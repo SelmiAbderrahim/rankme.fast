@@ -1,0 +1,12 @@
+node_modules
+dist
+coverage
+coverage-*
+.cov*
+*.stale
+.vitest-cache
+*.log
+*.tsbuildinfo
+.env
+.env.*
+!.env.example

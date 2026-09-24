@@ -1,0 +1,56 @@
+{
+  "title": "账户",
+  "description": "管理您的个人资料、安全、通知、连接和数据。",
+  "tabs": {
+    "profile": "个人资料",
+    "security": "安全",
+    "notifications": "通知",
+    "connections": "连接",
+    "branding": "品牌设置",
+    "mcp": "MCP 权限",
+    "privacy": "数据与隐私",
+    "api-keys": "API 密钥"
+  },
+  "profile": {
+    "title": "个人资料",
+    "subtitle": "您在 RankMeFast 的身份。",
+    "avatarAlt": "您的头像",
+    "emailLabel": "电子邮箱",
+    "verified": "邮箱已验证",
+    "unverified": "邮箱未验证",
+    "memberSince": "注册于 {{date}}",
+    "displayNameLabel": "显示名称",
+    "displayNameHint": "显示在应用和您的邮件中。",
+    "save": "保存更改",
+    "saving": "保存中…",
+    "saved": "您的个人资料已更新。",
+    "errors": {
+      "nameRequired": "请输入显示名称。",
+      "nameTooLong": "名称请少于 80 个字符。",
+      "saveFailed": "无法保存您的个人资料，请重试。"
+    }
+  },
+  "privacy": {
+    "export": {
+      "title": "导出您的数据",
+      "description": "以 JSON 文件下载您的账户数据副本。",
+      "button": "导出我的数据",
+      "exporting": "准备中…",
+      "success": "您的数据导出已下载。",
+      "error": "无法导出您的数据，请重试。"
+    },
+    "delete": {
+      "title": "删除账户",
+      "description": "安排永久删除您的账户和数据。",
+      "warning": "这将在宽限期后安排删除您的账户。请在此之前联系支持以取消。",
+      "button": "删除我的账户",
+      "dialogTitle": "删除您的账户？",
+      "dialogBody": "宽限期结束后，您的账户和数据将被永久删除。一旦该期限结束，将无法撤销。",
+      "cancel": "取消",
+      "confirm": "是的，删除我的账户",
+      "deleting": "安排中…",
+      "scheduled": "您的账户已安排在 {{date}} 删除。",
+      "error": "无法安排删除，请重试。"
+    }
+  }
+}

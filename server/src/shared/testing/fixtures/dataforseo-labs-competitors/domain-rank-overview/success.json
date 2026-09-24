@@ -1,0 +1,48 @@
+{
+  "version": "0.1.20260101",
+  "status_code": 20000,
+  "status_message": "Ok.",
+  "time": "0.1210 sec.",
+  "cost": 0.006,
+  "tasks_count": 1,
+  "tasks_error": 0,
+  "tasks": [
+    {
+      "id": "TASK_ID",
+      "status_code": 20000,
+      "status_message": "Ok.",
+      "time": "0.1140 sec.",
+      "cost": 0.006,
+      "result_count": 1,
+      "path": ["v3", "dataforseo_labs", "google", "domain_rank_overview", "live"],
+      "data": {
+        "api": "dataforseo_labs",
+        "function": "domain_rank_overview",
+        "target": "example.com",
+        "location_code": 2840,
+        "language_code": "en"
+      },
+      "result": [
+        {
+          "location_code": 2840,
+          "language_code": "en",
+          "total_count": 1,
+          "items_count": 1,
+          "items": [
+            {
+              "se_type": "google",
+              "target": "example.com",
+              "metrics": {
+                "organic": {
+                  "rank": 64,
+                  "count": 1820,
+                  "etv": 12400
+                }
+              }
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

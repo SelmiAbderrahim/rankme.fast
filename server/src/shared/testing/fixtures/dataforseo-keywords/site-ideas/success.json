@@ -1,0 +1,33 @@
+{
+  "version": "0.1.20260101",
+  "status_code": 20000,
+  "status_message": "Ok.",
+  "cost": 0.01224,
+  "tasks_count": 1,
+  "tasks_error": 0,
+  "tasks": [
+    {
+      "id": "TASK_ID",
+      "status_code": 20000,
+      "status_message": "Ok.",
+      "cost": 0.01224,
+      "result": [
+        {
+          "seed_keywords": ["seo audit tool", "technical seo scanner"],
+          "items": [
+            {
+              "keyword": "website seo audit",
+              "keyword_info": { "search_volume": 3600, "cpc": 2.1 },
+              "keyword_properties": { "keyword_difficulty": 44 }
+            },
+            {
+              "keyword": "technical seo checker",
+              "keyword_info": { "search_volume": 1900, "cpc": 3.4 },
+              "keyword_properties": { "keyword_difficulty": 51 }
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

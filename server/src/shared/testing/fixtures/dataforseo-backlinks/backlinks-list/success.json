@@ -1,0 +1,63 @@
+{
+  "version": "0.1.20260101",
+  "status_code": 20000,
+  "status_message": "Ok.",
+  "time": "0.2110 sec.",
+  "cost": 0.02,
+  "tasks_count": 1,
+  "tasks_error": 0,
+  "tasks": [
+    {
+      "id": "TASK_ID",
+      "status_code": 20000,
+      "status_message": "Ok.",
+      "time": "0.1912 sec.",
+      "cost": 0.02,
+      "result_count": 1,
+      "path": ["v3", "backlinks", "backlinks", "live"],
+      "data": {
+        "api": "backlinks",
+        "function": "backlinks",
+        "target": "example.com",
+        "mode": "one_per_domain",
+        "limit": 100
+      },
+      "result": [
+        {
+          "target": "example.com",
+          "total_count": 208,
+          "items_count": 2,
+          "search_after_token": "next-token-page-2",
+          "items": [
+            {
+              "domain_from": "blog.example.net",
+              "url_from": "https://blog.example.net/best-tools",
+              "url_to": "https://example.com/",
+              "anchor": "example tool",
+              "dofollow": true,
+              "rank": 512,
+              "first_seen": "2024-05-14 08:31:04 +00:00",
+              "last_seen": "2026-06-30 12:00:00 +00:00",
+              "is_broken": false
+              ,"backlink_spam_score": 70
+              ,"url_to_spam_score": 2
+            },
+            {
+              "domain_from": "news.example.org",
+              "url_from": "https://news.example.org/announcements/2025",
+              "url_to": "https://example.com/pricing",
+              "anchor": null,
+              "dofollow": false,
+              "rank": 320,
+              "first_seen": "2025-02-01 10:00:00 +00:00",
+              "last_seen": null,
+              "is_broken": true
+              ,"backlink_spam_score": 45
+              ,"url_to_spam_score": 3
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

@@ -1,0 +1,39 @@
+{
+  "record": {
+    "key": { "url": "https://example.com/" },
+    "metrics": {
+      "largest_contentful_paint": {
+        "histogram": [
+          { "start": 0, "end": 2500, "density": 0.75 },
+          { "start": 2500, "end": 4000, "density": 0.18 },
+          { "start": 4000, "density": 0.07 }
+        ],
+        "percentiles": { "p75": "1840" }
+      },
+      "interaction_to_next_paint": {
+        "histogram": [
+          { "start": 0, "end": 200, "density": 0.82 },
+          { "start": 200, "end": 500, "density": 0.15 },
+          { "start": 500, "density": 0.03 }
+        ],
+        "percentiles": { "p75": "180" }
+      },
+      "cumulative_layout_shift": {
+        "histogram": [
+          { "start": "0.00", "end": "0.10", "density": 0.88 },
+          { "start": "0.10", "end": "0.25", "density": 0.09 },
+          { "start": "0.25", "density": 0.03 }
+        ],
+        "percentiles": { "p75": "0.04" }
+      }
+    },
+    "collectionPeriod": {
+      "firstDate": { "year": 2026, "month": 6, "day": 1 },
+      "lastDate":  { "year": 2026, "month": 6, "day": 28 }
+    }
+  },
+  "urlNormalizationDetails": {
+    "originalUrl": "https://example.com/",
+    "normalizedUrl": "https://example.com/"
+  }
+}

@@ -1,0 +1,10 @@
+{
+  "name": "i18next-resources-to-backend",
+  "version": "1.2.1",
+  "type": "module",
+  "main": "index.js",
+  "exports": {
+    ".": "./index.js"
+  },
+  "license": "MIT"
+}

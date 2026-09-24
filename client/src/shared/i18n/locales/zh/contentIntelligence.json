@@ -1,0 +1,1012 @@
+{
+  "tab": "内容",
+  "views": {
+    "analyses": "分析",
+    "inventory": "清单",
+    "competitors": "竞争对手",
+    "monitoring": "监控",
+    "briefs": "内容简报"
+  },
+  "comingSoon": "此视图稍后推出。暂无内容。",
+  "rolloutUnavailable": {
+    "analysesTitle": "新的内容分析已暂时暂停",
+    "inventoryTitle": "新的内容清单任务已暂时暂停",
+    "competitorsTitle": "新的竞品对比已暂时暂停",
+    "monitoringTitle": "新的页面监控已暂时暂停",
+    "description": "你仍可查看已保存的结果，并取消仍在运行的任务。功能暂停期间不会预留新的额度。"
+  },
+  "suggestions": {
+    "loading": "正在加载已知页面和跟踪的关键词…",
+    "error": "部分页面或关键词建议无法加载，你仍可手动输入。",
+    "retry": "重新加载建议"
+  },
+  "list": {
+    "title": "内容分析",
+    "description": "将你的页面与自然竞争对手比较,获取评分卡、简报和初稿。",
+    "newAction": "新建分析",
+    "columns": {
+      "page": "页面",
+      "keyword": "关键词",
+      "locale": "语言",
+      "score": "评分",
+      "status": "状态",
+      "requestedAt": "请求时间",
+      "completedAt": "完成时间",
+      "warnings": "警告",
+      "actions": "操作"
+    },
+    "empty": {
+      "title": "尚无分析",
+      "description": "启动首个分析以查看建议、简报和初稿。",
+      "action": "启动分析"
+    },
+    "row": {
+      "view": "打开",
+      "cancel": "取消",
+      "regenerate": "重新生成"
+    },
+    "loading": "正在加载分析…",
+    "loadMore": "加载更多",
+    "warnings": "一个或多个警告",
+    "notAvailable": "不可用",
+    "warningCount": "{{count}} 条警告",
+    "warningCount_other": "{{count}} 条警告",
+    "progress": "已完成 {{value}}%"
+  },
+  "status": {
+    "queued": "排队中",
+    "collecting_owned": "读取你的页面",
+    "collecting_serp": "读取搜索结果",
+    "collecting_competitors": "读取比较页面",
+    "scoring": "评分中",
+    "generating_brief": "撰写简报",
+    "generating_draft": "撰写初稿",
+    "completed": "已完成",
+    "partial": "部分",
+    "failed": "失败",
+    "cancelled": "已取消"
+  },
+  "form": {
+    "title": "启动新分析",
+    "ownedUrl": "你拥有的页面 URL",
+    "ownedUrlPlaceholder": "https://example.com/page",
+    "ownedUrlHint": "必须是你拥有的站点上的页面。",
+    "manualPage": "选择已知页面，或输入同一站点的其他 URL。",
+    "keyword": "目标关键词",
+    "keywordHint": "页面应该获得排名的用户查询。",
+    "locale": "输出语言",
+    "detectedLocale": "从你的账户语言检测:{{locale}}",
+    "localeOverrideHint": "你可以为本次输出更改语言。",
+    "consent": "我了解可将有限、经清理的页面内容发送给已配置的 AI 提供方以生成简报和初稿。",
+    "consentRequired": "需要同意。",
+    "reviewedSources": { "title": "已审核的比较页面", "description": "这些公开排名页面来自您批准的匹配。是否开始分析仍由您确认。" },
+    "included": {
+      "title": "一次积分包含",
+      "owned": "一个自有页面",
+      "competitors": "最多三个公开自然比较页面",
+      "scorecard": "一张评分卡",
+      "brief": "一份简报",
+      "draft": "一份初稿",
+      "providerCall": "此次运行使用运营方配置的分析提供商。"
+    },
+    "previewLoading": "正在检查当前额度…",
+    "previewError": "无法检查当前额度。",
+    "baseRemaining": "剩余基础额度：{{count}}",
+    "packRemaining": "积分包余额：{{count}}",
+    "balance": "本月剩余基础额度:{{used}} / {{cap}}。",
+    "packBalance": "增值包余额:额外 {{balance}} 次分析。",
+    "submit": "启动分析",
+    "submitting": "启动中…",
+    "invalidUrl": "请输入有效 URL。",
+    "urlRequired": "请输入或选择页面 URL。",
+    "keywordRequired": "请输入或选择目标关键词。",
+    "keywordTooLong": "目标关键词不得超过 200 个字符。",
+    "offOrigin": "URL 必须匹配你的站点来源。",
+    "urlUnsafe": "URL 不能公开访问。",
+    "urlNotOwned": "该 URL 不属于你拥有的站点。",
+    "capacityExhausted": "月度额度和增值包均已耗尽。"
+  },
+  "detail": {
+    "progress": {
+      "regenerating": "正在开始…",
+      "title": "进行中",
+      "step": "第 {{current}} 步，共 {{total}} 步",
+      "percentComplete": "已完成 {{percent}}%",
+      "autoRefresh": "分析运行期间，此页面会自动刷新。",
+      "errorTitle": "此分析提前停止",
+      "errorGeneric": "分析在完成前已停止。"
+    },
+    "errorCategory": {
+      "owned_page_unusable": "无法读取您的页面。",
+      "owned_fetch_failed": "无法获取您的页面。",
+      "provider_unavailable": "无法使用内容服务。您的额度已退还。",
+      "serp_failed": "无法读取搜索结果。",
+      "scoring_failed": "无法为内容评分。",
+      "brief_failed": "无法撰写内容纲要。",
+      "draft_failed": "无法撰写初稿。",
+      "ai_budget_exceeded": "分析已达到其 AI 预算。",
+      "cost_ceiling_exceeded": "分析在成本上限处停止。",
+      "cancelled": "此分析已取消。",
+      "unexpected": "分析因意外错误而停止。"
+    },
+    "back": "返回分析",
+    "meta": {
+      "page": "页面",
+      "keyword": "关键词",
+      "locale": "语言",
+      "requested": "请求时间",
+      "completed": "完成时间",
+      "cost": "分析成本:{{units}} 积分"
+    },
+    "explanation": "这是内容就绪度对比,不是搜索引擎评分。",
+    "score": { "title": "内容就绪度评分", "overall": "总分", "confidence": "证据可信度", "breakdown": "分项明细", "section": "分项", "weight": "权重", "reason": "评分依据", "reasonUnavailable": "此分项暂无说明。", "reasonStrong": "现有证据支持此分项。", "reasonNeedsWork": "现有证据表明此分项仍可改进。", "reasonLimited": "证据有限，降低了此分项的可信度。", "sectionProgress": "{{section}} 得分：{{score}}/100" },
+    "sections": {
+      "readability": "可读性", "intent": "搜索意图匹配度",
+      "coverage": "覆盖度",
+      "structure": "结构", "links": "链接实用性", "schema": "结构化数据与答案清晰度", "technical": "技术内容信号"
+    },
+    "warnings": {
+      "title": "警告",
+      "empty": "无警告。", "unknown": "部分分析内容不可用。"
+    },
+    "recommendations": {
+      "title": "建议",
+      "empty": "没有可用建议。",
+      "severity": {
+        "high": "高",
+        "medium": "中",
+        "low": "低"
+      }
+    },
+    "brief": {
+      "title": "简报",
+      "empty": "此运行无简报。",
+      "editHint": "编辑此建议后保存明确版本。保存不会发布内容。",
+      "sectionHeading": "第 {{count}} 节标题",
+      "sectionBody": "章节说明",
+      "save": "保存简报版本",
+      "saving": "正在保存…",
+      "saved": "简报版本已保存。",
+      "saveFailed": "无法保存此简报版本，请重试。",
+      "versionHistory": "简报版本历史",
+      "noVersions": "尚无已保存的简报版本。",
+      "versionMeta": "{{date}} · {{count}} 节",
+      "unsavedGuard": "简报存在未保存的更改。",
+      "savedHint": "这是可编辑的建议，不会发布任何内容。"
+    },
+    "draft": {
+      "title": "初稿",
+      "empty": "此运行无初稿。",
+      "save": "保存版本",
+      "saving": "正在保存…",
+      "saved": "版本已保存。",
+      "saveFailed": "无法保存此版本，请重试。",
+      "versionHistory": "版本历史",
+      "noVersions": "尚无已保存版本。",
+      "versionMeta": "{{date}} · {{count}} 字",
+      "copy": "复制到剪贴板",
+      "copying": "正在复制…",
+      "copied": "已复制到剪贴板。",
+      "copyFailed": "无法复制草稿。",
+      "copyRetry": "再次尝试复制",
+      "export": "导出为 Markdown",
+      "wordCount": "{{count}} 词",
+      "unsavedGuard": "存在未保存的更改。"
+    },
+    "sources": {
+      "title": "来源",
+      "empty": "无引用。", "owned": "自有页面", "comparison": "对比页面 {{count}}"
+    },
+    "actions": {
+      "cancel": "取消分析",
+      "regenerate": "重新生成(消耗一个积分)"
+    }
+  },
+  "confirm": {
+    "cancel": {
+      "title": "要取消此分析吗?",
+      "description": "预留可能因阶段而退回。此操作不可撤销。",
+      "confirm": "取消分析",
+      "back": "保留"
+    },
+    "regenerate": {
+      "title": "要重新生成此分析吗?",
+      "description": "新运行将消耗一个积分。",
+      "confirm": "重新生成",
+      "back": "取消"
+    },
+    "discard": { "title": "放弃未保存的草稿更改？", "description": "最新编辑尚未保存为一个版本。", "confirm": "放弃并离开", "back": "继续编辑" }
+  },
+  "paywall": {
+    "title": "内容智能",
+    "description": "升级到 Starter 或以上以运行内容分析。",
+    "action": "查看套餐",
+    "exhausted": {
+      "title": "额度用尽",
+      "description": "月度额度和增值包已用尽。购买增值包或升级套餐。",
+      "buyPack": "购买分析包",
+      "seePlans": "查看套餐"
+    },
+    "packHint": "你的下一次将来自积分包。"
+  },
+  "partial": {
+    "title": "部分结果",
+    "description": "本次运行数据有限。评分卡可用;部分部分可能缺失。"
+  },
+  "warnings": { "keywordUnavailable": "关键词证据不可用，因此缺少该关键词的专项比较。", "serpUnavailable": "搜索结果证据不可用，因此评分仅依据自有页面。", "competitorsPartial": "部分对比页面不可用；评分使用成功读取的页面。", "aiBudgetExhausted": "写作预算在所有生成分项完成前已用尽。", "stuffingSuspected": "页面重复关键词的频率异常。", "briefFailed": "简报不可用，但评分卡已保留。", "draftFailed": "初稿不可用，但评分卡和简报已保留。" },
+  "refund": {
+    "refunded": "分析积分已退回。"
+  },
+  "errors": {
+    "loadEntitlementsFailed": "无法检查内容智能访问权限。",
+    "loadFailed": "无法加载分析。",
+    "loadOneFailed": "无法加载此分析。",
+    "startFailed": "无法启动分析。",
+    "cancelFailed": "无法取消。",
+    "regenerateFailed": "无法重新生成。",
+    "notCancellable": "该分析当前无法取消。",
+    "regenerateInFlight": "已有重新生成在进行中。",
+    "retry": "重试"
+  },
+  "opportunities": {
+    "title": "内容机会",
+    "description": "跟踪每条建议直至确认应用。状态更改不会调用供应商。",
+    "empty": "没有符合筛选条件的建议。",
+    "filters": {
+      "state": "状态",
+      "severity": "优先级"
+    },
+    "states": {
+      "all": "全部状态",
+      "suggested": "已建议",
+      "accepted": "已接受",
+      "dismissed": "已忽略",
+      "applied": "已应用"
+    },
+    "severities": {
+      "all": "全部优先级",
+      "high": "高",
+      "medium": "中",
+      "low": "低"
+    },
+    "recommendationLabel": "{{direction}} · {{section}}",
+    "rationale": "依据", "rationaleUnavailable": "此建议暂无依据说明。", "rationaleText": "请根据关联证据{{direction}}{{section}}分项。", "ownedEvidence": "自有页面证据", "directions": { "add": "补充", "strengthen": "强化", "clarify": "澄清", "remove": "精简" },
+    "confidence": "建议置信度：{{value}}",
+    "evidence": "{{count}} 个关联证据来源",
+    "actions": {
+      "accept": "接受",
+      "dismiss": "忽略",
+      "apply": "标记为已应用",
+      "undo": "撤销应用",
+      "details": "历史和结果"
+    },
+    "noteLabel": "备注",
+    "noteHint": "可选；未检测到内容变化时必填。最多 4,000 个字符。",
+    "cancel": "取消",
+    "updating": "正在更新…",
+    "success": "建议已更新。",
+    "errors": {
+      "generic": "无法更新建议。",
+      "conflict": "该建议已在其他位置更改。请重新加载数据后重试。"
+    },
+    "applicationCheck": {
+      "loading": "正在检查最新授权页面哈希…",
+      "sameTitle": "未检测到内容变化",
+      "sameDescription": "最新授权页面哈希与此分析一致。仍可确认，但必须填写说明备注。",
+      "changedTitle": "检测到内容变化",
+      "changedDescription": "最新授权页面哈希与分析锚点不同。",
+      "unavailableTitle": "没有可用的近期页面哈希",
+      "unavailableDescription": "确认前请运行新的授权分析。此检查不会调用供应商。",
+      "noteRequired": "请添加说明备注，以便在未检测到变化时确认。",
+      "error": "无法完成页面哈希检查。请在确认前重试。"
+    },
+    "confirm": {
+      "accept": {
+        "title": "接受此建议？",
+        "description": "接受操作会记录执行者并保留完整历史。",
+        "confirm": "接受"
+      },
+      "dismiss": {
+        "title": "忽略此建议？",
+        "description": "稍后仍可接受；该事件会保留在历史中。",
+        "confirm": "忽略"
+      },
+      "apply": {
+        "title": "确认已应用？",
+        "description": "仅在更改自有页面后确认。系统会记录内容哈希并观察之后 28 天。",
+        "confirm": "确认应用"
+      },
+      "undo": {
+        "title": "撤销应用状态？",
+        "description": "这会创建新事件，不会删除原始应用证据。",
+        "confirm": "撤销应用"
+      }
+    },
+    "history": {
+      "title": "建议历史",
+      "empty": "尚无状态变化。",
+      "meta": "执行者 {{actor}} · {{time}}",
+      "events": {
+        "accepted": "已接受",
+        "dismissed": "已忽略",
+        "applied": "已确认应用",
+        "undo_applied": "已撤销应用"
+      }
+    },
+    "hash": {
+      "same": "确认哈希与分析哈希一致。",
+      "changed": "确认哈希与分析哈希不同。",
+      "unavailable": "此事件未附加内容哈希。"
+    },
+    "outcomes": {
+      "hashAnchor": "已应用内容哈希锚点",
+      "sourceUnavailable": "一个或多个证据来源不可用。现有观察仍会显示；请同步缺失来源以提高覆盖率。",
+      "relativeDelta": "相对变化",
+      "observedDate": "观察日期",
+      "phase": "窗口",
+      "laterEditColumn": "后续编辑",
+      "phases": {
+        "baseline": "之前",
+        "following": "之后"
+      },
+      "boolean": {
+        "yes": "是",
+        "no": "否"
+      },
+      "series": {
+        "gsc": {
+          "title": "Search Console 观察",
+          "chartLabel": "结果窗口内可用的 Search Console 点击观察"
+        },
+        "rank": {
+          "title": "跟踪排名观察",
+          "chartLabel": "结果窗口内可用的跟踪排名观察"
+        }
+      },
+      "syncButton": "打开搜索数据设置",
+      "unavailable": "结果数据不可用",
+      "syncAction": "连接或同步 Search Console 和排名跟踪。缺失数据绝不会显示为零。",
+      "observedAfter": "在 {{date}} 应用后观察到",
+      "windowIncomplete": "之后的 28 天窗口尚未完成。",
+      "laterEdit": "窗口内存在后续内容编辑，请更谨慎地解读变化。",
+      "chartLabel": "结果窗口内可用的排名观察",
+      "metric": "指标",
+      "baseline": "之前 28 天",
+      "following": "之后 28 天",
+      "delta": "绝对变化",
+      "coverage": "数据覆盖 — Search Console：{{gsc}} 天；排名：{{rank}} 天。",
+      "disclaimer": "外部因素会影响搜索表现。此视图显示相关变化，而非归因。",
+      "metrics": {
+        "clicks": "点击",
+        "impressions": "展示",
+        "ctr": "点击率",
+        "averagePosition": "平均排名",
+        "rankPosition": "跟踪排名"
+      }
+    }
+  },
+  "inventory": {
+    "paywall": {
+      "title": "内容清单",
+      "description": "升级到 Pro 或 Agency，抓取你的页面以发现重复内容、单薄内容、关键词内耗和主题空缺。",
+      "action": "查看方案"
+    },
+    "status": {
+      "queued": "排队中",
+      "crawling": "抓取中",
+      "analyzing": "分析中",
+      "completed": "完成",
+      "partial": "部分完成",
+      "failed": "失败",
+      "cancelled": "已取消"
+    },
+    "confidence": {
+      "high": "高",
+      "medium": "中",
+      "low": "低"
+    },
+    "warnings": {
+      "partialCrawl": "部分页面无法抓取；结果仅覆盖能读取的页面。",
+      "stoppedEarly": "为控制预算，抓取提前停止。",
+      "evidenceMissing": "Search Console 证据不可用，因此部分发现的置信度较低。",
+      "explanationSkipped": "本次运行跳过了通俗易懂的摘要。"
+    },
+    "errorCategory": {
+      "no_pages_crawled": "无法从你的网站读取任何页面。",
+      "crawl_failed": "抓取无法完成。",
+      "analysis_failed": "分析无法完成。",
+      "cost_ceiling_exceeded": "运行在成本上限处停止。",
+      "cancelled": "本次运行已取消。",
+      "unexpected": "运行因意外错误而停止。"
+    },
+    "start": {
+      "title": "开始清单运行",
+      "description": "抓取你的页面，获得聚类、重复、单薄与孤立页面、关键词内耗和主题空缺。",
+      "pageLimit": "要抓取的页面数",
+      "pageLimitHint": "介于 1 到 {{max}} 页之间。每四页构成一个预留区块。",
+      "blocksTitle": "本次预留",
+      "blocks": "为 {{pages}} 页预留 {{blocks}} 个区块（每区块四页）。",
+      "blocksInvalid": "输入有效的页面数以查看预留的区块数量。",
+      "allowedPaths": "仅这些路径（可选）",
+      "excludedPaths": "跳过这些路径（可选）",
+      "sitemapSeeds": "站点地图 URL（可选）",
+      "pathsHint": "每行一个路径，以斜杠开头。最多 {{max}} 个路径。",
+      "seedsHint": "每行一个站点地图 URL。最多 {{max}} 个。",
+      "inFlight": "已有运行在进行中。请等待其完成后再开始新的运行。",
+      "submit": "开始清单",
+      "submitting": "正在开始…",
+      "errors": {
+        "pageLimitRange": "请输入 1 到 100 之间的页面数。",
+        "tooManyPaths": "每个列表最多使用 20 个路径。",
+        "invalidPath": "每个路径必须以斜杠开头（例如 /blog）。",
+        "tooManySeeds": "最多使用五个站点地图 URL。",
+        "invalidSeed": "其中一个站点地图 URL 过长。"
+      }
+    },
+    "runs": {
+      "title": "清单运行",
+      "description": "此网站的所有清单运行，最新在前。",
+      "view": "打开",
+      "loadMore": "加载更多",
+      "columns": {
+        "requested": "请求时间",
+        "status": "状态",
+        "pages": "页面",
+        "blocks": "区块",
+        "actions": "操作"
+      },
+      "empty": {
+        "title": "尚无清单运行",
+        "description": "开始你的第一次运行，绘制整个网站的重复、单薄页面和主题空缺。"
+      }
+    },
+    "detail": {
+      "back": "返回清单",
+      "pending": "本次运行仍在进行。完成后将显示发现。"
+    },
+    "progress": {
+      "title": "运行进度",
+      "pagesRequested": "请求页面",
+      "pagesProcessed": "已处理页面",
+      "pagesFailed": "失败页面",
+      "blocksReserved": "预留区块",
+      "blocksRefunded": "已退回区块",
+      "refundNote": "{{count}} 个未使用的区块已退回到你的额度。",
+      "warningsTitle": "警告",
+      "errorTitle": "本次运行提前停止",
+      "errorGeneric": "运行在完成前停止。",
+      "cancel": "取消运行",
+      "cancelling": "正在取消…"
+    },
+    "findings": {
+      "confidence": "置信度：{{value}}",
+      "evidence": "{{count}} 个关联证据来源",
+      "clusters": {
+        "title": "主题聚类",
+        "description": "共享同一主题的页面分组。",
+        "empty": "未找到主题聚类",
+        "emptyHint": "你的页面未按共享主题聚成分组。",
+        "columns": {
+          "label": "聚类",
+          "pages": "页面",
+          "terms": "共享词"
+        }
+      },
+      "links": {
+        "title": "内部链接",
+        "description": "你的页面之间如何相互链接。孤立和弱链接页面会被标记。",
+        "empty": "没有内部链接数据",
+        "emptyHint": "没有可用页面来构建内部链接视图。",
+        "columns": {
+          "page": "页面",
+          "inbound": "入链",
+          "outbound": "出链",
+          "flags": "标记"
+        }
+      },
+      "cannibalization": {
+        "title": "关键词内耗",
+        "description": "你的两个或多个页面在争夺同一查询。",
+        "empty": "未发现内耗",
+        "emptyHint": "未发现两个页面争夺同一查询。",
+        "hasGsc": "有 Search Console 证据",
+        "noGsc": "无 Search Console 证据",
+        "startAnalysis": "开始内容分析"
+      },
+      "gaps": {
+        "title": "主题空缺",
+        "description": "竞争对手覆盖而你的页面未覆盖的查询。",
+        "empty": "未发现主题空缺",
+        "emptyHint": "相对竞争对手未发现明显的主题空缺。"
+      },
+      "opportunity": {
+        "title": "机会摘要"
+      }
+    },
+    "table": {
+      "title": "已抓取页面",
+      "description": "我们读取的每个页面及其派生事实。",
+      "empty": "没有抓取到页面",
+      "emptyHint": "本次运行未读取任何页面。",
+      "noMatches": "没有页面匹配这些筛选条件。",
+      "clearFilters": "清除筛选",
+      "prev": "上一页",
+      "next": "下一页",
+      "pageOf": "第 {{page}} / {{total}} 页",
+      "filters": {
+        "url": "URL 包含",
+        "urlPlaceholder": "例如 /blog",
+        "topic": "主题包含",
+        "topicPlaceholder": "价格",
+        "language": "语言",
+        "allLanguages": "所有语言",
+        "issue": "问题",
+        "allIssues": "所有问题"
+      },
+      "columns": {
+        "url": "URL",
+        "language": "语言",
+        "words": "字数",
+        "links": "内部链接",
+        "topics": "主题",
+        "flags": "标记"
+      },
+      "qualityFlags": {
+        "thin": "单薄",
+        "orphan": "孤立",
+        "weakly_linked": "弱链接",
+        "noindex": "禁止索引",
+        "missing_title": "缺少标题"
+      }
+    },
+    "errors": {
+      "loadFailed": "无法加载清单运行。",
+      "loadOneFailed": "无法加载此运行。",
+      "startFailed": "无法开始清单运行。",
+      "retry": "重试"
+    }
+  },
+  "competitorContent": {
+    "paywall": {
+      "title": "竞争对手内容智能",
+      "description": "升级到 Agency 套餐，即可将你的页面与已确认的竞争对手对比，发现内容缺口、缺失的结构化数据和主题机会。",
+      "action": "查看套餐"
+    },
+    "status": {
+      "queued": "排队中",
+      "collecting": "收集中",
+      "comparing": "比较中",
+      "completed": "已完成",
+      "partial": "部分完成",
+      "failed": "失败",
+      "cancelled": "已取消"
+    },
+    "confidence": { "high": "高", "medium": "中", "low": "低" },
+    "warnings": {
+      "partialPortfolio": "部分竞争对手无法读取；结果仅涵盖我们能访问到的对象。",
+      "stoppedEarly": "为控制预算，本次运行提前停止。",
+      "aiBudgetExhausted": "为控制预算,已跳过通俗易懂的摘要。",
+      "aiUnavailable": "本次运行无法提供通俗易懂的摘要。",
+      "aiCopyRejected": "生成的摘要因与竞争对手措辞重复而被舍弃。"
+    },
+    "errorCategory": {
+      "no_confirmed_competitors": "本次运行没有可用的已确认竞争对手。",
+      "owned_page_unusable": "无法读取你的页面进行比较。",
+      "no_comparable_pages": "未能读取到可比较的竞争对手页面。",
+      "collection_failed": "无法收集页面。",
+      "comparison_failed": "无法完成比较。",
+      "cost_ceiling_exceeded": "运行已达到成本上限而停止。",
+      "cancelled": "本次运行已被取消。",
+      "unexpected": "本次运行因意外错误而停止。"
+    },
+    "errors": {
+      "loadFailed": "无法加载竞争对手运行。",
+      "loadOneFailed": "无法加载此次运行。",
+      "startFailed": "无法启动运行。",
+      "retry": "重试"
+    },
+    "manager": {
+      "suggestionsTitle": "建议的竞争对手",
+      "suggestionsDescription": "来自你现有竞争对手数据、已与你一同排名的域名。确认你想要对比的对象。",
+      "suggestionsEmpty": { "title": "暂无建议", "description": "请先从 Competitors 标签页运行竞争对手发现,或在下方通过 URL 添加竞争对手。" },
+      "columns": {
+        "domain": "域名",
+        "avgPosition": "平均排名",
+        "overlap": "共享关键词",
+        "source": "来源",
+        "status": "状态",
+        "actions": "操作"
+      },
+      "confirm": "确认",
+      "confirmed": "已确认",
+      "adding": "正在添加…",
+      "manualTitle": "添加竞争对手",
+      "manualDescription": "通过 URL 添加任意公开的竞争对手页面。确认某个域名并不代表你拥有它。",
+      "manualLabel": "竞争对手 URL",
+      "manualHint": "最多可向你的组合中添加 {{max}} 个竞争对手。",
+      "add": "添加竞争对手",
+      "portfolioFull": "你的组合已达到最多 {{max}} 个竞争对手。请先归档一个再添加。",
+      "portfolioTitle": "你的竞争对手",
+      "portfolioDescription": "可用于对比的已确认竞争对手。归档你不再跟踪的对象。",
+      "portfolioEmpty": { "title": "暂无竞争对手", "description": "确认一条建议或通过 URL 添加竞争对手,以建立你的组合。" },
+      "source": { "suggested": "建议", "manual": "手动" },
+      "profileStatus": { "active": "活跃", "archived": "已归档" },
+      "archive": "归档",
+      "restore": "恢复",
+      "updating": "正在更新…",
+      "errors": {
+        "invalidUrl": "请输入以 http 或 https 开头的有效 URL。",
+        "portfolioFull": "你的组合已达到最多 {{max}} 个竞争对手。",
+        "addFailed": "无法添加竞争对手。",
+        "mutateFailed": "无法更新竞争对手。"
+      }
+    },
+    "run": {
+      "title": "开始一次比较运行",
+      "description": "将你的某个页面与已确认的竞争对手进行比较,获取差异、缺口和机会。",
+      "noCompetitors": { "title": "请先确认一个竞争对手", "description": "开始比较运行前,请先在上方添加至少一个活跃的竞争对手。" },
+      "selectCompetitors": "选择要比较的竞争对手(最多 {{max}} 个)",
+      "ownedUrl": "你的页面 URL",
+      "ownedUrlHint": "必须是你所拥有网站上的页面。",
+      "competitorUrl": "{{domain}} 的排名页面",
+      "keyword": "重点关键词(可选)",
+      "keywordHint": "将比较范围缩小到你想赢得的搜索意图。",
+      "pageLimit": "要读取的竞争对手页面数",
+      "pageLimitHint": "在所选竞争对手中读取 1 到 {{max}} 个页面。",
+      "disclosureTitle": "本次运行的成本",
+      "disclosure": "本次运行占用一个单位,并在 {{count}} 个竞争对手中读取最多 {{pages}} 个页面。",
+      "disclosureInvalid": "请输入有效的页面数量,以查看本次运行占用的资源。",
+      "inFlight": "已有运行正在进行。请等待其完成后再开始新的运行。",
+      "submit": "开始比较",
+      "submitting": "正在启动…",
+      "reviewed": { "title": "审核排名页面", "description": "确认实际要比较的页面。未经您的批准不会开始运行。", "loading": "正在加载已审核匹配…", "notFound": "该已审核匹配已不可用。", "loadFailed": "无法加载已审核匹配。", "evidence": "关联关键词证据", "openSuggested": "打开建议排名页面", "competitorUrl": "竞争对手排名页面", "disclosure": "此次比较预留一个单位，并读取一个已审核竞争对手页面及其配对自有页面。", "reviewAction": "审核费用并确认", "confirmTitle": "开始此比较？", "confirmDescription": "我们将保存同域页面选择、预留一个单位并将比较加入队列。", "cancel": "继续审核", "confirm": "确认并开始" },
+      "errors": {
+        "noSelection": "请至少选择一个竞争对手进行比较。",
+        "tooMany": "所选竞争对手数量不得超过允许的上限。",
+        "invalidUrl": "请输入以 http 或 https 开头的有效页面 URL。",
+        "invalidCompetitorUrl": "请为每个选中的竞争对手输入明确的排名页面网址。",
+        "pageLimitRange": "请输入允许范围内的页面数量。"
+      }
+    },
+    "runs": {
+      "title": "比较运行",
+      "description": "该网站的所有比较运行,最新的在前。",
+      "columns": { "requested": "请求时间", "status": "状态", "competitors": "竞争对手", "pages": "页面", "actions": "操作" },
+      "view": "打开",
+      "loadMore": "加载更多",
+      "empty": { "title": "暂无比较运行", "description": "开始你的首次运行,看看你的页面与竞争对手相比如何。" }
+    },
+    "progress": {
+      "title": "运行进度",
+      "competitorsRequested": "请求的竞争对手",
+      "competitorsProcessed": "已读取的竞争对手",
+      "competitorsFailed": "失败的竞争对手",
+      "pagesScraped": "已读取的页面",
+      "refundNote": "预留的单位已退回到你的额度。",
+      "warningsTitle": "警告",
+      "errorTitle": "本次运行提前停止",
+      "errorGeneric": "运行在完成前停止。",
+      "cancel": "取消运行",
+      "cancelling": "正在取消…"
+    },
+    "detail": { "back": "返回竞争对手", "pending": "本次运行仍在进行。完成后将显示结果。" },
+    "findings": {
+      "confidence": "置信度:{{value}}",
+      "evidence": "{{count}} 个关联证据来源",
+      "explanation": { "title": "摘要" }
+    },
+    "comparison": {
+      "title": "比较概览",
+      "description": "每个竞争对手页面在关键维度上与你的页面的对比。",
+      "partialDomains": "部分竞争对手无法读取:{{domains}}。这些不计为弱点。",
+      "empty": "暂无比较数据",
+      "emptyHint": "本次运行未生成各竞争对手的差异。",
+      "noMatches": "没有竞争对手符合这些筛选条件。",
+      "clearFilters": "清除筛选",
+      "filters": { "domain": "竞争对手包含", "domainPlaceholder": "例如 competitor.com", "dimension": "维度" },
+      "dimensions": {
+        "all": "所有维度",
+        "length": "内容长度",
+        "structure": "结构",
+        "links": "链接",
+        "schema": "结构化数据",
+        "topics": "主题"
+      },
+      "columns": {
+        "competitor": "竞争对手",
+        "words": "字数差",
+        "headings": "标题差",
+        "internalLinks": "内部链接差",
+        "externalLinks": "外部链接差",
+        "missingSchema": "缺失的结构化数据",
+        "missingTopics": "缺失的主题"
+      }
+    },
+    "opportunities": {
+      "title": "机会",
+      "description": "由机器生成、附带证据并按置信度排序的机会。",
+      "startAnalysis": "开始内容分析",
+      "empty": "未发现机会",
+      "emptyHint": "本次比较未发现明确的内容机会。",
+      "kinds": {
+        "topic_gap": "主题缺口",
+        "schema_gap": "结构化数据缺口",
+        "format_gap": "格式缺口",
+        "internal_linking_gap": "内部链接缺口",
+        "differentiated_strength": "你的优势",
+        "target_keyword": "目标关键词"
+      }
+    },
+    "drilldown": {
+      "title": "页面详情",
+      "description": "你的页面以及我们读取的每个竞争对手页面的派生数据。",
+      "empty": "暂无页面详情",
+      "emptyHint": "本次运行未存储任何页面数据。",
+      "role": { "owned": "你的页面", "competitor": "竞争对手" },
+      "visit": "访问页面",
+      "words": "字数",
+      "headings": "标题",
+      "internalLinks": "内部链接",
+      "externalLinks": "外部链接"
+    }
+  },
+  "monitoring": {
+    "paywall": {
+      "title": "变更监测是代理套餐功能",
+      "description": "跟踪你自己的页面和已确认竞争对手页面的每周变更。升级到代理套餐即可开启。",
+      "action": "查看代理套餐"
+    },
+    "notifications": {
+      "title": "变更提醒",
+      "description": "选择当被监测页面发生实质性变更时是否给你发送邮件。",
+      "label": "有实质性变更时通知我",
+      "hint": "当被监测页面内容变化到值得关注时，每个页面发送一封邮件。安全邮件永不受影响。"
+    },
+    "form": {
+      "title": "添加监测",
+      "description": "监测一个公开页面的每周变更。选择你自己的页面或已确认的竞争对手页面。",
+      "allowanceValue": "{{used}} / {{cap}}",
+      "slots": "活动监测",
+      "checks": "本月每周检查",
+      "targetKind": "你想监测什么？",
+      "targetKinds": {
+        "owned": { "label": "我的某个页面", "hint": "本站上你已拥有的页面。" },
+        "competitor": { "label": "竞争对手页面", "hint": "你已确认的某个竞争对手的页面。" }
+      },
+      "ownedUrl": "页面地址",
+      "ownedUrlHint": "你自己网站上该页面的完整地址。",
+      "selectCompetitor": "选择一个已确认的竞争对手",
+      "competitorUrl": "竞争对手页面地址",
+      "competitorUrlHint": "要监测的具体竞争对手页面。它必须属于已确认的竞争对手。",
+      "noCompetitors": { "title": "尚无已确认的竞争对手", "description": "请先在竞争对手视图中确认一个竞争对手，然后才能监测其页面。", "action": "前往竞争对手" },
+      "cadenceTitle": "检查频率",
+      "cadenceValue": "每次检查按{{cadence}}进行。此设置无法更改。",
+      "errors": { "noCompetitor": "请先选择一个已确认的竞争对手。", "invalidUrl": "请输入以 http 或 https 开头的完整地址。" },
+      "slotsFull": "你已用满全部 {{limit}} 个监测名额。删除一个后才能再添加。",
+      "confirmTitle": "开始监控此页面？",
+      "confirmDescription": "确认对 {{url}} 进行{{cadence}}检查。这会占用一个监控名额，但不会启动内容分析。",
+      "confirmCancel": "继续编辑",
+      "confirmAction": "确认监控",
+      "submit": "开始监测",
+      "submitting": "正在开始…"
+    },
+    "cadence": { "weekly": "每周" },
+    "targetKinds": { "owned": "自有页面", "competitor": "竞争对手页面" },
+    "status": { "active": "活动", "paused": "已暂停", "cap_paused": "已暂停（已达上限）", "error": "错误" },
+    "list": {
+      "title": "你的监测",
+      "description": "你正在监测的每个页面、其状态及最近一次检查。",
+      "columns": { "target": "页面", "status": "状态", "lastCheck": "上次检查", "lastChange": "上次变更", "actions": "操作" },
+      "never": "尚未检查",
+      "noChange": "尚无变更",
+      "view": "记录",
+      "pause": "暂停",
+      "resume": "恢复",
+      "delete": "删除",
+      "updating": "处理中…",
+      "empty": { "title": "尚无监测", "description": "在上方添加你的第一个监测，开始跟踪每周变更。" },
+      "deleteConfirm": {
+        "title": "删除此监测？",
+        "description": "我们将停止检查此页面并删除其变更历史。此操作无法撤销。",
+        "cancel": "保留",
+        "confirm": "删除监测"
+      }
+    },
+    "filters": { "all": "全部", "active": "活动", "paused": "已暂停", "cap_paused": "已达上限", "error": "错误" },
+    "feed": {
+      "title": "变更记录",
+      "description": "每次每周检查以及我们检测到的任何实质性变更，最新的在前。",
+      "empty": { "title": "尚无检查", "description": "首次每周检查尚未运行。请在下次检查后再来查看。" },
+      "kinds": {
+        "check_reserved": "已排定检查",
+        "check_completed": "检查完成",
+        "change_detected": "检测到变更",
+        "check_failed": "检查失败",
+        "cap_paused": "达到上限暂停",
+        "unknown": "更新"
+      },
+      "loadMore": "显示更多"
+    },
+    "detail": { "back": "返回监测", "kind": "类型", "cadence": "频率", "lastCheck": "上次检查" },
+    "errorCategory": {
+      "provider_unavailable": "监测服务不可用。",
+      "reconcile_failed": "上次排定的检查未能完成。",
+      "cap_exhausted": "本月检查额度已用尽。",
+      "unexpected": "此监测出现问题。"
+    },
+    "errors": {
+      "createFailed": "无法添加此监测。",
+      "actionFailed": "无法更新此监测。",
+      "loadFailed": "无法加载你的监测。",
+      "loadOneFailed": "无法加载此监测。",
+      "monitorError": "此监测需要关注",
+      "retry": "重试"
+    }
+  },
+  "briefs": {
+    "form": {
+      "title": "创建基于搜索结果的简报",
+      "description": "选择一个已跟踪的关键词。系统预留额度前，你可以查看完整费用估算。",
+      "keyword": "目标关键词",
+      "placeholder": "例如：循证搜索优化",
+      "preview": "查看估算",
+      "previewing": "正在检查…",
+      "confirm": "创建简报",
+      "creating": "正在创建…",
+      "cancel": "取消"
+    },
+    "preview": {
+      "title": "费用预览",
+      "unit": "此简报将使用 {{count}} 个内容简报单位。",
+      "serp": {
+        "stored": "使用 {{date}} 保存的搜索结果观测；预计无需重新抓取。",
+        "fetched": "没有新鲜的已存搜索结果；此单位包含一次计费抓取。"
+      },
+      "scrapes": "将分别读取最多 {{count}} 个公开结果页面。",
+      "consume": "预计使用：基础 {{base}}，套餐 {{pack}}。",
+      "remaining": "当前可用：基础 {{base}}，套餐 {{pack}}。"
+    },
+    "status": {
+      "queued": "排队中",
+      "running": "处理中",
+      "completed": "已完成",
+      "completed_empty": "已完成 — 无语料",
+      "completed_partial": "部分完成",
+      "failed": "失败"
+    },
+    "states": {
+      "cap": {
+        "title": "简报额度已用完",
+        "description": "基础额度和简报套餐余额不足以创建此简报。",
+        "action": "查看简报套餐"
+      },
+      "disabled": {
+        "title": "内容简报暂不可用",
+        "description": "此功能目前已停用，已保存数据不会改变。"
+      },
+      "failed": {
+        "title": "简报未能完成",
+        "description": "本次运行已停止，安全保留的证据仍然可见。"
+      }
+    },
+    "locked": {
+      "title": "内容简报需要 Pro 或 Agency",
+      "description": "Agency 包含每月额度；Pro 可以使用简报套餐点数。",
+      "action": "比较方案"
+    },
+    "list": {
+      "title": "已保存的简报",
+      "description": "重新打开任何已保存简报都不会消耗新单位。",
+      "filter": "状态筛选",
+      "all": "全部状态",
+      "loading": "正在加载简报…",
+      "meta": "申请于 {{date}} · 保留 {{count}} 个页面"
+    },
+    "empty": {
+      "title": "还没有简报",
+      "description": "在上方预览已跟踪关键词，创建首份有证据支持的简报。"
+    },
+    "actions": {
+      "open": "打开",
+      "back": "返回简报",
+      "editor": "打开编辑器",
+      "more": "加载更多",
+      "retry": "重试"
+    },
+    "detail": {
+      "loading": "正在加载简报…",
+      "citations": "已保存证据引用"
+    },
+    "running": {
+      "title": "正在生成此简报",
+      "description": "每个受限阶段完成后，已保存证据会显示在这里；本页面会自动刷新。"
+    },
+    "halt": {
+      "title": "运行提前停止",
+      "message": "运行在{{stage}}阶段因{{reason}}而停止。保留的证据仍然可用。",
+      "stage": {
+        "serp_fetch": "抓取搜索结果",
+        "scrape": "读取页面",
+        "brief_ai": "生成智能大纲",
+        "editor_ai": "编辑器评分"
+      },
+      "reason": {
+        "cost_ceiling": "达到滚动费用上限",
+        "provider_error": "供应商发生故障",
+        "unsafe_url": "结果网址不安全",
+        "malformed_output": "智能回复缺少依据",
+        "processing_failure": "处理过程发生故障"
+      }
+    },
+    "corpus": {
+      "title": "前十名语料统计",
+      "scrapeDates": "前十名平均值基于 {{dates}} 抓取的页面。",
+      "noDates": "没有保留日期",
+      "range": "字数范围",
+      "average": "平均字数",
+      "pages": "保留页面",
+      "headings": "标题结构",
+      "entities": "结构化数据实体",
+      "noEntities": "未保留结构化数据实体。"
+    },
+    "sources": {
+      "title": "已保存来源页面",
+      "description": "标题和小标题是不受信任的第三方文本，将按原文显示。",
+      "meta": "抓取于 {{date}} · {{count}} 个词",
+      "empty": "未保留任何来源文档。"
+    },
+    "outline": {
+      "title": "带引用的大纲",
+      "empty": "由于已存证据不足，模型选择不生成大纲。"
+    },
+    "questions": {
+      "title": "来自已存相关问题证据的问题",
+      "empty": "没有带引用的问题通过证据检查。"
+    },
+    "terms": {
+      "title": "关键词组次要词",
+      "empty": "没有已保存的关键词组包含此关键词。"
+    },
+    "paa": { "title": "已保存的相关问题条目" },
+    "abstentions": {
+      "title": "证据限制",
+      "noSerpResults": "已保存或新抓取的搜索结果中没有可用网址。",
+      "noDocuments": "没有结果页面生成可保留的文档。",
+      "outline": "没有大纲节点具备足够的引用证据。",
+      "questions": "没有问题具备可解析的已存相关问题引用。",
+      "malformedEvidence": "缺少依据或格式错误的智能输出已被丢弃。",
+      "unknown": "由于证据不足，某个部分已被省略。"
+    },
+    "guidance": "这是基于已存语料的方向性建议；实际搜索结果可能不同。",
+    "cost": "本次运行费用：{{used}}，上限为 {{ceiling}} 微美元。",
+    "editor": {
+      "title": "草稿编辑器：{{keyword}}",
+      "description": "将受限草稿与已存语料比较。重新评分不会消耗新简报单位，且仅在原运行费用余量充足时调用智能模型。",
+      "draft": "草稿",
+      "characters": "已输入 {{count}} / 50,000 个字符",
+      "score": "评估此版本",
+      "scoring": "正在评估…",
+      "history": "评分历史",
+      "empty": "尚未评估任何草稿版本。",
+      "version": "版本 {{version}}",
+      "deterministicScore": "确定性建议：{{score}}/100",
+      "words": "字词",
+      "headings": "标题",
+      "entities": "匹配实体",
+      "aiScore": "智能建议：{{score}}/100",
+      "deterministicOnly": "仅提供确定性建议",
+      "disclosure": {
+        "scored": "受限智能评分以已保存证据为依据。",
+        "cost_ceiling": "原运行的费用余量不足，无法再次调用智能模型。",
+        "provider_error": "智能模型供应商不可用；确定性比较仍然可用。",
+        "malformed_output": "智能回复缺少证据依据，已被丢弃。"
+      }
+    },
+    "errors": {
+      "preview": "无法准备费用预览。",
+      "create": "无法创建此简报。",
+      "load": "无法加载此简报。",
+      "rescore": "无法评估此草稿。"
+    }
+  }
+}

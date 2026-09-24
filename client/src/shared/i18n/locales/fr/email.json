@@ -1,0 +1,11 @@
+{
+  "contact": {
+    "confirmation": "Votre e-mail a été envoyé. Nous vous répondrons rapidement."
+  },
+  "passwordReset": {
+    "subject": "Réinitialisez votre mot de passe"
+  },
+  "passwordChanged": {
+    "subject": "Votre mot de passe a été changé"
+  }
+}

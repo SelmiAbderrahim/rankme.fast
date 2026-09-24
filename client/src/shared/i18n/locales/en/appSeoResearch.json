@@ -1,0 +1,42 @@
+{
+  "title": "App research",
+  "description": "Find the keywords an app ranks for, compare keyword coverage, and discover nearby competitors.",
+  "panels": { "keywords": "App keywords", "gap": "Keyword gap", "competitors": "Competitors" },
+  "stores": { "google_play": "Google Play", "app_store": "App Store" },
+  "scope": { "title": "Research scope", "description": "Choose a registered app and store before running research.", "profile": "App profile", "store": "Store" },
+  "common": {
+    "previewing": "Preparing preview…", "exportCsv": "Export CSV", "observedAt": "Observed {{date}}",
+    "notRanked": "Not ranked", "unknown": "Unknown", "nextPage": "Next page"
+  },
+  "preview": {
+    "title": "Confirm this lookup", "description": "Review the account impact before the live lookup starts.",
+    "unit_zero": "This uses no lookup units.", "unit_one": "This uses {{count}} lookup unit.", "unit_two": "This uses {{count}} lookup units.", "unit_few": "This uses {{count}} lookup units.", "unit_many": "This uses {{count}} lookup units.", "unit_other": "This uses {{count}} lookup units.",
+    "remaining_zero": "No units remain before this lookup.", "remaining_one": "{{count}} unit remains before this lookup.", "remaining_two": "{{count}} units remain before this lookup.", "remaining_few": "{{count}} units remain before this lookup.", "remaining_many": "{{count}} units remain before this lookup.", "remaining_other": "{{count}} units remain before this lookup.",
+    "selfHost": "This self-hosted deployment does not enforce a sold-plan allowance.", "confirm": "Run lookup", "running": "Running lookup…",
+    "cache": { "cached": "A cached result is available; the lookup still counts.", "fresh_required": "Fresh vendor data is required.", "mixed": "The run combines cached and fresh data.", "unknown": "Cache status will be resolved when the lookup runs." }
+  },
+  "keywords": {
+    "title": "Keywords for this app", "description": "See up to one hundred observed store-search keywords and positions.",
+    "limitNote": "Results show observed ranks only. No volume or difficulty estimate is added.", "run": "Preview keyword lookup",
+    "results": "Ranked keywords", "caption": "Observed store-search ranks for the selected app.", "empty": "This app did not rank for any observed keywords.",
+    "trackLink": "Open keyword tracking"
+  },
+  "gap": {
+    "marketTitle": "United States and English only", "marketNote": "App research currently supports the United States in English. Other markets are unavailable.",
+    "title": "Compare keyword coverage", "description": "Compare the selected app with up to nineteen competitor app IDs.",
+    "location": "Location", "language": "Language", "unitedStates": "United States", "english": "English",
+    "competitorIds": "Competitor app IDs", "placeholder": "Enter one app ID per line", "idHelp": "Your app ({{ownAppId}}) is included automatically.",
+    "invalidIds": "Enter between one and nineteen valid competitor IDs for this store.", "run": "Preview keyword gap", "results": "Keyword gap",
+    "caption": "Observed rank for each app by keyword.", "empty": "No shared or missing keyword opportunities were observed."
+  },
+  "competitors": {
+    "title": "Discover competitors", "description": "Find up to one hundred related apps, then enrich the first fifty with ranking metrics in one lookup unit.",
+    "run": "Preview competitor lookup", "results": "Discovered competitors", "caption": "Apps sharing observed ranking keywords with the selected app.",
+    "empty": "No competitors were found for this app.", "partialTitle": "Partial result", "partialNote": "Competitors were retained, but the metrics enrichment call failed. This lookup still counted."
+  },
+  "columns": { "rank": "Rank", "keyword": "Keyword", "updated": "Updated", "app": "App", "averagePosition": "Average position", "sharedKeywords": "Shared keywords", "rankedKeywords": "Ranked keywords", "firstPositions": "First positions" },
+  "empty": { "noProfileTitle": "Register an app first", "noProfileDescription": "Add a Google Play package ID or App Store ID before running research." },
+  "disabled": { "title": "New research is paused", "description": "Stored results remain available, but new lookups are disabled by the operator." },
+  "upsell": { "title": "Add App SEO research", "description": "Your Pro plan needs the App SEO add-on or a research credit pack for these live lookups.", "cta": "View App SEO options" },
+  "errors": { "title": "Research could not be completed", "requestFailed": "The research request failed. Try again.", "downloadFailed": "The CSV could not be downloaded in this browser." }
+}

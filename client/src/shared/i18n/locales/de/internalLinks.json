@@ -1,0 +1,133 @@
+{
+  "eyebrow": "Hinweise aus dem gespeicherten Inventar",
+  "title": "Vorschläge für interne Links",
+  "subtitle": "Prüfen Sie Verknüpfungen zwischen Quell- und Zielseiten aus dem neuesten Inhaltsinventar und gespeicherten Search-Console-Daten. An der Website wird nichts geändert.",
+  "site": {
+    "inventoryLink": "Inhaltsinventar öffnen"
+  },
+  "tabs": {
+    "runs": "Gespeicherte Läufe",
+    "new": "Neuer Lauf"
+  },
+  "newRun": {
+    "title": "Vorschlagslauf vorbereiten",
+    "description": "Prüfen Sie den genauen Inventarstand und das Kontingent, bevor ein Lauf verbraucht wird.",
+    "guidanceOnly": "Die Vorschläge dienen nur als Orientierung. RankMeFast ändert weder Ihr CMS noch den HTML-Code Ihrer Seiten.",
+    "unitLabel": "Kontingent",
+    "unitValue": "{{count}} Lauf für interne Links",
+    "inventoryLabel": "Inventarstand",
+    "remaining": "Vor diesem Lauf sind noch {{count}} Läufe verfügbar.",
+    "preview": "Lauf prüfen",
+    "previewing": "Inventar wird geprüft…",
+    "confirm": "Vorschlagslauf starten",
+    "starting": "Wird gestartet…",
+    "cancel": "Abbrechen"
+  },
+  "states": {
+    "inventoryCta": "Inhaltsinventar erneut ausführen",
+    "planCta": "Tarife ansehen",
+    "emptyRuns": {
+      "title": "Noch keine gespeicherten Läufe",
+      "body": "Prüfen Sie einen neuen Lauf, um den verwendeten Inventarstand zu sehen."
+    },
+    "emptySuggestions": {
+      "title": "Keine passenden Vorschläge",
+      "body": "Der Lauf fand keine geeigneten Paare oder die Filter in der URL blenden sie aus."
+    },
+    "missing": {
+      "title": "Inhaltsinventar erforderlich",
+      "body": "Schließen Sie zuerst ein Inhaltsinventar ab. Es wurde kein Lauf verbraucht."
+    },
+    "stale": {
+      "title": "Das Inhaltsinventar ist veraltet",
+      "body": "Führen Sie das Inventar erneut aus, damit ein aktueller gespeicherter Stand verwendet wird. Es wurde kein Lauf verbraucht."
+    },
+    "cap": {
+      "title": "Monatliches Kontingent erreicht",
+      "body": "Die Anfrage wurde nicht gestartet. Warten Sie auf den nächsten Zeitraum oder prüfen Sie die verfügbaren Tarife."
+    },
+    "disabled": {
+      "title": "Vorschlagsläufe sind nicht verfügbar",
+      "body": "Neue Läufe sind vorübergehend deaktiviert. Gespeicherte Läufe bleiben zugänglich."
+    },
+    "rateLimited": {
+      "title": "Zu viele Anfragen",
+      "body": "Warten Sie einen Moment und versuchen Sie es erneut."
+    },
+    "notFound": {
+      "title": "Lauf nicht gefunden",
+      "body": "Dieser gespeicherte Lauf ist für das aktuelle Konto nicht verfügbar."
+    },
+    "failed": {
+      "title": "Der Lauf konnte nicht abgeschlossen werden",
+      "body": "Es wurden keine automatischen Änderungen vorgenommen. Versuchen Sie es später erneut oder öffnen Sie einen anderen Lauf."
+    },
+    "running": {
+      "title": "Vorschläge werden erstellt",
+      "body": "Gespeicherte Kandidaten werden sortiert und Ankertexte entworfen. Die Ansicht wird automatisch aktualisiert."
+    }
+  },
+  "status": {
+    "queued": "Eingereiht",
+    "processing": "In Bearbeitung",
+    "completed": "Abgeschlossen",
+    "failed": "Fehlgeschlagen",
+    "refunded": "Lauf zurückgegeben"
+  },
+  "runs": {
+    "snapshot": "Inventar: {{date}}",
+    "suggestionCount": "{{count}} Vorschläge",
+    "open": "Lauf öffnen"
+  },
+  "flags": {
+    "orphan": "Verwaist",
+    "weakly_linked": "Schwach verlinkt"
+  },
+  "confidence": {
+    "high": "Hoch",
+    "medium": "Mittel",
+    "low": "Niedrig"
+  },
+  "suggestions": {
+    "title": "Vorgeschlagene Links",
+    "inventorySnapshot": "Basierend auf dem Inventarstand {{date}}",
+    "rank": "Rang {{rank}}",
+    "anchorLabel": "Entwurf des Ankertexts",
+    "copy": "Anker kopieren",
+    "copied": "Kopiert",
+    "codeFixProblem": "Ein relevanter interner Link fehlt.",
+    "codeFixWhy": "Die Zielseite hat wenige eingehende interne Links und teilt relevanten Such- oder Überschriftenkontext mit der Quellseite.",
+    "codeFixRecommendation": "Fügen Sie den Link im passendsten Abschnitt der Quellseite ein und verwenden Sie den vorgeschlagenen Ankertext, wenn er sich natürlich liest.",
+    "fallback": "Die KI-Sortierung war nicht verfügbar oder wurde verworfen. Stattdessen werden deterministische Kandidaten mit Belegen angezeigt."
+  },
+  "evidence": {
+    "title": "Warum dieses Paar vorgeschlagen wurde",
+    "inbound": "Eingehende Links des Ziels",
+    "flag": "Qualitätsmerkmal des Ziels",
+    "inventoryDate": "Inventardatum",
+    "queries": "Gemeinsame Search-Console-Suchanfragen",
+    "headings": "Übereinstimmende Überschriftenbegriffe",
+    "none": "Keine Belege dieses Typs"
+  },
+  "filters": {
+    "target": "Zielmerkmal",
+    "targetValue": {
+      "all": "Alle Zielmerkmale",
+      "orphan": "Verwaist",
+      "weakly_linked": "Schwach verlinkt"
+    },
+    "section": "Quellbereich",
+    "allSections": "Alle Quellbereiche",
+    "confidence": "Konfidenz",
+    "confidenceValue": {
+      "all": "Alle Konfidenzstufen",
+      "high": "Hoch",
+      "medium": "Mittel",
+      "low": "Niedrig"
+    }
+  },
+  "export": {
+    "button": "Tabelle exportieren",
+    "exporting": "Export wird vorbereitet…"
+  }
+}

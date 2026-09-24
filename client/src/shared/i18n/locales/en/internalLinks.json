@@ -1,0 +1,133 @@
+{
+  "eyebrow": "Stored-inventory guidance",
+  "title": "Internal linking suggestions",
+  "subtitle": "Review source-to-target opportunities derived from your latest content inventory and stored Search Console evidence. Nothing is applied to your site.",
+  "site": {
+    "inventoryLink": "Open content inventory"
+  },
+  "tabs": {
+    "runs": "Saved runs",
+    "new": "New run"
+  },
+  "newRun": {
+    "title": "Prepare a suggestion run",
+    "description": "Preview the exact inventory snapshot and allowance before you spend one run.",
+    "guidanceOnly": "Suggestions are guidance only. RankMeFast does not edit your CMS or page HTML.",
+    "unitLabel": "Allowance",
+    "unitValue": "{{count}} internal-link run",
+    "inventoryLabel": "Inventory snapshot",
+    "remaining": "{{count}} runs remain before this run.",
+    "preview": "Preview run",
+    "previewing": "Checking inventory…",
+    "confirm": "Start suggestion run",
+    "starting": "Starting…",
+    "cancel": "Cancel"
+  },
+  "states": {
+    "inventoryCta": "Re-run content inventory",
+    "planCta": "See plans",
+    "emptyRuns": {
+      "title": "No saved runs yet",
+      "body": "Preview a new run to see which stored inventory snapshot it will use."
+    },
+    "emptySuggestions": {
+      "title": "No suggestions match",
+      "body": "This run found no eligible pairs, or the current URL-backed filters hide them."
+    },
+    "missing": {
+      "title": "Content inventory required",
+      "body": "Complete a content inventory before requesting suggestions. No run was spent."
+    },
+    "stale": {
+      "title": "Content inventory is out of date",
+      "body": "Re-run your content inventory so suggestions use a recent stored snapshot. No run was spent."
+    },
+    "cap": {
+      "title": "Monthly run allowance reached",
+      "body": "This request was not started. Wait for the next allowance period or review available plans."
+    },
+    "disabled": {
+      "title": "Suggestion runs are unavailable",
+      "body": "New internal-link runs are temporarily disabled. Saved runs remain available."
+    },
+    "rateLimited": {
+      "title": "Too many requests",
+      "body": "Wait a moment before trying this action again."
+    },
+    "notFound": {
+      "title": "Run not found",
+      "body": "This saved run is unavailable for the current account."
+    },
+    "failed": {
+      "title": "The run could not be completed",
+      "body": "No automatic changes were made. Try again later or open another saved run."
+    },
+    "running": {
+      "title": "Building suggestions",
+      "body": "The worker is ranking stored candidates and drafting anchors. This view updates automatically."
+    }
+  },
+  "status": {
+    "queued": "Queued",
+    "processing": "Processing",
+    "completed": "Completed",
+    "failed": "Failed",
+    "refunded": "Run returned"
+  },
+  "runs": {
+    "snapshot": "Inventory: {{date}}",
+    "suggestionCount": "{{count}} suggestions",
+    "open": "Open run"
+  },
+  "flags": {
+    "orphan": "Orphan",
+    "weakly_linked": "Weakly linked"
+  },
+  "confidence": {
+    "high": "High",
+    "medium": "Medium",
+    "low": "Low"
+  },
+  "suggestions": {
+    "title": "Suggested links",
+    "inventorySnapshot": "Based on inventory snapshot {{date}}",
+    "rank": "Rank {{rank}}",
+    "anchorLabel": "Draft anchor text",
+    "copy": "Copy anchor",
+    "copied": "Copied",
+    "codeFixProblem": "A relevant internal link is missing.",
+    "codeFixWhy": "The target has few inbound internal links and shares relevant search or heading context with the source.",
+    "codeFixRecommendation": "Add the link in the most relevant section of the source page, using the suggested anchor text when it reads naturally.",
+    "fallback": "AI ranking was unavailable or rejected. Deterministic, evidence-backed candidates are shown instead."
+  },
+  "evidence": {
+    "title": "Why this pair was suggested",
+    "inbound": "Target inbound links",
+    "flag": "Target quality flag",
+    "inventoryDate": "Inventory date",
+    "queries": "Shared Search Console queries",
+    "headings": "Matching heading terms",
+    "none": "No evidence of this type"
+  },
+  "filters": {
+    "target": "Target flag",
+    "targetValue": {
+      "all": "All target flags",
+      "orphan": "Orphan",
+      "weakly_linked": "Weakly linked"
+    },
+    "section": "Source section",
+    "allSections": "All source sections",
+    "confidence": "Confidence",
+    "confidenceValue": {
+      "all": "All confidence levels",
+      "high": "High",
+      "medium": "Medium",
+      "low": "Low"
+    }
+  },
+  "export": {
+    "button": "Export CSV",
+    "exporting": "Preparing export…"
+  }
+}

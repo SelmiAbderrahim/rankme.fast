@@ -1,0 +1,38 @@
+{
+  "version": "0.1.20260101",
+  "status_code": 20000,
+  "status_message": "Ok.",
+  "time": "0.1502 sec.",
+  "cost": 0.0102,
+  "tasks_count": 1,
+  "tasks_error": 0,
+  "tasks": [
+    {
+      "id": "TASK_ID",
+      "status_code": 20000,
+      "status_message": "Ok.",
+      "time": "0.1310 sec.",
+      "cost": 0.0102,
+      "result_count": 1,
+      "path": ["v3", "ai_optimization", "ai_keyword_data", "keywords_search_volume", "live"],
+      "data": {
+        "api": "ai_optimization",
+        "function": "keywords_search_volume"
+      },
+      "result": [
+        {
+          "items": [
+            {
+              "keyword": "best seo audit tool",
+              "ai_search_volume": 1400
+            },
+            {
+              "keyword": "how to fix crawl errors",
+              "ai_search_volume": null
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

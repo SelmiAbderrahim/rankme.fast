@@ -1,0 +1,19 @@
+{
+  "rows": [
+    {
+      "keys": ["FUTURE_GENERATIVE_SURFACE_V2"],
+      "clicks": 3,
+      "impressions": 118,
+      "ctr": 0.025423728,
+      "position": 7.4
+    },
+    {
+      "keys": ["VIDEO"],
+      "clicks": 27,
+      "impressions": 604,
+      "ctr": 0.044701987,
+      "position": 3.2
+    }
+  ],
+  "responseAggregationType": "byProperty"
+}

@@ -1,0 +1,6 @@
+ALTER TABLE "billing_checkout_intents" DROP CONSTRAINT "billing_checkout_intents_kind_check";--> statement-breakpoint
+ALTER TABLE "subscription_addons" DROP CONSTRAINT "subscription_addons_kind_check";--> statement-breakpoint
+DROP INDEX "billing_checkout_intents_open_recurring_uidx";--> statement-breakpoint
+CREATE UNIQUE INDEX "billing_checkout_intents_open_recurring_uidx" ON "billing_checkout_intents" USING btree ("account_id","kind") WHERE "billing_checkout_intents"."kind" in ('base', 'daily_rank', 'brand_radar', 'app_seo') and "billing_checkout_intents"."status" in ('creating', 'open');--> statement-breakpoint
+ALTER TABLE "billing_checkout_intents" ADD CONSTRAINT "billing_checkout_intents_kind_check" CHECK ("billing_checkout_intents"."kind" in ('base', 'daily_rank', 'brand_radar', 'app_seo', 'pack'));--> statement-breakpoint
+ALTER TABLE "subscription_addons" ADD CONSTRAINT "subscription_addons_kind_check" CHECK ("subscription_addons"."kind" in ('daily_rank', 'brand_radar', 'app_seo'));

@@ -1,0 +1,56 @@
+{
+  "title": "Account",
+  "description": "Manage your profile, security, notifications, connections, and data.",
+  "tabs": {
+    "profile": "Profile",
+    "security": "Security",
+    "notifications": "Notifications",
+    "connections": "Connections",
+    "branding": "Branding",
+    "mcp": "MCP permissions",
+    "privacy": "Data & privacy",
+    "api-keys": "API keys"
+  },
+  "profile": {
+    "title": "Profile",
+    "subtitle": "Your identity across RankMeFast.",
+    "avatarAlt": "Your profile picture",
+    "emailLabel": "Email",
+    "verified": "Email verified",
+    "unverified": "Email not verified",
+    "memberSince": "Member since {{date}}",
+    "displayNameLabel": "Display name",
+    "displayNameHint": "Shown across the app and on your emails.",
+    "save": "Save changes",
+    "saving": "Saving…",
+    "saved": "Your profile has been updated.",
+    "errors": {
+      "nameRequired": "Enter a display name.",
+      "nameTooLong": "Keep your name under 80 characters.",
+      "saveFailed": "We couldn't save your profile. Please try again."
+    }
+  },
+  "privacy": {
+    "export": {
+      "title": "Export your data",
+      "description": "Download a copy of your account data as a JSON file.",
+      "button": "Export my data",
+      "exporting": "Preparing…",
+      "success": "Your data export has downloaded.",
+      "error": "We couldn't export your data. Please try again."
+    },
+    "delete": {
+      "title": "Delete account",
+      "description": "Schedule your account and data for permanent removal.",
+      "warning": "This schedules your account for deletion after a grace period. Contact support before then to cancel.",
+      "button": "Delete my account",
+      "dialogTitle": "Delete your account?",
+      "dialogBody": "Your account and data will be permanently removed after the grace period. Once that period ends, this cannot be undone.",
+      "cancel": "Cancel",
+      "confirm": "Yes, delete my account",
+      "deleting": "Scheduling…",
+      "scheduled": "Your account is scheduled for deletion on {{date}}.",
+      "error": "We couldn't schedule deletion. Please try again."
+    }
+  }
+}

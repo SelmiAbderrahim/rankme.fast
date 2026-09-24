@@ -1,0 +1,25 @@
+{
+  "version": "0.1.20260811",
+  "status_code": 20000,
+  "status_message": "Ok.",
+  "cost": 0,
+  "tasks_error": 1,
+  "tasks": [
+    {
+      "id": "TASK_ID",
+      "status_code": 40402,
+      "status_message": "Invalid Path.",
+      "cost": 0,
+      "result": null,
+      "path": [
+        "v3",
+        "app_data",
+        "google",
+        "app_searches",
+        "task_get",
+        "advanced",
+        "TASK_ID"
+      ]
+    }
+  ]
+}

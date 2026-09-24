@@ -1,0 +1,152 @@
+{
+  "title": "Próximas acciones",
+  "description": "Correcciones y oportunidades priorizadas de cada fuente conectada, en una sola lista de trabajo.",
+  "status": {
+    "loading": "Cargando acciones…",
+    "refreshing": "Actualizando acciones…",
+    "showing": "Mostrando {{count}} acciones"
+  },
+  "errors": {
+    "loadFailed": "No pudimos cargar tus acciones. Inténtalo de nuevo.",
+    "unauthorized": "Debes iniciar sesión de nuevo para ver esto."
+  },
+  "notFound": {
+    "title": "No hay nada aquí",
+    "body": "No se encontró este sitio o esta acción."
+  },
+  "filters": {
+    "label": "Filtrar acciones",
+    "reset": "Restablecer filtros",
+    "all": "Todas",
+    "state": "Estado",
+    "source": "Fuente",
+    "severity": "Gravedad",
+    "confidence": "Confianza",
+    "effort": "Esfuerzo"
+  },
+  "pagination": {
+    "previous": "Anterior",
+    "next": "Siguiente"
+  },
+  "state": {
+    "open": "Abierta",
+    "planned": "Planificada",
+    "dismissed": "Descartada",
+    "completed": "Completada"
+  },
+  "source": {
+    "audit_finding": "Auditoría del sitio",
+    "confirmed_rank_drop": "Caída de posición confirmada",
+    "gsc_decline": "Descenso en Search Console",
+    "ga4_decline": "Descenso en Analytics",
+    "content_recommendation": "Recomendación de contenido",
+    "citation_gap": "Brecha de citas de IA",
+    "audience_research": "Investigación de audiencia"
+  },
+  "severity": {
+    "critical": "Crítica",
+    "warning": "Advertencia",
+    "info": "Información"
+  },
+  "impact": {
+    "high": "Impacto alto",
+    "medium": "Impacto medio",
+    "low": "Impacto bajo",
+    "none": "Sin impacto medido"
+  },
+  "confidence": {
+    "high": "Confianza alta",
+    "medium": "Confianza media",
+    "low": "Confianza baja"
+  },
+  "effort": {
+    "low": "Esfuerzo bajo",
+    "medium": "Esfuerzo medio",
+    "high": "Esfuerzo alto"
+  },
+  "freshness": {
+    "fresh": "Reciente",
+    "stale": "Obsoleto",
+    "unavailable": "Sin verificar"
+  },
+  "card": {
+    "nextStep": "Siguiente paso",
+    "observedAt": "Observado el {{date}}",
+    "openSource": "Abrir vista de origen",
+    "affectedNone": "En todo el sitio",
+    "affectedOne": "1 URL afectada",
+    "affectedCount": "{{count}} URL afectadas",
+    "evidence": "Evidencia",
+    "evidenceLink": "Abrir fuente de la evidencia",
+    "history": "Historial",
+    "retest": "Reanalizar"
+  },
+  "transitions": {
+    "planned": "Planificar",
+    "dismissed": "Descartar",
+    "completed": "Completar",
+    "open": "Reabrir"
+  },
+  "stateDialog": {
+    "titles": {
+      "planned": "¿Planificar esta acción?",
+      "dismissed": "¿Descartar esta acción?",
+      "completed": "¿Marcar esta acción como completada?",
+      "open": "¿Reabrir esta acción?"
+    },
+    "consequences": {
+      "planned": "La acción pasa a tu lista planificada. Podrás reabrirla o completarla más tarde.",
+      "dismissed": "La acción sale de tu lista abierta. Permanece en el historial y puede reabrirse en cualquier momento.",
+      "completed": "La acción se marca como hecha. Una comprobación posterior puede reabrirla si el problema vuelve.",
+      "open": "La acción vuelve a tu lista abierta."
+    },
+    "noteLabel": "Añadir una nota (opcional)",
+    "noteCount": "{{used}} de {{max}} caracteres",
+    "confirm": "Confirmar",
+    "saving": "Guardando…",
+    "conflict": "Otra persona cambió esta acción primero. Recárgala e inténtalo de nuevo.",
+    "conflictReload": "Recargar acción"
+  },
+  "history": {
+    "title": "Historial de la acción",
+    "empty": "Aún no hay cambios registrados.",
+    "actor": "Miembro del equipo",
+    "from": "desde {{state}}",
+    "close": "Cerrar"
+  },
+  "retest": {
+    "title": "¿Reanalizar este hallazgo?",
+    "description": "Un reanálisis ejecuta una auditoría nueva del sitio y actualiza todas las acciones basadas en auditorías.",
+    "unitsLabel": "Auditorías consumidas",
+    "unitsValue": "1",
+    "freshRun": "Un reanálisis siempre rastrea de nuevo — los resultados nunca provienen de una caché.",
+    "remaining": "Quedan {{remaining}} de {{cap}} auditorías en este período",
+    "allowanceUnknown": "No pudimos cargar tu saldo restante. El servidor comprobará tu límite antes de ejecutar de todos modos.",
+    "confirm": "Iniciar reanálisis",
+    "starting": "Iniciando…",
+    "queued": "Reanálisis en cola. Sigue el progreso en la pestaña de informe.",
+    "viewProgress": "Ver progreso del informe"
+  },
+  "sources": {
+    "partial": "Algunas fuentes de datos están obsoletas o no disponibles ahora mismo, así que esta lista puede estar incompleta.",
+    "unavailableTitle": "Fuentes de datos no disponibles",
+    "unavailableBody": "No podemos comprobar tus fuentes ahora mismo, así que no se pueden mostrar acciones. Esto no significa que todo esté bien.",
+    "clearTitle": "Nada requiere tu atención",
+    "clearBody": "Ninguna fuente conectada informa de acciones abiertas ahora mismo."
+  },
+  "overview": {
+    "viewAll": "Ver todas las acciones",
+    "open": "Abrir",
+    "degraded": "Algunas fuentes no están disponibles — esta lista puede estar incompleta.",
+    "error": "No pudimos cargar tus acciones.",
+    "retry": "Reintentar"
+  },
+  "report": {
+    "dismissCta": "Descartar como falso positivo",
+    "reopenCta": "Reabrir hallazgo",
+    "dismissedLabel": "Descartado como falso positivo",
+    "fixCta": "Marcar como corregido",
+    "fixedLabel": "Marcado como corregido",
+    "reappearedLabel": "Se sigue detectando tras marcarlo como corregido"
+  }
+}

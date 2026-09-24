@@ -1,0 +1,60 @@
+{
+  "version": "0.1.20260101",
+  "status_code": 20000,
+  "status_message": "Ok.",
+  "time": "0.2143 sec.",
+  "cost": 0.022216,
+  "tasks_count": 1,
+  "tasks_error": 0,
+  "tasks": [
+    {
+      "id": "TASK_ID",
+      "status_code": 20000,
+      "status_message": "Ok.",
+      "time": "0.2011 sec.",
+      "cost": 0.022216,
+      "result_count": 1,
+      "path": ["v3", "backlinks", "referring_domains", "live"],
+      "data": {
+        "api": "backlinks",
+        "function": "referring_domains",
+        "target": "example.com",
+        "rank_scale": "one_hundred",
+        "limit": 3
+      },
+      "result": [
+        {
+          "target": "example.com",
+          "total_count": 208,
+          "items_count": 3,
+          "items": [
+            {
+              "type": "referring_domain",
+              "domain": "blog.example.net",
+              "rank": 71,
+              "backlinks": 82,
+              "first_seen": "2024-04-11 09:22:10 +00:00",
+              "last_visited": "2025-11-30 04:12:41 +00:00"
+            },
+            {
+              "type": "referring_domain",
+              "domain": "https://Partners.Example.Org/",
+              "rank": 48,
+              "backlinks": 34,
+              "first_seen": "2024-06-01 07:11:00 +00:00",
+              "last_visited": "2025-12-01 10:00:00 +00:00"
+            },
+            {
+              "type": "referring_domain",
+              "domain": "news.example.co",
+              "rank": null,
+              "backlinks": 17,
+              "first_seen": null,
+              "last_visited": null
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

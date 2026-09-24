@@ -1,0 +1,9 @@
+{
+  "record": {
+    "metrics": {
+      "largest_contentful_paint": { "percentiles": { "p75": "5200" } },
+      "interaction_to_next_paint": { "percentiles": { "p75": "620" } },
+      "cumulative_layout_shift": { "percentiles": { "p75": "0.31" } }
+    }
+  }
+}

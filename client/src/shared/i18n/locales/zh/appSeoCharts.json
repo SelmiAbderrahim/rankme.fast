@@ -1,0 +1,14 @@
+{
+  "stores": { "googlePlay": "Google Play 商店", "appStore": "App Store 商店" },
+  "charts": { "google": { "topFree": "热门免费", "topPaid": "热门付费", "newFree": "新上架免费", "newPaid": "新上架付费", "topGrossing": "畅销榜", "moversShakers": "升降榜" }, "apple": { "topFree": "热门免费", "topPaid": "热门付费", "topGrossing": "畅销榜", "new": "新应用", "newFree": "新上架免费", "newPaid": "新上架付费" } },
+  "categories": { "business": "商务", "education": "教育", "entertainment": "娱乐", "finance": "财务", "foodDrink": "美食佳饮", "games": "游戏", "healthFitness": "健康健美", "lifestyle": "生活", "productivity": "效率", "shopping": "购物", "social": "社交", "sports": "体育", "tools": "工具", "travel": "旅游", "utilities": "实用工具" },
+  "form": { "title": "跟踪商店榜单", "description": "选择已内置的榜单和类别。RankMeFast 每周检查一页前 100 名。", "profile": "应用资料", "store": "商店", "chart": "榜单", "category": "类别", "usage": "已用 {{used}} 个，共 {{limit}} 个订阅", "add": "跟踪榜单", "adding": "正在添加…" },
+  "list": { "title": "已跟踪榜单", "description": "保存的空白名次表示应用未进入榜单前 100 名。", "chart": "榜单", "category": "类别", "position": "名次", "change": "变化", "actions": "操作", "notInTop100": "未进前 100 名", "neverChecked": "尚未检查", "historyLabel": "查看榜单历史", "recheckLabel": "立即检查榜单", "deleteLabel": "删除榜单订阅" },
+  "history": { "title": "榜单名次历史", "description": "第一名显示在顶部；未上榜的检查仍保留在表格中。", "chartLabel": "应用榜单名次历史", "tableCaption": "已保存的每周应用榜单名次", "date": "检查时间", "position": "名次", "notInTop100": "未进前 100 名", "empty": "尚未运行榜单检查。" },
+  "recheck": { "title": "立即检查此榜单？", "description": "这将获取本周的一页前 100 名榜单。", "units": "此次检查使用 {{units}} 次应用榜单检查。", "top100": "RankMeFast 不会请求更深的付费榜单页。", "confirm": "运行检查", "confirming": "正在排队…" },
+  "empty": { "noProfileTitle": "请先注册应用", "noProfileDescription": "榜单跟踪需要已注册的商店 ID。", "noSubscriptions": "此应用尚未跟踪任何榜单。" },
+  "disabled": { "title": "榜单跟踪已关闭", "description": "已保存的名次仍可查看；新订阅和检查已暂停。" },
+  "upsell": { "title": "添加 App SEO 榜单跟踪", "description": "此 Pro 账户需要 App SEO 附加项才能运行每周榜单检查。", "cta": "查看 App SEO 选项" },
+  "limit": { "title": "已达榜单上限", "description": "每个应用资料最多可跟踪 {{limit}} 个榜单。" },
+  "errors": { "title": "无法更新榜单跟踪", "requestFailed": "无法完成榜单请求，请重试。" }
+}

@@ -1,0 +1,222 @@
+{
+  "title": "Votre rapport d'audit",
+  "subtitle": "Ce qu'il faut corriger, surveiller, et ce qui passe déjà.",
+  "history": {
+    "title": "Historique des audits",
+    "empty": "Aucun audit pour le moment.",
+    "viewRun": "Voir cet audit",
+    "status": {
+      "queued": "En file d'attente",
+      "running": "En cours",
+      "succeeded": "Terminé",
+      "failed": "Échoué"
+    }
+  },
+  "tabs": {
+    "fix-now": "À corriger",
+    "watch": "À surveiller",
+    "passed": "Réussis"
+  },
+  "row": {
+    "affectedPages": "{{count}} pages concernées",
+    "affectedPagesOne": "1 page concernée",
+    "siteWide": "Vérification sur l'ensemble du site",
+    "passedSummary": "Cette vérification est réussie."
+  },
+  "severity": {
+    "critical": "Critique",
+    "warning": "Avertissement",
+    "info": "Info"
+  },
+  "badges": {
+    "fixed": "Corrigé",
+    "regressed": "Régression"
+  },
+  "detail": {
+    "whyTitle": "Pourquoi c'est important",
+    "affectedUrlsTitle": "URL concernées",
+    "brokenLinkTargetsTitle": "Cibles que l’audit n’a pas pu charger",
+    "brokenLinkSourcesTitle": "Pages contenant des liens vers ces cibles",
+    "fixTitle": "Comment corriger",
+    "copyFix": "Copier la correction",
+    "copied": "Copié",
+    "generateSchema": "Générer le balisage schema"
+  },
+  "retest": {
+    "cta": "Relancer",
+    "running": "Audit en cours…",
+    "starting": "Démarrage…",
+    "first": "Lancer votre premier audit"
+  },
+  "pageCap": {
+    "label": "Pages à analyser",
+    "max": "Maximum du forfait",
+    "pages": "{{pages}} pages"
+  },
+  "empty": {
+    "fix-now": {
+      "title": "Rien à corriger",
+      "description": "Excellent — aucun problème critique détecté dans cet audit."
+    },
+    "watch": {
+      "title": "Rien à surveiller",
+      "description": "Aucun avertissement sur votre site actuellement."
+    },
+    "passed": {
+      "title": "Rien de réussi pour l'instant",
+      "description": "Lancez votre premier audit pour voir ce que votre site fait déjà bien."
+    }
+  },
+  "noRun": {
+    "title": "Aucun audit pour l'instant",
+    "description": "Lancez votre premier audit pour voir ce qu'il faut corriger, surveiller, et ce qui passe déjà."
+  },
+  "states": {
+    "loading": "Chargement de votre rapport…",
+    "retry": "Réessayer",
+    "runInProgress": "Audit de votre site en cours — cela peut prendre quelques minutes."
+  },
+  "loadFailed": "Impossible de charger votre rapport.",
+  "retestFailed": "Impossible de démarrer l'audit.",
+  "pageSpeed": {
+    "sectionTitle": "Vitesse des pages",
+    "fieldLabel": "Ce que les vrais visiteurs ont vécu",
+    "labLabel": "Notre estimation en laboratoire",
+    "unavailableTitle": "Données de vitesse indisponibles pour cet audit",
+    "unavailableBody": "Nous n'avons pas pu joindre le service de vitesse. Votre rapport reste complet — les mesures reviendront au prochain audit.",
+    "noFieldDataTitle": "Pas encore assez de données visiteurs",
+    "noFieldDataBody": "Chrome ne rapporte la vitesse ressentie qu'à partir d'un certain trafic. Cette section se remplira automatiquement dès que le trafic augmentera.",
+    "originFallback": "Données au niveau de l'origine (pas seulement cette page)",
+    "sampleLabel": "{{count}} pages échantillonnées",
+    "sampleLabelOne": "1 page échantillonnée",
+    "metrics": {
+      "lcp": "LCP",
+      "inp": "INP",
+      "cls": "CLS",
+      "performance": "Performance"
+    },
+    "categories": {
+      "good": "Bon",
+      "needs-improvement": "À améliorer",
+      "poor": "Insuffisant"
+    }
+  },
+  "aiSummary": {
+    "cardTitle": "Résumé IA de vos correctifs",
+    "cardDescription": "Un résumé IA en langage clair de ce qu’il faut corriger en priorité.",
+    "cta": "Résumer mes correctifs",
+    "regenerate": "Régénérer",
+    "loading": "Rédaction du résumé…",
+    "attribution": "Généré par IA — vérifiez avant d’agir.",
+    "truncatedNote": "Le résumé a été raccourci.",
+    "errors": {
+      "unavailable": "Le résumé IA est temporairement indisponible — votre liste de correctifs n’est pas affectée.",
+      "capReached": "Vous avez atteint votre limite mensuelle de résumés IA. Passez au niveau supérieur ou ajoutez des crédits pour continuer."
+    }
+  },
+  "pdf": {
+    "download": "Télécharger le PDF",
+    "downloading": "Préparation du PDF…",
+    "error": "Impossible de préparer le PDF. Veuillez réessayer.",
+    "upgradeHint": "Les rapports PDF sont disponibles avec les forfaits Pro et Agency."
+  },
+  "gscBlock": {
+    "sectionTitle": "Performance de recherche Google (28 derniers jours)",
+    "sitemapsTitle": "Sitemaps dans Google Search Console",
+    "totalClicks": "Clics",
+    "totalImpressions": "Impressions",
+    "averageCtr": "Taux de clics",
+    "averagePosition": "Position moyenne",
+    "topQueriesTitle": "Principales recherches",
+    "topPagesTitle": "Pages principales",
+    "colQuery": "Recherche",
+    "colPage": "Page",
+    "colClicks": "Clics",
+    "colImpressions": "Impressions",
+    "colCtr": "CTR",
+    "colPosition": "Position",
+    "deltaClicks": "clics par rapport à la période précédente",
+    "deltaImpressions": "impressions par rapport à la période précédente",
+    "sampledFootnote": "Échantillonné par Google · les trois derniers jours sont exclus car Google les rapporte en retard.",
+    "unavailableTitle": "Données de recherche indisponibles pour cet audit",
+    "unavailableBody": "Nous n'avons pas pu joindre Google Search Console pour cet audit. Votre rapport reste complet — les données de recherche reviendront au prochain audit.",
+    "notConnectedTitle": "Connecter Google Search Console",
+    "notConnectedBody": "Connectez votre compte Google pour voir les vrais clics, impressions et l'état du sitemap dans ce rapport.",
+    "notConnectedCta": "Ouvrir les paramètres Google",
+    "reconnectTitle": "Votre connexion Google doit être renouvelée",
+    "reconnectBody": "Google n'accepte plus votre autorisation actuelle. Reconnectez-vous pour retrouver les données de recherche.",
+    "noDataTitle": "Pas encore de données de recherche",
+    "noDataBody": "Google n'a signalé aucun clic ni impression pour ce site au cours des quatre dernières semaines.",
+    "noSitemapsTitle": "Aucun sitemap envoyé à Google",
+    "noSitemapsBody": "Envoyez votre sitemap dans Google Search Console pour que Google puisse trouver chaque page que vous voulez indexer.",
+    "sitemapHealthy": "Sain",
+    "sitemapErrors": "{{count}} erreurs",
+    "sitemapWarnings": "{{count}} avertissements",
+    "sitemapProcessed": "{{count}} URL envoyées",
+    "sitemapLastDownloaded": "Dernière lecture par Google : {{date}}",
+    "sitemapNeverDownloaded": "Pas encore lu par Google"
+  },
+  "aiVisibilityBlock": {
+    "title": "AI Visibility",
+    "unavailableTitle": "Les données de visibilité IA sont indisponibles",
+    "unavailableBody": "Impossible de lire les données récentes des réponses des chats IA pour ce rapport.",
+    "noPromptsTitle": "Aucune requête IA suivie pour l'instant",
+    "noPromptsBody": "Suivez les questions des acheteurs pour voir si les réponses des chats IA vous mentionnent.",
+    "noPromptsCta": "Ajouter des requêtes à suivre",
+    "aiOverview": "Citations dans Google AI Overview",
+    "aiChats": "Mentions dans les chats IA",
+    "shareOfVoice": "Part de voix",
+    "brand": "Vous",
+    "competitors": "Concurrents",
+    "noData": "Aucune donnée",
+    "notMentioned": "Non mentionné",
+    "sentiment": {
+      "positive": "Chaleureux",
+      "neutral": "Sobre",
+      "negative": "Critique"
+    }
+  },
+  "localSeoBlock": {
+    "title": "SEO local",
+    "unavailableTitle": "Les données SEO local sont indisponibles",
+    "unavailableBody": "Impossible de lire les fiches, avis ou données de pack de cartes récentes pour ce rapport.",
+    "notConfiguredTitle": "SEO local pas encore configuré",
+    "notConfiguredBody": "Actualisez le SEO local pour récupérer les fiches d'entreprise, avis et classement dans le pack de cartes.",
+    "notConfiguredCta": "Ouvrir SEO local",
+    "listings": "Fiches d'annuaire",
+    "consistent": "Concordant",
+    "inconsistent": "Différent",
+    "averageRating": "Note moyenne",
+    "reviewCount": "Avis",
+    "unansweredQuestions": "Questions sans réponse",
+    "localPack": "Pack de cartes local",
+    "notRanked": "Absent du pack de cartes",
+    "packSize": "{{count}} résultats",
+    "noData": "Aucune donnée"
+  },
+  "exportUi": {
+    "trigger": "Exporter ou partager", "loading": "Chargement des options d’export…", "preparing": "Préparation du fichier…", "unavailable": "Export indisponible", "formatsLabel": "Formats de fichier",
+    "clipboard": { "action": "Copier dans le presse-papiers", "success": "Copié dans le presse-papiers.", "error": "Impossible de copier dans le presse-papiers." },
+    "formats": { "view": "Vue web", "pdf": "PDF", "csv": "CSV", "json": "JSON", "md": "Markdown", "jsonld": "JSON-LD", "txt": "Texte" },
+    "states": { "active": "Actif", "revoked": "Révoqué", "expired": "Expiré" },
+    "actions": { "retry": "Réessayer", "download": "Télécharger", "delete": "Supprimer", "revoke": "Révoquer", "cancel": "Annuler", "done": "Terminé" },
+    "errors": { "capabilities": "Impossible de charger les options d’export.", "create": "Impossible d’exporter le rapport. Réduisez le périmètre et réessayez.", "download": "Impossible de télécharger le fichier enregistré.", "list": "Impossible de charger les exports enregistrés.", "delete": "Impossible de supprimer l’export enregistré.", "share": "Impossible de créer le lien de partage.", "revoke": "Impossible de révoquer le lien de partage.", "copy": "Impossible de copier le lien." },
+    "share": { "action": "Créer un lien de partage", "title": "Partager un rapport immuable", "description": "Choisissez ce que les destinataires peuvent ouvrir. Le rapport ne changera plus après la création du lien.", "locale": "Langue du rapport", "expiry": "Expire après", "expiryHelp": "Choisissez entre un et 90 jours.", "permissions": "Formats autorisés", "create": "Créer le lien", "creating": "Création du lien…", "showOnce": "Copiez ce lien maintenant", "linkLabel": "Lien de partage", "copy": "Copier le lien", "copied": "Copié", "savedWithoutToken": "Par sécurité, RankMeFast ne conserve pas le lien lisible. Vous pouvez toujours le révoquer dans le centre d’export.", "existing": "Liens de cet instantané", "refresh": "Actualiser" },
+    "confirm": { "revokeTitle": "Révoquer ce lien ?", "revokeBody": "Toute personne qui l’utilise perdra immédiatement l’accès.", "deleteTitle": "Supprimer cet export enregistré ?", "deleteBody": "Le fichier ne fonctionnera plus et tous ses liens de partage seront révoqués." },
+    "center": { "title": "Exports et partages", "description": "Téléchargez les instantanés enregistrés et gérez les liens publics.", "tabsLabel": "Sections du centre d’export", "downloads": "Téléchargements", "shares": "Partages", "disabledTitle": "Les nouveaux exports sont suspendus", "disabledBody": "Les fichiers existants peuvent rester disponibles, mais aucun nouveau fichier ou lien ne peut être créé.", "emptyDownloadsTitle": "Aucun export enregistré", "emptyDownloadsBody": "Créez-en un depuis un rapport avec Exporter ou partager.", "emptySharesTitle": "Aucun lien de partage", "emptySharesBody": "Partagez un rapport compatible pour gérer son lien ici.", "deletedReport": "Rapport supprimé ou expiré", "more": "Charger plus", "expiresValue": "Expire le {{date}}", "views": "{{count}} vues", "columns": { "report": "Rapport", "format": "Format", "created": "Créé", "expires": "Expire", "actions": "Actions" } }
+  },
+  "publicShare": {
+    "report": "Rapport partagé",
+    "sourceDates": "Sources et dates",
+    "selection": "Périmètre du rapport",
+    "expires": "Ce lien expire le {{date}}.",
+    "downloadPdf": "Télécharger le PDF",
+    "downloadCsv": "Télécharger le CSV",
+    "notFoundTitle": "Ce lien de rapport n’est pas disponible",
+    "notFoundBody": "Il a peut-être expiré, été révoqué ou le rapport a été supprimé.",
+    "empty": "Aucune ligne n’est disponible pour cette section.",
+    "unavailable": "Indisponible",
+    "observed": "Observé le {{date}}",
+    "provenance": "Source {{kind}}"
+  }
+}

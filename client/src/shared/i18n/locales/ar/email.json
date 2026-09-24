@@ -1,0 +1,11 @@
+{
+  "contact": {
+    "confirmation": "تم إرسال بريدك الإلكتروني. سنتواصل معك قريباً."
+  },
+  "passwordReset": {
+    "subject": "إعادة تعيين كلمة المرور"
+  },
+  "passwordChanged": {
+    "subject": "تم تغيير كلمة المرور"
+  }
+}

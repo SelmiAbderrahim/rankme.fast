@@ -1,0 +1,32 @@
+{
+  "dimensionHeaders": [{ "name": "date" }],
+  "metricHeaders": [
+    { "name": "sessions", "type": "TYPE_INTEGER" },
+    { "name": "activeUsers", "type": "TYPE_INTEGER" },
+    { "name": "engagedSessions", "type": "TYPE_INTEGER" },
+    { "name": "keyEvents", "type": "TYPE_FLOAT" }
+  ],
+  "rows": [
+    {
+      "dimensionValues": [{ "value": "20260701" }],
+      "metricValues": [
+        { "value": "42" },
+        { "value": "38" },
+        { "value": "30" },
+        { "value": "3" }
+      ]
+    },
+    {
+      "dimensionValues": [{ "value": "20260702" }],
+      "metricValues": [
+        { "value": "51" },
+        { "value": "44" },
+        { "value": "39" },
+        { "value": "5" }
+      ]
+    }
+  ],
+  "rowCount": 2,
+  "metadata": { "currencyCode": "USD", "timeZone": "America/Los_Angeles" },
+  "kind": "analyticsData#runReport"
+}

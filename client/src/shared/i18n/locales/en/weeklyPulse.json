@@ -1,0 +1,105 @@
+{
+  "card": {
+    "title": "Weekly pulse",
+    "description": "One deterministic weekly digest per site — new/lost citations, confirmed rank drops, action changes, and the next three actions. Consumes one AI mentions check per site per week.",
+    "unitDisclosure": "One AI mentions check per site per week.",
+    "nextRun": "Next run: {{when}}",
+    "lastRun": "Last run: {{when}}",
+    "lastStatus": "Last status: {{status}}",
+    "enableCta": "Turn on weekly pulse",
+    "disableCta": "Turn off weekly pulse",
+    "previewCta": "Preview the spend",
+    "historyLink": "View past digests"
+  },
+  "status": {
+    "queued": "Queued",
+    "collecting": "Collecting",
+    "completed": "Completed",
+    "partial": "Partial data",
+    "blocked_capacity": "Blocked — over cap",
+    "unsupported": "Not supported this week",
+    "failed": "Failed",
+    "empty": "No pulse has run yet."
+  },
+  "confirm": {
+    "enableTitle": "Turn on the weekly pulse?",
+    "enableBody": "The scheduled job will consume one AI mentions check per week for this site.",
+    "enableAck": "I understand and want to receive the weekly pulse.",
+    "disableTitle": "Turn off the weekly pulse?",
+    "disableBody": "You will stop receiving the digest. History remains available.",
+    "confirmEnable": "Turn on",
+    "confirmDisable": "Turn off",
+    "cancel": "Cancel"
+  },
+  "detail": {
+    "title": "Weekly pulse digest — {{isoWeek}}",
+    "closeLabel": "Close digest detail",
+    "coverage": "Coverage — {{supported}} of {{total}} engines supported.",
+    "partial": "Some engines returned partial data this week.",
+    "sections": {
+      "newCitations": "New citations",
+      "lostCitations": "Lost citations",
+      "unknownPartial": "Unknown or partial citations",
+      "confirmedDrops": "Confirmed rank drops",
+      "actionsChanged": "Actions completed or regressed",
+      "top3": "Next three actions",
+      "gscGenerative": "Google generative AI appearance",
+      "brandDeltas": "Brand Radar changes",
+      "deepLinks": "Open in RankMeFast"
+    },
+    "empty": {
+      "newCitations": "No new citations this week.",
+      "lostCitations": "No lost citations this week.",
+      "unknownPartial": "No unknown or partial citations this week.",
+      "confirmedDrops": "No confirmed rank drops this week.",
+      "actionsChanged": "No action state changes this week.",
+      "top3": "You are up to date — no open actions."
+    },
+    "actionsFallback": "No action changes recorded for this pulse."
+  },
+  "history": {
+    "title": "Recent pulses",
+    "empty": "No pulses recorded yet.",
+    "loadMore": "Load more",
+    "runLabel": "{{isoWeek}} — {{status}}",
+    "openLabel": "Open pulse for {{isoWeek}}"
+  },
+  "preview": {
+    "title": "Spend preview",
+    "productUnits": "1 AI mentions check per week",
+    "remaining": "Remaining this month: {{remaining}}",
+    "capBlocked": "Your plan cap is exhausted. Turning on will fail at run time — upgrade or buy credits to unblock."
+  },
+  "gsc": {
+    "title": "Google generative AI appearance",
+    "description": "First-party Google Search Console data — never merged with AI mention metrics.",
+    "status": {
+      "available": "Available",
+      "unavailable": "Not appearing yet",
+      "partial": "Partial data",
+      "reconnect_required": "Reconnect Google Search Console",
+      "failed": "Temporarily unavailable"
+    },
+    "empty": "No generative AI appearance was reported by Google.",
+    "reconnect": "Reconnect Google Search Console to see this section.",
+    "window": "Window: {{start}} → {{end}}",
+    "row": "{{appearance}} — {{clicks}} clicks, {{impressions}} impressions",
+    "loading": "Loading Google Search Console data…",
+    "unknown": "Unrecognized appearance ({{raw}})"
+  },
+  "brandDeltas": {
+    "scopeNote": "These changes cover your whole account, grouped by tracked brand query — not only this site.",
+    "queryLine": "{{query}} — mentions {{delta}}",
+    "sentimentLine": "Sentiment shift in points: positive {{positive}}, neutral {{neutral}}, negative {{negative}}, unknown {{unknown}}.",
+    "firstScan": "{{query}} — first scan, nothing to compare yet.",
+    "noNewScan": "{{query}} — no new scan this period.",
+    "empty": "No brand scans to compare yet."
+  },
+  "errors": {
+    "unexpected": "Something went wrong — try again.",
+    "overCap": "Your plan cap is exhausted. Upgrade or buy credits to receive weekly pulses.",
+    "acknowledgePreviewRequired": "Preview the spend before enabling.",
+    "reconnectRequired": "Reconnect Google Search Console to load this data.",
+    "unauthorized": "Please sign in to view the weekly pulse."
+  }
+}

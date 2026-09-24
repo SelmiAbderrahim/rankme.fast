@@ -1,0 +1,3 @@
+ALTER TABLE "usage_activity_events" DROP CONSTRAINT "usage_activity_events_feature_check";--> statement-breakpoint
+ALTER TABLE "subscriptions" ADD COLUMN "brand_radar" boolean DEFAULT false NOT NULL;--> statement-breakpoint
+ALTER TABLE "usage_activity_events" ADD CONSTRAINT "usage_activity_events_feature_check" CHECK ("usage_activity_events"."feature" in ('audits', 'ranks', 'keyword_research', 'backlinks', 'competitors', 'local_seo', 'ai_visibility', 'content_intelligence', 'sites', 'link_intelligence', 'traffic_insights', 'keyword_trends', 'review_intelligence', 'brand_radar'));

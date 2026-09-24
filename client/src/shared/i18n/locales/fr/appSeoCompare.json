@@ -1,0 +1,99 @@
+{
+  "title": "Comparer les stores",
+  "description": "Comparez les dernières observations enregistrées sur Google Play et l’App Store. Cette vue ne lance aucun contrôle.",
+  "profile": { "label": "Profil d’application" },
+  "stores": { "googlePlay": "Google Play", "appStore": "App Store" },
+  "common": { "notObserved": "Non observé", "userPaired": "Associé par l’utilisateur" },
+  "deltas": {
+    "notObserved": "Non observé",
+    "even": "À égalité",
+    "googlePlayLeads": "Google Play +{{value}}",
+    "appStoreLeads": "App Store +{{value}}"
+  },
+  "header": {
+    "title": "Fiches des stores",
+    "description": "Derniers titre, note et nombre d’avis enregistrés pour les fiches associées par l’utilisateur.",
+    "rating": "Note",
+    "reviews": "Avis",
+    "openListing": "Ouvrir la fiche",
+    "deltaSummary": "Écarts entre les fiches",
+    "ratingDelta": "Écart de note",
+    "reviewDelta": "Écart du nombre d’avis"
+  },
+  "ranks": {
+    "title": "Positions des mots-clés",
+    "description": "Une expression est comparée uniquement si les deux stores suivent la même expression, la même zone et la même langue.",
+    "caption": "Dernières positions enregistrées pour les expressions suivies sur les deux stores",
+    "phrase": "Expression",
+    "market": "Marché",
+    "position": "Position",
+    "delta": "Écart",
+    "only": {
+      "googlePlay": "Suivies uniquement sur Google Play",
+      "appStore": "Suivies uniquement sur l’App Store",
+      "googlePlayCaption": "Expressions suivies uniquement sur Google Play",
+      "appStoreCaption": "Expressions suivies uniquement sur l’App Store",
+      "none": "Aucune expression propre à un store."
+    }
+  },
+  "parity": {
+    "title": "Cohérence des fiches",
+    "description": "Constats enregistrés et valeurs directes pour les fiches associées par l’utilisateur.",
+    "findings": "Constats enregistrés",
+    "status": { "finding": "Différent", "passed": "Cohérent", "notEvaluated": "Non comparé" },
+    "findingCopy": {
+      "stores-diverge": "Les titres des fiches diffèrent fortement entre les stores.",
+      "ratings-diverge": "Les notes des stores présentent un écart notable.",
+      "categories-diverge": "Les fiches ne partagent aucune catégorie de store."
+    },
+    "rawCaption": "Comparaison directe des derniers champs enregistrés",
+    "field": "Champ",
+    "match": "Cohérence",
+    "matches": "Identique",
+    "differs": "Différent",
+    "notCompared": "Non comparé",
+    "fields": {
+      "title": "Titre",
+      "developerName": "Nom du développeur",
+      "mainCategory": "Catégorie principale",
+      "version": "Version",
+      "categories": "Catégories"
+    }
+  },
+  "charts": {
+    "title": "Positions dans les classements",
+    "description": "Dernière position enregistrée pour chaque classement et catégorie suivis.",
+    "caption": "Dernières positions enregistrées par store",
+    "chart": "Classement",
+    "category": "Catégorie",
+    "allCategories": "Toutes les catégories",
+    "delta": "Écart"
+  },
+  "notObserved": {
+    "ranksTitle": "Positions non observées",
+    "ranksDescription": "Suivez des expressions et lancez un contrôle pour remplir cette comparaison.",
+    "sharedRanksTitle": "Aucune expression suivie en commun",
+    "sharedRanksDescription": "Suivez la même expression, la même zone et la même langue sur les deux stores.",
+    "openKeywords": "Ouvrir le suivi des mots-clés",
+    "listingsTitle": "Une fiche ou les deux n’ont pas été observées",
+    "listingsDescription": "Lancez un contrôle de fiche sur les deux stores pour remplir cette comparaison.",
+    "openListing": "Ouvrir les contrôles de fiches",
+    "chartsTitle": "Positions de classement non observées",
+    "chartsDescription": "Suivez un classement et lancez un contrôle pour remplir cette comparaison.",
+    "openCharts": "Ouvrir le suivi des classements"
+  },
+  "empty": {
+    "title": "Aucun profil d’application",
+    "description": "Enregistrez un profil avant de comparer les observations des stores.",
+    "cta": "Enregistrer une application"
+  },
+  "unpaired": {
+    "title": "Associez les fiches pour les comparer",
+    "description": "Ce profil n’est pas déclaré comme le même produit sur les deux stores. Cette association est votre déclaration et ne vérifie pas l’identité du produit.",
+    "cta": "Gérer les profils"
+  },
+  "errors": {
+    "title": "Impossible de charger la comparaison",
+    "requestFailed": "La comparaison enregistrée n’a pas pu être chargée. Réessayez."
+  }
+}

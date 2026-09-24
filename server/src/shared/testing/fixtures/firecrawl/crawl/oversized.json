@@ -1,0 +1,10 @@
+{
+  "status": "completed",
+  "total": 2,
+  "completed": 2,
+  "creditsUsed": 2,
+  "data": [
+    { "markdown": "# One\n01234567890123456789", "links": [], "metadata": { "sourceURL": "https://example.com/one", "statusCode": 200 } },
+    { "markdown": "# Two\n01234567890123456789", "links": [], "metadata": { "sourceURL": "https://example.com/two", "statusCode": 200 } }
+  ]
+}

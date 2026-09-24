@@ -1,0 +1,37 @@
+{
+  "version": "0.1.20260808",
+  "status_code": 20000,
+  "status_message": "Ok.",
+  "cost": 0,
+  "tasks": [
+    {
+      "id": "TASK_ID",
+      "status_code": 20000,
+      "status_message": "Ok.",
+      "cost": 0,
+      "result": [
+        {
+          "keyword": "top_free_ios",
+          "location_code": 2840,
+          "language_code": "en",
+          "datetime": "2026-08-08 13:05:00 +00:00",
+          "se_results_count": 100,
+          "items": [
+            {
+              "type": "app_store_search_organic",
+              "rank_group": 1,
+              "rank_absolute": 1,
+              "app_id": "686449807",
+              "title": "App Store Chart App",
+              "reviews_count": 120,
+              "rating": {
+                "value": 4.8
+              },
+              "is_free": true
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

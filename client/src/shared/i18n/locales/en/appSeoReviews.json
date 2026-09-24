@@ -1,0 +1,83 @@
+{
+  "common": { "notAvailable": "Not available" },
+  "stats": { "total": "Reviews", "average": "Average rating" },
+  "mix": { "positive": "Positive", "neutral": "Neutral", "negative": "Negative" },
+  "histogram": {
+    "title": "Star distribution",
+    "chartLabel": "Review count by star rating",
+    "tableCaption": "Review count for each star rating",
+    "star": "{{star}} stars",
+    "rating": "Rating",
+    "count": "Reviews"
+  },
+  "trend": {
+    "title": "Review volume",
+    "empty": "No dated reviews were returned for this run.",
+    "chartLabel": "Review volume over time",
+    "tableCaption": "Review count and average rating by month",
+    "period": "Month",
+    "count": "Reviews",
+    "average": "Average"
+  },
+  "states": {
+    "pending": "The review evidence is still being processed.",
+    "thinTitle": "Not enough evidence to cluster",
+    "thinDescription": "This run returned fewer than 10 reviews, so no AI analysis was requested.",
+    "unavailableTitle": "Clusters unavailable",
+    "unavailableDescription": "The stored reviews and statistics are ready, but the AI analysis could not be completed.",
+    "failedTitle": "Review pull failed",
+    "failedDescription": "No review evidence was retained for this run. Start a new run when you are ready."
+  },
+  "sentiment": { "positive": "Positive", "neutral": "Neutral", "negative": "Negative", "mixed": "Mixed" },
+  "clusters": {
+    "title": "Review themes",
+    "aiInterpretation": "AI interpretation",
+    "anonymous": "Anonymous reviewer",
+    "rating": "{{rating}} out of 5"
+  },
+  "dialog": {
+    "title": "Confirm review analysis",
+    "description": "This explicit run pulls a bounded review sample and analyzes its themes once.",
+    "units": "Usage for this run: {{units}} unit",
+    "bound": "Up to 300 reviews",
+    "unavailable": "Capacity is not available for this run.",
+    "confirming": "Starting analysis…",
+    "confirm": "Start review analysis"
+  },
+  "empty": {
+    "noProfileTitle": "Add an app profile first",
+    "noProfileDescription": "A review run needs an app profile with a Google Play package or App Store ID.",
+    "noRuns": "No review runs yet for this app and store."
+  },
+  "disabled": {
+    "title": "New review runs are unavailable",
+    "description": "Stored review runs remain available to read."
+  },
+  "upsell": {
+    "title": "Activate the App SEO add-on",
+    "description": "Your plan supports App SEO, but review analysis requires the App SEO add-on.",
+    "cta": "View billing"
+  },
+  "errors": { "title": "Review data could not be loaded", "requestFailed": "The review request failed. Please try again." },
+  "run": {
+    "title": "Analyze app reviews",
+    "description": "Pull a fresh, bounded sample for one app and store. Runs are never scheduled automatically.",
+    "bound": "Each run retrieves at most 300 reviews.",
+    "previewing": "Checking capacity…",
+    "button": "Preview run"
+  },
+  "scope": { "profile": "App profile", "store": "Store" },
+  "stores": { "google_play": "Google Play", "app_store": "App Store" },
+  "list": {
+    "title": "Review runs",
+    "description": "Stored evidence remains readable even when new runs are unavailable.",
+    "started": "Started",
+    "status": "Status",
+    "reviews": "Reviews",
+    "average": "Average",
+    "actions": "Actions",
+    "view": "View"
+  },
+  "status": { "queued": "Queued", "pulling": "Pulling reviews", "clustering": "Finding themes", "completed": "Completed", "failed": "Failed" },
+  "detail": { "title": "Run details", "description": "Deterministic statistics and evidence-backed themes from this stored run." }
+}

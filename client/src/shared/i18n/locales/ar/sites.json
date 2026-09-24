@@ -1,0 +1,196 @@
+{
+  "title": "المواقع",
+  "listDescription": "المواقع التي تتابعها مع RankMeFast.",
+  "loading": "جارٍ تحميل مواقعك…",
+  "retry": "حاول مرة أخرى",
+  "addTitle": "أضف موقعك",
+  "addDescription": "أدخل عنوان موقعك لبدء تدقيقه وتتبع ترتيبه.",
+  "urlLabel": "عنوان URL للموقع",
+  "urlPlaceholder": "https://example.com",
+  "addSubmit": "إضافة موقع",
+  "adding": "جارٍ الإضافة…",
+  "emptyTitle": "لا توجد مواقع بعد",
+  "emptyDescription": "أضف موقعك الأول للبدء.",
+  "columnName": "الاسم",
+  "columnDomain": "النطاق",
+  "columnAdded": "تاريخ الإضافة",
+  "columnGoogle": "Google",
+  "googleLinked": "مرتبط",
+  "googleNotLinked": "غير مرتبط",
+  "googleNotConnected": "Google غير متصل",
+  "columnActions": "إجراءات",
+  "rowActions": "فتح قائمة {{name}}",
+  "open": "فتح",
+  "viewReport": "عرض التقرير",
+  "trackKeywords": "تتبع الكلمات المفتاحية",
+  "backlinks": "الروابط الخلفية",
+  "competitors": "المنافسون",
+  "googleSettings": "إعدادات Google",
+  "editName": "تعديل الاسم المعروض",
+  "delete": "حذف",
+  "deleteTitle": "حذف الموقع",
+  "deleteDescription": "سيؤدي هذا إلى إزالة {{domain}} من حسابك. لا يمكن التراجع عن هذا.",
+  "deleteConfirm": "حذف الموقع",
+  "deleteCancel": "إلغاء",
+  "renameTitle": "تعديل الاسم المعروض",
+  "renameDescription": "غيّر طريقة ظهور {{domain}} في RankMeFast.",
+  "renameLabel": "الاسم المعروض",
+  "renamePlaceholder": "مدونتي",
+  "renameSave": "حفظ",
+  "renameSaving": "جارٍ الحفظ…",
+  "renameCancel": "إلغاء",
+  "renameFailed": "تعذر تحديث الموقع.",
+  "previous": "السابق",
+  "next": "التالي",
+  "loadFailed": "تعذر تحميل مواقعك.",
+  "addFailed": "تعذرت إضافة الموقع.",
+  "deleteFailed": "تعذر حذف الموقع.",
+  "pauseFailed": "تعذّر إيقاف الموقع مؤقتًا.",
+  "resumeFailed": "تعذّر استئناف الموقع.",
+  "paused": {
+    "chip": "متوقف مؤقتًا",
+    "menuPause": "إيقاف الموقع مؤقتًا",
+    "menuResume": "استئناف الموقع",
+    "confirmTitle": "إيقاف هذا الموقع مؤقتًا؟",
+    "confirmBody": "ستتوقف عمليات التدقيق وفحوصات الترتيب والتقارير الأسبوعية ومراقبة المحتوى والتنبيهات لموقع {{domain}}. تبقى تقاريرك وسجلّك متاحة.",
+    "confirmCta": "إيقاف الموقع مؤقتًا",
+    "cancel": "إلغاء",
+    "bannerTitle": "الموقع متوقف مؤقتًا",
+    "banner": "هذا الموقع متوقف مؤقتًا — لا تعمل أي فحوصات أو تدقيقات. تم الإيقاف {{when}}.",
+    "resumeCta": "استئناف",
+    "pausing": "جارٍ الإيقاف…",
+    "resuming": "جارٍ الاستئناف…"
+  },
+  "errors": {
+    "urlRequired": "أدخل عنوان URL لموقعك.",
+    "urlTooLong": "عنوان URL طويل جدًا (2048 حرفًا كحد أقصى).",
+    "urlInvalid": "أدخل عنوان URL صالحًا، مثل https://example.com.",
+    "urlScheme": "يتم دعم عناوين http:// و https:// فقط.",
+    "urlUserinfo": "أزل اسم المستخدم وكلمة المرور من عنوان URL.",
+    "urlIpLiteral": "عناوين IP غير مدعومة — استخدم اسم نطاق.",
+    "urlNoTld": "أدخل اسم نطاق كاملاً، مثل https://example.com."
+  },
+  "workspace": {
+    "tabs": {
+      "overview": "نظرة عامة",
+      "actions": "الإجراءات",
+      "report": "التقرير",
+      "keywords": "الكلمات المفتاحية",
+      "serpFeatures": "خصائص نتائج البحث",
+      "keywordClusters": "مجموعات الكلمات المفتاحية",
+      "research": "بحث الكلمات",
+      "backlinks": "الروابط الخلفية",
+      "competitors": "المنافسون",
+      "google": "Google",
+      "aiVisibility": "رؤية الذكاء الاصطناعي",
+      "brandRadar": "رادار العلامة",
+      "apps": "التطبيقات",
+      "localSeo": "SEO المحلي",
+      "reviews": "المراجعات",
+      "geogrid": "شبكة جغرافية",
+      "content": "المحتوى",
+      "internalLinks": "الروابط الداخلية",
+      "cannibalization": "تزاحم الكلمات المفتاحية",
+      "audienceResearch": "بحث الجمهور",
+      "schema": "الترميز"
+    },
+    "groups": {
+      "auditReports": "التدقيق والتقارير",
+      "search": "البحث",
+      "visibility": "الظهور",
+      "content": "المحتوى",
+      "localApps": "البحث المحلي والتطبيقات"
+    },
+    "navigationLabel": "عرض مساحة العمل",
+    "activeGroupLabel": "{{group}} · {{current}}",
+    "upgradeHint": "قم بترقية خطتك لفتح هذه اللسان."
+  },
+  "overview": {
+    "next": {
+      "title": "إجراءاتك التالية",
+      "description": "ابدأ بالعناصر الأعلى تأثيرًا من أحدث تدقيق.",
+      "viewProgress": "عرض تقدم التدقيق",
+      "openReport": "فتح التقرير الكامل",
+      "openFinding": "عرض في التقرير",
+      "clearTitle": "لا توجد إصلاحات عاجلة",
+      "clearDescription": "لا يتضمن أحدث تدقيق عناصر للإصلاح الفوري أو المراقبة.",
+      "inProgressTitle": "التدقيق قيد التنفيذ"
+    },
+    "sections": {
+      "searchExperienceTitle": "البحث وتجربة الموقع",
+      "searchExperienceDescription": "الطلب الفعلي من البحث وتجربة الجوال التي تدعمه.",
+      "trackingTitle": "التتبع والمشهد التنافسي",
+      "trackingDescription": "أحدث الترتيبات والإشارات الخارجية التي تشكل ظهورك."
+    },
+    "search": {
+      "title": "أداء البحث",
+      "description": "من لقطة Search Console في أحدث تدقيق.",
+      "topQuery": "أفضل عبارة بحث",
+      "openGoogle": "فتح بيانات Google"
+    },
+    "pageSpeed": {
+      "title": "تجربة الموقع",
+      "description": "أول عينة PageSpeed للجوال من أحدث تدقيق.",
+      "accessibility": "إمكانية الوصول",
+      "seo": "تحسين محركات البحث",
+      "coreWebVitals": "مؤشرات أداء الويب الأساسية"
+    },
+    "keywords": {
+      "title": "الكلمات المفتاحية المتتبعة مؤخرًا",
+      "description": "أحدث مواضع الكلمات التي أضفتها مؤخرًا.",
+      "open": "فتح الكلمات المفتاحية",
+      "awaiting": "بانتظار الفحص الأول"
+    },
+    "backlinks": {
+      "updated": "آخر تحديث: {{date}}",
+      "open": "فتح الروابط الخلفية",
+      "noSnapshotTitle": "لا توجد لقطة للروابط الخلفية بعد",
+      "noSnapshotDescription": "افتح الروابط الخلفية عندما تريد جلب الملف الكامل واستكشافه."
+    },
+    "competitors": {
+      "open": "فتح المنافسين",
+      "notLoadedTitle": "بيانات المنافسين متاحة عند الطلب",
+      "notLoadedDescription": "افتح المنافسين لتشغيل بحث خطة الوكالة. ستعيد النظرة العامة استخدام النتيجة دون استهلاك بحث آخر."
+    },
+    "unlock": {
+      "title": "تتوفر رؤى إضافية",
+      "backlinksAndCompetitors": "رقِّ خطتك لمعرفة قوة الروابط الخلفية وتداخل المنافسين.",
+      "competitors": "رقِّ إلى خطة الوكالة لمعرفة تداخل المنافسين وفجوات الكلمات المفتاحية.",
+      "openPlans": "مقارنة الخطط"
+    },
+    "statError": "تعذّر التحميل",
+    "meta": {
+      "title": "تفاصيل الموقع",
+      "name": "الاسم",
+      "domain": "النطاق"
+    },
+    "stats": {
+      "audit": {
+        "title": "إصلاحات فورية للتدقيق",
+        "hint": "افتح لسان التقرير لتشغيل تدقيق جديد."
+      },
+      "keywords": {
+        "title": "الكلمات المفتاحية المتتبعة",
+        "hint": "افتح لسان الكلمات المفتاحية لإضافة أو إزالة المصطلحات."
+      },
+      "backlinks": {
+        "title": "الروابط الخلفية",
+        "hint": "افتح لسان الروابط الخلفية لتحميل الملف."
+      },
+      "competitors": {
+        "title": "المنافسون",
+        "hint": "افتح لسان المنافسين لتحميل القائمة."
+      },
+      "google": {
+        "title": "Google Search Console",
+        "hint": "افتح لسان Google لإدارة الاتصال."
+      }
+    },
+    "gsc": {
+      "connected": "متصل",
+      "needs_reconnect": "يتطلب إعادة الاتصال",
+      "revoked": "ملغى",
+      "disconnected": "غير متصل"
+    }
+  }
+}

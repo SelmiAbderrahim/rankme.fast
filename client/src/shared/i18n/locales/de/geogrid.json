@@ -1,0 +1,113 @@
+{
+  "title": "Geogrid-Tracking lokaler Platzierungen",
+  "description": "Sehen Sie, wo Ihr Eintrag im Local Pack über ein Koordinatenraster steht. Ein Scan deckt das ganze Raster ab und kostet einen Geogrid-Scan.",
+  "locked": {
+    "body": "Geogrid-Scans gibt es in den Tarifen Pro und Agency.",
+    "cta": "Tarife ansehen"
+  },
+  "form": {
+    "keyword": "Verfolgtes Keyword",
+    "keywordPlaceholder": "Keyword wählen",
+    "coordinateHelp": "Geben Sie den Mittelpunkt als Zahlen ein. Es gibt keine Kartenauswahl — wir kaufen keine Kartenkacheln.",
+    "latitude": "Breitengrad des Mittelpunkts",
+    "longitude": "Längengrad des Mittelpunkts",
+    "spacing": "Abstand zwischen den Punkten",
+    "spacingOption": "{{km}} km",
+    "spacingCustom": "Abstand in Metern",
+    "size": "Rastergröße",
+    "sizeOption": "{{size}} mal {{size}} ({{cells}} Punkte)",
+    "zoom": "Kartenzoom",
+    "preview": "Diesen Scan schätzen",
+    "previewing": "Wird geschätzt…",
+    "errors": {
+      "keyword": "Wählen Sie zuerst ein verfolgtes Keyword.",
+      "latitude": "Der Breitengrad muss zwischen -{{max}} und {{max}} liegen.",
+      "longitude": "Der Längengrad muss zwischen -180 und 180 liegen.",
+      "spacing": "Der Abstand muss zwischen {{min}} und {{max}} Metern liegen, in Schritten von {{step}}.",
+      "zoom": "Der Zoom muss zwischen {{min}} und {{max}} liegen."
+    }
+  },
+  "preview": {
+    "title": "Was dieser Scan kostet",
+    "body": "{{units}} Geogrid-Scan deckt alle {{cells}} Rasterpunkte ab.",
+    "remaining": "Noch {{base}} in Ihrem Tarif, {{pack}} aus Paketen.",
+    "packUnavailable": "Derzeit ist kein Geogrid-Paket zum Kauf konfiguriert.",
+    "confirm": "Scan starten",
+    "running": "Läuft…",
+    "cancel": "Abbrechen"
+  },
+  "history": {
+    "title": "Frühere Scans",
+    "row": "{{keyword}} — {{size}} mal {{size}}",
+    "meta": "{{status}} · {{createdAt}}",
+    "emptyTitle": "Noch keine Scans",
+    "emptyBody": "Starten Sie Ihr erstes Raster, um Ihre Platzierung rund um einen Ort zu sehen."
+  },
+  "grid": {
+    "title": "Heatmap-Raster",
+    "ariaLabel": "Local-Pack-Platzierungen auf einem {{size}} mal {{size}} Raster",
+    "emptyTitle": "Kein Scan ausgewählt",
+    "emptyBody": "Wählen Sie einen früheren Scan oder starten Sie einen neuen.",
+    "running": "Dieser Scan läuft noch. Punkte erscheinen, sobald sie fertig sind.",
+    "cellPending": "Punkt {{index}}: noch nicht geprüft",
+    "cellObserved": "Punkt {{index}}: Platz {{position}} von {{packSize}} bei {{lat}}, {{lng}}, geprüft am {{capturedAt}}",
+    "cellNotInPack": "Punkt {{index}}: nicht im Local Pack bei {{lat}}, {{lng}}, geprüft am {{capturedAt}}",
+    "cellFailed": "Punkt {{index}}: Prüfung fehlgeschlagen bei {{lat}}, {{lng}}",
+    "legend": {
+      "top": "Plätze eins bis drei",
+      "mid": "Plätze vier bis sieben",
+      "low": "Platz acht oder schlechter",
+      "notInPack": "Nicht im Local Pack",
+      "failed": "Prüfung fehlgeschlagen"
+    }
+  },
+  "table": {
+    "caption": "Jeder Rasterpunkt, seine Koordinate und was wir dort gesehen haben.",
+    "point": "Punkt",
+    "latitude": "Breitengrad",
+    "longitude": "Längengrad",
+    "position": "Platz",
+    "packSize": "Pack-Größe",
+    "capturedAt": "Geprüft",
+    "state": "Status"
+  },
+  "detail": {
+    "observed": "Punkt {{index}} steht auf Platz {{position}} von {{packSize}} bei {{lat}}, {{lng}} (geprüft am {{capturedAt}}).",
+    "notInPack": "Punkt {{index}} ist nicht im Local Pack bei {{lat}}, {{lng}} (geprüft am {{capturedAt}}).",
+    "failed": "Punkt {{index}} konnte bei {{lat}}, {{lng}} nicht geprüft werden."
+  },
+  "states": {
+    "observed": "Im Pack",
+    "not_in_pack": "Nicht im Pack",
+    "failed": "Prüfung fehlgeschlagen"
+  },
+  "status": {
+    "queued": "In der Warteschlange",
+    "running": "Läuft",
+    "completed": "Fertig",
+    "completed_partial": "Fertig mit Lücken",
+    "failed": "Fehlgeschlagen"
+  },
+  "outcome": {
+    "partialTitle": "Einige Punkte haben nicht geantwortet",
+    "partialBody": "{{failed}} von {{total}} Punkten sind fehlgeschlagen. Der Rest sind echte Prüfungen.",
+    "failedTitle": "Der Scan ist fehlgeschlagen",
+    "failedBody": "Kein Punkt hat geantwortet, es gibt also nichts zu zeigen.",
+    "failedRefunded": "Kein Punkt hat geantwortet, deshalb haben wir den Scan Ihrem Kontingent gutgeschrieben."
+  },
+  "gates": {
+    "cap": "Ihre Geogrid-Scans sind aufgebraucht",
+    "killSwitch": "Geogrid-Scans sind pausiert",
+    "notOnPlan": "Nicht in Ihrem Tarif",
+    "notFound": "Nicht gefunden",
+    "rateLimited": "Zu viele Anfragen",
+    "invalid": "Prüfen Sie die Rastereinstellungen",
+    "failed": "Etwas ist schiefgelaufen",
+    "packCta": "Geogrid-Paket kaufen"
+  },
+  "errors": {
+    "loadFailed": "Wir konnten Ihre Geogrid-Scans nicht laden.",
+    "previewFailed": "Wir konnten diesen Scan nicht schätzen.",
+    "submitFailed": "Wir konnten diesen Scan nicht starten."
+  }
+}

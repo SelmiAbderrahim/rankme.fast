@@ -1,0 +1,165 @@
+{
+  "notifications": {
+    "title": "Benachrichtigungseinstellungen",
+    "description": "Wählen Sie, welche nicht-sicherheitsrelevanten E-Mails Sie erhalten möchten. Sicherheits-E-Mails (Passwort-Reset, E-Mail-Verifizierung, Bestätigung einer Passwortänderung) können nicht deaktiviert werden.",
+    "emailHeading": "E-Mail",
+    "loading": "Ihre Einstellungen werden geladen…",
+    "securityNote": "Sicherheits-E-Mails — Passwort-Reset, E-Mail-Verifizierung und Bestätigung einer Passwortänderung — werden unabhängig von den obigen Schaltern immer gesendet.",
+    "channels": {
+      "emailAuditComplete": {
+        "label": "Audit abgeschlossen",
+        "description": "Benachrichtigen, sobald ein Audit fertig ist."
+      },
+      "emailRankDrop": {
+        "label": "Ranking-Verlust",
+        "description": "Benachrichtigen, wenn ein verfolgtes Keyword Positionen verliert."
+      },
+      "emailAlerts": {
+        "label": "Warnregeln",
+        "description": "Benachrichtige mich, wenn eine meiner Warnregeln auslöst."
+      },
+      "emailDunning": {
+        "label": "Abrechnung",
+        "description": "Zahlungsbelege und Erinnerungen zu fehlgeschlagenen Zahlungen."
+      },
+      "emailMarketing": {
+        "label": "Produktupdates",
+        "description": "Gelegentliche Willkommensnachrichten, Produktneuigkeiten und Tipps."
+      }
+    },
+    "errors": {
+      "loadFailed": "Wir konnten Ihre Benachrichtigungseinstellungen nicht laden. Bitte aktualisieren Sie die Seite.",
+      "saveFailed": "Wir konnten diese Änderung nicht speichern. Bitte versuchen Sie es erneut."
+    }
+  },
+  "apiKeys": {
+    "title": "API-Schlüssel",
+    "description": "Erstellen Sie Schlüssel für MCP-Clients. Agency-Schlüssel funktionieren außerdem mit der öffentlichen Read-only-REST-API. MCP-Tools können Audits starten und Ihr monatliches Kontingent verbrauchen – bewahren Sie daher jeden Schlüssel sicher auf.",
+    "name": "Name",
+    "prefix": "Schlüssel",
+    "created": "Erstellt",
+    "lastUsed": "Zuletzt verwendet",
+    "never": "Nie",
+    "create": "Schlüssel erstellen",
+    "createTitle": "API-Schlüssel erstellen",
+    "createDescription": "Geben Sie dem Schlüssel einen Namen, um ihn später wiederzuerkennen — zum Beispiel das Tool, das ihn verwenden wird.",
+    "showOnceTitle": "Kopieren Sie Ihren API-Schlüssel jetzt",
+    "showOnceWarning": "Dies ist das einzige Mal, dass wir diesen Schlüssel anzeigen. Bewahren Sie ihn sicher auf — Sie können ihn nicht erneut einsehen.",
+    "copy": "Kopieren",
+    "copied": "Kopiert",
+    "done": "Fertig",
+    "revoke": "Widerrufen",
+    "revokedBadge": "Widerrufen",
+    "revokeConfirmTitle": "Diesen API-Schlüssel widerrufen?",
+    "revokeConfirmDescription": "„{{name}}“ funktioniert sofort nicht mehr. Dies kann nicht rückgängig gemacht werden.",
+    "empty": "Noch keine API-Schlüssel.",
+    "upgradeHint": "API-Schlüssel für MCP sind ab dem Starter-Plan verfügbar; die öffentliche REST-API erfordert Agency. Upgraden Sie, um einen MCP-Client zu verbinden.",
+    "upgradeCta": "Pläne ansehen",
+    "scopes": {
+      "column": "Zugriff",
+      "edit": "Zugriff bearbeiten",
+      "restricted": "Eingeschränkt",
+      "unrestricted": "Uneingeschränkt",
+      "restrictCreate": "Diesen Schlüssel einschränken",
+      "restrictKey": "Eigene Einschränkungen verwenden",
+      "intersectionHint": "Schlüsseleinschränkungen können die Kontovorgaben nur begrenzen, aber niemals erweitern.",
+      "editTitle": "API-Schlüsselzugriff bearbeiten",
+      "editDescription": "Legen Sie fest, worauf „{{name}}“ über MCP zugreifen darf.",
+      "unrestrictedDescription": "Dieser Schlüssel folgt den Kontovorgaben ohne zusätzliche Einschränkungen.",
+      "save": "Zugriff speichern",
+      "saving": "Zugriff wird gespeichert…",
+      "sitesFailed": "Ihre Websites konnten nicht geladen werden. Lassen Sie den Website-Zugriff uneingeschränkt und versuchen Sie es später erneut."
+    },
+    "errors": {
+      "loadFailed": "Ihre API-Schlüssel konnten nicht geladen werden. Bitte aktualisieren.",
+      "createFailed": "Der Schlüssel konnte nicht erstellt werden. Bitte erneut versuchen.",
+      "revokeFailed": "Der Schlüssel konnte nicht widerrufen werden. Bitte erneut versuchen.",
+      "scopesSaveFailed": "Der Zugriff dieses Schlüssels konnte nicht gespeichert werden. Bitte erneut versuchen.",
+      "nameRequired": "Geben Sie einen Namen mit 1 bis 60 Zeichen ein."
+    }
+  },
+  "mcp": {
+    "title": "MCP-Berechtigungen",
+    "description": "Legen Sie die Kontovorgaben für MCP-Schlüssel und Assistant-Tools fest. Neue Konten erlauben standardmäßig alle Tools und Websites.",
+    "loading": "MCP-Berechtigungen werden geladen…",
+    "save": "Berechtigungen speichern",
+    "saving": "Berechtigungen werden gespeichert…",
+    "saved": "MCP-Berechtigungen gespeichert.",
+    "retry": "Erneut versuchen",
+    "locked": {
+      "title": "MCP mit Starter oder höher verbinden",
+      "description": "Führen Sie ein Upgrade durch, um API-Schlüssel zu erstellen und RankMeFast mit einem MCP-Client zu verbinden.",
+      "cta": "Pläne ansehen"
+    },
+    "tools": {
+      "title": "Erlaubte Tools",
+      "description": "Deaktivieren Sie Tools, die MCP-Clients und der Assistant nicht verwenden dürfen.",
+      "list_sites": { "name": "Websites auflisten", "description": "Die Websites dieses Kontos anzeigen." },
+      "get_latest_audit_report": { "name": "Neuesten Auditbericht abrufen", "description": "Das neueste abgeschlossene Audit einer Website lesen." },
+      "list_keywords": { "name": "Keywords auflisten", "description": "Verfolgte Keywords einer Website anzeigen." },
+      "get_rank_history": { "name": "Rankingverlauf abrufen", "description": "Aktuelle Positionen verfolgter Keywords lesen." },
+      "list_content_analyses": { "name": "Inhaltsanalysen auflisten", "description": "Content-Intelligence-Analysen einer Website anzeigen." },
+      "get_content_analysis": { "name": "Inhaltsanalyse abrufen", "description": "Eine Content-Intelligence-Analyse lesen." },
+      "start_audit": { "name": "Audit starten", "description": "Ein neues Audit starten, das das monatliche Kontingent nutzt." },
+      "get_audit_status": { "name": "Auditstatus abrufen", "description": "Prüfen, ob ein Audit wartet, läuft oder abgeschlossen ist." },
+      "list_actions": { "name": "Nächste Schritte auflisten", "description": "Die priorisierte Fix-Liste einer Website mit dem Status jedes Eintrags lesen." },
+      "set_action_state": { "name": "Nächsten Schritt aktualisieren", "description": "Eine Aufgabe als geplant, verworfen, erledigt oder wieder offen markieren." }
+    },
+    "spend": {
+      "title": "Kontingent verbrauchende Aktionen",
+      "label": "Tools erlauben, die Plankontingent nutzen",
+      "description": "Wenn deaktiviert, bleiben Tools wie Audit starten blockiert, auch wenn ihr Tool-Schalter aktiv ist."
+    },
+    "sites": {
+      "title": "Erlaubte Websites",
+      "description": "Beschränken Sie Tools auf ausgewählte Websites oder erlauben Sie alle Websites.",
+      "all": "Alle Websites erlauben",
+      "allDescription": "Dies umfasst auch später hinzugefügte Websites.",
+      "empty": "Fügen Sie eine Website hinzu, bevor Sie eine Website-Einschränkung erstellen.",
+      "unavailable": "Nicht verfügbare Website",
+      "removeHint": "In diesem Konto nicht mehr verfügbar"
+    },
+    "quickStart": {
+      "title": "Schnellstart",
+      "description": "Erstellen Sie einen API-Schlüssel und kopieren Sie dann den Endpunkt oder eine einsatzbereite Client-Konfiguration.",
+      "endpoint": "MCP-Endpunkt",
+      "copyEndpoint": "MCP-Endpunkt kopieren",
+      "copy": "Kopieren",
+      "copyConfig": "{{client}}-Konfiguration kopieren",
+      "copied": "Kopiert",
+      "claudeCode": "Claude Code",
+      "cursor": "Cursor",
+      "apiKeys": "API-Schlüssel verwalten",
+      "copyError": "Ihr Browser konnte den Wert nicht kopieren. Markieren Sie den Text und kopieren Sie ihn manuell."
+    },
+    "errors": {
+      "loadFailed": "MCP-Berechtigungen konnten nicht geladen werden. Bitte erneut versuchen.",
+      "saveFailed": "MCP-Berechtigungen konnten nicht gespeichert werden. Bitte erneut versuchen.",
+      "sitesFailed": "Ihre Websites konnten nicht geladen werden. Website-Einschränkungen können unvollständig sein."
+    }
+  },
+  "branding": {
+    "title": "PDF-Branding",
+    "description": "Versehen Sie heruntergeladene Bericht-PDFs mit Ihrem eigenen Namen. Firmenname und Akzentfarbe erscheinen im PDF-Kopf.",
+    "companyName": "Firmenname",
+    "accentColor": "Akzentfarbe",
+    "invalidColor": "Geben Sie eine Farbe wie #b5321e ein oder lassen Sie das Feld leer.",
+    "save": "Branding speichern",
+    "saved": "Branding gespeichert.",
+    "upgradeHint": "White-Label-PDF-Berichte sind in den Plänen Pro und Agency verfügbar. Upgraden Sie, um Ihre Berichte anzupassen.",
+    "upgradeCta": "Pläne ansehen",
+    "logo": {
+      "label": "Firmenlogo",
+      "help": "Nur PNG, maximal 256 KB. Bilder werden vor dem Speichern verkleinert und neu codiert.",
+      "invalidType": "Wählen Sie ein PNG-Bild aus.",
+      "tooLarge": "Wählen Sie ein PNG-Bild unter 256 KB aus.",
+      "readFailed": "Dieses Bild konnte nicht gelesen werden. Wählen Sie eine andere PNG-Datei.",
+      "previewAlt": "Vorschau des Firmenlogos",
+      "remove": "Logo entfernen"
+    },
+    "errors": {
+      "loadFailed": "Ihr Branding konnte nicht geladen werden. Bitte aktualisieren Sie die Seite.",
+      "saveFailed": "Ihr Branding konnte nicht gespeichert werden. Bitte versuchen Sie es erneut."
+    }
+  }
+}

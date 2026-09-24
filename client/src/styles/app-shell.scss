@@ -1,0 +1,212 @@
+// App-shell styling — the authenticated SPA surface (navbar, page container,
+// footer) plus the auth forms (login / register / forgot / reset).
+//
+// The starter scaffold shipped Bootstrap class names (`navbar-default`,
+// `col-lg-12`, …) with no Bootstrap and no matching CSS, so these pages
+// rendered as raw HTML. This file authors the real styles. Anti-Codex rules:
+// flat borders, 6px button / 8px card radius, transitions on color/opacity
+// only (≤150ms), palette from CSS custom properties (dark-mode aware).
+
+// ── Layout ──────────────────────────────────────────────────────────────
+
+.container {
+  width: 100%;
+  max-width: 1120px;
+  margin: 0 auto;
+  padding: 0 var(--space-4);
+}
+
+// ── Navbar ──────────────────────────────────────────────────────────────
+
+.navbar {
+  border-bottom: 1px solid var(--color-border);
+  background: var(--color-bg);
+
+  .container {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: var(--space-4);
+    min-height: 56px;
+  }
+
+  .navbar-brand {
+    display: inline-flex;
+    align-items: center;
+    color: var(--color-fg);
+    text-decoration: none;
+  }
+
+  .navbar-nav {
+    display: flex;
+    align-items: center;
+    gap: var(--space-2);
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+
+  .navbar-nav a {
+    display: inline-block;
+    padding: var(--space-2) var(--space-3);
+    border-radius: var(--radius-button);
+    color: var(--color-muted);
+    font-size: 14px;
+    font-weight: 500;
+    text-decoration: none;
+    transition: color 150ms ease;
+  }
+
+  .navbar-nav a:hover,
+  .navbar-nav a:focus-visible {
+    color: var(--color-fg);
+  }
+}
+
+// ── Footer ──────────────────────────────────────────────────────────────
+
+footer {
+  margin-top: var(--space-6);
+  border-top: 1px solid var(--color-border);
+  padding: var(--space-5) 0;
+  color: var(--color-muted);
+  font-size: 14px;
+
+  .footer-nav {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space-4);
+    margin: 0 0 var(--space-3);
+    padding: 0;
+    list-style: none;
+  }
+
+  .footer-nav a {
+    color: var(--color-muted);
+    text-decoration: none;
+    transition: color 150ms ease;
+  }
+
+  .footer-nav a:hover,
+  .footer-nav a:focus-visible {
+    color: var(--color-fg);
+  }
+
+  .copyright {
+    margin: 0;
+  }
+}
+
+// ── Auth pages (login / register / forgot / reset) ──────────────────────
+
+.auth-page {
+  display: flex;
+  justify-content: center;
+  padding: var(--space-6) var(--space-4);
+}
+
+.auth-card {
+  width: 100%;
+  max-width: 400px;
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-card);
+  background: var(--color-bg);
+  padding: var(--space-6);
+}
+
+.auth-card__title {
+  margin: 0 0 var(--space-5);
+  font-size: 20px;
+  font-weight: 700;
+  color: var(--color-fg);
+}
+
+.auth-form {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-4);
+}
+
+.auth-field {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+
+  label {
+    font-size: 14px;
+    font-weight: 500;
+    color: var(--color-fg);
+  }
+
+  input {
+    width: 100%;
+    padding: var(--space-2) var(--space-3);
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-button);
+    background: var(--color-bg);
+    color: var(--color-fg);
+    font: inherit;
+    font-size: 14px;
+    transition: border-color 150ms ease;
+  }
+
+  input:focus-visible {
+    outline: none;
+    border-color: var(--color-primary);
+  }
+}
+
+.auth-field .error {
+  font-size: 13px;
+  color: var(--color-error);
+}
+
+.auth-button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: var(--space-3) var(--space-4);
+  border: 1px solid var(--color-primary);
+  border-radius: var(--radius-button);
+  background: var(--color-primary);
+  color: #ffffff;
+  font: inherit;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: opacity 150ms ease;
+}
+
+.auth-button:hover:not(:disabled) {
+  opacity: 0.9;
+}
+
+.auth-button:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.auth-alert {
+  border: 1px solid var(--color-error);
+  border-radius: var(--radius-button);
+  padding: var(--space-3);
+  color: var(--color-error);
+  font-size: 14px;
+}
+
+.auth-alert--success {
+  border-color: var(--color-success);
+  color: var(--color-success);
+}
+
+.auth-link {
+  margin-top: var(--space-4);
+  font-size: 14px;
+  color: var(--color-primary);
+  text-decoration: none;
+}
+
+.auth-link:hover,
+.auth-link:focus-visible {
+  text-decoration: underline;
+}

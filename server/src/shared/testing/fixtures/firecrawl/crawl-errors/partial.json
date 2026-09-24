@@ -1,0 +1,4 @@
+{
+  "errors": [{ "url": "https://example.com/unavailable", "error": "Synthetic network failure" }],
+  "robotsBlocked": ["https://example.com/blocked"]
+}

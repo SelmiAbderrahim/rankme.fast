@@ -1,0 +1,27 @@
+{
+  "id": "https://example.com/",
+  "loadingExperience": {
+    "id": "https://example.com/",
+    "metrics": {},
+    "origin_fallback": false
+  },
+  "originLoadingExperience": {
+    "id": "https://example.com/",
+    "metrics": {}
+  },
+  "lighthouseResult": {
+    "requestedUrl": "https://example.com/",
+    "finalUrl": "https://example.com/",
+    "runWarnings": [],
+    "categories": {
+      "performance": { "id": "performance", "title": "Performance", "score": 0.92 },
+      "accessibility": { "id": "accessibility", "title": "Accessibility", "score": 0.88 },
+      "best-practices": { "id": "best-practices", "title": "Best Practices", "score": 0.96 },
+      "seo": { "id": "seo", "title": "SEO", "score": 1.0 }
+    },
+    "audits": {
+      "viewport": { "id": "viewport", "score": 1.0 },
+      "tap-targets": { "id": "tap-targets", "score": 1.0 }
+    }
+  }
+}

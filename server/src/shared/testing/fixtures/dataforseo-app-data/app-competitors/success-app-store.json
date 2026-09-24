@@ -1,0 +1,53 @@
+{
+  "version": "0.1.20260808",
+  "status_code": 20000,
+  "status_message": "Ok.",
+  "cost": 0.012,
+  "tasks": [
+    {
+      "id": "TASK_ID",
+      "status_code": 20000,
+      "status_message": "Ok.",
+      "cost": 0.012,
+      "path": [
+        "v3",
+        "dataforseo_labs",
+        "apple",
+        "app_competitors",
+        "live"
+      ],
+      "result": [
+        {
+          "items": [
+            {
+              "app_id": "382617920",
+              "avg_position": 10.5,
+              "sum_position": 210,
+              "intersections": 13,
+              "competitor_metrics": {
+                "app_store_search_organic": {
+                  "pos_1": 1,
+                  "pos_2_3": 2,
+                  "pos_4_10": 4,
+                  "pos_11_100": 6,
+                  "count": 13,
+                  "search_volume": 3600
+                }
+              },
+              "full_metrics": {
+                "app_store_search_organic": {
+                  "pos_1": 3,
+                  "pos_2_3": 5,
+                  "pos_4_10": 7,
+                  "pos_11_100": 10,
+                  "count": 25,
+                  "search_volume": 8000
+                }
+              }
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

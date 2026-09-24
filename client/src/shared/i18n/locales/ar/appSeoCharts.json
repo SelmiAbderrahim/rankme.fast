@@ -1,0 +1,14 @@
+{
+  "stores": { "googlePlay": "متجر Google Play", "appStore": "متجر App Store" },
+  "charts": { "google": { "topFree": "الأعلى مجانًا", "topPaid": "الأعلى مدفوعًا", "newFree": "الجديدة المجانية", "newPaid": "الجديدة المدفوعة", "topGrossing": "الأعلى إيرادًا", "moversShakers": "الأسرع صعودًا" }, "apple": { "topFree": "الأعلى مجانًا", "topPaid": "الأعلى مدفوعًا", "topGrossing": "الأعلى إيرادًا", "new": "تطبيقات جديدة", "newFree": "الجديدة المجانية", "newPaid": "الجديدة المدفوعة" } },
+  "categories": { "business": "الأعمال", "education": "التعليم", "entertainment": "الترفيه", "finance": "المال", "foodDrink": "الطعام والشراب", "games": "الألعاب", "healthFitness": "الصحة واللياقة", "lifestyle": "نمط الحياة", "productivity": "الإنتاجية", "shopping": "التسوق", "social": "التواصل الاجتماعي", "sports": "الرياضة", "tools": "الأدوات", "travel": "السفر", "utilities": "الخدمات" },
+  "form": { "title": "تتبّع مخطط متجر", "description": "اختر مخططًا وفئة محفوظين. يفحص RankMeFast صفحة واحدة من أفضل 100 نتيجة أسبوعيًا.", "profile": "ملف التطبيق", "store": "المتجر", "chart": "المخطط", "category": "الفئة", "usage": "{{used}} من {{limit}} اشتراكات مخطط", "add": "تتبّع المخطط", "adding": "جارٍ الإضافة…" },
+  "list": { "title": "المخططات المتتبعة", "description": "يعني الموضع الفارغ المحفوظ أن التطبيق لم يكن ضمن أفضل 100.", "chart": "المخطط", "category": "الفئة", "position": "الموضع", "change": "التغيير", "actions": "الإجراءات", "notInTop100": "ليس ضمن أفضل 100", "neverChecked": "لم يُفحص بعد", "historyLabel": "عرض سجل المخطط", "recheckLabel": "فحص المخطط الآن", "deleteLabel": "حذف اشتراك المخطط" },
+  "history": { "title": "سجل موضع المخطط", "description": "يظهر المركز الأول في الأعلى، وتبقى الفحوص غير الموجودة في الجدول.", "chartLabel": "سجل موضع التطبيق في المخطط", "tableCaption": "مواضع مخطط التطبيق الأسبوعية المحفوظة", "date": "وقت الفحص", "position": "الموضع", "notInTop100": "ليس ضمن أفضل 100", "empty": "لم تُجرَ فحوص للمخطط بعد." },
+  "recheck": { "title": "فحص هذا المخطط الآن؟", "description": "يشغّل هذا صفحة أفضل 100 لهذا الأسبوع مرة واحدة.", "units": "يستخدم هذا الفحص {{units}} من فحوص مخطط التطبيق.", "top100": "لا يطلب RankMeFast صفحة مدفوعة أعمق.", "confirm": "تشغيل الفحص", "confirming": "جارٍ الإضافة إلى الطابور…" },
+  "empty": { "noProfileTitle": "سجّل تطبيقًا أولًا", "noProfileDescription": "يتطلب تتبّع المخطط معرّف متجر مسجلًا.", "noSubscriptions": "لا توجد مخططات متتبعة لهذا التطبيق بعد." },
+  "disabled": { "title": "تتبّع المخططات متوقف", "description": "تبقى المواضع المحفوظة متاحة، بينما تتوقف الاشتراكات والفحوص الجديدة." },
+  "upsell": { "title": "أضف تتبّع مخططات App SEO", "description": "يحتاج حساب Pro هذا إلى إضافة App SEO قبل تشغيل الفحوص الأسبوعية.", "cta": "عرض خيارات App SEO" },
+  "limit": { "title": "بلغت حد المخططات", "description": "يمكن لكل ملف تطبيق تتبّع {{limit}} مخططين كحد أقصى." },
+  "errors": { "title": "تعذّر تحديث تتبّع المخططات", "requestFailed": "تعذّر إكمال طلب المخطط. حاول مرة أخرى." }
+}

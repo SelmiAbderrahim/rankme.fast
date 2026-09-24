@@ -1,0 +1,41 @@
+{
+  "title": "SEO local",
+  "description": "Fiches d'entreprise, avis et classement dans le pack de cartes pour votre site.",
+  "empty": "Aucune donnée SEO locale — cliquez sur actualiser pour charger les fiches, avis et questions.",
+  "emptyTitle": "Aucune donnée locale pour l'instant",
+  "emptyCta": "Récupérer les données locales",
+  "refresh": {
+    "button": "Actualiser le SEO local",
+    "cooldown": "Actualisation dans {{seconds}} s",
+    "failed": "Impossible d'actualiser le SEO local. Réessayez dans un instant."
+  },
+  "loadFailed": "Impossible de charger le SEO local.",
+  "locked": {
+    "title": "Le SEO local est une fonctionnalité Pro",
+    "body": "Passez à Pro pour suivre la cohérence de votre entreprise dans les annuaires et le pack de cartes local.",
+    "upgrade": "Voir les forfaits"
+  },
+  "listings": {
+    "title": "Fiches d'entreprise",
+    "source": "Annuaire",
+    "name": "Nom",
+    "address": "Adresse",
+    "phone": "Téléphone",
+    "status": "Statut",
+    "consistent": "Concordant",
+    "inconsistent": "Différent"
+  },
+  "reviews": {
+    "title": "Avis et questions",
+    "averageRating": "Note moyenne",
+    "reviewCount": "Avis",
+    "unansweredQuestions": "Questions sans réponse"
+  },
+  "localPack": {
+    "title": "Pack de cartes local",
+    "keyword": "Mot-clé",
+    "position": "Position",
+    "packSize": "Taille du pack",
+    "notRanked": "Absent du pack de cartes"
+  }
+}

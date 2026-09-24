@@ -1,0 +1,18 @@
+{
+  "success": true,
+  "type": "monitor.page",
+  "id": "TASK_ID",
+  "webhookId": "WEBHOOK_ID",
+  "metadata": { "monitorRef": "MONITOR_REF" },
+  "data": [
+    {
+      "monitorId": "TASK_ID",
+      "checkId": "CHECK_ID",
+      "url": "https://example.com/pricing",
+      "status": "changed",
+      "isMeaningful": true,
+      "contentHash": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+      "diff": { "text": "- Old price $19\n+ New price $29", "json": null }
+    }
+  ]
+}

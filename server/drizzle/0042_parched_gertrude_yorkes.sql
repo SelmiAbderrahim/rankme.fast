@@ -1,0 +1,1 @@
+ALTER TABLE "keyword_cluster_decision_events" ALTER COLUMN "site_id" SET DATA TYPE text;

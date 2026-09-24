@@ -1,0 +1,4 @@
+{
+  "status_code": "not-a-number",
+  "detail": "recorded contract-drift sample: envelope status_code must be numeric"
+}

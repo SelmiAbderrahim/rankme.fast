@@ -1,0 +1,953 @@
+{
+  "tab": "Inhalt",
+  "views": {
+    "analyses": "Analysen",
+    "inventory": "Bestand",
+    "competitors": "Wettbewerber",
+    "monitoring": "Überwachung",
+    "briefs": "Content-Briefings"
+  },
+  "comingSoon": "Diese Ansicht kommt später. Noch nichts zu sehen.",
+  "rolloutUnavailable": {
+    "analysesTitle": "Neue Inhaltsanalysen sind vorübergehend pausiert",
+    "inventoryTitle": "Neue Inventarläufe sind vorübergehend pausiert",
+    "competitorsTitle": "Neue Wettbewerbervergleiche sind vorübergehend pausiert",
+    "monitoringTitle": "Neue Seitenmonitore sind vorübergehend pausiert",
+    "description": "Gespeicherte Ergebnisse bleiben lesbar und laufende Arbeit kann weiterhin abgebrochen werden. Während der Pause wird kein neues Kontingent reserviert."
+  },
+  "suggestions": {
+    "loading": "Bekannte Seiten und verfolgte Keywords werden geladen…",
+    "error": "Einige Seiten- oder Keyword-Vorschläge konnten nicht geladen werden. Du kannst sie weiterhin manuell eingeben.",
+    "retry": "Vorschläge neu laden"
+  },
+  "list": {
+    "title": "Inhaltsanalysen",
+    "description": "Vergleiche deine Seite mit organischen Wettbewerbern und erhalte Scorecard, Brief und ersten Entwurf.",
+    "newAction": "Neue Analyse",
+    "columns": {
+      "page": "Seite",
+      "keyword": "Keyword",
+      "locale": "Sprache",
+      "score": "Punkte",
+      "status": "Status",
+      "requestedAt": "Angefordert",
+      "completedAt": "Abgeschlossen",
+      "warnings": "Warnungen",
+      "actions": "Aktionen"
+    },
+    "empty": {
+      "title": "Noch keine Analysen",
+      "description": "Starte deine erste Analyse für Empfehlungen, Brief und Entwurf.",
+      "action": "Analyse starten"
+    },
+    "row": {
+      "view": "Öffnen",
+      "cancel": "Abbrechen",
+      "regenerate": "Neu generieren"
+    },
+    "loading": "Analysen werden geladen…",
+    "loadMore": "Mehr laden",
+    "warnings": "Eine oder mehrere Warnungen",
+    "notAvailable": "Nicht verfügbar",
+    "warningCount": "{{count}} Warnung",
+    "warningCount_other": "{{count}} Warnungen",
+    "progress": "{{value}} % abgeschlossen"
+  },
+  "status": {
+    "queued": "In Warteschlange",
+    "collecting_owned": "Seite wird gelesen",
+    "collecting_serp": "SERP wird gelesen",
+    "collecting_competitors": "Vergleichsseiten werden gelesen",
+    "scoring": "Bewertung",
+    "generating_brief": "Brief wird erstellt",
+    "generating_draft": "Entwurf wird geschrieben",
+    "completed": "Abgeschlossen",
+    "partial": "Teilweise",
+    "failed": "Fehlgeschlagen",
+    "cancelled": "Abgebrochen"
+  },
+  "form": {
+    "title": "Neue Analyse starten",
+    "ownedUrl": "URL der eigenen Seite",
+    "ownedUrlPlaceholder": "https://example.com/page",
+    "ownedUrlHint": "Muss eine Seite auf einer Website sein, die dir gehört.",
+    "manualPage": "Wähle eine bekannte Seite oder gib eine andere URL derselben Website ein.",
+    "keyword": "Ziel-Keyword",
+    "keywordHint": "Die Suchanfrage, für die die Seite ranken soll.",
+    "locale": "Ausgabesprache",
+    "detectedLocale": "Aus deiner Kontosprache erkannt: {{locale}}",
+    "localeOverrideHint": "Du kannst sie für diese Ausgabe ändern.",
+    "consent": "Ich verstehe, dass begrenzte, bereinigte Seiteninhalte an konfigurierte KI-Anbieter gesendet werden können, um Brief und Entwurf zu generieren.",
+    "consentRequired": "Zustimmung ist erforderlich.",
+    "reviewedSources": { "title": "Geprüfte Vergleichsseiten", "description": "Diese öffentlichen Ranking-Seiten stammen aus Ihrem genehmigten Landschaftsabgleich. Sie bestätigen den Start weiterhin selbst." },
+    "included": {
+      "title": "Was ein Guthaben enthält",
+      "owned": "Eine eigene Seite",
+      "competitors": "Bis zu drei öffentliche organische Vergleichsseiten",
+      "scorecard": "Eine Scorecard",
+      "brief": "Ein Brief",
+      "draft": "Ein erster Entwurf",
+      "providerCall": "Dieser Lauf nutzt die vom Betreiber eingerichteten Analyseanbieter."
+    },
+    "previewLoading": "Aktuelles Kontingent wird geprüft…",
+    "previewError": "Das aktuelle Kontingent konnte nicht geprüft werden.",
+    "baseRemaining": "Verbleibendes Grundkontingent: {{count}}",
+    "packRemaining": "Paket-Guthaben: {{count}}",
+    "balance": "Verbleibendes Monatskontingent: {{used}} von {{cap}}.",
+    "packBalance": "Paket-Guthaben: {{balance}} zusätzliche Analysen.",
+    "submit": "Analyse starten",
+    "submitting": "Wird gestartet…",
+    "invalidUrl": "Gültige URL eingeben.",
+    "urlRequired": "Gib eine Seiten-URL ein oder wähle sie aus.",
+    "keywordRequired": "Gib ein Ziel-Keyword ein oder wähle es aus.",
+    "keywordTooLong": "Begrenze das Ziel-Keyword auf 200 Zeichen.",
+    "offOrigin": "URL muss der Herkunft deiner Website entsprechen.",
+    "urlUnsafe": "URL ist nicht öffentlich erreichbar.",
+    "urlNotOwned": "Diese URL gehört zu keiner Website in deinem Besitz.",
+    "capacityExhausted": "Monatliches Kontingent und Paket-Guthaben sind erschöpft."
+  },
+  "detail": {
+    "progress": {
+      "regenerating": "Wird gestartet…",
+      "title": "In Bearbeitung",
+      "step": "Schritt {{current}} von {{total}}",
+      "percentComplete": "{{percent}} % abgeschlossen",
+      "autoRefresh": "Diese Seite wird während der Analyse automatisch aktualisiert.",
+      "errorTitle": "Diese Analyse wurde vorzeitig beendet",
+      "errorGeneric": "Die Analyse wurde vor dem Abschluss beendet."
+    },
+    "errorCategory": {
+      "owned_page_unusable": "Ihre Seite konnte nicht gelesen werden.",
+      "owned_fetch_failed": "Ihre Seite konnte nicht abgerufen werden.",
+      "provider_unavailable": "Der Inhaltsdienst konnte nicht verwendet werden. Ihr Guthaben wurde erstattet.",
+      "serp_failed": "Die Suchergebnisse konnten nicht gelesen werden.",
+      "scoring_failed": "Der Inhalt konnte nicht bewertet werden.",
+      "brief_failed": "Das Briefing konnte nicht erstellt werden.",
+      "draft_failed": "Der erste Entwurf konnte nicht erstellt werden.",
+      "ai_budget_exceeded": "Die Analyse hat ihr KI-Budget erreicht.",
+      "cost_ceiling_exceeded": "Die Analyse wurde bei ihrer Kostenobergrenze beendet.",
+      "cancelled": "Diese Analyse wurde abgebrochen.",
+      "unexpected": "Die Analyse wurde aufgrund eines unerwarteten Fehlers beendet."
+    },
+    "back": "Zurück zu den Analysen",
+    "meta": {
+      "page": "Seite",
+      "keyword": "Keyword",
+      "locale": "Sprache",
+      "requested": "Angefordert",
+      "completed": "Abgeschlossen",
+      "cost": "Analysekosten: {{units}} Guthaben"
+    },
+    "explanation": "Dies ist ein Vergleich der Inhaltsbereitschaft, kein Suchmaschinen-Score.",
+    "score": { "title": "Bewertung der Inhaltsbereitschaft", "overall": "Gesamtbewertung", "confidence": "Belegsicherheit", "breakdown": "Aufschlüsselung nach Bereich", "section": "Bereich", "weight": "Gewichtung", "reason": "Grund der Bewertung", "reasonUnavailable": "Für diesen Bereich ist keine Erklärung verfügbar.", "reasonStrong": "Die verfügbaren Belege stützen diesen Bereich.", "reasonNeedsWork": "Die verfügbaren Belege zeigen Verbesserungsmöglichkeiten.", "reasonLimited": "Begrenzte Belege senken die Sicherheit in diesem Bereich.", "sectionProgress": "Bewertung {{section}}: {{score}} von 100" },
+    "sections": {
+      "readability": "Lesbarkeit", "intent": "Passung zur Suchabsicht",
+      "coverage": "Abdeckung",
+      "structure": "Struktur", "links": "Nutzen der Links", "schema": "Strukturierte Daten und Antwortklarheit", "technical": "Technische Inhaltssignale"
+    },
+    "warnings": {
+      "title": "Warnungen",
+      "empty": "Keine Warnungen.", "unknown": "Ein Teil der Analyse war nicht verfügbar."
+    },
+    "recommendations": {
+      "title": "Empfehlungen",
+      "empty": "Keine Empfehlungen verfügbar.",
+      "severity": {
+        "high": "Hoch",
+        "medium": "Mittel",
+        "low": "Niedrig"
+      }
+    },
+    "brief": {
+      "title": "Brief",
+      "empty": "Brief für diesen Lauf nicht verfügbar.",
+      "editHint": "Bearbeite diesen Vorschlag und speichere dann eine eigene Version. Dabei wird nichts veröffentlicht.",
+      "sectionHeading": "Überschrift für Abschnitt {{count}}",
+      "sectionBody": "Hinweise zum Abschnitt",
+      "save": "Brief-Version speichern",
+      "saving": "Wird gespeichert…",
+      "saved": "Brief-Version gespeichert.",
+      "saveFailed": "Diese Brief-Version konnte nicht gespeichert werden. Versuche es erneut.",
+      "versionHistory": "Versionsverlauf des Briefs",
+      "noVersions": "Noch keine gespeicherten Brief-Versionen.",
+      "versionMeta": "{{date}} · {{count}} Abschnitte",
+      "unsavedGuard": "Du hast ungespeicherte Brief-Änderungen.",
+      "savedHint": "Dieser Vorschlag ist bearbeitbar. Es wird nichts veröffentlicht."
+    },
+    "draft": {
+      "title": "Erster Entwurf",
+      "empty": "Entwurf für diesen Lauf nicht verfügbar.",
+      "save": "Version speichern",
+      "saving": "Wird gespeichert…",
+      "saved": "Version gespeichert.",
+      "saveFailed": "Diese Version konnte nicht gespeichert werden. Versuche es erneut.",
+      "versionHistory": "Versionsverlauf",
+      "noVersions": "Noch keine gespeicherten Versionen.",
+      "versionMeta": "{{date}} · {{count}} Wörter",
+      "copy": "In Zwischenablage kopieren",
+      "copying": "Wird kopiert…",
+      "copied": "In die Zwischenablage kopiert.",
+      "copyFailed": "Der Entwurf konnte nicht kopiert werden.",
+      "copyRetry": "Erneut kopieren",
+      "export": "Als Markdown exportieren",
+      "wordCount": "{{count}} Wörter",
+      "unsavedGuard": "Du hast ungespeicherte Änderungen."
+    },
+    "sources": {
+      "title": "Quellen",
+      "empty": "Keine Quellenverweise.", "owned": "Eigene Seite", "comparison": "Vergleichsseite {{count}}"
+    },
+    "actions": {
+      "cancel": "Analyse abbrechen",
+      "regenerate": "Neu generieren (verbraucht ein Guthaben)"
+    }
+  },
+  "confirm": {
+    "cancel": {
+      "title": "Diese Analyse abbrechen?",
+      "description": "Die Reservierung kann je nach Phase erstattet werden. Nicht umkehrbar.",
+      "confirm": "Analyse abbrechen",
+      "back": "Behalten"
+    },
+    "regenerate": {
+      "title": "Diese Analyse neu generieren?",
+      "description": "Ein neuer Lauf verbraucht ein Guthaben.",
+      "confirm": "Neu generieren",
+      "back": "Abbrechen"
+    },
+    "discard": { "title": "Ungespeicherte Entwurfsänderungen verwerfen?", "description": "Deine letzten Änderungen wurden noch nicht als Version gespeichert.", "confirm": "Verwerfen und verlassen", "back": "Weiter bearbeiten" }
+  },
+  "paywall": {
+    "title": "Content Intelligence",
+    "description": "Wechsle zu Starter oder höher, um Inhaltsanalysen zu starten.",
+    "action": "Pläne ansehen",
+    "exhausted": {
+      "title": "Kontingent erschöpft",
+      "description": "Dein monatliches Kontingent und Paket-Guthaben sind aufgebraucht. Kaufe ein Paket oder wechsle den Plan.",
+      "buyPack": "Analyse-Paket kaufen",
+      "seePlans": "Pläne ansehen"
+    },
+    "packHint": "Die nächste Einheit kommt aus einem Guthaben-Paket."
+  },
+  "partial": {
+    "title": "Teilergebnis",
+    "description": "Dieser Lauf endete mit begrenzten Daten. Scorecard ist verfügbar; einige Abschnitte können fehlen."
+  },
+  "warnings": { "keywordUnavailable": "Keyword-Daten waren nicht verfügbar; deshalb fehlen Keyword-spezifische Vergleiche.", "serpUnavailable": "Suchergebnisbelege waren nicht verfügbar; die Bewertung nutzt daher nur deine Seite.", "competitorsPartial": "Einige Vergleichsseiten waren nicht verfügbar; die Bewertung nutzt die lesbaren Seiten.", "aiBudgetExhausted": "Das Schreibbudget endete, bevor alle erzeugten Bereiche fertig waren.", "stuffingSuspected": "Die Seite wiederholt das Keyword ungewöhnlich oft.", "briefFailed": "Das Briefing ist nicht verfügbar, die Scorecard bleibt erhalten.", "draftFailed": "Der erste Entwurf ist nicht verfügbar, Scorecard und Briefing bleiben erhalten." },
+  "refund": {
+    "refunded": "Das Analyse-Guthaben wurde erstattet."
+  },
+  "errors": {
+    "loadEntitlementsFailed": "Der Zugriff auf Content Intelligence konnte nicht geprüft werden.",
+    "loadFailed": "Analysen konnten nicht geladen werden.",
+    "loadOneFailed": "Diese Analyse konnte nicht geladen werden.",
+    "startFailed": "Analyse konnte nicht gestartet werden.",
+    "cancelFailed": "Abbruch fehlgeschlagen.",
+    "regenerateFailed": "Neu generieren fehlgeschlagen.",
+    "notCancellable": "Analyse ist nicht in einem abbrechbaren Zustand.",
+    "regenerateInFlight": "Eine Neugenerierung läuft bereits.",
+    "retry": "Erneut versuchen"
+  },
+  "opportunities": {
+    "title": "Content-Chancen", "description": "Verfolgen Sie jede Empfehlung bis zur bestätigten Umsetzung. Statusänderungen rufen keinen Anbieter auf.", "empty": "Keine Empfehlungen entsprechen diesen Filtern.",
+    "filters": { "state": "Status", "severity": "Priorität" }, "states": { "all": "Alle Status", "suggested": "Vorgeschlagen", "accepted": "Angenommen", "dismissed": "Verworfen", "applied": "Umgesetzt" }, "severities": { "all": "Alle Prioritäten", "high": "Hoch", "medium": "Mittel", "low": "Niedrig" },
+    "recommendationLabel": "{{direction}} · {{section}}", "rationale": "Begründung", "rationaleUnavailable": "Für diese Empfehlung ist keine Begründung verfügbar.", "rationaleText": "Nutze die verknüpften Belege, um den Bereich {{section}} zu {{direction}}.", "ownedEvidence": "Beleg der eigenen Seite", "directions": { "add": "ergänzen", "strengthen": "stärken", "clarify": "verdeutlichen", "remove": "bereinigen" }, "confidence": "Empfehlungssicherheit: {{value}}", "evidence": "{{count}} verknüpfte Belegquelle(n)",
+    "actions": { "accept": "Annehmen", "dismiss": "Verwerfen", "apply": "Als umgesetzt markieren", "undo": "Umsetzung rückgängig", "details": "Verlauf und Ergebnisse" },
+    "noteLabel": "Notiz", "noteHint": "Optional, außer wenn keine Inhaltsänderung erkannt wurde. Bis 4.000 Zeichen.", "cancel": "Abbrechen", "updating": "Wird aktualisiert…", "success": "Empfehlung aktualisiert.", "errors": { "generic": "Empfehlung konnte nicht aktualisiert werden.", "conflict": "Die Empfehlung wurde anderswo geändert. Laden Sie die Daten neu und versuchen Sie es erneut." },
+    "applicationCheck": { "loading": "Der neueste autorisierte Seiten-Hash wird geprüft…", "sameTitle": "Keine Inhaltsänderung erkannt", "sameDescription": "Der neueste autorisierte Seiten-Hash entspricht der Analyse. Eine Bestätigung ist mit erklärender Notiz möglich.", "changedTitle": "Inhaltsänderung erkannt", "changedDescription": "Der neueste autorisierte Seiten-Hash unterscheidet sich vom Analyse-Anker.", "unavailableTitle": "Kein aktueller Seiten-Hash verfügbar", "unavailableDescription": "Führen Sie vor der Bestätigung eine neue autorisierte Analyse aus. Diese Prüfung ruft keinen Anbieter auf.", "noteRequired": "Fügen Sie eine erklärende Notiz hinzu, wenn keine Inhaltsänderung erkannt wurde.", "error": "Die Seiten-Hash-Prüfung ist fehlgeschlagen. Versuchen Sie es vor der Bestätigung erneut." },
+    "confirm": { "accept": { "title": "Empfehlung annehmen?", "description": "Die Annahme protokolliert Sie als Akteur und bewahrt den Verlauf.", "confirm": "Annehmen" }, "dismiss": { "title": "Empfehlung verwerfen?", "description": "Sie können sie später annehmen. Das Ereignis bleibt erhalten.", "confirm": "Verwerfen" }, "apply": { "title": "Umsetzung bestätigen?", "description": "Bestätigen Sie erst nach Änderung der eigenen Seite. Der Inhalts-Hash und die folgenden 28 Tage werden erfasst.", "confirm": "Umsetzung bestätigen" }, "undo": { "title": "Umsetzungsstatus rückgängig machen?", "description": "Ein neues Ereignis wird angelegt; der ursprüngliche Nachweis bleibt erhalten.", "confirm": "Rückgängig" } },
+    "history": { "title": "Empfehlungsverlauf", "empty": "Noch keine Statusänderungen.", "meta": "Akteur {{actor}} · {{time}}", "events": { "accepted": "Angenommen", "dismissed": "Verworfen", "applied": "Umsetzung bestätigt", "undo_applied": "Umsetzung rückgängig" } },
+    "hash": { "same": "Bestätigter Hash entspricht dem Analyse-Hash.", "changed": "Bestätigter Hash unterscheidet sich vom Analyse-Hash.", "unavailable": "Diesem Ereignis ist kein Inhalts-Hash zugeordnet." },
+    "outcomes": { "hashAnchor": "Angewendeter Inhalts-Hash-Anker", "sourceUnavailable": "Mindestens eine Datenquelle ist nicht verfügbar. Vorhandene Beobachtungen bleiben sichtbar; synchronisieren Sie die fehlende Quelle für bessere Abdeckung.", "relativeDelta": "Relative Änderung", "observedDate": "Beobachtungsdatum", "phase": "Fenster", "laterEditColumn": "Spätere Änderung", "phases": { "baseline": "Vorher", "following": "Danach" }, "boolean": { "yes": "Ja", "no": "Nein" }, "series": { "gsc": { "title": "Search-Console-Beobachtungen", "chartLabel": "Verfügbare Search-Console-Klickbeobachtungen im Ergebnisfenster" }, "rank": { "title": "Beobachtungen des verfolgten Rangs", "chartLabel": "Verfügbare Beobachtungen des verfolgten Rangs im Ergebnisfenster" } }, "syncButton": "Suchdaten-Einstellungen öffnen", "unavailable": "Ergebnisdaten nicht verfügbar", "syncAction": "Verbinden oder synchronisieren Sie Search Console und Rank-Tracking. Fehlende Daten werden nie als null angezeigt.", "observedAfter": "Beobachtet nach Umsetzung am {{date}}", "windowIncomplete": "Das folgende 28-Tage-Fenster ist noch unvollständig.", "laterEdit": "Eine spätere Inhaltsänderung liegt in diesem Fenster; interpretieren Sie die Bewegung vorsichtig.", "chartLabel": "Verfügbare Rangbeobachtungen im Ergebnisfenster", "metric": "Metrik", "baseline": "Vorherige 28 Tage", "following": "Folgende 28 Tage", "delta": "Absolute Änderung", "coverage": "Datenabdeckung — Search Console: {{gsc}} Tage; Rank-Tracking: {{rank}} Tage.", "disclaimer": "Externe Faktoren beeinflussen die Suchleistung. Diese Ansicht zeigt korrelierte Bewegung, keine Zuschreibung.", "metrics": { "clicks": "Klicks", "impressions": "Impressionen", "ctr": "CTR", "averagePosition": "Durchschnittsposition", "rankPosition": "Verfolgter Rang" } }
+  },
+  "inventory": {
+    "paywall": {
+      "title": "Content-Inventar",
+      "description": "Führen Sie ein Upgrade auf Pro oder Agency durch, um Ihre Seiten auf Duplikate, dünne Inhalte, Kannibalisierung und Themenlücken zu prüfen.",
+      "action": "Tarife ansehen"
+    },
+    "status": {
+      "queued": "In Warteschlange",
+      "crawling": "Crawlen",
+      "analyzing": "Analysieren",
+      "completed": "Fertig",
+      "partial": "Teilweise",
+      "failed": "Fehlgeschlagen",
+      "cancelled": "Abgebrochen"
+    },
+    "confidence": {
+      "high": "Hoch",
+      "medium": "Mittel",
+      "low": "Niedrig"
+    },
+    "warnings": {
+      "partialCrawl": "Einige Seiten konnten nicht gecrawlt werden; die Ergebnisse umfassen die gelesenen Seiten.",
+      "stoppedEarly": "Der Crawl wurde vorzeitig gestoppt, um im Budget zu bleiben.",
+      "evidenceMissing": "Search-Console-Daten waren nicht verfügbar, daher haben einige Ergebnisse geringere Sicherheit.",
+      "explanationSkipped": "Die verständliche Zusammenfassung wurde für diesen Lauf übersprungen."
+    },
+    "errorCategory": {
+      "no_pages_crawled": "Es konnten keine Seiten Ihrer Website gelesen werden.",
+      "crawl_failed": "Der Crawl konnte nicht abgeschlossen werden.",
+      "analysis_failed": "Die Analyse konnte nicht abgeschlossen werden.",
+      "cost_ceiling_exceeded": "Der Lauf stoppte an seiner Kostenobergrenze.",
+      "cancelled": "Dieser Lauf wurde abgebrochen.",
+      "unexpected": "Der Lauf stoppte aufgrund eines unerwarteten Fehlers."
+    },
+    "start": {
+      "title": "Inventarlauf starten",
+      "description": "Crawlen Sie Ihre Seiten und erhalten Sie Cluster, Duplikate, dünne und verwaiste Seiten, Kannibalisierung und Themenlücken.",
+      "pageLimit": "Zu crawlende Seiten",
+      "pageLimitHint": "Zwischen einer und {{max}} Seiten. Vier Seiten bilden einen reservierten Block.",
+      "blocksTitle": "Was reserviert wird",
+      "blocks": "{{blocks}} Block/Blöcke für {{pages}} Seiten reserviert (vier Seiten pro Block).",
+      "blocksInvalid": "Geben Sie eine gültige Seitenzahl ein, um die reservierten Blöcke zu sehen.",
+      "allowedPaths": "Nur diese Pfade (optional)",
+      "excludedPaths": "Diese Pfade überspringen (optional)",
+      "sitemapSeeds": "Sitemap-URLs (optional)",
+      "pathsHint": "Ein Pfad pro Zeile, beginnend mit einem Schrägstrich. Bis zu {{max}} Pfade.",
+      "seedsHint": "Eine Sitemap-URL pro Zeile. Bis zu {{max}} Einträge.",
+      "inFlight": "Ein Lauf ist bereits aktiv. Warten Sie, bis er fertig ist, bevor Sie einen neuen starten.",
+      "submit": "Inventar starten",
+      "submitting": "Wird gestartet…",
+      "errors": {
+        "pageLimitRange": "Geben Sie eine Seitenzahl zwischen eins und 100 ein.",
+        "tooManyPaths": "Verwenden Sie höchstens 20 Pfade pro Liste.",
+        "invalidPath": "Jeder Pfad muss mit einem Schrägstrich beginnen (zum Beispiel /blog).",
+        "tooManySeeds": "Verwenden Sie höchstens fünf Sitemap-URLs.",
+        "invalidSeed": "Eine der Sitemap-URLs ist zu lang."
+      }
+    },
+    "runs": {
+      "title": "Inventarläufe",
+      "description": "Alle Inventarläufe für diese Website, neueste zuerst.",
+      "view": "Öffnen",
+      "loadMore": "Mehr laden",
+      "columns": {
+        "requested": "Angefordert",
+        "status": "Status",
+        "pages": "Seiten",
+        "blocks": "Blöcke",
+        "actions": "Aktionen"
+      },
+      "empty": {
+        "title": "Noch keine Inventarläufe",
+        "description": "Starten Sie Ihren ersten Lauf, um Duplikate, dünne Seiten und Themenlücken zu kartieren."
+      }
+    },
+    "detail": {
+      "back": "Zurück zum Inventar",
+      "pending": "Dieser Lauf arbeitet noch. Ergebnisse erscheinen, sobald er fertig ist."
+    },
+    "progress": {
+      "title": "Fortschritt",
+      "pagesRequested": "Angeforderte Seiten",
+      "pagesProcessed": "Verarbeitete Seiten",
+      "pagesFailed": "Fehlgeschlagene Seiten",
+      "blocksReserved": "Reservierte Blöcke",
+      "blocksRefunded": "Erstattete Blöcke",
+      "refundNote": "{{count}} ungenutzte(r) Block/Blöcke wurden Ihrem Kontingent gutgeschrieben.",
+      "warningsTitle": "Warnungen",
+      "errorTitle": "Dieser Lauf stoppte vorzeitig",
+      "errorGeneric": "Der Lauf stoppte, bevor er fertig war.",
+      "cancel": "Lauf abbrechen",
+      "cancelling": "Wird abgebrochen…"
+    },
+    "findings": {
+      "confidence": "Sicherheit: {{value}}",
+      "evidence": "{{count}} verknüpfte Beleg-Quelle(n)",
+      "clusters": {
+        "title": "Themencluster",
+        "description": "Gruppen von Seiten, die dasselbe Thema teilen.",
+        "empty": "Keine Themencluster gefunden",
+        "emptyHint": "Ihre Seiten bildeten keine Cluster mit gemeinsamem Thema.",
+        "columns": {
+          "label": "Cluster",
+          "pages": "Seiten",
+          "terms": "Gemeinsame Begriffe"
+        }
+      },
+      "links": {
+        "title": "Interne Links",
+        "description": "Wie Ihre Seiten aufeinander verlinken. Verwaiste und schwach verlinkte Seiten werden markiert.",
+        "empty": "Keine internen Linkdaten",
+        "emptyHint": "Keine Seiten verfügbar, um die interne Linkansicht zu erstellen.",
+        "columns": {
+          "page": "Seite",
+          "inbound": "Eingehend",
+          "outbound": "Ausgehend",
+          "flags": "Markierungen"
+        }
+      },
+      "cannibalization": {
+        "title": "Keyword-Kannibalisierung",
+        "description": "Zwei oder mehr Ihrer Seiten konkurrieren um dieselbe Suchanfrage.",
+        "empty": "Keine Kannibalisierung gefunden",
+        "emptyHint": "Keine zwei Seiten konkurrieren um dieselbe Suchanfrage.",
+        "hasGsc": "Search-Console-Beleg",
+        "noGsc": "Kein Search-Console-Beleg",
+        "startAnalysis": "Content-Analyse starten"
+      },
+      "gaps": {
+        "title": "Themenlücken",
+        "description": "Suchanfragen, die Ihre Wettbewerber abdecken, Ihre Seiten aber nicht.",
+        "empty": "Keine Themenlücken gefunden",
+        "emptyHint": "Keine klaren Themenlücken gegenüber Ihren Wettbewerbern gefunden."
+      },
+      "opportunity": {
+        "title": "Chancen-Zusammenfassung"
+      }
+    },
+    "table": {
+      "title": "Gecrawlte Seiten",
+      "description": "Jede gelesene Seite mit ihren abgeleiteten Fakten.",
+      "empty": "Keine Seiten gecrawlt",
+      "emptyHint": "Dieser Lauf hat keine Seiten gelesen.",
+      "noMatches": "Keine Seiten entsprechen diesen Filtern.",
+      "clearFilters": "Filter löschen",
+      "prev": "Zurück",
+      "next": "Weiter",
+      "pageOf": "Seite {{page}} von {{total}}",
+      "filters": {
+        "url": "URL enthält",
+        "urlPlaceholder": "/blog",
+        "topic": "Thema enthält",
+        "topicPlaceholder": "Preise",
+        "language": "Sprache",
+        "allLanguages": "Alle Sprachen",
+        "issue": "Problem",
+        "allIssues": "Alle Probleme"
+      },
+      "columns": {
+        "url": "URL",
+        "language": "Sprache",
+        "words": "Wörter",
+        "links": "Interne Links",
+        "topics": "Themen",
+        "flags": "Markierungen"
+      },
+      "qualityFlags": {
+        "thin": "Dünn",
+        "orphan": "Verwaist",
+        "weakly_linked": "Schwach verlinkt",
+        "noindex": "Noindex",
+        "missing_title": "Titel fehlt"
+      }
+    },
+    "errors": {
+      "loadFailed": "Inventarläufe konnten nicht geladen werden.",
+      "loadOneFailed": "Dieser Lauf konnte nicht geladen werden.",
+      "startFailed": "Der Inventarlauf konnte nicht gestartet werden.",
+      "retry": "Erneut versuchen"
+    }
+  },
+  "competitorContent": {
+    "paywall": {
+      "title": "Wettbewerbs-Content-Intelligence",
+      "description": "Wechseln Sie zu Agency, um Ihre Seiten mit bestätigten Wettbewerbern zu vergleichen und Content-Lücken, fehlende strukturierte Daten und Themenchancen aufzudecken.",
+      "action": "Pläne ansehen"
+    },
+    "status": {
+      "queued": "In Warteschlange",
+      "collecting": "Wird erfasst",
+      "comparing": "Wird verglichen",
+      "completed": "Abgeschlossen",
+      "partial": "Teilweise",
+      "failed": "Fehlgeschlagen",
+      "cancelled": "Abgebrochen"
+    },
+    "confidence": { "high": "Hoch", "medium": "Mittel", "low": "Niedrig" },
+    "warnings": {
+      "partialPortfolio": "Einige Wettbewerber konnten nicht gelesen werden; die Ergebnisse decken die erreichbaren ab.",
+      "stoppedEarly": "Der Lauf wurde vorzeitig beendet, um im Budget zu bleiben.",
+      "aiBudgetExhausted": "Die Zusammenfassung in einfacher Sprache wurde übersprungen, um im Budget zu bleiben.",
+      "aiUnavailable": "Die Zusammenfassung in einfacher Sprache war für diesen Lauf nicht verfügbar.",
+      "aiCopyRejected": "Die generierte Zusammenfassung wurde verworfen, weil sie die Formulierung des Wettbewerbers wiederholte."
+    },
+    "errorCategory": {
+      "no_confirmed_competitors": "Für diesen Lauf waren keine bestätigten Wettbewerber verfügbar.",
+      "owned_page_unusable": "Ihre Seite konnte für den Vergleich nicht gelesen werden.",
+      "no_comparable_pages": "Es konnten keine vergleichbaren Wettbewerberseiten gelesen werden.",
+      "collection_failed": "Die Seiten konnten nicht erfasst werden.",
+      "comparison_failed": "Der Vergleich konnte nicht abgeschlossen werden.",
+      "cost_ceiling_exceeded": "Der Lauf stoppte an seiner Kostenobergrenze.",
+      "cancelled": "Dieser Lauf wurde abgebrochen.",
+      "unexpected": "Der Lauf wurde wegen eines unerwarteten Fehlers gestoppt."
+    },
+    "errors": {
+      "loadFailed": "Wettbewerbsläufe konnten nicht geladen werden.",
+      "loadOneFailed": "Dieser Lauf konnte nicht geladen werden.",
+      "startFailed": "Der Lauf konnte nicht gestartet werden.",
+      "retry": "Erneut versuchen"
+    },
+    "manager": {
+      "suggestionsTitle": "Vorgeschlagene Wettbewerber",
+      "suggestionsDescription": "Domains, die bereits neben Ihnen ranken, aus Ihren vorhandenen Wettbewerbsdaten. Bestätigen Sie die zu vergleichenden.",
+      "suggestionsEmpty": {
+        "title": "Noch keine Vorschläge",
+        "description": "Führen Sie zuerst die Wettbewerbersuche im Tab „Competitors“ aus oder fügen Sie unten einen Wettbewerber per URL hinzu."
+      },
+      "columns": {
+        "domain": "Domain",
+        "avgPosition": "Durchschnittsposition",
+        "overlap": "Gemeinsame Keywords",
+        "source": "Quelle",
+        "status": "Status",
+        "actions": "Aktionen"
+      },
+      "confirm": "Bestätigen",
+      "confirmed": "Bestätigt",
+      "adding": "Wird hinzugefügt…",
+      "manualTitle": "Wettbewerber hinzufügen",
+      "manualDescription": "Fügen Sie jede öffentliche Wettbewerberseite per URL hinzu. Das Bestätigen einer Domain bedeutet nie, dass sie Ihnen gehört.",
+      "manualLabel": "Wettbewerber-URL",
+      "manualHint": "Fügen Sie bis zu {{max}} Wettbewerber zu Ihrem Portfolio hinzu.",
+      "add": "Wettbewerber hinzufügen",
+      "portfolioFull": "Ihr Portfolio enthält bereits das Maximum von {{max}} Wettbewerbern. Archivieren Sie einen, um einen weiteren hinzuzufügen.",
+      "portfolioTitle": "Ihre Wettbewerber",
+      "portfolioDescription": "Bestätigte Wettbewerber, mit denen Sie vergleichen können. Archivieren Sie nicht mehr verfolgte.",
+      "portfolioEmpty": {
+        "title": "Noch keine Wettbewerber",
+        "description": "Bestätigen Sie einen Vorschlag oder fügen Sie einen Wettbewerber per URL hinzu, um Ihr Portfolio aufzubauen."
+      },
+      "source": { "suggested": "Vorgeschlagen", "manual": "Manuell" },
+      "profileStatus": { "active": "Aktiv", "archived": "Archiviert" },
+      "archive": "Archivieren",
+      "restore": "Wiederherstellen",
+      "updating": "Wird aktualisiert…",
+      "errors": {
+        "invalidUrl": "Geben Sie eine gültige URL ein, die mit http oder https beginnt.",
+        "portfolioFull": "Ihr Portfolio enthält bereits das Maximum von {{max}} Wettbewerbern.",
+        "addFailed": "Der Wettbewerber konnte nicht hinzugefügt werden.",
+        "mutateFailed": "Der Wettbewerber konnte nicht aktualisiert werden."
+      }
+    },
+    "run": {
+      "title": "Vergleichslauf starten",
+      "description": "Vergleichen Sie eine Ihrer Seiten mit Ihren bestätigten Wettbewerbern und erhalten Sie Differenzen, Lücken und Chancen.",
+      "noCompetitors": {
+        "title": "Bestätigen Sie zuerst einen Wettbewerber",
+        "description": "Fügen Sie oben mindestens einen aktiven Wettbewerber hinzu, bevor Sie einen Vergleichslauf starten."
+      },
+      "selectCompetitors": "Wettbewerber zum Vergleich wählen (bis zu {{max}})",
+      "ownedUrl": "URL Ihrer Seite",
+      "ownedUrlHint": "Muss eine Seite der Website sein, die Ihnen gehört.",
+      "competitorUrl": "Ranking-Seite für {{domain}}",
+      "keyword": "Fokus-Keyword (optional)",
+      "keywordHint": "Grenzt den Vergleich auf die gewünschte Suchabsicht ein.",
+      "pageLimit": "Zu lesende Wettbewerberseiten",
+      "pageLimitHint": "Zwischen einer und {{max}} Seiten über die gewählten Wettbewerber.",
+      "disclosureTitle": "Was dieser Lauf kostet",
+      "disclosure": "Dieser Lauf reserviert eine Einheit und liest bis zu {{pages}} Seiten über {{count}} Wettbewerber.",
+      "disclosureInvalid": "Geben Sie eine gültige Seitenzahl ein, um zu sehen, was dieser Lauf reserviert.",
+      "inFlight": "Ein Lauf läuft bereits. Warten Sie auf dessen Ende, bevor Sie einen neuen starten.",
+      "submit": "Vergleich starten",
+      "submitting": "Wird gestartet…",
+      "reviewed": { "title": "Ranking-Seiten prüfen", "description": "Bestätigen Sie die tatsächlichen Vergleichsseiten. Vor Ihrer Freigabe startet kein Lauf.", "loading": "Geprüfter Abgleich wird geladen…", "notFound": "Dieser geprüfte Abgleich ist nicht mehr verfügbar.", "loadFailed": "Der geprüfte Abgleich konnte nicht geladen werden.", "evidence": "Verknüpfte Keyword-Evidenz", "openSuggested": "Vorgeschlagene Ranking-Seite öffnen", "competitorUrl": "Ranking-Seite des Wettbewerbers", "disclosure": "Der Vergleich reserviert eine Einheit und liest eine geprüfte Wettbewerberseite sowie die zugehörige eigene Seite.", "reviewAction": "Kosten prüfen und bestätigen", "confirmTitle": "Diesen Vergleich starten?", "confirmDescription": "Die Domain-gleichen Seiten werden gespeichert, eine Einheit reserviert und der Vergleich eingereiht.", "cancel": "Weiter prüfen", "confirm": "Bestätigen und starten" },
+      "errors": {
+        "noSelection": "Wählen Sie mindestens einen Wettbewerber zum Vergleich.",
+        "tooMany": "Wählen Sie nicht mehr als die erlaubte Anzahl an Wettbewerbern.",
+        "invalidUrl": "Geben Sie eine gültige Seiten-URL ein, die mit http oder https beginnt.",
+        "invalidCompetitorUrl": "Geben Sie für jeden ausgewählten Wettbewerber eine Ranking-Seiten-URL ein.",
+        "pageLimitRange": "Geben Sie eine Seitenzahl im erlaubten Bereich ein."
+      }
+    },
+    "runs": {
+      "title": "Vergleichsläufe",
+      "description": "Alle Vergleichsläufe für diese Website, neueste zuerst.",
+      "columns": {
+        "requested": "Angefordert",
+        "status": "Status",
+        "competitors": "Wettbewerber",
+        "pages": "Seiten",
+        "actions": "Aktionen"
+      },
+      "view": "Öffnen",
+      "loadMore": "Mehr laden",
+      "empty": {
+        "title": "Noch keine Vergleichsläufe",
+        "description": "Starten Sie Ihren ersten Lauf, um zu sehen, wie Ihre Seite im Vergleich zu Ihren Wettbewerbern abschneidet."
+      }
+    },
+    "progress": {
+      "title": "Lauffortschritt",
+      "competitorsRequested": "Angeforderte Wettbewerber",
+      "competitorsProcessed": "Gelesene Wettbewerber",
+      "competitorsFailed": "Fehlgeschlagene Wettbewerber",
+      "pagesScraped": "Gelesene Seiten",
+      "refundNote": "Die reservierte Einheit wurde Ihrem Kontingent gutgeschrieben.",
+      "warningsTitle": "Warnungen",
+      "errorTitle": "Dieser Lauf wurde vorzeitig beendet",
+      "errorGeneric": "Der Lauf wurde vor dem Ende gestoppt.",
+      "cancel": "Lauf abbrechen",
+      "cancelling": "Wird abgebrochen…"
+    },
+    "detail": {
+      "back": "Zurück zu Wettbewerbern",
+      "pending": "Dieser Lauf arbeitet noch. Ergebnisse erscheinen nach Abschluss."
+    },
+    "findings": {
+      "confidence": "Konfidenz: {{value}}",
+      "evidence": "{{count}} verknüpfte Belegquelle(n)",
+      "explanation": { "title": "Zusammenfassung" }
+    },
+    "comparison": {
+      "title": "Vergleichsübersicht",
+      "description": "Wie jede Wettbewerberseite mit Ihrer Seite über die zentralen Dimensionen abschneidet.",
+      "partialDomains": "Einige Wettbewerber konnten nicht gelesen werden: {{domains}}. Sie zählen nicht als Schwächen.",
+      "empty": "Keine Vergleichsdaten",
+      "emptyHint": "Dieser Lauf ergab keine Differenzen pro Wettbewerber.",
+      "noMatches": "Keine Wettbewerber entsprechen diesen Filtern.",
+      "clearFilters": "Filter zurücksetzen",
+      "filters": {
+        "domain": "Wettbewerber enthält",
+        "domainPlaceholder": "competitor.com",
+        "dimension": "Dimension"
+      },
+      "dimensions": {
+        "all": "Alle Dimensionen",
+        "length": "Inhaltslänge",
+        "structure": "Struktur",
+        "links": "Links",
+        "schema": "Strukturierte Daten",
+        "topics": "Themen"
+      },
+      "columns": {
+        "competitor": "Wettbewerber",
+        "words": "Wörter Δ",
+        "headings": "Überschriften Δ",
+        "internalLinks": "Interne Links Δ",
+        "externalLinks": "Externe Links Δ",
+        "missingSchema": "Fehlendes Schema",
+        "missingTopics": "Fehlende Themen"
+      }
+    },
+    "opportunities": {
+      "title": "Chancen",
+      "description": "Maschinell erzeugte Ansätze mit Belegen, nach Konfidenz sortiert.",
+      "startAnalysis": "Content-Analyse starten",
+      "empty": "Keine Chancen gefunden",
+      "emptyHint": "Dieser Vergleich ergab keine klaren Content-Chancen.",
+      "kinds": {
+        "topic_gap": "Themenlücke",
+        "schema_gap": "Schema-Lücke",
+        "format_gap": "Format-Lücke",
+        "internal_linking_gap": "Interne Verlinkungslücke",
+        "differentiated_strength": "Ihre Stärke",
+        "target_keyword": "Ziel-Keyword"
+      }
+    },
+    "drilldown": {
+      "title": "Seitendetails",
+      "description": "Abgeleitete Fakten für Ihre Seite und jede gelesene Wettbewerberseite.",
+      "empty": "Keine Seitendetails",
+      "emptyHint": "Dieser Lauf speicherte keine Fakten pro Seite.",
+      "role": { "owned": "Ihre Seite", "competitor": "Wettbewerber" },
+      "visit": "Seite besuchen",
+      "words": "Wörter",
+      "headings": "Überschriften",
+      "internalLinks": "Interne Links",
+      "externalLinks": "Externe Links"
+    }
+  },
+  "monitoring": {
+    "paywall": {
+      "title": "Änderungsüberwachung ist eine Agentur-Funktion",
+      "description": "Verfolgen Sie wöchentliche Änderungen an eigenen Seiten und Seiten bestätigter Wettbewerber. Wechseln Sie zum Agentur-Tarif, um sie zu aktivieren.",
+      "action": "Agentur-Tarife ansehen"
+    },
+    "notifications": {
+      "title": "Änderungswarnungen",
+      "description": "Legen Sie fest, ob wir Ihnen eine E-Mail senden, wenn sich eine überwachte Seite spürbar ändert.",
+      "label": "Bei wesentlichen Änderungen benachrichtigen",
+      "hint": "Eine E-Mail pro überwachter Seite, wenn sich ihr Inhalt genug ändert, um relevant zu sein. Sicherheits-E-Mails sind nie betroffen."
+    },
+    "form": {
+      "title": "Überwachung hinzufügen",
+      "description": "Überwachen Sie eine öffentliche Seite auf wöchentliche Änderungen. Wählen Sie eine eigene Seite oder die eines bestätigten Wettbewerbers.",
+      "allowanceValue": "{{used}} von {{cap}}",
+      "slots": "Aktive Überwachungen",
+      "checks": "Wöchentliche Prüfungen diesen Monat",
+      "targetKind": "Was möchten Sie überwachen?",
+      "targetKinds": {
+        "owned": {
+          "label": "Eine meiner Seiten",
+          "hint": "Eine Seite auf dieser Website, die Ihnen bereits gehört."
+        },
+        "competitor": {
+          "label": "Eine Wettbewerberseite",
+          "hint": "Eine Seite eines von Ihnen bestätigten Wettbewerbers."
+        }
+      },
+      "ownedUrl": "Seitenadresse",
+      "ownedUrlHint": "Die vollständige Adresse der Seite auf Ihrer eigenen Website.",
+      "selectCompetitor": "Bestätigten Wettbewerber wählen",
+      "competitorUrl": "Adresse der Wettbewerberseite",
+      "competitorUrlHint": "Die genaue zu überwachende Wettbewerberseite. Sie muss zu einem bestätigten Wettbewerber gehören.",
+      "noCompetitors": {
+        "title": "Noch keine bestätigten Wettbewerber",
+        "description": "Bestätigen Sie einen Wettbewerber in der Ansicht Wettbewerber, bevor Sie eine ihrer Seiten überwachen können.",
+        "action": "Zu den Wettbewerbern"
+      },
+      "cadenceTitle": "Wie oft wir prüfen",
+      "cadenceValue": "Jede Prüfung läuft {{cadence}}. Dies lässt sich nicht ändern.",
+      "errors": {
+        "noCompetitor": "Wählen Sie zuerst einen bestätigten Wettbewerber.",
+        "invalidUrl": "Geben Sie eine vollständige Adresse ein, die mit http oder https beginnt."
+      },
+      "slotsFull": "Sie nutzen alle {{limit}} Überwachungsplätze. Löschen Sie einen, um einen weiteren hinzuzufügen.",
+      "confirmTitle": "Diese Seite überwachen?",
+      "confirmDescription": "Bestätigen Sie {{url}} für {{cadence}} Prüfungen. Dadurch wird ein Überwachungsplatz belegt; eine Inhaltsanalyse startet nicht.",
+      "confirmCancel": "Weiter bearbeiten",
+      "confirmAction": "Überwachung bestätigen",
+      "submit": "Überwachung starten",
+      "submitting": "Wird gestartet…"
+    },
+    "cadence": { "weekly": "wöchentlich" },
+    "targetKinds": { "owned": "Eigene Seite", "competitor": "Wettbewerberseite" },
+    "status": {
+      "active": "Aktiv",
+      "paused": "Pausiert",
+      "cap_paused": "Pausiert (Limit erreicht)",
+      "error": "Fehler"
+    },
+    "list": {
+      "title": "Ihre Überwachungen",
+      "description": "Jede von Ihnen überwachte Seite, ihr Status und ihre letzte Prüfung.",
+      "columns": {
+        "target": "Seite",
+        "status": "Status",
+        "lastCheck": "Zuletzt geprüft",
+        "lastChange": "Letzte Änderung",
+        "actions": "Aktionen"
+      },
+      "never": "Noch nicht geprüft",
+      "noChange": "Noch keine Änderung",
+      "view": "Verlauf",
+      "pause": "Pausieren",
+      "resume": "Fortsetzen",
+      "delete": "Löschen",
+      "updating": "Wird ausgeführt…",
+      "empty": {
+        "title": "Noch keine Überwachungen",
+        "description": "Fügen Sie oben Ihre erste Überwachung hinzu, um wöchentliche Änderungen zu verfolgen."
+      },
+      "deleteConfirm": {
+        "title": "Diese Überwachung löschen?",
+        "description": "Wir prüfen diese Seite nicht mehr und entfernen ihren Änderungsverlauf. Dies kann nicht rückgängig gemacht werden.",
+        "cancel": "Behalten",
+        "confirm": "Überwachung löschen"
+      }
+    },
+    "filters": {
+      "all": "Alle",
+      "active": "Aktiv",
+      "paused": "Pausiert",
+      "cap_paused": "Limit erreicht",
+      "error": "Fehler"
+    },
+    "feed": {
+      "title": "Änderungsverlauf",
+      "description": "Jede wöchentliche Prüfung und jede erkannte wesentliche Änderung, die neuesten zuerst.",
+      "empty": {
+        "title": "Noch keine Prüfungen",
+        "description": "Die erste wöchentliche Prüfung wurde noch nicht ausgeführt. Kommen Sie nach der nächsten Prüfung wieder."
+      },
+      "kinds": {
+        "check_reserved": "Prüfung geplant",
+        "check_completed": "Prüfung abgeschlossen",
+        "change_detected": "Änderung erkannt",
+        "check_failed": "Prüfung fehlgeschlagen",
+        "cap_paused": "Am Limit pausiert",
+        "unknown": "Aktualisierung"
+      },
+      "loadMore": "Mehr anzeigen"
+    },
+    "detail": {
+      "back": "Zurück zu den Überwachungen",
+      "kind": "Typ",
+      "cadence": "Takt",
+      "lastCheck": "Zuletzt geprüft"
+    },
+    "errorCategory": {
+      "provider_unavailable": "Der Überwachungsdienst war nicht verfügbar.",
+      "reconcile_failed": "Die letzte geplante Prüfung konnte nicht abgeschlossen werden.",
+      "cap_exhausted": "Das monatliche Prüfkontingent ist aufgebraucht.",
+      "unexpected": "Bei dieser Überwachung ist ein Fehler aufgetreten."
+    },
+    "errors": {
+      "createFailed": "Wir konnten diese Überwachung nicht hinzufügen.",
+      "actionFailed": "Wir konnten diese Überwachung nicht aktualisieren.",
+      "loadFailed": "Wir konnten Ihre Überwachungen nicht laden.",
+      "loadOneFailed": "Wir konnten diese Überwachung nicht laden.",
+      "monitorError": "Diese Überwachung erfordert Aufmerksamkeit",
+      "retry": "Erneut versuchen"
+    }
+  },
+  "briefs": {
+    "form": {
+      "title": "SERP-basiertes Briefing erstellen",
+      "description": "Wählen Sie ein beobachtetes Keyword. Vor einer Reservierung prüfen Sie die vollständige Kostenschätzung.",
+      "keyword": "Ziel-Keyword",
+      "placeholder": "z. B. evidenzbasierte Suchoptimierung",
+      "preview": "Schätzung prüfen",
+      "previewing": "Wird geprüft…",
+      "confirm": "Briefing erstellen",
+      "creating": "Wird erstellt…",
+      "cancel": "Abbrechen"
+    },
+    "preview": {
+      "title": "Kostenvorschau",
+      "unit": "Dieses Briefing verbraucht {{count}} Content-Briefing-Einheit.",
+      "serp": {
+        "stored": "Gespeicherte SERP-Beobachtung vom {{date}}; kein neuer Abruf erwartet.",
+        "fetched": "Keine frische SERP gespeichert; ein abgerechneter Abruf ist in der Einheit enthalten."
+      },
+      "scrapes": "Bis zu {{count}} öffentliche Ergebnisseiten werden einzeln gelesen.",
+      "consume": "Voraussichtlicher Verbrauch: {{base}} Basis, {{pack}} Paket.",
+      "remaining": "Derzeit verfügbar: {{base}} Basis, {{pack}} Paket."
+    },
+    "status": {
+      "queued": "Warteschlange",
+      "running": "In Bearbeitung",
+      "completed": "Abgeschlossen",
+      "completed_empty": "Abgeschlossen — kein Korpus",
+      "completed_partial": "Teilweise",
+      "failed": "Fehlgeschlagen"
+    },
+    "states": {
+      "cap": {
+        "title": "Briefing-Kontingent aufgebraucht",
+        "description": "Basiskontingent und Paketguthaben reichen für dieses Briefing nicht aus.",
+        "action": "Briefing-Pakete ansehen"
+      },
+      "disabled": {
+        "title": "Content-Briefings sind nicht verfügbar",
+        "description": "Diese Funktion ist derzeit deaktiviert. Gespeicherte Daten bleiben unverändert."
+      },
+      "failed": {
+        "title": "Das Briefing konnte nicht fertiggestellt werden",
+        "description": "Der Lauf wurde beendet. Sicher gespeicherte Belege bleiben sichtbar."
+      }
+    },
+    "locked": {
+      "title": "Content-Briefings erfordern Pro oder Agency",
+      "description": "Agency enthält ein Monatskontingent. Pro kann Guthaben aus einem Briefing-Paket verwenden.",
+      "action": "Tarife vergleichen"
+    },
+    "list": {
+      "title": "Gespeicherte Briefings",
+      "description": "Öffnen Sie gespeicherte Briefings ohne eine weitere Einheit zu verbrauchen.",
+      "filter": "Statusfilter",
+      "all": "Alle Status",
+      "loading": "Briefings werden geladen…",
+      "meta": "Angefordert am {{date}} · {{count}} gespeicherte Seiten"
+    },
+    "empty": {
+      "title": "Noch keine Briefings",
+      "description": "Prüfen Sie oben ein beobachtetes Keyword, um Ihr erstes belegtes Briefing zu erstellen."
+    },
+    "actions": {
+      "open": "Öffnen",
+      "back": "Zurück zu den Briefings",
+      "editor": "Editor öffnen",
+      "more": "Mehr laden",
+      "retry": "Erneut versuchen"
+    },
+    "detail": {
+      "loading": "Briefing wird geladen…",
+      "citations": "Gespeicherte Belegverweise"
+    },
+    "running": {
+      "title": "Briefing wird aufgebaut",
+      "description": "Gespeicherte Belege erscheinen nach jeder begrenzten Stufe. Die Ansicht aktualisiert sich automatisch."
+    },
+    "halt": {
+      "title": "Lauf vorzeitig beendet",
+      "message": "Bei {{stage}} wegen {{reason}} beendet. Gespeicherte Belege sind weiterhin verfügbar.",
+      "stage": {
+        "serp_fetch": "SERP-Abruf",
+        "scrape": "Seitenabruf",
+        "brief_ai": "KI-Gliederung",
+        "editor_ai": "Editor-Bewertung"
+      },
+      "reason": {
+        "cost_ceiling": "des laufenden Kostenlimits",
+        "provider_error": "eines Anbieterausfalls",
+        "unsafe_url": "einer unsicheren Ergebnis-URL",
+        "malformed_output": "einer unbelegten KI-Antwort",
+        "processing_failure": "eines Verarbeitungsfehlers"
+      }
+    },
+    "corpus": {
+      "title": "Statistik des Top-10-Korpus",
+      "scrapeDates": "Top-10-Durchschnitt aus Seiten, die am {{dates}} gelesen wurden.",
+      "noDates": "keine gespeicherten Daten",
+      "range": "Wortzahlspanne",
+      "average": "Durchschnittliche Wörter",
+      "pages": "Gespeicherte Seiten",
+      "headings": "Überschriftenstruktur",
+      "entities": "Entitäten aus strukturierten Daten",
+      "noEntities": "Es wurden keine Entitäten aus strukturierten Daten gespeichert."
+    },
+    "sources": {
+      "title": "Gespeicherte Quellseiten",
+      "description": "Titel und Überschriften sind nicht vertrauenswürdiger Dritttext und werden wörtlich angezeigt.",
+      "meta": "Gelesen am {{date}} · {{count}} Wörter",
+      "empty": "Kein Quelldokument wurde gespeichert."
+    },
+    "outline": {
+      "title": "Belegte Gliederung",
+      "empty": "Das Modell hat sich enthalten, weil die gespeicherten Belege nicht ausreichten."
+    },
+    "questions": {
+      "title": "Fragen aus gespeicherten PAA-Belegen",
+      "empty": "Keine belegte Frage bestand die Belegprüfung."
+    },
+    "terms": {
+      "title": "Sekundärbegriffe des Clusters",
+      "empty": "Kein gespeichertes Cluster enthält dieses Keyword."
+    },
+    "paa": { "title": "Gespeicherte ähnliche Suchfragen" },
+    "abstentions": {
+      "title": "Grenzen der Belege",
+      "noSerpResults": "Die gespeicherte oder abgerufene SERP enthielt keine brauchbaren Ergebnis-URLs.",
+      "noDocuments": "Keine Ergebnisseite lieferte ein gespeichertes Dokument.",
+      "outline": "Kein Gliederungspunkt hatte genügend zitierte Belege.",
+      "questions": "Keine Frage hatte einen auflösbaren gespeicherten PAA-Verweis.",
+      "malformedEvidence": "Unbelegte oder fehlerhafte KI-Ausgabe wurde verworfen.",
+      "unknown": "Ein Abschnitt wurde wegen unzureichender Belege ausgelassen."
+    },
+    "guidance": "Richtungsweisende Hinweise aus dem gespeicherten Korpus; Suchergebnisse können abweichen.",
+    "cost": "Laufkosten: {{used}} von {{ceiling}} Mikrodollar Obergrenze.",
+    "editor": {
+      "title": "Entwurfseditor: {{keyword}}",
+      "description": "Vergleichen Sie einen begrenzten Entwurf mit dem gespeicherten Korpus. Eine Neubewertung verbraucht keine neue Einheit und ruft KI nur bei ausreichendem Restbudget auf.",
+      "draft": "Entwurf",
+      "characters": "{{count}} von 50.000 Zeichen",
+      "score": "Diese Version bewerten",
+      "scoring": "Wird bewertet…",
+      "history": "Bewertungsverlauf",
+      "empty": "Noch keine Entwurfsversion wurde bewertet.",
+      "version": "Version {{version}}",
+      "deterministicScore": "Deterministische Orientierung: {{score}}/100",
+      "words": "Wörter",
+      "headings": "Überschriften",
+      "entities": "Passende Entitäten",
+      "aiScore": "KI-Orientierung: {{score}}/100",
+      "deterministicOnly": "Nur deterministische Orientierung",
+      "disclosure": {
+        "scored": "Die begrenzte KI-Bewertung basiert auf gespeicherten Belegen.",
+        "cost_ceiling": "Das Restbudget des ursprünglichen Laufs reichte nicht für einen weiteren KI-Aufruf.",
+        "provider_error": "Der KI-Anbieter war nicht erreichbar; der deterministische Vergleich bleibt verfügbar.",
+        "malformed_output": "Die KI-Antwort war nicht belegt und wurde verworfen."
+      }
+    },
+    "errors": {
+      "preview": "Die Kostenvorschau konnte nicht erstellt werden.",
+      "create": "Dieses Briefing konnte nicht erstellt werden.",
+      "load": "Dieses Briefing konnte nicht geladen werden.",
+      "rescore": "Dieser Entwurf konnte nicht bewertet werden."
+    }
+  }
+}

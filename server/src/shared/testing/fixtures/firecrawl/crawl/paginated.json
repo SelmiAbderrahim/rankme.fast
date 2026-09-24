@@ -1,0 +1,8 @@
+{
+  "status": "completed",
+  "total": 2,
+  "completed": 2,
+  "creditsUsed": 2,
+  "next": "https://api.firecrawl.dev/v2/crawl/00000000-0000-4000-8000-000000000001?skip=1",
+  "data": [{ "markdown": "# One", "links": [], "metadata": { "sourceURL": "https://example.com/one", "statusCode": 200 } }]
+}

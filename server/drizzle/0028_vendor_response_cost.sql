@@ -1,0 +1,4 @@
+ALTER TABLE "credit_ledger" DROP CONSTRAINT "credit_ledger_metric_check";--> statement-breakpoint
+ALTER TABLE "vendor_responses" ADD COLUMN "cost_micros" bigint;--> statement-breakpoint
+CREATE INDEX "vendor_responses_account_fetched_idx" ON "vendor_responses" USING btree ("account_id","fetched_at");--> statement-breakpoint
+ALTER TABLE "credit_ledger" ADD CONSTRAINT "credit_ledger_metric_check" CHECK ("credit_ledger"."metric" in ('sites', 'keywords_tracked', 'audits', 'audit_pages', 'serp_checks', 'backlink_rows', 'ai_summaries', 'competitor_lookups', 'ai_mentions_checks', 'keyword_lookups', 'local_listing_checks'));

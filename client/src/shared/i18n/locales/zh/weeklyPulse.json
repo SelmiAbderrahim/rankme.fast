@@ -1,0 +1,105 @@
+{
+  "card": {
+    "title": "每周脉搏",
+    "description": "每个站点一份确定的每周摘要 — 新增/丢失引用、已确认排名下降、行动变化以及接下来的三个行动。每个站点每周消耗一次 AI 提及检查。",
+    "unitDisclosure": "每个站点每周一次 AI 提及检查。",
+    "nextRun": "下次运行:{{when}}",
+    "lastRun": "上次运行:{{when}}",
+    "lastStatus": "上次状态:{{status}}",
+    "enableCta": "开启每周脉搏",
+    "disableCta": "关闭每周脉搏",
+    "previewCta": "预览支出",
+    "historyLink": "查看历史摘要"
+  },
+  "status": {
+    "queued": "已排队",
+    "collecting": "收集中",
+    "completed": "已完成",
+    "partial": "部分数据",
+    "blocked_capacity": "已阻止 — 超出上限",
+    "unsupported": "本周不受支持",
+    "failed": "失败",
+    "empty": "尚未运行任何脉搏。"
+  },
+  "confirm": {
+    "enableTitle": "开启每周脉搏?",
+    "enableBody": "计划任务将为该站点每周消耗一次 AI 提及检查。",
+    "enableAck": "我了解并希望接收每周脉搏。",
+    "disableTitle": "关闭每周脉搏?",
+    "disableBody": "您将不再收到摘要。历史记录仍可查看。",
+    "confirmEnable": "开启",
+    "confirmDisable": "关闭",
+    "cancel": "取消"
+  },
+  "detail": {
+    "title": "每周脉搏摘要 — {{isoWeek}}",
+    "closeLabel": "关闭摘要详情",
+    "coverage": "覆盖率 — {{total}} 个引擎中支持 {{supported}} 个。",
+    "partial": "本周部分引擎返回了不完整数据。",
+    "sections": {
+      "newCitations": "新增引用",
+      "lostCitations": "丢失的引用",
+      "unknownPartial": "未知或部分引用",
+      "confirmedDrops": "已确认的排名下降",
+      "actionsChanged": "已完成或已回退的行动",
+      "top3": "接下来三个行动",
+      "gscGenerative": "Google 生成式 AI 展示",
+      "brandDeltas": "Brand Radar 变化",
+      "deepLinks": "在 RankMeFast 中打开"
+    },
+    "empty": {
+      "newCitations": "本周没有新增引用。",
+      "lostCitations": "本周没有丢失引用。",
+      "unknownPartial": "本周没有未知或部分引用。",
+      "confirmedDrops": "本周没有已确认的排名下降。",
+      "actionsChanged": "本周没有行动状态变更。",
+      "top3": "一切就绪 — 没有待处理的行动。"
+    },
+    "actionsFallback": "此脉搏未记录任何行动变化。"
+  },
+  "history": {
+    "title": "最近的脉搏",
+    "empty": "尚无脉搏记录。",
+    "loadMore": "加载更多",
+    "runLabel": "{{isoWeek}} — {{status}}",
+    "openLabel": "打开 {{isoWeek}} 的脉搏"
+  },
+  "preview": {
+    "title": "支出预览",
+    "productUnits": "每周 1 次 AI 提及检查",
+    "remaining": "本月剩余:{{remaining}}",
+    "capBlocked": "您的套餐已耗尽。启用将失败 — 请升级或购买信用额度以解锁。"
+  },
+  "gsc": {
+    "title": "Google 生成式 AI 展示",
+    "description": "第一方 Google Search Console 数据 — 从不与 AI 提及指标合并。",
+    "status": {
+      "available": "可用",
+      "unavailable": "尚未展示",
+      "partial": "部分数据",
+      "reconnect_required": "请重新连接 Google Search Console",
+      "failed": "暂时不可用"
+    },
+    "empty": "Google 未报告任何生成式 AI 展示。",
+    "reconnect": "请重新连接 Google Search Console 以查看该部分。",
+    "window": "窗口: {{start}} → {{end}}",
+    "row": "{{appearance}} — {{clicks}} 次点击,{{impressions}} 次展示",
+    "loading": "正在加载 Google Search Console 数据…",
+    "unknown": "未识别的展示({{raw}})"
+  },
+  "brandDeltas": {
+    "scopeNote": "这些变化覆盖整个账户，按跟踪的品牌关键词分组，而不仅限于本站点。",
+    "queryLine": "{{query}} — 提及 {{delta}}",
+    "sentimentLine": "情感变化（百分点）：正面 {{positive}}，中性 {{neutral}}，负面 {{negative}}，未知 {{unknown}}。",
+    "firstScan": "{{query}} — 首次扫描，暂无可比较的数据。",
+    "noNewScan": "{{query}} — 本期没有新的扫描。",
+    "empty": "暂无可比较的品牌扫描。"
+  },
+  "errors": {
+    "unexpected": "出现了问题 — 请重试。",
+    "overCap": "您的套餐已耗尽。请升级或购买信用额度以接收每周脉搏。",
+    "acknowledgePreviewRequired": "启用前请预览支出。",
+    "reconnectRequired": "请重新连接 Google Search Console 以加载此数据。",
+    "unauthorized": "请登录以查看每周脉搏。"
+  }
+}

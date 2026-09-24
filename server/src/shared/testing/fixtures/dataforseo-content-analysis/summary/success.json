@@ -1,0 +1,42 @@
+{
+  "version": "0.1.20260101",
+  "status_code": 20000,
+  "status_message": "Ok.",
+  "time": "0.12 sec.",
+  "cost": 0.0202,
+  "tasks_count": 1,
+  "tasks_error": 0,
+  "tasks": [
+    {
+      "id": "TASK_ID",
+      "status_code": 20000,
+      "status_message": "Ok.",
+      "time": "0.11 sec.",
+      "cost": 0.0202,
+      "result_count": 1,
+      "path": ["v3", "content_analysis", "summary", "live"],
+      "data": {
+        "api": "content_analysis",
+        "function": "summary",
+        "keyword": "rankmefast"
+      },
+      "result": [
+        {
+          "total_count": 42,
+          "rank": 68,
+          "se_types": ["organic"],
+          "sentiment_connotations": {
+            "positive": 24,
+            "neutral": 15,
+            "negative": 3
+          },
+          "top_domains": [
+            { "domain": "example.com", "count": 12 },
+            { "domain": "forum.example.org", "count": 8 },
+            { "domain": "news.example.net", "count": 5 }
+          ]
+        }
+      ]
+    }
+  ]
+}

@@ -1,0 +1,10 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 292 64" role="img" aria-labelledby="title">
+  <title id="title">RankMeFast</title>
+  <g>
+  <rect width="64" height="64" rx="14" fill="#1c1a18"/>
+  <path d="M16 18h14M16 25h9" fill="none" stroke="#ffffff" stroke-width="4" stroke-linecap="round"/>
+  <rect x="17" y="39" width="8" height="10" rx="2.5" fill="#ff5c3f"/>
+  <rect x="29" y="31" width="8" height="18" rx="2.5" fill="#ffffff"/>
+  <rect x="41" y="22" width="8" height="27" rx="2.5" fill="#ffffff"/></g>
+  <text x="78" y="42" fill="#1a1a1a" font-family="Inter, system-ui, -apple-system, Segoe UI, sans-serif" font-size="30" font-weight="800">RankMeFast</text>
+</svg>

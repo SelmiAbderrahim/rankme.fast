@@ -1,0 +1,196 @@
+{
+  "title": "Sites",
+  "listDescription": "Sites you track with RankMeFast.",
+  "loading": "Loading your sites…",
+  "retry": "Try again",
+  "addTitle": "Add your site",
+  "addDescription": "Enter your website address to start auditing and rank-tracking it.",
+  "urlLabel": "Site URL",
+  "urlPlaceholder": "https://example.com",
+  "addSubmit": "Add site",
+  "adding": "Adding…",
+  "emptyTitle": "No sites yet",
+  "emptyDescription": "Add your first site to get started.",
+  "columnName": "Name",
+  "columnDomain": "Domain",
+  "columnAdded": "Added",
+  "columnGoogle": "Google",
+  "googleLinked": "Linked",
+  "googleNotLinked": "Not linked",
+  "googleNotConnected": "Google not connected",
+  "columnActions": "Actions",
+  "rowActions": "Open menu for {{name}}",
+  "open": "Open",
+  "viewReport": "View report",
+  "trackKeywords": "Track keywords",
+  "backlinks": "Backlinks",
+  "competitors": "Competitors",
+  "googleSettings": "Google settings",
+  "editName": "Edit display name",
+  "delete": "Delete",
+  "deleteTitle": "Delete site",
+  "deleteDescription": "This removes {{domain}} from your account. This cannot be undone.",
+  "deleteConfirm": "Delete site",
+  "deleteCancel": "Cancel",
+  "renameTitle": "Edit display name",
+  "renameDescription": "Change how {{domain}} appears across RankMeFast.",
+  "renameLabel": "Display name",
+  "renamePlaceholder": "My blog",
+  "renameSave": "Save",
+  "renameSaving": "Saving…",
+  "renameCancel": "Cancel",
+  "renameFailed": "Could not update the site.",
+  "previous": "Previous",
+  "next": "Next",
+  "loadFailed": "Could not load your sites.",
+  "addFailed": "Could not add the site.",
+  "deleteFailed": "Could not delete the site.",
+  "pauseFailed": "Could not pause the site.",
+  "resumeFailed": "Could not resume the site.",
+  "paused": {
+    "chip": "Paused",
+    "menuPause": "Pause site",
+    "menuResume": "Resume site",
+    "confirmTitle": "Pause this site?",
+    "confirmBody": "Audits, rank checks, weekly reports, content monitoring, and alerts stop for {{domain}}. Your reports and history stay available.",
+    "confirmCta": "Pause site",
+    "cancel": "Cancel",
+    "bannerTitle": "Site paused",
+    "banner": "This site is paused — no checks or audits are running. Paused {{when}}.",
+    "resumeCta": "Resume",
+    "pausing": "Pausing…",
+    "resuming": "Resuming…"
+  },
+  "errors": {
+    "urlRequired": "Enter your site URL.",
+    "urlTooLong": "That URL is too long (2048 characters max).",
+    "urlInvalid": "Enter a valid URL, like https://example.com.",
+    "urlScheme": "Only http:// and https:// URLs are supported.",
+    "urlUserinfo": "Remove the username and password from the URL.",
+    "urlIpLiteral": "IP addresses are not supported — use a domain name.",
+    "urlNoTld": "Enter a full domain name, like https://example.com."
+  },
+  "workspace": {
+    "tabs": {
+      "overview": "Overview",
+      "actions": "Actions",
+      "report": "Report",
+      "keywords": "Keywords",
+      "serpFeatures": "SERP features",
+      "keywordClusters": "Keyword clusters",
+      "research": "Research",
+      "backlinks": "Backlinks",
+      "competitors": "Competitors",
+      "google": "Google",
+      "aiVisibility": "AI Visibility",
+      "brandRadar": "Brand Radar",
+      "apps": "Apps",
+      "localSeo": "Local SEO",
+      "reviews": "Reviews",
+      "geogrid": "Geogrid",
+      "content": "Content",
+      "internalLinks": "Internal links",
+      "cannibalization": "Keyword cannibalization",
+      "audienceResearch": "Audience Research",
+      "schema": "Schema"
+    },
+    "groups": {
+      "auditReports": "Audit & reports",
+      "search": "Search",
+      "visibility": "Visibility",
+      "content": "Content",
+      "localApps": "Local & apps"
+    },
+    "navigationLabel": "Workspace view",
+    "activeGroupLabel": "{{group}} · {{current}}",
+    "upgradeHint": "Upgrade your plan to unlock this tab."
+  },
+  "overview": {
+    "next": {
+      "title": "Next actions",
+      "description": "Start with the highest-impact items from your latest audit.",
+      "viewProgress": "View audit progress",
+      "openReport": "Open full report",
+      "openFinding": "View in report",
+      "clearTitle": "No urgent fixes",
+      "clearDescription": "Your latest audit has no fix-now or watch items.",
+      "inProgressTitle": "Audit in progress"
+    },
+    "sections": {
+      "searchExperienceTitle": "Search and experience",
+      "searchExperienceDescription": "Real search demand and the mobile experience behind it.",
+      "trackingTitle": "Tracking and landscape",
+      "trackingDescription": "Recent rankings and the off-site signals shaping your visibility."
+    },
+    "search": {
+      "title": "Search performance",
+      "description": "From the Search Console snapshot in your latest audit.",
+      "topQuery": "Top query",
+      "openGoogle": "Open Google insights"
+    },
+    "pageSpeed": {
+      "title": "Site experience",
+      "description": "The first mobile PageSpeed sample from your latest audit.",
+      "accessibility": "Accessibility",
+      "seo": "SEO",
+      "coreWebVitals": "Core Web Vitals"
+    },
+    "keywords": {
+      "title": "Recently tracked keywords",
+      "description": "Latest positions for your newest tracked terms.",
+      "open": "Open keywords",
+      "awaiting": "Awaiting first check"
+    },
+    "backlinks": {
+      "updated": "Updated {{date}}",
+      "open": "Open backlinks",
+      "noSnapshotTitle": "No backlink snapshot yet",
+      "noSnapshotDescription": "Open backlinks when you want to fetch and explore the full profile."
+    },
+    "competitors": {
+      "open": "Open competitors",
+      "notLoadedTitle": "Competitor data is ready on demand",
+      "notLoadedDescription": "Open competitors to run an Agency lookup. Overview will reuse that result without spending another lookup."
+    },
+    "unlock": {
+      "title": "More insight is available",
+      "backlinksAndCompetitors": "Upgrade for backlink strength and competitor overlap.",
+      "competitors": "Upgrade to Agency for competitor overlap and gap keywords.",
+      "openPlans": "Compare plans"
+    },
+    "statError": "Couldn't load",
+    "meta": {
+      "title": "Site details",
+      "name": "Name",
+      "domain": "Domain"
+    },
+    "stats": {
+      "audit": {
+        "title": "Audit fix-now",
+        "hint": "Open the report tab to run a fresh audit."
+      },
+      "keywords": {
+        "title": "Keywords tracked",
+        "hint": "Open the keywords tab to add or remove tracked terms."
+      },
+      "backlinks": {
+        "title": "Backlinks",
+        "hint": "Open the backlinks tab to load the profile."
+      },
+      "competitors": {
+        "title": "Competitors",
+        "hint": "Open the competitors tab to load the list."
+      },
+      "google": {
+        "title": "Google Search Console",
+        "hint": "Open the Google tab to manage the connection."
+      }
+    },
+    "gsc": {
+      "connected": "Connected",
+      "needs_reconnect": "Reconnect required",
+      "revoked": "Revoked",
+      "disconnected": "Not connected"
+    }
+  }
+}

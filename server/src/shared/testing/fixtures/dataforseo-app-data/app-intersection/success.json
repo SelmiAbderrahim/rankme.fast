@@ -1,0 +1,51 @@
+{
+  "version": "0.1.20260808",
+  "status_code": 20000,
+  "status_message": "Ok.",
+  "cost": 0.012,
+  "tasks": [
+    {
+      "id": "TASK_ID",
+      "status_code": 20000,
+      "status_message": "Ok.",
+      "cost": 0.012,
+      "path": [
+        "v3",
+        "dataforseo_labs",
+        "google_play",
+        "app_intersection",
+        "live"
+      ],
+      "result": [
+        {
+          "items": [
+            {
+              "keyword_data": {
+                "keyword": "rank tracker",
+                "keyword_info": {
+                  "search_volume": 880,
+                  "last_updated_time": "2026-08-03 08:00:00 +00:00"
+                },
+                "serp_info": {
+                  "last_updated_time": "2026-08-04 09:00:00 +00:00"
+                }
+              },
+              "intersection_result": {
+                "1": {
+                  "type": "google_play_search_organic",
+                  "rank_group": 2,
+                  "rank_absolute": 3
+                },
+                "2": {
+                  "type": "google_play_search_organic",
+                  "rank_group": 9,
+                  "rank_absolute": 12
+                }
+              }
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

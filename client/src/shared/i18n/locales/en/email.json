@@ -1,0 +1,11 @@
+{
+  "contact": {
+    "confirmation": "Your email has been sent. We will be in touch with you soon."
+  },
+  "passwordReset": {
+    "subject": "Reset your password"
+  },
+  "passwordChanged": {
+    "subject": "Your password was changed"
+  }
+}

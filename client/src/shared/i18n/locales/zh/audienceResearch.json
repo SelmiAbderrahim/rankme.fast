@@ -1,0 +1,239 @@
+{
+  "nav": {
+    "label": "受众研究",
+    "description": "将公开的抱怨、需求和问题转化为内容、产品和 SEO 机会。"
+  },
+  "outputLocale": "输出语言：{{locale}}",
+  "form": {
+    "market": {
+      "label": "市场",
+      "country": "国家/地区",
+      "language": "语言",
+      "device": "设备"
+    },
+    "competitors": {
+      "label": "竞争对手",
+      "helper": "从该网站已跟踪的竞争对手中最多选择五个。",
+      "chipRemove": "移除 {{domain}}",
+      "limit": "最多可选择 {{max}} 个竞争对手。"
+    },
+    "topics": {
+      "label": "主题",
+      "placeholder": "添加主题后按回车键",
+      "chipRemove": "移除 {{topic}}",
+      "count": "{{count}} / {{max}}",
+      "validationLength": "主题长度须在 2 到 160 个字符之间。",
+      "validationEmpty": "请先输入主题再添加。",
+      "validationMax": "最多可添加 {{max}} 个主题。"
+    },
+    "reviewButton": "预览",
+    "submitting": "处理中…"
+  },
+  "preview": {
+    "unitLabel": "1 次受众研究运行",
+    "remainingLabel": "本月剩余 {{remaining}}／{{cap}}",
+    "operationCeilings": "本次运行将执行的操作",
+    "cached": "缓存",
+    "fresh": "最新",
+    "supported": "该市场受到完整支持。",
+    "unsupported": "该市场支持有限——结果可能较为有限。",
+    "maxPages": "最多抓取 {{max}} 个公开页面",
+    "totalBudget": "总预算：{{micros}} 微美元",
+    "aiBudget": "AI 预算：{{micros}} 微美元",
+    "coverageOk": "服务商覆盖完整",
+    "coverageDegraded": "服务商覆盖受限——结果可能不完整。",
+    "coverageBlocked": "该账户已被阻止使用零数据保留抓取。"
+  },
+  "confirm": {
+    "title": "要开始本次受众研究运行吗？",
+    "body": "本次运行最多将抓取 {{maxPages}} 个公开页面，并从公开网络生成信号。它只运行一次——不会持续监测。",
+    "confirmButton": "开始运行",
+    "cancelButton": "取消",
+    "marketLine": "市场",
+    "competitorsLine": "竞争对手",
+    "topicsLine": "主题",
+    "unitLine": "消耗单位"
+  },
+  "progress": {
+    "stage": {
+      "queued": "已排队",
+      "discovering": "正在发现来源",
+      "selecting": "正在筛选候选项",
+      "collecting": "正在收集证据",
+      "clustering": "正在聚类信号",
+      "completed": "已完成",
+      "partial": "部分完成",
+      "failed": "失败"
+    },
+    "counts": {
+      "sources": "已找到 {{count}} 个来源",
+      "signals": "已找到 {{count}} 个信号"
+    },
+    "partial": {
+      "title": "本次运行以部分覆盖结束",
+      "body": "部分来源或 AI 阶段在完成前达到了上限。以下信号仅反映运行停止前收集到的证据。"
+    },
+    "failed": {
+      "title": "本次运行失败",
+      "body": "本次运行未能完成。请重试，或尝试更聚焦的主题或其他竞争对手。"
+    },
+    "noUsableEvidence": {
+      "title": "未找到可用证据",
+      "body": "我们未能为该市场和主题集找到足够的公开证据来生成信号。已退还本次运行的费用。"
+    },
+    "percentComplete": "已完成 {{percent}}%",
+    "back": "返回工作区"
+  },
+  "history": {
+    "title": "运行历史",
+    "columns": {
+      "market": "市场",
+      "requestedAt": "请求时间",
+      "state": "状态",
+      "sources": "来源",
+      "signals": "信号",
+      "coverage": "覆盖情况",
+      "unit": "单位"
+    },
+    "empty": {
+      "title": "暂无运行记录",
+      "body": "开始您的第一次受众研究运行，查看公开网络上的抱怨、需求和问题。"
+    },
+    "loading": "正在加载运行历史…",
+    "prev": "上一页",
+    "next": "下一页",
+    "view": "查看",
+    "marketUnavailable": "—",
+    "coverageNote": "覆盖不完整——打开该运行查看详情",
+    "coverageFull": "覆盖完整"
+  },
+  "locked": {
+    "title": "您的套餐不包含受众研究",
+    "body": "升级到 Starter、Pro 或 Agency 套餐即可运行客户之声研究，将公开反馈转化为内容、产品和 SEO 机会。",
+    "cta": "查看套餐"
+  },
+  "usage": {
+    "metrics": {
+      "audience_research_runs": {
+        "label": "受众研究运行",
+        "description": "一个单位对应一次完整的客户之声研究运行，无论其内部搜索或抓取次数多少。"
+      }
+    }
+  },
+  "billing": {
+    "overCap": {
+      "audience_research_runs": "您本月已用完套餐中的所有受众研究运行次数。升级以运行更多客户之声研究。"
+    }
+  },
+  "signals": {
+    "empty": {
+      "title": "本次运行已完成但未产生任何信号。",
+      "filtered": "没有符合当前筛选条件的信号。"
+    },
+    "citationCount": "{{count}} 个引用来源",
+    "confidence": {
+      "high": "高置信度",
+      "medium": "中置信度",
+      "low": "低置信度",
+      "anecdotal": "轶事性"
+    },
+    "type": {
+      "complaint": "投诉",
+      "request": "请求",
+      "question": "问题",
+      "competitor_gap": "竞争对手缺口",
+      "other": "信号"
+    },
+    "route": {
+      "content": "新内容",
+      "comparison_page": "对比页",
+      "product": "产品变更",
+      "seo": "SEO 修复",
+      "other": "其他",
+      "aiInterpretation": "AI 解读",
+      "aiInterpretationHint": "建议路线是 AI 解读,并非市场份额信号。"
+    },
+    "rationale": {
+      "summary": "{{independentDomainCount}} 个独立域,涵盖 {{sourceTypeCount}} 种来源类型;{{recent}}。",
+      "recent": "最新来源 {{date}}",
+      "recentUnknown": "日期不详"
+    },
+    "sourceType": {
+      "forum": "论坛",
+      "review": "评论",
+      "comparison": "对比",
+      "question": "问答",
+      "other": "其他"
+    },
+    "actions": {
+      "evidence": "查看证据",
+      "accept": "接受",
+      "dismiss": "忽略"
+    },
+    "evidence": {
+      "title": "信号证据",
+      "description": "此信号引用的每个来源。仅文本和链接——无 HTML。",
+      "empty": "此信号没有保留来源。",
+      "missingSource": "来源 {{id}} 已不可用。",
+      "dateUnavailable": "日期不详",
+      "observedAt": "观察于 {{date}}",
+      "freshness": "新鲜度:{{value}}",
+      "openLink": "打开来源",
+      "openLinkAria": "在新标签中打开来源 ({{host}})"
+    },
+    "decision": {
+      "signalTitleLabel": "信号",
+      "cancel": "取消",
+      "submitting": "处理中…",
+      "confirmCi": "创建推荐",
+      "confirmActions": "添加到下一步操作",
+      "confirmDismiss": "忽略信号",
+      "conflict": "此信号已被应用其他决定。",
+      "acceptSuccess": "决定已记录。",
+      "dismissSuccess": "信号已忽略。",
+      "openRecommendation": "打开推荐",
+      "openAction": "在下一步操作中打开",
+      "openExisting": "打开现有",
+      "replayHintCi": "此信号已作为 Content Intelligence 推荐被接受。",
+      "replayHintActions": "此信号已添加到下一步操作。",
+      "acceptTitle": {
+        "content": "创建 Content Intelligence 推荐",
+        "comparison_page": "创建 Content Intelligence 推荐",
+        "product": "添加到下一步操作",
+        "seo": "添加到下一步操作"
+      },
+      "acceptBody": {
+        "content": "将根据引用来源创建 Content Intelligence 推荐。",
+        "comparison_page": "将根据引用来源创建对比页推荐。",
+        "product": "将注册产品变更操作。",
+        "seo": "将注册 SEO 修复操作。"
+      },
+      "destination": {
+        "contentDetail": "推荐链回此信号,仅引用来源 ID——不复制正文。",
+        "actionsDetail": "操作链回此信号并在显示时读取不可变来源——不复制正文。"
+      },
+      "dismissTitle": "忽略信号",
+      "dismissBody": "选择一个原因。此操作终结——信号不会再出现。",
+      "reasonLabel": "原因",
+      "reasons": {
+        "not_relevant": "与我的站点无关",
+        "already_addressed": "已处理",
+        "low_confidence": "证据不足",
+        "duplicate": "重复",
+        "other": "其他"
+      }
+    }
+  },
+  "errors": {
+    "overCap": "您本月已用完套餐中的所有受众研究运行次数。升级以运行更多。",
+    "unsupportedMarket": "该市场暂不支持受众研究。请选择受支持的国家或语言。",
+    "zdrBlocked": "受众研究需要零数据保留（ZDR）抓取。请在服务商设置中启用 ZDR，然后重试。",
+    "noUsableEvidence": "未找到可用的公开证据。已退还本次运行的费用——请尝试其他主题或竞争对手。",
+    "costCeilingPartial": "本次运行达到成本上限。已保存部分证据；您可以直接使用或尝试更聚焦的主题。",
+    "processingFailure": "无法处理本次运行。已在可能时保存部分证据。",
+    "notFound": "找不到该运行。",
+    "providerFailed": "研究服务商未能完成本次运行。请稍后重试。",
+    "aiFailed": "AI 聚类步骤未能完成。已在可能时保存部分证据。",
+    "generic": "出现问题，请重试。"
+  }
+}

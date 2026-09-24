@@ -1,0 +1,270 @@
+{
+  "title": "Competitors",
+  "description": "See which sites you compete with and the keywords they rank for.",
+  "empty": "No competitors found for this domain yet. Track a few keywords and we'll analyze the sites dominating those search results.",
+  "emptyTitle": "No competitors yet",
+  "loadFailed": "Could not load competitors.",
+  "intersectionFailed": "Could not load gap keywords.",
+  "table": {
+    "title": "Top competitors",
+    "domain": "Domain",
+    "overlap": "Overlap",
+    "avgPosition": "Avg. position",
+    "estTraffic": "Est. traffic",
+    "actions": "Actions",
+    "gapAction": "Show gap",
+    "sourceTrackedKeywords": "Based on your tracked keywords"
+  },
+  "gap": {
+    "title": "Keywords {{competitor}} ranks for that you don't",
+    "loading": "Loading gap…",
+    "keyword": "Keyword",
+    "theyRank": "Their position",
+    "volume": "Volume",
+    "emptyTitle": "No gap keywords",
+    "empty": "No gap keywords yet — you rank for the same keywords they do."
+  },
+  "refresh": {
+    "button": "Refresh",
+    "cooldown": "Wait {{seconds}}s before refreshing.",
+    "failed": "Couldn't refresh right now. Your last data is still shown."
+  },
+  "locked": {
+    "title": "Upgrade to unlock competitor analysis",
+    "body": "Competitor portfolios and keyword landscapes start on Pro. Agency adds larger reports and ranking-page content comparison.",
+    "upgrade": "See plans"
+  },
+  "example": {
+    "title": "Example: what you get on Pro and Agency"
+  },
+  "intelligence": {
+    "title": "Competitor Intelligence",
+    "description": "Manage confirmed competitors, compare keyword landscapes, and keep accepted recommendations in one site workspace.",
+    "common": {
+      "cancel": "Cancel"
+    },
+    "tiers": {
+      "starter": "Starter",
+      "pro": "Pro",
+      "agency": "Agency"
+    },
+    "views": {
+      "label": "Competitor Intelligence views",
+      "overview": "Overview",
+      "keywords": "Keyword landscape",
+      "content": "Content",
+      "monitoring": "Monitoring",
+      "traffic": "Traffic",
+      "reports": "Reports"
+    },
+    "locked": {
+      "title": "Competitor Intelligence starts on Pro",
+      "description": "Upgrade to confirm competitors, run keyword landscape reports, and accept recommendations into Next Actions.",
+      "action": "Compare plans"
+    },
+    "portfolio": {
+      "title": "Confirmed competitor portfolio",
+      "description": "{{active}} of {{max}} active competitor slots are in use. Managing this list does not use an allowance.",
+      "manualLabel": "Add a public competitor URL",
+      "manualPlaceholder": "https://competitor.example/",
+      "add": "Add competitor",
+      "adding": "Adding competitor…",
+      "confirmed": "Competitor confirmed.",
+      "duplicate": "That competitor is already in the portfolio.",
+      "confirmedLabel": "Confirmed",
+      "confirm": "Confirm competitor",
+      "confirmTitle": "Confirm this competitor?",
+      "confirmDescription": "Add {{domain}} to the site portfolio. This does not run a paid lookup.",
+      "emptyTitle": "No confirmed competitors",
+      "empty": "Confirm a discovery suggestion or add a public competitor URL.",
+      "domain": "Domain",
+      "source": "Provenance",
+      "status": "Status",
+      "added": "Added",
+      "action": "Action",
+      "archive": "Archive",
+      "restore": "Restore",
+      "archivePending": "Archiving…",
+      "restorePending": "Restoring…",
+      "sources": {
+        "suggested": "Discovery suggestion",
+        "manual": "Added manually"
+      },
+      "statuses": {
+        "active": "Active",
+        "archived": "Archived"
+      }
+    },
+    "discovery": {
+      "title": "Competitor discovery",
+      "description": "Review stored suggestions for free. A new discovery refresh starts only after an exact spend preview and confirmation.",
+      "empty": "No stored discovery suggestions yet.",
+      "captured": "Stored {{date}}",
+      "observed": "Observed {{date}}",
+      "partial": "Some discovery sources did not return data. Stored results are shown without filling the gaps.",
+      "previewAction": "Preview discovery refresh",
+      "previewing": "Preparing discovery preview…",
+      "reviewAction": "Review and confirm",
+      "confirmTitle": "Run a new discovery refresh?",
+      "confirmDescription": "This refresh uses {{units}} keyword lookup unit. {{remaining}} units remain before the refresh.",
+      "confirmAction": "Confirm refresh"
+    },
+    "technology": {
+      "title": "Current portfolio summary",
+      "description": "This summary uses stored portfolio facts only. It does not start technology detection or another paid lookup.",
+      "summary": "{{manual}} competitors were added manually and {{suggested}} came from confirmed discovery suggestions. Technology details stay unavailable until a separately previewed lookup exists."
+    },
+    "landscape": {
+      "title": "Build a keyword landscape",
+      "description": "Select up to {{count}} confirmed competitors. The server checks the tier, market, allowance, and exact units before a run can start.",
+      "selection": "{{selected}} of {{count}} competitors selected",
+      "limit": "You can select up to {{count}} competitors for this report.",
+      "emptyTitle": "Confirm a competitor first",
+      "empty": "Return to Overview and add at least one active competitor.",
+      "previewAction": "Preview report spend",
+      "previewing": "Preparing report preview…",
+      "previewTitle": "Server-authoritative spend preview",
+      "previewDescription": "This report uses {{units}} keyword lookup units and can retain up to {{rows}} rows. {{remaining}} units remain before it starts.",
+      "cacheCounts": "Cache hits count toward usage",
+      "reviewAction": "Review and confirm",
+      "confirmTitle": "Start this landscape report?",
+      "confirmDescription": "Compare {{count}} competitors for {{units}} keyword lookup units.",
+      "confirmAction": "Confirm report",
+      "duplicate": "The matching report request already exists. The existing run was opened.",
+      "editMarket": "Edit tracked-keyword market"
+    },
+    "reports": {
+      "title": "Stored landscape reports",
+      "description": "Reopen immutable reports without starting another vendor lookup.",
+      "emptyTitle": "No landscape reports",
+      "empty": "Create a report from the Keyword landscape view.",
+      "date": "Created",
+      "competitors": "Competitors",
+      "state": "State",
+      "action": "Action",
+      "open": "Open report",
+      "more": "Load more reports",
+      "loadFailedTitle": "Could not load this report"
+    },
+    "detail": {
+      "title": "Landscape report",
+      "summary": "{{domain}} compared with {{count}} competitors on {{date}}.",
+      "progress": "{{done}} of {{total}} source steps complete",
+      "polling": "The report is still running. This stored status will refresh automatically.",
+      "partial": "{{usable}} of {{requested}} competitors produced usable data. {{failed}} source steps failed; missing values were not inferred.",
+      "back": "Back to report history",
+      "cancel": "Cancel report",
+      "rollupTitle": "Portfolio keyword rollup",
+      "rollupDescription": "{{rows}} keyword rows across {{usable}} competitors.",
+      "filtersTitle": "Report filters",
+      "classFilter": "Keyword class",
+      "domainFilter": "Competitor",
+      "textFilter": "Search keywords",
+      "allClasses": "All classes",
+      "allDomains": "All competitors",
+      "keywordsTitle": "Keyword evidence",
+      "keywordsDescription": "Ranks and URLs are observed facts. Search volume is a provider estimate; classes and recommendations are derived.",
+      "keyword": "Keyword",
+      "class": "Class",
+      "ownedRank": "Your rank",
+      "competitorRank": "Competitor rank",
+      "volume": "Estimated volume",
+      "source": "Evidence",
+      "sourcesTitle": "Source observations",
+      "sourcesDescription": "Provider, cache, status, and observation dates are retained with this immutable report.",
+      "sourcesEmpty": "No source observation was retained for this result.",
+      "observationDate": "Observed {{date}}",
+      "missing": "Not observed",
+      "next": "Next page",
+      "noMatchTitle": "No matching keywords",
+      "noMatch": "Change or clear the current URL-backed filters.",
+      "noDataTitle": "No retained report data",
+      "noData": "The run finished without enough usable source data. Missing values are not estimated.",
+      "matchesTitle": "Suggested page matches",
+      "matchesDescription": "These stored suggestions compare ranking URLs. They do not start a content scrape.",
+      "matchesEmpty": "No safe page match was available.",
+      "matchReason": "{{reason}} · {{confidence}} confidence",
+      "matchOwnedUrl": "Your reviewed page URL",
+      "matchCompetitorUrl": "Reviewed competitor ranking URL",
+      "approveMatch": "Approve match",
+      "rejectMatch": "Reject",
+      "openSuggested": "Open suggested page",
+      "analyzeReviewed": "Compare reviewed pages",
+      "monitorReviewed": "Monitor this reviewed page",
+      "focusAnalysis": "Start focused analysis",
+      "matchSaveError": "The page match could not be saved.",
+      "recommendationsTitle": "Strengths and recommendations",
+      "recommendationsDescription": "Recommendations stay report-only until you explicitly accept them.",
+      "recommendationsEmpty": "No recommendation met the evidence threshold.",
+      "accept": "Accept into Next Actions",
+      "acceptTitle": "Accept this recommendation?",
+      "acceptDescription": "Acceptance creates one durable Next Action. Sending the same decision again will not create a duplicate.",
+      "acceptConfirm": "Accept recommendation",
+      "openAction": "Open in Next Actions"
+    },
+    "classes": {
+      "missing": "Missing",
+      "owned_only": "You rank only",
+      "shared_behind": "Shared, behind",
+      "shared_ahead": "Shared, ahead",
+      "shared_even": "Shared, even"
+    },
+    "runStates": {
+      "queued": "Queued",
+      "collecting": "Collecting",
+      "aggregating": "Building report",
+      "completed": "Completed",
+      "partial": "Partial",
+      "failed": "Failed",
+      "cancelled": "Cancelled"
+    },
+    "states": {
+      "loading": "Report in progress",
+      "partial": "Partial data",
+      "cap": "This request exceeds the remaining allowance. Upgrade or add an eligible credit pack before confirming.",
+      "disabled": "New competitor requests are temporarily disabled. Stored reports remain available.",
+      "unsafeLink": "Unsafe source link hidden",
+      "rateLimit": "Too many requests. Wait and try again.",
+      "providerFailure": "A source failed. Available data remains visible.",
+      "cancelled": "The report was cancelled before all source steps completed.",
+      "stale": "This stored result may be out of date. Its observation date remains visible."
+    },
+    "labels": {
+      "observed": "Observed",
+      "estimate": "Estimate",
+      "derived": "Derived"
+    },
+    "cache": {
+      "hit": "Stored cache result",
+      "miss": "Fresh source result"
+    },
+    "market": {
+      "tracked_keyword_mode": "Market from tracked keywords",
+      "default": "Default market fallback"
+    },
+    "confidence": {
+      "high": "High",
+      "medium": "Medium",
+      "low": "Low"
+    },
+    "matchReasons": {
+      "same_keyword": "Same ranking keyword",
+      "highest_coverage": "Highest competitor coverage",
+      "closest_rank": "Closest observed rank"
+    },
+    "errors": {
+      "generic": "Could not complete the competitor request."
+    }
+  },
+  "techStack": {
+    "action": "See tech stack",
+    "cms": "CMS",
+    "analytics": "Analytics",
+    "hosting": "Hosting",
+    "ecommerce": "E-commerce",
+    "other": "Other",
+    "loading": "Detecting technologies…",
+    "empty": "No technologies detected.",
+    "failed": "Couldn't load the tech stack."
+  }
+}

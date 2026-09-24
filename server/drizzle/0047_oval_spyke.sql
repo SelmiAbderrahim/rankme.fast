@@ -1,0 +1,1 @@
+ALTER TABLE "audience_research_events" ALTER COLUMN "run_id" SET DATA TYPE text;

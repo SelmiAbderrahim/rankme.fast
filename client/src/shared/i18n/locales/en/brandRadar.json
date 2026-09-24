@@ -1,0 +1,235 @@
+{
+  "title": "Brand Radar",
+  "description": "See where your brand is mentioned across the web, one scan at a time.",
+  "outputLocale": "Output language: {{locale}}",
+  "tabs": {
+    "scans": "Scans",
+    "new": "New scan"
+  },
+  "list": {
+    "title": "Your scans",
+    "description": "Newest first. Each scan spends one brand-scan unit.",
+    "columns": {
+      "query": "Brand query",
+      "status": "Status",
+      "digest": "Summary",
+      "mentions": "Mentions",
+      "refund": "Refund",
+      "created": "Created",
+      "actions": "Actions"
+    },
+    "pendingCreated": "Just submitted",
+    "open": "Open",
+    "loadMore": "Load more",
+    "loading": "Loading scans",
+    "retry": "Try again",
+    "filter": {
+      "label": "Filter by status",
+      "all": "All statuses",
+      "note": "Filtering applies only to the scans loaded on this page."
+    }
+  },
+  "status": {
+    "queued": "Queued",
+    "running": "Running",
+    "completed": "Completed",
+    "completed_empty": "No mentions found",
+    "completed_partial": "Partly completed",
+    "failed": "Failed"
+  },
+  "digest": {
+    "pending": "Summary pending",
+    "digest_present": "Summary ready",
+    "digest_absent": "No summary",
+    "no_reliable_digest": "Summary withheld"
+  },
+  "refund": {
+    "refunded": "Scan credit returned"
+  },
+  "states": {
+    "empty": {
+      "title": "No scans yet",
+      "description": "Run your first brand scan to see where you are mentioned.",
+      "cta": "Start a scan"
+    },
+    "filtered": {
+      "description": "No scan on this page has that status."
+    },
+    "error": {
+      "title": "We could not load your scans"
+    },
+    "unavailable": {
+      "title": "Brand Radar is paused",
+      "description": "New scans are switched off right now.",
+      "storedReads": "Scans you already ran stay readable."
+    },
+    "notOnPlan": {
+      "title": "Brand Radar needs a higher plan",
+      "description": "Move to Pro or Agency to unlock brand scans.",
+      "link": "See plans"
+    },
+    "addonRequired": {
+      "title": "Add Brand Radar to your plan",
+      "description": "Check Billing for current Brand Radar add-on availability.",
+      "price": "{{price}} per month, {{units}} scans included.",
+      "link": "View Brand Radar options"
+    },
+    "overCap": {
+      "title": "You have used every brand scan",
+      "description": "Check Billing for current {{slug}} pack availability.",
+      "link": "View scan credit options"
+    }
+  },
+  "form": {
+    "title": "New brand scan",
+    "description": "We price the scan before anything is spent.",
+    "queryLabel": "Brand query",
+    "queryPlaceholder": "Your brand name",
+    "queryHelp": "One brand per scan, up to {{max}} characters.",
+    "languageLabel": "Language (optional)",
+    "languagePlaceholder": "en",
+    "languageHelp": "Two-letter language code, such as en or fr.",
+    "locationLabel": "Publisher country (optional)",
+    "locationPlaceholder": "Select a country",
+    "locationHelp": "Filters results by the publishing site's registered country. Leave it as all countries for worldwide results.",
+    "locationCatalogError": "Countries could not be loaded. Try again before pricing the scan.",
+    "preview": "Preview cost",
+    "previewing": "Pricing the scan",
+    "confirm": "Run the scan",
+    "confirming": "Submitting",
+    "cancel": "Cancel",
+    "needsPreview": "Preview the cost first. Nothing is spent until you run the scan."
+  },
+  "preview": {
+    "title": "What this scan costs",
+    "units": "Units for this scan: {{units}}",
+    "baseRemaining": "Plan allowance left",
+    "packRemaining": "Pack credits left",
+    "willConsumeBase": "From your plan allowance: {{units}}",
+    "willConsumePack": "From your pack credits: {{units}}"
+  },
+  "coverage": {
+    "estimateOnly": "Mention counts are provider estimates, not a complete census of the web.",
+    "unknown": "The provider did not disclose coverage for this scan."
+  },
+  "detail": {
+    "back": "Back to scans",
+    "loading": "Loading this scan",
+    "errorTitle": "We could not load this scan",
+    "mentionCount": "{{count}} mention found",
+    "mentionCount_other": "{{count}} mentions found",
+    "market": "Market",
+    "outputLocale": "Output language",
+    "createdAt": "Started",
+    "terminalAt": "Finished",
+    "notSettled": "Still running",
+    "banners": {
+      "queued": {
+        "title": "Waiting to start",
+        "description": "This scan is in the queue. Come back in a few minutes."
+      },
+      "running": {
+        "title": "Running",
+        "description": "This scan is being collected right now."
+      },
+      "completed_empty": {
+        "title": "No mentions found",
+        "description": "The scan ran and found no mentions for this brand. The scan credit was used."
+      },
+      "completed_partial": {
+        "title": "This scan stopped early",
+        "description": "Collection stopped before the end, either because the scan reached its spending ceiling or because the data provider stopped answering. What was collected is shown below."
+      },
+      "failed": {
+        "title": "This scan failed",
+        "description": "The scan could not finish. Nothing below is complete.",
+        "refunded": "The scan could not finish, so your scan credit was returned."
+      }
+    },
+    "halt": {
+      "search_provider_error": "The data provider failed while searching for mentions, so nothing was collected.",
+      "summary_cost_ceiling": "The scan stopped before the mention-summary step because it reached its spending ceiling. The mentions collected so far are kept.",
+      "summary_provider_error": "The data provider failed during the mention-summary step. The mentions collected before the failure are kept.",
+      "brand_digest_cost_ceiling": "The scan stopped before the AI digest step because it reached its spending ceiling. The mentions and summary are kept.",
+      "brand_digest_digest_failed": "The AI digest could not be produced reliably. The mentions and summary are kept.",
+      "scan_processing_failure": "The scan stalled during processing and was closed by the system."
+    },
+    "sentiment": {
+      "title": "How the mentions read",
+      "positive": "Positive",
+      "neutral": "Neutral",
+      "negative": "Negative",
+      "unknown": "Unclear",
+      "percent": "{{percent}}%",
+      "expandTable": "Show the sentiment split as a table",
+      "tableCaption": "Share of mentions by tone",
+      "columnLabel": "Tone",
+      "columnShare": "Share"
+    },
+    "topDomains": {
+      "title": "Sites that mention you most"
+    },
+    "trend": {
+      "title": "Mentions across scans",
+      "expandTable": "Show the trend as a table",
+      "tableCaption": "Mentions per scan for this brand query",
+      "capturedAt": "Scan date",
+      "mentions": "Mentions",
+      "delta": "Change",
+      "deltaUnavailable": "Not compared",
+      "noComparison": "First scan for this query — no comparison yet.",
+      "needMore": "Run this query again to see how mentions move over time."
+    },
+    "digest": {
+      "title": "What this means",
+      "aiLabel": "AI interpretation",
+      "pending": "The summary is still being written.",
+      "absent": "No summary was produced for this scan.",
+      "withheld": "The summary was withheld because no sentence could be tied to a mention.",
+      "citations": "{{count}} source",
+      "citations_other": "{{count}} sources",
+      "citationMissing": "Citation not in this page"
+    },
+    "mentions": {
+      "title": "Mentions",
+      "loading": "Loading mentions",
+      "loadMore": "Load more mentions",
+      "errorTitle": "We could not load the mentions",
+      "export": "Download CSV",
+      "exportFree": "Free — reads data you already paid for.",
+      "filterNote": "Filters apply to the mentions loaded on this page.",
+      "filteredEmpty": "No mention on this page matches those filters.",
+      "noObservedAt": "No date",
+      "filters": {
+        "sentiment": "Tone",
+        "domain": "Site",
+        "from": "From",
+        "to": "To"
+      },
+      "sentiment": {
+        "all": "All tones",
+        "positive": "Positive",
+        "neutral": "Neutral",
+        "negative": "Negative"
+      },
+      "columns": {
+        "title": "Title",
+        "snippet": "Excerpt",
+        "domain": "Site",
+        "sentiment": "Tone",
+        "observedAt": "Seen"
+      }
+    }
+  },
+  "errors": {
+    "previewTitle": "We could not price this scan",
+    "invalidQuery": "Enter a brand query of one to {{max}} characters.",
+    "invalidLanguage": "Use a two-letter language code, such as en.",
+    "invalidLocation": "Choose a supported publisher country.",
+    "listFailed": "We could not load your scans.",
+    "previewFailed": "We could not price this scan.",
+    "createFailed": "We could not queue this scan.",
+    "detailFailed": "We could not load this scan.",
+    "mentionsFailed": "We could not load the mentions for this scan."
+  }
+}

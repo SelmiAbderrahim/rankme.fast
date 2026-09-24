@@ -1,0 +1,42 @@
+{
+  "version": "0.1.20260101",
+  "status_code": 20000,
+  "status_message": "Ok.",
+  "time": "0.0904 sec.",
+  "cost": 0.0006,
+  "tasks_count": 1,
+  "tasks_error": 0,
+  "tasks": [
+    {
+      "id": "TASK_ID",
+      "status_code": 20000,
+      "status_message": "Ok.",
+      "time": "0.0704 sec.",
+      "cost": 0.0006,
+      "result_count": 1,
+      "path": ["v3", "serp", "google", "organic", "live", "advanced"],
+      "data": {
+        "api": "serp",
+        "function": "live",
+        "se": "google",
+        "se_type": "organic",
+        "keyword": "empty query",
+        "language_code": "en",
+        "location_code": 2840,
+        "device": "desktop"
+      },
+      "result": [
+        {
+          "keyword": "empty query",
+          "type": "organic",
+          "se_domain": "google.com",
+          "location_code": 2840,
+          "language_code": "en",
+          "datetime": "2026-01-01 00:00:00 +00:00",
+          "items_count": 0,
+          "items": []
+        }
+      ]
+    }
+  ]
+}

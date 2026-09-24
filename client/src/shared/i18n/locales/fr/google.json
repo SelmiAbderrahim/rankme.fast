@@ -1,0 +1,213 @@
+{
+  "settings": {
+    "title": "Google Search Console",
+    "subtitle": "Connectez Search Console pour que RankMeFast affiche l'état d'indexation réel et les verdicts des résultats enrichis dans vos audits."
+  },
+  "connect": {
+    "title": "Connecter Google Search Console",
+    "description": "Autorisez RankMeFast à lire l'état d'indexation et les verdicts des résultats enrichis depuis Search Console. Une propriété vérifiée est requise.",
+    "cta": "Se connecter avec Google",
+    "connecting": "Connexion…",
+    "scopeNote": "Nous demandons un accès en lecture seule à vos données Search Console."
+  },
+  "connected": {
+    "title": "Connecté",
+    "subtitle": "Choisissez la propriété Search Console que RankMeFast utilise.",
+    "emailLabel": "Connecté en tant que",
+    "propertyLabel": "Propriété Search Console",
+    "propertyPlaceholder": "Sélectionnez une propriété",
+    "propertyMissing": "Aucune propriété vérifiée trouvée — nous détecterons une correspondance au prochain audit.",
+    "connectedAt": "Connecté le {{date}}",
+    "lastUsedAt": "Dernière utilisation le {{date}}",
+    "lastUsedNever": "Jamais utilisée",
+    "disconnect": "Dissocier ce site"
+  },
+  "needsReconnect": {
+    "title": "Votre connexion Google doit être renouvelée",
+    "body": "Google exige un nouveau consentement — cela arrive si vous avez révoqué l'accès ou si la connexion est restée inutilisée pendant des mois. Vos audits fonctionnent toujours, mais les données d'indexation seront manquantes.",
+    "cta": "Reconnecter"
+  },
+  "disconnect": {
+    "confirmTitle": "Dissocier Google de ce site ?",
+    "confirmBody": "Cela supprime les sélections Search Console et Analytics de ce site. Les autres sites et la connexion Google partagée restent connectés.",
+    "confirm": "Dissocier le site",
+    "cancel": "Annuler",
+    "success": "Google Search Console déconnecté.",
+    "siteUnlinked": "Google a été dissocié de ce site."
+  },
+  "revoke": {
+    "cta": "Révoquer l’accès Google partout",
+    "confirmTitle": "Révoquer la connexion Google partagée ?",
+    "confirmBody": "Cela révoque l’accès Google et dissocie les {{count}} sites connectés. Cette action ne peut pas être limitée au site actuel.",
+    "confirm": "Révoquer partout"
+  },
+  "autoMatch": {
+    "queued": "Vérification des propriétés Google de ce site…",
+    "matching": "Recherche des propriétés Google correspondant à ce site…",
+    "ambiguous": "Plusieurs propriétés correspondent à ce site. Choisissez-en une ci-dessous.",
+    "no_match": "Aucune correspondance exacte n’a été trouvée. Choisissez une propriété ci-dessous.",
+    "scope_missing": "L’accès à Analytics n’a pas encore été accordé.",
+    "needs_reconnect": "Reconnectez Google avant de rechercher les propriétés.",
+    "unavailable": "La correspondance automatique est temporairement indisponible. Vous pouvez choisir une propriété ci-dessous.",
+    "not_connected": "Connectez Google pour rechercher une propriété pour ce site."
+  },
+  "errors": {
+    "missingScope": "Cette connexion n'a pas l'autorisation Search Console. Reconnectez-vous en laissant la case cochée.",
+    "notConnected": "Vous n'avez pas encore connecté Google Search Console.",
+    "invalidProperty": "Cette propriété ne figure pas parmi vos propriétés Search Console vérifiées. Choisissez-en une dans la liste.",
+    "quotaExceeded": "Le quota quotidien de Search Console est épuisé. Réessayez demain.",
+    "unavailable": "Impossible de joindre Google Search Console. Réessayez dans un instant.",
+    "loadFailed": "Impossible de charger votre connexion Google.",
+    "disconnectFailed": "Déconnexion impossible.",
+    "linkFailed": "Impossible de connecter ce compte Google. Choisissez le même compte que celui utilisé pour vous connecter, et accordez l'accès à Search Console."
+  },
+  "scopes": {
+    "label": "Accès",
+    "searchConsole": "Search Console",
+    "analytics": "Analytics",
+    "granted": "accordé",
+    "notGranted": "non accordé"
+  },
+  "range": {
+    "label": "Plage de dates",
+    "7d": "7 derniers jours",
+    "28d": "28 derniers jours",
+    "90d": "90 derniers jours"
+  },
+  "searchSummary": {
+    "title": "Performance de recherche ({{days}} derniers jours)",
+    "clicks": "Clics",
+    "impressions": "Impressions",
+    "ctr": "Taux de clics",
+    "position": "Position moyenne",
+    "topQueries": "Principales recherches",
+    "topPages": "Principales pages",
+    "viewAll": "Tout afficher",
+    "viewAllLabel": "Tout afficher — {{section}}",
+    "sitemapsLink": "Voir les sitemaps",
+    "asOf": "Données jusqu'au {{date}}",
+    "previousPeriod": "Période précédente : {{clicks}} clics · {{impressions}} impressions",
+    "reportLink": "Voir toutes les données sur votre rapport",
+    "emptyTitle": "Pas encore de données",
+    "emptyCta": "Gérer la connexion",
+    "empty": "Pas encore de données de recherche. Lancez un audit et ce résumé se remplira automatiquement.",
+    "error": "Impossible de charger votre résumé de recherche. Réessayez dans un instant.",
+    "retry": "Réessayer",
+    "refresh": "Actualiser les données de recherche",
+    "refreshing": "Actualisation…",
+    "refreshError": "Impossible d'actualiser vos données de recherche. Réessayez dans un instant.",
+    "refreshedJustNow": "Mis à jour à l'instant",
+    "timeseriesTitle": "Clics et impressions au fil du temps",
+    "timeseriesSubtitle": "Totaux quotidiens des {{days}} derniers jours.",
+    "timeseriesEmpty": "Pas encore de données quotidiennes.",
+    "timeseriesChartLabel": "{{metric}} par jour sur les {{days}} derniers jours",
+    "timeseriesTableCaption": "Performance de recherche quotidienne des {{days}} derniers jours",
+    "tableDate": "Date",
+    "metricLabel": "Choisir une métrique à afficher",
+    "countriesTitle": "Principaux pays",
+    "countriesEmpty": "Pas encore de données par pays.",
+    "countriesTableCaption": "Clics par pays",
+    "countryHeader": "Pays",
+    "devicesTitle": "Appareils",
+    "devicesEmpty": "Pas encore de données par appareil.",
+    "devicesTableCaption": "Clics par appareil",
+    "deviceHeader": "Appareil",
+    "devices": {
+      "desktop": "Ordinateur",
+      "mobile": "Mobile",
+      "tablet": "Tablette",
+      "unknown": "Autre"
+    }
+  },
+  "analytics": {
+    "title": "Google Analytics ({{days}} derniers jours)",
+    "sessions": "Sessions",
+    "activeUsers": "Utilisateurs actifs",
+    "engagedSessions": "Sessions avec engagement",
+    "keyEvents": "Événements clés",
+    "engagementRateLabel": "Taux d'engagement",
+    "engagementRateLine": "Taux d'engagement : {{rate}}",
+    "previousPeriod": "Période précédente : {{sessions}} sessions · {{activeUsers}} utilisateurs actifs",
+    "emptyTitle": "Pas encore de données Analytics",
+    "empty": "Pas encore de données Analytics. Les données apparaissent peu après la connexion de votre propriété — essayez d'actualiser.",
+    "error": "Impossible de charger votre résumé Analytics. Réessayez dans un instant.",
+    "refresh": "Actualiser les données Analytics",
+    "refreshError": "Impossible d'actualiser vos données Analytics. Réessayez dans un instant.",
+    "timeseriesTitle": "Sessions et utilisateurs actifs au fil du temps",
+    "timeseriesSubtitle": "Totaux quotidiens des {{days}} derniers jours.",
+    "timeseriesChartLabel": "{{metric}} par jour sur les {{days}} derniers jours",
+    "timeseriesTableCaption": "Performance Analytics quotidienne des {{days}} derniers jours",
+    "channelsTitle": "Canaux",
+    "channelsEmpty": "Pas encore de données par canal.",
+    "channelsTableCaption": "Sessions par canal",
+    "channelHeader": "Canal",
+    "pagesTitle": "Principales pages",
+    "pagesEmpty": "Pas encore de données par page.",
+    "pagesTableCaption": "Sessions par page",
+    "pageHeader": "Page",
+    "countriesTitle": "Principaux pays",
+    "countriesEmpty": "Pas encore de données par pays.",
+    "countriesTableCaption": "Sessions par pays",
+    "countryHeader": "Pays",
+    "devicesTitle": "Appareils",
+    "devicesEmpty": "Pas encore de données par appareil.",
+    "devicesTableCaption": "Sessions par appareil",
+    "deviceHeader": "Appareil",
+    "locked": {
+      "body": "Les statistiques Google Analytics sont incluses dans le plan Pro et au-delà. Passez à un plan supérieur pour voir les sessions, l'engagement et les événements clés à côté de vos données de recherche.",
+      "upgrade": "Mettre à niveau"
+    },
+    "enableTitle": "Google Analytics n'est pas activé",
+    "enableBody": "Accordez un accès en lecture seule à Google Analytics pour voir les sessions, l'engagement et les événements clés de ce site.",
+    "enableCta": "Activer Google Analytics",
+    "pickerHint": "Choisissez la propriété Google Analytics que RankMeFast utilise.",
+    "propertyLabel": "Propriété Analytics",
+    "propertyPlaceholder": "Sélectionnez une propriété",
+    "propertyNone": "Aucune propriété Google Analytics trouvée pour ce compte.",
+    "propertiesError": "Impossible de charger vos propriétés Analytics. Réessayez dans un instant.",
+    "setPropertyError": "Impossible d'enregistrer cette propriété Analytics. Réessayez dans un instant.",
+    "settingsTitle": "Google Analytics",
+    "settingsSubtitle": "Choisissez la propriété GA4 que RankMeFast utilise."
+  },
+  "searchDetail": {
+    "back": "Vue d'ensemble",
+    "views": {
+      "queries": "Principales recherches",
+      "pages": "Principales pages",
+      "countries": "Principaux pays",
+      "devices": "Appareils",
+      "sitemaps": "Sitemaps"
+    },
+    "searchLabel": "Filtrer les lignes",
+    "searchPlaceholder": "Filtrer…",
+    "noMatches": "Aucune ligne ne correspond à votre filtre.",
+    "loadMore": "Charger plus",
+    "error": "Impossible de charger ces données. Réessayez dans un instant.",
+    "columns": {
+      "query": "Requête de recherche",
+      "page": "Page",
+      "country": "Pays",
+      "device": "Appareil",
+      "clicks": "Clics",
+      "impressions": "Impressions",
+      "ctr": "CTR",
+      "position": "Position",
+      "actions": "Actions"
+    },
+    "sitemaps": {
+      "empty": "Aucun sitemap envoyé pour le moment.",
+      "columns": {
+        "path": "Sitemap",
+        "type": "Type",
+        "lastSubmitted": "Dernier envoi",
+        "processed": "Traitées",
+        "status": "Statut"
+      },
+      "status": {
+        "ok": "OK",
+        "errors": "{{n}} erreurs",
+        "warnings": "{{n}} avertissements"
+      }
+    }
+  }
+}

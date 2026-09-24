@@ -1,0 +1,133 @@
+{
+  "eyebrow": "Orientación del inventario guardado",
+  "title": "Sugerencias de enlaces internos",
+  "subtitle": "Revisa oportunidades entre páginas de origen y destino a partir del último inventario y de los datos guardados de Search Console. No se aplica ningún cambio al sitio.",
+  "site": {
+    "inventoryLink": "Abrir inventario de contenido"
+  },
+  "tabs": {
+    "runs": "Ejecuciones guardadas",
+    "new": "Nueva ejecución"
+  },
+  "newRun": {
+    "title": "Preparar una ejecución de sugerencias",
+    "description": "Comprueba la instantánea exacta y el cupo antes de gastar una ejecución.",
+    "guidanceOnly": "Las sugerencias son solo orientativas. RankMeFast no modifica tu CMS ni el HTML de las páginas.",
+    "unitLabel": "Cupo",
+    "unitValue": "{{count}} ejecución de enlaces internos",
+    "inventoryLabel": "Instantánea del inventario",
+    "remaining": "Quedan {{count}} ejecuciones antes de esta.",
+    "preview": "Previsualizar ejecución",
+    "previewing": "Comprobando el inventario…",
+    "confirm": "Iniciar sugerencias",
+    "starting": "Iniciando…",
+    "cancel": "Cancelar"
+  },
+  "states": {
+    "inventoryCta": "Volver a ejecutar el inventario",
+    "planCta": "Ver planes",
+    "emptyRuns": {
+      "title": "Aún no hay ejecuciones guardadas",
+      "body": "Previsualiza una nueva ejecución para ver qué inventario guardado utilizará."
+    },
+    "emptySuggestions": {
+      "title": "No hay sugerencias coincidentes",
+      "body": "No se encontraron pares aptos o los filtros de la URL los están ocultando."
+    },
+    "missing": {
+      "title": "Se necesita un inventario de contenido",
+      "body": "Completa un inventario antes de solicitar sugerencias. No se gastó ninguna ejecución."
+    },
+    "stale": {
+      "title": "El inventario está desactualizado",
+      "body": "Vuelve a ejecutar el inventario para usar una instantánea reciente. No se gastó ninguna ejecución."
+    },
+    "cap": {
+      "title": "Cupo mensual alcanzado",
+      "body": "La solicitud no se inició. Espera al próximo periodo o revisa los planes disponibles."
+    },
+    "disabled": {
+      "title": "Las sugerencias no están disponibles",
+      "body": "Las nuevas ejecuciones están desactivadas temporalmente. Las guardadas siguen disponibles."
+    },
+    "rateLimited": {
+      "title": "Demasiadas solicitudes",
+      "body": "Espera un momento antes de volver a intentarlo."
+    },
+    "notFound": {
+      "title": "Ejecución no encontrada",
+      "body": "Esta ejecución guardada no está disponible para la cuenta actual."
+    },
+    "failed": {
+      "title": "No se pudo completar la ejecución",
+      "body": "No se realizaron cambios automáticos. Inténtalo más tarde o abre otra ejecución guardada."
+    },
+    "running": {
+      "title": "Creando sugerencias",
+      "body": "El proceso ordena los candidatos guardados y redacta anclas. La vista se actualiza automáticamente."
+    }
+  },
+  "status": {
+    "queued": "En cola",
+    "processing": "En proceso",
+    "completed": "Completada",
+    "failed": "Fallida",
+    "refunded": "Ejecución devuelta"
+  },
+  "runs": {
+    "snapshot": "Inventario: {{date}}",
+    "suggestionCount": "{{count}} sugerencias",
+    "open": "Abrir ejecución"
+  },
+  "flags": {
+    "orphan": "Huérfana",
+    "weakly_linked": "Poco enlazada"
+  },
+  "confidence": {
+    "high": "Alta",
+    "medium": "Media",
+    "low": "Baja"
+  },
+  "suggestions": {
+    "title": "Enlaces sugeridos",
+    "inventorySnapshot": "Basado en el inventario del {{date}}",
+    "rank": "Posición {{rank}}",
+    "anchorLabel": "Texto de ancla propuesto",
+    "copy": "Copiar ancla",
+    "copied": "Copiada",
+    "codeFixProblem": "Falta un enlace interno relevante.",
+    "codeFixWhy": "La página de destino recibe pocos enlaces internos y comparte un contexto de búsqueda o encabezados relevante con la página de origen.",
+    "codeFixRecommendation": "Añade el enlace en la sección más pertinente de la página de origen y usa el texto de ancla sugerido cuando encaje de forma natural.",
+    "fallback": "La ordenación mediante IA no estaba disponible o fue rechazada. Se muestran candidatos deterministas respaldados por pruebas."
+  },
+  "evidence": {
+    "title": "Por qué se sugirió este par",
+    "inbound": "Enlaces entrantes del destino",
+    "flag": "Indicador de calidad del destino",
+    "inventoryDate": "Fecha del inventario",
+    "queries": "Consultas comunes de Search Console",
+    "headings": "Términos coincidentes de encabezados",
+    "none": "No hay pruebas de este tipo"
+  },
+  "filters": {
+    "target": "Indicador de destino",
+    "targetValue": {
+      "all": "Todos los indicadores",
+      "orphan": "Huérfana",
+      "weakly_linked": "Poco enlazada"
+    },
+    "section": "Sección de origen",
+    "allSections": "Todas las secciones",
+    "confidence": "Confianza",
+    "confidenceValue": {
+      "all": "Todos los niveles",
+      "high": "Alta",
+      "medium": "Media",
+      "low": "Baja"
+    }
+  },
+  "export": {
+    "button": "Exportar tabla",
+    "exporting": "Preparando exportación…"
+  }
+}

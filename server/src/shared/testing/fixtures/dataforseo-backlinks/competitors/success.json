@@ -1,0 +1,53 @@
+{
+  "version": "0.1.20260101",
+  "status_code": 20000,
+  "status_message": "Ok.",
+  "time": "0.2811 sec.",
+  "cost": 0.03,
+  "tasks_count": 1,
+  "tasks_error": 0,
+  "tasks": [
+    {
+      "id": "TASK_ID",
+      "status_code": 20000,
+      "status_message": "Ok.",
+      "time": "0.2712 sec.",
+      "cost": 0.03,
+      "result_count": 1,
+      "path": ["v3", "backlinks", "competitors", "live"],
+      "data": {
+        "api": "backlinks",
+        "function": "competitors",
+        "target": "example.com",
+        "rank_scale": "one_hundred",
+        "limit": 3
+      },
+      "result": [
+        {
+          "target": "example.com",
+          "items_count": 3,
+          "items": [
+            {
+              "type": "competitor",
+              "target": "rival-one.example",
+              "rank": 55,
+              "backlinks_intersections": 118
+            },
+            {
+              "type": "competitor",
+              "target": "rival-two.example",
+              "rank": 41,
+              "backlinks_intersections": 63
+            },
+            {
+              "type": "competitor",
+              "target": "niche-three.example",
+              "rank": null,
+              "backlinks_intersections": 22
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

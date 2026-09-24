@@ -1,0 +1,57 @@
+{
+  "version": "0.1.20260101",
+  "status_code": 20000,
+  "status_message": "Ok.",
+  "time": "0.2418 sec.",
+  "cost": 0.03,
+  "tasks_count": 1,
+  "tasks_error": 0,
+  "tasks": [
+    {
+      "id": "TASK_ID",
+      "status_code": 20000,
+      "status_message": "Ok.",
+      "time": "0.2312 sec.",
+      "cost": 0.03,
+      "result_count": 1,
+      "path": ["v3", "backlinks", "history", "live"],
+      "data": {
+        "api": "backlinks",
+        "function": "history",
+        "target": "example.com"
+      },
+      "result": [
+        {
+          "target": "example.com",
+          "items_count": 3,
+          "items": [
+            {
+              "type": "history",
+              "date": "2024-10-01",
+              "year": 2024,
+              "month": 10,
+              "backlinks": 1200,
+              "referring_domains": 150
+            },
+            {
+              "type": "history",
+              "date": "2024-11-01",
+              "year": 2024,
+              "month": 11,
+              "backlinks": 1350,
+              "referring_domains": 172
+            },
+            {
+              "type": "history",
+              "date": "2024-12-01",
+              "year": 2024,
+              "month": 12,
+              "backlinks": 1543,
+              "referring_domains": 208
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

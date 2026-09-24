@@ -1,0 +1,94 @@
+{
+  "title": "流量洞察",
+  "description": "请求并重新查看任意公共域名基于提供商索引的流量估算。",
+  "common": { "notAvailable": "不可用" },
+  "estimate": {
+    "label": "估算",
+    "coverage": "根据提供商的索引建模，并非分析平台数据。",
+    "observedAt": "观测于 {{date}}",
+    "source": "来源",
+    "freshness": { "fresh": "最新", "stale": "过期", "partial": "部分", "blocked": "已阻止", "failed": "失败", "unknown": "数据新鲜度未知" }
+  },
+  "request": {
+    "title": "请求快照",
+    "description": "在启动付费快照前预览对额度的确切影响。",
+    "marketLabel": "市场",
+    "marketValue": "美国 · 英语",
+    "domainLabel": "域名",
+    "domainPlaceholder": "example.com",
+    "domainHelp": "请输入不含 http://、https://、路径或凭据的公共域名。",
+    "preview": "预览快照",
+    "previewing": "正在准备预览…",
+    "confirm": "确认快照",
+    "confirming": "正在启动快照…",
+    "cancel": "取消"
+  },
+  "preview": {
+    "title": "用量预览",
+    "operatorNotice": "此请求使用运营方配置的流量数据提供商。",
+    "units": "{{count}} 个流量快照单位",
+    "units_other": "{{count}} 个流量快照单位",
+    "cached": "已缓存",
+    "fresh_required": "全新查询",
+    "baseRemaining": "剩余基础额度",
+    "packRemaining": "剩余扩展包额度",
+    "packTitle": "需要更多快照？",
+    "packLink": "查看额度包"
+  },
+  "detail": {
+    "description": "以下所有数字均为估算值，并非实测分析数据。",
+    "monthlyVisits": "估算每月自然访问量",
+    "rank": "估算域名排名",
+    "keywords": "估算关键词数量",
+    "countries": { "title": "估算国家/地区分布", "description": "提供商索引保留的主要国家和地区。", "country": "国家/地区", "visits": "估算访问量" },
+    "history": { "title": "估算流量历史", "description": "最多保留 24 个每月数据点。", "empty": "此快照未保留历史数据点。", "expandTable": "展开无障碍历史表格", "tableCaption": "排名、流量和关键词的估算历史", "date": "日期" }
+  },
+  "list": {
+    "title": "已存储快照",
+    "description": "读取已存储数据免费；暂停新请求时，这些数据仍可使用。",
+    "filters": { "domain": "按域名筛选", "from": "开始日期", "to": "结束日期" },
+    "columns": { "domain": "域名", "captured": "采集时间", "visits": "估算访问量", "action": "操作" },
+    "open": "打开快照",
+    "previous": "上一页",
+    "next": "下一页"
+  },
+  "states": {
+    "empty": { "title": "尚无流量快照", "description": "预览第一个域名快照。", "cta": "从域名开始" },
+    "partial": { "title": "部分估算", "description": "三个提供商操作中保留了 {{retained}} 个。不会推断缺失字段。" },
+    "failed": { "title": "快照失败", "refund": "没有保留任何提供商操作，因此已退还预留的快照单位。" },
+    "locked": { "title": "新快照已暂时停用", "description": "流量洞察暂时无法处理新请求，已存储的快照仍可查看。" },
+    "cap": { "title": "已达到快照限额", "description": "剩余基础额度和扩展包额度不足以完成此请求。请在账单中查看扩展包当前是否可用。", "link": "查看快照扩展包" },
+    "upgrade": { "title": "你的方案不包含流量洞察", "description": "请选择付费方案以请求流量快照。你仍可打开与此工作区共享的已存储快照。", "link": "比较方案" },
+    "timeout": { "title": "请求耗时过长", "retry": "重试", "retrying": "正在重试…" },
+    "signedOut": "请登录以查看流量洞察。",
+    "queued": "快照已加入队列",
+    "running": "快照运行中",
+    "succeeded": "快照已完成"
+  },
+  "errors": {
+    "invalidDomain": "请输入不含协议或路径的有效公共域名。",
+    "requestFailed": "无法启动流量快照。",
+    "previewFailed": "无法准备用量预览。",
+    "listFailed": "无法加载已存储的流量快照。",
+    "detailFailed": "无法加载此流量快照。",
+    "compareFailed": "无法比较这些流量快照。",
+    "previewTitle": "预览不可用"
+  },
+  "compare": {
+    "title": "比较流量快照",
+    "description": "并排比较两到五个已存储的估算结果。打开此视图不会消耗额度。",
+    "clamped": "最多可比较 {{count}} 个快照，第六个快照未添加。",
+    "select": "选择快照",
+    "selectSnapshot": "选择 {{domain}} 进行比较",
+    "button": "比较 {{count}} 个快照",
+    "remove": "从比较中移除 {{domain}}",
+    "countriesTitle": "对齐的国家/地区估算分布",
+    "historyTitle": "叠加的估算流量历史",
+    "historyDescription": "系列颜色按快照顺序显示，并使用共享图表色板。",
+    "chartLabel": "所选快照的叠加估算流量历史",
+    "historyEmpty": "没有保留可比较的历史数据点。",
+    "expandTable": "显示无障碍比较表格",
+    "tableCaption": "按快照显示的每月估算流量历史"
+  },
+  "agency": { "tabsLabel": "竞争对手工作区视图", "overviewTab": "竞争对手", "trafficTab": "流量洞察" }
+}

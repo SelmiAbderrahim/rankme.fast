@@ -1,0 +1,211 @@
+{
+  "title": "Reseñas",
+  "description": "Trae las reseñas públicas de los directorios que indiques y lee lo que repiten tus clientes.",
+  "outputLocale": "Idioma de salida: {{locale}}",
+  "sourceNames": {
+    "google": "Google",
+    "trustpilot": "Trustpilot",
+    "tripadvisor": "Tripadvisor"
+  },
+  "states": {
+    "signedOut": "Inicia sesión para leer tus reseñas.",
+    "notOnPlan": {
+      "title": "Las reseñas están en el plan Pro",
+      "description": "Cambia a Pro o Agency para traer reseñas de Google, Trustpilot y Tripadvisor.",
+      "link": "Ver los planes"
+    },
+    "capReached": {
+      "title": "Has usado todas las sincronizaciones de tu plan",
+      "description": "Consulta Facturación para comprobar la disponibilidad actual del paquete de sincronizaciones. Todo lo que ya trajiste sigue disponible.",
+      "link": "Ver opciones de paquetes"
+    },
+    "disabled": {
+      "title": "Las sincronizaciones nuevas están en pausa",
+      "description": "Hemos pausado las sincronizaciones nuevas de reseñas. Las reseñas que ya trajiste siguen disponibles."
+    },
+    "noSources": {
+      "title": "Añade al menos una fuente de reseñas para empezar.",
+      "description": "Añade una ficha de Google, Trustpilot o Tripadvisor antes de lanzar una sincronización."
+    },
+    "neverSynced": {
+      "title": "Aún sin sincronizar",
+      "description": "Tus fuentes están listas. Lanza la primera sincronización para traer reseñas."
+    }
+  },
+  "sources": {
+    "title": "Fuentes de reseñas",
+    "description": "Dinos dónde aparece tu negocio. Una ficha por directorio.",
+    "empty": "Todavía no hay fuentes. Añade una abajo.",
+    "configured": "Configurada",
+    "save": "Guardar fuente",
+    "remove": "Quitar",
+    "hint": {
+      "google": "Identificador de lugar de Google",
+      "trustpilot": "Dominio del negocio en Trustpilot",
+      "tripadvisor": "Identificador de sitio de Tripadvisor"
+    },
+    "placeholder": {
+      "google": "ChIJ_example_place_id",
+      "trustpilot": "example.com",
+      "tripadvisor": "1234567"
+    }
+  },
+  "sync": {
+    "title": "Lanzar una sincronización",
+    "description": "Una sincronización cubre todas las fuentes que elijas. Verás el coste antes de gastar nada.",
+    "sourcesLabel": "Fuentes a sincronizar",
+    "depthLabel": "Reseñas por fuente",
+    "depthHint": "Entre una y {{max}} reseñas de cada fuente.",
+    "selectAtLeastOne": "Elige al menos una fuente para ver el coste.",
+    "estimate": "Ver el coste",
+    "confirm": "Confirmar y lanzar",
+    "cancel": "Cancelar"
+  },
+  "preview": {
+    "title": "Lo que cuesta esta sincronización",
+    "description": "Es una estimación. No se gasta nada hasta que confirmes.",
+    "units": "Consume {{units}} sincronización",
+    "perSource": "Cubre {{sources}} fuentes",
+    "depth": "Trae hasta {{depth}} reseñas por fuente",
+    "available": "Entra en tu cupo",
+    "unavailable": "Supera tu cupo",
+    "baseRemaining": "Sincronizaciones del plan: quedan {{remaining}}",
+    "packRemaining": "Sincronizaciones del paquete: quedan {{remaining}}"
+  },
+  "runs": {
+    "title": "Historial de sincronizaciones",
+    "description": "Cada sincronización, lo que devolvió cada fuente y si se devolvió la unidad.",
+    "empty": "Todavía no hay sincronizaciones.",
+    "createdAt": "Iniciada",
+    "view": "Abrir",
+    "refunded": "Unidad devuelta",
+    "columns": {
+      "status": "Resultado",
+      "outcomes": "Por fuente",
+      "retained": "Reseñas nuevas",
+      "ai": "Temas"
+    },
+    "status": {
+      "queued": "En espera",
+      "running": "En curso",
+      "succeeded": "Hecha",
+      "partial": "Parcial",
+      "failed": "Fallida"
+    },
+    "outcome": {
+      "ok": "reseñas nuevas",
+      "failed": "falló",
+      "zeroNew": "nada nuevo"
+    },
+    "ai": {
+      "pending": "Temas pendientes",
+      "themesOk": "Temas listos",
+      "noReliableThemes": "Sin temas sólidos",
+      "aiFailed": "Fallaron los temas"
+    }
+  },
+  "inventory": {
+    "title": "Reseñas",
+    "description": "Las más recientes primero. El texto llega tal cual del directorio y se muestra como texto plano.",
+    "empty": "Todavía no hay reseñas guardadas.",
+    "noMatches": "Ninguna reseña coincide con estos filtros.",
+    "clearFilters": "Quitar filtros",
+    "filterSource": "Fuente",
+    "filterRating": "Valoración",
+    "filterQuery": "Buscar en el texto",
+    "sortLabel": "Ordenar",
+    "sort": {
+      "newest": "Más recientes primero",
+      "rating-high": "Mejor valoración",
+      "source": "Fuente"
+    },
+    "filterAll": "Todas",
+    "searchPlaceholder": "Buscar en las reseñas",
+    "apply": "Aplicar",
+    "stars": "{{stars}} estrellas",
+    "unrated": "Sin valoración",
+    "anonymous": "Sin nombre",
+    "page": "Página {{page}} de {{total}} reseñas",
+    "previous": "Anterior",
+    "next": "Siguiente",
+    "export": "Descargar CSV",
+    "exportLoading": "Preparando CSV…",
+    "exportFailed": "No pudimos preparar el CSV. Inténtalo de nuevo.",
+    "exportFree": "La descarga es gratuita y usa las reseñas que ya trajiste.",
+    "columns": {
+      "rating": "Valoración",
+      "reviewedAt": "Fecha",
+      "source": "Fuente",
+      "text": "Reseña",
+      "author": "Autor"
+    }
+  },
+  "stats": {
+    "title": "Salud de las reseñas",
+    "empty": "Todavía no hay nada que representar.",
+    "total": "{{total}} reseñas guardadas",
+    "distribution": {
+      "title": "Reparto de estrellas",
+      "stars": "{{stars}} estrellas",
+      "unrated": "Sin valoración"
+    },
+    "velocity": {
+      "title": "Reseñas por mes",
+      "latest": "En {{month}}",
+      "average": "Media de {{average}} al mes"
+    },
+    "sourceMix": {
+      "title": "De dónde vienen"
+    }
+  },
+  "trend": {
+    "title": "Valoración media en el tiempo",
+    "description": "Un punto por mes. Un mes sin valoración se deja como hueco.",
+    "chartLabel": "Valoración media en estrellas por mes",
+    "expandTable": "Leer como tabla",
+    "tableCaption": "Valoración media en estrellas por mes y fuente",
+    "month": "Mes",
+    "total": "Todas las fuentes",
+    "gap": "Sin datos",
+    "empty": "Todavía no hay reseñas con fecha."
+  },
+  "themes": {
+    "title": "Lo que más se repite",
+    "complaints": "Quejas frecuentes",
+    "praise": "Elogios frecuentes",
+    "citations": "Ver las reseñas que lo respaldan",
+    "citationCount": "{{citations}} reseñas",
+    "citationSource": "{{source}} · {{rating}} · {{date}}",
+    "sectionEmpty": "Aquí no hay nada para esta sincronización.",
+    "pending": "El paso de temas todavía no ha terminado.",
+    "noReliable": {
+      "title": "Esta vez no hay temas sólidos",
+      "description": "Solo mostramos un tema cuando al menos dos reseñas lo respaldan. Ninguno pasó ese listón y no vamos a inventarlo."
+    },
+    "aiFailed": {
+      "title": "No se pudieron construir los temas",
+      "description": "El paso de resumen falló. Tus reseñas llegaron bien y siguen disponibles abajo.",
+      "link": "Ir a las reseñas"
+    }
+  },
+  "provenance": {
+    "first_party": "Datos propios",
+    "provider_observation": "Observación del proveedor",
+    "estimate": "Estimación",
+    "ai_interpretation": "Interpretación de IA",
+    "observedAt": "Observado el {{date}}",
+    "sampleCount": "{{count}} reseñas en la muestra"
+  },
+  "errors": {
+    "sourcesFailed": "No pudimos cargar tus fuentes de reseñas.",
+    "addSourceFailed": "No pudimos guardar esa fuente.",
+    "removeSourceFailed": "No pudimos quitar esa fuente.",
+    "previewFailed": "No pudimos calcular el coste.",
+    "syncFailed": "No pudimos lanzar la sincronización.",
+    "runsFailed": "No pudimos cargar el historial de sincronizaciones.",
+    "runFailed": "No pudimos cargar esa sincronización.",
+    "statsFailed": "No pudimos cargar los números de las reseñas.",
+    "themesFailed": "No pudimos cargar los temas.",
+    "inventoryFailed": "No pudimos cargar tus reseñas."
+  }
+}

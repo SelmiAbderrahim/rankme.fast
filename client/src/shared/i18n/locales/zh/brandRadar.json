@@ -1,0 +1,235 @@
+{
+  "title": "品牌雷达",
+  "description": "逐次扫描，了解你的品牌在网络上被提及的位置。",
+  "outputLocale": "输出语言：{{locale}}",
+  "tabs": {
+    "scans": "扫描记录",
+    "new": "新建扫描"
+  },
+  "list": {
+    "title": "你的扫描",
+    "description": "最新的在前。每次扫描消耗一个扫描单位。",
+    "columns": {
+      "query": "品牌词",
+      "status": "状态",
+      "digest": "摘要",
+      "mentions": "提及数",
+      "refund": "退回",
+      "created": "创建时间",
+      "actions": "操作"
+    },
+    "pendingCreated": "刚刚提交",
+    "open": "打开",
+    "loadMore": "加载更多",
+    "loading": "正在加载扫描",
+    "retry": "重试",
+    "filter": {
+      "label": "按状态筛选",
+      "all": "全部状态",
+      "note": "筛选仅作用于本页已加载的扫描。"
+    }
+  },
+  "status": {
+    "queued": "排队中",
+    "running": "运行中",
+    "completed": "已完成",
+    "completed_empty": "未找到提及",
+    "completed_partial": "部分完成",
+    "failed": "失败"
+  },
+  "digest": {
+    "pending": "摘要待生成",
+    "digest_present": "摘要已就绪",
+    "digest_absent": "没有摘要",
+    "no_reliable_digest": "摘要已保留不发布"
+  },
+  "refund": {
+    "refunded": "扫描额度已退回"
+  },
+  "states": {
+    "empty": {
+      "title": "还没有扫描",
+      "description": "运行第一次品牌扫描，看看哪里提到了你。",
+      "cta": "开始扫描"
+    },
+    "filtered": {
+      "description": "本页没有该状态的扫描。"
+    },
+    "error": {
+      "title": "无法加载你的扫描"
+    },
+    "unavailable": {
+      "title": "品牌雷达已暂停",
+      "description": "目前无法发起新的扫描。",
+      "storedReads": "已经运行过的扫描仍可查看。"
+    },
+    "notOnPlan": {
+      "title": "品牌雷达需要更高的套餐",
+      "description": "升级到 Pro 或 Agency 即可解锁品牌扫描。",
+      "link": "查看套餐"
+    },
+    "addonRequired": {
+      "title": "为套餐添加品牌雷达",
+      "description": "请在账单中查看品牌雷达附加项当前是否可用。",
+      "price": "每月 {{price}}，包含 {{units}} 次扫描。",
+      "link": "查看品牌雷达选项"
+    },
+    "overCap": {
+      "title": "本月品牌扫描已用完",
+      "description": "请在账单中查看 {{slug}} 加量包当前是否可用。",
+      "link": "查看扫描额度选项"
+    }
+  },
+  "form": {
+    "title": "新建品牌扫描",
+    "description": "我们会先算好费用，之后才会消耗额度。",
+    "queryLabel": "品牌词",
+    "queryPlaceholder": "你的品牌名称",
+    "queryHelp": "每次扫描一个品牌，最多 {{max}} 个字符。",
+    "languageLabel": "语言（可选）",
+    "languagePlaceholder": "en",
+    "languageHelp": "两位字母的语言代码，例如 en 或 fr。",
+    "locationLabel": "发布网站所在国家/地区（可选）",
+    "locationPlaceholder": "选择国家/地区",
+    "locationHelp": "按发布网站的注册国家/地区筛选结果。选择所有国家/地区可查看全球结果。",
+    "locationCatalogError": "无法加载国家/地区。请重试后再估算扫描费用。",
+    "preview": "预览费用",
+    "previewing": "正在计算费用",
+    "confirm": "运行扫描",
+    "confirming": "正在提交",
+    "cancel": "取消",
+    "needsPreview": "请先预览费用。运行之前不会消耗任何额度。"
+  },
+  "preview": {
+    "title": "本次扫描的费用",
+    "units": "本次扫描所需单位：{{units}}",
+    "baseRemaining": "套餐剩余额度",
+    "packRemaining": "加量包剩余额度",
+    "willConsumeBase": "来自套餐额度：{{units}}",
+    "willConsumePack": "来自加量包额度：{{units}}"
+  },
+  "coverage": {
+    "estimateOnly": "提及数量为服务商估算，并非对整个网络的完整统计。",
+    "unknown": "服务商未说明本次扫描的覆盖范围。"
+  },
+  "detail": {
+    "back": "返回扫描列表",
+    "loading": "正在加载这次扫描",
+    "errorTitle": "无法加载这次扫描",
+    "mentionCount": "找到 {{count}} 条提及",
+    "mentionCount_other": "找到 {{count}} 条提及",
+    "market": "市场",
+    "outputLocale": "输出语言",
+    "createdAt": "开始",
+    "terminalAt": "结束",
+    "notSettled": "仍在运行",
+    "banners": {
+      "queued": {
+        "title": "等待开始",
+        "description": "这次扫描在队列中，请过几分钟再来查看。"
+      },
+      "running": {
+        "title": "运行中",
+        "description": "正在采集这次扫描的数据。"
+      },
+      "completed_empty": {
+        "title": "没有找到提及",
+        "description": "扫描已经跑完，没有找到这个品牌的任何提及。扫描额度已消耗。"
+      },
+      "completed_partial": {
+        "title": "这次扫描提前停止",
+        "description": "采集在结束前停止了，可能是扫描达到了花费上限，也可能是数据提供方不再响应。已采集到的内容显示在下方。"
+      },
+      "failed": {
+        "title": "这次扫描失败",
+        "description": "扫描没能完成，下方内容都不完整。",
+        "refunded": "扫描没能完成，我们已把扫描额度退还给你。"
+      }
+    },
+    "halt": {
+      "search_provider_error": "数据提供方在搜索提及时出错，因此没有收集到任何内容。",
+      "summary_cost_ceiling": "扫描在提及摘要步骤之前停止，因为达到了花费上限。目前已收集的提及会被保留。",
+      "summary_provider_error": "数据提供方在提及摘要步骤出错。故障前收集的提及会被保留。",
+      "brand_digest_cost_ceiling": "扫描在 AI 摘要步骤之前停止，因为达到了花费上限。提及和摘要会被保留。",
+      "brand_digest_digest_failed": "AI 摘要无法可靠生成。提及和摘要会被保留。",
+      "scan_processing_failure": "扫描在处理过程中停滞，已由系统关闭。"
+    },
+    "sentiment": {
+      "title": "这些提及的语气",
+      "positive": "正面",
+      "neutral": "中性",
+      "negative": "负面",
+      "unknown": "不明确",
+      "percent": "{{percent}}%",
+      "expandTable": "以表格显示语气分布",
+      "tableCaption": "按语气划分的提及占比",
+      "columnLabel": "语气",
+      "columnShare": "占比"
+    },
+    "topDomains": {
+      "title": "提及你最多的站点"
+    },
+    "trend": {
+      "title": "多次扫描之间的提及数",
+      "expandTable": "以表格显示趋势",
+      "tableCaption": "该品牌词每次扫描的提及数",
+      "capturedAt": "扫描日期",
+      "mentions": "提及数",
+      "delta": "变化",
+      "deltaUnavailable": "未对比",
+      "noComparison": "这是该品牌词的第一次扫描，暂时无法对比。",
+      "needMore": "再跑一次这个品牌词，就能看到提及数随时间的变化。"
+    },
+    "digest": {
+      "title": "这说明什么",
+      "aiLabel": "AI 解读",
+      "pending": "摘要还在生成中。",
+      "absent": "这次扫描没有生成摘要。",
+      "withheld": "由于没有一句话能对应到具体提及，摘要被保留未发布。",
+      "citations": "{{count}} 个来源",
+      "citations_other": "{{count}} 个来源",
+      "citationMissing": "该来源不在本页"
+    },
+    "mentions": {
+      "title": "提及",
+      "loading": "正在加载提及",
+      "loadMore": "加载更多提及",
+      "errorTitle": "无法加载提及",
+      "export": "下载 CSV",
+      "exportFree": "免费——读取你已经付过费的数据。",
+      "filterNote": "筛选只作用于本页已加载的提及。",
+      "filteredEmpty": "本页没有符合这些筛选条件的提及。",
+      "noObservedAt": "无日期",
+      "filters": {
+        "sentiment": "语气",
+        "domain": "站点",
+        "from": "起始",
+        "to": "结束"
+      },
+      "sentiment": {
+        "all": "全部语气",
+        "positive": "正面",
+        "neutral": "中性",
+        "negative": "负面"
+      },
+      "columns": {
+        "title": "标题",
+        "snippet": "摘录",
+        "domain": "站点",
+        "sentiment": "语气",
+        "observedAt": "发现时间"
+      }
+    }
+  },
+  "errors": {
+    "previewTitle": "无法计算本次扫描的费用",
+    "invalidQuery": "请输入 1 到 {{max}} 个字符的品牌词。",
+    "invalidLanguage": "请使用两位字母的语言代码，例如 en。",
+    "invalidLocation": "请选择受支持的发布网站国家或地区。",
+    "listFailed": "无法加载你的扫描。",
+    "previewFailed": "无法计算本次扫描的费用。",
+    "createFailed": "无法将本次扫描加入队列。",
+    "detailFailed": "无法加载这次扫描。",
+    "mentionsFailed": "无法加载这次扫描的提及。"
+  }
+}

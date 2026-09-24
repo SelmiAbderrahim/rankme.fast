@@ -1,0 +1,222 @@
+{
+  "title": "تقرير التدقيق الخاص بك",
+  "subtitle": "ما يجب إصلاحه، وما يجب مراقبته، وما اجتاز الفحص.",
+  "history": {
+    "title": "سجل التدقيق",
+    "empty": "لا توجد عمليات تدقيق بعد.",
+    "viewRun": "عرض هذا الفحص",
+    "status": {
+      "queued": "في قائمة الانتظار",
+      "running": "قيد التشغيل",
+      "succeeded": "اكتمل",
+      "failed": "فشل"
+    }
+  },
+  "tabs": {
+    "fix-now": "أصلح الآن",
+    "watch": "راقب",
+    "passed": "اجتاز"
+  },
+  "row": {
+    "affectedPages": "{{count}} صفحة متأثرة",
+    "affectedPagesOne": "صفحة واحدة متأثرة",
+    "siteWide": "فحص على مستوى الموقع",
+    "passedSummary": "هذا الفحص ناجح."
+  },
+  "severity": {
+    "critical": "حرج",
+    "warning": "تحذير",
+    "info": "معلومة"
+  },
+  "badges": {
+    "fixed": "تم الإصلاح",
+    "regressed": "تراجع"
+  },
+  "detail": {
+    "whyTitle": "لماذا هذا مهم",
+    "affectedUrlsTitle": "الروابط المتأثرة",
+    "brokenLinkTargetsTitle": "الوجهات التي تعذّر على التدقيق جلبها",
+    "brokenLinkSourcesTitle": "الصفحات التي ترتبط بهذه الوجهات",
+    "fixTitle": "كيفية الإصلاح",
+    "copyFix": "نسخ الإصلاح",
+    "copied": "تم النسخ",
+    "generateSchema": "إنشاء ترميز schema"
+  },
+  "retest": {
+    "cta": "إعادة الفحص",
+    "running": "جاري الفحص…",
+    "starting": "جاري البدء…",
+    "first": "شغّل أول تدقيق"
+  },
+  "pageCap": {
+    "label": "عدد الصفحات المراد فحصها",
+    "max": "الحد الأقصى للخطة",
+    "pages": "{{pages}} صفحة"
+  },
+  "empty": {
+    "fix-now": {
+      "title": "لا شيء لإصلاحه الآن",
+      "description": "عمل رائع — لم يتم العثور على مشاكل حرجة في هذا التدقيق."
+    },
+    "watch": {
+      "title": "لا شيء يستحق المراقبة",
+      "description": "لا توجد تحذيرات على موقعك حالياً."
+    },
+    "passed": {
+      "title": "لا شيء ناجح بعد",
+      "description": "شغّل أول تدقيق لترى ما يحسنه موقعك بالفعل."
+    }
+  },
+  "noRun": {
+    "title": "لا توجد عمليات تدقيق بعد",
+    "description": "شغّل أول تدقيق لترى ما يجب إصلاحه وما يجب مراقبته وما اجتاز الفحص."
+  },
+  "states": {
+    "loading": "جاري تحميل تقريرك…",
+    "retry": "حاول مرة أخرى",
+    "runInProgress": "جاري تدقيق موقعك — قد يستغرق ذلك بضع دقائق."
+  },
+  "loadFailed": "تعذر تحميل تقريرك.",
+  "retestFailed": "تعذر بدء التدقيق.",
+  "pageSpeed": {
+    "sectionTitle": "سرعة الصفحة",
+    "fieldLabel": "ما عاشه الزوار الحقيقيون",
+    "labLabel": "تقديرنا المخبري",
+    "unavailableTitle": "بيانات سرعة الصفحة غير متاحة لهذا الفحص",
+    "unavailableBody": "لم نتمكن من الوصول إلى خدمة قياس السرعة. تقريرك مكتمل — سيعود قسم السرعة في الفحص القادم.",
+    "noFieldDataTitle": "لا توجد بيانات زوار كافية بعد",
+    "noFieldDataBody": "يبلّغ Chrome عن سرعة الزوار الحقيقيين فقط بعد تحقيق حركة كافية. مع نمو الزيارات سيمتلئ هذا القسم تلقائياً.",
+    "originFallback": "بيانات على مستوى النطاق (وليس هذه الصفحة فقط)",
+    "sampleLabel": "تم اختيار {{count}} صفحة",
+    "sampleLabelOne": "تم اختيار صفحة واحدة",
+    "metrics": {
+      "lcp": "LCP",
+      "inp": "INP",
+      "cls": "CLS",
+      "performance": "الأداء"
+    },
+    "categories": {
+      "good": "جيد",
+      "needs-improvement": "بحاجة إلى تحسين",
+      "poor": "ضعيف"
+    }
+  },
+  "aiSummary": {
+    "cardTitle": "ملخّص الذكاء الاصطناعي للإصلاحات",
+    "cardDescription": "ملخّص بالذكاء الاصطناعي وبلغة واضحة لأهم ما ينبغي إصلاحه.",
+    "cta": "لخّص إصلاحاتي",
+    "regenerate": "إعادة الإنشاء",
+    "loading": "جارٍ كتابة ملخّصك…",
+    "attribution": "منشأ بواسطة الذكاء الاصطناعي — تحقّق قبل التنفيذ.",
+    "truncatedNote": "تمّ اختصار الملخّص.",
+    "errors": {
+      "unavailable": "ملخّص الذكاء الاصطناعي غير متاح مؤقتًا — لن تتأثر قائمة الإصلاحات.",
+      "capReached": "لقد استنفدت الحد الشهري لملخّصات الذكاء الاصطناعي. رقّ خطتك أو أضف رصيدًا للمتابعة."
+    }
+  },
+  "pdf": {
+    "download": "تنزيل PDF",
+    "downloading": "جارٍ تجهيز الملف…",
+    "error": "تعذّر تجهيز ملف PDF. حاول مرة أخرى.",
+    "upgradeHint": "تقارير PDF متاحة في خطتي Pro وAgency."
+  },
+  "gscBlock": {
+    "sectionTitle": "أداء البحث في Google (آخر 28 يومًا)",
+    "sitemapsTitle": "خرائط المواقع في Google Search Console",
+    "totalClicks": "النقرات",
+    "totalImpressions": "مرات الظهور",
+    "averageCtr": "معدل النقر إلى الظهور",
+    "averagePosition": "متوسط الترتيب",
+    "topQueriesTitle": "أهم عمليات البحث",
+    "topPagesTitle": "أهم الصفحات",
+    "colQuery": "البحث",
+    "colPage": "الصفحة",
+    "colClicks": "النقرات",
+    "colImpressions": "مرات الظهور",
+    "colCtr": "CTR",
+    "colPosition": "الترتيب",
+    "deltaClicks": "نقرات مقارنة بالفترة السابقة",
+    "deltaImpressions": "مرات ظهور مقارنة بالفترة السابقة",
+    "sampledFootnote": "معاينة من Google · يتم استبعاد الأيام الثلاثة الأخيرة لأن Google يبلغ عنها متأخرًا.",
+    "unavailableTitle": "بيانات البحث غير متاحة لهذا الفحص",
+    "unavailableBody": "لم نتمكن من الوصول إلى Google Search Console لهذا التدقيق. تقريرك مكتمل رغم ذلك — ستعود بيانات البحث في الفحص القادم.",
+    "notConnectedTitle": "اربط Google Search Console",
+    "notConnectedBody": "اربط حساب Google الخاص بك لرؤية النقرات ومرات الظهور الحقيقية وحالة خرائط الموقع في هذا التقرير.",
+    "notConnectedCta": "افتح إعدادات Google",
+    "reconnectTitle": "اتصالك بـ Google يحتاج إلى التجديد",
+    "reconnectBody": "لم يعد Google يقبل الصلاحية الحالية. أعد الربط لاستعادة بيانات البحث.",
+    "noDataTitle": "لا توجد بيانات بحث بعد",
+    "noDataBody": "لم يبلّغ Google عن أي نقرات أو مرات ظهور لهذا الموقع خلال الأسابيع الأربعة الأخيرة.",
+    "noSitemapsTitle": "لم يتم إرسال أي خريطة موقع إلى Google",
+    "noSitemapsBody": "أرسل خريطة موقعك في Google Search Console حتى يتمكن Google من العثور على كل صفحة تريد فهرستها.",
+    "sitemapHealthy": "سليمة",
+    "sitemapErrors": "{{count}} أخطاء",
+    "sitemapWarnings": "{{count}} تحذيرات",
+    "sitemapProcessed": "تم إرسال {{count}} رابط",
+    "sitemapLastDownloaded": "آخر قراءة بواسطة Google: {{date}}",
+    "sitemapNeverDownloaded": "لم تتم قراءتها بواسطة Google بعد"
+  },
+  "aiVisibilityBlock": {
+    "title": "رؤية الذكاء الاصطناعي",
+    "unavailableTitle": "بيانات رؤية الذكاء الاصطناعي غير متاحة",
+    "unavailableBody": "تعذر قراءة بيانات إجابات دردشة الذكاء الاصطناعي الحديثة لهذا التقرير.",
+    "noPromptsTitle": "لا توجد استعلامات ذكاء اصطناعي متتبَّعة بعد",
+    "noPromptsBody": "تتبّع أسئلة المشترين لمعرفة ما إذا كانت إجابات دردشة الذكاء الاصطناعي تذكرك.",
+    "noPromptsCta": "أضف استعلامات متتبَّعة",
+    "aiOverview": "اقتباسات Google AI Overview",
+    "aiChats": "إشارات دردشة الذكاء الاصطناعي",
+    "shareOfVoice": "حصة الحضور",
+    "brand": "أنت",
+    "competitors": "المنافسون",
+    "noData": "لا توجد بيانات",
+    "notMentioned": "غير مذكور",
+    "sentiment": {
+      "positive": "إيجابي",
+      "neutral": "حيادي",
+      "negative": "نقدي"
+    }
+  },
+  "localSeoBlock": {
+    "title": "تحسين محركات البحث المحلية",
+    "unavailableTitle": "بيانات SEO المحلي غير متاحة",
+    "unavailableBody": "تعذر قراءة القوائم أو التقييمات أو بيانات حزمة الخرائط الحديثة لهذا التقرير.",
+    "notConfiguredTitle": "لم يتم إعداد SEO المحلي بعد",
+    "notConfiguredBody": "قم بتحديث SEO المحلي لجلب قوائم الأعمال والتقييمات وترتيب حزمة الخرائط لموقعك.",
+    "notConfiguredCta": "فتح SEO المحلي",
+    "listings": "قوائم الدلائل",
+    "consistent": "متطابق",
+    "inconsistent": "غير متطابق",
+    "averageRating": "متوسط التقييم",
+    "reviewCount": "التقييمات",
+    "unansweredQuestions": "أسئلة بلا إجابة",
+    "localPack": "حزمة الخرائط المحلية",
+    "notRanked": "غير مدرج في حزمة الخرائط",
+    "packSize": "{{count}} نتيجة",
+    "noData": "لا توجد بيانات"
+  },
+  "exportUi": {
+    "trigger": "تصدير أو مشاركة", "loading": "جارٍ تحميل خيارات التصدير…", "preparing": "جارٍ تجهيز الملف…", "unavailable": "التصدير غير متاح", "formatsLabel": "تنسيقات الملفات",
+    "clipboard": { "action": "نسخ إلى الحافظة", "success": "تم النسخ إلى الحافظة.", "error": "تعذر النسخ إلى الحافظة." },
+    "formats": { "view": "عرض ويب", "pdf": "ملف PDF", "csv": "ملف CSV", "json": "JSON", "md": "مستند ماركداون", "jsonld": "JSON-LD", "txt": "نص" },
+    "states": { "active": "نشط", "revoked": "ملغى", "expired": "منتهي الصلاحية" },
+    "actions": { "retry": "إعادة المحاولة", "download": "تنزيل", "delete": "حذف", "revoke": "إلغاء", "cancel": "إلغاء الأمر", "done": "تم" },
+    "errors": { "capabilities": "تعذر تحميل خيارات التصدير.", "create": "تعذر تصدير التقرير. قلّل النطاق وحاول مرة أخرى.", "download": "تعذر تنزيل الملف المحفوظ.", "list": "تعذر تحميل التصديرات المحفوظة.", "delete": "تعذر حذف التصدير المحفوظ.", "share": "تعذر إنشاء رابط المشاركة.", "revoke": "تعذر إلغاء رابط المشاركة.", "copy": "تعذر نسخ الرابط." },
+    "share": { "action": "إنشاء رابط مشاركة", "title": "مشاركة تقرير ثابت", "description": "اختر ما يمكن للمستلمين فتحه. لن يتغير التقرير بعد إنشاء الرابط.", "locale": "لغة التقرير", "expiry": "تنتهي الصلاحية بعد", "expiryHelp": "اختر من يوم واحد إلى 90 يومًا.", "permissions": "التنسيقات المسموح بها", "create": "إنشاء الرابط", "creating": "جارٍ إنشاء الرابط…", "showOnce": "انسخ هذا الرابط الآن", "linkLabel": "رابط المشاركة", "copy": "نسخ الرابط", "copied": "تم النسخ", "savedWithoutToken": "لأسباب أمنية، لا يحفظ RankMeFast الرابط القابل للقراءة. يظل بإمكانك إلغاؤه من مركز التصدير.", "existing": "روابط هذه اللقطة", "refresh": "تحديث" },
+    "confirm": { "revokeTitle": "هل تريد إلغاء هذا الرابط؟", "revokeBody": "سيفقد كل من يستخدمه إمكانية الوصول فورًا.", "deleteTitle": "هل تريد حذف هذا التصدير المحفوظ؟", "deleteBody": "سيتوقف الملف عن العمل وستُلغى جميع روابط المشاركة المرتبطة به." },
+    "center": { "title": "التصديرات والمشاركات", "description": "نزّل لقطات التقارير المحفوظة وأدر الروابط العامة.", "tabsLabel": "أقسام مركز التصدير", "downloads": "التنزيلات", "shares": "المشاركات", "disabledTitle": "التصديرات الجديدة متوقفة مؤقتًا", "disabledBody": "قد تظل الملفات الحالية متاحة، لكن لا يمكن إنشاء ملفات أو روابط جديدة الآن.", "emptyDownloadsTitle": "لا توجد تصديرات محفوظة بعد", "emptyDownloadsBody": "أنشئ تصديرًا من أي تقرير عبر خيار التصدير أو المشاركة.", "emptySharesTitle": "لا توجد روابط مشاركة بعد", "emptySharesBody": "شارك تقريرًا مؤهلًا لإدارة رابطه هنا.", "deletedReport": "تقرير محذوف أو منتهي الصلاحية", "more": "تحميل المزيد", "expiresValue": "تنتهي الصلاحية في {{date}}", "views": "{{count}} مشاهدة", "columns": { "report": "التقرير", "format": "التنسيق", "created": "تاريخ الإنشاء", "expires": "انتهاء الصلاحية", "actions": "الإجراءات" } }
+  },
+  "publicShare": {
+    "report": "تقرير مشترك",
+    "sourceDates": "المصادر والتواريخ",
+    "selection": "نطاق التقرير",
+    "expires": "تنتهي صلاحية هذا الرابط في {{date}}.",
+    "downloadPdf": "تنزيل PDF",
+    "downloadCsv": "تنزيل CSV",
+    "notFoundTitle": "رابط التقرير هذا غير متاح",
+    "notFoundBody": "ربما انتهت صلاحيته أو أُلغي أو حُذف التقرير.",
+    "empty": "لا توجد صفوف متاحة لهذا القسم.",
+    "unavailable": "غير متاح",
+    "observed": "تم الرصد في {{date}}",
+    "provenance": "مصدر {{kind}}"
+  }
+}

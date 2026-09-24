@@ -1,0 +1,61 @@
+{
+  "version": "0.1.20260808",
+  "status_code": 20000,
+  "status_message": "Ok.",
+  "cost": 0,
+  "tasks": [
+    {
+      "id": "TASK_ID",
+      "status_code": 20000,
+      "status_message": "Ok.",
+      "cost": 0,
+      "result": [
+        {
+          "app_id": "686449807",
+          "location_code": 2840,
+          "language_code": "en",
+          "datetime": "2026-08-08 11:05:00 +00:00",
+          "items": [
+            {
+              "type": "app_store_info_organic",
+              "app_id": "686449807",
+              "title": "Audit App Store App",
+              "url": "https://apps.example.test/app/id686449807",
+              "description": "Documented-shape App Store listing.",
+              "reviews_count": 120,
+              "rating": {
+                "value": 4.8
+              },
+              "is_free": false,
+              "price": {
+                "current": 2.99,
+                "currency": "USD",
+                "displayed_price": "$2.99"
+              },
+              "main_category": "Utilities",
+              "categories": [
+                "Utilities"
+              ],
+              "languages": [
+                "en",
+                "fr"
+              ],
+              "advisories": [
+                "4+"
+              ],
+              "developer": "Example Studio",
+              "developer_url": "https://apps.example.test/developer/example",
+              "version": "3.0.0",
+              "minimum_os_version": "16.0",
+              "size": "30 MB",
+              "last_update_date": "2026-08-01 00:00:00 +00:00",
+              "images": [],
+              "similar_apps": [],
+              "more_apps_by_developer": []
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

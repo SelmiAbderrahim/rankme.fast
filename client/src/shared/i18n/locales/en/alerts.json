@@ -1,0 +1,133 @@
+{
+  "title": "Alerts",
+  "subtitle": "Get told when a ranking slips or your link profile changes.",
+  "tabs": {
+    "rules": "Rules",
+    "log": "Delivery log"
+  },
+  "type": {
+    "rank_drop": "Rank drop",
+    "new_backlink": "New links",
+    "lost_backlink": "Lost links"
+  },
+  "channel": {
+    "email": "Email",
+    "slack": "Slack",
+    "webhook": "Webhook"
+  },
+  "filters": {
+    "type": "Type",
+    "state": "State",
+    "all": "All"
+  },
+  "list": {
+    "title": "Your rules",
+    "capUsed": "{{count}} rules in use.",
+    "type": "Type",
+    "threshold": "Threshold",
+    "channels": "Channels",
+    "state": "State",
+    "actions": "Actions",
+    "emailCount": "{{count}} email recipients",
+    "secretTail": "signing key ends {{tail}}",
+    "enabled": "On",
+    "disabled": "Off",
+    "enable": "Turn on",
+    "disable": "Turn off",
+    "viewLog": "View log",
+    "delete": "Delete"
+  },
+  "builder": {
+    "title": "New rule",
+    "description": "Pick what to watch and where to send it.",
+    "site": "Site",
+    "sitePlaceholder": "Choose a site",
+    "type": "Alert type",
+    "threshold": "Position threshold",
+    "thresholdHint": "We alert when the confirmed position is this number or worse.",
+    "channels": "Channels",
+    "slackPlaceholder": "Slack incoming webhook address",
+    "webhookPlaceholder": "Your https endpoint",
+    "paidChannelLocked": "Slack and webhook channels need the Pro plan or higher.",
+    "noChannel": "Choose at least one channel.",
+    "submit": "Create rule"
+  },
+  "secret": {
+    "title": "Copy your signing key now",
+    "body": "We show this key once. Store it somewhere safe — you can only replace it, never read it again.",
+    "dismiss": "I have copied it"
+  },
+  "log": {
+    "title": "Delivery log",
+    "description": "Every alert we sent, with the two observations behind it.",
+    "channel": "Channel",
+    "status": "Status",
+    "evidence": "What changed",
+    "detail": "Detail",
+    "rankPair": "Position {{before}} on {{beforeAt}}, then {{after}} on {{afterAt}}.",
+    "linkPair": "{{beforeCount}} domains on {{beforeAt}}, then {{afterCount}} on {{afterAt}}.",
+    "notRanked": "below the top 100",
+    "domainCount": "{{count}} domains changed",
+    "attempt": "Attempt {{attempt}}",
+    "statusLabel": {
+      "pending": "Sending",
+      "sent": "Sent",
+      "failed": "Failed",
+      "suppressed": "Stopped"
+    },
+    "suppressed": {
+      "opted_out": "Recipient turned these emails off.",
+      "membership_removed": "Recipient is no longer on the account.",
+      "no_transport": "Email is not configured on this deployment.",
+      "rule_disabled": "The rule was off when the alert fired.",
+      "retries_exhausted": "We stopped after three failed tries.",
+      "flag_disabled": "Alerts were switched off by the operator."
+    },
+    "error": {
+      "transport_unavailable": "The channel could not be reached.",
+      "transport_rejected": "The channel refused the message.",
+      "transport_exception": "The channel failed unexpectedly.",
+      "unsafe_url": "That address is no longer safe to reach.",
+      "channel_timeout": "The channel took too long to answer.",
+      "retries_exhausted": "We stopped after three failed tries."
+    }
+  },
+  "states": {
+    "cap": {
+      "title": "Rule limit reached",
+      "body": "You have used every alert rule on your plan."
+    },
+    "tierLocked": {
+      "title": "Channel needs a higher plan",
+      "body": "Slack and webhook channels need the Pro plan or higher."
+    },
+    "disabled": {
+      "title": "Alerts are paused",
+      "body": "Alerts are temporarily unavailable. Your rules and log are still here."
+    },
+    "notFound": {
+      "title": "Not found",
+      "body": "That rule no longer exists."
+    },
+    "rateLimited": {
+      "title": "Too many requests",
+      "body": "Too many alert requests. Try again in a minute."
+    },
+    "invalid": {
+      "title": "Check the form",
+      "body": "Something in the rule is not valid yet."
+    },
+    "failed": {
+      "title": "Something went wrong",
+      "body": "We could not finish that. Try again."
+    },
+    "empty": {
+      "title": "No rules yet",
+      "body": "Create a rule to start getting alerts."
+    },
+    "noSites": {
+      "title": "Add a site first",
+      "body": "Alerts watch a site, so add one to begin."
+    }
+  }
+}

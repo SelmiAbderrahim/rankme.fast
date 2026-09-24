@@ -1,0 +1,26 @@
+{
+  "version": "0.1.20260801",
+  "status_code": 20000,
+  "status_message": "Ok.",
+  "tasks_count": 1,
+  "tasks_error": 0,
+  "tasks": [
+    {
+      "id": "TASK_ID",
+      "status_code": 20000,
+      "status_message": "Ok.",
+      "cost": 0,
+      "result": [
+        {
+          "items": [
+            {
+              "type": "maps_search",
+              "rank_group": "2",
+              "domain": "example.com"
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

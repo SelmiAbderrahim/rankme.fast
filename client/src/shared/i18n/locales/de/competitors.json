@@ -1,0 +1,270 @@
+{
+  "title": "Wettbewerber",
+  "description": "Sehen Sie, mit welchen Websites Sie konkurrieren und auf welchen Keywords sie ranken.",
+  "empty": "Für diese Domain wurden noch keine Wettbewerber gefunden. Verfolgen Sie einige Keywords, und wir analysieren die Websites, die diese Suchergebnisse dominieren.",
+  "emptyTitle": "Noch keine Wettbewerber",
+  "loadFailed": "Wettbewerber konnten nicht geladen werden.",
+  "intersectionFailed": "Gap-Keywords konnten nicht geladen werden.",
+  "table": {
+    "title": "Top-Wettbewerber",
+    "domain": "Domain",
+    "overlap": "Überschneidung",
+    "avgPosition": "Ø Position",
+    "estTraffic": "Geschätzter Traffic",
+    "actions": "Aktionen",
+    "gapAction": "Lücke anzeigen",
+    "sourceTrackedKeywords": "Basierend auf Ihren verfolgten Keywords"
+  },
+  "gap": {
+    "title": "Keywords, auf denen {{competitor}} rankt, Sie aber nicht",
+    "loading": "Lücke wird geladen…",
+    "keyword": "Keyword",
+    "theyRank": "Ihre Position",
+    "volume": "Volumen",
+    "emptyTitle": "Keine Gap-Keywords",
+    "empty": "Noch keine Gap-Keywords — Sie ranken auf denselben Keywords wie sie."
+  },
+  "refresh": {
+    "button": "Aktualisieren",
+    "cooldown": "Warten Sie {{seconds}} s vor der nächsten Aktualisierung.",
+    "failed": "Aktualisierung derzeit nicht möglich. Ihre letzten Daten werden weiterhin angezeigt."
+  },
+  "locked": {
+    "title": "Führen Sie ein Upgrade durch, um die Wettbewerbsanalyse freizuschalten",
+    "body": "Wettbewerber-Portfolios und Keyword-Landschaften beginnen mit Pro. Agency ergänzt größere Berichte und den Content-Vergleich von Ranking-Seiten.",
+    "upgrade": "Pläne ansehen"
+  },
+  "example": {
+    "title": "Beispiel: Was Pro und Agency bieten"
+  },
+  "intelligence": {
+    "title": "Wettbewerbsinformationen",
+    "description": "Verwalten Sie bestätigte Konkurrenten, vergleichen Sie Keyword-Landschaften und behalten Sie akzeptierte Empfehlungen in einem Site-Workspace bei.",
+    "common": {
+      "cancel": "Abbrechen"
+    },
+    "tiers": {
+      "starter": "Starter",
+      "pro": "Pro",
+      "agency": "Agency"
+    },
+    "views": {
+      "label": "Ansichten der Wettbewerbsanalyse",
+      "overview": "Übersicht",
+      "keywords": "Keyword-Landschaft",
+      "content": "Content",
+      "monitoring": "Monitoring",
+      "traffic": "Traffic",
+      "reports": "Berichte"
+    },
+    "locked": {
+      "title": "Die Wettbewerbsanalyse beginnt mit Pro",
+      "description": "Wechseln Sie zu Pro, um Wettbewerber zu bestätigen, Keyword-Landschaften zu erstellen und Empfehlungen in Nächste Aktionen zu übernehmen.",
+      "action": "Tarife vergleichen"
+    },
+    "portfolio": {
+      "title": "Bestätigtes Wettbewerberportfolio",
+      "description": "{{active}} von {{max}} aktiven Wettbewerber-Slots sind belegt. Für die Verwaltung dieser Liste wird kein Zuschlag verwendet.",
+      "manualLabel": "Fügen Sie eine öffentliche Mitbewerber-URL hinzu",
+      "manualPlaceholder": "https://competitor.example/",
+      "add": "Mitbewerber hinzufügen",
+      "adding": "Wettbewerber wird hinzugefügt…",
+      "confirmed": "Wettbewerber bestätigt.",
+      "duplicate": "Dieser Konkurrent ist bereits im Portfolio.",
+      "confirmedLabel": "Bestätigt",
+      "confirm": "Wettbewerber bestätigen",
+      "confirmTitle": "Diesen Konkurrenten bestätigen?",
+      "confirmDescription": "Fügen Sie {{domain}} zum Site-Portfolio hinzu. Dadurch wird keine kostenpflichtige Suche ausgeführt.",
+      "emptyTitle": "Keine bestätigten Konkurrenten",
+      "empty": "Bestätigen Sie einen Entdeckungsvorschlag oder fügen Sie eine öffentliche Mitbewerber-URL hinzu.",
+      "domain": "Domäne",
+      "source": "Provenienz",
+      "status": "Status",
+      "added": "Hinzugefügt",
+      "action": "Aktion",
+      "archive": "Archiv",
+      "restore": "Wiederherstellen",
+      "archivePending": "Archivierung…",
+      "restorePending": "Wiederherstellung…",
+      "sources": {
+        "suggested": "Entdeckungsvorschlag",
+        "manual": "Manuell hinzugefügt"
+      },
+      "statuses": {
+        "active": "Aktiv",
+        "archived": "Archiviert"
+      }
+    },
+    "discovery": {
+      "title": "Entdeckung von Mitbewerbern",
+      "description": "Überprüfen Sie gespeicherte Vorschläge kostenlos. Eine neue Entdeckungsaktualisierung beginnt erst nach einer genauen Ausgabenvorschau und -bestätigung.",
+      "empty": "Noch keine gespeicherten Entdeckungsvorschläge.",
+      "captured": "Gespeichert am {{date}}",
+      "observed": "Beobachtetes {{date}}",
+      "partial": "Einige Erkennungsquellen haben keine Daten zurückgegeben. Gespeicherte Ergebnisse werden angezeigt, ohne die Lücken zu füllen.",
+      "previewAction": "Vorschau der Erkennungsaktualisierung",
+      "previewing": "Discovery-Vorschau wird vorbereitet…",
+      "reviewAction": "Überprüfen und bestätigen Sie",
+      "confirmTitle": "Eine neue Erkennungsaktualisierung durchführen?",
+      "confirmDescription": "Diese Aktualisierung verwendet die Schlüsselwort-Sucheinheit {{units}}. Vor der Aktualisierung verbleiben {{remaining}} Einheiten.",
+      "confirmAction": "Bestätigen Sie die Aktualisierung"
+    },
+    "technology": {
+      "title": "Aktuelle Portfolioübersicht",
+      "description": "Diese Zusammenfassung verwendet ausschließlich gespeicherte Portfolio-Fakten. Es wird keine Technologieerkennung oder eine andere kostenpflichtige Suche gestartet.",
+      "summary": "{{manual}} Konkurrenten wurden manuell hinzugefügt und {{suggested}} stammten aus bestätigten Entdeckungsvorschlägen. Technologiedetails bleiben erst verfügbar, wenn eine separate Vorschau-Suche vorliegt."
+    },
+    "landscape": {
+      "title": "Erstellen Sie eine Keyword-Landschaft",
+      "description": "Wählen Sie bis zu {{count}} bestätigte Konkurrenten aus. Der Server überprüft die Stufe, den Markt, die Zulage und die genauen Einheiten, bevor ein Lauf beginnen kann.",
+      "selection": "{{selected}} von {{count}} Teilnehmern ausgewählt",
+      "limit": "Sie können bis zu {{count}} Mitbewerber für diesen Bericht auswählen.",
+      "emptyTitle": "Bestätigen Sie zuerst einen Konkurrenten",
+      "empty": "Kehren Sie zur Übersicht zurück und fügen Sie mindestens einen aktiven Konkurrenten hinzu.",
+      "previewAction": "Vorschau der Berichtsausgaben",
+      "previewing": "Berichtsvorschau wird vorbereitet…",
+      "previewTitle": "Serverautoritative Ausgabenvorschau",
+      "previewDescription": "Dieser Bericht verwendet {{units}} Schlüsselwortsucheinheiten und kann bis zu {{rows}} Zeilen speichern. {{remaining}} Einheiten bleiben vor dem Start übrig.",
+      "cacheCounts": "Cache-Treffer zählen zur Nutzung",
+      "reviewAction": "Überprüfen und bestätigen Sie",
+      "confirmTitle": "Diesen Landschaftsbericht starten?",
+      "confirmDescription": "Vergleichen Sie {{count}} Mitbewerber für {{units}} Keyword-Sucheinheiten.",
+      "confirmAction": "Bericht bestätigen",
+      "duplicate": "Die entsprechende Berichtsanforderung ist bereits vorhanden. Der bestehende Lauf wurde geöffnet.",
+      "editMarket": "Bearbeiten Sie den Markt für verfolgte Keywords"
+    },
+    "reports": {
+      "title": "Gespeicherte Landschaftsberichte",
+      "description": "Öffnen Sie unveränderliche Berichte erneut, ohne eine weitere Anbietersuche zu starten.",
+      "emptyTitle": "Keine Landschaftsberichte",
+      "empty": "Erstellen Sie einen Bericht aus der Keyword-Landschaftsansicht.",
+      "date": "Erstellt",
+      "competitors": "Konkurrenten",
+      "state": "Staat",
+      "action": "Aktion",
+      "open": "Bericht öffnen",
+      "more": "Weitere Berichte laden",
+      "loadFailedTitle": "Dieser Bericht konnte nicht geladen werden"
+    },
+    "detail": {
+      "title": "Landschaftsbericht",
+      "summary": "{{domain}} im Vergleich mit {{count}} Mitbewerbern am {{date}}.",
+      "progress": "{{done}} von {{total}} Quellschritten abgeschlossen",
+      "polling": "Der Bericht läuft noch. Dieser gespeicherte Status wird automatisch aktualisiert.",
+      "partial": "{{usable}} von {{requested}} Wettbewerbern produzierten verwertbare Daten. {{failed}} Quellschritte fehlgeschlagen; fehlende Werte wurden nicht abgeleitet.",
+      "back": "Zurück zum Berichtsverlauf",
+      "cancel": "Bericht abbrechen",
+      "rollupTitle": "Portfolio-Keyword-Rollup",
+      "rollupDescription": "{{rows}} Keyword-Zeilen bei {{usable}} Mitbewerbern.",
+      "filtersTitle": "Berichtsfilter",
+      "classFilter": "Keyword-Klasse",
+      "domainFilter": "Konkurrent",
+      "textFilter": "Suchbegriffe suchen",
+      "allClasses": "Alle Klassen",
+      "allDomains": "Alle Konkurrenten",
+      "keywordsTitle": "Stichwort Beweise",
+      "keywordsDescription": "Ränge und URLs sind beobachtete Fakten. Beim Suchvolumen handelt es sich um eine Schätzung des Anbieters. Es werden Klassen und Empfehlungen abgeleitet.",
+      "keyword": "Stichwort",
+      "class": "Klasse",
+      "ownedRank": "Dein Rang",
+      "competitorRank": "Wettbewerbsrang",
+      "volume": "Geschätztes Volumen",
+      "source": "Beweise",
+      "sourcesTitle": "Quellenbeobachtungen",
+      "sourcesDescription": "Anbieter, Cache, Status und Beobachtungsdaten werden in diesem unveränderlichen Bericht beibehalten.",
+      "sourcesEmpty": "Für dieses Ergebnis wurde keine Quellenbeobachtung gespeichert.",
+      "observationDate": "Beobachtetes {{date}}",
+      "missing": "Nicht beobachtet",
+      "next": "Nächste Seite",
+      "noMatchTitle": "Keine passenden Schlüsselwörter",
+      "noMatch": "Ändern oder löschen Sie die aktuellen URL-gestützten Filter.",
+      "noDataTitle": "Keine gespeicherten Berichtsdaten",
+      "noData": "Der Lauf wurde ohne genügend nutzbare Quelldaten beendet. Fehlende Werte werden nicht geschätzt.",
+      "matchesTitle": "Vorgeschlagene Seitenübereinstimmungen",
+      "matchesDescription": "Diese gespeicherten Vorschläge vergleichen Ranking-URLs. Sie starten keinen Content Scrape.",
+      "matchesEmpty": "Es war keine sichere Seitenübereinstimmung verfügbar.",
+      "matchReason": "{{reason}} · {{confidence}} Vertrauen",
+      "matchOwnedUrl": "Ihre geprüfte Seiten-URL",
+      "matchCompetitorUrl": "Geprüfte Ranking-URL des Wettbewerbers",
+      "approveMatch": "Abgleich genehmigen",
+      "rejectMatch": "Ablehnen",
+      "openSuggested": "Vorgeschlagene Seite öffnen",
+      "analyzeReviewed": "Geprüfte Seiten vergleichen",
+      "monitorReviewed": "Diese geprüfte Seite überwachen",
+      "focusAnalysis": "Fokussierte Analyse starten",
+      "matchSaveError": "Der Seitenabgleich konnte nicht gespeichert werden.",
+      "recommendationsTitle": "Stärken und Empfehlungen",
+      "recommendationsDescription": "Empfehlungen bleiben meldepflichtig, bis Sie sie ausdrücklich akzeptieren.",
+      "recommendationsEmpty": "Keine Empfehlung erreichte die Evidenzschwelle.",
+      "accept": "Akzeptieren Sie die nächsten Aktionen",
+      "acceptTitle": "Akzeptieren Sie diese Empfehlung?",
+      "acceptDescription": "Akzeptanz schafft eine dauerhafte nächste Aktion. Durch das erneute Senden derselben Entscheidung wird kein Duplikat erstellt.",
+      "acceptConfirm": "Empfehlung annehmen",
+      "openAction": "In „Nächste Aktionen“ öffnen"
+    },
+    "classes": {
+      "missing": "Fehlt",
+      "owned_only": "Nur Sie ranken",
+      "shared_behind": "Geteilt, hinten",
+      "shared_ahead": "Geteilt, voraus",
+      "shared_even": "Sogar geteilt"
+    },
+    "runStates": {
+      "queued": "In der Warteschlange",
+      "collecting": "Sammeln",
+      "aggregating": "Baubericht",
+      "completed": "Abgeschlossen",
+      "partial": "Teilweise",
+      "failed": "Fehlgeschlagen",
+      "cancelled": "Abgesagt"
+    },
+    "states": {
+      "loading": "Bericht in Bearbeitung",
+      "partial": "Teildaten",
+      "cap": "Dieser Antrag übersteigt den verbleibenden Betrag. Führen Sie vor der Bestätigung ein Upgrade durch oder fügen Sie ein berechtigtes Guthabenpaket hinzu.",
+      "disabled": "Neue Mitbewerberanfragen sind vorübergehend deaktiviert. Gespeicherte Berichte bleiben verfügbar.",
+      "unsafeLink": "Unsicherer Quelllink ausgeblendet",
+      "rateLimit": "Zu viele Anfragen. Warten Sie und versuchen Sie es erneut.",
+      "providerFailure": "Eine Quelle ist fehlgeschlagen. Verfügbare Daten bleiben sichtbar.",
+      "cancelled": "Der Bericht wurde abgebrochen, bevor alle Quellschritte abgeschlossen waren.",
+      "stale": "Dieses gespeicherte Ergebnis ist möglicherweise veraltet. Sein Beobachtungsdatum bleibt sichtbar."
+    },
+    "labels": {
+      "observed": "Beobachtet",
+      "estimate": "Schätzung",
+      "derived": "Abgeleitet"
+    },
+    "cache": {
+      "hit": "Gespeichertes Cache-Ergebnis",
+      "miss": "Frisches Quellergebnis"
+    },
+    "market": {
+      "tracked_keyword_mode": "Markt anhand von verfolgten Schlüsselwörtern",
+      "default": "Standardmarkt-Fallback"
+    },
+    "confidence": {
+      "high": "Hoch",
+      "medium": "Mittel",
+      "low": "Niedrig"
+    },
+    "matchReasons": {
+      "same_keyword": "Keyword mit gleichem Ranking",
+      "highest_coverage": "Höchste Mitbewerberabdeckung",
+      "closest_rank": "Nächstliegender beobachteter Rang"
+    },
+    "errors": {
+      "generic": "Die Mitbewerberanfrage konnte nicht abgeschlossen werden."
+    }
+  },
+  "techStack": {
+    "action": "Tech-Stack anzeigen",
+    "cms": "CMS",
+    "analytics": "Analytics",
+    "hosting": "Hosting",
+    "ecommerce": "E-Commerce",
+    "other": "Sonstige",
+    "loading": "Technologien werden erkannt…",
+    "empty": "Keine Technologien erkannt.",
+    "failed": "Tech-Stack konnte nicht geladen werden."
+  }
+}

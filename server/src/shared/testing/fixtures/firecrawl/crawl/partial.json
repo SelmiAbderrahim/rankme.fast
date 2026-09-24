@@ -1,0 +1,11 @@
+{
+  "status": "completed",
+  "total": 3,
+  "completed": 1,
+  "creditsUsed": 1,
+  "data": [{
+    "markdown": "# Partial page",
+    "links": [],
+    "metadata": { "sourceURL": "https://example.com/partial", "statusCode": 200 }
+  }]
+}

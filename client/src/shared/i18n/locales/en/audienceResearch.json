@@ -1,0 +1,239 @@
+{
+  "nav": {
+    "label": "Audience research",
+    "description": "Turn public complaints, requests, and questions into content, product, and SEO opportunities."
+  },
+  "outputLocale": "Output language: {{locale}}",
+  "form": {
+    "market": {
+      "label": "Market",
+      "country": "Country",
+      "language": "Language",
+      "device": "Device"
+    },
+    "competitors": {
+      "label": "Competitors",
+      "helper": "Pick up to five competitors already tracked for this site.",
+      "chipRemove": "Remove {{domain}}",
+      "limit": "Maximum {{max}} competitors selected."
+    },
+    "topics": {
+      "label": "Topics",
+      "placeholder": "Add a topic and press Enter",
+      "chipRemove": "Remove {{topic}}",
+      "count": "{{count}} / {{max}}",
+      "validationLength": "Topics must be between 2 and 160 characters.",
+      "validationEmpty": "Enter a topic before adding it.",
+      "validationMax": "You can add up to {{max}} topics."
+    },
+    "reviewButton": "Review",
+    "submitting": "Working…"
+  },
+  "preview": {
+    "unitLabel": "1 audience research run",
+    "remainingLabel": "{{remaining}} of {{cap}} remaining this month",
+    "operationCeilings": "What this run will do",
+    "cached": "Cached",
+    "fresh": "Fresh",
+    "supported": "This market is fully supported.",
+    "unsupported": "This market has limited support — results may be thinner.",
+    "maxPages": "Up to {{max}} public pages",
+    "totalBudget": "Total budget: {{micros}} micro-USD",
+    "aiBudget": "AI budget: {{micros}} micro-USD",
+    "coverageOk": "Full provider coverage",
+    "coverageDegraded": "Degraded provider coverage — results may be partial.",
+    "coverageBlocked": "Zero-data-retention scraping is blocked for this account."
+  },
+  "confirm": {
+    "title": "Start this audience research run?",
+    "body": "This run will crawl up to {{maxPages}} public pages and generate signals from the public web. It runs once — there is no continuous monitoring.",
+    "confirmButton": "Start run",
+    "cancelButton": "Cancel",
+    "marketLine": "Market",
+    "competitorsLine": "Competitors",
+    "topicsLine": "Topics",
+    "unitLine": "Units consumed"
+  },
+  "progress": {
+    "stage": {
+      "queued": "Queued",
+      "discovering": "Discovering sources",
+      "selecting": "Selecting candidates",
+      "collecting": "Collecting evidence",
+      "clustering": "Clustering signals",
+      "completed": "Completed",
+      "partial": "Partially completed",
+      "failed": "Failed"
+    },
+    "counts": {
+      "sources": "{{count}} sources found",
+      "signals": "{{count}} signals found"
+    },
+    "partial": {
+      "title": "This run finished with partial coverage",
+      "body": "Some sources or the AI stage hit a ceiling before finishing. The signals below reflect only the evidence collected before the run stopped."
+    },
+    "failed": {
+      "title": "This run failed",
+      "body": "This run did not finish. Try again, or try a narrower topic or a different competitor."
+    },
+    "noUsableEvidence": {
+      "title": "No usable evidence found",
+      "body": "We could not find enough public evidence to generate signals for this market and topic set. Your run was refunded."
+    },
+    "percentComplete": "{{percent}}% complete",
+    "back": "Back to workspace"
+  },
+  "history": {
+    "title": "Run history",
+    "columns": {
+      "market": "Market",
+      "requestedAt": "Requested",
+      "state": "State",
+      "sources": "Sources",
+      "signals": "Signals",
+      "coverage": "Coverage",
+      "unit": "Unit"
+    },
+    "empty": {
+      "title": "No runs yet",
+      "body": "Start your first audience research run to see complaints, requests, and questions from the public web."
+    },
+    "loading": "Loading run history…",
+    "prev": "Previous",
+    "next": "Next",
+    "view": "View",
+    "marketUnavailable": "—",
+    "coverageNote": "Partial coverage — open the run for details",
+    "coverageFull": "Full coverage"
+  },
+  "locked": {
+    "title": "Audience research is not included in your plan",
+    "body": "Upgrade to Starter, Pro, or Agency to run voice-of-customer research and turn public feedback into content, product, and SEO opportunities.",
+    "cta": "See plans"
+  },
+  "usage": {
+    "metrics": {
+      "audience_research_runs": {
+        "label": "Audience research runs",
+        "description": "One whole voice-of-customer research run per unit, regardless of how many searches or scrapes it makes."
+      }
+    }
+  },
+  "billing": {
+    "overCap": {
+      "audience_research_runs": "You have used every audience research run on your plan this month. Upgrade to run more voice-of-customer research."
+    }
+  },
+  "signals": {
+    "empty": {
+      "title": "This run finished but produced no signals.",
+      "filtered": "No signals match the current filters."
+    },
+    "citationCount": "{{count}} cited sources",
+    "confidence": {
+      "high": "High confidence",
+      "medium": "Medium confidence",
+      "low": "Low confidence",
+      "anecdotal": "Anecdotal"
+    },
+    "type": {
+      "complaint": "Complaint",
+      "request": "Request",
+      "question": "Question",
+      "competitor_gap": "Competitor gap",
+      "other": "Signal"
+    },
+    "route": {
+      "content": "New content",
+      "comparison_page": "Comparison page",
+      "product": "Product change",
+      "seo": "SEO fix",
+      "other": "Other",
+      "aiInterpretation": "AI interpretation",
+      "aiInterpretationHint": "The suggested route is an AI interpretation of the evidence, not a market share signal."
+    },
+    "rationale": {
+      "summary": "{{independentDomainCount}} independent domains across {{sourceTypeCount}} source types; {{recent}}.",
+      "recent": "most recent source {{date}}",
+      "recentUnknown": "date unavailable"
+    },
+    "sourceType": {
+      "forum": "Forum",
+      "review": "Review",
+      "comparison": "Comparison",
+      "question": "Q&A",
+      "other": "Other"
+    },
+    "actions": {
+      "evidence": "View evidence",
+      "accept": "Accept",
+      "dismiss": "Dismiss"
+    },
+    "evidence": {
+      "title": "Signal evidence",
+      "description": "Every retained source cited by this signal. Text and links only — no HTML.",
+      "empty": "This signal has no retained sources.",
+      "missingSource": "Cited source {{id}} is no longer available.",
+      "dateUnavailable": "date unavailable",
+      "observedAt": "Observed on {{date}}",
+      "freshness": "Freshness: {{value}}",
+      "openLink": "Open source",
+      "openLinkAria": "Open source ({{host}}) in a new tab"
+    },
+    "decision": {
+      "signalTitleLabel": "Signal",
+      "cancel": "Cancel",
+      "submitting": "Working…",
+      "confirmCi": "Create recommendation",
+      "confirmActions": "Add to Next Actions",
+      "confirmDismiss": "Dismiss signal",
+      "conflict": "Another decision was already applied to this signal.",
+      "acceptSuccess": "Decision recorded.",
+      "dismissSuccess": "Signal dismissed.",
+      "openRecommendation": "Open recommendation",
+      "openAction": "Open in Next Actions",
+      "openExisting": "Open existing",
+      "replayHintCi": "This signal was already accepted as a Content Intelligence recommendation.",
+      "replayHintActions": "This signal was already added to Next Actions.",
+      "acceptTitle": {
+        "content": "Create Content Intelligence recommendation",
+        "comparison_page": "Create Content Intelligence recommendation",
+        "product": "Add to Next Actions",
+        "seo": "Add to Next Actions"
+      },
+      "acceptBody": {
+        "content": "This will create a Content Intelligence recommendation from the retained sources cited by this signal.",
+        "comparison_page": "This will create a Content Intelligence comparison-page recommendation from the retained sources cited by this signal.",
+        "product": "This will register a product-change action in Next Actions.",
+        "seo": "This will register an SEO fix in Next Actions."
+      },
+      "destination": {
+        "contentDetail": "The Content Intelligence recommendation links back to this signal and only references retained source IDs — no source text is copied.",
+        "actionsDetail": "The Next Actions entry links back to this signal and reads the immutable retained sources when displayed — no source text is copied."
+      },
+      "dismissTitle": "Dismiss signal",
+      "dismissBody": "Pick a reason so we can improve the model. This is terminal — the signal will not reappear.",
+      "reasonLabel": "Reason",
+      "reasons": {
+        "not_relevant": "Not relevant to my site",
+        "already_addressed": "Already addressed",
+        "low_confidence": "Not enough evidence",
+        "duplicate": "Duplicate of another signal",
+        "other": "Other"
+      }
+    }
+  },
+  "errors": {
+    "overCap": "You have used every audience research run on your plan this month. Upgrade to run more.",
+    "unsupportedMarket": "Audience research is not available in that market yet. Try a supported country or language.",
+    "zdrBlocked": "Audience research needs zero-data-retention scraping. Turn on ZDR in your provider settings and try again.",
+    "noUsableEvidence": "No usable public evidence was found. Your run was refunded — try a different topic or competitor.",
+    "costCeilingPartial": "This run reached its cost limit. Partial evidence has been saved; use it or try a narrower topic.",
+    "processingFailure": "This run could not be processed. Partial evidence has been saved when available.",
+    "notFound": "That run could not be found.",
+    "providerFailed": "The research provider could not complete this run. Try again shortly.",
+    "aiFailed": "The AI clustering step could not complete. Partial evidence has been saved when available.",
+    "generic": "Something went wrong. Try again."
+  }
+}

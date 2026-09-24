@@ -1,0 +1,105 @@
+{
+  "card": {
+    "title": "Pulso semanal",
+    "description": "Un resumen semanal determinista por sitio — citas nuevas/perdidas, caídas de ranking confirmadas, cambios de acciones y las próximas tres acciones. Consume una verificación de menciones de IA por sitio y semana.",
+    "unitDisclosure": "Una verificación de menciones de IA por sitio y por semana.",
+    "nextRun": "Próxima ejecución: {{when}}",
+    "lastRun": "Última ejecución: {{when}}",
+    "lastStatus": "Último estado: {{status}}",
+    "enableCta": "Activar el pulso semanal",
+    "disableCta": "Desactivar el pulso semanal",
+    "previewCta": "Previsualizar el gasto",
+    "historyLink": "Ver resúmenes anteriores"
+  },
+  "status": {
+    "queued": "En cola",
+    "collecting": "Recopilando",
+    "completed": "Completado",
+    "partial": "Datos parciales",
+    "blocked_capacity": "Bloqueado — límite superado",
+    "unsupported": "No compatible esta semana",
+    "failed": "Fallido",
+    "empty": "Todavía no se ha ejecutado ningún pulso."
+  },
+  "confirm": {
+    "enableTitle": "¿Activar el pulso semanal?",
+    "enableBody": "La tarea programada consumirá una verificación de menciones de IA por semana para este sitio.",
+    "enableAck": "Entiendo y quiero recibir el pulso semanal.",
+    "disableTitle": "¿Desactivar el pulso semanal?",
+    "disableBody": "Dejarás de recibir el resumen. El historial sigue disponible.",
+    "confirmEnable": "Activar",
+    "confirmDisable": "Desactivar",
+    "cancel": "Cancelar"
+  },
+  "detail": {
+    "title": "Resumen del pulso semanal — {{isoWeek}}",
+    "closeLabel": "Cerrar detalle del resumen",
+    "coverage": "Cobertura — {{supported}} de {{total}} motores admitidos.",
+    "partial": "Algunos motores devolvieron datos parciales esta semana.",
+    "sections": {
+      "newCitations": "Nuevas citas",
+      "lostCitations": "Citas perdidas",
+      "unknownPartial": "Citas desconocidas o parciales",
+      "confirmedDrops": "Caídas de ranking confirmadas",
+      "actionsChanged": "Acciones completadas o revertidas",
+      "top3": "Las próximas tres acciones",
+      "gscGenerative": "Apariciones de IA generativa en Google",
+      "brandDeltas": "Cambios de Brand Radar",
+      "deepLinks": "Abrir en RankMeFast"
+    },
+    "empty": {
+      "newCitations": "No hay citas nuevas esta semana.",
+      "lostCitations": "No hay citas perdidas esta semana.",
+      "unknownPartial": "No hay citas desconocidas o parciales esta semana.",
+      "confirmedDrops": "No hay caídas de ranking confirmadas esta semana.",
+      "actionsChanged": "No hay cambios de estado de acción esta semana.",
+      "top3": "Estás al día — no hay acciones abiertas."
+    },
+    "actionsFallback": "No se registraron cambios de acciones para este pulso."
+  },
+  "history": {
+    "title": "Pulsos recientes",
+    "empty": "Todavía no hay pulsos registrados.",
+    "loadMore": "Cargar más",
+    "runLabel": "{{isoWeek}} — {{status}}",
+    "openLabel": "Abrir pulso de {{isoWeek}}"
+  },
+  "preview": {
+    "title": "Previsualización del gasto",
+    "productUnits": "1 verificación de menciones de IA por semana",
+    "remaining": "Restante este mes: {{remaining}}",
+    "capBlocked": "Se ha agotado el límite de tu plan. La activación fallará — actualiza o compra créditos para desbloquear."
+  },
+  "gsc": {
+    "title": "Apariciones de IA generativa en Google",
+    "description": "Datos de primera mano de Google Search Console — nunca combinados con las métricas de menciones de IA.",
+    "status": {
+      "available": "Disponible",
+      "unavailable": "Aún no aparece",
+      "partial": "Datos parciales",
+      "reconnect_required": "Vuelve a conectar Google Search Console",
+      "failed": "Temporalmente no disponible"
+    },
+    "empty": "Google no reportó apariciones de IA generativa.",
+    "reconnect": "Vuelve a conectar Google Search Console para ver esta sección.",
+    "window": "Ventana: {{start}} → {{end}}",
+    "row": "{{appearance}} — {{clicks}} clics, {{impressions}} impresiones",
+    "loading": "Cargando datos de Google Search Console…",
+    "unknown": "Aparición no reconocida ({{raw}})"
+  },
+  "brandDeltas": {
+    "scopeNote": "Estos cambios abarcan toda tu cuenta, agrupados por consulta de marca monitorizada, no solo este sitio.",
+    "queryLine": "{{query}} — menciones {{delta}}",
+    "sentimentLine": "Cambio de sentimiento en puntos: positivo {{positive}}, neutral {{neutral}}, negativo {{negative}}, desconocido {{unknown}}.",
+    "firstScan": "{{query}} — primer análisis, aún no hay comparación.",
+    "noNewScan": "{{query}} — sin análisis nuevo en este periodo.",
+    "empty": "Aún no hay análisis de marca que comparar."
+  },
+  "errors": {
+    "unexpected": "Algo salió mal — inténtalo de nuevo.",
+    "overCap": "Se ha agotado el límite de tu plan. Actualiza o compra créditos para recibir los pulsos semanales.",
+    "acknowledgePreviewRequired": "Previsualiza el gasto antes de activar.",
+    "reconnectRequired": "Vuelve a conectar Google Search Console para cargar estos datos.",
+    "unauthorized": "Inicia sesión para ver el pulso semanal."
+  }
+}

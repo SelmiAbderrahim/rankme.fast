@@ -1,0 +1,99 @@
+{
+  "title": "Stores vergleichen",
+  "description": "Vergleichen Sie die neuesten gespeicherten Beobachtungen aus Google Play und dem App Store. Diese Ansicht startet keine neue Prüfung.",
+  "profile": { "label": "App-Profil" },
+  "stores": { "googlePlay": "Google Play", "appStore": "App Store" },
+  "common": { "notObserved": "Nicht beobachtet", "userPaired": "Vom Benutzer gekoppelt" },
+  "deltas": {
+    "notObserved": "Nicht beobachtet",
+    "even": "Gleichauf",
+    "googlePlayLeads": "Google Play +{{value}}",
+    "appStoreLeads": "App Store +{{value}}"
+  },
+  "header": {
+    "title": "Store-Einträge",
+    "description": "Neueste gespeicherte Titel, Bewertungen und Rezensionszahlen der vom Benutzer gekoppelten Einträge.",
+    "rating": "Bewertung",
+    "reviews": "Rezensionen",
+    "openListing": "Store-Eintrag öffnen",
+    "deltaSummary": "Unterschiede der Store-Einträge",
+    "ratingDelta": "Bewertungsunterschied",
+    "reviewDelta": "Unterschied bei Rezensionen"
+  },
+  "ranks": {
+    "title": "Keyword-Ränge",
+    "description": "Eine Phrase wird nur verglichen, wenn beide Stores dieselbe Phrase, Region und Sprache verfolgen.",
+    "caption": "Neueste gespeicherte Ränge für in beiden Stores verfolgte Phrasen",
+    "phrase": "Phrase",
+    "market": "Markt",
+    "position": "Position",
+    "delta": "Unterschied",
+    "only": {
+      "googlePlay": "Nur bei Google Play verfolgt",
+      "appStore": "Nur im App Store verfolgt",
+      "googlePlayCaption": "Nur bei Google Play verfolgte Phrasen",
+      "appStoreCaption": "Nur im App Store verfolgte Phrasen",
+      "none": "Keine Phrasen, die nur in einem Store verfolgt werden."
+    }
+  },
+  "parity": {
+    "title": "Eintragskonsistenz",
+    "description": "Gespeicherte Konsistenzbefunde und direkte Werte für die vom Benutzer gekoppelten Einträge.",
+    "findings": "Gespeicherte Befunde",
+    "status": { "finding": "Abweichend", "passed": "Abgestimmt", "notEvaluated": "Nicht verglichen" },
+    "findingCopy": {
+      "stores-diverge": "Die Titel der Store-Einträge unterscheiden sich deutlich.",
+      "ratings-diverge": "Die Bewertungen der Stores unterscheiden sich merklich.",
+      "categories-diverge": "Die Einträge haben keine gemeinsame Store-Kategorie."
+    },
+    "rawCaption": "Direkter Vergleich der neuesten gespeicherten Eintragsfelder",
+    "field": "Feld",
+    "match": "Konsistenz",
+    "matches": "Stimmt überein",
+    "differs": "Weicht ab",
+    "notCompared": "Nicht verglichen",
+    "fields": {
+      "title": "Titel",
+      "developerName": "Entwicklername",
+      "mainCategory": "Hauptkategorie",
+      "version": "Version",
+      "categories": "Kategorien"
+    }
+  },
+  "charts": {
+    "title": "Chart-Positionen",
+    "description": "Neueste gespeicherte Position für jeden verfolgten Chart und jede Kategorie.",
+    "caption": "Neueste gespeicherte Chart-Positionen nach Store",
+    "chart": "Chart",
+    "category": "Kategorie",
+    "allCategories": "Alle Kategorien",
+    "delta": "Unterschied"
+  },
+  "notObserved": {
+    "ranksTitle": "Keyword-Ränge nicht beobachtet",
+    "ranksDescription": "Verfolgen Sie Phrasen und starten Sie eine Keyword-Prüfung, um diesen Vergleich zu füllen.",
+    "sharedRanksTitle": "Keine gemeinsam verfolgten Phrasen",
+    "sharedRanksDescription": "Verfolgen Sie dieselbe Phrase, Region und Sprache in beiden Stores.",
+    "openKeywords": "Keyword-Tracking öffnen",
+    "listingsTitle": "Ein oder beide Einträge nicht beobachtet",
+    "listingsDescription": "Starten Sie für beide Stores eine Eintragsprüfung, um den Vergleich zu füllen.",
+    "openListing": "Eintragsprüfungen öffnen",
+    "chartsTitle": "Chart-Positionen nicht beobachtet",
+    "chartsDescription": "Verfolgen Sie einen Chart und starten Sie eine Prüfung, um den Vergleich zu füllen.",
+    "openCharts": "Chart-Tracking öffnen"
+  },
+  "empty": {
+    "title": "Noch keine App-Profile",
+    "description": "Registrieren Sie ein App-Profil, bevor Sie Store-Beobachtungen vergleichen.",
+    "cta": "App registrieren"
+  },
+  "unpaired": {
+    "title": "Store-Einträge zum Vergleichen koppeln",
+    "description": "Dieses Profil ist nicht als dasselbe Produkt in beiden Stores markiert. Die Kopplung ist Ihre Angabe und bestätigt keine Store-Identität.",
+    "cta": "App-Profile verwalten"
+  },
+  "errors": {
+    "title": "Vergleich konnte nicht geladen werden",
+    "requestFailed": "Der gespeicherte Vergleich konnte nicht geladen werden. Versuchen Sie es erneut."
+  }
+}

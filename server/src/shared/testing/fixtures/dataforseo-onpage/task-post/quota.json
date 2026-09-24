@@ -1,0 +1,10 @@
+{
+  "version": "0.1.20260101",
+  "status_code": 40200,
+  "status_message": "Payment Required. Money limit is exceeded.",
+  "time": "0.0104 sec.",
+  "cost": 0,
+  "tasks_count": 1,
+  "tasks_error": 1,
+  "tasks": []
+}

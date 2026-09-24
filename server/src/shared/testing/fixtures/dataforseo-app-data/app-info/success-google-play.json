@@ -1,0 +1,50 @@
+{
+  "version": "0.1.20260808",
+  "status_code": 20000,
+  "status_message": "Ok.",
+  "cost": 0,
+  "tasks": [
+    {
+      "id": "TASK_ID",
+      "status_code": 20000,
+      "status_message": "Ok.",
+      "cost": 0,
+      "result": [
+        {
+          "app_id": "com.example.audit",
+          "location_code": 2840,
+          "language_code": "en",
+          "datetime": "2026-08-08 11:00:00 +00:00",
+          "items": [
+            {
+              "type": "google_play_info_organic",
+              "app_id": "com.example.audit",
+              "title": "Audit App",
+              "url": "https://play.example.test/apps/details?id=com.example.audit",
+              "description": "Documented-shape sample listing.",
+              "reviews_count": 321,
+              "rating": {
+                "value": 4.6
+              },
+              "is_free": true,
+              "main_category": "Tools",
+              "genres": [
+                "Tools"
+              ],
+              "installs": "10,000+",
+              "developer": "Example Studio",
+              "developer_website": "https://example.test/",
+              "released_date": "2020-01-01 00:00:00 +00:00",
+              "last_update_date": "2026-08-01 00:00:00 +00:00",
+              "images": [],
+              "videos": [],
+              "tags": [],
+              "similar_apps": [],
+              "more_apps_by_developer": []
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

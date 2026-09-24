@@ -1,0 +1,211 @@
+{
+  "title": "Reviews",
+  "description": "Pull public reviews from the directories you list, then read what customers keep saying.",
+  "outputLocale": "Output language: {{locale}}",
+  "sourceNames": {
+    "google": "Google",
+    "trustpilot": "Trustpilot",
+    "tripadvisor": "Tripadvisor"
+  },
+  "states": {
+    "signedOut": "Sign in to read your reviews.",
+    "notOnPlan": {
+      "title": "Reviews are on the Pro plan",
+      "description": "Move to Pro or Agency to pull reviews from Google, Trustpilot and Tripadvisor.",
+      "link": "See the plans"
+    },
+    "capReached": {
+      "title": "You have used every sync on your plan",
+      "description": "Check Billing for current review-sync pack availability. Everything you already synced stays readable.",
+      "link": "View pack options"
+    },
+    "disabled": {
+      "title": "New syncs are paused",
+      "description": "We have paused new review syncs for now. Reviews you already pulled stay readable."
+    },
+    "noSources": {
+      "title": "Add at least one review source to get started.",
+      "description": "Add a Google, Trustpilot or Tripadvisor listing before you run a sync."
+    },
+    "neverSynced": {
+      "title": "No sync yet",
+      "description": "Your sources are set up. Run the first sync to pull reviews in."
+    }
+  },
+  "sources": {
+    "title": "Review sources",
+    "description": "Tell us where your business is listed. One listing per directory.",
+    "empty": "No sources yet. Add one below.",
+    "configured": "Set up",
+    "save": "Save source",
+    "remove": "Remove",
+    "hint": {
+      "google": "Google Place ID",
+      "trustpilot": "Trustpilot business domain",
+      "tripadvisor": "Tripadvisor location ID"
+    },
+    "placeholder": {
+      "google": "ChIJ_example_place_id",
+      "trustpilot": "example.com",
+      "tripadvisor": "1234567"
+    }
+  },
+  "sync": {
+    "title": "Run a sync",
+    "description": "One sync covers every source you pick. See the cost before anything is spent.",
+    "sourcesLabel": "Sources to sync",
+    "depthLabel": "Reviews per source",
+    "depthHint": "Between one and {{max}} reviews from each source.",
+    "selectAtLeastOne": "Pick at least one source to see the cost.",
+    "estimate": "See the cost",
+    "confirm": "Confirm and run",
+    "cancel": "Cancel"
+  },
+  "preview": {
+    "title": "What this sync costs",
+    "description": "This is an estimate. Nothing is spent until you confirm.",
+    "units": "Uses {{units}} review sync",
+    "perSource": "Covers {{sources}} sources",
+    "depth": "Pulls up to {{depth}} reviews per source",
+    "available": "Fits in your allowance",
+    "unavailable": "Over your allowance",
+    "baseRemaining": "Plan syncs left: {{remaining}}",
+    "packRemaining": "Pack syncs left: {{remaining}}"
+  },
+  "runs": {
+    "title": "Sync history",
+    "description": "Every sync, what each source returned, and whether the unit was given back.",
+    "empty": "No syncs yet.",
+    "createdAt": "Started",
+    "view": "Open",
+    "refunded": "Unit refunded",
+    "columns": {
+      "status": "Result",
+      "outcomes": "Per source",
+      "retained": "New reviews",
+      "ai": "Themes"
+    },
+    "status": {
+      "queued": "Waiting",
+      "running": "Running",
+      "succeeded": "Done",
+      "partial": "Partly done",
+      "failed": "Failed"
+    },
+    "outcome": {
+      "ok": "new reviews",
+      "failed": "failed",
+      "zeroNew": "nothing new"
+    },
+    "ai": {
+      "pending": "Themes pending",
+      "themesOk": "Themes ready",
+      "noReliableThemes": "No solid themes",
+      "aiFailed": "Themes failed"
+    }
+  },
+  "inventory": {
+    "title": "Reviews",
+    "description": "Newest first. Text comes straight from the directory, shown as plain text.",
+    "empty": "No reviews stored yet.",
+    "noMatches": "No reviews match these filters.",
+    "clearFilters": "Clear filters",
+    "filterSource": "Source",
+    "filterRating": "Rating",
+    "filterQuery": "Search text",
+    "sortLabel": "Sort",
+    "sort": {
+      "newest": "Newest first",
+      "rating-high": "Highest rating",
+      "source": "Source"
+    },
+    "filterAll": "All",
+    "searchPlaceholder": "Search reviews",
+    "apply": "Apply",
+    "stars": "{{stars}} stars",
+    "unrated": "No rating",
+    "anonymous": "No name",
+    "page": "Page {{page}} of {{total}} reviews",
+    "previous": "Previous",
+    "next": "Next",
+    "export": "Download CSV",
+    "exportLoading": "Preparing CSV…",
+    "exportFailed": "We could not prepare the CSV. Try again.",
+    "exportFree": "The download is free and uses reviews you already pulled.",
+    "columns": {
+      "rating": "Rating",
+      "reviewedAt": "Date",
+      "source": "Source",
+      "text": "Review",
+      "author": "Author"
+    }
+  },
+  "stats": {
+    "title": "Review health",
+    "empty": "Nothing to chart yet.",
+    "total": "{{total}} reviews stored",
+    "distribution": {
+      "title": "Star spread",
+      "stars": "{{stars}} stars",
+      "unrated": "No rating"
+    },
+    "velocity": {
+      "title": "Reviews per month",
+      "latest": "In {{month}}",
+      "average": "Average {{average}} a month"
+    },
+    "sourceMix": {
+      "title": "Where they come from"
+    }
+  },
+  "trend": {
+    "title": "Average rating over time",
+    "description": "One point per month. A month with no rating is left as a gap.",
+    "chartLabel": "Average star rating per month",
+    "expandTable": "Read as a table",
+    "tableCaption": "Average star rating per month, by source",
+    "month": "Month",
+    "total": "All sources",
+    "gap": "No data",
+    "empty": "No dated reviews yet."
+  },
+  "themes": {
+    "title": "What people keep saying",
+    "complaints": "Common complaints",
+    "praise": "Common praise",
+    "citations": "Show the reviews behind this",
+    "citationCount": "{{citations}} reviews",
+    "citationSource": "{{source}} · {{rating}} · {{date}}",
+    "sectionEmpty": "Nothing here for this sync.",
+    "pending": "The theme pass has not finished yet.",
+    "noReliable": {
+      "title": "No solid themes this time",
+      "description": "We only show a theme when at least two reviews back it up. None cleared that bar, so we are not inventing one."
+    },
+    "aiFailed": {
+      "title": "Themes could not be built",
+      "description": "The summary step failed. Your reviews landed safely and are still readable below.",
+      "link": "Go to the reviews"
+    }
+  },
+  "provenance": {
+    "first_party": "First-party data",
+    "provider_observation": "Provider observation",
+    "estimate": "Estimate",
+    "ai_interpretation": "AI interpretation",
+    "observedAt": "Observed {{date}}",
+    "sampleCount": "{{count}} reviews sampled"
+  },
+  "errors": {
+    "sourcesFailed": "We could not load your review sources.",
+    "addSourceFailed": "We could not save that source.",
+    "removeSourceFailed": "We could not remove that source.",
+    "previewFailed": "We could not work out the cost.",
+    "syncFailed": "We could not start the sync.",
+    "runsFailed": "We could not load your sync history.",
+    "runFailed": "We could not load that sync.",
+    "statsFailed": "We could not load the review numbers.",
+    "themesFailed": "We could not load the themes.",
+    "inventoryFailed": "We could not load your reviews."
+  }
+}

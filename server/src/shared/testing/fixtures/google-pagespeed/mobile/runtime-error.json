@@ -1,0 +1,11 @@
+{
+  "lighthouseResult": {
+    "categories": {
+      "performance": { "score": null }
+    },
+    "runtimeError": {
+      "code": "NO_DOCUMENT_REQUEST",
+      "message": "Required document request not found."
+    }
+  }
+}

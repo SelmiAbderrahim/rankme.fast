@@ -1,0 +1,55 @@
+# Dependencies
+node_modules/
+.npm/
+
+# Build output
+client/dist/
+server/dist/
+build/
+*.tsbuildinfo
+
+# Vite / Vitest caches
+.vite/
+.vite-cache/
+.vitest-cache/
+
+# Test and coverage output
+coverage/
+coverage-*/
+.cov*
+*.stale/
+playwright-report/
+test-results/
+blob-report/
+.playwright-cli/
+
+# Logs
+logs/
+*.log
+npm-debug.log*
+
+# Environment (the root .env holds every secret; only the template is tracked)
+.env
+.env.*
+!.env.example
+/secrets/
+
+# Local database dumps (make backup)
+/backup/
+
+# Scratch files
+*.tmp.*
+.probe*
+
+# Local tooling state
+graphify-out/
+.claude/settings.local.json
+.claude/scheduled_tasks.lock
+
+# Editors and OS
+.idea/
+.vscode/
+*.swp
+*.swo
+.DS_Store
+Thumbs.db

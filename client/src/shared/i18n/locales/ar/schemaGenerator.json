@@ -1,0 +1,144 @@
+{
+  "title": "مولّد ترميز schema",
+  "description": "ينشئ JSON-LD لصفحة اعتمادًا على الحقائق التي حفظناها عنها. لا نخترع شيئًا: أي حقل لا نملك حقيقة تسنده نتركه، ونذكر السبب.",
+  "new": {
+    "title": "إنشاء الترميز",
+    "description": "اختر صفحة، اختر نوعًا، ثم اقرأ التكلفة قبل التأكيد."
+  },
+  "source": {
+    "legend": "مصدر الصفحة",
+    "audited": "صفحة مفحوصة",
+    "inventory": "صفحة من المخزون",
+    "url": "لصق عنوان",
+    "auditedLegend": "صفحات آخر فحص أجريته",
+    "inventoryLegend": "صفحات ينقصها نوع schema مدعوم",
+    "auditedEmpty": "شغّل فحصًا أولًا وستظهر صفحاته هنا.",
+    "inventoryEmpty": "لا توجد حاليًا صفحة في المخزون ينقصها نوع schema مدعوم.",
+    "hasStructuredData": "تحتوي بيانات منظمة بالفعل",
+    "noStructuredData": "لم نعثر على بيانات منظمة",
+    "structuredDataErrors": "أخطاء في البيانات المنظمة: {{n}}",
+    "richResultsVerdict": "حكم Search Console: {{verdict}}",
+    "declaresNothing": "لا تعلن أي نوع من schema.org",
+    "declaresTypes": "تعلن بالفعل: {{types}}",
+    "urlLabel": "عنوان الصفحة",
+    "urlPlaceholder": "https://example.com/page",
+    "urlHint": "نقرأ الصفحة مرة واحدة عبر اتصال آمن. العناوين العامة فقط تعمل.",
+    "urlInvalid": "أدخل عنوان https كاملًا، دون اسم مستخدم أو كلمة مرور."
+  },
+  "type": {
+    "legend": "نوع schema.org",
+    "required": "المطلوبة: {{n}}",
+    "recommended": "المستحسنة: {{n}}",
+    "alreadyDeclared": "هذه الصفحة تعلن هذا النوع بالفعل."
+  },
+  "preview": {
+    "title": "تكلفة هذه العملية",
+    "show": "اعرض التكلفة",
+    "units": "{{count}} عملية إنشاء من حصتك الشهرية.",
+    "units_other": "{{count}} عمليات إنشاء من حصتك الشهرية.",
+    "confirm": "إنشاء الترميز",
+    "remaining": "المتبقي في خطتك هذا الشهر: {{remaining}}.",
+    "pack": "بالإضافة إلى {{units}} من حزم الرصيد.",
+    "noFit": "هذا لا يتسع ضمن المتبقي. أضف رصيدًا أو غيّر الخطة أولًا."
+  },
+  "result": {
+    "title": "ترميز {{type}}",
+    "back": "العودة إلى القائمة",
+    "payload": "JSON-LD المُنشأ",
+    "copy": "نسخ",
+    "copied": "تم النسخ",
+    "download": "تنزيل",
+    "downloadFailedTitle": "لم يبدأ التنزيل",
+    "downloadFailed": "تعذّر جلب الملف. حاول مرة أخرى.",
+    "failedTitle": "لم يُنشأ أي شيء",
+    "failedProvider": "لم يستجب النموذج، لذلك لم نحتفظ بأي ترميز.",
+    "failedRejected": "كل الحقول التي اقترحها النموذج رسبت في تدقيق الحقائق، فاحتفظنا بما يمكن إثباته فقط.",
+    "refunded": "أُعيدت الوحدة إلى حصتك.",
+    "evidence": "مصدر كل حقل",
+    "evidenceDescription": "سطر لكل حقل في الترميز، يذكر الحقيقة المحفوظة التي تسنده.",
+    "evidenceFrom": "من {{fact}}",
+    "evidenceEmpty": "لم يتيسّر ملء أي حقل من حقيقة محفوظة.",
+    "omissions": "ما تركناه",
+    "omissionsDescription": "حقول لا تسندها حقيقة، وسبب غياب كل منها.",
+    "omissionsEmpty": "لم نترك شيئًا."
+  },
+  "fact": {
+    "pageUrl": "عنوان URL للصفحة",
+    "canonicalUrl": "عنوان URL الأساسي",
+    "pageTitle": "عنوان الصفحة",
+    "metaDescription": "وصف meta",
+    "headingOne": "العنوان H1",
+    "headingTwo": "العنوان H2",
+    "faqAnswer": "إجابة الأسئلة الشائعة",
+    "pageLanguage": "لغة الصفحة",
+    "articlePublishedTime": "وقت نشر المقالة",
+    "articleModifiedTime": "وقت تعديل المقالة",
+    "siteOrigin": "أصل الموقع",
+    "siteDomain": "نطاق الموقع",
+    "siteName": "اسم الموقع"
+  },
+  "reason": {
+    "no_evidence": "لا نملك حقيقة بشأنه",
+    "evidence_ambiguous": "الحقائق التي نملكها متعارضة",
+    "not_applicable": "لا ينطبق على هذه الصفحة"
+  },
+  "conformance": {
+    "title": "التحقق مقابل schema.org",
+    "conforms": "يتوافق هذا الترميز مع متطلبات schema.org للنوع {{type}}.",
+    "gaps": "لا يتوافق هذا الترميز بعد مع متطلبات schema.org للنوع {{type}}.",
+    "requiredTitle": "أكمل هذه لتلبية المتطلبات",
+    "recommendedTitle": "يستحسن إضافته",
+    "requiredGap": "أضف {{property}} —",
+    "recommendedSuggestion": "يمكنك إضافة {{property}} حالما تتوفر لدينا حقيقة تسنده.",
+    "version": "تم التحقق مقابل الإصدار {{version}} من مجموعة الخصائص."
+  },
+  "list": {
+    "title": "الترميز الذي أنشأته",
+    "caption": "عمليات الإنشاء المحفوظة، الأحدث أولًا",
+    "free": "إعادة فتح أي منها لا تكلّف شيئًا.",
+    "empty": "لم تنشئ ترميزًا لهذا الموقع بعد.",
+    "reopen": "فتح",
+    "page": "الصفحة",
+    "type": "النوع",
+    "status": "التحقق",
+    "statusConforms": "المتطلبات مستوفاة",
+    "statusGaps": "تنقص خاصية مطلوبة",
+    "statusFailed": "لم يُنشأ",
+    "generatedAt": "تاريخ الإنشاء"
+  },
+  "states": {
+    "empty": {
+      "title": "لا فحص بعد",
+      "body": "شغّل فحصًا لهذا الموقع لتصبح صفحاته قابلة للاختيار هنا."
+    },
+    "cap": {
+      "title": "استُهلكت الحصة الشهرية",
+      "body": "استخدمت كل عمليات إنشاء الترميز في خطتك هذا الشهر.",
+      "link": "عرض الخطط"
+    },
+    "notOnPlan": {
+      "title": "غير مشمول في خطتك",
+      "body": "إنشاء الترميز يبدأ من خطة Starter."
+    },
+    "killSwitch": {
+      "title": "غير متاح مؤقتًا",
+      "body": "عمليات الإنشاء الجديدة متوقفة الآن. ما أنشأته يبقى قابلًا للقراءة."
+    },
+    "notFound": {
+      "title": "غير موجود",
+      "body": "هذه الصفحة أو عملية الإنشاء لم تعد متاحة."
+    },
+    "unsafeUrl": {
+      "title": "لا يمكننا قراءة هذا العنوان",
+      "body": "أدخل عنوان صفحة https عامًا يُسمح لنا بجلبه."
+    },
+    "rateLimited": {
+      "title": "طلبات كثيرة جدًا",
+      "body": "انتظر دقيقة ثم حاول مجددًا."
+    },
+    "failed": {
+      "title": "حدث خطأ ما",
+      "body": "لم نتمكن من إنهاء هذا. حاول مجددًا."
+    }
+  }
+}

@@ -1,0 +1,83 @@
+{
+  "version": "0.1.20260101",
+  "status_code": 20000,
+  "status_message": "Ok.",
+  "time": "0.0904 sec.",
+  "cost": 0.0006,
+  "tasks_count": 1,
+  "tasks_error": 0,
+  "tasks": [
+    {
+      "id": "TASK_ID",
+      "status_code": 20000,
+      "status_message": "Ok.",
+      "time": "0.0704 sec.",
+      "cost": 0.0006,
+      "result_count": 1,
+      "path": ["v3", "serp", "google", "organic", "live", "advanced"],
+      "data": {
+        "api": "serp",
+        "function": "live",
+        "se": "google",
+        "se_type": "organic",
+        "keyword": "unsafe candidate mix",
+        "language_code": "en",
+        "location_code": 2840,
+        "device": "desktop"
+      },
+      "result": [
+        {
+          "keyword": "unsafe candidate mix",
+          "type": "organic",
+          "se_domain": "google.com",
+          "location_code": 2840,
+          "language_code": "en",
+          "datetime": "2026-01-01 00:00:00 +00:00",
+          "items_count": 5,
+          "items": [
+            {
+              "type": "organic",
+              "rank_group": 1,
+              "rank_absolute": 1,
+              "domain": "reddit.com",
+              "url": "data:text/html,<h1>drop me</h1>",
+              "title": "should be dropped: data: scheme"
+            },
+            {
+              "type": "organic",
+              "rank_group": 2,
+              "rank_absolute": 2,
+              "domain": "example.com",
+              "url": "javascript:alert(1)",
+              "title": "should be dropped: javascript: scheme"
+            },
+            {
+              "type": "organic",
+              "rank_group": 3,
+              "rank_absolute": 3,
+              "domain": "192.168.1.1",
+              "url": "http://192.168.1.1/admin",
+              "title": "kept at discovery, SSRF-blocked at fetch time"
+            },
+            {
+              "type": "organic",
+              "rank_group": 4,
+              "rank_absolute": 4,
+              "domain": "trustpilot.com",
+              "url": "https://trustpilot.com/review/example",
+              "title": "safe row that must survive"
+            },
+            {
+              "type": "organic",
+              "rank_group": 5,
+              "rank_absolute": 5,
+              "domain": "quora.com",
+              "url": "not-a-valid-url",
+              "title": "should be dropped: not parseable"
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

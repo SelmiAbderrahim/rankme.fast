@@ -1,0 +1,15 @@
+{
+  "dataStreams": [
+    {
+      "name": "properties/100000001/dataStreams/200000001",
+      "displayName": "Example production web",
+      "type": "WEB_DATA_STREAM",
+      "webStreamData": { "defaultUri": "https://example.com" }
+    },
+    {
+      "name": "properties/100000001/dataStreams/200000002",
+      "displayName": "Example Android",
+      "type": "ANDROID_APP_DATA_STREAM"
+    }
+  ]
+}

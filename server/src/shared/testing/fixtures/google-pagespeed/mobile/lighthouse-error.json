@@ -1,0 +1,7 @@
+{
+  "error": {
+    "code": 500,
+    "message": "Lighthouse returned error: NO_DOCUMENT_REQUEST. Required document request not found.",
+    "status": "LIGHTHOUSE_ERROR"
+  }
+}

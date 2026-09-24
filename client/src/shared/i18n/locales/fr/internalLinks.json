@@ -1,0 +1,133 @@
+{
+  "eyebrow": "Conseils issus de l’inventaire stocké",
+  "title": "Suggestions de liens internes",
+  "subtitle": "Examinez les possibilités de liaison entre pages à partir du dernier inventaire de contenu et des données Search Console stockées. Rien n’est appliqué au site.",
+  "site": {
+    "inventoryLink": "Ouvrir l’inventaire de contenu"
+  },
+  "tabs": {
+    "runs": "Exécutions enregistrées",
+    "new": "Nouvelle exécution"
+  },
+  "newRun": {
+    "title": "Préparer une exécution de suggestions",
+    "description": "Vérifiez l’inventaire exact et le quota avant de dépenser une exécution.",
+    "guidanceOnly": "Ces suggestions sont uniquement indicatives. RankMeFast ne modifie ni votre CMS ni le code HTML des pages.",
+    "unitLabel": "Quota",
+    "unitValue": "{{count}} exécution de liens internes",
+    "inventoryLabel": "Instantané de l’inventaire",
+    "remaining": "Il reste {{count}} exécutions avant celle-ci.",
+    "preview": "Prévisualiser l’exécution",
+    "previewing": "Vérification de l’inventaire…",
+    "confirm": "Lancer les suggestions",
+    "starting": "Démarrage…",
+    "cancel": "Annuler"
+  },
+  "states": {
+    "inventoryCta": "Relancer l’inventaire de contenu",
+    "planCta": "Voir les offres",
+    "emptyRuns": {
+      "title": "Aucune exécution enregistrée",
+      "body": "Prévisualisez une nouvelle exécution pour connaître l’inventaire stocké qui sera utilisé."
+    },
+    "emptySuggestions": {
+      "title": "Aucune suggestion correspondante",
+      "body": "Aucune paire admissible n’a été trouvée, ou les filtres de l’URL les masquent."
+    },
+    "missing": {
+      "title": "Inventaire de contenu requis",
+      "body": "Terminez un inventaire de contenu avant de demander des suggestions. Aucun quota n’a été dépensé."
+    },
+    "stale": {
+      "title": "L’inventaire de contenu est obsolète",
+      "body": "Relancez l’inventaire afin d’utiliser un instantané récent. Aucun quota n’a été dépensé."
+    },
+    "cap": {
+      "title": "Quota mensuel atteint",
+      "body": "La demande n’a pas démarré. Attendez la prochaine période ou consultez les offres disponibles."
+    },
+    "disabled": {
+      "title": "Suggestions indisponibles",
+      "body": "Les nouvelles exécutions sont temporairement désactivées. Les exécutions enregistrées restent accessibles."
+    },
+    "rateLimited": {
+      "title": "Trop de demandes",
+      "body": "Patientez un instant avant de réessayer."
+    },
+    "notFound": {
+      "title": "Exécution introuvable",
+      "body": "Cette exécution enregistrée n’est pas accessible pour le compte actuel."
+    },
+    "failed": {
+      "title": "L’exécution n’a pas abouti",
+      "body": "Aucune modification automatique n’a été effectuée. Réessayez plus tard ou ouvrez une autre exécution."
+    },
+    "running": {
+      "title": "Création des suggestions",
+      "body": "Le traitement classe les candidats stockés et rédige les ancres. Cette vue se met à jour automatiquement."
+    }
+  },
+  "status": {
+    "queued": "En attente",
+    "processing": "En cours",
+    "completed": "Terminée",
+    "failed": "Échec",
+    "refunded": "Exécution restituée"
+  },
+  "runs": {
+    "snapshot": "Inventaire : {{date}}",
+    "suggestionCount": "{{count}} suggestions",
+    "open": "Ouvrir"
+  },
+  "flags": {
+    "orphan": "Orpheline",
+    "weakly_linked": "Faiblement liée"
+  },
+  "confidence": {
+    "high": "Élevée",
+    "medium": "Moyenne",
+    "low": "Faible"
+  },
+  "suggestions": {
+    "title": "Liens suggérés",
+    "inventorySnapshot": "D’après l’inventaire du {{date}}",
+    "rank": "Rang {{rank}}",
+    "anchorLabel": "Texte d’ancre proposé",
+    "copy": "Copier l’ancre",
+    "copied": "Copiée",
+    "codeFixProblem": "Un lien interne pertinent manque.",
+    "codeFixWhy": "La page cible reçoit peu de liens internes et partage un contexte de recherche ou de titres pertinent avec la page source.",
+    "codeFixRecommendation": "Ajoutez le lien dans la section la plus pertinente de la page source, avec le texte d’ancre proposé lorsqu’il s’intègre naturellement.",
+    "fallback": "Le classement par IA était indisponible ou refusé. Les candidats déterministes fondés sur des preuves sont affichés."
+  },
+  "evidence": {
+    "title": "Pourquoi cette paire est suggérée",
+    "inbound": "Liens entrants de la cible",
+    "flag": "Indicateur qualité de la cible",
+    "inventoryDate": "Date de l’inventaire",
+    "queries": "Requêtes Search Console communes",
+    "headings": "Termes de titres correspondants",
+    "none": "Aucune preuve de ce type"
+  },
+  "filters": {
+    "target": "Indicateur cible",
+    "targetValue": {
+      "all": "Tous les indicateurs",
+      "orphan": "Orpheline",
+      "weakly_linked": "Faiblement liée"
+    },
+    "section": "Section source",
+    "allSections": "Toutes les sections",
+    "confidence": "Confiance",
+    "confidenceValue": {
+      "all": "Tous les niveaux",
+      "high": "Élevée",
+      "medium": "Moyenne",
+      "low": "Faible"
+    }
+  },
+  "export": {
+    "button": "Exporter le tableau",
+    "exporting": "Préparation de l’export…"
+  }
+}

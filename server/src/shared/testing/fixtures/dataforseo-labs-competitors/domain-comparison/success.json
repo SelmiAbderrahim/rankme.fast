@@ -1,0 +1,105 @@
+{
+  "version": "0.1.20260801",
+  "status_code": 20000,
+  "status_message": "Ok.",
+  "cost": 0.024,
+  "tasks_count": 1,
+  "tasks_error": 0,
+  "tasks": [
+    {
+      "id": "TASK_ID",
+      "status_code": 20000,
+      "status_message": "Ok.",
+      "cost": 0.024,
+      "result_count": 1,
+      "result": [
+        {
+          "location_code": 2840,
+          "language_code": "en",
+          "total_count": 3,
+          "items_count": 3,
+          "items": [
+            {
+              "keyword_data": {
+                "keyword": "brand query",
+                "keyword_info": { "search_volume": null },
+                "keyword_properties": { "keyword_difficulty": null },
+                "search_intent_info": { "main_intent": null }
+              },
+              "first_domain_serp_element": {
+                "serp_item": {
+                  "type": "organic",
+                  "rank_group": 4,
+                  "rank_absolute": 5,
+                  "url": null,
+                  "relative_url": "/brand?source=organic"
+                }
+              },
+              "second_domain_serp_element": {
+                "serp_item": {
+                  "type": "organic",
+                  "rank_group": 6,
+                  "rank_absolute": 7,
+                  "url": null,
+                  "relative_url": "/brand"
+                }
+              }
+            },
+            {
+              "keyword_data": {
+                "keyword": "SEO   Audit Tool",
+                "keyword_info": { "search_volume": 5400 },
+                "keyword_properties": { "keyword_difficulty": 68 },
+                "search_intent_info": { "main_intent": "commercial" }
+              },
+              "first_domain_serp_element": {
+                "serp_item": {
+                  "type": "organic",
+                  "rank_group": 8,
+                  "rank_absolute": 9,
+                  "url": "https://example.com/guides/seo-audit",
+                  "relative_url": null
+                }
+              },
+              "second_domain_serp_element": {
+                "serp_item": {
+                  "type": "organic",
+                  "rank_group": 3,
+                  "rank_absolute": 4,
+                  "url": "https://rival-one.example/seo-audit",
+                  "relative_url": null
+                }
+              }
+            },
+            {
+              "keyword_data": {
+                "keyword": "seo audit tool",
+                "keyword_info": { "search_volume": 5400 },
+                "keyword_properties": { "keyword_difficulty": 68 },
+                "search_intent_info": { "main_intent": "commercial" }
+              },
+              "first_domain_serp_element": {
+                "serp_item": {
+                  "type": "organic",
+                  "rank_group": 2,
+                  "rank_absolute": 2,
+                  "url": "HTTPS://EXAMPLE.COM:443/seo-audit#section",
+                  "relative_url": null
+                }
+              },
+              "second_domain_serp_element": {
+                "serp_item": {
+                  "type": "organic",
+                  "rank_group": 3,
+                  "rank_absolute": 4,
+                  "url": "https://rival-one.example/seo-audit#details",
+                  "relative_url": null
+                }
+              }
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

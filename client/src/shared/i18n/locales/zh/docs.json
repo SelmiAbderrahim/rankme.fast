@@ -1,0 +1,46 @@
+{
+  "title": "文档",
+  "eyebrow": "RankMeFast 指南",
+  "searchLabel": "搜索文档",
+  "searchPlaceholder": "搜索指南和答案…",
+  "searchAction": "搜索",
+  "navigationLabel": "文档导航",
+  "openNavigation": "打开文档导航",
+  "filterLabel": "按分区筛选文档",
+  "allSections": "全部",
+  "resultCount": "{{count}} 个结果",
+  "noResultsTitle": "未找到指南",
+  "noResultsBody": "请尝试更宽泛的词语，或清除分区筛选条件。",
+  "clearFilters": "清除筛选",
+  "viewSection": "查看分区",
+  "readGuide": "阅读指南",
+  "onThisPage": "本页内容",
+  "articleNavigation": "上一篇和下一篇指南",
+  "previous": "上一篇",
+  "next": "下一篇",
+  "copy": {
+    "trigger": "复制页面",
+    "label": "复制为",
+    "markdown": "标记文本",
+    "plainText": "纯文本",
+    "link": "页面链接",
+    "success": "已复制{{format}}。",
+    "failed": "无法复制。请检查浏览器权限后重试。"
+  },
+  "sections": {
+    "start": "入门",
+    "audits": "审计与报告",
+    "research": "研究与跟踪",
+    "product": "产品功能",
+    "account": "账户与计费",
+    "developers": "开发者"
+  },
+  "breadcrumbs": { "home": "首页", "docs": "文档" },
+  "error": {
+    "notFoundTitle": "未找到指南",
+    "notFoundBody": "该指南可能已移动，或地址有误。",
+    "title": "文档暂不可用",
+    "body": "无法加载文档，请稍后重试。",
+    "back": "返回文档"
+  }
+}

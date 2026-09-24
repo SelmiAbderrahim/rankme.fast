@@ -1,0 +1,133 @@
+{
+  "title": "Alertes",
+  "subtitle": "Soyez prévenu quand une position chute ou que votre profil de liens change.",
+  "tabs": {
+    "rules": "Règles",
+    "log": "Journal d’envoi"
+  },
+  "type": {
+    "rank_drop": "Perte de position",
+    "new_backlink": "Nouveaux liens",
+    "lost_backlink": "Liens perdus"
+  },
+  "channel": {
+    "email": "E-mail",
+    "slack": "Slack",
+    "webhook": "Webhook"
+  },
+  "filters": {
+    "type": "Type",
+    "state": "État",
+    "all": "Tous"
+  },
+  "list": {
+    "title": "Vos règles",
+    "capUsed": "{{count}} règles utilisées.",
+    "type": "Type",
+    "threshold": "Seuil",
+    "channels": "Canaux",
+    "state": "État",
+    "actions": "Actions",
+    "emailCount": "{{count}} destinataires e-mail",
+    "secretTail": "clé de signature finissant par {{tail}}",
+    "enabled": "Activée",
+    "disabled": "Désactivée",
+    "enable": "Activer",
+    "disable": "Désactiver",
+    "viewLog": "Voir le journal",
+    "delete": "Supprimer"
+  },
+  "builder": {
+    "title": "Nouvelle règle",
+    "description": "Choisissez quoi surveiller et où l’envoyer.",
+    "site": "Site",
+    "sitePlaceholder": "Choisissez un site",
+    "type": "Type d’alerte",
+    "threshold": "Seuil de position",
+    "thresholdHint": "Nous alertons quand la position confirmée atteint ce rang ou pire.",
+    "channels": "Canaux",
+    "slackPlaceholder": "Adresse du webhook entrant Slack",
+    "webhookPlaceholder": "Votre adresse https",
+    "paidChannelLocked": "Les canaux Slack et webhook exigent le forfait Pro ou supérieur.",
+    "noChannel": "Choisissez au moins un canal.",
+    "submit": "Créer la règle"
+  },
+  "secret": {
+    "title": "Copiez votre clé de signature maintenant",
+    "body": "Nous affichons cette clé une seule fois. Conservez-la en lieu sûr : vous pourrez la remplacer, jamais la relire.",
+    "dismiss": "C’est copié"
+  },
+  "log": {
+    "title": "Journal d’envoi",
+    "description": "Chaque alerte envoyée, avec les deux relevés qui la justifient.",
+    "channel": "Canal",
+    "status": "Statut",
+    "evidence": "Ce qui a changé",
+    "detail": "Détail",
+    "rankPair": "Position {{before}} le {{beforeAt}}, puis {{after}} le {{afterAt}}.",
+    "linkPair": "{{beforeCount}} domaines le {{beforeAt}}, puis {{afterCount}} le {{afterAt}}.",
+    "notRanked": "au-delà des 100 premiers résultats",
+    "domainCount": "{{count}} domaines modifiés",
+    "attempt": "Tentative {{attempt}}",
+    "statusLabel": {
+      "pending": "Envoi en cours",
+      "sent": "Envoyée",
+      "failed": "Échec",
+      "suppressed": "Arrêtée"
+    },
+    "suppressed": {
+      "opted_out": "Le destinataire a désactivé ces e-mails.",
+      "membership_removed": "Le destinataire n’est plus sur le compte.",
+      "no_transport": "L’e-mail n’est pas configuré sur ce déploiement.",
+      "rule_disabled": "La règle était désactivée au déclenchement.",
+      "retries_exhausted": "Nous avons arrêté après trois échecs.",
+      "flag_disabled": "Les alertes ont été coupées par l’opérateur."
+    },
+    "error": {
+      "transport_unavailable": "Le canal n’a pas pu être joint.",
+      "transport_rejected": "Le canal a refusé le message.",
+      "transport_exception": "Le canal a échoué de façon inattendue.",
+      "unsafe_url": "Cette adresse n’est plus sûre à joindre.",
+      "channel_timeout": "Le canal a mis trop de temps à répondre.",
+      "retries_exhausted": "Nous avons arrêté après trois échecs."
+    }
+  },
+  "states": {
+    "cap": {
+      "title": "Limite de règles atteinte",
+      "body": "Vous avez utilisé toutes les règles d’alerte de votre forfait."
+    },
+    "tierLocked": {
+      "title": "Ce canal exige un forfait supérieur",
+      "body": "Les canaux Slack et webhook exigent le forfait Pro ou supérieur."
+    },
+    "disabled": {
+      "title": "Alertes en pause",
+      "body": "Les alertes sont momentanément indisponibles. Vos règles et votre journal restent accessibles."
+    },
+    "notFound": {
+      "title": "Introuvable",
+      "body": "Cette règle n’existe plus."
+    },
+    "rateLimited": {
+      "title": "Trop de requêtes",
+      "body": "Trop de requêtes d’alerte. Réessayez dans une minute."
+    },
+    "invalid": {
+      "title": "Vérifiez le formulaire",
+      "body": "Une valeur de la règle n’est pas encore valide."
+    },
+    "failed": {
+      "title": "Une erreur est survenue",
+      "body": "Nous n’avons pas pu terminer. Réessayez."
+    },
+    "empty": {
+      "title": "Aucune règle",
+      "body": "Créez une règle pour recevoir des alertes."
+    },
+    "noSites": {
+      "title": "Ajoutez d’abord un site",
+      "body": "Les alertes surveillent un site : ajoutez-en un pour commencer."
+    }
+  }
+}

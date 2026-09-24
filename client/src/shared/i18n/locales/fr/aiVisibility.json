@@ -1,0 +1,124 @@
+{
+  "title": "AI Visibility",
+  "description": "Suivez les questions des acheteurs et voyez si les réponses des chats IA vous mentionnent.",
+  "loadFailed": "Impossible de charger la visibilité IA.",
+  "form": {
+    "label": "Requête suivie",
+    "placeholder": "meilleur outil d'audit SEO pour agences",
+    "add": "Suivre la requête",
+    "adding": "Ajout…",
+    "cap": "{{count}}/{{cap}} requêtes suivies",
+    "capReached": "Vous pouvez suivre jusqu'à {{cap}} requêtes par site."
+  },
+  "prompts": {
+    "title": "Requêtes suivies",
+    "empty": "Aucune requête suivie pour l'instant.",
+    "emptyTitle": "Aucune requête suivie pour l'instant",
+    "emptyCta": "Ajoutez votre première requête",
+    "prompt": "Requête",
+    "status": "Statut",
+    "sentiment": "Ton",
+    "mentioned": "Mentionné",
+    "notMentioned": "Non mentionné",
+    "remove": "Retirer la requête",
+    "confirmRemove": {
+      "title": "Supprimer cette requête ?",
+      "body": "Nous cesserons de vérifier si les réponses de l'IA vous mentionnent pour cette requête. Vous pourrez l'ajouter à nouveau plus tard.",
+      "confirm": "Supprimer",
+      "cancel": "Annuler"
+    }
+  },
+  "refresh": {
+    "button": "Vérifier maintenant",
+    "cooldown": "Attendez {{seconds}} s avant de revérifier.",
+    "failed": "Impossible de vérifier la visibilité IA pour le moment. Vos dernières données restent affichées.",
+    "success": "{{total}} requêtes vérifiées — les réponses IA vous mentionnent pour {{mentioned}} d'entre elles.",
+    "cost": "Consomme {{prompts}} de vos {{remaining}} vérifications restantes ce mois-ci."
+  },
+  "lastChecked": "Dernière vérification {{date}}",
+  "neverChecked": "Pas encore vérifié",
+  "kpi": {
+    "shareOfVoice": "Part de voix",
+    "mentioned": "Requêtes qui vous mentionnent",
+    "mentionedOf": "{{mentioned}} sur {{total}}",
+    "mentionedContext": "Requêtes où une réponse IA vous a cité le mois dernier",
+    "sentiment": "Ton des mentions",
+    "sentimentPositive": "chaleureux",
+    "sentimentNeutral": "neutre",
+    "sentimentNegative": "critique",
+    "sentimentContext": "Sur l'ensemble des réponses du dernier mois",
+    "checks": "Vérifications ce mois-ci",
+    "checksUsed": "{{used}}/{{cap}}"
+  },
+  "notMentioned": {
+    "title": "Pas encore visible",
+    "body": "Les réponses IA ne vous ont pas mentionné pour ces requêtes."
+  },
+  "details": {
+    "show": "Afficher le détail par moteur",
+    "hide": "Masquer le détail par moteur",
+    "noCitation": "Aucune page citée"
+  },
+  "trend": {
+    "title": "Mentions dans le temps",
+    "description": "À quelle fréquence les réponses IA vous mentionnent, jour après jour.",
+    "emptyTitle": "Pas encore de tendance",
+    "empty": "Lancez deux vérifications sur des jours différents pour voir une tendance.",
+    "latest": "Dernier relevé : les réponses IA vous mentionnent dans {{rate}} % des vérifications.",
+    "chartLabel": "Tendance du taux de mention sur {{count}} jours vérifiés",
+    "tableSummary": "Taux de mention par jour sur {{count}} jours",
+    "tableDate": "Date",
+    "tableRate": "Taux de mention",
+    "tableShare": "Part de voix",
+    "tableChecks": "Vérifications",
+    "failed": "Impossible de charger la tendance."
+  },
+  "onboarding": {
+    "suggestionsReady": "Commencez avec les requêtes suggérées ci-dessous — un clic les suit toutes.",
+    "trackSuggestions": "Suivre les requêtes suggérées",
+    "needKeywords": "Suivez des mots-clés dans l'onglet Mots-clés ou lancez un audit pour débloquer les suggestions."
+  },
+  "share": {
+    "title": "Part de voix",
+    "description": "À quelle fréquence les réponses IA vous citent par rapport à vos concurrents.",
+    "brand": "Vous",
+    "competitors": "Concurrents",
+    "noData": "Aucune donnée"
+  },
+  "sentiment": {
+    "positive": "Évoqué avec chaleur",
+    "neutral": "Évoqué sobrement",
+    "negative": "Évoqué avec sévérité",
+    "unknown": "Non évalué"
+  },
+  "suggestions": {
+    "title": "Ce que les gens demandent à l'IA",
+    "empty": "Aucune requête suggérée pour l'instant.",
+    "emptyTitle": "Aucune suggestion pour l'instant",
+    "emptyCta": "Suivez votre propre requête",
+    "failed": "Impossible de charger les requêtes suggérées.",
+    "track": "Suivre celle-ci",
+    "trackAll": "Tout suivre",
+    "trackingAll": "Suivi en cours…",
+    "aiGenerated": "Suggestion IA",
+    "generate": "Générer des suggestions",
+    "cooldown": "Attendez {{seconds}} s avant de générer à nouveau.",
+    "cost": "Utilise une de vos {{remaining}} générations restantes ce mois-ci.",
+    "capReached": "Vous avez utilisé toutes vos générations de suggestions ce mois-ci.",
+    "emptyGenerated": "Nous n'avons pas encore pu créer de questions à partir de vos données. Ajoutez des mots-clés suivis ou lancez un audit, puis générez à nouveau.",
+    "generatedAt": "Généré le {{date}}",
+    "outputLocale": "Langue de sortie : {{locale}}",
+    "generateFailed": "Impossible de générer des suggestions pour le moment. Votre génération n'a pas été décomptée.",
+    "generated": "{{count}} suggestions générées."
+  },
+  "locked": {
+    "body": "AI Visibility est disponible avec le forfait Agency.",
+    "upgrade": "Voir les forfaits"
+  },
+  "add": {
+    "failed": "Impossible d'ajouter cette requête."
+  },
+  "remove": {
+    "failed": "Impossible de retirer cette requête."
+  }
+}

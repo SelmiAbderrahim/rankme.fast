@@ -1,0 +1,45 @@
+{
+  "version": "0.1.20260801",
+  "status_code": 20000,
+  "status_message": "Ok.",
+  "time": "0.397 sec.",
+  "cost": 0.002,
+  "tasks_count": 1,
+  "tasks_error": 0,
+  "tasks": [
+    {
+      "id": "TASK_ID",
+      "status_code": 20000,
+      "status_message": "Ok.",
+      "cost": 0.002,
+      "result_count": 1,
+      "result": [
+        {
+          "keyword": "dentist austin",
+          "type": "maps",
+          "se_domain": "google.com",
+          "location_code": null,
+          "language_code": "en",
+          "datetime": "2026-08-01 10:04:00 +00:00",
+          "items_count": 2,
+          "items": [
+            {
+              "type": "maps_search",
+              "rank_group": 1,
+              "rank_absolute": 1,
+              "domain": "rival.example",
+              "url": "https://rival.example/"
+            },
+            {
+              "type": "maps_search",
+              "rank_group": 2,
+              "rank_absolute": 2,
+              "domain": "other.example",
+              "url": "https://other.example/"
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

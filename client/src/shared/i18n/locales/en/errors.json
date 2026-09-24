@@ -1,0 +1,23 @@
+{
+  "badRequest": "Bad request.",
+  "unauthorized": "You must be signed in to do that.",
+  "forbidden": "You do not have permission to do that.",
+  "notFound": "The requested resource was not found.",
+  "conflict": "Conflict: the resource already exists.",
+  "internal": "Something went wrong on our end. Please try again.",
+  "validationFailed": "Validation failed.",
+  "network": "Network request failed. Check your connection and try again.",
+  "timeout": "The request timed out. Please try again.",
+  "projectNotFound": "Project not found.",
+  "userNotFound": "User not found.",
+  "invalidCredentials": "Invalid email or password.",
+  "emailAlreadyRegistered": "That email is already registered.",
+  "passwordTooShort": "Password must be at least 8 characters.",
+  "emailRequired": "Please enter an email",
+  "emailInvalid": "Please enter a valid email address",
+  "passwordRequired": "Please enter a password",
+  "firstNameRequired": "Please enter a first name",
+  "lastNameRequired": "Please enter a last name",
+  "passwordConfirmRequired": "Please confirm the new password",
+  "passwordsMustMatch": "Passwords must match"
+}

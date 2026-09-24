@@ -1,0 +1,90 @@
+{
+  "title": "反向链接",
+  "description": "查看谁链接到您的网站，以及您的域名在 Google 眼中的强度。",
+  "empty": "尚未记录反向链接——我们将在下次刷新时获取新数据。",
+  "emptyTitle": "尚无反向链接",
+  "loadFailed": "无法加载反向链接。",
+  "summary": {
+    "domainRating": "域名评分",
+    "domainRatingHelp": "该网站的链接概况强度（0–100）。",
+    "referringDomains": "引用域名",
+    "backlinks": "反向链接",
+    "brokenBacklinks": "失效链接"
+  },
+  "delta": {
+    "since": "与上次相比"
+  },
+  "rowBudget": {
+    "label": "本月已获取的反向链接行数"
+  },
+  "table": {
+    "title": "近期反向链接",
+    "domain": "引用页面",
+    "anchor": "锚文本",
+    "dofollow": "链接类型",
+    "firstSeen": "首次发现",
+    "dofollowYes": "Dofollow",
+    "dofollowNo": "Nofollow",
+    "loadMore": "加载更多",
+    "loading": "加载中…"
+  },
+  "refresh": {
+    "button": "刷新",
+    "cooldown": "请等待 {{seconds}} 秒后再刷新。",
+    "failed": "暂时无法刷新。仍显示您最近的数据。"
+  },
+  "locked": {
+    "title": "升级以解锁反向链接",
+    "body": "域名评分、引用域名和您的反向链接列表都是 Pro 计划的一部分。",
+    "upgrade": "查看计划"
+  },
+  "errors": {
+    "capExceeded": "您套餐的反向链接行数额度（{{used}}/{{limit}} {{metric}}）已用尽。请升级套餐或购买信用包以获取更多行。"
+  },
+  "intelligence": {
+    "title": "链接情报", "description": "查看已保存的反向链接证据，并选择何时花费额度进行新的提供商查询。",
+    "tabs": { "label": "链接情报视图", "overview": "概览", "rows": "反向链接", "domains": "域名", "anchors": "锚文本", "history": "历史", "gap": "链接差距", "toxicity": "链接审核" },
+    "preview": { "title": "花费预览", "description": "此估算免费。仅在确认后预留额度。", "units": "{{count}} 个额度", "cached": "缓存结果", "mixed": "混合缓存", "fresh": "需要新查询", "available": "额度可用", "unavailable": "额度已用尽", "baseRemaining": "剩余 {{count}} 个基础额度", "packRemaining": "剩余 {{count}} 个加购额度", "confirm": "确认并花费 {{count}} 个额度", "cancel": "取消", "button": "预览花费" },
+    "states": { "default": "尚无已保存结果。需要新数据时请先预览花费。", "emptyTitle": "未找到结果", "emptyBody": "提供商已完成查询，但没有找到匹配行。", "partialTitle": "部分结果", "partialBody": "提供商停止响应前已保留部分行。", "providerTitle": "提供商查询失败", "providerBody": "未保留任何行，预留额度已退回。", "capTitle": "链接情报额度已用尽", "capBody": "请使用 {{pack}} 加购包或等待额度续期。", "disabledTitle": "链接情报暂时停用", "disabledBody": "仍可查看已保存结果，但新查询已暂停。", "lockedTitle": "升级以解锁链接情报", "lockedBody": "深度反向链接查询适用于 Pro 和 Agency 套餐。", "upgrade": "查看套餐", "errorTitle": "无法加载链接情报" },
+    "provenance": { "providerObservation": "提供商观测" },
+    "domains": { "title": "引用域名", "description": "链接到此网站的域名，包括强度和发现日期。", "sort": "默认排序：域名评分降序、反向链接降序，然后域名 A–Z。" },
+    "anchors": { "title": "锚文本", "description": "引用页面链接到此网站时使用的安全纯文本。" },
+    "history": { "title": "反向链接历史", "description": "按时间顺序显示最多 24 个月度观测。", "chartLabel": "每月反向链接", "tableCaption": "反向链接历史数据" },
+    "bulk": { "title": "批量域名评分", "description": "查询最多 100 个唯一域名的提供商评分。", "label": "域名", "help": "每行输入一个域名，或使用逗号分隔。", "invalid": "请输入 1 到 100 个有效域名。", "duplicate": "继续前请删除重复域名。" },
+    "filters": { "minRank": "最低域名评分", "minBacklinks": "最低反向链接数", "anchor": "筛选锚文本" },
+    "columns": { "domain": "域名", "backlinks": "反向链接", "domainRank": "域名评分", "firstSeen": "首次发现", "lastSeen": "最近发现", "anchor": "锚文本", "referringDomains": "引用域名", "month": "月份", "rank": "评分" },
+    "gap": { "title": "链接差距", "description": "比较竞争对手的链接机会。", "next": "按竞争对手展示的工作区将在下一链接情报部分交付。" },
+    "errors": { "preview": "无法准备花费预览。", "submit": "无法启动提供商查询。", "load": "无法加载已保存结果。" }
+  },
+  "gap": {
+    "workspace": { "title": "查找竞争对手链接缺口", "description": "将您的网站与最多三个竞争对手比较，并在开始前预览单位消耗。" },
+    "form": {
+      "ownDomainLabel": "您的域名", "competitorsLabel": "竞争对手域名", "competitorsHelp": "输入 {{min}} 到 {{max}} 个域名，每行一个或用逗号分隔。重复项会被移除。",
+      "errors": { "ownAmongCompetitors": "不能将您自己的域名设为竞争对手。", "duplicate": "已移除重复的竞争对手。", "atLeastOne": "请至少输入一个竞争对手域名。", "tooMany": "最多输入三个竞争对手域名。", "invalid": "请输入有效的域名。" }
+    },
+    "preview": { "title": "链接缺口消耗预览", "units": "{{n}} 个单位", "remainingBase": "剩余 {{n}} 个基础单位", "remainingPack": "剩余 {{n}} 个包单位", "cached": "缓存证据", "fresh": "需要新的提供商请求", "confirm": "确认并消耗 {{n}} 个单位", "cancel": "取消", "button": "预览缺口消耗" },
+    "result": { "title": "链接缺口结果", "readOnly": "已保存结果 · 只读", "competitorDescription": "链接到该竞争对手但未链接到您网站的域名。", "status": { "complete": "已完成", "partial": "部分完成" } },
+    "legStatus": { "ok": "已完成 · 已消耗单位", "provider_failed_refunded": "提供商失败 · 已退还单位", "zero_retained_consumed": "无保留行 · 已消耗单位", "zero_retained_refunded": "无保留行 · 已退还单位" },
+    "overlap": { "totalUnique": "唯一链接域名", "exclusiveToCompetitor": "竞争对手独有", "exclusivePctLabel": "独有比例", "exclusivePct": "{{pct}}% 为独有" },
+    "table": { "domain": "链接域名", "rank": "排名", "firstSeen": "首次发现", "emptyTitle": "没有独有域名", "empty": "该竞争对手没有保留独有链接域名。" },
+    "errors": { "title": "无法加载链接缺口", "preview": "无法准备缺口预览。", "submit": "无法启动链接缺口分析。", "load": "无法加载已保存的链接缺口分析。" }
+  },
+  "toxicity": {
+    "start": { "title": "审核反向链接观测", "description": "使用确定性规则为最多 1000 条已存反向链接评分，再决定导出内容。" },
+    "preview": { "unit": "1 个链接审核单位", "rowClamp": "最多 1000 行 · 100 个评分域名", "available": "配额可用", "capReached": "配额已用完", "explanation": "每次运行使用 1 个 toxicity_reviews 单位。包含配额用完后可购买 toxicity-reviews-10 包。预览和取消不会消耗单位。", "confirm": "确认并使用 1 个单位", "cancel": "取消", "button": "预览审核消耗" },
+    "states": { "lockedTitle": "升级以审核反向链接", "lockedBody": "Pro 和 Agency 套餐可使用链接审核和拒绝链接文件生成器。", "disabledTitle": "新链接审核已暂停", "disabledBody": "暂停新评分期间，已保存的审核仍可查看。", "capTitle": "链接审核配额已用完", "capBody": "添加 toxicity-reviews-10 包或等待配额刷新。", "errorTitle": "无法加载链接审核", "errorBody": "请稍后重试。已保存结果和此前下载不受影响。", "listError": "无法加载已保存的链接审核。", "runningTitle": "正在审核已保存的反向链接观测", "failedTitle": "链接审核已停止", "providerRefunded": "提供商在保留任何评分行之前失败。预留单位已退还。", "ceilingConsumed": "运行在成本上限处停止。预留单位已消耗，且未执行任何自动操作。", "partial": "部分提供商观测", "emptyTitle": "没有评分行", "emptyBody": "运行已完成，但未保留评分后的反向链接行。" },
+    "actions": { "viewPlans": "查看套餐", "viewPacks": "查看点数包", "open": "打开", "back": "返回新审核" },
+    "runs": { "title": "已保存的审核", "description": "重新打开已完成审核不会消耗新单位。", "date": "创建时间", "status": "状态", "rows": "行数", "emptyTitle": "没有已保存的审核", "emptyBody": "准备好后，可先进行免费的消耗预览。" },
+    "filters": { "status": "按状态筛选审核", "allStatuses": "全部状态", "band": "按规则分组筛选行", "allBands": "全部分组" },
+    "status": { "queued": "排队中", "running": "运行中", "succeeded": "已完成", "failed": "失败" },
+    "results": { "title": "链接审核结果", "rubric": "规则 {{version}}", "rowsTitle": "已评分的反向链接行", "observationCopy": "分组描述固定规则下已保存的提供商观测，不预测搜索引擎会采取的操作。", "providerObservation": "提供商观测 · 确定性规则" },
+    "columns": { "domain": "来源域名", "score": "垃圾评分", "band": "规则分组", "signals": "影响信号", "firstSeen": "首次发现", "lastSeen": "最后发现", "rationale": "可选说明" },
+    "band": { "clean": "正常", "watch": "观察", "toxic": "有害" },
+    "signal": { "spam_clean": "评分 0–29", "spam_watch": "评分 30–59", "spam_toxic": "评分 60–100", "broken": "失效", "dofollow": "Dofollow", "nofollow": "Nofollow" },
+    "rationale": { "toggle": "说明", "not_requested": "此行未请求说明。", "annotated": "已保存说明", "abstained": "AI 选择不作说明；确定性分组未改变。", "failed": "说明不可用；确定性分组未改变。" },
+    "disavow": { "title": "生成拒绝链接文件", "description": "有害分组的行默认包含。请逐行审核，并选择整个域名或精确 URL。", "selectionCaption": "可用于拒绝链接文件的行", "include": "包含", "scope": "范围", "preview": "实时文件预览", "reviewTitle": "下载前必须审核", "reviewBody": "RankMeFast 绝不会提交此文件。你必须检查文本、下载文件，并仅在自行判断适当时亲自提交。", "download": "下载 .txt", "downloadFailed": "无法准备文件。请检查选择后重试。", "includeDomain": "在文件中包含 {{domain}}", "scopeFor": "{{domain}} 的范围", "domainScope": "整个域名", "urlScope": "精确 URL" }
+  },
+  "cap": { "reached": "{{metric}} 配额已用完", "pack": "{{name}} 以 {{price}} 增加 {{units}} 个单位。", "upgrade": "查看计费选项" },
+  "killswitch": { "title": "链接缺口暂时不可用", "disabled": "新分析已暂停。已保存的链接缺口结果仍可查看。" },
+  "tier": { "locked": "升级以解锁链接缺口", "lockedBody": "链接缺口分析适用于 Pro 和 Agency 套餐。" }
+}

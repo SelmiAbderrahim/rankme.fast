@@ -1,0 +1,131 @@
+{
+  "eyebrow": "Stored-observation grouping",
+  "title": "Keyword clustering by SERP overlap",
+  "subtitle": "Group tracked keywords that return the same pages on Google. Every grouping is computed from rank checks you have already paid for — no new search is run.",
+  "site": {
+    "ranksLink": "Open rank tracking"
+  },
+  "tabs": {
+    "runs": "Saved runs",
+    "new": "New run"
+  },
+  "scope": {
+    "title": "Keywords in this run",
+    "description": "{{count}} keywords selected. Every selected keyword must have a usable recent Google result.",
+    "empty": "This site has no active Google keywords yet.",
+    "minimum": "Select at least two keywords before previewing the run."
+  },
+  "newRun": {
+    "title": "Prepare a clustering run",
+    "description": "Preview the keywords that qualify and your allowance before you spend one run.",
+    "storedOnly": "Clustering reads stored results only. No search is sent to any provider.",
+    "unitLabel": "Allowance",
+    "unitValue": "{{count}} clustering run",
+    "scopeLabel": "Keywords ready",
+    "scopeValue": "{{count}} tracked keywords qualify",
+    "method": "Two keywords are grouped when they share at least {{shared}} of their top {{window}} results, from a rank check in the last {{days}} days.",
+    "remaining": "{{count}} runs remain before this run.",
+    "labelingIncluded": "Optional AI group labels are included in this run and never change cluster membership.",
+    "preview": "Preview run",
+    "previewing": "Checking stored results…",
+    "confirm": "Start clustering run",
+    "starting": "Starting…",
+    "cancel": "Cancel"
+  },
+  "states": {
+    "ranksCta": "Run a rank check",
+    "planCta": "See plans",
+    "emptyRuns": {
+      "title": "No saved runs yet",
+      "body": "Preview a new run to see which tracked keywords qualify."
+    },
+    "emptyClusters": {
+      "title": "No clusters match",
+      "body": "This run produced no groups of that size, or the current filter hides them."
+    },
+    "notEnoughKeywords": {
+      "title": "Not enough recent rank checks",
+      "body": "At least two tracked keywords need a rank check from the last seven days. No run was spent."
+    },
+    "cap": {
+      "title": "Monthly run allowance reached",
+      "body": "This request was not started. Wait for the next allowance period or review available plans."
+    },
+    "disabled": {
+      "title": "Clustering runs are unavailable",
+      "body": "New clustering runs are temporarily disabled. Saved runs remain available."
+    },
+    "rateLimited": {
+      "title": "Too many requests",
+      "body": "Wait a moment before trying this action again."
+    },
+    "notFound": {
+      "title": "Run not found",
+      "body": "This saved run is unavailable for the current account."
+    },
+    "failed": {
+      "title": "The run could not be completed",
+      "body": "Your stored results were not changed. Try again later or open another saved run."
+    },
+    "running": {
+      "title": "Grouping keywords",
+      "body": "The worker is comparing stored results and naming the groups. This view updates automatically."
+    }
+  },
+  "status": {
+    "queued": "Queued",
+    "processing": "Processing",
+    "completed": "Completed",
+    "failed": "Failed"
+  },
+  "runs": {
+    "summary": "{{clusters}} groups from {{keywords}} keywords",
+    "requestedAt": "Requested {{date}}",
+    "open": "Open run"
+  },
+  "blocked": {
+    "title": "{{count}} keywords could not take part",
+    "body": "These tracked keywords have no usable stored result yet. Run a rank check and they will qualify for the next run.",
+    "more": "and {{count}} more",
+    "observedAt": "last checked {{date}}",
+    "reason": {
+      "missing": "Never checked",
+      "stale": "Check too old",
+      "empty": "No stored results"
+    }
+  },
+  "results": {
+    "title": "Groups",
+    "method": "Grouped on at least {{shared}} shared results out of the top {{window}}.",
+    "unlabeled": "Group naming was unavailable or rejected. The groups themselves are unchanged — naming never moves a keyword."
+  },
+  "filters": {
+    "size": "Group size",
+    "sizeValue": {
+      "all": "All groups",
+      "grouped": "Grouped keywords only",
+      "singleton": "Ungrouped keywords only"
+    }
+  },
+  "cluster": {
+    "unlabeled": "Unnamed group",
+    "aiSuggestion": "AI suggestion",
+    "grouped": "{{count}} keywords",
+    "singleton": "Not grouped",
+    "commonCore": "{{count}} results shared by every keyword",
+    "noCommonCore": "No single result is shared by every keyword in this group",
+    "showEvidence": "Show overlap",
+    "hideEvidence": "Hide overlap",
+    "pivot": "Reference",
+    "pivotWindow": "{{count}} stored results compared",
+    "sharedWithPivot": "{{count}} shared with the reference keyword",
+    "evidenceTitle": "Which results overlap",
+    "evidenceBody": "Each keyword below is grouped because it shares these stored result URLs with the reference keyword.",
+    "singletonEvidence": "This keyword shared too few results with any other tracked keyword to be grouped.",
+    "columns": {
+      "keyword": "Keyword",
+      "observedAt": "Result observed",
+      "sharedUrls": "Overlap"
+    }
+  }
+}

@@ -1,0 +1,1 @@
+ALTER TABLE "geogrid_scans" ADD COLUMN "attempted_point_indexes" integer[] DEFAULT '{}' NOT NULL;

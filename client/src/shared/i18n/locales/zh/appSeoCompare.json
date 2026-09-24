@@ -1,0 +1,99 @@
+{
+  "title": "对比应用商店",
+  "description": "对比 Google Play 和 App Store 中最新保存的观测数据。此页面不会发起新的检查。",
+  "profile": { "label": "应用资料" },
+  "stores": { "googlePlay": "Google Play 商店", "appStore": "App Store 商店" },
+  "common": { "notObserved": "未观测", "userPaired": "用户配对" },
+  "deltas": {
+    "notObserved": "未观测",
+    "even": "相同",
+    "googlePlayLeads": "Google Play 领先 +{{value}}",
+    "appStoreLeads": "App Store 领先 +{{value}}"
+  },
+  "header": {
+    "title": "商店详情页",
+    "description": "用户配对的两个详情页中最新保存的标题、评分和评论数。",
+    "rating": "评分",
+    "reviews": "评论",
+    "openListing": "打开商店详情页",
+    "deltaSummary": "商店详情页差异",
+    "ratingDelta": "评分差异",
+    "reviewDelta": "评论数差异"
+  },
+  "ranks": {
+    "title": "关键词排名",
+    "description": "只有两个商店跟踪相同短语、地区和语言时才会进行对比。",
+    "caption": "两个商店共同跟踪的短语的最新保存排名",
+    "phrase": "短语",
+    "market": "市场",
+    "position": "排名",
+    "delta": "差异",
+    "only": {
+      "googlePlay": "仅在 Google Play 跟踪",
+      "appStore": "仅在 App Store 跟踪",
+      "googlePlayCaption": "仅在 Google Play 跟踪的短语",
+      "appStoreCaption": "仅在 App Store 跟踪的短语",
+      "none": "没有仅由单个商店跟踪的短语。"
+    }
+  },
+  "parity": {
+    "title": "详情页一致性",
+    "description": "用户配对的详情页中保存的一致性结果和原始字段值。",
+    "findings": "已保存的一致性结果",
+    "status": { "finding": "不同", "passed": "一致", "notEvaluated": "未对比" },
+    "findingCopy": {
+      "stores-diverge": "两个商店中的详情页标题存在较大差异。",
+      "ratings-diverge": "两个商店中的评分存在明显差异。",
+      "categories-diverge": "两个详情页没有共同的商店分类。"
+    },
+    "rawCaption": "最新保存的详情页字段直接对比",
+    "field": "字段",
+    "match": "一致性",
+    "matches": "一致",
+    "differs": "不同",
+    "notCompared": "未对比",
+    "fields": {
+      "title": "标题",
+      "developerName": "开发者名称",
+      "mainCategory": "主要分类",
+      "version": "版本",
+      "categories": "分类"
+    }
+  },
+  "charts": {
+    "title": "榜单排名",
+    "description": "每个已跟踪榜单和分类中最新保存的排名。",
+    "caption": "按商店显示最新保存的榜单排名",
+    "chart": "榜单",
+    "category": "分类",
+    "allCategories": "所有分类",
+    "delta": "差异"
+  },
+  "notObserved": {
+    "ranksTitle": "未观测到关键词排名",
+    "ranksDescription": "跟踪短语并运行关键词检查，以填充此对比。",
+    "sharedRanksTitle": "没有共同跟踪的短语",
+    "sharedRanksDescription": "在两个商店中跟踪相同短语、地区和语言后即可对比。",
+    "openKeywords": "打开关键词跟踪",
+    "listingsTitle": "一个或两个详情页尚未观测",
+    "listingsDescription": "对两个商店运行详情页检查，以填充一致性对比。",
+    "openListing": "打开详情页检查",
+    "chartsTitle": "未观测到榜单排名",
+    "chartsDescription": "跟踪榜单并运行榜单检查，以填充此对比。",
+    "openCharts": "打开榜单跟踪"
+  },
+  "empty": {
+    "title": "尚无应用资料",
+    "description": "请先注册应用资料，再对比商店观测数据。",
+    "cta": "注册应用"
+  },
+  "unpaired": {
+    "title": "配对两个详情页后进行对比",
+    "description": "此资料尚未标记为两个商店中的同一产品。配对是您的声明，并不验证商店身份。",
+    "cta": "管理应用资料"
+  },
+  "errors": {
+    "title": "无法加载对比",
+    "requestFailed": "无法加载已保存的对比，请重试。"
+  }
+}

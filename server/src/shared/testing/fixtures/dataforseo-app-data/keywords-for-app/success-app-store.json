@@ -1,0 +1,44 @@
+{
+  "version": "0.1.20260808",
+  "status_code": 20000,
+  "status_message": "Ok.",
+  "cost": 0.012,
+  "tasks": [
+    {
+      "id": "TASK_ID",
+      "status_code": 20000,
+      "status_message": "Ok.",
+      "cost": 0.012,
+      "path": [
+        "v3",
+        "dataforseo_labs",
+        "apple",
+        "keywords_for_app",
+        "live"
+      ],
+      "result": [
+        {
+          "items": [
+            {
+              "keyword_data": {
+                "keyword": "app seo",
+                "keyword_info": {
+                  "search_volume": 900,
+                  "last_updated_time": "2026-08-01 08:00:00 +00:00"
+                }
+              },
+              "ranked_serp_element": {
+                "serp_item": {
+                  "type": "app_store_search_organic",
+                  "rank_group": 7,
+                  "rank_absolute": 7
+                },
+                "last_updated_time": "2026-08-02 09:00:00 +00:00"
+              }
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

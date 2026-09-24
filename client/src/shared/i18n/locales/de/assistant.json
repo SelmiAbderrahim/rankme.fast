@@ -1,0 +1,117 @@
+{
+  "title": "KI-Assistent",
+  "description": "Fragen Sie nach Ihren SEO-Daten und erlauben Sie dem Assistenten, freigegebene Werkzeuge zu verwenden.",
+  "loading": "Unterhaltungen werden geladen…",
+  "sidebar": {
+    "title": "Unterhaltungen",
+    "new": "Neue Unterhaltung",
+    "label": "Unterhaltungen mit dem Assistenten",
+    "empty": "Noch keine Unterhaltungen.",
+    "untitled": "Neue Unterhaltung",
+    "deleteLabel": "{{title}} löschen",
+    "deleteTitle": "Unterhaltung löschen?",
+    "deleteDescription": "Dadurch werden „{{title}}“ und alle zugehörigen Nachrichten dauerhaft gelöscht.",
+    "deleting": "Wird gelöscht…"
+  },
+  "context": {
+    "label": "Website-Kontext",
+    "none": "Keine Website — allgemeine Hinweise",
+    "loading": "Ihre Websites werden geladen…",
+    "linkedHelp": "Der Website-Kontext kann nach Beginn einer Unterhaltung nicht mehr geändert werden.",
+    "newHelp": "Optional. Verknüpfen Sie vor der ersten Nachricht eine Website.",
+    "unavailable": "Ihre Websites konnten nicht geladen werden. Sie können dennoch eine allgemeine Unterhaltung beginnen.",
+    "missing": "Die verknüpfte Website ist nicht mehr verfügbar"
+  },
+  "empty": {
+    "title": "Was möchten Sie verbessern?",
+    "description": "Fragen Sie in einfachen Worten. Der Assistent kann die für Ihr Konto freigegebenen SEO-Werkzeuge verwenden.",
+    "examples": "Probieren Sie eine dieser Fragen",
+    "prompts": {
+      "audit": "Fasse die wichtigsten Korrekturen aus meinem letzten Audit zusammen.",
+      "rank": "Bei welchen beobachteten Keywords hat sich die Position kürzlich verändert?",
+      "sites": "Zeige mir die Websites in meinem Konto."
+    }
+  },
+  "composer": {
+    "label": "Nachricht",
+    "placeholder": "Fragen Sie nach Rankings, Audits, Keywords oder Ihren Websites…",
+    "send": "Nachricht senden",
+    "sending": "Wird gesendet…",
+    "stop": "Stoppen",
+    "hint": "Eingabetaste zum Senden · Umschalt+Eingabetaste für eine neue Zeile",
+    "characters": "{{count}} / {{max}} Zeichen"
+  },
+  "messages": {
+    "label": "Nachrichten der Unterhaltung",
+    "user": "Ihre Nachricht",
+    "assistant": "Antwort des Assistenten",
+    "streaming": "Der Assistent antwortet",
+    "loading": "Unterhaltung wird geladen…"
+  },
+  "tool": {
+    "arguments": "Argumente",
+    "result": "Ergebnis",
+    "waiting": "Warten auf das Werkzeugergebnis…",
+    "status": {
+      "running": "Läuft",
+      "success": "Abgeschlossen",
+      "failed": "Fehlgeschlagen"
+    },
+    "names": {
+      "listSites": "Websites auflisten",
+      "latestAudit": "Neuester Audit-Bericht",
+      "listKeywords": "Keywords auflisten",
+      "rankHistory": "Ranking-Verlauf",
+      "listAnalyses": "Inhaltsanalysen auflisten",
+      "contentAnalysis": "Inhaltsanalyse",
+      "startAudit": "Audit starten",
+      "auditStatus": "Audit-Status",
+      "listActions": "Nächste Schritte",
+      "setActionState": "Aufgabe aktualisieren"
+    }
+  },
+  "results": {
+    "empty": "Das Werkzeug hat keine Zeilen zurückgegeben.",
+    "notAvailable": "Nicht verfügbar",
+    "notRanked": "Nicht platziert",
+    "keyword": "Keyword",
+    "date": "Datum",
+    "position": "Position",
+    "id": "ID",
+    "score": "Punktzahl bestandener Prüfungen",
+    "fixNow": "Jetzt beheben",
+    "topFindings": "Wichtigste Befunde",
+    "noFindings": "Es wurden keine Befunde zurückgegeben.",
+    "domain": "Domain",
+    "url": "URL"
+  },
+  "states": {
+    "locked": {
+      "title": "Der KI-Assistent ist ab Starter verfügbar",
+      "description": "Wechseln Sie zu Starter oder höher, um Ihre SEO-Daten und freigegebenen Werkzeuge im Chat zu nutzen.",
+      "action": "Tarife vergleichen"
+    },
+    "cap": {
+      "title": "Monatliche Nachrichten aufgebraucht",
+      "description": "Warten Sie auf die Erneuerung Ihres Monatskontingents oder prüfen Sie, ob ein Chat-Paket für Ihr Konto konfiguriert ist.",
+      "buyCredits": "Chat-Guthaben kaufen",
+      "seePlans": "Tarife vergleichen"
+    },
+    "unavailable": {
+      "title": "Assistent vorübergehend nicht verfügbar",
+      "description": "Der Assistent ist deaktiviert oder kann gerade nicht antworten. Ihre gespeicherten Unterhaltungen bleiben erhalten."
+    },
+    "error": {
+      "title": "Die Unterhaltung wurde unterbrochen"
+    }
+  },
+  "errors": {
+    "featureLocked": "Wechseln Sie zu Starter oder höher, um den KI-Assistenten zu verwenden.",
+    "capReached": "Sie haben die Assistenten-Nachrichten dieses Monats verbraucht. Kaufen Sie ein Guthabenpaket oder warten Sie auf die Zurücksetzung.",
+    "forbidden": "Ihre Anfrage konnte nicht bestätigt werden. Laden Sie die Seite neu und versuchen Sie es erneut.",
+    "rateLimited": "Zu viele Assistenten-Anfragen. Warten Sie einen Moment und versuchen Sie es erneut.",
+    "unavailable": "Der KI-Assistent ist vorübergehend nicht verfügbar.",
+    "streamFailed": "Die Antwort wurde unerwartet unterbrochen. Senden Sie Ihre Nachricht erneut.",
+    "generic": "Die Assistenten-Anfrage ist fehlgeschlagen. Versuchen Sie es erneut."
+  }
+}

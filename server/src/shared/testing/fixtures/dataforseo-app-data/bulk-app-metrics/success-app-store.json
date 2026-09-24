@@ -1,0 +1,40 @@
+{
+  "version": "0.1.20260808",
+  "status_code": 20000,
+  "status_message": "Ok.",
+  "cost": 0.012,
+  "tasks": [
+    {
+      "id": "TASK_ID",
+      "status_code": 20000,
+      "status_message": "Ok.",
+      "cost": 0.012,
+      "path": [
+        "v3",
+        "dataforseo_labs",
+        "apple",
+        "bulk_app_metrics",
+        "live"
+      ],
+      "result": [
+        {
+          "items": [
+            {
+              "app_id": "686449807",
+              "metrics": {
+                "app_store_search_organic": {
+                  "pos_1": 1,
+                  "pos_2_3": 2,
+                  "pos_4_10": 4,
+                  "pos_11_100": 6,
+                  "count": 13,
+                  "search_volume": 3600
+                }
+              }
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

@@ -1,0 +1,167 @@
+{
+  "title": "Equipo",
+  "description": "Invita a compañeros y gestiona los puestos de tu plan.",
+  "seatUsage": "{{used}} de {{limit}} puestos usados",
+  "invite": {
+    "heading": "Invitar a un compañero",
+    "emailLabel": "Correo",
+    "emailPlaceholder": "colega@example.com",
+    "emailInvalid": "Introduce un correo electrónico válido",
+    "submit": "Enviar invitación",
+    "submitting": "Enviando…",
+    "atCap": "Has ocupado todos tus puestos. Mejora tu plan para invitar a más personas.",
+    "upgradeCta": "Mejorar plan",
+    "description": "Elige un rol y exactamente qué sitios puede usar esta persona.",
+    "roleLabel": "Rol",
+    "adminRoleLimit": "Los administradores solo pueden invitar a miembros."
+  },
+  "members": {
+    "heading": "Miembros",
+    "columns": {
+      "email": "Correo",
+      "role": "Rol",
+      "status": "Estado",
+      "invitedAt": "Invitado el",
+      "expiresAt": "Caduca",
+      "access": "Acceso a sitios"
+    },
+    "roles": {
+      "owner": "Propietario",
+      "member": "Miembro",
+      "admin": "Administrador"
+    },
+    "status": {
+      "accepted": "Activo",
+      "pending": "Pendiente",
+      "expired": "Caducada"
+    },
+    "actions": {
+      "menuLabel": "Abrir menú de acciones",
+      "remove": "Quitar",
+      "revoke": "Revocar invitación",
+      "resend": "Reenviar invitación",
+      "leave": "Salir del espacio de trabajo",
+      "changeRole": "Cambiar el rol de {{email}}",
+      "editAccess": "Editar rol y acceso"
+    },
+    "confirmRemove": {
+      "title": "¿Quitar a este compañero?",
+      "body": "{{email}} pierde el acceso a este equipo de inmediato.",
+      "confirm": "Quitar",
+      "cancel": "Cancelar"
+    },
+    "confirmRevoke": {
+      "title": "¿Revocar esta invitación?",
+      "body": "La invitación de {{email}} deja de funcionar de inmediato.",
+      "confirm": "Revocar invitación"
+    },
+    "empty": "Aún no hay compañeros. Invita a alguien arriba.",
+    "removed": "Miembro eliminado.",
+    "loading": "Cargando equipo…",
+    "searchPlaceholder": "Buscar por correo",
+    "previous": "Anterior",
+    "next": "Siguiente",
+    "pageOf": "Página {{page}} de {{totalPages}} · {{total}} miembro(s)",
+    "edit": {
+      "title": "Editar acceso del miembro",
+      "description": "Cambia el rol y los sitios disponibles para {{email}}.",
+      "save": "Guardar acceso",
+      "saving": "Guardando…",
+      "cancel": "Cancelar"
+    }
+  },
+  "accept": {
+    "title": "Aceptar invitación",
+    "loading": "Comprobando tu invitación…",
+    "success": "Te has unido al equipo.",
+    "cta": "Ir al panel"
+  },
+  "errors": {
+    "loadFailed": "No pudimos cargar tu equipo. Actualiza la página.",
+    "inviteFailed": "No se pudo enviar la invitación.",
+    "seatCapExceeded": "Has ocupado todos tus puestos. Mejora tu plan para invitar a más personas.",
+    "alreadyInvited": "Ya hay una invitación pendiente para ese correo.",
+    "alreadyMember": "Ese correo ya es miembro del equipo.",
+    "inviteNotFound": "Ese enlace de invitación no es válido.",
+    "inviteExpired": "Esa invitación ha caducado. Solicita una nueva.",
+    "inviteUsed": "Esa invitación ya se ha aceptado.",
+    "removeFailed": "No se pudo eliminar a ese miembro.",
+    "resendFailed": "No pudimos reenviar esa invitación.",
+    "roleFailed": "No pudimos cambiar ese rol.",
+    "accessUpdateFailed": "No se pudo actualizar el acceso de este miembro.",
+    "rejectFailed": "No se pudo rechazar esta invitación."
+  },
+  "workspace": {
+    "switcherLabel": "Espacio de trabajo",
+    "own": "Mi espacio de trabajo",
+    "role": {
+      "owner": "Propietario",
+      "admin": "Administrador",
+      "member": "Miembro"
+    },
+    "notAvailable": {
+      "title": "No disponible en este espacio de trabajo",
+      "body": "La facturación, las conexiones, las claves y los ajustes de la cuenta son del propietario del espacio. Vuelve al tuyo para gestionar los propios."
+    }
+  },
+  "access": {
+    "heading": "Acceso a sitios",
+    "description": "Elige si esta persona puede usar todos los sitios o solo los seleccionados.",
+    "all": "Todos los sitios",
+    "allDescription": "Incluye los sitios que se añadan más adelante al espacio de trabajo.",
+    "selected": "Sitios seleccionados",
+    "selectedDescription": "El acceso se limita a los sitios marcados a continuación.",
+    "required": "Selecciona al menos un sitio.",
+    "empty": "Añade un sitio antes de crear una invitación restringida.",
+    "loadFailed": "No se pudieron cargar los sitios disponibles para esta invitación.",
+    "siteCount": "{{count}} sitio(s)"
+  },
+  "decision": {
+    "loading": "Comprobando la invitación…",
+    "invitedBy": "{{inviter}} te ha invitado a {{team}}.",
+    "role": "Rol",
+    "sites": "Sitios",
+    "expires": "Caduca",
+    "accept": {
+      "title": "Aceptar invitación al equipo",
+      "confirm": "Aceptar invitación",
+      "acting": "Aceptando…",
+      "signInRequired": "Inicia sesión con el correo invitado antes de aceptar.",
+      "signIn": "Iniciar sesión para aceptar",
+      "passwordRequired": "Sustituye tu contraseña temporal antes de aceptar esta invitación.",
+      "changePassword": "Cambiar contraseña",
+      "completeTitle": "Invitación aceptada",
+      "complete": "Ya tienes acceso a los sitios asignados del espacio de trabajo.",
+      "cta": "Ir al panel"
+    },
+    "reject": {
+      "title": "Rechazar invitación al equipo",
+      "confirm": "Rechazar invitación",
+      "acting": "Rechazando…",
+      "dialogTitle": "¿Rechazar esta invitación?",
+      "dialogBody": "La invitación dejará de funcionar. Una cuenta aún no reclamada puede eliminarse.",
+      "cancel": "Conservar invitación",
+      "completeTitle": "Invitación rechazada",
+      "complete": "La invitación se ha rechazado.",
+      "cta": "Volver al inicio"
+    }
+  },
+  "inbox": {
+    "buttonLabel": "Invitaciones de equipo",
+    "buttonLabelWithCount": "Invitaciones de equipo, {{count}} pendientes",
+    "title": "Invitaciones de equipo",
+    "description": "Revisa las invitaciones que esperan tu decisión.",
+    "emptyTitle": "No hay invitaciones pendientes",
+    "empty": "Las nuevas invitaciones aparecerán aquí.",
+    "invitedBy": "Invitación de {{inviter}}",
+    "summary": "{{role}} · {{access}} · caduca el {{date}}",
+    "accept": "Aceptar",
+    "accepting": "Aceptando…",
+    "reject": "Rechazar",
+    "rejecting": "Rechazando…",
+    "rejectTitle": "¿Rechazar esta invitación?",
+    "rejectBody": "No te unirás a {{team}}.",
+    "cancel": "Cancelar",
+    "loadFailed": "No se pudieron cargar tus invitaciones de equipo."
+  }
+}

@@ -1,0 +1,42 @@
+{
+  "version": "0.1.20260808",
+  "status_code": 20000,
+  "status_message": "Ok.",
+  "cost": 0,
+  "tasks": [
+    {
+      "id": "TASK_ID",
+      "status_code": 20000,
+      "status_message": "Ok.",
+      "cost": 0,
+      "result": [
+        {
+          "app_id": "com.example.audit",
+          "location_code": 2840,
+          "language_code": "en",
+          "datetime": "2026-08-08 12:00:00 +00:00",
+          "title": "Audit App",
+          "rating": {
+            "value": 4.6
+          },
+          "reviews_count": 321,
+          "items": [
+            {
+              "type": "google_play_reviews_search",
+              "id": "review-play-1",
+              "rating": {
+                "value": 5
+              },
+              "title": "Useful",
+              "review_text": "The sample audit is clear and practical.",
+              "timestamp": "2026-08-07 09:00:00 +00:00",
+              "user_profile": {
+                "profile_name": "Sample reviewer"
+              }
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

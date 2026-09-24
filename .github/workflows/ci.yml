@@ -1,0 +1,246 @@
+# RankMeFast CI — the release gate.
+#
+# All jobs run inside Docker containers for prod parity. The
+# pipeline gates every merge on:
+#   1. typecheck (tsc --noEmit) — client + server
+#   2. lint (eslint) — client + server
+#   3. zero-exception test-policy check — server, client, and Playwright trees
+#   4. unit + integration tests (vitest, mongodb-memory-server) — client + server
+#      * includes fixture-lint and the provider contract meta-check;
+#        a new adapter without a *.test.ts contract fails here
+#   5. coverage gate — v8 100% on lines/branches/functions/statements
+#   6. npm audit --audit-level=high — ZERO high/critical advisories
+#   7. E2E smoke + axe — full compose stack with fake providers;
+#      this job builds the api/worker/web images once via docker compose
+#
+# The build fails on any gate. See ops/ci-gates.md for the runbook.
+
+name: ci
+
+on:
+  push:
+    branches: [master, main]
+  pull_request:
+    branches: [master, main]
+
+jobs:
+  server:
+    name: server (typecheck / lint / test / coverage / audit)
+    runs-on: ubuntu-latest
+    container:
+      image: node:20-bookworm
+    # The queue suites run against a REAL Redis (BullMQ = Lua
+    # scripts + blocking streams; mocks drift). In CI that is this service
+    # container; on dev hosts vitest.global-setup.ts boots a throwaway one.
+    services:
+      redis:
+        image: redis:7-alpine
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      # The container runs as root while the checkout is owned by the runner
+      # user; git refuses to read it without an explicit safe.directory, and
+      # ci-gates.test.ts shells out to `git ls-files`.
+      - name: Trust workspace for git
+        run: git config --global --add safe.directory "$GITHUB_WORKSPACE"
+
+      - name: Cache npm
+        uses: actions/cache@v4
+        with:
+          path: ~/.npm
+          key: npm-server-${{ runner.os }}-${{ hashFiles('server/package-lock.json', 'client/package-lock.json') }}
+          restore-keys: npm-server-${{ runner.os }}-
+
+      - name: Install (npm ci)
+        working-directory: server
+        run: npm ci
+
+      # The docs boundary suite imports client/docs-runtime.js, which resolves
+      # gray-matter from client/node_modules.
+      - name: Install client deps for cross-package suites
+        working-directory: client
+        run: npm ci --ignore-scripts
+
+      # The server program is large enough that tsc exceeds node's default
+      # ~2 GB heap on the hosted runner; give it room instead of OOM-ing.
+      - name: Typecheck
+        working-directory: server
+        env:
+          NODE_OPTIONS: --max-old-space-size=8192
+        run: npm run typecheck
+
+      - name: Lint
+        if: ${{ !cancelled() }}
+        working-directory: server
+        run: npm run lint
+
+
+      # One scanner invocation owns server, client, and Playwright policy.
+      - name: Zero-exception test-policy check
+        if: ${{ !cancelled() }}
+        working-directory: server
+        run: npx tsx src/scripts/run-skip-policy.ts src ../client/src ../client/e2e
+
+      - name: Test + coverage (100% gate)
+        if: ${{ !cancelled() }}
+        working-directory: server
+        env:
+          NODE_ENV: test
+          MONGODB_URI: mongodb://127.0.0.1:0/ci
+          # Satisfies the env schema only — postgres tests run against
+          # in-process PGlite (shared/testing/postgres.ts), nothing dials this.
+          DATABASE_URL: postgres://ci:ci@127.0.0.1:5432/ci
+          BETTER_AUTH_SECRET: ci-better-auth-secret-ci-better-auth-secret
+          MASTER_ENCRYPTION_KEY: 0000000000000000000000000000000000000000000000000000000000000000
+          # Real Redis for the BullMQ suites (service container above).
+          TEST_REDIS_URL: redis://redis:6379
+        run: npx vitest run --coverage
+
+      # The parity test suites for all 7 locales must be
+      # discovered by vitest above. A silent rename that removes them from
+      # the collection would slip past coverage; this grep is the backstop.
+      - name: i18n parity suites present
+        if: ${{ !cancelled() }}
+        working-directory: server
+        run: |
+          test -f src/shared/i18n/dictionaries/en.ts
+          test -f src/shared/i18n/dictionaries/ar.ts
+          test -f src/shared/i18n/dictionaries/fr.ts
+          test -f src/shared/i18n/dictionaries/de.ts
+          test -f src/shared/i18n/dictionaries/es.ts
+          test -f src/shared/i18n/dictionaries/ru.ts
+          test -f src/shared/i18n/dictionaries/zh.ts
+
+      - name: npm audit (fail on high/critical)
+        if: ${{ !cancelled() }}
+        working-directory: server
+        run: npm audit --audit-level=high
+
+  client:
+    name: client (typecheck / lint / test / coverage / audit)
+    runs-on: ubuntu-latest
+    container:
+      image: node:20-bookworm
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Cache npm
+        uses: actions/cache@v4
+        with:
+          path: ~/.npm
+          key: npm-client-${{ runner.os }}-${{ hashFiles('client/package-lock.json') }}
+          restore-keys: npm-client-${{ runner.os }}-
+
+      - name: Install (npm ci)
+        working-directory: client
+        run: npm ci
+
+      - name: Typecheck
+        working-directory: client
+        run: npm run typecheck
+
+      - name: Lint
+        if: ${{ !cancelled() }}
+        working-directory: client
+        run: npm run lint
+
+      - name: Test + coverage (100% gate)
+        if: ${{ !cancelled() }}
+        working-directory: client
+        run: npx vitest run --coverage
+
+      # Same locale-directory backstop on the client.
+      - name: i18n parity locales present
+        if: ${{ !cancelled() }}
+        working-directory: client
+        run: |
+          test -d src/shared/i18n/locales/en
+          test -d src/shared/i18n/locales/ar
+          test -d src/shared/i18n/locales/fr
+          test -d src/shared/i18n/locales/de
+          test -d src/shared/i18n/locales/es
+          test -d src/shared/i18n/locales/ru
+          test -d src/shared/i18n/locales/zh
+
+      - name: npm audit (fail on high/critical)
+        if: ${{ !cancelled() }}
+        working-directory: client
+        run: npm audit --audit-level=high
+
+  # End-to-end smoke path + accessibility scan against the running
+  # compose stack. Fake providers everywhere — zero vendor traffic. Traces,
+  # screenshots, and videos are retained only on failure. Cache browsers for the
+  # 15 min pipeline target.
+  e2e:
+    name: e2e (playwright smoke + axe)
+    runs-on: ubuntu-latest
+    needs: [server, client]
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'npm'
+          cache-dependency-path: client/package-lock.json
+
+      - name: Install client (npm ci)
+        working-directory: client
+        run: npm ci
+
+      - name: Cache Playwright browsers
+        uses: actions/cache@v4
+        with:
+          path: ~/.cache/ms-playwright
+          key: playwright-${{ runner.os }}-${{ hashFiles('client/package-lock.json') }}
+
+      - name: Install Playwright browsers
+        working-directory: client
+        run: npx playwright install --with-deps chromium
+
+      - name: Boot compose stack (fake providers)
+        run: |
+          set -a
+          source .e2e-gate.env.sh
+          set +a
+          # Validate interpolation first, then use the repository's bounded
+          # all-service authority (api, worker, web, mongo, postgres, redis).
+          env -u NODE_ENV docker compose config --quiet
+          make build-up
+          make ps
+
+      - name: Playwright smoke + axe
+        working-directory: client
+        env:
+          CI: 'true'
+        run: |
+          set -a
+          source ../.e2e-gate.env.sh
+          set +a
+          env -u NODE_ENV npx playwright test --retries=0
+
+      - name: Upload traces on failure
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: playwright-report
+          path: |
+            client/playwright-report
+            client/test-results
+          retention-days: 7
+
+      - name: Compose logs on failure
+        if: failure()
+        run: |
+          source .e2e-gate.env.sh
+          docker compose logs --no-color --tail=200 api worker web
+
+      - name: Tear down compose
+        if: always()
+        run: |
+          source .e2e-gate.env.sh
+          docker compose down

@@ -1,0 +1,23 @@
+{
+  "badRequest": "Некорректный запрос.",
+  "unauthorized": "Для этого нужно войти в аккаунт.",
+  "forbidden": "У вас нет прав на это действие.",
+  "notFound": "Запрошенный ресурс не найден.",
+  "conflict": "Конфликт: ресурс уже существует.",
+  "internal": "Что-то пошло не так на нашей стороне. Попробуйте ещё раз.",
+  "validationFailed": "Ошибка валидации.",
+  "network": "Сетевой запрос не удался. Проверьте подключение и попробуйте снова.",
+  "timeout": "Время ожидания запроса истекло. Попробуйте снова.",
+  "projectNotFound": "Проект не найден.",
+  "userNotFound": "Пользователь не найден.",
+  "invalidCredentials": "Неверный email или пароль.",
+  "emailAlreadyRegistered": "Этот email уже зарегистрирован.",
+  "passwordTooShort": "Пароль должен содержать не менее 8 символов.",
+  "emailRequired": "Введите email",
+  "emailInvalid": "Введите корректный email",
+  "passwordRequired": "Введите пароль",
+  "firstNameRequired": "Введите имя",
+  "lastNameRequired": "Введите фамилию",
+  "passwordConfirmRequired": "Подтвердите новый пароль",
+  "passwordsMustMatch": "Пароли должны совпадать"
+}

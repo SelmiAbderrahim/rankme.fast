@@ -1,0 +1,82 @@
+{
+  "version": "0.1.20260101",
+  "status_code": 20000,
+  "status_message": "Ok.",
+  "time": "0.42 sec.",
+  "cost": 0.01,
+  "tasks_count": 1,
+  "tasks_error": 0,
+  "tasks": [
+    {
+      "id": "TASK_ID",
+      "status_code": 20000,
+      "status_message": "Ok.",
+      "time": "0.41 sec.",
+      "cost": 0.01,
+      "result_count": 1,
+      "path": ["v3", "keywords_data", "google_trends", "explore", "live"],
+      "data": {
+        "api": "keywords_data",
+        "function": "explore",
+        "keywords": ["rankmefast", "ahrefs"],
+        "location_code": 2840,
+        "language_code": "en",
+        "type": "web",
+        "item_types": ["google_trends_graph", "google_trends_queries_list"]
+      },
+      "result": [
+        {
+          "keywords": ["rankmefast", "ahrefs"],
+          "location_code": 2840,
+          "language_code": "en",
+          "check_url": "https://trends.google.com/trends/explore?q=rankmefast,ahrefs",
+          "datetime": "2026-01-15 12:00:00 +00:00",
+          "items_count": 2,
+          "items": [
+            {
+              "type": "google_trends_graph",
+              "position": 1,
+              "title": "Interest over time",
+              "keywords": ["rankmefast", "ahrefs"],
+              "data": [
+                {
+                  "date_from": "2025-01-01",
+                  "date_to": "2025-01-31",
+                  "timestamp": 1735689600,
+                  "values": [42, 61]
+                },
+                {
+                  "date_from": "2025-02-01",
+                  "date_to": "2025-02-28",
+                  "timestamp": 1738368000,
+                  "values": [47, 58]
+                },
+                {
+                  "date_from": "2025-03-01",
+                  "date_to": "2025-03-31",
+                  "timestamp": 1740787200,
+                  "values": [51, 63]
+                }
+              ]
+            },
+            {
+              "type": "google_trends_queries_list",
+              "position": 2,
+              "title": "Related queries",
+              "keywords": ["rankmefast"],
+              "top": [
+                { "query": "rankmefast review", "value": 100 },
+                { "query": "rankmefast alternatives", "value": 82 },
+                { "query": "rankmefast pricing", "value": 65 }
+              ],
+              "rising": [
+                { "query": "rankmefast vs ahrefs", "value": 74 },
+                { "query": "rankmefast api", "value": 41 }
+              ]
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

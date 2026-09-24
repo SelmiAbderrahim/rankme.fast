@@ -1,0 +1,27 @@
+{
+  "version": "0.1.20260101",
+  "status_code": 20000,
+  "status_message": "Ok.",
+  "time": "0.0110 sec.",
+  "cost": 0,
+  "tasks_count": 1,
+  "tasks_error": 0,
+  "tasks": [
+    {
+      "id": "TASK_ID",
+      "status_code": 20000,
+      "status_message": "Ok.",
+      "time": "0.0104 sec.",
+      "cost": 0,
+      "result_count": 1,
+      "path": ["v3", "on_page", "non_indexable"],
+      "result": [
+        {
+          "total_items_count": 0,
+          "items_count": 0,
+          "items": []
+        }
+      ]
+    }
+  ]
+}

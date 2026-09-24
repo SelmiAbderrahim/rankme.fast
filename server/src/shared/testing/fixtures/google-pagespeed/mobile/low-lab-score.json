@@ -1,0 +1,14 @@
+{
+  "lighthouseResult": {
+    "categories": {
+      "performance": { "score": 0.32 },
+      "accessibility": { "score": 0.65 },
+      "best-practices": { "score": 0.70 },
+      "seo": { "score": 0.90 }
+    },
+    "audits": {
+      "viewport": { "id": "viewport", "score": 1.0 },
+      "tap-targets": { "id": "tap-targets", "score": 1.0 }
+    }
+  }
+}

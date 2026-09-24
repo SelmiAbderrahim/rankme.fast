@@ -1,0 +1,105 @@
+{
+  "card": {
+    "title": "Wochenpuls",
+    "description": "Ein deterministischer Wochenbericht pro Site — neue/verlorene Zitate, bestätigte Ranking-Verluste, Aktionsänderungen und die nächsten drei Aktionen. Verbraucht eine AI-Mentions-Prüfung pro Site pro Woche.",
+    "unitDisclosure": "Eine AI-Mentions-Prüfung pro Site pro Woche.",
+    "nextRun": "Nächster Lauf: {{when}}",
+    "lastRun": "Letzter Lauf: {{when}}",
+    "lastStatus": "Letzter Status: {{status}}",
+    "enableCta": "Wochenpuls aktivieren",
+    "disableCta": "Wochenpuls deaktivieren",
+    "previewCta": "Ausgaben vorschauen",
+    "historyLink": "Vergangene Berichte anzeigen"
+  },
+  "status": {
+    "queued": "In Warteschlange",
+    "collecting": "Sammelt",
+    "completed": "Abgeschlossen",
+    "partial": "Teilweise Daten",
+    "blocked_capacity": "Blockiert — Limit überschritten",
+    "unsupported": "Diese Woche nicht unterstützt",
+    "failed": "Fehlgeschlagen",
+    "empty": "Es wurde noch kein Puls ausgeführt."
+  },
+  "confirm": {
+    "enableTitle": "Wochenpuls aktivieren?",
+    "enableBody": "Der geplante Job verbraucht pro Woche eine AI-Mentions-Prüfung für diese Site.",
+    "enableAck": "Ich verstehe und möchte den Wochenpuls erhalten.",
+    "disableTitle": "Wochenpuls deaktivieren?",
+    "disableBody": "Sie erhalten den Bericht nicht mehr. Der Verlauf bleibt verfügbar.",
+    "confirmEnable": "Aktivieren",
+    "confirmDisable": "Deaktivieren",
+    "cancel": "Abbrechen"
+  },
+  "detail": {
+    "title": "Wochenpuls-Digest — {{isoWeek}}",
+    "closeLabel": "Digest-Detail schließen",
+    "coverage": "Abdeckung — {{supported}} von {{total}} Engines unterstützt.",
+    "partial": "Einige Engines lieferten diese Woche unvollständige Daten.",
+    "sections": {
+      "newCitations": "Neue Zitate",
+      "lostCitations": "Verlorene Zitate",
+      "unknownPartial": "Unbekannte oder teilweise Zitate",
+      "confirmedDrops": "Bestätigte Ranking-Verluste",
+      "actionsChanged": "Abgeschlossene oder zurückgefallene Aktionen",
+      "top3": "Die nächsten drei Aktionen",
+      "gscGenerative": "Google generatives KI-Erscheinen",
+      "brandDeltas": "Brand-Radar-Veränderungen",
+      "deepLinks": "In RankMeFast öffnen"
+    },
+    "empty": {
+      "newCitations": "Diese Woche keine neuen Zitate.",
+      "lostCitations": "Diese Woche keine verlorenen Zitate.",
+      "unknownPartial": "Diese Woche keine unbekannten oder teilweisen Zitate.",
+      "confirmedDrops": "Diese Woche keine bestätigten Ranking-Verluste.",
+      "actionsChanged": "Diese Woche keine Änderungen des Aktionsstatus.",
+      "top3": "Alles erledigt — keine offenen Aktionen."
+    },
+    "actionsFallback": "Für diesen Puls wurden keine Aktionsänderungen erfasst."
+  },
+  "history": {
+    "title": "Letzte Pulse",
+    "empty": "Noch keine Pulse erfasst.",
+    "loadMore": "Mehr laden",
+    "runLabel": "{{isoWeek}} — {{status}}",
+    "openLabel": "Puls für {{isoWeek}} öffnen"
+  },
+  "preview": {
+    "title": "Ausgaben-Vorschau",
+    "productUnits": "1 AI-Mentions-Prüfung pro Woche",
+    "remaining": "Verbleibend diesen Monat: {{remaining}}",
+    "capBlocked": "Ihr Tarif-Limit ist erschöpft. Die Aktivierung schlägt fehl — upgraden oder Credits kaufen."
+  },
+  "gsc": {
+    "title": "Google generatives KI-Erscheinen",
+    "description": "Google Search Console-Daten aus erster Hand — niemals mit AI-Mentions-Metriken gemischt.",
+    "status": {
+      "available": "Verfügbar",
+      "unavailable": "Noch nicht erschienen",
+      "partial": "Teilweise Daten",
+      "reconnect_required": "Google Search Console erneut verbinden",
+      "failed": "Vorübergehend nicht verfügbar"
+    },
+    "empty": "Google meldete kein generatives KI-Erscheinen.",
+    "reconnect": "Bitte Google Search Console erneut verbinden, um diesen Abschnitt zu sehen.",
+    "window": "Fenster: {{start}} → {{end}}",
+    "row": "{{appearance}} — {{clicks}} Klicks, {{impressions}} Impressionen",
+    "loading": "Google Search Console-Daten werden geladen…",
+    "unknown": "Unbekannte Darstellung ({{raw}})"
+  },
+  "brandDeltas": {
+    "scopeNote": "Diese Veränderungen gelten für Ihr gesamtes Konto, gruppiert nach verfolgter Markenabfrage — nicht nur für diese Website.",
+    "queryLine": "{{query}} — Erwähnungen {{delta}}",
+    "sentimentLine": "Stimmungsverschiebung in Punkten: positiv {{positive}}, neutral {{neutral}}, negativ {{negative}}, unbekannt {{unknown}}.",
+    "firstScan": "{{query}} — erste Prüfung, noch kein Vergleich möglich.",
+    "noNewScan": "{{query}} — keine neue Prüfung in diesem Zeitraum.",
+    "empty": "Noch keine Markenprüfungen zum Vergleichen."
+  },
+  "errors": {
+    "unexpected": "Etwas ist schiefgelaufen — bitte erneut versuchen.",
+    "overCap": "Ihr Tarif-Limit ist erschöpft. Upgraden oder Credits kaufen, um Wochenpulse zu erhalten.",
+    "acknowledgePreviewRequired": "Vor der Aktivierung die Ausgaben vorschauen.",
+    "reconnectRequired": "Google Search Console erneut verbinden, um diese Daten zu laden.",
+    "unauthorized": "Bitte anmelden, um den Wochenpuls zu sehen."
+  }
+}

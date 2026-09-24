@@ -1,0 +1,35 @@
+{
+  "version": "0.1.20260101",
+  "status_code": 20000,
+  "status_message": "Ok.",
+  "time": "0.0310 sec.",
+  "cost": 0,
+  "tasks_count": 1,
+  "tasks_error": 0,
+  "tasks": [
+    {
+      "id": "TASK_ID",
+      "status_code": 20000,
+      "status_message": "Ok.",
+      "time": "0.0180 sec.",
+      "cost": 0,
+      "result_count": 1,
+      "path": ["v3", "on_page", "links"],
+      "result": [
+        {
+          "total_items_count": 1,
+          "items_count": 1,
+          "items": [
+            {
+              "link_from": "https://example.com/hidden",
+              "link_to": "https://example.com/404",
+              "direction": "internal",
+              "is_broken": true,
+              "type": "href"
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

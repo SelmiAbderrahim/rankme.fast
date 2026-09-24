@@ -1,0 +1,165 @@
+{
+  "notifications": {
+    "title": "Notification preferences",
+    "description": "Choose which non-security emails you want to receive. Security emails (password reset, email verification, password change confirmations) cannot be turned off.",
+    "emailHeading": "Email",
+    "loading": "Loading your preferences…",
+    "securityNote": "Security emails — password reset, email verification, and password change confirmations — are always sent, regardless of the switches above.",
+    "channels": {
+      "emailAuditComplete": {
+        "label": "Audit complete",
+        "description": "Notify me when an audit finishes running."
+      },
+      "emailRankDrop": {
+        "label": "Rank drops",
+        "description": "Notify me when a tracked keyword drops position."
+      },
+      "emailAlerts": {
+        "label": "Alert rules",
+        "description": "Notify me when one of my alert rules fires."
+      },
+      "emailDunning": {
+        "label": "Billing",
+        "description": "Payment receipts and failed-payment reminders."
+      },
+      "emailMarketing": {
+        "label": "Product updates",
+        "description": "Occasional welcome messages, product news and tips."
+      }
+    },
+    "errors": {
+      "loadFailed": "We couldn't load your notification preferences. Please refresh.",
+      "saveFailed": "We couldn't save that change. Please try again."
+    }
+  },
+  "apiKeys": {
+    "title": "API keys",
+    "description": "Create keys for MCP clients. Agency keys also work with the read-only public API. MCP can start audits and use your plan allowance, so keep each key secret.",
+    "name": "Name",
+    "prefix": "Key",
+    "created": "Created",
+    "lastUsed": "Last used",
+    "never": "Never",
+    "create": "Create key",
+    "createTitle": "Create an API key",
+    "createDescription": "Give the key a name so you can recognize it later — for example, the tool that will use it.",
+    "showOnceTitle": "Copy your API key now",
+    "showOnceWarning": "This is the only time we will show this key. Store it somewhere safe — you cannot see it again.",
+    "copy": "Copy",
+    "copied": "Copied",
+    "done": "Done",
+    "revoke": "Revoke",
+    "revokedBadge": "Revoked",
+    "revokeConfirmTitle": "Revoke this API key?",
+    "revokeConfirmDescription": "“{{name}}” will stop working immediately. This cannot be undone.",
+    "empty": "No API keys yet.",
+    "upgradeHint": "MCP access is available on Starter and above. Upgrade to connect an MCP client.",
+    "upgradeCta": "View plans",
+    "scopes": {
+      "column": "Access",
+      "edit": "Edit access",
+      "restricted": "Restricted",
+      "unrestricted": "Unrestricted",
+      "restrictCreate": "Restrict this key",
+      "restrictKey": "Use custom restrictions",
+      "intersectionHint": "Key restrictions can narrow your account defaults, but they can never grant more access.",
+      "editTitle": "Edit API key access",
+      "editDescription": "Choose what “{{name}}” can access through MCP.",
+      "unrestrictedDescription": "This key follows the account defaults without adding any restrictions.",
+      "save": "Save access",
+      "saving": "Saving access…",
+      "sitesFailed": "We couldn't load your sites. You can leave site access unrestricted and try again later."
+    },
+    "errors": {
+      "loadFailed": "We couldn't load your API keys. Please refresh.",
+      "createFailed": "We couldn't create that key. Please try again.",
+      "revokeFailed": "We couldn't revoke that key. Please try again.",
+      "scopesSaveFailed": "We couldn't save that key's access. Please try again.",
+      "nameRequired": "Enter a name between 1 and 60 characters."
+    }
+  },
+  "mcp": {
+    "title": "MCP permissions",
+    "description": "Set the account defaults used by MCP API keys and Assistant tool calls. New accounts allow every tool and site by default.",
+    "loading": "Loading MCP permissions…",
+    "save": "Save permissions",
+    "saving": "Saving permissions…",
+    "saved": "MCP permissions saved.",
+    "retry": "Try again",
+    "locked": {
+      "title": "Connect MCP on Starter or above",
+      "description": "Upgrade to create API keys and connect RankMeFast to an MCP client.",
+      "cta": "View plans"
+    },
+    "tools": {
+      "title": "Allowed tools",
+      "description": "Turn off any tool that MCP clients and the Assistant should not be able to use.",
+      "list_sites": { "name": "List sites", "description": "See the sites in this account." },
+      "get_latest_audit_report": { "name": "Get latest audit report", "description": "Read the newest completed audit for a site." },
+      "list_keywords": { "name": "List keywords", "description": "See tracked keywords for a site." },
+      "get_rank_history": { "name": "Get rank history", "description": "Read recent ranking positions for tracked keywords." },
+      "list_content_analyses": { "name": "List content analyses", "description": "See Content Intelligence analyses for a site." },
+      "get_content_analysis": { "name": "Get content analysis", "description": "Read one Content Intelligence analysis." },
+      "start_audit": { "name": "Start audit", "description": "Start a new audit that uses the account's monthly allowance." },
+      "get_audit_status": { "name": "Get audit status", "description": "Check whether an audit is queued, running, or complete." },
+      "list_actions": { "name": "List next actions", "description": "Read the prioritized fix list for a site, with the state of each item." },
+      "set_action_state": { "name": "Update a next action", "description": "Mark an action planned, dismissed, completed, or open again." }
+    },
+    "spend": {
+      "title": "Spending actions",
+      "label": "Allow tools that use plan allowance",
+      "description": "When off, spending tools such as Start audit are blocked even if their tool toggle is on."
+    },
+    "sites": {
+      "title": "Allowed sites",
+      "description": "Limit tools to selected sites, or leave all sites allowed.",
+      "all": "Allow all sites",
+      "allDescription": "This also includes sites you add later.",
+      "empty": "Add a site before creating a site restriction.",
+      "unavailable": "Unavailable site",
+      "removeHint": "No longer available in this account"
+    },
+    "quickStart": {
+      "title": "Quick start",
+      "description": "Create an API key, then copy the endpoint or a ready-to-use client configuration.",
+      "endpoint": "MCP endpoint",
+      "copyEndpoint": "Copy MCP endpoint",
+      "copy": "Copy",
+      "copyConfig": "Copy {{client}} configuration",
+      "copied": "Copied",
+      "claudeCode": "Claude Code",
+      "cursor": "Cursor",
+      "apiKeys": "Manage API keys",
+      "copyError": "Your browser couldn't copy that value. Select the text and copy it manually."
+    },
+    "errors": {
+      "loadFailed": "We couldn't load MCP permissions. Please try again.",
+      "saveFailed": "We couldn't save MCP permissions. Please try again.",
+      "sitesFailed": "We couldn't load your sites. Site restrictions may be incomplete."
+    }
+  },
+  "branding": {
+    "title": "PDF branding",
+    "description": "Put your own name on downloaded report PDFs. The company name and accent color appear in the PDF header.",
+    "companyName": "Company name",
+    "accentColor": "Accent color",
+    "invalidColor": "Enter a color like #b5321e, or leave it empty.",
+    "save": "Save branding",
+    "saved": "Branding saved.",
+    "upgradeHint": "White-label PDF reports are available on the Pro and Agency plans. Upgrade to customize your reports.",
+    "upgradeCta": "View plans",
+    "logo": {
+      "label": "Company logo",
+      "help": "PNG only, up to 256 KB. Images are resized and re-encoded before storage.",
+      "invalidType": "Choose a PNG image.",
+      "tooLarge": "Choose a PNG smaller than 256 KB.",
+      "readFailed": "We couldn't read that image. Choose another PNG.",
+      "previewAlt": "Company logo preview",
+      "remove": "Remove logo"
+    },
+    "errors": {
+      "loadFailed": "We couldn't load your branding. Please refresh.",
+      "saveFailed": "We couldn't save your branding. Please try again."
+    }
+  }
+}

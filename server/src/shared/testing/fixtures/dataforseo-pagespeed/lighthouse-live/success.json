@@ -1,0 +1,39 @@
+{
+  "version": "0.1.20260318",
+  "status_code": 20000,
+  "status_message": "Ok.",
+  "time": "11.2431 sec.",
+  "cost": 0.005,
+  "tasks_count": 1,
+  "tasks_error": 0,
+  "tasks": [
+    {
+      "id": "TASK_ID",
+      "status_code": 20000,
+      "status_message": "Ok.",
+      "time": "11.1904 sec.",
+      "cost": 0.005,
+      "result_count": 1,
+      "result": [
+        {
+          "lighthouseVersion": "13.0.3",
+          "requestedUrl": "https://example.test/",
+          "finalUrl": "https://example.test/",
+          "audits": {
+            "viewport-insight": {
+              "id": "viewport-insight",
+              "score": 1,
+              "scoreDisplayMode": "numeric"
+            }
+          },
+          "categories": {
+            "performance": { "score": 0.84 },
+            "accessibility": { "score": 0.96 },
+            "best-practices": { "score": 0.92 },
+            "seo": { "score": 1 }
+          }
+        }
+      ]
+    }
+  ]
+}

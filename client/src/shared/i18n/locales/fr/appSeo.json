@@ -1,0 +1,62 @@
+{
+  "title": "SEO d'application",
+  "description": "Gérez les profils d'application et les signaux des stores associés à ce site.",
+  "views": {
+    "profiles": "Profils",
+    "keywords": "Mots-clés",
+    "listing": "Fiche",
+    "charts": "Classements",
+    "research": "Recherche",
+    "reviews": "Avis",
+    "compare": "Comparaison",
+    "comingSoon": "Cet espace sera disponible prochainement dans ce lot."
+  },
+  "locked": {
+    "title": "Le SEO d'application est disponible avec Pro",
+    "description": "Passez à Pro ou à une offre supérieure pour enregistrer des applications et ouvrir cet espace.",
+    "cta": "Voir les offres"
+  },
+  "registration": {
+    "title": "Enregistrer une application",
+    "description": "Ajoutez un package Google Play, un identifiant App Store ou les deux. L'enregistrement vérifie uniquement le format et ne consomme aucun crédit fournisseur.",
+    "playLabel": "Identifiant de package Google Play",
+    "playPlaceholder": "com.example.app",
+    "playHelp": "Utilisez l'identifiant en DNS inversé affiché dans Google Play.",
+    "appleLabel": "Identifiant Apple App Store",
+    "applePlaceholder": "123456789",
+    "appleHelp": "Saisissez l'identifiant numérique de 6 à 12 chiffres.",
+    "pairedLabel": "Ces fiches correspondent à la même application",
+    "pairedHelp": "Associez-les uniquement si elles représentent le même produit.",
+    "usage": "{{used}} profil(s) sur {{limit}}",
+    "submit": "Enregistrer l'application",
+    "registering": "Enregistrement…"
+  },
+  "profiles": {
+    "googlePlay": "Google Play",
+    "appStore": "App Store",
+    "emptyTitle": "Aucun profil d'application",
+    "emptyDescription": "Enregistrez une fiche Play ou App Store pour commencer.",
+    "paired": "Associées",
+    "deleteLabel": "Supprimer {{id}}",
+    "deleteTitle": "Supprimer ce profil d'application ?",
+    "deleteDescription": "Son historique SEO d'application sera également supprimé. Cette action est irréversible.",
+    "cancel": "Annuler",
+    "confirmDelete": "Supprimer le profil"
+  },
+  "states": {
+    "limitTitle": "Limite de profils atteinte",
+    "limitDescription": "Supprimez un profil pour libérer une place ou choisissez une offre avec plus de profils.",
+    "upgrade": "Voir les offres",
+    "errorTitle": "Impossible de mettre à jour les profils"
+  },
+  "validation": {
+    "storeRequired": "Saisissez au moins un identifiant de store.",
+    "playFormat": "Saisissez un package en DNS inversé, par exemple com.example.app.",
+    "playTooLong": "L'identifiant Google Play est trop long.",
+    "appleFormat": "Saisissez un identifiant App Store de 6 à 12 chiffres.",
+    "pairedRequired": "Les profils associés nécessitent les deux identifiants."
+  },
+  "errors": {
+    "requestFailed": "La demande n'a pas abouti. Réessayez."
+  }
+}

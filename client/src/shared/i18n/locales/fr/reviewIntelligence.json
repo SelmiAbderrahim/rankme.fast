@@ -1,0 +1,211 @@
+{
+  "title": "Avis",
+  "description": "Récupérez les avis publics des annuaires que vous indiquez, puis lisez ce que vos clients répètent.",
+  "outputLocale": "Langue de sortie : {{locale}}",
+  "sourceNames": {
+    "google": "Google",
+    "trustpilot": "Trustpilot",
+    "tripadvisor": "Tripadvisor"
+  },
+  "states": {
+    "signedOut": "Connectez-vous pour lire vos avis.",
+    "notOnPlan": {
+      "title": "Les avis font partie de l'offre Pro",
+      "description": "Passez à Pro ou Agency pour récupérer les avis de Google, Trustpilot et Tripadvisor.",
+      "link": "Voir les offres"
+    },
+    "capReached": {
+      "title": "Vous avez utilisé toutes les synchronisations de votre offre",
+      "description": "Consultez la facturation pour connaître la disponibilité actuelle du pack de synchronisations. Tout ce que vous avez déjà récupéré reste lisible.",
+      "link": "Voir les options de packs"
+    },
+    "disabled": {
+      "title": "Les nouvelles synchronisations sont en pause",
+      "description": "Nous avons mis en pause les nouvelles synchronisations d'avis. Les avis déjà récupérés restent lisibles."
+    },
+    "noSources": {
+      "title": "Ajoutez au moins une source d'avis pour commencer.",
+      "description": "Ajoutez une fiche Google, Trustpilot ou Tripadvisor avant de lancer une synchronisation."
+    },
+    "neverSynced": {
+      "title": "Aucune synchronisation",
+      "description": "Vos sources sont prêtes. Lancez la première synchronisation pour récupérer les avis."
+    }
+  },
+  "sources": {
+    "title": "Sources d'avis",
+    "description": "Indiquez où votre établissement est référencé. Une fiche par annuaire.",
+    "empty": "Aucune source pour l'instant. Ajoutez-en une ci-dessous.",
+    "configured": "Configurée",
+    "save": "Enregistrer la source",
+    "remove": "Supprimer",
+    "hint": {
+      "google": "Identifiant de lieu Google",
+      "trustpilot": "Domaine de l'établissement sur Trustpilot",
+      "tripadvisor": "Identifiant de lieu Tripadvisor"
+    },
+    "placeholder": {
+      "google": "ChIJ_example_place_id",
+      "trustpilot": "example.com",
+      "tripadvisor": "1234567"
+    }
+  },
+  "sync": {
+    "title": "Lancer une synchronisation",
+    "description": "Une synchronisation couvre toutes les sources choisies. Le coût s'affiche avant toute dépense.",
+    "sourcesLabel": "Sources à synchroniser",
+    "depthLabel": "Avis par source",
+    "depthHint": "Entre un et {{max}} avis pour chaque source.",
+    "selectAtLeastOne": "Choisissez au moins une source pour voir le coût.",
+    "estimate": "Voir le coût",
+    "confirm": "Confirmer et lancer",
+    "cancel": "Annuler"
+  },
+  "preview": {
+    "title": "Coût de cette synchronisation",
+    "description": "Il s'agit d'une estimation. Rien n'est dépensé avant votre confirmation.",
+    "units": "Consomme {{units}} synchronisation",
+    "perSource": "Couvre {{sources}} sources",
+    "depth": "Récupère jusqu’à {{depth}} avis par source",
+    "available": "Tient dans votre quota",
+    "unavailable": "Dépasse votre quota",
+    "baseRemaining": "Synchronisations restantes : {{remaining}}",
+    "packRemaining": "Synchronisations restantes dans le pack : {{remaining}}"
+  },
+  "runs": {
+    "title": "Historique des synchronisations",
+    "description": "Chaque synchronisation, ce que chaque source a renvoyé et si l'unité a été recréditée.",
+    "empty": "Aucune synchronisation pour l'instant.",
+    "createdAt": "Démarrée",
+    "view": "Ouvrir",
+    "refunded": "Unité recréditée",
+    "columns": {
+      "status": "Résultat",
+      "outcomes": "Par source",
+      "retained": "Nouveaux avis",
+      "ai": "Thèmes"
+    },
+    "status": {
+      "queued": "En attente",
+      "running": "En cours",
+      "succeeded": "Terminée",
+      "partial": "Partielle",
+      "failed": "Échec"
+    },
+    "outcome": {
+      "ok": "nouveaux avis",
+      "failed": "échec",
+      "zeroNew": "rien de neuf"
+    },
+    "ai": {
+      "pending": "Thèmes en attente",
+      "themesOk": "Thèmes prêts",
+      "noReliableThemes": "Aucun thème fiable",
+      "aiFailed": "Échec des thèmes"
+    }
+  },
+  "inventory": {
+    "title": "Avis",
+    "description": "Les plus récents d'abord. Le texte vient directement de l'annuaire, affiché en texte brut.",
+    "empty": "Aucun avis enregistré pour l'instant.",
+    "noMatches": "Aucun avis ne correspond à ces filtres.",
+    "clearFilters": "Effacer les filtres",
+    "filterSource": "Source",
+    "filterRating": "Note",
+    "filterQuery": "Rechercher dans le texte",
+    "sortLabel": "Trier",
+    "sort": {
+      "newest": "Plus récents d’abord",
+      "rating-high": "Meilleure note",
+      "source": "Source"
+    },
+    "filterAll": "Toutes",
+    "searchPlaceholder": "Rechercher dans les avis",
+    "apply": "Appliquer",
+    "stars": "{{stars}} étoiles",
+    "unrated": "Sans note",
+    "anonymous": "Sans nom",
+    "page": "Page {{page}} sur {{total}} avis",
+    "previous": "Précédent",
+    "next": "Suivant",
+    "export": "Télécharger le CSV",
+    "exportLoading": "Préparation du CSV…",
+    "exportFailed": "Impossible de préparer le CSV. Réessayez.",
+    "exportFree": "Le téléchargement est gratuit et utilise les avis déjà récupérés.",
+    "columns": {
+      "rating": "Note",
+      "reviewedAt": "Date",
+      "source": "Source",
+      "text": "Avis",
+      "author": "Auteur"
+    }
+  },
+  "stats": {
+    "title": "Santé des avis",
+    "empty": "Rien à représenter pour l'instant.",
+    "total": "{{total}} avis enregistrés",
+    "distribution": {
+      "title": "Répartition des étoiles",
+      "stars": "{{stars}} étoiles",
+      "unrated": "Sans note"
+    },
+    "velocity": {
+      "title": "Avis par mois",
+      "latest": "En {{month}}",
+      "average": "Moyenne de {{average}} par mois"
+    },
+    "sourceMix": {
+      "title": "D'où ils viennent"
+    }
+  },
+  "trend": {
+    "title": "Note moyenne dans le temps",
+    "description": "Un point par mois. Un mois sans note reste un trou dans la courbe.",
+    "chartLabel": "Note moyenne en étoiles par mois",
+    "expandTable": "Lire sous forme de tableau",
+    "tableCaption": "Note moyenne en étoiles par mois et par source",
+    "month": "Mois",
+    "total": "Toutes les sources",
+    "gap": "Aucune donnée",
+    "empty": "Aucun avis daté pour l'instant."
+  },
+  "themes": {
+    "title": "Ce qui revient le plus",
+    "complaints": "Reproches fréquents",
+    "praise": "Compliments fréquents",
+    "citations": "Voir les avis correspondants",
+    "citationCount": "{{citations}} avis",
+    "citationSource": "{{source}} · {{rating}} · {{date}}",
+    "sectionEmpty": "Rien ici pour cette synchronisation.",
+    "pending": "L'analyse des thèmes n'est pas terminée.",
+    "noReliable": {
+      "title": "Aucun thème fiable cette fois",
+      "description": "Un thème n'apparaît que si au moins deux avis l'appuient. Aucun n'a passé ce seuil, et nous n'en inventons pas."
+    },
+    "aiFailed": {
+      "title": "Impossible de construire les thèmes",
+      "description": "L'étape de synthèse a échoué. Vos avis sont bien arrivés et restent lisibles ci-dessous.",
+      "link": "Aller aux avis"
+    }
+  },
+  "provenance": {
+    "first_party": "Données propriétaires",
+    "provider_observation": "Observation du fournisseur",
+    "estimate": "Estimation",
+    "ai_interpretation": "Interprétation par l’IA",
+    "observedAt": "Observé le {{date}}",
+    "sampleCount": "{{count}} avis échantillonnés"
+  },
+  "errors": {
+    "sourcesFailed": "Impossible de charger vos sources d'avis.",
+    "addSourceFailed": "Impossible d'enregistrer cette source.",
+    "removeSourceFailed": "Impossible de supprimer cette source.",
+    "previewFailed": "Impossible de calculer le coût.",
+    "syncFailed": "Impossible de lancer la synchronisation.",
+    "runsFailed": "Impossible de charger l'historique des synchronisations.",
+    "runFailed": "Impossible de charger cette synchronisation.",
+    "statsFailed": "Impossible de charger les chiffres des avis.",
+    "themesFailed": "Impossible de charger les thèmes.",
+    "inventoryFailed": "Impossible de charger vos avis."
+  }
+}

@@ -1,0 +1,124 @@
+{
+  "title": "AI 可见度",
+  "description": "跟踪买家问题，查看 AI 聊天回答是否提到您。",
+  "loadFailed": "无法加载 AI 可见度数据。",
+  "form": {
+    "label": "跟踪的提问",
+    "placeholder": "最适合代理机构的 SEO 审计工具",
+    "add": "跟踪提问",
+    "adding": "正在添加...",
+    "cap": "已跟踪 {{count}}/{{cap}} 个提问",
+    "capReached": "每个站点最多可跟踪 {{cap}} 个提问。"
+  },
+  "prompts": {
+    "title": "跟踪的提问",
+    "empty": "尚未跟踪任何提问。",
+    "emptyTitle": "尚未跟踪任何提问",
+    "emptyCta": "添加你的第一个提问",
+    "prompt": "提问",
+    "status": "状态",
+    "sentiment": "语气",
+    "mentioned": "被提及",
+    "notMentioned": "未被提及",
+    "remove": "移除提问",
+    "confirmRemove": {
+      "title": "移除此提问？",
+      "body": "我们将不再检查 AI 回答是否针对此提问提及你。你可以稍后再次添加。",
+      "confirm": "移除",
+      "cancel": "取消"
+    }
+  },
+  "refresh": {
+    "button": "立即检查",
+    "cooldown": "请等待 {{seconds}} 秒后再检查。",
+    "failed": "目前无法检查 AI 可见度。仍显示您最近的数据。",
+    "success": "已检查 {{total}} 个提问 — 其中 {{mentioned}} 个的 AI 回答提到了您。",
+    "cost": "将使用本月剩余 {{remaining}} 次检查中的 {{prompts}} 次。"
+  },
+  "lastChecked": "上次检查 {{date}}",
+  "neverChecked": "尚未检查",
+  "kpi": {
+    "shareOfVoice": "声量份额",
+    "mentioned": "提到您的提问",
+    "mentionedOf": "{{mentioned}} / {{total}}",
+    "mentionedContext": "过去一个月内 AI 回答提到您的提问",
+    "sentiment": "提及语气",
+    "sentimentPositive": "正面",
+    "sentimentNeutral": "中性",
+    "sentimentNegative": "批评",
+    "sentimentContext": "基于过去一个月的全部回答",
+    "checks": "本月检查次数",
+    "checksUsed": "{{used}}/{{cap}}"
+  },
+  "notMentioned": {
+    "title": "尚未出现",
+    "body": "这些提问的 AI 回答尚未提到您。"
+  },
+  "details": {
+    "show": "显示各引擎详情",
+    "hide": "隐藏各引擎详情",
+    "noCitation": "无引用页面"
+  },
+  "trend": {
+    "title": "提及趋势",
+    "description": "AI 回答逐日提到您的频率。",
+    "emptyTitle": "暂无趋势",
+    "empty": "在不同的两天各运行一次检查即可看到趋势。",
+    "latest": "最新：AI 回答在 {{rate}}% 的检查中提到您。",
+    "chartLabel": "{{count}} 个检查日的提及率趋势",
+    "tableSummary": "{{count}} 天内每日提及率",
+    "tableDate": "日期",
+    "tableRate": "提及率",
+    "tableShare": "声量份额",
+    "tableChecks": "检查次数",
+    "failed": "无法加载趋势。"
+  },
+  "onboarding": {
+    "suggestionsReady": "从下方建议的提问开始——一键即可全部跟踪。",
+    "trackSuggestions": "跟踪建议的提问",
+    "needKeywords": "在关键词标签页跟踪关键词或运行一次审计以解锁建议。"
+  },
+  "share": {
+    "title": "声量份额",
+    "description": "AI 回答提到您与竞争对手的频率对比。",
+    "brand": "您",
+    "competitors": "竞争对手",
+    "noData": "暂无数据"
+  },
+  "sentiment": {
+    "positive": "正面提及",
+    "neutral": "中性提及",
+    "negative": "批评性提及",
+    "unknown": "未评估"
+  },
+  "suggestions": {
+    "title": "人们向 AI 询问的短语",
+    "empty": "暂无建议的提问。",
+    "emptyTitle": "暂无建议",
+    "emptyCta": "跟踪你自己的提问",
+    "failed": "无法加载建议的提问。",
+    "track": "跟踪此项",
+    "trackAll": "全部跟踪",
+    "trackingAll": "正在跟踪...",
+    "aiGenerated": "AI 建议",
+    "generate": "生成建议",
+    "cooldown": "请等待 {{seconds}} 秒后再次生成。",
+    "cost": "将消耗本月剩余 {{remaining}} 次生成中的一次。",
+    "capReached": "本月您已用完全部建议生成次数。",
+    "emptyGenerated": "暂时无法根据您的数据生成问题。请添加跟踪关键词或运行一次审计，然后重新生成。",
+    "generatedAt": "生成于 {{date}}",
+    "outputLocale": "输出语言：{{locale}}",
+    "generateFailed": "目前无法生成建议。本次生成未计入配额。",
+    "generated": "已生成 {{count}} 条建议提问。"
+  },
+  "locked": {
+    "body": "AI 可见度功能适用于 Agency 方案。",
+    "upgrade": "查看套餐"
+  },
+  "add": {
+    "failed": "无法添加该提问。"
+  },
+  "remove": {
+    "failed": "无法移除该提问。"
+  }
+}

@@ -1,0 +1,42 @@
+{
+  "version": "0.1.20260808",
+  "status_code": 20000,
+  "status_message": "Ok.",
+  "cost": 0,
+  "tasks": [
+    {
+      "id": "TASK_ID",
+      "status_code": 20000,
+      "status_message": "Ok.",
+      "cost": 0,
+      "result": [
+        {
+          "app_id": "686449807",
+          "location_code": 2840,
+          "language_code": "en",
+          "datetime": "2026-08-08 12:05:00 +00:00",
+          "title": "Audit App Store App",
+          "rating": {
+            "value": 4.8
+          },
+          "reviews_count": 120,
+          "items": [
+            {
+              "type": "app_store_reviews_search",
+              "id": "review-apple-1",
+              "rating": {
+                "value": 4
+              },
+              "title": "Solid",
+              "review_text": "The sample keyword view is easy to use.",
+              "timestamp": "2026-08-06 08:00:00 +00:00",
+              "user_profile": {
+                "profile_name": "Store reviewer"
+              }
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

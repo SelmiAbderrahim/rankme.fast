@@ -1,0 +1,167 @@
+{
+  "title": "Équipe",
+  "description": "Invitez des coéquipiers et gérez les places de votre offre.",
+  "seatUsage": "{{used}} sur {{limit}} places utilisées",
+  "invite": {
+    "heading": "Inviter un coéquipier",
+    "emailLabel": "E-mail",
+    "emailPlaceholder": "collegue@example.com",
+    "emailInvalid": "Saisissez une adresse e-mail valide",
+    "submit": "Envoyer l'invitation",
+    "submitting": "Envoi…",
+    "atCap": "Vous avez utilisé toutes vos places. Passez à une offre supérieure pour en inviter plus.",
+    "upgradeCta": "Mettre à niveau",
+    "description": "Choisissez un rôle et précisément les sites auxquels cette personne aura accès.",
+    "roleLabel": "Rôle",
+    "adminRoleLimit": "Les administrateurs peuvent inviter uniquement des membres."
+  },
+  "members": {
+    "heading": "Membres",
+    "columns": {
+      "email": "E-mail",
+      "role": "Rôle",
+      "status": "Statut",
+      "invitedAt": "Invité le",
+      "expiresAt": "Expire le",
+      "access": "Accès aux sites"
+    },
+    "roles": {
+      "owner": "Propriétaire",
+      "member": "Membre",
+      "admin": "Administrateur"
+    },
+    "status": {
+      "accepted": "Actif",
+      "pending": "En attente",
+      "expired": "Expirée"
+    },
+    "actions": {
+      "menuLabel": "Ouvrir le menu d'actions",
+      "remove": "Retirer",
+      "revoke": "Révoquer l'invitation",
+      "resend": "Renvoyer l'invitation",
+      "leave": "Quitter l'espace de travail",
+      "changeRole": "Modifier le rôle de {{email}}",
+      "editAccess": "Modifier le rôle et l’accès"
+    },
+    "confirmRemove": {
+      "title": "Retirer ce coéquipier ?",
+      "body": "{{email}} perd immédiatement l'accès à cette équipe.",
+      "confirm": "Retirer",
+      "cancel": "Annuler"
+    },
+    "confirmRevoke": {
+      "title": "Révoquer cette invitation ?",
+      "body": "L'invitation pour {{email}} cesse aussitôt de fonctionner.",
+      "confirm": "Révoquer l'invitation"
+    },
+    "empty": "Aucun coéquipier pour le moment. Invitez quelqu'un ci-dessus.",
+    "removed": "Membre retiré.",
+    "loading": "Chargement de l'équipe…",
+    "searchPlaceholder": "Rechercher par e-mail",
+    "previous": "Précédent",
+    "next": "Suivant",
+    "pageOf": "Page {{page}} sur {{totalPages}} · {{total}} membre(s)",
+    "edit": {
+      "title": "Modifier l’accès du membre",
+      "description": "Modifiez le rôle et les sites accessibles à {{email}}.",
+      "save": "Enregistrer l’accès",
+      "saving": "Enregistrement…",
+      "cancel": "Annuler"
+    }
+  },
+  "accept": {
+    "title": "Accepter l'invitation",
+    "loading": "Vérification de votre invitation…",
+    "success": "Vous avez rejoint l'équipe.",
+    "cta": "Aller au tableau de bord"
+  },
+  "errors": {
+    "loadFailed": "Impossible de charger votre équipe. Merci de rafraîchir la page.",
+    "inviteFailed": "L'invitation n'a pas pu être envoyée.",
+    "seatCapExceeded": "Vous avez utilisé toutes vos places. Passez à une offre supérieure pour en inviter plus.",
+    "alreadyInvited": "Une invitation est déjà en attente pour cette adresse.",
+    "alreadyMember": "Cette adresse fait déjà partie de l'équipe.",
+    "inviteNotFound": "Ce lien d'invitation n'est pas valide.",
+    "inviteExpired": "Cette invitation a expiré. Demandez-en une nouvelle.",
+    "inviteUsed": "Cette invitation a déjà été acceptée.",
+    "removeFailed": "Impossible de retirer ce membre.",
+    "resendFailed": "Impossible de renvoyer cette invitation.",
+    "roleFailed": "Impossible de modifier ce rôle.",
+    "accessUpdateFailed": "Impossible de modifier l’accès de ce membre.",
+    "rejectFailed": "Impossible de refuser cette invitation."
+  },
+  "workspace": {
+    "switcherLabel": "Espace de travail",
+    "own": "Mon espace de travail",
+    "role": {
+      "owner": "Propriétaire",
+      "admin": "Administrateur",
+      "member": "Membre"
+    },
+    "notAvailable": {
+      "title": "Indisponible dans cet espace de travail",
+      "body": "La facturation, les connexions, les clés et les paramètres du compte restent avec le propriétaire de l'espace. Revenez à votre espace pour gérer les vôtres."
+    }
+  },
+  "access": {
+    "heading": "Accès aux sites",
+    "description": "Choisissez si cette personne peut utiliser tous les sites ou seulement une sélection.",
+    "all": "Tous les sites",
+    "allDescription": "Inclut les sites ajoutés ultérieurement à cet espace de travail.",
+    "selected": "Sites sélectionnés",
+    "selectedDescription": "L’accès est limité aux sites cochés ci-dessous.",
+    "required": "Sélectionnez au moins un site.",
+    "empty": "Ajoutez un site avant de créer une invitation à accès limité.",
+    "loadFailed": "Impossible de charger les sites disponibles pour cette invitation.",
+    "siteCount": "{{count}} site(s)"
+  },
+  "decision": {
+    "loading": "Vérification de l’invitation…",
+    "invitedBy": "{{inviter}} vous a invité à rejoindre {{team}}.",
+    "role": "Rôle",
+    "sites": "Sites",
+    "expires": "Expiration",
+    "accept": {
+      "title": "Accepter l’invitation à l’équipe",
+      "confirm": "Accepter l’invitation",
+      "acting": "Acceptation…",
+      "signInRequired": "Connectez-vous avec l’adresse invitée avant d’accepter.",
+      "signIn": "Se connecter pour accepter",
+      "passwordRequired": "Remplacez votre mot de passe temporaire avant d’accepter cette invitation.",
+      "changePassword": "Modifier le mot de passe",
+      "completeTitle": "Invitation acceptée",
+      "complete": "Vous avez maintenant accès aux sites attribués dans cet espace de travail.",
+      "cta": "Accéder au tableau de bord"
+    },
+    "reject": {
+      "title": "Refuser l’invitation à l’équipe",
+      "confirm": "Refuser l’invitation",
+      "acting": "Refus…",
+      "dialogTitle": "Refuser cette invitation ?",
+      "dialogBody": "L’invitation cessera de fonctionner. Un compte encore non revendiqué pourra être supprimé.",
+      "cancel": "Conserver l’invitation",
+      "completeTitle": "Invitation refusée",
+      "complete": "L’invitation a été refusée.",
+      "cta": "Retour à l’accueil"
+    }
+  },
+  "inbox": {
+    "buttonLabel": "Invitations d’équipe",
+    "buttonLabelWithCount": "Invitations d’équipe, {{count}} en attente",
+    "title": "Invitations d’équipe",
+    "description": "Consultez les invitations en attente de votre décision.",
+    "emptyTitle": "Aucune invitation en attente",
+    "empty": "Les nouvelles invitations d’équipe apparaîtront ici.",
+    "invitedBy": "Invitation de {{inviter}}",
+    "summary": "{{role}} · {{access}} · expire le {{date}}",
+    "accept": "Accepter",
+    "accepting": "Acceptation…",
+    "reject": "Refuser",
+    "rejecting": "Refus…",
+    "rejectTitle": "Refuser cette invitation ?",
+    "rejectBody": "Vous ne rejoindrez pas {{team}}.",
+    "cancel": "Annuler",
+    "loadFailed": "Impossible de charger vos invitations d’équipe."
+  }
+}

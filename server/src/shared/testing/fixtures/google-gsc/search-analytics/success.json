@@ -1,0 +1,32 @@
+{
+  "rows": [
+    {
+      "keys": [
+        "seo audit tool"
+      ],
+      "clicks": 182,
+      "impressions": 5421,
+      "ctr": 0.0335731,
+      "position": 4.18
+    },
+    {
+      "keys": [
+        "rank tracker"
+      ],
+      "clicks": 44,
+      "impressions": 6102,
+      "ctr": 0.0072107,
+      "position": 8.93
+    },
+    {
+      "keys": [
+        "website health check"
+      ],
+      "clicks": 11,
+      "impressions": 803,
+      "ctr": 0.0136986,
+      "position": 12.4
+    }
+  ],
+  "responseAggregationType": "byProperty"
+}

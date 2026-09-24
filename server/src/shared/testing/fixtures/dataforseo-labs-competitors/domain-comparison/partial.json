@@ -1,0 +1,31 @@
+{
+  "version": "0.1.20260801",
+  "status_code": 20000,
+  "status_message": "Ok.",
+  "cost": 0.01212,
+  "tasks_count": 1,
+  "tasks_error": 0,
+  "tasks": [
+    {
+      "id": "TASK_ID",
+      "status_code": 20000,
+      "status_message": "Ok.",
+      "cost": 0.01212,
+      "result_count": 1,
+      "result": [
+        {
+          "items_count": 1,
+          "items": [
+            {
+              "keyword_data": { "keyword": "partial observation" },
+              "first_domain_serp_element": null,
+              "second_domain_serp_element": {
+                "serp_item": { "type": "organic", "rank_group": 9 }
+              }
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

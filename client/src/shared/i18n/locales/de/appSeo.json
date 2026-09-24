@@ -1,0 +1,62 @@
+{
+  "title": "App-SEO",
+  "description": "Verwalte App-Profile und die Store-Signale für diese Website.",
+  "views": {
+    "profiles": "Profile",
+    "keywords": "Keywords",
+    "listing": "Store-Eintrag",
+    "charts": "Charts",
+    "research": "Recherche",
+    "reviews": "Bewertungen",
+    "compare": "Vergleich",
+    "comingSoon": "Dieser Arbeitsbereich folgt in Kürze in diesem Batch."
+  },
+  "locked": {
+    "title": "App-SEO ist ab Pro verfügbar",
+    "description": "Wechsle zu Pro oder höher, um App-Profile zu registrieren und diesen Bereich zu öffnen.",
+    "cta": "Tarife ansehen"
+  },
+  "registration": {
+    "title": "App registrieren",
+    "description": "Füge ein Google-Play-Paket, eine App-Store-ID oder beides hinzu. Die Registrierung prüft nur das Format und verbraucht keine Anbieter-Credits.",
+    "playLabel": "Google-Play-Paket-ID",
+    "playPlaceholder": "com.example.app",
+    "playHelp": "Verwende die in Google Play angezeigte Reverse-DNS-Paket-ID.",
+    "appleLabel": "Apple-App-Store-ID",
+    "applePlaceholder": "123456789",
+    "appleHelp": "Gib die 6- bis 12-stellige numerische App-ID ein.",
+    "pairedLabel": "Diese Einträge gehören zur selben App",
+    "pairedHelp": "Verknüpfe die Einträge nur, wenn sie dasselbe Produkt darstellen.",
+    "usage": "{{used}} von {{limit}} Profilen",
+    "submit": "App registrieren",
+    "registering": "Wird registriert…"
+  },
+  "profiles": {
+    "googlePlay": "Google Play",
+    "appStore": "App Store",
+    "emptyTitle": "Noch keine App-Profile",
+    "emptyDescription": "Registriere einen Play- oder App-Store-Eintrag, um zu beginnen.",
+    "paired": "Verknüpft",
+    "deleteLabel": "{{id}} löschen",
+    "deleteTitle": "Dieses App-Profil löschen?",
+    "deleteDescription": "Der gespeicherte App-SEO-Verlauf wird ebenfalls gelöscht. Dies kann nicht rückgängig gemacht werden.",
+    "cancel": "Abbrechen",
+    "confirmDelete": "Profil löschen"
+  },
+  "states": {
+    "limitTitle": "Limit für App-Profile erreicht",
+    "limitDescription": "Lösche ein Profil, um einen Platz freizugeben, oder wähle einen Tarif mit mehr Profilen.",
+    "upgrade": "Tarife ansehen",
+    "errorTitle": "App-Profile konnten nicht aktualisiert werden"
+  },
+  "validation": {
+    "storeRequired": "Gib mindestens eine Store-ID ein.",
+    "playFormat": "Gib eine Reverse-DNS-Paket-ID wie com.example.app ein.",
+    "playTooLong": "Die Google-Play-Paket-ID ist zu lang.",
+    "appleFormat": "Gib eine 6- bis 12-stellige App-Store-ID ein.",
+    "pairedRequired": "Verknüpfte Profile benötigen beide Store-IDs."
+  },
+  "errors": {
+    "requestFailed": "Die Anfrage konnte nicht abgeschlossen werden. Versuche es erneut."
+  }
+}

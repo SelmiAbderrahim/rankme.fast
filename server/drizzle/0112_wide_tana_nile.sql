@@ -1,0 +1,2 @@
+DROP INDEX "team_members_live_invite_uidx";--> statement-breakpoint
+CREATE UNIQUE INDEX "team_members_live_membership_uidx" ON "team_members" USING btree ("team_id","email") WHERE "team_members"."revoked_at" is null;

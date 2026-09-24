@@ -1,0 +1,23 @@
+{
+  "badRequest": "Ungültige Anfrage.",
+  "unauthorized": "Sie müssen angemeldet sein, um das zu tun.",
+  "forbidden": "Sie haben keine Berechtigung dafür.",
+  "notFound": "Die angeforderte Ressource wurde nicht gefunden.",
+  "conflict": "Konflikt: Die Ressource existiert bereits.",
+  "internal": "Bei uns ist etwas schiefgelaufen. Bitte versuchen Sie es erneut.",
+  "validationFailed": "Validierung fehlgeschlagen.",
+  "network": "Die Netzwerkanfrage ist fehlgeschlagen. Prüfen Sie Ihre Verbindung und versuchen Sie es erneut.",
+  "timeout": "Die Anfrage hat zu lange gedauert. Bitte versuchen Sie es erneut.",
+  "projectNotFound": "Projekt nicht gefunden.",
+  "userNotFound": "Benutzer nicht gefunden.",
+  "invalidCredentials": "Ungültige E-Mail oder Passwort.",
+  "emailAlreadyRegistered": "Diese E-Mail ist bereits registriert.",
+  "passwordTooShort": "Das Passwort muss mindestens 8 Zeichen lang sein.",
+  "emailRequired": "Bitte E-Mail eingeben",
+  "emailInvalid": "Bitte eine gültige E-Mail-Adresse eingeben",
+  "passwordRequired": "Bitte Passwort eingeben",
+  "firstNameRequired": "Bitte Vornamen eingeben",
+  "lastNameRequired": "Bitte Nachnamen eingeben",
+  "passwordConfirmRequired": "Bitte das neue Passwort bestätigen",
+  "passwordsMustMatch": "Die Passwörter müssen übereinstimmen"
+}

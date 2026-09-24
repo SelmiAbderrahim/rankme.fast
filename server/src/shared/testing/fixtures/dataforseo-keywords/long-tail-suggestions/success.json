@@ -1,0 +1,60 @@
+{
+  "version": "0.1.20260101",
+  "status_code": 20000,
+  "status_message": "Ok.",
+  "time": "0.1810 sec.",
+  "cost": 0.0132,
+  "tasks_count": 1,
+  "tasks_error": 0,
+  "tasks": [
+    {
+      "id": "TASK_ID",
+      "status_code": 20000,
+      "status_message": "Ok.",
+      "time": "0.1600 sec.",
+      "cost": 0.0132,
+      "result_count": 1,
+      "path": ["v3", "dataforseo_labs", "google", "keyword_suggestions", "live"],
+      "data": {
+        "api": "dataforseo_labs",
+        "function": "keyword_suggestions",
+        "location_code": 2840,
+        "language_code": "en",
+        "keyword": "seo audit tool",
+        "limit": 25
+      },
+      "result": [
+        {
+          "seed_keyword": "seo audit tool",
+          "location_code": 2840,
+          "language_code": "en",
+          "total_count": 2,
+          "items_count": 2,
+          "items": [
+            {
+              "keyword": "how to use an seo audit tool",
+              "keyword_info": {
+                "search_volume": 590,
+                "cpc": 2.1,
+                "monthly_searches": [
+                  { "year": 2025, "month": 11, "search_volume": 540 },
+                  { "year": 2025, "month": 12, "search_volume": 590 }
+                ]
+              },
+              "keyword_properties": { "keyword_difficulty": 27 }
+            },
+            {
+              "keyword": "best seo audit tool for small business",
+              "keyword_info": {
+                "search_volume": 320,
+                "cpc": 3.4,
+                "monthly_searches": null
+              },
+              "keyword_properties": { "keyword_difficulty": 33 }
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

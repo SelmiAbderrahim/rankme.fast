@@ -1,0 +1,85 @@
+{
+  "version": "0.1.20260101",
+  "status_code": 20000,
+  "status_message": "Ok.",
+  "time": "0.4711 sec.",
+  "cost": 0.002,
+  "tasks_count": 1,
+  "tasks_error": 0,
+  "tasks": [
+    {
+      "id": "TASK_ID",
+      "status_code": 20000,
+      "status_message": "Ok.",
+      "time": "0.4210 sec.",
+      "cost": 0.002,
+      "result_count": 1,
+      "path": ["v3", "serp", "bing", "organic", "live", "advanced"],
+      "data": {
+        "api": "serp",
+        "function": "live",
+        "se": "bing",
+        "se_type": "organic",
+        "keyword": "seo audit tool",
+        "language_code": "en",
+        "location_code": 2840,
+        "device": "desktop",
+        "depth": 10
+      },
+      "result": [
+        {
+          "keyword": "seo audit tool",
+          "type": "organic",
+          "se_domain": "bing.com",
+          "location_code": 2840,
+          "language_code": "en",
+          "datetime": "2026-01-01 00:00:00 +00:00",
+          "item_types": ["organic"],
+          "items_count": 4,
+          "items": [
+            {
+              "type": "organic",
+              "rank_group": 1,
+              "rank_absolute": 1,
+              "domain": "first-result.example.test",
+              "title": "A different tool",
+              "url": "https://first-result.example.test/tools"
+            },
+            {
+              "type": "organic",
+              "rank_group": 2,
+              "rank_absolute": 2,
+              "domain": "www.example.com",
+              "title": "Run a free SEO audit",
+              "url": "https://example.com/audit"
+            },
+            {
+              "type": "answer_box",
+              "rank_group": 3,
+              "rank_absolute": 3,
+              "domain": "answers.example.test",
+              "title": "Answer block that is not an organic ranking",
+              "url": "https://answers.example.test/what-is-an-seo-audit"
+            },
+            {
+              "type": "organic",
+              "rank_group": 3,
+              "rank_absolute": 4,
+              "domain": "third-result.example.test",
+              "title": "Another comparison page",
+              "url": "https://third-result.example.test/compare"
+            },
+            {
+              "type": "organic",
+              "rank_group": 4,
+              "rank_absolute": 5,
+              "domain": null,
+              "title": "Row the vendor returned without a URL",
+              "url": null
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

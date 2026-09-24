@@ -1,0 +1,23 @@
+{
+  "badRequest": "Requête invalide.",
+  "unauthorized": "Vous devez être connecté pour effectuer cette action.",
+  "forbidden": "Vous n’avez pas la permission d’effectuer cette action.",
+  "notFound": "La ressource demandée est introuvable.",
+  "conflict": "Conflit : la ressource existe déjà.",
+  "internal": "Une erreur est survenue chez nous. Veuillez réessayer.",
+  "validationFailed": "La validation a échoué.",
+  "network": "La requête réseau a échoué. Vérifiez votre connexion et réessayez.",
+  "timeout": "La requête a expiré. Veuillez réessayer.",
+  "projectNotFound": "Projet introuvable.",
+  "userNotFound": "Utilisateur introuvable.",
+  "invalidCredentials": "E-mail ou mot de passe invalide.",
+  "emailAlreadyRegistered": "Cet e-mail est déjà enregistré.",
+  "passwordTooShort": "Le mot de passe doit contenir au moins 8 caractères.",
+  "emailRequired": "Veuillez saisir un e-mail",
+  "emailInvalid": "Veuillez saisir une adresse e-mail valide",
+  "passwordRequired": "Veuillez saisir un mot de passe",
+  "firstNameRequired": "Veuillez saisir un prénom",
+  "lastNameRequired": "Veuillez saisir un nom",
+  "passwordConfirmRequired": "Veuillez confirmer le nouveau mot de passe",
+  "passwordsMustMatch": "Les mots de passe doivent correspondre"
+}

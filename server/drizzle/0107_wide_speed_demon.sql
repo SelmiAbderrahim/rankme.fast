@@ -1,0 +1,2 @@
+ALTER TABLE "keywords" ADD COLUMN "last_failed_reason" text;--> statement-breakpoint
+ALTER TABLE "keywords" ADD CONSTRAINT "keywords_last_failed_reason_check" CHECK ("keywords"."last_failed_reason" in ('vendor_auth', 'vendor_quota', 'vendor_timeout', 'vendor_unavailable', 'vendor_malformed'));

@@ -1,0 +1,131 @@
+{
+  "eyebrow": "Regroupement sur observations enregistrées",
+  "title": "Regroupement de mots-clés par recoupement de SERP",
+  "subtitle": "Regroupez les mots-clés suivis qui renvoient les mêmes pages sur Google. Chaque regroupement est calculé à partir de relevés de position déjà payés — aucune nouvelle recherche n'est lancée.",
+  "site": {
+    "ranksLink": "Ouvrir le suivi de position"
+  },
+  "tabs": {
+    "runs": "Regroupements enregistrés",
+    "new": "Nouveau regroupement"
+  },
+  "scope": {
+    "title": "Mots-clés de cette exécution",
+    "description": "{{count}} mots-clés sélectionnés. Chaque mot-clé sélectionné doit disposer d’un résultat Google récent et exploitable.",
+    "empty": "Ce site ne contient encore aucun mot-clé Google actif.",
+    "minimum": "Sélectionnez au moins deux mots-clés avant de prévisualiser l’exécution."
+  },
+  "newRun": {
+    "title": "Préparer un regroupement",
+    "description": "Prévisualisez les mots-clés éligibles et votre quota avant de consommer un regroupement.",
+    "storedOnly": "Le regroupement ne lit que des résultats enregistrés. Aucune recherche n'est envoyée à un fournisseur.",
+    "unitLabel": "Quota",
+    "unitValue": "{{count}} regroupement",
+    "scopeLabel": "Mots-clés éligibles",
+    "scopeValue": "{{count}} mots-clés suivis sont éligibles",
+    "method": "Deux mots-clés sont regroupés lorsqu'ils partagent au moins {{shared}} de leurs {{window}} premiers résultats, issus d'un relevé des {{days}} derniers jours.",
+    "remaining": "Il reste {{count}} regroupements avant celui-ci.",
+    "labelingIncluded": "Les libellés de groupe IA facultatifs sont inclus dans cette exécution et ne modifient jamais l’appartenance aux groupes.",
+    "preview": "Prévisualiser",
+    "previewing": "Vérification des résultats enregistrés…",
+    "confirm": "Lancer le regroupement",
+    "starting": "Démarrage…",
+    "cancel": "Annuler"
+  },
+  "states": {
+    "ranksCta": "Lancer un relevé de position",
+    "planCta": "Voir les offres",
+    "emptyRuns": {
+      "title": "Aucun regroupement enregistré",
+      "body": "Prévisualisez un regroupement pour voir quels mots-clés suivis sont éligibles."
+    },
+    "emptyClusters": {
+      "title": "Aucun groupe correspondant",
+      "body": "Ce regroupement n'a produit aucun groupe de cette taille, ou le filtre actuel les masque."
+    },
+    "notEnoughKeywords": {
+      "title": "Relevés de position récents insuffisants",
+      "body": "Au moins deux mots-clés suivis doivent avoir un relevé des sept derniers jours. Aucun regroupement n'a été consommé."
+    },
+    "cap": {
+      "title": "Quota mensuel atteint",
+      "body": "Cette demande n'a pas été lancée. Attendez la prochaine période de quota ou consultez les offres disponibles."
+    },
+    "disabled": {
+      "title": "Regroupements indisponibles",
+      "body": "Les nouveaux regroupements sont temporairement désactivés. Les regroupements enregistrés restent disponibles."
+    },
+    "rateLimited": {
+      "title": "Trop de demandes",
+      "body": "Patientez un instant avant de réessayer."
+    },
+    "notFound": {
+      "title": "Regroupement introuvable",
+      "body": "Ce regroupement enregistré n'est pas disponible pour ce compte."
+    },
+    "failed": {
+      "title": "Le regroupement n'a pas pu aboutir",
+      "body": "Vos résultats enregistrés sont inchangés. Réessayez plus tard ou ouvrez un autre regroupement enregistré."
+    },
+    "running": {
+      "title": "Regroupement en cours",
+      "body": "Le worker compare les résultats enregistrés et nomme les groupes. Cette vue se met à jour automatiquement."
+    }
+  },
+  "status": {
+    "queued": "En file d'attente",
+    "processing": "En cours",
+    "completed": "Terminé",
+    "failed": "Échoué"
+  },
+  "runs": {
+    "summary": "{{clusters}} groupes à partir de {{keywords}} mots-clés",
+    "requestedAt": "Demandé le {{date}}",
+    "open": "Ouvrir"
+  },
+  "blocked": {
+    "title": "{{count}} mots-clés n'ont pas pu participer",
+    "body": "Ces mots-clés suivis n'ont pas encore de résultat enregistré exploitable. Lancez un relevé de position et ils seront éligibles au prochain regroupement.",
+    "more": "et {{count}} de plus",
+    "observedAt": "dernier relevé {{date}}",
+    "reason": {
+      "missing": "Jamais relevé",
+      "stale": "Relevé trop ancien",
+      "empty": "Aucun résultat enregistré"
+    }
+  },
+  "results": {
+    "title": "Groupes",
+    "method": "Regroupés sur au moins {{shared}} résultats communs parmi les {{window}} premiers.",
+    "unlabeled": "La nomination des groupes était indisponible ou a été rejetée. Les groupes eux-mêmes sont inchangés — nommer ne déplace jamais un mot-clé."
+  },
+  "filters": {
+    "size": "Taille du groupe",
+    "sizeValue": {
+      "all": "Tous les groupes",
+      "grouped": "Mots-clés regroupés uniquement",
+      "singleton": "Mots-clés non regroupés uniquement"
+    }
+  },
+  "cluster": {
+    "unlabeled": "Groupe sans nom",
+    "aiSuggestion": "Suggestion IA",
+    "grouped": "{{count}} mots-clés",
+    "singleton": "Non regroupé",
+    "commonCore": "{{count}} résultats communs à tous les mots-clés",
+    "noCommonCore": "Aucun résultat n'est commun à tous les mots-clés de ce groupe",
+    "showEvidence": "Afficher le recoupement",
+    "hideEvidence": "Masquer le recoupement",
+    "pivot": "Référence",
+    "pivotWindow": "{{count}} résultats enregistrés comparés",
+    "sharedWithPivot": "{{count}} en commun avec le mot-clé de référence",
+    "evidenceTitle": "Quels résultats se recoupent",
+    "evidenceBody": "Chaque mot-clé ci-dessous est regroupé parce qu'il partage ces URL de résultats enregistrés avec le mot-clé de référence.",
+    "singletonEvidence": "Ce mot-clé partageait trop peu de résultats avec un autre mot-clé suivi pour être regroupé.",
+    "columns": {
+      "keyword": "Mot-clé",
+      "observedAt": "Résultat observé",
+      "sharedUrls": "Recoupement"
+    }
+  }
+}

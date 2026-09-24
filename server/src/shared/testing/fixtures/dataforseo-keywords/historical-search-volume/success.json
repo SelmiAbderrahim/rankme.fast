@@ -1,0 +1,58 @@
+{
+  "version": "0.1.20260101",
+  "status_code": 20000,
+  "status_message": "Ok.",
+  "time": "0.2411 sec.",
+  "cost": 0.0138,
+  "tasks_count": 1,
+  "tasks_error": 0,
+  "tasks": [
+    {
+      "id": "TASK_ID",
+      "status_code": 20000,
+      "status_message": "Ok.",
+      "time": "0.2211 sec.",
+      "cost": 0.0138,
+      "result_count": 1,
+      "path": ["v3", "dataforseo_labs", "google", "historical_search_volume", "live"],
+      "data": {
+        "api": "dataforseo_labs",
+        "function": "historical_search_volume",
+        "location_code": 2840,
+        "language_code": "en"
+      },
+      "result": [
+        {
+          "location_code": 2840,
+          "language_code": "en",
+          "total_count": 2,
+          "items_count": 2,
+          "items": [
+            {
+              "se_type": "google",
+              "keyword": "seo audit tool",
+              "keyword_info": {
+                "monthly_searches": [
+                  { "year": 2025, "month": 10, "search_volume": 5100 },
+                  { "year": 2025, "month": 11, "search_volume": 5200 },
+                  { "year": 2025, "month": 12, "search_volume": 5400 }
+                ]
+              }
+            },
+            {
+              "se_type": "google",
+              "keyword": "rank tracker",
+              "keyword_info": {
+                "monthly_searches": [
+                  { "year": 2025, "month": 10, "search_volume": 7700 },
+                  { "year": 2025, "month": 11, "search_volume": 7900 },
+                  { "year": 2025, "month": 12, "search_volume": 8100 }
+                ]
+              }
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

@@ -1,0 +1,56 @@
+{
+  "title": "Compte",
+  "description": "Gérez votre profil, la sécurité, les notifications, les connexions et vos données.",
+  "tabs": {
+    "profile": "Profil",
+    "security": "Sécurité",
+    "notifications": "Notifications",
+    "connections": "Connexions",
+    "branding": "Image de marque",
+    "mcp": "Autorisations MCP",
+    "privacy": "Données et confidentialité",
+    "api-keys": "Clés API"
+  },
+  "profile": {
+    "title": "Profil",
+    "subtitle": "Votre identité sur RankMeFast.",
+    "avatarAlt": "Votre photo de profil",
+    "emailLabel": "E-mail",
+    "verified": "E-mail vérifié",
+    "unverified": "E-mail non vérifié",
+    "memberSince": "Membre depuis {{date}}",
+    "displayNameLabel": "Nom affiché",
+    "displayNameHint": "Affiché dans l'application et sur vos e-mails.",
+    "save": "Enregistrer",
+    "saving": "Enregistrement…",
+    "saved": "Votre profil a été mis à jour.",
+    "errors": {
+      "nameRequired": "Saisissez un nom affiché.",
+      "nameTooLong": "Limitez votre nom à 80 caractères.",
+      "saveFailed": "Impossible d'enregistrer votre profil. Réessayez."
+    }
+  },
+  "privacy": {
+    "export": {
+      "title": "Exporter vos données",
+      "description": "Téléchargez une copie de vos données de compte au format JSON.",
+      "button": "Exporter mes données",
+      "exporting": "Préparation…",
+      "success": "Votre export de données a été téléchargé.",
+      "error": "Impossible d'exporter vos données. Réessayez."
+    },
+    "delete": {
+      "title": "Supprimer le compte",
+      "description": "Programmez la suppression définitive de votre compte et de vos données.",
+      "warning": "Ceci programme la suppression de votre compte après un délai de grâce. Contactez le support avant pour annuler.",
+      "button": "Supprimer mon compte",
+      "dialogTitle": "Supprimer votre compte ?",
+      "dialogBody": "Votre compte et vos données seront supprimés définitivement après le délai de grâce. Une fois ce délai écoulé, c'est irréversible.",
+      "cancel": "Annuler",
+      "confirm": "Oui, supprimer mon compte",
+      "deleting": "Programmation…",
+      "scheduled": "La suppression de votre compte est prévue le {{date}}.",
+      "error": "Impossible de programmer la suppression. Réessayez."
+    }
+  }
+}

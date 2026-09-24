@@ -1,0 +1,76 @@
+{
+  "version": "0.1.20260101",
+  "status_code": 20000,
+  "status_message": "Ok.",
+  "time": "0.0512 sec.",
+  "cost": 0,
+  "tasks_count": 1,
+  "tasks_error": 0,
+  "tasks": [
+    {
+      "id": "TASK_ID",
+      "status_code": 20000,
+      "status_message": "Ok.",
+      "time": "0.0210 sec.",
+      "cost": 0,
+      "result_count": 1,
+      "path": ["v3", "on_page", "pages"],
+      "result": [
+        {
+          "total_items_count": 2,
+          "items_count": 2,
+          "items": [
+            {
+              "url": "https://example.com/",
+              "status_code": 200,
+              "onpage_score": 87.5,
+              "meta": {
+                "title": "Example Domain",
+                "description": "An example page.",
+                "canonical": "https://example.com/",
+                "htags": {
+                  "h1": ["Example Domain"],
+                  "h2": ["More information"]
+                }
+              },
+              "checks": {
+                "no_title": false,
+                "no_description": false,
+                "no_h1_tag": false,
+                "has_micromarkup": true,
+                "has_micromarkup_errors": false,
+                "is_broken": false
+              },
+              "page_timing": {
+                "duration_time": 120,
+                "time_to_interactive": 300
+              }
+            },
+            {
+              "url": "https://example.com/hidden",
+              "status_code": 200,
+              "onpage_score": 41.2,
+              "meta": {
+                "title": null,
+                "description": null,
+                "canonical": null,
+                "htags": { "h1": [], "h2": [] }
+              },
+              "checks": {
+                "no_title": true,
+                "no_description": true,
+                "no_h1_tag": true,
+                "has_micromarkup": false,
+                "has_micromarkup_errors": true,
+                "is_broken": false
+              },
+              "page_timing": {
+                "duration_time": 300
+              }
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

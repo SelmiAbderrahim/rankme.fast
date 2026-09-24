@@ -1,0 +1,16 @@
+{
+  "success": true,
+  "data": {
+    "id": "TASK_ID",
+    "name": "rankmefast-weekly",
+    "status": "active",
+    "schedule": { "cron": "0 0 * * 0", "timezone": "UTC" },
+    "nextRunAt": "2026-07-27T00:00:00.000Z",
+    "lastRunAt": null,
+    "judgeEnabled": false,
+    "retentionDays": 30,
+    "estimatedCreditsPerMonth": 4,
+    "createdAt": "2026-07-20T00:00:00.000Z",
+    "updatedAt": "2026-07-20T00:00:00.000Z"
+  }
+}

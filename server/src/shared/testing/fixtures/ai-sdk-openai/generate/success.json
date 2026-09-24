@@ -1,0 +1,12 @@
+{
+  "output": { "ok": true },
+  "finishReason": "stop",
+  "usage": {
+    "inputTokens": 20,
+    "outputTokens": 4,
+    "cachedInputTokens": 2,
+    "reasoningTokens": 1
+  },
+  "warnings": []
+}
+

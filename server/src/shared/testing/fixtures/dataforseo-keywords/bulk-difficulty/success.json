@@ -1,0 +1,34 @@
+{
+  "version": "0.1.20260101",
+  "status_code": 20000,
+  "status_message": "Ok.",
+  "time": "0.0812 sec.",
+  "cost": 0.005,
+  "tasks_count": 1,
+  "tasks_error": 0,
+  "tasks": [
+    {
+      "id": "TASK_ID",
+      "status_code": 20000,
+      "status_message": "Ok.",
+      "time": "0.0512 sec.",
+      "cost": 0.005,
+      "result_count": 1,
+      "path": ["v3", "dataforseo_labs", "google", "bulk_keyword_difficulty", "live"],
+      "data": {
+        "api": "dataforseo_labs",
+        "function": "bulk_keyword_difficulty",
+        "location_code": 2840,
+        "language_code": "en"
+      },
+      "result": [
+        {
+          "items": [
+            { "keyword": "seo audit tool", "keyword_difficulty": 62 },
+            { "keyword": "rank tracker", "keyword_difficulty": 74 }
+          ]
+        }
+      ]
+    }
+  ]
+}

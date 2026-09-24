@@ -1,0 +1,69 @@
+{
+  "version": "0.1.20260101",
+  "status_code": 20000,
+  "status_message": "Ok.",
+  "time": "0.1832 sec.",
+  "cost": 0.0132,
+  "tasks_count": 1,
+  "tasks_error": 0,
+  "tasks": [
+    {
+      "id": "TASK_ID",
+      "status_code": 20000,
+      "status_message": "Ok.",
+      "time": "0.1602 sec.",
+      "cost": 0.0132,
+      "result_count": 1,
+      "path": ["v3", "dataforseo_labs", "google", "keyword_ideas", "live"],
+      "data": {
+        "api": "dataforseo_labs",
+        "function": "keyword_ideas",
+        "location_code": 2840,
+        "language_code": "en",
+        "keywords": ["seo audit tool"]
+      },
+      "result": [
+        {
+          "seed_keywords": ["seo audit tool"],
+          "location_code": 2840,
+          "language_code": "en",
+          "total_count": 2,
+          "items_count": 2,
+          "items": [
+            {
+              "keyword": "website audit checklist",
+              "location_code": 2840,
+              "language_code": "en",
+              "keyword_info": {
+                "search_volume": 2900,
+                "cpc": 2.35,
+                "competition": "MEDIUM",
+                "monthly_searches": [
+                  { "year": 2025, "month": 11, "search_volume": 2700 },
+                  { "year": 2025, "month": 12, "search_volume": 2900 }
+                ]
+              },
+              "keyword_properties": {
+                "keyword_difficulty": 41
+              }
+            },
+            {
+              "keyword": "free site health check",
+              "location_code": 2840,
+              "language_code": "en",
+              "keyword_info": {
+                "search_volume": 8800,
+                "cpc": 1.2,
+                "competition": "LOW",
+                "monthly_searches": null
+              },
+              "keyword_properties": {
+                "keyword_difficulty": null
+              }
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

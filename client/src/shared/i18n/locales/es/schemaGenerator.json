@@ -1,0 +1,144 @@
+{
+  "title": "Generador de marcado schema",
+  "description": "Crea JSON-LD para una página a partir de datos que ya guardamos sobre ella. Nada se inventa: si no podemos respaldar un campo con un dato, lo dejamos fuera y explicamos por qué.",
+  "new": {
+    "title": "Generar marcado",
+    "description": "Elige una página, elige un tipo y lee el coste antes de confirmar."
+  },
+  "source": {
+    "legend": "De dónde sale la página",
+    "audited": "Página auditada",
+    "inventory": "Página del inventario",
+    "url": "Pegar una dirección",
+    "auditedLegend": "Páginas de tu última auditoría",
+    "inventoryLegend": "Páginas a las que les falta un tipo de schema compatible",
+    "auditedEmpty": "Lanza primero una auditoría y sus páginas aparecerán aquí.",
+    "inventoryEmpty": "Ahora mismo ninguna página del inventario carece de un tipo de schema compatible.",
+    "hasStructuredData": "Ya tiene datos estructurados",
+    "noStructuredData": "No se encontraron datos estructurados",
+    "structuredDataErrors": "Errores en datos estructurados: {{n}}",
+    "richResultsVerdict": "Veredicto de Search Console: {{verdict}}",
+    "declaresNothing": "No declara ningún tipo de schema.org",
+    "declaresTypes": "Ya declara: {{types}}",
+    "urlLabel": "Dirección de la página",
+    "urlPlaceholder": "https://example.com/page",
+    "urlHint": "Leemos la página una vez por una conexión segura. Solo funcionan las direcciones públicas.",
+    "urlInvalid": "Escribe una dirección https completa, sin usuario ni contraseña."
+  },
+  "type": {
+    "legend": "Tipo de schema.org",
+    "required": "Obligatorias: {{n}}",
+    "recommended": "Recomendadas: {{n}}",
+    "alreadyDeclared": "Esta página ya declara este tipo."
+  },
+  "preview": {
+    "title": "Lo que cuesta",
+    "show": "Ver lo que cuesta",
+    "units": "{{count}} generación de tu cuota mensual.",
+    "units_other": "{{count}} generaciones de tu cuota mensual.",
+    "confirm": "Generar marcado",
+    "remaining": "Te queda en tu plan este mes: {{remaining}}.",
+    "pack": "Más {{units}} de los packs de créditos.",
+    "noFit": "Esto no cabe en lo que queda. Añade créditos o cambia de plan."
+  },
+  "result": {
+    "title": "Marcado {{type}}",
+    "back": "Volver a la lista",
+    "payload": "JSON-LD generado",
+    "copy": "Copiar",
+    "copied": "Copiado",
+    "download": "Descargar",
+    "downloadFailedTitle": "La descarga no empezó",
+    "downloadFailed": "No pudimos recuperar el archivo. Inténtalo otra vez.",
+    "failedTitle": "No se generó nada",
+    "failedProvider": "El modelo no respondió, así que no se guardó ningún marcado.",
+    "failedRejected": "Todos los campos que ofreció el modelo fallaron nuestra comprobación de datos; solo guardamos lo demostrable.",
+    "refunded": "Te devolvimos la unidad a tu cuota.",
+    "evidence": "De dónde sale cada campo",
+    "evidenceDescription": "Una línea por campo del marcado, con el dato guardado que lo respalda.",
+    "evidenceFrom": "de {{fact}}",
+    "evidenceEmpty": "Ningún campo pudo rellenarse con un dato guardado.",
+    "omissions": "Lo que dejamos fuera",
+    "omissionsDescription": "Campos sin un dato detrás y el motivo de cada ausencia.",
+    "omissionsEmpty": "No se dejó nada fuera."
+  },
+  "fact": {
+    "pageUrl": "URL de la página",
+    "canonicalUrl": "URL canónica",
+    "pageTitle": "Título de la página",
+    "metaDescription": "Metadescripción",
+    "headingOne": "Encabezado H1",
+    "headingTwo": "Encabezado H2",
+    "faqAnswer": "Respuesta de preguntas frecuentes",
+    "pageLanguage": "Idioma de la página",
+    "articlePublishedTime": "Hora de publicación del artículo",
+    "articleModifiedTime": "Hora de modificación del artículo",
+    "siteOrigin": "Origen del sitio",
+    "siteDomain": "Dominio del sitio",
+    "siteName": "Nombre del sitio"
+  },
+  "reason": {
+    "no_evidence": "no tenemos ningún dato al respecto",
+    "evidence_ambiguous": "los datos que tenemos no coinciden",
+    "not_applicable": "no se aplica a esta página"
+  },
+  "conformance": {
+    "title": "Comprobación frente a schema.org",
+    "conforms": "Este marcado cumple los requisitos de schema.org para el tipo {{type}}.",
+    "gaps": "Este marcado aún no cumple los requisitos de schema.org para el tipo {{type}}.",
+    "requiredTitle": "Completa esto para cumplir los requisitos",
+    "recommendedTitle": "Merece la pena añadir",
+    "requiredGap": "Añade {{property}} —",
+    "recommendedSuggestion": "Podrías añadir {{property}} en cuanto tengamos un dato para ello.",
+    "version": "Comprobado con la versión {{version}} del conjunto de propiedades."
+  },
+  "list": {
+    "title": "Marcado que has generado",
+    "caption": "Generaciones guardadas, la más reciente primero",
+    "free": "Volver a abrir una de estas no cuesta nada.",
+    "empty": "Todavía no has generado marcado para este sitio.",
+    "reopen": "Abrir",
+    "page": "Página",
+    "type": "Tipo",
+    "status": "Comprobación",
+    "statusConforms": "Requisitos cumplidos",
+    "statusGaps": "Falta una propiedad obligatoria",
+    "statusFailed": "No generado",
+    "generatedAt": "Generado"
+  },
+  "states": {
+    "empty": {
+      "title": "Aún no hay auditoría",
+      "body": "Lanza una auditoría de este sitio y sus páginas se podrán elegir aquí."
+    },
+    "cap": {
+      "title": "Cuota mensual agotada",
+      "body": "Has usado todas las generaciones de marcado de tu plan este mes.",
+      "link": "Ver planes"
+    },
+    "notOnPlan": {
+      "title": "No está en tu plan",
+      "body": "La generación de marcado empieza en el plan Starter."
+    },
+    "killSwitch": {
+      "title": "No disponible temporalmente",
+      "body": "Las generaciones nuevas están en pausa. El marcado que ya generaste sigue disponible."
+    },
+    "notFound": {
+      "title": "No encontrado",
+      "body": "Esa página o generación ya no está disponible."
+    },
+    "unsafeUrl": {
+      "title": "No podemos leer esa dirección",
+      "body": "Escribe una dirección de página https pública que tengamos permiso para leer."
+    },
+    "rateLimited": {
+      "title": "Demasiadas peticiones",
+      "body": "Espera un minuto y vuelve a intentarlo."
+    },
+    "failed": {
+      "title": "Algo salió mal",
+      "body": "No pudimos terminar esto. Inténtalo otra vez."
+    }
+  }
+}

@@ -1,0 +1,117 @@
+{
+  "title": "Asistente de IA",
+  "description": "Pregunta por tus datos SEO y permite que el asistente use las herramientas aprobadas.",
+  "loading": "Cargando conversaciones…",
+  "sidebar": {
+    "title": "Conversaciones",
+    "new": "Nueva conversación",
+    "label": "Conversaciones con el asistente",
+    "empty": "Aún no hay conversaciones.",
+    "untitled": "Nueva conversación",
+    "deleteLabel": "Eliminar {{title}}",
+    "deleteTitle": "¿Eliminar la conversación?",
+    "deleteDescription": "Esto elimina de forma permanente «{{title}}» y sus mensajes.",
+    "deleting": "Eliminando…"
+  },
+  "context": {
+    "label": "Contexto del sitio",
+    "none": "Sin sitio — orientación general",
+    "loading": "Cargando tus sitios…",
+    "linkedHelp": "El contexto del sitio queda fijo cuando comienza una conversación.",
+    "newHelp": "Opcional. Vincula un sitio antes de enviar el primer mensaje.",
+    "unavailable": "No se pudieron cargar tus sitios. Aun así, puedes iniciar una conversación general.",
+    "missing": "El sitio vinculado ya no está disponible"
+  },
+  "empty": {
+    "title": "¿Qué te gustaría mejorar?",
+    "description": "Pregunta con palabras sencillas. El asistente puede usar las herramientas SEO permitidas para tu cuenta.",
+    "examples": "Prueba una de estas preguntas",
+    "prompts": {
+      "audit": "Resume las correcciones más importantes de mi última auditoría.",
+      "rank": "¿Qué palabras clave seguidas cambiaron de posición recientemente?",
+      "sites": "Muéstrame los sitios de mi cuenta."
+    }
+  },
+  "composer": {
+    "label": "Mensaje",
+    "placeholder": "Pregunta por posiciones, auditorías, palabras clave o tus sitios…",
+    "send": "Enviar mensaje",
+    "sending": "Enviando…",
+    "stop": "Detener",
+    "hint": "Intro para enviar · Mayús+Intro para una línea nueva",
+    "characters": "{{count}} / {{max}} caracteres"
+  },
+  "messages": {
+    "label": "Mensajes de la conversación",
+    "user": "Tu mensaje",
+    "assistant": "Respuesta del asistente",
+    "streaming": "El asistente está respondiendo",
+    "loading": "Cargando conversación…"
+  },
+  "tool": {
+    "arguments": "Argumentos",
+    "result": "Resultado",
+    "waiting": "Esperando el resultado de la herramienta…",
+    "status": {
+      "running": "En curso",
+      "success": "Completada",
+      "failed": "Fallida"
+    },
+    "names": {
+      "listSites": "Listar sitios",
+      "latestAudit": "Último informe de auditoría",
+      "listKeywords": "Listar palabras clave",
+      "rankHistory": "Historial de posiciones",
+      "listAnalyses": "Listar análisis de contenido",
+      "contentAnalysis": "Análisis de contenido",
+      "startAudit": "Iniciar auditoría",
+      "auditStatus": "Estado de la auditoría",
+      "listActions": "Próximas acciones",
+      "setActionState": "Actualizar una acción"
+    }
+  },
+  "results": {
+    "empty": "La herramienta no devolvió filas.",
+    "notAvailable": "No disponible",
+    "notRanked": "Sin posición",
+    "keyword": "Palabra clave",
+    "date": "Fecha",
+    "position": "Posición",
+    "id": "ID",
+    "score": "Puntuación de comprobaciones superadas",
+    "fixNow": "Corregir ahora",
+    "topFindings": "Hallazgos principales",
+    "noFindings": "No se devolvieron hallazgos.",
+    "domain": "Dominio",
+    "url": "URL"
+  },
+  "states": {
+    "locked": {
+      "title": "El Asistente de IA está disponible desde Starter",
+      "description": "Mejora a Starter o un plan superior para conversar con tus datos SEO y las herramientas aprobadas.",
+      "action": "Comparar planes"
+    },
+    "cap": {
+      "title": "Mensajes mensuales utilizados",
+      "description": "Espera a que se renueve tu asignación mensual o comprueba si hay un paquete de chat configurado para tu cuenta.",
+      "buyCredits": "Comprar créditos de chat",
+      "seePlans": "Comparar planes"
+    },
+    "unavailable": {
+      "title": "Asistente no disponible temporalmente",
+      "description": "El asistente está desactivado o no puede responder ahora. Tus conversaciones guardadas no han cambiado."
+    },
+    "error": {
+      "title": "Algo interrumpió la conversación"
+    }
+  },
+  "errors": {
+    "featureLocked": "Mejora al plan Starter o superior para usar el asistente de IA.",
+    "capReached": "Has usado los mensajes del asistente de este mes. Compra un paquete de créditos o espera al reinicio.",
+    "forbidden": "No se pudo verificar tu solicitud. Actualiza la página e inténtalo de nuevo.",
+    "rateLimited": "Hay demasiadas solicitudes al asistente. Espera un momento e inténtalo de nuevo.",
+    "unavailable": "El asistente de IA no está disponible temporalmente.",
+    "streamFailed": "La respuesta se detuvo de forma inesperada. Vuelve a enviar tu mensaje.",
+    "generic": "La solicitud al asistente falló. Inténtalo de nuevo."
+  }
+}

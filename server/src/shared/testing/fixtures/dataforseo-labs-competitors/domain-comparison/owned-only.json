@@ -1,0 +1,42 @@
+{
+  "version": "0.1.20260801",
+  "status_code": 20000,
+  "status_message": "Ok.",
+  "cost": 0.024,
+  "tasks_count": 1,
+  "tasks_error": 0,
+  "tasks": [
+    {
+      "id": "TASK_ID",
+      "status_code": 20000,
+      "status_message": "Ok.",
+      "cost": 0.024,
+      "result_count": 1,
+      "result": [
+        {
+          "items_count": 1,
+          "items": [
+            {
+              "keyword_data": {
+                "keyword": "owned keyword",
+                "keyword_info": { "search_volume": 320 },
+                "keyword_properties": { "keyword_difficulty": 31 },
+                "search_intent_info": { "main_intent": "informational" }
+              },
+              "first_domain_serp_element": {
+                "serp_item": {
+                  "type": "organic",
+                  "rank_group": 4,
+                  "rank_absolute": 5,
+                  "url": "https://cross-domain.invalid/not-owned",
+                  "relative_url": "/owned-keyword"
+                }
+              },
+              "second_domain_serp_element": null
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

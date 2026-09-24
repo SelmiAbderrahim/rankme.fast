@@ -1,0 +1,124 @@
+{
+  "title": "AI Visibility",
+  "description": "Track buyer questions and see whether AI chat answers mention you.",
+  "loadFailed": "Could not load AI visibility.",
+  "form": {
+    "label": "Tracked prompt",
+    "placeholder": "best SEO audit tool for agencies",
+    "add": "Track prompt",
+    "adding": "Adding...",
+    "cap": "{{count}}/{{cap}} prompts tracked",
+    "capReached": "You can track up to {{cap}} prompts per site."
+  },
+  "prompts": {
+    "title": "Tracked prompts",
+    "empty": "No prompts tracked yet.",
+    "emptyTitle": "No prompts tracked yet",
+    "emptyCta": "Add your first prompt",
+    "prompt": "Prompt",
+    "status": "Status",
+    "sentiment": "Tone",
+    "mentioned": "Mentioned",
+    "notMentioned": "Not mentioned",
+    "remove": "Remove prompt",
+    "confirmRemove": {
+      "title": "Remove this prompt?",
+      "body": "This stops checking whether AI answers mention you for this prompt. You can add it again later.",
+      "confirm": "Remove",
+      "cancel": "Cancel"
+    }
+  },
+  "refresh": {
+    "button": "Check now",
+    "cooldown": "Wait {{seconds}}s before checking again.",
+    "failed": "Could not check AI visibility right now. Your last data is still shown.",
+    "success": "Checked {{total}} prompts — AI answers mention you for {{mentioned}}.",
+    "cost": "Uses {{prompts}} of your {{remaining}} checks left this month."
+  },
+  "lastChecked": "Last checked {{date}}",
+  "neverChecked": "Not checked yet",
+  "kpi": {
+    "shareOfVoice": "Share of voice",
+    "mentioned": "Prompts mentioning you",
+    "mentionedOf": "{{mentioned}} of {{total}}",
+    "mentionedContext": "Prompts where an AI answer named you in the last month",
+    "sentiment": "Tone of mentions",
+    "sentimentPositive": "warm",
+    "sentimentNeutral": "plain",
+    "sentimentNegative": "critical",
+    "sentimentContext": "Across all answers in the last month",
+    "checks": "Checks this month",
+    "checksUsed": "{{used}}/{{cap}}"
+  },
+  "notMentioned": {
+    "title": "Not showing up yet",
+    "body": "AI answers have not mentioned you for these prompts."
+  },
+  "details": {
+    "show": "Show engine details",
+    "hide": "Hide engine details",
+    "noCitation": "No cited page"
+  },
+  "trend": {
+    "title": "Mentions over time",
+    "description": "How often AI answers mention you, day by day.",
+    "emptyTitle": "No trend yet",
+    "empty": "Run two checks on different days to see a trend.",
+    "latest": "Latest: AI answers mention you in {{rate}}% of checks.",
+    "chartLabel": "Mention rate trend across {{count}} checked days",
+    "tableSummary": "Mention rate per day across {{count}} days",
+    "tableDate": "Date",
+    "tableRate": "Mention rate",
+    "tableShare": "Share of voice",
+    "tableChecks": "Checks",
+    "failed": "Could not load the trend."
+  },
+  "onboarding": {
+    "suggestionsReady": "Start with the suggested prompts below — one click tracks them all.",
+    "trackSuggestions": "Track suggested prompts",
+    "needKeywords": "Track keywords on the Keywords tab or run an audit to unlock suggestions."
+  },
+  "share": {
+    "title": "Share of voice",
+    "description": "How often AI answers name you vs competitors.",
+    "brand": "You",
+    "competitors": "Competitors",
+    "noData": "No data"
+  },
+  "sentiment": {
+    "positive": "Spoken about warmly",
+    "neutral": "Spoken about plainly",
+    "negative": "Spoken about critically",
+    "unknown": "Not evaluated"
+  },
+  "suggestions": {
+    "title": "Phrases people ask AI about",
+    "empty": "No suggested prompts yet.",
+    "emptyTitle": "No suggestions yet",
+    "emptyCta": "Track your own prompt",
+    "failed": "Could not load suggested prompts.",
+    "track": "Track this",
+    "trackAll": "Track all",
+    "trackingAll": "Tracking...",
+    "aiGenerated": "AI suggested",
+    "generate": "Generate suggestions",
+    "cooldown": "Wait {{seconds}}s before generating again.",
+    "cost": "Uses one of your {{remaining}} generations left this month.",
+    "capReached": "You have used all your suggestion generations this month.",
+    "emptyGenerated": "We could not build questions from your data yet. Add tracked keywords or run an audit, then generate again.",
+    "generatedAt": "Generated {{date}}",
+    "outputLocale": "Output language: {{locale}}",
+    "generateFailed": "Could not generate suggestions right now. Your generation was not counted.",
+    "generated": "Generated {{count}} suggested prompts."
+  },
+  "locked": {
+    "body": "AI Visibility is available on the Agency plan.",
+    "upgrade": "See plans"
+  },
+  "add": {
+    "failed": "Could not add that prompt."
+  },
+  "remove": {
+    "failed": "Could not remove that prompt."
+  }
+}

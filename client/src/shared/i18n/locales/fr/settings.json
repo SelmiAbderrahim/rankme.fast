@@ -1,0 +1,165 @@
+{
+  "notifications": {
+    "title": "Préférences de notifications",
+    "description": "Choisissez les e-mails non liés à la sécurité que vous souhaitez recevoir. Les e-mails de sécurité (réinitialisation de mot de passe, vérification d’e-mail, confirmations de changement de mot de passe) ne peuvent pas être désactivés.",
+    "emailHeading": "E-mail",
+    "loading": "Chargement de vos préférences…",
+    "securityNote": "Les e-mails de sécurité — réinitialisation de mot de passe, vérification d’e-mail et confirmations de changement de mot de passe — sont toujours envoyés, quelle que soit la configuration des commutateurs ci-dessus.",
+    "channels": {
+      "emailAuditComplete": {
+        "label": "Audit terminé",
+        "description": "M’avertir lorsqu’un audit se termine."
+      },
+      "emailRankDrop": {
+        "label": "Chute de position",
+        "description": "M’avertir lorsqu’un mot-clé suivi perd des positions."
+      },
+      "emailAlerts": {
+        "label": "Règles d’alerte",
+        "description": "Me prévenir quand une de mes règles d’alerte se déclenche."
+      },
+      "emailDunning": {
+        "label": "Facturation",
+        "description": "Reçus de paiement et rappels de paiement échoué."
+      },
+      "emailMarketing": {
+        "label": "Actualités produit",
+        "description": "Messages de bienvenue occasionnels, actualités et astuces."
+      }
+    },
+    "errors": {
+      "loadFailed": "Nous n’avons pas pu charger vos préférences de notifications. Veuillez actualiser.",
+      "saveFailed": "Nous n’avons pas pu enregistrer ce changement. Veuillez réessayer."
+    }
+  },
+  "apiKeys": {
+    "title": "Clés API",
+    "description": "Créez des clés pour les clients MCP. Avec le plan Agency, elles fonctionnent aussi avec l’API REST publique en lecture seule. Les outils MCP peuvent lancer des audits et consommer le quota du plan : gardez chaque clé secrète.",
+    "name": "Nom",
+    "prefix": "Clé",
+    "created": "Créée le",
+    "lastUsed": "Dernière utilisation",
+    "never": "Jamais",
+    "create": "Créer une clé",
+    "createTitle": "Créer une clé API",
+    "createDescription": "Donnez un nom à la clé pour la reconnaître plus tard — par exemple l'outil qui l'utilisera.",
+    "showOnceTitle": "Copiez votre clé API maintenant",
+    "showOnceWarning": "C'est la seule fois où nous afficherons cette clé. Conservez-la en lieu sûr — vous ne pourrez plus la revoir.",
+    "copy": "Copier",
+    "copied": "Copié",
+    "done": "Terminé",
+    "revoke": "Révoquer",
+    "revokedBadge": "Révoquée",
+    "revokeConfirmTitle": "Révoquer cette clé API ?",
+    "revokeConfirmDescription": "« {{name}} » cessera de fonctionner immédiatement. Cette action est irréversible.",
+    "empty": "Aucune clé API pour l'instant.",
+    "upgradeHint": "L’accès MCP et ses clés sont disponibles dès le plan Starter. L’API REST publique nécessite Agency. Passez à une offre supérieure pour connecter un client MCP.",
+    "upgradeCta": "Voir les plans",
+    "scopes": {
+      "column": "Accès",
+      "edit": "Modifier l’accès",
+      "restricted": "Restreint",
+      "unrestricted": "Sans restriction",
+      "restrictCreate": "Restreindre cette clé",
+      "restrictKey": "Utiliser des restrictions personnalisées",
+      "intersectionHint": "Les restrictions d’une clé peuvent réduire les autorisations du compte, jamais les élargir.",
+      "editTitle": "Modifier l’accès de la clé API",
+      "editDescription": "Choisissez les accès MCP de « {{name}} ».",
+      "unrestrictedDescription": "Cette clé suit les autorisations du compte sans ajouter de restriction.",
+      "save": "Enregistrer l’accès",
+      "saving": "Enregistrement de l’accès…",
+      "sitesFailed": "Impossible de charger vos sites. Laissez l’accès aux sites sans restriction et réessayez plus tard."
+    },
+    "errors": {
+      "loadFailed": "Impossible de charger vos clés API. Veuillez actualiser.",
+      "createFailed": "Impossible de créer cette clé. Veuillez réessayer.",
+      "revokeFailed": "Impossible de révoquer cette clé. Veuillez réessayer.",
+      "scopesSaveFailed": "Impossible d’enregistrer l’accès de cette clé. Veuillez réessayer.",
+      "nameRequired": "Saisissez un nom de 1 à 60 caractères."
+    }
+  },
+  "mcp": {
+    "title": "Autorisations MCP",
+    "description": "Définissez les autorisations du compte utilisées par les clés MCP et les outils de l’Assistant. Par défaut, tous les outils et sites sont autorisés.",
+    "loading": "Chargement des autorisations MCP…",
+    "save": "Enregistrer les autorisations",
+    "saving": "Enregistrement des autorisations…",
+    "saved": "Autorisations MCP enregistrées.",
+    "retry": "Réessayer",
+    "locked": {
+      "title": "Connectez MCP avec Starter ou une offre supérieure",
+      "description": "Passez à une offre supérieure pour créer des clés API et connecter RankMeFast à un client MCP.",
+      "cta": "Voir les plans"
+    },
+    "tools": {
+      "title": "Outils autorisés",
+      "description": "Désactivez les outils que les clients MCP et l’Assistant ne doivent pas pouvoir utiliser.",
+      "list_sites": { "name": "Lister les sites", "description": "Voir les sites de ce compte." },
+      "get_latest_audit_report": { "name": "Obtenir le dernier rapport d’audit", "description": "Lire le dernier audit terminé d’un site." },
+      "list_keywords": { "name": "Lister les mots-clés", "description": "Voir les mots-clés suivis d’un site." },
+      "get_rank_history": { "name": "Obtenir l’historique des positions", "description": "Lire les positions récentes des mots-clés suivis." },
+      "list_content_analyses": { "name": "Lister les analyses de contenu", "description": "Voir les analyses Content Intelligence d’un site." },
+      "get_content_analysis": { "name": "Obtenir une analyse de contenu", "description": "Lire une analyse Content Intelligence." },
+      "start_audit": { "name": "Démarrer un audit", "description": "Démarrer un audit qui utilise le quota mensuel du compte." },
+      "get_audit_status": { "name": "Obtenir l’état d’un audit", "description": "Vérifier si un audit est en attente, en cours ou terminé." },
+      "list_actions": { "name": "Lister les actions à venir", "description": "Lire la liste priorisée des correctifs d’un site, avec l’état de chaque élément." },
+      "set_action_state": { "name": "Mettre à jour une action", "description": "Marquer une action comme prévue, écartée, terminée ou de nouveau ouverte." }
+    },
+    "spend": {
+      "title": "Actions consommant le quota",
+      "label": "Autoriser les outils qui utilisent le quota du plan",
+      "description": "Si cette option est désactivée, les outils comme Démarrer un audit restent bloqués même si leur autorisation est active."
+    },
+    "sites": {
+      "title": "Sites autorisés",
+      "description": "Limitez les outils à certains sites ou autorisez tous les sites.",
+      "all": "Autoriser tous les sites",
+      "allDescription": "Cela inclut aussi les sites ajoutés plus tard.",
+      "empty": "Ajoutez un site avant de créer une restriction par site.",
+      "unavailable": "Site indisponible",
+      "removeHint": "N’est plus disponible dans ce compte"
+    },
+    "quickStart": {
+      "title": "Démarrage rapide",
+      "description": "Créez une clé API, puis copiez le point d’accès ou une configuration client prête à l’emploi.",
+      "endpoint": "Point d’accès MCP",
+      "copyEndpoint": "Copier le point d’accès MCP",
+      "copy": "Copier",
+      "copyConfig": "Copier la configuration {{client}}",
+      "copied": "Copié",
+      "claudeCode": "Claude Code",
+      "cursor": "Cursor",
+      "apiKeys": "Gérer les clés API",
+      "copyError": "Votre navigateur n’a pas pu copier cette valeur. Sélectionnez le texte et copiez-le manuellement."
+    },
+    "errors": {
+      "loadFailed": "Impossible de charger les autorisations MCP. Veuillez réessayer.",
+      "saveFailed": "Impossible d’enregistrer les autorisations MCP. Veuillez réessayer.",
+      "sitesFailed": "Impossible de charger vos sites. Les restrictions par site peuvent être incomplètes."
+    }
+  },
+  "branding": {
+    "title": "Image de marque des PDF",
+    "description": "Apposez votre propre nom sur les rapports PDF téléchargés. Le nom de la société et la couleur d’accent apparaissent dans l’en-tête du PDF.",
+    "companyName": "Nom de la société",
+    "accentColor": "Couleur d’accent",
+    "invalidColor": "Saisissez une couleur comme #b5321e, ou laissez le champ vide.",
+    "save": "Enregistrer la marque",
+    "saved": "Image de marque enregistrée.",
+    "upgradeHint": "Les rapports PDF en marque blanche sont disponibles avec les forfaits Pro et Agency. Passez à l’offre supérieure pour personnaliser vos rapports.",
+    "upgradeCta": "Voir les forfaits",
+    "logo": {
+      "label": "Logo de la société",
+      "help": "PNG uniquement, 256 Ko maximum. Les images sont redimensionnées et réencodées avant leur stockage.",
+      "invalidType": "Choisissez une image PNG.",
+      "tooLarge": "Choisissez une image PNG de moins de 256 Ko.",
+      "readFailed": "Impossible de lire cette image. Choisissez un autre fichier PNG.",
+      "previewAlt": "Aperçu du logo de la société",
+      "remove": "Supprimer le logo"
+    },
+    "errors": {
+      "loadFailed": "Impossible de charger votre image de marque. Veuillez actualiser.",
+      "saveFailed": "Impossible d’enregistrer votre image de marque. Veuillez réessayer."
+    }
+  }
+}

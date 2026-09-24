@@ -1,0 +1,56 @@
+{
+  "title": "Konto",
+  "description": "Verwalten Sie Ihr Profil, Sicherheit, Benachrichtigungen, Verbindungen und Daten.",
+  "tabs": {
+    "profile": "Profil",
+    "security": "Sicherheit",
+    "notifications": "Benachrichtigungen",
+    "connections": "Verbindungen",
+    "branding": "Branding",
+    "mcp": "MCP-Berechtigungen",
+    "privacy": "Daten & Datenschutz",
+    "api-keys": "API-Schlüssel"
+  },
+  "profile": {
+    "title": "Profil",
+    "subtitle": "Ihre Identität bei RankMeFast.",
+    "avatarAlt": "Ihr Profilbild",
+    "emailLabel": "E-Mail",
+    "verified": "E-Mail bestätigt",
+    "unverified": "E-Mail nicht bestätigt",
+    "memberSince": "Mitglied seit {{date}}",
+    "displayNameLabel": "Anzeigename",
+    "displayNameHint": "Wird in der App und in Ihren E-Mails angezeigt.",
+    "save": "Änderungen speichern",
+    "saving": "Wird gespeichert…",
+    "saved": "Ihr Profil wurde aktualisiert.",
+    "errors": {
+      "nameRequired": "Geben Sie einen Anzeigenamen ein.",
+      "nameTooLong": "Halten Sie Ihren Namen unter 80 Zeichen.",
+      "saveFailed": "Wir konnten Ihr Profil nicht speichern. Bitte versuchen Sie es erneut."
+    }
+  },
+  "privacy": {
+    "export": {
+      "title": "Daten exportieren",
+      "description": "Laden Sie eine Kopie Ihrer Kontodaten als JSON-Datei herunter.",
+      "button": "Meine Daten exportieren",
+      "exporting": "Wird vorbereitet…",
+      "success": "Ihr Datenexport wurde heruntergeladen.",
+      "error": "Wir konnten Ihre Daten nicht exportieren. Bitte versuchen Sie es erneut."
+    },
+    "delete": {
+      "title": "Konto löschen",
+      "description": "Planen Sie die dauerhafte Löschung Ihres Kontos und Ihrer Daten.",
+      "warning": "Dies plant die Löschung Ihres Kontos nach einer Kulanzfrist. Wenden Sie sich vorher an den Support, um abzubrechen.",
+      "button": "Mein Konto löschen",
+      "dialogTitle": "Ihr Konto löschen?",
+      "dialogBody": "Ihr Konto und Ihre Daten werden nach der Kulanzfrist dauerhaft entfernt. Nach Ablauf dieser Frist ist dies unwiderruflich.",
+      "cancel": "Abbrechen",
+      "confirm": "Ja, mein Konto löschen",
+      "deleting": "Wird geplant…",
+      "scheduled": "Ihr Konto ist zur Löschung am {{date}} vorgemerkt.",
+      "error": "Wir konnten die Löschung nicht planen. Bitte versuchen Sie es erneut."
+    }
+  }
+}

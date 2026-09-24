@@ -1,0 +1,4 @@
+DROP INDEX "ai_prompt_suggestion_runs_account_site_generated_idx";--> statement-breakpoint
+ALTER TABLE "ai_prompt_suggestion_runs" ADD COLUMN "output_locale" text DEFAULT 'en' NOT NULL;--> statement-breakpoint
+CREATE INDEX "ai_prompt_suggestion_runs_account_site_locale_generated_idx" ON "ai_prompt_suggestion_runs" USING btree ("account_id","site_id","output_locale","generated_at" DESC NULLS LAST);--> statement-breakpoint
+ALTER TABLE "ai_prompt_suggestion_runs" ADD CONSTRAINT "ai_prompt_suggestion_runs_output_locale_check" CHECK ("ai_prompt_suggestion_runs"."output_locale" in ('en', 'ar', 'fr', 'de', 'es', 'ru', 'zh'));

@@ -1,0 +1,213 @@
+{
+  "settings": {
+    "title": "Google Search Console",
+    "subtitle": "Подключите Search Console, чтобы RankMeFast показывал реальный статус индексации и вердикты расширенных результатов в ваших аудитах."
+  },
+  "connect": {
+    "title": "Подключить Google Search Console",
+    "description": "Разрешите RankMeFast читать статус индексации и вердикты расширенных результатов из Search Console. Требуется подтверждённый ресурс.",
+    "cta": "Подключить через Google",
+    "connecting": "Подключение…",
+    "scopeNote": "Мы запрашиваем доступ только для чтения к данным Search Console."
+  },
+  "connected": {
+    "title": "Подключено",
+    "subtitle": "Выберите, какой ресурс Search Console использует RankMeFast.",
+    "emailLabel": "Вход выполнен как",
+    "propertyLabel": "Ресурс Search Console",
+    "propertyPlaceholder": "Выберите ресурс",
+    "propertyMissing": "Подтверждённые ресурсы не найдены — мы определим совпадение при следующем аудите.",
+    "connectedAt": "Подключено {{date}}",
+    "lastUsedAt": "Последнее использование {{date}}",
+    "lastUsedNever": "Ещё не использовалось",
+    "disconnect": "Отвязать этот сайт"
+  },
+  "needsReconnect": {
+    "title": "Соединение с Google нужно переустановить",
+    "body": "Google требует повторного согласия — это происходит, если вы отозвали доступ или соединение месяцами не использовалось. Аудиты всё равно выполняются, но данных об индексации не будет.",
+    "cta": "Переподключить"
+  },
+  "disconnect": {
+    "confirmTitle": "Отвязать Google от этого сайта?",
+    "confirmBody": "Настройки Search Console и Analytics для этого сайта будут удалены. Другие сайты и общий вход Google останутся подключёнными.",
+    "confirm": "Отвязать сайт",
+    "cancel": "Отмена",
+    "success": "Google Search Console отключён.",
+    "siteUnlinked": "Google отвязан от этого сайта."
+  },
+  "revoke": {
+    "cta": "Отозвать доступ Google везде",
+    "confirmTitle": "Отозвать общее подключение Google?",
+    "confirmBody": "Доступ Google будет отозван, а все подключённые сайты ({{count}}) — отвязаны. Ограничить действие текущим сайтом нельзя.",
+    "confirm": "Отозвать везде"
+  },
+  "autoMatch": {
+    "queued": "Проверяем ресурсы Google для этого сайта…",
+    "matching": "Подбираем ресурсы Google для этого сайта…",
+    "ambiguous": "Сайту соответствуют несколько ресурсов. Выберите один ниже.",
+    "no_match": "Точное совпадение не найдено. Выберите ресурс ниже.",
+    "scope_missing": "Доступ к Analytics ещё не предоставлен.",
+    "needs_reconnect": "Переподключите Google перед подбором ресурсов.",
+    "unavailable": "Автоматический подбор временно недоступен. Ресурс можно выбрать ниже.",
+    "not_connected": "Подключите Google, чтобы подобрать ресурс для сайта."
+  },
+  "errors": {
+    "missingScope": "У этого подключения нет разрешения Search Console. Подключитесь снова и оставьте флажок включённым.",
+    "notConnected": "Вы ещё не подключили Google Search Console.",
+    "invalidProperty": "Этот ресурс не входит в число подтверждённых ресурсов Search Console. Выберите один из списка.",
+    "quotaExceeded": "Дневная квота Search Console исчерпана. Попробуйте завтра.",
+    "unavailable": "Не удалось связаться с Google Search Console. Повторите попытку позже.",
+    "loadFailed": "Не удалось загрузить подключение к Google.",
+    "disconnectFailed": "Не удалось отключить.",
+    "linkFailed": "Не удалось подключить этот аккаунт Google. Выберите тот же аккаунт, под которым вы вошли, и предоставьте доступ к Search Console."
+  },
+  "scopes": {
+    "label": "Доступ",
+    "searchConsole": "Search Console",
+    "analytics": "Аналитика",
+    "granted": "предоставлен",
+    "notGranted": "не предоставлен"
+  },
+  "range": {
+    "label": "Диапазон дат",
+    "7d": "Последние 7 дней",
+    "28d": "Последние 28 дней",
+    "90d": "Последние 90 дней"
+  },
+  "searchSummary": {
+    "title": "Эффективность поиска (последние {{days}} дней)",
+    "clicks": "Клики",
+    "impressions": "Показы",
+    "ctr": "Кликабельность",
+    "position": "Средняя позиция",
+    "topQueries": "Популярные запросы",
+    "topPages": "Популярные страницы",
+    "viewAll": "Показать все",
+    "viewAllLabel": "Показать все — {{section}}",
+    "sitemapsLink": "Посмотреть файлы Sitemap",
+    "asOf": "Данные по {{date}}",
+    "previousPeriod": "Предыдущий период: {{clicks}} кликов · {{impressions}} показов",
+    "reportLink": "Смотреть все данные в отчёте",
+    "emptyTitle": "Данных поиска пока нет",
+    "emptyCta": "Управление подключением",
+    "empty": "Данных поиска пока нет. Запустите аудит, и эта сводка заполнится автоматически.",
+    "error": "Не удалось загрузить сводку поиска. Повторите попытку позже.",
+    "retry": "Повторить",
+    "refresh": "Обновить данные поиска",
+    "refreshing": "Обновление…",
+    "refreshError": "Не удалось обновить данные поиска. Повторите попытку позже.",
+    "refreshedJustNow": "Только что обновлено",
+    "timeseriesTitle": "Клики и показы во времени",
+    "timeseriesSubtitle": "Ежедневные итоги за последние {{days}} дней.",
+    "timeseriesEmpty": "Пока нет ежедневных данных.",
+    "timeseriesChartLabel": "Ежедневные {{metric}} за последние {{days}} дней",
+    "timeseriesTableCaption": "Ежедневная эффективность поиска за последние {{days}} дней",
+    "tableDate": "Дата",
+    "metricLabel": "Выберите метрику для графика",
+    "countriesTitle": "Топ стран",
+    "countriesEmpty": "Пока нет данных по странам.",
+    "countriesTableCaption": "Клики по странам",
+    "countryHeader": "Страна",
+    "devicesTitle": "Устройства",
+    "devicesEmpty": "Пока нет данных по устройствам.",
+    "devicesTableCaption": "Клики по устройствам",
+    "deviceHeader": "Устройство",
+    "devices": {
+      "desktop": "Компьютер",
+      "mobile": "Мобильный",
+      "tablet": "Планшет",
+      "unknown": "Другое"
+    }
+  },
+  "analytics": {
+    "title": "Google Analytics (последние {{days}} дней)",
+    "sessions": "Сеансы",
+    "activeUsers": "Активные пользователи",
+    "engagedSessions": "Сеансы со взаимодействием",
+    "keyEvents": "Ключевые события",
+    "engagementRateLabel": "Уровень вовлечённости",
+    "engagementRateLine": "Уровень вовлечённости: {{rate}}",
+    "previousPeriod": "Предыдущий период: {{sessions}} сеансов · {{activeUsers}} активных пользователей",
+    "emptyTitle": "Данных аналитики пока нет",
+    "empty": "Данных аналитики пока нет. Данные появятся вскоре после подключения ресурса — попробуйте обновить.",
+    "error": "Не удалось загрузить сводку аналитики. Повторите попытку позже.",
+    "refresh": "Обновить данные аналитики",
+    "refreshError": "Не удалось обновить данные аналитики. Повторите попытку позже.",
+    "timeseriesTitle": "Сеансы и активные пользователи во времени",
+    "timeseriesSubtitle": "Ежедневные итоги за последние {{days}} дней.",
+    "timeseriesChartLabel": "Ежедневные {{metric}} за последние {{days}} дней",
+    "timeseriesTableCaption": "Ежедневная эффективность аналитики за последние {{days}} дней",
+    "channelsTitle": "Каналы",
+    "channelsEmpty": "Пока нет данных по каналам.",
+    "channelsTableCaption": "Сеансы по каналам",
+    "channelHeader": "Канал",
+    "pagesTitle": "Популярные страницы",
+    "pagesEmpty": "Пока нет данных по страницам.",
+    "pagesTableCaption": "Сеансы по страницам",
+    "pageHeader": "Страница",
+    "countriesTitle": "Топ стран",
+    "countriesEmpty": "Пока нет данных по странам.",
+    "countriesTableCaption": "Сеансы по странам",
+    "countryHeader": "Страна",
+    "devicesTitle": "Устройства",
+    "devicesEmpty": "Пока нет данных по устройствам.",
+    "devicesTableCaption": "Сеансы по устройствам",
+    "deviceHeader": "Устройство",
+    "locked": {
+      "body": "Статистика Google Analytics доступна в тарифе Pro и выше. Перейдите на более высокий тариф, чтобы видеть сеансы, вовлечённость и ключевые события рядом с данными поиска.",
+      "upgrade": "Повысить тариф"
+    },
+    "enableTitle": "Google Analytics не подключён",
+    "enableBody": "Предоставьте доступ только для чтения к Google Analytics, чтобы видеть сеансы, вовлечённость и ключевые события этого сайта.",
+    "enableCta": "Подключить Google Analytics",
+    "pickerHint": "Выберите, какой ресурс Google Analytics использует RankMeFast.",
+    "propertyLabel": "Ресурс Analytics",
+    "propertyPlaceholder": "Выберите ресурс",
+    "propertyNone": "Для этого аккаунта не найдено ресурсов Google Analytics.",
+    "propertiesError": "Не удалось загрузить ресурсы Analytics. Повторите попытку позже.",
+    "setPropertyError": "Не удалось сохранить этот ресурс Analytics. Повторите попытку позже.",
+    "settingsTitle": "Google Аналитика",
+    "settingsSubtitle": "Выберите, какой ресурс GA4 использует RankMeFast."
+  },
+  "searchDetail": {
+    "back": "Обзор",
+    "views": {
+      "queries": "Популярные запросы",
+      "pages": "Популярные страницы",
+      "countries": "Топ стран",
+      "devices": "Устройства",
+      "sitemaps": "Файлы Sitemap"
+    },
+    "searchLabel": "Фильтровать строки",
+    "searchPlaceholder": "Фильтр…",
+    "noMatches": "Ни одна строка не соответствует фильтру.",
+    "loadMore": "Загрузить ещё",
+    "error": "Не удалось загрузить эти данные. Повторите попытку позже.",
+    "columns": {
+      "query": "Поисковый запрос",
+      "page": "Страница",
+      "country": "Страна",
+      "device": "Устройство",
+      "clicks": "Клики",
+      "impressions": "Показы",
+      "ctr": "CTR",
+      "position": "Позиция",
+      "actions": "Действия"
+    },
+    "sitemaps": {
+      "empty": "Файлы Sitemap ещё не отправлены.",
+      "columns": {
+        "path": "Файл Sitemap",
+        "type": "Тип",
+        "lastSubmitted": "Последняя отправка",
+        "processed": "Обработано",
+        "status": "Статус"
+      },
+      "status": {
+        "ok": "OK",
+        "errors": "Ошибок: {{n}}",
+        "warnings": "Предупреждений: {{n}}"
+      }
+    }
+  }
+}

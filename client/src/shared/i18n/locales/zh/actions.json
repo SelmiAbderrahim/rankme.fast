@@ -1,0 +1,152 @@
+{
+  "title": "后续行动",
+  "description": "来自每个已连接数据源的优先修复项和机会，汇总在一个工作清单中。",
+  "status": {
+    "loading": "正在加载行动…",
+    "refreshing": "正在刷新行动…",
+    "showing": "正在显示 {{count}} 个行动"
+  },
+  "errors": {
+    "loadFailed": "无法加载行动，请重试。",
+    "unauthorized": "需要重新登录才能查看此内容。"
+  },
+  "notFound": {
+    "title": "这里没有内容",
+    "body": "找不到该站点或行动。"
+  },
+  "filters": {
+    "label": "筛选行动",
+    "reset": "重置筛选",
+    "all": "全部",
+    "state": "状态",
+    "source": "来源",
+    "severity": "严重程度",
+    "confidence": "可信度",
+    "effort": "工作量"
+  },
+  "pagination": {
+    "previous": "上一页",
+    "next": "下一页"
+  },
+  "state": {
+    "open": "待处理",
+    "planned": "已计划",
+    "dismissed": "已忽略",
+    "completed": "已完成"
+  },
+  "source": {
+    "audit_finding": "站点审计",
+    "confirmed_rank_drop": "已确认的排名下降",
+    "gsc_decline": "Search Console 下滑",
+    "ga4_decline": "Analytics 下滑",
+    "content_recommendation": "内容建议",
+    "citation_gap": "AI 引用缺口",
+    "audience_research": "受众研究"
+  },
+  "severity": {
+    "critical": "严重",
+    "warning": "警告",
+    "info": "提示"
+  },
+  "impact": {
+    "high": "影响大",
+    "medium": "影响中等",
+    "low": "影响小",
+    "none": "未测得影响"
+  },
+  "confidence": {
+    "high": "可信度高",
+    "medium": "可信度中等",
+    "low": "可信度低"
+  },
+  "effort": {
+    "low": "工作量小",
+    "medium": "工作量中等",
+    "high": "工作量大"
+  },
+  "freshness": {
+    "fresh": "最新",
+    "stale": "已过时",
+    "unavailable": "未验证"
+  },
+  "card": {
+    "nextStep": "下一步",
+    "observedAt": "观测于 {{date}}",
+    "openSource": "打开来源视图",
+    "affectedNone": "全站范围",
+    "affectedOne": "1 个受影响的网址",
+    "affectedCount": "{{count}} 个受影响的网址",
+    "evidence": "证据",
+    "evidenceLink": "打开证据来源",
+    "history": "历史记录",
+    "retest": "重新检测"
+  },
+  "transitions": {
+    "planned": "计划",
+    "dismissed": "忽略",
+    "completed": "完成",
+    "open": "重新打开"
+  },
+  "stateDialog": {
+    "titles": {
+      "planned": "要计划此行动吗？",
+      "dismissed": "要忽略此行动吗？",
+      "completed": "要将此行动标记为已完成吗？",
+      "open": "要重新打开此行动吗？"
+    },
+    "consequences": {
+      "planned": "该行动将移入你的计划清单。之后可以重新打开或完成它。",
+      "dismissed": "该行动将离开你的待处理清单。它会保留在历史记录中，随时可以重新打开。",
+      "completed": "该行动将标记为已完成。如果问题再次出现，后续检查仍可重新打开它。",
+      "open": "该行动将回到你的待处理清单。"
+    },
+    "noteLabel": "添加备注（可选）",
+    "noteCount": "{{used}} / {{max}} 个字符",
+    "confirm": "确认",
+    "saving": "保存中…",
+    "conflict": "其他人先修改了此行动。请重新加载后再试。",
+    "conflictReload": "重新加载行动"
+  },
+  "history": {
+    "title": "行动历史",
+    "empty": "尚无变更记录。",
+    "actor": "团队成员",
+    "from": "自「{{state}}」",
+    "close": "关闭"
+  },
+  "retest": {
+    "title": "要重新检测此发现吗？",
+    "description": "重新检测会运行一次全新的站点审计，并更新所有基于审计的行动。",
+    "unitsLabel": "消耗的审计次数",
+    "unitsValue": "1",
+    "freshRun": "重新检测始终重新抓取——结果绝不来自缓存。",
+    "remaining": "本周期剩余 {{remaining}} / {{cap}} 次审计",
+    "allowanceUnknown": "无法加载剩余额度。服务器在运行前仍会检查你的限额。",
+    "confirm": "开始重新检测",
+    "starting": "正在启动…",
+    "queued": "重新检测已加入队列。请在报告标签页跟踪进度。",
+    "viewProgress": "查看报告进度"
+  },
+  "sources": {
+    "partial": "部分数据源目前已过时或不可用，此列表可能不完整。",
+    "unavailableTitle": "数据源不可用",
+    "unavailableBody": "目前无法检查你的数据源，因此无法显示任何行动。这并不代表一切正常。",
+    "clearTitle": "暂无需要你关注的事项",
+    "clearBody": "所有已连接的数据源目前都没有报告待处理的行动。"
+  },
+  "overview": {
+    "viewAll": "查看全部行动",
+    "open": "打开",
+    "degraded": "部分数据源不可用——此列表可能不完整。",
+    "error": "无法加载行动。",
+    "retry": "重试"
+  },
+  "report": {
+    "dismissCta": "作为误报忽略",
+    "reopenCta": "重新打开发现",
+    "dismissedLabel": "已作为误报忽略",
+    "fixCta": "标记为已修复",
+    "fixedLabel": "已标记为已修复",
+    "reappearedLabel": "标记为已修复后仍被检测到"
+  }
+}

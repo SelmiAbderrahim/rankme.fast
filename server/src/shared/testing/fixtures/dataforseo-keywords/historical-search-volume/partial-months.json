@@ -1,0 +1,47 @@
+{
+  "version": "0.1.20260101",
+  "status_code": 20000,
+  "status_message": "Ok.",
+  "time": "0.1104 sec.",
+  "cost": 0.0022,
+  "tasks_count": 1,
+  "tasks_error": 0,
+  "tasks": [
+    {
+      "id": "TASK_ID",
+      "status_code": 20000,
+      "status_message": "Ok.",
+      "time": "0.0901 sec.",
+      "cost": 0.0022,
+      "result_count": 1,
+      "path": ["v3", "dataforseo_labs", "google", "historical_search_volume", "live"],
+      "data": {
+        "api": "dataforseo_labs",
+        "function": "historical_search_volume",
+        "location_code": 2840,
+        "language_code": "en"
+      },
+      "result": [
+        {
+          "location_code": 2840,
+          "language_code": "en",
+          "total_count": 1,
+          "items_count": 1,
+          "items": [
+            {
+              "se_type": "google",
+              "keyword": "seo audit tool",
+              "keyword_info": {
+                "monthly_searches": [
+                  { "year": 2025, "month": 11, "search_volume": 5200 },
+                  { "year": 2025, "month": 12, "search_volume": null },
+                  { "year": 2026, "month": 1, "search_volume": 5500 }
+                ]
+              }
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

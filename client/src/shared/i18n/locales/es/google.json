@@ -1,0 +1,213 @@
+{
+  "settings": {
+    "title": "Google Search Console",
+    "subtitle": "Conecta Search Console para que RankMeFast muestre el estado de indexación real y los veredictos de resultados enriquecidos en tus auditorías."
+  },
+  "connect": {
+    "title": "Conectar Google Search Console",
+    "description": "Permite a RankMeFast leer el estado de indexación y los veredictos de resultados enriquecidos desde Search Console. Requiere una propiedad verificada.",
+    "cta": "Conectar con Google",
+    "connecting": "Conectando…",
+    "scopeNote": "Solicitamos acceso de solo lectura a tus datos de Search Console."
+  },
+  "connected": {
+    "title": "Conectado",
+    "subtitle": "Elige qué propiedad de Search Console usa RankMeFast.",
+    "emailLabel": "Conectado como",
+    "propertyLabel": "Propiedad de Search Console",
+    "propertyPlaceholder": "Selecciona una propiedad",
+    "propertyMissing": "No se encontraron propiedades verificadas — detectaremos una coincidencia en la próxima auditoría.",
+    "connectedAt": "Conectado el {{date}}",
+    "lastUsedAt": "Último uso el {{date}}",
+    "lastUsedNever": "Nunca utilizada",
+    "disconnect": "Desvincular este sitio"
+  },
+  "needsReconnect": {
+    "title": "Tu conexión con Google necesita renovarse",
+    "body": "Google exige un nuevo consentimiento — esto ocurre si revocaste el acceso o la conexión estuvo meses sin uso. Las auditorías siguen ejecutándose, pero faltarán los datos de indexación.",
+    "cta": "Reconectar"
+  },
+  "disconnect": {
+    "confirmTitle": "¿Desvincular Google de este sitio?",
+    "confirmBody": "Esto elimina las selecciones de Search Console y Analytics de este sitio. Los demás sitios y el acceso compartido de Google siguen conectados.",
+    "confirm": "Desvincular sitio",
+    "cancel": "Cancelar",
+    "success": "Google Search Console desconectado.",
+    "siteUnlinked": "Google se desvinculó de este sitio."
+  },
+  "revoke": {
+    "cta": "Revocar el acceso de Google en todos los sitios",
+    "confirmTitle": "¿Revocar la conexión compartida de Google?",
+    "confirmBody": "Esto revoca el acceso de Google y desvincula los {{count}} sitios conectados. No se puede limitar al sitio actual.",
+    "confirm": "Revocar en todos"
+  },
+  "autoMatch": {
+    "queued": "Comprobando las propiedades de Google de este sitio…",
+    "matching": "Buscando la propiedad de Google correspondiente a este sitio…",
+    "ambiguous": "Más de una propiedad coincide con este sitio. Elige una abajo.",
+    "no_match": "No se encontró una coincidencia exacta. Elige una propiedad abajo.",
+    "scope_missing": "Aún no se ha concedido acceso a Analytics.",
+    "needs_reconnect": "Vuelve a conectar Google antes de buscar propiedades.",
+    "unavailable": "La detección automática no está disponible temporalmente. Puedes elegir una propiedad abajo.",
+    "not_connected": "Conecta Google para buscar una propiedad para este sitio."
+  },
+  "errors": {
+    "missingScope": "A esta conexión le falta el permiso de Search Console. Vuelve a conectar dejando marcada la casilla.",
+    "notConnected": "Aún no has conectado Google Search Console.",
+    "invalidProperty": "Esa propiedad no está entre tus propiedades verificadas de Search Console. Elige una de la lista.",
+    "quotaExceeded": "La cuota diaria de Search Console se agotó. Inténtalo mañana.",
+    "unavailable": "No pudimos contactar a Google Search Console. Inténtalo en un momento.",
+    "loadFailed": "No se pudo cargar tu conexión con Google.",
+    "disconnectFailed": "No se pudo desconectar.",
+    "linkFailed": "No se pudo conectar esa cuenta de Google. Elige la misma cuenta con la que iniciaste sesión y concede el acceso a Search Console."
+  },
+  "scopes": {
+    "label": "Acceso",
+    "searchConsole": "Search Console",
+    "analytics": "Analytics",
+    "granted": "concedido",
+    "notGranted": "no concedido"
+  },
+  "range": {
+    "label": "Rango de fechas",
+    "7d": "Últimos 7 días",
+    "28d": "Últimos 28 días",
+    "90d": "Últimos 90 días"
+  },
+  "searchSummary": {
+    "title": "Rendimiento de búsqueda (últimos {{days}} días)",
+    "clicks": "Clics",
+    "impressions": "Impresiones",
+    "ctr": "Tasa de clics",
+    "position": "Posición media",
+    "topQueries": "Búsquedas principales",
+    "topPages": "Páginas principales",
+    "viewAll": "Ver todo",
+    "viewAllLabel": "Ver todo — {{section}}",
+    "sitemapsLink": "Ver sitemaps",
+    "asOf": "Datos hasta {{date}}",
+    "previousPeriod": "Periodo anterior: {{clicks}} clics · {{impressions}} impresiones",
+    "reportLink": "Ver todos los datos en tu informe",
+    "emptyTitle": "Aún no hay datos",
+    "emptyCta": "Gestionar conexión",
+    "empty": "Aún no hay datos de búsqueda. Ejecuta una auditoría y este resumen se completará automáticamente.",
+    "error": "No pudimos cargar tu resumen de búsqueda. Inténtalo de nuevo en un momento.",
+    "retry": "Reintentar",
+    "refresh": "Actualizar datos de búsqueda",
+    "refreshing": "Actualizando…",
+    "refreshError": "No pudimos actualizar tus datos de búsqueda. Inténtalo de nuevo en un momento.",
+    "refreshedJustNow": "Actualizado hace un momento",
+    "timeseriesTitle": "Clics e impresiones a lo largo del tiempo",
+    "timeseriesSubtitle": "Totales diarios de los últimos {{days}} días.",
+    "timeseriesEmpty": "Aún no hay datos diarios.",
+    "timeseriesChartLabel": "{{metric}} diarios de los últimos {{days}} días",
+    "timeseriesTableCaption": "Rendimiento de búsqueda diario de los últimos {{days}} días",
+    "tableDate": "Fecha",
+    "metricLabel": "Elige una métrica para el gráfico",
+    "countriesTitle": "Países principales",
+    "countriesEmpty": "Aún no hay datos por país.",
+    "countriesTableCaption": "Clics por país",
+    "countryHeader": "País",
+    "devicesTitle": "Dispositivos",
+    "devicesEmpty": "Aún no hay datos por dispositivo.",
+    "devicesTableCaption": "Clics por dispositivo",
+    "deviceHeader": "Dispositivo",
+    "devices": {
+      "desktop": "Escritorio",
+      "mobile": "Móvil",
+      "tablet": "Tableta",
+      "unknown": "Otro"
+    }
+  },
+  "analytics": {
+    "title": "Google Analytics (últimos {{days}} días)",
+    "sessions": "Sesiones",
+    "activeUsers": "Usuarios activos",
+    "engagedSessions": "Sesiones con interacción",
+    "keyEvents": "Eventos clave",
+    "engagementRateLabel": "Tasa de interacción",
+    "engagementRateLine": "Tasa de interacción: {{rate}}",
+    "previousPeriod": "Periodo anterior: {{sessions}} sesiones · {{activeUsers}} usuarios activos",
+    "emptyTitle": "Aún no hay datos de Analytics",
+    "empty": "Aún no hay datos de Analytics. Los datos aparecen poco después de conectar tu propiedad — prueba a actualizar.",
+    "error": "No pudimos cargar tu resumen de Analytics. Inténtalo de nuevo en un momento.",
+    "refresh": "Actualizar datos de Analytics",
+    "refreshError": "No pudimos actualizar tus datos de Analytics. Inténtalo de nuevo en un momento.",
+    "timeseriesTitle": "Sesiones y usuarios activos a lo largo del tiempo",
+    "timeseriesSubtitle": "Totales diarios de los últimos {{days}} días.",
+    "timeseriesChartLabel": "{{metric}} diarios de los últimos {{days}} días",
+    "timeseriesTableCaption": "Rendimiento diario de Analytics de los últimos {{days}} días",
+    "channelsTitle": "Canales",
+    "channelsEmpty": "Aún no hay datos por canal.",
+    "channelsTableCaption": "Sesiones por canal",
+    "channelHeader": "Canal",
+    "pagesTitle": "Páginas principales",
+    "pagesEmpty": "Aún no hay datos por página.",
+    "pagesTableCaption": "Sesiones por página",
+    "pageHeader": "Página",
+    "countriesTitle": "Países principales",
+    "countriesEmpty": "Aún no hay datos por país.",
+    "countriesTableCaption": "Sesiones por país",
+    "countryHeader": "País",
+    "devicesTitle": "Dispositivos",
+    "devicesEmpty": "Aún no hay datos por dispositivo.",
+    "devicesTableCaption": "Sesiones por dispositivo",
+    "deviceHeader": "Dispositivo",
+    "locked": {
+      "body": "Las estadísticas de Google Analytics se incluyen en el plan Pro y superiores. Mejora tu plan para ver sesiones, interacción y eventos clave junto a tus datos de búsqueda.",
+      "upgrade": "Mejorar plan"
+    },
+    "enableTitle": "Google Analytics no está habilitado",
+    "enableBody": "Concede acceso de solo lectura a Google Analytics para ver sesiones, interacción y eventos clave de este sitio.",
+    "enableCta": "Habilitar Google Analytics",
+    "pickerHint": "Elige qué propiedad de Google Analytics usa RankMeFast.",
+    "propertyLabel": "Propiedad de Analytics",
+    "propertyPlaceholder": "Selecciona una propiedad",
+    "propertyNone": "No se encontraron propiedades de Google Analytics para esta cuenta.",
+    "propertiesError": "No pudimos cargar tus propiedades de Analytics. Inténtalo de nuevo en un momento.",
+    "setPropertyError": "No pudimos guardar esa propiedad de Analytics. Inténtalo de nuevo en un momento.",
+    "settingsTitle": "Google Analytics",
+    "settingsSubtitle": "Elige qué propiedad GA4 usa RankMeFast."
+  },
+  "searchDetail": {
+    "back": "Vista general",
+    "views": {
+      "queries": "Búsquedas principales",
+      "pages": "Páginas principales",
+      "countries": "Países principales",
+      "devices": "Dispositivos",
+      "sitemaps": "Sitemaps"
+    },
+    "searchLabel": "Filtrar filas",
+    "searchPlaceholder": "Filtrar…",
+    "noMatches": "Ninguna fila coincide con tu filtro.",
+    "loadMore": "Cargar más",
+    "error": "No pudimos cargar estos datos. Inténtalo de nuevo en un momento.",
+    "columns": {
+      "query": "Consulta de búsqueda",
+      "page": "Página",
+      "country": "País",
+      "device": "Dispositivo",
+      "clicks": "Clics",
+      "impressions": "Impresiones",
+      "ctr": "CTR",
+      "position": "Posición",
+      "actions": "Acciones"
+    },
+    "sitemaps": {
+      "empty": "Aún no se han enviado sitemaps.",
+      "columns": {
+        "path": "Sitemap",
+        "type": "Tipo",
+        "lastSubmitted": "Último envío",
+        "processed": "Procesadas",
+        "status": "Estado"
+      },
+      "status": {
+        "ok": "OK",
+        "errors": "{{n}} errores",
+        "warnings": "{{n}} advertencias"
+      }
+    }
+  }
+}

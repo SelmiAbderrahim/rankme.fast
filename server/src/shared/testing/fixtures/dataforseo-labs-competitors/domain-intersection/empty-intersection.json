@@ -1,0 +1,39 @@
+{
+  "version": "0.1.20260101",
+  "status_code": 20000,
+  "status_message": "Ok.",
+  "time": "0.0812 sec.",
+  "cost": 0.001,
+  "tasks_count": 1,
+  "tasks_error": 0,
+  "tasks": [
+    {
+      "id": "TASK_ID",
+      "status_code": 20000,
+      "status_message": "Ok.",
+      "time": "0.0601 sec.",
+      "cost": 0.001,
+      "result_count": 1,
+      "path": ["v3", "dataforseo_labs", "google", "domain_intersection", "live"],
+      "data": {
+        "api": "dataforseo_labs",
+        "function": "domain_intersection",
+        "target1": "example.com",
+        "target2": "no-overlap.example",
+        "location_code": 2840,
+        "language_code": "en",
+        "intersections": false,
+        "limit": 100
+      },
+      "result": [
+        {
+          "location_code": 2840,
+          "language_code": "en",
+          "total_count": 0,
+          "items_count": 0,
+          "items": []
+        }
+      ]
+    }
+  ]
+}

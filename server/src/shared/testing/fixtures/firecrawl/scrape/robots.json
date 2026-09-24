@@ -1,0 +1,12 @@
+{
+  "success": true,
+  "data": {
+    "markdown": "",
+    "links": [],
+    "metadata": {
+      "sourceURL": "https://example.com/blocked",
+      "statusCode": 403,
+      "error": "Blocked by robots.txt"
+    }
+  }
+}

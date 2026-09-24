@@ -1,0 +1,62 @@
+{
+  "title": "App SEO",
+  "description": "Manage app profiles and the store signals connected to this site.",
+  "views": {
+    "profiles": "Profiles",
+    "keywords": "Keywords",
+    "listing": "Listing",
+    "charts": "Charts",
+    "research": "Research",
+    "reviews": "Reviews",
+    "compare": "Compare",
+    "comingSoon": "This workspace is coming soon in this batch."
+  },
+  "locked": {
+    "title": "App SEO is available on Pro",
+    "description": "Upgrade to Pro or higher to register app profiles and open this workspace.",
+    "cta": "View plans"
+  },
+  "registration": {
+    "title": "Register an app",
+    "description": "Add a Google Play package, an App Store ID, or both. Registration checks format only and does not use vendor credits.",
+    "playLabel": "Google Play package ID",
+    "playPlaceholder": "com.example.app",
+    "playHelp": "Use the reverse-DNS package ID shown in Google Play.",
+    "appleLabel": "Apple App Store ID",
+    "applePlaceholder": "123456789",
+    "appleHelp": "Enter the 6–12 digit numeric app ID.",
+    "pairedLabel": "Treat these as the same app",
+    "pairedHelp": "Pair the two listings only when they represent the same product.",
+    "usage": "{{used}} of {{limit}} profiles",
+    "submit": "Register app",
+    "registering": "Registering…"
+  },
+  "profiles": {
+    "googlePlay": "Google Play",
+    "appStore": "App Store",
+    "emptyTitle": "No app profiles yet",
+    "emptyDescription": "Register a Play or App Store listing to begin.",
+    "paired": "Paired",
+    "deleteLabel": "Delete {{id}}",
+    "deleteTitle": "Delete this app profile?",
+    "deleteDescription": "Its stored App SEO history will also be removed. This cannot be undone.",
+    "cancel": "Cancel",
+    "confirmDelete": "Delete profile"
+  },
+  "states": {
+    "limitTitle": "App profile limit reached",
+    "limitDescription": "Delete a profile to free a slot, or choose a plan with more app profiles.",
+    "upgrade": "View plans",
+    "errorTitle": "We couldn't update app profiles"
+  },
+  "validation": {
+    "storeRequired": "Enter at least one store ID.",
+    "playFormat": "Enter a reverse-DNS package ID, such as com.example.app.",
+    "playTooLong": "The Google Play package ID is too long.",
+    "appleFormat": "Enter a 6–12 digit App Store ID.",
+    "pairedRequired": "Paired profiles need both store IDs."
+  },
+  "errors": {
+    "requestFailed": "The request could not be completed. Try again."
+  }
+}

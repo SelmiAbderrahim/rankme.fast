@@ -1,0 +1,155 @@
+{
+  "version": "0.1.20260101",
+  "status_code": 20000,
+  "status_message": "Ok.",
+  "time": "0.1041 sec.",
+  "cost": 0.0006,
+  "tasks_count": 1,
+  "tasks_error": 0,
+  "tasks": [
+    {
+      "id": "TASK_ID",
+      "status_code": 20000,
+      "status_message": "Ok.",
+      "time": "0.0611 sec.",
+      "cost": 0.0006,
+      "result_count": 1,
+      "path": [
+        "v3",
+        "serp",
+        "google",
+        "organic",
+        "task_get",
+        "advanced",
+        "TASK_ID"
+      ],
+      "data": {
+        "api": "serp",
+        "function": "task_get",
+        "se": "google",
+        "se_type": "organic",
+        "keyword": "seo audit tool",
+        "language_code": "en",
+        "location_code": 2840,
+        "device": "desktop"
+      },
+      "result": [
+        {
+          "keyword": "seo audit tool",
+          "type": "organic",
+          "se_domain": "google.com",
+          "location_code": 2840,
+          "language_code": "en",
+          "datetime": "2026-01-01 00:00:00 +00:00",
+          "items_count": 11,
+          "items": [
+            {
+              "type": "ai_overview",
+              "rank_group": 0,
+              "rank_absolute": 0,
+              "references": [
+                {
+                  "type": "ai_overview_reference",
+                  "domain": "docs.example.com",
+                  "url": "https://docs.example.com/seo-audit",
+                  "title": "SEO audit documentation"
+                }
+              ]
+            },
+            {
+              "type": "featured_snippet",
+              "rank_group": 1,
+              "rank_absolute": 1,
+              "domain": "www.example.com",
+              "url": "https://example.com/guides/seo-audit",
+              "title": "How to run an SEO audit <script>alert('xss')</script>"
+            },
+            {
+              "type": "organic",
+              "rank_group": 1,
+              "rank_absolute": 2,
+              "domain": "a.example",
+              "url": "https://a.example/"
+            },
+            {
+              "type": "people_also_ask",
+              "rank_group": 2,
+              "rank_absolute": 3,
+              "items": [
+                {
+                  "type": "people_also_ask_element",
+                  "title": "What does an SEO audit include?",
+                  "expanded_element": [
+                    {
+                      "type": "people_also_ask_expanded_element",
+                      "domain": "example.com",
+                      "url": "https://example.com/guides/seo-audit",
+                      "title": "SEO audit checklist"
+                    }
+                  ]
+                },
+                {
+                  "type": "people_also_ask_element",
+                  "title": "How often should I audit my site?",
+                  "expanded_element": [
+                    {
+                      "type": "people_also_ask_expanded_element",
+                      "url": "https://rival-one.example/how-often"
+                    }
+                  ]
+                },
+                {
+                  "type": "people_also_ask_element",
+                  "title": "Is an SEO audit free?"
+                }
+              ]
+            },
+            {
+              "type": "video",
+              "rank_group": 3,
+              "rank_absolute": 4
+            },
+            {
+              "type": "image_pack",
+              "rank_group": 4,
+              "rank_absolute": 5
+            },
+            {
+              "type": "local_pack",
+              "rank_group": 5,
+              "rank_absolute": 6
+            },
+            {
+              "type": "knowledge_graph",
+              "rank_group": 6,
+              "rank_absolute": 7
+            },
+            {
+              "type": "shopping",
+              "rank_group": 7,
+              "rank_absolute": 8
+            },
+            {
+              "type": "paid",
+              "rank_group": 0,
+              "rank_absolute": 0
+            },
+            {
+              "type": "related_searches",
+              "rank_group": 8,
+              "rank_absolute": 9,
+              "items": ["seo audit checklist", "free seo audit"]
+            },
+            {
+              "type": "organic",
+              "rank_group": 2,
+              "rank_absolute": 10,
+              "domain": "example.com",
+              "url": "https://example.com/pricing"
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

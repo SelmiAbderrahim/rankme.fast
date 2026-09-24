@@ -1,0 +1,152 @@
+{
+  "title": "Nächste Schritte",
+  "description": "Priorisierte Korrekturen und Chancen aus jeder verbundenen Quelle in einer einzigen Arbeitsliste.",
+  "status": {
+    "loading": "Aktionen werden geladen…",
+    "refreshing": "Aktionen werden aktualisiert…",
+    "showing": "{{count}} Aktionen angezeigt"
+  },
+  "errors": {
+    "loadFailed": "Ihre Aktionen konnten nicht geladen werden. Bitte versuchen Sie es erneut.",
+    "unauthorized": "Sie müssen sich erneut anmelden, um diesen Inhalt zu sehen."
+  },
+  "notFound": {
+    "title": "Hier ist nichts",
+    "body": "Diese Website oder Aktion wurde nicht gefunden."
+  },
+  "filters": {
+    "label": "Aktionen filtern",
+    "reset": "Filter zurücksetzen",
+    "all": "Alle",
+    "state": "Status",
+    "source": "Quelle",
+    "severity": "Schweregrad",
+    "confidence": "Zuversicht",
+    "effort": "Aufwand"
+  },
+  "pagination": {
+    "previous": "Zurück",
+    "next": "Weiter"
+  },
+  "state": {
+    "open": "Offen",
+    "planned": "Geplant",
+    "dismissed": "Verworfen",
+    "completed": "Erledigt"
+  },
+  "source": {
+    "audit_finding": "Website-Audit",
+    "confirmed_rank_drop": "Bestätigter Ranking-Verlust",
+    "gsc_decline": "Search-Console-Rückgang",
+    "ga4_decline": "Analytics-Rückgang",
+    "content_recommendation": "Content-Empfehlung",
+    "citation_gap": "KI-Zitationslücke",
+    "audience_research": "Zielgruppenforschung"
+  },
+  "severity": {
+    "critical": "Kritisch",
+    "warning": "Warnung",
+    "info": "Hinweis"
+  },
+  "impact": {
+    "high": "Hohe Wirkung",
+    "medium": "Mittlere Wirkung",
+    "low": "Geringe Wirkung",
+    "none": "Keine gemessene Wirkung"
+  },
+  "confidence": {
+    "high": "Hohe Zuversicht",
+    "medium": "Mittlere Zuversicht",
+    "low": "Geringe Zuversicht"
+  },
+  "effort": {
+    "low": "Geringer Aufwand",
+    "medium": "Mittlerer Aufwand",
+    "high": "Hoher Aufwand"
+  },
+  "freshness": {
+    "fresh": "Aktuell",
+    "stale": "Veraltet",
+    "unavailable": "Nicht überprüft"
+  },
+  "card": {
+    "nextStep": "Nächster Schritt",
+    "observedAt": "Beobachtet am {{date}}",
+    "openSource": "Quellansicht öffnen",
+    "affectedNone": "Websiteweit",
+    "affectedOne": "1 betroffene URL",
+    "affectedCount": "{{count}} betroffene URLs",
+    "evidence": "Belege",
+    "evidenceLink": "Belegquelle öffnen",
+    "history": "Verlauf",
+    "retest": "Erneut prüfen"
+  },
+  "transitions": {
+    "planned": "Planen",
+    "dismissed": "Verwerfen",
+    "completed": "Abschließen",
+    "open": "Wieder öffnen"
+  },
+  "stateDialog": {
+    "titles": {
+      "planned": "Diese Aktion planen?",
+      "dismissed": "Diese Aktion verwerfen?",
+      "completed": "Diese Aktion als erledigt markieren?",
+      "open": "Diese Aktion wieder öffnen?"
+    },
+    "consequences": {
+      "planned": "Die Aktion wandert in Ihre geplante Liste. Sie können sie später wieder öffnen oder abschließen.",
+      "dismissed": "Die Aktion verlässt Ihre offene Liste. Sie bleibt im Verlauf und kann jederzeit wieder geöffnet werden.",
+      "completed": "Die Aktion wird als erledigt markiert. Eine spätere Prüfung kann sie wieder öffnen, falls das Problem zurückkehrt.",
+      "open": "Die Aktion kehrt in Ihre offene Liste zurück."
+    },
+    "noteLabel": "Notiz hinzufügen (optional)",
+    "noteCount": "{{used}} von {{max}} Zeichen",
+    "confirm": "Bestätigen",
+    "saving": "Wird gespeichert…",
+    "conflict": "Jemand anderes hat diese Aktion zuerst geändert. Laden Sie sie neu und versuchen Sie es erneut.",
+    "conflictReload": "Aktion neu laden"
+  },
+  "history": {
+    "title": "Aktionsverlauf",
+    "empty": "Noch keine Änderungen aufgezeichnet.",
+    "actor": "Teammitglied",
+    "from": "von {{state}}",
+    "close": "Schließen"
+  },
+  "retest": {
+    "title": "Diesen Befund erneut prüfen?",
+    "description": "Eine erneute Prüfung startet einen frischen Website-Audit und aktualisiert alle audit-basierten Aktionen.",
+    "unitsLabel": "Verbrauchte Audit-Läufe",
+    "unitsValue": "1",
+    "freshRun": "Eine erneute Prüfung crawlt immer neu — Ergebnisse kommen nie aus einem Cache.",
+    "remaining": "{{remaining}} von {{cap}} Audit-Läufen in diesem Zeitraum übrig",
+    "allowanceUnknown": "Ihr verbleibendes Kontingent konnte nicht geladen werden. Der Server prüft Ihr Limit vor dem Start trotzdem.",
+    "confirm": "Erneute Prüfung starten",
+    "starting": "Wird gestartet…",
+    "queued": "Erneute Prüfung eingereiht. Verfolgen Sie den Fortschritt im Bericht-Tab.",
+    "viewProgress": "Berichtsfortschritt ansehen"
+  },
+  "sources": {
+    "partial": "Einige Datenquellen sind derzeit veraltet oder nicht verfügbar; diese Liste kann unvollständig sein.",
+    "unavailableTitle": "Datenquellen nicht verfügbar",
+    "unavailableBody": "Wir können Ihre Quellen derzeit nicht prüfen, daher können keine Aktionen angezeigt werden. Das ist keine Entwarnung.",
+    "clearTitle": "Nichts erfordert Ihre Aufmerksamkeit",
+    "clearBody": "Keine verbundene Quelle meldet derzeit offene Aktionen."
+  },
+  "overview": {
+    "viewAll": "Alle Aktionen ansehen",
+    "open": "Öffnen",
+    "degraded": "Einige Quellen sind nicht verfügbar — diese Liste kann unvollständig sein.",
+    "error": "Ihre Aktionen konnten nicht geladen werden.",
+    "retry": "Erneut versuchen"
+  },
+  "report": {
+    "dismissCta": "Als Fehlalarm verwerfen",
+    "reopenCta": "Befund wieder öffnen",
+    "dismissedLabel": "Als Fehlalarm verworfen",
+    "fixCta": "Als behoben markieren",
+    "fixedLabel": "Als behoben markiert",
+    "reappearedLabel": "Trotz Markierung als behoben weiterhin gefunden"
+  }
+}

@@ -1,0 +1,144 @@
+{
+  "title": "Générateur de balisage schema",
+  "description": "Créez du JSON-LD pour une page à partir des faits que nous avons déjà enregistrés. Rien n'est inventé : un champ que nous ne pouvons pas appuyer sur un fait est omis, et nous en donnons la raison.",
+  "new": {
+    "title": "Générer le balisage",
+    "description": "Choisissez une page, choisissez un type, puis lisez le coût avant de confirmer."
+  },
+  "source": {
+    "legend": "Origine de la page",
+    "audited": "Page auditée",
+    "inventory": "Page de l’inventaire",
+    "url": "Coller une adresse",
+    "auditedLegend": "Pages de votre dernier audit",
+    "inventoryLegend": "Pages auxquelles il manque un type schema pris en charge",
+    "auditedEmpty": "Lancez d'abord un audit et ses pages apparaîtront ici.",
+    "inventoryEmpty": "Aucune page de l’inventaire ne manque actuellement d’un type schema pris en charge.",
+    "hasStructuredData": "Contient déjà des données structurées",
+    "noStructuredData": "Aucune donnée structurée trouvée",
+    "structuredDataErrors": "Erreurs de données structurées : {{n}}",
+    "richResultsVerdict": "Verdict Search Console : {{verdict}}",
+    "declaresNothing": "Ne déclare aucun type schema.org",
+    "declaresTypes": "Déclare déjà : {{types}}",
+    "urlLabel": "Adresse de la page",
+    "urlPlaceholder": "https://example.com/page",
+    "urlHint": "Nous lisons la page une fois via une connexion sûre. Seules les adresses publiques fonctionnent.",
+    "urlInvalid": "Saisissez une adresse https complète, sans nom d'utilisateur ni mot de passe."
+  },
+  "type": {
+    "legend": "Type schema.org",
+    "required": "Obligatoires : {{n}}",
+    "recommended": "Recommandés : {{n}}",
+    "alreadyDeclared": "Cette page déclare déjà ce type."
+  },
+  "preview": {
+    "title": "Ce que cela coûte",
+    "show": "Afficher le coût",
+    "units": "{{count}} génération sur votre quota mensuel.",
+    "units_other": "{{count}} générations sur votre quota mensuel.",
+    "confirm": "Générer le balisage",
+    "remaining": "Restant sur votre offre ce mois-ci : {{remaining}}.",
+    "pack": "Plus {{units}} issus des packs de crédits.",
+    "noFit": "Cela ne tient pas dans ce qu'il reste. Ajoutez des crédits ou changez d'offre."
+  },
+  "result": {
+    "title": "Balisage {{type}}",
+    "back": "Retour à la liste",
+    "payload": "JSON-LD généré",
+    "copy": "Copier",
+    "copied": "Copié",
+    "download": "Télécharger",
+    "downloadFailedTitle": "Le téléchargement n'a pas démarré",
+    "downloadFailed": "Nous n'avons pas pu récupérer le fichier. Réessayez.",
+    "failedTitle": "Rien n'a été généré",
+    "failedProvider": "Le modèle n'a pas répondu, aucun balisage n'a donc été conservé.",
+    "failedRejected": "Tous les champs proposés par le modèle ont échoué à notre vérification des faits ; nous n'avons gardé que le prouvable.",
+    "refunded": "Votre quota a été recrédité.",
+    "evidence": "D'où vient chaque champ",
+    "evidenceDescription": "Une ligne par champ du balisage, nommant le fait enregistré qui le justifie.",
+    "evidenceFrom": "d'après {{fact}}",
+    "evidenceEmpty": "Aucun champ n'a pu être rempli à partir d'un fait enregistré.",
+    "omissions": "Ce que nous avons omis",
+    "omissionsDescription": "Champs sans fait derrière eux, et la raison de chaque absence.",
+    "omissionsEmpty": "Rien n'a été omis."
+  },
+  "fact": {
+    "pageUrl": "URL de la page",
+    "canonicalUrl": "URL canonique",
+    "pageTitle": "Titre de la page",
+    "metaDescription": "Méta-description",
+    "headingOne": "Titre H1",
+    "headingTwo": "Titre H2",
+    "faqAnswer": "Réponse à la FAQ",
+    "pageLanguage": "Langue de la page",
+    "articlePublishedTime": "Date de publication de l’article",
+    "articleModifiedTime": "Date de modification de l’article",
+    "siteOrigin": "Origine du site",
+    "siteDomain": "Domaine du site",
+    "siteName": "Nom du site"
+  },
+  "reason": {
+    "no_evidence": "nous n'avons aucun fait à ce sujet",
+    "evidence_ambiguous": "les faits dont nous disposons se contredisent",
+    "not_applicable": "cela ne s'applique pas à cette page"
+  },
+  "conformance": {
+    "title": "Vérification par rapport à schema.org",
+    "conforms": "Ce balisage est conforme aux exigences de schema.org pour le type {{type}}.",
+    "gaps": "Ce balisage n’est pas encore conforme aux exigences de schema.org pour le type {{type}}.",
+    "requiredTitle": "Complétez ceci pour satisfaire aux exigences",
+    "recommendedTitle": "À envisager",
+    "requiredGap": "Ajoutez {{property}} —",
+    "recommendedSuggestion": "Vous pourriez ajouter {{property}} dès que nous aurons un fait à ce sujet.",
+    "version": "Vérifié avec la version {{version}} du jeu de propriétés."
+  },
+  "list": {
+    "title": "Balisages générés",
+    "caption": "Générations enregistrées, la plus récente d'abord",
+    "free": "Rouvrir l'une d'elles ne coûte rien.",
+    "empty": "Vous n'avez encore généré aucun balisage pour ce site.",
+    "reopen": "Ouvrir",
+    "page": "Page",
+    "type": "Type",
+    "status": "Vérification",
+    "statusConforms": "Exigences satisfaites",
+    "statusGaps": "Propriété obligatoire manquante",
+    "statusFailed": "Non généré",
+    "generatedAt": "Généré le"
+  },
+  "states": {
+    "empty": {
+      "title": "Aucun audit pour l'instant",
+      "body": "Lancez un audit pour ce site et ses pages deviendront sélectionnables ici."
+    },
+    "cap": {
+      "title": "Quota mensuel épuisé",
+      "body": "Vous avez utilisé toutes les générations de balisage de votre offre ce mois-ci.",
+      "link": "Voir les offres"
+    },
+    "notOnPlan": {
+      "title": "Absent de votre offre",
+      "body": "La génération de balisage commence avec l'offre Starter."
+    },
+    "killSwitch": {
+      "title": "Temporairement indisponible",
+      "body": "Les nouvelles générations sont suspendues. Les balisages déjà générés restent consultables."
+    },
+    "notFound": {
+      "title": "Introuvable",
+      "body": "Cette page ou cette génération n'est plus disponible."
+    },
+    "unsafeUrl": {
+      "title": "Nous ne pouvons pas lire cette adresse",
+      "body": "Saisissez une adresse de page https publique que nous avons le droit de récupérer."
+    },
+    "rateLimited": {
+      "title": "Trop de requêtes",
+      "body": "Attendez une minute, puis réessayez."
+    },
+    "failed": {
+      "title": "Une erreur est survenue",
+      "body": "Nous n'avons pas pu terminer. Réessayez."
+    }
+  }
+}

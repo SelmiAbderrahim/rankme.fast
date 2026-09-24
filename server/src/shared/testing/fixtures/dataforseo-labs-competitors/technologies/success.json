@@ -1,0 +1,41 @@
+{
+  "version": "0.1.20260101",
+  "status_code": 20000,
+  "status_message": "Ok.",
+  "time": "0.0912 sec.",
+  "cost": 0.0132,
+  "tasks_count": 1,
+  "tasks_error": 0,
+  "tasks": [
+    {
+      "id": "TASK_ID",
+      "status_code": 20000,
+      "status_message": "Ok.",
+      "time": "0.0801 sec.",
+      "cost": 0.0132,
+      "result_count": 1,
+      "path": ["v3", "domain_analytics", "technologies", "domain_technologies", "live"],
+      "data": {
+        "api": "domain_analytics",
+        "function": "domain_technologies",
+        "target": "example.com"
+      },
+      "result": [
+        {
+          "type": "domain_technologies",
+          "domain": "example.com",
+          "technologies": {
+            "cms": { "cms": ["WordPress"] },
+            "analytics": {
+              "analytics": ["Google Analytics"],
+              "tag_managers": ["Google Tag Manager"]
+            },
+            "cdn": { "cdn": ["Cloudflare"] },
+            "ecommerce": { "ecommerce": ["WooCommerce"] },
+            "widgets": { "widgets": ["Intercom"] }
+          }
+        }
+      ]
+    }
+  ]
+}

@@ -1,0 +1,38 @@
+{
+  "version": "0.1.20260808",
+  "status_code": 20000,
+  "status_message": "Ok.",
+  "cost": 0,
+  "tasks": [
+    {
+      "id": "TASK_ID",
+      "status_code": 20000,
+      "status_message": "Ok.",
+      "cost": 0,
+      "result": [
+        {
+          "keyword": "topselling_free",
+          "location_code": 2840,
+          "language_code": "en",
+          "datetime": "2026-08-08 13:00:00 +00:00",
+          "se_results_count": 100,
+          "items": [
+            {
+              "type": "google_play_search_organic",
+              "rank_group": 1,
+              "rank_absolute": 1,
+              "app_id": "com.example.chart",
+              "title": "Chart App",
+              "reviews_count": 500,
+              "rating": {
+                "value": 4.5
+              },
+              "is_free": true,
+              "installs": "100,000+"
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

@@ -1,0 +1,56 @@
+{
+  "title": "Cuenta",
+  "description": "Gestiona tu perfil, seguridad, notificaciones, conexiones y datos.",
+  "tabs": {
+    "profile": "Perfil",
+    "security": "Seguridad",
+    "notifications": "Notificaciones",
+    "connections": "Conexiones",
+    "branding": "Marca",
+    "mcp": "Permisos de MCP",
+    "privacy": "Datos y privacidad",
+    "api-keys": "Claves de API"
+  },
+  "profile": {
+    "title": "Perfil",
+    "subtitle": "Tu identidad en RankMeFast.",
+    "avatarAlt": "Tu foto de perfil",
+    "emailLabel": "Correo electrónico",
+    "verified": "Correo verificado",
+    "unverified": "Correo sin verificar",
+    "memberSince": "Miembro desde {{date}}",
+    "displayNameLabel": "Nombre visible",
+    "displayNameHint": "Se muestra en la aplicación y en tus correos.",
+    "save": "Guardar cambios",
+    "saving": "Guardando…",
+    "saved": "Tu perfil se ha actualizado.",
+    "errors": {
+      "nameRequired": "Introduce un nombre visible.",
+      "nameTooLong": "Mantén tu nombre por debajo de 80 caracteres.",
+      "saveFailed": "No pudimos guardar tu perfil. Inténtalo de nuevo."
+    }
+  },
+  "privacy": {
+    "export": {
+      "title": "Exporta tus datos",
+      "description": "Descarga una copia de los datos de tu cuenta como archivo JSON.",
+      "button": "Exportar mis datos",
+      "exporting": "Preparando…",
+      "success": "Tu exportación de datos se ha descargado.",
+      "error": "No pudimos exportar tus datos. Inténtalo de nuevo."
+    },
+    "delete": {
+      "title": "Eliminar cuenta",
+      "description": "Programa la eliminación permanente de tu cuenta y tus datos.",
+      "warning": "Esto programa la eliminación de tu cuenta tras un periodo de gracia. Contacta con soporte antes para cancelar.",
+      "button": "Eliminar mi cuenta",
+      "dialogTitle": "¿Eliminar tu cuenta?",
+      "dialogBody": "Tu cuenta y tus datos se eliminarán de forma permanente tras el periodo de gracia. Una vez finalizado, no se puede deshacer.",
+      "cancel": "Cancelar",
+      "confirm": "Sí, eliminar mi cuenta",
+      "deleting": "Programando…",
+      "scheduled": "Tu cuenta está programada para eliminarse el {{date}}.",
+      "error": "No pudimos programar la eliminación. Inténtalo de nuevo."
+    }
+  }
+}

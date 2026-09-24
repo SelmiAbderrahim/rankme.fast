@@ -1,0 +1,167 @@
+{
+  "title": "Team",
+  "description": "Invite teammates and manage seats on your plan.",
+  "seatUsage": "{{used}} of {{limit}} seats used",
+  "invite": {
+    "heading": "Invite a teammate",
+    "emailLabel": "Email",
+    "emailPlaceholder": "colleague@example.com",
+    "emailInvalid": "Enter a valid email address",
+    "submit": "Send invite",
+    "submitting": "Sending…",
+    "atCap": "You've used all your seats. Upgrade to invite more.",
+    "upgradeCta": "Upgrade plan",
+    "description": "Choose a role and exactly which sites this teammate can use.",
+    "roleLabel": "Role",
+    "adminRoleLimit": "Admins can invite Members only."
+  },
+  "members": {
+    "heading": "Members",
+    "columns": {
+      "email": "Email",
+      "role": "Role",
+      "status": "Status",
+      "invitedAt": "Invited",
+      "expiresAt": "Expires",
+      "access": "Site access"
+    },
+    "roles": {
+      "owner": "Owner",
+      "member": "Member",
+      "admin": "Admin"
+    },
+    "status": {
+      "accepted": "Active",
+      "pending": "Pending",
+      "expired": "Expired"
+    },
+    "actions": {
+      "menuLabel": "Open actions menu",
+      "remove": "Remove",
+      "revoke": "Revoke invite",
+      "resend": "Resend invite",
+      "leave": "Leave workspace",
+      "changeRole": "Change the role of {{email}}",
+      "editAccess": "Edit role and access"
+    },
+    "confirmRemove": {
+      "title": "Remove this teammate?",
+      "body": "{{email}} loses access to this team right away.",
+      "confirm": "Remove",
+      "cancel": "Cancel"
+    },
+    "confirmRevoke": {
+      "title": "Revoke this invite?",
+      "body": "The invite for {{email}} stops working right away.",
+      "confirm": "Revoke invite"
+    },
+    "empty": "No teammates yet. Invite someone above.",
+    "removed": "Member removed.",
+    "loading": "Loading team…",
+    "searchPlaceholder": "Search by email",
+    "previous": "Previous",
+    "next": "Next",
+    "pageOf": "Page {{page}} of {{totalPages}} · {{total}} member(s)",
+    "edit": {
+      "title": "Edit teammate access",
+      "description": "Change the role and sites available to {{email}}.",
+      "save": "Save access",
+      "saving": "Saving…",
+      "cancel": "Cancel"
+    }
+  },
+  "accept": {
+    "title": "Accept invite",
+    "loading": "Checking your invite…",
+    "success": "You have joined the team.",
+    "cta": "Go to dashboard"
+  },
+  "errors": {
+    "loadFailed": "We couldn't load your team. Please refresh.",
+    "inviteFailed": "That invite could not be sent.",
+    "seatCapExceeded": "You've used all your seats. Upgrade to invite more.",
+    "alreadyInvited": "That email already has a pending invite.",
+    "alreadyMember": "That email is already on the team.",
+    "inviteNotFound": "That invite link is invalid.",
+    "inviteExpired": "That invite has expired. Ask for a new one.",
+    "inviteUsed": "That invite has already been accepted.",
+    "removeFailed": "We couldn't remove that member.",
+    "resendFailed": "We could not resend that invite.",
+    "roleFailed": "We could not change that role.",
+    "accessUpdateFailed": "We could not update that teammate’s access.",
+    "rejectFailed": "That invitation could not be rejected."
+  },
+  "workspace": {
+    "switcherLabel": "Workspace",
+    "own": "My workspace",
+    "role": {
+      "owner": "Owner",
+      "admin": "Admin",
+      "member": "Member"
+    },
+    "notAvailable": {
+      "title": "Not available in this workspace",
+      "body": "Billing, connections, keys, and account settings stay with the workspace owner. Switch back to your own workspace to manage yours."
+    }
+  },
+  "access": {
+    "heading": "Site access",
+    "description": "Choose whether this teammate can use every site or only selected sites.",
+    "all": "All sites",
+    "allDescription": "Includes sites added to this workspace later.",
+    "selected": "Selected sites",
+    "selectedDescription": "Access is limited to the sites checked below.",
+    "required": "Select at least one site.",
+    "empty": "Add a site before creating a site-restricted invitation.",
+    "loadFailed": "We could not load the sites available for this invitation.",
+    "siteCount": "{{count}} site(s)"
+  },
+  "decision": {
+    "loading": "Checking the invitation…",
+    "invitedBy": "{{inviter}} invited you to {{team}}.",
+    "role": "Role",
+    "sites": "Sites",
+    "expires": "Expires",
+    "accept": {
+      "title": "Accept team invitation",
+      "confirm": "Accept invitation",
+      "acting": "Accepting…",
+      "signInRequired": "Sign in with the invited email address before accepting.",
+      "signIn": "Sign in to accept",
+      "passwordRequired": "Replace your temporary password before accepting this invitation.",
+      "changePassword": "Change password",
+      "completeTitle": "Invitation accepted",
+      "complete": "You now have access to the assigned workspace sites.",
+      "cta": "Go to dashboard"
+    },
+    "reject": {
+      "title": "Reject team invitation",
+      "confirm": "Reject invitation",
+      "acting": "Rejecting…",
+      "dialogTitle": "Reject this invitation?",
+      "dialogBody": "The invitation will stop working. A still-unclaimed account may be deleted.",
+      "cancel": "Keep invitation",
+      "completeTitle": "Invitation rejected",
+      "complete": "The invitation has been rejected.",
+      "cta": "Return home"
+    }
+  },
+  "inbox": {
+    "buttonLabel": "Team invitations",
+    "buttonLabelWithCount": "Team invitations, {{count}} pending",
+    "title": "Team invitations",
+    "description": "Review invitations waiting for your decision.",
+    "emptyTitle": "No pending invitations",
+    "empty": "New team invitations will appear here.",
+    "invitedBy": "Invited by {{inviter}}",
+    "summary": "{{role}} · {{access}} · expires {{date}}",
+    "accept": "Accept",
+    "accepting": "Accepting…",
+    "reject": "Reject",
+    "rejecting": "Rejecting…",
+    "rejectTitle": "Reject this invitation?",
+    "rejectBody": "You will not join {{team}}.",
+    "cancel": "Cancel",
+    "loadFailed": "We could not load your team invitations."
+  }
+}

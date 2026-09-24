@@ -1,0 +1,113 @@
+{
+  "title": "Suivi de position locale en géogrille",
+  "description": "Voyez où votre établissement se classe dans le pack local sur une grille de coordonnées. Un scan couvre toute la grille et coûte un scan géogrille.",
+  "locked": {
+    "body": "Les scans géogrille sont inclus dans les offres Pro et Agence.",
+    "cta": "Voir les offres"
+  },
+  "form": {
+    "keyword": "Mot-clé suivi",
+    "keywordPlaceholder": "Choisissez un mot-clé",
+    "coordinateHelp": "Saisissez le point central en chiffres. Il n'y a pas de sélecteur sur carte — nous n'achetons pas de tuiles cartographiques.",
+    "latitude": "Latitude du centre",
+    "longitude": "Longitude du centre",
+    "spacing": "Écart entre les points",
+    "spacingOption": "{{km}} km",
+    "spacingCustom": "Écart en mètres",
+    "size": "Taille de la grille",
+    "sizeOption": "{{size}} sur {{size}} ({{cells}} points)",
+    "zoom": "Zoom de la carte",
+    "preview": "Estimer ce scan",
+    "previewing": "Estimation…",
+    "errors": {
+      "keyword": "Choisissez d'abord un mot-clé suivi.",
+      "latitude": "La latitude doit être comprise entre -{{max}} et {{max}}.",
+      "longitude": "La longitude doit être comprise entre -180 et 180.",
+      "spacing": "L'écart doit être compris entre {{min}} et {{max}} mètres, par pas de {{step}}.",
+      "zoom": "Le zoom doit être compris entre {{min}} et {{max}}."
+    }
+  },
+  "preview": {
+    "title": "Ce que coûte ce scan",
+    "body": "{{units}} scan géogrille couvre les {{cells}} points de la grille.",
+    "remaining": "Il reste {{base}} sur votre offre et {{pack}} en packs.",
+    "packUnavailable": "Aucun pack géogrille n’est actuellement configuré à l’achat.",
+    "confirm": "Lancer le scan",
+    "running": "En cours…",
+    "cancel": "Annuler"
+  },
+  "history": {
+    "title": "Scans passés",
+    "row": "{{keyword}} — {{size}} sur {{size}}",
+    "meta": "{{status}} · {{createdAt}}",
+    "emptyTitle": "Aucun scan pour l'instant",
+    "emptyBody": "Lancez votre première grille pour voir votre position autour d'un lieu."
+  },
+  "grid": {
+    "title": "Grille thermique",
+    "ariaLabel": "Positions dans le pack local sur une grille {{size}} sur {{size}}",
+    "emptyTitle": "Aucun scan sélectionné",
+    "emptyBody": "Choisissez un scan passé ou lancez-en un nouveau.",
+    "running": "Ce scan est en cours. Les points apparaissent au fur et à mesure.",
+    "cellPending": "Point {{index}} : pas encore vérifié",
+    "cellObserved": "Point {{index}} : position {{position}} sur {{packSize}} à {{lat}}, {{lng}}, vérifié le {{capturedAt}}",
+    "cellNotInPack": "Point {{index}} : absent du pack local à {{lat}}, {{lng}}, vérifié le {{capturedAt}}",
+    "cellFailed": "Point {{index}} : la vérification a échoué à {{lat}}, {{lng}}",
+    "legend": {
+      "top": "Positions un à trois",
+      "mid": "Positions quatre à sept",
+      "low": "Position huit ou plus",
+      "notInPack": "Absent du pack local",
+      "failed": "Vérification échouée"
+    }
+  },
+  "table": {
+    "caption": "Chaque point de la grille, sa coordonnée et ce que nous y avons vu.",
+    "point": "Point",
+    "latitude": "Latitude",
+    "longitude": "Longitude",
+    "position": "Position",
+    "packSize": "Taille du pack",
+    "capturedAt": "Vérifié",
+    "state": "État"
+  },
+  "detail": {
+    "observed": "Le point {{index}} se classe {{position}} sur {{packSize}} à {{lat}}, {{lng}} (vérifié le {{capturedAt}}).",
+    "notInPack": "Le point {{index}} est absent du pack local à {{lat}}, {{lng}} (vérifié le {{capturedAt}}).",
+    "failed": "Le point {{index}} n'a pas pu être vérifié à {{lat}}, {{lng}}."
+  },
+  "states": {
+    "observed": "Dans le pack",
+    "not_in_pack": "Hors du pack",
+    "failed": "Vérification échouée"
+  },
+  "status": {
+    "queued": "En file",
+    "running": "En cours",
+    "completed": "Terminé",
+    "completed_partial": "Terminé avec des trous",
+    "failed": "Échoué"
+  },
+  "outcome": {
+    "partialTitle": "Certains points n'ont pas répondu",
+    "partialBody": "{{failed}} des {{total}} points ont échoué. Les autres sont de vraies vérifications.",
+    "failedTitle": "Le scan a échoué",
+    "failedBody": "Aucun point n'a répondu, il n'y a donc rien à montrer.",
+    "failedRefunded": "Aucun point n'a répondu ; le scan a été recrédité sur votre quota."
+  },
+  "gates": {
+    "cap": "Vous n'avez plus de scans géogrille",
+    "killSwitch": "Les scans géogrille sont en pause",
+    "notOnPlan": "Pas inclus dans votre offre",
+    "notFound": "Introuvable",
+    "rateLimited": "Trop de requêtes",
+    "invalid": "Vérifiez les réglages de la grille",
+    "failed": "Une erreur est survenue",
+    "packCta": "Acheter un pack géogrille"
+  },
+  "errors": {
+    "loadFailed": "Nous n'avons pas pu charger vos scans géogrille.",
+    "previewFailed": "Nous n'avons pas pu estimer ce scan.",
+    "submitFailed": "Nous n'avons pas pu lancer ce scan."
+  }
+}

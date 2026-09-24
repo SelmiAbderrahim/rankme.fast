@@ -1,0 +1,41 @@
+{
+  "version": "0.1.20260101",
+  "status_code": 20000,
+  "status_message": "Ok.",
+  "time": "0.15 sec.",
+  "cost": 0,
+  "tasks_count": 1,
+  "tasks_error": 0,
+  "tasks": [
+    {
+      "id": "TASK_ID",
+      "status_code": 20000,
+      "status_message": "Ok.",
+      "time": "0.14 sec.",
+      "cost": 0,
+      "result_count": 1,
+      "path": ["v3", "business_data", "trustpilot", "reviews", "task_get", "advanced", "TASK_ID"],
+      "data": {
+        "api": "business_data",
+        "function": "task_get",
+        "keyword": "example.com"
+      },
+      "result": [
+        {
+          "items_count": 1,
+          "items": [
+            {
+              "review_id": "tp-rv-1",
+              "rating": { "value": 5, "votes_count": 1 },
+              "title": "Excellent audits",
+              "review_text": "The AI-Ready audit surfaced issues nobody else caught.",
+              "language_code": "en",
+              "timestamp": "2026-01-12 09:30:00 +00:00",
+              "profile_name": "Priya S."
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

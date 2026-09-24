@@ -1,0 +1,15 @@
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
+
+exports[`renderAuditReportPdf > renders the complete client report deterministically in ar 1`] = `"803216ae808622aa177750a21dca03166e279d96d1c31254d5b0226a7421149a"`;
+
+exports[`renderAuditReportPdf > renders the complete client report deterministically in de 1`] = `"c92fa1c72a1da338e5f4bc808c25a8f7ad102f9bc9e4218c7feb01d921cb1271"`;
+
+exports[`renderAuditReportPdf > renders the complete client report deterministically in en 1`] = `"38118fa1104fde93099efa9493ba9505e4557e8d1d8ebb02762f35b1a85b893b"`;
+
+exports[`renderAuditReportPdf > renders the complete client report deterministically in es 1`] = `"f83aacf05fb6dcd7c63d5207695c54dd8bc24f05f8c096ff459843bfe020cad1"`;
+
+exports[`renderAuditReportPdf > renders the complete client report deterministically in fr 1`] = `"233810102f16dc25c31479997e74fd342f735aa4781d19b9351dcefdd90a1263"`;
+
+exports[`renderAuditReportPdf > renders the complete client report deterministically in ru 1`] = `"9260a9d614cf3ceb101f2a535d99fc73008e82b5edd80fec674502d6705396e8"`;
+
+exports[`renderAuditReportPdf > renders the complete client report deterministically in zh 1`] = `"e8d151b64d9e8a0599f1b143db5d30a711adfc5231d804fc134a9e15d1a43537"`;

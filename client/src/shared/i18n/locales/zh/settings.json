@@ -1,0 +1,165 @@
+{
+  "notifications": {
+    "title": "通知偏好",
+    "description": "选择您希望接收的非安全类邮件。安全类邮件（密码重置、邮箱验证、密码变更确认）无法关闭。",
+    "emailHeading": "邮件",
+    "loading": "正在加载您的偏好设置…",
+    "securityNote": "安全类邮件 — 密码重置、邮箱验证和密码变更确认 — 无论上方开关状态如何，都始终会发送。",
+    "channels": {
+      "emailAuditComplete": {
+        "label": "审核完成",
+        "description": "审核完成时通知我。"
+      },
+      "emailRankDrop": {
+        "label": "排名下降",
+        "description": "已跟踪关键词排名下降时通知我。"
+      },
+      "emailAlerts": {
+        "label": "提醒规则",
+        "description": "当我的某条提醒规则触发时通知我。"
+      },
+      "emailDunning": {
+        "label": "账单",
+        "description": "付款收据以及付款失败的提醒。"
+      },
+      "emailMarketing": {
+        "label": "产品更新",
+        "description": "偶发的欢迎信、产品动态和小贴士。"
+      }
+    },
+    "errors": {
+      "loadFailed": "无法加载您的通知偏好。请刷新页面。",
+      "saveFailed": "无法保存该更改。请再试一次。"
+    }
+  },
+  "apiKeys": {
+    "title": "API 密钥",
+    "description": "为 MCP 客户端创建密钥。Agency 套餐的密钥还可用于只读公共 API。MCP 工具可以启动审计并消耗套餐额度，因此请妥善保管每个密钥。",
+    "name": "名称",
+    "prefix": "密钥",
+    "created": "创建时间",
+    "lastUsed": "最近使用",
+    "never": "从未",
+    "create": "创建密钥",
+    "createTitle": "创建 API 密钥",
+    "createDescription": "为密钥取一个名称，方便以后辨认——例如将要使用它的工具。",
+    "showOnceTitle": "请立即复制你的 API 密钥",
+    "showOnceWarning": "这是我们唯一一次显示该密钥。请妥善保存——之后将无法再次查看。",
+    "copy": "复制",
+    "copied": "已复制",
+    "done": "完成",
+    "revoke": "吊销",
+    "revokedBadge": "已吊销",
+    "revokeConfirmTitle": "吊销此 API 密钥？",
+    "revokeConfirmDescription": "“{{name}}” 将立即失效。此操作无法撤销。",
+    "empty": "还没有 API 密钥。",
+    "upgradeHint": "Starter 及以上套餐可创建 MCP API 密钥；公共 REST API 仅限 Agency。升级即可连接 MCP 客户端。",
+    "upgradeCta": "查看套餐",
+    "scopes": {
+      "column": "访问权限",
+      "edit": "编辑权限",
+      "restricted": "受限",
+      "unrestricted": "不受限",
+      "restrictCreate": "限制此密钥",
+      "restrictKey": "使用自定义限制",
+      "intersectionHint": "密钥限制只能缩小账户默认权限，绝不能扩大权限。",
+      "editTitle": "编辑 API 密钥权限",
+      "editDescription": "选择“{{name}}”可通过 MCP 访问的内容。",
+      "unrestrictedDescription": "此密钥遵循账户默认权限，不附加任何限制。",
+      "save": "保存权限",
+      "saving": "正在保存权限…",
+      "sitesFailed": "无法加载你的站点。你可以暂时保留不受限的站点访问权限，稍后再试。"
+    },
+    "errors": {
+      "loadFailed": "无法加载你的 API 密钥。请刷新页面。",
+      "createFailed": "无法创建该密钥。请重试。",
+      "revokeFailed": "无法吊销该密钥。请重试。",
+      "scopesSaveFailed": "无法保存该密钥的访问权限。请重试。",
+      "nameRequired": "请输入 1 到 60 个字符的名称。"
+    }
+  },
+  "mcp": {
+    "title": "MCP 权限",
+    "description": "设置 MCP 密钥和助手工具使用的账户默认权限。新账户默认允许所有工具和站点。",
+    "loading": "正在加载 MCP 权限…",
+    "save": "保存权限",
+    "saving": "正在保存权限…",
+    "saved": "MCP 权限已保存。",
+    "retry": "重试",
+    "locked": {
+      "title": "使用 Starter 或更高套餐连接 MCP",
+      "description": "升级后即可创建 API 密钥，并将 RankMeFast 连接到 MCP 客户端。",
+      "cta": "查看套餐"
+    },
+    "tools": {
+      "title": "允许的工具",
+      "description": "关闭不应由 MCP 客户端和助手使用的工具。",
+      "list_sites": { "name": "列出站点", "description": "查看此账户中的站点。" },
+      "get_latest_audit_report": { "name": "获取最新审计报告", "description": "读取站点最近完成的审计。" },
+      "list_keywords": { "name": "列出关键词", "description": "查看站点跟踪的关键词。" },
+      "get_rank_history": { "name": "获取排名历史", "description": "读取跟踪关键词最近的排名位置。" },
+      "list_content_analyses": { "name": "列出内容分析", "description": "查看站点的 Content Intelligence 分析。" },
+      "get_content_analysis": { "name": "获取内容分析", "description": "读取一项 Content Intelligence 分析。" },
+      "start_audit": { "name": "启动审计", "description": "启动会消耗账户每月额度的新审计。" },
+      "get_audit_status": { "name": "获取审计状态", "description": "检查审计正在排队、运行还是已完成。" },
+      "list_actions": { "name": "列出后续行动", "description": "读取站点的优先修复清单，并查看每项的状态。" },
+      "set_action_state": { "name": "更新后续行动", "description": "将某项行动标记为已计划、已忽略、已完成或重新打开。" }
+    },
+    "spend": {
+      "title": "消耗额度的操作",
+      "label": "允许使用套餐额度的工具",
+      "description": "关闭后，即使工具开关已开启，启动审计等消耗额度的工具也会被阻止。"
+    },
+    "sites": {
+      "title": "允许的站点",
+      "description": "将工具限制为选定站点，或允许所有站点。",
+      "all": "允许所有站点",
+      "allDescription": "这也包括以后添加的站点。",
+      "empty": "请先添加站点，再创建站点限制。",
+      "unavailable": "不可用的站点",
+      "removeHint": "此账户中已不可用"
+    },
+    "quickStart": {
+      "title": "快速开始",
+      "description": "创建 API 密钥，然后复制端点或可直接使用的客户端配置。",
+      "endpoint": "MCP 端点",
+      "copyEndpoint": "复制 MCP 端点",
+      "copy": "复制",
+      "copyConfig": "复制 {{client}} 配置",
+      "copied": "已复制",
+      "claudeCode": "Claude Code（克劳德代码）",
+      "cursor": "Cursor",
+      "apiKeys": "管理 API 密钥",
+      "copyError": "浏览器无法复制该值。请选择文本并手动复制。"
+    },
+    "errors": {
+      "loadFailed": "无法加载 MCP 权限。请重试。",
+      "saveFailed": "无法保存 MCP 权限。请重试。",
+      "sitesFailed": "无法加载你的站点。站点限制可能不完整。"
+    }
+  },
+  "branding": {
+    "title": "PDF 品牌设置",
+    "description": "在下载的报告 PDF 上使用您自己的名称。公司名称和强调色会显示在 PDF 页眉中。",
+    "companyName": "公司名称",
+    "accentColor": "强调色",
+    "invalidColor": "请输入类似 #b5321e 的颜色，或留空。",
+    "save": "保存品牌设置",
+    "saved": "品牌设置已保存。",
+    "upgradeHint": "白标 PDF 报告适用于 Pro 和 Agency 方案。升级即可自定义您的报告。",
+    "upgradeCta": "查看方案",
+    "logo": {
+      "label": "公司标志",
+      "help": "仅支持 PNG，最大 256 KB。图像在存储前会调整尺寸并重新编码。",
+      "invalidType": "请选择 PNG 图像。",
+      "tooLarge": "请选择小于 256 KB 的 PNG 图像。",
+      "readFailed": "无法读取该图像，请选择另一个 PNG 文件。",
+      "previewAlt": "公司标志预览",
+      "remove": "移除标志"
+    },
+    "errors": {
+      "loadFailed": "无法加载您的品牌设置，请刷新页面。",
+      "saveFailed": "无法保存您的品牌设置，请重试。"
+    }
+  }
+}

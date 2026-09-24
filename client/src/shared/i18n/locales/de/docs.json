@@ -1,0 +1,46 @@
+{
+  "title": "Dokumentation",
+  "eyebrow": "RankMeFast-Leitfäden",
+  "searchLabel": "Dokumentation durchsuchen",
+  "searchPlaceholder": "Leitfäden und Antworten suchen…",
+  "searchAction": "Suchen",
+  "navigationLabel": "Dokumentationsnavigation",
+  "openNavigation": "Dokumentationsnavigation öffnen",
+  "filterLabel": "Dokumentation nach Bereich filtern",
+  "allSections": "Alle",
+  "resultCount": "{{count}} Ergebnisse",
+  "noResultsTitle": "Keine Leitfäden gefunden",
+  "noResultsBody": "Versuchen Sie einen allgemeineren Begriff oder entfernen Sie den Bereichsfilter.",
+  "clearFilters": "Filter löschen",
+  "viewSection": "Bereich anzeigen",
+  "readGuide": "Leitfaden lesen",
+  "onThisPage": "Auf dieser Seite",
+  "articleNavigation": "Vorherige und nächste Leitfäden",
+  "previous": "Zurück",
+  "next": "Weiter",
+  "copy": {
+    "trigger": "Seite kopieren",
+    "label": "Kopieren als",
+    "markdown": "Markdown",
+    "plainText": "Klartext",
+    "link": "Seitenlink",
+    "success": "{{format}} kopiert.",
+    "failed": "Kopieren fehlgeschlagen. Prüfen Sie die Browserberechtigungen und versuchen Sie es erneut."
+  },
+  "sections": {
+    "start": "Erste Schritte",
+    "audits": "Audits und Berichte",
+    "research": "Recherche und Tracking",
+    "product": "Produktfunktionen",
+    "account": "Konto und Abrechnung",
+    "developers": "Entwickler"
+  },
+  "breadcrumbs": { "home": "Startseite", "docs": "Dokumentation" },
+  "error": {
+    "notFoundTitle": "Leitfaden nicht gefunden",
+    "notFoundBody": "Dieser Leitfaden wurde möglicherweise verschoben oder die Adresse ist falsch.",
+    "title": "Dokumentation nicht verfügbar",
+    "body": "Die Dokumentation konnte nicht geladen werden. Versuchen Sie es gleich erneut.",
+    "back": "Zur Dokumentation"
+  }
+}

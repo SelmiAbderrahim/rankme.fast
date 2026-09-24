@@ -1,0 +1,239 @@
+{
+  "nav": {
+    "label": "Zielgruppen-Recherche",
+    "description": "Verwandeln Sie öffentliche Beschwerden, Wünsche und Fragen in Content-, Produkt- und SEO-Chancen."
+  },
+  "outputLocale": "Ausgabesprache: {{locale}}",
+  "form": {
+    "market": {
+      "label": "Markt",
+      "country": "Land",
+      "language": "Sprache",
+      "device": "Gerät"
+    },
+    "competitors": {
+      "label": "Wettbewerber",
+      "helper": "Wählen Sie bis zu fünf bereits für diese Website erfasste Wettbewerber.",
+      "chipRemove": "{{domain}} entfernen",
+      "limit": "Maximal {{max}} Wettbewerber ausgewählt."
+    },
+    "topics": {
+      "label": "Themen",
+      "placeholder": "Thema hinzufügen und Eingabetaste drücken",
+      "chipRemove": "{{topic}} entfernen",
+      "count": "{{count}} / {{max}}",
+      "validationLength": "Themen müssen zwischen 2 und 160 Zeichen lang sein.",
+      "validationEmpty": "Geben Sie ein Thema ein, bevor Sie es hinzufügen.",
+      "validationMax": "Sie können bis zu {{max}} Themen hinzufügen."
+    },
+    "reviewButton": "Prüfen",
+    "submitting": "Wird bearbeitet…"
+  },
+  "preview": {
+    "unitLabel": "1 Zielgruppen-Recherche",
+    "remainingLabel": "{{remaining}} von {{cap}} in diesem Monat verbleibend",
+    "operationCeilings": "Was dieser Lauf tun wird",
+    "cached": "Zwischengespeichert",
+    "fresh": "Aktuell",
+    "supported": "Dieser Markt wird vollständig unterstützt.",
+    "unsupported": "Dieser Markt wird nur eingeschränkt unterstützt — die Ergebnisse können dünner ausfallen.",
+    "maxPages": "Bis zu {{max}} öffentliche Seiten",
+    "totalBudget": "Gesamtbudget: {{micros}} Mikro-USD",
+    "aiBudget": "KI-Budget: {{micros}} Mikro-USD",
+    "coverageOk": "Vollständige Anbieterabdeckung",
+    "coverageDegraded": "Eingeschränkte Anbieterabdeckung — Ergebnisse können unvollständig sein.",
+    "coverageBlocked": "Scraping ohne Datenspeicherung ist für dieses Konto blockiert."
+  },
+  "confirm": {
+    "title": "Diese Zielgruppen-Recherche starten?",
+    "body": "Dieser Lauf durchsucht bis zu {{maxPages}} öffentliche Seiten und erzeugt Signale aus dem öffentlichen Web. Er läuft einmalig — es gibt keine fortlaufende Überwachung.",
+    "confirmButton": "Lauf starten",
+    "cancelButton": "Abbrechen",
+    "marketLine": "Markt",
+    "competitorsLine": "Wettbewerber",
+    "topicsLine": "Themen",
+    "unitLine": "Verbrauchte Einheiten"
+  },
+  "progress": {
+    "stage": {
+      "queued": "In Warteschlange",
+      "discovering": "Quellen werden ermittelt",
+      "selecting": "Kandidaten werden ausgewählt",
+      "collecting": "Belege werden gesammelt",
+      "clustering": "Signale werden gruppiert",
+      "completed": "Abgeschlossen",
+      "partial": "Teilweise abgeschlossen",
+      "failed": "Fehlgeschlagen"
+    },
+    "counts": {
+      "sources": "{{count}} Quellen gefunden",
+      "signals": "{{count}} Signale gefunden"
+    },
+    "partial": {
+      "title": "Dieser Lauf wurde mit teilweiser Abdeckung abgeschlossen",
+      "body": "Einige Quellen oder die KI-Stufe haben vor Abschluss ein Limit erreicht. Die unten aufgeführten Signale spiegeln nur die vor dem Abbruch gesammelten Belege wider."
+    },
+    "failed": {
+      "title": "Dieser Lauf ist fehlgeschlagen",
+      "body": "Dieser Lauf wurde nicht abgeschlossen. Versuchen Sie es erneut oder wählen Sie ein engeres Thema oder einen anderen Wettbewerber."
+    },
+    "noUsableEvidence": {
+      "title": "Keine verwertbaren Belege gefunden",
+      "body": "Wir konnten für diesen Markt und diese Themen nicht genügend öffentliche Belege finden, um Signale zu erzeugen. Ihr Lauf wurde erstattet."
+    },
+    "percentComplete": "{{percent}} % abgeschlossen",
+    "back": "Zurück zum Arbeitsbereich"
+  },
+  "history": {
+    "title": "Laufverlauf",
+    "columns": {
+      "market": "Markt",
+      "requestedAt": "Angefordert",
+      "state": "Status",
+      "sources": "Quellen",
+      "signals": "Signale",
+      "coverage": "Abdeckung",
+      "unit": "Einheit"
+    },
+    "empty": {
+      "title": "Noch keine Läufe",
+      "body": "Starten Sie Ihre erste Zielgruppen-Recherche, um Beschwerden, Wünsche und Fragen aus dem öffentlichen Web zu sehen."
+    },
+    "loading": "Laufverlauf wird geladen…",
+    "prev": "Zurück",
+    "next": "Weiter",
+    "view": "Anzeigen",
+    "marketUnavailable": "—",
+    "coverageNote": "Teilweise Abdeckung — öffnen Sie den Lauf für Details",
+    "coverageFull": "Vollständige Abdeckung"
+  },
+  "locked": {
+    "title": "Zielgruppen-Recherche ist in Ihrem Tarif nicht enthalten",
+    "body": "Wechseln Sie zu Starter, Pro oder Agency, um Voice-of-Customer-Recherchen durchzuführen und öffentliches Feedback in Content-, Produkt- und SEO-Chancen zu verwandeln.",
+    "cta": "Tarife ansehen"
+  },
+  "usage": {
+    "metrics": {
+      "audience_research_runs": {
+        "label": "Zielgruppen-Recherchen",
+        "description": "Eine Einheit deckt einen vollständigen Voice-of-Customer-Lauf ab, unabhängig davon, wie viele Suchen oder Seitenabrufe er ausführt."
+      }
+    }
+  },
+  "billing": {
+    "overCap": {
+      "audience_research_runs": "Sie haben in diesem Monat alle Zielgruppen-Recherchen Ihres Tarifs verbraucht. Upgraden Sie, um mehr Voice-of-Customer-Recherchen durchzuführen."
+    }
+  },
+  "signals": {
+    "empty": {
+      "title": "Dieser Lauf ist beendet, hat aber keine Signale erzeugt.",
+      "filtered": "Keine Signale entsprechen den aktuellen Filtern."
+    },
+    "citationCount": "{{count}} zitierte Quellen",
+    "confidence": {
+      "high": "Hohe Sicherheit",
+      "medium": "Mittlere Sicherheit",
+      "low": "Geringe Sicherheit",
+      "anecdotal": "Anekdotisch"
+    },
+    "type": {
+      "complaint": "Beschwerde",
+      "request": "Anfrage",
+      "question": "Frage",
+      "competitor_gap": "Wettbewerbslücke",
+      "other": "Signal"
+    },
+    "route": {
+      "content": "Neuer Inhalt",
+      "comparison_page": "Vergleichsseite",
+      "product": "Produktänderung",
+      "seo": "SEO-Fix",
+      "other": "Andere",
+      "aiInterpretation": "KI-Interpretation",
+      "aiInterpretationHint": "Der vorgeschlagene Weg ist eine KI-Interpretation, kein Marktanteilssignal."
+    },
+    "rationale": {
+      "summary": "{{independentDomainCount}} unabhängige Domains über {{sourceTypeCount}} Quelltypen; {{recent}}.",
+      "recent": "jüngste Quelle {{date}}",
+      "recentUnknown": "Datum nicht verfügbar"
+    },
+    "sourceType": {
+      "forum": "Forum",
+      "review": "Bewertung",
+      "comparison": "Vergleich",
+      "question": "Q&A",
+      "other": "Andere"
+    },
+    "actions": {
+      "evidence": "Belege anzeigen",
+      "accept": "Akzeptieren",
+      "dismiss": "Verwerfen"
+    },
+    "evidence": {
+      "title": "Signalbelege",
+      "description": "Jede zitierte Quelle. Nur Text und Links — kein HTML.",
+      "empty": "Dieses Signal hat keine gespeicherten Quellen.",
+      "missingSource": "Quelle {{id}} ist nicht mehr verfügbar.",
+      "dateUnavailable": "Datum nicht verfügbar",
+      "observedAt": "Beobachtet am {{date}}",
+      "freshness": "Aktualität: {{value}}",
+      "openLink": "Quelle öffnen",
+      "openLinkAria": "Quelle ({{host}}) in neuem Tab öffnen"
+    },
+    "decision": {
+      "signalTitleLabel": "Signal",
+      "cancel": "Abbrechen",
+      "submitting": "Wird verarbeitet…",
+      "confirmCi": "Empfehlung erstellen",
+      "confirmActions": "Zu nächsten Aktionen hinzufügen",
+      "confirmDismiss": "Signal verwerfen",
+      "conflict": "Eine andere Entscheidung wurde bereits auf dieses Signal angewendet.",
+      "acceptSuccess": "Entscheidung erfasst.",
+      "dismissSuccess": "Signal verworfen.",
+      "openRecommendation": "Empfehlung öffnen",
+      "openAction": "In nächsten Aktionen öffnen",
+      "openExisting": "Vorhandenes öffnen",
+      "replayHintCi": "Dieses Signal wurde bereits als Content-Intelligence-Empfehlung akzeptiert.",
+      "replayHintActions": "Dieses Signal wurde bereits zu den nächsten Aktionen hinzugefügt.",
+      "acceptTitle": {
+        "content": "Content-Intelligence-Empfehlung erstellen",
+        "comparison_page": "Content-Intelligence-Empfehlung erstellen",
+        "product": "Zu nächsten Aktionen hinzufügen",
+        "seo": "Zu nächsten Aktionen hinzufügen"
+      },
+      "acceptBody": {
+        "content": "Erstellt eine Content-Intelligence-Empfehlung aus den zitierten Quellen.",
+        "comparison_page": "Erstellt eine Vergleichsseiten-Empfehlung aus den zitierten Quellen.",
+        "product": "Registriert eine Produktänderungs-Aktion.",
+        "seo": "Registriert einen SEO-Fix."
+      },
+      "destination": {
+        "contentDetail": "Die Empfehlung verweist auf dieses Signal und nur auf Quellen-IDs — kein Text wird kopiert.",
+        "actionsDetail": "Die Aktion verweist auf dieses Signal und liest die unveränderlichen Quellen bei Anzeige — kein Text wird kopiert."
+      },
+      "dismissTitle": "Signal verwerfen",
+      "dismissBody": "Wählen Sie einen Grund. Endgültig — das Signal erscheint nicht wieder.",
+      "reasonLabel": "Grund",
+      "reasons": {
+        "not_relevant": "Nicht relevant für meine Website",
+        "already_addressed": "Bereits behandelt",
+        "low_confidence": "Nicht genug Belege",
+        "duplicate": "Duplikat",
+        "other": "Andere"
+      }
+    }
+  },
+  "errors": {
+    "overCap": "Sie haben in diesem Monat alle Zielgruppen-Recherchen Ihres Tarifs verbraucht. Upgraden Sie, um mehr durchzuführen.",
+    "unsupportedMarket": "Zielgruppen-Recherche ist in diesem Markt noch nicht verfügbar. Wählen Sie ein unterstütztes Land oder eine unterstützte Sprache.",
+    "zdrBlocked": "Zielgruppen-Recherche benötigt Scraping ohne Datenspeicherung. Aktivieren Sie ZDR in den Anbieter-Einstellungen und versuchen Sie es erneut.",
+    "noUsableEvidence": "Keine verwertbaren öffentlichen Belege gefunden. Ihr Lauf wurde erstattet — probieren Sie ein anderes Thema oder einen anderen Wettbewerber.",
+    "costCeilingPartial": "Dieser Lauf hat sein Kostenlimit erreicht. Teilbelege wurden gespeichert; nutzen Sie diese oder wählen Sie ein engeres Thema.",
+    "processingFailure": "Dieser Lauf konnte nicht verarbeitet werden. Teilbelege wurden gespeichert, sofern verfügbar.",
+    "notFound": "Dieser Lauf konnte nicht gefunden werden.",
+    "providerFailed": "Der Recherche-Anbieter konnte diesen Lauf nicht abschließen. Versuchen Sie es in Kürze erneut.",
+    "aiFailed": "Der KI-Gruppierungsschritt konnte nicht abgeschlossen werden. Teilbelege wurden gespeichert, sofern verfügbar.",
+    "generic": "Etwas ist schiefgelaufen. Versuchen Sie es erneut."
+  }
+}

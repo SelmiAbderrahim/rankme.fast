@@ -1,0 +1,109 @@
+{
+  "title": "Keyword-Kannibalisierung",
+  "subtitle": "Suchanfragen, bei denen sich zwei oder mehr Ihrer Seiten dieselben Klicks, Impressionen und Positionen in der Search Console teilen.",
+  "tabs": {
+    "reports": "Berichte",
+    "new": "Neuer Bericht"
+  },
+  "filters": {
+    "confidence": "Sicherheit",
+    "confidenceValue": {
+      "all": "Alle",
+      "high": "Hoch",
+      "medium": "Mittel",
+      "low": "Niedrig"
+    }
+  },
+  "new": {
+    "title": "Bericht erstellen",
+    "description": "Berichte lesen die bereits gespeicherten Search-Console-Zeilen. Von Google wird nichts abgerufen.",
+    "window": "Aggregationszeitraum",
+    "windowOption": "{{days}} Tage",
+    "preview": "Kosten anzeigen",
+    "generate": "Bericht erstellen"
+  },
+  "preview": {
+    "title": "Was das kostet",
+    "units": "{{count}} Bericht aus Ihrem Monatskontingent.",
+    "units_other": "{{count}} Berichte aus Ihrem Monatskontingent.",
+    "remaining": "In diesem Monat noch im Tarif: {{remaining}}.",
+    "pack": "Plus {{units}} aus Guthabenpaketen.",
+    "noFit": "Das passt nicht mehr ins Restkontingent. Fügen Sie Guthaben hinzu oder wechseln Sie den Tarif."
+  },
+  "list": {
+    "generatedAt": "Erstellt",
+    "window": "Zeitraum",
+    "windowValue": "{{days}} Tage",
+    "lastSync": "Letzte Synchronisierung",
+    "candidates": "Kandidaten",
+    "open": "Öffnen"
+  },
+  "detail": {
+    "provenance": "Aus Ihren gespeicherten Search-Console-Daten über {{days}} Tage, zuletzt synchronisiert am {{date}}. {{queries}} Suchanfragen gelesen."
+  },
+  "candidates": {
+    "query": "Suchanfrage",
+    "label": "Kandidat",
+    "pages": "Seiten",
+    "confidence": "Sicherheit",
+    "confidenceValue": {
+      "high": "Hoch",
+      "medium": "Mittel",
+      "low": "Niedrig"
+    },
+    "primary": "Vorgeschlagene Hauptseite",
+    "clicks": "Klicks",
+    "inspect": "Ansehen"
+  },
+  "drilldown": {
+    "provenance": "Gespeicherte Zeilen über {{days}} Tage, zuletzt synchronisiert am {{date}}.",
+    "recommendation": "Behalten Sie {{url}} als Hauptseite.",
+    "reason": {
+      "most_clicks": "Sie erhält für diese Suchanfrage bereits die meisten Klicks.",
+      "best_position": "Die Klicks sind gleich, daher entscheidet die bessere Durchschnittsposition.",
+      "stable_order": "Klicks und Position sind gleich, daher halten wir die Reihenfolge stabil."
+    },
+    "page": "Seite",
+    "clicks": "Klicks",
+    "impressions": "Impressionen",
+    "position": "Durchschnittsposition",
+    "clickShare": "Klickanteil",
+    "primary": "Vorgeschlagene Hauptseite"
+  },
+  "states": {
+    "empty": {
+      "title": "Noch nichts zu zeigen",
+      "body": "Erstellen Sie einen Bericht, um zu sehen, um welche Suchanfragen Ihre Seiten konkurrieren."
+    },
+    "awaitingSync": {
+      "title": "Warten auf die nächste Synchronisierung",
+      "body": "Für diesen Zeitraum sind noch keine Suchanfrage-und-Seite-Zeilen aus der Search Console gespeichert. Sie kommen mit der nächsten Synchronisierung."
+    },
+    "disconnected": {
+      "title": "Search Console verbinden",
+      "body": "Verbinden Sie eine Search-Console-Property, bevor Sie einen neuen Bericht erstellen. Gespeicherte Berichte bleiben lesbar.",
+      "link": "Search Console verbinden"
+    },
+    "cap": {
+      "title": "Monatskontingent aufgebraucht",
+      "body": "Sie haben diesen Monat alle Kannibalisierungsberichte Ihres Tarifs verbraucht.",
+      "link": "Tarife ansehen"
+    },
+    "disabled": {
+      "title": "Vorübergehend nicht verfügbar",
+      "body": "Kannibalisierungsberichte pausieren gerade. Bereits erstellte Berichte bleiben lesbar."
+    },
+    "notFound": {
+      "title": "Bericht nicht gefunden",
+      "body": "Dieser Bericht ist nicht mehr verfügbar."
+    },
+    "rateLimited": {
+      "title": "Zu viele Anfragen",
+      "body": "Warten Sie eine Minute und versuchen Sie es erneut."
+    },
+    "failed": {
+      "title": "Etwas ist schiefgelaufen",
+      "body": "Das konnte nicht geladen werden. Versuchen Sie es erneut."
+    }
+  }
+}

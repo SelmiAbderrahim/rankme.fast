@@ -1,0 +1,11 @@
+{
+  "contact": {
+    "confirmation": "Ваше сообщение отправлено. Мы скоро свяжемся с вами."
+  },
+  "passwordReset": {
+    "subject": "Сброс пароля"
+  },
+  "passwordChanged": {
+    "subject": "Ваш пароль был изменён"
+  }
+}

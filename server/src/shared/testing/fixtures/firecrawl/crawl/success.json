@@ -1,0 +1,12 @@
+{
+  "status": "completed",
+  "total": 1,
+  "completed": 1,
+  "creditsUsed": 2,
+  "next": null,
+  "data": [{
+    "markdown": "# Crawled page\nSynthetic crawl evidence.",
+    "links": ["/next"],
+    "metadata": { "title": "Crawled page", "keywords": ["podcast summary", "episode brief"], "sourceURL": "https://example.com/", "statusCode": 200, "robots": ["index"] }
+  }]
+}

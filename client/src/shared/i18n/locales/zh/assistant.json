@@ -1,0 +1,117 @@
+{
+  "title": "AI 助手",
+  "description": "询问您的 SEO 数据，并允许助手使用已获准的工具。",
+  "loading": "正在加载对话…",
+  "sidebar": {
+    "title": "对话",
+    "new": "新建对话",
+    "label": "助手对话",
+    "empty": "尚无对话。",
+    "untitled": "新建对话",
+    "deleteLabel": "删除 {{title}}",
+    "deleteTitle": "删除对话？",
+    "deleteDescription": "这将永久删除“{{title}}”及其中的消息。",
+    "deleting": "正在删除…"
+  },
+  "context": {
+    "label": "站点上下文",
+    "none": "不关联站点 — 通用建议",
+    "loading": "正在加载您的站点…",
+    "linkedHelp": "对话开始后，站点上下文将无法更改。",
+    "newHelp": "可选。请在发送第一条消息前关联站点。",
+    "unavailable": "无法加载您的站点。您仍可开始通用对话。",
+    "missing": "关联的站点已不可用"
+  },
+  "empty": {
+    "title": "您想改进什么？",
+    "description": "请用自然语言提问。助手可以使用您的账户获准使用的 SEO 工具。",
+    "examples": "试试这些问题",
+    "prompts": {
+      "audit": "总结我最近一次审计中最重要的修复项。",
+      "rank": "最近有哪些跟踪关键词的排名发生了变化？",
+      "sites": "显示我账户中的站点。"
+    }
+  },
+  "composer": {
+    "label": "消息",
+    "placeholder": "询问排名、审计、关键词或您的站点…",
+    "send": "发送消息",
+    "sending": "正在发送…",
+    "stop": "停止",
+    "hint": "按 Enter 发送 · 按 Shift+Enter 换行",
+    "characters": "{{count}} / {{max}} 个字符"
+  },
+  "messages": {
+    "label": "对话消息",
+    "user": "您的消息",
+    "assistant": "助手回复",
+    "streaming": "助手正在回复",
+    "loading": "正在加载对话…"
+  },
+  "tool": {
+    "arguments": "参数",
+    "result": "结果",
+    "waiting": "正在等待工具结果…",
+    "status": {
+      "running": "运行中",
+      "success": "已完成",
+      "failed": "失败"
+    },
+    "names": {
+      "listSites": "列出站点",
+      "latestAudit": "最新审计报告",
+      "listKeywords": "列出关键词",
+      "rankHistory": "排名历史",
+      "listAnalyses": "列出内容分析",
+      "contentAnalysis": "内容分析",
+      "startAudit": "开始审计",
+      "auditStatus": "审计状态",
+      "listActions": "后续行动",
+      "setActionState": "更新行动"
+    }
+  },
+  "results": {
+    "empty": "工具未返回任何数据行。",
+    "notAvailable": "不可用",
+    "notRanked": "未排名",
+    "keyword": "关键词",
+    "date": "日期",
+    "position": "排名",
+    "id": "ID",
+    "score": "通过检查得分",
+    "fixNow": "立即修复",
+    "topFindings": "主要发现",
+    "noFindings": "未返回任何发现。",
+    "domain": "域名",
+    "url": "网址"
+  },
+  "states": {
+    "locked": {
+      "title": "Starter 及以上方案可使用 AI 助手",
+      "description": "升级到 Starter 或更高方案，即可通过对话查询 SEO 数据并使用已获准的工具。",
+      "action": "比较方案"
+    },
+    "cap": {
+      "title": "本月消息已用完",
+      "description": "等待每月额度重置，或检查你的账户是否配置了聊天积分包。",
+      "buyCredits": "购买聊天积分",
+      "seePlans": "比较方案"
+    },
+    "unavailable": {
+      "title": "助手暂时不可用",
+      "description": "助手当前已关闭或暂时无法回复。您保存的对话不会受到影响。"
+    },
+    "error": {
+      "title": "对话意外中断"
+    }
+  },
+  "errors": {
+    "featureLocked": "升级到 Starter 或更高方案即可使用 AI 助手。",
+    "capReached": "您已用完本月的助手消息。请购买积分包或等待额度重置。",
+    "forbidden": "无法验证您的请求。请刷新页面后重试。",
+    "rateLimited": "助手请求过多。请稍候再试。",
+    "unavailable": "AI 助手暂时不可用。",
+    "streamFailed": "回复意外中断。请重新发送您的消息。",
+    "generic": "助手请求失败。请重试。"
+  }
+}

@@ -1,0 +1,40 @@
+{
+  "version": "0.1.20260711",
+  "status_code": 20000,
+  "status_message": "Ok.",
+  "time": "0.148 sec.",
+  "cost": 0.00075,
+  "tasks_count": 1,
+  "tasks_error": 0,
+  "tasks": [
+    {
+      "id": "TASK_ID",
+      "status_code": 20000,
+      "status_message": "Ok.",
+      "cost": 0.00075,
+      "result_count": 1,
+      "result": [
+        {
+          "items_count": 3,
+          "items": [
+            {
+              "type": "google_business_question",
+              "question_text": "Do you offer emergency appointments?",
+              "items": [{ "answer_text": "Yes, call our front desk." }]
+            },
+            {
+              "type": "google_business_question",
+              "question_text": "Is parking available?",
+              "items": []
+            },
+            {
+              "type": "google_business_question",
+              "question_text": "Do you accept new patients?",
+              "answers": [{ "answer_text": "Yes." }]
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

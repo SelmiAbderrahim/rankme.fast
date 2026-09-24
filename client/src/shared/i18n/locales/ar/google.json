@@ -1,0 +1,213 @@
+{
+  "settings": {
+    "title": "Google Search Console",
+    "subtitle": "اربط Search Console لكي يعرض RankMeFast حالة الفهرسة الحقيقية ونتائج البيانات المنظمة في تقارير التدقيق."
+  },
+  "connect": {
+    "title": "ربط Google Search Console",
+    "description": "دع RankMeFast يقرأ حالة الفهرسة ونتائج البيانات المنظمة من Search Console. يتطلب موقعًا مُتحققًا منه.",
+    "cta": "الاتصال عبر Google",
+    "connecting": "جاري الاتصال…",
+    "scopeNote": "نطلب صلاحية قراءة فقط لبيانات Search Console الخاصة بك."
+  },
+  "connected": {
+    "title": "متصل",
+    "subtitle": "اختر موقع Search Console الذي يقرأ منه RankMeFast.",
+    "emailLabel": "تم تسجيل الدخول باسم",
+    "propertyLabel": "موقع Search Console",
+    "propertyPlaceholder": "اختر موقعًا",
+    "propertyMissing": "لا توجد مواقع مُتحقَّق منها — سنكتشف تطابقًا تلقائيًا في التدقيق التالي.",
+    "connectedAt": "تم الاتصال في {{date}}",
+    "lastUsedAt": "آخر استخدام {{date}}",
+    "lastUsedNever": "لم يُستخدم بعد",
+    "disconnect": "إلغاء ربط هذا الموقع"
+  },
+  "needsReconnect": {
+    "title": "اتصالك بجوجل يحتاج إلى إعادة الربط",
+    "body": "يطلب Google موافقة جديدة — يحدث هذا إذا سحبت الصلاحية أو ظل الاتصال بلا استخدام أشهرًا. لا تزال عمليات التدقيق تعمل بدون هذا الاتصال، لكن بيانات الفهرسة ستكون ناقصة.",
+    "cta": "إعادة الربط"
+  },
+  "disconnect": {
+    "confirmTitle": "إلغاء ربط Google بهذا الموقع؟",
+    "confirmBody": "يؤدي هذا إلى إزالة اختيارات Search Console وAnalytics لهذا الموقع. تظل المواقع الأخرى وتسجيل الدخول المشترك إلى Google متصلة.",
+    "confirm": "إلغاء ربط الموقع",
+    "cancel": "إلغاء",
+    "success": "تم قطع الاتصال مع Google Search Console.",
+    "siteUnlinked": "تم إلغاء ربط Google بهذا الموقع."
+  },
+  "revoke": {
+    "cta": "إلغاء وصول Google في جميع المواقع",
+    "confirmTitle": "إلغاء اتصال Google المشترك؟",
+    "confirmBody": "يؤدي هذا إلى إلغاء وصول Google وإلغاء ربط جميع المواقع المتصلة وعددها {{count}}. لا يمكن حصر الإجراء في الموقع الحالي.",
+    "confirm": "الإلغاء في كل المواقع"
+  },
+  "autoMatch": {
+    "queued": "جارٍ فحص موارد Google لهذا الموقع…",
+    "matching": "جارٍ مطابقة هذا الموقع مع موارد Google…",
+    "ambiguous": "يتطابق أكثر من مورد مع هذا الموقع. اختر واحدًا أدناه.",
+    "no_match": "لم يتم العثور على تطابق دقيق. اختر موردًا أدناه.",
+    "scope_missing": "لم يتم منح الوصول إلى Analytics بعد.",
+    "needs_reconnect": "أعد ربط Google قبل مطابقة الموارد.",
+    "unavailable": "المطابقة التلقائية غير متاحة مؤقتًا. يمكنك اختيار مورد أدناه.",
+    "not_connected": "اربط Google لمطابقة هذا الموقع."
+  },
+  "errors": {
+    "missingScope": "الاتصال يفتقر إلى صلاحية Search Console. حاول الربط مجددًا مع إبقاء الخيار مُفعّلًا.",
+    "notConnected": "لم تربط Google Search Console بعد.",
+    "invalidProperty": "هذا الموقع ليس ضمن مواقع Search Console المُتحقق منها. اختر واحدًا من القائمة.",
+    "quotaExceeded": "استُنفدت حصة Search Console اليومية. أعد المحاولة غدًا.",
+    "unavailable": "تعذّر الوصول إلى Google Search Console. حاول بعد قليل.",
+    "loadFailed": "تعذّر تحميل بيانات اتصال Google.",
+    "disconnectFailed": "تعذّر قطع الاتصال.",
+    "linkFailed": "تعذّر ربط حساب Google هذا. اختر الحساب نفسه الذي سجّلت الدخول به، وامنح صلاحية الوصول إلى Search Console."
+  },
+  "scopes": {
+    "label": "الصلاحيات",
+    "searchConsole": "Search Console",
+    "analytics": "الإحصاءات",
+    "granted": "ممنوحة",
+    "notGranted": "غير ممنوحة"
+  },
+  "range": {
+    "label": "النطاق الزمني",
+    "7d": "آخر 7 أيام",
+    "28d": "آخر 28 يومًا",
+    "90d": "آخر 90 يومًا"
+  },
+  "searchSummary": {
+    "title": "أداء البحث (آخر {{days}} يومًا)",
+    "clicks": "النقرات",
+    "impressions": "مرات الظهور",
+    "ctr": "معدل النقر إلى الظهور",
+    "position": "متوسط الترتيب",
+    "topQueries": "أهم عمليات البحث",
+    "topPages": "أهم الصفحات",
+    "viewAll": "عرض الكل",
+    "viewAllLabel": "عرض الكل — {{section}}",
+    "sitemapsLink": "عرض خرائط الموقع",
+    "asOf": "البيانات حتى {{date}}",
+    "previousPeriod": "الفترة السابقة: {{clicks}} نقرة · {{impressions}} ظهور",
+    "reportLink": "شاهد البيانات الكاملة في تقريرك",
+    "emptyTitle": "لا توجد بيانات بحث بعد",
+    "emptyCta": "إدارة الاتصال",
+    "empty": "لا توجد بيانات بحث بعد. شغّل تدقيقًا وسيتم ملء هذا الملخص تلقائيًا.",
+    "error": "تعذّر تحميل ملخص البحث الخاص بك. حاول مرة أخرى بعد قليل.",
+    "retry": "حاول مرة أخرى",
+    "refresh": "تحديث بيانات البحث",
+    "refreshing": "جارٍ التحديث…",
+    "refreshError": "تعذّر تحديث بيانات البحث. حاول مرة أخرى بعد قليل.",
+    "refreshedJustNow": "تم التحديث للتو",
+    "timeseriesTitle": "النقرات ومرات الظهور عبر الزمن",
+    "timeseriesSubtitle": "الإجماليات اليومية لآخر {{days}} يومًا.",
+    "timeseriesEmpty": "لا توجد بيانات يومية بعد.",
+    "timeseriesChartLabel": "{{metric}} يوميًا لآخر {{days}} يومًا",
+    "timeseriesTableCaption": "أداء البحث اليومي لآخر {{days}} يومًا",
+    "tableDate": "التاريخ",
+    "metricLabel": "اختر مقياسًا للرسم البياني",
+    "countriesTitle": "أهم البلدان",
+    "countriesEmpty": "لا توجد بيانات بلدان بعد.",
+    "countriesTableCaption": "النقرات حسب البلد",
+    "countryHeader": "البلد",
+    "devicesTitle": "الأجهزة",
+    "devicesEmpty": "لا توجد بيانات أجهزة بعد.",
+    "devicesTableCaption": "النقرات حسب الجهاز",
+    "deviceHeader": "الجهاز",
+    "devices": {
+      "desktop": "سطح المكتب",
+      "mobile": "الهاتف المحمول",
+      "tablet": "الجهاز اللوحي",
+      "unknown": "أخرى"
+    }
+  },
+  "analytics": {
+    "title": "Google Analytics (آخر {{days}} يومًا)",
+    "sessions": "الجلسات",
+    "activeUsers": "المستخدمون النشطون",
+    "engagedSessions": "الجلسات التفاعلية",
+    "keyEvents": "الأحداث الرئيسية",
+    "engagementRateLabel": "معدل التفاعل",
+    "engagementRateLine": "معدل التفاعل: {{rate}}",
+    "previousPeriod": "الفترة السابقة: {{sessions}} جلسة · {{activeUsers}} مستخدمًا نشطًا",
+    "emptyTitle": "لا توجد بيانات تحليلات بعد",
+    "empty": "لا توجد بيانات تحليلات بعد. تظهر البيانات بعد وقت قصير من ربط الموقع — جرّب التحديث.",
+    "error": "تعذّر تحميل ملخص التحليلات. حاول مرة أخرى بعد قليل.",
+    "refresh": "تحديث بيانات التحليلات",
+    "refreshError": "تعذّر تحديث بيانات التحليلات. حاول مرة أخرى بعد قليل.",
+    "timeseriesTitle": "الجلسات والمستخدمون النشطون عبر الزمن",
+    "timeseriesSubtitle": "الإجماليات اليومية لآخر {{days}} يومًا.",
+    "timeseriesChartLabel": "{{metric}} يوميًا لآخر {{days}} يومًا",
+    "timeseriesTableCaption": "أداء التحليلات اليومي لآخر {{days}} يومًا",
+    "channelsTitle": "القنوات",
+    "channelsEmpty": "لا توجد بيانات قنوات بعد.",
+    "channelsTableCaption": "الجلسات حسب القناة",
+    "channelHeader": "القناة",
+    "pagesTitle": "أهم الصفحات",
+    "pagesEmpty": "لا توجد بيانات صفحات بعد.",
+    "pagesTableCaption": "الجلسات حسب الصفحة",
+    "pageHeader": "الصفحة",
+    "countriesTitle": "أهم البلدان",
+    "countriesEmpty": "لا توجد بيانات بلدان بعد.",
+    "countriesTableCaption": "الجلسات حسب البلد",
+    "countryHeader": "البلد",
+    "devicesTitle": "الأجهزة",
+    "devicesEmpty": "لا توجد بيانات أجهزة بعد.",
+    "devicesTableCaption": "الجلسات حسب الجهاز",
+    "deviceHeader": "الجهاز",
+    "locked": {
+      "body": "إحصاءات Google Analytics متاحة في خطة Pro وما فوق. قم بالترقية لعرض الجلسات والتفاعل والأحداث الرئيسية إلى جانب بيانات البحث.",
+      "upgrade": "ترقية الخطة"
+    },
+    "enableTitle": "Google Analytics غير مفعّل",
+    "enableBody": "امنح صلاحية قراءة فقط لـ Google Analytics لعرض الجلسات والتفاعل والأحداث الرئيسية لهذا الموقع.",
+    "enableCta": "تفعيل Google Analytics",
+    "pickerHint": "اختر موقع Google Analytics الذي يقرأ منه RankMeFast.",
+    "propertyLabel": "موقع Analytics",
+    "propertyPlaceholder": "اختر موقعًا",
+    "propertyNone": "لم يتم العثور على مواقع Google Analytics لهذا الحساب.",
+    "propertiesError": "تعذّر تحميل مواقع Analytics. حاول مرة أخرى بعد قليل.",
+    "setPropertyError": "تعذّر حفظ موقع Analytics هذا. حاول مرة أخرى بعد قليل.",
+    "settingsTitle": "إحصاءات Google",
+    "settingsSubtitle": "اختر موقع GA4 الذي يقرأ منه RankMeFast."
+  },
+  "searchDetail": {
+    "back": "نظرة عامة",
+    "views": {
+      "queries": "أهم عمليات البحث",
+      "pages": "أهم الصفحات",
+      "countries": "أهم البلدان",
+      "devices": "الأجهزة",
+      "sitemaps": "خرائط الموقع"
+    },
+    "searchLabel": "تصفية الصفوف",
+    "searchPlaceholder": "تصفية…",
+    "noMatches": "لا توجد صفوف مطابقة للتصفية.",
+    "loadMore": "تحميل المزيد",
+    "error": "تعذّر تحميل هذه البيانات. حاول مرة أخرى بعد قليل.",
+    "columns": {
+      "query": "استعلام البحث",
+      "page": "الصفحة",
+      "country": "البلد",
+      "device": "الجهاز",
+      "clicks": "النقرات",
+      "impressions": "مرات الظهور",
+      "ctr": "معدل النقر",
+      "position": "الترتيب",
+      "actions": "الإجراءات"
+    },
+    "sitemaps": {
+      "empty": "لم يتم إرسال أي خريطة موقع بعد.",
+      "columns": {
+        "path": "خريطة الموقع",
+        "type": "النوع",
+        "lastSubmitted": "آخر إرسال",
+        "processed": "تمت معالجتها",
+        "status": "الحالة"
+      },
+      "status": {
+        "ok": "سليمة",
+        "errors": "{{n}} أخطاء",
+        "warnings": "{{n}} تحذيرات"
+      }
+    }
+  }
+}

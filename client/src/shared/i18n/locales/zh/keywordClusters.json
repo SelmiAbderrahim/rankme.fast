@@ -1,0 +1,131 @@
+{
+  "eyebrow": "基于已存储观测的分组",
+  "title": "按搜索结果重叠聚类关键词",
+  "subtitle": "把在 Google 上返回相同页面的已跟踪关键词分到一组。每次分组都基于你已经付费的排名检查计算，不会发起任何新的搜索。",
+  "site": {
+    "ranksLink": "打开排名跟踪"
+  },
+  "tabs": {
+    "runs": "已保存运行",
+    "new": "新建运行"
+  },
+  "scope": {
+    "title": "本次运行的关键词",
+    "description": "已选择 {{count}} 个关键词。每个所选关键词都必须有可用的近期 Google 结果。",
+    "empty": "该网站还没有活跃的 Google 关键词。",
+    "minimum": "请至少选择两个关键词，再预览本次运行。"
+  },
+  "newRun": {
+    "title": "准备一次聚类运行",
+    "description": "在消耗一次运行前，先预览符合条件的关键词和你的额度。",
+    "storedOnly": "聚类只读取已存储的结果，不会向任何供应商发送搜索。",
+    "unitLabel": "额度",
+    "unitValue": "{{count}} 次聚类运行",
+    "scopeLabel": "就绪的关键词",
+    "scopeValue": "{{count}} 个已跟踪关键词符合条件",
+    "method": "当两个关键词在各自前 {{window}} 条结果中至少共享 {{shared}} 条，且排名检查发生在最近 {{days}} 天内时，它们会被分到一组。",
+    "remaining": "本次运行前还剩 {{count}} 次。",
+    "labelingIncluded": "本次运行包含可选的 AI 群组标签，且绝不会改变聚类成员关系。",
+    "preview": "预览运行",
+    "previewing": "正在检查已存储结果…",
+    "confirm": "开始聚类运行",
+    "starting": "正在开始…",
+    "cancel": "取消"
+  },
+  "states": {
+    "ranksCta": "运行一次排名检查",
+    "planCta": "查看套餐",
+    "emptyRuns": {
+      "title": "还没有已保存的运行",
+      "body": "预览一次运行，看看哪些已跟踪关键词符合条件。"
+    },
+    "emptyClusters": {
+      "title": "没有匹配的分组",
+      "body": "本次运行没有产生该规模的分组，或当前筛选条件将其隐藏。"
+    },
+    "notEnoughKeywords": {
+      "title": "近期排名检查不足",
+      "body": "至少需要两个已跟踪关键词在过去七天内有排名检查。未消耗任何运行次数。"
+    },
+    "cap": {
+      "title": "已达每月运行额度",
+      "body": "该请求未启动。请等待下个额度周期，或查看可用套餐。"
+    },
+    "disabled": {
+      "title": "聚类运行不可用",
+      "body": "新的聚类运行暂时被停用。已保存的运行仍可查看。"
+    },
+    "rateLimited": {
+      "title": "请求过于频繁",
+      "body": "请稍候再重试该操作。"
+    },
+    "notFound": {
+      "title": "未找到该运行",
+      "body": "当前账户无法访问这条已保存的运行。"
+    },
+    "failed": {
+      "title": "该运行无法完成",
+      "body": "你已存储的结果未被更改。请稍后重试，或打开另一条已保存的运行。"
+    },
+    "running": {
+      "title": "正在分组关键词",
+      "body": "工作进程正在比较已存储结果并为分组命名。此视图会自动更新。"
+    }
+  },
+  "status": {
+    "queued": "排队中",
+    "processing": "处理中",
+    "completed": "已完成",
+    "failed": "已失败"
+  },
+  "runs": {
+    "summary": "由 {{keywords}} 个关键词得到 {{clusters}} 个分组",
+    "requestedAt": "请求于 {{date}}",
+    "open": "打开运行"
+  },
+  "blocked": {
+    "title": "{{count}} 个关键词无法参与",
+    "body": "这些已跟踪关键词还没有可用的已存储结果。运行一次排名检查后，它们即可参与下次运行。",
+    "more": "另有 {{count}} 个",
+    "observedAt": "最近检查 {{date}}",
+    "reason": {
+      "missing": "从未检查",
+      "stale": "检查过于陈旧",
+      "empty": "无已存储结果"
+    }
+  },
+  "results": {
+    "title": "分组",
+    "method": "在前 {{window}} 条结果中至少共享 {{shared}} 条即分为一组。",
+    "unlabeled": "分组命名不可用或被拒绝。分组本身未变——命名永远不会移动关键词。"
+  },
+  "filters": {
+    "size": "分组规模",
+    "sizeValue": {
+      "all": "全部分组",
+      "grouped": "仅已分组关键词",
+      "singleton": "仅未分组关键词"
+    }
+  },
+  "cluster": {
+    "unlabeled": "未命名分组",
+    "aiSuggestion": "AI 建议",
+    "grouped": "{{count}} 个关键词",
+    "singleton": "未分组",
+    "commonCore": "全部关键词共享 {{count}} 条结果",
+    "noCommonCore": "该分组中没有任何一条结果被所有关键词共享",
+    "showEvidence": "显示重叠",
+    "hideEvidence": "隐藏重叠",
+    "pivot": "基准",
+    "pivotWindow": "已比较 {{count}} 条存储结果",
+    "sharedWithPivot": "与基准关键词共享 {{count}} 条",
+    "evidenceTitle": "哪些结果重叠",
+    "evidenceBody": "下面每个关键词之所以被分到一组，是因为它与基准关键词共享这些已存储的结果 URL。",
+    "singletonEvidence": "该关键词与其他任何已跟踪关键词共享的结果太少，无法分组。",
+    "columns": {
+      "keyword": "关键词",
+      "observedAt": "结果观测时间",
+      "sharedUrls": "重叠"
+    }
+  }
+}

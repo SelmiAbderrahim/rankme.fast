@@ -1,0 +1,109 @@
+{
+  "title": "关键词相互竞争",
+  "subtitle": "在 Search Console 中，你有两个或更多页面分走同一搜索词的点击、展示与排名。",
+  "tabs": {
+    "reports": "报告",
+    "new": "新建报告"
+  },
+  "filters": {
+    "confidence": "把握程度",
+    "confidenceValue": {
+      "all": "全部",
+      "high": "高",
+      "medium": "中",
+      "low": "低"
+    }
+  },
+  "new": {
+    "title": "生成报告",
+    "description": "报告只读取我们已存储的 Search Console 数据，不会向 Google 发起请求。",
+    "window": "统计时间段",
+    "windowOption": "{{days}} 天",
+    "preview": "查看用量",
+    "generate": "生成报告"
+  },
+  "preview": {
+    "title": "本次用量",
+    "units": "从月度额度中扣除 {{count}} 份报告。",
+    "units_other": "从月度额度中扣除 {{count}} 份报告。",
+    "remaining": "本月套餐剩余：{{remaining}}。",
+    "pack": "另有额度包 {{units}} 份。",
+    "noFit": "剩余额度不足。请先购买额度或更换套餐。"
+  },
+  "list": {
+    "generatedAt": "生成时间",
+    "window": "时间段",
+    "windowValue": "{{days}} 天",
+    "lastSync": "最近同步",
+    "candidates": "候选项",
+    "open": "打开"
+  },
+  "detail": {
+    "provenance": "基于已存储的 {{days}} 天 Search Console 数据，最近同步于 {{date}}。共读取 {{queries}} 个搜索词。"
+  },
+  "candidates": {
+    "query": "搜索词",
+    "label": "候选项",
+    "pages": "页面数",
+    "confidence": "把握程度",
+    "confidenceValue": {
+      "high": "高",
+      "medium": "中",
+      "low": "低"
+    },
+    "primary": "建议的主页面",
+    "clicks": "点击",
+    "inspect": "查看"
+  },
+  "drilldown": {
+    "provenance": "{{days}} 天的已存储数据，最近同步于 {{date}}。",
+    "recommendation": "建议保留 {{url}} 作为主页面。",
+    "reason": {
+      "most_clicks": "它在该搜索词上已获得最多点击。",
+      "best_position": "点击相同，由更好的平均排名决定。",
+      "stable_order": "点击与排名都相同，因此保持固定顺序。"
+    },
+    "page": "页面",
+    "clicks": "点击",
+    "impressions": "展示",
+    "position": "平均排名",
+    "clickShare": "点击占比",
+    "primary": "建议的主页面"
+  },
+  "states": {
+    "empty": {
+      "title": "暂无内容",
+      "body": "生成一份报告，看看你的页面在争夺哪些搜索词。"
+    },
+    "awaitingSync": {
+      "title": "等待下次同步",
+      "body": "该时间段尚未存储 Search Console 的搜索词与页面数据，将在下次同步时到达。"
+    },
+    "disconnected": {
+      "title": "连接 Search Console",
+      "body": "生成新报告前，请先连接 Search Console 资源。已保存的报告仍可查看。",
+      "link": "连接 Search Console"
+    },
+    "cap": {
+      "title": "月度额度已用完",
+      "body": "本月套餐内的关键词相互竞争报告已全部用完。",
+      "link": "查看套餐"
+    },
+    "disabled": {
+      "title": "暂时不可用",
+      "body": "关键词相互竞争报告已暂停。已生成的报告仍可查看。"
+    },
+    "notFound": {
+      "title": "未找到报告",
+      "body": "该报告已不可用。"
+    },
+    "rateLimited": {
+      "title": "请求过于频繁",
+      "body": "请等待一分钟后重试。"
+    },
+    "failed": {
+      "title": "出了点问题",
+      "body": "加载失败，请重试。"
+    }
+  }
+}

@@ -1,0 +1,124 @@
+{
+  "title": "AI-Sichtbarkeit",
+  "description": "Verfolgen Sie Käuferfragen und sehen Sie, ob AI-Chatantworten Sie erwähnen.",
+  "loadFailed": "AI-Sichtbarkeit konnte nicht geladen werden.",
+  "form": {
+    "label": "Verfolgter Prompt",
+    "placeholder": "bestes SEO-Audit-Tool für Agenturen",
+    "add": "Prompt verfolgen",
+    "adding": "Wird hinzugefügt…",
+    "cap": "{{count}}/{{cap}} Prompts verfolgt",
+    "capReached": "Sie können bis zu {{cap}} Prompts pro Website verfolgen."
+  },
+  "prompts": {
+    "title": "Verfolgte Prompts",
+    "empty": "Noch keine Prompts verfolgt.",
+    "emptyTitle": "Noch keine Prompts verfolgt",
+    "emptyCta": "Fügen Sie Ihren ersten Prompt hinzu",
+    "prompt": "Prompt",
+    "status": "Status",
+    "sentiment": "Ton",
+    "mentioned": "Erwähnt",
+    "notMentioned": "Nicht erwähnt",
+    "remove": "Prompt entfernen",
+    "confirmRemove": {
+      "title": "Diesen Prompt entfernen?",
+      "body": "Wir prüfen dann nicht mehr, ob AI-Antworten Sie bei diesem Prompt erwähnen. Sie können ihn später wieder hinzufügen.",
+      "confirm": "Entfernen",
+      "cancel": "Abbrechen"
+    }
+  },
+  "refresh": {
+    "button": "Jetzt prüfen",
+    "cooldown": "Warten Sie {{seconds}} s, bevor Sie erneut prüfen.",
+    "failed": "AI-Sichtbarkeit konnte gerade nicht geprüft werden. Ihre letzten Daten werden weiterhin angezeigt.",
+    "success": "{{total}} Prompts geprüft — AI-Antworten erwähnen Sie bei {{mentioned}} davon.",
+    "cost": "Verbraucht {{prompts}} Ihrer {{remaining}} verbleibenden Prüfungen in diesem Monat."
+  },
+  "lastChecked": "Zuletzt geprüft {{date}}",
+  "neverChecked": "Noch nicht geprüft",
+  "kpi": {
+    "shareOfVoice": "Sichtbarkeitsanteil",
+    "mentioned": "Prompts, die Sie erwähnen",
+    "mentionedOf": "{{mentioned}} von {{total}}",
+    "mentionedContext": "Prompts, bei denen eine AI-Antwort Sie im letzten Monat genannt hat",
+    "sentiment": "Ton der Erwähnungen",
+    "sentimentPositive": "wohlwollend",
+    "sentimentNeutral": "sachlich",
+    "sentimentNegative": "kritisch",
+    "sentimentContext": "Über alle Antworten des letzten Monats",
+    "checks": "Prüfungen diesen Monat",
+    "checksUsed": "{{used}}/{{cap}}"
+  },
+  "notMentioned": {
+    "title": "Noch nicht sichtbar",
+    "body": "AI-Antworten haben Sie bei diesen Prompts nicht erwähnt."
+  },
+  "details": {
+    "show": "Engine-Details anzeigen",
+    "hide": "Engine-Details ausblenden",
+    "noCitation": "Keine zitierte Seite"
+  },
+  "trend": {
+    "title": "Erwähnungen im Zeitverlauf",
+    "description": "Wie oft AI-Antworten Sie erwähnen, Tag für Tag.",
+    "emptyTitle": "Noch kein Trend",
+    "empty": "Führen Sie zwei Prüfungen an verschiedenen Tagen aus, um einen Trend zu sehen.",
+    "latest": "Aktuell: AI-Antworten erwähnen Sie in {{rate}} % der Prüfungen.",
+    "chartLabel": "Erwähnungsraten-Trend über {{count}} geprüfte Tage",
+    "tableSummary": "Erwähnungsrate pro Tag über {{count}} Tage",
+    "tableDate": "Datum",
+    "tableRate": "Erwähnungsrate",
+    "tableShare": "Sichtbarkeitsanteil",
+    "tableChecks": "Prüfungen",
+    "failed": "Der Trend konnte nicht geladen werden."
+  },
+  "onboarding": {
+    "suggestionsReady": "Beginnen Sie mit den vorgeschlagenen Prompts unten — ein Klick verfolgt sie alle.",
+    "trackSuggestions": "Vorgeschlagene Prompts verfolgen",
+    "needKeywords": "Verfolgen Sie Keywords im Keywords-Tab oder starten Sie ein Audit, um Vorschläge freizuschalten."
+  },
+  "share": {
+    "title": "Sichtbarkeitsanteil",
+    "description": "Wie oft AI-Antworten Sie im Vergleich zu Wettbewerbern nennen.",
+    "brand": "Sie",
+    "competitors": "Wettbewerber",
+    "noData": "Keine Daten"
+  },
+  "sentiment": {
+    "positive": "Wohlwollend erwähnt",
+    "neutral": "Sachlich erwähnt",
+    "negative": "Kritisch erwähnt",
+    "unknown": "Nicht bewertet"
+  },
+  "suggestions": {
+    "title": "Was Menschen die AI fragen",
+    "empty": "Noch keine vorgeschlagenen Prompts.",
+    "emptyTitle": "Noch keine Vorschläge",
+    "emptyCta": "Verfolgen Sie Ihren eigenen Prompt",
+    "failed": "Vorgeschlagene Prompts konnten nicht geladen werden.",
+    "track": "Diesen verfolgen",
+    "trackAll": "Alle verfolgen",
+    "trackingAll": "Wird verfolgt…",
+    "aiGenerated": "AI-Vorschlag",
+    "generate": "Vorschläge generieren",
+    "cooldown": "Warten Sie {{seconds}} Sekunden, bevor Sie erneut generieren.",
+    "cost": "Verbraucht eine Ihrer {{remaining}} verbleibenden Generierungen in diesem Monat.",
+    "capReached": "Sie haben alle Vorschlagsgenerierungen in diesem Monat verbraucht.",
+    "emptyGenerated": "Aus Ihren Daten ließen sich noch keine Fragen bilden. Fügen Sie verfolgte Keywords hinzu oder starten Sie einen Audit und generieren Sie dann erneut.",
+    "generatedAt": "Generiert am {{date}}",
+    "outputLocale": "Ausgabesprache: {{locale}}",
+    "generateFailed": "Vorschläge konnten gerade nicht generiert werden. Ihre Generierung wurde nicht gezählt.",
+    "generated": "{{count}} Vorschläge generiert."
+  },
+  "locked": {
+    "body": "AI-Sichtbarkeit ist im Agency-Tarif verfügbar.",
+    "upgrade": "Tarife ansehen"
+  },
+  "add": {
+    "failed": "Dieser Prompt konnte nicht hinzugefügt werden."
+  },
+  "remove": {
+    "failed": "Dieser Prompt konnte nicht entfernt werden."
+  }
+}

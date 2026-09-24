@@ -1,0 +1,99 @@
+{
+  "title": "Comparar tiendas",
+  "description": "Compara las últimas observaciones guardadas de Google Play y App Store. Esta vista no inicia una comprobación nueva.",
+  "profile": { "label": "Perfil de la aplicación" },
+  "stores": { "googlePlay": "Google Play", "appStore": "App Store" },
+  "common": { "notObserved": "No observado", "userPaired": "Emparejado por el usuario" },
+  "deltas": {
+    "notObserved": "No observado",
+    "even": "Iguales",
+    "googlePlayLeads": "Google Play +{{value}}",
+    "appStoreLeads": "App Store +{{value}}"
+  },
+  "header": {
+    "title": "Fichas de las tiendas",
+    "description": "Últimos título, valoración y número de reseñas guardados para las fichas emparejadas por el usuario.",
+    "rating": "Valoración",
+    "reviews": "Reseñas",
+    "openListing": "Abrir ficha de la tienda",
+    "deltaSummary": "Diferencias entre fichas",
+    "ratingDelta": "Diferencia de valoración",
+    "reviewDelta": "Diferencia de reseñas"
+  },
+  "ranks": {
+    "title": "Posiciones de palabras clave",
+    "description": "Una frase solo se compara cuando ambas tiendas siguen la misma frase, ubicación e idioma.",
+    "caption": "Últimas posiciones guardadas para frases seguidas en ambas tiendas",
+    "phrase": "Frase",
+    "market": "Mercado",
+    "position": "Posición",
+    "delta": "Diferencia",
+    "only": {
+      "googlePlay": "Solo se sigue en Google Play",
+      "appStore": "Solo se sigue en App Store",
+      "googlePlayCaption": "Frases seguidas solo en Google Play",
+      "appStoreCaption": "Frases seguidas solo en App Store",
+      "none": "No hay frases exclusivas de una tienda."
+    }
+  },
+  "parity": {
+    "title": "Coherencia de las fichas",
+    "description": "Hallazgos guardados y valores directos de las fichas emparejadas por el usuario.",
+    "findings": "Hallazgos guardados",
+    "status": { "finding": "Distinto", "passed": "Coherente", "notEvaluated": "Sin comparar" },
+    "findingCopy": {
+      "stores-diverge": "Los títulos de las fichas difieren considerablemente entre tiendas.",
+      "ratings-diverge": "Las valoraciones de las tiendas presentan una diferencia notable.",
+      "categories-diverge": "Las fichas no comparten una categoría de tienda."
+    },
+    "rawCaption": "Comparación directa de los últimos campos guardados",
+    "field": "Campo",
+    "match": "Coherencia",
+    "matches": "Coincide",
+    "differs": "Difiere",
+    "notCompared": "Sin comparar",
+    "fields": {
+      "title": "Título",
+      "developerName": "Nombre del desarrollador",
+      "mainCategory": "Categoría principal",
+      "version": "Versión",
+      "categories": "Categorías"
+    }
+  },
+  "charts": {
+    "title": "Posiciones en listas",
+    "description": "Última posición guardada de cada lista y categoría seguidas.",
+    "caption": "Últimas posiciones guardadas por tienda",
+    "chart": "Lista",
+    "category": "Categoría",
+    "allCategories": "Todas las categorías",
+    "delta": "Diferencia"
+  },
+  "notObserved": {
+    "ranksTitle": "Posiciones no observadas",
+    "ranksDescription": "Sigue frases y ejecuta una comprobación para completar esta comparación.",
+    "sharedRanksTitle": "No hay frases seguidas en común",
+    "sharedRanksDescription": "Sigue la misma frase, ubicación e idioma en ambas tiendas.",
+    "openKeywords": "Abrir seguimiento de palabras clave",
+    "listingsTitle": "Una o ambas fichas no se han observado",
+    "listingsDescription": "Ejecuta una comprobación de ficha en ambas tiendas para completar la comparación.",
+    "openListing": "Abrir comprobaciones de fichas",
+    "chartsTitle": "Posiciones de listas no observadas",
+    "chartsDescription": "Sigue una lista y ejecuta una comprobación para completar la comparación.",
+    "openCharts": "Abrir seguimiento de listas"
+  },
+  "empty": {
+    "title": "Aún no hay perfiles de aplicaciones",
+    "description": "Registra un perfil antes de comparar observaciones de las tiendas.",
+    "cta": "Registrar una aplicación"
+  },
+  "unpaired": {
+    "title": "Empareja las fichas para compararlas",
+    "description": "Este perfil no está marcado como el mismo producto en ambas tiendas. El emparejamiento es una afirmación tuya y no verifica la identidad de la tienda.",
+    "cta": "Gestionar perfiles"
+  },
+  "errors": {
+    "title": "No pudimos cargar la comparación",
+    "requestFailed": "No se pudo cargar la comparación guardada. Inténtalo de nuevo."
+  }
+}

@@ -1,0 +1,235 @@
+{
+  "title": "Brand Radar",
+  "description": "Voyez où votre marque est citée sur le web, une analyse à la fois.",
+  "outputLocale": "Langue de sortie : {{locale}}",
+  "tabs": {
+    "scans": "Analyses",
+    "new": "Nouvelle analyse"
+  },
+  "list": {
+    "title": "Vos analyses",
+    "description": "Les plus récentes d'abord. Chaque analyse consomme une unité.",
+    "columns": {
+      "query": "Marque analysée",
+      "status": "Statut",
+      "digest": "Résumé",
+      "mentions": "Citations",
+      "refund": "Remboursement",
+      "created": "Créée le",
+      "actions": "Actions"
+    },
+    "pendingCreated": "Vient d'être envoyée",
+    "open": "Ouvrir",
+    "loadMore": "Charger plus",
+    "loading": "Chargement des analyses",
+    "retry": "Réessayer",
+    "filter": {
+      "label": "Filtrer par statut",
+      "all": "Tous les statuts",
+      "note": "Le filtre ne porte que sur les analyses chargées sur cette page."
+    }
+  },
+  "status": {
+    "queued": "En file d'attente",
+    "running": "En cours",
+    "completed": "Terminée",
+    "completed_empty": "Aucune citation trouvée",
+    "completed_partial": "Partiellement terminée",
+    "failed": "Échouée"
+  },
+  "digest": {
+    "pending": "Résumé en attente",
+    "digest_present": "Résumé disponible",
+    "digest_absent": "Pas de résumé",
+    "no_reliable_digest": "Résumé non publié"
+  },
+  "refund": {
+    "refunded": "Crédit d'analyse restitué"
+  },
+  "states": {
+    "empty": {
+      "title": "Aucune analyse pour l'instant",
+      "description": "Lancez votre première analyse pour voir où votre marque est citée.",
+      "cta": "Lancer une analyse"
+    },
+    "filtered": {
+      "description": "Aucune analyse de cette page n'a ce statut."
+    },
+    "error": {
+      "title": "Impossible de charger vos analyses"
+    },
+    "unavailable": {
+      "title": "Brand Radar est en pause",
+      "description": "Les nouvelles analyses sont désactivées pour le moment.",
+      "storedReads": "Les analyses déjà lancées restent consultables."
+    },
+    "notOnPlan": {
+      "title": "Brand Radar demande une offre supérieure",
+      "description": "Passez à Pro ou Agency pour débloquer les analyses de marque.",
+      "link": "Voir les offres"
+    },
+    "addonRequired": {
+      "title": "Ajoutez Brand Radar à votre offre",
+      "description": "Consultez la facturation pour connaître la disponibilité actuelle de l’option Brand Radar.",
+      "price": "{{price}} par mois, {{units}} analyses incluses.",
+      "link": "Voir les options Brand Radar"
+    },
+    "overCap": {
+      "title": "Vous avez utilisé toutes vos analyses",
+      "description": "Consultez la facturation pour connaître la disponibilité actuelle du pack {{slug}}.",
+      "link": "Voir les options de crédits"
+    }
+  },
+  "form": {
+    "title": "Nouvelle analyse de marque",
+    "description": "Nous chiffrons l'analyse avant toute dépense.",
+    "queryLabel": "Marque à analyser",
+    "queryPlaceholder": "Le nom de votre marque",
+    "queryHelp": "Une marque par analyse, jusqu'à {{max}} caractères.",
+    "languageLabel": "Langue (facultatif)",
+    "languagePlaceholder": "en",
+    "languageHelp": "Code de langue à deux lettres, par exemple en ou fr.",
+    "locationLabel": "Pays du site éditeur (facultatif)",
+    "locationPlaceholder": "Sélectionner un pays",
+    "locationHelp": "Filtre les résultats selon le pays d'enregistrement du site éditeur. Choisissez tous les pays pour des résultats mondiaux.",
+    "locationCatalogError": "Impossible de charger les pays. Réessayez avant d'estimer le coût de l'analyse.",
+    "preview": "Estimer le coût",
+    "previewing": "Estimation en cours",
+    "confirm": "Lancer l'analyse",
+    "confirming": "Envoi en cours",
+    "cancel": "Annuler",
+    "needsPreview": "Estimez d'abord le coût. Rien n'est dépensé avant le lancement."
+  },
+  "preview": {
+    "title": "Coût de cette analyse",
+    "units": "Unités pour cette analyse : {{units}}",
+    "baseRemaining": "Quota de l'offre restant",
+    "packRemaining": "Crédits de pack restants",
+    "willConsumeBase": "Sur le quota de votre offre : {{units}}",
+    "willConsumePack": "Sur vos crédits de pack : {{units}}"
+  },
+  "coverage": {
+    "estimateOnly": "Le nombre de citations est une estimation du fournisseur, pas un recensement complet du web.",
+    "unknown": "Le fournisseur n'a pas précisé la couverture de cette analyse."
+  },
+  "detail": {
+    "back": "Retour aux analyses",
+    "loading": "Chargement de cette analyse",
+    "errorTitle": "Impossible de charger cette analyse",
+    "mentionCount": "{{count}} citation trouvée",
+    "mentionCount_other": "{{count}} citations trouvées",
+    "market": "Marché",
+    "outputLocale": "Langue de sortie",
+    "createdAt": "Démarrée",
+    "terminalAt": "Terminée",
+    "notSettled": "Toujours en cours",
+    "banners": {
+      "queued": {
+        "title": "En attente de démarrage",
+        "description": "Cette analyse est en file d'attente. Revenez dans quelques minutes."
+      },
+      "running": {
+        "title": "En cours",
+        "description": "Les données de cette analyse sont en cours de collecte."
+      },
+      "completed_empty": {
+        "title": "Aucune citation trouvée",
+        "description": "L'analyse a bien tourné et n'a trouvé aucune citation pour cette marque. Le crédit d'analyse a été consommé."
+      },
+      "completed_partial": {
+        "title": "Cette analyse s'est arrêtée avant la fin",
+        "description": "La collecte s'est arrêtée en route, soit parce que l'analyse a atteint son plafond de dépense, soit parce que le fournisseur de données a cessé de répondre. Ce qui a été collecté est affiché ci-dessous."
+      },
+      "failed": {
+        "title": "Cette analyse a échoué",
+        "description": "L'analyse n'a pas pu aboutir. Rien de ce qui suit n'est complet.",
+        "refunded": "L'analyse n'a pas pu aboutir, votre crédit d'analyse vous a donc été rendu."
+      }
+    },
+    "halt": {
+      "search_provider_error": "Le fournisseur de données a échoué pendant la recherche de mentions ; rien n'a été collecté.",
+      "summary_cost_ceiling": "L'analyse s'est arrêtée avant l'étape de synthèse des mentions car elle a atteint son plafond de dépense. Les mentions déjà collectées sont conservées.",
+      "summary_provider_error": "Le fournisseur de données a échoué pendant l'étape de synthèse des mentions. Les mentions collectées avant l'échec sont conservées.",
+      "brand_digest_cost_ceiling": "L'analyse s'est arrêtée avant l'étape du résumé IA car elle a atteint son plafond de dépense. Les mentions et la synthèse sont conservées.",
+      "brand_digest_digest_failed": "Le résumé IA n'a pas pu être produit de manière fiable. Les mentions et la synthèse sont conservées.",
+      "scan_processing_failure": "L'analyse s'est bloquée pendant le traitement et a été clôturée par le système."
+    },
+    "sentiment": {
+      "title": "Le ton des citations",
+      "positive": "Positif",
+      "neutral": "Neutre",
+      "negative": "Négatif",
+      "unknown": "Indéterminé",
+      "percent": "{{percent}} %",
+      "expandTable": "Afficher la répartition des tons sous forme de tableau",
+      "tableCaption": "Part des citations par ton",
+      "columnLabel": "Ton",
+      "columnShare": "Part"
+    },
+    "topDomains": {
+      "title": "Les sites qui vous citent le plus"
+    },
+    "trend": {
+      "title": "Citations d'une analyse à l'autre",
+      "expandTable": "Afficher la tendance sous forme de tableau",
+      "tableCaption": "Citations par analyse pour cette marque",
+      "capturedAt": "Date de l'analyse",
+      "mentions": "Citations",
+      "delta": "Évolution",
+      "deltaUnavailable": "Non comparé",
+      "noComparison": "Première analyse pour cette marque — pas encore de comparaison.",
+      "needMore": "Relancez cette analyse pour voir l'évolution des citations dans le temps."
+    },
+    "digest": {
+      "title": "Ce que cela veut dire",
+      "aiLabel": "Interprétation par IA",
+      "pending": "Le résumé est encore en cours de rédaction.",
+      "absent": "Aucun résumé n'a été produit pour cette analyse.",
+      "withheld": "Le résumé a été retenu car aucune phrase n'a pu être rattachée à une citation.",
+      "citations": "{{count}} source",
+      "citations_other": "{{count}} sources",
+      "citationMissing": "Source absente de cette page"
+    },
+    "mentions": {
+      "title": "Citations",
+      "loading": "Chargement des citations",
+      "loadMore": "Charger plus de citations",
+      "errorTitle": "Impossible de charger les citations",
+      "export": "Télécharger le CSV",
+      "exportFree": "Gratuit — lit des données que vous avez déjà payées.",
+      "filterNote": "Les filtres portent sur les citations chargées sur cette page.",
+      "filteredEmpty": "Aucune citation de cette page ne correspond à ces filtres.",
+      "noObservedAt": "Sans date",
+      "filters": {
+        "sentiment": "Ton",
+        "domain": "Site",
+        "from": "Du",
+        "to": "Au"
+      },
+      "sentiment": {
+        "all": "Tous les tons",
+        "positive": "Positif",
+        "neutral": "Neutre",
+        "negative": "Négatif"
+      },
+      "columns": {
+        "title": "Titre",
+        "snippet": "Extrait",
+        "domain": "Site",
+        "sentiment": "Ton",
+        "observedAt": "Vue le"
+      }
+    }
+  },
+  "errors": {
+    "previewTitle": "Impossible d'estimer cette analyse",
+    "invalidQuery": "Saisissez une marque de un à {{max}} caractères.",
+    "invalidLanguage": "Utilisez un code de langue à deux lettres, par exemple en.",
+    "invalidLocation": "Choisissez un pays pris en charge pour le site éditeur.",
+    "listFailed": "Impossible de charger vos analyses.",
+    "previewFailed": "Impossible d'estimer cette analyse.",
+    "createFailed": "Impossible de mettre cette analyse en file d'attente.",
+    "detailFailed": "Impossible de charger cette analyse.",
+    "mentionsFailed": "Impossible de charger les citations de cette analyse."
+  }
+}

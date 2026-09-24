@@ -1,0 +1,10 @@
+# Optional development overlay. Use:
+#   docker compose -f docker-compose.yml -f docker-compose.dev.yml up
+#
+# Keeps the production compose file image-only while allowing local SSR server
+# edits to land without rebuilding the web image.
+
+services:
+  web:
+    volumes:
+      - ./client/server.js:/app/server.js:ro

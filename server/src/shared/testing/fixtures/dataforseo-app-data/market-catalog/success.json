@@ -1,0 +1,18 @@
+{
+  "version": "0.1.20260811",
+  "status_code": 20000,
+  "status_message": "Ok.",
+  "time": "0.02 sec.",
+  "cost": 0,
+  "tasks_count": 1,
+  "tasks_error": 0,
+  "tasks": [{
+    "id": "TASK_ID", "status_code": 20000, "status_message": "Ok.",
+    "time": "0.01 sec.", "cost": 0, "result_count": 2,
+    "path": ["v3", "app_data", "google", "locations"],
+    "result": [
+      { "location_code": 2840, "country_iso_code": "US", "location_type": "Country", "language_code": "en" },
+      { "location_code": 1023191, "country_iso_code": "US", "location_type": "City", "language_code": "es" }
+    ]
+  }]
+}

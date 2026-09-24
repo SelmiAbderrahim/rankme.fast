@@ -1,0 +1,1 @@
+CREATE UNIQUE INDEX "brand_radar_events_scan_stage_event_uidx" ON "brand_radar_events" USING btree ("scan_id","stage","event");

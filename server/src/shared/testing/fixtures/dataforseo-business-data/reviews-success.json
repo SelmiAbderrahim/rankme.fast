@@ -1,0 +1,37 @@
+{
+  "version": "0.1.20260711",
+  "status_code": 20000,
+  "status_message": "Ok.",
+  "time": "0.154 sec.",
+  "cost": 0.00075,
+  "tasks_count": 1,
+  "tasks_error": 0,
+  "tasks": [
+    {
+      "id": "TASK_ID",
+      "status_code": 20000,
+      "status_message": "Ok.",
+      "cost": 0.00075,
+      "result_count": 1,
+      "result": [
+        {
+          "items_count": 1,
+          "items": [
+            {
+              "type": "google_business_info",
+              "title": "Example Dental Studio",
+              "rating": {
+                "rating_type": "Max5",
+                "value": 4.7,
+                "votes_count": 1226,
+                "rating_max": 5
+              },
+              "reviews_count": 1226,
+              "items_count": 10
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

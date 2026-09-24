@@ -1,0 +1,94 @@
+{
+  "title": "Información de tráfico",
+  "description": "Solicita y vuelve a abrir estimaciones de tráfico del índice del proveedor para cualquier dominio público.",
+  "common": { "notAvailable": "No disponible" },
+  "estimate": {
+    "label": "Estimación",
+    "coverage": "Modelado a partir del índice del proveedor, no de datos analíticos.",
+    "observedAt": "Observado el {{date}}",
+    "source": "Fuente",
+    "freshness": { "fresh": "Reciente", "stale": "Antiguo", "partial": "Parcial", "blocked": "Bloqueado", "failed": "Fallido", "unknown": "Actualidad desconocida" }
+  },
+  "request": {
+    "title": "Solicitar una instantánea",
+    "description": "Consulta el impacto exacto en tu asignación antes de iniciar una instantánea de pago.",
+    "marketLabel": "Mercado",
+    "marketValue": "Estados Unidos · inglés",
+    "domainLabel": "Dominio",
+    "domainPlaceholder": "example.com",
+    "domainHelp": "Introduce un dominio público sin http://, https://, ruta ni credenciales.",
+    "preview": "Vista previa de la instantánea",
+    "previewing": "Preparando la vista previa…",
+    "confirm": "Confirmar instantánea",
+    "confirming": "Iniciando instantánea…",
+    "cancel": "Cancelar"
+  },
+  "preview": {
+    "title": "Vista previa del gasto",
+    "operatorNotice": "Esta solicitud usa el proveedor de datos de tráfico configurado por el operador.",
+    "units": "{{count}} unidad de instantánea de tráfico",
+    "units_other": "{{count}} unidades de instantáneas de tráfico",
+    "cached": "En caché",
+    "fresh_required": "Consulta nueva",
+    "baseRemaining": "Asignación base restante",
+    "packRemaining": "Asignación de paquetes restante",
+    "packTitle": "¿Necesitas más instantáneas?",
+    "packLink": "Ver paquetes de créditos"
+  },
+  "detail": {
+    "description": "Todas las cifras siguientes son estimaciones, no datos analíticos medidos.",
+    "monthlyVisits": "Visitas orgánicas mensuales estimadas",
+    "rank": "Clasificación estimada del dominio",
+    "keywords": "Cantidad estimada de palabras clave",
+    "countries": { "title": "Distribución estimada por país", "description": "Principales países conservados por el índice del proveedor.", "country": "País", "visits": "Visitas estimadas" },
+    "history": { "title": "Historial estimado de tráfico", "description": "Hasta 24 puntos mensuales conservados.", "empty": "No se conservaron puntos de historial para esta instantánea.", "expandTable": "Ampliar la tabla de historial accesible", "tableCaption": "Historial estimado de clasificación, tráfico y palabras clave", "date": "Fecha" }
+  },
+  "list": {
+    "title": "Instantáneas guardadas",
+    "description": "Consultar los datos guardados es gratis y siguen disponibles cuando se pausan las solicitudes nuevas.",
+    "filters": { "domain": "Filtrar por dominio", "from": "Fecha inicial", "to": "Fecha final" },
+    "columns": { "domain": "Dominio", "captured": "Capturada", "visits": "Visitas estimadas", "action": "Acción" },
+    "open": "Abrir instantánea",
+    "previous": "Anterior",
+    "next": "Siguiente"
+  },
+  "states": {
+    "empty": { "title": "Aún no hay instantáneas de tráfico", "description": "Obtén una vista previa de tu primera instantánea de dominio.", "cta": "Empezar con un dominio" },
+    "partial": { "title": "Estimación parcial", "description": "Se conservaron {{retained}} de tres operaciones del proveedor. Los campos ausentes no se infieren." },
+    "failed": { "title": "La instantánea falló", "refund": "No se conservó ninguna operación del proveedor, por lo que se reembolsó la unidad reservada." },
+    "locked": { "title": "Las nuevas instantáneas están pausadas temporalmente", "description": "La información de tráfico no está disponible temporalmente para solicitudes nuevas. Las instantáneas guardadas siguen disponibles." },
+    "cap": { "title": "Se alcanzó el límite de instantáneas", "description": "Esta solicitud supera tu asignación base y de paquetes restante. Consulta Facturación para comprobar la disponibilidad actual de los paquetes.", "link": "Ver paquetes de instantáneas" },
+    "upgrade": { "title": "Tu plan no incluye información de tráfico", "description": "Elige un plan de pago para solicitar instantáneas de tráfico. Aún puedes abrir las instantáneas guardadas compartidas con este espacio.", "link": "Comparar planes" },
+    "timeout": { "title": "La solicitud tardó demasiado", "retry": "Intentar de nuevo", "retrying": "Intentándolo de nuevo…" },
+    "signedOut": "Inicia sesión para ver la información de tráfico.",
+    "queued": "Instantánea en cola",
+    "running": "Instantánea en ejecución",
+    "succeeded": "Instantánea completada"
+  },
+  "errors": {
+    "invalidDomain": "Introduce un dominio público válido sin esquema ni ruta.",
+    "requestFailed": "No se pudo iniciar la instantánea de tráfico.",
+    "previewFailed": "No se pudo preparar la vista previa del gasto.",
+    "listFailed": "No se pudieron cargar las instantáneas de tráfico guardadas.",
+    "detailFailed": "No se pudo cargar esta instantánea de tráfico.",
+    "compareFailed": "No se pudieron comparar estas instantáneas de tráfico.",
+    "previewTitle": "Vista previa no disponible"
+  },
+  "compare": {
+    "title": "Comparar instantáneas de tráfico",
+    "description": "Compara entre dos y cinco estimaciones guardadas. Abrir esta vista no consume tu asignación.",
+    "clamped": "Puedes comparar hasta {{count}} instantáneas. La sexta no se añadió.",
+    "select": "Seleccionar instantáneas",
+    "selectSnapshot": "Seleccionar {{domain}} para comparar",
+    "button": "Comparar {{count}} instantáneas",
+    "remove": "Quitar {{domain}} de la comparación",
+    "countriesTitle": "Distribución estimada por país alineada",
+    "historyTitle": "Historial estimado de tráfico superpuesto",
+    "historyDescription": "Los colores siguen el orden de las instantáneas y usan la paleta compartida de gráficos.",
+    "chartLabel": "Historial estimado de tráfico superpuesto para las instantáneas seleccionadas",
+    "historyEmpty": "No se conservaron puntos de historial comparables.",
+    "expandTable": "Mostrar la tabla de comparación accesible",
+    "tableCaption": "Historial mensual estimado de tráfico por instantánea"
+  },
+  "agency": { "tabsLabel": "Vistas del espacio de competidores", "overviewTab": "Competidores", "trafficTab": "Información de tráfico" }
+}

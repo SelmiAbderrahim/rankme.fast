@@ -1,0 +1,44 @@
+{
+  "version": "0.1.20260808",
+  "status_code": 20000,
+  "status_message": "Ok.",
+  "cost": 0.012,
+  "tasks": [
+    {
+      "id": "TASK_ID",
+      "status_code": 20000,
+      "status_message": "Ok.",
+      "cost": 0.012,
+      "path": [
+        "v3",
+        "dataforseo_labs",
+        "google_play",
+        "keywords_for_app",
+        "live"
+      ],
+      "result": [
+        {
+          "items": [
+            {
+              "keyword_data": {
+                "keyword": "seo audit",
+                "keyword_info": {
+                  "search_volume": 1200,
+                  "last_updated_time": "2026-08-01 06:00:00 +00:00"
+                }
+              },
+              "ranked_serp_element": {
+                "serp_item": {
+                  "type": "google_play_search_organic",
+                  "rank_group": 3,
+                  "rank_absolute": 5
+                },
+                "last_updated_time": "2026-08-02 07:00:00 +00:00"
+              }
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

@@ -1,0 +1,133 @@
+{
+  "eyebrow": "基于已存内容清单的建议",
+  "title": "内部链接建议",
+  "subtitle": "根据最新内容清单和已保存的 Search Console 证据，审查来源页与目标页之间的链接机会。系统不会自动修改网站。",
+  "site": {
+    "inventoryLink": "打开内容清单"
+  },
+  "tabs": {
+    "runs": "已保存的运行",
+    "new": "新建运行"
+  },
+  "newRun": {
+    "title": "准备建议运行",
+    "description": "消耗一次运行前，先核对准确的清单快照和剩余额度。",
+    "guidanceOnly": "这些建议仅供参考。RankMeFast 不会修改内容管理系统或页面代码。",
+    "unitLabel": "额度",
+    "unitValue": "{{count}} 次内部链接运行",
+    "inventoryLabel": "清单快照",
+    "remaining": "本次运行前还剩 {{count}} 次。",
+    "preview": "预览运行",
+    "previewing": "正在检查清单…",
+    "confirm": "开始生成建议",
+    "starting": "正在启动…",
+    "cancel": "取消"
+  },
+  "states": {
+    "inventoryCta": "重新运行内容清单",
+    "planCta": "查看方案",
+    "emptyRuns": {
+      "title": "暂无已保存的运行",
+      "body": "预览一次新运行即可查看它将读取的已存清单快照。"
+    },
+    "emptySuggestions": {
+      "title": "没有匹配的建议",
+      "body": "本次运行未找到合格的页面组合，或者地址栏中的筛选条件隐藏了结果。"
+    },
+    "missing": {
+      "title": "需要内容清单",
+      "body": "请先完成内容清单，再请求建议。本次没有消耗额度。"
+    },
+    "stale": {
+      "title": "内容清单已过期",
+      "body": "请重新运行内容清单，以便使用近期保存的快照。本次没有消耗额度。"
+    },
+    "cap": {
+      "title": "已用完每月额度",
+      "body": "请求并未启动。请等待下一个额度周期，或查看可用方案。"
+    },
+    "disabled": {
+      "title": "暂时无法创建建议",
+      "body": "新运行已暂时停用，但仍可查看已保存的运行。"
+    },
+    "rateLimited": {
+      "title": "请求过于频繁",
+      "body": "请稍候片刻再重试。"
+    },
+    "notFound": {
+      "title": "找不到运行",
+      "body": "当前账户无法访问这次已保存的运行。"
+    },
+    "failed": {
+      "title": "运行未能完成",
+      "body": "系统没有进行任何自动修改。请稍后重试或打开其他已保存的运行。"
+    },
+    "running": {
+      "title": "正在生成建议",
+      "body": "系统正在排列已保存的候选项并起草锚文本。此页面会自动更新。"
+    }
+  },
+  "status": {
+    "queued": "等待处理",
+    "processing": "处理中",
+    "completed": "已完成",
+    "failed": "失败",
+    "refunded": "已返还运行次数"
+  },
+  "runs": {
+    "snapshot": "内容清单：{{date}}",
+    "suggestionCount": "{{count}} 条建议",
+    "open": "打开运行"
+  },
+  "flags": {
+    "orphan": "孤立页面",
+    "weakly_linked": "链接较少"
+  },
+  "confidence": {
+    "high": "高",
+    "medium": "中",
+    "low": "低"
+  },
+  "suggestions": {
+    "title": "建议的链接",
+    "inventorySnapshot": "依据 {{date}} 的内容清单快照",
+    "rank": "排序 {{rank}}",
+    "anchorLabel": "锚文本草稿",
+    "copy": "复制锚文本",
+    "copied": "已复制",
+    "codeFixProblem": "缺少一个相关的内部链接。",
+    "codeFixWhy": "目标页面获得的内部链接较少，并且与来源页面具有相关的搜索或标题语境。",
+    "codeFixRecommendation": "在来源页面最相关的段落中添加该链接；如果建议的锚文本读起来自然，就使用它。",
+    "fallback": "智能排序不可用或结果未通过校验，因此这里显示可复现且附带证据的候选项。"
+  },
+  "evidence": {
+    "title": "建议这组页面的原因",
+    "inbound": "目标页入站链接数",
+    "flag": "目标页质量标记",
+    "inventoryDate": "清单日期",
+    "queries": "共同的 Search Console 查询",
+    "headings": "匹配的标题词",
+    "none": "没有此类证据"
+  },
+  "filters": {
+    "target": "目标页标记",
+    "targetValue": {
+      "all": "所有目标页标记",
+      "orphan": "孤立页面",
+      "weakly_linked": "链接较少"
+    },
+    "section": "来源页版块",
+    "allSections": "所有来源页版块",
+    "confidence": "可信度",
+    "confidenceValue": {
+      "all": "所有可信度",
+      "high": "高",
+      "medium": "中",
+      "low": "低"
+    }
+  },
+  "export": {
+    "button": "导出表格",
+    "exporting": "正在准备导出…"
+  }
+}

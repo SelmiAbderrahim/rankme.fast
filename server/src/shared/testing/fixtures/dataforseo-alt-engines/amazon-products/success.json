@@ -1,0 +1,80 @@
+{
+  "version": "0.1.20260101",
+  "status_code": 20000,
+  "status_message": "Ok.",
+  "time": "0.1904 sec.",
+  "cost": 0,
+  "tasks_count": 1,
+  "tasks_error": 0,
+  "tasks": [
+    {
+      "id": "TASK_ID",
+      "status_code": 20000,
+      "status_message": "Ok.",
+      "time": "0.1412 sec.",
+      "cost": 0,
+      "result_count": 1,
+      "path": ["v3", "merchant", "amazon", "products", "task_get", "advanced", "TASK_ID"],
+      "data": {
+        "api": "merchant",
+        "function": "task_get",
+        "se": "amazon",
+        "se_type": "products",
+        "keyword": "seo audit book",
+        "language_code": "en",
+        "location_code": 2840
+      },
+      "result": [
+        {
+          "keyword": "seo audit book",
+          "type": "products",
+          "se_domain": "amazon.com",
+          "location_code": 2840,
+          "language_code": "en",
+          "datetime": "2026-01-01 00:00:00 +00:00",
+          "item_types": ["amazon_serp", "amazon_paid"],
+          "items_count": 4,
+          "items": [
+            {
+              "type": "amazon_paid",
+              "rank_group": 1,
+              "rank_absolute": 1,
+              "domain": "www.amazon.com",
+              "title": "Sponsored listing that is not an organic product ranking",
+              "url": "https://www.amazon.com/dp/PAID000001",
+              "asin": "PAID000001"
+            },
+            {
+              "type": "amazon_serp",
+              "rank_group": 1,
+              "rank_absolute": 2,
+              "domain": "www.amazon.com",
+              "title": "A rival SEO handbook",
+              "url": "https://www.amazon.com/dp/RIVAL00001",
+              "asin": "RIVAL00001"
+            },
+            {
+              "type": "amazon_serp",
+              "rank_group": 2,
+              "rank_absolute": 3,
+              "domain": "www.amazon.com",
+              "title": "The Technical SEO Audit Handbook",
+              "url": "https://www.amazon.com/gp/product/B0TRACKED1?ref=sr_1_2",
+              "asin": null,
+              "data_asin": "B0TRACKED1"
+            },
+            {
+              "type": "amazon_serp",
+              "rank_group": 3,
+              "rank_absolute": 4,
+              "domain": "www.amazon.com",
+              "title": "Row the vendor returned without a usable product URL",
+              "url": null,
+              "asin": "MISSING001"
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

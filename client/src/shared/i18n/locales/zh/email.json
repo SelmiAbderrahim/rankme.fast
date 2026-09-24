@@ -1,0 +1,11 @@
+{
+  "contact": {
+    "confirmation": "您的邮件已发送。我们会尽快与您联系。"
+  },
+  "passwordReset": {
+    "subject": "重置您的密码"
+  },
+  "passwordChanged": {
+    "subject": "您的密码已更改"
+  }
+}

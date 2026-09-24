@@ -1,0 +1,22 @@
+{
+  "timeZone": "Etc/UTC",
+  "dependencies": {},
+  "exceptionLogging": "STACKDRIVER",
+  "runtimeVersion": "V8",
+  "dataStudio": {
+    "name": "RankMeFast",
+    "company": "RankMeFast",
+    "companyUrl": "https://github.com/SelmiAbderrahim/seo-ai",
+    "logoUrl": "https://raw.githubusercontent.com/SelmiAbderrahim/seo-ai/master/client/public/icons/favicon-32.png",
+    "addonUrl": "https://github.com/SelmiAbderrahim/seo-ai/tree/master/tools/looker-connector",
+    "supportUrl": "https://github.com/SelmiAbderrahim/seo-ai/issues",
+    "description": "Read stored sites, keywords, rank history, SERP observations, and backlink rows from your own RankMeFast instance.",
+    "shortDescription": "Read stored RankMeFast SEO data in Looker Studio.",
+    "authType": ["KEY"],
+    "feeType": ["PAID"]
+  },
+  "oauthScopes": [
+    "https://www.googleapis.com/auth/script.external_request"
+  ]
+}
+

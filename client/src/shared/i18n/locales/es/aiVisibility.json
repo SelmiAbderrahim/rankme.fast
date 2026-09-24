@@ -1,0 +1,124 @@
+{
+  "title": "AI Visibility",
+  "description": "Sigue las preguntas de tus compradores y comprueba si las respuestas de los chats de AI te mencionan.",
+  "loadFailed": "No se pudo cargar AI Visibility.",
+  "form": {
+    "label": "Prompt seguido",
+    "placeholder": "mejor herramienta de auditoría SEO para agencias",
+    "add": "Seguir prompt",
+    "adding": "Añadiendo…",
+    "cap": "{{count}}/{{cap}} prompts seguidos",
+    "capReached": "Puedes seguir hasta {{cap}} prompts por sitio."
+  },
+  "prompts": {
+    "title": "Prompts seguidos",
+    "empty": "Aún no hay prompts seguidos.",
+    "emptyTitle": "Aún no hay prompts seguidos",
+    "emptyCta": "Añade tu primer prompt",
+    "prompt": "Prompt",
+    "status": "Estado",
+    "sentiment": "Tono",
+    "mentioned": "Mencionado",
+    "notMentioned": "No mencionado",
+    "remove": "Quitar prompt",
+    "confirmRemove": {
+      "title": "¿Quitar este prompt?",
+      "body": "Dejaremos de comprobar si las respuestas de la AI te mencionan para este prompt. Puedes añadirlo de nuevo más tarde.",
+      "confirm": "Quitar",
+      "cancel": "Cancelar"
+    }
+  },
+  "refresh": {
+    "button": "Comprobar ahora",
+    "cooldown": "Espera {{seconds}} s antes de volver a comprobar.",
+    "failed": "No se pudo comprobar AI Visibility ahora mismo. Se siguen mostrando tus últimos datos.",
+    "success": "{{total}} prompts comprobados — las respuestas de AI te mencionan en {{mentioned}} de ellos.",
+    "cost": "Consume {{prompts}} de tus {{remaining}} comprobaciones restantes este mes."
+  },
+  "lastChecked": "Última comprobación {{date}}",
+  "neverChecked": "Aún sin comprobar",
+  "kpi": {
+    "shareOfVoice": "Cuota de voz",
+    "mentioned": "Prompts que te mencionan",
+    "mentionedOf": "{{mentioned}} de {{total}}",
+    "mentionedContext": "Prompts en los que una respuesta de AI te nombró en el último mes",
+    "sentiment": "Tono de las menciones",
+    "sentimentPositive": "cálido",
+    "sentimentNeutral": "neutro",
+    "sentimentNegative": "crítico",
+    "sentimentContext": "En todas las respuestas del último mes",
+    "checks": "Comprobaciones este mes",
+    "checksUsed": "{{used}}/{{cap}}"
+  },
+  "notMentioned": {
+    "title": "Aún no apareces",
+    "body": "Las respuestas de AI no te han mencionado para estos prompts."
+  },
+  "details": {
+    "show": "Mostrar detalle por motor",
+    "hide": "Ocultar detalle por motor",
+    "noCitation": "Sin página citada"
+  },
+  "trend": {
+    "title": "Menciones a lo largo del tiempo",
+    "description": "Con qué frecuencia las respuestas de AI te mencionan, día a día.",
+    "emptyTitle": "Aún no hay tendencia",
+    "empty": "Ejecuta dos comprobaciones en días distintos para ver una tendencia.",
+    "latest": "Último dato: las respuestas de AI te mencionan en el {{rate}}% de las comprobaciones.",
+    "chartLabel": "Tendencia de la tasa de mención en {{count}} días comprobados",
+    "tableSummary": "Tasa de mención por día en {{count}} días",
+    "tableDate": "Fecha",
+    "tableRate": "Tasa de mención",
+    "tableShare": "Cuota de voz",
+    "tableChecks": "Comprobaciones",
+    "failed": "No se pudo cargar la tendencia."
+  },
+  "onboarding": {
+    "suggestionsReady": "Empieza con los prompts sugeridos de abajo: un clic los sigue todos.",
+    "trackSuggestions": "Seguir prompts sugeridos",
+    "needKeywords": "Sigue palabras clave en la pestaña Keywords o ejecuta una auditoría para desbloquear sugerencias."
+  },
+  "share": {
+    "title": "Cuota de voz",
+    "description": "Con qué frecuencia las respuestas de AI te nombran frente a tus competidores.",
+    "brand": "Tú",
+    "competitors": "Competidores",
+    "noData": "Sin datos"
+  },
+  "sentiment": {
+    "positive": "Se habla de ti con calidez",
+    "neutral": "Se habla de ti de forma neutra",
+    "negative": "Se habla de ti de forma crítica",
+    "unknown": "Sin evaluar"
+  },
+  "suggestions": {
+    "title": "Frases que la gente le pregunta a la AI",
+    "empty": "Aún no hay prompts sugeridos.",
+    "emptyTitle": "Aún no hay sugerencias",
+    "emptyCta": "Sigue tu propio prompt",
+    "failed": "No se pudieron cargar los prompts sugeridos.",
+    "track": "Seguir este",
+    "trackAll": "Seguir todos",
+    "trackingAll": "Siguiendo…",
+    "aiGenerated": "Sugerido por AI",
+    "generate": "Generar sugerencias",
+    "cooldown": "Espera {{seconds}} s antes de volver a generar.",
+    "cost": "Usa una de tus {{remaining}} generaciones restantes este mes.",
+    "capReached": "Has usado todas tus generaciones de sugerencias este mes.",
+    "emptyGenerated": "Todavía no hemos podido crear preguntas con tus datos. Añade palabras clave en seguimiento o ejecuta una auditoría y vuelve a generar.",
+    "generatedAt": "Generado el {{date}}",
+    "outputLocale": "Idioma de salida: {{locale}}",
+    "generateFailed": "No se han podido generar sugerencias ahora mismo. Tu generación no se ha contabilizado.",
+    "generated": "Se han generado {{count}} sugerencias."
+  },
+  "locked": {
+    "body": "AI Visibility está disponible en el plan Agency.",
+    "upgrade": "Ver planes"
+  },
+  "add": {
+    "failed": "No se pudo añadir ese prompt."
+  },
+  "remove": {
+    "failed": "No se pudo quitar ese prompt."
+  }
+}

@@ -1,0 +1,677 @@
+# rankme.fast control plane.
+# .env only — never Docker secret files, never baked into images. See
+# .claude/rules/environment-variables.md for why the `_FILE` mechanism is gone.
+
+name: rankme
+
+networks:
+  rankme:
+    driver: bridge
+
+volumes:
+  mongo-data:
+  redis-data:
+  postgres-data:
+
+x-logging: &default-logging
+  driver: json-file
+  options:
+    max-size: "10m"
+    max-file: "3"
+
+services:
+  mongo:
+    image: mongo:7
+    restart: unless-stopped
+    logging: *default-logging
+    mem_limit: 512m
+    networks: [rankme]
+    volumes:
+      - mongo-data:/data/db
+    healthcheck:
+      test: ["CMD", "mongosh", "--quiet", "--eval", "db.adminCommand('ping').ok"]
+      interval: 15s
+      timeout: 5s
+      retries: 5
+      start_period: 20s
+
+  redis:
+    image: redis:7-alpine
+    restart: unless-stopped
+    logging: *default-logging
+    mem_limit: 256m
+    networks: [rankme]
+    volumes:
+      - redis-data:/data
+    command: ["redis-server", "--appendonly", "yes"]
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 15s
+      timeout: 3s
+      retries: 5
+      start_period: 5s
+
+  # Relational store — ordered time-series data (rank history, keywords,
+  # backlinks, competitors, subscriptions, usage counters). Mongo stays the
+  # default document store; Postgres is the deliberate, scoped exception.
+  # Internal network only — no published host port.
+  postgres:
+    image: postgres:17-alpine
+    restart: unless-stopped
+    logging: *default-logging
+    mem_limit: 512m
+    networks: [rankme]
+    environment:
+      POSTGRES_USER: ${POSTGRES_USER:-rankme}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+      POSTGRES_DB: ${POSTGRES_DB:-rankme}
+    volumes:
+      - postgres-data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U $${POSTGRES_USER:-rankme} -d $${POSTGRES_DB:-rankme}"]
+      interval: 15s
+      timeout: 5s
+      retries: 5
+      start_period: 10s
+
+  api:
+    init: true
+    build:
+      context: ./server
+      dockerfile: Dockerfile
+      args:
+        APP_BUILD_SHA: ${APP_BUILD_SHA:-dev}
+    restart: unless-stopped
+    logging: *default-logging
+    mem_limit: 768m
+    networks: [rankme]
+    depends_on:
+      mongo:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+      postgres:
+        condition: service_healthy
+    environment:
+      NODE_ENV: ${NODE_ENV:-production}
+      ALLOW_FAKE_PROVIDERS: ${ALLOW_FAKE_PROVIDERS:-false}
+      # Fixed internal listen port. The host-side mapping is API_PORT below;
+      # keep this at 8080 so the port mapping and web's API_INTERNAL_URL agree.
+      PORT: 8080
+      LOG_LEVEL: ${LOG_LEVEL:-info}
+      MONGODB_URI: ${MONGODB_URI}
+      REDIS_URL: ${REDIS_URL}
+      # Postgres (Drizzle) — boot-time migrations run before the api listens.
+      DATABASE_URL: ${DATABASE_URL}
+      PG_POOL_MAX: ${PG_POOL_MAX:-10}
+      CLIENT_URL: ${CLIENT_URL}
+      APP_URL: ${APP_URL:-}
+      SERVER_URL: ${SERVER_URL}
+      # Optional public repository link listed in /llms.txt (https; blank omits it).
+      GITHUB_REPOSITORY_URL: ${GITHUB_REPOSITORY_URL:-}
+      # Same release stage the web build bakes in; `ga` drops the llms.txt beta line.
+      VITE_RELEASE_STAGE: ${VITE_RELEASE_STAGE:-beta}
+      DEFAULT_LOCALE: ${DEFAULT_LOCALE:-en}
+      # Better Auth + Google OAuth / GSC linking.
+      BETTER_AUTH_SECRET: ${BETTER_AUTH_SECRET}
+      GOOGLE_CLIENT_ID: ${GOOGLE_CLIENT_ID:-}
+      GOOGLE_CLIENT_SECRET: ${GOOGLE_CLIENT_SECRET:-}
+      # Secrets from the root .env ONLY — no Docker-secret `${KEY}_FILE`
+      # indirection. An empty mounted secret file used to silently override a
+      # valid .env value (the checkout-500 post-mortem); the resolver is gone.
+      # MASTER_ENCRYPTION_KEY is required — compose fails loud if it is unset.
+      MASTER_ENCRYPTION_KEY: ${MASTER_ENCRYPTION_KEY}
+      # Resend transactional email — unset → sendEmail skips + returns
+      # delivered:false.
+      EMAIL_TRANSPORT: ${EMAIL_TRANSPORT:-resend}
+      E2E_EMAIL_CAPTURE: ${E2E_EMAIL_CAPTURE:-false}
+      RESEND_API_KEY: ${RESEND_API_KEY:-}
+      RESEND_FROM: ${RESEND_FROM:-}
+      CONTACT_FORM_RECIPIENT: ${CONTACT_FORM_RECIPIENT:-}
+      ALERT_WEBHOOK_URL: ${ALERT_WEBHOOK_URL:-}
+      # Polar access token + webhook secret — from .env.
+      # Four new one-time credit packs.
+      # App SEO recurring add-on + four one-time packs.
+      # Vendor providers. Compose fallbacks remain deterministic
+      # for development, but production rejects them unless the isolated
+      # test/demo switch ALLOW_FAKE_PROVIDERS=true is explicit.
+      DATAFORSEO_LOGIN: ${DATAFORSEO_LOGIN:-}
+      DATAFORSEO_PASSWORD: ${DATAFORSEO_PASSWORD:-}
+      DATAFORSEO_BASE_URL: ${DATAFORSEO_BASE_URL:-https://api.dataforseo.com/v3}
+      PROVIDER_AUDIT: ${PROVIDER_AUDIT:-fake}
+      PROVIDER_RANK: ${PROVIDER_RANK:-fake}
+      PROVIDER_KEYWORD: ${PROVIDER_KEYWORD:-fake}
+      PROVIDER_BACKLINK: ${PROVIDER_BACKLINK:-fake}
+      PROVIDER_COMPETITOR: ${PROVIDER_COMPETITOR:-fake}
+      PROVIDER_PAGESPEED: ${PROVIDER_PAGESPEED:-fake}
+      PROVIDER_GSC: ${PROVIDER_GSC:-fake}
+      PROVIDER_GA4: ${PROVIDER_GA4:-fake}
+      PROVIDER_SUMMARY: ${PROVIDER_SUMMARY:-fake}
+      PROVIDER_AI_VISIBILITY: ${PROVIDER_AI_VISIBILITY:-fake}
+      PROVIDER_LOCAL_LISTINGS: ${PROVIDER_LOCAL_LISTINGS:-fake}
+      PROVIDER_CONTENT_SOURCE: ${PROVIDER_CONTENT_SOURCE:-fake}
+      # Content Analysis + Reviews provider seams (default `fake`).
+      PROVIDER_CONTENT_ANALYSIS: ${PROVIDER_CONTENT_ANALYSIS:-fake}
+      PROVIDER_REVIEWS: ${PROVIDER_REVIEWS:-fake}
+      PROVIDER_TRENDS: ${PROVIDER_TRENDS:-fake}
+      PROVIDER_APP_DATA: ${PROVIDER_APP_DATA:-fake}
+      FIRECRAWL_API_KEY: ${FIRECRAWL_API_KEY:-}
+      FIRECRAWL_FALLBACK_API_KEYS: ${FIRECRAWL_FALLBACK_API_KEYS:-}
+      FIRECRAWL_BASE_URL: ${FIRECRAWL_BASE_URL:-https://api.firecrawl.dev}
+      FIRECRAWL_TIMEOUT_MS: ${FIRECRAWL_TIMEOUT_MS:-60000}
+      FIRECRAWL_MAX_PAGE_CHARS: ${FIRECRAWL_MAX_PAGE_CHARS:-100000}
+      FIRECRAWL_MAX_CRAWL_PAGES: ${FIRECRAWL_MAX_CRAWL_PAGES:-100}
+      FIRECRAWL_COST_MICROS_PER_CREDIT: ${FIRECRAWL_COST_MICROS_PER_CREDIT:-1000}
+      FIRECRAWL_ZDR_ENABLED: ${FIRECRAWL_ZDR_ENABLED:-false}
+      # Firecrawl change-monitor webhook secret(s) — HMAC verification.
+      FIRECRAWL_WEBHOOK_SECRET: ${FIRECRAWL_WEBHOOK_SECRET:-}
+      FIRECRAWL_WEBHOOK_SECRETS: ${FIRECRAWL_WEBHOOK_SECRETS:-}
+      FIRECRAWL_WEBHOOK_SECRET_BINDINGS: '${FIRECRAWL_WEBHOOK_SECRET_BINDINGS:-[]}'
+      # Content Intelligence — per-analysis cost ceiling + AI budget + TTL.
+      CONTENT_ANALYSIS_COST_CEILING_MICROS: ${CONTENT_ANALYSIS_COST_CEILING_MICROS:-250000}
+      CONTENT_ANALYSIS_AI_BUDGET_MICROS: ${CONTENT_ANALYSIS_AI_BUDGET_MICROS:-140000}
+      CONTENT_ANALYSIS_SNAPSHOT_TTL_DAYS: ${CONTENT_ANALYSIS_SNAPSHOT_TTL_DAYS:-7}
+      # Content inventory crawl ceiling + monitor reconciliation interval.
+      CONTENT_INVENTORY_MAX_PAGES: ${CONTENT_INVENTORY_MAX_PAGES:-100}
+      CONTENT_MONITOR_RECON_INTERVAL_MS: ${CONTENT_MONITOR_RECON_INTERVAL_MS:-300000}
+      ALERT_SWEEP_INTERVAL_MS: ${ALERT_SWEEP_INTERVAL_MS:-300000}
+      # Structured AI generation runtime — fake is test/demo only in production.
+      PROVIDER_AI: ${PROVIDER_AI:-fake}
+      AI_PROVIDER_ORDER: ${AI_PROVIDER_ORDER:-glm,deepseek,kimi,openai,google,anthropic}
+      AI_TOTAL_TIMEOUT_MS: ${AI_TOTAL_TIMEOUT_MS:-120000}
+      AI_MAX_ATTEMPTS: ${AI_MAX_ATTEMPTS:-6}
+      AI_TELEMETRY_ENABLED: ${AI_TELEMETRY_ENABLED:-false}
+      AI_ACCOUNT_SPEND_WINDOW_MS: ${AI_ACCOUNT_SPEND_WINDOW_MS:-3600000}
+      AI_ACCOUNT_SPEND_LIMIT_MICROS: ${AI_ACCOUNT_SPEND_LIMIT_MICROS:-1000000}
+      AI_USAGE_RETENTION_DAYS: ${AI_USAGE_RETENTION_DAYS:-90}
+      AI_CHAT_MAX_OUTPUT_TOKENS: ${AI_CHAT_MAX_OUTPUT_TOKENS:-2048}
+      AI_CHAT_TOTAL_TIMEOUT_MS: ${AI_CHAT_TOTAL_TIMEOUT_MS:-120000}
+      AI_CHAT_MAX_STEPS: ${AI_CHAT_MAX_STEPS:-5}
+      GLM_ENABLED: ${GLM_ENABLED:-false}
+      GLM_API_KEY: ${GLM_API_KEY:-}
+      GLM_MODEL: ${GLM_MODEL:-}
+      GLM_BASE_URL: ${GLM_BASE_URL:-}
+      GLM_INPUT_COST_MICROS_PER_MILLION: ${GLM_INPUT_COST_MICROS_PER_MILLION:-}
+      GLM_OUTPUT_COST_MICROS_PER_MILLION: ${GLM_OUTPUT_COST_MICROS_PER_MILLION:-}
+      DEEPSEEK_ENABLED: ${DEEPSEEK_ENABLED:-false}
+      DEEPSEEK_API_KEY: ${DEEPSEEK_API_KEY:-}
+      DEEPSEEK_MODEL: ${DEEPSEEK_MODEL:-}
+      DEEPSEEK_INPUT_COST_MICROS_PER_MILLION: ${DEEPSEEK_INPUT_COST_MICROS_PER_MILLION:-}
+      DEEPSEEK_OUTPUT_COST_MICROS_PER_MILLION: ${DEEPSEEK_OUTPUT_COST_MICROS_PER_MILLION:-}
+      KIMI_ENABLED: ${KIMI_ENABLED:-false}
+      KIMI_API_KEY: ${KIMI_API_KEY:-}
+      KIMI_MODEL: ${KIMI_MODEL:-}
+      KIMI_INPUT_COST_MICROS_PER_MILLION: ${KIMI_INPUT_COST_MICROS_PER_MILLION:-}
+      KIMI_OUTPUT_COST_MICROS_PER_MILLION: ${KIMI_OUTPUT_COST_MICROS_PER_MILLION:-}
+      OPENAI_ENABLED: ${OPENAI_ENABLED:-false}
+      OPENAI_API_KEY: ${OPENAI_API_KEY:-}
+      OPENAI_MODEL: ${OPENAI_MODEL:-}
+      OPENAI_INPUT_COST_MICROS_PER_MILLION: ${OPENAI_INPUT_COST_MICROS_PER_MILLION:-}
+      OPENAI_OUTPUT_COST_MICROS_PER_MILLION: ${OPENAI_OUTPUT_COST_MICROS_PER_MILLION:-}
+      GOOGLE_ENABLED: ${GOOGLE_ENABLED:-false}
+      GOOGLE_GENERATIVE_AI_API_KEY: ${GOOGLE_GENERATIVE_AI_API_KEY:-}
+      GOOGLE_MODEL: ${GOOGLE_MODEL:-}
+      GOOGLE_INPUT_COST_MICROS_PER_MILLION: ${GOOGLE_INPUT_COST_MICROS_PER_MILLION:-}
+      GOOGLE_OUTPUT_COST_MICROS_PER_MILLION: ${GOOGLE_OUTPUT_COST_MICROS_PER_MILLION:-}
+      ANTHROPIC_ENABLED: ${ANTHROPIC_ENABLED:-false}
+      ANTHROPIC_MODEL: ${ANTHROPIC_MODEL:-}
+      ANTHROPIC_INPUT_COST_MICROS_PER_MILLION: ${ANTHROPIC_INPUT_COST_MICROS_PER_MILLION:-}
+      ANTHROPIC_OUTPUT_COST_MICROS_PER_MILLION: ${ANTHROPIC_OUTPUT_COST_MICROS_PER_MILLION:-}
+      # PSI / CrUX + caches.
+      GOOGLE_API_KEY: ${GOOGLE_API_KEY:-}
+      PAGESPEED_SAMPLE_SIZE: ${PAGESPEED_SAMPLE_SIZE:-3}
+      PAGESPEED_CACHE_TTL_HOURS: ${PAGESPEED_CACHE_TTL_HOURS:-24}
+      SERP_CACHE_TTL_HOURS: ${SERP_CACHE_TTL_HOURS:-24}
+      KEYWORD_CACHE_TTL_DAYS: ${KEYWORD_CACHE_TTL_DAYS:-30}
+      SERP_DEPTH: ${SERP_DEPTH:-100}
+      SERP_LIVE_DEPTH: ${SERP_LIVE_DEPTH:-20}
+      SERP_TASK_POLL_INTERVAL_MS: ${SERP_TASK_POLL_INTERVAL_MS:-3000}
+      SERP_TASK_MAX_POLL_ATTEMPTS: ${SERP_TASK_MAX_POLL_ATTEMPTS:-60}
+      GSC_INSPECT_SAMPLE: ${GSC_INSPECT_SAMPLE:-10}
+      GA4_LAG_DAYS: ${GA4_LAG_DAYS:-1}
+      # AI summary profile migration: fake | legacy anthropic | ordered ai-sdk.
+      AI_SUMMARY_ENABLED: ${AI_SUMMARY_ENABLED:-false}
+      ANTHROPIC_API_KEY: ${ANTHROPIC_API_KEY:-}
+      AI_SUMMARY_MODEL: ${AI_SUMMARY_MODEL:-claude-haiku-4-5}
+      # Audit pipeline knobs.
+      AUDIT_POLL_INTERVAL_MS: ${AUDIT_POLL_INTERVAL_MS:-30000}
+      AUDIT_RUN_TIMEOUT_MS: ${AUDIT_RUN_TIMEOUT_MS:-1800000}
+      # Rate limits + CSRF + data-rights.
+      RATE_LIMIT_AUTH_WINDOW_MS: ${RATE_LIMIT_AUTH_WINDOW_MS:-900000}
+      RATE_LIMIT_AUTH_MAX: ${RATE_LIMIT_AUTH_MAX:-30}
+      RATE_LIMIT_METRICS_WINDOW_MS: ${RATE_LIMIT_METRICS_WINDOW_MS:-3600000}
+      RATE_LIMIT_API_WINDOW_MS: ${RATE_LIMIT_API_WINDOW_MS:-60000}
+      RATE_LIMIT_API_MAX: ${RATE_LIMIT_API_MAX:-120}
+      RATE_LIMIT_REPORT_EXPORT_PUBLIC_WINDOW_MS: ${RATE_LIMIT_REPORT_EXPORT_PUBLIC_WINDOW_MS:-60000}
+      RATE_LIMIT_REPORT_EXPORT_PUBLIC_IP_MAX: ${RATE_LIMIT_REPORT_EXPORT_PUBLIC_IP_MAX:-60}
+      RATE_LIMIT_REPORT_EXPORT_PUBLIC_TOKEN_MAX: ${RATE_LIMIT_REPORT_EXPORT_PUBLIC_TOKEN_MAX:-120}
+      RATE_LIMIT_ENTERPRISE_LEAD_WINDOW_MS: ${RATE_LIMIT_ENTERPRISE_LEAD_WINDOW_MS:-3600000}
+      RATE_LIMIT_ENTERPRISE_LEAD_MAX: ${RATE_LIMIT_ENTERPRISE_LEAD_MAX:-5}
+      RATE_LIMIT_CONTACT_WINDOW_MS: ${RATE_LIMIT_CONTACT_WINDOW_MS:-900000}
+      RATE_LIMIT_CONTACT_MAX: ${RATE_LIMIT_CONTACT_MAX:-5}
+      RATE_LIMIT_CONTENT_CREATE_WINDOW_MS: ${RATE_LIMIT_CONTENT_CREATE_WINDOW_MS:-60000}
+      RATE_LIMIT_CONTENT_CREATE_MAX: ${RATE_LIMIT_CONTENT_CREATE_MAX:-10}
+      RATE_LIMIT_CONTENT_POLL_WINDOW_MS: ${RATE_LIMIT_CONTENT_POLL_WINDOW_MS:-60000}
+      RATE_LIMIT_CONTENT_POLL_MAX: ${RATE_LIMIT_CONTENT_POLL_MAX:-60}
+      RATE_LIMIT_RECOMMENDATION_WINDOW_MS: ${RATE_LIMIT_RECOMMENDATION_WINDOW_MS:-60000}
+      RATE_LIMIT_RECOMMENDATION_MAX: ${RATE_LIMIT_RECOMMENDATION_MAX:-60}
+      RATE_LIMIT_INVENTORY_WINDOW_MS: ${RATE_LIMIT_INVENTORY_WINDOW_MS:-60000}
+      RATE_LIMIT_INVENTORY_MAX: ${RATE_LIMIT_INVENTORY_MAX:-5}
+      RATE_LIMIT_COMPETITOR_WINDOW_MS: ${RATE_LIMIT_COMPETITOR_WINDOW_MS:-60000}
+      RATE_LIMIT_COMPETITOR_MAX: ${RATE_LIMIT_COMPETITOR_MAX:-30}
+      RATE_LIMIT_LINK_INTEL_WINDOW_MS: ${RATE_LIMIT_LINK_INTEL_WINDOW_MS:-60000}
+      RATE_LIMIT_LINK_INTEL_MAX: ${RATE_LIMIT_LINK_INTEL_MAX:-30}
+      RATE_LIMIT_LINK_INTEL_POLL_WINDOW_MS: ${RATE_LIMIT_LINK_INTEL_POLL_WINDOW_MS:-60000}
+      RATE_LIMIT_LINK_INTEL_POLL_MAX: ${RATE_LIMIT_LINK_INTEL_POLL_MAX:-60}
+      RATE_LIMIT_TRAFFIC_SNAPSHOTS_WINDOW_MS: ${RATE_LIMIT_TRAFFIC_SNAPSHOTS_WINDOW_MS:-60000}
+      RATE_LIMIT_TRAFFIC_SNAPSHOTS_MAX: ${RATE_LIMIT_TRAFFIC_SNAPSHOTS_MAX:-10}
+      RATE_LIMIT_REVIEW_SYNC_WINDOW_MS: ${RATE_LIMIT_REVIEW_SYNC_WINDOW_MS:-60000}
+      RATE_LIMIT_REVIEW_SYNC_MAX: ${RATE_LIMIT_REVIEW_SYNC_MAX:-20}
+      RATE_LIMIT_BRAND_RADAR_CREATE_WINDOW_MS: ${RATE_LIMIT_BRAND_RADAR_CREATE_WINDOW_MS:-60000}
+      RATE_LIMIT_BRAND_RADAR_CREATE_MAX: ${RATE_LIMIT_BRAND_RADAR_CREATE_MAX:-10}
+      RATE_LIMIT_BRAND_RADAR_POLL_WINDOW_MS: ${RATE_LIMIT_BRAND_RADAR_POLL_WINDOW_MS:-60000}
+      RATE_LIMIT_BRAND_RADAR_POLL_MAX: ${RATE_LIMIT_BRAND_RADAR_POLL_MAX:-60}
+      RATE_LIMIT_FIRECRAWL_WEBHOOK_WINDOW_MS: ${RATE_LIMIT_FIRECRAWL_WEBHOOK_WINDOW_MS:-60000}
+      RATE_LIMIT_FIRECRAWL_WEBHOOK_MAX: ${RATE_LIMIT_FIRECRAWL_WEBHOOK_MAX:-120}
+      RATE_LIMIT_MCP_WINDOW_MS: ${RATE_LIMIT_MCP_WINDOW_MS:-60000}
+      RATE_LIMIT_MCP_MAX: ${RATE_LIMIT_MCP_MAX:-120}
+      MCP_ENABLED: ${MCP_ENABLED:-true}
+      CHAT_ENABLED: ${CHAT_ENABLED:-true}
+      RATE_LIMIT_CHAT_WINDOW_MS: ${RATE_LIMIT_CHAT_WINDOW_MS:-60000}
+      RATE_LIMIT_CHAT_MAX: ${RATE_LIMIT_CHAT_MAX:-20}
+      CONTENT_INTELLIGENCE_ENABLED: ${CONTENT_INTELLIGENCE_ENABLED:-true}
+      CONTENT_INVENTORY_ENABLED: ${CONTENT_INVENTORY_ENABLED:-true}
+      COMPETITOR_CONTENT_INTELLIGENCE_ENABLED: ${COMPETITOR_CONTENT_INTELLIGENCE_ENABLED:-true}
+      COMPETITOR_INTELLIGENCE_ENABLED: ${COMPETITOR_INTELLIGENCE_ENABLED:-true}
+      CONTENT_MONITORING_ENABLED: ${CONTENT_MONITORING_ENABLED:-true}
+      # rollout flags (default false — seams only).
+      BRAND_RADAR_ENABLED: ${BRAND_RADAR_ENABLED:-false}
+      REVIEW_INTELLIGENCE_ENABLED: ${REVIEW_INTELLIGENCE_ENABLED:-false}
+      LINK_INTELLIGENCE_ENABLED: ${LINK_INTELLIGENCE_ENABLED:-false}
+      TRAFFIC_INSIGHTS_ENABLED: ${TRAFFIC_INSIGHTS_ENABLED:-false}
+      KEYWORD_TRENDS_ENABLED: ${KEYWORD_TRENDS_ENABLED:-false}
+      # rollout flags (default false — seams only).
+      SERP_FEATURE_TRACKING_ENABLED: ${SERP_FEATURE_TRACKING_ENABLED:-false}
+      KEYWORD_CLUSTERING_ENABLED: ${KEYWORD_CLUSTERING_ENABLED:-false}
+      ALT_ENGINE_TRACKING_ENABLED: ${ALT_ENGINE_TRACKING_ENABLED:-false}
+      CANNIBALIZATION_ENABLED: ${CANNIBALIZATION_ENABLED:-false}
+      TOXIC_LINKS_ENABLED: ${TOXIC_LINKS_ENABLED:-false}
+      ALERTS_ENABLED: ${ALERTS_ENABLED:-false}
+      INTERNAL_LINKING_ENABLED: ${INTERNAL_LINKING_ENABLED:-false}
+      CONTENT_BRIEFS_ENABLED: ${CONTENT_BRIEFS_ENABLED:-false}
+      GEOGRID_ENABLED: ${GEOGRID_ENABLED:-false}
+      SCHEMA_GENERATOR_ENABLED: ${SCHEMA_GENERATOR_ENABLED:-false}
+      CLIENT_REPORTS_ENABLED: ${CLIENT_REPORTS_ENABLED:-false}
+      PUBLIC_EXPORTS_ENABLED: ${PUBLIC_EXPORTS_ENABLED:-false}
+      # Per-run direct-cost ceilings, micros USD.
+      CONTENT_BRIEF_COST_CEILING_MICROS: ${CONTENT_BRIEF_COST_CEILING_MICROS:-120000}
+      INTERNAL_LINKING_COST_CEILING_MICROS: ${INTERNAL_LINKING_COST_CEILING_MICROS:-12000}
+      TOXICITY_COST_CEILING_MICROS: ${TOXICITY_COST_CEILING_MICROS:-30000}
+      SCHEMA_GEN_COST_CEILING_MICROS: ${SCHEMA_GEN_COST_CEILING_MICROS:-6000}
+      # rankme-app-seo 00 rollout flags (default false — seams only).
+      APP_SEO_ENABLED: ${APP_SEO_ENABLED:-false}
+      APP_KEYWORD_TRACKING_ENABLED: ${APP_KEYWORD_TRACKING_ENABLED:-false}
+      APP_LISTING_AUDITS_ENABLED: ${APP_LISTING_AUDITS_ENABLED:-false}
+      APP_CHART_TRACKING_ENABLED: ${APP_CHART_TRACKING_ENABLED:-false}
+      APP_RESEARCH_ENABLED: ${APP_RESEARCH_ENABLED:-false}
+      APP_REVIEWS_ENABLED: ${APP_REVIEWS_ENABLED:-false}
+      # App-review AI ceiling + ASO named rate buckets.
+      APP_REVIEW_AI_COST_CEILING_MICROS: ${APP_REVIEW_AI_COST_CEILING_MICROS:-40000}
+      RATE_LIMIT_APP_SEO_CREATE_WINDOW_MS: ${RATE_LIMIT_APP_SEO_CREATE_WINDOW_MS:-60000}
+      RATE_LIMIT_APP_SEO_CREATE_MAX: ${RATE_LIMIT_APP_SEO_CREATE_MAX:-10}
+      RATE_LIMIT_APP_SEO_POLL_WINDOW_MS: ${RATE_LIMIT_APP_SEO_POLL_WINDOW_MS:-60000}
+      RATE_LIMIT_APP_SEO_POLL_MAX: ${RATE_LIMIT_APP_SEO_POLL_MAX:-60}
+      RATE_LIMIT_SUPERADMIN_WINDOW_MS: ${RATE_LIMIT_SUPERADMIN_WINDOW_MS:-60000}
+      RATE_LIMIT_SUPERADMIN_MAX: ${RATE_LIMIT_SUPERADMIN_MAX:-60}
+      SUPERADMIN_STEPUP_WINDOW_MS: ${SUPERADMIN_STEPUP_WINDOW_MS:-300000}
+      SUPERADMIN_ALERT_DEDUP_WINDOW_MS: ${SUPERADMIN_ALERT_DEDUP_WINDOW_MS:-3600000}
+      CSRF_COOKIE_NAME: ${CSRF_COOKIE_NAME:-x-csrf-token}
+      CSRF_HEADER_NAME: ${CSRF_HEADER_NAME:-x-csrf-token}
+      ACCOUNT_DELETION_GRACE_HOURS: ${ACCOUNT_DELETION_GRACE_HOURS:-720}
+      # Legacy MERN integrations — optional backwards-compatible env slots.
+      # SuperAdmin bootstrap (superadmin). Passed to the api ONLY — the worker
+      # never seeds and the web SSR container never sees server secrets. Unset
+      # → the boot seeder no-ops. The password is redacted from all api logs.
+      SUPERADMIN_EMAIL: ${SUPERADMIN_EMAIL:-}
+      SUPERADMIN_PASSWORD: ${SUPERADMIN_PASSWORD:-}
+    ports:
+      # Loopback-only — nginx is the sole public entrypoint. Host port off the
+      # 8080 default to avoid colliding with other stacks on this box.
+      - "127.0.0.1:${API_PORT:-48080}:8080"
+    # Least-privilege hardening. The api never needs privilege
+    # escalation, extra capabilities, or a writable root.
+    security_opt:
+      - no-new-privileges:true
+    cap_drop:
+      - ALL
+    read_only: true
+    tmpfs:
+      - /tmp
+    healthcheck:
+      test: ["CMD-SHELL", "node -e \"fetch('http://127.0.0.1:'+ (process.env.PORT || 8080) +'/api/health').then(r=>{if(!r.ok)process.exit(1)}).catch(()=>process.exit(1))\""]
+      interval: 30s
+      timeout: 5s
+      retries: 3
+      start_period: 20s
+
+  # Second deployable: BullMQ consumers for the `audits` and
+  # `ranks` queues. Same image as api, different command — one codebase, two
+  # processes. Talks to vendors only through the provider registry; no
+  # browser, no crawler, no published ports (the /healthz endpoint is
+  # container-internal). Ceiling: exactly two runtime deployables.
+  worker:
+    init: true
+    build:
+      context: ./server
+      dockerfile: Dockerfile
+      args:
+        APP_BUILD_SHA: ${APP_BUILD_SHA:-dev}
+    command: ["node", "dist/worker.cjs"]
+    restart: unless-stopped
+    logging: *default-logging
+    mem_limit: 768m
+    networks: [rankme]
+    depends_on:
+      api:
+        condition: service_healthy
+      mongo:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+      postgres:
+        condition: service_healthy
+    environment:
+      NODE_ENV: ${NODE_ENV:-production}
+      ALLOW_FAKE_PROVIDERS: ${ALLOW_FAKE_PROVIDERS:-false}
+      LOG_LEVEL: ${LOG_LEVEL:-info}
+      MONGODB_URI: ${MONGODB_URI}
+      REDIS_URL: ${REDIS_URL}
+      DATABASE_URL: ${DATABASE_URL}
+      PG_POOL_MAX: ${PG_POOL_MAX:-10}
+      CLIENT_URL: ${CLIENT_URL}
+      APP_URL: ${APP_URL:-}
+      SERVER_URL: ${SERVER_URL}
+      DEFAULT_LOCALE: ${DEFAULT_LOCALE:-en}
+      # Better Auth + Google OAuth / GSC linking.
+      BETTER_AUTH_SECRET: ${BETTER_AUTH_SECRET}
+      GOOGLE_CLIENT_ID: ${GOOGLE_CLIENT_ID:-}
+      GOOGLE_CLIENT_SECRET: ${GOOGLE_CLIENT_SECRET:-}
+      # Secrets from the root .env ONLY — env parity with api across the two
+      # deployables (rules/environment-variables.md). No Docker-secret `_FILE`.
+      MASTER_ENCRYPTION_KEY: ${MASTER_ENCRYPTION_KEY}
+      # Resend — worker sends failure-alert email.
+      EMAIL_TRANSPORT: ${EMAIL_TRANSPORT:-resend}
+      E2E_EMAIL_CAPTURE: ${E2E_EMAIL_CAPTURE:-false}
+      RESEND_API_KEY: ${RESEND_API_KEY:-}
+      RESEND_FROM: ${RESEND_FROM:-}
+      CONTACT_FORM_RECIPIENT: ${CONTACT_FORM_RECIPIENT:-}
+      ALERT_WEBHOOK_URL: ${ALERT_WEBHOOK_URL:-}
+      # Polar (parity with api — entitlements resolver reads these).
+      # Four new one-time credit packs.
+      # App SEO recurring add-on + four one-time packs.
+      # Worker knobs: jobs processed concurrently per queue
+      # worker, and the internal /healthz port for the healthcheck below.
+      WORKER_CONCURRENCY: ${WORKER_CONCURRENCY:-5}
+      WORKER_PORT: 8081
+      # Vendor providers — env parity with api so both processes
+      # resolve the same registry; production fake use needs the explicit seam.
+      DATAFORSEO_LOGIN: ${DATAFORSEO_LOGIN:-}
+      DATAFORSEO_PASSWORD: ${DATAFORSEO_PASSWORD:-}
+      DATAFORSEO_BASE_URL: ${DATAFORSEO_BASE_URL:-https://api.dataforseo.com/v3}
+      PROVIDER_AUDIT: ${PROVIDER_AUDIT:-fake}
+      PROVIDER_RANK: ${PROVIDER_RANK:-fake}
+      PROVIDER_KEYWORD: ${PROVIDER_KEYWORD:-fake}
+      PROVIDER_BACKLINK: ${PROVIDER_BACKLINK:-fake}
+      PROVIDER_COMPETITOR: ${PROVIDER_COMPETITOR:-fake}
+      PROVIDER_PAGESPEED: ${PROVIDER_PAGESPEED:-fake}
+      PROVIDER_GSC: ${PROVIDER_GSC:-fake}
+      PROVIDER_GA4: ${PROVIDER_GA4:-fake}
+      PROVIDER_SUMMARY: ${PROVIDER_SUMMARY:-fake}
+      PROVIDER_AI_VISIBILITY: ${PROVIDER_AI_VISIBILITY:-fake}
+      PROVIDER_LOCAL_LISTINGS: ${PROVIDER_LOCAL_LISTINGS:-fake}
+      PROVIDER_CONTENT_SOURCE: ${PROVIDER_CONTENT_SOURCE:-fake}
+      # Content Analysis + Reviews provider seams (default `fake`).
+      PROVIDER_CONTENT_ANALYSIS: ${PROVIDER_CONTENT_ANALYSIS:-fake}
+      PROVIDER_REVIEWS: ${PROVIDER_REVIEWS:-fake}
+      PROVIDER_TRENDS: ${PROVIDER_TRENDS:-fake}
+      PROVIDER_APP_DATA: ${PROVIDER_APP_DATA:-fake}
+      FIRECRAWL_API_KEY: ${FIRECRAWL_API_KEY:-}
+      FIRECRAWL_FALLBACK_API_KEYS: ${FIRECRAWL_FALLBACK_API_KEYS:-}
+      FIRECRAWL_BASE_URL: ${FIRECRAWL_BASE_URL:-https://api.firecrawl.dev}
+      FIRECRAWL_TIMEOUT_MS: ${FIRECRAWL_TIMEOUT_MS:-60000}
+      FIRECRAWL_MAX_PAGE_CHARS: ${FIRECRAWL_MAX_PAGE_CHARS:-100000}
+      FIRECRAWL_MAX_CRAWL_PAGES: ${FIRECRAWL_MAX_CRAWL_PAGES:-100}
+      FIRECRAWL_COST_MICROS_PER_CREDIT: ${FIRECRAWL_COST_MICROS_PER_CREDIT:-1000}
+      FIRECRAWL_ZDR_ENABLED: ${FIRECRAWL_ZDR_ENABLED:-false}
+      # Firecrawl change-monitor webhook secret(s) — HMAC verification.
+      FIRECRAWL_WEBHOOK_SECRET: ${FIRECRAWL_WEBHOOK_SECRET:-}
+      FIRECRAWL_WEBHOOK_SECRETS: ${FIRECRAWL_WEBHOOK_SECRETS:-}
+      FIRECRAWL_WEBHOOK_SECRET_BINDINGS: '${FIRECRAWL_WEBHOOK_SECRET_BINDINGS:-[]}'
+      # Content Intelligence — per-analysis cost ceiling + AI budget + TTL.
+      CONTENT_ANALYSIS_COST_CEILING_MICROS: ${CONTENT_ANALYSIS_COST_CEILING_MICROS:-250000}
+      CONTENT_ANALYSIS_AI_BUDGET_MICROS: ${CONTENT_ANALYSIS_AI_BUDGET_MICROS:-140000}
+      CONTENT_ANALYSIS_SNAPSHOT_TTL_DAYS: ${CONTENT_ANALYSIS_SNAPSHOT_TTL_DAYS:-7}
+      # Content inventory crawl ceiling + monitor reconciliation interval.
+      CONTENT_INVENTORY_MAX_PAGES: ${CONTENT_INVENTORY_MAX_PAGES:-100}
+      CONTENT_MONITOR_RECON_INTERVAL_MS: ${CONTENT_MONITOR_RECON_INTERVAL_MS:-300000}
+      ALERT_SWEEP_INTERVAL_MS: ${ALERT_SWEEP_INTERVAL_MS:-300000}
+      # Structured AI generation runtime — fake is test/demo only in production.
+      PROVIDER_AI: ${PROVIDER_AI:-fake}
+      AI_PROVIDER_ORDER: ${AI_PROVIDER_ORDER:-glm,deepseek,kimi,openai,google,anthropic}
+      AI_TOTAL_TIMEOUT_MS: ${AI_TOTAL_TIMEOUT_MS:-120000}
+      AI_MAX_ATTEMPTS: ${AI_MAX_ATTEMPTS:-6}
+      AI_TELEMETRY_ENABLED: ${AI_TELEMETRY_ENABLED:-false}
+      AI_ACCOUNT_SPEND_WINDOW_MS: ${AI_ACCOUNT_SPEND_WINDOW_MS:-3600000}
+      AI_ACCOUNT_SPEND_LIMIT_MICROS: ${AI_ACCOUNT_SPEND_LIMIT_MICROS:-1000000}
+      AI_USAGE_RETENTION_DAYS: ${AI_USAGE_RETENTION_DAYS:-90}
+      AI_CHAT_MAX_OUTPUT_TOKENS: ${AI_CHAT_MAX_OUTPUT_TOKENS:-2048}
+      AI_CHAT_TOTAL_TIMEOUT_MS: ${AI_CHAT_TOTAL_TIMEOUT_MS:-120000}
+      AI_CHAT_MAX_STEPS: ${AI_CHAT_MAX_STEPS:-5}
+      GLM_ENABLED: ${GLM_ENABLED:-false}
+      GLM_API_KEY: ${GLM_API_KEY:-}
+      GLM_MODEL: ${GLM_MODEL:-}
+      GLM_BASE_URL: ${GLM_BASE_URL:-}
+      GLM_INPUT_COST_MICROS_PER_MILLION: ${GLM_INPUT_COST_MICROS_PER_MILLION:-}
+      GLM_OUTPUT_COST_MICROS_PER_MILLION: ${GLM_OUTPUT_COST_MICROS_PER_MILLION:-}
+      DEEPSEEK_ENABLED: ${DEEPSEEK_ENABLED:-false}
+      DEEPSEEK_API_KEY: ${DEEPSEEK_API_KEY:-}
+      DEEPSEEK_MODEL: ${DEEPSEEK_MODEL:-}
+      DEEPSEEK_INPUT_COST_MICROS_PER_MILLION: ${DEEPSEEK_INPUT_COST_MICROS_PER_MILLION:-}
+      DEEPSEEK_OUTPUT_COST_MICROS_PER_MILLION: ${DEEPSEEK_OUTPUT_COST_MICROS_PER_MILLION:-}
+      KIMI_ENABLED: ${KIMI_ENABLED:-false}
+      KIMI_API_KEY: ${KIMI_API_KEY:-}
+      KIMI_MODEL: ${KIMI_MODEL:-}
+      KIMI_INPUT_COST_MICROS_PER_MILLION: ${KIMI_INPUT_COST_MICROS_PER_MILLION:-}
+      KIMI_OUTPUT_COST_MICROS_PER_MILLION: ${KIMI_OUTPUT_COST_MICROS_PER_MILLION:-}
+      OPENAI_ENABLED: ${OPENAI_ENABLED:-false}
+      OPENAI_API_KEY: ${OPENAI_API_KEY:-}
+      OPENAI_MODEL: ${OPENAI_MODEL:-}
+      OPENAI_INPUT_COST_MICROS_PER_MILLION: ${OPENAI_INPUT_COST_MICROS_PER_MILLION:-}
+      OPENAI_OUTPUT_COST_MICROS_PER_MILLION: ${OPENAI_OUTPUT_COST_MICROS_PER_MILLION:-}
+      GOOGLE_ENABLED: ${GOOGLE_ENABLED:-false}
+      GOOGLE_GENERATIVE_AI_API_KEY: ${GOOGLE_GENERATIVE_AI_API_KEY:-}
+      GOOGLE_MODEL: ${GOOGLE_MODEL:-}
+      GOOGLE_INPUT_COST_MICROS_PER_MILLION: ${GOOGLE_INPUT_COST_MICROS_PER_MILLION:-}
+      GOOGLE_OUTPUT_COST_MICROS_PER_MILLION: ${GOOGLE_OUTPUT_COST_MICROS_PER_MILLION:-}
+      ANTHROPIC_ENABLED: ${ANTHROPIC_ENABLED:-false}
+      ANTHROPIC_MODEL: ${ANTHROPIC_MODEL:-}
+      ANTHROPIC_INPUT_COST_MICROS_PER_MILLION: ${ANTHROPIC_INPUT_COST_MICROS_PER_MILLION:-}
+      ANTHROPIC_OUTPUT_COST_MICROS_PER_MILLION: ${ANTHROPIC_OUTPUT_COST_MICROS_PER_MILLION:-}
+      # PSI / CrUX + caches.
+      GOOGLE_API_KEY: ${GOOGLE_API_KEY:-}
+      PAGESPEED_SAMPLE_SIZE: ${PAGESPEED_SAMPLE_SIZE:-3}
+      PAGESPEED_CACHE_TTL_HOURS: ${PAGESPEED_CACHE_TTL_HOURS:-24}
+      SERP_CACHE_TTL_HOURS: ${SERP_CACHE_TTL_HOURS:-24}
+      KEYWORD_CACHE_TTL_DAYS: ${KEYWORD_CACHE_TTL_DAYS:-30}
+      SERP_DEPTH: ${SERP_DEPTH:-100}
+      SERP_LIVE_DEPTH: ${SERP_LIVE_DEPTH:-20}
+      SERP_TASK_POLL_INTERVAL_MS: ${SERP_TASK_POLL_INTERVAL_MS:-3000}
+      SERP_TASK_MAX_POLL_ATTEMPTS: ${SERP_TASK_MAX_POLL_ATTEMPTS:-60}
+      GSC_INSPECT_SAMPLE: ${GSC_INSPECT_SAMPLE:-10}
+      GA4_LAG_DAYS: ${GA4_LAG_DAYS:-1}
+      # AI summary profile migration: fake | legacy anthropic | ordered ai-sdk.
+      AI_SUMMARY_ENABLED: ${AI_SUMMARY_ENABLED:-false}
+      ANTHROPIC_API_KEY: ${ANTHROPIC_API_KEY:-}
+      AI_SUMMARY_MODEL: ${AI_SUMMARY_MODEL:-claude-haiku-4-5}
+      # Audit pipeline knobs.
+      AUDIT_POLL_INTERVAL_MS: ${AUDIT_POLL_INTERVAL_MS:-30000}
+      AUDIT_RUN_TIMEOUT_MS: ${AUDIT_RUN_TIMEOUT_MS:-1800000}
+      # Rate limits + CSRF + data-rights.
+      RATE_LIMIT_AUTH_WINDOW_MS: ${RATE_LIMIT_AUTH_WINDOW_MS:-900000}
+      RATE_LIMIT_AUTH_MAX: ${RATE_LIMIT_AUTH_MAX:-30}
+      RATE_LIMIT_METRICS_WINDOW_MS: ${RATE_LIMIT_METRICS_WINDOW_MS:-3600000}
+      RATE_LIMIT_API_WINDOW_MS: ${RATE_LIMIT_API_WINDOW_MS:-60000}
+      RATE_LIMIT_API_MAX: ${RATE_LIMIT_API_MAX:-120}
+      RATE_LIMIT_REPORT_EXPORT_PUBLIC_WINDOW_MS: ${RATE_LIMIT_REPORT_EXPORT_PUBLIC_WINDOW_MS:-60000}
+      RATE_LIMIT_REPORT_EXPORT_PUBLIC_IP_MAX: ${RATE_LIMIT_REPORT_EXPORT_PUBLIC_IP_MAX:-60}
+      RATE_LIMIT_REPORT_EXPORT_PUBLIC_TOKEN_MAX: ${RATE_LIMIT_REPORT_EXPORT_PUBLIC_TOKEN_MAX:-120}
+      RATE_LIMIT_ENTERPRISE_LEAD_WINDOW_MS: ${RATE_LIMIT_ENTERPRISE_LEAD_WINDOW_MS:-3600000}
+      RATE_LIMIT_ENTERPRISE_LEAD_MAX: ${RATE_LIMIT_ENTERPRISE_LEAD_MAX:-5}
+      RATE_LIMIT_CONTACT_WINDOW_MS: ${RATE_LIMIT_CONTACT_WINDOW_MS:-900000}
+      RATE_LIMIT_CONTACT_MAX: ${RATE_LIMIT_CONTACT_MAX:-5}
+      RATE_LIMIT_CONTENT_CREATE_WINDOW_MS: ${RATE_LIMIT_CONTENT_CREATE_WINDOW_MS:-60000}
+      RATE_LIMIT_CONTENT_CREATE_MAX: ${RATE_LIMIT_CONTENT_CREATE_MAX:-10}
+      RATE_LIMIT_CONTENT_POLL_WINDOW_MS: ${RATE_LIMIT_CONTENT_POLL_WINDOW_MS:-60000}
+      RATE_LIMIT_CONTENT_POLL_MAX: ${RATE_LIMIT_CONTENT_POLL_MAX:-60}
+      RATE_LIMIT_RECOMMENDATION_WINDOW_MS: ${RATE_LIMIT_RECOMMENDATION_WINDOW_MS:-60000}
+      RATE_LIMIT_RECOMMENDATION_MAX: ${RATE_LIMIT_RECOMMENDATION_MAX:-60}
+      RATE_LIMIT_INVENTORY_WINDOW_MS: ${RATE_LIMIT_INVENTORY_WINDOW_MS:-60000}
+      RATE_LIMIT_INVENTORY_MAX: ${RATE_LIMIT_INVENTORY_MAX:-5}
+      RATE_LIMIT_COMPETITOR_WINDOW_MS: ${RATE_LIMIT_COMPETITOR_WINDOW_MS:-60000}
+      RATE_LIMIT_COMPETITOR_MAX: ${RATE_LIMIT_COMPETITOR_MAX:-30}
+      RATE_LIMIT_LINK_INTEL_WINDOW_MS: ${RATE_LIMIT_LINK_INTEL_WINDOW_MS:-60000}
+      RATE_LIMIT_LINK_INTEL_MAX: ${RATE_LIMIT_LINK_INTEL_MAX:-30}
+      RATE_LIMIT_LINK_INTEL_POLL_WINDOW_MS: ${RATE_LIMIT_LINK_INTEL_POLL_WINDOW_MS:-60000}
+      RATE_LIMIT_LINK_INTEL_POLL_MAX: ${RATE_LIMIT_LINK_INTEL_POLL_MAX:-60}
+      RATE_LIMIT_TRAFFIC_SNAPSHOTS_WINDOW_MS: ${RATE_LIMIT_TRAFFIC_SNAPSHOTS_WINDOW_MS:-60000}
+      RATE_LIMIT_TRAFFIC_SNAPSHOTS_MAX: ${RATE_LIMIT_TRAFFIC_SNAPSHOTS_MAX:-10}
+      RATE_LIMIT_REVIEW_SYNC_WINDOW_MS: ${RATE_LIMIT_REVIEW_SYNC_WINDOW_MS:-60000}
+      RATE_LIMIT_REVIEW_SYNC_MAX: ${RATE_LIMIT_REVIEW_SYNC_MAX:-20}
+      RATE_LIMIT_BRAND_RADAR_CREATE_WINDOW_MS: ${RATE_LIMIT_BRAND_RADAR_CREATE_WINDOW_MS:-60000}
+      RATE_LIMIT_BRAND_RADAR_CREATE_MAX: ${RATE_LIMIT_BRAND_RADAR_CREATE_MAX:-10}
+      RATE_LIMIT_BRAND_RADAR_POLL_WINDOW_MS: ${RATE_LIMIT_BRAND_RADAR_POLL_WINDOW_MS:-60000}
+      RATE_LIMIT_BRAND_RADAR_POLL_MAX: ${RATE_LIMIT_BRAND_RADAR_POLL_MAX:-60}
+      RATE_LIMIT_FIRECRAWL_WEBHOOK_WINDOW_MS: ${RATE_LIMIT_FIRECRAWL_WEBHOOK_WINDOW_MS:-60000}
+      RATE_LIMIT_FIRECRAWL_WEBHOOK_MAX: ${RATE_LIMIT_FIRECRAWL_WEBHOOK_MAX:-120}
+      RATE_LIMIT_MCP_WINDOW_MS: ${RATE_LIMIT_MCP_WINDOW_MS:-60000}
+      RATE_LIMIT_MCP_MAX: ${RATE_LIMIT_MCP_MAX:-120}
+      MCP_ENABLED: ${MCP_ENABLED:-true}
+      CHAT_ENABLED: ${CHAT_ENABLED:-true}
+      RATE_LIMIT_CHAT_WINDOW_MS: ${RATE_LIMIT_CHAT_WINDOW_MS:-60000}
+      RATE_LIMIT_CHAT_MAX: ${RATE_LIMIT_CHAT_MAX:-20}
+      CONTENT_INTELLIGENCE_ENABLED: ${CONTENT_INTELLIGENCE_ENABLED:-true}
+      CONTENT_INVENTORY_ENABLED: ${CONTENT_INVENTORY_ENABLED:-true}
+      COMPETITOR_CONTENT_INTELLIGENCE_ENABLED: ${COMPETITOR_CONTENT_INTELLIGENCE_ENABLED:-true}
+      COMPETITOR_INTELLIGENCE_ENABLED: ${COMPETITOR_INTELLIGENCE_ENABLED:-true}
+      CONTENT_MONITORING_ENABLED: ${CONTENT_MONITORING_ENABLED:-true}
+      # rollout flags (default false — seams only).
+      BRAND_RADAR_ENABLED: ${BRAND_RADAR_ENABLED:-false}
+      REVIEW_INTELLIGENCE_ENABLED: ${REVIEW_INTELLIGENCE_ENABLED:-false}
+      LINK_INTELLIGENCE_ENABLED: ${LINK_INTELLIGENCE_ENABLED:-false}
+      TRAFFIC_INSIGHTS_ENABLED: ${TRAFFIC_INSIGHTS_ENABLED:-false}
+      KEYWORD_TRENDS_ENABLED: ${KEYWORD_TRENDS_ENABLED:-false}
+      # rollout flags (default false — seams only).
+      SERP_FEATURE_TRACKING_ENABLED: ${SERP_FEATURE_TRACKING_ENABLED:-false}
+      KEYWORD_CLUSTERING_ENABLED: ${KEYWORD_CLUSTERING_ENABLED:-false}
+      ALT_ENGINE_TRACKING_ENABLED: ${ALT_ENGINE_TRACKING_ENABLED:-false}
+      CANNIBALIZATION_ENABLED: ${CANNIBALIZATION_ENABLED:-false}
+      TOXIC_LINKS_ENABLED: ${TOXIC_LINKS_ENABLED:-false}
+      ALERTS_ENABLED: ${ALERTS_ENABLED:-false}
+      INTERNAL_LINKING_ENABLED: ${INTERNAL_LINKING_ENABLED:-false}
+      CONTENT_BRIEFS_ENABLED: ${CONTENT_BRIEFS_ENABLED:-false}
+      GEOGRID_ENABLED: ${GEOGRID_ENABLED:-false}
+      SCHEMA_GENERATOR_ENABLED: ${SCHEMA_GENERATOR_ENABLED:-false}
+      CLIENT_REPORTS_ENABLED: ${CLIENT_REPORTS_ENABLED:-false}
+      PUBLIC_EXPORTS_ENABLED: ${PUBLIC_EXPORTS_ENABLED:-false}
+      # Per-run direct-cost ceilings, micros USD.
+      CONTENT_BRIEF_COST_CEILING_MICROS: ${CONTENT_BRIEF_COST_CEILING_MICROS:-120000}
+      INTERNAL_LINKING_COST_CEILING_MICROS: ${INTERNAL_LINKING_COST_CEILING_MICROS:-12000}
+      TOXICITY_COST_CEILING_MICROS: ${TOXICITY_COST_CEILING_MICROS:-30000}
+      SCHEMA_GEN_COST_CEILING_MICROS: ${SCHEMA_GEN_COST_CEILING_MICROS:-6000}
+      # rankme-app-seo 00 rollout flags (default false — seams only).
+      APP_SEO_ENABLED: ${APP_SEO_ENABLED:-false}
+      APP_KEYWORD_TRACKING_ENABLED: ${APP_KEYWORD_TRACKING_ENABLED:-false}
+      APP_LISTING_AUDITS_ENABLED: ${APP_LISTING_AUDITS_ENABLED:-false}
+      APP_CHART_TRACKING_ENABLED: ${APP_CHART_TRACKING_ENABLED:-false}
+      APP_RESEARCH_ENABLED: ${APP_RESEARCH_ENABLED:-false}
+      APP_REVIEWS_ENABLED: ${APP_REVIEWS_ENABLED:-false}
+      # App-review AI ceiling + ASO named rate buckets.
+      APP_REVIEW_AI_COST_CEILING_MICROS: ${APP_REVIEW_AI_COST_CEILING_MICROS:-40000}
+      RATE_LIMIT_APP_SEO_CREATE_WINDOW_MS: ${RATE_LIMIT_APP_SEO_CREATE_WINDOW_MS:-60000}
+      RATE_LIMIT_APP_SEO_CREATE_MAX: ${RATE_LIMIT_APP_SEO_CREATE_MAX:-10}
+      RATE_LIMIT_APP_SEO_POLL_WINDOW_MS: ${RATE_LIMIT_APP_SEO_POLL_WINDOW_MS:-60000}
+      RATE_LIMIT_APP_SEO_POLL_MAX: ${RATE_LIMIT_APP_SEO_POLL_MAX:-60}
+      RATE_LIMIT_SUPERADMIN_WINDOW_MS: ${RATE_LIMIT_SUPERADMIN_WINDOW_MS:-60000}
+      RATE_LIMIT_SUPERADMIN_MAX: ${RATE_LIMIT_SUPERADMIN_MAX:-60}
+      SUPERADMIN_STEPUP_WINDOW_MS: ${SUPERADMIN_STEPUP_WINDOW_MS:-300000}
+      SUPERADMIN_ALERT_DEDUP_WINDOW_MS: ${SUPERADMIN_ALERT_DEDUP_WINDOW_MS:-3600000}
+      CSRF_COOKIE_NAME: ${CSRF_COOKIE_NAME:-x-csrf-token}
+      CSRF_HEADER_NAME: ${CSRF_HEADER_NAME:-x-csrf-token}
+      ACCOUNT_DELETION_GRACE_HOURS: ${ACCOUNT_DELETION_GRACE_HOURS:-720}
+      # Legacy MERN integrations — optional backwards-compatible env slots.
+    # Same least-privilege hardening as api.
+    security_opt:
+      - no-new-privileges:true
+    cap_drop:
+      - ALL
+    read_only: true
+    tmpfs:
+      - /tmp
+    healthcheck:
+      test: ["CMD-SHELL", "node -e \"fetch('http://127.0.0.1:'+ (process.env.WORKER_PORT || 8081) +'/healthz').then(r=>{if(!r.ok)process.exit(1)}).catch(()=>process.exit(1))\""]
+      interval: 30s
+      timeout: 5s
+      retries: 3
+      start_period: 20s
+
+  # Public web entrypoint — Node SSR server (server.js). Renders marketing
+  # pages server-side for crawlers/AI, serves the CSR shell for the app, and
+  # reverse-proxies /robots.txt + /sitemap*.xml to the api SEO module.
+  web:
+    init: true
+    build:
+      context: ./client
+      dockerfile: Dockerfile
+      args:
+        APP_BUILD_SHA: ${APP_BUILD_SHA:-dev}
+        VITE_API_BASE_URL: ${VITE_API_BASE_URL}
+        VITE_APP_URL: ${APP_URL:-}
+        VITE_SITE_URL: ${VITE_SITE_URL}
+        VITE_GA_ID: ${VITE_GA_ID:-}
+        VITE_GITHUB_URL: ${VITE_GITHUB_URL:-}
+        VITE_RELEASE_STAGE: ${VITE_RELEASE_STAGE:-beta}
+    restart: unless-stopped
+    logging: *default-logging
+    mem_limit: 512m
+    networks: [rankme]
+    depends_on:
+      api:
+        condition: service_healthy
+    environment:
+      NODE_ENV: ${NODE_ENV:-production}
+      WEB_PORT: 3000
+      CLIENT_URL: ${CLIENT_URL}
+      APP_URL: ${APP_URL:-}
+      # Runtime CSP allow-list; the same values are also baked into the client.
+      VITE_API_BASE_URL: ${VITE_API_BASE_URL}
+      VITE_SOCKET_URL: ${VITE_SOCKET_URL:-}
+      # Internal origin of the api service for the SEO reverse-proxy.
+      API_INTERNAL_URL: http://api:8080
+      # Upstream fetch timeout for the AI Assistant SSE stream proxy route
+      # (POST /api/chat/conversations/:id/messages). Web-container-only —
+      # never read by server/src/config/env.ts. Default 5 minutes.
+      PROXY_STREAM_TIMEOUT_MS: ${PROXY_STREAM_TIMEOUT_MS:-300000}
+    ports:
+      # Loopback-only — nginx is the sole public entrypoint. Host port off the
+      # 3000 default to avoid colliding with other stacks on this box.
+      - "127.0.0.1:${WEB_PORT:-43000}:3000"
+    volumes:
+      # Documentation source — read-only input for SSR, search, and explicit
+      # text/markdown clients without rebaking the image for copy edits.
+      - ./docs:/docs:ro
+    healthcheck:
+      test: ["CMD-SHELL", "node -e \"fetch('http://127.0.0.1:3000/healthz').then(r=>{if(!r.ok)process.exit(1)}).catch(()=>process.exit(1))\""]
+      interval: 30s
+      timeout: 5s
+      retries: 3
+      start_period: 10s

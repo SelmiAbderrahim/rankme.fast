@@ -1,0 +1,213 @@
+{
+  "settings": {
+    "title": "Google Search Console",
+    "subtitle": "连接 Search Console，让 RankMeFast 在审核中显示真实的索引状态和结构化结果判定。"
+  },
+  "connect": {
+    "title": "连接 Google Search Console",
+    "description": "允许 RankMeFast 从 Search Console 读取索引状态和结构化结果判定。需要已验证的资源。",
+    "cta": "使用 Google 连接",
+    "connecting": "正在连接…",
+    "scopeNote": "我们仅请求对您 Search Console 数据的只读访问权限。"
+  },
+  "connected": {
+    "title": "已连接",
+    "subtitle": "选择 RankMeFast 读取的 Search Console 资源。",
+    "emailLabel": "登录账号",
+    "propertyLabel": "Search Console 资源",
+    "propertyPlaceholder": "选择一个资源",
+    "propertyMissing": "未找到已验证的资源 —— 下次审核时将自动识别匹配。",
+    "connectedAt": "连接于 {{date}}",
+    "lastUsedAt": "上次使用 {{date}}",
+    "lastUsedNever": "尚未使用",
+    "disconnect": "取消关联此网站"
+  },
+  "needsReconnect": {
+    "title": "您的 Google 连接需要重新授权",
+    "body": "Google 需要重新同意 —— 通常是因为您撤销了访问权限，或连接数月未使用。审核仍会照常运行，但会缺少索引状态数据。",
+    "cta": "重新连接"
+  },
+  "disconnect": {
+    "confirmTitle": "取消此网站与 Google 的关联？",
+    "confirmBody": "这会移除此网站的 Search Console 和 Analytics 选择。其他网站及共享的 Google 登录仍保持连接。",
+    "confirm": "取消关联网站",
+    "cancel": "取消",
+    "success": "已断开与 Google Search Console 的连接。",
+    "siteUnlinked": "已取消此网站与 Google 的关联。"
+  },
+  "revoke": {
+    "cta": "在所有网站撤销 Google 访问权限",
+    "confirmTitle": "撤销共享的 Google 连接？",
+    "confirmBody": "这会撤销 Google 访问权限，并取消所有 {{count}} 个已连接网站的关联。此操作无法仅限当前网站。",
+    "confirm": "全部撤销"
+  },
+  "autoMatch": {
+    "queued": "正在检查此网站的 Google 资源…",
+    "matching": "正在为此网站匹配 Google 资源…",
+    "ambiguous": "有多个资源与此网站匹配，请在下方选择一个。",
+    "no_match": "未找到完全匹配的资源，请在下方选择。",
+    "scope_missing": "尚未授予 Analytics 访问权限。",
+    "needs_reconnect": "请先重新连接 Google，再匹配资源。",
+    "unavailable": "自动匹配暂时不可用，您可以在下方手动选择资源。",
+    "not_connected": "连接 Google 后即可为此网站匹配资源。"
+  },
+  "errors": {
+    "missingScope": "此连接缺少 Search Console 权限。请重新连接并保持复选框勾选。",
+    "notConnected": "您尚未连接 Google Search Console。",
+    "invalidProperty": "该资源不在您已验证的 Search Console 资源中。请从列表中选择一个。",
+    "quotaExceeded": "Search Console 的每日配额已用完。请明天再试。",
+    "unavailable": "无法访问 Google Search Console，请稍后重试。",
+    "loadFailed": "无法加载您的 Google 连接。",
+    "disconnectFailed": "无法断开连接。",
+    "linkFailed": "无法连接该 Google 账号。请选择您登录时使用的同一账号，并授予 Search Console 访问权限。"
+  },
+  "scopes": {
+    "label": "访问权限",
+    "searchConsole": "Search Console",
+    "analytics": "分析",
+    "granted": "已授权",
+    "notGranted": "未授权"
+  },
+  "range": {
+    "label": "日期范围",
+    "7d": "过去 7 天",
+    "28d": "过去 28 天",
+    "90d": "过去 90 天"
+  },
+  "searchSummary": {
+    "title": "搜索表现（过去 {{days}} 天）",
+    "clicks": "点击次数",
+    "impressions": "展示次数",
+    "ctr": "点击率",
+    "position": "平均排名",
+    "topQueries": "热门搜索词",
+    "topPages": "热门页面",
+    "viewAll": "查看全部",
+    "viewAllLabel": "查看全部 — {{section}}",
+    "sitemapsLink": "查看站点地图",
+    "asOf": "数据截至 {{date}}",
+    "previousPeriod": "上一周期：{{clicks}} 次点击 · {{impressions}} 次展示",
+    "reportLink": "在报告中查看完整数据",
+    "emptyTitle": "暂无搜索数据",
+    "emptyCta": "管理连接",
+    "empty": "暂无搜索数据。运行审计后,此摘要将自动填充。",
+    "error": "无法加载您的搜索摘要,请稍后重试。",
+    "retry": "重试",
+    "refresh": "刷新搜索数据",
+    "refreshing": "正在刷新…",
+    "refreshError": "无法刷新您的搜索数据，请稍后重试。",
+    "refreshedJustNow": "刚刚已更新",
+    "timeseriesTitle": "点击次数和展示次数随时间变化",
+    "timeseriesSubtitle": "过去 {{days}} 天的每日总计。",
+    "timeseriesEmpty": "暂无每日数据。",
+    "timeseriesChartLabel": "过去 {{days}} 天的每日{{metric}}",
+    "timeseriesTableCaption": "过去 {{days}} 天的每日搜索表现",
+    "tableDate": "日期",
+    "metricLabel": "选择要绘制的指标",
+    "countriesTitle": "热门国家/地区",
+    "countriesEmpty": "暂无国家/地区数据。",
+    "countriesTableCaption": "按国家/地区的点击次数",
+    "countryHeader": "国家/地区",
+    "devicesTitle": "设备",
+    "devicesEmpty": "暂无设备数据。",
+    "devicesTableCaption": "按设备的点击次数",
+    "deviceHeader": "设备",
+    "devices": {
+      "desktop": "桌面设备",
+      "mobile": "移动设备",
+      "tablet": "平板设备",
+      "unknown": "其他"
+    }
+  },
+  "analytics": {
+    "title": "Google Analytics（过去 {{days}} 天）",
+    "sessions": "会话数",
+    "activeUsers": "活跃用户",
+    "engagedSessions": "互动会话数",
+    "keyEvents": "关键事件",
+    "engagementRateLabel": "互动率",
+    "engagementRateLine": "互动率：{{rate}}",
+    "previousPeriod": "上一周期：{{sessions}} 次会话 · {{activeUsers}} 位活跃用户",
+    "emptyTitle": "暂无分析数据",
+    "empty": "暂无分析数据。连接媒体资源后不久数据就会出现——请尝试刷新。",
+    "error": "无法加载您的分析摘要，请稍后重试。",
+    "refresh": "刷新分析数据",
+    "refreshError": "无法刷新您的分析数据，请稍后重试。",
+    "timeseriesTitle": "会话数和活跃用户随时间变化",
+    "timeseriesSubtitle": "过去 {{days}} 天的每日总计。",
+    "timeseriesChartLabel": "过去 {{days}} 天的每日{{metric}}",
+    "timeseriesTableCaption": "过去 {{days}} 天的每日分析表现",
+    "channelsTitle": "渠道",
+    "channelsEmpty": "暂无渠道数据。",
+    "channelsTableCaption": "按渠道的会话数",
+    "channelHeader": "渠道",
+    "pagesTitle": "热门页面",
+    "pagesEmpty": "暂无页面数据。",
+    "pagesTableCaption": "按页面的会话数",
+    "pageHeader": "页面",
+    "countriesTitle": "热门国家/地区",
+    "countriesEmpty": "暂无国家/地区数据。",
+    "countriesTableCaption": "按国家/地区的会话数",
+    "countryHeader": "国家/地区",
+    "devicesTitle": "设备",
+    "devicesEmpty": "暂无设备数据。",
+    "devicesTableCaption": "按设备的会话数",
+    "deviceHeader": "设备",
+    "locked": {
+      "body": "Google Analytics 数据分析包含在 Pro 及更高级别的方案中。升级后即可在搜索数据旁查看会话、互动和关键事件。",
+      "upgrade": "升级方案"
+    },
+    "enableTitle": "尚未启用 Google Analytics",
+    "enableBody": "授予对 Google Analytics 的只读访问权限，即可查看此网站的会话、互动和关键事件。",
+    "enableCta": "启用 Google Analytics",
+    "pickerHint": "选择 RankMeFast 读取的 Google Analytics 媒体资源。",
+    "propertyLabel": "Analytics 媒体资源",
+    "propertyPlaceholder": "选择一个媒体资源",
+    "propertyNone": "未找到此账号的 Google Analytics 媒体资源。",
+    "propertiesError": "无法加载您的 Analytics 媒体资源，请稍后重试。",
+    "setPropertyError": "无法保存该 Analytics 媒体资源，请稍后重试。",
+    "settingsTitle": "Google 分析",
+    "settingsSubtitle": "选择 RankMeFast 读取的 GA4 媒体资源。"
+  },
+  "searchDetail": {
+    "back": "概览",
+    "views": {
+      "queries": "热门搜索词",
+      "pages": "热门页面",
+      "countries": "热门国家/地区",
+      "devices": "设备",
+      "sitemaps": "站点地图"
+    },
+    "searchLabel": "筛选行",
+    "searchPlaceholder": "筛选…",
+    "noMatches": "没有符合筛选条件的行。",
+    "loadMore": "加载更多",
+    "error": "无法加载这些数据,请稍后重试。",
+    "columns": {
+      "query": "搜索查询",
+      "page": "页面",
+      "country": "国家/地区",
+      "device": "设备",
+      "clicks": "点击次数",
+      "impressions": "展示次数",
+      "ctr": "点击率",
+      "position": "排名",
+      "actions": "操作"
+    },
+    "sitemaps": {
+      "empty": "尚未提交任何站点地图。",
+      "columns": {
+        "path": "站点地图",
+        "type": "类型",
+        "lastSubmitted": "最近提交",
+        "processed": "已处理",
+        "status": "状态"
+      },
+      "status": {
+        "ok": "正常",
+        "errors": "{{n}} 个错误",
+        "warnings": "{{n}} 个警告"
+      }
+    }
+  }
+}

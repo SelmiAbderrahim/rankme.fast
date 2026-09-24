@@ -1,0 +1,43 @@
+{
+  "version": "0.1.20220819",
+  "status_code": 20000,
+  "status_message": "Ok.",
+  "cost": 0.0203,
+  "tasks_count": 1,
+  "tasks_error": 0,
+  "tasks": [
+    {
+      "id": "TASK_ID",
+      "status_code": 20000,
+      "status_message": "Ok.",
+      "cost": 0.0203,
+      "result_count": 1,
+      "path": ["v3", "backlinks", "bulk_spam_score", "live"],
+      "data": {
+        "api": "backlinks",
+        "function": "bulk_spam_score",
+        "targets": [
+          "d0.example", "d1.example", "d2.example", "d3.example", "d4.example",
+          "d5.example", "d6.example", "d7.example", "d8.example", "d9.example"
+        ]
+      },
+      "result": [
+        {
+          "items_count": 10,
+          "items": [
+            {"type": "backlinks_bulk_spam_score", "target": "d0.example", "spam_score": 5},
+            {"type": "backlinks_bulk_spam_score", "target": "d1.example", "spam_score": 15},
+            {"type": "backlinks_bulk_spam_score", "target": "d2.example", "spam_score": 25},
+            {"type": "backlinks_bulk_spam_score", "target": "d3.example", "spam_score": 35},
+            {"type": "backlinks_bulk_spam_score", "target": "d4.example", "spam_score": 45},
+            {"type": "backlinks_bulk_spam_score", "target": "d5.example", "spam_score": 55},
+            {"type": "backlinks_bulk_spam_score", "target": "d6.example", "spam_score": 65},
+            {"type": "backlinks_bulk_spam_score", "target": "d7.example", "spam_score": 75},
+            {"type": "backlinks_bulk_spam_score", "target": "d8.example", "spam_score": 85},
+            {"type": "backlinks_bulk_spam_score", "target": "d9.example", "spam_score": 95}
+          ]
+        }
+      ]
+    }
+  ]
+}

@@ -1,0 +1,46 @@
+{
+  "title": "Documentation",
+  "eyebrow": "RankMeFast guides",
+  "searchLabel": "Search documentation",
+  "searchPlaceholder": "Search guides and answers…",
+  "searchAction": "Search",
+  "navigationLabel": "Documentation navigation",
+  "openNavigation": "Open documentation navigation",
+  "filterLabel": "Filter documentation by section",
+  "allSections": "All",
+  "resultCount": "{{count}} results",
+  "noResultsTitle": "No guides found",
+  "noResultsBody": "Try a broader phrase or clear the section filter.",
+  "clearFilters": "Clear filters",
+  "viewSection": "View section",
+  "readGuide": "Read guide",
+  "onThisPage": "On this page",
+  "articleNavigation": "Previous and next guides",
+  "previous": "Previous",
+  "next": "Next",
+  "copy": {
+    "trigger": "Copy page",
+    "label": "Copy as",
+    "markdown": "Markdown",
+    "plainText": "Plain text",
+    "link": "Page link",
+    "success": "{{format}} copied.",
+    "failed": "Could not copy. Check your browser permissions and try again."
+  },
+  "sections": {
+    "start": "Start here",
+    "audits": "Audits and reports",
+    "research": "Research and tracking",
+    "product": "Product features",
+    "account": "Account and billing",
+    "developers": "Developers"
+  },
+  "breadcrumbs": { "home": "Home", "docs": "Documentation" },
+  "error": {
+    "notFoundTitle": "Guide not found",
+    "notFoundBody": "This guide may have moved or the address may be incorrect.",
+    "title": "Documentation unavailable",
+    "body": "We could not load the documentation. Please try again shortly.",
+    "back": "Back to documentation"
+  }
+}

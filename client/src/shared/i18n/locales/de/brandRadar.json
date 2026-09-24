@@ -1,0 +1,235 @@
+{
+  "title": "Brand Radar",
+  "description": "Sehen Sie, wo Ihre Marke im Web erwähnt wird – Scan für Scan.",
+  "outputLocale": "Ausgabesprache: {{locale}}",
+  "tabs": {
+    "scans": "Scans",
+    "new": "Neuer Scan"
+  },
+  "list": {
+    "title": "Ihre Scans",
+    "description": "Neueste zuerst. Jeder Scan verbraucht eine Scan-Einheit.",
+    "columns": {
+      "query": "Markenbegriff",
+      "status": "Status",
+      "digest": "Zusammenfassung",
+      "mentions": "Erwähnungen",
+      "refund": "Erstattung",
+      "created": "Erstellt",
+      "actions": "Aktionen"
+    },
+    "pendingCreated": "Gerade abgeschickt",
+    "open": "Öffnen",
+    "loadMore": "Mehr laden",
+    "loading": "Scans werden geladen",
+    "retry": "Erneut versuchen",
+    "filter": {
+      "label": "Nach Status filtern",
+      "all": "Alle Status",
+      "note": "Der Filter gilt nur für die auf dieser Seite geladenen Scans."
+    }
+  },
+  "status": {
+    "queued": "In Warteschlange",
+    "running": "Läuft",
+    "completed": "Abgeschlossen",
+    "completed_empty": "Keine Erwähnungen gefunden",
+    "completed_partial": "Teilweise abgeschlossen",
+    "failed": "Fehlgeschlagen"
+  },
+  "digest": {
+    "pending": "Zusammenfassung folgt",
+    "digest_present": "Zusammenfassung bereit",
+    "digest_absent": "Keine Zusammenfassung",
+    "no_reliable_digest": "Zusammenfassung zurückgehalten"
+  },
+  "refund": {
+    "refunded": "Scan-Guthaben erstattet"
+  },
+  "states": {
+    "empty": {
+      "title": "Noch keine Scans",
+      "description": "Starten Sie den ersten Markenscan, um Erwähnungen zu sehen.",
+      "cta": "Scan starten"
+    },
+    "filtered": {
+      "description": "Kein Scan auf dieser Seite hat diesen Status."
+    },
+    "error": {
+      "title": "Ihre Scans konnten nicht geladen werden"
+    },
+    "unavailable": {
+      "title": "Brand Radar pausiert",
+      "description": "Neue Scans sind derzeit abgeschaltet.",
+      "storedReads": "Bereits gelaufene Scans bleiben lesbar."
+    },
+    "notOnPlan": {
+      "title": "Brand Radar braucht einen höheren Tarif",
+      "description": "Wechseln Sie zu Pro oder Agency, um Markenscans freizuschalten.",
+      "link": "Tarife ansehen"
+    },
+    "addonRequired": {
+      "title": "Brand Radar zum Tarif hinzufügen",
+      "description": "Prüfen Sie unter Abrechnung, ob die Brand-Radar-Option derzeit verfügbar ist.",
+      "price": "{{price}} pro Monat, {{units}} Scans enthalten.",
+      "link": "Brand-Radar-Optionen ansehen"
+    },
+    "overCap": {
+      "title": "Alle Markenscans verbraucht",
+      "description": "Prüfen Sie unter Abrechnung, ob das Paket {{slug}} derzeit verfügbar ist.",
+      "link": "Scan-Guthabenoptionen ansehen"
+    }
+  },
+  "form": {
+    "title": "Neuer Markenscan",
+    "description": "Wir beziffern den Scan, bevor etwas verbraucht wird.",
+    "queryLabel": "Markenbegriff",
+    "queryPlaceholder": "Ihr Markenname",
+    "queryHelp": "Eine Marke pro Scan, bis zu {{max}} Zeichen.",
+    "languageLabel": "Sprache (optional)",
+    "languagePlaceholder": "en",
+    "languageHelp": "Zweibuchstabiger Sprachcode, etwa en oder fr.",
+    "locationLabel": "Land der veröffentlichenden Website (optional)",
+    "locationPlaceholder": "Land auswählen",
+    "locationHelp": "Filtert nach dem registrierten Land der veröffentlichenden Website. Alle Länder liefert weltweite Ergebnisse.",
+    "locationCatalogError": "Die Länder konnten nicht geladen werden. Versuchen Sie es vor der Kostenschätzung erneut.",
+    "preview": "Kosten anzeigen",
+    "previewing": "Kosten werden berechnet",
+    "confirm": "Scan starten",
+    "confirming": "Wird gesendet",
+    "cancel": "Abbrechen",
+    "needsPreview": "Zeigen Sie zuerst die Kosten an. Vor dem Start wird nichts verbraucht."
+  },
+  "preview": {
+    "title": "Kosten dieses Scans",
+    "units": "Einheiten für diesen Scan: {{units}}",
+    "baseRemaining": "Verbleibendes Tarifkontingent",
+    "packRemaining": "Verbleibendes Paketguthaben",
+    "willConsumeBase": "Aus Ihrem Tarifkontingent: {{units}}",
+    "willConsumePack": "Aus Ihrem Paketguthaben: {{units}}"
+  },
+  "coverage": {
+    "estimateOnly": "Erwähnungszahlen sind Schätzungen des Anbieters, keine vollständige Erhebung des Webs.",
+    "unknown": "Der Anbieter hat die Abdeckung dieses Scans nicht offengelegt."
+  },
+  "detail": {
+    "back": "Zurück zu den Scans",
+    "loading": "Dieser Scan wird geladen",
+    "errorTitle": "Dieser Scan konnte nicht geladen werden",
+    "mentionCount": "{{count}} Erwähnung gefunden",
+    "mentionCount_other": "{{count}} Erwähnungen gefunden",
+    "market": "Markt",
+    "outputLocale": "Ausgabesprache",
+    "createdAt": "Gestartet",
+    "terminalAt": "Beendet",
+    "notSettled": "Läuft noch",
+    "banners": {
+      "queued": {
+        "title": "Wartet auf den Start",
+        "description": "Dieser Scan steht in der Warteschlange. Schauen Sie in ein paar Minuten wieder vorbei."
+      },
+      "running": {
+        "title": "Läuft",
+        "description": "Die Daten dieses Scans werden gerade gesammelt."
+      },
+      "completed_empty": {
+        "title": "Keine Erwähnungen gefunden",
+        "description": "Der Scan lief und fand keine Erwähnung dieser Marke. Das Scan-Guthaben wurde verbraucht."
+      },
+      "completed_partial": {
+        "title": "Dieser Scan endete vorzeitig",
+        "description": "Die Sammlung endete vor dem Abschluss, entweder weil der Scan seine Ausgabengrenze erreichte oder weil der Datenanbieter nicht mehr antwortete. Was gesammelt wurde, steht unten."
+      },
+      "failed": {
+        "title": "Dieser Scan ist fehlgeschlagen",
+        "description": "Der Scan konnte nicht abgeschlossen werden. Nichts unten ist vollständig.",
+        "refunded": "Der Scan konnte nicht abgeschlossen werden, deshalb haben wir Ihr Scan-Guthaben zurückgegeben."
+      }
+    },
+    "halt": {
+      "search_provider_error": "Der Datenanbieter fiel bei der Suche nach Erwähnungen aus; es wurde nichts gesammelt.",
+      "summary_cost_ceiling": "Der Scan stoppte vor dem Schritt der Erwähnungszusammenfassung, weil er seine Ausgabengrenze erreichte. Die bisher gesammelten Erwähnungen bleiben erhalten.",
+      "summary_provider_error": "Der Datenanbieter fiel beim Schritt der Erwähnungszusammenfassung aus. Die vor dem Fehler gesammelten Erwähnungen bleiben erhalten.",
+      "brand_digest_cost_ceiling": "Der Scan stoppte vor dem KI-Digest-Schritt, weil er seine Ausgabengrenze erreichte. Erwähnungen und Zusammenfassung bleiben erhalten.",
+      "brand_digest_digest_failed": "Der KI-Digest konnte nicht zuverlässig erstellt werden. Erwähnungen und Zusammenfassung bleiben erhalten.",
+      "scan_processing_failure": "Der Scan blieb während der Verarbeitung hängen und wurde vom System geschlossen."
+    },
+    "sentiment": {
+      "title": "Wie die Erwähnungen klingen",
+      "positive": "Positiv",
+      "neutral": "Neutral",
+      "negative": "Negativ",
+      "unknown": "Unklar",
+      "percent": "{{percent}} %",
+      "expandTable": "Tonverteilung als Tabelle anzeigen",
+      "tableCaption": "Anteil der Erwähnungen nach Ton",
+      "columnLabel": "Ton",
+      "columnShare": "Anteil"
+    },
+    "topDomains": {
+      "title": "Seiten, die Sie am häufigsten nennen"
+    },
+    "trend": {
+      "title": "Erwähnungen über mehrere Scans",
+      "expandTable": "Verlauf als Tabelle anzeigen",
+      "tableCaption": "Erwähnungen pro Scan für diesen Markenbegriff",
+      "capturedAt": "Scan-Datum",
+      "mentions": "Erwähnungen",
+      "delta": "Veränderung",
+      "deltaUnavailable": "Nicht verglichen",
+      "noComparison": "Erster Scan für diesen Begriff — noch kein Vergleich.",
+      "needMore": "Starten Sie diesen Begriff erneut, um die Entwicklung zu sehen."
+    },
+    "digest": {
+      "title": "Was das bedeutet",
+      "aiLabel": "KI-Deutung",
+      "pending": "Die Zusammenfassung wird noch geschrieben.",
+      "absent": "Für diesen Scan wurde keine Zusammenfassung erstellt.",
+      "withheld": "Die Zusammenfassung wurde zurückgehalten, weil kein Satz einer Erwähnung zugeordnet werden konnte.",
+      "citations": "{{count}} Quelle",
+      "citations_other": "{{count}} Quellen",
+      "citationMissing": "Quelle nicht auf dieser Seite"
+    },
+    "mentions": {
+      "title": "Erwähnungen",
+      "loading": "Erwähnungen werden geladen",
+      "loadMore": "Mehr Erwähnungen laden",
+      "errorTitle": "Die Erwähnungen konnten nicht geladen werden",
+      "export": "CSV herunterladen",
+      "exportFree": "Kostenlos — liest Daten, die Sie bereits bezahlt haben.",
+      "filterNote": "Filter gelten für die auf dieser Seite geladenen Erwähnungen.",
+      "filteredEmpty": "Keine Erwähnung auf dieser Seite passt zu diesen Filtern.",
+      "noObservedAt": "Kein Datum",
+      "filters": {
+        "sentiment": "Ton",
+        "domain": "Seite",
+        "from": "Von",
+        "to": "Bis"
+      },
+      "sentiment": {
+        "all": "Alle Töne",
+        "positive": "Positiv",
+        "neutral": "Neutral",
+        "negative": "Negativ"
+      },
+      "columns": {
+        "title": "Titel",
+        "snippet": "Auszug",
+        "domain": "Seite",
+        "sentiment": "Ton",
+        "observedAt": "Gesehen"
+      }
+    }
+  },
+  "errors": {
+    "previewTitle": "Kosten konnten nicht berechnet werden",
+    "invalidQuery": "Geben Sie einen Markenbegriff mit einem bis {{max}} Zeichen ein.",
+    "invalidLanguage": "Verwenden Sie einen zweibuchstabigen Sprachcode, etwa en.",
+    "invalidLocation": "Wähle ein unterstütztes Land für die veröffentlichende Website.",
+    "listFailed": "Ihre Scans konnten nicht geladen werden.",
+    "previewFailed": "Die Kosten dieses Scans konnten nicht berechnet werden.",
+    "createFailed": "Dieser Scan konnte nicht eingereiht werden.",
+    "detailFailed": "Dieser Scan konnte nicht geladen werden.",
+    "mentionsFailed": "Die Erwähnungen dieses Scans konnten nicht geladen werden."
+  }
+}

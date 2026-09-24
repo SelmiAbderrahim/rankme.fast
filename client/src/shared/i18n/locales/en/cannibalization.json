@@ -1,0 +1,109 @@
+{
+  "title": "Keyword cannibalization",
+  "subtitle": "Queries where two or more of your pages split the same Search Console clicks, impressions, and position.",
+  "tabs": {
+    "reports": "Reports",
+    "new": "New report"
+  },
+  "filters": {
+    "confidence": "Confidence",
+    "confidenceValue": {
+      "all": "All",
+      "high": "High",
+      "medium": "Medium",
+      "low": "Low"
+    }
+  },
+  "new": {
+    "title": "Generate a report",
+    "description": "Reports read the Search Console rows we already store. Nothing is fetched from Google.",
+    "window": "Aggregation window",
+    "windowOption": "{{days}} days",
+    "preview": "Show what this costs",
+    "generate": "Generate report"
+  },
+  "preview": {
+    "title": "What this costs",
+    "units": "{{count}} report from your monthly allowance.",
+    "units_other": "{{count}} reports from your monthly allowance.",
+    "remaining": "Left on your plan this month: {{remaining}}.",
+    "pack": "Plus {{units}} from credit packs.",
+    "noFit": "This does not fit in what is left. Add credits or change plan first."
+  },
+  "list": {
+    "generatedAt": "Generated",
+    "window": "Window",
+    "windowValue": "{{days}} days",
+    "lastSync": "Last sync",
+    "candidates": "Candidates",
+    "open": "Open"
+  },
+  "detail": {
+    "provenance": "From your stored Search Console data over {{days}} days, last synced {{date}}. {{queries}} queries read."
+  },
+  "candidates": {
+    "query": "Query",
+    "label": "Candidate",
+    "pages": "Pages",
+    "confidence": "Confidence",
+    "confidenceValue": {
+      "high": "High",
+      "medium": "Medium",
+      "low": "Low"
+    },
+    "primary": "Suggested main page",
+    "clicks": "Clicks",
+    "inspect": "Inspect"
+  },
+  "drilldown": {
+    "provenance": "Stored rows over {{days}} days, last synced {{date}}.",
+    "recommendation": "Keep {{url}} as the main page.",
+    "reason": {
+      "most_clicks": "It already earns the most clicks for this query.",
+      "best_position": "Clicks are tied, so the better average position decides.",
+      "stable_order": "Clicks and position are tied, so we keep a stable order."
+    },
+    "page": "Page",
+    "clicks": "Clicks",
+    "impressions": "Impressions",
+    "position": "Average position",
+    "clickShare": "Share of clicks",
+    "primary": "Suggested main page"
+  },
+  "states": {
+    "empty": {
+      "title": "Nothing to show yet",
+      "body": "Generate a report to see which queries your pages compete over."
+    },
+    "awaitingSync": {
+      "title": "Waiting for the next sync",
+      "body": "We have not stored Search Console query and page rows for this window yet. They arrive with the next sync."
+    },
+    "disconnected": {
+      "title": "Connect Search Console",
+      "body": "Connect a Search Console property before generating a new report. Stored reports stay readable.",
+      "link": "Connect Search Console"
+    },
+    "cap": {
+      "title": "Monthly allowance used",
+      "body": "You have used every cannibalization report on your plan this month.",
+      "link": "See plans"
+    },
+    "disabled": {
+      "title": "Temporarily unavailable",
+      "body": "Cannibalization reports are paused right now. Reports you already ran stay readable."
+    },
+    "notFound": {
+      "title": "Report not found",
+      "body": "That report is no longer available."
+    },
+    "rateLimited": {
+      "title": "Too many requests",
+      "body": "Wait a minute, then try again."
+    },
+    "failed": {
+      "title": "Something went wrong",
+      "body": "We could not load this. Try again."
+    }
+  }
+}

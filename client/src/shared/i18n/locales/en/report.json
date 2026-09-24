@@ -1,0 +1,226 @@
+{
+  "title": "Your audit report",
+  "subtitle": "What to fix, what to watch, and what already passed.",
+  "history": {
+    "title": "Audit history",
+    "empty": "No audit runs yet.",
+    "viewRun": "View this run",
+    "status": {
+      "queued": "Queued",
+      "running": "Running",
+      "succeeded": "Completed",
+      "failed": "Failed"
+    }
+  },
+  "tabs": {
+    "fix-now": "Fix now",
+    "watch": "Watch",
+    "passed": "Passed"
+  },
+  "row": {
+    "affectedPages": "{{count}} pages affected",
+    "affectedPagesOne": "1 page affected",
+    "siteWide": "Site-wide check",
+    "passedSummary": "This check is passing."
+  },
+  "severity": {
+    "critical": "Critical",
+    "warning": "Warning",
+    "info": "Info"
+  },
+  "badges": {
+    "fixed": "Fixed",
+    "regressed": "Regressed"
+  },
+  "detail": {
+    "whyTitle": "Why it matters",
+    "affectedUrlsTitle": "Affected URLs",
+    "brokenLinkTargetsTitle": "Targets the audit could not fetch",
+    "brokenLinkSourcesTitle": "Pages linking to those targets",
+    "fixTitle": "How to fix it",
+    "copyFix": "Copy fix",
+    "copied": "Copied",
+    "generateSchema": "Generate schema markup"
+  },
+  "retest": {
+    "cta": "Retest",
+    "running": "Auditing…",
+    "starting": "Starting…",
+    "first": "Run your first audit"
+  },
+  "pageCap": {
+    "label": "Pages to crawl",
+    "max": "Plan max",
+    "pages": "{{pages}} pages"
+  },
+  "empty": {
+    "fix-now": {
+      "title": "Nothing to fix right now",
+      "description": "Great work — no critical issues found in this audit."
+    },
+    "watch": {
+      "title": "Nothing to watch",
+      "description": "There are no warnings on your site right now."
+    },
+    "passed": {
+      "title": "Nothing passing yet",
+      "description": "Run your first audit to see what your site already gets right."
+    }
+  },
+  "noRun": {
+    "title": "No audits yet",
+    "description": "Run your first audit to see what to fix, what to watch, and what already passes."
+  },
+  "states": {
+    "loading": "Loading your report…",
+    "retry": "Try again",
+    "runInProgress": "Auditing your site — this can take a couple of minutes."
+  },
+  "loadFailed": "Could not load your report.",
+  "retestFailed": "Could not start the audit.",
+  "pageSpeed": {
+    "sectionTitle": "Page speed",
+    "fieldLabel": "What real visitors experienced",
+    "labLabel": "Our lab estimate",
+    "unavailableTitle": "Page speed data not available for this run",
+    "unavailableBody": "We couldn't reach the page-speed service. Your report is still complete — page-speed insights will return on the next run.",
+    "noFieldDataTitle": "Not enough visitor data yet",
+    "noFieldDataBody": "Chrome only reports real-visitor speed once a site has enough traffic. As traffic grows, this section will fill in automatically.",
+    "originFallback": "Origin-level data (not just this page)",
+    "sampleLabel": "{{count}} pages sampled",
+    "sampleLabelOne": "1 page sampled",
+    "metrics": {
+      "lcp": "LCP",
+      "inp": "INP",
+      "cls": "CLS",
+      "performance": "Performance"
+    },
+    "categories": {
+      "good": "Good",
+      "needs-improvement": "Needs improvement",
+      "poor": "Poor"
+    }
+  },
+  "aiSummary": {
+    "cardTitle": "AI summary of your fixes",
+    "cardDescription": "A plain-language AI summary of what to fix first.",
+    "cta": "Summarize my fixes",
+    "regenerate": "Regenerate",
+    "loading": "Writing your summary…",
+    "attribution": "AI-generated — verify before acting.",
+    "truncatedNote": "Summary was shortened.",
+    "errors": {
+      "unavailable": "AI summary is temporarily unavailable — your checklist is unaffected.",
+      "capReached": "You've reached your monthly AI summary limit. Upgrade or add credits to keep generating."
+    }
+  },
+  "pdf": {
+    "download": "Download PDF",
+    "downloading": "Preparing PDF…",
+    "error": "Could not prepare the PDF. Please try again.",
+    "upgradeHint": "PDF reports are available on the Pro and Agency plans."
+  },
+  "gscBlock": {
+    "sectionTitle": "Google search performance (last 28 days)",
+    "sitemapsTitle": "Sitemaps in Google Search Console",
+    "totalClicks": "Clicks",
+    "totalImpressions": "Impressions",
+    "averageCtr": "Click-through rate",
+    "averagePosition": "Average position",
+    "topQueriesTitle": "Top searches",
+    "topPagesTitle": "Top pages",
+    "colQuery": "Search",
+    "colPage": "Page",
+    "colClicks": "Clicks",
+    "colImpressions": "Impressions",
+    "colCtr": "CTR",
+    "colPosition": "Position",
+    "deltaClicks": "clicks vs previous period",
+    "deltaImpressions": "impressions vs previous period",
+    "sampledFootnote": "Sampled by Google · the last three days are excluded because Google reports them late.",
+    "unavailableTitle": "Search data not available for this run",
+    "unavailableBody": "We couldn't reach Google Search Console for this audit. Your report is still complete — search data will return on the next run.",
+    "notConnectedTitle": "Connect Google Search Console",
+    "notConnectedBody": "Connect your Google account to see real clicks, impressions, and sitemap health on this report.",
+    "notConnectedCta": "Open Google settings",
+    "reconnectTitle": "Your Google connection needs to be renewed",
+    "reconnectBody": "Google no longer accepts your current permission. Reconnect to bring search data back.",
+    "noDataTitle": "No search data yet",
+    "noDataBody": "Google has not reported any clicks or impressions for this site in the last four weeks.",
+    "noSitemapsTitle": "No sitemap submitted to Google",
+    "noSitemapsBody": "Submit your sitemap in Google Search Console so Google can find every page you want indexed.",
+    "sitemapHealthy": "Healthy",
+    "sitemapErrors": "{{count}} errors",
+    "sitemapWarnings": "{{count}} warnings",
+    "sitemapProcessed": "{{count}} URLs submitted",
+    "sitemapLastDownloaded": "Last read by Google: {{date}}",
+    "sitemapNeverDownloaded": "Not read by Google yet"
+  },
+  "aiVisibilityBlock": {
+    "title": "AI Visibility",
+    "unavailableTitle": "AI visibility data is unavailable",
+    "unavailableBody": "We could not read recent AI chat answer data for this report.",
+    "noPromptsTitle": "No AI prompts tracked yet",
+    "noPromptsBody": "Track buyer questions to see whether AI chat answers mention you.",
+    "noPromptsCta": "Add tracked prompts",
+    "aiOverview": "Google AI Overview citations",
+    "aiChats": "AI chat mentions",
+    "shareOfVoice": "Share of voice",
+    "brand": "You",
+    "competitors": "Competitors",
+    "noData": "No data",
+    "notMentioned": "Not mentioned",
+    "sentiment": {
+      "positive": "Warm",
+      "neutral": "Plain",
+      "negative": "Critical"
+    }
+  },
+  "localSeoBlock": {
+    "title": "Local SEO",
+    "unavailableTitle": "Local SEO data is unavailable",
+    "unavailableBody": "We could not read recent local listings, reviews, or map-pack data for this report.",
+    "notConfiguredTitle": "Local SEO not set up yet",
+    "notConfiguredBody": "Refresh Local SEO to fetch business listings, reviews, and map-pack rank for your site.",
+    "notConfiguredCta": "Open Local SEO",
+    "listings": "Directory listings",
+    "consistent": "Matches",
+    "inconsistent": "Mismatch",
+    "averageRating": "Average rating",
+    "reviewCount": "Reviews",
+    "unansweredQuestions": "Unanswered questions",
+    "localPack": "Local map pack",
+    "notRanked": "Not in map pack",
+    "packSize": "{{count}} results",
+    "noData": "No data"
+  },
+  "exportUi": {
+    "trigger": "Export or share",
+    "loading": "Loading export options…",
+    "preparing": "Preparing file…",
+    "unavailable": "Export unavailable",
+    "formatsLabel": "File formats",
+    "clipboard": { "action": "Copy to clipboard", "success": "Copied to clipboard.", "error": "Could not copy to clipboard." },
+    "formats": { "view": "Web view", "pdf": "PDF", "csv": "CSV", "json": "JSON", "md": "Markdown", "jsonld": "JSON-LD", "txt": "Text" },
+    "states": { "active": "Active", "revoked": "Revoked", "expired": "Expired" },
+    "actions": { "retry": "Try again", "download": "Download", "delete": "Delete", "revoke": "Revoke", "cancel": "Cancel", "done": "Done" },
+    "errors": { "capabilities": "Export options could not be loaded.", "create": "The report could not be exported. Narrow the scope and try again.", "download": "The saved file could not be downloaded.", "list": "Saved exports could not be loaded.", "delete": "The saved export could not be deleted.", "share": "The share link could not be created.", "revoke": "The share link could not be revoked.", "copy": "The link could not be copied." },
+    "share": { "action": "Create share link", "title": "Share an immutable report", "description": "Choose what recipients can open. The report will not change after this link is created.", "locale": "Report language", "expiry": "Expires after", "expiryHelp": "Choose from one to 90 days.", "permissions": "Allowed formats", "create": "Create link", "creating": "Creating link…", "showOnce": "Copy this link now", "linkLabel": "Share link", "copy": "Copy link", "copied": "Copied", "savedWithoutToken": "For security, RankMeFast does not save the readable link. You can still revoke it from the export center.", "existing": "Links for this snapshot", "refresh": "Refresh" },
+    "confirm": { "revokeTitle": "Revoke this link?", "revokeBody": "Anyone using it will lose access immediately.", "deleteTitle": "Delete this saved export?", "deleteBody": "The file will stop working and every attached share link will be revoked." },
+    "center": { "title": "Exports and shares", "description": "Download saved report snapshots and manage public links.", "tabsLabel": "Export center sections", "downloads": "Downloads", "shares": "Shares", "disabledTitle": "New exports are paused", "disabledBody": "Existing files may remain available, but new files and links cannot be created right now.", "emptyDownloadsTitle": "No saved exports yet", "emptyDownloadsBody": "Create one from any report using Export or share.", "emptySharesTitle": "No share links yet", "emptySharesBody": "Share an eligible report to manage its link here.", "deletedReport": "Deleted or expired report", "more": "Load more", "expiresValue": "Expires {{date}}", "views": "{{count}} views", "columns": { "report": "Report", "format": "Format", "created": "Created", "expires": "Expires", "actions": "Actions" } }
+  },
+  "publicShare": {
+    "report": "Shared report",
+    "sourceDates": "Sources and dates",
+    "selection": "Report scope",
+    "expires": "This link expires on {{date}}.",
+    "downloadPdf": "Download PDF",
+    "downloadCsv": "Download CSV",
+    "notFoundTitle": "This report link is unavailable",
+    "notFoundBody": "It may have expired, been revoked, or the report may have been deleted.",
+    "empty": "No rows are available for this section.",
+    "unavailable": "Unavailable",
+    "observed": "Observed {{date}}",
+    "provenance": "{{kind}} source"
+  }
+}

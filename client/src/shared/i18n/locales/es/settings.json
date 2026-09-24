@@ -1,0 +1,165 @@
+{
+  "notifications": {
+    "title": "Preferencias de notificaciones",
+    "description": "Elige qué correos electrónicos no relacionados con la seguridad quieres recibir. Los correos de seguridad (restablecimiento de contraseña, verificación de correo, confirmaciones de cambio de contraseña) no se pueden desactivar.",
+    "emailHeading": "Correo electrónico",
+    "loading": "Cargando tus preferencias…",
+    "securityNote": "Los correos de seguridad — restablecimiento de contraseña, verificación de correo y confirmaciones de cambio de contraseña — siempre se envían, independientemente de los interruptores anteriores.",
+    "channels": {
+      "emailAuditComplete": {
+        "label": "Auditoría completada",
+        "description": "Avísame cuando termine una auditoría."
+      },
+      "emailRankDrop": {
+        "label": "Caída de posición",
+        "description": "Avísame cuando una palabra clave seguida baje de posición."
+      },
+      "emailAlerts": {
+        "label": "Reglas de aviso",
+        "description": "Avísame cuando se active una de mis reglas."
+      },
+      "emailDunning": {
+        "label": "Facturación",
+        "description": "Recibos de pago y recordatorios de pagos fallidos."
+      },
+      "emailMarketing": {
+        "label": "Novedades del producto",
+        "description": "Mensajes de bienvenida ocasionales, noticias y consejos."
+      }
+    },
+    "errors": {
+      "loadFailed": "No pudimos cargar tus preferencias de notificaciones. Actualiza la página.",
+      "saveFailed": "No pudimos guardar ese cambio. Inténtalo de nuevo."
+    }
+  },
+  "apiKeys": {
+    "title": "Claves de API",
+    "description": "Crea claves para clientes MCP. Las claves de Agency también funcionan con la API REST pública de solo lectura. Las herramientas MCP pueden iniciar auditorías y consumir tu cuota mensual, así que guarda cada clave de forma segura.",
+    "name": "Nombre",
+    "prefix": "Clave",
+    "created": "Creada",
+    "lastUsed": "Último uso",
+    "never": "Nunca",
+    "create": "Crear clave",
+    "createTitle": "Crear una clave de API",
+    "createDescription": "Dale un nombre a la clave para reconocerla más tarde — por ejemplo, la herramienta que la usará.",
+    "showOnceTitle": "Copia tu clave de API ahora",
+    "showOnceWarning": "Esta es la única vez que mostraremos esta clave. Guárdala en un lugar seguro — no podrás verla de nuevo.",
+    "copy": "Copiar",
+    "copied": "Copiado",
+    "done": "Hecho",
+    "revoke": "Revocar",
+    "revokedBadge": "Revocada",
+    "revokeConfirmTitle": "¿Revocar esta clave de API?",
+    "revokeConfirmDescription": "“{{name}}” dejará de funcionar de inmediato. Esto no se puede deshacer.",
+    "empty": "Aún no hay claves de API.",
+    "upgradeHint": "Las claves de API para MCP están disponibles desde Starter; la API REST pública requiere Agency. Mejora tu plan para conectar un cliente MCP.",
+    "upgradeCta": "Ver planes",
+    "scopes": {
+      "column": "Acceso",
+      "edit": "Editar acceso",
+      "restricted": "Restringido",
+      "unrestricted": "Sin restricciones",
+      "restrictCreate": "Restringir esta clave",
+      "restrictKey": "Usar restricciones personalizadas",
+      "intersectionHint": "Las restricciones de la clave pueden limitar los permisos de la cuenta, pero nunca ampliarlos.",
+      "editTitle": "Editar acceso de la clave de API",
+      "editDescription": "Elige a qué puede acceder “{{name}}” mediante MCP.",
+      "unrestrictedDescription": "Esta clave sigue los permisos de la cuenta sin añadir restricciones.",
+      "save": "Guardar acceso",
+      "saving": "Guardando acceso…",
+      "sitesFailed": "No pudimos cargar tus sitios. Deja el acceso sin restricciones e inténtalo más tarde."
+    },
+    "errors": {
+      "loadFailed": "No pudimos cargar tus claves de API. Actualiza la página.",
+      "createFailed": "No pudimos crear esa clave. Inténtalo de nuevo.",
+      "revokeFailed": "No pudimos revocar esa clave. Inténtalo de nuevo.",
+      "scopesSaveFailed": "No pudimos guardar el acceso de esa clave. Inténtalo de nuevo.",
+      "nameRequired": "Introduce un nombre de 1 a 60 caracteres."
+    }
+  },
+  "mcp": {
+    "title": "Permisos de MCP",
+    "description": "Define los permisos de la cuenta que usan las claves MCP y las herramientas del Asistente. Las cuentas nuevas permiten todas las herramientas y sitios de forma predeterminada.",
+    "loading": "Cargando permisos de MCP…",
+    "save": "Guardar permisos",
+    "saving": "Guardando permisos…",
+    "saved": "Permisos de MCP guardados.",
+    "retry": "Intentar de nuevo",
+    "locked": {
+      "title": "Conecta MCP con Starter o un plan superior",
+      "description": "Mejora tu plan para crear claves de API y conectar RankMeFast con un cliente MCP.",
+      "cta": "Ver planes"
+    },
+    "tools": {
+      "title": "Herramientas permitidas",
+      "description": "Desactiva las herramientas que los clientes MCP y el Asistente no deban usar.",
+      "list_sites": { "name": "Listar sitios", "description": "Ver los sitios de esta cuenta." },
+      "get_latest_audit_report": { "name": "Obtener el último informe de auditoría", "description": "Leer la auditoría completada más reciente de un sitio." },
+      "list_keywords": { "name": "Listar palabras clave", "description": "Ver las palabras clave seguidas de un sitio." },
+      "get_rank_history": { "name": "Obtener historial de posiciones", "description": "Leer posiciones recientes de palabras clave seguidas." },
+      "list_content_analyses": { "name": "Listar análisis de contenido", "description": "Ver análisis de Content Intelligence de un sitio." },
+      "get_content_analysis": { "name": "Obtener análisis de contenido", "description": "Leer un análisis de Content Intelligence." },
+      "start_audit": { "name": "Iniciar auditoría", "description": "Iniciar una auditoría que usa la cuota mensual de la cuenta." },
+      "get_audit_status": { "name": "Obtener estado de auditoría", "description": "Comprobar si una auditoría está en cola, en curso o completada." },
+      "list_actions": { "name": "Listar próximas acciones", "description": "Leer la lista priorizada de arreglos de un sitio, con el estado de cada elemento." },
+      "set_action_state": { "name": "Actualizar una acción", "description": "Marcar una acción como planificada, descartada, completada o abierta de nuevo." }
+    },
+    "spend": {
+      "title": "Acciones que consumen cuota",
+      "label": "Permitir herramientas que usan la cuota del plan",
+      "description": "Si se desactiva, las herramientas como Iniciar auditoría quedan bloqueadas aunque su control esté activo."
+    },
+    "sites": {
+      "title": "Sitios permitidos",
+      "description": "Limita las herramientas a sitios seleccionados o permite todos los sitios.",
+      "all": "Permitir todos los sitios",
+      "allDescription": "También incluye los sitios que añadas más adelante.",
+      "empty": "Añade un sitio antes de crear una restricción por sitio.",
+      "unavailable": "Sitio no disponible",
+      "removeHint": "Ya no está disponible en esta cuenta"
+    },
+    "quickStart": {
+      "title": "Inicio rápido",
+      "description": "Crea una clave de API y copia el endpoint o una configuración de cliente lista para usar.",
+      "endpoint": "Endpoint de MCP",
+      "copyEndpoint": "Copiar endpoint de MCP",
+      "copy": "Copiar",
+      "copyConfig": "Copiar configuración de {{client}}",
+      "copied": "Copiado",
+      "claudeCode": "Claude Code",
+      "cursor": "Cursor",
+      "apiKeys": "Gestionar claves de API",
+      "copyError": "El navegador no pudo copiar el valor. Selecciona el texto y cópialo manualmente."
+    },
+    "errors": {
+      "loadFailed": "No pudimos cargar los permisos de MCP. Inténtalo de nuevo.",
+      "saveFailed": "No pudimos guardar los permisos de MCP. Inténtalo de nuevo.",
+      "sitesFailed": "No pudimos cargar tus sitios. Las restricciones por sitio pueden estar incompletas."
+    }
+  },
+  "branding": {
+    "title": "Marca de los PDF",
+    "description": "Pon tu propio nombre en los informes PDF descargados. El nombre de la empresa y el color de acento aparecen en la cabecera del PDF.",
+    "companyName": "Nombre de la empresa",
+    "accentColor": "Color de acento",
+    "invalidColor": "Introduce un color como #b5321e o déjalo vacío.",
+    "save": "Guardar marca",
+    "saved": "Marca guardada.",
+    "upgradeHint": "Los informes PDF de marca blanca están disponibles en los planes Pro y Agency. Mejora tu plan para personalizar tus informes.",
+    "upgradeCta": "Ver planes",
+    "logo": {
+      "label": "Logotipo de la empresa",
+      "help": "Solo PNG, hasta 256 KB. Las imágenes se redimensionan y recodifican antes de guardarse.",
+      "invalidType": "Elige una imagen PNG.",
+      "tooLarge": "Elige una imagen PNG de menos de 256 KB.",
+      "readFailed": "No pudimos leer esa imagen. Elige otro archivo PNG.",
+      "previewAlt": "Vista previa del logotipo de la empresa",
+      "remove": "Quitar logotipo"
+    },
+    "errors": {
+      "loadFailed": "No pudimos cargar tu marca. Actualiza la página.",
+      "saveFailed": "No pudimos guardar tu marca. Inténtalo de nuevo."
+    }
+  }
+}

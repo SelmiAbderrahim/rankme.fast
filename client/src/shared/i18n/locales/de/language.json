@@ -1,0 +1,15 @@
+{
+  "switcher": {
+    "label": "Sprache",
+    "saveError": "Ihre Sprache konnte nicht gespeichert werden. Die vorherige Sprache wurde wiederhergestellt."
+  },
+  "names": {
+    "en": "English",
+    "ar": "العربية",
+    "fr": "Français",
+    "de": "Deutsch",
+    "es": "Español",
+    "ru": "Русский",
+    "zh": "中文"
+  }
+}

@@ -1,0 +1,112 @@
+{
+  "common": { "cancel": "Cancel", "notObserved": "Not observed" },
+  "stores": { "google_play": "Google Play", "app_store": "App Store" },
+  "severity": { "fixNow": "Fix now", "watch": "Watch", "advisory": "Advisory" },
+  "buckets": {
+    "fixNow": "Fix now ({{count}})",
+    "watch": "Watch ({{count}})",
+    "advisory": "Advisory ({{count}})"
+  },
+  "findings": {
+    "none": "No changes are needed in this bucket.",
+    "storeLabel": "Findings for {{store}}",
+    "title-too-long": { "title": "Shorten the app title", "why": "A title over {{limit}} characters does not fit the store limit.", "fix": "Keep the title clear and within {{limit}} characters.", "notEvaluated": "The title length was not observed." },
+    "short-description-too-long": { "title": "Shorten the short description", "why": "A short description over {{limit}} characters does not fit the store limit.", "fix": "State the main benefit within {{limit}} characters.", "notEvaluated": "The short description was not observed." },
+    "subtitle-too-long": { "title": "Shorten the subtitle", "why": "A subtitle over {{limit}} characters does not fit the store limit.", "fix": "State the main benefit within {{limit}} characters.", "notEvaluated": "The subtitle was not observed." },
+    "description-missing": { "title": "Add an app description", "why": "People need a clear explanation before they decide to install.", "fix": "Describe the main benefit and the most useful features.", "notEvaluated": "The description was not observed." },
+    "description-too-long": { "title": "Shorten the app description", "why": "A description over {{limit}} characters does not fit the store limit.", "fix": "Keep the useful detail and remove repetition.", "notEvaluated": "The description length could not be checked." },
+    "desc-missing-keywords": { "title": "Use a tracked phrase naturally", "why": "The listing does not mention any of the phrases you chose to track.", "fix": "Add one relevant tracked phrase where it reads naturally.", "notEvaluated": "Track a phrase and provide a description to run this check." },
+    "screenshots-few": { "title": "Add more screenshots", "why": "Fewer than four screenshots may not show enough of the app experience.", "fix": "Add at least four clear screenshots that show real product moments.", "notEvaluated": "The screenshot count was not observed." },
+    "rating-low": { "title": "Watch the store rating", "why": "A rating below {{minimum}} can make people hesitate before installing.", "fix": "Review recent feedback and fix the most repeated product problem first.", "notEvaluated": "The store rating was not observed." },
+    "stale-update": { "title": "Refresh the app listing", "why": "The last observed update was more than {{maximum}} days ago.", "fix": "Publish accurate release notes when the next useful update ships.", "notEvaluated": "The last update date was not observed." },
+    "stores-diverge": { "title": "Align the store titles", "why": "The paired titles describe the app differently across stores.", "fix": "Use the same recognizable product name and promise in both stores.", "notEvaluated": "Both paired listings must be observed for this check." },
+    "ratings-diverge": { "title": "Review the rating gap", "why": "The paired store ratings differ by {{difference}} points.", "fix": "Compare recent feedback in each store and address the store-specific issue.", "notEvaluated": "Both paired ratings must be observed for this check." },
+    "categories-diverge": { "title": "Align the store categories", "why": "The paired listings use unrelated store categories.", "fix": "Choose categories that describe the same product purpose in both stores.", "notEvaluated": "Both paired category lists must be observed for this check." }
+  },
+  "notObserved": {
+    "storeTitle": "Store not observed",
+    "storeFailed": "This store was not observed in the latest run. No defect was inferred.",
+    "shortDescription": "The short description was not available in this observation.",
+    "subtitle": "The subtitle was not available in this observation.",
+    "screenshots": "The screenshot count was not available in this observation.",
+    "installs": "Install counts are not published for this store or were not available.",
+    "fieldsTitle": "Evidence not observed",
+    "rulesTitle": "Checks not evaluated"
+  },
+  "preview": {
+    "title": "Confirm listing health check",
+    "description": "One run checks every store registered to this app profile.",
+    "units": "Usage for this run: {{count}} unit",
+    "remaining": "Checks remaining after this estimate: {{count}}",
+    "capacityTitle": "No capacity available",
+    "capacityDescription": "Add capacity or wait for the next allowance period before starting this run.",
+    "selfHost": "This self-hosted run does not enforce a product allowance.",
+    "running": "Starting check…",
+    "confirm": "Start listing check"
+  },
+  "empty": {
+    "title": "Add an app profile first",
+    "description": "A listing health check needs a Google Play package or App Store ID.",
+    "cta": "Add app profile"
+  },
+  "disabled": {
+    "title": "New listing checks are unavailable",
+    "description": "Stored listing reports and history remain available to read."
+  },
+  "upsell": {
+    "title": "Activate the App SEO add-on",
+    "description": "Your plan supports App SEO, but new listing checks require the App SEO add-on.",
+    "cta": "View billing"
+  },
+  "errors": {
+    "title": "Listing health data could not be loaded",
+    "requestFailed": "The listing health request failed. Please try again."
+  },
+  "queued": {
+    "title": "Listing check in progress",
+    "description": "The report will refresh when the stored observations are ready."
+  },
+  "run": {
+    "title": "Check listing health",
+    "description": "Observe the current store listings and create a deterministic fix list.",
+    "profile": "App profile",
+    "previewing": "Checking capacity…",
+    "button": "Preview run",
+    "bound": "One unit covers every store registered to this profile."
+  },
+  "report": {
+    "title": "Latest listing report",
+    "description": "Run a check to create the first stored report.",
+    "capturedAt": "Observed {{date}}",
+    "keywordsCta": "Manage tracked phrases",
+    "empty": "No listing report has been stored for this profile yet."
+  },
+  "store": {
+    "rating": "Rating",
+    "reviews": "Reviews",
+    "category": "Main category",
+    "updated": "Last update",
+    "screenshots": "Screenshot links observed",
+    "installs": "Published installs",
+    "description": "Store description",
+    "openListing": "Open store listing",
+    "screenshotLink": "Screenshot link {{number}}",
+    "moreScreenshots": "{{count}} more screenshot links"
+  },
+  "parity": {
+    "title": "Paired-store consistency",
+    "description": "Compare only the stores that you explicitly paired for this app.",
+    "provenance": "User-paired"
+  },
+  "history": {
+    "title": "Listing history",
+    "description": "Recent stored runs stay readable when new checks are unavailable.",
+    "empty": "No listing history yet.",
+    "partial": "Partial observation",
+    "counts": {
+      "fixNow": "Fix now: {{count}}",
+      "watch": "Watch: {{count}}",
+      "advisory": "Advisory: {{count}}"
+    }
+  }
+}

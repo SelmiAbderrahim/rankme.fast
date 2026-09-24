@@ -1,0 +1,211 @@
+{
+  "title": "المراجعات",
+  "description": "اسحب المراجعات العامة من الأدلة التي تحددها، ثم اقرأ ما يكرره العملاء.",
+  "outputLocale": "لغة المخرجات: {{locale}}",
+  "sourceNames": {
+    "google": "Google",
+    "trustpilot": "Trustpilot",
+    "tripadvisor": "Tripadvisor"
+  },
+  "states": {
+    "signedOut": "سجّل الدخول لقراءة مراجعاتك.",
+    "notOnPlan": {
+      "title": "المراجعات متاحة في خطة Pro",
+      "description": "انتقل إلى خطة Pro أو Agency لسحب المراجعات من Google وTrustpilot وTripadvisor.",
+      "link": "اطّلع على الخطط"
+    },
+    "capReached": {
+      "title": "استهلكت كل عمليات المزامنة في خطتك",
+      "description": "تحقق من قسم الفوترة لمعرفة التوفر الحالي لحزمة مزامنة المراجعات. كل ما سحبته سابقًا يبقى قابلًا للقراءة.",
+      "link": "عرض خيارات الحزم"
+    },
+    "disabled": {
+      "title": "عمليات المزامنة الجديدة موقوفة",
+      "description": "أوقفنا مؤقتًا عمليات مزامنة المراجعات الجديدة. المراجعات التي سحبتها سابقًا تبقى قابلة للقراءة."
+    },
+    "noSources": {
+      "title": "أضف مصدر مراجعات واحدًا على الأقل للبدء.",
+      "description": "أضف بطاقة على Google أو Trustpilot أو Tripadvisor قبل تشغيل المزامنة."
+    },
+    "neverSynced": {
+      "title": "لا توجد مزامنة بعد",
+      "description": "مصادرك جاهزة. شغّل أول مزامنة لسحب المراجعات."
+    }
+  },
+  "sources": {
+    "title": "مصادر المراجعات",
+    "description": "أخبرنا أين تُدرج نشاطك التجاري. بطاقة واحدة لكل دليل.",
+    "empty": "لا توجد مصادر بعد. أضف واحدًا بالأسفل.",
+    "configured": "مُعد",
+    "save": "احفظ المصدر",
+    "remove": "احذف",
+    "hint": {
+      "google": "معرّف المكان في Google",
+      "trustpilot": "نطاق النشاط التجاري في Trustpilot",
+      "tripadvisor": "معرّف الموقع في Tripadvisor"
+    },
+    "placeholder": {
+      "google": "ChIJ_example_place_id",
+      "trustpilot": "example.com",
+      "tripadvisor": "1234567"
+    }
+  },
+  "sync": {
+    "title": "شغّل مزامنة",
+    "description": "مزامنة واحدة تغطي كل المصادر التي تختارها. اطّلع على التكلفة قبل إنفاق أي شيء.",
+    "sourcesLabel": "المصادر المطلوب مزامنتها",
+    "depthLabel": "عدد المراجعات لكل مصدر",
+    "depthHint": "بين مراجعة واحدة و{{max}} مراجعة من كل مصدر.",
+    "selectAtLeastOne": "اختر مصدرًا واحدًا على الأقل لعرض التكلفة.",
+    "estimate": "اعرض التكلفة",
+    "confirm": "أكّد وشغّل",
+    "cancel": "إلغاء"
+  },
+  "preview": {
+    "title": "تكلفة هذه المزامنة",
+    "description": "هذا تقدير. لا يُنفَق شيء حتى تؤكّد.",
+    "units": "تستهلك {{units}} مزامنة مراجعات",
+    "perSource": "تغطي {{sources}} مصادر",
+    "depth": "تسحب حتى {{depth}} مراجعة من كل مصدر",
+    "available": "ضمن رصيدك المتاح",
+    "unavailable": "تتجاوز رصيدك المتاح",
+    "baseRemaining": "المزامنات المتبقية في الخطة: {{remaining}}",
+    "packRemaining": "المزامنات المتبقية في الحزمة: {{remaining}}"
+  },
+  "runs": {
+    "title": "سجل المزامنات",
+    "description": "كل مزامنة، وما أعاده كل مصدر، وما إذا أُعيدت الوحدة إلى رصيدك.",
+    "empty": "لا توجد مزامنات بعد.",
+    "createdAt": "بدأت",
+    "view": "افتح",
+    "refunded": "أُعيدت الوحدة",
+    "columns": {
+      "status": "النتيجة",
+      "outcomes": "لكل مصدر",
+      "retained": "مراجعات جديدة",
+      "ai": "المحاور"
+    },
+    "status": {
+      "queued": "في الانتظار",
+      "running": "قيد التشغيل",
+      "succeeded": "اكتملت",
+      "partial": "اكتملت جزئيًا",
+      "failed": "أخفقت"
+    },
+    "outcome": {
+      "ok": "مراجعات جديدة",
+      "failed": "أخفق",
+      "zeroNew": "لا جديد"
+    },
+    "ai": {
+      "pending": "المحاور قيد الإعداد",
+      "themesOk": "المحاور جاهزة",
+      "noReliableThemes": "لا محاور موثوقة",
+      "aiFailed": "أخفق إعداد المحاور"
+    }
+  },
+  "inventory": {
+    "title": "المراجعات",
+    "description": "الأحدث أولًا. النص يأتي كما هو من الدليل ويُعرض كنص عادي.",
+    "empty": "لا توجد مراجعات مخزنة بعد.",
+    "noMatches": "لا توجد مراجعات مطابقة لهذه المرشحات.",
+    "clearFilters": "امسح المرشحات",
+    "filterSource": "المصدر",
+    "filterRating": "التقييم",
+    "filterQuery": "ابحث في النص",
+    "sortLabel": "الترتيب",
+    "sort": {
+      "newest": "الأحدث أولًا",
+      "rating-high": "الأعلى تقييمًا",
+      "source": "المصدر"
+    },
+    "filterAll": "الكل",
+    "searchPlaceholder": "ابحث في المراجعات",
+    "apply": "طبّق",
+    "stars": "{{stars}} نجوم",
+    "unrated": "بلا تقييم",
+    "anonymous": "بلا اسم",
+    "page": "الصفحة {{page}} من {{total}} مراجعة",
+    "previous": "السابق",
+    "next": "التالي",
+    "export": "نزّل ملف CSV",
+    "exportLoading": "جارٍ إعداد CSV…",
+    "exportFailed": "تعذّر إعداد ملف CSV. حاول مرة أخرى.",
+    "exportFree": "التنزيل مجاني ويستخدم المراجعات التي سحبتها بالفعل.",
+    "columns": {
+      "rating": "التقييم",
+      "reviewedAt": "التاريخ",
+      "source": "المصدر",
+      "text": "المراجعة",
+      "author": "الكاتب"
+    }
+  },
+  "stats": {
+    "title": "صحة المراجعات",
+    "empty": "لا شيء لعرضه في الرسم بعد.",
+    "total": "{{total}} مراجعة مخزنة",
+    "distribution": {
+      "title": "توزيع النجوم",
+      "stars": "{{stars}} نجوم",
+      "unrated": "بلا تقييم"
+    },
+    "velocity": {
+      "title": "المراجعات شهريًا",
+      "latest": "في {{month}}",
+      "average": "بمعدل {{average}} شهريًا"
+    },
+    "sourceMix": {
+      "title": "من أين تأتي"
+    }
+  },
+  "trend": {
+    "title": "متوسط التقييم عبر الزمن",
+    "description": "نقطة واحدة لكل شهر. الشهر بلا تقييم يُترك فجوة.",
+    "chartLabel": "متوسط تقييم النجوم لكل شهر",
+    "expandTable": "اقرأه كجدول",
+    "tableCaption": "متوسط تقييم النجوم لكل شهر حسب المصدر",
+    "month": "الشهر",
+    "total": "كل المصادر",
+    "gap": "لا بيانات",
+    "empty": "لا توجد مراجعات مؤرخة بعد."
+  },
+  "themes": {
+    "title": "ما يكرره الناس",
+    "complaints": "الشكاوى المتكررة",
+    "praise": "المديح المتكرر",
+    "citations": "اعرض المراجعات وراء ذلك",
+    "citationCount": "{{citations}} مراجعات",
+    "citationSource": "{{source}} · {{rating}} · {{date}}",
+    "sectionEmpty": "لا شيء هنا لهذه المزامنة.",
+    "pending": "لم تنتهِ خطوة استخلاص المحاور بعد.",
+    "noReliable": {
+      "title": "لا محاور موثوقة هذه المرة",
+      "description": "نعرض المحور فقط عندما تدعمه مراجعتان على الأقل. لم يجتز أي محور هذا الشرط، ولن نختلق واحدًا."
+    },
+    "aiFailed": {
+      "title": "تعذّر بناء المحاور",
+      "description": "أخفقت خطوة التلخيص. مراجعاتك وصلت بأمان ولا تزال قابلة للقراءة بالأسفل.",
+      "link": "انتقل إلى المراجعات"
+    }
+  },
+  "provenance": {
+    "first_party": "بيانات الطرف الأول",
+    "provider_observation": "ملاحظة من المزوّد",
+    "estimate": "تقدير",
+    "ai_interpretation": "تفسير بالذكاء الاصطناعي",
+    "observedAt": "لوحظ في {{date}}",
+    "sampleCount": "{{count}} مراجعة في العينة"
+  },
+  "errors": {
+    "sourcesFailed": "تعذّر تحميل مصادر المراجعات.",
+    "addSourceFailed": "تعذّر حفظ هذا المصدر.",
+    "removeSourceFailed": "تعذّر حذف هذا المصدر.",
+    "previewFailed": "تعذّر حساب التكلفة.",
+    "syncFailed": "تعذّر بدء المزامنة.",
+    "runsFailed": "تعذّر تحميل سجل المزامنات.",
+    "runFailed": "تعذّر تحميل هذه المزامنة.",
+    "statsFailed": "تعذّر تحميل أرقام المراجعات.",
+    "themesFailed": "تعذّر تحميل المحاور.",
+    "inventoryFailed": "تعذّر تحميل مراجعاتك."
+  }
+}

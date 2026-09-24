@@ -1,0 +1,117 @@
+{
+  "title": "Assistant IA",
+  "description": "Posez des questions sur vos données SEO et autorisez l’assistant à utiliser les outils approuvés.",
+  "loading": "Chargement des conversations…",
+  "sidebar": {
+    "title": "Conversations",
+    "new": "Nouvelle conversation",
+    "label": "Conversations avec l’assistant",
+    "empty": "Aucune conversation pour le moment.",
+    "untitled": "Nouvelle conversation",
+    "deleteLabel": "Supprimer {{title}}",
+    "deleteTitle": "Supprimer la conversation ?",
+    "deleteDescription": "Cette action supprime définitivement « {{title}} » et ses messages.",
+    "deleting": "Suppression…"
+  },
+  "context": {
+    "label": "Contexte du site",
+    "none": "Aucun site — conseils généraux",
+    "loading": "Chargement de vos sites…",
+    "linkedHelp": "Le contexte du site est fixe après le début d’une conversation.",
+    "newHelp": "Facultatif. Associez un site avant d’envoyer le premier message.",
+    "unavailable": "Impossible de charger vos sites. Vous pouvez tout de même lancer une conversation générale.",
+    "missing": "Le site associé n’est plus disponible"
+  },
+  "empty": {
+    "title": "Que souhaitez-vous améliorer ?",
+    "description": "Posez votre question simplement. L’assistant peut utiliser les outils SEO autorisés pour votre compte.",
+    "examples": "Essayez l’une de ces questions",
+    "prompts": {
+      "audit": "Résume les corrections les plus importantes de mon dernier audit.",
+      "rank": "Quels mots-clés suivis ont récemment changé de position ?",
+      "sites": "Affiche les sites de mon compte."
+    }
+  },
+  "composer": {
+    "label": "Message",
+    "placeholder": "Posez une question sur les positions, audits, mots-clés ou sites…",
+    "send": "Envoyer le message",
+    "sending": "Envoi…",
+    "stop": "Arrêter",
+    "hint": "Entrée pour envoyer · Maj+Entrée pour une nouvelle ligne",
+    "characters": "{{count}} / {{max}} caractères"
+  },
+  "messages": {
+    "label": "Messages de la conversation",
+    "user": "Votre message",
+    "assistant": "Réponse de l’assistant",
+    "streaming": "L’assistant répond",
+    "loading": "Chargement de la conversation…"
+  },
+  "tool": {
+    "arguments": "Paramètres",
+    "result": "Résultat",
+    "waiting": "En attente du résultat de l’outil…",
+    "status": {
+      "running": "En cours",
+      "success": "Terminé",
+      "failed": "Échec"
+    },
+    "names": {
+      "listSites": "Lister les sites",
+      "latestAudit": "Dernier rapport d’audit",
+      "listKeywords": "Lister les mots-clés",
+      "rankHistory": "Historique des positions",
+      "listAnalyses": "Lister les analyses de contenu",
+      "contentAnalysis": "Analyse de contenu",
+      "startAudit": "Lancer un audit",
+      "auditStatus": "État de l’audit",
+      "listActions": "Actions à venir",
+      "setActionState": "Mettre à jour une action"
+    }
+  },
+  "results": {
+    "empty": "L’outil n’a renvoyé aucune ligne.",
+    "notAvailable": "Indisponible",
+    "notRanked": "Non classé",
+    "keyword": "Mot-clé",
+    "date": "Date",
+    "position": "Position",
+    "id": "Identifiant",
+    "score": "Score des contrôles réussis",
+    "fixNow": "À corriger",
+    "topFindings": "Principaux constats",
+    "noFindings": "Aucun constat n’a été renvoyé.",
+    "domain": "Domaine",
+    "url": "URL"
+  },
+  "states": {
+    "locked": {
+      "title": "L’Assistant IA est disponible dès Starter",
+      "description": "Passez à Starter ou une offre supérieure pour interroger vos données SEO et utiliser les outils approuvés.",
+      "action": "Comparer les offres"
+    },
+    "cap": {
+      "title": "Messages mensuels utilisés",
+      "description": "Attendez le renouvellement de votre quota mensuel ou vérifiez si un pack de chat est configuré pour votre compte.",
+      "buyCredits": "Acheter des crédits de chat",
+      "seePlans": "Comparer les offres"
+    },
+    "unavailable": {
+      "title": "Assistant temporairement indisponible",
+      "description": "L’assistant est désactivé ou ne peut pas répondre pour le moment. Vos conversations enregistrées restent intactes."
+    },
+    "error": {
+      "title": "Un problème a interrompu la conversation"
+    }
+  },
+  "errors": {
+    "featureLocked": "Passez à l’offre Starter ou supérieure pour utiliser l’assistant IA.",
+    "capReached": "Vous avez utilisé les messages de l’assistant de ce mois. Achetez un pack de crédits ou attendez la réinitialisation.",
+    "forbidden": "Votre demande n’a pas pu être vérifiée. Actualisez la page et réessayez.",
+    "rateLimited": "Trop de demandes sont envoyées à l’assistant. Patientez un instant puis réessayez.",
+    "unavailable": "L’assistant IA est temporairement indisponible.",
+    "streamFailed": "La réponse s’est interrompue de façon inattendue. Renvoyez votre message.",
+    "generic": "La demande à l’assistant a échoué. Réessayez."
+  }
+}

@@ -1,0 +1,46 @@
+{
+  "title": "الوثائق",
+  "eyebrow": "أدلة RankMeFast",
+  "searchLabel": "البحث في الوثائق",
+  "searchPlaceholder": "ابحث في الأدلة والإجابات…",
+  "searchAction": "بحث",
+  "navigationLabel": "التنقل في الوثائق",
+  "openNavigation": "فتح قائمة الوثائق",
+  "filterLabel": "تصفية الوثائق حسب القسم",
+  "allSections": "الكل",
+  "resultCount": "{{count}} نتيجة",
+  "noResultsTitle": "لم نعثر على أدلة",
+  "noResultsBody": "جرّب عبارة أوسع أو أزل تصفية القسم.",
+  "clearFilters": "مسح عوامل التصفية",
+  "viewSection": "عرض القسم",
+  "readGuide": "اقرأ الدليل",
+  "onThisPage": "في هذه الصفحة",
+  "articleNavigation": "الدليل السابق والتالي",
+  "previous": "السابق",
+  "next": "التالي",
+  "copy": {
+    "trigger": "نسخ الصفحة",
+    "label": "نسخ بصيغة",
+    "markdown": "ماركداون",
+    "plainText": "نص عادي",
+    "link": "رابط الصفحة",
+    "success": "تم نسخ {{format}}.",
+    "failed": "تعذر النسخ. تحقق من أذونات المتصفح وحاول مرة أخرى."
+  },
+  "sections": {
+    "start": "ابدأ هنا",
+    "audits": "التدقيق والتقارير",
+    "research": "البحث والتتبّع",
+    "product": "ميزات المنتج",
+    "account": "الحساب والفوترة",
+    "developers": "المطورون"
+  },
+  "breadcrumbs": { "home": "الرئيسية", "docs": "الوثائق" },
+  "error": {
+    "notFoundTitle": "الدليل غير موجود",
+    "notFoundBody": "ربما نُقل هذا الدليل أو أن العنوان غير صحيح.",
+    "title": "الوثائق غير متاحة",
+    "body": "تعذّر تحميل الوثائق. حاول مرة أخرى بعد قليل.",
+    "back": "العودة إلى الوثائق"
+  }
+}

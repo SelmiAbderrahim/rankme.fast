@@ -1,0 +1,1 @@
+ALTER TABLE "team_provisioned_accounts" ADD COLUMN "temporary_password_encrypted" jsonb;

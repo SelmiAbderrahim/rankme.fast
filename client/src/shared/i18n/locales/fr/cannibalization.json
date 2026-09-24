@@ -1,0 +1,109 @@
+{
+  "title": "Cannibalisation de mots-clés",
+  "subtitle": "Requêtes pour lesquelles au moins deux de vos pages se partagent les mêmes clics, impressions et position dans la Search Console.",
+  "tabs": {
+    "reports": "Rapports",
+    "new": "Nouveau rapport"
+  },
+  "filters": {
+    "confidence": "Confiance",
+    "confidenceValue": {
+      "all": "Tous",
+      "high": "Élevée",
+      "medium": "Moyenne",
+      "low": "Faible"
+    }
+  },
+  "new": {
+    "title": "Générer un rapport",
+    "description": "Les rapports lisent les lignes Search Console déjà stockées. Rien n’est récupéré chez Google.",
+    "window": "Période d’agrégation",
+    "windowOption": "{{days}} jours",
+    "preview": "Voir ce que cela coûte",
+    "generate": "Générer le rapport"
+  },
+  "preview": {
+    "title": "Ce que cela coûte",
+    "units": "{{count}} rapport sur votre quota mensuel.",
+    "units_other": "{{count}} rapports sur votre quota mensuel.",
+    "remaining": "Restant sur votre offre ce mois-ci : {{remaining}}.",
+    "pack": "Plus {{units}} issus des packs de crédits.",
+    "noFit": "Cela ne tient pas dans le restant. Ajoutez des crédits ou changez d’offre."
+  },
+  "list": {
+    "generatedAt": "Généré le",
+    "window": "Période",
+    "windowValue": "{{days}} jours",
+    "lastSync": "Dernière synchro",
+    "candidates": "Candidats",
+    "open": "Ouvrir"
+  },
+  "detail": {
+    "provenance": "À partir de vos données Search Console stockées sur {{days}} jours, dernière synchro {{date}}. {{queries}} requêtes lues."
+  },
+  "candidates": {
+    "query": "Requête",
+    "label": "Candidat",
+    "pages": "Pages",
+    "confidence": "Confiance",
+    "confidenceValue": {
+      "high": "Élevée",
+      "medium": "Moyenne",
+      "low": "Faible"
+    },
+    "primary": "Page principale suggérée",
+    "clicks": "Clics",
+    "inspect": "Inspecter"
+  },
+  "drilldown": {
+    "provenance": "Lignes stockées sur {{days}} jours, dernière synchro {{date}}.",
+    "recommendation": "Gardez {{url}} comme page principale.",
+    "reason": {
+      "most_clicks": "Elle obtient déjà le plus de clics pour cette requête.",
+      "best_position": "Les clics sont à égalité : la meilleure position moyenne tranche.",
+      "stable_order": "Clics et position à égalité : nous gardons un ordre stable."
+    },
+    "page": "Page",
+    "clicks": "Clics",
+    "impressions": "Impressions",
+    "position": "Position moyenne",
+    "clickShare": "Part des clics",
+    "primary": "Page principale suggérée"
+  },
+  "states": {
+    "empty": {
+      "title": "Rien à afficher pour l’instant",
+      "body": "Générez un rapport pour voir les requêtes que vos pages se disputent."
+    },
+    "awaitingSync": {
+      "title": "En attente de la prochaine synchro",
+      "body": "Aucune ligne requête et page de la Search Console n’est encore stockée pour cette période. Elles arriveront à la prochaine synchronisation."
+    },
+    "disconnected": {
+      "title": "Connectez la Search Console",
+      "body": "Connectez une propriété Search Console avant de générer un nouveau rapport. Les rapports stockés restent consultables.",
+      "link": "Connecter la Search Console"
+    },
+    "cap": {
+      "title": "Quota mensuel épuisé",
+      "body": "Vous avez utilisé tous les rapports de cannibalisation de votre offre ce mois-ci.",
+      "link": "Voir les offres"
+    },
+    "disabled": {
+      "title": "Momentanément indisponible",
+      "body": "Les rapports de cannibalisation sont en pause. Ceux déjà générés restent consultables."
+    },
+    "notFound": {
+      "title": "Rapport introuvable",
+      "body": "Ce rapport n’est plus disponible."
+    },
+    "rateLimited": {
+      "title": "Trop de requêtes",
+      "body": "Attendez une minute puis réessayez."
+    },
+    "failed": {
+      "title": "Une erreur est survenue",
+      "body": "Le chargement a échoué. Réessayez."
+    }
+  }
+}

@@ -1,0 +1,15 @@
+{
+  "sitemap": [
+    {
+      "path": "https://example.com/sitemap.xml",
+      "lastSubmitted": "2026-06-20T09:12:00.000Z",
+      "isPending": false,
+      "isSitemapsIndex": false,
+      "type": "sitemap",
+      "lastDownloaded": "2026-07-01T04:30:00.000Z",
+      "warnings": "0",
+      "errors": "0",
+      "processed": "128"
+    }
+  ]
+}

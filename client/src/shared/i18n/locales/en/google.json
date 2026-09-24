@@ -1,0 +1,213 @@
+{
+  "settings": {
+    "title": "Google Search Console",
+    "subtitle": "Connect Search Console so RankMeFast can show real index status and rich-result verdicts in your audits."
+  },
+  "connect": {
+    "title": "Connect Google Search Console",
+    "description": "Let RankMeFast read your index status and rich-results verdicts from Search Console. Requires a verified property.",
+    "cta": "Connect with Google",
+    "connecting": "Connecting…",
+    "scopeNote": "We request read-only access to your Search Console data."
+  },
+  "connected": {
+    "title": "Connected",
+    "subtitle": "Choose which Search Console property RankMeFast reads from.",
+    "emailLabel": "Signed in as",
+    "propertyLabel": "Search Console property",
+    "propertyPlaceholder": "Select a property",
+    "propertyMissing": "No verified properties found — we'll auto-detect a match on the next audit.",
+    "connectedAt": "Connected on {{date}}",
+    "lastUsedAt": "Last used {{date}}",
+    "lastUsedNever": "Never used",
+    "disconnect": "Unlink this site"
+  },
+  "needsReconnect": {
+    "title": "Your Google connection needs to be reconnected",
+    "body": "Google requires re-consent — this happens if you revoked access or the connection sat unused for months. Your audits still run without it, but index-status data will be missing.",
+    "cta": "Reconnect"
+  },
+  "disconnect": {
+    "confirmTitle": "Unlink Google from this site?",
+    "confirmBody": "This removes this site's Search Console and Analytics selections. Other sites and the shared Google sign-in stay connected.",
+    "confirm": "Unlink site",
+    "cancel": "Cancel",
+    "success": "Google Search Console disconnected.",
+    "siteUnlinked": "Google was unlinked from this site."
+  },
+  "revoke": {
+    "cta": "Revoke Google access everywhere",
+    "confirmTitle": "Revoke the shared Google connection?",
+    "confirmBody": "This revokes Google access and unlinks all {{count}} connected sites. This cannot be limited to the current site.",
+    "confirm": "Revoke everywhere"
+  },
+  "autoMatch": {
+    "queued": "Checking this site's Google properties…",
+    "matching": "Matching this site to its Google properties…",
+    "ambiguous": "More than one property matches this site. Choose one below.",
+    "no_match": "No exact property match was found. Choose one below.",
+    "scope_missing": "Analytics access has not been granted yet.",
+    "needs_reconnect": "Reconnect Google before matching properties.",
+    "unavailable": "Automatic matching is temporarily unavailable. You can choose a property below.",
+    "not_connected": "Connect Google to match this site."
+  },
+  "errors": {
+    "missingScope": "That connection is missing the Search Console permission. Try connecting again and keep the checkbox ticked.",
+    "notConnected": "You haven't connected Google Search Console yet.",
+    "invalidProperty": "That property is not in your verified Search Console properties. Choose one from the list.",
+    "quotaExceeded": "Search Console's daily quota is exhausted. Try again tomorrow.",
+    "unavailable": "We couldn't reach Google Search Console. Try again in a moment.",
+    "loadFailed": "Could not load your Google connection.",
+    "disconnectFailed": "Could not disconnect.",
+    "linkFailed": "Couldn't connect that Google account. Pick the same account you signed in with, and grant Search Console access."
+  },
+  "scopes": {
+    "label": "Access",
+    "searchConsole": "Search Console",
+    "analytics": "Analytics",
+    "granted": "granted",
+    "notGranted": "not granted"
+  },
+  "range": {
+    "label": "Date range",
+    "7d": "Last 7 days",
+    "28d": "Last 28 days",
+    "90d": "Last 90 days"
+  },
+  "searchSummary": {
+    "title": "Search performance (last {{days}} days)",
+    "clicks": "Clicks",
+    "impressions": "Impressions",
+    "ctr": "Click-through rate",
+    "position": "Average position",
+    "topQueries": "Top searches",
+    "topPages": "Top pages",
+    "viewAll": "View all",
+    "viewAllLabel": "View all — {{section}}",
+    "sitemapsLink": "View sitemaps",
+    "asOf": "Data through {{date}}",
+    "previousPeriod": "Previous period: {{clicks}} clicks · {{impressions}} impressions",
+    "reportLink": "See the full data on your report",
+    "emptyTitle": "No search data yet",
+    "emptyCta": "Manage connection",
+    "empty": "No search data yet. Run an audit and this summary will fill in automatically.",
+    "error": "We couldn't load your search summary. Try again in a moment.",
+    "retry": "Try again",
+    "refresh": "Refresh search data",
+    "refreshing": "Refreshing…",
+    "refreshError": "We couldn't refresh your search data. Try again in a moment.",
+    "refreshedJustNow": "Updated just now",
+    "timeseriesTitle": "Clicks and impressions over time",
+    "timeseriesSubtitle": "Daily totals for the last {{days}} days.",
+    "timeseriesEmpty": "No daily data yet.",
+    "timeseriesChartLabel": "Daily {{metric}} for the last {{days}} days",
+    "timeseriesTableCaption": "Daily search performance for the last {{days}} days",
+    "tableDate": "Date",
+    "metricLabel": "Choose a metric to chart",
+    "countriesTitle": "Top countries",
+    "countriesEmpty": "No country data yet.",
+    "countriesTableCaption": "Clicks by country",
+    "countryHeader": "Country",
+    "devicesTitle": "Devices",
+    "devicesEmpty": "No device data yet.",
+    "devicesTableCaption": "Clicks by device",
+    "deviceHeader": "Device",
+    "devices": {
+      "desktop": "Desktop",
+      "mobile": "Mobile",
+      "tablet": "Tablet",
+      "unknown": "Other"
+    }
+  },
+  "analytics": {
+    "title": "Google Analytics (last {{days}} days)",
+    "sessions": "Sessions",
+    "activeUsers": "Active users",
+    "engagedSessions": "Engaged sessions",
+    "keyEvents": "Key events",
+    "engagementRateLabel": "Engagement rate",
+    "engagementRateLine": "Engagement rate: {{rate}}",
+    "previousPeriod": "Previous period: {{sessions}} sessions · {{activeUsers}} active users",
+    "emptyTitle": "No analytics data yet",
+    "empty": "No analytics data yet. Data appears shortly after your property is connected — try a refresh.",
+    "error": "We couldn't load your analytics summary. Try again in a moment.",
+    "refresh": "Refresh analytics data",
+    "refreshError": "We couldn't refresh your analytics data. Try again in a moment.",
+    "timeseriesTitle": "Sessions and active users over time",
+    "timeseriesSubtitle": "Daily totals for the last {{days}} days.",
+    "timeseriesChartLabel": "Daily {{metric}} for the last {{days}} days",
+    "timeseriesTableCaption": "Daily analytics performance for the last {{days}} days",
+    "channelsTitle": "Channels",
+    "channelsEmpty": "No channel data yet.",
+    "channelsTableCaption": "Sessions by channel",
+    "channelHeader": "Channel",
+    "pagesTitle": "Top pages",
+    "pagesEmpty": "No page data yet.",
+    "pagesTableCaption": "Sessions by page",
+    "pageHeader": "Page",
+    "countriesTitle": "Top countries",
+    "countriesEmpty": "No country data yet.",
+    "countriesTableCaption": "Sessions by country",
+    "countryHeader": "Country",
+    "devicesTitle": "Devices",
+    "devicesEmpty": "No device data yet.",
+    "devicesTableCaption": "Sessions by device",
+    "deviceHeader": "Device",
+    "locked": {
+      "body": "Google Analytics insights are included in the Pro plan and above. Upgrade to see sessions, engagement, and key events next to your search data.",
+      "upgrade": "Upgrade plan"
+    },
+    "enableTitle": "Google Analytics is not enabled",
+    "enableBody": "Grant read-only access to Google Analytics to see sessions, engagement, and key events for this site.",
+    "enableCta": "Enable Google Analytics",
+    "pickerHint": "Choose which Google Analytics property RankMeFast reads from.",
+    "propertyLabel": "Analytics property",
+    "propertyPlaceholder": "Select a property",
+    "propertyNone": "No Google Analytics properties found for this account.",
+    "propertiesError": "We couldn't load your Analytics properties. Try again in a moment.",
+    "setPropertyError": "We couldn't save that Analytics property. Try again in a moment.",
+    "settingsTitle": "Google Analytics",
+    "settingsSubtitle": "Choose which GA4 property RankMeFast reads from."
+  },
+  "searchDetail": {
+    "back": "Overview",
+    "views": {
+      "queries": "Top searches",
+      "pages": "Top pages",
+      "countries": "Top countries",
+      "devices": "Devices",
+      "sitemaps": "Sitemaps"
+    },
+    "searchLabel": "Filter rows",
+    "searchPlaceholder": "Filter…",
+    "noMatches": "No rows match your filter.",
+    "loadMore": "Load more",
+    "error": "We couldn't load this data. Try again in a moment.",
+    "columns": {
+      "query": "Search query",
+      "page": "Page",
+      "country": "Country",
+      "device": "Device",
+      "clicks": "Clicks",
+      "impressions": "Impressions",
+      "ctr": "CTR",
+      "position": "Position",
+      "actions": "Actions"
+    },
+    "sitemaps": {
+      "empty": "No sitemaps submitted yet.",
+      "columns": {
+        "path": "Sitemap",
+        "type": "Type",
+        "lastSubmitted": "Last submitted",
+        "processed": "Processed",
+        "status": "Status"
+      },
+      "status": {
+        "ok": "OK",
+        "errors": "{{n}} errors",
+        "warnings": "{{n}} warnings"
+      }
+    }
+  }
+}

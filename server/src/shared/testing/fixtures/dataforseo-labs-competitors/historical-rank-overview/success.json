@@ -1,0 +1,76 @@
+{
+  "version": "0.1.20260101",
+  "status_code": 20000,
+  "status_message": "Ok.",
+  "time": "0.2412 sec.",
+  "cost": 0.0066,
+  "tasks_count": 1,
+  "tasks_error": 0,
+  "tasks": [
+    {
+      "id": "TASK_ID",
+      "status_code": 20000,
+      "status_message": "Ok.",
+      "time": "0.2301 sec.",
+      "cost": 0.0066,
+      "result_count": 1,
+      "path": ["v3", "dataforseo_labs", "google", "historical_rank_overview", "live"],
+      "data": {
+        "api": "dataforseo_labs",
+        "function": "historical_rank_overview",
+        "target": "example.com",
+        "location_code": 2840,
+        "language_code": "en"
+      },
+      "result": [
+        {
+          "location_code": 2840,
+          "language_code": "en",
+          "total_count": 3,
+          "items_count": 1,
+          "items": [
+            {
+              "se_type": "google",
+              "target": "example.com",
+              "items": [
+                {
+                  "year": 2024,
+                  "month": 10,
+                  "metrics": {
+                    "organic": {
+                      "rank": 58,
+                      "count": 1540,
+                      "etv": 9800
+                    }
+                  }
+                },
+                {
+                  "year": 2024,
+                  "month": 11,
+                  "metrics": {
+                    "organic": {
+                      "rank": 61,
+                      "count": 1680,
+                      "etv": 10950
+                    }
+                  }
+                },
+                {
+                  "year": 2024,
+                  "month": 12,
+                  "metrics": {
+                    "organic": {
+                      "rank": 64,
+                      "count": 1820,
+                      "etv": 12400
+                    }
+                  }
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

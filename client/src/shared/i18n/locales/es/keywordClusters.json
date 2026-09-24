@@ -1,0 +1,131 @@
+{
+  "eyebrow": "Agrupación desde observaciones almacenadas",
+  "title": "Agrupación de palabras clave por solapamiento de SERP",
+  "subtitle": "Agrupa las palabras clave rastreadas que devuelven las mismas páginas en Google. Cada agrupación se calcula a partir de comprobaciones de posición que ya has pagado: no se lanza ninguna búsqueda nueva.",
+  "site": {
+    "ranksLink": "Abrir seguimiento de posiciones"
+  },
+  "tabs": {
+    "runs": "Ejecuciones guardadas",
+    "new": "Nueva ejecución"
+  },
+  "scope": {
+    "title": "Palabras clave de esta ejecución",
+    "description": "{{count}} palabras clave seleccionadas. Cada palabra clave seleccionada debe tener un resultado reciente y utilizable de Google.",
+    "empty": "Este sitio aún no tiene palabras clave activas de Google.",
+    "minimum": "Selecciona al menos dos palabras clave antes de previsualizar la ejecución."
+  },
+  "newRun": {
+    "title": "Preparar una ejecución de agrupación",
+    "description": "Previsualiza las palabras clave que califican y tu cuota antes de gastar una ejecución.",
+    "storedOnly": "La agrupación solo lee resultados almacenados. No se envía ninguna búsqueda a ningún proveedor.",
+    "unitLabel": "Cuota",
+    "unitValue": "{{count}} ejecución de agrupación",
+    "scopeLabel": "Palabras clave listas",
+    "scopeValue": "{{count}} palabras clave rastreadas califican",
+    "method": "Dos palabras clave se agrupan cuando comparten al menos {{shared}} de sus {{window}} primeros resultados, de una comprobación de posición de los últimos {{days}} días.",
+    "remaining": "Quedan {{count}} ejecuciones antes de esta.",
+    "labelingIncluded": "Las etiquetas de grupo opcionales con IA están incluidas en esta ejecución y nunca cambian la pertenencia a los grupos.",
+    "preview": "Previsualizar ejecución",
+    "previewing": "Comprobando resultados almacenados…",
+    "confirm": "Iniciar la agrupación",
+    "starting": "Iniciando…",
+    "cancel": "Cancelar"
+  },
+  "states": {
+    "ranksCta": "Ejecutar una comprobación de posición",
+    "planCta": "Ver planes",
+    "emptyRuns": {
+      "title": "Aún no hay ejecuciones guardadas",
+      "body": "Previsualiza una ejecución para ver qué palabras clave rastreadas califican."
+    },
+    "emptyClusters": {
+      "title": "Ningún grupo coincide",
+      "body": "Esta ejecución no produjo grupos de ese tamaño, o el filtro actual los oculta."
+    },
+    "notEnoughKeywords": {
+      "title": "No hay suficientes comprobaciones recientes",
+      "body": "Al menos dos palabras clave rastreadas necesitan una comprobación de los últimos siete días. No se gastó ninguna ejecución."
+    },
+    "cap": {
+      "title": "Cuota mensual alcanzada",
+      "body": "Esta solicitud no se inició. Espera al siguiente periodo de cuota o revisa los planes disponibles."
+    },
+    "disabled": {
+      "title": "Las ejecuciones de agrupación no están disponibles",
+      "body": "Las nuevas ejecuciones están temporalmente desactivadas. Las guardadas siguen disponibles."
+    },
+    "rateLimited": {
+      "title": "Demasiadas solicitudes",
+      "body": "Espera un momento antes de volver a intentarlo."
+    },
+    "notFound": {
+      "title": "Ejecución no encontrada",
+      "body": "Esta ejecución guardada no está disponible para la cuenta actual."
+    },
+    "failed": {
+      "title": "La ejecución no pudo completarse",
+      "body": "Tus resultados almacenados no se modificaron. Inténtalo más tarde o abre otra ejecución guardada."
+    },
+    "running": {
+      "title": "Agrupando palabras clave",
+      "body": "El worker está comparando resultados almacenados y nombrando los grupos. Esta vista se actualiza automáticamente."
+    }
+  },
+  "status": {
+    "queued": "En cola",
+    "processing": "Procesando",
+    "completed": "Completada",
+    "failed": "Fallida"
+  },
+  "runs": {
+    "summary": "{{clusters}} grupos a partir de {{keywords}} palabras clave",
+    "requestedAt": "Solicitada el {{date}}",
+    "open": "Abrir ejecución"
+  },
+  "blocked": {
+    "title": "{{count}} palabras clave no pudieron participar",
+    "body": "Estas palabras clave rastreadas aún no tienen un resultado almacenado utilizable. Ejecuta una comprobación de posición y calificarán para la próxima ejecución.",
+    "more": "y {{count}} más",
+    "observedAt": "última comprobación {{date}}",
+    "reason": {
+      "missing": "Nunca comprobada",
+      "stale": "Comprobación demasiado antigua",
+      "empty": "Sin resultados almacenados"
+    }
+  },
+  "results": {
+    "title": "Grupos",
+    "method": "Agrupados con al menos {{shared}} resultados compartidos entre los {{window}} primeros.",
+    "unlabeled": "El nombrado de grupos no estaba disponible o fue rechazado. Los grupos en sí no cambian: nombrar nunca mueve una palabra clave."
+  },
+  "filters": {
+    "size": "Tamaño del grupo",
+    "sizeValue": {
+      "all": "Todos los grupos",
+      "grouped": "Solo palabras clave agrupadas",
+      "singleton": "Solo palabras clave sin agrupar"
+    }
+  },
+  "cluster": {
+    "unlabeled": "Grupo sin nombre",
+    "aiSuggestion": "Sugerencia de IA",
+    "grouped": "{{count}} palabras clave",
+    "singleton": "Sin agrupar",
+    "commonCore": "{{count}} resultados compartidos por todas las palabras clave",
+    "noCommonCore": "Ningún resultado es compartido por todas las palabras clave de este grupo",
+    "showEvidence": "Mostrar solapamiento",
+    "hideEvidence": "Ocultar solapamiento",
+    "pivot": "Referencia",
+    "pivotWindow": "{{count}} resultados almacenados comparados",
+    "sharedWithPivot": "{{count}} compartidos con la palabra clave de referencia",
+    "evidenceTitle": "Qué resultados se solapan",
+    "evidenceBody": "Cada palabra clave de abajo está agrupada porque comparte estas URL de resultados almacenados con la palabra clave de referencia.",
+    "singletonEvidence": "Esta palabra clave compartió demasiados pocos resultados con cualquier otra palabra clave rastreada como para agruparse.",
+    "columns": {
+      "keyword": "Palabra clave",
+      "observedAt": "Resultado observado",
+      "sharedUrls": "Solapamiento"
+    }
+  }
+}

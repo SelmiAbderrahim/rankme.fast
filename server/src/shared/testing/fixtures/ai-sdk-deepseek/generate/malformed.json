@@ -1,0 +1,6 @@
+{
+  "output": { "ok": "INVALID_FIXTURE_TYPE" },
+  "finishReason": "stop",
+  "usage": { "inputTokens": 20, "outputTokens": 4 }
+}
+

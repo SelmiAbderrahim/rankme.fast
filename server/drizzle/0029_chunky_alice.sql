@@ -1,0 +1,2 @@
+ALTER TABLE "competitors" ADD COLUMN "source" text DEFAULT 'domain' NOT NULL;--> statement-breakpoint
+ALTER TABLE "competitors" ADD CONSTRAINT "competitors_source_check" CHECK ("competitors"."source" in ('domain', 'tracked_keywords'));

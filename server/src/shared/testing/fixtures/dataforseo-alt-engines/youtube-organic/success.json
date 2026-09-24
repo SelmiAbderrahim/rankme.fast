@@ -1,0 +1,94 @@
+{
+  "version": "0.1.20260101",
+  "status_code": 20000,
+  "status_message": "Ok.",
+  "time": "0.6104 sec.",
+  "cost": 0.002,
+  "tasks_count": 1,
+  "tasks_error": 0,
+  "tasks": [
+    {
+      "id": "TASK_ID",
+      "status_code": 20000,
+      "status_message": "Ok.",
+      "time": "0.5613 sec.",
+      "cost": 0.002,
+      "result_count": 1,
+      "path": ["v3", "serp", "youtube", "organic", "live", "advanced"],
+      "data": {
+        "api": "serp",
+        "function": "live",
+        "se": "youtube",
+        "se_type": "organic",
+        "keyword": "seo audit tutorial",
+        "language_code": "en",
+        "location_code": 2840,
+        "block_depth": 20
+      },
+      "result": [
+        {
+          "keyword": "seo audit tutorial",
+          "type": "organic",
+          "se_domain": "youtube.com",
+          "location_code": 2840,
+          "language_code": "en",
+          "datetime": "2026-01-01 00:00:00 +00:00",
+          "item_types": ["youtube_video", "video_paid", "channel"],
+          "items_count": 5,
+          "items": [
+            {
+              "type": "video_paid",
+              "rank_group": 1,
+              "rank_absolute": 1,
+              "title": "Sponsored placement that is not an organic ranking",
+              "url": "https://www.youtube.com/watch?v=PAIDVIDEO01",
+              "channel_id": "UCpaid00000000000000000",
+              "channel_name": "Paid Channel",
+              "channel_url": "https://www.youtube.com/@paidchannel"
+            },
+            {
+              "type": "youtube_video",
+              "rank_group": 1,
+              "rank_absolute": 2,
+              "title": "How to run a full SEO audit",
+              "url": "https://www.youtube.com/watch?v=ORGANIC0001",
+              "channel_id": "UCother0000000000000000",
+              "channel_name": "Other Channel",
+              "channel_url": "https://www.youtube.com/@otherchannel"
+            },
+            {
+              "type": "youtube_video",
+              "rank_group": 2,
+              "rank_absolute": 3,
+              "title": "SEO audit walkthrough",
+              "url": "https://www.youtube.com/watch?v=ORGANIC0002",
+              "channel_id": "UCacme00000000000000000",
+              "channel_name": "Acme Channel",
+              "channel_url": "https://www.youtube.com/@acmechannel"
+            },
+            {
+              "type": "channel",
+              "rank_group": 3,
+              "rank_absolute": 4,
+              "title": "Channel card, not a video ranking",
+              "url": "https://www.youtube.com/@acmechannel",
+              "channel_id": "UCacme00000000000000000",
+              "channel_name": "Acme Channel",
+              "channel_url": "https://www.youtube.com/@acmechannel"
+            },
+            {
+              "type": "youtube_video",
+              "rank_group": 3,
+              "rank_absolute": 5,
+              "title": "Video block the vendor returned without a channel",
+              "url": "https://www.youtube.com/watch?v=ORGANIC0003",
+              "channel_id": null,
+              "channel_name": null,
+              "channel_url": null
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

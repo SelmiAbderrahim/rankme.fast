@@ -1,0 +1,105 @@
+{
+  "title": "Backlinks",
+  "description": "See who links to your site and how strong your domain looks to Google.",
+  "empty": "No backlinks recorded yet — we'll fetch fresh data on the next refresh.",
+  "emptyTitle": "No backlinks yet",
+  "loadFailed": "Could not load backlinks.",
+  "summary": {
+    "domainRating": "Domain rating",
+    "domainRatingHelp": "How strong this site's link profile looks (0–100).",
+    "referringDomains": "Referring domains",
+    "backlinks": "Backlinks",
+    "brokenBacklinks": "Broken backlinks"
+  },
+  "delta": {
+    "since": "vs previous"
+  },
+  "rowBudget": {
+    "label": "Backlink rows fetched this month"
+  },
+  "table": {
+    "title": "Recent backlinks",
+    "domain": "Referring page",
+    "anchor": "Anchor text",
+    "dofollow": "Link type",
+    "firstSeen": "First seen",
+    "dofollowYes": "Dofollow",
+    "dofollowNo": "Nofollow",
+    "loadMore": "Load more",
+    "loading": "Loading…"
+  },
+  "refresh": {
+    "button": "Refresh",
+    "cooldown": "Wait {{seconds}}s before refreshing.",
+    "failed": "Couldn't refresh right now. Your last data is still shown."
+  },
+  "locked": {
+    "title": "Upgrade to unlock backlinks",
+    "body": "Domain rating, referring domains and your backlink list are part of the Pro plan.",
+    "upgrade": "See plans"
+  },
+  "errors": {
+    "capExceeded": "Your plan's backlink row cap ({{used}}/{{limit}} {{metric}}) is exhausted. Upgrade or buy a credit pack to fetch more rows."
+  },
+  "intelligence": {
+    "title": "Link intelligence",
+    "description": "Inspect stored backlink evidence and choose when to spend units on a fresh provider pull.",
+    "tabs": { "label": "Link intelligence views", "overview": "Overview", "rows": "Backlinks", "domains": "Domains", "anchors": "Anchors", "history": "History", "gap": "Link gap", "toxicity": "Link review" },
+    "preview": {
+      "title": "Spend preview", "description": "This estimate is free. Units are reserved only after you confirm.",
+      "units": "{{count}} unit", "cached": "Cached result", "mixed": "Mixed cache", "fresh": "Fresh pull required",
+      "available": "Allowance available", "unavailable": "Allowance reached",
+      "baseRemaining": "{{count}} base units remaining", "packRemaining": "{{count}} pack units remaining",
+      "confirm": "Confirm and spend {{count}} units", "cancel": "Cancel", "button": "Preview spend"
+    },
+    "states": {
+      "default": "No stored result yet. Preview a pull when you need fresh evidence.", "emptyTitle": "No results found", "emptyBody": "The provider completed this pull without finding matching rows.",
+      "partialTitle": "Partial result", "partialBody": "Some rows were retained before the provider stopped responding.",
+      "providerTitle": "Provider pull failed", "providerBody": "No rows were retained and the reserved unit was refunded.",
+      "capTitle": "Link intelligence allowance reached", "capBody": "Use the {{pack}} overflow pack or wait for the allowance to renew.",
+      "disabledTitle": "Link intelligence is temporarily disabled", "disabledBody": "Stored results remain available, but new provider pulls are paused.",
+      "lockedTitle": "Upgrade to unlock link intelligence", "lockedBody": "Deep backlink pulls are available on Pro and Agency plans.", "upgrade": "See plans",
+      "errorTitle": "Could not load link intelligence"
+    },
+    "provenance": { "providerObservation": "Provider observation" },
+    "domains": { "title": "Referring domains", "description": "Domains that link to this site, with strength and discovery dates.", "sort": "Default sort: domain rank descending, backlinks descending, then domain A–Z." },
+    "anchors": { "title": "Anchor text", "description": "Inert text used by referring pages when they link to this site." },
+    "history": { "title": "Backlink history", "description": "Up to 24 monthly observations in chronological order.", "chartLabel": "Backlinks by month", "tableCaption": "Backlink history data" },
+    "bulk": { "title": "Bulk domain rank", "description": "Check the provider rank for up to 100 unique domains.", "label": "Domains", "help": "Enter one domain per line or separate domains with commas.", "invalid": "Enter between 1 and 100 valid domains.", "duplicate": "Remove duplicate domains before continuing." },
+    "filters": { "minRank": "Minimum domain rank", "minBacklinks": "Minimum backlinks", "anchor": "Filter anchor text" },
+    "columns": { "domain": "Domain", "backlinks": "Backlinks", "domainRank": "Domain rank", "firstSeen": "First seen", "lastSeen": "Last seen", "anchor": "Anchor", "referringDomains": "Referring domains", "month": "Month", "rank": "Rank" },
+    "gap": { "title": "Link gap", "description": "Compare competitor link opportunities.", "next": "The per-competitor gap workspace is delivered in the next Link Intelligence section." },
+    "errors": { "preview": "Could not prepare the spend preview.", "submit": "Could not start the provider pull.", "load": "Could not load the stored result." }
+  },
+  "gap": {
+    "workspace": { "title": "Find competitor link gaps", "description": "Compare your site with up to three competitors. Preview the unit cost before starting a run." },
+    "form": {
+      "ownDomainLabel": "Your domain", "competitorsLabel": "Competitor domains", "competitorsHelp": "Enter {{min}} to {{max}} domains, one per line or separated by commas. Duplicates are removed.",
+      "errors": { "ownAmongCompetitors": "Your own domain cannot be a competitor.", "duplicate": "Duplicate competitors were removed.", "atLeastOne": "Enter at least one competitor domain.", "tooMany": "Enter no more than three competitor domains.", "invalid": "Enter valid domain names." }
+    },
+    "preview": { "title": "Gap spend preview", "units": "{{n}} units", "remainingBase": "{{n}} base units remaining", "remainingPack": "{{n}} pack units remaining", "cached": "Cached evidence", "fresh": "Fresh provider pull", "confirm": "Confirm and spend {{n}} units", "cancel": "Cancel", "button": "Preview gap spend" },
+    "result": { "title": "Link gap results", "readOnly": "Stored result · read only", "competitorDescription": "Domains linking to this competitor but not to your site.", "status": { "complete": "Complete", "partial": "Partial" } },
+    "legStatus": { "ok": "Completed · unit consumed", "provider_failed_refunded": "Provider failed · unit refunded", "zero_retained_consumed": "No retained rows · unit consumed", "zero_retained_refunded": "No retained rows · unit refunded" },
+    "overlap": { "totalUnique": "Unique linking domains", "exclusiveToCompetitor": "Exclusive to competitor", "exclusivePctLabel": "Exclusive share", "exclusivePct": "{{pct}}% exclusive" },
+    "table": { "domain": "Linking domain", "rank": "Rank", "firstSeen": "First seen", "emptyTitle": "No exclusive domains", "empty": "This competitor leg retained no exclusive linking domains." },
+    "errors": { "title": "Could not load the link gap", "preview": "Could not prepare the gap preview.", "submit": "Could not start the link-gap run.", "load": "Could not load the stored link-gap run." }
+  },
+  "toxicity": {
+    "start": { "title": "Review backlink observations", "description": "Score up to 1,000 stored backlink rows with a deterministic rubric before deciding what belongs in an export." },
+    "preview": { "unit": "1 link-review unit", "rowClamp": "Up to 1,000 rows · 100 scored domains", "available": "Allowance available", "capReached": "Allowance reached", "explanation": "The run uses one toxicity_reviews unit. The toxicity-reviews-10 pack is available after your included allowance. Previewing and cancelling do not spend a unit.", "confirm": "Confirm and use 1 unit", "cancel": "Cancel", "button": "Preview review spend" },
+    "states": { "lockedTitle": "Upgrade to review backlink observations", "lockedBody": "Link review and disavow-file building are available on Pro and Agency plans.", "disabledTitle": "New link reviews are paused", "disabledBody": "Stored reviews remain readable while new scoring runs are unavailable.", "capTitle": "Link-review allowance reached", "capBody": "Add the toxicity-reviews-10 pack or wait for your allowance to renew.", "errorTitle": "Could not load the link review", "errorBody": "Try again shortly. Stored results and prior downloads are unchanged.", "listError": "Stored link reviews could not be loaded.", "runningTitle": "Reviewing stored backlink observations", "failedTitle": "Link review stopped", "providerRefunded": "The provider failed before any scored row was retained. The reserved unit was refunded.", "ceilingConsumed": "The run stopped at its cost ceiling. The reserved unit was consumed and no automatic action was taken.", "partial": "Partial provider observations", "emptyTitle": "No scored rows", "emptyBody": "The run completed without retaining a scored backlink row." },
+    "actions": { "viewPlans": "View plans", "viewPacks": "View credit packs", "open": "Open", "back": "Back to new review" },
+    "runs": { "title": "Stored reviews", "description": "Reopen completed reviews without using another unit.", "date": "Created", "status": "Status", "rows": "Rows", "emptyTitle": "No stored reviews", "emptyBody": "Start with a free spend preview when you are ready." },
+    "filters": { "status": "Filter reviews by status", "allStatuses": "All statuses", "band": "Filter rows by rubric band", "allBands": "All bands" },
+    "status": { "queued": "Queued", "running": "Running", "succeeded": "Completed", "failed": "Failed" },
+    "results": { "title": "Link review results", "rubric": "Rubric {{version}}", "rowsTitle": "Scored backlink rows", "observationCopy": "Bands describe stored provider observations under the pinned rubric. They do not predict a search-engine action.", "providerObservation": "Provider observation · deterministic rubric" },
+    "columns": { "domain": "Referring domain", "score": "Spam score", "band": "Rubric band", "signals": "Contributing signals", "firstSeen": "First seen", "lastSeen": "Last seen", "rationale": "Optional rationale" },
+    "band": { "clean": "Clean", "watch": "Watch", "toxic": "Toxic" },
+    "signal": { "spam_clean": "Score 0–29", "spam_watch": "Score 30–59", "spam_toxic": "Score 60–100", "broken": "Broken", "dofollow": "Dofollow", "nofollow": "Nofollow" },
+    "rationale": { "toggle": "Rationale", "not_requested": "No rationale requested for this row.", "annotated": "Stored rationale", "abstained": "The AI abstained; the deterministic band is unchanged.", "failed": "A rationale was unavailable; the deterministic band is unchanged." },
+    "disavow": { "title": "Build a disavow file", "description": "Toxic-band rows start included. Review every row and choose domain or exact-URL scope.", "selectionCaption": "Rows available for the disavow file", "include": "Include", "scope": "Scope", "preview": "Live file preview", "reviewTitle": "Review required before download", "reviewBody": "RankMeFast never submits this file. You must review the text, download it, and submit it yourself only if you decide it is appropriate.", "download": "Download .txt", "downloadFailed": "The file could not be prepared. Review your selection and try again.", "includeDomain": "Include {{domain}} in the file", "scopeFor": "Scope for {{domain}}", "domainScope": "Whole domain", "urlScope": "Exact URL" }
+  },
+  "cap": { "reached": "No {{metric}} allowance remains", "pack": "{{name}} adds {{units}} units for {{price}}.", "upgrade": "View billing options" },
+  "killswitch": { "title": "Link gap is temporarily unavailable", "disabled": "New runs are paused. Stored link-gap results remain readable." },
+  "tier": { "locked": "Upgrade to unlock link gap", "lockedBody": "Link-gap analysis is available on Pro and Agency plans." }
+}

@@ -1,0 +1,25 @@
+{
+  "version": "0.1.20260808",
+  "status_code": 20000,
+  "status_message": "Ok.",
+  "time": "0.01 sec.",
+  "cost": 0.001,
+  "tasks_count": 1,
+  "tasks_error": 0,
+  "tasks": [
+    {
+      "id": "TASK_ID",
+      "status_code": 20100,
+      "status_message": "Task Created.",
+      "cost": 0.001,
+      "result": null,
+      "path": [
+        "v3",
+        "app_data",
+        "google",
+        "app_reviews",
+        "task_post"
+      ]
+    }
+  ]
+}

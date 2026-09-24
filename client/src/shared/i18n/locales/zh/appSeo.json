@@ -1,0 +1,62 @@
+{
+  "title": "应用商店优化",
+  "description": "管理应用资料以及与此网站关联的商店数据。",
+  "views": {
+    "profiles": "资料",
+    "keywords": "关键词",
+    "listing": "商店页面",
+    "charts": "榜单",
+    "research": "研究",
+    "reviews": "评论",
+    "compare": "对比",
+    "comingSoon": "此工作区将在本批次后续开放。"
+  },
+  "locked": {
+    "title": "应用商店优化适用于 Pro 套餐",
+    "description": "升级到 Pro 或更高套餐，即可注册应用资料并打开此工作区。",
+    "cta": "查看套餐"
+  },
+  "registration": {
+    "title": "注册应用",
+    "description": "添加 Google Play 软件包 ID、App Store ID，或同时添加两者。注册只检查格式，不消耗供应商额度。",
+    "playLabel": "Google Play 软件包 ID",
+    "playPlaceholder": "例如：com.example.app",
+    "playHelp": "请输入 Google Play 中显示的反向域名格式软件包 ID。",
+    "appleLabel": "Apple App Store 标识符",
+    "applePlaceholder": "123456789",
+    "appleHelp": "请输入 6 至 12 位数字应用 ID。",
+    "pairedLabel": "将两个商店页面视为同一应用",
+    "pairedHelp": "仅当两个页面代表同一产品时才进行配对。",
+    "usage": "已用 {{used}} 个，共 {{limit}} 个资料",
+    "submit": "注册应用",
+    "registering": "正在注册…"
+  },
+  "profiles": {
+    "googlePlay": "Google Play 商店",
+    "appStore": "App Store 商店",
+    "emptyTitle": "尚无应用资料",
+    "emptyDescription": "注册 Play 或 App Store 页面即可开始。",
+    "paired": "已配对",
+    "deleteLabel": "删除 {{id}}",
+    "deleteTitle": "删除此应用资料？",
+    "deleteDescription": "已保存的应用商店优化历史记录也会被删除，且无法撤销。",
+    "cancel": "取消",
+    "confirmDelete": "删除资料"
+  },
+  "states": {
+    "limitTitle": "已达到应用资料上限",
+    "limitDescription": "删除一个资料以释放名额，或选择允许更多应用资料的套餐。",
+    "upgrade": "查看套餐",
+    "errorTitle": "无法更新应用资料"
+  },
+  "validation": {
+    "storeRequired": "请至少输入一个商店 ID。",
+    "playFormat": "请输入反向域名格式的软件包 ID，例如 com.example.app。",
+    "playTooLong": "Google Play 软件包 ID 过长。",
+    "appleFormat": "请输入 6 至 12 位数字的 App Store ID。",
+    "pairedRequired": "配对资料需要两个商店 ID。"
+  },
+  "errors": {
+    "requestFailed": "无法完成请求，请重试。"
+  }
+}

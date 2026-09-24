@@ -1,0 +1,131 @@
+{
+  "eyebrow": "Gruppierung aus gespeicherten Beobachtungen",
+  "title": "Keyword-Clustering nach SERP-Überschneidung",
+  "subtitle": "Gruppieren Sie verfolgte Keywords, die auf Google dieselben Seiten zurückgeben. Jede Gruppierung wird aus bereits bezahlten Positionsprüfungen berechnet — es wird keine neue Suche ausgeführt.",
+  "site": {
+    "ranksLink": "Positionsverfolgung öffnen"
+  },
+  "tabs": {
+    "runs": "Gespeicherte Läufe",
+    "new": "Neuer Lauf"
+  },
+  "scope": {
+    "title": "Keywords in diesem Lauf",
+    "description": "{{count}} Keywords ausgewählt. Jedes ausgewählte Keyword benötigt ein nutzbares, aktuelles Google-Ergebnis.",
+    "empty": "Diese Website hat noch keine aktiven Google-Keywords.",
+    "minimum": "Wählen Sie mindestens zwei Keywords aus, bevor Sie den Lauf in der Vorschau anzeigen."
+  },
+  "newRun": {
+    "title": "Clustering-Lauf vorbereiten",
+    "description": "Sehen Sie die qualifizierten Keywords und Ihr Kontingent, bevor Sie einen Lauf verbrauchen.",
+    "storedOnly": "Clustering liest ausschließlich gespeicherte Ergebnisse. Es wird keine Suche an einen Anbieter gesendet.",
+    "unitLabel": "Kontingent",
+    "unitValue": "{{count}} Clustering-Lauf",
+    "scopeLabel": "Bereite Keywords",
+    "scopeValue": "{{count}} verfolgte Keywords qualifizieren sich",
+    "method": "Zwei Keywords werden gruppiert, wenn sie mindestens {{shared}} ihrer Top-{{window}}-Ergebnisse teilen, aus einer Positionsprüfung der letzten {{days}} Tage.",
+    "remaining": "Vor diesem Lauf verbleiben {{count}} Läufe.",
+    "labelingIncluded": "Optionale KI-Gruppenbezeichnungen sind in diesem Lauf enthalten und ändern niemals die Cluster-Zugehörigkeit.",
+    "preview": "Lauf vorschauen",
+    "previewing": "Gespeicherte Ergebnisse werden geprüft…",
+    "confirm": "Clustering-Lauf starten",
+    "starting": "Wird gestartet…",
+    "cancel": "Abbrechen"
+  },
+  "states": {
+    "ranksCta": "Positionsprüfung ausführen",
+    "planCta": "Tarife ansehen",
+    "emptyRuns": {
+      "title": "Noch keine gespeicherten Läufe",
+      "body": "Sehen Sie sich einen neuen Lauf an, um zu erfahren, welche verfolgten Keywords sich qualifizieren."
+    },
+    "emptyClusters": {
+      "title": "Keine passenden Gruppen",
+      "body": "Dieser Lauf hat keine Gruppen dieser Größe erzeugt, oder der aktuelle Filter blendet sie aus."
+    },
+    "notEnoughKeywords": {
+      "title": "Nicht genügend aktuelle Positionsprüfungen",
+      "body": "Mindestens zwei verfolgte Keywords brauchen eine Prüfung aus den letzten sieben Tagen. Es wurde kein Lauf verbraucht."
+    },
+    "cap": {
+      "title": "Monatliches Kontingent erreicht",
+      "body": "Diese Anfrage wurde nicht gestartet. Warten Sie auf die nächste Kontingentperiode oder prüfen Sie die verfügbaren Tarife."
+    },
+    "disabled": {
+      "title": "Clustering-Läufe nicht verfügbar",
+      "body": "Neue Clustering-Läufe sind vorübergehend deaktiviert. Gespeicherte Läufe bleiben verfügbar."
+    },
+    "rateLimited": {
+      "title": "Zu viele Anfragen",
+      "body": "Warten Sie einen Moment, bevor Sie es erneut versuchen."
+    },
+    "notFound": {
+      "title": "Lauf nicht gefunden",
+      "body": "Dieser gespeicherte Lauf ist für das aktuelle Konto nicht verfügbar."
+    },
+    "failed": {
+      "title": "Der Lauf konnte nicht abgeschlossen werden",
+      "body": "Ihre gespeicherten Ergebnisse wurden nicht verändert. Versuchen Sie es später erneut oder öffnen Sie einen anderen gespeicherten Lauf."
+    },
+    "running": {
+      "title": "Keywords werden gruppiert",
+      "body": "Der Worker vergleicht gespeicherte Ergebnisse und benennt die Gruppen. Diese Ansicht aktualisiert sich automatisch."
+    }
+  },
+  "status": {
+    "queued": "In Warteschlange",
+    "processing": "In Bearbeitung",
+    "completed": "Abgeschlossen",
+    "failed": "Fehlgeschlagen"
+  },
+  "runs": {
+    "summary": "{{clusters}} Gruppen aus {{keywords}} Keywords",
+    "requestedAt": "Angefordert am {{date}}",
+    "open": "Lauf öffnen"
+  },
+  "blocked": {
+    "title": "{{count}} Keywords konnten nicht teilnehmen",
+    "body": "Diese verfolgten Keywords haben noch kein verwertbares gespeichertes Ergebnis. Führen Sie eine Positionsprüfung aus, dann qualifizieren sie sich für den nächsten Lauf.",
+    "more": "und {{count}} weitere",
+    "observedAt": "zuletzt geprüft {{date}}",
+    "reason": {
+      "missing": "Nie geprüft",
+      "stale": "Prüfung zu alt",
+      "empty": "Keine gespeicherten Ergebnisse"
+    }
+  },
+  "results": {
+    "title": "Gruppen",
+    "method": "Gruppiert bei mindestens {{shared}} gemeinsamen Ergebnissen aus den Top {{window}}.",
+    "unlabeled": "Die Benennung der Gruppen war nicht verfügbar oder wurde abgelehnt. Die Gruppen selbst sind unverändert — Benennung verschiebt niemals ein Keyword."
+  },
+  "filters": {
+    "size": "Gruppengröße",
+    "sizeValue": {
+      "all": "Alle Gruppen",
+      "grouped": "Nur gruppierte Keywords",
+      "singleton": "Nur nicht gruppierte Keywords"
+    }
+  },
+  "cluster": {
+    "unlabeled": "Unbenannte Gruppe",
+    "aiSuggestion": "KI-Vorschlag",
+    "grouped": "{{count}} Keywords",
+    "singleton": "Nicht gruppiert",
+    "commonCore": "{{count}} Ergebnisse, die alle Keywords teilen",
+    "noCommonCore": "Kein einzelnes Ergebnis wird von allen Keywords dieser Gruppe geteilt",
+    "showEvidence": "Überschneidung anzeigen",
+    "hideEvidence": "Überschneidung ausblenden",
+    "pivot": "Referenz",
+    "pivotWindow": "{{count}} gespeicherte Ergebnisse verglichen",
+    "sharedWithPivot": "{{count}} gemeinsam mit dem Referenz-Keyword",
+    "evidenceTitle": "Welche Ergebnisse sich überschneiden",
+    "evidenceBody": "Jedes Keyword unten ist gruppiert, weil es diese gespeicherten Ergebnis-URLs mit dem Referenz-Keyword teilt.",
+    "singletonEvidence": "Dieses Keyword teilte zu wenige Ergebnisse mit einem anderen verfolgten Keyword, um gruppiert zu werden.",
+    "columns": {
+      "keyword": "Keyword",
+      "observedAt": "Ergebnis beobachtet",
+      "sharedUrls": "Überschneidung"
+    }
+  }
+}

@@ -1,0 +1,41 @@
+{
+  "title": "SEO local",
+  "description": "Fichas de negocio, reseñas y posición en el paquete de mapas para tu sitio.",
+  "empty": "Aún no hay datos de SEO local: pulsa actualizar para cargar fichas, reseñas y preguntas.",
+  "emptyTitle": "Aún no hay datos locales",
+  "emptyCta": "Obtener datos locales",
+  "refresh": {
+    "button": "Actualizar SEO local",
+    "cooldown": "Actualizar en {{seconds}} s",
+    "failed": "No se pudo actualizar el SEO local. Inténtalo de nuevo en un momento."
+  },
+  "loadFailed": "No se pudo cargar el SEO local.",
+  "locked": {
+    "title": "SEO local es una función Pro",
+    "body": "Actualiza a Pro para hacer un seguimiento de la coherencia de tu negocio en directorios y en el paquete de mapas local.",
+    "upgrade": "Ver planes"
+  },
+  "listings": {
+    "title": "Fichas de negocio",
+    "source": "Directorio",
+    "name": "Nombre",
+    "address": "Dirección",
+    "phone": "Teléfono",
+    "status": "Estado",
+    "consistent": "Coincide",
+    "inconsistent": "No coincide"
+  },
+  "reviews": {
+    "title": "Reseñas y preguntas",
+    "averageRating": "Puntuación media",
+    "reviewCount": "Reseñas",
+    "unansweredQuestions": "Preguntas sin responder"
+  },
+  "localPack": {
+    "title": "Paquete de mapas local",
+    "keyword": "Palabra clave",
+    "position": "Posición",
+    "packSize": "Tamaño del paquete",
+    "notRanked": "Fuera del paquete de mapas"
+  }
+}

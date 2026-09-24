@@ -1,0 +1,62 @@
+{
+  "title": "SEO de aplicaciones",
+  "description": "Gestiona perfiles de aplicaciones y las señales de las tiendas vinculadas a este sitio.",
+  "views": {
+    "profiles": "Perfiles",
+    "keywords": "Palabras clave",
+    "listing": "Ficha",
+    "charts": "Listas",
+    "research": "Investigación",
+    "reviews": "Reseñas",
+    "compare": "Comparar",
+    "comingSoon": "Este espacio estará disponible próximamente en este lote."
+  },
+  "locked": {
+    "title": "El SEO de aplicaciones está disponible en Pro",
+    "description": "Cambia a Pro o superior para registrar perfiles de aplicaciones y abrir este espacio.",
+    "cta": "Ver planes"
+  },
+  "registration": {
+    "title": "Registrar una aplicación",
+    "description": "Añade un paquete de Google Play, un ID de App Store o ambos. El registro solo valida el formato y no consume créditos del proveedor.",
+    "playLabel": "ID de paquete de Google Play",
+    "playPlaceholder": "com.example.app",
+    "playHelp": "Usa el ID de paquete con DNS inverso que aparece en Google Play.",
+    "appleLabel": "ID de Apple App Store",
+    "applePlaceholder": "123456789",
+    "appleHelp": "Introduce el ID numérico de 6 a 12 dígitos.",
+    "pairedLabel": "Estas fichas corresponden a la misma aplicación",
+    "pairedHelp": "Vincúlalas solo si representan el mismo producto.",
+    "usage": "{{used}} de {{limit}} perfiles",
+    "submit": "Registrar aplicación",
+    "registering": "Registrando…"
+  },
+  "profiles": {
+    "googlePlay": "Google Play",
+    "appStore": "App Store",
+    "emptyTitle": "Aún no hay perfiles de aplicaciones",
+    "emptyDescription": "Registra una ficha de Play o App Store para empezar.",
+    "paired": "Vinculadas",
+    "deleteLabel": "Eliminar {{id}}",
+    "deleteTitle": "¿Eliminar este perfil de aplicación?",
+    "deleteDescription": "También se eliminará su historial de SEO de aplicaciones. Esta acción no se puede deshacer.",
+    "cancel": "Cancelar",
+    "confirmDelete": "Eliminar perfil"
+  },
+  "states": {
+    "limitTitle": "Límite de perfiles alcanzado",
+    "limitDescription": "Elimina un perfil para liberar una plaza o elige un plan con más perfiles.",
+    "upgrade": "Ver planes",
+    "errorTitle": "No pudimos actualizar los perfiles"
+  },
+  "validation": {
+    "storeRequired": "Introduce al menos un ID de tienda.",
+    "playFormat": "Introduce un paquete con DNS inverso, como com.example.app.",
+    "playTooLong": "El ID de paquete de Google Play es demasiado largo.",
+    "appleFormat": "Introduce un ID de App Store de 6 a 12 dígitos.",
+    "pairedRequired": "Los perfiles vinculados necesitan ambos ID de tienda."
+  },
+  "errors": {
+    "requestFailed": "No se pudo completar la solicitud. Inténtalo de nuevo."
+  }
+}

@@ -1,0 +1,99 @@
+{
+  "title": "Compare stores",
+  "description": "Compare the latest saved Google Play and App Store observations. This view does not run a new check.",
+  "profile": { "label": "App profile" },
+  "stores": { "googlePlay": "Google Play", "appStore": "App Store" },
+  "common": { "notObserved": "Not observed", "userPaired": "User-paired" },
+  "deltas": {
+    "notObserved": "Not observed",
+    "even": "Even",
+    "googlePlayLeads": "Google Play +{{value}}",
+    "appStoreLeads": "App Store +{{value}}"
+  },
+  "header": {
+    "title": "Store listings",
+    "description": "Latest saved title, rating, and review count for the user-paired listings.",
+    "rating": "Rating",
+    "reviews": "Reviews",
+    "openListing": "Open store listing",
+    "deltaSummary": "Store listing differences",
+    "ratingDelta": "Rating difference",
+    "reviewDelta": "Review-count difference"
+  },
+  "ranks": {
+    "title": "Keyword ranks",
+    "description": "Phrases compare only when both stores track the same phrase, location, and language.",
+    "caption": "Latest saved ranks for phrases tracked in both stores",
+    "phrase": "Phrase",
+    "market": "Market",
+    "position": "Position",
+    "delta": "Difference",
+    "only": {
+      "googlePlay": "Only tracked on Google Play",
+      "appStore": "Only tracked on the App Store",
+      "googlePlayCaption": "Phrases tracked only on Google Play",
+      "appStoreCaption": "Phrases tracked only on the App Store",
+      "none": "No store-only phrases."
+    }
+  },
+  "parity": {
+    "title": "Listing parity",
+    "description": "Saved parity findings and direct field values for listings the user paired.",
+    "findings": "Saved parity findings",
+    "status": { "finding": "Different", "passed": "Aligned", "notEvaluated": "Not compared" },
+    "findingCopy": {
+      "stores-diverge": "The listing titles differ substantially between stores.",
+      "ratings-diverge": "The store ratings differ by a notable amount.",
+      "categories-diverge": "The listings do not share a store category."
+    },
+    "rawCaption": "Direct comparison of the latest saved listing fields",
+    "field": "Field",
+    "match": "Parity",
+    "matches": "Matches",
+    "differs": "Differs",
+    "notCompared": "Not compared",
+    "fields": {
+      "title": "Title",
+      "developerName": "Developer name",
+      "mainCategory": "Main category",
+      "version": "Version",
+      "categories": "Categories"
+    }
+  },
+  "charts": {
+    "title": "Chart positions",
+    "description": "Latest saved position for each tracked chart and category.",
+    "caption": "Latest saved chart positions by store",
+    "chart": "Chart",
+    "category": "Category",
+    "allCategories": "All categories",
+    "delta": "Difference"
+  },
+  "notObserved": {
+    "ranksTitle": "Keyword ranks not observed",
+    "ranksDescription": "Track phrases and run a keyword check to populate this comparison.",
+    "sharedRanksTitle": "No shared tracked phrases",
+    "sharedRanksDescription": "Track the same phrase, location, and language in both stores to compare positions.",
+    "openKeywords": "Open keyword tracking",
+    "listingsTitle": "One or both listings not observed",
+    "listingsDescription": "Run a listing check for both stores to populate listing parity.",
+    "openListing": "Open listing checks",
+    "chartsTitle": "Chart positions not observed",
+    "chartsDescription": "Track a chart and run a chart check to populate this comparison.",
+    "openCharts": "Open chart tracking"
+  },
+  "empty": {
+    "title": "No app profiles yet",
+    "description": "Register an app profile before comparing store observations.",
+    "cta": "Register an app"
+  },
+  "unpaired": {
+    "title": "Pair the store listings to compare them",
+    "description": "This profile is not marked as the same product in both stores. Pairing is your claim and does not verify store identity.",
+    "cta": "Manage app profiles"
+  },
+  "errors": {
+    "title": "We couldn't load the comparison",
+    "requestFailed": "The saved comparison could not be loaded. Try again."
+  }
+}

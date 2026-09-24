@@ -1,0 +1,144 @@
+{
+  "title": "结构化标记生成器",
+  "description": "用我们已经保存的页面事实生成 JSON-LD。不编造任何内容：没有事实支撑的字段会被省略，并说明原因。",
+  "new": {
+    "title": "生成标记",
+    "description": "选择页面，选择类型，确认前先看清扣费。"
+  },
+  "source": {
+    "legend": "页面来源",
+    "audited": "已审计页面",
+    "inventory": "内容清单页面",
+    "url": "粘贴网址",
+    "auditedLegend": "最近一次审计中的页面",
+    "inventoryLegend": "缺少受支持 schema 类型的页面",
+    "auditedEmpty": "先运行一次审计，页面就会出现在这里。",
+    "inventoryEmpty": "目前清单中没有缺少受支持 schema 类型的页面。",
+    "hasStructuredData": "已有结构化数据",
+    "noStructuredData": "未发现结构化数据",
+    "structuredDataErrors": "结构化数据错误：{{n}}",
+    "richResultsVerdict": "Search Console 判定：{{verdict}}",
+    "declaresNothing": "未声明任何 schema.org 类型",
+    "declaresTypes": "已声明：{{types}}",
+    "urlLabel": "页面地址",
+    "urlPlaceholder": "https://example.com/page",
+    "urlHint": "我们会通过安全连接读取该页面一次。只支持公开地址。",
+    "urlInvalid": "请输入完整的 https 地址，且不要包含用户名或密码。"
+  },
+  "type": {
+    "legend": "schema.org 类型",
+    "required": "必填：{{n}}",
+    "recommended": "建议：{{n}}",
+    "alreadyDeclared": "该页面已经声明了此类型。"
+  },
+  "preview": {
+    "title": "本次扣费",
+    "show": "查看扣费",
+    "units": "从本月额度中扣除 {{count}} 次生成。",
+    "units_other": "从本月额度中扣除 {{count}} 次生成。",
+    "confirm": "生成标记",
+    "remaining": "本月套餐剩余：{{remaining}}。",
+    "pack": "另有额度包 {{units}} 次。",
+    "noFit": "剩余额度不足。请先购买额度或更换套餐。"
+  },
+  "result": {
+    "title": "{{type}} 标记",
+    "back": "返回列表",
+    "payload": "生成的 JSON-LD",
+    "copy": "复制",
+    "copied": "已复制",
+    "download": "下载",
+    "downloadFailedTitle": "下载未开始",
+    "downloadFailed": "无法取得文件，请重试。",
+    "failedTitle": "未生成任何内容",
+    "failedProvider": "模型没有响应，因此没有保留标记。",
+    "failedRejected": "模型给出的每个字段都未通过事实核对，我们只保留了可证实的部分。",
+    "refunded": "额度已退回。",
+    "evidence": "每个字段的来源",
+    "evidenceDescription": "标记中每个字段一行，写明其背后的已保存事实。",
+    "evidenceFrom": "来自 {{fact}}",
+    "evidenceEmpty": "没有字段能用已保存的事实填充。",
+    "omissions": "我们省略的内容",
+    "omissionsDescription": "没有事实支撑的字段，以及每处缺失的原因。",
+    "omissionsEmpty": "没有省略任何内容。"
+  },
+  "fact": {
+    "pageUrl": "页面 URL",
+    "canonicalUrl": "规范 URL",
+    "pageTitle": "页面标题",
+    "metaDescription": "元描述",
+    "headingOne": "H1 标题",
+    "headingTwo": "H2 标题",
+    "faqAnswer": "FAQ 答案",
+    "pageLanguage": "页面语言",
+    "articlePublishedTime": "文章发布时间",
+    "articleModifiedTime": "文章修改时间",
+    "siteOrigin": "网站源",
+    "siteDomain": "网站域名",
+    "siteName": "网站名称"
+  },
+  "reason": {
+    "no_evidence": "我们没有相关事实",
+    "evidence_ambiguous": "我们掌握的事实互相矛盾",
+    "not_applicable": "该项不适用于此页面"
+  },
+  "conformance": {
+    "title": "对照 schema.org 检查",
+    "conforms": "此标记符合 schema.org 对 {{type}} 类型的要求。",
+    "gaps": "此标记尚不符合 schema.org 对 {{type}} 类型的要求。",
+    "requiredTitle": "补齐以下内容即可满足要求",
+    "recommendedTitle": "值得补充",
+    "requiredGap": "补充 {{property}} —",
+    "recommendedSuggestion": "等我们掌握相关事实后，可以补充 {{property}}。",
+    "version": "按属性集版本 {{version}} 检查。"
+  },
+  "list": {
+    "title": "你生成的标记",
+    "caption": "已保存的生成记录，最新在前",
+    "free": "再次打开这些记录不收费。",
+    "empty": "你还没有为该站点生成过标记。",
+    "reopen": "打开",
+    "page": "页面",
+    "type": "类型",
+    "status": "检查",
+    "statusConforms": "已满足要求",
+    "statusGaps": "缺少必填属性",
+    "statusFailed": "未生成",
+    "generatedAt": "生成时间"
+  },
+  "states": {
+    "empty": {
+      "title": "尚无审计",
+      "body": "为该站点运行一次审计，其页面就能在这里选择。"
+    },
+    "cap": {
+      "title": "本月额度已用完",
+      "body": "本月套餐内的标记生成次数已全部用完。",
+      "link": "查看套餐"
+    },
+    "notOnPlan": {
+      "title": "当前套餐不含",
+      "body": "标记生成从 Starter 套餐开始提供。"
+    },
+    "killSwitch": {
+      "title": "暂时不可用",
+      "body": "新的生成已暂停。已生成的标记仍可查看。"
+    },
+    "notFound": {
+      "title": "未找到",
+      "body": "该页面或生成记录已不可用。"
+    },
+    "unsafeUrl": {
+      "title": "无法读取该地址",
+      "body": "请输入我们被允许读取的公开 https 页面地址。"
+    },
+    "rateLimited": {
+      "title": "请求过于频繁",
+      "body": "请等待一分钟后重试。"
+    },
+    "failed": {
+      "title": "出了点问题",
+      "body": "无法完成，请重试。"
+    }
+  }
+}

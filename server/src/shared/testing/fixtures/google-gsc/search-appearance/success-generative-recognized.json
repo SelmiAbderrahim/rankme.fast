@@ -1,0 +1,26 @@
+{
+  "rows": [
+    {
+      "keys": ["AI_OVERVIEWS"],
+      "clicks": 42,
+      "impressions": 1580,
+      "ctr": 0.0265822784,
+      "position": 4.3
+    },
+    {
+      "keys": ["AI_MODE"],
+      "clicks": 7,
+      "impressions": 214,
+      "ctr": 0.032710280,
+      "position": 6.8
+    },
+    {
+      "keys": ["FAQ_RICH_RESULTS"],
+      "clicks": 91,
+      "impressions": 2903,
+      "ctr": 0.031346882,
+      "position": 5.1
+    }
+  ],
+  "responseAggregationType": "byProperty"
+}

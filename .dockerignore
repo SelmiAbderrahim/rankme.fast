@@ -1,0 +1,43 @@
+# Build contexts are ./client and ./server (see their own .dockerignore);
+# this file covers any build that uses the repository root as context.
+
+# VCS and CI
+.git
+.gitignore
+.github
+
+# Secrets and local state
+.env
+.env.*
+!.env.example
+secrets
+backup
+
+# Dependencies, build output, caches
+**/node_modules
+**/dist
+**/.vite
+**/.vite-cache
+**/.vitest-cache
+**/*.tsbuildinfo
+
+# Test and coverage output
+**/coverage
+**/coverage-*
+**/.cov*
+**/*.stale
+**/playwright-report
+**/test-results
+**/.playwright-cli
+**/*.log
+
+# Not needed in any image
+docs
+ops
+scripts
+tools
+.claude
+graphify-out
+*.md
+LICENSE
+Makefile

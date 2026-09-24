@@ -1,0 +1,270 @@
+{
+  "title": "竞争对手",
+  "description": "查看您与哪些网站竞争，以及他们排名的关键词。",
+  "empty": "尚未找到此域名的竞争对手。跟踪几个关键词，我们将分析在这些搜索结果中占据主导地位的网站。",
+  "emptyTitle": "尚无竞争对手",
+  "loadFailed": "无法加载竞争对手。",
+  "intersectionFailed": "无法加载差距关键词。",
+  "table": {
+    "title": "主要竞争对手",
+    "domain": "域名",
+    "overlap": "重叠",
+    "avgPosition": "平均排名",
+    "estTraffic": "预估流量",
+    "actions": "操作",
+    "gapAction": "显示差距",
+    "sourceTrackedKeywords": "基于您跟踪的关键词"
+  },
+  "gap": {
+    "title": "{{competitor}} 排名而您未排名的关键词",
+    "loading": "正在加载差距…",
+    "keyword": "关键词",
+    "theyRank": "他们的排名",
+    "volume": "搜索量",
+    "emptyTitle": "无差距关键词",
+    "empty": "尚无差距关键词——您与他们排名相同的关键词。"
+  },
+  "refresh": {
+    "button": "刷新",
+    "cooldown": "请等待 {{seconds}} 秒后再刷新。",
+    "failed": "暂时无法刷新。仍显示您最近的数据。"
+  },
+  "locked": {
+    "title": "升级以解锁竞争对手分析",
+    "body": "竞品组合和关键词版图从 Pro 开始提供。Agency 还可生成更大规模的报告，并比较排名页面内容。",
+    "upgrade": "查看计划"
+  },
+  "example": {
+    "title": "示例：Pro 与 Agency 提供的功能"
+  },
+  "intelligence": {
+    "title": "竞争对手情报",
+    "description": "管理已确认的竞争对手、比较关键词情况，并在一个网站工作区中保留已接受的建议。",
+    "common": {
+      "cancel": "取消"
+    },
+    "tiers": {
+      "starter": "入门版",
+      "pro": "专业版",
+      "agency": "代理商版"
+    },
+    "views": {
+      "label": "竞品分析视图",
+      "overview": "概述",
+      "keywords": "关键词版图",
+      "content": "内容",
+      "monitoring": "监控",
+      "traffic": "流量",
+      "reports": "报告"
+    },
+    "locked": {
+      "title": "竞品分析从 Pro 开始提供",
+      "description": "升级到 Pro 后，你可以确认竞品、生成关键词版图，并把建议接受到后续操作中。",
+      "action": "比较计划"
+    },
+    "portfolio": {
+      "title": "已确认的竞争对手组合",
+      "description": "{{active}} 的 {{max}} 活跃竞争对手位置正在使用中。管理此列表不使用津贴。",
+      "manualLabel": "添加公开竞争对手 URL",
+      "manualPlaceholder": "https://competitor.example/",
+      "add": "添加竞争对手",
+      "adding": "添加竞争对手...",
+      "confirmed": "竞争对手确认。",
+      "duplicate": "该竞争对手已经在产品组合中。",
+      "confirmedLabel": "已确认",
+      "confirm": "确认竞争对手",
+      "confirmTitle": "确认该竞争对手？",
+      "confirmDescription": "将 {{domain}} 添加到站点组合中。这不会运行付费查找。",
+      "emptyTitle": "没有确认的竞争对手",
+      "empty": "确认发现建议或添加公开竞争对手 URL。",
+      "domain": "域名",
+      "source": "出处",
+      "status": "状态",
+      "added": "已添加",
+      "action": "行动",
+      "archive": "存档",
+      "restore": "恢复",
+      "archivePending": "归档...",
+      "restorePending": "正在恢复…",
+      "sources": {
+        "suggested": "发现建议",
+        "manual": "手动添加"
+      },
+      "statuses": {
+        "active": "活跃",
+        "archived": "已存档"
+      }
+    },
+    "discovery": {
+      "title": "竞争对手发现",
+      "description": "免费查看存储的建议。仅在准确的支出预览和确认后才会开始新的发现刷新。",
+      "empty": "尚未存储发现建议。",
+      "captured": "已存储 {{date}}",
+      "observed": "观察 {{date}}",
+      "partial": "一些发现源没有返回数据。显示存储的结果而不填充空白。",
+      "previewAction": "预览发现刷新",
+      "previewing": "正在准备发现预览...",
+      "reviewAction": "审核并确认",
+      "confirmTitle": "运行新的发现刷新？",
+      "confirmDescription": "此刷新使用 {{units}} 关键字查找单元。刷新前仍保留 {{remaining}} 单位。",
+      "confirmAction": "确认刷新"
+    },
+    "technology": {
+      "title": "当前投资组合摘要",
+      "description": "此摘要仅使用存储的投资组合事实。它不会启动技术检测或其他付费查找。",
+      "summary": "{{manual}} 竞争对手是手动添加的，{{suggested}} 来自已确认的发现建议。在存在单独预览的查找之前，技术详细信息将保持不可用。"
+    },
+    "landscape": {
+      "title": "建立关键词景观",
+      "description": "选择最多 {{count}} 个已确认的竞争对手。服务器在运行开始之前检查等级、市场、配额和确切单位。",
+      "selection": "已选择 {{selected}} 名 {{count}} 名参赛者",
+      "limit": "您最多可以为此报告选择 {{count}} 个竞争对手。",
+      "emptyTitle": "首先确认竞争对手",
+      "empty": "返回概述并添加至少一名活跃竞争对手。",
+      "previewAction": "预览报告支出",
+      "previewing": "正在准备报告预览...",
+      "previewTitle": "服务器权威支出预览",
+      "previewDescription": "此报告使用 {{units}} 关键字查找单元，最多可保留 {{rows}} 行。在开始之前剩余 {{remaining}} 单位。",
+      "cacheCounts": "缓存命中数计入使用量",
+      "reviewAction": "审核并确认",
+      "confirmTitle": "开始这份景观报告吗？",
+      "confirmDescription": "比较 {{count}} 竞争对手的 {{units}} 关键字查找单位。",
+      "confirmAction": "确认报告",
+      "duplicate": "匹配的报告请求已存在。现有运行已开放。",
+      "editMarket": "编辑跟踪关键字市场"
+    },
+    "reports": {
+      "title": "存储的景观报告",
+      "description": "重新打开不可变的报告，而无需开始另一个供应商查找。",
+      "emptyTitle": "没有景观报告",
+      "empty": "从关键字横向视图创建报告。",
+      "date": "已创建",
+      "competitors": "竞争对手",
+      "state": "状态",
+      "action": "行动",
+      "open": "打开报告",
+      "more": "加载更多报告",
+      "loadFailedTitle": "无法加载此报告"
+    },
+    "detail": {
+      "title": "景观报告",
+      "summary": "{{domain}} 与 {{count}} 竞争对手于 {{date}} 进行比较。",
+      "progress": "{{done}}（共 {{total}} 源步骤已完成）",
+      "polling": "该报告仍在运行。该存储的状态将自动刷新。",
+      "partial": "{{requested}} 竞争对手的 {{usable}} 生成了可用数据。 {{failed}} 源步骤失败；未推断出缺失值。",
+      "back": "返回报告历史",
+      "cancel": "取消报告",
+      "rollupTitle": "组合关键词汇总",
+      "rollupDescription": "{{usable}} 竞争对手中的 {{rows}} 关键字行。",
+      "filtersTitle": "报告过滤器",
+      "classFilter": "关键词类",
+      "domainFilter": "竞争对手",
+      "textFilter": "搜索关键词",
+      "allClasses": "所有课程",
+      "allDomains": "所有参赛者",
+      "keywordsTitle": "关键词证据",
+      "keywordsDescription": "排名和 URL 是观察到的事实。搜索量是提供商的估计值；派生出类别和建议。",
+      "keyword": "关键词",
+      "class": "班级",
+      "ownedRank": "你的军衔",
+      "competitorRank": "参赛者排名",
+      "volume": "预计数量",
+      "source": "证据",
+      "sourcesTitle": "来源观察",
+      "sourcesDescription": "提供者、缓存、状态和观察日期都保留在这个不可变的报告中。",
+      "sourcesEmpty": "对于这个结果没有保留源观察。",
+      "observationDate": "观察 {{date}}",
+      "missing": "未观察到",
+      "next": "下一页",
+      "noMatchTitle": "没有匹配的关键字",
+      "noMatch": "更改或清除当前支持 URL 的过滤器。",
+      "noDataTitle": "没有保留报告数据",
+      "noData": "运行结束时没有足够的可用源数据。不估计缺失值。",
+      "matchesTitle": "建议的页面匹配",
+      "matchesDescription": "这些存储的建议会比较排名 URL。他们不会开始内容抓取。",
+      "matchesEmpty": "没有可用的安全页面匹配。",
+      "matchReason": "{{reason}} · {{confidence}} 置信度",
+      "matchOwnedUrl": "已审核的自有页面网址",
+      "matchCompetitorUrl": "已审核的竞争对手排名网址",
+      "approveMatch": "批准匹配",
+      "rejectMatch": "拒绝",
+      "openSuggested": "打开建议页面",
+      "analyzeReviewed": "比较已审核页面",
+      "monitorReviewed": "监测此已审核页面",
+      "focusAnalysis": "开始聚焦分析",
+      "matchSaveError": "无法保存页面匹配。",
+      "recommendationsTitle": "优势和建议",
+      "recommendationsDescription": "在您明确接受建议之前，建议仅作为报告使用。",
+      "recommendationsEmpty": "没有建议符合证据阈值。",
+      "accept": "接受下一步行动",
+      "acceptTitle": "接受这个建议吗？",
+      "acceptDescription": "接受创造了持久的下一步行动。再次发送相同的决定不会创建重复的决定。",
+      "acceptConfirm": "接受推荐",
+      "openAction": "在下一步操作中打开"
+    },
+    "classes": {
+      "missing": "失踪",
+      "owned_only": "你只排名",
+      "shared_behind": "共享，落后",
+      "shared_ahead": "共享，前进",
+      "shared_even": "共享，甚至"
+    },
+    "runStates": {
+      "queued": "排队",
+      "collecting": "收藏",
+      "aggregating": "建筑报告",
+      "completed": "已完成",
+      "partial": "部分",
+      "failed": "失败",
+      "cancelled": "取消"
+    },
+    "states": {
+      "loading": "报告进行中",
+      "partial": "部分数据",
+      "cap": "该请求超出了剩余津贴。在确认之前升级或添加符合条件的积分包。",
+      "disabled": "暂时禁止新的竞争对手请求。存储的报告仍然可用。",
+      "unsafeLink": "隐藏不安全来源链接",
+      "rateLimit": "请求太多。等待并重试。",
+      "providerFailure": "源失败。可用数据仍然可见。",
+      "cancelled": "在所有源步骤完成之前，报告已被取消。",
+      "stale": "此存储的结果可能已过时。其观测日期仍然可见。"
+    },
+    "labels": {
+      "observed": "观察到",
+      "estimate": "估计",
+      "derived": "派生"
+    },
+    "cache": {
+      "hit": "存储缓存结果",
+      "miss": "新鲜来源结果"
+    },
+    "market": {
+      "tracked_keyword_mode": "来自跟踪关键字的市场",
+      "default": "默认市场回落"
+    },
+    "confidence": {
+      "high": "高",
+      "medium": "中等",
+      "low": "低"
+    },
+    "matchReasons": {
+      "same_keyword": "相同排名关键词",
+      "highest_coverage": "最高的竞争对手覆盖率",
+      "closest_rank": "最接近的观察排名"
+    },
+    "errors": {
+      "generic": "无法完成竞争对手的请求。"
+    }
+  },
+  "techStack": {
+    "action": "查看技术栈",
+    "cms": "CMS",
+    "analytics": "分析",
+    "hosting": "托管",
+    "ecommerce": "电子商务",
+    "other": "其他",
+    "loading": "正在检测技术…",
+    "empty": "未检测到任何技术。",
+    "failed": "无法加载技术栈。"
+  }
+}

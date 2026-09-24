@@ -1,0 +1,1 @@
+ALTER TABLE "user" ADD COLUMN "provisional_account" boolean DEFAULT false NOT NULL;

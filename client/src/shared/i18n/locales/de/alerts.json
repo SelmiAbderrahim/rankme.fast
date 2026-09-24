@@ -1,0 +1,133 @@
+{
+  "title": "Warnungen",
+  "subtitle": "Erfahre sofort, wenn eine Position fällt oder sich dein Linkprofil ändert.",
+  "tabs": {
+    "rules": "Regeln",
+    "log": "Versandprotokoll"
+  },
+  "type": {
+    "rank_drop": "Positionsverlust",
+    "new_backlink": "Neue Links",
+    "lost_backlink": "Verlorene Links"
+  },
+  "channel": {
+    "email": "E-Mail",
+    "slack": "Slack",
+    "webhook": "Webhook"
+  },
+  "filters": {
+    "type": "Typ",
+    "state": "Status",
+    "all": "Alle"
+  },
+  "list": {
+    "title": "Deine Regeln",
+    "capUsed": "{{count}} Regeln in Verwendung.",
+    "type": "Typ",
+    "threshold": "Schwelle",
+    "channels": "Kanäle",
+    "state": "Status",
+    "actions": "Aktionen",
+    "emailCount": "{{count}} E-Mail-Empfänger",
+    "secretTail": "Signaturschlüssel endet auf {{tail}}",
+    "enabled": "An",
+    "disabled": "Aus",
+    "enable": "Einschalten",
+    "disable": "Ausschalten",
+    "viewLog": "Protokoll ansehen",
+    "delete": "Löschen"
+  },
+  "builder": {
+    "title": "Neue Regel",
+    "description": "Wähle, was überwacht wird und wohin es geht.",
+    "site": "Website",
+    "sitePlaceholder": "Website wählen",
+    "type": "Warnungstyp",
+    "threshold": "Positionsschwelle",
+    "thresholdHint": "Wir warnen, sobald die bestätigte Position diesen Rang oder schlechter erreicht.",
+    "channels": "Kanäle",
+    "slackPlaceholder": "Adresse des eingehenden Slack-Webhooks",
+    "webhookPlaceholder": "Deine https-Adresse",
+    "paidChannelLocked": "Slack- und Webhook-Kanäle erfordern mindestens den Pro-Tarif.",
+    "noChannel": "Wähle mindestens einen Kanal.",
+    "submit": "Regel anlegen"
+  },
+  "secret": {
+    "title": "Kopiere jetzt deinen Signaturschlüssel",
+    "body": "Wir zeigen diesen Schlüssel nur einmal. Bewahre ihn sicher auf — du kannst ihn ersetzen, aber nie wieder lesen.",
+    "dismiss": "Kopiert"
+  },
+  "log": {
+    "title": "Versandprotokoll",
+    "description": "Jede gesendete Warnung samt der beiden Beobachtungen dahinter.",
+    "channel": "Kanal",
+    "status": "Status",
+    "evidence": "Was sich geändert hat",
+    "detail": "Detail",
+    "rankPair": "Position {{before}} am {{beforeAt}}, dann {{after}} am {{afterAt}}.",
+    "linkPair": "{{beforeCount}} Domains am {{beforeAt}}, dann {{afterCount}} am {{afterAt}}.",
+    "notRanked": "außerhalb der ersten 100 Treffer",
+    "domainCount": "{{count}} Domains verändert",
+    "attempt": "Versuch {{attempt}}",
+    "statusLabel": {
+      "pending": "Wird gesendet",
+      "sent": "Gesendet",
+      "failed": "Fehlgeschlagen",
+      "suppressed": "Gestoppt"
+    },
+    "suppressed": {
+      "opted_out": "Der Empfänger hat diese E-Mails abbestellt.",
+      "membership_removed": "Der Empfänger gehört nicht mehr zum Konto.",
+      "no_transport": "E-Mail ist in dieser Installation nicht eingerichtet.",
+      "rule_disabled": "Die Regel war beim Auslösen ausgeschaltet.",
+      "retries_exhausted": "Wir haben nach drei Fehlversuchen gestoppt.",
+      "flag_disabled": "Warnungen wurden vom Betreiber abgeschaltet."
+    },
+    "error": {
+      "transport_unavailable": "Der Kanal war nicht erreichbar.",
+      "transport_rejected": "Der Kanal hat die Nachricht abgelehnt.",
+      "transport_exception": "Der Kanal ist unerwartet fehlgeschlagen.",
+      "unsafe_url": "Diese Adresse ist nicht mehr sicher erreichbar.",
+      "channel_timeout": "Der Kanal hat zu lange geantwortet.",
+      "retries_exhausted": "Wir haben nach drei Fehlversuchen gestoppt."
+    }
+  },
+  "states": {
+    "cap": {
+      "title": "Regelgrenze erreicht",
+      "body": "Du hast alle Warnregeln deines Tarifs verbraucht."
+    },
+    "tierLocked": {
+      "title": "Kanal erfordert höheren Tarif",
+      "body": "Slack- und Webhook-Kanäle erfordern mindestens den Pro-Tarif."
+    },
+    "disabled": {
+      "title": "Warnungen pausiert",
+      "body": "Warnungen sind vorübergehend nicht verfügbar. Regeln und Protokoll bleiben erhalten."
+    },
+    "notFound": {
+      "title": "Nicht gefunden",
+      "body": "Diese Regel gibt es nicht mehr."
+    },
+    "rateLimited": {
+      "title": "Zu viele Anfragen",
+      "body": "Zu viele Warnungsanfragen. Versuche es in einer Minute erneut."
+    },
+    "invalid": {
+      "title": "Formular prüfen",
+      "body": "Ein Wert in der Regel ist noch nicht gültig."
+    },
+    "failed": {
+      "title": "Etwas ist schiefgelaufen",
+      "body": "Wir konnten das nicht abschließen. Versuche es erneut."
+    },
+    "empty": {
+      "title": "Noch keine Regeln",
+      "body": "Lege eine Regel an, um Warnungen zu erhalten."
+    },
+    "noSites": {
+      "title": "Zuerst eine Website hinzufügen",
+      "body": "Warnungen überwachen eine Website — füge eine hinzu."
+    }
+  }
+}

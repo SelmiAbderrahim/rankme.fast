@@ -1,0 +1,62 @@
+{
+  "title": "تحسين ظهور التطبيقات",
+  "description": "أدر ملفات التطبيقات وإشارات المتاجر المرتبطة بهذا الموقع.",
+  "views": {
+    "profiles": "الملفات",
+    "keywords": "الكلمات المفتاحية",
+    "listing": "صفحة المتجر",
+    "charts": "التصنيفات",
+    "research": "البحث",
+    "reviews": "المراجعات",
+    "compare": "المقارنة",
+    "comingSoon": "ستتوفر مساحة العمل هذه قريبًا ضمن هذه الدفعة."
+  },
+  "locked": {
+    "title": "تحسين ظهور التطبيقات متاح في خطة Pro",
+    "description": "رقِّ إلى Pro أو أعلى لتسجيل ملفات التطبيقات وفتح مساحة العمل.",
+    "cta": "عرض الخطط"
+  },
+  "registration": {
+    "title": "تسجيل تطبيق",
+    "description": "أضف معرّف حزمة Google Play أو معرّف App Store أو كليهما. يتحقق التسجيل من التنسيق فقط ولا يستهلك أرصدة المورد.",
+    "playLabel": "معرّف حزمة Google Play",
+    "playPlaceholder": "مثال: com.example.app",
+    "playHelp": "استخدم معرّف الحزمة بنمط النطاق العكسي الظاهر في Google Play.",
+    "appleLabel": "معرّف Apple App Store",
+    "applePlaceholder": "123456789",
+    "appleHelp": "أدخل معرّف التطبيق الرقمي المكوّن من 6 إلى 12 رقمًا.",
+    "pairedLabel": "اعتبار القائمتين للتطبيق نفسه",
+    "pairedHelp": "اربط القائمتين فقط عندما تمثلان المنتج نفسه.",
+    "usage": "{{used}} من {{limit}} ملفات",
+    "submit": "تسجيل التطبيق",
+    "registering": "جارٍ التسجيل…"
+  },
+  "profiles": {
+    "googlePlay": "متجر Google Play",
+    "appStore": "متجر App Store",
+    "emptyTitle": "لا توجد ملفات تطبيقات بعد",
+    "emptyDescription": "سجّل تطبيقًا من Play أو App Store للبدء.",
+    "paired": "مرتبط",
+    "deleteLabel": "حذف {{id}}",
+    "deleteTitle": "هل تريد حذف ملف التطبيق؟",
+    "deleteDescription": "سيُحذف أيضًا سجل تحسين ظهور التطبيق المخزّن. لا يمكن التراجع عن ذلك.",
+    "cancel": "إلغاء",
+    "confirmDelete": "حذف الملف"
+  },
+  "states": {
+    "limitTitle": "وصلت إلى حد ملفات التطبيقات",
+    "limitDescription": "احذف ملفًا لإتاحة مكان، أو اختر خطة تسمح بملفات أكثر.",
+    "upgrade": "عرض الخطط",
+    "errorTitle": "تعذر تحديث ملفات التطبيقات"
+  },
+  "validation": {
+    "storeRequired": "أدخل معرّف متجر واحدًا على الأقل.",
+    "playFormat": "أدخل معرّف حزمة بنمط النطاق العكسي، مثل com.example.app.",
+    "playTooLong": "معرّف حزمة Google Play طويل جدًا.",
+    "appleFormat": "أدخل معرّف App Store مكوّنًا من 6 إلى 12 رقمًا.",
+    "pairedRequired": "تحتاج الملفات المرتبطة إلى معرّفي المتجرين."
+  },
+  "errors": {
+    "requestFailed": "تعذر إكمال الطلب. حاول مرة أخرى."
+  }
+}

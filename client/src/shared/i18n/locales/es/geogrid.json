@@ -1,0 +1,113 @@
+{
+  "title": "Seguimiento local con geocuadrícula",
+  "description": "Comprueba en qué posición aparece tu negocio en el pack local a lo largo de una cuadrícula de coordenadas. Un escaneo cubre toda la cuadrícula y cuesta un escaneo de geocuadrícula.",
+  "locked": {
+    "body": "Los escaneos de geocuadrícula están en los planes Pro y Agencia.",
+    "cta": "Ver planes"
+  },
+  "form": {
+    "keyword": "Palabra clave en seguimiento",
+    "keywordPlaceholder": "Elige una palabra clave",
+    "coordinateHelp": "Escribe el punto central en números. No hay selector de mapa: no compramos teselas de mapa.",
+    "latitude": "Latitud del centro",
+    "longitude": "Longitud del centro",
+    "spacing": "Separación entre puntos",
+    "spacingOption": "{{km}} km",
+    "spacingCustom": "Separación en metros",
+    "size": "Tamaño de la cuadrícula",
+    "sizeOption": "{{size}} por {{size}} ({{cells}} puntos)",
+    "zoom": "Zoom del mapa",
+    "preview": "Estimar este escaneo",
+    "previewing": "Estimando…",
+    "errors": {
+      "keyword": "Elige primero una palabra clave en seguimiento.",
+      "latitude": "La latitud debe estar entre -{{max}} y {{max}}.",
+      "longitude": "La longitud debe estar entre -180 y 180.",
+      "spacing": "La separación debe estar entre {{min}} y {{max}} metros, en pasos de {{step}}.",
+      "zoom": "El zoom debe estar entre {{min}} y {{max}}."
+    }
+  },
+  "preview": {
+    "title": "Lo que cuesta este escaneo",
+    "body": "{{units}} escaneo de geocuadrícula cubre los {{cells}} puntos.",
+    "remaining": "Te quedan {{base}} en tu plan y {{pack}} en packs.",
+    "packUnavailable": "Ahora mismo no hay ningún pack de geocuadrícula configurado para comprar.",
+    "confirm": "Ejecutar el escaneo",
+    "running": "Ejecutando…",
+    "cancel": "Cancelar"
+  },
+  "history": {
+    "title": "Escaneos anteriores",
+    "row": "{{keyword}} — {{size}} por {{size}}",
+    "meta": "{{status}} · {{createdAt}}",
+    "emptyTitle": "Aún no hay escaneos",
+    "emptyBody": "Ejecuta tu primera cuadrícula para ver tu posición alrededor de un lugar."
+  },
+  "grid": {
+    "title": "Cuadrícula de calor",
+    "ariaLabel": "Posiciones del pack local en una cuadrícula de {{size}} por {{size}}",
+    "emptyTitle": "Ningún escaneo seleccionado",
+    "emptyBody": "Elige un escaneo anterior o ejecuta uno nuevo.",
+    "running": "Este escaneo sigue en marcha. Los puntos aparecen al terminar.",
+    "cellPending": "Punto {{index}}: aún sin comprobar",
+    "cellObserved": "Punto {{index}}: posición {{position}} de {{packSize}} en {{lat}}, {{lng}}, comprobado el {{capturedAt}}",
+    "cellNotInPack": "Punto {{index}}: fuera del pack local en {{lat}}, {{lng}}, comprobado el {{capturedAt}}",
+    "cellFailed": "Punto {{index}}: la comprobación falló en {{lat}}, {{lng}}",
+    "legend": {
+      "top": "Posiciones uno a tres",
+      "mid": "Posiciones cuatro a siete",
+      "low": "Posición ocho o peor",
+      "notInPack": "Fuera del pack local",
+      "failed": "Comprobación fallida"
+    }
+  },
+  "table": {
+    "caption": "Cada punto de la cuadrícula, su coordenada y lo que vimos allí.",
+    "point": "Punto",
+    "latitude": "Latitud",
+    "longitude": "Longitud",
+    "position": "Posición",
+    "packSize": "Tamaño del pack",
+    "capturedAt": "Comprobado",
+    "state": "Estado"
+  },
+  "detail": {
+    "observed": "El punto {{index}} ocupa la posición {{position}} de {{packSize}} en {{lat}}, {{lng}} (comprobado el {{capturedAt}}).",
+    "notInPack": "El punto {{index}} está fuera del pack local en {{lat}}, {{lng}} (comprobado el {{capturedAt}}).",
+    "failed": "No se pudo comprobar el punto {{index}} en {{lat}}, {{lng}}."
+  },
+  "states": {
+    "observed": "En el pack",
+    "not_in_pack": "Fuera del pack",
+    "failed": "Comprobación fallida"
+  },
+  "status": {
+    "queued": "En cola",
+    "running": "En marcha",
+    "completed": "Hecho",
+    "completed_partial": "Hecho con huecos",
+    "failed": "Fallido"
+  },
+  "outcome": {
+    "partialTitle": "Algunos puntos no respondieron",
+    "partialBody": "{{failed}} de {{total}} puntos fallaron. El resto son comprobaciones reales.",
+    "failedTitle": "El escaneo falló",
+    "failedBody": "Ningún punto respondió, así que no hay nada que mostrar.",
+    "failedRefunded": "Ningún punto respondió, así que devolvimos el escaneo a tu cuota."
+  },
+  "gates": {
+    "cap": "Te has quedado sin escaneos de geocuadrícula",
+    "killSwitch": "Los escaneos de geocuadrícula están en pausa",
+    "notOnPlan": "No está en tu plan",
+    "notFound": "No encontrado",
+    "rateLimited": "Demasiadas solicitudes",
+    "invalid": "Revisa los ajustes de la cuadrícula",
+    "failed": "Algo salió mal",
+    "packCta": "Comprar un pack de geocuadrícula"
+  },
+  "errors": {
+    "loadFailed": "No pudimos cargar tus escaneos de geocuadrícula.",
+    "previewFailed": "No pudimos estimar este escaneo.",
+    "submitFailed": "No pudimos iniciar este escaneo."
+  }
+}

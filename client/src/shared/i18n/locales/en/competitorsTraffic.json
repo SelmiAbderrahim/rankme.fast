@@ -1,0 +1,153 @@
+{
+  "title": "Traffic Insights",
+  "description": "Request and reopen provider-index traffic estimates for any public domain.",
+  "common": {
+    "notAvailable": "Not available"
+  },
+  "estimate": {
+    "label": "Estimate",
+    "coverage": "Modeled from the provider's index, not analytics data.",
+    "observedAt": "Observed {{date}}",
+    "source": "Source",
+    "freshness": {
+      "fresh": "Fresh",
+      "stale": "Stale",
+      "partial": "Partial",
+      "blocked": "Blocked",
+      "failed": "Failed",
+      "unknown": "Freshness unknown"
+    }
+  },
+  "request": {
+    "title": "Request a snapshot",
+    "description": "Preview the exact allowance impact before starting a paid snapshot.",
+    "marketLabel": "Market",
+    "marketValue": "United States · English",
+    "domainLabel": "Domain",
+    "domainPlaceholder": "example.com",
+    "domainHelp": "Enter a public domain without http://, https://, a path, or credentials.",
+    "preview": "Preview snapshot",
+    "previewing": "Preparing preview…",
+    "confirm": "Confirm snapshot",
+    "confirming": "Starting snapshot…",
+    "cancel": "Cancel"
+  },
+  "preview": {
+    "title": "Spend preview",
+    "operatorNotice": "This request uses the operator's configured traffic-data provider.",
+    "units": "{{count}} traffic snapshot unit",
+    "units_other": "{{count}} traffic snapshot units",
+    "cached": "Cached",
+    "fresh_required": "Fresh lookup",
+    "baseRemaining": "Base allowance remaining",
+    "packRemaining": "Pack allowance remaining",
+    "packTitle": "Need more snapshots?",
+    "packLink": "View credit packs"
+  },
+  "detail": {
+    "description": "Every number below is an estimate, not measured analytics.",
+    "monthlyVisits": "Estimated monthly organic visits",
+    "rank": "Estimated domain rank",
+    "keywords": "Estimated keyword count",
+    "countries": {
+      "title": "Estimated country split",
+      "description": "Top countries retained by the provider index.",
+      "country": "Country",
+      "visits": "Estimated visits"
+    },
+    "history": {
+      "title": "Estimated traffic history",
+      "description": "Up to 24 retained monthly points.",
+      "empty": "No history points were retained for this snapshot.",
+      "expandTable": "Expand the accessible history table",
+      "tableCaption": "Estimated rank, traffic, and keyword history",
+      "date": "Date"
+    }
+  },
+  "list": {
+    "title": "Stored snapshots",
+    "description": "Stored reads are free and stay available when new requests are paused.",
+    "filters": {
+      "domain": "Filter by domain",
+      "from": "From date",
+      "to": "To date"
+    },
+    "columns": {
+      "domain": "Domain",
+      "captured": "Captured",
+      "visits": "Estimated visits",
+      "action": "Action"
+    },
+    "open": "Open snapshot",
+    "previous": "Previous",
+    "next": "Next"
+  },
+  "states": {
+    "empty": {
+      "title": "No traffic snapshots yet",
+      "description": "Preview your first domain snapshot.",
+      "cta": "Start with a domain"
+    },
+    "partial": {
+      "title": "Partial estimate",
+      "description": "{{retained}} of three provider operations were retained. Missing fields are not inferred."
+    },
+    "failed": {
+      "title": "Snapshot failed",
+      "refund": "No provider operation was retained, so the reserved snapshot unit was refunded."
+    },
+    "locked": {
+      "title": "New snapshots are temporarily paused",
+      "description": "Traffic Insights is temporarily unavailable for new requests. Stored snapshots remain available."
+    },
+    "cap": {
+      "title": "Snapshot allowance reached",
+      "description": "This request does not fit your remaining base and pack allowance. Check Billing for current pack availability.",
+      "link": "View snapshot packs"
+    },
+    "upgrade": {
+      "title": "Traffic Insights is not on your plan",
+      "description": "Choose a paid plan to request traffic snapshots. You can still open any stored snapshots shared with this workspace.",
+      "link": "Compare plans"
+    },
+    "timeout": {
+      "title": "The request took too long",
+      "retry": "Try again",
+      "retrying": "Trying again…"
+    },
+    "signedOut": "Sign in to view Traffic Insights.",
+    "queued": "Snapshot queued",
+    "running": "Snapshot running",
+    "succeeded": "Snapshot complete"
+  },
+  "errors": {
+    "invalidDomain": "Enter a valid public domain without a scheme or path.",
+    "requestFailed": "Could not start the traffic snapshot.",
+    "previewFailed": "Could not prepare the spend preview.",
+    "listFailed": "Could not load stored traffic snapshots.",
+    "detailFailed": "Could not load this traffic snapshot.",
+    "compareFailed": "Could not compare these traffic snapshots.",
+    "previewTitle": "Preview unavailable"
+  },
+  "compare": {
+    "title": "Compare traffic snapshots",
+    "description": "Compare two to five stored estimates side by side. Opening this view does not use your allowance.",
+    "clamped": "You can compare up to {{count}} snapshots. The sixth snapshot was not added.",
+    "select": "Select snapshots",
+    "selectSnapshot": "Select {{domain}} for comparison",
+    "button": "Compare {{count}} snapshots",
+    "remove": "Remove {{domain}} from comparison",
+    "countriesTitle": "Aligned estimated country split",
+    "historyTitle": "Overlaid estimated traffic history",
+    "historyDescription": "Series colors follow snapshot order and use the shared chart palette.",
+    "chartLabel": "Overlaid estimated traffic history for selected snapshots",
+    "historyEmpty": "No comparable history points were retained.",
+    "expandTable": "Show the accessible comparison table",
+    "tableCaption": "Estimated monthly traffic history by snapshot"
+  },
+  "agency": {
+    "tabsLabel": "Competitors workspace views",
+    "overviewTab": "Competitors",
+    "trafficTab": "Traffic Insights"
+  }
+}

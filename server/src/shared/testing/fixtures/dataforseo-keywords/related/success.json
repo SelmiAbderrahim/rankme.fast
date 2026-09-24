@@ -1,0 +1,62 @@
+{
+  "version": "0.1.20260101",
+  "status_code": 20000,
+  "status_message": "Ok.",
+  "time": "0.1421 sec.",
+  "cost": 0.025,
+  "tasks_count": 1,
+  "tasks_error": 0,
+  "tasks": [
+    {
+      "id": "TASK_ID",
+      "status_code": 20000,
+      "status_message": "Ok.",
+      "time": "0.1201 sec.",
+      "cost": 0.025,
+      "result_count": 1,
+      "path": ["v3", "dataforseo_labs", "google", "related_keywords", "live"],
+      "data": {
+        "api": "dataforseo_labs",
+        "function": "related_keywords",
+        "location_code": 2840,
+        "language_code": "en",
+        "keyword": "seo audit tool"
+      },
+      "result": [
+        {
+          "items": [
+            {
+              "keyword_data": {
+                "keyword": "free seo audit tool",
+                "keyword_info": {
+                  "search_volume": 3200,
+                  "cpc": 3.14,
+                  "monthly_searches": [
+                    { "year": 2025, "month": 11, "search_volume": 3100 },
+                    { "year": 2025, "month": 12, "search_volume": 3200 }
+                  ]
+                },
+                "keyword_properties": {
+                  "keyword_difficulty": 48
+                }
+              }
+            },
+            {
+              "keyword_data": {
+                "keyword": "best seo audit tool",
+                "keyword_info": {
+                  "search_volume": 1800,
+                  "cpc": 5.02,
+                  "monthly_searches": null
+                },
+                "keyword_properties": {
+                  "keyword_difficulty": null
+                }
+              }
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

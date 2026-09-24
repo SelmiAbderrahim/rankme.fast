@@ -1,0 +1,11 @@
+{
+  "dimensionHeaders": [{ "name": "date" }],
+  "metricHeaders": [
+    { "name": "sessions", "type": "TYPE_INTEGER" },
+    { "name": "activeUsers", "type": "TYPE_INTEGER" },
+    { "name": "engagedSessions", "type": "TYPE_INTEGER" },
+    { "name": "keyEvents", "type": "TYPE_FLOAT" }
+  ],
+  "metadata": { "currencyCode": "USD", "timeZone": "America/Los_Angeles" },
+  "kind": "analyticsData#runReport"
+}

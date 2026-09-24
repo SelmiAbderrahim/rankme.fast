@@ -1,0 +1,67 @@
+{
+  "version": "0.1.20260101",
+  "status_code": 20000,
+  "status_message": "Ok.",
+  "time": "0.1611 sec.",
+  "cost": 0.011,
+  "tasks_count": 1,
+  "tasks_error": 0,
+  "tasks": [
+    {
+      "id": "TASK_ID",
+      "status_code": 20000,
+      "status_message": "Ok.",
+      "time": "0.1401 sec.",
+      "cost": 0.011,
+      "result_count": 1,
+      "path": ["v3", "dataforseo_labs", "google", "domain_intersection", "live"],
+      "data": {
+        "api": "dataforseo_labs",
+        "function": "domain_intersection",
+        "target1": "rival-one.example",
+        "target2": "example.com",
+        "location_code": 2840,
+        "language_code": "en",
+        "intersections": false,
+        "item_types": ["organic"],
+        "limit": 100
+      },
+      "result": [
+        {
+          "location_code": 2840,
+          "language_code": "en",
+          "total_count": 2,
+          "items_count": 2,
+          "items": [
+            {
+              "se_type": "google",
+              "keyword_data": {
+                "keyword": "seo audit tool",
+                "keyword_info": {
+                  "search_volume": 5400
+                }
+              },
+              "first_domain_serp_element": {
+                "rank_group": 7
+              },
+              "second_domain_serp_element": null
+            },
+            {
+              "se_type": "google",
+              "keyword_data": {
+                "keyword": "rank tracker",
+                "keyword_info": {
+                  "search_volume": null
+                }
+              },
+              "first_domain_serp_element": {
+                "rank_group": 2
+              },
+              "second_domain_serp_element": null
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

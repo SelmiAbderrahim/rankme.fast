@@ -1,0 +1,41 @@
+{
+  "title": "Lokale SEO",
+  "description": "Firmeneinträge, Bewertungen und Ranking im Kartenpaket für Ihre Seite.",
+  "empty": "Noch keine lokalen SEO-Daten — klicken Sie auf Aktualisieren, um Einträge, Bewertungen und Fragen zu laden.",
+  "emptyTitle": "Noch keine lokalen Daten",
+  "emptyCta": "Lokale Daten abrufen",
+  "refresh": {
+    "button": "Lokale SEO aktualisieren",
+    "cooldown": "Aktualisierung in {{seconds}} s",
+    "failed": "Lokale SEO konnte nicht aktualisiert werden. Bitte gleich noch einmal versuchen."
+  },
+  "loadFailed": "Lokale SEO konnte nicht geladen werden.",
+  "locked": {
+    "title": "Lokale SEO ist eine Pro-Funktion",
+    "body": "Upgraden Sie auf Pro, um zu verfolgen, wie konsistent Ihr Unternehmen in Verzeichnissen und im lokalen Kartenpaket erscheint.",
+    "upgrade": "Tarife ansehen"
+  },
+  "listings": {
+    "title": "Firmeneinträge",
+    "source": "Verzeichnis",
+    "name": "Name",
+    "address": "Adresse",
+    "phone": "Telefon",
+    "status": "Status",
+    "consistent": "Übereinstimmend",
+    "inconsistent": "Abweichend"
+  },
+  "reviews": {
+    "title": "Bewertungen & Fragen",
+    "averageRating": "Durchschnittliche Bewertung",
+    "reviewCount": "Bewertungen",
+    "unansweredQuestions": "Offene Fragen"
+  },
+  "localPack": {
+    "title": "Lokales Kartenpaket",
+    "keyword": "Keyword",
+    "position": "Position",
+    "packSize": "Paketgröße",
+    "notRanked": "Nicht im Kartenpaket"
+  }
+}

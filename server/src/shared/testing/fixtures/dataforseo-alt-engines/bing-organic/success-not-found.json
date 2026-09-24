@@ -1,0 +1,49 @@
+{
+  "version": "0.1.20260101",
+  "status_code": 20000,
+  "status_message": "Ok.",
+  "time": "0.3902 sec.",
+  "cost": 0.002,
+  "tasks_count": 1,
+  "tasks_error": 0,
+  "tasks": [
+    {
+      "id": "TASK_ID",
+      "status_code": 20000,
+      "status_message": "Ok.",
+      "time": "0.3410 sec.",
+      "cost": 0.002,
+      "result_count": 1,
+      "path": ["v3", "serp", "bing", "organic", "live", "advanced"],
+      "result": [
+        {
+          "keyword": "seo audit tool",
+          "type": "organic",
+          "se_domain": "bing.com",
+          "location_code": 2840,
+          "language_code": "en",
+          "datetime": "2026-01-01 00:00:00 +00:00",
+          "items_count": 2,
+          "items": [
+            {
+              "type": "organic",
+              "rank_group": 1,
+              "rank_absolute": 1,
+              "domain": "first-result.example.test",
+              "title": "A different tool",
+              "url": "https://first-result.example.test/tools"
+            },
+            {
+              "type": "organic",
+              "rank_group": 2,
+              "rank_absolute": 2,
+              "domain": "second-result.example.test",
+              "title": "Yet another tool",
+              "url": "https://second-result.example.test/tools"
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

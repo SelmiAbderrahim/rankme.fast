@@ -1,0 +1,58 @@
+{
+  "version": "0.1.20260101",
+  "status_code": 20000,
+  "status_message": "Ok.",
+  "time": "0.0904 sec.",
+  "cost": 0.0006,
+  "tasks_count": 1,
+  "tasks_error": 0,
+  "tasks": [
+    {
+      "id": "TASK_ID",
+      "status_code": 20000,
+      "status_message": "Ok.",
+      "time": "0.0704 sec.",
+      "cost": 0.0006,
+      "result_count": 1,
+      "path": ["v3", "serp", "google", "organic", "live", "advanced"],
+      "data": {
+        "api": "serp",
+        "function": "live",
+        "se": "google",
+        "se_type": "organic",
+        "keyword": "partial date sample",
+        "language_code": "en",
+        "location_code": 2840,
+        "device": "desktop"
+      },
+      "result": [
+        {
+          "keyword": "partial date sample",
+          "type": "organic",
+          "se_domain": "google.com",
+          "location_code": 2840,
+          "language_code": "en",
+          "items_count": 2,
+          "items": [
+            {
+              "type": "organic",
+              "rank_group": 1,
+              "rank_absolute": 1,
+              "domain": "reddit.com",
+              "url": "https://reddit.com/r/seo/comments/no-date-here",
+              "title": "Discussion — no vendor datetime attached"
+            },
+            {
+              "type": "organic",
+              "rank_group": 2,
+              "rank_absolute": 2,
+              "domain": "g2.com",
+              "url": "https://g2.com/products/example/alternatives",
+              "title": "Example alternatives"
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

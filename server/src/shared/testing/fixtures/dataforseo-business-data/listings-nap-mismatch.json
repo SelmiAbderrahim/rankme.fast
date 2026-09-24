@@ -1,0 +1,47 @@
+{
+  "version": "0.1.20260711",
+  "status_code": 20000,
+  "status_message": "Ok.",
+  "time": "0.121 sec.",
+  "cost": 0.01272,
+  "tasks_count": 1,
+  "tasks_error": 0,
+  "tasks": [
+    {
+      "id": "TASK_ID",
+      "status_code": 20000,
+      "status_message": "Ok.",
+      "cost": 0.01272,
+      "result_count": 1,
+      "result": [
+        {
+          "total_count": 3,
+          "count": 3,
+          "items": [
+            {
+              "type": "business_listing",
+              "source": "google",
+              "title": "Example Dental Studio",
+              "address": "100 Main St, Austin, TX 78701",
+              "phone": "+1 512-555-0100"
+            },
+            {
+              "type": "business_listing",
+              "source": "bing-places",
+              "title": "Example Dental",
+              "address": "100 Main Street, Austin, TX 78701",
+              "phone": "+1 512-555-9999"
+            },
+            {
+              "type": "business_listing",
+              "source": "yelp",
+              "title": "Example Dental Studio",
+              "address": "100 Main St, Austin, TX 78701",
+              "phone": "+1 512-555-0100"
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

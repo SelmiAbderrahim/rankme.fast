@@ -1,0 +1,54 @@
+{
+  "version": "0.1.20260808",
+  "status_code": 20000,
+  "status_message": "Ok.",
+  "cost": 0,
+  "tasks": [
+    {
+      "id": "TASK_ID",
+      "status_code": 20000,
+      "status_message": "Ok.",
+      "cost": 0,
+      "path": [
+        "v3",
+        "app_data",
+        "apple",
+        "app_searches",
+        "task_get",
+        "advanced",
+        "TASK_ID"
+      ],
+      "result": [
+        {
+          "keyword": "seo audit",
+          "location_code": 2840,
+          "language_code": "en",
+          "datetime": "2026-08-08 10:05:00 +00:00",
+          "se_results_count": 12,
+          "items": [
+            {
+              "type": "app_store_search_organic",
+              "rank_group": 1,
+              "rank_absolute": 1,
+              "app_id": "686449807",
+              "title": "Audit App Store App",
+              "url": "https://apps.example.test/app/id686449807",
+              "icon": "https://apps.example.test/icon.png",
+              "reviews_count": 120,
+              "rating": {
+                "value": 4.8
+              },
+              "is_free": false,
+              "price": {
+                "current": 2.99,
+                "currency": "USD",
+                "displayed_price": "$2.99"
+              },
+              "developer": "Example Studio"
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

@@ -1,0 +1,196 @@
+{
+  "title": "Websites",
+  "listDescription": "Websites, die Sie mit RankMeFast verfolgen.",
+  "loading": "Ihre Websites werden geladen…",
+  "retry": "Erneut versuchen",
+  "addTitle": "Website hinzufügen",
+  "addDescription": "Geben Sie Ihre Website-Adresse ein, um Audit und Ranking-Tracking zu starten.",
+  "urlLabel": "Website-URL",
+  "urlPlaceholder": "https://example.com",
+  "addSubmit": "Website hinzufügen",
+  "adding": "Wird hinzugefügt…",
+  "emptyTitle": "Noch keine Websites",
+  "emptyDescription": "Fügen Sie Ihre erste Website hinzu, um zu beginnen.",
+  "columnName": "Name",
+  "columnDomain": "Domain",
+  "columnAdded": "Hinzugefügt",
+  "columnGoogle": "Google",
+  "googleLinked": "Verknüpft",
+  "googleNotLinked": "Nicht verknüpft",
+  "googleNotConnected": "Google nicht verbunden",
+  "columnActions": "Aktionen",
+  "rowActions": "Menü für {{name}} öffnen",
+  "open": "Öffnen",
+  "viewReport": "Bericht ansehen",
+  "trackKeywords": "Keywords verfolgen",
+  "backlinks": "Backlinks",
+  "competitors": "Wettbewerber",
+  "googleSettings": "Google-Einstellungen",
+  "editName": "Anzeigenamen bearbeiten",
+  "delete": "Löschen",
+  "deleteTitle": "Website löschen",
+  "deleteDescription": "Dadurch wird {{domain}} aus Ihrem Konto entfernt. Dies kann nicht rückgängig gemacht werden.",
+  "deleteConfirm": "Website löschen",
+  "deleteCancel": "Abbrechen",
+  "renameTitle": "Anzeigenamen bearbeiten",
+  "renameDescription": "Ändern Sie, wie {{domain}} in RankMeFast angezeigt wird.",
+  "renameLabel": "Anzeigename",
+  "renamePlaceholder": "Mein Blog",
+  "renameSave": "Speichern",
+  "renameSaving": "Wird gespeichert…",
+  "renameCancel": "Abbrechen",
+  "renameFailed": "Die Website konnte nicht aktualisiert werden.",
+  "previous": "Zurück",
+  "next": "Weiter",
+  "loadFailed": "Ihre Websites konnten nicht geladen werden.",
+  "addFailed": "Die Website konnte nicht hinzugefügt werden.",
+  "deleteFailed": "Die Website konnte nicht gelöscht werden.",
+  "pauseFailed": "Die Website konnte nicht pausiert werden.",
+  "resumeFailed": "Die Website konnte nicht fortgesetzt werden.",
+  "paused": {
+    "chip": "Pausiert",
+    "menuPause": "Website pausieren",
+    "menuResume": "Website fortsetzen",
+    "confirmTitle": "Diese Website pausieren?",
+    "confirmBody": "Audits, Ranking-Prüfungen, Wochenberichte, Inhaltsüberwachung und Benachrichtigungen stoppen für {{domain}}. Ihre Berichte und Ihr Verlauf bleiben verfügbar.",
+    "confirmCta": "Website pausieren",
+    "cancel": "Abbrechen",
+    "bannerTitle": "Website pausiert",
+    "banner": "Diese Website ist pausiert — keine Prüfungen oder Audits laufen. Pausiert {{when}}.",
+    "resumeCta": "Fortsetzen",
+    "pausing": "Wird pausiert…",
+    "resuming": "Wird fortgesetzt…"
+  },
+  "errors": {
+    "urlRequired": "Geben Sie die URL Ihrer Website ein.",
+    "urlTooLong": "Diese URL ist zu lang (maximal 2048 Zeichen).",
+    "urlInvalid": "Geben Sie eine gültige URL ein, z. B. https://example.com.",
+    "urlScheme": "Nur http://- und https://-URLs werden unterstützt.",
+    "urlUserinfo": "Entfernen Sie Benutzername und Passwort aus der URL.",
+    "urlIpLiteral": "IP-Adressen werden nicht unterstützt — verwenden Sie einen Domainnamen.",
+    "urlNoTld": "Geben Sie einen vollständigen Domainnamen ein, z. B. https://example.com."
+  },
+  "workspace": {
+    "tabs": {
+      "overview": "Übersicht",
+      "actions": "Aktionen",
+      "report": "Bericht",
+      "keywords": "Keywords",
+      "serpFeatures": "SERP-Funktionen",
+      "keywordClusters": "Keyword-Cluster",
+      "research": "Recherche",
+      "backlinks": "Backlinks",
+      "competitors": "Wettbewerber",
+      "google": "Google",
+      "aiVisibility": "AI-Sichtbarkeit",
+      "brandRadar": "Brand Radar",
+      "apps": "Apps",
+      "localSeo": "Lokale SEO",
+      "reviews": "Bewertungen",
+      "geogrid": "Geogrid",
+      "content": "Inhalt",
+      "internalLinks": "Interne Links",
+      "cannibalization": "Keyword-Kannibalisierung",
+      "audienceResearch": "Zielgruppen-Recherche",
+      "schema": "Markup"
+    },
+    "groups": {
+      "auditReports": "Audit und Berichte",
+      "search": "Suche",
+      "visibility": "Sichtbarkeit",
+      "content": "Inhalte",
+      "localApps": "Lokales SEO und Apps"
+    },
+    "navigationLabel": "Arbeitsbereichsansicht",
+    "activeGroupLabel": "{{group}} · {{current}}",
+    "upgradeHint": "Upgraden Sie Ihren Plan, um diesen Tab freizuschalten."
+  },
+  "overview": {
+    "next": {
+      "title": "Nächste Schritte",
+      "description": "Beginnen Sie mit den wirkungsvollsten Punkten aus dem letzten Audit.",
+      "viewProgress": "Audit-Fortschritt ansehen",
+      "openReport": "Vollständigen Bericht öffnen",
+      "openFinding": "Im Bericht ansehen",
+      "clearTitle": "Keine dringenden Korrekturen",
+      "clearDescription": "Das letzte Audit enthält keine sofortigen Korrekturen oder Beobachtungspunkte.",
+      "inProgressTitle": "Audit läuft"
+    },
+    "sections": {
+      "searchExperienceTitle": "Suche und Nutzererlebnis",
+      "searchExperienceDescription": "Echte Suchnachfrage und das dahinterstehende mobile Erlebnis.",
+      "trackingTitle": "Tracking und Wettbewerb",
+      "trackingDescription": "Aktuelle Rankings und externe Signale, die Ihre Sichtbarkeit prägen."
+    },
+    "search": {
+      "title": "Suchleistung",
+      "description": "Aus dem Search-Console-Snapshot des letzten Audits.",
+      "topQuery": "Top-Suchanfrage",
+      "openGoogle": "Google-Daten öffnen"
+    },
+    "pageSpeed": {
+      "title": "Website-Erlebnis",
+      "description": "Die erste mobile PageSpeed-Stichprobe aus dem letzten Audit.",
+      "accessibility": "Barrierefreiheit",
+      "seo": "SEO",
+      "coreWebVitals": "Core Web Vitals"
+    },
+    "keywords": {
+      "title": "Kürzlich verfolgte Keywords",
+      "description": "Neueste Positionen Ihrer zuletzt hinzugefügten Begriffe.",
+      "open": "Keywords öffnen",
+      "awaiting": "Erste Prüfung ausstehend"
+    },
+    "backlinks": {
+      "updated": "Aktualisiert am {{date}}",
+      "open": "Backlinks öffnen",
+      "noSnapshotTitle": "Noch kein Backlink-Snapshot",
+      "noSnapshotDescription": "Öffnen Sie Backlinks, um das vollständige Profil abzurufen und zu untersuchen."
+    },
+    "competitors": {
+      "open": "Wettbewerber öffnen",
+      "notLoadedTitle": "Wettbewerbsdaten sind bei Bedarf verfügbar",
+      "notLoadedDescription": "Öffnen Sie Wettbewerber für eine Agency-Abfrage. Die Übersicht verwendet das Ergebnis erneut, ohne eine weitere Abfrage zu verbrauchen."
+    },
+    "unlock": {
+      "title": "Weitere Einblicke sind verfügbar",
+      "backlinksAndCompetitors": "Upgraden Sie für Backlink-Stärke und Wettbewerbsüberschneidungen.",
+      "competitors": "Upgraden Sie auf Agency für Wettbewerbsüberschneidungen und Keyword-Lücken.",
+      "openPlans": "Tarife vergleichen"
+    },
+    "statError": "Konnte nicht geladen werden",
+    "meta": {
+      "title": "Website-Details",
+      "name": "Name",
+      "domain": "Domain"
+    },
+    "stats": {
+      "audit": {
+        "title": "Sofort beheben",
+        "hint": "Öffnen Sie den Bericht-Tab, um ein neues Audit zu starten."
+      },
+      "keywords": {
+        "title": "Verfolgte Keywords",
+        "hint": "Öffnen Sie den Keywords-Tab, um Begriffe hinzuzufügen oder zu entfernen."
+      },
+      "backlinks": {
+        "title": "Backlinks",
+        "hint": "Öffnen Sie den Backlinks-Tab, um das Profil zu laden."
+      },
+      "competitors": {
+        "title": "Wettbewerber",
+        "hint": "Öffnen Sie den Wettbewerber-Tab, um die Liste zu laden."
+      },
+      "google": {
+        "title": "Google Search Console",
+        "hint": "Öffnen Sie den Google-Tab, um die Verbindung zu verwalten."
+      }
+    },
+    "gsc": {
+      "connected": "Verbunden",
+      "needs_reconnect": "Erneut verbinden",
+      "revoked": "Widerrufen",
+      "disconnected": "Nicht verbunden"
+    }
+  }
+}

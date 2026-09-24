@@ -1,0 +1,41 @@
+{
+  "title": "本地 SEO",
+  "description": "您网站的商家信息、评论和地图组合排名。",
+  "empty": "尚无本地 SEO 数据 —— 点击刷新以加载商家信息、评论和问答。",
+  "emptyTitle": "暂无本地数据",
+  "emptyCta": "获取本地数据",
+  "refresh": {
+    "button": "刷新本地 SEO",
+    "cooldown": "{{seconds}} 秒后可刷新",
+    "failed": "无法刷新本地 SEO,请稍后再试。"
+  },
+  "loadFailed": "无法加载本地 SEO。",
+  "locked": {
+    "title": "本地 SEO 是 Pro 功能",
+    "body": "升级到 Pro,即可跟踪您的商家在各目录和本地地图组合中的一致性。",
+    "upgrade": "查看套餐"
+  },
+  "listings": {
+    "title": "商家信息",
+    "source": "目录",
+    "name": "名称",
+    "address": "地址",
+    "phone": "电话",
+    "status": "状态",
+    "consistent": "一致",
+    "inconsistent": "不一致"
+  },
+  "reviews": {
+    "title": "评论与问答",
+    "averageRating": "平均评分",
+    "reviewCount": "评论数",
+    "unansweredQuestions": "未回答问题"
+  },
+  "localPack": {
+    "title": "本地地图组合",
+    "keyword": "关键词",
+    "position": "排名",
+    "packSize": "组合数量",
+    "notRanked": "未进入地图组合"
+  }
+}

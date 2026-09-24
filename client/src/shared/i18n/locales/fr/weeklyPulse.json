@@ -1,0 +1,105 @@
+{
+  "card": {
+    "title": "Bilan hebdomadaire",
+    "description": "Un bilan hebdomadaire déterministe par site — citations nouvelles/perdues, baisses de classement confirmées, changements d’actions et trois prochaines actions. Consomme une vérification de mentions IA par site et par semaine.",
+    "unitDisclosure": "Une vérification de mentions IA par site et par semaine.",
+    "nextRun": "Prochaine exécution : {{when}}",
+    "lastRun": "Dernière exécution : {{when}}",
+    "lastStatus": "Dernier statut : {{status}}",
+    "enableCta": "Activer le bilan hebdomadaire",
+    "disableCta": "Désactiver le bilan hebdomadaire",
+    "previewCta": "Prévisualiser la dépense",
+    "historyLink": "Voir les bilans passés"
+  },
+  "status": {
+    "queued": "En file d’attente",
+    "collecting": "Collecte en cours",
+    "completed": "Terminé",
+    "partial": "Données partielles",
+    "blocked_capacity": "Bloqué — quota dépassé",
+    "unsupported": "Non pris en charge cette semaine",
+    "failed": "Échec",
+    "empty": "Aucun bilan n’a encore été exécuté."
+  },
+  "confirm": {
+    "enableTitle": "Activer le bilan hebdomadaire ?",
+    "enableBody": "La tâche planifiée consommera une vérification de mentions IA par semaine pour ce site.",
+    "enableAck": "Je comprends et souhaite recevoir le bilan hebdomadaire.",
+    "disableTitle": "Désactiver le bilan hebdomadaire ?",
+    "disableBody": "Vous cesserez de recevoir le bilan. L’historique reste disponible.",
+    "confirmEnable": "Activer",
+    "confirmDisable": "Désactiver",
+    "cancel": "Annuler"
+  },
+  "detail": {
+    "title": "Bilan hebdomadaire — {{isoWeek}}",
+    "closeLabel": "Fermer le détail du bilan",
+    "coverage": "Couverture — {{supported}} moteur(s) pris en charge sur {{total}}.",
+    "partial": "Certains moteurs ont renvoyé des données partielles cette semaine.",
+    "sections": {
+      "newCitations": "Nouvelles citations",
+      "lostCitations": "Citations perdues",
+      "unknownPartial": "Citations inconnues ou partielles",
+      "confirmedDrops": "Baisses de classement confirmées",
+      "actionsChanged": "Actions terminées ou régressées",
+      "top3": "Trois prochaines actions",
+      "gscGenerative": "Apparition dans l’IA générative Google",
+      "brandDeltas": "Évolutions Brand Radar",
+      "deepLinks": "Ouvrir dans RankMeFast"
+    },
+    "empty": {
+      "newCitations": "Aucune nouvelle citation cette semaine.",
+      "lostCitations": "Aucune citation perdue cette semaine.",
+      "unknownPartial": "Aucune citation inconnue ou partielle cette semaine.",
+      "confirmedDrops": "Aucune baisse de classement confirmée cette semaine.",
+      "actionsChanged": "Aucun changement d’état d’action cette semaine.",
+      "top3": "Vous êtes à jour — aucune action ouverte."
+    },
+    "actionsFallback": "Aucun changement d’action enregistré pour ce bilan."
+  },
+  "history": {
+    "title": "Bilans récents",
+    "empty": "Aucun bilan enregistré.",
+    "loadMore": "Afficher plus",
+    "runLabel": "{{isoWeek}} — {{status}}",
+    "openLabel": "Ouvrir le bilan de {{isoWeek}}"
+  },
+  "preview": {
+    "title": "Prévisualisation de la dépense",
+    "productUnits": "1 vérification de mentions IA par semaine",
+    "remaining": "Restant ce mois : {{remaining}}",
+    "capBlocked": "Le quota de votre plan est épuisé. L’activation échouera — mettez à niveau ou achetez des crédits."
+  },
+  "gsc": {
+    "title": "Apparition dans l’IA générative Google",
+    "description": "Données Google Search Console de première main — jamais fusionnées avec les métriques de mentions IA.",
+    "status": {
+      "available": "Disponible",
+      "unavailable": "Pas encore d’apparition",
+      "partial": "Données partielles",
+      "reconnect_required": "Reconnecter Google Search Console",
+      "failed": "Temporairement indisponible"
+    },
+    "empty": "Google n’a signalé aucune apparition IA générative.",
+    "reconnect": "Reconnectez Google Search Console pour voir cette section.",
+    "window": "Fenêtre : {{start}} → {{end}}",
+    "row": "{{appearance}} — {{clicks}} clics, {{impressions}} impressions",
+    "loading": "Chargement des données Google Search Console…",
+    "unknown": "Apparition inconnue ({{raw}})"
+  },
+  "brandDeltas": {
+    "scopeNote": "Ces évolutions couvrent tout votre compte, regroupées par requête de marque suivie — pas uniquement ce site.",
+    "queryLine": "{{query}} — mentions : {{delta}}",
+    "sentimentLine": "Évolution du sentiment en points : positif {{positive}}, neutre {{neutral}}, négatif {{negative}}, inconnu {{unknown}}.",
+    "firstScan": "{{query}} — première analyse, rien à comparer pour l’instant.",
+    "noNewScan": "{{query}} — aucune nouvelle analyse sur cette période.",
+    "empty": "Aucune analyse de marque à comparer pour l’instant."
+  },
+  "errors": {
+    "unexpected": "Une erreur est survenue — réessayez.",
+    "overCap": "Le quota de votre plan est épuisé. Mettez à niveau ou achetez des crédits pour recevoir les bilans hebdomadaires.",
+    "acknowledgePreviewRequired": "Prévisualisez la dépense avant l’activation.",
+    "reconnectRequired": "Reconnectez Google Search Console pour charger ces données.",
+    "unauthorized": "Connectez-vous pour voir le bilan hebdomadaire."
+  }
+}

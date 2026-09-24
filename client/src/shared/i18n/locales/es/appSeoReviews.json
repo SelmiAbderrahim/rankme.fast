@@ -1,0 +1,71 @@
+{
+  "common": { "notAvailable": "No disponible" },
+  "stats": { "total": "Reseñas", "average": "Valoración media" },
+  "mix": { "positive": "Positivas", "neutral": "Neutrales", "negative": "Negativas" },
+  "histogram": {
+    "title": "Distribución por estrellas",
+    "chartLabel": "Número de reseñas por valoración",
+    "tableCaption": "Número de reseñas para cada valoración",
+    "star": "{{star}} estrellas",
+    "rating": "Valoración",
+    "count": "Reseñas"
+  },
+  "trend": {
+    "title": "Volumen de reseñas",
+    "empty": "Esta ejecución no devolvió reseñas con fecha.",
+    "chartLabel": "Volumen de reseñas a lo largo del tiempo",
+    "tableCaption": "Número de reseñas y valoración media por mes",
+    "period": "Mes",
+    "count": "Reseñas",
+    "average": "Media"
+  },
+  "states": {
+    "pending": "Las reseñas todavía se están procesando.",
+    "thinTitle": "No hay datos suficientes para agrupar",
+    "thinDescription": "Esta ejecución devolvió menos de 10 reseñas, por lo que no se solicitó ningún análisis con IA.",
+    "unavailableTitle": "Temas no disponibles",
+    "unavailableDescription": "Las reseñas y estadísticas guardadas están listas, pero no se pudo completar el análisis con IA.",
+    "failedTitle": "Error al obtener las reseñas",
+    "failedDescription": "No se conservaron reseñas de esta ejecución. Inicia una nueva cuando quieras."
+  },
+  "sentiment": { "positive": "Positivo", "neutral": "Neutral", "negative": "Negativo", "mixed": "Mixto" },
+  "clusters": { "title": "Temas de las reseñas", "aiInterpretation": "Interpretación de IA", "anonymous": "Persona anónima", "rating": "{{rating}} de 5" },
+  "dialog": {
+    "title": "Confirmar el análisis de reseñas",
+    "description": "Esta ejecución puntual obtiene una muestra limitada de reseñas y analiza sus temas una vez.",
+    "units": "Uso de esta ejecución: {{units}} unidad",
+    "bound": "Hasta 300 reseñas",
+    "unavailable": "No hay capacidad disponible para esta ejecución.",
+    "confirming": "Iniciando el análisis…",
+    "confirm": "Iniciar análisis de reseñas"
+  },
+  "empty": {
+    "noProfileTitle": "Añade primero un perfil de aplicación",
+    "noProfileDescription": "La ejecución necesita un perfil con un paquete de Google Play o un ID de App Store.",
+    "noRuns": "Aún no hay ejecuciones para esta aplicación y tienda."
+  },
+  "disabled": { "title": "No se pueden iniciar nuevas ejecuciones", "description": "Las ejecuciones guardadas siguen disponibles para consulta." },
+  "upsell": { "title": "Activa el complemento de App SEO", "description": "Tu plan incluye App SEO, pero el análisis de reseñas requiere su complemento.", "cta": "Ver facturación" },
+  "errors": { "title": "No se pudieron cargar las reseñas", "requestFailed": "La solicitud de reseñas falló. Inténtalo de nuevo." },
+  "run": {
+    "title": "Analizar reseñas de la aplicación",
+    "description": "Obtén una muestra nueva y limitada para una aplicación y una tienda. Las ejecuciones nunca se programan automáticamente.",
+    "bound": "Cada ejecución obtiene un máximo de 300 reseñas.",
+    "previewing": "Comprobando capacidad…",
+    "button": "Previsualizar ejecución"
+  },
+  "scope": { "profile": "Perfil de aplicación", "store": "Tienda" },
+  "stores": { "google_play": "Google Play", "app_store": "App Store" },
+  "list": {
+    "title": "Ejecuciones de reseñas",
+    "description": "Los datos guardados siguen disponibles aunque no se puedan iniciar nuevas ejecuciones.",
+    "started": "Inicio",
+    "status": "Estado",
+    "reviews": "Reseñas",
+    "average": "Media",
+    "actions": "Acciones",
+    "view": "Ver"
+  },
+  "status": { "queued": "En cola", "pulling": "Obteniendo reseñas", "clustering": "Buscando temas", "completed": "Completada", "failed": "Fallida" },
+  "detail": { "title": "Detalles de la ejecución", "description": "Estadísticas deterministas y temas respaldados por las reseñas guardadas." }
+}

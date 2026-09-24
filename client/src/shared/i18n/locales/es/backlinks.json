@@ -1,0 +1,90 @@
+{
+  "title": "Backlinks",
+  "description": "Descubre quién enlaza a tu sitio y qué tan fuerte se ve tu dominio para Google.",
+  "empty": "Aún no hay backlinks registrados — obtendremos datos frescos en la próxima actualización.",
+  "emptyTitle": "Aún no hay backlinks",
+  "loadFailed": "No se pudieron cargar los backlinks.",
+  "summary": {
+    "domainRating": "Valoración del dominio",
+    "domainRatingHelp": "Qué tan fuerte se ve el perfil de enlaces de este sitio (0–100).",
+    "referringDomains": "Dominios de referencia",
+    "backlinks": "Backlinks",
+    "brokenBacklinks": "Backlinks rotos"
+  },
+  "delta": {
+    "since": "vs anterior"
+  },
+  "rowBudget": {
+    "label": "Filas de backlinks obtenidas este mes"
+  },
+  "table": {
+    "title": "Backlinks recientes",
+    "domain": "Página de referencia",
+    "anchor": "Texto ancla",
+    "dofollow": "Tipo de enlace",
+    "firstSeen": "Visto por primera vez",
+    "dofollowYes": "Dofollow",
+    "dofollowNo": "Nofollow",
+    "loadMore": "Cargar más",
+    "loading": "Cargando…"
+  },
+  "refresh": {
+    "button": "Actualizar",
+    "cooldown": "Espera {{seconds}} s antes de actualizar.",
+    "failed": "No se pudo actualizar ahora. Tus últimos datos siguen visibles."
+  },
+  "locked": {
+    "title": "Mejora tu plan para desbloquear los backlinks",
+    "body": "La valoración del dominio, los dominios de referencia y tu lista de backlinks forman parte del plan Pro.",
+    "upgrade": "Ver planes"
+  },
+  "errors": {
+    "capExceeded": "El límite de filas de backlinks de tu plan ({{used}}/{{limit}} {{metric}}) se ha agotado. Mejora tu plan o compra un paquete de créditos para obtener más filas."
+  },
+  "intelligence": {
+    "title": "Inteligencia de enlaces", "description": "Revisa la evidencia guardada y decide cuándo gastar unidades en una nueva consulta.",
+    "tabs": { "label": "Vistas de inteligencia de enlaces", "overview": "Resumen", "rows": "Backlinks", "domains": "Dominios", "anchors": "Anclas", "history": "Historial", "gap": "Brecha de enlaces", "toxicity": "Revisión de enlaces" },
+    "preview": { "title": "Vista previa del gasto", "description": "Esta estimación es gratuita. Las unidades se reservan solo al confirmar.", "units": "{{count}} unidad", "cached": "Resultado en caché", "mixed": "Caché mixta", "fresh": "Se necesita una consulta nueva", "available": "Saldo disponible", "unavailable": "Saldo agotado", "baseRemaining": "Quedan {{count}} unidades base", "packRemaining": "Quedan {{count}} unidades del paquete", "confirm": "Confirmar y gastar {{count}} unidades", "cancel": "Cancelar", "button": "Ver gasto" },
+    "states": { "default": "Aún no hay resultados guardados. Previsualiza una consulta cuando necesites datos nuevos.", "emptyTitle": "No se encontraron resultados", "emptyBody": "El proveedor terminó sin encontrar filas coincidentes.", "partialTitle": "Resultado parcial", "partialBody": "Se conservaron algunas filas antes de que el proveedor dejara de responder.", "providerTitle": "Falló la consulta al proveedor", "providerBody": "No se conservaron filas y se reembolsó la unidad reservada.", "capTitle": "Se alcanzó el saldo de inteligencia de enlaces", "capBody": "Usa el paquete {{pack}} o espera a que se renueve el saldo.", "disabledTitle": "La inteligencia de enlaces está desactivada temporalmente", "disabledBody": "Los resultados guardados siguen disponibles, pero las nuevas consultas están pausadas.", "lockedTitle": "Mejora tu plan para desbloquearla", "lockedBody": "Las consultas profundas están disponibles en Pro y Agency.", "upgrade": "Ver planes", "errorTitle": "No se pudo cargar la inteligencia de enlaces" },
+    "provenance": { "providerObservation": "Observación del proveedor" },
+    "domains": { "title": "Dominios de referencia", "description": "Dominios que enlazan a este sitio, con fuerza y fechas de detección.", "sort": "Orden predeterminado: rango descendente, backlinks descendentes y dominio A–Z." },
+    "anchors": { "title": "Texto ancla", "description": "Texto inerte que usan las páginas de referencia al enlazar este sitio." },
+    "history": { "title": "Historial de backlinks", "description": "Hasta 24 observaciones mensuales en orden cronológico.", "chartLabel": "Backlinks por mes", "tableCaption": "Datos del historial de backlinks" },
+    "bulk": { "title": "Rango de dominios en lote", "description": "Consulta el rango de hasta 100 dominios únicos.", "label": "Dominios", "help": "Introduce un dominio por línea o sepáralos con comas.", "invalid": "Introduce entre 1 y 100 dominios válidos.", "duplicate": "Elimina los dominios duplicados." },
+    "filters": { "minRank": "Rango mínimo del dominio", "minBacklinks": "Backlinks mínimos", "anchor": "Filtrar texto ancla" },
+    "columns": { "domain": "Dominio", "backlinks": "Backlinks", "domainRank": "Rango del dominio", "firstSeen": "Primera detección", "lastSeen": "Última detección", "anchor": "Ancla", "referringDomains": "Dominios de referencia", "month": "Mes", "rank": "Rango" },
+    "gap": { "title": "Brecha de enlaces", "description": "Compara oportunidades de enlaces de competidores.", "next": "El espacio por competidor se entrega en la siguiente sección de Inteligencia de enlaces." },
+    "errors": { "preview": "No se pudo preparar la vista previa.", "submit": "No se pudo iniciar la consulta.", "load": "No se pudo cargar el resultado guardado." }
+  },
+  "gap": {
+    "workspace": { "title": "Encuentra brechas de enlaces de competidores", "description": "Compara tu sitio con hasta tres competidores y revisa el coste en unidades antes de iniciar el análisis." },
+    "form": {
+      "ownDomainLabel": "Tu dominio", "competitorsLabel": "Dominios competidores", "competitorsHelp": "Introduce de {{min}} a {{max}} dominios, uno por línea o separados por comas. Los duplicados se eliminan.",
+      "errors": { "ownAmongCompetitors": "Tu propio dominio no puede ser un competidor.", "duplicate": "Se eliminaron los competidores duplicados.", "atLeastOne": "Introduce al menos un dominio competidor.", "tooMany": "Introduce como máximo tres dominios competidores.", "invalid": "Introduce nombres de dominio válidos." }
+    },
+    "preview": { "title": "Vista previa del gasto", "units": "{{n}} unidades", "remainingBase": "Quedan {{n}} unidades base", "remainingPack": "Quedan {{n}} unidades del paquete", "cached": "Datos en caché", "fresh": "Nueva consulta al proveedor", "confirm": "Confirmar y gastar {{n}} unidades", "cancel": "Cancelar", "button": "Previsualizar gasto" },
+    "result": { "title": "Resultados de la brecha de enlaces", "readOnly": "Resultado guardado · solo lectura", "competitorDescription": "Dominios que enlazan a este competidor, pero no a tu sitio.", "status": { "complete": "Completo", "partial": "Parcial" } },
+    "legStatus": { "ok": "Completado · unidad consumida", "provider_failed_refunded": "Falló el proveedor · unidad reembolsada", "zero_retained_consumed": "Sin filas retenidas · unidad consumida", "zero_retained_refunded": "Sin filas retenidas · unidad reembolsada" },
+    "overlap": { "totalUnique": "Dominios enlazantes únicos", "exclusiveToCompetitor": "Exclusivos del competidor", "exclusivePctLabel": "Porcentaje exclusivo", "exclusivePct": "{{pct}} % exclusivos" },
+    "table": { "domain": "Dominio enlazante", "rank": "Rango", "firstSeen": "Primera detección", "emptyTitle": "Sin dominios exclusivos", "empty": "Este competidor no conservó dominios enlazantes exclusivos." },
+    "errors": { "title": "No se pudo cargar la brecha de enlaces", "preview": "No se pudo preparar la vista previa.", "submit": "No se pudo iniciar el análisis de brecha.", "load": "No se pudo cargar el análisis guardado." }
+  },
+  "toxicity": {
+    "start": { "title": "Revisar observaciones de backlinks", "description": "Puntúa hasta 1000 filas guardadas con una rúbrica determinista antes de decidir qué incluir en la exportación." },
+    "preview": { "unit": "1 unidad de revisión de enlaces", "rowClamp": "Hasta 1000 filas · 100 dominios puntuados", "available": "Cuota disponible", "capReached": "Cuota alcanzada", "explanation": "La ejecución usa una unidad toxicity_reviews. El paquete toxicity-reviews-10 está disponible al agotar la cuota incluida. Previsualizar y cancelar no gasta unidades.", "confirm": "Confirmar y usar 1 unidad", "cancel": "Cancelar", "button": "Previsualizar el coste" },
+    "states": { "lockedTitle": "Mejora el plan para revisar backlinks", "lockedBody": "La revisión de enlaces y la creación del archivo de desautorización están disponibles en Pro y Agency.", "disabledTitle": "Las nuevas revisiones están pausadas", "disabledBody": "Las revisiones guardadas siguen disponibles mientras las nuevas puntuaciones están pausadas.", "capTitle": "Cuota de revisión alcanzada", "capBody": "Añade el paquete toxicity-reviews-10 o espera a que se renueve la cuota.", "errorTitle": "No se pudo cargar la revisión", "errorBody": "Inténtalo de nuevo en breve. Los resultados guardados y las descargas anteriores no cambian.", "listError": "No se pudieron cargar las revisiones guardadas.", "runningTitle": "Revisando observaciones guardadas", "failedTitle": "La revisión se detuvo", "providerRefunded": "El proveedor falló antes de conservar una fila puntuada. Se reembolsó la unidad reservada.", "ceilingConsumed": "La ejecución se detuvo en el límite de coste. Se consumió la unidad reservada y no se realizó ninguna acción automática.", "partial": "Observaciones parciales del proveedor", "emptyTitle": "No hay filas puntuadas", "emptyBody": "La ejecución terminó sin conservar filas de backlinks puntuadas." },
+    "actions": { "viewPlans": "Ver planes", "viewPacks": "Ver paquetes de créditos", "open": "Abrir", "back": "Volver a una nueva revisión" },
+    "runs": { "title": "Revisiones guardadas", "description": "Vuelve a abrir revisiones terminadas sin usar otra unidad.", "date": "Creada", "status": "Estado", "rows": "Filas", "emptyTitle": "No hay revisiones guardadas", "emptyBody": "Empieza con una previsualización gratuita cuando estés listo." },
+    "filters": { "status": "Filtrar revisiones por estado", "allStatuses": "Todos los estados", "band": "Filtrar filas por banda", "allBands": "Todas las bandas" },
+    "status": { "queued": "En cola", "running": "En curso", "succeeded": "Completada", "failed": "Fallida" },
+    "results": { "title": "Resultados de la revisión", "rubric": "Rúbrica {{version}}", "rowsTitle": "Filas de backlinks puntuadas", "observationCopy": "Las bandas describen observaciones guardadas del proveedor según la rúbrica fijada. No predicen una acción del buscador.", "providerObservation": "Observación del proveedor · rúbrica determinista" },
+    "columns": { "domain": "Dominio de referencia", "score": "Puntuación de spam", "band": "Banda de la rúbrica", "signals": "Señales contribuyentes", "firstSeen": "Primera detección", "lastSeen": "Última detección", "rationale": "Justificación opcional" },
+    "band": { "clean": "Limpio", "watch": "Vigilar", "toxic": "Tóxico" },
+    "signal": { "spam_clean": "Puntuación 0–29", "spam_watch": "Puntuación 30–59", "spam_toxic": "Puntuación 60–100", "broken": "Roto", "dofollow": "Dofollow", "nofollow": "Nofollow" },
+    "rationale": { "toggle": "Justificación", "not_requested": "No se solicitó justificación para esta fila.", "annotated": "Justificación guardada", "abstained": "La IA se abstuvo; la banda determinista no cambia.", "failed": "No hay justificación; la banda determinista no cambia." },
+    "disavow": { "title": "Crear un archivo de desautorización", "description": "Las filas tóxicas empiezan incluidas. Revisa cada fila y elige dominio o URL exacta.", "selectionCaption": "Filas disponibles para el archivo", "include": "Incluir", "scope": "Alcance", "preview": "Vista previa en directo", "reviewTitle": "Revisión obligatoria antes de descargar", "reviewBody": "RankMeFast nunca envía este archivo. Debes revisar el texto, descargarlo y enviarlo tú mismo solo si decides que es apropiado.", "download": "Descargar .txt", "downloadFailed": "No se pudo preparar el archivo. Revisa la selección e inténtalo de nuevo.", "includeDomain": "Incluir {{domain}} en el archivo", "scopeFor": "Alcance para {{domain}}", "domainScope": "Dominio completo", "urlScope": "URL exacta" }
+  },
+  "cap": { "reached": "No queda cuota de {{metric}}", "pack": "{{name}} añade {{units}} unidades por {{price}}.", "upgrade": "Ver opciones de facturación" },
+  "killswitch": { "title": "La brecha de enlaces no está disponible temporalmente", "disabled": "Los nuevos análisis están pausados. Los resultados guardados siguen disponibles." },
+  "tier": { "locked": "Mejora tu plan para desbloquear la brecha de enlaces", "lockedBody": "El análisis de brecha de enlaces está disponible en los planes Pro y Agency." }
+}

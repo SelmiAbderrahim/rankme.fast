@@ -1,0 +1,57 @@
+{
+  "version": "0.1.20260101",
+  "status_code": 20000,
+  "status_message": "Ok.",
+  "time": "0.0912 sec.",
+  "cost": 0.00465,
+  "tasks_count": 1,
+  "tasks_error": 0,
+  "tasks": [
+    {
+      "id": "TASK_ID",
+      "status_code": 20000,
+      "status_message": "Ok.",
+      "time": "0.0512 sec.",
+      "cost": 0.00465,
+      "result_count": 1,
+      "path": ["v3", "serp", "google", "organic", "task_get", "regular", "TASK_ID"],
+      "data": {
+        "api": "serp",
+        "function": "task_get",
+        "se": "google",
+        "se_type": "organic",
+        "keyword": "seo audit tool",
+        "language_code": "en",
+        "location_code": 2840,
+        "device": "desktop"
+      },
+      "result": [
+        {
+          "keyword": "seo audit tool",
+          "type": "organic",
+          "se_domain": "google.com",
+          "location_code": 2840,
+          "language_code": "en",
+          "datetime": "2026-01-01 00:00:00 +00:00",
+          "items_count": 2,
+          "items": [
+            {
+              "type": "organic",
+              "rank_group": 1,
+              "rank_absolute": 1,
+              "domain": "a.example",
+              "url": "https://a.example/"
+            },
+            {
+              "type": "organic",
+              "rank_group": 2,
+              "rank_absolute": 2,
+              "domain": "b.example",
+              "url": "https://b.example/tools"
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

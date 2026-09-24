@@ -1,0 +1,270 @@
+{
+  "title": "Competidores",
+  "description": "Descubre con qué sitios compites y las palabras clave para las que se posicionan.",
+  "empty": "Aún no se encontraron competidores para este dominio. Haz seguimiento de algunas palabras clave y analizaremos los sitios que dominan esos resultados de búsqueda.",
+  "emptyTitle": "Aún no hay competidores",
+  "loadFailed": "No se pudieron cargar los competidores.",
+  "intersectionFailed": "No se pudieron cargar las palabras clave de brecha.",
+  "table": {
+    "title": "Principales competidores",
+    "domain": "Dominio",
+    "overlap": "Superposición",
+    "avgPosition": "Posición media",
+    "estTraffic": "Tráfico estimado",
+    "actions": "Acciones",
+    "gapAction": "Mostrar brecha",
+    "sourceTrackedKeywords": "Basado en tus palabras clave seguidas"
+  },
+  "gap": {
+    "title": "Palabras clave para las que {{competitor}} se posiciona pero tú no",
+    "loading": "Cargando brecha…",
+    "keyword": "Palabra clave",
+    "theyRank": "Su posición",
+    "volume": "Volumen",
+    "emptyTitle": "Sin palabras clave de brecha",
+    "empty": "Aún no hay palabras clave de brecha — te posicionas para las mismas palabras clave que ellos."
+  },
+  "refresh": {
+    "button": "Actualizar",
+    "cooldown": "Espera {{seconds}} s antes de actualizar.",
+    "failed": "No se pudo actualizar ahora. Tus últimos datos siguen visibles."
+  },
+  "locked": {
+    "title": "Mejora tu plan para desbloquear el análisis de competidores",
+    "body": "Las carteras de competidores y los panoramas de palabras clave comienzan en Pro. Agency añade informes más amplios y comparación del contenido de páginas posicionadas.",
+    "upgrade": "Ver planes"
+  },
+  "example": {
+    "title": "Ejemplo: lo que ofrecen Pro y Agency"
+  },
+  "intelligence": {
+    "title": "Inteligencia de la competencia",
+    "description": "Administre competidores confirmados, compare panoramas de palabras clave y mantenga recomendaciones aceptadas en un espacio de trabajo del sitio.",
+    "common": {
+      "cancel": "Cancelar"
+    },
+    "tiers": {
+      "starter": "Starter",
+      "pro": "Pro",
+      "agency": "Agency"
+    },
+    "views": {
+      "label": "Vistas de Competitor Intelligence",
+      "overview": "Descripción general",
+      "keywords": "Paisaje de palabras clave",
+      "content": "Contenido",
+      "monitoring": "Monitoreo",
+      "traffic": "Tráfico",
+      "reports": "Informes"
+    },
+    "locked": {
+      "title": "Competitor Intelligence comienza en Pro",
+      "description": "Mejora a Pro para confirmar competidores, crear panoramas de palabras clave y aceptar recomendaciones en Próximas acciones.",
+      "action": "Comparar planes"
+    },
+    "portfolio": {
+      "title": "Cartera de competidores confirmada",
+      "description": "{{active}} de {{max}} espacios de competidor activos están en uso. La gestión de esta lista no utiliza ningún subsidio.",
+      "manualLabel": "Agregar una URL pública de la competencia",
+      "manualPlaceholder": "https://competidor.ejemplo/",
+      "add": "Agregar competidor",
+      "adding": "Añadiendo competidor...",
+      "confirmed": "Competidor confirmado.",
+      "duplicate": "Ese competidor ya está en la cartera.",
+      "confirmedLabel": "Confirmado",
+      "confirm": "Confirmar competidor",
+      "confirmTitle": "¿Confirmar este competidor?",
+      "confirmDescription": "Agregue {{domain}} al portafolio del sitio. Esto no ejecuta una búsqueda paga.",
+      "emptyTitle": "No hay competidores confirmados",
+      "empty": "Confirme una sugerencia de descubrimiento o agregue una URL pública de un competidor.",
+      "domain": "Dominio",
+      "source": "Procedencia",
+      "status": "Estado",
+      "added": "Añadido",
+      "action": "acción",
+      "archive": "Archivo",
+      "restore": "Restaurar",
+      "archivePending": "Archivando…",
+      "restorePending": "Restaurando…",
+      "sources": {
+        "suggested": "sugerencia de descubrimiento",
+        "manual": "Agregado manualmente"
+      },
+      "statuses": {
+        "active": "Activo",
+        "archived": "Archivado"
+      }
+    },
+    "discovery": {
+      "title": "Descubrimiento de competidores",
+      "description": "Revisa las sugerencias almacenadas de forma gratuita. Una nueva actualización de descubrimiento comienza solo después de una vista previa y confirmación del gasto exacto.",
+      "empty": "Aún no hay sugerencias de descubrimiento almacenadas.",
+      "captured": "Almacenado {{date}}",
+      "observed": "Observado {{date}}",
+      "partial": "Algunas fuentes de descubrimiento no arrojaron datos. Los resultados almacenados se muestran sin llenar los espacios en blanco.",
+      "previewAction": "Vista previa de actualización de descubrimiento",
+      "previewing": "Preparando vista previa del descubrimiento...",
+      "reviewAction": "Revisar y confirmar",
+      "confirmTitle": "¿Ejecutar una nueva actualización de descubrimiento?",
+      "confirmDescription": "Esta actualización utiliza {{units}} unidad de búsqueda de palabras clave. Quedan {{remaining}} unidades antes de la actualización.",
+      "confirmAction": "Confirmar actualización"
+    },
+    "technology": {
+      "title": "Resumen de la cartera actual",
+      "description": "Este resumen utiliza únicamente datos de cartera almacenados. No inicia la detección de tecnología ni ninguna otra búsqueda paga.",
+      "summary": "{{manual}} competidores se agregaron manualmente y {{suggested}} provinieron de sugerencias de descubrimiento confirmadas. Los detalles tecnológicos no están disponibles hasta que exista una búsqueda previa por separado."
+    },
+    "landscape": {
+      "title": "Construya un panorama de palabras clave",
+      "description": "Seleccione hasta {{count}} competidores confirmados. El servidor verifica el nivel, el mercado, la asignación y las unidades exactas antes de que pueda comenzar una ejecución.",
+      "selection": "{{selected}} de {{count}} competidores seleccionados",
+      "limit": "Puede seleccionar hasta {{count}} competidores para este informe.",
+      "emptyTitle": "Confirma un competidor primero",
+      "empty": "Regrese a Descripción general y agregue al menos un competidor activo.",
+      "previewAction": "Vista previa del informe de gastos",
+      "previewing": "Preparando vista previa del informe...",
+      "previewTitle": "Vista previa del gasto autorizado por el servidor",
+      "previewDescription": "Este informe utiliza {{units}} unidades de búsqueda de palabras clave y puede retener hasta {{rows}} filas. Quedan {{remaining}} unidades antes de que comience.",
+      "cacheCounts": "Los aciertos de caché cuentan para el uso",
+      "reviewAction": "Revisar y confirmar",
+      "confirmTitle": "¿Iniciar este informe panorámico?",
+      "confirmDescription": "Compare {{count}} competidores para {{units}} unidades de búsqueda de palabras clave.",
+      "confirmAction": "Confirmar informe",
+      "duplicate": "La solicitud de informe coincidente ya existe. Se abrió el recorrido existente.",
+      "editMarket": "Editar el mercado de palabras clave rastreadas"
+    },
+    "reports": {
+      "title": "Informes panorámicos almacenados",
+      "description": "Vuelva a abrir informes inmutables sin iniciar otra búsqueda de proveedores.",
+      "emptyTitle": "No hay informes panorámicos",
+      "empty": "Cree un informe desde la vista panorámica de palabras clave.",
+      "date": "Creado",
+      "competitors": "Competidores",
+      "state": "Estado",
+      "action": "acción",
+      "open": "Abrir informe",
+      "more": "Cargar más informes",
+      "loadFailedTitle": "No se pudo cargar este informe"
+    },
+    "detail": {
+      "title": "Informe de paisaje",
+      "summary": "{{domain}} comparado con {{count}} competidores el {{date}}.",
+      "progress": "{{done}} de {{total}} pasos de origen completados",
+      "polling": "El informe aún se está publicando. Este estado almacenado se actualizará automáticamente.",
+      "partial": "{{usable}} de {{requested}} competidores produjeron datos utilizables. {{failed}} los pasos de origen fallaron; los valores faltantes no fueron inferidos.",
+      "back": "Volver al historial de informes",
+      "cancel": "Cancelar informe",
+      "rollupTitle": "Resumen de palabras clave de cartera",
+      "rollupDescription": "{{rows}} filas de palabras clave en {{usable}} competidores.",
+      "filtersTitle": "Filtros de informes",
+      "classFilter": "Clase de palabra clave",
+      "domainFilter": "Competidor",
+      "textFilter": "Buscar palabras clave",
+      "allClasses": "Todas las clases",
+      "allDomains": "Todos los competidores",
+      "keywordsTitle": "Evidencia de palabras clave",
+      "keywordsDescription": "Las clasificaciones y las URL son hechos observados. El volumen de búsqueda es una estimación del proveedor; Se derivan clases y recomendaciones.",
+      "keyword": "palabra clave",
+      "class": "clase",
+      "ownedRank": "tu rango",
+      "competitorRank": "Rango de competidor",
+      "volume": "Volumen estimado",
+      "source": "evidencia",
+      "sourcesTitle": "Observaciones de la fuente",
+      "sourcesDescription": "Las fechas de proveedor, caché, estado y observación se conservan en este informe inmutable.",
+      "sourcesEmpty": "No se retuvo ninguna observación de fuente para este resultado.",
+      "observationDate": "Observado {{date}}",
+      "missing": "No observado",
+      "next": "Página siguiente",
+      "noMatchTitle": "No hay palabras clave coincidentes",
+      "noMatch": "Cambie o borre los filtros actuales respaldados por URL.",
+      "noDataTitle": "No se conservan datos del informe",
+      "noData": "La ejecución finalizó sin suficientes datos de origen utilizables. Los valores faltantes no se estiman.",
+      "matchesTitle": "Coincidencias de páginas sugeridas",
+      "matchesDescription": "Estas sugerencias almacenadas comparan las URL de clasificación. No inician una extracción de contenido.",
+      "matchesEmpty": "No había ninguna coincidencia de página segura disponible.",
+      "matchReason": "{{reason}} · {{confidence}} confianza",
+      "matchOwnedUrl": "URL de tu página revisada",
+      "matchCompetitorUrl": "URL de ranking revisada del competidor",
+      "approveMatch": "Aprobar coincidencia",
+      "rejectMatch": "Rechazar",
+      "openSuggested": "Abrir página sugerida",
+      "analyzeReviewed": "Comparar páginas revisadas",
+      "monitorReviewed": "Supervisar esta página revisada",
+      "focusAnalysis": "Iniciar análisis enfocado",
+      "matchSaveError": "No se pudo guardar la coincidencia.",
+      "recommendationsTitle": "Fortalezas y recomendaciones",
+      "recommendationsDescription": "Las recomendaciones permanecen como informes exclusivos hasta que las acepte explícitamente.",
+      "recommendationsEmpty": "Ninguna recomendación alcanzó el umbral de evidencia.",
+      "accept": "Aceptar en las siguientes acciones",
+      "acceptTitle": "¿Aceptar esta recomendación?",
+      "acceptDescription": "La aceptación crea una Próxima Acción duradera. Enviar la misma decisión nuevamente no creará un duplicado.",
+      "acceptConfirm": "Aceptar recomendación",
+      "openAction": "Abrir en acciones siguientes"
+    },
+    "classes": {
+      "missing": "desaparecido",
+      "owned_only": "Solo clasificas",
+      "shared_behind": "compartido, detrás",
+      "shared_ahead": "Compartido, adelante",
+      "shared_even": "Compartido, incluso"
+    },
+    "runStates": {
+      "queued": "En cola",
+      "collecting": "Coleccionando",
+      "aggregating": "Informe de construcción",
+      "completed": "Completado",
+      "partial": "Parcial",
+      "failed": "Fallido",
+      "cancelled": "Cancelado"
+    },
+    "states": {
+      "loading": "Informe en progreso",
+      "partial": "Datos parciales",
+      "cap": "Esta solicitud excede la asignación restante. Actualice o agregue un paquete de crédito elegible antes de confirmar.",
+      "disabled": "Las solicitudes de nuevos competidores están temporalmente deshabilitadas. Los informes almacenados permanecen disponibles.",
+      "unsafeLink": "Enlace de fuente inseguro oculto",
+      "rateLimit": "Demasiadas solicitudes. Espere y vuelva a intentarlo.",
+      "providerFailure": "Una fuente falló. Los datos disponibles permanecen visibles.",
+      "cancelled": "El informe se canceló antes de que se completaran todos los pasos del origen.",
+      "stale": "Este resultado almacenado puede estar desactualizado. Su fecha de observación permanece visible."
+    },
+    "labels": {
+      "observed": "Observado",
+      "estimate": "Estimar",
+      "derived": "Derivado"
+    },
+    "cache": {
+      "hit": "Resultado de caché almacenado",
+      "miss": "Resultado de fuente nueva"
+    },
+    "market": {
+      "tracked_keyword_mode": "Comercializar a partir de palabras clave rastreadas",
+      "default": "Retroceso del mercado predeterminado"
+    },
+    "confidence": {
+      "high": "Alto",
+      "medium": "Medio",
+      "low": "Bajo"
+    },
+    "matchReasons": {
+      "same_keyword": "Palabra clave con la misma clasificación",
+      "highest_coverage": "Mayor cobertura de la competencia",
+      "closest_rank": "Rango observado más cercano"
+    },
+    "errors": {
+      "generic": "No se pudo completar la solicitud del competidor."
+    }
+  },
+  "techStack": {
+    "action": "Ver stack tecnológico",
+    "cms": "CMS",
+    "analytics": "Analítica",
+    "hosting": "Alojamiento",
+    "ecommerce": "Comercio electrónico",
+    "other": "Otros",
+    "loading": "Detectando tecnologías…",
+    "empty": "No se detectaron tecnologías.",
+    "failed": "No se pudo cargar el stack tecnológico."
+  }
+}

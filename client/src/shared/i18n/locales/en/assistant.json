@@ -1,0 +1,117 @@
+{
+  "title": "AI Assistant",
+  "description": "Ask about your SEO data and let the assistant use approved tools.",
+  "loading": "Loading conversations…",
+  "sidebar": {
+    "title": "Conversations",
+    "new": "New conversation",
+    "label": "Assistant conversations",
+    "empty": "No conversations yet.",
+    "untitled": "New conversation",
+    "deleteLabel": "Delete {{title}}",
+    "deleteTitle": "Delete conversation?",
+    "deleteDescription": "This permanently deletes “{{title}}” and its messages.",
+    "deleting": "Deleting…"
+  },
+  "context": {
+    "label": "Site context",
+    "none": "No site — general guidance",
+    "loading": "Loading your sites…",
+    "linkedHelp": "Site context is fixed after a conversation starts.",
+    "newHelp": "Optional. Link a site before sending the first message.",
+    "unavailable": "Your sites could not be loaded. You can still start a general conversation.",
+    "missing": "Linked site is no longer available"
+  },
+  "empty": {
+    "title": "What would you like to improve?",
+    "description": "Ask in plain language. The assistant can use the SEO tools your account permits.",
+    "examples": "Try one of these",
+    "prompts": {
+      "audit": "Summarize the most important fixes from my latest audit.",
+      "rank": "Which tracked keywords changed position recently?",
+      "sites": "Show me the sites in my account."
+    }
+  },
+  "composer": {
+    "label": "Message",
+    "placeholder": "Ask about rankings, audits, keywords, or your sites…",
+    "send": "Send message",
+    "sending": "Sending…",
+    "stop": "Stop",
+    "hint": "Enter to send · Shift+Enter for a new line",
+    "characters": "{{count}} / {{max}} characters"
+  },
+  "messages": {
+    "label": "Conversation messages",
+    "user": "Your message",
+    "assistant": "Assistant response",
+    "streaming": "Assistant is responding",
+    "loading": "Loading conversation…"
+  },
+  "tool": {
+    "arguments": "Arguments",
+    "result": "Result",
+    "waiting": "Waiting for the tool result…",
+    "status": {
+      "running": "Running",
+      "success": "Complete",
+      "failed": "Failed"
+    },
+    "names": {
+      "listSites": "List sites",
+      "latestAudit": "Latest audit report",
+      "listKeywords": "List keywords",
+      "rankHistory": "Rank history",
+      "listAnalyses": "List content analyses",
+      "contentAnalysis": "Content analysis",
+      "startAudit": "Start audit",
+      "auditStatus": "Audit status",
+      "listActions": "Next actions",
+      "setActionState": "Update an action"
+    }
+  },
+  "results": {
+    "empty": "The tool returned no rows.",
+    "notAvailable": "Not available",
+    "notRanked": "Not ranked",
+    "keyword": "Keyword",
+    "date": "Date",
+    "position": "Position",
+    "id": "ID",
+    "score": "Passed-check score",
+    "fixNow": "Fix now",
+    "topFindings": "Top findings",
+    "noFindings": "No findings were returned.",
+    "domain": "Domain",
+    "url": "URL"
+  },
+  "states": {
+    "locked": {
+      "title": "AI Assistant starts with Starter",
+      "description": "Upgrade to Starter or higher to chat with your SEO data and approved tools.",
+      "action": "Compare plans"
+    },
+    "cap": {
+      "title": "Monthly messages used",
+      "description": "Wait for your monthly allowance to reset, or check whether a chat pack is configured for your account.",
+      "buyCredits": "Buy chat credits",
+      "seePlans": "Compare plans"
+    },
+    "unavailable": {
+      "title": "Assistant temporarily unavailable",
+      "description": "The assistant is switched off or cannot respond right now. Your saved conversations are unchanged."
+    },
+    "error": {
+      "title": "Something interrupted the conversation"
+    }
+  },
+  "errors": {
+    "featureLocked": "Upgrade to Starter or higher to use the AI Assistant.",
+    "capReached": "You have used this month's assistant messages. Buy a credit pack or wait for the reset.",
+    "forbidden": "Your request could not be verified. Refresh the page and try again.",
+    "rateLimited": "Too many assistant requests. Wait a moment and try again.",
+    "unavailable": "The AI Assistant is temporarily unavailable.",
+    "streamFailed": "The response stopped unexpectedly. Try sending your message again.",
+    "generic": "The assistant request failed. Try again."
+  }
+}

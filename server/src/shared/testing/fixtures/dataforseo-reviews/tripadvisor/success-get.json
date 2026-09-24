@@ -1,0 +1,41 @@
+{
+  "version": "0.1.20260101",
+  "status_code": 20000,
+  "status_message": "Ok.",
+  "time": "0.15 sec.",
+  "cost": 0,
+  "tasks_count": 1,
+  "tasks_error": 0,
+  "tasks": [
+    {
+      "id": "TASK_ID",
+      "status_code": 20000,
+      "status_message": "Ok.",
+      "time": "0.14 sec.",
+      "cost": 0,
+      "result_count": 1,
+      "path": ["v3", "business_data", "tripadvisor", "reviews", "task_get", "advanced", "TASK_ID"],
+      "data": {
+        "api": "business_data",
+        "function": "task_get",
+        "keyword": "location_id:12345"
+      },
+      "result": [
+        {
+          "items_count": 1,
+          "items": [
+            {
+              "review_id": "ta-rv-1",
+              "rating": { "value": 4, "votes_count": 1 },
+              "title": null,
+              "review_text": "Good place, would visit again.",
+              "language_code": "en",
+              "timestamp": "2025-11-30 14:00:00 +00:00",
+              "profile_name": "Charlie K."
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

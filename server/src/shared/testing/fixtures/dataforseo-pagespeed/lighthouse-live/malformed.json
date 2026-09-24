@@ -1,0 +1,27 @@
+{
+  "version": "0.1.20260318",
+  "status_code": 20000,
+  "status_message": "Ok.",
+  "cost": 0.005,
+  "tasks_count": 1,
+  "tasks_error": 0,
+  "tasks": [
+    {
+      "id": "TASK_ID",
+      "status_code": 20000,
+      "status_message": "Ok.",
+      "cost": 0.005,
+      "result_count": 1,
+      "result": [
+        {
+          "categories": {
+            "performance": { "score": "not-a-number" },
+            "accessibility": { "score": 0.96 },
+            "best-practices": { "score": 0.92 },
+            "seo": { "score": 1 }
+          }
+        }
+      ]
+    }
+  ]
+}

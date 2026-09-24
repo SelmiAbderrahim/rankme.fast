@@ -1,0 +1,270 @@
+{
+  "title": "Concurrents",
+  "description": "Voyez avec quels sites vous êtes en concurrence et les mots-clés sur lesquels ils se positionnent.",
+  "empty": "Aucun concurrent trouvé pour ce domaine pour l'instant. Suivez quelques mots-clés et nous analyserons les sites qui dominent ces résultats de recherche.",
+  "emptyTitle": "Aucun concurrent pour l'instant",
+  "loadFailed": "Impossible de charger les concurrents.",
+  "intersectionFailed": "Impossible de charger les mots-clés d'écart.",
+  "table": {
+    "title": "Principaux concurrents",
+    "domain": "Domaine",
+    "overlap": "Recoupement",
+    "avgPosition": "Position moyenne",
+    "estTraffic": "Trafic estimé",
+    "actions": "Actions",
+    "gapAction": "Voir l'écart",
+    "sourceTrackedKeywords": "Basé sur vos mots-clés suivis"
+  },
+  "gap": {
+    "title": "Mots-clés sur lesquels {{competitor}} se positionne mais pas vous",
+    "loading": "Chargement de l’écart…",
+    "keyword": "Mot-clé",
+    "theyRank": "Leur position",
+    "volume": "Volume",
+    "emptyTitle": "Aucun mot-clé d'écart",
+    "empty": "Aucun mot-clé d'écart pour l'instant — vous vous positionnez sur les mêmes mots-clés qu'eux."
+  },
+  "refresh": {
+    "button": "Actualiser",
+    "cooldown": "Attendez {{seconds}} s avant d'actualiser.",
+    "failed": "Impossible d'actualiser pour le moment. Vos dernières données restent affichées."
+  },
+  "locked": {
+    "title": "Passez à la version supérieure pour débloquer l'analyse concurrentielle",
+    "body": "Les portefeuilles concurrents et les paysages de mots-clés commencent avec Pro. Agency ajoute des rapports plus étendus et la comparaison du contenu des pages classées.",
+    "upgrade": "Voir les plans"
+  },
+  "example": {
+    "title": "Exemple : ce que proposent Pro et Agency"
+  },
+  "intelligence": {
+    "title": "Veille sur la concurrence",
+    "description": "Gérez les concurrents confirmés, comparez les paysages de mots clés et conservez les recommandations acceptées dans un seul espace de travail de site.",
+    "common": {
+      "cancel": "Annuler"
+    },
+    "tiers": {
+      "starter": "Starter",
+      "pro": "Pro",
+      "agency": "Agency"
+    },
+    "views": {
+      "label": "Vues de veille concurrentielle",
+      "overview": "Aperçu",
+      "keywords": "Paysage de mots clés",
+      "content": "Contenu",
+      "monitoring": "Surveillance",
+      "traffic": "Trafic",
+      "reports": "Rapports"
+    },
+    "locked": {
+      "title": "La veille concurrentielle démarre sur Pro",
+      "description": "Passez à Pro pour confirmer des concurrents, créer des paysages de mots-clés et accepter des recommandations dans Prochaines actions.",
+      "action": "Comparer les formules"
+    },
+    "portfolio": {
+      "title": "Portefeuille de concurrents confirmés",
+      "description": "{{active}} sur {{max}} emplacements concurrents actifs sont utilisés. La gestion de cette liste n'utilise pas d'allocation.",
+      "manualLabel": "Ajouter une URL publique de concurrent",
+      "manualPlaceholder": "https://concurrent.exemple/",
+      "add": "Ajouter un concurrent",
+      "adding": "Ajout d'un concurrent…",
+      "confirmed": "Concurrent confirmé.",
+      "duplicate": "Ce concurrent est déjà dans le portefeuille.",
+      "confirmedLabel": "Confirmé",
+      "confirm": "Confirmer le concurrent",
+      "confirmTitle": "Confirmer ce concurrent ?",
+      "confirmDescription": "Ajoutez {{domain}} au portefeuille de sites. Cela n’exécute pas de recherche payante.",
+      "emptyTitle": "Aucun concurrent confirmé",
+      "empty": "Confirmez une suggestion de découverte ou ajoutez une URL publique de concurrent.",
+      "domain": "Domaine",
+      "source": "Provenance",
+      "status": "Statut",
+      "added": "Ajouté",
+      "action": "Action",
+      "archive": "Archiver",
+      "restore": "Restaurer",
+      "archivePending": "Archivage…",
+      "restorePending": "Restauration…",
+      "sources": {
+        "suggested": "Suggestion de découverte",
+        "manual": "Ajouté manuellement"
+      },
+      "statuses": {
+        "active": "Actif",
+        "archived": "Archivé"
+      }
+    },
+    "discovery": {
+      "title": "Découverte des concurrents",
+      "description": "Consultez gratuitement les suggestions stockées. Une nouvelle actualisation de découverte ne démarre qu'après un aperçu et une confirmation exactes des dépenses.",
+      "empty": "Aucune suggestion de découverte stockée pour l'instant.",
+      "captured": "Stocké le {{date}}",
+      "observed": "Observé {{date}}",
+      "partial": "Certaines sources de découverte n'ont pas renvoyé de données. Les résultats stockés sont affichés sans combler les lacunes.",
+      "previewAction": "Actualisation de la découverte de l'aperçu",
+      "previewing": "Préparation de l'aperçu de la découverte…",
+      "reviewAction": "Vérifier et confirmer",
+      "confirmTitle": "Exécuter une nouvelle actualisation de découverte ?",
+      "confirmDescription": "Cette actualisation utilise l'unité de recherche de mot clé {{units}}. Il reste {{remaining}} unités avant l’actualisation.",
+      "confirmAction": "Confirmer l'actualisation"
+    },
+    "technology": {
+      "title": "Résumé du portefeuille actuel",
+      "description": "Ce résumé utilise uniquement les faits de portefeuille stockés. Il ne démarre pas la détection technologique ou une autre recherche payante.",
+      "summary": "{{manual}} concurrents ont été ajoutés manuellement et {{suggested}} provenaient de suggestions de découverte confirmées. Les détails technologiques restent indisponibles jusqu’à ce qu’une recherche prévisualisée séparément existe."
+    },
+    "landscape": {
+      "title": "Construire un paysage de mots clés",
+      "description": "Sélectionnez jusqu'à {{count}} concurrents confirmés. Le serveur vérifie le niveau, le marché, l'allocation et les unités exactes avant qu'une exécution puisse commencer.",
+      "selection": "{{selected}} sur {{count}} concurrents sélectionnés",
+      "limit": "Vous pouvez sélectionner jusqu'à {{count}} concurrents pour ce rapport.",
+      "emptyTitle": "Confirmez d'abord un concurrent",
+      "empty": "Revenez à l'aperçu et ajoutez au moins un concurrent actif.",
+      "previewAction": "Aperçu des dépenses du rapport",
+      "previewing": "Préparation de l'aperçu du rapport…",
+      "previewTitle": "Aperçu des dépenses faisant autorité sur le serveur",
+      "previewDescription": "Ce rapport utilise {{units}} unités de recherche de mots clés et peut conserver jusqu'à {{rows}} lignes. Il reste {{remaining}} unités avant le démarrage.",
+      "cacheCounts": "Les accès au cache sont pris en compte dans l'utilisation",
+      "reviewAction": "Vérifier et confirmer",
+      "confirmTitle": "Commencer ce rapport paysager ?",
+      "confirmDescription": "Comparez {{count}} concurrents pour {{units}} unités de recherche de mots clés.",
+      "confirmAction": "Confirmer le rapport",
+      "duplicate": "La demande de rapport correspondant existe déjà. La piste existante a été ouverte.",
+      "editMarket": "Modifier le marché des mots clés suivis"
+    },
+    "reports": {
+      "title": "Rapports paysagers stockés",
+      "description": "Rouvrez les rapports immuables sans lancer une autre recherche de fournisseur.",
+      "emptyTitle": "Aucun rapport de paysage",
+      "empty": "Créez un rapport à partir de la vue paysage des mots clés.",
+      "date": "Créé",
+      "competitors": "Concurrents",
+      "state": "État",
+      "action": "Action",
+      "open": "Ouvrir le rapport",
+      "more": "Charger plus de rapports",
+      "loadFailedTitle": "Impossible de charger ce rapport"
+    },
+    "detail": {
+      "title": "Rapport paysager",
+      "summary": "{{domain}} par rapport à {{count}} concurrents le {{date}}.",
+      "progress": "{{done}} étapes source sur {{total}} terminées",
+      "polling": "Le rapport est toujours en cours d'exécution. Cet état stocké sera actualisé automatiquement.",
+      "partial": "{{usable}} des {{requested}} concurrents ont produit des données utilisables. Les étapes source {{failed}} ont échoué ; les valeurs manquantes n’ont pas été déduites.",
+      "back": "Retour à l'historique du rapport",
+      "cancel": "Annuler le rapport",
+      "rollupTitle": "Cumul de mots clés du portefeuille",
+      "rollupDescription": "{{rows}} lignes de mots clés parmi {{usable}} concurrents.",
+      "filtersTitle": "Filtres de rapport",
+      "classFilter": "Classe de mots-clés",
+      "domainFilter": "Concurrent",
+      "textFilter": "Rechercher des mots-clés",
+      "allClasses": "Tous les cours",
+      "allDomains": "Tous les concurrents",
+      "keywordsTitle": "Preuve de mots clés",
+      "keywordsDescription": "Les classements et les URL sont des faits observés. Le volume de recherche est une estimation du fournisseur ; des classes et des recommandations sont dérivées.",
+      "keyword": "Mot clé",
+      "class": "Classe",
+      "ownedRank": "Votre rang",
+      "competitorRank": "Classement des concurrents",
+      "volume": "Volume estimé",
+      "source": "Preuve",
+      "sourcesTitle": "Observations sources",
+      "sourcesDescription": "Les dates du fournisseur, du cache, du statut et de l’observation sont conservées avec ce rapport immuable.",
+      "sourcesEmpty": "Aucune observation de source n'a été retenue pour ce résultat.",
+      "observationDate": "Observé {{date}}",
+      "missing": "Non observé",
+      "next": "Page suivante",
+      "noMatchTitle": "Aucun mot clé correspondant",
+      "noMatch": "Modifiez ou effacez les filtres actuels basés sur les URL.",
+      "noDataTitle": "Aucune donnée de rapport conservée",
+      "noData": "L'exécution s'est terminée sans suffisamment de données sources utilisables. Les valeurs manquantes ne sont pas estimées.",
+      "matchesTitle": "Correspondances de pages suggérées",
+      "matchesDescription": "Ces suggestions stockées comparent les URL de classement. Ils ne lancent pas de grattage de contenu.",
+      "matchesEmpty": "Aucune correspondance de page sécurisée n'était disponible.",
+      "matchReason": "{{reason}} · {{confidence}} confiance",
+      "matchOwnedUrl": "URL de votre page vérifiée",
+      "matchCompetitorUrl": "URL de classement concurrente vérifiée",
+      "approveMatch": "Approuver",
+      "rejectMatch": "Rejeter",
+      "openSuggested": "Ouvrir la page suggérée",
+      "analyzeReviewed": "Comparer les pages vérifiées",
+      "monitorReviewed": "Surveiller cette page vérifiée",
+      "focusAnalysis": "Lancer l’analyse ciblée",
+      "matchSaveError": "La correspondance n’a pas pu être enregistrée.",
+      "recommendationsTitle": "Points forts et recommandations",
+      "recommendationsDescription": "Les recommandations restent sous forme de rapport uniquement jusqu'à ce que vous les acceptiez explicitement.",
+      "recommendationsEmpty": "Aucune recommandation ne répondait au seuil de preuve.",
+      "accept": "Accepter dans les actions suivantes",
+      "acceptTitle": "Accepter cette recommandation ?",
+      "acceptDescription": "L’acceptation crée une prochaine action durable. Renvoyer la même décision ne créera pas de doublon.",
+      "acceptConfirm": "Accepter la recommandation",
+      "openAction": "Ouvrir dans les actions suivantes"
+    },
+    "classes": {
+      "missing": "Manquant",
+      "owned_only": "Vous classez seulement",
+      "shared_behind": "Partagé, derrière",
+      "shared_ahead": "Partagé, en avance",
+      "shared_even": "Partagé, même"
+    },
+    "runStates": {
+      "queued": "En file d'attente",
+      "collecting": "Collecte",
+      "aggregating": "Rapport de construction",
+      "completed": "Terminé",
+      "partial": "Partielle",
+      "failed": "Échec",
+      "cancelled": "Annulé"
+    },
+    "states": {
+      "loading": "Rapport en cours",
+      "partial": "Données partielles",
+      "cap": "Cette demande dépasse l'allocation restante. Mettez à niveau ou ajoutez un pack de crédits éligible avant de confirmer.",
+      "disabled": "Les demandes de nouveaux concurrents sont temporairement désactivées. Les rapports stockés restent disponibles.",
+      "unsafeLink": "Lien source dangereux masqué",
+      "rateLimit": "Trop de demandes. Attendez et réessayez.",
+      "providerFailure": "Une source a échoué. Les données disponibles restent visibles.",
+      "cancelled": "Le rapport a été annulé avant que toutes les étapes de source ne soient terminées.",
+      "stale": "Ce résultat stocké est peut-être obsolète. Sa date d'observation reste visible."
+    },
+    "labels": {
+      "observed": "Observé",
+      "estimate": "Estimation",
+      "derived": "Dérivé"
+    },
+    "cache": {
+      "hit": "Résultat du cache stocké",
+      "miss": "Résultat de la nouvelle source"
+    },
+    "market": {
+      "tracked_keyword_mode": "Marché à partir de mots-clés suivis",
+      "default": "Repli du marché par défaut"
+    },
+    "confidence": {
+      "high": "Élevé",
+      "medium": "Moyen",
+      "low": "Faible"
+    },
+    "matchReasons": {
+      "same_keyword": "Même mot-clé de classement",
+      "highest_coverage": "Couverture concurrente la plus élevée",
+      "closest_rank": "Rang observé le plus proche"
+    },
+    "errors": {
+      "generic": "Impossible de répondre à la demande du concurrent."
+    }
+  },
+  "techStack": {
+    "action": "Voir la stack technique",
+    "cms": "CMS",
+    "analytics": "Analytics",
+    "hosting": "Hébergement",
+    "ecommerce": "E-commerce",
+    "other": "Autre",
+    "loading": "Détection des technologies…",
+    "empty": "Aucune technologie détectée.",
+    "failed": "Impossible de charger la stack technique."
+  }
+}

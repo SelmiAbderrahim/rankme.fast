@@ -1,0 +1,167 @@
+{
+  "title": "Team",
+  "description": "Laden Sie Teammitglieder ein und verwalten Sie die Plätze Ihres Tarifs.",
+  "seatUsage": "{{used}} von {{limit}} Plätzen belegt",
+  "invite": {
+    "heading": "Teammitglied einladen",
+    "description": "Wählen Sie eine Rolle und genau die Websites aus, die dieses Teammitglied nutzen darf.",
+    "emailLabel": "E-Mail",
+    "emailPlaceholder": "kollege@example.com",
+    "emailInvalid": "Gib eine gültige E-Mail-Adresse ein",
+    "submit": "Einladung senden",
+    "submitting": "Wird gesendet…",
+    "atCap": "Alle Plätze sind belegt. Führen Sie ein Upgrade durch, um weitere Personen einzuladen.",
+    "upgradeCta": "Tarif upgraden",
+    "roleLabel": "Rolle",
+    "adminRoleLimit": "Administratoren können nur Mitglieder einladen."
+  },
+  "access": {
+    "heading": "Website-Zugriff",
+    "description": "Legen Sie fest, ob dieses Teammitglied alle oder nur ausgewählte Websites nutzen darf.",
+    "all": "Alle Websites",
+    "allDescription": "Schließt Websites ein, die später zu diesem Arbeitsbereich hinzugefügt werden.",
+    "selected": "Ausgewählte Websites",
+    "selectedDescription": "Der Zugriff ist auf die unten ausgewählten Websites beschränkt.",
+    "required": "Wählen Sie mindestens eine Website aus.",
+    "empty": "Fügen Sie eine Website hinzu, bevor Sie eine eingeschränkte Einladung erstellen.",
+    "loadFailed": "Die für diese Einladung verfügbaren Websites konnten nicht geladen werden.",
+    "siteCount": "{{count}} Website(s)"
+  },
+  "members": {
+    "heading": "Mitglieder",
+    "columns": {
+      "email": "E-Mail",
+      "role": "Rolle",
+      "status": "Status",
+      "invitedAt": "Eingeladen",
+      "expiresAt": "Läuft ab",
+      "access": "Website-Zugriff"
+    },
+    "roles": {
+      "owner": "Inhaber",
+      "member": "Mitglied",
+      "admin": "Administrator"
+    },
+    "status": {
+      "accepted": "Aktiv",
+      "pending": "Ausstehend",
+      "expired": "Abgelaufen"
+    },
+    "actions": {
+      "menuLabel": "Aktionsmenü öffnen",
+      "remove": "Entfernen",
+      "revoke": "Einladung zurückziehen",
+      "resend": "Einladung erneut senden",
+      "leave": "Arbeitsbereich verlassen",
+      "changeRole": "Rolle von {{email}} ändern",
+      "editAccess": "Rolle und Zugriff bearbeiten"
+    },
+    "confirmRemove": {
+      "title": "Dieses Teammitglied entfernen?",
+      "body": "{{email}} verliert sofort den Zugriff auf dieses Team.",
+      "confirm": "Entfernen",
+      "cancel": "Abbrechen"
+    },
+    "confirmRevoke": {
+      "title": "Diese Einladung zurückziehen?",
+      "body": "Die Einladung für {{email}} funktioniert sofort nicht mehr.",
+      "confirm": "Einladung zurückziehen"
+    },
+    "empty": "Noch keine Teammitglieder. Laden Sie oben jemanden ein.",
+    "removed": "Mitglied entfernt.",
+    "loading": "Team wird geladen…",
+    "searchPlaceholder": "Nach E-Mail suchen",
+    "previous": "Zurück",
+    "next": "Weiter",
+    "pageOf": "Seite {{page}} von {{totalPages}} · {{total}} Mitglied(er)",
+    "edit": {
+      "title": "Zugriff des Teammitglieds bearbeiten",
+      "description": "Ändern Sie Rolle und Websites für {{email}}.",
+      "save": "Zugriff speichern",
+      "saving": "Wird gespeichert…",
+      "cancel": "Abbrechen"
+    }
+  },
+  "accept": {
+    "title": "Einladung annehmen",
+    "loading": "Ihre Einladung wird geprüft…",
+    "success": "Sie sind dem Team beigetreten.",
+    "cta": "Zum Dashboard"
+  },
+  "decision": {
+    "loading": "Einladung wird geprüft…",
+    "invitedBy": "{{inviter}} hat Sie zu {{team}} eingeladen.",
+    "role": "Rolle",
+    "sites": "Websites",
+    "expires": "Läuft ab",
+    "accept": {
+      "title": "Teameinladung annehmen",
+      "confirm": "Einladung annehmen",
+      "acting": "Wird angenommen…",
+      "signInRequired": "Melden Sie sich mit der eingeladenen E-Mail-Adresse an, bevor Sie annehmen.",
+      "signIn": "Zum Annehmen anmelden",
+      "passwordRequired": "Ersetzen Sie Ihr temporäres Passwort, bevor Sie diese Einladung annehmen.",
+      "changePassword": "Passwort ändern",
+      "completeTitle": "Einladung angenommen",
+      "complete": "Sie haben jetzt Zugriff auf die zugewiesenen Websites des Arbeitsbereichs.",
+      "cta": "Zum Dashboard"
+    },
+    "reject": {
+      "title": "Teameinladung ablehnen",
+      "confirm": "Einladung ablehnen",
+      "acting": "Wird abgelehnt…",
+      "dialogTitle": "Diese Einladung ablehnen?",
+      "dialogBody": "Die Einladung funktioniert danach nicht mehr. Ein noch nicht beanspruchtes Konto kann gelöscht werden.",
+      "cancel": "Einladung behalten",
+      "completeTitle": "Einladung abgelehnt",
+      "complete": "Die Einladung wurde abgelehnt.",
+      "cta": "Zur Startseite"
+    }
+  },
+  "inbox": {
+    "buttonLabel": "Teameinladungen",
+    "buttonLabelWithCount": "Teameinladungen, {{count}} ausstehend",
+    "title": "Teameinladungen",
+    "description": "Prüfen Sie Einladungen, die auf Ihre Entscheidung warten.",
+    "emptyTitle": "Keine offenen Einladungen",
+    "empty": "Neue Teameinladungen werden hier angezeigt.",
+    "invitedBy": "Eingeladen von {{inviter}}",
+    "summary": "{{role}} · {{access}} · läuft am {{date}} ab",
+    "accept": "Annehmen",
+    "accepting": "Wird angenommen…",
+    "reject": "Ablehnen",
+    "rejecting": "Wird abgelehnt…",
+    "rejectTitle": "Diese Einladung ablehnen?",
+    "rejectBody": "Sie treten {{team}} nicht bei.",
+    "cancel": "Abbrechen",
+    "loadFailed": "Ihre Teameinladungen konnten nicht geladen werden."
+  },
+  "errors": {
+    "loadFailed": "Ihr Team konnte nicht geladen werden. Bitte laden Sie neu.",
+    "inviteFailed": "Diese Einladung konnte nicht gesendet werden.",
+    "seatCapExceeded": "Alle Plätze sind belegt. Führen Sie ein Upgrade durch, um weitere Personen einzuladen.",
+    "alreadyInvited": "Für diese E-Mail-Adresse gibt es bereits eine offene Einladung.",
+    "alreadyMember": "Diese E-Mail-Adresse ist bereits Teammitglied.",
+    "inviteNotFound": "Dieser Einladungslink ist ungültig.",
+    "inviteExpired": "Diese Einladung ist abgelaufen. Bitten Sie um eine neue.",
+    "inviteUsed": "Diese Einladung wurde bereits angenommen.",
+    "removeFailed": "Das Mitglied konnte nicht entfernt werden.",
+    "resendFailed": "Diese Einladung konnte nicht erneut gesendet werden.",
+    "roleFailed": "Diese Rolle konnte nicht geändert werden.",
+    "accessUpdateFailed": "Der Zugriff dieses Teammitglieds konnte nicht aktualisiert werden.",
+    "rejectFailed": "Diese Einladung konnte nicht abgelehnt werden."
+  },
+  "workspace": {
+    "switcherLabel": "Arbeitsbereich",
+    "own": "Mein Arbeitsbereich",
+    "role": {
+      "owner": "Inhaber",
+      "admin": "Administrator",
+      "member": "Mitglied"
+    },
+    "notAvailable": {
+      "title": "In diesem Arbeitsbereich nicht verfügbar",
+      "body": "Abrechnung, Verbindungen, Schlüssel und Kontoeinstellungen bleiben beim Inhaber des Arbeitsbereichs. Wechseln Sie zurück, um Ihre eigenen zu verwalten."
+    }
+  }
+}

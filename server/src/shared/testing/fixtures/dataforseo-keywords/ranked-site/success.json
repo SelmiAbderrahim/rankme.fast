@@ -1,0 +1,51 @@
+{
+  "version": "0.1.20260101",
+  "status_code": 20000,
+  "status_message": "Ok.",
+  "cost": 0.01224,
+  "tasks_count": 1,
+  "tasks_error": 0,
+  "tasks": [
+    {
+      "id": "TASK_ID",
+      "status_code": 20000,
+      "status_message": "Ok.",
+      "cost": 0.01224,
+      "result": [
+        {
+          "items": [
+            {
+              "keyword_data": {
+                "keyword": "seo audit tool",
+                "keyword_info": { "search_volume": 5400 },
+                "keyword_properties": { "keyword_difficulty": 62 }
+              },
+              "ranked_serp_element": {
+                "serp_item": {
+                  "rank_group": 4,
+                  "rank_absolute": 5,
+                  "etv": 630.5,
+                  "url": "https://example.com/seo-audit"
+                }
+              }
+            },
+            {
+              "keyword_data": {
+                "keyword": "website audit checklist",
+                "keyword_info": { "search_volume": 2900 },
+                "keyword_properties": { "keyword_difficulty": 41 }
+              },
+              "ranked_serp_element": {
+                "serp_item": {
+                  "rank_group": 9,
+                  "etv": 112.2,
+                  "url": "https://example.com/checklist"
+                }
+              }
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

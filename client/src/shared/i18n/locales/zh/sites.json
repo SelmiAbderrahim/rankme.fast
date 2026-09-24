@@ -1,0 +1,196 @@
+{
+  "title": "网站",
+  "listDescription": "您在 RankMeFast 中跟踪的网站。",
+  "loading": "正在加载您的网站…",
+  "retry": "重试",
+  "addTitle": "添加您的网站",
+  "addDescription": "输入您的网站地址，开始审计并跟踪排名。",
+  "urlLabel": "网站网址",
+  "urlPlaceholder": "https://example.com",
+  "addSubmit": "添加网站",
+  "adding": "正在添加…",
+  "emptyTitle": "暂无网站",
+  "emptyDescription": "添加您的第一个网站即可开始。",
+  "columnName": "名称",
+  "columnDomain": "域名",
+  "columnAdded": "添加时间",
+  "columnGoogle": "Google",
+  "googleLinked": "已关联",
+  "googleNotLinked": "未关联",
+  "googleNotConnected": "Google 未连接",
+  "columnActions": "操作",
+  "rowActions": "打开 {{name}} 的菜单",
+  "open": "打开",
+  "viewReport": "查看报告",
+  "trackKeywords": "跟踪关键词",
+  "backlinks": "反向链接",
+  "competitors": "竞争对手",
+  "googleSettings": "Google 设置",
+  "editName": "编辑显示名称",
+  "delete": "删除",
+  "deleteTitle": "删除网站",
+  "deleteDescription": "这将从您的账户中移除 {{domain}}。此操作无法撤销。",
+  "deleteConfirm": "删除网站",
+  "deleteCancel": "取消",
+  "renameTitle": "编辑显示名称",
+  "renameDescription": "修改 {{domain}} 在 RankMeFast 中的显示方式。",
+  "renameLabel": "显示名称",
+  "renamePlaceholder": "我的博客",
+  "renameSave": "保存",
+  "renameSaving": "保存中…",
+  "renameCancel": "取消",
+  "renameFailed": "无法更新该网站。",
+  "previous": "上一页",
+  "next": "下一页",
+  "loadFailed": "无法加载您的网站。",
+  "addFailed": "无法添加该网站。",
+  "deleteFailed": "无法删除该网站。",
+  "pauseFailed": "无法暂停该网站。",
+  "resumeFailed": "无法恢复该网站。",
+  "paused": {
+    "chip": "已暂停",
+    "menuPause": "暂停网站",
+    "menuResume": "恢复网站",
+    "confirmTitle": "暂停此网站？",
+    "confirmBody": "{{domain}} 的审核、排名检查、每周报告、内容监控和提醒都将停止。您的报告和历史记录仍可查看。",
+    "confirmCta": "暂停网站",
+    "cancel": "取消",
+    "bannerTitle": "网站已暂停",
+    "banner": "此网站已暂停——不会运行任何检查或审核。暂停于{{when}}。",
+    "resumeCta": "恢复",
+    "pausing": "正在暂停…",
+    "resuming": "正在恢复…"
+  },
+  "errors": {
+    "urlRequired": "请输入您的网站网址。",
+    "urlTooLong": "该网址过长（最多 2048 个字符）。",
+    "urlInvalid": "请输入有效的网址，例如 https://example.com。",
+    "urlScheme": "仅支持 http:// 和 https:// 网址。",
+    "urlUserinfo": "请从网址中移除用户名和密码。",
+    "urlIpLiteral": "不支持 IP 地址——请使用域名。",
+    "urlNoTld": "请输入完整的域名，例如 https://example.com。"
+  },
+  "workspace": {
+    "tabs": {
+      "overview": "概览",
+      "actions": "行动",
+      "report": "报告",
+      "keywords": "关键词",
+      "serpFeatures": "SERP 功能",
+      "keywordClusters": "关键词聚类",
+      "research": "关键词研究",
+      "backlinks": "反向链接",
+      "competitors": "竞争对手",
+      "google": "Google",
+      "aiVisibility": "AI 可见度",
+      "brandRadar": "品牌雷达",
+      "apps": "应用",
+      "localSeo": "本地 SEO",
+      "reviews": "评价",
+      "geogrid": "地理网格",
+      "content": "内容",
+      "internalLinks": "内部链接",
+      "cannibalization": "关键词蚕食",
+      "audienceResearch": "受众研究",
+      "schema": "结构化标记"
+    },
+    "groups": {
+      "auditReports": "审计与报告",
+      "search": "搜索",
+      "visibility": "可见度",
+      "content": "内容",
+      "localApps": "本地 SEO 与应用"
+    },
+    "navigationLabel": "工作区视图",
+    "activeGroupLabel": "{{group}} · {{current}}",
+    "upgradeHint": "升级您的方案以解锁该标签页。"
+  },
+  "overview": {
+    "next": {
+      "title": "后续操作",
+      "description": "先处理最新审计中影响最大的项目。",
+      "viewProgress": "查看审计进度",
+      "openReport": "打开完整报告",
+      "openFinding": "在报告中查看",
+      "clearTitle": "没有紧急修复项",
+      "clearDescription": "最新审计中没有需要立即修复或关注的项目。",
+      "inProgressTitle": "审计进行中"
+    },
+    "sections": {
+      "searchExperienceTitle": "搜索与体验",
+      "searchExperienceDescription": "真实搜索需求及其背后的移动端体验。",
+      "trackingTitle": "跟踪与竞争格局",
+      "trackingDescription": "近期排名和影响可见度的站外信号。"
+    },
+    "search": {
+      "title": "搜索表现",
+      "description": "来自最新审计中的 Search Console 快照。",
+      "topQuery": "热门查询",
+      "openGoogle": "打开 Google 数据"
+    },
+    "pageSpeed": {
+      "title": "站点体验",
+      "description": "最新审计中的第一个移动端 PageSpeed 样本。",
+      "accessibility": "无障碍",
+      "seo": "SEO",
+      "coreWebVitals": "核心网页指标"
+    },
+    "keywords": {
+      "title": "最近跟踪的关键词",
+      "description": "最近添加词条的最新排名。",
+      "open": "打开关键词",
+      "awaiting": "等待首次检查"
+    },
+    "backlinks": {
+      "updated": "更新于 {{date}}",
+      "open": "打开反向链接",
+      "noSnapshotTitle": "尚无反向链接快照",
+      "noSnapshotDescription": "需要获取并查看完整资料时，请打开反向链接。"
+    },
+    "competitors": {
+      "open": "打开竞争对手",
+      "notLoadedTitle": "竞争对手数据可按需获取",
+      "notLoadedDescription": "打开竞争对手以执行 Agency 查询。概览会复用该结果，不会再次消耗查询次数。"
+    },
+    "unlock": {
+      "title": "还有更多洞察可用",
+      "backlinksAndCompetitors": "升级以查看反向链接强度和竞争重叠。",
+      "competitors": "升级到 Agency 以查看竞争重叠和关键词差距。",
+      "openPlans": "比较套餐"
+    },
+    "statError": "无法加载",
+    "meta": {
+      "title": "站点详情",
+      "name": "名称",
+      "domain": "域名"
+    },
+    "stats": {
+      "audit": {
+        "title": "立即修复",
+        "hint": "打开报告标签页运行新的审计。"
+      },
+      "keywords": {
+        "title": "跟踪的关键词",
+        "hint": "打开关键词标签页添加或移除词条。"
+      },
+      "backlinks": {
+        "title": "反向链接",
+        "hint": "打开反向链接标签页加载资料。"
+      },
+      "competitors": {
+        "title": "竞争对手",
+        "hint": "打开竞争对手标签页加载列表。"
+      },
+      "google": {
+        "title": "Google Search Console",
+        "hint": "打开 Google 标签页管理连接。"
+      }
+    },
+    "gsc": {
+      "connected": "已连接",
+      "needs_reconnect": "需要重新连接",
+      "revoked": "已撤销",
+      "disconnected": "未连接"
+    }
+  }
+}

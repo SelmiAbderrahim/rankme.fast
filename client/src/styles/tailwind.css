@@ -1,0 +1,436 @@
+@import 'tailwindcss';
+@import 'tw-animate-css';
+
+/*
+ * Self-hosted Instrument Serif accent face (SEC-07). WOFF2 vendored under
+ * client/public/fonts, served same-origin at /fonts/*, `swap` so the fallback
+ * serif paints immediately. Italic is preloaded in index.html (LCP path).
+ */
+/*
+ * Self-hosted Inter UI/body face (SEC-07). One sans family across the whole
+ * product — app, marketing, auth — so type renders identically on every OS
+ * instead of falling back to each platform's system stack. WOFF2 vendored
+ * under client/public/fonts, served same-origin at /fonts/*, latin subset,
+ * `swap` so the fallback paints immediately. Weights 400/500/600/700 cover
+ * body, medium labels, semibold headings, and bold. SIL OFL (rsms/inter).
+ */
+@font-face {
+  font-family: 'Inter';
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+  src: url('/fonts/inter-latin-400-normal.woff2') format('woff2');
+}
+@font-face {
+  font-family: 'Inter';
+  font-style: normal;
+  font-weight: 500;
+  font-display: swap;
+  src: url('/fonts/inter-latin-500-normal.woff2') format('woff2');
+}
+@font-face {
+  font-family: 'Inter';
+  font-style: normal;
+  font-weight: 600;
+  font-display: swap;
+  src: url('/fonts/inter-latin-600-normal.woff2') format('woff2');
+}
+@font-face {
+  font-family: 'Inter';
+  font-style: normal;
+  font-weight: 700;
+  font-display: swap;
+  src: url('/fonts/inter-latin-700-normal.woff2') format('woff2');
+}
+
+@font-face {
+  font-family: 'Instrument Serif';
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+  src: url('/fonts/instrument-serif-latin-400-normal.woff2') format('woff2');
+}
+@font-face {
+  font-family: 'Instrument Serif';
+  font-style: italic;
+  font-weight: 400;
+  font-display: swap;
+  src: url('/fonts/instrument-serif-latin-400-italic.woff2') format('woff2');
+}
+
+/*
+ * Manual dark-mode strategy: the `.dark` class on <html> is toggled by the
+ * no-flash head script in index.html and the ThemeProvider. System preference
+ * is resolved into that class, so `@media (prefers-color-scheme)` is not used.
+ */
+@custom-variant dark (&:is(.dark *));
+
+/*
+ * Aria-inspired editorial palette (design-system.md §1): warm paper surfaces,
+ * near-black "ink" as the primary action color, and a single signal-red
+ * `--highlight` accent used sparingly (eyebrows, stat bars, focus rings).
+ * Red stays out of `--primary` on purpose — a red primary button would read
+ * as destructive across the dashboard.
+ */
+:root {
+  color-scheme: light;
+  --radius: 0.5rem;
+
+  --background: #f2f0ed;
+  --foreground: #191715;
+
+  --card: #ffffff;
+  --card-foreground: #191715;
+
+  --popover: #ffffff;
+  --popover-foreground: #191715;
+
+  /* Ink — the Aria-style monochrome primary action color. */
+  --primary: #1c1a18;
+  --primary-foreground: #f5f3f0;
+
+  /* Taupe band fill (marketing closing CTA) + secondary buttons. */
+  --secondary: #dcd8d1;
+  --secondary-foreground: #191715;
+
+  --muted: #e8e5e0;
+  /* Secondary copy has AA+ headroom on paper, cards, and muted fills. */
+  --muted-foreground: #59544f;
+
+  --accent: #eceae5;
+  --accent-foreground: #191715;
+
+  /* Status-semantic tokens (SPEC-A1/A2). Light values sit on the 700–800
+     Tailwind scale so full-strength token text stays ≥4.5:1 (WCAG AA) even on
+     its own 10% soft tint over the warm-paper background — the worst-case
+     surface for the SPEC-A2 chip recipe (axe-verified). Info is indigo —
+     distinct from the highlight red and the purple chart series. */
+  --destructive: #b91c1c;
+  --destructive-foreground: #ffffff;
+
+  --success: #166534;
+  --success-foreground: #ffffff;
+
+  --warning: #92400e;
+  --warning-foreground: #ffffff;
+
+  --info: #4338ca;
+  --info-foreground: #ffffff;
+
+  /* Signal red (SPEC-A6) — the single brand accent. Burnt red-orange, tuned
+     for AA (≥4.5:1) as text on the paper background; NOT the destructive
+     crimson, and never used as a button fill. */
+  --highlight: #b5321e;
+  --highlight-foreground: #ffffff;
+
+  /* Passive dividers stay quiet. Interactive controls use the stronger
+     `--input` boundary, which clears WCAG 1.4.11 on page/card surfaces. */
+  --border: #c8c1b8;
+  --input: #8b8178;
+  --ring: #b5321e;
+
+  /* Sidebar surface tokens (shadcn Sidebar). */
+  --sidebar: #edeae6;
+  --sidebar-foreground: #191715;
+  --sidebar-primary: #1c1a18;
+  --sidebar-primary-foreground: #f5f3f0;
+  --sidebar-accent: #e4e1db;
+  --sidebar-accent-foreground: #191715;
+  --sidebar-border: #8b8178;
+  --sidebar-ring: #b5321e;
+
+  /* Chart palette — every series clears 3:1 as a graphical object on paper
+     and cards. Teal separates chart series from semantic success green. */
+  --chart-1: #b5321e;
+  --chart-2: #0d6d66;
+  --chart-3: #854d0e;
+  --chart-4: #7e22ce;
+  --chart-5: #1d4ed8;
+}
+
+.dark {
+  color-scheme: dark;
+  --background: #0a0a09;
+  --foreground: #f2f0ed;
+
+  --card: #141312;
+  --card-foreground: #f2f0ed;
+
+  --popover: #141312;
+  --popover-foreground: #f2f0ed;
+
+  --primary: #f2f0ed;
+  --primary-foreground: #12100f;
+
+  --secondary: #262421;
+  --secondary-foreground: #f2f0ed;
+
+  --muted: #1c1a18;
+  --muted-foreground: #a39f99;
+
+  --accent: #262421;
+  --accent-foreground: #f2f0ed;
+
+  /* red-400, not red-500: a `bg-destructive/10` status chip on a dark `--card`
+     blends to #2a1817, where red-500 measures 4.49:1 — a hair under AA. The
+     400 scale lands at 5.89:1 on the same tint and 7.16:1 as solid-fill text
+     against `--destructive-foreground`. */
+  --destructive: #f87171;
+  --destructive-foreground: #0a0a09;
+
+  --success: #22c55e;
+  --success-foreground: #0a0a09;
+
+  --warning: #fbbf24;
+  --warning-foreground: #0a0a09;
+
+  --info: #818cf8;
+  --info-foreground: #0a0a09;
+
+  --highlight: #ff5c3f;
+  --highlight-foreground: #12100f;
+
+  --border: #3d3833;
+  --input: #71685f;
+  --ring: #ff5c3f;
+
+  --sidebar: #141312;
+  --sidebar-foreground: #f2f0ed;
+  --sidebar-primary: #f2f0ed;
+  --sidebar-primary-foreground: #12100f;
+  --sidebar-accent: #262421;
+  --sidebar-accent-foreground: #f2f0ed;
+  --sidebar-border: #71685f;
+  --sidebar-ring: #ff5c3f;
+
+  --chart-1: #ff5c3f;
+  --chart-2: #2dd4bf;
+  --chart-3: #fbbf24;
+  --chart-4: #c084fc;
+  --chart-5: #60a5fa;
+}
+
+/*
+ * Marketing theme (design-system.md §1b). Public marketing and docs routes
+ * render inside `.mk-theme` (MarketingLayout root): bright white surfaces and
+ * a trustworthy blue primary. The authenticated dashboard keeps the warm
+ * paper / ink / signal-red tokens above. `@theme inline` resolves every
+ * utility to `var(--x)` at the element, so redeclaring the tokens on an
+ * ancestor is enough — no second utility set.
+ *
+ * `.dark .mk-theme` covers the global theme toggle; `.mk-theme .dark` covers
+ * the locally dark closing sheet and footer inside the marketing shell.
+ * Both blocks declare the FULL token set (theme-contrast.test.ts reads each).
+ */
+.mk-theme {
+  color-scheme: light;
+
+  --background: #ffffff;
+  --foreground: #0f172a;
+
+  --card: #ffffff;
+  --card-foreground: #0f172a;
+
+  --popover: #ffffff;
+  --popover-foreground: #0f172a;
+
+  /* Blue-700: 6.7:1 with white text, the marketing button fill. */
+  --primary: #1d4ed8;
+  --primary-foreground: #ffffff;
+
+  --secondary: #dbeafe;
+  --secondary-foreground: #1e3a8a;
+
+  --muted: #f1f5f9;
+  --muted-foreground: #475569;
+
+  --accent: #eff6ff;
+  --accent-foreground: #0f172a;
+
+  --destructive: #b91c1c;
+  --destructive-foreground: #ffffff;
+
+  --success: #166534;
+  --success-foreground: #ffffff;
+
+  --warning: #92400e;
+  --warning-foreground: #ffffff;
+
+  --info: #4338ca;
+  --info-foreground: #ffffff;
+
+  /* On marketing the accent IS the primary blue. */
+  --highlight: #1d4ed8;
+  --highlight-foreground: #ffffff;
+
+  --border: #e2e8f0;
+  --input: #64748b;
+  --ring: #1d4ed8;
+
+  --sidebar: #f1f5f9;
+  --sidebar-foreground: #0f172a;
+  --sidebar-primary: #1d4ed8;
+  --sidebar-primary-foreground: #ffffff;
+  --sidebar-accent: #eff6ff;
+  --sidebar-accent-foreground: #0f172a;
+  --sidebar-border: #64748b;
+  --sidebar-ring: #1d4ed8;
+
+  --chart-1: #1d4ed8;
+  --chart-2: #0d6d66;
+  --chart-3: #854d0e;
+  --chart-4: #7e22ce;
+  --chart-5: #b5321e;
+}
+
+.dark .mk-theme,
+.mk-theme .dark {
+  color-scheme: dark;
+
+  --background: #0b1220;
+  --foreground: #f8fafc;
+
+  --card: #111a2e;
+  --card-foreground: #f8fafc;
+
+  --popover: #111a2e;
+  --popover-foreground: #f8fafc;
+
+  --primary: #60a5fa;
+  --primary-foreground: #0b1220;
+
+  --secondary: #1e293b;
+  --secondary-foreground: #f8fafc;
+
+  --muted: #1e293b;
+  --muted-foreground: #94a3b8;
+
+  --accent: #172554;
+  --accent-foreground: #f8fafc;
+
+  --destructive: #f87171;
+  --destructive-foreground: #0a0a09;
+
+  --success: #22c55e;
+  --success-foreground: #0a0a09;
+
+  --warning: #fbbf24;
+  --warning-foreground: #0a0a09;
+
+  --info: #818cf8;
+  --info-foreground: #0a0a09;
+
+  --highlight: #60a5fa;
+  --highlight-foreground: #0b1220;
+
+  --border: #243044;
+  /* Tightest pair in the suite: 3.64:1 on --card. Do not darken. */
+  --input: #64748b;
+  --ring: #60a5fa;
+
+  --sidebar: #111a2e;
+  --sidebar-foreground: #f8fafc;
+  --sidebar-primary: #60a5fa;
+  --sidebar-primary-foreground: #0b1220;
+  --sidebar-accent: #172554;
+  --sidebar-accent-foreground: #f8fafc;
+  --sidebar-border: #64748b;
+  --sidebar-ring: #60a5fa;
+
+  --chart-1: #60a5fa;
+  --chart-2: #2dd4bf;
+  --chart-3: #fbbf24;
+  --chart-4: #c084fc;
+  --chart-5: #ff5c3f;
+}
+
+@theme inline {
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+
+  --color-card: var(--card);
+  --color-card-foreground: var(--card-foreground);
+
+  --color-popover: var(--popover);
+  --color-popover-foreground: var(--popover-foreground);
+
+  --color-primary: var(--primary);
+  --color-primary-foreground: var(--primary-foreground);
+
+  --color-secondary: var(--secondary);
+  --color-secondary-foreground: var(--secondary-foreground);
+
+  --color-muted: var(--muted);
+  --color-muted-foreground: var(--muted-foreground);
+
+  --color-accent: var(--accent);
+  --color-accent-foreground: var(--accent-foreground);
+
+  --color-destructive: var(--destructive);
+  --color-destructive-foreground: var(--destructive-foreground);
+
+  --color-success: var(--success);
+  --color-success-foreground: var(--success-foreground);
+
+  --color-warning: var(--warning);
+  --color-warning-foreground: var(--warning-foreground);
+
+  --color-info: var(--info);
+  --color-info-foreground: var(--info-foreground);
+
+  --color-highlight: var(--highlight);
+  --color-highlight-foreground: var(--highlight-foreground);
+
+  --color-border: var(--border);
+  --color-input: var(--input);
+  --color-ring: var(--ring);
+
+  --color-sidebar: var(--sidebar);
+  --color-sidebar-foreground: var(--sidebar-foreground);
+  --color-sidebar-primary: var(--sidebar-primary);
+  --color-sidebar-primary-foreground: var(--sidebar-primary-foreground);
+  --color-sidebar-accent: var(--sidebar-accent);
+  --color-sidebar-accent-foreground: var(--sidebar-accent-foreground);
+  --color-sidebar-border: var(--sidebar-border);
+  --color-sidebar-ring: var(--sidebar-ring);
+
+  --color-chart-1: var(--chart-1);
+  --color-chart-2: var(--chart-2);
+  --color-chart-3: var(--chart-3);
+  --color-chart-4: var(--chart-4);
+  --color-chart-5: var(--chart-5);
+
+  --radius-sm: calc(var(--radius) - 4px);
+  --radius-md: calc(var(--radius) - 2px);
+  --radius-lg: var(--radius);
+  --radius-xl: calc(var(--radius) + 4px);
+
+  --font-sans:
+    'Inter', system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+  --font-mono: 'JetBrains Mono', ui-monospace, monospace;
+  /* Accent display face — self-hosted Instrument Serif (SEC-07). Used for the
+     italic-serif marketing accent words; falls back to a system serif stack. */
+  --font-serif: 'Instrument Serif', ui-serif, Georgia, Cambria, 'Times New Roman', serif;
+}
+
+@layer base {
+  * {
+    @apply border-border outline-ring/50;
+  }
+  body {
+    @apply bg-background text-foreground font-sans antialiased;
+    overflow-x: clip;
+  }
+  #root {
+    width: 100%;
+    min-height: 100dvh;
+    min-width: 0;
+    overflow-x: clip;
+  }
+  img,
+  video,
+  canvas,
+  svg {
+    max-width: 100%;
+  }
+}

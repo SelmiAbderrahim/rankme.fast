@@ -1,0 +1,86 @@
+{
+  "version": "0.1.20260101",
+  "status_code": 20000,
+  "status_message": "Ok.",
+  "time": "0.1811 sec.",
+  "cost": 0.0114,
+  "tasks_count": 1,
+  "tasks_error": 0,
+  "tasks": [
+    {
+      "id": "TASK_ID",
+      "status_code": 20000,
+      "status_message": "Ok.",
+      "time": "0.1601 sec.",
+      "cost": 0.0114,
+      "result_count": 1,
+      "path": ["v3", "dataforseo_labs", "google", "keyword_overview", "live"],
+      "data": {
+        "api": "dataforseo_labs",
+        "function": "keyword_overview",
+        "location_code": 2840,
+        "language_code": "en"
+      },
+      "result": [
+        {
+          "location_code": 2840,
+          "language_code": "en",
+          "total_count": 2,
+          "items_count": 2,
+          "items": [
+            {
+              "se_type": "google",
+              "keyword": "seo audit tool",
+              "location_code": 2840,
+              "language_code": "en",
+              "keyword_info": {
+                "search_volume": 5400,
+                "cpc": 4.12,
+                "competition": "HIGH",
+                "competition_level": "HIGH",
+                "last_updated_time": "2026-01-15T00:00:00Z"
+              },
+              "keyword_properties": {
+                "keyword_difficulty": 62
+              },
+              "search_intent_info": {
+                "main_intent": "commercial",
+                "foreign_intent": ["informational"]
+              },
+              "serp_info": {
+                "serp_item_types": [
+                  "organic",
+                  "featured_snippet",
+                  "people_also_ask",
+                  "ai_overview"
+                ],
+                "se_results_count": 128000000
+              }
+            },
+            {
+              "se_type": "google",
+              "keyword": "rank tracker",
+              "location_code": 2840,
+              "language_code": "en",
+              "keyword_info": {
+                "search_volume": 8100,
+                "cpc": 6.45,
+                "last_updated_time": "2026-01-15T00:00:00Z"
+              },
+              "keyword_properties": {
+                "keyword_difficulty": 74
+              },
+              "search_intent_info": {
+                "main_intent": "transactional"
+              },
+              "serp_info": {
+                "serp_item_types": ["organic", "video_carousel", "shopping"],
+                "se_results_count": 41200000
+              }
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

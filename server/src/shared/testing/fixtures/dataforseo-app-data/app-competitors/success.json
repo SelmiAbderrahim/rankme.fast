@@ -1,0 +1,53 @@
+{
+  "version": "0.1.20260808",
+  "status_code": 20000,
+  "status_message": "Ok.",
+  "cost": 0.012,
+  "tasks": [
+    {
+      "id": "TASK_ID",
+      "status_code": 20000,
+      "status_message": "Ok.",
+      "cost": 0.012,
+      "path": [
+        "v3",
+        "dataforseo_labs",
+        "google_play",
+        "app_competitors",
+        "live"
+      ],
+      "result": [
+        {
+          "items": [
+            {
+              "app_id": "com.example.competitor",
+              "avg_position": 12.5,
+              "sum_position": 250,
+              "intersections": 17,
+              "competitor_metrics": {
+                "google_play_search_organic": {
+                  "pos_1": 2,
+                  "pos_2_3": 3,
+                  "pos_4_10": 5,
+                  "pos_11_100": 7,
+                  "count": 17,
+                  "search_volume": 4200
+                }
+              },
+              "full_metrics": {
+                "google_play_search_organic": {
+                  "pos_1": 4,
+                  "pos_2_3": 6,
+                  "pos_4_10": 8,
+                  "pos_11_100": 12,
+                  "count": 30,
+                  "search_volume": 9000
+                }
+              }
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

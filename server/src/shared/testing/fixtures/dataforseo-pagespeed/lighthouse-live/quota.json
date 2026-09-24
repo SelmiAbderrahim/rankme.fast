@@ -1,0 +1,18 @@
+{
+  "version": "0.1.20260318",
+  "status_code": 20000,
+  "status_message": "Ok.",
+  "cost": 0,
+  "tasks_count": 1,
+  "tasks_error": 1,
+  "tasks": [
+    {
+      "id": "TASK_ID",
+      "status_code": 40203,
+      "status_message": "The cost limit was exceeded",
+      "cost": 0,
+      "result_count": 0,
+      "result": null
+    }
+  ]
+}

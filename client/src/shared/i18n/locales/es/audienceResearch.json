@@ -1,0 +1,239 @@
+{
+  "nav": {
+    "label": "Investigación de audiencia",
+    "description": "Convierte quejas, solicitudes y preguntas públicas en oportunidades de contenido, producto y SEO."
+  },
+  "outputLocale": "Idioma de salida: {{locale}}",
+  "form": {
+    "market": {
+      "label": "Mercado",
+      "country": "País",
+      "language": "Idioma",
+      "device": "Dispositivo"
+    },
+    "competitors": {
+      "label": "Competidores",
+      "helper": "Elige hasta cinco competidores ya seguidos para este sitio.",
+      "chipRemove": "Quitar {{domain}}",
+      "limit": "Máximo {{max}} competidores seleccionados."
+    },
+    "topics": {
+      "label": "Temas",
+      "placeholder": "Añade un tema y pulsa Intro",
+      "chipRemove": "Quitar {{topic}}",
+      "count": "{{count}} / {{max}}",
+      "validationLength": "Los temas deben tener entre 2 y 160 caracteres.",
+      "validationEmpty": "Escribe un tema antes de añadirlo.",
+      "validationMax": "Puedes añadir hasta {{max}} temas."
+    },
+    "reviewButton": "Revisar",
+    "submitting": "Procesando…"
+  },
+  "preview": {
+    "unitLabel": "1 ejecución de investigación de audiencia",
+    "remainingLabel": "{{remaining}} de {{cap}} restantes este mes",
+    "operationCeilings": "Qué hará esta ejecución",
+    "cached": "En caché",
+    "fresh": "Reciente",
+    "supported": "Este mercado tiene soporte completo.",
+    "unsupported": "Este mercado tiene soporte limitado — los resultados pueden ser más escasos.",
+    "maxPages": "Hasta {{max}} páginas públicas",
+    "totalBudget": "Presupuesto total: {{micros}} micro-USD",
+    "aiBudget": "Presupuesto de IA: {{micros}} micro-USD",
+    "coverageOk": "Cobertura completa del proveedor",
+    "coverageDegraded": "Cobertura degradada del proveedor — los resultados pueden ser parciales.",
+    "coverageBlocked": "La extracción sin retención de datos está bloqueada para esta cuenta."
+  },
+  "confirm": {
+    "title": "¿Iniciar esta ejecución de investigación de audiencia?",
+    "body": "Esta ejecución rastreará hasta {{maxPages}} páginas públicas y generará señales a partir de la web pública. Se ejecuta una sola vez — no hay monitorización continua.",
+    "confirmButton": "Iniciar ejecución",
+    "cancelButton": "Cancelar",
+    "marketLine": "Mercado",
+    "competitorsLine": "Competidores",
+    "topicsLine": "Temas",
+    "unitLine": "Unidades consumidas"
+  },
+  "progress": {
+    "stage": {
+      "queued": "En cola",
+      "discovering": "Descubriendo fuentes",
+      "selecting": "Seleccionando candidatos",
+      "collecting": "Recopilando evidencia",
+      "clustering": "Agrupando señales",
+      "completed": "Completada",
+      "partial": "Completada parcialmente",
+      "failed": "Fallida"
+    },
+    "counts": {
+      "sources": "{{count}} fuentes encontradas",
+      "signals": "{{count}} señales encontradas"
+    },
+    "partial": {
+      "title": "Esta ejecución terminó con cobertura parcial",
+      "body": "Algunas fuentes o la etapa de IA alcanzaron un límite antes de terminar. Las señales de abajo reflejan solo la evidencia recopilada antes de que se detuviera la ejecución."
+    },
+    "failed": {
+      "title": "Esta ejecución falló",
+      "body": "Esta ejecución no terminó. Vuelve a intentarlo, o prueba con un tema más específico o un competidor diferente."
+    },
+    "noUsableEvidence": {
+      "title": "No se encontró evidencia utilizable",
+      "body": "No pudimos encontrar suficiente evidencia pública para generar señales para este mercado y estos temas. Se reembolsó tu ejecución."
+    },
+    "percentComplete": "{{percent}} % completado",
+    "back": "Volver al espacio de trabajo"
+  },
+  "history": {
+    "title": "Historial de ejecuciones",
+    "columns": {
+      "market": "Mercado",
+      "requestedAt": "Solicitada",
+      "state": "Estado",
+      "sources": "Fuentes",
+      "signals": "Señales",
+      "coverage": "Cobertura",
+      "unit": "Unidad"
+    },
+    "empty": {
+      "title": "Aún no hay ejecuciones",
+      "body": "Inicia tu primera investigación de audiencia para ver quejas, solicitudes y preguntas de la web pública."
+    },
+    "loading": "Cargando historial de ejecuciones…",
+    "prev": "Anterior",
+    "next": "Siguiente",
+    "view": "Ver",
+    "marketUnavailable": "—",
+    "coverageNote": "Cobertura parcial — abre la ejecución para más detalles",
+    "coverageFull": "Cobertura completa"
+  },
+  "locked": {
+    "title": "La investigación de audiencia no está incluida en tu plan",
+    "body": "Actualiza a Starter, Pro o Agency para ejecutar investigaciones de voz del cliente y convertir los comentarios públicos en oportunidades de contenido, producto y SEO.",
+    "cta": "Ver planes"
+  },
+  "usage": {
+    "metrics": {
+      "audience_research_runs": {
+        "label": "Ejecuciones de investigación de audiencia",
+        "description": "Una unidad cubre una ejecución completa de voz del cliente, sin importar cuántas búsquedas o extracciones realice."
+      }
+    }
+  },
+  "billing": {
+    "overCap": {
+      "audience_research_runs": "Has usado todas las ejecuciones de investigación de audiencia de tu plan este mes. Actualiza para lanzar más investigaciones de voz del cliente."
+    }
+  },
+  "signals": {
+    "empty": {
+      "title": "Esta ejecución terminó sin producir señales.",
+      "filtered": "Ninguna señal coincide con los filtros actuales."
+    },
+    "citationCount": "{{count}} fuentes citadas",
+    "confidence": {
+      "high": "Alta confianza",
+      "medium": "Confianza media",
+      "low": "Baja confianza",
+      "anecdotal": "Anecdótico"
+    },
+    "type": {
+      "complaint": "Queja",
+      "request": "Solicitud",
+      "question": "Pregunta",
+      "competitor_gap": "Brecha de competidor",
+      "other": "Señal"
+    },
+    "route": {
+      "content": "Nuevo contenido",
+      "comparison_page": "Página de comparación",
+      "product": "Cambio de producto",
+      "seo": "Corrección SEO",
+      "other": "Otro",
+      "aiInterpretation": "Interpretación IA",
+      "aiInterpretationHint": "La ruta sugerida es una interpretación de IA, no una señal de cuota de mercado."
+    },
+    "rationale": {
+      "summary": "{{independentDomainCount}} dominios independientes en {{sourceTypeCount}} tipos de fuente; {{recent}}.",
+      "recent": "fuente más reciente {{date}}",
+      "recentUnknown": "fecha no disponible"
+    },
+    "sourceType": {
+      "forum": "Foro",
+      "review": "Reseña",
+      "comparison": "Comparación",
+      "question": "P&R",
+      "other": "Otro"
+    },
+    "actions": {
+      "evidence": "Ver evidencia",
+      "accept": "Aceptar",
+      "dismiss": "Descartar"
+    },
+    "evidence": {
+      "title": "Evidencia de la señal",
+      "description": "Cada fuente citada. Solo texto y enlaces — sin HTML.",
+      "empty": "Esta señal no tiene fuentes retenidas.",
+      "missingSource": "La fuente {{id}} ya no está disponible.",
+      "dateUnavailable": "fecha no disponible",
+      "observedAt": "Observado el {{date}}",
+      "freshness": "Frescura: {{value}}",
+      "openLink": "Abrir fuente",
+      "openLinkAria": "Abrir fuente ({{host}}) en una pestaña nueva"
+    },
+    "decision": {
+      "signalTitleLabel": "Señal",
+      "cancel": "Cancelar",
+      "submitting": "Procesando…",
+      "confirmCi": "Crear recomendación",
+      "confirmActions": "Añadir a próximas acciones",
+      "confirmDismiss": "Descartar señal",
+      "conflict": "Ya se aplicó otra decisión a esta señal.",
+      "acceptSuccess": "Decisión registrada.",
+      "dismissSuccess": "Señal descartada.",
+      "openRecommendation": "Abrir recomendación",
+      "openAction": "Abrir en próximas acciones",
+      "openExisting": "Abrir existente",
+      "replayHintCi": "Esta señal ya se aceptó como recomendación de Content Intelligence.",
+      "replayHintActions": "Esta señal ya se añadió a las próximas acciones.",
+      "acceptTitle": {
+        "content": "Crear recomendación de Content Intelligence",
+        "comparison_page": "Crear recomendación de Content Intelligence",
+        "product": "Añadir a próximas acciones",
+        "seo": "Añadir a próximas acciones"
+      },
+      "acceptBody": {
+        "content": "Creará una recomendación de Content Intelligence con las fuentes citadas.",
+        "comparison_page": "Creará una recomendación de página de comparación con las fuentes citadas.",
+        "product": "Registrará una acción de cambio de producto.",
+        "seo": "Registrará una corrección SEO."
+      },
+      "destination": {
+        "contentDetail": "La recomendación enlaza con esta señal y solo referencia IDs de fuente — no se copia texto.",
+        "actionsDetail": "La acción enlaza con esta señal y lee las fuentes inmutables al mostrarla — no se copia texto."
+      },
+      "dismissTitle": "Descartar señal",
+      "dismissBody": "Elige una razón. Es terminal — la señal no reaparecerá.",
+      "reasonLabel": "Razón",
+      "reasons": {
+        "not_relevant": "No relevante para mi sitio",
+        "already_addressed": "Ya abordado",
+        "low_confidence": "Evidencia insuficiente",
+        "duplicate": "Duplicado",
+        "other": "Otro"
+      }
+    }
+  },
+  "errors": {
+    "overCap": "Has usado todas las ejecuciones de investigación de audiencia de tu plan este mes. Actualiza para lanzar más.",
+    "unsupportedMarket": "La investigación de audiencia aún no está disponible en ese mercado. Prueba con un país o idioma admitido.",
+    "zdrBlocked": "La investigación de audiencia requiere extracción sin retención de datos. Activa ZDR en la configuración del proveedor y vuelve a intentarlo.",
+    "noUsableEvidence": "No se encontró evidencia pública utilizable. Se reembolsó tu ejecución — prueba con otro tema o competidor.",
+    "costCeilingPartial": "Esta ejecución alcanzó su límite de coste. Se guardó la evidencia parcial; úsala o prueba un tema más específico.",
+    "processingFailure": "No se pudo procesar esta ejecución. La evidencia parcial se guardó cuando fue posible.",
+    "notFound": "No se pudo encontrar esa ejecución.",
+    "providerFailed": "El proveedor de investigación no pudo completar esta ejecución. Vuelve a intentarlo en breve.",
+    "aiFailed": "El paso de agrupación por IA no pudo completarse. La evidencia parcial se guardó cuando fue posible.",
+    "generic": "Algo salió mal. Vuelve a intentarlo."
+  }
+}

@@ -1,0 +1,211 @@
+{
+  "title": "Bewertungen",
+  "description": "Holen Sie öffentliche Bewertungen aus den Verzeichnissen, die Sie angeben, und lesen Sie, was Kundinnen und Kunden immer wieder sagen.",
+  "outputLocale": "Ausgabesprache: {{locale}}",
+  "sourceNames": {
+    "google": "Google",
+    "trustpilot": "Trustpilot",
+    "tripadvisor": "Tripadvisor"
+  },
+  "states": {
+    "signedOut": "Melden Sie sich an, um Ihre Bewertungen zu lesen.",
+    "notOnPlan": {
+      "title": "Bewertungen gehören zum Pro-Tarif",
+      "description": "Wechseln Sie zu Pro oder Agency, um Bewertungen von Google, Trustpilot und Tripadvisor zu holen.",
+      "link": "Tarife ansehen"
+    },
+    "capReached": {
+      "title": "Sie haben alle Abgleiche Ihres Tarifs verbraucht",
+      "description": "Prüfen Sie unter Abrechnung, ob das Bewertungspaket derzeit verfügbar ist. Alles bereits Geholte bleibt lesbar.",
+      "link": "Paketoptionen ansehen"
+    },
+    "disabled": {
+      "title": "Neue Abgleiche sind pausiert",
+      "description": "Wir haben neue Bewertungsabgleiche vorerst pausiert. Bereits geholte Bewertungen bleiben lesbar."
+    },
+    "noSources": {
+      "title": "Fügen Sie mindestens eine Bewertungsquelle hinzu, um zu starten.",
+      "description": "Hinterlegen Sie einen Eintrag bei Google, Trustpilot oder Tripadvisor, bevor Sie einen Abgleich starten."
+    },
+    "neverSynced": {
+      "title": "Noch kein Abgleich",
+      "description": "Ihre Quellen stehen. Starten Sie den ersten Abgleich, um Bewertungen zu holen."
+    }
+  },
+  "sources": {
+    "title": "Bewertungsquellen",
+    "description": "Sagen Sie uns, wo Ihr Betrieb eingetragen ist. Ein Eintrag pro Verzeichnis.",
+    "empty": "Noch keine Quellen. Fügen Sie unten eine hinzu.",
+    "configured": "Eingerichtet",
+    "save": "Quelle speichern",
+    "remove": "Entfernen",
+    "hint": {
+      "google": "Google-Orts-ID",
+      "trustpilot": "Trustpilot-Domain des Betriebs",
+      "tripadvisor": "Tripadvisor-Standort-ID"
+    },
+    "placeholder": {
+      "google": "ChIJ_example_place_id",
+      "trustpilot": "example.com",
+      "tripadvisor": "1234567"
+    }
+  },
+  "sync": {
+    "title": "Abgleich starten",
+    "description": "Ein Abgleich deckt alle gewählten Quellen ab. Die Kosten sehen Sie, bevor etwas ausgegeben wird.",
+    "sourcesLabel": "Zu prüfende Quellen",
+    "depthLabel": "Bewertungen pro Quelle",
+    "depthHint": "Zwischen einer und {{max}} Bewertungen je Quelle.",
+    "selectAtLeastOne": "Wählen Sie mindestens eine Quelle, um die Kosten zu sehen.",
+    "estimate": "Kosten anzeigen",
+    "confirm": "Bestätigen und starten",
+    "cancel": "Abbrechen"
+  },
+  "preview": {
+    "title": "Was dieser Abgleich kostet",
+    "description": "Das ist eine Schätzung. Vor Ihrer Bestätigung wird nichts ausgegeben.",
+    "units": "Verbraucht {{units}} Abgleich",
+    "perSource": "Deckt {{sources}} Quellen ab",
+    "depth": "Ruft bis zu {{depth}} Bewertungen je Quelle ab",
+    "available": "Passt in Ihr Kontingent",
+    "unavailable": "Über Ihrem Kontingent",
+    "baseRemaining": "Verbleibende Abgleiche im Tarif: {{remaining}}",
+    "packRemaining": "Verbleibende Abgleiche im Paket: {{remaining}}"
+  },
+  "runs": {
+    "title": "Abgleichverlauf",
+    "description": "Jeder Abgleich, was jede Quelle geliefert hat und ob die Einheit gutgeschrieben wurde.",
+    "empty": "Noch keine Abgleiche.",
+    "createdAt": "Gestartet",
+    "view": "Öffnen",
+    "refunded": "Einheit gutgeschrieben",
+    "columns": {
+      "status": "Ergebnis",
+      "outcomes": "Pro Quelle",
+      "retained": "Neue Bewertungen",
+      "ai": "Themen"
+    },
+    "status": {
+      "queued": "Wartet",
+      "running": "Läuft",
+      "succeeded": "Fertig",
+      "partial": "Teilweise",
+      "failed": "Fehlgeschlagen"
+    },
+    "outcome": {
+      "ok": "neue Bewertungen",
+      "failed": "fehlgeschlagen",
+      "zeroNew": "nichts Neues"
+    },
+    "ai": {
+      "pending": "Themen ausstehend",
+      "themesOk": "Themen bereit",
+      "noReliableThemes": "Keine belastbaren Themen",
+      "aiFailed": "Themen fehlgeschlagen"
+    }
+  },
+  "inventory": {
+    "title": "Bewertungen",
+    "description": "Neueste zuerst. Der Text kommt direkt aus dem Verzeichnis und wird als reiner Text gezeigt.",
+    "empty": "Noch keine Bewertungen gespeichert.",
+    "noMatches": "Keine Bewertungen passen zu diesen Filtern.",
+    "clearFilters": "Filter zurücksetzen",
+    "filterSource": "Quelle",
+    "filterRating": "Bewertung",
+    "filterQuery": "Text durchsuchen",
+    "sortLabel": "Sortieren",
+    "sort": {
+      "newest": "Neueste zuerst",
+      "rating-high": "Höchste Bewertung",
+      "source": "Quelle"
+    },
+    "filterAll": "Alle",
+    "searchPlaceholder": "Bewertungen durchsuchen",
+    "apply": "Anwenden",
+    "stars": "{{stars}} Sterne",
+    "unrated": "Ohne Wertung",
+    "anonymous": "Ohne Namen",
+    "page": "Seite {{page}} von {{total}} Bewertungen",
+    "previous": "Zurück",
+    "next": "Weiter",
+    "export": "CSV herunterladen",
+    "exportLoading": "CSV wird vorbereitet…",
+    "exportFailed": "Die CSV konnte nicht erstellt werden. Versuchen Sie es erneut.",
+    "exportFree": "Der Download ist kostenlos und nutzt bereits geholte Bewertungen.",
+    "columns": {
+      "rating": "Bewertung",
+      "reviewedAt": "Datum",
+      "source": "Quelle",
+      "text": "Bewertung",
+      "author": "Verfasser"
+    }
+  },
+  "stats": {
+    "title": "Zustand der Bewertungen",
+    "empty": "Noch nichts darzustellen.",
+    "total": "{{total}} Bewertungen gespeichert",
+    "distribution": {
+      "title": "Sterneverteilung",
+      "stars": "{{stars}} Sterne",
+      "unrated": "Ohne Wertung"
+    },
+    "velocity": {
+      "title": "Bewertungen pro Monat",
+      "latest": "Im {{month}}",
+      "average": "Im Schnitt {{average}} pro Monat"
+    },
+    "sourceMix": {
+      "title": "Woher sie kommen"
+    }
+  },
+  "trend": {
+    "title": "Durchschnittswertung im Zeitverlauf",
+    "description": "Ein Punkt je Monat. Ein Monat ohne Wertung bleibt eine Lücke.",
+    "chartLabel": "Durchschnittliche Sternewertung je Monat",
+    "expandTable": "Als Tabelle lesen",
+    "tableCaption": "Durchschnittliche Sternewertung je Monat und Quelle",
+    "month": "Monat",
+    "total": "Alle Quellen",
+    "gap": "Keine Daten",
+    "empty": "Noch keine datierten Bewertungen."
+  },
+  "themes": {
+    "title": "Was immer wieder gesagt wird",
+    "complaints": "Häufige Beschwerden",
+    "praise": "Häufiges Lob",
+    "citations": "Zugehörige Bewertungen zeigen",
+    "citationCount": "{{citations}} Bewertungen",
+    "citationSource": "{{source}} · {{rating}} · {{date}}",
+    "sectionEmpty": "Hier gibt es nichts für diesen Abgleich.",
+    "pending": "Der Themenlauf ist noch nicht fertig.",
+    "noReliable": {
+      "title": "Diesmal keine belastbaren Themen",
+      "description": "Ein Thema erscheint nur, wenn mindestens zwei Bewertungen es stützen. Keines hat diese Hürde genommen, und wir erfinden keines."
+    },
+    "aiFailed": {
+      "title": "Themen konnten nicht gebildet werden",
+      "description": "Der Zusammenfassungsschritt ist fehlgeschlagen. Ihre Bewertungen sind sicher angekommen und unten weiterhin lesbar.",
+      "link": "Zu den Bewertungen"
+    }
+  },
+  "provenance": {
+    "first_party": "Eigene Daten",
+    "provider_observation": "Anbieterbeobachtung",
+    "estimate": "Schätzung",
+    "ai_interpretation": "KI-Interpretation",
+    "observedAt": "Beobachtet am {{date}}",
+    "sampleCount": "{{count}} Bewertungen in der Stichprobe"
+  },
+  "errors": {
+    "sourcesFailed": "Wir konnten Ihre Bewertungsquellen nicht laden.",
+    "addSourceFailed": "Wir konnten diese Quelle nicht speichern.",
+    "removeSourceFailed": "Wir konnten diese Quelle nicht entfernen.",
+    "previewFailed": "Wir konnten die Kosten nicht ermitteln.",
+    "syncFailed": "Wir konnten den Abgleich nicht starten.",
+    "runsFailed": "Wir konnten den Abgleichverlauf nicht laden.",
+    "runFailed": "Wir konnten diesen Abgleich nicht laden.",
+    "statsFailed": "Wir konnten die Bewertungszahlen nicht laden.",
+    "themesFailed": "Wir konnten die Themen nicht laden.",
+    "inventoryFailed": "Wir konnten Ihre Bewertungen nicht laden."
+  }
+}

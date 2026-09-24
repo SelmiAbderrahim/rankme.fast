@@ -1,0 +1,144 @@
+{
+  "title": "Schema markup generator",
+  "description": "Build JSON-LD for a page from facts we already stored about it. Nothing is invented: a field we cannot back with a fact is left out, and we say why.",
+  "new": {
+    "title": "Generate markup",
+    "description": "Pick a page, pick a type, then read what it costs before you confirm."
+  },
+  "source": {
+    "legend": "Where the page comes from",
+    "audited": "Audited page",
+    "inventory": "Inventory page",
+    "url": "Paste a URL",
+    "auditedLegend": "Pages from your latest audit",
+    "inventoryLegend": "Pages missing a supported schema type",
+    "auditedEmpty": "Run an audit first and its pages show up here.",
+    "inventoryEmpty": "No inventory page is missing a supported schema type right now.",
+    "hasStructuredData": "Already has structured data",
+    "noStructuredData": "No structured data found",
+    "structuredDataErrors": "Structured-data errors: {{n}}",
+    "richResultsVerdict": "Search Console verdict: {{verdict}}",
+    "declaresNothing": "Declares no schema.org type",
+    "declaresTypes": "Already declares: {{types}}",
+    "urlLabel": "Page address",
+    "urlPlaceholder": "https://example.com/page",
+    "urlHint": "We read the page once over a safe connection. Only public addresses work.",
+    "urlInvalid": "Enter a full https address, with no user name or password in it."
+  },
+  "type": {
+    "legend": "Schema.org type",
+    "required": "Required: {{n}}",
+    "recommended": "Recommended: {{n}}",
+    "alreadyDeclared": "This page already declares this type."
+  },
+  "preview": {
+    "title": "What this costs",
+    "show": "Show what this costs",
+    "units": "{{count}} generation from your monthly allowance.",
+    "units_other": "{{count}} generations from your monthly allowance.",
+    "confirm": "Generate markup",
+    "remaining": "Left on your plan this month: {{remaining}}.",
+    "pack": "Plus {{units}} from credit packs.",
+    "noFit": "This does not fit in what is left. Add credits or change plan first."
+  },
+  "result": {
+    "title": "{{type}} markup",
+    "back": "Back to the list",
+    "payload": "Generated JSON-LD",
+    "copy": "Copy",
+    "copied": "Copied",
+    "download": "Download",
+    "downloadFailedTitle": "Download did not start",
+    "downloadFailed": "We could not fetch the file. Try again.",
+    "failedTitle": "Nothing was generated",
+    "failedProvider": "The model did not answer, so no markup was kept.",
+    "failedRejected": "Every field the model offered failed our fact check, so we kept only what we could prove.",
+    "refunded": "Your allowance was put back.",
+    "evidence": "Where each field came from",
+    "evidenceDescription": "One line per field in the markup, naming the stored fact behind it.",
+    "evidenceFrom": "from {{fact}}",
+    "evidenceEmpty": "No field could be filled from a stored fact.",
+    "omissions": "What we left out",
+    "omissionsDescription": "Fields with no fact behind them, and the reason each one is missing.",
+    "omissionsEmpty": "Nothing was left out."
+  },
+  "fact": {
+    "pageUrl": "Page URL",
+    "canonicalUrl": "Canonical URL",
+    "pageTitle": "Page title",
+    "metaDescription": "Meta description",
+    "headingOne": "Heading 1",
+    "headingTwo": "Heading 2",
+    "faqAnswer": "FAQ answer",
+    "pageLanguage": "Page language",
+    "articlePublishedTime": "Article publication time",
+    "articleModifiedTime": "Article modification time",
+    "siteOrigin": "Site origin",
+    "siteDomain": "Site domain",
+    "siteName": "Site name"
+  },
+  "reason": {
+    "no_evidence": "we hold no fact for it",
+    "evidence_ambiguous": "the facts we hold do not agree",
+    "not_applicable": "it does not apply to this page"
+  },
+  "conformance": {
+    "title": "Check against schema.org",
+    "conforms": "This markup conforms to schema.org requirements for type {{type}}.",
+    "gaps": "This markup does not yet conform to schema.org requirements for type {{type}}.",
+    "requiredTitle": "Fill these to meet the requirements",
+    "recommendedTitle": "Worth adding",
+    "requiredGap": "Add {{property}} —",
+    "recommendedSuggestion": "You could add {{property}} once we hold a fact for it.",
+    "version": "Checked against property set version {{version}}."
+  },
+  "list": {
+    "title": "Markup you generated",
+    "caption": "Stored generations, newest first",
+    "free": "Opening one of these again costs nothing.",
+    "empty": "You have not generated markup for this site yet.",
+    "reopen": "Open",
+    "page": "Page",
+    "type": "Type",
+    "status": "Check",
+    "statusConforms": "Requirements met",
+    "statusGaps": "Missing a required property",
+    "statusFailed": "Not generated",
+    "generatedAt": "Generated"
+  },
+  "states": {
+    "empty": {
+      "title": "No audit yet",
+      "body": "Run an audit for this site and its pages become pickable here."
+    },
+    "cap": {
+      "title": "Monthly allowance used",
+      "body": "You have used every markup generation on your plan this month.",
+      "link": "See plans"
+    },
+    "notOnPlan": {
+      "title": "Not on your plan",
+      "body": "Markup generation starts on the Starter plan."
+    },
+    "killSwitch": {
+      "title": "Temporarily unavailable",
+      "body": "New generations are paused right now. Markup you already generated stays readable."
+    },
+    "notFound": {
+      "title": "Not found",
+      "body": "That page or generation is no longer available."
+    },
+    "unsafeUrl": {
+      "title": "We cannot read that address",
+      "body": "Enter a public https page address we are allowed to fetch."
+    },
+    "rateLimited": {
+      "title": "Too many requests",
+      "body": "Wait a minute, then try again."
+    },
+    "failed": {
+      "title": "Something went wrong",
+      "body": "We could not finish this. Try again."
+    }
+  }
+}

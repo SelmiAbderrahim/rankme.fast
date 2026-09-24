@@ -1,0 +1,63 @@
+{
+  "version": "0.1.20260101",
+  "status_code": 20000,
+  "status_message": "Ok.",
+  "time": "0.1611 sec.",
+  "cost": 0.011,
+  "tasks_count": 1,
+  "tasks_error": 0,
+  "tasks": [
+    {
+      "id": "TASK_ID",
+      "status_code": 20000,
+      "status_message": "Ok.",
+      "time": "0.1401 sec.",
+      "cost": 0.011,
+      "result_count": 1,
+      "path": ["v3", "dataforseo_labs", "google", "competitors_domain", "live"],
+      "data": {
+        "api": "dataforseo_labs",
+        "function": "competitors_domain",
+        "target": "example.com",
+        "location_code": 2840,
+        "language_code": "en",
+        "limit": 10
+      },
+      "result": [
+        {
+          "target": "example.com",
+          "location_code": 2840,
+          "language_code": "en",
+          "total_count": 2,
+          "items_count": 2,
+          "items": [
+            {
+              "se_type": "google",
+              "domain": "rival-one.example",
+              "avg_position": 4.2,
+              "intersections": 118,
+              "metrics": {
+                "organic": {
+                  "count": 900,
+                  "etv": 20500
+                }
+              }
+            },
+            {
+              "se_type": "google",
+              "domain": "rival-two.example",
+              "avg_position": null,
+              "intersections": 34,
+              "metrics": {
+                "organic": {
+                  "count": 220,
+                  "etv": null
+                }
+              }
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

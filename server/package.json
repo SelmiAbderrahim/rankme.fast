@@ -1,0 +1,96 @@
+{
+  "name": "rankme-server",
+  "version": "2.0.0",
+  "description": "RankMeFast API server and worker (Express + TypeScript).",
+  "private": true,
+  "type": "module",
+  "main": "dist/server.js",
+  "engines": {
+    "node": ">=20"
+  },
+  "scripts": {
+    "dev": "tsx watch src/server.ts",
+    "dev:worker": "tsx watch src/worker.ts",
+    "build": "tsup && mkdir -p dist/fonts && cp src/modules/audits/pdf/fonts/* dist/fonts/",
+    "start:worker": "node dist/worker.cjs",
+    "db:generate": "drizzle-kit generate",
+    "db:migrate": "drizzle-kit migrate",
+    "start": "node dist/server.cjs",
+    "lint": "eslint . --ext .ts",
+    "test": "vitest",
+    "typecheck": "tsc -p tsconfig.json --noEmit",
+    "typecheck:production": "tsc -p tsconfig.production.json --noEmit"
+  },
+  "keywords": [
+    "mern",
+    "api",
+    "express",
+    "mongoose",
+    "typescript"
+  ],
+  "author": "Joshua Slate",
+  "license": "AGPL-3.0-only",
+  "dependencies": {
+    "@ai-sdk/anthropic": "3.0.97",
+    "@modelcontextprotocol/sdk": "1.30.0",
+    "@ai-sdk/deepseek": "2.0.49",
+    "@ai-sdk/google": "3.0.93",
+    "@ai-sdk/moonshotai": "2.0.36",
+    "@ai-sdk/openai": "3.0.85",
+    "@ai-sdk/openai-compatible": "2.0.60",
+    "@pdf-lib/fontkit": "^1.1.1",
+    "ai": "6.0.226",
+    "arabic-persian-reshaper": "^1.0.1",
+    "better-auth": "^1.6.23",
+    "bullmq": "^5.79.2",
+    "cors": "^2.8.5",
+    "drizzle-orm": "^0.45.2",
+    "express": "^4.21.2",
+    "express-rate-limit": "^7.5.1",
+    "helmet": "^8.2.0",
+    "ioredis": "5.10.1",
+    "mongoose": "^8.9.5",
+    "pdf-lib": "^1.17.1",
+    "pino": "^9.6.0",
+    "pino-http": "^10.4.0",
+    "postgres": "^3.4.9",
+    "sharp": "^0.35.4",
+    "zod": "^3.24.1"
+  },
+  "overrides": {
+    "fast-uri": "^3.1.8",
+    "nanoid": "3.3.18",
+    "minimatch@>=10": {
+      "brace-expansion": "^5.0.9"
+    },
+    "minimatch@<10": {
+      "brace-expansion": "^1.1.16"
+    },
+    "postcss": "^8.5.18"
+  },
+  "devDependencies": {
+    "@electric-sql/pglite": "^0.5.3",
+    "@types/cors": "^2.8.17",
+    "@types/express": "^4.17.21",
+    "@types/js-yaml": "^4.0.9",
+    "@types/node": "^22.10.5",
+    "@types/supertest": "^6.0.2",
+    "@typescript-eslint/eslint-plugin": "^8.20.0",
+    "@typescript-eslint/parser": "^8.20.0",
+    "@vitest/coverage-v8": "^4.1.10",
+    "drizzle-kit": "^0.31.10",
+    "eslint": "^9.18.0",
+    "eslint-config-prettier": "^9.1.0",
+    "globals": "^15.14.0",
+    "js-yaml": "^4.3.2",
+    "mongodb-memory-server": "^10.4.3",
+    "msw": "^2.14.6",
+    "pino-pretty": "^13.0.0",
+    "supertest": "^7.0.0",
+    "tsup": "^8.3.5",
+    "tsx": "^4.19.2",
+    "typescript": "^5.7.3",
+    "typescript-eslint": "^8.20.0",
+    "vitest": "^4.1.10"
+  }
+}

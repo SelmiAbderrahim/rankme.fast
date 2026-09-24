@@ -1,0 +1,89 @@
+{
+  "version": "0.1.20260101",
+  "status_code": 20000,
+  "status_message": "Ok.",
+  "time": "0.1512 sec.",
+  "cost": 0.002,
+  "tasks_count": 1,
+  "tasks_error": 0,
+  "tasks": [
+    {
+      "id": "TASK_ID",
+      "status_code": 20000,
+      "status_message": "Ok.",
+      "time": "0.0704 sec.",
+      "cost": 0.002,
+      "result_count": 1,
+      "path": ["v3", "serp", "google", "organic", "live", "advanced"],
+      "data": {
+        "api": "serp",
+        "function": "live",
+        "se": "google",
+        "se_type": "organic",
+        "keyword": "seo audit tool problems",
+        "language_code": "en",
+        "location_code": 2840,
+        "device": "desktop"
+      },
+      "result": [
+        {
+          "keyword": "seo audit tool problems",
+          "type": "organic",
+          "se_domain": "google.com",
+          "location_code": 2840,
+          "language_code": "en",
+          "datetime": "2026-01-01 00:00:00 +00:00",
+          "items_count": 6,
+          "items": [
+            {
+              "type": "organic",
+              "rank_group": 1,
+              "rank_absolute": 1,
+              "domain": "reddit.com",
+              "url": "https://reddit.com/r/seo/comments/seo-audit-tool-problems",
+              "title": "Why do audit tools flag issues my devs disagree with?"
+            },
+            {
+              "type": "organic",
+              "rank_group": 2,
+              "rank_absolute": 2,
+              "domain": "g2.com",
+              "url": "https://g2.com/products/example-audit/reviews",
+              "title": "Example Audit reviews and ratings on G2"
+            },
+            {
+              "type": "organic",
+              "rank_group": 3,
+              "rank_absolute": 3,
+              "domain": "quora.com",
+              "url": "https://quora.com/how-do-i-fix-a-broken-canonical-tag",
+              "title": "How do I fix a broken canonical tag?"
+            },
+            {
+              "type": "organic",
+              "rank_group": 4,
+              "rank_absolute": 4,
+              "domain": "example.com",
+              "url": "https://example.com/compare/example-vs-competitor",
+              "title": "Example vs Competitor — features and pricing compared"
+            },
+            {
+              "type": "organic",
+              "rank_group": 5,
+              "rank_absolute": 5,
+              "domain": "trustpilot.com",
+              "url": "https://trustpilot.com/review/example.com",
+              "title": "Example on Trustpilot — customer reviews"
+            },
+            {
+              "type": "people_also_ask",
+              "rank_group": 6,
+              "rank_absolute": 6,
+              "url": "https://ignored.example/paa"
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

@@ -1,0 +1,50 @@
+{
+  "version": "0.1.20260101",
+  "status_code": 20000,
+  "status_message": "Ok.",
+  "time": "0.1211 sec.",
+  "cost": 0.075,
+  "tasks_count": 1,
+  "tasks_error": 0,
+  "tasks": [
+    {
+      "id": "TASK_ID",
+      "status_code": 20000,
+      "status_message": "Ok.",
+      "time": "0.0912 sec.",
+      "cost": 0.075,
+      "result_count": 2,
+      "path": ["v3", "keywords_data", "google_ads", "search_volume", "live"],
+      "data": {
+        "api": "keywords_data",
+        "function": "search_volume",
+        "location_code": 2840,
+        "language_code": "en"
+      },
+      "result": [
+        {
+          "keyword": "seo audit tool",
+          "search_volume": 5400,
+          "cpc": 4.12,
+          "competition": "HIGH",
+          "competition_index": 82,
+          "monthly_searches": [
+            { "year": 2025, "month": 11, "search_volume": 5200 },
+            { "year": 2025, "month": 12, "search_volume": 5400 }
+          ]
+        },
+        {
+          "keyword": "rank tracker",
+          "search_volume": 8100,
+          "cpc": 6.45,
+          "competition": "MEDIUM",
+          "competition_index": 55,
+          "monthly_searches": [
+            { "year": 2025, "month": 11, "search_volume": 7900 },
+            { "year": 2025, "month": 12, "search_volume": 8100 }
+          ]
+        }
+      ]
+    }
+  ]
+}

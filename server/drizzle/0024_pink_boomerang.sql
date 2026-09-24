@@ -1,0 +1,2 @@
+ALTER TABLE "subscriptions" ADD COLUMN "interval" text DEFAULT 'monthly' NOT NULL;--> statement-breakpoint
+ALTER TABLE "subscriptions" ADD CONSTRAINT "subscriptions_interval_check" CHECK ("subscriptions"."interval" in ('monthly', 'yearly'));

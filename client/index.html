@@ -1,0 +1,90 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <link rel="alternate icon" type="image/png" sizes="32x32" href="/icons/favicon-32.png" />
+    <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png" />
+    <link rel="manifest" href="/site.webmanifest" />
+    <!-- prettier-ignore -->
+    <link rel="preload" href="/fonts/inter-latin-400-normal.woff2" as="font" type="font/woff2" crossorigin />
+    <!-- prettier-ignore -->
+    <link rel="preload" href="/fonts/inter-latin-600-normal.woff2" as="font" type="font/woff2" crossorigin />
+    <!-- prettier-ignore -->
+    <link rel="preload" href="/fonts/inter-latin-700-normal.woff2" as="font" type="font/woff2" crossorigin />
+
+    <link rel="mask-icon" href="/safari-pinned-tab.svg" color="#1c1a18" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="theme-color" content="#1c1a18" />
+    <meta name="application-name" content="RankMeFast" />
+    <meta name="apple-mobile-web-app-title" content="RankMeFast" />
+    <title>RankMeFast — plain-language SEO &amp; AI answer engine audits</title>
+    <meta
+      name="description"
+      content="rankme.fast is a plain-language SEO and AI-answer-engine audit tool. Paste a URL, get a free audit, and see exactly what to fix and where your keywords rank."
+    />
+    <script>
+      // Resolve theme before first paint to avoid a flash. `system` (or unset)
+      // follows the OS; an explicit choice in localStorage wins. Mirrors
+      // src/shared/theme/ThemeProvider so hydration sees the same .dark class.
+      (function () {
+        try {
+          var t = localStorage.getItem('theme');
+          var dark =
+            t === 'dark' ||
+            ((!t || t === 'system') && window.matchMedia('(prefers-color-scheme: dark)').matches);
+          document.documentElement.classList.toggle('dark', dark);
+        } catch (e) {}
+      })();
+    </script>
+    <!-- Google Analytics (GA4). The nonce'd bootstrap loads GA only when the
+         build has a valid GA4 measurement ID; unconfigured builds never emit egress. -->
+    <script>
+      (function () {
+        var id = String(__RANKME_GA_ID__).trim();
+        if (!/^G-[A-Z0-9]+$/.test(id)) return;
+        var loader = document.createElement('script');
+        loader.async = true;
+        loader.src = 'https://www.googletagmanager.com/gtag/js?id=' + encodeURIComponent(id);
+        document.head.appendChild(loader);
+        window.dataLayer = window.dataLayer || [];
+        window.gtag = function () {
+          window.dataLayer.push(arguments);
+        };
+        window.gtag('js', new Date());
+        var safePath = window.location.pathname.replace(
+          /(\/team\/(?:accept|reject))\/[^/]+\/?$/,
+          '$1/[redacted]',
+        );
+        var carriesInvitationReturnTo = false;
+        try {
+          var returnTo = new URLSearchParams(window.location.search).get('returnTo');
+          carriesInvitationReturnTo = /^\/team\/(?:accept|reject)\/[^/]+\/?$/.test(returnTo || '');
+        } catch (e) {}
+        // Capability URLs must never be copied into GA's automatic page
+        // location. Drop the query too: login/password-change returnTo values
+        // contain the same invitation credential in encoded form.
+        if (safePath !== window.location.pathname || carriesInvitationReturnTo) {
+          var safeLocation = window.location.origin + safePath;
+          window.gtag('set', {
+            page_location: safeLocation,
+            page_path: safePath,
+          });
+          window.gtag('config', id, {
+            page_location: safeLocation,
+            page_path: safePath,
+          });
+          return;
+        }
+        window.gtag('config', id);
+      })();
+    </script>
+    <!--ssr-head-->
+  </head>
+  <body>
+    <div id="root"><!--ssr-outlet--></div>
+    <noscript>RankMeFast requires JavaScript for the dashboard.</noscript>
+    <!--ssr-init-->
+    <script type="module" src="/src/entry-client.tsx"></script>
+  </body>
+</html>

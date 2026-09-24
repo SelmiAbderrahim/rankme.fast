@@ -1,0 +1,1 @@
+ALTER TABLE "rankings" ADD COLUMN "observation_meta" jsonb;

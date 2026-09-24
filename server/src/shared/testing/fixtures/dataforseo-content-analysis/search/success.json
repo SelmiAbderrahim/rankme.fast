@@ -1,0 +1,71 @@
+{
+  "version": "0.1.20260101",
+  "status_code": 20000,
+  "status_message": "Ok.",
+  "time": "0.15 sec.",
+  "cost": 0.0063,
+  "tasks_count": 1,
+  "tasks_error": 0,
+  "tasks": [
+    {
+      "id": "TASK_ID",
+      "status_code": 20000,
+      "status_message": "Ok.",
+      "time": "0.14 sec.",
+      "cost": 0.0063,
+      "result_count": 1,
+      "path": ["v3", "content_analysis", "search", "live"],
+      "data": {
+        "api": "content_analysis",
+        "function": "search",
+        "keyword": "rankmefast"
+      },
+      "result": [
+        {
+          "total_count": 3,
+          "items": [
+            {
+              "url": "https://example.com/blog/rankmefast-review",
+              "domain": "example.com",
+              "title": "RankMeFast honest review — pros and cons",
+              "text": "A short review of RankMeFast as an SEO audit product for small teams.",
+              "language_code": "en",
+              "date": "2026-01-15",
+              "sentiment_connotations": {
+                "positive": 0.78,
+                "neutral": 0.15,
+                "negative": 0.07
+              }
+            },
+            {
+              "url": "https://forum.example.org/threads/audit-tools",
+              "domain": "forum.example.org",
+              "title": "Which audit tool for a small agency?",
+              "text": "Forum discussion mentioning RankMeFast alongside two other SEO products.",
+              "language_code": "en",
+              "date": "2026-01-10",
+              "sentiment_connotations": {
+                "positive": 0.32,
+                "neutral": 0.55,
+                "negative": 0.13
+              }
+            },
+            {
+              "url": "https://news.example.net/2026/01/best-seo-tools",
+              "domain": "news.example.net",
+              "title": "Best SEO tools for 2026",
+              "text": "News roundup of best SEO tools including RankMeFast.",
+              "language_code": "en",
+              "date": "2026-01-08",
+              "sentiment_connotations": {
+                "positive": 0.65,
+                "neutral": 0.25,
+                "negative": 0.1
+              }
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

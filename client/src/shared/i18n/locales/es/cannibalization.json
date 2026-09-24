@@ -1,0 +1,109 @@
+{
+  "title": "Canibalización de palabras clave",
+  "subtitle": "Consultas en las que dos o más de tus páginas se reparten los mismos clics, impresiones y posición en Search Console.",
+  "tabs": {
+    "reports": "Informes",
+    "new": "Nuevo informe"
+  },
+  "filters": {
+    "confidence": "Confianza",
+    "confidenceValue": {
+      "all": "Todas",
+      "high": "Alta",
+      "medium": "Media",
+      "low": "Baja"
+    }
+  },
+  "new": {
+    "title": "Generar un informe",
+    "description": "Los informes leen las filas de Search Console que ya guardamos. No se pide nada a Google.",
+    "window": "Periodo de agregación",
+    "windowOption": "{{days}} días",
+    "preview": "Ver cuánto cuesta",
+    "generate": "Generar informe"
+  },
+  "preview": {
+    "title": "Cuánto cuesta",
+    "units": "{{count}} informe de tu cupo mensual.",
+    "units_other": "{{count}} informes de tu cupo mensual.",
+    "remaining": "Te queda este mes en tu plan: {{remaining}}.",
+    "pack": "Más {{units}} de los paquetes de créditos.",
+    "noFit": "No cabe en lo que queda. Añade créditos o cambia de plan primero."
+  },
+  "list": {
+    "generatedAt": "Generado",
+    "window": "Periodo",
+    "windowValue": "{{days}} días",
+    "lastSync": "Última sincronización",
+    "candidates": "Candidatas",
+    "open": "Abrir"
+  },
+  "detail": {
+    "provenance": "A partir de tus datos guardados de Search Console de {{days}} días, última sincronización {{date}}. Se leyeron {{queries}} consultas."
+  },
+  "candidates": {
+    "query": "Consulta",
+    "label": "Candidata",
+    "pages": "Páginas",
+    "confidence": "Confianza",
+    "confidenceValue": {
+      "high": "Alta",
+      "medium": "Media",
+      "low": "Baja"
+    },
+    "primary": "Página principal sugerida",
+    "clicks": "Clics",
+    "inspect": "Inspeccionar"
+  },
+  "drilldown": {
+    "provenance": "Filas guardadas de {{days}} días, última sincronización {{date}}.",
+    "recommendation": "Mantén {{url}} como página principal.",
+    "reason": {
+      "most_clicks": "Ya consigue más clics para esta consulta.",
+      "best_position": "Los clics empatan, así que decide la mejor posición media.",
+      "stable_order": "Clics y posición empatan, así que mantenemos un orden estable."
+    },
+    "page": "Página",
+    "clicks": "Clics",
+    "impressions": "Impresiones",
+    "position": "Posición media",
+    "clickShare": "Cuota de clics",
+    "primary": "Página principal sugerida"
+  },
+  "states": {
+    "empty": {
+      "title": "Todavía no hay nada",
+      "body": "Genera un informe para ver por qué consultas compiten tus páginas."
+    },
+    "awaitingSync": {
+      "title": "Esperando la próxima sincronización",
+      "body": "Aún no hay filas de consulta y página de Search Console guardadas para este periodo. Llegarán con la próxima sincronización."
+    },
+    "disconnected": {
+      "title": "Conecta Search Console",
+      "body": "Conecta una propiedad de Search Console antes de generar un informe nuevo. Los informes guardados siguen disponibles.",
+      "link": "Conectar Search Console"
+    },
+    "cap": {
+      "title": "Cupo mensual agotado",
+      "body": "Has usado todos los informes de canibalización de tu plan este mes.",
+      "link": "Ver planes"
+    },
+    "disabled": {
+      "title": "No disponible temporalmente",
+      "body": "Los informes de canibalización están en pausa. Los que ya generaste siguen siendo legibles."
+    },
+    "notFound": {
+      "title": "Informe no encontrado",
+      "body": "Ese informe ya no está disponible."
+    },
+    "rateLimited": {
+      "title": "Demasiadas solicitudes",
+      "body": "Espera un minuto y vuelve a intentarlo."
+    },
+    "failed": {
+      "title": "Algo salió mal",
+      "body": "No se pudo cargar. Inténtalo de nuevo."
+    }
+  }
+}

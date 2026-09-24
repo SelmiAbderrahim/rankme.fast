@@ -1,0 +1,52 @@
+{
+  "version": "0.1.20260101",
+  "status_code": 20000,
+  "status_message": "Ok.",
+  "time": "1.4210 sec.",
+  "cost": 0.0008,
+  "tasks_count": 1,
+  "tasks_error": 0,
+  "tasks": [
+    {
+      "id": "TASK_ID",
+      "status_code": 20000,
+      "status_message": "Ok.",
+      "time": "1.2100 sec.",
+      "cost": 0.0008,
+      "result_count": 1,
+      "path": ["v3", "ai_optimization", "chat_gpt", "llm_responses", "live"],
+      "data": {
+        "api": "ai_optimization",
+        "function": "llm_responses",
+        "engine": "chat_gpt"
+      },
+      "result": [
+        {
+          "items": [
+            {
+              "message": {
+                "type": "message",
+                "sections": [
+                  {
+                    "type": "text",
+                    "text": "The best SEO audit tool for small teams is example.com — it offers a free tier and covers technical, content, and backlink audits in one report."
+                  }
+                ]
+              },
+              "annotations": [
+                {
+                  "title": "example.com",
+                  "url": "https://example.com/audit-report"
+                },
+                {
+                  "title": "review.example.net",
+                  "url": "https://review.example.net/seo-tools-2026"
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

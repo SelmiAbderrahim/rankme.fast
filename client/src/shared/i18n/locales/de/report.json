@@ -1,0 +1,222 @@
+{
+  "title": "Ihr Audit-Bericht",
+  "subtitle": "Was zu beheben ist, was zu beobachten ist und was bereits besteht.",
+  "history": {
+    "title": "Audit-Verlauf",
+    "empty": "Noch keine Audits.",
+    "viewRun": "Diesen Lauf ansehen",
+    "status": {
+      "queued": "In Warteschlange",
+      "running": "Läuft",
+      "succeeded": "Abgeschlossen",
+      "failed": "Fehlgeschlagen"
+    }
+  },
+  "tabs": {
+    "fix-now": "Jetzt beheben",
+    "watch": "Beobachten",
+    "passed": "Bestanden"
+  },
+  "row": {
+    "affectedPages": "{{count}} Seiten betroffen",
+    "affectedPagesOne": "1 Seite betroffen",
+    "siteWide": "Websiteweite Prüfung",
+    "passedSummary": "Diese Prüfung ist erfolgreich."
+  },
+  "severity": {
+    "critical": "Kritisch",
+    "warning": "Warnung",
+    "info": "Info"
+  },
+  "badges": {
+    "fixed": "Behoben",
+    "regressed": "Verschlechtert"
+  },
+  "detail": {
+    "whyTitle": "Warum das wichtig ist",
+    "affectedUrlsTitle": "Betroffene URLs",
+    "brokenLinkTargetsTitle": "Ziele, die der Audit nicht abrufen konnte",
+    "brokenLinkSourcesTitle": "Seiten mit Links zu diesen Zielen",
+    "fixTitle": "So beheben Sie es",
+    "copyFix": "Lösung kopieren",
+    "copied": "Kopiert",
+    "generateSchema": "Schema-Markup erzeugen"
+  },
+  "retest": {
+    "cta": "Erneut prüfen",
+    "running": "Prüfung läuft…",
+    "starting": "Wird gestartet…",
+    "first": "Ersten Audit starten"
+  },
+  "pageCap": {
+    "label": "Zu crawlende Seiten",
+    "max": "Plan-Maximum",
+    "pages": "{{pages}} Seiten"
+  },
+  "empty": {
+    "fix-now": {
+      "title": "Nichts zu beheben",
+      "description": "Großartig — keine kritischen Probleme in diesem Audit gefunden."
+    },
+    "watch": {
+      "title": "Nichts zu beobachten",
+      "description": "Keine Warnungen auf Ihrer Website."
+    },
+    "passed": {
+      "title": "Noch nichts bestanden",
+      "description": "Starten Sie Ihren ersten Audit, um zu sehen, was Ihre Website bereits gut macht."
+    }
+  },
+  "noRun": {
+    "title": "Noch keine Audits",
+    "description": "Starten Sie Ihren ersten Audit, um zu sehen, was zu beheben, zu beobachten und was bereits gut ist."
+  },
+  "states": {
+    "loading": "Ihr Bericht wird geladen…",
+    "retry": "Erneut versuchen",
+    "runInProgress": "Website wird geprüft — dies kann einige Minuten dauern."
+  },
+  "loadFailed": "Ihr Bericht konnte nicht geladen werden.",
+  "retestFailed": "Der Audit konnte nicht gestartet werden.",
+  "pageSpeed": {
+    "sectionTitle": "Seitengeschwindigkeit",
+    "fieldLabel": "Was echte Besucher erlebt haben",
+    "labLabel": "Unsere Lab-Schätzung",
+    "unavailableTitle": "Seitengeschwindigkeit für diesen Lauf nicht verfügbar",
+    "unavailableBody": "Der Dienst für Seitengeschwindigkeit war nicht erreichbar. Ihr Bericht ist trotzdem vollständig — die Speed-Kennzahlen kommen beim nächsten Lauf zurück.",
+    "noFieldDataTitle": "Noch nicht genug Besucherdaten",
+    "noFieldDataBody": "Chrome meldet Besuchergeschwindigkeit erst, wenn eine Seite genug Traffic hat. Sobald der Traffic wächst, füllt sich dieser Bereich automatisch.",
+    "originFallback": "Daten auf Origin-Ebene (nicht nur diese Seite)",
+    "sampleLabel": "{{count}} Seiten stichprobenweise geprüft",
+    "sampleLabelOne": "1 Seite stichprobenweise geprüft",
+    "metrics": {
+      "lcp": "LCP",
+      "inp": "INP",
+      "cls": "CLS",
+      "performance": "Leistung"
+    },
+    "categories": {
+      "good": "Gut",
+      "needs-improvement": "Verbesserungswürdig",
+      "poor": "Schwach"
+    }
+  },
+  "aiSummary": {
+    "cardTitle": "KI-Zusammenfassung Ihrer Korrekturen",
+    "cardDescription": "Eine KI-Zusammenfassung Ihrer wichtigsten Korrekturen in Klartext.",
+    "cta": "Meine Korrekturen zusammenfassen",
+    "regenerate": "Neu erstellen",
+    "loading": "Zusammenfassung wird erstellt…",
+    "attribution": "KI-generiert — vor der Umsetzung prüfen.",
+    "truncatedNote": "Zusammenfassung wurde gekürzt.",
+    "errors": {
+      "unavailable": "KI-Zusammenfassung ist vorübergehend nicht verfügbar — Ihre Checkliste bleibt unverändert.",
+      "capReached": "Ihr monatliches KI-Zusammenfassungslimit ist erreicht. Upgraden oder Guthaben aufladen, um weitere Zusammenfassungen zu erzeugen."
+    }
+  },
+  "pdf": {
+    "download": "PDF herunterladen",
+    "downloading": "PDF wird vorbereitet…",
+    "error": "Das PDF konnte nicht erstellt werden. Bitte versuchen Sie es erneut.",
+    "upgradeHint": "PDF-Berichte sind in den Plänen Pro und Agency verfügbar."
+  },
+  "gscBlock": {
+    "sectionTitle": "Google-Suchleistung (letzte 28 Tage)",
+    "sitemapsTitle": "Sitemaps in Google Search Console",
+    "totalClicks": "Klicks",
+    "totalImpressions": "Impressionen",
+    "averageCtr": "Klickrate",
+    "averagePosition": "Durchschnittliche Position",
+    "topQueriesTitle": "Top-Suchanfragen",
+    "topPagesTitle": "Top-Seiten",
+    "colQuery": "Suche",
+    "colPage": "Seite",
+    "colClicks": "Klicks",
+    "colImpressions": "Impressionen",
+    "colCtr": "CTR",
+    "colPosition": "Position",
+    "deltaClicks": "Klicks im Vergleich zum vorherigen Zeitraum",
+    "deltaImpressions": "Impressionen im Vergleich zum vorherigen Zeitraum",
+    "sampledFootnote": "Stichprobe von Google · die letzten drei Tage sind ausgeschlossen, da Google sie verspätet meldet.",
+    "unavailableTitle": "Suchdaten für diesen Lauf nicht verfügbar",
+    "unavailableBody": "Google Search Console war für diesen Audit nicht erreichbar. Ihr Bericht ist trotzdem vollständig — die Suchdaten kommen beim nächsten Lauf zurück.",
+    "notConnectedTitle": "Google Search Console verbinden",
+    "notConnectedBody": "Verbinden Sie Ihr Google-Konto, um echte Klicks, Impressionen und den Sitemap-Status in diesem Bericht zu sehen.",
+    "notConnectedCta": "Google-Einstellungen öffnen",
+    "reconnectTitle": "Ihre Google-Verbindung muss erneuert werden",
+    "reconnectBody": "Google akzeptiert Ihre aktuelle Berechtigung nicht mehr. Verbinden Sie sich erneut, um die Suchdaten zurückzubekommen.",
+    "noDataTitle": "Noch keine Suchdaten",
+    "noDataBody": "Google hat für diese Website in den letzten vier Wochen keine Klicks oder Impressionen gemeldet.",
+    "noSitemapsTitle": "Keine Sitemap an Google übermittelt",
+    "noSitemapsBody": "Reichen Sie Ihre Sitemap in Google Search Console ein, damit Google jede Seite findet, die Sie indexieren lassen möchten.",
+    "sitemapHealthy": "Fehlerfrei",
+    "sitemapErrors": "{{count}} Fehler",
+    "sitemapWarnings": "{{count}} Warnungen",
+    "sitemapProcessed": "{{count}} URLs übermittelt",
+    "sitemapLastDownloaded": "Zuletzt von Google gelesen: {{date}}",
+    "sitemapNeverDownloaded": "Noch nicht von Google gelesen"
+  },
+  "aiVisibilityBlock": {
+    "title": "AI-Sichtbarkeit",
+    "unavailableTitle": "AI-Sichtbarkeitsdaten sind nicht verfügbar",
+    "unavailableBody": "Aktuelle AI-Chatantwortdaten für diesen Bericht konnten nicht gelesen werden.",
+    "noPromptsTitle": "Noch keine AI-Prompts verfolgt",
+    "noPromptsBody": "Verfolgen Sie Käuferfragen, um zu sehen, ob AI-Chatantworten Sie erwähnen.",
+    "noPromptsCta": "Prompts hinzufügen",
+    "aiOverview": "Zitate in Google AI Overview",
+    "aiChats": "AI-Chat-Erwähnungen",
+    "shareOfVoice": "Sichtbarkeitsanteil",
+    "brand": "Sie",
+    "competitors": "Wettbewerber",
+    "noData": "Keine Daten",
+    "notMentioned": "Nicht erwähnt",
+    "sentiment": {
+      "positive": "Wohlwollend",
+      "neutral": "Sachlich",
+      "negative": "Kritisch"
+    }
+  },
+  "localSeoBlock": {
+    "title": "Lokale SEO",
+    "unavailableTitle": "Lokale SEO-Daten sind nicht verfügbar",
+    "unavailableBody": "Aktuelle Einträge, Bewertungen oder Kartenpaket-Daten für diesen Bericht konnten nicht gelesen werden.",
+    "notConfiguredTitle": "Lokale SEO noch nicht eingerichtet",
+    "notConfiguredBody": "Aktualisieren Sie lokale SEO, um Firmeneinträge, Bewertungen und Rankings im Kartenpaket zu laden.",
+    "notConfiguredCta": "Lokale SEO öffnen",
+    "listings": "Verzeichniseinträge",
+    "consistent": "Übereinstimmend",
+    "inconsistent": "Abweichend",
+    "averageRating": "Durchschnittliche Bewertung",
+    "reviewCount": "Bewertungen",
+    "unansweredQuestions": "Offene Fragen",
+    "localPack": "Lokales Kartenpaket",
+    "notRanked": "Nicht im Kartenpaket",
+    "packSize": "{{count}} Ergebnisse",
+    "noData": "Keine Daten"
+  },
+  "exportUi": {
+    "trigger": "Exportieren oder teilen", "loading": "Exportoptionen werden geladen…", "preparing": "Datei wird vorbereitet…", "unavailable": "Export nicht verfügbar", "formatsLabel": "Dateiformate",
+    "clipboard": { "action": "In die Zwischenablage kopieren", "success": "In die Zwischenablage kopiert.", "error": "Kopieren in die Zwischenablage fehlgeschlagen." },
+    "formats": { "view": "Webansicht", "pdf": "PDF", "csv": "CSV", "json": "JSON", "md": "Markdown", "jsonld": "JSON-LD", "txt": "Text" },
+    "states": { "active": "Aktiv", "revoked": "Widerrufen", "expired": "Abgelaufen" },
+    "actions": { "retry": "Erneut versuchen", "download": "Herunterladen", "delete": "Löschen", "revoke": "Widerrufen", "cancel": "Abbrechen", "done": "Fertig" },
+    "errors": { "capabilities": "Exportoptionen konnten nicht geladen werden.", "create": "Der Bericht konnte nicht exportiert werden. Grenze den Umfang ein und versuche es erneut.", "download": "Die gespeicherte Datei konnte nicht heruntergeladen werden.", "list": "Gespeicherte Exporte konnten nicht geladen werden.", "delete": "Der gespeicherte Export konnte nicht gelöscht werden.", "share": "Der Freigabelink konnte nicht erstellt werden.", "revoke": "Der Freigabelink konnte nicht widerrufen werden.", "copy": "Der Link konnte nicht kopiert werden." },
+    "share": { "action": "Freigabelink erstellen", "title": "Unveränderlichen Bericht teilen", "description": "Lege fest, was Empfänger öffnen dürfen. Nach der Linkerstellung ändert sich der Bericht nicht mehr.", "locale": "Berichtssprache", "expiry": "Läuft ab nach", "expiryHelp": "Wähle zwischen einem und 90 Tagen.", "permissions": "Erlaubte Formate", "create": "Link erstellen", "creating": "Link wird erstellt…", "showOnce": "Diesen Link jetzt kopieren", "linkLabel": "Freigabelink", "copy": "Link kopieren", "copied": "Kopiert", "savedWithoutToken": "Aus Sicherheitsgründen speichert RankMeFast den lesbaren Link nicht. Im Exportcenter kannst du ihn weiterhin widerrufen.", "existing": "Links für diesen Snapshot", "refresh": "Aktualisieren" },
+    "confirm": { "revokeTitle": "Diesen Link widerrufen?", "revokeBody": "Alle Nutzer verlieren sofort den Zugriff.", "deleteTitle": "Diesen gespeicherten Export löschen?", "deleteBody": "Die Datei funktioniert danach nicht mehr und alle verknüpften Freigaben werden widerrufen." },
+    "center": { "title": "Exporte und Freigaben", "description": "Lade gespeicherte Berichtssnapshots herunter und verwalte öffentliche Links.", "tabsLabel": "Bereiche des Exportcenters", "downloads": "Downloads", "shares": "Freigaben", "disabledTitle": "Neue Exporte sind pausiert", "disabledBody": "Vorhandene Dateien können verfügbar bleiben, neue Dateien und Links können derzeit aber nicht erstellt werden.", "emptyDownloadsTitle": "Noch keine gespeicherten Exporte", "emptyDownloadsBody": "Erstelle einen Bericht über Exportieren oder teilen.", "emptySharesTitle": "Noch keine Freigabelinks", "emptySharesBody": "Teile einen geeigneten Bericht, um seinen Link hier zu verwalten.", "deletedReport": "Gelöschter oder abgelaufener Bericht", "more": "Mehr laden", "expiresValue": "Läuft am {{date}} ab", "views": "{{count}} Aufrufe", "columns": { "report": "Bericht", "format": "Format", "created": "Erstellt", "expires": "Läuft ab", "actions": "Aktionen" } }
+  },
+  "publicShare": {
+    "report": "Geteilter Bericht",
+    "sourceDates": "Quellen und Daten",
+    "selection": "Berichtsumfang",
+    "expires": "Dieser Link läuft am {{date}} ab.",
+    "downloadPdf": "PDF herunterladen",
+    "downloadCsv": "CSV herunterladen",
+    "notFoundTitle": "Dieser Berichtslink ist nicht verfügbar",
+    "notFoundBody": "Er ist möglicherweise abgelaufen, widerrufen oder der Bericht wurde gelöscht.",
+    "empty": "Für diesen Abschnitt sind keine Zeilen verfügbar.",
+    "unavailable": "Nicht verfügbar",
+    "observed": "Beobachtet am {{date}}",
+    "provenance": "Quelle: {{kind}}"
+  }
+}

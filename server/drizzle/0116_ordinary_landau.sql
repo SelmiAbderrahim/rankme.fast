@@ -1,0 +1,2 @@
+ALTER TABLE "keyword_research_history" DROP CONSTRAINT "krh_kind_check";--> statement-breakpoint
+ALTER TABLE "keyword_research_history" ADD CONSTRAINT "krh_kind_check" CHECK ("keyword_research_history"."kind" in ('metrics', 'related', 'intent', 'ideas', 'long_tail', 'gap', 'overview', 'trends', 'clusters'));

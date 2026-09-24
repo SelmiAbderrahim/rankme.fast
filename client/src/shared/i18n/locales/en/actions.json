@@ -1,0 +1,152 @@
+{
+  "title": "Next actions",
+  "description": "Prioritized fixes and opportunities from every connected source, in one worklist.",
+  "status": {
+    "loading": "Loading actions…",
+    "refreshing": "Refreshing actions…",
+    "showing": "Showing {{count}} actions"
+  },
+  "errors": {
+    "loadFailed": "We couldn't load your actions. Please try again.",
+    "unauthorized": "You need to sign in again to see this."
+  },
+  "notFound": {
+    "title": "Nothing here",
+    "body": "This site or action could not be found."
+  },
+  "filters": {
+    "label": "Filter actions",
+    "reset": "Reset filters",
+    "all": "All",
+    "state": "State",
+    "source": "Source",
+    "severity": "Severity",
+    "confidence": "Confidence",
+    "effort": "Effort"
+  },
+  "pagination": {
+    "previous": "Previous",
+    "next": "Next"
+  },
+  "state": {
+    "open": "Open",
+    "planned": "Planned",
+    "dismissed": "Dismissed",
+    "completed": "Completed"
+  },
+  "source": {
+    "audit_finding": "Site audit",
+    "confirmed_rank_drop": "Confirmed rank drop",
+    "gsc_decline": "Search Console decline",
+    "ga4_decline": "Analytics decline",
+    "content_recommendation": "Content recommendation",
+    "citation_gap": "AI citation gap",
+    "audience_research": "Audience research"
+  },
+  "severity": {
+    "critical": "Critical",
+    "warning": "Warning",
+    "info": "Info"
+  },
+  "impact": {
+    "high": "High impact",
+    "medium": "Medium impact",
+    "low": "Low impact",
+    "none": "No measured impact"
+  },
+  "confidence": {
+    "high": "High confidence",
+    "medium": "Medium confidence",
+    "low": "Low confidence"
+  },
+  "effort": {
+    "low": "Low effort",
+    "medium": "Medium effort",
+    "high": "High effort"
+  },
+  "freshness": {
+    "fresh": "Fresh",
+    "stale": "Stale",
+    "unavailable": "Not verified"
+  },
+  "card": {
+    "nextStep": "Next step",
+    "observedAt": "Observed {{date}}",
+    "openSource": "Open source view",
+    "affectedNone": "Site-wide",
+    "affectedOne": "1 affected URL",
+    "affectedCount": "{{count}} affected URLs",
+    "evidence": "Evidence",
+    "evidenceLink": "Open evidence source",
+    "history": "History",
+    "retest": "Retest"
+  },
+  "transitions": {
+    "planned": "Plan",
+    "dismissed": "Dismiss",
+    "completed": "Complete",
+    "open": "Reopen"
+  },
+  "stateDialog": {
+    "titles": {
+      "planned": "Plan this action?",
+      "dismissed": "Dismiss this action?",
+      "completed": "Mark this action complete?",
+      "open": "Reopen this action?"
+    },
+    "consequences": {
+      "planned": "The action moves to your planned list. You can reopen or complete it later.",
+      "dismissed": "The action leaves your open list. It stays in history and can be reopened at any time.",
+      "completed": "The action is marked as done. A later check can still reopen it if the problem returns.",
+      "open": "The action returns to your open list."
+    },
+    "noteLabel": "Add a note (optional)",
+    "noteCount": "{{used}} of {{max}} characters",
+    "confirm": "Confirm",
+    "saving": "Saving…",
+    "conflict": "Someone else changed this action first. Reload it and try again.",
+    "conflictReload": "Reload action"
+  },
+  "history": {
+    "title": "Action history",
+    "empty": "No changes recorded yet.",
+    "actor": "Team member",
+    "from": "from {{state}}",
+    "close": "Close"
+  },
+  "retest": {
+    "title": "Retest this finding?",
+    "description": "A retest runs one fresh site audit and updates every audit-based action.",
+    "unitsLabel": "Audit runs used",
+    "unitsValue": "1",
+    "freshRun": "Retests always run a fresh crawl — results are never served from a cache.",
+    "remaining": "{{remaining}} of {{cap}} audit runs left this period",
+    "allowanceUnknown": "We couldn't load your remaining allowance. The server still checks your limit before running.",
+    "confirm": "Start retest",
+    "starting": "Starting…",
+    "queued": "Retest queued. Track progress on the report tab.",
+    "viewProgress": "View report progress"
+  },
+  "sources": {
+    "partial": "Some data sources are stale or unavailable right now, so this list may be incomplete.",
+    "unavailableTitle": "Data sources unavailable",
+    "unavailableBody": "We can't check your sources right now, so no actions can be shown. This is not an all-clear.",
+    "clearTitle": "Nothing needs your attention",
+    "clearBody": "Every connected source reports no open actions right now."
+  },
+  "overview": {
+    "viewAll": "View all actions",
+    "open": "Open",
+    "degraded": "Some sources are unavailable — this list may be incomplete.",
+    "error": "We couldn't load your actions.",
+    "retry": "Try again"
+  },
+  "report": {
+    "dismissCta": "Dismiss as false positive",
+    "reopenCta": "Reopen finding",
+    "dismissedLabel": "Dismissed as false positive",
+    "fixCta": "Mark as fixed",
+    "fixedLabel": "Marked fixed",
+    "reappearedLabel": "Still detected after being marked fixed"
+  }
+}

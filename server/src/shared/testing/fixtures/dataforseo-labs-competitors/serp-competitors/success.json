@@ -1,0 +1,98 @@
+{
+  "version": "0.1.20260610",
+  "status_code": 20000,
+  "status_message": "Ok.",
+  "time": "0.2917 sec.",
+  "cost": 0.0144,
+  "tasks_count": 1,
+  "tasks_error": 0,
+  "tasks": [
+    {
+      "id": "TASK_ID",
+      "status_code": 20000,
+      "status_message": "Ok.",
+      "time": "0.2330 sec.",
+      "cost": 0.0144,
+      "result_count": 1,
+      "path": ["v3", "dataforseo_labs", "google", "serp_competitors", "live"],
+      "data": {
+        "api": "dataforseo_labs",
+        "function": "serp_competitors",
+        "se_type": "google",
+        "keywords": ["uptime kuma", "uptime monitor", "uptime monitor github"],
+        "location_code": 2840,
+        "language_code": "en",
+        "limit": 20
+      },
+      "result": [
+        {
+          "se_type": "google",
+          "seed_keywords": ["uptime kuma", "uptime monitor", "uptime monitor github"],
+          "location_code": 2840,
+          "language_code": "en",
+          "total_count": 4,
+          "items_count": 4,
+          "items": [
+            {
+              "se_type": "google",
+              "domain": "www.site24x7.com",
+              "avg_position": 9,
+              "median_position": 1,
+              "rating": 182,
+              "etv": 75.142,
+              "keywords_count": 1,
+              "visibility": 1.05,
+              "relevant_serp_items": 2,
+              "keywords_positions": {
+                "uptime monitor": [1, 17]
+              }
+            },
+            {
+              "se_type": "google",
+              "domain": "uptimerobot.com",
+              "avg_position": 1,
+              "median_position": 1,
+              "rating": 99,
+              "etv": 231.04,
+              "keywords_count": 2,
+              "visibility": 1,
+              "relevant_serp_items": 2,
+              "keywords_positions": {
+                "uptime monitor": [1],
+                "uptime kuma": [4]
+              }
+            },
+            {
+              "se_type": "google",
+              "domain": "netuptimemonitor.com",
+              "avg_position": 2,
+              "median_position": 2,
+              "rating": 98,
+              "etv": 126.36,
+              "keywords_count": 1,
+              "visibility": 0.9,
+              "relevant_serp_items": 1,
+              "keywords_positions": {
+                "uptime monitor": [2]
+              }
+            },
+            {
+              "se_type": "google",
+              "domain": "www.pingdom.com",
+              "avg_position": null,
+              "median_position": 10,
+              "rating": 90,
+              "etv": null,
+              "keywords_count": null,
+              "visibility": 0.1,
+              "relevant_serp_items": 1,
+              "keywords_positions": {
+                "uptime monitor": [10]
+              }
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

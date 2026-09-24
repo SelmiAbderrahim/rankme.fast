@@ -1,0 +1,222 @@
+{
+  "title": "您的审计报告",
+  "subtitle": "需要修复的、需要关注的以及已经通过的。",
+  "history": {
+    "title": "审计历史",
+    "empty": "暂无审计记录。",
+    "viewRun": "查看此次运行",
+    "status": {
+      "queued": "排队中",
+      "running": "运行中",
+      "succeeded": "已完成",
+      "failed": "失败"
+    }
+  },
+  "tabs": {
+    "fix-now": "立即修复",
+    "watch": "关注",
+    "passed": "已通过"
+  },
+  "row": {
+    "affectedPages": "涉及 {{count}} 个页面",
+    "affectedPagesOne": "涉及 1 个页面",
+    "siteWide": "整站检查",
+    "passedSummary": "此项检查已通过。"
+  },
+  "severity": {
+    "critical": "严重",
+    "warning": "警告",
+    "info": "信息"
+  },
+  "badges": {
+    "fixed": "已修复",
+    "regressed": "已退化"
+  },
+  "detail": {
+    "whyTitle": "为什么这很重要",
+    "affectedUrlsTitle": "受影响的网址",
+    "brokenLinkTargetsTitle": "审计无法抓取的目标网址",
+    "brokenLinkSourcesTitle": "链接到这些目标网址的页面",
+    "fixTitle": "如何修复",
+    "copyFix": "复制解决方案",
+    "copied": "已复制",
+    "generateSchema": "生成结构化标记"
+  },
+  "retest": {
+    "cta": "重新检测",
+    "running": "正在审计…",
+    "starting": "正在开始…",
+    "first": "运行首次审计"
+  },
+  "pageCap": {
+    "label": "抓取页面数",
+    "max": "套餐上限",
+    "pages": "{{pages}} 个页面"
+  },
+  "empty": {
+    "fix-now": {
+      "title": "暂无需要修复的内容",
+      "description": "非常好——本次审计未发现严重问题。"
+    },
+    "watch": {
+      "title": "暂无需要关注的内容",
+      "description": "您的网站目前没有警告。"
+    },
+    "passed": {
+      "title": "尚无通过的检查",
+      "description": "运行首次审计,查看您的网站已经做得好的地方。"
+    }
+  },
+  "noRun": {
+    "title": "尚未进行审计",
+    "description": "运行首次审计,查看需要修复、需要关注以及已经通过的项目。"
+  },
+  "states": {
+    "loading": "正在加载您的报告…",
+    "retry": "重试",
+    "runInProgress": "正在审计您的网站——这可能需要几分钟。"
+  },
+  "loadFailed": "无法加载您的报告。",
+  "retestFailed": "无法启动审计。",
+  "pageSpeed": {
+    "sectionTitle": "页面速度",
+    "fieldLabel": "真实访客的体验",
+    "labLabel": "我们的实验室估算",
+    "unavailableTitle": "本次审计未获取到页面速度数据",
+    "unavailableBody": "无法访问页面速度服务。您的报告依然完整——速度数据将在下一次运行时恢复。",
+    "noFieldDataTitle": "暂无足够的访客数据",
+    "noFieldDataBody": "Chrome 只有在站点获得足够流量后才会报告真实访客速度。随着流量增长,本区域会自动填充。",
+    "originFallback": "域级数据(不仅是此页面)",
+    "sampleLabel": "已抽样 {{count}} 个页面",
+    "sampleLabelOne": "已抽样 1 个页面",
+    "metrics": {
+      "lcp": "LCP",
+      "inp": "INP",
+      "cls": "CLS",
+      "performance": "性能"
+    },
+    "categories": {
+      "good": "良好",
+      "needs-improvement": "需要改进",
+      "poor": "较差"
+    }
+  },
+  "aiSummary": {
+    "cardTitle": "修复项的 AI 摘要",
+    "cardDescription": "简明的 AI 摘要，说明应优先修复的问题。",
+    "cta": "汇总我的修复项",
+    "regenerate": "重新生成",
+    "loading": "正在撰写您的摘要…",
+    "attribution": "由 AI 生成 —— 执行前请核实。",
+    "truncatedNote": "摘要已被截短。",
+    "errors": {
+      "unavailable": "AI 摘要暂时不可用 —— 您的检查清单不受影响。",
+      "capReached": "您已达到本月 AI 摘要额度。请升级套餐或购买额度以继续生成。"
+    }
+  },
+  "pdf": {
+    "download": "下载 PDF",
+    "downloading": "正在生成 PDF…",
+    "error": "无法生成 PDF，请重试。",
+    "upgradeHint": "PDF 报告适用于 Pro 和 Agency 方案。"
+  },
+  "gscBlock": {
+    "sectionTitle": "Google 搜索表现（过去 28 天）",
+    "sitemapsTitle": "Google Search Console 中的站点地图",
+    "totalClicks": "点击次数",
+    "totalImpressions": "展示次数",
+    "averageCtr": "点击率",
+    "averagePosition": "平均排名",
+    "topQueriesTitle": "热门搜索词",
+    "topPagesTitle": "热门页面",
+    "colQuery": "搜索词",
+    "colPage": "页面",
+    "colClicks": "点击次数",
+    "colImpressions": "展示次数",
+    "colCtr": "CTR",
+    "colPosition": "排名",
+    "deltaClicks": "次点击,较上一周期",
+    "deltaImpressions": "次展示,较上一周期",
+    "sampledFootnote": "由 Google 抽样统计 · 由于 Google 会延迟报告最近三天的数据,因此已排除在外。",
+    "unavailableTitle": "本次审计未获取到搜索数据",
+    "unavailableBody": "本次审计无法访问 Google Search Console。您的报告依然完整——搜索数据将在下一次运行时恢复。",
+    "notConnectedTitle": "连接 Google Search Console",
+    "notConnectedBody": "连接您的 Google 账号,即可在此报告中查看真实的点击次数、展示次数和站点地图状态。",
+    "notConnectedCta": "打开 Google 设置",
+    "reconnectTitle": "您的 Google 连接需要更新",
+    "reconnectBody": "Google 已不再接受您当前的授权。请重新连接以恢复搜索数据。",
+    "noDataTitle": "暂无搜索数据",
+    "noDataBody": "过去四周内,Google 未报告该网站的任何点击或展示数据。",
+    "noSitemapsTitle": "尚未向 Google 提交站点地图",
+    "noSitemapsBody": "请在 Google Search Console 中提交站点地图,以便 Google 找到您希望收录的每个页面。",
+    "sitemapHealthy": "状态正常",
+    "sitemapErrors": "{{count}} 个错误",
+    "sitemapWarnings": "{{count}} 个警告",
+    "sitemapProcessed": "已提交 {{count}} 个网址",
+    "sitemapLastDownloaded": "Google 上次读取时间为 {{date}}",
+    "sitemapNeverDownloaded": "Google 尚未读取"
+  },
+  "aiVisibilityBlock": {
+    "title": "AI 可见度",
+    "unavailableTitle": "AI 可见度数据不可用",
+    "unavailableBody": "无法读取此报告的近期 AI 聊天回答数据。",
+    "noPromptsTitle": "尚未跟踪任何 AI 提问",
+    "noPromptsBody": "跟踪买家问题，查看 AI 聊天回答是否提到您。",
+    "noPromptsCta": "添加跟踪提问",
+    "aiOverview": "Google AI Overview 引用",
+    "aiChats": "AI 聊天提及",
+    "shareOfVoice": "声量份额",
+    "brand": "您",
+    "competitors": "竞争对手",
+    "noData": "暂无数据",
+    "notMentioned": "未被提及",
+    "sentiment": {
+      "positive": "正面",
+      "neutral": "中性",
+      "negative": "批评"
+    }
+  },
+  "localSeoBlock": {
+    "title": "本地 SEO",
+    "unavailableTitle": "本地 SEO 数据不可用",
+    "unavailableBody": "无法读取此报告的最新目录信息、评论或地图组合数据。",
+    "notConfiguredTitle": "尚未设置本地 SEO",
+    "notConfiguredBody": "刷新本地 SEO 以获取您网站的商家信息、评论和地图组合排名。",
+    "notConfiguredCta": "打开本地 SEO",
+    "listings": "目录条目",
+    "consistent": "一致",
+    "inconsistent": "不一致",
+    "averageRating": "平均评分",
+    "reviewCount": "评论数",
+    "unansweredQuestions": "未回答问题",
+    "localPack": "本地地图组合",
+    "notRanked": "未进入地图组合",
+    "packSize": "共 {{count}} 条",
+    "noData": "暂无数据"
+  },
+  "exportUi": {
+    "trigger": "导出或分享", "loading": "正在加载导出选项…", "preparing": "正在准备文件…", "unavailable": "导出不可用", "formatsLabel": "文件格式",
+    "clipboard": { "action": "复制到剪贴板", "success": "已复制到剪贴板。", "error": "无法复制到剪贴板。" },
+    "formats": { "view": "网页视图", "pdf": "PDF 文件", "csv": "CSV 文件", "json": "JSON", "md": "Markdown 文档", "jsonld": "JSON-LD", "txt": "文本" },
+    "states": { "active": "有效", "revoked": "已撤销", "expired": "已过期" },
+    "actions": { "retry": "重试", "download": "下载", "delete": "删除", "revoke": "撤销", "cancel": "取消", "done": "完成" },
+    "errors": { "capabilities": "无法加载导出选项。", "create": "无法导出报告。请缩小范围后重试。", "download": "无法下载已保存的文件。", "list": "无法加载已保存的导出。", "delete": "无法删除已保存的导出。", "share": "无法创建分享链接。", "revoke": "无法撤销分享链接。", "copy": "无法复制链接。" },
+    "share": { "action": "创建分享链接", "title": "分享不可变报告", "description": "选择收件人可以打开的内容。链接创建后，报告将不再变化。", "locale": "报告语言", "expiry": "有效期", "expiryHelp": "请选择一至90天。", "permissions": "允许的格式", "create": "创建链接", "creating": "正在创建链接…", "showOnce": "立即复制此链接", "linkLabel": "分享链接", "copy": "复制链接", "copied": "已复制", "savedWithoutToken": "为确保安全，RankMeFast 不会保存可读链接。你仍可在导出中心撤销它。", "existing": "此快照的链接", "refresh": "刷新" },
+    "confirm": { "revokeTitle": "撤销此链接？", "revokeBody": "任何使用此链接的人都会立即失去访问权限。", "deleteTitle": "删除此导出？", "deleteBody": "文件将停止工作，所有关联的分享链接也会被撤销。" },
+    "center": { "title": "导出与分享", "description": "下载已保存的报告快照并管理公开链接。", "tabsLabel": "导出中心分区", "downloads": "下载", "shares": "分享", "disabledTitle": "新导出已暂停", "disabledBody": "现有文件可能仍可用，但目前无法创建新文件或链接。", "emptyDownloadsTitle": "尚无已保存的导出", "emptyDownloadsBody": "在任意报告中使用“导出或分享”创建。", "emptySharesTitle": "尚无分享链接", "emptySharesBody": "分享支持的报告后，可在此管理链接。", "deletedReport": "已删除或已过期的报告", "more": "加载更多", "expiresValue": "{{date}}到期", "views": "{{count}}次查看", "columns": { "report": "报告", "format": "格式", "created": "创建时间", "expires": "到期时间", "actions": "操作" } }
+  },
+  "publicShare": {
+    "report": "共享报告",
+    "sourceDates": "来源和日期",
+    "selection": "报告范围",
+    "expires": "此链接将于 {{date}} 失效。",
+    "downloadPdf": "下载 PDF",
+    "downloadCsv": "下载 CSV",
+    "notFoundTitle": "此报告链接不可用",
+    "notFoundBody": "链接可能已过期、被撤销，或报告已删除。",
+    "empty": "此部分没有可用行。",
+    "unavailable": "不可用",
+    "observed": "观测时间：{{date}}",
+    "provenance": "{{kind}} 来源"
+  }
+}

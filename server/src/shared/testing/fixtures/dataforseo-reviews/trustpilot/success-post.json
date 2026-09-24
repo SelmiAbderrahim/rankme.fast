@@ -1,0 +1,26 @@
+{
+  "version": "0.1.20260101",
+  "status_code": 20000,
+  "status_message": "Ok.",
+  "time": "0.05 sec.",
+  "cost": 0.007,
+  "tasks_count": 1,
+  "tasks_error": 0,
+  "tasks": [
+    {
+      "id": "TASK_ID",
+      "status_code": 20100,
+      "status_message": "Task Created.",
+      "time": "0.05 sec.",
+      "cost": 0.007,
+      "result_count": 0,
+      "path": ["v3", "business_data", "trustpilot", "reviews", "task_post"],
+      "data": {
+        "api": "business_data",
+        "function": "task_post",
+        "keyword": "example.com"
+      },
+      "result": null
+    }
+  ]
+}

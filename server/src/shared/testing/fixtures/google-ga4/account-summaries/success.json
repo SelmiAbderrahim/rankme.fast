@@ -1,0 +1,28 @@
+{
+  "accountSummaries": [
+    {
+      "name": "accountSummaries/12345",
+      "account": "accounts/12345",
+      "displayName": "Example Org",
+      "propertySummaries": [
+        {
+          "property": "properties/100000001",
+          "displayName": "example.com - GA4",
+          "propertyType": "PROPERTY_TYPE_ORDINARY",
+          "parent": "accounts/12345"
+        },
+        {
+          "property": "properties/100000002",
+          "displayName": "Example Staging",
+          "propertyType": "PROPERTY_TYPE_ORDINARY",
+          "parent": "accounts/12345"
+        }
+      ]
+    },
+    {
+      "name": "accountSummaries/67890",
+      "account": "accounts/67890",
+      "displayName": "Second Org (no properties)"
+    }
+  ]
+}

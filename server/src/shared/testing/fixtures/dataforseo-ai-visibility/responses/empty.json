@@ -1,0 +1,25 @@
+{
+  "version": "0.1.20260101",
+  "status_code": 20000,
+  "status_message": "Ok.",
+  "time": "0.9210 sec.",
+  "cost": 0.0006,
+  "tasks_count": 1,
+  "tasks_error": 0,
+  "tasks": [
+    {
+      "id": "TASK_ID",
+      "status_code": 20000,
+      "status_message": "Ok.",
+      "time": "0.8102 sec.",
+      "cost": 0.0006,
+      "result_count": 1,
+      "path": ["v3", "ai_optimization", "chat_gpt", "llm_responses", "live"],
+      "result": [
+        {
+          "items": []
+        }
+      ]
+    }
+  ]
+}

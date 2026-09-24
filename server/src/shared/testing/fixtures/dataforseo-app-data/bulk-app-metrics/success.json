@@ -1,0 +1,40 @@
+{
+  "version": "0.1.20260808",
+  "status_code": 20000,
+  "status_message": "Ok.",
+  "cost": 0.012,
+  "tasks": [
+    {
+      "id": "TASK_ID",
+      "status_code": 20000,
+      "status_message": "Ok.",
+      "cost": 0.012,
+      "path": [
+        "v3",
+        "dataforseo_labs",
+        "google_play",
+        "bulk_app_metrics",
+        "live"
+      ],
+      "result": [
+        {
+          "items": [
+            {
+              "app_id": "com.example.audit",
+              "metrics": {
+                "google_play_search_organic": {
+                  "pos_1": 2,
+                  "pos_2_3": 3,
+                  "pos_4_10": 5,
+                  "pos_11_100": 7,
+                  "count": 17,
+                  "search_volume": 4200
+                }
+              }
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

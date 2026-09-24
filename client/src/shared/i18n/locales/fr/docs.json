@@ -1,0 +1,46 @@
+{
+  "title": "Documentation",
+  "eyebrow": "Guides RankMeFast",
+  "searchLabel": "Rechercher dans la documentation",
+  "searchPlaceholder": "Rechercher des guides et réponses…",
+  "searchAction": "Rechercher",
+  "navigationLabel": "Navigation de la documentation",
+  "openNavigation": "Ouvrir la navigation de la documentation",
+  "filterLabel": "Filtrer la documentation par section",
+  "allSections": "Tout",
+  "resultCount": "{{count}} résultats",
+  "noResultsTitle": "Aucun guide trouvé",
+  "noResultsBody": "Essayez une expression plus large ou retirez le filtre de section.",
+  "clearFilters": "Effacer les filtres",
+  "viewSection": "Voir la section",
+  "readGuide": "Lire le guide",
+  "onThisPage": "Sur cette page",
+  "articleNavigation": "Guides précédent et suivant",
+  "previous": "Précédent",
+  "next": "Suivant",
+  "copy": {
+    "trigger": "Copier la page",
+    "label": "Copier au format",
+    "markdown": "Markdown",
+    "plainText": "Texte brut",
+    "link": "Lien de la page",
+    "success": "{{format}} copié.",
+    "failed": "Impossible de copier. Vérifiez les autorisations du navigateur et réessayez."
+  },
+  "sections": {
+    "start": "Bien démarrer",
+    "audits": "Audits et rapports",
+    "research": "Recherche et suivi",
+    "product": "Fonctionnalités du produit",
+    "account": "Compte et facturation",
+    "developers": "Développeurs"
+  },
+  "breadcrumbs": { "home": "Accueil", "docs": "Documentation" },
+  "error": {
+    "notFoundTitle": "Guide introuvable",
+    "notFoundBody": "Ce guide a peut-être été déplacé ou l’adresse est incorrecte.",
+    "title": "Documentation indisponible",
+    "body": "Impossible de charger la documentation. Réessayez dans un instant.",
+    "back": "Retour à la documentation"
+  }
+}

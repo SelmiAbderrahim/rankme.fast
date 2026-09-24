@@ -1,0 +1,11 @@
+{
+  "contact": {
+    "confirmation": "Tu mensaje ha sido enviado. Te contactaremos pronto."
+  },
+  "passwordReset": {
+    "subject": "Restablece tu contraseña"
+  },
+  "passwordChanged": {
+    "subject": "Tu contraseña fue cambiada"
+  }
+}

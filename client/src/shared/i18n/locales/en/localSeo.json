@@ -1,0 +1,41 @@
+{
+  "title": "Local SEO",
+  "description": "Business listings, reviews, and map-pack rank for your site.",
+  "empty": "No Local SEO data yet — hit refresh to fetch listings, reviews, and Q&A.",
+  "emptyTitle": "No local data yet",
+  "emptyCta": "Fetch local data",
+  "refresh": {
+    "button": "Refresh Local SEO",
+    "cooldown": "Refresh in {{seconds}}s",
+    "failed": "Could not refresh Local SEO. Try again in a moment."
+  },
+  "loadFailed": "Could not load Local SEO.",
+  "locked": {
+    "title": "Local SEO is a Pro feature",
+    "body": "Upgrade to Pro to track how consistently your business appears across directories and the local map pack.",
+    "upgrade": "See plans"
+  },
+  "listings": {
+    "title": "Business listings",
+    "source": "Directory",
+    "name": "Name",
+    "address": "Address",
+    "phone": "Phone",
+    "status": "Status",
+    "consistent": "Matches",
+    "inconsistent": "Mismatch"
+  },
+  "reviews": {
+    "title": "Reviews & Q&A",
+    "averageRating": "Average rating",
+    "reviewCount": "Reviews",
+    "unansweredQuestions": "Unanswered questions"
+  },
+  "localPack": {
+    "title": "Local map pack",
+    "keyword": "Keyword",
+    "position": "Position",
+    "packSize": "Pack size",
+    "notRanked": "Not in map pack"
+  }
+}

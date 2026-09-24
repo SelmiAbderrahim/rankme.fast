@@ -1,0 +1,1 @@
+export { GA4_DIMENSION_SETS, readGa4Metrics, readLatestGa4SnapshotDate, readPreviousGa4Totals, upsertGa4Metrics, type Ga4DimensionSet, type Ga4MetricRowInput, type Ga4SnapshotTotals, type ReadGa4MetricsRange, type UpsertGa4MetricsInput, } from './ga4-snapshots.service.js';

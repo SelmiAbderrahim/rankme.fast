@@ -1,0 +1,46 @@
+{
+  "version": "0.1.20260801",
+  "status_code": 20000,
+  "status_message": "Ok.",
+  "cost": 0.01212,
+  "tasks_count": 1,
+  "tasks_error": 0,
+  "tasks": [
+    {
+      "id": "TASK_ID",
+      "status_code": 20000,
+      "status_message": "Ok.",
+      "cost": 0.01212,
+      "result_count": 1,
+      "result": [
+        {
+          "items_count": 1,
+          "items": [
+            {
+              "keyword_data": {
+                "keyword": "no ranking urls",
+                "keyword_info": { "search_volume": null }
+              },
+              "first_domain_serp_element": {
+                "serp_item": {
+                  "type": "organic",
+                  "rank_group": 3,
+                  "url": null,
+                  "relative_url": null
+                }
+              },
+              "second_domain_serp_element": {
+                "serp_item": {
+                  "type": "organic",
+                  "rank_group": 5,
+                  "url": null,
+                  "relative_url": null
+                }
+              }
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

@@ -1,0 +1,4 @@
+{
+  "status_code": "not-a-number",
+  "detail": "documented-shape contract drift: status_code must be numeric"
+}

@@ -1,0 +1,113 @@
+{
+  "title": "地理网格本地排名跟踪",
+  "description": "在一片坐标网格上查看你的商家在本地组合结果中的排名。一次扫描覆盖整片网格，只花费一次地理网格扫描。",
+  "locked": {
+    "body": "地理网格扫描包含在专业版和代理版套餐中。",
+    "cta": "查看套餐"
+  },
+  "form": {
+    "keyword": "已跟踪关键词",
+    "keywordPlaceholder": "选择一个关键词",
+    "coordinateHelp": "请以数字输入中心点。这里没有地图选点——我们不购买地图瓦片。",
+    "latitude": "中心纬度",
+    "longitude": "中心经度",
+    "spacing": "点之间的间距",
+    "spacingOption": "{{km}} 公里",
+    "spacingCustom": "间距（米）",
+    "size": "网格大小",
+    "sizeOption": "{{size}} × {{size}}（{{cells}} 个点）",
+    "zoom": "地图缩放",
+    "preview": "估算这次扫描",
+    "previewing": "估算中…",
+    "errors": {
+      "keyword": "请先选择一个已跟踪的关键词。",
+      "latitude": "纬度必须在 -{{max}} 到 {{max}} 之间。",
+      "longitude": "经度必须在 -180 到 180 之间。",
+      "spacing": "间距必须在 {{min}} 到 {{max}} 米之间，且为 {{step}} 的整数倍。",
+      "zoom": "缩放必须在 {{min}} 到 {{max}} 之间。"
+    }
+  },
+  "preview": {
+    "title": "这次扫描的花费",
+    "body": "{{units}} 次地理网格扫描覆盖全部 {{cells}} 个网格点。",
+    "remaining": "套餐内还剩 {{base}} 次，加油包还剩 {{pack}} 次。",
+    "packUnavailable": "目前尚未配置可购买的地理网格加油包。",
+    "confirm": "开始扫描",
+    "running": "扫描中…",
+    "cancel": "取消"
+  },
+  "history": {
+    "title": "历史扫描",
+    "row": "{{keyword}} — {{size}} × {{size}}",
+    "meta": "{{status}} · {{createdAt}}",
+    "emptyTitle": "还没有扫描",
+    "emptyBody": "运行第一片网格，看看你在某个地点周边的排名。"
+  },
+  "grid": {
+    "title": "热力网格",
+    "ariaLabel": "{{size}} × {{size}} 网格上的本地组合排名",
+    "emptyTitle": "未选择扫描",
+    "emptyBody": "选择一次历史扫描，或运行一次新的扫描。",
+    "running": "这次扫描仍在进行，网格点完成后会陆续出现。",
+    "cellPending": "第 {{index}} 点：尚未检查",
+    "cellObserved": "第 {{index}} 点：在 {{lat}}, {{lng}} 排第 {{position}}（共 {{packSize}} 个），检查于 {{capturedAt}}",
+    "cellNotInPack": "第 {{index}} 点：在 {{lat}}, {{lng}} 未进入本地组合，检查于 {{capturedAt}}",
+    "cellFailed": "第 {{index}} 点：在 {{lat}}, {{lng}} 检查失败",
+    "legend": {
+      "top": "第一到第三名",
+      "mid": "第四到第七名",
+      "low": "第八名及之后",
+      "notInPack": "未进入本地组合",
+      "failed": "检查失败"
+    }
+  },
+  "table": {
+    "caption": "每个网格点、它的坐标，以及我们在那里看到的结果。",
+    "point": "点",
+    "latitude": "纬度",
+    "longitude": "经度",
+    "position": "排名",
+    "packSize": "组合数量",
+    "capturedAt": "检查时间",
+    "state": "状态"
+  },
+  "detail": {
+    "observed": "第 {{index}} 点在 {{lat}}, {{lng}} 排第 {{position}}（共 {{packSize}} 个），检查于 {{capturedAt}}。",
+    "notInPack": "第 {{index}} 点在 {{lat}}, {{lng}} 未进入本地组合，检查于 {{capturedAt}}。",
+    "failed": "第 {{index}} 点在 {{lat}}, {{lng}} 无法检查。"
+  },
+  "states": {
+    "observed": "在组合内",
+    "not_in_pack": "不在组合内",
+    "failed": "检查失败"
+  },
+  "status": {
+    "queued": "排队中",
+    "running": "进行中",
+    "completed": "已完成",
+    "completed_partial": "完成但有缺口",
+    "failed": "失败"
+  },
+  "outcome": {
+    "partialTitle": "部分点没有返回结果",
+    "partialBody": "{{total}} 个点中有 {{failed}} 个失败，其余都是真实检查结果。",
+    "failedTitle": "扫描失败",
+    "failedBody": "没有任何一个点返回结果，因此没有内容可显示。",
+    "failedRefunded": "没有任何一个点返回结果，我们已把这次扫描退回你的额度。"
+  },
+  "gates": {
+    "cap": "你的地理网格扫描已用完",
+    "killSwitch": "地理网格扫描已暂停",
+    "notOnPlan": "你的套餐不含此功能",
+    "notFound": "未找到",
+    "rateLimited": "请求过于频繁",
+    "invalid": "请检查网格设置",
+    "failed": "出了点问题",
+    "packCta": "购买地理网格加油包"
+  },
+  "errors": {
+    "loadFailed": "无法加载你的地理网格扫描。",
+    "previewFailed": "无法估算这次扫描。",
+    "submitFailed": "无法启动这次扫描。"
+  }
+}

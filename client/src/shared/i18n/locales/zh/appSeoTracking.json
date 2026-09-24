@@ -1,0 +1,15 @@
+{
+  "stores": { "googlePlay": "Google Play 商店", "appStore": "App Store 商店" },
+  "form": { "title": "跟踪应用关键词", "description": "每周检查一次所选商店。添加关键词会占用一个跟踪名额，检查会消耗应用关键词额度。", "profile": "应用资料", "phrase": "关键词", "store": "商店", "location": "国家或地区", "language": "语言", "add": "添加关键词", "phraseHint": "每行输入一个关键词，或用逗号分隔。", "previewing": "正在检查额度…" },
+  "slots": { "usage": "已用 {{used}}/{{limit}} 个关键词名额" },
+  "discover": {"title": "发现此应用的关键词", "description": "查找此应用在商店中已有排名的词组，然后选择要跟踪的词。", "marketNote": "发现功能仅覆盖美国（英语）商店页面，会消耗一次应用关键词查询。", "find": "查找热门关键词", "loading": "正在查找关键词…", "empty": "未找到此应用有排名的词组。", "keyword": "关键词", "rank": "商店排名", "notRanked": "无排名", "tracked": "已在跟踪", "selectAll": "选择所有可见关键词", "selectRow": "选择 {{keyword}}", "selectedCount": "已选择 {{count}} 个", "trackSelected": "跟踪所选（{{count}}）"},
+  "list": { "title": "已跟踪关键词", "description": "空结果表示在检查深度内未找到应用；没有记录则表示检查尚未运行。", "keyword": "关键词", "store": "商店", "position": "排名", "change": "变化", "actions": "操作", "notInDepth": "未进入靠前结果", "neverChecked": "尚未检查", "checking": "检查中…", "checkFailed": "检查失败", "noPreviousCheck": "没有上次检查", "historyLabel": "查看 {{phrase}} 的历史", "recheckLabel": "立即检查 {{phrase}}", "deleteLabel": "删除 {{phrase}}" },
+  "history": { "title": "排名历史：{{phrase}}", "description": "第 1 名显示在顶部。未找到应用的周次仍会保留在表格中。", "chartLabel": "{{phrase}} 的排名历史图", "tableCaption": "{{phrase}} 的已保存排名观察", "date": "检查日期", "position": "排名", "notInDepth": "超出检查深度", "empty": "尚未检查此关键词的排名。" },
+  "preview": { "units": "本次检查使用 {{units}} 次应用关键词检查。", "cache": "即使可以复用已保存的供应商证据，检查仍会计入额度。" },
+  "mintPreview": { "title": "添加此关键词？", "description": "确认前请查看跟踪名额和每周检查额度。", "slotDisclosure": "已使用 {{used}}/{{limit}} 个跟踪名额。", "confirm": "添加关键词", "count": "将添加 {{count}} 个关键词，每个占用一个跟踪名额。", "confirming": "正在添加…" },
+  "recheck": { "title": "立即检查此关键词？", "description": "运行本周针对“{{phrase}}”的商店搜索。", "confirm": "运行检查", "confirming": "正在排队…" },
+  "empty": { "noProfileTitle": "请先注册应用", "noProfileDescription": "跟踪关键词需要已注册的商店 ID。", "noKeywords": "此应用还没有跟踪关键词。" },
+  "disabled": { "title": "关键词跟踪不可用", "description": "此功能当前已关闭。已保存的观察仍可通过 API 获取。" },
+  "upsell": { "title": "添加 App SEO 关键词跟踪", "description": "Pro 账户需要 App SEO 附加服务或符合条件的检查包，才能运行每周商店检查。", "cta": "查看 App SEO 选项" },
+  "errors": { "title": "无法更新应用关键词跟踪", "requestFailed": "请求未能完成，请重试。" }
+}

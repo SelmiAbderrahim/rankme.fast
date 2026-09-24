@@ -1,0 +1,1 @@
+ALTER TABLE "keywords" ADD COLUMN "last_failed_check_at" timestamp with time zone;

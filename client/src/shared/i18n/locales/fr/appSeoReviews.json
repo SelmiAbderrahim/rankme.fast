@@ -1,0 +1,71 @@
+{
+  "common": { "notAvailable": "Indisponible" },
+  "stats": { "total": "Avis", "average": "Note moyenne" },
+  "mix": { "positive": "Positif", "neutral": "Neutre", "negative": "Négatif" },
+  "histogram": {
+    "title": "Répartition des étoiles",
+    "chartLabel": "Nombre d’avis par note",
+    "tableCaption": "Nombre d’avis pour chaque note",
+    "star": "{{star}} étoiles",
+    "rating": "Note",
+    "count": "Avis"
+  },
+  "trend": {
+    "title": "Volume d’avis",
+    "empty": "Aucun avis daté n’a été renvoyé pour cette exécution.",
+    "chartLabel": "Volume d’avis dans le temps",
+    "tableCaption": "Nombre d’avis et note moyenne par mois",
+    "period": "Mois",
+    "count": "Avis",
+    "average": "Moyenne"
+  },
+  "states": {
+    "pending": "Les avis sont encore en cours de traitement.",
+    "thinTitle": "Pas assez de données pour regrouper les avis",
+    "thinDescription": "Cette exécution a renvoyé moins de 10 avis. Aucune analyse par IA n’a donc été demandée.",
+    "unavailableTitle": "Regroupements indisponibles",
+    "unavailableDescription": "Les avis et statistiques enregistrés sont prêts, mais l’analyse par IA n’a pas abouti.",
+    "failedTitle": "Échec de la collecte des avis",
+    "failedDescription": "Aucun avis n’a été conservé pour cette exécution. Lancez-en une nouvelle quand vous le souhaitez."
+  },
+  "sentiment": { "positive": "Positif", "neutral": "Neutre", "negative": "Négatif", "mixed": "Mitigé" },
+  "clusters": { "title": "Thèmes des avis", "aiInterpretation": "Interprétation par IA", "anonymous": "Auteur anonyme", "rating": "{{rating}} sur 5" },
+  "dialog": {
+    "title": "Confirmer l’analyse des avis",
+    "description": "Cette exécution ponctuelle collecte un échantillon limité d’avis et analyse leurs thèmes une seule fois.",
+    "units": "Utilisation pour cette exécution : {{units}} unité",
+    "bound": "Jusqu’à 300 avis",
+    "unavailable": "La capacité nécessaire n’est pas disponible.",
+    "confirming": "Démarrage de l’analyse…",
+    "confirm": "Lancer l’analyse des avis"
+  },
+  "empty": {
+    "noProfileTitle": "Ajoutez d’abord un profil d’application",
+    "noProfileDescription": "Une exécution nécessite un profil avec un package Google Play ou un identifiant App Store.",
+    "noRuns": "Aucune analyse d’avis pour cette application et cette boutique."
+  },
+  "disabled": { "title": "Les nouvelles analyses sont indisponibles", "description": "Les analyses enregistrées restent consultables." },
+  "upsell": { "title": "Activez le module App SEO", "description": "Votre offre inclut App SEO, mais l’analyse des avis nécessite son module complémentaire.", "cta": "Voir la facturation" },
+  "errors": { "title": "Impossible de charger les avis", "requestFailed": "La demande d’avis a échoué. Réessayez." },
+  "run": {
+    "title": "Analyser les avis de l’application",
+    "description": "Collectez un nouvel échantillon limité pour une application et une boutique. Rien n’est planifié automatiquement.",
+    "bound": "Chaque exécution collecte au maximum 300 avis.",
+    "previewing": "Vérification de la capacité…",
+    "button": "Prévisualiser"
+  },
+  "scope": { "profile": "Profil d’application", "store": "Boutique" },
+  "stores": { "google_play": "Google Play", "app_store": "App Store" },
+  "list": {
+    "title": "Analyses d’avis",
+    "description": "Les données enregistrées restent consultables même si aucune nouvelle analyse ne peut être lancée.",
+    "started": "Démarrée",
+    "status": "État",
+    "reviews": "Avis",
+    "average": "Moyenne",
+    "actions": "Actions",
+    "view": "Afficher"
+  },
+  "status": { "queued": "En attente", "pulling": "Collecte des avis", "clustering": "Recherche des thèmes", "completed": "Terminée", "failed": "Échec" },
+  "detail": { "title": "Détails de l’exécution", "description": "Statistiques déterministes et thèmes étayés par les avis enregistrés." }
+}

@@ -1,0 +1,77 @@
+{
+  "version": "0.1.20260101",
+  "status_code": 20000,
+  "status_message": "Ok.",
+  "time": "0.1802 sec.",
+  "cost": 0.0072,
+  "tasks_count": 1,
+  "tasks_error": 0,
+  "tasks": [
+    {
+      "id": "TASK_ID",
+      "status_code": 20000,
+      "status_message": "Ok.",
+      "time": "0.1620 sec.",
+      "cost": 0.0072,
+      "result_count": 1,
+      "path": ["v3", "dataforseo_labs", "google", "bulk_traffic_estimation", "live"],
+      "data": {
+        "api": "dataforseo_labs",
+        "function": "bulk_traffic_estimation",
+        "targets": ["example.com", "rival-one.example", "niche-three.example"],
+        "location_code": 2840,
+        "language_code": "en"
+      },
+      "result": [
+        {
+          "location_code": 2840,
+          "language_code": "en",
+          "total_count": 3,
+          "items_count": 3,
+          "items": [
+            {
+              "se_type": "google",
+              "target": "example.com",
+              "metrics": {
+                "organic": {
+                  "etv": 12400,
+                  "count": 1820
+                }
+              },
+              "country_distribution": {
+                "US": { "etv": 8200, "count": 900 },
+                "DE": { "etv": 2100, "count": 340 },
+                "FR": { "etv": 900, "count": 210 }
+              }
+            },
+            {
+              "se_type": "google",
+              "target": "rival-one.example",
+              "metrics": {
+                "organic": {
+                  "etv": 4650,
+                  "count": 610
+                }
+              },
+              "country_distribution": {
+                "US": { "etv": 3200, "count": 470 },
+                "GB": { "etv": 950, "count": 130 }
+              }
+            },
+            {
+              "se_type": "google",
+              "target": "niche-three.example",
+              "metrics": {
+                "organic": {
+                  "etv": null,
+                  "count": 0
+                }
+              },
+              "country_distribution": null
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

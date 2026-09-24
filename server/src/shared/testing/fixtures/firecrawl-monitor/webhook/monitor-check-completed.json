@@ -1,0 +1,15 @@
+{
+  "success": true,
+  "type": "monitor.check.completed",
+  "id": "TASK_ID",
+  "webhookId": "WEBHOOK_ID",
+  "metadata": { "monitorRef": "MONITOR_REF" },
+  "data": [
+    {
+      "monitorId": "TASK_ID",
+      "checkId": "CHECK_ID",
+      "status": "completed",
+      "summary": { "totalPages": 1, "same": 0, "changed": 1, "new": 0, "removed": 0, "error": 0 }
+    }
+  ]
+}

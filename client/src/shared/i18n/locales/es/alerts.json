@@ -1,0 +1,133 @@
+{
+  "title": "Avisos",
+  "subtitle": "Entérate cuando una posición cae o cambia tu perfil de enlaces.",
+  "tabs": {
+    "rules": "Reglas",
+    "log": "Registro de envíos"
+  },
+  "type": {
+    "rank_drop": "Caída de posición",
+    "new_backlink": "Enlaces nuevos",
+    "lost_backlink": "Enlaces perdidos"
+  },
+  "channel": {
+    "email": "Correo",
+    "slack": "Slack",
+    "webhook": "Webhook"
+  },
+  "filters": {
+    "type": "Tipo",
+    "state": "Estado",
+    "all": "Todos"
+  },
+  "list": {
+    "title": "Tus reglas",
+    "capUsed": "{{count}} reglas en uso.",
+    "type": "Tipo",
+    "threshold": "Umbral",
+    "channels": "Canales",
+    "state": "Estado",
+    "actions": "Acciones",
+    "emailCount": "{{count}} destinatarios de correo",
+    "secretTail": "la clave de firma acaba en {{tail}}",
+    "enabled": "Activa",
+    "disabled": "Inactiva",
+    "enable": "Activar",
+    "disable": "Desactivar",
+    "viewLog": "Ver registro",
+    "delete": "Eliminar"
+  },
+  "builder": {
+    "title": "Nueva regla",
+    "description": "Elige qué vigilar y adónde enviarlo.",
+    "site": "Sitio",
+    "sitePlaceholder": "Elige un sitio",
+    "type": "Tipo de aviso",
+    "threshold": "Umbral de posición",
+    "thresholdHint": "Avisamos cuando la posición confirmada llega a este puesto o peor.",
+    "channels": "Canales",
+    "slackPlaceholder": "Dirección del webhook entrante de Slack",
+    "webhookPlaceholder": "Tu dirección https",
+    "paidChannelLocked": "Los canales de Slack y webhook requieren el plan Pro o superior.",
+    "noChannel": "Elige al menos un canal.",
+    "submit": "Crear regla"
+  },
+  "secret": {
+    "title": "Copia ahora tu clave de firma",
+    "body": "Mostramos esta clave una sola vez. Guárdala en un lugar seguro: podrás sustituirla, pero no volver a leerla.",
+    "dismiss": "Ya la copié"
+  },
+  "log": {
+    "title": "Registro de envíos",
+    "description": "Cada aviso enviado, con las dos observaciones que lo respaldan.",
+    "channel": "Canal",
+    "status": "Estado",
+    "evidence": "Qué cambió",
+    "detail": "Detalle",
+    "rankPair": "Posición {{before}} el {{beforeAt}} y luego {{after}} el {{afterAt}}.",
+    "linkPair": "{{beforeCount}} dominios el {{beforeAt}} y luego {{afterCount}} el {{afterAt}}.",
+    "notRanked": "fuera de los 100 primeros resultados",
+    "domainCount": "{{count}} dominios cambiaron",
+    "attempt": "Intento {{attempt}}",
+    "statusLabel": {
+      "pending": "Enviando",
+      "sent": "Enviado",
+      "failed": "Falló",
+      "suppressed": "Detenido"
+    },
+    "suppressed": {
+      "opted_out": "El destinatario desactivó estos correos.",
+      "membership_removed": "El destinatario ya no está en la cuenta.",
+      "no_transport": "El correo no está configurado en esta instalación.",
+      "rule_disabled": "La regla estaba desactivada al dispararse.",
+      "retries_exhausted": "Paramos tras tres intentos fallidos.",
+      "flag_disabled": "El operador desactivó los avisos."
+    },
+    "error": {
+      "transport_unavailable": "No se pudo alcanzar el canal.",
+      "transport_rejected": "El canal rechazó el mensaje.",
+      "transport_exception": "El canal falló de forma inesperada.",
+      "unsafe_url": "Ya no es seguro acceder a esa dirección.",
+      "channel_timeout": "El canal tardó demasiado en responder.",
+      "retries_exhausted": "Paramos tras tres intentos fallidos."
+    }
+  },
+  "states": {
+    "cap": {
+      "title": "Límite de reglas alcanzado",
+      "body": "Has usado todas las reglas de aviso de tu plan."
+    },
+    "tierLocked": {
+      "title": "El canal necesita un plan superior",
+      "body": "Los canales de Slack y webhook requieren el plan Pro o superior."
+    },
+    "disabled": {
+      "title": "Avisos en pausa",
+      "body": "Los avisos no están disponibles por ahora. Tus reglas y tu registro siguen aquí."
+    },
+    "notFound": {
+      "title": "No encontrado",
+      "body": "Esa regla ya no existe."
+    },
+    "rateLimited": {
+      "title": "Demasiadas solicitudes",
+      "body": "Demasiadas solicitudes de avisos. Inténtalo en un minuto."
+    },
+    "invalid": {
+      "title": "Revisa el formulario",
+      "body": "Algún dato de la regla aún no es válido."
+    },
+    "failed": {
+      "title": "Algo salió mal",
+      "body": "No pudimos terminar. Inténtalo de nuevo."
+    },
+    "empty": {
+      "title": "Aún no hay reglas",
+      "body": "Crea una regla para empezar a recibir avisos."
+    },
+    "noSites": {
+      "title": "Añade un sitio primero",
+      "body": "Los avisos vigilan un sitio, así que añade uno para empezar."
+    }
+  }
+}

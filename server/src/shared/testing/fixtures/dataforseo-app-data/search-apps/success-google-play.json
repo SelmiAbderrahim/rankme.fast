@@ -1,0 +1,55 @@
+{
+  "version": "0.1.20260808",
+  "status_code": 20000,
+  "status_message": "Ok.",
+  "cost": 0,
+  "tasks": [
+    {
+      "id": "TASK_ID",
+      "status_code": 20000,
+      "status_message": "Ok.",
+      "cost": 0,
+      "path": [
+        "v3",
+        "app_data",
+        "google",
+        "app_searches",
+        "task_get",
+        "advanced",
+        "TASK_ID"
+      ],
+      "result": [
+        {
+          "keyword": "seo audit",
+          "location_code": 2840,
+          "language_code": "en",
+          "datetime": "2026-08-08 10:00:00 +00:00",
+          "se_results_count": 42,
+          "items": [
+            {
+              "type": "google_play_search_organic",
+              "rank_group": 1,
+              "rank_absolute": 1,
+              "app_id": "com.example.audit",
+              "title": "Audit App",
+              "url": "https://play.example.test/apps/details?id=com.example.audit",
+              "icon": "https://play.example.test/icon.png",
+              "reviews_count": 321,
+              "rating": {
+                "value": 4.6
+              },
+              "is_free": true,
+              "price": {
+                "current": 0,
+                "currency": "USD",
+                "displayed_price": "Free"
+              },
+              "developer": "Example Studio",
+              "installs": "10,000+"
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

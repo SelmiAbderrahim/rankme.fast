@@ -1,0 +1,71 @@
+{
+  "common": { "notAvailable": "Nicht verfügbar" },
+  "stats": { "total": "Rezensionen", "average": "Durchschnittsbewertung" },
+  "mix": { "positive": "Positiv", "neutral": "Neutral", "negative": "Negativ" },
+  "histogram": {
+    "title": "Sterneverteilung",
+    "chartLabel": "Anzahl der Rezensionen nach Sternen",
+    "tableCaption": "Anzahl der Rezensionen je Sternebewertung",
+    "star": "{{star}} Sterne",
+    "rating": "Bewertung",
+    "count": "Rezensionen"
+  },
+  "trend": {
+    "title": "Rezensionsvolumen",
+    "empty": "Für diesen Lauf wurden keine datierten Rezensionen zurückgegeben.",
+    "chartLabel": "Rezensionsvolumen im Zeitverlauf",
+    "tableCaption": "Anzahl der Rezensionen und Durchschnittsbewertung pro Monat",
+    "period": "Monat",
+    "count": "Rezensionen",
+    "average": "Durchschnitt"
+  },
+  "states": {
+    "pending": "Die Rezensionsdaten werden noch verarbeitet.",
+    "thinTitle": "Nicht genug Daten für Themen",
+    "thinDescription": "Dieser Lauf lieferte weniger als 10 Rezensionen. Daher wurde keine KI-Analyse angefordert.",
+    "unavailableTitle": "Themen nicht verfügbar",
+    "unavailableDescription": "Die gespeicherten Rezensionen und Statistiken sind verfügbar, die KI-Analyse konnte jedoch nicht abgeschlossen werden.",
+    "failedTitle": "Rezensionsabruf fehlgeschlagen",
+    "failedDescription": "Für diesen Lauf wurden keine Rezensionen gespeichert. Starten Sie bei Bedarf einen neuen Lauf."
+  },
+  "sentiment": { "positive": "Positiv", "neutral": "Neutral", "negative": "Negativ", "mixed": "Gemischt" },
+  "clusters": { "title": "Rezensionsthemen", "aiInterpretation": "KI-Interpretation", "anonymous": "Anonyme Person", "rating": "{{rating}} von 5" },
+  "dialog": {
+    "title": "Rezensionsanalyse bestätigen",
+    "description": "Dieser einmalige Lauf ruft eine begrenzte Stichprobe ab und analysiert deren Themen.",
+    "units": "Nutzung für diesen Lauf: {{units}} Einheit",
+    "bound": "Bis zu 300 Rezensionen",
+    "unavailable": "Für diesen Lauf ist keine Kapazität verfügbar.",
+    "confirming": "Analyse wird gestartet…",
+    "confirm": "Rezensionsanalyse starten"
+  },
+  "empty": {
+    "noProfileTitle": "Zuerst ein App-Profil hinzufügen",
+    "noProfileDescription": "Ein Lauf benötigt ein App-Profil mit Google-Play-Paket oder App-Store-ID.",
+    "noRuns": "Für diese App und diesen Store gibt es noch keine Rezensionsläufe."
+  },
+  "disabled": { "title": "Neue Rezensionsläufe sind nicht verfügbar", "description": "Gespeicherte Rezensionsläufe bleiben lesbar." },
+  "upsell": { "title": "App-SEO-Add-on aktivieren", "description": "Ihr Tarif unterstützt App SEO, für die Rezensionsanalyse ist jedoch das App-SEO-Add-on erforderlich.", "cta": "Abrechnung ansehen" },
+  "errors": { "title": "Rezensionsdaten konnten nicht geladen werden", "requestFailed": "Die Rezensionsanfrage ist fehlgeschlagen. Bitte versuchen Sie es erneut." },
+  "run": {
+    "title": "App-Rezensionen analysieren",
+    "description": "Rufen Sie eine neue, begrenzte Stichprobe für eine App und einen Store ab. Läufe werden nie automatisch geplant.",
+    "bound": "Jeder Lauf ruft höchstens 300 Rezensionen ab.",
+    "previewing": "Kapazität wird geprüft…",
+    "button": "Lauf prüfen"
+  },
+  "scope": { "profile": "App-Profil", "store": "Store" },
+  "stores": { "google_play": "Google Play", "app_store": "App Store" },
+  "list": {
+    "title": "Rezensionsläufe",
+    "description": "Gespeicherte Daten bleiben lesbar, auch wenn keine neuen Läufe verfügbar sind.",
+    "started": "Gestartet",
+    "status": "Status",
+    "reviews": "Rezensionen",
+    "average": "Durchschnitt",
+    "actions": "Aktionen",
+    "view": "Ansehen"
+  },
+  "status": { "queued": "Warteschlange", "pulling": "Rezensionen werden abgerufen", "clustering": "Themen werden ermittelt", "completed": "Abgeschlossen", "failed": "Fehlgeschlagen" },
+  "detail": { "title": "Laufdetails", "description": "Deterministische Statistiken und belegte Themen aus diesem gespeicherten Lauf." }
+}

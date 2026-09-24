@@ -1,0 +1,113 @@
+{
+  "title": "Geogrid local rank tracking",
+  "description": "Check where your business ranks in the local pack across a grid of coordinates. One scan covers the whole grid and costs one geogrid scan.",
+  "locked": {
+    "body": "Geogrid scans are on the Pro and Agency plans.",
+    "cta": "See plans"
+  },
+  "form": {
+    "keyword": "Tracked keyword",
+    "keywordPlaceholder": "Choose a keyword",
+    "coordinateHelp": "Type the centre point as numbers. There is no map picker — we do not buy map tiles.",
+    "latitude": "Centre latitude",
+    "longitude": "Centre longitude",
+    "spacing": "Spacing between points",
+    "spacingOption": "{{km}} km",
+    "spacingCustom": "Spacing in metres",
+    "size": "Grid size",
+    "sizeOption": "{{size}} by {{size}} ({{cells}} points)",
+    "zoom": "Map zoom",
+    "preview": "Estimate this scan",
+    "previewing": "Estimating…",
+    "errors": {
+      "keyword": "Choose a tracked keyword first.",
+      "latitude": "Latitude must be between -{{max}} and {{max}}.",
+      "longitude": "Longitude must be between -180 and 180.",
+      "spacing": "Spacing must be between {{min}} and {{max}} metres, in steps of {{step}}.",
+      "zoom": "Zoom must be between {{min}} and {{max}}."
+    }
+  },
+  "preview": {
+    "title": "What this scan costs",
+    "body": "{{units}} geogrid scan covers all {{cells}} grid points.",
+    "remaining": "{{base}} left on your plan, {{pack}} left from packs.",
+    "packUnavailable": "No geogrid pack is configured for purchase right now.",
+    "confirm": "Run the scan",
+    "running": "Running…",
+    "cancel": "Cancel"
+  },
+  "history": {
+    "title": "Past scans",
+    "row": "{{keyword}} — {{size}} by {{size}}",
+    "meta": "{{status}} · {{createdAt}}",
+    "emptyTitle": "No scans yet",
+    "emptyBody": "Run your first grid to see where you rank around a place."
+  },
+  "grid": {
+    "title": "Heat grid",
+    "ariaLabel": "Local pack positions on a {{size}} by {{size}} grid",
+    "emptyTitle": "No scan selected",
+    "emptyBody": "Pick a past scan or run a new one.",
+    "running": "This scan is still running. Points appear as they finish.",
+    "cellPending": "Point {{index}}: not checked yet",
+    "cellObserved": "Point {{index}}: position {{position}} of {{packSize}} at {{lat}}, {{lng}}, checked {{capturedAt}}",
+    "cellNotInPack": "Point {{index}}: not in the local pack at {{lat}}, {{lng}}, checked {{capturedAt}}",
+    "cellFailed": "Point {{index}}: the check failed at {{lat}}, {{lng}}",
+    "legend": {
+      "top": "Positions one to three",
+      "mid": "Positions four to seven",
+      "low": "Position eight or lower",
+      "notInPack": "Not in the local pack",
+      "failed": "Check failed"
+    }
+  },
+  "table": {
+    "caption": "Every grid point, its coordinate, and what we saw there.",
+    "point": "Point",
+    "latitude": "Latitude",
+    "longitude": "Longitude",
+    "position": "Position",
+    "packSize": "Pack size",
+    "capturedAt": "Checked",
+    "state": "State"
+  },
+  "detail": {
+    "observed": "Point {{index}} ranks {{position}} of {{packSize}} at {{lat}}, {{lng}} (checked {{capturedAt}}).",
+    "notInPack": "Point {{index}} is not in the local pack at {{lat}}, {{lng}} (checked {{capturedAt}}).",
+    "failed": "Point {{index}} could not be checked at {{lat}}, {{lng}}."
+  },
+  "states": {
+    "observed": "In the pack",
+    "not_in_pack": "Not in the pack",
+    "failed": "Check failed"
+  },
+  "status": {
+    "queued": "Queued",
+    "running": "Running",
+    "completed": "Done",
+    "completed_partial": "Done with gaps",
+    "failed": "Failed"
+  },
+  "outcome": {
+    "partialTitle": "Some points did not answer",
+    "partialBody": "{{failed}} of {{total}} points failed. The rest are real checks.",
+    "failedTitle": "The scan failed",
+    "failedBody": "No point answered, so there is nothing to show.",
+    "failedRefunded": "No point answered, so we gave the scan back to your allowance."
+  },
+  "gates": {
+    "cap": "You are out of geogrid scans",
+    "killSwitch": "Geogrid scans are paused",
+    "notOnPlan": "Not on your plan",
+    "notFound": "Not found",
+    "rateLimited": "Too many requests",
+    "invalid": "Check the grid settings",
+    "failed": "Something went wrong",
+    "packCta": "Buy a geogrid pack"
+  },
+  "errors": {
+    "loadFailed": "We could not load your geogrid scans.",
+    "previewFailed": "We could not estimate this scan.",
+    "submitFailed": "We could not start this scan."
+  }
+}

@@ -1,0 +1,98 @@
+{
+  "workspaceTab": "Pages", "heading": "Pages",
+  "description": "Examinez chaque page avec les meilleures données de recherche enregistrées pour ce site. Aucune collecte ne démarre avant que vous choisissiez Actualiser.",
+  "common": { "notAvailable": "Non disponible" },
+  "actions": {
+    "refresh": "Actualiser", "refreshing": "Actualisation…", "collectFallback": "Collecter les données de secours",
+    "connectGoogle": "Connecter Google", "reconnectGoogle": "Reconnecter Google", "selectProperty": "Choisir la propriété",
+    "retry": "Réessayer", "retryRefresh": "Réessayer l’actualisation", "resetFilters": "Réinitialiser les filtres",
+    "inspect": "Examiner la page", "openPage": "Ouvrir la page dans un nouvel onglet", "reviewPlans": "Voir les offres"
+  },
+  "range": { "label": "Période", "7d": "7 jours", "28d": "28 jours", "90d": "90 jours" },
+  "sources": {
+    "gsc": { "label": "Google Search Console", "short": "Observé dans GSC", "description": "Clics, impressions, CTR et position moyenne observés sur la fenêtre glissante choisie." },
+    "dataforseo": { "label": "Instantané de classement de secours", "short": "Estimation du classement", "description": "Instantané ponctuel des mots-clés classés. Cette source ne fournit ni clics, ni impressions, ni CTR." },
+    "demo": { "label": "Instantané de classement démo", "short": "Estimation démo", "description": "Données d’exemple déterministes, distinctes des données Search Console ou DataForSEO en direct." },
+    "none": { "label": "Aucune source enregistrée", "short": "Aucune source", "description": "Aucune donnée de page Search Console ni aucun instantané de secours n’a encore été enregistré." },
+    "unmeasured": "Non mesuré"
+  },
+  "status": { "ready": "Prêt", "syncing": "Synchronisation", "empty": "Vide", "unavailable": "Indisponible", "stale": "Périmé" },
+  "states": {
+    "initialLoading": "Chargement des données de pages", "backgroundLoading": "Mise à jour de la vue en conservant les données précédentes.",
+    "loadingAnnouncement": "Chargement des pages.", "refreshAnnouncement": "Actualisation des pages.",
+    "ready": { "title": "Les données sont prêtes", "gsc": "Les données de pages Search Console enregistrées sont prêtes.", "dataforseo": "L’instantané de secours est prêt.", "demo": "L’instantané démo est prêt.", "none": "Aucune source enregistrée n’est prête." },
+    "syncing": { "title": "Search Console se synchronise", "gsc": "La première collecte de pages Search Console est en attente ou en cours. Aucune donnée de secours ne remplace GSC lorsqu’il fait autorité.", "dataforseo": "Préparation des données de classement de secours.", "demo": "Préparation des données de classement démo.", "none": "Préparation d’une source enregistrée." },
+    "empty": { "title": "Aucune page correspondante", "gsc": "Search Console n’a renvoyé aucune page pour cette fenêtre glissante.", "dataforseo": "L’instantané de secours n’a trouvé aucune page classée sur ce marché.", "demo": "L’instantané démo ne contient aucune page pour ce contexte.", "none": "Connectez Search Console ou lancez explicitement une collecte de secours décomptée." },
+    "unavailable": { "title": "Données de pages indisponibles", "gsc": "Les données Search Console faisant autorité sont indisponibles. Réessayez sans changer de source.", "dataforseo": "Le fournisseur de classement n’a pas pu créer d’instantané. Réessayez lorsqu’il sera disponible.", "demo": "Impossible de charger les données démo.", "none": "Aucune source enregistrée exploitable. Suivez les indications de connexion ou collectez explicitement les données de secours." },
+    "stale": { "title": "Dernières données valides affichées", "gsc": "La fraîcheur Search Console est incertaine ou la dernière actualisation a échoué. Les dernières lignes valides restent visibles.", "dataforseo": "Cet instantané dépasse la durée de fraîcheur du cache ou sa dernière actualisation a échoué.", "demo": "Cet instantané démo est périmé. Les dernières lignes valides restent visibles.", "none": "Le dernier état enregistré est périmé." },
+    "transport": { "title": "Impossible de charger les pages", "body": "La requête n’a pas abouti. Vérifiez la connexion et réessayez.", "retained": "La mise à jour a échoué ; les données précédentes restent visibles." },
+    "notFound": { "title": "Site ou données de page introuvables" },
+    "refreshFailed": { "title": "Échec de l’actualisation", "body": "Les dernières données valides restent visibles. Réessayez quand la source sera disponible." },
+    "cap": { "title": "Limite de collecte de secours atteinte", "body": "Cette actualisation nécessite une recherche de mot-clé. Les données déjà enregistrées restent accessibles." }
+  },
+  "fallbackReasons": {
+    "gsc_not_connected": "Search Console n’est pas connecté à cet espace de travail.", "gsc_needs_reconnect": "La connexion Google doit être rétablie.",
+    "gsc_revoked": "L’accès Google a été révoqué et doit être reconnecté.", "gsc_property_unmatched": "La propriété Search Console sélectionnée ne couvre pas ce site."
+  },
+  "disclosure": {
+    "observedAt": "Observé le", "range": "Sens de la période", "comparison": "Comparaison", "market": "Marché",
+    "rolling": "{{days}} derniers jours, avec le délai de reporting Search Console documenté",
+    "pointInTime": "Instantané ponctuel ; {{days}} jours modifient l’historique et la comparaison, pas les métriques principales de l’instantané",
+    "sincePreviousSync": "Depuis la synchronisation précédente", "noPreviousSync": "Aucune synchronisation précédente admissible",
+    "marketValue": "Zone {{location}}, langue {{language}}", "notApplicable": "Sans objet",
+    "coverage": "Couverture : {{accepted}} lignes source acceptées, {{dropped}} écartées ; {{inventory}} pages inventoriées, {{measured}} mesurées et {{unmeasured}} non mesurées.",
+    "reportingLag": "Délai de reporting Search Console : {{days}} jours.", "noReportingLag": "Cette source ne revendique aucun délai de reporting Search Console.",
+    "sampled": "La source indique que les données sont échantillonnées.", "notSampled": "La source n’indique aucun échantillonnage."
+  },
+  "metrics": {
+    "clicks": "Clics", "impressions": "Impressions", "ctr": "CTR", "averagePosition": "Position moyenne", "bestPosition": "Meilleure position",
+    "keywordCount": "Mots-clés classés", "searchVolume": "Volume de recherche", "difficulty": "Difficulté", "estimatedTraffic": "Trafic estimé",
+    "associatedQueryCount": "Requêtes / mots-clés", "qualifierObserved": "Observé sur la fenêtre glissante choisie",
+    "qualifierEstimated": "Estimé depuis l’instantané actuel", "qualifierUnavailable": "Non disponible dans les instantanés de classement"
+  },
+  "filters": {
+    "title": "Trouver des pages", "description": "La recherche et les filtres sont traités par le serveur et ne collectent aucune nouvelle donnée fournisseur.",
+    "searchLabel": "Rechercher dans les pages et requêtes", "searchPlaceholder": "Titre, chemin, URL, requête ou mot-clé",
+    "insight": "Opportunité", "allInsights": "Toutes les opportunités", "indexability": "Indexabilité d’exploration", "allIndexability": "Tous les états d’exploration",
+    "indexabilityOptions": { "indexable": "Explorable et indexable", "non_indexable": "Non explorable/indexable" },
+    "visibility": "Visibilité dans la recherche", "allVisibility": "Toute la visibilité", "visibilityOptions": { "measured": "Mesuré", "unmeasured": "Non mesuré" },
+    "sort": "Trier par", "direction": "Sens", "ascending": "Croissant", "descending": "Décroissant", "pageSize": "Taille de page",
+    "perPage": "{{count}} par page", "active": "Filtres actifs : {{context}}", "activeSearch": "Recherche : {{value}}", "noneActive": "Aucune recherche ni aucun filtre actif."
+  },
+  "insights": {
+    "striking_distance": { "label": "À portée", "description": "Cette page est assez proche pour progresser et répond à une demande de recherche notable." },
+    "low_ctr": { "label": "CTR faible", "description": "Les impressions observées sont fortes, mais les clics restent sous le seuil de la règle." },
+    "declining": { "label": "En baisse", "description": "La position ou les clics observés ont nettement baissé depuis la précédente synchronisation réussie." },
+    "winning": { "label": "En progression", "description": "La position ou les clics observés se sont nettement améliorés depuis la précédente synchronisation réussie." },
+    "non_indexable_visibility": { "label": "Visible mais non explorable", "description": "La page a des performances de recherche, mais le dernier crawl RankMeFast la marque non indexable. Ce n’est pas une affirmation sur l’index Google." },
+    "unmeasured": { "label": "Non mesuré", "description": "Le dernier crawl a trouvé cette page indexable, mais la source de performance actuelle ne contient aucune ligne pour elle." },
+    "none": "Aucune opportunité actuelle"
+  },
+  "sorts": {
+    "opportunity": "Opportunité", "url": "URL", "title": "Titre", "clicks": "Clics", "impressions": "Impressions", "ctr": "CTR",
+    "average_position": "Position moyenne", "best_position": "Meilleure position", "keyword_count": "Mots-clés classés", "search_volume": "Volume de recherche",
+    "difficulty": "Difficulté", "estimated_traffic": "Trafic estimé", "position_change": "Évolution de position", "click_change_pct": "Évolution des clics"
+  },
+  "indexability": { "indexable": "Explorable et indexable", "nonIndexable": "Non explorable/indexable", "unknown": "État d’exploration inconnu" },
+  "table": { "caption": "Résultats de performance et d’indexabilité des pages", "page": "Page", "source": "Source de performance", "crawl": "Indexabilité d’exploration", "insights": "Opportunités", "actions": "Actions", "untitled": "Page sans titre" },
+  "deltas": { "position": "Évolution de position", "clickChange": "Évolution des clics", "clicks": "Clics {{value}}" },
+  "empty": {
+    "title": "Aucune page à afficher", "filtered": "Aucune page ne correspond à la recherche et aux filtres. Réinitialisez-les pour retrouver tout l’inventaire.",
+    "gsc": "Search Console n’a renvoyé aucune page sur cette fenêtre. L’actualisation reste sur Search Console sans changer de source.",
+    "fallback": "L’instantané enregistré ne contient aucune page classée sur ce marché. Les métriques observées restent indisponibles.",
+    "none": "Aucun instantané de pages n’est enregistré. Connectez Google ou collectez explicitement les données de secours."
+  },
+  "pagination": { "label": "Pagination des pages", "context": "{{shown}} pages affichées sur {{total}} correspondantes", "previous": "Précédent", "next": "Suivant", "cursorReset": "Le jeu de résultats a changé ; retour à la première page." },
+  "detail": {
+    "title": "Détail de la page", "description": "Chargement du contexte canonique", "close": "Fermer le détail", "errorTitle": "Impossible de charger le détail",
+    "notFound": "Cette page ne figure plus dans l’inventaire actuel. La liste reste disponible.", "pageContext": "Contexte canonique", "crawlReason": "Motif du dernier crawl : {{reason}}",
+    "opportunities": "Explications des opportunités", "noOpportunities": "Aucune règle d’opportunité ne s’applique actuellement.",
+    "queriesTitle": "Requêtes observées", "keywordsTitle": "Mots-clés classés", "associatedCount": "{{shown}} lignes associées affichées sur {{total}}.",
+    "truncated": "La réponse est limitée à 100 lignes.", "associatedEmpty": "Aucune requête ni aucun mot-clé associé n’est enregistré.",
+    "associatedCaption": "Requêtes ou mots-clés associés à cette page", "queryOrKeyword": "Requête ou mot-clé",
+    "trendTitle": "Historique de position moyenne", "trendDescription": "{{count}} points enregistrés, avec un maximum de 90 renvoyés.",
+    "trendEmpty": "Aucun historique comparable de position moyenne n’est encore enregistré.", "trendAria": "Historique de position moyenne sur {{count}} points",
+    "trendTableCaption": "Données accessibles de l’historique de page", "date": "Date d’observation"
+  },
+  "notifications": { "refreshed": "Les données {{source}} ont été actualisées.", "empty": "L’actualisation {{source}} s’est terminée sans page." }
+}

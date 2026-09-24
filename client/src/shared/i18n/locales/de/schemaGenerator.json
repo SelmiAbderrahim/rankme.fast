@@ -1,0 +1,144 @@
+{
+  "title": "Schema-Markup-Generator",
+  "description": "Erzeugt JSON-LD für eine Seite aus Fakten, die wir bereits gespeichert haben. Nichts wird erfunden: Ein Feld ohne belegbaren Fakt bleibt weg, und wir nennen den Grund.",
+  "new": {
+    "title": "Markup erzeugen",
+    "description": "Seite wählen, Typ wählen, dann vor dem Bestätigen die Kosten lesen."
+  },
+  "source": {
+    "legend": "Woher die Seite stammt",
+    "audited": "Geprüfte Seite",
+    "inventory": "Inventarseite",
+    "url": "Adresse einfügen",
+    "auditedLegend": "Seiten aus Ihrer letzten Prüfung",
+    "inventoryLegend": "Seiten, denen ein unterstützter Schematyp fehlt",
+    "auditedEmpty": "Starten Sie zuerst eine Prüfung, dann erscheinen deren Seiten hier.",
+    "inventoryEmpty": "Derzeit fehlt keiner Inventarseite ein unterstützter Schematyp.",
+    "hasStructuredData": "Enthält bereits strukturierte Daten",
+    "noStructuredData": "Keine strukturierten Daten gefunden",
+    "structuredDataErrors": "Fehler in strukturierten Daten: {{n}}",
+    "richResultsVerdict": "Urteil der Search Console: {{verdict}}",
+    "declaresNothing": "Gibt keinen schema.org-Typ an",
+    "declaresTypes": "Bereits angegeben: {{types}}",
+    "urlLabel": "Seitenadresse",
+    "urlPlaceholder": "https://example.com/page",
+    "urlHint": "Wir lesen die Seite einmal über eine sichere Verbindung. Nur öffentliche Adressen funktionieren.",
+    "urlInvalid": "Geben Sie eine vollständige https-Adresse ohne Benutzername und Passwort ein."
+  },
+  "type": {
+    "legend": "schema.org-Typ",
+    "required": "Pflicht: {{n}}",
+    "recommended": "Empfohlen: {{n}}",
+    "alreadyDeclared": "Diese Seite gibt diesen Typ bereits an."
+  },
+  "preview": {
+    "title": "Was das kostet",
+    "show": "Kosten anzeigen",
+    "units": "{{count}} Erzeugung aus Ihrem Monatskontingent.",
+    "units_other": "{{count}} Erzeugungen aus Ihrem Monatskontingent.",
+    "confirm": "Markup erzeugen",
+    "remaining": "Diesen Monat in Ihrem Tarif übrig: {{remaining}}.",
+    "pack": "Dazu {{units}} aus Guthabenpaketen.",
+    "noFit": "Das passt nicht in den Rest. Fügen Sie Guthaben hinzu oder wechseln Sie den Tarif."
+  },
+  "result": {
+    "title": "{{type}}-Markup",
+    "back": "Zurück zur Liste",
+    "payload": "Erzeugtes JSON-LD",
+    "copy": "Kopieren",
+    "copied": "Kopiert",
+    "download": "Herunterladen",
+    "downloadFailedTitle": "Download nicht gestartet",
+    "downloadFailed": "Die Datei konnte nicht geladen werden. Versuchen Sie es erneut.",
+    "failedTitle": "Es wurde nichts erzeugt",
+    "failedProvider": "Das Modell hat nicht geantwortet, daher wurde kein Markup behalten.",
+    "failedRejected": "Alle vom Modell angebotenen Felder fielen bei unserer Faktenprüfung durch; wir haben nur Belegbares behalten.",
+    "refunded": "Ihr Kontingent wurde zurückgebucht.",
+    "evidence": "Woher jedes Feld stammt",
+    "evidenceDescription": "Eine Zeile je Feld im Markup, mit dem gespeicherten Fakt dahinter.",
+    "evidenceFrom": "aus {{fact}}",
+    "evidenceEmpty": "Kein Feld ließ sich aus einem gespeicherten Fakt füllen.",
+    "omissions": "Was wir weggelassen haben",
+    "omissionsDescription": "Felder ohne Fakt dahinter und der Grund für jede Lücke.",
+    "omissionsEmpty": "Es wurde nichts weggelassen."
+  },
+  "fact": {
+    "pageUrl": "Seiten-URL",
+    "canonicalUrl": "Kanonische URL",
+    "pageTitle": "Seitentitel",
+    "metaDescription": "Meta-Beschreibung",
+    "headingOne": "H1-Überschrift",
+    "headingTwo": "H2-Überschrift",
+    "faqAnswer": "FAQ-Antwort",
+    "pageLanguage": "Seitensprache",
+    "articlePublishedTime": "Veröffentlichungszeit des Artikels",
+    "articleModifiedTime": "Änderungszeit des Artikels",
+    "siteOrigin": "Website-Ursprung",
+    "siteDomain": "Website-Domain",
+    "siteName": "Website-Name"
+  },
+  "reason": {
+    "no_evidence": "wir haben dazu keinen Fakt",
+    "evidence_ambiguous": "unsere Fakten widersprechen sich",
+    "not_applicable": "das trifft auf diese Seite nicht zu"
+  },
+  "conformance": {
+    "title": "Prüfung gegen schema.org",
+    "conforms": "Dieses Markup entspricht den schema.org-Anforderungen für den Typ {{type}}.",
+    "gaps": "Dieses Markup entspricht noch nicht den schema.org-Anforderungen für den Typ {{type}}.",
+    "requiredTitle": "Ergänzen Sie dies, um die Vorgaben zu erfüllen",
+    "recommendedTitle": "Lohnt sich",
+    "requiredGap": "Ergänzen Sie {{property}} —",
+    "recommendedSuggestion": "Sie könnten {{property}} ergänzen, sobald wir dazu einen Fakt haben.",
+    "version": "Geprüft gegen Eigenschaftssatz Version {{version}}."
+  },
+  "list": {
+    "title": "Erzeugtes Markup",
+    "caption": "Gespeicherte Erzeugungen, neueste zuerst",
+    "free": "Eine davon erneut zu öffnen kostet nichts.",
+    "empty": "Für diese Website haben Sie noch kein Markup erzeugt.",
+    "reopen": "Öffnen",
+    "page": "Seite",
+    "type": "Typ",
+    "status": "Prüfung",
+    "statusConforms": "Vorgaben erfüllt",
+    "statusGaps": "Pflichteigenschaft fehlt",
+    "statusFailed": "Nicht erzeugt",
+    "generatedAt": "Erzeugt am"
+  },
+  "states": {
+    "empty": {
+      "title": "Noch keine Prüfung",
+      "body": "Starten Sie eine Prüfung für diese Website, dann lassen sich ihre Seiten hier auswählen."
+    },
+    "cap": {
+      "title": "Monatskontingent aufgebraucht",
+      "body": "Sie haben diesen Monat alle Markup-Erzeugungen Ihres Tarifs verbraucht.",
+      "link": "Tarife ansehen"
+    },
+    "notOnPlan": {
+      "title": "Nicht in Ihrem Tarif",
+      "body": "Die Markup-Erzeugung beginnt mit dem Starter-Tarif."
+    },
+    "killSwitch": {
+      "title": "Vorübergehend nicht verfügbar",
+      "body": "Neue Erzeugungen pausieren. Bereits erzeugtes Markup bleibt lesbar."
+    },
+    "notFound": {
+      "title": "Nicht gefunden",
+      "body": "Diese Seite oder Erzeugung ist nicht mehr verfügbar."
+    },
+    "unsafeUrl": {
+      "title": "Diese Adresse können wir nicht lesen",
+      "body": "Geben Sie eine öffentliche https-Seitenadresse an, die wir abrufen dürfen."
+    },
+    "rateLimited": {
+      "title": "Zu viele Anfragen",
+      "body": "Warten Sie eine Minute und versuchen Sie es erneut."
+    },
+    "failed": {
+      "title": "Etwas ist schiefgelaufen",
+      "body": "Wir konnten das nicht abschließen. Versuchen Sie es erneut."
+    }
+  }
+}
