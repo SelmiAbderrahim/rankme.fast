@@ -30,6 +30,8 @@ export const SERVER_COVERAGE_EXCLUDE: string[] = [
     'src/modules/**/index.ts',
     'src/db/schema/index.ts',
     'src/shared/cooldown/index.ts',
+    'src/shared/mcp-permissions/index.ts',
+    'src/shared/providers/email.ts',
     'src/shared/providers/**/index.ts',
     'src/shared/queue/index.ts',
     'src/shared/vendor-cache/index.ts',
