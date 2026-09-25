@@ -20,6 +20,7 @@ in one `docker compose up`.
 [![i18n: 7 locales](https://img.shields.io/badge/i18n-7%20locales-8A2BE2.svg)](#features)
 
 [Quick start](#quick-start) ·
+[Try it without keys](#try-it-without-vendor-keys) ·
 [Features](#features) ·
 [Documentation](docs/index.en.md) ·
 [Self-hosting guide](docs/self-hosting.en.md) ·
@@ -105,10 +106,7 @@ make ps                  # every service should be healthy
 
 Open http://localhost:3000 and create an account.
 
-<details>
-<summary><b>Demo mode (no vendor keys)</b></summary>
-
-<br>
+### Try it without vendor keys
 
 Each provider has a `fake` backend, so you can explore the product without
 spending anything. With `NODE_ENV=production` the fakes are refused unless you
@@ -121,8 +119,6 @@ EMAIL_TRANSPORT=fake
 
 > [!WARNING]
 > Never enable this on a public deployment.
-
-</details>
 
 <details>
 <summary><b>Connecting real data</b></summary>

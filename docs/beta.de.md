@@ -21,7 +21,7 @@ Einige Ansichten werden noch fertiggestellt. Formulierungen und Layout können s
 
 ## Fehler melden
 
-Nutzen Sie **Fehler melden** im Beta-Banner oben auf der Seite. Sobald der Quellcode öffentlich ist, öffnet der Link ein GitHub-Formular zum Melden eines Fehlers. Bis dahin startet er eine E-Mail an support@rankme.fast. Diese Adresse funktioniert auch, wenn Sie das Banner ausgeblendet haben.
+Nutzen Sie **Fehler melden** im Beta-Banner oben auf der Seite. Der Link öffnet das [GitHub-Formular zum Melden eines Fehlers](https://github.com/SelmiAbderrahim/rankme.fast/issues/new/choose). Wenn Sie das Banner ausgeblendet haben oder kein GitHub-Konto besitzen, schreiben Sie an support@rankme.fast.
 
 Eine hilfreiche Meldung enthält:
 
@@ -34,6 +34,6 @@ Lassen Sie Passwörter, API-Schlüssel und andere Geheimnisse weg. Wir lesen jed
 
 ## Fortschritt verfolgen
 
-Der Maintainer postet Neuigkeiten auf X als [@rahim_selmi](https://x.com/rahim_selmi). Änderungen, die Ihre Nutzung von RankMeFast betreffen, stehen im [Changelog](./changelog.de.md).
+Der Quellcode ist öffentlich auf [GitHub](https://github.com/SelmiAbderrahim/rankme.fast). Dort können Sie Releases verfolgen und Issues eröffnen. Der Maintainer postet Neuigkeiten auf X als [@rahim_selmi](https://x.com/rahim_selmi). Änderungen, die Ihre Nutzung von RankMeFast betreffen, stehen im [Changelog](./changelog.de.md).
 
 [Zurück zum Doku-Index](./index.de.md)

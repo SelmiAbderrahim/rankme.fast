@@ -21,7 +21,7 @@ Some screens are still being finished. Wording and layout can change between rel
 
 ## Report a bug
 
-Use **Report a bug** in the beta banner at the top of the page. Once the source code is public, it opens a GitHub issue form. Until then, it starts an email to support@rankme.fast, which also works if you hid the banner.
+Use **Report a bug** in the beta banner at the top of the page. It opens the [GitHub issue form](https://github.com/SelmiAbderrahim/rankme.fast/issues/new/choose). If you hid the banner or don't have a GitHub account, email support@rankme.fast instead.
 
 A useful report says:
 
@@ -34,6 +34,6 @@ Leave out passwords, API keys, and other secrets. We read every report, but we c
 
 ## Follow progress
 
-The maintainer posts updates on X as [@rahim_selmi](https://x.com/rahim_selmi). Changes that affect how you use RankMeFast go in the [changelog](./changelog.en.md).
+The source code is public on [GitHub](https://github.com/SelmiAbderrahim/rankme.fast), where you can follow releases and open issues. The maintainer posts updates on X as [@rahim_selmi](https://x.com/rahim_selmi). Changes that affect how you use RankMeFast go in the [changelog](./changelog.en.md).
 
 [Back to the docs index](./index.en.md)

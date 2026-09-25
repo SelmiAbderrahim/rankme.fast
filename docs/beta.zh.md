@@ -21,7 +21,7 @@ RankMeFast 目前处于公开测试阶段。你可以把它用于实际工作，
 
 ## 报告问题
 
-使用页面顶部测试版横幅中的 **报告问题**。源代码公开后，它会打开 GitHub 的问题反馈表单。在此之前，它会发起一封发往 support@rankme.fast 的邮件；如果你已关闭横幅，也可以直接发邮件到这个地址。
+使用页面顶部测试版横幅中的 **报告问题**。它会打开 [GitHub 的问题反馈表单](https://github.com/SelmiAbderrahim/rankme.fast/issues/new/choose)。如果你已关闭横幅或没有 GitHub 账号，请发邮件到 support@rankme.fast。
 
 一份有用的报告包括：
 
@@ -34,6 +34,6 @@ RankMeFast 目前处于公开测试阶段。你可以把它用于实际工作，
 
 ## 关注进展
 
-维护者会在 X 上发布更新：[@rahim_selmi](https://x.com/rahim_selmi)。影响 RankMeFast 使用方式的变更会记录在[更新日志](./changelog.zh.md)中。
+源代码已在 [GitHub](https://github.com/SelmiAbderrahim/rankme.fast) 上公开，你可以在那里关注版本发布并提交问题。维护者会在 X 上发布更新：[@rahim_selmi](https://x.com/rahim_selmi)。影响 RankMeFast 使用方式的变更会记录在[更新日志](./changelog.zh.md)中。
 
 [返回文档索引](./index.zh.md)

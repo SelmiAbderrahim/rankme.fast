@@ -191,6 +191,28 @@ describe('landscape preview and start', () => {
     expect(await CompetitorLandscapeRun.countDocuments()).toBe(1);
   });
 
+  it('replays the stored run for a repeated idempotency key', async () => {
+    const siteId = await seedSite();
+    const profiles = await seedProfiles(siteId, 1);
+    const context = { accountId: ACCOUNT, requestedByUserId: ACCOUNT, siteId };
+    const first = await startLandscape(input(profiles, 'replay'), context, { db: db(), queue: queue() });
+    await expect(
+      startLandscape(input(profiles, 'replay'), context, { db: db(), queue: queue() }),
+    ).resolves.toEqual({ runId: first.runId, state: 'queued', duplicate: true });
+    expect(await CompetitorLandscapeRun.countDocuments()).toBe(1);
+  });
+
+  it('reuses the active run for an equivalent request under a new idempotency key', async () => {
+    const siteId = await seedSite();
+    const profiles = await seedProfiles(siteId, 1);
+    const context = { accountId: ACCOUNT, requestedByUserId: ACCOUNT, siteId };
+    const first = await startLandscape(input(profiles, 'fingerprint-a'), context, { db: db(), queue: queue() });
+    await expect(
+      startLandscape(input(profiles, 'fingerprint-b'), context, { db: db(), queue: queue() }),
+    ).resolves.toEqual({ runId: first.runId, state: 'queued', duplicate: true });
+    expect(await CompetitorLandscapeRun.countDocuments()).toBe(1);
+  });
+
   it('keeps history readable while the new-run kill switch is off', async () => {
     const siteId = await seedSite();
     const profiles = await seedProfiles(siteId, 1);

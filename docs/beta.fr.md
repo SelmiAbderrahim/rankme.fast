@@ -21,7 +21,7 @@ Certains écrans sont encore en cours de finition. Les textes et la mise en page
 
 ## Signaler un bug
 
-Utilisez **Signaler un bug** dans le bandeau bêta en haut de la page. Une fois le code source public, ce lien ouvre un formulaire de signalement sur GitHub. En attendant, il prépare un e-mail à support@rankme.fast, une adresse que vous pouvez aussi utiliser si vous avez masqué le bandeau.
+Utilisez **Signaler un bug** dans le bandeau bêta en haut de la page. Ce lien ouvre le [formulaire de signalement sur GitHub](https://github.com/SelmiAbderrahim/rankme.fast/issues/new/choose). Si vous avez masqué le bandeau ou n’avez pas de compte GitHub, écrivez à support@rankme.fast.
 
 Un bon signalement indique :
 
@@ -34,6 +34,6 @@ N’incluez jamais de mot de passe, de clé API ni d’autre secret. Nous lisons
 
 ## Suivre l’avancement
 
-Le mainteneur publie des nouvelles sur X sous [@rahim_selmi](https://x.com/rahim_selmi). Les changements qui modifient votre utilisation de RankMeFast figurent dans le [journal des changements](./changelog.fr.md).
+Le code source est public sur [GitHub](https://github.com/SelmiAbderrahim/rankme.fast), où vous pouvez suivre les versions et ouvrir des tickets. Le mainteneur publie des nouvelles sur X sous [@rahim_selmi](https://x.com/rahim_selmi). Les changements qui modifient votre utilisation de RankMeFast figurent dans le [journal des changements](./changelog.fr.md).
 
 [Retour à l’index de la documentation](./index.fr.md)

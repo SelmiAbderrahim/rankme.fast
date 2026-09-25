@@ -21,7 +21,7 @@ Algunas pantallas aún se están terminando. Los textos y el diseño pueden camb
 
 ## Informar de un error
 
-Usa **Informar de un error** en el aviso de beta de la parte superior de la página. Cuando el código fuente sea público, abrirá un formulario para informar de una incidencia en GitHub. Hasta entonces, inicia un correo a support@rankme.fast, que también sirve si ocultaste el aviso.
+Usa **Informar de un error** en el aviso de beta de la parte superior de la página. Abre el [formulario de incidencias en GitHub](https://github.com/SelmiAbderrahim/rankme.fast/issues/new/choose). Si ocultaste el aviso o no tienes cuenta de GitHub, escribe a support@rankme.fast.
 
 Un buen informe explica:
 
@@ -34,6 +34,6 @@ No incluyas contraseñas, claves de API ni otros secretos. Leemos todos los info
 
 ## Sigue el progreso
 
-El mantenedor publica novedades en X como [@rahim_selmi](https://x.com/rahim_selmi). Los cambios que afectan a cómo usas RankMeFast aparecen en el [registro de cambios](./changelog.es.md).
+El código fuente es público en [GitHub](https://github.com/SelmiAbderrahim/rankme.fast), donde puedes seguir las versiones y abrir incidencias. El mantenedor publica novedades en X como [@rahim_selmi](https://x.com/rahim_selmi). Los cambios que afectan a cómo usas RankMeFast aparecen en el [registro de cambios](./changelog.es.md).
 
 [Volver al índice de la documentación](./index.es.md)

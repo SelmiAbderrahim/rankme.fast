@@ -222,13 +222,13 @@ npm --prefix client run build        # tsc --noEmit && vite build
 | `CLIENT_URL` | yes | public marketing origin (canonical URLs and public links) |
 | `APP_URL` | no | authenticated app origin; defaults to `CLIENT_URL` for single-origin deployments |
 | `SERVER_URL` | yes | public api origin (OAuth redirect base) |
-| `GITHUB_REPOSITORY_URL` | no | public repository URL listed in `/llms.txt` (https only). Blank (default) omits it; set together with `VITE_GITHUB_URL` once the repository is public |
+| `GITHUB_REPOSITORY_URL` | no | public repository URL listed in `/llms.txt` (https only). Defaults to the upstream repository in `.env.example`; blank omits it. Keep in sync with `VITE_GITHUB_URL` |
 | `DEFAULT_LOCALE` | no | server-side fallback when Accept-Language / cookie are missing; one of the 7; default `en` |
 | `VITE_API_BASE_URL` | yes | client build-time api base (default `/api` so browser calls stay same-origin through the web→api proxy) |
 | `VITE_SOCKET_URL` | no | optional client socket origin; absolute values are added to the web CSP `connect-src` |
 | `VITE_SITE_URL` | yes | public origin used for canonical / OG / hreflang / sitemap URLs |
 | `VITE_GA_ID` | no | Google Analytics 4 measurement ID (e.g. `G-XXXXXXXXXX`) baked into `index.html` at build; blank disables. GA loader/beacon hosts are allow-listed in the web SSR CSP |
-| `VITE_GITHUB_URL` | no | public GitHub repository URL, baked into the client bundle at build. Blank (default) removes every open-source marketing element — header GitHub chip, AGPL license badge, `git clone` line in the self-host snippet. Set only once the repository is public |
+| `VITE_GITHUB_URL` | no | public GitHub repository URL, baked into the client bundle at build. Defaults to the upstream repository in `.env.example`. Drives the header GitHub chip, AGPL license badge, `git clone` line, and the beta banner's GitHub issue link; blank removes every open-source element and routes bug reports to the support mailbox |
 | `VITE_RELEASE_STAGE` | no | release stage baked into the client bundle at build: `beta` (default) renders the shared public-beta banner and header badge on marketing and app surfaces; `ga` removes both. The api reads the same value (compose `api` env) to add or drop the `Status: public beta` line in `/llms.txt`. Blank or any other value resolves to `beta` |
 | `API_INTERNAL_URL` | yes | web SSR → api reverse-proxy origin (compose: `http://api:8080`) |
 | `MASTER_ENCRYPTION_KEY` | yes | AES-256-GCM key for secrets at rest (≥32 bytes decoded; hex/base64/utf8 accepted); set the value directly in the root `.env` |

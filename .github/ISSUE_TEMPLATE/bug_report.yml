@@ -1,0 +1,49 @@
+name: Bug report
+description: Something in RankMeFast doesn't work the way it should.
+labels: ["bug", "needs-triage"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thanks for reporting a bug. **Leave out passwords, API keys, session cookies, and other secrets** — issues are public.
+  - type: textarea
+    id: goal
+    attributes:
+      label: What were you trying to do?
+    validations:
+      required: true
+  - type: textarea
+    id: behavior
+    attributes:
+      label: What did you expect, and what happened instead?
+    validations:
+      required: true
+  - type: input
+    id: page
+    attributes:
+      label: Page address
+      description: The route or page where it happened (for example `/sites/:siteId/report`).
+  - type: dropdown
+    id: deployment
+    attributes:
+      label: Where are you running RankMeFast?
+      options:
+        - Hosted (rankme.fast)
+        - Self-hosted with Docker Compose
+        - Local development
+    validations:
+      required: true
+  - type: input
+    id: version
+    attributes:
+      label: Version
+      description: Shown in the app footer or at `/api/health` (for example `2.0.0+abc1234`).
+  - type: input
+    id: browser
+    attributes:
+      label: Browser and operating system
+  - type: textarea
+    id: extra
+    attributes:
+      label: Screenshots, logs, or request ID
+      description: Redact anything sensitive before pasting logs.
