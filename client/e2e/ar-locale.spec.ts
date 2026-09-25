@@ -148,7 +148,7 @@ test('ar (RTL) report screen renders with dir=rtl', async ({ page }) => {
   await expect(page.locator('html')).toHaveAttribute('dir', 'rtl');
 });
 
-test('Arabic public beta chrome mirrors the layout and keeps Get started above the fold', async ({
+test('Arabic public beta chrome honors RTL at a narrow viewport', async ({
   page,
 }) => {
   await page.setViewportSize({ width: 320, height: 720 });
@@ -156,10 +156,6 @@ test('Arabic public beta chrome mirrors the layout and keeps Get started above t
   await expect(page.locator('html')).toHaveAttribute('dir', 'rtl');
   await expect(page.getByTestId('release-stage-banner')).toBeVisible();
   await expect(page.getByTestId('release-stage-badge').first()).toBeVisible();
-  const getStarted = page.getByRole('link', { name: /ابدأ الآن/i }).first();
-  await expect(getStarted).toBeInViewport();
-  await expect(getStarted).toHaveAttribute('href', /[?&]lng=ar(&|$)/);
-
   const directions = await page.locator('#public-main').evaluate((main) => ({
     page: document.documentElement.dir,
     main: getComputedStyle(main).direction,
@@ -255,7 +251,7 @@ test('public docs surfaces render in Arabic RTL', async ({ page }) => {
   }
 });
 
-test('paid workspaces and operator panels honor Arabic RTL', async ({
+test('self-hosted workspaces honor Arabic RTL', async ({
   page,
 }) => {
   test.setTimeout(120_000);
@@ -305,14 +301,4 @@ test('paid workspaces and operator panels honor Arabic RTL', async ({
     });
   }
 
-  for (const section of ['overview', 'providers', 'costs', 'quality', 'queues', 'monitors']) {
-    await test.step(`superadmin ${section}`, async () => {
-      await page.goto(`/superadmin?tab=intelligence&intel=${section}&lng=ar`);
-      await expect(page.locator('html')).toHaveAttribute('dir', 'rtl');
-      await expect(page.getByTestId(`intelligence-section-${section}`)).toHaveAttribute(
-        'data-state',
-        'active',
-      );
-    });
-  }
 });

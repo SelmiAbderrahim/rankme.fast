@@ -24,6 +24,9 @@ export function RetestPreviewCard() {
         </span>
       </p>
       <p className="text-muted-foreground">{t('retest.freshRun')}</p>
+      <p className="text-muted-foreground" data-testid="retest-preview-remaining">
+        {t('retest.selfHosted')}
+      </p>
     </div>
   );
 }

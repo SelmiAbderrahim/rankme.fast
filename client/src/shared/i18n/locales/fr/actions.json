@@ -120,6 +120,7 @@
     "unitsLabel": "Audits consommés",
     "unitsValue": "1",
     "freshRun": "Un retest lance toujours une exploration à neuf — les résultats ne proviennent jamais d'un cache.",
+    "selfHosted": "Les limites d’utilisation du forfait ne sont pas mesurées en mode auto-hébergé.",
     "remaining": "{{remaining}} audits restants sur {{cap}} pour cette période",
     "allowanceUnknown": "Impossible de charger votre quota restant. Le serveur vérifiera votre limite avant l'exécution.",
     "confirm": "Lancer le retest",

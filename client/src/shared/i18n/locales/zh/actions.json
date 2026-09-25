@@ -120,6 +120,7 @@
     "unitsLabel": "消耗的审计次数",
     "unitsValue": "1",
     "freshRun": "重新检测始终重新抓取——结果绝不来自缓存。",
+    "selfHosted": "自托管模式不计量套餐使用限额。",
     "remaining": "本周期剩余 {{remaining}} / {{cap}} 次审计",
     "allowanceUnknown": "无法加载剩余额度。服务器在运行前仍会检查你的限额。",
     "confirm": "开始重新检测",

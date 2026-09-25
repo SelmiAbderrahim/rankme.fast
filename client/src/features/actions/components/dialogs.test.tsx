@@ -346,6 +346,9 @@ describe('RetestPreviewCard', () => {
     expect(screen.getByTestId('retest-preview')).toHaveTextContent(
       'Retests always run a fresh crawl',
     );
+    expect(screen.getByTestId('retest-preview-remaining')).toHaveTextContent(
+      'Plan usage limits are not metered in self-hosted mode.',
+    );
   });
 });
 

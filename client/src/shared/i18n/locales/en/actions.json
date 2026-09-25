@@ -120,6 +120,7 @@
     "unitsLabel": "Audit runs used",
     "unitsValue": "1",
     "freshRun": "Retests always run a fresh crawl — results are never served from a cache.",
+    "selfHosted": "Plan usage limits are not metered in self-hosted mode.",
     "remaining": "{{remaining}} of {{cap}} audit runs left this period",
     "allowanceUnknown": "We couldn't load your remaining allowance. The server still checks your limit before running.",
     "confirm": "Start retest",
