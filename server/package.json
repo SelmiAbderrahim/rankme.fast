@@ -1,6 +1,6 @@
 {
   "name": "rankme-server",
-  "version": "2.0.0",
+  "version": "0.1.0",
   "description": "RankMeFast API server and worker (Express + TypeScript).",
   "private": true,
   "type": "module",

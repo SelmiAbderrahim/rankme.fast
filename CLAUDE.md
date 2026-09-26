@@ -206,7 +206,7 @@ npm --prefix client run build        # tsc --noEmit && vite build
 
 | Variable | Required | Purpose |
 |----------|----------|---------|
-| `APP_BUILD_SHA` | no | Build-only short Git SHA (7–12 hex digits), default `dev`; web/api/worker use package version + SHA (for example `2.0.0+dev`). Rebuild all three together. |
+| `APP_BUILD_SHA` | no | Build-only short Git SHA (7–12 hex digits), default `dev`; web/api/worker use package version + SHA (for example `0.1.0+dev`). Rebuild all three together. |
 | `VITE_APP_VERSION` | generated | Vite derives this from `client/package.json` and `APP_BUILD_SHA`; never set manually. Server health uses `server/package.json` and the same baked SHA. |
 | `NODE_ENV` | yes | `production` / `development` / `test` |
 | `PORT` | yes | api HTTP port (default `8080`) |

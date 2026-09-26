@@ -1,6 +1,6 @@
 {
   "name": "rankme-client",
-  "version": "2.0.0",
+  "version": "0.1.0",
   "description": "RankMeFast web client and SSR server (Vite + React 18 + TypeScript).",
   "private": true,
   "type": "module",

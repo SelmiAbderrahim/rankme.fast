@@ -37,7 +37,7 @@ body:
     id: version
     attributes:
       label: Version
-      description: Shown in the app footer or at `/api/health` (for example `2.0.0+abc1234`).
+      description: Shown in the app footer or at `/api/health` (for example `0.1.0+abc1234`).
   - type: input
     id: browser
     attributes:

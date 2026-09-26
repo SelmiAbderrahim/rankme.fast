@@ -11,7 +11,7 @@ in one `docker compose up`.
 
 [![CI](https://github.com/SelmiAbderrahim/rankme.fast/actions/workflows/ci.yml/badge.svg)](https://github.com/SelmiAbderrahim/rankme.fast/actions/workflows/ci.yml)
 [![License: AGPL v3](https://img.shields.io/badge/license-AGPL--3.0-blue.svg)](LICENSE)
-[![Version](https://img.shields.io/badge/version-2.0.0-informational.svg)](docs/changelog.en.md)
+[![Version](https://img.shields.io/badge/version-0.1.0-informational.svg)](docs/changelog.en.md)
 [![Status](https://img.shields.io/badge/status-public%20beta-orange.svg)](docs/beta.en.md)
 [![Docker Compose](https://img.shields.io/badge/deploy-docker%20compose-2496ED.svg?logo=docker&logoColor=white)](#quick-start)
 [![Node 20+](https://img.shields.io/badge/node-%E2%89%A520-339933.svg?logo=node.js&logoColor=white)](#development)

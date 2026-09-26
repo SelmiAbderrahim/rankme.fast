@@ -190,7 +190,7 @@ describe("/api/health", () => {
       status: "ok",
       db: true,
       redis: true,
-      version: "2.0.0+a1b2c3d4",
+      version: "0.1.0+a1b2c3d4",
     });
     expect(JSON.stringify(response.body)).not.toContain("APP_BUILD_SHA");
     expect(JSON.stringify(response.body)).not.toContain("A1B2C3D4");
