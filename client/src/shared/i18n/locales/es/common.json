@@ -257,5 +257,13 @@
     "reportBug": "Informar de un error",
     "reportProblem": "Informar de este problema",
     "mailSubject": "Informe de error ({{version}})"
+  },
+  "appUpdated": {
+    "title": "Hay una nueva versión disponible",
+    "description": "Se publicó una nueva versión mientras esta página estaba abierta. Recarga para continuar.",
+    "reload": "Recargar"
+  },
+  "routeError": {
+    "title": "Algo salió mal"
   }
 }

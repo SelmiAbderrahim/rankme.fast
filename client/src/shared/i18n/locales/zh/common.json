@@ -257,5 +257,13 @@
     "reportBug": "报告错误",
     "reportProblem": "报告此问题",
     "mailSubject": "错误报告 ({{version}})"
+  },
+  "appUpdated": {
+    "title": "有新版本可用",
+    "description": "此页面打开期间发布了新版本。请重新加载以继续。",
+    "reload": "重新加载"
+  },
+  "routeError": {
+    "title": "出了点问题"
   }
 }

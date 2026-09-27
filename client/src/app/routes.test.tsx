@@ -82,6 +82,9 @@ describe('app lazy routes', () => {
     renderRouter(router);
 
     const alert = await screen.findByRole('alert');
+    // A generic failure never uses the 404 heading (issue #6).
+    expect(screen.getByRole('heading', { level: 1 })).toHaveTextContent('Something went wrong');
+    expect(alert).not.toHaveTextContent('Page not found');
     expect(alert).toHaveTextContent('Something went wrong on our end. Please try again.');
     expect(screen.getByRole('link', { name: 'Back to dashboard' })).toHaveAttribute(
       'href',
@@ -92,6 +95,57 @@ describe('app lazy routes', () => {
       '_blank',
     );
     expect(alert.querySelectorAll('[data-slot="button"][data-variant="default"]')).toHaveLength(1);
+  });
+
+  it('a stale chunk after a deploy reloads once and offers a reload instead of "Page not found" (issue #6)', async () => {
+    sessionStorage.clear();
+    const reload = vi.fn();
+    vi.stubGlobal('location', { ...globalThis.location, reload });
+    const router = createMemoryRouter(
+      [
+        {
+          path: '/',
+          errorElement: <RouteErrorBoundary />,
+          lazy: async () => {
+            throw new TypeError(
+              'Failed to fetch dynamically imported module: https://app.test/assets/ReportPage-DLBrsKUc.js',
+            );
+          },
+        },
+      ],
+      { initialEntries: ['/'] },
+    );
+    renderRouter(router);
+
+    const alert = await screen.findByRole('alert');
+    expect(screen.getByRole('heading', { level: 1 })).toHaveTextContent('A new version is available');
+    expect(alert).not.toHaveTextContent('Page not found');
+    await waitFor(() => expect(reload).toHaveBeenCalledTimes(1));
+    // The guard stops a loop; the visible button still reloads on demand.
+    const user = (await import('@testing-library/user-event')).default.setup();
+    await user.click(screen.getByRole('button', { name: 'Reload' }));
+    expect(reload).toHaveBeenCalledTimes(2);
+    vi.unstubAllGlobals();
+    sessionStorage.clear();
+  });
+
+  it('a 404 route response keeps the not-found heading and copy', async () => {
+    const router = createMemoryRouter(
+      [
+        {
+          path: '/',
+          errorElement: <RouteErrorBoundary />,
+          loader: () => {
+            throw new Response('missing', { status: 404 });
+          },
+          element: <p>unreachable</p>,
+        },
+      ],
+      { initialEntries: ['/'] },
+    );
+    renderRouter(router);
+    expect(await screen.findByRole('heading', { level: 1 })).toHaveTextContent('Page not found');
+    expect(screen.getByRole('alert')).toHaveTextContent("This page doesn't exist or you can't view it.");
   });
 
   it('passes the matched declared error route to the secondary bug-report action', async () => {

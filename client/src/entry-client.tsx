@@ -9,6 +9,7 @@ import { createAppRouter, waitForAppRouterInitialization } from './app/router';
 import { LazyRouteFallback } from './app/routes';
 import { initI18n } from '@shared/i18n';
 import { resolveMarketingRoute } from '@shared/i18n/localePath';
+import { reloadOnceForStaleChunk } from '@shared/lib/chunkReload';
 // Self-hosted fonts (bundled locally by Vite — no external CDN request).
 // JetBrains Mono covers code blocks; Inter is served from static font faces.
 import '@fontsource/jetbrains-mono/400.css';
@@ -39,6 +40,13 @@ const i18n = initI18n(ssrLocale ? { initialLocale: ssrLocale } : {});
 // switch takes effect without re-registering anything, and returns null in the
 // ordinary single-workspace case so no header is sent at all.
 setWorkspaceIdProvider(() => selectActiveWorkspaceId(store.getState()));
+
+// Vite fires `vite:preloadError` when a hashed chunk from the build this tab
+// loaded is gone after a deploy. Reload once to pick up the new build; the
+// route error boundary covers the case the guard refuses.
+window.addEventListener('vite:preloadError', (event) => {
+  if (reloadOnceForStaleChunk()) event.preventDefault();
+});
 
 const router = createAppRouter();
 
