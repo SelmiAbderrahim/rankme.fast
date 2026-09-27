@@ -10,7 +10,9 @@
       "running": "Läuft",
       "succeeded": "Abgeschlossen",
       "failed": "Fehlgeschlagen"
-    }
+    },
+    "loading": "Audit-Verlauf wird geladen…",
+    "loadFailed": "Der Audit-Verlauf konnte nicht geladen werden."
   },
   "tabs": {
     "fix-now": "Jetzt beheben",

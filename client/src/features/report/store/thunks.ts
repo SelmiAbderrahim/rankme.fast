@@ -8,6 +8,7 @@ import {
   startAuditRequest,
 } from '../api';
 import { saveBlobAs } from '@features/report-export';
+import { ApiError } from '@shared/api/client';
 import { reportErrorMessage } from '../errorMessage';
 import {
   presentationRequestIdentity,
@@ -130,11 +131,38 @@ export const loadRuns = createAsyncThunk<
   const { siteId } = arg;
   const identity = requestIdentityFor(arg);
   try {
-    return await fetchAuditRunsRequest(siteId, 10, readInit(identity, signal));
+    try {
+      return await fetchAuditRunsRequest(siteId, 10, readInit(identity, signal));
+    } catch (err) {
+      // A page load fires several reads at once; a proxy rate limit or a
+      // brief upstream hiccup answers one of them 429/5xx. Retry that read
+      // once after a short pause instead of reporting the history as failed.
+      if (!isTransientReadError(err) || signal.aborted) throw err;
+      await waitFor(RUNS_RETRY_DELAY_MS, signal);
+      return await fetchAuditRunsRequest(siteId, 10, readInit(identity, signal));
+    }
   } catch (err) {
-    return rejectWithValue(reportErrorMessage(err, 'report:loadFailed'));
+    return rejectWithValue(reportErrorMessage(err, 'report:history.loadFailed'));
   }
 });
+
+/** Pause before the single automatic retry of a transient history read. */
+export const RUNS_RETRY_DELAY_MS = 800;
+const TRANSIENT_STATUSES = new Set([429, 502, 503, 504]);
+const isTransientReadError = (err: unknown): boolean =>
+  err instanceof ApiError && TRANSIENT_STATUSES.has(err.status);
+const waitFor = (ms: number, signal: AbortSignal): Promise<void> =>
+  new Promise((resolve, reject) => {
+    const timer = setTimeout(resolve, ms);
+    signal.addEventListener(
+      'abort',
+      () => {
+        clearTimeout(timer);
+        reject(signal.reason);
+      },
+      { once: true },
+    );
+  });
 
 export const pollRun = createAsyncThunk<
   PublicAuditRun,

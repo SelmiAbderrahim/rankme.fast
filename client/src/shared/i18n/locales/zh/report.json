@@ -10,7 +10,9 @@
       "running": "运行中",
       "succeeded": "已完成",
       "failed": "失败"
-    }
+    },
+    "loading": "正在加载审计历史…",
+    "loadFailed": "无法加载审计历史。"
   },
   "tabs": {
     "fix-now": "立即修复",

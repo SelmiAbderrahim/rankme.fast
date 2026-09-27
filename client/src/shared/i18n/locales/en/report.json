@@ -10,7 +10,9 @@
       "running": "Running",
       "succeeded": "Completed",
       "failed": "Failed"
-    }
+    },
+    "loading": "Loading audit history…",
+    "loadFailed": "We couldn't load your audit history."
   },
   "tabs": {
     "fix-now": "Fix now",

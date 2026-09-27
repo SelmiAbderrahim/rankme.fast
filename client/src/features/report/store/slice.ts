@@ -28,6 +28,7 @@ export const initialState: ReportState = {
   runsLoading: false,
   runsLoaded: false,
   runsSiteId: null,
+  runsError: '',
   pdfDownloading: false,
   pdfError: '',
 };
@@ -128,6 +129,7 @@ const reportSlice = createSlice({
         state.presentationLocale = identity.presentationLocale;
         state.presentationGeneration = identity.presentationGeneration;
         state.runsLoading = true;
+        state.runsError = '';
         if (state.runsSiteId !== action.meta.arg.siteId) {
           state.runs = [];
           state.runsLoaded = false;
@@ -143,6 +145,12 @@ const reportSlice = createSlice({
       .addCase(loadRuns.rejected, (state, action) => {
         if (action.meta.aborted || !matchesIdentity(state, action.meta.arg)) return;
         state.runsLoading = false;
+        // A failed read is not an empty history: keep the error for the card
+        // and forget the site so the next mount (client-side navigation)
+        // fetches again instead of replaying the failure.
+        state.runsError = action.payload ?? '';
+        state.runsLoaded = false;
+        state.runsSiteId = null;
       })
       .addCase(downloadReportPdf.pending, (state) => {
         state.pdfDownloading = true;
@@ -169,6 +177,7 @@ const reportSlice = createSlice({
         state.runsLoading = false;
         state.runsLoaded = false;
         state.runsSiteId = null;
+        state.runsError = '';
         state.retestError = '';
         state.pdfError = '';
       });

@@ -1557,6 +1557,18 @@ describe('slice — reducers & thunks state transitions', () => {
     expect(state.error).toBe('');
   });
 
+  it('loadRuns rejected with no payload records an empty error and forgets the site', async () => {
+    const { loadRuns } = await import('../store/thunks');
+    const { reportReducer } = await import('../store/slice');
+    const state = reportReducer(
+      { ...baseReportState(), runsSiteId: 's', runsLoading: true, runsError: 'old' },
+      loadRuns.rejected(new Error('boom'), 'req', { siteId: 's' }),
+    );
+    expect(state.runsError).toBe('');
+    expect(state.runsSiteId).toBeNull();
+    expect(state.runsLoading).toBe(false);
+  });
+
   it('startRetest rejected with no payload falls back to empty retestError', async () => {
     const { startRetest } = await import('../store/thunks');
     const { reportReducer } = await import('../store/slice');

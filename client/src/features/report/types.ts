@@ -319,6 +319,8 @@ export interface ReportState {
   runsLoading: boolean;
   runsLoaded: boolean;
   runsSiteId: string | null;
+  /** Localized message when the history read failed; '' otherwise. */
+  runsError: string;
   /** White-label PDF download (workstream B). */
   pdfDownloading: boolean;
   pdfError: string;

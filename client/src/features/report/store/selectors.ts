@@ -19,6 +19,8 @@ export const selectReportSiteId = (state: RootState) => selectSlice(state).siteI
 export const selectReportRunStatus = (state: RootState) => selectSlice(state).runStatus;
 export const selectReportRuns = (state: RootState) => selectSlice(state).runs;
 export const selectReportRunsSiteId = (state: RootState) => selectSlice(state).runsSiteId;
+export const selectReportRunsLoading = (state: RootState) => selectSlice(state).runsLoading;
+export const selectReportRunsError = (state: RootState) => selectSlice(state).runsError;
 export const selectReportPdfDownloading = (state: RootState) =>
   selectSlice(state).pdfDownloading;
 export const selectReportPdfError = (state: RootState) => selectSlice(state).pdfError;

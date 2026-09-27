@@ -10,7 +10,9 @@
       "running": "En curso",
       "succeeded": "Completado",
       "failed": "Fallido"
-    }
+    },
+    "loading": "Cargando el historial de auditorías…",
+    "loadFailed": "No pudimos cargar el historial de auditorías."
   },
   "tabs": {
     "fix-now": "Corregir ahora",

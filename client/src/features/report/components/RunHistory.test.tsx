@@ -9,6 +9,9 @@ import { reportReducer } from '../store/slice';
 import type { PublicAuditRun, ReportState } from '../types';
 import { RunHistory } from './RunHistory';
 import * as api from '../api';
+import { ApiError } from '@shared/api/client';
+import userEvent from '@testing-library/user-event';
+import { RUNS_RETRY_DELAY_MS } from '../store/thunks';
 
 vi.mock('../api', async (importOriginal) => ({
   ...(await importOriginal<typeof import('../api')>()),
@@ -80,11 +83,60 @@ describe('RunHistory', () => {
     expect(await screen.findByTestId('report-run-history-empty')).toBeInTheDocument();
   });
 
-  it('does not throw when the runs load fails', async () => {
-    mocked.fetchAuditRunsRequest.mockRejectedValue(new Error('boom'));
+  it('shows an error with a retry instead of the empty state when the load fails (issue #4)', async () => {
+    mocked.fetchAuditRunsRequest.mockRejectedValueOnce(new Error('boom'));
     renderRH(makeStore());
-    await waitFor(() => expect(mocked.fetchAuditRunsRequest).toHaveBeenCalled());
-    expect(screen.getByTestId('report-run-history-empty')).toBeInTheDocument();
+    expect(await screen.findByTestId('report-run-history-error')).toHaveTextContent(
+      "We couldn't load your audit history.",
+    );
+    expect(screen.queryByTestId('report-run-history-empty')).toBeNull();
+    // Non-transient failures are not retried automatically.
+    expect(mocked.fetchAuditRunsRequest).toHaveBeenCalledTimes(1);
+
+    mocked.fetchAuditRunsRequest.mockResolvedValueOnce({ runs: [run('r-5')], nextCursor: null });
+    await userEvent.setup().click(screen.getByTestId('report-run-history-retry'));
+    expect(await screen.findByTestId('report-run-r-5')).toBeInTheDocument();
+    expect(screen.queryByTestId('report-run-history-error')).toBeNull();
+  });
+
+  it('retries a transient 503 once before showing anything (issue #4)', async () => {
+    mocked.fetchAuditRunsRequest
+      .mockRejectedValueOnce(new ApiError('Service unavailable', 503, null))
+      .mockResolvedValueOnce({ runs: [run('r-6')], nextCursor: null });
+    renderRH(makeStore());
+    expect(screen.getByTestId('report-run-history-loading')).toHaveTextContent('Loading audit history…');
+    expect(
+      await screen.findByTestId('report-run-r-6', {}, { timeout: RUNS_RETRY_DELAY_MS + 2000 }),
+    ).toBeInTheDocument();
+    expect(mocked.fetchAuditRunsRequest).toHaveBeenCalledTimes(2);
+  });
+
+  it('surfaces the error when the transient retry fails too, and refetches on the next mount', async () => {
+    mocked.fetchAuditRunsRequest.mockRejectedValue(new ApiError('Too many requests', 429, null));
+    const store = makeStore();
+    const first = renderRH(store);
+    expect(
+      await screen.findByTestId('report-run-history-error', {}, { timeout: RUNS_RETRY_DELAY_MS + 2000 }),
+    ).toBeInTheDocument();
+    expect(mocked.fetchAuditRunsRequest).toHaveBeenCalledTimes(2);
+    first.unmount();
+
+    // Client-side navigation back to the report must not replay the failure.
+    mocked.fetchAuditRunsRequest.mockReset();
+    mocked.fetchAuditRunsRequest.mockResolvedValue({ runs: [run('r-7')], nextCursor: null });
+    renderRH(store);
+    expect(await screen.findByTestId('report-run-r-7')).toBeInTheDocument();
+  });
+
+  it('stops waiting to retry when the read is aborted by an unmount', async () => {
+    mocked.fetchAuditRunsRequest.mockRejectedValueOnce(new ApiError('Bad gateway', 502, null));
+    const store = makeStore();
+    const view = renderRH(store);
+    await waitFor(() => expect(mocked.fetchAuditRunsRequest).toHaveBeenCalledTimes(1));
+    view.unmount();
+    await new Promise((resolve) => setTimeout(resolve, RUNS_RETRY_DELAY_MS + 100));
+    expect(mocked.fetchAuditRunsRequest).toHaveBeenCalledTimes(1);
+    expect(store.getState().report.runsError).toBe('');
   });
 
   it('does not refetch when runs are already loaded for the same site', () => {

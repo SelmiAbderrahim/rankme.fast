@@ -10,7 +10,9 @@
       "running": "En cours",
       "succeeded": "Terminé",
       "failed": "Échoué"
-    }
+    },
+    "loading": "Chargement de l'historique des audits…",
+    "loadFailed": "Impossible de charger l'historique des audits."
   },
   "tabs": {
     "fix-now": "À corriger",
