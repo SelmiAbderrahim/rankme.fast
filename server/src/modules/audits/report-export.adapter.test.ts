@@ -70,7 +70,7 @@ function finding(
 function report(input: Partial<AuditReport> = {}): AuditReport {
   return {
     runId,
-    counts: { fixNow: 1, watch: 1, passed: 1 },
+    counts: { fixNow: 1, watch: 1, passed: 1, notEvaluated: 0 },
     findings: [
       finding('fix-now', {
         severity: 'critical',
@@ -319,6 +319,15 @@ describe('audit report export composition helpers', () => {
     ]));
   });
 
+  it('never exports not-evaluated checks as findings (issue #1)', () => {
+    const base = report();
+    const built = internals.auditBlocks('en', {
+      ...base,
+      findings: [...base.findings, finding('watch', { notEvaluated: true, meta: { insufficientData: true } })],
+    }, { buckets: ['watch'], sections: ['findings'] });
+    expect(built.findingCount).toBe(1);
+  });
+
   it('covers local null measurements and section/bucket filtering independently', () => {
     const local = report({
       localSeo: {
@@ -389,7 +398,7 @@ describe('audit report export access, composition, and rendering', () => {
   it('uses the extended PDF finding and affected-URL bounds while allowing narrowed exports', async () => {
     const adapter = createAuditReportExportAdapter();
     vi.mocked(getAuditReport).mockResolvedValueOnce(report({
-      counts: { fixNow: 201, watch: 0, passed: 0 },
+      counts: { fixNow: 201, watch: 0, passed: 0, notEvaluated: 0 },
       findings: Array.from({ length: 201 }, () => finding('fix-now')),
     }));
     await expect(adapter.compose(composeContext({ format: 'pdf' }))).resolves.toMatchObject({
@@ -406,7 +415,7 @@ describe('audit report export access, composition, and rendering', () => {
     });
 
     vi.mocked(getAuditReport).mockResolvedValueOnce(report({
-      counts: { fixNow: REPORT_GLOBAL_BOUNDS.pdfItems + 1, watch: 0, passed: 0 },
+      counts: { fixNow: REPORT_GLOBAL_BOUNDS.pdfItems + 1, watch: 0, passed: 0, notEvaluated: 0 },
       findings: Array.from(
         { length: REPORT_GLOBAL_BOUNDS.pdfItems + 1 },
         () => finding('fix-now'),

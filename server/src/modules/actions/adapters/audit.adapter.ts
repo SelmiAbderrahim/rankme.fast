@@ -12,6 +12,7 @@ import type { Severity } from '../actions.orders.js';
 import { canonicalizeAffectedUrls } from './url.js';
 import type { TranslationKey } from '../../../shared/i18n/index.js';
 import { isAuditCodeFixEligible } from '../../../shared/code-fix-eligibility.js';
+import { isNotEvaluatedFinding } from '../../../shared/audit-findings.js';
 interface RunLean {
     _id: Types.ObjectId;
     finishedAt?: Date | null;
@@ -29,7 +30,7 @@ interface SnapshotLean {
 }
 // Locked contract: the adapter reads ONLY the
 // latest succeeded site audit and emits `fix-now` + `watch` findings as
-// candidates; `passed` findings are absent. Retests continue through the
+// candidates; `passed` and not-evaluated (`insufficientData`) findings are absent. Retests continue through the
 // shipped audit start service (controller-side), so audit candidates are the
 // ONLY source with `retestAvailable: true`.
 //
@@ -74,6 +75,10 @@ export const auditActionAdapter: SourceReader = async (ctx) => {
     const seenRuleIds = new Set<string>();
     for (const finding of snapshot.findings ?? []) {
         if (finding.bucket !== 'fix-now' && finding.bucket !== 'watch')
+            continue;
+        // A check that could not run (missing GSC / review source / field
+        // data) is not an open problem — never mint a worklist item for it.
+        if (isNotEvaluatedFinding(finding))
             continue;
         // The rule engine emits one finding per rule; dedupe defensively so a
         // malformed snapshot can never mint two candidates with the same id.

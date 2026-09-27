@@ -34,6 +34,8 @@ export interface LocalizedFinding {
   codeFixPromptAvailable?: true;
   brokenLinkTargets?: string[];
   meta?: Record<string, unknown>;
+  /** The check could not run (data source missing) — not an open problem. */
+  notEvaluated?: true;
   copy: LocalizedRuleCopy;
 }
 
@@ -41,6 +43,8 @@ export interface FindingCounts {
   fixNow: number;
   watch: number;
   passed: number;
+  /** Checks that could not run; absent on responses from older API versions. */
+  notEvaluated?: number;
 }
 
 export interface DiffEntry {

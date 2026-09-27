@@ -222,5 +222,18 @@
     "unavailable": "Unavailable",
     "observed": "Observed {{date}}",
     "provenance": "{{kind}} source"
+  },
+  "notEvaluated": {
+    "title": "Not evaluated",
+    "description": "These checks could not run because a data source is missing. They are not counted as problems.",
+    "badge": "Not evaluated",
+    "sources": {
+      "gsc": "Connect Google Search Console to check this.",
+      "gscReconnect": "Reconnect Google Search Console to check this.",
+      "pageSpeed": "Speed data from real visitors is not available for this site yet.",
+      "localSeo": "Add a business listing or review source to check this.",
+      "aiVisibility": "Track AI prompts to check this.",
+      "generic": "The crawl did not return enough data to check this."
+    }
   }
 }

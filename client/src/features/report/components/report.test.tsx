@@ -558,6 +558,75 @@ describe('ReportPage — tabs, counts & URL state', () => {
   });
 });
 
+describe('ReportPage — not-evaluated checks (issue #1)', () => {
+  const notEvaluated = (
+    ruleId: string,
+    reason: string | undefined,
+    title: string,
+  ): LocalizedFinding => ({
+    ruleId,
+    bucket: 'watch',
+    severity: 'warning',
+    affectedUrls: [],
+    meta: { insufficientData: true, ...(reason ? { reason } : {}) },
+    notEvaluated: true,
+    copy: {
+      titleKey: `auditRules.${ruleId}.title`,
+      whyKey: `auditRules.${ruleId}.why`,
+      fixKey: `auditRules.${ruleId}.fix`,
+      passedLabelKey: `auditRules.${ruleId}.passedLabel`,
+      title,
+      why: 'why',
+      fix: 'fix',
+      passedLabel: 'passed',
+    },
+  });
+
+  it('lists checks that could not run apart from Watch, with the missing source', async () => {
+    mocked.fetchReportRequest.mockResolvedValue(
+      makeReport({
+        counts: { fixNow: 1, watch: 2, passed: 1, notEvaluated: 7 },
+        findings: [
+          ...findingsFixture,
+          notEvaluated('gsc-ctr-low', 'not-connected', 'Searchers see you but rarely click'),
+          notEvaluated('not-indexed', 'needs-reconnect', 'Pages not indexed'),
+          notEvaluated('core-web-vitals-poor', 'no-field-data', 'Core Web Vitals below threshold'),
+          notEvaluated('low-review-rating', 'not-configured', 'Low review rating'),
+          notEvaluated('ai-visibility-low', undefined, 'AI visibility low'),
+          notEvaluated('sitemap-missing-or-weak', undefined, 'Sitemap missing or weak'),
+          notEvaluated('sitemap-errors', 'not-connected', 'Sitemap errors'),
+        ],
+      }),
+    );
+    renderReport({ path: '/sites/site-1/report?bucket=watch&finding=gsc-ctr-low' });
+    const section = await screen.findByTestId('report-not-evaluated');
+    expect(section).toHaveTextContent('Not evaluated');
+    expect(section).toHaveTextContent('(7)');
+    const rows = screen.getAllByTestId('report-not-evaluated-row');
+    const hint = (ruleId: string) =>
+      rows.find((row) => row.getAttribute('data-rule-id') === ruleId)?.textContent ?? '';
+    expect(hint('gsc-ctr-low')).toContain('Connect Google Search Console to check this.');
+    expect(hint('sitemap-errors')).toContain('Connect Google Search Console to check this.');
+    expect(hint('not-indexed')).toContain('Reconnect Google Search Console to check this.');
+    expect(hint('core-web-vitals-poor')).toContain('Speed data from real visitors');
+    expect(hint('low-review-rating')).toContain('business listing or review source');
+    expect(hint('ai-visibility-low')).toContain('Track AI prompts');
+    expect(hint('sitemap-missing-or-weak')).toContain('did not return enough data');
+
+    // The Watch tab keeps only evaluated warnings and its count excludes the rest.
+    expect(screen.getByTestId('report-tab-watch')).toHaveTextContent('(2)');
+    const watchRows = screen.getAllByTestId('report-issue-row').map((row) => row.getAttribute('data-rule-id'));
+    expect(watchRows).toEqual(['headings-weak', 'faq-content-missing']);
+    expect(screen.queryByTestId('report-issue-detail')).not.toBeInTheDocument();
+  });
+
+  it('renders no not-evaluated section when every check ran', async () => {
+    renderReport();
+    expect(await screen.findByText('Page titles missing or weak')).toBeInTheDocument();
+    expect(screen.queryByTestId('report-not-evaluated')).not.toBeInTheDocument();
+  });
+});
+
 describe('ReportPage — issue detail + copy', () => {
   it('expands the row to reveal why / URL / fix and copies the fix', async () => {
     clipboardMocked.writeToClipboard.mockResolvedValue(true);

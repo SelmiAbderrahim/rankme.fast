@@ -86,7 +86,7 @@ function makeFinding(
 function makeReport(overrides: Partial<AuditReport> = {}): AuditReport {
   return {
     runId: 'run-1',
-    counts: { fixNow: 2, watch: 1, passed: 1 },
+    counts: { fixNow: 2, watch: 1, passed: 1, notEvaluated: 0 },
     findings: [
       makeFinding(1, 'fix-now'),
       makeFinding(2, 'fix-now', { affectedUrls: [] }),
@@ -137,6 +137,21 @@ describe('renderAuditReportPdf', () => {
     const first = await renderAuditReportPdf(input);
     const second = await renderAuditReportPdf(input);
     expect(Buffer.compare(Buffer.from(first), Buffer.from(second))).toBe(0);
+  });
+
+  it('leaves not-evaluated checks out of the Watch section (issue #1)', async () => {
+    const withoutNotEvaluated = await renderAuditReportPdf(makeInput());
+    const base = makeReport();
+    const withNotEvaluated = await renderAuditReportPdf(makeInput({
+      report: {
+        ...base,
+        findings: [
+          ...base.findings,
+          makeFinding(9, 'watch', { notEvaluated: true, meta: { insufficientData: true } }),
+        ],
+      },
+    }));
+    expect(Buffer.compare(Buffer.from(withNotEvaluated), Buffer.from(withoutNotEvaluated))).toBe(0);
   });
 
   it('applies custom branding — output differs from the RankMeFast default', async () => {
@@ -270,7 +285,7 @@ describe('renderAuditReportPdf', () => {
     const bytes = await renderAuditReportPdf(
       makeInput({
         report: makeReport({
-          counts: { fixNow: PDF_MAX_FINDINGS, watch: 1, passed: 1 },
+          counts: { fixNow: PDF_MAX_FINDINGS, watch: 1, passed: 1, notEvaluated: 0 },
           findings,
         }),
       }),
@@ -286,7 +301,7 @@ describe('renderAuditReportPdf', () => {
     const bytes = await renderAuditReportPdf(
       makeInput({
         report: makeReport({
-          counts: { fixNow: PDF_MAX_FINDINGS - 5, watch: 10, passed: 0 },
+          counts: { fixNow: PDF_MAX_FINDINGS - 5, watch: 10, passed: 0, notEvaluated: 0 },
           findings,
         }),
       }),

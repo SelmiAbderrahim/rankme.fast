@@ -218,5 +218,18 @@
     "unavailable": "不可用",
     "observed": "观测时间：{{date}}",
     "provenance": "{{kind}} 来源"
+  },
+  "notEvaluated": {
+    "title": "未评估",
+    "description": "由于缺少数据源,这些检查无法运行。它们不计为问题。",
+    "badge": "未评估",
+    "sources": {
+      "gsc": "连接 Google Search Console 以进行此项检查。",
+      "gscReconnect": "重新连接 Google Search Console 以进行此项检查。",
+      "pageSpeed": "此网站暂无真实访客的速度数据。",
+      "localSeo": "添加商家信息或评价来源以进行此项检查。",
+      "aiVisibility": "跟踪 AI 提示词以进行此项检查。",
+      "generic": "抓取未返回足够的数据来进行此项检查。"
+    }
   }
 }

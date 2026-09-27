@@ -6,6 +6,8 @@
  * check can never crash the report or invent a fix-now.
  */
 import type { AuditResult } from '../../../shared/providers/index.js';
+import { isNotEvaluatedFinding } from '../../../shared/audit-findings.js';
+export { isNotEvaluatedFinding };
 import { accessibilityLowRule } from './accessibility-low.js';
 import { aiVisibilityLowRule } from './ai-visibility-low.js';
 import { brokenInternalLinksRule } from './broken-internal-links.js';
@@ -247,11 +249,22 @@ export interface FindingCounts {
     fixNow: number;
     watch: number;
     passed: number;
+    /**
+     * Checks that could not run because their data source is missing
+     * (`meta.insufficientData`). Counted apart from `watch` so an
+     * unconnected integration never reads as an open warning.
+     */
+    notEvaluated: number;
 }
-export function countByBucket(findings: RuleFinding[]): FindingCounts {
-    const counts: FindingCounts = { fixNow: 0, watch: 0, passed: 0 };
+export function countByBucket<T extends {
+    bucket: string;
+    meta?: Record<string, unknown> | null;
+}>(findings: readonly T[]): FindingCounts {
+    const counts: FindingCounts = { fixNow: 0, watch: 0, passed: 0, notEvaluated: 0 };
     for (const finding of findings) {
-        if (finding.bucket === 'fix-now')
+        if (isNotEvaluatedFinding(finding))
+            counts.notEvaluated += 1;
+        else if (finding.bucket === 'fix-now')
             counts.fixNow += 1;
         else if (finding.bucket === 'watch')
             counts.watch += 1;

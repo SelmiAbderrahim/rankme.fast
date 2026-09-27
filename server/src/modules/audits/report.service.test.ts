@@ -856,6 +856,45 @@ describe('getAuditReport', () => {
     expect(insufficient?.codeFixPromptAvailable).toBeUndefined();
   });
 
+  it('flags insufficient-data findings as not evaluated and keeps them out of the Watch count (issue #1)', async () => {
+    const ids = await seedRun();
+    await writeReportSnapshot({ ...ids, result: makeAuditResult() });
+    const report = await getAuditReport({
+      runId: ids.runId,
+      accountId: ids.accountId,
+      locale: 'en',
+    });
+
+    const notEvaluated = report.findings.filter((finding) => finding.notEvaluated);
+    expect(notEvaluated.map((finding) => finding.ruleId)).toEqual(
+      expect.arrayContaining(['gsc-ctr-low', 'not-indexed', 'sitemap-errors', 'low-review-rating', 'core-web-vitals-poor']),
+    );
+    for (const finding of notEvaluated) {
+      expect(finding.meta?.insufficientData).toBe(true);
+    }
+    const watchEvaluated = report.findings.filter((finding) =>
+      finding.bucket === 'watch' && !finding.notEvaluated);
+    expect(report.counts.watch).toBe(watchEvaluated.length);
+    expect(report.counts.notEvaluated).toBe(notEvaluated.length);
+    expect(report.findings.find((f) => f.ruleId === 'title-missing-or-weak')?.notEvaluated).toBeUndefined();
+  });
+
+  it('recomputes counts for legacy snapshots that stored not-evaluated checks under watch', async () => {
+    const ids = await seedRun();
+    await ReportSnapshot.create({
+      runId: ids.runId,
+      siteId: ids.siteId,
+      accountId: ids.accountId,
+      findings: [
+        { ruleId: 'gsc-ctr-low', bucket: 'watch', severity: 'warning', affectedUrls: [], meta: { insufficientData: true, reason: 'not-connected' } },
+        { ruleId: 'title-missing-or-weak', bucket: 'watch', severity: 'warning', affectedUrls: ['https://example.com/'] },
+      ],
+      counts: { fixNow: 0, watch: 2, passed: 0 },
+    });
+    const report = await getAuditReport({ runId: ids.runId, accountId: ids.accountId, locale: 'en' });
+    expect(report.counts).toEqual({ fixNow: 0, watch: 1, passed: 0, notEvaluated: 1 });
+  });
+
   it('surfaces null aiVisibility + localSeo sections on old snapshots (pre-feature)', async () => {
     const ids = await seedRun();
     await writeReportSnapshot({ ...ids, result: makeAuditResult() });

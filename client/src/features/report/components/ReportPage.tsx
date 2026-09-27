@@ -21,6 +21,7 @@
  *   - report-run-in-progress               run-in-progress banner
  *   - report-error                         inline error alert
  *   - report-no-run                        first-run empty state
+ *   - report-not-evaluated                 checks that could not run
  */
 import { useEffect, useMemo, useRef, useState } from 'react';
 import { useParams, useSearchParams } from 'react-router-dom';
@@ -74,6 +75,7 @@ import type {
 } from '../types';
 import { AiSummaryCard } from './AiSummaryCard';
 import { IssueRow } from './IssueRow';
+import { NotEvaluatedChecks } from './NotEvaluatedChecks';
 import { RetestConfirmDialog } from './RetestConfirmDialog';
 import { RunHistory } from './RunHistory';
 import { DocsLink } from '@shared/docs/DocsLink';
@@ -136,7 +138,8 @@ export const buildRuleDiffMap = (
 const filterByTab = (
   findings: LocalizedFinding[],
   tab: ReportTab,
-): LocalizedFinding[] => findings.filter((f) => f.bucket === tab);
+): LocalizedFinding[] =>
+  findings.filter((f) => f.bucket === tab && !f.notEvaluated);
 
 interface ReportPageProps {
   siteId?: string;
@@ -304,11 +307,16 @@ export const ReportPage = ({
     return map;
   }, [report]);
 
+  const notEvaluatedFindings = useMemo(
+    () => (report?.findings ?? []).filter((f) => f.notEvaluated),
+    [report],
+  );
+
   const focusedReportRef = useRef('');
   useEffect(() => {
     if (!focusedRuleId || !report) return;
     const finding = report.findings.find((item) => item.ruleId === focusedRuleId);
-    if (!finding) return;
+    if (!finding || finding.notEvaluated) return;
     const key = `${report.runId}:${finding.ruleId}`;
     if (focusedReportRef.current === key) return;
     focusedReportRef.current = key;
@@ -602,6 +610,8 @@ export const ReportPage = ({
           </TabsContent>
         ))}
       </Tabs>
+
+      <NotEvaluatedChecks findings={notEvaluatedFindings} />
 
       <RunHistory siteId={siteId} />
     </div>

@@ -218,5 +218,18 @@
     "unavailable": "Indisponible",
     "observed": "Observé le {{date}}",
     "provenance": "Source {{kind}}"
+  },
+  "notEvaluated": {
+    "title": "Non évalué",
+    "description": "Ces vérifications n'ont pas pu s'exécuter car une source de données manque. Elles ne sont pas comptées comme des problèmes.",
+    "badge": "Non évalué",
+    "sources": {
+      "gsc": "Connectez Google Search Console pour effectuer cette vérification.",
+      "gscReconnect": "Reconnectez Google Search Console pour effectuer cette vérification.",
+      "pageSpeed": "Les données de vitesse issues de vrais visiteurs ne sont pas encore disponibles pour ce site.",
+      "localSeo": "Ajoutez une fiche d'établissement ou une source d'avis pour effectuer cette vérification.",
+      "aiVisibility": "Suivez des requêtes IA pour effectuer cette vérification.",
+      "generic": "L'exploration n'a pas renvoyé assez de données pour effectuer cette vérification."
+    }
   }
 }

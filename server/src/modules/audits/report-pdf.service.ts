@@ -489,7 +489,7 @@ async function renderAuditReportPdfWithSharedPrimitives(input: RenderAuditReport
         let drawn = 0;
         let clippedFindings = 0;
         for (const { bucket, labelKey } of BUCKET_ORDER) {
-            const findings = report.findings.filter((finding) => finding.bucket === bucket);
+            const findings = report.findings.filter((finding) => finding.bucket === bucket && !finding.notEvaluated);
             if (findings.length === 0)
                 continue;
             const budget = PDF_MAX_FINDINGS - drawn;

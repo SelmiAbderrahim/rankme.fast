@@ -218,5 +218,18 @@
     "unavailable": "No disponible",
     "observed": "Observado el {{date}}",
     "provenance": "Fuente {{kind}}"
+  },
+  "notEvaluated": {
+    "title": "Sin evaluar",
+    "description": "Estas comprobaciones no se pudieron ejecutar porque falta una fuente de datos. No cuentan como problemas.",
+    "badge": "Sin evaluar",
+    "sources": {
+      "gsc": "Conecta Google Search Console para comprobar esto.",
+      "gscReconnect": "Vuelve a conectar Google Search Console para comprobar esto.",
+      "pageSpeed": "Aún no hay datos de velocidad de visitantes reales para este sitio.",
+      "localSeo": "Añade una ficha de negocio o una fuente de reseñas para comprobar esto.",
+      "aiVisibility": "Sigue prompts de IA para comprobar esto.",
+      "generic": "El rastreo no devolvió datos suficientes para comprobar esto."
+    }
   }
 }

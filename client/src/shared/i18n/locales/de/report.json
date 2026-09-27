@@ -218,5 +218,18 @@
     "unavailable": "Nicht verfügbar",
     "observed": "Beobachtet am {{date}}",
     "provenance": "Quelle: {{kind}}"
+  },
+  "notEvaluated": {
+    "title": "Nicht geprüft",
+    "description": "Diese Prüfungen konnten nicht laufen, weil eine Datenquelle fehlt. Sie zählen nicht als Probleme.",
+    "badge": "Nicht geprüft",
+    "sources": {
+      "gsc": "Verbinden Sie die Google Search Console, um dies zu prüfen.",
+      "gscReconnect": "Verbinden Sie die Google Search Console erneut, um dies zu prüfen.",
+      "pageSpeed": "Geschwindigkeitsdaten echter Besucher sind für diese Website noch nicht verfügbar.",
+      "localSeo": "Fügen Sie einen Unternehmenseintrag oder eine Bewertungsquelle hinzu, um dies zu prüfen.",
+      "aiVisibility": "Verfolgen Sie KI-Prompts, um dies zu prüfen.",
+      "generic": "Der Crawl hat nicht genug Daten geliefert, um dies zu prüfen."
+    }
   }
 }
