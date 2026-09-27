@@ -360,7 +360,11 @@ export const ReportPage = ({
       >
         <SelectValue />
       </SelectTrigger>
-      <SelectContent>
+      {/* Popper keeps the list below the trigger. The default item-aligned
+          mode laid it over the trigger and the dialog copy above it, where
+          the dark popover and dialog surfaces are nearly the same color, so
+          the options read as drawn on a transparent layer. */}
+      <SelectContent position="popper" align="start">
         {PAGE_CAP_OPTIONS.map((option) => (
           <SelectItem key={option} value={option}>
             {option === PAGE_CAP_MAX

@@ -760,6 +760,13 @@ describe('ReportPage — retest & diff badges', () => {
     expect(picker).toHaveTextContent('Plan max');
 
     await user.click(picker);
+    // Issue #11: the list opens as a popper below the trigger, never laid
+    // over the trigger and the dialog copy (item-aligned mode).
+    const listbox = await screen.findByRole('listbox');
+    expect(listbox.closest('[data-slot="select-content"]')).toHaveClass(
+      'data-[side=bottom]:translate-y-1',
+      'bg-popover',
+    );
     await user.click(await screen.findByRole('option', { name: '1000 pages' }));
     await user.click(screen.getByTestId('report-retest-confirm'));
     await waitFor(() =>
