@@ -114,6 +114,7 @@ services:
       DEFAULT_LOCALE: ${DEFAULT_LOCALE:-en}
       # Better Auth + Google OAuth / GSC linking.
       BETTER_AUTH_SECRET: ${BETTER_AUTH_SECRET}
+      AUTH_COOKIE_PREFIX: ${AUTH_COOKIE_PREFIX:-}
       GOOGLE_CLIENT_ID: ${GOOGLE_CLIENT_ID:-}
       GOOGLE_CLIENT_SECRET: ${GOOGLE_CLIENT_SECRET:-}
       # Secrets from the root .env ONLY — no Docker-secret `${KEY}_FILE`
@@ -394,6 +395,7 @@ services:
       DEFAULT_LOCALE: ${DEFAULT_LOCALE:-en}
       # Better Auth + Google OAuth / GSC linking.
       BETTER_AUTH_SECRET: ${BETTER_AUTH_SECRET}
+      AUTH_COOKIE_PREFIX: ${AUTH_COOKIE_PREFIX:-}
       GOOGLE_CLIENT_ID: ${GOOGLE_CLIENT_ID:-}
       GOOGLE_CLIENT_SECRET: ${GOOGLE_CLIENT_SECRET:-}
       # Secrets from the root .env ONLY — env parity with api across the two

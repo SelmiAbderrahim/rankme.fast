@@ -47,6 +47,18 @@ describe('envSchema', () => {
     }
   });
 
+  it('defaults a blank auth cookie prefix and rejects unsafe ones', () => {
+    expect(envSchema.parse({ ...baseEnv, AUTH_COOKIE_PREFIX: ' ' }).AUTH_COOKIE_PREFIX).toBe(
+      'better-auth',
+    );
+    expect(envSchema.parse({ ...baseEnv, AUTH_COOKIE_PREFIX: 'rmf-oss' }).AUTH_COOKIE_PREFIX).toBe(
+      'rmf-oss',
+    );
+    for (const prefix of ['a;b', 'a b', 'x'.repeat(33)]) {
+      expect(envSchema.safeParse({ ...baseEnv, AUTH_COOKIE_PREFIX: prefix }).success).toBe(false);
+    }
+  });
+
   it('treats a blank app URL as unset', () => {
     const parsed = envSchema.safeParse({
       ...baseEnv,

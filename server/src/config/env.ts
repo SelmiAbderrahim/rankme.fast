@@ -228,6 +228,12 @@ export const envSchema = z.object({
     WORKER_PORT: z.coerce.number().int().positive().default(8081),
     // Better Auth — signs session tokens + OAuth state. Required, ≥32 chars.
     BETTER_AUTH_SECRET: z.string().min(32),
+    // Better Auth cookie-name prefix. Give each deployment its own value when
+    // several share a parent domain: a parent-domain session cookie with the
+    // default name is sent to every subdomain and shadows this deployment's
+    // cookie, so sign-in succeeds but every follow-up request is a 401.
+    // Changing it signs every current session out once.
+    AUTH_COOKIE_PREFIX: z.preprocess((value) => (typeof value === 'string' && value.trim() === '' ? undefined : value), z.string().regex(/^[A-Za-z0-9_-]{1,32}$/).default('better-auth')),
     // Google OAuth (Better Auth social provider) — optional; the provider is
     // only registered when both halves are present.
     GOOGLE_CLIENT_ID: z.string().optional(),

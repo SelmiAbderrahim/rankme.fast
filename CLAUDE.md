@@ -218,6 +218,7 @@ npm --prefix client run build        # tsc --noEmit && vite build
 | `DATABASE_URL` | yes | Drizzle/Postgres connection — must match POSTGRES_* |
 | `PG_POOL_MAX` | no | postgres-js pool size per process (api + worker); default 10 |
 | `BETTER_AUTH_SECRET` | yes | session signing (≥32 chars; `openssl rand -hex 32`) |
+| `AUTH_COOKIE_PREFIX` | no | Better Auth cookie-name prefix (`[A-Za-z0-9_-]{1,32}`); blank = `better-auth`. Set a unique value when another deployment on the same parent domain sets Better Auth cookies — its parent-domain cookie otherwise shadows this one. Changing it signs every session out once |
 | `GOOGLE_CLIENT_ID` / `GOOGLE_CLIENT_SECRET` | no | Google OAuth (login + GSC linking); provider registered only when BOTH set |
 | `CLIENT_URL` | yes | public marketing origin (canonical URLs and public links) |
 | `APP_URL` | no | authenticated app origin; defaults to `CLIENT_URL` for single-origin deployments |

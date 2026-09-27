@@ -309,6 +309,7 @@ export function createAuth(database: AuthDatabase, options: CreateAuthOptions = 
             // NODE_ENV=test unless this is set explicitly. Pin it on so the test
             // suite exercises the SAME check production runs.
             disableOriginCheck: false,
+            cookiePrefix: env.AUTH_COOKIE_PREFIX,
             ...(appHostname !== clientHostname
                 ? {
                     crossSubDomainCookies: {

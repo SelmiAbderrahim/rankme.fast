@@ -6,6 +6,7 @@ process.env.DATABASE_URL = 'postgres://rankme:rankme@127.0.0.1:5432/rankme-test'
 process.env.BETTER_AUTH_SECRET = '0123456789abcdef0123456789abcdef';
 process.env.CLIENT_URL = 'http://localhost:3000';
 delete process.env.APP_URL;
+delete process.env.AUTH_COOKIE_PREFIX;
 process.env.SERVER_URL = 'http://localhost:8080';
 // Google OAuth stays unset in tests — the provider is conditionally
 // registered, and the social sign-in path is exercised client-side.
