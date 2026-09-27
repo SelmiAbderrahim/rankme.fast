@@ -48,7 +48,8 @@
     "cta": "Reauditar",
     "running": "Auditando…",
     "starting": "Iniciando…",
-    "first": "Ejecuta tu primera auditoría"
+    "first": "Ejecuta tu primera auditoría",
+    "dialogTitle": "¿Ejecutar una auditoría nueva?"
   },
   "pageCap": {
     "label": "Páginas a rastrear",
@@ -238,5 +239,10 @@
   "pending": {
     "title": "Tus resultados aparecerán aquí",
     "description": "Cuando termine esta auditoría, verás qué corregir, qué vigilar y qué ya pasa."
+  },
+  "firstAudit": {
+    "title": "Ejecuta tu primera auditoría",
+    "description": "Rastreamos tu sitio una vez y te mostramos qué corregir, qué vigilar y qué ya pasa.",
+    "confirm": "Iniciar auditoría"
   }
 }

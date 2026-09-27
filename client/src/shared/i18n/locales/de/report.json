@@ -48,7 +48,8 @@
     "cta": "Erneut prüfen",
     "running": "Prüfung läuft…",
     "starting": "Wird gestartet…",
-    "first": "Ersten Audit starten"
+    "first": "Ersten Audit starten",
+    "dialogTitle": "Neuen Audit starten?"
   },
   "pageCap": {
     "label": "Zu crawlende Seiten",
@@ -238,5 +239,10 @@
   "pending": {
     "title": "Ihre Ergebnisse erscheinen hier",
     "description": "Sobald dieser Audit abgeschlossen ist, sehen Sie, was zu beheben, was zu beobachten und was bereits in Ordnung ist."
+  },
+  "firstAudit": {
+    "title": "Ersten Audit starten",
+    "description": "Wir crawlen Ihre Website einmal und zeigen, was zu beheben, was zu beobachten und was bereits in Ordnung ist.",
+    "confirm": "Audit starten"
   }
 }

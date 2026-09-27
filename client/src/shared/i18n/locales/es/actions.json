@@ -117,7 +117,7 @@
   "retest": {
     "title": "¿Reanalizar este hallazgo?",
     "description": "Un reanálisis ejecuta una auditoría nueva del sitio y actualiza todas las acciones basadas en auditorías.",
-    "unitsLabel": "Auditorías consumidas",
+    "unitsLabel": "Auditorías que se usarán",
     "unitsValue": "1",
     "freshRun": "Un reanálisis siempre rastrea de nuevo — los resultados nunca provienen de una caché.",
     "selfHosted": "Los límites de uso del plan no se miden en el modo autoalojado.",

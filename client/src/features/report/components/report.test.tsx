@@ -1,5 +1,5 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
-import { act, render, screen, waitFor } from '@testing-library/react';
+import { act, render, screen, waitFor, within } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { Provider } from 'react-redux';
 import { I18nextProvider } from 'react-i18next';
@@ -397,6 +397,29 @@ describe('ReportPage — loading, empty & error', () => {
     const user = userEvent.setup();
     await user.click(await screen.findByRole('button', { name: /Run your first audit/ }));
     expect(await screen.findByTestId('retest-preview-units')).toHaveTextContent('1');
+  });
+
+  it('words the first-audit dialog as a first audit, not a finding retest (issue #10)', async () => {
+    mocked.fetchLatestRunRequest.mockResolvedValue({ runs: [], nextCursor: null });
+    renderReport();
+    const user = userEvent.setup();
+    await user.click(await screen.findByRole('button', { name: /Run your first audit/ }));
+    const dialog = await screen.findByTestId('report-retest-dialog');
+    expect(within(dialog).getByRole('heading', { name: 'Run your first audit' })).toBeInTheDocument();
+    expect(dialog).not.toHaveTextContent('Retest this finding?');
+    expect(dialog).not.toHaveTextContent('Retests always run a fresh crawl');
+    expect(dialog).toHaveTextContent('Audit runs this will use: 1');
+    expect(within(dialog).getByTestId('report-retest-confirm')).toHaveTextContent('Start audit');
+  });
+
+  it('words the report-level retest dialog as a fresh site audit', async () => {
+    renderReport();
+    const user = userEvent.setup();
+    await user.click(await screen.findByTestId('report-retest'));
+    const dialog = await screen.findByTestId('report-retest-dialog');
+    expect(within(dialog).getByRole('heading', { name: 'Run a fresh audit?' })).toBeInTheDocument();
+    expect(dialog).toHaveTextContent('Retests always run a fresh crawl');
+    expect(within(dialog).getByTestId('report-retest-confirm')).toHaveTextContent('Start retest');
   });
 
   it('shows the "starting" label while the first retest is in flight', async () => {

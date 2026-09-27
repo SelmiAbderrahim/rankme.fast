@@ -9,7 +9,12 @@
  */
 import { useTranslation } from 'react-i18next';
 
-export function RetestPreviewCard() {
+export interface RetestPreviewCardProps {
+  /** The site's first audit — there is no earlier result to re-check. */
+  firstRun?: boolean;
+}
+
+export function RetestPreviewCard({ firstRun = false }: RetestPreviewCardProps = {}) {
   const { t } = useTranslation('actions');
 
   return (
@@ -23,7 +28,7 @@ export function RetestPreviewCard() {
           {t('retest.unitsValue')}
         </span>
       </p>
-      <p className="text-muted-foreground">{t('retest.freshRun')}</p>
+      {firstRun ? null : <p className="text-muted-foreground">{t('retest.freshRun')}</p>}
       <p className="text-muted-foreground" data-testid="retest-preview-remaining">
         {t('retest.selfHosted')}
       </p>

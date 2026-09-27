@@ -490,6 +490,7 @@ export const ReportPage = ({
           </Alert>
         ) : null}
         <RetestConfirmDialog
+          variant="first"
           open={retestOpen}
           onOpenChange={setRetestOpen}
           pageCapPicker={pageCapPicker}

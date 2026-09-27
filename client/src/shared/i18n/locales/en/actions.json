@@ -117,7 +117,7 @@
   "retest": {
     "title": "Retest this finding?",
     "description": "A retest runs one fresh site audit and updates every audit-based action.",
-    "unitsLabel": "Audit runs used",
+    "unitsLabel": "Audit runs this will use",
     "unitsValue": "1",
     "freshRun": "Retests always run a fresh crawl — results are never served from a cache.",
     "selfHosted": "Plan usage limits are not metered in self-hosted mode.",

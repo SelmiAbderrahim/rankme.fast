@@ -48,7 +48,8 @@
     "cta": "Retest",
     "running": "Auditing…",
     "starting": "Starting…",
-    "first": "Run your first audit"
+    "first": "Run your first audit",
+    "dialogTitle": "Run a fresh audit?"
   },
   "pageCap": {
     "label": "Pages to crawl",
@@ -242,5 +243,10 @@
   "pending": {
     "title": "Your results will appear here",
     "description": "When this audit finishes, you'll see what to fix, what to watch, and what already passes."
+  },
+  "firstAudit": {
+    "title": "Run your first audit",
+    "description": "We crawl your site once and show what to fix, what to watch, and what already passes.",
+    "confirm": "Start audit"
   }
 }

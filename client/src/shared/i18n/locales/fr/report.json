@@ -48,7 +48,8 @@
     "cta": "Relancer",
     "running": "Audit en cours…",
     "starting": "Démarrage…",
-    "first": "Lancer votre premier audit"
+    "first": "Lancer votre premier audit",
+    "dialogTitle": "Lancer un nouvel audit ?"
   },
   "pageCap": {
     "label": "Pages à analyser",
@@ -238,5 +239,10 @@
   "pending": {
     "title": "Vos résultats apparaîtront ici",
     "description": "À la fin de cet audit, vous verrez ce qu'il faut corriger, ce qu'il faut surveiller et ce qui passe déjà."
+  },
+  "firstAudit": {
+    "title": "Lancez votre premier audit",
+    "description": "Nous explorons votre site une fois et vous montrons ce qu'il faut corriger, ce qu'il faut surveiller et ce qui passe déjà.",
+    "confirm": "Lancer l'audit"
   }
 }

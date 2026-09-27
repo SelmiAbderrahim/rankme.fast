@@ -24,6 +24,12 @@ import { Button } from '@shared/ui/button';
 import { RetestPreviewCard } from '@features/actions';
 
 export interface RetestConfirmDialogProps {
+  /**
+   * `first` = the site has no audit yet (nothing to retest); `retest` = a
+   * fresh audit over an existing report. Only the wording differs — both
+   * start exactly one site audit through the same mutation.
+   */
+  variant?: 'first' | 'retest';
   open: boolean;
   onOpenChange: (open: boolean) => void;
   /** The shipped page-cap Select, rendered inside the confirmation. */
@@ -34,6 +40,7 @@ export interface RetestConfirmDialogProps {
 }
 
 export const RetestConfirmDialog = ({
+  variant = 'retest',
   open,
   onOpenChange,
   pageCapPicker,
@@ -47,10 +54,16 @@ export const RetestConfirmDialog = ({
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent data-testid="report-retest-dialog">
         <DialogHeader>
-          <DialogTitle>{t('actions:retest.title')}</DialogTitle>
-          <DialogDescription>{t('actions:retest.description')}</DialogDescription>
+          <DialogTitle>
+            {variant === 'first' ? t('report:firstAudit.title') : t('report:retest.dialogTitle')}
+          </DialogTitle>
+          <DialogDescription>
+            {variant === 'first'
+              ? t('report:firstAudit.description')
+              : t('actions:retest.description')}
+          </DialogDescription>
         </DialogHeader>
-        <RetestPreviewCard />
+        <RetestPreviewCard firstRun={variant === 'first'} />
         <div className="flex items-center gap-2">{pageCapPicker}</div>
         {error ? (
           <Alert
@@ -77,7 +90,7 @@ export const RetestConfirmDialog = ({
             loadingLabel={t('actions:retest.starting')}
             data-testid="report-retest-confirm"
           >
-            {t('actions:retest.confirm')}
+            {variant === 'first' ? t('report:firstAudit.confirm') : t('actions:retest.confirm')}
           </Button>
         </DialogFooter>
       </DialogContent>

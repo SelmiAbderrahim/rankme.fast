@@ -48,7 +48,8 @@
     "cta": "重新检测",
     "running": "正在审计…",
     "starting": "正在开始…",
-    "first": "运行首次审计"
+    "first": "运行首次审计",
+    "dialogTitle": "运行一次新的审计?"
   },
   "pageCap": {
     "label": "抓取页面数",
@@ -238,5 +239,10 @@
   "pending": {
     "title": "结果将显示在这里",
     "description": "本次审计完成后,您将看到需要修复、需要关注以及已经通过的项目。"
+  },
+  "firstAudit": {
+    "title": "运行首次审计",
+    "description": "我们会抓取一次您的网站,并显示需要修复、需要关注以及已经通过的项目。",
+    "confirm": "开始审计"
   }
 }
