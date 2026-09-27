@@ -604,7 +604,9 @@ describe('OverviewPanel', () => {
 
   it('shows audit progress while a run is queued or running', () => {
     renderPanel(buildStore({ report: null, reportRunStatus: 'running' }));
-    expect(screen.getByText('Audit in progress')).toBeInTheDocument();
+    expect(
+      within(screen.getByTestId('overview-next-actions')).getByText('Audit in progress'),
+    ).toBeInTheDocument();
     expect(screen.getByTestId('overview-primary-action')).toHaveTextContent('View audit progress');
   });
 
@@ -865,6 +867,28 @@ describe('OverviewPanel', () => {
       }),
     );
     expect(screen.getByText('Page speed data not available for this run')).toBeInTheDocument();
+  });
+
+  it('shows a neutral first-audit prompt, not a service failure, before any audit (issue #9)', () => {
+    renderPanel(buildStore({ report: null }));
+    const pageSpeed = within(screen.getByTestId('overview-pagespeed'));
+    expect(pageSpeed.getByText('No page-speed results yet')).toBeInTheDocument();
+    expect(pageSpeed.getByText('Run your first audit to see mobile PageSpeed results.')).toBeInTheDocument();
+    expect(pageSpeed.queryByText('Page speed data not available for this run')).toBeNull();
+    expect(pageSpeed.queryByText(/couldn't reach the page-speed service/)).toBeNull();
+  });
+
+  it('shows the in-progress state on the page-speed card while the first audit runs', () => {
+    renderPanel(buildStore({ report: null, reportRunStatus: 'running' }));
+    const pageSpeed = within(screen.getByTestId('overview-pagespeed'));
+    expect(pageSpeed.getByText('Auditing your site — this can take a couple of minutes.')).toBeInTheDocument();
+  });
+
+  it('says page speed was not measured when the audit carried no PageSpeed section', () => {
+    renderPanel(buildStore({ report: richReport({ pageSpeed: null }) }));
+    const pageSpeed = within(screen.getByTestId('overview-pagespeed'));
+    expect(pageSpeed.getByText('Page speed not measured')).toBeInTheDocument();
+    expect(pageSpeed.queryByText('Page speed data not available for this run')).toBeNull();
   });
 
   it('shows empty keyword and backlink states without inventing zeroes', () => {

@@ -133,7 +133,11 @@
       "description": "Die erste mobile PageSpeed-Stichprobe aus dem letzten Audit.",
       "accessibility": "Barrierefreiheit",
       "seo": "SEO",
-      "coreWebVitals": "Core Web Vitals"
+      "coreWebVitals": "Core Web Vitals",
+      "noAuditTitle": "Noch keine Geschwindigkeitsergebnisse",
+      "noAuditBody": "Starten Sie Ihren ersten Audit, um mobile PageSpeed-Ergebnisse zu sehen.",
+      "notMeasuredTitle": "Seitengeschwindigkeit nicht gemessen",
+      "notMeasuredBody": "Ihr letzter Audit enthielt keine PageSpeed-Stichprobe. Ergebnisse erscheinen hier nach einem Audit, der die Geschwindigkeit misst."
     },
     "keywords": {
       "title": "Kürzlich verfolgte Keywords",

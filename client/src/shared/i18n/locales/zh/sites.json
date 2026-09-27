@@ -133,7 +133,11 @@
       "description": "最新审计中的第一个移动端 PageSpeed 样本。",
       "accessibility": "无障碍",
       "seo": "SEO",
-      "coreWebVitals": "核心网页指标"
+      "coreWebVitals": "核心网页指标",
+      "noAuditTitle": "暂无页面速度结果",
+      "noAuditBody": "运行首次审计以查看移动端 PageSpeed 结果。",
+      "notMeasuredTitle": "未测量页面速度",
+      "notMeasuredBody": "最近一次审计未包含 PageSpeed 采样。测量页面速度的审计完成后,结果将显示在这里。"
     },
     "keywords": {
       "title": "最近跟踪的关键词",

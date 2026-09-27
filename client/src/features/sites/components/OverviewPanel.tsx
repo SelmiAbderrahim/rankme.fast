@@ -262,6 +262,32 @@ export const OverviewPanel = ({ siteId }: Props) => {
       ? (report.pageSpeed.samples.find((sample) => sample.strategy === 'mobile') ??
         report.pageSpeed.samples[0])
       : undefined;
+  // Only a measured-then-failed run gets the "service unreachable" copy; no
+  // audit yet (or one still running) is a neutral empty state.
+  const pageSpeedEmptyCopy = (() => {
+    if (report?.pageSpeed?.status === 'unavailable') {
+      return {
+        title: t('report:pageSpeed.unavailableTitle'),
+        description: t('report:pageSpeed.unavailableBody'),
+      };
+    }
+    if (!report && (reportRunStatus === 'queued' || reportRunStatus === 'running')) {
+      return {
+        title: t('sites:overview.next.inProgressTitle'),
+        description: t('report:states.runInProgress'),
+      };
+    }
+    if (!report) {
+      return {
+        title: t('sites:overview.pageSpeed.noAuditTitle'),
+        description: t('sites:overview.pageSpeed.noAuditBody'),
+      };
+    }
+    return {
+      title: t('sites:overview.pageSpeed.notMeasuredTitle'),
+      description: t('sites:overview.pageSpeed.notMeasuredBody'),
+    };
+  })();
   const gsc = report?.gscSearch;
   const cachedCompetitors =
     competitorsSiteId === siteId ? competitorList?.competitors.slice(0, 3) : undefined;
@@ -675,8 +701,8 @@ export const OverviewPanel = ({ siteId }: Props) => {
                     <EmptyMedia variant="icon">
                       <Gauge aria-hidden="true" />
                     </EmptyMedia>
-                    <EmptyTitle>{t('report:pageSpeed.unavailableTitle')}</EmptyTitle>
-                    <EmptyDescription>{t('report:pageSpeed.unavailableBody')}</EmptyDescription>
+                    <EmptyTitle>{pageSpeedEmptyCopy.title}</EmptyTitle>
+                    <EmptyDescription>{pageSpeedEmptyCopy.description}</EmptyDescription>
                   </EmptyHeader>
                 </Empty>
               )}
