@@ -379,6 +379,8 @@ function normalizePage(item: z.infer<typeof pageItemSchema>): AuditPage {
     const meta = item.meta ?? {};
     const checks = item.checks ?? {};
     const timing = normalizeTiming(item.page_timing ?? undefined);
+    // `has_micromarkup` covers inline HTML microdata only; pages that ship
+    // JSON-LD are re-checked by the audit processor's structured-data probe.
     const hasStructuredData = checks.has_micromarkup === true;
     const structuredDataErrors: string[] = checks.has_micromarkup_errors === true
         ? ['micromarkup errors reported by vendor']

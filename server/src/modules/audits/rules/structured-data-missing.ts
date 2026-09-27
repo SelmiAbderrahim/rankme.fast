@@ -1,7 +1,9 @@
 /**
  * Rule `structured-data-missing` — pages without schema.org micromarkup at
  * all (watch: advisory) or with vendor-reported micromarkup errors (fix-now:
- * broken markup is worse than none).
+ * broken markup is worse than none). `hasStructuredData` combines the
+ * vendor's microdata flag with the processor's JSON-LD probe, so pages that
+ * ship server-rendered JSON-LD blocks are credited.
  */
 import type { AuditResult } from '../../../shared/providers/index.js';
 import { bucketFor } from './bucket.js';

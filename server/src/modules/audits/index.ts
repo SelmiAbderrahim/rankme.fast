@@ -3,6 +3,7 @@ export { AuditRun, AUDIT_RUN_STATUSES, type AuditRunDocument, type AuditRunHydra
 export { AuditedPage, type AuditedPageDocument, type AuditedPageHydrated, } from './audited-page.model.js';
 export { completeAuditRun, failAuditRun, markAuditRunRunning, type TransitionResult, } from './audit-run.service.js';
 export { createAuditProcessor, onAuditJobExhausted, resolveAuditTarget, selectPageSpeedSampleUrls, urlPathDepth, type AuditJobOutcome, type AuditProcessorDeps, type ResolvedAuditTarget, } from './audit.processor.js';
+export { createStructuredDataProbe, htmlHasJsonLd, type StructuredDataProbe } from './structured-data-probe.js';
 export { createAuditCompletedHandler, createAuditFailedHandler, type AuditStatusEventDeps, } from './audit.events.js';
 export { auditsRouter, auditsSiteRouter } from './audits.routes.js';
 export { getAuditsQueue, setAuditsQueue } from './audits.queue-holder.js';
