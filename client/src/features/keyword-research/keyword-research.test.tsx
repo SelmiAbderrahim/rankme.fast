@@ -808,6 +808,44 @@ describe('KeywordResearchPanel — recent research', () => {
     await screen.findByTestId('keyword-research-recent-empty');
   });
 
+  it('refreshes Recent research after a lookup without a page reload (issue #13)', async () => {
+    mocked.fetchHistoryRequest
+      .mockResolvedValueOnce({ items: [], nextCursor: null })
+      .mockResolvedValueOnce({
+        items: [
+          historyItem({ id: 'h-new-metrics', phrases: ['trading bot', 'crypto trading bot'] }),
+          historyItem({ id: 'h-new-intent', kind: 'intent', phrases: ['trading bot', 'crypto trading bot'] }),
+        ],
+        nextCursor: null,
+      });
+    mocked.fetchMetricsRequest.mockResolvedValueOnce({ keywords: [metric()] });
+    withProviders(<KeywordResearchPage siteId="s1" />);
+    await screen.findByTestId('keyword-research-recent-empty');
+
+    const user = userEvent.setup();
+    await user.type(screen.getByTestId('keyword-research-input'), 'trading bot{enter}');
+    await user.click(screen.getByTestId('keyword-research-submit'));
+
+    await screen.findByTestId('keyword-research-table');
+    expect(await screen.findByTestId('keyword-research-recent-row-h-new-metrics')).toBeInTheDocument();
+    expect(screen.getByTestId('keyword-research-recent-row-h-new-intent')).toBeInTheDocument();
+    // One refresh after both lookups (metrics + intent) settle.
+    expect(mocked.fetchHistoryRequest).toHaveBeenCalledTimes(2);
+  });
+
+  it('does not re-read Recent research when every lookup of a submit fails', async () => {
+    mocked.fetchMetricsRequest.mockRejectedValueOnce(new ApiError('x', 503, {}));
+    mocked.fetchIntentRequest.mockRejectedValueOnce(new ApiError('x', 503, {}));
+    withProviders(<KeywordResearchPage siteId="s1" />);
+    await screen.findByTestId('keyword-research-recent-empty');
+    const user = userEvent.setup();
+    await user.type(screen.getByTestId('keyword-research-input'), 'trading bot{enter}');
+    await user.click(screen.getByTestId('keyword-research-submit'));
+    await screen.findByTestId('keyword-research-error');
+    await new Promise((resolve) => setTimeout(resolve, 50));
+    expect(mocked.fetchHistoryRequest).toHaveBeenCalledTimes(1);
+  });
+
   it('renders the recent lookups with both cached and live source chips', async () => {
     mocked.fetchHistoryRequest.mockResolvedValueOnce({
       items: [

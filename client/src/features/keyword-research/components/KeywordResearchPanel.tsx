@@ -80,7 +80,14 @@ import { cn } from '@shared/lib/utils';
 import { useAppDispatch, useAppSelector } from '@shared/hooks/redux';
 import { APP_PAGE_ICONS } from '@shared/navigation/appPageIcons';
 import { contentAnalysisHref } from '@shared/navigation/contentIntelligenceHref';
-import { fetchIdeas, fetchIntent, fetchLongTail, loadMetrics, loadRelated } from '../store/thunks';
+import {
+  fetchIdeas,
+  fetchIntent,
+  fetchLongTail,
+  loadHistory,
+  loadMetrics,
+  loadRelated,
+} from '../store/thunks';
 import {
   setExpanded,
   clearMessages,
@@ -355,14 +362,29 @@ export const KeywordResearchPanel = ({ siteId }: Props) => {
     });
   };
 
+  // Every lookup is saved to Recent research server-side; re-read the list
+  // once the lookups settle so it shows the new rows without a reload. One
+  // refresh per submit, and only when at least one lookup succeeded.
+  const refreshHistoryAfter = (
+    ...requests: Array<Promise<{ meta: { requestStatus: 'fulfilled' | 'rejected' } }>>
+  ) => {
+    void Promise.all(requests).then((results) => {
+      if (results.some((result) => result.meta.requestStatus === 'fulfilled')) {
+        void dispatch(loadHistory({}));
+      }
+    });
+  };
+
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     /* v8 ignore next -- submit button is disabled when chips.length === 0; belt-and-braces guard. */
     if (chips.length === 0) return;
-    void dispatch(loadMetrics({ keywords: chips, locationCode, languageCode }));
-    // Classify intent for the same set — badges merge onto the rows as they
-    // resolve. Rides the same `keyword_lookups` metering as /metrics.
-    void dispatch(fetchIntent({ keywords: chips, locationCode, languageCode }));
+    refreshHistoryAfter(
+      dispatch(loadMetrics({ keywords: chips, locationCode, languageCode })),
+      // Classify intent for the same set — badges merge onto the rows as they
+      // resolve. Rides the same `keyword_lookups` metering as /metrics.
+      dispatch(fetchIntent({ keywords: chips, locationCode, languageCode })),
+    );
   };
 
   // "Search again" on a Recent-research row re-runs the lookup IN PLACE (unlike
@@ -376,28 +398,32 @@ export const KeywordResearchPanel = ({ siteId }: Props) => {
       const seed = item.phrases[0];
       /* v8 ignore next -- persisted research history always contains at least one phrase. */
       if (seed) {
-        void dispatch(
-          fetchLongTail({
-            seed,
-            locationCode: item.locationCode,
-            languageCode: item.languageCode,
-          }),
+        refreshHistoryAfter(
+          dispatch(
+            fetchLongTail({
+              seed,
+              locationCode: item.locationCode,
+              languageCode: item.languageCode,
+            }),
+          ),
         );
       }
     } else {
-      void dispatch(
-        loadMetrics({
-          keywords: item.phrases,
-          locationCode: item.locationCode,
-          languageCode: item.languageCode,
-        }),
-      );
-      void dispatch(
-        fetchIntent({
-          keywords: item.phrases,
-          locationCode: item.locationCode,
-          languageCode: item.languageCode,
-        }),
+      refreshHistoryAfter(
+        dispatch(
+          loadMetrics({
+            keywords: item.phrases,
+            locationCode: item.locationCode,
+            languageCode: item.languageCode,
+          }),
+        ),
+        dispatch(
+          fetchIntent({
+            keywords: item.phrases,
+            locationCode: item.locationCode,
+            languageCode: item.languageCode,
+          }),
+        ),
       );
     }
   };
@@ -409,12 +435,14 @@ export const KeywordResearchPanel = ({ siteId }: Props) => {
   const handleGetIdeas = () => {
     /* v8 ignore next -- button is disabled when ideaSeed is empty; belt-and-braces guard. */
     if (ideaSeed.length === 0) return;
-    void dispatch(fetchIdeas({ seed: ideaSeed, locationCode, languageCode }));
+    refreshHistoryAfter(dispatch(fetchIdeas({ seed: ideaSeed, locationCode, languageCode })));
   };
 
   // The button is disabled without a valid seed, so no guard is needed here.
   const handleFindLongTail = () => {
-    void dispatch(fetchLongTail({ seed: longTailSeed, locationCode, languageCode }));
+    refreshHistoryAfter(
+      dispatch(fetchLongTail({ seed: longTailSeed, locationCode, languageCode })),
+    );
   };
 
   // Empty-state CTA: put the cursor back in the seed input for the next lookup.
