@@ -133,7 +133,11 @@
       "description": "Le premier échantillon PageSpeed mobile du dernier audit.",
       "accessibility": "Accessibilité",
       "seo": "SEO",
-      "coreWebVitals": "Signaux Web essentiels"
+      "coreWebVitals": "Signaux Web essentiels",
+      "noAuditTitle": "Pas encore de résultats de vitesse",
+      "noAuditBody": "Lancez votre premier audit pour voir les résultats PageSpeed sur mobile.",
+      "notMeasuredTitle": "Vitesse de page non mesurée",
+      "notMeasuredBody": "Votre dernier audit ne contenait pas d'échantillon PageSpeed. Les résultats apparaîtront ici après un audit qui mesure la vitesse."
     },
     "keywords": {
       "title": "Mots-clés suivis récemment",

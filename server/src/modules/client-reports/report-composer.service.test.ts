@@ -180,6 +180,25 @@ describe('client report composition', () => {
     });
   });
 
+  it('drops not-evaluated audit checks from the client-facing findings (issue #1)', async () => {
+    mocked.reportSnapshotFindOne.mockReturnValueOnce(query({
+      runId: 'run-1',
+      createdAt: new Date('2026-08-02T00:00:00.000Z'),
+    }));
+    mocked.auditRunFindOne.mockReturnValueOnce(query({ finishedAt: new Date('2026-08-02T00:00:00.000Z') }));
+    const base = report([{ affectedUrls: ['a'] }, { affectedUrls: [] }]);
+    mocked.getAuditReport.mockResolvedValueOnce({
+      ...base,
+      findings: [base.findings[0], { ...base.findings[1], notEvaluated: true }],
+    });
+
+    const composed = await composeClientReport({
+      ...INPUT,
+      sections: { audit: true, ranks: false, gsc: false },
+    }, {} as never);
+    expect(composed.sections.audit?.report.findings.map((finding) => finding.ruleId)).toEqual(['rule-0']);
+  });
+
   it('reads legacy GSC rows when a bound site has no generation id', async () => {
     mocked.siteFindOne.mockReturnValueOnce(query({
       displayName: 'Site',

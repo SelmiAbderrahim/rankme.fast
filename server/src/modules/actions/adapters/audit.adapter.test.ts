@@ -182,6 +182,40 @@ describe('auditActionAdapter', () => {
     expect(JSON.stringify(result)).not.toContain(HOSTILE_META);
   });
 
+  it('skips checks that could not run for lack of data (issue #1)', async () => {
+    const { accountId, siteId } = ids();
+    await seedRun({
+      accountId,
+      siteId,
+      findings: [
+        { ruleId: 'gsc-ctr-low', bucket: 'watch', severity: 'warning', affectedUrls: [], meta: { insufficientData: true, reason: 'not-connected' } },
+        { ruleId: 'core-web-vitals-poor', bucket: 'watch', severity: 'warning', affectedUrls: [], meta: { insufficientData: true, reason: 'no-field-data' } },
+        { ruleId: 'title-missing-or-weak', bucket: 'watch', severity: 'warning', affectedUrls: ['https://ex.test/a'] },
+      ],
+    });
+    const result = await auditActionAdapter({ accountId, siteId, db: unusedDb });
+    expect(result.actions.map((action) => action.sourceId)).toEqual(['title-missing-or-weak']);
+  });
+
+  it('reports the real affected-URL total next to the 20-URL sample (issue #12)', async () => {
+    const { accountId, siteId } = ids();
+    await seedRun({
+      accountId,
+      siteId,
+      findings: [
+        {
+          ruleId: 'structured-data-missing',
+          bucket: 'watch',
+          severity: 'warning',
+          affectedUrls: Array.from({ length: 170 }, (_, i) => `https://ex.test/p-${i}`),
+        },
+      ],
+    });
+    const result = await auditActionAdapter({ accountId, siteId, db: unusedDb });
+    expect(result.actions[0]?.affectedUrls).toHaveLength(20);
+    expect(result.actions[0]?.affectedUrlCount).toBe(170);
+  });
+
   it('adds code-fix metadata only for actionable technical findings with evidence', async () => {
     const { accountId, siteId } = ids();
     await seedRun({

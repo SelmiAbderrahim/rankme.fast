@@ -1,9 +1,11 @@
-import { Link, type RouteObject } from 'react-router-dom';
+import { useEffect } from 'react';
+import { isRouteErrorResponse, Link, useRouteError, type RouteObject } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { AppLayout } from '@shared/components/AppLayout';
 import { MinimalLayout } from '@shared/components/MinimalLayout';
 import { NotFound } from '@shared/components/NotFound';
-import { Bug } from 'lucide-react';
+import { Bug, RefreshCw } from 'lucide-react';
+import { isChunkLoadError, reloadOnceForStaleChunk } from '@shared/lib/chunkReload';
 import { Button } from '@shared/ui/button';
 import { buildBugReportHref } from '@shared/feedback/bugReport';
 import { useRoutePattern } from '@shared/feedback/useRoutePattern';
@@ -65,13 +67,41 @@ export function LazyRouteFallback() {
 export function RouteErrorBoundary() {
   const { t } = useTranslation(['common', 'errors']);
   const routePattern = useRoutePattern();
+  const error = useRouteError();
+  const staleChunk = isChunkLoadError(error);
+  const notFound = isRouteErrorResponse(error) && error.status === 404;
+
+  // A deploy removed the chunk this tab expected: reload once so the user
+  // lands on the page they asked for. The guard prevents a reload loop.
+  useEffect(() => {
+    if (staleChunk) reloadOnceForStaleChunk();
+  }, [staleChunk]);
+
+  if (staleChunk) {
+    return (
+      <main className="mx-auto w-full max-w-3xl space-y-3 p-6" role="alert">
+        <h1 className="text-2xl font-semibold tracking-tight">
+          {t('common:appUpdated.title')}
+        </h1>
+        <p className="text-muted-foreground">{t('common:appUpdated.description')}</p>
+        <div className="flex flex-wrap gap-2">
+          <Button type="button" onClick={() => globalThis.location.reload()}>
+            <RefreshCw aria-hidden="true" />
+            {t('common:appUpdated.reload')}
+          </Button>
+        </div>
+      </main>
+    );
+  }
 
   return (
     <main className="mx-auto w-full max-w-3xl space-y-3 p-6" role="alert">
       <h1 className="text-2xl font-semibold tracking-tight">
-        {t('common:notFound.title')}
+        {notFound ? t('common:notFound.title') : t('common:routeError.title')}
       </h1>
-      <p className="text-muted-foreground">{t('errors:internal')}</p>
+      <p className="text-muted-foreground">
+        {notFound ? t('common:notFound.description') : t('errors:internal')}
+      </p>
       <div className="flex flex-wrap gap-2">
         <Button asChild><Link to="/dashboard">{t('common:notFound.backToDashboard')}</Link></Button>
         <Button variant="secondary" asChild>

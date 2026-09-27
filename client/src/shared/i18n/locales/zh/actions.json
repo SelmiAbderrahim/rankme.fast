@@ -79,7 +79,8 @@
     "evidence": "证据",
     "evidenceLink": "打开证据来源",
     "history": "历史记录",
-    "retest": "重新检测"
+    "retest": "重新检测",
+    "affectedSample": "(显示 {{shown}} 个)"
   },
   "transitions": {
     "planned": "计划",
@@ -117,7 +118,7 @@
   "retest": {
     "title": "要重新检测此发现吗？",
     "description": "重新检测会运行一次全新的站点审计，并更新所有基于审计的行动。",
-    "unitsLabel": "消耗的审计次数",
+    "unitsLabel": "本次将消耗的审计次数",
     "unitsValue": "1",
     "freshRun": "重新检测始终重新抓取——结果绝不来自缓存。",
     "selfHosted": "自托管模式不计量套餐使用限额。",

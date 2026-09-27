@@ -133,7 +133,11 @@
       "description": "La primera muestra móvil de PageSpeed de la última auditoría.",
       "accessibility": "Accesibilidad",
       "seo": "SEO",
-      "coreWebVitals": "Métricas web principales"
+      "coreWebVitals": "Métricas web principales",
+      "noAuditTitle": "Aún no hay resultados de velocidad",
+      "noAuditBody": "Ejecuta tu primera auditoría para ver los resultados de PageSpeed en móvil.",
+      "notMeasuredTitle": "Velocidad de página no medida",
+      "notMeasuredBody": "Tu última auditoría no incluyó una muestra de PageSpeed. Los resultados aparecerán aquí tras una auditoría que mida la velocidad."
     },
     "keywords": {
       "title": "Palabras clave seguidas recientemente",

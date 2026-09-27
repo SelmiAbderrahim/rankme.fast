@@ -226,6 +226,8 @@ const isDocsPath = (pathname) => DOCS_PATH.test(pathname);
 // token-scoped client portals / report shares. Every other path belongs to
 // the authenticated SPA and gets the CSR shell, so a new app route never has
 // to be mirrored here and can never be SSR-404'd before the SPA takes over.
+// A reverse proxy in front of this server must forward EVERY app-host path
+// here instead of keeping its own app-route allow-list (ops/reverse-proxy.md).
 const isPublicPath = (pathname) =>
   isDocsPath(pathname) || isPortalPath(pathname) || isReportSharePath(pathname);
 

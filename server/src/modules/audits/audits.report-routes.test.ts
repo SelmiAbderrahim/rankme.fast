@@ -127,6 +127,7 @@ describe('GET /api/audits/:runId/report', () => {
       fixNow: expect.any(Number),
       watch: expect.any(Number),
       passed: expect.any(Number),
+      notEvaluated: expect.any(Number),
     });
     for (const finding of res.body.findings) {
       expect(finding.copy.title).toBeTypeOf('string');

@@ -10,7 +10,9 @@
       "running": "Läuft",
       "succeeded": "Abgeschlossen",
       "failed": "Fehlgeschlagen"
-    }
+    },
+    "loading": "Audit-Verlauf wird geladen…",
+    "loadFailed": "Der Audit-Verlauf konnte nicht geladen werden."
   },
   "tabs": {
     "fix-now": "Jetzt beheben",
@@ -46,7 +48,8 @@
     "cta": "Erneut prüfen",
     "running": "Prüfung läuft…",
     "starting": "Wird gestartet…",
-    "first": "Ersten Audit starten"
+    "first": "Ersten Audit starten",
+    "dialogTitle": "Neuen Audit starten?"
   },
   "pageCap": {
     "label": "Zu crawlende Seiten",
@@ -74,7 +77,8 @@
   "states": {
     "loading": "Ihr Bericht wird geladen…",
     "retry": "Erneut versuchen",
-    "runInProgress": "Website wird geprüft — dies kann einige Minuten dauern."
+    "runInProgress": "Website wird geprüft — dies kann einige Minuten dauern.",
+    "runProgress": "Bis zu {{count}} Seiten werden geprüft."
   },
   "loadFailed": "Ihr Bericht konnte nicht geladen werden.",
   "retestFailed": "Der Audit konnte nicht gestartet werden.",
@@ -218,5 +222,27 @@
     "unavailable": "Nicht verfügbar",
     "observed": "Beobachtet am {{date}}",
     "provenance": "Quelle: {{kind}}"
+  },
+  "notEvaluated": {
+    "title": "Nicht geprüft",
+    "description": "Diese Prüfungen konnten nicht laufen, weil eine Datenquelle fehlt. Sie zählen nicht als Probleme.",
+    "badge": "Nicht geprüft",
+    "sources": {
+      "gsc": "Verbinden Sie die Google Search Console, um dies zu prüfen.",
+      "gscReconnect": "Verbinden Sie die Google Search Console erneut, um dies zu prüfen.",
+      "pageSpeed": "Geschwindigkeitsdaten echter Besucher sind für diese Website noch nicht verfügbar.",
+      "localSeo": "Fügen Sie einen Unternehmenseintrag oder eine Bewertungsquelle hinzu, um dies zu prüfen.",
+      "aiVisibility": "Verfolgen Sie KI-Prompts, um dies zu prüfen.",
+      "generic": "Der Crawl hat nicht genug Daten geliefert, um dies zu prüfen."
+    }
+  },
+  "pending": {
+    "title": "Ihre Ergebnisse erscheinen hier",
+    "description": "Sobald dieser Audit abgeschlossen ist, sehen Sie, was zu beheben, was zu beobachten und was bereits in Ordnung ist."
+  },
+  "firstAudit": {
+    "title": "Ersten Audit starten",
+    "description": "Wir crawlen Ihre Website einmal und zeigen, was zu beheben, was zu beobachten und was bereits in Ordnung ist.",
+    "confirm": "Audit starten"
   }
 }

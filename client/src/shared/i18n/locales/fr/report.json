@@ -10,7 +10,9 @@
       "running": "En cours",
       "succeeded": "Terminé",
       "failed": "Échoué"
-    }
+    },
+    "loading": "Chargement de l'historique des audits…",
+    "loadFailed": "Impossible de charger l'historique des audits."
   },
   "tabs": {
     "fix-now": "À corriger",
@@ -46,7 +48,8 @@
     "cta": "Relancer",
     "running": "Audit en cours…",
     "starting": "Démarrage…",
-    "first": "Lancer votre premier audit"
+    "first": "Lancer votre premier audit",
+    "dialogTitle": "Lancer un nouvel audit ?"
   },
   "pageCap": {
     "label": "Pages à analyser",
@@ -74,7 +77,8 @@
   "states": {
     "loading": "Chargement de votre rapport…",
     "retry": "Réessayer",
-    "runInProgress": "Audit de votre site en cours — cela peut prendre quelques minutes."
+    "runInProgress": "Audit de votre site en cours — cela peut prendre quelques minutes.",
+    "runProgress": "Vérification de {{count}} pages au maximum."
   },
   "loadFailed": "Impossible de charger votre rapport.",
   "retestFailed": "Impossible de démarrer l'audit.",
@@ -218,5 +222,27 @@
     "unavailable": "Indisponible",
     "observed": "Observé le {{date}}",
     "provenance": "Source {{kind}}"
+  },
+  "notEvaluated": {
+    "title": "Non évalué",
+    "description": "Ces vérifications n'ont pas pu s'exécuter car une source de données manque. Elles ne sont pas comptées comme des problèmes.",
+    "badge": "Non évalué",
+    "sources": {
+      "gsc": "Connectez Google Search Console pour effectuer cette vérification.",
+      "gscReconnect": "Reconnectez Google Search Console pour effectuer cette vérification.",
+      "pageSpeed": "Les données de vitesse issues de vrais visiteurs ne sont pas encore disponibles pour ce site.",
+      "localSeo": "Ajoutez une fiche d'établissement ou une source d'avis pour effectuer cette vérification.",
+      "aiVisibility": "Suivez des requêtes IA pour effectuer cette vérification.",
+      "generic": "L'exploration n'a pas renvoyé assez de données pour effectuer cette vérification."
+    }
+  },
+  "pending": {
+    "title": "Vos résultats apparaîtront ici",
+    "description": "À la fin de cet audit, vous verrez ce qu'il faut corriger, ce qu'il faut surveiller et ce qui passe déjà."
+  },
+  "firstAudit": {
+    "title": "Lancez votre premier audit",
+    "description": "Nous explorons votre site une fois et vous montrons ce qu'il faut corriger, ce qu'il faut surveiller et ce qui passe déjà.",
+    "confirm": "Lancer l'audit"
   }
 }

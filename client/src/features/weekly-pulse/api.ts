@@ -74,13 +74,17 @@ export function getWeeklyPulseHistoryDetail(
   );
 }
 
-/** GSC first-party generative-AI appearance for a site. */
+/**
+ * GSC first-party generative-AI appearance for a site. Site-scoped: the old
+ * account-global `/google/*` mount no longer exists and 404s. A site without
+ * a bound Search Console property answers 200 with `status: 'unavailable'`.
+ */
 export function getGenerativeAppearance(
   siteId: string,
   init: WeeklyPulseApiInit = {},
 ): Promise<{ appearance: GscGenerativeAppearanceRead }> {
   return apiClient<{ appearance: GscGenerativeAppearanceRead }>(
-    `/google/generative-appearance?siteId=${encodeURIComponent(siteId)}`,
+    `/sites/${encodeURIComponent(siteId)}/google/generative-appearance`,
     { method: 'GET', ...(init.signal ? { signal: init.signal } : {}) },
   );
 }

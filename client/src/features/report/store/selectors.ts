@@ -17,8 +17,11 @@ export const selectReportRetestError = (state: RootState) => selectSlice(state).
 export const selectReportRunId = (state: RootState) => selectSlice(state).runId;
 export const selectReportSiteId = (state: RootState) => selectSlice(state).siteId;
 export const selectReportRunStatus = (state: RootState) => selectSlice(state).runStatus;
+export const selectReportRunPageCap = (state: RootState) => selectSlice(state).runPageCap;
 export const selectReportRuns = (state: RootState) => selectSlice(state).runs;
 export const selectReportRunsSiteId = (state: RootState) => selectSlice(state).runsSiteId;
+export const selectReportRunsLoading = (state: RootState) => selectSlice(state).runsLoading;
+export const selectReportRunsError = (state: RootState) => selectSlice(state).runsError;
 export const selectReportPdfDownloading = (state: RootState) =>
   selectSlice(state).pdfDownloading;
 export const selectReportPdfError = (state: RootState) => selectSlice(state).pdfError;

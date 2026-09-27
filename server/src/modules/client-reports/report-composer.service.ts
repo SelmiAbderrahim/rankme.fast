@@ -90,7 +90,9 @@ async function readAuditSection(input: ComposeClientReportInput): Promise<Client
     });
     return {
         snapshotDate: (run.finishedAt ?? snapshot.createdAt).toISOString(),
-        report,
+        // Checks that could not run (missing integration) are not findings a
+        // client should read as open warnings.
+        report: { ...report, findings: report.findings.filter((finding) => !finding.notEvaluated) },
     };
 }
 async function readRankSection(input: ComposeClientReportInput, db: Db): Promise<ClientRankSection | null> {

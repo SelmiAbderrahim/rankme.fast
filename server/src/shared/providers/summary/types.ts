@@ -1,7 +1,7 @@
 /**
  * SummaryProvider contract.
  *
- * Optional AI helper that turns the audit's Fix-now findings into a plain-
+ * Optional AI helper that turns the audit's Fix-now and Watch findings into a plain-
  * English business-owner summary. The rest of the audit never depends on
  * this — feature off, key absent, or provider failure produces byte-
  * identical report output to the pre-feature snapshot.
@@ -10,6 +10,11 @@ import type { SupportedLocale } from '../../i18n/index.js';
 import type { AiUsageContext } from '../ai-generation.js';
 export interface SummaryFindingInput {
     ruleId: string;
+    /**
+     * Report bucket the finding came from: `fix-now` (urgent) or `watch`
+     * (worth doing, not urgent). Absent = legacy caller (fix-now only).
+     */
+    priority?: 'fix-now' | 'watch';
     /** Localized title (never a translation key) — what the provider quotes. */
     title: string;
     /** Localized "why it matters" copy. */

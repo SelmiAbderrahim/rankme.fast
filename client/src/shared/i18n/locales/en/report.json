@@ -10,7 +10,9 @@
       "running": "Running",
       "succeeded": "Completed",
       "failed": "Failed"
-    }
+    },
+    "loading": "Loading audit history…",
+    "loadFailed": "We couldn't load your audit history."
   },
   "tabs": {
     "fix-now": "Fix now",
@@ -46,7 +48,8 @@
     "cta": "Retest",
     "running": "Auditing…",
     "starting": "Starting…",
-    "first": "Run your first audit"
+    "first": "Run your first audit",
+    "dialogTitle": "Run a fresh audit?"
   },
   "pageCap": {
     "label": "Pages to crawl",
@@ -74,7 +77,8 @@
   "states": {
     "loading": "Loading your report…",
     "retry": "Try again",
-    "runInProgress": "Auditing your site — this can take a couple of minutes."
+    "runInProgress": "Auditing your site — this can take a couple of minutes.",
+    "runProgress": "Checking up to {{count}} pages."
   },
   "loadFailed": "Could not load your report.",
   "retestFailed": "Could not start the audit.",
@@ -222,5 +226,27 @@
     "unavailable": "Unavailable",
     "observed": "Observed {{date}}",
     "provenance": "{{kind}} source"
+  },
+  "notEvaluated": {
+    "title": "Not evaluated",
+    "description": "These checks could not run because a data source is missing. They are not counted as problems.",
+    "badge": "Not evaluated",
+    "sources": {
+      "gsc": "Connect Google Search Console to check this.",
+      "gscReconnect": "Reconnect Google Search Console to check this.",
+      "pageSpeed": "Speed data from real visitors is not available for this site yet.",
+      "localSeo": "Add a business listing or review source to check this.",
+      "aiVisibility": "Track AI prompts to check this.",
+      "generic": "The crawl did not return enough data to check this."
+    }
+  },
+  "pending": {
+    "title": "Your results will appear here",
+    "description": "When this audit finishes, you'll see what to fix, what to watch, and what already passes."
+  },
+  "firstAudit": {
+    "title": "Run your first audit",
+    "description": "We crawl your site once and show what to fix, what to watch, and what already passes.",
+    "confirm": "Start audit"
   }
 }

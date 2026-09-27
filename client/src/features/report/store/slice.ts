@@ -24,10 +24,12 @@ export const initialState: ReportState = {
   retesting: false,
   retestError: '',
   runStatus: null,
+  runPageCap: null,
   runs: [],
   runsLoading: false,
   runsLoaded: false,
   runsSiteId: null,
+  runsError: '',
   pdfDownloading: false,
   pdfError: '',
 };
@@ -91,10 +93,12 @@ const reportSlice = createSlice({
           state.report = null;
           state.runId = null;
           state.runStatus = null;
+          state.runPageCap = null;
           return;
         }
         state.runId = action.payload.runId;
         state.runStatus = action.payload.runStatus;
+        state.runPageCap = action.payload.pageCap ?? null;
         state.report = action.payload.report ?? null;
       })
       .addCase(loadReport.rejected, (state, action) => {
@@ -112,6 +116,7 @@ const reportSlice = createSlice({
         state.retesting = false;
         state.runId = action.payload.run.id;
         state.runStatus = action.payload.run.status;
+        state.runPageCap = action.payload.run.pageCap;
       })
       .addCase(startRetest.rejected, (state, action) => {
         if (action.meta.aborted) return;
@@ -122,12 +127,14 @@ const reportSlice = createSlice({
         if (!matchesIdentity(state, action.meta.arg)) return;
         state.runStatus = action.payload.status;
         state.runId = action.payload.id;
+        state.runPageCap = action.payload.pageCap;
       })
       .addCase(loadRuns.pending, (state, action) => {
         const identity = identityFor(action.meta.arg);
         state.presentationLocale = identity.presentationLocale;
         state.presentationGeneration = identity.presentationGeneration;
         state.runsLoading = true;
+        state.runsError = '';
         if (state.runsSiteId !== action.meta.arg.siteId) {
           state.runs = [];
           state.runsLoaded = false;
@@ -143,6 +150,12 @@ const reportSlice = createSlice({
       .addCase(loadRuns.rejected, (state, action) => {
         if (action.meta.aborted || !matchesIdentity(state, action.meta.arg)) return;
         state.runsLoading = false;
+        // A failed read is not an empty history: keep the error for the card
+        // and forget the site so the next mount (client-side navigation)
+        // fetches again instead of replaying the failure.
+        state.runsError = action.payload ?? '';
+        state.runsLoaded = false;
+        state.runsSiteId = null;
       })
       .addCase(downloadReportPdf.pending, (state) => {
         state.pdfDownloading = true;
@@ -169,6 +182,7 @@ const reportSlice = createSlice({
         state.runsLoading = false;
         state.runsLoaded = false;
         state.runsSiteId = null;
+        state.runsError = '';
         state.retestError = '';
         state.pdfError = '';
       });

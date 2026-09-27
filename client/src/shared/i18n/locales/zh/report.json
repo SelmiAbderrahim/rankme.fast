@@ -10,7 +10,9 @@
       "running": "运行中",
       "succeeded": "已完成",
       "failed": "失败"
-    }
+    },
+    "loading": "正在加载审计历史…",
+    "loadFailed": "无法加载审计历史。"
   },
   "tabs": {
     "fix-now": "立即修复",
@@ -46,7 +48,8 @@
     "cta": "重新检测",
     "running": "正在审计…",
     "starting": "正在开始…",
-    "first": "运行首次审计"
+    "first": "运行首次审计",
+    "dialogTitle": "运行一次新的审计?"
   },
   "pageCap": {
     "label": "抓取页面数",
@@ -74,7 +77,8 @@
   "states": {
     "loading": "正在加载您的报告…",
     "retry": "重试",
-    "runInProgress": "正在审计您的网站——这可能需要几分钟。"
+    "runInProgress": "正在审计您的网站——这可能需要几分钟。",
+    "runProgress": "正在检查最多 {{count}} 个页面。"
   },
   "loadFailed": "无法加载您的报告。",
   "retestFailed": "无法启动审计。",
@@ -218,5 +222,27 @@
     "unavailable": "不可用",
     "observed": "观测时间：{{date}}",
     "provenance": "{{kind}} 来源"
+  },
+  "notEvaluated": {
+    "title": "未评估",
+    "description": "由于缺少数据源,这些检查无法运行。它们不计为问题。",
+    "badge": "未评估",
+    "sources": {
+      "gsc": "连接 Google Search Console 以进行此项检查。",
+      "gscReconnect": "重新连接 Google Search Console 以进行此项检查。",
+      "pageSpeed": "此网站暂无真实访客的速度数据。",
+      "localSeo": "添加商家信息或评价来源以进行此项检查。",
+      "aiVisibility": "跟踪 AI 提示词以进行此项检查。",
+      "generic": "抓取未返回足够的数据来进行此项检查。"
+    }
+  },
+  "pending": {
+    "title": "结果将显示在这里",
+    "description": "本次审计完成后,您将看到需要修复、需要关注以及已经通过的项目。"
+  },
+  "firstAudit": {
+    "title": "运行首次审计",
+    "description": "我们会抓取一次您的网站,并显示需要修复、需要关注以及已经通过的项目。",
+    "confirm": "开始审计"
   }
 }

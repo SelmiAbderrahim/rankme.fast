@@ -87,6 +87,13 @@ export interface AuditProcessorDeps {
         sitemaps: GscSitemapsEvaluationInput;
     }>;
     /**
+     * JSON-LD re-check for pages the vendor reported without structured data
+     * (the vendor flag only detects HTML microdata). Returns the URLs whose
+     * initial HTML carries valid JSON-LD. Optional; a failure keeps the
+     * vendor verdict and never fails the run.
+     */
+    probeStructuredData?: (urls: readonly string[]) => Promise<ReadonlySet<string>>;
+    /**
      * Vendor-response archiver (generic vendor layer). When present, the
      * normalized crawl result is appended to the `vendor_responses` table
      * (capability `audit`, per-account — never served cross-user) right after
@@ -287,7 +294,7 @@ export function createAuditProcessor(deps: AuditProcessorDeps) {
                 const result: AuditResult = await deps.provider.getAuditResult(vendorTaskId);
                 return { vendorTaskId, result };
             });
-            const { vendorTaskId, result } = crawl;
+            const { vendorTaskId, result: vendorResult } = crawl;
             // Save-everything: the normalized crawl result is archived append-only
             // the moment the vendor hands it over (per-account — audit data is
             // never served cross-user). An archive failure is OUR database failing
@@ -304,14 +311,15 @@ export function createAuditProcessor(deps: AuditProcessorDeps) {
                         // crawled page, so the requested ceiling and the actual count
                         // are both kept for operator cost review.
                         pageCap: payload.pageCap,
-                        pagesCrawled: result.pages.length,
+                        pagesCrawled: vendorResult.pages.length,
                     },
-                    payload: result,
+                    payload: vendorResult,
                     accountId: payload.accountId,
                     costMicros,
                     fetchedAt: new Date(now()),
                 });
             }
+            const result = await applyStructuredDataProbe(vendorResult, deps);
             // Page-speed sampling — Lighthouse + optional CrUX on a
             // sampled subset.
             // Provider failure is degradation, NOT audit failure (release-gate
@@ -417,6 +425,35 @@ export function createAuditProcessor(deps: AuditProcessorDeps) {
             }
             throw err; // retryable — BullMQ backoff; exhaustion handled below
         }
+    };
+}
+/**
+ * Re-check vendor-negative pages for server-rendered JSON-LD and mark the
+ * ones that carry it as having structured data. Pages with vendor-reported
+ * markup errors, non-indexable pages, and pages the vendor already credits
+ * are left untouched. Any probe failure keeps the vendor result.
+ */
+export async function applyStructuredDataProbe(result: AuditResult, deps: Pick<AuditProcessorDeps, 'probeStructuredData' | 'logger'>): Promise<AuditResult> {
+    if (!deps.probeStructuredData)
+        return result;
+    const candidates = result.pages
+        .filter((page) => page.isIndexable && !page.hasStructuredData && page.structuredDataErrors.length === 0)
+        .map((page) => page.url);
+    if (candidates.length === 0)
+        return result;
+    let withJsonLd: ReadonlySet<string>;
+    try {
+        withJsonLd = await deps.probeStructuredData(candidates);
+    }
+    catch (err) {
+        deps.logger.warn({ err: (err as Error).message }, 'structured-data probe failed — keeping vendor verdict');
+        return result;
+    }
+    if (withJsonLd.size === 0)
+        return result;
+    return {
+        ...result,
+        pages: result.pages.map((page) => withJsonLd.has(page.url) ? { ...page, hasStructuredData: true } : page),
     };
 }
 /**

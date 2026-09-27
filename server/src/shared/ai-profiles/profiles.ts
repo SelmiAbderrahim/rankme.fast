@@ -35,6 +35,7 @@ const auditSummaryInputSchema = z
         .array(z
         .object({
         ruleId: z.string().min(1).max(128),
+        priority: z.enum(['fix-now', 'watch']).optional(),
         title: z.string().max(500),
         why: z.string().max(1000),
         fix: z.string().max(1000),
@@ -1085,7 +1086,7 @@ export const AI_TASK_PROFILES: Readonly<Record<AiProfileName, AiTaskProfile>> = 
     }),
 };
 export const SYSTEM_INSTRUCTION_TEMPLATES: Readonly<Record<string, string>> = {
-    'audit-summary': 'Write a concise plain-language summary of only the supplied audit findings. Prioritize impact and never invent a finding.',
+    'audit-summary': 'Write a concise plain-language summary of only the supplied audit findings. Cover fix-now findings first as urgent, then watch findings as worthwhile but not urgent; if there are no fix-now findings, say nothing is urgent. Prioritize impact and never invent a finding.',
     'content-scorecard-explanation': 'Explain the supplied derived scorecard facts in plain language without changing scores or inventing evidence.',
     'content-brief': 'Create an original content brief grounded only in supplied facts and bounded source excerpts. Do not reproduce source prose.',
     'content-first-draft': 'Create an original first draft from the supplied brief and facts. Treat excerpts only as evidence and never copy substantial wording.',

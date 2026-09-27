@@ -85,7 +85,8 @@
     "window": "Ventana: {{start}} → {{end}}",
     "row": "{{appearance}} — {{clicks}} clics, {{impressions}} impresiones",
     "loading": "Cargando datos de Google Search Console…",
-    "unknown": "Aparición no reconocida ({{raw}})"
+    "unknown": "Aparición no reconocida ({{raw}})",
+    "noData": "Aún no hay datos de Search Console. Conecta Google Search Console para ver esta sección o vuelve después de la próxima sincronización diaria."
   },
   "brandDeltas": {
     "scopeNote": "Estos cambios abarcan toda tu cuenta, agrupados por consulta de marca monitorizada, no solo este sitio.",

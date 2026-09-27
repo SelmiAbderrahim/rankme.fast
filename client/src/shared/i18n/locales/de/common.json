@@ -257,5 +257,13 @@
     "reportBug": "Fehler melden",
     "reportProblem": "Dieses Problem melden",
     "mailSubject": "Fehlerbericht ({{version}})"
+  },
+  "appUpdated": {
+    "title": "Eine neue Version ist verfügbar",
+    "description": "Während diese Seite geöffnet war, wurde eine neue Version veröffentlicht. Laden Sie die Seite neu, um fortzufahren.",
+    "reload": "Neu laden"
+  },
+  "routeError": {
+    "title": "Etwas ist schiefgelaufen"
   }
 }

@@ -523,6 +523,86 @@ describe('audit processor — page persistence and PageSpeed sampling', () => {
     expect(snap!.findings.length).toBeGreaterThan(0);
   });
 
+  describe('JSON-LD structured-data probe (issue #2)', () => {
+    const jsonLdResult = {
+      ...FAKE_AUDIT_RESULT,
+      pages: [
+        { ...FAKE_AUDIT_RESULT.pages[0]!, url: 'https://example.com/', hasStructuredData: false },
+        { ...FAKE_AUDIT_RESULT.pages[0]!, url: 'https://example.com/about', hasStructuredData: false },
+        { ...FAKE_AUDIT_RESULT.pages[0]!, url: 'https://example.com/plain', hasStructuredData: false },
+        { ...FAKE_AUDIT_RESULT.pages[0]!, url: 'https://example.com/microdata', hasStructuredData: true },
+        FAKE_AUDIT_RESULT.pages[1]!,
+      ],
+    };
+    const structuredFinding = async (runId: string) => {
+      const snap = await ReportSnapshot.findOne({ runId });
+      return snap!.findings.find((f) => f.ruleId === 'structured-data-missing')!;
+    };
+
+    it('credits vendor-negative pages whose HTML carries JSON-LD', async () => {
+      const ids = await seed();
+      const probe = vi.fn(async () => new Set(['https://example.com/', 'https://example.com/about']));
+      const processor = createAuditProcessor({
+        provider: createFakeAuditProvider({ result: jsonLdResult }),
+        probeStructuredData: probe,
+        logger,
+      });
+      await processor(jobFor({ ...ids, pageCap: 100 }));
+      // Only indexable, error-free pages the vendor did not credit are probed.
+      expect(probe).toHaveBeenCalledWith([
+        'https://example.com/',
+        'https://example.com/about',
+        'https://example.com/plain',
+      ]);
+      const finding = await structuredFinding(ids.runId);
+      expect(finding.affectedUrls).toEqual(['https://example.com/plain']);
+      const pages = await AuditedPage.find({ runId: ids.runId, hasStructuredData: true });
+      expect(pages.map((page) => page.url).sort()).toEqual([
+        'https://example.com/',
+        'https://example.com/about',
+        'https://example.com/microdata',
+      ]);
+    });
+
+    it('passes the rule when every page ships JSON-LD', async () => {
+      const ids = await seed();
+      const processor = createAuditProcessor({
+        provider: createFakeAuditProvider({ result: jsonLdResult }),
+        probeStructuredData: async (urls) => new Set(urls),
+        logger,
+      });
+      await processor(jobFor({ ...ids, pageCap: 100 }));
+      expect((await structuredFinding(ids.runId)).bucket).toBe('passed');
+    });
+
+    it('keeps the vendor verdict when the probe finds nothing or fails', async () => {
+      for (const probeStructuredData of [
+        async () => new Set<string>(),
+        async () => {
+          throw new Error('probe down');
+        },
+      ]) {
+        await clearCollections();
+        const ids = await seed();
+        const processor = createAuditProcessor({
+          provider: createFakeAuditProvider({ result: jsonLdResult }),
+          probeStructuredData,
+          logger,
+        });
+        await expect(processor(jobFor({ ...ids, pageCap: 100 }))).resolves.toMatchObject({ runId: ids.runId });
+        expect((await structuredFinding(ids.runId)).affectedUrls).toHaveLength(3);
+      }
+    });
+
+    it('skips the probe when no page needs a re-check', async () => {
+      const ids = await seed();
+      const probe = vi.fn(async () => new Set<string>());
+      const processor = createAuditProcessor({ provider: createFakeAuditProvider(), probeStructuredData: probe, logger });
+      await processor(jobFor({ ...ids, pageCap: 100 }));
+      expect(probe).not.toHaveBeenCalled();
+    });
+  });
+
   it('re-running replaces the prior snapshot in place (idempotent)', async () => {
     const ids = await seed();
     const provider = createFakeAuditProvider();

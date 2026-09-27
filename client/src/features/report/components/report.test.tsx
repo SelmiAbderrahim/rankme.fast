@@ -1,5 +1,5 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
-import { act, render, screen, waitFor } from '@testing-library/react';
+import { act, render, screen, waitFor, within } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { Provider } from 'react-redux';
 import { I18nextProvider } from 'react-i18next';
@@ -399,6 +399,29 @@ describe('ReportPage — loading, empty & error', () => {
     expect(await screen.findByTestId('retest-preview-units')).toHaveTextContent('1');
   });
 
+  it('words the first-audit dialog as a first audit, not a finding retest (issue #10)', async () => {
+    mocked.fetchLatestRunRequest.mockResolvedValue({ runs: [], nextCursor: null });
+    renderReport();
+    const user = userEvent.setup();
+    await user.click(await screen.findByRole('button', { name: /Run your first audit/ }));
+    const dialog = await screen.findByTestId('report-retest-dialog');
+    expect(within(dialog).getByRole('heading', { name: 'Run your first audit' })).toBeInTheDocument();
+    expect(dialog).not.toHaveTextContent('Retest this finding?');
+    expect(dialog).not.toHaveTextContent('Retests always run a fresh crawl');
+    expect(dialog).toHaveTextContent('Audit runs this will use: 1');
+    expect(within(dialog).getByTestId('report-retest-confirm')).toHaveTextContent('Start audit');
+  });
+
+  it('words the report-level retest dialog as a fresh site audit', async () => {
+    renderReport();
+    const user = userEvent.setup();
+    await user.click(await screen.findByTestId('report-retest'));
+    const dialog = await screen.findByTestId('report-retest-dialog');
+    expect(within(dialog).getByRole('heading', { name: 'Run a fresh audit?' })).toBeInTheDocument();
+    expect(dialog).toHaveTextContent('Retests always run a fresh crawl');
+    expect(within(dialog).getByTestId('report-retest-confirm')).toHaveTextContent('Start retest');
+  });
+
   it('shows the "starting" label while the first retest is in flight', async () => {
     const store = makeStore({
       loaded: true,
@@ -558,6 +581,75 @@ describe('ReportPage — tabs, counts & URL state', () => {
   });
 });
 
+describe('ReportPage — not-evaluated checks (issue #1)', () => {
+  const notEvaluated = (
+    ruleId: string,
+    reason: string | undefined,
+    title: string,
+  ): LocalizedFinding => ({
+    ruleId,
+    bucket: 'watch',
+    severity: 'warning',
+    affectedUrls: [],
+    meta: { insufficientData: true, ...(reason ? { reason } : {}) },
+    notEvaluated: true,
+    copy: {
+      titleKey: `auditRules.${ruleId}.title`,
+      whyKey: `auditRules.${ruleId}.why`,
+      fixKey: `auditRules.${ruleId}.fix`,
+      passedLabelKey: `auditRules.${ruleId}.passedLabel`,
+      title,
+      why: 'why',
+      fix: 'fix',
+      passedLabel: 'passed',
+    },
+  });
+
+  it('lists checks that could not run apart from Watch, with the missing source', async () => {
+    mocked.fetchReportRequest.mockResolvedValue(
+      makeReport({
+        counts: { fixNow: 1, watch: 2, passed: 1, notEvaluated: 7 },
+        findings: [
+          ...findingsFixture,
+          notEvaluated('gsc-ctr-low', 'not-connected', 'Searchers see you but rarely click'),
+          notEvaluated('not-indexed', 'needs-reconnect', 'Pages not indexed'),
+          notEvaluated('core-web-vitals-poor', 'no-field-data', 'Core Web Vitals below threshold'),
+          notEvaluated('low-review-rating', 'not-configured', 'Low review rating'),
+          notEvaluated('ai-visibility-low', undefined, 'AI visibility low'),
+          notEvaluated('sitemap-missing-or-weak', undefined, 'Sitemap missing or weak'),
+          notEvaluated('sitemap-errors', 'not-connected', 'Sitemap errors'),
+        ],
+      }),
+    );
+    renderReport({ path: '/sites/site-1/report?bucket=watch&finding=gsc-ctr-low' });
+    const section = await screen.findByTestId('report-not-evaluated');
+    expect(section).toHaveTextContent('Not evaluated');
+    expect(section).toHaveTextContent('(7)');
+    const rows = screen.getAllByTestId('report-not-evaluated-row');
+    const hint = (ruleId: string) =>
+      rows.find((row) => row.getAttribute('data-rule-id') === ruleId)?.textContent ?? '';
+    expect(hint('gsc-ctr-low')).toContain('Connect Google Search Console to check this.');
+    expect(hint('sitemap-errors')).toContain('Connect Google Search Console to check this.');
+    expect(hint('not-indexed')).toContain('Reconnect Google Search Console to check this.');
+    expect(hint('core-web-vitals-poor')).toContain('Speed data from real visitors');
+    expect(hint('low-review-rating')).toContain('business listing or review source');
+    expect(hint('ai-visibility-low')).toContain('Track AI prompts');
+    expect(hint('sitemap-missing-or-weak')).toContain('did not return enough data');
+
+    // The Watch tab keeps only evaluated warnings and its count excludes the rest.
+    expect(screen.getByTestId('report-tab-watch')).toHaveTextContent('(2)');
+    const watchRows = screen.getAllByTestId('report-issue-row').map((row) => row.getAttribute('data-rule-id'));
+    expect(watchRows).toEqual(['headings-weak', 'faq-content-missing']);
+    expect(screen.queryByTestId('report-issue-detail')).not.toBeInTheDocument();
+  });
+
+  it('renders no not-evaluated section when every check ran', async () => {
+    renderReport();
+    expect(await screen.findByText('Page titles missing or weak')).toBeInTheDocument();
+    expect(screen.queryByTestId('report-not-evaluated')).not.toBeInTheDocument();
+  });
+});
+
 describe('ReportPage — issue detail + copy', () => {
   it('expands the row to reveal why / URL / fix and copies the fix', async () => {
     clipboardMocked.writeToClipboard.mockResolvedValue(true);
@@ -668,6 +760,13 @@ describe('ReportPage — retest & diff badges', () => {
     expect(picker).toHaveTextContent('Plan max');
 
     await user.click(picker);
+    // Issue #11: the list opens as a popper below the trigger, never laid
+    // over the trigger and the dialog copy (item-aligned mode).
+    const listbox = await screen.findByRole('listbox');
+    expect(listbox.closest('[data-slot="select-content"]')).toHaveClass(
+      'data-[side=bottom]:translate-y-1',
+      'bg-popover',
+    );
     await user.click(await screen.findByRole('option', { name: '1000 pages' }));
     await user.click(screen.getByTestId('report-retest-confirm'));
     await waitFor(() =>
@@ -1488,6 +1587,18 @@ describe('slice — reducers & thunks state transitions', () => {
     expect(state.error).toBe('');
   });
 
+  it('loadRuns rejected with no payload records an empty error and forgets the site', async () => {
+    const { loadRuns } = await import('../store/thunks');
+    const { reportReducer } = await import('../store/slice');
+    const state = reportReducer(
+      { ...baseReportState(), runsSiteId: 's', runsLoading: true, runsError: 'old' },
+      loadRuns.rejected(new Error('boom'), 'req', { siteId: 's' }),
+    );
+    expect(state.runsError).toBe('');
+    expect(state.runsSiteId).toBeNull();
+    expect(state.runsLoading).toBe(false);
+  });
+
   it('startRetest rejected with no payload falls back to empty retestError', async () => {
     const { startRetest } = await import('../store/thunks');
     const { reportReducer } = await import('../store/slice');
@@ -1583,7 +1694,48 @@ describe('slice — reducers & thunks state transitions', () => {
     });
     renderReport();
     expect(await screen.findByTestId('report-run-in-progress')).toBeInTheDocument();
+    // Issue #8: no results exist yet — never congratulate an unfinished run.
+    expect(screen.getByTestId('report-run-progress')).toHaveTextContent('Checking up to 100 pages.');
+    expect(screen.getByTestId('report-run-pending')).toHaveTextContent('Your results will appear here');
+    expect(screen.queryByTestId('report-tabs')).toBeNull();
+    expect(screen.queryByText('Nothing to fix right now')).toBeNull();
+    expect(screen.queryByText(/Great work/)).toBeNull();
   });
+
+  it('keeps the first-run placeholder after starting the first audit, then shows results (issue #8)', async () => {
+    mocked.fetchLatestRunRequest.mockResolvedValue({ runs: [], nextCursor: null });
+    mocked.fetchRunRequest.mockResolvedValue({
+      run: {
+        id: 'run-2', siteId: 'site-1', status: 'running', pageCap: 100, pagesCrawled: 0,
+        vendorTaskId: null, startedAt: null, finishedAt: null, error: null,
+        createdAt: '2026-07-02T00:00:00.000Z', updatedAt: '2026-07-02T00:00:00.000Z',
+      },
+    });
+    renderReport();
+    const user = userEvent.setup();
+    await user.click(await screen.findByTestId('report-retest'));
+    await user.click(await screen.findByTestId('report-retest-confirm'));
+    expect(await screen.findByTestId('report-run-pending')).toBeInTheDocument();
+    expect(screen.getByTestId('report-run-progress')).toHaveTextContent('Checking up to 100 pages.');
+    expect(screen.queryByTestId('report-empty-fix-now')).toBeNull();
+  });
+
+  it('keeps showing the previous report during a retest', () => {
+    const store = makeStore({
+      loaded: true,
+      siteId: 'site-1',
+      runId: 'run-2',
+      runStatus: 'running',
+      runPageCap: null,
+      report: makeReport(),
+    });
+    renderReport({ store });
+    expect(screen.getByTestId('report-run-in-progress')).toBeInTheDocument();
+    expect(screen.queryByTestId('report-run-progress')).toBeNull();
+    expect(screen.getByTestId('report-tabs')).toBeInTheDocument();
+    expect(screen.queryByTestId('report-run-pending')).toBeNull();
+  });
+
   it('drops loadReport fulfilled for a previous siteId (stale)', async () => {
     const { loadReport } = await import('../store/thunks');
     const { reportReducer } = await import('../store/slice');

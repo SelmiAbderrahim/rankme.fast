@@ -79,7 +79,8 @@
     "evidence": "Belege",
     "evidenceLink": "Belegquelle öffnen",
     "history": "Verlauf",
-    "retest": "Erneut prüfen"
+    "retest": "Erneut prüfen",
+    "affectedSample": "({{shown}} angezeigt)"
   },
   "transitions": {
     "planned": "Planen",
@@ -117,7 +118,7 @@
   "retest": {
     "title": "Diesen Befund erneut prüfen?",
     "description": "Eine erneute Prüfung startet einen frischen Website-Audit und aktualisiert alle audit-basierten Aktionen.",
-    "unitsLabel": "Verbrauchte Audit-Läufe",
+    "unitsLabel": "Dafür verwendete Audit-Läufe",
     "unitsValue": "1",
     "freshRun": "Eine erneute Prüfung crawlt immer neu — Ergebnisse kommen nie aus einem Cache.",
     "selfHosted": "Nutzungslimits von Plänen werden im selbstgehosteten Modus nicht gemessen.",

@@ -356,6 +356,21 @@ describe('SSR web server', () => {
     }
   });
 
+  it.each(['/exports', '/exports/', '/exports?tab=shares', '/fr/exports', '/profile', '/settings/team'])(
+    'keeps the authenticated app route %s on the app host (issue #3)',
+    async (appPath) => {
+      process.env.CLIENT_URL = 'https://site.test';
+      process.env.APP_URL = 'https://app.site.test';
+      const { web } = await createTestServer(`app-keep-${appPath.replace(/[/?=]/g, '-')}`);
+
+      const response = await requestApp(web.app, appPath, { Host: 'app.site.test' });
+
+      expect(response.headers.location).toBeUndefined();
+      expect(response.status).toBe(200);
+      expect(response.body).not.toContain('window.__SSR__');
+    },
+  );
+
   it('redirects public content on the app host back to its canonical host', async () => {
     process.env.CLIENT_URL = 'https://site.test';
     process.env.APP_URL = 'https://app.site.test';

@@ -339,6 +339,22 @@ describe('KeywordIntelligenceWorkspace — live search interest tab', () => {
     );
   });
 
+  it('shows exactly one "Learn more" link per tab, pointing at that tab\'s docs (issue #14)', async () => {
+    renderInRouter(
+      <KeywordIntelligenceWorkspace />,
+      '/keyword-research?tab=live-trends',
+    );
+    expect(await screen.findByTestId('live-trends-view')).toBeInTheDocument();
+    expect(screen.getAllByRole('link', { name: /Learn more/ })).toHaveLength(1);
+    expect(screen.getByTestId('docs-link-keyword-trends')).toHaveAttribute('href', '/docs/keyword-trends');
+    expect(screen.queryByTestId('docs-link-keyword-intelligence')).toBeNull();
+
+    fireEvent.mouseDown(screen.getByTestId('keyword-intel-tab-research'));
+    fireEvent.click(screen.getByTestId('keyword-intel-tab-research'));
+    await waitFor(() => expect(screen.getByTestId('docs-link-keyword-intelligence')).toBeInTheDocument());
+    expect(screen.queryByTestId('docs-link-keyword-trends')).toBeNull();
+  });
+
   it('switches to live search interest through a click and keeps the URL authoritative', async () => {
     renderInRouter(<KeywordIntelligenceWorkspace />);
     fireEvent.mouseDown(screen.getByTestId('keyword-intel-tab-live-trends'));

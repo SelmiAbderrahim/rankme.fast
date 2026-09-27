@@ -18,7 +18,7 @@ import { AuditRun } from './audit-run.model.js';
 import { AuditedPage } from './audited-page.model.js';
 import { ReportSnapshot, type ReportSnapshotHydrated, } from './report-snapshot.model.js';
 import { selectAuditSummaryLocale, type AuditSummaryStatus, } from './summary.selection.js';
-import { countByBucket, evaluateAllRules, type AiVisibilityEvaluationInput, type FindingCounts, type GscSearchEvaluationInput, type GscSearchStatus, type GscSitemapsEvaluationInput, type GscSitemapsStatus, type IndexStatusEvaluationInput, type IndexStatusSample, type IndexStatusStatus, type LocalSeoEvaluationInput, type PageSpeedEvaluationInput, type PageSpeedSample, type PageSpeedStatus, type RuleFinding, } from './rules/index.js';
+import { countByBucket, evaluateAllRules, isNotEvaluatedFinding, type AiVisibilityEvaluationInput, type FindingCounts, type GscSearchEvaluationInput, type GscSearchStatus, type GscSitemapsEvaluationInput, type GscSitemapsStatus, type IndexStatusEvaluationInput, type IndexStatusSample, type IndexStatusStatus, type LocalSeoEvaluationInput, type PageSpeedEvaluationInput, type PageSpeedSample, type PageSpeedStatus, type RuleFinding, } from './rules/index.js';
 // ---------------------------------------------------------------------------
 // Snapshot writing
 // ---------------------------------------------------------------------------
@@ -234,6 +234,8 @@ export interface LocalizedRuleCopy {
 }
 export interface LocalizedFinding extends RuleFinding {
     copy: LocalizedRuleCopy;
+    /** The rule could not run (missing data source) — not an open problem. */
+    notEvaluated?: true;
     codeFixPromptAvailable?: true;
     brokenLinkTargets?: string[];
 }
@@ -523,6 +525,7 @@ export async function getAuditReport(input: GetAuditReportInput): Promise<AuditR
         severity: f.severity as RuleFinding['severity'],
         affectedUrls: [...f.affectedUrls],
         ...(f.meta ? { meta: f.meta } : {}),
+        ...(isNotEvaluatedFinding(f) ? { notEvaluated: true as const } : {}),
         copy: localizeAuditRuleCopy(f.ruleId, input.locale, f.meta ?? undefined),
         ...(isAuditCodeFixEligible(f)
             ? { codeFixPromptAvailable: true as const }
@@ -612,7 +615,10 @@ export async function getAuditReport(input: GetAuditReportInput): Promise<AuditR
         : null;
     return {
         runId: run.id as string,
-        counts: snapshotObj.counts,
+        // Recomputed from the frozen findings (not the stored counts) so
+        // snapshots written before the not-evaluated split stop counting
+        // unconnected checks as Watch items.
+        counts: countByBucket(snapshotObj.findings),
         findings,
         diff,
         pageSpeed,

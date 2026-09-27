@@ -10,7 +10,9 @@
       "running": "En curso",
       "succeeded": "Completado",
       "failed": "Fallido"
-    }
+    },
+    "loading": "Cargando el historial de auditorías…",
+    "loadFailed": "No pudimos cargar el historial de auditorías."
   },
   "tabs": {
     "fix-now": "Corregir ahora",
@@ -46,7 +48,8 @@
     "cta": "Reauditar",
     "running": "Auditando…",
     "starting": "Iniciando…",
-    "first": "Ejecuta tu primera auditoría"
+    "first": "Ejecuta tu primera auditoría",
+    "dialogTitle": "¿Ejecutar una auditoría nueva?"
   },
   "pageCap": {
     "label": "Páginas a rastrear",
@@ -74,7 +77,8 @@
   "states": {
     "loading": "Cargando tu informe…",
     "retry": "Reintentar",
-    "runInProgress": "Auditando tu sitio — puede tardar unos minutos."
+    "runInProgress": "Auditando tu sitio — puede tardar unos minutos.",
+    "runProgress": "Revisando hasta {{count}} páginas."
   },
   "loadFailed": "No se pudo cargar tu informe.",
   "retestFailed": "No se pudo iniciar la auditoría.",
@@ -218,5 +222,27 @@
     "unavailable": "No disponible",
     "observed": "Observado el {{date}}",
     "provenance": "Fuente {{kind}}"
+  },
+  "notEvaluated": {
+    "title": "Sin evaluar",
+    "description": "Estas comprobaciones no se pudieron ejecutar porque falta una fuente de datos. No cuentan como problemas.",
+    "badge": "Sin evaluar",
+    "sources": {
+      "gsc": "Conecta Google Search Console para comprobar esto.",
+      "gscReconnect": "Vuelve a conectar Google Search Console para comprobar esto.",
+      "pageSpeed": "Aún no hay datos de velocidad de visitantes reales para este sitio.",
+      "localSeo": "Añade una ficha de negocio o una fuente de reseñas para comprobar esto.",
+      "aiVisibility": "Sigue prompts de IA para comprobar esto.",
+      "generic": "El rastreo no devolvió datos suficientes para comprobar esto."
+    }
+  },
+  "pending": {
+    "title": "Tus resultados aparecerán aquí",
+    "description": "Cuando termine esta auditoría, verás qué corregir, qué vigilar y qué ya pasa."
+  },
+  "firstAudit": {
+    "title": "Ejecuta tu primera auditoría",
+    "description": "Rastreamos tu sitio una vez y te mostramos qué corregir, qué vigilar y qué ya pasa.",
+    "confirm": "Iniciar auditoría"
   }
 }

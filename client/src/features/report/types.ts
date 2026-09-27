@@ -34,6 +34,8 @@ export interface LocalizedFinding {
   codeFixPromptAvailable?: true;
   brokenLinkTargets?: string[];
   meta?: Record<string, unknown>;
+  /** The check could not run (data source missing) — not an open problem. */
+  notEvaluated?: true;
   copy: LocalizedRuleCopy;
 }
 
@@ -41,6 +43,8 @@ export interface FindingCounts {
   fixNow: number;
   watch: number;
   passed: number;
+  /** Checks that could not run; absent on responses from older API versions. */
+  notEvaluated?: number;
 }
 
 export interface DiffEntry {
@@ -310,11 +314,15 @@ export interface ReportState {
   retesting: boolean;
   retestError: string;
   runStatus: PublicAuditRun['status'] | null;
+  /** Crawl ceiling of the in-flight run, when known. */
+  runPageCap: number | null;
   /** Recent audit runs for the report history block. */
   runs: PublicAuditRun[];
   runsLoading: boolean;
   runsLoaded: boolean;
   runsSiteId: string | null;
+  /** Localized message when the history read failed; '' otherwise. */
+  runsError: string;
   /** White-label PDF download (workstream B). */
   pdfDownloading: boolean;
   pdfError: string;

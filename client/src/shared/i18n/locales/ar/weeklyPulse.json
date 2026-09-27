@@ -85,7 +85,8 @@
     "window": "النافذة: {{start}} → {{end}}",
     "row": "{{appearance}} — {{clicks}} نقرة، {{impressions}} ظهور",
     "loading": "جارٍ تحميل بيانات Google Search Console…",
-    "unknown": "ظهور غير معروف ({{raw}})"
+    "unknown": "ظهور غير معروف ({{raw}})",
+    "noData": "لا توجد بيانات من Search Console بعد. اربط Google Search Console لعرض هذا القسم، أو عُد بعد المزامنة اليومية التالية."
   },
   "brandDeltas": {
     "scopeNote": "تشمل هذه التغيّرات حسابك بالكامل، مجمّعة حسب استعلام العلامة التجارية المتتبَّع، وليس هذا الموقع وحده.",

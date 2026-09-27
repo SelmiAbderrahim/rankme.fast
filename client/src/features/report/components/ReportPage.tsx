@@ -19,8 +19,11 @@
  *   - report-loading                       skeleton state
  *   - report-empty-<tab>                   per-tab empty state
  *   - report-run-in-progress               run-in-progress banner
+ *   - report-run-progress                  crawl ceiling line in the banner
+ *   - report-run-pending                   results placeholder while the first run is in flight
  *   - report-error                         inline error alert
  *   - report-no-run                        first-run empty state
+ *   - report-not-evaluated                 checks that could not run
  */
 import { useEffect, useMemo, useRef, useState } from 'react';
 import { useParams, useSearchParams } from 'react-router-dom';
@@ -65,6 +68,7 @@ import {
   selectReportRetestError,
   selectReportRetesting,
   selectReportRunId,
+  selectReportRunPageCap,
   selectReportRunStatus,
   selectReportSiteId,
 } from '../store/selectors';
@@ -74,6 +78,7 @@ import type {
 } from '../types';
 import { AiSummaryCard } from './AiSummaryCard';
 import { IssueRow } from './IssueRow';
+import { NotEvaluatedChecks } from './NotEvaluatedChecks';
 import { RetestConfirmDialog } from './RetestConfirmDialog';
 import { RunHistory } from './RunHistory';
 import { DocsLink } from '@shared/docs/DocsLink';
@@ -136,7 +141,8 @@ export const buildRuleDiffMap = (
 const filterByTab = (
   findings: LocalizedFinding[],
   tab: ReportTab,
-): LocalizedFinding[] => findings.filter((f) => f.bucket === tab);
+): LocalizedFinding[] =>
+  findings.filter((f) => f.bucket === tab && !f.notEvaluated);
 
 interface ReportPageProps {
   siteId?: string;
@@ -180,6 +186,7 @@ export const ReportPage = ({
   const retestError = useAppSelector(selectReportRetestError);
   const runId = useAppSelector(selectReportRunId);
   const runStatus = useAppSelector(selectReportRunStatus);
+  const runPageCap = useAppSelector(selectReportRunPageCap);
   const currentSiteId = useAppSelector(selectReportSiteId);
 
   const lastLoadKey = useRef<string>('');
@@ -304,11 +311,16 @@ export const ReportPage = ({
     return map;
   }, [report]);
 
+  const notEvaluatedFindings = useMemo(
+    () => (report?.findings ?? []).filter((f) => f.notEvaluated),
+    [report],
+  );
+
   const focusedReportRef = useRef('');
   useEffect(() => {
     if (!focusedRuleId || !report) return;
     const finding = report.findings.find((item) => item.ruleId === focusedRuleId);
-    if (!finding) return;
+    if (!finding || finding.notEvaluated) return;
     const key = `${report.runId}:${finding.ruleId}`;
     if (focusedReportRef.current === key) return;
     focusedReportRef.current = key;
@@ -348,7 +360,11 @@ export const ReportPage = ({
       >
         <SelectValue />
       </SelectTrigger>
-      <SelectContent>
+      {/* Popper keeps the list below the trigger. The default item-aligned
+          mode laid it over the trigger and the dialog copy above it, where
+          the dark popover and dialog surfaces are nearly the same color, so
+          the options read as drawn on a transparent layer. */}
+      <SelectContent position="popper" align="start">
         {PAGE_CAP_OPTIONS.map((option) => (
           <SelectItem key={option} value={option}>
             {option === PAGE_CAP_MAX
@@ -478,6 +494,7 @@ export const ReportPage = ({
           </Alert>
         ) : null}
         <RetestConfirmDialog
+          variant="first"
           open={retestOpen}
           onOpenChange={setRetestOpen}
           pageCapPicker={pageCapPicker}
@@ -546,7 +563,14 @@ export const ReportPage = ({
           aria-live="polite"
           data-testid="report-run-in-progress"
         >
-          <AlertDescription>{t('states.runInProgress')}</AlertDescription>
+          <AlertDescription>
+            <span className="block">{t('states.runInProgress')}</span>
+            {runPageCap ? (
+              <span className="block" data-testid="report-run-progress">
+                {t('states.runProgress', { count: runPageCap })}
+              </span>
+            ) : null}
+          </AlertDescription>
         </Alert>
       ) : null}
 
@@ -574,34 +598,47 @@ export const ReportPage = ({
         />
       ) : null}
 
-      <Tabs
-        value={activeTab}
-        onValueChange={(v) => setActiveTab(v as ReportTab)}
-        defaultValue={DEFAULT_REPORT_TAB}
-      >
-        <TabsList
-          data-testid="report-tabs"
-          className="h-auto w-full flex-wrap justify-start sm:w-fit"
+      {report ? (
+        <Tabs
+          value={activeTab}
+          onValueChange={(v) => setActiveTab(v as ReportTab)}
+          defaultValue={DEFAULT_REPORT_TAB}
         >
+          <TabsList
+            data-testid="report-tabs"
+            className="h-auto w-full flex-wrap justify-start sm:w-fit"
+          >
+            {REPORT_TABS.map((tab) => (
+              <TabsTrigger
+                key={tab}
+                value={tab}
+                data-testid={`report-tab-${tab}`}
+              >
+                {t(`tabs.${tab}`)}
+                <span className="text-muted-foreground ms-2 tabular-nums">
+                  ({countForTab[tab]})
+                </span>
+              </TabsTrigger>
+            ))}
+          </TabsList>
           {REPORT_TABS.map((tab) => (
-            <TabsTrigger
-              key={tab}
-              value={tab}
-              data-testid={`report-tab-${tab}`}
-            >
-              {t(`tabs.${tab}`)}
-              <span className="text-muted-foreground ms-2 tabular-nums">
-                ({countForTab[tab]})
-              </span>
-            </TabsTrigger>
+            <TabsContent key={tab} value={tab} className="mt-4">
+              {renderTabPanel(tab)}
+            </TabsContent>
           ))}
-        </TabsList>
-        {REPORT_TABS.map((tab) => (
-          <TabsContent key={tab} value={tab} className="mt-4">
-            {renderTabPanel(tab)}
-          </TabsContent>
-        ))}
-      </Tabs>
+        </Tabs>
+      ) : (
+        // First audit still running: no results exist yet, so never show the
+        // "nothing to fix" empty states that congratulate an unfinished run.
+        <Empty className="w-full" data-testid="report-run-pending">
+          <EmptyHeader>
+            <EmptyTitle>{t('pending.title')}</EmptyTitle>
+            <EmptyDescription>{t('pending.description')}</EmptyDescription>
+          </EmptyHeader>
+        </Empty>
+      )}
+
+      <NotEvaluatedChecks findings={notEvaluatedFindings} />
 
       <RunHistory siteId={siteId} />
     </div>

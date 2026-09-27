@@ -90,6 +90,7 @@ function item(
       },
     },
     affectedUrls,
+    affectedUrlCount: affectedUrls.length,
     evidence: [],
     severity: 'warning',
     firstPartyImpact: 'medium',

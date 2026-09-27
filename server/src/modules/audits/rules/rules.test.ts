@@ -14,6 +14,7 @@ import {
   ALL_RULES,
   bucketFor,
   countByBucket,
+  isNotEvaluatedFinding,
   CTR_LOW_MIN_IMPRESSIONS,
   CTR_LOW_THRESHOLD,
   evaluateAllRules,
@@ -1559,7 +1560,30 @@ describe('countByBucket', () => {
       { ruleId: 'c' as RuleId, bucket: 'passed', severity: 'info', affectedUrls: [] },
       { ruleId: 'd' as RuleId, bucket: 'passed', severity: 'info', affectedUrls: [] },
     ]);
-    expect(counts).toEqual({ fixNow: 1, watch: 1, passed: 2 });
+    expect(counts).toEqual({ fixNow: 1, watch: 1, passed: 2, notEvaluated: 0 });
+  });
+
+  it('counts insufficient-data checks as not evaluated, never as watch (issue #1)', () => {
+    const counts = countByBucket([
+      { ruleId: 'gsc-ctr-low' as RuleId, bucket: 'watch', severity: 'warning', affectedUrls: [], meta: { insufficientData: true, reason: 'not-connected' } },
+      { ruleId: 'low-review-rating' as RuleId, bucket: 'watch', severity: 'warning', affectedUrls: [], meta: { insufficientData: true, reason: 'not-configured' } },
+      { ruleId: 'title-missing-or-weak' as RuleId, bucket: 'watch', severity: 'warning', affectedUrls: ['https://e.com/'] },
+      { ruleId: 'robots-blocked' as RuleId, bucket: 'passed', severity: 'critical', affectedUrls: [], meta: { insufficientData: true } },
+    ]);
+    expect(counts).toEqual({ fixNow: 0, watch: 1, passed: 1, notEvaluated: 2 });
+  });
+
+  it('every data-source rule degrades to a not-evaluated finding when its input is missing', () => {
+    const findings = evaluateAllRules(makeAuditResult());
+    const notEvaluated = findings.filter((f) => isNotEvaluatedFinding(f)).map((f) => f.ruleId);
+    expect(notEvaluated).toEqual(expect.arrayContaining([
+      'gsc-ctr-low',
+      'not-indexed',
+      'sitemap-errors',
+      'low-review-rating',
+      'core-web-vitals-poor',
+    ]));
+    expect(countByBucket(findings).notEvaluated).toBe(notEvaluated.length);
   });
 });
 

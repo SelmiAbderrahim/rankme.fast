@@ -27,6 +27,7 @@ const countsSchema = new mongoose.Schema({
     fixNow: { type: Number, required: true },
     watch: { type: Number, required: true },
     passed: { type: Number, required: true },
+    notEvaluated: { type: Number, default: 0 },
 }, { _id: false });
 /**
  * Page-speed section. Present only when the PSI+CrUX provider

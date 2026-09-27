@@ -133,7 +133,11 @@
       "description": "The first mobile PageSpeed sample from your latest audit.",
       "accessibility": "Accessibility",
       "seo": "SEO",
-      "coreWebVitals": "Core Web Vitals"
+      "coreWebVitals": "Core Web Vitals",
+      "noAuditTitle": "No page-speed results yet",
+      "noAuditBody": "Run your first audit to see mobile PageSpeed results.",
+      "notMeasuredTitle": "Page speed not measured",
+      "notMeasuredBody": "Your latest audit did not include a PageSpeed sample. Results appear here after an audit that measures page speed."
     },
     "keywords": {
       "title": "Recently tracked keywords",

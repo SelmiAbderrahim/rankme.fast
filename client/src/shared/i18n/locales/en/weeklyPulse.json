@@ -85,7 +85,8 @@
     "window": "Window: {{start}} → {{end}}",
     "row": "{{appearance}} — {{clicks}} clicks, {{impressions}} impressions",
     "loading": "Loading Google Search Console data…",
-    "unknown": "Unrecognized appearance ({{raw}})"
+    "unknown": "Unrecognized appearance ({{raw}})",
+    "noData": "No Search Console data yet. Connect Google Search Console to see this section, or check back after the next daily sync."
   },
   "brandDeltas": {
     "scopeNote": "These changes cover your whole account, grouped by tracked brand query — not only this site.",

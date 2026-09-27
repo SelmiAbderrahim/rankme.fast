@@ -79,7 +79,8 @@
     "evidence": "Preuves",
     "evidenceLink": "Ouvrir la source de la preuve",
     "history": "Historique",
-    "retest": "Retester"
+    "retest": "Retester",
+    "affectedSample": "({{shown}} affichées)"
   },
   "transitions": {
     "planned": "Planifier",
@@ -117,7 +118,7 @@
   "retest": {
     "title": "Retester ce constat ?",
     "description": "Un retest lance un nouvel audit complet du site et met à jour toutes les actions issues de l'audit.",
-    "unitsLabel": "Audits consommés",
+    "unitsLabel": "Audits que cela consommera",
     "unitsValue": "1",
     "freshRun": "Un retest lance toujours une exploration à neuf — les résultats ne proviennent jamais d'un cache.",
     "selfHosted": "Les limites d’utilisation du forfait ne sont pas mesurées en mode auto-hébergé.",

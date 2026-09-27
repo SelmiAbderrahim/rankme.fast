@@ -569,6 +569,26 @@ describe('listActionsForSite', () => {
     ]);
     expect(result.items[2]!.affectedUrls).toHaveLength(20);
     expect(result.items[3]!.affectedUrls).toHaveLength(20);
+    // Issue #12: the sample is capped, the count is not. Without an
+    // adapter-supplied total the count falls back to the candidate list.
+    expect(result.items[2]!.affectedUrlCount).toBe(21);
+    expect(result.items[3]!.affectedUrlCount).toBe(25);
+    expect(result.items[0]!.affectedUrlCount).toBe(result.items[0]!.affectedUrls.length);
+  });
+
+  it('passes an adapter-supplied affected-URL total through unchanged (issue #12)', async () => {
+    const { accountId, siteId } = await seedSite();
+    registerStub('audit_finding', [
+      candidate({
+        sourceType: 'audit_finding',
+        sourceId: 'structured-data-missing',
+        affectedUrls: Array.from({ length: 20 }, (_, i) => `https://ex.test/p-${i}`),
+        affectedUrlCount: 170,
+      }),
+    ]);
+    const result = await listActionsForSite({ accountId, siteId, locale: 'en', db: getTestDb() });
+    expect(result.items[0]!.affectedUrls).toHaveLength(20);
+    expect(result.items[0]!.affectedUrlCount).toBe(170);
   });
 
   it('applies state, source, severity, confidence, and effort filters before pagination', async () => {

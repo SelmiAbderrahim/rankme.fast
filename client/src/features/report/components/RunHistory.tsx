@@ -2,9 +2,17 @@ import { useEffect, useRef } from 'react';
 import { Link } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { useAppDispatch, useAppSelector } from '@shared/hooks/redux';
+import { Alert, AlertDescription } from '@shared/ui/alert';
+import { Button } from '@shared/ui/button';
+import { Skeleton } from '@shared/ui/skeleton';
 import { StatusChip, type StatusTone } from '@shared/ui/status-chip';
 import { loadRuns } from '../store/thunks';
-import { selectReportRuns, selectReportRunsSiteId } from '../store/selectors';
+import {
+  selectReportRuns,
+  selectReportRunsError,
+  selectReportRunsLoading,
+  selectReportRunsSiteId,
+} from '../store/selectors';
 import type { PublicAuditRun } from '../types';
 import { usePresentationRefreshSignal } from '@shared/i18n';
 
@@ -27,6 +35,8 @@ export const RunHistory = ({ siteId }: { siteId: string }) => {
   const dispatch = useAppDispatch();
   const runs = useAppSelector(selectReportRuns);
   const runsSiteId = useAppSelector(selectReportRunsSiteId);
+  const runsLoading = useAppSelector(selectReportRunsLoading);
+  const runsError = useAppSelector(selectReportRunsError);
   const runsSiteIdRef = useRef(runsSiteId);
   runsSiteIdRef.current = runsSiteId;
 
@@ -49,6 +59,16 @@ export const RunHistory = ({ siteId }: { siteId: string }) => {
     siteId,
   ]);
 
+  const retry = () => {
+    void dispatch(
+      loadRuns({
+        siteId,
+        presentationLocale: presentation.locale,
+        presentationGeneration: presentation.generation,
+      }),
+    );
+  };
+
   const fmtDate = (iso: string): string =>
     new Intl.DateTimeFormat(i18n.language, {
       dateStyle: 'medium',
@@ -62,7 +82,35 @@ export const RunHistory = ({ siteId }: { siteId: string }) => {
       aria-label={t('history.title')}
     >
       <h3 className="text-sm font-semibold">{t('history.title')}</h3>
-      {runs.length === 0 ? (
+      {runsError ? (
+        <div className="mt-2 flex flex-col items-start gap-2">
+          <Alert variant="destructive" role="alert" data-testid="report-run-history-error">
+            <AlertDescription>{runsError}</AlertDescription>
+          </Alert>
+          <Button
+            type="button"
+            variant="outline"
+            size="sm"
+            onClick={retry}
+            loading={runsLoading}
+            loadingLabel={t('history.loading')}
+            data-testid="report-run-history-retry"
+          >
+            {t('states.retry')}
+          </Button>
+        </div>
+      ) : runs.length === 0 && runsLoading ? (
+        <div
+          className="mt-2 flex flex-col gap-2"
+          aria-busy="true"
+          aria-live="polite"
+          data-testid="report-run-history-loading"
+        >
+          <span className="sr-only">{t('history.loading')}</span>
+          <Skeleton className="h-6 w-full" />
+          <Skeleton className="h-6 w-2/3" />
+        </div>
+      ) : runs.length === 0 ? (
         <p className="text-muted-foreground mt-2 text-sm" data-testid="report-run-history-empty">
           {t('history.empty')}
         </p>

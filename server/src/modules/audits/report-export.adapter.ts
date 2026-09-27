@@ -31,6 +31,10 @@ type AuditExportSelection = z.infer<typeof auditExportSelectionSchema>;
 function auditBucket(bucket: AuditReport['findings'][number]['bucket']) {
     return bucket === 'fix-now' ? 'fixNow' : bucket;
 }
+/** Selected buckets only; not-evaluated checks are never exported as findings. */
+function selectAuditFindings(report: AuditReport, selection: AuditExportSelection) {
+    return report.findings.filter((finding) => !finding.notEvaluated && selection.buckets.includes(auditBucket(finding.bucket)));
+}
 function canonicalBucket(bucket: AuditReport['findings'][number]['bucket']) {
     return bucket === 'fix-now' ? ('fix_now' as const) : bucket;
 }
@@ -112,7 +116,7 @@ function auditBlocks(locale: ReportDocumentV1['locale'], report: AuditReport, se
 } {
     const enabled = new Set(selection.sections);
     const blocks: ReportBlockV1[] = [];
-    const findings = report.findings.filter((finding) => selection.buckets.includes(auditBucket(finding.bucket)));
+    const findings = selectAuditFindings(report, selection);
     blocks.push({
         type: 'kpi_group',
         id: 'audit-counts',
@@ -391,7 +395,7 @@ export function createAuditReportExportAdapter(): ReportExportAdapter<AuditExpor
             ]);
             if (run.status !== 'succeeded' || !run.finishedAt)
                 throw HttpError.notFound({ code: 'AUDITS_ERRORS_NOT_FOUND', messageKey: 'audits.errors.notFound' });
-            const selectedFindings = report.findings.filter((finding) => context.selection.buckets.includes(auditBucket(finding.bucket)));
+            const selectedFindings = selectAuditFindings(report, context.selection);
             if (context.format === 'pdf' &&
                 (selectedFindings.length > REPORT_GLOBAL_BOUNDS.pdfItems ||
                     selectedFindings.some((finding) => finding.affectedUrls.length >

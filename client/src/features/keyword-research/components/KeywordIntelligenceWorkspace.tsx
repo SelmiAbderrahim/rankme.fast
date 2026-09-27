@@ -101,7 +101,13 @@ export const KeywordIntelligenceWorkspace = () => {
                 selection={{ operation: exportResult.kind }}
               />
             ) : null}
-            <DocsLink slug="keyword-intelligence" className="text-muted-foreground hover:text-foreground text-xs underline underline-offset-2" />
+            {/* One "Learn more" per tab: Live search interest has its own
+                docs page, every other tab shares the workspace page. */}
+            {activeTab === 'live-trends' ? (
+              <DocsLink slug="keyword-trends" className="text-muted-foreground hover:text-foreground text-xs underline underline-offset-2" />
+            ) : (
+              <DocsLink slug="keyword-intelligence" className="text-muted-foreground hover:text-foreground text-xs underline underline-offset-2" />
+            )}
           </div>
         </div>
         <TabsContent
@@ -140,9 +146,6 @@ export const KeywordIntelligenceWorkspace = () => {
           className="mt-4 flex flex-col gap-3"
           data-testid="keyword-intel-panel-live-trends"
         >
-          <div className="flex justify-end">
-            <DocsLink slug="keyword-trends" />
-          </div>
           <Suspense fallback={<LazyViewFallback />}>
             <LazyLiveTrendsView />
           </Suspense>

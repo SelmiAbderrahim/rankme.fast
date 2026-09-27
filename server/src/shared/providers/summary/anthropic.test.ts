@@ -397,6 +397,28 @@ describe('createAnthropicSummaryProvider', () => {
     expect(content).not.toContain('r-25');
   });
 
+  it('labels fix-now and watch findings so a watch-only audit is still summarized (issue #5)', async () => {
+    const { fn, calls } = makeFetch(
+      jsonResponse({ content: [{ type: 'text', text: 'ok' }] }),
+    );
+    const provider = createAnthropicSummaryProvider({ apiKey: 'k', fetchFn: fn });
+    await provider.summarize({
+      ...baseInput(),
+      findings: [
+        { ...FINDINGS[0]!, priority: 'fix-now' as const },
+        { ...FINDINGS[1]!, priority: 'watch' as const },
+      ],
+    });
+    const body = JSON.parse(String(calls[0]?.init?.body)) as {
+      system: string;
+      messages: { content: string }[];
+    };
+    const content = body.messages[0]?.content ?? '';
+    expect(content).toContain('1. (FIX NOW) [title-missing-or-weak]');
+    expect(content).toContain('2. (WATCH) [broken-internal-links]');
+    expect(body.system).toContain('if there are none, say nothing is urgent');
+  });
+
   it('empties call abort timer after success', async () => {
     const spy = vi.spyOn(globalThis, 'clearTimeout');
     const { fn } = makeFetch(

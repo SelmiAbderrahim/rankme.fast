@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest';
 import { ACTION_MAX_AFFECTED_URLS } from '../actions.orders.js';
-import { canonicalizeAffectedUrls } from './url.js';
+import { canonicalizeAffectedUrls, countCanonicalAffectedUrls } from './url.js';
 
 describe('canonicalizeAffectedUrls', () => {
   it('keeps http(s) URLs and drops unparseable values', () => {
@@ -56,5 +56,19 @@ describe('canonicalizeAffectedUrls', () => {
 
   it('returns an empty array for empty input', () => {
     expect(canonicalizeAffectedUrls([])).toEqual([]);
+  });
+});
+
+describe('countCanonicalAffectedUrls (issue #12)', () => {
+  it('counts every distinct valid URL beyond the sample cap', () => {
+    const urls = [
+      ...Array.from({ length: 170 }, (_, i) => `https://example.com/page-${i}`),
+      'https://example.com/page-0#frag',
+      'javascript:alert(1)',
+      'not a url',
+    ];
+    expect(canonicalizeAffectedUrls(urls)).toHaveLength(ACTION_MAX_AFFECTED_URLS);
+    expect(countCanonicalAffectedUrls(urls)).toBe(170);
+    expect(countCanonicalAffectedUrls([])).toBe(0);
   });
 });

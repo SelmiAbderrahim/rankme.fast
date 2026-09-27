@@ -257,5 +257,13 @@
     "reportBug": "Signaler un bug",
     "reportProblem": "Signaler ce problème",
     "mailSubject": "Rapport de bug ({{version}})"
+  },
+  "appUpdated": {
+    "title": "Une nouvelle version est disponible",
+    "description": "Une nouvelle version a été publiée pendant que cette page était ouverte. Rechargez pour continuer.",
+    "reload": "Recharger"
+  },
+  "routeError": {
+    "title": "Une erreur s'est produite"
   }
 }
