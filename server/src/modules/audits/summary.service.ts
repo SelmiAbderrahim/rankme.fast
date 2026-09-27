@@ -14,6 +14,7 @@ import { translate } from "../../shared/i18n/index.js";
 import type { SummaryFindingInput, SummaryProvider, } from "../../shared/providers/index.js";
 import { enqueueAuditSummaryJob } from "../../shared/queue/index.js";
 import { HttpError } from "../../shared/utils/http-error.js";
+import { isNotEvaluatedFinding } from "../../shared/audit-findings.js";
 import { Site } from "../sites/index.js";
 import { AuditRun, type AuditRunHydrated } from "./audit-run.model.js";
 import { ReportSnapshot, type ReportSnapshotHydrated, } from "./report-snapshot.model.js";
@@ -47,6 +48,8 @@ interface OwnedSummaryContext {
     run: AuditRunHydrated;
     snapshot: ReportSnapshotHydrated;
 }
+/** The audit_summary profile accepts at most 25 findings per call. */
+const MAX_SUMMARY_FINDINGS = 25;
 function localizedTitle(ruleId: string, locale: SupportedLocale): string {
     return translate(locale, `auditRules.${ruleId}.title`);
 }
@@ -89,10 +92,19 @@ async function buildProviderInput(input: AuditSummaryInput, context: OwnedSummar
     });
     if (!site)
         throw HttpError.notFound({ code: 'AUDITS_ERRORS_NOT_FOUND', messageKey: "audits.errors.notFound" });
-    const findings: SummaryFindingInput[] = context.snapshot.findings
-        .filter((finding) => finding.bucket === "fix-now")
+    // Fix-now first, then the evaluated Watch items — an audit with no
+    // critical issue still has things worth doing. Checks that could not run
+    // (missing data source) are never summarized as problems.
+    const actionable = context.snapshot.findings.filter((finding) => finding.bucket !== "passed" &&
+        !isNotEvaluatedFinding(finding as { bucket: string; meta?: Record<string, unknown> | null }));
+    const findings: SummaryFindingInput[] = [
+        ...actionable.filter((finding) => finding.bucket === "fix-now"),
+        ...actionable.filter((finding) => finding.bucket === "watch"),
+    ]
+        .slice(0, MAX_SUMMARY_FINDINGS)
         .map((finding) => ({
         ruleId: finding.ruleId,
+        priority: finding.bucket === "fix-now" ? "fix-now" as const : "watch" as const,
         title: localizedTitle(finding.ruleId, input.locale),
         why: localizedWhy(finding.ruleId, input.locale),
         fix: localizedFix(finding.ruleId, input.locale),

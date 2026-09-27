@@ -507,7 +507,58 @@ describe("worker-side provider generation", () => {
     expect(Number.isNaN(Date.parse(result.createdAt))).toBe(false);
   });
 
-  it("localizes fix-now findings, passes correlation, archives metadata, and logs safely", async () => {
+  it("summarizes Watch findings when there is nothing to fix now, skipping unevaluated checks (issue #5)", async () => {
+    const ids = await seedOne();
+    await ReportSnapshot.updateOne(
+      { runId: ids.runId },
+      {
+        $set: {
+          findings: [
+            { ruleId: "structured-data-missing", bucket: "watch", severity: "warning", affectedUrls: ["https://example.com/a", "https://example.com/b"], meta: null },
+            { ruleId: "gsc-ctr-low", bucket: "watch", severity: "warning", affectedUrls: [], meta: { insufficientData: true, reason: "not-connected" } },
+            { ruleId: "robots-blocked", bucket: "passed", severity: "critical", affectedUrls: [], meta: null },
+            { ruleId: "title-missing-or-weak", bucket: "watch", severity: "warning", affectedUrls: ["https://example.com/c"], meta: null },
+          ],
+        },
+      },
+    );
+    const summarize = vi.fn().mockResolvedValue({ summary: "Nothing is urgent.", truncated: false, model: "m" });
+    await generateAuditSummary(
+      { ...ids, locale: "en", generationId: new mongoose.Types.ObjectId().toHexString() },
+      { provider: fakeProvider({ summarize }) },
+    );
+    const findings = summarize.mock.calls[0]![0].findings as Array<{ ruleId: string; priority: string }>;
+    expect(findings.map((f) => [f.ruleId, f.priority])).toEqual([
+      ["structured-data-missing", "watch"],
+      ["title-missing-or-weak", "watch"],
+    ]);
+  });
+
+  it("caps the provider input at 25 findings, fix-now first", async () => {
+    const ids = await seedOne();
+    const finding = (bucket: "fix-now" | "watch") => ({
+      ruleId: bucket === "fix-now" ? "title-missing-or-weak" : "headings-weak",
+      bucket,
+      severity: bucket === "fix-now" ? "critical" : "warning",
+      affectedUrls: [],
+      meta: null,
+    });
+    await ReportSnapshot.updateOne(
+      { runId: ids.runId },
+      { $set: { findings: [...Array.from({ length: 20 }, () => finding("watch")), ...Array.from({ length: 10 }, () => finding("fix-now"))] } },
+    );
+    const summarize = vi.fn().mockResolvedValue({ summary: "ok", truncated: false, model: "m" });
+    await generateAuditSummary(
+      { ...ids, locale: "en", generationId: new mongoose.Types.ObjectId().toHexString() },
+      { provider: fakeProvider({ summarize }) },
+    );
+    const findings = summarize.mock.calls[0]![0].findings as Array<{ priority: string }>;
+    expect(findings).toHaveLength(25);
+    expect(findings.slice(0, 10).every((f) => f.priority === "fix-now")).toBe(true);
+    expect(findings.slice(10).every((f) => f.priority === "watch")).toBe(true);
+  });
+
+  it("localizes fix-now and watch findings, passes correlation, archives metadata, and logs safely", async () => {
     const ids = await seedOne();
     const summarize = vi.fn().mockResolvedValue({
       summary: "Generated summary.",
@@ -542,7 +593,13 @@ describe("worker-side provider generation", () => {
         findings: [
           expect.objectContaining({
             ruleId: "title-missing-or-weak",
+            priority: "fix-now",
             affectedCount: 1,
+          }),
+          expect.objectContaining({
+            ruleId: "headings-weak",
+            priority: "watch",
+            affectedCount: 0,
           }),
         ],
       }),
@@ -564,7 +621,7 @@ describe("worker-side provider generation", () => {
     expect(info).toHaveBeenCalledWith(
       expect.objectContaining({
         outcome: "ok",
-        findingCount: 1,
+        findingCount: 2,
         model: "model-1",
       }),
       "ai summary generated",

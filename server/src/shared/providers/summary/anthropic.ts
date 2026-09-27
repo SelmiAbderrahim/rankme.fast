@@ -70,25 +70,27 @@ function buildSystemPrompt(locale: string): string {
     return [
         `You are RankMeFast's SEO summariser.`,
         `Respond ENTIRELY in ${language}.`,
-        `Read the fixed list of "Fix-now" findings the user provides.`,
+        `Read the fixed list of audit findings the user provides. Each is marked FIX NOW (urgent) or WATCH (worth doing, not urgent).`,
+        `Cover FIX NOW findings first; if there are none, say nothing is urgent and summarize the WATCH findings.`,
         `Write ≤200 words of plain, business-owner language — no jargon, no marketing.`,
         `Order the findings by impact, most valuable first.`,
         `Use one short imperative sentence per finding ("Fix broken links on your pricing page.").`,
         `Never invent findings that are not in the list.`,
         `Only reference the rule ids, titles, or affected-URL counts we give you.`,
         `Never emit URLs, keys, or code blocks.`,
-        `If the list is empty, reply with one sentence saying nothing critical was found.`,
+        `If the list is empty, reply with one sentence saying nothing needs fixing right now.`,
     ].join(' ');
 }
 function buildUserPrompt(input: SummarizeInput): string {
     const findings = input.findings.slice(0, MAX_FINDINGS);
     const lines: string[] = [
         `Site: ${input.siteDomain}`,
-        `Fix-now findings (${findings.length}):`,
+        `Findings (${findings.length}):`,
     ];
     findings.forEach((f, i) => {
         const affected = f.affectedCount > 0 ? ` — affects ${f.affectedCount} page(s)` : '';
-        lines.push(`${i + 1}. [${f.ruleId}] ${f.title}${affected}`);
+        const priority = f.priority === 'watch' ? 'WATCH' : 'FIX NOW';
+        lines.push(`${i + 1}. (${priority}) [${f.ruleId}] ${f.title}${affected}`);
         lines.push(`   Why: ${f.why}`);
         lines.push(`   Fix: ${f.fix}`);
     });
