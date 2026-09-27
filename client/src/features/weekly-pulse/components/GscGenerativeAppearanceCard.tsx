@@ -98,6 +98,15 @@ function GscAppearanceContent({
       </p>
     );
   }
+  if (status === 'unavailable' && appearance.window === null) {
+    // No Search Console snapshot at all — the site is not connected yet or
+    // the first daily sync has not run. Never an error.
+    return (
+      <p className="text-muted-foreground mt-3 text-sm" data-testid="gsc-no-data">
+        {t('gsc.noData')}
+      </p>
+    );
+  }
   if (status === 'unavailable' || appearance.rows.every((r) => !r.isGenerative)) {
     return (
       <p className="text-muted-foreground mt-3 text-sm" data-testid="gsc-empty">

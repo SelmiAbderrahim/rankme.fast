@@ -85,7 +85,8 @@
     "window": "窗口: {{start}} → {{end}}",
     "row": "{{appearance}} — {{clicks}} 次点击,{{impressions}} 次展示",
     "loading": "正在加载 Google Search Console 数据…",
-    "unknown": "未识别的展示({{raw}})"
+    "unknown": "未识别的展示({{raw}})",
+    "noData": "暂无 Search Console 数据。连接 Google Search Console 即可查看此部分,或在下一次每日同步后再来查看。"
   },
   "brandDeltas": {
     "scopeNote": "这些变化覆盖整个账户，按跟踪的品牌关键词分组，而不仅限于本站点。",

@@ -112,10 +112,11 @@ describe('weekly-pulse api', () => {
     expect(mocked.mock.calls[0]![1]).toMatchObject({ signal: controller.signal });
   });
 
-  it('getGenerativeAppearance GETs the google endpoint with an encoded siteId query', async () => {
+  it('getGenerativeAppearance GETs the site-scoped google endpoint (issue #7)', async () => {
     await getGenerativeAppearance('s 1');
     const [path, opts] = mocked.mock.calls[0]!;
-    expect(path).toBe('/google/generative-appearance?siteId=s%201');
+    // The account-global /api/google mount is gone; it 404'd every read.
+    expect(path).toBe('/sites/s%201/google/generative-appearance');
     expect(opts).toMatchObject({ method: 'GET' });
     expect(opts).not.toHaveProperty('signal');
   });

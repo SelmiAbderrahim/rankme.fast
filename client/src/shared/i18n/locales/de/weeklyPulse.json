@@ -85,7 +85,8 @@
     "window": "Fenster: {{start}} → {{end}}",
     "row": "{{appearance}} — {{clicks}} Klicks, {{impressions}} Impressionen",
     "loading": "Google Search Console-Daten werden geladen…",
-    "unknown": "Unbekannte Darstellung ({{raw}})"
+    "unknown": "Unbekannte Darstellung ({{raw}})",
+    "noData": "Noch keine Search-Console-Daten. Verbinden Sie die Google Search Console, um diesen Bereich zu sehen, oder schauen Sie nach der nächsten täglichen Synchronisierung wieder vorbei."
   },
   "brandDeltas": {
     "scopeNote": "Diese Veränderungen gelten für Ihr gesamtes Konto, gruppiert nach verfolgter Markenabfrage — nicht nur für diese Website.",

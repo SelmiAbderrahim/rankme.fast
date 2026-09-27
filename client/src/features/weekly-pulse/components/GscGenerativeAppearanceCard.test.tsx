@@ -64,11 +64,27 @@ describe('GscGenerativeAppearanceCard', () => {
     );
   });
 
-  it('renders unavailable empty state', async () => {
+  it('renders a connect prompt, not an error, when Search Console has no data (issue #7)', async () => {
     (api.getGenerativeAppearance as ReturnType<typeof vi.fn>).mockResolvedValue({
       appearance: {
         status: 'unavailable',
         window: null,
+        rows: [],
+        observationMeta: null,
+      },
+    });
+    render(await withProviders(<GscGenerativeAppearanceCard siteId="s1" />));
+    await waitFor(() => expect(screen.getByTestId('gsc-no-data')).toHaveTextContent(
+      'Connect Google Search Console',
+    ));
+    expect(screen.queryByRole('alert')).toBeNull();
+  });
+
+  it('renders the unavailable empty state for a synced window without generative rows', async () => {
+    (api.getGenerativeAppearance as ReturnType<typeof vi.fn>).mockResolvedValue({
+      appearance: {
+        status: 'unavailable',
+        window: { start: '2026-09-01', end: '2026-09-28' },
         rows: [],
         observationMeta: null,
       },
