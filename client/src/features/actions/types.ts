@@ -102,7 +102,10 @@ export interface ActionItem {
     whyItMatters: ActionSemanticCopy;
     nextStep: ActionSemanticCopy;
   };
+  /** Sample of affected URLs (the server caps it at 20). */
   affectedUrls: string[];
+  /** Real number of affected URLs; absent on older API responses. */
+  affectedUrlCount?: number;
   evidence: ActionEvidence[];
   severity: ActionSeverity;
   firstPartyImpact: ActionFirstPartyImpact;

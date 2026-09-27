@@ -79,7 +79,8 @@
     "evidence": "Доказательства",
     "evidenceLink": "Открыть источник доказательства",
     "history": "История",
-    "retest": "Перепроверить"
+    "retest": "Перепроверить",
+    "affectedSample": "(показано {{shown}})"
   },
   "transitions": {
     "planned": "Запланировать",

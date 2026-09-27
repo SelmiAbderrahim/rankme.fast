@@ -18,6 +18,11 @@ export interface CandidateAction {
     sourceType: ActionSourceType;
     sourceId: string;
     affectedUrls: readonly string[];
+    /**
+     * Distinct affected URLs before the sample cap. Absent = the adapter's
+     * list is complete (`affectedUrls.length`).
+     */
+    affectedUrlCount?: number;
     evidence: readonly ActionEvidence[];
     severity: Severity;
     firstPartyImpact: FirstPartyImpact;
@@ -52,7 +57,10 @@ export interface ActionItem {
         whyItMatters: SemanticCopy;
         nextStep: SemanticCopy;
     };
+    /** Sample of affected URLs, at most ACTION_MAX_AFFECTED_URLS. */
     affectedUrls: readonly string[];
+    /** Real number of affected URLs; ≥ `affectedUrls.length`. */
+    affectedUrlCount: number;
     evidence: readonly ActionEvidence[];
     severity: Severity;
     firstPartyImpact: FirstPartyImpact;

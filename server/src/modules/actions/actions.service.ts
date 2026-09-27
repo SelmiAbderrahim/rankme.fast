@@ -137,6 +137,7 @@ export async function listActionsForSite(input: ListActionsInput): Promise<ListA
                 },
             },
             affectedUrls: urls,
+            affectedUrlCount: Math.max(candidate.affectedUrlCount ?? candidate.affectedUrls.length, urls.length),
             evidence: candidate.evidence,
             severity: candidate.severity,
             firstPartyImpact: candidate.firstPartyImpact,

@@ -79,7 +79,8 @@
     "evidence": "证据",
     "evidenceLink": "打开证据来源",
     "history": "历史记录",
-    "retest": "重新检测"
+    "retest": "重新检测",
+    "affectedSample": "(显示 {{shown}} 个)"
   },
   "transitions": {
     "planned": "计划",

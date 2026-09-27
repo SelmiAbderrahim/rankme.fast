@@ -79,7 +79,8 @@
     "evidence": "Evidencia",
     "evidenceLink": "Abrir fuente de la evidencia",
     "history": "Historial",
-    "retest": "Reanalizar"
+    "retest": "Reanalizar",
+    "affectedSample": "(se muestran {{shown}})"
   },
   "transitions": {
     "planned": "Planificar",

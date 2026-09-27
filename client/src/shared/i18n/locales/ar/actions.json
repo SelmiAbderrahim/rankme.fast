@@ -79,7 +79,8 @@
     "evidence": "الأدلة",
     "evidenceLink": "فتح مصدر الدليل",
     "history": "السجل",
-    "retest": "إعادة الفحص"
+    "retest": "إعادة الفحص",
+    "affectedSample": "(يُعرض {{shown}})"
   },
   "transitions": {
     "planned": "تخطيط",

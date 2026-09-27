@@ -197,6 +197,25 @@ describe('auditActionAdapter', () => {
     expect(result.actions.map((action) => action.sourceId)).toEqual(['title-missing-or-weak']);
   });
 
+  it('reports the real affected-URL total next to the 20-URL sample (issue #12)', async () => {
+    const { accountId, siteId } = ids();
+    await seedRun({
+      accountId,
+      siteId,
+      findings: [
+        {
+          ruleId: 'structured-data-missing',
+          bucket: 'watch',
+          severity: 'warning',
+          affectedUrls: Array.from({ length: 170 }, (_, i) => `https://ex.test/p-${i}`),
+        },
+      ],
+    });
+    const result = await auditActionAdapter({ accountId, siteId, db: unusedDb });
+    expect(result.actions[0]?.affectedUrls).toHaveLength(20);
+    expect(result.actions[0]?.affectedUrlCount).toBe(170);
+  });
+
   it('adds code-fix metadata only for actionable technical findings with evidence', async () => {
     const { accountId, siteId } = ids();
     await seedRun({

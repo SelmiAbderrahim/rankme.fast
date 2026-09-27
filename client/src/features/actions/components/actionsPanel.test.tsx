@@ -523,6 +523,26 @@ describe('ActionCard — content, safe links, collapse', () => {
     );
   });
 
+  it('labels the real affected-URL total and marks a sampled list (issue #12)', async () => {
+    const sample = Array.from({ length: 20 }, (_, i) => `https://example.com/p-${i}`);
+    mocked.listActions.mockResolvedValueOnce(
+      okResponse([
+        item('sampled', { affectedUrls: sample, affectedUrlCount: 170 }),
+        item('complete', { affectedUrls: sample.slice(0, 3), affectedUrlCount: 3 }),
+        item('legacy', { affectedUrls: sample.slice(0, 2) }),
+      ]),
+    );
+    renderPanel();
+    const cards = await screen.findAllByTestId('action-card');
+    const sampled = within(cards[0]!).getByTestId('action-urls-toggle');
+    expect(sampled).toHaveTextContent('170 affected URLs (showing 20)');
+    const complete = within(cards[1]!).getByTestId('action-urls-toggle');
+    expect(complete).toHaveTextContent('3 affected URLs');
+    expect(within(complete).queryByTestId('action-urls-sample')).toBeNull();
+    // Older API responses without the total keep counting the list.
+    expect(within(cards[2]!).getByTestId('action-urls-toggle')).toHaveTextContent('2 affected URLs');
+  });
+
   it('labels a site-wide action and the one-URL case', async () => {
     mocked.listActions.mockResolvedValueOnce(
       okResponse([

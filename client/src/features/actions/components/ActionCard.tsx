@@ -60,7 +60,10 @@ export function ActionCard({ item, siteId, onReload }: ActionCardProps) {
 
   const internalHref = safeInternalHref(item.sourceLink);
   const freshness = item.evidence[0]?.observation.freshness;
-  const affectedCount = item.affectedUrls.length;
+  // The URL list is a bounded sample; label the real total and say when
+  // only part of it is shown.
+  const shownCount = item.affectedUrls.length;
+  const affectedCount = Math.max(item.affectedUrlCount ?? shownCount, shownCount);
   const transitions = ACTION_ALLOWED_TRANSITIONS[item.state];
   const codeFixPrompt: CodeFixPromptInput | null = item.codeFixPrompt
     ? {
@@ -157,6 +160,12 @@ export function ActionCard({ item, siteId, onReload }: ActionCardProps) {
             {affectedCount === 1
               ? t('card.affectedOne')
               : t('card.affectedCount', { count: affectedCount })}
+            {affectedCount > shownCount ? (
+              <span data-testid="action-urls-sample">
+                {' '}
+                {t('card.affectedSample', { shown: shownCount })}
+              </span>
+            ) : null}
           </button>
           {urlsExpanded ? (
             <ul

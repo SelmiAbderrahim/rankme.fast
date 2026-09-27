@@ -9,7 +9,7 @@ import { ReportSnapshot } from '../../audits/report-snapshot.model.js';
 import type { SourceReader } from '../actions.registry.js';
 import type { ActionEvidence, CandidateAction } from '../actions.types.js';
 import type { Severity } from '../actions.orders.js';
-import { canonicalizeAffectedUrls } from './url.js';
+import { canonicalizeAffectedUrls, countCanonicalAffectedUrls } from './url.js';
 import type { TranslationKey } from '../../../shared/i18n/index.js';
 import { isAuditCodeFixEligible } from '../../../shared/code-fix-eligibility.js';
 import { isNotEvaluatedFinding } from '../../../shared/audit-findings.js';
@@ -104,6 +104,7 @@ export const auditActionAdapter: SourceReader = async (ctx) => {
             sourceType: 'audit_finding',
             sourceId,
             affectedUrls: canonicalizeAffectedUrls(finding.affectedUrls ?? []),
+            affectedUrlCount: countCanonicalAffectedUrls(finding.affectedUrls ?? []),
             evidence,
             severity: finding.severity,
             firstPartyImpact: 'none',

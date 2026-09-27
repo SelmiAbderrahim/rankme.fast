@@ -79,7 +79,8 @@
     "evidence": "Evidence",
     "evidenceLink": "Open evidence source",
     "history": "History",
-    "retest": "Retest"
+    "retest": "Retest",
+    "affectedSample": "(showing {{shown}})"
   },
   "transitions": {
     "planned": "Plan",

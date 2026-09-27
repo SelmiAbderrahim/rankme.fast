@@ -4,7 +4,7 @@ import { buildObservationMeta } from '../../../shared/observations/observations.
 import type { SourceReader, SourceReaderContext } from '../actions.registry.js';
 import type { CandidateAction } from '../actions.types.js';
 import { declineBand, declineSeverity, firstPartyImpactFromBaseline, } from '../actions.orders.js';
-import { canonicalizeAffectedUrls } from './url.js';
+import { canonicalizeAffectedUrls, countCanonicalAffectedUrls } from './url.js';
 import { Site } from '../../sites/index.js';
 // The `page` dimension set is the canonical decline surface: its per-row keys
 // are page URLs (affected-URL evidence for free) and its summed clicks match
@@ -112,6 +112,7 @@ export const gscActionAdapter: SourceReader = async (ctx) => {
         sourceType: 'gsc_decline',
         sourceId,
         affectedUrls: canonicalizeAffectedUrls(decliningPages.map((p) => p.url)),
+        affectedUrlCount: countCanonicalAffectedUrls(decliningPages.map((p) => p.url)),
         evidence: [
             {
                 sourceRef: sourceId,

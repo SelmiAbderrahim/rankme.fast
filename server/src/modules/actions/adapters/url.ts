@@ -7,25 +7,29 @@ import { ACTION_MAX_AFFECTED_URLS } from '../actions.orders.js';
 //     dropped rather than surfaced broken;
 //   - http(s) only — no javascript:/data:/file: schemes ever reach a client;
 //   - fragments and embedded credentials stripped;
-//   - order-preserving dedupe, bounded to ACTION_MAX_AFFECTED_URLS.
+//   - order-preserving dedupe, bounded to ACTION_MAX_AFFECTED_URLS
+//     (`countCanonicalAffectedUrls` reports the unbounded total).
+function canonicalUrl(raw: string): string | null {
+    let parsed: URL;
+    try {
+        parsed = new URL(raw);
+    }
+    catch {
+        return null;
+    }
+    if (parsed.protocol !== 'https:' && parsed.protocol !== 'http:')
+        return null;
+    parsed.hash = '';
+    parsed.username = '';
+    parsed.password = '';
+    return parsed.toString();
+}
 export function canonicalizeAffectedUrls(urls: readonly string[]): string[] {
     const seen = new Set<string>();
     const out: string[] = [];
     for (const raw of urls) {
-        let parsed: URL;
-        try {
-            parsed = new URL(raw);
-        }
-        catch {
-            continue;
-        }
-        if (parsed.protocol !== 'https:' && parsed.protocol !== 'http:')
-            continue;
-        parsed.hash = '';
-        parsed.username = '';
-        parsed.password = '';
-        const canonical = parsed.toString();
-        if (seen.has(canonical))
+        const canonical = canonicalUrl(raw);
+        if (canonical === null || seen.has(canonical))
             continue;
         seen.add(canonical);
         out.push(canonical);
@@ -33,4 +37,18 @@ export function canonicalizeAffectedUrls(urls: readonly string[]): string[] {
             break;
     }
     return out;
+}
+/**
+ * Total distinct valid URLs — the real affected-page count behind the
+ * bounded `canonicalizeAffectedUrls` sample, so a card can say
+ * "170 affected URLs (showing 20)" instead of counting the sample.
+ */
+export function countCanonicalAffectedUrls(urls: readonly string[]): number {
+    const seen = new Set<string>();
+    for (const raw of urls) {
+        const canonical = canonicalUrl(raw);
+        if (canonical !== null)
+            seen.add(canonical);
+    }
+    return seen.size;
 }
