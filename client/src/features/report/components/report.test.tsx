@@ -1664,7 +1664,48 @@ describe('slice — reducers & thunks state transitions', () => {
     });
     renderReport();
     expect(await screen.findByTestId('report-run-in-progress')).toBeInTheDocument();
+    // Issue #8: no results exist yet — never congratulate an unfinished run.
+    expect(screen.getByTestId('report-run-progress')).toHaveTextContent('Checking up to 100 pages.');
+    expect(screen.getByTestId('report-run-pending')).toHaveTextContent('Your results will appear here');
+    expect(screen.queryByTestId('report-tabs')).toBeNull();
+    expect(screen.queryByText('Nothing to fix right now')).toBeNull();
+    expect(screen.queryByText(/Great work/)).toBeNull();
   });
+
+  it('keeps the first-run placeholder after starting the first audit, then shows results (issue #8)', async () => {
+    mocked.fetchLatestRunRequest.mockResolvedValue({ runs: [], nextCursor: null });
+    mocked.fetchRunRequest.mockResolvedValue({
+      run: {
+        id: 'run-2', siteId: 'site-1', status: 'running', pageCap: 100, pagesCrawled: 0,
+        vendorTaskId: null, startedAt: null, finishedAt: null, error: null,
+        createdAt: '2026-07-02T00:00:00.000Z', updatedAt: '2026-07-02T00:00:00.000Z',
+      },
+    });
+    renderReport();
+    const user = userEvent.setup();
+    await user.click(await screen.findByTestId('report-retest'));
+    await user.click(await screen.findByTestId('report-retest-confirm'));
+    expect(await screen.findByTestId('report-run-pending')).toBeInTheDocument();
+    expect(screen.getByTestId('report-run-progress')).toHaveTextContent('Checking up to 100 pages.');
+    expect(screen.queryByTestId('report-empty-fix-now')).toBeNull();
+  });
+
+  it('keeps showing the previous report during a retest', () => {
+    const store = makeStore({
+      loaded: true,
+      siteId: 'site-1',
+      runId: 'run-2',
+      runStatus: 'running',
+      runPageCap: null,
+      report: makeReport(),
+    });
+    renderReport({ store });
+    expect(screen.getByTestId('report-run-in-progress')).toBeInTheDocument();
+    expect(screen.queryByTestId('report-run-progress')).toBeNull();
+    expect(screen.getByTestId('report-tabs')).toBeInTheDocument();
+    expect(screen.queryByTestId('report-run-pending')).toBeNull();
+  });
+
   it('drops loadReport fulfilled for a previous siteId (stale)', async () => {
     const { loadReport } = await import('../store/thunks');
     const { reportReducer } = await import('../store/slice');

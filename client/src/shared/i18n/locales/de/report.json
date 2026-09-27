@@ -76,7 +76,8 @@
   "states": {
     "loading": "Ihr Bericht wird geladen…",
     "retry": "Erneut versuchen",
-    "runInProgress": "Website wird geprüft — dies kann einige Minuten dauern."
+    "runInProgress": "Website wird geprüft — dies kann einige Minuten dauern.",
+    "runProgress": "Bis zu {{count}} Seiten werden geprüft."
   },
   "loadFailed": "Ihr Bericht konnte nicht geladen werden.",
   "retestFailed": "Der Audit konnte nicht gestartet werden.",
@@ -233,5 +234,9 @@
       "aiVisibility": "Verfolgen Sie KI-Prompts, um dies zu prüfen.",
       "generic": "Der Crawl hat nicht genug Daten geliefert, um dies zu prüfen."
     }
+  },
+  "pending": {
+    "title": "Ihre Ergebnisse erscheinen hier",
+    "description": "Sobald dieser Audit abgeschlossen ist, sehen Sie, was zu beheben, was zu beobachten und was bereits in Ordnung ist."
   }
 }

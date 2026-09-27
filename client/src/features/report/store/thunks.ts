@@ -47,6 +47,8 @@ export interface LoadReportResult {
   runId: string;
   report: AuditReport | null;
   runStatus: PublicAuditRun['status'];
+  /** Crawl ceiling of the resolved run (in-progress indicator). */
+  pageCap?: number;
 }
 
 /**
@@ -76,13 +78,13 @@ export const loadReport = createAsyncThunk<
       resolvedRunId = latest.id;
       runStatus = latest.status;
       if (runStatus !== 'succeeded') {
-        return { siteId, runId: resolvedRunId, report: null, runStatus };
+        return { siteId, runId: resolvedRunId, report: null, runStatus, pageCap: latest.pageCap };
       }
     } else {
       const { run } = await fetchRunRequest(resolvedRunId, readInit(identity, signal));
       runStatus = run.status;
       if (runStatus !== 'succeeded') {
-        return { siteId, runId: resolvedRunId, report: null, runStatus };
+        return { siteId, runId: resolvedRunId, report: null, runStatus, pageCap: run.pageCap };
       }
     }
     const report = await fetchReportRequest(resolvedRunId, readInit(identity, signal));

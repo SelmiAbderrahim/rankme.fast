@@ -24,6 +24,7 @@ export const initialState: ReportState = {
   retesting: false,
   retestError: '',
   runStatus: null,
+  runPageCap: null,
   runs: [],
   runsLoading: false,
   runsLoaded: false,
@@ -92,10 +93,12 @@ const reportSlice = createSlice({
           state.report = null;
           state.runId = null;
           state.runStatus = null;
+          state.runPageCap = null;
           return;
         }
         state.runId = action.payload.runId;
         state.runStatus = action.payload.runStatus;
+        state.runPageCap = action.payload.pageCap ?? null;
         state.report = action.payload.report ?? null;
       })
       .addCase(loadReport.rejected, (state, action) => {
@@ -113,6 +116,7 @@ const reportSlice = createSlice({
         state.retesting = false;
         state.runId = action.payload.run.id;
         state.runStatus = action.payload.run.status;
+        state.runPageCap = action.payload.run.pageCap;
       })
       .addCase(startRetest.rejected, (state, action) => {
         if (action.meta.aborted) return;
@@ -123,6 +127,7 @@ const reportSlice = createSlice({
         if (!matchesIdentity(state, action.meta.arg)) return;
         state.runStatus = action.payload.status;
         state.runId = action.payload.id;
+        state.runPageCap = action.payload.pageCap;
       })
       .addCase(loadRuns.pending, (state, action) => {
         const identity = identityFor(action.meta.arg);

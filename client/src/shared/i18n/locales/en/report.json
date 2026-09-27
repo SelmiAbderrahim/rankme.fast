@@ -76,7 +76,8 @@
   "states": {
     "loading": "Loading your report…",
     "retry": "Try again",
-    "runInProgress": "Auditing your site — this can take a couple of minutes."
+    "runInProgress": "Auditing your site — this can take a couple of minutes.",
+    "runProgress": "Checking up to {{count}} pages."
   },
   "loadFailed": "Could not load your report.",
   "retestFailed": "Could not start the audit.",
@@ -237,5 +238,9 @@
       "aiVisibility": "Track AI prompts to check this.",
       "generic": "The crawl did not return enough data to check this."
     }
+  },
+  "pending": {
+    "title": "Your results will appear here",
+    "description": "When this audit finishes, you'll see what to fix, what to watch, and what already passes."
   }
 }

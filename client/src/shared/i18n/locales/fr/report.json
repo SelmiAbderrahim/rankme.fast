@@ -76,7 +76,8 @@
   "states": {
     "loading": "Chargement de votre rapport…",
     "retry": "Réessayer",
-    "runInProgress": "Audit de votre site en cours — cela peut prendre quelques minutes."
+    "runInProgress": "Audit de votre site en cours — cela peut prendre quelques minutes.",
+    "runProgress": "Vérification de {{count}} pages au maximum."
   },
   "loadFailed": "Impossible de charger votre rapport.",
   "retestFailed": "Impossible de démarrer l'audit.",
@@ -233,5 +234,9 @@
       "aiVisibility": "Suivez des requêtes IA pour effectuer cette vérification.",
       "generic": "L'exploration n'a pas renvoyé assez de données pour effectuer cette vérification."
     }
+  },
+  "pending": {
+    "title": "Vos résultats apparaîtront ici",
+    "description": "À la fin de cet audit, vous verrez ce qu'il faut corriger, ce qu'il faut surveiller et ce qui passe déjà."
   }
 }

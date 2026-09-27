@@ -76,7 +76,8 @@
   "states": {
     "loading": "正在加载您的报告…",
     "retry": "重试",
-    "runInProgress": "正在审计您的网站——这可能需要几分钟。"
+    "runInProgress": "正在审计您的网站——这可能需要几分钟。",
+    "runProgress": "正在检查最多 {{count}} 个页面。"
   },
   "loadFailed": "无法加载您的报告。",
   "retestFailed": "无法启动审计。",
@@ -233,5 +234,9 @@
       "aiVisibility": "跟踪 AI 提示词以进行此项检查。",
       "generic": "抓取未返回足够的数据来进行此项检查。"
     }
+  },
+  "pending": {
+    "title": "结果将显示在这里",
+    "description": "本次审计完成后,您将看到需要修复、需要关注以及已经通过的项目。"
   }
 }

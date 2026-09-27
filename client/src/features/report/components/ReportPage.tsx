@@ -19,6 +19,8 @@
  *   - report-loading                       skeleton state
  *   - report-empty-<tab>                   per-tab empty state
  *   - report-run-in-progress               run-in-progress banner
+ *   - report-run-progress                  crawl ceiling line in the banner
+ *   - report-run-pending                   results placeholder while the first run is in flight
  *   - report-error                         inline error alert
  *   - report-no-run                        first-run empty state
  *   - report-not-evaluated                 checks that could not run
@@ -66,6 +68,7 @@ import {
   selectReportRetestError,
   selectReportRetesting,
   selectReportRunId,
+  selectReportRunPageCap,
   selectReportRunStatus,
   selectReportSiteId,
 } from '../store/selectors';
@@ -183,6 +186,7 @@ export const ReportPage = ({
   const retestError = useAppSelector(selectReportRetestError);
   const runId = useAppSelector(selectReportRunId);
   const runStatus = useAppSelector(selectReportRunStatus);
+  const runPageCap = useAppSelector(selectReportRunPageCap);
   const currentSiteId = useAppSelector(selectReportSiteId);
 
   const lastLoadKey = useRef<string>('');
@@ -554,7 +558,14 @@ export const ReportPage = ({
           aria-live="polite"
           data-testid="report-run-in-progress"
         >
-          <AlertDescription>{t('states.runInProgress')}</AlertDescription>
+          <AlertDescription>
+            <span className="block">{t('states.runInProgress')}</span>
+            {runPageCap ? (
+              <span className="block" data-testid="report-run-progress">
+                {t('states.runProgress', { count: runPageCap })}
+              </span>
+            ) : null}
+          </AlertDescription>
         </Alert>
       ) : null}
 
@@ -582,34 +593,45 @@ export const ReportPage = ({
         />
       ) : null}
 
-      <Tabs
-        value={activeTab}
-        onValueChange={(v) => setActiveTab(v as ReportTab)}
-        defaultValue={DEFAULT_REPORT_TAB}
-      >
-        <TabsList
-          data-testid="report-tabs"
-          className="h-auto w-full flex-wrap justify-start sm:w-fit"
+      {report ? (
+        <Tabs
+          value={activeTab}
+          onValueChange={(v) => setActiveTab(v as ReportTab)}
+          defaultValue={DEFAULT_REPORT_TAB}
         >
+          <TabsList
+            data-testid="report-tabs"
+            className="h-auto w-full flex-wrap justify-start sm:w-fit"
+          >
+            {REPORT_TABS.map((tab) => (
+              <TabsTrigger
+                key={tab}
+                value={tab}
+                data-testid={`report-tab-${tab}`}
+              >
+                {t(`tabs.${tab}`)}
+                <span className="text-muted-foreground ms-2 tabular-nums">
+                  ({countForTab[tab]})
+                </span>
+              </TabsTrigger>
+            ))}
+          </TabsList>
           {REPORT_TABS.map((tab) => (
-            <TabsTrigger
-              key={tab}
-              value={tab}
-              data-testid={`report-tab-${tab}`}
-            >
-              {t(`tabs.${tab}`)}
-              <span className="text-muted-foreground ms-2 tabular-nums">
-                ({countForTab[tab]})
-              </span>
-            </TabsTrigger>
+            <TabsContent key={tab} value={tab} className="mt-4">
+              {renderTabPanel(tab)}
+            </TabsContent>
           ))}
-        </TabsList>
-        {REPORT_TABS.map((tab) => (
-          <TabsContent key={tab} value={tab} className="mt-4">
-            {renderTabPanel(tab)}
-          </TabsContent>
-        ))}
-      </Tabs>
+        </Tabs>
+      ) : (
+        // First audit still running: no results exist yet, so never show the
+        // "nothing to fix" empty states that congratulate an unfinished run.
+        <Empty className="w-full" data-testid="report-run-pending">
+          <EmptyHeader>
+            <EmptyTitle>{t('pending.title')}</EmptyTitle>
+            <EmptyDescription>{t('pending.description')}</EmptyDescription>
+          </EmptyHeader>
+        </Empty>
+      )}
 
       <NotEvaluatedChecks findings={notEvaluatedFindings} />
 

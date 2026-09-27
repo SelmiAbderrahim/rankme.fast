@@ -76,7 +76,8 @@
   "states": {
     "loading": "Cargando tu informe…",
     "retry": "Reintentar",
-    "runInProgress": "Auditando tu sitio — puede tardar unos minutos."
+    "runInProgress": "Auditando tu sitio — puede tardar unos minutos.",
+    "runProgress": "Revisando hasta {{count}} páginas."
   },
   "loadFailed": "No se pudo cargar tu informe.",
   "retestFailed": "No se pudo iniciar la auditoría.",
@@ -233,5 +234,9 @@
       "aiVisibility": "Sigue prompts de IA para comprobar esto.",
       "generic": "El rastreo no devolvió datos suficientes para comprobar esto."
     }
+  },
+  "pending": {
+    "title": "Tus resultados aparecerán aquí",
+    "description": "Cuando termine esta auditoría, verás qué corregir, qué vigilar y qué ya pasa."
   }
 }

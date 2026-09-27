@@ -314,6 +314,8 @@ export interface ReportState {
   retesting: boolean;
   retestError: string;
   runStatus: PublicAuditRun['status'] | null;
+  /** Crawl ceiling of the in-flight run, when known. */
+  runPageCap: number | null;
   /** Recent audit runs for the report history block. */
   runs: PublicAuditRun[];
   runsLoading: boolean;
