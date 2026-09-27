@@ -103,10 +103,11 @@ export const KeywordIntelligenceWorkspace = () => {
             ) : null}
             {/* One "Learn more" per tab: Live search interest has its own
                 docs page, every other tab shares the workspace page. */}
-            <DocsLink
-              slug={activeTab === 'live-trends' ? 'keyword-trends' : 'keyword-intelligence'}
-              className="text-muted-foreground hover:text-foreground text-xs underline underline-offset-2"
-            />
+            {activeTab === 'live-trends' ? (
+              <DocsLink slug="keyword-trends" className="text-muted-foreground hover:text-foreground text-xs underline underline-offset-2" />
+            ) : (
+              <DocsLink slug="keyword-intelligence" className="text-muted-foreground hover:text-foreground text-xs underline underline-offset-2" />
+            )}
           </div>
         </div>
         <TabsContent
