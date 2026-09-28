@@ -454,6 +454,17 @@ describe('ReportPage — loading, empty & error', () => {
 });
 
 describe('ReportPage — tabs, counts & URL state', () => {
+  it('loads a report whose run already finished exactly once (issue #4)', async () => {
+    renderReport();
+    expect(await screen.findByTestId('report-tab-fix-now')).toBeInTheDocument();
+    // A second load would swap the page back to its skeleton, unmounting the
+    // audit history and aborting its read.
+    await new Promise((resolve) => setTimeout(resolve, 50));
+    expect(mocked.fetchReportRequest).toHaveBeenCalledTimes(1);
+    expect(screen.queryByTestId('report-loading')).toBeNull();
+    expect(screen.getByTestId('report-run-history')).toBeInTheDocument();
+  });
+
   it('renders three tab triggers with counts and defaults to fix-now', async () => {
     let currentSearch = '';
     renderReport({
@@ -1587,16 +1598,44 @@ describe('slice — reducers & thunks state transitions', () => {
     expect(state.error).toBe('');
   });
 
-  it('loadRuns rejected with no payload records an empty error and forgets the site', async () => {
+  it('loadRuns rejected with no payload records an empty error and keeps the site', async () => {
     const { loadRuns } = await import('../store/thunks');
     const { reportReducer } = await import('../store/slice');
     const state = reportReducer(
-      { ...baseReportState(), runsSiteId: 's', runsLoading: true, runsError: 'old' },
+      {
+        ...baseReportState(),
+        runsSiteId: 's',
+        runsLoading: true,
+        runsRequestId: 'req',
+        runsError: 'old',
+      },
       loadRuns.rejected(new Error('boom'), 'req', { siteId: 's' }),
     );
     expect(state.runsError).toBe('');
-    expect(state.runsSiteId).toBeNull();
+    expect(state.runsSiteId).toBe('s');
     expect(state.runsLoading).toBe(false);
+    expect(state.runsRequestId).toBeNull();
+  });
+
+  it('loadRuns settles only for the read that owns the loading state', async () => {
+    const { loadRuns } = await import('../store/thunks');
+    const { reportReducer } = await import('../store/slice');
+    const owned = {
+      ...baseReportState(),
+      runsSiteId: 's',
+      runsLoading: true,
+      runsRequestId: 'newer',
+    };
+    const stale = reportReducer(
+      owned,
+      loadRuns.fulfilled({ runs: [], nextCursor: null }, 'older', { siteId: 's' }),
+    );
+    expect(stale.runsLoading).toBe(true);
+    const staleFailure = reportReducer(
+      owned,
+      loadRuns.rejected(new Error('boom'), 'older', { siteId: 's' }),
+    );
+    expect(staleFailure.runsLoading).toBe(true);
   });
 
   it('startRetest rejected with no payload falls back to empty retestError', async () => {
@@ -2267,8 +2306,8 @@ describe('ReportPage — runIdParam !== undefined mismatches state.runId (line 1
   });
 });
 
-describe('ReportPage — StrictMode double-invocation guard (line 206 true branch)', () => {
-  it('finishedRunRef guard prevents second dispatch on StrictMode remount', async () => {
+describe('ReportPage — StrictMode double-invocation', () => {
+  it('does not refetch a run that was already finished under StrictMode', async () => {
     const store = makeStore({
       loaded: true,
       siteId: 'site-1',
@@ -2289,10 +2328,11 @@ describe('ReportPage — StrictMode double-invocation guard (line 206 true branc
         </Provider>
       </StrictMode>,
     );
-    // StrictMode: effects mount → cleanup → remount. Second invocation of the
-    // runStatus='succeeded' effect hits finishedRunRef.current === runId guard (line 206).
-    // The abort leaves loading=true so the loading UI stays — assert it directly.
-    expect(screen.getByTestId('report-loading')).toBeInTheDocument();
+    // StrictMode: effects mount → cleanup → remount. A run that was already
+    // finished when the page loaded is the report on screen — it is never
+    // refetched, so the page does not fall back to its skeleton (issue #4).
+    expect(screen.queryByTestId('report-loading')).toBeNull();
+    expect(mocked.fetchReportRequest).not.toHaveBeenCalled();
   });
 });
 

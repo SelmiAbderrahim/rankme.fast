@@ -12,6 +12,7 @@ import * as api from '../api';
 import { ApiError } from '@shared/api/client';
 import userEvent from '@testing-library/user-event';
 import { RUNS_RETRY_DELAY_MS } from '../store/thunks';
+import { presentationLocaleChanged } from '@shared/i18n/requestIdentity';
 
 vi.mock('../api', async (importOriginal) => ({
   ...(await importOriginal<typeof import('../api')>()),
@@ -137,6 +138,59 @@ describe('RunHistory', () => {
     await new Promise((resolve) => setTimeout(resolve, RUNS_RETRY_DELAY_MS + 100));
     expect(mocked.fetchAuditRunsRequest).toHaveBeenCalledTimes(1);
     expect(store.getState().report.runsError).toBe('');
+  });
+
+  it('refetches on remount when the first read was aborted mid-flight (issue #4)', async () => {
+    // The report page swaps to its skeleton while it reloads, unmounting the
+    // card and aborting its read. The next mount must fetch again instead of
+    // waiting forever on "Loading audit history…".
+    let signalOfFirst: AbortSignal | undefined;
+    mocked.fetchAuditRunsRequest.mockImplementationOnce(
+      (_siteId, _limit, init) =>
+        new Promise((_resolve, reject) => {
+          signalOfFirst = init?.signal ?? undefined;
+          signalOfFirst?.addEventListener('abort', () =>
+            reject(new DOMException('Aborted', 'AbortError')),
+          );
+        }),
+    );
+    const store = makeStore();
+    const first = renderRH(store);
+    await waitFor(() => expect(mocked.fetchAuditRunsRequest).toHaveBeenCalledTimes(1));
+    first.unmount();
+    await waitFor(() => expect(signalOfFirst?.aborted).toBe(true));
+    await waitFor(() => expect(store.getState().report.runsLoading).toBe(false));
+
+    mocked.fetchAuditRunsRequest.mockResolvedValueOnce({ runs: [run('r-10')], nextCursor: null });
+    renderRH(store);
+    expect(await screen.findByTestId('report-run-r-10')).toBeInTheDocument();
+    expect(mocked.fetchAuditRunsRequest).toHaveBeenCalledTimes(2);
+    expect(screen.queryByTestId('report-run-history-loading')).toBeNull();
+  });
+
+  it('refetches after a locale change aborts the in-flight read', async () => {
+    mocked.fetchAuditRunsRequest.mockImplementationOnce(
+      (_siteId, _limit, init) =>
+        new Promise((_resolve, reject) => {
+          init?.signal?.addEventListener('abort', () =>
+            reject(new DOMException('Aborted', 'AbortError')),
+          );
+        }),
+    );
+    mocked.fetchAuditRunsRequest.mockResolvedValue({ runs: [run('r-11')], nextCursor: null });
+    const store = makeStore();
+    renderRH(store);
+    await waitFor(() => expect(mocked.fetchAuditRunsRequest).toHaveBeenCalledTimes(1));
+    store.dispatch(
+      presentationLocaleChanged({
+        locale: 'en',
+        generation: 7,
+        refreshGeneration: 7,
+        reason: 'stale-mutation',
+      }),
+    );
+    expect(await screen.findByTestId('report-run-r-11')).toBeInTheDocument();
+    expect(mocked.fetchAuditRunsRequest).toHaveBeenCalledTimes(2);
   });
 
   it('does not refetch when runs are already loaded for the same site', () => {

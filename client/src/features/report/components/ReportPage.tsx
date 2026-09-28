@@ -236,9 +236,14 @@ export const ReportPage = ({
   // Poll the run while it's queued/running (retest just kicked off, for
   // example). Stops as soon as the run reaches a terminal state, at which
   // point we refetch the report so the tab counts refresh.
+  // The run this page watched while it was queued/running. Only a run seen in
+  // flight needs a report refetch when it finishes; a run that was already
+  // finished when the page loaded is exactly the report just fetched.
+  const watchedRunRef = useRef<string | null>(null);
   useEffect(() => {
     if (!runId) return;
     if (runStatus !== 'queued' && runStatus !== 'running') return;
+    watchedRunRef.current = runId;
     let inFlight: { abort: () => void } | null = null;
     const timer = window.setInterval(() => {
       inFlight = dispatch(pollRun({ runId, ...requestIdentity }));
@@ -252,6 +257,9 @@ export const ReportPage = ({
   const finishedRunRef = useRef<string | null>(null);
   useEffect(() => {
     if (!runId || runStatus !== 'succeeded') return;
+    // Loaded already finished: refetching would blank the page back to its
+    // skeleton, unmounting (and aborting) the history and actions reads.
+    if (watchedRunRef.current !== runId) return;
     /* c8 ignore next -- defensive guard against React StrictMode double-invocation; the effect deps guarantee at most one dispatch per (runId, runStatus) transition in practice. */
     if (finishedRunRef.current === runId) return;
     finishedRunRef.current = runId;

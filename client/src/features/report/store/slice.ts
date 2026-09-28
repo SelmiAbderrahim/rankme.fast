@@ -29,6 +29,7 @@ export const initialState: ReportState = {
   runsLoading: false,
   runsLoaded: false,
   runsSiteId: null,
+  runsRequestId: null,
   runsError: '',
   pdfDownloading: false,
   pdfError: '',
@@ -135,6 +136,7 @@ const reportSlice = createSlice({
         state.presentationGeneration = identity.presentationGeneration;
         state.runsLoading = true;
         state.runsError = '';
+        state.runsRequestId = action.meta.requestId;
         if (state.runsSiteId !== action.meta.arg.siteId) {
           state.runs = [];
           state.runsLoaded = false;
@@ -142,20 +144,34 @@ const reportSlice = createSlice({
         }
       })
       .addCase(loadRuns.fulfilled, (state, action) => {
+        if (action.meta.requestId !== state.runsRequestId) return;
         if (!matchesIdentity(state, action.meta.arg)) return;
+        state.runsRequestId = null;
         state.runsLoading = false;
         state.runsLoaded = true;
         state.runs = action.payload.runs;
       })
       .addCase(loadRuns.rejected, (state, action) => {
-        if (action.meta.aborted || !matchesIdentity(state, action.meta.arg)) return;
+        // Only the read that owns the loading state may settle it; an older
+        // read superseded by a newer one is ignored.
+        if (action.meta.requestId !== state.runsRequestId) return;
+        if (action.meta.aborted) {
+          // The card unmounted mid-read (the report page swaps to its
+          // skeleton while it reloads). Forget the site so the next mount
+          // fetches again instead of waiting on a read that will never land.
+          state.runsRequestId = null;
+          state.runsLoading = false;
+          state.runsSiteId = null;
+          return;
+        }
+        if (!matchesIdentity(state, action.meta.arg)) return;
+        state.runsRequestId = null;
         state.runsLoading = false;
         // A failed read is not an empty history: keep the error for the card
-        // and forget the site so the next mount (client-side navigation)
-        // fetches again instead of replaying the failure.
+        // (which offers a retry, and retries on its next mount instead of
+        // replaying the failure).
         state.runsError = action.payload ?? '';
         state.runsLoaded = false;
-        state.runsSiteId = null;
       })
       .addCase(downloadReportPdf.pending, (state) => {
         state.pdfDownloading = true;
@@ -182,6 +198,7 @@ const reportSlice = createSlice({
         state.runsLoading = false;
         state.runsLoaded = false;
         state.runsSiteId = null;
+        state.runsRequestId = null;
         state.runsError = '';
         state.retestError = '';
         state.pdfError = '';

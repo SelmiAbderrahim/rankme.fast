@@ -321,6 +321,8 @@ export interface ReportState {
   runsLoading: boolean;
   runsLoaded: boolean;
   runsSiteId: string | null;
+  /** Thunk request id of the history read that owns `runsLoading`. */
+  runsRequestId: string | null;
   /** Localized message when the history read failed; '' otherwise. */
   runsError: string;
   /** White-label PDF download (workstream B). */

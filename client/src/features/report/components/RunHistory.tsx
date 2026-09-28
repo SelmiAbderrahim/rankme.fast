@@ -1,4 +1,4 @@
-import { useEffect, useRef } from 'react';
+import { useCallback, useEffect, useRef } from 'react';
 import { Link } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { useAppDispatch, useAppSelector } from '@shared/hooks/redux';
@@ -37,37 +37,41 @@ export const RunHistory = ({ siteId }: { siteId: string }) => {
   const runsSiteId = useAppSelector(selectReportRunsSiteId);
   const runsLoading = useAppSelector(selectReportRunsLoading);
   const runsError = useAppSelector(selectReportRunsError);
-  const runsSiteIdRef = useRef(runsSiteId);
-  runsSiteIdRef.current = runsSiteId;
+  // The history belongs to another site (or none yet, or it was forgotten
+  // after an aborted read or a locale change): fetch it. Derived from the
+  // store, so a read that never lands can never strand the card.
+  const needsRuns = runsSiteId !== siteId;
+  // A failure left by an earlier visit is retried once when the card mounts.
+  const retryOnMount = useRef(runsError !== '' && !needsRuns);
+  const requestRef = useRef<{ abort: () => void } | null>(null);
 
-  useEffect(() => {
-    if (runsSiteIdRef.current !== siteId) {
-      const request = dispatch(
-        loadRuns({
-          siteId,
-          presentationLocale: presentation.locale,
-          presentationGeneration: presentation.generation,
-        }),
-      );
-      return () => request.abort();
-    }
-  }, [
-    dispatch,
-    presentation.generation,
-    presentation.locale,
-    presentation.refreshGeneration,
-    siteId,
-  ]);
-
-  const retry = () => {
-    void dispatch(
+  const load = useCallback(() => {
+    requestRef.current?.abort();
+    requestRef.current = dispatch(
       loadRuns({
         siteId,
         presentationLocale: presentation.locale,
         presentationGeneration: presentation.generation,
       }),
     );
-  };
+  }, [dispatch, presentation.generation, presentation.locale, siteId]);
+
+  useEffect(() => {
+    // `pending` marks the site as owned synchronously, so this effect re-runs
+    // with `needsRuns` false and must NOT abort the read it just started —
+    // hence no cleanup here; unmount aborts via the effect below.
+    if (needsRuns) load();
+  }, [load, needsRuns]);
+
+  useEffect(() => {
+    if (!retryOnMount.current) return;
+    retryOnMount.current = false;
+    load();
+  }, [load]);
+
+  useEffect(() => () => requestRef.current?.abort(), []);
+
+  const retry = load;
 
   const fmtDate = (iso: string): string =>
     new Intl.DateTimeFormat(i18n.language, {
