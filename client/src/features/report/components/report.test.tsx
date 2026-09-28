@@ -747,6 +747,8 @@ describe('ReportPage — retest & diff badges', () => {
     );
     const cta = screen.getByTestId('report-retest');
     expect(cta).toBeEnabled();
+    // The new run is checked as soon as it starts; it is still queued.
+    mocked.fetchRunRequest.mockResolvedValue(runInState('queued', 'run-2'));
 
     // Retest → preview dialog → confirm → server returns queued.
     await user.click(cta);
@@ -803,7 +805,7 @@ describe('ReportPage — retest & diff badges', () => {
     // Kick off with a queued deep-linked run so the polling effect starts
     // immediately, then swap the fetchRunRequest mock to succeeded — the
     // next poll tick transitions the report through the finished branch.
-    mocked.fetchRunRequest.mockResolvedValueOnce({
+    mocked.fetchRunRequest.mockResolvedValue({
       run: {
         id: 'run-3',
         siteId: 'site-1',
@@ -840,6 +842,63 @@ describe('ReportPage — retest & diff badges', () => {
       { timeout: 8000 },
     );
   }, 15000);
+
+  const runInState = (status: 'queued' | 'succeeded', id = 'run-3') => ({
+    run: {
+      id,
+      siteId: 'site-1',
+      status,
+      pageCap: 100,
+      pagesCrawled: status === 'succeeded' ? 3 : 0,
+      vendorTaskId: null,
+      startedAt: null,
+      finishedAt: null,
+      error: null,
+      createdAt: '2026-07-02T00:00:00.000Z',
+      updatedAt: '2026-07-02T00:00:00.000Z',
+    },
+  });
+
+  it('checks a run in flight at once instead of one poll interval later (issue #4)', async () => {
+    // First read (the deep-linked run) is queued; the very next status read
+    // already reports it finished. Remounting on a running audit must pick
+    // that up without waiting out the 3-second interval.
+    mocked.fetchRunRequest.mockResolvedValueOnce(runInState('queued'));
+    mocked.fetchRunRequest.mockResolvedValue(runInState('succeeded'));
+    renderReport({ path: '/sites/site-1/report/run-3' });
+    // Well inside the 3-second interval: only the immediate check can land it.
+    await waitFor(
+      () =>
+        expect(mocked.fetchReportRequest).toHaveBeenCalledWith(
+          'run-3',
+          expect.objectContaining({ signal: expect.any(AbortSignal) }),
+        ),
+      { timeout: 1500 },
+    );
+  });
+
+  it('re-checks a run in flight when the tab becomes visible again (issue #4)', async () => {
+    mocked.fetchRunRequest.mockResolvedValue(runInState('queued'));
+    const visibility = vi.spyOn(document, 'visibilityState', 'get');
+    try {
+      renderReport({ path: '/sites/site-1/report/run-3' });
+      expect(await screen.findByTestId('report-run-in-progress')).toBeInTheDocument();
+      // Deep-link read + the immediate check.
+      await waitFor(() => expect(mocked.fetchRunRequest).toHaveBeenCalledTimes(2));
+      visibility.mockReturnValue('hidden');
+      act(() => {
+        document.dispatchEvent(new Event('visibilitychange'));
+      });
+      expect(mocked.fetchRunRequest).toHaveBeenCalledTimes(2);
+      visibility.mockReturnValue('visible');
+      act(() => {
+        document.dispatchEvent(new Event('visibilitychange'));
+      });
+      expect(mocked.fetchRunRequest).toHaveBeenCalledTimes(3);
+    } finally {
+      visibility.mockRestore();
+    }
+  });
 
   it('renders Fixed and Regressed badges from the diff', async () => {
     mocked.fetchReportRequest.mockResolvedValue(

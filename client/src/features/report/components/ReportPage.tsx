@@ -245,11 +245,22 @@ export const ReportPage = ({
     if (runStatus !== 'queued' && runStatus !== 'running') return;
     watchedRunRef.current = runId;
     let inFlight: { abort: () => void } | null = null;
-    const timer = window.setInterval(() => {
+    const poll = () => {
       inFlight = dispatch(pollRun({ runId, ...requestIdentity }));
-    }, POLL_INTERVAL_MS);
+    };
+    // Check at once instead of one interval later: a page that remounts on a
+    // run in flight (switching tabs aborts the pending poll) and a background
+    // tab whose timers the browser throttled otherwise keep showing
+    // "Auditing…" long after the run finished (issue #4).
+    poll();
+    const onVisible = () => {
+      if (document.visibilityState === 'visible') poll();
+    };
+    document.addEventListener('visibilitychange', onVisible);
+    const timer = window.setInterval(poll, POLL_INTERVAL_MS);
     return () => {
       window.clearInterval(timer);
+      document.removeEventListener('visibilitychange', onVisible);
       inFlight?.abort();
     };
   }, [dispatch, requestIdentity, runId, runStatus]);
