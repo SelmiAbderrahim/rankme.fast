@@ -1617,6 +1617,25 @@ describe('slice — reducers & thunks state transitions', () => {
     expect(state.runsRequestId).toBeNull();
   });
 
+  it('loadRuns ignores a settled read from an older presentation identity', async () => {
+    const { loadRuns } = await import('../store/thunks');
+    const { reportReducer } = await import('../store/slice');
+    const owned = {
+      ...baseReportState(),
+      presentationGeneration: 5,
+      runsSiteId: 's',
+      runsLoading: true,
+      runsRequestId: 'req',
+    };
+    const arg = { siteId: 's', presentationLocale: 'en' as const, presentationGeneration: 4 };
+    expect(
+      reportReducer(owned, loadRuns.fulfilled({ runs: [], nextCursor: null }, 'req', arg)).runsLoading,
+    ).toBe(true);
+    expect(
+      reportReducer(owned, loadRuns.rejected(new Error('boom'), 'req', arg)).runsLoading,
+    ).toBe(true);
+  });
+
   it('loadRuns settles only for the read that owns the loading state', async () => {
     const { loadRuns } = await import('../store/thunks');
     const { reportReducer } = await import('../store/slice');

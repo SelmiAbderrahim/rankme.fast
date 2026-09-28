@@ -254,15 +254,14 @@ export const ReportPage = ({
     };
   }, [dispatch, requestIdentity, runId, runStatus]);
 
-  const finishedRunRef = useRef<string | null>(null);
   useEffect(() => {
     if (!runId || runStatus !== 'succeeded') return;
-    // Loaded already finished: refetching would blank the page back to its
-    // skeleton, unmounting (and aborting) the history and actions reads.
+    // Only a run this page watched in flight is refetched, exactly once. A
+    // run that had already finished when the page loaded is the report just
+    // fetched: refetching would blank the page back to its skeleton,
+    // unmounting (and aborting) the history and actions reads.
     if (watchedRunRef.current !== runId) return;
-    /* c8 ignore next -- defensive guard against React StrictMode double-invocation; the effect deps guarantee at most one dispatch per (runId, runStatus) transition in practice. */
-    if (finishedRunRef.current === runId) return;
-    finishedRunRef.current = runId;
+    watchedRunRef.current = null;
     // Force refetch after a run finishes — bypass the dedupe guard above.
     lastLoadKey.current = '';
     const p = dispatch(loadReport({ siteId, runId, ...requestIdentity }));
