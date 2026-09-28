@@ -31,6 +31,7 @@ import { completeAuditRun, failAuditRun, markAuditRunRunning } from './audit-run
 import { replaceAuditedPages } from './audits.service.js';
 import { writeReportSnapshot } from './report.service.js';
 import type { PageSpeedEvaluationInput, PageSpeedSample, } from './rules/index.js';
+import type { SiteProbe, SiteProbeResult } from './site-probe.js';
 export interface AuditProcessorDeps {
     provider: AuditProvider;
     logger: Logger;
@@ -93,6 +94,12 @@ export interface AuditProcessorDeps {
      * vendor verdict and never fails the run.
      */
     probeStructuredData?: (urls: readonly string[]) => Promise<ReadonlySet<string>>;
+    /**
+     * Site-level probe (robots.txt sitemap directive and `/llms.txt`). Fills
+     * the site-wide signals the vendor does not report. Optional; a failure
+     * keeps the vendor result and never fails the run.
+     */
+    probeSite?: SiteProbe;
     /**
      * Vendor-response archiver (generic vendor layer). When present, the
      * normalized crawl result is appended to the `vendor_responses` table
@@ -319,7 +326,7 @@ export function createAuditProcessor(deps: AuditProcessorDeps) {
                     fetchedAt: new Date(now()),
                 });
             }
-            const result = await applyStructuredDataProbe(vendorResult, deps);
+            const result = await applySiteProbe(await applyStructuredDataProbe(vendorResult, deps), target, deps);
             // Page-speed sampling — Lighthouse + optional CrUX on a
             // sampled subset.
             // Provider failure is degradation, NOT audit failure (release-gate
@@ -455,6 +462,31 @@ export async function applyStructuredDataProbe(result: AuditResult, deps: Pick<A
         ...result,
         pages: result.pages.map((page) => withJsonLd.has(page.url) ? { ...page, hasStructuredData: true } : page),
     };
+}
+/**
+ * Merge the site probe into the vendor's site-wide checks. A signal the
+ * vendor reported wins; the probe only fills what is absent. Any probe
+ * failure keeps the vendor result.
+ */
+export async function applySiteProbe(result: AuditResult, target: ResolvedAuditTarget, deps: Pick<AuditProcessorDeps, 'probeSite' | 'logger'>): Promise<AuditResult> {
+    if (!deps.probeSite)
+        return result;
+    let probe: SiteProbeResult;
+    try {
+        probe = await deps.probeSite(target);
+    }
+    catch (err) {
+        deps.logger.warn({ err: (err as Error).message }, 'site probe failed — keeping vendor verdict');
+        return result;
+    }
+    const checks = { ...result.domainChecks };
+    if (checks.sitemapReferencedInRobots === undefined && probe.sitemapReferencedInRobots !== undefined) {
+        checks.sitemapReferencedInRobots = probe.sitemapReferencedInRobots;
+    }
+    if (checks.llmsTxtFound === undefined && probe.llmsTxtFound !== undefined) {
+        checks.llmsTxtFound = probe.llmsTxtFound;
+    }
+    return { ...result, domainChecks: checks };
 }
 /**
  * Terminal-failure hook for the dead-letter wiring: marks the domain record

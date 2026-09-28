@@ -25,7 +25,7 @@ import { alertRules, scheduledReports } from './db/schema/index.js';
 import { createAiProfileRunRecorder } from './db/ai-profile-run-events.js';
 import { AI_USAGE_PRUNE_INTERVAL_MS, AI_USAGE_PRUNE_JOB, AI_USAGE_PRUNE_QUEUE, AI_USAGE_PRUNE_SCHEDULER_KEY, createAiUsagePruneProcessor, } from './db/ai-usage-events.js';
 import { closeDatastores } from './db/shutdown.js';
-import { AuditRun, createAuditProcessor, createAuditSummaryProcessor, createStructuredDataProbe, onAuditJobExhausted, onAuditSummaryJobExhausted, } from './modules/audits/index.js';
+import { AuditRun, createAuditProcessor, createAuditSummaryProcessor, createSiteProbe, createStructuredDataProbe, onAuditJobExhausted, onAuditSummaryJobExhausted, } from './modules/audits/index.js';
 import { REPORT_EXPORT_RETENTION_INTERVAL_MS, REPORT_EXPORT_RETENTION_JOB, REPORT_EXPORT_RETENTION_QUEUE, REPORT_EXPORT_RETENTION_SCHEDULER_KEY, createReportExportRetentionProcessor, } from './modules/report-exports/index.js';
 import { alertSweepIntervalMs, ALERT_SWEEP_JOB, ALERT_SWEEP_QUEUE, ALERT_SWEEP_SCHEDULER_KEY, createAlertDispatchDeps, createAlertDispatchProcessor, createAlertSweepProcessor, reconcileAlertDeliveries, } from './modules/alerts/index.js';
 import { GSC_DAILY_SYNC_CRON, GSC_DAILY_SYNC_SCHEDULER_KEY, GSC_DAILY_SYNC_SWEEP_JOB, createCollectGscInsights, createCollectIndexStatus, createGa4SyncProcessor, createGoogleSiteAutoMatchProcessor, createGscDailySyncProducer, createGscSyncQueueDispatcher, createGscSyncProcessor, createMongoGscDailySyncRepository, setGoogleGa4Provider, setGoogleGscProvider, } from './modules/google-connections/index.js';
@@ -290,6 +290,7 @@ async function main(): Promise<void> {
         ...(collectIndexStatus ? { collectIndexStatus } : {}),
         ...(collectGscInsights ? { collectGscInsights } : {}),
         probeStructuredData: createStructuredDataProbe(),
+        probeSite: createSiteProbe(),
         archiveVendorResponse,
         logger,
     });
