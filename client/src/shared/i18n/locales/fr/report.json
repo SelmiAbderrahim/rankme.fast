@@ -42,7 +42,21 @@
     "fixTitle": "Comment corriger",
     "copyFix": "Copier la correction",
     "copied": "Copié",
-    "generateSchema": "Générer le balisage schema"
+    "generateSchema": "Générer le balisage schema",
+    "addressVariants": {
+      "title": "Adresses vérifiées",
+      "address": "Adresse",
+      "result": "Résultat",
+      "verdict": "Statut",
+      "mainAddress": "Votre adresse principale",
+      "redirectsTo": "Redirige vers {{url}}",
+      "answersDirectly": "S’ouvre ici sans redirection (statut {{status}})",
+      "endsWithError": "Aboutit à {{url}} avec une erreur (statut {{status}})",
+      "unreachable": "N’a pas répondu",
+      "okChip": "OK",
+      "problemChip": "À corriger",
+      "unknownChip": "Non vérifiée"
+    }
   },
   "retest": {
     "cta": "Relancer",

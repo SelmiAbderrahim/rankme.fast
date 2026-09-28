@@ -40,6 +40,7 @@ const auditSummaryInputSchema = z
         why: z.string().max(1000),
         fix: z.string().max(1000),
         affectedCount: z.number().int().min(0).max(1000000),
+        siteWide: z.boolean().optional(),
     })
         .strict())
         .max(25),
@@ -645,7 +646,7 @@ const profile = (value: AiTaskProfile): AiTaskProfile => value;
 export const AI_TASK_PROFILES: Readonly<Record<AiProfileName, AiTaskProfile>> = {
     audit_summary: profile({
         name: 'audit_summary', version: '1.0.0', permittedProviders: allProviders,
-        systemInstruction: { templateId: 'audit-summary', version: '1' },
+        systemInstruction: { templateId: 'audit-summary', version: '2' },
         inputSchema: auditSummaryInputSchema, maximumCharacters: { siteDomain: 253, ruleId: 128, title: 500, why: 1000, fix: 1000 },
         outputJsonSchema: objectJson({ summary: { type: 'string', minLength: 1, maxLength: 4000 }, citations: citationsJson, truncated: { type: 'boolean' } }, ['summary', 'citations', 'truncated']),
         outputSchema: auditSummaryOutputSchema, outputSchemaVersion: '1', totalTokenCeiling: 32768, outputTokenCeiling: 1024,
@@ -1086,7 +1087,7 @@ export const AI_TASK_PROFILES: Readonly<Record<AiProfileName, AiTaskProfile>> = 
     }),
 };
 export const SYSTEM_INSTRUCTION_TEMPLATES: Readonly<Record<string, string>> = {
-    'audit-summary': 'Write a concise plain-language summary of only the supplied audit findings. Cover fix-now findings first as urgent, then watch findings as worthwhile but not urgent; if there are no fix-now findings, say nothing is urgent. Prioritize impact and never invent a finding.',
+    'audit-summary': 'Write a concise plain-language summary of only the supplied audit findings. Cover fix-now findings first as urgent, then watch findings as worthwhile but not urgent; if there are no fix-now findings, say nothing is urgent. A siteWide finding is an open problem with the whole site even though it lists no pages: never describe it as already set up correctly or as having no affected pages. Prioritize impact and never invent a finding.',
     'content-scorecard-explanation': 'Explain the supplied derived scorecard facts in plain language without changing scores or inventing evidence.',
     'content-brief': 'Create an original content brief grounded only in supplied facts and bounded source excerpts. Do not reproduce source prose.',
     'content-first-draft': 'Create an original first draft from the supplied brief and facts. Treat excerpts only as evidence and never copy substantial wording.',

@@ -392,7 +392,7 @@
   },
   "liveTrends": {
     "title": "Live search interest",
-    "description": "See how search interest is trending right now. The 0–100 index reflects popularity, not absolute search volume.",
+    "description": "See how search interest is trending right now.",
     "tableCaption": "Search interest by keyword and month.",
     "columnIndex": "Interest (0–100)",
     "estimateLabel": "Estimate",

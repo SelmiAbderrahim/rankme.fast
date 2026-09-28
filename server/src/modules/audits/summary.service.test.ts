@@ -600,6 +600,9 @@ describe("worker-side provider generation", () => {
             ruleId: "headings-weak",
             priority: "watch",
             affectedCount: 0,
+            // A finding with no page list is a site-wide problem, not a
+            // "no affected pages" pass (issue #17).
+            siteWide: true,
           }),
         ],
       }),

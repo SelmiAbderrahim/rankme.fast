@@ -166,7 +166,7 @@ describe('AI task profile runner', () => {
       timeoutMs: 60000, permittedProviders: expect.arrayContaining(['openai', 'anthropic']),
       profileMetadata: {
         name: 'audit_summary', outputSchemaVersion: '1',
-        promptTemplateId: 'audit-summary', promptTemplateVersion: '1',
+        promptTemplateId: 'audit-summary', promptTemplateVersion: '2',
       },
     });
     expect(captured?.sanitizedInput).toMatch(/^<untrusted_customer_data>/u);

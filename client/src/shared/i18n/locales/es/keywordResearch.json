@@ -392,7 +392,7 @@
   },
   "liveTrends": {
     "title": "Interés de búsqueda en directo",
-    "description": "Vea cómo evoluciona el interés de búsqueda ahora mismo. El índice 0–100 refleja popularidad, no volumen absoluto.",
+    "description": "Vea cómo evoluciona el interés de búsqueda ahora mismo.",
     "tableCaption": "Interés de búsqueda por palabra clave y mes.",
     "columnIndex": "Interés (0–100)",
     "estimateLabel": "Estimación",

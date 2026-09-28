@@ -23,6 +23,11 @@ export interface SummaryFindingInput {
     fix: string;
     /** Count of affected URLs for this rule (0 for site-wide findings). */
     affectedCount: number;
+    /**
+     * The finding is about the site as a whole (no page list). It is still an
+     * open problem — a zero `affectedCount` never means "nothing affected".
+     */
+    siteWide?: boolean;
 }
 export interface SummarizeInput {
     findings: SummaryFindingInput[];

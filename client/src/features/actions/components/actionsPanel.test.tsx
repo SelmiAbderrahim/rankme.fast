@@ -607,10 +607,36 @@ describe('ActionCard — content, safe links, collapse', () => {
     expect(
       within(cards[1]!).queryByTestId('action-evidence-link'),
     ).not.toBeInTheDocument();
-    expect(within(cards[1]!).getByText('sneaky')).toBeInTheDocument();
+    expect(within(cards[1]!).getByTestId('action-evidence-label')).toHaveTextContent(
+      'Site audit · Jul 1, 2026',
+    );
     expect(
       within(cards[2]!).queryByTestId('action-evidence-link'),
     ).not.toBeInTheDocument();
+  });
+
+  it('labels evidence by source and date, never by its internal key (issue #19)', async () => {
+    mocked.listActions.mockResolvedValueOnce(
+      okResponse([
+        item('title-missing-or-weak', {
+          sourceId: '6aba2c73494c7d1f4ccde1f9:title-missing-or-weak',
+          evidence: [
+            {
+              sourceRef: '6aba2c73494c7d1f4ccde1f9:title-missing-or-weak',
+              observation: { freshness: 'fresh', observedAt: '2026-09-28T08:00:00.000Z' },
+            },
+          ],
+        }),
+      ]),
+    );
+    renderPanel();
+    const card = (await screen.findAllByTestId('action-card'))[0]!;
+    const evidence = within(card).getByTestId('action-evidence');
+    expect(within(evidence).getByTestId('action-evidence-label')).toHaveTextContent(
+      'Site audit · Sep 28, 2026',
+    );
+    expect(evidence).not.toHaveTextContent('6aba2c73494c7d1f4ccde1f9');
+    expect(card).not.toHaveTextContent(':title-missing-or-weak');
   });
 
   it('renders the internal source link only when revalidation passes', async () => {

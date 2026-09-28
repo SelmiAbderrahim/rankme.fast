@@ -42,7 +42,21 @@
     "fixTitle": "So beheben Sie es",
     "copyFix": "Lösung kopieren",
     "copied": "Kopiert",
-    "generateSchema": "Schema-Markup erzeugen"
+    "generateSchema": "Schema-Markup erzeugen",
+    "addressVariants": {
+      "title": "Geprüfte Adressen",
+      "address": "Adresse",
+      "result": "Ergebnis",
+      "verdict": "Status",
+      "mainAddress": "Ihre Hauptadresse",
+      "redirectsTo": "Leitet weiter zu {{url}}",
+      "answersDirectly": "Öffnet hier ohne Weiterleitung (Status {{status}})",
+      "endsWithError": "Endet auf {{url}} mit einem Fehler (Status {{status}})",
+      "unreachable": "Keine Antwort",
+      "okChip": "OK",
+      "problemChip": "Beheben",
+      "unknownChip": "Nicht geprüft"
+    }
   },
   "retest": {
     "cta": "Erneut prüfen",

@@ -297,6 +297,58 @@ describe('DataForSeoOnPageAuditProvider.getAuditResult', () => {
     });
   });
 
+  it('maps word count and question-style headings so thin-content and FAQ checks run (issue #16)', async () => {
+    const page = (url: string, meta: Record<string, unknown>) => ({
+      url,
+      status_code: 200,
+      meta,
+      checks: { is_broken: false },
+      onpage_score: 90,
+    });
+    vendorMockServer.use(
+      http.get('*/on_page/summary/*', () => HttpResponse.json(readFixture('summary', 'success'))),
+      http.post('*/on_page/pages', () =>
+        HttpResponse.json({
+          status_code: 20000,
+          tasks: [
+            {
+              id: 'TASK_ID',
+              status_code: 20000,
+              result: [
+                {
+                  items: [
+                    page('https://example.com/faq', {
+                      htags: { h2: ['Pricing'], h3: ['How much does it cost?'] },
+                      content: { plain_text_word_count: 640 },
+                    }),
+                    page('https://example.com/ar', { htags: { h4: ['كم يكلف؟'] } }),
+                    page('https://example.com/zh', { htags: { h2: ['多少钱？ '] } }),
+                    page('https://example.com/about', {
+                      htags: { h1: ['About us'], h2: null },
+                      content: { plain_text_word_count: 120 },
+                    }),
+                    page('https://example.com/bare', { content: { plain_text_word_count: null } }),
+                  ],
+                },
+              ],
+            },
+          ],
+        }),
+      ),
+      http.post('*/on_page/links', () => HttpResponse.json(readFixture('links', 'empty'))),
+      http.post('*/on_page/non_indexable', () => HttpResponse.json(readFixture('non-indexable', 'empty'))),
+    );
+    const result = await provider.getAuditResult('TASK_ID');
+    const byUrl = new Map(result.pages.map((p) => [p.url, p]));
+    expect(byUrl.get('https://example.com/faq')).toMatchObject({ wordCount: 640, hasFaqSignals: true });
+    expect(byUrl.get('https://example.com/ar')).toMatchObject({ hasFaqSignals: true });
+    expect(byUrl.get('https://example.com/zh')).toMatchObject({ hasFaqSignals: true });
+    expect(byUrl.get('https://example.com/about')).toMatchObject({ wordCount: 120, hasFaqSignals: false });
+    // No heading outline and no word count: both stay absent (not evaluated).
+    expect(byUrl.get('https://example.com/bare')).not.toHaveProperty('wordCount');
+    expect(byUrl.get('https://example.com/bare')).not.toHaveProperty('hasFaqSignals');
+  });
+
   it('handles empty pages, links, and non-indexable — zero pages, no overlay', async () => {
     vendorMockServer.use(
       http.get('*/on_page/summary/*', () =>

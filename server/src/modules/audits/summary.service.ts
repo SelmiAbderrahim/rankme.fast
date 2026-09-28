@@ -109,6 +109,7 @@ async function buildProviderInput(input: AuditSummaryInput, context: OwnedSummar
         why: localizedWhy(finding.ruleId, input.locale),
         fix: localizedFix(finding.ruleId, input.locale),
         affectedCount: finding.affectedUrls.length,
+        ...(finding.affectedUrls.length === 0 ? { siteWide: true } : {}),
     }));
     return {
         findings,

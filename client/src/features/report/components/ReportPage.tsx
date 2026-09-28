@@ -236,25 +236,43 @@ export const ReportPage = ({
   // Poll the run while it's queued/running (retest just kicked off, for
   // example). Stops as soon as the run reaches a terminal state, at which
   // point we refetch the report so the tab counts refresh.
+  // The run this page watched while it was queued/running. Only a run seen in
+  // flight needs a report refetch when it finishes; a run that was already
+  // finished when the page loaded is exactly the report just fetched.
+  const watchedRunRef = useRef<string | null>(null);
   useEffect(() => {
     if (!runId) return;
     if (runStatus !== 'queued' && runStatus !== 'running') return;
+    watchedRunRef.current = runId;
     let inFlight: { abort: () => void } | null = null;
-    const timer = window.setInterval(() => {
+    const poll = () => {
       inFlight = dispatch(pollRun({ runId, ...requestIdentity }));
-    }, POLL_INTERVAL_MS);
+    };
+    // Check at once instead of one interval later: a page that remounts on a
+    // run in flight (switching tabs aborts the pending poll) and a background
+    // tab whose timers the browser throttled otherwise keep showing
+    // "Auditing…" long after the run finished (issue #4).
+    poll();
+    const onVisible = () => {
+      if (document.visibilityState === 'visible') poll();
+    };
+    document.addEventListener('visibilitychange', onVisible);
+    const timer = window.setInterval(poll, POLL_INTERVAL_MS);
     return () => {
       window.clearInterval(timer);
+      document.removeEventListener('visibilitychange', onVisible);
       inFlight?.abort();
     };
   }, [dispatch, requestIdentity, runId, runStatus]);
 
-  const finishedRunRef = useRef<string | null>(null);
   useEffect(() => {
     if (!runId || runStatus !== 'succeeded') return;
-    /* c8 ignore next -- defensive guard against React StrictMode double-invocation; the effect deps guarantee at most one dispatch per (runId, runStatus) transition in practice. */
-    if (finishedRunRef.current === runId) return;
-    finishedRunRef.current = runId;
+    // Only a run this page watched in flight is refetched, exactly once. A
+    // run that had already finished when the page loaded is the report just
+    // fetched: refetching would blank the page back to its skeleton,
+    // unmounting (and aborting) the history and actions reads.
+    if (watchedRunRef.current !== runId) return;
+    watchedRunRef.current = null;
     // Force refetch after a run finishes — bypass the dedupe guard above.
     lastLoadKey.current = '';
     const p = dispatch(loadReport({ siteId, runId, ...requestIdentity }));
@@ -574,10 +592,13 @@ export const ReportPage = ({
         </Alert>
       ) : null}
 
-      {report?.aiSummaryEnabled && runId ? (
+      {/* The card belongs to the run whose report is on screen, not to the
+          run a retest just started: keying it on the in-flight run remounted
+          it with the summary cached at page load (issue #18). */}
+      {report?.aiSummaryEnabled ? (
         <AiSummaryCard
-          key={`${runId}:${presentationLocale}`}
-          runId={runId}
+          key={`${report.runId}:${presentationLocale}`}
+          runId={report.runId}
           requestedLocale={presentationLocale}
           initial={
             report.aiSummaryAvailability

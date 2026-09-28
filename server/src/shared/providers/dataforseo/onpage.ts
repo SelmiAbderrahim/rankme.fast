@@ -72,6 +72,15 @@ const pageMetaSchema = z
         .object({
         h1: z.array(z.string()).nullable().optional(),
         h2: z.array(z.string()).nullable().optional(),
+        h3: z.array(z.string()).nullable().optional(),
+        h4: z.array(z.string()).nullable().optional(),
+    })
+        .passthrough()
+        .nullable()
+        .optional(),
+    content: z
+        .object({
+        plain_text_word_count: z.number().nullable().optional(),
     })
         .passthrough()
         .nullable()
@@ -386,6 +395,8 @@ function normalizePage(item: z.infer<typeof pageItemSchema>): AuditPage {
         ? ['micromarkup errors reported by vendor']
         : [];
     const isIndexable = checks.is_broken !== true;
+    const wordCount = meta.content?.plain_text_word_count;
+    const hasFaqSignals = meta.htags ? hasQuestionHeadings(meta.htags) : undefined;
     return {
         url: item.url,
         statusCode: item.status_code,
@@ -399,8 +410,19 @@ function normalizePage(item: z.infer<typeof pageItemSchema>): AuditPage {
         isIndexable,
         brokenLinks: [],
         onPageScore: item.onpage_score ?? 0,
+        ...(typeof wordCount === 'number' ? { wordCount } : {}),
+        ...(hasFaqSignals !== undefined ? { hasFaqSignals } : {}),
         ...(timing ? { timing } : {}),
     };
+}
+/** Question marks in the scripts the product ships (Latin, CJK full-width, Arabic). */
+const QUESTION_HEADING = /[?？؟]\s*$/;
+/**
+ * FAQ / Q&A signal from the crawled heading outline: a page with at least one
+ * question-style heading answers a buyer question on the page.
+ */
+function hasQuestionHeadings(htags: NonNullable<z.infer<typeof pageMetaSchema>['htags']>): boolean {
+    return [htags.h1, htags.h2, htags.h3, htags.h4].some((level) => (level ?? []).some((heading) => QUESTION_HEADING.test(heading)));
 }
 function normalizeTiming(timing: z.infer<typeof pageTimingSchema>): AuditPageTiming | undefined {
     if (!timing)

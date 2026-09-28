@@ -49,6 +49,27 @@ export interface AuditDomainChecks {
      * check was not run for this audit — treated as insufficient data.
      */
     llmsTxtFound?: boolean;
+    /**
+     * Where each http/https × apex/www address of the site ends up. Filled by
+     * the audit's own site probe (vendors do not report it); absent when the
+     * probe could not read the site's https address.
+     */
+    addressVariants?: AddressVariantResult[];
+}
+/** One probed address variant of a site (`https-canonicalization` evidence). */
+export interface AddressVariantResult {
+    /** The variant that was requested, e.g. `http://www.example.com/`. */
+    url: string;
+    /** Final HTTP status after redirects; null when the variant did not answer. */
+    status: number | null;
+    /** Final URL after redirects; null when the variant did not answer. */
+    finalUrl: string | null;
+    /**
+     * true = ends on the canonical https origin; false = answers somewhere
+     * else (another host, plain http, an error page); null = unreachable, so
+     * it cannot be judged.
+     */
+    ok: boolean | null;
 }
 export interface AuditPageTiming {
     timeToInteractiveMs?: number;

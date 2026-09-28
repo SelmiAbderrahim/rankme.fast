@@ -577,6 +577,21 @@ describe('LiveTrendsView — state coverage', () => {
     expect(screen.getByTestId('live-trends-run-error')).toBeInTheDocument();
   });
 
+  it('explains the 0–100 index once in the card intro (issue #20)', () => {
+    setState({
+      liveTrends: {
+        ...initialState.liveTrends,
+        list: { loading: false, data: emptyList(), error: '', errorKind: null },
+      },
+    });
+    renderInRouter(<LiveTrendsView />);
+    const note = screen.getByTestId('live-trends-coverage-note');
+    expect(note).toHaveTextContent('Search interest is shown as a 0–100 index, not absolute volume.');
+    const intro = note.parentElement!;
+    expect(intro).toHaveTextContent('See how search interest is trending right now.');
+    expect(intro.textContent!.match(/0–100/g)).toHaveLength(1);
+  });
+
   it('stored history empty state renders localized copy', () => {
     setState({
       liveTrends: {

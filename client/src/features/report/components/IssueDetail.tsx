@@ -25,6 +25,7 @@ import { GscBlock } from './GscBlock';
 import { AiVisibilityBlock } from './AiVisibilityBlock';
 import { LocalSeoBlock } from './LocalSeoBlock';
 import { PageSpeedBlock } from './PageSpeedBlock';
+import { AddressVariantsBlock, addressVariantsOf } from './AddressVariantsBlock';
 
 export interface IssueDetailProps {
   finding: LocalizedFinding;
@@ -66,6 +67,9 @@ export const IssueDetail = ({
   const showGscSitemapsBlock = isGscSitemapRuleId(finding.ruleId);
   const showAiVisibilityBlock = isAiVisibilityRuleId(finding.ruleId);
   const showLocalSeoBlock = isLocalSeoRuleId(finding.ruleId);
+  // Probed site addresses replace the plain URL list: the table already
+  // names each address and says what is wrong with it.
+  const addressVariants = addressVariantsOf(finding.meta);
   const brokenLinkTargets =
     finding.ruleId === 'broken-internal-links'
       ? (finding.brokenLinkTargets ?? [])
@@ -138,7 +142,7 @@ export const IssueDetail = ({
         </div>
       ) : null}
 
-      {siteId && finding.affectedUrls[0] ? (
+      {siteId && finding.affectedUrls[0] && !addressVariants ? (
         <div className="mb-4">
           <Button asChild variant="outline" size="sm">
             <Link
@@ -178,7 +182,9 @@ export const IssueDetail = ({
         </div>
       ) : null}
 
-      {finding.affectedUrls.length > 0 ? (
+      {addressVariants ? <AddressVariantsBlock variants={addressVariants} /> : null}
+
+      {finding.affectedUrls.length > 0 && !addressVariants ? (
         <div className="mb-4">
           <h4 className="text-sm font-semibold">
             {brokenLinkTargets.length > 0

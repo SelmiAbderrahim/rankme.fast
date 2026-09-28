@@ -101,6 +101,28 @@ describe('createAnthropicSummaryProvider', () => {
     expect(body.messages[0]?.content).toContain('title-missing-or-weak');
   });
 
+  it('labels a site-wide finding instead of implying nothing is affected (issue #17)', async () => {
+    const { fn, calls } = makeFetch(jsonResponse({ content: [{ type: 'text', text: 'ok' }] }));
+    const provider = createAnthropicSummaryProvider({ apiKey: 'k', fetchFn: fn });
+    await provider.summarize({
+      ...baseInput(),
+      findings: [
+        {
+          ruleId: 'https-canonicalization',
+          priority: 'watch',
+          title: 'HTTPS and address setup',
+          why: 'Mixed addresses split trust.',
+          fix: 'Redirect every address to one https address.',
+          affectedCount: 0,
+          siteWide: true,
+        },
+      ],
+    });
+    const body = JSON.parse(String(calls[0]?.init?.body)) as { system: string; messages: { content: string }[] };
+    expect(body.messages[0]?.content).toContain('HTTPS and address setup — site-wide problem');
+    expect(body.system).toContain('never call it already fixed');
+  });
+
   it('accepts a custom model override', async () => {
     const { fn, calls } = makeFetch(
       jsonResponse({ content: [{ type: 'text', text: 'ok' }] }),

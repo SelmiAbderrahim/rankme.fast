@@ -392,7 +392,7 @@
   },
   "liveTrends": {
     "title": "Intérêt de recherche en direct",
-    "description": "Voyez comment l'intérêt de recherche évolue en ce moment. L'indice 0–100 reflète la popularité, pas le volume absolu.",
+    "description": "Voyez comment l'intérêt de recherche évolue en ce moment.",
     "tableCaption": "Intérêt de recherche par mot-clé et par mois.",
     "columnIndex": "Intérêt (0–100)",
     "estimateLabel": "Estimation",

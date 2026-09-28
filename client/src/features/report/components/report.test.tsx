@@ -454,6 +454,17 @@ describe('ReportPage — loading, empty & error', () => {
 });
 
 describe('ReportPage — tabs, counts & URL state', () => {
+  it('loads a report whose run already finished exactly once (issue #4)', async () => {
+    renderReport();
+    expect(await screen.findByTestId('report-tab-fix-now')).toBeInTheDocument();
+    // A second load would swap the page back to its skeleton, unmounting the
+    // audit history and aborting its read.
+    await new Promise((resolve) => setTimeout(resolve, 50));
+    expect(mocked.fetchReportRequest).toHaveBeenCalledTimes(1);
+    expect(screen.queryByTestId('report-loading')).toBeNull();
+    expect(screen.getByTestId('report-run-history')).toBeInTheDocument();
+  });
+
   it('renders three tab triggers with counts and defaults to fix-now', async () => {
     let currentSearch = '';
     renderReport({
@@ -736,6 +747,8 @@ describe('ReportPage — retest & diff badges', () => {
     );
     const cta = screen.getByTestId('report-retest');
     expect(cta).toBeEnabled();
+    // The new run is checked as soon as it starts; it is still queued.
+    mocked.fetchRunRequest.mockResolvedValue(runInState('queued', 'run-2'));
 
     // Retest → preview dialog → confirm → server returns queued.
     await user.click(cta);
@@ -792,7 +805,7 @@ describe('ReportPage — retest & diff badges', () => {
     // Kick off with a queued deep-linked run so the polling effect starts
     // immediately, then swap the fetchRunRequest mock to succeeded — the
     // next poll tick transitions the report through the finished branch.
-    mocked.fetchRunRequest.mockResolvedValueOnce({
+    mocked.fetchRunRequest.mockResolvedValue({
       run: {
         id: 'run-3',
         siteId: 'site-1',
@@ -829,6 +842,63 @@ describe('ReportPage — retest & diff badges', () => {
       { timeout: 8000 },
     );
   }, 15000);
+
+  const runInState = (status: 'queued' | 'succeeded', id = 'run-3') => ({
+    run: {
+      id,
+      siteId: 'site-1',
+      status,
+      pageCap: 100,
+      pagesCrawled: status === 'succeeded' ? 3 : 0,
+      vendorTaskId: null,
+      startedAt: null,
+      finishedAt: null,
+      error: null,
+      createdAt: '2026-07-02T00:00:00.000Z',
+      updatedAt: '2026-07-02T00:00:00.000Z',
+    },
+  });
+
+  it('checks a run in flight at once instead of one poll interval later (issue #4)', async () => {
+    // First read (the deep-linked run) is queued; the very next status read
+    // already reports it finished. Remounting on a running audit must pick
+    // that up without waiting out the 3-second interval.
+    mocked.fetchRunRequest.mockResolvedValueOnce(runInState('queued'));
+    mocked.fetchRunRequest.mockResolvedValue(runInState('succeeded'));
+    renderReport({ path: '/sites/site-1/report/run-3' });
+    // Well inside the 3-second interval: only the immediate check can land it.
+    await waitFor(
+      () =>
+        expect(mocked.fetchReportRequest).toHaveBeenCalledWith(
+          'run-3',
+          expect.objectContaining({ signal: expect.any(AbortSignal) }),
+        ),
+      { timeout: 1500 },
+    );
+  });
+
+  it('re-checks a run in flight when the tab becomes visible again (issue #4)', async () => {
+    mocked.fetchRunRequest.mockResolvedValue(runInState('queued'));
+    const visibility = vi.spyOn(document, 'visibilityState', 'get');
+    try {
+      renderReport({ path: '/sites/site-1/report/run-3' });
+      expect(await screen.findByTestId('report-run-in-progress')).toBeInTheDocument();
+      // Deep-link read + the immediate check.
+      await waitFor(() => expect(mocked.fetchRunRequest).toHaveBeenCalledTimes(2));
+      visibility.mockReturnValue('hidden');
+      act(() => {
+        document.dispatchEvent(new Event('visibilitychange'));
+      });
+      expect(mocked.fetchRunRequest).toHaveBeenCalledTimes(2);
+      visibility.mockReturnValue('visible');
+      act(() => {
+        document.dispatchEvent(new Event('visibilitychange'));
+      });
+      expect(mocked.fetchRunRequest).toHaveBeenCalledTimes(3);
+    } finally {
+      visibility.mockRestore();
+    }
+  });
 
   it('renders Fixed and Regressed badges from the diff', async () => {
     mocked.fetchReportRequest.mockResolvedValue(
@@ -1384,6 +1454,56 @@ describe('IssueRow / IssueDetail units', () => {
     );
   });
 
+  it('shows where each probed address ends up for the HTTPS / address check (issue #17)', () => {
+    const finding: LocalizedFinding = {
+      ...findingsFixture[0]!,
+      ruleId: 'https-canonicalization',
+      bucket: 'watch',
+      severity: 'warning',
+      affectedUrls: ['http://www.example.com/', 'https://www.example.com/'],
+      meta: {
+        addressVariants: [
+          { url: 'http://example.com/', status: 200, finalUrl: 'https://example.com/', ok: true },
+          { url: 'http://www.example.com/', status: 200, finalUrl: 'http://www.example.com/', ok: false },
+          { url: 'https://example.com/', status: 200, finalUrl: 'https://example.com/', ok: true },
+          { url: 'https://www.example.com/', status: 404, finalUrl: 'https://www.example.com/', ok: false },
+          { url: 'https://old.example.com/', status: null, finalUrl: null, ok: null },
+          { url: 'malformed' },
+        ],
+      },
+    };
+    render(
+      <MemoryRouter>
+        <I18nextProvider i18n={i18n}>
+          <IssueDetail finding={finding} diffByUrl={new Map()} siteId="site-1" />
+        </I18nextProvider>
+      </MemoryRouter>,
+    );
+    const rows = screen.getAllByTestId('report-address-variant');
+    expect(rows.map((row) => row.textContent)).toEqual([
+      'http://example.com/Redirects to https://example.com/OK',
+      'http://www.example.com/Opens here without redirecting (status 200)Needs fixing',
+      'https://example.com/Your main addressOK',
+      'https://www.example.com/Ends on https://www.example.com/ with an error (status 404)Needs fixing',
+      'https://old.example.com/Did not answerNot checked',
+    ]);
+    // The table replaces the plain URL list and the page-level content CTA.
+    expect(screen.queryByText('Affected URLs')).toBeNull();
+    expect(screen.queryByTestId('report-content-analysis-cta')).toBeNull();
+  });
+
+  it('keeps the plain URL list when a finding carries no usable address variants', () => {
+    for (const meta of [{ addressVariants: 'nope' }, { addressVariants: [null, 3] }]) {
+      const { unmount } = render(
+        <I18nextProvider i18n={i18n}>
+          <IssueDetail finding={{ ...findingsFixture[0]!, meta }} diffByUrl={new Map()} />
+        </I18nextProvider>,
+      );
+      expect(screen.queryByTestId('report-address-variants')).toBeNull();
+      unmount();
+    }
+  });
+
   it('IssueDetail renders the passed label for a passed rule', () => {
     render(
       <I18nextProvider i18n={i18n}>
@@ -1587,16 +1707,63 @@ describe('slice — reducers & thunks state transitions', () => {
     expect(state.error).toBe('');
   });
 
-  it('loadRuns rejected with no payload records an empty error and forgets the site', async () => {
+  it('loadRuns rejected with no payload records an empty error and keeps the site', async () => {
     const { loadRuns } = await import('../store/thunks');
     const { reportReducer } = await import('../store/slice');
     const state = reportReducer(
-      { ...baseReportState(), runsSiteId: 's', runsLoading: true, runsError: 'old' },
+      {
+        ...baseReportState(),
+        runsSiteId: 's',
+        runsLoading: true,
+        runsRequestId: 'req',
+        runsError: 'old',
+      },
       loadRuns.rejected(new Error('boom'), 'req', { siteId: 's' }),
     );
     expect(state.runsError).toBe('');
-    expect(state.runsSiteId).toBeNull();
+    expect(state.runsSiteId).toBe('s');
     expect(state.runsLoading).toBe(false);
+    expect(state.runsRequestId).toBeNull();
+  });
+
+  it('loadRuns ignores a settled read from an older presentation identity', async () => {
+    const { loadRuns } = await import('../store/thunks');
+    const { reportReducer } = await import('../store/slice');
+    const owned = {
+      ...baseReportState(),
+      presentationGeneration: 5,
+      runsSiteId: 's',
+      runsLoading: true,
+      runsRequestId: 'req',
+    };
+    const arg = { siteId: 's', presentationLocale: 'en' as const, presentationGeneration: 4 };
+    expect(
+      reportReducer(owned, loadRuns.fulfilled({ runs: [], nextCursor: null }, 'req', arg)).runsLoading,
+    ).toBe(true);
+    expect(
+      reportReducer(owned, loadRuns.rejected(new Error('boom'), 'req', arg)).runsLoading,
+    ).toBe(true);
+  });
+
+  it('loadRuns settles only for the read that owns the loading state', async () => {
+    const { loadRuns } = await import('../store/thunks');
+    const { reportReducer } = await import('../store/slice');
+    const owned = {
+      ...baseReportState(),
+      runsSiteId: 's',
+      runsLoading: true,
+      runsRequestId: 'newer',
+    };
+    const stale = reportReducer(
+      owned,
+      loadRuns.fulfilled({ runs: [], nextCursor: null }, 'older', { siteId: 's' }),
+    );
+    expect(stale.runsLoading).toBe(true);
+    const staleFailure = reportReducer(
+      owned,
+      loadRuns.rejected(new Error('boom'), 'older', { siteId: 's' }),
+    );
+    expect(staleFailure.runsLoading).toBe(true);
   });
 
   it('startRetest rejected with no payload falls back to empty retestError', async () => {
@@ -2090,6 +2257,65 @@ describe('ReportPage — AI summary card feature gate', () => {
     expect(screen.getByTestId('report-ai-summary-cta')).toBeInTheDocument();
   });
 
+  it('keeps the freshly generated summary on screen when a retest starts (issue #18)', async () => {
+    const report = makeReport({ aiSummaryEnabled: true });
+    mocked.fetchReportRequest.mockResolvedValue(report);
+    mocked.generateAiSummaryRequest.mockResolvedValue({
+      status: 'succeeded',
+      requestedLocale: 'en',
+      availableLocales: ['en'],
+      aiSummary: {
+        text: 'Fresh summary for this run.',
+        locale: 'en',
+        model: 'model-1',
+        truncated: false,
+        createdAt: '2026-09-28T09:08:52.000Z',
+      },
+    });
+    // The new run stays queued so the page keeps showing the previous report.
+    mocked.fetchRunRequest.mockResolvedValue({
+      run: {
+        id: 'run-2',
+        siteId: 'site-1',
+        status: 'queued',
+        pageCap: 100,
+        pagesCrawled: 0,
+        vendorTaskId: null,
+        startedAt: null,
+        finishedAt: null,
+        error: null,
+        createdAt: '2026-07-02T00:00:00.000Z',
+        updatedAt: '2026-07-02T00:00:00.000Z',
+      },
+    });
+    const store = makeStore({
+      loaded: true,
+      siteId: 'site-1',
+      runId: 'run-1',
+      runStatus: 'succeeded',
+      report,
+    });
+    renderReport({ store });
+    const user = userEvent.setup();
+    await user.click(await screen.findByTestId('report-ai-summary-cta'));
+    expect(await screen.findByTestId('report-ai-summary-text')).toHaveTextContent(
+      'Fresh summary for this run.',
+    );
+    expect(mocked.generateAiSummaryRequest).toHaveBeenCalledWith('run-1', 'en');
+
+    await user.click(screen.getByTestId('report-retest'));
+    await user.click(await screen.findByTestId('report-retest-confirm'));
+    await waitFor(() => expect(store.getState().report.runId).toBe('run-2'));
+
+    // Not reset to the page-load state ("Summarize my fixes") and not bound
+    // to the run that has no results yet.
+    expect(screen.getByTestId('report-ai-summary-text')).toHaveTextContent(
+      'Fresh summary for this run.',
+    );
+    expect(screen.queryByTestId('report-ai-summary-cta')).toBeNull();
+    expect(mocked.generateAiSummaryRequest).toHaveBeenCalledTimes(1);
+  });
+
   it('projects an exact-locale legacy summary when availability metadata is absent', async () => {
     const legacySummary = {
       text: 'Legacy English summary.',
@@ -2267,8 +2493,8 @@ describe('ReportPage — runIdParam !== undefined mismatches state.runId (line 1
   });
 });
 
-describe('ReportPage — StrictMode double-invocation guard (line 206 true branch)', () => {
-  it('finishedRunRef guard prevents second dispatch on StrictMode remount', async () => {
+describe('ReportPage — StrictMode double-invocation', () => {
+  it('does not refetch a run that was already finished under StrictMode', async () => {
     const store = makeStore({
       loaded: true,
       siteId: 'site-1',
@@ -2289,10 +2515,11 @@ describe('ReportPage — StrictMode double-invocation guard (line 206 true branc
         </Provider>
       </StrictMode>,
     );
-    // StrictMode: effects mount → cleanup → remount. Second invocation of the
-    // runStatus='succeeded' effect hits finishedRunRef.current === runId guard (line 206).
-    // The abort leaves loading=true so the loading UI stays — assert it directly.
-    expect(screen.getByTestId('report-loading')).toBeInTheDocument();
+    // StrictMode: effects mount → cleanup → remount. A run that was already
+    // finished when the page loaded is the report on screen — it is never
+    // refetched, so the page does not fall back to its skeleton (issue #4).
+    expect(screen.queryByTestId('report-loading')).toBeNull();
+    expect(mocked.fetchReportRequest).not.toHaveBeenCalled();
   });
 });
 

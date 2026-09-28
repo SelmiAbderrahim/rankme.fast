@@ -392,7 +392,7 @@
   },
   "liveTrends": {
     "title": "Live-Suchinteresse",
-    "description": "Sehen Sie, wie sich das Suchinteresse gerade entwickelt. Der 0–100-Index zeigt Beliebtheit, kein absolutes Volumen.",
+    "description": "Sehen Sie, wie sich das Suchinteresse gerade entwickelt.",
     "tableCaption": "Suchinteresse nach Keyword und Monat.",
     "columnIndex": "Interesse (0–100)",
     "estimateLabel": "Schätzung",
