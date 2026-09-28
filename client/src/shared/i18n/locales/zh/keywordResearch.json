@@ -392,7 +392,7 @@
   },
   "liveTrends": {
     "title": "实时搜索热度",
-    "description": "查看当下搜索热度的变化。0–100 指数反映的是热度，而非绝对搜索量。",
+    "description": "查看当下搜索热度的变化。",
     "tableCaption": "按关键词和月份的搜索热度。",
     "columnIndex": "热度（0–100）",
     "estimateLabel": "估算",
