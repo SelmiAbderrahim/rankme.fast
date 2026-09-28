@@ -15,11 +15,18 @@ terminates TLS in front of the loopback-published `web` and `api` ports.
    added: `/exports`, `/actions`, `/dashboard/alerts` and friends were sent
    to the public host by a stale list, where the host-scoped session cookie
    is absent, so a refresh looked like a forced sign-out (issue #3).
+   Symptom: an in-app link to a page works, but a refresh of the same page
+   lands on the public host's sign-in with "Your session has expired", and
+   `curl -sI https://<app host>/<that path>` answers `301` with a `Location`
+   on the public host. Fixing the SPA or the `web` container cannot help; the
+   proxy block itself must forward the path (see the reference below).
 2. **Rate limits must answer 429, never 503.** nginx `limit_req` rejects with
-   503 by default. The SPA fires a burst of parallel reads on a full page
-   load; a 503 reads as "service down" and the client does not treat it as a
-   back-off signal (issue #4). Set `limit_req_status 429;` and size `burst`
-   for the page-load fan-out. The api has its own per-account limiters.
+   503 by default, and a 503 reads as "service down" instead of a back-off
+   signal. Set `limit_req_status 429;` and size `burst` for the page-load
+   fan-out. The api has its own per-account limiters. (Issue #4 was first
+   blamed on this. It was not the cause: nginx logged those page-load reads
+   as `499`, and the api logged "request aborted" a few milliseconds in,
+   because the client itself had cancelled them.)
 3. `/api/*` goes to the `api` port with the prefix preserved; everything else
    on either host goes to the `web` port with `Host` and `X-Forwarded-*`
    headers intact.
