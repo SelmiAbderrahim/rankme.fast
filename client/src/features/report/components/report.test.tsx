@@ -2129,6 +2129,65 @@ describe('ReportPage — AI summary card feature gate', () => {
     expect(screen.getByTestId('report-ai-summary-cta')).toBeInTheDocument();
   });
 
+  it('keeps the freshly generated summary on screen when a retest starts (issue #18)', async () => {
+    const report = makeReport({ aiSummaryEnabled: true });
+    mocked.fetchReportRequest.mockResolvedValue(report);
+    mocked.generateAiSummaryRequest.mockResolvedValue({
+      status: 'succeeded',
+      requestedLocale: 'en',
+      availableLocales: ['en'],
+      aiSummary: {
+        text: 'Fresh summary for this run.',
+        locale: 'en',
+        model: 'model-1',
+        truncated: false,
+        createdAt: '2026-09-28T09:08:52.000Z',
+      },
+    });
+    // The new run stays queued so the page keeps showing the previous report.
+    mocked.fetchRunRequest.mockResolvedValue({
+      run: {
+        id: 'run-2',
+        siteId: 'site-1',
+        status: 'queued',
+        pageCap: 100,
+        pagesCrawled: 0,
+        vendorTaskId: null,
+        startedAt: null,
+        finishedAt: null,
+        error: null,
+        createdAt: '2026-07-02T00:00:00.000Z',
+        updatedAt: '2026-07-02T00:00:00.000Z',
+      },
+    });
+    const store = makeStore({
+      loaded: true,
+      siteId: 'site-1',
+      runId: 'run-1',
+      runStatus: 'succeeded',
+      report,
+    });
+    renderReport({ store });
+    const user = userEvent.setup();
+    await user.click(await screen.findByTestId('report-ai-summary-cta'));
+    expect(await screen.findByTestId('report-ai-summary-text')).toHaveTextContent(
+      'Fresh summary for this run.',
+    );
+    expect(mocked.generateAiSummaryRequest).toHaveBeenCalledWith('run-1', 'en');
+
+    await user.click(screen.getByTestId('report-retest'));
+    await user.click(await screen.findByTestId('report-retest-confirm'));
+    await waitFor(() => expect(store.getState().report.runId).toBe('run-2'));
+
+    // Not reset to the page-load state ("Summarize my fixes") and not bound
+    // to the run that has no results yet.
+    expect(screen.getByTestId('report-ai-summary-text')).toHaveTextContent(
+      'Fresh summary for this run.',
+    );
+    expect(screen.queryByTestId('report-ai-summary-cta')).toBeNull();
+    expect(mocked.generateAiSummaryRequest).toHaveBeenCalledTimes(1);
+  });
+
   it('projects an exact-locale legacy summary when availability metadata is absent', async () => {
     const legacySummary = {
       text: 'Legacy English summary.',

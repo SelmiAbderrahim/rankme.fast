@@ -582,10 +582,13 @@ export const ReportPage = ({
         </Alert>
       ) : null}
 
-      {report?.aiSummaryEnabled && runId ? (
+      {/* The card belongs to the run whose report is on screen, not to the
+          run a retest just started: keying it on the in-flight run remounted
+          it with the summary cached at page load (issue #18). */}
+      {report?.aiSummaryEnabled ? (
         <AiSummaryCard
-          key={`${runId}:${presentationLocale}`}
-          runId={runId}
+          key={`${report.runId}:${presentationLocale}`}
+          runId={report.runId}
           requestedLocale={presentationLocale}
           initial={
             report.aiSummaryAvailability
