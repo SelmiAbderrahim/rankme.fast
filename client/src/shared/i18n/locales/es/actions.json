@@ -77,6 +77,7 @@
     "affectedOne": "1 URL afectada",
     "affectedCount": "{{count}} URL afectadas",
     "evidence": "Evidencia",
+    "evidenceLabel": "{{source}} · {{date}}",
     "evidenceLink": "Abrir fuente de la evidencia",
     "history": "Historial",
     "retest": "Reanalizar",

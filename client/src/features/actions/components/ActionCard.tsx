@@ -198,7 +198,15 @@ export function ActionCard({ item, siteId, onReload }: ActionCardProps) {
               const linkable = external !== null && external !== UNSAFE_HREF_PLACEHOLDER;
               return (
                 <li key={entry.sourceRef} className="flex flex-wrap items-center gap-2">
-                  <span className="break-all">{entry.sourceRef}</span>
+                  {/* `sourceRef` is an internal key (e.g. `<auditId>:<ruleId>`)
+                      and never user copy: label the evidence by its source
+                      and observation date instead (issue #19). */}
+                  <span data-testid="action-evidence-label">
+                    {t('card.evidenceLabel', {
+                      source: t(`source.${item.sourceType}`),
+                      date: formatDate(entry.observation.observedAt),
+                    })}
+                  </span>
                   <StatusChip
                     tone={ACTION_FRESHNESS_TONES[entry.observation.freshness]}
                   >
