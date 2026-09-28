@@ -42,7 +42,21 @@
     "fixTitle": "كيفية الإصلاح",
     "copyFix": "نسخ الإصلاح",
     "copied": "تم النسخ",
-    "generateSchema": "إنشاء ترميز schema"
+    "generateSchema": "إنشاء ترميز schema",
+    "addressVariants": {
+      "title": "العناوين التي فحصناها",
+      "address": "العنوان",
+      "result": "النتيجة",
+      "verdict": "الحالة",
+      "mainAddress": "عنوانك الرئيسي",
+      "redirectsTo": "يعيد التوجيه إلى {{url}}",
+      "answersDirectly": "يُفتح هنا دون إعادة توجيه (الحالة {{status}})",
+      "endsWithError": "ينتهي عند {{url}} مع خطأ (الحالة {{status}})",
+      "unreachable": "لم يستجب",
+      "okChip": "سليم",
+      "problemChip": "يحتاج إلى إصلاح",
+      "unknownChip": "لم يُفحص"
+    }
   },
   "retest": {
     "cta": "إعادة الفحص",

@@ -42,7 +42,21 @@
     "fixTitle": "如何修复",
     "copyFix": "复制解决方案",
     "copied": "已复制",
-    "generateSchema": "生成结构化标记"
+    "generateSchema": "生成结构化标记",
+    "addressVariants": {
+      "title": "已检查的地址",
+      "address": "地址",
+      "result": "结果",
+      "verdict": "状态",
+      "mainAddress": "您的主地址",
+      "redirectsTo": "重定向到 {{url}}",
+      "answersDirectly": "直接在此打开，未重定向（状态 {{status}}）",
+      "endsWithError": "最终到达 {{url}} 并出错（状态 {{status}}）",
+      "unreachable": "无响应",
+      "okChip": "正常",
+      "problemChip": "需要修复",
+      "unknownChip": "未检查"
+    }
   },
   "retest": {
     "cta": "重新检测",

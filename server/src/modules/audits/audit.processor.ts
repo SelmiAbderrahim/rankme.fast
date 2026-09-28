@@ -95,9 +95,10 @@ export interface AuditProcessorDeps {
      */
     probeStructuredData?: (urls: readonly string[]) => Promise<ReadonlySet<string>>;
     /**
-     * Site-level probe (robots.txt sitemap directive and `/llms.txt`). Fills
-     * the site-wide signals the vendor does not report. Optional; a failure
-     * keeps the vendor result and never fails the run.
+     * Site-level probe (robots.txt sitemap directive, `/llms.txt`, and the
+     * http/https × apex/www address variants). Fills the site-wide signals the
+     * vendor does not report. Optional; a failure keeps the vendor result and
+     * never fails the run.
      */
     probeSite?: SiteProbe;
     /**
@@ -465,8 +466,11 @@ export async function applyStructuredDataProbe(result: AuditResult, deps: Pick<A
 }
 /**
  * Merge the site probe into the vendor's site-wide checks. A signal the
- * vendor reported wins; the probe only fills what is absent. Any probe
- * failure keeps the vendor result.
+ * vendor reported wins; the probe only fills what is absent. The address
+ * variants are direct evidence for `canonicalizationOk`, so a variant that
+ * ends somewhere other than the canonical https origin sets it to false, and
+ * four variants that all end there set it to true. Any probe failure keeps
+ * the vendor result.
  */
 export async function applySiteProbe(result: AuditResult, target: ResolvedAuditTarget, deps: Pick<AuditProcessorDeps, 'probeSite' | 'logger'>): Promise<AuditResult> {
     if (!deps.probeSite)
@@ -485,6 +489,13 @@ export async function applySiteProbe(result: AuditResult, target: ResolvedAuditT
     }
     if (checks.llmsTxtFound === undefined && probe.llmsTxtFound !== undefined) {
         checks.llmsTxtFound = probe.llmsTxtFound;
+    }
+    if (probe.addressVariants && probe.addressVariants.length > 0) {
+        checks.addressVariants = probe.addressVariants;
+        if (probe.addressVariants.some((v) => v.ok === false))
+            checks.canonicalizationOk = false;
+        else if (probe.addressVariants.every((v) => v.ok === true))
+            checks.canonicalizationOk = true;
     }
     return { ...result, domainChecks: checks };
 }

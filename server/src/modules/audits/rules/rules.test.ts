@@ -1140,6 +1140,36 @@ describe('rule branch coverage', () => {
     expect(finding.meta).toEqual({ httpsEnforced: false, httpsRedirect: null });
   });
 
+  it('https-canonicalization names the failing address variants as evidence (issue #17)', () => {
+    const addressVariants = [
+      { url: 'http://example.com/', status: 200, finalUrl: 'https://example.com/', ok: true },
+      { url: 'http://www.example.com/', status: 200, finalUrl: 'http://www.example.com/', ok: false },
+      { url: 'https://www.example.com/', status: null, finalUrl: null, ok: null },
+    ];
+    const watch = findingFor(
+      'https-canonicalization',
+      evaluateAllRules(makeAuditResult({ domainChecks: { canonicalizationOk: false, addressVariants } })),
+    );
+    expect(watch.bucket).toBe('watch');
+    expect(watch.affectedUrls).toEqual(['http://www.example.com/']);
+    expect(watch.meta).toEqual({ addressVariants });
+
+    const critical = findingFor(
+      'https-canonicalization',
+      evaluateAllRules(makeAuditResult({ domainChecks: { httpsRedirect: false, addressVariants } })),
+    );
+    expect(critical.bucket).toBe('fix-now');
+    expect(critical.affectedUrls).toEqual(['http://www.example.com/']);
+    expect(critical.meta).toEqual({ httpsEnforced: true, httpsRedirect: false, addressVariants });
+
+    const passed = findingFor(
+      'https-canonicalization',
+      evaluateAllRules(makeAuditResult({ domainChecks: { addressVariants: [addressVariants[0]!] } })),
+    );
+    expect(passed.bucket).toBe('passed');
+    expect(passed.meta).toEqual({ addressVariants: [addressVariants[0]] });
+  });
+
   it('https-canonicalization flags canonicalizationOk=false as watch', () => {
     const finding = findingFor(
       'https-canonicalization',

@@ -604,17 +604,24 @@ describe('audit processor — page persistence and PageSpeed sampling', () => {
     });
   });
 
-  describe('site probe (issue #16)', () => {
+  describe('site probe (issues #16, #17)', () => {
     const findingOf = async (runId: string, ruleId: string) => {
       const snap = await ReportSnapshot.findOne({ runId });
       return snap!.findings.find((f) => f.ruleId === ruleId)!;
     };
+    const variants = [
+      { url: 'http://example.com/', status: 200, finalUrl: 'https://example.com/', ok: true },
+      { url: 'http://www.example.com/', status: 200, finalUrl: 'http://www.example.com/', ok: false },
+      { url: 'https://example.com/', status: 200, finalUrl: 'https://example.com/', ok: true },
+      { url: 'https://www.example.com/', status: 200, finalUrl: 'https://example.com/', ok: true },
+    ];
 
     it('evaluates the sitemap and llms.txt checks from the probe instead of "not evaluated"', async () => {
       const ids = await seed();
       const probeSite = vi.fn(async () => ({
         sitemapReferencedInRobots: true,
         llmsTxtFound: false,
+        addressVariants: variants,
       }));
       const processor = createAuditProcessor({ provider: createFakeAuditProvider(), probeSite, logger });
       await processor(jobFor({ ...ids, pageCap: 100 }));
@@ -628,6 +635,11 @@ describe('audit processor — page persistence and PageSpeed sampling', () => {
       expect(llms.bucket).toBe('watch');
       expect(llms.meta?.insufficientData).toBeUndefined();
 
+      // The address-setup warning names the variant to fix and keeps the evidence.
+      const https = await findingOf(ids.runId, 'https-canonicalization');
+      expect(https.bucket).toBe('watch');
+      expect(https.affectedUrls).toEqual(['http://www.example.com/']);
+      expect(https.meta?.addressVariants).toEqual(variants);
     });
 
     it('keeps the vendor verdict when the probe fails', async () => {
@@ -646,6 +658,7 @@ describe('audit processor — page persistence and PageSpeed sampling', () => {
 
   describe('applySiteProbe', () => {
     const target = { domain: 'example.com', url: 'https://example.com' };
+    const ok = (url: string) => ({ url, status: 200, finalUrl: 'https://example.com/', ok: true });
 
     it('never overrides a signal the vendor reported', async () => {
       const result = {
@@ -658,6 +671,28 @@ describe('audit processor — page persistence and PageSpeed sampling', () => {
       });
       expect(merged.domainChecks.sitemapReferencedInRobots).toBe(false);
       expect(merged.domainChecks.llmsTxtFound).toBe(true);
+      expect(merged.domainChecks.addressVariants).toBeUndefined();
+    });
+
+    it('sets canonicalizationOk from conclusive variants only', async () => {
+      const allOk = await applySiteProbe(FAKE_AUDIT_RESULT, target, {
+        probeSite: async () => ({ addressVariants: [ok('http://example.com/'), ok('https://www.example.com/')] }),
+        logger,
+      });
+      expect(allOk.domainChecks.canonicalizationOk).toBe(true);
+
+      const unknown = await applySiteProbe(FAKE_AUDIT_RESULT, target, {
+        probeSite: async () => ({
+          addressVariants: [ok('http://example.com/'), { url: 'http://www.example.com/', status: null, finalUrl: null, ok: null }],
+        }),
+        logger,
+      });
+      // One variant did not answer: nothing conclusive, the vendor verdict stays.
+      expect(unknown.domainChecks.canonicalizationOk).toBe(FAKE_AUDIT_RESULT.domainChecks.canonicalizationOk);
+      expect(unknown.domainChecks.addressVariants).toHaveLength(2);
+
+      const empty = await applySiteProbe(FAKE_AUDIT_RESULT, target, { probeSite: async () => ({ addressVariants: [] }), logger });
+      expect(empty.domainChecks).toEqual(FAKE_AUDIT_RESULT.domainChecks);
     });
 
     it('returns the vendor result untouched without a probe', async () => {

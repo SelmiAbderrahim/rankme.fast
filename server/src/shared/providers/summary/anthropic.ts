@@ -77,6 +77,7 @@ function buildSystemPrompt(locale: string): string {
         `Use one short imperative sentence per finding ("Fix broken links on your pricing page.").`,
         `Never invent findings that are not in the list.`,
         `Only reference the rule ids, titles, or affected-URL counts we give you.`,
+        `A site-wide finding is an open problem with the whole site even though it lists no pages; never call it already fixed.`,
         `Never emit URLs, keys, or code blocks.`,
         `If the list is empty, reply with one sentence saying nothing needs fixing right now.`,
     ].join(' ');
@@ -88,7 +89,9 @@ function buildUserPrompt(input: SummarizeInput): string {
         `Findings (${findings.length}):`,
     ];
     findings.forEach((f, i) => {
-        const affected = f.affectedCount > 0 ? ` — affects ${f.affectedCount} page(s)` : '';
+        const affected = f.affectedCount > 0
+            ? ` — affects ${f.affectedCount} page(s)`
+            : f.siteWide ? ' — site-wide problem' : '';
         const priority = f.priority === 'watch' ? 'WATCH' : 'FIX NOW';
         lines.push(`${i + 1}. (${priority}) [${f.ruleId}] ${f.title}${affected}`);
         lines.push(`   Why: ${f.why}`);

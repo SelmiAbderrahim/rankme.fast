@@ -2,24 +2,30 @@
  * Site-level probe.
  *
  * The on-page vendor reports a handful of site-wide booleans but never says
- * whether `robots.txt` declares the sitemap or whether `/llms.txt` exists.
- * Those rules therefore always landed in "Not evaluated".
+ * whether `robots.txt` declares the sitemap or whether `/llms.txt` exists, and
+ * its "canonicalization" flag carries no evidence of WHICH address variant is
+ * wrong. Those rules therefore always landed in "Not evaluated", or as a
+ * warning the user could not act on.
  *
  * The probe reads the few public URLs those checks are about, through the
  * shared SSRF authority, after the crawl finishes:
  *
  *   - `robots.txt`  → is a `Sitemap:` directive declared?
  *   - `llms.txt`    → is the file served (not an HTML soft-404)?
+ *   - the four http/https × apex/www origins → where does each one end up?
  *
  * Every read is bounded (deadline, redirect ceiling, response size). A read
  * that fails leaves its signal absent, so the rule keeps its
  * "insufficient data" behaviour instead of inventing a verdict.
  */
+import type { AddressVariantResult } from '../../shared/providers/index.js';
 import { fetchPublicUrlSafeWithFinalUrl, type FetchPublicUrlSafeOptions } from '../../shared/security/url-safety.js';
 
 export interface SiteProbeResult {
     sitemapReferencedInRobots?: boolean;
     llmsTxtFound?: boolean;
+    /** Absent when the site's own https address could not be read. */
+    addressVariants?: AddressVariantResult[];
 }
 
 export type SiteProbe = (target: { domain: string; url: string }) => Promise<SiteProbeResult>;
@@ -47,6 +53,8 @@ const MAX_TEXT_BYTES = 256 * 1024;
 const defaultFetchUrl = (safety: SiteProbeOptions['safety']) => (url: string): Promise<ProbeResponse | null> =>
     fetchPublicUrlSafeWithFinalUrl(url, { method: 'GET', headers: { accept: 'text/plain,text/html;q=0.8,*/*;q=0.5' } }, {
         ...safety,
+        // The http:// variants are exactly what this check is about.
+        allowHttp: true,
         deadlineMs: DEADLINE_MS,
         maxRedirects: MAX_REDIRECTS,
         maxResponseBytes: MAX_TEXT_BYTES,
@@ -56,6 +64,11 @@ const defaultFetchUrl = (safety: SiteProbeOptions['safety']) => (url: string): P
         contentType: response.headers.get('content-type') ?? '',
         text: () => response.text(),
     }), () => null);
+
+/** Bare hostname without a leading `www.`. */
+function apexOf(hostname: string): string {
+    return hostname.toLowerCase().replace(/^www\./, '');
+}
 
 /** `Sitemap:` directives declared in a robots.txt body. */
 export function robotsSitemapDirectives(body: string): string[] {
@@ -80,6 +93,7 @@ export function createSiteProbe(opts: SiteProbeOptions = {}): SiteProbe {
         catch {
             siteHost = domain.toLowerCase();
         }
+        const apex = apexOf(siteHost);
         const home = await fetchUrl(`https://${siteHost}/`);
         // The site's own https address is the reference for every other
         // check; without it nothing here can be judged.
@@ -90,6 +104,25 @@ export function createSiteProbe(opts: SiteProbeOptions = {}): SiteProbe {
             return {};
         const origin = canonical.origin;
         const out: SiteProbeResult = {};
+
+        const variantUrls = [
+            `http://${apex}/`,
+            `http://www.${apex}/`,
+            `https://${apex}/`,
+            `https://www.${apex}/`,
+        ];
+        out.addressVariants = await Promise.all(variantUrls.map(async (variant): Promise<AddressVariantResult> => {
+            const response = variant === `https://${siteHost}/` ? home : await fetchUrl(variant);
+            if (!response)
+                return { url: variant, status: null, finalUrl: null, ok: null };
+            const final = new URL(response.finalUrl);
+            return {
+                url: variant,
+                status: response.status,
+                finalUrl: final.href,
+                ok: final.origin === origin && response.status < 400,
+            };
+        }));
 
         const robots = await fetchUrl(`${origin}/robots.txt`);
         if (robots && robots.status === 200 && !isHtml(robots.contentType)) {

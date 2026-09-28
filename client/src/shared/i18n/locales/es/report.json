@@ -42,7 +42,21 @@
     "fixTitle": "Cómo corregirlo",
     "copyFix": "Copiar solución",
     "copied": "Copiado",
-    "generateSchema": "Generar marcado schema"
+    "generateSchema": "Generar marcado schema",
+    "addressVariants": {
+      "title": "Direcciones comprobadas",
+      "address": "Dirección",
+      "result": "Resultado",
+      "verdict": "Estado",
+      "mainAddress": "Tu dirección principal",
+      "redirectsTo": "Redirige a {{url}}",
+      "answersDirectly": "Se abre aquí sin redirigir (estado {{status}})",
+      "endsWithError": "Termina en {{url}} con un error (estado {{status}})",
+      "unreachable": "No respondió",
+      "okChip": "OK",
+      "problemChip": "Hay que corregirla",
+      "unknownChip": "Sin comprobar"
+    }
   },
   "retest": {
     "cta": "Reauditar",

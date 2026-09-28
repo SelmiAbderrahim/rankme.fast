@@ -1395,6 +1395,56 @@ describe('IssueRow / IssueDetail units', () => {
     );
   });
 
+  it('shows where each probed address ends up for the HTTPS / address check (issue #17)', () => {
+    const finding: LocalizedFinding = {
+      ...findingsFixture[0]!,
+      ruleId: 'https-canonicalization',
+      bucket: 'watch',
+      severity: 'warning',
+      affectedUrls: ['http://www.example.com/', 'https://www.example.com/'],
+      meta: {
+        addressVariants: [
+          { url: 'http://example.com/', status: 200, finalUrl: 'https://example.com/', ok: true },
+          { url: 'http://www.example.com/', status: 200, finalUrl: 'http://www.example.com/', ok: false },
+          { url: 'https://example.com/', status: 200, finalUrl: 'https://example.com/', ok: true },
+          { url: 'https://www.example.com/', status: 404, finalUrl: 'https://www.example.com/', ok: false },
+          { url: 'https://old.example.com/', status: null, finalUrl: null, ok: null },
+          { url: 'malformed' },
+        ],
+      },
+    };
+    render(
+      <MemoryRouter>
+        <I18nextProvider i18n={i18n}>
+          <IssueDetail finding={finding} diffByUrl={new Map()} siteId="site-1" />
+        </I18nextProvider>
+      </MemoryRouter>,
+    );
+    const rows = screen.getAllByTestId('report-address-variant');
+    expect(rows.map((row) => row.textContent)).toEqual([
+      'http://example.com/Redirects to https://example.com/OK',
+      'http://www.example.com/Opens here without redirecting (status 200)Needs fixing',
+      'https://example.com/Your main addressOK',
+      'https://www.example.com/Ends on https://www.example.com/ with an error (status 404)Needs fixing',
+      'https://old.example.com/Did not answerNot checked',
+    ]);
+    // The table replaces the plain URL list and the page-level content CTA.
+    expect(screen.queryByText('Affected URLs')).toBeNull();
+    expect(screen.queryByTestId('report-content-analysis-cta')).toBeNull();
+  });
+
+  it('keeps the plain URL list when a finding carries no usable address variants', () => {
+    for (const meta of [{ addressVariants: 'nope' }, { addressVariants: [null, 3] }]) {
+      const { unmount } = render(
+        <I18nextProvider i18n={i18n}>
+          <IssueDetail finding={{ ...findingsFixture[0]!, meta }} diffByUrl={new Map()} />
+        </I18nextProvider>,
+      );
+      expect(screen.queryByTestId('report-address-variants')).toBeNull();
+      unmount();
+    }
+  });
+
   it('IssueDetail renders the passed label for a passed rule', () => {
     render(
       <I18nextProvider i18n={i18n}>

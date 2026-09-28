@@ -42,7 +42,21 @@
     "fixTitle": "How to fix it",
     "copyFix": "Copy fix",
     "copied": "Copied",
-    "generateSchema": "Generate schema markup"
+    "generateSchema": "Generate schema markup",
+    "addressVariants": {
+      "title": "Addresses we checked",
+      "address": "Address",
+      "result": "Result",
+      "verdict": "Status",
+      "mainAddress": "Your main address",
+      "redirectsTo": "Redirects to {{url}}",
+      "answersDirectly": "Opens here without redirecting (status {{status}})",
+      "endsWithError": "Ends on {{url}} with an error (status {{status}})",
+      "unreachable": "Did not answer",
+      "okChip": "OK",
+      "problemChip": "Needs fixing",
+      "unknownChip": "Not checked"
+    }
   },
   "retest": {
     "cta": "Retest",

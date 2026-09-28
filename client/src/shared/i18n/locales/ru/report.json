@@ -42,7 +42,21 @@
     "fixTitle": "Как исправить",
     "copyFix": "Скопировать решение",
     "copied": "Скопировано",
-    "generateSchema": "Создать разметку schema"
+    "generateSchema": "Создать разметку schema",
+    "addressVariants": {
+      "title": "Проверенные адреса",
+      "address": "Адрес",
+      "result": "Результат",
+      "verdict": "Статус",
+      "mainAddress": "Ваш основной адрес",
+      "redirectsTo": "Перенаправляет на {{url}}",
+      "answersDirectly": "Открывается здесь без перенаправления (статус {{status}})",
+      "endsWithError": "Заканчивается на {{url}} с ошибкой (статус {{status}})",
+      "unreachable": "Не ответил",
+      "okChip": "OK",
+      "problemChip": "Нужно исправить",
+      "unknownChip": "Не проверен"
+    }
   },
   "retest": {
     "cta": "Перепроверить",
