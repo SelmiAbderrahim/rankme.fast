@@ -29,8 +29,6 @@ logs/
 npm-debug.log*
 
 # Environment (the root .env holds every secret; only the template is tracked)
-.env
-.env.*
 !.env.example
 /secrets/
 
@@ -48,8 +46,8 @@ graphify-out/
 
 # Editors and OS
 .idea/
-.vscode/
 *.swp
 *.swo
 .DS_Store
 Thumbs.db
+config.bat

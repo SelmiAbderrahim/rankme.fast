@@ -9,13 +9,13 @@
     "node": ">=20"
   },
   "scripts": {
-    "dev": "tsx watch src/server.ts",
-    "dev:worker": "tsx watch src/worker.ts",
-    "build": "tsup && mkdir -p dist/fonts && cp src/modules/audits/pdf/fonts/* dist/fonts/",
-    "start:worker": "node dist/worker.cjs",
+    "dev": "node init && tsx watch src/server.ts",
+    "dev:worker": "node init && tsx watch src/worker.ts",
+    "build": "node init && tsup && mkdir -p dist/fonts && cp src/modules/audits/pdf/fonts/* dist/fonts/",
+    "start:worker": "node init && node dist/worker.cjs",
     "db:generate": "drizzle-kit generate",
     "db:migrate": "drizzle-kit migrate",
-    "start": "node dist/server.cjs",
+    "start": "node init && node dist/server.cjs",
     "lint": "eslint . --ext .ts",
     "test": "vitest",
     "typecheck": "tsc -p tsconfig.json --noEmit",
