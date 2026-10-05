@@ -35,6 +35,16 @@ const hooks = vi.hoisted(() => ({
   dispatch: vi.fn(),
 }));
 
+const sitesMock = vi.hoisted(() => ({
+  loadSites: vi.fn(() => ({ type: 'sites/loadSites/mock' })),
+  selectSites: (state: Record<string, unknown>) =>
+    (state.sites as { items: unknown[] }).items,
+  selectSitesLoading: (state: Record<string, unknown>) =>
+    (state.sites as { loading: boolean }).loading,
+  selectSitesLoaded: (state: Record<string, unknown>) =>
+    (state.sites as { loaded: boolean }).loaded,
+}));
+
 const api = vi.hoisted(() => ({
   fetchHistoryRequest: vi.fn(),
   fetchKeywordPreviewRequest: vi.fn(),
@@ -59,6 +69,8 @@ vi.mock('@shared/hooks/redux', () => ({
   useAppSelector: (selector: (state: Record<string, unknown>) => unknown) =>
     selector(hooks.state),
 }));
+
+vi.mock('@features/sites', () => sitesMock);
 
 vi.mock('@features/auth', async (importOriginal) => ({
   ...(await importOriginal<typeof import('@features/auth')>()),
@@ -182,8 +194,25 @@ function setState(
   overrides: Partial<KeywordResearchState> = {},
 ): KeywordResearchState {
   const merged: KeywordResearchState = { ...initialState, ...overrides };
-  hooks.state = { keywordResearch: merged };
+  hooks.state = {
+    keywordResearch: merged,
+    sites: hooks.state.sites ?? { items: [], loading: false, loaded: true },
+  };
   return merged;
+}
+
+const gapSite = (id: string, domain: string, displayName = '') => ({
+  id,
+  domain,
+  displayName,
+  url: `https://${domain}`,
+});
+
+function setSites(items: ReturnType<typeof gapSite>[], flags: { loading?: boolean; loaded?: boolean } = {}) {
+  hooks.state = {
+    ...hooks.state,
+    sites: { items, loading: flags.loading ?? false, loaded: flags.loaded ?? true },
+  };
 }
 
 function installThunkDispatch() {
@@ -209,6 +238,8 @@ function renderInRouter(node: React.ReactNode, path = '/keyword-research') {
 
 beforeEach(() => {
   hooks.dispatch.mockReset();
+  hooks.state = {};
+  sitesMock.loadSites.mockClear();
   installThunkDispatch();
   for (const mock of Object.values(api)) mock.mockReset();
   api.fetchHistoryRequest.mockResolvedValue({ items: [], nextCursor: null });
@@ -988,6 +1019,89 @@ describe('GapView', () => {
   it('does not offer the link before either local or stored gap inputs exist', () => {
     renderInRouter(<GapView />, '/keyword-research?siteId=site-one');
     expect(screen.queryByTestId('kw-gap-site-workspace-link')).not.toBeInTheDocument();
+  });
+});
+
+describe('GapView — own domain from the account sites', () => {
+  it('asks for sites when none are loaded and shows no picker for an account without sites', () => {
+    hooks.state = { sites: { items: [], loading: false, loaded: false } };
+    setState();
+    renderInRouter(<GapView />);
+    expect(sitesMock.loadSites).toHaveBeenCalledWith({ direction: 'initial' });
+    expect(screen.queryByTestId('kw-gap-site')).toBeNull();
+    expect(screen.getByTestId('kw-gap-own-domain')).toHaveValue('');
+  });
+
+  it('does not ask again while sites are loading or already loaded', () => {
+    hooks.state = { sites: { items: [], loading: true, loaded: false } };
+    setState();
+    const { unmount } = renderInRouter(<GapView />);
+    unmount();
+    setSites([gapSite('s1', 'one.example')]);
+    renderInRouter(<GapView />);
+    expect(sitesMock.loadSites).not.toHaveBeenCalled();
+  });
+
+  it('prefills the first site, offers every site by name, and keeps another domain possible', () => {
+    setSites([gapSite('s1', 'one.example', 'Shop'), gapSite('s2', 'two.example')]);
+    renderInRouter(<GapView />);
+    const picker = screen.getByRole('combobox', { name: 'Site' });
+    expect(picker).toHaveValue('s1');
+    expect(screen.getByRole('option', { name: 'Shop' })).toBeInTheDocument();
+    expect(screen.getByRole('option', { name: 'two.example' })).toBeInTheDocument();
+    expect(screen.getByRole('option', { name: 'Another domain' })).toBeInTheDocument();
+    expect(screen.getByTestId('kw-gap-own-domain')).toHaveValue('one.example');
+
+    fireEvent.change(picker, { target: { value: 's2' } });
+    expect(screen.getByTestId('kw-gap-own-domain')).toHaveValue('two.example');
+    expect(picker).toHaveValue('s2');
+
+    fireEvent.change(screen.getByTestId('kw-gap-own-domain'), {
+      target: { value: 'custom.example' },
+    });
+    expect(picker).toHaveValue('');
+
+    fireEvent.change(picker, { target: { value: '' } });
+    expect(screen.getByTestId('kw-gap-own-domain')).toHaveValue('');
+  });
+
+  it('prefills the site named by ?siteId= instead of the first one', () => {
+    setSites([gapSite('s1', 'one.example'), gapSite('s2', 'two.example')]);
+    renderInRouter(<GapView />, '/keyword-research?tab=gap&siteId=s2');
+    expect(screen.getByTestId('kw-gap-own-domain')).toHaveValue('two.example');
+    expect(screen.getByRole('combobox', { name: 'Site' })).toHaveValue('s2');
+  });
+
+  it('never overwrites a domain the user already typed when sites arrive later', () => {
+    setSites([]);
+    const { rerender } = renderInRouter(<GapView />);
+    fireEvent.change(screen.getByTestId('kw-gap-own-domain'), {
+      target: { value: 'typed.example' },
+    });
+    setSites([gapSite('s1', 'one.example')]);
+    rerender(
+      <I18nextProvider i18n={i18n}>
+        <MemoryRouter initialEntries={['/keyword-research']}>
+          <GapView />
+        </MemoryRouter>
+      </I18nextProvider>,
+    );
+    expect(screen.getByTestId('kw-gap-own-domain')).toHaveValue('typed.example');
+    expect(screen.getByRole('combobox', { name: 'Site' })).toHaveValue('');
+  });
+
+  it('submits the prefilled site domain in the preview request', async () => {
+    setSites([gapSite('s1', 'one.example')]);
+    renderInRouter(<GapView />);
+    const input = screen.getByTestId('kw-gap-competitor-input');
+    fireEvent.change(input, { target: { value: 'rival.example' } });
+    fireEvent.keyDown(input, { key: 'Enter' });
+    fireEvent.submit(screen.getByTestId('kw-gap-form'));
+    await waitFor(() =>
+      expect(api.fetchKeywordPreviewRequest).toHaveBeenCalledWith(
+        expect.objectContaining({ operation: 'gap', ownDomain: 'one.example' }),
+      ),
+    );
   });
 });
 

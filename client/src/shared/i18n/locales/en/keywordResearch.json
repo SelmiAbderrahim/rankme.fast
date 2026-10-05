@@ -120,6 +120,8 @@
     "title": "Keyword gap",
     "description": "Compare your domain with up to three competitors and see the keywords they rank for that you do not.",
     "ownDomainLabel": "Your domain",
+    "siteLabel": "Site",
+    "otherDomain": "Another domain",
     "competitorsLabel": "Competitor domains",
     "submit": "Run gap analysis",
     "submitting": "Comparing…",

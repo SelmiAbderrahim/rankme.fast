@@ -120,6 +120,8 @@
     "title": "Écart de mots-clés",
     "description": "Comparez votre domaine avec jusqu’à trois concurrents et voyez les mots-clés sur lesquels ils se positionnent sans vous.",
     "ownDomainLabel": "Votre domaine",
+    "siteLabel": "Site",
+    "otherDomain": "Un autre domaine",
     "competitorsLabel": "Domaines concurrents",
     "submit": "Lancer l’analyse d’écart",
     "submitting": "Comparaison en cours…",

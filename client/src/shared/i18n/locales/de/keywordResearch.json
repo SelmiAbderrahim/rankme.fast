@@ -120,6 +120,8 @@
     "title": "Keyword-Lücke",
     "description": "Vergleichen Sie Ihre Domain mit bis zu drei Wettbewerbern und sehen Sie die Keywords, für die diese ranken, Sie aber nicht.",
     "ownDomainLabel": "Ihre Domain",
+    "siteLabel": "Website",
+    "otherDomain": "Andere Domain",
     "competitorsLabel": "Wettbewerber-Domains",
     "submit": "Lückenanalyse starten",
     "submitting": "Vergleich läuft…",

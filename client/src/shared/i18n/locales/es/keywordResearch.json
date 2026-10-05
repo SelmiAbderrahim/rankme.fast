@@ -120,6 +120,8 @@
     "title": "Brecha de palabras clave",
     "description": "Compara tu dominio con hasta tres competidores y descubre las palabras clave por las que se posicionan y tú no.",
     "ownDomainLabel": "Tu dominio",
+    "siteLabel": "Sitio",
+    "otherDomain": "Otro dominio",
     "competitorsLabel": "Dominios competidores",
     "submit": "Ejecutar análisis de brecha",
     "submitting": "Comparando…",

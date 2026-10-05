@@ -7,8 +7,12 @@
  * explicit confirm (`POST /gap`, one keyword_lookups unit per deduped
  * competitor) → per-pair tables with URL-backed filters. Cancelling the
  * preview discards it without any request or unit.
+ *
+ * "Your domain" starts from one of the account's sites (the `?siteId=` one,
+ * otherwise the first) and a site picker switches between them; the field
+ * stays editable so any other domain can still be typed.
  */
-import { useMemo, useState } from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
 import { Link, useSearchParams } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { Alert, AlertDescription } from '@shared/ui/alert';
@@ -16,8 +20,11 @@ import { Button } from '@shared/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@shared/ui/card';
 import { Input } from '@shared/ui/input';
 import { Label } from '@shared/ui/label';
+import { NativeSelect } from '@shared/ui/native-select';
 import { Skeleton } from '@shared/ui/skeleton';
 import { useAppDispatch, useAppSelector } from '@shared/hooks/redux';
+import { siteLabel } from '@shared/lib/siteLabel';
+import { loadSites, selectSites, selectSitesLoaded, selectSitesLoading } from '@features/sites';
 import { fetchKeywordPreview, runGap } from '../store/thunks';
 import { clearPreview } from '../store/slice';
 import { selectGap, selectPreview } from '../store/selectors';
@@ -39,6 +46,9 @@ export const GapView = () => {
   const dispatch = useAppDispatch();
   const preview = useAppSelector(selectPreview);
   const gap = useAppSelector(selectGap);
+  const sites = useAppSelector(selectSites);
+  const sitesLoaded = useAppSelector(selectSitesLoaded);
+  const sitesLoading = useAppSelector(selectSitesLoading);
   const [query, setQuery] = useKeywordWorkspaceQuery();
   const [searchParams] = useSearchParams();
 
@@ -48,6 +58,28 @@ export const GapView = () => {
   const [languageCode, setLanguageCode] = useState(DEFAULT_LANGUAGE_CODE);
   const [formError, setFormError] = useState('');
   const [pendingBody, setPendingBody] = useState<GapRequestBody | null>(null);
+  const ownDomainTouched = useRef(false);
+  const selectedSiteId = searchParams.get('siteId');
+
+  useEffect(() => {
+    if (sitesLoaded || sitesLoading) return;
+    void dispatch(loadSites({ direction: 'initial' }));
+  }, [dispatch, sitesLoaded, sitesLoading]);
+
+  // Prefill once the sites arrive, but never overwrite what the user typed or picked.
+  useEffect(() => {
+    if (ownDomainTouched.current || sites.length === 0) return;
+    const preferred = sites.find((site) => site.id === selectedSiteId) ?? sites[0]!;
+    setOwnDomain(preferred.domain);
+  }, [sites, selectedSiteId]);
+
+  const changeOwnDomain = (value: string) => {
+    ownDomainTouched.current = true;
+    setOwnDomain(value);
+  };
+  // The picker mirrors the field: it shows a site while the text equals that
+  // site's domain, and "another domain" for anything else.
+  const pickedSiteId = sites.find((site) => site.domain === ownDomain.trim())?.id ?? '';
   const workspaceHref = useMemo(() => {
     const siteId = searchParams.get('siteId');
     if (!siteId) return null;
@@ -115,13 +147,31 @@ export const GapView = () => {
               <Label htmlFor="kw-gap-own-domain">
                 {t('keywordResearch:gap.ownDomainLabel')}
               </Label>
+              {sites.length > 0 ? (
+                <NativeSelect
+                  aria-label={t('keywordResearch:gap.siteLabel')}
+                  value={pickedSiteId}
+                  wrapperClassName="sm:w-72"
+                  onChange={(e) =>
+                    changeOwnDomain(sites.find((site) => site.id === e.target.value)?.domain ?? '')
+                  }
+                  data-testid="kw-gap-site"
+                >
+                  {sites.map((site) => (
+                    <option key={site.id} value={site.id}>
+                      {siteLabel(site)}
+                    </option>
+                  ))}
+                  <option value="">{t('keywordResearch:gap.otherDomain')}</option>
+                </NativeSelect>
+              ) : null}
               <Input
                 id="kw-gap-own-domain"
                 dir="ltr"
                 value={ownDomain}
                 maxLength={253}
                 placeholder="example.com"
-                onChange={(e) => setOwnDomain(e.target.value)}
+                onChange={(e) => changeOwnDomain(e.target.value)}
                 data-testid="kw-gap-own-domain"
               />
             </div>
