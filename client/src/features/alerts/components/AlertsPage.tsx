@@ -4,6 +4,7 @@ import { useAppDispatch, useAppSelector } from '@shared/hooks/redux';
 import { useAuthSession } from '@features/auth';
 import { PageHeader } from '@shared/components/PageHeader';
 import { APP_PAGE_ICONS } from '@shared/navigation/appPageIcons';
+import { NativeSelect } from '@shared/ui/native-select';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@shared/ui/card';
 import { Spinner } from '@shared/ui/spinner';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@shared/ui/tabs';
@@ -161,8 +162,7 @@ export const AlertsPage = () => {
                 <div className="flex flex-wrap gap-2">
                   <label className="flex flex-col gap-1 text-sm">
                     <span>{t('filters.type')}</span>
-                    <select
-                      className="rounded-md border border-input bg-background px-2 py-1"
+                    <NativeSelect
                       value={url.type ?? ''}
                       onChange={(event) =>
                         url.setType((event.target.value || null) as AlertRuleType | null)
@@ -174,12 +174,11 @@ export const AlertsPage = () => {
                           {t(`type.${type}`)}
                         </option>
                       ))}
-                    </select>
+                    </NativeSelect>
                   </label>
                   <label className="flex flex-col gap-1 text-sm">
                     <span>{t('filters.state')}</span>
-                    <select
-                      className="rounded-md border border-input bg-background px-2 py-1"
+                    <NativeSelect
                       value={url.enabled === null ? '' : String(url.enabled)}
                       onChange={(event) =>
                         url.setEnabled(
@@ -190,7 +189,7 @@ export const AlertsPage = () => {
                       <option value="">{t('filters.all')}</option>
                       <option value="true">{t('list.enabled')}</option>
                       <option value="false">{t('list.disabled')}</option>
-                    </select>
+                    </NativeSelect>
                   </label>
                 </div>
 

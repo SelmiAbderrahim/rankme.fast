@@ -1,6 +1,7 @@
 import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { safeExternalHref } from '@shared/security';
+import { NativeSelect } from '@shared/ui/native-select';
 import { Alert, AlertDescription, AlertTitle } from '@shared/ui/alert';
 import { Button } from '@shared/ui/button';
 import { Field, FieldLabel } from '@shared/ui/field';
@@ -111,10 +112,9 @@ export const MentionTable = ({
           <FieldLabel htmlFor="brand-radar-sentiment-filter">
             {t('detail.mentions.filters.sentiment')}
           </FieldLabel>
-          <select
+          <NativeSelect
             id="brand-radar-sentiment-filter"
             data-testid="brand-radar-sentiment-filter"
-            className="border-input focus-visible:border-ring focus-visible:ring-ring/50 h-9 w-full cursor-pointer rounded-md border bg-transparent px-3 text-sm outline-none focus-visible:ring-[3px]"
             value={filters.sentiment}
             onChange={(event) => onSentiment(event.target.value as BrandRadarSentimentFilter)}
           >
@@ -123,7 +123,7 @@ export const MentionTable = ({
                 {t(`detail.mentions.sentiment.${option}`)}
               </option>
             ))}
-          </select>
+          </NativeSelect>
         </Field>
         <Field>
           <FieldLabel htmlFor="brand-radar-domain-filter">

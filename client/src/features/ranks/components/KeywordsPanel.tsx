@@ -17,6 +17,7 @@ import { Link, useSearchParams } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { toast } from 'sonner';
 import { ReportExportControl } from '@features/report-export';
+import { NativeSelect } from '@shared/ui/native-select';
 import { Alert, AlertDescription } from '@shared/ui/alert';
 import { Button } from '@shared/ui/button';
 import { RefreshButton } from '@shared/components/RefreshButton';
@@ -442,9 +443,8 @@ export const KeywordsPanel = ({ siteId }: Props) => {
             <label className="text-muted-foreground text-sm" htmlFor="rank-engine-filter">
               {t('engine.filterLabel')}
             </label>
-            <select
+            <NativeSelect
               id="rank-engine-filter"
-              className="border-input bg-background cursor-pointer rounded-md border px-3 py-2 text-sm"
               value={engineFilter}
               onChange={(event) => setEngineFilter(event.target.value as RankEngine | 'all')}
             >
@@ -454,7 +454,7 @@ export const KeywordsPanel = ({ siteId }: Props) => {
                   {t(`engine.name.${option}`)}
                 </option>
               ))}
-            </select>
+            </NativeSelect>
           </div>
           {cadenceError ? (
             <Alert

@@ -26,6 +26,7 @@ import {
   AlertDialogTitle,
   AlertDialogTrigger,
 } from '@shared/ui/alert-dialog';
+import { NativeSelect } from '@shared/ui/native-select';
 import { Alert, AlertDescription, AlertTitle } from '@shared/ui/alert';
 import { Badge } from '@shared/ui/badge';
 import { Button } from '@shared/ui/button';
@@ -978,9 +979,9 @@ function ReportDetail({ siteId, runId }: { siteId: string; runId: string }) {
             <CardContent className="grid gap-3 md:grid-cols-3">
               <div className="flex flex-col gap-2">
                 <Label htmlFor="landscape-class">{t('intelligence.detail.classFilter')}</Label>
-                <select
+                <NativeSelect
                   id="landscape-class"
-                  className="min-h-11 rounded-md border border-input bg-background px-3"
+                  className="min-h-11"
                   value={className ?? ''}
                   onChange={(event) => patch({ class: event.target.value || null })}
                 >
@@ -988,13 +989,13 @@ function ReportDetail({ siteId, runId }: { siteId: string; runId: string }) {
                   {LANDSCAPE_CLASSES.map((item) => (
                     <option key={item} value={item}>{t(`intelligence.classes.${item}`)}</option>
                   ))}
-                </select>
+                </NativeSelect>
               </div>
               <div className="flex flex-col gap-2">
                 <Label htmlFor="landscape-domain">{t('intelligence.detail.domainFilter')}</Label>
-                <select
+                <NativeSelect
                   id="landscape-domain"
-                  className="min-h-11 rounded-md border border-input bg-background px-3"
+                  className="min-h-11"
                   value={competitor ?? ''}
                   onChange={(event) => patch({ domain: event.target.value || null })}
                 >
@@ -1002,7 +1003,7 @@ function ReportDetail({ siteId, runId }: { siteId: string; runId: string }) {
                   {detail.manifest.competitors.map((item) => (
                     <option key={item.profileId} value={item.profileId}>{item.domain}</option>
                   ))}
-                </select>
+                </NativeSelect>
               </div>
               <div className="flex flex-col gap-2">
                 <Label htmlFor="landscape-query">{t('intelligence.detail.textFilter')}</Label>

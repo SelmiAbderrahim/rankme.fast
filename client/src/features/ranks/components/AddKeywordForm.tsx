@@ -4,6 +4,7 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import { useTranslation } from 'react-i18next';
 import { Link } from 'react-router-dom';
 import { safeExternalHref } from '@shared/security';
+import { NativeSelect } from '@shared/ui/native-select';
 import { Alert, AlertDescription } from '@shared/ui/alert';
 import { Button } from '@shared/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@shared/ui/card';
@@ -324,9 +325,8 @@ export const AddKeywordForm = ({
             <div className="flex flex-wrap items-end gap-3">
               <div className="flex flex-col gap-2">
                 <Label htmlFor="keyword-suggestion-count">{t('suggestionsCountLabel')}</Label>
-                <select
+                <NativeSelect
                   id="keyword-suggestion-count"
-                  className="border-input bg-background rounded-md border px-3 py-2 text-sm"
                   value={suggestionCount}
                   onChange={(event) => setSuggestionCount(Number(event.target.value))}
                 >
@@ -335,7 +335,7 @@ export const AddKeywordForm = ({
                       {count}
                     </option>
                   ))}
-                </select>
+                </NativeSelect>
               </div>
               <Button
                 type="button"
@@ -594,7 +594,6 @@ export const AddKeywordForm = ({
                 id="keyword-engine-target-input"
                 type="text"
                 autoComplete="off"
-                className="border-input bg-background rounded-md border px-3 py-2 text-sm"
                 placeholder={t(
                   engine === 'youtube'
                     ? 'engine.targetPlaceholderYoutube'
@@ -723,9 +722,8 @@ export const AddKeywordForm = ({
             </div>
             <div className="flex flex-col gap-2">
               <Label htmlFor="keyword-language">{t('addLanguageLabel')}</Label>
-              <select
+              <NativeSelect
                 id="keyword-language"
-                className="border-input bg-background rounded-md border px-3 py-2 text-sm"
                 {...register('languageCode')}
               >
                 {availableLanguages.map((lang) => (
@@ -733,13 +731,12 @@ export const AddKeywordForm = ({
                     {languageName(lang, i18n.language) ?? lang}
                   </option>
                 ))}
-              </select>
+              </NativeSelect>
             </div>
             <div className="flex flex-col gap-2">
               <Label htmlFor="keyword-device">{t('addDeviceLabel')}</Label>
-              <select
+              <NativeSelect
                 id="keyword-device"
-                className="border-input bg-background rounded-md border px-3 py-2 text-sm"
                 {...register('device')}
               >
                 {DEVICE_OPTIONS.map((d) => (
@@ -747,7 +744,7 @@ export const AddKeywordForm = ({
                     {t(d === 'desktop' ? 'deviceDesktop' : 'deviceMobile')}
                   </option>
                 ))}
-              </select>
+              </NativeSelect>
             </div>
           </div>
           <Button

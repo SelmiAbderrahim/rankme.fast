@@ -1,4 +1,5 @@
 import { useTranslation } from 'react-i18next';
+import { NativeSelect } from '@shared/ui/native-select';
 import { Alert, AlertDescription, AlertTitle } from '@shared/ui/alert';
 import { Button } from '@shared/ui/button';
 import {
@@ -81,9 +82,9 @@ export const ScanListTable = ({
       <CardContent className="flex flex-col gap-4">
         <Field>
           <FieldLabel htmlFor="brand-radar-status-filter">{t('list.filter.label')}</FieldLabel>
-          <select
+          <NativeSelect
             id="brand-radar-status-filter"
-            className="border-input focus-visible:border-ring focus-visible:ring-ring/50 h-9 w-full cursor-pointer rounded-md border bg-transparent px-3 text-sm outline-none focus-visible:ring-[3px] sm:w-64"
+            wrapperClassName="sm:w-64"
             data-testid="brand-radar-status-filter"
             value={statusFilter}
             onChange={(event) => onStatusFilter(event.target.value as BrandRadarStatusFilter)}
@@ -93,7 +94,7 @@ export const ScanListTable = ({
                 {option === 'all' ? t('list.filter.all') : t(`status.${option}`)}
               </option>
             ))}
-          </select>
+          </NativeSelect>
           <p className="text-muted-foreground text-xs">{t('list.filter.note')}</p>
         </Field>
 

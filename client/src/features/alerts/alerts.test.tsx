@@ -365,6 +365,17 @@ describe('AlertsPage — rules tab', () => {
     expect(await screen.findByTestId('alerts-page')).toHaveClass('px-4', 'py-8');
   });
 
+  it('renders the Type and State filters with the shared select styling', async () => {
+    routeApi();
+    renderPage();
+    await screen.findByTestId('alerts-page');
+    for (const name of ['Type', 'State']) {
+      const select = screen.getAllByLabelText(name).find((node) => node.tagName === 'SELECT');
+      expect(select).toHaveAttribute('data-slot', 'native-select');
+      expect(select).toHaveClass('h-9', 'border-input');
+    }
+  });
+
   it('lists configured rules with their cap usage', async () => {
     routeApi();
     renderPage();
