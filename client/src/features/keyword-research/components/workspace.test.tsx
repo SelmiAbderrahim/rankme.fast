@@ -71,8 +71,16 @@ vi.mock('@features/auth', async (importOriginal) => ({
 }));
 
 vi.mock('@features/report-export', () => ({
-  ReportExportControl: ({ selection }: { selection?: { operation?: string } }) => (
-    <div data-testid="mock-keyword-export">{selection?.operation}</div>
+  ReportExportControl: ({
+    selection,
+    empty,
+  }: {
+    selection?: { operation?: string };
+    empty?: boolean;
+  }) => (
+    <div data-testid="mock-keyword-export" data-empty={String(Boolean(empty))}>
+      {selection?.operation}
+    </div>
   ),
 }));
 
@@ -242,6 +250,51 @@ describe('KeywordIntelligenceWorkspace', () => {
     });
     renderInRouter(<KeywordIntelligenceWorkspace />);
     expect(screen.getByTestId('mock-keyword-export')).toHaveTextContent('metrics');
+  });
+
+  it('keeps the export visible but empty until the active tab has a stored result with rows', () => {
+    const item = (resultCount: number) => ({
+      id: 'history-metrics',
+      kind: 'metrics' as const,
+      phrases: ['seo audit'],
+      locationCode: 2840,
+      languageCode: 'en',
+      resultCount,
+      cached: false,
+      createdAt: '2026-07-19T00:00:00.000Z',
+    });
+    const { unmount } = renderInRouter(<KeywordIntelligenceWorkspace />);
+    expect(screen.getByTestId('mock-keyword-export')).toHaveAttribute('data-empty', 'true');
+    unmount();
+
+    setState({ history: [item(0)], historyLoaded: true });
+    const second = renderInRouter(<KeywordIntelligenceWorkspace />);
+    expect(screen.getByTestId('mock-keyword-export')).toHaveAttribute('data-empty', 'true');
+    second.unmount();
+
+    setState({ history: [item(3)], historyLoaded: true });
+    renderInRouter(<KeywordIntelligenceWorkspace />);
+    expect(screen.getByTestId('mock-keyword-export')).toHaveAttribute('data-empty', 'false');
+  });
+
+  it('shows the page title before the tabs and export, once, on every tab', () => {
+    const { unmount } = renderInRouter(<KeywordIntelligenceWorkspace />);
+    const heading = screen.getByRole('heading', { level: 1, name: 'Keyword research' });
+    const tabs = screen.getByTestId('keyword-intel-tabs');
+    expect(
+      heading.compareDocumentPosition(tabs) & Node.DOCUMENT_POSITION_FOLLOWING,
+    ).toBeTruthy();
+    expect(screen.getByTestId('mock-keyword-export').compareDocumentPosition(heading)).toBe(
+      Node.DOCUMENT_POSITION_PRECEDING,
+    );
+    expect(screen.getByTestId('keyword-research-history-link')).toHaveAttribute(
+      'href',
+      '/keyword-research/history',
+    );
+    unmount();
+
+    renderInRouter(<KeywordIntelligenceWorkspace />, '/keyword-research?tab=gap');
+    expect(screen.getAllByRole('heading', { level: 1 })).toHaveLength(1);
   });
 
   it('normalizes an unknown ?tab= to research', () => {

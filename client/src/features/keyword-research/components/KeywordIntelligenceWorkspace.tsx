@@ -22,6 +22,7 @@ import { useAppDispatch, useAppSelector } from '@shared/hooks/redux';
 import { selectHistory, selectHistoryLoaded } from '../store/selectors';
 import { loadHistory } from '../store/thunks';
 import { DEFAULT_WORKSPACE_TAB, WORKSPACE_TABS, useWorkspaceTab } from '../tabState';
+import { KeywordResearchHeader } from './KeywordResearchHeader';
 import { KeywordResearchPanel } from './KeywordResearchPanel';
 import { OverviewSection } from './OverviewSection';
 
@@ -72,6 +73,7 @@ export const KeywordIntelligenceWorkspace = () => {
       className="flex flex-col gap-4 px-4 py-8"
       data-testid="keyword-intel-workspace"
     >
+      <KeywordResearchHeader />
       <Tabs
         value={activeTab}
         onValueChange={(v) => setActiveTab(v as (typeof WORKSPACE_TABS)[number])}
@@ -94,11 +96,12 @@ export const KeywordIntelligenceWorkspace = () => {
             ))}
           </TabsList>
           <div className="flex shrink-0 items-center gap-2">
-            {exportResult ? (
+            {exportOperation.length > 0 ? (
               <ReportExportControl
                 kind="keyword.research_result"
-                target={{ scope: 'account_resource', resourceId: exportResult.id }}
-                selection={{ operation: exportResult.kind }}
+                target={{ scope: 'account_resource', resourceId: exportResult?.id ?? '' }}
+                selection={{ operation: exportResult?.kind ?? exportOperation[0] }}
+                empty={!exportResult || exportResult.resultCount === 0}
               />
             ) : null}
             {/* One "Learn more" per tab: Live search interest has its own
@@ -115,7 +118,7 @@ export const KeywordIntelligenceWorkspace = () => {
           className="mt-2 flex flex-col gap-6"
           data-testid="keyword-intel-panel-research"
         >
-          <KeywordResearchPanel siteId={null} />
+          <KeywordResearchPanel siteId={null} hideHeader />
           <div className="px-4">
             <OverviewSection />
           </div>

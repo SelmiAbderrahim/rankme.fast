@@ -27,7 +27,6 @@ import {
   ChevronRight,
   Copy,
   FileText,
-  History,
   Lightbulb,
   MoreHorizontal,
   Plus,
@@ -46,7 +45,6 @@ import {
   type Keyword,
 } from '@features/ranks';
 import { toast } from 'sonner';
-import { PageHeader } from '@shared/components/PageHeader';
 import { Alert, AlertDescription } from '@shared/ui/alert';
 import { StatusChip, type StatusTone } from '@shared/ui/status-chip';
 import { Button } from '@shared/ui/button';
@@ -78,7 +76,6 @@ import {
 } from '@shared/ui/table';
 import { cn } from '@shared/lib/utils';
 import { useAppDispatch, useAppSelector } from '@shared/hooks/redux';
-import { APP_PAGE_ICONS } from '@shared/navigation/appPageIcons';
 import { contentAnalysisHref } from '@shared/navigation/contentIntelligenceHref';
 import {
   fetchIdeas,
@@ -122,6 +119,7 @@ import {
   difficultyBand,
   parsePrefillParams,
 } from '../validation';
+import { KeywordResearchHeader } from './KeywordResearchHeader';
 import { ResearchHistoryTable } from './ResearchHistoryTable';
 import { MarketSelects } from './MarketSelects';
 import type { KeywordMetric, RelatedKeyword, ResearchHistoryItem, SearchIntent } from '../types';
@@ -251,9 +249,11 @@ function Sparkline({ points }: { points: number[] }) {
 
 interface Props {
   siteId?: string | null;
+  /** The standalone workspace renders the page title above its tabs, so the panel skips its own. */
+  hideHeader?: boolean;
 }
 
-export const KeywordResearchPanel = ({ siteId }: Props) => {
+export const KeywordResearchPanel = ({ siteId, hideHeader = false }: Props) => {
   const { t } = useTranslation();
   const dispatch = useAppDispatch();
 
@@ -648,21 +648,7 @@ export const KeywordResearchPanel = ({ siteId }: Props) => {
 
   return (
     <div className="flex flex-col gap-6 px-4 py-8" data-testid="keyword-research-panel">
-      <PageHeader
-        icon={APP_PAGE_ICONS.keywordResearch}
-        title={t('keywordResearch:panelTitle')}
-        description={t('keywordResearch:panelDescription')}
-        actions={
-          <div className="flex flex-wrap items-center justify-end gap-3">
-            <Button variant="outline" asChild>
-              <Link to="/keyword-research/history" data-testid="keyword-research-history-link">
-                <History className="me-1 h-4 w-4" aria-hidden="true" />
-                {t('keywordResearch:historyLink')}
-              </Link>
-            </Button>
-          </div>
-        }
-      />
+      {hideHeader ? null : <KeywordResearchHeader />}
 
       <Card>
         <CardHeader>
