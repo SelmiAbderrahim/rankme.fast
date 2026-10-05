@@ -196,6 +196,7 @@ describe('assistant streaming thunk', () => {
     expect(action.payload).toMatchObject({
       conversationId: 'c1',
       outcome: 'complete',
+      accepted: true,
       finishReason: 'stop',
       tokens: { input: 10, output: 4 },
     });
@@ -657,9 +658,59 @@ describe('assistant streaming thunk', () => {
     const action = await pending;
 
     expect(action.meta.requestStatus).toBe('fulfilled');
-    expect(action.payload).toMatchObject({ outcome: 'aborted' });
+    expect(action.payload).toMatchObject({ outcome: 'aborted', accepted: false });
     expect(store.getState().assistant.stream.status).toBe('aborted');
+    // Never confirmed by the server: the optimistic bubble is withdrawn.
+    expect(store.getState().assistant.messagesByConversation.c1).toEqual([]);
     expect(stopAssistantStream()).toBe(false);
+  });
+
+  it('Stop after the server accepted the message keeps it in the thread and marks the reply aborted', async () => {
+    vi.spyOn(globalThis, 'fetch').mockImplementation(
+      (_input, init) =>
+        Promise.resolve(
+          new Response(
+            new ReadableStream<Uint8Array>({
+              start(controller) {
+                controller.enqueue(encode(successfulFrames()[0]!));
+                controller.enqueue(encode(frame('delta', { text: 'Step 1' })));
+                init?.signal?.addEventListener('abort', () => {
+                  controller.error(new DOMException('Aborted', 'AbortError'));
+                });
+              },
+            }),
+            {
+              status: 200,
+              headers: {
+                'Content-Type': 'text/event-stream',
+                'Content-Language': 'en',
+              },
+            },
+          ),
+        ),
+    );
+    const store = makeStore();
+    await store.dispatch(loadAssistantConversations.fulfilled([conversation], 'seed'));
+    const pending = store.dispatch(
+      sendAssistantMessage({ conversationId: 'c1', text: 'Give me a 20-step plan' }),
+    );
+    // The user's bubble is on screen from the moment of sending.
+    expect(
+      store.getState().assistant.messagesByConversation.c1?.map((item) => item.role),
+    ).toEqual(['user']);
+    await vi.waitFor(() =>
+      expect(store.getState().assistant.stream.status).toBe('streaming'),
+    );
+
+    expect(stopAssistantStream()).toBe(true);
+    const action = await pending;
+
+    expect(action.payload).toMatchObject({ outcome: 'aborted', accepted: true });
+    const messages = store.getState().assistant.messagesByConversation.c1!;
+    expect(messages).toMatchObject([
+      { id: 'u1', role: 'user', parts: [{ type: 'text', text: 'Give me a 20-step plan' }] },
+      { id: 'a1', role: 'assistant', status: 'aborted', parts: [{ type: 'text', text: 'Step 1' }] },
+    ]);
   });
 
   it('starting a new stream cancels the previous controller without clobbering the new result', async () => {

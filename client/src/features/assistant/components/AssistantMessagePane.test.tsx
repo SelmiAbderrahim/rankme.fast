@@ -101,6 +101,25 @@ describe('AssistantMessagePane', () => {
     expect(screen.getByText('custom_tool')).toBeInTheDocument();
   });
 
+  it('marks a stopped assistant turn and leaves the sent message intact', () => {
+    render(
+      <AssistantMessagePane
+        {...baseProps()}
+        messages={[
+          message({
+            id: 'u1',
+            role: 'user',
+            parts: [{ type: 'text', text: 'Give me a 20-step plan' }],
+          }),
+          message({ id: 'a1', status: 'aborted', parts: [] }),
+        ]}
+      />,
+    );
+    expect(screen.getByLabelText('Your message')).toHaveTextContent('Give me a 20-step plan');
+    expect(screen.getByLabelText('Assistant response')).toHaveTextContent('Response stopped');
+    expect(screen.getAllByText('Response stopped')).toHaveLength(1);
+  });
+
   it('renders assistant replies as markdown and user text literally', () => {
     render(
       <AssistantMessagePane

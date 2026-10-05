@@ -619,6 +619,88 @@ describe('POST /api/chat/conversations/:id/messages (SSE)', () => {
     }
   });
 
+  it('keeps the user message and closes the turn as aborted when Stop lands before the stream opens', async () => {
+    const user = await seedUser('chat-abort-early@x.co');
+    const streamChat = vi.fn(async function* () {
+      yield { type: 'text_delta' as const, text: 'never requested' };
+    });
+    setChatAiProvider({ streamChat } as unknown as AiChatProvider);
+    const conversation = await createConversationFor(user);
+
+    // Hold the user-message write open so the socket can die while the
+    // handler is still before `flushHeaders()`.
+    let reachedWrite!: () => void;
+    const reached = new Promise<void>((resolve) => {
+      reachedWrite = resolve;
+    });
+    let releaseWrite!: () => void;
+    const released = new Promise<void>((resolve) => {
+      releaseWrite = resolve;
+    });
+    const originalCreate = ChatMessage.create.bind(ChatMessage) as (
+      ...args: unknown[]
+    ) => Promise<unknown>;
+    const createSpy = vi
+      .spyOn(ChatMessage, 'create')
+      .mockImplementationOnce((async (...args: unknown[]) => {
+        reachedWrite();
+        await released;
+        return originalCreate(...args);
+      }) as never);
+
+    const server = app.listen(0);
+    try {
+      const port = (server.address() as AddressInfo).port;
+      const payload = JSON.stringify({ text: 'stopped early' });
+      const clientRequest = http.request({
+        host: '127.0.0.1',
+        port,
+        method: 'POST',
+        path: `/api/chat/conversations/${conversation.id}/messages`,
+        headers: {
+          'content-type': 'application/json',
+          'content-length': Buffer.byteLength(payload),
+          cookie: user.cookie,
+        },
+      });
+      clientRequest.on('error', () => {});
+      clientRequest.write(payload);
+      clientRequest.end();
+
+      await reached;
+      clientRequest.destroy();
+      // Let the server observe the closed socket before the write completes.
+      await new Promise((resolve) => setTimeout(resolve, 100));
+      releaseWrite();
+
+      const deadline = Date.now() + 10_000;
+      let assistant = null;
+      while (Date.now() < deadline) {
+        assistant = await ChatMessage.findOne({
+          accountId: user.id,
+          role: 'assistant',
+        });
+        if (assistant) break;
+        await new Promise((resolve) => setTimeout(resolve, 50));
+      }
+      expect(assistant).toMatchObject({ status: 'aborted', parts: [] });
+      expect(streamChat).not.toHaveBeenCalled();
+      const userMessage = await ChatMessage.findOne({
+        accountId: user.id,
+        role: 'user',
+      });
+      expect(userMessage).toMatchObject({ status: 'complete' });
+      expect((userMessage!.parts as Array<{ text?: string }>)[0]!.text).toBe(
+        'stopped early',
+      );
+    } finally {
+      createSpy.mockRestore();
+      await new Promise<void>((resolve) => {
+        server.close(() => resolve());
+      });
+    }
+  });
+
   it('enforces the named chat rate bucket', async () => {
     (env as { RATE_LIMIT_CHAT_MAX: number }).RATE_LIMIT_CHAT_MAX = 2;
     const limitedApp = createApp();

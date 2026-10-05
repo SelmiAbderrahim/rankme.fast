@@ -46,6 +46,7 @@
     "user": "Your message",
     "assistant": "Assistant response",
     "streaming": "Assistant is responding",
+    "stopped": "Response stopped",
     "loading": "Loading conversation…"
   },
   "tool": {

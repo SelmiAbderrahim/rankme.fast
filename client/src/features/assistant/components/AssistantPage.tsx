@@ -129,7 +129,13 @@ export function AssistantPage() {
     }
 
     const sent = await dispatch(sendAssistantMessage({ conversationId, text }));
-    if (sendAssistantMessage.fulfilled.match(sent) && draft.trim() === text) {
+    // A Stop before the server accepted the message withdraws it from the
+    // thread, so the text stays in the composer to edit and re-send.
+    if (
+      sendAssistantMessage.fulfilled.match(sent) &&
+      sent.payload.accepted &&
+      draft.trim() === text
+    ) {
       setDraft('');
     }
   };

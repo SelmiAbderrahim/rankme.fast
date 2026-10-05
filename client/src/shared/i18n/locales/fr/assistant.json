@@ -46,6 +46,7 @@
     "user": "Votre message",
     "assistant": "Réponse de l’assistant",
     "streaming": "L’assistant répond",
+    "stopped": "Réponse arrêtée",
     "loading": "Chargement de la conversation…"
   },
   "tool": {

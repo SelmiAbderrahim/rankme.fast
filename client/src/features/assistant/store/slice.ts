@@ -116,6 +116,27 @@ function streamedAssistantMessage(state: AssistantState): ChatMessage | undefine
   );
 }
 
+/** Id of the optimistic user bubble shown until the server's `meta` frame. */
+const pendingUserMessageId = (requestId: string): string => `pending:${requestId}`;
+
+/**
+ * A send that ended before the server confirmed it (no `meta` frame) never
+ * reached a known persisted state, so its optimistic bubble is withdrawn: a
+ * retry or the restored composer text re-sends it instead of duplicating it.
+ */
+function discardUnconfirmedUserMessage(
+  state: AssistantState,
+  requestId: string,
+): void {
+  if (state.stream.userMessageId !== null) return;
+  const conversationId = state.stream.conversationId as string;
+  const messages = state.messagesByConversation[conversationId];
+  if (!messages) return;
+  state.messagesByConversation[conversationId] = messages.filter(
+    (message) => message.id !== pendingUserMessageId(requestId),
+  );
+}
+
 const isCurrentStream = (
   state: AssistantState,
   requestId: string,
@@ -213,6 +234,10 @@ const slice = createSlice({
         if (!action.meta.aborted) state.deleteError[id] = action.payload ?? null;
       })
       .addCase(sendAssistantMessage.pending, (state, action) => {
+        // A superseded send that never got confirmed leaves no stale bubble.
+        if (state.stream.requestId) {
+          discardUnconfirmedUserMessage(state, state.stream.requestId);
+        }
         state.stream = {
           ...initialAssistantStreamState,
           status: 'connecting',
@@ -220,6 +245,15 @@ const slice = createSlice({
           conversationId: action.meta.arg.conversationId,
           lastPrompt: action.meta.arg.text,
         };
+        messagesFor(state, action.meta.arg.conversationId).push({
+          id: pendingUserMessageId(action.meta.requestId),
+          role: 'user',
+          status: 'complete',
+          responseLocale: null,
+          parts: [{ type: 'text', text: action.meta.arg.text }],
+          tokens: null,
+          createdAt: new Date().toISOString(),
+        });
       })
       .addCase(streamMetaReceived, (state, action) => {
         if (!isCurrentStream(state, action.payload.requestId, action.payload.conversationId)) {
@@ -231,8 +265,15 @@ const slice = createSlice({
         state.stream.responseLocale = action.payload.responseLocale;
 
         const messages = messagesFor(state, action.payload.conversationId);
-        messages.push(
-          {
+        // Confirm the optimistic bubble in place; fall back to appending when
+        // a conversation reload replaced the list mid-send.
+        const optimistic = messages.find(
+          (message) => message.id === pendingUserMessageId(action.payload.requestId),
+        );
+        if (optimistic) {
+          optimistic.id = action.payload.userMessageId;
+        } else {
+          messages.push({
             id: action.payload.userMessageId,
             role: 'user',
             status: 'complete',
@@ -240,17 +281,17 @@ const slice = createSlice({
             parts: [{ type: 'text', text: action.payload.userText }],
             tokens: null,
             createdAt: action.payload.createdAt,
-          },
-          {
-            id: action.payload.assistantMessageId,
-            role: 'assistant',
-            status: 'complete',
-            responseLocale: action.payload.responseLocale,
-            parts: [],
-            tokens: null,
-            createdAt: action.payload.createdAt,
-          },
-        );
+          });
+        }
+        messages.push({
+          id: action.payload.assistantMessageId,
+          role: 'assistant',
+          status: 'complete',
+          responseLocale: action.payload.responseLocale,
+          parts: [],
+          tokens: null,
+          createdAt: action.payload.createdAt,
+        });
 
         const conversation = state.conversations.find(
           (item) => item.id === action.payload.conversationId,
@@ -326,11 +367,15 @@ const slice = createSlice({
       })
       .addCase(sendAssistantMessage.fulfilled, (state, action) => {
         if (state.stream.requestId !== action.meta.requestId) return;
-        if (action.payload.outcome === 'aborted') state.stream.status = 'aborted';
+        if (action.payload.outcome === 'aborted') {
+          state.stream.status = 'aborted';
+          discardUnconfirmedUserMessage(state, action.meta.requestId);
+        }
         state.stream.requestId = null;
       })
       .addCase(sendAssistantMessage.rejected, (state, action) => {
         if (state.stream.requestId !== action.meta.requestId) return;
+        discardUnconfirmedUserMessage(state, action.meta.requestId);
         if (action.meta.aborted) {
           const message = streamedAssistantMessage(state);
           if (message) message.status = 'aborted';

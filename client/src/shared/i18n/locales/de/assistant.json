@@ -46,6 +46,7 @@
     "user": "Ihre Nachricht",
     "assistant": "Antwort des Assistenten",
     "streaming": "Der Assistent antwortet",
+    "stopped": "Antwort gestoppt",
     "loading": "Unterhaltung wird geladen…"
   },
   "tool": {

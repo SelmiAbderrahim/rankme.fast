@@ -192,6 +192,11 @@ export function AssistantMessagePane({
               >
                 <MessageParts parts={message.parts} role={message.role} />
                 {streaming && message.id === assistantMessageId ? <StreamingCaret /> : null}
+                {!outgoing && message.status === 'aborted' ? (
+                  <p className="text-xs text-muted-foreground">
+                    {t('assistant:messages.stopped')}
+                  </p>
+                ) : null}
               </div>
             </article>
           );

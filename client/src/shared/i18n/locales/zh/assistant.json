@@ -46,6 +46,7 @@
     "user": "您的消息",
     "assistant": "助手回复",
     "streaming": "助手正在回复",
+    "stopped": "已停止回复",
     "loading": "正在加载对话…"
   },
   "tool": {

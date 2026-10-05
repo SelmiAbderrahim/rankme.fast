@@ -301,6 +301,54 @@ describe('AssistantPage', () => {
     await userEvent.click(await screen.findByRole('button', { name: 'Stop' }));
     await waitFor(() => expect(requestSignal?.aborted).toBe(true));
     expect(await screen.findByRole('button', { name: 'Send message' })).toBeInTheDocument();
+    // Stopped before the server accepted it: nothing was saved, so the text
+    // returns to the composer instead of vanishing.
+    expect(screen.getByRole('textbox')).toHaveValue('Stop this response');
+    expect(screen.queryByRole('article')).not.toBeInTheDocument();
+  });
+
+  it('keeps the sent message and marks the reply stopped when Stop lands mid-stream', async () => {
+    const saved = conversation();
+    vi.spyOn(globalThis, 'fetch').mockImplementation(
+      (_input, init) => new Promise<Response>((resolve) => {
+        const body = new ReadableStream<Uint8Array>({
+          start(controller) {
+            controller.enqueue(encode(frame('meta', {
+              conversationId: 'c1',
+              userMessageId: 'u1',
+              assistantMessageId: 'a1',
+              responseLocale: 'en',
+            })));
+            init?.signal?.addEventListener('abort', () => {
+              controller.error(new DOMException('Aborted', 'AbortError'));
+            });
+          },
+        });
+        resolve(new Response(body, {
+          status: 200,
+          headers: { 'Content-Type': 'text/event-stream', 'Content-Language': 'en' },
+        }));
+      }),
+    );
+    renderPage(
+      assistantState({
+        conversations: [saved],
+        activeConversationId: 'c1',
+        messagesByConversation: { c1: [] },
+        detailStatus: { c1: 'succeeded' },
+      }),
+    );
+    await userEvent.type(screen.getByRole('textbox'), 'Give me a 20-step plan');
+    await userEvent.click(screen.getByRole('button', { name: 'Send message' }));
+    await waitFor(() => {
+      expect(screen.getByText('Give me a 20-step plan', { selector: 'p' })).toBeInTheDocument();
+    });
+    await userEvent.click(await screen.findByRole('button', { name: 'Stop' }));
+
+    expect(await screen.findByText('Response stopped')).toBeInTheDocument();
+    expect(screen.getByText('Give me a 20-step plan', { selector: 'p' })).toBeInTheDocument();
+    // The message was accepted, so the composer is cleared as for any send.
+    expect(screen.getByRole('textbox')).toHaveValue('');
   });
 
   it('retries a failed conversation detail', async () => {

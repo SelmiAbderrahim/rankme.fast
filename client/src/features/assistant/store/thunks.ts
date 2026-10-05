@@ -387,6 +387,7 @@ export const sendAssistantMessage = createAsyncThunk<
         conversationId: input.conversationId,
         responseLocale,
         outcome: 'complete',
+        accepted: true,
         finishReason: accumulator.finishReason,
         tokens: accumulator.tokens,
       };
@@ -404,6 +405,7 @@ export const sendAssistantMessage = createAsyncThunk<
           conversationId: input.conversationId,
           responseLocale,
           outcome: 'aborted',
+          accepted: accumulator.sawMeta,
           finishReason: null,
           tokens: accumulator.tokens,
         };
