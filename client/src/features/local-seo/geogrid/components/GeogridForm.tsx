@@ -154,6 +154,8 @@ export const GeogridForm = ({
       <fieldset className="flex flex-col gap-2" disabled={disabled}>
         <legend className="text-sm font-medium">{t('form.spacing')}</legend>
         <RadioGroup
+          name="spacingMeters"
+          aria-label={t('form.spacing')}
           data-testid="geogrid-spacing"
           className="flex flex-wrap gap-2"
           value={String(form.spacingMeters)}
@@ -170,8 +172,12 @@ export const GeogridForm = ({
             </Label>
           ))}
         </RadioGroup>
+        {/* The radios are presets; this input is the value they all write to. */}
+        <Label htmlFor="geogrid-spacing-custom" className="text-muted-foreground text-xs">
+          {t('form.spacingCustom')}
+        </Label>
         <Input
-          aria-label={t('form.spacingCustom')}
+          id="geogrid-spacing-custom"
           data-testid="geogrid-spacing-custom"
           type="number"
           step={GEOGRID_SPACING_STEP_METERS}
@@ -195,6 +201,8 @@ export const GeogridForm = ({
       <fieldset className="flex flex-col gap-2" disabled={disabled}>
         <legend className="text-sm font-medium">{t('form.size')}</legend>
         <RadioGroup
+          name="gridSize"
+          aria-label={t('form.size')}
           data-testid="geogrid-size"
           className="flex flex-wrap gap-2"
           value={String(form.gridSize)}

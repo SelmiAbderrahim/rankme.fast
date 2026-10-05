@@ -13,7 +13,7 @@
     "longitude": "中心经度",
     "spacing": "点之间的间距",
     "spacingOption": "{{km}} 公里",
-    "spacingCustom": "间距（米）",
+    "spacingCustom": "自定义间距（米）",
     "size": "网格大小",
     "sizeOption": "{{size}} × {{size}}（{{cells}} 个点）",
     "zoom": "地图缩放",

@@ -13,7 +13,7 @@
     "longitude": "Längengrad des Mittelpunkts",
     "spacing": "Abstand zwischen den Punkten",
     "spacingOption": "{{km}} km",
-    "spacingCustom": "Abstand in Metern",
+    "spacingCustom": "Eigener Abstand (m)",
     "size": "Rastergröße",
     "sizeOption": "{{size}} mal {{size}} ({{cells}} Punkte)",
     "zoom": "Kartenzoom",

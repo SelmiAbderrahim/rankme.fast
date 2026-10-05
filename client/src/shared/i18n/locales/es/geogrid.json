@@ -13,7 +13,7 @@
     "longitude": "Longitud del centro",
     "spacing": "Separación entre puntos",
     "spacingOption": "{{km}} km",
-    "spacingCustom": "Separación en metros",
+    "spacingCustom": "Separación personalizada (m)",
     "size": "Tamaño de la cuadrícula",
     "sizeOption": "{{size}} por {{size}} ({{cells}} puntos)",
     "zoom": "Zoom del mapa",
