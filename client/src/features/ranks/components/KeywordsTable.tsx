@@ -343,7 +343,7 @@ export const KeywordsTable = ({
         <Table>
           <TableHeader>
             <TableRow>
-              <TableHead className="w-1/5">{t('columnPhrase')}</TableHead>
+              <TableHead className="w-1/3 min-w-48">{t('columnPhrase')}</TableHead>
               <TableHead>{t('columnLocation')}</TableHead>
               <TableHead>{t('columnDevice')}</TableHead>
               <TableHead className="text-end">
@@ -378,9 +378,11 @@ export const KeywordsTable = ({
                 aria-selected={isSelected(k)}
                 data-testid={`keyword-row-${k.id}`}
               >
-                {/* max-w-0 lets the truncating child cap the column at its 20%
-                    share instead of the phrase widening the whole table. */}
-                <TableCell className="w-1/5 max-w-0">
+                {/* max-w-0 lets the truncating child cap the column at its share
+                    instead of the phrase widening the whole table; min-w-48
+                    keeps short phrases readable when the table is narrow (the
+                    other columns shrink and the table scrolls before it clips). */}
+                <TableCell className="w-1/3 min-w-48 max-w-0">
                   <button
                     type="button"
                     onClick={() => onSelect(k)}

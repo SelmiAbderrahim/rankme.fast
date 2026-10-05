@@ -254,6 +254,19 @@ describe('KeywordsPanel — clipboard export', () => {
   });
 });
 
+describe('KeywordsPanel — table layout', () => {
+  it('reserves a minimum width for the keyword column so short phrases are not clipped', async () => {
+    renderPage();
+    const table = await screen.findByTestId('keywords-table');
+    const header = within(table).getByRole('columnheader', { name: 'Keyword' });
+    expect(header).toHaveClass('min-w-48');
+    const cell = screen.getByTestId('keyword-select-k1').closest('td');
+    expect(cell).toHaveClass('min-w-48');
+    // The truncating child still caps the column share rather than widening the table.
+    expect(cell).toHaveClass('max-w-0');
+  });
+});
+
 describe('KeywordsPanel — export entries', () => {
   it('shows one distinctly named export button, then a second distinctly named one once a keyword is selected', async () => {
     renderPage();
