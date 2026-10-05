@@ -79,7 +79,7 @@ export const CannibalizationPage = ({ siteId }: CannibalizationPageProps) => {
 
   useEffect(() => {
     void dispatch(loadCannibalizationPrerequisites(siteId));
-  }, [dispatch]);
+  }, [dispatch, siteId]);
 
   useEffect(() => {
     void dispatch(loadCannibalizationReports({ siteId, windowDays: url.window }));
