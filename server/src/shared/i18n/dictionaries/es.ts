@@ -1309,6 +1309,7 @@ export const es: DictionaryShape = {
                 ownedUrlUnsafe: 'Esa dirección de página apunta a una ubicación bloqueada o interna.',
                 ownedUrlOffOrigin: 'Esa dirección de página no pertenece al sitio seleccionado.',
                 urlUnsafe: 'Esa dirección de competidor apunta a una ubicación bloqueada o interna.',
+                ownSite: 'Ese es tu propio sitio, así que no se puede añadir como competidor.',
                 portfolioFull: 'Has alcanzado el número máximo de competidores para este sitio. Archiva uno antes de añadir otro.',
                 competitorNotFound: 'Competidor no encontrado.',
                 ownedPageUnusable: 'No pudimos leer suficiente contenido de tu página para compararla.',

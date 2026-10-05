@@ -1309,6 +1309,7 @@ export const de: DictionaryShape = {
                 ownedUrlUnsafe: 'Diese Seitenadresse verweist auf einen gesperrten oder internen Ort.',
                 ownedUrlOffOrigin: 'Diese Seitenadresse gehört nicht zur ausgewählten Website.',
                 urlUnsafe: 'Diese Wettbewerberadresse verweist auf einen gesperrten oder internen Ort.',
+                ownSite: 'Das ist Ihre eigene Website und kann daher nicht als Wettbewerber hinzugefügt werden.',
                 portfolioFull: 'Sie haben die maximale Anzahl an Wettbewerbern für diese Website erreicht. Archivieren Sie einen, bevor Sie einen weiteren hinzufügen.',
                 competitorNotFound: 'Wettbewerber nicht gefunden.',
                 ownedPageUnusable: 'Wir konnten nicht genug Inhalt von Ihrer Seite lesen, um sie zu vergleichen.',

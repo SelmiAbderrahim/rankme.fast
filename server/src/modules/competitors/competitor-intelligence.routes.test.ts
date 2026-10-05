@@ -497,6 +497,34 @@ describe('canonical competitor-intelligence router', () => {
       .expect(404);
   });
 
+  it('rejects the site\'s own domain (www/http aliases) with a localized 400 and keeps cross-account 404', async () => {
+    const user = await verifiedUser();
+    const siteId = await seedSite(user.id, 'www.owned.example');
+    for (const url of ['https://www.owned.example/', 'https://owned.example', 'http://owned.example/x']) {
+      const res = await request(app)
+        .post(`${BASE(siteId)}/competitors`)
+        .set('Cookie', user.cookie)
+        .set('Accept-Language', 'de')
+        .set('Idempotency-Key', `own-${url.length}`)
+        .send({ url, source: 'manual' })
+        .expect(400);
+      expect(JSON.stringify(res.body)).toContain('Das ist Ihre eigene Website');
+    }
+    const list = await request(app)
+      .get(`${BASE(siteId)}/competitors?status=all`)
+      .set('Cookie', user.cookie)
+      .expect(200);
+    expect(list.body.items).toHaveLength(0);
+
+    const stranger = await verifiedUser();
+    await request(app)
+      .post(`${BASE(siteId)}/competitors`)
+      .set('Cookie', stranger.cookie)
+      .set('Idempotency-Key', 'own-stranger')
+      .send({ url: 'https://owned.example', source: 'manual' })
+      .expect(404);
+  });
+
   it('keeps discovery preview zero-spend, serves same-day cache hits, and retains the last good snapshot', async () => {
     const user = await verifiedUser();
     const siteId = await seedSite(user.id);

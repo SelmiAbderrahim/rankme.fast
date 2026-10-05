@@ -1309,6 +1309,7 @@ export const zh: DictionaryShape = {
                 ownedUrlUnsafe: '该页面地址指向被屏蔽或内部的位置。',
                 ownedUrlOffOrigin: '该页面地址不属于所选站点。',
                 urlUnsafe: '该竞争对手地址指向被屏蔽或内部的位置。',
+                ownSite: '这是您自己的网站，不能添加为竞争对手。',
                 portfolioFull: '您已达到该站点的竞争对手数量上限。请先归档一个再添加新的。',
                 competitorNotFound: '未找到竞争对手。',
                 ownedPageUnusable: '我们无法从您的页面读取足够的内容来进行对比。',

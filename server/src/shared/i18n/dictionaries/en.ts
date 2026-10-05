@@ -1302,6 +1302,7 @@ export const en = {
                 ownedUrlUnsafe: 'That page address points to a blocked or internal location.',
                 ownedUrlOffOrigin: 'That page address does not belong to the selected site.',
                 urlUnsafe: 'That competitor address points to a blocked or internal location.',
+                ownSite: 'That is your own site, so it cannot be added as a competitor.',
                 portfolioFull: 'You have reached the maximum number of competitors for this site. Archive one before adding another.',
                 competitorNotFound: 'Competitor not found.',
                 ownedPageUnusable: 'We could not read enough content from your page to compare it.',
