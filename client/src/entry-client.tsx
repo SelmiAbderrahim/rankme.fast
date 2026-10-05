@@ -4,6 +4,7 @@ import { RouterProvider } from 'react-router-dom';
 import { App } from './App';
 import { store } from './app/store';
 import { setWorkspaceIdProvider } from '@shared/api/client';
+import { retainAuthSession } from '@features/auth';
 import { selectActiveWorkspaceId } from '@features/workspace';
 import { createAppRouter, waitForAppRouterInitialization } from './app/router';
 import { LazyRouteFallback } from './app/routes';
@@ -47,6 +48,10 @@ setWorkspaceIdProvider(() => selectActiveWorkspaceId(store.getState()));
 window.addEventListener('vite:preloadError', (event) => {
   if (reloadOnceForStaleChunk()) event.preventDefault();
 });
+
+// One permanent session subscription + throttled tab-return refresh instead of
+// a get-session fetch on every route-guard remount and every focus.
+retainAuthSession();
 
 const router = createAppRouter();
 

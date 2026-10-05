@@ -1,4 +1,5 @@
 export { authClient } from './authClient';
+export { retainAuthSession, SESSION_FOCUS_MIN_INTERVAL_MS } from './sessionKeepAlive';
 export { useAuthSession, type AuthSessionState } from './useAuthSession';
 export { authRoutes } from './routes';
 export { ActiveSessions } from './components/ActiveSessions';

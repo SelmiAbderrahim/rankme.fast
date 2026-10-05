@@ -13,17 +13,44 @@ import type {
   TeamInboxState,
 } from '../types';
 
+/** How long a passive refresh (mount, tab focus) treats the loaded list as fresh. */
+export const INBOX_MAX_AGE_MS = 5 * 60_000;
+
+export interface LoadPendingInvitationsOptions {
+  /**
+   * Skip the request when the list settled less than this many ms ago. Omit
+   * for an explicit refresh (opening the drawer, the invitations page).
+   */
+  maxAgeMs?: number;
+}
+
 export const loadPendingInvitations = createAsyncThunk<
   PendingInvitationsResponse,
-  void,
+  LoadPendingInvitationsOptions | void,
   { rejectValue: string }
->('teamInbox/load', async (_, { rejectWithValue }) => {
-  try {
-    return await fetchPendingInvitationsRequest();
-  } catch (error) {
-    return rejectWithValue(teamErrorMessage(error, 'team:inbox.loadFailed'));
-  }
-});
+>(
+  'teamInbox/load',
+  async (_, { rejectWithValue }) => {
+    try {
+      return await fetchPendingInvitationsRequest();
+    } catch (error) {
+      return rejectWithValue(teamErrorMessage(error, 'team:inbox.loadFailed'));
+    }
+  },
+  {
+    // One GET /api/team/invitations at a time, and passive callers never
+    // refetch a list that is still fresh.
+    condition: (options, { getState }) => {
+      const inbox = selectInbox(getState() as RootState);
+      if (inbox.fetching) return false;
+      const maxAgeMs = options?.maxAgeMs;
+      if (maxAgeMs !== undefined && inbox.lastFetchedAt !== null) {
+        return Date.now() - inbox.lastFetchedAt >= maxAgeMs;
+      }
+      return true;
+    },
+  },
+);
 
 export const acceptPendingInvitation = createAsyncThunk<
   AcceptInviteResponse & { id: string },
@@ -52,6 +79,8 @@ export const rejectPendingInvitation = createAsyncThunk<
 export const teamInboxInitialState: TeamInboxState = {
   invitations: [],
   status: 'idle',
+  fetching: false,
+  lastFetchedAt: null,
   actionId: null,
   error: '',
   message: '',
@@ -70,14 +99,19 @@ const teamInboxSlice = createSlice({
     builder
       .addCase(loadPendingInvitations.pending, (state) => {
         if (state.status === 'idle') state.status = 'loading';
+        state.fetching = true;
         state.error = '';
       })
       .addCase(loadPendingInvitations.fulfilled, (state, action) => {
         state.status = 'loaded';
+        state.fetching = false;
+        state.lastFetchedAt = Date.now();
         state.invitations = action.payload.invitations;
       })
       .addCase(loadPendingInvitations.rejected, (state, action) => {
         state.status = 'failed';
+        state.fetching = false;
+        state.lastFetchedAt = Date.now();
         state.error = action.payload ?? '';
       })
       .addCase(acceptPendingInvitation.pending, (state, action) => {

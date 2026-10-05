@@ -22,6 +22,11 @@ export const addAuthLocaleHeader = <T extends { headers: Headers }>(context: T):
 export const authClient = createAuthClient({
   baseURL: resolveAbsoluteApiUrl('/auth'),
   fetchOptions: { onRequest: addAuthLocaleHeader },
+  // Better Auth refetches the session on every tab focus (rate-limited to 5s)
+  // and again whenever the last `useSession` consumer unmounts and a new one
+  // mounts. `retainAuthSession` replaces both with one keep-alive subscription
+  // and a 60s focus throttle, so the built-in focus refetch is turned off.
+  sessionOptions: { refetchOnWindowFocus: false },
   // Mirrors the server's `user.additionalFields` so `session.user.role` is
   // typed. `input: false` — the server owns role assignment, never the client.
   // `twoFactorClient` exposes `authClient.twoFactor.enable / disable /
