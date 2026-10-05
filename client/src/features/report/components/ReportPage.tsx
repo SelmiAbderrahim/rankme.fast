@@ -619,6 +619,17 @@ export const ReportPage = ({
         />
       ) : null}
 
+      {report?.hostRedirect ? (
+        <Alert role="status" data-testid="report-host-redirect">
+          <AlertDescription>
+            {t('hostRedirect.notice', {
+              from: report.hostRedirect.from,
+              to: report.hostRedirect.to,
+            })}
+          </AlertDescription>
+        </Alert>
+      ) : null}
+
       {report ? (
         <Tabs
           value={activeTab}

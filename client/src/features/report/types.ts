@@ -224,6 +224,11 @@ export interface AuditReport {
   aiVisibility?: AiVisibilitySection | null;
   /** Local SEO section — NAP, reviews/Q&A, local-pack rank. */
   localSeo?: LocalSeoSection | null;
+  /**
+   * Set when the crawl landed on another host than the site's own (www <->
+   * apex or another domain): every affected URL in the report belongs to `to`.
+   */
+  hostRedirect?: { from: string; to: string } | null;
   /** `null` when the AI summary has never been generated for this run. */
   aiSummary?: AuditReportAiSummary | null;
   /** Durable generation state; absent on responses from older API versions. */

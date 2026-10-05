@@ -1099,6 +1099,7 @@ export const es: DictionaryShape = {
             urlIpLiteral: 'No se admiten direcciones IP — usa un nombre de dominio.',
             urlNoTld: 'Introduce un nombre de dominio completo, como https://example.com.',
             duplicate: 'Ese sitio ya está en tu cuenta.',
+            duplicateAlias: 'Ese sitio ya está en tu cuenta como {{domain}}. Las direcciones con y sin www cuentan como un solo sitio.',
             capExceeded: 'Tu plan alcanzó su límite de sitios. Mejora tu plan para añadir más.',
             notFound: 'Sitio no encontrado.',
             deleteWhileRunning: 'Espera a que termine la auditoría en curso antes de eliminar este sitio.',

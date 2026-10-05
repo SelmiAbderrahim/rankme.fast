@@ -94,6 +94,9 @@
     "runInProgress": "Auditing your site — this can take a couple of minutes.",
     "runProgress": "Checking up to {{count}} pages."
   },
+  "hostRedirect": {
+    "notice": "{{from}} redirects to {{to}}, so this report covers {{to}}. Every page and address listed below belongs to {{to}}."
+  },
   "loadFailed": "Could not load your report.",
   "retestFailed": "Could not start the audit.",
   "pageSpeed": {

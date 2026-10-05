@@ -316,6 +316,23 @@ describe('getAuditReport', () => {
     expect(report.diff).toEqual(emptyDiff());
   });
 
+  it('surfaces the host the crawl landed on, and null when it stayed put (issue #29)', async () => {
+    const ids = await seedRun();
+    await writeReportSnapshot({
+      ...ids,
+      result: { ...makeAuditResult(), hostRedirect: { from: 'www.example.com', to: 'example.com' } },
+    });
+    const redirected = await getAuditReport({ runId: ids.runId, accountId: ids.accountId, locale: 'en' });
+    expect(redirected.hostRedirect).toEqual({ from: 'www.example.com', to: 'example.com' });
+    // Plain object: no Mongoose back-references for the MCP denylist walk.
+    expect(JSON.parse(JSON.stringify(redirected.hostRedirect))).toEqual(redirected.hostRedirect);
+
+    const plain = await seedRun();
+    await writeReportSnapshot({ ...plain, result: makeAuditResult() });
+    const report = await getAuditReport({ runId: plain.runId, accountId: plain.accountId, locale: 'en' });
+    expect(report.hostRedirect).toBeNull();
+  });
+
   it('returns a stored AI summary and infers succeeded when the legacy job field is absent', async () => {
     const ids = await seedRun();
     await writeReportSnapshot({ ...ids, result: makeAuditResult() });

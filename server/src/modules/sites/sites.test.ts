@@ -350,11 +350,69 @@ describe('POST /api/sites', () => {
     expect(dup.body.error.message).toBe(DICTIONARIES.en.sites.errors.duplicate);
   });
 
+  it('rejects the www / non-www alias of an existing site with a localized 409', async () => {
+    const user = await seedUser();
+    const first = await request(app)
+      .post('/api/sites')
+      .set('Cookie', user.cookie)
+      .send({ url: 'https://example.com' });
+    expect(first.status).toBe(201);
+
+    const www = await request(app)
+      .post('/api/sites')
+      .set('Cookie', user.cookie)
+      .send({ url: 'http://www.example.com/' });
+    expect(www.status).toBe(409);
+    expect(www.body.error.message).toBe(
+      DICTIONARIES.en.sites.errors.duplicateAlias.replace('{{domain}}', 'example.com'),
+    );
+
+    // …and the other direction: the site was added with www first.
+    const other = await seedUser('alias-www@x.co');
+    await createSite(other.id, { url: 'https://www.shop.example.org' });
+    await expect(createSite(other.id, { url: 'https://shop.example.org' })).rejects.toMatchObject({
+      status: 409,
+      message: 'sites.errors.duplicateAlias',
+      vars: { domain: 'www.shop.example.org' },
+    });
+    expect(await Site.countDocuments({ accountId: other.id })).toBe(1);
+  });
+
+  it('lets another account add the alias of a site it does not own', async () => {
+    const owner = await seedUser();
+    const other = await seedUser('alias-other@x.co');
+    await createSite(owner.id, { url: 'https://example.com' });
+    await expect(createSite(other.id, { url: 'https://www.example.com' })).resolves.toMatchObject({
+      domain: 'www.example.com',
+    });
+  });
+
+  it('does not treat a deeper subdomain as an alias', async () => {
+    const user = await seedUser();
+    await createSite(user.id, { url: 'https://example.com' });
+    await expect(createSite(user.id, { url: 'https://blog.example.com' })).resolves.toMatchObject({
+      domain: 'blog.example.com',
+    });
+  });
+
+  it('re-checks aliases under the account lock so a concurrent www / apex pair creates one site', async () => {
+    const user = await seedUser();
+    const results = await Promise.allSettled([
+      createSite(user.id, { url: 'https://race.example.com' }),
+      createSite(user.id, { url: 'https://www.race.example.com' }),
+    ]);
+    expect(results.filter((r) => r.status === 'fulfilled')).toHaveLength(1);
+    expect(results.filter((r) => r.status === 'rejected')).toHaveLength(1);
+    expect(await Site.countDocuments({ accountId: user.id })).toBe(1);
+  });
+
   it('maps a unique-index race (E11000) to the same localized 409', async () => {
     const user = await seedUser();
     await insertSite(user.id, 'example.com');
     // Simulate the race: the pre-check misses the concurrent insert.
-    vi.spyOn(Site, 'findOne').mockResolvedValueOnce(null);
+    vi.spyOn(Site, 'findOne')
+      .mockResolvedValueOnce(null)
+      .mockResolvedValueOnce(null);
     await expect(createSite(user.id, { url: 'https://example.com' })).rejects.toMatchObject({
       status: 409,
       message: 'sites.errors.duplicate',

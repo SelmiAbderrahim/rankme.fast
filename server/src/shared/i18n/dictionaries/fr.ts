@@ -1099,6 +1099,7 @@ export const fr: DictionaryShape = {
             urlIpLiteral: 'Les adresses IP ne sont pas prises en charge — utilisez un nom de domaine.',
             urlNoTld: 'Saisissez un nom de domaine complet, comme https://example.com.',
             duplicate: 'Ce site est déjà dans votre compte.',
+            duplicateAlias: 'Ce site est déjà dans votre compte sous le nom {{domain}}. Les adresses avec et sans www comptent pour un seul site.',
             capExceeded: 'Votre forfait a atteint sa limite de sites. Passez à un forfait supérieur pour en ajouter.',
             notFound: 'Site introuvable.',
             deleteWhileRunning: 'Attendez la fin de l’audit en cours avant de supprimer ce site.',

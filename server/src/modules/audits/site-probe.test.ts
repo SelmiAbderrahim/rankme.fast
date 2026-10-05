@@ -4,7 +4,7 @@
  * http/https × apex/www address ends up.
  */
 import { describe, expect, it, vi } from 'vitest';
-import { createSiteProbe, robotsSitemapDirectives, type ProbeResponse } from './site-probe.js';
+import { createSiteProbe, detectHostRedirect, robotsSitemapDirectives, type ProbeResponse } from './site-probe.js';
 
 type Route = { status: number; finalUrl?: string; contentType?: string; body?: string } | 'down';
 
@@ -119,11 +119,30 @@ describe('createSiteProbe', () => {
   });
 
   it('returns nothing when the site https address cannot be read', async () => {
-    for (const home of ['down', { status: 503 }, { status: 200, finalUrl: 'http://example.com/' }] as Route[]) {
+    for (const home of ['down', { status: 503 }] as Route[]) {
       const fetchUrl = fakeNetwork({ 'https://example.com/': home });
       expect(await createSiteProbe({ fetchUrl })({ domain: 'example.com', url: 'https://example.com' })).toEqual({});
       expect(fetchUrl).toHaveBeenCalledTimes(1);
     }
+    // An address that ends on plain http is still evidence of where the start
+    // page lands, but nothing else is judged.
+    const fetchUrl = fakeNetwork({ 'https://example.com/': { status: 200, finalUrl: 'http://example.com/' } });
+    expect(await createSiteProbe({ fetchUrl })({ domain: 'example.com', url: 'https://example.com' })).toEqual({
+      startPageFinalUrl: 'http://example.com/',
+    });
+    expect(fetchUrl).toHaveBeenCalledTimes(1);
+  });
+
+  it('reports the final start-page URL so a cross-host redirect is visible (issue #29)', async () => {
+    const apex = 'https://example.com/';
+    const fetchUrl = fakeNetwork({
+      'https://www.example.com/': { status: 200, finalUrl: apex },
+      [apex]: { status: 200 },
+      'http://example.com/': { status: 200, finalUrl: apex },
+      'http://www.example.com/': { status: 200, finalUrl: apex },
+    });
+    const result = await createSiteProbe({ fetchUrl })({ domain: 'www.example.com', url: 'https://www.example.com' });
+    expect(result.startPageFinalUrl).toBe(apex);
   });
 
   it('reads through the shared SSRF authority by default', async () => {
@@ -164,5 +183,24 @@ describe('robotsSitemapDirectives', () => {
       'https://a.test/b.xml',
     ]);
     expect(robotsSitemapDirectives('User-agent: *\nDisallow: /')).toEqual([]);
+  });
+});
+
+describe('detectHostRedirect', () => {
+  it('prefers the crawled page hosts when none is on the site host', () => {
+    expect(detectHostRedirect('www.example.com', undefined, [
+      'https://example.com/',
+      'https://example.com/a',
+      'https://cdn.example.net/b',
+    ])).toEqual({ from: 'www.example.com', to: 'example.com' });
+  });
+
+  it('falls back to the start page final URL, and ignores same-host evidence', () => {
+    expect(detectHostRedirect('WWW.example.com', 'https://example.com/', [])).toEqual({
+      from: 'www.example.com',
+      to: 'example.com',
+    });
+    expect(detectHostRedirect('www.example.com', 'https://www.example.com/', ['https://www.example.com/a'])).toBeNull();
+    expect(detectHostRedirect('www.example.com', undefined, ['::bad::'])).toBeNull();
   });
 });

@@ -1099,6 +1099,7 @@ export const de: DictionaryShape = {
             urlIpLiteral: 'IP-Adressen werden nicht unterstützt — verwenden Sie einen Domainnamen.',
             urlNoTld: 'Geben Sie einen vollständigen Domainnamen ein, z. B. https://example.com.',
             duplicate: 'Diese Website ist bereits in Ihrem Konto.',
+            duplicateAlias: 'Diese Website ist bereits als {{domain}} in Ihrem Konto. Die Adressen mit und ohne www zählen als eine Website.',
             capExceeded: 'Ihr Tarif hat sein Website-Limit erreicht. Führen Sie ein Upgrade durch, um weitere hinzuzufügen.',
             notFound: 'Website nicht gefunden.',
             deleteWhileRunning: 'Warten Sie, bis das laufende Audit abgeschlossen ist, bevor Sie diese Website entfernen.',

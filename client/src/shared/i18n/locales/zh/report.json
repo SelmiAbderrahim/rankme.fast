@@ -94,6 +94,9 @@
     "runInProgress": "正在审计您的网站——这可能需要几分钟。",
     "runProgress": "正在检查最多 {{count}} 个页面。"
   },
+  "hostRedirect": {
+    "notice": "{{from}} 会跳转到 {{to}}，因此本报告检查的是 {{to}}。下方列出的所有页面和地址都属于 {{to}}。"
+  },
   "loadFailed": "无法加载您的报告。",
   "retestFailed": "无法启动审计。",
   "pageSpeed": {

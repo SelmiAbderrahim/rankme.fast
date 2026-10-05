@@ -94,6 +94,9 @@
     "runInProgress": "Website wird geprüft — dies kann einige Minuten dauern.",
     "runProgress": "Bis zu {{count}} Seiten werden geprüft."
   },
+  "hostRedirect": {
+    "notice": "{{from}} leitet auf {{to}} weiter, daher bezieht sich dieser Bericht auf {{to}}. Alle unten aufgeführten Seiten und Adressen gehören zu {{to}}."
+  },
   "loadFailed": "Ihr Bericht konnte nicht geladen werden.",
   "retestFailed": "Der Audit konnte nicht gestartet werden.",
   "pageSpeed": {

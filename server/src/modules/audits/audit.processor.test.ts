@@ -33,7 +33,7 @@ import {
   selectPageSpeedSampleUrls,
   urlPathDepth,
 } from './index.js';
-import { applySiteProbe } from './audit.processor.js';
+import { applyHostRedirect, applySiteProbe } from './audit.processor.js';
 
 const logger = pino({ level: 'silent' });
 
@@ -697,6 +697,77 @@ describe('audit processor — page persistence and PageSpeed sampling', () => {
 
     it('returns the vendor result untouched without a probe', async () => {
       expect(await applySiteProbe(FAKE_AUDIT_RESULT, target, { logger })).toBe(FAKE_AUDIT_RESULT);
+    });
+  });
+
+  describe('host redirect (issue #29)', () => {
+    const wwwTarget = { domain: 'www.example.com', url: 'https://www.example.com' };
+    const onApex = {
+      ...FAKE_AUDIT_RESULT,
+      pages: FAKE_AUDIT_RESULT.pages.map((p) => ({ ...p, url: p.url.replace('www.', '') })),
+    };
+
+    it('records the host the crawl landed on when no page is on the site host', () => {
+      const result = {
+        ...FAKE_AUDIT_RESULT,
+        pages: [
+          { ...FAKE_AUDIT_RESULT.pages[0]!, url: 'https://example.com/' },
+          { ...FAKE_AUDIT_RESULT.pages[0]!, url: 'https://example.com/about' },
+          { ...FAKE_AUDIT_RESULT.pages[0]!, url: 'https://other.example.net/x' },
+          { ...FAKE_AUDIT_RESULT.pages[0]!, url: 'not a url' },
+        ],
+      };
+      expect(applyHostRedirect(result, wwwTarget).hostRedirect).toEqual({
+        from: 'www.example.com',
+        to: 'example.com',
+      });
+    });
+
+    it('leaves a crawl that stayed on the site host untouched', () => {
+      const result = {
+        ...FAKE_AUDIT_RESULT,
+        pages: [{ ...FAKE_AUDIT_RESULT.pages[0]!, url: 'https://www.example.com/' }],
+      };
+      expect(applyHostRedirect(result, wwwTarget)).toBe(result);
+      expect(applyHostRedirect({ ...FAKE_AUDIT_RESULT, pages: [] }, wwwTarget).hostRedirect).toBeUndefined();
+    });
+
+    it('falls back to the domain when the stored url is not parseable', () => {
+      expect(applyHostRedirect(onApex, { domain: 'www.example.com', url: 'nope' }).hostRedirect).toEqual({
+        from: 'www.example.com',
+        to: 'example.com',
+      });
+    });
+
+    it('takes the start page redirect from the site probe', async () => {
+      const merged = await applySiteProbe(FAKE_AUDIT_RESULT, wwwTarget, {
+        probeSite: async () => ({ startPageFinalUrl: 'https://example.com/' }),
+        logger,
+      });
+      expect(merged.hostRedirect).toEqual({ from: 'www.example.com', to: 'example.com' });
+      const same = await applySiteProbe(FAKE_AUDIT_RESULT, wwwTarget, {
+        probeSite: async () => ({ startPageFinalUrl: 'https://www.example.com/' }),
+        logger,
+      });
+      expect(same.hostRedirect).toBeUndefined();
+    });
+
+    it('persists the redirect on the report snapshot end to end', async () => {
+      const accountId = new mongoose.Types.ObjectId();
+      const site = await Site.create({ accountId, url: 'https://www.example.com', domain: 'www.example.com' });
+      const run = await AuditRun.create({ accountId, siteId: site._id, pageCap: 100 });
+      const processor = createAuditProcessor({
+        provider: createFakeAuditProvider({ result: onApex }),
+        logger,
+      });
+      await processor(jobFor({
+        accountId: accountId.toHexString(),
+        siteId: site.id as string,
+        runId: run.id as string,
+        pageCap: 100,
+      }));
+      const snapshot = await ReportSnapshot.findOne({ runId: run._id }).lean();
+      expect(snapshot?.hostRedirect).toEqual({ from: 'www.example.com', to: 'example.com' });
     });
   });
 

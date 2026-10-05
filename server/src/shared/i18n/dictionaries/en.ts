@@ -1099,6 +1099,7 @@ export const en = {
             urlIpLiteral: 'IP addresses are not supported — use a domain name.',
             urlNoTld: 'Enter a full domain name, like https://example.com.',
             duplicate: 'That site is already in your account.',
+            duplicateAlias: 'That site is already in your account as {{domain}}. The www and non-www addresses count as one site.',
             capExceeded: 'Your plan has reached its site limit. Upgrade to add more sites.',
             notFound: 'Site not found.',
             deleteWhileRunning: 'Wait for the running audit to finish before removing this site.',

@@ -2257,6 +2257,37 @@ describe('ReportPage — AI summary card feature gate', () => {
     expect(screen.getByTestId('report-ai-summary-cta')).toBeInTheDocument();
   });
 
+  it('tells the user which host was audited when the site redirects (issue #29)', async () => {
+    const report = makeReport({ hostRedirect: { from: 'www.example.com', to: 'example.com' } });
+    mocked.fetchReportRequest.mockResolvedValue(report);
+    const store = makeStore({
+      loaded: true,
+      siteId: 'site-1',
+      runId: 'run-1',
+      runStatus: 'succeeded',
+      report,
+    });
+    renderReport({ store });
+    const notice = await screen.findByTestId('report-host-redirect');
+    expect(notice).toHaveTextContent('www.example.com redirects to example.com');
+    expect(notice).toHaveTextContent('this report covers example.com');
+  });
+
+  it('shows no host notice when the crawl stayed on the site host', async () => {
+    const report = makeReport({ hostRedirect: null });
+    mocked.fetchReportRequest.mockResolvedValue(report);
+    const store = makeStore({
+      loaded: true,
+      siteId: 'site-1',
+      runId: 'run-1',
+      runStatus: 'succeeded',
+      report,
+    });
+    renderReport({ store });
+    await screen.findByTestId('report-tabs');
+    expect(screen.queryByTestId('report-host-redirect')).not.toBeInTheDocument();
+  });
+
   it('keeps the freshly generated summary on screen when a retest starts (issue #18)', async () => {
     const report = makeReport({ aiSummaryEnabled: true });
     mocked.fetchReportRequest.mockResolvedValue(report);

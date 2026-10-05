@@ -1099,6 +1099,7 @@ export const zh: DictionaryShape = {
             urlIpLiteral: '不支持 IP 地址——请使用域名。',
             urlNoTld: '请输入完整的域名，例如 https://example.com。',
             duplicate: '该网站已在您的账户中。',
+            duplicateAlias: '该网站已作为 {{domain}} 在您的账户中。带 www 和不带 www 的地址视为同一个网站。',
             capExceeded: '您的套餐已达到网站数量上限。升级以添加更多网站。',
             notFound: '未找到该网站。',
             deleteWhileRunning: '请等待正在进行的审核完成，然后再移除此网站。',

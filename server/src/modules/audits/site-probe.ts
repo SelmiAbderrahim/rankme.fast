@@ -18,10 +18,12 @@
  * that fails leaves its signal absent, so the rule keeps its
  * "insufficient data" behaviour instead of inventing a verdict.
  */
-import type { AddressVariantResult } from '../../shared/providers/index.js';
+import type { AddressVariantResult, AuditHostRedirect } from '../../shared/providers/index.js';
 import { fetchPublicUrlSafeWithFinalUrl, type FetchPublicUrlSafeOptions } from '../../shared/security/url-safety.js';
 
 export interface SiteProbeResult {
+    /** Final URL of the site's own https start page, after redirects. */
+    startPageFinalUrl?: string;
     sitemapReferencedInRobots?: boolean;
     llmsTxtFound?: boolean;
     /** Absent when the site's own https address could not be read. */
@@ -81,6 +83,38 @@ export function robotsSitemapDirectives(body: string): string[] {
     return out;
 }
 
+/**
+ * Where did the crawl really land? Both signals name a hostname other than
+ * the site's own: the start page's final URL after redirects (probe), and the
+ * hostnames of the crawled pages themselves (vendor). When no crawled page is
+ * on the site's host, the dominant crawled host wins because that is what
+ * every finding's affected URLs point at. Returns null when the crawl stayed
+ * on the site's host or no evidence exists.
+ */
+export function detectHostRedirect(siteHost: string, startPageFinalUrl: string | undefined, pageUrls: readonly string[]): AuditHostRedirect | null {
+    const from = siteHost.toLowerCase();
+    const counts = new Map<string, number>();
+    for (const url of pageUrls) {
+        try {
+            const host = new URL(url).hostname.toLowerCase();
+            counts.set(host, (counts.get(host) ?? 0) + 1);
+        }
+        catch {
+            // A malformed vendor URL carries no host evidence.
+        }
+    }
+    if (counts.size > 0 && !counts.has(from)) {
+        const [dominant] = [...counts.entries()].sort((a, b) => b[1] - a[1])[0]!;
+        return { from, to: dominant };
+    }
+    if (startPageFinalUrl) {
+        const to = new URL(startPageFinalUrl).hostname.toLowerCase();
+        if (to !== from)
+            return { from, to };
+    }
+    return null;
+}
+
 const isHtml = (contentType: string): boolean => /\bhtml\b/i.test(contentType);
 
 export function createSiteProbe(opts: SiteProbeOptions = {}): SiteProbe {
@@ -100,10 +134,10 @@ export function createSiteProbe(opts: SiteProbeOptions = {}): SiteProbe {
         if (!home || home.status >= 400)
             return {};
         const canonical = new URL(home.finalUrl);
+        const out: SiteProbeResult = { startPageFinalUrl: canonical.href };
         if (canonical.protocol !== 'https:')
-            return {};
+            return out;
         const origin = canonical.origin;
-        const out: SiteProbeResult = {};
 
         const variantUrls = [
             `http://${apex}/`,
