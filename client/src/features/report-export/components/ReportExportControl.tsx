@@ -37,6 +37,12 @@ export interface ReportExportControlProps {
   target: ReportTarget;
   selection?: ReportViewFilters;
   disabled?: boolean;
+  /**
+   * The page has no data to export yet. The trigger renders disabled and says
+   * why ("Nothing to export yet") instead of opening a menu that would produce
+   * an empty file.
+   */
+  empty?: boolean;
   className?: string;
   locale?: SupportedLocale;
   clipboardText?: string;
@@ -51,6 +57,7 @@ export function ReportExportControl({
   target,
   selection = {},
   disabled = false,
+  empty = false,
   className,
   locale,
   clipboardText,
@@ -111,6 +118,30 @@ export function ReportExportControl({
     }
     toast.error(t('exportUi.clipboard.error'));
   };
+
+  if (empty) {
+    const reasonId = `${operationKey}:empty`;
+    return (
+      // The wrapper owns the tooltip: a disabled button swallows pointer events.
+      <span title={t('exportUi.empty')} className="inline-flex">
+        <Button
+          type="button"
+          variant="outline"
+          disabled
+          className={className}
+          aria-label={ariaLabel ?? label ?? t('exportUi.trigger')}
+          aria-describedby={reasonId}
+        >
+          <Download data-icon="inline-start" />
+          {label ?? t('exportUi.trigger')}
+          <ChevronDown data-icon="inline-end" />
+        </Button>
+        <span id={reasonId} className="sr-only">
+          {t('exportUi.empty')}
+        </span>
+      </span>
+    );
+  }
 
   if (loaded && (!enabled || !capability)) {
     return (

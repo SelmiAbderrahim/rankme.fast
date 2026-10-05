@@ -87,6 +87,9 @@ const NUMERIC_COLUMN_HELP: Record<NumericColumn, string> = {
 export const GoogleSearchDetailPanel = ({ view, siteId }: GoogleSearchDetailPanelProps) => {
   const { t } = useTranslation('google');
   const [, setView] = useGoogleSearchView();
+  const sitemaps = useAppSelector(selectGoogleSitemaps);
+  const sitemapsSiteId = useAppSelector(selectGoogleSitemapsSiteId);
+  const noSitemaps = sitemapsSiteId !== siteId || sitemaps.items.length === 0;
 
   return (
     <section
@@ -112,6 +115,7 @@ export const GoogleSearchDetailPanel = ({ view, siteId }: GoogleSearchDetailPane
             kind="google.gsc_sitemaps"
             target={{ scope: 'site', siteId }}
             selection={{}}
+            empty={noSitemaps}
           />
         ) : null}
       </div>

@@ -218,7 +218,7 @@
     "noData": "Aucune donnée"
   },
   "exportUi": {
-    "trigger": "Exporter ou partager", "loading": "Chargement des options d’export…", "preparing": "Préparation du fichier…", "ready": "Export prêt. Une copie est aussi enregistrée dans Exports et partages.", "unavailable": "Export indisponible", "formatsLabel": "Formats de fichier",
+    "trigger": "Exporter ou partager", "loading": "Chargement des options d’export…", "preparing": "Préparation du fichier…", "ready": "Export prêt. Une copie est aussi enregistrée dans Exports et partages.", "unavailable": "Export indisponible", "empty": "Rien à exporter pour l’instant", "formatsLabel": "Formats de fichier",
     "clipboard": { "action": "Copier dans le presse-papiers", "success": "Copié dans le presse-papiers.", "error": "Impossible de copier dans le presse-papiers." },
     "formats": { "view": "Vue web", "pdf": "PDF", "csv": "CSV", "json": "JSON", "md": "Markdown", "jsonld": "JSON-LD", "txt": "Texte" },
     "kindAreas": { "audit": "Audit du site", "ranks": "Classements", "google": "Données Google", "client": "Rapport client", "keyword": "Mots-clés", "backlinks": "Backlinks", "competitors": "Concurrents", "actions": "Actions suivantes", "ai": "Visibilité IA", "audience": "Recherche d’audience", "brand": "Brand Radar", "content": "Contenu", "internal_links": "Liens internes", "weekly_pulse": "Bilan hebdomadaire", "local": "SEO local", "schema": "Balisage schema", "pages": "Pages", "app": "Optimisation des boutiques d’applications" },

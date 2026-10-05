@@ -3,7 +3,7 @@
  * error / retry / not-connected / RTL states + the `?view=` drill-in links.
  */
 import { beforeEach, describe, expect, it, vi } from 'vitest';
-import { render, screen, waitFor, within } from '@testing-library/react';
+import { cleanup, render, screen, waitFor, within } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { Provider } from 'react-redux';
 import { I18nextProvider } from 'react-i18next';
@@ -167,6 +167,27 @@ describe('GoogleSearchSummaryCard', () => {
       'href',
       '/sites/site-1?tab=report',
     );
+  });
+
+  it('marks the export as empty only when the summary carries no clicks, impressions, queries or pages', async () => {
+    mockedApi.fetchSearchSummary.mockResolvedValue({ summary });
+    renderWith(makeStore({ connection: connected }));
+    expect(await screen.findByText('1,234')).toBeInTheDocument();
+    expect(screen.queryByText('Nothing to export yet')).not.toBeInTheDocument();
+    cleanup();
+
+    mockedApi.fetchSearchSummary.mockResolvedValue({
+      summary: {
+        ...summary,
+        totalClicks: 0,
+        totalImpressions: 0,
+        topQueries: [],
+        topPages: [],
+      },
+    });
+    renderWith(makeStore({ connection: connected }));
+    expect(await screen.findByText('Nothing to export yet')).toBeInTheDocument();
+    expect(screen.getByRole('button', { name: 'Export or share' })).toBeDisabled();
   });
 
   it('renders a quiet "View all" link per section and a sitemaps link', async () => {

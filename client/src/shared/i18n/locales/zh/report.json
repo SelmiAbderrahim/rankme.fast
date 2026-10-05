@@ -218,7 +218,7 @@
     "noData": "暂无数据"
   },
   "exportUi": {
-    "trigger": "导出或分享", "loading": "正在加载导出选项…", "preparing": "正在准备文件…", "ready": "导出已完成。副本也已保存在“导出与分享”中。", "unavailable": "导出不可用", "formatsLabel": "文件格式",
+    "trigger": "导出或分享", "loading": "正在加载导出选项…", "preparing": "正在准备文件…", "ready": "导出已完成。副本也已保存在“导出与分享”中。", "unavailable": "导出不可用", "empty": "暂无可导出的内容", "formatsLabel": "文件格式",
     "clipboard": { "action": "复制到剪贴板", "success": "已复制到剪贴板。", "error": "无法复制到剪贴板。" },
     "formats": { "view": "网页视图", "pdf": "PDF 文件", "csv": "CSV 文件", "json": "JSON", "md": "Markdown 文档", "jsonld": "JSON-LD", "txt": "文本" },
     "kindAreas": { "audit": "网站审计", "ranks": "排名", "google": "Google 数据", "client": "客户报告", "keyword": "关键词", "backlinks": "外链", "competitors": "竞争对手", "actions": "下一步行动", "ai": "AI 可见度", "audience": "受众研究", "brand": "品牌雷达", "content": "内容", "internal_links": "内部链接", "weekly_pulse": "每周简报", "local": "本地 SEO", "schema": "Schema 标记", "pages": "页面", "app": "应用商店优化" },

@@ -223,6 +223,7 @@
     "preparing": "Preparing file…",
     "ready": "Export ready. A copy is also saved in Exports and shares.",
     "unavailable": "Export unavailable",
+    "empty": "Nothing to export yet",
     "formatsLabel": "File formats",
     "clipboard": { "action": "Copy to clipboard", "success": "Copied to clipboard.", "error": "Could not copy to clipboard." },
     "formats": { "view": "Web view", "pdf": "PDF", "csv": "CSV", "json": "JSON", "md": "Markdown", "jsonld": "JSON-LD", "txt": "Text" },

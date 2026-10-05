@@ -161,6 +161,12 @@ export const GoogleSearchSummaryCard = ({ siteId }: GoogleSearchSummaryCardProps
               kind="google.gsc_search"
               target={{ scope: 'site', siteId }}
               selection={{ window: range }}
+              empty={
+                summary.totalImpressions === 0 &&
+                summary.totalClicks === 0 &&
+                summary.topQueries.length === 0 &&
+                summary.topPages.length === 0
+              }
             />
           ) : null}
           {summary ? (

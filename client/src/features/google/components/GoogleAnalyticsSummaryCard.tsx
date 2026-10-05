@@ -183,6 +183,12 @@ export const GoogleAnalyticsSummaryCard = ({
               kind="google.ga4"
               target={{ scope: 'site', siteId }}
               selection={{ window: range }}
+              empty={
+                summary.totalSessions === 0 &&
+                summary.totalActiveUsers === 0 &&
+                summary.channels.length === 0 &&
+                summary.topPages.length === 0
+              }
             />
           ) : null}
           {summary ? (

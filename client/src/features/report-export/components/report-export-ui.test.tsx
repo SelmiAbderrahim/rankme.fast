@@ -255,6 +255,39 @@ describe('ReportExportControl', () => {
     expect(named).toHaveTextContent('Export history');
   });
 
+  it('disables the trigger and says why when the page has nothing to export yet', async () => {
+    const user = userEvent.setup();
+    renderWithStore(
+      <ReportExportControl
+        kind="audit.run"
+        target={{ scope: 'site_resource', siteId: 'site-one', resourceId: 'audit-one' }}
+        empty
+      />,
+    );
+    const trigger = screen.getByRole('button', { name: 'Export or share' });
+    expect(trigger).toBeDisabled();
+    expect(trigger).toHaveAccessibleDescription('Nothing to export yet');
+    expect(trigger.parentElement).toHaveAttribute('title', 'Nothing to export yet');
+    await user.click(trigger);
+    expect(screen.queryByRole('menu')).toBeNull();
+    expect(mockedCreateSnapshot).not.toHaveBeenCalled();
+  });
+
+  it('keeps a caller-supplied name on the empty trigger', () => {
+    renderWithStore(
+      <ReportExportControl
+        kind="audit.run"
+        target={{ scope: 'site', siteId: 'site-one' }}
+        label="Export history"
+        ariaLabel="Export ranking history for blue shoes"
+        empty
+      />,
+    );
+    const trigger = screen.getByRole('button', { name: 'Export ranking history for blue shoes' });
+    expect(trigger).toBeDisabled();
+    expect(trigger).toHaveTextContent('Export history');
+  });
+
   it('confirms a finished export with a toast and stays silent when it fails', async () => {
     const success = vi.spyOn(toast, 'success').mockReturnValue('t');
     mockedCreateSnapshot
