@@ -191,7 +191,6 @@ describe('POST inventory — block math', () => {
     const freshApp = createApp();
     setContentInventoryQueue(fakeQueue().queue);
     try {
-      const user = await freshUser();
       // Distinct, publicly-resolvable origins (assertPublicUrlSafe hits real DNS).
       const cases: Array<[number, number, string]> = [
         [1, 1, 'https://example.com'],
@@ -200,10 +199,12 @@ describe('POST inventory — block math', () => {
         [100, 25, 'https://www.example.com'],
       ];
       for (const [pageLimit, blocks, origin] of cases) {
-        const siteId = await addSite(user, origin);
+        // One account per case: www/non-www of one origin is a single site per account.
+        const owner = await freshUser();
+        const siteId = await addSite(owner, origin);
         const res = await request(freshApp)
           .post(START_PATH(siteId))
-          .set('Cookie', user.cookie)
+          .set('Cookie', owner.cookie)
           .send({ pageLimit, locale: 'en' });
         expect(res.status).toBe(202);
         expect((res.body as { reservedBlocks: number }).reservedBlocks).toBe(blocks);
