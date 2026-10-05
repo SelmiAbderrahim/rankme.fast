@@ -1,4 +1,5 @@
 import { useRoutePattern } from '@shared/feedback/useRoutePattern';
+import { useAppDocumentTitle } from '@shared/hooks/useAppDocumentTitle';
 import { Outlet } from 'react-router-dom';
 import { SidebarInset, SidebarProvider } from '@shared/ui/sidebar';
 import { AppBreadcrumbs } from './AppBreadcrumbs';
@@ -15,6 +16,7 @@ import { ReleaseStageBanner } from './ReleaseStageBanner';
  */
 export const AppLayout = () => {
   const routePattern = useRoutePattern();
+  useAppDocumentTitle();
   return (
     <SidebarProvider>
       <AppSidebar />
