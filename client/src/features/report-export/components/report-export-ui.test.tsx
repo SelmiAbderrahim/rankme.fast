@@ -6,6 +6,7 @@ import { fireEvent, render, screen, waitFor, within } from '@testing-library/rea
 import userEvent from '@testing-library/user-event';
 import { MemoryRouter, useLocation } from 'react-router-dom';
 import { ApiError } from '@shared/api/client';
+import { sitesReducer } from '@features/sites';
 import { i18n, initI18n } from '@shared/i18n';
 import type {
   ReportExportCapability,
@@ -150,9 +151,14 @@ function LocationProbe() {
 }
 
 function renderWithStore(child: React.ReactNode, reportExport = state(), entry = '/exports') {
+  const sitesState = {
+    ...sitesReducer(undefined, { type: '@@init' }),
+    loaded: true,
+    items: [{ id: 'site-1', url: 'https://acme.test', domain: 'acme.test', displayName: 'Acme', paused: false, pausedAt: null, createdAt: '2026-01-01T00:00:00.000Z', updatedAt: '2026-01-01T00:00:00.000Z' }],
+  };
   const store = configureStore({
-    reducer: { reportExport: reportExportReducer },
-    preloadedState: { reportExport },
+    reducer: { reportExport: reportExportReducer, sites: sitesReducer },
+    preloadedState: { reportExport, sites: sitesState },
   });
   return {
     store,
@@ -550,6 +556,29 @@ describe('ExportCenterPage', () => {
     mockedListSnapshots.mockResolvedValue({ items: [], nextCursor: null });
     const more = screen.queryByRole('button', { name: 'Load more' });
     if (more) await user.click(more);
+  });
+
+  it('shows a localized report area and the site instead of the internal export kind', async () => {
+    mockedListAllShares.mockResolvedValue({ items: [], nextCursor: null });
+    mockedListSnapshots.mockResolvedValue({ items: [], nextCursor: null });
+    renderWithStore(
+      <ExportCenterPage />,
+      state({
+        snapshots: [
+          snapshot({ id: 's-a', kind: 'client.composite', title: 'Client SEO report', siteId: 'site-1' }),
+          snapshot({ id: 's-b', kind: 'keyword.research_result', title: 'Keyword set', siteId: null }),
+          snapshot({ id: 's-c', kind: 'unknown.kind', title: 'Mystery', siteId: 'site-gone' }),
+        ],
+      }),
+    );
+    expect(await screen.findByRole('columnheader', { name: 'Site' })).toBeInTheDocument();
+    expect(screen.queryByText('client.composite')).toBeNull();
+    expect(screen.queryByText('keyword.research_result')).toBeNull();
+    expect(screen.getAllByText('Client report').length).toBeGreaterThan(0);
+    expect(screen.getAllByText('Keywords').length).toBeGreaterThan(0);
+    expect(screen.getAllByText('acme.test').length).toBeGreaterThan(0);
+    expect(screen.getAllByText('Whole account').length).toBeGreaterThan(0);
+    expect(screen.getAllByText('—').length).toBeGreaterThan(0);
   });
 
   it('renders invalid-tab and capability retry states accessibly', async () => {

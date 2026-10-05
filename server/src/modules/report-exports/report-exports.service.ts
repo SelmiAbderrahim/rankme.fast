@@ -183,6 +183,7 @@ function toSummary(snapshot: SnapshotLean, document = parseSnapshotDocument(snap
     return {
         id: String(snapshot._id),
         kind: snapshot.kind,
+        siteId: snapshot.siteId ? String(snapshot.siteId) : null,
         format: snapshot.format,
         locale: snapshot.locale,
         title: document.title,

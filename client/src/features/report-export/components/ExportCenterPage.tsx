@@ -1,7 +1,8 @@
-import { useEffect } from 'react';
+import { useEffect, useMemo } from 'react';
 import { Download, FileArchive, Link2, Trash2, Unlink } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 import { useSearchParams } from 'react-router-dom';
+import { loadSites, selectSites, selectSitesLoaded } from '@features/sites';
 import { PageHeader } from '@shared/components/PageHeader';
 import { useAppDispatch, useAppSelector } from '@shared/hooks/redux';
 import { Alert, AlertDescription, AlertTitle } from '@shared/ui/alert';
@@ -59,6 +60,14 @@ function date(value: string, locale: string): string {
   );
 }
 
+/**
+ * The catalog kind ("client.composite") is an internal id; users see the
+ * localized product area instead ("Client report"). Unknown areas show nothing.
+ */
+function kindAreaKey(kind: string): string {
+  return `exportUi.kindAreas.${kind.split('.')[0]}`;
+}
+
 function shareState(share: ReportShareCenterItem): 'active' | 'revoked' | 'expired' {
   if (share.revokedAt) return 'revoked';
   return Date.parse(share.expiresAt) <= Date.now() ? 'expired' : 'active';
@@ -88,12 +97,21 @@ export function ExportCenterPage() {
   const sharesError = useAppSelector(selectReportSharesError);
   const operation = useAppSelector(selectReportExportActiveOperation);
   const operationError = useAppSelector(selectReportExportOperationError);
+  const sites = useAppSelector(selectSites);
+  const sitesLoaded = useAppSelector(selectSitesLoaded);
+  const siteDomains = useMemo(() => new Map(sites.map((site) => [site.id, site.domain])), [sites]);
+  const kindArea = (kind: string) => t(kindAreaKey(kind), { defaultValue: '' });
+  const siteLabel = (snapshot: ReportSnapshotSummary) =>
+    snapshot.siteId
+      ? (siteDomains.get(snapshot.siteId) ?? '—')
+      : t('exportUi.center.noSite');
 
   useEffect(() => {
+    if (!sitesLoaded) void dispatch(loadSites({ direction: 'initial' }));
     void dispatch(loadReportExportCapabilities());
     if (!snapshotsLoaded) void dispatch(loadReportSnapshots(undefined));
     if (!sharesLoaded) void dispatch(loadReportShareCenter(undefined));
-  }, [dispatch, sharesLoaded, snapshotsLoaded]);
+  }, [dispatch, sharesLoaded, sitesLoaded, snapshotsLoaded]);
 
   const changeTab = (value: string) => {
     const next = new URLSearchParams(params);
@@ -161,6 +179,7 @@ export function ExportCenterPage() {
                   <TableHeader>
                     <TableRow>
                       <TableHead>{t('exportUi.center.columns.report')}</TableHead>
+                      <TableHead>{t('exportUi.center.columns.site')}</TableHead>
                       <TableHead>{t('exportUi.center.columns.format')}</TableHead>
                       <TableHead>{t('exportUi.center.columns.created')}</TableHead>
                       <TableHead>{t('exportUi.center.columns.expires')}</TableHead>
@@ -175,9 +194,12 @@ export function ExportCenterPage() {
                         <TableCell>
                           <div className="flex flex-col gap-1">
                             <span className="font-medium">{snapshot.title}</span>
-                            <span className="text-xs text-muted-foreground">{snapshot.kind}</span>
+                            <span className="text-xs text-muted-foreground">
+                              {kindArea(snapshot.kind)}
+                            </span>
                           </div>
                         </TableCell>
+                        <TableCell>{siteLabel(snapshot)}</TableCell>
                         <TableCell>
                           <Badge variant="outline">
                             {t(`exportUi.formats.${snapshot.format}`)}
@@ -202,7 +224,9 @@ export function ExportCenterPage() {
                   <Card key={snapshot.id}>
                     <CardHeader>
                       <CardTitle className="text-base">{snapshot.title}</CardTitle>
-                      <CardDescription>{snapshot.kind}</CardDescription>
+                      <CardDescription>
+                        {[kindArea(snapshot.kind), siteLabel(snapshot)].filter(Boolean).join(' · ')}
+                      </CardDescription>
                     </CardHeader>
                     <CardContent className="flex flex-col gap-3">
                       <div className="flex flex-wrap gap-2">
