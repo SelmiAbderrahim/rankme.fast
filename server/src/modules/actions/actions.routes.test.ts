@@ -383,7 +383,16 @@ describe('action state round-trip and history', () => {
       newState: 'planned',
       eventKind: 'plan',
       note: 'next sprint',
+      actorUserId: user.id,
+      actorIsYou: true,
+      actor: { email: 'mutator@example.com' },
     });
+
+    // The note rides on the action itself.
+    const listed = await request(app)
+      .get(`/api/sites/${siteId}/actions`)
+      .set('Cookie', user.cookie);
+    expect(listed.body.items[0]).toMatchObject({ state: 'planned', latestNote: 'next sprint' });
 
     // Cross-account state mutation and history → 404, not 403.
     const bob = await signupVerifiedUser(app, { email: 'bob-mutator@example.com' });

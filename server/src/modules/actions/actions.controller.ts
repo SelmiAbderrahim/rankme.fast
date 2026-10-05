@@ -11,7 +11,7 @@ import { isSupportedLocale, DEFAULT_LOCALE } from '../../shared/i18n/index.js';
 import type { SupportedLocale } from '../../shared/i18n/index.js';
 import type { ActionSourceType } from '../../db/schema/action-events.js';
 import { hashActionId } from './actions.identity.js';
-import { actionIdParamsSchema, listActionsQuerySchema, mutateActionStateSchema, retestActionBodySchema, siteIdParamsSchema, } from './actions.schema.js';
+import { actionHistoryResponseSchema, actionIdParamsSchema, listActionsQuerySchema, mutateActionStateSchema, retestActionBodySchema, siteIdParamsSchema, } from './actions.schema.js';
 import { getActionHistory, listActionsForSite, } from './actions.service.js';
 import { mutateActionState } from './actions.state.service.js';
 import { getSourceReaders } from './actions.registry.js';
@@ -61,8 +61,9 @@ export const getActionHistoryHandler: RequestHandler = asyncHandler(async (req, 
         actionId,
         db: resolveDb(),
         locale: resolveLocale(req),
+        viewerUserId: requireUserId(req.user),
     });
-    res.status(200).json(result);
+    res.status(200).json(actionHistoryResponseSchema.parse(result));
 });
 export const mutateActionStateHandler: RequestHandler = asyncHandler(async (req, res) => {
     const accountId = requireAccountId(req);

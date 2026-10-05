@@ -68,6 +68,8 @@ export interface ActionItem {
     effort: Effort;
     state: ActionState;
     version: number;
+    /** Note on the decision that set the current state (inert text), or null. */
+    latestNote: string | null;
     /**
      * True when the action is `completed` yet its source still emits it from an
      * observation made AFTER the user marked it done — the fix did not hold, or

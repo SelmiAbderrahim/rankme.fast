@@ -98,6 +98,7 @@ function item(
     effort: 'low',
     state,
     version: 1,
+    latestNote: null,
     reappearedAfterFix: false,
     observedAt: '2026-07-14T00:00:00.000Z',
     lastVerifiedAt: null,
