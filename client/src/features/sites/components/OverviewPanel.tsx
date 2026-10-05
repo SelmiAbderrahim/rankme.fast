@@ -986,11 +986,6 @@ export const OverviewPanel = ({ siteId }: Props) => {
                         {t('sites:overview.competitors.notLoadedDescription')}
                       </EmptyDescription>
                     </EmptyHeader>
-                    <EmptyContent>
-                      <Button asChild variant="outline" size="sm">
-                        <Link to="?tab=competitors">{t('sites:overview.competitors.open')}</Link>
-                      </Button>
-                    </EmptyContent>
                   </Empty>
                 )}
               </CardContent>

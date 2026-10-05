@@ -554,6 +554,12 @@ describe('OverviewPanel', () => {
     );
     expect(mocked.getConnection).toHaveBeenCalled();
     expect(mocked.fetchCompetitors).not.toHaveBeenCalled();
+
+    // One call to action, and no plan jargon, on the not-yet-loaded card.
+    const card = screen.getByTestId('overview-competitors');
+    expect(within(card).getAllByRole('link', { name: 'Open competitors' })).toHaveLength(1);
+    expect(within(card).getByText(/Open competitors to run a lookup\./)).toBeInTheDocument();
+    expect(card).not.toHaveTextContent(/Agency/);
   });
 
   it('does not refetch already-loaded slices', () => {

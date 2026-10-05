@@ -154,7 +154,7 @@
     "competitors": {
       "open": "Wettbewerber öffnen",
       "notLoadedTitle": "Wettbewerbsdaten sind bei Bedarf verfügbar",
-      "notLoadedDescription": "Öffnen Sie Wettbewerber für eine Agency-Abfrage. Die Übersicht verwendet das Ergebnis erneut, ohne eine weitere Abfrage zu verbrauchen."
+      "notLoadedDescription": "Öffnen Sie Wettbewerber, um eine Abfrage auszuführen. Die Übersicht verwendet das Ergebnis erneut, ohne eine weitere Abfrage zu verbrauchen."
     },
     "unlock": {
       "title": "Weitere Einblicke sind verfügbar",

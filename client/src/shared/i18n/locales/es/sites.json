@@ -154,7 +154,7 @@
     "competitors": {
       "open": "Abrir competidores",
       "notLoadedTitle": "Los datos de competidores están disponibles bajo demanda",
-      "notLoadedDescription": "Abre competidores para ejecutar una consulta de Agency. El resumen reutilizará el resultado sin consumir otra consulta."
+      "notLoadedDescription": "Abre competidores para ejecutar una consulta. El resumen reutilizará el resultado sin consumir otra consulta."
     },
     "unlock": {
       "title": "Hay más información disponible",

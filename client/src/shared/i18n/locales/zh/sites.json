@@ -154,7 +154,7 @@
     "competitors": {
       "open": "打开竞争对手",
       "notLoadedTitle": "竞争对手数据可按需获取",
-      "notLoadedDescription": "打开竞争对手以执行 Agency 查询。概览会复用该结果，不会再次消耗查询次数。"
+      "notLoadedDescription": "打开竞争对手以执行一次查询。概览会复用该结果，不会再次消耗查询次数。"
     },
     "unlock": {
       "title": "还有更多洞察可用",

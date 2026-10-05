@@ -154,7 +154,7 @@
     "competitors": {
       "open": "Open competitors",
       "notLoadedTitle": "Competitor data is ready on demand",
-      "notLoadedDescription": "Open competitors to run an Agency lookup. Overview will reuse that result without spending another lookup."
+      "notLoadedDescription": "Open competitors to run a lookup. Overview will reuse that result without spending another lookup."
     },
     "unlock": {
       "title": "More insight is available",
