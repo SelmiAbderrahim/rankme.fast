@@ -1,5 +1,6 @@
 import { Check, ChevronDown } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
+import { Link, useLocation } from 'react-router-dom';
 import { Button } from '@shared/ui/button';
 import {
   DropdownMenu,
@@ -38,22 +39,33 @@ export const SiteWorkspaceNavigation = ({
     'common',
   ]);
   const direction = i18n.dir();
+  const location = useLocation();
   const activeGroup = getSiteTabGroup(activeTab);
   const labelFor = (tab: SiteTab): string => t(getSiteTabLabelKey(tab));
+
+  // Real destinations: every tab is a link to `?tab=<tab>` that keeps the other
+  // query params, so middle-click, copy-link and hover previews all work.
+  // `replace` mirrors `useTabParam` (tab switches never pile up history).
+  const hrefFor = (tab: SiteTab): string => {
+    const params = new URLSearchParams(location.search);
+    params.set('tab', tab);
+    return `${location.pathname}?${params.toString()}`;
+  };
 
   const renderDestination = (tab: SiteTab) => {
     const active = activeTab === tab;
     return (
       <DropdownMenuItem
         key={tab}
+        asChild
         className="min-h-11"
-        onSelect={() => onTabChange(tab)}
-        aria-current={active ? 'page' : undefined}
         data-testid={`site-tab-${tab}`}
         data-state={active ? 'active' : 'inactive'}
       >
-        <Check aria-hidden="true" className={active ? undefined : 'invisible'} />
-        <span className="min-w-0 flex-1">{labelFor(tab)}</span>
+        <Link to={hrefFor(tab)} replace aria-current={active ? 'page' : undefined}>
+          <Check aria-hidden="true" className={active ? undefined : 'invisible'} />
+          <span className="min-w-0 flex-1">{labelFor(tab)}</span>
+        </Link>
       </DropdownMenuItem>
     );
   };
@@ -108,15 +120,19 @@ export const SiteWorkspaceNavigation = ({
         data-testid="site-nav-desktop"
       >
         <Button
-          type="button"
+          asChild
           variant={activeTab === 'overview' ? 'secondary' : 'outline'}
           className="min-h-11 h-auto w-full whitespace-normal"
-          onClick={() => onTabChange('overview')}
-          aria-current={activeTab === 'overview' ? 'page' : undefined}
           data-testid="site-tab-overview"
           data-state={activeTab === 'overview' ? 'active' : 'inactive'}
         >
-          {labelFor('overview')}
+          <Link
+            to={hrefFor('overview')}
+            replace
+            aria-current={activeTab === 'overview' ? 'page' : undefined}
+          >
+            {labelFor('overview')}
+          </Link>
         </Button>
 
         {SITE_TAB_GROUPS.map((group) => {
