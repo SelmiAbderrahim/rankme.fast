@@ -120,6 +120,67 @@ describe('AssistantMarkdown', () => {
     expect(screen.getByText('Audit chart')).toBeInTheDocument();
   });
 
+  it('renders single newlines as line breaks and keeps code blocks intact', () => {
+    const { container } = render(
+      <AssistantMarkdown
+        text={[
+          'Rule: Page titles missing or weak',
+          'Severity: Warning',
+          'Affected URL: https://example.com/',
+          '',
+          '- first line',
+          '  second line',
+          '',
+          '```',
+          'keep',
+          'newlines',
+          '```',
+        ].join('\n')}
+      />,
+    );
+    const paragraph = container.querySelector('p')!;
+    expect(paragraph.querySelectorAll('br')).toHaveLength(2);
+    expect(paragraph.innerHTML).toContain('Severity: Warning');
+    expect(container.querySelector('li br')).not.toBeNull();
+    // No line break element is injected into the fenced block.
+    expect(container.querySelector('pre br')).toBeNull();
+    expect(container.querySelector('pre')!.textContent).toBe('keep\nnewlines\n');
+  });
+
+  it('does not turn a break-containing line into HTML', () => {
+    const { container } = render(
+      <AssistantMarkdown text={'a <img src=x onerror=alert(1)>\nb'} />,
+    );
+    expect(container.querySelector('img')).toBeNull();
+    expect(container.querySelectorAll('br')).toHaveLength(1);
+  });
+
+  it('treats bare domains the same way in every table row', () => {
+    render(
+      <AssistantMarkdown
+        text={[
+          '| Site |',
+          '| --- |',
+          '| www.example.com |',
+          '| example.com |',
+          '| https://full.example.com/path |',
+          '',
+          '[www.label.com](https://www.label.com/page)',
+        ].join('\n')}
+      />,
+    );
+    expect(screen.getByRole('cell', { name: 'www.example.com' }).querySelector('a')).toBeNull();
+    expect(screen.getByRole('cell', { name: 'example.com' }).querySelector('a')).toBeNull();
+    // Full URLs and explicit links keep working through the safe-href guard.
+    const full = screen.getByRole('link', { name: 'https://full.example.com/path' });
+    expect(full).toHaveAttribute('href', 'https://full.example.com/path');
+    expect(full).toHaveAttribute('rel', 'nofollow ugc noopener noreferrer');
+    expect(screen.getByRole('link', { name: 'www.label.com' })).toHaveAttribute(
+      'href',
+      'https://www.label.com/page',
+    );
+  });
+
   it('keeps embedded HTML inert', () => {
     const { container } = render(
       <AssistantMarkdown text={'Before <script>alert(1)</script> <b>bold</b> after'} />,

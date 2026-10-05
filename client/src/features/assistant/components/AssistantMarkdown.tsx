@@ -2,13 +2,14 @@ import { memo, type PropsWithChildren } from 'react';
 import ReactMarkdown, { type Components } from 'react-markdown';
 import remarkGfm from 'remark-gfm';
 import { SAFE_EXTERNAL_REL, safeExternalHref } from '@shared/security';
+import { remarkSoftBreaks } from '../markdownBreaks';
 
 /**
  * Assistant replies arrive as GFM markdown over SSE. Every element is rendered
  * through an explicit override so nothing depends on a typography plugin, and
  * so untrusted model output never reaches the DOM as markup: no raw-HTML rehype
  * plugin is registered, so react-markdown drops embedded HTML, and links pass
- * the shared scheme guard. See `.claude/rules/output-encoding.md`.
+ * the shared scheme guard. Single newlines render as `<br>` (`remarkSoftBreaks`). See `.claude/rules/output-encoding.md`.
  */
 
 const H1 = ({ children }: PropsWithChildren) => (
@@ -58,17 +59,24 @@ const components: Components = {
   ),
   // `String(href)` keeps this branch-free: a missing or malformed href fails the
   // URL parse inside the guard and comes back as the inert placeholder.
-  a: ({ href, children }) => (
-    // eslint-disable-next-line react/jsx-no-target-blank -- SAFE_EXTERNAL_REL includes noopener and noreferrer.
-    <a
-      className="font-medium text-highlight underline underline-offset-4"
-      href={safeExternalHref(String(href))}
-      target="_blank"
-      rel={SAFE_EXTERNAL_REL}
-    >
-      {children}
-    </a>
-  ),
+  a: ({ href, children }) =>
+    // GFM links a bare `www.` host (its href is the text with `http://`
+    // prepended) but not the same domain without `www.`, so a table of domains
+    // mixed links and plain text. Bare hosts stay plain text everywhere; a
+    // full URL or an explicit `[label](url)` link is still a link.
+    typeof children === 'string' && href === `http://${children}` ? (
+      <>{children}</>
+    ) : (
+      // eslint-disable-next-line react/jsx-no-target-blank -- SAFE_EXTERNAL_REL includes noopener and noreferrer.
+      <a
+        className="font-medium text-highlight underline underline-offset-4"
+        href={safeExternalHref(String(href))}
+        target="_blank"
+        rel={SAFE_EXTERNAL_REL}
+      >
+        {children}
+      </a>
+    ),
   // The dashboard CSP allows `img-src 'self' data:` only, so a remote image is a
   // guaranteed broken icon. Show the alt text instead.
   img: ({ alt }) => <span className="text-muted-foreground">{alt}</span>,
@@ -81,7 +89,7 @@ const components: Components = {
 export const AssistantMarkdown = memo(function AssistantMarkdown({ text }: { text: string }) {
   return (
     <div className="assistant-markdown space-y-3 break-words leading-6">
-      <ReactMarkdown remarkPlugins={[remarkGfm]} components={components}>
+      <ReactMarkdown remarkPlugins={[remarkGfm, remarkSoftBreaks]} components={components}>
         {text}
       </ReactMarkdown>
     </div>
