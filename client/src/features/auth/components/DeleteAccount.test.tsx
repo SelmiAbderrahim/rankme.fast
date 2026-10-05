@@ -75,6 +75,37 @@ describe('DeleteAccount', () => {
     expect(screen.getByRole('button', { name: 'Delete my account' })).toBeInTheDocument();
   });
 
+  it('states the real grace period up front once the status reports it', async () => {
+    getAccountDeletionStatusMock.mockResolvedValue({
+      scheduledAt: null,
+      startedAt: null,
+      cancellable: false,
+      graceHours: 720,
+    });
+    renderWithLocale();
+    expect(
+      await screen.findByText(/Nothing is erased for 30 days\. Sign back in during that time to cancel\./),
+    ).toBeInTheDocument();
+  });
+
+  it('falls back to hours when the grace period is not a whole number of days', async () => {
+    getAccountDeletionStatusMock.mockResolvedValue({
+      scheduledAt: null,
+      startedAt: null,
+      cancellable: false,
+      graceHours: 36,
+    });
+    renderWithLocale();
+    expect(await screen.findByText(/Nothing is erased for 36 hours/)).toBeInTheDocument();
+  });
+
+  it('uses the generic copy when the status carries no grace length', () => {
+    renderWithLocale();
+    expect(
+      screen.getByText(/Nothing is erased during a grace period|sign back in during the grace period/i),
+    ).toBeInTheDocument();
+  });
+
   it('keeps the destructive action disabled until the email matches', () => {
     renderWithLocale();
     fireEvent.click(screen.getByRole('button', { name: 'Delete my account' }));

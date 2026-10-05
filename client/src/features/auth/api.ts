@@ -22,6 +22,8 @@ export interface AccountDeletionStatus {
   scheduledAt: string | null;
   startedAt: string | null;
   cancellable: boolean;
+  /** Operator-configured grace length, so copy can state it before scheduling. */
+  graceHours?: number;
 }
 
 export const getAccountDeletionStatus = async (): Promise<AccountDeletionStatus> =>

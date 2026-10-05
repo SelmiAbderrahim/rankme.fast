@@ -71,5 +71,10 @@ export const cancelMyAccountDeletion: RequestHandler = asyncHandler(async (req, 
 export const accountDeletionStatus: RequestHandler = asyncHandler(async (req, res) => {
     if (!req.user)
         throw HttpError.unauthorized({ code: 'ERRORS_UNAUTHORIZED', messageKey: 'errors.unauthorized' });
-    res.status(200).json(await getAccountDeletionStatus(req.user.id));
+    // `graceHours` lets the UI state the real grace length up front, before
+    // anything is scheduled, instead of a vague "after a grace period".
+    res.status(200).json({
+        ...(await getAccountDeletionStatus(req.user.id)),
+        graceHours: env.ACCOUNT_DELETION_GRACE_HOURS,
+    });
 });

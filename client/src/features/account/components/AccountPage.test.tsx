@@ -9,8 +9,10 @@ import { AccountPage } from './AccountPage';
 // Stub every tab body so this suite isolates the tab/URL logic.
 vi.mock('./ProfileInfoCard', () => ({ ProfileInfoCard: () => <div>PROFILE_BODY</div> }));
 vi.mock('./ExportData', () => ({ ExportData: () => <div>EXPORT_BODY</div> }));
-vi.mock('./DeleteAccount', () => ({ DeleteAccount: () => <div>DELETE_BODY</div> }));
-vi.mock('@features/auth', () => ({ SecuritySettings: () => <div>SECURITY_BODY</div> }));
+vi.mock('@features/auth', () => ({
+  SecuritySettings: () => <div>SECURITY_BODY</div>,
+  DeleteAccount: () => <div>DELETE_BODY</div>,
+}));
 vi.mock('@features/settings', () => ({
   NotificationPreferences: () => <div>NOTIF_BODY</div>,
   ApiKeysPanel: () => <div>API_KEYS_BODY</div>,

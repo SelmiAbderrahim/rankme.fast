@@ -1,22 +1,14 @@
 import { beforeEach, describe, expect, it, vi, type Mock } from 'vitest';
-import { act, render, screen, waitFor } from '@testing-library/react';
+import { render, screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { I18nextProvider } from 'react-i18next';
-import {
-  changeLanguage,
-  i18n,
-  initI18n,
-  requestPresentationRefresh,
-} from '@shared/i18n';
+import { changeLanguage, i18n, initI18n } from '@shared/i18n';
 import * as api from '../api';
-import type { AccountDeletionResult, DataExport } from '../types';
+import type { DataExport } from '../types';
 import { ExportData } from './ExportData';
-import { DeleteAccount } from './DeleteAccount';
 
 vi.mock('../api', () => ({
   exportMyDataRequest: vi.fn(),
-  fetchCsrfToken: vi.fn(),
-  deleteAccountRequest: vi.fn(),
 }));
 vi.mock('sonner', () => ({ toast: { success: vi.fn(), error: vi.fn() } }));
 
@@ -106,97 +98,6 @@ describe('ExportData', () => {
     await userEvent.click(screen.getByRole('button', { name: 'Export my data' }));
     await screen.findByText("We couldn't export your data. Please try again.");
     const restored = screen.getByRole('button', { name: 'Export my data' });
-    expect(restored).not.toHaveAttribute('aria-busy');
-    expect(restored.querySelector('[data-slot="spinner"]')).not.toBeInTheDocument();
-  });
-});
-
-describe('DeleteAccount', () => {
-  it('clears component-local server copy on a presentation refresh', () => {
-    renderNode(<DeleteAccount />);
-
-    act(() => {
-      requestPresentationRefresh();
-    });
-
-    expect(screen.queryByRole('alert')).not.toBeInTheDocument();
-  });
-
-  it('fetches a CSRF token, schedules deletion, and shows the date', async () => {
-    mockedApi.fetchCsrfToken.mockResolvedValue({ csrfToken: 'tok-9' });
-    mockedApi.deleteAccountRequest.mockResolvedValue({
-      scheduledAt: '2026-08-01T00:00:00.000Z',
-      purgeAt: '2026-08-31T00:00:00.000Z',
-      warningEmailQueued: false,
-    });
-    renderNode(<DeleteAccount />);
-    await userEvent.click(screen.getByRole('button', { name: 'Delete my account' }));
-    await userEvent.click(screen.getByRole('button', { name: 'Yes, delete my account' }));
-
-    await waitFor(() =>
-      expect(mockedApi.deleteAccountRequest).toHaveBeenCalledWith('tok-9'),
-    );
-    expect(mockedApi.fetchCsrfToken).toHaveBeenCalled();
-    expect(await screen.findByText(/scheduled for deletion on/)).toBeInTheDocument();
-  });
-
-  it('closes the dialog on cancel without calling the API', async () => {
-    renderNode(<DeleteAccount />);
-    await userEvent.click(screen.getByRole('button', { name: 'Delete my account' }));
-    expect(screen.getByText('Delete your account?')).toBeInTheDocument();
-    await userEvent.click(screen.getByRole('button', { name: 'Cancel' }));
-    await waitFor(() =>
-      expect(screen.queryByText('Delete your account?')).not.toBeInTheDocument(),
-    );
-    expect(mockedApi.deleteAccountRequest).not.toHaveBeenCalled();
-  });
-
-  it('surfaces an error when scheduling fails', async () => {
-    mockedApi.fetchCsrfToken.mockResolvedValue({ csrfToken: 'tok-9' });
-    mockedApi.deleteAccountRequest.mockRejectedValue(new Error('nope'));
-    renderNode(<DeleteAccount />);
-    await userEvent.click(screen.getByRole('button', { name: 'Delete my account' }));
-    await userEvent.click(screen.getByRole('button', { name: 'Yes, delete my account' }));
-    expect(
-      await screen.findByText("We couldn't schedule deletion. Please try again."),
-    ).toBeInTheDocument();
-  });
-
-  it('shows the shared loading affordance while scheduling and unmounts it on success', async () => {
-    mockedApi.fetchCsrfToken.mockResolvedValue({ csrfToken: 'tok-9' });
-    let resolve!: (value: AccountDeletionResult) => void;
-    mockedApi.deleteAccountRequest.mockReturnValue(
-      new Promise((res) => {
-        resolve = res;
-      }),
-    );
-    renderNode(<DeleteAccount />);
-    await userEvent.click(screen.getByRole('button', { name: 'Delete my account' }));
-    await userEvent.click(screen.getByRole('button', { name: 'Yes, delete my account' }));
-    const pending = await screen.findByRole('button', { name: 'Scheduling…' });
-    expect(pending).toBeDisabled();
-    expect(pending).toHaveAttribute('aria-busy', 'true');
-    expect(pending.querySelector('[data-slot="spinner"]')).toBeInTheDocument();
-    resolve({
-      scheduledAt: '2026-08-01T00:00:00.000Z',
-      purgeAt: '2026-08-31T00:00:00.000Z',
-      warningEmailQueued: false,
-    });
-    // Success closes the dialog and swaps in the scheduled banner → the button unmounts.
-    await waitFor(() =>
-      expect(screen.queryByRole('button', { name: 'Scheduling…' })).not.toBeInTheDocument(),
-    );
-    expect(await screen.findByText(/scheduled for deletion on/)).toBeInTheDocument();
-  });
-
-  it('restores the confirm button after a failed deletion', async () => {
-    mockedApi.fetchCsrfToken.mockResolvedValue({ csrfToken: 'tok-9' });
-    mockedApi.deleteAccountRequest.mockRejectedValue(new Error('nope'));
-    renderNode(<DeleteAccount />);
-    await userEvent.click(screen.getByRole('button', { name: 'Delete my account' }));
-    await userEvent.click(screen.getByRole('button', { name: 'Yes, delete my account' }));
-    await screen.findByText("We couldn't schedule deletion. Please try again.");
-    const restored = screen.getByRole('button', { name: 'Yes, delete my account' });
     expect(restored).not.toHaveAttribute('aria-busy');
     expect(restored.querySelector('[data-slot="spinner"]')).not.toBeInTheDocument();
   });

@@ -14,8 +14,19 @@ import {
 } from '../api';
 import { useClearOnPresentationRefresh } from '@shared/i18n';
 
+/** "30 days" in the active locale; whole days when possible, otherwise hours. */
+const formatGracePeriod = (hours: number, locale: string): string => {
+  const wholeDays = hours >= 24 && hours % 24 === 0;
+  return new Intl.NumberFormat(locale, {
+    style: 'unit',
+    unit: wholeDays ? 'day' : 'hour',
+    unitDisplay: 'long',
+  }).format(wholeDays ? hours / 24 : hours);
+};
+
 /**
- * `/settings/security` — danger-zone account deletion.
+ * Danger-zone account deletion, shared by Security and Data & privacy so both
+ * tabs give the same instructions.
  *
  * Calls the legal data-rights endpoint (`POST /api/legal/delete-account`),
  * which schedules a grace-period soft-delete + purge — the account is
@@ -33,6 +44,7 @@ export const DeleteAccount = () => {
   const [busy, setBusy] = useState(false);
   const [errorMessage, setErrorMessage] = useState('');
   const [scheduledDate, setScheduledDate] = useState<string | null>(null);
+  const [graceHours, setGraceHours] = useState<number | null>(null);
   useClearOnPresentationRefresh(() => setErrorMessage(''));
 
   const formatDate = useCallback((value: string) =>
@@ -45,7 +57,9 @@ export const DeleteAccount = () => {
     let active = true;
     void getAccountDeletionStatus()
       .then((status) => {
-        if (active && status.cancellable && status.scheduledAt) {
+        if (!active) return;
+        if (typeof status.graceHours === 'number') setGraceHours(status.graceHours);
+        if (status.cancellable && status.scheduledAt) {
           setScheduledDate(formatDate(status.scheduledAt));
         }
       })
@@ -56,6 +70,8 @@ export const DeleteAccount = () => {
     // Language changes should reformat a persisted purge date on the next
     // status read; user identity is the stable request authority.
   }, [userId, formatDate]);
+
+  const gracePeriod = graceHours === null ? null : formatGracePeriod(graceHours, i18n.language);
 
   const armed = email !== '' && typed.trim().toLowerCase() === email.trim().toLowerCase();
 
@@ -113,17 +129,20 @@ export const DeleteAccount = () => {
               <Button
                 type="button"
                 variant="outline"
-                disabled={busy}
+                loading={busy}
+                loadingLabel={t('security.deletion.cancelling')}
                 onClick={() => void cancelScheduled()}
               >
-                {busy
-                  ? t('security.deletion.cancelling')
-                  : t('security.deletion.cancelScheduled')}
+                {t('security.deletion.cancelScheduled')}
               </Button>
             </>
           ) : (
             <>
-              <p className="text-muted-foreground text-sm">{t('security.deletion.description')}</p>
+              <p className="text-muted-foreground text-sm">
+                {gracePeriod
+                  ? t('security.deletion.descriptionWithPeriod', { period: gracePeriod })
+                  : t('security.deletion.description')}
+              </p>
 
               {errorMessage ? (
                 <Alert variant="destructive" role="alert">
@@ -148,10 +167,12 @@ export const DeleteAccount = () => {
                     <Button
                       type="button"
                       variant="destructive"
-                      disabled={!armed || busy}
+                      disabled={!armed}
+                      loading={busy}
+                      loadingLabel={t('security.deletion.deleting')}
                       onClick={() => void submit()}
                     >
-                      {busy ? t('security.deletion.deleting') : t('security.deletion.delete')}
+                      {t('security.deletion.delete')}
                     </Button>
                     <Button
                       type="button"

@@ -45,19 +45,6 @@
       "success": "您的数据导出已下载。",
       "error": "无法导出您的数据，请重试。"
     },
-    "delete": {
-      "title": "删除账户",
-      "description": "安排永久删除您的账户和数据。",
-      "warning": "这将在宽限期后安排删除您的账户。请在此之前联系支持以取消。",
-      "button": "删除我的账户",
-      "dialogTitle": "删除您的账户？",
-      "dialogBody": "宽限期结束后，您的账户和数据将被永久删除。一旦该期限结束，将无法撤销。",
-      "cancel": "取消",
-      "confirm": "是的，删除我的账户",
-      "deleting": "安排中…",
-      "scheduled": "您的账户已安排在 {{date}} 删除。",
-      "error": "无法安排删除，请重试。"
-    },
     "analytics": {
       "title": "使用情况分析",
       "description": "选择 RankMeFast 是否可以使用 Google Analytics 统计页面访问量。发送的页面地址不含站点 ID 或所选标签页。",

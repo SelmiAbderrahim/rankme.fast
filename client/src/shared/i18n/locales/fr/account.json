@@ -45,19 +45,6 @@
       "success": "Votre export de données a été téléchargé.",
       "error": "Impossible d'exporter vos données. Réessayez."
     },
-    "delete": {
-      "title": "Supprimer le compte",
-      "description": "Programmez la suppression définitive de votre compte et de vos données.",
-      "warning": "Ceci programme la suppression de votre compte après un délai de grâce. Contactez le support avant pour annuler.",
-      "button": "Supprimer mon compte",
-      "dialogTitle": "Supprimer votre compte ?",
-      "dialogBody": "Votre compte et vos données seront supprimés définitivement après le délai de grâce. Une fois ce délai écoulé, c'est irréversible.",
-      "cancel": "Annuler",
-      "confirm": "Oui, supprimer mon compte",
-      "deleting": "Programmation…",
-      "scheduled": "La suppression de votre compte est prévue le {{date}}.",
-      "error": "Impossible de programmer la suppression. Réessayez."
-    },
     "analytics": {
       "title": "Statistiques d’utilisation",
       "description": "Choisissez si RankMeFast peut utiliser Google Analytics pour compter les visites de pages. Les adresses de page sont envoyées sans identifiants de site ni choix d’onglet.",

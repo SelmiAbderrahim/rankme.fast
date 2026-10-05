@@ -1,5 +1,5 @@
 import { useTranslation } from 'react-i18next';
-import { SecuritySettings } from '@features/auth';
+import { DeleteAccount, SecuritySettings } from '@features/auth';
 import {
   ApiKeysPanel,
   BrandingPanel,
@@ -14,7 +14,6 @@ import { ACCOUNT_TABS } from '../types';
 import { ProfileInfoCard } from './ProfileInfoCard';
 import { AnalyticsPreference } from './AnalyticsPreference';
 import { ExportData } from './ExportData';
-import { DeleteAccount } from './DeleteAccount';
 
 /**
  * `/profile` — the Account hub. One tabbed page (`?tab=`) composing the profile
