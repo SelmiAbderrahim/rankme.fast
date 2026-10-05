@@ -239,7 +239,12 @@
   "preview": {
     "title": "Verbrauchsvorschau",
     "description": "Sehen Sie genau, wie viele Keyword-Abfragen diese Aktion kostet, bevor Sie sie starten.",
-    "productUnits": "{{count}} Keyword-Abfrage(n)",
+    "productUnits_zero": "{{count}} Keyword-Abfragen",
+    "productUnits_one": "{{count}} Keyword-Abfrage",
+    "productUnits_two": "{{count}} Keyword-Abfragen",
+    "productUnits_few": "{{count}} Keyword-Abfragen",
+    "productUnits_many": "{{count}} Keyword-Abfragen",
+    "productUnits_other": "{{count}} Keyword-Abfragen",
     "cachedSummary": "{{cached}} aus dem Cache · {{fresh}} live",
     "canFit": "Passt in Ihr aktuelles Kontingent",
     "cannotFit": "Würde Ihr verbleibendes Kontingent überschreiten",

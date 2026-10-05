@@ -172,7 +172,7 @@ export function InventoryStartForm({ siteId, disabled, onStarted }: InventorySta
             <p className="text-sm font-medium">{t('inventory.start.blocksTitle')}</p>
             <p className="text-muted-foreground mt-1 text-sm">
               {validPageLimit
-                ? t('inventory.start.blocks', { blocks, pages: pageLimitNum })
+                ? t('inventory.start.blocks', { count: blocks, pages: pageLimitNum })
                 : t('inventory.start.blocksInvalid')}
             </p>
           </div>

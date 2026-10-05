@@ -239,7 +239,12 @@
   "preview": {
     "title": "Previsión de gasto",
     "description": "Consulta exactamente cuántas búsquedas de palabras clave costará esta acción antes de ejecutarla.",
-    "productUnits": "{{count}} búsqueda(s) de palabras clave",
+    "productUnits_zero": "{{count}} búsquedas de palabras clave",
+    "productUnits_one": "{{count}} búsqueda de palabras clave",
+    "productUnits_two": "{{count}} búsquedas de palabras clave",
+    "productUnits_few": "{{count}} búsquedas de palabras clave",
+    "productUnits_many": "{{count}} búsquedas de palabras clave",
+    "productUnits_other": "{{count}} búsquedas de palabras clave",
     "cachedSummary": "{{cached}} en caché · {{fresh}} en vivo",
     "canFit": "Cabe en tu cuota actual",
     "cannotFit": "Superaría tu cuota restante",

@@ -239,7 +239,12 @@
   "preview": {
     "title": "Spend preview",
     "description": "See exactly how many keyword lookups this action would cost before you run it.",
-    "productUnits": "{{count}} keyword lookup(s)",
+    "productUnits_zero": "{{count}} keyword lookups",
+    "productUnits_one": "{{count}} keyword lookup",
+    "productUnits_two": "{{count}} keyword lookups",
+    "productUnits_few": "{{count}} keyword lookups",
+    "productUnits_many": "{{count}} keyword lookups",
+    "productUnits_other": "{{count}} keyword lookups",
     "cachedSummary": "{{cached}} cached · {{fresh}} fresh",
     "canFit": "Fits within your current allowance",
     "cannotFit": "Would exceed your remaining allowance",

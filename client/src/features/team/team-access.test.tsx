@@ -205,7 +205,7 @@ describe('bounded invitation form and roster', () => {
         />
       </I18nextProvider>,
     );
-    expect(screen.getByText('1 site(s)')).toBeInTheDocument();
+    expect(screen.getByText('1 site')).toBeInTheDocument();
     expect(screen.getByText('All sites')).toBeInTheDocument();
     await user.click(screen.getByTestId('member-actions-m-1'));
     await user.click(await screen.findByRole('menuitem', { name: 'Edit role and access' }));

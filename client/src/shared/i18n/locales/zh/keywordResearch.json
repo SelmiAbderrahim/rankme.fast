@@ -239,7 +239,12 @@
   "preview": {
     "title": "花费预览",
     "description": "在执行之前查看此操作将消耗多少次关键词查询。",
-    "productUnits": "{{count}} 次关键词查询",
+    "productUnits_zero": "{{count}} 次关键词查询",
+    "productUnits_one": "{{count}} 次关键词查询",
+    "productUnits_two": "{{count}} 次关键词查询",
+    "productUnits_few": "{{count}} 次关键词查询",
+    "productUnits_many": "{{count}} 次关键词查询",
+    "productUnits_other": "{{count}} 次关键词查询",
     "cachedSummary": "{{cached}} 缓存 · {{fresh}} 实时",
     "canFit": "在您当前的额度内",
     "cannotFit": "将超出剩余额度",

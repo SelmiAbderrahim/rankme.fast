@@ -70,9 +70,9 @@ export const DocsHome = () => {
           <div>
             <p className="mb-6 text-sm text-muted-foreground">{t('resultCount', { count: results.length })}</p>
             {results.length ? (
-              <div className="grid gap-px border bg-border md:grid-cols-2">
+              <div className="grid gap-4 md:grid-cols-2" data-testid="docs-results">
                 {results.map((doc) => (
-                  <Link key={doc.slug} to={docsUrl(doc.slug, catalog.locale)} className="group bg-background p-6 transition-colors hover:bg-muted/60">
+                  <Link key={doc.slug} to={docsUrl(doc.slug, catalog.locale)} className="group border bg-background p-6 transition-colors hover:bg-muted/60">
                     <span className="text-xs font-semibold uppercase tracking-wide text-highlight">{t(`sections.${doc.section}`)}</span>
                     <h2 className="mt-2 font-serif text-2xl font-semibold group-hover:underline">{doc.title}</h2>
                     <p className="mt-2 text-sm leading-6 text-muted-foreground">{doc.description}</p>

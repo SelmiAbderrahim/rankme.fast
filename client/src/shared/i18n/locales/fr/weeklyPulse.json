@@ -34,7 +34,7 @@
   "detail": {
     "title": "Bilan hebdomadaire — {{isoWeek}}",
     "closeLabel": "Fermer le détail du bilan",
-    "coverage": "Couverture — {{supported}} moteur(s) pris en charge sur {{total}}.",
+    "coverage": "Couverture — moteurs pris en charge : {{supported}} sur {{total}}.",
     "partial": "Certains moteurs ont renvoyé des données partielles cette semaine.",
     "sections": {
       "newCitations": "Nouvelles citations",

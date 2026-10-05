@@ -61,7 +61,12 @@
     "searchPlaceholder": "البحث بالبريد الإلكتروني",
     "previous": "السابق",
     "next": "التالي",
-    "pageOf": "الصفحة {{page}} من {{totalPages}} · {{total}} عضو",
+    "pageOf_zero": "الصفحة {{page}} من {{totalPages}} · لا يوجد أعضاء",
+    "pageOf_one": "الصفحة {{page}} من {{totalPages}} · عضو واحد",
+    "pageOf_two": "الصفحة {{page}} من {{totalPages}} · عضوان",
+    "pageOf_few": "الصفحة {{page}} من {{totalPages}} · {{count}} أعضاء",
+    "pageOf_many": "الصفحة {{page}} من {{totalPages}} · {{count}} عضوًا",
+    "pageOf_other": "الصفحة {{page}} من {{totalPages}} · {{count}} عضو",
     "edit": {
       "title": "تعديل وصول العضو",
       "description": "غيّر الدور والمواقع المتاحة لـ {{email}}.",
@@ -115,7 +120,12 @@
     "required": "حدد موقعاً واحداً على الأقل.",
     "empty": "أضف موقعاً قبل إنشاء دعوة مقيدة بالمواقع.",
     "loadFailed": "تعذر تحميل المواقع المتاحة لهذه الدعوة.",
-    "siteCount": "{{count}} موقع"
+    "siteCount_zero": "لا توجد مواقع",
+    "siteCount_one": "موقع واحد",
+    "siteCount_two": "موقعان",
+    "siteCount_few": "{{count}} مواقع",
+    "siteCount_many": "{{count}} موقعًا",
+    "siteCount_other": "{{count}} موقع"
   },
   "decision": {
     "loading": "جارٍ التحقق من الدعوة…",

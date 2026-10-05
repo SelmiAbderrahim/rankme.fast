@@ -61,7 +61,12 @@
     "searchPlaceholder": "Buscar por correo",
     "previous": "Anterior",
     "next": "Siguiente",
-    "pageOf": "Página {{page}} de {{totalPages}} · {{total}} miembro(s)",
+    "pageOf_zero": "Página {{page}} de {{totalPages}} · {{count}} miembros",
+    "pageOf_one": "Página {{page}} de {{totalPages}} · {{count}} miembro",
+    "pageOf_two": "Página {{page}} de {{totalPages}} · {{count}} miembros",
+    "pageOf_few": "Página {{page}} de {{totalPages}} · {{count}} miembros",
+    "pageOf_many": "Página {{page}} de {{totalPages}} · {{count}} miembros",
+    "pageOf_other": "Página {{page}} de {{totalPages}} · {{count}} miembros",
     "edit": {
       "title": "Editar acceso del miembro",
       "description": "Cambia el rol y los sitios disponibles para {{email}}.",
@@ -115,7 +120,12 @@
     "required": "Selecciona al menos un sitio.",
     "empty": "Añade un sitio antes de crear una invitación restringida.",
     "loadFailed": "No se pudieron cargar los sitios disponibles para esta invitación.",
-    "siteCount": "{{count}} sitio(s)"
+    "siteCount_zero": "{{count}} sitios",
+    "siteCount_one": "{{count}} sitio",
+    "siteCount_two": "{{count}} sitios",
+    "siteCount_few": "{{count}} sitios",
+    "siteCount_many": "{{count}} sitios",
+    "siteCount_other": "{{count}} sitios"
   },
   "decision": {
     "loading": "Comprobando la invitación…",

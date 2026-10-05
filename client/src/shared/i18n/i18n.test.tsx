@@ -61,14 +61,20 @@ describe('client i18n key parity', () => {
   it.each(NAMESPACES)(
     '%s namespace: {{var}} placeholders match across locales',
     (ns) => {
-      const walk = (base: unknown, cmp: unknown) => {
+      // Arabic spells the number into the word for the CLDR zero/one/two
+      // plural forms ("نتيجة واحدة", "نتيجتان"), so `{{count}}` is legitimately
+      // absent there. Every other plural form still has to carry it.
+      const numberSpelledOut = /_(zero|one|two)$/u;
+      const withoutCount = (s: string, key: string) =>
+        placeholders(s).filter((p) => !(p === 'count' && numberSpelledOut.test(key)));
+      const walk = (base: unknown, cmp: unknown, key = '') => {
         if (typeof base === 'string') {
-          expect(placeholders(cmp as string)).toEqual(placeholders(base));
+          expect(withoutCount(cmp as string, key)).toEqual(withoutCount(base, key));
           return;
         }
         if (base && typeof base === 'object') {
           for (const [k, v] of Object.entries(base as Record<string, unknown>)) {
-            walk(v, (cmp as Record<string, unknown>)[k]);
+            walk(v, (cmp as Record<string, unknown>)[k], k);
           }
         }
       };
@@ -87,6 +93,47 @@ describe('client i18n key parity', () => {
         /\bpenalt(?:y|ies)\b/iu,
       );
     }
+  });
+});
+
+describe('plural handling', () => {
+  it.each(SUPPORTED_LOCALES)('%s: no "(s)"-style optional plural endings remain', (locale) => {
+    const offenders = NAMESPACES.flatMap((ns) =>
+      collectStrings(RESOURCES[locale][ns]).filter((v) => /\p{L}\((?:s|es|n|en|er|e|ов)\)/u.test(v)),
+    );
+    expect(offenders).toEqual([]);
+  });
+
+  const pluralCases: Array<[string, string, string]> = [
+    ['docs', 'resultCount', 'docs'],
+    ['team', 'members.pageOf', 'team'],
+    ['team', 'access.siteCount', 'team'],
+  ];
+
+  it.each(SUPPORTED_LOCALES)('%s: every CLDR plural category resolves for count-driven keys', (locale) => {
+    const rules = new Intl.PluralRules(locale);
+    const counts = [0, 1, 2, 3, 5, 11, 21, 100, 1.5];
+    for (const [ns, key] of pluralCases) {
+      const flat = (RESOURCES[locale][ns as keyof (typeof RESOURCES)[typeof locale]] ?? {}) as Record<string, unknown>;
+      const node = key.split('.').slice(0, -1).reduce<Record<string, unknown>>((acc, k) => acc[k] as Record<string, unknown>, flat);
+      const leaf = key.split('.').at(-1) as string;
+      for (const count of counts) {
+        const category = rules.select(count);
+        expect(typeof node[`${leaf}_${category}`], `${locale}/${ns}:${key}_${category} for ${count}`).toBe('string');
+      }
+    }
+  });
+
+  it('inflects the docs result count in English, Russian and Arabic', async () => {
+    const inst = i18n.createInstance();
+    await inst.init({ lng: 'en', fallbackLng: 'en', resources: RESOURCES as never, interpolation: { escapeValue: false } });
+    const t = (lng: string, count: number) => inst.getFixedT(lng, 'docs')('resultCount', { count });
+    expect(t('en', 1)).toBe('1 result');
+    expect(t('en', 2)).toBe('2 results');
+    expect(t('ru', 2)).toBe('2 результата');
+    expect(t('ru', 5)).toBe('5 результатов');
+    expect(t('ar', 2)).toBe('نتيجتان');
+    expect(t('ar', 3)).toBe('3 نتائج');
   });
 });
 

@@ -134,7 +134,7 @@ describe('actionable invitation inbox', () => {
     renderInbox(many);
     expect(screen.getByText('99+')).toBeInTheDocument();
     await user.click(screen.getByRole('button', { name: 'Team invitations, 100 pending' }));
-    expect(await screen.findByText(/Member · 2 site\(s\)/)).toBeInTheDocument();
+    expect(await screen.findByText(/Member · 2 sites/)).toBeInTheDocument();
     await user.click((await screen.findAllByRole('button', { name: 'Accept' }))[0]!);
     await waitFor(() => expect(mocked.acceptPendingInvitationRequest).toHaveBeenCalledWith('invite-0'));
     expect(screen.getByRole('dialog')).toBeInTheDocument();

@@ -239,7 +239,12 @@
   "preview": {
     "title": "Предпросмотр расходов",
     "description": "Посмотрите точно, сколько запросов ключевых слов стоит это действие, прежде чем запускать его.",
-    "productUnits": "{{count}} запрос(ов) ключевых слов",
+    "productUnits_zero": "{{count}} запроса ключевых слов",
+    "productUnits_one": "{{count}} запрос ключевых слов",
+    "productUnits_two": "{{count}} запроса ключевых слов",
+    "productUnits_few": "{{count}} запроса ключевых слов",
+    "productUnits_many": "{{count}} запросов ключевых слов",
+    "productUnits_other": "{{count}} запроса ключевых слов",
     "cachedSummary": "{{cached}} из кэша · {{fresh}} в реальном времени",
     "canFit": "Укладывается в ваш текущий лимит",
     "cannotFit": "Превысит оставшийся лимит",
