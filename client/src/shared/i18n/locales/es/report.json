@@ -67,7 +67,8 @@
   },
   "pageCap": {
     "label": "Páginas a rastrear",
-    "max": "Máximo del plan",
+    "max": "Máximo permitido",
+    "help": "Define cuántas páginas visita el rastreador. «Máximo permitido» cubre tantas páginas como admita este servidor; con menos páginas termina antes.",
     "pages": "{{pages}} páginas"
   },
   "empty": {
@@ -92,6 +93,7 @@
     "loading": "Cargando tu informe…",
     "retry": "Reintentar",
     "runInProgress": "Auditando tu sitio — puede tardar unos minutos.",
+    "queuedWaiting": "Esperando a que un worker la tome…",
     "runProgress": "Revisando hasta {{count}} páginas."
   },
   "hostRedirect": {

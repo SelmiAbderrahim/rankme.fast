@@ -67,7 +67,8 @@
   },
   "pageCap": {
     "label": "抓取页面数",
-    "max": "套餐上限",
+    "max": "允许的最大值",
+    "help": "设置抓取器访问的页面数量。“允许的最大值”会覆盖此服务器允许的最多页面；页面越少，完成越快。",
     "pages": "{{pages}} 个页面"
   },
   "empty": {
@@ -92,6 +93,7 @@
     "loading": "正在加载您的报告…",
     "retry": "重试",
     "runInProgress": "正在审计您的网站——这可能需要几分钟。",
+    "queuedWaiting": "正在等待工作进程接手此任务…",
     "runProgress": "正在检查最多 {{count}} 个页面。"
   },
   "hostRedirect": {

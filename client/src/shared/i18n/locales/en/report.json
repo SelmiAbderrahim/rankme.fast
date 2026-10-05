@@ -67,7 +67,8 @@
   },
   "pageCap": {
     "label": "Pages to crawl",
-    "max": "Plan max",
+    "max": "Maximum allowed",
+    "help": "Sets how many pages the crawler visits. “Maximum allowed” covers as many pages as this server permits; fewer pages finish sooner.",
     "pages": "{{pages}} pages"
   },
   "empty": {
@@ -92,6 +93,7 @@
     "loading": "Loading your report…",
     "retry": "Try again",
     "runInProgress": "Auditing your site — this can take a couple of minutes.",
+    "queuedWaiting": "Waiting for a worker to pick this up…",
     "runProgress": "Checking up to {{count}} pages."
   },
   "hostRedirect": {

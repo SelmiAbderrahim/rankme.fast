@@ -64,7 +64,7 @@ export const RetestConfirmDialog = ({
           </DialogDescription>
         </DialogHeader>
         <RetestPreviewCard firstRun={variant === 'first'} />
-        <div className="flex items-center gap-2">{pageCapPicker}</div>
+        {pageCapPicker}
         {error ? (
           <Alert
             variant="destructive"

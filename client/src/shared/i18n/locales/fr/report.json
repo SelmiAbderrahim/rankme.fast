@@ -67,7 +67,8 @@
   },
   "pageCap": {
     "label": "Pages à analyser",
-    "max": "Maximum du forfait",
+    "max": "Maximum autorisé",
+    "help": "Définit le nombre de pages explorées. « Maximum autorisé » couvre autant de pages que ce serveur le permet ; moins de pages, c’est plus rapide.",
     "pages": "{{pages}} pages"
   },
   "empty": {
@@ -92,6 +93,7 @@
     "loading": "Chargement de votre rapport…",
     "retry": "Réessayer",
     "runInProgress": "Audit de votre site en cours — cela peut prendre quelques minutes.",
+    "queuedWaiting": "En attente qu’un worker prenne en charge cette analyse…",
     "runProgress": "Vérification de {{count}} pages au maximum."
   },
   "hostRedirect": {

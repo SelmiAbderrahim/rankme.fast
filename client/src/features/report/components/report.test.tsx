@@ -808,7 +808,14 @@ describe('ReportPage — retest & diff badges', () => {
     // The page-cap picker now lives inside the preview dialog.
     await user.click(screen.getByTestId('report-retest'));
     const picker = await screen.findByTestId('report-page-cap');
-    expect(picker).toHaveTextContent('Plan max');
+    expect(picker).toHaveTextContent('Maximum allowed');
+    // Issue #43: a visible label names the control and helper text explains
+    // what the maximum option means on this server.
+    const dialog = screen.getByTestId('report-retest-dialog');
+    expect(within(dialog).getByLabelText('Pages to crawl')).toBe(picker);
+    expect(within(dialog).getByText('Pages to crawl')).toBeVisible();
+    expect(picker).toHaveAccessibleDescription(/Maximum allowed.*this server permits/);
+    expect(dialog).not.toHaveTextContent(/plan max/i);
 
     await user.click(picker);
     // Issue #11: the list opens as a popper below the trigger, never laid
@@ -860,6 +867,10 @@ describe('ReportPage — retest & diff badges', () => {
     });
     renderReport({ path: '/sites/site-1/report/run-3' });
     expect(await screen.findByTestId('report-run-in-progress')).toBeInTheDocument();
+    // Issue #43: a queued run says it is waiting for a worker; no ETA invented.
+    expect(screen.getByTestId('report-run-queued-hint')).toHaveTextContent(
+      'Waiting for a worker to pick this up…',
+    );
     mocked.fetchRunRequest.mockResolvedValue({
       run: {
         id: 'run-3',
@@ -1335,6 +1346,8 @@ describe('ReportPage — retest & diff badges', () => {
     renderReport({ path: '/sites/site-1/report/run-3' });
     expect(await screen.findByTestId('report-run-in-progress')).toBeInTheDocument();
     expect(screen.getByTestId('report-retest')).toBeDisabled();
+    // Only a queued run shows the waiting-for-a-worker hint.
+    expect(screen.queryByTestId('report-run-queued-hint')).not.toBeInTheDocument();
   });
 
 });

@@ -67,7 +67,8 @@
   },
   "pageCap": {
     "label": "Zu crawlende Seiten",
-    "max": "Plan-Maximum",
+    "max": "Maximal zulässig",
+    "help": "Legt fest, wie viele Seiten der Crawler besucht. „Maximal zulässig“ deckt so viele Seiten ab, wie dieser Server erlaubt; weniger Seiten sind schneller fertig.",
     "pages": "{{pages}} Seiten"
   },
   "empty": {
@@ -92,6 +93,7 @@
     "loading": "Ihr Bericht wird geladen…",
     "retry": "Erneut versuchen",
     "runInProgress": "Website wird geprüft — dies kann einige Minuten dauern.",
+    "queuedWaiting": "Wartet darauf, dass ein Worker dies übernimmt …",
     "runProgress": "Bis zu {{count}} Seiten werden geprüft."
   },
   "hostRedirect": {
