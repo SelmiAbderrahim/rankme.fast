@@ -233,6 +233,7 @@ export const SnapshotRequestForm = ({
                 <FieldLabel htmlFor="traffic-domain">{t('request.domainLabel')}</FieldLabel>
                 <Input
                   id="traffic-domain"
+                  dir="ltr"
                   name="domain"
                   value={domain}
                   placeholder={t('request.domainPlaceholder')}

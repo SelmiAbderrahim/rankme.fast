@@ -791,14 +791,14 @@ export function AnalysisDetail({
                 <li key={`${c.sourceId}-${c.url}`}>
                   <span className="font-medium">{index === 0 ? t('detail.sources.owned') : t('detail.sources.comparison', { count: index })}: </span>
                   {href === '#' ? (
-                    <span>{c.title ?? c.url}</span>
+                    <bdi>{c.title ?? c.url}</bdi>
                   ) : (
                     <a
                       href={href}
                       rel="nofollow ugc noopener noreferrer"
                       target="_blank"
                     >
-                      {c.title ?? c.url}
+                      <bdi>{c.title ?? c.url}</bdi>
                     </a>
                   )}
                 </li>

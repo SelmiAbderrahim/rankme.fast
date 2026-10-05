@@ -110,6 +110,7 @@ export function ComparisonOverview({ deltas, partialDomains }: ComparisonOvervie
                 </Label>
                 <Input
                   id="competitor-filter-domain"
+                  dir="ltr"
                   value={domainFilter}
                   placeholder={t('competitorContent.comparison.filters.domainPlaceholder')}
                   onChange={(e) => update({ ccDomain: e.target.value })}

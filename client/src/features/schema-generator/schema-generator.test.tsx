@@ -321,6 +321,8 @@ describe('SchemaGeneratorPanel — pickers', () => {
     expect(await screen.findByTestId('schema-audited-option-0')).toHaveTextContent(
       AUDITED_URL,
     );
+    // Crawled page titles are untrusted mixed-direction text.
+    expect(screen.getByText('A guide')).toHaveAttribute('dir', 'auto');
     // Crawl + Search Console context travels with the page row.
     expect(screen.getByTestId('schema-audited-option-0')).toHaveTextContent(
       'No structured data found',

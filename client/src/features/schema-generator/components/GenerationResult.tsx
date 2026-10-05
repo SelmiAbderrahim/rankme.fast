@@ -235,7 +235,7 @@ export const GenerationResult = ({ detail }: GenerationResultProps) => {
                         : row.factId,
                     })}
                   </span>
-                  <span className="break-all">{row.value}</span>
+                  <span className="break-all" dir="auto">{row.value}</span>
                 </li>
               ))}
             </ul>

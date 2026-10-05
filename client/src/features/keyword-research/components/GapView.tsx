@@ -117,6 +117,7 @@ export const GapView = () => {
               </Label>
               <Input
                 id="kw-gap-own-domain"
+                dir="ltr"
                 value={ownDomain}
                 maxLength={253}
                 placeholder="example.com"

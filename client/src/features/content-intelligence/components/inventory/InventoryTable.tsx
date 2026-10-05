@@ -106,6 +106,7 @@ export function InventoryTable({ pages }: InventoryTableProps) {
                 <Label htmlFor="inventory-filter-url">{t('inventory.table.filters.url')}</Label>
                 <Input
                   id="inventory-filter-url"
+                  dir="ltr"
                   value={urlFilter}
                   placeholder={t('inventory.table.filters.urlPlaceholder')}
                   onChange={(e) => update({ invUrl: e.target.value, invPage: null })}

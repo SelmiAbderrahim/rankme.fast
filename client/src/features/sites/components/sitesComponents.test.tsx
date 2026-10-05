@@ -89,6 +89,11 @@ describe('AddSiteForm', () => {
     expect(screen.getByRole('button', { name: 'Add site' })).toBeInTheDocument();
   });
 
+  it('keeps the Site URL input left-to-right', () => {
+    renderWith(<AddSiteForm />);
+    expect(screen.getByLabelText('Site URL')).toHaveAttribute('dir', 'ltr');
+  });
+
   it('shows an inline, linked validation error for an invalid URL', async () => {
     const user = userEvent.setup();
     renderWith(<AddSiteForm />);

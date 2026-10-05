@@ -103,6 +103,7 @@ export function SignalCard({
         <CardTitle
           className="mt-2 text-base"
           data-testid={`signal-title-${signal.signalId}`}
+          dir="auto"
         >
           {signal.title}
         </CardTitle>

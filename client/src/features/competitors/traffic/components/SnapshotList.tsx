@@ -139,6 +139,7 @@ export const SnapshotList = ({ data, status, error = '', onOpen }: SnapshotListP
             <Input
               ref={domainRef}
               id="traffic-filter-domain"
+              dir="ltr"
               value={params.get('domain') ?? ''}
               onChange={(event) => setFilter('domain', event.target.value)}
               onBlur={normalizeUrlFilters}

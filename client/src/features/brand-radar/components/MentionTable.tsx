@@ -131,6 +131,7 @@ export const MentionTable = ({
           </FieldLabel>
           <Input
             id="brand-radar-domain-filter"
+            dir="ltr"
             data-testid="brand-radar-domain-filter"
             value={filters.domain}
             onChange={(event) => onDomain(event.target.value)}
@@ -212,8 +213,8 @@ export const MentionTable = ({
                 data-testid="brand-radar-mention-row"
               >
                 {/* SEC-OUT: every vendor field is a React text node. */}
-                <TableCell>{row.title}</TableCell>
-                <TableCell className="max-w-md">{row.snippet}</TableCell>
+                <TableCell dir="auto">{row.title}</TableCell>
+                <TableCell className="max-w-md" dir="auto">{row.snippet}</TableCell>
                 <TableCell>
                   {row.url === null ? (
                     // The server refused the stored scheme — no anchor at all.

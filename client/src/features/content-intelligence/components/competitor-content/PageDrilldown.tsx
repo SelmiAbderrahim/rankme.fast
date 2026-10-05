@@ -55,7 +55,7 @@ export function PageDrilldown({ pages }: PageDrilldownProps) {
                 </div>
 
                 {p.facts.title ? (
-                  <p className="font-medium">{p.facts.title}</p>
+                  <p className="font-medium" dir="auto">{p.facts.title}</p>
                 ) : null}
 
                 {/* eslint-disable-next-line react/jsx-no-target-blank -- SAFE_EXTERNAL_REL contains "noopener noreferrer" */}
@@ -111,6 +111,7 @@ export function PageDrilldown({ pages }: PageDrilldownProps) {
                   <blockquote
                     className="text-muted-foreground border-border border-s-2 ps-3 text-sm"
                     data-testid={`competitor-page-snippet-${p.url}`}
+                    dir="auto"
                   >
                     {p.facts.snippet}
                   </blockquote>
