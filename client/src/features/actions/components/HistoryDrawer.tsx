@@ -28,6 +28,7 @@ import {
 } from '../store/selectors';
 import { loadActionHistory } from '../store/thunks';
 import { ACTION_STATE_TONES } from './tones';
+import type { ActionHistoryEntry } from '../types';
 import {
   presentationRequestIdentity,
   usePresentationRefreshSignal,
@@ -87,6 +88,14 @@ export function HistoryDrawer({
     siteId,
     actionId,
   ]);
+
+  // Display name or email as inert text. "You" for the signed-in user; the
+  // generic label only when the server could not resolve a workspace member.
+  const actorLabel = (entry: ActionHistoryEntry): string => {
+    if (entry.actorIsYou) return t('history.actorYou');
+    if (entry.actor) return entry.actor.name || entry.actor.email;
+    return t('history.actor');
+  };
 
   const formatTime = (iso: string): string =>
     new Intl.DateTimeFormat(i18n.language, {
@@ -158,7 +167,7 @@ export function HistoryDrawer({
                     ) : null}
                   </div>
                   <p className="text-muted-foreground text-xs">
-                    {t('history.actor')} · {formatTime(entry.createdAt)}
+                    {actorLabel(entry)} · {formatTime(entry.createdAt)}
                   </p>
                   {entry.note ? (
                     <p className="text-sm" data-testid="action-history-note">

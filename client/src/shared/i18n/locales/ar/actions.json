@@ -22,7 +22,9 @@
     "source": "المصدر",
     "severity": "الخطورة",
     "confidence": "الثقة",
-    "effort": "الجهد"
+    "effort": "الجهد",
+    "noMatchTitle": "لا توجد إجراءات تطابق هذه المرشحات",
+    "noMatchBody": "جرّب تغيير المرشحات أو إعادة تعيينها لرؤية المزيد من الإجراءات."
   },
   "pagination": {
     "previous": "السابق",
@@ -81,7 +83,8 @@
     "evidenceLink": "فتح مصدر الدليل",
     "history": "السجل",
     "retest": "إعادة الفحص",
-    "affectedSample": "(يُعرض {{shown}})"
+    "affectedSample": "(يُعرض {{shown}})",
+    "noteLabel": "ملاحظة"
   },
   "transitions": {
     "planned": "تخطيط",
@@ -114,7 +117,8 @@
     "empty": "لا توجد تغييرات مسجلة بعد.",
     "actor": "عضو الفريق",
     "from": "من {{state}}",
-    "close": "إغلاق"
+    "close": "إغلاق",
+    "actorYou": "أنت"
   },
   "retest": {
     "title": "هل تريد إعادة فحص هذه النتيجة؟",

@@ -96,6 +96,7 @@ const item = (id: string, overrides: Partial<ActionItem> = {}): ActionItem => ({
   effort: 'low',
   state: 'open',
   version: 1,
+  latestNote: null,
   reappearedAfterFix: false,
   observedAt: '2026-07-10T00:00:00.000Z',
   lastVerifiedAt: null,
@@ -393,6 +394,28 @@ describe('ActionsPanel — source status and empty states', () => {
     renderPanel();
     expect(await screen.findByTestId('actions-empty-unavailable')).toBeInTheDocument();
     expect(screen.queryByTestId('actions-empty-clear')).not.toBeInTheDocument();
+  });
+
+  it('says no actions match when filters are active and the result is empty', async () => {
+    mocked.listActions.mockResolvedValueOnce(okResponse([]));
+    renderPanel('/sites/s1?tab=actions&state=completed');
+    const empty = await screen.findByTestId('actions-empty-filtered');
+    expect(empty).toHaveTextContent('No actions match these filters');
+    expect(screen.queryByTestId('actions-empty-clear')).not.toBeInTheDocument();
+    expect(screen.queryByText('Nothing needs your attention')).not.toBeInTheDocument();
+    const user = userEvent.setup();
+    await user.click(screen.getByTestId('actions-empty-filtered-reset'));
+    await waitFor(() => expect(capturedSearch).toBe('?tab=actions'));
+  });
+
+  it('shows the latest decision note on the card as inert text', async () => {
+    mocked.listActions.mockResolvedValueOnce(
+      okResponse([item('noted', { state: 'planned', latestNote: '<b>QA</b> note' })]),
+    );
+    renderPanel();
+    const note = await screen.findByTestId('action-note');
+    expect(note).toHaveTextContent('Note: <b>QA</b> note');
+    expect(note.querySelector('b')).toBeNull();
   });
 
   it('shows the true all-clear only when every source is healthy', async () => {

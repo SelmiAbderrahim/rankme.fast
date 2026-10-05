@@ -22,7 +22,9 @@
     "source": "Source",
     "severity": "Severity",
     "confidence": "Confidence",
-    "effort": "Effort"
+    "effort": "Effort",
+    "noMatchTitle": "No actions match these filters",
+    "noMatchBody": "Try changing or resetting the filters to see more actions."
   },
   "pagination": {
     "previous": "Previous",
@@ -81,7 +83,8 @@
     "evidenceLink": "Open evidence source",
     "history": "History",
     "retest": "Retest",
-    "affectedSample": "(showing {{shown}})"
+    "affectedSample": "(showing {{shown}})",
+    "noteLabel": "Note"
   },
   "transitions": {
     "planned": "Plan",
@@ -114,7 +117,8 @@
     "empty": "No changes recorded yet.",
     "actor": "Team member",
     "from": "from {{state}}",
-    "close": "Close"
+    "close": "Close",
+    "actorYou": "You"
   },
   "retest": {
     "title": "Retest this finding?",

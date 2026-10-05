@@ -22,7 +22,9 @@
     "source": "Quelle",
     "severity": "Schweregrad",
     "confidence": "Zuversicht",
-    "effort": "Aufwand"
+    "effort": "Aufwand",
+    "noMatchTitle": "Keine Aktionen entsprechen diesen Filtern",
+    "noMatchBody": "Ändern oder setzen Sie die Filter zurück, um mehr Aktionen zu sehen."
   },
   "pagination": {
     "previous": "Zurück",
@@ -81,7 +83,8 @@
     "evidenceLink": "Belegquelle öffnen",
     "history": "Verlauf",
     "retest": "Erneut prüfen",
-    "affectedSample": "({{shown}} angezeigt)"
+    "affectedSample": "({{shown}} angezeigt)",
+    "noteLabel": "Notiz"
   },
   "transitions": {
     "planned": "Planen",
@@ -114,7 +117,8 @@
     "empty": "Noch keine Änderungen aufgezeichnet.",
     "actor": "Teammitglied",
     "from": "von {{state}}",
-    "close": "Schließen"
+    "close": "Schließen",
+    "actorYou": "Sie"
   },
   "retest": {
     "title": "Diesen Befund erneut prüfen?",

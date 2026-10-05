@@ -22,7 +22,9 @@
     "source": "Source",
     "severity": "Gravité",
     "confidence": "Confiance",
-    "effort": "Effort"
+    "effort": "Effort",
+    "noMatchTitle": "Aucune action ne correspond à ces filtres",
+    "noMatchBody": "Modifiez ou réinitialisez les filtres pour voir plus d'actions."
   },
   "pagination": {
     "previous": "Précédent",
@@ -81,7 +83,8 @@
     "evidenceLink": "Ouvrir la source de la preuve",
     "history": "Historique",
     "retest": "Retester",
-    "affectedSample": "({{shown}} affichées)"
+    "affectedSample": "({{shown}} affichées)",
+    "noteLabel": "Note"
   },
   "transitions": {
     "planned": "Planifier",
@@ -114,7 +117,8 @@
     "empty": "Aucun changement enregistré pour l'instant.",
     "actor": "Membre de l'équipe",
     "from": "depuis {{state}}",
-    "close": "Fermer"
+    "close": "Fermer",
+    "actorYou": "Vous"
   },
   "retest": {
     "title": "Retester ce constat ?",
