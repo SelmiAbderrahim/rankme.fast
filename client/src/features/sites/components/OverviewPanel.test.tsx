@@ -587,7 +587,7 @@ describe('OverviewPanel', () => {
     expect(mocked.fetchKeywordsRequest).toHaveBeenCalledWith(
       'site-2',
       undefined,
-      expect.objectContaining({ signal: expect.any(AbortSignal) }),
+      {},
     );
     expect(mocked.fetchBacklinkSummary).toHaveBeenCalledWith(
       'site-2',
@@ -686,7 +686,7 @@ describe('OverviewPanel', () => {
     await waitFor(() => expect(mocked.listActions).toHaveBeenCalledTimes(1));
     expect(mocked.listActions).toHaveBeenCalledWith(
       expect.objectContaining({ siteId: 'site-1', limit: 5 }),
-      expect.objectContaining({ signal: expect.any(AbortSignal) }),
+      expect.objectContaining({ presentationLocale: expect.any(String) }),
     );
     expect(await screen.findByText('fetched problem')).toBeInTheDocument();
     // No-spend proof: no mutation, retest, history, or competitor call fired.

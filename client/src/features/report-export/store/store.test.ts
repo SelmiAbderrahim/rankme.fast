@@ -310,6 +310,38 @@ describe('report-export store failure and selector matrix', () => {
     });
   });
 
+  it('requests the capability list once for controls mounting in the same commit', async () => {
+    let resolve!: (value: { enabled: boolean; kinds: ReportExportCapability[] }) => void;
+    api.getReportExportCapabilities.mockReturnValueOnce(
+      new Promise((res) => {
+        resolve = res;
+      }),
+    );
+    const store = makeStore();
+    const first = store.dispatch(loadReportExportCapabilities());
+    const second = store.dispatch(loadReportExportCapabilities());
+    const third = store.dispatch(loadReportExportCapabilities());
+    resolve({ enabled: true, kinds: [capability] });
+    await Promise.all([first, second, third]);
+    expect(api.getReportExportCapabilities).toHaveBeenCalledTimes(1);
+    // Loaded: later mounts reuse the list instead of refetching it.
+    await store.dispatch(loadReportExportCapabilities());
+    expect(api.getReportExportCapabilities).toHaveBeenCalledTimes(1);
+    expect(store.getState().reportExport.capabilities).toEqual([capability]);
+  });
+
+  it('allows a capability retry after a failed load', async () => {
+    api.getReportExportCapabilities.mockRejectedValueOnce(
+      new ApiError('down', 503, { error: { message: 'Temporarily unavailable' } }),
+    );
+    const store = makeStore();
+    await store.dispatch(loadReportExportCapabilities());
+    expect(store.getState().reportExport.capabilitiesError).toBe('Temporarily unavailable');
+    await store.dispatch(loadReportExportCapabilities());
+    expect(api.getReportExportCapabilities).toHaveBeenCalledTimes(2);
+    expect(store.getState().reportExport.capabilitiesError).toBe('');
+  });
+
   it('does not turn an explicit capability abort into a user-facing refusal', async () => {
     let reject!: (reason: Error) => void;
     api.getReportExportCapabilities.mockReturnValueOnce(

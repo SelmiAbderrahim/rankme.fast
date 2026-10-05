@@ -580,7 +580,7 @@ describe('KeywordsPanel — URL-backed engine filter', () => {
     expect(mocked.fetchKeywordsRequest).toHaveBeenCalledWith(
       'site-1',
       undefined,
-      expect.objectContaining({ engine: 'bing', signal: expect.any(AbortSignal) }),
+      { engine: 'bing' },
     );
   });
 

@@ -521,7 +521,7 @@ describe('KeywordsPanel — Check now (on-demand rank check)', () => {
       expect(mocked.fetchKeywordsRequest).toHaveBeenLastCalledWith(
         'site-1',
         undefined,
-        expect.objectContaining({ engine: 'amazon', signal: expect.any(AbortSignal) }),
+        { engine: 'amazon' },
       );
     });
 
@@ -564,7 +564,7 @@ describe('KeywordsPanel — Check now (on-demand rank check)', () => {
     expect(mocked.fetchKeywordsRequest).toHaveBeenLastCalledWith(
       'site-1',
       undefined,
-      expect.objectContaining({ engine: 'amazon', signal: expect.any(AbortSignal) }),
+      { engine: 'amazon' },
     );
   });
 
@@ -708,7 +708,7 @@ describe('KeywordsPanel — loading, error, empty', () => {
     expect(mocked.fetchKeywordsRequest).toHaveBeenLastCalledWith(
       'site-1',
       undefined,
-      expect.objectContaining({ engine: 'amazon', signal: expect.any(AbortSignal) }),
+      { engine: 'amazon' },
     );
   });
 
@@ -727,7 +727,7 @@ describe('KeywordsPanel — keywords table, position rendering, add + remove', (
       expect(mocked.fetchKeywordsRequest).toHaveBeenCalledWith(
         'site-1',
         undefined,
-        expect.objectContaining({ signal: expect.any(AbortSignal) }),
+        {},
       ),
     );
     const table = await screen.findByTestId('keywords-table');
@@ -755,7 +755,7 @@ describe('KeywordsPanel — keywords table, position rendering, add + remove', (
       expect(mocked.fetchKeywordsRequest).toHaveBeenCalledWith(
         'site-1',
         undefined,
-        expect.objectContaining({ signal: expect.any(AbortSignal) }),
+        {},
       ),
     );
     const badges = await screen.findAllByText('Unavailable');
@@ -834,7 +834,7 @@ describe('KeywordsPanel — keywords table, position rendering, add + remove', (
     expect(mocked.fetchKeywordsRequest).toHaveBeenLastCalledWith(
       'site-1',
       undefined,
-      expect.objectContaining({ engine: 'amazon', signal: expect.any(AbortSignal) }),
+      { engine: 'amazon' },
     );
     await waitFor(() => expect((input as HTMLTextAreaElement).value).toBe(''));
   });
@@ -1186,7 +1186,7 @@ describe('KeywordsPanel — keywords table, position rendering, add + remove', (
     expect(mocked.fetchKeywordsRequest).toHaveBeenLastCalledWith(
       'site-1',
       undefined,
-      expect.objectContaining({ engine: 'amazon', signal: expect.any(AbortSignal) }),
+      { engine: 'amazon' },
     );
   });
 
@@ -1203,7 +1203,7 @@ describe('KeywordsPanel — keywords table, position rendering, add + remove', (
     expect(mocked.fetchKeywordsRequest).toHaveBeenLastCalledWith(
       'site-1',
       undefined,
-      expect.objectContaining({ signal: expect.any(AbortSignal) }),
+      {},
     );
     expect(mocked.fetchKeywordsRequest.mock.calls.at(-1)?.[2]).not.toHaveProperty('engine');
   });

@@ -1,5 +1,6 @@
 import '@testing-library/jest-dom/vitest';
-import { afterAll, vi } from 'vitest';
+import { afterAll, afterEach, vi } from 'vitest';
+import { dropInFlight } from '@shared/lib/inFlight';
 import { configure } from '@testing-library/dom';
 
 // Parallel fork processes in constrained Docker runners starve the CPU during
@@ -8,6 +9,10 @@ import { configure } from '@testing-library/dom';
 // route imports under scheduling pressure. 10 s matches the vitest testTimeout
 // set in vitest.config.ts and still catches genuinely infinite loops.
 configure({ asyncUtilTimeout: 10_000 });
+
+// Shared in-flight read requests live at module scope; a test that leaves a
+// request pending (or never resolves a mock) must not hand it to the next test.
+afterEach(() => dropInFlight(''));
 
 // Better Auth's nanostore deliberately defers its final unmount by 1 second
 // so rapid React remounts do not churn the session listeners. A test file can

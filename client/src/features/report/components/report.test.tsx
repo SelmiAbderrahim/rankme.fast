@@ -1037,7 +1037,7 @@ describe('ReportPage — retest & diff badges', () => {
           siteId: 'site-1',
           filters: { source: ['audit_finding'] },
         }),
-        expect.objectContaining({ signal: expect.any(AbortSignal) }),
+        expect.objectContaining({ presentationLocale: expect.any(String) }),
       ),
     );
     const user = userEvent.setup();

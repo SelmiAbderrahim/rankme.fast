@@ -1,6 +1,7 @@
 import { createAsyncThunk } from '@reduxjs/toolkit';
 import { ApiError } from '@shared/api/client';
 import {
+  buildListActionsQuery,
   getActionHistory as getActionHistoryApi,
   listActions as listActionsApi,
   mutateActionState as mutateActionStateApi,
@@ -17,10 +18,13 @@ import type {
   MutateActionStateResponse,
   RetestActionResponse,
 } from '../types';
+import { shareInFlight, withInFlightInvalidation } from '@shared/lib/inFlight';
 import {
   presentationRequestIdentity,
   type PresentationRequestIdentity,
 } from '@shared/i18n/requestIdentity';
+
+const ACTIONS_IN_FLIGHT = 'actions:';
 
 export interface ActionsRejectPayload {
   error: string;
@@ -75,17 +79,20 @@ export const loadActions = createAsyncThunk<
   { response: ListActionsResponse; siteId: string; requestSeq: number },
   LoadActionsArg,
   { rejectValue: ActionsRejectPayload }
->('actions/loadActions', async (arg, { rejectWithValue, signal }) => {
+>('actions/loadActions', async (arg, { rejectWithValue }) => {
   const identity = requestIdentityFor(arg);
   try {
-    const response = await listActionsApi(
-      {
-        siteId: arg.siteId,
-        ...(arg.filters ? { filters: arg.filters } : {}),
-        ...(typeof arg.limit === 'number' ? { limit: arg.limit } : {}),
-        ...(arg.cursor ? { cursor: arg.cursor } : {}),
-      },
-      { signal, ...identity },
+    const payload = {
+      siteId: arg.siteId,
+      ...(arg.filters ? { filters: arg.filters } : {}),
+      ...(typeof arg.limit === 'number' ? { limit: arg.limit } : {}),
+      ...(arg.cursor ? { cursor: arg.cursor } : {}),
+    };
+    // The Actions panel, the Overview top-five and the report rows all read
+    // this list; identical concurrent reads share one request.
+    const response = await shareInFlight(
+      `${ACTIONS_IN_FLIGHT}${arg.siteId}:${buildListActionsQuery(payload)}:${identity.presentationLocale}:${identity.presentationGeneration}`,
+      () => listActionsApi(payload, identity),
     );
     return { response, siteId: arg.siteId, requestSeq: arg.requestSeq };
   } catch (err) {
@@ -116,7 +123,7 @@ export const submitActionState = createAsyncThunk<
   { rejectValue: ActionsRejectPayload }
 >('actions/submitState', async (arg, { rejectWithValue }) => {
   try {
-    return await mutateActionStateApi(arg);
+    return await withInFlightInvalidation(ACTIONS_IN_FLIGHT, () => mutateActionStateApi(arg));
   } catch (err) {
     return rejectWithValue(normalizeError(err));
   }
@@ -128,7 +135,7 @@ export const submitRetestAction = createAsyncThunk<
   { rejectValue: ActionsRejectPayload }
 >('actions/submitRetest', async (arg, { rejectWithValue }) => {
   try {
-    return await retestActionApi(arg);
+    return await withInFlightInvalidation(ACTIONS_IN_FLIGHT, () => retestActionApi(arg));
   } catch (err) {
     return rejectWithValue(normalizeError(err));
   }

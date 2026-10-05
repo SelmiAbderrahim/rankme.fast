@@ -197,7 +197,7 @@ describe('ActionsPanel — load, order, filters, pagination', () => {
     expect(cards[1]).toHaveTextContent('a-first-by-alpha problem');
     expect(mocked.listActions).toHaveBeenCalledWith(
       expect.objectContaining({ siteId: 's1', filters: {} }),
-      expect.objectContaining({ signal: expect.any(AbortSignal) }),
+      expect.objectContaining({ presentationLocale: expect.any(String) }),
     );
     expect(screen.getByRole('status')).toHaveTextContent('Showing 2 actions');
   });

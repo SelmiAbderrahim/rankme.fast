@@ -660,7 +660,7 @@ describe('KeywordResearchPage — mount history read', () => {
     expect(mockedRanks.fetchKeywordsRequest).toHaveBeenCalledWith(
       's1',
       undefined,
-      expect.objectContaining({ signal: expect.any(AbortSignal) }),
+      {},
     );
   });
 });
