@@ -141,6 +141,59 @@ describe('AppSidebar', () => {
     expectLinkIcon('Security', 'lucide-lock-keyhole');
   });
 
+  describe('single active item', () => {
+    const activeLinks = () =>
+      screen
+        .getAllByRole('link')
+        .filter((link) => link.getAttribute('aria-current') === 'page')
+        .map((link) => link.textContent);
+
+    const renderAt = (entry: string) => {
+      setSession({ role: 'Member' });
+      render(
+        <Wrap entries={[entry]}>
+          <AppSidebar />
+        </Wrap>,
+      );
+    };
+
+    it('highlights only Alerts on /dashboard/alerts', () => {
+      renderAt('/dashboard/alerts');
+      expect(activeLinks()).toEqual(['Alerts']);
+    });
+
+    it('highlights only Dashboard on /dashboard', () => {
+      renderAt('/dashboard');
+      expect(activeLinks()).toEqual(['Dashboard']);
+    });
+
+    it('highlights Security, not Profile, on the Profile security tab', () => {
+      renderAt('/profile?tab=security');
+      expect(activeLinks()).toEqual(['Security']);
+    });
+
+    it('highlights Notifications, not Profile, on the Profile notifications tab', () => {
+      renderAt('/profile?tab=notifications');
+      expect(activeLinks()).toEqual(['Notifications']);
+    });
+
+    it('keeps Profile active on its own and on non-mirrored tabs', () => {
+      renderAt('/profile');
+      expect(activeLinks()).toEqual(['Profile']);
+      document.body.innerHTML = '';
+      renderAt('/profile?tab=branding');
+      expect(activeLinks()).toEqual(['Profile']);
+    });
+
+    it('highlights the canonical settings routes and nothing for an unknown route', () => {
+      renderAt('/settings/security');
+      expect(activeLinks()).toEqual(['Security']);
+      document.body.innerHTML = '';
+      renderAt('/nowhere');
+      expect(activeLinks()).toEqual([]);
+    });
+  });
+
   it('closes the mobile drawer when a nav item is tapped on mobile', async () => {
     sidebar.isMobile = true;
     setSession({ role: 'Member' });

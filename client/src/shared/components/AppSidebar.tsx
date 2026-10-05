@@ -4,7 +4,7 @@ import { BRAND_NAME, BrandLogo } from '@shared/brand';
 import { docsUrl } from '@shared/docs/docsUrl';
 import { DEFAULT_LOCALE, isSupportedLocale } from '@shared/i18n';
 import { useAppSelector } from '@shared/hooks/redux';
-import { APP_NAV_GROUPS } from '@shared/navigation/appNav';
+import { APP_NAV_GROUPS, resolveActiveNavKey } from '@shared/navigation/appNav';
 import {
   Sidebar,
   SidebarContent,
@@ -24,16 +24,13 @@ import {
 } from '@features/workspace';
 import { ReleaseStageBadge } from './ReleaseStageBadge';
 
-const isActivePath = (pathname: string, to: string) =>
-  pathname === to || pathname.startsWith(`${to}/`);
-
 /**
  * App shell sidebar (SPEC-02) — logo block, grouped localized nav and a
  * brand-primary active row.
  */
 export const AppSidebar = () => {
   const { t, i18n } = useTranslation(['common', 'alerts']);
-  const { pathname } = useLocation();
+  const { pathname, search } = useLocation();
   const { setOpenMobile, isMobile } = useSidebar();
   const side = i18n.dir() === 'rtl' ? 'right' : 'left';
   const workspaceRole = useAppSelector(selectActiveWorkspaceRole);
@@ -46,21 +43,29 @@ export const AppSidebar = () => {
 
   // Inside a foreign workspace, hide what the server would 404 anyway — one
   // shared policy map, never a per-page fork.
-  const renderedGroups = APP_NAV_GROUPS.map((group) => ({
+  const resolvedGroups = APP_NAV_GROUPS.map((group) => ({
     labelKey: group.labelKey,
     rows: group.items
       .filter((item) => canOpenRoute(item.to, workspaceRole, isForeignWorkspace))
-      .map((item) => {
-        const href = item.to === '/docs' ? docsUrl('index', locale) : item.to;
-        return {
-          key: item.to,
-          href,
-          label: t(item.labelKey),
-          icon: item.icon,
-          active: isActivePath(pathname, href),
-        };
-      }),
+      .map((item) => ({
+        key: item.to,
+        href: item.to === '/docs' ? docsUrl('index', locale) : item.to,
+        aliases: item.aliases,
+        label: t(item.labelKey),
+        icon: item.icon,
+      })),
   })).filter((group) => group.rows.length > 0);
+
+  // Exactly one row is active: the most specific match across every visible row.
+  const activeKey = resolveActiveNavKey(
+    resolvedGroups.flatMap((group) => group.rows),
+    pathname,
+    search,
+  );
+  const renderedGroups = resolvedGroups.map((group) => ({
+    labelKey: group.labelKey,
+    rows: group.rows.map((row) => ({ ...row, active: row.key === activeKey })),
+  }));
 
   return (
     <Sidebar side={side} variant="inset" collapsible="icon">
