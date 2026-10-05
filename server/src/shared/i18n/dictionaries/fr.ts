@@ -203,6 +203,7 @@ export const fr: DictionaryShape = {
             downstreamFailure: 'Impossible d\'enregistrer la décision. Réessayez sous peu.',
             invalidDestination: 'Cette destination ne correspond pas à la route du signal.',
             citedSourceMissing: 'Une source citée n\'est plus disponible ; actualisez puis réessayez.',
+            competitorNotTracked: "Choisissez des concurrents dans la liste des concurrents actifs de ce site. Ajoutez-les ou restaurez-les d'abord dans l'onglet Concurrents.",
         },
         messages: {
             queued: 'Recherche d’audience mise en file d’attente.',

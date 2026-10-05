@@ -203,6 +203,7 @@ export const zh: DictionaryShape = {
             downstreamFailure: '决定未能记录，请稍后再试。',
             invalidDestination: '所选目的地与该信号的路径不符。',
             citedSourceMissing: '引用的来源已不可用,请刷新后再试。',
+            competitorNotTracked: '请从此站点的活跃竞争对手列表中选择。请先在“竞争对手”标签页中添加或恢复它们。',
         },
         messages: {
             queued: '受众研究已加入队列。',

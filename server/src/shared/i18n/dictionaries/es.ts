@@ -203,6 +203,7 @@ export const es: DictionaryShape = {
             downstreamFailure: 'No se pudo registrar tu decisión. Vuelve a intentarlo en breve.',
             invalidDestination: 'Ese destino no coincide con la ruta de la señal.',
             citedSourceMissing: 'Una fuente citada ya no está disponible; actualiza y vuelve a intentar.',
+            competitorNotTracked: 'Elige competidores de la lista de competidores activos de este sitio. Primero añádelos o restáuralos en la pestaña Competidores.',
         },
         messages: {
             queued: 'Investigación de audiencia en cola.',

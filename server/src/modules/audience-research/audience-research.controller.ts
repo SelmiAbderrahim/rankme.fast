@@ -18,6 +18,7 @@ import { requireAccountId } from '../../shared/utils/require-account-id.js';
 import { HttpError } from '../../shared/utils/http-error.js';
 import { toSupportedLocale } from '../../shared/i18n/index.js';
 import { db as productionDb } from '../../db/client.js';
+import { listCompetitors } from '../competitor-content/index.js';
 import { getAudienceResearchDb, getAudienceResearchQueue, } from './audience-research.holders.js';
 import { getAudienceResearchRun, getAudienceResearchRunResult, listAudienceResearchRuns, previewAudienceResearchRun, startAudienceResearchRun, } from './audience-research.service.js';
 import { decisionBodySchema, listRunsQuerySchema, runIdParamsSchema, runInputBodySchema, signalIdParamsSchema, siteIdParamsSchema, } from './audience-research.api.schemas.js';
@@ -58,6 +59,7 @@ export const createAudienceResearchRunController = asyncHandler(async (req: Requ
         outputLocale: toSupportedLocale(req.language),
     }, {
         queue: getAudienceResearchQueue(),
+        loadActiveCompetitorDomains: async (scope) => (await listCompetitors(resolveAudienceResearchDb(), { ...scope, status: 'active' })).map((profile) => profile.registrableDomain),
     });
     res.status(202).json({
         runId: result.runId,

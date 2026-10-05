@@ -203,6 +203,7 @@ export const de: DictionaryShape = {
             downstreamFailure: 'Ihre Entscheidung konnte nicht gespeichert werden. Bitte erneut versuchen.',
             invalidDestination: 'Diese Zieloption passt nicht zur Route des Signals.',
             citedSourceMissing: 'Eine zitierte Quelle ist nicht mehr verfügbar. Aktualisieren und erneut versuchen.',
+            competitorNotTracked: 'Wähle Wettbewerber aus der Liste der aktiven Wettbewerber dieser Website. Füge sie zuerst im Tab Wettbewerber hinzu oder stelle sie wieder her.',
         },
         messages: {
             queued: 'Zielgruppen-Recherche in die Warteschlange gestellt.',

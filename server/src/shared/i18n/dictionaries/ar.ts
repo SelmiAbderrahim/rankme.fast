@@ -203,6 +203,7 @@ export const ar: DictionaryShape = {
             downstreamFailure: 'تعذّر تسجيل قرارك. أعد المحاولة قريباً.',
             invalidDestination: 'الوجهة المختارة لا تطابق مسار الإشارة.',
             citedSourceMissing: 'أحد المصادر المستشهد بها لم يعد متاحاً؛ حدّث وأعد المحاولة.',
+            competitorNotTracked: 'اختر المنافسين من قائمة المنافسين النشطين لهذا الموقع. أضفهم أو أعدهم أولاً من تبويب المنافسين.',
         },
         messages: {
             queued: 'تمت جدولة بحث الجمهور.',

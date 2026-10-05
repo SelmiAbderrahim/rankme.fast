@@ -202,6 +202,7 @@ export const en = {
             downstreamFailure: 'Your decision could not be recorded. Try again shortly.',
             invalidDestination: 'That destination doesn\'t match the signal\'s route.',
             citedSourceMissing: 'A cited source is no longer available; refresh and try again.',
+            competitorNotTracked: "Pick competitors from this site's active competitor list. Add or restore them on the Competitors tab first.",
         },
         messages: {
             queued: 'Audience research queued.',

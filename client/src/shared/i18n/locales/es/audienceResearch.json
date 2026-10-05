@@ -15,7 +15,11 @@
       "label": "Competidores",
       "helper": "Elige hasta cinco competidores ya seguidos para este sitio.",
       "chipRemove": "Quitar {{domain}}",
-      "limit": "Máximo {{max}} competidores seleccionados."
+      "limit": "Máximo {{max}} competidores seleccionados.",
+      "loading": "Cargando tus competidores…",
+      "empty": "Este sitio aún no tiene competidores activos. Añade primero los competidores que quieras investigar.",
+      "openCompetitors": "Abrir Competidores",
+      "loadFailed": "No se pudieron cargar tus competidores. Recarga la página e inténtalo de nuevo."
     },
     "topics": {
       "label": "Temas",

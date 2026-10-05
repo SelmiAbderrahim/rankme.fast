@@ -22,6 +22,7 @@ import { createPaginationCursorCodec, type PaginationCursorCodec, } from '../../
 import { HttpError } from '../../shared/utils/http-error.js';
 import { isSupportedLocale, type SupportedLocale, } from '../../shared/i18n/locales.js';
 import { Site } from '../sites/index.js';
+import { registrableDomainKey } from '../competitor-content/index.js';
 import { assertSiteNotPaused } from '../sites/sites.guard.js';
 import { AUDIENCE_RESEARCH_JOB_NAME, enqueueAudienceResearchJob, } from '../../shared/queue/index.js';
 import { AudienceResearchRun, type AudienceResearchRunDocument, type AudienceResearchRunHydrated, } from './audience-research.model.js';
@@ -43,6 +44,12 @@ export interface StartRunInput {
 }
 export interface StartRunDeps {
     queue: Queue | null;
+    /**
+     * Registrable domains of the site's ACTIVE competitor portfolio. The form
+     * only offers portfolio competitors, so the server enforces the same
+     * promise: a submitted competitor outside it is rejected, never researched.
+     */
+    loadActiveCompetitorDomains: (scope: { accountId: string; siteId: string }) => Promise<readonly string[]>;
 }
 export interface StartedRun {
     runId: string;
@@ -302,6 +309,19 @@ export async function previewAudienceResearchRun(input: PreviewRunInput): Promis
     await loadOwnedSite(input.accountId, input.siteId);
     return { deploymentMode: 'community', capacityEnforced: false };
 }
+/**
+ * Every submitted competitor must belong to the site's active portfolio
+ * (compared by registrable domain). Skipped when none were submitted so a
+ * competitor-free run costs no portfolio read.
+ */
+async function assertCompetitorsInPortfolio(input: StartRunInput, deps: StartRunDeps): Promise<void> {
+    if (input.input.competitorDomains.length === 0)
+        return;
+    const active = new Set((await deps.loadActiveCompetitorDomains({ accountId: input.accountId, siteId: input.siteId })).map(registrableDomainKey));
+    if (input.input.competitorDomains.some((domain) => !active.has(registrableDomainKey(domain)))) {
+        throw HttpError.badRequest({ code: 'AUDIENCE_RESEARCH_ERRORS_COMPETITOR_NOT_TRACKED', messageKey: 'audienceResearch.errors.competitorNotTracked' });
+    }
+}
 /** START — the load-bearing ordering above. */
 export async function startAudienceResearchRun(input: StartRunInput, deps: StartRunDeps): Promise<StartedRun> {
     const queue = deps.queue;
@@ -311,6 +331,7 @@ export async function startAudienceResearchRun(input: StartRunInput, deps: Start
     // (2) Ownership.
     const site = await loadOwnedSite(input.accountId, input.siteId);
     assertSiteNotPaused(site);
+    await assertCompetitorsInPortfolio(input, deps);
     // (3) Deterministic identity — client retries resolve to the same runId.
     const legacyInputHash = computeDeterministicInputHash({
         accountId: input.accountId,

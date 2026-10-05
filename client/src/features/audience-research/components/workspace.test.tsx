@@ -24,9 +24,15 @@ const api = vi.hoisted(() => ({
 }));
 
 const competitorsMock = vi.hoisted(() => ({
-  loadCompetitors: vi.fn(() => ({ type: 'competitors/loadCompetitors/mock' })),
-  selectCompetitorsList: (state: Record<string, unknown>) =>
-    (state.competitors as { list: unknown } | undefined)?.list ?? null,
+  loadCompetitorPortfolio: vi.fn(() => ({ type: 'competitors/loadPortfolio/mock' })),
+  selectCompetitorIntelligence: (state: Record<string, unknown>) =>
+    (state.competitors as { intelligence: unknown } | undefined)?.intelligence ?? {
+      siteId: null,
+      profiles: [],
+      profilesLoading: false,
+      profilesLoaded: false,
+      profilesError: '',
+    },
   competitorsReducer: (state: unknown = {}) => state,
 }));
 
@@ -88,22 +94,37 @@ function run(id = 'r1', overrides: Partial<RunStatusView> = {}): RunStatusView {
   };
 }
 
-function setState(overrides: Partial<typeof initialState> = {}, competitorDomains: string[] | null = null) {
+function profile(registrableDomain: string, status: 'active' | 'archived' = 'active') {
+  return {
+    id: `p-${registrableDomain}`,
+    origin: `https://${registrableDomain}`,
+    registrableDomain,
+    source: 'manual' as const,
+    status,
+    createdAt: '2026-01-01T00:00:00.000Z',
+  };
+}
+
+/**
+ * `competitorDomains` = the loaded ACTIVE portfolio for site `s1` (an empty
+ * array is a loaded-but-empty portfolio); `null` = not loaded yet.
+ */
+function setState(
+  overrides: Partial<typeof initialState> = {},
+  competitorDomains: string[] | null = null,
+  portfolio: Record<string, unknown> = {},
+) {
   hooks.state = {
     audienceResearch: { ...initialState, ...overrides },
     competitors: competitorDomains
       ? {
-          list: {
-            competitors: competitorDomains.map((domain) => ({
-              domain,
-              avgPosition: null,
-              intersections: 0,
-              estimatedTraffic: null,
-              fetchedAt: '2026-01-01T00:00:00.000Z',
-            })),
-            fetchedAt: '2026-01-01T00:00:00.000Z',
-            target: 's1',
-            source: 'domain',
+          intelligence: {
+            siteId: 's1',
+            profiles: competitorDomains.map((domain) => profile(domain)),
+            profilesLoading: false,
+            profilesLoaded: true,
+            profilesError: '',
+            ...portfolio,
           },
         }
       : undefined,
@@ -131,7 +152,7 @@ beforeEach(() => {
   vi.useRealTimers();
   hooks.dispatch.mockReset();
   for (const mock of Object.values(api)) mock.mockReset();
-  competitorsMock.loadCompetitors.mockClear();
+  competitorsMock.loadCompetitorPortfolio.mockClear();
   marketCatalogMock.current = {
     markets: [
       { countryCode: 'US', locationCode: 2840, languageCodes: ['en', 'fr'] },
@@ -542,7 +563,7 @@ describe('NewRunForm', () => {
   it('renders the market/competitor/topic form and loads the competitor list', () => {
     setState({}, ['a.com']);
     renderInRouter(<NewRunForm siteId="s1" />);
-    expect(competitorsMock.loadCompetitors).toHaveBeenCalledWith({ siteId: 's1' });
+    expect(competitorsMock.loadCompetitorPortfolio).toHaveBeenCalledWith({ siteId: 's1' });
     expect(screen.getByTestId('audience-research-start-button')).toBeEnabled();
   });
 
@@ -865,10 +886,77 @@ describe('NewRunForm', () => {
     );
   });
 
-  it('shows a placeholder when the site has no tracked competitors', () => {
+  it('shows a loading note until the portfolio has loaded', () => {
     setState({}, null);
     renderInRouter(<NewRunForm siteId="s1" />);
-    expect(screen.getByTestId('audience-research-form-no-competitors')).toBeInTheDocument();
+    expect(screen.getByTestId('audience-research-form-competitors-loading')).toHaveTextContent(
+      'Loading your competitors…',
+    );
+    expect(screen.queryByTestId('audience-research-form-no-competitors')).toBeNull();
+  });
+
+  it('shows an empty state linking to the Competitors tab when the portfolio is empty', () => {
+    setState({}, []);
+    renderInRouter(<NewRunForm siteId="s1" />);
+    expect(screen.getByTestId('audience-research-form-no-competitors')).toHaveTextContent(
+      'no active competitors',
+    );
+    expect(screen.getByTestId('audience-research-form-competitors-link')).toHaveAttribute(
+      'href',
+      '/sites/s1?tab=competitors',
+    );
+  });
+
+  it('offers only active portfolio competitors and ignores archived ones', () => {
+    setState({}, ['mine.com']);
+    (hooks.state.competitors as { intelligence: { profiles: unknown[] } }).intelligence.profiles.push(
+      profile('old.com', 'archived'),
+    );
+    renderInRouter(<NewRunForm siteId="s1" />);
+    expect(screen.getByTestId('audience-research-competitor-mine.com')).toBeInTheDocument();
+    expect(screen.queryByTestId('audience-research-competitor-old.com')).toBeNull();
+  });
+
+  it('does not show another site\'s portfolio', () => {
+    setState({}, ['other.com'], { siteId: 's2' });
+    renderInRouter(<NewRunForm siteId="s1" />);
+    expect(screen.queryByTestId('audience-research-competitor-other.com')).toBeNull();
+    expect(screen.getByTestId('audience-research-form-competitors-loading')).toBeInTheDocument();
+  });
+
+  it('shows a load error instead of the empty state when the portfolio failed to load', () => {
+    setState({}, [], { profilesError: 'boom' });
+    renderInRouter(<NewRunForm siteId="s1" />);
+    expect(screen.getByTestId('audience-research-form-competitors-error')).toHaveTextContent(
+      'could not be loaded',
+    );
+    expect(screen.queryByTestId('audience-research-form-no-competitors')).toBeNull();
+  });
+
+  it('drops selected competitors that are no longer in the active portfolio', () => {
+    setState(
+      { form: { market: DEFAULT_FORM_MARKET, competitors: ['mine.com', 'gone.com'], topics: [] } },
+      ['mine.com'],
+    );
+    renderInRouter(<NewRunForm siteId="s1" />);
+    expect(hooks.dispatch).toHaveBeenCalledWith(
+      expect.objectContaining({
+        type: 'audienceResearch/setFormCompetitors',
+        payload: ['mine.com'],
+      }),
+    );
+  });
+
+  it('keeps the selection untouched when the portfolio failed to load', () => {
+    setState(
+      { form: { market: DEFAULT_FORM_MARKET, competitors: ['mine.com'], topics: [] } },
+      [],
+      { profilesError: 'boom' },
+    );
+    renderInRouter(<NewRunForm siteId="s1" />);
+    expect(hooks.dispatch).not.toHaveBeenCalledWith(
+      expect.objectContaining({ type: 'audienceResearch/setFormCompetitors' }),
+    );
   });
 
   it('ignores Enter with a blank topic draft', () => {

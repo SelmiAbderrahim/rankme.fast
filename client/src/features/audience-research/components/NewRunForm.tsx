@@ -1,5 +1,6 @@
 import { useCallback, useEffect, useId, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
+import { Link } from 'react-router-dom';
 import { X } from 'lucide-react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@shared/ui/card';
 import { Button } from '@shared/ui/button';
@@ -17,8 +18,8 @@ import { Alert, AlertDescription, AlertTitle } from '@shared/ui/alert';
 import { CountryCombobox, languageName, useMarketCatalog } from '@shared/markets';
 import { useAppDispatch, useAppSelector } from '@shared/hooks/redux';
 import {
-  loadCompetitors,
-  selectCompetitorsList,
+  loadCompetitorPortfolio,
+  selectCompetitorIntelligence,
   competitorsReducer,
 } from '@features/competitors';
 import { rootReducer } from '@app/store';
@@ -61,7 +62,7 @@ export function NewRunForm({ siteId }: NewRunFormProps) {
   const dispatch = useAppDispatch();
   const form = useAppSelector(selectForm);
   const startStatus = useAppSelector(selectStartStatus);
-  const competitorsList = useAppSelector(selectCompetitorsList);
+  const portfolio = useAppSelector(selectCompetitorIntelligence);
   const marketCatalog = useMarketCatalog('seo');
   const selectedMarket = marketCatalog.markets.find(
     (market) => market.countryCode === form.market.country,
@@ -78,7 +79,7 @@ export function NewRunForm({ siteId }: NewRunFormProps) {
 
   useEffect(() => {
     ensureCompetitorsReducerInjected();
-    void dispatch(loadCompetitors({ siteId }));
+    void dispatch(loadCompetitorPortfolio({ siteId }));
   }, [dispatch, siteId]);
 
   useEffect(() => {
@@ -110,10 +111,31 @@ export function NewRunForm({ siteId }: NewRunFormProps) {
     [dispatch],
   );
 
+  // The picker offers ONLY the site's confirmed, active competitor portfolio
+  // (the same list as the Competitors tab) — never SERP-derived domains, which
+  // are mostly platforms and publishers rather than competitors.
+  const portfolioReady = portfolio.siteId === siteId;
+  const portfolioLoaded = portfolioReady && portfolio.profilesLoaded;
+  const portfolioFailed = portfolioLoaded && portfolio.profilesError !== '';
   const availableCompetitors = useMemo(
-    () => competitorsList?.competitors.map((c) => c.domain) ?? [],
-    [competitorsList],
+    () =>
+      portfolioReady
+        ? portfolio.profiles
+            .filter((profile) => profile.status === 'active')
+            .map((profile) => profile.registrableDomain)
+        : [],
+    [portfolioReady, portfolio.profiles],
   );
+
+  // A selection that left the portfolio (archived/removed since it was picked,
+  // or carried over from another site) would be rejected by the server — drop it.
+  useEffect(() => {
+    if (!portfolioLoaded || portfolioFailed) return;
+    const stillTracked = form.competitors.filter((domain) => availableCompetitors.includes(domain));
+    if (stillTracked.length !== form.competitors.length) {
+      dispatch(setFormCompetitors(stillTracked));
+    }
+  }, [availableCompetitors, dispatch, form.competitors, portfolioFailed, portfolioLoaded]);
 
   // No `>= MAX_COMPETITORS` guard for the "select" path — every unselected
   // competitor button is already disabled once the cap is reached (below),
@@ -264,9 +286,24 @@ export function NewRunForm({ siteId }: NewRunFormProps) {
             {t('form.competitors.label')} ({form.competitors.length}/{MAX_COMPETITORS})
           </p>
           <p className="text-muted-foreground mb-2 text-xs">{t('form.competitors.helper')}</p>
-          {availableCompetitors.length === 0 ? (
+          {!portfolioLoaded ? (
+            <p className="text-muted-foreground text-xs" role="status" data-testid="audience-research-form-competitors-loading">
+              {t('form.competitors.loading')}
+            </p>
+          ) : portfolioFailed ? (
+            <p className="text-destructive text-xs" role="alert" data-testid="audience-research-form-competitors-error">
+              {t('form.competitors.loadFailed')}
+            </p>
+          ) : availableCompetitors.length === 0 ? (
             <p className="text-muted-foreground text-xs" data-testid="audience-research-form-no-competitors">
-              —
+              {t('form.competitors.empty')}{' '}
+              <Link
+                to={`/sites/${encodeURIComponent(siteId)}?tab=competitors`}
+                className="text-foreground underline underline-offset-2"
+                data-testid="audience-research-form-competitors-link"
+              >
+                {t('form.competitors.openCompetitors')}
+              </Link>
             </p>
           ) : (
             <div className="flex flex-wrap gap-2" data-testid="audience-research-form-competitors">
