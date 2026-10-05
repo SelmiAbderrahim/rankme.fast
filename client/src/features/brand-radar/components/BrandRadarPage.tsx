@@ -93,17 +93,17 @@ export const BrandRadarPage = ({ siteId }: BrandRadarPageProps) => {
   );
 
   return (
-    <main
+    <div
       className="mx-auto flex w-full max-w-6xl flex-col gap-6 p-4 sm:p-6"
       data-testid="brand-radar-page"
     >
-      <header className="flex flex-wrap items-start justify-between gap-4">
+      <div className="flex flex-wrap items-start justify-between gap-4">
         <div className="flex flex-col gap-1">
           <h1 className="text-2xl font-semibold tracking-tight">{t('title')}</h1>
           <p className="text-muted-foreground text-sm">{t('description')}</p>
         </div>
         <DocsLink slug="brand-radar" className="text-muted-foreground hover:text-foreground shrink-0 text-xs underline underline-offset-2" />
-      </header>
+      </div>
 
       {unavailable ? (
         <Alert role="status" data-testid="brand-radar-unavailable">
@@ -166,6 +166,6 @@ export const BrandRadarPage = ({ siteId }: BrandRadarPageProps) => {
         </TabsContent>
       </Tabs>
       )}
-    </main>
+    </div>
   );
 };

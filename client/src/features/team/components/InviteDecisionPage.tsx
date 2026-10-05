@@ -97,10 +97,10 @@ export const InviteDecisionPage = ({ action }: InviteDecisionPageProps) => {
 
   if (loading) {
     return (
-      <main className="mx-auto flex w-full max-w-lg flex-col gap-3 px-4 py-10" aria-busy="true">
+      <div className="mx-auto flex w-full max-w-lg flex-col gap-3 px-4 py-10" aria-busy="true">
         <p className="text-muted-foreground text-sm">{t('decision.loading')}</p>
         <Skeleton className="h-44 w-full" />
-      </main>
+      </div>
     );
   }
 
@@ -109,11 +109,11 @@ export const InviteDecisionPage = ({ action }: InviteDecisionPageProps) => {
   // so the recipient can retry without reloading the email link.
   if (!preview) {
     return (
-      <main className="mx-auto w-full max-w-lg px-4 py-10">
+      <div className="mx-auto w-full max-w-lg px-4 py-10">
         <Alert variant="destructive" role="alert">
           <AlertDescription>{error}</AlertDescription>
         </Alert>
-      </main>
+      </div>
     );
   }
 
@@ -127,7 +127,7 @@ export const InviteDecisionPage = ({ action }: InviteDecisionPageProps) => {
 
   if (complete) {
     return (
-      <main className="mx-auto w-full max-w-lg px-4 py-10">
+      <div className="mx-auto w-full max-w-lg px-4 py-10">
         <Card>
           <CardHeader>
             <CardTitle><h1>{t(`decision.${action}.completeTitle`)}</h1></CardTitle>
@@ -146,12 +146,12 @@ export const InviteDecisionPage = ({ action }: InviteDecisionPageProps) => {
             </Button>
           </CardFooter>
         </Card>
-      </main>
+      </div>
     );
   }
 
   return (
-    <main className="mx-auto w-full max-w-lg px-4 py-10">
+    <div className="mx-auto w-full max-w-lg px-4 py-10">
       <Card>
         <CardHeader>
           <CardTitle><h1>{t(`decision.${action}.title`)}</h1></CardTitle>
@@ -207,6 +207,6 @@ export const InviteDecisionPage = ({ action }: InviteDecisionPageProps) => {
           </AlertDialogFooter>
         </AlertDialogContent>
       </AlertDialog>
-    </main>
+    </div>
   );
 };

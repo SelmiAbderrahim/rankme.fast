@@ -18,11 +18,11 @@ export const RequiredPasswordChangePage = () => {
   );
 
   return (
-    <main className="mx-auto flex w-full max-w-md flex-col gap-4 px-4 py-10">
+    <div className="mx-auto flex w-full max-w-md flex-col gap-4 px-4 py-10">
       <Alert>
         <AlertDescription>{t('provisional.passwordNotice')}</AlertDescription>
       </Alert>
       <ChangePassword onSuccess={() => navigate(returnTo.current, { replace: true })} />
-    </main>
+    </div>
   );
 };

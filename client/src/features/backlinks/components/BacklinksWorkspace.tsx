@@ -58,7 +58,7 @@ export function BacklinksWorkspace({ siteId, embedded = false }: BacklinksWorksp
       data-embedded={embedded ? 'true' : undefined}
       dir={i18n.dir()}
     >
-      <header className="flex flex-wrap items-start justify-between gap-4">
+      <div className="flex flex-wrap items-start justify-between gap-4">
         <div>
           {embedded ? (
             <h2 className="text-2xl font-semibold">{t('intelligence.title')}</h2>
@@ -77,7 +77,7 @@ export function BacklinksWorkspace({ siteId, embedded = false }: BacklinksWorksp
           ) : null}
           <DocsLink slug="link-intelligence" className="text-muted-foreground hover:text-foreground text-xs underline underline-offset-2" />
         </div>
-      </header>
+      </div>
       <Tabs value={tab} onValueChange={(value) => setTab(value as typeof tab)}>
         <div>
           <TabsList

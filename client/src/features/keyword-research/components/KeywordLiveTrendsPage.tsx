@@ -22,7 +22,7 @@ export const KeywordLiveTrendsPage = () => {
   // values back to the sole valid tab (url-tab-state rule).
   useTabParam<'live-trends'>('live-trends', TAB_VALUES);
   return (
-    <main
+    <div
       id="keyword-live-trends-page"
       className="mx-auto flex w-full max-w-5xl flex-col gap-6 p-4 sm:p-6"
       data-testid="keyword-live-trends-page"
@@ -34,6 +34,6 @@ export const KeywordLiveTrendsPage = () => {
         actions={<DocsLink slug="keyword-trends" />}
       />
       <LiveTrendsView />
-    </main>
+    </div>
   );
 };

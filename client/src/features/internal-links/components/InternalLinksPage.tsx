@@ -207,18 +207,18 @@ export const InternalLinksPage = ({ siteId }: InternalLinksPageProps) => {
   const running = detail?.status === 'queued' || detail?.status === 'processing';
 
   return (
-    <main
+    <div
       className="mx-auto flex w-full max-w-6xl flex-col gap-6 p-6"
       data-testid="internal-links-page"
     >
-      <header className="space-y-2">
+      <div className="space-y-2">
         <div className="flex items-center gap-2 text-sm text-muted-foreground">
           <Sparkles className="size-4" aria-hidden="true" />
           <span>{t('eyebrow')}</span>
         </div>
         <h1 className="text-2xl font-semibold tracking-tight">{t('title')}</h1>
         <p className="max-w-3xl text-sm text-muted-foreground">{t('subtitle')}</p>
-      </header>
+      </div>
 
       <div className="flex flex-wrap items-end gap-4">
         <Button asChild variant="ghost" size="sm">
@@ -364,6 +364,6 @@ export const InternalLinksPage = ({ siteId }: InternalLinksPageProps) => {
           ) : null}
         </TabsContent>
       </Tabs>
-    </main>
+    </div>
   );
 };

@@ -112,11 +112,11 @@ export function ContentBriefEditorPage() {
   };
 
   const backHref = `/sites/${encodeURIComponent(siteId)}?tab=content&view=briefs&brief=${encodeURIComponent(briefId)}`;
-  if (loading) return <main className="mx-auto w-full max-w-6xl p-6" aria-busy="true" aria-label={t('briefs.detail.loading')}><Skeleton className="h-64 w-full" /></main>;
-  if (!detail) return <main className="mx-auto w-full max-w-3xl space-y-4 p-6"><Alert variant="destructive"><AlertTitle>{t('briefs.states.failed.title')}</AlertTitle><AlertDescription>{error || t('briefs.errors.load')}</AlertDescription></Alert><Button asChild variant="outline"><Link to={backHref}>{t('briefs.actions.back')}</Link></Button></main>;
+  if (loading) return <div className="mx-auto w-full max-w-6xl p-6" aria-busy="true" aria-label={t('briefs.detail.loading')}><Skeleton className="h-64 w-full" /></div>;
+  if (!detail) return <div className="mx-auto w-full max-w-3xl space-y-4 p-6"><Alert variant="destructive"><AlertTitle>{t('briefs.states.failed.title')}</AlertTitle><AlertDescription>{error || t('briefs.errors.load')}</AlertDescription></Alert><Button asChild variant="outline"><Link to={backHref}>{t('briefs.actions.back')}</Link></Button></div>;
 
   return (
-    <main className="mx-auto w-full max-w-6xl space-y-5 p-4 sm:p-6" data-testid="content-brief-editor">
+    <div className="mx-auto w-full max-w-6xl space-y-5 p-4 sm:p-6" data-testid="content-brief-editor">
       <div className="flex flex-wrap items-start justify-between gap-3">
         <div>
           <Button asChild variant="ghost" className="px-0"><Link to={backHref}>{t('briefs.actions.back')}</Link></Button>
@@ -148,6 +148,6 @@ export function ContentBriefEditorPage() {
         <h2 id="content-brief-history-title" className="text-2xl font-semibold">{t('briefs.editor.history')}</h2>
         {detail.scoreHistory.length ? detail.scoreHistory.slice().reverse().map((version, index) => <div key={version.version} ref={index === 0 ? latestRef : undefined} tabIndex={index === 0 ? -1 : undefined}><ScoreCard version={version} /></div>) : <p className="text-sm text-muted-foreground">{t('briefs.editor.empty')}</p>}
       </section>
-    </main>
+    </div>
   );
 }

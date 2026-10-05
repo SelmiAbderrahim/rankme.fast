@@ -111,8 +111,8 @@ export const CannibalizationPage = ({ siteId }: CannibalizationPageProps) => {
   };
 
   return (
-    <main className="mx-auto flex w-full max-w-6xl flex-col gap-6 p-6">
-      <header className="flex flex-wrap items-start justify-between gap-3">
+    <div className="mx-auto flex w-full max-w-6xl flex-col gap-6 p-6">
+      <div className="flex flex-wrap items-start justify-between gap-3">
         <div className="flex flex-col gap-2">
           <h1 className="text-2xl font-semibold tracking-tight">{t('title')}</h1>
           <p className="text-muted-foreground text-sm">{t('subtitle')}</p>
@@ -124,7 +124,7 @@ export const CannibalizationPage = ({ siteId }: CannibalizationPageProps) => {
             selection={{ confidence: url.confidence }}
           />
         ) : null}
-      </header>
+      </div>
 
       <div className="flex flex-wrap items-end gap-4">
         <div className="flex flex-col gap-1">
@@ -249,6 +249,6 @@ export const CannibalizationPage = ({ siteId }: CannibalizationPageProps) => {
           ) : null}
         </TabsContent>
       </Tabs>
-    </main>
+    </div>
   );
 };

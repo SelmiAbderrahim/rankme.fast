@@ -213,16 +213,16 @@ export function AssistantPage() {
 
   if (listStatus === 'idle' || listStatus === 'loading') {
     return (
-      <main className="mx-auto flex w-full max-w-7xl flex-col gap-6 p-4 sm:p-6" aria-labelledby="assistant-title">
+      <section className="mx-auto flex w-full max-w-7xl flex-col gap-6 p-4 sm:p-6" aria-labelledby="assistant-title">
         <AssistantPageHeader />
         <AssistantPageLoading />
-      </main>
+      </section>
     );
   }
 
   if (listStatus === 'failed') {
     return (
-      <main className="mx-auto flex w-full max-w-4xl flex-col gap-6 p-4 sm:p-6" aria-labelledby="assistant-title">
+      <section className="mx-auto flex w-full max-w-4xl flex-col gap-6 p-4 sm:p-6" aria-labelledby="assistant-title">
         <AssistantPageHeader />
         <Card className="p-6">
           <AssistantMessagePane
@@ -235,7 +235,7 @@ export function AssistantPage() {
             onRetry={retryList}
           />
         </Card>
-      </main>
+      </section>
     );
   }
 
@@ -252,7 +252,7 @@ export function AssistantPage() {
     detailStatus === 'loading' || detailStatus === 'failed' || activeUnavailable;
 
   return (
-    <main className="mx-auto flex w-full max-w-7xl flex-col gap-6 p-4 sm:p-6" aria-labelledby="assistant-title">
+    <section className="mx-auto flex w-full max-w-7xl flex-col gap-6 p-4 sm:p-6" aria-labelledby="assistant-title">
       <AssistantPageHeader />
 
       {/*
@@ -322,6 +322,6 @@ export function AssistantPage() {
           ) : null}
         </Card>
       </div>
-    </main>
+    </section>
   );
 }

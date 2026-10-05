@@ -110,7 +110,7 @@ export function ExportCenterPage() {
     );
 
   return (
-    <main className="flex flex-col gap-6 p-4 sm:p-6">
+    <div className="flex flex-col gap-6 p-4 sm:p-6">
       <PageHeader
         icon={FileArchive}
         title={t('exportUi.center.title')}
@@ -341,7 +341,7 @@ export function ExportCenterPage() {
           ) : null}
         </TabsContent>
       </Tabs>
-    </main>
+    </div>
   );
 }
 

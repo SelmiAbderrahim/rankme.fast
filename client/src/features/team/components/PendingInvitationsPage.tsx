@@ -69,11 +69,11 @@ export const PendingInvitationsPage = () => {
   };
 
   return (
-    <main className="mx-auto flex w-full max-w-2xl flex-col gap-6 px-4 py-10">
-      <header className="flex flex-col gap-2">
+    <div className="mx-auto flex w-full max-w-2xl flex-col gap-6 px-4 py-10">
+      <div className="flex flex-col gap-2">
         <h1 className="text-2xl font-semibold">{t('inbox.title')}</h1>
         <p className="text-muted-foreground">{t('inbox.description')}</p>
-      </header>
+      </div>
       {error ? <Alert variant="destructive" role="alert"><AlertDescription>{error}</AlertDescription></Alert> : null}
       {status === 'loading' || status === 'idle' ? (
         <div className="flex flex-col gap-3" aria-busy="true">
@@ -152,6 +152,6 @@ export const PendingInvitationsPage = () => {
           </AlertDialogFooter>
         </AlertDialogContent>
       </AlertDialog>
-    </main>
+    </div>
   );
 };

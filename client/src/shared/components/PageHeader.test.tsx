@@ -14,11 +14,13 @@ describe('PageHeader', () => {
         description="Your account overview"
         supportingContent={<a href="/docs">Open guide</a>}
         actions={<button type="button">Refresh</button>}
-        aria-label="Page identity"
+        data-testid="identity"
       />,
     );
 
-    expect(screen.getByRole('banner', { name: 'Page identity' })).toBeInTheDocument();
+    // Not a <header>: a page title must never add a second banner landmark.
+    expect(screen.queryByRole('banner')).not.toBeInTheDocument();
+    expect(screen.getByTestId('identity').tagName).toBe('DIV');
     expect(screen.getByRole('heading', { level: 1, name: 'Dashboard' })).toHaveAttribute(
       'id',
       'dashboard-title',
@@ -49,7 +51,7 @@ describe('PageHeader', () => {
     expect(heading).toHaveClass('font-serif');
     expect(heading).toHaveAttribute('tabindex', '-1');
     expect(titleRef.current).toBe(heading);
-    expect(heading.closest('header')).toHaveClass('page-class');
+    expect(heading.closest('.page-class')).toHaveClass('page-class');
     expect(heading.parentElement).toHaveTextContent('Guide');
   });
 });
