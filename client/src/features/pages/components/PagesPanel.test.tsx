@@ -357,7 +357,26 @@ describe('PagesPanel source-aware list and detail', () => {
     expect(screen.getAllByText('Not available').length).toBeGreaterThan(0);
     expect(screen.getByText(/No eligible previous sync/)).toBeVisible();
     expect(screen.getByText('The source reports sampled data.')).toBeVisible();
-    expect(screen.getByText('This source has no Search Console reporting-lag claim.')).toBeVisible();
+    // No lag to report: the line is omitted rather than explaining its absence.
+    expect(screen.queryByText(/Search Console data runs about/)).toBeNull();
+    expect(screen.queryByText(/reporting-lag/)).toBeNull();
+  });
+
+  it('describes coverage and lag in plain language', async () => {
+    mockedList.mockResolvedValue(listResponse());
+    renderPanel();
+    await screen.findByText('Google Search Console');
+    expect(screen.getByText(/^Pages with search data: \d+ of \d+\. Pages without: \d+\.$/)).toBeVisible();
+    expect(screen.getByText('Search Console data runs about 3 days behind.')).toBeVisible();
+    expect(screen.queryByText(/source rows|inventory pages/)).toBeNull();
+  });
+
+  it('only promises collection on actions the page actually shows', async () => {
+    mockedList.mockResolvedValue(listResponse());
+    renderPanel();
+    await screen.findByText('Google Search Console');
+    expect(screen.getByText(/Nothing is collected until you ask for it\./)).toBeVisible();
+    expect(screen.queryByText(/choose Refresh/)).toBeNull();
   });
 
   it('uses the unknown-language label for an unrecognized fallback market', async () => {
