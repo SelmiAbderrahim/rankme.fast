@@ -187,8 +187,7 @@ const SearchCombobox = ({
         onFocus={() => setOpen(true)}
         onBlur={() => setOpen(false)}
         onKeyDown={onKeyDown}
-        // Neutral (ink) focus ring: the global signal-red ring reads as a
-        // validation error on a plain search field.
+        // Neutral (ink) focus ring, matching the global `--ring` token.
         className="h-9 w-full min-w-0 cursor-text rounded-md border border-input bg-transparent ps-8 pe-3 text-base shadow-xs outline-none transition-[color,box-shadow] placeholder:text-muted-foreground focus-visible:border-foreground focus-visible:ring-[3px] focus-visible:ring-foreground/20 md:text-sm dark:bg-input/30"
       />
 

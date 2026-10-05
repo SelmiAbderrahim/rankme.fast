@@ -95,8 +95,11 @@ describe.each([
     for (const surface of ['background', 'card', 'sidebar'] as const) {
       expectPair(block, surface === 'sidebar' ? 'sidebar-border' : 'input', surface, 3);
     }
-    for (const surface of ['background', 'card'] as const) {
+    for (const surface of ['background', 'card', 'popover', 'sidebar'] as const) {
       expectPair(block, 'ring', surface, 3);
+    }
+    for (const surface of ['background', 'card', 'sidebar'] as const) {
+      expectPair(block, 'sidebar-ring', surface, 3);
     }
     expect(token(block, 'input')).not.toBe(token(block, 'border'));
   });
@@ -127,5 +130,17 @@ describe.each([
         ).toBeGreaterThanOrEqual(4.5);
       }
     }
+  });
+});
+
+describe('focus ring is not an error colour', () => {
+  it.each([
+    ['light', ':root'],
+    ['dark', '.dark'],
+  ] as const)('%s app theme keeps red for invalid state only', (_theme, selector) => {
+    const block = themeBlock(selector);
+    expect(token(block, 'ring')).not.toBe(token(block, 'highlight'));
+    expect(token(block, 'ring')).not.toBe(token(block, 'destructive'));
+    expect(token(block, 'sidebar-ring')).toBe(token(block, 'ring'));
   });
 });
