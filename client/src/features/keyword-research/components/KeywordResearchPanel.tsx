@@ -1182,6 +1182,15 @@ const RowGroup = ({
   );
 };
 
+/** Hard = destructive, medium = warning, easy = success; an unknown difficulty
+ * is the absence of a signal, so it stays neutral instead of reading as good news. */
+const DIFFICULTY_TONE = {
+  hard: 'destructive',
+  medium: 'warning',
+  easy: 'success',
+  unknown: 'muted',
+} as const satisfies Record<ReturnType<typeof difficultyBand>, StatusTone>;
+
 const DifficultyBadge = ({ difficulty }: { difficulty: number | null }) => {
   const { t } = useTranslation();
   const band = difficultyBand(difficulty);
@@ -1189,7 +1198,7 @@ const DifficultyBadge = ({ difficulty }: { difficulty: number | null }) => {
   const numeric = difficulty === null ? '—' : String(difficulty);
   return (
     <StatusChip
-      tone={band === 'hard' ? 'destructive' : band === 'medium' ? 'warning' : 'success'}
+      tone={DIFFICULTY_TONE[band]}
       title={numeric}
     >
       {label}

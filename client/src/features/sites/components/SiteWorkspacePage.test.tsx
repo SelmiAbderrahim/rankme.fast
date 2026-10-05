@@ -359,6 +359,8 @@ describe('SiteWorkspacePage — default tab, deep link, invalid tab, switching',
     expect(screen.getByTestId('site-navigation')).toHaveAccessibleName('Workspace view');
     // Site heading uses the displayName.
     expect(screen.getByRole('heading', { name: 'Example' })).toBeInTheDocument();
+    // A distinct display name keeps the domain as the subtitle.
+    expect(screen.getByText('example.com')).toBeInTheDocument();
   });
 
   it('deep-link ?tab=report mounts the ReportPage', async () => {
@@ -690,6 +692,8 @@ describe('SiteWorkspacePage — falls back when the site is not yet loaded', () 
   it('falls back to the owned domain when the display name is empty', async () => {
     renderAt('/sites/site-1', { displayName: '' });
     expect(await screen.findByRole('heading', { name: 'example.com' })).toBeInTheDocument();
+    // The domain is the title, so it is not printed a second time.
+    expect(screen.getAllByText('example.com')).toHaveLength(1);
   });
 
   it('shows a heading skeleton (not the raw UUID) until the sites slice resolves', () => {

@@ -18,6 +18,7 @@ import { PageHeader } from '@shared/components/PageHeader';
 import { Alert, AlertDescription, AlertTitle } from '@shared/ui/alert';
 import { Button } from '@shared/ui/button';
 import { formatRelativeTime } from '@shared/lib/datetime';
+import { siteLabel } from '@shared/lib/siteLabel';
 import { useAppDispatch, useAppSelector } from '@shared/hooks/redux';
 import { APP_PAGE_ICONS } from '@shared/navigation/appPageIcons';
 import { rootReducer } from '@app/store';
@@ -348,7 +349,7 @@ export const SiteWorkspacePage = () => {
     );
   }
 
-  const heading = site.displayName || site.domain;
+  const heading = siteLabel(site);
 
   const panels: Record<SiteTab, ReactNode> = {
     overview: <OverviewPanel siteId={siteId} />,
@@ -487,7 +488,7 @@ export const SiteWorkspacePage = () => {
       <PageHeader
         icon={APP_PAGE_ICONS.siteWorkspace}
         title={heading}
-        description={site.domain}
+        description={heading === site.domain ? undefined : site.domain}
       />
       {site.paused ? (
         <Alert role="status" data-testid="site-paused-banner">

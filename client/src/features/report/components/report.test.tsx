@@ -1593,6 +1593,26 @@ describe('IssueRow / IssueDetail units', () => {
     expect(screen.queryByTestId('report-badge-regressed')).not.toBeInTheDocument();
   });
 
+  it('IssueRow tones each severity chip by the status language (Watch = warning, never destructive)', () => {
+    const expected = { critical: 'destructive', warning: 'warning', info: 'info' } as const;
+    for (const [severity, tone] of Object.entries(expected)) {
+      const { unmount } = render(
+        <Provider store={makeStore()}>
+          <I18nextProvider i18n={i18n}>
+            <IssueRow
+              finding={{ ...findingsFixture[0]!, severity: severity as keyof typeof expected }}
+              diffByUrl={new Map()}
+            />
+          </I18nextProvider>
+        </Provider>,
+      );
+      const chip = screen.getByTestId(`report-badge-severity-${severity}`);
+      expect(chip).toHaveAttribute('data-tone', tone);
+      expect(chip.className).not.toContain(tone === 'warning' ? 'text-destructive' : 'text-warning');
+      unmount();
+    }
+  });
+
   it('IssueRow offers no finding controls without a siteId context, even on the latest run', () => {
     const finding = { ...findingsFixture[0]!, codeFixPromptAvailable: true as const };
     render(

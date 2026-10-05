@@ -63,6 +63,9 @@ describe('actionable invitation inbox', () => {
     const user = userEvent.setup();
     renderInbox();
     const trigger = await screen.findByRole('button', { name: 'Team invitations, 1 pending' });
+    // The bell only opens team invitations (notification settings live under
+    // the account menu), so it says so on hover as well as to screen readers.
+    expect(trigger).toHaveAttribute('title', 'Team invitations');
     await user.click(trigger);
     const dialog = await screen.findByRole('dialog');
     expect(within(dialog).getByText('Acme')).toBeInTheDocument();

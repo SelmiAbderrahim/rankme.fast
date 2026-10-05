@@ -606,7 +606,29 @@ describe('KeywordResearchPanel rendering', () => {
     await user.type(screen.getByTestId('keyword-research-input'), 'seo audit tool{enter}');
     await user.click(screen.getByTestId('keyword-research-submit'));
     await screen.findByTestId('keyword-research-table');
-    expect(screen.getByText(/unknown/i)).toBeInTheDocument();
+    // No difficulty score is the absence of a signal: neutral, never the
+    // green "easy" tone.
+    const chip = screen.getByText(/unknown/i);
+    expect(chip).toHaveAttribute('data-tone', 'muted');
+  });
+
+  it('tones each difficulty band by severity', async () => {
+    const store = makeStore();
+    mocked.fetchMetricsRequest.mockResolvedValueOnce({
+      keywords: [
+        metric({ keyword: 'a', difficulty: 10 }),
+        metric({ keyword: 'b', difficulty: 50 }),
+        metric({ keyword: 'c', difficulty: 85 }),
+      ],
+    });
+    const user = userEvent.setup();
+    withProviders(<KeywordResearchPanel siteId={null} />, store);
+    await user.type(screen.getByTestId('keyword-research-input'), 'a{enter}');
+    await user.click(screen.getByTestId('keyword-research-submit'));
+    await screen.findByTestId('keyword-research-table');
+    expect(screen.getByTitle('10')).toHaveAttribute('data-tone', 'success');
+    expect(screen.getByTitle('50')).toHaveAttribute('data-tone', 'warning');
+    expect(screen.getByTitle('85')).toHaveAttribute('data-tone', 'destructive');
   });
 
   it('changes location + language via the selects and forwards them', async () => {

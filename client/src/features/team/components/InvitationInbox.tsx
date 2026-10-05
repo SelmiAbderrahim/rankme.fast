@@ -90,6 +90,7 @@ export const InvitationInbox = () => {
             variant="ghost"
             size="icon"
             className="relative"
+            title={t('inbox.buttonLabel')}
             aria-label={count > 0
               ? t('inbox.buttonLabelWithCount', { count })
               : t('inbox.buttonLabel')}
