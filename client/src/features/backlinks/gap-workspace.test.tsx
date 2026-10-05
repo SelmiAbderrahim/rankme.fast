@@ -204,7 +204,7 @@ describe('gap form preview and confirm', () => {
         competitors: ['rival.example'],
       }),
     );
-    expect(screen.getByTestId('link-intel-preview')).toHaveTextContent('self-hosted');
+    expect(screen.getByTestId('link-intel-preview')).toHaveTextContent("aren't applied on this server");
     await user.click(screen.getByRole('button', { name: 'Cancel' }));
     expect(mocked.startLinkGap).not.toHaveBeenCalled();
   });

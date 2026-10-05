@@ -363,7 +363,7 @@ describe('unified competitor workspace', () => {
     await screen.findByText('suggested.example');
     await userEvent.click(screen.getByRole('button', { name: /preview discovery refresh/i }));
     await userEvent.click(await screen.findByRole('button', { name: /review and confirm/i }));
-    expect(await screen.findByRole('alertdialog')).toHaveTextContent(/self-host/i);
+    expect(await screen.findByRole('alertdialog')).toHaveTextContent(/aren.t applied on this server/i);
     await userEvent.click(screen.getByRole('button', { name: /confirm refresh/i }));
     await waitFor(() => expect(mocked.refreshDiscovery).toHaveBeenCalledTimes(1));
 
@@ -382,13 +382,13 @@ describe('unified competitor workspace', () => {
     expect(screen.getByRole('button', { name: /review and confirm/i })).toBeDisabled();
   });
 
-  it('confirms landscape previews with the self-host notice', async () => {
+  it('confirms landscape previews with the unmetered notice', async () => {
     renderWorkspace('/sites/site-1?tab=competitors&view=keywords');
     await userEvent.click(await screen.findByRole('checkbox'));
     await userEvent.click(screen.getByRole('button', { name: /preview report spend/i }));
-    expect(await screen.findByText(/self-host/i)).toBeInTheDocument();
+    expect(await screen.findByText(/aren.t applied on this server/i)).toBeInTheDocument();
     await userEvent.click(screen.getByRole('button', { name: /review and confirm/i }));
-    expect(await screen.findByRole('alertdialog')).toHaveTextContent(/self-host/i);
+    expect(await screen.findByRole('alertdialog')).toHaveTextContent(/aren.t applied on this server/i);
     await userEvent.click(screen.getByRole('button', { name: /confirm report/i }));
     await waitFor(() => expect(mocked.startLandscapeRun).toHaveBeenCalled());
   });
