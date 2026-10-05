@@ -12,16 +12,27 @@ import { TwoFactorSettings } from './TwoFactorSettings';
  * password change, email change (with re-verification via Better Auth),
  * two-factor (TOTP + backup codes) enrolment, active-session management, and
  * the danger-zone account deletion.
+ *
+ * `embedded` drops the page header and padding when a host (the Account tabs)
+ * already renders its own header, so two full headers never nest.
  */
-export const SecuritySettings = () => {
+export const SecuritySettings = ({ embedded = false }: { embedded?: boolean }) => {
   const { t } = useTranslation('auth');
   return (
-    <div className="mx-auto flex w-full max-w-2xl flex-col gap-6 py-6">
-      <PageHeader
-        icon={APP_PAGE_ICONS.security}
-        title={t('security.title')}
-        description={t('security.description')}
-      />
+    <div
+      className={
+        embedded
+          ? 'flex w-full flex-col gap-6'
+          : 'mx-auto flex w-full max-w-2xl flex-col gap-6 py-6'
+      }
+    >
+      {embedded ? null : (
+        <PageHeader
+          icon={APP_PAGE_ICONS.security}
+          title={t('security.title')}
+          description={t('security.description')}
+        />
+      )}
       <ChangePassword />
       <ChangeEmail />
       <TwoFactorSettings />

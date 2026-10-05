@@ -55,12 +55,12 @@ const makeStore = (preloaded?: Partial<NotificationState>) =>
 
 type Store = ReturnType<typeof makeStore>;
 
-const renderWith = (store: Store = makeStore()) => {
+const renderWith = (store: Store = makeStore(), embedded = false) => {
   render(
     <Provider store={store}>
       <I18nextProvider i18n={i18n}>
         <MemoryRouter>
-          <NotificationPreferences />
+          <NotificationPreferences embedded={embedded} />
         </MemoryRouter>
       </I18nextProvider>
     </Provider>,
@@ -93,6 +93,15 @@ describe('NotificationPreferences', () => {
     expect(screen.getByRole('switch', { name: 'Alert rules' })).toBeChecked();
     // Product updates is opt-in, so it starts off for a new account.
     expect(screen.getByRole('switch', { name: 'Product updates' })).not.toBeChecked();
+  });
+
+  it('drops the page header but keeps the description when embedded', () => {
+    renderWith(makeStore({ loaded: true, preferences: defaultPrefs() }), true);
+    expect(
+      screen.queryByRole('heading', { name: 'Notification preferences' }),
+    ).not.toBeInTheDocument();
+    expect(screen.getAllByText(/security emails/i)).toHaveLength(1);
+    expect(screen.getByRole('switch', { name: 'Rank drops' })).toBeInTheDocument();
   });
 
   it('states the security-email exception exactly once', async () => {

@@ -8,12 +8,18 @@ import { Card, CardContent, CardHeader, CardTitle } from '@shared/ui/card';
 import { Skeleton } from '@shared/ui/skeleton';
 import { Empty, EmptyDescription, EmptyHeader, EmptyTitle } from '@shared/ui/empty';
 import { authClient } from '../authClient';
+import { parseUserAgent } from '../userAgent';
 
 interface SessionRow {
   token: string;
   ipAddress?: string | null;
   userAgent?: string | null;
+  createdAt?: string | Date | null;
+  updatedAt?: string | Date | null;
 }
+
+/** Longest raw user-agent shown when the parser recognises neither part. */
+const RAW_AGENT_MAX = 80;
 
 /**
  * `/settings/security` — active-session (device) list + revoke panel.
@@ -24,7 +30,7 @@ interface SessionRow {
  * a button) so a user can't lock themselves out of the page they're on.
  */
 export const ActiveSessions = () => {
-  const { t } = useTranslation('auth');
+  const { t, i18n } = useTranslation('auth');
   const { data: sessionData } = authClient.useSession();
   const currentToken = sessionData?.session.token ?? '';
 
@@ -73,6 +79,28 @@ export const ActiveSessions = () => {
     await load();
   };
 
+  const deviceLabel = (userAgent: string | null | undefined): string => {
+    if (!userAgent) return t('security.sessions.unknownDevice');
+    const { browser, os } = parseUserAgent(userAgent);
+    if (browser && os) return t('security.sessions.device', { browser, os });
+    const known = browser ?? os;
+    if (known) return known;
+    return userAgent.length > RAW_AGENT_MAX
+      ? `${userAgent.slice(0, RAW_AGENT_MAX)}…`
+      : userAgent;
+  };
+
+  const lastActive = (s: SessionRow): string | null => {
+    const at = new Date(s.updatedAt ?? s.createdAt ?? Number.NaN);
+    if (Number.isNaN(at.getTime())) return null;
+    return t('security.sessions.lastActive', {
+      date: new Intl.DateTimeFormat(i18n.language, {
+        dateStyle: 'medium',
+        timeStyle: 'short',
+      }).format(at),
+    });
+  };
+
   const others = (sessions ?? []).filter((s) => s.token !== currentToken);
 
   return (
@@ -108,6 +136,7 @@ export const ActiveSessions = () => {
             <ul className="flex flex-col gap-2">
               {sessions.map((s) => {
                 const isCurrent = s.token === currentToken;
+                const activity = lastActive(s);
                 return (
                   <li
                     key={s.token}
@@ -116,13 +145,16 @@ export const ActiveSessions = () => {
                     <div className="flex items-start gap-2">
                       <Monitor className="text-muted-foreground mt-0.5 size-4" aria-hidden />
                       <div className="flex flex-col">
-                        <span className="text-sm font-medium">
-                          {s.userAgent || t('security.sessions.unknownDevice')}
+                        <span className="text-sm font-medium" title={s.userAgent ?? undefined}>
+                          {deviceLabel(s.userAgent)}
                         </span>
                         {s.ipAddress ? (
                           <span className="text-muted-foreground text-xs">
                             {t('security.sessions.ip', { ip: s.ipAddress })}
                           </span>
+                        ) : null}
+                        {activity ? (
+                          <span className="text-muted-foreground text-xs">{activity}</span>
                         ) : null}
                       </div>
                     </div>

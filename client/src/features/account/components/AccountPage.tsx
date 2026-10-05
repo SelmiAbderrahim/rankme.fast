@@ -46,10 +46,10 @@ export const AccountPage = () => {
           <ProfileInfoCard />
         </TabsContent>
         <TabsContent value="security">
-          <SecuritySettings />
+          <SecuritySettings embedded />
         </TabsContent>
         <TabsContent value="notifications">
-          <NotificationPreferences />
+          <NotificationPreferences embedded />
         </TabsContent>
         <TabsContent value="branding">
           <BrandingPanel />

@@ -32,8 +32,13 @@ void settingsReducer;
  * channels. Security email (password reset, verification, password change)
  * is not listed here because it cannot be disabled; the page description says
  * so once.
+ *
+ * `embedded` is for hosts that already render a page header (the Account
+ * tabs): the page header and page padding are dropped so the screen does not
+ * nest a second full header inside the host's, but the description stays as a
+ * plain line because it carries the "security email can't be disabled" note.
  */
-export const NotificationPreferences = () => {
+export const NotificationPreferences = ({ embedded = false }: { embedded?: boolean }) => {
   const { t } = useTranslation(['settings', 'common']);
   const dispatch = useAppDispatch();
   const preferences = useAppSelector(selectNotificationPreferences);
@@ -58,12 +63,24 @@ export const NotificationPreferences = () => {
   };
 
   return (
-    <div className="mx-auto flex w-full max-w-2xl flex-col gap-6 py-6">
-      <PageHeader
-        icon={APP_PAGE_ICONS.notifications}
-        title={t('settings:notifications.title')}
-        description={t('settings:notifications.description')}
-      />
+    <div
+      className={
+        embedded
+          ? 'flex w-full flex-col gap-6'
+          : 'mx-auto flex w-full max-w-2xl flex-col gap-6 py-6'
+      }
+    >
+      {embedded ? (
+        <p className="text-muted-foreground text-sm">
+          {t('settings:notifications.description')}
+        </p>
+      ) : (
+        <PageHeader
+          icon={APP_PAGE_ICONS.notifications}
+          title={t('settings:notifications.title')}
+          description={t('settings:notifications.description')}
+        />
+      )}
 
       <Card>
         <CardHeader>
