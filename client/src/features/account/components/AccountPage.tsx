@@ -26,7 +26,8 @@ export const AccountPage = () => {
   const [tab, setTab] = useTabParam('profile', ACCOUNT_TABS);
 
   return (
-    <div className="mx-auto flex w-full max-w-3xl flex-col gap-6 py-6">
+    <div className="flex w-full max-w-3xl flex-col gap-6 px-4 py-8"
+      data-testid="account-page">
       <PageHeader
         icon={APP_PAGE_ICONS.profile}
         title={t('title')}

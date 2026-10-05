@@ -613,6 +613,20 @@ describe('internal-link accessibility and RTL', () => {
     }
   });
 
+  it('adds no page gutter of its own and renders "Open content inventory" as an outline button link', async () => {
+    routeApi();
+    renderPage(`/sites/${SITE}?tab=internal-links`);
+    const page = await screen.findByTestId('internal-links-page');
+    // Embedded in the site workspace, which already pads its tab panels: a
+    // second page-level gutter or max-width made this tab sit inset from its siblings.
+    for (const cls of ['p-6', 'p-4', 'sm:p-6', 'mx-auto', 'max-w-6xl']) {
+      expect(page).not.toHaveClass(cls);
+    }
+    const link = screen.getByRole('link', { name: 'Open content inventory' });
+    expect(link).toHaveAttribute('data-variant', 'outline');
+    expect(link).toHaveAttribute('data-slot', 'button');
+  });
+
   it('keeps preview confirmation, cancellation, evidence, copy, and export keyboard reachable', async () => {
     routeApi();
     const user = userEvent.setup();

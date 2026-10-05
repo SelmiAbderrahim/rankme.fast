@@ -227,7 +227,7 @@ export const KeywordClustersPage = ({ siteId }: KeywordClustersPageProps) => {
 
   return (
     <div
-      className="mx-auto flex w-full max-w-6xl flex-col gap-6 p-6"
+      className="flex w-full min-w-0 flex-col gap-6"
       data-testid="keyword-clusters-page"
     >
       <div className="space-y-2">
@@ -240,7 +240,7 @@ export const KeywordClustersPage = ({ siteId }: KeywordClustersPageProps) => {
       </div>
 
       <div className="flex flex-wrap items-end gap-4">
-        <Button asChild variant="ghost" size="sm">
+        <Button asChild variant="outline" size="sm">
           <Link to={ranksHref}>{t('site.ranksLink')}</Link>
         </Button>
       </div>

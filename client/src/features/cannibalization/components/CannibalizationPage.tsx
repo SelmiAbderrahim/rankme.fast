@@ -111,7 +111,7 @@ export const CannibalizationPage = ({ siteId }: CannibalizationPageProps) => {
   };
 
   return (
-    <div className="mx-auto flex w-full max-w-6xl flex-col gap-6 p-6">
+    <div className="flex w-full min-w-0 flex-col gap-6" data-testid="cannibalization-page">
       <div className="flex flex-wrap items-start justify-between gap-3">
         <div className="flex flex-col gap-2">
           <h1 className="text-2xl font-semibold tracking-tight">{t('title')}</h1>

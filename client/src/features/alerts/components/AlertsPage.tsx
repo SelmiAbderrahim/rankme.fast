@@ -124,7 +124,7 @@ export const AlertsPage = () => {
   const flagDisabled = saveGate?.kind === 'disabled' || listGate?.kind === 'disabled';
 
   return (
-    <div className="flex flex-col gap-6" data-testid="alerts-page">
+    <div className="flex flex-col gap-6 px-4 py-8" data-testid="alerts-page">
       <PageHeader
         icon={APP_PAGE_ICONS.alerts}
         title={t('title')}

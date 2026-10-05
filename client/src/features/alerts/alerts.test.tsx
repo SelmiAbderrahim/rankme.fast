@@ -359,6 +359,12 @@ describe('alerts URL state', () => {
 });
 
 describe('AlertsPage — rules tab', () => {
+  it('uses the same page gutter as Dashboard and Sites', async () => {
+    routeApi();
+    renderPage();
+    expect(await screen.findByTestId('alerts-page')).toHaveClass('px-4', 'py-8');
+  });
+
   it('lists configured rules with their cap usage', async () => {
     routeApi();
     renderPage();

@@ -164,6 +164,15 @@ afterEach(() => {
 });
 
 describe('CannibalizationPage — reports tab', () => {
+  it('adds no page gutter of its own inside the site workspace', async () => {
+    routeApi();
+    renderPage();
+    const page = await screen.findByTestId('cannibalization-page');
+    for (const cls of ['p-6', 'p-4', 'sm:p-6', 'mx-auto', 'max-w-6xl']) {
+      expect(page).not.toHaveClass(cls);
+    }
+  });
+
   it('loads sites and the stored report list', async () => {
     routeApi();
     renderPage();

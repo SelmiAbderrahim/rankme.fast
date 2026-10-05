@@ -208,7 +208,7 @@ export const InternalLinksPage = ({ siteId }: InternalLinksPageProps) => {
 
   return (
     <div
-      className="mx-auto flex w-full max-w-6xl flex-col gap-6 p-6"
+      className="flex w-full min-w-0 flex-col gap-6"
       data-testid="internal-links-page"
     >
       <div className="space-y-2">
@@ -221,7 +221,7 @@ export const InternalLinksPage = ({ siteId }: InternalLinksPageProps) => {
       </div>
 
       <div className="flex flex-wrap items-end gap-4">
-        <Button asChild variant="ghost" size="sm">
+        <Button asChild variant="outline" size="sm">
           <Link to={inventoryHref}>{t('site.inventoryLink')}</Link>
         </Button>
       </div>

@@ -94,7 +94,7 @@ export const BrandRadarPage = ({ siteId }: BrandRadarPageProps) => {
 
   return (
     <div
-      className="mx-auto flex w-full max-w-6xl flex-col gap-6 p-4 sm:p-6"
+      className="flex w-full min-w-0 flex-col gap-6"
       data-testid="brand-radar-page"
     >
       <div className="flex flex-wrap items-start justify-between gap-4">

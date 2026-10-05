@@ -52,6 +52,13 @@ describe('AccountPage', () => {
     expect(screen.getByRole('heading', { name: 'Account' })).toBeInTheDocument();
   });
 
+  it('uses the same page gutter as Dashboard and Sites, left-aligned rather than centred', () => {
+    renderAt('/profile');
+    const page = screen.getByTestId('account-page');
+    expect(page).toHaveClass('px-4', 'py-8');
+    expect(page).not.toHaveClass('mx-auto');
+  });
+
   it('deep-links to a tab from ?tab=', () => {
     renderAt('/profile?tab=security');
     expect(screen.getByText('SECURITY_BODY')).toBeInTheDocument();
