@@ -26,6 +26,9 @@
   "preview": {
     "title": "Vista previa del gasto",
     "operatorNotice": "Esta solicitud usa el proveedor de datos de tráfico configurado por el operador.",
+    "domain": "Dominio",
+    "impact": "Impacto en la asignación",
+    "notMetered": "No se mide en este servidor",
     "units": "{{count}} unidad de instantánea de tráfico",
     "units_other": "{{count}} unidades de instantáneas de tráfico",
     "cached": "En caché",

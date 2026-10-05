@@ -152,6 +152,10 @@ export interface TrafficSpendPreviewOperation {
 }
 
 export interface TrafficSpendPreview {
+  /** Present only when the server meters usage; community servers omit them. */
+  productUnits?: number;
+  remainingBaseUnits?: number;
+  remainingPackUnits?: number;
   /** Per-domain cache status; absent when the server has nothing to break down. */
   breakdown?: TrafficSpendPreviewOperation[];
 }

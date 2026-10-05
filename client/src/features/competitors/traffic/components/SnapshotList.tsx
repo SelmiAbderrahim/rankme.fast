@@ -189,7 +189,7 @@ export const SnapshotList = ({ data, status, error = '', onOpen }: SnapshotListP
               <EmptyTitle>{t('states.empty.title')}</EmptyTitle>
               <EmptyDescription>{t('states.empty.description')}</EmptyDescription>
             </EmptyHeader>
-            <EmptyContent className="flex flex-row gap-2">
+            <EmptyContent className="flex-row justify-center gap-2">
               <Button type="button" variant="outline" onClick={() => domainRef.current?.focus()}>
                 {t('states.empty.cta')}
               </Button>

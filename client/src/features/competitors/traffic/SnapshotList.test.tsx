@@ -113,6 +113,9 @@ describe('SnapshotList URL-backed filters', () => {
 
     renderList({ data: { snapshots: [], nextCursor: null }, status: 'succeeded' });
     expect(screen.getByTestId('traffic-list-empty')).toHaveTextContent('No traffic snapshots yet');
+    // The CTA row centres its button (logical-safe: justify-center, no left bias).
+    const ctaRow = screen.getByRole('button', { name: 'Start with a domain' }).parentElement as HTMLElement;
+    expect(ctaRow).toHaveClass('flex-row', 'justify-center');
     await userEvent.click(screen.getByRole('button', { name: 'Start with a domain' }));
     expect(screen.getByRole('textbox', { name: 'Filter by domain' })).toHaveFocus();
   });
