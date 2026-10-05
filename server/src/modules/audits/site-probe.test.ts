@@ -118,19 +118,92 @@ describe('createSiteProbe', () => {
     expect(partial.llmsTxtFound).toBe(true);
   });
 
-  it('returns nothing when the site https address cannot be read', async () => {
-    for (const home of ['down', { status: 503 }] as Route[]) {
-      const fetchUrl = fakeNetwork({ 'https://example.com/': home });
-      expect(await createSiteProbe({ fetchUrl })({ domain: 'example.com', url: 'https://example.com' })).toEqual({});
-      expect(fetchUrl).toHaveBeenCalledTimes(1);
-    }
-    // An address that ends on plain http is still evidence of where the start
-    // page lands, but nothing else is judged.
-    const fetchUrl = fakeNetwork({ 'https://example.com/': { status: 200, finalUrl: 'http://example.com/' } });
-    expect(await createSiteProbe({ fetchUrl })({ domain: 'example.com', url: 'https://example.com' })).toEqual({
-      startPageFinalUrl: 'http://example.com/',
+  it('still reads robots.txt, sitemap.xml and llms.txt when the start page is blocked (issue #38)', async () => {
+    const fetchUrl = fakeNetwork({
+      [HOME]: { status: 403, contentType: 'text/html' },
+      'https://bottradesforyou.com/robots.txt': { status: 200, body: 'User-agent: *\nSitemap: https://bottradesforyou.com/sitemap.xml\n' },
+      'https://bottradesforyou.com/sitemap.xml': { status: 200, contentType: 'application/xml' },
+      'https://bottradesforyou.com/llms.txt': { status: 200, contentType: 'text/plain' },
     });
-    expect(fetchUrl).toHaveBeenCalledTimes(1);
+    const result = await createSiteProbe({ fetchUrl })(target);
+    expect(result).toEqual({ sitemapReferencedInRobots: true, sitemapFound: true, llmsTxtFound: true });
+    // Nothing is judged against an unreadable start page: no variants, no host evidence.
+    expect(fetchUrl).toHaveBeenCalledTimes(4);
+  });
+
+  it('reads the root files even when the start page does not answer at all', async () => {
+    const fetchUrl = fakeNetwork({
+      [HOME]: 'down',
+      'https://bottradesforyou.com/robots.txt': { status: 404, contentType: 'text/html' },
+      'https://bottradesforyou.com/sitemap.xml': { status: 404, contentType: 'text/html' },
+      'https://bottradesforyou.com/llms.txt': { status: 404, contentType: 'text/html' },
+    });
+    expect(await createSiteProbe({ fetchUrl })(target)).toEqual({ sitemapReferencedInRobots: false, llmsTxtFound: false });
+  });
+
+  it('reads the root files from the redirected host, even when its start page errors', async () => {
+    const www = 'https://www.example.com/';
+    const fetchUrl = fakeNetwork({
+      'https://example.com/': { status: 403, finalUrl: www },
+      'https://www.example.com/robots.txt': { status: 200, body: 'Sitemap: https://www.example.com/s.xml' },
+      'https://www.example.com/sitemap.xml': { status: 200, contentType: 'text/xml' },
+      'https://www.example.com/llms.txt': { status: 404 },
+    });
+    const result = await createSiteProbe({ fetchUrl })({ domain: 'example.com', url: 'https://example.com' });
+    expect(result).toEqual({ sitemapReferencedInRobots: true, sitemapFound: true, llmsTxtFound: false });
+    // An error page on a foreign host says nothing about the site's own files.
+    const foreign = fakeNetwork({ 'https://example.com/': { status: 403, finalUrl: 'https://challenge.example.net/x' } });
+    await createSiteProbe({ fetchUrl: foreign })({ domain: 'example.com', url: 'https://example.com' });
+    expect(foreign).toHaveBeenCalledWith('https://example.com/robots.txt');
+  });
+
+  it('treats a missing sitemap.xml as no sitemap evidence, and an HTML robots.txt as no directive', async () => {
+    const fetchUrl = fakeNetwork({
+      [HOME]: { status: 200 },
+      'https://bottradesforyou.com/robots.txt': { status: 200, contentType: 'text/html', body: '<html></html>' },
+      'https://bottradesforyou.com/sitemap.xml': { status: 404 },
+      'https://bottradesforyou.com/llms.txt': { status: 404 },
+    });
+    const result = await createSiteProbe({ fetchUrl })(target);
+    expect(result.sitemapReferencedInRobots).toBe(false);
+    expect(result).not.toHaveProperty('sitemapFound');
+    expect(result).not.toHaveProperty('failures');
+    // An HTML shell answering /sitemap.xml is not a sitemap.
+    const soft = fakeNetwork({ [HOME]: { status: 200 }, 'https://bottradesforyou.com/sitemap.xml': { status: 200, contentType: 'text/html' } });
+    expect(await createSiteProbe({ fetchUrl: soft })(target)).not.toHaveProperty('sitemapFound');
+  });
+
+  it('records why a root file gave no verdict: blocked, HTTP error, or unreachable', async () => {
+    const fetchUrl = fakeNetwork({
+      [HOME]: { status: 200 },
+      'https://bottradesforyou.com/robots.txt': { status: 403 },
+      'https://bottradesforyou.com/llms.txt': { status: 503 },
+    });
+    expect((await createSiteProbe({ fetchUrl })(target)).failures).toEqual({
+      robots: { reason: 'blocked', status: 403 },
+      llms: { reason: 'http-error', status: 503 },
+    });
+    const down = fakeNetwork({ [HOME]: { status: 200 } });
+    expect((await createSiteProbe({ fetchUrl: down })(target)).failures).toEqual({
+      robots: { reason: 'unreachable' },
+      llms: { reason: 'unreachable' },
+    });
+    const unreadable = vi.fn(async (url: string): Promise<ProbeResponse | null> => ({
+      status: 200,
+      finalUrl: url,
+      contentType: 'text/plain',
+      text: async () => {
+        throw new Error('stream reset');
+      },
+    }));
+    expect((await createSiteProbe({ fetchUrl: unreadable })(target)).failures).toEqual({ robots: { reason: 'unreachable' } });
+  });
+
+  it('judges nothing against a start page that ends on plain http', async () => {
+    const fetchUrl = fakeNetwork({ 'https://example.com/': { status: 200, finalUrl: 'http://example.com/' } });
+    const result = await createSiteProbe({ fetchUrl })({ domain: 'example.com', url: 'https://example.com' });
+    expect(result.startPageFinalUrl).toBe('http://example.com/');
+    expect(result).not.toHaveProperty('addressVariants');
   });
 
   it('reports the final start-page URL so a cross-host redirect is visible (issue #29)', async () => {
@@ -146,8 +219,10 @@ describe('createSiteProbe', () => {
   });
 
   it('reads through the shared SSRF authority by default', async () => {
-    // A private address fails closed: the probe reports nothing, never throws.
-    expect(await createSiteProbe()({ domain: 'localhost', url: 'https://localhost' })).toEqual({});
+    // A private address fails closed: nothing is read, the failures say so, and it never throws.
+    expect(await createSiteProbe()({ domain: 'localhost', url: 'https://localhost' })).toEqual({
+      failures: { robots: { reason: 'unreachable' }, llms: { reason: 'unreachable' } },
+    });
 
     const seen: string[] = [];
     const probe = createSiteProbe({

@@ -490,6 +490,12 @@ export async function applySiteProbe(result: AuditResult, target: ResolvedAuditT
     if (checks.llmsTxtFound === undefined && probe.llmsTxtFound !== undefined) {
         checks.llmsTxtFound = probe.llmsTxtFound;
     }
+    // A sitemap the probe saw served (or robots.txt declares) is direct
+    // evidence; the vendor's "no sitemap" never outranks it.
+    if (probe.sitemapFound)
+        checks.sitemapFound = true;
+    if (probe.failures)
+        checks.probeFailures = probe.failures;
     if (probe.addressVariants && probe.addressVariants.length > 0) {
         checks.addressVariants = probe.addressVariants;
         if (probe.addressVariants.some((v) => v.ok === false))

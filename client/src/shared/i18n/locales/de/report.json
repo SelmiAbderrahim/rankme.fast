@@ -250,7 +250,10 @@
       "pageSpeed": "Geschwindigkeitsdaten echter Besucher sind für diese Website noch nicht verfügbar.",
       "localSeo": "Fügen Sie einen Unternehmenseintrag oder eine Bewertungsquelle hinzu, um dies zu prüfen.",
       "aiVisibility": "Verfolgen Sie KI-Prompts, um dies zu prüfen.",
-      "generic": "Der Crawl hat nicht genug Daten geliefert, um dies zu prüfen."
+      "generic": "Der Crawl hat nicht genug Daten geliefert, um dies zu prüfen.",
+      "probeUnreachable": "Wir konnten {{file}} auf Ihrer Website nicht erreichen, daher ließ sich dies nicht prüfen.",
+      "probeBlocked": "Ihre Website hat unsere Anfrage für {{file}} abgelehnt (HTTP {{status}}), daher ließ sich dies nicht prüfen.",
+      "probeHttpError": "Ihre Website hat für {{file}} mit HTTP {{status}} geantwortet, daher ließ sich dies nicht prüfen."
     }
   },
   "pending": {

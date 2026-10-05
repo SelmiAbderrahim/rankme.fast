@@ -12,14 +12,18 @@ const RULE_ID = 'llms-txt-missing' as const;
 export const llmsTxtMissingRule: AuditRule = {
     id: RULE_ID,
     evaluate(result: AuditResult): RuleFinding {
-        const found = result.domainChecks.llmsTxtFound;
+        const { llmsTxtFound: found, probeFailures } = result.domainChecks;
         if (found === undefined) {
             return {
                 ruleId: RULE_ID,
                 bucket: 'watch',
                 severity: 'info',
                 affectedUrls: [],
-                meta: { insufficientData: true },
+                meta: {
+                    insufficientData: true,
+                    // Why /llms.txt could not be read, when the probe knows.
+                    ...(probeFailures?.llms ? { probeFailure: { file: 'llms.txt', ...probeFailures.llms } } : {}),
+                },
             };
         }
         if (!found) {

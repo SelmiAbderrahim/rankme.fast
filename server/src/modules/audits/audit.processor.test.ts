@@ -642,6 +642,45 @@ describe('audit processor — page persistence and PageSpeed sampling', () => {
       expect(https.meta?.addressVariants).toEqual(variants);
     });
 
+    it('evaluates the sitemap and llms.txt checks when the start page is blocked (issue #38)', async () => {
+      // Start page 403: the probe still read robots.txt, sitemap.xml and llms.txt.
+      const passing = await seed();
+      await createAuditProcessor({
+        provider: createFakeAuditProvider(),
+        probeSite: async () => ({ sitemapReferencedInRobots: true, sitemapFound: true, llmsTxtFound: true }),
+        logger,
+      })(jobFor({ ...passing, pageCap: 100 }));
+      expect((await findingOf(passing.runId, 'sitemap-missing-or-weak')).bucket).toBe('passed');
+      expect((await findingOf(passing.runId, 'llms-txt-missing')).bucket).toBe('passed');
+
+      // robots.txt 404 → a real "sitemap not declared" watch finding, not "not evaluated".
+      const missing = await seed();
+      await createAuditProcessor({
+        provider: createFakeAuditProvider(),
+        probeSite: async () => ({ sitemapReferencedInRobots: false, sitemapFound: true, llmsTxtFound: false }),
+        logger,
+      })(jobFor({ ...missing, pageCap: 100 }));
+      const watch = await findingOf(missing.runId, 'sitemap-missing-or-weak');
+      expect(watch.bucket).toBe('watch');
+      expect(watch.meta?.insufficientData).toBeUndefined();
+
+      // A genuinely failed read stays "not evaluated" and says why.
+      const failed = await seed();
+      await createAuditProcessor({
+        provider: createFakeAuditProvider(),
+        probeSite: async () => ({ failures: { robots: { reason: 'blocked', status: 403 }, llms: { reason: 'unreachable' } } }),
+        logger,
+      })(jobFor({ ...failed, pageCap: 100 }));
+      expect((await findingOf(failed.runId, 'sitemap-missing-or-weak')).meta).toEqual({
+        insufficientData: true,
+        probeFailure: { file: 'robots.txt', reason: 'blocked', status: 403 },
+      });
+      expect((await findingOf(failed.runId, 'llms-txt-missing')).meta).toEqual({
+        insufficientData: true,
+        probeFailure: { file: 'llms.txt', reason: 'unreachable' },
+      });
+    });
+
     it('keeps the vendor verdict when the probe fails', async () => {
       const ids = await seed();
       const processor = createAuditProcessor({
@@ -672,6 +711,14 @@ describe('audit processor — page persistence and PageSpeed sampling', () => {
       expect(merged.domainChecks.sitemapReferencedInRobots).toBe(false);
       expect(merged.domainChecks.llmsTxtFound).toBe(true);
       expect(merged.domainChecks.addressVariants).toBeUndefined();
+    });
+
+    it('trusts a sitemap the probe saw over the vendor "no sitemap"', async () => {
+      const noSitemap = { ...FAKE_AUDIT_RESULT, domainChecks: { ...FAKE_AUDIT_RESULT.domainChecks, sitemapFound: false } };
+      const merged = await applySiteProbe(noSitemap, target, { probeSite: async () => ({ sitemapFound: true }), logger });
+      expect(merged.domainChecks.sitemapFound).toBe(true);
+      const untouched = await applySiteProbe(noSitemap, target, { probeSite: async () => ({}), logger });
+      expect(untouched.domainChecks.sitemapFound).toBe(false);
     });
 
     it('sets canonicalizationOk from conclusive variants only', async () => {

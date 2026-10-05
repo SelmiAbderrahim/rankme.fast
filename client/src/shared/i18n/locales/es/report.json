@@ -250,7 +250,10 @@
       "pageSpeed": "Aún no hay datos de velocidad de visitantes reales para este sitio.",
       "localSeo": "Añade una ficha de negocio o una fuente de reseñas para comprobar esto.",
       "aiVisibility": "Sigue prompts de IA para comprobar esto.",
-      "generic": "El rastreo no devolvió datos suficientes para comprobar esto."
+      "generic": "El rastreo no devolvió datos suficientes para comprobar esto.",
+      "probeUnreachable": "No pudimos acceder a {{file}} en tu sitio, así que no se pudo comprobar esto.",
+      "probeBlocked": "Tu sitio rechazó nuestra solicitud de {{file}} (HTTP {{status}}), así que no se pudo comprobar esto.",
+      "probeHttpError": "Tu sitio respondió con HTTP {{status}} para {{file}}, así que no se pudo comprobar esto."
     }
   },
   "pending": {

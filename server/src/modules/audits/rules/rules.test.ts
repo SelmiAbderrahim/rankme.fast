@@ -840,6 +840,26 @@ describe('rule branch coverage', () => {
     expect(finding.meta).toEqual({ insufficientData: true });
   });
 
+  it('sitemap and llms.txt rules carry why the probe could not read the file', () => {
+    const results = evaluateAllRules(
+      makeAuditResult({
+        domainChecks: {
+          sitemapReferencedInRobots: undefined,
+          llmsTxtFound: undefined,
+          probeFailures: { robots: { reason: 'blocked', status: 403 }, llms: { reason: 'http-error', status: 503 } },
+        },
+      }),
+    );
+    expect(findingFor('sitemap-missing-or-weak', results).meta).toEqual({
+      insufficientData: true,
+      probeFailure: { file: 'robots.txt', reason: 'blocked', status: 403 },
+    });
+    expect(findingFor('llms-txt-missing', results).meta).toEqual({
+      insufficientData: true,
+      probeFailure: { file: 'llms.txt', reason: 'http-error', status: 503 },
+    });
+  });
+
   it('sitemap rule reports watch when found but not referenced in robots', () => {
     const finding = findingFor(
       'sitemap-missing-or-weak',

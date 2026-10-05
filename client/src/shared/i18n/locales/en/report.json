@@ -254,7 +254,10 @@
       "pageSpeed": "Speed data from real visitors is not available for this site yet.",
       "localSeo": "Add a business listing or review source to check this.",
       "aiVisibility": "Track AI prompts to check this.",
-      "generic": "The crawl did not return enough data to check this."
+      "generic": "The crawl did not return enough data to check this.",
+      "probeUnreachable": "We could not reach {{file}} on your site, so this could not be checked.",
+      "probeBlocked": "Your site refused our request for {{file}} (HTTP {{status}}), so this could not be checked.",
+      "probeHttpError": "Your site answered with HTTP {{status}} for {{file}}, so this could not be checked."
     }
   },
   "pending": {

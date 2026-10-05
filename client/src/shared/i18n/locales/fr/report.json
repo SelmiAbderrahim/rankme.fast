@@ -250,7 +250,10 @@
       "pageSpeed": "Les données de vitesse issues de vrais visiteurs ne sont pas encore disponibles pour ce site.",
       "localSeo": "Ajoutez une fiche d'établissement ou une source d'avis pour effectuer cette vérification.",
       "aiVisibility": "Suivez des requêtes IA pour effectuer cette vérification.",
-      "generic": "L'exploration n'a pas renvoyé assez de données pour effectuer cette vérification."
+      "generic": "L'exploration n'a pas renvoyé assez de données pour effectuer cette vérification.",
+      "probeUnreachable": "Nous n'avons pas pu joindre {{file}} sur votre site, cette vérification n'a donc pas pu être faite.",
+      "probeBlocked": "Votre site a refusé notre requête pour {{file}} (HTTP {{status}}), cette vérification n'a donc pas pu être faite.",
+      "probeHttpError": "Votre site a répondu HTTP {{status}} pour {{file}}, cette vérification n'a donc pas pu être faite."
     }
   },
   "pending": {

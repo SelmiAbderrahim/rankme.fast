@@ -13,6 +13,7 @@ import { reportErrorMessage } from '../errorMessage';
 import { ApiError } from '@shared/api/client';
 import { ReportPage } from './ReportPage';
 import { IssueRow } from './IssueRow';
+import { notEvaluatedSource } from './NotEvaluatedChecks';
 import { IssueDetail } from './IssueDetail';
 import type {
   AuditReport,
@@ -652,6 +653,43 @@ describe('ReportPage — not-evaluated checks (issue #1)', () => {
     const watchRows = screen.getAllByTestId('report-issue-row').map((row) => row.getAttribute('data-rule-id'));
     expect(watchRows).toEqual(['headings-weak', 'faq-content-missing']);
     expect(screen.queryByTestId('report-issue-detail')).not.toBeInTheDocument();
+  });
+
+  it('says what happened when the audit could not read robots.txt or llms.txt (issue #38)', async () => {
+    const withProbe = (ruleId: string, title: string, probeFailure: unknown): LocalizedFinding => ({
+      ...notEvaluated(ruleId, undefined, title),
+      meta: { insufficientData: true, probeFailure },
+    });
+    mocked.fetchReportRequest.mockResolvedValue(
+      makeReport({
+        counts: { fixNow: 1, watch: 2, passed: 1, notEvaluated: 4 },
+        findings: [
+          ...findingsFixture,
+          withProbe('sitemap-missing-or-weak', 'Sitemap missing', { file: 'robots.txt', reason: 'blocked', status: 403 }),
+          withProbe('llms-txt-missing', 'llms.txt missing', { file: 'llms.txt', reason: 'http-error', status: 503 }),
+          withProbe('thin-content', 'Thin content', { file: 'robots.txt', reason: 'unreachable' }),
+          withProbe('faq-content-missing', 'FAQ', { file: 'x', reason: 'weird' }),
+        ],
+      }),
+    );
+    renderReport();
+    await screen.findByTestId('report-not-evaluated');
+    const rows = screen.getAllByTestId('report-not-evaluated-row');
+    const hint = (ruleId: string) =>
+      rows.find((row) => row.getAttribute('data-rule-id') === ruleId)?.textContent ?? '';
+    expect(hint('sitemap-missing-or-weak')).toContain(
+      'Your site refused our request for robots.txt (HTTP 403)',
+    );
+    expect(hint('llms-txt-missing')).toContain(
+      'Your site answered with HTTP 503 for llms.txt',
+    );
+    expect(hint('thin-content')).toContain('We could not reach robots.txt on your site');
+    // An unknown reason never leaks raw keys: it falls back to the generic copy.
+    expect(hint('faq-content-missing')).toContain('did not return enough data');
+    // A non-object value is ignored too.
+    expect(
+      notEvaluatedSource({ ...notEvaluated('x', undefined, 'x'), meta: { probeFailure: 'nope' } }),
+    ).toBe('generic');
   });
 
   it('renders no not-evaluated section when every check ran', async () => {
