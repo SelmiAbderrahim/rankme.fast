@@ -68,6 +68,14 @@ interface Props {
 const CHECK_POLL_INTERVAL_MS = 3_000;
 const CHECK_POLL_MAX_MS = 60_000;
 
+/** A keyword just added whose automatic first check is still outstanding. */
+interface InitialCheck {
+  /** Server stamp (`updatedAt`) the first snapshot must reach. */
+  since: number;
+  /** Local epoch ms after which the row stops showing "Checking…". */
+  until: number;
+}
+
 export const KeywordsPanel = ({ siteId }: Props) => {
   const { t } = useTranslation('ranks');
   const dispatch = useAppDispatch();
@@ -100,6 +108,8 @@ export const KeywordsPanel = ({ siteId }: Props) => {
   const cadence = useAppSelector(selectCadence);
   const [checkingSince, setCheckingSince] = useState<number | null>(null);
   const [checkingTargetId, setCheckingTargetId] = useState<string | null>(null);
+  // Keywords added this session whose automatic first check has not landed.
+  const [initialChecks, setInitialChecks] = useState<Record<string, InitialCheck>>({});
   const updatingCadence = useAppSelector(selectUpdatingCadence);
   const cadenceError = useAppSelector(selectCadenceError);
   const checkingNow = useAppSelector(selectCheckingNow);
@@ -194,14 +204,58 @@ export const KeywordsPanel = ({ siteId }: Props) => {
     }
   }, [checkingKeywords, checkingSince]);
 
+  // Adding a keyword makes the server enqueue its first check, which finishes
+  // asynchronously in the worker. Keep the new rows in "Checking…" and poll the
+  // list until each snapshot (or recorded failure) lands, or the deadline
+  // passes, so the position appears without a manual reload.
+  useEffect(() => {
+    const entries = Object.entries(initialChecks);
+    if (entries.length === 0) return;
+    const now = Date.now();
+    const live = entries.filter(([id, { since, until }]) => {
+      const keyword = keywords.find((k) => k.id === id);
+      return keyword !== undefined && now < until && !rankCheckReachedTerminal(keyword, since);
+    });
+    if (live.length !== entries.length) {
+      setInitialChecks(Object.fromEntries(live));
+      return;
+    }
+    let inFlight: { abort: () => void } | null = null;
+    const timer = window.setInterval(() => {
+      if (live.some(([, { until }]) => Date.now() >= until)) {
+        setInitialChecks(
+          Object.fromEntries(live.filter(([, { until }]) => Date.now() < until)),
+        );
+        return;
+      }
+      inFlight = dispatch(
+        loadKeywords({
+          siteId,
+          direction: 'initial',
+          ...(requestedEngine ? { engine: requestedEngine } : {}),
+        }),
+      );
+    }, CHECK_POLL_INTERVAL_MS);
+    return () => {
+      window.clearInterval(timer);
+      inFlight?.abort();
+    };
+  }, [dispatch, requestedEngine, siteId, keywords, initialChecks]);
+
   const handleAdd = async (values: AddKeywordFormValues[]) => {
     const added: string[] = [];
+    const fresh: Record<string, InitialCheck> = {};
     for (const value of values) {
       const result = await dispatch(addKeyword({ siteId, ...value }));
       if (!addKeyword.fulfilled.match(result)) break;
       added.push(value.phrase);
+      const { id, updatedAt } = result.payload.keyword;
+      fresh[id] = { since: Date.parse(updatedAt), until: Date.now() + CHECK_POLL_MAX_MS };
     }
     if (added.length > 0) {
+      toast.success(
+        t(added.length === 1 ? 'keywordsAddedOne' : 'keywordsAdded', { count: added.length }),
+      );
       await dispatch(
         loadKeywords({
           siteId,
@@ -209,6 +263,9 @@ export const KeywordsPanel = ({ siteId }: Props) => {
           ...(requestedEngine ? { engine: requestedEngine } : {}),
         }),
       );
+      // Registered after the reload so the new rows already exist in the list
+      // when the poll effect first looks for them.
+      setInitialChecks((current) => ({ ...current, ...fresh }));
     }
     return added;
   };
@@ -256,6 +313,20 @@ export const KeywordsPanel = ({ siteId }: Props) => {
     ? keywords.find((k) => k.id === selectedId)
     : undefined;
 
+  // Explain the missing trend from the keyword's real state (first check still
+  // running, never checked, failed, or one snapshot under this site's cadence)
+  // rather than promising a fixed schedule.
+  const trendHintKey = (keyword: Keyword): string => {
+    const initial = initialChecks[keyword.id];
+    if (initial !== undefined && !rankCheckReachedTerminal(keyword, initial.since)) {
+      return 'trendChecking';
+    }
+    if (history.length === 0 && keyword.lastCheckedAt === null) {
+      return keyword.lastFailedCheckAt === null ? 'trendNoChecks' : 'trendCheckFailed';
+    }
+    return cadence === 'daily' ? 'trendOneCheckDaily' : 'trendOneCheckWeekly';
+  };
+
   const renderTrend = () => {
     if (!selectedKeyword) {
       if (keywords.length === 0) return null;
@@ -292,7 +363,7 @@ export const KeywordsPanel = ({ siteId }: Props) => {
     if (history.length < 2) {
       return (
         <p className="text-muted-foreground text-sm" data-testid="rank-trend-empty">
-          {t('trendNotEnoughData')}
+          {t(trendHintKey(selectedKeyword))}
         </p>
       );
     }
@@ -427,6 +498,7 @@ export const KeywordsPanel = ({ siteId }: Props) => {
           checkingSince={checkingSince}
           checkingKeywordId={checkingTargetId}
           requestingKeywordId={requestingKeywordId}
+          initialChecks={initialChecks}
         />
       )}
       {renderTrend()}

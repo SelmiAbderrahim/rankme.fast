@@ -374,6 +374,140 @@ describe('KeywordsPanel — Check now (on-demand rank check)', () => {
     expect(screen.queryByText('Checking…')).toBeNull();
   });
 
+  describe('initial check after adding a keyword', () => {
+    const addedStamp = '2026-07-13T00:00:00.000Z';
+    const pendingRow = () =>
+      keyword('k3', {
+        phrase: 'new keyword',
+        updatedAt: addedStamp,
+        lastCheckedAt: null,
+        latestPosition: null,
+        delta: null,
+      });
+    const listWith = (k3: Keyword) =>
+      listPage({ keywords: [keyword('k1'), keyword('k2'), k3] });
+
+    const addNewKeyword = async () => {
+      mocked.createKeywordRequest.mockResolvedValue({
+        keyword: pendingRow(),
+        message: 'Keyword added.',
+      });
+      renderPage();
+      await vi.advanceTimersByTimeAsync(0);
+      fireEvent.change(screen.getByLabelText('Keywords'), { target: { value: 'new keyword' } });
+      mocked.fetchKeywordsRequest.mockResolvedValue(listWith(pendingRow()));
+      fireEvent.click(screen.getByRole('button', { name: 'Track keywords' }));
+      await vi.advanceTimersByTimeAsync(0);
+    };
+
+    it('toasts, shows "Checking…" and polls until the first position lands', async () => {
+      vi.useFakeTimers();
+      vi.setSystemTime(new Date(addedStamp));
+      await addNewKeyword();
+
+      expect(toast.success).toHaveBeenCalledWith('Keyword added. Checking its position now.');
+      expect(screen.getAllByTestId('keyword-checking-pos-k3').length).toBeGreaterThan(0);
+      expect(screen.queryByTestId('keyword-unavailable-k3')).toBeNull();
+
+      const before = mocked.fetchKeywordsRequest.mock.calls.length;
+      mocked.fetchKeywordsRequest.mockResolvedValue(
+        listWith(
+          keyword('k3', {
+            phrase: 'new keyword',
+            updatedAt: addedStamp,
+            lastCheckedAt: '2026-07-13T00:00:05.000Z',
+            latestPosition: 7,
+          }),
+        ),
+      );
+      await vi.advanceTimersByTimeAsync(3_000);
+      expect(mocked.fetchKeywordsRequest.mock.calls.length).toBe(before + 1);
+      expect(screen.queryByTestId('keyword-checking-pos-k3')).toBeNull();
+      expect(screen.getAllByText('7').length).toBeGreaterThan(0);
+
+      // Terminal row → polling has stopped.
+      await vi.advanceTimersByTimeAsync(9_000);
+      expect(mocked.fetchKeywordsRequest.mock.calls.length).toBe(before + 1);
+    });
+
+    it('pluralizes the toast for a batch', async () => {
+      vi.useFakeTimers();
+      vi.setSystemTime(new Date(addedStamp));
+      renderPage();
+      await vi.advanceTimersByTimeAsync(0);
+      fireEvent.change(screen.getByLabelText('Keywords'), {
+        target: { value: 'one\ntwo' },
+      });
+      fireEvent.click(screen.getByRole('button', { name: 'Track keywords' }));
+      await vi.advanceTimersByTimeAsync(0);
+      expect(toast.success).toHaveBeenCalledWith('2 keywords added. Checking their positions now.');
+    });
+
+    it('shows a "checking" hint instead of a fixed schedule while the first check runs', async () => {
+      vi.useFakeTimers();
+      vi.setSystemTime(new Date(addedStamp));
+      mocked.fetchKeywordHistoryRequest.mockResolvedValue(historyPage(0));
+      await addNewKeyword();
+      fireEvent.click(screen.getByTestId('keyword-select-k3'));
+      await vi.advanceTimersByTimeAsync(0);
+      const hint = screen.getByTestId('rank-trend-empty');
+      expect(hint).toHaveTextContent(/Checking this keyword now/);
+      expect(hint).not.toHaveTextContent(/Monday/);
+    });
+
+    it('gives up after the deadline and falls back to Unavailable', async () => {
+      vi.useFakeTimers();
+      vi.setSystemTime(new Date(addedStamp));
+      await addNewKeyword();
+      expect(screen.getAllByTestId('keyword-checking-pos-k3').length).toBeGreaterThan(0);
+
+      await vi.advanceTimersByTimeAsync(60_000);
+      expect(screen.queryByTestId('keyword-checking-pos-k3')).toBeNull();
+      expect(screen.getAllByTestId('keyword-unavailable-k3').length).toBeGreaterThan(0);
+
+      const settled = mocked.fetchKeywordsRequest.mock.calls.length;
+      await vi.advanceTimersByTimeAsync(12_000);
+      expect(mocked.fetchKeywordsRequest.mock.calls.length).toBe(settled);
+    });
+
+    it('keeps the engine filter on the first-check poll', async () => {
+      vi.useFakeTimers();
+      vi.setSystemTime(new Date(addedStamp));
+      const amazonPending = keyword('a2', {
+        engine: 'amazon',
+        engineTarget: 'B0TRACKED2',
+        updatedAt: addedStamp,
+        lastCheckedAt: null,
+        latestPosition: null,
+        delta: null,
+      });
+      mocked.createKeywordRequest.mockResolvedValue({ keyword: amazonPending, message: 'Added.' });
+      mocked.fetchKeywordsRequest.mockResolvedValue(listPage({ keywords: [amazonPending] }));
+      renderPage({ initialEntry: '/site?engine=amazon' });
+      await vi.advanceTimersByTimeAsync(0);
+      fireEvent.change(screen.getByLabelText('Keywords'), { target: { value: 'new phrase' } });
+      fireEvent.click(screen.getByRole('button', { name: 'Track keywords' }));
+      await vi.advanceTimersByTimeAsync(0);
+      await vi.advanceTimersByTimeAsync(3_000);
+      expect(mocked.fetchKeywordsRequest).toHaveBeenLastCalledWith(
+        'site-1',
+        undefined,
+        expect.objectContaining({ engine: 'amazon', signal: expect.any(AbortSignal) }),
+      );
+    });
+
+    it('stops tracking a row that disappears from the list', async () => {
+      vi.useFakeTimers();
+      vi.setSystemTime(new Date(addedStamp));
+      await addNewKeyword();
+      mocked.fetchKeywordsRequest.mockResolvedValue(listPage());
+      await vi.advanceTimersByTimeAsync(3_000);
+      const settled = mocked.fetchKeywordsRequest.mock.calls.length;
+      await vi.advanceTimersByTimeAsync(9_000);
+      expect(mocked.fetchKeywordsRequest.mock.calls.length).toBe(settled);
+    });
+  });
+
   it('keeps the selected engine on every post-check poll request', async () => {
     vi.useFakeTimers();
     vi.setSystemTime(new Date('2026-07-13T00:00:00.000Z'));
@@ -1084,7 +1218,53 @@ describe('trend chart — <2 datapoints, selection, chart render + a11y table', 
     const user = userEvent.setup();
     await user.click(screen.getByTestId('keyword-select-k1'));
     expect(await screen.findByTestId('rank-trend-empty')).toHaveTextContent(
-      /First check runs Monday/,
+      /One check so far — the trend appears after the next weekly check/,
+    );
+  });
+
+  it('names the daily schedule once a daily site has one check', async () => {
+    mocked.fetchKeywordsRequest.mockResolvedValue(listPage({ cadence: 'daily' }));
+    mocked.fetchKeywordHistoryRequest.mockResolvedValueOnce(historyPage(1));
+    renderPage();
+    await userEvent.setup().click(await screen.findByTestId('keyword-select-k1'));
+    expect(await screen.findByTestId('rank-trend-empty')).toHaveTextContent(
+      /next daily check/,
+    );
+  });
+
+  it('says no check has run when the keyword was never checked', async () => {
+    mocked.fetchKeywordsRequest.mockResolvedValue(
+      listPage({
+        keywords: [keyword('k1', { lastCheckedAt: null, latestPosition: null, delta: null })],
+      }),
+    );
+    mocked.fetchKeywordHistoryRequest.mockResolvedValueOnce(historyPage(0));
+    renderPage();
+    await userEvent.setup().click(await screen.findByTestId('keyword-select-k1'));
+    const hint = await screen.findByTestId('rank-trend-empty');
+    expect(hint).toHaveTextContent(/No checks yet/);
+    expect(hint).not.toHaveTextContent(/Monday/);
+  });
+
+  it('says the last check failed when only a failed attempt is recorded', async () => {
+    mocked.fetchKeywordsRequest.mockResolvedValue(
+      listPage({
+        keywords: [
+          keyword('k1', {
+            lastCheckedAt: null,
+            latestPosition: null,
+            delta: null,
+            lastFailedCheckAt: '2026-07-03T00:00:00.000Z',
+            lastFailedReason: 'vendor_error',
+          }),
+        ],
+      }),
+    );
+    mocked.fetchKeywordHistoryRequest.mockResolvedValueOnce(historyPage(0));
+    renderPage();
+    await userEvent.setup().click(await screen.findByTestId('keyword-select-k1'));
+    expect(await screen.findByTestId('rank-trend-empty')).toHaveTextContent(
+      /last check failed/,
     );
   });
 

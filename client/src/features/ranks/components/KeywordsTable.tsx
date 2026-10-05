@@ -46,6 +46,12 @@ export interface KeywordsTableProps {
   checkingKeywordId?: string | null;
   /** Row whose POST request has not returned yet. */
   requestingKeywordId?: string | null;
+  /**
+   * Keywords just added, keyed by id, with the stamp their automatic first
+   * check must reach. Such a row renders "Checking…" until its snapshot (or a
+   * recorded failure) lands.
+   */
+  initialChecks?: Record<string, { since: number }>;
 }
 
 const dateTimeFormatter = (locale: string) =>
@@ -65,6 +71,7 @@ export const KeywordsTable = ({
   checkingSince = null,
   checkingKeywordId = null,
   requestingKeywordId = null,
+  initialChecks = {},
 }: KeywordsTableProps) => {
   const { t, i18n } = useTranslation('ranks');
   const [pendingRemove, setPendingRemove] = useState<Keyword | null>(null);
@@ -72,10 +79,15 @@ export const KeywordsTable = ({
 
   // A row is "checking" while a Check-now poll is in flight and this keyword's
   // snapshot has not yet been refreshed past the trigger stamp.
-  const isChecking = (k: Keyword): boolean =>
-    checkingSince !== null &&
-    (checkingKeywordId === null || checkingKeywordId === k.id) &&
-    !rankCheckReachedTerminal(k, checkingSince);
+  const isChecking = (k: Keyword): boolean => {
+    const initial = initialChecks[k.id];
+    if (initial !== undefined && !rankCheckReachedTerminal(k, initial.since)) return true;
+    return (
+      checkingSince !== null &&
+      (checkingKeywordId === null || checkingKeywordId === k.id) &&
+      !rankCheckReachedTerminal(k, checkingSince)
+    );
+  };
 
   /**
    * Engine provenance on every row. Google rows
