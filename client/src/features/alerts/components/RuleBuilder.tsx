@@ -4,6 +4,7 @@ import { Button } from '@shared/ui/button';
 import { Input } from '@shared/ui/input';
 import { Label } from '@shared/ui/label';
 import { Checkbox } from '@shared/ui/checkbox';
+import { siteLabel } from '@shared/lib/siteLabel';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@shared/ui/select';
 import type { CreateRuleInput } from '../api';
 import {
@@ -78,17 +79,29 @@ export const RuleBuilder = ({
       <div className="flex flex-col gap-2">
         <Label htmlFor="alerts-site">{t('builder.site')}</Label>
         <Select value={site} onValueChange={setSelectedSite}>
-          <SelectTrigger id="alerts-site">
+          <SelectTrigger
+            id="alerts-site"
+            aria-describedby={site === '' ? 'alerts-site-required' : undefined}
+          >
             <SelectValue placeholder={t('builder.sitePlaceholder')} />
           </SelectTrigger>
           <SelectContent>
             {sites.map((option) => (
               <SelectItem key={option.id} value={option.id}>
-                {option.displayName}
+                {siteLabel(option)}
               </SelectItem>
             ))}
           </SelectContent>
         </Select>
+        {site === '' ? (
+          <p
+            id="alerts-site-required"
+            className="text-sm text-muted-foreground"
+            data-testid="alerts-site-required"
+          >
+            {t('builder.siteRequired')}
+          </p>
+        ) : null}
       </div>
 
       <div className="flex flex-col gap-2">

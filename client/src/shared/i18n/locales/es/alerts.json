@@ -42,6 +42,7 @@
     "description": "Elige qué vigilar y adónde enviarlo.",
     "site": "Sitio",
     "sitePlaceholder": "Elige un sitio",
+    "siteRequired": "Elige un sitio para crear una regla.",
     "type": "Tipo de aviso",
     "threshold": "Umbral de posición",
     "thresholdHint": "Avisamos cuando la posición confirmada llega a este puesto o peor.",

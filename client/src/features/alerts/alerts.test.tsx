@@ -556,6 +556,37 @@ describe('AlertsPage — rules tab', () => {
 });
 
 describe('RuleBuilder', () => {
+  it('labels a site without a display name by its domain and selects it', async () => {
+    const onSubmit = vi.fn();
+    render(
+      <I18nextProvider i18n={i18n}>
+        <RuleBuilder
+          sites={[{ id: SITE_ID, domain: 'example.test', displayName: '' }]}
+          siteId={null}
+          currentUserId="u1"
+          paidChannelsLocked={false}
+          capReached={false}
+          submitting={false}
+          onSubmit={onSubmit}
+        />
+      </I18nextProvider>,
+    );
+
+    expect(screen.getByRole('button', { name: 'Create rule' })).toBeDisabled();
+    expect(screen.getByTestId('alerts-site-required')).toHaveTextContent(
+      'Choose a site to create a rule.',
+    );
+
+    await userEvent.click(screen.getByLabelText('Site'));
+    await userEvent.click(screen.getByRole('option', { name: 'example.test' }));
+
+    expect(screen.queryByTestId('alerts-site-required')).not.toBeInTheDocument();
+    await userEvent.click(screen.getByRole('button', { name: 'Create rule' }));
+    expect(onSubmit).toHaveBeenCalledWith(
+      expect.objectContaining({ siteId: SITE_ID, type: 'rank_drop' }),
+    );
+  });
+
   it('edits every field and submits a non-rank rule with paid channels', async () => {
     const onSubmit = vi.fn();
     render(

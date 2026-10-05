@@ -1,6 +1,7 @@
 import { useTranslation } from 'react-i18next';
 import type { Site } from '@features/sites';
 import { Checkbox } from '@shared/ui/checkbox';
+import { siteLabel } from '@shared/lib/siteLabel';
 import {
   Field,
   FieldContent,
@@ -47,7 +48,7 @@ export function McpScopeFields({
   const siteOptions: SiteOption[] = [
     ...sites.map((site) => ({
       id: site.id,
-      label: site.displayName || site.domain,
+      label: siteLabel(site),
       description: site.url,
       missing: false,
     })),

@@ -42,6 +42,7 @@
     "description": "选择要监控的内容与发送去向。",
     "site": "站点",
     "sitePlaceholder": "选择站点",
+    "siteRequired": "请选择一个网站以创建规则。",
     "type": "提醒类型",
     "threshold": "位次阈值",
     "thresholdHint": "当确认后的排名跌至该位次或更低时提醒你。",

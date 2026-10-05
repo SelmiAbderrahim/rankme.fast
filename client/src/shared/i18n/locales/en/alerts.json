@@ -42,6 +42,7 @@
     "description": "Pick what to watch and where to send it.",
     "site": "Site",
     "sitePlaceholder": "Choose a site",
+    "siteRequired": "Choose a site to create a rule.",
     "type": "Alert type",
     "threshold": "Position threshold",
     "thresholdHint": "We alert when the confirmed position is this number or worse.",
