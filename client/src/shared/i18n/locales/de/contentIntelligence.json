@@ -75,7 +75,7 @@
     "keyword": "Ziel-Keyword",
     "keywordHint": "Die Suchanfrage, für die die Seite ranken soll.",
     "locale": "Ausgabesprache",
-    "detectedLocale": "Aus deiner Kontosprache erkannt: {{locale}}",
+    "detectedLocale": "Aus deiner Kontosprache erkannt: {{locale}}.",
     "localeOverrideHint": "Du kannst sie für diese Ausgabe ändern.",
     "consent": "Ich verstehe, dass begrenzte, bereinigte Seiteninhalte an konfigurierte KI-Anbieter gesendet werden können, um Brief und Entwurf zu generieren.",
     "consentRequired": "Zustimmung ist erforderlich.",
@@ -87,7 +87,7 @@
       "scorecard": "Eine Scorecard",
       "brief": "Ein Brief",
       "draft": "Ein erster Entwurf",
-      "providerCall": "Dieser Lauf nutzt die vom Betreiber eingerichteten Analyseanbieter."
+      "providerCall": "Dieser Lauf nutzt die eingerichteten Analyseanbieter."
     },
     "previewLoading": "Aktuelles Kontingent wird geprüft…",
     "previewError": "Das aktuelle Kontingent konnte nicht geprüft werden.",

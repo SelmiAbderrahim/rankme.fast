@@ -75,7 +75,7 @@
     "keyword": "Mot-clé cible",
     "keywordHint": "La requête pour laquelle la page doit se positionner.",
     "locale": "Langue de sortie",
-    "detectedLocale": "Détectée depuis votre compte : {{locale}}",
+    "detectedLocale": "Détectée depuis votre compte : {{locale}}.",
     "localeOverrideHint": "Vous pouvez la modifier pour ce résultat.",
     "consent": "Je comprends que du contenu limité et assaini de la page peut être envoyé aux fournisseurs d'IA configurés pour générer le brief et le brouillon.",
     "consentRequired": "Le consentement est requis.",
@@ -87,7 +87,7 @@
       "scorecard": "Une fiche de score",
       "brief": "Un brief",
       "draft": "Un premier brouillon",
-      "providerCall": "Cette exécution utilise les fournisseurs d’analyse configurés par l’opérateur."
+      "providerCall": "Cette exécution utilise les fournisseurs d’analyse configurés."
     },
     "previewLoading": "Vérification de votre quota actuel…",
     "previewError": "Impossible de vérifier le quota actuel.",

@@ -25,7 +25,7 @@
   },
   "preview": {
     "title": "用量预览",
-    "operatorNotice": "此请求使用运营方配置的流量数据提供商。",
+    "operatorNotice": "此请求使用已配置的流量数据提供商。",
     "domain": "域名",
     "impact": "对额度的影响",
     "notMetered": "此服务器不计量",

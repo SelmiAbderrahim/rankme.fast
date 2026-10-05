@@ -82,7 +82,7 @@
       "no_transport": "E-Mail ist in dieser Installation nicht eingerichtet.",
       "rule_disabled": "Die Regel war beim Auslösen ausgeschaltet.",
       "retries_exhausted": "Wir haben nach drei Fehlversuchen gestoppt.",
-      "flag_disabled": "Warnungen wurden vom Betreiber abgeschaltet."
+      "flag_disabled": "Warnungen wurden von einem Administrator abgeschaltet."
     },
     "error": {
       "transport_unavailable": "Der Kanal war nicht erreichbar.",

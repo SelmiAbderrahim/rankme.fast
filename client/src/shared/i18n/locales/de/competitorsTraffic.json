@@ -25,7 +25,7 @@
   },
   "preview": {
     "title": "Verbrauchsvorschau",
-    "operatorNotice": "Diese Anfrage nutzt den vom Betreiber eingerichteten Anbieter für Traffic-Daten.",
+    "operatorNotice": "Diese Anfrage nutzt den eingerichteten Anbieter für Traffic-Daten.",
     "domain": "Domain",
     "impact": "Auswirkung auf das Kontingent",
     "notMetered": "Auf diesem Server nicht gemessen",

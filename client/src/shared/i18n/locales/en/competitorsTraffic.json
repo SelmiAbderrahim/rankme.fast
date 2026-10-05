@@ -34,7 +34,7 @@
   },
   "preview": {
     "title": "Spend preview",
-    "operatorNotice": "This request uses the operator's configured traffic-data provider.",
+    "operatorNotice": "This request uses the configured traffic-data provider.",
     "domain": "Domain",
     "impact": "Allowance impact",
     "notMetered": "Not metered on this server",

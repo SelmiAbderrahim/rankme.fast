@@ -75,7 +75,7 @@
     "keyword": "Palabra clave objetivo",
     "keywordHint": "La consulta que la página debería posicionar.",
     "locale": "Idioma de salida",
-    "detectedLocale": "Detectado del idioma de tu cuenta: {{locale}}",
+    "detectedLocale": "Detectado del idioma de tu cuenta: {{locale}}.",
     "localeOverrideHint": "Puedes cambiarlo para este resultado.",
     "consent": "Entiendo que se puede enviar contenido limitado y saneado de la página a los proveedores de IA configurados para generar el brief y el borrador.",
     "consentRequired": "Se requiere consentimiento.",
@@ -87,7 +87,7 @@
       "scorecard": "Una tarjeta de puntuación",
       "brief": "Un brief",
       "draft": "Un primer borrador",
-      "providerCall": "Esta ejecución usa los proveedores de análisis configurados por el operador."
+      "providerCall": "Esta ejecución usa los proveedores de análisis configurados."
     },
     "previewLoading": "Comprobando tu cupo actual…",
     "previewError": "No se pudo comprobar el cupo actual.",

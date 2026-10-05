@@ -248,7 +248,7 @@ describe('SpendPreviewCard', () => {
 
     renderCard({}, false);
     expect(screen.getByTestId('traffic-preview')).toHaveTextContent(
-      "This request uses the operator's configured traffic-data provider.",
+      "This request uses the configured traffic-data provider.",
     );
   });
 

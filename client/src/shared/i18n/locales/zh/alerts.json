@@ -82,7 +82,7 @@
       "no_transport": "本部署未配置邮件服务。",
       "rule_disabled": "触发时该规则处于停用状态。",
       "retries_exhausted": "三次失败后已停止重试。",
-      "flag_disabled": "运营方已关闭提醒功能。"
+      "flag_disabled": "管理员已关闭提醒功能。"
     },
     "error": {
       "transport_unavailable": "无法连接该渠道。",

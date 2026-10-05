@@ -75,7 +75,7 @@
     "keyword": "目标关键词",
     "keywordHint": "页面应该获得排名的用户查询。",
     "locale": "输出语言",
-    "detectedLocale": "从你的账户语言检测:{{locale}}",
+    "detectedLocale": "从你的账户语言检测:{{locale}}。",
     "localeOverrideHint": "你可以为本次输出更改语言。",
     "consent": "我了解可将有限、经清理的页面内容发送给已配置的 AI 提供方以生成简报和初稿。",
     "consentRequired": "需要同意。",
@@ -87,7 +87,7 @@
       "scorecard": "一张评分卡",
       "brief": "一份简报",
       "draft": "一份初稿",
-      "providerCall": "此次运行使用运营方配置的分析提供商。"
+      "providerCall": "此次运行使用已配置的分析提供商。"
     },
     "previewLoading": "正在检查当前额度…",
     "previewError": "无法检查当前额度。",

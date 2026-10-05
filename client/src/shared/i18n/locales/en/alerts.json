@@ -82,7 +82,7 @@
       "no_transport": "Email is not configured on this deployment.",
       "rule_disabled": "The rule was off when the alert fired.",
       "retries_exhausted": "We stopped after three failed tries.",
-      "flag_disabled": "Alerts were switched off by the operator."
+      "flag_disabled": "Alerts were switched off by an administrator."
     },
     "error": {
       "transport_unavailable": "The channel could not be reached.",

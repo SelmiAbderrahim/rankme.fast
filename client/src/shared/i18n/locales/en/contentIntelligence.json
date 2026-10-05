@@ -75,7 +75,7 @@
     "keyword": "Target keyword",
     "keywordHint": "The user query the page should rank for.",
     "locale": "Output locale",
-    "detectedLocale": "Detected from your account language: {{locale}}",
+    "detectedLocale": "Detected from your account language: {{locale}}.",
     "localeOverrideHint": "You can override it for this output.",
     "consent": "I understand bounded, sanitized page content may be sent to configured AI providers to generate the brief and first draft.",
     "consentRequired": "Consent is required.",
@@ -90,7 +90,7 @@
       "scorecard": "One scorecard",
       "brief": "One brief",
       "draft": "One first draft",
-      "providerCall": "This run uses the operator's configured analysis providers."
+      "providerCall": "This run uses the configured analysis providers."
     },
     "previewLoading": "Checking your current allowance…",
     "previewError": "The current allowance could not be checked.",

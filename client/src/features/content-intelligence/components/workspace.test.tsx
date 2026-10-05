@@ -366,6 +366,14 @@ describe('NewAnalysisForm', () => {
     expect(hooks.dispatch).toHaveBeenCalledWith(updateFormDraft({ locale: 'fr' }));
   });
 
+  it('separates the detected-language sentence from the override hint', () => {
+    renderInRouter(<NewAnalysisForm siteId="s1" />);
+    expect(screen.getByTestId('content-form-locale-hint').textContent).toMatch(
+      /^Detected from your account language: \S+\. You can override it for this output\.$/,
+    );
+    expect(screen.getByTestId('content-form-preview')).not.toHaveTextContent(/operator/i);
+  });
+
   it('renders reviewed competitor sources safely and carries reviewed matches into submission', async () => {
     const reviewedPageMatches = [{
       landscapeReportId: '0123456789abcdef01234567',
