@@ -5,7 +5,6 @@ import {
   createAssistantConversation,
   deleteAssistantConversation,
   getAssistantConversation,
-  getAssistantCsrfToken,
   listAssistantConversations,
 } from './api';
 
@@ -94,24 +93,6 @@ describe('assistant API', () => {
       '/chat/conversations/id%2Ftwo',
       { method: 'DELETE', localeMode: 'artifact', signal: controller.signal },
     );
-  });
-
-  it('gets the CSRF token with and without a caller signal', async () => {
-    mockedApiClient.mockResolvedValue({ csrfToken: 'csrf-1' } as never);
-    const controller = new AbortController();
-
-    await expect(getAssistantCsrfToken()).resolves.toBe('csrf-1');
-    await expect(
-      getAssistantCsrfToken({ signal: controller.signal }),
-    ).resolves.toBe('csrf-1');
-
-    expect(mockedApiClient).toHaveBeenNthCalledWith(1, '/security/csrf-token', {
-      method: 'GET',
-    });
-    expect(mockedApiClient).toHaveBeenNthCalledWith(2, '/security/csrf-token', {
-      method: 'GET',
-      signal: controller.signal,
-    });
   });
 
   it('builds an env-derived, encoded stream URL', () => {

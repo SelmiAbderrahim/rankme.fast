@@ -4,6 +4,11 @@ import userEvent from '@testing-library/user-event';
 import { Provider } from 'react-redux';
 import { MemoryRouter } from 'react-router-dom';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
+import {
+  ApiError,
+  __resetCsrfTokenCacheForTests,
+  __seedCsrfTokenForTests,
+} from '@shared/api/client';
 import { changeLanguage, initI18n } from '@shared/i18n';
 import {
   sitesReducer,
@@ -24,7 +29,6 @@ const api = vi.hoisted(() => ({
   createAssistantConversation: vi.fn(),
   deleteAssistantConversation: vi.fn(),
   getAssistantConversation: vi.fn(),
-  getAssistantCsrfToken: vi.fn(),
   listAssistantConversations: vi.fn(),
 }));
 
@@ -175,7 +179,8 @@ beforeEach(async () => {
   api.assistantMessageStreamUrl.mockImplementation(
     (id: string) => `/api/chat/conversations/${id}/messages`,
   );
-  api.getAssistantCsrfToken.mockResolvedValue('csrf');
+  __resetCsrfTokenCacheForTests();
+  __seedCsrfTokenForTests('csrf');
   initI18n({ initialLocale: 'en' });
   await changeLanguage('en');
 });
@@ -404,6 +409,61 @@ describe('AssistantPage', () => {
     expect(await screen.findByRole('alert')).toBeInTheDocument();
     await userEvent.click(screen.getByRole('button', { name: 'Try again' }));
     expect(await screen.findByText('Created after retry')).toBeInTheDocument();
+  });
+
+  const csrfInvalidBody = {
+    error: {
+      message: 'CSRF token missing or invalid.',
+      code: 'CSRF_INVALID',
+      messageKey: 'security.error.csrfInvalid',
+    },
+  };
+
+  it('keeps the draft and shows the server error when creating the conversation is refused', async () => {
+    api.createAssistantConversation.mockRejectedValueOnce(
+      new ApiError('forbidden', 403, csrfInvalidBody),
+    );
+    const fetchSpy = vi.spyOn(globalThis, 'fetch');
+    renderPage();
+    await userEvent.type(screen.getByRole('textbox'), 'Summarize my latest audit');
+    await userEvent.click(screen.getByRole('button', { name: 'Send message' }));
+
+    const alert = await screen.findByRole('alert');
+    expect(alert).toHaveTextContent('CSRF token missing or invalid.');
+    expect(screen.getByRole('textbox')).toHaveValue('Summarize my latest audit');
+    expect(fetchSpy).not.toHaveBeenCalled();
+  });
+
+  it('keeps the draft and shows the server error when the message stays CSRF-rejected after one retry', async () => {
+    const csrfRejection = () =>
+      new Response(JSON.stringify(csrfInvalidBody), {
+        status: 403,
+        headers: { 'Content-Type': 'application/json' },
+      });
+    const fetchSpy = vi
+      .spyOn(globalThis, 'fetch')
+      .mockResolvedValueOnce(csrfRejection())
+      .mockResolvedValueOnce(
+        new Response(JSON.stringify({ csrfToken: 'fresh' }), {
+          status: 200,
+          headers: { 'Content-Type': 'application/json' },
+        }),
+      )
+      .mockResolvedValueOnce(csrfRejection());
+    renderPage(
+      assistantState({
+        conversations: [conversation()],
+        activeConversationId: 'c1',
+        messagesByConversation: { c1: [] },
+        detailStatus: { c1: 'succeeded' },
+      }),
+    );
+    await userEvent.type(screen.getByRole('textbox'), 'Keep this text');
+    await userEvent.click(screen.getByRole('button', { name: 'Send message' }));
+
+    expect(await screen.findByRole('alert')).toHaveTextContent('CSRF token missing or invalid.');
+    expect(screen.getByRole('textbox')).toHaveValue('Keep this text');
+    expect(fetchSpy).toHaveBeenCalledTimes(3);
   });
 
   it('leaves a blank failed draft idle when retry has no message to send', async () => {

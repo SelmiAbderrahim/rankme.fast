@@ -1,6 +1,6 @@
 import { configureStore } from '@reduxjs/toolkit';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
-import { ApiError } from '@shared/api/client';
+import { ApiError, __resetCsrfTokenCacheForTests, __seedCsrfTokenForTests } from '@shared/api/client';
 import { changeLanguage, initI18n } from '@shared/i18n';
 import type { ChatConversation, ChatMessage } from '../types';
 import { assistantReducer } from './slice';
@@ -23,7 +23,6 @@ const api = vi.hoisted(() => ({
   createAssistantConversation: vi.fn(),
   deleteAssistantConversation: vi.fn(),
   getAssistantConversation: vi.fn(),
-  getAssistantCsrfToken: vi.fn(),
   listAssistantConversations: vi.fn(),
 }));
 
@@ -112,7 +111,8 @@ beforeEach(async () => {
   api.assistantMessageStreamPath.mockImplementation(
     (id: string) => `/chat/conversations/${encodeURIComponent(id)}/messages`,
   );
-  api.getAssistantCsrfToken.mockResolvedValue('csrf-token');
+  __resetCsrfTokenCacheForTests();
+  __seedCsrfTokenForTests('csrf-token');
   initI18n({ initialLocale: 'en' });
   await changeLanguage('en');
   expect(stopAssistantStream()).toBe(false);
@@ -199,9 +199,6 @@ describe('assistant streaming thunk', () => {
       accepted: true,
       finishReason: 'stop',
       tokens: { input: 10, output: 4 },
-    });
-    expect(api.getAssistantCsrfToken).toHaveBeenCalledWith({
-      signal: expect.any(AbortSignal),
     });
     const fetchCall = fetchSpy.mock.calls[0]!;
     expect(fetchCall[0]).toBe('/api/chat/conversations/c1/messages');
@@ -493,7 +490,7 @@ describe('assistant streaming thunk', () => {
     expect(third.payload).toMatchObject({ kind: 'rate_limited', status: 429 });
   });
 
-  it('maps a raw network failure and a CSRF refusal before the stream opens', async () => {
+  it('maps a raw network failure before the stream opens', async () => {
     vi.spyOn(globalThis, 'fetch').mockRejectedValueOnce(new TypeError('offline'));
     const networkStore = makeStore();
     const network = await networkStore.dispatch(
@@ -501,24 +498,99 @@ describe('assistant streaming thunk', () => {
     );
     expect(network.payload).toMatchObject({ kind: 'generic', status: 0 });
     expect((network.payload as { message: string }).message).toContain('Network request');
-
-    api.getAssistantCsrfToken.mockRejectedValueOnce(new ApiError('csrf', 403, null));
-    const csrfStore = makeStore();
-    const csrf = await csrfStore.dispatch(
-      sendAssistantMessage({ conversationId: 'c1', text: 'Hello' }),
-    );
-    expect(csrf.payload).toMatchObject({ kind: 'forbidden', status: 403 });
   });
 
-  it('normalizes a raw TypeError raised before the stream request opens', async () => {
-    api.getAssistantCsrfToken.mockRejectedValueOnce(new TypeError('offline'));
+  describe('CSRF rejection', () => {
+    const csrfInvalid = (): Response =>
+      new Response(
+        JSON.stringify({
+          error: {
+            message: 'CSRF token missing or invalid.',
+            code: 'CSRF_INVALID',
+            messageKey: 'security.error.csrfInvalid',
+          },
+        }),
+        { status: 403, headers: { 'Content-Type': 'application/json' } },
+      );
+    const tokenResponse = (csrfToken: string): Response =>
+      new Response(JSON.stringify({ csrfToken }), {
+        status: 200,
+        headers: { 'Content-Type': 'application/json' },
+      });
 
-    const action = await makeStore().dispatch(
-      sendAssistantMessage({ conversationId: 'c1', text: 'Hello' }),
-    );
+    it('refreshes the token and re-sends the message once on CSRF_INVALID', async () => {
+      const fetchSpy = vi
+        .spyOn(globalThis, 'fetch')
+        .mockResolvedValueOnce(csrfInvalid())
+        .mockResolvedValueOnce(tokenResponse('fresh-token'))
+        .mockResolvedValueOnce(streamResponse(successfulFrames()));
+      const store = makeStore();
 
-    expect(action.payload).toMatchObject({ kind: 'generic', status: 0 });
-    expect((action.payload as { message: string }).message).toContain('Network request');
+      const action = await store.dispatch(
+        sendAssistantMessage({ conversationId: 'c1', text: 'Hello' }),
+      );
+
+      expect(action.meta.requestStatus).toBe('fulfilled');
+      expect(action.payload).toMatchObject({ outcome: 'complete', accepted: true });
+      expect(fetchSpy).toHaveBeenCalledTimes(3);
+      expect(String(fetchSpy.mock.calls[1]![0])).toContain('/security/csrf-token');
+      const first = fetchSpy.mock.calls[0]![1]?.headers as Headers;
+      const retry = fetchSpy.mock.calls[2]![1]?.headers as Headers;
+      expect(first.get('x-csrf-token')).toBe('csrf-token');
+      expect(retry.get('x-csrf-token')).toBe('fresh-token');
+      expect(fetchSpy.mock.calls[2]![1]?.body).toBe(JSON.stringify({ text: 'Hello' }));
+      expect(store.getState().assistant.stream.error).toBeNull();
+    });
+
+    it('surfaces the server message after a second CSRF_INVALID instead of looping', async () => {
+      const fetchSpy = vi
+        .spyOn(globalThis, 'fetch')
+        .mockResolvedValueOnce(csrfInvalid())
+        .mockResolvedValueOnce(tokenResponse('fresh-token'))
+        .mockResolvedValueOnce(csrfInvalid());
+      const store = makeStore();
+
+      const action = await store.dispatch(
+        sendAssistantMessage({ conversationId: 'c1', text: 'Hello' }),
+      );
+
+      expect(action.meta.requestStatus).toBe('rejected');
+      expect(action.payload).toMatchObject({
+        kind: 'forbidden',
+        status: 403,
+        message: 'CSRF token missing or invalid.',
+      });
+      expect(fetchSpy).toHaveBeenCalledTimes(3);
+      expect(store.getState().assistant.stream.error).toMatchObject({ status: 403 });
+    });
+
+    it('does not retry a 403 that is not a CSRF rejection', async () => {
+      const fetchSpy = vi.spyOn(globalThis, 'fetch').mockResolvedValueOnce(
+        new Response(JSON.stringify({ error: { code: 'FORBIDDEN', message: 'No.' } }), {
+          status: 403,
+          headers: { 'Content-Type': 'application/json' },
+        }),
+      );
+
+      const action = await makeStore().dispatch(
+        sendAssistantMessage({ conversationId: 'c1', text: 'Hello' }),
+      );
+
+      expect(action.payload).toMatchObject({ kind: 'forbidden', message: 'No.' });
+      expect(fetchSpy).toHaveBeenCalledTimes(1);
+    });
+
+    it('maps a failed token refresh to a visible network error', async () => {
+      vi.spyOn(globalThis, 'fetch')
+        .mockResolvedValueOnce(csrfInvalid())
+        .mockRejectedValueOnce(new TypeError('offline'));
+
+      const action = await makeStore().dispatch(
+        sendAssistantMessage({ conversationId: 'c1', text: 'Hello' }),
+      );
+
+      expect(action.payload).toMatchObject({ kind: 'generic', status: 0 });
+    });
   });
 
   it.each([

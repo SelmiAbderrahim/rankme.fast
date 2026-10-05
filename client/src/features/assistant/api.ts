@@ -60,21 +60,6 @@ export function deleteAssistantConversation(
   );
 }
 
-/**
- * The SSE request cannot use `apiClient` because that helper buffers and
- * parses the entire response. It still needs the standard double-submit CSRF
- * token before opening the raw fetch stream.
- */
-export async function getAssistantCsrfToken(
-  init: RequestSignal = {},
-): Promise<string> {
-  const response = await apiClient<{ csrfToken: string }>('/security/csrf-token', {
-    method: 'GET',
-    ...(init.signal ? { signal: init.signal } : {}),
-  });
-  return response.csrfToken;
-}
-
 export function assistantMessageStreamUrl(conversationId: string): string {
   return resolveApiUrl(assistantMessageStreamPath(conversationId));
 }
