@@ -401,7 +401,12 @@ describe('repository language policy', () => {
       const current = clientLocaleEntries(locale);
       expect([...current.keys()].sort(), `${locale} client keys`).toEqual([...english.keys()].sort());
       for (const [key, template] of english) {
-        expect(placeholders(current.get(key) ?? ''), `${locale}:${key}`).toEqual(placeholders(template));
+        // Arabic spells the number into the word for the CLDR zero/one/two plural
+        // forms, so `{{count}}` is legitimately absent there (same rule as the
+        // client i18n parity test). Every other form still has to carry it.
+        const withoutCount = (value: string) =>
+          placeholders(value).filter((name) => !(name === 'count' && /_(zero|one|two)$/u.test(key)));
+        expect(withoutCount(current.get(key) ?? ''), `${locale}:${key}`).toEqual(withoutCount(template));
       }
     }
   });
