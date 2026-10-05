@@ -51,7 +51,7 @@ export function AssistantComposer({
   };
 
   return (
-    <form className="border-t bg-card p-4" onSubmit={handleSubmit}>
+    <form className="border-t bg-card p-4 max-lg:sticky max-lg:bottom-0 max-lg:z-10" onSubmit={handleSubmit}>
       <Label htmlFor="assistant-message" className="sr-only">
         {t('composer.label')}
       </Label>

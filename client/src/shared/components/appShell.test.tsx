@@ -1,5 +1,5 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
-import { render, screen, within } from '@testing-library/react';
+import { render, screen, waitFor, within } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { Provider } from 'react-redux';
 import { configureStore } from '@reduxjs/toolkit';
@@ -216,6 +216,32 @@ describe('AppSidebar', () => {
     );
     await userEvent.click(screen.getByRole('link', { name: 'Sites' }));
     expect(sidebar.setOpenMobile).not.toHaveBeenCalled();
+  });
+
+  it('offers the shared language switcher in the mobile drawer and closes it after a change', async () => {
+    sidebar.isMobile = true;
+    setSession({ role: 'Member' });
+    render(
+      <Wrap>
+        <AppSidebar />
+      </Wrap>,
+    );
+    const select = screen.getByRole('combobox', { name: 'Language' });
+    expect(select).toHaveAttribute('id', 'language-switcher-drawer');
+    await userEvent.selectOptions(select, 'fr');
+    await waitFor(() => expect(i18n.language).toBe('fr'));
+    expect(sidebar.setOpenMobile).toHaveBeenCalledWith(false);
+  });
+
+  it('does not render a second language switcher in the desktop sidebar', () => {
+    sidebar.isMobile = false;
+    setSession({ role: 'Member' });
+    render(
+      <Wrap>
+        <AppSidebar />
+      </Wrap>,
+    );
+    expect(screen.queryByRole('combobox', { name: 'Language' })).not.toBeInTheDocument();
   });
 
   it('places the sidebar on the right for RTL locales', async () => {

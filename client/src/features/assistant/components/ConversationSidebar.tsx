@@ -1,5 +1,5 @@
-import { useState } from 'react';
-import { MessageSquarePlus, Trash2 } from 'lucide-react';
+import { useId, useState } from 'react';
+import { ChevronDown, MessageSquarePlus, Trash2 } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 import {
   AlertDialog,
@@ -12,6 +12,7 @@ import {
 } from '@shared/ui/alert-dialog';
 import { Alert, AlertDescription } from '@shared/ui/alert';
 import { Button } from '@shared/ui/button';
+import { cn } from '@shared/lib/utils';
 import type { ChatConversation } from '../types';
 
 interface ConversationSidebarProps {
@@ -35,6 +36,11 @@ export function ConversationSidebar({
   const { t, i18n } = useTranslation(['assistant', 'common']);
   const [deleteTarget, setDeleteTarget] = useState<ChatConversation | null>(null);
   const [deleting, setDeleting] = useState(false);
+  // Small screens only (below `lg` the list stacks above the thread): the list
+  // starts collapsed so the thread and composer are not pushed off-screen. At
+  // `lg` and up the list is always shown and the toggle is hidden.
+  const [expanded, setExpanded] = useState(false);
+  const listId = useId();
   const [deleteError, setDeleteError] = useState<string | null>(null);
 
   const formatDate = (value: string) => {
@@ -73,6 +79,22 @@ export function ConversationSidebar({
           <MessageSquarePlus aria-hidden="true" />
           {t('assistant:sidebar.new')}
         </Button>
+        <Button
+          type="button"
+          variant="outline"
+          className="mt-2 w-full justify-between lg:hidden"
+          aria-expanded={expanded}
+          aria-controls={listId}
+          onClick={() => setExpanded((open) => !open)}
+        >
+          {expanded
+            ? t('assistant:sidebar.hideList')
+            : t('assistant:sidebar.showList', { count: conversations.length })}
+          <ChevronDown
+            aria-hidden="true"
+            className={cn(expanded && 'rotate-180')}
+          />
+        </Button>
       </div>
       {/*
         A plain scroll container, not the Radix ScrollArea: its viewport wraps
@@ -81,8 +103,12 @@ export function ConversationSidebar({
         pushed past the card border.
       */}
       <div
+        id={listId}
         data-slot="conversation-scroll"
-        className="max-h-56 min-h-0 min-w-0 flex-1 overflow-y-auto lg:max-h-none"
+        className={cn(
+          'max-h-56 min-h-0 min-w-0 flex-1 overflow-y-auto lg:block lg:max-h-none',
+          !expanded && 'hidden',
+        )}
       >
         <nav className="flex min-w-0 flex-col gap-1 p-2" aria-label={t('assistant:sidebar.label')}>
           {conversations.length === 0 ? (
@@ -105,7 +131,10 @@ export function ConversationSidebar({
                     className="h-auto min-w-0 flex-1 justify-start px-3 py-2 text-start"
                     disabled={disabled}
                     aria-current={active ? 'page' : undefined}
-                    onClick={() => onSelect(conversation.id)}
+                    onClick={() => {
+                      setExpanded(false);
+                      onSelect(conversation.id);
+                    }}
                   >
                     <span className="min-w-0 flex-1">
                       <span className="block truncate font-medium">{title}</span>

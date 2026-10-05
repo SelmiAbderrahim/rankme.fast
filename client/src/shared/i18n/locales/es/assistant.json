@@ -6,6 +6,8 @@
     "title": "Conversaciones",
     "new": "Nueva conversación",
     "label": "Conversaciones con el asistente",
+    "showList": "Mostrar conversaciones ({{count}})",
+    "hideList": "Ocultar conversaciones",
     "empty": "Aún no hay conversaciones.",
     "untitled": "Nueva conversación",
     "deleteLabel": "Eliminar {{title}}",

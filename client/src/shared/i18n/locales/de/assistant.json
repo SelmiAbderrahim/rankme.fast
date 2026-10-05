@@ -6,6 +6,8 @@
     "title": "Unterhaltungen",
     "new": "Neue Unterhaltung",
     "label": "Unterhaltungen mit dem Assistenten",
+    "showList": "Unterhaltungen anzeigen ({{count}})",
+    "hideList": "Unterhaltungen ausblenden",
     "empty": "Noch keine Unterhaltungen.",
     "untitled": "Neue Unterhaltung",
     "deleteLabel": "{{title}} löschen",

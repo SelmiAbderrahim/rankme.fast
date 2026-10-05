@@ -3,11 +3,13 @@ import { Link, useLocation } from 'react-router-dom';
 import { BRAND_NAME, BrandLogo } from '@shared/brand';
 import { docsUrl } from '@shared/docs/docsUrl';
 import { DEFAULT_LOCALE, isSupportedLocale } from '@shared/i18n';
+import { LanguageSwitcher } from '@shared/i18n/LanguageSwitcher';
 import { useAppSelector } from '@shared/hooks/redux';
 import { APP_NAV_GROUPS, resolveActiveNavKey } from '@shared/navigation/appNav';
 import {
   Sidebar,
   SidebarContent,
+  SidebarFooter,
   SidebarGroup,
   SidebarGroupContent,
   SidebarGroupLabel,
@@ -114,6 +116,18 @@ export const AppSidebar = () => {
           </SidebarGroup>
         ))}
       </SidebarContent>
+
+      {isMobile ? (
+        // The top-bar switcher only fits from `md` up; below that the drawer is
+        // the one place a language can be chosen. Same shared component.
+        <SidebarFooter>
+          <LanguageSwitcher
+            id="language-switcher-drawer"
+            className="[&_select]:w-full"
+            onLocaleChange={closeOnMobile}
+          />
+        </SidebarFooter>
+      ) : null}
     </Sidebar>
   );
 };

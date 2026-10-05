@@ -6,6 +6,8 @@
     "title": "Conversations",
     "new": "New conversation",
     "label": "Assistant conversations",
+    "showList": "Show conversations ({{count}})",
+    "hideList": "Hide conversations",
     "empty": "No conversations yet.",
     "untitled": "New conversation",
     "deleteLabel": "Delete {{title}}",

@@ -233,7 +233,8 @@ export function AssistantPage() {
           onDelete={handleDelete}
         />
 
-        <Card className="min-h-96 min-w-0 gap-0 overflow-hidden py-0">
+        {/* `overflow-clip` (not hidden) below `lg` so the composer can stick to the viewport. */}
+        <Card className="min-h-96 min-w-0 gap-0 overflow-hidden py-0 max-lg:overflow-clip">
           <div className="border-b p-4">
             <AssistantSiteSelector
               sites={sites}

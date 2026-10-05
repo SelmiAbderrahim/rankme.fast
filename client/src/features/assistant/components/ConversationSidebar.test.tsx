@@ -41,6 +41,37 @@ describe('ConversationSidebar', () => {
     expect(screen.getByRole('button', { name: 'New conversation' })).toBeDisabled();
   });
 
+  it('collapses the list behind a toggle for small screens and re-collapses on select', async () => {
+    const onSelect = vi.fn();
+    render(
+      <ConversationSidebar
+        conversations={[conversation('c1', 'First'), conversation('c2', 'Second')]}
+        activeConversationId={null}
+        onNew={vi.fn()}
+        onSelect={onSelect}
+        onDelete={vi.fn()}
+      />,
+    );
+    const toggle = screen.getByRole('button', { name: 'Show conversations (2)' });
+    const list = document.querySelector('[data-slot="conversation-scroll"]')!;
+    expect(toggle).toHaveAttribute('aria-expanded', 'false');
+    expect(toggle).toHaveAttribute('aria-controls', list.id);
+    expect(toggle).toHaveClass('lg:hidden');
+    // Collapsed below `lg`, but always shown from `lg` up.
+    expect(list).toHaveClass('hidden', 'lg:block');
+
+    await userEvent.click(toggle);
+    expect(screen.getByRole('button', { name: 'Hide conversations' })).toHaveAttribute(
+      'aria-expanded',
+      'true',
+    );
+    expect(list).not.toHaveClass('hidden');
+
+    await userEvent.click(screen.getByRole('button', { name: /^Second/ }));
+    expect(onSelect).toHaveBeenCalledWith('c2');
+    expect(list).toHaveClass('hidden');
+  });
+
   it('selects a row, starts a new draft, localizes dates, and preserves invalid dates', async () => {
     const onNew = vi.fn();
     const onSelect = vi.fn();

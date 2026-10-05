@@ -17,6 +17,11 @@ const props = () => ({
 });
 
 describe('AssistantComposer', () => {
+  it('sticks to the viewport bottom on small screens only', () => {
+    const { container } = render(<AssistantComposer {...props()} />);
+    expect(container.querySelector('form')).toHaveClass('max-lg:sticky', 'max-lg:bottom-0');
+  });
+
   it('updates the draft and submits trimmed text from the form', async () => {
     const values = props();
     const { rerender } = render(<AssistantComposer {...values} />);
