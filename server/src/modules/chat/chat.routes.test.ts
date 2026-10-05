@@ -419,6 +419,42 @@ describe('POST /api/chat/conversations/:id/messages (SSE)', () => {
     expect(await ChatMessage.countDocuments({ accountId: user.id })).toBe(0);
   });
 
+  it('hands the linked site id to the model and defaults site-scoped tools to it', async () => {
+    const user = await seedUser('chat-linked-site@x.co');
+    const site = await Site.create({
+      accountId: user.id,
+      url: 'https://linked.example.com',
+      domain: 'linked.example.com',
+      displayName: '',
+    });
+    const linked = await createConversationFor(user, String(site._id));
+    const plain = await createConversationFor(user);
+    const captured: AiChatStreamInput[] = [];
+    const fake = createFakeAiChatProvider();
+    setChatAiProvider({
+      streamChat(input) {
+        captured.push(input);
+        return fake.streamChat(input);
+      },
+    });
+
+    await streamMessage(user, linked.id, 'How is my site doing?');
+    await streamMessage(user, plain.id, 'How are my sites doing?');
+
+    expect(captured[0]?.systemInstruction.text).toContain(
+      `linked.example.com (siteId ${String(site._id)})`,
+    );
+    const linkedSchema = captured[0]?.tools.get_latest_audit_report?.jsonSchema as {
+      required: string[];
+    };
+    expect(linkedSchema.required).toEqual([]);
+    expect(captured[1]?.systemInstruction.text).not.toContain('siteId');
+    const plainSchema = captured[1]?.tools.get_latest_audit_report?.jsonSchema as {
+      required: string[];
+    };
+    expect(plainSchema.required).toEqual(['siteId']);
+  });
+
   it('keeps alternating accepted locales and historical prose verbatim in one conversation', async () => {
     const user = await seedUser('chat-mixed-locales@x.co');
     const conversation = await createConversationFor(user);

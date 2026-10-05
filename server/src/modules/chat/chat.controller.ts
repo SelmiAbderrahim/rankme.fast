@@ -87,7 +87,7 @@ export const sendMessageHandler: RequestHandler = asyncHandler(async (req, res) 
     const assistantMessageId = String(new Types.ObjectId());
     const appended = await appendUserMessage(accountId, conversationId, body.text, userMessageId);
     const history = await assembleHistory(accountId, conversationId);
-    const { tools } = await buildChatTools(accountId, responseLocale, allowedTeamSiteIds(req));
+    const { tools } = await buildChatTools(accountId, responseLocale, allowedTeamSiteIds(req), appended.site?.id ?? null);
     const profile = resolveAiTaskProfile('chat_assistant');
     // From here on the response is a stream — no status codes remain.
     res.setHeader('Content-Type', 'text/event-stream; charset=utf-8');
@@ -140,7 +140,7 @@ export const sendMessageHandler: RequestHandler = asyncHandler(async (req, res) 
         for await (const event of provider.streamChat({
             messages: history,
             responseLocale,
-            systemInstruction: buildChatSystemInstruction(appended.siteDomain, responseLocale),
+            systemInstruction: buildChatSystemInstruction(appended.site, responseLocale),
             tools,
             maxOutputTokens: env.AI_CHAT_MAX_OUTPUT_TOKENS,
             temperature: profile.temperature,
