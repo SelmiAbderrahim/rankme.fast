@@ -421,6 +421,7 @@ export const KeywordsPanel = ({ siteId }: Props) => {
             kind="ranks.current"
             target={{ scope: 'site', siteId }}
             selection={requestedEngine ? { engine: requestedEngine } : {}}
+            label={t('exportRankings')}
             clipboardText={
               keywords.length > 0 ? `${keywords.map(({ phrase }) => phrase).join(',')},` : ''
             }
@@ -430,6 +431,8 @@ export const KeywordsPanel = ({ siteId }: Props) => {
               kind="ranks.history"
               target={{ scope: 'site', siteId }}
               selection={{ keywordIds: [selectedKeyword.id] }}
+              label={t('exportHistory')}
+              ariaLabel={t('exportHistoryAria', { keyword: selectedKeyword.phrase })}
             />
           ) : null}
           <Button asChild variant="outline" size="sm">

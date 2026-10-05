@@ -1,5 +1,8 @@
 {
   "keywordClusteringCta": "Cluster keywords",
+  "exportRankings": "Export rankings",
+  "exportHistory": "Export history",
+  "exportHistoryAria": "Export ranking history for {{keyword}}",
   "panelTitle": "Rank tracking",
   "panelDescription": "Track how your keywords rank in Google.",
   "loading": "Loading your keywords…",

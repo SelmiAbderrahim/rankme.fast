@@ -1,5 +1,8 @@
 {
   "keywordClusteringCta": "聚类关键词",
+  "exportRankings": "导出排名",
+  "exportHistory": "导出历史",
+  "exportHistoryAria": "导出 {{keyword}} 的排名历史",
   "panelTitle": "排名跟踪",
   "panelDescription": "跟踪您的关键词在 Google 上的排名。",
   "loading": "正在加载您的关键词…",

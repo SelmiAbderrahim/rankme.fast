@@ -1,5 +1,8 @@
 {
   "keywordClusteringCta": "Regrouper les mots-clés",
+  "exportRankings": "Exporter les classements",
+  "exportHistory": "Exporter l’historique",
+  "exportHistoryAria": "Exporter l’historique de classement de {{keyword}}",
   "panelTitle": "Suivi de positionnement",
   "panelDescription": "Suivez le positionnement de vos mots-clés dans Google.",
   "loading": "Chargement de vos mots-clés…",

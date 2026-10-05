@@ -40,6 +40,10 @@ export interface ReportExportControlProps {
   className?: string;
   locale?: SupportedLocale;
   clipboardText?: string;
+  /** Visible trigger text; defaults to "Export or share". Set it when two controls share a toolbar. */
+  label?: string;
+  /** Accessible name when it must say more than the visible `label` (for example, which item). */
+  ariaLabel?: string;
 }
 
 export function ReportExportControl({
@@ -50,6 +54,8 @@ export function ReportExportControl({
   className,
   locale,
   clipboardText,
+  label,
+  ariaLabel,
 }: ReportExportControlProps) {
   const { t, i18n } = useTranslation('report');
   const dispatch = useAppDispatch();
@@ -123,10 +129,10 @@ export function ReportExportControl({
             loadingLabel={t(busy ? 'exportUi.preparing' : 'exportUi.loading')}
             disabled={disabled || Boolean(capabilitiesError)}
             className={className}
-            aria-label={t('exportUi.trigger')}
+            aria-label={ariaLabel ?? label ?? t('exportUi.trigger')}
           >
             <Download data-icon="inline-start" />
-            {t('exportUi.trigger')}
+            {label ?? t('exportUi.trigger')}
             <ChevronDown data-icon="inline-end" />
           </Button>
         </DropdownMenuTrigger>

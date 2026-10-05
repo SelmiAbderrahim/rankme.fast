@@ -1,5 +1,8 @@
 {
   "keywordClusteringCta": "Agrupar palabras clave",
+  "exportRankings": "Exportar posiciones",
+  "exportHistory": "Exportar historial",
+  "exportHistoryAria": "Exportar el historial de posiciones de {{keyword}}",
   "panelTitle": "Seguimiento de posiciones",
   "panelDescription": "Sigue cómo se posicionan tus palabras clave en Google.",
   "loading": "Cargando tus palabras clave…",

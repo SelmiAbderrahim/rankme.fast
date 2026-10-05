@@ -226,6 +226,28 @@ describe('ReportExportControl', () => {
     ).toHaveAttribute('dir', 'ltr');
   });
 
+  it('uses a caller-supplied label as the visible text and accessible name, with an optional longer name', () => {
+    const target = { scope: 'site_resource', siteId: 'site-one', resourceId: 'audit-one' } as const;
+    const { unmount } = renderWithStore(
+      <ReportExportControl kind="audit.run" target={target} label="Export rankings" />,
+    );
+    const labelled = screen.getByRole('button', { name: 'Export rankings' });
+    expect(labelled).toHaveTextContent('Export rankings');
+    expect(screen.queryByRole('button', { name: 'Export or share' })).toBeNull();
+    unmount();
+
+    renderWithStore(
+      <ReportExportControl
+        kind="audit.run"
+        target={target}
+        label="Export history"
+        ariaLabel="Export ranking history for blue shoes"
+      />,
+    );
+    const named = screen.getByRole('button', { name: 'Export ranking history for blue shoes' });
+    expect(named).toHaveTextContent('Export history');
+  });
+
   it('reports a failed export through an alert and retries the same format', async () => {
     mockedCreateSnapshot
       .mockRejectedValueOnce(new Error('provider text must stay private'))

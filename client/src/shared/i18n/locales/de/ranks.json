@@ -1,5 +1,8 @@
 {
   "keywordClusteringCta": "Keywords gruppieren",
+  "exportRankings": "Rankings exportieren",
+  "exportHistory": "Verlauf exportieren",
+  "exportHistoryAria": "Ranking-Verlauf für {{keyword}} exportieren",
   "panelTitle": "Ranking-Tracking",
   "panelDescription": "Verfolge, wie deine Keywords in Google ranken.",
   "loading": "Deine Keywords werden geladen…",

@@ -230,7 +230,7 @@ describe('KeywordsPanel — clipboard export', () => {
     await screen.findByTestId('keywords-table');
 
     const user = userEvent.setup();
-    await user.click(screen.getByRole('button', { name: 'Export or share' }));
+    await user.click(screen.getByRole('button', { name: 'Export rankings' }));
     await user.click(screen.getByRole('menuitem', { name: 'Copy to clipboard' }));
 
     await waitFor(() =>
@@ -245,12 +245,33 @@ describe('KeywordsPanel — clipboard export', () => {
     await screen.findByTestId('keywords-table');
 
     const user = userEvent.setup();
-    await user.click(screen.getByRole('button', { name: 'Export or share' }));
+    await user.click(screen.getByRole('button', { name: 'Export rankings' }));
     await user.click(screen.getByRole('menuitem', { name: 'Copy to clipboard' }));
 
     await waitFor(() =>
       expect(toast.error).toHaveBeenCalledWith('Could not copy to clipboard.'),
     );
+  });
+});
+
+describe('KeywordsPanel — export entries', () => {
+  it('shows one distinctly named export button, then a second distinctly named one once a keyword is selected', async () => {
+    renderPage();
+    await screen.findByTestId('keywords-table');
+
+    expect(screen.getByRole('button', { name: 'Export rankings' })).toBeInTheDocument();
+    expect(screen.queryByRole('button', { name: 'Export or share' })).toBeNull();
+    expect(screen.queryByRole('button', { name: /Export history|ranking history/ })).toBeNull();
+
+    await userEvent.setup().click(screen.getByTestId('keyword-select-k1'));
+
+    const history = await screen.findByRole('button', {
+      name: 'Export ranking history for phrase-k1',
+    });
+    expect(history).toHaveTextContent('Export history');
+    expect(screen.getByRole('button', { name: 'Export rankings' })).toBeInTheDocument();
+    // No two export buttons share an accessible name.
+    expect(screen.queryByRole('button', { name: 'Export or share' })).toBeNull();
   });
 });
 

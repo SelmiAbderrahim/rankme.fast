@@ -1,5 +1,8 @@
 {
   "keywordClusteringCta": "Сгруппировать ключевые слова",
+  "exportRankings": "Экспорт позиций",
+  "exportHistory": "Экспорт истории",
+  "exportHistoryAria": "Экспорт истории позиций для {{keyword}}",
   "panelTitle": "Отслеживание позиций",
   "panelDescription": "Следите за позициями ваших ключевых слов в Google.",
   "loading": "Загружаем ваши ключевые слова…",

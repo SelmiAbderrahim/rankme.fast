@@ -1,5 +1,8 @@
 {
   "keywordClusteringCta": "تجميع الكلمات المفتاحية",
+  "exportRankings": "تصدير الترتيب",
+  "exportHistory": "تصدير السجل",
+  "exportHistoryAria": "تصدير سجل ترتيب {{keyword}}",
   "panelTitle": "تتبع الترتيب",
   "panelDescription": "تتبع مواقع كلماتك المفتاحية في Google.",
   "loading": "جارٍ تحميل كلماتك المفتاحية…",
