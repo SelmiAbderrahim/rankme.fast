@@ -98,6 +98,9 @@ export function ReportExportControl({
       setLocalError(action.payload!);
     } else {
       setRetryFormat(null);
+      // The snapshot behind every download is kept, so the file the browser
+      // just saved can also be fetched again from Exports and shares.
+      toast.success(t('exportUi.ready'));
     }
   };
 

@@ -4,6 +4,7 @@ import { Provider } from 'react-redux';
 import { I18nextProvider } from 'react-i18next';
 import { fireEvent, render, screen, waitFor, within } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
+import { toast } from 'sonner';
 import { MemoryRouter, useLocation } from 'react-router-dom';
 import { ApiError } from '@shared/api/client';
 import { sitesReducer } from '@features/sites';
@@ -252,6 +253,32 @@ describe('ReportExportControl', () => {
     );
     const named = screen.getByRole('button', { name: 'Export ranking history for blue shoes' });
     expect(named).toHaveTextContent('Export history');
+  });
+
+  it('confirms a finished export with a toast and stays silent when it fails', async () => {
+    const success = vi.spyOn(toast, 'success').mockReturnValue('t');
+    mockedCreateSnapshot
+      .mockRejectedValueOnce(new Error('nope'))
+      .mockResolvedValueOnce(snapshot());
+    const user = userEvent.setup();
+    renderWithStore(
+      <ReportExportControl
+        kind="audit.run"
+        target={{ scope: 'account_resource', resourceId: 'landscape-one' }}
+      />,
+    );
+    await user.click(screen.getByRole('button', { name: 'Export or share' }));
+    await user.click(screen.getByRole('menuitem', { name: 'CSV' }));
+    await screen.findByRole('alert');
+    expect(success).not.toHaveBeenCalled();
+
+    await user.click(within(screen.getByRole('alert')).getByRole('button', { name: 'Try again' }));
+    await waitFor(() =>
+      expect(success).toHaveBeenCalledWith(
+        'Export ready. A copy is also saved in Exports and shares.',
+      ),
+    );
+    success.mockRestore();
   });
 
   it('reports a failed export through an alert and retries the same format', async () => {

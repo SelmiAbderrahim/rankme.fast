@@ -221,6 +221,7 @@
     "trigger": "Export or share",
     "loading": "Loading export options…",
     "preparing": "Preparing file…",
+    "ready": "Export ready. A copy is also saved in Exports and shares.",
     "unavailable": "Export unavailable",
     "formatsLabel": "File formats",
     "clipboard": { "action": "Copy to clipboard", "success": "Copied to clipboard.", "error": "Could not copy to clipboard." },

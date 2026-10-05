@@ -218,7 +218,7 @@
     "noData": "Keine Daten"
   },
   "exportUi": {
-    "trigger": "Exportieren oder teilen", "loading": "Exportoptionen werden geladen…", "preparing": "Datei wird vorbereitet…", "unavailable": "Export nicht verfügbar", "formatsLabel": "Dateiformate",
+    "trigger": "Exportieren oder teilen", "loading": "Exportoptionen werden geladen…", "preparing": "Datei wird vorbereitet…", "ready": "Export fertig. Eine Kopie ist auch unter „Exporte und Freigaben“ gespeichert.", "unavailable": "Export nicht verfügbar", "formatsLabel": "Dateiformate",
     "clipboard": { "action": "In die Zwischenablage kopieren", "success": "In die Zwischenablage kopiert.", "error": "Kopieren in die Zwischenablage fehlgeschlagen." },
     "formats": { "view": "Webansicht", "pdf": "PDF", "csv": "CSV", "json": "JSON", "md": "Markdown", "jsonld": "JSON-LD", "txt": "Text" },
     "kindAreas": { "audit": "Website-Audit", "ranks": "Rankings", "google": "Google-Daten", "client": "Kundenbericht", "keyword": "Keywords", "backlinks": "Backlinks", "competitors": "Wettbewerber", "actions": "Nächste Aktionen", "ai": "KI-Sichtbarkeit", "audience": "Zielgruppenrecherche", "brand": "Brand Radar", "content": "Inhalte", "internal_links": "Interne Links", "weekly_pulse": "Wöchentlicher Überblick", "local": "Lokales SEO", "schema": "Schema-Markup", "pages": "Seiten", "app": "App-Store-Optimierung" },

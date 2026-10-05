@@ -218,7 +218,7 @@
     "noData": "Sin datos"
   },
   "exportUi": {
-    "trigger": "Exportar o compartir", "loading": "Cargando opciones de exportación…", "preparing": "Preparando el archivo…", "unavailable": "Exportación no disponible", "formatsLabel": "Formatos de archivo",
+    "trigger": "Exportar o compartir", "loading": "Cargando opciones de exportación…", "preparing": "Preparando el archivo…", "ready": "Exportación lista. También se guardó una copia en Exportaciones y enlaces.", "unavailable": "Exportación no disponible", "formatsLabel": "Formatos de archivo",
     "clipboard": { "action": "Copiar al portapapeles", "success": "Copiado al portapapeles.", "error": "No se pudo copiar al portapapeles." },
     "formats": { "view": "Vista web", "pdf": "PDF", "csv": "CSV", "json": "JSON", "md": "Markdown", "jsonld": "JSON-LD", "txt": "Texto" },
     "kindAreas": { "audit": "Auditoría del sitio", "ranks": "Posiciones", "google": "Datos de Google", "client": "Informe de cliente", "keyword": "Palabras clave", "backlinks": "Backlinks", "competitors": "Competidores", "actions": "Próximas acciones", "ai": "Visibilidad en IA", "audience": "Investigación de audiencia", "brand": "Brand Radar", "content": "Contenido", "internal_links": "Enlaces internos", "weekly_pulse": "Resumen semanal", "local": "SEO local", "schema": "Marcado schema", "pages": "Páginas", "app": "Optimización de tiendas de apps" },
