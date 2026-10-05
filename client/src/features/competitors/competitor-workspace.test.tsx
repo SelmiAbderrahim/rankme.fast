@@ -6,7 +6,6 @@ import { MemoryRouter, Route, Routes, useLocation } from 'react-router-dom';
 import { render, screen, waitFor, within } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { toast } from 'sonner';
-import { ApiError } from '@shared/api/client';
 import { changeLanguage, i18n, initI18n } from '@shared/i18n';
 import * as api from './api';
 import { CompetitorWorkspace } from './components/CompetitorWorkspace';
@@ -810,9 +809,10 @@ describe('unified competitor workspace', () => {
   });
 
   it('treats missing discovery as an empty stored state instead of an error', async () => {
-    mocked.fetchLatestDiscovery.mockRejectedValueOnce(new ApiError('missing', 404, undefined));
+    mocked.fetchLatestDiscovery.mockResolvedValueOnce({ discovery: null });
     renderWorkspace('/sites/site-1?tab=competitors&view=overview');
     expect(await screen.findByText(/no stored discovery suggestions yet/i)).toBeInTheDocument();
+    expect(screen.queryByRole('alert')).not.toBeInTheDocument();
   });
 
   it('renders provider failures, empty reports, and transparent missing report data', async () => {

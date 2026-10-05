@@ -97,7 +97,7 @@ export const previewDiscoverySpend = (siteId: string): Promise<DiscoverySpendPre
 export const fetchLatestDiscovery = (
   siteId: string,
   signal?: AbortSignal,
-): Promise<{ discovery: CompetitorDiscovery }> =>
+): Promise<{ discovery: CompetitorDiscovery | null }> =>
   apiClient(`${intelligenceBase(siteId)}/discovery`, { signal });
 
 export const refreshDiscovery = (

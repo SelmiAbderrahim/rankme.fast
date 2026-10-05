@@ -630,12 +630,23 @@ describe('canonical competitor-intelligence router', () => {
     })).resolves.toMatchObject({ suggestions: expect.any(Array) });
   });
 
-  it('returns 404 before the first discovery and honors the disabled preview', async () => {
+  it('returns 200 with a null discovery before the first run, 404 for another account, and honors the disabled preview', async () => {
     const user = await verifiedUser();
     const siteId = await seedSite(user.id, 'preview-modes.example');
-    await request(app)
+    const empty = await request(app)
       .get(`${BASE(siteId)}/discovery`)
       .set('Cookie', user.cookie)
+      .expect(200);
+    expect(empty.body).toEqual({ discovery: null });
+    await expect(getLatestCompetitorDiscovery({
+      db: getTestDb() as never,
+      accountId: user.id,
+      siteId,
+    })).resolves.toBeNull();
+    const stranger = await verifiedUser();
+    await request(app)
+      .get(`${BASE(siteId)}/discovery`)
+      .set('Cookie', stranger.cookie)
       .expect(404);
 
     (env as { COMPETITOR_INTELLIGENCE_ENABLED: boolean }).COMPETITOR_INTELLIGENCE_ENABLED = false;
