@@ -221,6 +221,42 @@ describe('AssistantPage', () => {
     expect(container.querySelector('[data-slot="card"]')).toHaveClass('min-w-0');
   });
 
+  it('keeps the composer pinned in a bounded workspace from lg up without breaking the small-screen sticky composer', () => {
+    const { container } = renderPage(assistantState({ conversations: [conversation()] }));
+    const workspace = container.querySelector('[data-slot="assistant-workspace"]')!;
+    // Viewport-bounded from `lg`: the thread scrolls inside, the composer stays visible.
+    expect(workspace).toHaveClass(
+      'lg:h-[max(32rem,calc(100dvh-18rem))]',
+      'lg:grid-rows-[minmax(0,1fr)]',
+    );
+    const card = container.querySelector('[data-slot="card"]')!;
+    expect(card).toHaveClass('lg:min-h-0', 'overflow-hidden', 'max-lg:overflow-clip');
+    expect(card.querySelector('form')).toHaveClass('max-lg:sticky', 'max-lg:bottom-0');
+    expect(card.querySelector('[data-slot="scroll-area"]')).toHaveClass('lg:min-h-0');
+  });
+
+  it('fills AND focuses the composer when a suggestion is clicked, then scrolls it into view', async () => {
+    const scrollIntoView = vi.spyOn(Element.prototype, 'scrollIntoView');
+    renderPage();
+    await userEvent.click(screen.getByRole('button', {
+      name: 'Show me the sites in my account.',
+    }));
+    const textbox = screen.getByRole('textbox');
+    expect(textbox).toHaveValue('Show me the sites in my account.');
+    expect(textbox).toHaveFocus();
+    expect(scrollIntoView.mock.instances).toContain(textbox);
+    expect(scrollIntoView).toHaveBeenCalledWith({ block: 'nearest' });
+  });
+
+  it('survives a suggestion click when there is no composer to focus', async () => {
+    api.listAssistantConversations.mockResolvedValue({ conversations: [] });
+    renderPage(assistantState({ listStatus: 'failed', listError: genericError }));
+    await userEvent.click(screen.getByRole('button', {
+      name: 'Show me the sites in my account.',
+    }));
+    expect(screen.queryByRole('textbox')).not.toBeInTheDocument();
+  });
+
   it('renders a generic list failure with a retry', async () => {
     api.listAssistantConversations.mockResolvedValue({ conversations: [] });
     renderPage(
@@ -354,6 +390,137 @@ describe('AssistantPage', () => {
     expect(screen.getByText('Give me a 20-step plan', { selector: 'p' })).toBeInTheDocument();
     // The message was accepted, so the composer is cleared as for any send.
     expect(screen.getByRole('textbox')).toHaveValue('');
+  });
+
+  it('clears the composer the moment a message is sent, before the reply finishes', async () => {
+    let requestSignal: AbortSignal | undefined;
+    vi.spyOn(globalThis, 'fetch').mockImplementation(
+      (_input, init) => new Promise<Response>((_resolve, reject) => {
+        requestSignal = init?.signal ?? undefined;
+        init?.signal?.addEventListener('abort', () => {
+          reject(new DOMException('Aborted', 'AbortError'));
+        });
+      }),
+    );
+    renderPage(
+      assistantState({
+        conversations: [conversation()],
+        activeConversationId: 'c1',
+        messagesByConversation: { c1: [] },
+        detailStatus: { c1: 'succeeded' },
+      }),
+    );
+    await userEvent.type(screen.getByRole('textbox'), 'Clear me right away');
+    await userEvent.click(screen.getByRole('button', { name: 'Send message' }));
+
+    // Still streaming (Stop is offered) and the sent text is already gone.
+    expect(await screen.findByRole('button', { name: 'Stop' })).toBeInTheDocument();
+    expect(screen.getByRole('textbox')).toHaveValue('');
+    expect(screen.getByText('0 / 8000 characters')).toBeInTheDocument();
+    expect(screen.getByText('Clear me right away', { selector: 'p' })).toBeInTheDocument();
+    expect(requestSignal?.aborted).toBe(false);
+  });
+
+  it('restores the draft when the send fails before the server confirms it', async () => {
+    vi.spyOn(globalThis, 'fetch').mockResolvedValue(
+      new Response(JSON.stringify({ error: { message: 'Boom', code: 'INTERNAL' } }), {
+        status: 500,
+        headers: { 'Content-Type': 'application/json' },
+      }),
+    );
+    renderPage(
+      assistantState({
+        conversations: [conversation()],
+        activeConversationId: 'c1',
+        messagesByConversation: { c1: [] },
+        detailStatus: { c1: 'succeeded' },
+      }),
+    );
+    await userEvent.type(screen.getByRole('textbox'), 'Please try again later');
+    await userEvent.click(screen.getByRole('button', { name: 'Send message' }));
+
+    expect(await screen.findByRole('alert')).toBeInTheDocument();
+    expect(screen.getByRole('textbox')).toHaveValue('Please try again later');
+    // The unconfirmed bubble was withdrawn, so the text is not shown twice.
+    expect(screen.queryByText('Please try again later', { selector: 'p' })).not.toBeInTheDocument();
+  });
+
+  it('does not restore the draft once the server saved the message and the reply then failed', async () => {
+    vi.spyOn(globalThis, 'fetch').mockResolvedValue(
+      new Response(
+        new ReadableStream<Uint8Array>({
+          start(controller) {
+            controller.enqueue(encode(frame('meta', {
+              conversationId: 'c1',
+              userMessageId: 'u1',
+              assistantMessageId: 'a1',
+              responseLocale: 'en',
+            })));
+            controller.enqueue(encode(frame('error', {
+              code: 'chat_stream_failed',
+              messageKey: 'chat.errors.generationFailed',
+              message: 'The assistant could not finish this reply. Try again.',
+            })));
+            controller.close();
+          },
+        }),
+        {
+          status: 200,
+          headers: { 'Content-Type': 'text/event-stream', 'Content-Language': 'en' },
+        },
+      ),
+    );
+    renderPage(
+      assistantState({
+        conversations: [conversation()],
+        activeConversationId: 'c1',
+        messagesByConversation: { c1: [] },
+        detailStatus: { c1: 'succeeded' },
+      }),
+    );
+    await userEvent.type(screen.getByRole('textbox'), 'Saved before failing');
+    await userEvent.click(screen.getByRole('button', { name: 'Send message' }));
+
+    expect(await screen.findByRole('alert')).toHaveTextContent(
+      'The assistant could not finish this reply. Try again.',
+    );
+    expect(screen.getByText('Saved before failing', { selector: 'p' })).toBeInTheDocument();
+    expect(screen.getByRole('textbox')).toHaveValue('');
+  });
+
+  it('retries the earlier prompt without clobbering a newer draft', async () => {
+    const fetchSpy = vi.spyOn(globalThis, 'fetch').mockResolvedValue(
+      new Response(JSON.stringify({ error: { message: 'Boom', code: 'INTERNAL' } }), {
+        status: 500,
+        headers: { 'Content-Type': 'application/json' },
+      }),
+    );
+    renderPage(
+      assistantState({
+        conversations: [conversation()],
+        activeConversationId: 'c1',
+        messagesByConversation: { c1: [] },
+        detailStatus: { c1: 'succeeded' },
+        stream: {
+          ...initialAssistantState.stream,
+          status: 'error',
+          conversationId: 'c1',
+          lastPrompt: 'Earlier prompt',
+          error: genericError,
+        },
+      }),
+    );
+    await userEvent.type(screen.getByRole('textbox'), 'Something new');
+    await userEvent.click(screen.getByRole('button', { name: 'Try again' }));
+
+    // The retry re-sent the earlier prompt, not the new draft...
+    await waitFor(() => expect(fetchSpy).toHaveBeenCalled());
+    expect(JSON.parse(String(fetchSpy.mock.calls[0]![1]!.body))).toEqual({
+      text: 'Earlier prompt',
+    });
+    await screen.findByRole('alert');
+    // ...and left what the user was typing alone.
+    expect(screen.getByRole('textbox')).toHaveValue('Something new');
   });
 
   it('retries a failed conversation detail', async () => {

@@ -2,6 +2,7 @@ import { render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 import { changeLanguage, initI18n } from '@shared/i18n';
+import type { Site } from '@features/sites';
 import type { ChatConversation } from '../types';
 import { ConversationSidebar } from './ConversationSidebar';
 
@@ -19,6 +20,17 @@ const conversation = (
   createdAt: '2026-08-01T10:00:00.000Z',
 });
 
+const site = (id: string, domain: string, displayName = ''): Site => ({
+  id,
+  url: `https://${domain}`,
+  domain,
+  displayName,
+  paused: false,
+  pausedAt: null,
+  createdAt: '2026-08-01T10:00:00.000Z',
+  updatedAt: '2026-08-01T10:00:00.000Z',
+});
+
 beforeEach(async () => {
   initI18n({ initialLocale: 'en' });
   await changeLanguage('en');
@@ -29,6 +41,7 @@ describe('ConversationSidebar', () => {
     const onNew = vi.fn();
     render(
       <ConversationSidebar
+        sites={[]}
         conversations={[]}
         activeConversationId={null}
         disabled
@@ -45,6 +58,7 @@ describe('ConversationSidebar', () => {
     const onSelect = vi.fn();
     render(
       <ConversationSidebar
+        sites={[]}
         conversations={[conversation('c1', 'First'), conversation('c2', 'Second')]}
         activeConversationId={null}
         onNew={vi.fn()}
@@ -77,6 +91,7 @@ describe('ConversationSidebar', () => {
     const onSelect = vi.fn();
     render(
       <ConversationSidebar
+        sites={[]}
         conversations={[
           conversation('c1', 'First'),
           conversation('c2', '', 'not-a-date'),
@@ -102,6 +117,7 @@ describe('ConversationSidebar', () => {
     const title = 'Summarize the most important fixes from my latest audit.';
     const { container } = render(
       <ConversationSidebar
+        sites={[]}
         conversations={[conversation('c1', title)]}
         activeConversationId={null}
         onNew={vi.fn()}
@@ -138,6 +154,7 @@ describe('ConversationSidebar', () => {
     );
     render(
       <ConversationSidebar
+        sites={[]}
         conversations={[conversation('c1', 'First')]}
         activeConversationId="c1"
         onNew={vi.fn()}
@@ -165,6 +182,7 @@ describe('ConversationSidebar', () => {
     const onDelete = vi.fn().mockResolvedValue('Could not delete this conversation.');
     render(
       <ConversationSidebar
+        sites={[]}
         conversations={[conversation('c1', '')]}
         activeConversationId={null}
         onNew={vi.fn()}
@@ -179,5 +197,53 @@ describe('ConversationSidebar', () => {
     expect(await screen.findByText('Could not delete this conversation.')).toBeInTheDocument();
     await userEvent.click(screen.getByRole('button', { name: 'Cancel' }));
     expect(screen.queryByRole('alertdialog')).not.toBeInTheDocument();
+  });
+
+  it('names each conversation\'s site context by its label, domain, or general guidance', () => {
+    render(
+      <ConversationSidebar
+        sites={[site('s1', 'named.example.com', 'Named Shop'), site('s2', 'plain.example.com')]}
+        conversations={[
+          { ...conversation('c1', 'Named chat'), siteId: 's1' },
+          { ...conversation('c2', 'Domain chat'), siteId: 's2' },
+          conversation('c3', 'General chat'),
+          { ...conversation('c4', 'Unresolved chat'), siteId: 'not-loaded' },
+        ]}
+        activeConversationId={null}
+        onNew={vi.fn()}
+        onSelect={vi.fn()}
+        onDelete={vi.fn()}
+      />,
+    );
+    const contextOf = (title: string) =>
+      screen
+        .getByText(title)
+        .closest('button')!
+        .querySelector('[data-slot="conversation-site"]');
+    expect(contextOf('Named chat')).toHaveTextContent('Named Shop');
+    expect(contextOf('Domain chat')).toHaveTextContent('plain.example.com');
+    expect(contextOf('General chat')).toHaveTextContent('No site — general guidance');
+    // Not in the loaded list (yet): no label rather than a wrong one.
+    expect(contextOf('Unresolved chat')).toBeNull();
+  });
+
+  it('marks the active conversation with a strong, non-color-only highlight', () => {
+    render(
+      <ConversationSidebar
+        sites={[]}
+        conversations={[conversation('c1', 'Active one'), conversation('c2', 'Other one')]}
+        activeConversationId="c1"
+        onNew={vi.fn()}
+        onSelect={vi.fn()}
+        onDelete={vi.fn()}
+      />,
+    );
+    const active = screen.getByText('Active one');
+    const row = active.closest('[data-active]')!;
+    expect(row).toHaveAttribute('data-active', 'true');
+    expect(row).toHaveClass('data-[active=true]:border-primary', 'data-[active=true]:bg-accent', 'border-s-4');
+    expect(active).toHaveClass('font-semibold');
+    expect(screen.getByText('Other one')).not.toHaveClass('font-semibold');
+    expect(screen.getByText('Other one').closest('[data-active]')).toHaveAttribute('data-active', 'false');
   });
 });

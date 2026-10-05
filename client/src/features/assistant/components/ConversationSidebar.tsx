@@ -1,5 +1,5 @@
 import { useId, useState } from 'react';
-import { ChevronDown, MessageSquarePlus, Trash2 } from 'lucide-react';
+import { ChevronDown, Globe, MessageSquarePlus, Trash2 } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 import {
   AlertDialog,
@@ -13,10 +13,14 @@ import {
 import { Alert, AlertDescription } from '@shared/ui/alert';
 import { Button } from '@shared/ui/button';
 import { cn } from '@shared/lib/utils';
+import { siteLabel } from '@shared/lib/siteLabel';
+import type { Site } from '@features/sites';
 import type { ChatConversation } from '../types';
 
 interface ConversationSidebarProps {
   conversations: ChatConversation[];
+  /** Loaded sites, used to name each conversation's site context. */
+  sites: Site[];
   activeConversationId: string | null;
   disabled?: boolean;
   onNew: () => void;
@@ -27,6 +31,7 @@ interface ConversationSidebarProps {
 /** Persistent conversation navigation with an explicit destructive confirmation. */
 export function ConversationSidebar({
   conversations,
+  sites,
   activeConversationId,
   disabled = false,
   onNew,
@@ -119,10 +124,19 @@ export function ConversationSidebar({
             conversations.map((conversation) => {
               const title = conversation.title || t('assistant:sidebar.untitled');
               const active = conversation.id === activeConversationId;
+              // A linked site is named by its label (name or domain); an
+              // unlinked conversation is general guidance. A linked site that is
+              // not in the loaded list yet shows no label rather than a wrong one.
+              const linkedSite = conversation.siteId
+                ? sites.find((site) => site.id === conversation.siteId)
+                : undefined;
+              const contextLabel = conversation.siteId
+                ? linkedSite && siteLabel(linkedSite)
+                : t('assistant:context.none');
               return (
                 <div
                   key={conversation.id}
-                  className="flex min-w-0 items-center gap-1 rounded-lg border border-transparent data-[active=true]:border-border data-[active=true]:bg-accent"
+                  className="flex min-w-0 items-center gap-1 rounded-lg border border-s-4 border-transparent data-[active=true]:border-primary data-[active=true]:bg-accent"
                   data-active={active ? 'true' : 'false'}
                 >
                   <Button
@@ -137,7 +151,18 @@ export function ConversationSidebar({
                     }}
                   >
                     <span className="min-w-0 flex-1">
-                      <span className="block truncate font-medium">{title}</span>
+                      <span className={cn('block truncate font-medium', active && 'font-semibold')}>
+                        {title}
+                      </span>
+                      {contextLabel ? (
+                        <span
+                          className="flex min-w-0 items-center gap-1 text-xs text-muted-foreground"
+                          data-slot="conversation-site"
+                        >
+                          <Globe aria-hidden="true" className="size-3 shrink-0" />
+                          <span className="truncate">{contextLabel}</span>
+                        </span>
+                      ) : null}
                       <span className="block truncate text-xs text-muted-foreground">
                         {formatDate(conversation.lastMessageAt)}
                       </span>

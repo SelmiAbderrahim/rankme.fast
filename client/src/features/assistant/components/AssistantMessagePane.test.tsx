@@ -1,4 +1,4 @@
-import { render, screen } from '@testing-library/react';
+import { fireEvent, render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 import { changeLanguage, initI18n } from '@shared/i18n';
@@ -203,5 +203,85 @@ describe('AssistantMessagePane', () => {
 
     rerender(<AssistantMessagePane {...baseProps()} error={error} />);
     expect(screen.queryByRole('button', { name: 'Try again' })).not.toBeInTheDocument();
+  });
+
+  describe('following the thread', () => {
+    const userMessage = message({
+      id: 'u1',
+      role: 'user',
+      parts: [{ type: 'text', text: 'A question' }],
+    });
+    const reply = message({ id: 'a1', parts: [{ type: 'text', text: 'An answer' }] });
+
+    /** jsdom has no layout: give the viewport measurable scroll geometry. */
+    function instrument(height: { scrollHeight: number; scrollTop: number; clientHeight: number }) {
+      const viewport = document.querySelector<HTMLElement>('[data-slot="scroll-area-viewport"]')!;
+      const state = { ...height };
+      Object.defineProperty(viewport, 'scrollHeight', { configurable: true, get: () => state.scrollHeight });
+      Object.defineProperty(viewport, 'clientHeight', { configurable: true, get: () => state.clientHeight });
+      Object.defineProperty(viewport, 'scrollTop', {
+        configurable: true,
+        get: () => state.scrollTop,
+        set: (value: number) => {
+          state.scrollTop = value;
+        },
+      });
+      return { viewport, state };
+    }
+
+    it('scrolls the thread viewport to the newest content while the reader is at the bottom', () => {
+      const { rerender } = render(
+        <AssistantMessagePane {...baseProps()} messages={[userMessage]} />,
+      );
+      const { state } = instrument({ scrollHeight: 900, scrollTop: 400, clientHeight: 500 });
+      state.scrollHeight = 1200;
+      rerender(<AssistantMessagePane {...baseProps()} messages={[userMessage, reply]} />);
+      expect(state.scrollTop).toBe(1200);
+    });
+
+    it('stops following once the reader scrolls up, and resumes when they send again', () => {
+      const { rerender } = render(
+        <AssistantMessagePane {...baseProps()} messages={[userMessage, reply]} />,
+      );
+      const { viewport, state } = instrument({ scrollHeight: 2000, scrollTop: 100, clientHeight: 500 });
+      fireEvent.scroll(viewport);
+
+      const streamingReply = message({ id: 'a1', parts: [{ type: 'text', text: 'An answer, longer' }] });
+      rerender(<AssistantMessagePane {...baseProps()} messages={[userMessage, streamingReply]} streaming />);
+      expect(state.scrollTop).toBe(100);
+
+      // Scrolling back near the bottom re-pins.
+      state.scrollTop = 1480;
+      fireEvent.scroll(viewport);
+      rerender(
+        <AssistantMessagePane
+          {...baseProps()}
+          messages={[userMessage, { ...streamingReply, parts: [{ type: 'text', text: 'More text' }] }]}
+          streaming
+        />,
+      );
+      expect(state.scrollTop).toBe(2000);
+
+      // A new user message always returns to the bottom, even from far up.
+      state.scrollTop = 0;
+      fireEvent.scroll(viewport);
+      state.scrollHeight = 2400;
+      rerender(
+        <AssistantMessagePane
+          {...baseProps()}
+          messages={[userMessage, streamingReply, message({ id: 'u2', role: 'user', parts: [{ type: 'text', text: 'Next' }] })]}
+        />,
+      );
+      expect(state.scrollTop).toBe(2400);
+    });
+
+    it('does nothing while the conversation is still loading', () => {
+      const { rerender } = render(
+        <AssistantMessagePane {...baseProps()} loadStatus="loading" />,
+      );
+      expect(() =>
+        rerender(<AssistantMessagePane {...baseProps()} loadStatus="loading" error={error} />),
+      ).not.toThrow();
+    });
   });
 });

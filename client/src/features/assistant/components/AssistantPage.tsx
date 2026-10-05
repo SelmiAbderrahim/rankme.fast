@@ -1,4 +1,5 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
+import { useStore } from 'react-redux';
 import { useTranslation } from 'react-i18next';
 import {
   loadSites,
@@ -10,6 +11,7 @@ import {
 import { PageHeader } from '@shared/components/PageHeader';
 import { DocsLink } from '@shared/docs/DocsLink';
 import { useAppDispatch, useAppSelector } from '@shared/hooks/redux';
+import type { RootState } from '@app/store';
 import { APP_PAGE_ICONS } from '@shared/navigation/appPageIcons';
 import { Card } from '@shared/ui/card';
 import { Skeleton } from '@shared/ui/skeleton';
@@ -85,7 +87,11 @@ export function AssistantPage() {
   const sitesLoading = useAppSelector(selectSitesLoading);
   const sitesLoaded = useAppSelector(selectSitesLoaded);
   const sitesError = useAppSelector(selectSitesError);
-  const [draft, setDraft] = useState('');
+  const store = useStore<RootState>();
+  const [draft, setDraftState] = useState('');
+  // The latest draft for async code that outlives the render it started in.
+  const draftRef = useRef('');
+  const composerRef = useRef<HTMLTextAreaElement>(null);
   const [selectedSiteId, setSelectedSiteId] = useState<string | null>(null);
 
   const streaming = stream.status === 'connecting' || stream.status === 'streaming';
@@ -115,8 +121,33 @@ export function AssistantPage() {
     stopAssistantStream();
   }, []);
 
+  const setDraft = (value: string) => {
+    draftRef.current = value;
+    setDraftState(value);
+  };
+
+  // A suggestion fills the composer, then moves focus (which also scrolls it
+  // into view) so the click visibly does something even when the box sits
+  // below the thread.
+  const selectPrompt = (prompt: string) => {
+    setDraft(prompt);
+    const textarea = composerRef.current;
+    if (!textarea) return;
+    textarea.focus();
+    textarea.scrollIntoView({ block: 'nearest' });
+  };
+
   const sendText = async (text: string, forcedConversationId?: string) => {
     dispatch(clearAssistantErrors());
+    // Sending from the composer clears it at once; the text comes back below
+    // if the server never confirmed the message. A retry of an earlier prompt
+    // leaves whatever the user is typing now untouched.
+    const fromComposer = draftRef.current.trim() === text;
+    if (fromComposer) setDraft('');
+    const restoreDraft = () => {
+      if (fromComposer) setDraft(text);
+    };
+
     let conversationId = forcedConversationId ?? activeConversationId;
     if (!conversationId) {
       const created = await dispatch(
@@ -124,20 +155,21 @@ export function AssistantPage() {
           selectedSiteId ? { siteId: selectedSiteId } : undefined,
         ),
       );
-      if (!createAssistantConversationThunk.fulfilled.match(created)) return;
+      if (!createAssistantConversationThunk.fulfilled.match(created)) {
+        restoreDraft();
+        return;
+      }
       conversationId = created.payload.id;
     }
 
     const sent = await dispatch(sendAssistantMessage({ conversationId, text }));
-    // A Stop before the server accepted the message withdraws it from the
-    // thread, so the text stays in the composer to edit and re-send.
-    if (
-      sendAssistantMessage.fulfilled.match(sent) &&
-      sent.payload.accepted &&
-      draft.trim() === text
-    ) {
-      setDraft('');
-    }
+    // The server saves the message on its `meta` frame. A Stop or failure
+    // before that withdraws the bubble from the thread, so the text returns to
+    // the composer to edit and re-send; once saved it lives in the thread.
+    const confirmed = sendAssistantMessage.fulfilled.match(sent)
+      ? sent.payload.accepted
+      : selectAssistantStream(store.getState()).userMessageId !== null;
+    if (!confirmed) restoreDraft();
   };
 
   const handleNew = () => {
@@ -199,7 +231,7 @@ export function AssistantPage() {
             error={listError}
             streaming={false}
             assistantMessageId={null}
-            onPromptSelect={setDraft}
+            onPromptSelect={selectPrompt}
             onRetry={retryList}
           />
         </Card>
@@ -223,9 +255,20 @@ export function AssistantPage() {
     <main className="mx-auto flex w-full max-w-7xl flex-col gap-6 p-4 sm:p-6" aria-labelledby="assistant-title">
       <AssistantPageHeader />
 
-      <div className="grid min-h-96 grid-cols-[minmax(0,1fr)] gap-4 lg:grid-cols-[16rem_minmax(0,1fr)]">
+      {/*
+        From `lg` the workspace is a bounded-height region (viewport minus the
+        app chrome and page header): the thread scrolls inside it and the
+        composer stays pinned at its bottom, visible without scrolling the
+        page. Below `lg` the sidebar stacks above the thread and the composer
+        sticks to the viewport instead (see the Card below).
+      */}
+      <div
+        data-slot="assistant-workspace"
+        className="grid min-h-96 grid-cols-[minmax(0,1fr)] gap-4 lg:h-[max(32rem,calc(100dvh-18rem))] lg:grid-cols-[16rem_minmax(0,1fr)] lg:grid-rows-[minmax(0,1fr)]"
+      >
         <ConversationSidebar
           conversations={conversations}
+          sites={sites}
           activeConversationId={activeConversationId}
           disabled={streaming}
           onNew={handleNew}
@@ -234,7 +277,7 @@ export function AssistantPage() {
         />
 
         {/* `overflow-clip` (not hidden) below `lg` so the composer can stick to the viewport. */}
-        <Card className="min-h-96 min-w-0 gap-0 overflow-hidden py-0 max-lg:overflow-clip">
+        <Card className="min-h-96 min-w-0 gap-0 overflow-hidden py-0 max-lg:overflow-clip lg:min-h-0">
           <div className="border-b p-4">
             <AssistantSiteSelector
               sites={sites}
@@ -258,7 +301,7 @@ export function AssistantPage() {
               error={paneError}
               streaming={streaming}
               assistantMessageId={stream.assistantMessageId}
-              onPromptSelect={setDraft}
+              onPromptSelect={selectPrompt}
               onRetry={paneRetry}
             />
           )}
@@ -269,6 +312,7 @@ export function AssistantPage() {
               disabled={composerDisabled}
               creating={createStatus === 'loading'}
               streaming={streaming}
+              textareaRef={composerRef}
               onDraftChange={setDraft}
               onSend={(text) => void sendText(text)}
               onStop={() => {
