@@ -46,7 +46,8 @@
     "team": "Team",
     "admin": "Admin",
     "superadmin": "Platform",
-    "startFree": "Start free"
+    "startFree": "Start free",
+    "openApp": "Open app"
   },
   "footer": {
     "copyright": "© {{year}}, {{brand}}. All Rights Reserved.",
@@ -139,7 +140,8 @@
     "upgradeTitle": "Unlock more audits",
     "upgradeBody": "Upgrade for higher caps and deeper reports.",
     "upgradeCta": "Upgrade",
-    "groupSuperAdmin": "Platform"
+    "groupSuperAdmin": "Platform",
+    "opensInNewTab": "Opens in a new tab"
   },
   "locked": "Locked",
   "retry": "Try again",

@@ -1,6 +1,7 @@
 import { apiClient } from '@shared/api/client';
 import type {
   CreateSiteResponse,
+  GetSiteResponse,
   DeleteSiteResponse,
   PauseSiteResponse,
   SiteListPage,
@@ -11,6 +12,9 @@ export const fetchSitesRequest = (cursor?: string | null): Promise<SiteListPage>
   const query = cursor ? `?cursor=${encodeURIComponent(cursor)}` : '';
   return apiClient<SiteListPage>(`/sites${query}`);
 };
+
+export const fetchSiteRequest = (id: string): Promise<GetSiteResponse> =>
+  apiClient<GetSiteResponse>(`/sites/${encodeURIComponent(id)}`);
 
 export const createSiteRequest = (url: string): Promise<CreateSiteResponse> =>
   apiClient<CreateSiteResponse>('/sites', {

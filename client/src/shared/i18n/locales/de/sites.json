@@ -196,5 +196,14 @@
       "revoked": "Widerrufen",
       "disconnected": "Nicht verbunden"
     }
+  },
+  "notFound": {
+    "title": "Website nicht gefunden",
+    "description": "Diese Website existiert nicht oder Sie haben keinen Zugriff darauf.",
+    "back": "Zurück zu den Websites"
+  },
+  "lookupFailed": {
+    "title": "Diese Website konnte nicht geladen werden",
+    "description": "Wir konnten diese Website gerade nicht prüfen. Versuchen Sie es gleich noch einmal."
   }
 }

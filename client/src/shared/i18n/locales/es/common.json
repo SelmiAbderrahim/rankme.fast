@@ -46,7 +46,8 @@
     "team": "Equipo",
     "admin": "Administración",
     "superadmin": "Plataforma",
-    "startFree": "Empezar gratis"
+    "startFree": "Empezar gratis",
+    "openApp": "Abrir la aplicación"
   },
   "footer": {
     "copyright": "© {{year}}, {{brand}}. Todos los derechos reservados.",
@@ -139,7 +140,8 @@
     "upgradeTitle": "Desbloquea más auditorías",
     "upgradeBody": "Mejora tu plan para límites más altos e informes más detallados.",
     "upgradeCta": "Mejorar plan",
-    "groupSuperAdmin": "Plataforma"
+    "groupSuperAdmin": "Plataforma",
+    "opensInNewTab": "Se abre en una pestaña nueva"
   },
   "locked": "Bloqueado",
   "retry": "Reintentar",

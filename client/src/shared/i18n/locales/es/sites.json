@@ -196,5 +196,14 @@
       "revoked": "Revocado",
       "disconnected": "No conectado"
     }
+  },
+  "notFound": {
+    "title": "Sitio no encontrado",
+    "description": "Este sitio no existe o no tienes acceso a él.",
+    "back": "Volver a los sitios"
+  },
+  "lookupFailed": {
+    "title": "No se pudo cargar este sitio",
+    "description": "No pudimos comprobar este sitio ahora mismo. Inténtalo de nuevo en un momento."
   }
 }

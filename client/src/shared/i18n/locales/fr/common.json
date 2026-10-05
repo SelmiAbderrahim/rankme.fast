@@ -46,7 +46,8 @@
     "team": "Équipe",
     "admin": "Admin",
     "superadmin": "Plateforme",
-    "startFree": "Commencer gratuitement"
+    "startFree": "Commencer gratuitement",
+    "openApp": "Ouvrir l'application"
   },
   "footer": {
     "copyright": "© {{year}}, {{brand}}. Tous droits réservés.",
@@ -139,7 +140,8 @@
     "upgradeTitle": "Débloquez plus d'audits",
     "upgradeBody": "Passez à un forfait supérieur pour des limites plus élevées et des rapports plus détaillés.",
     "upgradeCta": "Mettre à niveau",
-    "groupSuperAdmin": "Plateforme"
+    "groupSuperAdmin": "Plateforme",
+    "opensInNewTab": "S'ouvre dans un nouvel onglet"
   },
   "locked": "Verrouillé",
   "retry": "Réessayer",

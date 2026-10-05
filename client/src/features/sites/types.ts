@@ -18,6 +18,10 @@ export interface SiteListPage {
   nextCursor: string | null;
 }
 
+export interface GetSiteResponse {
+  site: Site;
+}
+
 export interface CreateSiteResponse {
   site: Site;
   message: string;

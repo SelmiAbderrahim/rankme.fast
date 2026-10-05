@@ -139,6 +139,20 @@ describe('AppLayout', () => {
     expect(screen.getByText('OUTLET')).toBeInTheDocument();
     expect(screen.getByText(/All Rights Reserved/)).toBeInTheDocument();
   });
+
+  it('renders explicit children in place of the outlet (signed-in 404)', () => {
+    mockSession(true);
+    render(
+      <MemoryRouter initialEntries={['/x']}>
+        <Shell>
+          <AppLayout>
+            <div>CHILD</div>
+          </AppLayout>
+        </Shell>
+      </MemoryRouter>,
+    );
+    expect(screen.getByText('CHILD')).toBeInTheDocument();
+  });
 });
 
 describe('route tree', () => {

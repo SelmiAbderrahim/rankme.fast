@@ -196,5 +196,14 @@
       "revoked": "已撤销",
       "disconnected": "未连接"
     }
+  },
+  "notFound": {
+    "title": "未找到网站",
+    "description": "此网站不存在，或你没有访问权限。",
+    "back": "返回网站列表"
+  },
+  "lookupFailed": {
+    "title": "无法加载此网站",
+    "description": "暂时无法检查此网站，请稍后重试。"
   }
 }

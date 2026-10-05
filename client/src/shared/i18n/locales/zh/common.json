@@ -46,7 +46,8 @@
     "team": "团队",
     "admin": "管理",
     "superadmin": "平台",
-    "startFree": "免费开始"
+    "startFree": "免费开始",
+    "openApp": "打开应用"
   },
   "footer": {
     "copyright": "© {{year}}, {{brand}}. 保留所有权利。",
@@ -139,7 +140,8 @@
     "upgradeTitle": "解锁更多审计",
     "upgradeBody": "升级以获得更高额度和更深入的报告。",
     "upgradeCta": "升级",
-    "groupSuperAdmin": "平台"
+    "groupSuperAdmin": "平台",
+    "opensInNewTab": "在新标签页中打开"
   },
   "locked": "已锁定",
   "retry": "重试",

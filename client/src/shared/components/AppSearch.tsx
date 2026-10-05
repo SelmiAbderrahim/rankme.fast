@@ -26,6 +26,8 @@ interface SearchResult {
   hint?: string;
   icon: LucideIcon;
   group: 'pages' | 'sites';
+  /** Opens outside the SPA, in a new tab. */
+  newTab?: boolean;
   /** Text the query is matched against. */
   fields: string[];
   rank: number;
@@ -52,6 +54,7 @@ const useSearchResults = (query: string): SearchResult[] => {
           to: item.to === '/docs' ? docsUrl('index', locale) : item.to,
           label: t(item.labelKey),
           icon: item.icon,
+          newTab: item.newTab === true,
           group: 'pages' as const,
           fields: [t(item.labelKey)],
           rank: 0,
@@ -116,7 +119,8 @@ const SearchCombobox = ({
   const activeResult = results[active];
 
   const choose = (result: SearchResult) => {
-    navigate(result.to);
+    if (result.newTab) window.open(result.to, '_blank', 'noopener,noreferrer');
+    else navigate(result.to);
     setQuery('');
     setActive(0);
     setOpen(false);

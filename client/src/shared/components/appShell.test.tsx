@@ -126,14 +126,20 @@ describe('AppSidebar', () => {
       '/assistant',
     );
     expect(screen.getByRole('link', { name: 'Sites' })).not.toHaveAttribute('aria-current');
-    expect(screen.getByRole('link', { name: 'Docs' })).toHaveAttribute('href', '/docs');
+    // Docs leave the SPA: a new tab, never a same-tab jump that drops the shell.
+    const docs = screen.getByRole('link', { name: /^Docs/ });
+    expect(docs).toHaveAttribute('href', '/docs');
+    expect(docs).toHaveAttribute('target', '_blank');
+    expect(docs).toHaveAttribute('rel', 'noopener noreferrer');
+    expect(docs).toHaveAccessibleName('Docs Opens in a new tab');
+    expect(screen.getByRole('link', { name: 'Sites' })).not.toHaveAttribute('target');
     expect(screen.queryByRole('link', { name: 'Guides' })).not.toBeInTheDocument();
     expectLinkIcon('Dashboard', 'lucide-layout-dashboard');
     expectLinkIcon('AI Assistant', 'lucide-bot');
     expectLinkIcon('Sites', 'lucide-earth');
     expectLinkIcon(/Keyword research/, 'lucide-search');
     expectLinkIcon('Alerts', 'lucide-bell-ring');
-    expectLinkIcon('Docs', 'lucide-book-open-text');
+    expectLinkIcon(/^Docs/, 'lucide-book-open-text');
     expectLinkIcon('Profile', 'lucide-circle-user-round');
     expect(screen.queryByRole('link', { name: 'Billing' })).not.toBeInTheDocument();
     expectLinkIcon('Team', 'lucide-users-round');
@@ -253,7 +259,7 @@ describe('AppSidebar', () => {
       </Wrap>,
     );
     expect(screen.getByText('نظرة عامة')).toBeInTheDocument();
-    expect(screen.getByRole('link', { name: 'الوثائق' })).toHaveAttribute('href', '/ar/docs');
+    expect(screen.getByRole('link', { name: /^الوثائق/ })).toHaveAttribute('href', '/ar/docs');
     await i18n.changeLanguage('en');
   });
 
@@ -265,7 +271,7 @@ describe('AppSidebar', () => {
         <AppSidebar />
       </Wrap>,
     );
-    expect(screen.getByRole('link', { name: 'Docs' })).toHaveAttribute('href', '/docs');
+    expect(screen.getByRole('link', { name: /^Docs/ })).toHaveAttribute('href', '/docs');
     await i18n.changeLanguage('en');
   });
 
@@ -418,16 +424,22 @@ describe('AppTopbar', () => {
     await i18n.changeLanguage('ar');
     setSession({ role: 'Member' });
     renderTopbar();
+    const open = vi.spyOn(window, 'open').mockReturnValue(null);
     await userEvent.type(screen.getByRole('combobox', { name: 'بحث' }), 'الوثائق{Enter}');
-    expect(screen.getByTestId('loc')).toHaveTextContent('/ar/docs');
+    expect(open).toHaveBeenCalledWith('/ar/docs', '_blank', 'noopener,noreferrer');
+    // The SPA route is untouched: docs open in a new tab.
+    expect(screen.getByTestId('loc')).not.toHaveTextContent('/ar/docs');
+    open.mockRestore();
   });
 
   it('uses the unprefixed docs route for an unsupported language', async () => {
     await i18n.changeLanguage('xx-unsupported');
     setSession({ role: 'Member' });
     renderTopbar();
+    const open = vi.spyOn(window, 'open').mockReturnValue(null);
     await userEvent.type(searchBox(), 'Docs{Enter}');
-    expect(screen.getByTestId('loc')).toHaveTextContent('/docs');
+    expect(open).toHaveBeenCalledWith('/docs', '_blank', 'noopener,noreferrer');
+    open.mockRestore();
   });
 
   it('applies the workspace role policy to search results', async () => {

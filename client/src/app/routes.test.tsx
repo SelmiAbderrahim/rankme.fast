@@ -6,7 +6,7 @@ import { i18n, initI18n } from '@shared/i18n';
 import { rootReducer } from './store';
 
 vi.mock('@shared/components/AppLayout', () => ({
-  AppLayout: () => <Outlet />,
+  AppLayout: ({ children }: { children?: React.ReactNode }) => <>{children ?? <Outlet />}</>,
 }));
 
 vi.mock('@shared/components/MinimalLayout', () => ({
@@ -14,13 +14,15 @@ vi.mock('@shared/components/MinimalLayout', () => ({
 }));
 
 vi.mock('@shared/components/PublicLayout', () => ({
-  PublicLayout: () => <Outlet />,
+  PublicLayout: ({ children }: { children?: React.ReactNode }) => <>{children ?? <Outlet />}</>,
 }));
 
 vi.mock('@features/auth', () => ({
   authRoutes: [],
   RequireAuth: ({ children }: { children: React.ReactNode }) => <>{children}</>,
   RequirePasswordCurrent: ({ children }: { children: React.ReactNode }) => <>{children}</>,
+  SessionPending: () => <p>pending</p>,
+  useAuthSession: () => ({ authenticated: false, isPending: false }),
   RequireVerified: ({ children }: { children: React.ReactNode }) => <>{children}</>,
   RequiredPasswordChangePage: () => <h1>Change password</h1>,
 }));
@@ -225,6 +227,12 @@ describe('app lazy routes', () => {
 
   it('renders the shared NotFound for an unknown path in the public tree (real 404 via loader)', async () => {
     const router = createMemoryRouter(routes, { initialEntries: ['/totally-nonexistent-xyz'] });
+    renderRouter(router);
+    expect(await screen.findByText('Page not found')).toBeInTheDocument();
+  });
+
+  it('renders the shared NotFound for an unknown locale-prefixed public path', async () => {
+    const router = createMemoryRouter(routes, { initialEntries: ['/fr/totally-nonexistent-xyz'] });
     renderRouter(router);
     expect(await screen.findByText('Page not found')).toBeInTheDocument();
   });

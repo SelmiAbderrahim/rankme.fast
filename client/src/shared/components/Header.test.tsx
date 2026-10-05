@@ -177,10 +177,13 @@ describe('Header marketing variant', () => {
     renderHeader(true, 'marketing');
     // Desktop CTA pair is present for an authenticated visitor.
     expect(screen.getAllByRole('link', { name: 'Dashboard' }).length).toBeGreaterThan(0);
+    // A session turns Log in / Get started into a way back to the app.
+    expect(screen.getAllByRole('link', { name: 'Open app' }).length).toBeGreaterThan(0);
+    expect(screen.queryByRole('link', { name: /^(Log in|Get started)$/ })).toBeNull();
     await user.click(screen.getByRole('button', { name: /open menu/i }));
     const dialog = await screen.findByRole('dialog');
     // Exercise both authed CTAs' close-on-click handlers.
-    await user.click(within(dialog).getAllByRole('link', { name: 'Dashboard' })[0]!);
+    await user.click(within(dialog).getAllByRole('link', { name: 'Open app' })[0]!);
     await user.click(screen.getByRole('button', { name: /open menu/i }));
     const dialog1b = await screen.findByRole('dialog');
     await user.click(within(dialog1b).getByRole('link', { name: /log out/i }));

@@ -58,6 +58,21 @@ afterEach(() => {
 });
 
 describe('PublicLayout', () => {
+  it('renders explicit children in place of the outlet (the 404 owns its route)', () => {
+    const router = createMemoryRouter(
+      [{ path: '*', element: <PublicLayout><h1>Missing</h1></PublicLayout> }],
+      { initialEntries: ['/nope'] },
+    );
+    render(
+      <I18nextProvider i18n={i18n}>
+        <RouterProvider router={router} />
+      </I18nextProvider>,
+    );
+    expect(document.getElementById('public-main')).toContainElement(
+      screen.getByRole('heading', { name: 'Missing' }),
+    );
+  });
+
   it('composes the shared header, minimal footer, and a skip link to the main column', () => {
     renderPath('/docs/getting-started');
 

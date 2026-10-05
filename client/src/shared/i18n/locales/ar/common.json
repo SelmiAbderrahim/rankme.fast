@@ -46,7 +46,8 @@
     "team": "الفريق",
     "admin": "الإدارة",
     "superadmin": "المنصة",
-    "startFree": "ابدأ مجانًا"
+    "startFree": "ابدأ مجانًا",
+    "openApp": "فتح التطبيق"
   },
   "footer": {
     "copyright": "© {{year}}، {{brand}}. جميع الحقوق محفوظة.",
@@ -139,7 +140,8 @@
     "upgradeTitle": "افتح المزيد من عمليات التدقيق",
     "upgradeBody": "قم بالترقية للحصول على حدود أعلى وتقارير أعمق.",
     "upgradeCta": "ترقية",
-    "groupSuperAdmin": "المنصة"
+    "groupSuperAdmin": "المنصة",
+    "opensInNewTab": "يفتح في علامة تبويب جديدة"
   },
   "locked": "مقفل",
   "retry": "حاول مرة أخرى",

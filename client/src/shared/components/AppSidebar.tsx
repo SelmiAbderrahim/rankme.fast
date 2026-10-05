@@ -1,4 +1,5 @@
 import { useTranslation } from 'react-i18next';
+import { ExternalLink } from 'lucide-react';
 import { Link, useLocation } from 'react-router-dom';
 import { BRAND_NAME, BrandLogo } from '@shared/brand';
 import { docsUrl } from '@shared/docs/docsUrl';
@@ -53,6 +54,7 @@ export const AppSidebar = () => {
         key: item.to,
         href: item.to === '/docs' ? docsUrl('index', locale) : item.to,
         aliases: item.aliases,
+        newTab: item.newTab === true,
         label: t(item.labelKey),
         icon: item.icon,
       })),
@@ -99,14 +101,31 @@ export const AppSidebar = () => {
                         tooltip={row.label}
                         className="data-[active=true]:bg-primary data-[active=true]:text-primary-foreground data-[active=true]:hover:bg-primary/90 data-[active=true]:hover:text-primary-foreground"
                       >
-                        <Link
-                          to={row.href}
-                          aria-current={row.active ? 'page' : undefined}
-                          onClick={closeOnMobile}
-                        >
-                          <Icon />
-                          <span>{row.label}</span>
-                        </Link>
+                        {row.newTab ? (
+                          // Leaves the SPA (docs are server-rendered, and live on
+                          // the public host in a split deployment): a new tab keeps
+                          // the app and its session where the user left them.
+                          <a
+                            href={row.href}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            onClick={closeOnMobile}
+                          >
+                            <Icon />
+                            <span>{row.label}</span>
+                            <ExternalLink aria-hidden="true" className="ms-auto size-3.5 opacity-60" />
+                            <span className="sr-only">{t('shell.opensInNewTab')}</span>
+                          </a>
+                        ) : (
+                          <Link
+                            to={row.href}
+                            aria-current={row.active ? 'page' : undefined}
+                            onClick={closeOnMobile}
+                          >
+                            <Icon />
+                            <span>{row.label}</span>
+                          </Link>
+                        )}
                       </SidebarMenuButton>
                     </SidebarMenuItem>
                   );

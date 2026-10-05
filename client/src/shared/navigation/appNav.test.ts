@@ -41,4 +41,9 @@ describe('APP_NAV_GROUPS', () => {
     expect(byTo['/settings/security']?.aliases).toContain('/profile?tab=security');
     expect(byTo['/settings/notifications']?.aliases).toContain('/profile?tab=notifications');
   });
+
+  it('opens only Docs in a new tab', () => {
+    const items = APP_NAV_GROUPS.flatMap((group) => group.items);
+    expect(items.filter((item) => item.newTab).map((item) => item.to)).toEqual(['/docs']);
+  });
 });

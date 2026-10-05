@@ -3,6 +3,7 @@ import * as client from '@shared/api/client';
 import {
   createSiteRequest,
   deleteSiteRequest,
+  fetchSiteRequest,
   fetchSitesRequest,
   pauseSiteRequest,
   resumeSiteRequest,
@@ -31,6 +32,11 @@ describe('sites api wrappers', () => {
   it('fetchSitesRequest treats null cursor as first page', async () => {
     await fetchSitesRequest(null);
     expect(apiClient).toHaveBeenCalledWith('/sites');
+  });
+
+  it('fetchSiteRequest reads one site by encoded id', async () => {
+    await fetchSiteRequest('a/b');
+    expect(apiClient).toHaveBeenCalledWith('/sites/a%2Fb');
   });
 
   it('createSiteRequest posts the url', async () => {

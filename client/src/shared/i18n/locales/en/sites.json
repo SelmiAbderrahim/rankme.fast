@@ -196,5 +196,14 @@
       "revoked": "Revoked",
       "disconnected": "Not connected"
     }
+  },
+  "notFound": {
+    "title": "Site not found",
+    "description": "This site doesn't exist, or you don't have access to it.",
+    "back": "Back to sites"
+  },
+  "lookupFailed": {
+    "title": "Could not load this site",
+    "description": "We couldn't check this site right now. Try again in a moment."
   }
 }

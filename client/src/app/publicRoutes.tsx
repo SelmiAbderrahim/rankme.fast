@@ -1,6 +1,6 @@
 import { Navigate, type RouteObject } from 'react-router-dom';
 import { docsRoute } from '@features/docs';
-import { NotFound } from '@shared/components/NotFound';
+import { NotFoundRoute } from '@shared/components/NotFoundRoute';
 import { PublicLayout } from '@shared/components/PublicLayout';
 import { DEFAULT_LOCALE, type SupportedLocale } from '@shared/i18n';
 import { authEntryHref, MARKETING_LOCALE_PREFIXES } from '@shared/i18n/localePath';
@@ -16,31 +16,36 @@ const rootRedirect = (locale: SupportedLocale): RouteObject => ({
 });
 
 /**
+ * Real-404 catch-all. The loader throws a 404 Response so the SSR static
+ * handler emits an HTTP 404 (not a soft-404 200); errorElement paints the same
+ * NotFoundRoute on both the SSR and client data routers. It sits beside — not
+ * inside — PublicLayout because NotFoundRoute picks the shell itself: the
+ * signed-out public chrome, or the authenticated app shell for a signed-in user.
+ */
+const notFoundRoute: RouteObject = {
+  path: '*',
+  loader: () => {
+    throw new Response(null, { status: 404 });
+  },
+  element: <NotFoundRoute />,
+  errorElement: <NotFoundRoute />,
+};
+
+/**
  * Public, server-rendered pages: the docs plus a real-404 catch-all. Shared
  * by the English (un-prefixed) branch and one branch per non-default locale
  * (/ar, /fr, …). Locale prefixes are literal path segments — never a
  * `:locale` param — so they cannot hijack app routes like /login.
  */
-const pages: RouteObject[] = [
-  docsRoute,
-  // The loader throws a real 404 Response so the SSR static handler emits an
-  // HTTP 404 status (not a soft-404 200); errorElement paints NotFound on both
-  // the SSR and client data routers.
-  {
-    path: '*',
-    loader: () => {
-      throw new Response(null, { status: 404 });
-    },
-    element: <NotFound />,
-    errorElement: <NotFound />,
-  },
+const pages = (locale: SupportedLocale): RouteObject[] => [
+  { element: <PublicLayout />, children: [rootRedirect(locale), docsRoute] },
+  notFoundRoute,
 ];
 
 export const publicRoutes: RouteObject[] = [
-  { element: <PublicLayout />, children: [rootRedirect(DEFAULT_LOCALE), ...pages] },
+  ...pages(DEFAULT_LOCALE),
   ...MARKETING_LOCALE_PREFIXES.map((locale) => ({
     path: locale,
-    element: <PublicLayout />,
-    children: [rootRedirect(locale), ...pages],
+    children: pages(locale),
   })),
 ];

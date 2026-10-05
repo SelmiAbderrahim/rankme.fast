@@ -63,6 +63,9 @@ export const Header = ({
   const showAuthActions = isMarketing;
   const loginLabelKey = isMarketing ? 'nav.logIn' : 'nav.login';
   const logoutLabelKey = isMarketing ? 'nav.logOut' : 'nav.logout';
+  // On the marketing/docs chrome a session means "take me back to the app";
+  // the app variant's own nav already names every destination.
+  const openAppLabelKey = isMarketing ? 'nav.openApp' : 'nav.dashboard';
   const dashboardHref = isMarketing ? appHref('/dashboard') : '/dashboard';
   const logoutHref = isMarketing ? appHref('/logout') : '/logout';
 
@@ -107,10 +110,10 @@ export const Header = ({
             authenticated ? (
               <>
                 <Button asChild variant="ghost" size="sm" className="hidden sm:inline-flex">
-                  <Link to={dashboardHref}>{t('nav.dashboard')}</Link>
+                  <Link to={logoutHref}>{t(logoutLabelKey)}</Link>
                 </Button>
                 <Button asChild size="sm" className="hidden rounded-full sm:inline-flex">
-                  <Link to={logoutHref}>{t(logoutLabelKey)}</Link>
+                  <Link to={dashboardHref}>{t(openAppLabelKey)}</Link>
                 </Button>
               </>
             ) : (
@@ -174,7 +177,7 @@ export const Header = ({
                         className="justify-start"
                         onClick={() => setOpen(false)}
                       >
-                        <Link to={dashboardHref}>{t('nav.dashboard')}</Link>
+                        <Link to={dashboardHref}>{t(openAppLabelKey)}</Link>
                       </Button>
                       <Button
                         asChild

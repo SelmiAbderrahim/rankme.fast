@@ -11,6 +11,12 @@ export interface AppNavItem {
    * leaves the sidebar pointing somewhere else.
    */
   aliases?: readonly string[];
+  /**
+   * The destination leaves the SPA (docs are server-rendered, and on a split
+   * deployment live on the public host). It opens in a new tab so the app and
+   * its session stay where the user left them.
+   */
+  newTab?: boolean;
 }
 
 export interface AppNavGroup {
@@ -45,7 +51,7 @@ export const APP_NAV_GROUPS: readonly AppNavGroup[] = [
       // panels — they are deliberately not
       // account-level sidebar destinations.
       { to: '/dashboard/alerts', labelKey: 'alerts:title', icon: APP_PAGE_ICONS.alerts },
-      { to: '/docs', labelKey: 'nav.docs', icon: APP_PAGE_ICONS.docs },
+      { to: '/docs', labelKey: 'nav.docs', icon: APP_PAGE_ICONS.docs, newTab: true },
       { to: '/exports', labelKey: 'nav.exports', icon: APP_PAGE_ICONS.exports },
     ],
   },

@@ -11,9 +11,9 @@
  *   - overview-panel                       overview surface
  */
 import { Suspense, lazy, useEffect, type ReactNode } from 'react';
-import { useParams } from 'react-router-dom';
+import { Link, useParams } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
-import { Pause, Play } from 'lucide-react';
+import { Pause, Play, SearchX } from 'lucide-react';
 import { PageHeader } from '@shared/components/PageHeader';
 import { Alert, AlertDescription, AlertTitle } from '@shared/ui/alert';
 import { Button } from '@shared/ui/button';
@@ -33,13 +33,26 @@ import {
 } from '@features/google';
 import { Skeleton } from '@shared/ui/skeleton';
 import {
+  Empty,
+  EmptyDescription,
+  EmptyHeader,
+  EmptyMedia,
+  EmptyTitle,
+} from '@shared/ui/empty';
+import {
   getSiteTabLabelKey,
   useSiteSubView,
   useSiteTab,
   type SiteTab,
 } from '../tabState';
 import { loadSites, resumeSite } from '../store/thunks';
-import { selectPausingSiteId, selectSites, selectSitesLoaded } from '../store/selectors';
+import {
+  selectPausingSiteId,
+  selectSites,
+  selectSitesError,
+  selectSitesLoaded,
+} from '../store/selectors';
+import { useSiteLookup } from '../useSiteLookup';
 import { OverviewPanel } from './OverviewPanel';
 import { SiteWorkspaceNavigation } from './SiteWorkspaceNavigation';
 
@@ -270,6 +283,7 @@ export const SiteWorkspacePage = () => {
 
   const sites = useAppSelector(selectSites);
   const sitesLoaded = useAppSelector(selectSitesLoaded);
+  const sitesError = useAppSelector(selectSitesError);
   const pausingId = useAppSelector(selectPausingSiteId);
 
   useEffect(() => {
@@ -283,11 +297,58 @@ export const SiteWorkspacePage = () => {
   // Google-tab drill-in (`?view=`) — null means the overview card stack.
   const [googleView] = useSiteSubView();
 
-  const site = sites.find((s) => s.id === siteId);
-  const heading = site?.displayName || site?.domain || siteId;
-  // Show a heading-sized skeleton until the sites slice resolves, so the raw
-  // site UUID never flashes as the page title.
-  const headingResolved = sitesLoaded || Boolean(site);
+  // The list is paginated, so a site missing from it may still exist: ask the
+  // API once the list has settled. Its 404 is the only "not found" answer.
+  const listedSite = sites.find((s) => s.id === siteId);
+  const lookup = useSiteLookup(siteId, !listedSite && (sitesLoaded || Boolean(sitesError)));
+  const site = listedSite ?? lookup.site ?? undefined;
+
+  if (!site) {
+    if (lookup.status === 'notFound') {
+      return (
+        <div className="flex flex-col gap-6 px-4 py-8" data-testid="site-not-found">
+          <Empty className="mx-auto max-w-md">
+            <EmptyHeader>
+              <EmptyMedia variant="icon">
+                <SearchX aria-hidden="true" />
+              </EmptyMedia>
+              <EmptyTitle>{t('notFound.title')}</EmptyTitle>
+              <EmptyDescription>{t('notFound.description')}</EmptyDescription>
+            </EmptyHeader>
+            <Button asChild>
+              <Link to="/sites">{t('notFound.back')}</Link>
+            </Button>
+          </Empty>
+        </div>
+      );
+    }
+    if (lookup.status === 'error') {
+      return (
+        <div className="flex flex-col gap-6 px-4 py-8" data-testid="site-lookup-error">
+          <Alert variant="destructive" role="alert">
+            <AlertTitle>{t('lookupFailed.title')}</AlertTitle>
+            <AlertDescription>
+              <p>{t('lookupFailed.description')}</p>
+              <Button variant="outline" size="sm" className="mt-2" onClick={lookup.retry}>
+                {t('retry')}
+              </Button>
+            </AlertDescription>
+          </Alert>
+        </div>
+      );
+    }
+    // Still resolving: a heading-sized skeleton, so neither the raw site id
+    // nor a workspace for a site that may not exist ever paints.
+    return (
+      <div className="flex flex-col gap-6 px-4 py-8" data-testid="site-workspace-loading" aria-busy="true">
+        <span className="sr-only" role="status">{t('loading')}</span>
+        <Skeleton className="h-8 w-64" data-testid="workspace-heading-skeleton" />
+        <Skeleton className="h-32 w-full" />
+      </div>
+    );
+  }
+
+  const heading = site.displayName || site.domain;
 
   const panels: Record<SiteTab, ReactNode> = {
     overview: <OverviewPanel siteId={siteId} />,
@@ -325,7 +386,7 @@ export const SiteWorkspacePage = () => {
     ),
     traffic: (
       <Suspense fallback={<LazyPanelFallback />}>
-        <LazyTrafficInsightsPanel siteId={siteId} siteDomain={site?.domain} />
+        <LazyTrafficInsightsPanel siteId={siteId} siteDomain={site.domain} />
       </Suspense>
     ),
     backlinks: (
@@ -396,7 +457,7 @@ export const SiteWorkspacePage = () => {
     ),
     content: (
       <Suspense fallback={<LazyPanelFallback />}>
-        <LazyContentIntelligencePage siteId={siteId} siteOrigin={site?.url} />
+        <LazyContentIntelligencePage siteId={siteId} siteOrigin={site.url} />
       </Suspense>
     ),
     'internal-links': (
@@ -425,23 +486,10 @@ export const SiteWorkspacePage = () => {
     <div className="flex flex-col gap-6 px-4 py-8" data-testid="site-workspace">
       <PageHeader
         icon={APP_PAGE_ICONS.siteWorkspace}
-        title={
-          headingResolved ? (
-            heading
-          ) : (
-            <span>
-              <span className="sr-only">{t('loading')}</span>
-              <span
-                aria-hidden="true"
-                className="block h-8 w-64 animate-pulse rounded-md bg-accent"
-                data-testid="workspace-heading-skeleton"
-              />
-            </span>
-          )
-        }
-        description={site?.domain}
+        title={heading}
+        description={site.domain}
       />
-      {site?.paused ? (
+      {site.paused ? (
         <Alert role="status" data-testid="site-paused-banner">
           <Pause aria-hidden="true" />
           <AlertTitle>{t('paused.bannerTitle')}</AlertTitle>
