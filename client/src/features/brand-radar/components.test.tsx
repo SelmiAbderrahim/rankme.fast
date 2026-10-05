@@ -67,7 +67,7 @@ describe('SpendPreviewCard', () => {
   it('describes self-host capacity without finite allowance claims', () => {
     renderUi(<SpendPreviewCard preview={previewFixture()} loading={false} />);
     expect(screen.getByTestId('brand-radar-preview')).toHaveTextContent(
-      'Plan usage limits are not metered in self-hosted mode.',
+      "Usage limits aren't applied on this server.",
     );
   });
 });

@@ -6,9 +6,9 @@
   "yes": "Yes",
   "no": "No",
   "capacity": {
-    "selfHost": "Plan usage limits are not metered in self-hosted mode.",
+    "selfHost": "Usage limits aren't applied on this server.",
     "selfHostPlan": "Self-hosted",
-    "selfHostSlots": "{{used}} in use; plan limits are not metered in self-hosted mode."
+    "selfHostSlots": "{{used}} in use; usage limits aren't applied on this server."
   },
   "logPanel": {
     "title": "Backup output",

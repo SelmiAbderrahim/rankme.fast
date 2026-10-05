@@ -6,9 +6,9 @@
   "yes": "Sí",
   "no": "No",
   "capacity": {
-    "selfHost": "Los límites de uso del plan no se contabilizan en el modo autoalojado.",
+    "selfHost": "En este servidor no se aplican límites de uso.",
     "selfHostPlan": "Autoalojado",
-    "selfHostSlots": "{{used}} en uso; los límites del plan no se contabilizan en el modo autoalojado."
+    "selfHostSlots": "{{used}} en uso; en este servidor no se aplican límites de uso."
   },
   "logPanel": {
     "title": "Salida de la copia",

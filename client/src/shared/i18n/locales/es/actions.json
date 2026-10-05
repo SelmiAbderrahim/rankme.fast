@@ -122,7 +122,7 @@
     "unitsLabel": "Auditorías que se usarán",
     "unitsValue": "1",
     "freshRun": "Un reanálisis siempre rastrea de nuevo — los resultados nunca provienen de una caché.",
-    "selfHosted": "Los límites de uso del plan no se miden en el modo autoalojado.",
+    "selfHosted": "En este servidor no se aplican límites de uso.",
     "remaining": "Quedan {{remaining}} de {{cap}} auditorías en este período",
     "allowanceUnknown": "No pudimos cargar tu saldo restante. El servidor comprobará tu límite antes de ejecutar de todos modos.",
     "confirm": "Iniciar reanálisis",

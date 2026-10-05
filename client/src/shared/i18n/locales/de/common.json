@@ -6,9 +6,9 @@
   "yes": "Ja",
   "no": "Nein",
   "capacity": {
-    "selfHost": "Tariflimits werden im selbst gehosteten Betrieb nicht erfasst.",
+    "selfHost": "Auf diesem Server werden keine Nutzungslimits angewendet.",
     "selfHostPlan": "Selbst gehostet",
-    "selfHostSlots": "{{used}} belegt; Tariflimits werden im selbst gehosteten Betrieb nicht erfasst."
+    "selfHostSlots": "{{used}} belegt; auf diesem Server werden keine Nutzungslimits angewendet."
   },
   "logPanel": {
     "title": "Sicherungsausgabe",

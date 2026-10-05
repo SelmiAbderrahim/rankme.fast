@@ -301,7 +301,7 @@ describe('InternalLinksPage — preview and lifecycle states', () => {
     renderPage(`/sites/${SITE}?tab=internal-links&view=new`);
     await user.click(await screen.findByTestId('internal-links-preview-button'));
     expect(await screen.findByTestId('internal-links-preview')).toHaveTextContent(
-      'Plan usage limits are not metered in self-hosted mode.',
+      "Usage limits aren't applied on this server.",
     );
     expect(screen.getByTestId('internal-links-preview-date')).toHaveTextContent(DATE);
     await user.click(screen.getByTestId('internal-links-cancel'));
@@ -499,7 +499,7 @@ describe('internal-link presentation primitives', () => {
       />,
     );
     expect(
-      screen.getByText('Plan usage limits are not metered in self-hosted mode.'),
+      screen.getByText("Usage limits aren't applied on this server."),
     ).toBeInTheDocument();
     expect(screen.getByTestId('internal-links-preview-date')).toHaveTextContent(DATE);
     expect(screen.getByTestId('internal-links-cancel')).toBeDisabled();

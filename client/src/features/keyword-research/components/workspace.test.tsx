@@ -470,7 +470,7 @@ describe('KeywordSpendPreviewCard', () => {
   it('discloses that usage is not metered', () => {
     renderInRouter(<KeywordSpendPreviewCard preview={preview} loading={false} />);
     expect(screen.getByTestId('kw-preview')).toHaveTextContent(
-      'Plan usage limits are not metered in self-hosted mode.',
+      "Usage limits aren't applied on this server.",
     );
   });
 

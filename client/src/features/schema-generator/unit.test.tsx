@@ -183,7 +183,7 @@ describe('SpendDisclosure', () => {
       </I18nextProvider>,
     );
     expect(screen.getByTestId('schema-preview')).toHaveTextContent(
-      'Plan usage limits are not metered in self-hosted mode.',
+      "Usage limits aren't applied on this server.",
     );
   });
 });

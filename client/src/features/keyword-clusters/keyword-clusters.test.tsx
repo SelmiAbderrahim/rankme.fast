@@ -536,7 +536,7 @@ describe('NewRunPanel', () => {
       screen.getByText(/share at least 3 of their top 10 results/i),
     ).toBeInTheDocument();
     expect(
-      screen.getByText('Plan usage limits are not metered in self-hosted mode.'),
+      screen.getByText("Usage limits aren't applied on this server."),
     ).toBeInTheDocument();
   });
 

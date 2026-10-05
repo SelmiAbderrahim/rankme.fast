@@ -122,7 +122,7 @@
     "unitsLabel": "Dafür verwendete Audit-Läufe",
     "unitsValue": "1",
     "freshRun": "Eine erneute Prüfung crawlt immer neu — Ergebnisse kommen nie aus einem Cache.",
-    "selfHosted": "Nutzungslimits von Plänen werden im selbstgehosteten Modus nicht gemessen.",
+    "selfHosted": "Auf diesem Server werden keine Nutzungslimits angewendet.",
     "remaining": "{{remaining}} von {{cap}} Audit-Läufen in diesem Zeitraum übrig",
     "allowanceUnknown": "Ihr verbleibendes Kontingent konnte nicht geladen werden. Der Server prüft Ihr Limit vor dem Start trotzdem.",
     "confirm": "Erneute Prüfung starten",

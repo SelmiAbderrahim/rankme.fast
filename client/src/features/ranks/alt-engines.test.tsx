@@ -224,7 +224,7 @@ describe('AddKeywordForm — engine picker', () => {
       ),
     ).toBeInTheDocument();
     expect(within(panel).getByTestId('alt-engine-preview-usage')).toHaveTextContent(
-      'Plan usage limits are not metered in self-hosted mode.',
+      "Usage limits aren't applied on this server.",
     );
     // Bing matches the site domain — no target field.
     expect(screen.queryByTestId('keyword-engine-target')).toBeNull();

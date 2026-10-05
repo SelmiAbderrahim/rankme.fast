@@ -275,7 +275,7 @@ describe('CannibalizationPage — new report tab', () => {
     renderPage(`/sites/${SITE_ID}?tab=cannibalization&view=new`);
     await userEvent.click(await screen.findByTestId('cannibalization-preview-button'));
     expect(await screen.findByTestId('cannibalization-preview')).toHaveTextContent(
-      'Plan usage limits are not metered in self-hosted mode.',
+      "Usage limits aren't applied on this server.",
     );
   });
 

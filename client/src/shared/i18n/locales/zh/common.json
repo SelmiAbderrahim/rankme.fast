@@ -6,9 +6,9 @@
   "yes": "是",
   "no": "否",
   "capacity": {
-    "selfHost": "自托管模式不计量套餐用量上限。",
+    "selfHost": "此服务器不应用用量限制。",
     "selfHostPlan": "自托管",
-    "selfHostSlots": "已使用 {{used}}；自托管模式不计量套餐上限。"
+    "selfHostSlots": "已使用 {{used}}；此服务器不应用用量限制。"
   },
   "logPanel": {
     "title": "备份输出",

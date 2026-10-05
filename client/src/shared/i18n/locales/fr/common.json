@@ -6,9 +6,9 @@
   "yes": "Oui",
   "no": "Non",
   "capacity": {
-    "selfHost": "Les limites d’usage du forfait ne sont pas comptabilisées en mode auto-hébergé.",
+    "selfHost": "Les limites d’utilisation ne sont pas appliquées sur ce serveur.",
     "selfHostPlan": "Auto-hébergé",
-    "selfHostSlots": "{{used}} utilisés ; les limites du forfait ne sont pas comptabilisées en mode auto-hébergé."
+    "selfHostSlots": "{{used}} utilisés ; les limites d’utilisation ne sont pas appliquées sur ce serveur."
   },
   "logPanel": {
     "title": "Sortie de sauvegarde",

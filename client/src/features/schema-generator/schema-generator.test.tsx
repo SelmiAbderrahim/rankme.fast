@@ -453,7 +453,7 @@ describe('SchemaGeneratorPanel — preview then generate', () => {
     expect(screen.queryByTestId('schema-generate-button')).toBeNull();
     await userEvent.click(screen.getByTestId('schema-preview-button'));
     expect(await screen.findByTestId('schema-preview')).toHaveTextContent(
-      'Plan usage limits are not metered in self-hosted mode.',
+      "Usage limits aren't applied on this server.",
     );
     const disclosure = screen.getByTestId('schema-preview');
     const confirm = screen.getByTestId('schema-generate-button');
