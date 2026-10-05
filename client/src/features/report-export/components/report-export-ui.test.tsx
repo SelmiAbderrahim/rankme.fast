@@ -151,10 +151,15 @@ function LocationProbe() {
   return <output data-testid="location-search">{location.search}</output>;
 }
 
-function renderWithStore(child: React.ReactNode, reportExport = state(), entry = '/exports') {
+function renderWithStore(
+  child: React.ReactNode,
+  reportExport = state(),
+  entry = '/exports',
+  sitesLoaded = true,
+) {
   const sitesState = {
     ...sitesReducer(undefined, { type: '@@init' }),
-    loaded: true,
+    loaded: sitesLoaded,
     items: [{ id: 'site-1', url: 'https://acme.test', domain: 'acme.test', displayName: 'Acme', paused: false, pausedAt: null, createdAt: '2026-01-01T00:00:00.000Z', updatedAt: '2026-01-01T00:00:00.000Z' }],
   };
   const store = configureStore({
@@ -639,6 +644,27 @@ describe('ExportCenterPage', () => {
     expect(screen.getAllByText('acme.test').length).toBeGreaterThan(0);
     expect(screen.getAllByText('Whole account').length).toBeGreaterThan(0);
     expect(screen.getAllByText('—').length).toBeGreaterThan(0);
+  });
+
+  it('loads the site list itself when it has not been loaded yet', async () => {
+    mockedListAllShares.mockResolvedValue({ items: [], nextCursor: null });
+    mockedListSnapshots.mockResolvedValue({ items: [], nextCursor: null });
+    const fetchMock = vi.spyOn(globalThis, 'fetch').mockResolvedValue(
+      new Response(JSON.stringify({ sites: [], nextCursor: null }), {
+        status: 200,
+        headers: { 'content-type': 'application/json' },
+      }),
+    );
+    try {
+      renderWithStore(<ExportCenterPage />, state(), '/exports', false);
+      await waitFor(() =>
+        expect(
+          fetchMock.mock.calls.some(([url]) => String(url).includes('/sites')),
+        ).toBe(true),
+      );
+    } finally {
+      fetchMock.mockRestore();
+    }
   });
 
   it('renders invalid-tab and capability retry states accessibly', async () => {

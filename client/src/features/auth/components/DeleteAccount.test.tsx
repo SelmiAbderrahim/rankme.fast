@@ -88,6 +88,20 @@ describe('DeleteAccount', () => {
     ).toBeInTheDocument();
   });
 
+  it('ignores a status that resolves after the card was unmounted', async () => {
+    let resolveStatus!: (value: unknown) => void;
+    getAccountDeletionStatusMock.mockReturnValue(
+      new Promise((resolve) => {
+        resolveStatus = resolve;
+      }),
+    );
+    const { unmount } = renderWithLocale();
+    unmount();
+    resolveStatus({ scheduledAt: null, startedAt: null, cancellable: false, graceHours: 720 });
+    await Promise.resolve();
+    expect(getAccountDeletionStatusMock).toHaveBeenCalledTimes(1);
+  });
+
   it('falls back to hours when the grace period is not a whole number of days', async () => {
     getAccountDeletionStatusMock.mockResolvedValue({
       scheduledAt: null,

@@ -56,6 +56,34 @@ describe('shareInFlight', () => {
     await expect(old).resolves.toBe('stale');
     expect(fresh).toHaveBeenCalledTimes(1);
   });
+
+  it('only drops keys that start with the prefix', async () => {
+    const gate = deferred<string>();
+    const start = vi.fn(() => gate.promise);
+    const unrelated = shareInFlight('actions:s1', start);
+    dropInFlight('keywords:');
+    const joined = shareInFlight('actions:s1', vi.fn(async () => 'other'));
+    gate.resolve('kept');
+    await expect(joined).resolves.toBe('kept');
+    await expect(unrelated).resolves.toBe('kept');
+    expect(start).toHaveBeenCalledTimes(1);
+  });
+
+  it('does not forget a newer request when an older dropped one settles', async () => {
+    const oldGate = deferred<string>();
+    const newGate = deferred<string>();
+    const fresh = vi.fn(() => newGate.promise);
+    const old = shareInFlight('keywords:s1', () => oldGate.promise);
+    dropInFlight('keywords:');
+    const newer = shareInFlight('keywords:s1', fresh);
+    oldGate.resolve('stale');
+    await old;
+    const joined = shareInFlight('keywords:s1', vi.fn(async () => 'other'));
+    newGate.resolve('fresh');
+    await expect(joined).resolves.toBe('fresh');
+    await expect(newer).resolves.toBe('fresh');
+    expect(fresh).toHaveBeenCalledTimes(1);
+  });
 });
 
 describe('withInFlightInvalidation', () => {

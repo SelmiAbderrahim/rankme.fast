@@ -30,6 +30,12 @@ const setup = (visibilityState: 'visible' | 'hidden' = 'visible') => {
 };
 
 describe('retainAuthSession', () => {
+  it('registers a listener that ignores session updates', () => {
+    const { listen } = setup();
+    const callback = (listen.mock.calls[0] as unknown as [() => void])[0];
+    expect(() => callback()).not.toThrow();
+  });
+
   it('holds one permanent listener so the session atom never unmounts', () => {
     const { listen, unlisten, dispose, doc } = setup();
     expect(listen).toHaveBeenCalledTimes(1);
