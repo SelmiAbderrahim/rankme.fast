@@ -209,5 +209,13 @@
         "warnings": "{{n}} 个警告"
       }
     }
+  },
+  "required": {
+    "title": "连接 Google Search Console",
+    "cta": "连接 Google Search Console",
+    "body": {
+      "cannibalization": "关键词蚕食报告基于您的 Search Console 数据生成。请先为此网站连接 Search Console，再生成报告。已保存的报告仍可查看。",
+      "internalLinks": "内部链接建议会根据您的 Search Console 搜索查询来判断哪些页面重要。请先为此网站连接 Search Console，以获得基于真实搜索的建议。"
+    }
   }
 }

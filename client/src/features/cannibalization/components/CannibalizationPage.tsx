@@ -1,5 +1,6 @@
 import { useEffect, useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
+import { GscRequiredNotice } from '@features/google';
 import { ReportExportControl } from '@features/report-export';
 import { useAppDispatch, useAppSelector } from '@shared/hooks/redux';
 import { Label } from '@shared/ui/label';
@@ -175,7 +176,7 @@ export const CannibalizationPage = ({ siteId }: CannibalizationPageProps) => {
           {sitesStatus === 'loading' ? (
             <Skeleton className="h-32 w-full" data-testid="cannibalization-new-loading" />
           ) : gscConnected === false ? (
-            <StateNotice kind="disconnected" />
+            <GscRequiredNotice siteId={siteId} tool="cannibalization" />
           ) : gscConnected === null ? (
             <StateNotice kind="failed" />
           ) : (
@@ -208,7 +209,11 @@ export const CannibalizationPage = ({ siteId }: CannibalizationPageProps) => {
             <StateNotice kind={listGate.kind} message={listGate.message} />
           ) : null}
           {listStatus === 'succeeded' && reports.length === 0 ? (
-            <StateNotice kind="empty" />
+            gscConnected === false ? (
+              <GscRequiredNotice siteId={siteId} tool="cannibalization" />
+            ) : (
+              <StateNotice kind="empty" />
+            )
           ) : null}
           {reports.length > 0 ? (
             <ReportListTable

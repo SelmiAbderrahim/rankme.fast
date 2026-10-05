@@ -79,11 +79,6 @@
       "title": "等待下次同步",
       "body": "该时间段尚未存储 Search Console 的搜索词与页面数据，将在下次同步时到达。"
     },
-    "disconnected": {
-      "title": "连接 Search Console",
-      "body": "生成新报告前，请先连接 Search Console 资源。已保存的报告仍可查看。",
-      "link": "连接 Search Console"
-    },
     "cap": {
       "title": "月度额度已用完",
       "body": "本月套餐内的关键词相互竞争报告已全部用完。",

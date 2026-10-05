@@ -1,4 +1,4 @@
-import { act, render, screen, waitFor, within } from '@testing-library/react';
+import { act, cleanup, render, screen, waitFor, within } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { I18nextProvider } from 'react-i18next';
 import { MemoryRouter, useLocation } from 'react-router-dom';
@@ -138,6 +138,7 @@ interface ApiHandlers {
   start?: () => unknown;
   run?: () => unknown;
   csv?: () => unknown;
+  google?: () => unknown;
 }
 
 const resolved = (fn: (() => unknown) | undefined, fallback: unknown) => {
@@ -150,6 +151,14 @@ const resolved = (fn: (() => unknown) | undefined, fallback: unknown) => {
 
 const routeApi = (handlers: ApiHandlers = {}) => {
   mockedApi.mockImplementation((path: string, options?: { method?: string; headers?: HeadersInit }) => {
+    if (path === `/sites/${SITE}/google/configuration`) {
+      return resolved(handlers.google, {
+        configuration: {
+          connection: { status: 'connected' },
+          gsc: { propertyUrl: 'sc-domain:example.test' },
+        },
+      });
+    }
     if (path.endsWith('/export.csv')) return resolved(handlers.csv, '\ufeffsource_url\r\n');
     if (path.includes('/internal-link-runs/preview')) {
       return resolved(handlers.preview, readyPreview());
@@ -291,6 +300,39 @@ describe('InternalLinksPage — saved runs and URL-backed filters', () => {
     routeApi({ list: () => { throw new Error('offline'); } });
     renderPage();
     expect(await screen.findByTestId('internal-links-state-failed')).toBeInTheDocument();
+  });
+});
+
+describe('InternalLinksPage — Search Console requirement', () => {
+  it('tells the user Search Console is needed and links to the Google tab when it is not connected', async () => {
+    routeApi({
+      google: () => ({ configuration: { connection: null, gsc: { propertyUrl: null } } }),
+      list: () => ({ items: [] }),
+    });
+    renderPage();
+    const notice = await screen.findByTestId('gsc-required-notice');
+    expect(notice).toHaveTextContent('Internal link suggestions use your Search Console queries');
+    expect(screen.getByRole('link', { name: 'Connect Google Search Console' })).toHaveAttribute(
+      'href',
+      `/sites/${SITE}?tab=google`,
+    );
+    expect(await screen.findByTestId('internal-links-state-emptyRuns')).toBeInTheDocument();
+  });
+
+  it('shows no notice when Search Console is connected or the lookup fails', async () => {
+    routeApi();
+    renderPage();
+    await screen.findByTestId('internal-links-run-list');
+    expect(screen.queryByTestId('gsc-required-notice')).toBeNull();
+    cleanup();
+    routeApi({
+      google: () => {
+        throw new Error('boom');
+      },
+    });
+    renderPage();
+    await screen.findByTestId('internal-links-run-list');
+    expect(screen.queryByTestId('gsc-required-notice')).toBeNull();
   });
 });
 

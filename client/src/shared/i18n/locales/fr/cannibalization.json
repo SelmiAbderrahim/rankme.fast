@@ -79,11 +79,6 @@
       "title": "En attente de la prochaine synchro",
       "body": "Aucune ligne requête et page de la Search Console n’est encore stockée pour cette période. Elles arriveront à la prochaine synchronisation."
     },
-    "disconnected": {
-      "title": "Connectez la Search Console",
-      "body": "Connectez une propriété Search Console avant de générer un nouveau rapport. Les rapports stockés restent consultables.",
-      "link": "Connecter la Search Console"
-    },
     "cap": {
       "title": "Quota mensuel épuisé",
       "body": "Vous avez utilisé tous les rapports de cannibalisation de votre offre ce mois-ci.",

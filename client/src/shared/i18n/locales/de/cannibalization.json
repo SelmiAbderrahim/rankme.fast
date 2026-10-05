@@ -79,11 +79,6 @@
       "title": "Warten auf die nächste Synchronisierung",
       "body": "Für diesen Zeitraum sind noch keine Suchanfrage-und-Seite-Zeilen aus der Search Console gespeichert. Sie kommen mit der nächsten Synchronisierung."
     },
-    "disconnected": {
-      "title": "Search Console verbinden",
-      "body": "Verbinden Sie eine Search-Console-Property, bevor Sie einen neuen Bericht erstellen. Gespeicherte Berichte bleiben lesbar.",
-      "link": "Search Console verbinden"
-    },
     "cap": {
       "title": "Monatskontingent aufgebraucht",
       "body": "Sie haben diesen Monat alle Kannibalisierungsberichte Ihres Tarifs verbraucht.",

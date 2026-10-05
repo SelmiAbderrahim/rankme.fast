@@ -249,12 +249,35 @@ describe('CannibalizationPage — reports tab', () => {
       }),
     });
     renderPage(`/sites/${SITE_ID}?tab=cannibalization&view=new`);
-    const notice = await screen.findByTestId('cannibalization-state-disconnected');
-    expect(notice).toHaveTextContent('Connect Search Console');
-    expect(screen.getByRole('link', { name: 'Connect Search Console' })).toHaveAttribute(
+    const notice = await screen.findByTestId('gsc-required-notice');
+    expect(notice).toHaveTextContent('Connect Google Search Console');
+    expect(
+      screen.getByRole('link', { name: 'Connect Google Search Console' }),
+    ).toHaveAttribute('href', `/sites/${SITE_ID}?tab=google`);
+  });
+
+  it('explains that Search Console is needed instead of a bare empty list when nothing is connected', async () => {
+    routeApi({
+      connection: () => ({
+        configuration: { connection: null, gsc: { propertyUrl: null } },
+      }),
+      list: () => ({ items: [] }),
+    });
+    renderPage();
+    const notice = await screen.findByTestId('gsc-required-notice');
+    expect(notice).toHaveTextContent('Keyword cannibalization reports are built from your Search Console data');
+    expect(screen.getByRole('link', { name: 'Connect Google Search Console' })).toHaveAttribute(
       'href',
       `/sites/${SITE_ID}?tab=google`,
     );
+    expect(screen.queryByTestId('cannibalization-state-empty')).toBeNull();
+  });
+
+  it('keeps the plain empty state when Search Console is connected', async () => {
+    routeApi({ list: () => ({ items: [] }) });
+    renderPage();
+    expect(await screen.findByTestId('cannibalization-state-empty')).toBeInTheDocument();
+    expect(screen.queryByTestId('gsc-required-notice')).toBeNull();
   });
 
   it('renders the detail refusal when a stored report is gone', async () => {

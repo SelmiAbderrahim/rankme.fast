@@ -2,6 +2,7 @@ import { LoaderCircle, Sparkles } from 'lucide-react';
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Link } from 'react-router-dom';
+import { GscRequiredNotice, useGscConnected } from '@features/google';
 import { ReportExportControl } from '@features/report-export';
 import { isSupportedLocale } from '@shared/i18n';
 import { Alert, AlertDescription, AlertTitle } from '@shared/ui/alert';
@@ -59,6 +60,7 @@ export interface InternalLinksPageProps {
 export const InternalLinksPage = ({ siteId }: InternalLinksPageProps) => {
   const { t, i18n } = useTranslation('internalLinks');
   const url = useInternalLinkUrlState();
+  const gscConnected = useGscConnected(siteId);
   const [runs, setRuns] = useState<InternalLinkRunSummary[]>([]);
   const [runsLoading, setRunsLoading] = useState(false);
   const [runsGate, setRunsGate] = useState<InternalLinkUiState | null>(null);
@@ -225,6 +227,10 @@ export const InternalLinksPage = ({ siteId }: InternalLinksPageProps) => {
           <Link to={inventoryHref}>{t('site.inventoryLink')}</Link>
         </Button>
       </div>
+
+      {gscConnected === 'disconnected' ? (
+        <GscRequiredNotice siteId={siteId} tool="internalLinks" />
+      ) : null}
 
       <Tabs
         value={url.view}

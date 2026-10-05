@@ -209,5 +209,13 @@
         "warnings": "{{n}} avertissements"
       }
     }
+  },
+  "required": {
+    "title": "Connectez Google Search Console",
+    "cta": "Connecter Google Search Console",
+    "body": {
+      "cannibalization": "Les rapports de cannibalisation de mots-clés reposent sur vos données Search Console. Connectez Search Console à ce site pour en générer un. Les rapports déjà enregistrés restent consultables.",
+      "internalLinks": "Les suggestions de liens internes s’appuient sur vos requêtes Search Console pour choisir les pages qui comptent. Connectez Search Console à ce site pour obtenir des suggestions fondées sur de vraies recherches."
+    }
   }
 }
