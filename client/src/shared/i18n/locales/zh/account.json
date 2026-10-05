@@ -51,6 +51,11 @@
       "deleting": "安排中…",
       "scheduled": "您的账户已安排在 {{date}} 删除。",
       "error": "无法安排删除，请重试。"
+    },
+    "analytics": {
+      "title": "使用情况分析",
+      "description": "选择 RankMeFast 是否可以使用 Google Analytics 统计页面访问量。发送的页面地址不含站点 ID 或所选标签页。",
+      "label": "允许使用情况分析"
     }
   }
 }

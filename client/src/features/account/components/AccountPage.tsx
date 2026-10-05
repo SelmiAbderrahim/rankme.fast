@@ -12,6 +12,7 @@ import { APP_PAGE_ICONS } from '@shared/navigation/appPageIcons';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@shared/ui/tabs';
 import { ACCOUNT_TABS } from '../types';
 import { ProfileInfoCard } from './ProfileInfoCard';
+import { AnalyticsPreference } from './AnalyticsPreference';
 import { ExportData } from './ExportData';
 import { DeleteAccount } from './DeleteAccount';
 
@@ -62,6 +63,7 @@ export const AccountPage = () => {
         </TabsContent>
         <TabsContent value="privacy">
           <div className="flex flex-col gap-6">
+            <AnalyticsPreference />
             <ExportData />
             <DeleteAccount />
           </div>

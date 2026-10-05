@@ -51,6 +51,11 @@
       "deleting": "Wird geplant…",
       "scheduled": "Ihr Konto ist zur Löschung am {{date}} vorgemerkt.",
       "error": "Wir konnten die Löschung nicht planen. Bitte versuchen Sie es erneut."
+    },
+    "analytics": {
+      "title": "Nutzungsanalyse",
+      "description": "Legen Sie fest, ob RankMeFast Google Analytics zum Zählen von Seitenaufrufen verwenden darf. Seitenadressen werden ohne Website-IDs oder Tab-Auswahl gesendet.",
+      "label": "Nutzungsanalyse erlauben"
     }
   }
 }

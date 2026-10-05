@@ -7,6 +7,7 @@ import type { i18n as I18nType } from 'i18next';
 import { useI18nDirection } from '@shared/i18n/useDirection';
 import { ThemeProvider } from '@shared/theme/ThemeProvider';
 import { TooltipProvider } from '@shared/ui/tooltip';
+import { AnalyticsConsentBanner } from '@shared/components/AnalyticsConsentBanner';
 import { Toaster } from '@shared/ui/sonner';
 import type { AppStore } from './store';
 import { PrincipalStateBoundary } from './PrincipalStateBoundary';
@@ -51,6 +52,7 @@ export const Providers = ({
                 <AuthenticatedLocaleBoundary>
                   {children}
                 </AuthenticatedLocaleBoundary>
+                <AnalyticsConsentBanner />
                 <Toaster position="top-right" />
               </TooltipProvider>
             </ThemeProvider>

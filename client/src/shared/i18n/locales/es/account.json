@@ -51,6 +51,11 @@
       "deleting": "Programando…",
       "scheduled": "Tu cuenta está programada para eliminarse el {{date}}.",
       "error": "No pudimos programar la eliminación. Inténtalo de nuevo."
+    },
+    "analytics": {
+      "title": "Analítica de uso",
+      "description": "Elige si RankMeFast puede usar Google Analytics para contar las visitas a las páginas. Las direcciones de página se envían sin identificadores de sitio ni pestañas elegidas.",
+      "label": "Permitir la analítica de uso"
     }
   }
 }

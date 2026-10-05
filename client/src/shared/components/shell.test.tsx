@@ -11,6 +11,7 @@ import { i18n, initI18n } from '@shared/i18n';
 import { sitesReducer } from '@features/sites';
 import { Header } from './Header';
 import { Footer } from './Footer';
+import { readAnalyticsChoice, writeAnalyticsChoice } from '@shared/analytics';
 import { appVersion } from '@shared/config/version';
 import { releaseStage } from '@shared/config/release';
 import { AppLayout } from './AppLayout';
@@ -120,6 +121,22 @@ describe('Footer', () => {
     expect(screen.getByRole('link', { name: 'Register' })).toBeInTheDocument();
   });
 
+  it('offers no analytics control when the build has no measurement id', () => {
+    vi.stubEnv('VITE_GA_ID', '');
+    renderWithAuth(<Footer />, true);
+    expect(screen.queryByRole('button', { name: 'Analytics preferences' })).toBeNull();
+    vi.unstubAllEnvs();
+  });
+
+  it('re-opens the consent prompt from the analytics preferences control', async () => {
+    vi.stubEnv('VITE_GA_ID', 'G-TEST123');
+    writeAnalyticsChoice('denied');
+    renderWithAuth(<Footer />, true);
+    await userEvent.click(screen.getByRole('button', { name: 'Analytics preferences' }));
+    expect(readAnalyticsChoice()).toBeNull();
+    writeAnalyticsChoice(null);
+    vi.unstubAllEnvs();
+  });
 });
 
 describe('AppLayout', () => {

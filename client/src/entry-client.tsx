@@ -11,6 +11,7 @@ import { LazyRouteFallback } from './app/routes';
 import { initI18n } from '@shared/i18n';
 import { resolveMarketingRoute } from '@shared/i18n/localePath';
 import { reloadOnceForStaleChunk } from '@shared/lib/chunkReload';
+import { startAnalyticsPageTracking } from '@shared/analytics';
 // Self-hosted fonts (bundled locally by Vite — no external CDN request).
 // JetBrains Mono covers code blocks; Inter is served from static font faces.
 import '@fontsource/jetbrains-mono/400.css';
@@ -54,6 +55,10 @@ window.addEventListener('vite:preloadError', (event) => {
 retainAuthSession();
 
 const router = createAppRouter();
+
+// Google Analytics stays unloaded until the visitor opts in; this only wires the
+// consent + route listeners (a no-op when the build has no VITE_GA_ID).
+startAnalyticsPageTracking(router);
 
 const renderApp = async () => {
   if (ssrLocale) {

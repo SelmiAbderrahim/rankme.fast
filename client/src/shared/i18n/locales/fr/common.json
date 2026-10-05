@@ -51,7 +51,8 @@
   },
   "footer": {
     "copyright": "© {{year}}, {{brand}}. Tous droits réservés.",
-    "version": "Version v{{version}} · {{stage}}"
+    "version": "Version v{{version}} · {{stage}}",
+    "analyticsPreferences": "Préférences de statistiques"
   },
   "theme": {
     "toggle": "Changer le thème",
@@ -271,5 +272,12 @@
   },
   "routeError": {
     "title": "Une erreur s'est produite"
+  },
+  "analyticsConsent": {
+    "label": "Consentement aux statistiques",
+    "title": "Nous aider à améliorer RankMeFast ?",
+    "message": "Nous aimerions utiliser Google Analytics pour compter les visites de pages. Il ne reçoit jamais d’identifiants de site, de choix d’onglet ni de titres de page. Rien ne se charge sans votre accord, et vous pouvez changer d’avis à tout moment.",
+    "accept": "Accepter les statistiques",
+    "decline": "Non merci"
   }
 }

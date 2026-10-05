@@ -51,7 +51,8 @@
   },
   "footer": {
     "copyright": "© {{year}}, {{brand}}. 保留所有权利。",
-    "version": "版本 v{{version}} · {{stage}}"
+    "version": "版本 v{{version}} · {{stage}}",
+    "analyticsPreferences": "分析统计偏好"
   },
   "theme": {
     "toggle": "切换主题",
@@ -271,5 +272,12 @@
   },
   "routeError": {
     "title": "出了点问题"
+  },
+  "analyticsConsent": {
+    "label": "分析统计同意",
+    "title": "愿意帮助我们改进 RankMeFast 吗？",
+    "message": "我们希望使用 Google Analytics 统计页面访问量。它不会收到站点 ID、所选标签页或页面标题。您不同意就不会加载任何内容，并且可以随时改变主意。",
+    "accept": "接受分析统计",
+    "decline": "不用了"
   }
 }

@@ -51,6 +51,11 @@
       "deleting": "Programmation…",
       "scheduled": "La suppression de votre compte est prévue le {{date}}.",
       "error": "Impossible de programmer la suppression. Réessayez."
+    },
+    "analytics": {
+      "title": "Statistiques d’utilisation",
+      "description": "Choisissez si RankMeFast peut utiliser Google Analytics pour compter les visites de pages. Les adresses de page sont envoyées sans identifiants de site ni choix d’onglet.",
+      "label": "Autoriser les statistiques d’utilisation"
     }
   }
 }
