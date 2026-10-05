@@ -28,9 +28,10 @@ import { NOTIFICATION_CHANNELS, type NotificationChannel } from '../types';
 void settingsReducer;
 
 /**
- * `/settings/notifications` — four toggles for the non-transactional email
+ * `/settings/notifications` — toggles for the non-transactional email
  * channels. Security email (password reset, verification, password change)
- * is not listed here because it cannot be disabled.
+ * is not listed here because it cannot be disabled; the page description says
+ * so once.
  */
 export const NotificationPreferences = () => {
   const { t } = useTranslation(['settings', 'common']);
@@ -114,10 +115,6 @@ export const NotificationPreferences = () => {
               })}
             </ul>
           ) : null}
-
-          <p className="text-muted-foreground mt-6 text-sm">
-            {t('settings:notifications.securityNote')}
-          </p>
         </CardContent>
       </Card>
     </div>

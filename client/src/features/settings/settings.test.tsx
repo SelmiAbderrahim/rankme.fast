@@ -77,6 +77,10 @@ beforeEach(async () => {
 
 describe('NotificationPreferences', () => {
   it('loads on mount and renders every switch', async () => {
+    // A new account: the server stores marketing mail as opted out.
+    mocked.getNotificationPreferencesRequest.mockResolvedValue({
+      preferences: defaultPrefs({ emailMarketing: false }),
+    });
     renderWith();
     await waitFor(() =>
       expect(mocked.getNotificationPreferencesRequest).toHaveBeenCalled(),
@@ -87,7 +91,13 @@ describe('NotificationPreferences', () => {
     expect(screen.getByRole('switch', { name: 'Audit complete' })).toBeChecked();
     expect(screen.getByRole('switch', { name: 'Rank drops' })).toBeChecked();
     expect(screen.getByRole('switch', { name: 'Alert rules' })).toBeChecked();
-    expect(screen.getByRole('switch', { name: 'Product updates' })).toBeChecked();
+    // Product updates is opt-in, so it starts off for a new account.
+    expect(screen.getByRole('switch', { name: 'Product updates' })).not.toBeChecked();
+  });
+
+  it('states the security-email exception exactly once', async () => {
+    renderWith(makeStore({ loaded: true, preferences: defaultPrefs() }));
+    expect(screen.getAllByText(/security emails/i)).toHaveLength(1);
   });
 
   it('does not re-fetch when the store is already loaded', async () => {

@@ -4,7 +4,6 @@
     "description": "Choisissez les e-mails non liés à la sécurité que vous souhaitez recevoir. Les e-mails de sécurité (réinitialisation de mot de passe, vérification d’e-mail, confirmations de changement de mot de passe) ne peuvent pas être désactivés.",
     "emailHeading": "E-mail",
     "loading": "Chargement de vos préférences…",
-    "securityNote": "Les e-mails de sécurité — réinitialisation de mot de passe, vérification d’e-mail et confirmations de changement de mot de passe — sont toujours envoyés, quelle que soit la configuration des commutateurs ci-dessus.",
     "channels": {
       "emailAuditComplete": {
         "label": "Audit terminé",

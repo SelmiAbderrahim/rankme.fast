@@ -11,7 +11,7 @@ order: 4
 
 Sie steuern, welche nicht-sicherheitsrelevanten E-Mails RankMeFast Ihnen sendet. Öffnen Sie **Einstellungen → Benachrichtigungen** (`/settings/notifications`) und schalten Sie einen der vier Schalter um.
 
-Jeder Schalter ist standardmäßig aktiviert. Ihn zu deaktivieren wirkt sofort: Die nächste passende E-Mail wird übersprungen.
+Die Schalter für Audit, Ranking und Abrechnung sind standardmäßig aktiviert; **Produktupdates** ist standardmäßig deaktiviert und wird erst gesendet, wenn Sie den Schalter einschalten. Eine Änderung wirkt sofort: Die nächste passende E-Mail wird übersprungen (oder gesendet, wenn Sie den Schalter eingeschaltet haben).
 
 ## Was jeder Schalter steuert
 

@@ -11,7 +11,7 @@ order: 4
 
 You control which non-security emails RankMeFast sends you. Open **Settings → Notifications** (`/settings/notifications`) and toggle any of the four switches.
 
-Every switch defaults to **on**. Turning a switch off takes effect immediately: the next matching email is skipped.
+Audit, rank, and billing switches default to **on**; **Product updates** defaults to **off** and is sent only after you turn it on. Changing a switch takes effect immediately: the next matching email is skipped (or sent, for a switch you turned on).
 
 ## What each toggle controls
 

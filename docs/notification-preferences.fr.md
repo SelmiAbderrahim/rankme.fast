@@ -11,7 +11,7 @@ order: 4
 
 Vous contrôlez les e-mails non liés à la sécurité que RankMeFast vous envoie. Ouvrez **Paramètres → Notifications** (`/settings/notifications`) et basculez l’un des quatre commutateurs.
 
-Chaque commutateur est activé par défaut. Le désactiver prend effet immédiatement : le prochain e-mail correspondant sera ignoré.
+Les commutateurs d’audit, de position et de facturation sont activés par défaut ; **Actualités produit** est désactivé par défaut et n’est envoyé qu’après que vous l’avez activé. Un changement prend effet immédiatement : le prochain e-mail correspondant sera ignoré (ou envoyé, si vous avez activé le commutateur).
 
 ## Ce que chaque commutateur contrôle
 

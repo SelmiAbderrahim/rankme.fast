@@ -4,7 +4,6 @@
     "description": "Choose which non-security emails you want to receive. Security emails (password reset, email verification, password change confirmations) cannot be turned off.",
     "emailHeading": "Email",
     "loading": "Loading your preferences…",
-    "securityNote": "Security emails — password reset, email verification, and password change confirmations — are always sent, regardless of the switches above.",
     "channels": {
       "emailAuditComplete": {
         "label": "Audit complete",

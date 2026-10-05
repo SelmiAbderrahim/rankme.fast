@@ -353,12 +353,39 @@ describe('users module', () => {
   });
 
   describe('notification preferences', () => {
-    it('resolveNotificationPreferences returns all-true defaults for an unknown user', async () => {
+    it('defaults operational channels on and marketing off (opt-in)', () => {
+      expect(DEFAULT_NOTIFICATION_PREFERENCES).toEqual({
+        emailAuditComplete: true,
+        emailRankDrop: true,
+        emailMarketing: false,
+        emailMonitorChange: true,
+        emailAlerts: true,
+      });
+    });
+
+    it('stores marketing off for a newly created account and keeps an explicit opt-in', async () => {
+      const created = await signupVerifiedUser(app, { email: 'fresh-optin@test.com' });
+      const stored = await User.findById(created.id).select('notificationPreferences').lean();
+      expect(stored?.notificationPreferences?.emailMarketing).toBe(false);
+      await updateNotificationPreferences(created.id, { emailMarketing: true });
+      expect((await resolveNotificationPreferences(created.id)).emailMarketing).toBe(true);
+    });
+
+    it('keeps the stored marketing choice of an existing user', async () => {
+      const created = await signupVerifiedUser(app, { email: 'legacy-on@test.com' });
+      await User.updateOne(
+        { _id: created.id },
+        { $set: { 'notificationPreferences.emailMarketing': true } },
+      );
+      expect((await resolveNotificationPreferences(created.id)).emailMarketing).toBe(true);
+    });
+
+    it('resolveNotificationPreferences returns the defaults for an unknown user', async () => {
       const prefs = await resolveNotificationPreferences('507f1f77bcf86cd799439011');
       expect(prefs).toEqual(DEFAULT_NOTIFICATION_PREFERENCES);
     });
 
-    it('resolveNotificationPreferences returns all-true for a user with no stored field', async () => {
+    it('resolveNotificationPreferences returns the defaults for a user with no stored field', async () => {
       const created = await signupVerifiedUser(app, { email: 'defaults@test.com' });
       // Force the field to be absent (Mongoose sets defaults on save; strip them).
       await User.updateOne(
@@ -390,7 +417,7 @@ describe('users module', () => {
       expect(merged).toEqual({
         emailAuditComplete: false,
         emailRankDrop: false,
-        emailMarketing: true,
+        emailMarketing: false,
         emailMonitorChange: true,
         // Alert-rule notifications are their own
         // opt-out, so muting them never also mutes rank drops or monitoring.

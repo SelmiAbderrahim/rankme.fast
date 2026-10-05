@@ -68,11 +68,14 @@ export const NOTIFICATION_CHANNELS: readonly NotificationChannel[] = [
     'emailMonitorChange',
     'emailAlerts',
 ];
-/** Opt-out defaults: a legacy user with no stored field keeps receiving. */
+/**
+ * Defaults for a user with no stored field. Operational channels are opt-out
+ * (a legacy user keeps receiving); marketing is opt-in, so absent means no.
+ */
 export const DEFAULT_NOTIFICATION_PREFERENCES: NotificationPreferences = {
     emailAuditComplete: true,
     emailRankDrop: true,
-    emailMarketing: true,
+    emailMarketing: false,
     emailMonitorChange: true,
     emailAlerts: true,
 };
@@ -89,10 +92,10 @@ function mergePreferences(stored: Partial<Record<NotificationChannel, unknown>> 
     return out;
 }
 /**
- * Read + merge the stored preference record over the all-true default so a
- * legacy user with an absent field is handled without a migration. Returns
- * defaults when the user is unknown — the mailer gate treats that as "send"
- * so the fallback matches "no opt-out on record".
+ * Read + merge the stored preference record over the defaults so a legacy
+ * user with an absent field is handled without a migration. Returns defaults
+ * when the user is unknown — operational mail treats that as "send" (no opt-out
+ * on record) while marketing stays off (no opt-in on record).
  */
 export async function resolveNotificationPreferences(userId: string): Promise<NotificationPreferences> {
     const user = await User.findById(userId).select('notificationPreferences').lean();

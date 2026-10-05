@@ -4,7 +4,6 @@
     "description": "Elige qué correos electrónicos no relacionados con la seguridad quieres recibir. Los correos de seguridad (restablecimiento de contraseña, verificación de correo, confirmaciones de cambio de contraseña) no se pueden desactivar.",
     "emailHeading": "Correo electrónico",
     "loading": "Cargando tus preferencias…",
-    "securityNote": "Los correos de seguridad — restablecimiento de contraseña, verificación de correo y confirmaciones de cambio de contraseña — siempre se envían, independientemente de los interruptores anteriores.",
     "channels": {
       "emailAuditComplete": {
         "label": "Auditoría completada",

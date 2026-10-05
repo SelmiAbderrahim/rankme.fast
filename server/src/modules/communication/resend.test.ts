@@ -14,10 +14,25 @@ import {
   deliverPasswordChangedEmail,
   deliverWelcomeEmail,
 } from './communication.service.js';
+import type * as UsersService from '../users/users.service.js';
 import { env } from '../../config/env.js';
 import { logger } from '../../config/logger.js';
 import { E2E_EMAIL_OUTBOX_PATH } from '../../shared/providers/e2e-email-capture.js';
 import { SUPPORTED_LOCALES, translate } from '../../shared/i18n/index.js';
+
+// Welcome mail is gated on the stored marketing opt-in; this file has no
+// datastore, so resolve every user as opted in. The gate itself is covered
+// against real Mongo in notifications.test.ts.
+vi.mock('../users/users.service.js', async (importOriginal) => {
+  const actual = await importOriginal<typeof UsersService>();
+  return {
+    ...actual,
+    resolveNotificationPreferences: async () => ({
+      ...actual.DEFAULT_NOTIFICATION_PREFERENCES,
+      emailMarketing: true,
+    }),
+  };
+});
 
 const originalKey = process.env.RESEND_API_KEY;
 const originalFrom = process.env.RESEND_FROM;
@@ -308,7 +323,7 @@ describe('communication.service localized senders', () => {
 
   it('deliverWelcomeEmail interpolates {{name}} and {{clientUrl}}', async () => {
     await withResendConfigured(async () => {
-      await deliverWelcomeEmail({ email: 'u@x', name: 'Alex', locale: 'en' });
+      await deliverWelcomeEmail({ email: 'u@x', name: 'Alex', userId: 'opted-in', locale: 'en' });
       expect(seen[0]?.subject).toBe('Welcome to RankMeFast');
       expect(seen[0]?.text).toContain('Alex');
     });
@@ -317,7 +332,7 @@ describe('communication.service localized senders', () => {
   it('deliverWelcomeEmail defaults to DEFAULT_LOCALE when locale omitted', async () => {
     await withResendConfigured(async () => {
       seen.length = 0;
-      await deliverWelcomeEmail({ email: 'u@x', name: 'Alex' });
+      await deliverWelcomeEmail({ email: 'u@x', name: 'Alex', userId: 'opted-in' });
       expect(seen[0]?.subject).toBe('Welcome to RankMeFast');
     });
   });
