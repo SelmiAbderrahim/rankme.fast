@@ -66,6 +66,19 @@ describe('site access controls', () => {
     expect(screen.queryByRole('alert')).not.toBeInTheDocument();
   });
 
+  it('places each site checkbox directly before its label, next to the radios above', async () => {
+    const user = userEvent.setup();
+    render(<I18nextProvider i18n={i18n}><AccessHarness /></I18nextProvider>);
+    await user.click(screen.getByRole('radio', { name: 'Selected sites' }));
+    const checkbox = screen.getByRole('checkbox', { name: 'Main site' });
+    const label = screen.getByText('Main site');
+    // Checkbox precedes the label in the same row, not pushed to the far edge after it.
+    expect(
+      checkbox.compareDocumentPosition(label) & Node.DOCUMENT_POSITION_FOLLOWING,
+    ).toBeTruthy();
+    expect(checkbox.parentElement).toBe(label.closest('[data-slot="field"]'));
+  });
+
   it('prevents a scoped Admin from granting All sites and explains an empty catalog', () => {
     const { rerender } = render(
       <I18nextProvider i18n={i18n}><AccessHarness allowAll={false} /></I18nextProvider>,

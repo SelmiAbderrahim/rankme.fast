@@ -99,10 +99,6 @@ export const TeamSiteAccessFields = ({
             const id = `${idPrefix}-site-${site.id}`;
             return (
               <Field key={site.id} orientation="horizontal" data-disabled={disabled || undefined}>
-                <FieldContent>
-                  <FieldLabel htmlFor={id}>{site.label}</FieldLabel>
-                  <FieldDescription>{site.url}</FieldDescription>
-                </FieldContent>
                 <Checkbox
                   id={id}
                   checked={selectedIds.includes(site.id)}
@@ -110,6 +106,10 @@ export const TeamSiteAccessFields = ({
                   aria-invalid={showValidation && selectionInvalid ? true : undefined}
                   onCheckedChange={(checked) => setSite(site.id, checked === true)}
                 />
+                <FieldContent>
+                  <FieldLabel htmlFor={id}>{site.label}</FieldLabel>
+                  <FieldDescription>{site.url}</FieldDescription>
+                </FieldContent>
               </Field>
             );
           })}

@@ -114,7 +114,11 @@ export const TeamMembersTable = ({
                     : t('access.siteCount', { count: siteAccess.siteIds.length })}
                 </TableCell>
                 <TableCell className="text-end text-muted-foreground">
-                  {formatDate(member.invitedAt, i18n.language)}
+                  {isPending
+                    ? formatDate(member.invitedAt, i18n.language)
+                    : t('members.joinedOn', {
+                        date: formatDate(member.acceptedAt ?? member.invitedAt, i18n.language),
+                      })}
                 </TableCell>
                 <TableCell className="text-end text-muted-foreground">
                   {isPending ? formatDate(member.expiresAt, i18n.language) : '—'}

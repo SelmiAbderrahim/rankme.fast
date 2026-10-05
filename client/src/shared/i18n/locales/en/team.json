@@ -21,7 +21,7 @@
       "email": "Email",
       "role": "Role",
       "status": "Status",
-      "invitedAt": "Invited",
+      "invitedAt": "Invited / joined",
       "expiresAt": "Expires",
       "access": "Site access"
     },
@@ -68,7 +68,8 @@
       "save": "Save access",
       "saving": "Saving…",
       "cancel": "Cancel"
-    }
+    },
+    "joinedOn": "Joined {{date}}"
   },
   "accept": {
     "title": "Accept invite",

@@ -33,7 +33,7 @@
       "email": "E-Mail",
       "role": "Rolle",
       "status": "Status",
-      "invitedAt": "Eingeladen",
+      "invitedAt": "Eingeladen / beigetreten",
       "expiresAt": "Läuft ab",
       "access": "Website-Zugriff"
     },
@@ -80,7 +80,8 @@
       "save": "Zugriff speichern",
       "saving": "Wird gespeichert…",
       "cancel": "Abbrechen"
-    }
+    },
+    "joinedOn": "Beigetreten am {{date}}"
   },
   "accept": {
     "title": "Einladung annehmen",

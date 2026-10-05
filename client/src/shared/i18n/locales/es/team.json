@@ -21,7 +21,7 @@
       "email": "Correo",
       "role": "Rol",
       "status": "Estado",
-      "invitedAt": "Invitado el",
+      "invitedAt": "Invitado / unido el",
       "expiresAt": "Caduca",
       "access": "Acceso a sitios"
     },
@@ -68,7 +68,8 @@
       "save": "Guardar acceso",
       "saving": "Guardando…",
       "cancel": "Cancelar"
-    }
+    },
+    "joinedOn": "Se unió el {{date}}"
   },
   "accept": {
     "title": "Aceptar invitación",

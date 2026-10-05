@@ -164,17 +164,17 @@ export const BrandingPanel = () => {
                   aria-invalid={colorError || undefined}
                   aria-describedby={colorError ? 'branding-accent-error' : undefined}
                 />
-                <span
-                  aria-hidden="true"
-                  data-testid="branding-swatch"
-                  className="border-border size-6 shrink-0 rounded-md border"
-                  style={
-                    HEX_COLOR.test(accentColor)
-                      ? // User-picked color — necessarily dynamic, not a theme token.
-                        { backgroundColor: accentColor }
-                      : undefined
-                  }
-                />
+                {/* Only a valid hex gets a preview; an empty or invalid value would
+                    otherwise render a blank box that looks like a broken control. */}
+                {HEX_COLOR.test(accentColor) ? (
+                  <span
+                    aria-hidden="true"
+                    data-testid="branding-swatch"
+                    className="border-border size-6 shrink-0 rounded-md border"
+                    // User-picked color — necessarily dynamic, not a theme token.
+                    style={{ backgroundColor: accentColor }}
+                  />
+                ) : null}
               </div>
               {colorError ? (
                 <p

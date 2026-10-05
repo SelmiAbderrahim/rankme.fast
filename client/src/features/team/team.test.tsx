@@ -317,6 +317,51 @@ describe('TeamMembersTable', () => {
     expect(screen.getByTestId('member-actions-m-2')).toBeInTheDocument();
   });
 
+  it('labels accepted rows "Joined" with the acceptance date and pending rows with the invite date', () => {
+    render(
+      <I18nextProvider i18n={i18n}>
+        <TeamMembersTable
+          members={[
+            member({
+              id: 'owner',
+              role: 'owner',
+              status: 'accepted',
+              invitedAt: '2026-09-27T00:00:00.000Z',
+              acceptedAt: '2026-09-28T00:00:00.000Z',
+            }),
+            member({ id: 'm-2', status: 'pending', invitedAt: '2026-07-01T00:00:00.000Z' }),
+          ]}
+          removingId={null}
+          onRemove={() => {}}
+          onEdit={() => {}}
+          onResend={() => {}}
+        />
+      </I18nextProvider>,
+    );
+    const date = (iso: string) =>
+      new Intl.DateTimeFormat('en', { dateStyle: 'medium' }).format(new Date(iso));
+    expect(screen.getByText(`Joined ${date('2026-09-28T00:00:00.000Z')}`)).toBeInTheDocument();
+    expect(screen.getByText(date('2026-07-01T00:00:00.000Z'))).toBeInTheDocument();
+    expect(screen.queryByText(/^Invited \d/)).not.toBeInTheDocument();
+    // The owner row never carries an actions menu, even when edit/resend are allowed.
+    expect(screen.queryByTestId('member-actions-owner')).toBeNull();
+  });
+
+  it('falls back to the invite date when an accepted row has no acceptance date', () => {
+    render(
+      <I18nextProvider i18n={i18n}>
+        <TeamMembersTable
+          members={[member({ id: 'm-3', status: 'accepted', invitedAt: '2026-06-02T00:00:00.000Z' })]}
+          removingId={null}
+        />
+      </I18nextProvider>,
+    );
+    const expected = new Intl.DateTimeFormat('en', { dateStyle: 'medium' }).format(
+      new Date('2026-06-02T00:00:00.000Z'),
+    );
+    expect(screen.getByText(`Joined ${expected}`)).toBeInTheDocument();
+  });
+
   const renderTable = (
     members: TeamMember[],
     onRemove: (m: TeamMember) => void | Promise<unknown> = () => {},

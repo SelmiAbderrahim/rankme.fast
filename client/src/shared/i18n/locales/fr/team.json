@@ -21,7 +21,7 @@
       "email": "E-mail",
       "role": "Rôle",
       "status": "Statut",
-      "invitedAt": "Invité le",
+      "invitedAt": "Invité / rejoint le",
       "expiresAt": "Expire le",
       "access": "Accès aux sites"
     },
@@ -68,7 +68,8 @@
       "save": "Enregistrer l’accès",
       "saving": "Enregistrement…",
       "cancel": "Annuler"
-    }
+    },
+    "joinedOn": "Rejoint le {{date}}"
   },
   "accept": {
     "title": "Accepter l'invitation",

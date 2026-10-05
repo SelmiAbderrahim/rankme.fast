@@ -149,6 +149,8 @@ describe('ApiKeysPanel', () => {
     mocked.listApiKeysRequest.mockResolvedValue({ apiKeys: [] });
     renderPanel();
     expect(await screen.findByText('No API keys yet.')).toBeInTheDocument();
+    // The header description is not repeated inside the empty state.
+    expect(screen.getAllByText(/Create keys for MCP clients/)).toHaveLength(1);
   });
 
   it('surfaces a load error', async () => {
