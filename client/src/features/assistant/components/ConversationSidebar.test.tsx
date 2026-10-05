@@ -67,6 +67,39 @@ describe('ConversationSidebar', () => {
     expect(onSelect).toHaveBeenCalledWith('c1');
   });
 
+  it('lets long titles truncate and keeps Delete inside the card (layout contract)', () => {
+    const title = 'Summarize the most important fixes from my latest audit.';
+    const { container } = render(
+      <ConversationSidebar
+        conversations={[conversation('c1', title)]}
+        activeConversationId={null}
+        onNew={vi.fn()}
+        onSelect={vi.fn()}
+        onDelete={vi.fn()}
+      />,
+    );
+    // jsdom cannot measure layout, so assert the shrink chain that does.
+    expect(container.querySelector('aside')).toHaveClass('min-w-0');
+    // No Radix ScrollArea: its `display: table` wrapper defeats truncation.
+    expect(container.querySelector('[data-slot="scroll-area-viewport"]')).toBeNull();
+    const scroller = container.querySelector('[data-slot="conversation-scroll"]');
+    expect(scroller).toHaveClass('min-w-0', 'overflow-y-auto');
+    expect(screen.getByRole('navigation')).toHaveClass('min-w-0');
+
+    const titleEl = screen.getByText(title);
+    expect(titleEl).toHaveClass('block', 'truncate');
+    expect(titleEl.parentElement).toHaveClass('min-w-0', 'flex-1');
+    const selectBtn = titleEl.closest('button')!;
+    expect(selectBtn).toHaveClass('min-w-0', 'flex-1');
+    const row = selectBtn.parentElement!;
+    expect(row).toHaveClass('flex', 'min-w-0');
+
+    const del = screen.getByRole('button', { name: `Delete ${title}` });
+    expect(del).toHaveClass('shrink-0', 'me-1');
+    expect(del.parentElement).toBe(row);
+    expect(del.className).not.toMatch(/\bm[lr]-/);
+  });
+
   it('confirms and completes deletion with shared loading feedback', async () => {
     let resolveDelete: ((value: string | null) => void) | undefined;
     const onDelete = vi.fn(

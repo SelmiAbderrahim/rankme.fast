@@ -217,7 +217,7 @@ export function AssistantPage() {
     <main className="mx-auto flex w-full max-w-7xl flex-col gap-6 p-4 sm:p-6" aria-labelledby="assistant-title">
       <AssistantPageHeader />
 
-      <div className="grid min-h-96 gap-4 lg:grid-cols-[16rem_minmax(0,1fr)]">
+      <div className="grid min-h-96 grid-cols-[minmax(0,1fr)] gap-4 lg:grid-cols-[16rem_minmax(0,1fr)]">
         <ConversationSidebar
           conversations={conversations}
           activeConversationId={activeConversationId}
@@ -227,7 +227,7 @@ export function AssistantPage() {
           onDelete={handleDelete}
         />
 
-        <Card className="min-h-96 gap-0 overflow-hidden py-0">
+        <Card className="min-h-96 min-w-0 gap-0 overflow-hidden py-0">
           <div className="border-b p-4">
             <AssistantSiteSelector
               sites={sites}

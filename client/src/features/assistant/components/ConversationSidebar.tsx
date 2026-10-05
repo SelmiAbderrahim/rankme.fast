@@ -12,7 +12,6 @@ import {
 } from '@shared/ui/alert-dialog';
 import { Alert, AlertDescription } from '@shared/ui/alert';
 import { Button } from '@shared/ui/button';
-import { ScrollArea } from '@shared/ui/scroll-area';
 import type { ChatConversation } from '../types';
 
 interface ConversationSidebarProps {
@@ -61,7 +60,7 @@ export function ConversationSidebar({
   };
 
   return (
-    <aside className="flex min-h-0 flex-col rounded-xl border bg-card shadow-sm">
+    <aside className="flex min-h-0 min-w-0 flex-col rounded-xl border bg-card shadow-sm">
       <div className="border-b p-4">
         <h2 className="font-semibold">{t('assistant:sidebar.title')}</h2>
         <Button
@@ -75,8 +74,17 @@ export function ConversationSidebar({
           {t('assistant:sidebar.new')}
         </Button>
       </div>
-      <ScrollArea className="max-h-56 min-h-0 flex-1 lg:max-h-none">
-        <nav className="flex flex-col gap-1 p-2" aria-label={t('assistant:sidebar.label')}>
+      {/*
+        A plain scroll container, not the Radix ScrollArea: its viewport wraps
+        children in a `display: table; min-width: 100%` div that sizes to the
+        widest title, so `truncate` never engages and the Delete buttons are
+        pushed past the card border.
+      */}
+      <div
+        data-slot="conversation-scroll"
+        className="max-h-56 min-h-0 min-w-0 flex-1 overflow-y-auto lg:max-h-none"
+      >
+        <nav className="flex min-w-0 flex-col gap-1 p-2" aria-label={t('assistant:sidebar.label')}>
           {conversations.length === 0 ? (
             <p className="p-3 text-sm text-muted-foreground">
               {t('assistant:sidebar.empty')}
@@ -88,7 +96,7 @@ export function ConversationSidebar({
               return (
                 <div
                   key={conversation.id}
-                  className="flex items-center gap-1 rounded-lg border border-transparent data-[active=true]:border-border data-[active=true]:bg-accent"
+                  className="flex min-w-0 items-center gap-1 rounded-lg border border-transparent data-[active=true]:border-border data-[active=true]:bg-accent"
                   data-active={active ? 'true' : 'false'}
                 >
                   <Button
@@ -99,9 +107,9 @@ export function ConversationSidebar({
                     aria-current={active ? 'page' : undefined}
                     onClick={() => onSelect(conversation.id)}
                   >
-                    <span className="min-w-0">
+                    <span className="min-w-0 flex-1">
                       <span className="block truncate font-medium">{title}</span>
-                      <span className="block text-xs text-muted-foreground">
+                      <span className="block truncate text-xs text-muted-foreground">
                         {formatDate(conversation.lastMessageAt)}
                       </span>
                     </span>
@@ -110,7 +118,7 @@ export function ConversationSidebar({
                     type="button"
                     variant="ghost"
                     size="icon-sm"
-                    className="me-1 text-destructive hover:text-destructive focus-visible:text-destructive"
+                    className="me-1 shrink-0 text-destructive hover:text-destructive focus-visible:text-destructive"
                     disabled={disabled}
                     aria-label={t('assistant:sidebar.deleteLabel', { title })}
                     onClick={() => openDelete(conversation)}
@@ -122,7 +130,7 @@ export function ConversationSidebar({
             })
           )}
         </nav>
-      </ScrollArea>
+      </div>
 
       <AlertDialog
         open={deleteTarget !== null}

@@ -207,6 +207,15 @@ describe('AssistantPage', () => {
     expect(sitesFeature.loadSites).toHaveBeenCalledWith({});
   });
 
+  it('lets both grid columns shrink so the Conversations card never overflows the viewport', () => {
+    const { container } = renderPage(assistantState({ conversations: [conversation()] }));
+    // jsdom cannot measure layout: assert the track/item classes that do.
+    const grid = container.querySelector('aside')!.parentElement!;
+    expect(grid).toHaveClass('grid-cols-[minmax(0,1fr)]', 'lg:grid-cols-[16rem_minmax(0,1fr)]');
+    expect(container.querySelector('aside')).toHaveClass('min-w-0');
+    expect(container.querySelector('[data-slot="card"]')).toHaveClass('min-w-0');
+  });
+
   it('renders a generic list failure with a retry', async () => {
     api.listAssistantConversations.mockResolvedValue({ conversations: [] });
     renderPage(
