@@ -28,7 +28,13 @@
       "nameRequired": "Introduce un nombre visible.",
       "nameTooLong": "Mantén tu nombre por debajo de 80 caracteres.",
       "saveFailed": "No pudimos guardar tu perfil. Inténtalo de nuevo."
-    }
+    },
+    "workspaceOwner": "Propietario del espacio de trabajo",
+    "platformRole": {
+      "Admin": "Administrador de la plataforma",
+      "SuperAdmin": "Superadministrador de la plataforma"
+    },
+    "emailHint": "Para cambiar tu correo, abre Seguridad y usa Cambiar correo. La dirección solo cambia después de confirmar el enlace que te enviamos."
   },
   "privacy": {
     "export": {

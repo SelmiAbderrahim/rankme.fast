@@ -28,7 +28,13 @@
       "nameRequired": "请输入显示名称。",
       "nameTooLong": "名称请少于 80 个字符。",
       "saveFailed": "无法保存您的个人资料，请重试。"
-    }
+    },
+    "workspaceOwner": "工作区所有者",
+    "platformRole": {
+      "Admin": "平台管理员",
+      "SuperAdmin": "平台超级管理员"
+    },
+    "emailHint": "要更改邮箱，请打开“安全”并使用“更改邮箱”。只有在您确认我们发送的链接后，地址才会更改。"
   },
   "privacy": {
     "export": {

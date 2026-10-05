@@ -54,7 +54,7 @@ export const ProfileInfoCard = () => {
   const {
     register,
     handleSubmit,
-    formState: { errors, isSubmitting },
+    formState: { errors, isSubmitting, isDirty },
   } = useForm<ProfileValues>({
     resolver: zodResolver(schema),
     // `values` (not `defaultValues`) so the field tracks the live session name.
@@ -98,7 +98,14 @@ export const ProfileInfoCard = () => {
             </span>
             <span className="text-muted-foreground truncate text-sm">{user.email}</span>
             <div className="mt-1 flex flex-wrap items-center gap-2">
-              <Badge variant="outline">{user.role}</Badge>
+              {/* `user.role` is the PLATFORM role (Member/Admin/SuperAdmin), not the
+                  team role the Team page lists, so a plain "Member" badge read as a
+                  contradiction. Every account owns its own workspace; the platform
+                  role is only worth showing when it is elevated. */}
+              <Badge variant="outline">{t('profile.workspaceOwner')}</Badge>
+              {user.role === 'Admin' || user.role === 'SuperAdmin' ? (
+                <Badge variant="outline">{t(`profile.platformRole.${user.role}`)}</Badge>
+              ) : null}
               <StatusChip tone={user.emailVerified ? 'success' : 'warning'} dot>
                 {user.emailVerified ? t('profile.verified') : t('profile.unverified')}
               </StatusChip>
@@ -135,13 +142,24 @@ export const ProfileInfoCard = () => {
 
           <div className="flex flex-col gap-2">
             <Label htmlFor="account-email">{t('profile.emailLabel')}</Label>
-            <Input id="account-email" type="email" value={user.email} readOnly aria-readonly="true" />
+            <Input
+              id="account-email"
+              type="email"
+              value={user.email}
+              readOnly
+              aria-readonly="true"
+              aria-describedby="account-email-hint"
+            />
+            <p id="account-email-hint" className="text-muted-foreground text-sm">
+              {t('profile.emailHint')}
+            </p>
           </div>
 
           <Button
             type="submit"
             loading={isSubmitting}
             loadingLabel={t('profile.saving')}
+            disabled={!isDirty}
             className="w-fit"
           >
             {t('profile.save')}

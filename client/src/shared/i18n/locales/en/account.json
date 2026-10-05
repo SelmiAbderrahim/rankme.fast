@@ -28,7 +28,13 @@
       "nameRequired": "Enter a display name.",
       "nameTooLong": "Keep your name under 80 characters.",
       "saveFailed": "We couldn't save your profile. Please try again."
-    }
+    },
+    "workspaceOwner": "Workspace owner",
+    "platformRole": {
+      "Admin": "Platform admin",
+      "SuperAdmin": "Platform super admin"
+    },
+    "emailHint": "To change your email, open Security and use Change email. The address only changes after you confirm the link we send."
   },
   "privacy": {
     "export": {

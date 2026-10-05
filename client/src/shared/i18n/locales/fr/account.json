@@ -28,7 +28,13 @@
       "nameRequired": "Saisissez un nom affiché.",
       "nameTooLong": "Limitez votre nom à 80 caractères.",
       "saveFailed": "Impossible d'enregistrer votre profil. Réessayez."
-    }
+    },
+    "workspaceOwner": "Propriétaire de l'espace de travail",
+    "platformRole": {
+      "Admin": "Administrateur de la plateforme",
+      "SuperAdmin": "Super administrateur de la plateforme"
+    },
+    "emailHint": "Pour changer votre adresse e-mail, ouvrez Sécurité et utilisez Changer l'adresse e-mail. L'adresse ne change qu'après confirmation du lien que nous envoyons."
   },
   "privacy": {
     "export": {

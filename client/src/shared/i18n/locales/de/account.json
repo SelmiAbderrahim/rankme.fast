@@ -28,7 +28,13 @@
       "nameRequired": "Geben Sie einen Anzeigenamen ein.",
       "nameTooLong": "Halten Sie Ihren Namen unter 80 Zeichen.",
       "saveFailed": "Wir konnten Ihr Profil nicht speichern. Bitte versuchen Sie es erneut."
-    }
+    },
+    "workspaceOwner": "Inhaber des Arbeitsbereichs",
+    "platformRole": {
+      "Admin": "Plattform-Administrator",
+      "SuperAdmin": "Plattform-Superadministrator"
+    },
+    "emailHint": "Um Ihre E-Mail-Adresse zu ändern, öffnen Sie Sicherheit und nutzen Sie E-Mail ändern. Die Adresse ändert sich erst, nachdem Sie den gesendeten Link bestätigt haben."
   },
   "privacy": {
     "export": {
