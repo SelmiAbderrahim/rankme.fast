@@ -108,6 +108,16 @@ describe('AddSiteForm', () => {
     expect(mocked.createSiteRequest).not.toHaveBeenCalled();
   });
 
+  it('shows a required-field message when the URL is empty', async () => {
+    const user = userEvent.setup();
+    renderWith(<AddSiteForm />);
+    await user.click(screen.getByRole('button', { name: 'Add site' }));
+    const error = await screen.findByText('Enter your site URL.');
+    expect(error).toHaveAttribute('role', 'alert');
+    expect(screen.getByLabelText('Site URL')).toHaveAttribute('aria-describedby', 'site-url-error');
+    expect(mocked.createSiteRequest).not.toHaveBeenCalled();
+  });
+
   it('submits a valid URL, resets the input, and reloads the list', async () => {
     const user = userEvent.setup();
     mocked.createSiteRequest.mockResolvedValue({
@@ -135,6 +145,27 @@ describe('AddSiteForm', () => {
 
     expect(await screen.findByRole('alert')).toHaveTextContent('Could not add the site.');
     expect(mocked.fetchSitesRequest).not.toHaveBeenCalled();
+  });
+
+  it('shows a server rejection below the URL input, linked to it, until the value changes', async () => {
+    const user = userEvent.setup();
+    mocked.createSiteRequest.mockRejectedValue(new TypeError('offline'));
+    renderWith(<AddSiteForm />);
+    const input = screen.getByLabelText('Site URL');
+    await user.type(input, 'https://example.com');
+    await user.click(screen.getByRole('button', { name: 'Add site' }));
+
+    const error = await screen.findByRole('alert');
+    expect(error).toHaveAttribute('id', 'site-url-error');
+    expect(input).toHaveAttribute('aria-describedby', 'site-url-error');
+    expect(input).toHaveAttribute('aria-invalid', 'true');
+    // Same position as the format errors: after the input, inside the same field.
+    expect(input.compareDocumentPosition(error) & Node.DOCUMENT_POSITION_FOLLOWING).toBeTruthy();
+    expect(input.parentElement).toContainElement(error);
+
+    await user.type(input, '/x');
+    expect(screen.queryByRole('alert')).toBeNull();
+    expect(input).not.toHaveAttribute('aria-invalid', 'true');
   });
 
   it('shows the busy label while adding', () => {
