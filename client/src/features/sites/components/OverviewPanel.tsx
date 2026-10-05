@@ -17,6 +17,7 @@ import {
   Link2,
   Search,
   ShieldAlert,
+  ShieldCheck,
   Target,
   Users,
 } from 'lucide-react';
@@ -385,12 +386,21 @@ export const OverviewPanel = ({ siteId }: Props) => {
           ) : report ? (
             <>
               <div className="grid gap-3 sm:grid-cols-3" data-testid="overview-audit-counts">
+                {/* Red only when something needs fixing: a zero count is the good
+                    outcome (success); an unreadable count stays neutral. */}
                 <StatCard
                   variant="chip"
-                  tone="destructive"
-                  icon={ShieldAlert}
+                  tone={
+                    report.counts.fixNow > 0
+                      ? 'destructive'
+                      : report.counts.fixNow === 0
+                        ? 'success'
+                        : 'muted'
+                  }
+                  icon={report.counts.fixNow > 0 ? ShieldAlert : ShieldCheck}
                   label={t('report:tabs.fix-now')}
                   value={count(report.counts.fixNow)}
+                  data-testid="overview-count-fix-now"
                 />
                 <StatCard
                   variant="chip"

@@ -927,6 +927,31 @@ describe('OverviewPanel', () => {
     );
   });
 
+  it('colours the Fix now card red only when something needs fixing (issue #43)', () => {
+    const { unmount } = renderPanel(buildStore({ report: richReport() }));
+    expect(screen.getByTestId('overview-count-fix-now')).toHaveClass('bg-destructive/10');
+    unmount();
+
+    const zero = renderPanel(
+      buildStore({
+        report: richReport({ counts: { fixNow: 0, watch: 15, passed: 8 } }),
+      }),
+    );
+    const card = screen.getByTestId('overview-count-fix-now');
+    expect(card).toHaveClass('bg-success/10');
+    expect(card).not.toHaveClass('bg-destructive/10');
+    zero.unmount();
+
+    renderPanel(
+      buildStore({
+        report: richReport({
+          counts: { fixNow: null as unknown as number, watch: 0, passed: 0 },
+        }),
+      }),
+    );
+    expect(screen.getByTestId('overview-count-fix-now')).toHaveClass('bg-muted');
+  });
+
   it('uses a readable fallback for missing count and percentage values', () => {
     const gscSearch = richReport().gscSearch;
     renderPanel(
