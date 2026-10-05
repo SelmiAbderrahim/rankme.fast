@@ -416,7 +416,7 @@ export const KeywordsPanel = ({ siteId }: Props) => {
           disabled={updatingCadence}
           onChange={handleCadence}
         />
-        <div className="flex items-center gap-3">
+        <div className="flex flex-wrap items-center gap-3" data-testid="keywords-toolbar">
           <ReportExportControl
             kind="ranks.current"
             target={{ scope: 'site', siteId }}

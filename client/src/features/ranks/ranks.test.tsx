@@ -273,6 +273,14 @@ describe('KeywordsPanel — export entries', () => {
     // No two export buttons share an accessible name.
     expect(screen.queryByRole('button', { name: 'Export or share' })).toBeNull();
   });
+
+  it('lets the toolbar wrap so Check now stays reachable on narrow screens', async () => {
+    renderPage();
+    const toolbar = await screen.findByTestId('keywords-toolbar');
+    expect(toolbar).toHaveClass('flex-wrap');
+    expect(toolbar).toContainElement(screen.getByTestId('keyword-check-now'));
+    expect(toolbar.parentElement).toHaveClass('flex-wrap');
+  });
 });
 
 describe('KeywordsPanel — Check now (on-demand rank check)', () => {
