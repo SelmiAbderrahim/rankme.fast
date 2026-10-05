@@ -389,6 +389,12 @@ export const ar: DictionaryShape = {
             errors: {
                 unavailable: 'ملخّص الذكاء الاصطناعي غير متاح مؤقتًا — لن تتأثر قائمة الإصلاحات.',
             },
+            fallback: {
+                nothingUrgent: 'لا يوجد شيء عاجل حاليًا.',
+                urgent: 'أصلح هذه أولًا: {{items}}.',
+                watch: 'يستحق العمل عليها لاحقًا: {{items}}.',
+                none: 'لا يحتاج شيء إلى إصلاح حاليًا.',
+            },
         },
     },
     clientReports: {

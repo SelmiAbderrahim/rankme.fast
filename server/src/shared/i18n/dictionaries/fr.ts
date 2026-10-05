@@ -389,6 +389,12 @@ export const fr: DictionaryShape = {
             errors: {
                 unavailable: 'Le résumé IA est temporairement indisponible — votre liste de correctifs n’est pas affectée.',
             },
+            fallback: {
+                nothingUrgent: 'Rien n’est urgent pour le moment.',
+                urgent: 'À corriger en priorité : {{items}}.',
+                watch: 'À faire ensuite : {{items}}.',
+                none: 'Rien ne demande de correction pour le moment.',
+            },
         },
     },
     clientReports: {

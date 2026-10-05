@@ -389,6 +389,12 @@ export const ru: DictionaryShape = {
             errors: {
                 unavailable: 'ИИ-резюме временно недоступно — на ваш чек-лист это не влияет.',
             },
+            fallback: {
+                nothingUrgent: 'Сейчас нет ничего срочного.',
+                urgent: 'Сначала исправьте: {{items}}.',
+                watch: 'Стоит сделать дальше: {{items}}.',
+                none: 'Сейчас ничего исправлять не нужно.',
+            },
         },
     },
     clientReports: {

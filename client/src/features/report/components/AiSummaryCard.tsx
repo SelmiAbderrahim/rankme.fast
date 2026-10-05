@@ -174,10 +174,7 @@ export const AiSummaryCard = ({
               {t('aiSummary.truncatedNote')}
             </p>
           ) : null}
-          <p className="text-muted-foreground text-xs">
-            {t('aiSummary.attribution')} <span aria-hidden="true">·</span>{' '}
-            <span className="font-mono">{summary.model}</span>
-          </p>
+          <p className="text-muted-foreground text-xs">{t('aiSummary.attribution')}</p>
         </div>
       ) : null}
     </section>

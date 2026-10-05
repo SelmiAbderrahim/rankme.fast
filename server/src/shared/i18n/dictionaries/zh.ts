@@ -389,6 +389,12 @@ export const zh: DictionaryShape = {
             errors: {
                 unavailable: 'AI 摘要暂时不可用——您的检查清单不受影响。',
             },
+            fallback: {
+                nothingUrgent: '目前没有紧急事项。',
+                urgent: '请先修复：{{items}}。',
+                watch: '接下来值得处理：{{items}}。',
+                none: '目前没有需要修复的问题。',
+            },
         },
     },
     clientReports: {

@@ -18,6 +18,7 @@ import { isNotEvaluatedFinding } from "../../shared/audit-findings.js";
 import { Site } from "../sites/index.js";
 import { AuditRun, type AuditRunHydrated } from "./audit-run.model.js";
 import { ReportSnapshot, type ReportSnapshotHydrated, } from "./report-snapshot.model.js";
+import { buildDeterministicSummary, DETERMINISTIC_SUMMARY_MODEL, leaksPromptWording, } from './summary.guard.js';
 import { selectAuditSummaryLocale, type AuditSummaryState, type PersistedAiSummary, } from './summary.selection.js';
 export type { AuditSummaryState, AuditSummaryStatus, PersistedAiSummary, } from './summary.selection.js';
 export interface AuditSummaryInput {
@@ -208,6 +209,13 @@ export async function generateAuditSummary(input: AuditSummaryInput & {
     try {
         const result = await deps.provider.summarize(providerInput);
         const now = deps.now?.() ?? new Date();
+        // The text describes the request payload instead of the site (#5,
+        // #37): never persist it. A deterministic summary replaces it, so the
+        // owner still gets an answer without another paid attempt.
+        const leaked = leaksPromptWording(result.summary, input.locale);
+        const text = leaked
+            ? buildDeterministicSummary(input.locale, providerInput.findings)
+            : result.summary;
         if (deps.archiveVendorResponse) {
             await deps.archiveVendorResponse({
                 capability: "summary",
@@ -233,13 +241,13 @@ export async function generateAuditSummary(input: AuditSummaryInput & {
             model: result.model,
             findingCount: providerInput.findings.length,
             locale: input.locale,
-            outcome: "ok",
+            outcome: leaked ? "leak-fallback" : "ok",
         }, "ai summary generated");
         return {
-            text: result.summary,
+            text,
             locale: input.locale,
-            model: result.model,
-            truncated: result.truncated,
+            model: leaked ? DETERMINISTIC_SUMMARY_MODEL : result.model,
+            truncated: leaked ? false : result.truncated,
             createdAt: now.toISOString(),
         };
     }

@@ -438,7 +438,9 @@ describe('createAnthropicSummaryProvider', () => {
     const content = body.messages[0]?.content ?? '';
     expect(content).toContain('1. (FIX NOW) [title-missing-or-weak]');
     expect(content).toContain('2. (WATCH) [broken-internal-links]');
-    expect(body.system).toContain('if there are none, say nothing is urgent');
+    expect(body.system).toContain('open by saying nothing is urgent right now');
+    expect(body.system).toContain('second person');
+    expect(body.system).not.toContain('lists no pages');
   });
 
   it('empties call abort timer after success', async () => {

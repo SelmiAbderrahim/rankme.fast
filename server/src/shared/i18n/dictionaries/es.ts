@@ -389,6 +389,12 @@ export const es: DictionaryShape = {
             errors: {
                 unavailable: 'El resumen con IA no está disponible temporalmente — tu lista de correcciones no se ve afectada.',
             },
+            fallback: {
+                nothingUrgent: 'Nada es urgente por ahora.',
+                urgent: 'Corrige esto primero: {{items}}.',
+                watch: 'Conviene hacer a continuación: {{items}}.',
+                none: 'Por ahora no hay nada que corregir.',
+            },
         },
     },
     clientReports: {

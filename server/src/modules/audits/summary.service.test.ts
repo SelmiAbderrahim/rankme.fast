@@ -534,6 +534,60 @@ describe("worker-side provider generation", () => {
     ]);
   });
 
+  it("replaces a summary that narrates its input with a deterministic one (0 Fix now, issue #37)", async () => {
+    const ids = await seedOne();
+    await ReportSnapshot.updateOne(
+      { runId: ids.runId },
+      {
+        $set: {
+          findings: [
+            { ruleId: "structured-data-missing", bucket: "watch", severity: "warning", affectedUrls: [], meta: null },
+            { ruleId: "title-missing-or-weak", bucket: "watch", severity: "warning", affectedUrls: ["https://example.com/a"], meta: null },
+          ],
+        },
+      },
+    );
+    const summarize = vi.fn().mockResolvedValue({
+      summary: "No fix-now findings were supplied, so nothing is urgent. The HTTPS finding is an open problem even though it lists no pages.",
+      truncated: true,
+      model: "deepseek-v4-pro",
+    });
+    const info = vi.fn();
+    const result = await generateAuditSummary(
+      { ...ids, locale: "en", generationId: new mongoose.Types.ObjectId().toHexString() },
+      { provider: fakeProvider({ summarize }), logger: { info } },
+    );
+    // No second paid attempt: the provider is called exactly once.
+    expect(summarize).toHaveBeenCalledTimes(1);
+    expect(result.text).toMatch(/^Nothing is urgent right now\. Worth doing next: .+\.$/);
+    expect(result.text).not.toMatch(/supplied|lists no pages/i);
+    expect(result.model).toBe("deterministic");
+    expect(result.truncated).toBe(false);
+    expect(info).toHaveBeenCalledWith(
+      expect.objectContaining({ outcome: "leak-fallback" }),
+      "ai summary generated",
+    );
+  });
+
+  it("keeps a clean model summary untouched when nothing is urgent", async () => {
+    const ids = await seedOne();
+    await ReportSnapshot.updateOne(
+      { runId: ids.runId },
+      { $set: { findings: [{ ruleId: "headings-weak", bucket: "watch", severity: "warning", affectedUrls: [], meta: null }] } },
+    );
+    const summarize = vi.fn().mockResolvedValue({
+      summary: "Nothing is urgent right now. Start with your headings.",
+      truncated: false,
+      model: "m",
+    });
+    const result = await generateAuditSummary(
+      { ...ids, locale: "en", generationId: new mongoose.Types.ObjectId().toHexString() },
+      { provider: fakeProvider({ summarize }) },
+    );
+    expect(result.text).toBe("Nothing is urgent right now. Start with your headings.");
+    expect(result.model).toBe("m");
+  });
+
   it("caps the provider input at 25 findings, fix-now first", async () => {
     const ids = await seedOne();
     const finding = (bucket: "fix-now" | "watch") => ({

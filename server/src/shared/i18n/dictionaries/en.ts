@@ -388,6 +388,12 @@ export const en = {
             errors: {
                 unavailable: 'AI summary is temporarily unavailable — your checklist is unaffected.',
             },
+            fallback: {
+                nothingUrgent: 'Nothing is urgent right now.',
+                urgent: 'Fix these first: {{items}}.',
+                watch: 'Worth doing next: {{items}}.',
+                none: 'Nothing needs fixing right now.',
+            },
         },
     },
     clientReports: {

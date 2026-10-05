@@ -389,6 +389,12 @@ export const de: DictionaryShape = {
             errors: {
                 unavailable: 'KI-Zusammenfassung ist vorübergehend nicht verfügbar — Ihre Checkliste bleibt unverändert.',
             },
+            fallback: {
+                nothingUrgent: 'Im Moment ist nichts dringend.',
+                urgent: 'Zuerst beheben: {{items}}.',
+                watch: 'Als Nächstes sinnvoll: {{items}}.',
+                none: 'Im Moment muss nichts behoben werden.',
+            },
         },
     },
     clientReports: {
