@@ -32,12 +32,12 @@
   "license": "AGPL-3.0-only",
   "dependencies": {
     "@ai-sdk/anthropic": "3.0.97",
-    "@modelcontextprotocol/sdk": "1.30.0",
     "@ai-sdk/deepseek": "2.0.49",
     "@ai-sdk/google": "3.0.93",
     "@ai-sdk/moonshotai": "2.0.36",
     "@ai-sdk/openai": "3.0.85",
     "@ai-sdk/openai-compatible": "2.0.60",
+    "@modelcontextprotocol/sdk": "1.32.1",
     "@pdf-lib/fontkit": "^1.1.1",
     "ai": "6.0.226",
     "arabic-persian-reshaper": "^1.0.1",
