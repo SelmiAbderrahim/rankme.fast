@@ -1,5 +1,5 @@
 import { useTranslation } from 'react-i18next';
-import { SecuritySettings } from '@features/auth';
+import { DeleteAccount, SecuritySettings } from '@features/auth';
 import {
   ApiKeysPanel,
   BrandingPanel,
@@ -12,8 +12,8 @@ import { APP_PAGE_ICONS } from '@shared/navigation/appPageIcons';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@shared/ui/tabs';
 import { ACCOUNT_TABS } from '../types';
 import { ProfileInfoCard } from './ProfileInfoCard';
+import { AnalyticsPreference } from './AnalyticsPreference';
 import { ExportData } from './ExportData';
-import { DeleteAccount } from './DeleteAccount';
 
 /**
  * `/profile` — the Account hub. One tabbed page (`?tab=`) composing the profile
@@ -26,7 +26,8 @@ export const AccountPage = () => {
   const [tab, setTab] = useTabParam('profile', ACCOUNT_TABS);
 
   return (
-    <div className="mx-auto flex w-full max-w-3xl flex-col gap-6 py-6">
+    <div className="flex w-full max-w-3xl flex-col gap-6 px-4 py-8"
+      data-testid="account-page">
       <PageHeader
         icon={APP_PAGE_ICONS.profile}
         title={t('title')}
@@ -46,10 +47,10 @@ export const AccountPage = () => {
           <ProfileInfoCard />
         </TabsContent>
         <TabsContent value="security">
-          <SecuritySettings />
+          <SecuritySettings embedded />
         </TabsContent>
         <TabsContent value="notifications">
-          <NotificationPreferences />
+          <NotificationPreferences embedded />
         </TabsContent>
         <TabsContent value="branding">
           <BrandingPanel />
@@ -62,6 +63,7 @@ export const AccountPage = () => {
         </TabsContent>
         <TabsContent value="privacy">
           <div className="flex flex-col gap-6">
+            <AnalyticsPreference />
             <ExportData />
             <DeleteAccount />
           </div>

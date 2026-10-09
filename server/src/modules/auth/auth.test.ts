@@ -634,6 +634,18 @@ describe('auth module (Better Auth)', () => {
       expect(mirror?.profile?.lastName).toBe('Two Three');
     });
 
+    it('rejects a direct email change on update-user so verification cannot be bypassed', async () => {
+      const user = await signupTestUser(app, { email: 'direct-change@example.com' });
+      const res = await request(app)
+        .post('/api/auth/update-user')
+        .set('Origin', env.CLIENT_URL)
+        .set('Cookie', user.cookie)
+        .send({ email: 'someone-else@example.com' });
+      expect(res.status).toBeGreaterThanOrEqual(400);
+      const mirror = await User.findById(user.id);
+      expect(mirror?.email).toBe('direct-change@example.com');
+    });
+
     it('signup rejects duplicate emails', async () => {
       await signupTestUser(app, { email: 'ivan@example.com' });
       const res = await request(app)

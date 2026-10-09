@@ -55,12 +55,12 @@ const makeStore = (preloaded?: Partial<NotificationState>) =>
 
 type Store = ReturnType<typeof makeStore>;
 
-const renderWith = (store: Store = makeStore()) => {
+const renderWith = (store: Store = makeStore(), embedded = false) => {
   render(
     <Provider store={store}>
       <I18nextProvider i18n={i18n}>
         <MemoryRouter>
-          <NotificationPreferences />
+          <NotificationPreferences embedded={embedded} />
         </MemoryRouter>
       </I18nextProvider>
     </Provider>,
@@ -77,6 +77,10 @@ beforeEach(async () => {
 
 describe('NotificationPreferences', () => {
   it('loads on mount and renders every switch', async () => {
+    // A new account: the server stores marketing mail as opted out.
+    mocked.getNotificationPreferencesRequest.mockResolvedValue({
+      preferences: defaultPrefs({ emailMarketing: false }),
+    });
     renderWith();
     await waitFor(() =>
       expect(mocked.getNotificationPreferencesRequest).toHaveBeenCalled(),
@@ -87,7 +91,22 @@ describe('NotificationPreferences', () => {
     expect(screen.getByRole('switch', { name: 'Audit complete' })).toBeChecked();
     expect(screen.getByRole('switch', { name: 'Rank drops' })).toBeChecked();
     expect(screen.getByRole('switch', { name: 'Alert rules' })).toBeChecked();
-    expect(screen.getByRole('switch', { name: 'Product updates' })).toBeChecked();
+    // Product updates is opt-in, so it starts off for a new account.
+    expect(screen.getByRole('switch', { name: 'Product updates' })).not.toBeChecked();
+  });
+
+  it('drops the page header but keeps the description when embedded', () => {
+    renderWith(makeStore({ loaded: true, preferences: defaultPrefs() }), true);
+    expect(
+      screen.queryByRole('heading', { name: 'Notification preferences' }),
+    ).not.toBeInTheDocument();
+    expect(screen.getAllByText(/security emails/i)).toHaveLength(1);
+    expect(screen.getByRole('switch', { name: 'Rank drops' })).toBeInTheDocument();
+  });
+
+  it('states the security-email exception exactly once', async () => {
+    renderWith(makeStore({ loaded: true, preferences: defaultPrefs() }));
+    expect(screen.getAllByText(/security emails/i)).toHaveLength(1);
   });
 
   it('does not re-fetch when the store is already loaded', async () => {

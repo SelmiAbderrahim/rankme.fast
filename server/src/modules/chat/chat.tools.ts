@@ -69,7 +69,23 @@ export interface ChatToolSet {
     tools: Record<string, AiChatTool>;
     permissions: EffectiveMcpPermissions;
 }
-export async function buildChatTools(accountId: string, locale: SupportedLocale, teamAllowedSiteIds: readonly string[] | null = null): Promise<ChatToolSet> {
+/** Tools whose input names a site — the ones a linked site can default. */
+const SITE_SCOPED_TOOLS: ReadonlySet<McpToolName> = new Set(MCP_TOOL_NAMES.filter((name) => 'siteId' in (CHAT_TOOL_JSON_SCHEMAS[name].properties as Record<string, unknown>)));
+/**
+ * Model-facing schema for one tool. With a conversation-linked site, `siteId`
+ * stops being required: the executor defaults it, so the model has no reason
+ * to call `list_sites` just to discover an id the user already selected.
+ */
+function schemaFor(name: McpToolName, defaultSiteId: string | null): AiJsonSchema {
+    const schema = CHAT_TOOL_JSON_SCHEMAS[name];
+    if (!defaultSiteId || !SITE_SCOPED_TOOLS.has(name))
+        return schema;
+    return {
+        ...schema,
+        required: (schema.required as readonly string[]).filter((key) => key !== 'siteId'),
+    };
+}
+export async function buildChatTools(accountId: string, locale: SupportedLocale, teamAllowedSiteIds: readonly string[] | null = null, defaultSiteId: string | null = null): Promise<ChatToolSet> {
     const accountSpec = await getAccountMcpSpec(accountId);
     const permissions = resolveEffectivePermissions(accountSpec, null, MCP_TOOL_NAMES);
     if (teamAllowedSiteIds !== null) {
@@ -86,13 +102,22 @@ export async function buildChatTools(accountId: string, locale: SupportedLocale,
         const definition = resolveMcpToolDefinition(name, locale);
         tools[name] = {
             description: definition.description,
-            jsonSchema: CHAT_TOOL_JSON_SCHEMAS[name],
+            jsonSchema: schemaFor(name, defaultSiteId),
             execute: async (args) => {
                 // `runTool` inside every registry executor already converts thrown
                 // permission/ownership errors into localized tool-error results and
                 // denylist-scans the structured payload.
+                // The conversation's linked site is the default target; an
+                // explicit `siteId` from the model (another site the user asked
+                // about) still wins and goes through the same permission gates.
                 const boundArgs = typeof args === 'object' && args !== null && !Array.isArray(args)
-                    ? { ...(args as Record<string, unknown>), locale }
+                    ? {
+                        ...(args as Record<string, unknown>),
+                        ...(defaultSiteId && SITE_SCOPED_TOOLS.has(name)
+                            ? { siteId: (args as Record<string, unknown>).siteId ?? defaultSiteId }
+                            : {}),
+                        locale,
+                    }
                     : { locale, invalidChatToolInput: args };
                 const result = await definition.execute(boundArgs, context);
                 return {

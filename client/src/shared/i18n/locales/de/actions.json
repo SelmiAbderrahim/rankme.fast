@@ -22,7 +22,9 @@
     "source": "Quelle",
     "severity": "Schweregrad",
     "confidence": "Zuversicht",
-    "effort": "Aufwand"
+    "effort": "Aufwand",
+    "noMatchTitle": "Keine Aktionen entsprechen diesen Filtern",
+    "noMatchBody": "Ändern oder setzen Sie die Filter zurück, um mehr Aktionen zu sehen."
   },
   "pagination": {
     "previous": "Zurück",
@@ -81,7 +83,8 @@
     "evidenceLink": "Belegquelle öffnen",
     "history": "Verlauf",
     "retest": "Erneut prüfen",
-    "affectedSample": "({{shown}} angezeigt)"
+    "affectedSample": "({{shown}} angezeigt)",
+    "noteLabel": "Notiz"
   },
   "transitions": {
     "planned": "Planen",
@@ -114,7 +117,8 @@
     "empty": "Noch keine Änderungen aufgezeichnet.",
     "actor": "Teammitglied",
     "from": "von {{state}}",
-    "close": "Schließen"
+    "close": "Schließen",
+    "actorYou": "Sie"
   },
   "retest": {
     "title": "Diesen Befund erneut prüfen?",
@@ -122,7 +126,7 @@
     "unitsLabel": "Dafür verwendete Audit-Läufe",
     "unitsValue": "1",
     "freshRun": "Eine erneute Prüfung crawlt immer neu — Ergebnisse kommen nie aus einem Cache.",
-    "selfHosted": "Nutzungslimits von Plänen werden im selbstgehosteten Modus nicht gemessen.",
+    "selfHosted": "Auf diesem Server werden keine Nutzungslimits angewendet.",
     "remaining": "{{remaining}} von {{cap}} Audit-Läufen in diesem Zeitraum übrig",
     "allowanceUnknown": "Ihr verbleibendes Kontingent konnte nicht geladen werden. Der Server prüft Ihr Limit vor dem Start trotzdem.",
     "confirm": "Erneute Prüfung starten",

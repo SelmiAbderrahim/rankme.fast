@@ -209,5 +209,13 @@
         "warnings": "{{n}} Warnungen"
       }
     }
+  },
+  "required": {
+    "title": "Google Search Console verbinden",
+    "cta": "Google Search Console verbinden",
+    "body": {
+      "cannibalization": "Berichte zur Keyword-Kannibalisierung basieren auf Ihren Search-Console-Daten. Verbinden Sie die Search Console mit dieser Website, um einen Bericht zu erstellen. Bereits gespeicherte Berichte bleiben lesbar.",
+      "internalLinks": "Vorschläge für interne Links nutzen Ihre Search-Console-Suchanfragen, um die wichtigen Seiten zu bestimmen. Verbinden Sie die Search Console mit dieser Website, um Vorschläge auf Basis echter Suchanfragen zu erhalten."
+    }
   }
 }

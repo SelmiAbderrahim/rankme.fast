@@ -16,6 +16,7 @@ import { and, asc, eq } from 'drizzle-orm';
 import { Types } from 'mongoose';
 import { assertPublicUrlSafe } from '../../shared/security/index.js';
 import { HttpError } from '../../shared/utils/http-error.js';
+import { isSameHost } from '../../shared/utils/host.js';
 import { Site } from '../sites/index.js';
 import { competitorProfiles, competitors, type CompetitorProfileRow, type CompetitorProfileSource, } from '../../db/schema/index.js';
 /** Canonical `protocol//host` origin (host lowercased, default port dropped). */
@@ -137,6 +138,25 @@ export async function suggestCompetitors(db: ApplicationDb, input: SuggestCompet
 // ---------------------------------------------------------------------------
 // Confirm / manual-add.
 // ---------------------------------------------------------------------------
+/**
+ * A site is never its own competitor. Runs on the raw input BEFORE the SSRF
+ * check so http/https variants get the precise message (and no DNS lookup is
+ * spent): rejects the site's host with any www/scheme/port alias, plus any
+ * subdomain that would collapse onto it via the registrable-domain dedupe key.
+ * Unparseable input falls through to the SSRF authority's own rejection.
+ */
+function assertNotOwnSite(siteDomain: string, rawUrl: string): void {
+    let host: string;
+    try {
+        host = new URL(rawUrl.trim()).hostname;
+    }
+    catch {
+        return;
+    }
+    if (isSameHost(host, siteDomain) || isSameHost(registrableDomainKey(host), siteDomain)) {
+        throw HttpError.badRequest({ code: 'CONTENT_INTELLIGENCE_COMPETITOR_CONTENT_ERRORS_OWN_SITE', messageKey: 'contentIntelligence.competitorContent.errors.ownSite' });
+    }
+}
 export interface AddCompetitorInput {
     accountId: string;
     siteId: string;
@@ -154,14 +174,16 @@ export interface AddCompetitorDeps {
 /**
  * Confirm a suggestion or add a manual competitor. Order:
  *   1. own(404) — the site must belong to the account,
- *   2. SEC-URL — `assertPublicUrlSafe` (scheme/host/DNS/redirect pinning),
- *   3. portfolio ceiling — reject once the active set is full,
- *   4. dedupe by registrable domain (unique index; a resend returns the row).
+ *   2. reject the site's own domain (any www/scheme alias),
+ *   3. SEC-URL — `assertPublicUrlSafe` (scheme/host/DNS/redirect pinning),
+ *   4. portfolio ceiling — reject once the active set is full,
+ *   5. dedupe by registrable domain (unique index; a resend returns the row).
  * Never implies domain ownership.
  */
 export async function addCompetitor(db: ApplicationDb, input: AddCompetitorInput, deps: AddCompetitorDeps = {}): Promise<AddCompetitorResult> {
     const site = await loadOwnedSite(input.accountId, input.siteId);
     const siteId = String(site._id);
+    assertNotOwnSite(site.domain, input.url);
     let safe: URL;
     try {
         safe = await assertPublicUrlSafe(input.url);

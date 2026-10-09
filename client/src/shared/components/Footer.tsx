@@ -4,6 +4,8 @@ import { Link } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { useAuthSession } from '@features/auth';
 import { BRAND_NAME } from '@shared/brand';
+import { isAnalyticsConfigured, writeAnalyticsChoice } from '@shared/analytics';
+import { Button } from '@shared/ui/button';
 import { Separator } from '@shared/ui/separator';
 
 const AUTHED_LINKS = [
@@ -34,6 +36,20 @@ export const Footer = () => {
                 </Link>
               </li>
             ))}
+            {isAnalyticsConfigured() ? (
+              <li>
+                {/* Clearing the stored choice re-opens the consent prompt. */}
+                <Button
+                  variant="ghost"
+                  size="xs"
+                  type="button"
+                  className="text-muted-foreground hover:text-foreground"
+                  onClick={() => writeAnalyticsChoice(null)}
+                >
+                  {t('footer.analyticsPreferences')}
+                </Button>
+              </li>
+            ) : null}
           </ul>
         </nav>
         <p className="text-muted-foreground" dir="ltr">{t('footer.version', { version: appVersion, stage: releaseStage() })}</p>

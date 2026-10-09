@@ -14,6 +14,8 @@ import {
   resolveAbsoluteApiUrl,
   resolveApiUrl,
   __resetCsrfTokenCacheForTests,
+  __seedCsrfTokenForTests,
+  getCsrfToken,
 } from './client';
 import {
   initI18n,
@@ -46,6 +48,7 @@ interface FakeResponseInit {
 
 const fakeResponse = (init: FakeResponseInit): Response =>
   ({
+    clone: () => fakeResponse(init),
     ok: init.ok ?? true,
     status: init.status ?? 200,
     headers: {
@@ -63,6 +66,23 @@ const fakeResponse = (init: FakeResponseInit): Response =>
       return init.text ?? '';
     },
   }) as unknown as Response;
+
+const csrfInvalidResponse = (): Response =>
+  fakeResponse({
+    ok: false,
+    status: 403,
+    contentType: 'application/json',
+    json: {
+      error: {
+        message: 'CSRF token missing or invalid.',
+        code: 'CSRF_INVALID',
+        messageKey: 'security.error.csrfInvalid',
+      },
+    },
+  });
+
+const tokenResponse = (csrfToken: string): Response =>
+  fakeResponse({ contentType: 'application/json', json: { csrfToken } });
 
 const fetchSpy = () => vi.spyOn(globalThis, 'fetch');
 
@@ -875,45 +895,232 @@ describe('apiClient', () => {
     expect(headers.get('x-csrf-token')).toBe('second');
   });
 
-  it('refreshes the token once and retries on a 403 CSRF rejection', async () => {
+  it('refreshes the token once and retries on 403 CSRF_INVALID', async () => {
     const spy = fetchSpy()
+      .mockResolvedValueOnce(tokenResponse('stale'))
+      .mockResolvedValueOnce(csrfInvalidResponse())
+      .mockResolvedValueOnce(tokenResponse('fresh'))
       .mockResolvedValueOnce(
-        fakeResponse({ contentType: 'application/json', json: { csrfToken: 'stale' } }),
-      )
-      .mockResolvedValueOnce(fakeResponse({ ok: false, status: 403, text: '' }))
-      .mockResolvedValueOnce(
-        fakeResponse({ contentType: 'application/json', json: { csrfToken: 'fresh' } }),
-      )
-      .mockResolvedValueOnce(fakeResponse({ ok: true, status: 200, text: '' }));
-    await apiClient('/retry', { method: 'POST' });
+        fakeResponse({ contentType: 'application/json', json: { id: 'created' } }),
+      );
+    const result = await apiClient('/retry', { method: 'POST', body: { a: 1 } });
     // Sequence: token, mutation (403), token-refresh, retry-mutation (200).
+    expect(result).toEqual({ id: 'created' });
     expect(spy).toHaveBeenCalledTimes(4);
+    expect(requestPath(spy.mock.calls[2]![0])).toBe('/api/security/csrf-token');
     const retryHeaders = spy.mock.calls[3]![1]?.headers as Headers;
     expect(retryHeaders.get('x-csrf-token')).toBe('fresh');
+    expect(spy.mock.calls[3]![1]?.body).toBe(JSON.stringify({ a: 1 }));
   });
 
-  it('still throws when the CSRF retry itself returns 403', async () => {
+  it('keeps the refreshed token cached for later mutations', async () => {
     const spy = fetchSpy()
+      .mockResolvedValueOnce(tokenResponse('stale'))
+      .mockResolvedValueOnce(csrfInvalidResponse())
+      .mockResolvedValueOnce(tokenResponse('fresh'))
+      .mockResolvedValueOnce(fakeResponse({ text: '' }))
+      .mockResolvedValueOnce(fakeResponse({ text: '' }));
+    await apiClient('/a', { method: 'POST' });
+    await apiClient('/b', { method: 'POST' });
+    expect(spy).toHaveBeenCalledTimes(5);
+    expect((spy.mock.calls[4]![1]?.headers as Headers).get('x-csrf-token')).toBe('fresh');
+  });
+
+  it('stops after one retry when CSRF_INVALID repeats and surfaces the server body', async () => {
+    const spy = fetchSpy()
+      .mockResolvedValueOnce(tokenResponse('t1'))
+      .mockResolvedValueOnce(csrfInvalidResponse())
+      .mockResolvedValueOnce(tokenResponse('t2'))
+      .mockResolvedValueOnce(csrfInvalidResponse());
+    const err = await apiClient('/still-broken', { method: 'POST' }).catch((e: unknown) => e);
+    expect(err).toBeInstanceOf(ApiError);
+    expect((err as ApiError).status).toBe(403);
+    expect((err as ApiError).code).toBe('http');
+    expect((err as ApiError).data).toMatchObject({
+      error: { code: 'CSRF_INVALID', messageKey: 'security.error.csrfInvalid' },
+    });
+    expect(spy).toHaveBeenCalledTimes(4);
+  });
+
+  it.each([
+    ['a coded non-CSRF refusal', { error: { code: 'FORBIDDEN', message: 'No' } }],
+    ['a string error body', { error: 'nope' }],
+    ['an error-less object', {}],
+    ['a legacy errorInfo envelope with another code', { error: 'x', errorInfo: { code: 'PLAN' } }],
+  ])('does not retry a 403 that is %s', async (_label, json) => {
+    const spy = fetchSpy()
+      .mockResolvedValueOnce(tokenResponse('t1'))
       .mockResolvedValueOnce(
-        fakeResponse({ contentType: 'application/json', json: { csrfToken: 't1' } }),
-      )
-      .mockResolvedValueOnce(fakeResponse({ ok: false, status: 403, text: '' }))
-      .mockResolvedValueOnce(
-        fakeResponse({ contentType: 'application/json', json: { csrfToken: 't2' } }),
-      )
+        fakeResponse({ ok: false, status: 403, contentType: 'application/json', json }),
+      );
+    const err = await apiClient('/forbidden', { method: 'POST' }).catch((e: unknown) => e);
+    expect((err as ApiError).status).toBe(403);
+    expect(spy).toHaveBeenCalledTimes(2);
+  });
+
+  it('does not retry a 403 with a non-JSON body', async () => {
+    const spy = fetchSpy()
+      .mockResolvedValueOnce(tokenResponse('t1'))
+      .mockResolvedValueOnce(fakeResponse({ ok: false, status: 403, text: 'denied' }));
+    await expect(apiClient('/forbidden', { method: 'POST' })).rejects.toMatchObject({
+      status: 403,
+    });
+    expect(spy).toHaveBeenCalledTimes(2);
+  });
+
+  it('retries a legacy errorInfo CSRF_INVALID envelope', async () => {
+    const spy = fetchSpy()
+      .mockResolvedValueOnce(tokenResponse('t1'))
       .mockResolvedValueOnce(
         fakeResponse({
           ok: false,
           status: 403,
           contentType: 'application/json',
-          json: { error: 'still bad' },
+          json: { error: 'x', errorInfo: { code: 'CSRF_INVALID' } },
         }),
-      );
-    const err = await apiClient('/still-broken', { method: 'POST' }).catch((e: unknown) => e);
-    expect(err).toBeInstanceOf(ApiError);
-    expect((err as ApiError).status).toBe(403);
-    expect((err as ApiError).code).toBe('http');
+      )
+      .mockResolvedValueOnce(tokenResponse('t2'))
+      .mockResolvedValueOnce(fakeResponse({ text: '' }));
+    await apiClient('/legacy', { method: 'POST' });
     expect(spy).toHaveBeenCalledTimes(4);
+  });
+
+  it('shares one token fetch between concurrent mutations', async () => {
+    let resolveToken: (response: Response) => void = () => {};
+    const spy = fetchSpy()
+      .mockImplementationOnce(
+        () => new Promise<Response>((resolve) => { resolveToken = resolve; }),
+      )
+      .mockResolvedValue(fakeResponse({ text: '' }));
+    const both = Promise.all([
+      apiClient('/a', { method: 'POST' }),
+      apiClient('/b', { method: 'POST' }),
+    ]);
+    await vi.waitFor(() => expect(spy).toHaveBeenCalledTimes(1));
+    resolveToken(tokenResponse('shared'));
+    await both;
+    // One token request + two mutations, both carrying the shared token.
+    expect(spy).toHaveBeenCalledTimes(3);
+    expect((spy.mock.calls[1]![1]?.headers as Headers).get('x-csrf-token')).toBe('shared');
+    expect((spy.mock.calls[2]![1]?.headers as Headers).get('x-csrf-token')).toBe('shared');
+  });
+
+  it('reuses a token another request already refreshed instead of rotating again', async () => {
+    __seedCsrfTokenForTests('old');
+    let releaseFirst: (response: Response) => void = () => {};
+    const spy = fetchSpy()
+      // First mutation: held open, rejected only after the second has refreshed.
+      .mockImplementationOnce(() => new Promise<Response>((resolve) => { releaseFirst = resolve; }))
+      .mockResolvedValueOnce(csrfInvalidResponse())
+      .mockResolvedValueOnce(tokenResponse('fresh'))
+      .mockResolvedValue(fakeResponse({ text: '' }));
+    const a = apiClient('/a', { method: 'POST' });
+    const b = apiClient('/b', { method: 'POST' });
+    // b is rejected, refreshes the token and succeeds while a is still pending.
+    await b;
+    expect(spy).toHaveBeenCalledTimes(4);
+    releaseFirst(csrfInvalidResponse());
+    await a;
+    const tokenFetches = spy.mock.calls.filter(([url]) =>
+      requestPath(url).endsWith('/security/csrf-token'),
+    );
+    expect(tokenFetches).toHaveLength(1);
+    const last = spy.mock.calls.at(-1)![1]?.headers as Headers;
+    expect(last.get('x-csrf-token')).toBe('fresh');
+  });
+
+  it('getCsrfToken fetches once and serves the cache afterwards', async () => {
+    const spy = fetchSpy().mockResolvedValueOnce(tokenResponse('only'));
+    await expect(getCsrfToken()).resolves.toBe('only');
+    await expect(getCsrfToken()).resolves.toBe('only');
+    expect(spy).toHaveBeenCalledTimes(1);
+  });
+
+  it('fetchCsrfToken updates the cache so the next mutation sends the rotated token', async () => {
+    const spy = fetchSpy()
+      .mockResolvedValueOnce(tokenResponse('first'))
+      .mockResolvedValueOnce(tokenResponse('rotated'))
+      .mockResolvedValueOnce(fakeResponse({ text: '' }));
+    await fetchCsrfToken();
+    await fetchCsrfToken();
+    await apiClient('/after', { method: 'POST' });
+    expect(spy).toHaveBeenCalledTimes(3);
+    expect((spy.mock.calls[2]![1]?.headers as Headers).get('x-csrf-token')).toBe('rotated');
+  });
+
+  describe('apiFetch csrf', () => {
+    const post = () =>
+      apiFetch('/chat/conversations/c1/messages', {
+        method: 'POST',
+        localeMode: 'artifact',
+        csrf: true,
+        timeoutMs: null,
+        headers: { Accept: 'text/event-stream' },
+        body: JSON.stringify({ text: 'hi' }),
+      });
+
+    it('attaches the cached token without an extra round-trip', async () => {
+      __seedCsrfTokenForTests('cached');
+      const spy = fetchSpy().mockResolvedValue(fakeResponse({ text: 'ok' }));
+      await post();
+      await post();
+      expect(spy).toHaveBeenCalledTimes(2);
+      const headers = spy.mock.calls[0]![1]?.headers as Headers;
+      expect(headers.get('x-csrf-token')).toBe('cached');
+      expect(headers.get('Accept')).toBe('text/event-stream');
+    });
+
+    it('fetches the token when missing', async () => {
+      const spy = fetchSpy()
+        .mockResolvedValueOnce(tokenResponse('new'))
+        .mockResolvedValueOnce(fakeResponse({ text: 'ok' }));
+      await post();
+      expect(requestPath(spy.mock.calls[0]![0])).toBe('/api/security/csrf-token');
+      expect((spy.mock.calls[1]![1]?.headers as Headers).get('x-csrf-token')).toBe('new');
+    });
+
+    it('refreshes and re-sends once on CSRF_INVALID', async () => {
+      __seedCsrfTokenForTests('stale');
+      const spy = fetchSpy()
+        .mockResolvedValueOnce(csrfInvalidResponse())
+        .mockResolvedValueOnce(tokenResponse('fresh'))
+        .mockResolvedValueOnce(fakeResponse({ text: 'stream' }));
+      const response = await post();
+      expect(await response.text()).toBe('stream');
+      expect(spy).toHaveBeenCalledTimes(3);
+      const retry = spy.mock.calls[2]![1];
+      expect((retry?.headers as Headers).get('x-csrf-token')).toBe('fresh');
+      expect(retry?.body).toBe(JSON.stringify({ text: 'hi' }));
+    });
+
+    it('returns the second CSRF_INVALID response without looping', async () => {
+      __seedCsrfTokenForTests('stale');
+      const spy = fetchSpy()
+        .mockResolvedValueOnce(csrfInvalidResponse())
+        .mockResolvedValueOnce(tokenResponse('fresh'))
+        .mockResolvedValueOnce(csrfInvalidResponse());
+      const response = await post();
+      expect(response.status).toBe(403);
+      expect(spy).toHaveBeenCalledTimes(3);
+    });
+
+    it.each([
+      ['a non-CSRF 403', () => fakeResponse({ ok: false, status: 403, contentType: 'application/json', json: { error: { code: 'X' } } })],
+      ['an unreadable 403 body', () => fakeResponse({ ok: false, status: 403, jsonError: new Error('bad json') })],
+      ['a non-403 failure', () => fakeResponse({ ok: false, status: 500, text: '' })],
+    ])('does not retry %s', async (_label, make) => {
+      __seedCsrfTokenForTests('tok');
+      const spy = fetchSpy().mockResolvedValueOnce(make());
+      await post();
+      expect(spy).toHaveBeenCalledTimes(1);
+    });
+
+    it('sends no token unless csrf is requested', async () => {
+      const spy = fetchSpy().mockResolvedValue(fakeResponse({ text: 'ok' }));
+      await apiFetch('/raw', { method: 'POST', localeMode: 'artifact' });
+      expect(spy).toHaveBeenCalledTimes(1);
+      expect((spy.mock.calls[0]![1]?.headers as Headers).get('x-csrf-token')).toBeNull();
+    });
   });
 
   it('honors an explicit csrf:false override on a mutating method', async () => {

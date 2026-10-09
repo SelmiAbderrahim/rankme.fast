@@ -72,15 +72,12 @@ describe('mailer notification-preference gate', () => {
     await clearCollections();
   });
 
-  it('shouldSendNotification returns true for a fresh user with defaults', async () => {
+  it('shouldSendNotification: operational channels default on, marketing defaults off', async () => {
     const userId = await makeUser();
-    for (const channel of [
-      'emailAuditComplete',
-      'emailRankDrop',
-      'emailMarketing',
-    ] as const) {
+    for (const channel of ['emailAuditComplete', 'emailRankDrop'] as const) {
       expect(await shouldSendNotification(userId, channel)).toBe(true);
     }
+    expect(await shouldSendNotification(userId, 'emailMarketing')).toBe(false);
   });
 
   it('shouldSendNotification honours a stored false', async () => {
@@ -242,11 +239,24 @@ describe('mailer notification-preference gate', () => {
     });
   });
 
-  it('deliverWelcomeEmail without a userId sends (legacy caller — no gate)', async () => {
+  it('deliverWelcomeEmail does not send to a brand-new account that never opted in', async () => {
     await withResend(async () => {
-      const res = await deliverWelcomeEmail({ email: 'u@test.com', name: 'Alex' });
-      expect(res.delivered).toBe(true);
-      expect(seen).toHaveLength(1);
+      const userId = await makeUser();
+      const res = await deliverWelcomeEmail({ email: 'u@test.com', name: 'Alex', userId });
+      expect(res).toEqual({ delivered: false, reason: 'opted-out' });
+      expect(seen).toHaveLength(0);
+    });
+  });
+
+  it('deliverWelcomeEmail does not send for an unknown user (no opt-in on record)', async () => {
+    await withResend(async () => {
+      const res = await deliverWelcomeEmail({
+        email: 'u@test.com',
+        name: 'Alex',
+        userId: '507f1f77bcf86cd799439011',
+      });
+      expect(res).toEqual({ delivered: false, reason: 'opted-out' });
+      expect(seen).toHaveLength(0);
     });
   });
 

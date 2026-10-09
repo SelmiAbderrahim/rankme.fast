@@ -529,7 +529,7 @@ describe('LiveTrendsView — preview card variants', () => {
     });
     renderInRouter(<LiveTrendsView />);
     expect(screen.getByTestId('live-trends-preview')).toHaveTextContent(
-      'Plan usage limits are not metered in self-hosted mode.',
+      "Usage limits aren't applied on this server.",
     );
   });
 

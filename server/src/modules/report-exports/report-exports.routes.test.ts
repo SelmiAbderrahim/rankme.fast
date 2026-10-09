@@ -1429,6 +1429,7 @@ describe("report-export invariant matrix", () => {
       .set("Cookie", source.user.cookie)
       .expect(200);
     expect(pageOne.body.items).toHaveLength(1);
+    expect(pageOne.body.items[0].siteId).toBe(source.siteId);
     expect(pageOne.body.nextCursor).toEqual(expect.any(String));
     const pageTwo = await request(app)
       .get(

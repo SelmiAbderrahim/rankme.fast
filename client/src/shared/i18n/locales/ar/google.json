@@ -209,5 +209,13 @@
         "warnings": "{{n}} تحذيرات"
       }
     }
+  },
+  "required": {
+    "title": "اربط Google Search Console",
+    "cta": "اربط Google Search Console",
+    "body": {
+      "cannibalization": "تُبنى تقارير تداخل الكلمات المفتاحية من بيانات Search Console الخاصة بك. اربط Search Console بهذا الموقع لإنشاء تقرير. تبقى التقارير المحفوظة سابقًا متاحة للقراءة.",
+      "internalLinks": "تستخدم اقتراحات الروابط الداخلية استعلامات Search Console لاختيار الصفحات المهمة. اربط Search Console بهذا الموقع لتحصل على اقتراحات مبنية على عمليات بحث حقيقية."
+    }
   }
 }

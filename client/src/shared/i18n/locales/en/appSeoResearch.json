@@ -36,7 +36,7 @@
   },
   "columns": { "rank": "Rank", "keyword": "Keyword", "updated": "Updated", "app": "App", "averagePosition": "Average position", "sharedKeywords": "Shared keywords", "rankedKeywords": "Ranked keywords", "firstPositions": "First positions" },
   "empty": { "noProfileTitle": "Register an app first", "noProfileDescription": "Add a Google Play package ID or App Store ID before running research." },
-  "disabled": { "title": "New research is paused", "description": "Stored results remain available, but new lookups are disabled by the operator." },
+  "disabled": { "title": "New research is paused", "description": "Stored results remain available, but new lookups are turned off." },
   "upsell": { "title": "Add App SEO research", "description": "Your Pro plan needs the App SEO add-on or a research credit pack for these live lookups.", "cta": "View App SEO options" },
   "errors": { "title": "Research could not be completed", "requestFailed": "The research request failed. Try again.", "downloadFailed": "The CSV could not be downloaded in this browser." }
 }

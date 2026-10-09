@@ -6,6 +6,8 @@
     "title": "对话",
     "new": "新建对话",
     "label": "助手对话",
+    "showList": "显示对话（{{count}}）",
+    "hideList": "隐藏对话",
     "empty": "尚无对话。",
     "untitled": "新建对话",
     "deleteLabel": "删除 {{title}}",
@@ -46,6 +48,7 @@
     "user": "您的消息",
     "assistant": "助手回复",
     "streaming": "助手正在回复",
+    "stopped": "已停止回复",
     "loading": "正在加载对话…"
   },
   "tool": {

@@ -455,6 +455,7 @@ describe('GoogleSearchDetailPanel — sitemaps view', () => {
     expect(screen.getByRole('heading', { name: 'Sitemaps' })).toBeInTheDocument();
     expect(screen.getByText(/Data through/)).toBeInTheDocument();
     expect(screen.getAllByTestId('google-sitemaps-row')).toHaveLength(3);
+    expect(screen.queryByText('Nothing to export yet')).toBeNull();
 
     const statuses = screen.getAllByTestId('google-sitemaps-status');
     expect(statuses[0]).toHaveTextContent('OK');
@@ -480,6 +481,8 @@ describe('GoogleSearchDetailPanel — sitemaps view', () => {
     expect(await screen.findByTestId('google-sitemaps-empty')).toHaveTextContent(
       'No sitemaps submitted yet.',
     );
+    expect(screen.getByRole('button', { name: 'Export or share' })).toBeDisabled();
+    expect(screen.getByText('Nothing to export yet')).toBeInTheDocument();
   });
 
   it('maps a 404 to the same empty state', async () => {

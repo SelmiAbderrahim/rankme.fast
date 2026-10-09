@@ -33,7 +33,7 @@ import {
   selectPageSpeedSampleUrls,
   urlPathDepth,
 } from './index.js';
-import { applySiteProbe } from './audit.processor.js';
+import { applyHostRedirect, applySiteProbe } from './audit.processor.js';
 
 const logger = pino({ level: 'silent' });
 
@@ -642,6 +642,45 @@ describe('audit processor — page persistence and PageSpeed sampling', () => {
       expect(https.meta?.addressVariants).toEqual(variants);
     });
 
+    it('evaluates the sitemap and llms.txt checks when the start page is blocked (issue #38)', async () => {
+      // Start page 403: the probe still read robots.txt, sitemap.xml and llms.txt.
+      const passing = await seed();
+      await createAuditProcessor({
+        provider: createFakeAuditProvider(),
+        probeSite: async () => ({ sitemapReferencedInRobots: true, sitemapFound: true, llmsTxtFound: true }),
+        logger,
+      })(jobFor({ ...passing, pageCap: 100 }));
+      expect((await findingOf(passing.runId, 'sitemap-missing-or-weak')).bucket).toBe('passed');
+      expect((await findingOf(passing.runId, 'llms-txt-missing')).bucket).toBe('passed');
+
+      // robots.txt 404 → a real "sitemap not declared" watch finding, not "not evaluated".
+      const missing = await seed();
+      await createAuditProcessor({
+        provider: createFakeAuditProvider(),
+        probeSite: async () => ({ sitemapReferencedInRobots: false, sitemapFound: true, llmsTxtFound: false }),
+        logger,
+      })(jobFor({ ...missing, pageCap: 100 }));
+      const watch = await findingOf(missing.runId, 'sitemap-missing-or-weak');
+      expect(watch.bucket).toBe('watch');
+      expect(watch.meta?.insufficientData).toBeUndefined();
+
+      // A genuinely failed read stays "not evaluated" and says why.
+      const failed = await seed();
+      await createAuditProcessor({
+        provider: createFakeAuditProvider(),
+        probeSite: async () => ({ failures: { robots: { reason: 'blocked', status: 403 }, llms: { reason: 'unreachable' } } }),
+        logger,
+      })(jobFor({ ...failed, pageCap: 100 }));
+      expect((await findingOf(failed.runId, 'sitemap-missing-or-weak')).meta).toEqual({
+        insufficientData: true,
+        probeFailure: { file: 'robots.txt', reason: 'blocked', status: 403 },
+      });
+      expect((await findingOf(failed.runId, 'llms-txt-missing')).meta).toEqual({
+        insufficientData: true,
+        probeFailure: { file: 'llms.txt', reason: 'unreachable' },
+      });
+    });
+
     it('keeps the vendor verdict when the probe fails', async () => {
       const ids = await seed();
       const processor = createAuditProcessor({
@@ -674,6 +713,14 @@ describe('audit processor — page persistence and PageSpeed sampling', () => {
       expect(merged.domainChecks.addressVariants).toBeUndefined();
     });
 
+    it('trusts a sitemap the probe saw over the vendor "no sitemap"', async () => {
+      const noSitemap = { ...FAKE_AUDIT_RESULT, domainChecks: { ...FAKE_AUDIT_RESULT.domainChecks, sitemapFound: false } };
+      const merged = await applySiteProbe(noSitemap, target, { probeSite: async () => ({ sitemapFound: true }), logger });
+      expect(merged.domainChecks.sitemapFound).toBe(true);
+      const untouched = await applySiteProbe(noSitemap, target, { probeSite: async () => ({}), logger });
+      expect(untouched.domainChecks.sitemapFound).toBe(false);
+    });
+
     it('sets canonicalizationOk from conclusive variants only', async () => {
       const allOk = await applySiteProbe(FAKE_AUDIT_RESULT, target, {
         probeSite: async () => ({ addressVariants: [ok('http://example.com/'), ok('https://www.example.com/')] }),
@@ -697,6 +744,77 @@ describe('audit processor — page persistence and PageSpeed sampling', () => {
 
     it('returns the vendor result untouched without a probe', async () => {
       expect(await applySiteProbe(FAKE_AUDIT_RESULT, target, { logger })).toBe(FAKE_AUDIT_RESULT);
+    });
+  });
+
+  describe('host redirect (issue #29)', () => {
+    const wwwTarget = { domain: 'www.example.com', url: 'https://www.example.com' };
+    const onApex = {
+      ...FAKE_AUDIT_RESULT,
+      pages: FAKE_AUDIT_RESULT.pages.map((p) => ({ ...p, url: p.url.replace('www.', '') })),
+    };
+
+    it('records the host the crawl landed on when no page is on the site host', () => {
+      const result = {
+        ...FAKE_AUDIT_RESULT,
+        pages: [
+          { ...FAKE_AUDIT_RESULT.pages[0]!, url: 'https://example.com/' },
+          { ...FAKE_AUDIT_RESULT.pages[0]!, url: 'https://example.com/about' },
+          { ...FAKE_AUDIT_RESULT.pages[0]!, url: 'https://other.example.net/x' },
+          { ...FAKE_AUDIT_RESULT.pages[0]!, url: 'not a url' },
+        ],
+      };
+      expect(applyHostRedirect(result, wwwTarget).hostRedirect).toEqual({
+        from: 'www.example.com',
+        to: 'example.com',
+      });
+    });
+
+    it('leaves a crawl that stayed on the site host untouched', () => {
+      const result = {
+        ...FAKE_AUDIT_RESULT,
+        pages: [{ ...FAKE_AUDIT_RESULT.pages[0]!, url: 'https://www.example.com/' }],
+      };
+      expect(applyHostRedirect(result, wwwTarget)).toBe(result);
+      expect(applyHostRedirect({ ...FAKE_AUDIT_RESULT, pages: [] }, wwwTarget).hostRedirect).toBeUndefined();
+    });
+
+    it('falls back to the domain when the stored url is not parseable', () => {
+      expect(applyHostRedirect(onApex, { domain: 'www.example.com', url: 'nope' }).hostRedirect).toEqual({
+        from: 'www.example.com',
+        to: 'example.com',
+      });
+    });
+
+    it('takes the start page redirect from the site probe', async () => {
+      const merged = await applySiteProbe(FAKE_AUDIT_RESULT, wwwTarget, {
+        probeSite: async () => ({ startPageFinalUrl: 'https://example.com/' }),
+        logger,
+      });
+      expect(merged.hostRedirect).toEqual({ from: 'www.example.com', to: 'example.com' });
+      const same = await applySiteProbe(FAKE_AUDIT_RESULT, wwwTarget, {
+        probeSite: async () => ({ startPageFinalUrl: 'https://www.example.com/' }),
+        logger,
+      });
+      expect(same.hostRedirect).toBeUndefined();
+    });
+
+    it('persists the redirect on the report snapshot end to end', async () => {
+      const accountId = new mongoose.Types.ObjectId();
+      const site = await Site.create({ accountId, url: 'https://www.example.com', domain: 'www.example.com' });
+      const run = await AuditRun.create({ accountId, siteId: site._id, pageCap: 100 });
+      const processor = createAuditProcessor({
+        provider: createFakeAuditProvider({ result: onApex }),
+        logger,
+      });
+      await processor(jobFor({
+        accountId: accountId.toHexString(),
+        siteId: site.id as string,
+        runId: run.id as string,
+        pageCap: 100,
+      }));
+      const snapshot = await ReportSnapshot.findOne({ runId: run._id }).lean();
+      expect(snapshot?.hostRedirect).toEqual({ from: 'www.example.com', to: 'example.com' });
     });
   });
 

@@ -501,6 +501,151 @@ describe('assistant slice stream actions', () => {
     });
   });
 
+  const meta = (requestId = 'stream-1') =>
+    streamMetaReceived({
+      requestId,
+      conversationId: 'c1',
+      userMessageId: 'u1',
+      assistantMessageId: 'a1',
+      responseLocale: 'en',
+      userText: 'Prompt',
+      createdAt: '2026-08-02T11:00:00.000Z',
+    });
+
+  it('shows the sent message at once and confirms it in place on the meta frame', () => {
+    let state = start();
+    expect(state.messagesByConversation.c1?.at(-1)).toMatchObject({
+      id: 'pending:stream-1',
+      role: 'user',
+      parts: [{ type: 'text', text: 'Prompt' }],
+    });
+
+    state = assistantReducer(state, meta());
+    expect(state.messagesByConversation.c1?.map((item) => item.id)).toEqual([
+      'stored',
+      'u1',
+      'a1',
+    ]);
+  });
+
+  it('appends the user message on meta when a reload replaced the optimistic one', () => {
+    let state = start();
+    state = assistantReducer(
+      state,
+      loadAssistantConversation.fulfilled(
+        { conversation: conversation('c1'), messages: [message('stored')] },
+        'reload',
+        { conversationId: 'c1' },
+      ),
+    );
+    state = assistantReducer(state, meta());
+    expect(state.messagesByConversation.c1?.map((item) => item.id)).toEqual([
+      'stored',
+      'u1',
+      'a1',
+    ]);
+  });
+
+  it('keeps the user message and marks the reply aborted when Stop follows meta', () => {
+    let state = assistantReducer(start(), meta());
+    state = assistantReducer(
+      state,
+      sendAssistantMessage.fulfilled(
+        {
+          conversationId: 'c1',
+          responseLocale: 'en',
+          outcome: 'aborted',
+          accepted: true,
+          finishReason: null,
+          tokens: null,
+        },
+        'stream-1',
+        { conversationId: 'c1', text: 'Prompt' },
+      ),
+    );
+    expect(state.messagesByConversation.c1?.map((item) => item.id)).toEqual([
+      'stored',
+      'u1',
+      'a1',
+    ]);
+  });
+
+  it('withdraws the unconfirmed user message when Stop lands before meta', () => {
+    const state = assistantReducer(
+      start(),
+      sendAssistantMessage.fulfilled(
+        {
+          conversationId: 'c1',
+          responseLocale: 'en',
+          outcome: 'aborted',
+          accepted: false,
+          finishReason: null,
+          tokens: null,
+        },
+        'stream-1',
+        { conversationId: 'c1', text: 'Prompt' },
+      ),
+    );
+    expect(state.stream.status).toBe('aborted');
+    expect(state.messagesByConversation.c1?.map((item) => item.id)).toEqual(['stored']);
+  });
+
+  it('withdraws the unconfirmed user message when the request is rejected before meta', () => {
+    const state = assistantReducer(
+      start(),
+      sendAssistantMessage.rejected(null, 'stream-1', {
+        conversationId: 'c1',
+        text: 'Prompt',
+      }, error),
+    );
+    expect(state.messagesByConversation.c1?.map((item) => item.id)).toEqual(['stored']);
+  });
+
+  it('keeps the user message when the stream fails after meta', () => {
+    let state = assistantReducer(start(), meta());
+    state = assistantReducer(
+      state,
+      sendAssistantMessage.rejected(null, 'stream-1', {
+        conversationId: 'c1',
+        text: 'Prompt',
+      }, error),
+    );
+    expect(state.messagesByConversation.c1?.map((item) => item.id)).toEqual([
+      'stored',
+      'u1',
+      'a1',
+    ]);
+  });
+
+  it('drops the bubble of a superseded unconfirmed send when a new one starts', () => {
+    const state = assistantReducer(
+      start(),
+      sendAssistantMessage.pending('stream-2', { conversationId: 'c1', text: 'Next' }),
+    );
+    expect(state.messagesByConversation.c1?.map((item) => item.id)).toEqual([
+      'stored',
+      'pending:stream-2',
+    ]);
+  });
+
+  it('tolerates the conversation vanishing while an unconfirmed send ends', () => {
+    let state = start();
+    state = assistantReducer(
+      state,
+      deleteAssistantConversationThunk.fulfilled({ conversationId: 'c1' }, 'del', {
+        conversationId: 'c1',
+      }),
+    );
+    state = assistantReducer(
+      state,
+      sendAssistantMessage.rejected(abortError, 'stream-1', {
+        conversationId: 'c1',
+        text: 'Prompt',
+      }),
+    );
+    expect(state.messagesByConversation.c1).toBeUndefined();
+  });
+
   it('handles missing streamed messages for tool/final/error actions', () => {
     let state = start();
     state = assistantReducer(
@@ -553,6 +698,7 @@ describe('assistant slice stream actions', () => {
           conversationId: 'c1',
           responseLocale: 'en',
           outcome: 'complete',
+          accepted: true,
           finishReason: 'stop',
           tokens: null,
         },

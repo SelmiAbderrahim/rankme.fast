@@ -49,6 +49,8 @@ export interface ReportSourceDate {
 export interface ReportSnapshotSummary {
   id: string;
   kind: string;
+  /** Owning site for site-scoped exports; null for account-wide ones. */
+  siteId?: string | null;
   format: ReportFormat;
   locale: SupportedLocale;
   title: string;

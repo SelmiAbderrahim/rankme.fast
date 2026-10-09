@@ -414,3 +414,86 @@ describe('actions selectors', () => {
     expect(miss).toBeNull();
   });
 });
+
+describe('loadActions — duplicate request guard', () => {
+  const emptyList = { items: [], sourceStatus: {}, nextCursor: null };
+
+  it('shares one request between identical concurrent loads from different surfaces', async () => {
+    let resolve!: (value: unknown) => void;
+    mocked.mockReturnValueOnce(new Promise((res) => { resolve = res; }) as never);
+    const store = makeStore();
+    const loads = [
+      store.dispatch(loadActions({ siteId: 's1', limit: 5, requestSeq: 1 })),
+      store.dispatch(loadActions({ siteId: 's1', limit: 5, requestSeq: 2 })),
+      store.dispatch(loadActions({ siteId: 's1', limit: 5, requestSeq: 3 })),
+    ];
+    resolve({ items: [makeItem()], sourceStatus: {}, nextCursor: null });
+    const results = await Promise.all(loads);
+    expect(mocked).toHaveBeenCalledTimes(1);
+    expect(results.every((r) => r.type === 'actions/loadActions/fulfilled')).toBe(true);
+    expect(selectActions(store.getState())).toHaveLength(1);
+  });
+
+  it('does not share requests that differ by site, filters, limit, or cursor', async () => {
+    mocked.mockResolvedValue(emptyList as never);
+    const store = makeStore();
+    await Promise.all([
+      store.dispatch(loadActions({ siteId: 's1', requestSeq: 1 })),
+      store.dispatch(loadActions({ siteId: 's2', requestSeq: 2 })),
+      store.dispatch(loadActions({ siteId: 's2', requestSeq: 3, limit: 5 })),
+      store.dispatch(loadActions({ siteId: 's2', requestSeq: 4, filters: { source: ['audit_finding'] } })),
+      store.dispatch(loadActions({ siteId: 's2', requestSeq: 5, cursor: 'c1' })),
+    ]);
+    expect(mocked).toHaveBeenCalledTimes(5);
+  });
+
+  it('does not share a request across presentation locales', async () => {
+    mocked.mockResolvedValue(emptyList as never);
+    const store = makeStore();
+    await Promise.all([
+      store.dispatch(loadActions({ siteId: 's1', requestSeq: 1, presentationLocale: 'en', presentationGeneration: 1 })),
+      store.dispatch(loadActions({ siteId: 's1', requestSeq: 2, presentationLocale: 'de', presentationGeneration: 2 })),
+    ]);
+    expect(mocked).toHaveBeenCalledTimes(2);
+  });
+
+  it('refetches after the first request settled', async () => {
+    mocked.mockResolvedValue(emptyList as never);
+    const store = makeStore();
+    await store.dispatch(loadActions({ siteId: 's1', requestSeq: 1 }));
+    await store.dispatch(loadActions({ siteId: 's1', requestSeq: 2 }));
+    expect(mocked).toHaveBeenCalledTimes(2);
+  });
+
+  it('lets an aborted effect run redispatch onto the request still in flight', async () => {
+    let resolve!: (value: unknown) => void;
+    mocked.mockReturnValueOnce(new Promise((res) => { resolve = res; }) as never);
+    const store = makeStore();
+    const first = store.dispatch(loadActions({ siteId: 's1', requestSeq: 1 }));
+    first.abort();
+    const second = store.dispatch(loadActions({ siteId: 's1', requestSeq: 2 }));
+    resolve({ items: [makeItem()], sourceStatus: {}, nextCursor: null });
+    await Promise.all([first, second]);
+    expect(mocked).toHaveBeenCalledTimes(1);
+    expect(selectActionsListStatus(store.getState())).toBe('ready');
+    expect(selectActions(store.getState())).toHaveLength(1);
+  });
+
+  it('never serves a read that started before a state change to a reload after it', async () => {
+    let resolveStale!: (value: unknown) => void;
+    mocked.mockReturnValueOnce(new Promise((res) => { resolveStale = res; }) as never);
+    const store = makeStore();
+    const stale = store.dispatch(loadActions({ siteId: 's1', requestSeq: 1 }));
+    mocked.mockResolvedValueOnce({ id: 'a1', state: 'dismissed', version: 1, replayed: false } as never);
+    await store.dispatch(
+      submitActionState({ siteId: 's1', actionId: 'a1', state: 'dismissed', expectedVersion: 0, clientKey: 'k' }),
+    );
+    mocked.mockResolvedValueOnce({ items: [makeItem({ state: 'dismissed', version: 1 })], sourceStatus: {}, nextCursor: null } as never);
+    await store.dispatch(loadActions({ siteId: 's1', requestSeq: 2 }));
+    // 1 stale read + mutation + 1 post-mutation read (the stale one was not joined).
+    expect(mocked).toHaveBeenCalledTimes(3);
+    resolveStale(emptyList);
+    await stale;
+  });
+});
+

@@ -28,7 +28,13 @@
       "nameRequired": "Geben Sie einen Anzeigenamen ein.",
       "nameTooLong": "Halten Sie Ihren Namen unter 80 Zeichen.",
       "saveFailed": "Wir konnten Ihr Profil nicht speichern. Bitte versuchen Sie es erneut."
-    }
+    },
+    "workspaceOwner": "Inhaber des Arbeitsbereichs",
+    "platformRole": {
+      "Admin": "Plattform-Administrator",
+      "SuperAdmin": "Plattform-Superadministrator"
+    },
+    "emailHint": "Um Ihre E-Mail-Adresse zu ändern, öffnen Sie Sicherheit und nutzen Sie E-Mail ändern. Die Adresse ändert sich erst, nachdem Sie den gesendeten Link bestätigt haben."
   },
   "privacy": {
     "export": {
@@ -39,18 +45,10 @@
       "success": "Ihr Datenexport wurde heruntergeladen.",
       "error": "Wir konnten Ihre Daten nicht exportieren. Bitte versuchen Sie es erneut."
     },
-    "delete": {
-      "title": "Konto löschen",
-      "description": "Planen Sie die dauerhafte Löschung Ihres Kontos und Ihrer Daten.",
-      "warning": "Dies plant die Löschung Ihres Kontos nach einer Kulanzfrist. Wenden Sie sich vorher an den Support, um abzubrechen.",
-      "button": "Mein Konto löschen",
-      "dialogTitle": "Ihr Konto löschen?",
-      "dialogBody": "Ihr Konto und Ihre Daten werden nach der Kulanzfrist dauerhaft entfernt. Nach Ablauf dieser Frist ist dies unwiderruflich.",
-      "cancel": "Abbrechen",
-      "confirm": "Ja, mein Konto löschen",
-      "deleting": "Wird geplant…",
-      "scheduled": "Ihr Konto ist zur Löschung am {{date}} vorgemerkt.",
-      "error": "Wir konnten die Löschung nicht planen. Bitte versuchen Sie es erneut."
+    "analytics": {
+      "title": "Nutzungsanalyse",
+      "description": "Legen Sie fest, ob RankMeFast Google Analytics zum Zählen von Seitenaufrufen verwenden darf. Seitenadressen werden ohne Website-IDs oder Tab-Auswahl gesendet.",
+      "label": "Nutzungsanalyse erlauben"
     }
   }
 }

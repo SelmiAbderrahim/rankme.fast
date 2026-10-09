@@ -151,7 +151,7 @@ export function AcceptDecisionDialog({
         <div className="flex flex-col gap-2 text-sm">
           <p>
             <strong>{t('signals.decision.signalTitleLabel')}: </strong>
-            {signal.title}
+            <bdi>{signal.title}</bdi>
           </p>
           <p className="text-muted-foreground text-xs">
             {isCi

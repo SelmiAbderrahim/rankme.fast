@@ -241,8 +241,10 @@ const isPublicPath = (pathname) =>
 function contentSecurityPolicy(nonce) {
   return [
     "default-src 'self'",
-    // Google Analytics: gtag loader host in script-src, beacon endpoints in
-    // connect-src (below), image-fallback pixel hosts in img-src.
+    // Google Analytics: the client injects the gtag loader only after the
+    // visitor opts in (shared/analytics), but the host must be allowed in
+    // script-src; beacon endpoints go in connect-src (below), image-fallback
+    // pixel hosts in img-src.
     `script-src 'self' 'nonce-${nonce}' https://www.googletagmanager.com`,
     "style-src 'self' 'unsafe-inline'",
     "img-src 'self' data: https://www.google-analytics.com https://www.googletagmanager.com",

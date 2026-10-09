@@ -209,5 +209,13 @@
         "warnings": "{{n}} advertencias"
       }
     }
+  },
+  "required": {
+    "title": "Conecta Google Search Console",
+    "cta": "Conectar Google Search Console",
+    "body": {
+      "cannibalization": "Los informes de canibalización de palabras clave se crean con tus datos de Search Console. Conecta Search Console a este sitio para generar uno. Los informes que ya guardaste siguen disponibles.",
+      "internalLinks": "Las sugerencias de enlaces internos usan tus consultas de Search Console para elegir qué páginas importan. Conecta Search Console a este sitio para recibir sugerencias basadas en búsquedas reales."
+    }
   }
 }

@@ -21,7 +21,7 @@
       "email": "E-mail",
       "role": "Rôle",
       "status": "Statut",
-      "invitedAt": "Invité le",
+      "invitedAt": "Invité / rejoint le",
       "expiresAt": "Expire le",
       "access": "Accès aux sites"
     },
@@ -61,14 +61,20 @@
     "searchPlaceholder": "Rechercher par e-mail",
     "previous": "Précédent",
     "next": "Suivant",
-    "pageOf": "Page {{page}} sur {{totalPages}} · {{total}} membre(s)",
+    "pageOf_zero": "Page {{page}} sur {{totalPages}} · {{count}} membres",
+    "pageOf_one": "Page {{page}} sur {{totalPages}} · {{count}} membre",
+    "pageOf_two": "Page {{page}} sur {{totalPages}} · {{count}} membres",
+    "pageOf_few": "Page {{page}} sur {{totalPages}} · {{count}} membres",
+    "pageOf_many": "Page {{page}} sur {{totalPages}} · {{count}} membres",
+    "pageOf_other": "Page {{page}} sur {{totalPages}} · {{count}} membres",
     "edit": {
       "title": "Modifier l’accès du membre",
       "description": "Modifiez le rôle et les sites accessibles à {{email}}.",
       "save": "Enregistrer l’accès",
       "saving": "Enregistrement…",
       "cancel": "Annuler"
-    }
+    },
+    "joinedOn": "Rejoint le {{date}}"
   },
   "accept": {
     "title": "Accepter l'invitation",
@@ -114,7 +120,12 @@
     "required": "Sélectionnez au moins un site.",
     "empty": "Ajoutez un site avant de créer une invitation à accès limité.",
     "loadFailed": "Impossible de charger les sites disponibles pour cette invitation.",
-    "siteCount": "{{count}} site(s)"
+    "siteCount_zero": "{{count}} sites",
+    "siteCount_one": "{{count}} site",
+    "siteCount_two": "{{count}} sites",
+    "siteCount_few": "{{count}} sites",
+    "siteCount_many": "{{count}} sites",
+    "siteCount_other": "{{count}} sites"
   },
   "decision": {
     "loading": "Vérification de l’invitation…",

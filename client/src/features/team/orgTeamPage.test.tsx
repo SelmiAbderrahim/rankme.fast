@@ -209,10 +209,16 @@ describe('roster navigation and self-service', () => {
     mocked.fetchTeamRequest.mockClear();
     await user.type(screen.getByLabelText('Search by email'), 'ada');
     await waitFor(() => expect(mocked.fetchTeamRequest).toHaveBeenCalledWith({ query: 'ada', page: 1 }));
-    await screen.findByText('Page 1 of 3 · 60 member(s)');
+    await screen.findByText('Page 1 of 3 · 60 members');
     mocked.fetchTeamRequest.mockClear();
     await user.click(screen.getByRole('button', { name: 'Next' }));
     await waitFor(() => expect(mocked.fetchTeamRequest).toHaveBeenCalledWith({ query: 'ada', page: 2 }));
+  });
+
+  it('uses the singular for a one-member roster', async () => {
+    const store = makeStore({ overview: overview({ meta: { total: 1, page: 1, pageSize: 25 } }), page: 1 });
+    renderPage(store);
+    expect(await screen.findByText('Page 1 of 1 · 1 member')).toBeInTheDocument();
   });
 
   it('limits a plain member to leaving their own row and hides invitation controls', async () => {

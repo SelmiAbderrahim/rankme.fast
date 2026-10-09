@@ -167,6 +167,15 @@ export const ActionsPanel = ({ siteId }: ActionsPanelProps) => {
     (key) => query[key] !== DEFAULT_ACTIONS_QUERY[key],
   );
 
+  const resetFilters = () =>
+    setQuery({
+      state: 'all',
+      source: 'all',
+      severity: 'all',
+      confidence: 'all',
+      effort: 'all',
+    });
+
   const loadingInitial = listStatus === 'loading' || listStatus === 'idle';
   const refreshing = listStatus === 'refreshing';
 
@@ -236,15 +245,7 @@ export const ActionsPanel = ({ siteId }: ActionsPanelProps) => {
             type="button"
             variant="ghost"
             size="sm"
-            onClick={() =>
-              setQuery({
-                state: 'all',
-                source: 'all',
-                severity: 'all',
-                confidence: 'all',
-                effort: 'all',
-              })
-            }
+            onClick={resetFilters}
             data-testid="actions-filters-reset"
           >
             {t('filters.reset')}
@@ -308,6 +309,27 @@ export const ActionsPanel = ({ siteId }: ActionsPanelProps) => {
               <EmptyTitle>{t('sources.unavailableTitle')}</EmptyTitle>
               <EmptyDescription>{t('sources.unavailableBody')}</EmptyDescription>
             </EmptyHeader>
+          </Empty>
+        ) : filtersActive ? (
+          // Items exist but none match: say so, rather than claiming the
+          // sources are all-clear.
+          <Empty className="border py-8" data-testid="actions-empty-filtered">
+            <EmptyHeader>
+              <EmptyMedia variant="icon">
+                <SearchX aria-hidden="true" />
+              </EmptyMedia>
+              <EmptyTitle>{t('filters.noMatchTitle')}</EmptyTitle>
+              <EmptyDescription>{t('filters.noMatchBody')}</EmptyDescription>
+            </EmptyHeader>
+            <Button
+              type="button"
+              variant="outline"
+              size="sm"
+              onClick={resetFilters}
+              data-testid="actions-empty-filtered-reset"
+            >
+              {t('filters.reset')}
+            </Button>
           </Empty>
         ) : (
           <Empty className="border py-8" data-testid="actions-empty-clear">

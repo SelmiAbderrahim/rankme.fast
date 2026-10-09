@@ -62,6 +62,8 @@ export interface ReportExportAdapter<TSelection extends ReportSelection = Report
 export interface ReportExportSnapshotSummaryDto {
     id: string;
     kind: ReportKindId;
+    /** Owning site, when the export is site-scoped; lets the client name it. */
+    siteId: string | null;
     format: ReportFormat;
     locale: ReportLocale;
     title: string;

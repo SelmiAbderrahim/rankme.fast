@@ -226,21 +226,21 @@ export const KeywordClustersPage = ({ siteId }: KeywordClustersPageProps) => {
   const running = detail?.status === 'queued' || detail?.status === 'processing';
 
   return (
-    <main
-      className="mx-auto flex w-full max-w-6xl flex-col gap-6 p-6"
+    <div
+      className="flex w-full min-w-0 flex-col gap-6"
       data-testid="keyword-clusters-page"
     >
-      <header className="space-y-2">
+      <div className="space-y-2">
         <div className="text-muted-foreground flex items-center gap-2 text-sm">
           <Network className="size-4" aria-hidden="true" />
           <span>{t('eyebrow')}</span>
         </div>
         <h1 className="text-2xl font-semibold tracking-tight">{t('title')}</h1>
         <p className="text-muted-foreground max-w-3xl text-sm">{t('subtitle')}</p>
-      </header>
+      </div>
 
       <div className="flex flex-wrap items-end gap-4">
-        <Button asChild variant="ghost" size="sm">
+        <Button asChild variant="outline" size="sm">
           <Link to={ranksHref}>{t('site.ranksLink')}</Link>
         </Button>
       </div>
@@ -433,6 +433,6 @@ export const KeywordClustersPage = ({ siteId }: KeywordClustersPageProps) => {
           ) : null}
         </TabsContent>
       </Tabs>
-    </main>
+    </div>
   );
 };

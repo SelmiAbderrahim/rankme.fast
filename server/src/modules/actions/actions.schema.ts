@@ -58,3 +58,24 @@ export const retestActionBodySchema = z
 })
     .default({});
 export type RetestActionBody = z.infer<typeof retestActionBodySchema>;
+
+// Response contract for the history read. Parsed in the controller so the
+// actor fields can never grow beyond display name + email.
+export const actionHistoryEntrySchema = z.object({
+    ordinal: z.number().int().min(1),
+    priorState: z.enum(ACTION_STATES).nullable(),
+    newState: z.enum(ACTION_STATES),
+    eventKind: z.string(),
+    actorUserId: z.string(),
+    actor: z
+        .object({ name: z.string().nullable(), email: z.string() })
+        .strict()
+        .nullable(),
+    actorIsYou: z.boolean(),
+    note: z.string().nullable(),
+    createdAt: z.string(),
+}).strict();
+export const actionHistoryResponseSchema = z.object({
+    entries: z.array(actionHistoryEntrySchema),
+}).strict();
+export type ActionHistoryResponse = z.infer<typeof actionHistoryResponseSchema>;

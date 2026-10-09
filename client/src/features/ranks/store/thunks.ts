@@ -10,6 +10,7 @@ import {
   removeKeywordRequest,
   updateCadenceRequest,
 } from '../api';
+import { shareInFlight, withInFlightInvalidation } from '@shared/lib/inFlight';
 import { ranksErrorMessage } from '../errorMessage';
 import type {
   CadenceUpdateResponse,
@@ -23,6 +24,8 @@ import type {
   SerpFeatureDetail,
   SerpFeaturesResponse,
 } from '../types';
+
+const KEYWORDS_IN_FLIGHT = 'keywords:';
 
 /** Fallback cooldown when a 429 arrives without a parsable retryAfterMs. */
 const DEFAULT_CHECK_COOLDOWN_MS = 60_000;
@@ -47,12 +50,14 @@ export const loadKeywords = createAsyncThunk<
   KeywordListPage,
   LoadKeywordsArgs,
   { rejectValue: string }
->('ranks/load', async ({ siteId, cursor, engine }, { rejectWithValue, signal }) => {
+>('ranks/load', async ({ siteId, cursor, engine }, { rejectWithValue }) => {
   try {
-    return await fetchKeywordsRequest(siteId, cursor, {
-      signal,
-      ...(engine ? { engine } : {}),
-    });
+    // The Keywords panel, the Overview card and the keyword-research page all
+    // load this list; identical concurrent reads share one request.
+    return await shareInFlight(
+      `${KEYWORDS_IN_FLIGHT}${siteId}:${cursor ?? ''}:${engine ?? ''}`,
+      () => fetchKeywordsRequest(siteId, cursor, engine ? { engine } : {}),
+    );
   } catch (err) {
     return rejectWithValue(ranksErrorMessage(err, 'ranks:loadFailed'));
   }
@@ -68,7 +73,8 @@ export const addKeyword = createAsyncThunk<
   { rejectValue: string }
 >('ranks/add', async ({ siteId, ...body }, { rejectWithValue }) => {
   try {
-    return await createKeywordRequest(siteId, body);
+    return await withInFlightInvalidation(KEYWORDS_IN_FLIGHT, () =>
+      createKeywordRequest(siteId, body));
   } catch (err) {
     return rejectWithValue(ranksErrorMessage(err, 'ranks:addFailed'));
   }
@@ -80,7 +86,8 @@ export const removeKeyword = createAsyncThunk<
   { rejectValue: string }
 >('ranks/remove', async (id, { rejectWithValue }) => {
   try {
-    const { message } = await removeKeywordRequest(id);
+    const { message } = await withInFlightInvalidation(KEYWORDS_IN_FLIGHT, () =>
+      removeKeywordRequest(id));
     return { id, message };
   } catch (err) {
     return rejectWithValue(ranksErrorMessage(err, 'ranks:removeFailed'));
@@ -100,7 +107,8 @@ export const updateCadence = createAsyncThunk<
   { rejectValue: string }
 >('ranks/updateCadence', async ({ siteId, cadence }, { rejectWithValue }) => {
   try {
-    return await updateCadenceRequest(siteId, cadence);
+    return await withInFlightInvalidation(KEYWORDS_IN_FLIGHT, () =>
+      updateCadenceRequest(siteId, cadence));
   } catch (err) {
     return rejectWithValue(ranksErrorMessage(err, 'ranks:cadenceFailed'));
   }
@@ -112,9 +120,8 @@ export const checkNow = createAsyncThunk<
   { rejectValue: CheckNowRejected }
 >('ranks/checkNow', async ({ siteId, keywordId }, { rejectWithValue }) => {
   try {
-    return keywordId
-      ? await checkNowRequest(siteId, keywordId)
-      : await checkNowRequest(siteId);
+    return await withInFlightInvalidation(KEYWORDS_IN_FLIGHT, () =>
+      keywordId ? checkNowRequest(siteId, keywordId) : checkNowRequest(siteId));
   } catch (err) {
     // A 429 means the per-site cooldown is active — surface a countdown.
     const cooldownUntil =

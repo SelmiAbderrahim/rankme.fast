@@ -28,7 +28,13 @@
       "nameRequired": "请输入显示名称。",
       "nameTooLong": "名称请少于 80 个字符。",
       "saveFailed": "无法保存您的个人资料，请重试。"
-    }
+    },
+    "workspaceOwner": "工作区所有者",
+    "platformRole": {
+      "Admin": "平台管理员",
+      "SuperAdmin": "平台超级管理员"
+    },
+    "emailHint": "要更改邮箱，请打开“安全”并使用“更改邮箱”。只有在您确认我们发送的链接后，地址才会更改。"
   },
   "privacy": {
     "export": {
@@ -39,18 +45,10 @@
       "success": "您的数据导出已下载。",
       "error": "无法导出您的数据，请重试。"
     },
-    "delete": {
-      "title": "删除账户",
-      "description": "安排永久删除您的账户和数据。",
-      "warning": "这将在宽限期后安排删除您的账户。请在此之前联系支持以取消。",
-      "button": "删除我的账户",
-      "dialogTitle": "删除您的账户？",
-      "dialogBody": "宽限期结束后，您的账户和数据将被永久删除。一旦该期限结束，将无法撤销。",
-      "cancel": "取消",
-      "confirm": "是的，删除我的账户",
-      "deleting": "安排中…",
-      "scheduled": "您的账户已安排在 {{date}} 删除。",
-      "error": "无法安排删除，请重试。"
+    "analytics": {
+      "title": "使用情况分析",
+      "description": "选择 RankMeFast 是否可以使用 Google Analytics 统计页面访问量。发送的页面地址不含站点 ID 或所选标签页。",
+      "label": "允许使用情况分析"
     }
   }
 }

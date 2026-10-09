@@ -103,6 +103,7 @@ export const LocalSeoPanel = ({ siteId }: Props) => {
             kind="local.seo_snapshot"
             target={{ scope: 'site', siteId }}
             selection={{}}
+            empty={!hasAnyData}
           />
           <RefreshButton
             onRefresh={() => void dispatch(refreshLocalSeo({ siteId }))}

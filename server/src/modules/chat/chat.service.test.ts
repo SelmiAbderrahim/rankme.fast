@@ -211,7 +211,7 @@ describe('appendUserMessage', () => {
       locale: 'en',
     });
     const withDomain = await appendUserMessage(ACCOUNT, linked.id, 'hi');
-    expect(withDomain.siteDomain).toBe('ctx.example.com');
+    expect(withDomain.site).toEqual({ id: String(site._id), domain: 'ctx.example.com' });
 
     const siteExists = vi
       .spyOn(Site, 'exists')
@@ -225,7 +225,7 @@ describe('appendUserMessage', () => {
         linked.id,
         'site removed between checks',
       );
-      expect(racedDeletion.siteDomain).toBeNull();
+      expect(racedDeletion.site).toBeNull();
     } finally {
       siteExists.mockRestore();
       findSite.mockRestore();
@@ -240,7 +240,7 @@ describe('appendUserMessage', () => {
 
     const unlinked = await createConversation({ accountId: ACCOUNT, locale: 'en' });
     const noDomain = await appendUserMessage(ACCOUNT, unlinked.id, 'hi');
-    expect(noDomain.siteDomain).toBeNull();
+    expect(noDomain.site).toBeNull();
   });
 
   it(`refuses the ${CHAT_MAX_MESSAGES_PER_CONVERSATION + 1}th message with a localized 409`, async () => {
@@ -339,10 +339,15 @@ describe('buildChatSystemInstruction', () => {
     expect(base.text).toContain('RankMeFast SEO assistant');
     expect(base.text).not.toContain('linked site for this conversation');
 
-    const seeded = buildChatSystemInstruction('seed.example.com', 'en');
-    expect(seeded.text).toContain(
-      'The user’s linked site for this conversation is seed.example.com.',
+    const seeded = buildChatSystemInstruction(
+      { id: '6a6fa7c28d75c2fd32d84a01', domain: 'seed.example.com' },
+      'en',
     );
+    expect(seeded.text).toContain(
+      'The user selected a site for this conversation: seed.example.com (siteId 6a6fa7c28d75c2fd32d84a01).',
+    );
+    // The selected site must steer tool use: reuse the id, skip discovery.
+    expect(seeded.text).toContain('do not call list_sites');
   });
 
   it.each([
@@ -354,10 +359,15 @@ describe('buildChatSystemInstruction', () => {
     ['ru', 'Отвечайте на русском языке'],
     ['zh', '请使用中文回答'],
   ] as const)('builds the complete safety instruction in %s', (locale, marker) => {
-    const instruction = buildChatSystemInstruction('raw.example', locale);
+    const instruction = buildChatSystemInstruction(
+      { id: '6a6fa7c28d75c2fd32d84a01', domain: 'raw.example' },
+      locale,
+    );
     expect(instruction).toMatchObject({ id: 'chat-assistant', version: '1' });
     expect(instruction.text).toContain(marker);
     expect(instruction.text).toContain('raw.example');
+    expect(instruction.text).toContain('6a6fa7c28d75c2fd32d84a01');
+    expect(instruction.text).toContain('list_sites');
   });
 });
 

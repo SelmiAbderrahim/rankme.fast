@@ -154,7 +154,7 @@
     "competitors": {
       "open": "Open competitors",
       "notLoadedTitle": "Competitor data is ready on demand",
-      "notLoadedDescription": "Open competitors to run an Agency lookup. Overview will reuse that result without spending another lookup."
+      "notLoadedDescription": "Open competitors to run a lookup. Overview will reuse that result without spending another lookup."
     },
     "unlock": {
       "title": "More insight is available",
@@ -196,5 +196,14 @@
       "revoked": "Revoked",
       "disconnected": "Not connected"
     }
+  },
+  "notFound": {
+    "title": "Site not found",
+    "description": "This site doesn't exist, or you don't have access to it.",
+    "back": "Back to sites"
+  },
+  "lookupFailed": {
+    "title": "Could not load this site",
+    "description": "We couldn't check this site right now. Try again in a moment."
   }
 }

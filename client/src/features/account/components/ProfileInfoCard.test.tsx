@@ -64,11 +64,31 @@ describe('ProfileInfoCard — identity', () => {
     renderCard();
     expect(screen.getByText('Ada Lovelace')).toBeInTheDocument();
     expect(screen.getByText('zoe@example.com')).toBeInTheDocument();
-    expect(screen.getByText('Member')).toBeInTheDocument();
+    expect(screen.getByText('Workspace owner')).toBeInTheDocument();
+    // The platform role is not a team role; a plain Member is not surfaced.
+    expect(screen.queryByText('Member')).not.toBeInTheDocument();
     expect(screen.getByText('Email verified')).toBeInTheDocument();
     expect(screen.getByText(/Member since/)).toBeInTheDocument();
     // Two-word name → initials fallback.
     expect(screen.getByText('AL')).toBeInTheDocument();
+  });
+
+  it.each([
+    ['Admin', 'Platform admin'],
+    ['SuperAdmin', 'Platform super admin'],
+  ])('also shows the %s platform role', (role, label) => {
+    mockSession(sessionUser({ role } as Partial<AuthSessionUser>));
+    renderCard();
+    expect(screen.getByText(label)).toBeInTheDocument();
+    expect(screen.getByText('Workspace owner')).toBeInTheDocument();
+  });
+
+  it('keeps the email read-only and points to the verified change-email flow', () => {
+    mockSession(sessionUser());
+    renderCard();
+    const email = screen.getByLabelText('Email');
+    expect(email).toHaveAttribute('readonly');
+    expect(email).toHaveAccessibleDescription(/open Security and use Change email/);
   });
 
   it('shows the unverified chip and email-based initials when unnamed', () => {
@@ -100,6 +120,19 @@ describe('ProfileInfoCard — identity', () => {
 });
 
 describe('ProfileInfoCard — edit', () => {
+  it('disables Save changes until the name is edited and again once it is reverted', async () => {
+    mockSession(sessionUser());
+    renderCard();
+    const save = screen.getByRole('button', { name: 'Save changes' });
+    expect(save).toBeDisabled();
+    const input = screen.getByLabelText('Display name');
+    await userEvent.type(input, 'x');
+    expect(save).toBeEnabled();
+    await userEvent.type(input, '{Backspace}');
+    expect(save).toBeDisabled();
+    expect(updateUser).not.toHaveBeenCalled();
+  });
+
   it('clears component-local server copy on a presentation refresh', () => {
     mockSession(sessionUser());
     renderCard();

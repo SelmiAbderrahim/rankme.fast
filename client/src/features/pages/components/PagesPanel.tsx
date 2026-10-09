@@ -871,15 +871,13 @@ export function PagesPanel({ siteId }: PagesPanelProps) {
             </CardHeader>
             <CardContent className="flex flex-col gap-3 text-sm text-muted-foreground">
               <p>{t('disclosure.coverage', {
-                accepted: data.envelope.coverage.sourceRowsAccepted,
-                dropped: data.envelope.coverage.sourceRowsDropped,
                 inventory: data.envelope.coverage.inventoryPages,
                 measured: data.envelope.coverage.measuredPages,
                 unmeasured: data.envelope.coverage.unmeasuredPages,
               })}</p>
-              <p>{data.envelope.coverage.reportingLagDays
-                ? t('disclosure.reportingLag', { days: data.envelope.coverage.reportingLagDays })
-                : t('disclosure.noReportingLag')}</p>
+              {data.envelope.coverage.reportingLagDays ? (
+                <p>{t('disclosure.reportingLag', { count: data.envelope.coverage.reportingLagDays })}</p>
+              ) : null}
               {data.envelope.coverage.sampled !== null ? (
                 <p>{data.envelope.coverage.sampled ? t('disclosure.sampled') : t('disclosure.notSampled')}</p>
               ) : null}

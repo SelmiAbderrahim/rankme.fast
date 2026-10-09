@@ -1,3 +1,4 @@
+import { useEffect, useRef, type UIEvent } from 'react';
 import { Bot, MessageCircleQuestion, UserRound } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 import { Alert, AlertDescription, AlertTitle } from '@shared/ui/alert';
@@ -146,11 +147,32 @@ export function AssistantMessagePane({
   const hasStreamingMessage = Boolean(
     assistantMessageId && messages.some((message) => message.id === assistantMessageId),
   );
+  const endRef = useRef<HTMLDivElement>(null);
+  // Follow new content only while the reader is at the bottom, so scrolling
+  // up to re-read mid-stream is not fought. A message the user just sent
+  // always brings them back down.
+  const pinnedRef = useRef(true);
+
+  useEffect(() => {
+    if (messages.at(-1)?.role === 'user') pinnedRef.current = true;
+    const end = endRef.current;
+    if (!pinnedRef.current || !end) return;
+    // From `lg` the thread scrolls inside the workspace; below it the viewport
+    // is as tall as its content, so this is a no-op and the page scrolls as before.
+    const viewport = end.closest<HTMLElement>('[data-slot="scroll-area-viewport"]')!;
+    viewport.scrollTop = viewport.scrollHeight;
+  }, [messages, streaming, error]);
+
+  const trackPinned = (event: UIEvent<HTMLDivElement>) => {
+    const viewport = event.target as HTMLElement;
+    pinnedRef.current =
+      viewport.scrollHeight - viewport.scrollTop - viewport.clientHeight < 64;
+  };
 
   if (loadStatus === 'loading') return <ConversationLoading />;
 
   return (
-    <ScrollArea className="min-h-80 flex-1">
+    <ScrollArea className="min-h-80 flex-1 lg:min-h-0" onScrollCapture={trackPinned}>
       <div
         className="flex min-h-80 flex-col justify-end gap-6 p-4 sm:p-6"
         role="log"
@@ -192,6 +214,11 @@ export function AssistantMessagePane({
               >
                 <MessageParts parts={message.parts} role={message.role} />
                 {streaming && message.id === assistantMessageId ? <StreamingCaret /> : null}
+                {!outgoing && message.status === 'aborted' ? (
+                  <p className="text-xs text-muted-foreground">
+                    {t('assistant:messages.stopped')}
+                  </p>
+                ) : null}
               </div>
             </article>
           );
@@ -221,6 +248,7 @@ export function AssistantMessagePane({
             </AlertDescription>
           </Alert>
         ) : null}
+        <div ref={endRef} aria-hidden="true" />
       </div>
     </ScrollArea>
   );

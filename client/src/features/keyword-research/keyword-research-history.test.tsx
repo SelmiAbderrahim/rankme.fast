@@ -337,6 +337,15 @@ describe('KeywordResearchHistoryPage', () => {
     await waitFor(() =>
       expect(screen.getAllByTestId(/keyword-research-history-row-/)).toHaveLength(9),
     );
+    // Kinds are categories, so none may borrow a status tone: an Intent chip in
+    // warning/destructive colours reads as an error next to Metrics.
+    const chips = document.querySelectorAll('[data-slot="status-chip"][data-tone]');
+    const tones = Array.from(chips)
+      .map((chip) => chip.getAttribute('data-tone'))
+      .filter((tone) => tone === 'warning' || tone === 'destructive');
+    expect(tones).toEqual([]);
+    expect(screen.getByTestId('keyword-research-history-row-k2').querySelector('[data-tone]'))
+      .toHaveAttribute('data-tone', 'info');
   });
 
   it('labels the kinds the server already writes (latent-defect fix)', async () => {

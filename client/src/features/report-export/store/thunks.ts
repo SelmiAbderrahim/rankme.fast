@@ -1,4 +1,5 @@
 import { createAsyncThunk } from '@reduxjs/toolkit';
+import type { RootState } from '@app/store';
 import i18n from 'i18next';
 import {
   createReportSnapshot,
@@ -9,6 +10,11 @@ import {
   listReportSnapshots,
   revokeReportShare,
 } from '../api';
+import {
+  selectReportExportCapabilitiesError,
+  selectReportExportCapabilitiesLoaded,
+  selectReportExportCapabilitiesLoading,
+} from './selectors';
 import { filenameFromContentDisposition, saveBlobAs } from '../download';
 import { reportExportErrorMessage } from '../errorMapping';
 import type {
@@ -26,14 +32,31 @@ export const loadReportExportCapabilities = createAsyncThunk<
   ReportExportCapabilities,
   void,
   { rejectValue: string }
->('reportExport/loadCapabilities', async (_, { rejectWithValue, signal }) => {
-  try {
-    return await getReportExportCapabilities();
-  } catch (error) {
-    if (signal.aborted) throw error;
-    return rejectWithValue(reportExportErrorMessage(error, fallback('capabilities')));
-  }
-});
+>(
+  'reportExport/loadCapabilities',
+  async (_, { rejectWithValue, signal }) => {
+    try {
+      return await getReportExportCapabilities();
+    } catch (error) {
+      if (signal.aborted) throw error;
+      return rejectWithValue(reportExportErrorMessage(error, fallback('capabilities')));
+    }
+  },
+  {
+    // Every export control on a page asks for the (account-wide, static)
+    // capability list in the same commit, before any of them can see the
+    // others' `loading` flag. Read state at dispatch time instead: one request
+    // while loading, none once loaded, and a retry only after a failure.
+    condition: (_, { getState }) => {
+      const state = getState() as RootState;
+      if (selectReportExportCapabilitiesLoading(state)) return false;
+      return (
+        !selectReportExportCapabilitiesLoaded(state) ||
+        selectReportExportCapabilitiesError(state) !== ''
+      );
+    },
+  },
+);
 
 export const createAndDownloadReport = createAsyncThunk<
   ReportSnapshotSummary,

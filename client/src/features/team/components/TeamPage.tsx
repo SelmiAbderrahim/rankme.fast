@@ -192,7 +192,7 @@ export const TeamPage = () => {
             />
             <div className="flex items-center justify-between gap-3">
               <p className="text-muted-foreground text-sm" aria-live="polite">
-                {t('members.pageOf', { page: meta.page, totalPages, total: meta.total })}
+                {t('members.pageOf', { page: meta.page, totalPages, count: meta.total })}
               </p>
               <div className="flex gap-2">
                 <Button variant="outline" size="sm" disabled={meta.page <= 1} onClick={() => dispatch(setTeamPage(meta.page - 1))}>

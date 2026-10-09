@@ -1,5 +1,6 @@
 import { useMemo, useState } from 'react';
 import { Link } from 'react-router-dom';
+import { siteLabel } from '@shared/lib/siteLabel';
 import { useTranslation } from 'react-i18next';
 import { ArrowDown, ArrowUp, ArrowUpDown, MoreHorizontal, Pause, Play } from 'lucide-react';
 import { useAppDispatch, useAppSelector } from '@shared/hooks/redux';
@@ -60,7 +61,7 @@ export interface SitesTableProps {
 const formatAdded = (iso: string, locale: string): string =>
   new Intl.DateTimeFormat(locale, { dateStyle: 'medium' }).format(new Date(iso));
 
-const siteName = (site: Site): string => site.displayName || site.domain;
+const siteName = siteLabel;
 
 const siteInitials = (site: Site): string =>
   siteName(site).trim().slice(0, 2).toUpperCase();

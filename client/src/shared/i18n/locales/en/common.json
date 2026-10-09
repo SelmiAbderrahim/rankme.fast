@@ -6,9 +6,9 @@
   "yes": "Yes",
   "no": "No",
   "capacity": {
-    "selfHost": "Plan usage limits are not metered in self-hosted mode.",
+    "selfHost": "Usage limits aren't applied on this server.",
     "selfHostPlan": "Self-hosted",
-    "selfHostSlots": "{{used}} in use; plan limits are not metered in self-hosted mode."
+    "selfHostSlots": "{{used}} in use; usage limits aren't applied on this server."
   },
   "logPanel": {
     "title": "Backup output",
@@ -46,11 +46,13 @@
     "team": "Team",
     "admin": "Admin",
     "superadmin": "Platform",
-    "startFree": "Start free"
+    "startFree": "Start free",
+    "openApp": "Open app"
   },
   "footer": {
     "copyright": "© {{year}}, {{brand}}. All Rights Reserved.",
-    "version": "v{{version}} · {{stage}}"
+    "version": "v{{version}} · {{stage}}",
+    "analyticsPreferences": "Analytics preferences"
   },
   "theme": {
     "toggle": "Toggle theme",
@@ -125,6 +127,10 @@
     "groupAccount": "Account",
     "groupAdmin": "Admin",
     "search": "Search",
+    "searchPlaceholder": "Search pages and sites",
+    "searchNoResults": "No results for “{{query}}”",
+    "searchGroupPages": "Pages",
+    "searchGroupSites": "Sites",
     "notifications": "Notifications",
     "account": "Account menu",
     "profile": "Profile",
@@ -135,7 +141,8 @@
     "upgradeTitle": "Unlock more audits",
     "upgradeBody": "Upgrade for higher caps and deeper reports.",
     "upgradeCta": "Upgrade",
-    "groupSuperAdmin": "Platform"
+    "groupSuperAdmin": "Platform",
+    "opensInNewTab": "Opens in a new tab"
   },
   "locked": "Locked",
   "retry": "Try again",
@@ -265,5 +272,12 @@
   },
   "routeError": {
     "title": "Something went wrong"
+  },
+  "analyticsConsent": {
+    "label": "Analytics consent",
+    "title": "Help us improve RankMeFast?",
+    "message": "We would like to use Google Analytics to count page visits. It never receives site IDs, tab choices, or page titles. Nothing loads unless you accept, and you can change your mind at any time.",
+    "accept": "Accept analytics",
+    "decline": "No thanks"
   }
 }

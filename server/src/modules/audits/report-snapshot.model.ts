@@ -325,6 +325,17 @@ const reportSnapshotSchema = new mongoose.Schema({
     gscSitemaps: { type: gscSitemapsSchema, required: false, default: null },
     aiVisibility: { type: aiVisibilitySchema, required: false, default: null },
     localSeo: { type: localSeoSchema, required: false, default: null },
+    // Set when the crawl landed on another host than the site's own (www <->
+    // apex or a different domain) — the report tells the user which host was
+    // actually audited. Absent/null = the crawl stayed on the site's host.
+    hostRedirect: {
+        type: new mongoose.Schema({
+            from: { type: String, required: true },
+            to: { type: String, required: true },
+        }, { _id: false }),
+        required: false,
+        default: null,
+    },
     aiSummaryVariantsByLocale: {
         type: aiSummaryVariantsByLocaleSchema,
         required: false,

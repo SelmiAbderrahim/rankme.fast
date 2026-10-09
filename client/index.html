@@ -37,48 +37,6 @@
         } catch (e) {}
       })();
     </script>
-    <!-- Google Analytics (GA4). The nonce'd bootstrap loads GA only when the
-         build has a valid GA4 measurement ID; unconfigured builds never emit egress. -->
-    <script>
-      (function () {
-        var id = String(__RANKME_GA_ID__).trim();
-        if (!/^G-[A-Z0-9]+$/.test(id)) return;
-        var loader = document.createElement('script');
-        loader.async = true;
-        loader.src = 'https://www.googletagmanager.com/gtag/js?id=' + encodeURIComponent(id);
-        document.head.appendChild(loader);
-        window.dataLayer = window.dataLayer || [];
-        window.gtag = function () {
-          window.dataLayer.push(arguments);
-        };
-        window.gtag('js', new Date());
-        var safePath = window.location.pathname.replace(
-          /(\/team\/(?:accept|reject))\/[^/]+\/?$/,
-          '$1/[redacted]',
-        );
-        var carriesInvitationReturnTo = false;
-        try {
-          var returnTo = new URLSearchParams(window.location.search).get('returnTo');
-          carriesInvitationReturnTo = /^\/team\/(?:accept|reject)\/[^/]+\/?$/.test(returnTo || '');
-        } catch (e) {}
-        // Capability URLs must never be copied into GA's automatic page
-        // location. Drop the query too: login/password-change returnTo values
-        // contain the same invitation credential in encoded form.
-        if (safePath !== window.location.pathname || carriesInvitationReturnTo) {
-          var safeLocation = window.location.origin + safePath;
-          window.gtag('set', {
-            page_location: safeLocation,
-            page_path: safePath,
-          });
-          window.gtag('config', id, {
-            page_location: safeLocation,
-            page_path: safePath,
-          });
-          return;
-        }
-        window.gtag('config', id);
-      })();
-    </script>
     <!--ssr-head-->
   </head>
   <body>

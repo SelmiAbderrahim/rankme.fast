@@ -359,6 +359,23 @@ describe('alerts URL state', () => {
 });
 
 describe('AlertsPage — rules tab', () => {
+  it('uses the same page gutter as Dashboard and Sites', async () => {
+    routeApi();
+    renderPage();
+    expect(await screen.findByTestId('alerts-page')).toHaveClass('px-4', 'py-8');
+  });
+
+  it('renders the Type and State filters with the shared select styling', async () => {
+    routeApi();
+    renderPage();
+    await screen.findByTestId('alerts-page');
+    for (const name of ['Type', 'State']) {
+      const select = screen.getAllByLabelText(name).find((node) => node.tagName === 'SELECT');
+      expect(select).toHaveAttribute('data-slot', 'native-select');
+      expect(select).toHaveClass('h-9', 'border-input');
+    }
+  });
+
   it('lists configured rules with their cap usage', async () => {
     routeApi();
     renderPage();
@@ -556,6 +573,37 @@ describe('AlertsPage — rules tab', () => {
 });
 
 describe('RuleBuilder', () => {
+  it('labels a site without a display name by its domain and selects it', async () => {
+    const onSubmit = vi.fn();
+    render(
+      <I18nextProvider i18n={i18n}>
+        <RuleBuilder
+          sites={[{ id: SITE_ID, domain: 'example.test', displayName: '' }]}
+          siteId={null}
+          currentUserId="u1"
+          paidChannelsLocked={false}
+          capReached={false}
+          submitting={false}
+          onSubmit={onSubmit}
+        />
+      </I18nextProvider>,
+    );
+
+    expect(screen.getByRole('button', { name: 'Create rule' })).toBeDisabled();
+    expect(screen.getByTestId('alerts-site-required')).toHaveTextContent(
+      'Choose a site to create a rule.',
+    );
+
+    await userEvent.click(screen.getByLabelText('Site'));
+    await userEvent.click(screen.getByRole('option', { name: 'example.test' }));
+
+    expect(screen.queryByTestId('alerts-site-required')).not.toBeInTheDocument();
+    await userEvent.click(screen.getByRole('button', { name: 'Create rule' }));
+    expect(onSubmit).toHaveBeenCalledWith(
+      expect.objectContaining({ siteId: SITE_ID, type: 'rank_drop' }),
+    );
+  });
+
   it('edits every field and submits a non-rank rule with paid channels', async () => {
     const onSubmit = vi.fn();
     render(

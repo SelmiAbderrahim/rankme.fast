@@ -42,6 +42,7 @@
     "description": "Choisissez quoi surveiller et où l’envoyer.",
     "site": "Site",
     "sitePlaceholder": "Choisissez un site",
+    "siteRequired": "Choisissez un site pour créer une règle.",
     "type": "Type d’alerte",
     "threshold": "Seuil de position",
     "thresholdHint": "Nous alertons quand la position confirmée atteint ce rang ou pire.",
@@ -81,7 +82,7 @@
       "no_transport": "L’e-mail n’est pas configuré sur ce déploiement.",
       "rule_disabled": "La règle était désactivée au déclenchement.",
       "retries_exhausted": "Nous avons arrêté après trois échecs.",
-      "flag_disabled": "Les alertes ont été coupées par l’opérateur."
+      "flag_disabled": "Les alertes ont été désactivées par un administrateur."
     },
     "error": {
       "transport_unavailable": "Le canal n’a pas pu être joint.",

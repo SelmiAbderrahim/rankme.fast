@@ -554,6 +554,12 @@ describe('OverviewPanel', () => {
     );
     expect(mocked.getConnection).toHaveBeenCalled();
     expect(mocked.fetchCompetitors).not.toHaveBeenCalled();
+
+    // One call to action, and no plan jargon, on the not-yet-loaded card.
+    const card = screen.getByTestId('overview-competitors');
+    expect(within(card).getAllByRole('link', { name: 'Open competitors' })).toHaveLength(1);
+    expect(within(card).getByText(/Open competitors to run a lookup\./)).toBeInTheDocument();
+    expect(card).not.toHaveTextContent(/Agency/);
   });
 
   it('does not refetch already-loaded slices', () => {
@@ -587,7 +593,7 @@ describe('OverviewPanel', () => {
     expect(mocked.fetchKeywordsRequest).toHaveBeenCalledWith(
       'site-2',
       undefined,
-      expect.objectContaining({ signal: expect.any(AbortSignal) }),
+      {},
     );
     expect(mocked.fetchBacklinkSummary).toHaveBeenCalledWith(
       'site-2',
@@ -686,7 +692,7 @@ describe('OverviewPanel', () => {
     await waitFor(() => expect(mocked.listActions).toHaveBeenCalledTimes(1));
     expect(mocked.listActions).toHaveBeenCalledWith(
       expect.objectContaining({ siteId: 'site-1', limit: 5 }),
-      expect.objectContaining({ signal: expect.any(AbortSignal) }),
+      expect.objectContaining({ presentationLocale: expect.any(String) }),
     );
     expect(await screen.findByText('fetched problem')).toBeInTheDocument();
     // No-spend proof: no mutation, retest, history, or competitor call fired.
@@ -925,6 +931,31 @@ describe('OverviewPanel', () => {
         maximumFractionDigits: 1,
       }).format(0.0082),
     );
+  });
+
+  it('colours the Fix now card red only when something needs fixing (issue #43)', () => {
+    const { unmount } = renderPanel(buildStore({ report: richReport() }));
+    expect(screen.getByTestId('overview-count-fix-now')).toHaveClass('bg-destructive/10');
+    unmount();
+
+    const zero = renderPanel(
+      buildStore({
+        report: richReport({ counts: { fixNow: 0, watch: 15, passed: 8 } }),
+      }),
+    );
+    const card = screen.getByTestId('overview-count-fix-now');
+    expect(card).toHaveClass('bg-success/10');
+    expect(card).not.toHaveClass('bg-destructive/10');
+    zero.unmount();
+
+    renderPanel(
+      buildStore({
+        report: richReport({
+          counts: { fixNow: null as unknown as number, watch: 0, passed: 0 },
+        }),
+      }),
+    );
+    expect(screen.getByTestId('overview-count-fix-now')).toHaveClass('bg-muted');
   });
 
   it('uses a readable fallback for missing count and percentage values', () => {

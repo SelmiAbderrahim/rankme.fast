@@ -6,6 +6,8 @@
     "title": "Unterhaltungen",
     "new": "Neue Unterhaltung",
     "label": "Unterhaltungen mit dem Assistenten",
+    "showList": "Unterhaltungen anzeigen ({{count}})",
+    "hideList": "Unterhaltungen ausblenden",
     "empty": "Noch keine Unterhaltungen.",
     "untitled": "Neue Unterhaltung",
     "deleteLabel": "{{title}} löschen",
@@ -46,6 +48,7 @@
     "user": "Ihre Nachricht",
     "assistant": "Antwort des Assistenten",
     "streaming": "Der Assistent antwortet",
+    "stopped": "Antwort gestoppt",
     "loading": "Unterhaltung wird geladen…"
   },
   "tool": {

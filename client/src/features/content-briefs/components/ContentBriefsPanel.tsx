@@ -392,7 +392,7 @@ function EvidenceCard({ detail }: { detail: ContentBriefDetail }) {
               <li key={document.id} className="rounded-md border p-3">
                 <div className="flex flex-wrap items-center gap-2">
                   <Badge variant="outline">{document.id}</Badge>
-                  {document.sourceUrl ? <a className="min-h-11 break-all py-2 text-sm underline underline-offset-4" href={safeExternalHref(document.sourceUrl)} target="_blank" rel="nofollow ugc noopener noreferrer">{document.title || document.sourceUrl}</a> : <span className="text-sm">{document.title}</span>}
+                  {document.sourceUrl ? <a className="min-h-11 break-all py-2 text-sm underline underline-offset-4" href={safeExternalHref(document.sourceUrl)} target="_blank" rel="nofollow ugc noopener noreferrer"><bdi>{document.title || document.sourceUrl}</bdi></a> : <span className="text-sm" dir="auto">{document.title}</span>}
                 </div>
                 <p className="text-sm text-muted-foreground">{t('briefs.sources.meta', { date: localeDate(i18n.language, document.capturedAt), count: document.wordCount })}</p>
               </li>

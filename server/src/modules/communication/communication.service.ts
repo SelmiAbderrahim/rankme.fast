@@ -116,11 +116,10 @@ export interface WelcomeEmailInput {
     email: string;
     name: string;
     /**
-     * User id used to consult the marketing preference. Optional so legacy
-     * callers (fixtures, one-off scripts) can still fire the mail — a missing
-     * id resolves to the all-true default and the mail sends.
+     * User id used to consult the marketing preference. Required: the welcome
+     * mail is marketing, so it must never be sent without resolving an opt-in.
      */
-    userId?: string;
+    userId: string;
     locale?: SupportedLocale;
 }
 export interface TeamInviteEmailInput {
@@ -183,7 +182,7 @@ export async function deliverTeamInviteEmail(input: TeamInviteEmailInput): Promi
     });
 }
 export async function deliverWelcomeEmail(input: WelcomeEmailInput): Promise<NotificationSendResult> {
-    if (input.userId && !(await shouldSendNotification(input.userId, 'emailMarketing'))) {
+    if (!(await shouldSendNotification(input.userId, 'emailMarketing'))) {
         return { delivered: false, reason: 'opted-out' };
     }
     const locale = resolveRecipientLocale({ artifactLocale: input.locale });

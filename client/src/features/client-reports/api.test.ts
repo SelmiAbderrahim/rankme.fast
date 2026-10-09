@@ -3,7 +3,6 @@ import {
   ApiError,
   apiFetch,
   apiClient,
-  fetchCsrfToken,
 } from '@shared/api/client';
 import {
   createClientPortalLink,
@@ -21,12 +20,10 @@ vi.mock('@shared/api/client', async (importOriginal) => ({
   ...(await importOriginal<typeof import('@shared/api/client')>()),
   apiClient: vi.fn(),
   apiFetch: vi.fn(),
-  fetchCsrfToken: vi.fn(),
 }));
 
 const mockedApi = vi.mocked(apiClient);
 const mockedApiFetch = vi.mocked(apiFetch);
-const mockedCsrf = vi.mocked(fetchCsrfToken);
 
 const schedule: ScheduledReportInput = {
   name: 'Monday report',
@@ -44,7 +41,6 @@ beforeEach(() => {
   vi.clearAllMocks();
   mockedApi.mockResolvedValue({} as never);
   mockedApiFetch.mockReset();
-  mockedCsrf.mockResolvedValue('csrf-value');
 });
 
 describe('client reports API', () => {
@@ -125,7 +121,8 @@ describe('client reports API', () => {
       localeMode: 'artifact',
       locale: 'en',
     }));
-    expect(call[1]?.headers).toMatchObject({ 'x-csrf-token': 'csrf-value' });
+    // The shared transport attaches the cached token and retries CSRF_INVALID.
+    expect(call[1]).toMatchObject({ csrf: true });
   });
 
   it('preserves JSON and text failure bodies in ApiError', async () => {

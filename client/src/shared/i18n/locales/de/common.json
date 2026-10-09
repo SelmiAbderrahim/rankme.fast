@@ -6,9 +6,9 @@
   "yes": "Ja",
   "no": "Nein",
   "capacity": {
-    "selfHost": "Tariflimits werden im selbst gehosteten Betrieb nicht erfasst.",
+    "selfHost": "Auf diesem Server werden keine Nutzungslimits angewendet.",
     "selfHostPlan": "Selbst gehostet",
-    "selfHostSlots": "{{used}} belegt; Tariflimits werden im selbst gehosteten Betrieb nicht erfasst."
+    "selfHostSlots": "{{used}} belegt; auf diesem Server werden keine Nutzungslimits angewendet."
   },
   "logPanel": {
     "title": "Sicherungsausgabe",
@@ -46,11 +46,13 @@
     "team": "Team",
     "admin": "Admin",
     "superadmin": "Plattform",
-    "startFree": "Kostenlos starten"
+    "startFree": "Kostenlos starten",
+    "openApp": "App öffnen"
   },
   "footer": {
     "copyright": "© {{year}}, {{brand}}. Alle Rechte vorbehalten.",
-    "version": "Version v{{version}} · {{stage}}"
+    "version": "Version v{{version}} · {{stage}}",
+    "analyticsPreferences": "Analyse-Einstellungen"
   },
   "theme": {
     "toggle": "Theme wechseln",
@@ -125,6 +127,10 @@
     "groupAccount": "Konto",
     "groupAdmin": "Admin",
     "search": "Suchen",
+    "searchPlaceholder": "Seiten und Websites durchsuchen",
+    "searchNoResults": "Keine Ergebnisse für „{{query}}“",
+    "searchGroupPages": "Seiten",
+    "searchGroupSites": "Websites",
     "notifications": "Benachrichtigungen",
     "account": "Kontomenü",
     "profile": "Profil",
@@ -135,7 +141,8 @@
     "upgradeTitle": "Mehr Audits freischalten",
     "upgradeBody": "Upgraden Sie für höhere Limits und ausführlichere Berichte.",
     "upgradeCta": "Upgrade",
-    "groupSuperAdmin": "Plattform"
+    "groupSuperAdmin": "Plattform",
+    "opensInNewTab": "Öffnet in einem neuen Tab"
   },
   "locked": "Gesperrt",
   "retry": "Erneut versuchen",
@@ -265,5 +272,12 @@
   },
   "routeError": {
     "title": "Etwas ist schiefgelaufen"
+  },
+  "analyticsConsent": {
+    "label": "Analyse-Einwilligung",
+    "title": "Helfen Sie uns, RankMeFast zu verbessern?",
+    "message": "Wir möchten Google Analytics nutzen, um Seitenaufrufe zu zählen. Es erhält nie Website-IDs, Tab-Auswahlen oder Seitentitel. Ohne Ihre Zustimmung wird nichts geladen, und Sie können Ihre Entscheidung jederzeit ändern.",
+    "accept": "Analyse zulassen",
+    "decline": "Nein, danke"
   }
 }

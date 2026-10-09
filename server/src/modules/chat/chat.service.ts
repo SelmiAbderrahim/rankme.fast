@@ -186,8 +186,11 @@ export async function assertConversationWritable(accountId: string, conversation
 export interface AppendUserMessageResult {
     conversation: ChatConversationDto;
     message: ChatMessageDto;
-    /** Linked-site domain, when the conversation has one (system prompt seed). */
-    siteDomain: string | null;
+    /** Linked site, when the conversation has one (system prompt seed). */
+    site: {
+        id: string;
+        domain: string;
+    } | null;
 }
 export async function appendUserMessage(accountId: string, conversationId: string, text: string, messageId?: string): Promise<AppendUserMessageResult> {
     const doc = await loadOwnedConversation(accountId, conversationId);
@@ -208,21 +211,24 @@ export async function appendUserMessage(accountId: string, conversationId: strin
     doc.messageCount += 1;
     doc.lastMessageAt = new Date();
     await doc.save();
-    let siteDomain: string | null = null;
+    let linkedSite: {
+        id: string;
+        domain: string;
+    } | null = null;
     if (doc.siteId) {
         const site = await Site.findOne({
             _id: doc.siteId,
             accountId,
             deletionStartedAt: null,
         }).select('domain');
-        siteDomain = site ? site.domain : null;
+        linkedSite = site ? { id: String(doc.siteId), domain: site.domain } : null;
     }
     return {
         conversation: toConversationDto(doc as unknown as ConversationDoc),
         message: toMessageDto(message as unknown as ChatMessageDocument & {
             _id: Types.ObjectId;
         }),
-        siteDomain,
+        site: linkedSite,
     };
 }
 export interface AppendAssistantMessageInput {
@@ -291,11 +297,14 @@ export async function assembleHistory(accountId: string, conversationId: string)
     return history;
 }
 /** Versioned system instruction from the chat_assistant profile (+ site seed). */
-export function buildChatSystemInstruction(siteDomain: string | null, responseLocale: SupportedLocale): AiSystemInstruction {
+export function buildChatSystemInstruction(site: {
+    id: string;
+    domain: string;
+} | null, responseLocale: SupportedLocale): AiSystemInstruction {
     const profile = resolveAiTaskProfile('chat_assistant');
     const base = translate(responseLocale, 'chat.systemInstruction.base');
-    const text = siteDomain
-        ? `${base} ${translate(responseLocale, 'chat.systemInstruction.linkedSite', { siteDomain })}`
+    const text = site
+        ? `${base} ${translate(responseLocale, 'chat.systemInstruction.linkedSite', { siteDomain: site.domain, siteId: site.id })}`
         : base;
     return {
         id: profile.systemInstruction.templateId,

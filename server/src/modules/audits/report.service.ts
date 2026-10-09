@@ -9,7 +9,7 @@
  *      renders — copy resolved into the caller's locale, never keys.
  */
 import { Types } from 'mongoose';
-import type { AuditResult } from '../../shared/providers/index.js';
+import type { AuditHostRedirect, AuditResult } from '../../shared/providers/index.js';
 import { isAuditCodeFixEligible } from '../../shared/code-fix-eligibility.js';
 import { hasTranslationKey, localizeSemanticCopy, type SupportedLocale, type TranslationKey, } from '../../shared/i18n/index.js';
 import { HttpError } from '../../shared/utils/http-error.js';
@@ -98,6 +98,7 @@ export async function writeReportSnapshot(input: WriteReportSnapshotInput): Prom
                 }
                 : null,
             localSeo: input.localSeo ?? null,
+            hostRedirect: input.result.hostRedirect ?? null,
         },
     }, { upsert: true, new: true });
     return doc as ReportSnapshotHydrated;
@@ -368,6 +369,12 @@ export interface AuditReport {
     /** Local SEO section — NAP, reviews/Q&A, local-pack rank. */
     localSeo?: LocalSeoSection | null;
     /**
+     * Set when the crawl landed on another host than the site's own, so every
+     * affected URL in this report belongs to `to`. `null` = same host (or a
+     * snapshot written before the check existed).
+     */
+    hostRedirect?: AuditHostRedirect | null;
+    /**
      * Cached AI summary. `null` = no successful generation yet;
      * aiSummaryStatus distinguishes idle, active, and failed jobs.
      */
@@ -511,6 +518,7 @@ export async function getAuditReport(input: GetAuditReportInput): Promise<AuditR
             notMentionedPrompts?: string[];
         }) | null;
         localSeo?: LocalSeoEvaluationInput | null;
+        hostRedirect?: AuditHostRedirect | null;
     };
     const brokenFinding = snapshotObj.findings.find((finding) => finding.ruleId === 'broken-internal-links' && finding.bucket !== 'passed');
     const storedBrokenLinkTargets = brokenFinding?.meta?.brokenLinkTargets;
@@ -627,6 +635,7 @@ export async function getAuditReport(input: GetAuditReportInput): Promise<AuditR
         gscSitemaps,
         aiVisibility,
         localSeo,
+        hostRedirect: snapshotObj.hostRedirect ? { from: snapshotObj.hostRedirect.from, to: snapshotObj.hostRedirect.to } : null,
         aiSummary,
         aiSummaryStatus,
         aiSummaryAvailability: {

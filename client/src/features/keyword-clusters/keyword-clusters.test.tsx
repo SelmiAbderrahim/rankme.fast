@@ -536,7 +536,7 @@ describe('NewRunPanel', () => {
       screen.getByText(/share at least 3 of their top 10 results/i),
     ).toBeInTheDocument();
     expect(
-      screen.getByText('Plan usage limits are not metered in self-hosted mode.'),
+      screen.getByText("Usage limits aren't applied on this server."),
     ).toBeInTheDocument();
   });
 
@@ -718,6 +718,20 @@ describe('KeywordClustersPage', () => {
     expect(
       await screen.findByTestId('keyword-clusters-state-rateLimited'),
     ).toBeInTheDocument();
+  });
+
+  it('adds no page gutter of its own and renders "Open rank tracking" as an outline button link', async () => {
+    routeApi();
+    renderPage();
+    const page = await screen.findByTestId('keyword-clusters-page');
+    // Embedded in the site workspace, which already pads its tab panels: a
+    // second page-level gutter or max-width made this tab sit inset from its siblings.
+    for (const cls of ['p-6', 'p-4', 'sm:p-6', 'mx-auto', 'max-w-6xl']) {
+      expect(page).not.toHaveClass(cls);
+    }
+    const link = screen.getByRole('link', { name: 'Open rank tracking' });
+    expect(link).toHaveAttribute('data-variant', 'outline');
+    expect(link).toHaveAttribute('data-slot', 'button');
   });
 
   it('normalizes invalid URL state instead of rendering a blank screen', async () => {

@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState, type FormEvent } from 'react';
+import { useEffect, useRef, useState, type FormEvent, type ReactNode } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Alert, AlertDescription, AlertTitle } from '@shared/ui/alert';
 import { Badge } from '@shared/ui/badge';
@@ -31,10 +31,14 @@ import { trafficSnapshotDomainSchema, type TrafficSpendPreview } from '../types'
 interface SpendPreviewCardProps {
   preview: TrafficSpendPreview | null;
   loading: boolean;
+  /** Domain the snapshot would be charged to; shown so the price is not anonymous. */
+  domain?: string;
+  /** Confirm/Cancel controls, rendered inside the card footer. */
+  actions?: ReactNode;
 }
 
-export const SpendPreviewCard = ({ preview, loading }: SpendPreviewCardProps) => {
-  const { t } = useTranslation('competitorsTraffic');
+export const SpendPreviewCard = ({ preview, loading, domain, actions }: SpendPreviewCardProps) => {
+  const { t, i18n } = useTranslation('competitorsTraffic');
 
   if (loading && !preview) {
     return (
@@ -51,6 +55,17 @@ export const SpendPreviewCard = ({ preview, loading }: SpendPreviewCardProps) =>
   }
   if (!preview) return null;
 
+  const formatNumber = (value: number) => new Intl.NumberFormat(i18n.language).format(value);
+  const remaining = [
+    { key: 'baseRemaining', value: preview.remainingBaseUnits },
+    { key: 'packRemaining', value: preview.remainingPackUnits },
+  ].filter((row): row is { key: string; value: number } => typeof row.value === 'number');
+  // The server reports allowance numbers only when it meters usage; a
+  // self-hosted server does not, and we say so instead of showing nothing.
+  const metered = remaining.length > 0;
+  const units = preview.productUnits ?? preview.breakdown?.length ?? 1;
+  const rowClass = 'flex flex-wrap items-baseline justify-between gap-x-4 gap-y-1';
+
   return (
     <Card data-testid="traffic-preview">
       <CardHeader>
@@ -58,20 +73,47 @@ export const SpendPreviewCard = ({ preview, loading }: SpendPreviewCardProps) =>
         <CardDescription>{t('preview.operatorNotice')}</CardDescription>
       </CardHeader>
       <CardContent className="flex flex-col gap-4 text-sm">
-        <div className="flex flex-wrap gap-2">
-          {(preview.breakdown ?? []).map((operation) => {
-            const domain = operation.operationKey.replace(/^traffic:/, '');
-            return (
-              <Badge
-                key={operation.operationKey}
-                variant={operation.cachedStatus === 'cached' ? 'secondary' : 'outline'}
-              >
-                {domain}: {t(`preview.${operation.cachedStatus}`)}
-              </Badge>
-            );
-          })}
-        </div>
+        <dl className="flex flex-col gap-2" data-testid="traffic-preview-details">
+          {domain ? (
+            <div className={rowClass}>
+              <dt className="text-muted-foreground">{t('preview.domain')}</dt>
+              <dd className="font-medium" dir="ltr">{domain}</dd>
+            </div>
+          ) : null}
+          <div className={rowClass}>
+            <dt className="text-muted-foreground">{t('request.marketLabel')}</dt>
+            <dd className="font-medium">{t('request.marketValue')}</dd>
+          </div>
+          <div className={rowClass}>
+            <dt className="text-muted-foreground">{t('preview.impact')}</dt>
+            <dd className="font-medium" data-testid="traffic-preview-impact">
+              {metered ? t('preview.units', { count: units }) : t('preview.notMetered')}
+            </dd>
+          </div>
+          {remaining.map((row) => (
+            <div key={row.key} className={rowClass}>
+              <dt className="text-muted-foreground">{t(`preview.${row.key}`)}</dt>
+              <dd className="font-medium">{formatNumber(row.value)}</dd>
+            </div>
+          ))}
+        </dl>
+        {preview.breakdown?.length ? (
+          <div className="flex flex-wrap gap-2">
+            {preview.breakdown.map((operation) => {
+              const operationDomain = operation.operationKey.replace(/^traffic:/, '');
+              return (
+                <Badge
+                  key={operation.operationKey}
+                  variant={operation.cachedStatus === 'cached' ? 'secondary' : 'outline'}
+                >
+                  {operationDomain}: {t(`preview.${operation.cachedStatus}`)}
+                </Badge>
+              );
+            })}
+          </div>
+        ) : null}
       </CardContent>
+      {actions ? <CardFooter className="flex flex-wrap items-center gap-2">{actions}</CardFooter> : null}
     </Card>
   );
 };
@@ -191,6 +233,7 @@ export const SnapshotRequestForm = ({
                 <FieldLabel htmlFor="traffic-domain">{t('request.domainLabel')}</FieldLabel>
                 <Input
                   id="traffic-domain"
+                  dir="ltr"
                   name="domain"
                   value={domain}
                   placeholder={t('request.domainPlaceholder')}
@@ -261,22 +304,23 @@ export const SnapshotRequestForm = ({
         </Alert>
       ) : null}
 
-      <SpendPreviewCard preview={preview} loading={previewStatus === 'loading'} />
-
-      {preview || previewStatus === 'failed' ? (
-        <div className="flex flex-col items-start gap-2">
-          <div className="flex flex-wrap items-center gap-2">
-            <Button
-              type="button"
-              variant="default"
-              loading={requestStatus === 'loading'}
-              loadingLabel={t('request.confirming')}
-              disabled={!preview || previewFailed || locked}
-              onClick={handleConfirm}
-            >
-              {t('request.confirm')}
-            </Button>
-            {preview ? (
+      <SpendPreviewCard
+        preview={preview}
+        loading={previewStatus === 'loading'}
+        domain={validatedDomain}
+        actions={
+          preview ? (
+            <>
+              <Button
+                type="button"
+                variant="default"
+                loading={requestStatus === 'loading'}
+                loadingLabel={t('request.confirming')}
+                disabled={previewFailed || locked}
+                onClick={handleConfirm}
+              >
+                {t('request.confirm')}
+              </Button>
               <Button
                 type="button"
                 variant="outline"
@@ -285,8 +329,16 @@ export const SnapshotRequestForm = ({
               >
                 {t('request.cancel')}
               </Button>
-            ) : null}
-          </div>
+            </>
+          ) : null
+        }
+      />
+
+      {!preview && previewFailed ? (
+        <div className="flex flex-wrap items-center gap-2">
+          <Button type="button" variant="default" disabled>
+            {t('request.confirm')}
+          </Button>
         </div>
       ) : null}
 

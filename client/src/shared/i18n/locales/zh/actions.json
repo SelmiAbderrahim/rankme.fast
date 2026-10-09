@@ -22,7 +22,9 @@
     "source": "来源",
     "severity": "严重程度",
     "confidence": "可信度",
-    "effort": "工作量"
+    "effort": "工作量",
+    "noMatchTitle": "没有符合这些筛选条件的操作",
+    "noMatchBody": "请调整或重置筛选条件以查看更多操作。"
   },
   "pagination": {
     "previous": "上一页",
@@ -81,7 +83,8 @@
     "evidenceLink": "打开证据来源",
     "history": "历史记录",
     "retest": "重新检测",
-    "affectedSample": "(显示 {{shown}} 个)"
+    "affectedSample": "(显示 {{shown}} 个)",
+    "noteLabel": "备注"
   },
   "transitions": {
     "planned": "计划",
@@ -114,7 +117,8 @@
     "empty": "尚无变更记录。",
     "actor": "团队成员",
     "from": "自「{{state}}」",
-    "close": "关闭"
+    "close": "关闭",
+    "actorYou": "您"
   },
   "retest": {
     "title": "要重新检测此发现吗？",
@@ -122,7 +126,7 @@
     "unitsLabel": "本次将消耗的审计次数",
     "unitsValue": "1",
     "freshRun": "重新检测始终重新抓取——结果绝不来自缓存。",
-    "selfHosted": "自托管模式不计量套餐使用限额。",
+    "selfHosted": "此服务器不应用用量限制。",
     "remaining": "本周期剩余 {{remaining}} / {{cap}} 次审计",
     "allowanceUnknown": "无法加载剩余额度。服务器在运行前仍会检查你的限额。",
     "confirm": "开始重新检测",

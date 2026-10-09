@@ -1,5 +1,5 @@
 import { configureStore } from '@reduxjs/toolkit';
-import { beforeAll, beforeEach, describe, expect, it, vi } from 'vitest';
+import { afterEach, beforeAll, beforeEach, describe, expect, it, vi } from 'vitest';
 import { initI18n } from '@shared/i18n';
 import * as api from '../api';
 import {
@@ -13,6 +13,7 @@ import {
   selectInvitationInboxStatus,
   selectPendingInvitationCount,
   selectPendingInvitations,
+  INBOX_MAX_AGE_MS,
   teamInboxInitialState,
   teamInboxReducer,
 } from './inboxSlice';
@@ -104,5 +105,57 @@ describe('team invitation inbox state', () => {
     expect(state.actionId).toBe('i-1');
     state = teamInboxReducer(state, rejectPendingInvitation.rejected(null, 'reject', 'i-1', undefined));
     expect(state).toMatchObject({ actionId: null, error: '' });
+  });
+
+  describe('request guard', () => {
+    afterEach(() => vi.useRealTimers());
+
+    it('shares one in-flight request between concurrent loads', async () => {
+      let resolve!: (value: { invitations: PendingInvitation[] }) => void;
+      mocked.fetchPendingInvitationsRequest.mockReturnValue(
+        new Promise((r) => { resolve = r; }),
+      );
+      const store = makeStore();
+      const first = store.dispatch(loadPendingInvitations());
+      expect(store.getState().teamInbox.fetching).toBe(true);
+      await store.dispatch(loadPendingInvitations());
+      await store.dispatch(loadPendingInvitations({ maxAgeMs: INBOX_MAX_AGE_MS }));
+      expect(mocked.fetchPendingInvitationsRequest).toHaveBeenCalledTimes(1);
+      resolve({ invitations: [invitation] });
+      await first;
+      expect(store.getState().teamInbox).toMatchObject({ fetching: false, status: 'loaded' });
+    });
+
+    it('skips a passive refresh while fresh and runs it once stale', async () => {
+      vi.useFakeTimers();
+      mocked.fetchPendingInvitationsRequest.mockResolvedValue({ invitations: [invitation] });
+      const store = makeStore();
+      await store.dispatch(loadPendingInvitations({ maxAgeMs: INBOX_MAX_AGE_MS }));
+      await store.dispatch(loadPendingInvitations({ maxAgeMs: INBOX_MAX_AGE_MS }));
+      expect(mocked.fetchPendingInvitationsRequest).toHaveBeenCalledTimes(1);
+      vi.advanceTimersByTime(INBOX_MAX_AGE_MS - 1);
+      await store.dispatch(loadPendingInvitations({ maxAgeMs: INBOX_MAX_AGE_MS }));
+      expect(mocked.fetchPendingInvitationsRequest).toHaveBeenCalledTimes(1);
+      vi.advanceTimersByTime(1);
+      await store.dispatch(loadPendingInvitations({ maxAgeMs: INBOX_MAX_AGE_MS }));
+      expect(mocked.fetchPendingInvitationsRequest).toHaveBeenCalledTimes(2);
+    });
+
+    it('lets an explicit refresh through even when the list is fresh', async () => {
+      mocked.fetchPendingInvitationsRequest.mockResolvedValue({ invitations: [invitation] });
+      const store = makeStore();
+      await store.dispatch(loadPendingInvitations());
+      await store.dispatch(loadPendingInvitations());
+      expect(mocked.fetchPendingInvitationsRequest).toHaveBeenCalledTimes(2);
+    });
+
+    it('does not hammer a failing endpoint on passive refreshes', async () => {
+      mocked.fetchPendingInvitationsRequest.mockRejectedValue(new TypeError('offline'));
+      const store = makeStore();
+      await store.dispatch(loadPendingInvitations({ maxAgeMs: INBOX_MAX_AGE_MS }));
+      await store.dispatch(loadPendingInvitations({ maxAgeMs: INBOX_MAX_AGE_MS }));
+      expect(mocked.fetchPendingInvitationsRequest).toHaveBeenCalledTimes(1);
+      expect(store.getState().teamInbox.status).toBe('failed');
+    });
   });
 });

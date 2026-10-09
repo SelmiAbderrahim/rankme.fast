@@ -15,7 +15,11 @@
       "label": "Concurrents",
       "helper": "Choisissez jusqu’à cinq concurrents déjà suivis pour ce site.",
       "chipRemove": "Retirer {{domain}}",
-      "limit": "Maximum {{max}} concurrents sélectionnés."
+      "limit": "Maximum {{max}} concurrents sélectionnés.",
+      "loading": "Chargement de vos concurrents…",
+      "empty": "Ce site n'a pas encore de concurrent actif. Ajoutez d'abord les concurrents à étudier.",
+      "openCompetitors": "Ouvrir Concurrents",
+      "loadFailed": "Impossible de charger vos concurrents. Rechargez la page et réessayez."
     },
     "topics": {
       "label": "Sujets",

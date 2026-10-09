@@ -40,11 +40,13 @@ function startAudienceResearchRun(
   input: Omit<Parameters<typeof startAudienceResearchRunImpl>[0], 'outputLocale'> & {
     outputLocale?: Parameters<typeof startAudienceResearchRunImpl>[0]['outputLocale'];
   },
-  deps: Parameters<typeof startAudienceResearchRunImpl>[1],
+  deps: Omit<Parameters<typeof startAudienceResearchRunImpl>[1], 'loadActiveCompetitorDomains'> &
+    Partial<Pick<Parameters<typeof startAudienceResearchRunImpl>[1], 'loadActiveCompetitorDomains'>>,
 ) {
   return startAudienceResearchRunImpl(
     { ...input, outputLocale: input.outputLocale ?? 'en' },
-    deps,
+    // Default portfolio: the one competitor `baseInput()` submits.
+    { loadActiveCompetitorDomains: async () => ['acme.example'], ...deps },
   );
 }
 
@@ -181,6 +183,45 @@ describe('startAudienceResearchRun — compensation ordering', () => {
       message: 'audienceResearch.errors.processingFailure',
     });
     expect(await AudienceResearchRun.countDocuments()).toBe(0);
+  });
+
+  it('rejects a competitor outside the active portfolio before creating or enqueuing', async () => {
+    const { accountId, siteId } = await seedAccount();
+    const { queue, jobs } = fakeQueue();
+    const loadActiveCompetitorDomains = vi.fn(async () => ['acme.example']);
+    await expect(
+      startAudienceResearchRun(
+        { accountId, siteId, input: baseInput({ competitorDomains: ['acme.example', 'reddit.com'] }) },
+        { queue, loadActiveCompetitorDomains },
+      ),
+    ).rejects.toMatchObject({
+      status: 400,
+      message: 'audienceResearch.errors.competitorNotTracked',
+    });
+    expect(loadActiveCompetitorDomains).toHaveBeenCalledWith({ accountId, siteId });
+    expect(await AudienceResearchRun.countDocuments()).toBe(0);
+    expect(jobs).toHaveLength(0);
+  });
+
+  it('matches portfolio competitors by registrable domain', async () => {
+    const { accountId, siteId } = await seedAccount();
+    const { queue } = fakeQueue();
+    const started = await startAudienceResearchRun(
+      { accountId, siteId, input: baseInput({ competitorDomains: ['www.Acme.example'] }) },
+      { queue, loadActiveCompetitorDomains: async () => ['acme.example'] },
+    );
+    expect(started.duplicate).toBe(false);
+  });
+
+  it('skips the portfolio read when no competitors are submitted', async () => {
+    const { accountId, siteId } = await seedAccount();
+    const { queue } = fakeQueue();
+    const loadActiveCompetitorDomains = vi.fn(async () => []);
+    await startAudienceResearchRun(
+      { accountId, siteId, input: baseInput({ competitorDomains: [] }) },
+      { queue, loadActiveCompetitorDomains },
+    );
+    expect(loadActiveCompetitorDomains).not.toHaveBeenCalled();
   });
 
   it('creates once and enqueues with the deterministic job id', async () => {

@@ -62,6 +62,8 @@ describe('GscGenerativeAppearanceCard', () => {
     await waitFor(() =>
       expect(screen.getByTestId('gsc-appearance-row')).toBeInTheDocument(),
     );
+    // Rows exist, so the export is not marked as empty.
+    expect(screen.queryByText('Nothing to export yet')).toBeNull();
   });
 
   it('renders a connect prompt, not an error, when Search Console has no data (issue #7)', async () => {
@@ -78,6 +80,8 @@ describe('GscGenerativeAppearanceCard', () => {
       'Connect Google Search Console',
     ));
     expect(screen.queryByRole('alert')).toBeNull();
+    expect(screen.getByRole('button', { name: 'Export or share' })).toBeDisabled();
+    expect(screen.getByText('Nothing to export yet')).toBeInTheDocument();
   });
 
   it('renders the unavailable empty state for a synced window without generative rows', async () => {
@@ -91,6 +95,7 @@ describe('GscGenerativeAppearanceCard', () => {
     });
     render(await withProviders(<GscGenerativeAppearanceCard siteId="s1" />));
     await waitFor(() => expect(screen.getByTestId('gsc-empty')).toBeInTheDocument());
+    expect(screen.getByText('Nothing to export yet')).toBeInTheDocument();
   });
 
   it('renders reconnect state', async () => {

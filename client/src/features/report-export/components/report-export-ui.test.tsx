@@ -4,8 +4,10 @@ import { Provider } from 'react-redux';
 import { I18nextProvider } from 'react-i18next';
 import { fireEvent, render, screen, waitFor, within } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
+import { toast } from 'sonner';
 import { MemoryRouter, useLocation } from 'react-router-dom';
 import { ApiError } from '@shared/api/client';
+import { sitesReducer } from '@features/sites';
 import { i18n, initI18n } from '@shared/i18n';
 import type {
   ReportExportCapability,
@@ -149,10 +151,20 @@ function LocationProbe() {
   return <output data-testid="location-search">{location.search}</output>;
 }
 
-function renderWithStore(child: React.ReactNode, reportExport = state(), entry = '/exports') {
+function renderWithStore(
+  child: React.ReactNode,
+  reportExport = state(),
+  entry = '/exports',
+  sitesLoaded = true,
+) {
+  const sitesState = {
+    ...sitesReducer(undefined, { type: '@@init' }),
+    loaded: sitesLoaded,
+    items: [{ id: 'site-1', url: 'https://acme.test', domain: 'acme.test', displayName: 'Acme', paused: false, pausedAt: null, createdAt: '2026-01-01T00:00:00.000Z', updatedAt: '2026-01-01T00:00:00.000Z' }],
+  };
   const store = configureStore({
-    reducer: { reportExport: reportExportReducer },
-    preloadedState: { reportExport },
+    reducer: { reportExport: reportExportReducer, sites: sitesReducer },
+    preloadedState: { reportExport, sites: sitesState },
   });
   return {
     store,
@@ -224,6 +236,87 @@ describe('ReportExportControl', () => {
     expect(
       await screen.findByRole('dialog', { name: 'Share an immutable report' }),
     ).toHaveAttribute('dir', 'ltr');
+  });
+
+  it('uses a caller-supplied label as the visible text and accessible name, with an optional longer name', () => {
+    const target = { scope: 'site_resource', siteId: 'site-one', resourceId: 'audit-one' } as const;
+    const { unmount } = renderWithStore(
+      <ReportExportControl kind="audit.run" target={target} label="Export rankings" />,
+    );
+    const labelled = screen.getByRole('button', { name: 'Export rankings' });
+    expect(labelled).toHaveTextContent('Export rankings');
+    expect(screen.queryByRole('button', { name: 'Export or share' })).toBeNull();
+    unmount();
+
+    renderWithStore(
+      <ReportExportControl
+        kind="audit.run"
+        target={target}
+        label="Export history"
+        ariaLabel="Export ranking history for blue shoes"
+      />,
+    );
+    const named = screen.getByRole('button', { name: 'Export ranking history for blue shoes' });
+    expect(named).toHaveTextContent('Export history');
+  });
+
+  it('disables the trigger and says why when the page has nothing to export yet', async () => {
+    const user = userEvent.setup();
+    renderWithStore(
+      <ReportExportControl
+        kind="audit.run"
+        target={{ scope: 'site_resource', siteId: 'site-one', resourceId: 'audit-one' }}
+        empty
+      />,
+    );
+    const trigger = screen.getByRole('button', { name: 'Export or share' });
+    expect(trigger).toBeDisabled();
+    expect(trigger).toHaveAccessibleDescription('Nothing to export yet');
+    expect(trigger.parentElement).toHaveAttribute('title', 'Nothing to export yet');
+    await user.click(trigger);
+    expect(screen.queryByRole('menu')).toBeNull();
+    expect(mockedCreateSnapshot).not.toHaveBeenCalled();
+  });
+
+  it('keeps a caller-supplied name on the empty trigger', () => {
+    renderWithStore(
+      <ReportExportControl
+        kind="audit.run"
+        target={{ scope: 'site', siteId: 'site-one' }}
+        label="Export history"
+        ariaLabel="Export ranking history for blue shoes"
+        empty
+      />,
+    );
+    const trigger = screen.getByRole('button', { name: 'Export ranking history for blue shoes' });
+    expect(trigger).toBeDisabled();
+    expect(trigger).toHaveTextContent('Export history');
+  });
+
+  it('confirms a finished export with a toast and stays silent when it fails', async () => {
+    const success = vi.spyOn(toast, 'success').mockReturnValue('t');
+    mockedCreateSnapshot
+      .mockRejectedValueOnce(new Error('nope'))
+      .mockResolvedValueOnce(snapshot());
+    const user = userEvent.setup();
+    renderWithStore(
+      <ReportExportControl
+        kind="audit.run"
+        target={{ scope: 'account_resource', resourceId: 'landscape-one' }}
+      />,
+    );
+    await user.click(screen.getByRole('button', { name: 'Export or share' }));
+    await user.click(screen.getByRole('menuitem', { name: 'CSV' }));
+    await screen.findByRole('alert');
+    expect(success).not.toHaveBeenCalled();
+
+    await user.click(within(screen.getByRole('alert')).getByRole('button', { name: 'Try again' }));
+    await waitFor(() =>
+      expect(success).toHaveBeenCalledWith(
+        'Export ready. A copy is also saved in Exports and shares.',
+      ),
+    );
+    success.mockRestore();
   });
 
   it('reports a failed export through an alert and retries the same format', async () => {
@@ -528,6 +621,50 @@ describe('ExportCenterPage', () => {
     mockedListSnapshots.mockResolvedValue({ items: [], nextCursor: null });
     const more = screen.queryByRole('button', { name: 'Load more' });
     if (more) await user.click(more);
+  });
+
+  it('shows a localized report area and the site instead of the internal export kind', async () => {
+    mockedListAllShares.mockResolvedValue({ items: [], nextCursor: null });
+    mockedListSnapshots.mockResolvedValue({ items: [], nextCursor: null });
+    renderWithStore(
+      <ExportCenterPage />,
+      state({
+        snapshots: [
+          snapshot({ id: 's-a', kind: 'client.composite', title: 'Client SEO report', siteId: 'site-1' }),
+          snapshot({ id: 's-b', kind: 'keyword.research_result', title: 'Keyword set', siteId: null }),
+          snapshot({ id: 's-c', kind: 'unknown.kind', title: 'Mystery', siteId: 'site-gone' }),
+        ],
+      }),
+    );
+    expect(await screen.findByRole('columnheader', { name: 'Site' })).toBeInTheDocument();
+    expect(screen.queryByText('client.composite')).toBeNull();
+    expect(screen.queryByText('keyword.research_result')).toBeNull();
+    expect(screen.getAllByText('Client report').length).toBeGreaterThan(0);
+    expect(screen.getAllByText('Keywords').length).toBeGreaterThan(0);
+    expect(screen.getAllByText('acme.test').length).toBeGreaterThan(0);
+    expect(screen.getAllByText('Whole account').length).toBeGreaterThan(0);
+    expect(screen.getAllByText('—').length).toBeGreaterThan(0);
+  });
+
+  it('loads the site list itself when it has not been loaded yet', async () => {
+    mockedListAllShares.mockResolvedValue({ items: [], nextCursor: null });
+    mockedListSnapshots.mockResolvedValue({ items: [], nextCursor: null });
+    const fetchMock = vi.spyOn(globalThis, 'fetch').mockResolvedValue(
+      new Response(JSON.stringify({ sites: [], nextCursor: null }), {
+        status: 200,
+        headers: { 'content-type': 'application/json' },
+      }),
+    );
+    try {
+      renderWithStore(<ExportCenterPage />, state(), '/exports', false);
+      await waitFor(() =>
+        expect(
+          fetchMock.mock.calls.some(([url]) => String(url).includes('/sites')),
+        ).toBe(true),
+      );
+    } finally {
+      fetchMock.mockRestore();
+    }
   });
 
   it('renders invalid-tab and capability retry states accessibly', async () => {

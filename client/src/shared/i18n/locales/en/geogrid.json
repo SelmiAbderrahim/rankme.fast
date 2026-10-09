@@ -13,7 +13,7 @@
     "longitude": "Centre longitude",
     "spacing": "Spacing between points",
     "spacingOption": "{{km}} km",
-    "spacingCustom": "Spacing in metres",
+    "spacingCustom": "Custom spacing (m)",
     "size": "Grid size",
     "sizeOption": "{{size}} by {{size}} ({{cells}} points)",
     "zoom": "Map zoom",

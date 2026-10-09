@@ -6,9 +6,9 @@
   "yes": "是",
   "no": "否",
   "capacity": {
-    "selfHost": "自托管模式不计量套餐用量上限。",
+    "selfHost": "此服务器不应用用量限制。",
     "selfHostPlan": "自托管",
-    "selfHostSlots": "已使用 {{used}}；自托管模式不计量套餐上限。"
+    "selfHostSlots": "已使用 {{used}}；此服务器不应用用量限制。"
   },
   "logPanel": {
     "title": "备份输出",
@@ -46,11 +46,13 @@
     "team": "团队",
     "admin": "管理",
     "superadmin": "平台",
-    "startFree": "免费开始"
+    "startFree": "免费开始",
+    "openApp": "打开应用"
   },
   "footer": {
     "copyright": "© {{year}}, {{brand}}. 保留所有权利。",
-    "version": "版本 v{{version}} · {{stage}}"
+    "version": "版本 v{{version}} · {{stage}}",
+    "analyticsPreferences": "分析统计偏好"
   },
   "theme": {
     "toggle": "切换主题",
@@ -125,6 +127,10 @@
     "groupAccount": "账户",
     "groupAdmin": "管理",
     "search": "搜索",
+    "searchPlaceholder": "搜索页面和网站",
+    "searchNoResults": "没有找到“{{query}}”的结果",
+    "searchGroupPages": "页面",
+    "searchGroupSites": "网站",
     "notifications": "通知",
     "account": "账户菜单",
     "profile": "个人资料",
@@ -135,7 +141,8 @@
     "upgradeTitle": "解锁更多审计",
     "upgradeBody": "升级以获得更高额度和更深入的报告。",
     "upgradeCta": "升级",
-    "groupSuperAdmin": "平台"
+    "groupSuperAdmin": "平台",
+    "opensInNewTab": "在新标签页中打开"
   },
   "locked": "已锁定",
   "retry": "重试",
@@ -265,5 +272,12 @@
   },
   "routeError": {
     "title": "出了点问题"
+  },
+  "analyticsConsent": {
+    "label": "分析统计同意",
+    "title": "愿意帮助我们改进 RankMeFast 吗？",
+    "message": "我们希望使用 Google Analytics 统计页面访问量。它不会收到站点 ID、所选标签页或页面标题。您不同意就不会加载任何内容，并且可以随时改变主意。",
+    "accept": "接受分析统计",
+    "decline": "不用了"
   }
 }

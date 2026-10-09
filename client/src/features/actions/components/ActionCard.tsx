@@ -128,6 +128,16 @@ export function ActionCard({ item, siteId, onReload }: ActionCardProps) {
           <span className="text-muted-foreground">{t('card.nextStep')}: </span>
           {item.nextStep}
         </p>
+        {item.latestNote ? (
+          // User-authored text: rendered as an inert text node, never HTML.
+          <p
+            className="text-muted-foreground border-border border-s-2 ps-3 text-sm"
+            data-testid="action-note"
+          >
+            <span className="font-medium">{t('card.noteLabel')}: </span>
+            {item.latestNote}
+          </p>
+        ) : null}
       </div>
 
       <div className="flex flex-wrap items-center gap-x-4 gap-y-1 text-xs">

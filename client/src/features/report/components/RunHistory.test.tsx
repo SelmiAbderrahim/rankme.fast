@@ -78,6 +78,26 @@ describe('RunHistory', () => {
     expect(screen.getByText('Failed')).toBeInTheDocument();
   });
 
+  it('maps every run status to the design-system status language (issue #43)', async () => {
+    mocked.fetchAuditRunsRequest.mockResolvedValue({
+      runs: [
+        run('r-q', 'queued'),
+        run('r-r', 'running'),
+        run('r-s', 'succeeded'),
+        run('r-f', 'failed'),
+      ],
+      nextCursor: null,
+    });
+    renderRH(makeStore());
+    await screen.findByTestId('report-run-r-q');
+    const tone = (label: string) => screen.getByText(label).getAttribute('data-tone');
+    // A queued run is pending (warning), never the failure colour.
+    expect(tone('Queued')).toBe('warning');
+    expect(tone('Running')).toBe('info');
+    expect(tone('Completed')).toBe('success');
+    expect(tone('Failed')).toBe('destructive');
+  });
+
   it('shows an empty message when there are no runs', async () => {
     mocked.fetchAuditRunsRequest.mockResolvedValue({ runs: [], nextCursor: null });
     renderRH(makeStore());

@@ -5,6 +5,7 @@ import { HttpError } from '../../shared/utils/http-error.js';
 import type { TranslationKey } from '../../shared/i18n/errors.js';
 import { env } from '../../config/env.js';
 import { validateSiteUrl, type SiteUrlRejectReason, } from '../../shared/validation/site-url.js';
+import { normalizeHost } from '../../shared/utils/host.js';
 import { Site, type SiteHydrated } from './sites.model.js';
 import { getSitesDb } from './sites.holder.js';
 import { AuditRun } from '../audits/audit-run.model.js';
@@ -77,6 +78,23 @@ export function toPublicSite(site: SiteHydrated): PublicSite {
         updatedAt: site.updatedAt.toISOString(),
     };
 }
+async function assertNoDuplicateSite(accountId: string, domain: string): Promise<void> {
+    const bareHost = normalizeHost(domain);
+    const existing = await Site.findOne({
+        accountId,
+        domain: { $in: [domain, bareHost, `www.${bareHost}`] },
+    });
+    if (!existing)
+        return;
+    if (existing.domain === domain) {
+        throw HttpError.conflict({ code: 'SITES_ERRORS_DUPLICATE', messageKey: 'sites.errors.duplicate' });
+    }
+    throw HttpError.conflict({
+        code: 'SITES_ERRORS_DUPLICATE',
+        messageKey: 'sites.errors.duplicateAlias',
+        vars: { domain: existing.domain },
+    });
+}
 export async function createSite(accountId: string, input: {
     url: string;
     displayName?: string;
@@ -87,13 +105,12 @@ export async function createSite(accountId: string, input: {
     if (!result.ok) {
         throw HttpError.badRequest({ code: 'BAD_REQUEST', messageKey: SITE_URL_REJECT_KEYS[result.reason] });
     }
-    // Re-adding an existing domain is a 409. This pre-check stays OUTSIDE the
-    // advisory-lock transaction so a duplicate 409 is returned fast without
-    // touching the Postgres lock table.
-    const existing = await Site.findOne({ accountId, domain: result.domain });
-    if (existing) {
-        throw HttpError.conflict({ code: 'SITES_ERRORS_DUPLICATE', messageKey: 'sites.errors.duplicate' });
-    }
+    // Re-adding an existing domain is a 409, and so is adding its www / non-www
+    // alias (http vs https never reaches here: only the hostname is stored).
+    // This pre-check stays OUTSIDE the advisory-lock transaction so a duplicate
+    // 409 is returned fast without touching the Postgres lock table. Existing
+    // alias pairs created before this guard are left untouched.
+    await assertNoDuplicateSite(accountId, result.domain);
     // Site creation is serialized per account with the Postgres
     // transaction-scoped advisory lock (hashtext(accountId)) that the account
     // deletion barrier also takes. The lock is released when the tx
@@ -102,6 +119,9 @@ export async function createSite(accountId: string, input: {
     try {
         return await db.transaction(async (tx) => {
             await tx.execute(sql `select pg_advisory_xact_lock(hashtext(${accountId}))`);
+            // The unique index only catches the exact domain, so two concurrent
+            // adds of a www / non-www pair are re-checked under the lock.
+            await assertNoDuplicateSite(accountId, result.domain);
             const site = await Site.create({
                 accountId,
                 url: result.url,

@@ -2,7 +2,6 @@ import {
   ApiError,
   apiFetch,
   apiClient,
-  fetchCsrfToken,
 } from '@shared/api/client';
 import type { SupportedLocale } from '@shared/i18n';
 import type {
@@ -99,7 +98,6 @@ export async function downloadClientReport(
   siteId: string,
   input: { locale: SupportedLocale; sections: ClientReportSections },
 ): Promise<Blob> {
-  const csrfToken = await fetchCsrfToken();
   const path = `${sitePath(siteId)}/pdf`;
   let response: Response;
   try {
@@ -110,8 +108,8 @@ export async function downloadClientReport(
       headers: {
         Accept: 'application/pdf',
         'Content-Type': 'application/json',
-        'x-csrf-token': csrfToken,
       },
+      csrf: true,
       body: JSON.stringify(input),
       timeoutMs: 30_000,
     });

@@ -353,6 +353,29 @@ describe('geogrid panel — form bounds', () => {
     ).toBe(false);
   });
 
+  it('groups the preset radios by name and labels the custom spacing input', async () => {
+    wireApi();
+    renderPanel();
+    await screen.findByTestId('geogrid-form');
+    const spacing = screen.getByRole('radiogroup', { name: 'Spacing between points' });
+    const size = screen.getByRole('radiogroup', { name: 'Grid size' });
+    // Every radio (including Radix's form-bound input) carries its group name.
+    const named = (root: HTMLElement) =>
+      [...root.querySelectorAll('input[type="radio"]')].map((el) => el.getAttribute('name'));
+    expect(named(spacing.parentElement as HTMLElement)).toEqual(
+      expect.arrayContaining(['spacingMeters']),
+    );
+    expect(named(size.parentElement as HTMLElement)).toEqual(
+      expect.arrayContaining(['gridSize']),
+    );
+    const radios = [...document.querySelectorAll('input[type="radio"]')];
+    expect(radios.length).toBeGreaterThan(0);
+    expect(radios.every((el) => el.getAttribute('name'))).toBe(true);
+    expect(screen.getByLabelText('Custom spacing (m)')).toBe(
+      screen.getByTestId('geogrid-spacing-custom'),
+    );
+  });
+
   it('rejects an out-of-range spacing typed into the custom field', async () => {
     wireApi();
     renderPanel();

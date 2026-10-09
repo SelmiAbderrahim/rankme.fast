@@ -13,7 +13,7 @@
     "longitude": "Longitude du centre",
     "spacing": "Écart entre les points",
     "spacingOption": "{{km}} km",
-    "spacingCustom": "Écart en mètres",
+    "spacingCustom": "Écart personnalisé (m)",
     "size": "Taille de la grille",
     "sizeOption": "{{size}} sur {{size}} ({{cells}} points)",
     "zoom": "Zoom de la carte",

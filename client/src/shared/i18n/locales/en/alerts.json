@@ -42,6 +42,7 @@
     "description": "Pick what to watch and where to send it.",
     "site": "Site",
     "sitePlaceholder": "Choose a site",
+    "siteRequired": "Choose a site to create a rule.",
     "type": "Alert type",
     "threshold": "Position threshold",
     "thresholdHint": "We alert when the confirmed position is this number or worse.",
@@ -81,7 +82,7 @@
       "no_transport": "Email is not configured on this deployment.",
       "rule_disabled": "The rule was off when the alert fired.",
       "retries_exhausted": "We stopped after three failed tries.",
-      "flag_disabled": "Alerts were switched off by the operator."
+      "flag_disabled": "Alerts were switched off by an administrator."
     },
     "error": {
       "transport_unavailable": "The channel could not be reached.",

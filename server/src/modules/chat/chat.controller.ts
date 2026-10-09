@@ -68,6 +68,15 @@ export const sendMessageHandler: RequestHandler = asyncHandler(async (req, res) 
     // The middleware-validated language is frozen when this turn is accepted.
     // Later UI changes cannot relabel or override provider/tool work already paid for.
     const responseLocale = req.language;
+    const abortController = new AbortController();
+    // `res` close is the reliable disconnect signal: on modern Node, `req`
+    // 'close' fires when the request MESSAGE completes (the body was already
+    // parsed), not when the connection dies. `res` 'close' fires when the
+    // socket terminates — prematurely (Stop button / navigation) or after a
+    // normal `res.end()`, where the abort is a harmless no-op. It is
+    // registered before the first await so a Stop that lands while the user
+    // message is still being persisted is not missed.
+    res.on('close', () => abortController.abort());
     // Pre-flush refusals — all clean JSON through the global error handler.
     await assertConversationWritable(accountId, conversationId); // 404 / 409
     if (!env.CHAT_ENABLED)
@@ -78,7 +87,7 @@ export const sendMessageHandler: RequestHandler = asyncHandler(async (req, res) 
     const assistantMessageId = String(new Types.ObjectId());
     const appended = await appendUserMessage(accountId, conversationId, body.text, userMessageId);
     const history = await assembleHistory(accountId, conversationId);
-    const { tools } = await buildChatTools(accountId, responseLocale, allowedTeamSiteIds(req));
+    const { tools } = await buildChatTools(accountId, responseLocale, allowedTeamSiteIds(req), appended.site?.id ?? null);
     const profile = resolveAiTaskProfile('chat_assistant');
     // From here on the response is a stream — no status codes remain.
     res.setHeader('Content-Type', 'text/event-stream; charset=utf-8');
@@ -87,13 +96,6 @@ export const sendMessageHandler: RequestHandler = asyncHandler(async (req, res) 
     res.setHeader('Connection', 'keep-alive');
     res.setHeader('X-Accel-Buffering', 'no');
     res.flushHeaders();
-    const abortController = new AbortController();
-    // `res` close is the reliable disconnect signal: on modern Node, `req`
-    // 'close' fires when the request MESSAGE completes (the body was already
-    // parsed), not when the connection dies. `res` 'close' fires when the
-    // socket terminates — prematurely (Stop button / navigation) or after a
-    // normal `res.end()`, where the abort is a harmless no-op.
-    res.on('close', () => abortController.abort());
     const heartbeat = startChatHeartbeat(res);
     writeSse(res, 'meta', {
         conversationId,
@@ -131,11 +133,14 @@ export const sendMessageHandler: RequestHandler = asyncHandler(async (req, res) 
         }
     };
     try {
+        // Stopped before the stream opened: the user message is already saved,
+        // so close the turn as aborted instead of paying for a reply nobody reads.
+        abortController.signal.throwIfAborted();
         const provider = getChatAiProvider();
         for await (const event of provider.streamChat({
             messages: history,
             responseLocale,
-            systemInstruction: buildChatSystemInstruction(appended.siteDomain, responseLocale),
+            systemInstruction: buildChatSystemInstruction(appended.site, responseLocale),
             tools,
             maxOutputTokens: env.AI_CHAT_MAX_OUTPUT_TOKENS,
             temperature: profile.temperature,

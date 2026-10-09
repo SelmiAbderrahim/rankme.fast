@@ -25,7 +25,10 @@
   },
   "preview": {
     "title": "Aperçu de la dépense",
-    "operatorNotice": "Cette demande utilise le fournisseur de données de trafic configuré par l’opérateur.",
+    "operatorNotice": "Cette demande utilise le fournisseur de données de trafic configuré.",
+    "domain": "Domaine",
+    "impact": "Impact sur le quota",
+    "notMetered": "Non mesuré sur ce serveur",
     "units": "{{count}} unité d’instantané de trafic",
     "units_other": "{{count}} unités d’instantanés de trafic",
     "cached": "En cache",

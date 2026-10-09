@@ -69,6 +69,20 @@ describe('BrandingPanel', () => {
     });
   });
 
+  it('shows no swatch for an empty or invalid accent color', async () => {
+    mocked.getBrandingRequest.mockResolvedValue({
+      branding: { companyName: 'Acme SEO', accentColor: '', logoDataUrl: null },
+    });
+    renderPanel();
+    await screen.findByDisplayValue('Acme SEO');
+    expect(screen.queryByTestId('branding-swatch')).not.toBeInTheDocument();
+    const input = screen.getByLabelText('Accent color');
+    await userEvent.type(input, '#33');
+    expect(screen.queryByTestId('branding-swatch')).not.toBeInTheDocument();
+    await userEvent.type(input, '66ff');
+    expect(screen.getByTestId('branding-swatch')).toBeInTheDocument();
+  });
+
   it('shows a skeleton while loading', () => {
     mocked.getBrandingRequest.mockReturnValue(new Promise(() => {}));
     renderPanel();

@@ -4,7 +4,6 @@
     "description": "选择您希望接收的非安全类邮件。安全类邮件（密码重置、邮箱验证、密码变更确认）无法关闭。",
     "emailHeading": "邮件",
     "loading": "正在加载您的偏好设置…",
-    "securityNote": "安全类邮件 — 密码重置、邮箱验证和密码变更确认 — 无论上方开关状态如何，都始终会发送。",
     "channels": {
       "emailAuditComplete": {
         "label": "审核完成",

@@ -110,6 +110,49 @@ describe('addCompetitor', () => {
     expect(rows).toHaveLength(0);
   });
 
+  it.each([
+    'https://example.com/',
+    'http://example.com',
+    'https://www.example.com/pricing',
+    'HTTPS://WWW.EXAMPLE.COM:443/',
+    'https://blog.example.com/',
+  ])('400s with the own-site key when %s is the site itself, and never inserts', async (url) => {
+    const siteId = await ownedSite();
+    await expect(addCompetitor(db(), { accountId: ACCOUNT, siteId, url, source: 'manual' })).rejects.toMatchObject({
+      status: 400,
+      messageKey: 'contentIntelligence.competitorContent.errors.ownSite',
+    });
+    const rows = await db().select().from(competitorProfiles).where(eq(competitorProfiles.siteId, siteId));
+    expect(rows).toHaveLength(0);
+  });
+
+  it('lets unparseable input fall through to the URL-safety rejection', async () => {
+    const siteId = await ownedSite();
+    await expect(
+      addCompetitor(db(), { accountId: ACCOUNT, siteId, url: 'not a url', source: 'manual' }),
+    ).rejects.toMatchObject({ status: 400, messageKey: 'contentIntelligence.competitorContent.errors.urlUnsafe' });
+  });
+
+  it('rejects the apex when the site itself is registered as www', async () => {
+    const siteId = await ownedSite(ACCOUNT, 'https://www.example.com');
+    await expect(
+      addCompetitor(db(), { accountId: ACCOUNT, siteId, url: 'https://example.com/', source: 'suggested' }),
+    ).rejects.toMatchObject({ status: 400, messageKey: 'contentIntelligence.competitorContent.errors.ownSite' });
+  });
+
+  it('still allows a sibling subdomain competitor for a subdomain site', async () => {
+    const siteId = await ownedSite(ACCOUNT, 'https://blog.example.com');
+    const apex = await addCompetitor(db(), { accountId: ACCOUNT, siteId, url: 'https://example.org/', source: 'manual' });
+    expect(apex.duplicate).toBe(false);
+  });
+
+  it('keeps the cross-account 404 ahead of the own-site check', async () => {
+    const siteId = await ownedSite(OTHER);
+    await expect(
+      addCompetitor(db(), { accountId: ACCOUNT, siteId, url: 'https://example.com/', source: 'manual' }),
+    ).rejects.toMatchObject({ status: 404 });
+  });
+
   it('adds a public competitor and returns duplicate on a resend (registrable dedupe)', async () => {
     const siteId = await ownedSite();
     const first = await addCompetitor(db(), { accountId: ACCOUNT, siteId, url: 'https://example.org/path', source: 'manual' });

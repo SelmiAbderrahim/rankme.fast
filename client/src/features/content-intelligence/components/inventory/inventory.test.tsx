@@ -315,7 +315,7 @@ describe('InventoryStartForm', () => {
     const onStarted = vi.fn();
     renderInRouter(<InventoryStartForm siteId="s1" onStarted={onStarted} />);
     // Default page limit 20 → 5 blocks.
-    expect(screen.getByTestId('inventory-form-blocks')).toHaveTextContent('5 block(s)');
+    expect(screen.getByTestId('inventory-form-blocks')).toHaveTextContent('5 blocks reserved');
     // Valid path + seed exercise the loop false-branches (length ok, regex ok).
     fireEvent.change(screen.getByTestId('inventory-form-allowed'), { target: { value: '/blog\n' } });
     fireEvent.change(screen.getByTestId('inventory-form-seeds'), {

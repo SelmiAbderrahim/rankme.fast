@@ -1,15 +1,15 @@
 import { configureStore } from '@reduxjs/toolkit';
-import { render, screen, waitFor, within } from '@testing-library/react';
+import { act, render, screen, waitFor, within } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { Provider } from 'react-redux';
 import { I18nextProvider } from 'react-i18next';
 import { MemoryRouter } from 'react-router-dom';
-import { beforeEach, describe, expect, it, vi } from 'vitest';
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import { changeLanguage, i18n, initI18n } from '@shared/i18n';
 import { workspaceReducer } from '@features/workspace';
 import * as api from './api';
 import { InvitationInbox } from './components/InvitationInbox';
-import { teamInboxReducer } from './store/inboxSlice';
+import { INBOX_MAX_AGE_MS, teamInboxReducer } from './store/inboxSlice';
 import type { PendingInvitation } from './types';
 
 vi.mock('./api', () => ({
@@ -36,6 +36,8 @@ const renderInbox = (preloadedInvitations: PendingInvitation[] = []) => render(
       teamInbox: {
         invitations: preloadedInvitations,
         status: preloadedInvitations.length > 0 ? 'loaded' as const : 'idle' as const,
+        fetching: false,
+        lastFetchedAt: null,
         actionId: null,
         error: '',
         message: '',
@@ -61,6 +63,9 @@ describe('actionable invitation inbox', () => {
     const user = userEvent.setup();
     renderInbox();
     const trigger = await screen.findByRole('button', { name: 'Team invitations, 1 pending' });
+    // The bell only opens team invitations (notification settings live under
+    // the account menu), so it says so on hover as well as to screen readers.
+    expect(trigger).toHaveAttribute('title', 'Team invitations');
     await user.click(trigger);
     const dialog = await screen.findByRole('dialog');
     expect(within(dialog).getByText('Acme')).toBeInTheDocument();
@@ -129,7 +134,7 @@ describe('actionable invitation inbox', () => {
     renderInbox(many);
     expect(screen.getByText('99+')).toBeInTheDocument();
     await user.click(screen.getByRole('button', { name: 'Team invitations, 100 pending' }));
-    expect(await screen.findByText(/Member · 2 site\(s\)/)).toBeInTheDocument();
+    expect(await screen.findByText(/Member · 2 sites/)).toBeInTheDocument();
     await user.click((await screen.findAllByRole('button', { name: 'Accept' }))[0]!);
     await waitFor(() => expect(mocked.acceptPendingInvitationRequest).toHaveBeenCalledWith('invite-0'));
     expect(screen.getByRole('dialog')).toBeInTheDocument();
@@ -154,12 +159,10 @@ describe('actionable invitation inbox', () => {
     expect(screen.getByRole('dialog')).toBeInTheDocument();
   });
 
-  it('refreshes on focus and supports closing the sheet', async () => {
+  it('supports closing the sheet', async () => {
     const user = userEvent.setup();
     renderInbox();
     await waitFor(() => expect(mocked.fetchPendingInvitationsRequest).toHaveBeenCalledTimes(1));
-    globalThis.dispatchEvent(new Event('focus'));
-    await waitFor(() => expect(mocked.fetchPendingInvitationsRequest).toHaveBeenCalledTimes(2));
     await user.click(await screen.findByRole('button', { name: 'Team invitations, 1 pending' }));
     await user.click(within(await screen.findByRole('dialog')).getByRole('button', { name: 'Close' }));
     await waitFor(() => expect(screen.queryByRole('dialog')).not.toBeInTheDocument());
@@ -187,5 +190,39 @@ describe('actionable invitation inbox', () => {
     await user.click(within(await screen.findByRole('alertdialog')).getByRole('button', { name: 'Reject' }));
     expect(await screen.findByRole('alert')).toHaveTextContent(/could not be rejected/i);
     expect(screen.queryByRole('alertdialog')).not.toBeInTheDocument();
+  });
+});
+
+describe('invitation inbox request volume', () => {
+  afterEach(() => vi.useRealTimers());
+
+  it('does not poll while the drawer is closed', async () => {
+    vi.useFakeTimers();
+    renderInbox();
+    await act(async () => { await vi.advanceTimersByTimeAsync(0); });
+    expect(mocked.fetchPendingInvitationsRequest).toHaveBeenCalledTimes(1);
+    await act(async () => { await vi.advanceTimersByTimeAsync(30 * 60_000); });
+    expect(mocked.fetchPendingInvitationsRequest).toHaveBeenCalledTimes(1);
+  });
+
+  it('throttles tab-focus refreshes to one per INBOX_MAX_AGE_MS', async () => {
+    vi.useFakeTimers();
+    renderInbox();
+    await act(async () => { await vi.advanceTimersByTimeAsync(0); });
+    for (let i = 0; i < 5; i += 1) {
+      await act(async () => { window.dispatchEvent(new Event('focus')); });
+    }
+    expect(mocked.fetchPendingInvitationsRequest).toHaveBeenCalledTimes(1);
+    await act(async () => { await vi.advanceTimersByTimeAsync(INBOX_MAX_AGE_MS); });
+    await act(async () => { window.dispatchEvent(new Event('focus')); });
+    expect(mocked.fetchPendingInvitationsRequest).toHaveBeenCalledTimes(2);
+  });
+
+  it('refreshes once when the drawer opens', async () => {
+    const user = userEvent.setup();
+    renderInbox();
+    await user.click(await screen.findByRole('button', { name: 'Team invitations, 1 pending' }));
+    await screen.findByRole('dialog');
+    expect(mocked.fetchPendingInvitationsRequest).toHaveBeenCalledTimes(2);
   });
 });

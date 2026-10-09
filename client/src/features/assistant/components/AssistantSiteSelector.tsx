@@ -2,6 +2,7 @@ import { Link2 } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 import type { Site } from '@features/sites';
 import { Label } from '@shared/ui/label';
+import { siteLabel } from '@shared/lib/siteLabel';
 import {
   Select,
   SelectContent,
@@ -67,7 +68,7 @@ export function AssistantSiteSelector({
           <SelectItem value={NO_ASSISTANT_SITE}>{t('context.none')}</SelectItem>
           {sites.map((site) => (
             <SelectItem key={site.id} value={site.id}>
-              {site.displayName || site.domain}
+              {siteLabel(site)}
             </SelectItem>
           ))}
           {linkedSiteMissing && linkedSiteId ? (

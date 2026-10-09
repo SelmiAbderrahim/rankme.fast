@@ -149,7 +149,10 @@ describe('documentation experience', () => {
 
   it('filters by query and section while preserving both in filter links', async () => {
     renderDocs('/docs?q=summary&section=audits');
-    expect(await screen.findByText('1 results')).toBeInTheDocument();
+    expect(await screen.findByText('1 result')).toBeInTheDocument();
+    // Cards carry their own border: a 1px grey grid fill would show as an empty
+    // block beside a lone result.
+    expect(screen.getByTestId('docs-results')).not.toHaveClass('bg-border');
     expect(screen.getByRole('heading', { level: 2, name: 'AI summary' })).toBeInTheDocument();
     expect(screen.getByRole('link', { name: 'Account and billing' })).toHaveAttribute(
       'href',

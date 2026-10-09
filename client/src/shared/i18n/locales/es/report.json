@@ -67,7 +67,8 @@
   },
   "pageCap": {
     "label": "Páginas a rastrear",
-    "max": "Máximo del plan",
+    "max": "Máximo permitido",
+    "help": "Define cuántas páginas visita el rastreador. «Máximo permitido» cubre tantas páginas como admita este servidor; con menos páginas termina antes.",
     "pages": "{{pages}} páginas"
   },
   "empty": {
@@ -92,7 +93,11 @@
     "loading": "Cargando tu informe…",
     "retry": "Reintentar",
     "runInProgress": "Auditando tu sitio — puede tardar unos minutos.",
+    "queuedWaiting": "Esperando a que un worker la tome…",
     "runProgress": "Revisando hasta {{count}} páginas."
+  },
+  "hostRedirect": {
+    "notice": "{{from}} redirige a {{to}}, así que este informe cubre {{to}}. Todas las páginas y direcciones que aparecen abajo pertenecen a {{to}}."
   },
   "loadFailed": "No se pudo cargar tu informe.",
   "retestFailed": "No se pudo iniciar la auditoría.",
@@ -213,15 +218,16 @@
     "noData": "Sin datos"
   },
   "exportUi": {
-    "trigger": "Exportar o compartir", "loading": "Cargando opciones de exportación…", "preparing": "Preparando el archivo…", "unavailable": "Exportación no disponible", "formatsLabel": "Formatos de archivo",
+    "trigger": "Exportar o compartir", "loading": "Cargando opciones de exportación…", "preparing": "Preparando el archivo…", "ready": "Exportación lista. También se guardó una copia en Exportaciones y enlaces.", "unavailable": "Exportación no disponible", "empty": "Aún no hay nada que exportar", "formatsLabel": "Formatos de archivo",
     "clipboard": { "action": "Copiar al portapapeles", "success": "Copiado al portapapeles.", "error": "No se pudo copiar al portapapeles." },
     "formats": { "view": "Vista web", "pdf": "PDF", "csv": "CSV", "json": "JSON", "md": "Markdown", "jsonld": "JSON-LD", "txt": "Texto" },
+    "kindAreas": { "audit": "Auditoría del sitio", "ranks": "Posiciones", "google": "Datos de Google", "client": "Informe de cliente", "keyword": "Palabras clave", "backlinks": "Backlinks", "competitors": "Competidores", "actions": "Próximas acciones", "ai": "Visibilidad en IA", "audience": "Investigación de audiencia", "brand": "Brand Radar", "content": "Contenido", "internal_links": "Enlaces internos", "weekly_pulse": "Resumen semanal", "local": "SEO local", "schema": "Marcado schema", "pages": "Páginas", "app": "Optimización de tiendas de apps" },
     "states": { "active": "Activo", "revoked": "Revocado", "expired": "Caducado" },
     "actions": { "retry": "Intentar de nuevo", "download": "Descargar", "delete": "Eliminar", "revoke": "Revocar", "cancel": "Cancelar", "done": "Listo" },
     "errors": { "capabilities": "No se pudieron cargar las opciones de exportación.", "create": "No se pudo exportar el informe. Reduce el alcance e inténtalo de nuevo.", "download": "No se pudo descargar el archivo guardado.", "list": "No se pudieron cargar las exportaciones guardadas.", "delete": "No se pudo eliminar la exportación guardada.", "share": "No se pudo crear el enlace compartido.", "revoke": "No se pudo revocar el enlace compartido.", "copy": "No se pudo copiar el enlace." },
     "share": { "action": "Crear enlace compartido", "title": "Compartir un informe inmutable", "description": "Elige qué pueden abrir los destinatarios. El informe no cambiará después de crear el enlace.", "locale": "Idioma del informe", "expiry": "Caduca después de", "expiryHelp": "Elige entre uno y 90 días.", "permissions": "Formatos permitidos", "create": "Crear enlace", "creating": "Creando enlace…", "showOnce": "Copia este enlace ahora", "linkLabel": "Enlace compartido", "copy": "Copiar enlace", "copied": "Copiado", "savedWithoutToken": "Por seguridad, RankMeFast no guarda el enlace legible. Puedes revocarlo desde el centro de exportación.", "existing": "Enlaces de esta captura", "refresh": "Actualizar" },
     "confirm": { "revokeTitle": "¿Revocar este enlace?", "revokeBody": "Quien lo use perderá el acceso de inmediato.", "deleteTitle": "¿Eliminar esta exportación guardada?", "deleteBody": "El archivo dejará de funcionar y se revocarán todos sus enlaces compartidos." },
-    "center": { "title": "Exportaciones y enlaces", "description": "Descarga capturas de informes y gestiona enlaces públicos.", "tabsLabel": "Secciones del centro de exportación", "downloads": "Descargas", "shares": "Enlaces", "disabledTitle": "Las nuevas exportaciones están pausadas", "disabledBody": "Los archivos existentes pueden seguir disponibles, pero ahora no se pueden crear archivos ni enlaces nuevos.", "emptyDownloadsTitle": "Todavía no hay exportaciones guardadas", "emptyDownloadsBody": "Crea una desde cualquier informe con Exportar o compartir.", "emptySharesTitle": "Todavía no hay enlaces compartidos", "emptySharesBody": "Comparte un informe compatible para gestionar su enlace aquí.", "deletedReport": "Informe eliminado o caducado", "more": "Cargar más", "expiresValue": "Caduca el {{date}}", "views": "{{count}} visitas", "columns": { "report": "Informe", "format": "Formato", "created": "Creado", "expires": "Caduca", "actions": "Acciones" } }
+    "center": { "title": "Exportaciones y enlaces", "description": "Descarga capturas de informes y gestiona enlaces públicos.", "tabsLabel": "Secciones del centro de exportación", "downloads": "Descargas", "shares": "Enlaces", "disabledTitle": "Las nuevas exportaciones están pausadas", "disabledBody": "Los archivos existentes pueden seguir disponibles, pero ahora no se pueden crear archivos ni enlaces nuevos.", "emptyDownloadsTitle": "Todavía no hay exportaciones guardadas", "emptyDownloadsBody": "Crea una desde cualquier informe con Exportar o compartir.", "emptySharesTitle": "Todavía no hay enlaces compartidos", "emptySharesBody": "Comparte un informe compatible para gestionar su enlace aquí.", "deletedReport": "Informe eliminado o caducado", "noSite": "Toda la cuenta", "more": "Cargar más", "expiresValue": "Caduca el {{date}}", "views": "{{count}} visitas", "columns": { "report": "Informe", "site": "Sitio", "format": "Formato", "created": "Creado", "expires": "Caduca", "actions": "Acciones" } }
   },
   "publicShare": {
     "report": "Informe compartido",
@@ -247,7 +253,10 @@
       "pageSpeed": "Aún no hay datos de velocidad de visitantes reales para este sitio.",
       "localSeo": "Añade una ficha de negocio o una fuente de reseñas para comprobar esto.",
       "aiVisibility": "Sigue prompts de IA para comprobar esto.",
-      "generic": "El rastreo no devolvió datos suficientes para comprobar esto."
+      "generic": "El rastreo no devolvió datos suficientes para comprobar esto.",
+      "probeUnreachable": "No pudimos acceder a {{file}} en tu sitio, así que no se pudo comprobar esto.",
+      "probeBlocked": "Tu sitio rechazó nuestra solicitud de {{file}} (HTTP {{status}}), así que no se pudo comprobar esto.",
+      "probeHttpError": "Tu sitio respondió con HTTP {{status}} para {{file}}, así que no se pudo comprobar esto."
     }
   },
   "pending": {

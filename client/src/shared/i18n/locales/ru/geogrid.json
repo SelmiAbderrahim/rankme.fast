@@ -13,7 +13,7 @@
     "longitude": "Долгота центра",
     "spacing": "Шаг между точками",
     "spacingOption": "{{km}} км",
-    "spacingCustom": "Шаг в метрах",
+    "spacingCustom": "Свой шаг (м)",
     "size": "Размер сетки",
     "sizeOption": "{{size}} на {{size}} ({{cells}} точек)",
     "zoom": "Масштаб карты",

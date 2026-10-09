@@ -42,6 +42,7 @@
     "description": "选择要监控的内容与发送去向。",
     "site": "站点",
     "sitePlaceholder": "选择站点",
+    "siteRequired": "请选择一个网站以创建规则。",
     "type": "提醒类型",
     "threshold": "位次阈值",
     "thresholdHint": "当确认后的排名跌至该位次或更低时提醒你。",
@@ -81,7 +82,7 @@
       "no_transport": "本部署未配置邮件服务。",
       "rule_disabled": "触发时该规则处于停用状态。",
       "retries_exhausted": "三次失败后已停止重试。",
-      "flag_disabled": "运营方已关闭提醒功能。"
+      "flag_disabled": "管理员已关闭提醒功能。"
     },
     "error": {
       "transport_unavailable": "无法连接该渠道。",

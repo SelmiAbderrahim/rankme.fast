@@ -6,7 +6,7 @@
  * refresh (live region + follow-up GET), range select refetch, and RTL.
  */
 import { beforeEach, describe, expect, it, vi, type Mock } from 'vitest';
-import { render, screen, waitFor, within } from '@testing-library/react';
+import { cleanup, render, screen, waitFor, within } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { Provider } from 'react-redux';
 import { I18nextProvider } from 'react-i18next';
@@ -375,6 +375,31 @@ describe('GoogleAnalyticsSummaryCard — data states', () => {
       'Previous period: 300 sessions · 250 active users',
     );
     expect(screen.getByText(/Data through/)).toBeInTheDocument();
+  });
+
+  it('marks the export as empty only when the summary carries no sessions, users, channels or pages', () => {
+    renderWith(
+      makeStore({ connection: configured, analytics: loadedAnalytics({ summary }) }),
+    );
+    expect(screen.queryByText('Nothing to export yet')).not.toBeInTheDocument();
+    cleanup();
+
+    renderWith(
+      makeStore({
+        connection: configured,
+        analytics: loadedAnalytics({
+          summary: {
+            ...summary,
+            totalSessions: 0,
+            totalActiveUsers: 0,
+            channels: [],
+            topPages: [],
+          },
+        }),
+      }),
+    );
+    expect(screen.getByText('Nothing to export yet')).toBeInTheDocument();
+    expect(screen.getByRole('button', { name: 'Export or share' })).toBeDisabled();
   });
 
   it('hides the previous-period line when the server has no prior window', () => {

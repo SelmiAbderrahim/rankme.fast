@@ -21,7 +21,7 @@
       "email": "Email",
       "role": "Роль",
       "status": "Статус",
-      "invitedAt": "Приглашён",
+      "invitedAt": "Приглашён / присоединился",
       "expiresAt": "Истекает",
       "access": "Доступ к сайтам"
     },
@@ -61,14 +61,20 @@
     "searchPlaceholder": "Поиск по адресу",
     "previous": "Назад",
     "next": "Далее",
-    "pageOf": "Страница {{page}} из {{totalPages}} · участников: {{total}}",
+    "pageOf_zero": "Страница {{page}} из {{totalPages}} · {{count}} участника",
+    "pageOf_one": "Страница {{page}} из {{totalPages}} · {{count}} участник",
+    "pageOf_two": "Страница {{page}} из {{totalPages}} · {{count}} участника",
+    "pageOf_few": "Страница {{page}} из {{totalPages}} · {{count}} участника",
+    "pageOf_many": "Страница {{page}} из {{totalPages}} · {{count}} участников",
+    "pageOf_other": "Страница {{page}} из {{totalPages}} · {{count}} участника",
     "edit": {
       "title": "Изменить доступ участника",
       "description": "Измените роль и доступные сайты для {{email}}.",
       "save": "Сохранить доступ",
       "saving": "Сохранение…",
       "cancel": "Отмена"
-    }
+    },
+    "joinedOn": "Присоединился {{date}}"
   },
   "accept": {
     "title": "Принять приглашение",
@@ -114,7 +120,12 @@
     "required": "Выберите хотя бы один сайт.",
     "empty": "Добавьте сайт, прежде чем создавать приглашение с ограниченным доступом.",
     "loadFailed": "Не удалось загрузить сайты, доступные для этого приглашения.",
-    "siteCount": "Сайтов: {{count}}"
+    "siteCount_zero": "{{count}} сайта",
+    "siteCount_one": "{{count}} сайт",
+    "siteCount_two": "{{count}} сайта",
+    "siteCount_few": "{{count}} сайта",
+    "siteCount_many": "{{count}} сайтов",
+    "siteCount_other": "{{count}} сайта"
   },
   "decision": {
     "loading": "Проверяем приглашение…",

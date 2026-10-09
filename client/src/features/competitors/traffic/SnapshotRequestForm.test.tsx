@@ -1,5 +1,5 @@
 import { beforeEach, describe, expect, it, vi } from 'vitest';
-import { render, screen, waitFor, within } from '@testing-library/react';
+import { cleanup, render, screen, waitFor, within } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { configureStore } from '@reduxjs/toolkit';
 import { Provider } from 'react-redux';
@@ -78,6 +78,10 @@ describe('SnapshotRequestForm', () => {
     const card = await screen.findByTestId('traffic-preview');
     expect(within(card).getByText('example.com: Cached')).toBeVisible();
     expect(within(card).queryByRole('link')).not.toBeInTheDocument();
+    expect(within(card).getByText('Domain').nextSibling).toHaveTextContent('example.com');
+    // Confirm / Cancel live in the card footer, not detached beneath it.
+    expect(within(card).getByRole('button', { name: 'Confirm snapshot' })).toBeVisible();
+    expect(within(card).getByRole('button', { name: 'Cancel' })).toBeVisible();
 
     await user.click(screen.getByRole('button', { name: 'Confirm snapshot' }));
     await waitFor(() =>
@@ -244,7 +248,62 @@ describe('SpendPreviewCard', () => {
 
     renderCard({}, false);
     expect(screen.getByTestId('traffic-preview')).toHaveTextContent(
-      "This request uses the operator's configured traffic-data provider.",
+      "This request uses the configured traffic-data provider.",
     );
+  });
+
+  it('says the allowance is not metered when the server sends no numbers', () => {
+    renderCard({}, false);
+    const card = screen.getByTestId('traffic-preview');
+    expect(within(card).getByText('Allowance impact')).toBeVisible();
+    expect(within(card).getByTestId('traffic-preview-impact')).toHaveTextContent(
+      'Not metered on this server',
+    );
+    expect(within(card).getByText('Market')).toBeVisible();
+    expect(within(card).queryByText('Base allowance remaining')).not.toBeInTheDocument();
+    expect(within(card).queryByText('Domain')).not.toBeInTheDocument();
+  });
+
+  it('shows units, remaining allowance, market and domain when the server meters usage', () => {
+    renderCard(
+      preview({ productUnits: 2, remainingBaseUnits: 1234, remainingPackUnits: 0 }),
+      false,
+    );
+    const card = screen.getByTestId('traffic-preview');
+    expect(within(card).getByTestId('traffic-preview-impact')).toHaveTextContent(
+      '2 traffic snapshot units',
+    );
+    expect(within(card).getByText('Base allowance remaining').nextSibling).toHaveTextContent('1,234');
+    expect(within(card).getByText('Pack allowance remaining').nextSibling).toHaveTextContent('0');
+    expect(within(card).getByText('United States · English')).toBeVisible();
+    expect(within(card).queryByText('Not metered on this server')).not.toBeInTheDocument();
+  });
+
+  it('falls back to the breakdown length, then one unit, for the metered unit count', () => {
+    const first = renderCard(preview({ remainingBaseUnits: 5 }), false);
+    expect(screen.getByTestId('traffic-preview-impact')).toHaveTextContent('1 traffic snapshot unit');
+    first.unmount();
+    renderCard({ remainingPackUnits: 5 }, false);
+    expect(screen.getByTestId('traffic-preview-impact')).toHaveTextContent('1 traffic snapshot unit');
+  });
+
+  it('renders the domain and puts actions in the card footer', () => {
+    renderCard(preview(), false);
+    expect(screen.queryByRole('button')).not.toBeInTheDocument();
+    cleanup();
+    render(
+      <I18nextProvider i18n={i18n}>
+        <SpendPreviewCard
+          preview={preview()}
+          loading={false}
+          domain="example.com"
+          actions={<button type="button">Go</button>}
+        />
+      </I18nextProvider>,
+    );
+    const card = screen.getByTestId('traffic-preview');
+    expect(within(card).getByText('Domain').nextSibling).toHaveTextContent('example.com');
+    const footer = card.querySelector('[data-slot="card-footer"]') as HTMLElement;
+    expect(within(footer).getByRole('button', { name: 'Go' })).toBeVisible();
   });
 });

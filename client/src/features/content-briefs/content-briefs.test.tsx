@@ -238,7 +238,7 @@ describe('content briefs list and request flow', () => {
     await userEvent.type(input, '  Evidence   Led SEO  ');
     await userEvent.click(screen.getByRole('button', { name: 'Review estimate' }));
     expect(await screen.findByTestId('content-brief-preview')).toHaveTextContent(
-      'Plan usage limits are not metered in self-hosted mode.',
+      "Usage limits aren't applied on this server.",
     );
     expect(api.previewContentBrief).toHaveBeenCalledWith(
       's1',

@@ -209,5 +209,13 @@
         "warnings": "{{n}} warnings"
       }
     }
+  },
+  "required": {
+    "title": "Connect Google Search Console",
+    "cta": "Connect Google Search Console",
+    "body": {
+      "cannibalization": "Keyword cannibalization reports are built from your Search Console data. Connect Search Console for this site to generate one. Reports you already saved stay readable.",
+      "internalLinks": "Internal link suggestions use your Search Console queries to choose which pages matter. Connect Search Console for this site to get suggestions based on real searches."
+    }
   }
 }

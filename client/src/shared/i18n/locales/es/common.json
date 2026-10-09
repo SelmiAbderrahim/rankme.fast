@@ -6,9 +6,9 @@
   "yes": "Sí",
   "no": "No",
   "capacity": {
-    "selfHost": "Los límites de uso del plan no se contabilizan en el modo autoalojado.",
+    "selfHost": "En este servidor no se aplican límites de uso.",
     "selfHostPlan": "Autoalojado",
-    "selfHostSlots": "{{used}} en uso; los límites del plan no se contabilizan en el modo autoalojado."
+    "selfHostSlots": "{{used}} en uso; en este servidor no se aplican límites de uso."
   },
   "logPanel": {
     "title": "Salida de la copia",
@@ -46,11 +46,13 @@
     "team": "Equipo",
     "admin": "Administración",
     "superadmin": "Plataforma",
-    "startFree": "Empezar gratis"
+    "startFree": "Empezar gratis",
+    "openApp": "Abrir la aplicación"
   },
   "footer": {
     "copyright": "© {{year}}, {{brand}}. Todos los derechos reservados.",
-    "version": "Versión v{{version}} · {{stage}}"
+    "version": "Versión v{{version}} · {{stage}}",
+    "analyticsPreferences": "Preferencias de analítica"
   },
   "theme": {
     "toggle": "Cambiar tema",
@@ -125,6 +127,10 @@
     "groupAccount": "Cuenta",
     "groupAdmin": "Administración",
     "search": "Buscar",
+    "searchPlaceholder": "Buscar páginas y sitios",
+    "searchNoResults": "Sin resultados para «{{query}}»",
+    "searchGroupPages": "Páginas",
+    "searchGroupSites": "Sitios",
     "notifications": "Notificaciones",
     "account": "Menú de cuenta",
     "profile": "Perfil",
@@ -135,7 +141,8 @@
     "upgradeTitle": "Desbloquea más auditorías",
     "upgradeBody": "Mejora tu plan para límites más altos e informes más detallados.",
     "upgradeCta": "Mejorar plan",
-    "groupSuperAdmin": "Plataforma"
+    "groupSuperAdmin": "Plataforma",
+    "opensInNewTab": "Se abre en una pestaña nueva"
   },
   "locked": "Bloqueado",
   "retry": "Reintentar",
@@ -265,5 +272,12 @@
   },
   "routeError": {
     "title": "Algo salió mal"
+  },
+  "analyticsConsent": {
+    "label": "Consentimiento de analítica",
+    "title": "¿Nos ayudas a mejorar RankMeFast?",
+    "message": "Nos gustaría usar Google Analytics para contar las visitas a las páginas. Nunca recibe identificadores de sitio, pestañas elegidas ni títulos de página. No se carga nada si no aceptas, y puedes cambiar de opinión en cualquier momento.",
+    "accept": "Aceptar analítica",
+    "decline": "No, gracias"
   }
 }

@@ -50,6 +50,62 @@ beforeEach(() => {
   useSession.mockReturnValue({ data: { session: { token: 'cur' }, user: { id: 'u1' } }, isPending: false });
 });
 
+const CHROME_MAC =
+  'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/154.0.0.0 Safari/537.36';
+
+describe('ActiveSessions device labels', () => {
+  it('shows "Browser on OS" instead of the raw user-agent, keeping the raw text as a tooltip', async () => {
+    listSessions.mockResolvedValue(ok([sess('cur', CHROME_MAC)]));
+    renderWithLocale();
+    const label = await screen.findByText('Chrome 154 on macOS');
+    expect(label).toHaveAttribute('title', CHROME_MAC);
+    expect(screen.queryByText(/Mozilla\/5\.0/)).not.toBeInTheDocument();
+    expect(screen.getByText('This device')).toBeInTheDocument();
+  });
+
+  it('names just the part it recognises', async () => {
+    listSessions.mockResolvedValue(
+      ok([sess('a', 'Mozilla/5.0 (X11; Linux x86_64) Gecko/20100101'), sess('b', 'Firefox/131.0')]),
+    );
+    renderWithLocale();
+    expect(await screen.findByText('Linux')).toBeInTheDocument();
+    expect(screen.getByText('Firefox 131')).toBeInTheDocument();
+  });
+
+  it('falls back to the raw agent, truncated when long', async () => {
+    const long = `custom-client/1.0 ${'x'.repeat(200)}`;
+    listSessions.mockResolvedValue(ok([sess('a', 'curl/8.4.0'), sess('b', long)]));
+    renderWithLocale();
+    expect(await screen.findByText('curl/8.4.0')).toBeInTheDocument();
+    expect(screen.getByText(`${long.slice(0, 80)}…`)).toBeInTheDocument();
+  });
+
+  it('shows the last-active time when the session carries one, and omits it otherwise', async () => {
+    listSessions.mockResolvedValue(
+      ok([
+        { ...sess('cur', CHROME_MAC), updatedAt: '2026-10-05T10:30:00.000Z' },
+        sess('other', 'curl/8.4.0'),
+      ]),
+    );
+    renderWithLocale();
+    await screen.findByText('Chrome 154 on macOS');
+    const expected = new Intl.DateTimeFormat('en', {
+      dateStyle: 'medium',
+      timeStyle: 'short',
+    }).format(new Date('2026-10-05T10:30:00.000Z'));
+    expect(screen.getByText(`Last active ${expected}`)).toBeInTheDocument();
+    expect(screen.getAllByText(/Last active/)).toHaveLength(1);
+  });
+
+  it('uses createdAt when updatedAt is absent', async () => {
+    listSessions.mockResolvedValue(
+      ok([{ ...sess('cur', CHROME_MAC), createdAt: '2026-10-01T08:00:00.000Z' }]),
+    );
+    renderWithLocale();
+    expect(await screen.findByText(/Last active/)).toBeInTheDocument();
+  });
+});
+
 describe('ActiveSessions', () => {
   it('shows a loading skeleton while the session list is in flight', () => {
     listSessions.mockReturnValue(new Promise(() => {}));

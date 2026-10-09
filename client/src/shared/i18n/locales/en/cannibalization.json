@@ -79,11 +79,6 @@
       "title": "Waiting for the next sync",
       "body": "We have not stored Search Console query and page rows for this window yet. They arrive with the next sync."
     },
-    "disconnected": {
-      "title": "Connect Search Console",
-      "body": "Connect a Search Console property before generating a new report. Stored reports stay readable.",
-      "link": "Connect Search Console"
-    },
     "cap": {
       "title": "Monthly allowance used",
       "body": "You have used every cannibalization report on your plan this month.",

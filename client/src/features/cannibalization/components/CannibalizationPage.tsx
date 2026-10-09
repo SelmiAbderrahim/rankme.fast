@@ -1,5 +1,6 @@
 import { useEffect, useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
+import { GscRequiredNotice } from '@features/google';
 import { ReportExportControl } from '@features/report-export';
 import { useAppDispatch, useAppSelector } from '@shared/hooks/redux';
 import { Label } from '@shared/ui/label';
@@ -78,7 +79,7 @@ export const CannibalizationPage = ({ siteId }: CannibalizationPageProps) => {
 
   useEffect(() => {
     void dispatch(loadCannibalizationPrerequisites(siteId));
-  }, [dispatch]);
+  }, [dispatch, siteId]);
 
   useEffect(() => {
     void dispatch(loadCannibalizationReports({ siteId, windowDays: url.window }));
@@ -111,8 +112,8 @@ export const CannibalizationPage = ({ siteId }: CannibalizationPageProps) => {
   };
 
   return (
-    <main className="mx-auto flex w-full max-w-6xl flex-col gap-6 p-6">
-      <header className="flex flex-wrap items-start justify-between gap-3">
+    <div className="flex w-full min-w-0 flex-col gap-6" data-testid="cannibalization-page">
+      <div className="flex flex-wrap items-start justify-between gap-3">
         <div className="flex flex-col gap-2">
           <h1 className="text-2xl font-semibold tracking-tight">{t('title')}</h1>
           <p className="text-muted-foreground text-sm">{t('subtitle')}</p>
@@ -124,7 +125,7 @@ export const CannibalizationPage = ({ siteId }: CannibalizationPageProps) => {
             selection={{ confidence: url.confidence }}
           />
         ) : null}
-      </header>
+      </div>
 
       <div className="flex flex-wrap items-end gap-4">
         <div className="flex flex-col gap-1">
@@ -175,7 +176,7 @@ export const CannibalizationPage = ({ siteId }: CannibalizationPageProps) => {
           {sitesStatus === 'loading' ? (
             <Skeleton className="h-32 w-full" data-testid="cannibalization-new-loading" />
           ) : gscConnected === false ? (
-            <StateNotice kind="disconnected" />
+            <GscRequiredNotice siteId={siteId} tool="cannibalization" />
           ) : gscConnected === null ? (
             <StateNotice kind="failed" />
           ) : (
@@ -208,7 +209,11 @@ export const CannibalizationPage = ({ siteId }: CannibalizationPageProps) => {
             <StateNotice kind={listGate.kind} message={listGate.message} />
           ) : null}
           {listStatus === 'succeeded' && reports.length === 0 ? (
-            <StateNotice kind="empty" />
+            gscConnected === false ? (
+              <GscRequiredNotice siteId={siteId} tool="cannibalization" />
+            ) : (
+              <StateNotice kind="empty" />
+            )
           ) : null}
           {reports.length > 0 ? (
             <ReportListTable
@@ -249,6 +254,6 @@ export const CannibalizationPage = ({ siteId }: CannibalizationPageProps) => {
           ) : null}
         </TabsContent>
       </Tabs>
-    </main>
+    </div>
   );
 };

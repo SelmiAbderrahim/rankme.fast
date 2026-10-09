@@ -22,7 +22,9 @@
     "source": "Fuente",
     "severity": "Gravedad",
     "confidence": "Confianza",
-    "effort": "Esfuerzo"
+    "effort": "Esfuerzo",
+    "noMatchTitle": "Ninguna acción coincide con estos filtros",
+    "noMatchBody": "Cambia o restablece los filtros para ver más acciones."
   },
   "pagination": {
     "previous": "Anterior",
@@ -81,7 +83,8 @@
     "evidenceLink": "Abrir fuente de la evidencia",
     "history": "Historial",
     "retest": "Reanalizar",
-    "affectedSample": "(se muestran {{shown}})"
+    "affectedSample": "(se muestran {{shown}})",
+    "noteLabel": "Nota"
   },
   "transitions": {
     "planned": "Planificar",
@@ -114,7 +117,8 @@
     "empty": "Aún no hay cambios registrados.",
     "actor": "Miembro del equipo",
     "from": "desde {{state}}",
-    "close": "Cerrar"
+    "close": "Cerrar",
+    "actorYou": "Tú"
   },
   "retest": {
     "title": "¿Reanalizar este hallazgo?",
@@ -122,7 +126,7 @@
     "unitsLabel": "Auditorías que se usarán",
     "unitsValue": "1",
     "freshRun": "Un reanálisis siempre rastrea de nuevo — los resultados nunca provienen de una caché.",
-    "selfHosted": "Los límites de uso del plan no se miden en el modo autoalojado.",
+    "selfHosted": "En este servidor no se aplican límites de uso.",
     "remaining": "Quedan {{remaining}} de {{cap}} auditorías en este período",
     "allowanceUnknown": "No pudimos cargar tu saldo restante. El servidor comprobará tu límite antes de ejecutar de todos modos.",
     "confirm": "Iniciar reanálisis",

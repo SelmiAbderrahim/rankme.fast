@@ -86,7 +86,9 @@ export const PagePicker = ({
                   >
                     <span className="font-mono text-xs break-all" dir="ltr">{page.url}</span>
                     {page.title ? (
-                      <span className="text-muted-foreground text-xs">{page.title}</span>
+                      <span className="text-muted-foreground text-xs" dir="auto">
+                        {page.title}
+                      </span>
                     ) : null}
                     <span className="text-muted-foreground text-xs">
                       {page.hasStructuredData

@@ -2,6 +2,7 @@
  * Country + language pickers shared by the workspace forms.
  */
 import { useEffect } from 'react';
+import { NativeSelect } from '@shared/ui/native-select';
 import { useTranslation } from 'react-i18next';
 import {
   CountryCombobox,
@@ -61,12 +62,11 @@ export const MarketSelects = ({
           if (market?.locationCode) onLocationChange(market.locationCode);
         }}
       />
-      <select
+      <NativeSelect
         aria-label={t('keywordResearch:languageLabel')}
         value={languageCode}
         onChange={(e) => onLanguageChange(e.target.value)}
         disabled={catalog.loading || catalog.error}
-        className="border-input h-9 cursor-pointer rounded-md border px-2 text-sm"
         data-testid={`${testIdPrefix}-language`}
       >
         {languages.map((language) => (
@@ -74,7 +74,7 @@ export const MarketSelects = ({
             {languageName(language, i18n.language) ?? language}
           </option>
         ))}
-      </select>
+      </NativeSelect>
       {catalog.error ? (
         <p className="text-destructive basis-full text-sm" role="alert">
           {t('common:market.loadError')}

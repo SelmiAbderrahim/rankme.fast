@@ -6,9 +6,9 @@
   "yes": "نعم",
   "no": "لا",
   "capacity": {
-    "selfHost": "لا تُقاس حدود استخدام الخطة في وضع الاستضافة الذاتية.",
+    "selfHost": "لا تُطبَّق حدود الاستخدام على هذا الخادم.",
     "selfHostPlan": "استضافة ذاتية",
-    "selfHostSlots": "المستخدم: {{used}}؛ لا تُقاس حدود الخطة في وضع الاستضافة الذاتية."
+    "selfHostSlots": "المستخدم: {{used}}؛ لا تُطبَّق حدود الاستخدام على هذا الخادم."
   },
   "logPanel": {
     "title": "مخرجات النسخ الاحتياطي",
@@ -46,11 +46,13 @@
     "team": "الفريق",
     "admin": "الإدارة",
     "superadmin": "المنصة",
-    "startFree": "ابدأ مجانًا"
+    "startFree": "ابدأ مجانًا",
+    "openApp": "فتح التطبيق"
   },
   "footer": {
     "copyright": "© {{year}}، {{brand}}. جميع الحقوق محفوظة.",
-    "version": "الإصدار v{{version}} · {{stage}}"
+    "version": "الإصدار v{{version}} · {{stage}}",
+    "analyticsPreferences": "تفضيلات التحليلات"
   },
   "theme": {
     "toggle": "تبديل السمة",
@@ -125,6 +127,10 @@
     "groupAccount": "الحساب",
     "groupAdmin": "الإدارة",
     "search": "بحث",
+    "searchPlaceholder": "ابحث في الصفحات والمواقع",
+    "searchNoResults": "لا نتائج لـ «{{query}}»",
+    "searchGroupPages": "الصفحات",
+    "searchGroupSites": "المواقع",
     "notifications": "الإشعارات",
     "account": "قائمة الحساب",
     "profile": "الملف الشخصي",
@@ -135,7 +141,8 @@
     "upgradeTitle": "افتح المزيد من عمليات التدقيق",
     "upgradeBody": "قم بالترقية للحصول على حدود أعلى وتقارير أعمق.",
     "upgradeCta": "ترقية",
-    "groupSuperAdmin": "المنصة"
+    "groupSuperAdmin": "المنصة",
+    "opensInNewTab": "يفتح في علامة تبويب جديدة"
   },
   "locked": "مقفل",
   "retry": "حاول مرة أخرى",
@@ -265,5 +272,12 @@
   },
   "routeError": {
     "title": "حدث خطأ ما"
+  },
+  "analyticsConsent": {
+    "label": "الموافقة على التحليلات",
+    "title": "هل تساعدنا على تحسين RankMeFast؟",
+    "message": "نود استخدام Google Analytics لإحصاء زيارات الصفحات. لا يستلم أبداً معرّفات المواقع أو اختيارات علامات التبويب أو عناوين الصفحات. لا يتم تحميل أي شيء ما لم توافق، ويمكنك تغيير رأيك في أي وقت.",
+    "accept": "قبول التحليلات",
+    "decline": "لا، شكراً"
   }
 }

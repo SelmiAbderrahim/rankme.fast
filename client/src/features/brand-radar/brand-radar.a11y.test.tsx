@@ -143,6 +143,15 @@ describe('Brand Radar RTL-safe styling', () => {
     expect(source.default).not.toMatch(/(?:^|["' \t]|:)(?:left|right)-\d/);
   });
 
+  it('adds no page gutter of its own inside the site workspace', async () => {
+    routeApi();
+    renderPage();
+    const page = await screen.findByTestId('brand-radar-page');
+    for (const cls of ['p-6', 'p-4', 'sm:p-6', 'mx-auto', 'max-w-6xl']) {
+      expect(page).not.toHaveClass(cls);
+    }
+  });
+
   it('renders the workspace in Arabic under a right-to-left document', async () => {
     routeApi();
     await changeLanguage('ar');

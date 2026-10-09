@@ -6,6 +6,8 @@
     "title": "Conversaciones",
     "new": "Nueva conversación",
     "label": "Conversaciones con el asistente",
+    "showList": "Mostrar conversaciones ({{count}})",
+    "hideList": "Ocultar conversaciones",
     "empty": "Aún no hay conversaciones.",
     "untitled": "Nueva conversación",
     "deleteLabel": "Eliminar {{title}}",
@@ -46,6 +48,7 @@
     "user": "Tu mensaje",
     "assistant": "Respuesta del asistente",
     "streaming": "El asistente está respondiendo",
+    "stopped": "Respuesta detenida",
     "loading": "Cargando conversación…"
   },
   "tool": {

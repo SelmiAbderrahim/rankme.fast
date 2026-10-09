@@ -191,6 +191,14 @@ export interface ApiClientOptions extends Omit<RequestInit, 'body'> {
 export interface ApiFetchOptions extends RequestInit, ApiContextOptions {
   allowLegacyNullContentLanguage?: boolean;
   timeoutMs?: number | null;
+  /**
+   * Attach the shared double-submit CSRF token and, when the server answers
+   * `403 CSRF_INVALID`, refresh it and re-send the request exactly once.
+   * Required for cookie-authenticated mutations (SSE, PDF) that cannot use
+   * `apiClient`. The body must be re-sendable (string, FormData, Blob) because
+   * the retry reuses it; a consumed stream cannot be retried.
+   */
+  csrf?: boolean;
 }
 
 const MUTATING_METHODS = new Set(['POST', 'PUT', 'PATCH', 'DELETE']);
@@ -339,6 +347,36 @@ const cacheCsrfToken = (token: string): string => {
   return token;
 };
 
+/**
+ * Every `GET /security/csrf-token` ROTATES the server cookie, which silently
+ * invalidates any token already cached or in flight. So the token is fetched
+ * only when missing/expired or after the server reports `CSRF_INVALID`, and
+ * concurrent callers share one fetch instead of racing each other's cookies.
+ */
+let csrfInflight: Promise<string> | null = null;
+
+const CSRF_INVALID_CODE = 'CSRF_INVALID';
+
+/** True for the server's `403 { error: { code: 'CSRF_INVALID' } }` envelope. */
+const isCsrfInvalidBody = (status: number, data: unknown): boolean => {
+  if (status !== 403 || typeof data !== 'object' || data === null) return false;
+  const body = data as { error?: unknown; errorInfo?: unknown };
+  const code = (value: unknown): unknown =>
+    typeof value === 'object' && value !== null
+      ? (value as { code?: unknown }).code
+      : undefined;
+  return code(body.error) === CSRF_INVALID_CODE || code(body.errorInfo) === CSRF_INVALID_CODE;
+};
+
+const isCsrfInvalidResponse = async (response: Response): Promise<boolean> => {
+  if (response.status !== 403) return false;
+  try {
+    return isCsrfInvalidBody(response.status, await response.clone().json());
+  } catch {
+    return false;
+  }
+};
+
 const parseResponseBody = async (response: Response): Promise<unknown> => {
   const contentType = response.headers.get('Content-Type') ?? '';
   try {
@@ -446,6 +484,7 @@ export const apiFetch = async (
     workspace,
     allowLegacyNullContentLanguage,
     timeoutMs,
+    csrf,
     headers: initialHeaders,
     ...init
   } = options;
@@ -467,25 +506,36 @@ export const apiFetch = async (
             : { presentationGeneration }),
         })
       : context;
-  const headers = new Headers(initialHeaders);
-  for (const [name, value] of apiContextHeaders(path, {
-    localeMode: resolvedContext.mode,
-    ...(resolvedContext.locale ? { locale: resolvedContext.locale } : {}),
-    ...(workspace === undefined ? {} : { workspace }),
-  })) {
-    if (!headers.has(name)) headers.set(name, value);
-  }
-  return fetchWithLocaleContract(
-    path,
-    { ...init, headers },
-    resolvedContext,
-    {
-      ...(allowLegacyNullContentLanguage === undefined
-        ? {}
-        : { allowLegacyNullContentLanguage }),
-      ...(timeoutMs === undefined ? {} : { timeoutMs }),
-    },
-  );
+  const send = (csrfToken: string | null): Promise<Response> => {
+    const headers = new Headers(initialHeaders);
+    if (csrfToken !== null) headers.set(CSRF_HEADER, csrfToken);
+    for (const [name, value] of apiContextHeaders(path, {
+      localeMode: resolvedContext.mode,
+      ...(resolvedContext.locale ? { locale: resolvedContext.locale } : {}),
+      ...(workspace === undefined ? {} : { workspace }),
+    })) {
+      if (!headers.has(name)) headers.set(name, value);
+    }
+    return fetchWithLocaleContract(
+      path,
+      { ...init, headers },
+      resolvedContext,
+      {
+        ...(allowLegacyNullContentLanguage === undefined
+          ? {}
+          : { allowLegacyNullContentLanguage }),
+        ...(timeoutMs === undefined ? {} : { timeoutMs }),
+      },
+    );
+  };
+  if (csrf !== true) return send(null);
+
+  const token = await getCsrfToken();
+  const response = await send(token);
+  // Only a CSRF rejection is retried, and only once: any other 403 (role,
+  // plan, ownership) would fail identically and a second CSRF 403 is final.
+  if (!(await isCsrfInvalidResponse(response))) return response;
+  return send(await refreshCsrfToken(token));
 };
 
 /**
@@ -557,20 +607,22 @@ export const apiClient = async <T = unknown>(
   };
 
   let response: Response;
+  let data: unknown;
   if (needsCsrf) {
-    const csrfToken = getCachedCsrfToken() ?? cacheCsrfToken(await fetchCsrfToken());
+    const csrfToken = await getCsrfToken();
     response = await doFetch(csrfToken);
-    // A 403 on a mutating request most likely means the cached token was
-    // rotated (server restart, cookie cleared). Refresh once and retry.
-    if (response.status === 403) {
-      csrfCache = null;
-      response = await doFetch(cacheCsrfToken(await fetchCsrfToken()));
+    data = await parseResponseBody(response);
+    // `403 CSRF_INVALID` means the cached token no longer matches the cookie
+    // (rotated by another tab/request, server restart, cookie cleared).
+    // Refresh and re-send exactly once; other 403s are real refusals.
+    if (isCsrfInvalidBody(response.status, data)) {
+      response = await doFetch(await refreshCsrfToken(csrfToken));
+      data = await parseResponseBody(response);
     }
   } else {
     response = await doFetch(null);
+    data = await parseResponseBody(response);
   }
-
-  const data = await parseResponseBody(response);
 
   const responseBecameStale =
     !isCurrentRequestLocale(localeContext) &&
@@ -605,15 +657,44 @@ export const apiClient = async <T = unknown>(
 /** Test-only: reset the module-scope CSRF token cache. */
 export const __resetCsrfTokenCacheForTests = (): void => {
   csrfCache = null;
+  csrfInflight = null;
+};
+
+/** Test-only: pre-seed the cache so suites that stub `fetch` need no token round-trip. */
+export const __seedCsrfTokenForTests = (token: string): void => {
+  cacheCsrfToken(token);
 };
 
 /**
- * Fetch a fresh double-submit CSRF token from the server. The GET response
- * also sets the matching cookie (`credentials: 'include'`), so the returned
- * token + cookie form the pair `requireCsrf` compares. Called automatically by
- * `apiClient` when `{ csrf: true }` is passed.
+ * Fetch a fresh double-submit CSRF token from the server and make it the
+ * cached one. The GET response also sets the matching cookie
+ * (`credentials: 'include'`), so the returned token + cookie form the pair
+ * `requireCsrf` compares. Concurrent calls share one request.
  */
-export const fetchCsrfToken = async (): Promise<string> => {
-  const { csrfToken } = await apiClient<{ csrfToken: string }>('/security/csrf-token');
-  return csrfToken;
+export const fetchCsrfToken = (): Promise<string> => {
+  csrfInflight ??= (async () => {
+    try {
+      const { csrfToken } = await apiClient<{ csrfToken: string }>('/security/csrf-token');
+      return cacheCsrfToken(csrfToken);
+    } finally {
+      csrfInflight = null;
+    }
+  })();
+  return csrfInflight;
+};
+
+/** The cached CSRF token, fetched only when missing or expired. */
+export const getCsrfToken = async (): Promise<string> =>
+  getCachedCsrfToken() ?? fetchCsrfToken();
+
+/**
+ * Replace a token the server rejected. When another request already refreshed
+ * the cache while this one was in flight, reuse that token: fetching again
+ * would rotate the cookie and invalidate the other request's retry.
+ */
+const refreshCsrfToken = async (rejectedToken: string): Promise<string> => {
+  const current = getCachedCsrfToken();
+  if (current !== null && current !== rejectedToken) return current;
+  csrfCache = null;
+  return fetchCsrfToken();
 };

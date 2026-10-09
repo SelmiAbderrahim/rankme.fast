@@ -155,6 +155,10 @@ export interface TeamState {
 export interface TeamInboxState {
   invitations: PendingInvitation[];
   status: 'idle' | 'loading' | 'loaded' | 'failed';
+  /** True while a list request is in flight; concurrent loads are skipped. */
+  fetching: boolean;
+  /** Epoch ms of the last settled list request (success or failure). */
+  lastFetchedAt: number | null;
   actionId: string | null;
   error: string;
   message: string;

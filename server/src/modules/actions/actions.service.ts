@@ -6,6 +6,7 @@ import { hashActionId, buildSourceLink, legacyAuditActionId, } from './actions.i
 import { ACTION_MAX_AFFECTED_URLS, compareActions, } from './actions.orders.js';
 import { getSourceReaders, type SourceReaderResult, } from './actions.registry.js';
 import { findLatestEventsForActions, listEventsForAction, } from './actions.events.repo.js';
+import { resolveWorkspaceActors } from '../team/index.js';
 import type { ActionItem, CandidateAction, SourceStatusEnvelope, } from './actions.types.js';
 import type { ActionSourceType, ActionState } from '../../db/schema/action-events.js';
 import { localizeSemanticCopy, type SupportedLocale, } from '../../shared/i18n/index.js';
@@ -145,6 +146,10 @@ export async function listActionsForSite(input: ListActionsInput): Promise<ListA
             effort: candidate.effort,
             state,
             version,
+            // The note travels with the decision that produced the CURRENT
+            // state; a source-authoritative state that has since moved on does
+            // not inherit an older decision's note.
+            latestNote: overlay && overlay.newState === state ? overlay.note : null,
             reappearedAfterFix,
             observedAt: candidate.observedAt,
             lastVerifiedAt: candidate.lastVerifiedAt,
@@ -206,6 +211,13 @@ export interface ListActionHistoryInput {
     actionId: string;
     db: ApplicationDb;
     locale: SupportedLocale;
+    /** The signed-in human; marks their own entries so the UI can say "You". */
+    viewerUserId?: string;
+}
+export interface ActionHistoryActor {
+    /** Display name, or `null` when the account never set one. */
+    name: string | null;
+    email: string;
 }
 export interface ActionHistoryEntry {
     ordinal: number;
@@ -213,6 +225,14 @@ export interface ActionHistoryEntry {
     newState: ActionState;
     eventKind: string;
     actorUserId: string;
+    /**
+     * Name + email of the actor, resolved only for members of this workspace.
+     * `null` when the actor is not (or no longer) a member — the UI then shows
+     * a generic label. Never any other profile data.
+     */
+    actor: ActionHistoryActor | null;
+    /** True when the actor is the requesting user. */
+    actorIsYou: boolean;
     note: string | null;
     createdAt: string;
 }
@@ -235,6 +255,7 @@ export async function getActionHistory(input: ListActionHistoryInput): Promise<{
             : Promise.resolve([]),
     ]);
     const rows = [...legacyRows, ...currentRows].sort((a, b) => a.createdAt.getTime() - b.createdAt.getTime());
+    const actors = await resolveWorkspaceActors(input.db, input.accountId, rows.map((row) => row.actorUserId));
     return {
         entries: rows.map((row, index) => ({
             ordinal: index + 1,
@@ -242,6 +263,8 @@ export async function getActionHistory(input: ListActionHistoryInput): Promise<{
             newState: row.newState,
             eventKind: row.eventKind,
             actorUserId: row.actorUserId,
+            actor: actors.get(row.actorUserId) ?? null,
+            actorIsYou: input.viewerUserId !== undefined && row.actorUserId === input.viewerUserId,
             note: row.note,
             createdAt: row.createdAt.toISOString(),
         })),

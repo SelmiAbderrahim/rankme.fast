@@ -321,6 +321,8 @@ describe('SchemaGeneratorPanel — pickers', () => {
     expect(await screen.findByTestId('schema-audited-option-0')).toHaveTextContent(
       AUDITED_URL,
     );
+    // Crawled page titles are untrusted mixed-direction text.
+    expect(screen.getByText('A guide')).toHaveAttribute('dir', 'auto');
     // Crawl + Search Console context travels with the page row.
     expect(screen.getByTestId('schema-audited-option-0')).toHaveTextContent(
       'No structured data found',
@@ -453,7 +455,7 @@ describe('SchemaGeneratorPanel — preview then generate', () => {
     expect(screen.queryByTestId('schema-generate-button')).toBeNull();
     await userEvent.click(screen.getByTestId('schema-preview-button'));
     expect(await screen.findByTestId('schema-preview')).toHaveTextContent(
-      'Plan usage limits are not metered in self-hosted mode.',
+      "Usage limits aren't applied on this server.",
     );
     const disclosure = screen.getByTestId('schema-preview');
     const confirm = screen.getByTestId('schema-generate-button');

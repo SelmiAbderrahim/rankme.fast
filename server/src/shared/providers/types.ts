@@ -55,6 +55,25 @@ export interface AuditDomainChecks {
      * probe could not read the site's https address.
      */
     addressVariants?: AddressVariantResult[];
+    /**
+     * Why the audit's own root-file reads (robots.txt / llms.txt) gave no
+     * verdict. Absent when every read gave one. Lets the report say what
+     * happened instead of a generic "not enough data".
+     */
+    probeFailures?: SiteProbeFailures;
+}
+
+/** One root-file read that gave no usable verdict. */
+export interface SiteProbeFailure {
+    /** `blocked` = 401 / 403 / 429; `http-error` = any other unusable status; `unreachable` = no answer. */
+    reason: 'unreachable' | 'blocked' | 'http-error';
+    /** HTTP status; absent when `unreachable`. */
+    status?: number;
+}
+
+export interface SiteProbeFailures {
+    robots?: SiteProbeFailure;
+    llms?: SiteProbeFailure;
 }
 /** One probed address variant of a site (`https-canonicalization` evidence). */
 export interface AddressVariantResult {
@@ -103,9 +122,21 @@ export interface AuditPage {
     hasFaqSignals?: boolean;
     timing?: AuditPageTiming;
 }
+/**
+ * The audited site's start page answers on another host (www <-> apex, or a
+ * different domain), so every crawled URL and finding belongs to `to`.
+ */
+export interface AuditHostRedirect {
+    /** Hostname of the site as added (lowercase). */
+    from: string;
+    /** Hostname the crawl actually landed on (lowercase). */
+    to: string;
+}
 export interface AuditResult {
     domainChecks: AuditDomainChecks;
     pages: AuditPage[];
+    /** Absent = the crawl stayed on the site's own host (or it was not checked). */
+    hostRedirect?: AuditHostRedirect;
 }
 export interface AuditProvider {
     startAudit(input: StartAuditInput): Promise<{

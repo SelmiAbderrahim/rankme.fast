@@ -15,7 +15,11 @@
       "label": "Wettbewerber",
       "helper": "Wählen Sie bis zu fünf bereits für diese Website erfasste Wettbewerber.",
       "chipRemove": "{{domain}} entfernen",
-      "limit": "Maximal {{max}} Wettbewerber ausgewählt."
+      "limit": "Maximal {{max}} Wettbewerber ausgewählt.",
+      "loading": "Wettbewerber werden geladen …",
+      "empty": "Diese Website hat noch keine aktiven Wettbewerber. Füge zuerst die Wettbewerber hinzu, die du untersuchen möchtest.",
+      "openCompetitors": "Wettbewerber öffnen",
+      "loadFailed": "Die Wettbewerber konnten nicht geladen werden. Lade die Seite neu und versuche es erneut."
     },
     "topics": {
       "label": "Themen",

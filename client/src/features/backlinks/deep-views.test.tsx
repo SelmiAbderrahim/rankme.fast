@@ -544,7 +544,7 @@ describe('secondary deep-view branches', () => {
     loading.unmount();
     const selfHost = wrap(<SpendPreviewPanel preview={preview()} loading={false} />);
     expect(selfHost.container).toHaveTextContent(
-      'Plan usage limits are not metered in self-hosted mode.',
+      "Usage limits aren't applied on this server.",
     );
     selfHost.unmount();
     const empty = wrap(<SpendPreviewPanel preview={null} loading={false} />);

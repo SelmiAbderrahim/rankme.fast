@@ -25,7 +25,12 @@
     "required": "Wählen Sie mindestens eine Website aus.",
     "empty": "Fügen Sie eine Website hinzu, bevor Sie eine eingeschränkte Einladung erstellen.",
     "loadFailed": "Die für diese Einladung verfügbaren Websites konnten nicht geladen werden.",
-    "siteCount": "{{count}} Website(s)"
+    "siteCount_zero": "{{count}} Websites",
+    "siteCount_one": "{{count}} Website",
+    "siteCount_two": "{{count}} Websites",
+    "siteCount_few": "{{count}} Websites",
+    "siteCount_many": "{{count}} Websites",
+    "siteCount_other": "{{count}} Websites"
   },
   "members": {
     "heading": "Mitglieder",
@@ -33,7 +38,7 @@
       "email": "E-Mail",
       "role": "Rolle",
       "status": "Status",
-      "invitedAt": "Eingeladen",
+      "invitedAt": "Eingeladen / beigetreten",
       "expiresAt": "Läuft ab",
       "access": "Website-Zugriff"
     },
@@ -73,14 +78,20 @@
     "searchPlaceholder": "Nach E-Mail suchen",
     "previous": "Zurück",
     "next": "Weiter",
-    "pageOf": "Seite {{page}} von {{totalPages}} · {{total}} Mitglied(er)",
+    "pageOf_zero": "Seite {{page}} von {{totalPages}} · {{count}} Mitglieder",
+    "pageOf_one": "Seite {{page}} von {{totalPages}} · {{count}} Mitglied",
+    "pageOf_two": "Seite {{page}} von {{totalPages}} · {{count}} Mitglieder",
+    "pageOf_few": "Seite {{page}} von {{totalPages}} · {{count}} Mitglieder",
+    "pageOf_many": "Seite {{page}} von {{totalPages}} · {{count}} Mitglieder",
+    "pageOf_other": "Seite {{page}} von {{totalPages}} · {{count}} Mitglieder",
     "edit": {
       "title": "Zugriff des Teammitglieds bearbeiten",
       "description": "Ändern Sie Rolle und Websites für {{email}}.",
       "save": "Zugriff speichern",
       "saving": "Wird gespeichert…",
       "cancel": "Abbrechen"
-    }
+    },
+    "joinedOn": "Beigetreten am {{date}}"
   },
   "accept": {
     "title": "Einladung annehmen",

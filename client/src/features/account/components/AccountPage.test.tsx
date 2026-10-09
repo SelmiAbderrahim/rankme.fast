@@ -9,10 +9,16 @@ import { AccountPage } from './AccountPage';
 // Stub every tab body so this suite isolates the tab/URL logic.
 vi.mock('./ProfileInfoCard', () => ({ ProfileInfoCard: () => <div>PROFILE_BODY</div> }));
 vi.mock('./ExportData', () => ({ ExportData: () => <div>EXPORT_BODY</div> }));
-vi.mock('./DeleteAccount', () => ({ DeleteAccount: () => <div>DELETE_BODY</div> }));
-vi.mock('@features/auth', () => ({ SecuritySettings: () => <div>SECURITY_BODY</div> }));
+vi.mock('@features/auth', () => ({
+  SecuritySettings: ({ embedded }: { embedded?: boolean }) => (
+    <div data-embedded={String(embedded)}>SECURITY_BODY</div>
+  ),
+  DeleteAccount: () => <div>DELETE_BODY</div>,
+}));
 vi.mock('@features/settings', () => ({
-  NotificationPreferences: () => <div>NOTIF_BODY</div>,
+  NotificationPreferences: ({ embedded }: { embedded?: boolean }) => (
+    <div data-embedded={String(embedded)}>NOTIF_BODY</div>
+  ),
   ApiKeysPanel: () => <div>API_KEYS_BODY</div>,
   BrandingPanel: () => <div>BRANDING_BODY</div>,
   McpPermissionsPanel: () => <div>MCP_BODY</div>,
@@ -46,9 +52,26 @@ describe('AccountPage', () => {
     expect(screen.getByRole('heading', { name: 'Account' })).toBeInTheDocument();
   });
 
+  it('uses the same page gutter as Dashboard and Sites, left-aligned rather than centred', () => {
+    renderAt('/profile');
+    const page = screen.getByTestId('account-page');
+    expect(page).toHaveClass('px-4', 'py-8');
+    expect(page).not.toHaveClass('mx-auto');
+  });
+
   it('deep-links to a tab from ?tab=', () => {
     renderAt('/profile?tab=security');
     expect(screen.getByText('SECURITY_BODY')).toBeInTheDocument();
+  });
+
+  it('embeds the security and notifications screens so they render no second page header', () => {
+    renderAt('/profile?tab=security');
+    expect(screen.getByText('SECURITY_BODY')).toHaveAttribute('data-embedded', 'true');
+  });
+
+  it('embeds the notifications screen too', () => {
+    renderAt('/profile?tab=notifications');
+    expect(screen.getByText('NOTIF_BODY')).toHaveAttribute('data-embedded', 'true');
   });
 
   it('falls back to profile for an unknown tab value', () => {

@@ -1,4 +1,4 @@
-import type { FormEvent, KeyboardEvent } from 'react';
+import type { FormEvent, KeyboardEvent, Ref } from 'react';
 import { SendHorizontal, Square } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 import { Button } from '@shared/ui/button';
@@ -12,6 +12,8 @@ interface AssistantComposerProps {
   disabled?: boolean;
   creating?: boolean;
   streaming?: boolean;
+  /** Lets the page focus the box, e.g. after a suggestion fills it. */
+  textareaRef?: Ref<HTMLTextAreaElement>;
   onDraftChange: (value: string) => void;
   onSend: (text: string) => void;
   onStop: () => void;
@@ -23,6 +25,7 @@ export function AssistantComposer({
   disabled = false,
   creating = false,
   streaming = false,
+  textareaRef,
   onDraftChange,
   onSend,
   onStop,
@@ -51,12 +54,13 @@ export function AssistantComposer({
   };
 
   return (
-    <form className="border-t bg-card p-4" onSubmit={handleSubmit}>
+    <form className="border-t bg-card p-4 max-lg:sticky max-lg:bottom-0 max-lg:z-10" onSubmit={handleSubmit}>
       <Label htmlFor="assistant-message" className="sr-only">
         {t('composer.label')}
       </Label>
       <div className="flex items-end gap-2">
         <Textarea
+          ref={textareaRef}
           id="assistant-message"
           value={draft}
           maxLength={ASSISTANT_MESSAGE_MAX_CHARS}

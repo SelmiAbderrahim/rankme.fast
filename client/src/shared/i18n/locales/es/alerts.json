@@ -42,6 +42,7 @@
     "description": "Elige qué vigilar y adónde enviarlo.",
     "site": "Sitio",
     "sitePlaceholder": "Elige un sitio",
+    "siteRequired": "Elige un sitio para crear una regla.",
     "type": "Tipo de aviso",
     "threshold": "Umbral de posición",
     "thresholdHint": "Avisamos cuando la posición confirmada llega a este puesto o peor.",
@@ -81,7 +82,7 @@
       "no_transport": "El correo no está configurado en esta instalación.",
       "rule_disabled": "La regla estaba desactivada al dispararse.",
       "retries_exhausted": "Paramos tras tres intentos fallidos.",
-      "flag_disabled": "El operador desactivó los avisos."
+      "flag_disabled": "Un administrador desactivó los avisos."
     },
     "error": {
       "transport_unavailable": "No se pudo alcanzar el canal.",

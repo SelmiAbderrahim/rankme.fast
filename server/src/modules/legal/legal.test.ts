@@ -919,6 +919,7 @@ describe('legal / GDPR', () => {
         scheduledAt: null,
         startedAt: null,
         cancellable: false,
+        graceHours: env.ACCOUNT_DELETION_GRACE_HOURS,
       });
     });
 

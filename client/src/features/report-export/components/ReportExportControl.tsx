@@ -37,9 +37,19 @@ export interface ReportExportControlProps {
   target: ReportTarget;
   selection?: ReportViewFilters;
   disabled?: boolean;
+  /**
+   * The page has no data to export yet. The trigger renders disabled and says
+   * why ("Nothing to export yet") instead of opening a menu that would produce
+   * an empty file.
+   */
+  empty?: boolean;
   className?: string;
   locale?: SupportedLocale;
   clipboardText?: string;
+  /** Visible trigger text; defaults to "Export or share". Set it when two controls share a toolbar. */
+  label?: string;
+  /** Accessible name when it must say more than the visible `label` (for example, which item). */
+  ariaLabel?: string;
 }
 
 export function ReportExportControl({
@@ -47,9 +57,12 @@ export function ReportExportControl({
   target,
   selection = {},
   disabled = false,
+  empty = false,
   className,
   locale,
   clipboardText,
+  label,
+  ariaLabel,
 }: ReportExportControlProps) {
   const { t, i18n } = useTranslation('report');
   const dispatch = useAppDispatch();
@@ -92,6 +105,9 @@ export function ReportExportControl({
       setLocalError(action.payload!);
     } else {
       setRetryFormat(null);
+      // The snapshot behind every download is kept, so the file the browser
+      // just saved can also be fetched again from Exports and shares.
+      toast.success(t('exportUi.ready'));
     }
   };
 
@@ -102,6 +118,30 @@ export function ReportExportControl({
     }
     toast.error(t('exportUi.clipboard.error'));
   };
+
+  if (empty) {
+    const reasonId = `${operationKey}:empty`;
+    return (
+      // The wrapper owns the tooltip: a disabled button swallows pointer events.
+      <span title={t('exportUi.empty')} className="inline-flex">
+        <Button
+          type="button"
+          variant="outline"
+          disabled
+          className={className}
+          aria-label={ariaLabel ?? label ?? t('exportUi.trigger')}
+          aria-describedby={reasonId}
+        >
+          <Download data-icon="inline-start" />
+          {label ?? t('exportUi.trigger')}
+          <ChevronDown data-icon="inline-end" />
+        </Button>
+        <span id={reasonId} className="sr-only">
+          {t('exportUi.empty')}
+        </span>
+      </span>
+    );
+  }
 
   if (loaded && (!enabled || !capability)) {
     return (
@@ -123,10 +163,10 @@ export function ReportExportControl({
             loadingLabel={t(busy ? 'exportUi.preparing' : 'exportUi.loading')}
             disabled={disabled || Boolean(capabilitiesError)}
             className={className}
-            aria-label={t('exportUi.trigger')}
+            aria-label={ariaLabel ?? label ?? t('exportUi.trigger')}
           >
             <Download data-icon="inline-start" />
-            {t('exportUi.trigger')}
+            {label ?? t('exportUi.trigger')}
             <ChevronDown data-icon="inline-end" />
           </Button>
         </DropdownMenuTrigger>

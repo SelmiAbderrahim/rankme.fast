@@ -15,7 +15,11 @@
       "label": "Competitors",
       "helper": "Pick up to five competitors already tracked for this site.",
       "chipRemove": "Remove {{domain}}",
-      "limit": "Maximum {{max}} competitors selected."
+      "limit": "Maximum {{max}} competitors selected.",
+      "loading": "Loading your competitors…",
+      "empty": "This site has no active competitors yet. Add the competitors you want to research first.",
+      "openCompetitors": "Open Competitors",
+      "loadFailed": "Your competitors could not be loaded. Reload the page and try again."
     },
     "topics": {
       "label": "Topics",

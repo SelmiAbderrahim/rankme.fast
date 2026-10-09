@@ -449,6 +449,34 @@ describe('AcceptClusterDialog', () => {
     await waitFor(() => expect(toastMock.success).toHaveBeenCalled());
   });
 
+  it('names a site without a display name by its domain, shown once', () => {
+    setState({}, {
+      sites: {
+        items: [
+          {
+            id: SITE_ID,
+            url: 'https://mysite.example',
+            domain: 'mysite.example',
+            displayName: '',
+            createdAt: '2026-01-01T00:00:00.000Z',
+            updatedAt: '2026-01-01T00:00:00.000Z',
+          },
+        ],
+        loading: false,
+        loaded: true,
+      },
+    });
+    renderInRouter(
+      <AcceptClusterDialog
+        runId={RUN_ID}
+        cluster={cluster}
+        onClose={vi.fn()}
+        onConflict={vi.fn()}
+      />,
+    );
+    expect(screen.getAllByText('mysite.example')).toHaveLength(1);
+  });
+
   it('loads sites when not yet loaded and shows loading/empty states', () => {
     setState({}, {
       sites: { items: [], loading: false, loaded: false },

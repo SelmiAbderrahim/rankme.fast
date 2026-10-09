@@ -1,10 +1,10 @@
+import { useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useTranslation } from 'react-i18next';
 import { Button } from '@shared/ui/button';
 import { Input } from '@shared/ui/input';
 import { Label } from '@shared/ui/label';
-import { Alert, AlertDescription } from '@shared/ui/alert';
 import {
   Card,
   CardContent,
@@ -27,13 +27,23 @@ export const AddSiteForm = () => {
     register,
     handleSubmit,
     reset,
+    watch,
     formState: { errors },
   } = useForm<AddSiteFormValues>({
     resolver: zodResolver(buildAddSiteSchema(t)),
     defaultValues: { url: '' },
   });
 
+  // The server's rejection ("already added", ...) belongs to the URL that was
+  // submitted: show it in the same spot as the format errors and drop it once
+  // the user edits the value.
+  const [submittedUrl, setSubmittedUrl] = useState<string | null>(null);
+  const urlValue = watch('url');
+  const serverError = addError && submittedUrl === urlValue ? addError : '';
+  const urlError = errors.url?.message || serverError;
+
   const onSubmit = handleSubmit(async (values) => {
+    setSubmittedUrl(values.url);
     const result = await dispatch(addSite(values.url));
     if (addSite.fulfilled.match(result)) {
       reset();
@@ -49,11 +59,6 @@ export const AddSiteForm = () => {
       </CardHeader>
       <CardContent>
         <form className="flex flex-col gap-4" onSubmit={onSubmit} noValidate>
-          {addError ? (
-            <Alert variant="destructive" role="alert">
-              <AlertDescription>{addError}</AlertDescription>
-            </Alert>
-          ) : null}
           <div className="flex flex-col gap-2">
             <Label htmlFor="site-url">{t('urlLabel')}</Label>
             <Input
@@ -62,13 +67,13 @@ export const AddSiteForm = () => {
               inputMode="url"
               placeholder={t('urlPlaceholder')}
               autoComplete="url"
-              aria-invalid={!!errors.url}
-              aria-describedby={errors.url ? 'site-url-error' : undefined}
+              aria-invalid={!!urlError}
+              aria-describedby={urlError ? 'site-url-error' : undefined}
               {...register('url')}
             />
-            {errors.url ? (
+            {urlError ? (
               <p id="site-url-error" role="alert" className="text-destructive text-sm">
-                {errors.url.message}
+                {urlError}
               </p>
             ) : null}
           </div>

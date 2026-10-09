@@ -21,7 +21,7 @@
       "email": "Email",
       "role": "Role",
       "status": "Status",
-      "invitedAt": "Invited",
+      "invitedAt": "Invited / joined",
       "expiresAt": "Expires",
       "access": "Site access"
     },
@@ -61,14 +61,20 @@
     "searchPlaceholder": "Search by email",
     "previous": "Previous",
     "next": "Next",
-    "pageOf": "Page {{page}} of {{totalPages}} · {{total}} member(s)",
+    "pageOf_zero": "Page {{page}} of {{totalPages}} · {{count}} members",
+    "pageOf_one": "Page {{page}} of {{totalPages}} · {{count}} member",
+    "pageOf_two": "Page {{page}} of {{totalPages}} · {{count}} members",
+    "pageOf_few": "Page {{page}} of {{totalPages}} · {{count}} members",
+    "pageOf_many": "Page {{page}} of {{totalPages}} · {{count}} members",
+    "pageOf_other": "Page {{page}} of {{totalPages}} · {{count}} members",
     "edit": {
       "title": "Edit teammate access",
       "description": "Change the role and sites available to {{email}}.",
       "save": "Save access",
       "saving": "Saving…",
       "cancel": "Cancel"
-    }
+    },
+    "joinedOn": "Joined {{date}}"
   },
   "accept": {
     "title": "Accept invite",
@@ -114,7 +120,12 @@
     "required": "Select at least one site.",
     "empty": "Add a site before creating a site-restricted invitation.",
     "loadFailed": "We could not load the sites available for this invitation.",
-    "siteCount": "{{count}} site(s)"
+    "siteCount_zero": "{{count}} sites",
+    "siteCount_one": "{{count}} site",
+    "siteCount_two": "{{count}} sites",
+    "siteCount_few": "{{count}} sites",
+    "siteCount_many": "{{count}} sites",
+    "siteCount_other": "{{count}} sites"
   },
   "decision": {
     "loading": "Checking the invitation…",

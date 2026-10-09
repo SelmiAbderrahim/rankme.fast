@@ -21,7 +21,7 @@
       "email": "邮箱",
       "role": "角色",
       "status": "状态",
-      "invitedAt": "邀请时间",
+      "invitedAt": "邀请 / 加入时间",
       "expiresAt": "到期",
       "access": "网站访问权限"
     },
@@ -61,14 +61,20 @@
     "searchPlaceholder": "按邮箱搜索",
     "previous": "上一页",
     "next": "下一页",
-    "pageOf": "第 {{page}} / {{totalPages}} 页 · 共 {{total}} 位成员",
+    "pageOf_zero": "第 {{page}} / {{totalPages}} 页 · 共 {{count}} 位成员",
+    "pageOf_one": "第 {{page}} / {{totalPages}} 页 · 共 {{count}} 位成员",
+    "pageOf_two": "第 {{page}} / {{totalPages}} 页 · 共 {{count}} 位成员",
+    "pageOf_few": "第 {{page}} / {{totalPages}} 页 · 共 {{count}} 位成员",
+    "pageOf_many": "第 {{page}} / {{totalPages}} 页 · 共 {{count}} 位成员",
+    "pageOf_other": "第 {{page}} / {{totalPages}} 页 · 共 {{count}} 位成员",
     "edit": {
       "title": "编辑成员访问权限",
       "description": "更改 {{email}} 的角色和可访问网站。",
       "save": "保存权限",
       "saving": "正在保存…",
       "cancel": "取消"
-    }
+    },
+    "joinedOn": "加入于 {{date}}"
   },
   "accept": {
     "title": "接受邀请",
@@ -114,7 +120,12 @@
     "required": "请至少选择一个网站。",
     "empty": "请先添加网站，再创建受限邀请。",
     "loadFailed": "无法加载此邀请可分配的网站。",
-    "siteCount": "{{count}} 个网站"
+    "siteCount_zero": "{{count}} 个网站",
+    "siteCount_one": "{{count}} 个网站",
+    "siteCount_two": "{{count}} 个网站",
+    "siteCount_few": "{{count}} 个网站",
+    "siteCount_many": "{{count}} 个网站",
+    "siteCount_other": "{{count}} 个网站"
   },
   "decision": {
     "loading": "正在检查邀请…",

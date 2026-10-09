@@ -175,7 +175,7 @@ export async function getLatestCompetitorDiscovery(input: {
     accountId: string;
     siteId: string;
     locale?: SupportedLocale;
-}): Promise<DiscoveryResult> {
+}): Promise<DiscoveryResult | null> {
     const locale = input.locale ?? 'en';
     await loadOwnedLandscapeSite(input.accountId, input.siteId, { allowPaused: true });
     const [good, latest] = await Promise.all([
@@ -189,8 +189,10 @@ export async function getLatestCompetitorDiscovery(input: {
             siteId: input.siteId,
         }).sort({ createdAt: -1, _id: -1 }),
     ]);
+    // No discovery has run yet is an expected empty state, not a missing
+    // resource: the site itself is already proven owned above (404 otherwise).
     if (!good)
-        throw HttpError.notFound({ code: 'COMPETITORS_DISCOVERY_ERRORS_NOT_FOUND', messageKey: 'competitors.discovery.errors.notFound' });
+        return null;
     // `good` is selected from the same account/site set as `latest`, so a good
     // row proves that the latest query also has a result.
     return serializeAttempt(good, latest!, locale);

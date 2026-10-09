@@ -180,6 +180,23 @@ describe('LocalSeoPanel — renders before the lazy slice materializes', () => {
   });
 });
 
+describe('LocalSeoPanel — export on empty data', () => {
+  it('disables the export with a reason when the site has no local data, and not once it does', async () => {
+    mocked.fetchLocalSeo.mockResolvedValueOnce(
+      snapshot({ listings: [], reviews: null, localPack: [] }),
+    );
+    const { unmount } = withProviders(<LocalSeoPanel siteId="s1" />);
+    await waitFor(() => expect(screen.getByText('Nothing to export yet')).toBeInTheDocument());
+    expect(screen.getByRole('button', { name: 'Export or share' })).toBeDisabled();
+    unmount();
+
+    mocked.fetchLocalSeo.mockResolvedValueOnce(snapshot());
+    withProviders(<LocalSeoPanel siteId="s2" />);
+    expect(await screen.findByTestId('local-seo-listings')).toBeInTheDocument();
+    expect(screen.queryByText('Nothing to export yet')).not.toBeInTheDocument();
+  });
+});
+
 // ---------------------------------------------------------------------------
 // Slice + thunks (loadLocalSeo)
 // ---------------------------------------------------------------------------

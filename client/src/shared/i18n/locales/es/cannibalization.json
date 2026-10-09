@@ -79,11 +79,6 @@
       "title": "Esperando la próxima sincronización",
       "body": "Aún no hay filas de consulta y página de Search Console guardadas para este periodo. Llegarán con la próxima sincronización."
     },
-    "disconnected": {
-      "title": "Conecta Search Console",
-      "body": "Conecta una propiedad de Search Console antes de generar un informe nuevo. Los informes guardados siguen disponibles.",
-      "link": "Conectar Search Console"
-    },
     "cap": {
       "title": "Cupo mensual agotado",
       "body": "Has usado todos los informes de canibalización de tu plan este mes.",

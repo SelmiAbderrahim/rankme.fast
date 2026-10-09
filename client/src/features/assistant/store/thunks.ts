@@ -11,7 +11,6 @@ import {
   createAssistantConversation as createConversationApi,
   deleteAssistantConversation as deleteConversationApi,
   getAssistantConversation as getConversationApi,
-  getAssistantCsrfToken,
   listAssistantConversations as listConversationsApi,
 } from '../api';
 import {
@@ -332,7 +331,6 @@ export const sendAssistantMessage = createAsyncThunk<
     let streamOpened = false;
 
     try {
-      const csrfToken = await getAssistantCsrfToken({ signal: combinedSignal });
       const streamPath = assistantMessageStreamPath(input.conversationId);
       const response = await apiFetch(streamPath, {
         method: 'POST',
@@ -340,10 +338,12 @@ export const sendAssistantMessage = createAsyncThunk<
         locale: responseLocale,
         timeoutMs: null,
         signal: combinedSignal,
+        // Shared cached token; a `403 CSRF_INVALID` refreshes it and re-sends
+        // the message once instead of dropping it.
+        csrf: true,
         headers: {
           Accept: 'text/event-stream',
           'Content-Type': 'application/json',
-          'x-csrf-token': csrfToken,
         },
         body: JSON.stringify({ text: input.text }),
       });
@@ -387,6 +387,7 @@ export const sendAssistantMessage = createAsyncThunk<
         conversationId: input.conversationId,
         responseLocale,
         outcome: 'complete',
+        accepted: true,
         finishReason: accumulator.finishReason,
         tokens: accumulator.tokens,
       };
@@ -404,6 +405,7 @@ export const sendAssistantMessage = createAsyncThunk<
           conversationId: input.conversationId,
           responseLocale,
           outcome: 'aborted',
+          accepted: accumulator.sawMeta,
           finishReason: null,
           tokens: accumulator.tokens,
         };
@@ -414,11 +416,7 @@ export const sendAssistantMessage = createAsyncThunk<
           ? assistantErrorMessage(error)
           : streamOpened
             ? assistantStreamError(null, 'invalid_stream')
-            : assistantErrorMessage(
-                error instanceof TypeError
-                  ? new ApiError('Assistant network request failed', 0, null, 'network')
-                  : error,
-              );
+            : assistantErrorMessage(error);
       dispatch(streamErrored({ ...base, error: normalized }));
       return rejectWithValue(normalized);
     } finally {

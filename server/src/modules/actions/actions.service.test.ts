@@ -20,6 +20,8 @@ import {
   truncateAllTables,
 } from '../../shared/testing/postgres.js';
 import { Site } from '../sites/index.js';
+import { user as authUser } from '../../db/schema/auth.js';
+import { teamMembers } from '../../db/schema/team-members.js';
 import {
   appendActionEvent,
   deleteAllEventsForAccount,
@@ -691,6 +693,158 @@ describe('listActionsForSite', () => {
     expect(result.sourceStatus.gsc_decline).toEqual({ status: 'unavailable' });
     expect(result.sourceStatus.confirmed_rank_drop?.status).toBe('available');
     expect(result.items).toHaveLength(1);
+  });
+});
+
+describe('getActionHistory actors and notes', () => {
+  async function seedAuthUser(id: string, name: string, email: string): Promise<void> {
+    await getTestDb().insert(authUser).values({ id, name, email });
+  }
+
+  it('resolves actors only for workspace members and flags the viewer', async () => {
+    const { accountId, siteId } = await seedSite();
+    registerStub('confirmed_rank_drop', [candidate({ sourceId: 'rank-1' })]);
+    const actionId = hashActionId({
+      accountId,
+      siteId,
+      sourceType: 'confirmed_rank_drop',
+      sourceId: 'rank-1',
+    });
+    const memberId = new Types.ObjectId().toHexString();
+    const unnamedId = new Types.ObjectId().toHexString();
+    const removedId = new Types.ObjectId().toHexString();
+    const strangerId = new Types.ObjectId().toHexString();
+    await seedAuthUser(accountId, 'Owner Person', 'owner@example.com');
+    await seedAuthUser(memberId, 'Mia Member', 'mia@example.com');
+    await seedAuthUser(unnamedId, '  ', 'unnamed@example.com');
+    await seedAuthUser(removedId, 'Gone Person', 'gone@example.com');
+    await seedAuthUser(strangerId, 'Other Tenant', 'stranger@example.com');
+    const base = {
+      teamId: accountId,
+      invitedBy: accountId,
+      expiresAt: new Date(Date.now() + 86_400_000),
+      acceptedAt: new Date(),
+    };
+    await getTestDb().insert(teamMembers).values([
+      { ...base, userId: memberId, email: 'mia@example.com', inviteTokenHash: 'h1' },
+      { ...base, userId: unnamedId, email: 'unnamed@example.com', inviteTokenHash: 'h2' },
+      { ...base, userId: removedId, email: 'gone@example.com', inviteTokenHash: 'h3', revokedAt: new Date() },
+      // Pending invite: no accepted_at yet.
+      { ...base, userId: null, email: 'pending@example.com', inviteTokenHash: 'h4', acceptedAt: null },
+    ]);
+    let version = 0;
+    for (const [actor, state] of [
+      [accountId, 'planned'],
+      [memberId, 'open'],
+      [unnamedId, 'planned'],
+      [removedId, 'open'],
+      [strangerId, 'planned'],
+    ] as const) {
+      await mutateActionState({
+        accountId,
+        siteId,
+        actionId,
+        actorUserId: actor,
+        newState: state,
+        expectedVersion: version,
+        note: null,
+        clientKey: `ck-${version}`,
+        db: getTestDb(),
+      });
+      version += 1;
+    }
+    const { entries } = await getActionHistory({
+      accountId,
+      siteId,
+      actionId,
+      db: getTestDb(),
+      locale: 'en',
+      viewerUserId: memberId,
+    });
+    expect(entries.map((e) => e.actor)).toEqual([
+      { name: 'Owner Person', email: 'owner@example.com' },
+      { name: 'Mia Member', email: 'mia@example.com' },
+      { name: null, email: 'unnamed@example.com' },
+      // Removed member and a stranger never resolve: no cross-account leak.
+      null,
+      null,
+    ]);
+    expect(entries.map((e) => e.actorIsYou)).toEqual([false, true, false, false, false]);
+    const anon = await getActionHistory({
+      accountId,
+      siteId,
+      actionId,
+      db: getTestDb(),
+      locale: 'en',
+    });
+    expect(anon.entries.every((e) => !e.actorIsYou)).toBe(true);
+  });
+
+  it('surfaces the note of the decision behind the current state on the list', async () => {
+    const { accountId, siteId } = await seedSite();
+    registerStub('confirmed_rank_drop', [candidate({ sourceId: 'rank-1' })]);
+    const actionId = hashActionId({
+      accountId,
+      siteId,
+      sourceType: 'confirmed_rank_drop',
+      sourceId: 'rank-1',
+    });
+    const list = () =>
+      listActionsForSite({ accountId, siteId, locale: 'en', db: getTestDb() });
+    expect((await list()).items[0]!.latestNote).toBeNull();
+    await mutateActionState({
+      accountId,
+      siteId,
+      actionId,
+      actorUserId: accountId,
+      newState: 'planned',
+      expectedVersion: 0,
+      note: 'QA test note',
+      clientKey: 'ck-n1',
+      db: getTestDb(),
+    });
+    expect((await list()).items[0]!.latestNote).toBe('QA test note');
+    await mutateActionState({
+      accountId,
+      siteId,
+      actionId,
+      actorUserId: accountId,
+      newState: 'open',
+      expectedVersion: 1,
+      note: null,
+      clientKey: 'ck-n2',
+      db: getTestDb(),
+    });
+    expect((await list()).items[0]!.latestNote).toBeNull();
+  });
+
+  it('does not attach an older note to a source-authoritative state that moved on', async () => {
+    const { accountId, siteId } = await seedSite();
+    registerStub('content_recommendation', [
+      candidate({ sourceType: 'content_recommendation', sourceId: 'rec-1', sourceState: 'open' }),
+    ]);
+    const actionId = hashActionId({
+      accountId,
+      siteId,
+      sourceType: 'content_recommendation',
+      sourceId: 'rec-1',
+    });
+    await appendActionEvent(getTestDb(), {
+      accountId,
+      siteId,
+      actionId,
+      sourceType: 'content_recommendation',
+      sourceIdRef: hashSourceIdRef({ accountId, sourceType: 'content_recommendation', sourceId: 'rec-1' }),
+      priorState: 'open',
+      newState: 'planned',
+      eventKind: 'plan',
+      actorUserId: accountId,
+      note: 'stale note',
+      idempotencyKey: 'ck-c1',
+    });
+    const { items } = await listActionsForSite({ accountId, siteId, locale: 'en', db: getTestDb() });
+    expect(items[0]!.state).toBe('open');
+    expect(items[0]!.latestNote).toBeNull();
   });
 });
 

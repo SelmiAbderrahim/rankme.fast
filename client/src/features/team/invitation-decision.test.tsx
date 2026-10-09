@@ -320,7 +320,7 @@ describe('recoverable provisional invitation page', () => {
     });
     renderPage();
     expect(await screen.findByText(/Member · Main site/)).toBeInTheDocument();
-    expect(screen.getByText(/Member · 2 site\(s\)/)).toBeInTheDocument();
+    expect(screen.getByText(/Member · 2 sites/)).toBeInTheDocument();
   });
 
   it('renders loading, load-error, and empty recovery states', async () => {

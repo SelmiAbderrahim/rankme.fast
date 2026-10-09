@@ -2,7 +2,7 @@ import { existsSync, readFileSync } from 'node:fs';
 import { resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { parseEnv } from 'node:util';
-import { defineConfig, type Plugin } from 'vite';
+import { defineConfig } from 'vite';
 import react from '@vitejs/plugin-react';
 import tailwindcss from '@tailwindcss/vite';
 import tsconfigPaths from 'vite-tsconfig-paths';
@@ -22,18 +22,6 @@ function loadRootClientEnv(mode: string): Record<string, string> {
     }
   }
   return result;
-}
-
-function analyticsHtmlPlugin(rawMeasurementId: string): Plugin {
-  const candidate = rawMeasurementId.trim();
-  const measurementId = /^G-[A-Z0-9]+$/u.test(candidate) ? candidate : '';
-  return {
-    name: 'rankme-analytics-html',
-    transformIndexHtml: {
-      order: 'pre',
-      handler: (html) => html.replaceAll('__RANKME_GA_ID__', JSON.stringify(measurementId)),
-    },
-  };
 }
 
 function manualChunk(id: string): string | undefined {
@@ -83,7 +71,6 @@ export default defineConfig(({ isSsrBuild, mode }) => {
     if (process.env[key] === undefined) process.env[key] = value;
   }
   const serverProxyTarget = process.env.SERVER_URL ?? 'http://localhost:8080';
-  const measurementId = process.env.VITE_GA_ID ?? rootEnv.VITE_GA_ID ?? '';
   const { version } = JSON.parse(readFileSync(new URL('./package.json', import.meta.url), 'utf8')) as { version: string };
   const rawSha = process.env.APP_BUILD_SHA ?? 'dev';
   const buildSha = /^[a-f0-9]{7,12}$/iu.test(rawSha) ? rawSha.toLowerCase() : 'dev';
@@ -92,7 +79,7 @@ export default defineConfig(({ isSsrBuild, mode }) => {
     define: {
       'import.meta.env.VITE_APP_VERSION': JSON.stringify(`${version}+${buildSha}`),
     },
-    plugins: [analyticsHtmlPlugin(measurementId), react(), tailwindcss(), tsconfigPaths()],
+    plugins: [react(), tailwindcss(), tsconfigPaths()],
     resolve: {
       alias: isSsrBuild
         ? [{ find: '@shared/i18n/localeLoader', replacement: SERVER_LOCALE_LOADER }]

@@ -106,6 +106,57 @@ describe('buildChatTools', () => {
     });
   });
 
+  describe('with a conversation-linked site', () => {
+    it('stops requiring siteId in the model schema for site-scoped tools only', async () => {
+      const { tools } = await buildChatTools('account-1', 'en', null, SITE_ID);
+      const required = (name: string) =>
+        (tools[name]!.jsonSchema as { required: string[] }).required;
+      expect(required('get_latest_audit_report')).toEqual([]);
+      expect(required('list_keywords')).toEqual([]);
+      expect(required('set_action_state')).not.toContain('siteId');
+      expect(required('set_action_state')).toContain('actionId');
+      // Tools without a site argument are untouched.
+      expect(tools.list_sites!.jsonSchema).toBe(CHAT_TOOL_JSON_SCHEMAS.list_sites);
+      expect(tools.get_audit_status!.jsonSchema).toBe(CHAT_TOOL_JSON_SCHEMAS.get_audit_status);
+      // Property names are preserved so the model can still target another site.
+      expect(
+        Object.keys((tools.list_keywords!.jsonSchema as { properties: object }).properties),
+      ).toContain('siteId');
+    });
+
+    it('defaults a missing or null siteId to the linked site and lets an explicit one win', async () => {
+      const { tools } = await buildChatTools('account-1', 'en', null, SITE_ID);
+      await tools.list_keywords!.execute({});
+      expect(mocks.listKeywords).toHaveBeenLastCalledWith(
+        expect.objectContaining({ siteId: SITE_ID }),
+        expect.anything(),
+      );
+      await tools.list_keywords!.execute({ siteId: null });
+      expect(mocks.listKeywords).toHaveBeenLastCalledWith(
+        expect.objectContaining({ siteId: SITE_ID }),
+        expect.anything(),
+      );
+      await tools.list_keywords!.execute({ siteId: OTHER_SITE_ID });
+      expect(mocks.listKeywords).toHaveBeenLastCalledWith(
+        expect.objectContaining({ siteId: OTHER_SITE_ID }),
+        expect.anything(),
+      );
+    });
+
+    it('does not inject a siteId for non-site tools or malformed input', async () => {
+      const { tools } = await buildChatTools('account-1', 'en', null, SITE_ID);
+      const outcome = await tools.get_audit_status!.execute({ runId: SITE_ID });
+      expect(outcome.ok).toBe(true);
+      const invalid = await tools.list_keywords!.execute('nope');
+      expect(invalid).toMatchObject({ ok: false });
+    });
+
+    it('keeps the schema untouched when no site is linked', async () => {
+      const { tools } = await buildChatTools('account-1', 'en');
+      expect(tools.list_keywords!.jsonSchema).toBe(CHAT_TOOL_JSON_SCHEMAS.list_keywords);
+    });
+  });
+
   it('OMITS tools the account defaults disable — the model never sees them', async () => {
     mocks.getAccountMcpSpec.mockResolvedValue({
       tools: { start_audit: false, get_rank_history: false },

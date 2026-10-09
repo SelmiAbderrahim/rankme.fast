@@ -113,6 +113,12 @@ export interface SendAssistantMessageResult {
   conversationId: string;
   responseLocale: SupportedLocale;
   outcome: 'complete' | 'aborted';
+  /**
+   * True once the server confirmed it saved the user message (the `meta`
+   * frame arrived). An aborted send that was never accepted keeps its text in
+   * the composer instead of the thread.
+   */
+  accepted: boolean;
   finishReason: string | null;
   tokens: { input: number | null; output: number | null } | null;
 }

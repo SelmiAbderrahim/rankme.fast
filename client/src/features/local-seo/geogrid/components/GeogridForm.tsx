@@ -14,6 +14,7 @@
  *   - geogrid-preview-submit       preview button
  */
 import { useTranslation } from 'react-i18next';
+import { NativeSelect } from '@shared/ui/native-select';
 import { Button } from '@shared/ui/button';
 import { Input } from '@shared/ui/input';
 import { Label } from '@shared/ui/label';
@@ -78,10 +79,9 @@ export const GeogridForm = ({
     >
       <div className="flex flex-col gap-1.5">
         <Label htmlFor="geogrid-keyword">{t('form.keyword')}</Label>
-        <select
+        <NativeSelect
           id="geogrid-keyword"
           data-testid="geogrid-keyword"
-          className="border-input bg-background h-9 cursor-pointer rounded-md border px-3 text-sm disabled:cursor-not-allowed disabled:opacity-50"
           value={form.keywordId}
           disabled={disabled}
           aria-invalid={has('keywordId') || undefined}
@@ -94,7 +94,7 @@ export const GeogridForm = ({
               {keyword.phrase}
             </option>
           ))}
-        </select>
+        </NativeSelect>
         {has('keywordId') ? (
           <p id="geogrid-keyword-error" role="alert" className="text-destructive text-xs">
             {t('form.errors.keyword')}
@@ -154,6 +154,8 @@ export const GeogridForm = ({
       <fieldset className="flex flex-col gap-2" disabled={disabled}>
         <legend className="text-sm font-medium">{t('form.spacing')}</legend>
         <RadioGroup
+          name="spacingMeters"
+          aria-label={t('form.spacing')}
           data-testid="geogrid-spacing"
           className="flex flex-wrap gap-2"
           value={String(form.spacingMeters)}
@@ -170,8 +172,12 @@ export const GeogridForm = ({
             </Label>
           ))}
         </RadioGroup>
+        {/* The radios are presets; this input is the value they all write to. */}
+        <Label htmlFor="geogrid-spacing-custom" className="text-muted-foreground text-xs">
+          {t('form.spacingCustom')}
+        </Label>
         <Input
-          aria-label={t('form.spacingCustom')}
+          id="geogrid-spacing-custom"
           data-testid="geogrid-spacing-custom"
           type="number"
           step={GEOGRID_SPACING_STEP_METERS}
@@ -195,6 +201,8 @@ export const GeogridForm = ({
       <fieldset className="flex flex-col gap-2" disabled={disabled}>
         <legend className="text-sm font-medium">{t('form.size')}</legend>
         <RadioGroup
+          name="gridSize"
+          aria-label={t('form.size')}
           data-testid="geogrid-size"
           className="flex flex-wrap gap-2"
           value={String(form.gridSize)}

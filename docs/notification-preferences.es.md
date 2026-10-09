@@ -11,7 +11,7 @@ order: 4
 
 Tú decides qué correos no relacionados con la seguridad te envía RankMeFast. Abre **Ajustes → Notificaciones** (`/settings/notifications`) y activa o desactiva cualquiera de los cuatro interruptores.
 
-Todos los interruptores están activados por defecto. Desactivar uno tiene efecto inmediato: el siguiente correo correspondiente se omitirá.
+Los interruptores de auditoría, ranking y facturación están activados por defecto; **Novedades del producto** está desactivado por defecto y solo se envía después de que lo actives. Cambiar un interruptor tiene efecto inmediato: el siguiente correo correspondiente se omitirá (o se enviará, si activaste el interruptor).
 
 ## Qué controla cada interruptor
 

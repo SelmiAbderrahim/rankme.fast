@@ -28,7 +28,13 @@
       "nameRequired": "Enter a display name.",
       "nameTooLong": "Keep your name under 80 characters.",
       "saveFailed": "We couldn't save your profile. Please try again."
-    }
+    },
+    "workspaceOwner": "Workspace owner",
+    "platformRole": {
+      "Admin": "Platform admin",
+      "SuperAdmin": "Platform super admin"
+    },
+    "emailHint": "To change your email, open Security and use Change email. The address only changes after you confirm the link we send."
   },
   "privacy": {
     "export": {
@@ -39,18 +45,10 @@
       "success": "Your data export has downloaded.",
       "error": "We couldn't export your data. Please try again."
     },
-    "delete": {
-      "title": "Delete account",
-      "description": "Schedule your account and data for permanent removal.",
-      "warning": "This schedules your account for deletion after a grace period. Contact support before then to cancel.",
-      "button": "Delete my account",
-      "dialogTitle": "Delete your account?",
-      "dialogBody": "Your account and data will be permanently removed after the grace period. Once that period ends, this cannot be undone.",
-      "cancel": "Cancel",
-      "confirm": "Yes, delete my account",
-      "deleting": "Scheduling…",
-      "scheduled": "Your account is scheduled for deletion on {{date}}.",
-      "error": "We couldn't schedule deletion. Please try again."
+    "analytics": {
+      "title": "Usage analytics",
+      "description": "Choose whether RankMeFast may use Google Analytics to count page visits. Page addresses are sent without site IDs or tab choices.",
+      "label": "Allow usage analytics"
     }
   }
 }

@@ -4,7 +4,6 @@
     "description": "Wählen Sie, welche nicht-sicherheitsrelevanten E-Mails Sie erhalten möchten. Sicherheits-E-Mails (Passwort-Reset, E-Mail-Verifizierung, Bestätigung einer Passwortänderung) können nicht deaktiviert werden.",
     "emailHeading": "E-Mail",
     "loading": "Ihre Einstellungen werden geladen…",
-    "securityNote": "Sicherheits-E-Mails — Passwort-Reset, E-Mail-Verifizierung und Bestätigung einer Passwortänderung — werden unabhängig von den obigen Schaltern immer gesendet.",
     "channels": {
       "emailAuditComplete": {
         "label": "Audit abgeschlossen",

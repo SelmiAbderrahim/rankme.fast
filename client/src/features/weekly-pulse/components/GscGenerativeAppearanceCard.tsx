@@ -21,6 +21,14 @@ interface GscGenerativeAppearanceCardProps {
   siteId: string;
 }
 
+type Appearance = NonNullable<
+  ReturnType<typeof useAppSelector<ReturnType<typeof selectPulseGscAppearance>>>
+>;
+
+/** True only when the card would list generative rows, so an export would not be empty. */
+const hasGenerativeRows = (appearance: Appearance): boolean =>
+  appearance.status === 'available' && appearance.rows.some((row) => row.isGenerative);
+
 export function GscGenerativeAppearanceCard({ siteId }: GscGenerativeAppearanceCardProps) {
   const { t } = useTranslation('weeklyPulse');
   const dispatch = useAppDispatch();
@@ -47,6 +55,7 @@ export function GscGenerativeAppearanceCard({ siteId }: GscGenerativeAppearanceC
             kind="google.gsc_generative_appearance"
             target={{ scope: 'site', siteId }}
             selection={{}}
+            empty={!hasGenerativeRows(appearance)}
           />
         ) : null}
       </div>
@@ -70,9 +79,7 @@ export function GscGenerativeAppearanceCard({ siteId }: GscGenerativeAppearanceC
 function GscAppearanceContent({
   appearance,
 }: {
-  appearance: NonNullable<
-    ReturnType<typeof useAppSelector<ReturnType<typeof selectPulseGscAppearance>>>
-  >;
+  appearance: Appearance;
 }) {
   const { t } = useTranslation('weeklyPulse');
   const status = appearance.status;

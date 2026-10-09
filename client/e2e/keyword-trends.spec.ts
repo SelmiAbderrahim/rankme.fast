@@ -250,7 +250,7 @@ test('Live Keyword Trends: standalone + workspace journeys, metering, cache, ref
     await expect(preview).toBeVisible();
     // The self-hosted client ships no billing UI: the pre-confirm card only
     // states that plan usage is not metered — no units, allowance, or packs.
-    await expect(preview).toContainText('Plan usage limits are not metered in self-hosted mode.');
+    await expect(preview).toContainText("Usage limits aren't applied on this server.");
     await expect(preview.getByRole('link')).toHaveCount(0);
     await expect(page.getByTestId('live-trends-confirm')).toBeVisible();
     await scanBothThemes(page, 'live-trends-preview');

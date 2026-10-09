@@ -1,7 +1,7 @@
 {
   "workspaceTab": "Pages",
   "heading": "Pages",
-  "description": "Review each page using the best stored search evidence available for this site. Nothing is collected until you choose Refresh.",
+  "description": "Review each page using the best stored search data available for this site. Nothing is collected until you ask for it.",
   "common": { "notAvailable": "Not available" },
   "actions": {
     "refresh": "Refresh",
@@ -40,7 +40,7 @@
     },
     "syncing": {
       "title": "Search Console is syncing",
-      "gsc": "The first Search Console page collection is still pending or running. Fallback data is not substituted while GSC is authoritative.",
+      "gsc": "The first Search Console page collection is still pending or running. Fallback data is not shown in the meantime.",
       "dataforseo": "Fallback ranking data is being prepared.",
       "demo": "Demo ranking data is being prepared.",
       "none": "A stored source is being prepared."
@@ -50,14 +50,14 @@
       "gsc": "Search Console returned no page rows for this selected rolling window.",
       "dataforseo": "The fallback snapshot found no ranking pages for this market.",
       "demo": "The demo snapshot contains no ranking pages for this context.",
-      "none": "Connect Search Console or explicitly collect a metered fallback snapshot."
+      "none": "Connect Search Console, or collect fallback data (this counts toward your usage)."
     },
     "unavailable": {
       "title": "Page data is unavailable",
-      "gsc": "Authoritative Search Console data is currently unavailable. Retry without switching to fallback data.",
+      "gsc": "Search Console data is unavailable right now. Try again in a moment.",
       "dataforseo": "The ranking provider could not produce a stored snapshot. Retry when the provider is available.",
       "demo": "Demo ranking data could not be loaded.",
-      "none": "No usable stored source is available. Use the connection guidance or collect fallback data explicitly."
+      "none": "No usable stored data yet. Connect Search Console or collect fallback data."
     },
     "stale": {
       "title": "Showing the last good data",
@@ -98,9 +98,13 @@
     "noPreviousSync": "No eligible previous sync",
     "marketValue": "Location {{location}}, language {{language}}",
     "notApplicable": "Not applicable",
-    "coverage": "Coverage: {{accepted}} source rows accepted, {{dropped}} dropped; {{inventory}} inventory pages, {{measured}} measured, and {{unmeasured}} unmeasured.",
-    "reportingLag": "Search Console reporting lag: {{days}} days.",
-    "noReportingLag": "This source has no Search Console reporting-lag claim.",
+    "coverage": "Pages with search data: {{measured}} of {{inventory}}. Pages without: {{unmeasured}}.",
+    "reportingLag_zero": "Search Console data runs about {{count}} days behind.",
+    "reportingLag_one": "Search Console data runs about {{count}} day behind.",
+    "reportingLag_two": "Search Console data runs about {{count}} days behind.",
+    "reportingLag_few": "Search Console data runs about {{count}} days behind.",
+    "reportingLag_many": "Search Console data runs about {{count}} days behind.",
+    "reportingLag_other": "Search Console data runs about {{count}} days behind.",
     "sampled": "The source reports sampled data.",
     "notSampled": "The source did not report sampling."
   },

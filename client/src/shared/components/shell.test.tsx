@@ -11,9 +11,12 @@ import { i18n, initI18n } from '@shared/i18n';
 import { sitesReducer } from '@features/sites';
 import { Header } from './Header';
 import { Footer } from './Footer';
+import { readAnalyticsChoice, writeAnalyticsChoice } from '@shared/analytics';
 import { appVersion } from '@shared/config/version';
 import { releaseStage } from '@shared/config/release';
+import { Bug } from 'lucide-react';
 import { AppLayout } from './AppLayout';
+import { PageHeader } from './PageHeader';
 import { useAuthSession, type AuthSessionState } from '@features/auth';
 import { routes, appShellRoutes } from '@app/routes';
 
@@ -120,6 +123,22 @@ describe('Footer', () => {
     expect(screen.getByRole('link', { name: 'Register' })).toBeInTheDocument();
   });
 
+  it('offers no analytics control when the build has no measurement id', () => {
+    vi.stubEnv('VITE_GA_ID', '');
+    renderWithAuth(<Footer />, true);
+    expect(screen.queryByRole('button', { name: 'Analytics preferences' })).toBeNull();
+    vi.unstubAllEnvs();
+  });
+
+  it('re-opens the consent prompt from the analytics preferences control', async () => {
+    vi.stubEnv('VITE_GA_ID', 'G-TEST123');
+    writeAnalyticsChoice('denied');
+    renderWithAuth(<Footer />, true);
+    await userEvent.click(screen.getByRole('button', { name: 'Analytics preferences' }));
+    expect(readAnalyticsChoice()).toBeNull();
+    writeAnalyticsChoice(null);
+    vi.unstubAllEnvs();
+  });
 });
 
 describe('AppLayout', () => {
@@ -138,6 +157,45 @@ describe('AppLayout', () => {
     );
     expect(screen.getByText('OUTLET')).toBeInTheDocument();
     expect(screen.getByText(/All Rights Reserved/)).toBeInTheDocument();
+  });
+
+  it('exposes exactly one main and one banner landmark around page headers', () => {
+    mockSession(true);
+    const { container } = render(
+      <MemoryRouter initialEntries={['/x']}>
+        <Shell>
+          <Routes>
+            <Route element={<AppLayout />}>
+              <Route
+                path="/x"
+                element={<PageHeader icon={Bug} title="Page title" />}
+              />
+            </Route>
+          </Routes>
+        </Shell>
+      </MemoryRouter>,
+    );
+    expect(container.querySelectorAll('main')).toHaveLength(1);
+    expect(screen.getAllByRole('main')).toHaveLength(1);
+    expect(screen.getAllByRole('banner')).toHaveLength(1);
+    expect(container.querySelectorAll('header')).toHaveLength(1);
+    expect(screen.getByRole('main')).toContainElement(
+      screen.getByRole('heading', { name: 'Page title' }),
+    );
+  });
+
+  it('renders explicit children in place of the outlet (signed-in 404)', () => {
+    mockSession(true);
+    render(
+      <MemoryRouter initialEntries={['/x']}>
+        <Shell>
+          <AppLayout>
+            <div>CHILD</div>
+          </AppLayout>
+        </Shell>
+      </MemoryRouter>,
+    );
+    expect(screen.getByText('CHILD')).toBeInTheDocument();
   });
 });
 

@@ -1,4 +1,4 @@
-import { act, render, screen, waitFor, within } from '@testing-library/react';
+import { act, cleanup, render, screen, waitFor, within } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { I18nextProvider } from 'react-i18next';
 import { MemoryRouter, useLocation } from 'react-router-dom';
@@ -138,6 +138,7 @@ interface ApiHandlers {
   start?: () => unknown;
   run?: () => unknown;
   csv?: () => unknown;
+  google?: () => unknown;
 }
 
 const resolved = (fn: (() => unknown) | undefined, fallback: unknown) => {
@@ -150,6 +151,14 @@ const resolved = (fn: (() => unknown) | undefined, fallback: unknown) => {
 
 const routeApi = (handlers: ApiHandlers = {}) => {
   mockedApi.mockImplementation((path: string, options?: { method?: string; headers?: HeadersInit }) => {
+    if (path === `/sites/${SITE}/google/configuration`) {
+      return resolved(handlers.google, {
+        configuration: {
+          connection: { status: 'connected' },
+          gsc: { propertyUrl: 'sc-domain:example.test' },
+        },
+      });
+    }
     if (path.endsWith('/export.csv')) return resolved(handlers.csv, '\ufeffsource_url\r\n');
     if (path.includes('/internal-link-runs/preview')) {
       return resolved(handlers.preview, readyPreview());
@@ -294,6 +303,39 @@ describe('InternalLinksPage — saved runs and URL-backed filters', () => {
   });
 });
 
+describe('InternalLinksPage — Search Console requirement', () => {
+  it('tells the user Search Console is needed and links to the Google tab when it is not connected', async () => {
+    routeApi({
+      google: () => ({ configuration: { connection: null, gsc: { propertyUrl: null } } }),
+      list: () => ({ items: [] }),
+    });
+    renderPage();
+    const notice = await screen.findByTestId('gsc-required-notice');
+    expect(notice).toHaveTextContent('Internal link suggestions use your Search Console queries');
+    expect(screen.getByRole('link', { name: 'Connect Google Search Console' })).toHaveAttribute(
+      'href',
+      `/sites/${SITE}?tab=google`,
+    );
+    expect(await screen.findByTestId('internal-links-state-emptyRuns')).toBeInTheDocument();
+  });
+
+  it('shows no notice when Search Console is connected or the lookup fails', async () => {
+    routeApi();
+    renderPage();
+    await screen.findByTestId('internal-links-run-list');
+    expect(screen.queryByTestId('gsc-required-notice')).toBeNull();
+    cleanup();
+    routeApi({
+      google: () => {
+        throw new Error('boom');
+      },
+    });
+    renderPage();
+    await screen.findByTestId('internal-links-run-list');
+    expect(screen.queryByTestId('gsc-required-notice')).toBeNull();
+  });
+});
+
 describe('InternalLinksPage — preview and lifecycle states', () => {
   it('previews the inventory date, cancels without starting, then confirms', async () => {
     routeApi({ start: () => detail({ status: 'completed' }) });
@@ -301,7 +343,7 @@ describe('InternalLinksPage — preview and lifecycle states', () => {
     renderPage(`/sites/${SITE}?tab=internal-links&view=new`);
     await user.click(await screen.findByTestId('internal-links-preview-button'));
     expect(await screen.findByTestId('internal-links-preview')).toHaveTextContent(
-      'Plan usage limits are not metered in self-hosted mode.',
+      "Usage limits aren't applied on this server.",
     );
     expect(screen.getByTestId('internal-links-preview-date')).toHaveTextContent(DATE);
     await user.click(screen.getByTestId('internal-links-cancel'));
@@ -499,7 +541,7 @@ describe('internal-link presentation primitives', () => {
       />,
     );
     expect(
-      screen.getByText('Plan usage limits are not metered in self-hosted mode.'),
+      screen.getByText("Usage limits aren't applied on this server."),
     ).toBeInTheDocument();
     expect(screen.getByTestId('internal-links-preview-date')).toHaveTextContent(DATE);
     expect(screen.getByTestId('internal-links-cancel')).toBeDisabled();
@@ -611,6 +653,20 @@ describe('internal-link accessibility and RTL', () => {
     for (const node of page.querySelectorAll('[dir]')) {
       expect(node).toHaveAttribute('dir', 'rtl');
     }
+  });
+
+  it('adds no page gutter of its own and renders "Open content inventory" as an outline button link', async () => {
+    routeApi();
+    renderPage(`/sites/${SITE}?tab=internal-links`);
+    const page = await screen.findByTestId('internal-links-page');
+    // Embedded in the site workspace, which already pads its tab panels: a
+    // second page-level gutter or max-width made this tab sit inset from its siblings.
+    for (const cls of ['p-6', 'p-4', 'sm:p-6', 'mx-auto', 'max-w-6xl']) {
+      expect(page).not.toHaveClass(cls);
+    }
+    const link = screen.getByRole('link', { name: 'Open content inventory' });
+    expect(link).toHaveAttribute('data-variant', 'outline');
+    expect(link).toHaveAttribute('data-slot', 'button');
   });
 
   it('keeps preview confirmation, cancellation, evidence, copy, and export keyboard reachable', async () => {

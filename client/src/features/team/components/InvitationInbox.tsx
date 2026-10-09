@@ -28,6 +28,7 @@ import {
 } from '@shared/ui/sheet';
 import { Skeleton } from '@shared/ui/skeleton';
 import {
+  INBOX_MAX_AGE_MS,
   acceptPendingInvitation,
   loadPendingInvitations,
   rejectPendingInvitation,
@@ -38,8 +39,6 @@ import {
   selectPendingInvitations,
 } from '../store/inboxSlice';
 import type { PendingInvitation } from '../types';
-
-const POLL_INTERVAL_MS = 60_000;
 
 export const InvitationInbox = () => {
   const { t, i18n } = useTranslation('team');
@@ -52,15 +51,17 @@ export const InvitationInbox = () => {
   const [open, setOpen] = useState(false);
   const [pendingReject, setPendingReject] = useState<PendingInvitation | null>(null);
 
+  // The bell badge needs a count without the drawer open, but not a poll: one
+  // load on mount plus a refresh when the tab regains focus, both skipped
+  // while the loaded list is under INBOX_MAX_AGE_MS old. Opening the drawer
+  // always refreshes (below).
   useEffect(() => {
-    void dispatch(loadPendingInvitations());
-    const refresh = () => { void dispatch(loadPendingInvitations()); };
-    globalThis.addEventListener?.('focus', refresh);
-    const interval = globalThis.setInterval(refresh, POLL_INTERVAL_MS);
-    return () => {
-      globalThis.removeEventListener?.('focus', refresh);
-      globalThis.clearInterval(interval);
+    const refresh = () => {
+      void dispatch(loadPendingInvitations({ maxAgeMs: INBOX_MAX_AGE_MS }));
     };
+    refresh();
+    globalThis.addEventListener?.('focus', refresh);
+    return () => globalThis.removeEventListener?.('focus', refresh);
   }, [dispatch]);
 
   const accept = async (invitation: PendingInvitation) => {
@@ -89,6 +90,7 @@ export const InvitationInbox = () => {
             variant="ghost"
             size="icon"
             className="relative"
+            title={t('inbox.buttonLabel')}
             aria-label={count > 0
               ? t('inbox.buttonLabelWithCount', { count })
               : t('inbox.buttonLabel')}

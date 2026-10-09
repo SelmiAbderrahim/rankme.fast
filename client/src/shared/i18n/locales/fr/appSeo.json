@@ -27,7 +27,7 @@
     "appleHelp": "Saisissez l'identifiant numérique de 6 à 12 chiffres.",
     "pairedLabel": "Ces fiches correspondent à la même application",
     "pairedHelp": "Associez-les uniquement si elles représentent le même produit.",
-    "usage": "{{used}} profil(s) sur {{limit}}",
+    "usage": "{{used}} profils sur {{limit}}",
     "submit": "Enregistrer l'application",
     "registering": "Enregistrement…"
   },

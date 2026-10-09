@@ -46,6 +46,8 @@ import {
   setAudienceResearchQueue,
 } from './index.js';
 import { db as productionDb } from '../../db/client.js';
+import { DICTIONARIES } from '../../shared/i18n/index.js';
+import { competitorProfiles } from '../../db/schema/index.js';
 import {
   decideAudienceResearchSignalController,
   previewAudienceResearchController,
@@ -76,7 +78,27 @@ async function addSite(user: TestUser, origin = 'https://example.com'): Promise<
     .post('/api/sites')
     .set('Cookie', user.cookie)
     .send({ url: origin });
-  return (res.body as { site: { id: string } }).site.id;
+  const siteId = (res.body as { site: { id: string } }).site.id;
+  // The form (and now the server) only accepts competitors from the site's
+  // active portfolio, so every test site starts with `acme.example` in it.
+  await seedCompetitor(user, siteId, 'acme.example', 'active');
+  return siteId;
+}
+
+async function seedCompetitor(
+  user: TestUser,
+  siteId: string,
+  domain: string,
+  status: 'active' | 'archived',
+): Promise<void> {
+  await (getTestDb() as unknown as typeof productionDb).insert(competitorProfiles).values({
+    accountId: user.id,
+    siteId,
+    origin: `https://${domain}`,
+    registrableDomain: domain,
+    source: 'manual',
+    status,
+  });
 }
 
 function baseInputBody() {
@@ -168,6 +190,31 @@ describe('audience-research API smoke', () => {
     // Exactly one persisted run.
     const runCount = await AudienceResearchRun.countDocuments();
     expect(runCount).toBe(1);
+  });
+
+  it('POST run rejects competitors outside the active portfolio with 400 and creates nothing', async () => {
+    const { queue, jobs } = fakeQueue();
+    setAudienceResearchQueue(queue);
+    const user = await signupVerifiedUser(app, { email: 'alice-portfolio@example.com' });
+    const siteId = await addSite(user);
+    await seedCompetitor(user, siteId, 'old-rival.example', 'archived');
+
+    for (const competitorDomains of [['reddit.com'], ['old-rival.example'], ['acme.example', 'forbes.com']]) {
+      const res = await request(app)
+        .post(`/api/sites/${siteId}/audience-research/runs`)
+        .set('Cookie', user.cookie)
+        .send({ ...baseInputBody(), competitorDomains });
+      expect(res.status).toBe(400);
+      expect(res.body.error.message).toBe(DICTIONARIES.en.audienceResearch.errors.competitorNotTracked);
+    }
+    expect(await AudienceResearchRun.countDocuments()).toBe(0);
+    expect(jobs).toHaveLength(0);
+
+    const none = await request(app)
+      .post(`/api/sites/${siteId}/audience-research/runs`)
+      .set('Cookie', user.cookie)
+      .send({ ...baseInputBody(), competitorDomains: [] });
+    expect(none.status).toBe(202);
   });
 
   it('versions run identity by output locale and a language-only read has no side effects', async () => {

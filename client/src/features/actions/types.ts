@@ -113,6 +113,8 @@ export interface ActionItem {
   effort: ActionEffort;
   state: ActionState;
   version: number;
+  /** Note on the decision behind the current state; absent on older API responses. */
+  latestNote?: string | null;
   /** Completed, yet the source still reports it from a later observation. */
   reappearedAfterFix: boolean;
   observedAt: string;
@@ -141,6 +143,10 @@ export interface ActionHistoryEntry {
   newState: ActionState;
   eventKind: string;
   actorUserId: string;
+  /** Name + email, only for current workspace members; absent/null otherwise. */
+  actor?: { name: string | null; email: string } | null;
+  /** True when the signed-in user made this change. */
+  actorIsYou?: boolean;
   note: string | null;
   createdAt: string;
 }

@@ -229,6 +229,13 @@ describe('SecuritySettings page', () => {
     expect(screen.getByText('Delete account')).toBeInTheDocument();
   });
 
+  it('drops its own page header when embedded in a host that has one', () => {
+    renderWithLocale(<SecuritySettings embedded />);
+    expect(screen.queryByRole('heading', { level: 1 })).not.toBeInTheDocument();
+    expect(screen.getByRole('button', { name: 'Update password' })).toBeInTheDocument();
+    expect(screen.getByText('Active sessions')).toBeInTheDocument();
+  });
+
   it('is theme-agnostic (dark)', () => {
     document.documentElement.classList.add('dark');
     renderWithLocale(<SecuritySettings />);

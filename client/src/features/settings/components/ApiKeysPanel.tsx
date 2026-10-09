@@ -46,7 +46,7 @@ import {
 import { Skeleton } from '@shared/ui/skeleton';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@shared/ui/table';
 import { TableHeaderHelp } from '@shared/ui/table-header-help';
-import { Empty, EmptyDescription, EmptyHeader, EmptyTitle } from '@shared/ui/empty';
+import { Empty, EmptyHeader, EmptyTitle } from '@shared/ui/empty';
 import { clearApiKeysMessages, clearCreatedApiKey } from '../store/apiKeysSlice';
 import {
   createApiKey,
@@ -240,7 +240,6 @@ export const ApiKeysPanel = () => {
           <Empty>
             <EmptyHeader>
               <EmptyTitle>{t('settings:apiKeys.empty')}</EmptyTitle>
-              <EmptyDescription>{t('settings:apiKeys.description')}</EmptyDescription>
             </EmptyHeader>
           </Empty>
         ) : keys.length > 0 ? (

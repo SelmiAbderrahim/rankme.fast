@@ -785,7 +785,7 @@ export function RecommendationWorkflow({ analysis, onChanged }: RecommendationWo
                             <li key={sourceId}>
                               {citation && href !== '#' ? (
                                 <a href={href} target="_blank" rel="nofollow ugc noopener noreferrer">
-                                  {citation.title ?? citation.url}
+                                  <bdi>{citation.title ?? citation.url}</bdi>
                                 </a>
                               ) : (
                                 <span>{citation?.title ?? t('opportunities.ownedEvidence')}</span>

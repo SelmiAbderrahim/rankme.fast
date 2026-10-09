@@ -1,4 +1,5 @@
 import { apiClient } from '@shared/api/client';
+import { siteLabel } from '@shared/lib/siteLabel';
 import { z } from 'zod';
 import { ASSIGNABLE_TEAM_ROLES, TEAM_ROLES } from './types';
 import type {
@@ -191,7 +192,7 @@ export const fetchGrantableSitesRequest = async (): Promise<TeamSiteOption[]> =>
     for (const site of response.sites) {
       sites.set(site.id, {
         id: site.id,
-        label: site.displayName || site.domain,
+        label: siteLabel(site),
         url: site.url,
       });
     }

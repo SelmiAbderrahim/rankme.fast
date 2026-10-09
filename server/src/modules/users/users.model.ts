@@ -129,15 +129,17 @@ const userSchema = new mongoose.Schema({
         logoWidth: { type: Number, default: null },
         logoHeight: { type: Number, default: null },
     },
-    // Non-transactional email opt-out flags. Opt-out model: any
-    // missing field is read as `true` by resolveNotificationPreferences so
-    // pre-existing users keep receiving until they explicitly opt out. Security
+    // Non-transactional email flags. Operational mail (audit complete, rank
+    // drops, alerts, monitoring) is opt-out: a missing field reads as `true` by
+    // resolveNotificationPreferences. Marketing (`emailMarketing`) is opt-in and
+    // defaults to `false`, so no product-update mail goes out until the user
+    // switches it on; stored values of existing users are never rewritten. Security
     // email (password reset / email verification / password-changed
     // confirmation) is NEVER gated — those routes ignore this record entirely.
     notificationPreferences: {
         emailAuditComplete: { type: Boolean, default: true },
         emailRankDrop: { type: Boolean, default: true },
-        emailMarketing: { type: Boolean, default: true },
+        emailMarketing: { type: Boolean, default: false },
         // Public-page change monitoring — material-change alert.
         emailMonitorChange: { type: Boolean, default: true },
         emailAlerts: { type: Boolean, default: true },

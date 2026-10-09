@@ -1,4 +1,4 @@
-import { useEffect } from 'react';
+import { useEffect, type ReactNode } from 'react';
 import { Outlet, useLocation, useNavigate } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { Footer } from './Footer';
@@ -12,8 +12,9 @@ import { appHref } from '@shared/navigation/appHref';
  * Public (signed-out) shell for the server-rendered docs and the public 404.
  * Sibling to MinimalLayout (auth screens) and AppLayout (product shell); the
  * self-hosted edition ships no marketing site, so this is the only SSR chrome.
+ * `children` replaces the `<Outlet />` for the 404, which owns its own route.
  */
-export const PublicLayout = () => {
+export const PublicLayout = ({ children }: { children?: ReactNode }) => {
   const { locale, basePath } = useMarketingRoute();
   const navigate = useNavigate();
   const location = useLocation();
@@ -63,7 +64,7 @@ export const PublicLayout = () => {
       />
 
       <main className="flex-1" id="public-main">
-        <Outlet />
+        {children ?? <Outlet />}
       </main>
 
       <Footer />

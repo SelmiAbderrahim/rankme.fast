@@ -67,7 +67,8 @@
   },
   "pageCap": {
     "label": "抓取页面数",
-    "max": "套餐上限",
+    "max": "允许的最大值",
+    "help": "设置抓取器访问的页面数量。“允许的最大值”会覆盖此服务器允许的最多页面；页面越少，完成越快。",
     "pages": "{{pages}} 个页面"
   },
   "empty": {
@@ -92,7 +93,11 @@
     "loading": "正在加载您的报告…",
     "retry": "重试",
     "runInProgress": "正在审计您的网站——这可能需要几分钟。",
+    "queuedWaiting": "正在等待工作进程接手此任务…",
     "runProgress": "正在检查最多 {{count}} 个页面。"
+  },
+  "hostRedirect": {
+    "notice": "{{from}} 会跳转到 {{to}}，因此本报告检查的是 {{to}}。下方列出的所有页面和地址都属于 {{to}}。"
   },
   "loadFailed": "无法加载您的报告。",
   "retestFailed": "无法启动审计。",
@@ -213,15 +218,16 @@
     "noData": "暂无数据"
   },
   "exportUi": {
-    "trigger": "导出或分享", "loading": "正在加载导出选项…", "preparing": "正在准备文件…", "unavailable": "导出不可用", "formatsLabel": "文件格式",
+    "trigger": "导出或分享", "loading": "正在加载导出选项…", "preparing": "正在准备文件…", "ready": "导出已完成。副本也已保存在“导出与分享”中。", "unavailable": "导出不可用", "empty": "暂无可导出的内容", "formatsLabel": "文件格式",
     "clipboard": { "action": "复制到剪贴板", "success": "已复制到剪贴板。", "error": "无法复制到剪贴板。" },
     "formats": { "view": "网页视图", "pdf": "PDF 文件", "csv": "CSV 文件", "json": "JSON", "md": "Markdown 文档", "jsonld": "JSON-LD", "txt": "文本" },
+    "kindAreas": { "audit": "网站审计", "ranks": "排名", "google": "Google 数据", "client": "客户报告", "keyword": "关键词", "backlinks": "外链", "competitors": "竞争对手", "actions": "下一步行动", "ai": "AI 可见度", "audience": "受众研究", "brand": "品牌雷达", "content": "内容", "internal_links": "内部链接", "weekly_pulse": "每周简报", "local": "本地 SEO", "schema": "Schema 标记", "pages": "页面", "app": "应用商店优化" },
     "states": { "active": "有效", "revoked": "已撤销", "expired": "已过期" },
     "actions": { "retry": "重试", "download": "下载", "delete": "删除", "revoke": "撤销", "cancel": "取消", "done": "完成" },
     "errors": { "capabilities": "无法加载导出选项。", "create": "无法导出报告。请缩小范围后重试。", "download": "无法下载已保存的文件。", "list": "无法加载已保存的导出。", "delete": "无法删除已保存的导出。", "share": "无法创建分享链接。", "revoke": "无法撤销分享链接。", "copy": "无法复制链接。" },
     "share": { "action": "创建分享链接", "title": "分享不可变报告", "description": "选择收件人可以打开的内容。链接创建后，报告将不再变化。", "locale": "报告语言", "expiry": "有效期", "expiryHelp": "请选择一至90天。", "permissions": "允许的格式", "create": "创建链接", "creating": "正在创建链接…", "showOnce": "立即复制此链接", "linkLabel": "分享链接", "copy": "复制链接", "copied": "已复制", "savedWithoutToken": "为确保安全，RankMeFast 不会保存可读链接。你仍可在导出中心撤销它。", "existing": "此快照的链接", "refresh": "刷新" },
     "confirm": { "revokeTitle": "撤销此链接？", "revokeBody": "任何使用此链接的人都会立即失去访问权限。", "deleteTitle": "删除此导出？", "deleteBody": "文件将停止工作，所有关联的分享链接也会被撤销。" },
-    "center": { "title": "导出与分享", "description": "下载已保存的报告快照并管理公开链接。", "tabsLabel": "导出中心分区", "downloads": "下载", "shares": "分享", "disabledTitle": "新导出已暂停", "disabledBody": "现有文件可能仍可用，但目前无法创建新文件或链接。", "emptyDownloadsTitle": "尚无已保存的导出", "emptyDownloadsBody": "在任意报告中使用“导出或分享”创建。", "emptySharesTitle": "尚无分享链接", "emptySharesBody": "分享支持的报告后，可在此管理链接。", "deletedReport": "已删除或已过期的报告", "more": "加载更多", "expiresValue": "{{date}}到期", "views": "{{count}}次查看", "columns": { "report": "报告", "format": "格式", "created": "创建时间", "expires": "到期时间", "actions": "操作" } }
+    "center": { "title": "导出与分享", "description": "下载已保存的报告快照并管理公开链接。", "tabsLabel": "导出中心分区", "downloads": "下载", "shares": "分享", "disabledTitle": "新导出已暂停", "disabledBody": "现有文件可能仍可用，但目前无法创建新文件或链接。", "emptyDownloadsTitle": "尚无已保存的导出", "emptyDownloadsBody": "在任意报告中使用“导出或分享”创建。", "emptySharesTitle": "尚无分享链接", "emptySharesBody": "分享支持的报告后，可在此管理链接。", "deletedReport": "已删除或已过期的报告", "noSite": "整个账户", "more": "加载更多", "expiresValue": "{{date}}到期", "views": "{{count}}次查看", "columns": { "report": "报告", "site": "网站", "format": "格式", "created": "创建时间", "expires": "到期时间", "actions": "操作" } }
   },
   "publicShare": {
     "report": "共享报告",
@@ -247,7 +253,10 @@
       "pageSpeed": "此网站暂无真实访客的速度数据。",
       "localSeo": "添加商家信息或评价来源以进行此项检查。",
       "aiVisibility": "跟踪 AI 提示词以进行此项检查。",
-      "generic": "抓取未返回足够的数据来进行此项检查。"
+      "generic": "抓取未返回足够的数据来进行此项检查。",
+      "probeUnreachable": "我们无法访问你网站上的 {{file}}，因此无法完成此项检查。",
+      "probeBlocked": "你的网站拒绝了我们对 {{file}} 的请求（HTTP {{status}}），因此无法完成此项检查。",
+      "probeHttpError": "你的网站对 {{file}} 返回了 HTTP {{status}}，因此无法完成此项检查。"
     }
   },
   "pending": {

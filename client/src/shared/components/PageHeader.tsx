@@ -7,7 +7,7 @@ import type { LucideIcon } from 'lucide-react';
 import { cn } from '@shared/lib/utils';
 
 export interface PageHeaderProps
-  extends Omit<ComponentPropsWithoutRef<'header'>, 'title'> {
+  extends Omit<ComponentPropsWithoutRef<'div'>, 'title'> {
   icon: LucideIcon;
   title: ReactNode;
   titleId?: string;
@@ -40,7 +40,7 @@ export const PageHeader = ({
   const { className: titleClassName, ...restTitleProps } = titleProps ?? {};
 
   return (
-    <header
+    <div
       className={cn(
         'flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between',
         className,
@@ -73,7 +73,7 @@ export const PageHeader = ({
         </div>
       </div>
       {actions ? <div className="shrink-0">{actions}</div> : null}
-    </header>
+    </div>
   );
 };
 

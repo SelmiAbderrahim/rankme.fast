@@ -154,7 +154,7 @@
     "competitors": {
       "open": "打开竞争对手",
       "notLoadedTitle": "竞争对手数据可按需获取",
-      "notLoadedDescription": "打开竞争对手以执行 Agency 查询。概览会复用该结果，不会再次消耗查询次数。"
+      "notLoadedDescription": "打开竞争对手以执行一次查询。概览会复用该结果，不会再次消耗查询次数。"
     },
     "unlock": {
       "title": "还有更多洞察可用",
@@ -196,5 +196,14 @@
       "revoked": "已撤销",
       "disconnected": "未连接"
     }
+  },
+  "notFound": {
+    "title": "未找到网站",
+    "description": "此网站不存在，或你没有访问权限。",
+    "back": "返回网站列表"
+  },
+  "lookupFailed": {
+    "title": "无法加载此网站",
+    "description": "暂时无法检查此网站，请稍后重试。"
   }
 }

@@ -154,7 +154,7 @@
     "competitors": {
       "open": "Wettbewerber öffnen",
       "notLoadedTitle": "Wettbewerbsdaten sind bei Bedarf verfügbar",
-      "notLoadedDescription": "Öffnen Sie Wettbewerber für eine Agency-Abfrage. Die Übersicht verwendet das Ergebnis erneut, ohne eine weitere Abfrage zu verbrauchen."
+      "notLoadedDescription": "Öffnen Sie Wettbewerber, um eine Abfrage auszuführen. Die Übersicht verwendet das Ergebnis erneut, ohne eine weitere Abfrage zu verbrauchen."
     },
     "unlock": {
       "title": "Weitere Einblicke sind verfügbar",
@@ -196,5 +196,14 @@
       "revoked": "Widerrufen",
       "disconnected": "Nicht verbunden"
     }
+  },
+  "notFound": {
+    "title": "Website nicht gefunden",
+    "description": "Diese Website existiert nicht oder Sie haben keinen Zugriff darauf.",
+    "back": "Zurück zu den Websites"
+  },
+  "lookupFailed": {
+    "title": "Diese Website konnte nicht geladen werden",
+    "description": "Wir konnten diese Website gerade nicht prüfen. Versuchen Sie es gleich noch einmal."
   }
 }

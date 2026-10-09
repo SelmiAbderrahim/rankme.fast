@@ -6,7 +6,6 @@ import { MemoryRouter, Route, Routes, useLocation } from 'react-router-dom';
 import { render, screen, waitFor, within } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { toast } from 'sonner';
-import { ApiError } from '@shared/api/client';
 import { changeLanguage, i18n, initI18n } from '@shared/i18n';
 import * as api from './api';
 import { CompetitorWorkspace } from './components/CompetitorWorkspace';
@@ -364,7 +363,7 @@ describe('unified competitor workspace', () => {
     await screen.findByText('suggested.example');
     await userEvent.click(screen.getByRole('button', { name: /preview discovery refresh/i }));
     await userEvent.click(await screen.findByRole('button', { name: /review and confirm/i }));
-    expect(await screen.findByRole('alertdialog')).toHaveTextContent(/self-host/i);
+    expect(await screen.findByRole('alertdialog')).toHaveTextContent(/aren.t applied on this server/i);
     await userEvent.click(screen.getByRole('button', { name: /confirm refresh/i }));
     await waitFor(() => expect(mocked.refreshDiscovery).toHaveBeenCalledTimes(1));
 
@@ -383,13 +382,13 @@ describe('unified competitor workspace', () => {
     expect(screen.getByRole('button', { name: /review and confirm/i })).toBeDisabled();
   });
 
-  it('confirms landscape previews with the self-host notice', async () => {
+  it('confirms landscape previews with the unmetered notice', async () => {
     renderWorkspace('/sites/site-1?tab=competitors&view=keywords');
     await userEvent.click(await screen.findByRole('checkbox'));
     await userEvent.click(screen.getByRole('button', { name: /preview report spend/i }));
-    expect(await screen.findByText(/self-host/i)).toBeInTheDocument();
+    expect(await screen.findByText(/aren.t applied on this server/i)).toBeInTheDocument();
     await userEvent.click(screen.getByRole('button', { name: /review and confirm/i }));
-    expect(await screen.findByRole('alertdialog')).toHaveTextContent(/self-host/i);
+    expect(await screen.findByRole('alertdialog')).toHaveTextContent(/aren.t applied on this server/i);
     await userEvent.click(screen.getByRole('button', { name: /confirm report/i }));
     await waitFor(() => expect(mocked.startLandscapeRun).toHaveBeenCalled());
   });
@@ -810,9 +809,10 @@ describe('unified competitor workspace', () => {
   });
 
   it('treats missing discovery as an empty stored state instead of an error', async () => {
-    mocked.fetchLatestDiscovery.mockRejectedValueOnce(new ApiError('missing', 404, undefined));
+    mocked.fetchLatestDiscovery.mockResolvedValueOnce({ discovery: null });
     renderWorkspace('/sites/site-1?tab=competitors&view=overview');
     expect(await screen.findByText(/no stored discovery suggestions yet/i)).toBeInTheDocument();
+    expect(screen.queryByRole('alert')).not.toBeInTheDocument();
   });
 
   it('renders provider failures, empty reports, and transparent missing report data', async () => {

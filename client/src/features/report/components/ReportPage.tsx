@@ -25,13 +25,14 @@
  *   - report-no-run                        first-run empty state
  *   - report-not-evaluated                 checks that could not run
  */
-import { useEffect, useMemo, useRef, useState } from 'react';
+import { useEffect, useId, useMemo, useRef, useState } from 'react';
 import { useParams, useSearchParams } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { RefreshCw } from 'lucide-react';
 import { ReportExportControl } from '@features/report-export';
 import { Alert, AlertDescription } from '@shared/ui/alert';
 import { Button } from '@shared/ui/button';
+import { Label } from '@shared/ui/label';
 import { Skeleton } from '@shared/ui/skeleton';
 import {
   Empty,
@@ -174,6 +175,7 @@ export const ReportPage = ({
   const [activeTab, setActiveTab] = useReportTab();
   // Local UI state (not navigation — the ?tab= rule does not apply).
   const [pageCap, setPageCap] = useState<string>(PAGE_CAP_MAX);
+  const pageCapId = useId();
   // Retest confirmation dialog — opening it is a read-only
   // preview; only the in-dialog confirm dispatches the mutation.
   const [retestOpen, setRetestOpen] = useState(false);
@@ -369,29 +371,38 @@ export const ReportPage = ({
   const runInProgress =
     retesting || runStatus === 'queued' || runStatus === 'running';
 
+  // The label and helper text travel with the Select so the crawl-size choice
+  // is explained wherever the picker is rendered (the retest/first-run dialog).
   const pageCapPicker = (
-    <Select value={pageCap} onValueChange={setPageCap} disabled={runInProgress}>
-      <SelectTrigger
-        size="sm"
-        aria-label={t('pageCap.label')}
-        data-testid="report-page-cap"
-      >
-        <SelectValue />
-      </SelectTrigger>
-      {/* Popper keeps the list below the trigger. The default item-aligned
-          mode laid it over the trigger and the dialog copy above it, where
-          the dark popover and dialog surfaces are nearly the same color, so
-          the options read as drawn on a transparent layer. */}
-      <SelectContent position="popper" align="start">
-        {PAGE_CAP_OPTIONS.map((option) => (
-          <SelectItem key={option} value={option}>
-            {option === PAGE_CAP_MAX
-              ? t('pageCap.max')
-              : t('pageCap.pages', { pages: option })}
-          </SelectItem>
-        ))}
-      </SelectContent>
-    </Select>
+    <div className="flex w-full flex-col gap-1.5">
+      <Label htmlFor={pageCapId}>{t('pageCap.label')}</Label>
+      <Select value={pageCap} onValueChange={setPageCap} disabled={runInProgress}>
+        <SelectTrigger
+          id={pageCapId}
+          size="sm"
+          aria-describedby={`${pageCapId}-help`}
+          data-testid="report-page-cap"
+        >
+          <SelectValue />
+        </SelectTrigger>
+        {/* Popper keeps the list below the trigger. The default item-aligned
+            mode laid it over the trigger and the dialog copy above it, where
+            the dark popover and dialog surfaces are nearly the same color, so
+            the options read as drawn on a transparent layer. */}
+        <SelectContent position="popper" align="start">
+          {PAGE_CAP_OPTIONS.map((option) => (
+            <SelectItem key={option} value={option}>
+              {option === PAGE_CAP_MAX
+                ? t('pageCap.max')
+                : t('pageCap.pages', { pages: option })}
+            </SelectItem>
+          ))}
+        </SelectContent>
+      </Select>
+      <p id={`${pageCapId}-help`} className="text-muted-foreground text-xs">
+        {t('pageCap.help')}
+      </p>
+    </div>
   );
 
   const renderTabPanel = (tab: ReportTab) => {
@@ -583,6 +594,11 @@ export const ReportPage = ({
         >
           <AlertDescription>
             <span className="block">{t('states.runInProgress')}</span>
+            {runStatus === 'queued' ? (
+              <span className="block" data-testid="report-run-queued-hint">
+                {t('states.queuedWaiting')}
+              </span>
+            ) : null}
             {runPageCap ? (
               <span className="block" data-testid="report-run-progress">
                 {t('states.runProgress', { count: runPageCap })}
@@ -617,6 +633,17 @@ export const ReportPage = ({
                 : 'idle'
           }
         />
+      ) : null}
+
+      {report?.hostRedirect ? (
+        <Alert role="status" data-testid="report-host-redirect">
+          <AlertDescription>
+            {t('hostRedirect.notice', {
+              from: report.hostRedirect.from,
+              to: report.hostRedirect.to,
+            })}
+          </AlertDescription>
+        </Alert>
       ) : null}
 
       {report ? (

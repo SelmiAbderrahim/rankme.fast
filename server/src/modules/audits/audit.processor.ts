@@ -31,7 +31,7 @@ import { completeAuditRun, failAuditRun, markAuditRunRunning } from './audit-run
 import { replaceAuditedPages } from './audits.service.js';
 import { writeReportSnapshot } from './report.service.js';
 import type { PageSpeedEvaluationInput, PageSpeedSample, } from './rules/index.js';
-import type { SiteProbe, SiteProbeResult } from './site-probe.js';
+import { detectHostRedirect, type SiteProbe, type SiteProbeResult } from './site-probe.js';
 export interface AuditProcessorDeps {
     provider: AuditProvider;
     logger: Logger;
@@ -327,7 +327,7 @@ export function createAuditProcessor(deps: AuditProcessorDeps) {
                     fetchedAt: new Date(now()),
                 });
             }
-            const result = await applySiteProbe(await applyStructuredDataProbe(vendorResult, deps), target, deps);
+            const result = applyHostRedirect(await applySiteProbe(await applyStructuredDataProbe(vendorResult, deps), target, deps), target);
             // Page-speed sampling — Lighthouse + optional CrUX on a
             // sampled subset.
             // Provider failure is degradation, NOT audit failure (release-gate
@@ -490,6 +490,12 @@ export async function applySiteProbe(result: AuditResult, target: ResolvedAuditT
     if (checks.llmsTxtFound === undefined && probe.llmsTxtFound !== undefined) {
         checks.llmsTxtFound = probe.llmsTxtFound;
     }
+    // A sitemap the probe saw served (or robots.txt declares) is direct
+    // evidence; the vendor's "no sitemap" never outranks it.
+    if (probe.sitemapFound)
+        checks.sitemapFound = true;
+    if (probe.failures)
+        checks.probeFailures = probe.failures;
     if (probe.addressVariants && probe.addressVariants.length > 0) {
         checks.addressVariants = probe.addressVariants;
         if (probe.addressVariants.some((v) => v.ok === false))
@@ -497,7 +503,32 @@ export async function applySiteProbe(result: AuditResult, target: ResolvedAuditT
         else if (probe.addressVariants.every((v) => v.ok === true))
             checks.canonicalizationOk = true;
     }
-    return { ...result, domainChecks: checks };
+    const probeRedirect = detectHostRedirect(siteHostOf(target), probe.startPageFinalUrl, []);
+    return {
+        ...result,
+        domainChecks: checks,
+        ...(probeRedirect ? { hostRedirect: probeRedirect } : {}),
+    };
+}
+/**
+ * Record when the crawl landed on another host than the site's own (www <->
+ * apex, or a different domain). The crawled page URLs are the strongest
+ * evidence — they are what every finding lists — so they override a probe
+ * verdict already merged by `applySiteProbe`. Pure; never fails the audit.
+ */
+export function applyHostRedirect(result: AuditResult, target: ResolvedAuditTarget): AuditResult {
+    const redirect = detectHostRedirect(siteHostOf(target), undefined, result.pages.map((page) => page.url));
+    if (!redirect)
+        return result;
+    return { ...result, hostRedirect: redirect };
+}
+function siteHostOf(target: ResolvedAuditTarget): string {
+    try {
+        return new URL(target.url).hostname;
+    }
+    catch {
+        return target.domain;
+    }
 }
 /**
  * Terminal-failure hook for the dead-letter wiring: marks the domain record

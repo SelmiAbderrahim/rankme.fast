@@ -17,7 +17,6 @@ export {
   createAssistantConversation,
   deleteAssistantConversation,
   getAssistantConversation,
-  getAssistantCsrfToken,
   listAssistantConversations,
 } from './api';
 export {

@@ -141,7 +141,7 @@ export function SignalEvidenceDrawer({
                         </Badge>
                       ) : null}
                     </div>
-                    <p className="text-sm font-medium">{source.title}</p>
+                    <p className="text-sm font-medium" dir="auto">{source.title}</p>
                     <p className="text-muted-foreground text-xs">
                       {t('signals.evidence.observedAt', { date: observedDisplay })}
                     </p>

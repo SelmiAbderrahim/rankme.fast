@@ -14,6 +14,7 @@ import { googleReducer } from '@features/google';
 import { keywordResearchReducer } from '@features/keyword-research';
 import { ranksReducer } from '@features/ranks';
 import { reportReducer } from '@features/report';
+import { ApiError } from '@shared/api/client';
 import * as sitesApi from '../api';
 import { sitesReducer } from '../store/slice';
 import { SITE_TABS, getSiteTabGroup, type SiteTab } from '../tabState';
@@ -257,6 +258,7 @@ vi.mock('../api', () => ({
     ],
     nextCursor: null,
   })),
+  fetchSiteRequest: vi.fn(),
   createSiteRequest: vi.fn(),
   deleteSiteRequest: vi.fn(),
   updateSiteRequest: vi.fn(),
@@ -357,6 +359,8 @@ describe('SiteWorkspacePage — default tab, deep link, invalid tab, switching',
     expect(screen.getByTestId('site-navigation')).toHaveAccessibleName('Workspace view');
     // Site heading uses the displayName.
     expect(screen.getByRole('heading', { name: 'Example' })).toBeInTheDocument();
+    // A distinct display name keeps the domain as the subtitle.
+    expect(screen.getByText('example.com')).toBeInTheDocument();
   });
 
   it('deep-link ?tab=report mounts the ReportPage', async () => {
@@ -597,7 +601,7 @@ describe('SiteWorkspacePage — every destination is open', () => {
 });
 
 describe('SiteWorkspacePage — falls back when the site is not yet loaded', () => {
-  it('renders the site id as the heading when the site record is missing', async () => {
+  const renderUnlisted = (siteId: string) => {
     const store = configureStore({
       reducer: {
         sites: sitesReducer,
@@ -608,18 +612,12 @@ describe('SiteWorkspacePage — falls back when the site is not yet loaded', () 
         ranks: ranksReducer,
         report: reportReducer,
       },
-      preloadedState: {
-        sites: {
-          ...baseSites(),
-          loaded: true,
-          items: [],
-        },
-      },
+      preloadedState: { sites: { ...baseSites(), loaded: true, items: [] } },
     });
-    render(
+    return render(
       <Provider store={store}>
         <I18nextProvider i18n={i18n}>
-          <MemoryRouter initialEntries={['/sites/unknown']}>
+          <MemoryRouter initialEntries={[`/sites/${siteId}`]}>
             <Routes>
               <Route path="/sites/:siteId" element={<SiteWorkspacePage />} />
             </Routes>
@@ -627,14 +625,75 @@ describe('SiteWorkspacePage — falls back when the site is not yet loaded', () 
         </I18nextProvider>
       </Provider>,
     );
-    await waitFor(() =>
-      expect(screen.getByRole('heading', { name: 'unknown' })).toBeInTheDocument(),
+  };
+
+  it('loads a site that is missing from the paginated list by id', async () => {
+    mockedApi.fetchSiteRequest.mockResolvedValueOnce({
+      site: {
+        id: 'later-page',
+        url: 'https://later.example',
+        domain: 'later.example',
+        displayName: 'Later page',
+        paused: false,
+        pausedAt: null,
+        createdAt: '2026-07-01T00:00:00.000Z',
+        updatedAt: '2026-07-01T00:00:00.000Z',
+      },
+    });
+    renderUnlisted('later-page');
+    expect(await screen.findByRole('heading', { name: 'Later page' })).toBeInTheDocument();
+    expect(screen.getByTestId('site-workspace')).toBeInTheDocument();
+    expect(mockedApi.fetchSiteRequest).toHaveBeenCalledWith('later-page');
+  });
+
+  it('shows a localized not-found page, not a workspace, when the API answers 404', async () => {
+    mockedApi.fetchSiteRequest.mockRejectedValueOnce(
+      new ApiError('Not found', 404, { error: { code: 'SITES_ERRORS_NOT_FOUND' } }),
     );
+    renderUnlisted('000000000000000000000000');
+    expect(await screen.findByTestId('site-not-found')).toBeInTheDocument();
+    expect(screen.getByText('Site not found')).toBeInTheDocument();
+    expect(screen.getByRole('link', { name: 'Back to sites' })).toHaveAttribute('href', '/sites');
+    // No workspace chrome, tabs, or raw id heading.
+    expect(screen.queryByTestId('site-workspace')).toBeNull();
+    expect(screen.queryByTestId('site-navigation')).toBeNull();
+    expect(screen.queryByText('000000000000000000000000')).toBeNull();
+  });
+
+  it('keeps a retry state for a transient failure and recovers on retry', async () => {
+    mockedApi.fetchSiteRequest
+      .mockRejectedValueOnce(new ApiError('Server error', 503, null))
+      .mockResolvedValueOnce({
+        site: {
+          id: 'flaky',
+          url: 'https://flaky.example',
+          domain: 'flaky.example',
+          displayName: 'Flaky',
+          paused: false,
+          pausedAt: null,
+          createdAt: '2026-07-01T00:00:00.000Z',
+          updatedAt: '2026-07-01T00:00:00.000Z',
+        },
+      });
+    renderUnlisted('flaky');
+    expect(await screen.findByTestId('site-lookup-error')).toBeInTheDocument();
+    expect(screen.queryByTestId('site-not-found')).toBeNull();
+    expect(screen.queryByTestId('site-workspace')).toBeNull();
+    await userEvent.click(screen.getByRole('button', { name: 'Try again' }));
+    expect(await screen.findByRole('heading', { name: 'Flaky' })).toBeInTheDocument();
+  });
+
+  it('treats a non-ApiError failure as transient, not as not-found', async () => {
+    mockedApi.fetchSiteRequest.mockRejectedValueOnce(new TypeError('boom'));
+    renderUnlisted('odd');
+    expect(await screen.findByTestId('site-lookup-error')).toBeInTheDocument();
   });
 
   it('falls back to the owned domain when the display name is empty', async () => {
     renderAt('/sites/site-1', { displayName: '' });
     expect(await screen.findByRole('heading', { name: 'example.com' })).toBeInTheDocument();
+    // The domain is the title, so it is not printed a second time.
+    expect(screen.getAllByText('example.com')).toHaveLength(1);
   });
 
   it('shows a heading skeleton (not the raw UUID) until the sites slice resolves', () => {
@@ -697,6 +756,7 @@ describe('SiteWorkspacePage — siteId param absent', () => {
   it('falls back to empty string when useParams yields no siteId (covers ?? right branch)', async () => {
     // Render WITHOUT a :siteId route pattern so useParams() returns {}
     // → params.siteId is undefined → the ?? '' right branch fires.
+    mockedApi.fetchSiteRequest.mockRejectedValueOnce(new ApiError('Not found', 404, null));
     const store = makeStore();
     render(
       <Provider store={store}>
@@ -709,8 +769,8 @@ describe('SiteWorkspacePage — siteId param absent', () => {
         </I18nextProvider>
       </Provider>,
     );
-    // Component renders (with siteId=''), showing the workspace shell
-    await waitFor(() => expect(screen.getByTestId('site-workspace')).toBeInTheDocument());
+    // With siteId='' the lookup 404s, so the not-found page renders.
+    await waitFor(() => expect(screen.getByTestId('site-not-found')).toBeInTheDocument());
   });
 });
 

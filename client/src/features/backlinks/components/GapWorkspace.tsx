@@ -153,6 +153,7 @@ export function GapWorkspace({ siteId, ownDomain: selectedDomain }: GapWorkspace
               <FieldLabel htmlFor="gap-own-domain">{t('gap.form.ownDomainLabel')}</FieldLabel>
               <Input
                 id="gap-own-domain"
+                dir="ltr"
                 value={ownDomain}
                 onChange={(event) => {
                   ownDomainEdited.current = true;

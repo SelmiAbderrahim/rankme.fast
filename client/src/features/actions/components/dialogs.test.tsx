@@ -314,6 +314,31 @@ describe('HistoryDrawer', () => {
     expect(entries[0]).toHaveTextContent('Team member');
   });
 
+  it('labels the actor: You for the viewer, name or email for teammates', async () => {
+    const base = {
+      priorState: 'open',
+      newState: 'planned',
+      eventKind: 'state_change',
+      actorUserId: 'u',
+      note: null,
+      createdAt: '2026-07-10T10:00:00.000Z',
+    };
+    mocked.getActionHistory.mockResolvedValueOnce({
+      entries: [
+        { ...base, ordinal: 1, actorIsYou: true, actor: { name: 'Me', email: 'me@x.io' } },
+        { ...base, ordinal: 2, actorIsYou: false, actor: { name: 'Sam Lee', email: 'sam@x.io' } },
+        { ...base, ordinal: 3, actorIsYou: false, actor: { name: null, email: 'ann@x.io' } },
+        { ...base, ordinal: 4, actorIsYou: false, actor: null },
+      ],
+    } as never);
+    renderWith(<HistoryDrawer {...props} open onOpenChange={vi.fn()} />);
+    const entries = await screen.findAllByTestId('action-history-entry');
+    expect(entries[0]).toHaveTextContent('You ·');
+    expect(entries[1]).toHaveTextContent('Sam Lee');
+    expect(entries[2]).toHaveTextContent('ann@x.io');
+    expect(entries[3]).toHaveTextContent('Team member');
+  });
+
   it('shows the empty state when no changes are recorded', async () => {
     mocked.getActionHistory.mockResolvedValueOnce({ entries: [] } as never);
     renderWith(<HistoryDrawer {...props} open onOpenChange={vi.fn()} />);
@@ -347,7 +372,7 @@ describe('RetestPreviewCard', () => {
       'Retests always run a fresh crawl',
     );
     expect(screen.getByTestId('retest-preview-remaining')).toHaveTextContent(
-      'Plan usage limits are not metered in self-hosted mode.',
+      "Usage limits aren't applied on this server.",
     );
   });
 });

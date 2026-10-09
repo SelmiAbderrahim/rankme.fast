@@ -13,6 +13,7 @@ import { reportErrorMessage } from '../errorMessage';
 import { ApiError } from '@shared/api/client';
 import { ReportPage } from './ReportPage';
 import { IssueRow } from './IssueRow';
+import { notEvaluatedSource } from './NotEvaluatedChecks';
 import { IssueDetail } from './IssueDetail';
 import type {
   AuditReport,
@@ -654,6 +655,43 @@ describe('ReportPage — not-evaluated checks (issue #1)', () => {
     expect(screen.queryByTestId('report-issue-detail')).not.toBeInTheDocument();
   });
 
+  it('says what happened when the audit could not read robots.txt or llms.txt (issue #38)', async () => {
+    const withProbe = (ruleId: string, title: string, probeFailure: unknown): LocalizedFinding => ({
+      ...notEvaluated(ruleId, undefined, title),
+      meta: { insufficientData: true, probeFailure },
+    });
+    mocked.fetchReportRequest.mockResolvedValue(
+      makeReport({
+        counts: { fixNow: 1, watch: 2, passed: 1, notEvaluated: 4 },
+        findings: [
+          ...findingsFixture,
+          withProbe('sitemap-missing-or-weak', 'Sitemap missing', { file: 'robots.txt', reason: 'blocked', status: 403 }),
+          withProbe('llms-txt-missing', 'llms.txt missing', { file: 'llms.txt', reason: 'http-error', status: 503 }),
+          withProbe('thin-content', 'Thin content', { file: 'robots.txt', reason: 'unreachable' }),
+          withProbe('faq-content-missing', 'FAQ', { file: 'x', reason: 'weird' }),
+        ],
+      }),
+    );
+    renderReport();
+    await screen.findByTestId('report-not-evaluated');
+    const rows = screen.getAllByTestId('report-not-evaluated-row');
+    const hint = (ruleId: string) =>
+      rows.find((row) => row.getAttribute('data-rule-id') === ruleId)?.textContent ?? '';
+    expect(hint('sitemap-missing-or-weak')).toContain(
+      'Your site refused our request for robots.txt (HTTP 403)',
+    );
+    expect(hint('llms-txt-missing')).toContain(
+      'Your site answered with HTTP 503 for llms.txt',
+    );
+    expect(hint('thin-content')).toContain('We could not reach robots.txt on your site');
+    // An unknown reason never leaks raw keys: it falls back to the generic copy.
+    expect(hint('faq-content-missing')).toContain('did not return enough data');
+    // A non-object value is ignored too.
+    expect(
+      notEvaluatedSource({ ...notEvaluated('x', undefined, 'x'), meta: { probeFailure: 'nope' } }),
+    ).toBe('generic');
+  });
+
   it('renders no not-evaluated section when every check ran', async () => {
     renderReport();
     expect(await screen.findByText('Page titles missing or weak')).toBeInTheDocument();
@@ -770,7 +808,14 @@ describe('ReportPage — retest & diff badges', () => {
     // The page-cap picker now lives inside the preview dialog.
     await user.click(screen.getByTestId('report-retest'));
     const picker = await screen.findByTestId('report-page-cap');
-    expect(picker).toHaveTextContent('Plan max');
+    expect(picker).toHaveTextContent('Maximum allowed');
+    // Issue #43: a visible label names the control and helper text explains
+    // what the maximum option means on this server.
+    const dialog = screen.getByTestId('report-retest-dialog');
+    expect(within(dialog).getByLabelText('Pages to crawl')).toBe(picker);
+    expect(within(dialog).getByText('Pages to crawl')).toBeVisible();
+    expect(picker).toHaveAccessibleDescription(/Maximum allowed.*this server permits/);
+    expect(dialog).not.toHaveTextContent(/plan max/i);
 
     await user.click(picker);
     // Issue #11: the list opens as a popper below the trigger, never laid
@@ -822,6 +867,10 @@ describe('ReportPage — retest & diff badges', () => {
     });
     renderReport({ path: '/sites/site-1/report/run-3' });
     expect(await screen.findByTestId('report-run-in-progress')).toBeInTheDocument();
+    // Issue #43: a queued run says it is waiting for a worker; no ETA invented.
+    expect(screen.getByTestId('report-run-queued-hint')).toHaveTextContent(
+      'Waiting for a worker to pick this up…',
+    );
     mocked.fetchRunRequest.mockResolvedValue({
       run: {
         id: 'run-3',
@@ -999,7 +1048,7 @@ describe('ReportPage — retest & diff badges', () => {
           siteId: 'site-1',
           filters: { source: ['audit_finding'] },
         }),
-        expect.objectContaining({ signal: expect.any(AbortSignal) }),
+        expect.objectContaining({ presentationLocale: expect.any(String) }),
       ),
     );
     const user = userEvent.setup();
@@ -1297,6 +1346,8 @@ describe('ReportPage — retest & diff badges', () => {
     renderReport({ path: '/sites/site-1/report/run-3' });
     expect(await screen.findByTestId('report-run-in-progress')).toBeInTheDocument();
     expect(screen.getByTestId('report-retest')).toBeDisabled();
+    // Only a queued run shows the waiting-for-a-worker hint.
+    expect(screen.queryByTestId('report-run-queued-hint')).not.toBeInTheDocument();
   });
 
 });
@@ -1540,6 +1591,26 @@ describe('IssueRow / IssueDetail units', () => {
     );
     expect(screen.queryByTestId('report-badge-fixed')).not.toBeInTheDocument();
     expect(screen.queryByTestId('report-badge-regressed')).not.toBeInTheDocument();
+  });
+
+  it('IssueRow tones each severity chip by the status language (Watch = warning, never destructive)', () => {
+    const expected = { critical: 'destructive', warning: 'warning', info: 'info' } as const;
+    for (const [severity, tone] of Object.entries(expected)) {
+      const { unmount } = render(
+        <Provider store={makeStore()}>
+          <I18nextProvider i18n={i18n}>
+            <IssueRow
+              finding={{ ...findingsFixture[0]!, severity: severity as keyof typeof expected }}
+              diffByUrl={new Map()}
+            />
+          </I18nextProvider>
+        </Provider>,
+      );
+      const chip = screen.getByTestId(`report-badge-severity-${severity}`);
+      expect(chip).toHaveAttribute('data-tone', tone);
+      expect(chip.className).not.toContain(tone === 'warning' ? 'text-destructive' : 'text-warning');
+      unmount();
+    }
   });
 
   it('IssueRow offers no finding controls without a siteId context, even on the latest run', () => {
@@ -2255,6 +2326,37 @@ describe('ReportPage — AI summary card feature gate', () => {
     renderReport({ store });
     expect(await screen.findByTestId('report-ai-summary')).toBeInTheDocument();
     expect(screen.getByTestId('report-ai-summary-cta')).toBeInTheDocument();
+  });
+
+  it('tells the user which host was audited when the site redirects (issue #29)', async () => {
+    const report = makeReport({ hostRedirect: { from: 'www.example.com', to: 'example.com' } });
+    mocked.fetchReportRequest.mockResolvedValue(report);
+    const store = makeStore({
+      loaded: true,
+      siteId: 'site-1',
+      runId: 'run-1',
+      runStatus: 'succeeded',
+      report,
+    });
+    renderReport({ store });
+    const notice = await screen.findByTestId('report-host-redirect');
+    expect(notice).toHaveTextContent('www.example.com redirects to example.com');
+    expect(notice).toHaveTextContent('this report covers example.com');
+  });
+
+  it('shows no host notice when the crawl stayed on the site host', async () => {
+    const report = makeReport({ hostRedirect: null });
+    mocked.fetchReportRequest.mockResolvedValue(report);
+    const store = makeStore({
+      loaded: true,
+      siteId: 'site-1',
+      runId: 'run-1',
+      runStatus: 'succeeded',
+      report,
+    });
+    renderReport({ store });
+    await screen.findByTestId('report-tabs');
+    expect(screen.queryByTestId('report-host-redirect')).not.toBeInTheDocument();
   });
 
   it('keeps the freshly generated summary on screen when a retest starts (issue #18)', async () => {

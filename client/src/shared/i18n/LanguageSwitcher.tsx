@@ -1,3 +1,4 @@
+import { NativeSelect } from '@shared/ui/native-select';
 import { useTranslation } from 'react-i18next';
 import { SUPPORTED_LOCALES, isSupportedLocale } from './index';
 import type { SupportedLocale } from './locales';
@@ -25,7 +26,7 @@ export const LanguageSwitcher = ({
       <label htmlFor={id} className="sr-only">
         {label}
       </label>
-      <select
+      <NativeSelect
         id={id}
         aria-label={label}
         value={current}
@@ -38,14 +39,13 @@ export const LanguageSwitcher = ({
             });
           }
         }}
-        className="border-input bg-background focus-visible:ring-ring h-9 rounded-md border px-2 text-sm shadow-xs focus-visible:ring-2 focus-visible:outline-none"
       >
         {SUPPORTED_LOCALES.map((locale) => (
           <option key={locale} value={locale}>
             {t(`names.${locale}`)}
           </option>
         ))}
-      </select>
+      </NativeSelect>
     </div>
   );
 };

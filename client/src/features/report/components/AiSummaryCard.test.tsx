@@ -80,7 +80,8 @@ describe('AiSummaryCard', () => {
     expect(screen.getByTestId('report-ai-summary-text')).toHaveTextContent(storedSummary.text);
     expect(screen.getByTestId('report-ai-summary-regenerate')).toBeInTheDocument();
     expect(screen.getByText(/AI-generated/)).toBeInTheDocument();
-    expect(screen.getByText(/model-1/)).toBeInTheDocument();
+    // The raw provider model id is an operator detail, never end-user copy.
+    expect(screen.queryByText(/model-1/)).toBeNull();
     expect(screen.queryByTestId('report-ai-summary-truncated')).toBeNull();
   });
 

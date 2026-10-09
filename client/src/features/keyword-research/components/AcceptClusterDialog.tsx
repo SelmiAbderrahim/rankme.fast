@@ -16,6 +16,7 @@ import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { toast } from 'sonner';
+import { siteLabel } from '@shared/lib/siteLabel';
 import {
   Dialog,
   DialogContent,
@@ -182,10 +183,12 @@ export const AcceptClusterDialog = ({
                         data-testid={`kw-accept-site-${site.id}`}
                       />
                       <span className="flex flex-col">
-                        <span className="font-medium">{site.displayName}</span>
-                        <span className="text-muted-foreground text-xs">
-                          {site.domain}
-                        </span>
+                        <span className="font-medium">{siteLabel(site)}</span>
+                        {siteLabel(site) !== site.domain ? (
+                          <span className="text-muted-foreground text-xs">
+                            {site.domain}
+                          </span>
+                        ) : null}
                       </span>
                     </label>
                   );

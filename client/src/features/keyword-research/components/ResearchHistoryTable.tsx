@@ -22,18 +22,21 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@
 import { formatCountryFromLocation, languageName } from '@shared/markets';
 import type { ResearchHistoryItem, ResearchHistoryKind } from '../types';
 
+// A kind is a category, not a health status: none of these may use the
+// warning/destructive/success tones, which would read as "something is wrong"
+// (or "all good") next to the real status chips.
 const KIND_TONE: Record<ResearchHistoryKind, StatusTone> = {
   metrics: 'primary',
   related: 'info',
-  intent: 'warning',
-  ideas: 'success',
-  long_tail: 'success',
+  intent: 'info',
+  ideas: 'muted',
+  long_tail: 'muted',
   // The server has written these kinds; labelling
   // them here fixes the latent raw-key defect in the history table.
   gap: 'info',
   overview: 'primary',
-  trends: 'success',
-  clusters: 'warning',
+  trends: 'muted',
+  clusters: 'info',
 };
 
 export function locationLabel(

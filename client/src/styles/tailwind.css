@@ -68,7 +68,7 @@
 /*
  * Aria-inspired editorial palette (design-system.md §1): warm paper surfaces,
  * near-black "ink" as the primary action color, and a single signal-red
- * `--highlight` accent used sparingly (eyebrows, stat bars, focus rings).
+ * `--highlight` accent used sparingly (eyebrows, stat bars; focus rings are neutral ink).
  * Red stays out of `--primary` on purpose — a red primary button would read
  * as destructive across the dashboard.
  */
@@ -127,7 +127,10 @@
      `--input` boundary, which clears WCAG 1.4.11 on page/card surfaces. */
   --border: #c8c1b8;
   --input: #8b8178;
-  --ring: #b5321e;
+  /* Neutral ink ring: a focus ring must not read as a validation error, so
+     red stays reserved for aria-invalid (--destructive). Marketing keeps its
+     blue brand ring (.mk-theme). */
+  --ring: #3d3833;
 
   /* Sidebar surface tokens (shadcn Sidebar). */
   --sidebar: #edeae6;
@@ -137,7 +140,7 @@
   --sidebar-accent: #e4e1db;
   --sidebar-accent-foreground: #191715;
   --sidebar-border: #8b8178;
-  --sidebar-ring: #b5321e;
+  --sidebar-ring: #3d3833;
 
   /* Chart palette — every series clears 3:1 as a graphical object on paper
      and cards. Teal separates chart series from semantic success green. */
@@ -192,7 +195,7 @@
 
   --border: #3d3833;
   --input: #71685f;
-  --ring: #ff5c3f;
+  --ring: #c9c4bd;
 
   --sidebar: #141312;
   --sidebar-foreground: #f2f0ed;
@@ -201,7 +204,7 @@
   --sidebar-accent: #262421;
   --sidebar-accent-foreground: #f2f0ed;
   --sidebar-border: #71685f;
-  --sidebar-ring: #ff5c3f;
+  --sidebar-ring: #c9c4bd;
 
   --chart-1: #ff5c3f;
   --chart-2: #2dd4bf;

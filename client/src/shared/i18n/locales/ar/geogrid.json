@@ -13,7 +13,7 @@
     "longitude": "خط طول المركز",
     "spacing": "المسافة بين النقاط",
     "spacingOption": "{{km}} كم",
-    "spacingCustom": "المسافة بالأمتار",
+    "spacingCustom": "مسافة مخصصة (م)",
     "size": "حجم الشبكة",
     "sizeOption": "{{size}} × {{size}} ({{cells}} نقطة)",
     "zoom": "تقريب الخريطة",

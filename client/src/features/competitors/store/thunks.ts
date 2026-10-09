@@ -190,15 +190,15 @@ export const mutatePortfolioCompetitor = createAsyncThunk<
   }
 });
 
+/** Resolves `null` when no discovery has run yet (an expected empty state). */
 export const loadCompetitorDiscovery = createAsyncThunk<
-  CompetitorDiscovery,
+  CompetitorDiscovery | null,
   { siteId: string },
   { rejectValue: string }
 >('competitors/loadDiscovery', async ({ siteId }, { rejectWithValue, signal }) => {
   try {
     return (await fetchLatestDiscovery(siteId, signal)).discovery;
   } catch (error) {
-    if (apiErrorStatus(error) === 404) return rejectWithValue('');
     return rejectWithValue(intelligenceError(error));
   }
 });

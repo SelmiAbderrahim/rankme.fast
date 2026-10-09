@@ -4,12 +4,14 @@ import { RouterProvider } from 'react-router-dom';
 import { App } from './App';
 import { store } from './app/store';
 import { setWorkspaceIdProvider } from '@shared/api/client';
+import { retainAuthSession } from '@features/auth';
 import { selectActiveWorkspaceId } from '@features/workspace';
 import { createAppRouter, waitForAppRouterInitialization } from './app/router';
 import { LazyRouteFallback } from './app/routes';
 import { initI18n } from '@shared/i18n';
 import { resolveMarketingRoute } from '@shared/i18n/localePath';
 import { reloadOnceForStaleChunk } from '@shared/lib/chunkReload';
+import { startAnalyticsPageTracking } from '@shared/analytics';
 // Self-hosted fonts (bundled locally by Vite — no external CDN request).
 // JetBrains Mono covers code blocks; Inter is served from static font faces.
 import '@fontsource/jetbrains-mono/400.css';
@@ -48,7 +50,15 @@ window.addEventListener('vite:preloadError', (event) => {
   if (reloadOnceForStaleChunk()) event.preventDefault();
 });
 
+// One permanent session subscription + throttled tab-return refresh instead of
+// a get-session fetch on every route-guard remount and every focus.
+retainAuthSession();
+
 const router = createAppRouter();
+
+// Google Analytics stays unloaded until the visitor opts in; this only wires the
+// consent + route listeners (a no-op when the build has no VITE_GA_ID).
+startAnalyticsPageTracking(router);
 
 const renderApp = async () => {
   if (ssrLocale) {
