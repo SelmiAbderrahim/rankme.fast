@@ -140,6 +140,10 @@ describe('normalizeAiVisibilityTarget', () => {
   it('trims whitespace on bare domain', () => {
     expect(normalizeAiVisibilityTarget('  example.com  ')).toBe('example.com');
   });
+  it('strips a leading www. like the SERP matchers do', () => {
+    expect(normalizeAiVisibilityTarget('www.example.com')).toBe('example.com');
+    expect(normalizeAiVisibilityTarget('https://WWW.Example.com/')).toBe('example.com');
+  });
 });
 
 describe('extractAnswerText', () => {
@@ -306,6 +310,36 @@ describe('DataForSeoAiVisibilityProvider — checkMentions', () => {
       expect(row.mentioned).toBe(true);
       expect(row.citedUrl).toBeUndefined();
     }
+  });
+
+  it.each([
+    { site: 'www.example.com', vendor: 'example.com' },
+    { site: 'example.com', vendor: 'www.example.com' },
+    { site: 'https://www.example.com/', vendor: 'WWW.Example.com' },
+  ])('matches $site against the vendor domain $vendor', async ({ site, vendor }) => {
+    vendorMockServer.use(
+      http.post('https://dataforseo.mock/v3/*', () =>
+        HttpResponse.json({
+          version: '0.1.20260101',
+          status_code: 20000,
+          status_message: 'Ok.',
+          tasks_count: 1,
+          tasks_error: 0,
+          tasks: [
+            {
+              id: 'TASK_ID',
+              status_code: 20000,
+              status_message: 'Ok.',
+              cost: 0.1,
+              result: [{ domain: vendor, keyword: 'best seo audit tool', platform: 'google' }],
+            },
+          ],
+        }),
+      ),
+    );
+    const rows = await provider.checkMentions({ domain: site, prompts: ['best seo audit tool'] });
+    expect(rows).toHaveLength(AI_MENTION_PLATFORMS.length);
+    for (const row of rows) expect(row.mentioned).toBe(true);
   });
 
   it('falls back to source_url when url is absent', async () => {
