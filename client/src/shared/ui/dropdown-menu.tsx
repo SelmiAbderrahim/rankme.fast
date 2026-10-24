@@ -23,10 +23,13 @@ function DropdownMenuPortal({
 }
 
 /** Assistive activation may deliver click without a preceding pointerdown. */
-function DropdownMenuTrigger({ onPointerDown, onClick, className, ...props }: React.ComponentProps<typeof DropdownMenuPrimitive.Trigger>) {
+const DropdownMenuTrigger = React.forwardRef<
+  React.ElementRef<typeof DropdownMenuPrimitive.Trigger>,
+  React.ComponentPropsWithoutRef<typeof DropdownMenuPrimitive.Trigger>
+>(({ onPointerDown, onClick, className, ...props }, ref) => {
   const pointerFocus = usePointerFocus();
   const pressStartedClosed = React.useRef<boolean | null>(null);
-  return <DropdownMenuPrimitive.Trigger data-slot="dropdown-menu-trigger" data-pointer-focus={pointerFocus ? "" : undefined} className={cn("data-[pointer-focus]:focus-visible:ring-0 data-[pointer-focus]:focus-visible:outline-none", className)}
+  return <DropdownMenuPrimitive.Trigger ref={ref} data-slot="dropdown-menu-trigger" data-pointer-focus={pointerFocus ? "" : undefined} className={cn("data-[pointer-focus]:focus-visible:ring-0 data-[pointer-focus]:focus-visible:outline-none", className)}
     onPointerDown={(event) => {
       onPointerDown?.(event);
       pressStartedClosed.current = event.currentTarget.getAttribute("aria-expanded") !== "true";
@@ -40,7 +43,8 @@ function DropdownMenuTrigger({ onPointerDown, onClick, className, ...props }: Re
       const PointerEventCtor = window.PointerEvent ?? window.MouseEvent;
       trigger.dispatchEvent(new PointerEventCtor("pointerdown", { bubbles: true, cancelable: true, button: 0 }));
     }} {...props} />;
-}
+});
+DropdownMenuTrigger.displayName = "DropdownMenuTrigger";
 
 function DropdownMenuContent({
   className,

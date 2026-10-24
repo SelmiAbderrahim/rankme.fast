@@ -194,7 +194,7 @@
     "groupAccount": "账户",
     "groupAdmin": "管理",
     "search": "搜索",
-    "searchPlaceholder": "搜索页面和网站",
+    "searchPlaceholder": "搜索页面、站点和文档…",
     "searchNoResults": "没有找到“{{query}}”的结果",
     "searchGroupPages": "页面",
     "searchGroupSites": "网站",
@@ -209,7 +209,12 @@
     "upgradeBody": "升级以获得更高额度和更深入的报告。",
     "upgradeCta": "升级",
     "groupSuperAdmin": "平台",
-    "opensInNewTab": "在新标签页中打开"
+    "opensInNewTab": "在新标签页中打开",
+    "searchSitesLoading": "正在加载站点…",
+    "searchGroupTools": "网站工具",
+    "searchGroupDocs": "文档",
+    "searchDocsFor": "在文档中搜索“{{query}}”",
+    "navigating": "正在加载页面…"
   },
   "locked": "已锁定",
   "retry": "重试",

@@ -114,7 +114,6 @@
     "choosePageDescription": "افتح صفحة من الموقع.",
     "siblingPages": "الصفحات في هذا القسم",
     "noSites": "لم يتم العثور على مواقع",
-    "activeSubViewLabel": "{{tab}} · {{view}}",
     "navLandmark": "الموقع",
     "switchSiteNamed": "تبديل الموقع · {{site}}",
     "currentSite": "الموقع الحالي",

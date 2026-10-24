@@ -25,7 +25,6 @@ vi.mock('../../api', async (importOriginal) => ({
   createSiteRequest: vi.fn(),
 }));
 
-
 vi.mock('@features/auth', async (importOriginal) => ({
   ...(await importOriginal<typeof import('@features/auth')>()),
   useAuthSession: vi.fn(),
@@ -225,10 +224,7 @@ describe('SiteMenu — expanded', () => {
     renderWith(<SiteMenu />, { entry: '/sites/s1?tab=keywords' });
     expect(nav()).toHaveAttribute('data-state', 'expanded');
     expect(nav()).toHaveAccessibleName('Site');
-    expect(screen.getByRole('link', { name: 'Keywords' })).toHaveAttribute(
-      'aria-current',
-      'page',
-    );
+    expect(screen.getByRole('link', { name: 'Keywords' })).toHaveAttribute('aria-current', 'page');
     const search = screen.getByRole('button', { name: 'Search' });
     expect(search).toHaveAttribute('aria-expanded', 'true');
     const content = screen.getByRole('button', { name: 'Content' });
@@ -331,7 +327,9 @@ describe('SiteMenu — expanded', () => {
     const user = userEvent.setup();
     renderWith(<SiteMenu />);
     await user.type(filterBox(), 'qqq');
-    expect(screen.getByTestId('site-nav-no-results')).toHaveTextContent('No pages match “\u2068qqq\u2069”');
+    expect(screen.getByTestId('site-nav-no-results')).toHaveTextContent(
+      'No pages match “\u2068qqq\u2069”',
+    );
     await user.keyboard('{Enter}');
     expect(loc()).toHaveTextContent('/sites/s1');
     await user.click(
@@ -632,7 +630,9 @@ describe('SiteSwitcher', () => {
     const user = userEvent.setup();
     renderWith(<SiteSwitcher />, { entry: '/sites/s1?tab=content&view=briefs&run=9' });
     const trigger = screen.getByTestId('site-switcher');
-    await waitFor(() => expect(trigger).toHaveAccessibleName('Switch site · \u2068s1.example.com\u2069'));
+    await waitFor(() =>
+      expect(trigger).toHaveAccessibleName('Switch site · \u2068s1.example.com\u2069'),
+    );
     await user.click(trigger);
     const popover = await screen.findByTestId('site-switcher-popover');
     const first = within(popover).getByRole('option', { name: /s1\.example\.com/ });
@@ -712,7 +712,9 @@ describe('SiteSwitcher', () => {
     const view = renderWith(<SiteSwitcher variant="rail" />, {
       store: makeStore({ items: [], loaded: false }),
     });
-    expect(screen.getByTestId('site-switcher')).toHaveAccessibleName('Switch site · \u2068Loading site…\u2069');
+    expect(screen.getByTestId('site-switcher')).toHaveAccessibleName(
+      'Switch site · \u2068Loading site…\u2069',
+    );
     await user.click(screen.getByTestId('site-switcher'));
     expect(api.fetchSitesRequest).toHaveBeenCalled();
     view.unmount();
@@ -730,9 +732,14 @@ describe('SiteSwitcher', () => {
 describe('SiteSwitcher — unknown site (QA round 3, F-Z)', () => {
   it('settles on "Unknown site" instead of "Loading site…" when the direct read fails', async () => {
     vi.mocked(api.fetchSiteRequest).mockRejectedValueOnce(new Error('gone'));
-    renderWith(<SiteSwitcher variant="rail" />, { entry: '/sites/s404', store: makeStore({ items: [], loaded: false }) });
+    renderWith(<SiteSwitcher variant="rail" />, {
+      entry: '/sites/s404',
+      store: makeStore({ items: [], loaded: false }),
+    });
     await waitFor(() =>
-      expect(screen.getByTestId('site-switcher').getAttribute('aria-label')).toContain('Unknown site'),
+      expect(screen.getByTestId('site-switcher').getAttribute('aria-label')).toContain(
+        'Unknown site',
+      ),
     );
   });
 });
@@ -816,7 +823,6 @@ describe('SiteNavigationFrame', () => {
   });
 });
 
-
 it('returns focus to the mobile page picker after Escape and after choosing a destination', async () => {
   const user = userEvent.setup();
   renderWith(<SiteMobileBar />, { entry: '/sites/s1?tab=keywords&view=queries#details' });
@@ -840,16 +846,27 @@ it('shows picker failures with retry and marks bounded all-site reads as partial
   renderWith(<SiteSwitcher />);
   await user.click(screen.getByTestId('site-switcher'));
   expect(await screen.findByRole('alert')).toHaveTextContent('Could not load your sites.');
-  vi.mocked(api.fetchSitesRequest).mockImplementation(async (cursor) => ({ sites: [site(cursor ? 's2' : 's1')], nextCursor: 'repeated' }));
+  vi.mocked(api.fetchSitesRequest).mockImplementation(async (cursor) => ({
+    sites: [site(cursor ? 's2' : 's1')],
+    nextCursor: 'repeated',
+  }));
   await user.click(screen.getByRole('button', { name: 'Try again' }));
-  expect(await screen.findByText('Only your first 2 sites are listed here.')).toHaveAttribute('role', 'status');
+  expect(await screen.findByText('Only your first 2 sites are listed here.')).toHaveAttribute(
+    'role',
+    'status',
+  );
   expect(screen.getByRole('option', { name: /s1.example.com/ })).toBeInTheDocument();
 });
 
 it('dismisses a mobile page sheet when the viewport grows or another route opens', async () => {
   media.add(MOBILE_QUERY);
   const user = userEvent.setup();
-  renderWith(<><SiteMobileBar /><GoTo to="/sites/s1?tab=report" /></>);
+  renderWith(
+    <>
+      <SiteMobileBar />
+      <GoTo to="/sites/s1?tab=report" />
+    </>,
+  );
   await user.click(screen.getByTestId('site-page-picker'));
   expect(screen.getByRole('dialog')).toBeInTheDocument();
   setMedia([]);
@@ -859,4 +876,31 @@ it('dismisses a mobile page sheet when the viewport grows or another route opens
   // External route change while the modal is open, like browser history navigation.
   fireEvent.click(screen.getByText('go'));
   await waitFor(() => expect(screen.queryByRole('dialog')).toBeNull());
+});
+
+it('reads all switcher options only on open, announces pending state, and leaves paginated site state intact', async () => {
+  let resolve!: (page: { sites: Site[]; nextCursor: null }) => void;
+  vi.mocked(api.fetchSitesRequest).mockReturnValue(
+    new Promise((done) => {
+      resolve = done;
+    }),
+  );
+  const store = makeStore();
+  const before = store.getState().sites;
+  const user = userEvent.setup();
+  renderWith(<SiteSwitcher />, { store });
+  expect(api.fetchSitesRequest).not.toHaveBeenCalled();
+  await user.click(screen.getByTestId('site-switcher'));
+  expect(within(screen.getByTestId('site-switcher-popover')).getByRole('status')).toHaveTextContent(
+    'Loading your sites…',
+  );
+  await act(async () =>
+    resolve({ sites: [site('outside-page', { displayName: 'Outside page' })], nextCursor: null }),
+  );
+  expect(
+    await screen.findByRole('option', { name: 'Outside page outside-page.example.com' }),
+  ).toBeInTheDocument();
+  expect(store.getState().sites).toBe(before);
+  await user.click(screen.getByRole('option', { name: 'Outside page outside-page.example.com' }));
+  expect(loc()).toHaveTextContent('/sites/outside-page');
 });

@@ -114,7 +114,6 @@
     "choosePageDescription": "Ouvrez une page du site.",
     "siblingPages": "Pages de cette section",
     "noSites": "Aucun site trouvé",
-    "activeSubViewLabel": "{{tab}} · {{view}}",
     "navLandmark": "Site",
     "switchSiteNamed": "Changer de site · {{site}}",
     "currentSite": "Site actuel",

@@ -34,19 +34,8 @@ import {
   GoogleSearchSummaryCard,
 } from '@features/google';
 import { Skeleton } from '@shared/ui/skeleton';
-import {
-  Empty,
-  EmptyDescription,
-  EmptyHeader,
-  EmptyMedia,
-  EmptyTitle,
-} from '@shared/ui/empty';
-import {
-  getSiteTabLabelKey,
-  useSiteSubView,
-  useSiteTab,
-  type SiteTab,
-} from '../tabState';
+import { Empty, EmptyDescription, EmptyHeader, EmptyMedia, EmptyTitle } from '@shared/ui/empty';
+import { getSiteTabLabelKey, useSiteSubView, useSiteTab, type SiteTab } from '../tabState';
 import { loadSites, resumeSite } from '../store/thunks';
 import {
   selectPausingSiteId,
@@ -218,10 +207,19 @@ const LazyBrandRadarPanel = lazy(async () => {
 });
 
 const LazyAppsPanel = lazy(async () => {
-  const [{ AppsPanel, appSeoChartsReducer, appSeoCompareReducer, appSeoListingReducer, appSeoReducer, appSeoResearchReducer, appSeoReviewsReducer, appSeoTrackingReducer }, { rootReducer }] = await Promise.all([
-    import('@features/app-seo'),
-    import('@app/store'),
-  ]);
+  const [
+    {
+      AppsPanel,
+      appSeoChartsReducer,
+      appSeoCompareReducer,
+      appSeoListingReducer,
+      appSeoReducer,
+      appSeoResearchReducer,
+      appSeoReviewsReducer,
+      appSeoTrackingReducer,
+    },
+    { rootReducer },
+  ] = await Promise.all([import('@features/app-seo'), import('@app/store')]);
   rootReducer.inject({ reducerPath: 'appSeo', reducer: appSeoReducer });
   rootReducer.inject({ reducerPath: 'appSeoTracking', reducer: appSeoTrackingReducer });
   rootReducer.inject({ reducerPath: 'appSeoListing', reducer: appSeoListingReducer });
@@ -271,12 +269,7 @@ const LazyPanelFallback = () => (
 );
 
 export const SiteWorkspacePage = () => {
-  const { t, i18n } = useTranslation([
-    'sites',
-    'pages',
-    'clientReports',
-    'competitorsTraffic',
-  ]);
+  const { t, i18n } = useTranslation(['sites', 'pages', 'clientReports', 'competitorsTraffic']);
   const dispatch = useAppDispatch();
   const params = useParams<{ siteId: string }>();
   const siteId = params.siteId ?? '';
@@ -342,8 +335,14 @@ export const SiteWorkspacePage = () => {
     // Still resolving: a heading-sized skeleton, so neither the raw site id
     // nor a workspace for a site that may not exist ever paints.
     return (
-      <div className="flex flex-col gap-6 px-4 py-8" data-testid="site-workspace-loading" aria-busy="true">
-        <span className="sr-only" role="status">{t('loading')}</span>
+      <div
+        className="flex flex-col gap-6 px-4 py-8"
+        data-testid="site-workspace-loading"
+        aria-busy="true"
+      >
+        <span className="sr-only" role="status">
+          {t('loading')}
+        </span>
         <Skeleton className="h-8 w-64" data-testid="workspace-heading-skeleton" />
         <Skeleton className="h-32 w-full" />
       </div>

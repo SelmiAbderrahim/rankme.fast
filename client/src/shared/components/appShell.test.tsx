@@ -68,7 +68,7 @@ const makeStore = (workspace: Partial<WorkspaceState> = {}, sites: Site[] = []) 
     reducer: { workspace: workspaceReducer, sites: sitesReducer },
     preloadedState: {
       workspace: { ...workspaceInitialState, ...workspace },
-      sites: { ...sitesReducer(undefined, { type: '@@init' }), items: sites },
+      sites: { ...sitesReducer(undefined, { type: '@@init' }), items: sites, loaded: true },
     },
   });
 
@@ -366,6 +366,7 @@ describe('AppTopbar', () => {
   });
 
   it('supports arrow-key navigation with aria-activedescendant and wraps', async () => {
+    const open = vi.spyOn(window, 'open').mockReturnValue(null);
     setSession({ role: 'Member' });
     renderTopbar();
     await userEvent.click(searchBox());
@@ -376,7 +377,9 @@ describe('AppTopbar', () => {
     await userEvent.keyboard('{ArrowUp}{ArrowUp}');
     expect(options().at(-1)).toHaveAttribute('aria-selected', 'true');
     await userEvent.keyboard('{Enter}');
-    expect(screen.getByTestId('loc')).toHaveTextContent('/settings/security');
+    expect(open).toHaveBeenCalledWith('/docs', '_blank', 'noopener,noreferrer');
+    expect(screen.getByTestId('loc')).toHaveTextContent('/dashboard');
+    open.mockRestore();
   });
 
   it('reopens on ArrowDown, and Escape closes and clears', async () => {

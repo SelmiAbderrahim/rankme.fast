@@ -85,9 +85,14 @@ export type SiteTabResolution =
 export function resolveSiteTab(value: string | null): SiteTabResolution {
   if (value === null || value.trim() === '') return { kind: 'absent', tab: DEFAULT_SITE_TAB };
   if (isSiteTab(value)) return { kind: 'valid', tab: value };
-  const normalized = value.trim().toLowerCase().replace(/[\s_]+/g, '-');
+  const normalized = value
+    .trim()
+    .toLowerCase()
+    .replace(/[\s_]+/g, '-');
   if (isSiteTab(normalized)) return { kind: 'alias', tab: normalized, requested: value };
-  const alias = Object.hasOwn(SITE_TAB_ALIASES, normalized) ? SITE_TAB_ALIASES[normalized] : undefined;
+  const alias = Object.hasOwn(SITE_TAB_ALIASES, normalized)
+    ? SITE_TAB_ALIASES[normalized]
+    : undefined;
   if (alias) return { kind: 'alias', tab: alias, requested: value };
   return { kind: 'unknown', tab: DEFAULT_SITE_TAB, requested: value };
 }

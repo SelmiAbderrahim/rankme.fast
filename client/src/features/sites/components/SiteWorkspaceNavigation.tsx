@@ -62,7 +62,12 @@ export const SiteWorkspaceNavigation = ({
         data-testid={`site-tab-${tab}`}
         data-state={active ? 'active' : 'inactive'}
       >
-        <Link to={hrefFor(tab)} replace state={location.state} aria-current={active ? 'page' : undefined}>
+        <Link
+          to={hrefFor(tab)}
+          replace
+          state={location.state}
+          aria-current={active ? 'page' : undefined}
+        >
           <Check aria-hidden="true" className={active ? undefined : 'invisible'} />
           <span className="min-w-0 flex-1">{labelFor(tab)}</span>
         </Link>

@@ -194,7 +194,7 @@
     "groupAccount": "Cuenta",
     "groupAdmin": "Administración",
     "search": "Buscar",
-    "searchPlaceholder": "Buscar páginas y sitios",
+    "searchPlaceholder": "Buscar páginas, sitios y documentación…",
     "searchNoResults": "Sin resultados para «{{query}}»",
     "searchGroupPages": "Páginas",
     "searchGroupSites": "Sitios",
@@ -209,7 +209,12 @@
     "upgradeBody": "Mejora tu plan para límites más altos e informes más detallados.",
     "upgradeCta": "Mejorar plan",
     "groupSuperAdmin": "Plataforma",
-    "opensInNewTab": "Se abre en una pestaña nueva"
+    "opensInNewTab": "Se abre en una pestaña nueva",
+    "searchSitesLoading": "Cargando tus sitios…",
+    "searchGroupTools": "Herramientas del sitio",
+    "searchGroupDocs": "Documentación",
+    "searchDocsFor": "Buscar «{{query}}» en la documentación",
+    "navigating": "Cargando la página…"
   },
   "locked": "Bloqueado",
   "retry": "Reintentar",

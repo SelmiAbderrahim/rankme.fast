@@ -264,14 +264,14 @@ describe('SpendPreviewCard', () => {
     expect(within(card).queryByText('Domain')).not.toBeInTheDocument();
   });
 
-  it('shows units, remaining allowance, market and domain when the server meters usage', () => {
+  it('shows the snapshot count, remaining allowance, market and domain when provided', () => {
     renderCard(
       preview({ productUnits: 2, remainingBaseUnits: 1234, remainingPackUnits: 0 }),
       false,
     );
     const card = screen.getByTestId('traffic-preview');
     expect(within(card).getByTestId('traffic-preview-impact')).toHaveTextContent(
-      '2 traffic snapshot units',
+      '2 traffic snapshots',
     );
     expect(within(card).getByText('Base allowance remaining').nextSibling).toHaveTextContent('1,234');
     expect(within(card).getByText('Pack allowance remaining').nextSibling).toHaveTextContent('0');
@@ -279,12 +279,12 @@ describe('SpendPreviewCard', () => {
     expect(within(card).queryByText('Not metered on this server')).not.toBeInTheDocument();
   });
 
-  it('falls back to the breakdown length, then one unit, for the metered unit count', () => {
+  it('falls back to the breakdown length, then one snapshot, for the count', () => {
     const first = renderCard(preview({ remainingBaseUnits: 5 }), false);
-    expect(screen.getByTestId('traffic-preview-impact')).toHaveTextContent('1 traffic snapshot unit');
+    expect(screen.getByTestId('traffic-preview-impact')).toHaveTextContent('1 traffic snapshot');
     first.unmount();
     renderCard({ remainingPackUnits: 5 }, false);
-    expect(screen.getByTestId('traffic-preview-impact')).toHaveTextContent('1 traffic snapshot unit');
+    expect(screen.getByTestId('traffic-preview-impact')).toHaveTextContent('1 traffic snapshot');
   });
 
   it('renders the domain and puts actions in the card footer', () => {

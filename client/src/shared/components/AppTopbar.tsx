@@ -54,7 +54,7 @@ export const AppTopbar = () => {
   }, [dispatch]);
 
   return (
-    <header className="flex h-14 min-w-0 items-center gap-2 border-b px-3">
+    <header className="sticky top-0 z-40 bg-background flex h-14 min-w-0 items-center gap-2 border-b px-3">
       <Button
         variant="ghost"
         size="icon"

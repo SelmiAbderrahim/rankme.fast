@@ -5,7 +5,12 @@ import { useMediaQuery } from '@shared/hooks/useMediaQuery';
 import { useShellScrollRestoration } from '@shared/hooks/useShellScrollRestoration';
 import { returnFocusTo, useOverlayDismiss } from '@shared/hooks/useOverlayDismiss';
 import { Outlet, useLocation } from 'react-router-dom';
-import { SidebarInset, SidebarProvider, readSidebarCookie, writeSidebarCookie } from '@shared/ui/sidebar';
+import {
+  SidebarInset,
+  SidebarProvider,
+  readSidebarCookie,
+  writeSidebarCookie,
+} from '@shared/ui/sidebar';
 import { AppBreadcrumbs } from './AppBreadcrumbs';
 import { SiteNavigationFrame, SiteNavigationProvider } from '@features/sites';
 import { WorkspaceRouteGuard } from '@features/workspace';
@@ -27,20 +32,25 @@ const useAppSidebarState = () => {
   const [overlayOpen, setOverlayOpen] = useState(false);
   useEffect(() => setOverlayOpen(false), [overlay, pathname, search]);
   const open = overlay ? overlayOpen : (saved ?? !narrow);
-  const setOpen = useCallback((next: boolean) => {
-    if (overlay) {
-      setOverlayOpen(next);
-      return;
-    }
-    setSaved(next);
-    writeSidebarCookie(next);
-  }, [overlay]);
+  const setOpen = useCallback(
+    (next: boolean) => {
+      if (overlay) {
+        setOverlayOpen(next);
+        return;
+      }
+      setSaved(next);
+      writeSidebarCookie(next);
+    },
+    [overlay],
+  );
   useOverlayDismiss(
     overlay && overlayOpen,
     () => document.querySelector('[data-slot="sidebar-container"]'),
     () => {
       setOverlayOpen(false);
-      returnFocusTo(() => document.querySelector<HTMLElement>('[data-testid="app-sidebar-toggle"]'));
+      returnFocusTo(() =>
+        document.querySelector<HTMLElement>('[data-testid="app-sidebar-toggle"]'),
+      );
     },
     () => [document.querySelector<HTMLElement>('[data-testid="app-sidebar-toggle"]')],
   );
@@ -62,30 +72,33 @@ export const AppLayout = ({ children }: { children?: ReactNode }) => {
   const sidebar = useAppSidebarState();
   return (
     <AppTitleBoundary>
-    <SidebarProvider
-      className="md:h-dvh md:overflow-hidden"
-      data-app-frame=""
-      open={sidebar.open}
-      onOpenChange={sidebar.setOpen}
-      overlay={sidebar.overlay}
-    >
-      <SkipLink targetId="main-content" />
-      <AppSidebar />
-      <SiteNavigationProvider>
-      <SidebarInset className="min-w-0 max-w-full md:overflow-x-hidden md:overflow-y-auto md:overscroll-y-none md:*:shrink-0 md:scroll-pt-18">
-        <ReleaseStageBanner routePattern={routePattern} />
-        <AppTopbar />
-        <SiteNavigationFrame footer={<Footer />}>
-        <main id="main-content" ref={mainRef} tabIndex={-1} className="min-w-0 max-w-full flex-1 px-4 py-6 focus:outline-none">
-          <AppBreadcrumbs />
-          <WorkspaceRouteGuard>
-            {children ?? <Outlet />}
-          </WorkspaceRouteGuard>
-        </main>
-        </SiteNavigationFrame>
-      </SidebarInset>
-      </SiteNavigationProvider>
-    </SidebarProvider>
+      <SidebarProvider
+        className="md:h-dvh md:overflow-hidden"
+        data-app-frame=""
+        open={sidebar.open}
+        onOpenChange={sidebar.setOpen}
+        overlay={sidebar.overlay}
+      >
+        <SkipLink targetId="main-content" />
+        <AppSidebar />
+        <SiteNavigationProvider>
+          <SidebarInset className="min-w-0 max-w-full md:overflow-x-hidden md:overflow-y-auto md:overscroll-y-none md:*:shrink-0 md:scroll-pt-18">
+            <ReleaseStageBanner routePattern={routePattern} />
+            <AppTopbar />
+            <SiteNavigationFrame footer={<Footer />}>
+              <main
+                id="main-content"
+                ref={mainRef}
+                tabIndex={-1}
+                className="min-w-0 max-w-full flex-1 px-4 py-6 focus:outline-none"
+              >
+                <AppBreadcrumbs />
+                <WorkspaceRouteGuard>{children ?? <Outlet />}</WorkspaceRouteGuard>
+              </main>
+            </SiteNavigationFrame>
+          </SidebarInset>
+        </SiteNavigationProvider>
+      </SidebarProvider>
     </AppTitleBoundary>
   );
 };

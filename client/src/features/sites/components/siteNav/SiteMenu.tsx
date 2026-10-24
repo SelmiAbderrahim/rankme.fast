@@ -54,8 +54,7 @@ import { useSiteNavigation } from './context';
 const HOVER_DELAY_MS = 150;
 const MOBILE_QUERY = '(max-width: 767.98px)';
 
-const itemsOf = (group: SiteNavGroupId): SiteNavItem[] =>
-  getSiteNavGroupItems(group);
+const itemsOf = (group: SiteNavGroupId): SiteNavItem[] => getSiteNavGroupItems(group);
 
 /** The label with the filter match marked. */
 const Highlighted = ({ label, query }: { label: string; query: string }) => {
@@ -222,7 +221,8 @@ const RailGroup = ({
           return (
             <DropdownMenuItem key={item.id} asChild className="p-0 focus:bg-transparent">
               <Link
-          replace state={state}
+                replace
+                state={state}
                 to={siteTabHref(siteId ?? '', item.id, search, hash)}
                 aria-current={current ? 'page' : undefined}
                 className={cn(
@@ -300,7 +300,7 @@ const ExpandedGroup = ({
         <button
           type="button"
           className={cn(
-            'group/heading flex h-8 w-full cursor-pointer items-center gap-2 rounded-md px-2.5 text-start outline-hidden transition-colors duration-150 hover:bg-sidebar-accent/60 focus-visible:ring-2 focus-visible:ring-sidebar-ring focus-visible:ring-inset motion-reduce:transition-none',
+            'group/heading flex h-8 w-full cursor-pointer items-center gap-2 rounded-md px-2.5 text-start outline-hidden transition-colors duration-150 hover:bg-sidebar-accent/60 active:bg-sidebar-accent focus-visible:ring-2 focus-visible:ring-sidebar-ring focus-visible:ring-inset motion-reduce:transition-none',
             NAV_GROUP_LABEL_CLASS,
           )}
           aria-expanded={open}
@@ -326,7 +326,8 @@ const ExpandedGroup = ({
               <li key={item.id}>
                 <NavTooltip label={itemLabel} when="truncated">
                   <Link
-          replace state={state}
+                    replace
+                    state={state}
                     to={siteTabHref(siteId ?? '', item.id, search, hash)}
                     aria-current={item.id === activeTab ? 'page' : undefined}
                     className={NAV_ROW_CLASS}
@@ -499,7 +500,7 @@ export const SiteMenu = () => {
               <NavTooltip label={t('sites:workspace.clearFilter')}>
                 <button
                   type="button"
-                  className="inline-flex size-6 cursor-pointer items-center justify-center rounded-sm text-muted-foreground outline-hidden hover:bg-sidebar-accent hover:text-sidebar-foreground focus-visible:ring-2 focus-visible:ring-sidebar-ring"
+                  className="inline-flex size-6 cursor-pointer items-center justify-center rounded-sm text-muted-foreground outline-hidden hover:bg-sidebar-accent hover:text-sidebar-foreground active:bg-sidebar-accent focus-visible:ring-2 focus-visible:ring-sidebar-ring"
                   aria-label={t('sites:workspace.clearFilter')}
                   onClick={() => {
                     setFilter('');
@@ -545,7 +546,8 @@ export const SiteMenu = () => {
             {showOverview ? (
               <NavTooltip label={overviewLabel} when="truncated">
                 <Link
-          replace state={state}
+                  replace
+                  state={state}
                   to={overviewHref}
                   aria-current={activeTab === overview.id ? 'page' : undefined}
                   className={NAV_ROW_CLASS}
@@ -580,7 +582,7 @@ export const SiteMenu = () => {
                 <p>{t('sites:workspace.noPagesMatch', { query: isolateText(query) })}</p>
                 <button
                   type="button"
-                  className="mt-1 cursor-pointer font-medium text-sidebar-foreground underline underline-offset-4 outline-hidden hover:no-underline focus-visible:ring-2 focus-visible:ring-sidebar-ring"
+                  className="mt-1 cursor-pointer font-medium text-sidebar-foreground underline underline-offset-4 outline-hidden hover:no-underline active:no-underline focus-visible:ring-2 focus-visible:ring-sidebar-ring"
                   onClick={() => {
                     setFilter('');
                     filterRef.current?.focus();
@@ -595,7 +597,8 @@ export const SiteMenu = () => {
           <div className="flex flex-col items-center gap-0.5">
             <NavTooltip label={overviewLabel}>
               <Link
-          replace state={state}
+                replace
+                state={state}
                 to={overviewHref}
                 aria-label={overviewLabel}
                 aria-current={activeTab === overview.id ? 'page' : undefined}

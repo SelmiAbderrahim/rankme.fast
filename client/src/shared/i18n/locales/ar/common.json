@@ -194,7 +194,7 @@
     "groupAccount": "الحساب",
     "groupAdmin": "الإدارة",
     "search": "بحث",
-    "searchPlaceholder": "ابحث في الصفحات والمواقع",
+    "searchPlaceholder": "ابحث في الصفحات والمواقع والوثائق…",
     "searchNoResults": "لا نتائج لـ «{{query}}»",
     "searchGroupPages": "الصفحات",
     "searchGroupSites": "المواقع",
@@ -209,7 +209,12 @@
     "upgradeBody": "قم بالترقية للحصول على حدود أعلى وتقارير أعمق.",
     "upgradeCta": "ترقية",
     "groupSuperAdmin": "المنصة",
-    "opensInNewTab": "يفتح في علامة تبويب جديدة"
+    "opensInNewTab": "يفتح في علامة تبويب جديدة",
+    "searchSitesLoading": "جاري تحميل مواقعك…",
+    "searchGroupTools": "أدوات الموقع",
+    "searchGroupDocs": "الوثائق",
+    "searchDocsFor": "ابحث في الوثائق عن «{{query}}»",
+    "navigating": "جاري تحميل الصفحة…"
   },
   "locked": "مقفل",
   "retry": "حاول مرة أخرى",

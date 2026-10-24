@@ -1,24 +1,28 @@
 import { Bdi } from '@shared/components/Bdi';
-import { useId, useMemo, useRef, useState, type KeyboardEvent } from 'react';
+import { useEffect, useId, useMemo, useRef, useState, type KeyboardEvent } from 'react';
 import type { LucideIcon } from 'lucide-react';
 import { Search } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
-import { useNavigate } from 'react-router-dom';
-import { selectSites } from '@features/sites';
-import {
-  canOpenRoute,
-  selectActiveWorkspaceRole,
-  selectIsForeignWorkspace,
-} from '@features/workspace';
+import { useMatch, useNavigate } from 'react-router-dom';
+import { SITE_NAV_GROUPS, SITE_NAV_ITEMS, loadSites, selectSites, selectSitesLoaded, selectSitesLoading, siteTabHref } from '@features/sites';
+import { canOpenRoute, selectActiveWorkspaceRole, selectIsForeignWorkspace } from '@features/workspace';
 import { docsUrl } from '@shared/docs/docsUrl';
-import { useAppSelector } from '@shared/hooks/redux';
+import { useAppDispatch, useAppSelector } from '@shared/hooks/redux';
 import { DEFAULT_LOCALE, isSupportedLocale } from '@shared/i18n';
 import { cn } from '@shared/lib/utils';
+import { isolateText } from '@shared/lib/bidi';
 import { APP_NAV_GROUPS } from '@shared/navigation/appNav';
 import { APP_PAGE_ICONS } from '@shared/navigation/appPageIcons';
 import { rankSearchFields } from '@shared/navigation/searchMatch';
 import { Button } from '@shared/ui/button';
-import { Dialog, DialogContent, DialogDescription, DialogTitle } from '@shared/ui/dialog';
+import { Dialog, DialogContent, DialogDescription, DialogTitle, DialogTrigger } from '@shared/ui/dialog';
+import { NavigationPendingIndicator } from './NavigationPendingIndicator';
+
+type SearchGroup = 'pages' | 'tools' | 'sites' | 'docs';
+const SEARCH_GROUPS: SearchGroup[] = ['pages', 'tools', 'sites', 'docs'];
+const GROUP_LABELS: Record<SearchGroup, string> = {
+  pages: 'shell.searchGroupPages', tools: 'shell.searchGroupTools', sites: 'shell.searchGroupSites', docs: 'shell.searchGroupDocs',
+};
 
 interface SearchResult {
   id: string;
@@ -26,7 +30,7 @@ interface SearchResult {
   label: string;
   hint?: string;
   icon: LucideIcon;
-  group: 'pages' | 'sites';
+  group: SearchGroup;
   /** Opens outside the SPA, in a new tab. */
   newTab?: boolean;
   /** Text the query is matched against. */
@@ -37,9 +41,11 @@ interface SearchResult {
 /** Empty-query browse list shows a few sites, not the whole portfolio. */
 const BROWSE_SITE_LIMIT = 5;
 const RESULT_LIMIT = 12;
+const TOOL_RESULT_LIMIT = 8;
 
 const useSearchResults = (query: string): SearchResult[] => {
-  const { t, i18n } = useTranslation(['common', 'alerts']);
+  const { t, i18n } = useTranslation(['common', 'alerts', ...new Set(SITE_NAV_ITEMS.map((item) => item.labelKey.split(':')[0]!))]);
+  const currentSiteId = useMatch('/sites/:siteId/*')?.params.siteId;
   const sites = useAppSelector(selectSites);
   const role = useAppSelector(selectActiveWorkspaceRole);
   const isForeign = useAppSelector(selectIsForeignWorkspace);
@@ -56,34 +62,48 @@ const useSearchResults = (query: string): SearchResult[] => {
           label: t(item.labelKey),
           icon: item.icon,
           newTab: item.newTab === true,
-          group: 'pages' as const,
+          group: item.to === '/docs' ? 'docs' as const : 'pages' as const,
           fields: [t(item.labelKey)],
           rank: 0,
         })),
     );
     const siteRows: SearchResult[] = sites.map((site) => ({
       id: `site:${site.id}`,
-      to: `/sites/${site.id}`,
+      to: `/sites/${encodeURIComponent(site.id)}`,
       label: site.displayName || site.domain,
       hint: site.displayName && site.displayName !== site.domain ? site.domain : undefined,
       icon: APP_PAGE_ICONS.sites,
       group: 'sites' as const,
-      fields: [site.displayName, site.domain, site.url],
+      fields: [site.displayName, site.domain],
       rank: 0,
     }));
 
     const needle = query.trim();
-    if (!needle) return [...pages, ...siteRows.slice(0, BROWSE_SITE_LIMIT)];
+    const toolSites = sites.filter((site) => !currentSiteId || site.id === currentSiteId)
+      .sort((a, b) => Number(a.paused) - Number(b.paused));
+    const tools: SearchResult[] = needle ? SITE_NAV_ITEMS.flatMap((item) => {
+      const label = t(item.labelKey);
+      const group = SITE_NAV_GROUPS.find((group) => group.id === item.group);
+      const rank = rankSearchFields(group ? [label, t(group.labelKey)] : [label], needle);
+      if (rank === null) return [];
+      return toolSites.map((site) => ({
+        id: `tool:${site.id}:${item.id}`, to: siteTabHref(site.id, item.id),
+        label: `${label} — ${site.displayName || site.domain}`, icon: item.icon,
+        hint: site.paused ? t('sites:paused.optionSuffix') : undefined,
+        group: 'tools' as const, fields: [], rank,
+      }));
+    }).slice(0, TOOL_RESULT_LIMIT) : [];
 
-    const scored = [...pages, ...siteRows].flatMap((row, order) => {
+    const inDisplayOrder = (rows: SearchResult[]) => rows.sort((a, b) =>
+      SEARCH_GROUPS.indexOf(a.group) - SEARCH_GROUPS.indexOf(b.group) || a.rank - b.rank);
+    if (!needle) return inDisplayOrder([...pages, ...siteRows.slice(0, BROWSE_SITE_LIMIT)]);
+
+    const scored = [...pages, ...siteRows].flatMap((row) => {
       const rank = rankSearchFields(row.fields, needle);
-      return rank === null ? [] : [{ row: { ...row, rank }, order }];
+      return rank === null ? [] : [{ ...row, rank }];
     });
-    return scored
-      .sort((a, b) => a.row.rank - b.row.rank || a.order - b.order)
-      .slice(0, RESULT_LIMIT)
-      .map((entry) => entry.row);
-  }, [query, t, locale, sites, role, isForeign]);
+    return inDisplayOrder([...scored, ...tools]).slice(0, RESULT_LIMIT);
+  }, [query, t, locale, sites, role, isForeign, currentSiteId]);
 };
 
 interface SearchComboboxProps {
@@ -105,19 +125,35 @@ const SearchCombobox = ({
   onNavigate,
   className,
 }: SearchComboboxProps) => {
-  const { t } = useTranslation(['common']);
+  const { t, i18n } = useTranslation(['common']);
   const navigate = useNavigate();
+  const dispatch = useAppDispatch();
+  const sitesLoaded = useAppSelector(selectSitesLoaded);
+  const sitesLoading = useAppSelector(selectSitesLoading);
   const baseId = useId();
   const listId = `${baseId}-list`;
   const statusId = `${baseId}-empty`;
   const inputRef = useRef<HTMLInputElement>(null);
+  const listRef = useRef<HTMLDivElement>(null);
+  const activeRef = useRef<HTMLDivElement>(null);
   const [query, setQuery] = useState('');
   const [open, setOpen] = useState(false);
   const [active, setActive] = useState(0);
   const results = useSearchResults(query);
+  const activeIndex = Math.min(active, results.length - 1);
   const showList = persistent || open;
   const optionId = (index: number) => `${baseId}-opt-${index}`;
-  const activeResult = results[active];
+  const activeResult = results[activeIndex];
+
+  useEffect(() => {
+    const list = listRef.current;
+    const option = activeRef.current;
+    if (!list || !option) return;
+    const bounds = list.getBoundingClientRect();
+    const row = option.getBoundingClientRect();
+    if (row.top < bounds.top) list.scrollTop -= bounds.top - row.top;
+    else if (row.bottom > bounds.bottom) list.scrollTop += row.bottom - bounds.bottom;
+  }, [activeIndex, results, showList]);
 
   const choose = (result: SearchResult) => {
     if (result.newTab) window.open(result.to, '_blank', 'noopener,noreferrer');
@@ -132,7 +168,11 @@ const SearchCombobox = ({
   const move = (delta: number) => {
     setOpen(true);
     if (results.length === 0) return;
-    setActive((current) => (current + delta + results.length) % results.length);
+    if (!showList) {
+      setActive(delta > 0 ? 0 : results.length - 1);
+      return;
+    }
+    setActive((activeIndex + delta + results.length) % results.length);
   };
 
   const onKeyDown = (event: KeyboardEvent<HTMLInputElement>) => {
@@ -152,7 +192,7 @@ const SearchCombobox = ({
     }
   };
 
-  const grouped = (['pages', 'sites'] as const)
+  const grouped = SEARCH_GROUPS
     .map((group) => ({
       group,
       rows: results.map((row, index) => ({ row, index })).filter(({ row }) => row.group === group),
@@ -163,7 +203,7 @@ const SearchCombobox = ({
     <div className={cn('relative', className)}>
       <Search
         aria-hidden="true"
-        className="pointer-events-none absolute start-2.5 top-1/2 size-4 -translate-y-1/2 text-muted-foreground"
+        className="pointer-events-none absolute start-2.5 top-[1.125rem] size-4 -translate-y-1/2 text-muted-foreground"
       />
       <input
         ref={inputRef}
@@ -177,7 +217,7 @@ const SearchCombobox = ({
         aria-controls={showList && results.length > 0 ? listId : undefined}
         aria-describedby={showList && results.length === 0 && query.trim() ? statusId : undefined}
         aria-autocomplete="list"
-        aria-activedescendant={showList && activeResult ? optionId(active) : undefined}
+        aria-activedescendant={showList && activeResult ? optionId(activeIndex) : undefined}
         value={query}
         placeholder={t('shell.searchPlaceholder')}
         onChange={(event) => {
@@ -185,7 +225,10 @@ const SearchCombobox = ({
           setActive(0);
           setOpen(true);
         }}
-        onFocus={() => setOpen(true)}
+        onFocus={() => {
+          setOpen(true);
+          if (!sitesLoaded && !sitesLoading) void dispatch(loadSites({}));
+        }}
         onBlur={() => setOpen(false)}
         onKeyDown={onKeyDown}
         // Neutral (ink) focus ring, matching the global `--ring` token.
@@ -195,19 +238,20 @@ const SearchCombobox = ({
       {showList ? (
         <div
           className={cn(
-            'z-50 mt-1 w-full overflow-y-auto rounded-md border bg-popover p-1 text-popover-foreground',
-            persistent ? 'max-h-[60vh] border-0 p-0' : 'absolute top-full max-h-80 min-w-64 shadow-md',
+            'z-50 mt-1 w-full rounded-md border bg-popover p-1 text-popover-foreground',
+            persistent ? 'border-0 p-0' : 'absolute top-full min-w-64 shadow-md',
           )}
         >
+          {sitesLoading ? <p role="status" className="px-3 py-2 text-sm text-muted-foreground">{t('shell.searchSitesLoading')}</p> : null}
           {results.length > 0 ? (
-            <div id={listId} role="listbox" aria-label={t('shell.search')}>
+            <div ref={listRef} id={listId} role="listbox" aria-label={t('shell.search')} className={cn('overflow-y-auto overscroll-contain', persistent ? 'max-h-[60vh]' : 'max-h-80')}>
               {grouped.map(({ group, rows }) => (
                 <div key={group} role="group" aria-labelledby={`${baseId}-group-${group}`}>
                   <div
                     id={`${baseId}-group-${group}`}
                     className="px-2 py-1.5 text-xs font-medium text-muted-foreground"
                   >
-                    {t(group === 'pages' ? 'shell.searchGroupPages' : 'shell.searchGroupSites')}
+                    {t(GROUP_LABELS[group])}
                   </div>
                   {rows.map(({ row, index }) => {
                     const Icon = row.icon;
@@ -215,8 +259,9 @@ const SearchCombobox = ({
                       <div
                         key={row.id}
                         id={optionId(index)}
+                        ref={index === activeIndex ? activeRef : undefined}
                         role="option"
-                        aria-selected={index === active}
+                        aria-selected={index === activeIndex}
                         // Keep focus in the input so a click never blurs (and
                         // closes) the list before the click lands.
                         onMouseDown={(event) => event.preventDefault()}
@@ -224,14 +269,14 @@ const SearchCombobox = ({
                         onClick={() => choose(row)}
                         className={cn(
                           'flex cursor-pointer items-center gap-2 rounded-sm px-2 py-1.5 text-sm',
-                          index === active && 'bg-accent text-accent-foreground',
+                          index === activeIndex && 'bg-accent text-accent-foreground',
                         )}
                       >
                         <Icon aria-hidden="true" className="size-4 shrink-0 text-muted-foreground" />
                         <span className="min-w-0 truncate"><Bdi>{row.label}</Bdi></span>
                         {row.hint ? (
                           <span className="ms-auto truncate text-xs text-muted-foreground">
-                            {row.hint}
+                            <Bdi>{row.hint}</Bdi>
                           </span>
                         ) : null}
                       </div>
@@ -241,10 +286,11 @@ const SearchCombobox = ({
               ))}
             </div>
           ) : (
-            <p id={statusId} role="status" className="px-3 py-6 text-center text-sm text-muted-foreground">
-              {t('shell.searchNoResults', { query: query.trim() })}
-            </p>
+            <p id={statusId} role="status" className="px-3 py-6 text-center text-sm text-muted-foreground">{t('shell.searchNoResults', { query: query.trim() })}</p>
           )}
+          {query.trim() ? <a href={`${docsUrl('index', i18n.language)}?q=${encodeURIComponent(query.trim())}`} target="_blank" rel="noopener noreferrer" className="block px-3 py-2 text-sm underline underline-offset-4 focus-visible:ring-2 focus-visible:ring-ring">
+            <Bdi>{t('shell.searchDocsFor', { query: isolateText(query.trim()) })}</Bdi>
+          </a> : null}
         </div>
       ) : null}
     </div>
@@ -263,22 +309,19 @@ export const AppSearch = () => {
   return (
     <>
       <SearchCombobox className="hidden max-w-sm flex-1 sm:block" />
-      <Button
-        variant="ghost"
-        size="icon"
-        className="sm:hidden"
-        aria-label={t('shell.search')}
-        onClick={() => setDialogOpen(true)}
-      >
-        <Search aria-hidden="true" />
-      </Button>
       <Dialog open={dialogOpen} onOpenChange={setDialogOpen}>
+        <DialogTrigger asChild>
+          <Button variant="ghost" size="icon" className="sm:hidden" aria-label={t('shell.search')}>
+            <Search aria-hidden="true" />
+          </Button>
+        </DialogTrigger>
         <DialogContent className="top-[15%] translate-y-0 gap-3 p-4">
           <DialogTitle className="sr-only">{t('shell.search')}</DialogTitle>
           <DialogDescription className="sr-only">{t('shell.searchPlaceholder')}</DialogDescription>
           <SearchCombobox persistent autoFocus className="pe-8" onNavigate={() => setDialogOpen(false)} />
         </DialogContent>
       </Dialog>
+      <NavigationPendingIndicator />
     </>
   );
 };

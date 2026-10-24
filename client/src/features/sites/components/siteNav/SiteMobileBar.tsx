@@ -8,8 +8,21 @@ import { useMediaQuery } from '@shared/hooks/useMediaQuery';
 import { cn } from '@shared/lib/utils';
 import { Button } from '@shared/ui/button';
 import { NAV_GROUP_LABEL_CLASS, NAV_LABEL_CLASS, NAV_ROW_CLASS } from '@shared/ui/nav-row';
-import { Sheet, SheetContent, SheetDescription, SheetHeader, SheetTitle, SheetTrigger } from '@shared/ui/sheet';
-import { SITE_NAV_GROUPS, SITE_NAV_ITEMS, getSiteNavGroupItems, getSiteNavItem, siteTabHref } from '../../siteNavigation';
+import {
+  Sheet,
+  SheetContent,
+  SheetDescription,
+  SheetHeader,
+  SheetTitle,
+  SheetTrigger,
+} from '@shared/ui/sheet';
+import {
+  SITE_NAV_GROUPS,
+  SITE_NAV_ITEMS,
+  getSiteNavGroupItems,
+  getSiteNavItem,
+  siteTabHref,
+} from '../../siteNavigation';
 import { SITE_NAV_NAMESPACES, activeTabFromLocation } from './shared';
 import { SiteSwitcher } from './SiteSwitcher';
 import { useSiteNavigation } from './context';
@@ -28,9 +41,7 @@ export const SiteMobileBar = () => {
   const [filter, setFilter] = useState('');
   const activeTab = activeTabFromLocation(pathname, search);
   const activeItem = getSiteNavItem(activeTab);
-  const siblings = activeItem.group
-    ? getSiteNavGroupItems(activeItem.group)
-    : [];
+  const siblings = activeItem.group ? getSiteNavGroupItems(activeItem.group) : [];
   const activeChipRef = useRef<HTMLAnchorElement>(null);
   useEffect(() => {
     activeChipRef.current?.scrollIntoView?.({ block: 'nearest', inline: 'center' });
@@ -47,7 +58,8 @@ export const SiteMobileBar = () => {
     return (
       <li key={item.id}>
         <Link
-          replace state={state}
+          replace
+          state={state}
           to={siteTabHref(siteId ?? '', item.id, search, hash)}
           onClick={() => setOpen(false)}
           aria-current={activeTab === item.id ? 'page' : undefined}
@@ -78,18 +90,18 @@ export const SiteMobileBar = () => {
             <SiteSwitcher variant="bar" />
           </div>
           <SheetTrigger asChild>
-          <Button
-            variant="outline"
-            className="min-h-11 min-w-0 max-w-[48%] justify-between gap-2"
-            aria-haspopup="dialog"
-            aria-expanded={open}
-            data-testid="site-page-picker"
-          >
-            <span className="truncate">
-              <Bdi>{t(activeItem.labelKey)}</Bdi>
-            </span>
-            <ChevronDown aria-hidden="true" className="size-4 shrink-0" />
-          </Button>
+            <Button
+              variant="outline"
+              className="min-h-11 min-w-0 max-w-[48%] justify-between gap-2"
+              aria-haspopup="dialog"
+              aria-expanded={open}
+              data-testid="site-page-picker"
+            >
+              <span className="truncate">
+                <Bdi>{t(activeItem.labelKey)}</Bdi>
+              </span>
+              <ChevronDown aria-hidden="true" className="size-4 shrink-0" />
+            </Button>
           </SheetTrigger>
         </div>
         {siblings.length > 0 ? (
@@ -100,7 +112,8 @@ export const SiteMobileBar = () => {
           >
             {siblings.map((item) => (
               <Link
-          replace state={state}
+                replace
+                state={state}
                 ref={item.id === activeTab ? activeChipRef : undefined}
                 key={item.id}
                 // Chips exist only for a grouped tab, i.e. on a site route.
@@ -114,47 +127,47 @@ export const SiteMobileBar = () => {
           </div>
         ) : null}
       </div>
-        <SheetContent
-          side="bottom"
-          className="max-h-[85svh] rounded-t-lg p-0 pb-[env(safe-area-inset-bottom)] md:hidden"
+      <SheetContent
+        side="bottom"
+        className="max-h-[85svh] rounded-t-lg p-0 pb-[env(safe-area-inset-bottom)] md:hidden"
+      >
+        <SheetHeader className="border-b px-4 pt-4 pb-3">
+          <div className="mx-auto mb-1 h-1 w-10 rounded-full bg-border" aria-hidden="true" />
+          <SheetTitle>{t('sites:workspace.choosePage')}</SheetTitle>
+          <SheetDescription>{t('sites:workspace.choosePageDescription')}</SheetDescription>
+        </SheetHeader>
+        <div className="relative m-4">
+          <Search
+            aria-hidden="true"
+            className="absolute start-3 top-3 size-4 text-muted-foreground"
+          />
+          <input
+            type="search"
+            value={filter}
+            onChange={(event) => setFilter(event.target.value)}
+            placeholder={t('sites:workspace.filterPages')}
+            aria-label={t('sites:workspace.filterPages')}
+            className="h-10 w-full rounded-md border border-input bg-background ps-9 pe-3 text-sm outline-hidden placeholder:text-muted-foreground focus-visible:ring-2 focus-visible:ring-ring"
+          />
+        </div>
+        <nav
+          className="max-h-[58svh] space-y-3 overflow-y-auto px-4 pb-4"
+          aria-label={t('sites:workspace.navLandmark')}
         >
-          <SheetHeader className="border-b px-4 pt-4 pb-3">
-            <div className="mx-auto mb-1 h-1 w-10 rounded-full bg-border" aria-hidden="true" />
-            <SheetTitle>{t('sites:workspace.choosePage')}</SheetTitle>
-            <SheetDescription>{t('sites:workspace.choosePageDescription')}</SheetDescription>
-          </SheetHeader>
-          <div className="relative m-4">
-            <Search
-              aria-hidden="true"
-              className="absolute start-3 top-3 size-4 text-muted-foreground"
-            />
-            <input
-              type="search"
-              value={filter}
-              onChange={(event) => setFilter(event.target.value)}
-              placeholder={t('sites:workspace.filterPages')}
-              aria-label={t('sites:workspace.filterPages')}
-              className="h-10 w-full rounded-md border border-input bg-background ps-9 pe-3 text-sm outline-hidden placeholder:text-muted-foreground focus-visible:ring-2 focus-visible:ring-ring"
-            />
-          </div>
-          <nav
-            className="max-h-[58svh] space-y-3 overflow-y-auto px-4 pb-4"
-            aria-label={t('sites:workspace.navLandmark')}
-          >
-            {visible(overview.labelKey) ? <ul>{row(overview)}</ul> : null}
-            {groups.map((group) => (
-              <div key={group.id}>
-                <p className={cn(NAV_GROUP_LABEL_CLASS, 'mb-1 px-2.5')}>{t(group.labelKey)}</p>
-                <ul className="flex flex-col gap-0.5">{group.items.map(row)}</ul>
-              </div>
-            ))}
-            {nothing ? (
-              <p className="px-2.5 py-4 text-sm text-muted-foreground" role="status">
-                {t('sites:workspace.noPagesMatch', { query: isolateText(filter.trim()) })}
-              </p>
-            ) : null}
-          </nav>
-        </SheetContent>
+          {visible(overview.labelKey) ? <ul>{row(overview)}</ul> : null}
+          {groups.map((group) => (
+            <div key={group.id}>
+              <p className={cn(NAV_GROUP_LABEL_CLASS, 'mb-1 px-2.5')}>{t(group.labelKey)}</p>
+              <ul className="flex flex-col gap-0.5">{group.items.map(row)}</ul>
+            </div>
+          ))}
+          {nothing ? (
+            <p className="px-2.5 py-4 text-sm text-muted-foreground" role="status">
+              {t('sites:workspace.noPagesMatch', { query: isolateText(filter.trim()) })}
+            </p>
+          ) : null}
+        </nav>
+      </SheetContent>
     </Sheet>
   );
 };

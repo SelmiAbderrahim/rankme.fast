@@ -194,7 +194,7 @@
     "groupAccount": "Аккаунт",
     "groupAdmin": "Администрирование",
     "search": "Поиск",
-    "searchPlaceholder": "Поиск по страницам и сайтам",
+    "searchPlaceholder": "Поиск по страницам, сайтам и документации…",
     "searchNoResults": "Нет результатов для «{{query}}»",
     "searchGroupPages": "Страницы",
     "searchGroupSites": "Сайты",
@@ -209,7 +209,12 @@
     "upgradeBody": "Перейдите на более высокий тариф для больших лимитов и подробных отчётов.",
     "upgradeCta": "Улучшить",
     "groupSuperAdmin": "Платформа",
-    "opensInNewTab": "Откроется в новой вкладке"
+    "opensInNewTab": "Откроется в новой вкладке",
+    "searchSitesLoading": "Загружаем ваши сайты…",
+    "searchGroupTools": "Инструменты сайта",
+    "searchGroupDocs": "Документация",
+    "searchDocsFor": "Искать «{{query}}» в документации",
+    "navigating": "Загрузка страницы…"
   },
   "locked": "Заблокировано",
   "retry": "Повторить",

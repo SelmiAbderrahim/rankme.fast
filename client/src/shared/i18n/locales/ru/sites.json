@@ -114,7 +114,6 @@
     "choosePageDescription": "Откройте страницу сайта.",
     "siblingPages": "Страницы этого раздела",
     "noSites": "Сайты не найдены",
-    "activeSubViewLabel": "{{tab}} · {{view}}",
     "navLandmark": "Сайт",
     "switchSiteNamed": "Сменить сайт · {{site}}",
     "currentSite": "Текущий сайт",

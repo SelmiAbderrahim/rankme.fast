@@ -20,10 +20,7 @@ const renderNavigation = (
   const view = render(
     <I18nextProvider i18n={i18n}>
       <MemoryRouter initialEntries={[entry]}>
-        <SiteWorkspaceNavigation
-          activeTab={activeTab}
-          onTabChange={onTabChange}
-        />
+        <SiteWorkspaceNavigation activeTab={activeTab} onTabChange={onTabChange} />
         <LocationProbe />
       </MemoryRouter>
     </I18nextProvider>,
@@ -141,10 +138,35 @@ describe('SiteWorkspaceNavigation', () => {
 it('retains hash and router state when the compatibility control chooses a destination', async () => {
   const StateProbe = () => {
     const location = useLocation();
-    return <output data-testid="state-probe">{JSON.stringify({ hash: location.hash, state: location.state })}</output>;
+    return (
+      <output data-testid="state-probe">
+        {JSON.stringify({ hash: location.hash, state: location.state })}
+      </output>
+    );
   };
-  render(<I18nextProvider i18n={i18n}><MemoryRouter initialEntries={[{ pathname: '/sites/s1', search: '?tab=keywords&view=queries', hash: '#details', state: { saved: true } }]}><SiteWorkspaceNavigation activeTab="keywords" onTabChange={vi.fn()} /><StateProbe /></MemoryRouter></I18nextProvider>);
-  expect(screen.getByTestId('site-tab-overview')).toHaveAttribute('href', '/sites/s1?tab=overview&view=queries#details');
+  render(
+    <I18nextProvider i18n={i18n}>
+      <MemoryRouter
+        initialEntries={[
+          {
+            pathname: '/sites/s1',
+            search: '?tab=keywords&view=queries',
+            hash: '#details',
+            state: { saved: true },
+          },
+        ]}
+      >
+        <SiteWorkspaceNavigation activeTab="keywords" onTabChange={vi.fn()} />
+        <StateProbe />
+      </MemoryRouter>
+    </I18nextProvider>,
+  );
+  expect(screen.getByTestId('site-tab-overview')).toHaveAttribute(
+    'href',
+    '/sites/s1?tab=overview&view=queries#details',
+  );
   await userEvent.click(screen.getByTestId('site-tab-overview'));
-  expect(screen.getByTestId('state-probe')).toHaveTextContent('{"hash":"#details","state":{"saved":true}}');
+  expect(screen.getByTestId('state-probe')).toHaveTextContent(
+    '{"hash":"#details","state":{"saved":true}}',
+  );
 });

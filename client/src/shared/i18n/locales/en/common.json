@@ -194,7 +194,7 @@
     "groupAccount": "Account",
     "groupAdmin": "Admin",
     "search": "Search",
-    "searchPlaceholder": "Search pages and sites",
+    "searchPlaceholder": "Search pages, sites, and docs…",
     "searchNoResults": "No results for “{{query}}”",
     "searchGroupPages": "Pages",
     "searchGroupSites": "Sites",
@@ -209,7 +209,12 @@
     "upgradeBody": "Upgrade for higher caps and deeper reports.",
     "upgradeCta": "Upgrade",
     "groupSuperAdmin": "Platform",
-    "opensInNewTab": "Opens in a new tab"
+    "opensInNewTab": "Opens in a new tab",
+    "searchSitesLoading": "Loading your sites…",
+    "searchGroupTools": "Site tools",
+    "searchGroupDocs": "Docs",
+    "searchDocsFor": "Search the docs for “{{query}}”",
+    "navigating": "Loading page…"
   },
   "locked": "Locked",
   "retry": "Try again",

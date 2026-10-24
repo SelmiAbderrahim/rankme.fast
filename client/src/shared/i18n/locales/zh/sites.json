@@ -114,7 +114,6 @@
     "choosePageDescription": "打开网站页面。",
     "siblingPages": "此分组中的页面",
     "noSites": "未找到网站",
-    "activeSubViewLabel": "{{tab}} · {{view}}",
     "navLandmark": "网站",
     "switchSiteNamed": "切换网站 · {{site}}",
     "currentSite": "当前网站",

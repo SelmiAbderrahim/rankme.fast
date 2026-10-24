@@ -1,4 +1,4 @@
-import { isPlainKey, isTypingTarget } from "@shared/lib/keyboard";
+import { isPlainKey, isTypingTarget } from '@shared/lib/keyboard';
 import { afterEach, describe, expect, it, vi } from 'vitest';
 import {
   activeTabFromLocation,

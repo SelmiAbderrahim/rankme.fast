@@ -194,7 +194,7 @@
     "groupAccount": "Compte",
     "groupAdmin": "Admin",
     "search": "Rechercher",
-    "searchPlaceholder": "Rechercher des pages et des sites",
+    "searchPlaceholder": "Rechercher pages, sites et docs…",
     "searchNoResults": "Aucun résultat pour « {{query}} »",
     "searchGroupPages": "Pages",
     "searchGroupSites": "Sites",
@@ -209,7 +209,12 @@
     "upgradeBody": "Passez à un forfait supérieur pour des limites plus élevées et des rapports plus détaillés.",
     "upgradeCta": "Mettre à niveau",
     "groupSuperAdmin": "Plateforme",
-    "opensInNewTab": "S'ouvre dans un nouvel onglet"
+    "opensInNewTab": "S'ouvre dans un nouvel onglet",
+    "searchSitesLoading": "Chargement de vos sites…",
+    "searchGroupTools": "Outils du site",
+    "searchGroupDocs": "Documentation",
+    "searchDocsFor": "Rechercher « {{query}} » dans la documentation",
+    "navigating": "Chargement de la page…"
   },
   "locked": "Verrouillé",
   "retry": "Réessayer",

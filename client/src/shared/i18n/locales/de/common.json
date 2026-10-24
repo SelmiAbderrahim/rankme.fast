@@ -194,7 +194,7 @@
     "groupAccount": "Konto",
     "groupAdmin": "Admin",
     "search": "Suchen",
-    "searchPlaceholder": "Seiten und Websites durchsuchen",
+    "searchPlaceholder": "Seiten, Websites und Dokumentation durchsuchen…",
     "searchNoResults": "Keine Ergebnisse für „{{query}}“",
     "searchGroupPages": "Seiten",
     "searchGroupSites": "Websites",
@@ -209,7 +209,12 @@
     "upgradeBody": "Upgraden Sie für höhere Limits und ausführlichere Berichte.",
     "upgradeCta": "Upgrade",
     "groupSuperAdmin": "Plattform",
-    "opensInNewTab": "Öffnet in einem neuen Tab"
+    "opensInNewTab": "Öffnet in einem neuen Tab",
+    "searchSitesLoading": "Ihre Websites werden geladen…",
+    "searchGroupTools": "Website-Tools",
+    "searchGroupDocs": "Dokumentation",
+    "searchDocsFor": "Dokumentation nach „{{query}}“ durchsuchen",
+    "navigating": "Seite wird geladen…"
   },
   "locked": "Gesperrt",
   "retry": "Erneut versuchen",

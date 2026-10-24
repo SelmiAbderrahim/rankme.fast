@@ -40,7 +40,10 @@ beforeEach(async () => {
 describe('SiteSelect', () => {
   it('isolates the site name and keeps the paused suffix outside it', async () => {
     renderSelect(
-      [site('a', 'shop.example', { displayName: 'متجر' }), site('b', 'paused.example', { paused: true })],
+      [
+        site('a', 'shop.example', { displayName: 'متجر' }),
+        site('b', 'paused.example', { paused: true }),
+      ],
       false,
     );
     const user = userEvent.setup();
@@ -62,8 +65,12 @@ describe('SiteSelect', () => {
     expect(screen.getByTestId('pick-truncated')).toHaveTextContent(
       'Only your first 2 sites are listed here.',
     );
-    await changeLanguage('de');
-    const many = Array.from({ length: 1_000 }, (_, index) => site(`s${index}`, `s${index}.example`));
+    await act(async () => {
+      await changeLanguage('de');
+    });
+    const many = Array.from({ length: 1_000 }, (_, index) =>
+      site(`s${index}`, `s${index}.example`),
+    );
     renderSelect(many, true);
     expect(screen.getAllByTestId('pick-truncated')[1]).toHaveTextContent(
       'Hier werden nur Ihre ersten 1.000 Websites aufgeführt.',
@@ -76,8 +83,20 @@ it('exposes loading, retry, empty and selection states without returning partial
   const onChange = vi.fn();
   const a = site('a', 'a.example');
   const b = site('b', 'b.example');
-  const props = { id: 'form-site', testId: 'form-site', value: 'b', onChange, placeholder: 'Choose a site' };
-  const mount = (state: import('../useAllSites').AllSitesState) => <I18nextProvider i18n={i18n}><MemoryRouter><SiteSelect {...props} invalid describedBy="help" sites={{ ...state, retry }} /></MemoryRouter></I18nextProvider>;
+  const props = {
+    id: 'form-site',
+    testId: 'form-site',
+    value: 'b',
+    onChange,
+    placeholder: 'Choose a site',
+  };
+  const mount = (state: import('../useAllSites').AllSitesState) => (
+    <I18nextProvider i18n={i18n}>
+      <MemoryRouter>
+        <SiteSelect {...props} invalid describedBy="help" sites={{ ...state, retry }} />
+      </MemoryRouter>
+    </I18nextProvider>
+  );
   const view = render(mount({ status: 'loading', sites: [] }));
   expect(screen.getByTestId('form-site-loading')).toHaveAttribute('aria-busy', 'true');
   expect(screen.getByTestId('form-site-loading')).toHaveTextContent('Loading your sites…');
@@ -89,7 +108,7 @@ it('exposes loading, retry, empty and selection states without returning partial
   view.rerender(mount({ status: 'ready', sites: [], truncated: false }));
   expect(screen.getByTestId('form-site-empty')).toHaveTextContent('You have no sites yet.');
   expect(screen.getByRole('link', { name: 'Add a site' })).toHaveAttribute('href', '/sites');
-  view.rerender(mount({ status: 'ready', sites: [a,b], truncated: false }));
+  view.rerender(mount({ status: 'ready', sites: [a, b], truncated: false }));
   expect(screen.getByRole('combobox')).toHaveTextContent('b.example');
   expect(screen.getByRole('combobox')).toHaveAttribute('aria-invalid', 'true');
   expect(screen.getByRole('combobox')).toHaveAttribute('aria-describedby', 'help');
@@ -99,8 +118,28 @@ it('exposes loading, retry, empty and selection states without returning partial
 });
 
 it('uses the placeholder for an unknown selection and mirrors the options in RTL', async () => {
-  await act(async () => { await changeLanguage('ar'); });
-  render(<I18nextProvider i18n={i18n}><MemoryRouter><SiteSelect id="rtl" testId="rtl" value="missing" onChange={vi.fn()} placeholder="اختر موقعًا" sites={{ status: 'ready', sites: [site('a','a.example')], truncated: false, retry: vi.fn() }} /></MemoryRouter></I18nextProvider>);
+  await act(async () => {
+    await changeLanguage('ar');
+  });
+  render(
+    <I18nextProvider i18n={i18n}>
+      <MemoryRouter>
+        <SiteSelect
+          id="rtl"
+          testId="rtl"
+          value="missing"
+          onChange={vi.fn()}
+          placeholder="اختر موقعًا"
+          sites={{
+            status: 'ready',
+            sites: [site('a', 'a.example')],
+            truncated: false,
+            retry: vi.fn(),
+          }}
+        />
+      </MemoryRouter>
+    </I18nextProvider>,
+  );
   expect(screen.getByRole('combobox')).toHaveTextContent('اختر موقعًا');
   await userEvent.click(screen.getByRole('combobox'));
   expect(screen.getByRole('listbox')).toHaveAttribute('dir', 'rtl');
