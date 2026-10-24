@@ -2,6 +2,8 @@ import { existsSync, readFileSync } from "node:fs";
 import { fileURLToPath } from "node:url";
 import fontkit from "@pdf-lib/fontkit";
 import reshaper from "arabic-persian-reshaper";
+import bidiFactory from "bidi-js";
+import { visualOrderFontkit } from "./visual-fontkit.js";
 import { PDFDocument, type PDFFont, type PDFPage, type RGB } from "pdf-lib";
 import type { ReportLocale } from "./contracts.js";
 export const REPORT_PDF_PAGE_WIDTH = 595.28;
@@ -9,7 +11,7 @@ export const REPORT_PDF_PAGE_HEIGHT = 841.89;
 export const REPORT_PDF_MARGIN = 50;
 export const REPORT_PDF_FOOTER_SPACE = 34;
 export const REPORT_PDF_CONTENT_WIDTH = REPORT_PDF_PAGE_WIDTH - REPORT_PDF_MARGIN * 2;
-export type PdfFontFile = "NotoSans-Regular.ttf" | "NotoSans-Bold.ttf" | "NotoSansArabic-Regular.ttf" | "NotoSansSC-Regular.otf";
+export type PdfFontFile = "NotoSans-Regular.ttf" | "NotoSans-Bold.ttf" | "NotoSansArabic-Regular.ttf" | "NotoSansSC-Regular.ttf";
 const fontCache = new Map<PdfFontFile, Uint8Array>();
 function fontUrl(file: PdfFontFile): URL {
     const sourceUrl = new URL(`../../modules/audits/pdf/fonts/${file}`, import.meta.url);
@@ -37,8 +39,8 @@ export function reportPdfFontFiles(locale: ReportLocale): {
     }
     if (locale === "zh") {
         return {
-            regular: "NotoSansSC-Regular.otf",
-            bold: "NotoSansSC-Regular.otf",
+            regular: "NotoSansSC-Regular.ttf",
+            bold: "NotoSansSC-Regular.ttf",
         };
     }
     return { regular: "NotoSans-Regular.ttf", bold: "NotoSans-Bold.ttf" };
@@ -50,31 +52,10 @@ export function containsReportArabic(text: string): boolean {
 export function shapeReportArabic(text: string): string {
     return reshaper.ArabicShaper.convertArabic(text);
 }
+const bidi = bidiFactory();
 export function toVisualReportRtlLine(line: string): string {
-    const runs: Array<{
-        rtl: boolean;
-        words: string[];
-    }> = [];
-    for (const word of line.split(" ")) {
-        const rtl = containsReportArabic(word);
-        const previous = runs[runs.length - 1];
-        if (previous?.rtl === rtl)
-            previous.words.push(word);
-        else
-            runs.push({ rtl, words: [word] });
-    }
-    const output: string[] = [];
-    for (let index = runs.length - 1; index >= 0; index -= 1) {
-        const run = runs[index]!;
-        if (run.rtl) {
-            for (let wordIndex = run.words.length - 1; wordIndex >= 0; wordIndex -= 1) {
-                output.push([...run.words[wordIndex]!].reverse().join(""));
-            }
-        }
-        else
-            output.push(...run.words);
-    }
-    return output.join(" ");
+    if (!containsReportArabic(line)) return line;
+    return bidi.getReorderedString(line, bidi.getEmbeddingLevels(line, 'rtl'));
 }
 export interface ReportPdfContext {
     doc: PDFDocument;
@@ -89,10 +70,14 @@ export interface ReportPdfContext {
 }
 export async function createReportPdfContext(locale: ReportLocale): Promise<ReportPdfContext> {
     const doc = await PDFDocument.create();
-    doc.registerFontkit(fontkit);
+    doc.registerFontkit(locale === "ar" ? visualOrderFontkit : fontkit);
     const files = reportPdfFontFiles(locale);
     const regular = await doc.embedFont(readReportPdfFont(files.regular), {
-        subset: true,
+        // Subsetting corrupts this font's Chinese outlines. Keep the complete
+        // TrueType program and its native regional forms; Latin locl alternates
+        // otherwise have inconsistent width entries in pdf-lib.
+        subset: locale !== "zh",
+        ...(locale === "zh" ? { features: { locl: false } } : {}),
         customName: "RankMeFast-Regular",
     });
     const bold = files.bold === files.regular && locale !== "ar"

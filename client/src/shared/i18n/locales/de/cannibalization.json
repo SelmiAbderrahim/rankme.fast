@@ -24,8 +24,6 @@
   },
   "preview": {
     "title": "Was das kostet",
-    "units": "{{count}} Bericht aus Ihrem Monatskontingent.",
-    "units_other": "{{count}} Berichte aus Ihrem Monatskontingent.",
     "remaining": "In diesem Monat noch im Tarif: {{remaining}}.",
     "pack": "Plus {{units}} aus Guthabenpaketen.",
     "noFit": "Das passt nicht mehr ins Restkontingent. Fügen Sie Guthaben hinzu oder wechseln Sie den Tarif."
@@ -39,7 +37,7 @@
     "open": "Öffnen"
   },
   "detail": {
-    "provenance": "Aus Ihren gespeicherten Search-Console-Daten über {{days}} Tage, zuletzt synchronisiert am {{date}}. {{queries}} Suchanfragen gelesen."
+    "provenance": "Aus Ihren gespeicherten Search-Console-Daten über $t(cannibalization:counts.windowDays, {\"count\": {{days}}}), zuletzt synchronisiert am {{date}}. $t(cannibalization:counts.queriesRead, {\"count\": {{queries}}})"
   },
   "candidates": {
     "query": "Suchanfrage",
@@ -56,7 +54,7 @@
     "inspect": "Ansehen"
   },
   "drilldown": {
-    "provenance": "Gespeicherte Zeilen über {{days}} Tage, zuletzt synchronisiert am {{date}}.",
+    "provenance": "Gespeicherte Zeilen über $t(cannibalization:counts.windowDays, {\"count\": {{days}}}), zuletzt synchronisiert am {{date}}.",
     "recommendation": "Behalten Sie {{url}} als Hauptseite.",
     "reason": {
       "most_clicks": "Sie erhält für diese Suchanfrage bereits die meisten Klicks.",
@@ -100,5 +98,19 @@
       "title": "Etwas ist schiefgelaufen",
       "body": "Das konnte nicht geladen werden. Versuchen Sie es erneut."
     }
+  },
+  "counts": {
+    "windowDays_zero": "{{count}} Tage",
+    "windowDays_one": "{{count}} Tag",
+    "windowDays_two": "{{count}} Tage",
+    "windowDays_few": "{{count}} Tage",
+    "windowDays_many": "{{count}} Tage",
+    "windowDays_other": "{{count}} Tage",
+    "queriesRead_zero": "{{count}} Suchanfragen gelesen.",
+    "queriesRead_one": "{{count}} Suchanfrage gelesen.",
+    "queriesRead_two": "{{count}} Suchanfragen gelesen.",
+    "queriesRead_few": "{{count}} Suchanfragen gelesen.",
+    "queriesRead_many": "{{count}} Suchanfragen gelesen.",
+    "queriesRead_other": "{{count}} Suchanfragen gelesen."
   }
 }

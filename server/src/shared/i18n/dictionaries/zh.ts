@@ -746,7 +746,6 @@ export const zh: DictionaryShape = {
         },
         trends: {
             errors: {
-                overCap: '你的关键词趋势配额（{{used}}/{{limit}} {{metric}}）已用完。请升级套餐或购买额度以继续探索。',
                 unavailable: '关键词趋势暂时不可用，请稍后再试。',
                 providerFailed: '趋势数据提供方暂时不可用，请稍后再试。',
                 notFound: '未找到该趋势查询。',
@@ -785,7 +784,6 @@ export const zh: DictionaryShape = {
                 runNotReady: '此链接审核尚未准备好导出。',
             },
             preview: {
-                packOverflow: '包含的额度用完后，可添加 {{slug}} 包（{{units}} 次审核）。',
             },
         },
         errors: {
@@ -986,7 +984,6 @@ export const zh: DictionaryShape = {
     alerts: {
         errors: {
             unavailable: '提醒功能暂时不可用，请稍后再试。',
-            capExceeded: '你已用完当前套餐的全部提醒规则。',
             channelNotOnPlan: 'Slack 与 Webhook 渠道需要 Pro 及以上套餐。',
             rateLimited: '提醒请求过于频繁，请一分钟后再试。',
             siteNotFound: '未找到该站点。',
@@ -1060,7 +1057,6 @@ export const zh: DictionaryShape = {
             invalidSelection: '请至少选择两个不同的流量快照进行比较。',
         },
         errors: {
-            overCap: '你已用完本月套餐中的所有流量快照。',
             productUnavailable: '流量洞察暂时不可用，请稍后重试。',
             notFound: '未找到流量快照。',
             invalidDomain: '请输入有效的公共域名，例如 example.com。',
@@ -1632,29 +1628,23 @@ export const zh: DictionaryShape = {
                 invalidAppId: '请输入所选商店的有效应用 ID。',
                 appIdCount: '请选择二至二十个不同的应用。',
                 ownAppRequired: '请在比较中包含所选资料的应用。',
-                keywordAllowanceExhausted: '本周期可用的应用研究查询次数已用完。',
-                competitorAllowanceExhausted: '本周期可用的应用竞品查询次数已用完。',
             },
         },
         errors: {
             productUnavailable: '应用商店优化功能暂时不可用。',
             notFound: '未找到应用资料。',
-            profileLimitReached: '你已达到当前方案的应用资料数量上限。',
             duplicate: '此应用已注册到你的账户。',
             rateLimited: '应用资料请求过多，请稍后重试。',
             storeIdRequired: '请输入 Google Play 软件包 ID 或 App Store ID。',
             pairedStoreIdsRequired: '关联资料需要提供两个商店 ID。',
             keywordNotFound: '未找到跟踪的应用关键词。',
             keywordTrackingUnavailable: '应用关键词跟踪功能暂时不可用。',
-            keywordSlotLimitReached: '你已达到当前方案的应用关键词跟踪数量上限。',
-            keywordChecksExhausted: '你已用完本周期可用的应用关键词检查次数。',
             duplicateKeyword: '所选应用已在此商店跟踪该关键词。',
             chartSubscriptionNotFound: '未找到应用榜单订阅。',
             chartTrackingUnavailable: '应用榜单跟踪功能暂时不可用。',
             invalidChartSelection: '请选择该商店支持的榜单和类别。',
             chartSubscriptionLimit: '每个应用资料最多可跟踪两个榜单。',
             duplicateChartSubscription: '所选应用已在跟踪该榜单和类别。',
-            chartChecksExhausted: '你已用完本周期可用的应用榜单检查次数。',
         },
     },
     reportExports: {

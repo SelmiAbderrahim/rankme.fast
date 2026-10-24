@@ -76,8 +76,13 @@
   },
   "runs": {
     "snapshot": "Inventar: {{date}}",
-    "suggestionCount": "{{count}} Vorschläge",
-    "open": "Lauf öffnen"
+    "suggestionCount_one": "{{count}} Vorschlag",
+    "open": "Lauf öffnen",
+    "suggestionCount_zero": "{{count}} Vorschläge",
+    "suggestionCount_two": "{{count}} Vorschläge",
+    "suggestionCount_few": "{{count}} Vorschläge",
+    "suggestionCount_many": "{{count}} Vorschläge",
+    "suggestionCount_other": "{{count}} Vorschläge"
   },
   "flags": {
     "orphan": "Verwaist",

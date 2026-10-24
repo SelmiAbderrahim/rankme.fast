@@ -28,7 +28,12 @@
   "queued": { "title": "فحص الصفحة قيد التنفيذ", "description": "سيتم تحديث التقرير عندما تصبح الملاحظات المحفوظة جاهزة." },
   "run": { "title": "افحص صحة صفحة المتجر", "description": "لاحظ صفحات المتجر الحالية وأنشئ قائمة إصلاحات حتمية.", "profile": "ملف التطبيق", "previewing": "جارٍ التحقق من السعة…", "button": "معاينة التشغيل", "bound": "تغطي وحدة واحدة كل متجر مسجل في هذا الملف." },
   "report": { "title": "أحدث تقرير للصفحة", "description": "ابدأ فحصاً لإنشاء أول تقرير محفوظ.", "capturedAt": "تمت الملاحظة في {{date}}", "keywordsCta": "إدارة العبارات المتتبعة", "empty": "لم يتم حفظ تقرير لهذا الملف بعد." },
-  "store": { "rating": "التقييم", "reviews": "المراجعات", "category": "الفئة الرئيسية", "updated": "آخر تحديث", "screenshots": "روابط لقطات الشاشة الملاحظة", "installs": "التثبيتات المنشورة", "description": "وصف المتجر", "openListing": "فتح صفحة المتجر", "screenshotLink": "رابط لقطة الشاشة {{number}}", "moreScreenshots": "{{count}} روابط لقطات أخرى" },
+  "store": { "rating": "التقييم", "reviews": "المراجعات", "category": "الفئة الرئيسية", "updated": "آخر تحديث", "screenshots": "روابط لقطات الشاشة الملاحظة", "installs": "التثبيتات المنشورة", "description": "وصف المتجر", "openListing": "فتح صفحة المتجر", "screenshotLink": "رابط لقطة الشاشة {{number}}", "moreScreenshots_one": "{{count}} رابط لقطة آخر",
+    "moreScreenshots_zero": "{{count}} روابط لقطات أخرى",
+    "moreScreenshots_two": "{{count}} من روابط اللقطات الأخرى",
+    "moreScreenshots_few": "{{count}} روابط لقطات أخرى",
+    "moreScreenshots_many": "{{count}} رابط لقطة آخر",
+    "moreScreenshots_other": "{{count}} رابط لقطة آخر" },
   "parity": { "title": "اتساق المتجرين المقترنين", "description": "يقارن فقط المتاجر التي قرنتها صراحةً لهذا التطبيق.", "provenance": "اقتران من المستخدم" },
   "history": { "title": "سجل صفحات المتجر", "description": "تظل عمليات التشغيل المحفوظة متاحة عند تعذر بدء فحوصات جديدة.", "empty": "لا يوجد سجل بعد.", "partial": "ملاحظة جزئية", "counts": { "fixNow": "أصلح الآن: {{count}}", "watch": "راقب: {{count}}", "advisory": "نصائح: {{count}}" } }
 }

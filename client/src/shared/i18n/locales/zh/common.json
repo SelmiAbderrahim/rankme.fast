@@ -47,7 +47,8 @@
     "admin": "管理",
     "superadmin": "平台",
     "startFree": "免费开始",
-    "openApp": "打开应用"
+    "openApp": "打开应用",
+    "breadcrumb": "面包屑导航"
   },
   "footer": {
     "copyright": "© {{year}}, {{brand}}. 保留所有权利。",
@@ -119,7 +120,73 @@
       }
     },
     "usage": {},
-    "loading": "正在加载仪表板…"
+    "loading": "正在加载仪表板…",
+    "health": {
+      "fixNow": {
+        "open_zero": "{{n}} 项待处理",
+        "open_one": "{{n}} 项待处理",
+        "open_two": "{{n}} 项待处理",
+        "open_few": "{{n}} 项待处理",
+        "open_many": "{{n}} 项待处理",
+        "open_other": "{{n}} 项待处理",
+        "none": "没有待处理项",
+        "noneStale": "上次审核时无待办"
+      },
+      "showing_zero": "显示 {{shown}} 个，共 {{total}} 个活跃网站。",
+      "showing_one": "显示 {{shown}} 个，共 {{total}} 个活跃网站。",
+      "showing_two": "显示 {{shown}} 个，共 {{total}} 个活跃网站。",
+      "showing_few": "显示 {{shown}} 个，共 {{total}} 个活跃网站。",
+      "showing_many": "显示 {{shown}} 个，共 {{total}} 个活跃网站。",
+      "showing_other": "显示 {{shown}} 个，共 {{total}} 个活跃网站。",
+      "seeAll_zero": "查看全部 {{total}} 个网站",
+      "seeAll_one": "查看全部 {{total}} 个网站",
+      "seeAll_two": "查看全部 {{total}} 个网站",
+      "seeAll_few": "查看全部 {{total}} 个网站",
+      "seeAll_many": "查看全部 {{total}} 个网站",
+      "seeAll_other": "查看全部 {{total}} 个网站",
+      "paused": {"more_zero": "还有 {{n}} 个已暂停的网站未显示。",
+        "more_one": "还有 {{n}} 个已暂停的网站未显示。",
+        "more_two": "还有 {{n}} 个已暂停的网站未显示。",
+        "more_few": "还有 {{n}} 个已暂停的网站未显示。",
+        "more_many": "还有 {{n}} 个已暂停的网站未显示。",
+        "more_other": "还有 {{n}} 个已暂停的网站未显示。"},
+      "search": {"clicks_zero": "{{n}} 次点击",
+        "clicks_one": "{{n}} 次点击",
+        "clicks_two": "{{n}} 次点击",
+        "clicks_few": "{{n}} 次点击",
+        "clicks_many": "{{n}} 次点击",
+        "clicks_other": "{{n}} 次点击",
+        "impressions_zero": "{{n}} 次展示",
+        "impressions_one": "{{n}} 次展示",
+        "impressions_two": "{{n}} 次展示",
+        "impressions_few": "{{n}} 次展示",
+        "impressions_many": "{{n}} 次展示",
+        "impressions_other": "{{n}} 次展示"},
+      "rank": {"notCompared": {"failed_zero": "{{count}} 次检查失败",
+          "failed_one": "{{count}} 次检查失败",
+          "failed_two": "{{count}} 次检查失败",
+          "failed_few": "{{count}} 次检查失败",
+          "failed_many": "{{count}} 次检查失败",
+          "failed_other": "{{count}} 次检查失败",
+          "skipped_zero": "{{count}} 个已跳过",
+          "skipped_one": "{{count}} 个已跳过",
+          "skipped_two": "{{count}} 个已跳过",
+          "skipped_few": "{{count}} 个已跳过",
+          "skipped_many": "{{count}} 个已跳过",
+          "skipped_other": "{{count}} 个已跳过",
+          "noPair_zero": "{{count}} 个等待第二次检查",
+          "noPair_one": "{{count}} 个等待第二次检查",
+          "noPair_two": "{{count}} 个等待第二次检查",
+          "noPair_few": "{{count}} 个等待第二次检查",
+          "noPair_many": "{{count}} 个等待第二次检查",
+          "noPair_other": "{{count}} 个等待第二次检查",
+          "unranked_zero": "{{count}} 个两次检查均未上榜",
+          "unranked_one": "{{count}} 个两次检查均未上榜",
+          "unranked_two": "{{count}} 个两次检查均未上榜",
+          "unranked_few": "{{count}} 个两次检查均未上榜",
+          "unranked_many": "{{count}} 个两次检查均未上榜",
+          "unranked_other": "{{count}} 个两次检查均未上榜"}}
+    }
   },
   "shell": {
     "groupOverview": "概览",
@@ -224,7 +291,28 @@
     "noResults": "没有符合搜索条件的国家/地区。",
     "loadError": "无法加载国家/地区。请重试。",
     "unknownCountry": "未知国家/地区",
-    "unknownLanguage": "未知语言"
+    "unknownLanguage": "未知语言",
+    "provenance": {
+      "owner": "默认使用此网站已保存的市场（{{country}} · {{language}}）。",
+      "search_console": "根据您网站的 Search Console 流量默认选择（{{country}}）。",
+      "cctld": "根据您网站所属的国家/地区默认选择（{{country}}）。",
+      "site_language": "根据您网站页面的语言默认选择（{{language}}）。",
+      "assumed": "我们无法识别您网站的市场。添加关键词前请先核对。",
+      "hint": "您可以在这里更改。",
+      "edit": "更改网站默认市场"
+    },
+    "script": {
+      "arabic": "阿拉伯文",
+      "cyrillic": "西里尔文",
+      "han": "中文",
+      "kana": "日文",
+      "hangul": "韩文"
+    },
+    "mismatch": {
+      "body": "这个关键词看起来是{{script}}，但所选语言是{{language}}。要切换为{{suggested}}吗？",
+      "unavailable": "这个关键词看起来是{{script}}，但所选语言是{{language}}，而此国家/地区不提供{{suggested}}。请检查国家/地区和语言。",
+      "switch": "切换为{{suggested}}"
+    }
   },
   "codeFixPrompt": {
     "button": "复制代码修复提示词",
@@ -279,5 +367,92 @@
     "message": "我们希望使用 Google Analytics 统计页面访问量。它不会收到站点 ID、所选标签页或页面标题。您不同意就不会加载任何内容，并且可以随时改变主意。",
     "accept": "接受分析统计",
     "decline": "不用了"
+  },
+  "datePicker": {
+    "placeholder": "选择日期",
+    "dialogLabel": "日期选择",
+    "previousMonth": "上个月",
+    "nextMonth": "下个月",
+    "today": "今天",
+    "clear": "清除"
+  },
+  "toast": {
+    "close": "关闭通知"
+  },
+  "metric": {
+    "noData": "暂无数据"
+  },
+  "positionDelta": {
+    "improved_zero": "提升了 {{value}} 位",
+    "improved_one": "提升了 {{value}} 位",
+    "improved_two": "提升了 {{value}} 位",
+    "improved_few": "提升了 {{value}} 位",
+    "improved_many": "提升了 {{value}} 位",
+    "improved_other": "提升了 {{value}} 位",
+    "declined_zero": "下降了 {{value}} 位",
+    "declined_one": "下降了 {{value}} 位",
+    "declined_two": "下降了 {{value}} 位",
+    "declined_few": "下降了 {{value}} 位",
+    "declined_many": "下降了 {{value}} 位",
+    "declined_other": "下降了 {{value}} 位",
+    "unchanged": "排名没有变化",
+    "noPrevious": "暂无此前数据",
+    "short": {
+      "improved": "更好",
+      "declined": "更差",
+      "unchanged": "无变化"
+    },
+    "window": {
+      "previousSync_zero": "过去 {{days}} 天的平均排名，与上次数据同步时同一时间窗口相比。数字越小越好。Search Console 的平均值按展示次数加权。",
+      "previousSync_one": "过去 {{days}} 天的平均排名，与上次数据同步时同一时间窗口相比。数字越小越好。Search Console 的平均值按展示次数加权。",
+      "previousSync_two": "过去 {{days}} 天的平均排名，与上次数据同步时同一时间窗口相比。数字越小越好。Search Console 的平均值按展示次数加权。",
+      "previousSync_few": "过去 {{days}} 天的平均排名，与上次数据同步时同一时间窗口相比。数字越小越好。Search Console 的平均值按展示次数加权。",
+      "previousSync_many": "过去 {{days}} 天的平均排名，与上次数据同步时同一时间窗口相比。数字越小越好。Search Console 的平均值按展示次数加权。",
+      "previousSync_other": "过去 {{days}} 天的平均排名，与上次数据同步时同一时间窗口相比。数字越小越好。Search Console 的平均值按展示次数加权。",
+      "previousCheck": "最近一次检查的排名与上一次检查相比。数字越小越好。"
+    }
+  },
+  "rankChange": {
+    "entered": "新增",
+    "enteredLabel": "进入排名",
+    "dropped": "丢失",
+    "droppedLabel": "掉出排名",
+    "unranked": "两次检查均未上榜"
+  },
+  "phraseList": {
+    "listLabel": "识别到的条目",
+    "verdict": {
+      "ready": "就绪",
+      "repeated": "重复",
+      "existing": "已添加",
+      "tooLong": "过长"
+    },
+    "remove": "移除 {{phrase}}",
+    "more_zero": "还有 {{count, number}} 个",
+    "more_one": "还有 {{count, number}} 个",
+    "more_two": "还有 {{count, number}} 个",
+    "more_few": "还有 {{count, number}} 个",
+    "more_many": "还有 {{count, number}} 个",
+    "more_other": "还有 {{count, number}} 个",
+    "ignoredColumns": "这看起来是表格数据，因此只使用第一列。",
+    "skippedHeader": "已跳过表头行“{{header}}”。",
+    "overPasteLimit_zero": "每次只读取前 {{max, number}} 个条目，另有 {{count, number}} 个未读取，请分批添加。",
+    "overPasteLimit_one": "每次只读取前 {{max, number}} 个条目，另有 {{count, number}} 个未读取，请分批添加。",
+    "overPasteLimit_two": "每次只读取前 {{max, number}} 个条目，另有 {{count, number}} 个未读取，请分批添加。",
+    "overPasteLimit_few": "每次只读取前 {{max, number}} 个条目，另有 {{count, number}} 个未读取，请分批添加。",
+    "overPasteLimit_many": "每次只读取前 {{max, number}} 个条目，另有 {{count, number}} 个未读取，请分批添加。",
+    "overPasteLimit_other": "每次只读取前 {{max, number}} 个条目，另有 {{count, number}} 个未读取，请分批添加。",
+    "copy": "复制为列表",
+    "copied": "已复制，每行一个条目。",
+    "copyFailed": "无法复制，请选中文字后手动复制。"
+  },
+  "competitorDomains": {
+    "count": "域名：{{used}} / {{max}}",
+    "alreadyAdded": "已添加：{{domains}}",
+    "invalid": "不是有效的域名：{{domains}}。请输入类似 competitor.com 的域名。",
+    "own": "这是你自己的网站，不能作为竞争对手：{{domains}}",
+    "limit": "一次最多可对比 {{max}} 个竞争对手域名。请先移除一个再添加。",
+    "remove": "移除 {{domain}}",
+    "placeholder": "例如 competitor.com"
   }
 }

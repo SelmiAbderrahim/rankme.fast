@@ -746,7 +746,6 @@ export const ar: DictionaryShape = {
         },
         trends: {
             errors: {
-                overCap: 'استُنفدت حصة استكشاف اتجاهات الكلمات المفتاحية في خطتك ({{used}}/{{limit}} {{metric}}). قم بالترقية أو أضف رصيدًا للاستكشاف أكثر.',
                 unavailable: 'استكشاف اتجاهات الكلمات المفتاحية غير متاح مؤقتًا. حاول مجددًا لاحقًا.',
                 providerFailed: 'مزوّد الاتجاهات غير متاح مؤقتًا. حاول مجددًا بعد قليل.',
                 notFound: 'لم يتم العثور على عملية الاستكشاف.',
@@ -785,7 +784,6 @@ export const ar: DictionaryShape = {
                 runNotReady: 'مراجعة الروابط هذه غير جاهزة للتصدير بعد.',
             },
             preview: {
-                packOverflow: 'أضف حزمة {{slug}} (عددها {{units}} مراجعات) عند نفاد الرصيد المشمول.',
             },
         },
         errors: {
@@ -986,7 +984,6 @@ export const ar: DictionaryShape = {
     alerts: {
         errors: {
             unavailable: 'التنبيهات غير متاحة مؤقتًا. حاول مرة أخرى لاحقًا.',
-            capExceeded: 'لقد استخدمت كل قواعد التنبيه المتاحة في باقتك.',
             channelNotOnPlan: 'قناتا Slack والويب هوك تتطلبان باقة Pro أو أعلى.',
             rateLimited: 'طلبات تنبيه كثيرة جدًا. حاول بعد دقيقة.',
             siteNotFound: 'الموقع غير موجود.',
@@ -1060,7 +1057,6 @@ export const ar: DictionaryShape = {
             invalidSelection: 'اختر لقطتين مختلفتين على الأقل من حركة الزيارات للمقارنة.',
         },
         errors: {
-            overCap: 'لقد استخدمت جميع لقطات الزيارات المتاحة في خطتك لهذا الشهر.',
             productUnavailable: 'إحصاءات الزيارات غير متاحة مؤقتًا. يُرجى المحاولة لاحقًا.',
             notFound: 'لم يتم العثور على لقطة الزيارات.',
             invalidDomain: 'أدخل نطاقًا عامًا صالحًا مثل example.com.',
@@ -1632,29 +1628,23 @@ export const ar: DictionaryShape = {
                 invalidAppId: 'أدخل معرّف تطبيق صالحًا للمتجر المحدد.',
                 appIdCount: 'اختر ما بين تطبيقين وعشرين تطبيقًا فريدًا.',
                 ownAppRequired: 'ضمّن تطبيق الملف المحدد في المقارنة.',
-                keywordAllowanceExhausted: 'لقد استهلكت عمليات بحث التطبيقات المتاحة لهذه الفترة.',
-                competitorAllowanceExhausted: 'لقد استهلكت عمليات بحث منافسي التطبيقات المتاحة لهذه الفترة.',
             },
         },
         errors: {
             productUnavailable: 'تحسين ظهور التطبيقات غير متاح مؤقتًا.',
             notFound: 'تعذّر العثور على ملف التطبيق.',
-            profileLimitReached: 'لقد بلغت الحد الأقصى لملفات التطبيقات في هذه الخطة.',
             duplicate: 'هذا التطبيق مسجّل بالفعل في حسابك.',
             rateLimited: 'طلبات ملفات التطبيقات كثيرة جدًا. حاول مجددًا بعد قليل.',
             storeIdRequired: 'أدخل معرّف حزمة Google Play أو معرّف App Store.',
             pairedStoreIdsRequired: 'تحتاج الملفات المقترنة إلى معرّفي المتجرين.',
             keywordNotFound: 'تعذّر العثور على كلمة التطبيق المتتبعة.',
             keywordTrackingUnavailable: 'تتبّع كلمات التطبيق غير متاح مؤقتًا.',
-            keywordSlotLimitReached: 'لقد بلغت حد كلمات التطبيق المتتبعة في هذه الخطة.',
-            keywordChecksExhausted: 'لقد استخدمت عمليات فحص كلمات التطبيق المتاحة لهذه الفترة.',
             duplicateKeyword: 'هذه الكلمة والمتجر قيد التتبّع بالفعل للتطبيق المحدد.',
             chartSubscriptionNotFound: 'تعذّر العثور على اشتراك مخطط التطبيق.',
             chartTrackingUnavailable: 'تتبّع مخططات التطبيقات غير متاح مؤقتًا.',
             invalidChartSelection: 'اختر مخططًا وفئة مدعومين لهذا المتجر.',
             chartSubscriptionLimit: 'يمكنك تتبّع مخططين كحد أقصى لكل ملف تطبيق.',
             duplicateChartSubscription: 'هذا المخطط وهذه الفئة قيد التتبّع بالفعل للتطبيق المحدد.',
-            chartChecksExhausted: 'لقد استخدمت عمليات فحص مخططات التطبيقات المتاحة لهذه الفترة.',
         },
     },
     reportExports: {

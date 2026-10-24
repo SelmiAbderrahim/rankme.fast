@@ -1,3 +1,4 @@
+import { Bdi } from '@shared/components/Bdi';
 import { useCallback, useEffect, useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { ReportExportControl } from '@features/report-export';
@@ -316,7 +317,7 @@ export const ScanDetailPanel = ({
                       data-testid="brand-radar-top-domain-row"
                     >
                       {/* SEC-OUT: vendor domain string as a text node. */}
-                      <span>{entryRow.domain}</span>
+                      <span><Bdi>{entryRow.domain}</Bdi></span>
                       <span className="tabular-nums">{number.format(entryRow.count)}</span>
                     </li>
                   ))}

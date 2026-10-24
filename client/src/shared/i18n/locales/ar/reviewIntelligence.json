@@ -65,12 +65,22 @@
     "title": "تكلفة هذه المزامنة",
     "description": "هذا تقدير. لا يُنفَق شيء حتى تؤكّد.",
     "units": "تستهلك {{units}} مزامنة مراجعات",
-    "perSource": "تغطي {{sources}} مصادر",
-    "depth": "تسحب حتى {{depth}} مراجعة من كل مصدر",
+    "perSource_one": "تغطي {{sources}} مصدر",
+    "depth_one": "تسحب حتى {{depth}} مراجعة من كل مصدر",
     "available": "ضمن رصيدك المتاح",
     "unavailable": "تتجاوز رصيدك المتاح",
     "baseRemaining": "المزامنات المتبقية في الخطة: {{remaining}}",
-    "packRemaining": "المزامنات المتبقية في الحزمة: {{remaining}}"
+    "packRemaining": "المزامنات المتبقية في الحزمة: {{remaining}}",
+    "depth_zero": "تسحب حتى {{depth}} مراجعات من كل مصدر",
+    "depth_two": "تسحب حتى مراجعتين ({{depth}}) من كل مصدر",
+    "depth_few": "تسحب حتى {{depth}} مراجعات من كل مصدر",
+    "depth_many": "تسحب حتى {{depth}} مراجعة من كل مصدر",
+    "depth_other": "تسحب حتى {{depth}} مراجعة من كل مصدر",
+    "perSource_zero": "تغطي {{sources}} مصادر",
+    "perSource_two": "تغطي {{sources}} من المصادر",
+    "perSource_few": "تغطي {{sources}} مصادر",
+    "perSource_many": "تغطي {{sources}} مصدر",
+    "perSource_other": "تغطي {{sources}} مصدر"
   },
   "runs": {
     "title": "سجل المزامنات",
@@ -122,10 +132,10 @@
     "filterAll": "الكل",
     "searchPlaceholder": "ابحث في المراجعات",
     "apply": "طبّق",
-    "stars": "{{stars}} نجوم",
+    "stars_one": "{{stars}} نجمة",
     "unrated": "بلا تقييم",
     "anonymous": "بلا اسم",
-    "page": "الصفحة {{page}} من {{total}} مراجعة",
+    "page_one": "الصفحة {{page}}، المراجعات: {{total}}",
     "previous": "السابق",
     "next": "التالي",
     "export": "نزّل ملف CSV",
@@ -138,16 +148,31 @@
       "source": "المصدر",
       "text": "المراجعة",
       "author": "الكاتب"
-    }
+    },
+    "stars_zero": "{{stars}} نجوم",
+    "stars_two": "{{stars}} من النجوم",
+    "stars_few": "{{stars}} نجوم",
+    "stars_many": "{{stars}} نجمة",
+    "stars_other": "{{stars}} نجمة",
+    "page_zero": "الصفحة {{page}}، المراجعات: {{total}}",
+    "page_two": "الصفحة {{page}}، المراجعات: {{total}}",
+    "page_few": "الصفحة {{page}}، المراجعات: {{total}}",
+    "page_many": "الصفحة {{page}}، المراجعات: {{total}}",
+    "page_other": "الصفحة {{page}}، المراجعات: {{total}}"
   },
   "stats": {
     "title": "صحة المراجعات",
     "empty": "لا شيء لعرضه في الرسم بعد.",
-    "total": "{{total}} مراجعة مخزنة",
+    "total_one": "{{total}} مراجعة مخزنة",
     "distribution": {
       "title": "توزيع النجوم",
-      "stars": "{{stars}} نجوم",
-      "unrated": "بلا تقييم"
+      "stars_one": "{{stars}} نجمة",
+      "unrated": "بلا تقييم",
+      "stars_zero": "{{stars}} نجوم",
+      "stars_two": "{{stars}} من النجوم",
+      "stars_few": "{{stars}} نجوم",
+      "stars_many": "{{stars}} نجمة",
+      "stars_other": "{{stars}} نجمة"
     },
     "velocity": {
       "title": "المراجعات شهريًا",
@@ -156,7 +181,12 @@
     },
     "sourceMix": {
       "title": "من أين تأتي"
-    }
+    },
+    "total_zero": "{{total}} مراجعات مخزنة",
+    "total_two": "{{total}} من المراجعات المخزنة",
+    "total_few": "{{total}} مراجعات مخزنة",
+    "total_many": "{{total}} مراجعة مخزنة",
+    "total_other": "{{total}} مراجعة مخزنة"
   },
   "trend": {
     "title": "متوسط التقييم عبر الزمن",
@@ -174,7 +204,7 @@
     "complaints": "الشكاوى المتكررة",
     "praise": "المديح المتكرر",
     "citations": "اعرض المراجعات وراء ذلك",
-    "citationCount": "{{citations}} مراجعات",
+    "citationCount_one": "{{citations}} مراجعة",
     "citationSource": "{{source}} · {{rating}} · {{date}}",
     "sectionEmpty": "لا شيء هنا لهذه المزامنة.",
     "pending": "لم تنتهِ خطوة استخلاص المحاور بعد.",
@@ -186,7 +216,12 @@
       "title": "تعذّر بناء المحاور",
       "description": "أخفقت خطوة التلخيص. مراجعاتك وصلت بأمان ولا تزال قابلة للقراءة بالأسفل.",
       "link": "انتقل إلى المراجعات"
-    }
+    },
+    "citationCount_zero": "{{citations}} مراجعات",
+    "citationCount_two": "{{citations}} من المراجعات",
+    "citationCount_few": "{{citations}} مراجعات",
+    "citationCount_many": "{{citations}} مراجعة",
+    "citationCount_other": "{{citations}} مراجعة"
   },
   "provenance": {
     "first_party": "بيانات الطرف الأول",
@@ -194,7 +229,12 @@
     "estimate": "تقدير",
     "ai_interpretation": "تفسير بالذكاء الاصطناعي",
     "observedAt": "لوحظ في {{date}}",
-    "sampleCount": "{{count}} مراجعة في العينة"
+    "sampleCount_one": "{{count}} مراجعة في العينة",
+    "sampleCount_zero": "{{count}} مراجعات في العينة",
+    "sampleCount_two": "{{count}} من المراجعات في العينة",
+    "sampleCount_few": "{{count}} مراجعات في العينة",
+    "sampleCount_many": "{{count}} مراجعة في العينة",
+    "sampleCount_other": "{{count}} مراجعة في العينة"
   },
   "errors": {
     "sourcesFailed": "تعذّر تحميل مصادر المراجعات.",

@@ -1,3 +1,4 @@
+import { Bdi } from '@shared/components/Bdi';
 import { useId, useMemo, useRef, useState, type KeyboardEvent } from 'react';
 import type { LucideIcon } from 'lucide-react';
 import { Search } from 'lucide-react';
@@ -227,7 +228,7 @@ const SearchCombobox = ({
                         )}
                       >
                         <Icon aria-hidden="true" className="size-4 shrink-0 text-muted-foreground" />
-                        <span className="min-w-0 truncate">{row.label}</span>
+                        <span className="min-w-0 truncate"><Bdi>{row.label}</Bdi></span>
                         {row.hint ? (
                           <span className="ms-auto truncate text-xs text-muted-foreground">
                             {row.hint}

@@ -1,3 +1,4 @@
+import { Bdi } from '@shared/components/Bdi';
 import { useTranslation } from 'react-i18next';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@shared/ui/card';
 import { StatusChip, type StatusTone } from '@shared/ui/status-chip';
@@ -44,7 +45,7 @@ export function TopicalGaps({ gaps }: TopicalGapsProps) {
                 className="border-border flex flex-wrap items-center gap-2 rounded-md border p-3"
                 data-testid={`inventory-gap-${gap.id}`}
               >
-                <span className="font-medium">{gap.query}</span>
+                <span className="font-medium"><Bdi>{gap.query}</Bdi></span>
                 <StatusChip tone={CONFIDENCE_TONE[gap.confidence]}>
                   {t('inventory.findings.confidence', {
                     value: t(`inventory.confidence.${gap.confidence}`),

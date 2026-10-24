@@ -1,3 +1,4 @@
+import { Bdi } from '@shared/components/Bdi';
 import { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
@@ -174,7 +175,7 @@ export const IssueDetail = ({
                   rel="nofollow ugc noopener noreferrer"
                   className="font-mono text-xs text-primary underline break-all"
                 >
-                  {url}
+                  <Bdi>{url}</Bdi>
                 </a>
               </li>
             ))}
@@ -202,7 +203,7 @@ export const IssueDetail = ({
                     rel="nofollow ugc noopener noreferrer"
                     className="font-mono text-xs text-primary underline break-all"
                   >
-                    {url}
+                    <Bdi>{url}</Bdi>
                   </a>
                   {kind === 'fixed' ? (
                     <span className="text-xs font-medium text-success">

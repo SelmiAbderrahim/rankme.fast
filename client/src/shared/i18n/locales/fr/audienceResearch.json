@@ -41,22 +41,32 @@
     "fresh": "Récent",
     "supported": "Ce marché est entièrement pris en charge.",
     "unsupported": "Ce marché n’est pris en charge que partiellement — les résultats peuvent être plus limités.",
-    "maxPages": "Jusqu’à {{max}} pages publiques",
+    "maxPages_one": "Jusqu’à {{max}} page publique",
     "totalBudget": "Budget total : {{micros}} micro-USD",
     "aiBudget": "Budget IA : {{micros}} micro-USD",
     "coverageOk": "Couverture complète du fournisseur",
     "coverageDegraded": "Couverture dégradée du fournisseur — les résultats peuvent être partiels.",
-    "coverageBlocked": "L’extraction sans conservation des données est bloquée pour ce compte."
+    "coverageBlocked": "L’extraction sans conservation des données est bloquée pour ce compte.",
+    "maxPages_zero": "Jusqu’à {{max}} page publique",
+    "maxPages_two": "Jusqu’à {{max}} pages publiques",
+    "maxPages_few": "Jusqu’à {{max}} pages publiques",
+    "maxPages_many": "Jusqu’à {{max}} pages publiques",
+    "maxPages_other": "Jusqu’à {{max}} pages publiques"
   },
   "confirm": {
     "title": "Lancer cette exécution de recherche d’audience ?",
-    "body": "Cette exécution explorera jusqu’à {{maxPages}} pages publiques et générera des signaux à partir du web public. Elle s’exécute une seule fois — il n’y a pas de suivi continu.",
+    "body_one": "Cette exécution explorera jusqu’à {{maxPages}} page publique et générera des signaux à partir du web public. Elle s’exécute une seule fois — il n’y a pas de suivi continu.",
     "confirmButton": "Lancer l’exécution",
     "cancelButton": "Annuler",
     "marketLine": "Marché",
     "competitorsLine": "Concurrents",
     "topicsLine": "Sujets",
-    "unitLine": "Unités consommées"
+    "unitLine": "Unités consommées",
+    "body_zero": "Cette exécution explorera jusqu’à {{maxPages}} page publique et générera des signaux à partir du web public. Elle s’exécute une seule fois — il n’y a pas de suivi continu.",
+    "body_two": "Cette exécution explorera jusqu’à {{maxPages}} pages publiques et générera des signaux à partir du web public. Elle s’exécute une seule fois — il n’y a pas de suivi continu.",
+    "body_few": "Cette exécution explorera jusqu’à {{maxPages}} pages publiques et générera des signaux à partir du web public. Elle s’exécute une seule fois — il n’y a pas de suivi continu.",
+    "body_many": "Cette exécution explorera jusqu’à {{maxPages}} pages publiques et générera des signaux à partir du web public. Elle s’exécute une seule fois — il n’y a pas de suivi continu.",
+    "body_other": "Cette exécution explorera jusqu’à {{maxPages}} pages publiques et générera des signaux à partir du web public. Elle s’exécute une seule fois — il n’y a pas de suivi continu."
   },
   "progress": {
     "stage": {
@@ -70,8 +80,18 @@
       "failed": "Échouée"
     },
     "counts": {
-      "sources": "{{count}} sources trouvées",
-      "signals": "{{count}} signaux trouvés"
+      "sources_one": "{{count}} source trouvée",
+      "signals_one": "{{count}} signal trouvé",
+      "sources_zero": "{{count}} source trouvée",
+      "sources_two": "{{count}} sources trouvées",
+      "sources_few": "{{count}} sources trouvées",
+      "sources_many": "{{count}} sources trouvées",
+      "sources_other": "{{count}} sources trouvées",
+      "signals_zero": "{{count}} signal trouvé",
+      "signals_two": "{{count}} signaux trouvés",
+      "signals_few": "{{count}} signaux trouvés",
+      "signals_many": "{{count}} signaux trouvés",
+      "signals_other": "{{count}} signaux trouvés"
     },
     "partial": {
       "title": "Cette exécution s’est terminée avec une couverture partielle",
@@ -134,7 +154,7 @@
       "title": "Cette exécution est terminée mais n'a produit aucun signal.",
       "filtered": "Aucun signal ne correspond aux filtres actuels."
     },
-    "citationCount": "{{count}} sources citées",
+    "citationCount_one": "{{count}} source citée",
     "confidence": {
       "high": "Confiance élevée",
       "medium": "Confiance moyenne",
@@ -158,7 +178,7 @@
       "aiInterpretationHint": "Le parcours suggéré est une interprétation IA, pas un signal de part de marché."
     },
     "rationale": {
-      "summary": "{{independentDomainCount}} domaines indépendants sur {{sourceTypeCount}} types de sources ; {{recent}}.",
+      "summary": "Domaines indépendants : {{independentDomainCount}} ; types de sources : {{sourceTypeCount}} ; {{recent}}.",
       "recent": "source la plus récente {{date}}",
       "recentUnknown": "date indisponible"
     },
@@ -226,7 +246,12 @@
         "duplicate": "Doublon",
         "other": "Autre"
       }
-    }
+    },
+    "citationCount_zero": "{{count}} source citée",
+    "citationCount_two": "{{count}} sources citées",
+    "citationCount_few": "{{count}} sources citées",
+    "citationCount_many": "{{count}} sources citées",
+    "citationCount_other": "{{count}} sources citées"
   },
   "errors": {
     "overCap": "Vous avez utilisé toutes vos exécutions de recherche d’audience ce mois-ci. Passez à une offre supérieure pour en lancer davantage.",

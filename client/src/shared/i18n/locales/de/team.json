@@ -30,7 +30,13 @@
     "siteCount_two": "{{count}} Websites",
     "siteCount_few": "{{count}} Websites",
     "siteCount_many": "{{count}} Websites",
-    "siteCount_other": "{{count}} Websites"
+    "siteCount_other": "{{count}} Websites",
+    "outsideYourAccess_zero": "{{count}} weitere Websites außerhalb Ihres Zugriffs",
+    "outsideYourAccess_one": "{{count}} weitere Website außerhalb Ihres Zugriffs",
+    "outsideYourAccess_two": "{{count}} weitere Websites außerhalb Ihres Zugriffs",
+    "outsideYourAccess_few": "{{count}} weitere Websites außerhalb Ihres Zugriffs",
+    "outsideYourAccess_many": "{{count}} weitere Websites außerhalb Ihres Zugriffs",
+    "outsideYourAccess_other": "{{count}} weitere Websites außerhalb Ihres Zugriffs"
   },
   "members": {
     "heading": "Mitglieder",
@@ -91,7 +97,13 @@
       "saving": "Wird gespeichert…",
       "cancel": "Abbrechen"
     },
-    "joinedOn": "Beigetreten am {{date}}"
+    "joinedOn": "Beigetreten am {{date}}",
+    "total_zero": "Keine Mitglieder",
+    "total_one": "{{count}} Mitglied",
+    "total_two": "{{count}} Mitglieder",
+    "total_few": "{{count}} Mitglieder",
+    "total_many": "{{count}} Mitglieder",
+    "total_other": "{{count}} Mitglieder"
   },
   "accept": {
     "title": "Einladung annehmen",
@@ -131,7 +143,7 @@
   },
   "inbox": {
     "buttonLabel": "Teameinladungen",
-    "buttonLabelWithCount": "Teameinladungen, {{count}} ausstehend",
+    "buttonLabelWithCount_one": "Teameinladungen, {{count}} ausstehend",
     "title": "Teameinladungen",
     "description": "Prüfen Sie Einladungen, die auf Ihre Entscheidung warten.",
     "emptyTitle": "Keine offenen Einladungen",
@@ -145,7 +157,12 @@
     "rejectTitle": "Diese Einladung ablehnen?",
     "rejectBody": "Sie treten {{team}} nicht bei.",
     "cancel": "Abbrechen",
-    "loadFailed": "Ihre Teameinladungen konnten nicht geladen werden."
+    "loadFailed": "Ihre Teameinladungen konnten nicht geladen werden.",
+    "buttonLabelWithCount_zero": "Teameinladungen, {{count}} ausstehend",
+    "buttonLabelWithCount_two": "Teameinladungen, {{count}} ausstehend",
+    "buttonLabelWithCount_few": "Teameinladungen, {{count}} ausstehend",
+    "buttonLabelWithCount_many": "Teameinladungen, {{count}} ausstehend",
+    "buttonLabelWithCount_other": "Teameinladungen, {{count}} ausstehend"
   },
   "errors": {
     "loadFailed": "Ihr Team konnte nicht geladen werden. Bitte laden Sie neu.",
@@ -174,5 +191,11 @@
       "title": "In diesem Arbeitsbereich nicht verfügbar",
       "body": "Abrechnung, Verbindungen, Schlüssel und Kontoeinstellungen bleiben beim Inhaber des Arbeitsbereichs. Wechseln Sie zurück, um Ihre eigenen zu verwalten."
     }
-  }
+  },
+  "received": {"pending_zero": "{{count}} Einladungen anderer Teams warten auf Sie.",
+    "pending_one": "{{count}} Einladung eines anderen Teams wartet auf Sie.",
+    "pending_two": "{{count}} Einladungen anderer Teams warten auf Sie.",
+    "pending_few": "{{count}} Einladungen anderer Teams warten auf Sie.",
+    "pending_many": "{{count}} Einladungen anderer Teams warten auf Sie.",
+    "pending_other": "{{count}} Einladungen anderer Teams warten auf Sie."}
 }

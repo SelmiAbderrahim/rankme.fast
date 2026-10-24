@@ -141,7 +141,8 @@ describe('DigestDetailView', () => {
         />,
       ),
     );
-    expect(screen.getByText(/foo — 3 → 8/)).toBeInTheDocument();
+    expect(screen.getByText('foo').closest('li')).toHaveTextContent('foo — 3 → 8');
+    expect(screen.getByText('foo')).toHaveAttribute('dir', 'auto');
   });
 
   it('renders rank drops with unknown prior/current ranks as placeholders', async () => {
@@ -161,7 +162,7 @@ describe('DigestDetailView', () => {
         />,
       ),
     );
-    expect(screen.getByText(/bar — \? → \?/)).toBeInTheDocument();
+    expect(screen.getByText('bar').closest('li')).toHaveTextContent('bar — ? → ?');
   });
 
   it('renders action transitions', async () => {

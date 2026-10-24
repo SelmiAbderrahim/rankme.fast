@@ -16,6 +16,7 @@
  * SEC-INJECT: term derivation uses a SINGLE FIXED split class, never a regex
  * built from crawled content, and every string is length-capped before use.
  */
+import { countWords } from '../../shared/utils/text-length.js';
 import type { Logger } from 'pino';
 import { assertPublicUrlSafe, type PublicUrlResolver, } from '../../shared/security/url-safety.js';
 import { VendorQuotaError } from '../../shared/providers/errors.js';
@@ -60,9 +61,6 @@ function tokenize(source: string, maxChars: number, maxTerms: number): string[] 
     }
     return out;
 }
-function countWords(text: string): number {
-    return text.trim().split(/\s+/).filter(Boolean).length;
-}
 /** Turn a provider document into derived facts + a bounded snippet. */
 export function documentToFacts(doc: ContentDocument, role: 'owned' | 'competitor', competitorDomain: string | null): CompetitorPageFacts {
     const headings = doc.headings
@@ -84,7 +82,7 @@ export function documentToFacts(doc: ContentDocument, role: 'owned' | 'competito
         title,
         description: cap(doc.description, 4000),
         headings,
-        wordCount: countWords(doc.text),
+        wordCount: countWords(doc.text, doc.language),
         schemaTypes,
         hasSchemaOrgArticle: schemaTypes.includes('Article'),
         internalLinkCount: internalLinks.length,

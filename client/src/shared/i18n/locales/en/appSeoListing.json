@@ -91,7 +91,12 @@
     "description": "Store description",
     "openListing": "Open store listing",
     "screenshotLink": "Screenshot link {{number}}",
-    "moreScreenshots": "{{count}} more screenshot links"
+    "moreScreenshots_one": "{{count}} more screenshot link",
+    "moreScreenshots_zero": "{{count}} more screenshot links",
+    "moreScreenshots_two": "{{count}} more screenshot links",
+    "moreScreenshots_few": "{{count}} more screenshot links",
+    "moreScreenshots_many": "{{count}} more screenshot links",
+    "moreScreenshots_other": "{{count}} more screenshot links"
   },
   "parity": {
     "title": "Paired-store consistency",

@@ -123,7 +123,7 @@ export const saveBriefVersionBodySchema = z
             code: z.ZodIssueCode.too_big,
             maximum: 100000,
             inclusive: true,
-            type: 'string',
+            origin: 'string',
             path: ['sections'],
             message: 'validation.custom.briefTooLong',
         });

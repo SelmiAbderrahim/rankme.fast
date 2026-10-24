@@ -9,6 +9,7 @@
  * vendor SDK. Every crawled URL is validated via `assertPublicUrlSafe`.
  * Every AI call flows through the shared profile runner.
  */
+import { countWords } from '../../shared/utils/text-length.js';
 import { createHash } from 'node:crypto';
 import type { ContentDocument, ContentSourceProvider, } from '../../shared/providers/content-source.js';
 import type { KeywordProvider, RankProvider, SerpDevice, } from '../../shared/providers/types.js';
@@ -71,7 +72,7 @@ function sanitizeExcerpt(markdown: string): string {
 }
 function factsFromDocument(doc: ContentDocument, url: string): OwnedPageFacts {
     const excerpt = sanitizeExcerpt(doc.markdown);
-    const wordCount = excerpt.trim().split(/\s+/).filter(Boolean).length;
+    const wordCount = countWords(excerpt, doc.language);
     const links = doc.links ?? [];
     const internal = links.filter((l) => !l.external).length;
     const external = links.filter((l) => l.external).length;
@@ -94,7 +95,7 @@ function factsFromDocument(doc: ContentDocument, url: string): OwnedPageFacts {
 }
 function competitorFromDocument(doc: ContentDocument, url: string, sourceId: string): CompetitorEvidence {
     const excerpt = sanitizeExcerpt(doc.markdown);
-    const wordCount = excerpt.trim().split(/\s+/).filter(Boolean).length;
+    const wordCount = countWords(excerpt, doc.language);
     const schemaTypes = Array.from(new Set((doc.structuredData ?? []).map((s) => s.type).filter(Boolean))).slice(0, 50);
     // Snippet: short bounded citation only — never substantial competitor prose.
     const snippet = excerpt.slice(0, 400);

@@ -116,7 +116,7 @@
     "back": "返回扫描列表",
     "loading": "正在加载这次扫描",
     "errorTitle": "无法加载这次扫描",
-    "mentionCount": "找到 {{count}} 条提及",
+    "mentionCount_one": "找到 {{count}} 条提及",
     "mentionCount_other": "找到 {{count}} 条提及",
     "market": "市场",
     "outputLocale": "输出语言",
@@ -186,9 +186,13 @@
       "pending": "摘要还在生成中。",
       "absent": "这次扫描没有生成摘要。",
       "withheld": "由于没有一句话能对应到具体提及，摘要被保留未发布。",
-      "citations": "{{count}} 个来源",
+      "citations_one": "{{count}} 个来源",
       "citations_other": "{{count}} 个来源",
-      "citationMissing": "该来源不在本页"
+      "citationMissing": "该来源不在本页",
+      "citations_zero": "{{count}} 个来源",
+      "citations_two": "{{count}} 个来源",
+      "citations_few": "{{count}} 个来源",
+      "citations_many": "{{count}} 个来源"
     },
     "mentions": {
       "title": "提及",
@@ -219,7 +223,11 @@
         "sentiment": "语气",
         "observedAt": "发现时间"
       }
-    }
+    },
+    "mentionCount_zero": "找到 {{count}} 条提及",
+    "mentionCount_two": "找到 {{count}} 条提及",
+    "mentionCount_few": "找到 {{count}} 条提及",
+    "mentionCount_many": "找到 {{count}} 条提及"
   },
   "errors": {
     "previewTitle": "无法计算本次扫描的费用",

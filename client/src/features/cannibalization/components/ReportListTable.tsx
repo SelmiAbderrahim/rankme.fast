@@ -45,7 +45,7 @@ export const ReportListTable = ({
             data-active={report.id === activeReportId ? 'true' : 'false'}
           >
             <TableCell>{formatDate(report.generatedAt)}</TableCell>
-            <TableCell>{t('list.windowValue', { days: report.windowDays })}</TableCell>
+            <TableCell>{t('counts.windowDays', { count: report.windowDays })}</TableCell>
             <TableCell>{report.snapshotDate}</TableCell>
             <TableCell className="text-end">{report.candidateCount}</TableCell>
             <TableCell className="text-end">

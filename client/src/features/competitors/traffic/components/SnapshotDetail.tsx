@@ -1,3 +1,4 @@
+import { Bdi } from '@shared/components/Bdi';
 import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { ReportExportControl } from '@features/report-export';
@@ -56,7 +57,7 @@ export const SnapshotDetail = ({ detail, loading, error = '' }: SnapshotDetailPr
     return (
       <Card aria-busy="true" aria-live="polite">
         <CardHeader>
-          <CardTitle>{detail.targetDomain}</CardTitle>
+          <CardTitle><Bdi>{detail.targetDomain}</Bdi></CardTitle>
           <CardDescription>{t(`states.${detail.status}`)}</CardDescription>
         </CardHeader>
         <CardContent className="flex flex-col gap-2">
@@ -101,7 +102,7 @@ export const SnapshotDetail = ({ detail, loading, error = '' }: SnapshotDetailPr
       <div className="flex flex-wrap items-start justify-between gap-3">
         <div>
           <h2 id="traffic-detail-title" className="text-start text-xl font-semibold">
-            {detail.targetDomain}
+            <Bdi>{detail.targetDomain}</Bdi>
           </h2>
           <p className="text-start text-sm text-muted-foreground">{t('detail.description')}</p>
         </div>
@@ -127,7 +128,7 @@ export const SnapshotDetail = ({ detail, loading, error = '' }: SnapshotDetailPr
         {statRows.map((stat) => (
           <Card key={stat.key} data-testid={`traffic-stat-${stat.key}`}>
             <CardHeader>
-              <CardDescription>{stat.label}</CardDescription>
+              <CardDescription><Bdi>{stat.label}</Bdi></CardDescription>
               <CardTitle className="text-2xl tabular-nums">{stat.value}</CardTitle>
             </CardHeader>
             <CardContent>

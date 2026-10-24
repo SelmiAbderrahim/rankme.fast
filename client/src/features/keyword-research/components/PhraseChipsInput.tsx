@@ -1,3 +1,4 @@
+import { Bdi } from '@shared/components/Bdi';
 /**
  * Small chips input shared by the gap/overview/trends/clusters forms.
  *
@@ -74,7 +75,7 @@ export const PhraseChipsInput = ({
               className="border-border bg-muted inline-flex items-center gap-1 rounded-full border px-2.5 py-0.5 text-xs"
               data-testid={`${testIdPrefix}-chip-${keywordSlug(chip)}`}
             >
-              <span className="max-w-48 truncate">{chip}</span>
+              <span className="max-w-48 truncate"><Bdi>{chip}</Bdi></span>
               <button
                 type="button"
                 aria-label={t('keywordResearch:removeKeyword', { phrase: chip })}
@@ -109,7 +110,7 @@ export const PhraseChipsInput = ({
           className="text-destructive text-xs"
           data-testid={`${testIdPrefix}-limit`}
         >
-          {t('keywordResearch:tracked.limitReached', { max })}
+          {t('keywordResearch:tracked.limitReached', { count: max, max })}
         </p>
       ) : null}
     </div>

@@ -10,6 +10,8 @@ import { Button } from '@shared/ui/button';
 import { buildBugReportHref } from '@shared/feedback/bugReport';
 import { useRoutePattern } from '@shared/feedback/useRoutePattern';
 import { Skeleton } from '@shared/ui/skeleton';
+import { AppTitleBoundary } from '@shared/components/AppTitleBoundary';
+import { useAppTitleDetail } from '@shared/navigation/appTitleContext';
 import { authRoutes } from '@features/auth';
 import { accountRoutes } from '@features/account/routes';
 import { actionsRoutes } from '@features/actions/routes';
@@ -70,6 +72,7 @@ export function RouteErrorBoundary() {
   const error = useRouteError();
   const staleChunk = isChunkLoadError(error);
   const notFound = isRouteErrorResponse(error) && error.status === 404;
+  useAppTitleDetail([t(staleChunk ? 'common:appUpdated.title' : notFound ? 'common:notFound.title' : 'common:routeError.title')]);
 
   // A deploy removed the chunk this tab expected: reload once so the user
   // lands on the page they asked for. The guard prevents a reload loop.
@@ -129,7 +132,7 @@ export const appShellRoutes: RouteObject[] = [
         <AppLayout />
       </RequirePasswordCurrent>
     ),
-    errorElement: <RouteErrorBoundary />,
+    errorElement: <AppTitleBoundary><RouteErrorBoundary /></AppTitleBoundary>,
     children: [
       ...shellAuthRoutes,
       ...accountRoutes,

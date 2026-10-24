@@ -1,3 +1,4 @@
+import { Bdi } from '@shared/components/Bdi';
 import { useEffect, useMemo } from 'react';
 import { Download, FileArchive, Link2, Trash2, Unlink } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
@@ -193,13 +194,13 @@ export function ExportCenterPage() {
                       <TableRow key={snapshot.id}>
                         <TableCell>
                           <div className="flex flex-col gap-1">
-                            <span className="font-medium">{snapshot.title}</span>
+                            <span className="font-medium"><Bdi>{snapshot.title}</Bdi></span>
                             <span className="text-xs text-muted-foreground">
                               {kindArea(snapshot.kind)}
                             </span>
                           </div>
                         </TableCell>
-                        <TableCell>{siteLabel(snapshot)}</TableCell>
+                        <TableCell><Bdi>{siteLabel(snapshot)}</Bdi></TableCell>
                         <TableCell>
                           <Badge variant="outline">
                             {t(`exportUi.formats.${snapshot.format}`)}
@@ -223,7 +224,7 @@ export function ExportCenterPage() {
                 {snapshots.map((snapshot) => (
                   <Card key={snapshot.id}>
                     <CardHeader>
-                      <CardTitle className="text-base">{snapshot.title}</CardTitle>
+                      <CardTitle className="text-base"><Bdi>{snapshot.title}</Bdi></CardTitle>
                       <CardDescription>
                         {[kindArea(snapshot.kind), siteLabel(snapshot)].filter(Boolean).join(' · ')}
                       </CardDescription>
@@ -290,7 +291,7 @@ export function ExportCenterPage() {
                     <CardHeader className="flex flex-row items-start justify-between gap-4">
                       <div className="min-w-0">
                         <CardTitle className="break-words text-base">
-                          {share.snapshot?.title ?? t('exportUi.center.deletedReport')}
+                          <Bdi>{share.snapshot?.title ?? t('exportUi.center.deletedReport')}</Bdi>
                         </CardTitle>
                         <CardDescription>{date(share.createdAt, i18n.language)}</CardDescription>
                       </div>

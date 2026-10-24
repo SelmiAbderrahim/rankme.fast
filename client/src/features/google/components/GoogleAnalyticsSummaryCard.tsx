@@ -173,10 +173,10 @@ export const GoogleAnalyticsSummaryCard = ({
     <section
       className="rounded-xl border bg-card p-4 shadow-sm"
       data-testid="google-analytics-summary-card"
-      aria-label={t('analytics.title', { days })}
+      aria-label={t('analytics.title', { count: days, days })}
     >
       <div className="flex flex-wrap items-center justify-between gap-2">
-        <h3 className="text-sm font-semibold">{t('analytics.title', { days })}</h3>
+        <h3 className="text-sm font-semibold">{t('analytics.title', { count: days, days })}</h3>
         <div className="flex items-center gap-2">
           {summary ? (
             <ReportExportControl
@@ -370,7 +370,7 @@ export const GoogleAnalyticsSummaryCard = ({
               {t('analytics.timeseriesTitle')}
             </p>
             <p className="text-muted-foreground text-xs">
-              {t('analytics.timeseriesSubtitle', { days })}
+              {t('analytics.timeseriesSubtitle', { count: days, days })}
             </p>
             <MetricTimeseriesChart
               points={summary.timeseries}
@@ -410,10 +410,10 @@ export const GoogleAnalyticsSummaryCard = ({
                 },
               ]}
               chartLabel={(metric) =>
-                t('analytics.timeseriesChartLabel', { metric, days })
+                t('analytics.timeseriesChartLabel', { count: days, metric, days })
               }
               metricGroupLabel={t('searchSummary.metricLabel')}
-              tableCaption={t('analytics.timeseriesTableCaption', { days })}
+              tableCaption={t('analytics.timeseriesTableCaption', { count: days, days })}
               dateHeader={t('searchSummary.tableDate')}
               emptyLabel={t('searchSummary.timeseriesEmpty')}
               testIdPrefix="ga4-timeseries"

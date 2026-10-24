@@ -116,7 +116,7 @@
     "back": "Volver a los análisis",
     "loading": "Cargando este análisis",
     "errorTitle": "No pudimos cargar este análisis",
-    "mentionCount": "{{count}} mención encontrada",
+    "mentionCount_one": "{{count}} mención encontrada",
     "mentionCount_other": "{{count}} menciones encontradas",
     "market": "Mercado",
     "outputLocale": "Idioma de salida",
@@ -186,9 +186,13 @@
       "pending": "El resumen aún se está escribiendo.",
       "absent": "No se produjo ningún resumen para este análisis.",
       "withheld": "El resumen se retuvo porque ninguna frase pudo enlazarse con una mención.",
-      "citations": "{{count}} fuente",
+      "citations_one": "{{count}} fuente",
       "citations_other": "{{count}} fuentes",
-      "citationMissing": "La fuente no está en esta página"
+      "citationMissing": "La fuente no está en esta página",
+      "citations_zero": "{{count}} fuentes",
+      "citations_two": "{{count}} fuentes",
+      "citations_few": "{{count}} fuentes",
+      "citations_many": "{{count}} fuentes"
     },
     "mentions": {
       "title": "Menciones",
@@ -219,7 +223,11 @@
         "sentiment": "Tono",
         "observedAt": "Visto"
       }
-    }
+    },
+    "mentionCount_zero": "{{count}} menciones encontradas",
+    "mentionCount_two": "{{count}} menciones encontradas",
+    "mentionCount_few": "{{count}} menciones encontradas",
+    "mentionCount_many": "{{count}} menciones encontradas"
   },
   "errors": {
     "previewTitle": "No pudimos calcular el coste",

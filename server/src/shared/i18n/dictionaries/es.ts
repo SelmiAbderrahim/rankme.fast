@@ -746,7 +746,6 @@ export const es: DictionaryShape = {
         },
         trends: {
             errors: {
-                overCap: 'Se ha agotado tu asignación de Tendencias de palabras clave ({{used}}/{{limit}} {{metric}}). Mejora el plan o añade créditos para explorar más.',
                 unavailable: 'Tendencias de palabras clave no está disponible ahora mismo. Vuelve a intentarlo en un momento.',
                 providerFailed: 'El proveedor de tendencias no está disponible. Vuelve a intentarlo en un momento.',
                 notFound: 'No se encontró esa exploración de tendencias.',
@@ -785,7 +784,6 @@ export const es: DictionaryShape = {
                 runNotReady: 'Esta revisión de enlaces aún no está lista para exportar.',
             },
             preview: {
-                packOverflow: 'Añade el paquete {{slug}} ({{units}} revisiones) cuando se agote tu cuota incluida.',
             },
         },
         errors: {
@@ -986,7 +984,6 @@ export const es: DictionaryShape = {
     alerts: {
         errors: {
             unavailable: 'Los avisos no están disponibles por ahora. Inténtalo más tarde.',
-            capExceeded: 'Has usado todas las reglas de aviso de tu plan.',
             channelNotOnPlan: 'Los canales de Slack y webhook requieren el plan Pro o superior.',
             rateLimited: 'Demasiadas solicitudes de avisos. Inténtalo en un minuto.',
             siteNotFound: 'Sitio no encontrado.',
@@ -1060,7 +1057,6 @@ export const es: DictionaryShape = {
             invalidSelection: 'Elige al menos dos instantáneas de tráfico diferentes para comparar.',
         },
         errors: {
-            overCap: 'Has usado todas las instantáneas de tráfico de tu plan este mes.',
             productUnavailable: 'Traffic Insights no está disponible temporalmente. Inténtalo de nuevo más tarde.',
             notFound: 'No se encontró la instantánea de tráfico.',
             invalidDomain: 'Introduce un dominio público válido, como example.com.',
@@ -1632,29 +1628,23 @@ export const es: DictionaryShape = {
                 invalidAppId: 'Introduce un identificador de aplicación válido para la tienda seleccionada.',
                 appIdCount: 'Elige entre dos y veinte aplicaciones únicas.',
                 ownAppRequired: 'Incluye la aplicación del perfil seleccionado en la comparación.',
-                keywordAllowanceExhausted: 'Has usado las búsquedas de aplicaciones disponibles para este periodo.',
-                competitorAllowanceExhausted: 'Has usado las búsquedas de competidores disponibles para este periodo.',
             },
         },
         errors: {
             productUnavailable: 'El SEO para aplicaciones no está disponible temporalmente.',
             notFound: 'No se encontró el perfil de la aplicación.',
-            profileLimitReached: 'Has alcanzado el límite de perfiles de aplicaciones de este plan.',
             duplicate: 'Esta aplicación ya está registrada en tu cuenta.',
             rateLimited: 'Demasiadas solicitudes de perfiles de aplicaciones. Inténtalo de nuevo en breve.',
             storeIdRequired: 'Introduce un ID de paquete de Google Play o un ID de App Store.',
             pairedStoreIdsRequired: 'Los perfiles vinculados necesitan los dos ID de tienda.',
             keywordNotFound: 'No se encontró la palabra clave de la aplicación.',
             keywordTrackingUnavailable: 'El seguimiento de palabras clave de aplicaciones no está disponible temporalmente.',
-            keywordSlotLimitReached: 'Has alcanzado el límite de palabras clave de aplicaciones de este plan.',
-            keywordChecksExhausted: 'Has utilizado las comprobaciones de palabras clave de aplicaciones disponibles para este periodo.',
             duplicateKeyword: 'Esta palabra clave y tienda ya se siguen para la aplicación seleccionada.',
             chartSubscriptionNotFound: 'No se encontró la suscripción al ranking de aplicaciones.',
             chartTrackingUnavailable: 'El seguimiento de rankings de aplicaciones no está disponible temporalmente.',
             invalidChartSelection: 'Elige un ranking y una categoría compatibles con esta tienda.',
             chartSubscriptionLimit: 'Puedes seguir hasta dos rankings por perfil de aplicación.',
             duplicateChartSubscription: 'Este ranking y esta categoría ya se siguen para la aplicación seleccionada.',
-            chartChecksExhausted: 'Has utilizado las comprobaciones de rankings de aplicaciones disponibles para este periodo.',
         },
     },
     reportExports: {

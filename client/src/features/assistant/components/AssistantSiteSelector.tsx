@@ -1,3 +1,4 @@
+import { Bdi } from '@shared/components/Bdi';
 import { Link2 } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 import type { Site } from '@features/sites';
@@ -68,7 +69,7 @@ export function AssistantSiteSelector({
           <SelectItem value={NO_ASSISTANT_SITE}>{t('context.none')}</SelectItem>
           {sites.map((site) => (
             <SelectItem key={site.id} value={site.id}>
-              {siteLabel(site)}
+              <Bdi>{siteLabel(site)}</Bdi>
             </SelectItem>
           ))}
           {linkedSiteMissing && linkedSiteId ? (

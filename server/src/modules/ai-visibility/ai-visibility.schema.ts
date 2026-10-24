@@ -3,7 +3,7 @@ export const siteIdParamsSchema = z.object({
     siteId: z.string().min(1),
 });
 export const promptIdParamsSchema = siteIdParamsSchema.extend({
-    promptId: z.string().uuid(),
+    promptId: z.string().guid(),
 });
 export const addTrackedPromptBodySchema = z.object({
     prompt: z.string().trim().min(1, 'aiVisibility.errors.promptRequired').max(280),

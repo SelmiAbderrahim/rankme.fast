@@ -49,9 +49,13 @@
     "loadMore": "Charger plus",
     "warnings": "Un ou plusieurs avertissements",
     "notAvailable": "Indisponible",
-    "warningCount": "{{count}} avertissement",
+    "warningCount_one": "{{count}} avertissement",
     "warningCount_other": "{{count}} avertissements",
-    "progress": "{{value}} % terminé"
+    "progress": "{{value}} % terminé",
+    "warningCount_zero": "{{count}} avertissement",
+    "warningCount_two": "{{count}} avertissements",
+    "warningCount_few": "{{count}} avertissements",
+    "warningCount_many": "{{count}} avertissements"
   },
   "status": {
     "queued": "En file",
@@ -172,9 +176,14 @@
       "saveFailed": "Impossible d’enregistrer cette version du brief. Réessayez.",
       "versionHistory": "Historique des versions du brief",
       "noVersions": "Aucune version du brief enregistrée.",
-      "versionMeta": "{{date}} · {{count}} sections",
+      "versionMeta_one": "{{date}} · {{count}} section",
       "unsavedGuard": "Le brief contient des modifications non enregistrées.",
-      "savedHint": "Cette suggestion est modifiable. Rien n’est publié."
+      "savedHint": "Cette suggestion est modifiable. Rien n’est publié.",
+      "versionMeta_zero": "{{date}} · {{count}} section",
+      "versionMeta_two": "{{date}} · {{count}} sections",
+      "versionMeta_few": "{{date}} · {{count}} sections",
+      "versionMeta_many": "{{date}} · {{count}} sections",
+      "versionMeta_other": "{{date}} · {{count}} sections"
     },
     "draft": {
       "title": "Premier brouillon",
@@ -185,15 +194,25 @@
       "saveFailed": "Impossible d’enregistrer cette version. Réessayez.",
       "versionHistory": "Historique des versions",
       "noVersions": "Aucune version enregistrée.",
-      "versionMeta": "{{date}} · {{count}} mots",
+      "versionMeta_one": "{{date}} · {{count}} mot",
       "copy": "Copier dans le presse-papiers",
       "copying": "Copie…",
       "copied": "Copié dans le presse-papiers.",
       "copyFailed": "Impossible de copier le brouillon.",
       "copyRetry": "Réessayer la copie",
       "export": "Exporter en Markdown",
-      "wordCount": "{{count}} mots",
-      "unsavedGuard": "Vous avez des modifications non enregistrées."
+      "wordCount_one": "{{count}} mot",
+      "unsavedGuard": "Vous avez des modifications non enregistrées.",
+      "versionMeta_zero": "{{date}} · {{count}} mot",
+      "versionMeta_two": "{{date}} · {{count}} mots",
+      "versionMeta_few": "{{date}} · {{count}} mots",
+      "versionMeta_many": "{{date}} · {{count}} mots",
+      "versionMeta_other": "{{date}} · {{count}} mots",
+      "wordCount_zero": "{{count}} mot",
+      "wordCount_two": "{{count}} mots",
+      "wordCount_few": "{{count}} mots",
+      "wordCount_many": "{{count}} mots",
+      "wordCount_other": "{{count}} mots"
     },
     "sources": {
       "title": "Sources",
@@ -221,18 +240,7 @@
       "title": "Ignorer les modifications non enregistrées ?", "description": "Vos dernières modifications n’ont pas été enregistrées comme version.", "confirm": "Ignorer et quitter", "back": "Continuer la modification"
     }
   },
-  "paywall": {
-    "title": "Content Intelligence",
-    "description": "Passez à Starter ou supérieur pour lancer des analyses de contenu.",
-    "action": "Voir les plans",
-    "exhausted": {
-      "title": "Quota épuisé",
-      "description": "Votre quota mensuel et votre solde de pack sont épuisés. Achetez un pack ou changez de plan.",
-      "buyPack": "Acheter un pack d'analyses",
-      "seePlans": "Voir les plans"
-    },
-    "packHint": "Votre prochaine unité proviendra d'un pack de crédits."
-  },
+
   "partial": {
     "title": "Résultat partiel",
     "description": "Cette exécution s'est terminée avec des données limitées. La fiche est disponible ; certaines sections peuvent manquer."
@@ -263,7 +271,7 @@
     "confirm": { "accept": { "title": "Accepter cette recommandation ?", "description": "L’acceptation enregistre l’acteur et conserve l’historique.", "confirm": "Accepter" }, "dismiss": { "title": "Écarter cette recommandation ?", "description": "Vous pourrez l’accepter plus tard. L’événement reste dans l’historique.", "confirm": "Écarter" }, "apply": { "title": "Confirmer l’application ?", "description": "Confirmez seulement après modification de la page propriétaire. L’empreinte et les 28 jours suivants sont enregistrés.", "confirm": "Confirmer" }, "undo": { "title": "Annuler l’état appliqué ?", "description": "Un nouvel événement est créé sans supprimer la preuve originale.", "confirm": "Annuler l’application" } },
     "history": { "title": "Historique de la recommandation", "empty": "Aucun changement pour l’instant.", "meta": "Acteur {{actor}} · {{time}}", "events": { "accepted": "Acceptée", "dismissed": "Écartée", "applied": "Application confirmée", "undo_applied": "Application annulée" } },
     "hash": { "same": "L’empreinte confirmée correspond à celle de l’analyse.", "changed": "L’empreinte confirmée diffère de celle de l’analyse.", "unavailable": "Aucune empreinte n’est jointe à cet événement." },
-    "outcomes": { "hashAnchor": "Ancre de l’empreinte du contenu appliqué", "sourceUnavailable": "Une ou plusieurs sources sont indisponibles. Les observations disponibles restent visibles ; synchronisez la source manquante pour améliorer la couverture.", "relativeDelta": "Variation relative", "observedDate": "Date observée", "phase": "Fenêtre", "laterEditColumn": "Modification ultérieure", "phases": { "baseline": "Précédente", "following": "Suivante" }, "boolean": { "yes": "Oui", "no": "Non" }, "series": { "gsc": { "title": "Observations Search Console", "chartLabel": "Observations de clics Search Console disponibles dans la fenêtre" }, "rank": { "title": "Observations du rang suivi", "chartLabel": "Observations du rang suivi disponibles dans la fenêtre" } }, "syncButton": "Ouvrir les réglages des données de recherche", "unavailable": "Données de résultat indisponibles", "syncAction": "Connectez ou synchronisez Search Console et le suivi de rang. Les données absentes ne sont jamais affichées comme zéro.", "observedAfter": "Observé après l’application du {{date}}", "windowIncomplete": "La fenêtre suivante de 28 jours est encore incomplète.", "laterEdit": "Une modification ultérieure se trouve dans la fenêtre ; interprétez le mouvement avec prudence.", "chartLabel": "Observations de rang disponibles dans la fenêtre", "metric": "Mesure", "baseline": "28 jours précédents", "following": "28 jours suivants", "delta": "Variation absolue", "coverage": "Couverture — Search Console : {{gsc}} jours ; rang : {{rank}} jours.", "disclaimer": "Des facteurs externes influencent les performances de recherche. Cette vue montre un mouvement corrélé, pas une attribution.", "metrics": { "clicks": "Clics", "impressions": "Impressions", "ctr": "CTR", "averagePosition": "Position moyenne", "rankPosition": "Rang suivi" } }
+    "outcomes": { "hashAnchor": "Ancre de l’empreinte du contenu appliqué", "sourceUnavailable": "Une ou plusieurs sources sont indisponibles. Les observations disponibles restent visibles ; synchronisez la source manquante pour améliorer la couverture.", "relativeDelta": "Variation relative", "observedDate": "Date observée", "phase": "Fenêtre", "laterEditColumn": "Modification ultérieure", "phases": { "baseline": "Précédente", "following": "Suivante" }, "boolean": { "yes": "Oui", "no": "Non" }, "series": { "gsc": { "title": "Observations Search Console", "chartLabel": "Observations de clics Search Console disponibles dans la fenêtre" }, "rank": { "title": "Observations du rang suivi", "chartLabel": "Observations du rang suivi disponibles dans la fenêtre" } }, "syncButton": "Ouvrir les réglages des données de recherche", "unavailable": "Données de résultat indisponibles", "syncAction": "Connectez ou synchronisez Search Console et le suivi de rang. Les données absentes ne sont jamais affichées comme zéro.", "observedAfter": "Observé après l’application du {{date}}", "windowIncomplete": "La fenêtre suivante de 28 jours est encore incomplète.", "laterEdit": "Une modification ultérieure se trouve dans la fenêtre ; interprétez le mouvement avec prudence.", "chartLabel": "Observations de rang disponibles dans la fenêtre", "metric": "Mesure", "baseline": "28 jours précédents", "following": "28 jours suivants", "delta": "Variation absolue", "coverage": "Couverture en jours — Search Console : {{gsc}} ; rang : {{rank}}.", "disclaimer": "Des facteurs externes influencent les performances de recherche. Cette vue montre un mouvement corrélé, pas une attribution.", "metrics": { "clicks": "Clics", "impressions": "Impressions", "ctr": "CTR", "averagePosition": "Position moyenne", "rankPosition": "Rang suivi" } }
   },
   "inventory": {
     "paywall": {
@@ -303,15 +311,10 @@
       "title": "Lancer un inventaire",
       "description": "Explorez vos pages et obtenez des groupes, doublons, pages légères et orphelines, cannibalisation et lacunes thématiques.",
       "pageLimit": "Pages à explorer",
-      "pageLimitHint": "Entre une et {{max}} pages. Quatre pages forment un bloc réservé.",
-      "blocksTitle": "Ce que cela réserve",
-      "blocks_zero": "{{count}} blocs réservés. Limite de pages : {{pages}} (quatre pages par bloc).",
-      "blocks_one": "{{count}} bloc réservé. Limite de pages : {{pages}} (quatre pages par bloc).",
-      "blocks_two": "{{count}} blocs réservés. Limite de pages : {{pages}} (quatre pages par bloc).",
-      "blocks_few": "{{count}} blocs réservés. Limite de pages : {{pages}} (quatre pages par bloc).",
-      "blocks_many": "{{count}} blocs réservés. Limite de pages : {{pages}} (quatre pages par bloc).",
-      "blocks_other": "{{count}} blocs réservés. Limite de pages : {{pages}} (quatre pages par bloc).",
-      "blocksInvalid": "Saisissez un nombre de pages valide pour voir le nombre de blocs réservés.",
+      "pageLimitHint": "Entre une et {{max}} pages.",
+      "blocksTitle": "Pages de cette analyse",
+
+      "blocksInvalid": "Saisissez un nombre de pages valide pour voir la limite d’exploration.",
       "allowedPaths": "Uniquement ces chemins (facultatif)",
       "excludedPaths": "Ignorer ces chemins (facultatif)",
       "sitemapSeeds": "URL de sitemap (facultatif)",
@@ -326,7 +329,14 @@
         "invalidPath": "Chaque chemin doit commencer par une barre oblique (par exemple /blog).",
         "tooManySeeds": "Utilisez au maximum cinq URL de sitemap.",
         "invalidSeed": "L’une des URL de sitemap est trop longue."
-      }
+      },
+      "pageCount_zero": "{{count}} page",
+      "pageCount_one": "{{count}} page",
+      "pageCount_two": "{{count}} pages",
+      "pageCount_few": "{{count}} pages",
+      "pageCount_many": "{{count}} pages",
+      "pageCount_other": "{{count}} pages",
+      "blocks": "Jusqu’à $t(contentIntelligence:inventory.start.pageCount, {\"count\": {{pages}}})."
     },
     "runs": {
       "title": "Exécutions d’inventaire",
@@ -557,14 +567,9 @@
       "keywordHint": "Restreint la comparaison à l’intention que vous visez.",
       "pageLimit": "Pages concurrentes à lire",
       "pageLimitHint": "Entre une et {{max}} pages parmi les concurrents choisis.",
-      "disclosureTitle": "Coût de cette analyse",
-      "disclosure_zero": "Cette analyse réserve une unité et lit jusqu’à {{pages}} pages parmi {{count}} concurrents.",
-      "disclosure_one": "Cette analyse réserve une unité et lit jusqu’à {{pages}} pages parmi {{count}} concurrent.",
-      "disclosure_two": "Cette analyse réserve une unité et lit jusqu’à {{pages}} pages parmi {{count}} concurrents.",
-      "disclosure_few": "Cette analyse réserve une unité et lit jusqu’à {{pages}} pages parmi {{count}} concurrents.",
-      "disclosure_many": "Cette analyse réserve une unité et lit jusqu’à {{pages}} pages parmi {{count}} concurrents.",
-      "disclosure_other": "Cette analyse réserve une unité et lit jusqu’à {{pages}} pages parmi {{count}} concurrents.",
-      "disclosureInvalid": "Saisissez un nombre de pages valide pour voir ce que réserve cette analyse.",
+      "disclosureTitle": "Pages et concurrents de cette analyse",
+
+      "disclosureInvalid": "Saisissez un nombre de pages valide pour voir les limites de l’analyse.",
       "inFlight": "Une analyse est déjà en cours. Attendez sa fin avant d’en démarrer une autre.",
       "submit": "Démarrer la comparaison",
       "submitting": "Démarrage…",
@@ -575,7 +580,20 @@
         "invalidUrl": "Saisissez une URL de page valide commençant par http ou https.",
         "invalidCompetitorUrl": "Saisissez une URL classée explicite pour chaque concurrent sélectionné.",
         "pageLimitRange": "Saisissez un nombre de pages dans la plage autorisée."
-      }
+      },
+      "pageCount_zero": "{{count}} page",
+      "pageCount_one": "{{count}} page",
+      "pageCount_two": "{{count}} pages",
+      "pageCount_few": "{{count}} pages",
+      "pageCount_many": "{{count}} pages",
+      "pageCount_other": "{{count}} pages",
+      "competitorCount_zero": "{{count}} concurrent",
+      "competitorCount_one": "{{count}} concurrent",
+      "competitorCount_two": "{{count}} concurrents",
+      "competitorCount_few": "{{count}} concurrents",
+      "competitorCount_many": "{{count}} concurrents",
+      "competitorCount_other": "{{count}} concurrents",
+      "disclosure": "Cette analyse lit jusqu’à $t(contentIntelligence:competitorContent.run.pageCount, {\"count\": {{pages}}}) parmi $t(contentIntelligence:competitorContent.run.competitorCount, {\"count\": {{count}}})."
     },
     "runs": {
       "title": "Analyses comparatives",
@@ -830,9 +848,14 @@
         "stored": "Observation SERP enregistrée le {{date}} ; aucune nouvelle collecte n'est prévue.",
         "fetched": "Aucune SERP récente enregistrée ; une collecte facturée est incluse dans l'unité."
       },
-      "scrapes": "Jusqu'à {{count}} pages de résultats publiques seront lues séparément.",
+      "scrapes_one": "Jusqu'à {{count}} page de résultats publique sera lue séparément.",
       "consume": "Utilisation prévue : {{base}} unité de base, {{pack}} de pack.",
-      "remaining": "Disponible : {{base}} unité de base, {{pack}} de pack."
+      "remaining": "Disponible : {{base}} unité de base, {{pack}} de pack.",
+      "scrapes_zero": "Jusqu'à {{count}} page de résultats publique sera lue séparément.",
+      "scrapes_two": "Jusqu'à {{count}} pages de résultats publiques seront lues séparément.",
+      "scrapes_few": "Jusqu'à {{count}} pages de résultats publiques seront lues séparément.",
+      "scrapes_many": "Jusqu'à {{count}} pages de résultats publiques seront lues séparément.",
+      "scrapes_other": "Jusqu'à {{count}} pages de résultats publiques seront lues séparément."
     },
     "status": {
       "queued": "En attente",
@@ -868,7 +891,12 @@
       "filter": "Filtre d'état",
       "all": "Tous les états",
       "loading": "Chargement des briefs…",
-      "meta": "Demandé le {{date}} · {{count}} pages conservées"
+      "meta_one": "Demandé le {{date}} · {{count}} page conservée",
+      "meta_zero": "Demandé le {{date}} · {{count}} page conservée",
+      "meta_two": "Demandé le {{date}} · {{count}} pages conservées",
+      "meta_few": "Demandé le {{date}} · {{count}} pages conservées",
+      "meta_many": "Demandé le {{date}} · {{count}} pages conservées",
+      "meta_other": "Demandé le {{date}} · {{count}} pages conservées"
     },
     "empty": {
       "title": "Aucun brief",
@@ -920,8 +948,13 @@
     "sources": {
       "title": "Pages sources enregistrées",
       "description": "Les titres et intertitres sont du texte tiers non fiable, affiché littéralement.",
-      "meta": "Lue le {{date}} · {{count}} mots",
-      "empty": "Aucun document source n'a été conservé."
+      "meta_one": "Lue le {{date}} · {{count}} mot",
+      "empty": "Aucun document source n'a été conservé.",
+      "meta_zero": "Lue le {{date}} · {{count}} mot",
+      "meta_two": "Lue le {{date}} · {{count}} mots",
+      "meta_few": "Lue le {{date}} · {{count}} mots",
+      "meta_many": "Lue le {{date}} · {{count}} mots",
+      "meta_other": "Lue le {{date}} · {{count}} mots"
     },
     "outline": {
       "title": "Plan cité",

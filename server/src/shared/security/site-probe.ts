@@ -25,8 +25,9 @@
  * failure (HTTP status / unreachable / blocked) is recorded so the report
  * can say what happened.
  */
-import type { AddressVariantResult, AuditHostRedirect, SiteProbeFailure, SiteProbeFailures } from '../../shared/providers/index.js';
-import { fetchPublicUrlSafeWithFinalUrl, type FetchPublicUrlSafeOptions } from '../../shared/security/url-safety.js';
+import type { AddressVariantResult, AuditHostRedirect, SiteProbeFailure, SiteProbeFailures, PageFetchFailure, RedirectHop } from '../providers/types.js';
+import { fetchPublicUrlSafe, fetchPublicUrlSafeWithFinalUrl, UnsafeUrlError, type FetchPublicUrlSafeOptions } from './url-safety.js';
+import { robotsDisallows } from './robots-rules.js';
 
 export interface SiteProbeResult {
     /** Final URL of the site's own https start page; absent when it could not be read. */
@@ -240,5 +241,119 @@ export function createSiteProbe(opts: SiteProbeOptions = {}): SiteProbe {
             };
         }));
         return out;
+    };
+}
+
+export const PAGE_PROBE_MAX_REDIRECTS = 5;
+const PAGE_HEAD_MAX_BYTES = 64 * 1024;
+const PAGE_GET_MAX_BYTES = 5 * 1024 * 1024;
+const ROBOTS_DEADLINE_MS = 5000;
+const ROBOTS_MAX_BYTES = 512 * 1024;
+const RETRY_WITH_GET: ReadonlySet<number> = new Set([403, 404, 405, 501]);
+const HTML_MEDIA_TYPES: ReadonlySet<string> = new Set(['text/html', 'application/xhtml+xml']);
+
+export interface PageProbeResult {
+    url: string;
+    statusCode: number | null;
+    finalUrl: string | null;
+    redirectChain: RedirectHop[];
+    contentType: string | null;
+    failure: PageFetchFailure | null;
+}
+export interface PageProbeOptions extends FetchPublicUrlSafeOptions {
+    checkRobots?: boolean;
+}
+export interface PageProbeCall {
+    method?: 'HEAD' | 'GET';
+    checkRobots?: boolean;
+}
+export interface PageProber {
+    probe(url: string, call?: PageProbeCall): Promise<PageProbeResult>;
+}
+
+function mediaType(headers: Headers): string | null {
+    const raw = headers.get('content-type');
+    if (!raw)
+        return null;
+    const type = raw.split(';')[0]!.trim().toLowerCase();
+    return type === '' ? null : type;
+}
+
+function failureFromError(error: unknown): { failure: PageFetchFailure; chain: RedirectHop[] } {
+    if (error instanceof UnsafeUrlError) {
+        const kind = error.kind;
+        const failure: PageFetchFailure = kind === 'redirect_limit' || kind === 'redirect_loop' || kind === 'unsafe_redirect' || kind === 'timeout'
+            ? { kind } : { kind: 'unreachable' };
+        return { failure, chain: error.redirectChain };
+    }
+    return { failure: { kind: 'unreachable' }, chain: [] };
+}
+
+/** Page and site probes share one SSRF authority; robots reads are cached per origin. */
+export function createPageProber(opts: PageProbeOptions = {}): PageProber {
+    const { checkRobots: defaultCheckRobots = true, ...fetchOpts } = opts;
+    const robotsByOrigin = new Map<string, Promise<string | null>>();
+    const readRobots = (origin: string): Promise<string | null> => {
+        let cached = robotsByOrigin.get(origin);
+        if (!cached) {
+            cached = (async () => {
+                try {
+                    const response = await fetchPublicUrlSafe(new URL('/robots.txt', origin), {
+                        method: 'GET', headers: { accept: 'text/plain' },
+                    }, { ...fetchOpts, deadlineMs: ROBOTS_DEADLINE_MS, maxResponseBytes: ROBOTS_MAX_BYTES, maxRedirects: PAGE_PROBE_MAX_REDIRECTS });
+                    return response.status === 200 ? await response.text() : null;
+                }
+                catch {
+                    return null;
+                }
+            })();
+            robotsByOrigin.set(origin, cached);
+        }
+        return cached;
+    };
+    return {
+        async probe(url, call = {}) {
+            const checkRobots = call.checkRobots ?? defaultCheckRobots;
+            const base = { deadlineMs: DEADLINE_MS, maxRedirects: PAGE_PROBE_MAX_REDIRECTS, ...fetchOpts };
+            const head = () => fetchPublicUrlSafeWithFinalUrl(url, { method: 'HEAD' }, { ...base, maxResponseBytes: PAGE_HEAD_MAX_BYTES });
+            const get = () => fetchPublicUrlSafeWithFinalUrl(url, { method: 'GET', headers: { accept: 'text/html' } }, { ...base, maxResponseBytes: PAGE_GET_MAX_BYTES });
+            const getOr = async (fallback: () => ReturnType<typeof head>) => {
+                try {
+                    return await get();
+                }
+                catch (error) {
+                    if (error instanceof UnsafeUrlError && error.kind === 'response_too_large')
+                        return fallback();
+                    throw error;
+                }
+            };
+            let answer;
+            try {
+                if (call.method === 'GET')
+                    answer = await getOr(head);
+                else {
+                    const first = await head();
+                    answer = RETRY_WITH_GET.has(first.response.status) ? await getOr(async () => first) : first;
+                }
+            }
+            catch (error) {
+                const { failure, chain } = failureFromError(error);
+                return { url, statusCode: null, finalUrl: null, redirectChain: chain, contentType: null, failure };
+            }
+            const statusCode = answer.response.status;
+            const contentType = mediaType(answer.response.headers);
+            const finalUrl = answer.finalUrl.href;
+            let failure: PageFetchFailure | null = null;
+            if (statusCode < 200 || statusCode >= 300)
+                failure = { kind: 'http_error', statusCode };
+            else if (checkRobots) {
+                const robots = await readRobots(answer.finalUrl.origin);
+                if (robots !== null && robotsDisallows(robots, answer.finalUrl.pathname + answer.finalUrl.search))
+                    failure = { kind: 'robots_blocked' };
+            }
+            if (!failure && contentType !== null && !HTML_MEDIA_TYPES.has(contentType))
+                failure = { kind: 'non_html', contentType };
+            return { url, statusCode, finalUrl, redirectChain: answer.redirects, contentType, failure };
+        },
     };
 }

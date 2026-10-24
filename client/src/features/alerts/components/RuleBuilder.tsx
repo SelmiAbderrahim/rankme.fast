@@ -1,3 +1,4 @@
+import { Bdi } from '@shared/components/Bdi';
 import { useState, type FormEvent } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Button } from '@shared/ui/button';
@@ -88,7 +89,7 @@ export const RuleBuilder = ({
           <SelectContent>
             {sites.map((option) => (
               <SelectItem key={option.id} value={option.id}>
-                {siteLabel(option)}
+                <Bdi>{siteLabel(option)}</Bdi>
               </SelectItem>
             ))}
           </SelectContent>

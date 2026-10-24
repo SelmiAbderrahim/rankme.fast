@@ -1,3 +1,5 @@
+import { isolateText } from '@shared/lib/bidi';
+import { Bdi } from '@shared/components/Bdi';
 /**
  * GoogleSearchSummaryCard — the Search Analytics summary on the
  * `?tab=google` surface, shown ONLY when the connection is `connected`.
@@ -151,10 +153,10 @@ export const GoogleSearchSummaryCard = ({ siteId }: GoogleSearchSummaryCardProps
     <section
       className="rounded-xl border bg-card p-4 shadow-sm"
       data-testid="google-search-summary-card"
-      aria-label={t('searchSummary.title', { days })}
+      aria-label={t('searchSummary.title', { count: days, days })}
     >
       <div className="flex flex-wrap items-center justify-between gap-2">
-        <h3 className="text-sm font-semibold">{t('searchSummary.title', { days })}</h3>
+        <h3 className="text-sm font-semibold">{t('searchSummary.title', { count: days, days })}</h3>
         <div className="flex items-center gap-2">
           {summary ? (
             <ReportExportControl
@@ -303,8 +305,8 @@ export const GoogleSearchSummaryCard = ({ siteId }: GoogleSearchSummaryCardProps
                       key={query.query}
                       className="flex items-center justify-between gap-2 text-sm"
                     >
-                      <span className="min-w-0 flex-1 truncate" title={query.query}>
-                        {query.query}
+                      <span className="min-w-0 flex-1 truncate" title={isolateText(query.query)}>
+                        <Bdi>{query.query}</Bdi>
                       </span>
                       <span className="text-muted-foreground shrink-0 tabular-nums" dir="ltr">
                         {formatInt(locale, query.clicks)} · {formatPercent(locale, query.ctr)}
@@ -326,7 +328,7 @@ export const GoogleSearchSummaryCard = ({ siteId }: GoogleSearchSummaryCardProps
                       key={page.url}
                       className="flex items-center justify-between gap-2 text-sm"
                     >
-                      <span className="min-w-0 flex-1 truncate" title={page.url} dir="ltr">
+                      <span className="min-w-0 flex-1 truncate" title={isolateText(page.url)} dir="ltr">
                         {page.url}
                       </span>
                       <span className="text-muted-foreground shrink-0 tabular-nums" dir="ltr">
@@ -345,7 +347,7 @@ export const GoogleSearchSummaryCard = ({ siteId }: GoogleSearchSummaryCardProps
               {t('searchSummary.timeseriesTitle')}
             </p>
             <p className="text-muted-foreground text-xs">
-              {t('searchSummary.timeseriesSubtitle', { days })}
+              {t('searchSummary.timeseriesSubtitle', { count: days, days })}
             </p>
             <GscTimeseriesChart points={summary.timeseries ?? []} days={days} />
           </div>

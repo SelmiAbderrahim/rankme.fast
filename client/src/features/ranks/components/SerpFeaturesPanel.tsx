@@ -1,3 +1,5 @@
+import { isolateText } from '@shared/lib/bidi';
+import { Bdi } from '@shared/components/Bdi';
 /**
  * SERP features panel — `?tab=serp-features` in the site workspace.
  *
@@ -271,7 +273,7 @@ export const SerpFeaturesPanel = ({ siteId }: SerpFeaturesPanelProps) => {
         </div>
         <div className="flex flex-wrap items-center justify-between gap-3">
           <h2 id="serp-features-history-heading" className="text-lg font-semibold">
-            {detail ? detail.phrase : t('serpFeatures.history.title')}
+            <Bdi>{detail ? detail.phrase : t('serpFeatures.history.title')}</Bdi>
           </h2>
           <ReportExportControl
             kind="ranks.serp_features"
@@ -322,7 +324,7 @@ export const SerpFeaturesPanel = ({ siteId }: SerpFeaturesPanelProps) => {
                       data-testid="serp-feature-snippet-source"
                     >
                       {t('serpFeatures.snippetHeldBy', {
-                        domain: detail.latest.snippetSource.domain,
+                        domain: isolateText(detail.latest.snippetSource.domain),
                       })}
                     </p>
                   ) : null}
@@ -388,7 +390,7 @@ export const SerpFeaturesPanel = ({ siteId }: SerpFeaturesPanelProps) => {
                           key={entry.question}
                           className="border-border flex flex-col gap-1 rounded-xl border p-3"
                         >
-                          <span className="text-sm">{entry.question}</span>
+                          <span className="text-sm"><Bdi>{entry.question}</Bdi></span>
                           {entry.owned ? (
                             <StatusChip tone="success" data-testid="serp-feature-owned-paa">
                               {t('serpFeatures.ownedPaa')}
@@ -520,8 +522,8 @@ export const SerpFeaturesPanel = ({ siteId }: SerpFeaturesPanelProps) => {
                 {/* max-w-0 lets the truncating child cap the column at its 20%
                     share instead of the phrase widening the whole table. */}
                 <TableCell className="w-1/5 max-w-0 font-medium">
-                  <span className="block truncate" title={row.phrase}>
-                    {row.phrase}
+                  <span className="block truncate" title={isolateText(row.phrase)}>
+                    <Bdi>{row.phrase}</Bdi>
                   </span>
                 </TableCell>
                 <TableCell>

@@ -7,6 +7,13 @@ import {
 } from './code-fix-eligibility.js';
 
 describe('code-fix eligibility', () => {
+  it.each(['redirect-chains', 'mixed-content', 'broken-resources', 'oversized-images', 'uncached-static-resources'])(
+    'offers a code fix for actionable %s findings', (ruleId) => {
+      expect(isAuditCodeFixEligible({ ruleId, bucket: 'fix-now' })).toBe(true);
+      expect(isAuditCodeFixEligible({ ruleId, bucket: 'passed' })).toBe(false);
+      expect(isAuditCodeFixEligible({ ruleId, bucket: 'watch', meta: { insufficientData: true } })).toBe(false);
+    },
+  );
   it('allows exactly the configured actionable audit rules', () => {
     for (const ruleId of AUDIT_CODE_FIX_RULE_IDS) {
       expect(isAuditCodeFixEligible({ ruleId, bucket: 'fix-now' })).toBe(true);

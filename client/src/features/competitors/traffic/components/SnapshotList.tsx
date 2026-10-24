@@ -1,3 +1,4 @@
+import { Bdi } from '@shared/components/Bdi';
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { useSearchParams } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
@@ -229,7 +230,7 @@ export const SnapshotList = ({ data, status, error = '', onOpen }: SnapshotListP
                       onCheckedChange={(checked) => toggleSelected(snapshot.id, checked === true)}
                     />
                   </TableCell>
-                  <TableCell>{snapshot.targetDomain}</TableCell>
+                  <TableCell><Bdi>{snapshot.targetDomain}</Bdi></TableCell>
                   <TableCell>{date.format(new Date(snapshot.capturedAt))}</TableCell>
                   <TableCell className="text-end">
                     <span className="flex flex-col items-end gap-1">

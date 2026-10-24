@@ -51,10 +51,10 @@ export const clientReportScheduleBodySchema = z.discriminatedUnion('frequency', 
     }).strict(),
 ]);
 export const clientReportScheduleParamsSchema = clientReportSiteParamsSchema.extend({
-    scheduleId: z.string().uuid(),
+    scheduleId: z.string().guid(),
 });
 export const clientReportDeliveryQuerySchema = z.object({
-    cursor: z.string().uuid().optional(),
+    cursor: z.string().guid().optional(),
     limit: z.coerce.number().int().min(1).max(50).default(20),
 });
 export const clientPortalCreateBodySchema = z

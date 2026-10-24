@@ -1,3 +1,4 @@
+import { Bdi } from '@shared/components/Bdi';
 import { useTranslation } from 'react-i18next';
 import { Link, useLocation } from 'react-router-dom';
 import { DEFAULT_BACKLINK_TAB, isBacklinkTab } from '@features/backlinks';
@@ -83,12 +84,12 @@ export const AppBreadcrumbs = () => {
           return (
             <BreadcrumbItem key={`${crumb.label}-${index}`}>
               {isLast ? (
-                <BreadcrumbPage>{crumb.label}</BreadcrumbPage>
+                <BreadcrumbPage><Bdi>{crumb.label}</Bdi></BreadcrumbPage>
               ) : (
                 <>
                   <BreadcrumbLink asChild>
                     {/* Non-last crumbs always carry `to` (only the current page omits it). */}
-                    <Link to={crumb.to!}>{crumb.label}</Link>
+                    <Link to={crumb.to!}><Bdi>{crumb.label}</Bdi></Link>
                   </BreadcrumbLink>
                   <BreadcrumbSeparator className="rtl:rotate-180" />
                 </>

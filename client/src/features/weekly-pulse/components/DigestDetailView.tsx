@@ -1,3 +1,4 @@
+import { Bdi } from '@shared/components/Bdi';
 /**
  * Weekly Pulse — digest detail view.
  *
@@ -61,7 +62,7 @@ export function DigestDetailView({ projection, onClose }: DigestDetailViewProps)
           <ul>
             {projection.citations_new.map((c) => (
               <li key={c.canonicalUrl}>
-                {c.host} — {c.engine}
+                <Bdi>{c.host}</Bdi> — {c.engine}
               </li>
             ))}
           </ul>
@@ -77,7 +78,7 @@ export function DigestDetailView({ projection, onClose }: DigestDetailViewProps)
           <ul>
             {projection.citations_lost.map((c) => (
               <li key={c.canonicalUrl}>
-                {c.host} — {c.engine}
+                <Bdi>{c.host}</Bdi> — {c.engine}
               </li>
             ))}
           </ul>
@@ -93,7 +94,7 @@ export function DigestDetailView({ projection, onClose }: DigestDetailViewProps)
           <ul>
             {projection.citations_unknown_partial.map((c) => (
               <li key={c.canonicalUrl}>
-                {c.host} — {c.engine}
+                <Bdi>{c.host}</Bdi> — {c.engine}
               </li>
             ))}
           </ul>
@@ -109,7 +110,7 @@ export function DigestDetailView({ projection, onClose }: DigestDetailViewProps)
           <ul>
             {projection.confirmed_rank_drops.map((r) => (
               <li key={`${r.keyword}-${r.confirmedAt}`}>
-                {r.keyword} — {r.priorRank ?? '?'} → {r.currentRank ?? '?'}
+                <Bdi>{r.keyword}</Bdi> — {r.priorRank ?? '?'} → {r.currentRank ?? '?'}
               </li>
             ))}
           </ul>

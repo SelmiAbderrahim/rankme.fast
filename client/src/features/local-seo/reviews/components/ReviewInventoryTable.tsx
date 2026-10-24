@@ -153,7 +153,7 @@ export const ReviewInventoryTable = ({
                   <SelectItem value="all">{t('inventory.filterAll')}</SelectItem>
                   {[5, 4, 3, 2, 1].map((star) => (
                     <SelectItem key={star} value={String(star)}>
-                      {t('inventory.stars', { stars: star })}
+                      {t('inventory.stars', { count: star, stars: star })}
                     </SelectItem>
                   ))}
                 </SelectGroup>
@@ -314,7 +314,7 @@ export const ReviewInventoryTable = ({
             </Table>
             <div className="flex items-center justify-between gap-2">
               <span className="text-muted-foreground text-sm" data-testid="reviews-inventory-page">
-                {t('inventory.page', { page: filters.page, total: data.total })}
+                {t('inventory.page', { count: data.total, page: filters.page, total: data.total })}
               </span>
               <div className="flex gap-2">
                 <Button

@@ -26,12 +26,29 @@
     "dofollowYes": "Dofollow",
     "dofollowNo": "Nofollow",
     "loadMore": "Charger plus",
-    "loading": "Chargement…"
+    "loading": "Chargement…",
+    "scope_zero": "Affichage de {{shown}} sur {{total}} backlink (un lien par domaine référent)",
+    "scope_one": "Affichage de {{shown}} sur {{total}} backlink (un lien par domaine référent)",
+    "scope_two": "Affichage de {{shown}} sur {{total}} backlinks (un lien par domaine référent)",
+    "scope_few": "Affichage de {{shown}} sur {{total}} backlinks (un lien par domaine référent)",
+    "scope_many": "Affichage de {{shown}} sur {{total}} backlinks (un lien par domaine référent)",
+    "scope_other": "Affichage de {{shown}} sur {{total}} backlinks (un lien par domaine référent)",
+    "scopeNoTotal_zero": "Affichage de {{shown}} backlink (un lien par domaine référent)",
+    "scopeNoTotal_one": "Affichage de {{shown}} backlink (un lien par domaine référent)",
+    "scopeNoTotal_two": "Affichage de {{shown}} backlinks (un lien par domaine référent)",
+    "scopeNoTotal_few": "Affichage de {{shown}} backlinks (un lien par domaine référent)",
+    "scopeNoTotal_many": "Affichage de {{shown}} backlinks (un lien par domaine référent)",
+    "scopeNoTotal_other": "Affichage de {{shown}} backlinks (un lien par domaine référent)"
   },
   "refresh": {
     "button": "Actualiser",
-    "cooldown": "Attendez {{seconds}} s avant d'actualiser.",
-    "failed": "Impossible d'actualiser pour le moment. Vos dernières données restent affichées."
+    "cooldown_one": "Attendez {{seconds}} s avant d'actualiser.",
+    "failed": "Impossible d'actualiser pour le moment. Vos dernières données restent affichées.",
+    "cooldown_zero": "Attendez {{seconds}} s avant d'actualiser.",
+    "cooldown_two": "Attendez {{seconds}} s avant d'actualiser.",
+    "cooldown_few": "Attendez {{seconds}} s avant d'actualiser.",
+    "cooldown_many": "Attendez {{seconds}} s avant d'actualiser.",
+    "cooldown_other": "Attendez {{seconds}} s avant d'actualiser."
   },
   "locked": {
     "title": "Passez à la version supérieure pour débloquer les backlinks",
@@ -74,7 +91,7 @@
     "preview": { "unit": "1 unité d’analyse de liens", "rowClamp": "Jusqu’à 1 000 lignes · 100 domaines évalués", "available": "Quota disponible", "capReached": "Quota atteint", "explanation": "L’exécution utilise une unité toxicity_reviews. Le pack toxicity-reviews-10 est disponible après le quota inclus. Prévisualiser puis annuler ne dépense aucune unité.", "confirm": "Confirmer et utiliser 1 unité", "cancel": "Annuler", "button": "Prévisualiser le coût" },
     "states": { "lockedTitle": "Passez à une offre supérieure pour analyser les liens", "lockedBody": "L’analyse des liens et la création du fichier de désaveu sont disponibles avec Pro et Agency.", "disabledTitle": "Les nouvelles analyses sont suspendues", "disabledBody": "Les analyses enregistrées restent consultables pendant la suspension des nouveaux scores.", "capTitle": "Quota d’analyse de liens atteint", "capBody": "Ajoutez le pack toxicity-reviews-10 ou attendez le renouvellement du quota.", "errorTitle": "Impossible de charger l’analyse de liens", "errorBody": "Réessayez dans un instant. Les résultats enregistrés et téléchargements précédents sont inchangés.", "listError": "Impossible de charger les analyses enregistrées.", "runningTitle": "Analyse des observations enregistrées", "failedTitle": "L’analyse des liens s’est arrêtée", "providerRefunded": "Le fournisseur a échoué avant qu’une ligne évaluée ne soit conservée. L’unité réservée a été remboursée.", "ceilingConsumed": "L’exécution s’est arrêtée au plafond de coût. L’unité réservée a été consommée et aucune action automatique n’a été effectuée.", "partial": "Observations partielles du fournisseur", "emptyTitle": "Aucune ligne évaluée", "emptyBody": "L’exécution s’est terminée sans conserver de backlink évalué." },
     "actions": { "viewPlans": "Voir les offres", "viewPacks": "Voir les packs de crédits", "open": "Ouvrir", "back": "Revenir à une nouvelle analyse" },
-    "runs": { "title": "Analyses enregistrées", "description": "Rouvrez les analyses terminées sans utiliser une autre unité.", "date": "Création", "status": "État", "rows": "Lignes", "emptyTitle": "Aucune analyse enregistrée", "emptyBody": "Commencez par une prévisualisation gratuite lorsque vous êtes prêt." },
+    "runs": { "title": "Analyses enregistrées", "description": "Rouvrez les analyses enregistrées sans lancer une nouvelle vérification.", "date": "Création", "status": "État", "rows": "Lignes", "emptyTitle": "Aucune analyse enregistrée", "emptyBody": "Prévisualisez une analyse lorsque vous êtes prêt." },
     "filters": { "status": "Filtrer les analyses par état", "allStatuses": "Tous les états", "band": "Filtrer les lignes par catégorie", "allBands": "Toutes les catégories" },
     "status": { "queued": "En attente", "running": "En cours", "succeeded": "Terminée", "failed": "Échec" },
     "results": { "title": "Résultats de l’analyse des liens", "rubric": "Grille {{version}}", "rowsTitle": "Backlinks évalués", "observationCopy": "Les catégories décrivent les observations enregistrées du fournisseur selon la grille fixée. Elles ne prédisent aucune action d’un moteur de recherche.", "providerObservation": "Observation du fournisseur · grille déterministe" },

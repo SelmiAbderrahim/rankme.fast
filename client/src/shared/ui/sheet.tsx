@@ -4,6 +4,8 @@ import * as React from "react"
 import { XIcon } from "lucide-react"
 import { Dialog as SheetPrimitive } from "radix-ui"
 
+import { CLOSING_LAYER_PASS_THROUGH, preserveMovedFocus, useReleaseBodyPointerLockOnClose } from "@shared/ui/overlay-release";
+
 import { cn } from "@/shared/lib/utils"
 
 function Sheet({ ...props }: React.ComponentProps<typeof SheetPrimitive.Root>) {
@@ -36,7 +38,8 @@ const SheetOverlay = React.forwardRef<
     ref={ref}
     data-slot="sheet-overlay"
     className={cn(
-      "fixed inset-0 z-50 bg-black/50 data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:animate-in data-[state=open]:fade-in-0",
+      "fixed inset-0 z-50 bg-overlay data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:animate-in data-[state=open]:fade-in-0",
+      CLOSING_LAYER_PASS_THROUGH,
       className
     )}
     {...props}
@@ -55,10 +58,12 @@ function SheetContent({
   side?: "top" | "right" | "bottom" | "left"
   showCloseButton?: boolean
 }) {
+  const releaseLock = useReleaseBodyPointerLockOnClose();
   return (
     <SheetPortal>
       <SheetOverlay />
       <SheetPrimitive.Content
+        ref={releaseLock}
         data-slot="sheet-content"
         className={cn(
           "fixed z-50 flex flex-col gap-4 bg-background shadow-lg transition ease-in-out data-[state=closed]:animate-out data-[state=closed]:duration-300 data-[state=open]:animate-in data-[state=open]:duration-500",
@@ -70,9 +75,11 @@ function SheetContent({
             "inset-x-0 top-0 h-auto border-b data-[state=closed]:slide-out-to-top data-[state=open]:slide-in-from-top",
           side === "bottom" &&
             "inset-x-0 bottom-0 h-auto border-t data-[state=closed]:slide-out-to-bottom data-[state=open]:slide-in-from-bottom",
+          CLOSING_LAYER_PASS_THROUGH,
           className
         )}
         {...props}
+        onCloseAutoFocus={preserveMovedFocus(props.onCloseAutoFocus)}
       >
         {children}
         {showCloseButton && (

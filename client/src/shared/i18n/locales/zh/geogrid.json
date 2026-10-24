@@ -109,5 +109,11 @@
     "loadFailed": "无法加载你的地理网格扫描。",
     "previewFailed": "无法估算这次扫描。",
     "submitFailed": "无法启动这次扫描。"
-  }
+  },
+  "center": {"place": {"resultsLegend_zero": "“{{query}}”共找到 {{count}} 个地点。请选择中心：",
+      "resultsLegend_one": "“{{query}}”共找到 {{count}} 个地点。请选择中心：",
+      "resultsLegend_two": "“{{query}}”共找到 {{count}} 个地点。请选择中心：",
+      "resultsLegend_few": "“{{query}}”共找到 {{count}} 个地点。请选择中心：",
+      "resultsLegend_many": "“{{query}}”共找到 {{count}} 个地点。请选择中心：",
+      "resultsLegend_other": "“{{query}}”共找到 {{count}} 个地点。请选择中心："}}
 }

@@ -1,3 +1,4 @@
+import { Bdi } from '@shared/components/Bdi';
 import { useTranslation } from 'react-i18next';
 import { StatusChip, type StatusTone } from '@shared/ui/status-chip';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@shared/ui/table';
@@ -72,7 +73,7 @@ export const DeliveryLog = ({ deliveries }: DeliveryLogProps) => {
             <TableCell>
               <div className="flex flex-col gap-1 text-sm">
                 {delivery.evidence.kind === 'rank_drop' ? (
-                  <span>{delivery.evidence.keyword}</span>
+                  <span><Bdi>{delivery.evidence.keyword}</Bdi></span>
                 ) : (
                   <span>{t('log.domainCount', { count: delivery.evidence.changedTotal })}</span>
                 )}
@@ -81,7 +82,7 @@ export const DeliveryLog = ({ deliveries }: DeliveryLogProps) => {
                 delivery.evidence.changedDomains.length > 0 ? (
                   <ul className="text-muted-foreground">
                     {delivery.evidence.changedDomains.map((domain) => (
-                      <li key={domain}>{domain}</li>
+                      <li key={domain}><Bdi>{domain}</Bdi></li>
                     ))}
                   </ul>
                 ) : null}

@@ -31,7 +31,7 @@ import { completeAuditRun, failAuditRun, markAuditRunRunning } from './audit-run
 import { replaceAuditedPages } from './audits.service.js';
 import { writeReportSnapshot } from './report.service.js';
 import type { PageSpeedEvaluationInput, PageSpeedSample, } from './rules/index.js';
-import { detectHostRedirect, type SiteProbe, type SiteProbeResult } from './site-probe.js';
+import { detectHostRedirect, type SiteProbe, type SiteProbeResult } from '../../shared/security/site-probe.js';
 export interface AuditProcessorDeps {
     provider: AuditProvider;
     logger: Logger;

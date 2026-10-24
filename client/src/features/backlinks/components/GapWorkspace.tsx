@@ -1,3 +1,4 @@
+import { Bdi } from '@shared/components/Bdi';
 import { useEffect, useMemo, useRef, useState, type FormEvent } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
@@ -342,7 +343,7 @@ export function GapCompetitorCard({ leg }: { leg: LinkGapLeg }) {
   return (
     <Card data-testid={`gap-competitor-${leg.competitor}`}>
       <CardHeader>
-        <CardTitle>{leg.competitor}</CardTitle>
+        <CardTitle><Bdi>{leg.competitor}</Bdi></CardTitle>
         <CardDescription>{t('gap.result.competitorDescription')}</CardDescription>
       </CardHeader>
       <CardContent className="flex flex-col gap-5">
@@ -374,7 +375,7 @@ export function GapCompetitorCard({ leg }: { leg: LinkGapLeg }) {
               {rows.map((row) => (
                 <TableRow key={row.domain}>
                   <TableCell>
-                    {row.url ? (
+                    <Bdi>{row.url ? (
                       // eslint-disable-next-line react/jsx-no-target-blank -- SAFE_EXTERNAL_REL includes noopener and noreferrer.
                       <a
                         href={safeExternalHref(row.url)}
@@ -386,7 +387,7 @@ export function GapCompetitorCard({ leg }: { leg: LinkGapLeg }) {
                       </a>
                     ) : (
                       row.domain
-                    )}
+                    )}</Bdi>
                   </TableCell>
                   <TableCell>{row.rank ?? '—'}</TableCell>
                   <TableCell>{formatGapFirstSeen(row.firstSeen, i18n.language)}</TableCell>

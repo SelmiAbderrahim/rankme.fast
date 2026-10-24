@@ -1,3 +1,4 @@
+import { Bdi } from '@shared/components/Bdi';
 import { useTranslation } from 'react-i18next';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@shared/ui/card';
 import { formatCountryFromLocation, languageName } from '@shared/markets';
@@ -65,7 +66,7 @@ export function RankComparisonSection({
             <TableBody>
               {comparison.ranks.shared.map((row) => (
                 <TableRow key={`${row.phrase}-${row.locationCode}-${row.languageCode}`}>
-                  <TableCell className="max-w-72 whitespace-normal">{row.phrase}</TableCell>
+                  <TableCell className="max-w-72 whitespace-normal"><Bdi>{row.phrase}</Bdi></TableCell>
                   <TableCell>{marketLabel(row.locationCode, row.languageCode)}</TableCell>
                   <TableCell className="text-end tabular-nums">{rank(row.googlePlay.position)}</TableCell>
                   <TableCell className="text-end tabular-nums">{rank(row.appStore.position)}</TableCell>
@@ -97,7 +98,7 @@ export function RankComparisonSection({
                   <TableBody>
                     {comparison.ranks[key].map((row) => (
                       <TableRow key={`${row.phrase}-${row.locationCode}-${row.languageCode}`}>
-                        <TableCell className="max-w-56 whitespace-normal">{row.phrase}</TableCell>
+                        <TableCell className="max-w-56 whitespace-normal"><Bdi>{row.phrase}</Bdi></TableCell>
                         <TableCell>{marketLabel(row.locationCode, row.languageCode)}</TableCell>
                         <TableCell className="text-end tabular-nums">{rank(row.position)}</TableCell>
                       </TableRow>

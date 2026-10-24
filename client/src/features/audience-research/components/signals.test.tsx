@@ -222,10 +222,10 @@ describe('SignalCard', () => {
       'High confidence',
     );
     expect(screen.getByTestId('signal-rationale-sig-1')).toHaveTextContent(
-      '3 independent domains across 2 source types; most recent source 2026-06-01.',
+      'Independent domains: 3; source types: 2; most recent source 2026-06-01.',
     );
     expect(screen.getByTestId('signal-citation-count-sig-1')).toHaveTextContent(
-      '1 cited sources',
+      '1 cited source',
     );
     expect(screen.getByTestId('signal-accept-sig-1')).toBeInTheDocument();
     expect(screen.getByTestId('signal-dismiss-sig-1')).toBeInTheDocument();

@@ -496,3 +496,63 @@ describe('web server — token-scoped client portal SSR', () => {
     }
   });
 });
+
+describe('web server — pre-React app frame', () => {
+  it.each([
+    ['en', 'Loading RankMeFast…'], ['ar', 'جارٍ تحميل RankMeFast…'],
+    ['fr', 'Chargement de RankMeFast…'], ['de', 'RankMeFast wird geladen…'],
+    ['es', 'Cargando RankMeFast…'], ['ru', 'Загрузка RankMeFast…'], ['zh', '正在加载 RankMeFast…'],
+  ])('paints the translated frame for %s before the SPA mounts', async (locale, loading) => {
+    const { base, close } = await boot();
+    try {
+      const response = await fetch(`${base}/sites/site-a`, { headers: { cookie: `lang=${locale}` } });
+      expect(response.status).toBe(200); const html = await response.text();
+      expect(html).toContain('data-app-boot=""'); expect(html).toContain('data-app-boot-sidebar=""');
+      expect(html).toContain('role="status" aria-busy="true"'); expect(html).toContain(loading);
+      expect(html).not.toContain('window.__SSR__');
+    } finally { await close(); }
+  });
+  it.each(['/login', '/register', '/forgot-password', '/reset-password', '/verify-email', '/two-factor', '/logout', '/team/invitations', '/team/change-password', '/team/accept/token', '/team/reject/token'])('keeps minimal-layout %s free of dashboard chrome', async (route) => {
+    const { base, close } = await boot();
+    try {
+      const response = await fetch(`${base}${route}`); expect(response.status).toBe(200);
+      expect(await response.text()).not.toContain('data-app-boot');
+    } finally { await close(); }
+  });
+  it('keeps new CSR paths working and leaves public SSR content intact', async () => {
+    const { base, close } = await boot({ renderFn: async () => ({ statusCode: 200, appHtml: '<main>Public document</main>' }) });
+    try {
+      const unknown = await fetch(`${base}/a-future-app-route`); expect(unknown.status).toBe(200);
+      expect(await unknown.text()).toContain('data-app-boot=""');
+      const html = await (await fetch(`${base}/docs`)).text();
+      expect(html).toContain('<main>Public document</main>'); expect(html).not.toContain('data-app-boot');
+    } finally { await close(); }
+  });
+});
+
+describe('web server — saved sidebar frame width', () => {
+  it.each([
+    ['app_sidebar_state=false', '3.5rem'],
+    ['sidebar_state=false', '3.5rem'],
+    ['app_sidebar_state=true; sidebar_state=false', '15rem'],
+    ['app_sidebar_state=invalid; sidebar_state=false', '3.5rem'],
+  ])('honors %s in the static sidebar before React reads its saved choice', async (cookie, width) => {
+    const { base, close } = await boot();
+    try {
+      const html = await (await fetch(`${base}/dashboard`, { headers: { cookie } })).text();
+      expect(html).toContain(`data-app-boot-sidebar="" style="width:${width};`);
+    } finally { await close(); }
+  });
+});
+
+
+describe('web server — case-insensitive minimal routes', () => {
+  it.each(['/LOGIN', '/TEAM/invitations', '/Team/ACCEPT/token'])('matches React Router minimal-layout classification for %s', async (route) => {
+    const { base, close } = await boot();
+    try {
+      const response = await fetch(`${base}${route}`);
+      expect(response.status).toBe(200);
+      expect(await response.text()).not.toContain('data-app-boot');
+    } finally { await close(); }
+  });
+});

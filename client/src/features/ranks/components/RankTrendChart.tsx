@@ -1,3 +1,4 @@
+import { isolateText } from '@shared/lib/bidi';
 import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@shared/ui/card';
@@ -55,7 +56,7 @@ export const RankTrendChart = ({ keyword, series }: RankTrendChartProps) => {
       <CardHeader>
         <CardTitle>{t('trendTitle')}</CardTitle>
         <CardDescription>
-          {t('trendSubtitle', { phrase: keyword.phrase })}
+          {t('trendSubtitle', { phrase: isolateText(keyword.phrase) })}
         </CardDescription>
       </CardHeader>
       <CardContent className="flex flex-col gap-4">
@@ -117,7 +118,7 @@ export const RankTrendChart = ({ keyword, series }: RankTrendChartProps) => {
         <table className="sr-only" data-testid="rank-trend-table">
           <caption>
             {t('trendTableSummary', {
-              phrase: keyword.phrase,
+              phrase: isolateText(keyword.phrase),
               count: points.length,
             })}
           </caption>

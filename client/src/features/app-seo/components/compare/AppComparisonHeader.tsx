@@ -1,3 +1,4 @@
+import { Bdi } from '@shared/components/Bdi';
 import { ExternalLink } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 import { safeExternalHref } from '@shared/security';
@@ -17,7 +18,7 @@ function ListingCard({ listing, storeLabel }: {
       <CardHeader className="px-5">
         <CardDescription>{storeLabel}</CardDescription>
         <CardTitle className="break-words">
-          {listing?.title ?? t('common.notObserved')}
+          <Bdi>{listing?.title ?? t('common.notObserved')}</Bdi>
         </CardTitle>
       </CardHeader>
       <CardContent className="grid gap-3 px-5 sm:grid-cols-2">

@@ -212,7 +212,7 @@ export function decodeTrafficSnapshotCursor(cursor: string): SnapshotCursor {
 const trafficSnapshotCursorSchema = z
     .object({
     capturedAt: z.string().datetime({ offset: true }),
-    id: z.string().uuid(),
+    id: z.string().guid(),
 })
     .strict();
 export async function listSnapshots(accountId: string, query: TrafficSnapshotListQuery, db: Db, allowedSiteIds: readonly string[] | null = null) {

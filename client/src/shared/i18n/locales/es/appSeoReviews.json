@@ -6,9 +6,14 @@
     "title": "Distribución por estrellas",
     "chartLabel": "Número de reseñas por valoración",
     "tableCaption": "Número de reseñas para cada valoración",
-    "star": "{{star}} estrellas",
+    "star_one": "{{star}} estrella",
     "rating": "Valoración",
-    "count": "Reseñas"
+    "count": "Reseñas",
+    "star_zero": "{{star}} estrellas",
+    "star_two": "{{star}} estrellas",
+    "star_few": "{{star}} estrellas",
+    "star_many": "{{star}} estrellas",
+    "star_other": "{{star}} estrellas"
   },
   "trend": {
     "title": "Volumen de reseñas",

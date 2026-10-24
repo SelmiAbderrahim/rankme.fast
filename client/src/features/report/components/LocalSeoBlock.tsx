@@ -1,3 +1,4 @@
+import { Bdi } from '@shared/components/Bdi';
 import { Link } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { StatusChip } from '@shared/ui/status-chip';
@@ -100,7 +101,7 @@ export const LocalSeoBlock = ({ section, siteId }: LocalSeoBlockProps) => {
               {t('localSeoBlock.localPack')}
             </p>
             <p>
-              <span className="font-medium">{section.localPack.keyword}</span>
+              <span className="font-medium"><Bdi>{section.localPack.keyword}</Bdi></span>
               {': '}
               <span className="tabular-nums" dir="ltr">
                 {section.localPack.position === null

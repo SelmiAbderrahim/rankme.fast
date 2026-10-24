@@ -1,3 +1,4 @@
+import { Bdi } from '@shared/components/Bdi';
 /** Durable, refresh-safe AI summary card. */
 import { useCallback, useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
@@ -167,7 +168,7 @@ export const AiSummaryCard = ({
       {summary ? (
         <div className="flex flex-col gap-2">
           <p data-testid="report-ai-summary-text" className="whitespace-pre-line text-sm">
-            {summary.text}
+            <Bdi>{summary.text}</Bdi>
           </p>
           {summary.truncated ? (
             <p data-testid="report-ai-summary-truncated" className="text-muted-foreground text-xs">

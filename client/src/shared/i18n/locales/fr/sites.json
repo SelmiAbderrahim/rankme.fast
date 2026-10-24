@@ -48,6 +48,7 @@
   "pauseFailed": "Impossible de mettre le site en pause.",
   "resumeFailed": "Impossible de réactiver le site.",
   "paused": {
+    "actionBlocked": "Réactivez ce site pour lancer des vérifications, des audits ou des tâches planifiées.",
     "chip": "En pause",
     "menuPause": "Mettre en pause",
     "menuResume": "Réactiver le site",
@@ -59,7 +60,8 @@
     "banner": "Ce site est en pause — aucune vérification ni aucun audit ne s'exécute. Mis en pause {{when}}.",
     "resumeCta": "Réactiver",
     "pausing": "Mise en pause…",
-    "resuming": "Réactivation…"
+    "resuming": "Réactivation…",
+    "optionSuffix": "en pause"
   },
   "errors": {
     "urlRequired": "Saisissez l’URL de votre site.",
@@ -103,7 +105,34 @@
     },
     "navigationLabel": "Vue de l’espace de travail",
     "activeGroupLabel": "{{group}} · {{current}}",
-    "upgradeHint": "Passez à une offre supérieure pour débloquer cet onglet."
+    "upgradeHint": "Passez à une offre supérieure pour débloquer cet onglet.",
+    "switchSite": "Changer de site",
+    "loadingSite": "Chargement du site…",
+    "filterSites": "Filtrer les sites…",
+    "filterPages": "Filtrer les pages…",
+    "choosePage": "Choisir une page",
+    "choosePageDescription": "Ouvrez une page du site.",
+    "siblingPages": "Pages de cette section",
+    "noSites": "Aucun site trouvé",
+    "activeSubViewLabel": "{{tab}} · {{view}}",
+    "navLandmark": "Site",
+    "switchSiteNamed": "Changer de site · {{site}}",
+    "currentSite": "Site actuel",
+    "recentSites": "Récents",
+    "allSites": "Tous les sites",
+    "noSitesMatch": "Aucun site ne correspond à « {{query}} »",
+    "addSite": "Ajouter un site",
+    "manageSites": "Gérer les sites",
+    "collapseSiteMenu": "Réduire le menu du site",
+    "expandSiteMenu": "Développer le menu du site",
+    "filterPagesShort": "Filtrer les pages",
+    "clearFilter": "Effacer le filtre",
+    "noPagesMatch": "Aucune page ne correspond à « {{query}} »",
+    "unknownTab": {
+      "title": "Cette section n’existe pas",
+      "body": "Cette section n’est pas disponible dans cet espace de travail. La vue d’ensemble s’affiche à la place."
+    },
+    "unknownSite": "Site inconnu"
   },
   "overview": {
     "next": {
@@ -205,5 +234,12 @@
   "lookupFailed": {
     "title": "Impossible de charger ce site",
     "description": "Nous n'avons pas pu vérifier ce site pour le moment. Réessayez dans un instant."
+  },
+  "picker": {
+    "loading": "Chargement de vos sites…",
+    "loadFailed": "Impossible de charger vos sites.",
+    "empty": "Vous n’avez encore aucun site.",
+    "addSite": "Ajouter un site",
+    "truncated": "Seuls vos {{shown, number}} premiers sites sont listés ici."
   }
 }

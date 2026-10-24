@@ -1,3 +1,4 @@
+import { isSiteMutation } from '@shared/cache/invalidation';
 import { createSlice } from '@reduxjs/toolkit';
 import type { SitesState } from '../types';
 import { addSite, loadSites, pauseSite, removeSite, renameSite, resumeSite } from './thunks';
@@ -9,6 +10,7 @@ const initialState: SitesState = {
   cursorStack: [],
   loading: false,
   loaded: false,
+  loadedAt: null,
   error: '',
   adding: false,
   addError: '',
@@ -55,6 +57,7 @@ const sitesSlice = createSlice({
         state.nextCursor = action.payload.nextCursor;
         state.loading = false;
         state.loaded = true;
+        state.loadedAt = Date.now();
       })
       .addCase(loadSites.rejected, (state, action) => {
         state.loading = false;
@@ -136,6 +139,10 @@ const sitesSlice = createSlice({
       .addCase(resumeSite.rejected, (state, action) => {
         state.pausingId = null;
         state.pauseError = action.payload ?? '';
+      })
+      .addMatcher(isSiteMutation, (state) => {
+        state.loadedAt = null;
+        state.loading = false;
       });
   },
 });

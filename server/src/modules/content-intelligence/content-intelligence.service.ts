@@ -16,6 +16,7 @@
  * Duplicate idempotency keys return the existing analysis without starting a
  * second run. Enqueue failure marks the fresh run failed and surfaces a 503.
  */
+import { countWords } from '../../shared/utils/text-length.js';
 import type { Queue } from 'bullmq';
 import { Types } from 'mongoose';
 import { assertPublicUrlSafe, makeIdempotencyKey, stripQueryOperators, createPaginationCursorCodec, type PaginationCursorCodec, } from '../../shared/security/index.js';
@@ -312,8 +313,7 @@ export async function saveDraftVersion(input: {
         .update(`${input.analysisId}:${scopedClientKey}`)
         .digest('hex')
         .slice(0, 16)}`;
-    const trimmed = input.markdown.trim();
-    const wordCount = trimmed.length === 0 ? 0 : trimmed.split(/\s+/u).length;
+    const wordCount = countWords(input.markdown);
     doc.draft.markdown = input.markdown;
     doc.draft.wordCount = wordCount;
     doc.draftVersions.push({

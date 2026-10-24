@@ -1,3 +1,4 @@
+import { Bdi } from '@shared/components/Bdi';
 /**
  * One flat bordered card per unified action.
  *
@@ -185,7 +186,7 @@ export function ActionCard({ item, siteId, onReload }: ActionCardProps) {
             >
               {item.affectedUrls.map((url) => (
                 <li key={url} className="break-all">
-                  {url}
+                  <Bdi>{url}</Bdi>
                 </li>
               ))}
             </ul>

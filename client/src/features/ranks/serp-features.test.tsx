@@ -1,3 +1,4 @@
+import { isolateText } from '@shared/lib/bidi';
 /**
  * SERP features panel.
  *
@@ -340,7 +341,7 @@ describe('SerpFeaturesPanel — per-keyword drill-in', () => {
       within(historyChart).getByTestId('serp-features-history-marker-people_also_ask-1'),
     ).toHaveClass('bg-chart-3');
     expect(within(historyTable).getAllByRole('row')).toHaveLength(3);
-    expect(within(historyTable).getByText('Yes (1 answers)')).toBeInTheDocument();
+    expect(within(historyTable).getByText('Yes (1 answer)')).toBeInTheDocument();
     expect(within(historyTable).getByText('No')).toBeInTheDocument();
 
     await user.click(screen.getByRole('button', { name: /Back to all keywords/ }));
@@ -379,7 +380,7 @@ describe('SerpFeaturesPanel — per-keyword drill-in', () => {
     );
     renderPanel('/sites/site-1?tab=serp-features&keyword=kw-1');
     expect(await screen.findByTestId('serp-feature-snippet-source')).toHaveTextContent(
-      'Featured snippet held by rival-one.example',
+      `Featured snippet held by ${isolateText('rival-one.example')}`,
     );
     expect(screen.queryByTestId('serp-feature-owned-snippet')).not.toBeInTheDocument();
   });

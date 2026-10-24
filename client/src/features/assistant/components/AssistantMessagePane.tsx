@@ -1,3 +1,4 @@
+import { Bdi } from '@shared/components/Bdi';
 import { useEffect, useRef, type UIEvent } from 'react';
 import { Bot, MessageCircleQuestion, UserRound } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
@@ -46,7 +47,7 @@ function MessageParts({ parts, role }: { parts: ChatMessagePart[]; role: ChatMes
         <AssistantMarkdown key={`text-${index}`} text={part.text} />
       ) : (
         <p key={`text-${index}`} className="whitespace-pre-wrap break-words">
-          {part.text}
+          <Bdi>{part.text}</Bdi>
         </p>
       );
     }
@@ -124,7 +125,7 @@ function ConversationEmpty({ onPromptSelect }: { onPromptSelect: (prompt: string
               className="h-auto justify-start whitespace-normal text-start"
               onClick={() => onPromptSelect(prompt)}
             >
-              {prompt}
+              <Bdi>{prompt}</Bdi>
             </Button>
           ))}
         </div>

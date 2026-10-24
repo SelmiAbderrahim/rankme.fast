@@ -1,3 +1,4 @@
+import { Bdi } from '@shared/components/Bdi';
 /**
  * MetricTimeseriesChart — the shared metric-agnostic SVG line chart behind
  * BOTH the GSC (clicks/impressions) and GA4 (sessions/active users) daily
@@ -117,7 +118,7 @@ export const MetricTimeseriesChart = <P extends { date: string }>({
             aria-pressed={metricIndex === index}
             onClick={() => setMetricIndex(index === 1 ? 1 : 0)}
           >
-            {toggle.label}
+            <Bdi>{toggle.label}</Bdi>
           </Button>
         ))}
       </div>

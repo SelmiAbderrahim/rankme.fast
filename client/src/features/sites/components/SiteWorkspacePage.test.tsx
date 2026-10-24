@@ -1,5 +1,5 @@
 import { beforeEach, describe, expect, it, vi } from 'vitest';
-import { render, screen, waitFor } from '@testing-library/react';
+import { render, screen, waitFor, within } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { Provider } from 'react-redux';
 import { I18nextProvider } from 'react-i18next';
@@ -17,8 +17,11 @@ import { reportReducer } from '@features/report';
 import { ApiError } from '@shared/api/client';
 import * as sitesApi from '../api';
 import { sitesReducer } from '../store/slice';
-import { SITE_TABS, getSiteTabGroup, type SiteTab } from '../tabState';
+import { SITE_TABS, getSiteTabLabelKey, type SiteTab } from '../tabState';
 import type { SitesState } from '../types';
+import { TooltipProvider } from '@shared/ui/tooltip';
+import { SiteNavigationProvider, SiteNavigationFrame } from './SiteNavigation';
+import { AppTitleBoundary } from '@shared/components/AppTitleBoundary';
 import { SiteWorkspacePage } from './SiteWorkspacePage';
 
 vi.mock('@features/ranks', async (importOriginal) => ({
@@ -318,7 +321,7 @@ const renderAt = (path: string, opts: WorkspaceStoreOpts = {}) => {
       <I18nextProvider i18n={i18n}>
         <MemoryRouter initialEntries={[path]}>
           <Routes>
-            <Route path="/sites/:siteId" element={<SiteWorkspacePage />} />
+            <Route path="/sites/:siteId" element={<TooltipProvider><SiteNavigationProvider><SiteNavigationFrame><SiteWorkspacePage /></SiteNavigationFrame></SiteNavigationProvider></TooltipProvider>} />
           </Routes>
         </MemoryRouter>
       </I18nextProvider>
@@ -329,19 +332,14 @@ const renderAt = (path: string, opts: WorkspaceStoreOpts = {}) => {
 
 const expectActiveDestination = (tab: SiteTab) => {
   expect(screen.getByTestId(`site-tab-panel-${tab}`)).toBeInTheDocument();
-  const group = getSiteTabGroup(tab);
-  if (group) {
-    expect(screen.getByTestId(`site-nav-group-${group.id}`)).toHaveAttribute('data-active', 'true');
-    return;
-  }
-  expect(screen.getByTestId('site-tab-overview')).toHaveAttribute('data-state', 'active');
+  expect(within(screen.getByTestId('site-navigation')).getByRole('link', { name: i18n.t(getSiteTabLabelKey(tab)) })).toHaveAttribute('aria-current', 'page');
 };
 
 const openMobileDestinations = async () => {
   const user = userEvent.setup();
-  await user.click(await screen.findByTestId('site-nav-mobile'));
+  await user.click(await screen.findByTestId('site-page-picker'));
   return {
-    destination: (tab: SiteTab) => screen.getByTestId(`site-nav-mobile-item-${tab}`),
+    destination: (tab: SiteTab) => within(screen.getByRole('dialog')).getByRole('link', { name: i18n.t(getSiteTabLabelKey(tab)) }),
     user,
   };
 };
@@ -356,11 +354,11 @@ describe('SiteWorkspacePage — default tab, deep link, invalid tab, switching',
     renderAt('/sites/site-1');
     await waitFor(() => expect(screen.getByTestId('overview-panel')).toBeInTheDocument());
     expectActiveDestination('overview');
-    expect(screen.getByTestId('site-navigation')).toHaveAccessibleName('Workspace view');
+    expect(screen.getByTestId('site-navigation')).toHaveAccessibleName('Site');
     // Site heading uses the displayName.
     expect(screen.getByRole('heading', { name: 'Example' })).toBeInTheDocument();
     // A distinct display name keeps the domain as the subtitle.
-    expect(screen.getByText('example.com')).toBeInTheDocument();
+    expect(within(screen.getByTestId('site-workspace')).getAllByText('example.com')[0]).toBeInTheDocument();
   });
 
   it('deep-link ?tab=report mounts the ReportPage', async () => {
@@ -459,14 +457,16 @@ describe('SiteWorkspacePage — default tab, deep link, invalid tab, switching',
   it('invalid ?tab= falls back to the overview default', async () => {
     renderAt('/sites/site-1?tab=nonsense');
     await waitFor(() => expect(screen.getByTestId('overview-panel')).toBeInTheDocument());
+    expect(screen.getByTestId('site-unknown-tab-notice')).toHaveTextContent("That section doesn't exist");
+    expect(screen.getByTestId('site-unknown-tab-notice')).toHaveTextContent('That section is unavailable in this workspace, so Overview is shown instead.');
   });
 
   it('clicking a tab writes ?tab= without pushing browser history', async () => {
     renderAt('/sites/site-1');
     const before = window.history.length;
     const user = userEvent.setup();
-    await user.click(screen.getByTestId('site-nav-group-audit-reports'));
-    await user.click(screen.getByTestId('site-tab-report'));
+    await user.click(within(screen.getByTestId('site-navigation')).getByRole('button', { name: 'Audit & reports' }));
+    await user.click(within(screen.getByTestId('site-navigation')).getByRole('link', { name: 'Report' }));
     await waitFor(() => expect(screen.getByTestId('mock-report')).toBeInTheDocument());
     expect(window.history.length).toBe(before);
   });
@@ -475,7 +475,7 @@ describe('SiteWorkspacePage — default tab, deep link, invalid tab, switching',
 describe('SiteWorkspacePage — every destination is open', () => {
   it('lists every workspace destination with no lock marker', async () => {
     renderAt('/sites/site-1');
-    await waitFor(() => expect(screen.getByTestId('site-tab-overview')).toBeInTheDocument());
+    await waitFor(() => expect(within(screen.getByTestId('site-navigation')).getByRole('link', { name: i18n.t('sites:workspace.tabs.overview') })).toBeInTheDocument());
     const { destination } = await openMobileDestinations();
     for (const tab of SITE_TABS) {
       expect(destination(tab)).toBeInTheDocument();
@@ -619,7 +619,7 @@ describe('SiteWorkspacePage — falls back when the site is not yet loaded', () 
         <I18nextProvider i18n={i18n}>
           <MemoryRouter initialEntries={[`/sites/${siteId}`]}>
             <Routes>
-              <Route path="/sites/:siteId" element={<SiteWorkspacePage />} />
+              <Route path="/sites/:siteId" element={<AppTitleBoundary><SiteWorkspacePage /></AppTitleBoundary>} />
             </Routes>
           </MemoryRouter>
         </I18nextProvider>
@@ -644,6 +644,8 @@ describe('SiteWorkspacePage — falls back when the site is not yet loaded', () 
     expect(await screen.findByRole('heading', { name: 'Later page' })).toBeInTheDocument();
     expect(screen.getByTestId('site-workspace')).toBeInTheDocument();
     expect(mockedApi.fetchSiteRequest).toHaveBeenCalledWith('later-page');
+    await waitFor(() => expect(document.title).toBe('Overview · Later page · RankMeFast'));
+    expect(screen.getAllByTestId('route-announcer')).toHaveLength(1);
   });
 
   it('shows a localized not-found page, not a workspace, when the API answers 404', async () => {
@@ -693,7 +695,7 @@ describe('SiteWorkspacePage — falls back when the site is not yet loaded', () 
     renderAt('/sites/site-1', { displayName: '' });
     expect(await screen.findByRole('heading', { name: 'example.com' })).toBeInTheDocument();
     // The domain is the title, so it is not printed a second time.
-    expect(screen.getAllByText('example.com')).toHaveLength(1);
+    expect(within(screen.getByTestId('site-workspace')).getAllByText('example.com')).toHaveLength(1);
   });
 
   it('shows a heading skeleton (not the raw UUID) until the sites slice resolves', () => {
@@ -713,7 +715,7 @@ describe('SiteWorkspacePage — falls back when the site is not yet loaded', () 
         <I18nextProvider i18n={i18n}>
           <MemoryRouter initialEntries={['/sites/site-1']}>
             <Routes>
-              <Route path="/sites/:siteId" element={<SiteWorkspacePage />} />
+              <Route path="/sites/:siteId" element={<AppTitleBoundary><SiteWorkspacePage /></AppTitleBoundary>} />
             </Routes>
           </MemoryRouter>
         </I18nextProvider>
@@ -742,7 +744,7 @@ describe('SiteWorkspacePage — falls back when the site is not yet loaded', () 
         <I18nextProvider i18n={i18n}>
           <MemoryRouter initialEntries={['/sites/site-1']}>
             <Routes>
-              <Route path="/sites/:siteId" element={<SiteWorkspacePage />} />
+              <Route path="/sites/:siteId" element={<AppTitleBoundary><SiteWorkspacePage /></AppTitleBoundary>} />
             </Routes>
           </MemoryRouter>
         </I18nextProvider>
@@ -788,7 +790,7 @@ describe('SiteWorkspacePage — paused banner', () => {
 
   it('renders no banner when the site is not paused', async () => {
     renderAt('/sites/site-1');
-    await waitFor(() => expect(screen.getByTestId('site-tab-overview')).toBeInTheDocument());
+    await waitFor(() => expect(within(screen.getByTestId('site-navigation')).getByRole('link', { name: i18n.t('sites:workspace.tabs.overview') })).toBeInTheDocument());
     expect(screen.queryByTestId('site-paused-banner')).toBeNull();
   });
 
@@ -846,8 +848,8 @@ describe('SiteWorkspacePage — RTL', () => {
     await changeLanguage('ar');
     expect(document.documentElement.dir).toBe('rtl');
     renderAt('/sites/site-1');
-    await waitFor(() => expect(screen.getByTestId('site-tab-overview')).toBeInTheDocument());
+    await waitFor(() => expect(within(screen.getByTestId('site-navigation')).getByRole('link', { name: i18n.t('sites:workspace.tabs.overview') })).toBeInTheDocument());
     // Arabic overview tab label
-    expect(screen.getByTestId('site-tab-overview')).toHaveTextContent('نظرة عامة');
+    expect(within(screen.getByTestId('site-navigation')).getByRole('link', { name: i18n.t('sites:workspace.tabs.overview') })).toHaveTextContent('نظرة عامة');
   });
 });

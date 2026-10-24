@@ -16,9 +16,30 @@
  *    and the `messageKey` it rendered from, so clients and logs can key off a
  *    value that does not move when the copy changes.
  */
-import type { ZodError, ZodIssue } from 'zod';
+import { z, type ZodError, type ZodIssue } from 'zod';
+
+import { canonicalErrorCode } from './error-codes.js';
 import { DEFAULT_LOCALE, isSupportedLocale, type SupportedLocale } from './locales.js';
 import { DICTIONARIES, translate, type DictionaryShape, type TranslationVars } from './index.js';
+// Classify before Zod removes the input from public issues; never retain raw values.
+z.config({
+    customError: (issue) => {
+        if (issue.code === 'invalid_type') {
+            if (issue.input === undefined) return 'validation.issue.required';
+            if (issue.expected === 'number' && (issue.input === Infinity || issue.input === -Infinity)) return 'validation.issue.notFinite';
+            if (issue.expected === 'date' && issue.input instanceof Date) return 'validation.issue.invalidDate';
+        }
+        if (issue.code === 'invalid_value') {
+            if (issue.inst instanceof z.ZodEnum) {
+                if (issue.input === undefined) return 'validation.issue.required';
+                return typeof issue.input === 'string' ? 'validation.issue.invalidEnumValue' : 'validation.issue.invalidType';
+            }
+            return 'validation.issue.invalidLiteral';
+        }
+        return undefined;
+    },
+});
+
 /**
  * Every dot-path in the English dictionary whose leaf is a string. Nested
  * objects recurse; anything else (arrays, functions) contributes nothing, so a
@@ -44,8 +65,14 @@ export interface LocalizedErrorDescriptor {
 /** Response metadata for one localized error. */
 export interface LocalizedErrorPayload {
     code: string;
+    /** Original code when normalization changes it, for compatibility. */
+    legacyCode?: string;
     messageKey: string;
     message: string;
+}
+function withCanonicalCode(code: string): Pick<LocalizedErrorPayload, 'code' | 'legacyCode'> {
+    const canonical = canonicalErrorCode(code);
+    return canonical === code ? { code } : { code: canonical, legacyCode: code };
 }
 const PLACEHOLDER = /\{\{\s*[a-zA-Z0-9_]+\s*\}\}/g;
 const KEY_SHAPE = /^[a-zA-Z][a-zA-Z0-9_-]*(\.[a-zA-Z0-9_-]+)+$/;
@@ -171,7 +198,7 @@ export function resolveLocalizedError(input: ResolveLocalizedErrorInput): Locali
     if (!hasTranslationKey(input.messageKey)) {
         const family = statusFamily(input.status);
         return {
-            code: family.code,
+            ...withCanonicalCode(family.code),
             messageKey: family.messageKey,
             message: renderTranslation(locale, family.messageKey),
         };
@@ -181,7 +208,7 @@ export function resolveLocalizedError(input: ResolveLocalizedErrorInput): Locali
         ? input.code
         : deriveErrorCode(messageKey);
     return {
-        code,
+        ...withCanonicalCode(code),
         messageKey,
         message: renderTranslation(locale, messageKey, sanitizeTranslationVars(input.vars)),
     };
@@ -202,8 +229,7 @@ export interface LocalizedZodDetails {
     fieldErrors: Record<string, string[]>;
     issues: LocalizedZodIssue[];
 }
-type SizedType = 'array' | 'string' | 'number' | 'set' | 'date' | 'bigint';
-const TOO_SMALL_KEYS: Record<SizedType, TranslationKey> = {
+const TOO_SMALL_KEYS: Readonly<Record<string, TranslationKey>> = {
     string: 'validation.issue.tooSmallString',
     number: 'validation.issue.tooSmallNumber',
     bigint: 'validation.issue.tooSmallNumber',
@@ -211,7 +237,7 @@ const TOO_SMALL_KEYS: Record<SizedType, TranslationKey> = {
     set: 'validation.issue.tooSmallArray',
     date: 'validation.issue.tooSmallDate',
 };
-const TOO_BIG_KEYS: Record<SizedType, TranslationKey> = {
+const TOO_BIG_KEYS: Readonly<Record<string, TranslationKey>> = {
     string: 'validation.issue.tooBigString',
     number: 'validation.issue.tooBigNumber',
     bigint: 'validation.issue.tooBigNumber',
@@ -223,6 +249,7 @@ const STRING_VALIDATION_KEYS: Readonly<Record<string, TranslationKey>> = Object.
     email: 'validation.issue.invalidEmail',
     url: 'validation.issue.invalidUrl',
     uuid: 'validation.issue.invalidUuid',
+    guid: 'validation.issue.invalidUuid',
     datetime: 'validation.issue.invalidDatetime',
 });
 const ISSUE_CODE_KEYS: Readonly<Record<string, TranslationKey>> = Object.freeze({
@@ -231,13 +258,28 @@ const ISSUE_CODE_KEYS: Readonly<Record<string, TranslationKey>> = Object.freeze(
     invalid_union: 'validation.issue.invalidUnion',
     invalid_union_discriminator: 'validation.issue.invalidUnionDiscriminator',
     invalid_enum_value: 'validation.issue.invalidEnumValue',
-    invalid_arguments: 'validation.issue.invalidArguments',
-    invalid_return_type: 'validation.issue.invalidReturnType',
     invalid_date: 'validation.issue.invalidDate',
-    invalid_intersection_types: 'validation.issue.invalidIntersectionTypes',
     not_finite: 'validation.issue.notFinite',
+    invalid_key: 'validation.issue.invalidType',
+    invalid_element: 'validation.issue.invalidType',
     custom: 'validation.issue.custom',
 });
+/** Preserve the API's issue codes while consuming native Zod issues. */
+function wireIssueCode(issue: ZodIssue): string {
+    if (issue.code === 'invalid_format') return 'invalid_string';
+    if (issue.code === 'invalid_value') {
+        if (issue.message === 'validation.issue.required' || issue.message === 'validation.issue.invalidType') return 'invalid_type';
+        return issue.message === 'validation.issue.invalidEnumValue' || issue.values.length !== 1
+            ? 'invalid_enum_value'
+            : 'invalid_literal';
+    }
+    if (issue.code === 'invalid_union' && issue.discriminator !== undefined) return 'invalid_union_discriminator';
+    if (issue.code === 'invalid_type') {
+        if (issue.message === 'validation.issue.notFinite') return 'not_finite';
+        if (issue.message === 'validation.issue.invalidDate') return 'invalid_date';
+    }
+    return issue.code;
+}
 /** Bounded numeric bound → interpolation var; anything else is dropped. */
 function boundVar(name: string, value: unknown): TranslationVars | undefined {
     if (typeof value === 'number' && Number.isFinite(value))
@@ -264,27 +306,25 @@ function issueTranslation(issue: ZodIssue): IssueTranslation {
         return { messageKey: issue.message };
     if (issue.code === 'invalid_type') {
         return {
-            messageKey: issue.received === 'undefined'
-                ? 'validation.issue.required'
-                : 'validation.issue.invalidType',
+            messageKey: 'validation.issue.invalidType',
         };
     }
-    if (issue.code === 'invalid_string') {
-        const validation = typeof issue.validation === 'string' ? issue.validation : '';
+    if (issue.code === 'invalid_format') {
+        const validation = issue.format;
         return {
             messageKey: STRING_VALIDATION_KEYS[validation] ?? 'validation.issue.invalidString',
         };
     }
     if (issue.code === 'too_small') {
-        return withVars(TOO_SMALL_KEYS[issue.type], boundVar('minimum', issue.minimum));
+        return withVars(TOO_SMALL_KEYS[issue.origin] ?? 'validation.issue.unknown', boundVar('minimum', issue.minimum));
     }
     if (issue.code === 'too_big') {
-        return withVars(TOO_BIG_KEYS[issue.type], boundVar('maximum', issue.maximum));
+        return withVars(TOO_BIG_KEYS[issue.origin] ?? 'validation.issue.unknown', boundVar('maximum', issue.maximum));
     }
     if (issue.code === 'not_multiple_of') {
-        return withVars('validation.issue.notMultipleOf', boundVar('multipleOf', issue.multipleOf));
+        return withVars('validation.issue.notMultipleOf', boundVar('multipleOf', issue.divisor));
     }
-    return { messageKey: ISSUE_CODE_KEYS[issue.code] ?? 'validation.issue.unknown' };
+    return { messageKey: ISSUE_CODE_KEYS[wireIssueCode(issue)] ?? 'validation.issue.unknown' };
 }
 /**
  * Localize a `ZodError` into the compatible details payload. Field paths and
@@ -300,7 +340,7 @@ export function localizeZodError(locale: unknown, error: ZodError): LocalizedZod
         const { messageKey, vars } = issueTranslation(issue);
         const message = renderTranslation(resolved, messageKey, vars);
         const path = issue.path.filter((segment): segment is string | number => typeof segment === 'string' || typeof segment === 'number');
-        issues.push({ code: issue.code, path, messageKey, message });
+        issues.push({ code: wireIssueCode(issue), path, messageKey, message });
         const head = path[0];
         if (head === undefined) {
             formErrors.push(message);

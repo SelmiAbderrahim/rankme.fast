@@ -20,6 +20,7 @@ import { Button } from '@shared/ui/button';
 import { formatRelativeTime } from '@shared/lib/datetime';
 import { siteLabel } from '@shared/lib/siteLabel';
 import { useAppDispatch, useAppSelector } from '@shared/hooks/redux';
+import { useAppTitleDetail } from '@shared/navigation/appTitleContext';
 import { APP_PAGE_ICONS } from '@shared/navigation/appPageIcons';
 import { rootReducer } from '@app/store';
 import { loadBacklinksPage, backlinksReducer } from '@features/backlinks';
@@ -55,7 +56,6 @@ import {
 } from '../store/selectors';
 import { useSiteLookup } from '../useSiteLookup';
 import { OverviewPanel } from './OverviewPanel';
-import { SiteWorkspaceNavigation } from './SiteWorkspaceNavigation';
 
 const LazyActionsPanel = lazy(async () => {
   const [{ ActionsPanel, actionsReducer }, { rootReducer }] = await Promise.all([
@@ -294,7 +294,7 @@ export const SiteWorkspacePage = () => {
   }, [dispatch, sitesLoaded]);
 
   // `useSiteTab` already coerces unknown `?tab=` values to the overview default.
-  const [activeTab, setActiveTab] = useSiteTab();
+  const [activeTab, , unknownTab] = useSiteTab();
   // Google-tab drill-in (`?view=`) — null means the overview card stack.
   const [googleView] = useSiteSubView();
 
@@ -303,6 +303,7 @@ export const SiteWorkspacePage = () => {
   const listedSite = sites.find((s) => s.id === siteId);
   const lookup = useSiteLookup(siteId, !listedSite && (sitesLoaded || Boolean(sitesError)));
   const site = listedSite ?? lookup.site ?? undefined;
+  useAppTitleDetail(site ? [t(getSiteTabLabelKey(activeTab)), siteLabel(site)] : null);
 
   if (!site) {
     if (lookup.status === 'notFound') {
@@ -515,10 +516,12 @@ export const SiteWorkspacePage = () => {
           </AlertDescription>
         </Alert>
       ) : null}
-      <SiteWorkspaceNavigation
-        activeTab={activeTab}
-        onTabChange={setActiveTab}
-      />
+      {unknownTab ? (
+        <Alert role="status" data-testid="site-unknown-tab-notice">
+          <AlertTitle>{t('workspace.unknownTab.title')}</AlertTitle>
+          <AlertDescription>{t('workspace.unknownTab.body')}</AlertDescription>
+        </Alert>
+      ) : null}
       <section
         className="min-w-0"
         aria-label={t(getSiteTabLabelKey(activeTab))}

@@ -597,8 +597,8 @@ describe("report PDF text and pagination support", () => {
       bold: "NotoSansArabic-Regular.ttf",
     });
     expect(reportPdfFontFiles("zh")).toEqual({
-      regular: "NotoSansSC-Regular.otf",
-      bold: "NotoSansSC-Regular.otf",
+      regular: "NotoSansSC-Regular.ttf",
+      bold: "NotoSansSC-Regular.ttf",
     });
     expect(reportPdfFontFiles("en")).toEqual({
       regular: "NotoSans-Regular.ttf",

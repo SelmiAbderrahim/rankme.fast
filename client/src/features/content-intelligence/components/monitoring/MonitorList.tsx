@@ -1,3 +1,4 @@
+import { Bdi } from '@shared/components/Bdi';
 import { useCallback, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { ExternalLink, Eye } from 'lucide-react';
@@ -218,7 +219,7 @@ function MonitorRow({ siteId, monitor, onOpen }: MonitorRowProps) {
             data-testid={`monitor-target-${monitor.monitorId}`}
           >
             <ExternalLink aria-hidden="true" className="size-3" />
-            {monitor.targetUrl}
+            <Bdi>{monitor.targetUrl}</Bdi>
           </a>
         </div>
       </TableCell>

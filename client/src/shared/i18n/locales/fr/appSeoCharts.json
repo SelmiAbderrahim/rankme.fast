@@ -9,6 +9,11 @@
   "empty": { "noProfileTitle": "Enregistrez d’abord une app", "noProfileDescription": "Le suivi exige un identifiant de boutique enregistré.", "noSubscriptions": "Aucun classement n’est encore suivi pour cette app." },
   "disabled": { "title": "Le suivi des classements est désactivé", "description": "Les positions enregistrées restent disponibles. Les nouveaux abonnements et contrôles sont suspendus." },
   "upsell": { "title": "Ajoutez le suivi des classements App SEO", "description": "Ce compte Pro a besoin du module App SEO pour lancer les contrôles hebdomadaires.", "cta": "Voir les options App SEO" },
-  "limit": { "title": "Limite atteinte", "description": "Chaque profil d’application peut suivre jusqu’à {{limit}} classements." },
+  "limit": { "title": "Limite atteinte", "description_one": "Chaque profil d’application peut suivre jusqu’à {{limit}} classement.",
+    "description_zero": "Chaque profil d’application peut suivre jusqu’à {{limit}} classement.",
+    "description_two": "Chaque profil d’application peut suivre jusqu’à {{limit}} classements.",
+    "description_few": "Chaque profil d’application peut suivre jusqu’à {{limit}} classements.",
+    "description_many": "Chaque profil d’application peut suivre jusqu’à {{limit}} classements.",
+    "description_other": "Chaque profil d’application peut suivre jusqu’à {{limit}} classements." },
   "errors": { "title": "Impossible de mettre à jour le suivi", "requestFailed": "La demande n’a pas pu aboutir. Réessayez." }
 }

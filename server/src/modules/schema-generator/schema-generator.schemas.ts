@@ -9,7 +9,7 @@
  */
 import { z } from 'zod';
 import { safeUrlString } from '../../shared/security/input-guards.js';
-import { EVIDENCE_SOURCES } from './evidence.js';
+import { EVIDENCE_SOURCES } from './evidence-sources.js';
 import { SUPPORTED_SCHEMA_TYPES } from './schema-types.registry.js';
 const objectIdSchema = z
     .string()
@@ -33,7 +33,7 @@ const generationBodyShape = {
  * take the URL as a lookup key against documents this account already owns, so
  * they only need the length bound.
  */
-const withSafeUrlForFetchPath = <T extends z.ZodTypeAny>(schema: T) => schema.superRefine((value: {
+const withSafeUrlForFetchPath = <T extends z.ZodType<{ source: string; pageUrl: string }>>(schema: T) => schema.superRefine((value: {
     source: string;
     pageUrl: string;
 }, ctx: z.RefinementCtx) => {

@@ -26,12 +26,29 @@
     "dofollowYes": "Dofollow",
     "dofollowNo": "Nofollow",
     "loadMore": "加载更多",
-    "loading": "加载中…"
+    "loading": "加载中…",
+    "scope_zero": "显示 {{shown}} 条，共 {{total}} 条反向链接（每个引用域名保留一条链接）",
+    "scope_one": "显示 {{shown}} 条，共 {{total}} 条反向链接（每个引用域名保留一条链接）",
+    "scope_two": "显示 {{shown}} 条，共 {{total}} 条反向链接（每个引用域名保留一条链接）",
+    "scope_few": "显示 {{shown}} 条，共 {{total}} 条反向链接（每个引用域名保留一条链接）",
+    "scope_many": "显示 {{shown}} 条，共 {{total}} 条反向链接（每个引用域名保留一条链接）",
+    "scope_other": "显示 {{shown}} 条，共 {{total}} 条反向链接（每个引用域名保留一条链接）",
+    "scopeNoTotal_zero": "显示 {{shown}} 条反向链接（每个引用域名保留一条链接）",
+    "scopeNoTotal_one": "显示 {{shown}} 条反向链接（每个引用域名保留一条链接）",
+    "scopeNoTotal_two": "显示 {{shown}} 条反向链接（每个引用域名保留一条链接）",
+    "scopeNoTotal_few": "显示 {{shown}} 条反向链接（每个引用域名保留一条链接）",
+    "scopeNoTotal_many": "显示 {{shown}} 条反向链接（每个引用域名保留一条链接）",
+    "scopeNoTotal_other": "显示 {{shown}} 条反向链接（每个引用域名保留一条链接）"
   },
   "refresh": {
     "button": "刷新",
-    "cooldown": "请等待 {{seconds}} 秒后再刷新。",
-    "failed": "暂时无法刷新。仍显示您最近的数据。"
+    "cooldown_one": "请等待 {{seconds}} 秒后再刷新。",
+    "failed": "暂时无法刷新。仍显示您最近的数据。",
+    "cooldown_zero": "请等待 {{seconds}} 秒后再刷新。",
+    "cooldown_two": "请等待 {{seconds}} 秒后再刷新。",
+    "cooldown_few": "请等待 {{seconds}} 秒后再刷新。",
+    "cooldown_many": "请等待 {{seconds}} 秒后再刷新。",
+    "cooldown_other": "请等待 {{seconds}} 秒后再刷新。"
   },
   "locked": {
     "title": "升级以解锁反向链接",
@@ -74,7 +91,7 @@
     "preview": { "unit": "1 个链接审核单位", "rowClamp": "最多 1000 行 · 100 个评分域名", "available": "配额可用", "capReached": "配额已用完", "explanation": "每次运行使用 1 个 toxicity_reviews 单位。包含配额用完后可购买 toxicity-reviews-10 包。预览和取消不会消耗单位。", "confirm": "确认并使用 1 个单位", "cancel": "取消", "button": "预览审核消耗" },
     "states": { "lockedTitle": "升级以审核反向链接", "lockedBody": "Pro 和 Agency 套餐可使用链接审核和拒绝链接文件生成器。", "disabledTitle": "新链接审核已暂停", "disabledBody": "暂停新评分期间，已保存的审核仍可查看。", "capTitle": "链接审核配额已用完", "capBody": "添加 toxicity-reviews-10 包或等待配额刷新。", "errorTitle": "无法加载链接审核", "errorBody": "请稍后重试。已保存结果和此前下载不受影响。", "listError": "无法加载已保存的链接审核。", "runningTitle": "正在审核已保存的反向链接观测", "failedTitle": "链接审核已停止", "providerRefunded": "提供商在保留任何评分行之前失败。预留单位已退还。", "ceilingConsumed": "运行在成本上限处停止。预留单位已消耗，且未执行任何自动操作。", "partial": "部分提供商观测", "emptyTitle": "没有评分行", "emptyBody": "运行已完成，但未保留评分后的反向链接行。" },
     "actions": { "viewPlans": "查看套餐", "viewPacks": "查看点数包", "open": "打开", "back": "返回新审核" },
-    "runs": { "title": "已保存的审核", "description": "重新打开已完成审核不会消耗新单位。", "date": "创建时间", "status": "状态", "rows": "行数", "emptyTitle": "没有已保存的审核", "emptyBody": "准备好后，可先进行免费的消耗预览。" },
+    "runs": { "title": "已保存的审核", "description": "重新打开已保存的检查，不启动新的检查。", "date": "创建时间", "status": "状态", "rows": "行数", "emptyTitle": "没有已保存的审核", "emptyBody": "准备好后预览一次检查。" },
     "filters": { "status": "按状态筛选审核", "allStatuses": "全部状态", "band": "按规则分组筛选行", "allBands": "全部分组" },
     "status": { "queued": "排队中", "running": "运行中", "succeeded": "已完成", "failed": "失败" },
     "results": { "title": "链接审核结果", "rubric": "规则 {{version}}", "rowsTitle": "已评分的反向链接行", "observationCopy": "分组描述固定规则下已保存的提供商观测，不预测搜索引擎会采取的操作。", "providerObservation": "提供商观测 · 确定性规则" },

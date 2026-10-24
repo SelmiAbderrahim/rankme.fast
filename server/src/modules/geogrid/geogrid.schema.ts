@@ -33,7 +33,7 @@ export const geogridZoomSchema = z
     .min(GEOGRID_MIN_ZOOM)
     .max(GEOGRID_MAX_ZOOM);
 export const geogridDefinitionSchema = z.object({
-    keywordId: z.string().uuid(),
+    keywordId: z.string().guid(),
     centerLat: geogridCenterLatSchema,
     centerLng: geogridCenterLngSchema,
     spacingMeters: geogridSpacingSchema,
@@ -42,7 +42,7 @@ export const geogridDefinitionSchema = z.object({
 });
 export type GeogridDefinitionInput = z.infer<typeof geogridDefinitionSchema>;
 export const listGeogridScansQuerySchema = z.object({
-    keywordId: z.string().uuid().optional(),
+    keywordId: z.string().guid().optional(),
     limit: z.coerce.number().int().min(1).max(50).default(20),
 });
 export const geogridSiteParamSchema = z.object({
@@ -50,5 +50,5 @@ export const geogridSiteParamSchema = z.object({
 });
 export const geogridScanIdParamSchema = z.object({
     siteId: z.string().min(1),
-    scanId: z.string().uuid(),
+    scanId: z.string().guid(),
 });

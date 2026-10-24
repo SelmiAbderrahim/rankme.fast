@@ -6,9 +6,14 @@
     "title": "توزيع النجوم",
     "chartLabel": "عدد المراجعات حسب تقييم النجوم",
     "tableCaption": "عدد المراجعات لكل تقييم بالنجوم",
-    "star": "{{star}} نجوم",
+    "star_one": "{{star}} نجمة",
     "rating": "التقييم",
-    "count": "المراجعات"
+    "count": "المراجعات",
+    "star_zero": "{{star}} نجوم",
+    "star_two": "{{star}} من النجوم",
+    "star_few": "{{star}} نجوم",
+    "star_many": "{{star}} نجمة",
+    "star_other": "{{star}} نجمة"
   },
   "trend": {
     "title": "حجم المراجعات",

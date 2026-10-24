@@ -6,9 +6,14 @@
     "title": "Sterneverteilung",
     "chartLabel": "Anzahl der Rezensionen nach Sternen",
     "tableCaption": "Anzahl der Rezensionen je Sternebewertung",
-    "star": "{{star}} Sterne",
+    "star_one": "{{star}} Stern",
     "rating": "Bewertung",
-    "count": "Rezensionen"
+    "count": "Rezensionen",
+    "star_zero": "{{star}} Sterne",
+    "star_two": "{{star}} Sterne",
+    "star_few": "{{star}} Sterne",
+    "star_many": "{{star}} Sterne",
+    "star_other": "{{star}} Sterne"
   },
   "trend": {
     "title": "Rezensionsvolumen",

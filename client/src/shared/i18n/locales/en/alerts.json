@@ -22,20 +22,30 @@
   },
   "list": {
     "title": "Your rules",
-    "capUsed": "{{count}} rules in use.",
+    "capUsed_one": "{{count}} rule in use.",
     "type": "Type",
     "threshold": "Threshold",
     "channels": "Channels",
     "state": "State",
     "actions": "Actions",
-    "emailCount": "{{count}} email recipients",
+    "emailCount_one": "{{count}} email recipient",
     "secretTail": "signing key ends {{tail}}",
     "enabled": "On",
     "disabled": "Off",
     "enable": "Turn on",
     "disable": "Turn off",
     "viewLog": "View log",
-    "delete": "Delete"
+    "delete": "Delete",
+    "capUsed_zero": "{{count}} rules in use.",
+    "capUsed_two": "{{count}} rules in use.",
+    "capUsed_few": "{{count}} rules in use.",
+    "capUsed_many": "{{count}} rules in use.",
+    "capUsed_other": "{{count}} rules in use.",
+    "emailCount_zero": "{{count}} email recipients",
+    "emailCount_two": "{{count}} email recipients",
+    "emailCount_few": "{{count}} email recipients",
+    "emailCount_many": "{{count}} email recipients",
+    "emailCount_other": "{{count}} email recipients"
   },
   "builder": {
     "title": "New rule",
@@ -68,7 +78,7 @@
     "rankPair": "Position {{before}} on {{beforeAt}}, then {{after}} on {{afterAt}}.",
     "linkPair": "{{beforeCount}} domains on {{beforeAt}}, then {{afterCount}} on {{afterAt}}.",
     "notRanked": "below the top 100",
-    "domainCount": "{{count}} domains changed",
+    "domainCount_one": "{{count}} domain changed",
     "attempt": "Attempt {{attempt}}",
     "statusLabel": {
       "pending": "Sending",
@@ -91,12 +101,17 @@
       "unsafe_url": "That address is no longer safe to reach.",
       "channel_timeout": "The channel took too long to answer.",
       "retries_exhausted": "We stopped after three failed tries."
-    }
+    },
+    "domainCount_zero": "{{count}} domains changed",
+    "domainCount_two": "{{count}} domains changed",
+    "domainCount_few": "{{count}} domains changed",
+    "domainCount_many": "{{count}} domains changed",
+    "domainCount_other": "{{count}} domains changed"
   },
   "states": {
     "cap": {
       "title": "Rule limit reached",
-      "body": "You have used every alert rule on your plan."
+      "body": "Another alert rule cannot be added right now."
     },
     "tierLocked": {
       "title": "Channel needs a higher plan",

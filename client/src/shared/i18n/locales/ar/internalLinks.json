@@ -76,8 +76,13 @@
   },
   "runs": {
     "snapshot": "المخزون: {{date}}",
-    "suggestionCount": "{{count}} اقتراحات",
-    "open": "فتح الجولة"
+    "suggestionCount_one": "{{count}} اقتراح",
+    "open": "فتح الجولة",
+    "suggestionCount_zero": "{{count}} اقتراحات",
+    "suggestionCount_two": "{{count}} من الاقتراحات",
+    "suggestionCount_few": "{{count}} اقتراحات",
+    "suggestionCount_many": "{{count}} اقتراح",
+    "suggestionCount_other": "{{count}} اقتراح"
   },
   "flags": {
     "orphan": "يتيمة",

@@ -1,3 +1,4 @@
+import { Bdi } from '@shared/components/Bdi';
 import { useTranslation } from 'react-i18next';
 import { SAFE_EXTERNAL_REL, safeExternalHref } from '@shared/security';
 import { Badge } from '@shared/ui/badge';
@@ -25,7 +26,7 @@ export const QueryDrillDown = ({ candidate }: QueryDrillDownProps) => {
   return (
     <Card data-testid="cannibalization-drilldown">
       <CardHeader>
-        <CardTitle data-testid="cannibalization-drilldown-query">{candidate.query}</CardTitle>
+        <CardTitle data-testid="cannibalization-drilldown-query"><Bdi>{candidate.query}</Bdi></CardTitle>
         <CardDescription>
           {t('drilldown.provenance', {
             days: candidate.windowDays,
@@ -76,7 +77,7 @@ export const QueryDrillDown = ({ candidate }: QueryDrillDownProps) => {
                 <TableCell className="flex flex-wrap items-center gap-2">
                   {/* eslint-disable-next-line react/jsx-no-target-blank -- SAFE_EXTERNAL_REL contains noopener and noreferrer. */}
                   <a href={safeExternalHref(page.url)} rel={SAFE_EXTERNAL_REL} target="_blank">
-                    {page.url}
+                    <Bdi>{page.url}</Bdi>
                   </a>
                   {page.isPrimary ? (
                     <Badge data-testid="cannibalization-primary-badge">

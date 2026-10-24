@@ -1,3 +1,4 @@
+import { Bdi } from '@shared/components/Bdi';
 import { useTranslation } from 'react-i18next';
 import type { Site } from '@features/sites';
 import { Checkbox } from '@shared/ui/checkbox';
@@ -184,10 +185,10 @@ export function McpScopeFields({
                 >
                   <FieldContent>
                     <FieldLabel htmlFor={`${idPrefix}-site-${site.id}`}>
-                      {site.label}
+                      <Bdi>{site.label}</Bdi>
                     </FieldLabel>
                     <FieldDescription>
-                      {site.description}
+                      <Bdi>{site.description}</Bdi>
                       {site.missing ? ` · ${t('mcp.sites.removeHint')}` : ''}
                     </FieldDescription>
                   </FieldContent>

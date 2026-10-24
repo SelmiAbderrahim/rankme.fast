@@ -1,3 +1,4 @@
+import { Bdi } from '@shared/components/Bdi';
 import { useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
@@ -94,9 +95,9 @@ export const ProfileInfoCard = () => {
           </Avatar>
           <div className="flex min-w-0 flex-col gap-1">
             <span className="text-foreground truncate text-base font-semibold">
-              {name || user.email}
+              <Bdi>{name || user.email}</Bdi>
             </span>
-            <span className="text-muted-foreground truncate text-sm">{user.email}</span>
+            <span className="text-muted-foreground truncate text-sm"><Bdi>{user.email}</Bdi></span>
             <div className="mt-1 flex flex-wrap items-center gap-2">
               {/* `user.role` is the PLATFORM role (Member/Admin/SuperAdmin), not the
                   team role the Team page lists, so a plain "Member" badge read as a

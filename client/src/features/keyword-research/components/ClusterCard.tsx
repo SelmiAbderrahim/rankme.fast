@@ -1,3 +1,4 @@
+import { Bdi } from '@shared/components/Bdi';
 /**
  * One AI keyword cluster.
  *
@@ -58,7 +59,7 @@ export const ClusterCard = ({
   return (
     <Card data-testid={`kw-cluster-card-${cluster.clusterId}`}>
       <CardHeader className="flex flex-col gap-2">
-        <CardTitle className="text-base break-words">{cluster.label}</CardTitle>
+        <CardTitle className="text-base break-words"><Bdi>{cluster.label}</Bdi></CardTitle>
         <div className="flex flex-wrap items-center gap-2">
           <StatusChip
             tone="primary"
@@ -124,7 +125,7 @@ export const ClusterCard = ({
                     className="border-border rounded-md border px-2.5 py-1.5 text-xs"
                     data-testid={`kw-cluster-member-${cluster.clusterId}-${keywordSlug(keyword)}`}
                   >
-                    <span className="font-medium break-words">{keyword}</span>
+                    <span className="font-medium break-words"><Bdi>{keyword}</Bdi></span>
                     {ref ? (
                       <span className="text-muted-foreground ms-2">
                         {t(`keywordResearch:clusters.memberSource.${ref.source}`)}{' '}

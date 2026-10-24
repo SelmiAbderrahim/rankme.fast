@@ -49,9 +49,13 @@
     "loadMore": "加载更多",
     "warnings": "一个或多个警告",
     "notAvailable": "不可用",
-    "warningCount": "{{count}} 条警告",
+    "warningCount_one": "{{count}} 条警告",
     "warningCount_other": "{{count}} 条警告",
-    "progress": "已完成 {{value}}%"
+    "progress": "已完成 {{value}}%",
+    "warningCount_zero": "{{count}} 条警告",
+    "warningCount_two": "{{count}} 条警告",
+    "warningCount_few": "{{count}} 条警告",
+    "warningCount_many": "{{count}} 条警告"
   },
   "status": {
     "queued": "排队中",
@@ -170,9 +174,14 @@
       "saveFailed": "无法保存此简报版本，请重试。",
       "versionHistory": "简报版本历史",
       "noVersions": "尚无已保存的简报版本。",
-      "versionMeta": "{{date}} · {{count}} 节",
+      "versionMeta_one": "{{date}} · {{count}} 节",
       "unsavedGuard": "简报存在未保存的更改。",
-      "savedHint": "这是可编辑的建议，不会发布任何内容。"
+      "savedHint": "这是可编辑的建议，不会发布任何内容。",
+      "versionMeta_zero": "{{date}} · {{count}} 节",
+      "versionMeta_two": "{{date}} · {{count}} 节",
+      "versionMeta_few": "{{date}} · {{count}} 节",
+      "versionMeta_many": "{{date}} · {{count}} 节",
+      "versionMeta_other": "{{date}} · {{count}} 节"
     },
     "draft": {
       "title": "初稿",
@@ -183,15 +192,25 @@
       "saveFailed": "无法保存此版本，请重试。",
       "versionHistory": "版本历史",
       "noVersions": "尚无已保存版本。",
-      "versionMeta": "{{date}} · {{count}} 字",
+      "versionMeta_one": "{{date}} · {{count}} 字",
       "copy": "复制到剪贴板",
       "copying": "正在复制…",
       "copied": "已复制到剪贴板。",
       "copyFailed": "无法复制草稿。",
       "copyRetry": "再次尝试复制",
       "export": "导出为 Markdown",
-      "wordCount": "{{count}} 词",
-      "unsavedGuard": "存在未保存的更改。"
+      "wordCount_one": "{{count}} 词",
+      "unsavedGuard": "存在未保存的更改。",
+      "versionMeta_zero": "{{date}} · {{count}} 字",
+      "versionMeta_two": "{{date}} · {{count}} 字",
+      "versionMeta_few": "{{date}} · {{count}} 字",
+      "versionMeta_many": "{{date}} · {{count}} 字",
+      "versionMeta_other": "{{date}} · {{count}} 字",
+      "wordCount_zero": "{{count}} 词",
+      "wordCount_two": "{{count}} 词",
+      "wordCount_few": "{{count}} 词",
+      "wordCount_many": "{{count}} 词",
+      "wordCount_other": "{{count}} 词"
     },
     "sources": {
       "title": "来源",
@@ -217,18 +236,7 @@
     },
     "discard": { "title": "放弃未保存的草稿更改？", "description": "最新编辑尚未保存为一个版本。", "confirm": "放弃并离开", "back": "继续编辑" }
   },
-  "paywall": {
-    "title": "内容智能",
-    "description": "升级到 Starter 或以上以运行内容分析。",
-    "action": "查看套餐",
-    "exhausted": {
-      "title": "额度用尽",
-      "description": "月度额度和增值包已用尽。购买增值包或升级套餐。",
-      "buyPack": "购买分析包",
-      "seePlans": "查看套餐"
-    },
-    "packHint": "你的下一次将来自积分包。"
-  },
+
   "partial": {
     "title": "部分结果",
     "description": "本次运行数据有限。评分卡可用;部分部分可能缺失。"
@@ -379,7 +387,7 @@
       "baseline": "之前 28 天",
       "following": "之后 28 天",
       "delta": "绝对变化",
-      "coverage": "数据覆盖 — Search Console：{{gsc}} 天；排名：{{rank}} 天。",
+      "coverage": "数据覆盖天数 — Search Console：{{gsc}}；排名：{{rank}}。",
       "disclaimer": "外部因素会影响搜索表现。此视图显示相关变化，而非归因。",
       "metrics": {
         "clicks": "点击",
@@ -428,15 +436,10 @@
       "title": "开始清单运行",
       "description": "抓取你的页面，获得聚类、重复、单薄与孤立页面、关键词内耗和主题空缺。",
       "pageLimit": "要抓取的页面数",
-      "pageLimitHint": "介于 1 到 {{max}} 页之间。每四页构成一个预留区块。",
-      "blocksTitle": "本次预留",
-      "blocks_zero": "已预留 {{count}} 个区块。页数上限：{{pages}}（每区块四页）。",
-      "blocks_one": "已预留 {{count}} 个区块。页数上限：{{pages}}（每区块四页）。",
-      "blocks_two": "已预留 {{count}} 个区块。页数上限：{{pages}}（每区块四页）。",
-      "blocks_few": "已预留 {{count}} 个区块。页数上限：{{pages}}（每区块四页）。",
-      "blocks_many": "已预留 {{count}} 个区块。页数上限：{{pages}}（每区块四页）。",
-      "blocks_other": "已预留 {{count}} 个区块。页数上限：{{pages}}（每区块四页）。",
-      "blocksInvalid": "输入有效的页面数以查看预留的区块数量。",
+      "pageLimitHint": "一至 {{max}} 个页面。",
+      "blocksTitle": "本次运行的页面",
+
+      "blocksInvalid": "输入有效页数以查看抓取上限。",
       "allowedPaths": "仅这些路径（可选）",
       "excludedPaths": "跳过这些路径（可选）",
       "sitemapSeeds": "站点地图 URL（可选）",
@@ -451,7 +454,14 @@
         "invalidPath": "每个路径必须以斜杠开头（例如 /blog）。",
         "tooManySeeds": "最多使用五个站点地图 URL。",
         "invalidSeed": "其中一个站点地图 URL 过长。"
-      }
+      },
+      "pageCount_zero": "{{count}} 页",
+      "pageCount_one": "{{count}} 页",
+      "pageCount_two": "{{count}} 页",
+      "pageCount_few": "{{count}} 页",
+      "pageCount_many": "{{count}} 页",
+      "pageCount_other": "{{count}} 页",
+      "blocks": "最多 $t(contentIntelligence:inventory.start.pageCount, {\"count\": {{pages}}})。"
     },
     "runs": {
       "title": "清单运行",
@@ -673,14 +683,9 @@
       "keywordHint": "将比较范围缩小到你想赢得的搜索意图。",
       "pageLimit": "要读取的竞争对手页面数",
       "pageLimitHint": "在所选竞争对手中读取 1 到 {{max}} 个页面。",
-      "disclosureTitle": "本次运行的成本",
-      "disclosure_zero": "本次运行占用一个单位,并在 {{count}} 个竞争对手中读取最多 {{pages}} 个页面。",
-      "disclosure_one": "本次运行占用一个单位,并在 {{count}} 个竞争对手中读取最多 {{pages}} 个页面。",
-      "disclosure_two": "本次运行占用一个单位,并在 {{count}} 个竞争对手中读取最多 {{pages}} 个页面。",
-      "disclosure_few": "本次运行占用一个单位,并在 {{count}} 个竞争对手中读取最多 {{pages}} 个页面。",
-      "disclosure_many": "本次运行占用一个单位,并在 {{count}} 个竞争对手中读取最多 {{pages}} 个页面。",
-      "disclosure_other": "本次运行占用一个单位,并在 {{count}} 个竞争对手中读取最多 {{pages}} 个页面。",
-      "disclosureInvalid": "请输入有效的页面数量,以查看本次运行占用的资源。",
+      "disclosureTitle": "本次运行的页面与竞争对手",
+
+      "disclosureInvalid": "输入有效页数以查看运行上限。",
       "inFlight": "已有运行正在进行。请等待其完成后再开始新的运行。",
       "submit": "开始比较",
       "submitting": "正在启动…",
@@ -691,7 +696,20 @@
         "invalidUrl": "请输入以 http 或 https 开头的有效页面 URL。",
         "invalidCompetitorUrl": "请为每个选中的竞争对手输入明确的排名页面网址。",
         "pageLimitRange": "请输入允许范围内的页面数量。"
-      }
+      },
+      "pageCount_zero": "{{count}} 个页面",
+      "pageCount_one": "{{count}} 个页面",
+      "pageCount_two": "{{count}} 个页面",
+      "pageCount_few": "{{count}} 个页面",
+      "pageCount_many": "{{count}} 个页面",
+      "pageCount_other": "{{count}} 个页面",
+      "competitorCount_zero": "{{count}} 个竞争对手",
+      "competitorCount_one": "{{count}} 个竞争对手",
+      "competitorCount_two": "{{count}} 个竞争对手",
+      "competitorCount_few": "{{count}} 个竞争对手",
+      "competitorCount_many": "{{count}} 个竞争对手",
+      "competitorCount_other": "{{count}} 个竞争对手",
+      "disclosure": "本次运行在 $t(contentIntelligence:competitorContent.run.competitorCount, {\"count\": {{count}}})中读取最多 $t(contentIntelligence:competitorContent.run.pageCount, {\"count\": {{pages}}})。"
     },
     "runs": {
       "title": "比较运行",
@@ -892,9 +910,14 @@
         "stored": "使用 {{date}} 保存的搜索结果观测；预计无需重新抓取。",
         "fetched": "没有新鲜的已存搜索结果；此单位包含一次计费抓取。"
       },
-      "scrapes": "将分别读取最多 {{count}} 个公开结果页面。",
+      "scrapes_one": "将分别读取最多 {{count}} 个公开结果页面。",
       "consume": "预计使用：基础 {{base}}，套餐 {{pack}}。",
-      "remaining": "当前可用：基础 {{base}}，套餐 {{pack}}。"
+      "remaining": "当前可用：基础 {{base}}，套餐 {{pack}}。",
+      "scrapes_zero": "将分别读取最多 {{count}} 个公开结果页面。",
+      "scrapes_two": "将分别读取最多 {{count}} 个公开结果页面。",
+      "scrapes_few": "将分别读取最多 {{count}} 个公开结果页面。",
+      "scrapes_many": "将分别读取最多 {{count}} 个公开结果页面。",
+      "scrapes_other": "将分别读取最多 {{count}} 个公开结果页面。"
     },
     "status": {
       "queued": "排队中",
@@ -930,7 +953,12 @@
       "filter": "状态筛选",
       "all": "全部状态",
       "loading": "正在加载简报…",
-      "meta": "申请于 {{date}} · 保留 {{count}} 个页面"
+      "meta_one": "申请于 {{date}} · 保留 {{count}} 个页面",
+      "meta_zero": "申请于 {{date}} · 保留 {{count}} 个页面",
+      "meta_two": "申请于 {{date}} · 保留 {{count}} 个页面",
+      "meta_few": "申请于 {{date}} · 保留 {{count}} 个页面",
+      "meta_many": "申请于 {{date}} · 保留 {{count}} 个页面",
+      "meta_other": "申请于 {{date}} · 保留 {{count}} 个页面"
     },
     "empty": {
       "title": "还没有简报",
@@ -982,8 +1010,13 @@
     "sources": {
       "title": "已保存来源页面",
       "description": "标题和小标题是不受信任的第三方文本，将按原文显示。",
-      "meta": "抓取于 {{date}} · {{count}} 个词",
-      "empty": "未保留任何来源文档。"
+      "meta_one": "抓取于 {{date}} · {{count}} 个词",
+      "empty": "未保留任何来源文档。",
+      "meta_zero": "抓取于 {{date}} · {{count}} 个词",
+      "meta_two": "抓取于 {{date}} · {{count}} 个词",
+      "meta_few": "抓取于 {{date}} · {{count}} 个词",
+      "meta_many": "抓取于 {{date}} · {{count}} 个词",
+      "meta_other": "抓取于 {{date}} · {{count}} 个词"
     },
     "outline": {
       "title": "带引用的大纲",

@@ -44,6 +44,8 @@ export interface PauseSiteResponse {
 export type LoadDirection = 'initial' | 'next' | 'prev';
 
 export interface LoadSitesArgs {
+  force?: boolean;
+  maxAgeMs?: number;
   cursor?: string | null;
   direction?: LoadDirection;
 }
@@ -59,6 +61,8 @@ export interface SitesState {
   cursorStack: (string | null)[];
   loading: boolean;
   loaded: boolean;
+  /** Missing older preloaded state is treated as stale. */
+  loadedAt?: number | null;
   error: string;
   adding: boolean;
   addError: string;

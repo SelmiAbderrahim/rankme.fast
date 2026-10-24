@@ -6,8 +6,13 @@
   "emptyCta": "Récupérer les données locales",
   "refresh": {
     "button": "Actualiser le SEO local",
-    "cooldown": "Actualisation dans {{seconds}} s",
-    "failed": "Impossible d'actualiser le SEO local. Réessayez dans un instant."
+    "cooldown_one": "Actualisation dans {{seconds}} s",
+    "failed": "Impossible d'actualiser le SEO local. Réessayez dans un instant.",
+    "cooldown_zero": "Actualisation dans {{seconds}} s",
+    "cooldown_two": "Actualisation dans {{seconds}} s",
+    "cooldown_few": "Actualisation dans {{seconds}} s",
+    "cooldown_many": "Actualisation dans {{seconds}} s",
+    "cooldown_other": "Actualisation dans {{seconds}} s"
   },
   "loadFailed": "Impossible de charger le SEO local.",
   "locked": {
@@ -37,5 +42,11 @@
     "position": "Position",
     "packSize": "Taille du pack",
     "notRanked": "Absent du pack de cartes"
-  }
+  },
+  "setup": {"resultsLegend_zero": "{{count}} résultat pour « {{query}} ». Choisissez le vôtre :",
+    "resultsLegend_one": "{{count}} résultat pour « {{query}} ». Choisissez le vôtre :",
+    "resultsLegend_two": "{{count}} résultats pour « {{query}} ». Choisissez le vôtre :",
+    "resultsLegend_few": "{{count}} résultats pour « {{query}} ». Choisissez le vôtre :",
+    "resultsLegend_many": "{{count}} résultats pour « {{query}} ». Choisissez le vôtre :",
+    "resultsLegend_other": "{{count}} résultats pour « {{query}} ». Choisissez le vôtre :"}
 }

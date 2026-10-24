@@ -69,11 +69,15 @@ export function createSiteMutationLease(resolveSiteId: SiteIdResolver, options: 
         return runWithSiteWorkLeaseContext(lease, next);
     });
 }
-export const siteMutationLease = createSiteMutationLease((req) => {
-    // Content-analysis preflight is deliberately a no-write ownership probe:
-    // foreign sites return `{ok:false,reason:'not_owned'}` and malformed ids
-    // are shaped by zod. It neither reserves nor enqueues, so no lease applies.
+export const siteMutationLease = createSiteMutationLease(async (req) => {
+    // Preflight checks ownership without taking a write lease. Malformed ids
+    // still reach the route schema; foreign and missing sites share its 404.
     if (req.method === 'POST' && req.path === '/content-analyses/preflight') {
+        const siteId = req.params.siteId;
+        if (typeof siteId === 'string' && Types.ObjectId.isValid(siteId)) {
+            const owned = await Site.exists({ _id: siteId, accountId: requireAccountId(req), deletionStartedAt: null });
+            if (!owned) throw HttpError.notFound({ code: 'SITES_ERRORS_NOT_FOUND', messageKey: 'sites.errors.notFound' });
+        }
         return null;
     }
     // A malformed id can never name a Site, so there is nothing to lease. Fall

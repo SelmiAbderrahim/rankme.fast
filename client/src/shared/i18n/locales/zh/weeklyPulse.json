@@ -83,7 +83,7 @@
     "empty": "Google 未报告任何生成式 AI 展示。",
     "reconnect": "请重新连接 Google Search Console 以查看该部分。",
     "window": "窗口: {{start}} → {{end}}",
-    "row": "{{appearance}} — {{clicks}} 次点击,{{impressions}} 次展示",
+    "row": "{{appearance}} — 点击： {{clicks}} · 展示： {{impressions}}",
     "loading": "正在加载 Google Search Console 数据…",
     "unknown": "未识别的展示({{raw}})",
     "noData": "暂无 Search Console 数据。连接 Google Search Console 即可查看此部分,或在下一次每日同步后再来查看。"

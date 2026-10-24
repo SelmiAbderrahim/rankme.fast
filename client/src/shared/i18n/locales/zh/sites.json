@@ -48,6 +48,7 @@
   "pauseFailed": "无法暂停该网站。",
   "resumeFailed": "无法恢复该网站。",
   "paused": {
+    "actionBlocked": "恢复此网站以运行检查、审核或计划任务。",
     "chip": "已暂停",
     "menuPause": "暂停网站",
     "menuResume": "恢复网站",
@@ -59,7 +60,8 @@
     "banner": "此网站已暂停——不会运行任何检查或审核。暂停于{{when}}。",
     "resumeCta": "恢复",
     "pausing": "正在暂停…",
-    "resuming": "正在恢复…"
+    "resuming": "正在恢复…",
+    "optionSuffix": "已暂停"
   },
   "errors": {
     "urlRequired": "请输入您的网站网址。",
@@ -103,7 +105,34 @@
     },
     "navigationLabel": "工作区视图",
     "activeGroupLabel": "{{group}} · {{current}}",
-    "upgradeHint": "升级您的方案以解锁该标签页。"
+    "upgradeHint": "升级您的方案以解锁该标签页。",
+    "switchSite": "切换网站",
+    "loadingSite": "正在加载网站…",
+    "filterSites": "筛选网站…",
+    "filterPages": "筛选页面…",
+    "choosePage": "选择页面",
+    "choosePageDescription": "打开网站页面。",
+    "siblingPages": "此分组中的页面",
+    "noSites": "未找到网站",
+    "activeSubViewLabel": "{{tab}} · {{view}}",
+    "navLandmark": "网站",
+    "switchSiteNamed": "切换网站 · {{site}}",
+    "currentSite": "当前网站",
+    "recentSites": "最近",
+    "allSites": "所有网站",
+    "noSitesMatch": "没有与“{{query}}”匹配的网站",
+    "addSite": "添加网站",
+    "manageSites": "管理网站",
+    "collapseSiteMenu": "收起网站菜单",
+    "expandSiteMenu": "展开网站菜单",
+    "filterPagesShort": "筛选页面",
+    "clearFilter": "清除筛选",
+    "noPagesMatch": "没有与“{{query}}”匹配的页面",
+    "unknownTab": {
+      "title": "该版块不存在",
+      "body": "此工作区无法使用该版块，因此改为显示概览。"
+    },
+    "unknownSite": "未知站点"
   },
   "overview": {
     "next": {
@@ -205,5 +234,12 @@
   "lookupFailed": {
     "title": "无法加载此网站",
     "description": "暂时无法检查此网站，请稍后重试。"
+  },
+  "picker": {
+    "loading": "正在加载您的站点…",
+    "loadFailed": "无法加载您的站点。",
+    "empty": "您还没有站点。",
+    "addSite": "添加站点",
+    "truncated": "此处仅列出您的前 {{shown, number}} 个站点。"
   }
 }

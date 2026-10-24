@@ -8,12 +8,12 @@
  *
  * Locale handling:
  *   - en/fr/de/es/ru → Noto Sans (regular + bold).
- *   - zh → Noto Sans SC subset, single weight, character-level word wrap.
- *     Characters outside the vendored subset (rare hanzi in AI summaries)
+ *   - zh → Noto Sans SC TrueType, single weight, character-level word wrap.
+ *     Characters outside the vendored font (unsupported symbols in summaries)
  *     are replaced with `?` instead of throwing.
- *   - ar → Noto Sans Arabic, single weight. pdf-lib does no shaping/bidi, so
+ *   - ar → Noto Sans Arabic with Latin fallback.
  *     text is shaped onto Arabic Presentation Forms and reordered to visual
- *     RTL per line (see `./pdf/rtl.ts` for the full decision record). Dates
+ *     RTL per line and consumed once by fontkit. Dates
  *     use Latin digits (`ar-u-nu-latn`) so numbers survive reordering.
  *
  * The layout is a simple top-down cursor with manual page breaks: header
@@ -21,11 +21,10 @@
  * grouped fix-now → watch → passed (clipped at PDF_MAX_FINDINGS, ten URLs
  * per finding), optional AI summary, and a localized page-number footer.
  */
-import { PDFDocument, rgb, type PDFFont, type PDFPage, type RGB } from 'pdf-lib';
-import fontkit from '@pdf-lib/fontkit';
+import { rgb, type PDFFont, type RGB } from 'pdf-lib';
 import { translate, type SupportedLocale, type TranslationVars, } from '../../shared/i18n/index.js';
 import type { AuditReport, LocalizedFinding } from './report.service.js';
-import { fontFilesFor, readPdfFont } from './pdf/fonts.js';
+import { createReportPdfContext, drawReportPdfText, measureReportPdfText, type ReportPdfContext } from '../../shared/report-exports/pdf-support.js';
 import { containsArabic, shapeArabic, toVisualRtlLine } from './pdf/rtl.js';
 export interface ReportPdfBranding {
     companyName: string;
@@ -97,16 +96,7 @@ export function parseAccentColor(value: string): RGB | null {
         return null;
     return rgb(Number.parseInt(value.slice(1, 3), 16) / 255, Number.parseInt(value.slice(3, 5), 16) / 255, Number.parseInt(value.slice(5, 7), 16) / 255);
 }
-interface RenderCtx {
-    doc: PDFDocument;
-    page: PDFPage;
-    y: number;
-    rtl: boolean;
-    zh: boolean;
-    regular: PDFFont;
-    bold: PDFFont;
-    glyphs: Map<PDFFont, Set<number>>;
-}
+type RenderCtx = ReportPdfContext;
 function addPage(ctx: RenderCtx): void {
     ctx.page = ctx.doc.addPage([PAGE_WIDTH, PAGE_HEIGHT]);
     ctx.y = PAGE_HEIGHT - MARGIN;
@@ -138,7 +128,9 @@ function sanitizeForFont(ctx: RenderCtx, font: PDFFont, text: string): string {
             out += ' ';
             continue;
         }
-        out += glyphs.has(codePoint) ? ch : '?';
+        const fallback = ctx.fallbacks.get(font);
+        const supported = glyphs.has(codePoint) || (fallback && glyphSetFor(ctx, fallback).has(codePoint));
+        out += supported ? ch : '?';
     }
     return out;
 }
@@ -152,9 +144,9 @@ function prepareText(ctx: RenderCtx, font: PDFFont, text: string): string {
  * unbroken CJK-free strings — are hard-broken at character boundaries.
  */
 function wrapText(ctx: RenderCtx, font: PDFFont, size: number, text: string, maxWidth: number): string[] {
-    const tokens = ctx.zh ? [...text] : text.split(' ').filter((token) => token.length > 0);
-    const separator = ctx.zh ? '' : ' ';
-    const width = (value: string): number => font.widthOfTextAtSize(value, size);
+    const tokens = ctx.cjk ? [...text] : text.split(' ').filter((token) => token.length > 0);
+    const separator = ctx.cjk ? '' : ' ';
+    const width = (value: string): number => measureReportPdfText(ctx, font, value, size);
     const lines: string[] = [];
     let current = '';
     const flush = (): void => {
@@ -208,9 +200,9 @@ function drawParagraph(ctx: RenderCtx, rawText: string, options: ParagraphOption
             ensureSpace(ctx, lineHeight);
             const visual = ctx.rtl ? toVisualRtlLine(line) : line;
             const x = ctx.rtl
-                ? PAGE_WIDTH - MARGIN - indent - font.widthOfTextAtSize(visual, size)
+                ? PAGE_WIDTH - MARGIN - indent - measureReportPdfText(ctx, font, visual, size)
                 : MARGIN + indent;
-            ctx.page.drawText(visual, { x, y: ctx.y - size, size, font, color });
+            drawReportPdfText(ctx, font, visual, { x, y: ctx.y - size, size, color });
             ctx.y -= lineHeight;
         }
     }
@@ -312,13 +304,12 @@ async function drawBrandHeader(ctx: RenderCtx, brandName: string, logoPngBytes: 
     lines.forEach((line, index) => {
         const visual = ctx.rtl ? toVisualRtlLine(line) : line;
         const x = ctx.rtl
-            ? logoX - gap - ctx.bold.widthOfTextAtSize(visual, 20)
+            ? logoX - gap - measureReportPdfText(ctx, ctx.bold, visual, 20)
             : MARGIN + logoWidth + gap;
-        ctx.page.drawText(visual, {
+        drawReportPdfText(ctx, ctx.bold, visual, {
             x,
             y: ctx.y - 20 - index * lineHeight,
             size: 20,
-            font: ctx.bold,
             color: INK,
         });
     });
@@ -405,37 +396,14 @@ const BUCKET_ORDER = [
 async function renderAuditReportPdfWithSharedPrimitives(input: RenderAuditReportPdfInput): Promise<Uint8Array> {
     const { report, branding, locale, generatedAt, siteDomain } = input;
     const t = (key: string, vars?: TranslationVars): string => translate(locale, `report.pdf.${key}`, vars);
-    const doc = await PDFDocument.create();
-    doc.registerFontkit(fontkit);
-    const files = fontFilesFor(locale);
-    const regular = await doc.embedFont(readPdfFont(files.regular), {
-        subset: true,
-        customName: 'RankMeFast-Regular',
-    });
-    const bold = files.bold === files.regular
-        ? regular
-        : await doc.embedFont(readPdfFont(files.bold), {
-            subset: true,
-            customName: 'RankMeFast-Bold',
-        });
+    const ctx = await createReportPdfContext(locale);
+    const { doc, regular, bold } = ctx;
     // Deterministic metadata — no wall-clock, no randomness.
     doc.setTitle(t('title'));
     doc.setProducer('RankMeFast');
     doc.setCreator('RankMeFast');
     doc.setCreationDate(generatedAt);
     doc.setModificationDate(generatedAt);
-    const ctx: RenderCtx = {
-        doc,
-        // Placeholders — addPage() immediately assigns the real first page.
-        page: undefined as unknown as PDFPage,
-        y: 0,
-        rtl: locale === 'ar',
-        zh: locale === 'zh',
-        regular,
-        bold,
-        glyphs: new Map(),
-    };
-    addPage(ctx);
     const accent = branding ? (parseAccentColor(branding.accentColor) ?? INK) : INK;
     const trimmedCompanyName = branding ? branding.companyName.trim() : '';
     const brandName = trimmedCompanyName.length > 0 ? trimmedCompanyName : t('defaultBrand');
@@ -535,11 +503,10 @@ async function renderAuditReportPdfWithSharedPrimitives(input: RenderAuditReport
     pages.forEach((page, index) => {
         const prepared = prepareText(ctx, regular, t('page', { n: index + 1, total: pages.length }));
         const text = ctx.rtl ? toVisualRtlLine(prepared) : prepared;
-        page.drawText(text, {
-            x: (PAGE_WIDTH - regular.widthOfTextAtSize(text, 9)) / 2,
+        drawReportPdfText({ ...ctx, page }, regular, text, {
+            x: (PAGE_WIDTH - measureReportPdfText(ctx, regular, text, 9)) / 2,
             y: MARGIN / 2,
             size: 9,
-            font: regular,
             color: MUTED,
         });
     });

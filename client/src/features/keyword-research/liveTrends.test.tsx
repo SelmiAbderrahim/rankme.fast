@@ -265,6 +265,12 @@ describe('LiveTrendsView — form validation', () => {
     expect(parsed.success).toBe(true);
   });
 
+  it('keeps the market-specific error key for an unsupported market', () => {
+    const parsed = liveTrendsFormSchema.safeParse({ keywords: ['seo'], geo: 'anywhere' });
+    if (parsed.success) throw new Error('expected invalid market');
+    expect(parsed.error.issues).toMatchObject([{ path: ['geo'], message: 'keywordResearch:trends.errors.geoInvalid' }]);
+  });
+
   it('normalizes supported markets and rejects inputs outside provider clamps', () => {
     expect(
       liveTrendsFormSchema.parse({

@@ -2011,7 +2011,7 @@ describe('AiVisibilityPanel — new surfaces', () => {
     await waitFor(() =>
       expect(
         (toast as unknown as { success: MockedFunction<AnyFn> }).success,
-      ).toHaveBeenCalledWith('Checked 1 prompts — AI answers mention you for 1.'),
+      ).toHaveBeenCalledWith('Checked 1 prompt — AI answers mention you for 1.'),
     );
     await waitFor(() => expect(mocked.fetchAiVisibilityTrend).toHaveBeenCalledWith('s1', expect.anything()));
   });

@@ -26,12 +26,29 @@
     "dofollowYes": "Dofollow",
     "dofollowNo": "Nofollow",
     "loadMore": "Cargar más",
-    "loading": "Cargando…"
+    "loading": "Cargando…",
+    "scope_zero": "Mostrando {{shown}} de {{total}} backlinks (un enlace por dominio de referencia)",
+    "scope_one": "Mostrando {{shown}} de {{total}} backlink (un enlace por dominio de referencia)",
+    "scope_two": "Mostrando {{shown}} de {{total}} backlinks (un enlace por dominio de referencia)",
+    "scope_few": "Mostrando {{shown}} de {{total}} backlinks (un enlace por dominio de referencia)",
+    "scope_many": "Mostrando {{shown}} de {{total}} backlinks (un enlace por dominio de referencia)",
+    "scope_other": "Mostrando {{shown}} de {{total}} backlinks (un enlace por dominio de referencia)",
+    "scopeNoTotal_zero": "Mostrando {{shown}} backlinks (un enlace por dominio de referencia)",
+    "scopeNoTotal_one": "Mostrando {{shown}} backlink (un enlace por dominio de referencia)",
+    "scopeNoTotal_two": "Mostrando {{shown}} backlinks (un enlace por dominio de referencia)",
+    "scopeNoTotal_few": "Mostrando {{shown}} backlinks (un enlace por dominio de referencia)",
+    "scopeNoTotal_many": "Mostrando {{shown}} backlinks (un enlace por dominio de referencia)",
+    "scopeNoTotal_other": "Mostrando {{shown}} backlinks (un enlace por dominio de referencia)"
   },
   "refresh": {
     "button": "Actualizar",
-    "cooldown": "Espera {{seconds}} s antes de actualizar.",
-    "failed": "No se pudo actualizar ahora. Tus últimos datos siguen visibles."
+    "cooldown_one": "Espera {{seconds}} s antes de actualizar.",
+    "failed": "No se pudo actualizar ahora. Tus últimos datos siguen visibles.",
+    "cooldown_zero": "Espera {{seconds}} s antes de actualizar.",
+    "cooldown_two": "Espera {{seconds}} s antes de actualizar.",
+    "cooldown_few": "Espera {{seconds}} s antes de actualizar.",
+    "cooldown_many": "Espera {{seconds}} s antes de actualizar.",
+    "cooldown_other": "Espera {{seconds}} s antes de actualizar."
   },
   "locked": {
     "title": "Mejora tu plan para desbloquear los backlinks",
@@ -74,7 +91,7 @@
     "preview": { "unit": "1 unidad de revisión de enlaces", "rowClamp": "Hasta 1000 filas · 100 dominios puntuados", "available": "Cuota disponible", "capReached": "Cuota alcanzada", "explanation": "La ejecución usa una unidad toxicity_reviews. El paquete toxicity-reviews-10 está disponible al agotar la cuota incluida. Previsualizar y cancelar no gasta unidades.", "confirm": "Confirmar y usar 1 unidad", "cancel": "Cancelar", "button": "Previsualizar el coste" },
     "states": { "lockedTitle": "Mejora el plan para revisar backlinks", "lockedBody": "La revisión de enlaces y la creación del archivo de desautorización están disponibles en Pro y Agency.", "disabledTitle": "Las nuevas revisiones están pausadas", "disabledBody": "Las revisiones guardadas siguen disponibles mientras las nuevas puntuaciones están pausadas.", "capTitle": "Cuota de revisión alcanzada", "capBody": "Añade el paquete toxicity-reviews-10 o espera a que se renueve la cuota.", "errorTitle": "No se pudo cargar la revisión", "errorBody": "Inténtalo de nuevo en breve. Los resultados guardados y las descargas anteriores no cambian.", "listError": "No se pudieron cargar las revisiones guardadas.", "runningTitle": "Revisando observaciones guardadas", "failedTitle": "La revisión se detuvo", "providerRefunded": "El proveedor falló antes de conservar una fila puntuada. Se reembolsó la unidad reservada.", "ceilingConsumed": "La ejecución se detuvo en el límite de coste. Se consumió la unidad reservada y no se realizó ninguna acción automática.", "partial": "Observaciones parciales del proveedor", "emptyTitle": "No hay filas puntuadas", "emptyBody": "La ejecución terminó sin conservar filas de backlinks puntuadas." },
     "actions": { "viewPlans": "Ver planes", "viewPacks": "Ver paquetes de créditos", "open": "Abrir", "back": "Volver a una nueva revisión" },
-    "runs": { "title": "Revisiones guardadas", "description": "Vuelve a abrir revisiones terminadas sin usar otra unidad.", "date": "Creada", "status": "Estado", "rows": "Filas", "emptyTitle": "No hay revisiones guardadas", "emptyBody": "Empieza con una previsualización gratuita cuando estés listo." },
+    "runs": { "title": "Revisiones guardadas", "description": "Vuelva a abrir las revisiones guardadas sin iniciar otra comprobación.", "date": "Creada", "status": "Estado", "rows": "Filas", "emptyTitle": "No hay revisiones guardadas", "emptyBody": "Previsualice una revisión cuando esté listo." },
     "filters": { "status": "Filtrar revisiones por estado", "allStatuses": "Todos los estados", "band": "Filtrar filas por banda", "allBands": "Todas las bandas" },
     "status": { "queued": "En cola", "running": "En curso", "succeeded": "Completada", "failed": "Fallida" },
     "results": { "title": "Resultados de la revisión", "rubric": "Rúbrica {{version}}", "rowsTitle": "Filas de backlinks puntuadas", "observationCopy": "Las bandas describen observaciones guardadas del proveedor según la rúbrica fijada. No predicen una acción del buscador.", "providerObservation": "Observación del proveedor · rúbrica determinista" },

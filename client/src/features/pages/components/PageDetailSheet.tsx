@@ -1,3 +1,4 @@
+import { Bdi } from '@shared/components/Bdi';
 import { ExternalLink, FileSearch, RotateCcw, X } from 'lucide-react';
 import type { RefObject } from 'react';
 import { useTranslation } from 'react-i18next';
@@ -75,10 +76,10 @@ export function PageDetailSheet({
       >
         <SheetHeader className="border-b border-border pe-14">
           <SheetTitle className="break-words text-start">
-            {page?.title || page?.displayUrl || t('detail.title')}
+            <Bdi>{page?.title || page?.displayUrl || t('detail.title')}</Bdi>
           </SheetTitle>
           <SheetDescription className="break-all text-start">
-            {page?.url ?? t('detail.description')}
+            <Bdi>{page?.url ?? t('detail.description')}</Bdi>
           </SheetDescription>
           <SheetClose asChild>
             <Button
@@ -203,6 +204,7 @@ export function PageDetailSheet({
                   </CardTitle>
                   <p className="text-sm text-muted-foreground">
                     {t('detail.associatedCount', {
+                      count: detail.associated.total,
                       shown: detail.associated.rows.length,
                       total: detail.associated.total,
                     })}
@@ -231,7 +233,7 @@ export function PageDetailSheet({
                         {detail.associated.rows.map((row, index) => (
                           <TableRow key={`${row.query}-${index}`}>
                             <TableCell className="max-w-64 whitespace-normal break-words">
-                              {row.query}
+                              <Bdi>{row.query}</Bdi>
                             </TableCell>
                             <TableCell dir="ltr">
                               {formatPagesMetric(locale, 'averagePosition', row.position)

@@ -20,10 +20,15 @@
     "passed": "已通过"
   },
   "row": {
-    "affectedPages": "涉及 {{count}} 个页面",
+    "affectedPages_one": "涉及 {{count}} 个页面",
     "affectedPagesOne": "涉及 1 个页面",
     "siteWide": "整站检查",
-    "passedSummary": "此项检查已通过。"
+    "passedSummary": "此项检查已通过。",
+    "affectedPages_zero": "涉及 {{count}} 个页面",
+    "affectedPages_two": "涉及 {{count}} 个页面",
+    "affectedPages_few": "涉及 {{count}} 个页面",
+    "affectedPages_many": "涉及 {{count}} 个页面",
+    "affectedPages_other": "涉及 {{count}} 个页面"
   },
   "severity": {
     "critical": "严重",
@@ -56,7 +61,19 @@
       "okChip": "正常",
       "problemChip": "需要修复",
       "unknownChip": "未检查"
-    }
+    },
+    "measured": {"words_zero": "{{count}} 个词",
+      "words_one": "{{count}} 个词",
+      "words_two": "{{count}} 个词",
+      "words_few": "{{count}} 个词",
+      "words_many": "{{count}} 个词",
+      "words_other": "{{count}} 个词",
+      "characters_zero": "{{count}} 个字符",
+      "characters_one": "{{count}} 个字符",
+      "characters_two": "{{count}} 个字符",
+      "characters_few": "{{count}} 个字符",
+      "characters_many": "{{count}} 个字符",
+      "characters_other": "{{count}} 个字符"}
   },
   "retest": {
     "cta": "重新检测",
@@ -69,7 +86,12 @@
     "label": "抓取页面数",
     "max": "允许的最大值",
     "help": "设置抓取器访问的页面数量。“允许的最大值”会覆盖此服务器允许的最多页面；页面越少，完成越快。",
-    "pages": "{{pages}} 个页面"
+    "pages_one": "{{pages}} 个页面",
+    "pages_zero": "{{pages}} 个页面",
+    "pages_two": "{{pages}} 个页面",
+    "pages_few": "{{pages}} 个页面",
+    "pages_many": "{{pages}} 个页面",
+    "pages_other": "{{pages}} 个页面"
   },
   "empty": {
     "fix-now": {
@@ -110,7 +132,7 @@
     "noFieldDataTitle": "暂无足够的访客数据",
     "noFieldDataBody": "Chrome 只有在站点获得足够流量后才会报告真实访客速度。随着流量增长,本区域会自动填充。",
     "originFallback": "域级数据(不仅是此页面)",
-    "sampleLabel": "已抽样 {{count}} 个页面",
+    "sampleLabel_one": "已抽样 {{count}} 个页面",
     "sampleLabelOne": "已抽样 1 个页面",
     "metrics": {
       "lcp": "LCP",
@@ -122,7 +144,12 @@
       "good": "良好",
       "needs-improvement": "需要改进",
       "poor": "较差"
-    }
+    },
+    "sampleLabel_zero": "已抽样 {{count}} 个页面",
+    "sampleLabel_two": "已抽样 {{count}} 个页面",
+    "sampleLabel_few": "已抽样 {{count}} 个页面",
+    "sampleLabel_many": "已抽样 {{count}} 个页面",
+    "sampleLabel_other": "已抽样 {{count}} 个页面"
   },
   "aiSummary": {
     "cardTitle": "修复项的 AI 摘要",
@@ -135,7 +162,13 @@
     "errors": {
       "unavailable": "AI 摘要暂时不可用 —— 您的检查清单不受影响。",
       "capReached": "您已达到本月 AI 摘要额度。请升级套餐或购买额度以继续生成。"
-    }
+    },
+    "basis_zero": "基于 {{count}} 个未解决的问题",
+    "basis_one": "基于 {{count}} 个未解决的问题",
+    "basis_two": "基于 {{count}} 个未解决的问题",
+    "basis_few": "基于 {{count}} 个未解决的问题",
+    "basis_many": "基于 {{count}} 个未解决的问题",
+    "basis_other": "基于 {{count}} 个未解决的问题"
   },
   "pdf": {
     "download": "下载 PDF",
@@ -173,11 +206,26 @@
     "noSitemapsTitle": "尚未向 Google 提交站点地图",
     "noSitemapsBody": "请在 Google Search Console 中提交站点地图,以便 Google 找到您希望收录的每个页面。",
     "sitemapHealthy": "状态正常",
-    "sitemapErrors": "{{count}} 个错误",
-    "sitemapWarnings": "{{count}} 个警告",
-    "sitemapProcessed": "已提交 {{count}} 个网址",
+    "sitemapErrors_one": "{{count}} 个错误",
+    "sitemapWarnings_one": "{{count}} 个警告",
+    "sitemapProcessed_one": "已提交 {{count}} 个网址",
     "sitemapLastDownloaded": "Google 上次读取时间为 {{date}}",
-    "sitemapNeverDownloaded": "Google 尚未读取"
+    "sitemapNeverDownloaded": "Google 尚未读取",
+    "sitemapErrors_zero": "{{count}} 个错误",
+    "sitemapErrors_two": "{{count}} 个错误",
+    "sitemapErrors_few": "{{count}} 个错误",
+    "sitemapErrors_many": "{{count}} 个错误",
+    "sitemapErrors_other": "{{count}} 个错误",
+    "sitemapWarnings_zero": "{{count}} 个警告",
+    "sitemapWarnings_two": "{{count}} 个警告",
+    "sitemapWarnings_few": "{{count}} 个警告",
+    "sitemapWarnings_many": "{{count}} 个警告",
+    "sitemapWarnings_other": "{{count}} 个警告",
+    "sitemapProcessed_zero": "已提交 {{count}} 个网址",
+    "sitemapProcessed_two": "已提交 {{count}} 个网址",
+    "sitemapProcessed_few": "已提交 {{count}} 个网址",
+    "sitemapProcessed_many": "已提交 {{count}} 个网址",
+    "sitemapProcessed_other": "已提交 {{count}} 个网址"
   },
   "aiVisibilityBlock": {
     "title": "AI 可见度",
@@ -214,8 +262,13 @@
     "unansweredQuestions": "未回答问题",
     "localPack": "本地地图组合",
     "notRanked": "未进入地图组合",
-    "packSize": "共 {{count}} 条",
-    "noData": "暂无数据"
+    "packSize_one": "共 {{count}} 条",
+    "noData": "暂无数据",
+    "packSize_zero": "共 {{count}} 条",
+    "packSize_two": "共 {{count}} 条",
+    "packSize_few": "共 {{count}} 条",
+    "packSize_many": "共 {{count}} 条",
+    "packSize_other": "共 {{count}} 条"
   },
   "exportUi": {
     "trigger": "导出或分享", "loading": "正在加载导出选项…", "preparing": "正在准备文件…", "ready": "导出已完成。副本也已保存在“导出与分享”中。", "unavailable": "导出不可用", "empty": "暂无可导出的内容", "formatsLabel": "文件格式",
@@ -227,7 +280,12 @@
     "errors": { "capabilities": "无法加载导出选项。", "create": "无法导出报告。请缩小范围后重试。", "download": "无法下载已保存的文件。", "list": "无法加载已保存的导出。", "delete": "无法删除已保存的导出。", "share": "无法创建分享链接。", "revoke": "无法撤销分享链接。", "copy": "无法复制链接。" },
     "share": { "action": "创建分享链接", "title": "分享不可变报告", "description": "选择收件人可以打开的内容。链接创建后，报告将不再变化。", "locale": "报告语言", "expiry": "有效期", "expiryHelp": "请选择一至90天。", "permissions": "允许的格式", "create": "创建链接", "creating": "正在创建链接…", "showOnce": "立即复制此链接", "linkLabel": "分享链接", "copy": "复制链接", "copied": "已复制", "savedWithoutToken": "为确保安全，RankMeFast 不会保存可读链接。你仍可在导出中心撤销它。", "existing": "此快照的链接", "refresh": "刷新" },
     "confirm": { "revokeTitle": "撤销此链接？", "revokeBody": "任何使用此链接的人都会立即失去访问权限。", "deleteTitle": "删除此导出？", "deleteBody": "文件将停止工作，所有关联的分享链接也会被撤销。" },
-    "center": { "title": "导出与分享", "description": "下载已保存的报告快照并管理公开链接。", "tabsLabel": "导出中心分区", "downloads": "下载", "shares": "分享", "disabledTitle": "新导出已暂停", "disabledBody": "现有文件可能仍可用，但目前无法创建新文件或链接。", "emptyDownloadsTitle": "尚无已保存的导出", "emptyDownloadsBody": "在任意报告中使用“导出或分享”创建。", "emptySharesTitle": "尚无分享链接", "emptySharesBody": "分享支持的报告后，可在此管理链接。", "deletedReport": "已删除或已过期的报告", "noSite": "整个账户", "more": "加载更多", "expiresValue": "{{date}}到期", "views": "{{count}}次查看", "columns": { "report": "报告", "site": "网站", "format": "格式", "created": "创建时间", "expires": "到期时间", "actions": "操作" } }
+    "center": { "title": "导出与分享", "description": "下载已保存的报告快照并管理公开链接。", "tabsLabel": "导出中心分区", "downloads": "下载", "shares": "分享", "disabledTitle": "新导出已暂停", "disabledBody": "现有文件可能仍可用，但目前无法创建新文件或链接。", "emptyDownloadsTitle": "尚无已保存的导出", "emptyDownloadsBody": "在任意报告中使用“导出或分享”创建。", "emptySharesTitle": "尚无分享链接", "emptySharesBody": "分享支持的报告后，可在此管理链接。", "deletedReport": "已删除或已过期的报告", "noSite": "整个账户", "more": "加载更多", "expiresValue": "{{date}}到期", "views_one": "{{count}}次查看", "columns": { "report": "报告", "site": "网站", "format": "格式", "created": "创建时间", "expires": "到期时间", "actions": "操作" },
+      "views_zero": "{{count}}次查看",
+      "views_two": "{{count}}次查看",
+      "views_few": "{{count}}次查看",
+      "views_many": "{{count}}次查看",
+      "views_other": "{{count}}次查看" }
   },
   "publicShare": {
     "report": "共享报告",
@@ -267,5 +325,36 @@
     "title": "运行首次审计",
     "description": "我们会抓取一次您的网站,并显示需要修复、需要关注以及已经通过的项目。",
     "confirm": "开始审计"
-  }
+  },
+  "findingStatus": "{{bucket}} · {{severity}}",
+  "progress": {"upTo_zero": "最多抓取 {{cap}} 个页面。",
+    "upTo_one": "最多抓取 {{cap}} 个页面。",
+    "upTo_two": "最多抓取 {{cap}} 个页面。",
+    "upTo_few": "最多抓取 {{cap}} 个页面。",
+    "upTo_many": "最多抓取 {{cap}} 个页面。",
+    "upTo_other": "最多抓取 {{cap}} 个页面。"},
+  "dismissed": {"title_zero": "已忽略（{{count}}）",
+    "title_one": "已忽略（{{count}}）",
+    "title_two": "已忽略（{{count}}）",
+    "title_few": "已忽略（{{count}}）",
+    "title_many": "已忽略（{{count}}）",
+    "title_other": "已忽略（{{count}}）",
+    "stillDetected_zero": "最新审计中仍然发现：涉及 {{count}} 个页面。",
+    "stillDetected_one": "最新审计中仍然发现：涉及 {{count}} 个页面。",
+    "stillDetected_two": "最新审计中仍然发现：涉及 {{count}} 个页面。",
+    "stillDetected_few": "最新审计中仍然发现：涉及 {{count}} 个页面。",
+    "stillDetected_many": "最新审计中仍然发现：涉及 {{count}} 个页面。",
+    "stillDetected_other": "最新审计中仍然发现：涉及 {{count}} 个页面。",
+    "resurfaced_zero": "已忽略，但现在又有 {{count}} 个页面受到影响。",
+    "resurfaced_one": "已忽略，但现在又有 {{count}} 个页面受到影响。",
+    "resurfaced_two": "已忽略，但现在又有 {{count}} 个页面受到影响。",
+    "resurfaced_few": "已忽略，但现在又有 {{count}} 个页面受到影响。",
+    "resurfaced_many": "已忽略，但现在又有 {{count}} 个页面受到影响。",
+    "resurfaced_other": "已忽略，但现在又有 {{count}} 个页面受到影响。"},
+  "stale": {"title_zero": "上次审计是 {{count}} 天前",
+    "title_one": "上次审计是 {{count}} 天前",
+    "title_two": "上次审计是 {{count}} 天前",
+    "title_few": "上次审计是 {{count}} 天前",
+    "title_many": "上次审计是 {{count}} 天前",
+    "title_other": "上次审计是 {{count}} 天前"}
 }

@@ -1,3 +1,4 @@
+import { Bdi } from '@shared/components/Bdi';
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { CalendarDays, FilePenLine, RefreshCw } from 'lucide-react';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
@@ -289,7 +290,7 @@ function BriefList({
             {page.items.map((brief) => (
               <li key={brief.id} className="flex flex-col gap-3 py-4 sm:flex-row sm:items-center sm:justify-between" data-testid={`content-brief-row-${brief.id}`}>
                 <div className="min-w-0 space-y-1">
-                  <p className="truncate font-medium">{brief.keyword}</p>
+                  <p className="truncate font-medium"><Bdi>{brief.keyword}</Bdi></p>
                   <p className="text-sm text-muted-foreground">
                     {t('briefs.list.meta', {
                       date: localeDate(i18n.language, brief.requestedAt),
@@ -370,7 +371,7 @@ function CorpusCard({ detail }: { detail: ContentBriefDetail }) {
         </div>
         <div>
           <h3 className="mb-2 font-medium">{t('briefs.corpus.entities')}</h3>
-          {stats.entities.length ? <div className="flex flex-wrap gap-2">{stats.entities.map((entity) => <Badge key={entity.label} variant="secondary">{entity.label} · {entity.documentCount}</Badge>)}</div> : <p className="text-sm text-muted-foreground">{t('briefs.corpus.noEntities')}</p>}
+          {stats.entities.length ? <div className="flex flex-wrap gap-2">{stats.entities.map((entity) => <Badge key={entity.label} variant="secondary"><Bdi>{entity.label}</Bdi> · {entity.documentCount}</Badge>)}</div> : <p className="text-sm text-muted-foreground">{t('briefs.corpus.noEntities')}</p>}
         </div>
       </CardContent>
     </Card>
@@ -412,7 +413,7 @@ function BriefDetailView({ detail, onBack }: { detail: ContentBriefDetail; onBac
       <div className="flex flex-wrap items-center justify-between gap-3">
         <div>
           <Button variant="ghost" className="px-0" onClick={onBack}>{t('briefs.actions.back')}</Button>
-          <h2 className="text-2xl font-semibold tracking-tight">{detail.keyword}</h2>
+          <h2 className="text-2xl font-semibold tracking-tight"><Bdi>{detail.keyword}</Bdi></h2>
         </div>
         <div className="flex items-center gap-2">
           <BriefStatusBadge status={detail.status} />
@@ -436,23 +437,23 @@ function BriefDetailView({ detail, onBack }: { detail: ContentBriefDetail; onBac
       <Card>
         <CardHeader><CardTitle>{t('briefs.outline.title')}</CardTitle><CardDescription>{t('briefs.guidance')}</CardDescription></CardHeader>
         <CardContent>
-          {detail.outline.length ? <ol className="space-y-4">{detail.outline.map((node) => <li key={node.id} className="space-y-2"><h3 className="font-semibold">{node.heading}</h3><p className="text-sm text-muted-foreground">{node.purpose}</p><CitationChips citations={node.citations} /></li>)}</ol> : <p className="text-sm text-muted-foreground">{t('briefs.outline.empty')}</p>}
+          {detail.outline.length ? <ol className="space-y-4">{detail.outline.map((node) => <li key={node.id} className="space-y-2"><h3 className="font-semibold"><Bdi>{node.heading}</Bdi></h3><p className="text-sm text-muted-foreground">{node.purpose}</p><CitationChips citations={node.citations} /></li>)}</ol> : <p className="text-sm text-muted-foreground">{t('briefs.outline.empty')}</p>}
         </CardContent>
       </Card>
       <div className="grid gap-4 lg:grid-cols-2">
         <Card>
           <CardHeader><CardTitle>{t('briefs.questions.title')}</CardTitle></CardHeader>
-          <CardContent>{detail.questions.length ? <ul className="space-y-3">{detail.questions.map((question, index) => <li key={`${question.question}-${index}`} className="space-y-2"><p>{question.question}</p><CitationChips citations={question.citations} /></li>)}</ul> : <p className="text-sm text-muted-foreground">{t('briefs.questions.empty')}</p>}</CardContent>
+          <CardContent>{detail.questions.length ? <ul className="space-y-3">{detail.questions.map((question, index) => <li key={`${question.question}-${index}`} className="space-y-2"><p><Bdi>{question.question}</Bdi></p><CitationChips citations={question.citations} /></li>)}</ul> : <p className="text-sm text-muted-foreground">{t('briefs.questions.empty')}</p>}</CardContent>
         </Card>
         <Card>
           <CardHeader><CardTitle>{t('briefs.terms.title')}</CardTitle></CardHeader>
-          <CardContent>{detail.secondaryTerms.length ? <div className="flex flex-wrap gap-2">{detail.secondaryTerms.map((term) => <Badge key={term.id} variant="secondary">{term.term}</Badge>)}</div> : <p className="text-sm text-muted-foreground">{t('briefs.terms.empty')}</p>}</CardContent>
+          <CardContent>{detail.secondaryTerms.length ? <div className="flex flex-wrap gap-2">{detail.secondaryTerms.map((term) => <Badge key={term.id} variant="secondary"><Bdi>{term.term}</Bdi></Badge>)}</div> : <p className="text-sm text-muted-foreground">{t('briefs.terms.empty')}</p>}</CardContent>
         </Card>
       </div>
       {detail.serp.paaRows.length ? (
         <Card>
           <CardHeader><CardTitle>{t('briefs.paa.title')}</CardTitle></CardHeader>
-          <CardContent><ul className="space-y-2">{detail.serp.paaRows.map((row) => <li key={row.id} className="flex flex-wrap items-center gap-2"><Badge variant="outline">{row.id}</Badge><span>{row.question}</span></li>)}</ul></CardContent>
+          <CardContent><ul className="space-y-2">{detail.serp.paaRows.map((row) => <li key={row.id} className="flex flex-wrap items-center gap-2"><Badge variant="outline">{row.id}</Badge><span><Bdi>{row.question}</Bdi></span></li>)}</ul></CardContent>
         </Card>
       ) : null}
       {detail.abstentions.length ? (

@@ -83,7 +83,7 @@
     "empty": "لم يبلّغ Google عن أي ظهور للذكاء الاصطناعي التوليدي.",
     "reconnect": "أعد ربط Google Search Console لعرض هذا القسم.",
     "window": "النافذة: {{start}} → {{end}}",
-    "row": "{{appearance}} — {{clicks}} نقرة، {{impressions}} ظهور",
+    "row": "{{appearance}} — النقرات: {{clicks}} · مرات الظهور: {{impressions}}",
     "loading": "جارٍ تحميل بيانات Google Search Console…",
     "unknown": "ظهور غير معروف ({{raw}})",
     "noData": "لا توجد بيانات من Search Console بعد. اربط Google Search Console لعرض هذا القسم، أو عُد بعد المزامنة اليومية التالية."

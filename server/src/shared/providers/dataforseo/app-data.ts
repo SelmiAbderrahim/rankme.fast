@@ -257,7 +257,7 @@ const rawCompetitorsResultSchema = z.array(rawCompetitorsBucketSchema);
 const rawIntersectionItemSchema = z
     .object({
     keyword_data: rawKeywordDataSchema,
-    intersection_result: z.record(rawLabsRankSchema),
+    intersection_result: z.record(z.string(), rawLabsRankSchema),
 })
     .passthrough();
 const rawIntersectionBucketSchema = z
@@ -799,15 +799,15 @@ export function createDataForSeoAppDataProvider(config: DataForSeoAppDataProvide
         }
         return normalizeAppMarkets(locations.result, languages.result);
     }
-    async function runTask<TSchema extends z.ZodTypeAny>(input: {
+    async function runTask<T>(input: {
         store: AppStoreKind;
         endpoint: string;
         operation: string;
         body: unknown;
-        resultSchema: TSchema;
-    }): Promise<z.output<TSchema>> {
+        resultSchema: z.ZodType<T>;
+    }): Promise<T> {
         const paths = taskPaths(input.store, input.endpoint);
-        const posted = await dataForSeoRequest(config, paths.post, [input.body], input.resultSchema, {
+        const posted = await dataForSeoRequest<T>(config, paths.post, [input.body], input.resultSchema, {
             operation: `${input.operation}-post`,
         });
         const postOutcome = requireOutcome(posted, input.operation, "task_post");
@@ -823,9 +823,9 @@ export function createDataForSeoAppDataProvider(config: DataForSeoAppDataProvide
             return providerMalformed(input.operation, "task_post missing task id");
         }
         for (let attempt = 0; attempt < maxPollAttempts; attempt += 1) {
-            let fetched: DataForSeoTaskOutcome<z.output<TSchema>>[];
+            let fetched: DataForSeoTaskOutcome<T>[];
             try {
-                fetched = await dataForSeoRequest(config, paths.get(postOutcome.taskId), [], input.resultSchema, { operation: `${input.operation}-get`, method: "GET" });
+                fetched = await dataForSeoRequest<T>(config, paths.get(postOutcome.taskId), [], input.resultSchema, { operation: `${input.operation}-get`, method: "GET" });
             }
             catch (error) {
                 // DataForSEO can briefly answer 40401/40402 before a newly accepted
@@ -849,14 +849,14 @@ export function createDataForSeoAppDataProvider(config: DataForSeoAppDataProvide
         }
         throw new VendorUnavailableError(`task_get remained in queue after ${maxPollAttempts} polls`, { provider: "dataforseo", operation: input.operation });
     }
-    async function runLive<TSchema extends z.ZodTypeAny>(input: {
+    async function runLive<T>(input: {
         store: AppStoreKind;
         endpoint: string;
         operation: string;
         body: unknown;
-        resultSchema: TSchema;
-    }): Promise<z.output<TSchema>> {
-        const outcomes = await dataForSeoRequest(config, labsPath(input.store, input.endpoint), [input.body], input.resultSchema, { operation: input.operation });
+        resultSchema: z.ZodType<T>;
+    }): Promise<T> {
+        const outcomes = await dataForSeoRequest<T>(config, labsPath(input.store, input.endpoint), [input.body], input.resultSchema, { operation: input.operation });
         const outcome = requireOutcome(outcomes, input.operation, "live");
         if (outcome.status === "ok")
             return outcome.result;

@@ -4,7 +4,7 @@
   "searchTitle": "Recherchez un ensemble de mots-clés",
   "inputLabel": "Mots-clés à rechercher",
   "inputPlaceholder": "Tapez un mot-clé et appuyez sur Entrée",
-  "selectionCount": "{{count}} sur {{max}} sélectionnés",
+  "selectionCount_one": "{{count}} sur {{max}} sélectionné",
   "removeKeyword": "Supprimer {{phrase}}",
   "tracked": {
     "title": "Mots-clés suivis",
@@ -18,7 +18,12 @@
     "emptyCta": "Accéder aux mots-clés suivis",
     "noMatch": "Aucun mot-clé suivi ne correspond à la localisation et à la langue sélectionnées.",
     "allSelected": "Tous les mots-clés correspondants sont sélectionnés.",
-    "limitReached": "Vous avez sélectionné le maximum de {{max}} mots-clés."
+    "limitReached_one": "Vous avez sélectionné le maximum de {{max}} mot-clé.",
+    "limitReached_zero": "Vous avez sélectionné le maximum de {{max}} mot-clé.",
+    "limitReached_two": "Vous avez sélectionné le maximum de {{max}} mots-clés.",
+    "limitReached_few": "Vous avez sélectionné le maximum de {{max}} mots-clés.",
+    "limitReached_many": "Vous avez sélectionné le maximum de {{max}} mots-clés.",
+    "limitReached_other": "Vous avez sélectionné le maximum de {{max}} mots-clés."
   },
   "locationLabel": "Localisation",
   "languageLabel": "Langue",
@@ -131,7 +136,7 @@
     "columnSearchVolume": "Volume",
     "emptyPair": "Aucun mot-clé commun avec ce concurrent.",
     "emptyResults": "Aucun écart trouvé pour les concurrents sélectionnés.",
-    "resultCount": "{{count}} mots-clés trouvés",
+    "resultCount_one": "{{count}} mot-clé trouvé",
     "cachedBadge": "En cache",
     "freshBadge": "Direct",
     "pairPickerLabel": "Choisir un concurrent",
@@ -157,7 +162,12 @@
     },
     "idle": "Lancez une analyse d'écart pour voir les mots-clés sur lesquels vos concurrents se positionnent.",
     "loadFailed": "Impossible de lancer l'analyse d'écart de mots-clés.",
-    "siteWorkspaceLink": "Ouvrir cette configuration dans l’espace concurrents du site"
+    "siteWorkspaceLink": "Ouvrir cette configuration dans l’espace concurrents du site",
+    "resultCount_zero": "{{count}} mot-clé trouvé",
+    "resultCount_two": "{{count}} mots-clés trouvés",
+    "resultCount_few": "{{count}} mots-clés trouvés",
+    "resultCount_many": "{{count}} mots-clés trouvés",
+    "resultCount_other": "{{count}} mots-clés trouvés"
   },
   "overview": {
     "title": "Aperçu SERP",
@@ -295,7 +305,13 @@
     "loadMore": "Afficher plus",
     "loading": "Chargement…",
     "loadFailed": "Impossible de charger l’historique des recherches.",
-    "back": "Retour à la recherche de mots-clés"
+    "back": "Retour à la recherche de mots-clés",
+    "shown_zero": "Aucune recherche enregistrée",
+    "shown_one": "{{loaded}} sur {{count}} recherche enregistrée affichée",
+    "shown_two": "{{loaded}} sur {{count}} recherches enregistrées affichées",
+    "shown_few": "{{loaded}} sur {{count}} recherches enregistrées affichées",
+    "shown_many": "{{loaded}} sur {{count}} recherches enregistrées affichées",
+    "shown_other": "{{loaded}} sur {{count}} recherches enregistrées affichées"
   },
   "previewFailed": "Impossible de charger l'aperçu du coût.",
   "tabs": {
@@ -323,7 +339,7 @@
     "title": "Groupes de mots-clés par IA",
     "description": "Regroupez 10 à 200 de vos expressions stockées en sujets via une seule passe IA. L'IA ne lit que les lignes déjà récupérées — elle n'appelle jamais le fournisseur de recherche.",
     "noCandidates": "Aucune expression stockée pour l'instant. Lancez d'abord une recherche de mots-clés — le regroupement lit vos lignes stockées.",
-    "selectionCount": "{{count}} sélectionnées ({{min}}–{{max}} requises)",
+    "selectionCount_one": "{{count}} sélectionnées ({{min}}–{{max}} requises)",
     "source": {
       "metrics": "recherche",
       "ideas": "idée",
@@ -341,7 +357,7 @@
     "listFailed": "Impossible de charger les passes de regroupement stockées.",
     "detailFailed": "Impossible de charger cette passe de regroupement.",
     "decisionFailed": "Impossible d'enregistrer la décision.",
-    "resultTitle": "{{count}} groupes",
+    "resultTitle_one": "{{count}} groupe",
     "cachedRun": "Passe stockée — lecture gratuite",
     "freshRun": "Nouvelle passe",
     "aiProfileLine": "Profil IA {{name}} v{{version}}",
@@ -357,7 +373,7 @@
     "noFilterMatch": "Aucun groupe ne correspond au filtre de décision actuel.",
     "runsTitle": "Passes de regroupement stockées",
     "runsEmpty": "Aucune passe de regroupement stockée pour l'instant.",
-    "runRowTitle": "{{count}} groupes",
+    "runRowTitle_one": "{{count}} groupe",
     "runRowMembers": "expressions",
     "openRun": "Ouvrir",
     "route": {
@@ -371,7 +387,7 @@
     },
     "confidenceNote": "La confiance est calculée de façon déterministe à partir du nombre de membres et de l'homogénéité d'intention — l'IA propose le regroupement ; l'étiquette n'est pas un score IA.",
     "summedVolume": "Volume de recherche mensuel cumulé : {{volume}}",
-    "membersToggle": "Afficher les {{count}} mots-clés membres",
+    "membersToggle_one": "Afficher {{count}} mot-clé membre",
     "memberSource": {
       "vendor_cache": "ligne fournisseur stockée",
       "history": "historique de recherche"
@@ -395,7 +411,33 @@
     "dismissBody": "L'écartement est définitif pour ce groupe — le journal des décisions est en ajout seul et ne peut pas être inversé.",
     "dismissConfirm": "Écarter le groupe",
     "dismissSuccess": "Groupe écarté.",
-    "dismissReplayHint": "Ce groupe est déjà écarté."
+    "dismissReplayHint": "Ce groupe est déjà écarté.",
+    "selectionCount_zero": "{{count}} sélectionnées ({{min}}–{{max}} requises)",
+    "selectionCount_two": "{{count}} sélectionnées ({{min}}–{{max}} requises)",
+    "selectionCount_few": "{{count}} sélectionnées ({{min}}–{{max}} requises)",
+    "selectionCount_many": "{{count}} sélectionnées ({{min}}–{{max}} requises)",
+    "selectionCount_other": "{{count}} sélectionnées ({{min}}–{{max}} requises)",
+    "resultTitle_zero": "{{count}} groupe",
+    "resultTitle_two": "{{count}} groupes",
+    "resultTitle_few": "{{count}} groupes",
+    "resultTitle_many": "{{count}} groupes",
+    "resultTitle_other": "{{count}} groupes",
+    "runRowTitle_zero": "{{count}} groupe",
+    "runRowTitle_two": "{{count}} groupes",
+    "runRowTitle_few": "{{count}} groupes",
+    "runRowTitle_many": "{{count}} groupes",
+    "runRowTitle_other": "{{count}} groupes",
+    "membersToggle_zero": "Afficher {{count}} mot-clé membre",
+    "membersToggle_two": "Afficher les {{count}} mots-clés membres",
+    "membersToggle_few": "Afficher les {{count}} mots-clés membres",
+    "membersToggle_many": "Afficher les {{count}} mots-clés membres",
+    "membersToggle_other": "Afficher les {{count}} mots-clés membres",
+    "truncatedNote_zero": "Mots-clés enregistrés affichés : {{count}} sur {{total}}. Recherchez pour affiner la liste.",
+    "truncatedNote_one": "Mots-clés enregistrés affichés : {{count}} sur {{total}}. Recherchez pour affiner la liste.",
+    "truncatedNote_two": "Mots-clés enregistrés affichés : {{count}} sur {{total}}. Recherchez pour affiner la liste.",
+    "truncatedNote_few": "Mots-clés enregistrés affichés : {{count}} sur {{total}}. Recherchez pour affiner la liste.",
+    "truncatedNote_many": "Mots-clés enregistrés affichés : {{count}} sur {{total}}. Recherchez pour affiner la liste.",
+    "truncatedNote_other": "Mots-clés enregistrés affichés : {{count}} sur {{total}}. Recherchez pour affiner la liste."
   },
   "liveTrends": {
     "title": "Intérêt de recherche en direct",
@@ -414,8 +456,6 @@
     },
     "preview": {
       "title": "Estimation du coût",
-      "units": "{{count}} unité sera utilisée.",
-      "units_other": "{{count}} unités seront utilisées.",
       "cached": "En cache",
       "fresh_required": "Nouvelle récupération",
       "mixed": "Mixte",
@@ -427,14 +467,14 @@
     },
     "states": {
       "unavailableTitle": "Les tendances en direct sont temporairement indisponibles",
-    "unavailableBody": "Cet outil est en pause. Les explorations passées restent lisibles.",
-    "capBody": "Vous avez atteint votre quota mensuel de tendances en direct.",
-    "capPackName": "Pack de tendances de mots-clés",
-    "failedTitle": "L'exploration n'a pas pu aboutir",
-    "providerFailedTitle": "Le fournisseur de tendances n'a pas répondu",
-    "emptyTitle": "Aucune série d'intérêt de recherche renvoyée",
-    "emptyBody": "Le fournisseur a terminé l'exploration, mais n'a renvoyé aucune série pour ce marché. L'unité a tout de même été consommée.",
-    "sparseTitle": "L'historique est mince pour ce marché",
+      "unavailableBody": "Cet outil est en pause. Les explorations passées restent lisibles.",
+      "capBody": "Vous avez atteint votre quota mensuel de tendances en direct.",
+      "capPackName": "Pack de tendances de mots-clés",
+      "failedTitle": "L'exploration n'a pas pu aboutir",
+      "providerFailedTitle": "Le fournisseur de tendances n'a pas répondu",
+      "emptyTitle": "Aucune série d'intérêt de recherche renvoyée",
+      "emptyBody": "Le fournisseur a terminé l'exploration, mais n'a renvoyé aucune série pour ce marché. L'unité a tout de même été consommée.",
+      "sparseTitle": "L'historique est mince pour ce marché",
       "sparseBody": "Il faut au moins 24 mois d'historique pour la saisonnalité et 56 semaines pour la comparaison annuelle."
     },
     "readouts": {
@@ -490,5 +530,10 @@
       "body": "L'intérêt de recherche en direct est disponible dès l'offre Starter, même si le reste de cet espace de travail exige Pro.",
       "cta": "Ouvrir l'intérêt de recherche en direct"
     }
-  }
+  },
+  "selectionCount_zero": "{{count}} sur {{max}} sélectionné",
+  "selectionCount_two": "{{count}} sur {{max}} sélectionnés",
+  "selectionCount_few": "{{count}} sur {{max}} sélectionnés",
+  "selectionCount_many": "{{count}} sur {{max}} sélectionnés",
+  "selectionCount_other": "{{count}} sur {{max}} sélectionnés"
 }

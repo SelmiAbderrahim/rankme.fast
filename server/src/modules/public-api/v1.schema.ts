@@ -33,7 +33,7 @@ const v1LegacyCsvCursorSchema = z
     .object({
     v: z.literal(1),
     siteId: z.string().regex(/^[0-9a-f]{24}$/i),
-    keywordCursor: z.string().uuid().nullable(),
+    keywordCursor: z.string().guid().nullable(),
 })
     .strict();
 export interface V1LegacyCsvCursor {

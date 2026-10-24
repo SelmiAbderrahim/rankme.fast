@@ -116,7 +116,7 @@
     "back": "العودة إلى عمليات الفحص",
     "loading": "جارٍ تحميل هذا الفحص",
     "errorTitle": "تعذّر تحميل هذا الفحص",
-    "mentionCount": "عُثر على إشارة واحدة ({{count}})",
+    "mentionCount_one": "عُثر على {{count}} إشارة",
     "mentionCount_other": "عُثر على {{count}} إشارة",
     "market": "السوق",
     "outputLocale": "لغة المخرجات",
@@ -186,9 +186,13 @@
       "pending": "ما زالت كتابة الملخص جارية.",
       "absent": "لم يُنتَج ملخص لهذا الفحص.",
       "withheld": "حُجب الملخص لأنه لم يمكن ربط أي جملة بإشارة.",
-      "citations": "مصدر واحد ({{count}})",
-      "citations_other": "{{count}} مصادر",
-      "citationMissing": "المصدر غير موجود في هذه الصفحة"
+      "citations_one": "{{count}} مصدر",
+      "citations_other": "{{count}} مصدر",
+      "citationMissing": "المصدر غير موجود في هذه الصفحة",
+      "citations_zero": "{{count}} مصادر",
+      "citations_two": "{{count}} من المصادر",
+      "citations_few": "{{count}} مصادر",
+      "citations_many": "{{count}} مصدر"
     },
     "mentions": {
       "title": "الإشارات",
@@ -219,7 +223,11 @@
         "sentiment": "النبرة",
         "observedAt": "شوهدت"
       }
-    }
+    },
+    "mentionCount_zero": "عُثر على {{count}} إشارات",
+    "mentionCount_two": "عُثر على {{count}} من الإشارات",
+    "mentionCount_few": "عُثر على {{count}} إشارات",
+    "mentionCount_many": "عُثر على {{count}} إشارة"
   },
   "errors": {
     "previewTitle": "تعذّر حساب تكلفة هذا الفحص",

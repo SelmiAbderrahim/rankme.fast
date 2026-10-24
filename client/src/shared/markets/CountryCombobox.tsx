@@ -1,7 +1,8 @@
 import { useId, useMemo, useRef, useState, type KeyboardEvent } from 'react';
-import { Check, ChevronsUpDown, Search } from 'lucide-react';
+import { Check, ChevronDown, Search } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 import { Button } from '@shared/ui/button';
+import { TAP_TARGET } from '@shared/ui/tap-target';
 import { Input } from '@shared/ui/input';
 import { Popover, PopoverContent, PopoverTrigger } from '@shared/ui/popover';
 import { cn } from '@shared/lib/utils';
@@ -104,7 +105,8 @@ export function CountryCombobox({
         <Button
           id={controlId}
           type="button"
-          variant="outline"
+          variant="field"
+          size="field"
           role="combobox"
           aria-controls={listId}
           aria-label={ariaLabel}
@@ -112,11 +114,12 @@ export function CountryCombobox({
           aria-invalid={invalid || undefined}
           aria-describedby={describedBy}
           disabled={disabled || loading}
+          loading={loading}
           data-testid={testId}
-          className={cn('w-full justify-between font-normal', className)}
+          className={cn('w-full justify-between', className)}
         >
           <span className="truncate">{loading ? t('market.loading') : selectedLabel}</span>
-          <ChevronsUpDown className="size-4 opacity-50" aria-hidden="true" />
+          <ChevronDown className="size-4 opacity-50" aria-hidden="true" />
         </Button>
       </PopoverTrigger>
       <PopoverContent
@@ -148,7 +151,8 @@ export function CountryCombobox({
               role="option"
               aria-selected={value === null}
               className={cn(
-                'focus-visible:bg-accent flex w-full items-center gap-2 rounded-sm px-2 py-2 text-start text-sm outline-none',
+                TAP_TARGET,
+                'focus-visible:bg-accent hover:bg-accent active:bg-accent flex w-full cursor-pointer items-center gap-2 rounded-sm px-2 py-2 text-start text-sm outline-none',
                 activeIndex === 0 && 'bg-accent',
               )}
               onClick={() => choose(null)}
@@ -166,7 +170,8 @@ export function CountryCombobox({
                 role="option"
                 aria-selected={value === market.countryCode}
                 className={cn(
-                  'focus-visible:bg-accent flex w-full items-center gap-2 rounded-sm px-2 py-2 text-start text-sm outline-none',
+                  TAP_TARGET,
+                  'focus-visible:bg-accent hover:bg-accent active:bg-accent flex w-full cursor-pointer items-center gap-2 rounded-sm px-2 py-2 text-start text-sm outline-none',
                   activeIndex === optionIndex && 'bg-accent',
                 )}
                 onClick={() => choose(market)}

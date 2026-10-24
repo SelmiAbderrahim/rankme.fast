@@ -1,13 +1,22 @@
 {
   "title": "Analyse du trafic",
   "description": "Demandez et rouvrez des estimations de trafic issues de l’index du fournisseur pour tout domaine public.",
-  "common": { "notAvailable": "Indisponible" },
+  "common": {
+    "notAvailable": "Indisponible"
+  },
   "estimate": {
     "label": "Estimation",
     "coverage": "Modélisé à partir de l’index du fournisseur, et non de données analytiques.",
     "observedAt": "Observé le {{date}}",
     "source": "Source",
-    "freshness": { "fresh": "Récent", "stale": "Ancien", "partial": "Partiel", "blocked": "Bloqué", "failed": "Échec", "unknown": "Fraîcheur inconnue" }
+    "freshness": {
+      "fresh": "Récent",
+      "stale": "Ancien",
+      "partial": "Partiel",
+      "blocked": "Bloqué",
+      "failed": "Échec",
+      "unknown": "Fraîcheur inconnue"
+    }
   },
   "request": {
     "title": "Demander un instantané",
@@ -29,40 +38,91 @@
     "domain": "Domaine",
     "impact": "Impact sur le quota",
     "notMetered": "Non mesuré sur ce serveur",
-    "units": "{{count}} unité d’instantané de trafic",
-    "units_other": "{{count}} unités d’instantanés de trafic",
+    "units": "{{count}} instantané des données de trafic",
+    "units_other": "{{count}} instantanés des données de trafic",
     "cached": "En cache",
     "fresh_required": "Nouvelle recherche",
     "baseRemaining": "Quota de base restant",
     "packRemaining": "Quota de pack restant",
     "packTitle": "Besoin de plus d’instantanés ?",
-    "packLink": "Voir les packs de crédits"
+    "packLink": "Voir les packs de crédits",
+    "units_zero": "{{count}} instantanés des données de trafic",
+    "units_one": "{{count}} instantané des données de trafic",
+    "units_two": "{{count}} instantanés des données de trafic",
+    "units_few": "{{count}} instantanés des données de trafic",
+    "units_many": "{{count}} instantanés des données de trafic"
   },
   "detail": {
     "description": "Tous les nombres ci-dessous sont des estimations, pas des mesures analytiques.",
     "monthlyVisits": "Visites organiques mensuelles estimées",
     "rank": "Classement estimé du domaine",
     "keywords": "Nombre estimé de mots-clés",
-    "countries": { "title": "Répartition estimée par pays", "description": "Principaux pays conservés par l’index du fournisseur.", "country": "Pays", "visits": "Visites estimées" },
-    "history": { "title": "Historique estimé du trafic", "description": "Jusqu’à 24 points mensuels conservés.", "empty": "Aucun point d’historique n’a été conservé pour cet instantané.", "expandTable": "Développer le tableau d’historique accessible", "tableCaption": "Historique estimé du classement, du trafic et des mots-clés", "date": "Date" }
+    "countries": {
+      "title": "Répartition estimée par pays",
+      "description": "Principaux pays conservés par l’index du fournisseur.",
+      "country": "Pays",
+      "visits": "Visites estimées"
+    },
+    "history": {
+      "title": "Historique estimé du trafic",
+      "description": "Jusqu’à 24 points mensuels conservés.",
+      "empty": "Aucun point d’historique n’a été conservé pour cet instantané.",
+      "expandTable": "Développer le tableau d’historique accessible",
+      "tableCaption": "Historique estimé du classement, du trafic et des mots-clés",
+      "date": "Date"
+    }
   },
   "list": {
     "title": "Instantanés enregistrés",
     "description": "La consultation des données enregistrées est gratuite et reste disponible lorsque les nouvelles demandes sont suspendues.",
-    "filters": { "domain": "Filtrer par domaine", "from": "Date de début", "to": "Date de fin" },
-    "columns": { "domain": "Domaine", "captured": "Capturé", "visits": "Visites estimées", "action": "Action" },
+    "filters": {
+      "domain": "Filtrer par domaine",
+      "from": "Date de début",
+      "to": "Date de fin"
+    },
+    "columns": {
+      "domain": "Domaine",
+      "captured": "Capturé",
+      "visits": "Visites estimées",
+      "action": "Action"
+    },
     "open": "Ouvrir l’instantané",
     "previous": "Précédent",
     "next": "Suivant"
   },
   "states": {
-    "empty": { "title": "Aucun instantané de trafic", "description": "Prévisualisez votre premier instantané de domaine.", "cta": "Commencer par un domaine" },
-    "partial": { "title": "Estimation partielle", "description": "{{retained}} opérations sur trois ont été conservées. Les champs manquants ne sont pas déduits." },
-    "failed": { "title": "Échec de l’instantané", "refund": "Aucune opération du fournisseur n’a été conservée ; l’unité réservée a donc été remboursée." },
-    "locked": { "title": "Les nouveaux instantanés sont temporairement suspendus", "description": "L’analyse du trafic est temporairement indisponible pour les nouvelles demandes. Les instantanés enregistrés restent accessibles." },
-    "cap": { "title": "Quota d’instantanés atteint", "description": "Cette demande dépasse vos quotas de base et de packs restants. Consultez la facturation pour connaître la disponibilité actuelle des packs.", "link": "Voir les packs d’instantanés" },
-    "upgrade": { "title": "L’analyse du trafic n’est pas incluse dans votre offre", "description": "Choisissez une offre payante pour demander des instantanés de trafic. Vous pouvez toujours ouvrir les instantanés enregistrés partagés avec cet espace.", "link": "Comparer les offres" },
-    "timeout": { "title": "La demande a pris trop de temps", "retry": "Réessayer", "retrying": "Nouvelle tentative…" },
+    "empty": {
+      "title": "Aucun instantané de trafic",
+      "description": "Prévisualisez votre premier instantané de domaine.",
+      "cta": "Commencer par un domaine"
+    },
+    "partial": {
+      "title": "Estimation partielle",
+      "description": "{{retained}} opérations sur trois ont été conservées. Les champs manquants ne sont pas déduits."
+    },
+    "failed": {
+      "title": "Échec de l’instantané",
+      "refund": "Aucune opération du fournisseur n’a été conservée ; l’unité réservée a donc été remboursée."
+    },
+    "locked": {
+      "title": "Les nouveaux instantanés sont temporairement suspendus",
+      "description": "L’analyse du trafic est temporairement indisponible pour les nouvelles demandes. Les instantanés enregistrés restent accessibles."
+    },
+    "cap": {
+      "title": "Quota d’instantanés atteint",
+      "description": "Cette demande dépasse vos quotas de base et de packs restants. Consultez la facturation pour connaître la disponibilité actuelle des packs.",
+      "link": "Voir les packs d’instantanés"
+    },
+    "upgrade": {
+      "title": "L’analyse du trafic n’est pas incluse dans votre offre",
+      "description": "Choisissez une offre payante pour demander des instantanés de trafic. Vous pouvez toujours ouvrir les instantanés enregistrés partagés avec cet espace.",
+      "link": "Comparer les offres"
+    },
+    "timeout": {
+      "title": "La demande a pris trop de temps",
+      "retry": "Réessayer",
+      "retrying": "Nouvelle tentative…"
+    },
     "signedOut": "Connectez-vous pour consulter l’analyse du trafic.",
     "queued": "Instantané en attente",
     "running": "Instantané en cours",
@@ -83,7 +143,7 @@
     "clamped": "Vous pouvez comparer jusqu’à {{count}} instantanés. Le sixième n’a pas été ajouté.",
     "select": "Sélectionner des instantanés",
     "selectSnapshot": "Sélectionner {{domain}} pour la comparaison",
-    "button": "Comparer {{count}} instantanés",
+    "button_one": "Comparer {{count}} instantané",
     "remove": "Retirer {{domain}} de la comparaison",
     "countriesTitle": "Répartition estimée alignée par pays",
     "historyTitle": "Historique estimé du trafic superposé",
@@ -91,7 +151,22 @@
     "chartLabel": "Historique estimé du trafic superposé pour les instantanés sélectionnés",
     "historyEmpty": "Aucun point d’historique comparable n’a été conservé.",
     "expandTable": "Afficher le tableau comparatif accessible",
-    "tableCaption": "Historique mensuel estimé du trafic par instantané"
+    "tableCaption": "Historique mensuel estimé du trafic par instantané",
+    "button_zero": "Comparer {{count}} instantané",
+    "button_two": "Comparer {{count}} instantanés",
+    "button_few": "Comparer {{count}} instantanés",
+    "button_many": "Comparer {{count}} instantanés",
+    "button_other": "Comparer {{count}} instantanés",
+    "selectedCount_zero": "{{count}} sélectionné",
+    "selectedCount_one": "{{count}} sélectionné",
+    "selectedCount_two": "{{count}} sélectionnés",
+    "selectedCount_few": "{{count}} sélectionnés",
+    "selectedCount_many": "{{count}} sélectionnés",
+    "selectedCount_other": "{{count}} sélectionnés"
   },
-  "agency": { "tabsLabel": "Vues de l’espace Concurrents", "overviewTab": "Concurrents", "trafficTab": "Analyse du trafic" }
+  "agency": {
+    "tabsLabel": "Vues de l’espace Concurrents",
+    "overviewTab": "Concurrents",
+    "trafficTab": "Analyse du trafic"
+  }
 }

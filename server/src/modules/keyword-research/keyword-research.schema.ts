@@ -10,7 +10,7 @@ const phraseSchema = z
     .min(1, 'keywordResearch.errors.phraseRequired')
     .max(80, 'keywordResearch.errors.phraseTooLong');
 const locationCodeSchema = z
-    .number({ invalid_type_error: 'keywordResearch.errors.locationInvalid' })
+    .number({ error: (issue) => issue.input === undefined ? undefined : 'keywordResearch.errors.locationInvalid' })
     .int()
     .positive();
 const languageCodeSchema = z
@@ -238,7 +238,7 @@ const trendsGeoSchema = z
     .trim()
     .transform((value) => value.toLowerCase())
     .pipe(z.enum(['us', 'gb', 'de', 'fr'], {
-    errorMap: () => ({ message: 'keywordResearch.trends.errors.geoInvalid' }),
+    error: 'keywordResearch.trends.errors.geoInvalid',
 }));
 const trendsLanguageSchema = z
     .string()
@@ -281,10 +281,7 @@ export const trendsRunIdParamSchema = z.object({
 });
 export const decisionRequestSchema = z
     .object({
-    kind: z.enum(['accepted', 'dismissed'], {
-        required_error: 'keywordResearch.errors.decisionKindInvalid',
-        invalid_type_error: 'keywordResearch.errors.decisionKindInvalid',
-    }),
+    kind: z.string({ error: 'keywordResearch.errors.decisionKindInvalid' }).pipe(z.enum(['accepted', 'dismissed'])),
     idempotencyKey: z
         .string()
         .trim()

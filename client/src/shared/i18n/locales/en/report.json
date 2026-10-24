@@ -20,10 +20,15 @@
     "passed": "Passed"
   },
   "row": {
-    "affectedPages": "{{count}} pages affected",
+    "affectedPages_one": "{{count}} page affected",
     "affectedPagesOne": "1 page affected",
     "siteWide": "Site-wide check",
-    "passedSummary": "This check is passing."
+    "passedSummary": "This check is passing.",
+    "affectedPages_zero": "{{count}} pages affected",
+    "affectedPages_two": "{{count}} pages affected",
+    "affectedPages_few": "{{count}} pages affected",
+    "affectedPages_many": "{{count}} pages affected",
+    "affectedPages_other": "{{count}} pages affected"
   },
   "severity": {
     "critical": "Critical",
@@ -56,7 +61,19 @@
       "okChip": "OK",
       "problemChip": "Needs fixing",
       "unknownChip": "Not checked"
-    }
+    },
+    "measured": {"words_zero": "{{count}} words",
+      "words_one": "{{count}} word",
+      "words_two": "{{count}} words",
+      "words_few": "{{count}} words",
+      "words_many": "{{count}} words",
+      "words_other": "{{count}} words",
+      "characters_zero": "{{count}} characters",
+      "characters_one": "{{count}} character",
+      "characters_two": "{{count}} characters",
+      "characters_few": "{{count}} characters",
+      "characters_many": "{{count}} characters",
+      "characters_other": "{{count}} characters"}
   },
   "retest": {
     "cta": "Retest",
@@ -69,7 +86,12 @@
     "label": "Pages to crawl",
     "max": "Maximum allowed",
     "help": "Sets how many pages the crawler visits. “Maximum allowed” covers as many pages as this server permits; fewer pages finish sooner.",
-    "pages": "{{pages}} pages"
+    "pages_one": "{{pages}} page",
+    "pages_zero": "{{pages}} pages",
+    "pages_two": "{{pages}} pages",
+    "pages_few": "{{pages}} pages",
+    "pages_many": "{{pages}} pages",
+    "pages_other": "{{pages}} pages"
   },
   "empty": {
     "fix-now": {
@@ -110,7 +132,7 @@
     "noFieldDataTitle": "Not enough visitor data yet",
     "noFieldDataBody": "Chrome only reports real-visitor speed once a site has enough traffic. As traffic grows, this section will fill in automatically.",
     "originFallback": "Origin-level data (not just this page)",
-    "sampleLabel": "{{count}} pages sampled",
+    "sampleLabel_one": "{{count}} page sampled",
     "sampleLabelOne": "1 page sampled",
     "metrics": {
       "lcp": "LCP",
@@ -122,7 +144,12 @@
       "good": "Good",
       "needs-improvement": "Needs improvement",
       "poor": "Poor"
-    }
+    },
+    "sampleLabel_zero": "{{count}} pages sampled",
+    "sampleLabel_two": "{{count}} pages sampled",
+    "sampleLabel_few": "{{count}} pages sampled",
+    "sampleLabel_many": "{{count}} pages sampled",
+    "sampleLabel_other": "{{count}} pages sampled"
   },
   "aiSummary": {
     "cardTitle": "AI summary of your fixes",
@@ -135,7 +162,13 @@
     "errors": {
       "unavailable": "AI summary is temporarily unavailable — your checklist is unaffected.",
       "capReached": "You've reached your monthly AI summary limit. Upgrade or add credits to keep generating."
-    }
+    },
+    "basis_zero": "Based on {{count}} open findings",
+    "basis_one": "Based on {{count}} open finding",
+    "basis_two": "Based on {{count}} open findings",
+    "basis_few": "Based on {{count}} open findings",
+    "basis_many": "Based on {{count}} open findings",
+    "basis_other": "Based on {{count}} open findings"
   },
   "pdf": {
     "download": "Download PDF",
@@ -173,11 +206,26 @@
     "noSitemapsTitle": "No sitemap submitted to Google",
     "noSitemapsBody": "Submit your sitemap in Google Search Console so Google can find every page you want indexed.",
     "sitemapHealthy": "Healthy",
-    "sitemapErrors": "{{count}} errors",
-    "sitemapWarnings": "{{count}} warnings",
-    "sitemapProcessed": "{{count}} URLs submitted",
+    "sitemapErrors_one": "{{count}} error",
+    "sitemapWarnings_one": "{{count}} warning",
+    "sitemapProcessed_one": "{{count}} URL submitted",
     "sitemapLastDownloaded": "Last read by Google: {{date}}",
-    "sitemapNeverDownloaded": "Not read by Google yet"
+    "sitemapNeverDownloaded": "Not read by Google yet",
+    "sitemapErrors_zero": "{{count}} errors",
+    "sitemapErrors_two": "{{count}} errors",
+    "sitemapErrors_few": "{{count}} errors",
+    "sitemapErrors_many": "{{count}} errors",
+    "sitemapErrors_other": "{{count}} errors",
+    "sitemapWarnings_zero": "{{count}} warnings",
+    "sitemapWarnings_two": "{{count}} warnings",
+    "sitemapWarnings_few": "{{count}} warnings",
+    "sitemapWarnings_many": "{{count}} warnings",
+    "sitemapWarnings_other": "{{count}} warnings",
+    "sitemapProcessed_zero": "{{count}} URLs submitted",
+    "sitemapProcessed_two": "{{count}} URLs submitted",
+    "sitemapProcessed_few": "{{count}} URLs submitted",
+    "sitemapProcessed_many": "{{count}} URLs submitted",
+    "sitemapProcessed_other": "{{count}} URLs submitted"
   },
   "aiVisibilityBlock": {
     "title": "AI Visibility",
@@ -214,8 +262,13 @@
     "unansweredQuestions": "Unanswered questions",
     "localPack": "Local map pack",
     "notRanked": "Not in map pack",
-    "packSize": "{{count}} results",
-    "noData": "No data"
+    "packSize_one": "{{count}} result",
+    "noData": "No data",
+    "packSize_zero": "{{count}} results",
+    "packSize_two": "{{count}} results",
+    "packSize_few": "{{count}} results",
+    "packSize_many": "{{count}} results",
+    "packSize_other": "{{count}} results"
   },
   "exportUi": {
     "trigger": "Export or share",
@@ -233,7 +286,12 @@
     "errors": { "capabilities": "Export options could not be loaded.", "create": "The report could not be exported. Narrow the scope and try again.", "download": "The saved file could not be downloaded.", "list": "Saved exports could not be loaded.", "delete": "The saved export could not be deleted.", "share": "The share link could not be created.", "revoke": "The share link could not be revoked.", "copy": "The link could not be copied." },
     "share": { "action": "Create share link", "title": "Share an immutable report", "description": "Choose what recipients can open. The report will not change after this link is created.", "locale": "Report language", "expiry": "Expires after", "expiryHelp": "Choose from one to 90 days.", "permissions": "Allowed formats", "create": "Create link", "creating": "Creating link…", "showOnce": "Copy this link now", "linkLabel": "Share link", "copy": "Copy link", "copied": "Copied", "savedWithoutToken": "For security, RankMeFast does not save the readable link. You can still revoke it from the export center.", "existing": "Links for this snapshot", "refresh": "Refresh" },
     "confirm": { "revokeTitle": "Revoke this link?", "revokeBody": "Anyone using it will lose access immediately.", "deleteTitle": "Delete this saved export?", "deleteBody": "The file will stop working and every attached share link will be revoked." },
-    "center": { "title": "Exports and shares", "description": "Download saved report snapshots and manage public links.", "tabsLabel": "Export center sections", "downloads": "Downloads", "shares": "Shares", "disabledTitle": "New exports are paused", "disabledBody": "Existing files may remain available, but new files and links cannot be created right now.", "emptyDownloadsTitle": "No saved exports yet", "emptyDownloadsBody": "Create one from any report using Export or share.", "emptySharesTitle": "No share links yet", "emptySharesBody": "Share an eligible report to manage its link here.", "deletedReport": "Deleted or expired report", "noSite": "Whole account", "more": "Load more", "expiresValue": "Expires {{date}}", "views": "{{count}} views", "columns": { "report": "Report", "site": "Site", "format": "Format", "created": "Created", "expires": "Expires", "actions": "Actions" } }
+    "center": { "title": "Exports and shares", "description": "Download saved report snapshots and manage public links.", "tabsLabel": "Export center sections", "downloads": "Downloads", "shares": "Shares", "disabledTitle": "New exports are paused", "disabledBody": "Existing files may remain available, but new files and links cannot be created right now.", "emptyDownloadsTitle": "No saved exports yet", "emptyDownloadsBody": "Create one from any report using Export or share.", "emptySharesTitle": "No share links yet", "emptySharesBody": "Share an eligible report to manage its link here.", "deletedReport": "Deleted or expired report", "noSite": "Whole account", "more": "Load more", "expiresValue": "Expires {{date}}", "views_one": "{{count}} view", "columns": { "report": "Report", "site": "Site", "format": "Format", "created": "Created", "expires": "Expires", "actions": "Actions" },
+      "views_zero": "{{count}} views",
+      "views_two": "{{count}} views",
+      "views_few": "{{count}} views",
+      "views_many": "{{count}} views",
+      "views_other": "{{count}} views" }
   },
   "publicShare": {
     "report": "Shared report",
@@ -273,5 +331,36 @@
     "title": "Run your first audit",
     "description": "We crawl your site once and show what to fix, what to watch, and what already passes.",
     "confirm": "Start audit"
-  }
+  },
+  "findingStatus": "{{bucket}} · {{severity}}",
+  "progress": {"upTo_zero": "Crawling up to {{cap}} pages.",
+    "upTo_one": "Crawling up to {{cap}} page.",
+    "upTo_two": "Crawling up to {{cap}} pages.",
+    "upTo_few": "Crawling up to {{cap}} pages.",
+    "upTo_many": "Crawling up to {{cap}} pages.",
+    "upTo_other": "Crawling up to {{cap}} pages."},
+  "dismissed": {"title_zero": "Dismissed ({{count}})",
+    "title_one": "Dismissed ({{count}})",
+    "title_two": "Dismissed ({{count}})",
+    "title_few": "Dismissed ({{count}})",
+    "title_many": "Dismissed ({{count}})",
+    "title_other": "Dismissed ({{count}})",
+    "stillDetected_zero": "Still detected in the latest audit: {{count}} pages affected.",
+    "stillDetected_one": "Still detected in the latest audit: {{count}} page affected.",
+    "stillDetected_two": "Still detected in the latest audit: {{count}} pages affected.",
+    "stillDetected_few": "Still detected in the latest audit: {{count}} pages affected.",
+    "stillDetected_many": "Still detected in the latest audit: {{count}} pages affected.",
+    "stillDetected_other": "Still detected in the latest audit: {{count}} pages affected.",
+    "resurfaced_zero": "Dismissed, but {{count}} more pages are now affected.",
+    "resurfaced_one": "Dismissed, but {{count}} more page is now affected.",
+    "resurfaced_two": "Dismissed, but {{count}} more pages are now affected.",
+    "resurfaced_few": "Dismissed, but {{count}} more pages are now affected.",
+    "resurfaced_many": "Dismissed, but {{count}} more pages are now affected.",
+    "resurfaced_other": "Dismissed, but {{count}} more pages are now affected."},
+  "stale": {"title_zero": "Last audited {{count}} days ago",
+    "title_one": "Last audited {{count}} day ago",
+    "title_two": "Last audited {{count}} days ago",
+    "title_few": "Last audited {{count}} days ago",
+    "title_many": "Last audited {{count}} days ago",
+    "title_other": "Last audited {{count}} days ago"}
 }

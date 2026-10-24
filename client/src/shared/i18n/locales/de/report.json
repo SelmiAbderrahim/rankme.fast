@@ -20,10 +20,15 @@
     "passed": "Bestanden"
   },
   "row": {
-    "affectedPages": "{{count}} Seiten betroffen",
+    "affectedPages_one": "{{count}} Seite betroffen",
     "affectedPagesOne": "1 Seite betroffen",
     "siteWide": "Websiteweite Prüfung",
-    "passedSummary": "Diese Prüfung ist erfolgreich."
+    "passedSummary": "Diese Prüfung ist erfolgreich.",
+    "affectedPages_zero": "{{count}} Seiten betroffen",
+    "affectedPages_two": "{{count}} Seiten betroffen",
+    "affectedPages_few": "{{count}} Seiten betroffen",
+    "affectedPages_many": "{{count}} Seiten betroffen",
+    "affectedPages_other": "{{count}} Seiten betroffen"
   },
   "severity": {
     "critical": "Kritisch",
@@ -56,7 +61,19 @@
       "okChip": "OK",
       "problemChip": "Beheben",
       "unknownChip": "Nicht geprüft"
-    }
+    },
+    "measured": {"words_zero": "{{count}} Wörter",
+      "words_one": "{{count}} Wort",
+      "words_two": "{{count}} Wörter",
+      "words_few": "{{count}} Wörter",
+      "words_many": "{{count}} Wörter",
+      "words_other": "{{count}} Wörter",
+      "characters_zero": "{{count}} Zeichen",
+      "characters_one": "{{count}} Zeichen",
+      "characters_two": "{{count}} Zeichen",
+      "characters_few": "{{count}} Zeichen",
+      "characters_many": "{{count}} Zeichen",
+      "characters_other": "{{count}} Zeichen"}
   },
   "retest": {
     "cta": "Erneut prüfen",
@@ -69,7 +86,12 @@
     "label": "Zu crawlende Seiten",
     "max": "Maximal zulässig",
     "help": "Legt fest, wie viele Seiten der Crawler besucht. „Maximal zulässig“ deckt so viele Seiten ab, wie dieser Server erlaubt; weniger Seiten sind schneller fertig.",
-    "pages": "{{pages}} Seiten"
+    "pages_one": "{{pages}} Seite",
+    "pages_zero": "{{pages}} Seiten",
+    "pages_two": "{{pages}} Seiten",
+    "pages_few": "{{pages}} Seiten",
+    "pages_many": "{{pages}} Seiten",
+    "pages_other": "{{pages}} Seiten"
   },
   "empty": {
     "fix-now": {
@@ -110,7 +132,7 @@
     "noFieldDataTitle": "Noch nicht genug Besucherdaten",
     "noFieldDataBody": "Chrome meldet Besuchergeschwindigkeit erst, wenn eine Seite genug Traffic hat. Sobald der Traffic wächst, füllt sich dieser Bereich automatisch.",
     "originFallback": "Daten auf Origin-Ebene (nicht nur diese Seite)",
-    "sampleLabel": "{{count}} Seiten stichprobenweise geprüft",
+    "sampleLabel_one": "{{count}} Seite stichprobenweise geprüft",
     "sampleLabelOne": "1 Seite stichprobenweise geprüft",
     "metrics": {
       "lcp": "LCP",
@@ -122,7 +144,12 @@
       "good": "Gut",
       "needs-improvement": "Verbesserungswürdig",
       "poor": "Schwach"
-    }
+    },
+    "sampleLabel_zero": "{{count}} Seiten stichprobenweise geprüft",
+    "sampleLabel_two": "{{count}} Seiten stichprobenweise geprüft",
+    "sampleLabel_few": "{{count}} Seiten stichprobenweise geprüft",
+    "sampleLabel_many": "{{count}} Seiten stichprobenweise geprüft",
+    "sampleLabel_other": "{{count}} Seiten stichprobenweise geprüft"
   },
   "aiSummary": {
     "cardTitle": "KI-Zusammenfassung Ihrer Korrekturen",
@@ -135,7 +162,13 @@
     "errors": {
       "unavailable": "KI-Zusammenfassung ist vorübergehend nicht verfügbar — Ihre Checkliste bleibt unverändert.",
       "capReached": "Ihr monatliches KI-Zusammenfassungslimit ist erreicht. Upgraden oder Guthaben aufladen, um weitere Zusammenfassungen zu erzeugen."
-    }
+    },
+    "basis_zero": "Basiert auf {{count}} offenen Befunden",
+    "basis_one": "Basiert auf {{count}} offenem Befund",
+    "basis_two": "Basiert auf {{count}} offenen Befunden",
+    "basis_few": "Basiert auf {{count}} offenen Befunden",
+    "basis_many": "Basiert auf {{count}} offenen Befunden",
+    "basis_other": "Basiert auf {{count}} offenen Befunden"
   },
   "pdf": {
     "download": "PDF herunterladen",
@@ -173,11 +206,26 @@
     "noSitemapsTitle": "Keine Sitemap an Google übermittelt",
     "noSitemapsBody": "Reichen Sie Ihre Sitemap in Google Search Console ein, damit Google jede Seite findet, die Sie indexieren lassen möchten.",
     "sitemapHealthy": "Fehlerfrei",
-    "sitemapErrors": "{{count}} Fehler",
-    "sitemapWarnings": "{{count}} Warnungen",
-    "sitemapProcessed": "{{count}} URLs übermittelt",
+    "sitemapErrors_one": "{{count}} Fehler",
+    "sitemapWarnings_one": "{{count}} Warnung",
+    "sitemapProcessed_one": "{{count}} URL übermittelt",
     "sitemapLastDownloaded": "Zuletzt von Google gelesen: {{date}}",
-    "sitemapNeverDownloaded": "Noch nicht von Google gelesen"
+    "sitemapNeverDownloaded": "Noch nicht von Google gelesen",
+    "sitemapErrors_zero": "{{count}} Fehler",
+    "sitemapErrors_two": "{{count}} Fehler",
+    "sitemapErrors_few": "{{count}} Fehler",
+    "sitemapErrors_many": "{{count}} Fehler",
+    "sitemapErrors_other": "{{count}} Fehler",
+    "sitemapWarnings_zero": "{{count}} Warnungen",
+    "sitemapWarnings_two": "{{count}} Warnungen",
+    "sitemapWarnings_few": "{{count}} Warnungen",
+    "sitemapWarnings_many": "{{count}} Warnungen",
+    "sitemapWarnings_other": "{{count}} Warnungen",
+    "sitemapProcessed_zero": "{{count}} URLs übermittelt",
+    "sitemapProcessed_two": "{{count}} URLs übermittelt",
+    "sitemapProcessed_few": "{{count}} URLs übermittelt",
+    "sitemapProcessed_many": "{{count}} URLs übermittelt",
+    "sitemapProcessed_other": "{{count}} URLs übermittelt"
   },
   "aiVisibilityBlock": {
     "title": "AI-Sichtbarkeit",
@@ -214,8 +262,13 @@
     "unansweredQuestions": "Offene Fragen",
     "localPack": "Lokales Kartenpaket",
     "notRanked": "Nicht im Kartenpaket",
-    "packSize": "{{count}} Ergebnisse",
-    "noData": "Keine Daten"
+    "packSize_one": "{{count}} Ergebnis",
+    "noData": "Keine Daten",
+    "packSize_zero": "{{count}} Ergebnisse",
+    "packSize_two": "{{count}} Ergebnisse",
+    "packSize_few": "{{count}} Ergebnisse",
+    "packSize_many": "{{count}} Ergebnisse",
+    "packSize_other": "{{count}} Ergebnisse"
   },
   "exportUi": {
     "trigger": "Exportieren oder teilen", "loading": "Exportoptionen werden geladen…", "preparing": "Datei wird vorbereitet…", "ready": "Export fertig. Eine Kopie ist auch unter „Exporte und Freigaben“ gespeichert.", "unavailable": "Export nicht verfügbar", "empty": "Noch nichts zu exportieren", "formatsLabel": "Dateiformate",
@@ -225,9 +278,14 @@
     "states": { "active": "Aktiv", "revoked": "Widerrufen", "expired": "Abgelaufen" },
     "actions": { "retry": "Erneut versuchen", "download": "Herunterladen", "delete": "Löschen", "revoke": "Widerrufen", "cancel": "Abbrechen", "done": "Fertig" },
     "errors": { "capabilities": "Exportoptionen konnten nicht geladen werden.", "create": "Der Bericht konnte nicht exportiert werden. Grenze den Umfang ein und versuche es erneut.", "download": "Die gespeicherte Datei konnte nicht heruntergeladen werden.", "list": "Gespeicherte Exporte konnten nicht geladen werden.", "delete": "Der gespeicherte Export konnte nicht gelöscht werden.", "share": "Der Freigabelink konnte nicht erstellt werden.", "revoke": "Der Freigabelink konnte nicht widerrufen werden.", "copy": "Der Link konnte nicht kopiert werden." },
-    "share": { "action": "Freigabelink erstellen", "title": "Unveränderlichen Bericht teilen", "description": "Lege fest, was Empfänger öffnen dürfen. Nach der Linkerstellung ändert sich der Bericht nicht mehr.", "locale": "Berichtssprache", "expiry": "Läuft ab nach", "expiryHelp": "Wähle zwischen einem und 90 Tagen.", "permissions": "Erlaubte Formate", "create": "Link erstellen", "creating": "Link wird erstellt…", "showOnce": "Diesen Link jetzt kopieren", "linkLabel": "Freigabelink", "copy": "Link kopieren", "copied": "Kopiert", "savedWithoutToken": "Aus Sicherheitsgründen speichert RankMeFast den lesbaren Link nicht. Im Exportcenter kannst du ihn weiterhin widerrufen.", "existing": "Links für diesen Snapshot", "refresh": "Aktualisieren" },
+    "share": { "action": "Freigabelink erstellen", "title": "Unveränderlichen Bericht teilen", "description": "Lege fest, was Empfänger öffnen dürfen. Nach der Linkerstellung ändert sich der Bericht nicht mehr.", "locale": "Berichtssprache", "expiry": "Läuft ab nach", "expiryHelp": "Wählen Sie zwischen einem und 90 Tagen.", "permissions": "Erlaubte Formate", "create": "Link erstellen", "creating": "Link wird erstellt…", "showOnce": "Diesen Link jetzt kopieren", "linkLabel": "Freigabelink", "copy": "Link kopieren", "copied": "Kopiert", "savedWithoutToken": "Aus Sicherheitsgründen speichert RankMeFast den lesbaren Link nicht. Im Exportcenter können Sie ihn weiterhin widerrufen.", "existing": "Links für diesen Snapshot", "refresh": "Aktualisieren" },
     "confirm": { "revokeTitle": "Diesen Link widerrufen?", "revokeBody": "Alle Nutzer verlieren sofort den Zugriff.", "deleteTitle": "Diesen gespeicherten Export löschen?", "deleteBody": "Die Datei funktioniert danach nicht mehr und alle verknüpften Freigaben werden widerrufen." },
-    "center": { "title": "Exporte und Freigaben", "description": "Lade gespeicherte Berichtssnapshots herunter und verwalte öffentliche Links.", "tabsLabel": "Bereiche des Exportcenters", "downloads": "Downloads", "shares": "Freigaben", "disabledTitle": "Neue Exporte sind pausiert", "disabledBody": "Vorhandene Dateien können verfügbar bleiben, neue Dateien und Links können derzeit aber nicht erstellt werden.", "emptyDownloadsTitle": "Noch keine gespeicherten Exporte", "emptyDownloadsBody": "Erstelle einen Bericht über Exportieren oder teilen.", "emptySharesTitle": "Noch keine Freigabelinks", "emptySharesBody": "Teile einen geeigneten Bericht, um seinen Link hier zu verwalten.", "deletedReport": "Gelöschter oder abgelaufener Bericht", "noSite": "Ganzes Konto", "more": "Mehr laden", "expiresValue": "Läuft am {{date}} ab", "views": "{{count}} Aufrufe", "columns": { "report": "Bericht", "site": "Website", "format": "Format", "created": "Erstellt", "expires": "Läuft ab", "actions": "Aktionen" } }
+    "center": { "title": "Exporte und Freigaben", "description": "Lade gespeicherte Berichtssnapshots herunter und verwalte öffentliche Links.", "tabsLabel": "Bereiche des Exportcenters", "downloads": "Downloads", "shares": "Freigaben", "disabledTitle": "Neue Exporte sind pausiert", "disabledBody": "Vorhandene Dateien können verfügbar bleiben, neue Dateien und Links können derzeit aber nicht erstellt werden.", "emptyDownloadsTitle": "Noch keine gespeicherten Exporte", "emptyDownloadsBody": "Erstelle einen Bericht über Exportieren oder teilen.", "emptySharesTitle": "Noch keine Freigabelinks", "emptySharesBody": "Teile einen geeigneten Bericht, um seinen Link hier zu verwalten.", "deletedReport": "Gelöschter oder abgelaufener Bericht", "noSite": "Ganzes Konto", "more": "Mehr laden", "expiresValue": "Läuft am {{date}} ab", "views_one": "{{count}} Aufruf", "columns": { "report": "Bericht", "site": "Website", "format": "Format", "created": "Erstellt", "expires": "Läuft ab", "actions": "Aktionen" },
+      "views_zero": "{{count}} Aufrufe",
+      "views_two": "{{count}} Aufrufe",
+      "views_few": "{{count}} Aufrufe",
+      "views_many": "{{count}} Aufrufe",
+      "views_other": "{{count}} Aufrufe" }
   },
   "publicShare": {
     "report": "Geteilter Bericht",
@@ -267,5 +325,36 @@
     "title": "Ersten Audit starten",
     "description": "Wir crawlen Ihre Website einmal und zeigen, was zu beheben, was zu beobachten und was bereits in Ordnung ist.",
     "confirm": "Audit starten"
-  }
+  },
+  "findingStatus": "{{bucket}} · {{severity}}",
+  "progress": {"upTo_zero": "Bis zu {{cap}} Seiten werden gecrawlt.",
+    "upTo_one": "Bis zu {{cap}} Seite wird gecrawlt.",
+    "upTo_two": "Bis zu {{cap}} Seiten werden gecrawlt.",
+    "upTo_few": "Bis zu {{cap}} Seiten werden gecrawlt.",
+    "upTo_many": "Bis zu {{cap}} Seiten werden gecrawlt.",
+    "upTo_other": "Bis zu {{cap}} Seiten werden gecrawlt."},
+  "dismissed": {"title_zero": "Verworfen ({{count}})",
+    "title_one": "Verworfen ({{count}})",
+    "title_two": "Verworfen ({{count}})",
+    "title_few": "Verworfen ({{count}})",
+    "title_many": "Verworfen ({{count}})",
+    "title_other": "Verworfen ({{count}})",
+    "stillDetected_zero": "Im neuesten Audit weiterhin gefunden: {{count}} Seiten betroffen.",
+    "stillDetected_one": "Im neuesten Audit weiterhin gefunden: {{count}} Seite betroffen.",
+    "stillDetected_two": "Im neuesten Audit weiterhin gefunden: {{count}} Seiten betroffen.",
+    "stillDetected_few": "Im neuesten Audit weiterhin gefunden: {{count}} Seiten betroffen.",
+    "stillDetected_many": "Im neuesten Audit weiterhin gefunden: {{count}} Seiten betroffen.",
+    "stillDetected_other": "Im neuesten Audit weiterhin gefunden: {{count}} Seiten betroffen.",
+    "resurfaced_zero": "Verworfen, aber jetzt sind {{count}} weitere Seiten betroffen.",
+    "resurfaced_one": "Verworfen, aber jetzt ist {{count}} weitere Seite betroffen.",
+    "resurfaced_two": "Verworfen, aber jetzt sind {{count}} weitere Seiten betroffen.",
+    "resurfaced_few": "Verworfen, aber jetzt sind {{count}} weitere Seiten betroffen.",
+    "resurfaced_many": "Verworfen, aber jetzt sind {{count}} weitere Seiten betroffen.",
+    "resurfaced_other": "Verworfen, aber jetzt sind {{count}} weitere Seiten betroffen."},
+  "stale": {"title_zero": "Letztes Audit vor {{count}} Tagen",
+    "title_one": "Letztes Audit vor {{count}} Tag",
+    "title_two": "Letztes Audit vor {{count}} Tagen",
+    "title_few": "Letztes Audit vor {{count}} Tagen",
+    "title_many": "Letztes Audit vor {{count}} Tagen",
+    "title_other": "Letztes Audit vor {{count}} Tagen"}
 }

@@ -74,7 +74,13 @@
       "saving": "Saving…",
       "cancel": "Cancel"
     },
-    "joinedOn": "Joined {{date}}"
+    "joinedOn": "Joined {{date}}",
+    "total_zero": "No members",
+    "total_one": "{{count}} member",
+    "total_two": "{{count}} members",
+    "total_few": "{{count}} members",
+    "total_many": "{{count}} members",
+    "total_other": "{{count}} members"
   },
   "accept": {
     "title": "Accept invite",
@@ -125,7 +131,13 @@
     "siteCount_two": "{{count}} sites",
     "siteCount_few": "{{count}} sites",
     "siteCount_many": "{{count}} sites",
-    "siteCount_other": "{{count}} sites"
+    "siteCount_other": "{{count}} sites",
+    "outsideYourAccess_zero": "{{count}} more sites outside your access",
+    "outsideYourAccess_one": "{{count}} more site outside your access",
+    "outsideYourAccess_two": "{{count}} more sites outside your access",
+    "outsideYourAccess_few": "{{count}} more sites outside your access",
+    "outsideYourAccess_many": "{{count}} more sites outside your access",
+    "outsideYourAccess_other": "{{count}} more sites outside your access"
   },
   "decision": {
     "loading": "Checking the invitation…",
@@ -159,7 +171,7 @@
   },
   "inbox": {
     "buttonLabel": "Team invitations",
-    "buttonLabelWithCount": "Team invitations, {{count}} pending",
+    "buttonLabelWithCount_one": "Team invitations, {{count}} pending",
     "title": "Team invitations",
     "description": "Review invitations waiting for your decision.",
     "emptyTitle": "No pending invitations",
@@ -173,6 +185,17 @@
     "rejectTitle": "Reject this invitation?",
     "rejectBody": "You will not join {{team}}.",
     "cancel": "Cancel",
-    "loadFailed": "We could not load your team invitations."
-  }
+    "loadFailed": "We could not load your team invitations.",
+    "buttonLabelWithCount_zero": "Team invitations, {{count}} pending",
+    "buttonLabelWithCount_two": "Team invitations, {{count}} pending",
+    "buttonLabelWithCount_few": "Team invitations, {{count}} pending",
+    "buttonLabelWithCount_many": "Team invitations, {{count}} pending",
+    "buttonLabelWithCount_other": "Team invitations, {{count}} pending"
+  },
+  "received": {"pending_zero": "{{count}} invitations from other teams are waiting for you.",
+    "pending_one": "{{count}} invitation from another team is waiting for you.",
+    "pending_two": "{{count}} invitations from other teams are waiting for you.",
+    "pending_few": "{{count}} invitations from other teams are waiting for you.",
+    "pending_many": "{{count}} invitations from other teams are waiting for you.",
+    "pending_other": "{{count}} invitations from other teams are waiting for you."}
 }

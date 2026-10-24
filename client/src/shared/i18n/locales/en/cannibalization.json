@@ -24,8 +24,6 @@
   },
   "preview": {
     "title": "What this costs",
-    "units": "{{count}} report from your monthly allowance.",
-    "units_other": "{{count}} reports from your monthly allowance.",
     "remaining": "Left on your plan this month: {{remaining}}.",
     "pack": "Plus {{units}} from credit packs.",
     "noFit": "This does not fit in what is left. Add credits or change plan first."
@@ -39,7 +37,7 @@
     "open": "Open"
   },
   "detail": {
-    "provenance": "From your stored Search Console data over {{days}} days, last synced {{date}}. {{queries}} queries read."
+    "provenance": "From your stored Search Console data over $t(cannibalization:counts.windowDays, {\"count\": {{days}}}), last synced {{date}}. $t(cannibalization:counts.queriesRead, {\"count\": {{queries}}})"
   },
   "candidates": {
     "query": "Query",
@@ -56,7 +54,7 @@
     "inspect": "Inspect"
   },
   "drilldown": {
-    "provenance": "Stored rows over {{days}} days, last synced {{date}}.",
+    "provenance": "Stored rows over $t(cannibalization:counts.windowDays, {\"count\": {{days}}}), last synced {{date}}.",
     "recommendation": "Keep {{url}} as the main page.",
     "reason": {
       "most_clicks": "It already earns the most clicks for this query.",
@@ -100,5 +98,19 @@
       "title": "Something went wrong",
       "body": "We could not load this. Try again."
     }
+  },
+  "counts": {
+    "windowDays_zero": "{{count}} days",
+    "windowDays_one": "{{count}} day",
+    "windowDays_two": "{{count}} days",
+    "windowDays_few": "{{count}} days",
+    "windowDays_many": "{{count}} days",
+    "windowDays_other": "{{count}} days",
+    "queriesRead_zero": "{{count}} queries read.",
+    "queriesRead_one": "{{count}} query read.",
+    "queriesRead_two": "{{count}} queries read.",
+    "queriesRead_few": "{{count}} queries read.",
+    "queriesRead_many": "{{count}} queries read.",
+    "queriesRead_other": "{{count}} queries read."
   }
 }

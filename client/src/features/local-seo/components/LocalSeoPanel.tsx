@@ -1,3 +1,4 @@
+import { Bdi } from '@shared/components/Bdi';
 /**
  * Local SEO panel — NAP consistency, review/Q&A health,
  * local-pack rank.
@@ -171,7 +172,7 @@ export const LocalSeoPanel = ({ siteId }: Props) => {
                 {listings.map((row) => (
                   <TableRow key={row.source} data-testid={`local-seo-listing-row-${row.source}`}>
                     <TableCell className="font-medium">{row.source}</TableCell>
-                    <TableCell>{row.name}</TableCell>
+                    <TableCell><Bdi>{row.name}</Bdi></TableCell>
                     <TableCell>{row.address ?? '—'}</TableCell>
                     <TableCell>{row.phone ?? '—'}</TableCell>
                     <TableCell className="text-end">
@@ -262,7 +263,7 @@ export const LocalSeoPanel = ({ siteId }: Props) => {
                     key={`${row.keywordId}-${i}`}
                     data-testid={`local-seo-local-pack-row-${i}`}
                   >
-                    <TableCell className="font-medium">{row.phrase}</TableCell>
+                    <TableCell className="font-medium"><Bdi>{row.phrase}</Bdi></TableCell>
                     <TableCell className="text-end tabular-nums">
                       {formatPosition(row.position, t('localPack.notRanked'))}
                     </TableCell>

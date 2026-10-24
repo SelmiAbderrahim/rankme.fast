@@ -1,4 +1,4 @@
-import { DEFAULT_SITE_TAB, isSiteTab, SITE_TAB_LABEL_KEYS } from '@features/sites';
+import { resolveSiteTab, SITE_TAB_LABEL_KEYS } from '@features/sites';
 import { BRAND_NAME } from '@shared/brand';
 import { APP_NAV_GROUPS, resolveActiveNavKey } from '@shared/navigation/appNav';
 
@@ -17,12 +17,34 @@ const NAV_CANDIDATES = APP_NAV_GROUPS.flatMap((group) =>
   })),
 );
 
+const AUTH_TITLES: Readonly<Record<string, string>> = {
+  '/login': 'auth:login.title',
+  '/register': 'auth:register.title',
+  '/forgot-password': 'auth:reset.title',
+  '/reset-password': 'auth:reset.newPasswordTitle',
+  '/verify-email': 'auth:verify.title',
+  '/two-factor': 'auth:twoFactor.challenge.title',
+  '/logout': 'nav.logout',
+  '/team/change-password': 'auth:change.title',
+  '/team/invitations': 'team:inbox.title',
+};
+
 // Site workspace sub-routes that are not `?tab=` panels, mapped to the tab
 // whose label names them.
 const SITE_SUBROUTE_TABS: Readonly<Record<string, keyof typeof SITE_TAB_LABEL_KEYS>> = {
   report: 'report',
   backlinks: 'backlinks',
   'content-briefs': 'content',
+  'ai-visibility': 'ai-visibility',
+  'local-seo': 'local-seo',
+  competitors: 'competitors',
+  traffic: 'traffic',
+  'content-intelligence': 'content',
+  audits: 'report',
+  ranks: 'keywords',
+  gsc: 'google',
+  ga4: 'google',
+  'audience-research': 'audience-research',
 };
 
 /**
@@ -32,17 +54,24 @@ const SITE_SUBROUTE_TABS: Readonly<Record<string, keyof typeof SITE_TAB_LABEL_KE
  */
 export const resolveAppTitleTarget = (pathname: string, search: string): AppTitleTarget => {
   const parts = pathname.split('/').filter(Boolean);
-  if (parts[0] === 'sites' && parts[1]) {
+  const authTitle = AUTH_TITLES[`/${parts.join('/')}`.toLowerCase()];
+  if (authTitle) return { pageKey: authTitle, siteId: null };
+  const teamAction = parts[1]?.toLowerCase();
+  if (parts[0]?.toLowerCase() === 'team' && parts[2] && (teamAction === 'accept' || teamAction === 'reject')) {
+    return { pageKey: `team:decision.${teamAction}.title`, siteId: null };
+  }
+  if (parts[0]?.toLowerCase() === 'sites' && parts[1]) {
     const siteId = parts[1];
     if (parts[2] === undefined) {
       const requested = new URLSearchParams(search).get('tab');
-      const tab = isSiteTab(requested) ? requested : DEFAULT_SITE_TAB;
+      const tab = resolveSiteTab(requested).tab;
       return { pageKey: SITE_TAB_LABEL_KEYS[tab], siteId };
     }
-    const tab = SITE_SUBROUTE_TABS[parts[2]];
+    const subroute = parts[2].toLowerCase();
+    const tab = Object.hasOwn(SITE_SUBROUTE_TABS, subroute) ? SITE_SUBROUTE_TABS[subroute] : undefined;
     return { pageKey: tab ? SITE_TAB_LABEL_KEYS[tab] : null, siteId };
   }
-  return { pageKey: resolveActiveNavKey(NAV_CANDIDATES, pathname, search), siteId: null };
+  return { pageKey: resolveActiveNavKey(NAV_CANDIDATES, pathname.toLowerCase(), search), siteId: null };
 };
 
 /** `<Page> · <Site> · RankMeFast`; absent parts are dropped, never blank. */

@@ -1,5 +1,5 @@
 /**
- * Audits HTTP-service tests (prompt 07).
+ * Audits HTTP-service tests.
  *
  * Covers the start/list/get orchestration plus the page-cap policy and the
  * page persistence idempotency. A fake in-memory Queue stands in for BullMQ
@@ -22,6 +22,7 @@ import {
   listAuditRuns,
   replaceAuditedPages,
   resolveAuditPageCap,
+  resolveOwnedAuditRunSiteId,
   startAuditForSite,
 } from './index.js';
 import { AUDIT_PAGE_CAP_MAX } from './audits.schema.js';
@@ -463,6 +464,16 @@ describe('listAuditRuns', () => {
 });
 
 describe('getAuditRun', () => {
+  it('resolves a run lease only for its owner and rejects missing or malformed resources', async () => {
+    const owner = new mongoose.Types.ObjectId().toHexString();
+    const stranger = new mongoose.Types.ObjectId().toHexString();
+    const site = await seedSite(owner);
+    const run = await AuditRun.create({ accountId: owner, siteId: site._id, pageCap: 100 });
+    expect(await resolveOwnedAuditRunSiteId(owner, String(run._id))).toBe(String(site._id));
+    expect(await resolveOwnedAuditRunSiteId(stranger, String(run._id))).toBeNull();
+    expect(await resolveOwnedAuditRunSiteId(owner, new mongoose.Types.ObjectId().toHexString())).toBeNull();
+    expect(await resolveOwnedAuditRunSiteId(owner, 'malformed')).toBeNull();
+  });
   it('returns run + summary derived from the persisted result', async () => {
     const accountId = new mongoose.Types.ObjectId().toHexString();
     const site = await seedSite(accountId);
@@ -528,7 +539,8 @@ describe('getAuditRun', () => {
     const view = await getAuditRun({ accountId, runId: run.id as string });
     expect(view.run.startedAt).toBe(startedAt.toISOString());
     expect(view.run.finishedAt).toBe(finishedAt.toISOString());
-    expect(view.run.vendorTaskId).toBe('vendor-task-1');
+    expect(view.run).not.toHaveProperty('vendorTaskId');
+    expect((await AuditRun.findById(run._id))?.vendorTaskId).toBe('vendor-task-1');
     expect(view.run.error).toBe('unused');
   });
 

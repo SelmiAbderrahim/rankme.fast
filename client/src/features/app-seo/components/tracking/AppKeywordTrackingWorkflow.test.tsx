@@ -254,7 +254,7 @@ describe('App keyword tracking lifecycle', () => {
       expect.objectContaining({ phrase: 'alpha' }),
     );
     expect(
-      await screen.findByText('Adding 3 keywords. Each uses one tracking slot.'),
+      await screen.findByText('This selection adds 3 keywords.'),
     ).toBeVisible();
     await user.click(screen.getByRole('button', { name: 'Add keyword' }));
     await waitFor(() => expect(trackingApi.createTrackedAppKeyword).toHaveBeenCalledTimes(3));
@@ -321,7 +321,7 @@ describe('App keyword tracking lifecycle', () => {
     await user.type(screen.getByLabelText('Keyword'), ', zeta');
     await user.click(screen.getByRole('button', { name: 'Track selected (2)' }));
     expect(
-      await screen.findByText('Adding 2 keywords. Each uses one tracking slot.'),
+      await screen.findByText('This selection adds 2 keywords.'),
     ).toBeVisible();
     await user.click(screen.getByRole('button', { name: 'Add keyword' }));
     await waitFor(() => expect(trackingApi.createTrackedAppKeyword).toHaveBeenCalledTimes(2));
@@ -413,6 +413,7 @@ describe('App keyword tracking lifecycle', () => {
       }),
     );
     expect(await screen.findByText('Add this tracked keyword?')).toBeVisible();
+    expect(screen.queryByText('This selection adds 1 keyword.')).not.toBeInTheDocument();
     await user.click(screen.getByRole('button', { name: 'Add keyword' }));
     await waitFor(() => expect(trackingApi.createTrackedAppKeyword).toHaveBeenCalled());
     expect(screen.getByLabelText('Keyword')).toHaveValue('');

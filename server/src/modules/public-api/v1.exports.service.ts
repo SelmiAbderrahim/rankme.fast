@@ -7,7 +7,7 @@ const exportCursorSchema = z
     .object({
     v: z.literal(1),
     at: z.string().datetime({ offset: true }),
-    id: z.string().uuid(),
+    id: z.string().guid(),
 })
     .strict();
 export interface V1ExportCursor {

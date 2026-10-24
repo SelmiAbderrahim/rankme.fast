@@ -41,22 +41,32 @@
     "fresh": "Fresh",
     "supported": "This market is fully supported.",
     "unsupported": "This market has limited support — results may be thinner.",
-    "maxPages": "Up to {{max}} public pages",
+    "maxPages_one": "Up to {{max}} public page",
     "totalBudget": "Total budget: {{micros}} micro-USD",
     "aiBudget": "AI budget: {{micros}} micro-USD",
     "coverageOk": "Full provider coverage",
     "coverageDegraded": "Degraded provider coverage — results may be partial.",
-    "coverageBlocked": "Zero-data-retention scraping is blocked for this account."
+    "coverageBlocked": "Zero-data-retention scraping is blocked for this account.",
+    "maxPages_zero": "Up to {{max}} public pages",
+    "maxPages_two": "Up to {{max}} public pages",
+    "maxPages_few": "Up to {{max}} public pages",
+    "maxPages_many": "Up to {{max}} public pages",
+    "maxPages_other": "Up to {{max}} public pages"
   },
   "confirm": {
     "title": "Start this audience research run?",
-    "body": "This run will crawl up to {{maxPages}} public pages and generate signals from the public web. It runs once — there is no continuous monitoring.",
+    "body_one": "This run will crawl up to {{maxPages}} public page and generate signals from the public web. It runs once — there is no continuous monitoring.",
     "confirmButton": "Start run",
     "cancelButton": "Cancel",
     "marketLine": "Market",
     "competitorsLine": "Competitors",
     "topicsLine": "Topics",
-    "unitLine": "Units consumed"
+    "unitLine": "Units consumed",
+    "body_zero": "This run will crawl up to {{maxPages}} public pages and generate signals from the public web. It runs once — there is no continuous monitoring.",
+    "body_two": "This run will crawl up to {{maxPages}} public pages and generate signals from the public web. It runs once — there is no continuous monitoring.",
+    "body_few": "This run will crawl up to {{maxPages}} public pages and generate signals from the public web. It runs once — there is no continuous monitoring.",
+    "body_many": "This run will crawl up to {{maxPages}} public pages and generate signals from the public web. It runs once — there is no continuous monitoring.",
+    "body_other": "This run will crawl up to {{maxPages}} public pages and generate signals from the public web. It runs once — there is no continuous monitoring."
   },
   "progress": {
     "stage": {
@@ -70,8 +80,18 @@
       "failed": "Failed"
     },
     "counts": {
-      "sources": "{{count}} sources found",
-      "signals": "{{count}} signals found"
+      "sources_one": "{{count}} source found",
+      "signals_one": "{{count}} signal found",
+      "sources_zero": "{{count}} sources found",
+      "sources_two": "{{count}} sources found",
+      "sources_few": "{{count}} sources found",
+      "sources_many": "{{count}} sources found",
+      "sources_other": "{{count}} sources found",
+      "signals_zero": "{{count}} signals found",
+      "signals_two": "{{count}} signals found",
+      "signals_few": "{{count}} signals found",
+      "signals_many": "{{count}} signals found",
+      "signals_other": "{{count}} signals found"
     },
     "partial": {
       "title": "This run finished with partial coverage",
@@ -134,7 +154,7 @@
       "title": "This run finished but produced no signals.",
       "filtered": "No signals match the current filters."
     },
-    "citationCount": "{{count}} cited sources",
+    "citationCount_one": "{{count}} cited source",
     "confidence": {
       "high": "High confidence",
       "medium": "Medium confidence",
@@ -158,7 +178,7 @@
       "aiInterpretationHint": "The suggested route is an AI interpretation of the evidence, not a market share signal."
     },
     "rationale": {
-      "summary": "{{independentDomainCount}} independent domains across {{sourceTypeCount}} source types; {{recent}}.",
+      "summary": "Independent domains: {{independentDomainCount}}; source types: {{sourceTypeCount}}; {{recent}}.",
       "recent": "most recent source {{date}}",
       "recentUnknown": "date unavailable"
     },
@@ -226,7 +246,12 @@
         "duplicate": "Duplicate of another signal",
         "other": "Other"
       }
-    }
+    },
+    "citationCount_zero": "{{count}} cited sources",
+    "citationCount_two": "{{count}} cited sources",
+    "citationCount_few": "{{count}} cited sources",
+    "citationCount_many": "{{count}} cited sources",
+    "citationCount_other": "{{count}} cited sources"
   },
   "errors": {
     "overCap": "You have used every audience research run on your plan this month. Upgrade to run more.",

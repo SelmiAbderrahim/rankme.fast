@@ -9,6 +9,11 @@
   "empty": { "noProfileTitle": "Registra primero una app", "noProfileDescription": "El seguimiento necesita un ID de tienda registrado.", "noSubscriptions": "Aún no hay rankings seguidos para esta app." },
   "disabled": { "title": "El seguimiento de rankings está desactivado", "description": "Las posiciones guardadas siguen disponibles. Las nuevas suscripciones y comprobaciones están en pausa." },
   "upsell": { "title": "Añade el seguimiento de rankings de App SEO", "description": "Esta cuenta Pro necesita el complemento App SEO para ejecutar comprobaciones semanales.", "cta": "Ver opciones de App SEO" },
-  "limit": { "title": "Límite de rankings alcanzado", "description": "Cada perfil de aplicación puede seguir hasta {{limit}} rankings." },
+  "limit": { "title": "Límite de rankings alcanzado", "description_one": "Cada perfil de aplicación puede seguir hasta {{limit}} ranking.",
+    "description_zero": "Cada perfil de aplicación puede seguir hasta {{limit}} rankings.",
+    "description_two": "Cada perfil de aplicación puede seguir hasta {{limit}} rankings.",
+    "description_few": "Cada perfil de aplicación puede seguir hasta {{limit}} rankings.",
+    "description_many": "Cada perfil de aplicación puede seguir hasta {{limit}} rankings.",
+    "description_other": "Cada perfil de aplicación puede seguir hasta {{limit}} rankings." },
   "errors": { "title": "No pudimos actualizar el seguimiento", "requestFailed": "No se pudo completar la solicitud. Inténtalo de nuevo." }
 }

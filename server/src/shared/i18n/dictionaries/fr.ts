@@ -746,7 +746,6 @@ export const fr: DictionaryShape = {
         },
         trends: {
             errors: {
-                overCap: 'Ton quota d’exploration Tendances mots-clés ({{used}}/{{limit}} {{metric}}) est épuisé. Passe à un plan supérieur ou ajoute des crédits.',
                 unavailable: 'Tendances mots-clés est momentanément indisponible. Réessaie sous peu.',
                 providerFailed: 'Le fournisseur de tendances est momentanément indisponible. Réessaie sous peu.',
                 notFound: 'Cette exploration de tendances est introuvable.',
@@ -785,7 +784,6 @@ export const fr: DictionaryShape = {
                 runNotReady: 'Cette analyse de liens n’est pas encore prête à être exportée.',
             },
             preview: {
-                packOverflow: 'Ajoutez le pack {{slug}} ({{units}} analyses) lorsque votre quota inclus est épuisé.',
             },
         },
         errors: {
@@ -986,7 +984,6 @@ export const fr: DictionaryShape = {
     alerts: {
         errors: {
             unavailable: 'Les alertes sont momentanément indisponibles. Réessayez plus tard.',
-            capExceeded: 'Vous avez utilisé toutes les règles d’alerte de votre forfait.',
             channelNotOnPlan: 'Les canaux Slack et webhook exigent le forfait Pro ou supérieur.',
             rateLimited: 'Trop de requêtes d’alerte. Réessayez dans une minute.',
             siteNotFound: 'Site introuvable.',
@@ -1060,7 +1057,6 @@ export const fr: DictionaryShape = {
             invalidSelection: 'Choisissez au moins deux instantanés de trafic différents à comparer.',
         },
         errors: {
-            overCap: 'Vous avez utilisé tous les instantanés de trafic de votre forfait ce mois-ci.',
             productUnavailable: 'Traffic Insights est temporairement indisponible. Réessayez plus tard.',
             notFound: 'Instantané de trafic introuvable.',
             invalidDomain: 'Saisissez un domaine public valide, comme example.com.',
@@ -1632,29 +1628,23 @@ export const fr: DictionaryShape = {
                 invalidAppId: 'Saisissez un identifiant d’application valide pour la boutique choisie.',
                 appIdCount: 'Choisissez entre deux et vingt applications distinctes.',
                 ownAppRequired: 'Incluez l’application du profil sélectionné dans la comparaison.',
-                keywordAllowanceExhausted: 'Vous avez utilisé les recherches d’applications disponibles pour cette période.',
-                competitorAllowanceExhausted: 'Vous avez utilisé les recherches de concurrents disponibles pour cette période.',
             },
         },
         errors: {
             productUnavailable: 'Le référencement des applications est temporairement indisponible.',
             notFound: 'Profil d’application introuvable.',
-            profileLimitReached: 'Vous avez atteint la limite de profils d’application de cette offre.',
             duplicate: 'Cette application est déjà enregistrée pour votre compte.',
             rateLimited: 'Trop de requêtes de profils d’application. Réessayez dans un instant.',
             storeIdRequired: 'Saisissez un identifiant de package Google Play ou un identifiant App Store.',
             pairedStoreIdsRequired: 'Les profils associés nécessitent les deux identifiants de boutique.',
             keywordNotFound: 'Mot-clé d’application suivi introuvable.',
             keywordTrackingUnavailable: 'Le suivi des mots-clés d’application est temporairement indisponible.',
-            keywordSlotLimitReached: 'Vous avez atteint la limite de mots-clés d’application suivis de cette offre.',
-            keywordChecksExhausted: 'Vous avez utilisé les vérifications de mots-clés d’application disponibles pour cette période.',
             duplicateKeyword: 'Ce mot-clé et cette boutique sont déjà suivis pour l’application sélectionnée.',
             chartSubscriptionNotFound: 'Abonnement au classement d’applications introuvable.',
             chartTrackingUnavailable: 'Le suivi des classements d’applications est temporairement indisponible.',
             invalidChartSelection: 'Choisissez un classement et une catégorie pris en charge pour cette boutique.',
             chartSubscriptionLimit: 'Vous pouvez suivre jusqu’à deux classements par profil d’application.',
             duplicateChartSubscription: 'Ce classement et cette catégorie sont déjà suivis pour l’application sélectionnée.',
-            chartChecksExhausted: 'Vous avez utilisé les vérifications de classement d’applications disponibles pour cette période.',
         },
     },
     reportExports: {

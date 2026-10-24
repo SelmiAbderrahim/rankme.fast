@@ -48,6 +48,7 @@
   "pauseFailed": "تعذّر إيقاف الموقع مؤقتًا.",
   "resumeFailed": "تعذّر استئناف الموقع.",
   "paused": {
+    "actionBlocked": "استأنف هذا الموقع لتشغيل الفحوصات أو عمليات التدقيق أو المهام المجدولة.",
     "chip": "متوقف مؤقتًا",
     "menuPause": "إيقاف الموقع مؤقتًا",
     "menuResume": "استئناف الموقع",
@@ -59,7 +60,8 @@
     "banner": "هذا الموقع متوقف مؤقتًا — لا تعمل أي فحوصات أو تدقيقات. تم الإيقاف {{when}}.",
     "resumeCta": "استئناف",
     "pausing": "جارٍ الإيقاف…",
-    "resuming": "جارٍ الاستئناف…"
+    "resuming": "جارٍ الاستئناف…",
+    "optionSuffix": "متوقف مؤقتًا"
   },
   "errors": {
     "urlRequired": "أدخل عنوان URL لموقعك.",
@@ -103,7 +105,34 @@
     },
     "navigationLabel": "عرض مساحة العمل",
     "activeGroupLabel": "{{group}} · {{current}}",
-    "upgradeHint": "قم بترقية خطتك لفتح هذه اللسان."
+    "upgradeHint": "قم بترقية خطتك لفتح هذه اللسان.",
+    "switchSite": "تبديل الموقع",
+    "loadingSite": "جارٍ تحميل الموقع…",
+    "filterSites": "تصفية المواقع…",
+    "filterPages": "تصفية الصفحات…",
+    "choosePage": "اختيار صفحة",
+    "choosePageDescription": "افتح صفحة من الموقع.",
+    "siblingPages": "الصفحات في هذا القسم",
+    "noSites": "لم يتم العثور على مواقع",
+    "activeSubViewLabel": "{{tab}} · {{view}}",
+    "navLandmark": "الموقع",
+    "switchSiteNamed": "تبديل الموقع · {{site}}",
+    "currentSite": "الموقع الحالي",
+    "recentSites": "الأخيرة",
+    "allSites": "كل المواقع",
+    "noSitesMatch": "لا توجد مواقع تطابق «{{query}}»",
+    "addSite": "إضافة موقع",
+    "manageSites": "إدارة المواقع",
+    "collapseSiteMenu": "طي قائمة الموقع",
+    "expandSiteMenu": "توسيع قائمة الموقع",
+    "filterPagesShort": "تصفية الصفحات",
+    "clearFilter": "مسح التصفية",
+    "noPagesMatch": "لا توجد صفحات تطابق «{{query}}»",
+    "unknownTab": {
+      "title": "هذا القسم غير موجود",
+      "body": "هذا القسم غير متاح في مساحة العمل هذه، لذلك نعرض النظرة العامة بدلًا منه."
+    },
+    "unknownSite": "موقع غير معروف"
   },
   "overview": {
     "next": {
@@ -205,5 +234,12 @@
   "lookupFailed": {
     "title": "تعذّر تحميل هذا الموقع",
     "description": "تعذّر التحقق من هذا الموقع الآن. حاول مرة أخرى بعد قليل."
+  },
+  "picker": {
+    "loading": "جارٍ تحميل مواقعك…",
+    "loadFailed": "تعذّر تحميل مواقعك.",
+    "empty": "لا توجد لديك مواقع بعد.",
+    "addSite": "إضافة موقع",
+    "truncated": "تعرض هذه القائمة أول {{shown, number}} من مواقعك فقط."
   }
 }

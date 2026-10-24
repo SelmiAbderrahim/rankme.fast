@@ -1,3 +1,5 @@
+import { invalidateApiReadContext } from '@shared/api/client';
+import { invalidatedBootstrapReads, isWorkspaceSwitch } from '@shared/cache/invalidation';
 import {
   combineSlices,
   configureStore,
@@ -126,17 +128,42 @@ const clearTransientPresentationMessages = (state: unknown): RootState => {
   return next as unknown as RootState;
 };
 
-const accountBoundReducer: Reducer<RootState, UnknownAction, Partial<RootState>> = (
-  state,
-  action,
-) => {
-  const reduced = rootReducer(
-    resetAccountState.match(action) ? undefined : state,
-    action,
-  ) as RootState;
-  return action.type === 'i18n/presentationLocaleChanged'
-    ? clearTransientPresentationMessages(reduced)
-    : reduced;
+const createAccountBoundReducer = (): Reducer<RootState, UnknownAction, Partial<RootState>> => {
+  const pendingRequests = new Map<string, string>();
+  const invalidatedRequests = new Set<string>();
+  return (state, action) => {
+    const meta = action.meta as { requestId?: string; requestStatus?: string } | undefined;
+    const requestId = meta?.requestId;
+    if (requestId && meta?.requestStatus === 'pending') pendingRequests.set(requestId, action.type);
+    if (requestId && (meta?.requestStatus === 'fulfilled' || meta?.requestStatus === 'rejected')) {
+      pendingRequests.delete(requestId);
+      if (invalidatedRequests.delete(requestId)) return state as RootState;
+    }
+    const accountReset = resetAccountState.match(action);
+    const workspaceSwitch = isWorkspaceSwitch(action);
+    if (accountReset || workspaceSwitch) {
+      invalidateApiReadContext();
+      for (const pending of pendingRequests.keys()) invalidatedRequests.add(pending);
+      pendingRequests.clear();
+    }
+    const invalidatedTypes = invalidatedBootstrapReads(action);
+    if (invalidatedTypes.length > 0) {
+      for (const [pending, type] of pendingRequests) {
+        if (invalidatedTypes.includes(type)) {
+          invalidatedRequests.add(pending);
+          pendingRequests.delete(pending);
+        }
+      }
+    }
+    // Workspace selection survives the reset so its reducer can resolve the new header.
+    const input = accountReset ? undefined : workspaceSwitch
+      ? { ...rootReducer(undefined, { type: '@@init' }), workspace: state?.workspace }
+      : state;
+    const reduced = rootReducer(input, action) as RootState;
+    return action.type === 'i18n/presentationLocaleChanged'
+      ? clearTransientPresentationMessages(reduced)
+      : reduced;
+  };
 };
 
 /**
@@ -146,7 +173,7 @@ const accountBoundReducer: Reducer<RootState, UnknownAction, Partial<RootState>>
  */
 export function makeStore(preloadedState?: Partial<RootState>) {
   return configureStore({
-    reducer: accountBoundReducer,
+    reducer: createAccountBoundReducer(),
     devTools: import.meta.env.DEV,
     ...(preloadedState ? { preloadedState } : {}),
   });

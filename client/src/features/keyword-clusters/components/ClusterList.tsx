@@ -1,3 +1,4 @@
+import { Bdi } from '@shared/components/Bdi';
 import { Sparkles } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 import { Badge } from '@shared/ui/badge';
@@ -34,7 +35,7 @@ export const ClusterList = ({ clusters, openClusterId, onToggle }: ClusterListPr
               <div className="space-y-1">
                 <div className="flex flex-wrap items-center gap-2">
                   <h3 className="text-base font-semibold">
-                    {cluster.label ?? t('cluster.unlabeled')}
+                    <Bdi>{cluster.label ?? t('cluster.unlabeled')}</Bdi>
                   </h3>
                   {cluster.labelSource === 'ai' ? (
                     <Badge
@@ -90,7 +91,7 @@ export const ClusterList = ({ clusters, openClusterId, onToggle }: ClusterListPr
                     data-testid={`keyword-cluster-member-${member.keywordId}`}
                   >
                     <TableHead scope="row" className="whitespace-normal font-medium">
-                      {member.phrase}
+                      <Bdi>{member.phrase}</Bdi>
                       {member.isPivot ? (
                         <Badge variant="outline" className="ms-2">
                           {t('cluster.pivot')}
@@ -127,7 +128,7 @@ export const ClusterList = ({ clusters, openClusterId, onToggle }: ClusterListPr
                   .filter((member) => !member.isPivot)
                   .map((member) => (
                     <div key={member.keywordId} className="space-y-1">
-                      <p className="text-sm font-medium">{member.phrase}</p>
+                      <p className="text-sm font-medium"><Bdi>{member.phrase}</Bdi></p>
                       <ul className="text-muted-foreground space-y-0.5 text-xs">
                         {member.sharedUrls.map((sharedUrl) => (
                           <li key={sharedUrl} className="break-all">

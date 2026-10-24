@@ -9,6 +9,11 @@
   "empty": { "noProfileTitle": "Registriere zuerst eine App", "noProfileDescription": "Chart-Tracking benötigt eine registrierte Store-ID.", "noSubscriptions": "Für diese App werden noch keine Charts getrackt." },
   "disabled": { "title": "Chart-Tracking ist ausgeschaltet", "description": "Gespeicherte Positionen bleiben verfügbar. Neue Abonnements und Checks sind pausiert." },
   "upsell": { "title": "App-SEO-Chart-Tracking hinzufügen", "description": "Dieses Pro-Konto benötigt das App-SEO-Add-on für wöchentliche Chart-Checks.", "cta": "App-SEO-Optionen ansehen" },
-  "limit": { "title": "Chart-Limit erreicht", "description": "Jedes App-Profil kann bis zu {{limit}} Charts tracken." },
+  "limit": { "title": "Chart-Limit erreicht", "description_one": "Jedes App-Profil kann bis zu {{limit}} Chart tracken.",
+    "description_zero": "Jedes App-Profil kann bis zu {{limit}} Charts tracken.",
+    "description_two": "Jedes App-Profil kann bis zu {{limit}} Charts tracken.",
+    "description_few": "Jedes App-Profil kann bis zu {{limit}} Charts tracken.",
+    "description_many": "Jedes App-Profil kann bis zu {{limit}} Charts tracken.",
+    "description_other": "Jedes App-Profil kann bis zu {{limit}} Charts tracken." },
   "errors": { "title": "Chart-Tracking konnte nicht aktualisiert werden", "requestFailed": "Die Chart-Anfrage konnte nicht abgeschlossen werden. Versuche es erneut." }
 }

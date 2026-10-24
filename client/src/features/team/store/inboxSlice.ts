@@ -1,3 +1,5 @@
+import { invalidatedBootstrapReads } from '@shared/cache/invalidation';
+import { CACHE_TTL_MS, isFresh } from '@shared/cache/freshness';
 import { createAsyncThunk, createSlice } from '@reduxjs/toolkit';
 import type { RootState } from '@app/store';
 import {
@@ -14,7 +16,7 @@ import type {
 } from '../types';
 
 /** How long a passive refresh (mount, tab focus) treats the loaded list as fresh. */
-export const INBOX_MAX_AGE_MS = 5 * 60_000;
+export const INBOX_MAX_AGE_MS = CACHE_TTL_MS.invitations;
 
 export interface LoadPendingInvitationsOptions {
   /**
@@ -45,7 +47,7 @@ export const loadPendingInvitations = createAsyncThunk<
       if (inbox.fetching) return false;
       const maxAgeMs = options?.maxAgeMs;
       if (maxAgeMs !== undefined && inbox.lastFetchedAt !== null) {
-        return Date.now() - inbox.lastFetchedAt >= maxAgeMs;
+        return !isFresh(inbox.lastFetchedAt, maxAgeMs);
       }
       return true;
     },
@@ -120,6 +122,7 @@ const teamInboxSlice = createSlice({
       })
       .addCase(acceptPendingInvitation.fulfilled, (state, action) => {
         state.actionId = null;
+        state.lastFetchedAt = null;
         state.message = action.payload.message;
         state.invitations = state.invitations.filter((item) => item.id !== action.payload.id);
       })
@@ -133,12 +136,18 @@ const teamInboxSlice = createSlice({
       })
       .addCase(rejectPendingInvitation.fulfilled, (state, action) => {
         state.actionId = null;
+        state.lastFetchedAt = null;
         state.message = action.payload.message;
         state.invitations = state.invitations.filter((item) => item.id !== action.payload.id);
       })
       .addCase(rejectPendingInvitation.rejected, (state, action) => {
         state.actionId = null;
         state.error = action.payload ?? '';
+      })
+      .addMatcher((action) => invalidatedBootstrapReads(action).includes('teamInbox/load/pending'), (state) => {
+        state.lastFetchedAt = null;
+        state.fetching = false;
+        if (state.status === 'loading') state.status = 'idle';
       });
   },
 });

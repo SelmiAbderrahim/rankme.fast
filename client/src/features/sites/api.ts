@@ -8,9 +8,18 @@ import type {
   UpdateSiteResponse,
 } from './types';
 
-export const fetchSitesRequest = (cursor?: string | null): Promise<SiteListPage> => {
-  const query = cursor ? `?cursor=${encodeURIComponent(cursor)}` : '';
-  return apiClient<SiteListPage>(`/sites${query}`);
+export const fetchSitesRequest = (
+  cursor?: string | null,
+  signal?: AbortSignal,
+  limit?: number,
+): Promise<SiteListPage> => {
+  const params: string[] = [];
+  if (cursor) params.push(`cursor=${encodeURIComponent(cursor)}`);
+  if (limit !== undefined) params.push(`limit=${encodeURIComponent(limit)}`);
+  const query = params.length ? `?${params.join('&')}` : '';
+  return signal === undefined
+    ? apiClient<SiteListPage>(`/sites${query}`)
+    : apiClient<SiteListPage>(`/sites${query}`, { signal });
 };
 
 export const fetchSiteRequest = (id: string): Promise<GetSiteResponse> =>

@@ -90,7 +90,7 @@ export const GeogridForm = ({
         >
           <option value="">{t('form.keywordPlaceholder')}</option>
           {keywords.map((keyword) => (
-            <option key={keyword.id} value={keyword.id}>
+            <option key={keyword.id} value={keyword.id} dir="auto">
               {keyword.phrase}
             </option>
           ))}

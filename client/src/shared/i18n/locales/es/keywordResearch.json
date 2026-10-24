@@ -4,7 +4,7 @@
   "searchTitle": "Investiga un conjunto de palabras clave",
   "inputLabel": "Palabras clave a investigar",
   "inputPlaceholder": "Escribe una palabra clave y pulsa Intro",
-  "selectionCount": "{{count}} de {{max}} seleccionadas",
+  "selectionCount_one": "{{count}} de {{max}} seleccionada",
   "removeKeyword": "Eliminar {{phrase}}",
   "tracked": {
     "title": "Palabras clave seguidas",
@@ -18,7 +18,12 @@
     "emptyCta": "Ir a palabras clave seguidas",
     "noMatch": "Ninguna palabra clave seguida coincide con la ubicación y el idioma seleccionados.",
     "allSelected": "Todas las palabras clave coincidentes están seleccionadas.",
-    "limitReached": "Has seleccionado el máximo de {{max}} palabras clave."
+    "limitReached_one": "Has seleccionado el máximo de {{max}} palabra clave.",
+    "limitReached_zero": "Has seleccionado el máximo de {{max}} palabras clave.",
+    "limitReached_two": "Has seleccionado el máximo de {{max}} palabras clave.",
+    "limitReached_few": "Has seleccionado el máximo de {{max}} palabras clave.",
+    "limitReached_many": "Has seleccionado el máximo de {{max}} palabras clave.",
+    "limitReached_other": "Has seleccionado el máximo de {{max}} palabras clave."
   },
   "locationLabel": "Ubicación",
   "languageLabel": "Idioma",
@@ -131,7 +136,7 @@
     "columnSearchVolume": "Volumen",
     "emptyPair": "No hay palabras clave en común con este competidor.",
     "emptyResults": "No se encontró brecha para los competidores seleccionados.",
-    "resultCount": "{{count}} palabras encontradas",
+    "resultCount_one": "{{count}} palabra encontrada",
     "cachedBadge": "En caché",
     "freshBadge": "En vivo",
     "pairPickerLabel": "Elige un competidor",
@@ -157,7 +162,12 @@
     },
     "idle": "Ejecuta un análisis de brecha para ver en qué palabras clave posicionan tus competidores.",
     "loadFailed": "No se pudo ejecutar el análisis de brecha de palabras clave.",
-    "siteWorkspaceLink": "Abrir esta configuración en el espacio de competidores del sitio"
+    "siteWorkspaceLink": "Abrir esta configuración en el espacio de competidores del sitio",
+    "resultCount_zero": "{{count}} palabras encontradas",
+    "resultCount_two": "{{count}} palabras encontradas",
+    "resultCount_few": "{{count}} palabras encontradas",
+    "resultCount_many": "{{count}} palabras encontradas",
+    "resultCount_other": "{{count}} palabras encontradas"
   },
   "overview": {
     "title": "Panorama SERP",
@@ -295,7 +305,13 @@
     "loadMore": "Cargar más",
     "loading": "Cargando…",
     "loadFailed": "No se pudo cargar el historial de investigación.",
-    "back": "Volver a la investigación de palabras clave"
+    "back": "Volver a la investigación de palabras clave",
+    "shown_zero": "Sin búsquedas guardadas",
+    "shown_one": "Mostrando {{loaded}} de {{count}} búsqueda guardada",
+    "shown_two": "Mostrando {{loaded}} de {{count}} búsquedas guardadas",
+    "shown_few": "Mostrando {{loaded}} de {{count}} búsquedas guardadas",
+    "shown_many": "Mostrando {{loaded}} de {{count}} búsquedas guardadas",
+    "shown_other": "Mostrando {{loaded}} de {{count}} búsquedas guardadas"
   },
   "previewFailed": "No se pudo cargar la vista previa del coste.",
   "tabs": {
@@ -323,7 +339,7 @@
     "title": "Grupos de palabras clave con IA",
     "description": "Agrupa entre 10 y 200 de tus frases almacenadas en temas con una sola pasada de IA. La IA solo lee filas que ya obtuviste — nunca llama al proveedor de búsqueda.",
     "noCandidates": "Aún no hay frases almacenadas. Ejecuta primero una investigación de palabras clave — la agrupación lee tus filas almacenadas.",
-    "selectionCount": "{{count}} seleccionadas (se requieren {{min}}–{{max}})",
+    "selectionCount_one": "{{count}} seleccionadas (se requieren {{min}}–{{max}})",
     "source": {
       "metrics": "investigación",
       "ideas": "idea",
@@ -341,7 +357,7 @@
     "listFailed": "No se pudieron cargar las pasadas de agrupación almacenadas.",
     "detailFailed": "No se pudo cargar esa pasada de agrupación.",
     "decisionFailed": "No se pudo guardar la decisión.",
-    "resultTitle": "{{count}} grupos",
+    "resultTitle_one": "{{count}} grupo",
     "cachedRun": "Pasada almacenada — lectura gratuita",
     "freshRun": "Pasada nueva",
     "aiProfileLine": "Perfil de IA {{name}} v{{version}}",
@@ -357,7 +373,7 @@
     "noFilterMatch": "Ningún grupo coincide con el filtro de decisión actual.",
     "runsTitle": "Pasadas de agrupación almacenadas",
     "runsEmpty": "Aún no hay pasadas de agrupación almacenadas.",
-    "runRowTitle": "{{count}} grupos",
+    "runRowTitle_one": "{{count}} grupo",
     "runRowMembers": "frases",
     "openRun": "Abrir",
     "route": {
@@ -371,7 +387,7 @@
     },
     "confidenceNote": "La confianza se calcula de forma determinista a partir del número de miembros y la homogeneidad de intención — la IA sugiere la agrupación; la etiqueta no es una puntuación de IA.",
     "summedVolume": "Volumen de búsqueda mensual combinado: {{volume}}",
-    "membersToggle": "Mostrar {{count}} palabras clave miembro",
+    "membersToggle_one": "Mostrar {{count}} palabra clave miembro",
     "memberSource": {
       "vendor_cache": "fila de proveedor almacenada",
       "history": "historial de investigación"
@@ -395,7 +411,33 @@
     "dismissBody": "Descartar es definitivo para este grupo — el registro de decisiones es de solo escritura y no puede revertirse después.",
     "dismissConfirm": "Descartar grupo",
     "dismissSuccess": "Grupo descartado.",
-    "dismissReplayHint": "Este grupo ya está descartado."
+    "dismissReplayHint": "Este grupo ya está descartado.",
+    "selectionCount_zero": "{{count}} seleccionadas (se requieren {{min}}–{{max}})",
+    "selectionCount_two": "{{count}} seleccionadas (se requieren {{min}}–{{max}})",
+    "selectionCount_few": "{{count}} seleccionadas (se requieren {{min}}–{{max}})",
+    "selectionCount_many": "{{count}} seleccionadas (se requieren {{min}}–{{max}})",
+    "selectionCount_other": "{{count}} seleccionadas (se requieren {{min}}–{{max}})",
+    "resultTitle_zero": "{{count}} grupos",
+    "resultTitle_two": "{{count}} grupos",
+    "resultTitle_few": "{{count}} grupos",
+    "resultTitle_many": "{{count}} grupos",
+    "resultTitle_other": "{{count}} grupos",
+    "runRowTitle_zero": "{{count}} grupos",
+    "runRowTitle_two": "{{count}} grupos",
+    "runRowTitle_few": "{{count}} grupos",
+    "runRowTitle_many": "{{count}} grupos",
+    "runRowTitle_other": "{{count}} grupos",
+    "membersToggle_zero": "Mostrar {{count}} palabras clave miembro",
+    "membersToggle_two": "Mostrar {{count}} palabras clave miembro",
+    "membersToggle_few": "Mostrar {{count}} palabras clave miembro",
+    "membersToggle_many": "Mostrar {{count}} palabras clave miembro",
+    "membersToggle_other": "Mostrar {{count}} palabras clave miembro",
+    "truncatedNote_zero": "Palabras clave guardadas que se muestran: {{count}} de {{total}}. Busque para acotar la lista.",
+    "truncatedNote_one": "Palabras clave guardadas que se muestran: {{count}} de {{total}}. Busque para acotar la lista.",
+    "truncatedNote_two": "Palabras clave guardadas que se muestran: {{count}} de {{total}}. Busque para acotar la lista.",
+    "truncatedNote_few": "Palabras clave guardadas que se muestran: {{count}} de {{total}}. Busque para acotar la lista.",
+    "truncatedNote_many": "Palabras clave guardadas que se muestran: {{count}} de {{total}}. Busque para acotar la lista.",
+    "truncatedNote_other": "Palabras clave guardadas que se muestran: {{count}} de {{total}}. Busque para acotar la lista."
   },
   "liveTrends": {
     "title": "Interés de búsqueda en directo",
@@ -414,8 +456,6 @@
     },
     "preview": {
       "title": "Estimación de coste",
-      "units": "Se usará {{count}} unidad.",
-      "units_other": "Se usarán {{count}} unidades.",
       "cached": "En caché",
       "fresh_required": "Consulta nueva",
       "mixed": "Mixto",
@@ -427,14 +467,14 @@
     },
     "states": {
       "unavailableTitle": "Las tendencias en directo están temporalmente no disponibles",
-    "unavailableBody": "Esta herramienta está en pausa. Las exploraciones existentes siguen legibles.",
-    "capBody": "Ha alcanzado su cuota mensual de tendencias en directo.",
-    "capPackName": "Pack de tendencias de palabras clave",
-    "failedTitle": "La exploración no pudo completarse",
-    "providerFailedTitle": "El proveedor de tendencias no respondió",
-    "emptyTitle": "No se devolvieron series de interés de búsqueda",
-    "emptyBody": "El proveedor completó la exploración, pero no devolvió series para este mercado. La unidad se consumió igualmente.",
-    "sparseTitle": "El historial es escaso para este mercado",
+      "unavailableBody": "Esta herramienta está en pausa. Las exploraciones existentes siguen legibles.",
+      "capBody": "Ha alcanzado su cuota mensual de tendencias en directo.",
+      "capPackName": "Pack de tendencias de palabras clave",
+      "failedTitle": "La exploración no pudo completarse",
+      "providerFailedTitle": "El proveedor de tendencias no respondió",
+      "emptyTitle": "No se devolvieron series de interés de búsqueda",
+      "emptyBody": "El proveedor completó la exploración, pero no devolvió series para este mercado. La unidad se consumió igualmente.",
+      "sparseTitle": "El historial es escaso para este mercado",
       "sparseBody": "Se necesitan al menos 24 meses de historial para estacionalidad y 56 semanas para año a año."
     },
     "readouts": {
@@ -490,5 +530,10 @@
       "body": "El interés de búsqueda en directo está disponible desde Starter, aunque el resto de este espacio de trabajo requiere Pro.",
       "cta": "Abrir el interés de búsqueda en directo"
     }
-  }
+  },
+  "selectionCount_zero": "{{count}} de {{max}} seleccionadas",
+  "selectionCount_two": "{{count}} de {{max}} seleccionadas",
+  "selectionCount_few": "{{count}} de {{max}} seleccionadas",
+  "selectionCount_many": "{{count}} de {{max}} seleccionadas",
+  "selectionCount_other": "{{count}} de {{max}} seleccionadas"
 }

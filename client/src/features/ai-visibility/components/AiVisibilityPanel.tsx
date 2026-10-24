@@ -1,3 +1,4 @@
+import { Bdi } from '@shared/components/Bdi';
 import { FormEvent, Fragment, useEffect, useMemo, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { ChevronDown, ChevronRight, ListPlus, Plus, Trash2 } from 'lucide-react';
@@ -198,7 +199,7 @@ export const AiVisibilityPanel = ({ siteId }: Props) => {
       const mentioned = new Set(
         result.snapshots.filter((row) => row.mentioned).map((row) => row.prompt),
       ).size;
-      toast.success(t('refresh.success', { mentioned, total: result.prompts.length }));
+      toast.success(t('refresh.success', { count: result.prompts.length, mentioned, total: result.prompts.length }));
       void dispatch(loadAiVisibilityTrend({ siteId }));
     });
   };
@@ -483,7 +484,7 @@ export const AiVisibilityPanel = ({ siteId }: Props) => {
                           </Button>
                         ) : null}
                       </TableCell>
-                      <TableCell className="whitespace-normal">{row.prompt}</TableCell>
+                      <TableCell className="whitespace-normal"><Bdi>{row.prompt}</Bdi></TableCell>
                       <TableCell>
                         <StatusChip tone={latest?.mentioned ? 'success' : 'muted'}>
                           {latest?.mentioned ? t('prompts.mentioned') : t('prompts.notMentioned')}
@@ -608,7 +609,7 @@ export const AiVisibilityPanel = ({ siteId }: Props) => {
               <div key={item.prompt} className="flex items-center justify-between gap-3 px-4 py-3">
                 <div>
                   <p className="text-sm font-medium">
-                    {item.prompt}
+                    <Bdi>{item.prompt}</Bdi>
                     {item.source === 'ai' ? (
                       <StatusChip tone="info" className="ms-2">
                         {t('suggestions.aiGenerated')}

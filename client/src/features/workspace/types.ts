@@ -15,4 +15,6 @@ export interface WorkspaceState {
   activeWorkspaceId: string | null;
   status: 'idle' | 'loading' | 'loaded' | 'failed';
   loadError: string;
+  /** Missing older preloaded state is treated as stale. */
+  loadedAt?: number | null;
 }

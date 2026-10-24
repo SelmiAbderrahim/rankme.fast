@@ -186,7 +186,7 @@ export const brandRadarScanFormSchema = z.object({
   locationCode: z.coerce
     // `Number('abc')` is NaN, and the base type check fires before `.int()`,
     // so the NaN arm needs its own key or zod's default English leaks out.
-    .number({ invalid_type_error: 'errors.invalidLocation' })
+    .number({ error: 'errors.invalidLocation' })
     .int('errors.invalidLocation')
     .positive('errors.invalidLocation')
     .optional(),

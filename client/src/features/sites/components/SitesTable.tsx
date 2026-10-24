@@ -1,3 +1,5 @@
+import { isolateText } from '@shared/lib/bidi';
+import { Bdi } from '@shared/components/Bdi';
 import { useMemo, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { siteLabel } from '@shared/lib/siteLabel';
@@ -241,12 +243,12 @@ export const SitesTable = ({ sites, deletingId, onDelete }: SitesTableProps) => 
                       </AvatarFallback>
                     </Avatar>
                     <Link to={`/sites/${site.id}`} className="hover:underline">
-                      {siteName(site)}
+                      <Bdi>{siteName(site)}</Bdi>
                     </Link>
                     {pausedChip(site)}
                   </span>
                 </TableCell>
-                <TableCell className="text-muted-foreground">{site.domain}</TableCell>
+                <TableCell className="text-muted-foreground"><Bdi>{site.domain}</Bdi></TableCell>
                 <TableCell className="text-end">
                   {formatAdded(site.createdAt, i18n.language)}
                 </TableCell>
@@ -270,10 +272,10 @@ export const SitesTable = ({ sites, deletingId, onDelete }: SitesTableProps) => 
                 <div className="min-w-0">
                   <p className="truncate font-medium">
                     <Link to={`/sites/${site.id}`} className="hover:underline">
-                      {siteName(site)}
+                      <Bdi>{siteName(site)}</Bdi>
                     </Link>
                   </p>
-                  <p className="text-muted-foreground truncate text-sm">{site.domain}</p>
+                  <p className="text-muted-foreground truncate text-sm"><Bdi>{site.domain}</Bdi></p>
                   <p className="text-muted-foreground text-sm">
                     {t('columnAdded')}: {formatAdded(site.createdAt, i18n.language)}
                   </p>
@@ -299,7 +301,7 @@ export const SitesTable = ({ sites, deletingId, onDelete }: SitesTableProps) => 
             <AlertDialogHeader>
               <AlertDialogTitle>{t('deleteTitle')}</AlertDialogTitle>
               <AlertDialogDescription>
-                {t('deleteDescription', { domain: pendingDelete.domain })}
+                {t('deleteDescription', { domain: isolateText(pendingDelete.domain) })}
               </AlertDialogDescription>
             </AlertDialogHeader>
             <AlertDialogFooter>
@@ -328,7 +330,7 @@ export const SitesTable = ({ sites, deletingId, onDelete }: SitesTableProps) => 
             <AlertDialogHeader>
               <AlertDialogTitle>{t('paused.confirmTitle')}</AlertDialogTitle>
               <AlertDialogDescription>
-                {t('paused.confirmBody', { domain: pendingPause.domain })}
+                {t('paused.confirmBody', { domain: isolateText(pendingPause.domain) })}
               </AlertDialogDescription>
             </AlertDialogHeader>
             <AlertDialogFooter>
@@ -357,7 +359,7 @@ export const SitesTable = ({ sites, deletingId, onDelete }: SitesTableProps) => 
             <DialogHeader>
               <DialogTitle>{t('renameTitle')}</DialogTitle>
               <DialogDescription>
-                {t('renameDescription', { domain: renaming.domain })}
+                {t('renameDescription', { domain: isolateText(renaming.domain) })}
               </DialogDescription>
             </DialogHeader>
             <form

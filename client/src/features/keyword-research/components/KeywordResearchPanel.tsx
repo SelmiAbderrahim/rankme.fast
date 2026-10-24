@@ -1,3 +1,4 @@
+import { Bdi } from '@shared/components/Bdi';
 /**
  * Keyword-research panel.
  *
@@ -153,7 +154,7 @@ const KeywordCandidateList = ({ items, testId }: { items: RelatedKeyword[]; test
           key={r.keyword}
           className={cn('flex items-center justify-between rounded-md border px-3 py-2')}
         >
-          <span className="text-sm">{r.keyword}</span>
+          <span className="text-sm"><Bdi>{r.keyword}</Bdi></span>
           <span className="flex items-center gap-2">
             <span
               className="text-muted-foreground text-xs tabular-nums"
@@ -574,7 +575,7 @@ export const KeywordResearchPanel = ({ siteId, hideHeader = false }: Props) => {
     } else if (remainingKeywordSlots === 0) {
       content = (
         <p className="text-muted-foreground text-sm" data-testid="keyword-research-tracked-limit">
-          {t('keywordResearch:tracked.limitReached', { max: MAX_KEYWORDS })}
+          {t('keywordResearch:tracked.limitReached', { count: MAX_KEYWORDS, max: MAX_KEYWORDS })}
         </p>
       );
     } else if (trackedSuggestions.length === 0) {
@@ -601,7 +602,7 @@ export const KeywordResearchPanel = ({ siteId, hideHeader = false }: Props) => {
               data-testid={`keyword-research-tracked-${keywordSlug(phrase)}`}
             >
               <Plus aria-hidden="true" />
-              {phrase}
+              <Bdi>{phrase}</Bdi>
             </Button>
           ))}
         </div>
@@ -1078,7 +1079,7 @@ const RowGroup = ({
             {expanded ? <ChevronDown className="h-4 w-4" /> : <ChevronRight className="h-4 w-4 rtl:rotate-180" />}
           </button>
         </TableCell>
-        <TableCell>{metric.keyword}</TableCell>
+        <TableCell><Bdi>{metric.keyword}</Bdi></TableCell>
         <TableCell className="text-end tabular-nums">
           {formatVolume(metric.searchVolume, t, i18n.language)}
         </TableCell>

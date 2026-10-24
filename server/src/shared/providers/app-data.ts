@@ -265,7 +265,7 @@ export const appIntersectionRowSchema = z
     store: appStoreKindSchema,
     keyword: keywordSchema,
     searchVolume: nullableCountSchema,
-    ranksByAppId: z.record(appIntersectionRankSchema),
+    ranksByAppId: z.record(z.string(), appIntersectionRankSchema),
     lastUpdatedAt: nullableObservedAtSchema,
     observationMeta: observationMetaSchema,
 })

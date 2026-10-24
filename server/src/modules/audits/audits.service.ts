@@ -33,7 +33,6 @@ export interface PublicAuditRun {
     status: AuditRunStatus;
     pageCap: number;
     pagesCrawled: number;
-    vendorTaskId: string | null;
     startedAt: string | null;
     finishedAt: string | null;
     error: string | null;
@@ -51,7 +50,6 @@ export function toPublicAuditRun(run: AuditRunHydrated, pagesCrawled = 0): Publi
         status: run.status,
         pageCap: run.pageCap,
         pagesCrawled,
-        vendorTaskId: run.vendorTaskId ?? null,
         startedAt: run.startedAt ? run.startedAt.toISOString() : null,
         finishedAt: run.finishedAt ? run.finishedAt.toISOString() : null,
         error: run.error ?? null,

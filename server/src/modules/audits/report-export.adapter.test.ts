@@ -182,7 +182,6 @@ function auditRun(input: {
       status: input.status ?? 'succeeded',
       pageCap: 100,
       pagesCrawled: 10,
-      vendorTaskId: 'task-1',
       startedAt: '2026-08-10T11:00:00.000Z',
       finishedAt: input.finishedAt === undefined ? finishedAt : input.finishedAt,
       error: null,

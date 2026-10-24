@@ -1,3 +1,5 @@
+import { isolateText } from '@shared/lib/bidi';
+import { Bdi } from '@shared/components/Bdi';
 /**
  * Historical trends view.
  *
@@ -100,7 +102,7 @@ const TrendsRowCard = ({ row }: { row: KeywordTrendsRow }) => {
   return (
     <Card data-testid={`kw-trends-card-${slug}`}>
       <CardHeader className="flex flex-col gap-2">
-        <CardTitle className="text-base break-words">{row.keyword}</CardTitle>
+        <CardTitle className="text-base break-words"><Bdi>{row.keyword}</Bdi></CardTitle>
         <div className="flex flex-wrap items-center gap-2">
           <StatusChip tone={row.cached ? 'muted' : 'success'}>
             {row.cached ? t('keywordResearch:history.cached') : t('keywordResearch:history.fresh')}
@@ -115,7 +117,7 @@ const TrendsRowCard = ({ row }: { row: KeywordTrendsRow }) => {
           <div className="overflow-x-auto">
             <Table data-testid={`kw-trends-table-${slug}`}>
               <caption className="sr-only">
-                {t('keywordResearch:trends.tableCaption', { phrase: row.keyword })}
+                {t('keywordResearch:trends.tableCaption', { phrase: isolateText(row.keyword) })}
               </caption>
               <TableHeader>
                 <TableRow>

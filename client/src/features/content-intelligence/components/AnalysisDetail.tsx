@@ -1,3 +1,4 @@
+import { Bdi } from '@shared/components/Bdi';
 import { useCallback, useContext, useEffect, useMemo, useRef, useState } from 'react';
 import { UNSAFE_DataRouterContext, useBlocker } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
@@ -421,7 +422,7 @@ export function AnalysisDetail({
 
       <Card>
         <CardHeader>
-          <CardTitle>{analysis.keyword}</CardTitle>
+          <CardTitle><Bdi>{analysis.keyword}</Bdi></CardTitle>
           <CardDescription>{analysis.ownedUrl}</CardDescription>
         </CardHeader>
         <CardContent className="flex flex-col gap-2 text-sm">

@@ -28,7 +28,12 @@
   "queued": { "title": "详情检查进行中", "description": "保存的观察结果准备好后，报告会自动刷新。" },
   "run": { "title": "检查详情健康状况", "description": "观察当前商店详情并生成确定性的修复清单。", "profile": "应用资料", "previewing": "正在检查额度…", "button": "预览运行", "bound": "一个单位涵盖此资料中登记的所有商店。" },
   "report": { "title": "最新详情报告", "description": "运行检查以创建第一份已保存报告。", "capturedAt": "观察时间：{{date}}", "keywordsCta": "管理跟踪词组", "empty": "此应用资料尚无已保存的详情报告。" },
-  "store": { "rating": "评分", "reviews": "评论", "category": "主要类别", "updated": "上次更新", "screenshots": "观察到的截图链接", "installs": "公开安装数", "description": "商店说明", "openListing": "打开商店详情", "screenshotLink": "截图链接 {{number}}", "moreScreenshots": "另有 {{count}} 个截图链接" },
+  "store": { "rating": "评分", "reviews": "评论", "category": "主要类别", "updated": "上次更新", "screenshots": "观察到的截图链接", "installs": "公开安装数", "description": "商店说明", "openListing": "打开商店详情", "screenshotLink": "截图链接 {{number}}", "moreScreenshots_one": "另有 {{count}} 个截图链接",
+    "moreScreenshots_zero": "另有 {{count}} 个截图链接",
+    "moreScreenshots_two": "另有 {{count}} 个截图链接",
+    "moreScreenshots_few": "另有 {{count}} 个截图链接",
+    "moreScreenshots_many": "另有 {{count}} 个截图链接",
+    "moreScreenshots_other": "另有 {{count}} 个截图链接" },
   "parity": { "title": "配对商店一致性", "description": "仅比较你为此应用明确配对的商店。", "provenance": "用户配对" },
   "history": { "title": "详情历史", "description": "无法开始新检查时，仍可查看最近保存的运行。", "empty": "暂无详情历史。", "partial": "部分观察", "counts": { "fixNow": "立即修复：{{count}}", "watch": "关注：{{count}}", "advisory": "建议：{{count}}" } }
 }

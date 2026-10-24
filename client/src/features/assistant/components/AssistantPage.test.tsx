@@ -382,12 +382,12 @@ describe('AssistantPage', () => {
     await userEvent.type(screen.getByRole('textbox'), 'Give me a 20-step plan');
     await userEvent.click(screen.getByRole('button', { name: 'Send message' }));
     await waitFor(() => {
-      expect(screen.getByText('Give me a 20-step plan', { selector: 'p' })).toBeInTheDocument();
+      expect(screen.getByText('Give me a 20-step plan', { selector: 'p > bdi' })).toBeInTheDocument();
     });
     await userEvent.click(await screen.findByRole('button', { name: 'Stop' }));
 
     expect(await screen.findByText('Response stopped')).toBeInTheDocument();
-    expect(screen.getByText('Give me a 20-step plan', { selector: 'p' })).toBeInTheDocument();
+    expect(screen.getByText('Give me a 20-step plan', { selector: 'p > bdi' })).toBeInTheDocument();
     // The message was accepted, so the composer is cleared as for any send.
     expect(screen.getByRole('textbox')).toHaveValue('');
   });
@@ -417,7 +417,7 @@ describe('AssistantPage', () => {
     expect(await screen.findByRole('button', { name: 'Stop' })).toBeInTheDocument();
     expect(screen.getByRole('textbox')).toHaveValue('');
     expect(screen.getByText('0 / 8000 characters')).toBeInTheDocument();
-    expect(screen.getByText('Clear me right away', { selector: 'p' })).toBeInTheDocument();
+    expect(screen.getByText('Clear me right away', { selector: 'p > bdi' })).toBeInTheDocument();
     expect(requestSignal?.aborted).toBe(false);
   });
 
@@ -442,7 +442,7 @@ describe('AssistantPage', () => {
     expect(await screen.findByRole('alert')).toBeInTheDocument();
     expect(screen.getByRole('textbox')).toHaveValue('Please try again later');
     // The unconfirmed bubble was withdrawn, so the text is not shown twice.
-    expect(screen.queryByText('Please try again later', { selector: 'p' })).not.toBeInTheDocument();
+    expect(screen.queryByText('Please try again later', { selector: 'p > bdi' })).not.toBeInTheDocument();
   });
 
   it('does not restore the draft once the server saved the message and the reply then failed', async () => {
@@ -484,7 +484,7 @@ describe('AssistantPage', () => {
     expect(await screen.findByRole('alert')).toHaveTextContent(
       'The assistant could not finish this reply. Try again.',
     );
-    expect(screen.getByText('Saved before failing', { selector: 'p' })).toBeInTheDocument();
+    expect(screen.getByText('Saved before failing', { selector: 'p > bdi' })).toBeInTheDocument();
     expect(screen.getByRole('textbox')).toHaveValue('');
   });
 

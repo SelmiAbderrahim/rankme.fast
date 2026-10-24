@@ -1,3 +1,5 @@
+import { isolateText } from '@shared/lib/bidi';
+import { Bdi } from '@shared/components/Bdi';
 /**
  * AI keyword clusters view.
  *
@@ -93,7 +95,7 @@ const RunSummaryChips = ({ run }: { run: ClusterRun }) => {
       )}
       <span className="text-muted-foreground text-xs">
         {t('keywordResearch:clusters.aiProfileLine', {
-          name: run.aiProfile.name,
+          name: isolateText(run.aiProfile.name),
           version: run.aiProfile.version,
         })}
       </span>
@@ -239,7 +241,7 @@ export const ClustersView = () => {
                           onChange={() => toggle(candidate.phrase)}
                           data-testid={`kw-clusters-candidate-${keywordSlug(candidate.phrase)}`}
                         />
-                        <span className="max-w-48 truncate">{candidate.phrase}</span>
+                        <span className="max-w-48 truncate"><Bdi>{candidate.phrase}</Bdi></span>
                         <span className="text-muted-foreground">
                           {t(
                             `keywordResearch:clusters.source.${candidate.sourceKey}`,

@@ -1,5 +1,6 @@
 import i18n from 'i18next';
 import { ApiError } from '@shared/api/client';
+import { API_ERROR_CODE_ALIASES, API_ERROR_CODE_MESSAGES, API_ERROR_CODE_PATTERN, canonicalApiErrorCode } from './errorCodes';
 
 /**
  * Normalized view of every error envelope the API can return.
@@ -12,6 +13,7 @@ import { ApiError } from '@shared/api/client';
 export interface ApiErrorInfo {
   /** Which wire family produced this envelope. */
   family: 'object' | 'legacy';
+  /** Known legacy aliases resolve to the server's canonical code. */
   code: string | null;
   messageKey: string | null;
   /** Display-safe localized copy, or null when nothing displayable was sent. */
@@ -29,7 +31,11 @@ const displayable = (value: unknown): string | null => {
   if (typeof value !== 'string') return null;
   const trimmed = value.trim();
   if (trimmed.length === 0) return null;
-  if (KEY_SHAPED.test(trimmed)) return null;
+  if (
+    KEY_SHAPED.test(trimmed) ||
+    API_ERROR_CODE_PATTERN.test(trimmed) ||
+    Object.hasOwn(API_ERROR_CODE_ALIASES, trimmed)
+  ) return null;
   if (PLACEHOLDER.test(trimmed)) return null;
   return trimmed;
 };
@@ -37,6 +43,11 @@ const displayable = (value: unknown): string | null => {
 /** Machine identifiers stay opaque strings; anything else is discarded. */
 const machineString = (value: unknown): string | null =>
   typeof value === 'string' && value.length > 0 && value.length <= 128 ? value : null;
+
+const machineCode = (value: unknown): string | null => {
+  const code = machineString(value);
+  return code === null ? null : canonicalApiErrorCode(code);
+};
 
 const asRecord = (value: unknown): Record<string, unknown> | null =>
   typeof value === 'object' && value !== null && !Array.isArray(value)
@@ -55,7 +66,7 @@ export const parseApiErrorEnvelope = (data: unknown): ApiErrorInfo | null => {
   if (nested !== null) {
     return {
       family: 'object',
-      code: machineString(nested.code),
+      code: machineCode(nested.code),
       messageKey: machineString(nested.messageKey),
       message: displayable(nested.message),
       details: nested.details,
@@ -66,7 +77,7 @@ export const parseApiErrorEnvelope = (data: unknown): ApiErrorInfo | null => {
   const info = asRecord(body.errorInfo);
   return {
     family: 'legacy',
-    code: info === null ? null : machineString(info.code),
+    code: info === null ? null : machineCode(info.code),
     messageKey: info === null ? null : machineString(info.messageKey),
     message: displayable(body.error) ?? displayable(info?.message),
     details: body.details,
@@ -94,6 +105,9 @@ export function apiErrorMessage(err: unknown, fallbackKey: string): string {
     const info = parseApiErrorEnvelope(err.data);
     const trusted = info !== null && (info.family === 'object' || info.messageKey !== null);
     if (trusted && info.message !== null) return info.message;
+    const codeKey = info?.code && Object.hasOwn(API_ERROR_CODE_MESSAGES, info.code)
+      ? API_ERROR_CODE_MESSAGES[info.code] : null;
+    if (codeKey) return i18n.t(codeKey);
     if (err.code === 'network' || err.code === 'timeout') {
       return i18n.t(`errors:${err.code}`);
     }
@@ -135,3 +149,23 @@ export function apiErrorRetryAfterMs(err: unknown): number | null {
   const value = details?.retryAfterMs;
   return typeof value === 'number' && value > 0 ? value : null;
 }
+
+/** Compare canonical and older server aliases consistently. */
+export function apiErrorCodeIs(err: unknown, code: string): boolean {
+  return apiErrorCode(err) === canonicalApiErrorCode(code);
+}
+
+/** First display-safe localized validation message attributed to a field. */
+export function apiErrorFieldMessage(err: unknown, field: string): string | null {
+  const fields = asRecord(asRecord(apiErrorInfo(err)?.details)?.fieldErrors);
+  if (fields === null || !Object.hasOwn(fields, field)) return null;
+  const messages = fields[field];
+  if (!Array.isArray(messages)) return null;
+  for (const message of messages) {
+    const copy = displayable(message);
+    if (copy !== null) return copy;
+  }
+  return null;
+}
+
+export { isAbortError } from '@shared/api/client';

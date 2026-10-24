@@ -76,8 +76,13 @@
   },
   "runs": {
     "snapshot": "Инвентарь: {{date}}",
-    "suggestionCount": "Предложений: {{count}}",
-    "open": "Открыть запуск"
+    "suggestionCount_one": "Предложений: {{count}}",
+    "open": "Открыть запуск",
+    "suggestionCount_zero": "Предложений: {{count}}",
+    "suggestionCount_two": "Предложений: {{count}}",
+    "suggestionCount_few": "Предложений: {{count}}",
+    "suggestionCount_many": "Предложений: {{count}}",
+    "suggestionCount_other": "Предложений: {{count}}"
   },
   "flags": {
     "orphan": "Изолированная",

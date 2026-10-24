@@ -1,3 +1,4 @@
+import { Bdi } from '@shared/components/Bdi';
 import { useMemo } from 'react';
 import { useSearchParams } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
@@ -235,7 +236,7 @@ export function ComparisonOverview({ deltas, partialDomains }: ComparisonOvervie
                                   variant="secondary"
                                   className="font-normal"
                                 >
-                                  {topic}
+                                  <Bdi>{topic}</Bdi>
                                 </Badge>
                               ))
                             )}

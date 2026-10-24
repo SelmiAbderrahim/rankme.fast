@@ -1,3 +1,4 @@
+import { Bdi } from '@shared/components/Bdi';
 import { Wrench } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from '@shared/ui/accordion';
@@ -137,7 +138,7 @@ function RankHistoryResult({ content }: { content: Record<string, unknown> }) {
       <TableBody>
         {rows.map((row) => (
           <TableRow key={row.key}>
-            <TableCell className="whitespace-normal">{row.phrase}</TableCell>
+            <TableCell className="whitespace-normal"><Bdi>{row.phrase}</Bdi></TableCell>
             <TableCell>
               {formatDate(row.checkedAt, i18n.language, t('results.notAvailable'))}
             </TableCell>

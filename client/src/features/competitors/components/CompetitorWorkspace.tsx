@@ -1,3 +1,5 @@
+import { isolateText } from '@shared/lib/bidi';
+import { Bdi } from '@shared/components/Bdi';
 import { Suspense, lazy, useEffect, useId, useState } from 'react';
 import { Link, useSearchParams } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
@@ -471,7 +473,7 @@ function ConfirmSuggestion({
         <AlertDialogHeader>
           <AlertDialogTitle>{t('intelligence.portfolio.confirmTitle')}</AlertDialogTitle>
           <AlertDialogDescription>
-            {t('intelligence.portfolio.confirmDescription', { domain })}
+            {t('intelligence.portfolio.confirmDescription', { domain: isolateText(domain) })}
           </AlertDialogDescription>
         </AlertDialogHeader>
         <AlertDialogFooter>
@@ -1001,7 +1003,7 @@ function ReportDetail({ siteId, runId }: { siteId: string; runId: string }) {
                 >
                   <option value="">{t('intelligence.detail.allDomains')}</option>
                   {detail.manifest.competitors.map((item) => (
-                    <option key={item.profileId} value={item.profileId}>{item.domain}</option>
+                    <option key={item.profileId} value={item.profileId} dir="auto">{item.domain}</option>
                   ))}
                 </NativeSelect>
               </div>
@@ -1069,7 +1071,7 @@ function LandscapeRows() {
             <TableBody>
               {detail.items.map((row) => (
                 <TableRow key={row.id}>
-                  <TableCell>{row.keyword}</TableCell>
+                  <TableCell><Bdi>{row.keyword}</Bdi></TableCell>
                   <TableCell><Badge variant="outline">{t(`intelligence.classes.${row.class}`)}</Badge></TableCell>
                   <TableCell>
                     <RankingValue position={row.ownedPosition} url={row.ownedUrl} />
@@ -1309,7 +1311,7 @@ function Recommendations({
             : null;
           return <Card key={opportunity.id}>
             <CardHeader>
-              <CardTitle className="text-base">{opportunity.title}</CardTitle>
+              <CardTitle className="text-base"><Bdi>{opportunity.title}</Bdi></CardTitle>
               <CardDescription>{opportunity.recommendation}</CardDescription>
             </CardHeader>
             <CardContent className="flex flex-wrap gap-2">

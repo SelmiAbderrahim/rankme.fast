@@ -40,6 +40,7 @@
  * SEC-REDACT: crawled and AI-generated text NEVER reaches the logger — only
  * ids, statuses, codes, and counts are logged.
  */
+import { countWords } from '../../shared/utils/text-length.js';
 import type { Job, Processor } from 'bullmq';
 import type { Logger } from 'pino';
 import { env } from '../../config/env.js';
@@ -163,9 +164,6 @@ export function stripHtmlMarkers(input: string): string {
         out = out.replace(/<\/?script\b|<\/?iframe\b|<!doctype/gi, '');
     }
     return HTML_MARKER_TEST.test(out) ? out.replace(/[<>]/g, ' ') : out;
-}
-function countWords(text: string): number {
-    return text.trim().split(/\s+/).filter(Boolean).length;
 }
 function addWarning(doc: ContentAnalysisHydrated, code: string, messageKey: string): void {
     if (doc.warnings.some((w) => w.code === code))

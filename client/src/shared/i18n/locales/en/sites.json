@@ -48,6 +48,7 @@
   "pauseFailed": "Could not pause the site.",
   "resumeFailed": "Could not resume the site.",
   "paused": {
+    "actionBlocked": "Resume this site to run checks, audits, or scheduled work.",
     "chip": "Paused",
     "menuPause": "Pause site",
     "menuResume": "Resume site",
@@ -59,7 +60,8 @@
     "banner": "This site is paused — no checks or audits are running. Paused {{when}}.",
     "resumeCta": "Resume",
     "pausing": "Pausing…",
-    "resuming": "Resuming…"
+    "resuming": "Resuming…",
+    "optionSuffix": "paused"
   },
   "errors": {
     "urlRequired": "Enter your site URL.",
@@ -103,7 +105,34 @@
     },
     "navigationLabel": "Workspace view",
     "activeGroupLabel": "{{group}} · {{current}}",
-    "upgradeHint": "Upgrade your plan to unlock this tab."
+    "upgradeHint": "Upgrade your plan to unlock this tab.",
+    "switchSite": "Switch site",
+    "loadingSite": "Loading site…",
+    "filterSites": "Filter sites…",
+    "filterPages": "Filter pages…",
+    "choosePage": "Choose a page",
+    "choosePageDescription": "Open a site page.",
+    "siblingPages": "Pages in this section",
+    "noSites": "No sites found",
+    "activeSubViewLabel": "{{tab}} · {{view}}",
+    "navLandmark": "Site",
+    "switchSiteNamed": "Switch site · {{site}}",
+    "currentSite": "Current site",
+    "recentSites": "Recent",
+    "allSites": "All sites",
+    "noSitesMatch": "No sites match “{{query}}”",
+    "addSite": "Add site",
+    "manageSites": "Manage sites",
+    "collapseSiteMenu": "Collapse site menu",
+    "expandSiteMenu": "Expand site menu",
+    "filterPagesShort": "Filter pages",
+    "clearFilter": "Clear filter",
+    "noPagesMatch": "No pages match “{{query}}”",
+    "unknownTab": {
+      "title": "That section doesn't exist",
+      "body": "That section is unavailable in this workspace, so Overview is shown instead."
+    },
+    "unknownSite": "Unknown site"
   },
   "overview": {
     "next": {
@@ -205,5 +234,12 @@
   "lookupFailed": {
     "title": "Could not load this site",
     "description": "We couldn't check this site right now. Try again in a moment."
+  },
+  "picker": {
+    "loading": "Loading your sites…",
+    "loadFailed": "Could not load your sites.",
+    "empty": "You have no sites yet.",
+    "addSite": "Add a site",
+    "truncated": "Only your first {{shown, number}} sites are listed here."
   }
 }

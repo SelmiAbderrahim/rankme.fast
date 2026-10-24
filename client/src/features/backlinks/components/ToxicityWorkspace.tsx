@@ -1,3 +1,4 @@
+import { Bdi } from '@shared/components/Bdi';
 import { useEffect, useState, type Dispatch, type SetStateAction } from 'react';
 import { ShieldAlert } from 'lucide-react';
 import { useLocation, useNavigate } from 'react-router-dom';
@@ -460,7 +461,7 @@ function ToxicityRunView({
       <Card>
         <CardHeader>
           <CardTitle>{t('toxicity.results.title')}</CardTitle>
-          <CardDescription>{detail.domain}</CardDescription>
+          <CardDescription><Bdi>{detail.domain}</Bdi></CardDescription>
         </CardHeader>
         <CardContent className="flex flex-wrap gap-2">
           <ReportExportControl
@@ -572,7 +573,7 @@ function ToxicityTableRow({ row, locale }: { row: ToxicityRow; locale: string })
     <TableRow data-testid={`toxicity-row-${row.id}`}>
       <TableCell>
         <span className="block max-w-64 break-all" data-testid="toxicity-domain">
-          {row.domain}
+          <Bdi>{row.domain}</Bdi>
         </span>
       </TableCell>
       <TableCell>{row.spamScore}</TableCell>
@@ -597,7 +598,7 @@ function ToxicityTableRow({ row, locale }: { row: ToxicityRow; locale: string })
               {t('toxicity.rationale.toggle')}
             </AccordionTrigger>
             <AccordionContent className="text-sm">
-              {row.rationale.text ?? t(`toxicity.rationale.${row.rationale.status}`)}
+              <Bdi>{row.rationale.text ?? t(`toxicity.rationale.${row.rationale.status}`)}</Bdi>
             </AccordionContent>
           </AccordionItem>
         </Accordion>
@@ -728,7 +729,7 @@ function DisavowSelectionRow({
         />
       </TableCell>
       <TableCell>
-        <span className="block max-w-64 break-all">{row.domain}</span>
+        <span className="block max-w-64 break-all"><Bdi>{row.domain}</Bdi></span>
       </TableCell>
       <TableCell>
         <BandChip band={row.band} />

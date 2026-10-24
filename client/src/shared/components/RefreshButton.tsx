@@ -56,7 +56,7 @@ export const RefreshButton = ({
 
   const coolingDown = remaining > 0;
   const label = coolingDown
-    ? t(cooldownKey, { seconds: remaining })
+    ? t(cooldownKey, { count: remaining, seconds: remaining })
     : t(labelKey);
 
   return (

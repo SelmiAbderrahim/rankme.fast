@@ -22,20 +22,30 @@
   },
   "list": {
     "title": "Ваши правила",
-    "capUsed": "Используется правил: {{count}}.",
+    "capUsed_one": "Используется правил: {{count}}.",
     "type": "Тип",
     "threshold": "Порог",
     "channels": "Каналы",
     "state": "Состояние",
     "actions": "Действия",
-    "emailCount": "Получателей почты: {{count}}",
+    "emailCount_one": "Получателей почты: {{count}}",
     "secretTail": "ключ подписи оканчивается на {{tail}}",
     "enabled": "Включено",
     "disabled": "Выключено",
     "enable": "Включить",
     "disable": "Выключить",
     "viewLog": "Открыть журнал",
-    "delete": "Удалить"
+    "delete": "Удалить",
+    "capUsed_zero": "Используется правил: {{count}}.",
+    "capUsed_two": "Используется правил: {{count}}.",
+    "capUsed_few": "Используется правил: {{count}}.",
+    "capUsed_many": "Используется правил: {{count}}.",
+    "capUsed_other": "Используется правил: {{count}}.",
+    "emailCount_zero": "Получателей почты: {{count}}",
+    "emailCount_two": "Получателей почты: {{count}}",
+    "emailCount_few": "Получателей почты: {{count}}",
+    "emailCount_many": "Получателей почты: {{count}}",
+    "emailCount_other": "Получателей почты: {{count}}"
   },
   "builder": {
     "title": "Новое правило",
@@ -68,7 +78,7 @@
     "rankPair": "Позиция {{before}} — {{beforeAt}}, затем {{after}} — {{afterAt}}.",
     "linkPair": "Доменов {{beforeCount}} — {{beforeAt}}, затем {{afterCount}} — {{afterAt}}.",
     "notRanked": "за пределами первой сотни",
-    "domainCount": "Изменилось доменов: {{count}}",
+    "domainCount_one": "Изменился {{count}} домен",
     "attempt": "Попытка {{attempt}}",
     "statusLabel": {
       "pending": "Отправляется",
@@ -91,12 +101,17 @@
       "unsafe_url": "Обращаться к этому адресу больше небезопасно.",
       "channel_timeout": "Канал отвечал слишком долго.",
       "retries_exhausted": "Мы остановились после трёх неудачных попыток."
-    }
+    },
+    "domainCount_zero": "Изменилось доменов: {{count}}",
+    "domainCount_two": "Изменились {{count}} домена",
+    "domainCount_few": "Изменились {{count}} домена",
+    "domainCount_many": "Изменились {{count}} доменов",
+    "domainCount_other": "Изменились {{count}} домена"
   },
   "states": {
     "cap": {
       "title": "Достигнут предел правил",
-      "body": "Вы использовали все правила оповещений в своём тарифе."
+      "body": "Сейчас нельзя добавить ещё одно правило оповещения."
     },
     "tierLocked": {
       "title": "Каналу нужен более высокий тариф",

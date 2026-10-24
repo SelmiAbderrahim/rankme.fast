@@ -1,3 +1,4 @@
+import { Bdi } from '@shared/components/Bdi';
 import { useCallback, useEffect, useId, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Alert, AlertDescription, AlertTitle } from '@shared/ui/alert';
@@ -305,7 +306,7 @@ export function NewAnalysisForm({
                       return (
                         <li key={url}>
                           {href === '#' ? (
-                            <span>{url}</span>
+                            <span><Bdi>{url}</Bdi></span>
                           ) : (
                             <a
                               href={href}
@@ -313,7 +314,7 @@ export function NewAnalysisForm({
                               rel="nofollow ugc noopener noreferrer"
                               className="underline underline-offset-2"
                             >
-                              {url}
+                              <Bdi>{url}</Bdi>
                             </a>
                           )}
                         </li>

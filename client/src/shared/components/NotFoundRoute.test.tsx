@@ -1,5 +1,6 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
-import { render, screen } from '@testing-library/react';
+import { render, screen, waitFor } from '@testing-library/react';
+import { HelmetProvider } from 'react-helmet-async';
 import { I18nextProvider } from 'react-i18next';
 import { createMemoryRouter, RouterProvider } from 'react-router-dom';
 import { i18n, initI18n } from '@shared/i18n';
@@ -32,9 +33,9 @@ const renderRoute = () => {
     initialEntries: ['/nope'],
   });
   return render(
-    <I18nextProvider i18n={i18n}>
+    <HelmetProvider><I18nextProvider i18n={i18n}>
       <RouterProvider router={router} />
-    </I18nextProvider>,
+    </I18nextProvider></HelmetProvider>,
   );
 };
 
@@ -56,10 +57,11 @@ describe('NotFoundRoute', () => {
     expect(screen.getByRole('link', { name: 'Back to dashboard' })).toBeInTheDocument();
   });
 
-  it('keeps the public shell for a signed-out visitor', () => {
+  it('keeps the public shell for a signed-out visitor', async () => {
     renderRoute();
     expect(screen.getByTestId('public-shell')).toHaveTextContent('Page not found');
     expect(screen.queryByTestId('app-shell')).toBeNull();
+    await waitFor(() => expect(document.title).toBe('Page not found · RankMeFast'));
   });
 
   it('waits for the session instead of flashing signed-out chrome on a client-only render', () => {

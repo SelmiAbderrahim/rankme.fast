@@ -11,9 +11,14 @@
   },
   "scope": {
     "title": "Mots-clés de cette exécution",
-    "description": "{{count}} mots-clés sélectionnés. Chaque mot-clé sélectionné doit disposer d’un résultat Google récent et exploitable.",
+    "description_one": "{{count}} mot-clé sélectionné. Chaque mot-clé sélectionné doit disposer d’un résultat Google récent et exploitable.",
     "empty": "Ce site ne contient encore aucun mot-clé Google actif.",
-    "minimum": "Sélectionnez au moins deux mots-clés avant de prévisualiser l’exécution."
+    "minimum": "Sélectionnez au moins deux mots-clés avant de prévisualiser l’exécution.",
+    "description_zero": "{{count}} mot-clé sélectionné. Chaque mot-clé sélectionné doit disposer d’un résultat Google récent et exploitable.",
+    "description_two": "{{count}} mots-clés sélectionnés. Chaque mot-clé sélectionné doit disposer d’un résultat Google récent et exploitable.",
+    "description_few": "{{count}} mots-clés sélectionnés. Chaque mot-clé sélectionné doit disposer d’un résultat Google récent et exploitable.",
+    "description_many": "{{count}} mots-clés sélectionnés. Chaque mot-clé sélectionné doit disposer d’un résultat Google récent et exploitable.",
+    "description_other": "{{count}} mots-clés sélectionnés. Chaque mot-clé sélectionné doit disposer d’un résultat Google récent et exploitable."
   },
   "newRun": {
     "title": "Préparer un regroupement",
@@ -22,7 +27,7 @@
     "unitLabel": "Quota",
     "unitValue": "{{count}} regroupement",
     "scopeLabel": "Mots-clés éligibles",
-    "scopeValue": "{{count}} mots-clés suivis sont éligibles",
+    "scopeValue_one": "{{count}} mot-clé suivi est éligible",
     "method": "Deux mots-clés sont regroupés lorsqu'ils partagent au moins {{shared}} de leurs {{window}} premiers résultats, issus d'un relevé des {{days}} derniers jours.",
     "remaining": "Il reste {{count}} regroupements avant celui-ci.",
     "labelingIncluded": "Les libellés de groupe IA facultatifs sont inclus dans cette exécution et ne modifient jamais l’appartenance aux groupes.",
@@ -30,7 +35,12 @@
     "previewing": "Vérification des résultats enregistrés…",
     "confirm": "Lancer le regroupement",
     "starting": "Démarrage…",
-    "cancel": "Annuler"
+    "cancel": "Annuler",
+    "scopeValue_zero": "{{count}} mot-clé suivi est éligible",
+    "scopeValue_two": "{{count}} mots-clés suivis sont éligibles",
+    "scopeValue_few": "{{count}} mots-clés suivis sont éligibles",
+    "scopeValue_many": "{{count}} mots-clés suivis sont éligibles",
+    "scopeValue_other": "{{count}} mots-clés suivis sont éligibles"
   },
   "states": {
     "ranksCta": "Lancer un relevé de position",
@@ -84,15 +94,25 @@
     "open": "Ouvrir"
   },
   "blocked": {
-    "title": "{{count}} mots-clés n'ont pas pu participer",
+    "title_one": "{{count}} mot-clé n'a pas pu participer",
     "body": "Ces mots-clés suivis n'ont pas encore de résultat enregistré exploitable. Lancez un relevé de position et ils seront éligibles au prochain regroupement.",
-    "more": "et {{count}} de plus",
+    "more_one": "et {{count}} de plus",
     "observedAt": "dernier relevé {{date}}",
     "reason": {
       "missing": "Jamais relevé",
       "stale": "Relevé trop ancien",
       "empty": "Aucun résultat enregistré"
-    }
+    },
+    "more_zero": "et {{count}} de plus",
+    "more_two": "et {{count}} de plus",
+    "more_few": "et {{count}} de plus",
+    "more_many": "et {{count}} de plus",
+    "more_other": "et {{count}} de plus",
+    "title_zero": "{{count}} mot-clé n'a pas pu participer",
+    "title_two": "{{count}} mots-clés n'ont pas pu participer",
+    "title_few": "{{count}} mots-clés n'ont pas pu participer",
+    "title_many": "{{count}} mots-clés n'ont pas pu participer",
+    "title_other": "{{count}} mots-clés n'ont pas pu participer"
   },
   "results": {
     "title": "Groupes",
@@ -110,15 +130,15 @@
   "cluster": {
     "unlabeled": "Groupe sans nom",
     "aiSuggestion": "Suggestion IA",
-    "grouped": "{{count}} mots-clés",
+    "grouped_one": "{{count}} mot-clé",
     "singleton": "Non regroupé",
-    "commonCore": "{{count}} résultats communs à tous les mots-clés",
+    "commonCore_one": "{{count}} résultat commun à tous les mots-clés",
     "noCommonCore": "Aucun résultat n'est commun à tous les mots-clés de ce groupe",
     "showEvidence": "Afficher le recoupement",
     "hideEvidence": "Masquer le recoupement",
     "pivot": "Référence",
-    "pivotWindow": "{{count}} résultats enregistrés comparés",
-    "sharedWithPivot": "{{count}} en commun avec le mot-clé de référence",
+    "pivotWindow_one": "{{count}} résultat enregistré comparé",
+    "sharedWithPivot_one": "{{count}} en commun avec le mot-clé de référence",
     "evidenceTitle": "Quels résultats se recoupent",
     "evidenceBody": "Chaque mot-clé ci-dessous est regroupé parce qu'il partage ces URL de résultats enregistrés avec le mot-clé de référence.",
     "singletonEvidence": "Ce mot-clé partageait trop peu de résultats avec un autre mot-clé suivi pour être regroupé.",
@@ -126,6 +146,44 @@
       "keyword": "Mot-clé",
       "observedAt": "Résultat observé",
       "sharedUrls": "Recoupement"
-    }
-  }
+    },
+    "sharedWithPivot_zero": "{{count}} en commun avec le mot-clé de référence",
+    "sharedWithPivot_two": "{{count}} en commun avec le mot-clé de référence",
+    "sharedWithPivot_few": "{{count}} en commun avec le mot-clé de référence",
+    "sharedWithPivot_many": "{{count}} en commun avec le mot-clé de référence",
+    "sharedWithPivot_other": "{{count}} en commun avec le mot-clé de référence",
+    "grouped_zero": "{{count}} mot-clé",
+    "grouped_two": "{{count}} mots-clés",
+    "grouped_few": "{{count}} mots-clés",
+    "grouped_many": "{{count}} mots-clés",
+    "grouped_other": "{{count}} mots-clés",
+    "commonCore_zero": "{{count}} résultat commun à tous les mots-clés",
+    "commonCore_two": "{{count}} résultats communs à tous les mots-clés",
+    "commonCore_few": "{{count}} résultats communs à tous les mots-clés",
+    "commonCore_many": "{{count}} résultats communs à tous les mots-clés",
+    "commonCore_other": "{{count}} résultats communs à tous les mots-clés",
+    "pivotWindow_zero": "{{count}} résultat enregistré comparé",
+    "pivotWindow_two": "{{count}} résultats enregistrés comparés",
+    "pivotWindow_few": "{{count}} résultats enregistrés comparés",
+    "pivotWindow_many": "{{count}} résultats enregistrés comparés",
+    "pivotWindow_other": "{{count}} résultats enregistrés comparés"
+  },
+  "eligibility": {"needCheck_zero": "{{count}} mot-clé sur {{total}} a besoin d’une nouvelle vérification de classement.",
+    "needCheck_one": "{{count}} mot-clé sur {{total}} a besoin d’une nouvelle vérification de classement.",
+    "needCheck_two": "{{count}} mots-clés sur {{total}} ont besoin d’une nouvelle vérification de classement.",
+    "needCheck_few": "{{count}} mots-clés sur {{total}} ont besoin d’une nouvelle vérification de classement.",
+    "needCheck_many": "{{count}} mots-clés sur {{total}} ont besoin d’une nouvelle vérification de classement.",
+    "needCheck_other": "{{count}} mots-clés sur {{total}} ont besoin d’une nouvelle vérification de classement.",
+    "ready_zero": "{{count}} est prêt.",
+    "ready_one": "{{count}} est prêt.",
+    "ready_two": "{{count}} sont prêts.",
+    "ready_few": "{{count}} sont prêts.",
+    "ready_many": "{{count}} sont prêts.",
+    "ready_other": "{{count}} sont prêts.",
+    "minimum_zero": "Le regroupement nécessite au moins {{count}} mots-clés prêts.",
+    "minimum_one": "Le regroupement nécessite au moins {{count}} mot-clé prêt.",
+    "minimum_two": "Le regroupement nécessite au moins {{count}} mots-clés prêts.",
+    "minimum_few": "Le regroupement nécessite au moins {{count}} mots-clés prêts.",
+    "minimum_many": "Le regroupement nécessite au moins {{count}} mots-clés prêts.",
+    "minimum_other": "Le regroupement nécessite au moins {{count}} mots-clés prêts."}
 }

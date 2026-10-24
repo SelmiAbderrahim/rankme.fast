@@ -746,7 +746,6 @@ export const en = {
         },
         trends: {
             errors: {
-                overCap: 'Your plan\'s Keyword Trends allowance ({{used}}/{{limit}} {{metric}}) is exhausted. Upgrade or add credits to explore more.',
                 unavailable: 'Keyword Trends is temporarily unavailable. Try again shortly.',
                 providerFailed: 'The trends provider is temporarily unavailable. Try again shortly.',
                 notFound: 'That trends exploration was not found.',
@@ -785,7 +784,6 @@ export const en = {
                 runNotReady: 'This link review is not ready to export yet.',
             },
             preview: {
-                packOverflow: 'Add the {{slug}} pack ({{units}} reviews) when your included allowance is used.',
             },
         },
         errors: {
@@ -986,7 +984,6 @@ export const en = {
     alerts: {
         errors: {
             unavailable: 'Alerts are temporarily unavailable. Please try again later.',
-            capExceeded: 'You have used every alert rule on your plan.',
             channelNotOnPlan: 'Slack and webhook channels need the Pro plan or higher.',
             rateLimited: 'Too many alert requests. Try again in a minute.',
             siteNotFound: 'Site not found.',
@@ -1060,7 +1057,6 @@ export const en = {
             invalidSelection: 'Choose at least two different traffic snapshots to compare.',
         },
         errors: {
-            overCap: 'You have used every traffic snapshot on your plan this month.',
             productUnavailable: 'Traffic Insights is temporarily unavailable. Please try again later.',
             notFound: 'Traffic snapshot not found.',
             invalidDomain: 'Enter a valid public domain, like example.com.',
@@ -1632,29 +1628,23 @@ export const en = {
                 invalidAppId: 'Enter a valid app ID for the selected store.',
                 appIdCount: 'Choose between two and twenty unique apps.',
                 ownAppRequired: 'Include the selected profile app in the comparison.',
-                keywordAllowanceExhausted: 'You have used the available app research lookups for this period.',
-                competitorAllowanceExhausted: 'You have used the available app competitor lookups for this period.',
             },
         },
         errors: {
             productUnavailable: 'App SEO is temporarily unavailable.',
             notFound: 'App profile not found.',
-            profileLimitReached: 'You have reached the app profile limit for this plan.',
             duplicate: 'This app is already registered for your account.',
             rateLimited: 'Too many App SEO profile requests. Try again shortly.',
             storeIdRequired: 'Enter a Google Play package ID or an App Store ID.',
             pairedStoreIdsRequired: 'Paired profiles need both store IDs.',
             keywordNotFound: 'Tracked app keyword not found.',
             keywordTrackingUnavailable: 'App keyword tracking is temporarily unavailable.',
-            keywordSlotLimitReached: 'You have reached the tracked app keyword limit for this plan.',
-            keywordChecksExhausted: 'You have used the available app keyword checks for this period.',
             duplicateKeyword: 'This keyword and store are already tracked for the selected app.',
             chartSubscriptionNotFound: 'Chart subscription not found.',
             chartTrackingUnavailable: 'App chart tracking is temporarily unavailable.',
             invalidChartSelection: 'Choose a supported chart and category for this store.',
             chartSubscriptionLimit: 'You can track up to two charts for each app profile.',
             duplicateChartSubscription: 'This chart and category are already tracked for the selected app.',
-            chartChecksExhausted: 'You have used the available app chart checks for this period.',
         },
     },
     reportExports: {

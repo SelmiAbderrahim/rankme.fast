@@ -109,5 +109,11 @@
     "loadFailed": "No pudimos cargar tus escaneos de geocuadrícula.",
     "previewFailed": "No pudimos estimar este escaneo.",
     "submitFailed": "No pudimos iniciar este escaneo."
-  }
+  },
+  "center": {"place": {"resultsLegend_zero": "{{count}} lugares para «{{query}}». Elige el centro:",
+      "resultsLegend_one": "{{count}} lugar para «{{query}}». Elige el centro:",
+      "resultsLegend_two": "{{count}} lugares para «{{query}}». Elige el centro:",
+      "resultsLegend_few": "{{count}} lugares para «{{query}}». Elige el centro:",
+      "resultsLegend_many": "{{count}} lugares para «{{query}}». Elige el centro:",
+      "resultsLegend_other": "{{count}} lugares para «{{query}}». Elige el centro:"}}
 }

@@ -41,22 +41,32 @@
     "fresh": "最新",
     "supported": "该市场受到完整支持。",
     "unsupported": "该市场支持有限——结果可能较为有限。",
-    "maxPages": "最多抓取 {{max}} 个公开页面",
+    "maxPages_one": "最多抓取 {{max}} 个公开页面",
     "totalBudget": "总预算：{{micros}} 微美元",
     "aiBudget": "AI 预算：{{micros}} 微美元",
     "coverageOk": "服务商覆盖完整",
     "coverageDegraded": "服务商覆盖受限——结果可能不完整。",
-    "coverageBlocked": "该账户已被阻止使用零数据保留抓取。"
+    "coverageBlocked": "该账户已被阻止使用零数据保留抓取。",
+    "maxPages_zero": "最多抓取 {{max}} 个公开页面",
+    "maxPages_two": "最多抓取 {{max}} 个公开页面",
+    "maxPages_few": "最多抓取 {{max}} 个公开页面",
+    "maxPages_many": "最多抓取 {{max}} 个公开页面",
+    "maxPages_other": "最多抓取 {{max}} 个公开页面"
   },
   "confirm": {
     "title": "要开始本次受众研究运行吗？",
-    "body": "本次运行最多将抓取 {{maxPages}} 个公开页面，并从公开网络生成信号。它只运行一次——不会持续监测。",
+    "body_one": "本次运行最多将抓取 {{maxPages}} 个公开页面，并从公开网络生成信号。它只运行一次——不会持续监测。",
     "confirmButton": "开始运行",
     "cancelButton": "取消",
     "marketLine": "市场",
     "competitorsLine": "竞争对手",
     "topicsLine": "主题",
-    "unitLine": "消耗单位"
+    "unitLine": "消耗单位",
+    "body_zero": "本次运行最多将抓取 {{maxPages}} 个公开页面，并从公开网络生成信号。它只运行一次——不会持续监测。",
+    "body_two": "本次运行最多将抓取 {{maxPages}} 个公开页面，并从公开网络生成信号。它只运行一次——不会持续监测。",
+    "body_few": "本次运行最多将抓取 {{maxPages}} 个公开页面，并从公开网络生成信号。它只运行一次——不会持续监测。",
+    "body_many": "本次运行最多将抓取 {{maxPages}} 个公开页面，并从公开网络生成信号。它只运行一次——不会持续监测。",
+    "body_other": "本次运行最多将抓取 {{maxPages}} 个公开页面，并从公开网络生成信号。它只运行一次——不会持续监测。"
   },
   "progress": {
     "stage": {
@@ -70,8 +80,18 @@
       "failed": "失败"
     },
     "counts": {
-      "sources": "已找到 {{count}} 个来源",
-      "signals": "已找到 {{count}} 个信号"
+      "sources_one": "已找到 {{count}} 个来源",
+      "signals_one": "已找到 {{count}} 个信号",
+      "sources_zero": "已找到 {{count}} 个来源",
+      "sources_two": "已找到 {{count}} 个来源",
+      "sources_few": "已找到 {{count}} 个来源",
+      "sources_many": "已找到 {{count}} 个来源",
+      "sources_other": "已找到 {{count}} 个来源",
+      "signals_zero": "已找到 {{count}} 个信号",
+      "signals_two": "已找到 {{count}} 个信号",
+      "signals_few": "已找到 {{count}} 个信号",
+      "signals_many": "已找到 {{count}} 个信号",
+      "signals_other": "已找到 {{count}} 个信号"
     },
     "partial": {
       "title": "本次运行以部分覆盖结束",
@@ -134,7 +154,7 @@
       "title": "本次运行已完成但未产生任何信号。",
       "filtered": "没有符合当前筛选条件的信号。"
     },
-    "citationCount": "{{count}} 个引用来源",
+    "citationCount_one": "{{count}} 个引用来源",
     "confidence": {
       "high": "高置信度",
       "medium": "中置信度",
@@ -158,7 +178,7 @@
       "aiInterpretationHint": "建议路线是 AI 解读,并非市场份额信号。"
     },
     "rationale": {
-      "summary": "{{independentDomainCount}} 个独立域,涵盖 {{sourceTypeCount}} 种来源类型;{{recent}}。",
+      "summary": "独立域：{{independentDomainCount}}；来源类型：{{sourceTypeCount}}；{{recent}}。",
       "recent": "最新来源 {{date}}",
       "recentUnknown": "日期不详"
     },
@@ -226,7 +246,12 @@
         "duplicate": "重复",
         "other": "其他"
       }
-    }
+    },
+    "citationCount_zero": "{{count}} 个引用来源",
+    "citationCount_two": "{{count}} 个引用来源",
+    "citationCount_few": "{{count}} 个引用来源",
+    "citationCount_many": "{{count}} 个引用来源",
+    "citationCount_other": "{{count}} 个引用来源"
   },
   "errors": {
     "overCap": "您本月已用完套餐中的所有受众研究运行次数。升级以运行更多。",

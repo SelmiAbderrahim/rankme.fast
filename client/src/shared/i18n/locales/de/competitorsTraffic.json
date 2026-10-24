@@ -1,13 +1,22 @@
 {
   "title": "Traffic-Einblicke",
   "description": "Fordern Sie indexbasierte Traffic-Schätzungen für öffentliche Domains an und öffnen Sie sie erneut.",
-  "common": { "notAvailable": "Nicht verfügbar" },
+  "common": {
+    "notAvailable": "Nicht verfügbar"
+  },
   "estimate": {
     "label": "Schätzung",
     "coverage": "Aus dem Index des Anbieters modelliert, nicht aus Analysedaten.",
     "observedAt": "Beobachtet am {{date}}",
     "source": "Quelle",
-    "freshness": { "fresh": "Aktuell", "stale": "Veraltet", "partial": "Teilweise", "blocked": "Blockiert", "failed": "Fehlgeschlagen", "unknown": "Aktualität unbekannt" }
+    "freshness": {
+      "fresh": "Aktuell",
+      "stale": "Veraltet",
+      "partial": "Teilweise",
+      "blocked": "Blockiert",
+      "failed": "Fehlgeschlagen",
+      "unknown": "Aktualität unbekannt"
+    }
   },
   "request": {
     "title": "Snapshot anfordern",
@@ -29,40 +38,91 @@
     "domain": "Domain",
     "impact": "Auswirkung auf das Kontingent",
     "notMetered": "Auf diesem Server nicht gemessen",
-    "units": "{{count}} Traffic-Snapshot-Einheit",
-    "units_other": "{{count}} Traffic-Snapshot-Einheiten",
+    "units": "{{count}} Momentaufnahme der Besuchsdaten",
+    "units_other": "{{count}} Momentaufnahmen der Besuchsdaten",
     "cached": "Zwischengespeichert",
     "fresh_required": "Neue Abfrage",
     "baseRemaining": "Verbleibendes Basiskontingent",
     "packRemaining": "Verbleibendes Paketkontingent",
     "packTitle": "Benötigen Sie mehr Snapshots?",
-    "packLink": "Credit-Pakete ansehen"
+    "packLink": "Credit-Pakete ansehen",
+    "units_zero": "{{count}} Momentaufnahmen der Besuchsdaten",
+    "units_one": "{{count}} Momentaufnahme der Besuchsdaten",
+    "units_two": "{{count}} Momentaufnahmen der Besuchsdaten",
+    "units_few": "{{count}} Momentaufnahmen der Besuchsdaten",
+    "units_many": "{{count}} Momentaufnahmen der Besuchsdaten"
   },
   "detail": {
     "description": "Alle folgenden Zahlen sind Schätzungen und keine gemessenen Analysedaten.",
     "monthlyVisits": "Geschätzte monatliche organische Besuche",
     "rank": "Geschätzter Domain-Rang",
     "keywords": "Geschätzte Keyword-Anzahl",
-    "countries": { "title": "Geschätzte Länderaufteilung", "description": "Die wichtigsten im Anbieterindex gespeicherten Länder.", "country": "Land", "visits": "Geschätzte Besuche" },
-    "history": { "title": "Geschätzter Traffic-Verlauf", "description": "Bis zu 24 gespeicherte Monatspunkte.", "empty": "Für diesen Snapshot wurden keine Verlaufspunkte gespeichert.", "expandTable": "Barrierefreie Verlaufstabelle aufklappen", "tableCaption": "Geschätzter Verlauf von Rang, Traffic und Keywords", "date": "Datum" }
+    "countries": {
+      "title": "Geschätzte Länderaufteilung",
+      "description": "Die wichtigsten im Anbieterindex gespeicherten Länder.",
+      "country": "Land",
+      "visits": "Geschätzte Besuche"
+    },
+    "history": {
+      "title": "Geschätzter Traffic-Verlauf",
+      "description": "Bis zu 24 gespeicherte Monatspunkte.",
+      "empty": "Für diesen Snapshot wurden keine Verlaufspunkte gespeichert.",
+      "expandTable": "Barrierefreie Verlaufstabelle aufklappen",
+      "tableCaption": "Geschätzter Verlauf von Rang, Traffic und Keywords",
+      "date": "Datum"
+    }
   },
   "list": {
     "title": "Gespeicherte Snapshots",
     "description": "Gespeicherte Daten können kostenlos gelesen werden und bleiben verfügbar, wenn neue Anfragen pausiert sind.",
-    "filters": { "domain": "Nach Domain filtern", "from": "Von Datum", "to": "Bis Datum" },
-    "columns": { "domain": "Domain", "captured": "Erfasst", "visits": "Geschätzte Besuche", "action": "Aktion" },
+    "filters": {
+      "domain": "Nach Domain filtern",
+      "from": "Von Datum",
+      "to": "Bis Datum"
+    },
+    "columns": {
+      "domain": "Domain",
+      "captured": "Erfasst",
+      "visits": "Geschätzte Besuche",
+      "action": "Aktion"
+    },
     "open": "Snapshot öffnen",
     "previous": "Zurück",
     "next": "Weiter"
   },
   "states": {
-    "empty": { "title": "Noch keine Traffic-Snapshots", "description": "Zeigen Sie eine Vorschau Ihres ersten Domain-Snapshots an.", "cta": "Mit einer Domain beginnen" },
-    "partial": { "title": "Teilweise Schätzung", "description": "{{retained}} von drei Anbieteroperationen wurden gespeichert. Fehlende Felder werden nicht abgeleitet." },
-    "failed": { "title": "Snapshot fehlgeschlagen", "refund": "Es wurde keine Anbieteroperation gespeichert, daher wurde die reservierte Snapshot-Einheit erstattet." },
-    "locked": { "title": "Neue Snapshots sind vorübergehend pausiert", "description": "Traffic-Einblicke sind für neue Anfragen vorübergehend nicht verfügbar. Gespeicherte Snapshots bleiben verfügbar." },
-    "cap": { "title": "Snapshot-Kontingent erreicht", "description": "Diese Anfrage passt nicht in Ihr verbleibendes Basis- und Paketkontingent. Prüfen Sie unter Abrechnung, welche Pakete derzeit verfügbar sind.", "link": "Snapshot-Pakete ansehen" },
-    "upgrade": { "title": "Traffic-Einblicke sind nicht in Ihrem Tarif enthalten", "description": "Wählen Sie einen kostenpflichtigen Tarif, um Traffic-Snapshots anzufordern. Mit diesem Arbeitsbereich geteilte gespeicherte Snapshots können Sie weiterhin öffnen.", "link": "Tarife vergleichen" },
-    "timeout": { "title": "Die Anfrage hat zu lange gedauert", "retry": "Erneut versuchen", "retrying": "Erneuter Versuch…" },
+    "empty": {
+      "title": "Noch keine Traffic-Snapshots",
+      "description": "Zeigen Sie eine Vorschau Ihres ersten Domain-Snapshots an.",
+      "cta": "Mit einer Domain beginnen"
+    },
+    "partial": {
+      "title": "Teilweise Schätzung",
+      "description": "{{retained}} von drei Anbieteroperationen wurden gespeichert. Fehlende Felder werden nicht abgeleitet."
+    },
+    "failed": {
+      "title": "Snapshot fehlgeschlagen",
+      "refund": "Es wurde keine Anbieteroperation gespeichert, daher wurde die reservierte Snapshot-Einheit erstattet."
+    },
+    "locked": {
+      "title": "Neue Snapshots sind vorübergehend pausiert",
+      "description": "Traffic-Einblicke sind für neue Anfragen vorübergehend nicht verfügbar. Gespeicherte Snapshots bleiben verfügbar."
+    },
+    "cap": {
+      "title": "Snapshot-Kontingent erreicht",
+      "description": "Diese Anfrage passt nicht in Ihr verbleibendes Basis- und Paketkontingent. Prüfen Sie unter Abrechnung, welche Pakete derzeit verfügbar sind.",
+      "link": "Snapshot-Pakete ansehen"
+    },
+    "upgrade": {
+      "title": "Traffic-Einblicke sind nicht in Ihrem Tarif enthalten",
+      "description": "Wählen Sie einen kostenpflichtigen Tarif, um Traffic-Snapshots anzufordern. Mit diesem Arbeitsbereich geteilte gespeicherte Snapshots können Sie weiterhin öffnen.",
+      "link": "Tarife vergleichen"
+    },
+    "timeout": {
+      "title": "Die Anfrage hat zu lange gedauert",
+      "retry": "Erneut versuchen",
+      "retrying": "Erneuter Versuch…"
+    },
     "signedOut": "Melden Sie sich an, um Traffic-Einblicke aufzurufen.",
     "queued": "Snapshot in Warteschlange",
     "running": "Snapshot wird ausgeführt",
@@ -83,7 +143,7 @@
     "clamped": "Sie können bis zu {{count}} Snapshots vergleichen. Der sechste Snapshot wurde nicht hinzugefügt.",
     "select": "Snapshots auswählen",
     "selectSnapshot": "{{domain}} zum Vergleich auswählen",
-    "button": "{{count}} Snapshots vergleichen",
+    "button_one": "{{count}} Snapshot vergleichen",
     "remove": "{{domain}} aus dem Vergleich entfernen",
     "countriesTitle": "Ausgerichtete geschätzte Länderaufteilung",
     "historyTitle": "Überlagerter geschätzter Traffic-Verlauf",
@@ -91,7 +151,22 @@
     "chartLabel": "Überlagerter geschätzter Traffic-Verlauf der ausgewählten Snapshots",
     "historyEmpty": "Es wurden keine vergleichbaren Verlaufspunkte gespeichert.",
     "expandTable": "Barrierefreie Vergleichstabelle anzeigen",
-    "tableCaption": "Geschätzter monatlicher Traffic-Verlauf nach Snapshot"
+    "tableCaption": "Geschätzter monatlicher Traffic-Verlauf nach Snapshot",
+    "button_zero": "{{count}} Snapshots vergleichen",
+    "button_two": "{{count}} Snapshots vergleichen",
+    "button_few": "{{count}} Snapshots vergleichen",
+    "button_many": "{{count}} Snapshots vergleichen",
+    "button_other": "{{count}} Snapshots vergleichen",
+    "selectedCount_zero": "{{count}} ausgewählt",
+    "selectedCount_one": "{{count}} ausgewählt",
+    "selectedCount_two": "{{count}} ausgewählt",
+    "selectedCount_few": "{{count}} ausgewählt",
+    "selectedCount_many": "{{count}} ausgewählt",
+    "selectedCount_other": "{{count}} ausgewählt"
   },
-  "agency": { "tabsLabel": "Ansichten des Mitbewerber-Arbeitsbereichs", "overviewTab": "Mitbewerber", "trafficTab": "Traffic-Einblicke" }
+  "agency": {
+    "tabsLabel": "Ansichten des Mitbewerber-Arbeitsbereichs",
+    "overviewTab": "Mitbewerber",
+    "trafficTab": "Traffic-Einblicke"
+  }
 }

@@ -38,8 +38,13 @@
   "revoke": {
     "cta": "Revoke Google access everywhere",
     "confirmTitle": "Revoke the shared Google connection?",
-    "confirmBody": "This revokes Google access and unlinks all {{count}} connected sites. This cannot be limited to the current site.",
-    "confirm": "Revoke everywhere"
+    "confirmBody_one": "This revokes Google access and unlinks the {{count}} connected site. This cannot be limited to the current site.",
+    "confirm": "Revoke everywhere",
+    "confirmBody_zero": "This revokes Google access and unlinks all {{count}} connected sites. This cannot be limited to the current site.",
+    "confirmBody_two": "This revokes Google access and unlinks all {{count}} connected sites. This cannot be limited to the current site.",
+    "confirmBody_few": "This revokes Google access and unlinks all {{count}} connected sites. This cannot be limited to the current site.",
+    "confirmBody_many": "This revokes Google access and unlinks all {{count}} connected sites. This cannot be limited to the current site.",
+    "confirmBody_other": "This revokes Google access and unlinks all {{count}} connected sites. This cannot be limited to the current site."
   },
   "autoMatch": {
     "queued": "Checking this site's Google properties…",
@@ -86,7 +91,7 @@
     "viewAllLabel": "View all — {{section}}",
     "sitemapsLink": "View sitemaps",
     "asOf": "Data through {{date}}",
-    "previousPeriod": "Previous period: {{clicks}} clicks · {{impressions}} impressions",
+    "previousPeriod": "Previous period — clicks: {{clicks}} · impressions: {{impressions}}",
     "reportLink": "See the full data on your report",
     "emptyTitle": "No search data yet",
     "emptyCta": "Manage connection",
@@ -98,10 +103,10 @@
     "refreshError": "We couldn't refresh your search data. Try again in a moment.",
     "refreshedJustNow": "Updated just now",
     "timeseriesTitle": "Clicks and impressions over time",
-    "timeseriesSubtitle": "Daily totals for the last {{days}} days.",
+    "timeseriesSubtitle_one": "Daily totals for the last {{days}} day.",
     "timeseriesEmpty": "No daily data yet.",
-    "timeseriesChartLabel": "Daily {{metric}} for the last {{days}} days",
-    "timeseriesTableCaption": "Daily search performance for the last {{days}} days",
+    "timeseriesChartLabel_one": "Daily {{metric}} for the last {{days}} day",
+    "timeseriesTableCaption_one": "Daily search performance for the last {{days}} day",
     "tableDate": "Date",
     "metricLabel": "Choose a metric to chart",
     "countriesTitle": "Top countries",
@@ -117,7 +122,22 @@
       "mobile": "Mobile",
       "tablet": "Tablet",
       "unknown": "Other"
-    }
+    },
+    "timeseriesSubtitle_zero": "Daily totals for the last {{days}} days.",
+    "timeseriesSubtitle_two": "Daily totals for the last {{days}} days.",
+    "timeseriesSubtitle_few": "Daily totals for the last {{days}} days.",
+    "timeseriesSubtitle_many": "Daily totals for the last {{days}} days.",
+    "timeseriesSubtitle_other": "Daily totals for the last {{days}} days.",
+    "timeseriesChartLabel_zero": "Daily {{metric}} for the last {{days}} days",
+    "timeseriesChartLabel_two": "Daily {{metric}} for the last {{days}} days",
+    "timeseriesChartLabel_few": "Daily {{metric}} for the last {{days}} days",
+    "timeseriesChartLabel_many": "Daily {{metric}} for the last {{days}} days",
+    "timeseriesChartLabel_other": "Daily {{metric}} for the last {{days}} days",
+    "timeseriesTableCaption_zero": "Daily search performance for the last {{days}} days",
+    "timeseriesTableCaption_two": "Daily search performance for the last {{days}} days",
+    "timeseriesTableCaption_few": "Daily search performance for the last {{days}} days",
+    "timeseriesTableCaption_many": "Daily search performance for the last {{days}} days",
+    "timeseriesTableCaption_other": "Daily search performance for the last {{days}} days"
   },
   "analytics": {
     "title": "Google Analytics (last {{days}} days)",
@@ -127,16 +147,16 @@
     "keyEvents": "Key events",
     "engagementRateLabel": "Engagement rate",
     "engagementRateLine": "Engagement rate: {{rate}}",
-    "previousPeriod": "Previous period: {{sessions}} sessions · {{activeUsers}} active users",
+    "previousPeriod": "Previous period — sessions: {{sessions}} · active users: {{activeUsers}}",
     "emptyTitle": "No analytics data yet",
     "empty": "No analytics data yet. Data appears shortly after your property is connected — try a refresh.",
     "error": "We couldn't load your analytics summary. Try again in a moment.",
     "refresh": "Refresh analytics data",
     "refreshError": "We couldn't refresh your analytics data. Try again in a moment.",
     "timeseriesTitle": "Sessions and active users over time",
-    "timeseriesSubtitle": "Daily totals for the last {{days}} days.",
-    "timeseriesChartLabel": "Daily {{metric}} for the last {{days}} days",
-    "timeseriesTableCaption": "Daily analytics performance for the last {{days}} days",
+    "timeseriesSubtitle_one": "Daily totals for the last {{days}} day.",
+    "timeseriesChartLabel_one": "Daily {{metric}} for the last {{days}} day",
+    "timeseriesTableCaption_one": "Daily analytics performance for the last {{days}} day",
     "channelsTitle": "Channels",
     "channelsEmpty": "No channel data yet.",
     "channelsTableCaption": "Sessions by channel",
@@ -167,7 +187,28 @@
     "propertiesError": "We couldn't load your Analytics properties. Try again in a moment.",
     "setPropertyError": "We couldn't save that Analytics property. Try again in a moment.",
     "settingsTitle": "Google Analytics",
-    "settingsSubtitle": "Choose which GA4 property RankMeFast reads from."
+    "settingsSubtitle": "Choose which GA4 property RankMeFast reads from.",
+    "timeseriesSubtitle_zero": "Daily totals for the last {{days}} days.",
+    "timeseriesSubtitle_two": "Daily totals for the last {{days}} days.",
+    "timeseriesSubtitle_few": "Daily totals for the last {{days}} days.",
+    "timeseriesSubtitle_many": "Daily totals for the last {{days}} days.",
+    "timeseriesSubtitle_other": "Daily totals for the last {{days}} days.",
+    "timeseriesChartLabel_zero": "Daily {{metric}} for the last {{days}} days",
+    "timeseriesChartLabel_two": "Daily {{metric}} for the last {{days}} days",
+    "timeseriesChartLabel_few": "Daily {{metric}} for the last {{days}} days",
+    "timeseriesChartLabel_many": "Daily {{metric}} for the last {{days}} days",
+    "timeseriesChartLabel_other": "Daily {{metric}} for the last {{days}} days",
+    "timeseriesTableCaption_zero": "Daily analytics performance for the last {{days}} days",
+    "timeseriesTableCaption_two": "Daily analytics performance for the last {{days}} days",
+    "timeseriesTableCaption_few": "Daily analytics performance for the last {{days}} days",
+    "timeseriesTableCaption_many": "Daily analytics performance for the last {{days}} days",
+    "timeseriesTableCaption_other": "Daily analytics performance for the last {{days}} days",
+    "staleBody_zero": "The newest Google Analytics data here is from {{date}}, but data through {{expected}} should already be available, so these numbers don't cover the last {{days}} days. Refresh to sync again. If the date doesn't change, reconnect Google.",
+    "staleBody_one": "The newest Google Analytics data here is from {{date}}, but data through {{expected}} should already be available, so these numbers don't cover the last {{days}} day. Refresh to sync again. If the date doesn't change, reconnect Google.",
+    "staleBody_two": "The newest Google Analytics data here is from {{date}}, but data through {{expected}} should already be available, so these numbers don't cover the last {{days}} days. Refresh to sync again. If the date doesn't change, reconnect Google.",
+    "staleBody_few": "The newest Google Analytics data here is from {{date}}, but data through {{expected}} should already be available, so these numbers don't cover the last {{days}} days. Refresh to sync again. If the date doesn't change, reconnect Google.",
+    "staleBody_many": "The newest Google Analytics data here is from {{date}}, but data through {{expected}} should already be available, so these numbers don't cover the last {{days}} days. Refresh to sync again. If the date doesn't change, reconnect Google.",
+    "staleBody_other": "The newest Google Analytics data here is from {{date}}, but data through {{expected}} should already be available, so these numbers don't cover the last {{days}} days. Refresh to sync again. If the date doesn't change, reconnect Google."
   },
   "searchDetail": {
     "back": "Overview",
@@ -205,8 +246,18 @@
       },
       "status": {
         "ok": "OK",
-        "errors": "{{n}} errors",
-        "warnings": "{{n}} warnings"
+        "errors_one": "{{n}} error",
+        "warnings_one": "{{n}} warning",
+        "errors_zero": "{{n}} errors",
+        "errors_two": "{{n}} errors",
+        "errors_few": "{{n}} errors",
+        "errors_many": "{{n}} errors",
+        "errors_other": "{{n}} errors",
+        "warnings_zero": "{{n}} warnings",
+        "warnings_two": "{{n}} warnings",
+        "warnings_few": "{{n}} warnings",
+        "warnings_many": "{{n}} warnings",
+        "warnings_other": "{{n}} warnings"
       }
     }
   },
@@ -217,5 +268,11 @@
       "cannibalization": "Keyword cannibalization reports are built from your Search Console data. Connect Search Console for this site to generate one. Reports you already saved stay readable.",
       "internalLinks": "Internal link suggestions use your Search Console queries to choose which pages matter. Connect Search Console for this site to get suggestions based on real searches."
     }
-  }
+  },
+  "breakdown": {"other_zero": "Other ({{hidden}} more)",
+    "other_one": "Other ({{hidden}} more)",
+    "other_two": "Other ({{hidden}} more)",
+    "other_few": "Other ({{hidden}} more)",
+    "other_many": "Other ({{hidden}} more)",
+    "other_other": "Other ({{hidden}} more)"}
 }

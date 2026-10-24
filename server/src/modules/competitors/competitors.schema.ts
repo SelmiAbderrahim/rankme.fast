@@ -4,7 +4,7 @@ export const siteIdParamsSchema = z.object({
 });
 export const intersectionQuerySchema = z.object({
     competitor: z
-        .string({ invalid_type_error: 'competitors.errors.competitorRequired' })
+        .string({ error: (issue) => issue.input === undefined ? undefined : 'competitors.errors.competitorRequired' })
         .trim()
         .min(1, 'competitors.errors.competitorRequired')
         .max(253, 'competitors.errors.competitorTooLong'),
@@ -15,7 +15,7 @@ export type IntersectionQuery = z.infer<typeof intersectionQuerySchema>;
 export const techStackParamsSchema = z.object({
     siteId: z.string().min(1),
     domain: z
-        .string({ invalid_type_error: 'competitors.errors.competitorRequired' })
+        .string({ error: (issue) => issue.input === undefined ? undefined : 'competitors.errors.competitorRequired' })
         .trim()
         .min(1, 'competitors.errors.competitorRequired')
         .max(253, 'competitors.errors.competitorTooLong'),

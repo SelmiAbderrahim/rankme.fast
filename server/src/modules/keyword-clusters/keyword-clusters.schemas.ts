@@ -63,7 +63,7 @@ export const KEYWORD_CLUSTER_MAX_URL_LENGTH = 2048;
 const objectIdSchema = z
     .string()
     .regex(/^[0-9a-fA-F]{24}$/, 'validation.issue.invalidString');
-const uuidSchema = z.string().uuid();
+const uuidSchema = z.string().guid();
 export const keywordClusterSiteParamsSchema = z
     .object({ siteId: objectIdSchema })
     .strict();
@@ -80,7 +80,7 @@ export const keywordClusterStartBodySchema = z
     locale: z.enum(SUPPORTED_LOCALES).default('en'),
 })
     .strict()
-    .default({});
+    .prefault({});
 export const keywordClusterListQuerySchema = z
     .object({ limit: z.coerce.number().int().min(1).max(50).default(20) })
     .strict();

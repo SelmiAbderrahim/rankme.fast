@@ -38,8 +38,13 @@
   "revoke": {
     "cta": "Отозвать доступ Google везде",
     "confirmTitle": "Отозвать общее подключение Google?",
-    "confirmBody": "Доступ Google будет отозван, а все подключённые сайты ({{count}}) — отвязаны. Ограничить действие текущим сайтом нельзя.",
-    "confirm": "Отозвать везде"
+    "confirmBody_one": "Доступ Google будет отозван, а все подключённые сайты ({{count}}) — отвязаны. Ограничить действие текущим сайтом нельзя.",
+    "confirm": "Отозвать везде",
+    "confirmBody_zero": "Доступ Google будет отозван, а все подключённые сайты ({{count}}) — отвязаны. Ограничить действие текущим сайтом нельзя.",
+    "confirmBody_two": "Доступ Google будет отозван, а все подключённые сайты ({{count}}) — отвязаны. Ограничить действие текущим сайтом нельзя.",
+    "confirmBody_few": "Доступ Google будет отозван, а все подключённые сайты ({{count}}) — отвязаны. Ограничить действие текущим сайтом нельзя.",
+    "confirmBody_many": "Доступ Google будет отозван, а все подключённые сайты ({{count}}) — отвязаны. Ограничить действие текущим сайтом нельзя.",
+    "confirmBody_other": "Доступ Google будет отозван, а все подключённые сайты ({{count}}) — отвязаны. Ограничить действие текущим сайтом нельзя."
   },
   "autoMatch": {
     "queued": "Проверяем ресурсы Google для этого сайта…",
@@ -86,7 +91,7 @@
     "viewAllLabel": "Показать все — {{section}}",
     "sitemapsLink": "Посмотреть файлы Sitemap",
     "asOf": "Данные по {{date}}",
-    "previousPeriod": "Предыдущий период: {{clicks}} кликов · {{impressions}} показов",
+    "previousPeriod": "Предыдущий период — клики: {{clicks}} · показы: {{impressions}}",
     "reportLink": "Смотреть все данные в отчёте",
     "emptyTitle": "Данных поиска пока нет",
     "emptyCta": "Управление подключением",
@@ -98,10 +103,10 @@
     "refreshError": "Не удалось обновить данные поиска. Повторите попытку позже.",
     "refreshedJustNow": "Только что обновлено",
     "timeseriesTitle": "Клики и показы во времени",
-    "timeseriesSubtitle": "Ежедневные итоги за последние {{days}} дней.",
+    "timeseriesSubtitle_one": "Ежедневные итоги за последний {{days}} день.",
     "timeseriesEmpty": "Пока нет ежедневных данных.",
-    "timeseriesChartLabel": "Ежедневные {{metric}} за последние {{days}} дней",
-    "timeseriesTableCaption": "Ежедневная эффективность поиска за последние {{days}} дней",
+    "timeseriesChartLabel_one": "Ежедневные {{metric}} за последний {{days}} день",
+    "timeseriesTableCaption_one": "Ежедневная эффективность поиска за последний {{days}} день",
     "tableDate": "Дата",
     "metricLabel": "Выберите метрику для графика",
     "countriesTitle": "Топ стран",
@@ -117,7 +122,22 @@
       "mobile": "Мобильный",
       "tablet": "Планшет",
       "unknown": "Другое"
-    }
+    },
+    "timeseriesSubtitle_zero": "Ежедневные итоги за последние {{days}} дней.",
+    "timeseriesSubtitle_two": "Ежедневные итоги за последние {{days}} дней.",
+    "timeseriesSubtitle_few": "Ежедневные итоги за последние {{days}} дня.",
+    "timeseriesSubtitle_many": "Ежедневные итоги за последние {{days}} дней.",
+    "timeseriesSubtitle_other": "Ежедневные итоги за последние {{days}} дня.",
+    "timeseriesChartLabel_zero": "Ежедневные {{metric}} за последние {{days}} дней",
+    "timeseriesChartLabel_two": "Ежедневные {{metric}} за последние {{days}} дней",
+    "timeseriesChartLabel_few": "Ежедневные {{metric}} за последние {{days}} дня",
+    "timeseriesChartLabel_many": "Ежедневные {{metric}} за последние {{days}} дней",
+    "timeseriesChartLabel_other": "Ежедневные {{metric}} за последние {{days}} дня",
+    "timeseriesTableCaption_zero": "Ежедневная эффективность поиска за последние {{days}} дней",
+    "timeseriesTableCaption_two": "Ежедневная эффективность поиска за последние {{days}} дней",
+    "timeseriesTableCaption_few": "Ежедневная эффективность поиска за последние {{days}} дня",
+    "timeseriesTableCaption_many": "Ежедневная эффективность поиска за последние {{days}} дней",
+    "timeseriesTableCaption_other": "Ежедневная эффективность поиска за последние {{days}} дня"
   },
   "analytics": {
     "title": "Google Analytics (последние {{days}} дней)",
@@ -127,16 +147,16 @@
     "keyEvents": "Ключевые события",
     "engagementRateLabel": "Уровень вовлечённости",
     "engagementRateLine": "Уровень вовлечённости: {{rate}}",
-    "previousPeriod": "Предыдущий период: {{sessions}} сеансов · {{activeUsers}} активных пользователей",
+    "previousPeriod": "Предыдущий период — сеансы: {{sessions}} · активные пользователи: {{activeUsers}}",
     "emptyTitle": "Данных аналитики пока нет",
     "empty": "Данных аналитики пока нет. Данные появятся вскоре после подключения ресурса — попробуйте обновить.",
     "error": "Не удалось загрузить сводку аналитики. Повторите попытку позже.",
     "refresh": "Обновить данные аналитики",
     "refreshError": "Не удалось обновить данные аналитики. Повторите попытку позже.",
     "timeseriesTitle": "Сеансы и активные пользователи во времени",
-    "timeseriesSubtitle": "Ежедневные итоги за последние {{days}} дней.",
-    "timeseriesChartLabel": "Ежедневные {{metric}} за последние {{days}} дней",
-    "timeseriesTableCaption": "Ежедневная эффективность аналитики за последние {{days}} дней",
+    "timeseriesSubtitle_one": "Ежедневные итоги за последний {{days}} день.",
+    "timeseriesChartLabel_one": "Ежедневные {{metric}} за последний {{days}} день",
+    "timeseriesTableCaption_one": "Ежедневная эффективность аналитики за последний {{days}} день",
     "channelsTitle": "Каналы",
     "channelsEmpty": "Пока нет данных по каналам.",
     "channelsTableCaption": "Сеансы по каналам",
@@ -167,7 +187,28 @@
     "propertiesError": "Не удалось загрузить ресурсы Analytics. Повторите попытку позже.",
     "setPropertyError": "Не удалось сохранить этот ресурс Analytics. Повторите попытку позже.",
     "settingsTitle": "Google Аналитика",
-    "settingsSubtitle": "Выберите, какой ресурс GA4 использует RankMeFast."
+    "settingsSubtitle": "Выберите, какой ресурс GA4 использует RankMeFast.",
+    "timeseriesSubtitle_zero": "Ежедневные итоги за последние {{days}} дней.",
+    "timeseriesSubtitle_two": "Ежедневные итоги за последние {{days}} дней.",
+    "timeseriesSubtitle_few": "Ежедневные итоги за последние {{days}} дня.",
+    "timeseriesSubtitle_many": "Ежедневные итоги за последние {{days}} дней.",
+    "timeseriesSubtitle_other": "Ежедневные итоги за последние {{days}} дня.",
+    "timeseriesChartLabel_zero": "Ежедневные {{metric}} за последние {{days}} дней",
+    "timeseriesChartLabel_two": "Ежедневные {{metric}} за последние {{days}} дней",
+    "timeseriesChartLabel_few": "Ежедневные {{metric}} за последние {{days}} дня",
+    "timeseriesChartLabel_many": "Ежедневные {{metric}} за последние {{days}} дней",
+    "timeseriesChartLabel_other": "Ежедневные {{metric}} за последние {{days}} дня",
+    "timeseriesTableCaption_zero": "Ежедневная эффективность аналитики за последние {{days}} дней",
+    "timeseriesTableCaption_two": "Ежедневная эффективность аналитики за последние {{days}} дней",
+    "timeseriesTableCaption_few": "Ежедневная эффективность аналитики за последние {{days}} дня",
+    "timeseriesTableCaption_many": "Ежедневная эффективность аналитики за последние {{days}} дней",
+    "timeseriesTableCaption_other": "Ежедневная эффективность аналитики за последние {{days}} дня",
+    "staleBody_zero": "Последние данные Google Analytics здесь относятся к {{date}}, хотя данные по {{expected}} уже должны быть доступны, поэтому эти цифры не охватывают последние {{days}} дней. Обновите данные, чтобы синхронизировать их заново. Если дата не изменится, переподключите Google.",
+    "staleBody_one": "Последние данные Google Analytics здесь относятся к {{date}}, хотя данные по {{expected}} уже должны быть доступны, поэтому эти цифры не охватывают последний {{days}} день. Обновите данные, чтобы синхронизировать их заново. Если дата не изменится, переподключите Google.",
+    "staleBody_two": "Последние данные Google Analytics здесь относятся к {{date}}, хотя данные по {{expected}} уже должны быть доступны, поэтому эти цифры не охватывают последние {{days}} дней. Обновите данные, чтобы синхронизировать их заново. Если дата не изменится, переподключите Google.",
+    "staleBody_few": "Последние данные Google Analytics здесь относятся к {{date}}, хотя данные по {{expected}} уже должны быть доступны, поэтому эти цифры не охватывают последние {{days}} дня. Обновите данные, чтобы синхронизировать их заново. Если дата не изменится, переподключите Google.",
+    "staleBody_many": "Последние данные Google Analytics здесь относятся к {{date}}, хотя данные по {{expected}} уже должны быть доступны, поэтому эти цифры не охватывают последние {{days}} дней. Обновите данные, чтобы синхронизировать их заново. Если дата не изменится, переподключите Google.",
+    "staleBody_other": "Последние данные Google Analytics здесь относятся к {{date}}, хотя данные по {{expected}} уже должны быть доступны, поэтому эти цифры не охватывают последние {{days}} дня. Обновите данные, чтобы синхронизировать их заново. Если дата не изменится, переподключите Google."
   },
   "searchDetail": {
     "back": "Обзор",
@@ -205,8 +246,18 @@
       },
       "status": {
         "ok": "OK",
-        "errors": "Ошибок: {{n}}",
-        "warnings": "Предупреждений: {{n}}"
+        "errors_one": "{{n}} ошибка",
+        "warnings_one": "{{n}} предупреждение",
+        "errors_zero": "{{n}} ошибок",
+        "errors_two": "{{n}} ошибки",
+        "errors_few": "{{n}} ошибки",
+        "errors_many": "{{n}} ошибок",
+        "errors_other": "{{n}} ошибки",
+        "warnings_zero": "{{n}} предупреждений",
+        "warnings_two": "{{n}} предупреждения",
+        "warnings_few": "{{n}} предупреждения",
+        "warnings_many": "{{n}} предупреждений",
+        "warnings_other": "{{n}} предупреждения"
       }
     }
   },
@@ -217,5 +268,11 @@
       "cannibalization": "Отчёты о каннибализации ключевых слов строятся на данных вашей Search Console. Подключите Search Console к этому сайту, чтобы создать отчёт. Уже сохранённые отчёты остаются доступны.",
       "internalLinks": "Подсказки по внутренним ссылкам используют ваши запросы из Search Console, чтобы выбрать важные страницы. Подключите Search Console к этому сайту, чтобы получать подсказки на основе реальных поисков."
     }
-  }
+  },
+  "breakdown": {"other_zero": "Другие (ещё {{hidden}})",
+    "other_one": "Другие (ещё {{hidden}})",
+    "other_two": "Другие (ещё {{hidden}})",
+    "other_few": "Другие (ещё {{hidden}})",
+    "other_many": "Другие (ещё {{hidden}})",
+    "other_other": "Другие (ещё {{hidden}})"}
 }

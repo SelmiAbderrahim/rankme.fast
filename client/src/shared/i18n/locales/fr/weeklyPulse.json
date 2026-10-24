@@ -83,7 +83,7 @@
     "empty": "Google n’a signalé aucune apparition IA générative.",
     "reconnect": "Reconnectez Google Search Console pour voir cette section.",
     "window": "Fenêtre : {{start}} → {{end}}",
-    "row": "{{appearance}} — {{clicks}} clics, {{impressions}} impressions",
+    "row": "{{appearance}} — clics : {{clicks}} · impressions : {{impressions}}",
     "loading": "Chargement des données Google Search Console…",
     "unknown": "Apparition inconnue ({{raw}})",
     "noData": "Aucune donnée Search Console pour l'instant. Connectez Google Search Console pour voir cette section, ou revenez après la prochaine synchronisation quotidienne."

@@ -1,3 +1,4 @@
+import { isolateText } from '@shared/lib/bidi';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import { fireEvent, render, screen, waitFor, within } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
@@ -339,7 +340,7 @@ describe('ClientReportsPanel', () => {
 
     await userEvent.click(screen.getByRole('button', { name: 'Delete' }));
     const alert = await screen.findByRole('alertdialog');
-    expect(alert).toHaveTextContent('Deleting Monday report');
+    expect(alert).toHaveTextContent(`Deleting ${isolateText('Monday report')}`);
     await userEvent.click(within(alert).getByRole('button', { name: 'Delete' }));
     await waitFor(() => expect(mocked.deleteScheduledReport).toHaveBeenCalled());
 

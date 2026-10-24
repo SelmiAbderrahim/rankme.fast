@@ -372,7 +372,7 @@ describe('GoogleAnalyticsSummaryCard — data states', () => {
       'Engagement rate: 60%',
     );
     expect(screen.getByTestId('google-analytics-previous')).toHaveTextContent(
-      'Previous period: 300 sessions · 250 active users',
+      'Previous period — sessions: 300 · active users: 250',
     );
     expect(screen.getByText(/Data through/)).toBeInTheDocument();
   });

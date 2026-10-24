@@ -116,7 +116,7 @@
     "back": "Back to scans",
     "loading": "Loading this scan",
     "errorTitle": "We could not load this scan",
-    "mentionCount": "{{count}} mention found",
+    "mentionCount_one": "{{count}} mention found",
     "mentionCount_other": "{{count}} mentions found",
     "market": "Market",
     "outputLocale": "Output language",
@@ -186,9 +186,13 @@
       "pending": "The summary is still being written.",
       "absent": "No summary was produced for this scan.",
       "withheld": "The summary was withheld because no sentence could be tied to a mention.",
-      "citations": "{{count}} source",
+      "citations_one": "{{count}} source",
       "citations_other": "{{count}} sources",
-      "citationMissing": "Citation not in this page"
+      "citationMissing": "Citation not in this page",
+      "citations_zero": "{{count}} sources",
+      "citations_two": "{{count}} sources",
+      "citations_few": "{{count}} sources",
+      "citations_many": "{{count}} sources"
     },
     "mentions": {
       "title": "Mentions",
@@ -219,7 +223,11 @@
         "sentiment": "Tone",
         "observedAt": "Seen"
       }
-    }
+    },
+    "mentionCount_zero": "{{count}} mentions found",
+    "mentionCount_two": "{{count}} mentions found",
+    "mentionCount_few": "{{count}} mentions found",
+    "mentionCount_many": "{{count}} mentions found"
   },
   "errors": {
     "previewTitle": "We could not price this scan",

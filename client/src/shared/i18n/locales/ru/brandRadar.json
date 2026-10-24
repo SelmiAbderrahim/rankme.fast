@@ -116,7 +116,7 @@
     "back": "Назад к проверкам",
     "loading": "Загружаем эту проверку",
     "errorTitle": "Не удалось загрузить эту проверку",
-    "mentionCount": "Найдено упоминаний: {{count}}",
+    "mentionCount_one": "Найдено упоминаний: {{count}}",
     "mentionCount_other": "Найдено упоминаний: {{count}}",
     "market": "Рынок",
     "outputLocale": "Язык результата",
@@ -186,9 +186,13 @@
       "pending": "Сводка ещё готовится.",
       "absent": "Для этой проверки сводка не составлялась.",
       "withheld": "Сводку не показали: ни одно предложение не удалось связать с упоминанием.",
-      "citations": "Источников: {{count}}",
+      "citations_one": "Источников: {{count}}",
       "citations_other": "Источников: {{count}}",
-      "citationMissing": "Источника нет на этой странице"
+      "citationMissing": "Источника нет на этой странице",
+      "citations_zero": "Источников: {{count}}",
+      "citations_two": "Источников: {{count}}",
+      "citations_few": "Источников: {{count}}",
+      "citations_many": "Источников: {{count}}"
     },
     "mentions": {
       "title": "Упоминания",
@@ -219,7 +223,11 @@
         "sentiment": "Тон",
         "observedAt": "Замечено"
       }
-    }
+    },
+    "mentionCount_zero": "Найдено упоминаний: {{count}}",
+    "mentionCount_two": "Найдено упоминаний: {{count}}",
+    "mentionCount_few": "Найдено упоминаний: {{count}}",
+    "mentionCount_many": "Найдено упоминаний: {{count}}"
   },
   "errors": {
     "previewTitle": "Не удалось рассчитать стоимость",

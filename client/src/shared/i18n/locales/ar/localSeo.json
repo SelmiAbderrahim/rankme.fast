@@ -6,8 +6,13 @@
   "emptyCta": "جلب البيانات المحلية",
   "refresh": {
     "button": "تحديث البيانات المحلية",
-    "cooldown": "التحديث خلال {{seconds}} ثانية",
-    "failed": "تعذر تحديث البيانات المحلية. حاول مرة أخرى بعد لحظة."
+    "cooldown_one": "التحديث خلال {{seconds}} ثانية",
+    "failed": "تعذر تحديث البيانات المحلية. حاول مرة أخرى بعد لحظة.",
+    "cooldown_zero": "التحديث خلال {{seconds}} ثوانٍ",
+    "cooldown_two": "التحديث خلال ثانيتين ({{seconds}})",
+    "cooldown_few": "التحديث خلال {{seconds}} ثوانٍ",
+    "cooldown_many": "التحديث خلال {{seconds}} ثانية",
+    "cooldown_other": "التحديث خلال {{seconds}} ثانية"
   },
   "loadFailed": "تعذر تحميل البيانات المحلية.",
   "locked": {
@@ -37,5 +42,11 @@
     "position": "الترتيب",
     "packSize": "حجم الحزمة",
     "notRanked": "غير مدرج في حزمة الخرائط"
-  }
+  },
+  "setup": {"resultsLegend_zero": "عدد نتائج «{{query}}»: {{count}}. اختر نشاطك التجاري:",
+    "resultsLegend_one": "عدد نتائج «{{query}}»: {{count}}. اختر نشاطك التجاري:",
+    "resultsLegend_two": "عدد نتائج «{{query}}»: {{count}}. اختر نشاطك التجاري:",
+    "resultsLegend_few": "عدد نتائج «{{query}}»: {{count}}. اختر نشاطك التجاري:",
+    "resultsLegend_many": "عدد نتائج «{{query}}»: {{count}}. اختر نشاطك التجاري:",
+    "resultsLegend_other": "عدد نتائج «{{query}}»: {{count}}. اختر نشاطك التجاري:"}
 }

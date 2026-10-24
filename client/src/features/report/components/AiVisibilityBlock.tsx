@@ -1,3 +1,4 @@
+import { Bdi } from '@shared/components/Bdi';
 import { Link } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { StatusChip, type StatusTone } from '@shared/ui/status-chip';
@@ -121,7 +122,7 @@ export const AiVisibilityBlock = ({ section, siteId }: AiVisibilityBlockProps) =
           <ul className="space-y-1">
             {section.notMentionedPrompts.map((prompt) => (
               <li key={prompt} className="flex flex-wrap items-center gap-2 text-sm">
-                <span>{prompt}</span>
+                <span><Bdi>{prompt}</Bdi></span>
                 <StatusChip tone="muted">{t('aiVisibilityBlock.notMentioned')}</StatusChip>
               </li>
             ))}

@@ -18,7 +18,7 @@ import {
 } from './types';
 
 export const geogridDefinitionSchema = z.object({
-  keywordId: z.string().uuid(),
+  keywordId: z.string().guid(),
   centerLat: z
     .number()
     .finite()

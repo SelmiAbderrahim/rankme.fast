@@ -24,8 +24,6 @@
   },
   "preview": {
     "title": "التكلفة",
-    "units": "{{count}} تقرير من حصتك الشهرية.",
-    "units_other": "{{count}} تقارير من حصتك الشهرية.",
     "remaining": "المتبقي في خطتك هذا الشهر: {{remaining}}.",
     "pack": "بالإضافة إلى {{units}} من حزم الرصيد.",
     "noFit": "هذا لا يتسع في المتبقي. أضف رصيدًا أو غيّر الخطة أولًا."
@@ -39,7 +37,7 @@
     "open": "افتح"
   },
   "detail": {
-    "provenance": "من بيانات Search Console المخزّنة عبر {{days}} يومًا، آخر مزامنة {{date}}. تمت قراءة {{queries}} استعلامًا."
+    "provenance": "من بيانات Search Console المخزّنة عبر $t(cannibalization:counts.windowDays, {\"count\": {{days}}})، آخر مزامنة {{date}}. $t(cannibalization:counts.queriesRead, {\"count\": {{queries}}})"
   },
   "candidates": {
     "query": "الاستعلام",
@@ -56,7 +54,7 @@
     "inspect": "افحص"
   },
   "drilldown": {
-    "provenance": "صفوف مخزّنة عبر {{days}} يومًا، آخر مزامنة {{date}}.",
+    "provenance": "صفوف مخزّنة عبر $t(cannibalization:counts.windowDays, {\"count\": {{days}}})، آخر مزامنة {{date}}.",
     "recommendation": "أبقِ {{url}} صفحةً رئيسية.",
     "reason": {
       "most_clicks": "تحصد بالفعل أكثر النقرات لهذا الاستعلام.",
@@ -100,5 +98,19 @@
       "title": "حدث خطأ ما",
       "body": "تعذّر التحميل. أعد المحاولة."
     }
+  },
+  "counts": {
+    "windowDays_zero": "{{count}} أيام",
+    "windowDays_one": "{{count}} يومًا",
+    "windowDays_two": "{{count}} من الأيام",
+    "windowDays_few": "{{count}} أيام",
+    "windowDays_many": "{{count}} يومًا",
+    "windowDays_other": "{{count}} يومًا",
+    "queriesRead_zero": "تمت قراءة {{count}} استعلامات.",
+    "queriesRead_one": "تمت قراءة {{count}} استعلامًا.",
+    "queriesRead_two": "تمت قراءة {{count}} من الاستعلامات.",
+    "queriesRead_few": "تمت قراءة {{count}} استعلامات.",
+    "queriesRead_many": "تمت قراءة {{count}} استعلامًا.",
+    "queriesRead_other": "تمت قراءة {{count}} استعلامًا."
   }
 }

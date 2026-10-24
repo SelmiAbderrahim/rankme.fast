@@ -1,3 +1,4 @@
+import { Bdi } from '@shared/components/Bdi';
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { ChevronDown, ChevronRight } from 'lucide-react';
@@ -103,7 +104,7 @@ export const IssueRow = ({
           <ChevronRight className="size-4 shrink-0 rtl:rotate-180" aria-hidden="true" />
         )}
         <span className="min-w-0 flex-1">
-          <span className="block font-medium">{finding.copy.title}</span>
+          <span className="block font-medium"><Bdi>{finding.copy.title}</Bdi></span>
           <span className="text-muted-foreground block text-xs">
             {finding.bucket === 'passed'
               ? t('row.passedSummary')

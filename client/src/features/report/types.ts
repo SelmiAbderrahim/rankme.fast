@@ -5,6 +5,17 @@
  * keys.
  */
 import type { SupportedLocale } from '@shared/i18n';
+import type { CrawlStopReason, CrawlStopReasonSource } from '@shared/components/CrawlStopReasonNote';
+
+export interface AuditCrawlSummary {
+  finishedAt: string | null;
+  pageCap: number;
+  pagesStored: number | null;
+  vendorPagesCrawled: number | null;
+  stopReason: CrawlStopReason | null;
+  stopReasonSource?: CrawlStopReasonSource | null;
+  sitemapFound: boolean | null;
+}
 
 export type RuleBucket = 'fix-now' | 'watch' | 'passed';
 export type RuleSeverity = 'critical' | 'warning' | 'info';

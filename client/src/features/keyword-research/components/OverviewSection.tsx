@@ -1,3 +1,5 @@
+import { isolateText } from '@shared/lib/bidi';
+import { Bdi } from '@shared/components/Bdi';
 /**
  * SERP overview section — a URL-addressable section of the
  * research tab (`?tab=research`, no fifth tab value by locked decision).
@@ -46,8 +48,8 @@ const OverviewRow = ({ row }: { row: KeywordOverviewRow }) => {
 
   return (
     <TableRow data-testid={`kw-overview-row-${slug}`}>
-      <TableCell className="max-w-56 truncate" title={row.keyword}>
-        {row.keyword}
+      <TableCell className="max-w-56 truncate" title={isolateText(row.keyword)}>
+        <Bdi>{row.keyword}</Bdi>
       </TableCell>
       <TableCell className="text-end tabular-nums">{format(row.searchVolume)}</TableCell>
       <TableCell>

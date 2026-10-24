@@ -1,3 +1,5 @@
+import { isolateText } from '@shared/lib/bidi';
+import { Bdi } from '@shared/components/Bdi';
 /**
  * GSC block — Search Analytics summary and/or sitemap health
  * rendered inside the `gsc-ctr-low` and `sitemap-errors` issue rows. Mirrors
@@ -139,8 +141,8 @@ const TopTable = ({
       <tbody>
         {rows.map((row) => (
           <tr key={row.key} className="border-b last:border-b-0">
-            <td className="max-w-0 truncate py-1.5 pe-2" title={row.key}>
-              {row.key}
+            <td className="max-w-0 truncate py-1.5 pe-2" title={isolateText(row.key)}>
+              <Bdi>{row.key}</Bdi>
             </td>
             <td className="py-1.5 text-end tabular-nums" dir="ltr">
               {formatInt(locale, row.clicks)}
@@ -215,7 +217,7 @@ const SearchSection = ({
                   {delta.value >= 0 ? '+' : ''}
                   {formatInt(locale, delta.value)}
                 </span>
-                &nbsp;{delta.label}
+                &nbsp;<Bdi>{delta.label}</Bdi>
               </Badge>
             ))}
           </span>

@@ -137,3 +137,14 @@ describe('SiteWorkspaceNavigation', () => {
     expect(screen.getByTestId('site-nav-group-content')).toHaveAccessibleName('المحتوى · المحتوى');
   });
 });
+
+it('retains hash and router state when the compatibility control chooses a destination', async () => {
+  const StateProbe = () => {
+    const location = useLocation();
+    return <output data-testid="state-probe">{JSON.stringify({ hash: location.hash, state: location.state })}</output>;
+  };
+  render(<I18nextProvider i18n={i18n}><MemoryRouter initialEntries={[{ pathname: '/sites/s1', search: '?tab=keywords&view=queries', hash: '#details', state: { saved: true } }]}><SiteWorkspaceNavigation activeTab="keywords" onTabChange={vi.fn()} /><StateProbe /></MemoryRouter></I18nextProvider>);
+  expect(screen.getByTestId('site-tab-overview')).toHaveAttribute('href', '/sites/s1?tab=overview&view=queries#details');
+  await userEvent.click(screen.getByTestId('site-tab-overview'));
+  expect(screen.getByTestId('state-probe')).toHaveTextContent('{"hash":"#details","state":{"saved":true}}');
+});

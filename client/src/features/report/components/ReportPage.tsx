@@ -394,7 +394,7 @@ export const ReportPage = ({
             <SelectItem key={option} value={option}>
               {option === PAGE_CAP_MAX
                 ? t('pageCap.max')
-                : t('pageCap.pages', { pages: option })}
+                : t('pageCap.pages', { count: Number(option), pages: option })}
             </SelectItem>
           ))}
         </SelectContent>

@@ -1,3 +1,4 @@
+import { isolateText } from '@shared/lib/bidi';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 import { act, render, screen, waitFor, within } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
@@ -254,7 +255,7 @@ describe('SitesPage', () => {
     await user.click(await screen.findByRole('menuitem', { name: 'Delete' }));
 
     expect(await screen.findByRole('alertdialog')).toHaveTextContent(
-      'This removes a.example.com from your account.',
+      `This removes ${isolateText('a.example.com')} from your account.`,
     );
     await user.click(screen.getByRole('button', { name: 'Delete site' }));
 
@@ -585,7 +586,7 @@ describe('SitesTable — pause and resume', () => {
     const dialog = await screen.findByRole('alertdialog');
     expect(dialog).toHaveTextContent('Pause this site?');
     expect(dialog).toHaveTextContent(
-      'Audits, rank checks, weekly reports, content monitoring, and alerts stop for a.example.com.',
+      `Audits, rank checks, weekly reports, content monitoring, and alerts stop for ${isolateText('a.example.com')}.`,
     );
     await user.click(within(dialog).getByRole('button', { name: 'Pause site' }));
 

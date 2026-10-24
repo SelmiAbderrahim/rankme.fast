@@ -37,7 +37,7 @@ const scrapeResponseSchema = z.object({
 });
 const crawlStartSchema = z.object({
     success: z.literal(true),
-    id: z.string().uuid(),
+    id: z.string().guid(),
 });
 const crawlStatusSchema = z.object({
     status: z.enum(['scraping', 'completed', 'failed', 'cancelled']),

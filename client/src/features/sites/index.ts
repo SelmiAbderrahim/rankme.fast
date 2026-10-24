@@ -31,6 +31,9 @@ export {
   getSiteTabGroup,
   getSiteTabLabelKey,
   isSiteTab,
+  resolveSiteTab,
+  SITE_TAB_ALIASES,
+  type SiteTabResolution,
   useSiteTab,
   APP_SEO_VIEWS,
   DEFAULT_APP_SEO_VIEW,
@@ -43,3 +46,7 @@ export {
 } from './tabState';
 export { validateSiteUrl, buildAddSiteSchema, SITE_URL_MAX_LENGTH } from './validation';
 export type { Site, SiteListPage, SitesState } from './types';
+export { useAllSites, SITE_PICKER_MAX_PAGES, SITE_PICKER_PAGE_SIZE, type AllSitesState } from './useAllSites';
+export { SITE_NAV_ITEMS, SITE_NAV_GROUPS, siteTabHref, getSiteNavItem } from './siteNavigation';
+export { SiteNavigationFrame, SiteNavigationProvider, useSiteNavigation } from './components/SiteNavigation';
+export { SiteSelect, type SiteSelectProps } from './components/SiteSelect';

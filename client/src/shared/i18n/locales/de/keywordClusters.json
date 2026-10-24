@@ -11,9 +11,14 @@
   },
   "scope": {
     "title": "Keywords in diesem Lauf",
-    "description": "{{count}} Keywords ausgewählt. Jedes ausgewählte Keyword benötigt ein nutzbares, aktuelles Google-Ergebnis.",
+    "description_one": "{{count}} Keyword ausgewählt. Jedes ausgewählte Keyword benötigt ein nutzbares, aktuelles Google-Ergebnis.",
     "empty": "Diese Website hat noch keine aktiven Google-Keywords.",
-    "minimum": "Wählen Sie mindestens zwei Keywords aus, bevor Sie den Lauf in der Vorschau anzeigen."
+    "minimum": "Wählen Sie mindestens zwei Keywords aus, bevor Sie den Lauf in der Vorschau anzeigen.",
+    "description_zero": "{{count}} Keywords ausgewählt. Jedes ausgewählte Keyword benötigt ein nutzbares, aktuelles Google-Ergebnis.",
+    "description_two": "{{count}} Keywords ausgewählt. Jedes ausgewählte Keyword benötigt ein nutzbares, aktuelles Google-Ergebnis.",
+    "description_few": "{{count}} Keywords ausgewählt. Jedes ausgewählte Keyword benötigt ein nutzbares, aktuelles Google-Ergebnis.",
+    "description_many": "{{count}} Keywords ausgewählt. Jedes ausgewählte Keyword benötigt ein nutzbares, aktuelles Google-Ergebnis.",
+    "description_other": "{{count}} Keywords ausgewählt. Jedes ausgewählte Keyword benötigt ein nutzbares, aktuelles Google-Ergebnis."
   },
   "newRun": {
     "title": "Clustering-Lauf vorbereiten",
@@ -22,7 +27,7 @@
     "unitLabel": "Kontingent",
     "unitValue": "{{count}} Clustering-Lauf",
     "scopeLabel": "Bereite Keywords",
-    "scopeValue": "{{count}} verfolgte Keywords qualifizieren sich",
+    "scopeValue_one": "{{count}} verfolgtes Keyword qualifiziert sich",
     "method": "Zwei Keywords werden gruppiert, wenn sie mindestens {{shared}} ihrer Top-{{window}}-Ergebnisse teilen, aus einer Positionsprüfung der letzten {{days}} Tage.",
     "remaining": "Vor diesem Lauf verbleiben {{count}} Läufe.",
     "labelingIncluded": "Optionale KI-Gruppenbezeichnungen sind in diesem Lauf enthalten und ändern niemals die Cluster-Zugehörigkeit.",
@@ -30,7 +35,12 @@
     "previewing": "Gespeicherte Ergebnisse werden geprüft…",
     "confirm": "Clustering-Lauf starten",
     "starting": "Wird gestartet…",
-    "cancel": "Abbrechen"
+    "cancel": "Abbrechen",
+    "scopeValue_zero": "{{count}} verfolgte Keywords qualifizieren sich",
+    "scopeValue_two": "{{count}} verfolgte Keywords qualifizieren sich",
+    "scopeValue_few": "{{count}} verfolgte Keywords qualifizieren sich",
+    "scopeValue_many": "{{count}} verfolgte Keywords qualifizieren sich",
+    "scopeValue_other": "{{count}} verfolgte Keywords qualifizieren sich"
   },
   "states": {
     "ranksCta": "Positionsprüfung ausführen",
@@ -84,15 +94,25 @@
     "open": "Lauf öffnen"
   },
   "blocked": {
-    "title": "{{count}} Keywords konnten nicht teilnehmen",
+    "title_one": "{{count}} Keyword konnte nicht teilnehmen",
     "body": "Diese verfolgten Keywords haben noch kein verwertbares gespeichertes Ergebnis. Führen Sie eine Positionsprüfung aus, dann qualifizieren sie sich für den nächsten Lauf.",
-    "more": "und {{count}} weitere",
+    "more_one": "und {{count}} weitere",
     "observedAt": "zuletzt geprüft {{date}}",
     "reason": {
       "missing": "Nie geprüft",
       "stale": "Prüfung zu alt",
       "empty": "Keine gespeicherten Ergebnisse"
-    }
+    },
+    "more_zero": "und {{count}} weitere",
+    "more_two": "und {{count}} weitere",
+    "more_few": "und {{count}} weitere",
+    "more_many": "und {{count}} weitere",
+    "more_other": "und {{count}} weitere",
+    "title_zero": "{{count}} Keywords konnten nicht teilnehmen",
+    "title_two": "{{count}} Keywords konnten nicht teilnehmen",
+    "title_few": "{{count}} Keywords konnten nicht teilnehmen",
+    "title_many": "{{count}} Keywords konnten nicht teilnehmen",
+    "title_other": "{{count}} Keywords konnten nicht teilnehmen"
   },
   "results": {
     "title": "Gruppen",
@@ -110,15 +130,15 @@
   "cluster": {
     "unlabeled": "Unbenannte Gruppe",
     "aiSuggestion": "KI-Vorschlag",
-    "grouped": "{{count}} Keywords",
+    "grouped_one": "{{count}} Keyword",
     "singleton": "Nicht gruppiert",
-    "commonCore": "{{count}} Ergebnisse, die alle Keywords teilen",
+    "commonCore_one": "{{count}} Ergebnis, das alle Keywords teilen",
     "noCommonCore": "Kein einzelnes Ergebnis wird von allen Keywords dieser Gruppe geteilt",
     "showEvidence": "Überschneidung anzeigen",
     "hideEvidence": "Überschneidung ausblenden",
     "pivot": "Referenz",
-    "pivotWindow": "{{count}} gespeicherte Ergebnisse verglichen",
-    "sharedWithPivot": "{{count}} gemeinsam mit dem Referenz-Keyword",
+    "pivotWindow_one": "{{count}} gespeichertes Ergebnis verglichen",
+    "sharedWithPivot_one": "{{count}} gemeinsam mit dem Referenz-Keyword",
     "evidenceTitle": "Welche Ergebnisse sich überschneiden",
     "evidenceBody": "Jedes Keyword unten ist gruppiert, weil es diese gespeicherten Ergebnis-URLs mit dem Referenz-Keyword teilt.",
     "singletonEvidence": "Dieses Keyword teilte zu wenige Ergebnisse mit einem anderen verfolgten Keyword, um gruppiert zu werden.",
@@ -126,6 +146,44 @@
       "keyword": "Keyword",
       "observedAt": "Ergebnis beobachtet",
       "sharedUrls": "Überschneidung"
-    }
-  }
+    },
+    "sharedWithPivot_zero": "{{count}} gemeinsam mit dem Referenz-Keyword",
+    "sharedWithPivot_two": "{{count}} gemeinsam mit dem Referenz-Keyword",
+    "sharedWithPivot_few": "{{count}} gemeinsam mit dem Referenz-Keyword",
+    "sharedWithPivot_many": "{{count}} gemeinsam mit dem Referenz-Keyword",
+    "sharedWithPivot_other": "{{count}} gemeinsam mit dem Referenz-Keyword",
+    "grouped_zero": "{{count}} Keywords",
+    "grouped_two": "{{count}} Keywords",
+    "grouped_few": "{{count}} Keywords",
+    "grouped_many": "{{count}} Keywords",
+    "grouped_other": "{{count}} Keywords",
+    "commonCore_zero": "{{count}} Ergebnisse, die alle Keywords teilen",
+    "commonCore_two": "{{count}} Ergebnisse, die alle Keywords teilen",
+    "commonCore_few": "{{count}} Ergebnisse, die alle Keywords teilen",
+    "commonCore_many": "{{count}} Ergebnisse, die alle Keywords teilen",
+    "commonCore_other": "{{count}} Ergebnisse, die alle Keywords teilen",
+    "pivotWindow_zero": "{{count}} gespeicherte Ergebnisse verglichen",
+    "pivotWindow_two": "{{count}} gespeicherte Ergebnisse verglichen",
+    "pivotWindow_few": "{{count}} gespeicherte Ergebnisse verglichen",
+    "pivotWindow_many": "{{count}} gespeicherte Ergebnisse verglichen",
+    "pivotWindow_other": "{{count}} gespeicherte Ergebnisse verglichen"
+  },
+  "eligibility": {"needCheck_zero": "{{count}} von {{total}} Keywords brauchen eine neue Ranking-Prüfung.",
+    "needCheck_one": "{{count}} von {{total}} Keywords braucht eine neue Ranking-Prüfung.",
+    "needCheck_two": "{{count}} von {{total}} Keywords brauchen eine neue Ranking-Prüfung.",
+    "needCheck_few": "{{count}} von {{total}} Keywords brauchen eine neue Ranking-Prüfung.",
+    "needCheck_many": "{{count}} von {{total}} Keywords brauchen eine neue Ranking-Prüfung.",
+    "needCheck_other": "{{count}} von {{total}} Keywords brauchen eine neue Ranking-Prüfung.",
+    "ready_zero": "{{count}} sind bereit.",
+    "ready_one": "{{count}} ist bereit.",
+    "ready_two": "{{count}} sind bereit.",
+    "ready_few": "{{count}} sind bereit.",
+    "ready_many": "{{count}} sind bereit.",
+    "ready_other": "{{count}} sind bereit.",
+    "minimum_zero": "Für das Clustering braucht es mindestens {{count}} bereite Keywords.",
+    "minimum_one": "Für das Clustering braucht es mindestens {{count}} bereites Keyword.",
+    "minimum_two": "Für das Clustering braucht es mindestens {{count}} bereite Keywords.",
+    "minimum_few": "Für das Clustering braucht es mindestens {{count}} bereite Keywords.",
+    "minimum_many": "Für das Clustering braucht es mindestens {{count}} bereite Keywords.",
+    "minimum_other": "Für das Clustering braucht es mindestens {{count}} bereite Keywords."}
 }

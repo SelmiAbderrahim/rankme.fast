@@ -1,3 +1,4 @@
+import { Bdi } from '@shared/components/Bdi';
 import { useTranslation } from 'react-i18next';
 import { Link } from 'react-router-dom';
 import {
@@ -37,7 +38,7 @@ export const BlockedKeywords = ({ blocked, total, ranksHref }: BlockedKeywordsPr
                 className="border-border flex flex-wrap items-center gap-2 border p-2"
                 data-testid={`keyword-clusters-blocked-${row.reason}`}
               >
-                <span className="text-sm font-medium">{row.phrase}</span>
+                <span className="text-sm font-medium"><Bdi>{row.phrase}</Bdi></span>
                 <Badge variant="outline">{t(`blocked.reason.${row.reason}`)}</Badge>
                 {row.observedAt ? (
                   <span className="text-muted-foreground text-xs">

@@ -1,3 +1,4 @@
+import { Bdi } from '@shared/components/Bdi';
 import { ArrowRight, Check, Clipboard, FileText, Network } from 'lucide-react';
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
@@ -50,14 +51,14 @@ export const SuggestionList = ({ suggestions }: SuggestionListProps) => {
                 className="border-border bg-muted/40 min-w-0 break-all border p-3 font-mono text-sm"
                 data-testid={`internal-links-source-${suggestion.id}`}
               >
-                {suggestion.sourceUrl}
+                <Bdi>{suggestion.sourceUrl}</Bdi>
               </span>
               <ArrowRight className="mx-auto size-4 rtl:rotate-180" aria-hidden="true" />
               <span
                 className="border-border bg-muted/40 min-w-0 break-all border p-3 font-mono text-sm"
                 data-testid={`internal-links-target-${suggestion.id}`}
               >
-                {suggestion.targetUrl}
+                <Bdi>{suggestion.targetUrl}</Bdi>
               </span>
             </CardTitle>
           </CardHeader>

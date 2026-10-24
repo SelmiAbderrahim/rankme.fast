@@ -58,10 +58,10 @@ export const GscTimeseriesChart = ({ points, days = 28 }: GscTimeseriesChartProp
         },
       ]}
       chartLabel={(metric) =>
-        t('searchSummary.timeseriesChartLabel', { metric, days })
+        t('searchSummary.timeseriesChartLabel', { count: days, metric, days })
       }
       metricGroupLabel={t('searchSummary.metricLabel')}
-      tableCaption={t('searchSummary.timeseriesTableCaption', { days })}
+      tableCaption={t('searchSummary.timeseriesTableCaption', { count: days, days })}
       dateHeader={t('searchSummary.tableDate')}
       emptyLabel={t('searchSummary.timeseriesEmpty')}
       testIdPrefix="gsc-timeseries"

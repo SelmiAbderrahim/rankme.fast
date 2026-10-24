@@ -1,3 +1,4 @@
+import { Bdi } from '@shared/components/Bdi';
 /**
  * Accept-cluster dialog.
  *
@@ -133,7 +134,7 @@ export const AcceptClusterDialog = ({
         <div className="flex flex-col gap-3 text-sm">
           <p className="break-words">
             <strong>{t('keywordResearch:clusters.clusterLabel')}: </strong>
-            {cluster.label}
+            <Bdi>{cluster.label}</Bdi>
           </p>
 
           {terminal ? (
@@ -183,10 +184,10 @@ export const AcceptClusterDialog = ({
                         data-testid={`kw-accept-site-${site.id}`}
                       />
                       <span className="flex flex-col">
-                        <span className="font-medium">{siteLabel(site)}</span>
+                        <span className="font-medium"><Bdi>{siteLabel(site)}</Bdi></span>
                         {siteLabel(site) !== site.domain ? (
                           <span className="text-muted-foreground text-xs">
-                            {site.domain}
+                            <Bdi>{site.domain}</Bdi>
                           </span>
                         ) : null}
                       </span>

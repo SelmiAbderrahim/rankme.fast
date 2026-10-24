@@ -116,7 +116,7 @@
     "back": "Retour aux analyses",
     "loading": "Chargement de cette analyse",
     "errorTitle": "Impossible de charger cette analyse",
-    "mentionCount": "{{count}} citation trouvée",
+    "mentionCount_one": "{{count}} citation trouvée",
     "mentionCount_other": "{{count}} citations trouvées",
     "market": "Marché",
     "outputLocale": "Langue de sortie",
@@ -186,9 +186,13 @@
       "pending": "Le résumé est encore en cours de rédaction.",
       "absent": "Aucun résumé n'a été produit pour cette analyse.",
       "withheld": "Le résumé a été retenu car aucune phrase n'a pu être rattachée à une citation.",
-      "citations": "{{count}} source",
+      "citations_one": "{{count}} source",
       "citations_other": "{{count}} sources",
-      "citationMissing": "Source absente de cette page"
+      "citationMissing": "Source absente de cette page",
+      "citations_zero": "{{count}} source",
+      "citations_two": "{{count}} sources",
+      "citations_few": "{{count}} sources",
+      "citations_many": "{{count}} sources"
     },
     "mentions": {
       "title": "Citations",
@@ -219,7 +223,11 @@
         "sentiment": "Ton",
         "observedAt": "Vue le"
       }
-    }
+    },
+    "mentionCount_zero": "{{count}} citation trouvée",
+    "mentionCount_two": "{{count}} citations trouvées",
+    "mentionCount_few": "{{count}} citations trouvées",
+    "mentionCount_many": "{{count}} citations trouvées"
   },
   "errors": {
     "previewTitle": "Impossible d'estimer cette analyse",

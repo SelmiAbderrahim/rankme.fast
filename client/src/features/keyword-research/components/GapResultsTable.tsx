@@ -1,3 +1,5 @@
+import { isolateText } from '@shared/lib/bidi';
+import { Bdi } from '@shared/components/Bdi';
 /**
  * Per-pair gap result tables.
  *
@@ -223,8 +225,8 @@ export const GapResultsTable = ({ data, query, onQueryChange }: GapResultsTableP
                           key={row.keyword}
                           data-testid={`kw-gap-row-${keywordSlug(row.keyword)}`}
                         >
-                          <TableCell className="max-w-64 truncate" title={row.keyword}>
-                            {row.keyword}
+                          <TableCell className="max-w-64 truncate" title={isolateText(row.keyword)}>
+                            <Bdi>{row.keyword}</Bdi>
                           </TableCell>
                           <TableCell className="text-end tabular-nums">
                             {formatPosition(row.ownPosition)}
@@ -252,7 +254,7 @@ export const GapResultsTable = ({ data, query, onQueryChange }: GapResultsTableP
                   const kind = classifyGapRow(row);
                   return (
                     <li key={row.keyword} className="border-border rounded-md border p-3 text-sm">
-                      <p className="font-medium break-words">{row.keyword}</p>
+                      <p className="font-medium break-words"><Bdi>{row.keyword}</Bdi></p>
                       <p className="text-muted-foreground mt-1 text-xs">
                         {t('keywordResearch:gap.columnOwnPosition')}:{' '}
                         {formatPosition(row.ownPosition)} ·{' '}

@@ -22,20 +22,30 @@
   },
   "list": {
     "title": "قواعدك",
-    "capUsed": "{{count}} قواعد قيد الاستخدام.",
+    "capUsed_one": "{{count}} قاعدة قيد الاستخدام.",
     "type": "النوع",
     "threshold": "الحد",
     "channels": "القنوات",
     "state": "الحالة",
     "actions": "إجراءات",
-    "emailCount": "{{count}} مستلمي بريد",
+    "emailCount_one": "{{count}} مستلم بريد",
     "secretTail": "ينتهي مفتاح التوقيع بـ {{tail}}",
     "enabled": "مفعّلة",
     "disabled": "متوقفة",
     "enable": "تفعيل",
     "disable": "إيقاف",
     "viewLog": "عرض السجل",
-    "delete": "حذف"
+    "delete": "حذف",
+    "capUsed_zero": "{{count}} قواعد قيد الاستخدام.",
+    "capUsed_two": "{{count}} من القواعد قيد الاستخدام.",
+    "capUsed_few": "{{count}} قواعد قيد الاستخدام.",
+    "capUsed_many": "{{count}} قاعدة قيد الاستخدام.",
+    "capUsed_other": "{{count}} قاعدة قيد الاستخدام.",
+    "emailCount_zero": "{{count}} مستلمي بريد",
+    "emailCount_two": "{{count}} من مستلمي البريد",
+    "emailCount_few": "{{count}} مستلمي بريد",
+    "emailCount_many": "{{count}} مستلم بريد",
+    "emailCount_other": "{{count}} مستلم بريد"
   },
   "builder": {
     "title": "قاعدة جديدة",
@@ -68,7 +78,7 @@
     "rankPair": "المركز {{before}} بتاريخ {{beforeAt}}، ثم {{after}} بتاريخ {{afterAt}}.",
     "linkPair": "{{beforeCount}} نطاقات بتاريخ {{beforeAt}}، ثم {{afterCount}} بتاريخ {{afterAt}}.",
     "notRanked": "خارج أفضل 100 نتيجة",
-    "domainCount": "تغيّر {{count}} نطاقات",
+    "domainCount_one": "النطاقات التي تغيّرت: {{count}}",
     "attempt": "المحاولة {{attempt}}",
     "statusLabel": {
       "pending": "قيد الإرسال",
@@ -91,12 +101,17 @@
       "unsafe_url": "لم يعد الوصول إلى هذا العنوان آمنًا.",
       "channel_timeout": "استغرقت القناة وقتًا طويلًا للرد.",
       "retries_exhausted": "توقفنا بعد ثلاث محاولات فاشلة."
-    }
+    },
+    "domainCount_zero": "النطاقات التي تغيّرت: {{count}}",
+    "domainCount_two": "النطاقات التي تغيّرت: {{count}}",
+    "domainCount_few": "النطاقات التي تغيّرت: {{count}}",
+    "domainCount_many": "النطاقات التي تغيّرت: {{count}}",
+    "domainCount_other": "النطاقات التي تغيّرت: {{count}}"
   },
   "states": {
     "cap": {
       "title": "بلغت حد القواعد",
-      "body": "لقد استخدمت كل قواعد التنبيه المتاحة في باقتك."
+      "body": "لا يمكن إضافة قاعدة تنبيه أخرى في الوقت الحالي."
     },
     "tierLocked": {
       "title": "القناة تتطلب باقة أعلى",

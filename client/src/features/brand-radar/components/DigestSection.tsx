@@ -1,3 +1,4 @@
+import { Bdi } from '@shared/components/Bdi';
 import { useTranslation } from 'react-i18next';
 import {
   Accordion,
@@ -53,7 +54,7 @@ export const DigestSection = ({
           {sentences.map((sentence, index) => (
             <li key={`${index}-${sentence.text}`} className="flex flex-col gap-1">
               {/* SEC-OUT: AI text renders as a text node, never as HTML. */}
-              <p>{sentence.text}</p>
+              <p><Bdi>{sentence.text}</Bdi></p>
               <Accordion type="single" collapsible>
                 <AccordionItem value={`citations-${index}`}>
                   <AccordionTrigger data-testid="brand-radar-citation-trigger">
@@ -71,7 +72,7 @@ export const DigestSection = ({
                                 className="underline underline-offset-2"
                                 data-testid="brand-radar-citation-resolved"
                               >
-                                {row.domain}
+                                <Bdi>{row.domain}</Bdi>
                               </a>
                             ) : (
                               <span data-testid="brand-radar-citation-unresolved">

@@ -64,9 +64,9 @@ describe('label helpers', () => {
     expect(locationLabel(2840, t)).toBe('United States');
     expect(locationLabel(999, t)).toBe('common:market.unknownCountry');
   });
-  it('languageLabel resolves known codes and preserves unknown codes', () => {
+  it('languageLabel resolves known codes and localizes unknown codes', () => {
     expect(languageLabel('en', t)).toBe('English');
-    expect(languageLabel('xx', t)).toBe('xx');
+    expect(languageLabel('xx', t)).toBe('common:market.unknownLanguage');
     expect(languageLabel('', t)).toBe('common:market.unknownLanguage');
   });
 });
@@ -164,10 +164,10 @@ describe('KeywordResearchHistoryPage', () => {
     // Cached vs live source chips.
     expect(screen.getByText('Cached')).toBeInTheDocument();
     expect(screen.getAllByText('Live').length).toBeGreaterThan(0);
-    // Unknown country values use localized compatibility labels; unknown
-    // language codes remain visible for legacy history rows.
+    // Legacy country and language codes use localized compatibility labels.
     expect(screen.getByText('Unknown country')).toBeInTheDocument();
-    expect(screen.getByText('xx')).toBeInTheDocument();
+    expect(screen.getByText('Unknown language')).toBeInTheDocument();
+    expect(screen.queryByText('xx')).toBeNull();
     // Known location label resolves.
     expect(screen.getAllByText('United States').length).toBeGreaterThan(0);
     const resultsHelp = screen.getByRole('button', { name: 'About Results' });

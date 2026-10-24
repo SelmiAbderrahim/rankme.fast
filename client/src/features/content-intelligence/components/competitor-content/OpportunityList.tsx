@@ -1,3 +1,4 @@
+import { Bdi } from '@shared/components/Bdi';
 import { useTranslation } from 'react-i18next';
 import { ArrowRight } from 'lucide-react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@shared/ui/card';
@@ -60,7 +61,7 @@ export function OpportunityList({ opportunities, onStartAnalysis }: OpportunityL
                   <StatusChip tone="muted">
                     {t(`competitorContent.opportunities.kinds.${opp.kind}`)}
                   </StatusChip>
-                  <span className="font-medium">{opp.label}</span>
+                  <span className="font-medium"><Bdi>{opp.label}</Bdi></span>
                   <StatusChip tone={competitorConfidenceTone(opp.confidence)}>
                     {t('competitorContent.findings.confidence', {
                       value: t(`competitorContent.confidence.${opp.confidence}`),

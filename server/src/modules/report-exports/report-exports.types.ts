@@ -52,7 +52,7 @@ export interface ReportExportAdapter<TSelection extends ReportSelection = Report
     kind: ReportKindId;
     kindVersion: number;
     supportedFormats: readonly ReportFormat[];
-    selectionSchema: z.ZodType<TSelection, z.ZodTypeDef, unknown>;
+    selectionSchema: z.ZodType<TSelection, unknown>;
     assertAccess(context: ReportExportAccessContext): Promise<void>;
     compose(context: Omit<ReportExportComposeContext, 'selection'> & {
         selection: TSelection;

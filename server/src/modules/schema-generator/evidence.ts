@@ -14,8 +14,8 @@ import { ContentInventoryPage } from '../content-intelligence/index.js';
 import { Site } from '../sites/index.js';
 import { fetchPublicUrlSafe, type FetchPublicUrlSafeOptions, } from '../../shared/security/url-safety.js';
 import { safeUrlString } from '../../shared/security/input-guards.js';
-export const EVIDENCE_SOURCES = ['audited-page', 'inventory-page', 'url'] as const;
-export type EvidenceSource = (typeof EVIDENCE_SOURCES)[number];
+import type { EvidenceSource } from './evidence-sources.js';
+export { EVIDENCE_SOURCES, type EvidenceSource } from './evidence-sources.js';
 export interface EvidenceFact {
     readonly id: string;
     readonly kind: 'first_party';

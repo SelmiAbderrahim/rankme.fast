@@ -1,3 +1,5 @@
+import { isolateText } from '@shared/lib/bidi';
+import { Bdi } from '@shared/components/Bdi';
 import { useMemo, useState, type ReactNode } from 'react';
 import { useTranslation } from 'react-i18next';
 import { ArrowDown, ArrowUp, Minus, MoreHorizontal, RefreshCw } from 'lucide-react';
@@ -386,11 +388,11 @@ export const KeywordsTable = ({
                   <button
                     type="button"
                     onClick={() => onSelect(k)}
-                    title={k.phrase}
+                    title={isolateText(k.phrase)}
                     className="block w-full truncate text-start font-medium hover:underline focus-visible:underline focus-visible:outline-none"
                     data-testid={`keyword-select-${k.id}`}
                   >
-                    {k.phrase}
+                    <Bdi>{k.phrase}</Bdi>
                   </button>
                   {renderEngineBadge(k)}
                 </TableCell>
@@ -423,7 +425,7 @@ export const KeywordsTable = ({
                   onClick={() => onSelect(k)}
                   className="min-w-0 break-words text-start font-medium hover:underline focus-visible:underline focus-visible:outline-none"
                 >
-                  {k.phrase}
+                  <Bdi>{k.phrase}</Bdi>
                 </button>
                 {rowMenu(k)}
               </div>
@@ -456,7 +458,7 @@ export const KeywordsTable = ({
             <AlertDialogHeader>
               <AlertDialogTitle>{t('removeConfirmTitle')}</AlertDialogTitle>
               <AlertDialogDescription>
-                {t('removeConfirmDescription', { phrase: pendingRemove.phrase })}
+                {t('removeConfirmDescription', { phrase: isolateText(pendingRemove.phrase) })}
               </AlertDialogDescription>
             </AlertDialogHeader>
             <AlertDialogFooter>

@@ -42,7 +42,7 @@ export function ConfirmRunDialog({
       <DialogContent data-testid="audience-research-confirm-dialog">
         <DialogHeader>
           <DialogTitle>{t('confirm.title')}</DialogTitle>
-          <DialogDescription>{t('confirm.body', { maxPages })}</DialogDescription>
+          <DialogDescription>{t('confirm.body', { count: maxPages, maxPages })}</DialogDescription>
         </DialogHeader>
         <dl className="flex flex-col gap-2 text-sm">
           <div>

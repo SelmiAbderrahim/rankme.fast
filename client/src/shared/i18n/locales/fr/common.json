@@ -47,7 +47,8 @@
     "admin": "Admin",
     "superadmin": "Plateforme",
     "startFree": "Commencer gratuitement",
-    "openApp": "Ouvrir l'application"
+    "openApp": "Ouvrir l'application",
+    "breadcrumb": "Fil d’Ariane"
   },
   "footer": {
     "copyright": "© {{year}}, {{brand}}. Tous droits réservés.",
@@ -119,7 +120,73 @@
       }
     },
     "usage": {},
-    "loading": "Chargement du tableau de bord…"
+    "loading": "Chargement du tableau de bord…",
+    "health": {
+      "fixNow": {
+        "open_zero": "{{n}} ouvert",
+        "open_one": "{{n}} ouvert",
+        "open_two": "{{n}} ouverts",
+        "open_few": "{{n}} ouverts",
+        "open_many": "{{n}} ouverts",
+        "open_other": "{{n}} ouverts",
+        "none": "Aucun ouvert",
+        "noneStale": "Aucun ouvert au dernier audit"
+      },
+      "showing_zero": "Affichage de {{shown}} sur {{total}} site actif.",
+      "showing_one": "Affichage de {{shown}} sur {{total}} site actif.",
+      "showing_two": "Affichage de {{shown}} sur {{total}} sites actifs.",
+      "showing_few": "Affichage de {{shown}} sur {{total}} sites actifs.",
+      "showing_many": "Affichage de {{shown}} sur {{total}} sites actifs.",
+      "showing_other": "Affichage de {{shown}} sur {{total}} sites actifs.",
+      "seeAll_zero": "Voir {{total}} site",
+      "seeAll_one": "Voir {{total}} site",
+      "seeAll_two": "Voir les {{total}} sites",
+      "seeAll_few": "Voir les {{total}} sites",
+      "seeAll_many": "Voir les {{total}} sites",
+      "seeAll_other": "Voir les {{total}} sites",
+      "paused": {"more_zero": "{{n}} autre site en pause n’est pas affiché.",
+        "more_one": "{{n}} autre site en pause n’est pas affiché.",
+        "more_two": "{{n}} autres sites en pause ne sont pas affichés.",
+        "more_few": "{{n}} autres sites en pause ne sont pas affichés.",
+        "more_many": "{{n}} autres sites en pause ne sont pas affichés.",
+        "more_other": "{{n}} autres sites en pause ne sont pas affichés."},
+      "search": {"clicks_zero": "{{n}} clic",
+        "clicks_one": "{{n}} clic",
+        "clicks_two": "{{n}} clics",
+        "clicks_few": "{{n}} clics",
+        "clicks_many": "{{n}} clics",
+        "clicks_other": "{{n}} clics",
+        "impressions_zero": "{{n}} impression",
+        "impressions_one": "{{n}} impression",
+        "impressions_two": "{{n}} impressions",
+        "impressions_few": "{{n}} impressions",
+        "impressions_many": "{{n}} impressions",
+        "impressions_other": "{{n}} impressions"},
+      "rank": {"notCompared": {"failed_zero": "{{count}} vérifications échouées",
+          "failed_one": "{{count}} vérification échouée",
+          "failed_two": "{{count}} vérifications échouées",
+          "failed_few": "{{count}} vérifications échouées",
+          "failed_many": "{{count}} vérifications échouées",
+          "failed_other": "{{count}} vérifications échouées",
+          "skipped_zero": "{{count}} ignorés",
+          "skipped_one": "{{count}} ignoré",
+          "skipped_two": "{{count}} ignorés",
+          "skipped_few": "{{count}} ignorés",
+          "skipped_many": "{{count}} ignorés",
+          "skipped_other": "{{count}} ignorés",
+          "noPair_zero": "{{count}} en attente d’une deuxième vérification",
+          "noPair_one": "{{count}} en attente d’une deuxième vérification",
+          "noPair_two": "{{count}} en attente d’une deuxième vérification",
+          "noPair_few": "{{count}} en attente d’une deuxième vérification",
+          "noPair_many": "{{count}} en attente d’une deuxième vérification",
+          "noPair_other": "{{count}} en attente d’une deuxième vérification",
+          "unranked_zero": "{{count}} non classés lors des deux vérifications",
+          "unranked_one": "{{count}} non classé lors des deux vérifications",
+          "unranked_two": "{{count}} non classés lors des deux vérifications",
+          "unranked_few": "{{count}} non classés lors des deux vérifications",
+          "unranked_many": "{{count}} non classés lors des deux vérifications",
+          "unranked_other": "{{count}} non classés lors des deux vérifications"}}
+    }
   },
   "shell": {
     "groupOverview": "Vue d'ensemble",
@@ -224,7 +291,28 @@
     "noResults": "Aucun pays ne correspond à la recherche.",
     "loadError": "Impossible de charger les pays. Réessayez.",
     "unknownCountry": "Pays inconnu",
-    "unknownLanguage": "Langue inconnue"
+    "unknownLanguage": "Langue inconnue",
+    "provenance": {
+      "owner": "Marché par défaut enregistré pour ce site ({{country}} · {{language}}).",
+      "search_console": "Choisi d’après le trafic Search Console de votre site ({{country}}).",
+      "cctld": "Choisi d’après le pays de votre site ({{country}}).",
+      "site_language": "Choisi d’après la langue des pages de votre site ({{language}}).",
+      "assumed": "Nous n’avons pas pu détecter le marché de votre site. Vérifiez-le avant d’ajouter des mots-clés.",
+      "hint": "Vous pouvez le modifier ici.",
+      "edit": "Modifier le marché par défaut du site"
+    },
+    "script": {
+      "arabic": "alphabet arabe",
+      "cyrillic": "alphabet cyrillique",
+      "han": "caractères chinois",
+      "kana": "écriture japonaise",
+      "hangul": "alphabet coréen"
+    },
+    "mismatch": {
+      "body": "Ce mot-clé semble écrit en {{script}}, mais la langue choisie est : {{language}}. Passer en {{suggested}} ?",
+      "unavailable": "Ce mot-clé semble écrit en {{script}}, mais la langue choisie est : {{language}}, et ce pays ne propose pas {{suggested}}. Vérifiez le pays et la langue.",
+      "switch": "Passer en {{suggested}}"
+    }
   },
   "codeFixPrompt": {
     "button": "Copier le prompt de correction",
@@ -279,5 +367,92 @@
     "message": "Nous aimerions utiliser Google Analytics pour compter les visites de pages. Il ne reçoit jamais d’identifiants de site, de choix d’onglet ni de titres de page. Rien ne se charge sans votre accord, et vous pouvez changer d’avis à tout moment.",
     "accept": "Accepter les statistiques",
     "decline": "Non merci"
+  },
+  "datePicker": {
+    "placeholder": "Choisir une date",
+    "dialogLabel": "Sélection de la date",
+    "previousMonth": "Mois précédent",
+    "nextMonth": "Mois suivant",
+    "today": "Aujourd’hui",
+    "clear": "Effacer"
+  },
+  "toast": {
+    "close": "Fermer la notification"
+  },
+  "metric": {
+    "noData": "Aucune donnée"
+  },
+  "positionDelta": {
+    "improved_zero": "Amélioration de {{value}} position",
+    "improved_one": "Amélioration de {{value}} position",
+    "improved_two": "Amélioration de {{value}} positions",
+    "improved_few": "Amélioration de {{value}} positions",
+    "improved_many": "Amélioration de {{value}} positions",
+    "improved_other": "Amélioration de {{value}} positions",
+    "declined_zero": "Recul de {{value}} position",
+    "declined_one": "Recul de {{value}} position",
+    "declined_two": "Recul de {{value}} positions",
+    "declined_few": "Recul de {{value}} positions",
+    "declined_many": "Recul de {{value}} positions",
+    "declined_other": "Recul de {{value}} positions",
+    "unchanged": "Aucun changement de position",
+    "noPrevious": "Aucune donnée précédente",
+    "short": {
+      "improved": "mieux",
+      "declined": "moins bien",
+      "unchanged": "Inchangé"
+    },
+    "window": {
+      "previousSync_zero": "Position moyenne sur les {{days}} jours comparée à la même période lors de la synchronisation précédente. Plus le chiffre est bas, mieux c’est. Les moyennes Search Console sont pondérées par les impressions.",
+      "previousSync_one": "Position moyenne sur les {{days}} jour comparée à la même période lors de la synchronisation précédente. Plus le chiffre est bas, mieux c’est. Les moyennes Search Console sont pondérées par les impressions.",
+      "previousSync_two": "Position moyenne sur les {{days}} jours comparée à la même période lors de la synchronisation précédente. Plus le chiffre est bas, mieux c’est. Les moyennes Search Console sont pondérées par les impressions.",
+      "previousSync_few": "Position moyenne sur les {{days}} jours comparée à la même période lors de la synchronisation précédente. Plus le chiffre est bas, mieux c’est. Les moyennes Search Console sont pondérées par les impressions.",
+      "previousSync_many": "Position moyenne sur les {{days}} jours comparée à la même période lors de la synchronisation précédente. Plus le chiffre est bas, mieux c’est. Les moyennes Search Console sont pondérées par les impressions.",
+      "previousSync_other": "Position moyenne sur les {{days}} jours comparée à la même période lors de la synchronisation précédente. Plus le chiffre est bas, mieux c’est. Les moyennes Search Console sont pondérées par les impressions.",
+      "previousCheck": "Position lors de la dernière vérification comparée à la vérification précédente. Plus le chiffre est bas, mieux c’est."
+    }
+  },
+  "rankChange": {
+    "entered": "Nouveau",
+    "enteredLabel": "Entré dans le classement",
+    "dropped": "Perdu",
+    "droppedLabel": "Sorti du classement",
+    "unranked": "Non classé lors des deux vérifications"
+  },
+  "phraseList": {
+    "listLabel": "Éléments détectés",
+    "verdict": {
+      "ready": "Prêt",
+      "repeated": "Répété",
+      "existing": "Déjà ajouté",
+      "tooLong": "Trop long"
+    },
+    "remove": "Retirer {{phrase}}",
+    "more_zero": "et {{count, number}} de plus",
+    "more_one": "et {{count, number}} de plus",
+    "more_two": "et {{count, number}} de plus",
+    "more_few": "et {{count, number}} de plus",
+    "more_many": "et {{count, number}} de plus",
+    "more_other": "et {{count, number}} de plus",
+    "ignoredColumns": "Cela ressemble à un tableur : seule la première colonne est utilisée.",
+    "skippedHeader": "La ligne d’en-tête « {{header}} » a été ignorée.",
+    "overPasteLimit_zero": "Seuls les {{max, number}} premiers éléments sont lus à la fois. {{count, number}} éléments ont été laissés de côté ; ajoutez-les dans un autre lot.",
+    "overPasteLimit_one": "Seuls les {{max, number}} premiers éléments sont lus à la fois. {{count, number}} élément a été laissé de côté ; ajoutez-le dans un autre lot.",
+    "overPasteLimit_two": "Seuls les {{max, number}} premiers éléments sont lus à la fois. {{count, number}} éléments ont été laissés de côté ; ajoutez-les dans un autre lot.",
+    "overPasteLimit_few": "Seuls les {{max, number}} premiers éléments sont lus à la fois. {{count, number}} éléments ont été laissés de côté ; ajoutez-les dans un autre lot.",
+    "overPasteLimit_many": "Seuls les {{max, number}} premiers éléments sont lus à la fois. {{count, number}} éléments ont été laissés de côté ; ajoutez-les dans un autre lot.",
+    "overPasteLimit_other": "Seuls les {{max, number}} premiers éléments sont lus à la fois. {{count, number}} éléments ont été laissés de côté ; ajoutez-les dans un autre lot.",
+    "copy": "Copier en liste",
+    "copied": "Copié, un élément par ligne.",
+    "copyFailed": "Copie impossible. Sélectionnez le texte et copiez-le vous-même."
+  },
+  "competitorDomains": {
+    "count": "Domaines : {{used}} sur {{max}}",
+    "alreadyAdded": "Déjà ajouté : {{domains}}",
+    "invalid": "Nom de domaine non valide : {{domains}}. Saisissez par exemple competitor.com.",
+    "own": "C'est votre propre site, il ne peut donc pas être un concurrent : {{domains}}",
+    "limit": "Vous pouvez comparer jusqu'à {{max}} domaines concurrents à la fois. Retirez-en un pour en ajouter un autre.",
+    "remove": "Retirer {{domain}}",
+    "placeholder": "p. ex. competitor.com"
   }
 }

@@ -1,3 +1,5 @@
+import { isolateText } from '@shared/lib/bidi';
+import { Bdi } from '@shared/components/Bdi';
 /**
  * GoogleSearchDetailPanel — the `?view=` drill-in layer of the site
  * workspace Google tab. Four Search Analytics dimensions (queries / pages /
@@ -306,8 +308,8 @@ const AnalyticsSection = ({ view, siteId }: { view: AnalyticsView; siteId: strin
               {rows.map((row) => (
                 <TableRow key={row.key} data-testid="google-detail-row">
                   <TableCell className="max-w-xs">
-                    <span className="block truncate" title={row.key}>
-                      {rowLabel(row.key)}
+                    <span className="block truncate" title={isolateText(row.key)}>
+                      <Bdi>{rowLabel(row.key)}</Bdi>
                     </span>
                   </TableCell>
                   <TableCell className="text-end tabular-nums" dir="ltr">
@@ -482,7 +484,7 @@ const SitemapsSection = ({ siteId }: { siteId: string }) => {
                 </TableCell>
                 <TableCell>
                   <Badge className={status.tone} data-testid="google-sitemaps-status">
-                    {t(status.labelKey, { n: formatInt(locale, status.n) })}
+                    {t(status.labelKey, { count: status.n, n: formatInt(locale, status.n) })}
                   </Badge>
                 </TableCell>
               </TableRow>

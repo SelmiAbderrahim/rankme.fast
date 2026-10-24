@@ -682,7 +682,8 @@ describe('resolveLocalizedError fail-closed contract', () => {
         messageKey: 'errors.projectNotFound',
       });
       expect(payload).toEqual({
-        code: 'ERRORS_PROJECT_NOT_FOUND',
+        code: 'PROJECT_NOT_FOUND',
+        legacyCode: 'ERRORS_PROJECT_NOT_FOUND',
         messageKey: 'errors.projectNotFound',
         message: translate(locale, 'errors.projectNotFound'),
       });
@@ -690,7 +691,7 @@ describe('resolveLocalizedError fail-closed contract', () => {
     }
   });
 
-  it('keeps an explicit stable code and drops a malformed one', () => {
+  it('canonicalizes an explicit code and derives a code for malformed input', () => {
     expect(
       resolveLocalizedError({
         status: 409,
@@ -698,7 +699,7 @@ describe('resolveLocalizedError fail-closed contract', () => {
         messageKey: 'errors.conflict',
         code: 'PAGES_SITE_NOT_FOUND',
       }).code,
-    ).toBe('PAGES_SITE_NOT_FOUND');
+    ).toBe('SITE_NOT_FOUND');
     expect(
       resolveLocalizedError({
         status: 409,
@@ -706,12 +707,13 @@ describe('resolveLocalizedError fail-closed contract', () => {
         messageKey: 'errors.conflict',
         code: 'drop me; DROP TABLE',
       }).code,
-    ).toBe('ERRORS_CONFLICT');
+    ).toBe('RESOURCE_CONFLICT');
   });
 
   it('fails closed to the status family for unknown keys and legacy literals', () => {
     expect(resolveLocalizedError({ status: 403, locale: 'en', messageKey: 'nope.missing' })).toEqual({
-      code: 'FORBIDDEN',
+      code: 'ACCESS_FORBIDDEN',
+      legacyCode: 'FORBIDDEN',
       messageKey: 'errors.forbidden',
       message: translate('en', 'errors.forbidden'),
     });
@@ -722,7 +724,7 @@ describe('resolveLocalizedError fail-closed contract', () => {
         messageKey: 'Site https://acme.test is not reachable',
       }).message,
     ).toBe(translate('en', 'errors.badRequest'));
-    expect(resolveLocalizedError({ status: 500, locale: 'en' }).code).toBe('INTERNAL');
+    expect(resolveLocalizedError({ status: 500, locale: 'en' }).code).toBe('INTERNAL_ERROR');
   });
 
   it('interpolates accepted vars and strips the placeholders it cannot fill', () => {
@@ -799,8 +801,8 @@ describe('localized Zod issues', () => {
   it('separates a missing field from a wrongly typed one', () => {
     expect(
       issues([
-        { code: 'invalid_type', path: ['a'], expected: 'string', received: 'undefined', message: 'Required' },
-        { code: 'invalid_type', path: ['b'], expected: 'string', received: 'number', message: 'Expected string' },
+        { code: 'invalid_type', path: ['a'], expected: 'string', message: 'validation.issue.required' },
+        { code: 'invalid_type', path: ['b'], expected: 'string', message: 'Expected string' },
       ]).map((i) => i.messageKey),
     ).toEqual(['validation.issue.required', 'validation.issue.invalidType']);
   });
@@ -808,12 +810,12 @@ describe('localized Zod issues', () => {
   it('maps every string validation family it knows and falls back otherwise', () => {
     expect(
       issues([
-        { code: 'invalid_string', validation: 'email', path: ['a'], message: 'Invalid email' },
-        { code: 'invalid_string', validation: 'url', path: ['b'], message: 'Invalid url' },
-        { code: 'invalid_string', validation: 'uuid', path: ['c'], message: 'Invalid uuid' },
-        { code: 'invalid_string', validation: 'datetime', path: ['d'], message: 'Invalid datetime' },
-        { code: 'invalid_string', validation: 'regex', path: ['e'], message: 'Invalid' },
-        { code: 'invalid_string', validation: { includes: 'x' }, path: ['f'], message: 'Invalid' },
+        { code: 'invalid_format', format: 'email', path: ['a'], message: 'Invalid email' },
+        { code: 'invalid_format', format: 'url', path: ['b'], message: 'Invalid url' },
+        { code: 'invalid_format', format: 'uuid', path: ['c'], message: 'Invalid uuid' },
+        { code: 'invalid_format', format: 'datetime', path: ['d'], message: 'Invalid datetime' },
+        { code: 'invalid_format', format: 'regex', path: ['e'], message: 'Invalid' },
+        { code: 'invalid_format', format: 'includes', path: ['f'], message: 'Invalid' },
       ]).map((i) => i.messageKey),
     ).toEqual([
       'validation.issue.invalidEmail',
@@ -828,18 +830,18 @@ describe('localized Zod issues', () => {
   it('maps every sized family with a bounded numeric interpolation', () => {
     expect(
       issues([
-        { code: 'too_small', type: 'string', minimum: 3, inclusive: true, path: ['a'], message: '' },
-        { code: 'too_small', type: 'number', minimum: 18, inclusive: true, path: ['b'], message: '' },
-        { code: 'too_small', type: 'array', minimum: 2, inclusive: true, path: ['c'], message: '' },
-        { code: 'too_small', type: 'set', minimum: 1, inclusive: true, path: ['d'], message: '' },
-        { code: 'too_small', type: 'date', minimum: 1, inclusive: true, path: ['e'], message: '' },
-        { code: 'too_small', type: 'bigint', minimum: BigInt(5), inclusive: true, path: ['f'], message: '' },
-        { code: 'too_big', type: 'string', maximum: 30, inclusive: true, path: ['g'], message: '' },
-        { code: 'too_big', type: 'number', maximum: 99, inclusive: true, path: ['h'], message: '' },
-        { code: 'too_big', type: 'array', maximum: 4, inclusive: true, path: ['i'], message: '' },
-        { code: 'too_big', type: 'set', maximum: 4, inclusive: true, path: ['j'], message: '' },
-        { code: 'too_big', type: 'date', maximum: 4, inclusive: true, path: ['k'], message: '' },
-        { code: 'too_big', type: 'bigint', maximum: BigInt(7), inclusive: true, path: ['l'], message: '' },
+        { code: 'too_small', origin: 'string', minimum: 3, inclusive: true, path: ['a'], message: '' },
+        { code: 'too_small', origin: 'number', minimum: 18, inclusive: true, path: ['b'], message: '' },
+        { code: 'too_small', origin: 'array', minimum: 2, inclusive: true, path: ['c'], message: '' },
+        { code: 'too_small', origin: 'set', minimum: 1, inclusive: true, path: ['d'], message: '' },
+        { code: 'too_small', origin: 'date', minimum: 1, inclusive: true, path: ['e'], message: '' },
+        { code: 'too_small', origin: 'bigint', minimum: BigInt(5), inclusive: true, path: ['f'], message: '' },
+        { code: 'too_big', origin: 'string', maximum: 30, inclusive: true, path: ['g'], message: '' },
+        { code: 'too_big', origin: 'number', maximum: 99, inclusive: true, path: ['h'], message: '' },
+        { code: 'too_big', origin: 'array', maximum: 4, inclusive: true, path: ['i'], message: '' },
+        { code: 'too_big', origin: 'set', maximum: 4, inclusive: true, path: ['j'], message: '' },
+        { code: 'too_big', origin: 'date', maximum: 4, inclusive: true, path: ['k'], message: '' },
+        { code: 'too_big', origin: 'bigint', maximum: BigInt(7), inclusive: true, path: ['l'], message: '' },
       ]).map((i) => i.messageKey),
     ).toEqual([
       'validation.issue.tooSmallString',
@@ -857,19 +859,28 @@ describe('localized Zod issues', () => {
     ]);
   });
 
+  it('localizes unsupported sized kinds without exposing their diagnostics', () => {
+    const details = issues([
+      { code: 'too_small', origin: 'file', minimum: 10, inclusive: true, path: ['upload'], message: 'private file diagnostic' },
+      { code: 'too_big', origin: 'file', maximum: 20, inclusive: true, path: ['upload'], message: 'private file diagnostic' },
+    ]);
+    expect(details.map(({ messageKey }) => messageKey)).toEqual(['validation.issue.unknown', 'validation.issue.unknown']);
+    expect(details.every(({ message }) => !message.includes('private'))).toBe(true);
+  });
+
   it('drops a bound it cannot represent safely instead of rendering it', () => {
     const [unsafe, missing, multiple, nonFinite] = issues([
       {
         code: 'too_big',
-        type: 'bigint',
+        origin: 'bigint',
         maximum: BigInt('9007199254740993'),
         inclusive: true,
         path: ['a'],
         message: '',
       },
-      { code: 'too_small', type: 'string', minimum: 'three', inclusive: true, path: ['b'], message: '' },
-      { code: 'not_multiple_of', multipleOf: 5, path: ['c'], message: '' },
-      { code: 'too_small', type: 'number', minimum: Number.NaN, inclusive: true, path: ['d'], message: '' },
+      { code: 'too_small', origin: 'string', minimum: 'three', inclusive: true, path: ['b'], message: '' },
+      { code: 'not_multiple_of', divisor: 5, path: ['c'], message: '' },
+      { code: 'too_small', origin: 'number', minimum: Number.NaN, inclusive: true, path: ['d'], message: '' },
     ]);
     expect(unsafe?.message).not.toContain('9007199254740');
     expect(unsafe?.message).not.toContain('{{');
@@ -884,16 +895,15 @@ describe('localized Zod issues', () => {
   it('maps the remaining standard codes and any unknown code', () => {
     expect(
       issues([
-        { code: 'invalid_literal', path: ['a'], message: '' },
+        { code: 'invalid_value', values: ['fixed'], path: ['a'], message: '' },
         { code: 'unrecognized_keys', keys: ['x'], path: [], message: '' },
-        { code: 'invalid_union', unionErrors: [], path: ['c'], message: '' },
-        { code: 'invalid_union_discriminator', options: [], path: ['d'], message: '' },
-        { code: 'invalid_enum_value', options: [], received: 'x', path: ['e'], message: '' },
-        { code: 'invalid_arguments', argumentsError: null, path: ['f'], message: '' },
-        { code: 'invalid_return_type', returnTypeError: null, path: ['g'], message: '' },
-        { code: 'invalid_date', path: ['h'], message: '' },
-        { code: 'invalid_intersection_types', path: ['i'], message: '' },
-        { code: 'not_finite', path: ['j'], message: '' },
+        { code: 'invalid_union', errors: [], path: ['c'], message: '' },
+        { code: 'invalid_union', discriminator: 'kind', errors: [], path: ['d'], message: '' },
+        { code: 'invalid_value', values: ['first', 'second'], path: ['e'], message: '' },
+        { code: 'invalid_key', origin: 'map', issues: [], path: ['f'], message: '' },
+        { code: 'invalid_element', origin: 'set', key: 'x', issues: [], path: ['g'], message: '' },
+        { code: 'invalid_type', expected: 'date', path: ['h'], message: 'validation.issue.invalidDate' },
+        { code: 'invalid_type', expected: 'number', path: ['j'], message: 'validation.issue.notFinite' },
         { code: 'brand_new_zod_code', path: ['k'], message: '' },
       ]).map((i) => i.messageKey),
     ).toEqual([
@@ -902,10 +912,9 @@ describe('localized Zod issues', () => {
       'validation.issue.invalidUnion',
       'validation.issue.invalidUnionDiscriminator',
       'validation.issue.invalidEnumValue',
-      'validation.issue.invalidArguments',
-      'validation.issue.invalidReturnType',
+      'validation.issue.invalidType',
+      'validation.issue.invalidType',
       'validation.issue.invalidDate',
-      'validation.issue.invalidIntersectionTypes',
       'validation.issue.notFinite',
       'validation.issue.unknown',
     ]);
@@ -921,7 +930,7 @@ describe('localized Zod issues', () => {
   it('localizes issue copy in all seven locales', () => {
     for (const locale of SUPPORTED_LOCALES) {
       const details = localizeZodError(locale, new ZodError([
-        { code: 'invalid_type', path: ['name'], expected: 'string', received: 'undefined', message: 'Required' },
+        { code: 'invalid_type', path: ['name'], expected: 'string', message: 'validation.issue.required' },
       ] as never));
       expect(details.fieldErrors.name).toEqual([translate(locale, 'validation.issue.required')]);
     }

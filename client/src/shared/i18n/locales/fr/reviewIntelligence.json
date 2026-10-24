@@ -65,12 +65,22 @@
     "title": "Coût de cette synchronisation",
     "description": "Il s'agit d'une estimation. Rien n'est dépensé avant votre confirmation.",
     "units": "Consomme {{units}} synchronisation",
-    "perSource": "Couvre {{sources}} sources",
-    "depth": "Récupère jusqu’à {{depth}} avis par source",
+    "perSource_one": "Couvre {{sources}} source",
+    "depth_one": "Récupère jusqu’à {{depth}} avis par source",
     "available": "Tient dans votre quota",
     "unavailable": "Dépasse votre quota",
     "baseRemaining": "Synchronisations restantes : {{remaining}}",
-    "packRemaining": "Synchronisations restantes dans le pack : {{remaining}}"
+    "packRemaining": "Synchronisations restantes dans le pack : {{remaining}}",
+    "depth_zero": "Récupère jusqu’à {{depth}} avis par source",
+    "depth_two": "Récupère jusqu’à {{depth}} avis par source",
+    "depth_few": "Récupère jusqu’à {{depth}} avis par source",
+    "depth_many": "Récupère jusqu’à {{depth}} avis par source",
+    "depth_other": "Récupère jusqu’à {{depth}} avis par source",
+    "perSource_zero": "Couvre {{sources}} source",
+    "perSource_two": "Couvre {{sources}} sources",
+    "perSource_few": "Couvre {{sources}} sources",
+    "perSource_many": "Couvre {{sources}} sources",
+    "perSource_other": "Couvre {{sources}} sources"
   },
   "runs": {
     "title": "Historique des synchronisations",
@@ -122,10 +132,10 @@
     "filterAll": "Toutes",
     "searchPlaceholder": "Rechercher dans les avis",
     "apply": "Appliquer",
-    "stars": "{{stars}} étoiles",
+    "stars_one": "{{stars}} étoile",
     "unrated": "Sans note",
     "anonymous": "Sans nom",
-    "page": "Page {{page}} sur {{total}} avis",
+    "page_one": "Page {{page}} sur {{total}} avis",
     "previous": "Précédent",
     "next": "Suivant",
     "export": "Télécharger le CSV",
@@ -138,16 +148,31 @@
       "source": "Source",
       "text": "Avis",
       "author": "Auteur"
-    }
+    },
+    "stars_zero": "{{stars}} étoile",
+    "stars_two": "{{stars}} étoiles",
+    "stars_few": "{{stars}} étoiles",
+    "stars_many": "{{stars}} étoiles",
+    "stars_other": "{{stars}} étoiles",
+    "page_zero": "Page {{page}} sur {{total}} avis",
+    "page_two": "Page {{page}} sur {{total}} avis",
+    "page_few": "Page {{page}} sur {{total}} avis",
+    "page_many": "Page {{page}} sur {{total}} avis",
+    "page_other": "Page {{page}} sur {{total}} avis"
   },
   "stats": {
     "title": "Santé des avis",
     "empty": "Rien à représenter pour l'instant.",
-    "total": "{{total}} avis enregistrés",
+    "total_one": "{{total}} avis enregistré",
     "distribution": {
       "title": "Répartition des étoiles",
-      "stars": "{{stars}} étoiles",
-      "unrated": "Sans note"
+      "stars_one": "{{stars}} étoile",
+      "unrated": "Sans note",
+      "stars_zero": "{{stars}} étoile",
+      "stars_two": "{{stars}} étoiles",
+      "stars_few": "{{stars}} étoiles",
+      "stars_many": "{{stars}} étoiles",
+      "stars_other": "{{stars}} étoiles"
     },
     "velocity": {
       "title": "Avis par mois",
@@ -156,7 +181,12 @@
     },
     "sourceMix": {
       "title": "D'où ils viennent"
-    }
+    },
+    "total_zero": "{{total}} avis enregistré",
+    "total_two": "{{total}} avis enregistrés",
+    "total_few": "{{total}} avis enregistrés",
+    "total_many": "{{total}} avis enregistrés",
+    "total_other": "{{total}} avis enregistrés"
   },
   "trend": {
     "title": "Note moyenne dans le temps",
@@ -174,7 +204,7 @@
     "complaints": "Reproches fréquents",
     "praise": "Compliments fréquents",
     "citations": "Voir les avis correspondants",
-    "citationCount": "{{citations}} avis",
+    "citationCount_one": "{{citations}} avis",
     "citationSource": "{{source}} · {{rating}} · {{date}}",
     "sectionEmpty": "Rien ici pour cette synchronisation.",
     "pending": "L'analyse des thèmes n'est pas terminée.",
@@ -186,7 +216,12 @@
       "title": "Impossible de construire les thèmes",
       "description": "L'étape de synthèse a échoué. Vos avis sont bien arrivés et restent lisibles ci-dessous.",
       "link": "Aller aux avis"
-    }
+    },
+    "citationCount_zero": "{{citations}} avis",
+    "citationCount_two": "{{citations}} avis",
+    "citationCount_few": "{{citations}} avis",
+    "citationCount_many": "{{citations}} avis",
+    "citationCount_other": "{{citations}} avis"
   },
   "provenance": {
     "first_party": "Données propriétaires",
@@ -194,7 +229,12 @@
     "estimate": "Estimation",
     "ai_interpretation": "Interprétation par l’IA",
     "observedAt": "Observé le {{date}}",
-    "sampleCount": "{{count}} avis échantillonnés"
+    "sampleCount_one": "{{count}} avis échantillonné",
+    "sampleCount_zero": "{{count}} avis échantillonné",
+    "sampleCount_two": "{{count}} avis échantillonnés",
+    "sampleCount_few": "{{count}} avis échantillonnés",
+    "sampleCount_many": "{{count}} avis échantillonnés",
+    "sampleCount_other": "{{count}} avis échantillonnés"
   },
   "errors": {
     "sourcesFailed": "Impossible de charger vos sources d'avis.",

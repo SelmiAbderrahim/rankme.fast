@@ -109,5 +109,11 @@
     "loadFailed": "We could not load your geogrid scans.",
     "previewFailed": "We could not estimate this scan.",
     "submitFailed": "We could not start this scan."
-  }
+  },
+  "center": {"place": {"resultsLegend_zero": "{{count}} places for “{{query}}”. Pick the center:",
+      "resultsLegend_one": "{{count}} place for “{{query}}”. Pick the center:",
+      "resultsLegend_two": "{{count}} places for “{{query}}”. Pick the center:",
+      "resultsLegend_few": "{{count}} places for “{{query}}”. Pick the center:",
+      "resultsLegend_many": "{{count}} places for “{{query}}”. Pick the center:",
+      "resultsLegend_other": "{{count}} places for “{{query}}”. Pick the center:"}}
 }

@@ -6,8 +6,13 @@
   "emptyCta": "Obtener datos locales",
   "refresh": {
     "button": "Actualizar SEO local",
-    "cooldown": "Actualizar en {{seconds}} s",
-    "failed": "No se pudo actualizar el SEO local. Inténtalo de nuevo en un momento."
+    "cooldown_one": "Actualizar en {{seconds}} s",
+    "failed": "No se pudo actualizar el SEO local. Inténtalo de nuevo en un momento.",
+    "cooldown_zero": "Actualizar en {{seconds}} s",
+    "cooldown_two": "Actualizar en {{seconds}} s",
+    "cooldown_few": "Actualizar en {{seconds}} s",
+    "cooldown_many": "Actualizar en {{seconds}} s",
+    "cooldown_other": "Actualizar en {{seconds}} s"
   },
   "loadFailed": "No se pudo cargar el SEO local.",
   "locked": {
@@ -37,5 +42,11 @@
     "position": "Posición",
     "packSize": "Tamaño del paquete",
     "notRanked": "Fuera del paquete de mapas"
-  }
+  },
+  "setup": {"resultsLegend_zero": "{{count}} resultados para «{{query}}». Elige el tuyo:",
+    "resultsLegend_one": "{{count}} resultado para «{{query}}». Elige el tuyo:",
+    "resultsLegend_two": "{{count}} resultados para «{{query}}». Elige el tuyo:",
+    "resultsLegend_few": "{{count}} resultados para «{{query}}». Elige el tuyo:",
+    "resultsLegend_many": "{{count}} resultados para «{{query}}». Elige el tuyo:",
+    "resultsLegend_other": "{{count}} resultados para «{{query}}». Elige el tuyo:"}
 }

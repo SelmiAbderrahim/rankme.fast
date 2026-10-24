@@ -24,8 +24,6 @@
   },
   "preview": {
     "title": "Ce que cela coûte",
-    "units": "{{count}} rapport sur votre quota mensuel.",
-    "units_other": "{{count}} rapports sur votre quota mensuel.",
     "remaining": "Restant sur votre offre ce mois-ci : {{remaining}}.",
     "pack": "Plus {{units}} issus des packs de crédits.",
     "noFit": "Cela ne tient pas dans le restant. Ajoutez des crédits ou changez d’offre."
@@ -39,7 +37,7 @@
     "open": "Ouvrir"
   },
   "detail": {
-    "provenance": "À partir de vos données Search Console stockées sur {{days}} jours, dernière synchro {{date}}. {{queries}} requêtes lues."
+    "provenance": "À partir de vos données Search Console stockées sur $t(cannibalization:counts.windowDays, {\"count\": {{days}}}), dernière synchro {{date}}. $t(cannibalization:counts.queriesRead, {\"count\": {{queries}}})"
   },
   "candidates": {
     "query": "Requête",
@@ -56,7 +54,7 @@
     "inspect": "Inspecter"
   },
   "drilldown": {
-    "provenance": "Lignes stockées sur {{days}} jours, dernière synchro {{date}}.",
+    "provenance": "Lignes stockées sur $t(cannibalization:counts.windowDays, {\"count\": {{days}}}), dernière synchro {{date}}.",
     "recommendation": "Gardez {{url}} comme page principale.",
     "reason": {
       "most_clicks": "Elle obtient déjà le plus de clics pour cette requête.",
@@ -100,5 +98,19 @@
       "title": "Une erreur est survenue",
       "body": "Le chargement a échoué. Réessayez."
     }
+  },
+  "counts": {
+    "windowDays_zero": "{{count}} jour",
+    "windowDays_one": "{{count}} jour",
+    "windowDays_two": "{{count}} jours",
+    "windowDays_few": "{{count}} jours",
+    "windowDays_many": "{{count}} jours",
+    "windowDays_other": "{{count}} jours",
+    "queriesRead_zero": "{{count}} requête lue.",
+    "queriesRead_one": "{{count}} requête lue.",
+    "queriesRead_two": "{{count}} requêtes lues.",
+    "queriesRead_few": "{{count}} requêtes lues.",
+    "queriesRead_many": "{{count}} requêtes lues.",
+    "queriesRead_other": "{{count}} requêtes lues."
   }
 }

@@ -1,3 +1,4 @@
+import { isolateText } from '@shared/lib/bidi';
 /**
  * Stored-scan history. Reopening a stored scan is FREE — no
  * metric, no vendor call — and the selection is URL-backed so a grid is
@@ -54,7 +55,7 @@ export const GeogridScanHistory = ({ scans, selectedScanId, onSelect }: Props) =
           >
             <span className="flex flex-col gap-0.5">
               <span className="font-medium">
-                {t('history.row', { keyword: scan.keyword, size: scan.gridSize })}
+                {t('history.row', { keyword: isolateText(scan.keyword), size: scan.gridSize })}
               </span>
               <span className="text-muted-foreground text-xs">
                 {t('history.meta', {

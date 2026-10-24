@@ -6,9 +6,14 @@
     "title": "Répartition des étoiles",
     "chartLabel": "Nombre d’avis par note",
     "tableCaption": "Nombre d’avis pour chaque note",
-    "star": "{{star}} étoiles",
+    "star_one": "{{star}} étoile",
     "rating": "Note",
-    "count": "Avis"
+    "count": "Avis",
+    "star_zero": "{{star}} étoile",
+    "star_two": "{{star}} étoiles",
+    "star_few": "{{star}} étoiles",
+    "star_many": "{{star}} étoiles",
+    "star_other": "{{star}} étoiles"
   },
   "trend": {
     "title": "Volume d’avis",

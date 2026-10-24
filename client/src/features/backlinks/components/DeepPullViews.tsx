@@ -1,3 +1,4 @@
+import { Bdi } from '@shared/components/Bdi';
 import { useEffect, useMemo, useState, type FormEvent } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
@@ -531,11 +532,11 @@ function DataTable({
             const label = typeof header === 'string' ? header : header.label;
             return (
               <TableHead key={label}>
-                {typeof header === 'string' ? (
+                <Bdi>{typeof header === 'string' ? (
                   label
                 ) : (
                   <TableHeaderHelp label={label} description={header.description} />
-                )}
+                )}</Bdi>
               </TableHead>
             );
           })}

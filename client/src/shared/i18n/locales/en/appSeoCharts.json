@@ -9,6 +9,11 @@
   "empty": { "noProfileTitle": "Register an app first", "noProfileDescription": "Chart tracking needs a registered store ID.", "noSubscriptions": "No charts are tracked for this app yet." },
   "disabled": { "title": "Chart tracking is switched off", "description": "Stored chart positions remain available. New subscriptions and checks are paused." },
   "upsell": { "title": "Add App SEO chart tracking", "description": "This Pro account needs the App SEO add-on before weekly chart checks can run.", "cta": "View App SEO options" },
-  "limit": { "title": "Chart limit reached", "description": "Each app profile can track up to {{limit}} charts." },
+  "limit": { "title": "Chart limit reached", "description_one": "Each app profile can track up to {{limit}} chart.",
+    "description_zero": "Each app profile can track up to {{limit}} charts.",
+    "description_two": "Each app profile can track up to {{limit}} charts.",
+    "description_few": "Each app profile can track up to {{limit}} charts.",
+    "description_many": "Each app profile can track up to {{limit}} charts.",
+    "description_other": "Each app profile can track up to {{limit}} charts." },
   "errors": { "title": "We couldn’t update chart tracking", "requestFailed": "The chart request could not be completed. Try again." }
 }

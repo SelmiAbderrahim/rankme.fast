@@ -34,6 +34,14 @@ describe('sites api wrappers', () => {
     expect(apiClient).toHaveBeenCalledWith('/sites');
   });
 
+  it('fetchSitesRequest supports an explicit picker size and abort signal', async () => {
+    const signal = new AbortController().signal;
+    await fetchSitesRequest('a/b', signal, 100);
+    expect(apiClient).toHaveBeenCalledWith('/sites?cursor=a%2Fb&limit=100', { signal });
+    await fetchSitesRequest(null, undefined, 100);
+    expect(apiClient).toHaveBeenCalledWith('/sites?limit=100');
+  });
+
   it('fetchSiteRequest reads one site by encoded id', async () => {
     await fetchSiteRequest('a/b');
     expect(apiClient).toHaveBeenCalledWith('/sites/a%2Fb');

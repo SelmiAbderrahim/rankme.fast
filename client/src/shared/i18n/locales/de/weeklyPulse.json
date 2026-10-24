@@ -83,7 +83,7 @@
     "empty": "Google meldete kein generatives KI-Erscheinen.",
     "reconnect": "Bitte Google Search Console erneut verbinden, um diesen Abschnitt zu sehen.",
     "window": "Fenster: {{start}} → {{end}}",
-    "row": "{{appearance}} — {{clicks}} Klicks, {{impressions}} Impressionen",
+    "row": "{{appearance}} — Klicks: {{clicks}} · Impressionen: {{impressions}}",
     "loading": "Google Search Console-Daten werden geladen…",
     "unknown": "Unbekannte Darstellung ({{raw}})",
     "noData": "Noch keine Search-Console-Daten. Verbinden Sie die Google Search Console, um diesen Bereich zu sehen, oder schauen Sie nach der nächsten täglichen Synchronisierung wieder vorbei."

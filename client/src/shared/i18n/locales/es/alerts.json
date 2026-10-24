@@ -22,20 +22,30 @@
   },
   "list": {
     "title": "Tus reglas",
-    "capUsed": "{{count}} reglas en uso.",
+    "capUsed_one": "{{count}} regla en uso.",
     "type": "Tipo",
     "threshold": "Umbral",
     "channels": "Canales",
     "state": "Estado",
     "actions": "Acciones",
-    "emailCount": "{{count}} destinatarios de correo",
+    "emailCount_one": "{{count}} destinatario de correo",
     "secretTail": "la clave de firma acaba en {{tail}}",
     "enabled": "Activa",
     "disabled": "Inactiva",
     "enable": "Activar",
     "disable": "Desactivar",
     "viewLog": "Ver registro",
-    "delete": "Eliminar"
+    "delete": "Eliminar",
+    "capUsed_zero": "{{count}} reglas en uso.",
+    "capUsed_two": "{{count}} reglas en uso.",
+    "capUsed_few": "{{count}} reglas en uso.",
+    "capUsed_many": "{{count}} reglas en uso.",
+    "capUsed_other": "{{count}} reglas en uso.",
+    "emailCount_zero": "{{count}} destinatarios de correo",
+    "emailCount_two": "{{count}} destinatarios de correo",
+    "emailCount_few": "{{count}} destinatarios de correo",
+    "emailCount_many": "{{count}} destinatarios de correo",
+    "emailCount_other": "{{count}} destinatarios de correo"
   },
   "builder": {
     "title": "Nueva regla",
@@ -68,7 +78,7 @@
     "rankPair": "Posición {{before}} el {{beforeAt}} y luego {{after}} el {{afterAt}}.",
     "linkPair": "{{beforeCount}} dominios el {{beforeAt}} y luego {{afterCount}} el {{afterAt}}.",
     "notRanked": "fuera de los 100 primeros resultados",
-    "domainCount": "{{count}} dominios cambiaron",
+    "domainCount_one": "{{count}} dominio cambió",
     "attempt": "Intento {{attempt}}",
     "statusLabel": {
       "pending": "Enviando",
@@ -91,12 +101,17 @@
       "unsafe_url": "Ya no es seguro acceder a esa dirección.",
       "channel_timeout": "El canal tardó demasiado en responder.",
       "retries_exhausted": "Paramos tras tres intentos fallidos."
-    }
+    },
+    "domainCount_zero": "{{count}} dominios cambiaron",
+    "domainCount_two": "{{count}} dominios cambiaron",
+    "domainCount_few": "{{count}} dominios cambiaron",
+    "domainCount_many": "{{count}} dominios cambiaron",
+    "domainCount_other": "{{count}} dominios cambiaron"
   },
   "states": {
     "cap": {
       "title": "Límite de reglas alcanzado",
-      "body": "Has usado todas las reglas de aviso de tu plan."
+      "body": "No se puede añadir otra regla de alerta en este momento."
     },
     "tierLocked": {
       "title": "El canal necesita un plan superior",

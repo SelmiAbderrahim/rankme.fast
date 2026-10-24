@@ -1,3 +1,4 @@
+import { Bdi } from '@shared/components/Bdi';
 import { useMemo } from 'react';
 import { useSearchParams } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
@@ -215,7 +216,7 @@ export function InventoryTable({ pages }: InventoryTableProps) {
                       {visible.map((page) => (
                         <TableRow key={page.url} data-testid="inventory-page-row">
                           <TableCell className="max-w-[240px] truncate font-medium">
-                            {page.facts.url}
+                            <Bdi>{page.facts.url}</Bdi>
                           </TableCell>
                           <TableCell>{page.facts.language ?? '—'}</TableCell>
                           <TableCell className="text-end tabular-nums">

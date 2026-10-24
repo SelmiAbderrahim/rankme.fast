@@ -1,3 +1,5 @@
+import { isolateText } from '@shared/lib/bidi';
+import { Bdi } from '@shared/components/Bdi';
 /**
  * GscBreakdownList — a generic compact breakdown used for the country/device
  * splits of the search summary AND the channel/page/country/device splits of
@@ -75,8 +77,8 @@ export const GscBreakdownList = ({
                     scope="row"
                     className="py-1 pe-3 text-start align-top font-normal"
                   >
-                    <span className="block truncate" title={row.label}>
-                      {row.label}
+                    <span className="block truncate" title={isolateText(row.label)}>
+                      <Bdi>{row.label}</Bdi>
                     </span>
                     <span
                       role="progressbar"

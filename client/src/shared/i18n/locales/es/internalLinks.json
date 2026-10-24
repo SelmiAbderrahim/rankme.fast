@@ -76,8 +76,13 @@
   },
   "runs": {
     "snapshot": "Inventario: {{date}}",
-    "suggestionCount": "{{count}} sugerencias",
-    "open": "Abrir ejecución"
+    "suggestionCount_one": "{{count}} sugerencia",
+    "open": "Abrir ejecución",
+    "suggestionCount_zero": "{{count}} sugerencias",
+    "suggestionCount_two": "{{count}} sugerencias",
+    "suggestionCount_few": "{{count}} sugerencias",
+    "suggestionCount_many": "{{count}} sugerencias",
+    "suggestionCount_other": "{{count}} sugerencias"
   },
   "flags": {
     "orphan": "Huérfana",

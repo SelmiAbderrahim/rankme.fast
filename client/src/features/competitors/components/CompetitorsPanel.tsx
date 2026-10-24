@@ -1,3 +1,5 @@
+import { isolateText } from '@shared/lib/bidi';
+import { Bdi } from '@shared/components/Bdi';
 /**
  * Competitors panel.
  *
@@ -158,7 +160,7 @@ const TechStackCell = ({ cell, domain }: TechStackCellProps) => {
           <Badge key={`${entry.category}-${entry.name}`} variant="secondary" className="gap-1">
             <Icon className="h-3 w-3" aria-hidden="true" />
             <span className="sr-only">{t(`competitors:techStack.${entry.category}`)}: </span>
-            {entry.name}
+            <Bdi>{entry.name}</Bdi>
           </Badge>
         );
       })}
@@ -337,7 +339,7 @@ export const CompetitorsPanel = ({ siteId }: Props) => {
                                     {c.domain.slice(0, 2).toUpperCase()}
                                   </AvatarFallback>
                                 </Avatar>
-                                {c.domain}
+                                <Bdi>{c.domain}</Bdi>
                               </span>
                             </TableCell>
                             <TableCell className="text-end tabular-nums">
@@ -408,7 +410,7 @@ export const CompetitorsPanel = ({ siteId }: Props) => {
                                 >
                                   <h3 className="font-semibold">
                                     {t('competitors:gap.title', {
-                                      competitor: c.domain,
+                                      competitor: isolateText(c.domain),
                                     })}
                                   </h3>
                                   {intersectionLoading ? (
@@ -456,7 +458,7 @@ export const CompetitorsPanel = ({ siteId }: Props) => {
                                             data-testid={`competitors-gap-row-${i}`}
                                           >
                                             <TableCell className="whitespace-normal">
-                                              {k.keyword}
+                                              <Bdi>{k.keyword}</Bdi>
                                             </TableCell>
                                             <TableCell className="text-end tabular-nums">
                                               {k.target2Position === null

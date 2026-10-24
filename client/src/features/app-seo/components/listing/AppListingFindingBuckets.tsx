@@ -1,3 +1,4 @@
+import { Bdi } from '@shared/components/Bdi';
 import { useTranslation } from 'react-i18next';
 import { Badge } from '@shared/ui/badge';
 import type {
@@ -18,7 +19,7 @@ function FindingRow({ finding }: { finding: AppListingFinding }) {
   return (
     <li className="grid gap-2 rounded-xl border border-border p-4">
       <div className="flex flex-wrap items-start justify-between gap-2">
-        <p className="font-medium">{finding.title}</p>
+        <p className="font-medium"><Bdi>{finding.title}</Bdi></p>
         <Badge className={severityClass(finding.severity)}>
           {t(`severity.${finding.severity}`)}
         </Badge>
@@ -70,7 +71,7 @@ export function AppListingNotEvaluated({ findings }: { findings: AppListingFindi
         {pending.map((finding) => (
           <li key={`${finding.scope}:${finding.id}`} className="rounded-lg border border-border p-3">
             <span className="font-medium text-foreground">
-              {finding.title}
+              <Bdi>{finding.title}</Bdi>
             </span>{' '}
             {finding.notEvaluatedText}
           </li>

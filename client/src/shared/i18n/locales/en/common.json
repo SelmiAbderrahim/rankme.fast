@@ -47,7 +47,8 @@
     "admin": "Admin",
     "superadmin": "Platform",
     "startFree": "Start free",
-    "openApp": "Open app"
+    "openApp": "Open app",
+    "breadcrumb": "Breadcrumb"
   },
   "footer": {
     "copyright": "© {{year}}, {{brand}}. All Rights Reserved.",
@@ -119,7 +120,73 @@
       }
     },
     "usage": {},
-    "loading": "Loading dashboard…"
+    "loading": "Loading dashboard…",
+    "health": {
+      "fixNow": {
+        "open_zero": "{{n}} open",
+        "open_one": "{{n}} open",
+        "open_two": "{{n}} open",
+        "open_few": "{{n}} open",
+        "open_many": "{{n}} open",
+        "open_other": "{{n}} open",
+        "none": "None open",
+        "noneStale": "None open at last audit"
+      },
+      "showing_zero": "Showing {{shown}} of {{total}} active sites.",
+      "showing_one": "Showing {{shown}} of {{total}} active site.",
+      "showing_two": "Showing {{shown}} of {{total}} active sites.",
+      "showing_few": "Showing {{shown}} of {{total}} active sites.",
+      "showing_many": "Showing {{shown}} of {{total}} active sites.",
+      "showing_other": "Showing {{shown}} of {{total}} active sites.",
+      "seeAll_zero": "See all {{total}} sites",
+      "seeAll_one": "See {{total}} site",
+      "seeAll_two": "See all {{total}} sites",
+      "seeAll_few": "See all {{total}} sites",
+      "seeAll_many": "See all {{total}} sites",
+      "seeAll_other": "See all {{total}} sites",
+      "paused": {"more_zero": "{{n}} more paused sites are not shown.",
+        "more_one": "{{n}} more paused site is not shown.",
+        "more_two": "{{n}} more paused sites are not shown.",
+        "more_few": "{{n}} more paused sites are not shown.",
+        "more_many": "{{n}} more paused sites are not shown.",
+        "more_other": "{{n}} more paused sites are not shown."},
+      "search": {"clicks_zero": "{{n}} clicks",
+        "clicks_one": "{{n}} click",
+        "clicks_two": "{{n}} clicks",
+        "clicks_few": "{{n}} clicks",
+        "clicks_many": "{{n}} clicks",
+        "clicks_other": "{{n}} clicks",
+        "impressions_zero": "{{n}} impressions",
+        "impressions_one": "{{n}} impression",
+        "impressions_two": "{{n}} impressions",
+        "impressions_few": "{{n}} impressions",
+        "impressions_many": "{{n}} impressions",
+        "impressions_other": "{{n}} impressions"},
+      "rank": {"notCompared": {"failed_zero": "{{count}} checks failed",
+          "failed_one": "{{count}} check failed",
+          "failed_two": "{{count}} checks failed",
+          "failed_few": "{{count}} checks failed",
+          "failed_many": "{{count}} checks failed",
+          "failed_other": "{{count}} checks failed",
+          "skipped_zero": "{{count}} skipped",
+          "skipped_one": "{{count}} skipped",
+          "skipped_two": "{{count}} skipped",
+          "skipped_few": "{{count}} skipped",
+          "skipped_many": "{{count}} skipped",
+          "skipped_other": "{{count}} skipped",
+          "noPair_zero": "{{count}} waiting for a second check",
+          "noPair_one": "{{count}} waiting for a second check",
+          "noPair_two": "{{count}} waiting for a second check",
+          "noPair_few": "{{count}} waiting for a second check",
+          "noPair_many": "{{count}} waiting for a second check",
+          "noPair_other": "{{count}} waiting for a second check",
+          "unranked_zero": "{{count}} not ranked in either check",
+          "unranked_one": "{{count}} not ranked in either check",
+          "unranked_two": "{{count}} not ranked in either check",
+          "unranked_few": "{{count}} not ranked in either check",
+          "unranked_many": "{{count}} not ranked in either check",
+          "unranked_other": "{{count}} not ranked in either check"}}
+    }
   },
   "shell": {
     "groupOverview": "Overview",
@@ -224,7 +291,28 @@
     "noResults": "No countries match your search.",
     "loadError": "Countries could not be loaded. Try again.",
     "unknownCountry": "Unknown country",
-    "unknownLanguage": "Unknown language"
+    "unknownLanguage": "Unknown language",
+    "provenance": {
+      "owner": "Defaulted from this site's saved market ({{country}} · {{language}}).",
+      "search_console": "Defaulted from your Search Console traffic ({{country}}).",
+      "cctld": "Defaulted from your site's country ({{country}}).",
+      "site_language": "Defaulted from your site's page language ({{language}}).",
+      "assumed": "We could not detect your site's market. Check this before adding keywords.",
+      "hint": "You can change it here.",
+      "edit": "Change site default"
+    },
+    "script": {
+      "arabic": "Arabic",
+      "cyrillic": "Cyrillic",
+      "han": "Chinese",
+      "kana": "Japanese",
+      "hangul": "Korean"
+    },
+    "mismatch": {
+      "body": "This keyword looks like {{script}} text, but the language is {{language}}. Switch to {{suggested}}?",
+      "unavailable": "This keyword looks like {{script}} text, but the language is {{language}} and this country does not offer {{suggested}}. Check the country and language.",
+      "switch": "Switch to {{suggested}}"
+    }
   },
   "codeFixPrompt": {
     "button": "Copy code prompt",
@@ -279,5 +367,92 @@
     "message": "We would like to use Google Analytics to count page visits. It never receives site IDs, tab choices, or page titles. Nothing loads unless you accept, and you can change your mind at any time.",
     "accept": "Accept analytics",
     "decline": "No thanks"
+  },
+  "datePicker": {
+    "placeholder": "Pick a date",
+    "dialogLabel": "Choose a date",
+    "previousMonth": "Previous month",
+    "nextMonth": "Next month",
+    "today": "Today",
+    "clear": "Clear"
+  },
+  "toast": {
+    "close": "Close notification"
+  },
+  "metric": {
+    "noData": "No data"
+  },
+  "positionDelta": {
+    "improved_zero": "Improved by {{value}} positions",
+    "improved_one": "Improved by {{value}} position",
+    "improved_two": "Improved by {{value}} positions",
+    "improved_few": "Improved by {{value}} positions",
+    "improved_many": "Improved by {{value}} positions",
+    "improved_other": "Improved by {{value}} positions",
+    "declined_zero": "Declined by {{value}} positions",
+    "declined_one": "Declined by {{value}} position",
+    "declined_two": "Declined by {{value}} positions",
+    "declined_few": "Declined by {{value}} positions",
+    "declined_many": "Declined by {{value}} positions",
+    "declined_other": "Declined by {{value}} positions",
+    "unchanged": "No change in position",
+    "noPrevious": "No previous data",
+    "short": {
+      "improved": "better",
+      "declined": "worse",
+      "unchanged": "No change"
+    },
+    "window": {
+      "previousSync_zero": "Average position over the last {{days}} days compared with the same window at the previous data sync. Lower is better. Search Console averages are weighted by impressions.",
+      "previousSync_one": "Average position over the last {{days}} day compared with the same window at the previous data sync. Lower is better. Search Console averages are weighted by impressions.",
+      "previousSync_two": "Average position over the last {{days}} days compared with the same window at the previous data sync. Lower is better. Search Console averages are weighted by impressions.",
+      "previousSync_few": "Average position over the last {{days}} days compared with the same window at the previous data sync. Lower is better. Search Console averages are weighted by impressions.",
+      "previousSync_many": "Average position over the last {{days}} days compared with the same window at the previous data sync. Lower is better. Search Console averages are weighted by impressions.",
+      "previousSync_other": "Average position over the last {{days}} days compared with the same window at the previous data sync. Lower is better. Search Console averages are weighted by impressions.",
+      "previousCheck": "Position at the latest check compared with the check before. Lower is better."
+    }
+  },
+  "rankChange": {
+    "entered": "New",
+    "enteredLabel": "Entered the rankings",
+    "dropped": "Lost",
+    "droppedLabel": "Dropped out of the rankings",
+    "unranked": "Not ranked in either check"
+  },
+  "phraseList": {
+    "listLabel": "Detected items",
+    "verdict": {
+      "ready": "Ready",
+      "repeated": "Repeated",
+      "existing": "Already added",
+      "tooLong": "Too long"
+    },
+    "remove": "Remove {{phrase}}",
+    "more_zero": "and {{count, number}} more",
+    "more_one": "and {{count, number}} more",
+    "more_two": "and {{count, number}} more",
+    "more_few": "and {{count, number}} more",
+    "more_many": "and {{count, number}} more",
+    "more_other": "and {{count, number}} more",
+    "ignoredColumns": "This looks like a spreadsheet, so only the first column is used.",
+    "skippedHeader": "The header row “{{header}}” was skipped.",
+    "overPasteLimit_zero": "Only the first {{max, number}} items are read at once. {{count, number}} more were left out; add them in another batch.",
+    "overPasteLimit_one": "Only the first {{max, number}} items are read at once. {{count, number}} more was left out; add it in another batch.",
+    "overPasteLimit_two": "Only the first {{max, number}} items are read at once. {{count, number}} more were left out; add them in another batch.",
+    "overPasteLimit_few": "Only the first {{max, number}} items are read at once. {{count, number}} more were left out; add them in another batch.",
+    "overPasteLimit_many": "Only the first {{max, number}} items are read at once. {{count, number}} more were left out; add them in another batch.",
+    "overPasteLimit_other": "Only the first {{max, number}} items are read at once. {{count, number}} more were left out; add them in another batch.",
+    "copy": "Copy as a list",
+    "copied": "Copied, one item per line.",
+    "copyFailed": "Could not copy. Select the text and copy it yourself."
+  },
+  "competitorDomains": {
+    "count": "Domains: {{used}} of {{max}}",
+    "alreadyAdded": "Already added: {{domains}}",
+    "invalid": "Not a domain name: {{domains}}. Use something like competitor.com.",
+    "own": "That is your own site, so it can't be a competitor: {{domains}}",
+    "limit": "You can compare up to {{max}} competitor domains at a time. Remove one to add another.",
+    "remove": "Remove {{domain}}",
+    "placeholder": "e.g. competitor.com"
   }
 }

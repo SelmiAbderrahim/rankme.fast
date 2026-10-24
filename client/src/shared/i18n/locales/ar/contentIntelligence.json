@@ -49,9 +49,13 @@
     "loadMore": "تحميل المزيد",
     "warnings": "تحذير أو أكثر",
     "notAvailable": "غير متاح",
-    "warningCount": "{{count}} تحذير",
-    "warningCount_other": "{{count}} تحذيرات",
-    "progress": "اكتمل {{value}}٪"
+    "warningCount_one": "{{count}} تحذير",
+    "warningCount_other": "{{count}} تحذير",
+    "progress": "اكتمل {{value}}٪",
+    "warningCount_zero": "{{count}} تحذيرات",
+    "warningCount_two": "{{count}} من التحذيرات",
+    "warningCount_few": "{{count}} تحذيرات",
+    "warningCount_many": "{{count}} تحذير"
   },
   "status": {
     "queued": "في الطابور",
@@ -173,9 +177,14 @@
       "saveFailed": "تعذر حفظ إصدار الموجز. حاول مجددًا.",
       "versionHistory": "سجل إصدارات الموجز",
       "noVersions": "لا توجد إصدارات موجز محفوظة بعد.",
-      "versionMeta": "{{date}} · {{count}} أقسام",
+      "versionMeta_one": "{{date}} · {{count}} قسم",
       "unsavedGuard": "لديك تغييرات غير محفوظة في الموجز.",
-      "savedHint": "هذا اقتراح قابل للتحرير. لن يُنشر شيء."
+      "savedHint": "هذا اقتراح قابل للتحرير. لن يُنشر شيء.",
+      "versionMeta_zero": "{{date}} · {{count}} أقسام",
+      "versionMeta_two": "{{date}} · {{count}} من الأقسام",
+      "versionMeta_few": "{{date}} · {{count}} أقسام",
+      "versionMeta_many": "{{date}} · {{count}} قسم",
+      "versionMeta_other": "{{date}} · {{count}} قسم"
     },
     "draft": {
       "title": "المسودة الأولى",
@@ -186,15 +195,25 @@
       "saveFailed": "تعذر حفظ هذا الإصدار. حاول مجددًا.",
       "versionHistory": "سجل الإصدارات",
       "noVersions": "لا توجد إصدارات محفوظة بعد.",
-      "versionMeta": "{{date}} · {{count}} كلمة",
+      "versionMeta_one": "{{date}} · {{count}} كلمة",
       "copy": "نسخ إلى الحافظة",
       "copying": "جارٍ النسخ…",
       "copied": "تم النسخ إلى الحافظة.",
       "copyFailed": "تعذر نسخ المسودة.",
       "copyRetry": "محاولة النسخ مجددًا",
       "export": "تصدير كـ Markdown",
-      "wordCount": "{{count}} كلمة",
-      "unsavedGuard": "لديك تغييرات غير محفوظة."
+      "wordCount_one": "{{count}} كلمة",
+      "unsavedGuard": "لديك تغييرات غير محفوظة.",
+      "versionMeta_zero": "{{date}} · {{count}} كلمات",
+      "versionMeta_two": "{{date}} · {{count}} من الكلمات",
+      "versionMeta_few": "{{date}} · {{count}} كلمات",
+      "versionMeta_many": "{{date}} · {{count}} كلمة",
+      "versionMeta_other": "{{date}} · {{count}} كلمة",
+      "wordCount_zero": "{{count}} كلمات",
+      "wordCount_two": "{{count}} من الكلمات",
+      "wordCount_few": "{{count}} كلمات",
+      "wordCount_many": "{{count}} كلمة",
+      "wordCount_other": "{{count}} كلمة"
     },
     "sources": {
       "title": "المصادر",
@@ -222,18 +241,7 @@
       "title": "هل تريد تجاهل تغييرات المسودة غير المحفوظة؟", "description": "لم تُحفظ تعديلاتك الأخيرة كإصدار.", "confirm": "تجاهل ومغادرة", "back": "متابعة التحرير"
     }
   },
-  "paywall": {
-    "title": "ذكاء المحتوى",
-    "description": "قم بالترقية إلى Starter أو أعلى لتشغيل تحليلات المحتوى.",
-    "action": "عرض الخطط",
-    "exhausted": {
-      "title": "الرصيد مستنفد",
-      "description": "استُنفد رصيدك الأساسي الشهري ورصيد الحزمة. اشترِ حزمة رصيد أو رقّ خطتك.",
-      "buyPack": "شراء حزمة تحليلات",
-      "seePlans": "عرض الخطط"
-    },
-    "packHint": "ستأتي الوحدة التالية من حزمة رصيد."
-  },
+
   "partial": {
     "title": "نتيجة جزئية",
     "description": "اكتملت هذه العملية ببيانات محدودة. بطاقة التقييم متاحة؛ قد تفتقد بعض الأقسام."
@@ -280,12 +288,12 @@
     "rationale": "السبب", "rationaleUnavailable": "لا يتوفر سبب لهذه التوصية.", "rationaleText": "استخدم الأدلة المرتبطة من أجل {{direction}} قسم {{section}}.", "ownedEvidence": "دليل من صفحتك",
     "directions": { "add": "الإضافة إلى", "strengthen": "تعزيز", "clarify": "توضيح", "remove": "الإزالة من" },
     "confidence": "ثقة التوصية: {{value}}",
-    "evidence_zero": "لا توجد مصادر أدلة مرتبطة",
-    "evidence_one": "مصدر أدلة واحد مرتبط",
-    "evidence_two": "مصدرا أدلة مرتبطان",
-    "evidence_few": "{{count}} مصادر أدلة مرتبطة",
-    "evidence_many": "{{count}} مصدر أدلة مرتبطًا",
-    "evidence_other": "{{count}} مصدر أدلة مرتبط",
+    "evidence_zero": "مصادر الأدلة المرتبطة: {{count}}",
+    "evidence_one": "مصادر الأدلة المرتبطة: {{count}}",
+    "evidence_two": "مصادر الأدلة المرتبطة: {{count}}",
+    "evidence_few": "مصادر الأدلة المرتبطة: {{count}}",
+    "evidence_many": "مصادر الأدلة المرتبطة: {{count}}",
+    "evidence_other": "مصادر الأدلة المرتبطة: {{count}}",
     "actions": {
       "accept": "قبول",
       "dismiss": "رفض",
@@ -387,7 +395,7 @@
       "baseline": "الأيام الـ28 السابقة",
       "following": "الأيام الـ28 التالية",
       "delta": "التغير المطلق",
-      "coverage": "تغطية البيانات — Search Console: {{gsc}} يومًا؛ الترتيب: {{rank}} يومًا.",
+      "coverage": "تغطية البيانات بالأيام — Search Console: {{gsc}}؛ الترتيب: {{rank}}.",
       "disclaimer": "تؤثر عوامل خارجية في أداء البحث. يعرض هذا المنظر حركة مترابطة لا إسنادًا سببيًا.",
       "metrics": {
         "clicks": "النقرات",
@@ -436,15 +444,10 @@
       "title": "بدء عملية جرد",
       "description": "ازحف صفحاتك المملوكة واحصل على مجموعات وتكرارات وصفحات ضعيفة ويتيمة وتنافس على الكلمات وفجوات مواضيع.",
       "pageLimit": "عدد الصفحات المراد زحفها",
-      "pageLimitHint": "بين صفحة واحدة و{{max}} صفحة. كل أربع صفحات تشكّل كتلة محجوزة واحدة.",
-      "blocksTitle": "ما الذي يتم حجزه",
-      "blocks_zero": "لم تُحجز أي كتل. حد الصفحات: {{pages}} (أربع صفحات لكل كتلة).",
-      "blocks_one": "تم حجز كتلة واحدة. حد الصفحات: {{pages}} (أربع صفحات لكل كتلة).",
-      "blocks_two": "تم حجز كتلتين. حد الصفحات: {{pages}} (أربع صفحات لكل كتلة).",
-      "blocks_few": "تم حجز {{count}} كتل. حد الصفحات: {{pages}} (أربع صفحات لكل كتلة).",
-      "blocks_many": "تم حجز {{count}} كتلة. حد الصفحات: {{pages}} (أربع صفحات لكل كتلة).",
-      "blocks_other": "تم حجز {{count}} كتلة. حد الصفحات: {{pages}} (أربع صفحات لكل كتلة).",
-      "blocksInvalid": "أدخل عدد صفحات صالحًا لمعرفة عدد الكتل المحجوزة.",
+      "pageLimitHint": "بين صفحة واحدة و{{max}} صفحة.",
+      "blocksTitle": "صفحات هذه العملية",
+
+      "blocksInvalid": "أدخل عدد صفحات صالحًا لمعرفة حد الزحف.",
       "allowedPaths": "هذه المسارات فقط (اختياري)",
       "excludedPaths": "تخطَّ هذه المسارات (اختياري)",
       "sitemapSeeds": "روابط خريطة الموقع (اختياري)",
@@ -459,7 +462,14 @@
         "invalidPath": "يجب أن يبدأ كل مسار بشرطة مائلة (مثل /blog).",
         "tooManySeeds": "استخدم خمسة روابط خريطة موقع كحد أقصى.",
         "invalidSeed": "أحد روابط خريطة الموقع طويل جدًا."
-      }
+      },
+      "pageCount_zero": "{{count}} صفحات",
+      "pageCount_one": "{{count}} صفحة",
+      "pageCount_two": "{{count}} من الصفحات",
+      "pageCount_few": "{{count}} صفحات",
+      "pageCount_many": "{{count}} صفحة",
+      "pageCount_other": "{{count}} صفحة",
+      "blocks": "حتى $t(contentIntelligence:inventory.start.pageCount, {\"count\": {{pages}}})."
     },
     "runs": {
       "title": "عمليات الجرد",
@@ -503,12 +513,12 @@
     },
     "findings": {
       "confidence": "الثقة: {{value}}",
-      "evidence_zero": "لا توجد مصادر أدلة مرتبطة",
-      "evidence_one": "مصدر أدلة واحد مرتبط",
-      "evidence_two": "مصدرا أدلة مرتبطان",
+      "evidence_zero": "{{count}} مصادر أدلة مرتبطة",
+      "evidence_one": "{{count}} مصدر دليل مرتبط",
+      "evidence_two": "{{count}} من مصادر الأدلة المرتبطة",
       "evidence_few": "{{count}} مصادر أدلة مرتبطة",
-      "evidence_many": "{{count}} مصدر أدلة مرتبطًا",
-      "evidence_other": "{{count}} مصدر أدلة مرتبط",
+      "evidence_many": "{{count}} مصدر دليل مرتبط",
+      "evidence_other": "{{count}} مصدر دليل مرتبط",
       "clusters": {
         "title": "مجموعات المواضيع",
         "description": "مجموعات من الصفحات تشترك في الموضوع نفسه.",
@@ -690,14 +700,9 @@
       "keywordHint": "يضيّق المقارنة على النية التي تريد الفوز بها.",
       "pageLimit": "عدد صفحات المنافسين المراد قراءتها",
       "pageLimitHint": "بين صفحة واحدة و{{max}} صفحة عبر المنافسين المختارين.",
-      "disclosureTitle": "تكلفة هذه العملية",
-      "disclosure_zero": "تحجز هذه العملية وحدة واحدة وتقرأ حتى {{pages}} صفحة عبر {{count}} من المنافسين.",
-      "disclosure_one": "تحجز هذه العملية وحدة واحدة وتقرأ حتى {{pages}} صفحة عبر {{count}} من المنافسين.",
-      "disclosure_two": "تحجز هذه العملية وحدة واحدة وتقرأ حتى {{pages}} صفحة عبر {{count}} من المنافسين.",
-      "disclosure_few": "تحجز هذه العملية وحدة واحدة وتقرأ حتى {{pages}} صفحة عبر {{count}} من المنافسين.",
-      "disclosure_many": "تحجز هذه العملية وحدة واحدة وتقرأ حتى {{pages}} صفحة عبر {{count}} من المنافسين.",
-      "disclosure_other": "تحجز هذه العملية وحدة واحدة وتقرأ حتى {{pages}} صفحة عبر {{count}} من المنافسين.",
-      "disclosureInvalid": "أدخل عدد صفحات صالحًا لمعرفة ما تحجزه هذه العملية.",
+      "disclosureTitle": "الصفحات والمنافسون في هذه العملية",
+
+      "disclosureInvalid": "أدخل عدد صفحات صالحًا لمعرفة حدود العملية.",
       "inFlight": "هناك عملية قيد التنفيذ بالفعل. انتظر انتهاءها قبل بدء أخرى.",
       "submit": "بدء المقارنة",
       "submitting": "جارٍ البدء…",
@@ -708,7 +713,20 @@
         "invalidUrl": "أدخل عنوان URL صالحًا للصفحة يبدأ بـ http أو https.",
         "invalidCompetitorUrl": "أدخل رابط صفحة ترتيب صريحًا لكل منافس محدد.",
         "pageLimitRange": "أدخل عدد صفحات ضمن النطاق المسموح."
-      }
+      },
+      "pageCount_zero": "{{count}} صفحات",
+      "pageCount_one": "{{count}} صفحة",
+      "pageCount_two": "{{count}} من الصفحات",
+      "pageCount_few": "{{count}} صفحات",
+      "pageCount_many": "{{count}} صفحة",
+      "pageCount_other": "{{count}} صفحة",
+      "competitorCount_zero": "{{count}} منافسين",
+      "competitorCount_one": "{{count}} منافس",
+      "competitorCount_two": "{{count}} من المنافسين",
+      "competitorCount_few": "{{count}} منافسين",
+      "competitorCount_many": "{{count}} منافس",
+      "competitorCount_other": "{{count}} منافس",
+      "disclosure": "تقرأ هذه العملية حتى $t(contentIntelligence:competitorContent.run.pageCount, {\"count\": {{pages}}}) عبر $t(contentIntelligence:competitorContent.run.competitorCount, {\"count\": {{count}}})."
     },
     "runs": {
       "title": "عمليات المقارنة",
@@ -746,12 +764,12 @@
     },
     "findings": {
       "confidence": "الثقة: {{value}}",
-      "evidence_zero": "لا توجد مصادر أدلة مرتبطة",
-      "evidence_one": "مصدر أدلة واحد مرتبط",
-      "evidence_two": "مصدرا أدلة مرتبطان",
-      "evidence_few": "{{count}} مصادر أدلة مرتبطة",
-      "evidence_many": "{{count}} مصدر أدلة مرتبطًا",
-      "evidence_other": "{{count}} مصدر أدلة مرتبط",
+      "evidence_zero": "{{count}} من مصادر الأدلة المرتبطة",
+      "evidence_one": "{{count}} من مصادر الأدلة المرتبطة",
+      "evidence_two": "{{count}} من مصادر الأدلة المرتبطة",
+      "evidence_few": "{{count}} من مصادر الأدلة المرتبطة",
+      "evidence_many": "{{count}} من مصادر الأدلة المرتبطة",
+      "evidence_other": "{{count}} من مصادر الأدلة المرتبطة",
       "explanation": { "title": "ملخص" }
     },
     "comparison": {
@@ -949,9 +967,14 @@
         "stored": "ملاحظة نتائج بحث مخزنة بتاريخ {{date}}؛ لا يُتوقع جلب جديد.",
         "fetched": "لا توجد ملاحظة حديثة مخزنة؛ تتضمن الوحدة عملية جلب واحدة محسوبة."
       },
-      "scrapes": "سيتم جمع ما يصل إلى {{count}} صفحات نتائج عامة كلٌ على حدة.",
+      "scrapes_one": "سيتم جمع ما يصل إلى {{count}} صفحة نتائج عامة كلٌ على حدة.",
       "consume": "الاستخدام المتوقع: {{base}} من الأساسي و{{pack}} من الحزمة.",
-      "remaining": "المتاح الآن: {{base}} أساسي و{{pack}} من الحزمة."
+      "remaining": "المتاح الآن: {{base}} أساسي و{{pack}} من الحزمة.",
+      "scrapes_zero": "سيتم جمع ما يصل إلى {{count}} صفحات نتائج عامة كلٌ على حدة.",
+      "scrapes_two": "سيتم جمع ما يصل إلى {{count}} من صفحات النتائج العامة كلٌ على حدة.",
+      "scrapes_few": "سيتم جمع ما يصل إلى {{count}} صفحات نتائج عامة كلٌ على حدة.",
+      "scrapes_many": "سيتم جمع ما يصل إلى {{count}} صفحة نتائج عامة كلٌ على حدة.",
+      "scrapes_other": "سيتم جمع ما يصل إلى {{count}} صفحة نتائج عامة كلٌ على حدة."
     },
     "status": {
       "queued": "في قائمة الانتظار",
@@ -987,7 +1010,12 @@
       "filter": "تصفية الحالة",
       "all": "كل الحالات",
       "loading": "جارٍ تحميل الموجزات…",
-      "meta": "طُلب في {{date}} · {{count}} صفحات محفوظة"
+      "meta_one": "طُلب في {{date}} · {{count}} صفحة محفوظة",
+      "meta_zero": "طُلب في {{date}} · {{count}} صفحات محفوظة",
+      "meta_two": "طُلب في {{date}} · {{count}} من الصفحات المحفوظة",
+      "meta_few": "طُلب في {{date}} · {{count}} صفحات محفوظة",
+      "meta_many": "طُلب في {{date}} · {{count}} صفحة محفوظة",
+      "meta_other": "طُلب في {{date}} · {{count}} صفحة محفوظة"
     },
     "empty": {
       "title": "لا توجد موجزات بعد",
@@ -1039,8 +1067,13 @@
     "sources": {
       "title": "صفحات المصادر المخزنة",
       "description": "العناوين والنصوص الوصفية محتوى خارجي غير موثوق ويُعرض حرفيًا.",
-      "meta": "جُمعت في {{date}} · {{count}} كلمة",
-      "empty": "لم يتم حفظ أي مستند مصدر."
+      "meta_one": "جُمعت في {{date}} · {{count}} كلمة",
+      "empty": "لم يتم حفظ أي مستند مصدر.",
+      "meta_zero": "جُمعت في {{date}} · {{count}} كلمات",
+      "meta_two": "جُمعت في {{date}} · {{count}} من الكلمات",
+      "meta_few": "جُمعت في {{date}} · {{count}} كلمات",
+      "meta_many": "جُمعت في {{date}} · {{count}} كلمة",
+      "meta_other": "جُمعت في {{date}} · {{count}} كلمة"
     },
     "outline": {
       "title": "مخطط موثق",

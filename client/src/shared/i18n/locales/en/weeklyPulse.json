@@ -83,7 +83,7 @@
     "empty": "No generative AI appearance was reported by Google.",
     "reconnect": "Reconnect Google Search Console to see this section.",
     "window": "Window: {{start}} → {{end}}",
-    "row": "{{appearance}} — {{clicks}} clicks, {{impressions}} impressions",
+    "row": "{{appearance}} — clicks: {{clicks}} · impressions: {{impressions}}",
     "loading": "Loading Google Search Console data…",
     "unknown": "Unrecognized appearance ({{raw}})",
     "noData": "No Search Console data yet. Connect Google Search Console to see this section, or check back after the next daily sync."

@@ -25,6 +25,7 @@ function sendLocalizedError(req: Request, res: Response, status: number, payload
             ...(extras.details === undefined ? {} : { details: extras.details }),
             ...(extras.stack === undefined ? {} : { stack: extras.stack }),
             code: payload.code,
+            ...(payload.legacyCode === undefined ? {} : { legacyCode: payload.legacyCode }),
             messageKey: payload.messageKey,
         },
     });

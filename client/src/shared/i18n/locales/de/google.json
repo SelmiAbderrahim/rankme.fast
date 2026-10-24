@@ -38,8 +38,13 @@
   "revoke": {
     "cta": "Google-Zugriff überall widerrufen",
     "confirmTitle": "Gemeinsame Google-Verbindung widerrufen?",
-    "confirmBody": "Dadurch wird der Google-Zugriff widerrufen und die Verbindung zu allen {{count}} Websites getrennt. Dies kann nicht auf die aktuelle Website beschränkt werden.",
-    "confirm": "Überall widerrufen"
+    "confirmBody_one": "Dadurch wird der Google-Zugriff widerrufen und die Verbindung zu der {{count}} Website getrennt. Dies kann nicht auf die aktuelle Website beschränkt werden.",
+    "confirm": "Überall widerrufen",
+    "confirmBody_zero": "Dadurch wird der Google-Zugriff widerrufen und die Verbindung zu allen {{count}} Websites getrennt. Dies kann nicht auf die aktuelle Website beschränkt werden.",
+    "confirmBody_two": "Dadurch wird der Google-Zugriff widerrufen und die Verbindung zu allen {{count}} Websites getrennt. Dies kann nicht auf die aktuelle Website beschränkt werden.",
+    "confirmBody_few": "Dadurch wird der Google-Zugriff widerrufen und die Verbindung zu allen {{count}} Websites getrennt. Dies kann nicht auf die aktuelle Website beschränkt werden.",
+    "confirmBody_many": "Dadurch wird der Google-Zugriff widerrufen und die Verbindung zu allen {{count}} Websites getrennt. Dies kann nicht auf die aktuelle Website beschränkt werden.",
+    "confirmBody_other": "Dadurch wird der Google-Zugriff widerrufen und die Verbindung zu allen {{count}} Websites getrennt. Dies kann nicht auf die aktuelle Website beschränkt werden."
   },
   "autoMatch": {
     "queued": "Die Google-Properties dieser Website werden geprüft…",
@@ -86,7 +91,7 @@
     "viewAllLabel": "Alle anzeigen — {{section}}",
     "sitemapsLink": "Sitemaps ansehen",
     "asOf": "Daten bis {{date}}",
-    "previousPeriod": "Vorheriger Zeitraum: {{clicks}} Klicks · {{impressions}} Impressionen",
+    "previousPeriod": "Vorheriger Zeitraum — Klicks: {{clicks}} · Impressionen: {{impressions}}",
     "reportLink": "Alle Daten in Ihrem Bericht ansehen",
     "emptyTitle": "Noch keine Suchdaten",
     "emptyCta": "Verbindung verwalten",
@@ -98,10 +103,10 @@
     "refreshError": "Ihre Suchdaten konnten nicht aktualisiert werden. Versuchen Sie es gleich noch einmal.",
     "refreshedJustNow": "Gerade aktualisiert",
     "timeseriesTitle": "Klicks und Impressionen im Zeitverlauf",
-    "timeseriesSubtitle": "Tägliche Summen der letzten {{days}} Tage.",
+    "timeseriesSubtitle_one": "Tägliche Summen des letzten Tages ({{days}}).",
     "timeseriesEmpty": "Noch keine Tagesdaten.",
-    "timeseriesChartLabel": "Tägliche {{metric}} der letzten {{days}} Tage",
-    "timeseriesTableCaption": "Tägliche Suchleistung der letzten {{days}} Tage",
+    "timeseriesChartLabel_one": "Tägliche {{metric}} des letzten Tages ({{days}})",
+    "timeseriesTableCaption_one": "Tägliche Suchleistung des letzten Tages ({{days}})",
     "tableDate": "Datum",
     "metricLabel": "Metrik für das Diagramm wählen",
     "countriesTitle": "Top-Länder",
@@ -117,7 +122,22 @@
       "mobile": "Mobil",
       "tablet": "Tablet",
       "unknown": "Sonstige"
-    }
+    },
+    "timeseriesSubtitle_zero": "Tägliche Summen der letzten {{days}} Tage.",
+    "timeseriesSubtitle_two": "Tägliche Summen der letzten {{days}} Tage.",
+    "timeseriesSubtitle_few": "Tägliche Summen der letzten {{days}} Tage.",
+    "timeseriesSubtitle_many": "Tägliche Summen der letzten {{days}} Tage.",
+    "timeseriesSubtitle_other": "Tägliche Summen der letzten {{days}} Tage.",
+    "timeseriesChartLabel_zero": "Tägliche {{metric}} der letzten {{days}} Tage",
+    "timeseriesChartLabel_two": "Tägliche {{metric}} der letzten {{days}} Tage",
+    "timeseriesChartLabel_few": "Tägliche {{metric}} der letzten {{days}} Tage",
+    "timeseriesChartLabel_many": "Tägliche {{metric}} der letzten {{days}} Tage",
+    "timeseriesChartLabel_other": "Tägliche {{metric}} der letzten {{days}} Tage",
+    "timeseriesTableCaption_zero": "Tägliche Suchleistung der letzten {{days}} Tage",
+    "timeseriesTableCaption_two": "Tägliche Suchleistung der letzten {{days}} Tage",
+    "timeseriesTableCaption_few": "Tägliche Suchleistung der letzten {{days}} Tage",
+    "timeseriesTableCaption_many": "Tägliche Suchleistung der letzten {{days}} Tage",
+    "timeseriesTableCaption_other": "Tägliche Suchleistung der letzten {{days}} Tage"
   },
   "analytics": {
     "title": "Google Analytics (letzte {{days}} Tage)",
@@ -127,16 +147,16 @@
     "keyEvents": "Schlüsselereignisse",
     "engagementRateLabel": "Interaktionsrate",
     "engagementRateLine": "Interaktionsrate: {{rate}}",
-    "previousPeriod": "Vorheriger Zeitraum: {{sessions}} Sitzungen · {{activeUsers}} aktive Nutzer",
+    "previousPeriod": "Vorheriger Zeitraum — Sitzungen: {{sessions}} · aktive Nutzer: {{activeUsers}}",
     "emptyTitle": "Noch keine Analytics-Daten",
     "empty": "Noch keine Analytics-Daten. Daten erscheinen kurz nach dem Verbinden Ihrer Property — versuchen Sie eine Aktualisierung.",
     "error": "Ihre Analytics-Zusammenfassung konnte nicht geladen werden. Versuchen Sie es gleich noch einmal.",
     "refresh": "Analytics-Daten aktualisieren",
     "refreshError": "Ihre Analytics-Daten konnten nicht aktualisiert werden. Versuchen Sie es gleich noch einmal.",
     "timeseriesTitle": "Sitzungen und aktive Nutzer im Zeitverlauf",
-    "timeseriesSubtitle": "Tägliche Summen der letzten {{days}} Tage.",
-    "timeseriesChartLabel": "Tägliche {{metric}} der letzten {{days}} Tage",
-    "timeseriesTableCaption": "Tägliche Analytics-Leistung der letzten {{days}} Tage",
+    "timeseriesSubtitle_one": "Tägliche Summen des letzten Tages ({{days}}).",
+    "timeseriesChartLabel_one": "Tägliche {{metric}} des letzten Tages ({{days}})",
+    "timeseriesTableCaption_one": "Tägliche Analytics-Leistung des letzten Tages ({{days}})",
     "channelsTitle": "Kanäle",
     "channelsEmpty": "Noch keine Kanaldaten.",
     "channelsTableCaption": "Sitzungen nach Kanal",
@@ -167,7 +187,28 @@
     "propertiesError": "Ihre Analytics-Properties konnten nicht geladen werden. Versuchen Sie es gleich noch einmal.",
     "setPropertyError": "Diese Analytics-Property konnte nicht gespeichert werden. Versuchen Sie es gleich noch einmal.",
     "settingsTitle": "Google Analytics",
-    "settingsSubtitle": "Wählen Sie, welche GA4-Property RankMeFast verwendet."
+    "settingsSubtitle": "Wählen Sie, welche GA4-Property RankMeFast verwendet.",
+    "timeseriesSubtitle_zero": "Tägliche Summen der letzten {{days}} Tage.",
+    "timeseriesSubtitle_two": "Tägliche Summen der letzten {{days}} Tage.",
+    "timeseriesSubtitle_few": "Tägliche Summen der letzten {{days}} Tage.",
+    "timeseriesSubtitle_many": "Tägliche Summen der letzten {{days}} Tage.",
+    "timeseriesSubtitle_other": "Tägliche Summen der letzten {{days}} Tage.",
+    "timeseriesChartLabel_zero": "Tägliche {{metric}} der letzten {{days}} Tage",
+    "timeseriesChartLabel_two": "Tägliche {{metric}} der letzten {{days}} Tage",
+    "timeseriesChartLabel_few": "Tägliche {{metric}} der letzten {{days}} Tage",
+    "timeseriesChartLabel_many": "Tägliche {{metric}} der letzten {{days}} Tage",
+    "timeseriesChartLabel_other": "Tägliche {{metric}} der letzten {{days}} Tage",
+    "timeseriesTableCaption_zero": "Tägliche Analytics-Leistung der letzten {{days}} Tage",
+    "timeseriesTableCaption_two": "Tägliche Analytics-Leistung der letzten {{days}} Tage",
+    "timeseriesTableCaption_few": "Tägliche Analytics-Leistung der letzten {{days}} Tage",
+    "timeseriesTableCaption_many": "Tägliche Analytics-Leistung der letzten {{days}} Tage",
+    "timeseriesTableCaption_other": "Tägliche Analytics-Leistung der letzten {{days}} Tage",
+    "staleBody_zero": "Die neuesten Google-Analytics-Daten hier stammen vom {{date}}, obwohl Daten bis zum {{expected}} bereits verfügbar sein sollten. Diese Zahlen decken daher nicht die letzten {{days}} Tage ab. Aktualisieren Sie, um erneut zu synchronisieren. Ändert sich das Datum nicht, verbinden Sie Google neu.",
+    "staleBody_one": "Die neuesten Google-Analytics-Daten hier stammen vom {{date}}, obwohl Daten bis zum {{expected}} bereits verfügbar sein sollten. Diese Zahlen decken daher nicht den letzten Tag ({{days}}) ab. Aktualisieren Sie, um erneut zu synchronisieren. Ändert sich das Datum nicht, verbinden Sie Google neu.",
+    "staleBody_two": "Die neuesten Google-Analytics-Daten hier stammen vom {{date}}, obwohl Daten bis zum {{expected}} bereits verfügbar sein sollten. Diese Zahlen decken daher nicht die letzten {{days}} Tage ab. Aktualisieren Sie, um erneut zu synchronisieren. Ändert sich das Datum nicht, verbinden Sie Google neu.",
+    "staleBody_few": "Die neuesten Google-Analytics-Daten hier stammen vom {{date}}, obwohl Daten bis zum {{expected}} bereits verfügbar sein sollten. Diese Zahlen decken daher nicht die letzten {{days}} Tage ab. Aktualisieren Sie, um erneut zu synchronisieren. Ändert sich das Datum nicht, verbinden Sie Google neu.",
+    "staleBody_many": "Die neuesten Google-Analytics-Daten hier stammen vom {{date}}, obwohl Daten bis zum {{expected}} bereits verfügbar sein sollten. Diese Zahlen decken daher nicht die letzten {{days}} Tage ab. Aktualisieren Sie, um erneut zu synchronisieren. Ändert sich das Datum nicht, verbinden Sie Google neu.",
+    "staleBody_other": "Die neuesten Google-Analytics-Daten hier stammen vom {{date}}, obwohl Daten bis zum {{expected}} bereits verfügbar sein sollten. Diese Zahlen decken daher nicht die letzten {{days}} Tage ab. Aktualisieren Sie, um erneut zu synchronisieren. Ändert sich das Datum nicht, verbinden Sie Google neu."
   },
   "searchDetail": {
     "back": "Übersicht",
@@ -205,8 +246,18 @@
       },
       "status": {
         "ok": "OK",
-        "errors": "{{n}} Fehler",
-        "warnings": "{{n}} Warnungen"
+        "errors_one": "{{n}} Fehler",
+        "warnings_one": "{{n}} Warnung",
+        "errors_zero": "{{n}} Fehler",
+        "errors_two": "{{n}} Fehler",
+        "errors_few": "{{n}} Fehler",
+        "errors_many": "{{n}} Fehler",
+        "errors_other": "{{n}} Fehler",
+        "warnings_zero": "{{n}} Warnungen",
+        "warnings_two": "{{n}} Warnungen",
+        "warnings_few": "{{n}} Warnungen",
+        "warnings_many": "{{n}} Warnungen",
+        "warnings_other": "{{n}} Warnungen"
       }
     }
   },
@@ -217,5 +268,11 @@
       "cannibalization": "Berichte zur Keyword-Kannibalisierung basieren auf Ihren Search-Console-Daten. Verbinden Sie die Search Console mit dieser Website, um einen Bericht zu erstellen. Bereits gespeicherte Berichte bleiben lesbar.",
       "internalLinks": "Vorschläge für interne Links nutzen Ihre Search-Console-Suchanfragen, um die wichtigen Seiten zu bestimmen. Verbinden Sie die Search Console mit dieser Website, um Vorschläge auf Basis echter Suchanfragen zu erhalten."
     }
-  }
+  },
+  "breakdown": {"other_zero": "Sonstige ({{hidden}} weitere)",
+    "other_one": "Sonstige ({{hidden}} weitere)",
+    "other_two": "Sonstige ({{hidden}} weitere)",
+    "other_few": "Sonstige ({{hidden}} weitere)",
+    "other_many": "Sonstige ({{hidden}} weitere)",
+    "other_other": "Sonstige ({{hidden}} weitere)"}
 }

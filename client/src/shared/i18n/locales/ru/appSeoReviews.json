@@ -6,9 +6,14 @@
     "title": "Распределение оценок",
     "chartLabel": "Количество отзывов по числу звёзд",
     "tableCaption": "Количество отзывов для каждой оценки",
-    "star": "{{star}} зв.",
+    "star_one": "{{star}} зв.",
     "rating": "Оценка",
-    "count": "Отзывы"
+    "count": "Отзывы",
+    "star_zero": "{{star}} зв.",
+    "star_two": "{{star}} зв.",
+    "star_few": "{{star}} зв.",
+    "star_many": "{{star}} зв.",
+    "star_other": "{{star}} зв."
   },
   "trend": {
     "title": "Объём отзывов",

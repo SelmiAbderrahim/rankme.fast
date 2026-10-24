@@ -6,9 +6,14 @@
     "title": "Star distribution",
     "chartLabel": "Review count by star rating",
     "tableCaption": "Review count for each star rating",
-    "star": "{{star}} stars",
+    "star_one": "{{star}} star",
     "rating": "Rating",
-    "count": "Reviews"
+    "count": "Reviews",
+    "star_zero": "{{star}} stars",
+    "star_two": "{{star}} stars",
+    "star_few": "{{star}} stars",
+    "star_many": "{{star}} stars",
+    "star_other": "{{star}} stars"
   },
   "trend": {
     "title": "Review volume",

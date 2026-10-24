@@ -49,7 +49,7 @@ export const SiteWorkspaceNavigation = ({
   const hrefFor = (tab: SiteTab): string => {
     const params = new URLSearchParams(location.search);
     params.set('tab', tab);
-    return `${location.pathname}?${params.toString()}`;
+    return `${location.pathname}?${params.toString()}${location.hash}`;
   };
 
   const renderDestination = (tab: SiteTab) => {
@@ -62,7 +62,7 @@ export const SiteWorkspaceNavigation = ({
         data-testid={`site-tab-${tab}`}
         data-state={active ? 'active' : 'inactive'}
       >
-        <Link to={hrefFor(tab)} replace aria-current={active ? 'page' : undefined}>
+        <Link to={hrefFor(tab)} replace state={location.state} aria-current={active ? 'page' : undefined}>
           <Check aria-hidden="true" className={active ? undefined : 'invisible'} />
           <span className="min-w-0 flex-1">{labelFor(tab)}</span>
         </Link>
@@ -129,6 +129,7 @@ export const SiteWorkspaceNavigation = ({
           <Link
             to={hrefFor('overview')}
             replace
+            state={location.state}
             aria-current={activeTab === 'overview' ? 'page' : undefined}
           >
             {labelFor('overview')}

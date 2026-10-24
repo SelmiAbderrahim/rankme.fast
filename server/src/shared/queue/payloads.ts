@@ -60,7 +60,7 @@ export const rankJobSchema = z
     accountId: objectIdHex,
     siteId: objectIdHex,
     /** Empty means every active site keyword; non-empty narrows to UUID rows. */
-    keywordIds: z.array(z.string().uuid()).max(30),
+    keywordIds: z.array(z.string().guid()).max(30),
     /** Job-scheduler key that produced this job (`manual` for one-offs). */
     schedulerKey: z.string().min(1),
     /**
@@ -86,7 +86,7 @@ export const rankJobSchema = z
     altEngineReservation: z
         .object({
         batchKey: z.string().regex(/^manual-\d+(?:-r\d+)?$/).max(80),
-        keywordIds: z.array(z.string().uuid()).min(1).max(30),
+        keywordIds: z.array(z.string().guid()).min(1).max(30),
     })
         .strict()
         .optional(),
@@ -94,7 +94,7 @@ export const rankJobSchema = z
     serpReservation: z
         .object({
         batchKey: z.string().regex(/^manual-\d+(?:-r\d+)?$/).max(80),
-        keywordId: z.string().uuid(),
+        keywordId: z.string().guid(),
         units: z.number().int().min(1).max(2),
     })
         .strict()
@@ -147,7 +147,7 @@ export const appSeoTrackingJobSchema = z
     accountId: objectIdHex,
     siteId: objectIdHex,
     profileId: objectIdHex,
-    keywordId: z.string().uuid(),
+    keywordId: z.string().guid(),
     reservationStamp: z.string().regex(/^\d{4}-W\d{2}(?:-r\d{6})?$/),
     manual: z.boolean(),
 })
@@ -159,7 +159,7 @@ export const appSeoListingJobSchema = z
     accountId: objectIdHex,
     siteId: objectIdHex,
     profileId: objectIdHex,
-    runId: z.string().uuid(),
+    runId: z.string().guid(),
     capturedAt: z.string().datetime({ offset: true }),
     locationCode: z.number().int().positive(),
     languageCode: z.string().trim().min(2).max(16),
@@ -212,7 +212,7 @@ export const googleSiteAutoMatchJobSchema = z
     .object({
     accountId: objectIdHex,
     siteId: objectIdHex,
-    requestId: z.string().uuid(),
+    requestId: z.string().guid(),
 })
     .strict();
 export type GoogleSiteAutoMatchJob = z.infer<typeof googleSiteAutoMatchJobSchema>;
@@ -401,7 +401,7 @@ export const clientReportJobSchema = z
     .object({
     accountId: objectIdHex,
     siteId: objectIdHex,
-    scheduleId: z.string().uuid(),
+    scheduleId: z.string().guid(),
     runKey: z.string().min(1).max(128).regex(/^[A-Za-z0-9_-]+$/),
     scheduledFor: z.string().datetime({ offset: true }),
 })
@@ -497,7 +497,7 @@ export const geogridScanJobSchema = z
     .object({
     accountId: objectIdHex,
     siteId: objectIdHex,
-    scanId: z.string().uuid(),
+    scanId: z.string().guid(),
 })
     .strict();
 export type GeogridScanJob = z.infer<typeof geogridScanJobSchema>;
@@ -516,7 +516,7 @@ export const alertDispatchJobSchema = z
     .object({
     accountId: z.string().min(1).max(64),
     siteId: z.string().min(1).max(64),
-    ruleId: z.string().uuid(),
+    ruleId: z.string().guid(),
     transitionId: z.string().min(1).max(200),
     evidence: z.record(z.string(), z.unknown()),
 })

@@ -9,6 +9,11 @@
   "empty": { "noProfileTitle": "请先注册应用", "noProfileDescription": "榜单跟踪需要已注册的商店 ID。", "noSubscriptions": "此应用尚未跟踪任何榜单。" },
   "disabled": { "title": "榜单跟踪已关闭", "description": "已保存的名次仍可查看；新订阅和检查已暂停。" },
   "upsell": { "title": "添加 App SEO 榜单跟踪", "description": "此 Pro 账户需要 App SEO 附加项才能运行每周榜单检查。", "cta": "查看 App SEO 选项" },
-  "limit": { "title": "已达榜单上限", "description": "每个应用资料最多可跟踪 {{limit}} 个榜单。" },
+  "limit": { "title": "已达榜单上限", "description_one": "每个应用资料最多可跟踪 {{limit}} 个榜单。",
+    "description_zero": "每个应用资料最多可跟踪 {{limit}} 个榜单。",
+    "description_two": "每个应用资料最多可跟踪 {{limit}} 个榜单。",
+    "description_few": "每个应用资料最多可跟踪 {{limit}} 个榜单。",
+    "description_many": "每个应用资料最多可跟踪 {{limit}} 个榜单。",
+    "description_other": "每个应用资料最多可跟踪 {{limit}} 个榜单。" },
   "errors": { "title": "无法更新榜单跟踪", "requestFailed": "无法完成榜单请求，请重试。" }
 }

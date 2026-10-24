@@ -1,3 +1,4 @@
+import { Bdi } from '@shared/components/Bdi';
 import { useEffect } from 'react';
 import { Bug, PanelLeft } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
@@ -59,6 +60,7 @@ export const AppTopbar = () => {
         size="icon"
         onClick={toggleSidebar}
         aria-label={t('shell.collapse')}
+        data-testid="app-sidebar-toggle"
       >
         <PanelLeft className="rtl:scale-x-[-1]" />
       </Button>
@@ -88,7 +90,7 @@ export const AppTopbar = () => {
           </DropdownMenuTrigger>
           <DropdownMenuContent align="end" className="w-52">
             <DropdownMenuLabel className="truncate">
-              {user?.name || user?.email || t('shell.account')}
+              <Bdi>{user?.name || user?.email || t('shell.account')}</Bdi>
             </DropdownMenuLabel>
             <DropdownMenuSeparator />
             <DropdownMenuItem asChild>

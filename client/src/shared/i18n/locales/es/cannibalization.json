@@ -24,8 +24,6 @@
   },
   "preview": {
     "title": "Cuánto cuesta",
-    "units": "{{count}} informe de tu cupo mensual.",
-    "units_other": "{{count}} informes de tu cupo mensual.",
     "remaining": "Te queda este mes en tu plan: {{remaining}}.",
     "pack": "Más {{units}} de los paquetes de créditos.",
     "noFit": "No cabe en lo que queda. Añade créditos o cambia de plan primero."
@@ -39,7 +37,7 @@
     "open": "Abrir"
   },
   "detail": {
-    "provenance": "A partir de tus datos guardados de Search Console de {{days}} días, última sincronización {{date}}. Se leyeron {{queries}} consultas."
+    "provenance": "A partir de tus datos guardados de Search Console de $t(cannibalization:counts.windowDays, {\"count\": {{days}}}), última sincronización {{date}}. $t(cannibalization:counts.queriesRead, {\"count\": {{queries}}})"
   },
   "candidates": {
     "query": "Consulta",
@@ -56,7 +54,7 @@
     "inspect": "Inspeccionar"
   },
   "drilldown": {
-    "provenance": "Filas guardadas de {{days}} días, última sincronización {{date}}.",
+    "provenance": "Filas guardadas de $t(cannibalization:counts.windowDays, {\"count\": {{days}}}), última sincronización {{date}}.",
     "recommendation": "Mantén {{url}} como página principal.",
     "reason": {
       "most_clicks": "Ya consigue más clics para esta consulta.",
@@ -100,5 +98,19 @@
       "title": "Algo salió mal",
       "body": "No se pudo cargar. Inténtalo de nuevo."
     }
+  },
+  "counts": {
+    "windowDays_zero": "{{count}} días",
+    "windowDays_one": "{{count}} día",
+    "windowDays_two": "{{count}} días",
+    "windowDays_few": "{{count}} días",
+    "windowDays_many": "{{count}} días",
+    "windowDays_other": "{{count}} días",
+    "queriesRead_zero": "Se leyeron {{count}} consultas.",
+    "queriesRead_one": "Se leyó {{count}} consulta.",
+    "queriesRead_two": "Se leyeron {{count}} consultas.",
+    "queriesRead_few": "Se leyeron {{count}} consultas.",
+    "queriesRead_many": "Se leyeron {{count}} consultas.",
+    "queriesRead_other": "Se leyeron {{count}} consultas."
   }
 }

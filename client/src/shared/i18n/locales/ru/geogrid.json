@@ -109,5 +109,11 @@
     "loadFailed": "Не удалось загрузить ваши сканирования геосетки.",
     "previewFailed": "Не удалось оценить это сканирование.",
     "submitFailed": "Не удалось запустить это сканирование."
-  }
+  },
+  "center": {"place": {"resultsLegend_zero": "{{count}} места по запросу «{{query}}». Выберите центр:",
+      "resultsLegend_one": "{{count}} место по запросу «{{query}}». Выберите центр:",
+      "resultsLegend_two": "{{count}} места по запросу «{{query}}». Выберите центр:",
+      "resultsLegend_few": "{{count}} места по запросу «{{query}}». Выберите центр:",
+      "resultsLegend_many": "{{count}} мест по запросу «{{query}}». Выберите центр:",
+      "resultsLegend_other": "{{count}} места по запросу «{{query}}». Выберите центр:"}}
 }

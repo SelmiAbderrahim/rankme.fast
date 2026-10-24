@@ -40,7 +40,7 @@ interface StoredReportAdapterConfig<TSelection extends ReportSelection> {
     kind: ReportKindId;
     localizationStem: string;
     formats: readonly ReportFormat[];
-    selectionSchema: z.ZodType<TSelection, z.ZodTypeDef, unknown>;
+    selectionSchema: z.ZodType<TSelection, unknown>;
     access(context: ReportExportAccessContext): Promise<unknown>;
     load(context: Omit<ReportExportComposeContext, 'selection'> & {
         selection: TSelection;

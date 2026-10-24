@@ -6,9 +6,14 @@
     "title": "星级分布",
     "chartLabel": "各星级的评论数量",
     "tableCaption": "每个星级的评论数量",
-    "star": "{{star}} 星",
+    "star_one": "{{star}} 星",
     "rating": "评分",
-    "count": "评论"
+    "count": "评论",
+    "star_zero": "{{star}} 星",
+    "star_two": "{{star}} 星",
+    "star_few": "{{star}} 星",
+    "star_many": "{{star}} 星",
+    "star_other": "{{star}} 星"
   },
   "trend": {
     "title": "评论量",

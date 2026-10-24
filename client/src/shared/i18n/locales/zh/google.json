@@ -38,8 +38,13 @@
   "revoke": {
     "cta": "在所有网站撤销 Google 访问权限",
     "confirmTitle": "撤销共享的 Google 连接？",
-    "confirmBody": "这会撤销 Google 访问权限，并取消所有 {{count}} 个已连接网站的关联。此操作无法仅限当前网站。",
-    "confirm": "全部撤销"
+    "confirmBody_one": "这会撤销 Google 访问权限，并取消所有 {{count}} 个已连接网站的关联。此操作无法仅限当前网站。",
+    "confirm": "全部撤销",
+    "confirmBody_zero": "这会撤销 Google 访问权限，并取消所有 {{count}} 个已连接网站的关联。此操作无法仅限当前网站。",
+    "confirmBody_two": "这会撤销 Google 访问权限，并取消所有 {{count}} 个已连接网站的关联。此操作无法仅限当前网站。",
+    "confirmBody_few": "这会撤销 Google 访问权限，并取消所有 {{count}} 个已连接网站的关联。此操作无法仅限当前网站。",
+    "confirmBody_many": "这会撤销 Google 访问权限，并取消所有 {{count}} 个已连接网站的关联。此操作无法仅限当前网站。",
+    "confirmBody_other": "这会撤销 Google 访问权限，并取消所有 {{count}} 个已连接网站的关联。此操作无法仅限当前网站。"
   },
   "autoMatch": {
     "queued": "正在检查此网站的 Google 资源…",
@@ -86,7 +91,7 @@
     "viewAllLabel": "查看全部 — {{section}}",
     "sitemapsLink": "查看站点地图",
     "asOf": "数据截至 {{date}}",
-    "previousPeriod": "上一周期：{{clicks}} 次点击 · {{impressions}} 次展示",
+    "previousPeriod": "上一周期 — 点击： {{clicks}} · 展示： {{impressions}}",
     "reportLink": "在报告中查看完整数据",
     "emptyTitle": "暂无搜索数据",
     "emptyCta": "管理连接",
@@ -98,10 +103,10 @@
     "refreshError": "无法刷新您的搜索数据，请稍后重试。",
     "refreshedJustNow": "刚刚已更新",
     "timeseriesTitle": "点击次数和展示次数随时间变化",
-    "timeseriesSubtitle": "过去 {{days}} 天的每日总计。",
+    "timeseriesSubtitle_one": "过去 {{days}} 天的每日总计。",
     "timeseriesEmpty": "暂无每日数据。",
-    "timeseriesChartLabel": "过去 {{days}} 天的每日{{metric}}",
-    "timeseriesTableCaption": "过去 {{days}} 天的每日搜索表现",
+    "timeseriesChartLabel_one": "过去 {{days}} 天的每日{{metric}}",
+    "timeseriesTableCaption_one": "过去 {{days}} 天的每日搜索表现",
     "tableDate": "日期",
     "metricLabel": "选择要绘制的指标",
     "countriesTitle": "热门国家/地区",
@@ -117,7 +122,22 @@
       "mobile": "移动设备",
       "tablet": "平板设备",
       "unknown": "其他"
-    }
+    },
+    "timeseriesSubtitle_zero": "过去 {{days}} 天的每日总计。",
+    "timeseriesSubtitle_two": "过去 {{days}} 天的每日总计。",
+    "timeseriesSubtitle_few": "过去 {{days}} 天的每日总计。",
+    "timeseriesSubtitle_many": "过去 {{days}} 天的每日总计。",
+    "timeseriesSubtitle_other": "过去 {{days}} 天的每日总计。",
+    "timeseriesChartLabel_zero": "过去 {{days}} 天的每日{{metric}}",
+    "timeseriesChartLabel_two": "过去 {{days}} 天的每日{{metric}}",
+    "timeseriesChartLabel_few": "过去 {{days}} 天的每日{{metric}}",
+    "timeseriesChartLabel_many": "过去 {{days}} 天的每日{{metric}}",
+    "timeseriesChartLabel_other": "过去 {{days}} 天的每日{{metric}}",
+    "timeseriesTableCaption_zero": "过去 {{days}} 天的每日搜索表现",
+    "timeseriesTableCaption_two": "过去 {{days}} 天的每日搜索表现",
+    "timeseriesTableCaption_few": "过去 {{days}} 天的每日搜索表现",
+    "timeseriesTableCaption_many": "过去 {{days}} 天的每日搜索表现",
+    "timeseriesTableCaption_other": "过去 {{days}} 天的每日搜索表现"
   },
   "analytics": {
     "title": "Google Analytics（过去 {{days}} 天）",
@@ -127,16 +147,16 @@
     "keyEvents": "关键事件",
     "engagementRateLabel": "互动率",
     "engagementRateLine": "互动率：{{rate}}",
-    "previousPeriod": "上一周期：{{sessions}} 次会话 · {{activeUsers}} 位活跃用户",
+    "previousPeriod": "上一周期 — 会话：{{sessions}} · 活跃用户：{{activeUsers}}",
     "emptyTitle": "暂无分析数据",
     "empty": "暂无分析数据。连接媒体资源后不久数据就会出现——请尝试刷新。",
     "error": "无法加载您的分析摘要，请稍后重试。",
     "refresh": "刷新分析数据",
     "refreshError": "无法刷新您的分析数据，请稍后重试。",
     "timeseriesTitle": "会话数和活跃用户随时间变化",
-    "timeseriesSubtitle": "过去 {{days}} 天的每日总计。",
-    "timeseriesChartLabel": "过去 {{days}} 天的每日{{metric}}",
-    "timeseriesTableCaption": "过去 {{days}} 天的每日分析表现",
+    "timeseriesSubtitle_one": "过去 {{days}} 天的每日总计。",
+    "timeseriesChartLabel_one": "过去 {{days}} 天的每日{{metric}}",
+    "timeseriesTableCaption_one": "过去 {{days}} 天的每日分析表现",
     "channelsTitle": "渠道",
     "channelsEmpty": "暂无渠道数据。",
     "channelsTableCaption": "按渠道的会话数",
@@ -167,7 +187,28 @@
     "propertiesError": "无法加载您的 Analytics 媒体资源，请稍后重试。",
     "setPropertyError": "无法保存该 Analytics 媒体资源，请稍后重试。",
     "settingsTitle": "Google 分析",
-    "settingsSubtitle": "选择 RankMeFast 读取的 GA4 媒体资源。"
+    "settingsSubtitle": "选择 RankMeFast 读取的 GA4 媒体资源。",
+    "timeseriesSubtitle_zero": "过去 {{days}} 天的每日总计。",
+    "timeseriesSubtitle_two": "过去 {{days}} 天的每日总计。",
+    "timeseriesSubtitle_few": "过去 {{days}} 天的每日总计。",
+    "timeseriesSubtitle_many": "过去 {{days}} 天的每日总计。",
+    "timeseriesSubtitle_other": "过去 {{days}} 天的每日总计。",
+    "timeseriesChartLabel_zero": "过去 {{days}} 天的每日{{metric}}",
+    "timeseriesChartLabel_two": "过去 {{days}} 天的每日{{metric}}",
+    "timeseriesChartLabel_few": "过去 {{days}} 天的每日{{metric}}",
+    "timeseriesChartLabel_many": "过去 {{days}} 天的每日{{metric}}",
+    "timeseriesChartLabel_other": "过去 {{days}} 天的每日{{metric}}",
+    "timeseriesTableCaption_zero": "过去 {{days}} 天的每日分析表现",
+    "timeseriesTableCaption_two": "过去 {{days}} 天的每日分析表现",
+    "timeseriesTableCaption_few": "过去 {{days}} 天的每日分析表现",
+    "timeseriesTableCaption_many": "过去 {{days}} 天的每日分析表现",
+    "timeseriesTableCaption_other": "过去 {{days}} 天的每日分析表现",
+    "staleBody_zero": "这里最新的 Google Analytics 数据截至 {{date}}，但截至 {{expected}} 的数据应该已经可用，因此这些数字并未覆盖最近 {{days}} 天。请刷新以重新同步。如果日期仍未变化，请重新连接 Google。",
+    "staleBody_one": "这里最新的 Google Analytics 数据截至 {{date}}，但截至 {{expected}} 的数据应该已经可用，因此这些数字并未覆盖最近 {{days}} 天。请刷新以重新同步。如果日期仍未变化，请重新连接 Google。",
+    "staleBody_two": "这里最新的 Google Analytics 数据截至 {{date}}，但截至 {{expected}} 的数据应该已经可用，因此这些数字并未覆盖最近 {{days}} 天。请刷新以重新同步。如果日期仍未变化，请重新连接 Google。",
+    "staleBody_few": "这里最新的 Google Analytics 数据截至 {{date}}，但截至 {{expected}} 的数据应该已经可用，因此这些数字并未覆盖最近 {{days}} 天。请刷新以重新同步。如果日期仍未变化，请重新连接 Google。",
+    "staleBody_many": "这里最新的 Google Analytics 数据截至 {{date}}，但截至 {{expected}} 的数据应该已经可用，因此这些数字并未覆盖最近 {{days}} 天。请刷新以重新同步。如果日期仍未变化，请重新连接 Google。",
+    "staleBody_other": "这里最新的 Google Analytics 数据截至 {{date}}，但截至 {{expected}} 的数据应该已经可用，因此这些数字并未覆盖最近 {{days}} 天。请刷新以重新同步。如果日期仍未变化，请重新连接 Google。"
   },
   "searchDetail": {
     "back": "概览",
@@ -205,8 +246,18 @@
       },
       "status": {
         "ok": "正常",
-        "errors": "{{n}} 个错误",
-        "warnings": "{{n}} 个警告"
+        "errors_one": "{{n}} 个错误",
+        "warnings_one": "{{n}} 个警告",
+        "errors_zero": "{{n}} 个错误",
+        "errors_two": "{{n}} 个错误",
+        "errors_few": "{{n}} 个错误",
+        "errors_many": "{{n}} 个错误",
+        "errors_other": "{{n}} 个错误",
+        "warnings_zero": "{{n}} 个警告",
+        "warnings_two": "{{n}} 个警告",
+        "warnings_few": "{{n}} 个警告",
+        "warnings_many": "{{n}} 个警告",
+        "warnings_other": "{{n}} 个警告"
       }
     }
   },
@@ -217,5 +268,11 @@
       "cannibalization": "关键词蚕食报告基于您的 Search Console 数据生成。请先为此网站连接 Search Console，再生成报告。已保存的报告仍可查看。",
       "internalLinks": "内部链接建议会根据您的 Search Console 搜索查询来判断哪些页面重要。请先为此网站连接 Search Console，以获得基于真实搜索的建议。"
     }
-  }
+  },
+  "breakdown": {"other_zero": "其他（另有 {{hidden}} 项）",
+    "other_one": "其他（另有 {{hidden}} 项）",
+    "other_two": "其他（另有 {{hidden}} 项）",
+    "other_few": "其他（另有 {{hidden}} 项）",
+    "other_many": "其他（另有 {{hidden}} 项）",
+    "other_other": "其他（另有 {{hidden}} 项）"}
 }

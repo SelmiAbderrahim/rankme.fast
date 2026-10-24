@@ -381,7 +381,7 @@ describe('AlertsPage — rules tab', () => {
     renderPage();
 
     expect(await screen.findByTestId('alerts-rule-list')).toBeInTheDocument();
-    expect(screen.getByText('1 rules in use.')).toBeInTheDocument();
+    expect(screen.getByText('1 rule in use.')).toBeInTheDocument();
     // 'Rank drop' also appears as a builder <option>, so scope to the table.
     const list = screen.getByTestId('alerts-rule-list');
     expect(within(list).getByText('Rank drop')).toBeInTheDocument();

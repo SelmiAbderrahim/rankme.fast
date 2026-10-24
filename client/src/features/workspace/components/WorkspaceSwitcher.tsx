@@ -1,3 +1,4 @@
+import { Bdi } from '@shared/components/Bdi';
 import { Building2, Check, ChevronsUpDown } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 import { useAppDispatch, useAppSelector } from '@shared/hooks/redux';
@@ -59,7 +60,7 @@ export const WorkspaceSwitcher = () => {
           aria-label={t('workspace.switcherLabel')}
         >
           <Building2 aria-hidden="true" className="size-4 shrink-0" />
-          <span className="truncate">{active?.label ?? t('workspace.own')}</span>
+          <span className="truncate"><Bdi>{active?.label ?? t('workspace.own')}</Bdi></span>
           <ChevronsUpDown aria-hidden="true" className="size-4 shrink-0 opacity-60" />
         </Button>
       </DropdownMenuTrigger>
@@ -79,7 +80,7 @@ export const WorkspaceSwitcher = () => {
                 aria-hidden="true"
                 className={`size-4 shrink-0 ${isActive ? 'opacity-100' : 'opacity-0'}`}
               />
-              <span className="min-w-0 flex-1 truncate">{workspace.label}</span>
+              <span className="min-w-0 flex-1 truncate"><Bdi>{workspace.label}</Bdi></span>
               <Badge variant="secondary" className="shrink-0 rounded-full">
                 {t(`workspace.role.${workspace.role}`)}
               </Badge>

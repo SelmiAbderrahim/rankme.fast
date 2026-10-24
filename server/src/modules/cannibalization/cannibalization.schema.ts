@@ -20,13 +20,13 @@ const windowSchema = z
     .union([z.literal(7), z.literal(28), z.literal(90)])
     .default(DEFAULT_CANNIBALIZATION_WINDOW);
 /**
- * `.default({})` makes an absent body parse to the default window, so the
+ * `.prefault({})` makes an absent body parse to the default window, so the
  * controller never needs its own `?? {}` fallback.
  */
 export const generateReportBodySchema = z
     .object({ windowDays: windowSchema })
     .strict()
-    .default({});
+    .prefault({});
 export type GenerateReportBody = z.infer<typeof generateReportBodySchema>;
 export const previewReportBodySchema = generateReportBodySchema;
 export const listReportsQuerySchema = z

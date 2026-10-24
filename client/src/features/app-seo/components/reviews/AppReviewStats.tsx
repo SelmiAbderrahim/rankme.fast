@@ -59,7 +59,7 @@ export function AppReviewStatsView({ stats }: { stats: AppReviewStats }) {
         >
           {stats.histogram.map((bucket) => (
             <div key={bucket.star} className="grid grid-cols-[4rem_1fr_3rem] items-center gap-3">
-              <span className="text-sm">{t('histogram.star', { star: bucket.star })}</span>
+              <span className="text-sm">{t('histogram.star', { count: bucket.star, star: bucket.star })}</span>
               <div className="bg-muted h-3 overflow-hidden rounded-sm">
                 <div
                   className="bg-chart-1 h-full"
@@ -78,7 +78,7 @@ export function AppReviewStatsView({ stats }: { stats: AppReviewStats }) {
           </TableRow></TableHeader>
           <TableBody>{stats.histogram.map((bucket) => (
             <TableRow key={bucket.star}>
-              <TableCell>{t('histogram.star', { star: bucket.star })}</TableCell>
+              <TableCell>{t('histogram.star', { count: bucket.star, star: bucket.star })}</TableCell>
               <TableCell>{number.format(bucket.count)}</TableCell>
             </TableRow>
           ))}</TableBody>

@@ -1,3 +1,4 @@
+import { Bdi } from '@shared/components/Bdi';
 import { useCallback, useEffect, useId, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Link } from 'react-router-dom';
@@ -319,7 +320,7 @@ export function NewRunForm({ siteId }: NewRunFormProps) {
                     data-testid={`audience-research-competitor-${domain}`}
                     data-selected={selected ? 'true' : undefined}
                   >
-                    <Badge variant={selected ? 'default' : 'outline'}>{domain}</Badge>
+                    <Badge variant={selected ? 'default' : 'outline'}><Bdi>{domain}</Bdi></Badge>
                   </button>
                 );
               })}
@@ -346,7 +347,7 @@ export function NewRunForm({ siteId }: NewRunFormProps) {
           <div className="mb-2 flex flex-wrap gap-2" data-testid="audience-research-topics-chips">
             {form.topics.map((topic, index) => (
               <Badge key={`${topic}-${index}`} variant="secondary" className="gap-1">
-                {topic}
+                <Bdi>{topic}</Bdi>
                 <button
                   type="button"
                   onClick={() => removeTopicAt(index)}

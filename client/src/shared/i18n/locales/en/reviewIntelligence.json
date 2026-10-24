@@ -65,12 +65,22 @@
     "title": "What this sync costs",
     "description": "This is an estimate. Nothing is spent until you confirm.",
     "units": "Uses {{units}} review sync",
-    "perSource": "Covers {{sources}} sources",
-    "depth": "Pulls up to {{depth}} reviews per source",
+    "perSource_one": "Covers {{sources}} source",
+    "depth_one": "Pulls up to {{depth}} review per source",
     "available": "Fits in your allowance",
     "unavailable": "Over your allowance",
     "baseRemaining": "Plan syncs left: {{remaining}}",
-    "packRemaining": "Pack syncs left: {{remaining}}"
+    "packRemaining": "Pack syncs left: {{remaining}}",
+    "depth_zero": "Pulls up to {{depth}} reviews per source",
+    "depth_two": "Pulls up to {{depth}} reviews per source",
+    "depth_few": "Pulls up to {{depth}} reviews per source",
+    "depth_many": "Pulls up to {{depth}} reviews per source",
+    "depth_other": "Pulls up to {{depth}} reviews per source",
+    "perSource_zero": "Covers {{sources}} sources",
+    "perSource_two": "Covers {{sources}} sources",
+    "perSource_few": "Covers {{sources}} sources",
+    "perSource_many": "Covers {{sources}} sources",
+    "perSource_other": "Covers {{sources}} sources"
   },
   "runs": {
     "title": "Sync history",
@@ -122,10 +132,10 @@
     "filterAll": "All",
     "searchPlaceholder": "Search reviews",
     "apply": "Apply",
-    "stars": "{{stars}} stars",
+    "stars_one": "{{stars}} star",
     "unrated": "No rating",
     "anonymous": "No name",
-    "page": "Page {{page}} of {{total}} reviews",
+    "page_one": "Page {{page}} of {{total}} review",
     "previous": "Previous",
     "next": "Next",
     "export": "Download CSV",
@@ -138,16 +148,31 @@
       "source": "Source",
       "text": "Review",
       "author": "Author"
-    }
+    },
+    "stars_zero": "{{stars}} stars",
+    "stars_two": "{{stars}} stars",
+    "stars_few": "{{stars}} stars",
+    "stars_many": "{{stars}} stars",
+    "stars_other": "{{stars}} stars",
+    "page_zero": "Page {{page}} of {{total}} reviews",
+    "page_two": "Page {{page}} of {{total}} reviews",
+    "page_few": "Page {{page}} of {{total}} reviews",
+    "page_many": "Page {{page}} of {{total}} reviews",
+    "page_other": "Page {{page}} of {{total}} reviews"
   },
   "stats": {
     "title": "Review health",
     "empty": "Nothing to chart yet.",
-    "total": "{{total}} reviews stored",
+    "total_one": "{{total}} review stored",
     "distribution": {
       "title": "Star spread",
-      "stars": "{{stars}} stars",
-      "unrated": "No rating"
+      "stars_one": "{{stars}} star",
+      "unrated": "No rating",
+      "stars_zero": "{{stars}} stars",
+      "stars_two": "{{stars}} stars",
+      "stars_few": "{{stars}} stars",
+      "stars_many": "{{stars}} stars",
+      "stars_other": "{{stars}} stars"
     },
     "velocity": {
       "title": "Reviews per month",
@@ -156,7 +181,12 @@
     },
     "sourceMix": {
       "title": "Where they come from"
-    }
+    },
+    "total_zero": "{{total}} reviews stored",
+    "total_two": "{{total}} reviews stored",
+    "total_few": "{{total}} reviews stored",
+    "total_many": "{{total}} reviews stored",
+    "total_other": "{{total}} reviews stored"
   },
   "trend": {
     "title": "Average rating over time",
@@ -174,7 +204,7 @@
     "complaints": "Common complaints",
     "praise": "Common praise",
     "citations": "Show the reviews behind this",
-    "citationCount": "{{citations}} reviews",
+    "citationCount_one": "{{citations}} review",
     "citationSource": "{{source}} · {{rating}} · {{date}}",
     "sectionEmpty": "Nothing here for this sync.",
     "pending": "The theme pass has not finished yet.",
@@ -186,7 +216,12 @@
       "title": "Themes could not be built",
       "description": "The summary step failed. Your reviews landed safely and are still readable below.",
       "link": "Go to the reviews"
-    }
+    },
+    "citationCount_zero": "{{citations}} reviews",
+    "citationCount_two": "{{citations}} reviews",
+    "citationCount_few": "{{citations}} reviews",
+    "citationCount_many": "{{citations}} reviews",
+    "citationCount_other": "{{citations}} reviews"
   },
   "provenance": {
     "first_party": "First-party data",
@@ -194,7 +229,12 @@
     "estimate": "Estimate",
     "ai_interpretation": "AI interpretation",
     "observedAt": "Observed {{date}}",
-    "sampleCount": "{{count}} reviews sampled"
+    "sampleCount_one": "{{count}} review sampled",
+    "sampleCount_zero": "{{count}} reviews sampled",
+    "sampleCount_two": "{{count}} reviews sampled",
+    "sampleCount_few": "{{count}} reviews sampled",
+    "sampleCount_many": "{{count}} reviews sampled",
+    "sampleCount_other": "{{count}} reviews sampled"
   },
   "errors": {
     "sourcesFailed": "We could not load your review sources.",

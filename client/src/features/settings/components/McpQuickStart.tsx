@@ -1,3 +1,4 @@
+import { Bdi } from '@shared/components/Bdi';
 import { useState } from 'react';
 import { Check, Copy, KeyRound } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
@@ -104,7 +105,7 @@ export function McpQuickStart() {
         {snippets.map((snippet) => (
           <section key={snippet.target} className="flex flex-col gap-2">
             <div className="flex items-center justify-between gap-3">
-              <h3 className="text-sm font-medium">{snippet.label}</h3>
+              <h3 className="text-sm font-medium"><Bdi>{snippet.label}</Bdi></h3>
               <Button
                 type="button"
                 variant="outline"

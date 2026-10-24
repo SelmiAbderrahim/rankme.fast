@@ -41,22 +41,32 @@
     "fresh": "Reciente",
     "supported": "Este mercado tiene soporte completo.",
     "unsupported": "Este mercado tiene soporte limitado — los resultados pueden ser más escasos.",
-    "maxPages": "Hasta {{max}} páginas públicas",
+    "maxPages_one": "Hasta {{max}} página pública",
     "totalBudget": "Presupuesto total: {{micros}} micro-USD",
     "aiBudget": "Presupuesto de IA: {{micros}} micro-USD",
     "coverageOk": "Cobertura completa del proveedor",
     "coverageDegraded": "Cobertura degradada del proveedor — los resultados pueden ser parciales.",
-    "coverageBlocked": "La extracción sin retención de datos está bloqueada para esta cuenta."
+    "coverageBlocked": "La extracción sin retención de datos está bloqueada para esta cuenta.",
+    "maxPages_zero": "Hasta {{max}} páginas públicas",
+    "maxPages_two": "Hasta {{max}} páginas públicas",
+    "maxPages_few": "Hasta {{max}} páginas públicas",
+    "maxPages_many": "Hasta {{max}} páginas públicas",
+    "maxPages_other": "Hasta {{max}} páginas públicas"
   },
   "confirm": {
     "title": "¿Iniciar esta ejecución de investigación de audiencia?",
-    "body": "Esta ejecución rastreará hasta {{maxPages}} páginas públicas y generará señales a partir de la web pública. Se ejecuta una sola vez — no hay monitorización continua.",
+    "body_one": "Esta ejecución rastreará hasta {{maxPages}} página pública y generará señales a partir de la web pública. Se ejecuta una sola vez — no hay monitorización continua.",
     "confirmButton": "Iniciar ejecución",
     "cancelButton": "Cancelar",
     "marketLine": "Mercado",
     "competitorsLine": "Competidores",
     "topicsLine": "Temas",
-    "unitLine": "Unidades consumidas"
+    "unitLine": "Unidades consumidas",
+    "body_zero": "Esta ejecución rastreará hasta {{maxPages}} páginas públicas y generará señales a partir de la web pública. Se ejecuta una sola vez — no hay monitorización continua.",
+    "body_two": "Esta ejecución rastreará hasta {{maxPages}} páginas públicas y generará señales a partir de la web pública. Se ejecuta una sola vez — no hay monitorización continua.",
+    "body_few": "Esta ejecución rastreará hasta {{maxPages}} páginas públicas y generará señales a partir de la web pública. Se ejecuta una sola vez — no hay monitorización continua.",
+    "body_many": "Esta ejecución rastreará hasta {{maxPages}} páginas públicas y generará señales a partir de la web pública. Se ejecuta una sola vez — no hay monitorización continua.",
+    "body_other": "Esta ejecución rastreará hasta {{maxPages}} páginas públicas y generará señales a partir de la web pública. Se ejecuta una sola vez — no hay monitorización continua."
   },
   "progress": {
     "stage": {
@@ -70,8 +80,18 @@
       "failed": "Fallida"
     },
     "counts": {
-      "sources": "{{count}} fuentes encontradas",
-      "signals": "{{count}} señales encontradas"
+      "sources_one": "{{count}} fuente encontrada",
+      "signals_one": "{{count}} señal encontrada",
+      "sources_zero": "{{count}} fuentes encontradas",
+      "sources_two": "{{count}} fuentes encontradas",
+      "sources_few": "{{count}} fuentes encontradas",
+      "sources_many": "{{count}} fuentes encontradas",
+      "sources_other": "{{count}} fuentes encontradas",
+      "signals_zero": "{{count}} señales encontradas",
+      "signals_two": "{{count}} señales encontradas",
+      "signals_few": "{{count}} señales encontradas",
+      "signals_many": "{{count}} señales encontradas",
+      "signals_other": "{{count}} señales encontradas"
     },
     "partial": {
       "title": "Esta ejecución terminó con cobertura parcial",
@@ -134,7 +154,7 @@
       "title": "Esta ejecución terminó sin producir señales.",
       "filtered": "Ninguna señal coincide con los filtros actuales."
     },
-    "citationCount": "{{count}} fuentes citadas",
+    "citationCount_one": "{{count}} fuente citada",
     "confidence": {
       "high": "Alta confianza",
       "medium": "Confianza media",
@@ -158,7 +178,7 @@
       "aiInterpretationHint": "La ruta sugerida es una interpretación de IA, no una señal de cuota de mercado."
     },
     "rationale": {
-      "summary": "{{independentDomainCount}} dominios independientes en {{sourceTypeCount}} tipos de fuente; {{recent}}.",
+      "summary": "Dominios independientes: {{independentDomainCount}}; tipos de fuente: {{sourceTypeCount}}; {{recent}}.",
       "recent": "fuente más reciente {{date}}",
       "recentUnknown": "fecha no disponible"
     },
@@ -226,7 +246,12 @@
         "duplicate": "Duplicado",
         "other": "Otro"
       }
-    }
+    },
+    "citationCount_zero": "{{count}} fuentes citadas",
+    "citationCount_two": "{{count}} fuentes citadas",
+    "citationCount_few": "{{count}} fuentes citadas",
+    "citationCount_many": "{{count}} fuentes citadas",
+    "citationCount_other": "{{count}} fuentes citadas"
   },
   "errors": {
     "overCap": "Has usado todas las ejecuciones de investigación de audiencia de tu plan este mes. Actualiza para lanzar más.",

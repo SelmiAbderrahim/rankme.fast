@@ -10,7 +10,7 @@
  * a later crawl must never silently rewrite markup the user already copied.
  */
 import mongoose, { type HydratedDocument, type InferSchemaType } from 'mongoose';
-import { EVIDENCE_SOURCES } from './evidence.js';
+import { EVIDENCE_SOURCES } from './evidence-sources.js';
 import { OMISSION_REASONS, SUPPORTED_SCHEMA_TYPES } from './schema-types.registry.js';
 export const SCHEMA_GENERATION_STATUSES = ['complete', 'failed'] as const;
 export type SchemaGenerationStatus = (typeof SCHEMA_GENERATION_STATUSES)[number];

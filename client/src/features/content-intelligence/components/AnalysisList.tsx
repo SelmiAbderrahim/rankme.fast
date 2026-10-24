@@ -1,3 +1,4 @@
+import { Bdi } from '@shared/components/Bdi';
 import { useCallback, useEffect, useRef } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@shared/ui/card';
@@ -235,7 +236,7 @@ function AnalysisRow({ a, onOpen }: AnalysisRowProps) {
       <TableCell className="max-w-[240px] truncate">
         <span className="font-medium">{a.ownedUrl}</span>
       </TableCell>
-      <TableCell>{a.keyword}</TableCell>
+      <TableCell><Bdi>{a.keyword}</Bdi></TableCell>
       <TableCell>{a.locale}</TableCell>
       <TableCell>
         <StatusChip tone={analysisStatusTone(a.status)} aria-live="polite">
@@ -325,7 +326,7 @@ function AnalysisCard({ analysis, onOpen }: { analysis: ContentAnalysis; onOpen:
     <section className="rounded-lg border border-border p-4" data-testid={`content-card-${analysis.analysisId}`}>
       <h3 className="break-words font-medium">{analysis.ownedUrl}</h3>
       <dl className="mt-2 grid grid-cols-2 gap-2 text-sm">
-        <div><dt className="text-muted-foreground">{t('list.columns.keyword')}</dt><dd>{analysis.keyword}</dd></div>
+        <div><dt className="text-muted-foreground">{t('list.columns.keyword')}</dt><dd><Bdi>{analysis.keyword}</Bdi></dd></div>
         <div><dt className="text-muted-foreground">{t('list.columns.locale')}</dt><dd>{analysis.locale}</dd></div>
         <div><dt className="text-muted-foreground">{t('list.columns.score')}</dt><dd>{score ?? t('list.notAvailable')}</dd></div>
         <div><dt className="text-muted-foreground">{t('list.columns.requestedAt')}</dt><dd>{requested}</dd></div>

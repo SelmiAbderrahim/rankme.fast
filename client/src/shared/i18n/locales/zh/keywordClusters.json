@@ -11,9 +11,14 @@
   },
   "scope": {
     "title": "本次运行的关键词",
-    "description": "已选择 {{count}} 个关键词。每个所选关键词都必须有可用的近期 Google 结果。",
+    "description_one": "已选择 {{count}} 个关键词。每个所选关键词都必须有可用的近期 Google 结果。",
     "empty": "该网站还没有活跃的 Google 关键词。",
-    "minimum": "请至少选择两个关键词，再预览本次运行。"
+    "minimum": "请至少选择两个关键词，再预览本次运行。",
+    "description_zero": "已选择 {{count}} 个关键词。每个所选关键词都必须有可用的近期 Google 结果。",
+    "description_two": "已选择 {{count}} 个关键词。每个所选关键词都必须有可用的近期 Google 结果。",
+    "description_few": "已选择 {{count}} 个关键词。每个所选关键词都必须有可用的近期 Google 结果。",
+    "description_many": "已选择 {{count}} 个关键词。每个所选关键词都必须有可用的近期 Google 结果。",
+    "description_other": "已选择 {{count}} 个关键词。每个所选关键词都必须有可用的近期 Google 结果。"
   },
   "newRun": {
     "title": "准备一次聚类运行",
@@ -22,7 +27,7 @@
     "unitLabel": "额度",
     "unitValue": "{{count}} 次聚类运行",
     "scopeLabel": "就绪的关键词",
-    "scopeValue": "{{count}} 个已跟踪关键词符合条件",
+    "scopeValue_one": "{{count}} 个已跟踪关键词符合条件",
     "method": "当两个关键词在各自前 {{window}} 条结果中至少共享 {{shared}} 条，且排名检查发生在最近 {{days}} 天内时，它们会被分到一组。",
     "remaining": "本次运行前还剩 {{count}} 次。",
     "labelingIncluded": "本次运行包含可选的 AI 群组标签，且绝不会改变聚类成员关系。",
@@ -30,7 +35,12 @@
     "previewing": "正在检查已存储结果…",
     "confirm": "开始聚类运行",
     "starting": "正在开始…",
-    "cancel": "取消"
+    "cancel": "取消",
+    "scopeValue_zero": "{{count}} 个已跟踪关键词符合条件",
+    "scopeValue_two": "{{count}} 个已跟踪关键词符合条件",
+    "scopeValue_few": "{{count}} 个已跟踪关键词符合条件",
+    "scopeValue_many": "{{count}} 个已跟踪关键词符合条件",
+    "scopeValue_other": "{{count}} 个已跟踪关键词符合条件"
   },
   "states": {
     "ranksCta": "运行一次排名检查",
@@ -84,15 +94,25 @@
     "open": "打开运行"
   },
   "blocked": {
-    "title": "{{count}} 个关键词无法参与",
+    "title_one": "{{count}} 个关键词无法参与",
     "body": "这些已跟踪关键词还没有可用的已存储结果。运行一次排名检查后，它们即可参与下次运行。",
-    "more": "另有 {{count}} 个",
+    "more_one": "另有 {{count}} 个",
     "observedAt": "最近检查 {{date}}",
     "reason": {
       "missing": "从未检查",
       "stale": "检查过于陈旧",
       "empty": "无已存储结果"
-    }
+    },
+    "more_zero": "另有 {{count}} 个",
+    "more_two": "另有 {{count}} 个",
+    "more_few": "另有 {{count}} 个",
+    "more_many": "另有 {{count}} 个",
+    "more_other": "另有 {{count}} 个",
+    "title_zero": "{{count}} 个关键词无法参与",
+    "title_two": "{{count}} 个关键词无法参与",
+    "title_few": "{{count}} 个关键词无法参与",
+    "title_many": "{{count}} 个关键词无法参与",
+    "title_other": "{{count}} 个关键词无法参与"
   },
   "results": {
     "title": "分组",
@@ -110,15 +130,15 @@
   "cluster": {
     "unlabeled": "未命名分组",
     "aiSuggestion": "AI 建议",
-    "grouped": "{{count}} 个关键词",
+    "grouped_one": "{{count}} 个关键词",
     "singleton": "未分组",
-    "commonCore": "全部关键词共享 {{count}} 条结果",
+    "commonCore_one": "全部关键词共享 {{count}} 条结果",
     "noCommonCore": "该分组中没有任何一条结果被所有关键词共享",
     "showEvidence": "显示重叠",
     "hideEvidence": "隐藏重叠",
     "pivot": "基准",
-    "pivotWindow": "已比较 {{count}} 条存储结果",
-    "sharedWithPivot": "与基准关键词共享 {{count}} 条",
+    "pivotWindow_one": "已比较 {{count}} 条存储结果",
+    "sharedWithPivot_one": "与基准关键词共享 {{count}} 条",
     "evidenceTitle": "哪些结果重叠",
     "evidenceBody": "下面每个关键词之所以被分到一组，是因为它与基准关键词共享这些已存储的结果 URL。",
     "singletonEvidence": "该关键词与其他任何已跟踪关键词共享的结果太少，无法分组。",
@@ -126,6 +146,44 @@
       "keyword": "关键词",
       "observedAt": "结果观测时间",
       "sharedUrls": "重叠"
-    }
-  }
+    },
+    "sharedWithPivot_zero": "与基准关键词共享 {{count}} 条",
+    "sharedWithPivot_two": "与基准关键词共享 {{count}} 条",
+    "sharedWithPivot_few": "与基准关键词共享 {{count}} 条",
+    "sharedWithPivot_many": "与基准关键词共享 {{count}} 条",
+    "sharedWithPivot_other": "与基准关键词共享 {{count}} 条",
+    "grouped_zero": "{{count}} 个关键词",
+    "grouped_two": "{{count}} 个关键词",
+    "grouped_few": "{{count}} 个关键词",
+    "grouped_many": "{{count}} 个关键词",
+    "grouped_other": "{{count}} 个关键词",
+    "commonCore_zero": "全部关键词共享 {{count}} 条结果",
+    "commonCore_two": "全部关键词共享 {{count}} 条结果",
+    "commonCore_few": "全部关键词共享 {{count}} 条结果",
+    "commonCore_many": "全部关键词共享 {{count}} 条结果",
+    "commonCore_other": "全部关键词共享 {{count}} 条结果",
+    "pivotWindow_zero": "已比较 {{count}} 条存储结果",
+    "pivotWindow_two": "已比较 {{count}} 条存储结果",
+    "pivotWindow_few": "已比较 {{count}} 条存储结果",
+    "pivotWindow_many": "已比较 {{count}} 条存储结果",
+    "pivotWindow_other": "已比较 {{count}} 条存储结果"
+  },
+  "eligibility": {"needCheck_zero": "{{total}} 个关键词中有 {{count}} 个需要重新检查排名。",
+    "needCheck_one": "{{total}} 个关键词中有 {{count}} 个需要重新检查排名。",
+    "needCheck_two": "{{total}} 个关键词中有 {{count}} 个需要重新检查排名。",
+    "needCheck_few": "{{total}} 个关键词中有 {{count}} 个需要重新检查排名。",
+    "needCheck_many": "{{total}} 个关键词中有 {{count}} 个需要重新检查排名。",
+    "needCheck_other": "{{total}} 个关键词中有 {{count}} 个需要重新检查排名。",
+    "ready_zero": "{{count}} 个已就绪。",
+    "ready_one": "{{count}} 个已就绪。",
+    "ready_two": "{{count}} 个已就绪。",
+    "ready_few": "{{count}} 个已就绪。",
+    "ready_many": "{{count}} 个已就绪。",
+    "ready_other": "{{count}} 个已就绪。",
+    "minimum_zero": "聚类至少需要 {{count}} 个就绪的关键词。",
+    "minimum_one": "聚类至少需要 {{count}} 个就绪的关键词。",
+    "minimum_two": "聚类至少需要 {{count}} 个就绪的关键词。",
+    "minimum_few": "聚类至少需要 {{count}} 个就绪的关键词。",
+    "minimum_many": "聚类至少需要 {{count}} 个就绪的关键词。",
+    "minimum_other": "聚类至少需要 {{count}} 个就绪的关键词。"}
 }

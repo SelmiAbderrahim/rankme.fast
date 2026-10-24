@@ -641,7 +641,7 @@ describe('internal-link accessibility and RTL', () => {
     expect(source.default).not.toMatch(/(?:^|["' \t]|:)(?:left|right)-\d/u);
   });
 
-  it('renders translated Arabic in an RTL workspace without an LTR island', async () => {
+  it('renders an RTL workspace and isolates source and target addresses', async () => {
     routeApi();
     await changeLanguage('ar');
     document.documentElement.setAttribute('lang', 'ar');
@@ -651,8 +651,10 @@ describe('internal-link accessibility and RTL', () => {
     expect(screen.getByRole('heading', { name: 'اقتراحات الروابط الداخلية' })).toBeVisible();
     expect(page.ownerDocument.documentElement).toHaveAttribute('dir', 'rtl');
     for (const node of page.querySelectorAll('[dir]')) {
-      expect(node).toHaveAttribute('dir', 'rtl');
+      if (node.tagName === 'BDI') expect(node).toHaveAttribute('dir', 'auto');
+      else expect(node).toHaveAttribute('dir', 'rtl');
     }
+    expect(page.querySelectorAll('bdi[dir=auto]').length).toBeGreaterThan(0);
   });
 
   it('adds no page gutter of its own and renders "Open content inventory" as an outline button link', async () => {

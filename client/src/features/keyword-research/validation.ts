@@ -257,9 +257,7 @@ const liveTrendsGeoSchema = z
   .transform((value) => value.toLowerCase())
   .pipe(
     z.enum(['us', 'gb', 'de', 'fr'], {
-      errorMap: () => ({
-        message: 'keywordResearch:trends.errors.geoInvalid',
-      }),
+      error: 'keywordResearch:trends.errors.geoInvalid',
     }),
   );
 

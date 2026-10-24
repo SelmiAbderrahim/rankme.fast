@@ -20,10 +20,15 @@
     "passed": "Пройдено"
   },
   "row": {
-    "affectedPages": "затронуто {{count}} страниц",
+    "affectedPages_one": "затронута {{count}} страница",
     "affectedPagesOne": "затронута 1 страница",
     "siteWide": "Проверка всего сайта",
-    "passedSummary": "Эта проверка пройдена."
+    "passedSummary": "Эта проверка пройдена.",
+    "affectedPages_zero": "затронуто {{count}} страниц",
+    "affectedPages_two": "затронуто {{count}} страницы",
+    "affectedPages_few": "затронуто {{count}} страницы",
+    "affectedPages_many": "затронуто {{count}} страниц",
+    "affectedPages_other": "затронуто {{count}} страницы"
   },
   "severity": {
     "critical": "Критично",
@@ -56,7 +61,19 @@
       "okChip": "OK",
       "problemChip": "Нужно исправить",
       "unknownChip": "Не проверен"
-    }
+    },
+    "measured": {"words_zero": "{{count}} слов",
+      "words_one": "{{count}} слово",
+      "words_two": "{{count}} слова",
+      "words_few": "{{count}} слова",
+      "words_many": "{{count}} слов",
+      "words_other": "{{count}} слова",
+      "characters_zero": "{{count}} символов",
+      "characters_one": "{{count}} символ",
+      "characters_two": "{{count}} символа",
+      "characters_few": "{{count}} символа",
+      "characters_many": "{{count}} символов",
+      "characters_other": "{{count}} символа"}
   },
   "retest": {
     "cta": "Перепроверить",
@@ -69,7 +86,12 @@
     "label": "Страницы для сканирования",
     "max": "Максимально допустимое",
     "help": "Определяет, сколько страниц просканирует краулер. «Максимально допустимое» охватывает столько страниц, сколько разрешает этот сервер; чем меньше страниц, тем быстрее завершится проверка.",
-    "pages": "{{pages}} страниц"
+    "pages_one": "{{pages}} страница",
+    "pages_zero": "{{pages}} страниц",
+    "pages_two": "{{pages}} страницы",
+    "pages_few": "{{pages}} страницы",
+    "pages_many": "{{pages}} страниц",
+    "pages_other": "{{pages}} страницы"
   },
   "empty": {
     "fix-now": {
@@ -110,7 +132,7 @@
     "noFieldDataTitle": "Пока недостаточно данных от посетителей",
     "noFieldDataBody": "Chrome сообщает о скорости реальных посетителей только при достаточном трафике. Как только трафик подрастёт, этот блок заполнится автоматически.",
     "originFallback": "Данные по всему домену (не только по этой странице)",
-    "sampleLabel": "Проверено страниц: {{count}}",
+    "sampleLabel_one": "Проверено страниц: {{count}}",
     "sampleLabelOne": "Проверена 1 страница",
     "metrics": {
       "lcp": "LCP",
@@ -122,7 +144,12 @@
       "good": "Хорошо",
       "needs-improvement": "Требует улучшения",
       "poor": "Плохо"
-    }
+    },
+    "sampleLabel_zero": "Проверено страниц: {{count}}",
+    "sampleLabel_two": "Проверено страниц: {{count}}",
+    "sampleLabel_few": "Проверено страниц: {{count}}",
+    "sampleLabel_many": "Проверено страниц: {{count}}",
+    "sampleLabel_other": "Проверено страниц: {{count}}"
   },
   "aiSummary": {
     "cardTitle": "ИИ-резюме ваших исправлений",
@@ -135,7 +162,13 @@
     "errors": {
       "unavailable": "ИИ-резюме временно недоступно — на ваш чек-лист это не влияет.",
       "capReached": "Вы исчерпали месячный лимит ИИ-резюме. Обновите тариф или пополните кредиты, чтобы продолжать."
-    }
+    },
+    "basis_zero": "На основе {{count}} открытых проблем",
+    "basis_one": "На основе {{count}} открытой проблемы",
+    "basis_two": "На основе {{count}} открытых проблем",
+    "basis_few": "На основе {{count}} открытых проблем",
+    "basis_many": "На основе {{count}} открытых проблем",
+    "basis_other": "На основе {{count}} открытых проблем"
   },
   "pdf": {
     "download": "Скачать PDF",
@@ -173,11 +206,26 @@
     "noSitemapsTitle": "В Google не отправлен ни один sitemap",
     "noSitemapsBody": "Отправьте sitemap в Google Search Console, чтобы Google мог найти каждую страницу, которую вы хотите проиндексировать.",
     "sitemapHealthy": "В порядке",
-    "sitemapErrors": "{{count}} ошибок",
-    "sitemapWarnings": "{{count}} предупреждений",
-    "sitemapProcessed": "Отправлено URL: {{count}}",
+    "sitemapErrors_one": "{{count}} ошибка",
+    "sitemapWarnings_one": "{{count}} предупреждение",
+    "sitemapProcessed_one": "Отправлено URL: {{count}}",
     "sitemapLastDownloaded": "Последнее чтение Google: {{date}}",
-    "sitemapNeverDownloaded": "Ещё не прочитан Google"
+    "sitemapNeverDownloaded": "Ещё не прочитан Google",
+    "sitemapErrors_zero": "{{count}} ошибок",
+    "sitemapErrors_two": "{{count}} ошибки",
+    "sitemapErrors_few": "{{count}} ошибки",
+    "sitemapErrors_many": "{{count}} ошибок",
+    "sitemapErrors_other": "{{count}} ошибки",
+    "sitemapWarnings_zero": "{{count}} предупреждений",
+    "sitemapWarnings_two": "{{count}} предупреждения",
+    "sitemapWarnings_few": "{{count}} предупреждения",
+    "sitemapWarnings_many": "{{count}} предупреждений",
+    "sitemapWarnings_other": "{{count}} предупреждения",
+    "sitemapProcessed_zero": "Отправлено URL: {{count}}",
+    "sitemapProcessed_two": "Отправлено URL: {{count}}",
+    "sitemapProcessed_few": "Отправлено URL: {{count}}",
+    "sitemapProcessed_many": "Отправлено URL: {{count}}",
+    "sitemapProcessed_other": "Отправлено URL: {{count}}"
   },
   "aiVisibilityBlock": {
     "title": "Видимость в AI",
@@ -214,8 +262,13 @@
     "unansweredQuestions": "Вопросы без ответа",
     "localPack": "Локальный блок карт",
     "notRanked": "Не в блоке карт",
-    "packSize": "{{count}} результатов",
-    "noData": "Нет данных"
+    "packSize_one": "{{count}} результат",
+    "noData": "Нет данных",
+    "packSize_zero": "{{count}} результатов",
+    "packSize_two": "{{count}} результата",
+    "packSize_few": "{{count}} результата",
+    "packSize_many": "{{count}} результатов",
+    "packSize_other": "{{count}} результата"
   },
   "exportUi": {
     "trigger": "Экспортировать или поделиться", "loading": "Загрузка вариантов экспорта…", "preparing": "Подготовка файла…", "ready": "Экспорт готов. Копия также сохранена в разделе «Экспорт и общие ссылки».", "unavailable": "Экспорт недоступен", "empty": "Пока нечего экспортировать", "formatsLabel": "Форматы файлов",
@@ -227,7 +280,12 @@
     "errors": { "capabilities": "Не удалось загрузить варианты экспорта.", "create": "Не удалось экспортировать отчёт. Сузьте область и повторите попытку.", "download": "Не удалось скачать сохранённый файл.", "list": "Не удалось загрузить сохранённые экспорты.", "delete": "Не удалось удалить сохранённый экспорт.", "share": "Не удалось создать общую ссылку.", "revoke": "Не удалось отозвать общую ссылку.", "copy": "Не удалось скопировать ссылку." },
     "share": { "action": "Создать общую ссылку", "title": "Поделиться неизменяемым отчётом", "description": "Выберите, что смогут открыть получатели. После создания ссылки отчёт не изменится.", "locale": "Язык отчёта", "expiry": "Срок действия", "expiryHelp": "Выберите от одного до 90 дней.", "permissions": "Разрешённые форматы", "create": "Создать ссылку", "creating": "Создание ссылки…", "showOnce": "Скопируйте ссылку сейчас", "linkLabel": "Общая ссылка", "copy": "Скопировать ссылку", "copied": "Скопировано", "savedWithoutToken": "В целях безопасности RankMeFast не хранит читаемую ссылку. Её можно отозвать в центре экспорта.", "existing": "Ссылки для этого снимка", "refresh": "Обновить" },
     "confirm": { "revokeTitle": "Отозвать эту ссылку?", "revokeBody": "Доступ по ней прекратится немедленно.", "deleteTitle": "Удалить сохранённый экспорт?", "deleteBody": "Файл перестанет работать, а все связанные ссылки будут отозваны." },
-    "center": { "title": "Экспорт и общие ссылки", "description": "Скачивайте снимки отчётов и управляйте публичными ссылками.", "tabsLabel": "Разделы центра экспорта", "downloads": "Загрузки", "shares": "Общие ссылки", "disabledTitle": "Новые экспорты приостановлены", "disabledBody": "Существующие файлы могут оставаться доступными, но новые файлы и ссылки сейчас создать нельзя.", "emptyDownloadsTitle": "Сохранённых экспортов пока нет", "emptyDownloadsBody": "Создайте экспорт в любом отчёте через меню экспорта и общего доступа.", "emptySharesTitle": "Общих ссылок пока нет", "emptySharesBody": "Поделитесь доступным отчётом, чтобы управлять ссылкой здесь.", "deletedReport": "Удалённый или просроченный отчёт", "noSite": "Весь аккаунт", "more": "Загрузить ещё", "expiresValue": "Истекает {{date}}", "views": "Просмотров: {{count}}", "columns": { "report": "Отчёт", "site": "Сайт", "format": "Формат", "created": "Создан", "expires": "Истекает", "actions": "Действия" } }
+    "center": { "title": "Экспорт и общие ссылки", "description": "Скачивайте снимки отчётов и управляйте публичными ссылками.", "tabsLabel": "Разделы центра экспорта", "downloads": "Загрузки", "shares": "Общие ссылки", "disabledTitle": "Новые экспорты приостановлены", "disabledBody": "Существующие файлы могут оставаться доступными, но новые файлы и ссылки сейчас создать нельзя.", "emptyDownloadsTitle": "Сохранённых экспортов пока нет", "emptyDownloadsBody": "Создайте экспорт в любом отчёте через меню экспорта и общего доступа.", "emptySharesTitle": "Общих ссылок пока нет", "emptySharesBody": "Поделитесь доступным отчётом, чтобы управлять ссылкой здесь.", "deletedReport": "Удалённый или просроченный отчёт", "noSite": "Весь аккаунт", "more": "Загрузить ещё", "expiresValue": "Истекает {{date}}", "views_one": "Просмотров: {{count}}", "columns": { "report": "Отчёт", "site": "Сайт", "format": "Формат", "created": "Создан", "expires": "Истекает", "actions": "Действия" },
+      "views_zero": "Просмотров: {{count}}",
+      "views_two": "Просмотров: {{count}}",
+      "views_few": "Просмотров: {{count}}",
+      "views_many": "Просмотров: {{count}}",
+      "views_other": "Просмотров: {{count}}" }
   },
   "publicShare": {
     "report": "Общий отчёт",
@@ -267,5 +325,36 @@
     "title": "Запустите первый аудит",
     "description": "Мы один раз просканируем сайт и покажем, что исправить, за чем следить и что уже в порядке.",
     "confirm": "Начать аудит"
-  }
+  },
+  "findingStatus": "{{bucket}} · {{severity}}",
+  "progress": {"upTo_zero": "Сканируем до {{cap}} страниц.",
+    "upTo_one": "Сканируем до {{cap}} страницы.",
+    "upTo_two": "Сканируем до {{cap}} страниц.",
+    "upTo_few": "Сканируем до {{cap}} страниц.",
+    "upTo_many": "Сканируем до {{cap}} страниц.",
+    "upTo_other": "Сканируем до {{cap}} страниц."},
+  "dismissed": {"title_zero": "Отклонённые ({{count}})",
+    "title_one": "Отклонённые ({{count}})",
+    "title_two": "Отклонённые ({{count}})",
+    "title_few": "Отклонённые ({{count}})",
+    "title_many": "Отклонённые ({{count}})",
+    "title_other": "Отклонённые ({{count}})",
+    "stillDetected_zero": "Всё ещё обнаружено в последнем аудите: затронуто {{count}} страницы.",
+    "stillDetected_one": "Всё ещё обнаружено в последнем аудите: затронута {{count}} страница.",
+    "stillDetected_two": "Всё ещё обнаружено в последнем аудите: затронуто {{count}} страницы.",
+    "stillDetected_few": "Всё ещё обнаружено в последнем аудите: затронуто {{count}} страницы.",
+    "stillDetected_many": "Всё ещё обнаружено в последнем аудите: затронуто {{count}} страниц.",
+    "stillDetected_other": "Всё ещё обнаружено в последнем аудите: затронуто {{count}} страницы.",
+    "resurfaced_zero": "Отклонено, но теперь затронуто ещё {{count}} страницы.",
+    "resurfaced_one": "Отклонено, но теперь затронута ещё {{count}} страница.",
+    "resurfaced_two": "Отклонено, но теперь затронуто ещё {{count}} страницы.",
+    "resurfaced_few": "Отклонено, но теперь затронуты ещё {{count}} страницы.",
+    "resurfaced_many": "Отклонено, но теперь затронуто ещё {{count}} страниц.",
+    "resurfaced_other": "Отклонено, но теперь затронуто ещё {{count}} страницы."},
+  "stale": {"title_zero": "Последний аудит был {{count}} дней назад",
+    "title_one": "Последний аудит был {{count}} день назад",
+    "title_two": "Последний аудит был {{count}} дня назад",
+    "title_few": "Последний аудит был {{count}} дня назад",
+    "title_many": "Последний аудит был {{count}} дней назад",
+    "title_other": "Последний аудит был {{count}} дня назад"}
 }

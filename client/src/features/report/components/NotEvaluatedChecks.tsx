@@ -1,3 +1,4 @@
+import { Bdi } from '@shared/components/Bdi';
 /**
  * Checks the audit could not run because their data source is missing
  * (Search Console not connected, no review source, no field data, …).
@@ -105,7 +106,7 @@ export const NotEvaluatedChecks = ({ findings }: NotEvaluatedChecksProps) => {
                 data-rule-id={finding.ruleId}
               >
                 <span className="min-w-0">
-                  <span className="block text-sm font-medium">{finding.copy.title}</span>
+                  <span className="block text-sm font-medium"><Bdi>{finding.copy.title}</Bdi></span>
                   <span className="text-muted-foreground block text-xs">
                     {t(`notEvaluated.sources.${notEvaluatedSource(finding)}`, {
                       file: probe?.file,

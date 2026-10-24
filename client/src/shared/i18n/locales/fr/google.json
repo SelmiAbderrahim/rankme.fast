@@ -38,8 +38,13 @@
   "revoke": {
     "cta": "Révoquer l’accès Google partout",
     "confirmTitle": "Révoquer la connexion Google partagée ?",
-    "confirmBody": "Cela révoque l’accès Google et dissocie les {{count}} sites connectés. Cette action ne peut pas être limitée au site actuel.",
-    "confirm": "Révoquer partout"
+    "confirmBody_one": "Cela révoque l’accès Google et dissocie le {{count}} site connecté. Cette action ne peut pas être limitée au site actuel.",
+    "confirm": "Révoquer partout",
+    "confirmBody_zero": "Cela révoque l’accès Google et dissocie le {{count}} site connecté. Cette action ne peut pas être limitée au site actuel.",
+    "confirmBody_two": "Cela révoque l’accès Google et dissocie les {{count}} sites connectés. Cette action ne peut pas être limitée au site actuel.",
+    "confirmBody_few": "Cela révoque l’accès Google et dissocie les {{count}} sites connectés. Cette action ne peut pas être limitée au site actuel.",
+    "confirmBody_many": "Cela révoque l’accès Google et dissocie les {{count}} sites connectés. Cette action ne peut pas être limitée au site actuel.",
+    "confirmBody_other": "Cela révoque l’accès Google et dissocie les {{count}} sites connectés. Cette action ne peut pas être limitée au site actuel."
   },
   "autoMatch": {
     "queued": "Vérification des propriétés Google de ce site…",
@@ -86,7 +91,7 @@
     "viewAllLabel": "Tout afficher — {{section}}",
     "sitemapsLink": "Voir les sitemaps",
     "asOf": "Données jusqu'au {{date}}",
-    "previousPeriod": "Période précédente : {{clicks}} clics · {{impressions}} impressions",
+    "previousPeriod": "Période précédente — clics : {{clicks}} · impressions : {{impressions}}",
     "reportLink": "Voir toutes les données sur votre rapport",
     "emptyTitle": "Pas encore de données",
     "emptyCta": "Gérer la connexion",
@@ -98,10 +103,10 @@
     "refreshError": "Impossible d'actualiser vos données de recherche. Réessayez dans un instant.",
     "refreshedJustNow": "Mis à jour à l'instant",
     "timeseriesTitle": "Clics et impressions au fil du temps",
-    "timeseriesSubtitle": "Totaux quotidiens des {{days}} derniers jours.",
+    "timeseriesSubtitle_one": "Totaux quotidiens du dernier jour ({{days}}).",
     "timeseriesEmpty": "Pas encore de données quotidiennes.",
-    "timeseriesChartLabel": "{{metric}} par jour sur les {{days}} derniers jours",
-    "timeseriesTableCaption": "Performance de recherche quotidienne des {{days}} derniers jours",
+    "timeseriesChartLabel_one": "{{metric}} par jour sur le dernier jour ({{days}})",
+    "timeseriesTableCaption_one": "Performance de recherche quotidienne du dernier jour ({{days}})",
     "tableDate": "Date",
     "metricLabel": "Choisir une métrique à afficher",
     "countriesTitle": "Principaux pays",
@@ -117,7 +122,22 @@
       "mobile": "Mobile",
       "tablet": "Tablette",
       "unknown": "Autre"
-    }
+    },
+    "timeseriesSubtitle_zero": "Totaux quotidiens des {{days}} derniers jours.",
+    "timeseriesSubtitle_two": "Totaux quotidiens des {{days}} derniers jours.",
+    "timeseriesSubtitle_few": "Totaux quotidiens des {{days}} derniers jours.",
+    "timeseriesSubtitle_many": "Totaux quotidiens des {{days}} derniers jours.",
+    "timeseriesSubtitle_other": "Totaux quotidiens des {{days}} derniers jours.",
+    "timeseriesChartLabel_zero": "{{metric}} par jour sur les {{days}} derniers jours",
+    "timeseriesChartLabel_two": "{{metric}} par jour sur les {{days}} derniers jours",
+    "timeseriesChartLabel_few": "{{metric}} par jour sur les {{days}} derniers jours",
+    "timeseriesChartLabel_many": "{{metric}} par jour sur les {{days}} derniers jours",
+    "timeseriesChartLabel_other": "{{metric}} par jour sur les {{days}} derniers jours",
+    "timeseriesTableCaption_zero": "Performance de recherche quotidienne des {{days}} derniers jours",
+    "timeseriesTableCaption_two": "Performance de recherche quotidienne des {{days}} derniers jours",
+    "timeseriesTableCaption_few": "Performance de recherche quotidienne des {{days}} derniers jours",
+    "timeseriesTableCaption_many": "Performance de recherche quotidienne des {{days}} derniers jours",
+    "timeseriesTableCaption_other": "Performance de recherche quotidienne des {{days}} derniers jours"
   },
   "analytics": {
     "title": "Google Analytics ({{days}} derniers jours)",
@@ -127,16 +147,16 @@
     "keyEvents": "Événements clés",
     "engagementRateLabel": "Taux d'engagement",
     "engagementRateLine": "Taux d'engagement : {{rate}}",
-    "previousPeriod": "Période précédente : {{sessions}} sessions · {{activeUsers}} utilisateurs actifs",
+    "previousPeriod": "Période précédente — sessions : {{sessions}} · utilisateurs actifs : {{activeUsers}}",
     "emptyTitle": "Pas encore de données Analytics",
     "empty": "Pas encore de données Analytics. Les données apparaissent peu après la connexion de votre propriété — essayez d'actualiser.",
     "error": "Impossible de charger votre résumé Analytics. Réessayez dans un instant.",
     "refresh": "Actualiser les données Analytics",
     "refreshError": "Impossible d'actualiser vos données Analytics. Réessayez dans un instant.",
     "timeseriesTitle": "Sessions et utilisateurs actifs au fil du temps",
-    "timeseriesSubtitle": "Totaux quotidiens des {{days}} derniers jours.",
-    "timeseriesChartLabel": "{{metric}} par jour sur les {{days}} derniers jours",
-    "timeseriesTableCaption": "Performance Analytics quotidienne des {{days}} derniers jours",
+    "timeseriesSubtitle_one": "Totaux quotidiens du dernier jour ({{days}}).",
+    "timeseriesChartLabel_one": "{{metric}} par jour sur le dernier jour ({{days}})",
+    "timeseriesTableCaption_one": "Performance Analytics quotidienne du dernier jour ({{days}})",
     "channelsTitle": "Canaux",
     "channelsEmpty": "Pas encore de données par canal.",
     "channelsTableCaption": "Sessions par canal",
@@ -167,7 +187,28 @@
     "propertiesError": "Impossible de charger vos propriétés Analytics. Réessayez dans un instant.",
     "setPropertyError": "Impossible d'enregistrer cette propriété Analytics. Réessayez dans un instant.",
     "settingsTitle": "Google Analytics",
-    "settingsSubtitle": "Choisissez la propriété GA4 que RankMeFast utilise."
+    "settingsSubtitle": "Choisissez la propriété GA4 que RankMeFast utilise.",
+    "timeseriesSubtitle_zero": "Totaux quotidiens des {{days}} derniers jours.",
+    "timeseriesSubtitle_two": "Totaux quotidiens des {{days}} derniers jours.",
+    "timeseriesSubtitle_few": "Totaux quotidiens des {{days}} derniers jours.",
+    "timeseriesSubtitle_many": "Totaux quotidiens des {{days}} derniers jours.",
+    "timeseriesSubtitle_other": "Totaux quotidiens des {{days}} derniers jours.",
+    "timeseriesChartLabel_zero": "{{metric}} par jour sur les {{days}} derniers jours",
+    "timeseriesChartLabel_two": "{{metric}} par jour sur les {{days}} derniers jours",
+    "timeseriesChartLabel_few": "{{metric}} par jour sur les {{days}} derniers jours",
+    "timeseriesChartLabel_many": "{{metric}} par jour sur les {{days}} derniers jours",
+    "timeseriesChartLabel_other": "{{metric}} par jour sur les {{days}} derniers jours",
+    "timeseriesTableCaption_zero": "Performance Analytics quotidienne des {{days}} derniers jours",
+    "timeseriesTableCaption_two": "Performance Analytics quotidienne des {{days}} derniers jours",
+    "timeseriesTableCaption_few": "Performance Analytics quotidienne des {{days}} derniers jours",
+    "timeseriesTableCaption_many": "Performance Analytics quotidienne des {{days}} derniers jours",
+    "timeseriesTableCaption_other": "Performance Analytics quotidienne des {{days}} derniers jours",
+    "staleBody_zero": "Les données Google Analytics les plus récentes affichées ici datent du {{date}}, alors que les données jusqu'au {{expected}} devraient déjà être disponibles : ces chiffres ne couvrent donc pas les {{days}} derniers jours. Actualisez pour relancer la synchronisation. Si la date ne change pas, reconnectez Google.",
+    "staleBody_one": "Les données Google Analytics les plus récentes affichées ici datent du {{date}}, alors que les données jusqu'au {{expected}} devraient déjà être disponibles : ces chiffres ne couvrent donc pas le dernier jour ({{days}}). Actualisez pour relancer la synchronisation. Si la date ne change pas, reconnectez Google.",
+    "staleBody_two": "Les données Google Analytics les plus récentes affichées ici datent du {{date}}, alors que les données jusqu'au {{expected}} devraient déjà être disponibles : ces chiffres ne couvrent donc pas les {{days}} derniers jours. Actualisez pour relancer la synchronisation. Si la date ne change pas, reconnectez Google.",
+    "staleBody_few": "Les données Google Analytics les plus récentes affichées ici datent du {{date}}, alors que les données jusqu'au {{expected}} devraient déjà être disponibles : ces chiffres ne couvrent donc pas les {{days}} derniers jours. Actualisez pour relancer la synchronisation. Si la date ne change pas, reconnectez Google.",
+    "staleBody_many": "Les données Google Analytics les plus récentes affichées ici datent du {{date}}, alors que les données jusqu'au {{expected}} devraient déjà être disponibles : ces chiffres ne couvrent donc pas les {{days}} derniers jours. Actualisez pour relancer la synchronisation. Si la date ne change pas, reconnectez Google.",
+    "staleBody_other": "Les données Google Analytics les plus récentes affichées ici datent du {{date}}, alors que les données jusqu'au {{expected}} devraient déjà être disponibles : ces chiffres ne couvrent donc pas les {{days}} derniers jours. Actualisez pour relancer la synchronisation. Si la date ne change pas, reconnectez Google."
   },
   "searchDetail": {
     "back": "Vue d'ensemble",
@@ -205,8 +246,18 @@
       },
       "status": {
         "ok": "OK",
-        "errors": "{{n}} erreurs",
-        "warnings": "{{n}} avertissements"
+        "errors_one": "{{n}} erreur",
+        "warnings_one": "{{n}} avertissement",
+        "errors_zero": "{{n}} erreur",
+        "errors_two": "{{n}} erreurs",
+        "errors_few": "{{n}} erreurs",
+        "errors_many": "{{n}} erreurs",
+        "errors_other": "{{n}} erreurs",
+        "warnings_zero": "{{n}} avertissement",
+        "warnings_two": "{{n}} avertissements",
+        "warnings_few": "{{n}} avertissements",
+        "warnings_many": "{{n}} avertissements",
+        "warnings_other": "{{n}} avertissements"
       }
     }
   },
@@ -217,5 +268,11 @@
       "cannibalization": "Les rapports de cannibalisation de mots-clés reposent sur vos données Search Console. Connectez Search Console à ce site pour en générer un. Les rapports déjà enregistrés restent consultables.",
       "internalLinks": "Les suggestions de liens internes s’appuient sur vos requêtes Search Console pour choisir les pages qui comptent. Connectez Search Console à ce site pour obtenir des suggestions fondées sur de vraies recherches."
     }
-  }
+  },
+  "breakdown": {"other_zero": "Autres ({{hidden}} de plus)",
+    "other_one": "Autres ({{hidden}} de plus)",
+    "other_two": "Autres ({{hidden}} de plus)",
+    "other_few": "Autres ({{hidden}} de plus)",
+    "other_many": "Autres ({{hidden}} de plus)",
+    "other_other": "Autres ({{hidden}} de plus)"}
 }

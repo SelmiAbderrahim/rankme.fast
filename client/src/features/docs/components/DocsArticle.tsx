@@ -1,3 +1,4 @@
+import { Bdi } from '@shared/components/Bdi';
 import { useEffect, useRef } from 'react';
 import { Link, useLoaderData, useOutletContext } from 'react-router-dom';
 import { ArrowLeft, ArrowRight, ChevronDown, Copy, FileCode2, FileText, Link2 } from 'lucide-react';
@@ -74,7 +75,7 @@ export const DocsArticle = () => {
               <BreadcrumbSeparator />
               <BreadcrumbItem><BreadcrumbLink asChild><Link to={docsUrl('index', catalog.locale)}>{t('breadcrumbs.docs')}</Link></BreadcrumbLink></BreadcrumbItem>
               <BreadcrumbSeparator />
-              <BreadcrumbItem><BreadcrumbPage>{doc.title}</BreadcrumbPage></BreadcrumbItem>
+              <BreadcrumbItem><BreadcrumbPage><Bdi>{doc.title}</Bdi></BreadcrumbPage></BreadcrumbItem>
             </BreadcrumbList>
           </Breadcrumb>
           <p className="text-xs font-semibold uppercase tracking-[0.14em] text-highlight">{t(`sections.${doc.section}`)}</p>
@@ -124,20 +125,20 @@ export const DocsArticle = () => {
               </DropdownMenuContent>
             </DropdownMenu>}
           />
-          <p className="mt-5 border-b pb-8 text-lg leading-8 text-muted-foreground">{doc.description}</p>
+          <p className="mt-5 border-b pb-8 text-lg leading-8 text-muted-foreground"><Bdi>{doc.description}</Bdi></p>
           <div ref={articleBodyRef} className="mt-9"><MarkdownContent body={doc.body} locale={catalog.locale} /></div>
 
           <nav aria-label={t('articleNavigation')} className="mt-14 grid gap-3 border-t pt-7 sm:grid-cols-2">
             {previous ? (
               <Link to={docsUrl(previous.slug, catalog.locale)} className="group border p-4 hover:bg-muted/60">
                 <span className="flex items-center gap-2 text-xs uppercase tracking-wide text-muted-foreground"><ArrowLeft className="size-4 rtl:rotate-180" />{t('previous')}</span>
-                <span className="mt-2 block font-serif text-lg font-semibold">{previous.title}</span>
+                <span className="mt-2 block font-serif text-lg font-semibold"><Bdi>{previous.title}</Bdi></span>
               </Link>
             ) : <span />}
             {next ? (
               <Link to={docsUrl(next.slug, catalog.locale)} className="group border p-4 text-end hover:bg-muted/60">
                 <span className="flex items-center justify-end gap-2 text-xs uppercase tracking-wide text-muted-foreground">{t('next')}<ArrowRight className="size-4 rtl:rotate-180" /></span>
-                <span className="mt-2 block font-serif text-lg font-semibold">{next.title}</span>
+                <span className="mt-2 block font-serif text-lg font-semibold"><Bdi>{next.title}</Bdi></span>
               </Link>
             ) : null}
           </nav>
@@ -148,7 +149,7 @@ export const DocsArticle = () => {
             <nav aria-label={t('onThisPage')} className="sticky top-24 border-s ps-5">
               <h2 className="mb-3 text-xs font-semibold uppercase tracking-[0.14em]">{t('onThisPage')}</h2>
               <ul className="space-y-2 text-sm text-muted-foreground">
-                {toc.map((item) => <li key={`${item.id}-${item.label}`} className={item.level === 3 ? 'ps-3' : undefined}><a href={`#${item.id}`} className="transition-colors hover:text-foreground">{item.label}</a></li>)}
+                {toc.map((item) => <li key={`${item.id}-${item.label}`} className={item.level === 3 ? 'ps-3' : undefined}><a href={`#${item.id}`} className="transition-colors hover:text-foreground"><Bdi>{item.label}</Bdi></a></li>)}
               </ul>
             </nav>
           </aside>

@@ -74,7 +74,13 @@
       "saving": "Сохранение…",
       "cancel": "Отмена"
     },
-    "joinedOn": "Присоединился {{date}}"
+    "joinedOn": "Присоединился {{date}}",
+    "total_zero": "Нет участников",
+    "total_one": "{{count}} участник",
+    "total_two": "{{count}} участника",
+    "total_few": "{{count}} участника",
+    "total_many": "{{count}} участников",
+    "total_other": "{{count}} участника"
   },
   "accept": {
     "title": "Принять приглашение",
@@ -125,7 +131,13 @@
     "siteCount_two": "{{count}} сайта",
     "siteCount_few": "{{count}} сайта",
     "siteCount_many": "{{count}} сайтов",
-    "siteCount_other": "{{count}} сайта"
+    "siteCount_other": "{{count}} сайта",
+    "outsideYourAccess_zero": "Ещё {{count}} сайтов вне вашего доступа",
+    "outsideYourAccess_one": "Ещё {{count}} сайт вне вашего доступа",
+    "outsideYourAccess_two": "Ещё {{count}} сайта вне вашего доступа",
+    "outsideYourAccess_few": "Ещё {{count}} сайта вне вашего доступа",
+    "outsideYourAccess_many": "Ещё {{count}} сайтов вне вашего доступа",
+    "outsideYourAccess_other": "Ещё {{count}} сайта вне вашего доступа"
   },
   "decision": {
     "loading": "Проверяем приглашение…",
@@ -159,7 +171,7 @@
   },
   "inbox": {
     "buttonLabel": "Приглашения в команды",
-    "buttonLabelWithCount": "Приглашения в команды: {{count}}",
+    "buttonLabelWithCount_one": "Приглашения в команды: {{count}}",
     "title": "Приглашения в команды",
     "description": "Просмотрите приглашения, ожидающие вашего решения.",
     "emptyTitle": "Нет ожидающих приглашений",
@@ -173,6 +185,17 @@
     "rejectTitle": "Отклонить это приглашение?",
     "rejectBody": "Вы не присоединитесь к {{team}}.",
     "cancel": "Отмена",
-    "loadFailed": "Не удалось загрузить приглашения в команды."
-  }
+    "loadFailed": "Не удалось загрузить приглашения в команды.",
+    "buttonLabelWithCount_zero": "Приглашения в команды: {{count}}",
+    "buttonLabelWithCount_two": "Приглашения в команды: {{count}}",
+    "buttonLabelWithCount_few": "Приглашения в команды: {{count}}",
+    "buttonLabelWithCount_many": "Приглашения в команды: {{count}}",
+    "buttonLabelWithCount_other": "Приглашения в команды: {{count}}"
+  },
+  "received": {"pending_zero": "{{count}} приглашения из других команд ждут вашего ответа.",
+    "pending_one": "{{count}} приглашение из другой команды ждёт вашего ответа.",
+    "pending_two": "{{count}} приглашения из других команд ждут вашего ответа.",
+    "pending_few": "{{count}} приглашения из других команд ждут вашего ответа.",
+    "pending_many": "{{count}} приглашений из других команд ждут вашего ответа.",
+    "pending_other": "{{count}} приглашения из других команд ждут вашего ответа."}
 }

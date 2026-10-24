@@ -76,8 +76,13 @@
   },
   "runs": {
     "snapshot": "内容清单：{{date}}",
-    "suggestionCount": "{{count}} 条建议",
-    "open": "打开运行"
+    "suggestionCount_one": "{{count}} 条建议",
+    "open": "打开运行",
+    "suggestionCount_zero": "{{count}} 条建议",
+    "suggestionCount_two": "{{count}} 条建议",
+    "suggestionCount_few": "{{count}} 条建议",
+    "suggestionCount_many": "{{count}} 条建议",
+    "suggestionCount_other": "{{count}} 条建议"
   },
   "flags": {
     "orphan": "孤立页面",

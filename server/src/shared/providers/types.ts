@@ -94,6 +94,20 @@ export interface AuditPageTiming {
     timeToInteractiveMs?: number;
     fetchMs?: number;
 }
+/** A validated address that answered with a redirect status. */
+export interface RedirectHop {
+    url: string;
+    status: number;
+}
+export const PAGE_FETCH_FAILURE_KINDS = ['http_error', 'redirect_loop', 'redirect_limit', 'unsafe_redirect', 'robots_blocked', 'timeout', 'non_html', 'unreachable'] as const;
+export type PageFetchFailureKind = (typeof PAGE_FETCH_FAILURE_KINDS)[number];
+/** Observed request evidence, never an inferred failure. */
+export interface PageFetchFailure {
+    kind: PageFetchFailureKind;
+    statusCode?: number;
+    contentType?: string;
+}
+
 export interface AuditPage {
     url: string;
     statusCode: number;

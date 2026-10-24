@@ -26,12 +26,29 @@
     "dofollowYes": "Dofollow",
     "dofollowNo": "Nofollow",
     "loadMore": "Mehr laden",
-    "loading": "Wird geladen…"
+    "loading": "Wird geladen…",
+    "scope_zero": "{{shown}} von {{total}} Backlinks angezeigt (ein Link pro verweisender Domain)",
+    "scope_one": "{{shown}} von {{total}} Backlink angezeigt (ein Link pro verweisender Domain)",
+    "scope_two": "{{shown}} von {{total}} Backlinks angezeigt (ein Link pro verweisender Domain)",
+    "scope_few": "{{shown}} von {{total}} Backlinks angezeigt (ein Link pro verweisender Domain)",
+    "scope_many": "{{shown}} von {{total}} Backlinks angezeigt (ein Link pro verweisender Domain)",
+    "scope_other": "{{shown}} von {{total}} Backlinks angezeigt (ein Link pro verweisender Domain)",
+    "scopeNoTotal_zero": "{{shown}} Backlinks angezeigt (ein Link pro verweisender Domain)",
+    "scopeNoTotal_one": "{{shown}} Backlink angezeigt (ein Link pro verweisender Domain)",
+    "scopeNoTotal_two": "{{shown}} Backlinks angezeigt (ein Link pro verweisender Domain)",
+    "scopeNoTotal_few": "{{shown}} Backlinks angezeigt (ein Link pro verweisender Domain)",
+    "scopeNoTotal_many": "{{shown}} Backlinks angezeigt (ein Link pro verweisender Domain)",
+    "scopeNoTotal_other": "{{shown}} Backlinks angezeigt (ein Link pro verweisender Domain)"
   },
   "refresh": {
     "button": "Aktualisieren",
-    "cooldown": "Warten Sie {{seconds}} s vor der nächsten Aktualisierung.",
-    "failed": "Aktualisierung derzeit nicht möglich. Ihre letzten Daten werden weiterhin angezeigt."
+    "cooldown_one": "Warten Sie {{seconds}} s vor der nächsten Aktualisierung.",
+    "failed": "Aktualisierung derzeit nicht möglich. Ihre letzten Daten werden weiterhin angezeigt.",
+    "cooldown_zero": "Warten Sie {{seconds}} s vor der nächsten Aktualisierung.",
+    "cooldown_two": "Warten Sie {{seconds}} s vor der nächsten Aktualisierung.",
+    "cooldown_few": "Warten Sie {{seconds}} s vor der nächsten Aktualisierung.",
+    "cooldown_many": "Warten Sie {{seconds}} s vor der nächsten Aktualisierung.",
+    "cooldown_other": "Warten Sie {{seconds}} s vor der nächsten Aktualisierung."
   },
   "locked": {
     "title": "Führen Sie ein Upgrade durch, um Backlinks freizuschalten",
@@ -70,11 +87,11 @@
     "errors": { "title": "Link-Lücke konnte nicht geladen werden", "preview": "Vorschau konnte nicht erstellt werden.", "submit": "Link-Lücken-Analyse konnte nicht gestartet werden.", "load": "Gespeicherte Link-Lücken-Analyse konnte nicht geladen werden." }
   },
   "toxicity": {
-    "start": { "title": "Backlink-Beobachtungen prüfen", "description": "Bewerte bis zu 1.000 gespeicherte Backlink-Zeilen mit einem deterministischen Raster, bevor du den Export zusammenstellst." },
+    "start": { "title": "Backlink-Beobachtungen prüfen", "description": "Bewerten Sie bis zu 1.000 gespeicherte Backlink-Zeilen mit einem deterministischen Raster, bevor Sie den Export zusammenstellen." },
     "preview": { "unit": "1 Linkprüfungs-Einheit", "rowClamp": "Bis zu 1.000 Zeilen · 100 bewertete Domains", "available": "Kontingent verfügbar", "capReached": "Kontingent erreicht", "explanation": "Der Lauf nutzt eine toxicity_reviews-Einheit. Nach dem Inklusivkontingent ist das Paket toxicity-reviews-10 verfügbar. Vorschau und Abbruch verbrauchen keine Einheit.", "confirm": "Bestätigen und 1 Einheit nutzen", "cancel": "Abbrechen", "button": "Kosten der Prüfung ansehen" },
     "states": { "lockedTitle": "Upgrade für die Backlink-Prüfung", "lockedBody": "Linkprüfung und Disavow-Datei sind in Pro und Agency verfügbar.", "disabledTitle": "Neue Linkprüfungen sind pausiert", "disabledBody": "Gespeicherte Prüfungen bleiben lesbar, während neue Bewertungen ausgesetzt sind.", "capTitle": "Linkprüfungs-Kontingent erreicht", "capBody": "Füge das Paket toxicity-reviews-10 hinzu oder warte auf die Erneuerung.", "errorTitle": "Linkprüfung konnte nicht geladen werden", "errorBody": "Versuche es gleich noch einmal. Gespeicherte Ergebnisse und frühere Downloads bleiben unverändert.", "listError": "Gespeicherte Linkprüfungen konnten nicht geladen werden.", "runningTitle": "Gespeicherte Backlink-Beobachtungen werden geprüft", "failedTitle": "Linkprüfung angehalten", "providerRefunded": "Der Anbieter ist ausgefallen, bevor eine bewertete Zeile gespeichert wurde. Die reservierte Einheit wurde erstattet.", "ceilingConsumed": "Der Lauf wurde am Kostenlimit gestoppt. Die reservierte Einheit wurde verbraucht und es erfolgte keine automatische Aktion.", "partial": "Teilweise Anbieterbeobachtungen", "emptyTitle": "Keine bewerteten Zeilen", "emptyBody": "Der Lauf wurde ohne gespeicherte bewertete Backlink-Zeile abgeschlossen." },
     "actions": { "viewPlans": "Tarife ansehen", "viewPacks": "Credit-Pakete ansehen", "open": "Öffnen", "back": "Zurück zu einer neuen Prüfung" },
-    "runs": { "title": "Gespeicherte Prüfungen", "description": "Öffne abgeschlossene Prüfungen erneut, ohne eine weitere Einheit zu nutzen.", "date": "Erstellt", "status": "Status", "rows": "Zeilen", "emptyTitle": "Keine gespeicherten Prüfungen", "emptyBody": "Beginne mit einer kostenlosen Kostenvorschau, wenn du bereit bist." },
+    "runs": { "title": "Gespeicherte Prüfungen", "description": "Öffnen Sie gespeicherte Prüfungen erneut, ohne eine weitere Prüfung zu starten.", "date": "Erstellt", "status": "Status", "rows": "Zeilen", "emptyTitle": "Keine gespeicherten Prüfungen", "emptyBody": "Sehen Sie sich eine Prüfungsvorschau an, wenn Sie bereit sind." },
     "filters": { "status": "Prüfungen nach Status filtern", "allStatuses": "Alle Status", "band": "Zeilen nach Rasterband filtern", "allBands": "Alle Bänder" },
     "status": { "queued": "Warteschlange", "running": "Läuft", "succeeded": "Abgeschlossen", "failed": "Fehlgeschlagen" },
     "results": { "title": "Ergebnisse der Linkprüfung", "rubric": "Raster {{version}}", "rowsTitle": "Bewertete Backlink-Zeilen", "observationCopy": "Die Bänder beschreiben gespeicherte Anbieterbeobachtungen nach dem festgelegten Raster. Sie sagen keine Suchmaschinenaktion voraus.", "providerObservation": "Anbieterbeobachtung · deterministisches Raster" },
@@ -82,7 +99,7 @@
     "band": { "clean": "Unauffällig", "watch": "Beobachten", "toxic": "Toxisch" },
     "signal": { "spam_clean": "Wert 0–29", "spam_watch": "Wert 30–59", "spam_toxic": "Wert 60–100", "broken": "Defekt", "dofollow": "Dofollow", "nofollow": "Nofollow" },
     "rationale": { "toggle": "Begründung", "not_requested": "Für diese Zeile wurde keine Begründung angefordert.", "annotated": "Gespeicherte Begründung", "abstained": "Die KI hat sich enthalten; das deterministische Band bleibt unverändert.", "failed": "Keine Begründung verfügbar; das deterministische Band bleibt unverändert." },
-    "disavow": { "title": "Disavow-Datei erstellen", "description": "Toxische Zeilen sind anfangs enthalten. Prüfe jede Zeile und wähle Domain oder exakte URL.", "selectionCaption": "Für die Disavow-Datei verfügbare Zeilen", "include": "Aufnehmen", "scope": "Umfang", "preview": "Live-Dateivorschau", "reviewTitle": "Prüfung vor dem Download erforderlich", "reviewBody": "RankMeFast übermittelt diese Datei niemals. Du musst den Text prüfen, herunterladen und nur dann selbst einreichen, wenn du ihn für angemessen hältst.", "download": ".txt herunterladen", "downloadFailed": "Die Datei konnte nicht erstellt werden. Prüfe deine Auswahl und versuche es erneut.", "includeDomain": "{{domain}} in die Datei aufnehmen", "scopeFor": "Umfang für {{domain}}", "domainScope": "Ganze Domain", "urlScope": "Exakte URL" }
+    "disavow": { "title": "Disavow-Datei erstellen", "description": "Toxische Zeilen sind anfangs enthalten. Prüfen Sie jede Zeile und wählen Sie Domain oder exakte URL.", "selectionCaption": "Für die Disavow-Datei verfügbare Zeilen", "include": "Aufnehmen", "scope": "Umfang", "preview": "Live-Dateivorschau", "reviewTitle": "Prüfung vor dem Download erforderlich", "reviewBody": "RankMeFast übermittelt diese Datei niemals. Sie müssen den Text prüfen, herunterladen und nur dann selbst einreichen, wenn Sie ihn für angemessen halten.", "download": ".txt herunterladen", "downloadFailed": "Die Datei konnte nicht erstellt werden. Prüfen Sie Ihre Auswahl und versuchen Sie es erneut.", "includeDomain": "{{domain}} in die Datei aufnehmen", "scopeFor": "Umfang für {{domain}}", "domainScope": "Ganze Domain", "urlScope": "Exakte URL" }
   },
   "cap": { "reached": "Kein {{metric}}-Kontingent mehr verfügbar", "pack": "{{name}} fügt {{units}} Einheiten für {{price}} hinzu.", "upgrade": "Abrechnungsoptionen ansehen" },
   "killswitch": { "title": "Link-Lücke ist vorübergehend nicht verfügbar", "disabled": "Neue Analysen sind pausiert. Gespeicherte Ergebnisse bleiben lesbar." },

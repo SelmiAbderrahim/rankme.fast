@@ -109,5 +109,11 @@
     "loadFailed": "تعذّر تحميل فحوصاتك الشبكية.",
     "previewFailed": "تعذّر تقدير هذا الفحص.",
     "submitFailed": "تعذّر بدء هذا الفحص."
-  }
+  },
+  "center": {"place": {"resultsLegend_zero": "عدد الأماكن لـ «{{query}}»: {{count}}. اختر المركز:",
+      "resultsLegend_one": "عدد الأماكن لـ «{{query}}»: {{count}}. اختر المركز:",
+      "resultsLegend_two": "عدد الأماكن لـ «{{query}}»: {{count}}. اختر المركز:",
+      "resultsLegend_few": "عدد الأماكن لـ «{{query}}»: {{count}}. اختر المركز:",
+      "resultsLegend_many": "عدد الأماكن لـ «{{query}}»: {{count}}. اختر المركز:",
+      "resultsLegend_other": "عدد الأماكن لـ «{{query}}»: {{count}}. اختر المركز:"}}
 }

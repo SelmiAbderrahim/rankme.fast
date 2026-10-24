@@ -484,8 +484,8 @@ describe('pdf fonts', () => {
       bold: 'NotoSansArabic-Regular.ttf',
     });
     expect(fontFilesFor('zh')).toEqual({
-      regular: 'NotoSansSC-Regular.otf',
-      bold: 'NotoSansSC-Regular.otf',
+      regular: 'NotoSansSC-Regular.ttf',
+      bold: 'NotoSansSC-Regular.ttf',
     });
     expect(fontFilesFor('en')).toEqual({
       regular: 'NotoSans-Regular.ttf',

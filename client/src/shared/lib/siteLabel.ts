@@ -6,7 +6,10 @@
  * `displayName` alone produced blank options (an empty, unselectable-looking
  * row in a Radix `Select`). Whitespace-only names count as empty.
  */
-export const siteLabel = (site: {
+export interface SiteLabelSource {
   displayName?: string | null;
   domain: string;
-}): string => site.displayName?.trim() || site.domain;
+  paused?: boolean;
+}
+
+export const siteLabel = (site: SiteLabelSource): string => site.displayName?.trim() || site.domain;

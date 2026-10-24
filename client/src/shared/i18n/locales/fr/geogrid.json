@@ -109,5 +109,11 @@
     "loadFailed": "Nous n'avons pas pu charger vos scans géogrille.",
     "previewFailed": "Nous n'avons pas pu estimer ce scan.",
     "submitFailed": "Nous n'avons pas pu lancer ce scan."
-  }
+  },
+  "center": {"place": {"resultsLegend_zero": "{{count}} lieux pour « {{query}} ». Choisissez le centre :",
+      "resultsLegend_one": "{{count}} lieu pour « {{query}} ». Choisissez le centre :",
+      "resultsLegend_two": "{{count}} lieux pour « {{query}} ». Choisissez le centre :",
+      "resultsLegend_few": "{{count}} lieux pour « {{query}} ». Choisissez le centre :",
+      "resultsLegend_many": "{{count}} lieux pour « {{query}} ». Choisissez le centre :",
+      "resultsLegend_other": "{{count}} lieux pour « {{query}} ». Choisissez le centre :"}}
 }

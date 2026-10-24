@@ -76,8 +76,13 @@
   },
   "runs": {
     "snapshot": "Inventaire : {{date}}",
-    "suggestionCount": "{{count}} suggestions",
-    "open": "Ouvrir"
+    "suggestionCount_one": "{{count}} suggestion",
+    "open": "Ouvrir",
+    "suggestionCount_zero": "{{count}} suggestion",
+    "suggestionCount_two": "{{count}} suggestions",
+    "suggestionCount_few": "{{count}} suggestions",
+    "suggestionCount_many": "{{count}} suggestions",
+    "suggestionCount_other": "{{count}} suggestions"
   },
   "flags": {
     "orphan": "Orpheline",

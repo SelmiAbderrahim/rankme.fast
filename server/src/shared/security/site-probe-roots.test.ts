@@ -1,5 +1,5 @@
 /**
- * Site probe (issues #16, #17): the site-wide signals the on-page vendor does
+ * Site root-file and address-variant probes: the site-wide signals the on-page vendor does
  * not report — robots.txt sitemap directive, `/llms.txt`, and where each
  * http/https × apex/www address ends up.
  */

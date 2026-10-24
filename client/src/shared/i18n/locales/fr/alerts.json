@@ -22,20 +22,30 @@
   },
   "list": {
     "title": "Vos règles",
-    "capUsed": "{{count}} règles utilisées.",
+    "capUsed_one": "{{count}} règle utilisée.",
     "type": "Type",
     "threshold": "Seuil",
     "channels": "Canaux",
     "state": "État",
     "actions": "Actions",
-    "emailCount": "{{count}} destinataires e-mail",
+    "emailCount_one": "{{count}} destinataire e-mail",
     "secretTail": "clé de signature finissant par {{tail}}",
     "enabled": "Activée",
     "disabled": "Désactivée",
     "enable": "Activer",
     "disable": "Désactiver",
     "viewLog": "Voir le journal",
-    "delete": "Supprimer"
+    "delete": "Supprimer",
+    "capUsed_zero": "{{count}} règle utilisée.",
+    "capUsed_two": "{{count}} règles utilisées.",
+    "capUsed_few": "{{count}} règles utilisées.",
+    "capUsed_many": "{{count}} règles utilisées.",
+    "capUsed_other": "{{count}} règles utilisées.",
+    "emailCount_zero": "{{count}} destinataire e-mail",
+    "emailCount_two": "{{count}} destinataires e-mail",
+    "emailCount_few": "{{count}} destinataires e-mail",
+    "emailCount_many": "{{count}} destinataires e-mail",
+    "emailCount_other": "{{count}} destinataires e-mail"
   },
   "builder": {
     "title": "Nouvelle règle",
@@ -68,7 +78,7 @@
     "rankPair": "Position {{before}} le {{beforeAt}}, puis {{after}} le {{afterAt}}.",
     "linkPair": "{{beforeCount}} domaines le {{beforeAt}}, puis {{afterCount}} le {{afterAt}}.",
     "notRanked": "au-delà des 100 premiers résultats",
-    "domainCount": "{{count}} domaines modifiés",
+    "domainCount_one": "{{count}} domaine modifié",
     "attempt": "Tentative {{attempt}}",
     "statusLabel": {
       "pending": "Envoi en cours",
@@ -91,12 +101,17 @@
       "unsafe_url": "Cette adresse n’est plus sûre à joindre.",
       "channel_timeout": "Le canal a mis trop de temps à répondre.",
       "retries_exhausted": "Nous avons arrêté après trois échecs."
-    }
+    },
+    "domainCount_zero": "{{count}} domaine modifié",
+    "domainCount_two": "{{count}} domaines modifiés",
+    "domainCount_few": "{{count}} domaines modifiés",
+    "domainCount_many": "{{count}} domaines modifiés",
+    "domainCount_other": "{{count}} domaines modifiés"
   },
   "states": {
     "cap": {
       "title": "Limite de règles atteinte",
-      "body": "Vous avez utilisé toutes les règles d’alerte de votre forfait."
+      "body": "Il est impossible d’ajouter une autre règle d’alerte pour le moment."
     },
     "tierLocked": {
       "title": "Ce canal exige un forfait supérieur",

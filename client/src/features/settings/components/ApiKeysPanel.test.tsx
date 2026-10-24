@@ -1,3 +1,4 @@
+import { isolateText } from '@shared/lib/bidi';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 import { render, screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
@@ -369,7 +370,7 @@ describe('ApiKeysPanel', () => {
     await userEvent.click(screen.getByRole('button', { name: 'Revoke' }));
     // Confirm dialog carries the key name.
     expect(
-      await screen.findByText(/“CI pipeline” will stop working immediately/),
+      await screen.findByText(`“${isolateText('CI pipeline')}” will stop working immediately. This cannot be undone.`),
     ).toBeInTheDocument();
     await userEvent.click(screen.getByRole('button', { name: 'Revoke' }));
     expect(await screen.findByText('API key revoked.')).toBeInTheDocument();

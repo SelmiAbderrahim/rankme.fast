@@ -1,3 +1,5 @@
+import { isolateText } from '@shared/lib/bidi';
+import { Bdi } from '@shared/components/Bdi';
 import { useCallback, useEffect, useMemo, useState, type FormEvent } from 'react';
 import { useTranslation } from 'react-i18next';
 import {
@@ -758,7 +760,7 @@ export function ClientReportsPanel({ siteId }: ClientReportsPanelProps) {
                 >
                   <div className="min-w-0">
                     <div className="flex flex-wrap items-center gap-2">
-                      <p className="font-medium break-words">{schedule.name}</p>
+                      <p className="font-medium break-words"><Bdi>{schedule.name}</Bdi></p>
                       {!schedule.enabled ? (
                         <StatusChip>{t('clientReports:schedules.disabled')}</StatusChip>
                       ) : null}
@@ -805,7 +807,7 @@ export function ClientReportsPanel({ siteId }: ClientReportsPanelProps) {
                           </AlertDialogTitle>
                           <AlertDialogDescription>
                             {t('clientReports:schedules.deleteDescription', {
-                              name: schedule.name,
+                              name: isolateText(schedule.name),
                             })}
                           </AlertDialogDescription>
                         </AlertDialogHeader>
@@ -859,7 +861,7 @@ export function ClientReportsPanel({ siteId }: ClientReportsPanelProps) {
                       <TableCell className="break-all">{delivery.recipient}</TableCell>
                       <TableCell>
                         <StatusChip tone={statusTone(delivery.status)} dot>
-                          {delivery.label}
+                          <Bdi>{delivery.label}</Bdi>
                         </StatusChip>
                       </TableCell>
                       <TableCell>{formatDate(delivery.snapshotDate, i18n.language)}</TableCell>

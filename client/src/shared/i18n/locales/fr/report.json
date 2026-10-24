@@ -20,10 +20,15 @@
     "passed": "Réussis"
   },
   "row": {
-    "affectedPages": "{{count}} pages concernées",
+    "affectedPages_one": "{{count}} page concernée",
     "affectedPagesOne": "1 page concernée",
     "siteWide": "Vérification sur l'ensemble du site",
-    "passedSummary": "Cette vérification est réussie."
+    "passedSummary": "Cette vérification est réussie.",
+    "affectedPages_zero": "{{count}} page concernée",
+    "affectedPages_two": "{{count}} pages concernées",
+    "affectedPages_few": "{{count}} pages concernées",
+    "affectedPages_many": "{{count}} pages concernées",
+    "affectedPages_other": "{{count}} pages concernées"
   },
   "severity": {
     "critical": "Critique",
@@ -56,7 +61,19 @@
       "okChip": "OK",
       "problemChip": "À corriger",
       "unknownChip": "Non vérifiée"
-    }
+    },
+    "measured": {"words_zero": "{{count}} mot",
+      "words_one": "{{count}} mot",
+      "words_two": "{{count}} mots",
+      "words_few": "{{count}} mots",
+      "words_many": "{{count}} mots",
+      "words_other": "{{count}} mots",
+      "characters_zero": "{{count}} caractère",
+      "characters_one": "{{count}} caractère",
+      "characters_two": "{{count}} caractères",
+      "characters_few": "{{count}} caractères",
+      "characters_many": "{{count}} caractères",
+      "characters_other": "{{count}} caractères"}
   },
   "retest": {
     "cta": "Relancer",
@@ -69,7 +86,12 @@
     "label": "Pages à analyser",
     "max": "Maximum autorisé",
     "help": "Définit le nombre de pages explorées. « Maximum autorisé » couvre autant de pages que ce serveur le permet ; moins de pages, c’est plus rapide.",
-    "pages": "{{pages}} pages"
+    "pages_one": "{{pages}} page",
+    "pages_zero": "{{pages}} page",
+    "pages_two": "{{pages}} pages",
+    "pages_few": "{{pages}} pages",
+    "pages_many": "{{pages}} pages",
+    "pages_other": "{{pages}} pages"
   },
   "empty": {
     "fix-now": {
@@ -110,7 +132,7 @@
     "noFieldDataTitle": "Pas encore assez de données visiteurs",
     "noFieldDataBody": "Chrome ne rapporte la vitesse ressentie qu'à partir d'un certain trafic. Cette section se remplira automatiquement dès que le trafic augmentera.",
     "originFallback": "Données au niveau de l'origine (pas seulement cette page)",
-    "sampleLabel": "{{count}} pages échantillonnées",
+    "sampleLabel_one": "{{count}} page échantillonnée",
     "sampleLabelOne": "1 page échantillonnée",
     "metrics": {
       "lcp": "LCP",
@@ -122,7 +144,12 @@
       "good": "Bon",
       "needs-improvement": "À améliorer",
       "poor": "Insuffisant"
-    }
+    },
+    "sampleLabel_zero": "{{count}} page échantillonnée",
+    "sampleLabel_two": "{{count}} pages échantillonnées",
+    "sampleLabel_few": "{{count}} pages échantillonnées",
+    "sampleLabel_many": "{{count}} pages échantillonnées",
+    "sampleLabel_other": "{{count}} pages échantillonnées"
   },
   "aiSummary": {
     "cardTitle": "Résumé IA de vos correctifs",
@@ -135,7 +162,13 @@
     "errors": {
       "unavailable": "Le résumé IA est temporairement indisponible — votre liste de correctifs n’est pas affectée.",
       "capReached": "Vous avez atteint votre limite mensuelle de résumés IA. Passez au niveau supérieur ou ajoutez des crédits pour continuer."
-    }
+    },
+    "basis_zero": "Basé sur {{count}} constat ouvert",
+    "basis_one": "Basé sur {{count}} constat ouvert",
+    "basis_two": "Basé sur {{count}} constats ouverts",
+    "basis_few": "Basé sur {{count}} constats ouverts",
+    "basis_many": "Basé sur {{count}} constats ouverts",
+    "basis_other": "Basé sur {{count}} constats ouverts"
   },
   "pdf": {
     "download": "Télécharger le PDF",
@@ -173,11 +206,26 @@
     "noSitemapsTitle": "Aucun sitemap envoyé à Google",
     "noSitemapsBody": "Envoyez votre sitemap dans Google Search Console pour que Google puisse trouver chaque page que vous voulez indexer.",
     "sitemapHealthy": "Sain",
-    "sitemapErrors": "{{count}} erreurs",
-    "sitemapWarnings": "{{count}} avertissements",
-    "sitemapProcessed": "{{count}} URL envoyées",
+    "sitemapErrors_one": "{{count}} erreur",
+    "sitemapWarnings_one": "{{count}} avertissement",
+    "sitemapProcessed_one": "{{count}} URL envoyée",
     "sitemapLastDownloaded": "Dernière lecture par Google : {{date}}",
-    "sitemapNeverDownloaded": "Pas encore lu par Google"
+    "sitemapNeverDownloaded": "Pas encore lu par Google",
+    "sitemapErrors_zero": "{{count}} erreur",
+    "sitemapErrors_two": "{{count}} erreurs",
+    "sitemapErrors_few": "{{count}} erreurs",
+    "sitemapErrors_many": "{{count}} erreurs",
+    "sitemapErrors_other": "{{count}} erreurs",
+    "sitemapWarnings_zero": "{{count}} avertissement",
+    "sitemapWarnings_two": "{{count}} avertissements",
+    "sitemapWarnings_few": "{{count}} avertissements",
+    "sitemapWarnings_many": "{{count}} avertissements",
+    "sitemapWarnings_other": "{{count}} avertissements",
+    "sitemapProcessed_zero": "{{count}} URL envoyée",
+    "sitemapProcessed_two": "{{count}} URL envoyées",
+    "sitemapProcessed_few": "{{count}} URL envoyées",
+    "sitemapProcessed_many": "{{count}} URL envoyées",
+    "sitemapProcessed_other": "{{count}} URL envoyées"
   },
   "aiVisibilityBlock": {
     "title": "AI Visibility",
@@ -214,8 +262,13 @@
     "unansweredQuestions": "Questions sans réponse",
     "localPack": "Pack de cartes local",
     "notRanked": "Absent du pack de cartes",
-    "packSize": "{{count}} résultats",
-    "noData": "Aucune donnée"
+    "packSize_one": "{{count}} résultat",
+    "noData": "Aucune donnée",
+    "packSize_zero": "{{count}} résultat",
+    "packSize_two": "{{count}} résultats",
+    "packSize_few": "{{count}} résultats",
+    "packSize_many": "{{count}} résultats",
+    "packSize_other": "{{count}} résultats"
   },
   "exportUi": {
     "trigger": "Exporter ou partager", "loading": "Chargement des options d’export…", "preparing": "Préparation du fichier…", "ready": "Export prêt. Une copie est aussi enregistrée dans Exports et partages.", "unavailable": "Export indisponible", "empty": "Rien à exporter pour l’instant", "formatsLabel": "Formats de fichier",
@@ -227,7 +280,12 @@
     "errors": { "capabilities": "Impossible de charger les options d’export.", "create": "Impossible d’exporter le rapport. Réduisez le périmètre et réessayez.", "download": "Impossible de télécharger le fichier enregistré.", "list": "Impossible de charger les exports enregistrés.", "delete": "Impossible de supprimer l’export enregistré.", "share": "Impossible de créer le lien de partage.", "revoke": "Impossible de révoquer le lien de partage.", "copy": "Impossible de copier le lien." },
     "share": { "action": "Créer un lien de partage", "title": "Partager un rapport immuable", "description": "Choisissez ce que les destinataires peuvent ouvrir. Le rapport ne changera plus après la création du lien.", "locale": "Langue du rapport", "expiry": "Expire après", "expiryHelp": "Choisissez entre un et 90 jours.", "permissions": "Formats autorisés", "create": "Créer le lien", "creating": "Création du lien…", "showOnce": "Copiez ce lien maintenant", "linkLabel": "Lien de partage", "copy": "Copier le lien", "copied": "Copié", "savedWithoutToken": "Par sécurité, RankMeFast ne conserve pas le lien lisible. Vous pouvez toujours le révoquer dans le centre d’export.", "existing": "Liens de cet instantané", "refresh": "Actualiser" },
     "confirm": { "revokeTitle": "Révoquer ce lien ?", "revokeBody": "Toute personne qui l’utilise perdra immédiatement l’accès.", "deleteTitle": "Supprimer cet export enregistré ?", "deleteBody": "Le fichier ne fonctionnera plus et tous ses liens de partage seront révoqués." },
-    "center": { "title": "Exports et partages", "description": "Téléchargez les instantanés enregistrés et gérez les liens publics.", "tabsLabel": "Sections du centre d’export", "downloads": "Téléchargements", "shares": "Partages", "disabledTitle": "Les nouveaux exports sont suspendus", "disabledBody": "Les fichiers existants peuvent rester disponibles, mais aucun nouveau fichier ou lien ne peut être créé.", "emptyDownloadsTitle": "Aucun export enregistré", "emptyDownloadsBody": "Créez-en un depuis un rapport avec Exporter ou partager.", "emptySharesTitle": "Aucun lien de partage", "emptySharesBody": "Partagez un rapport compatible pour gérer son lien ici.", "deletedReport": "Rapport supprimé ou expiré", "noSite": "Tout le compte", "more": "Charger plus", "expiresValue": "Expire le {{date}}", "views": "{{count}} vues", "columns": { "report": "Rapport", "site": "Site", "format": "Format", "created": "Créé", "expires": "Expire", "actions": "Actions" } }
+    "center": { "title": "Exports et partages", "description": "Téléchargez les instantanés enregistrés et gérez les liens publics.", "tabsLabel": "Sections du centre d’export", "downloads": "Téléchargements", "shares": "Partages", "disabledTitle": "Les nouveaux exports sont suspendus", "disabledBody": "Les fichiers existants peuvent rester disponibles, mais aucun nouveau fichier ou lien ne peut être créé.", "emptyDownloadsTitle": "Aucun export enregistré", "emptyDownloadsBody": "Créez-en un depuis un rapport avec Exporter ou partager.", "emptySharesTitle": "Aucun lien de partage", "emptySharesBody": "Partagez un rapport compatible pour gérer son lien ici.", "deletedReport": "Rapport supprimé ou expiré", "noSite": "Tout le compte", "more": "Charger plus", "expiresValue": "Expire le {{date}}", "views_one": "{{count}} vue", "columns": { "report": "Rapport", "site": "Site", "format": "Format", "created": "Créé", "expires": "Expire", "actions": "Actions" },
+      "views_zero": "{{count}} vue",
+      "views_two": "{{count}} vues",
+      "views_few": "{{count}} vues",
+      "views_many": "{{count}} vues",
+      "views_other": "{{count}} vues" }
   },
   "publicShare": {
     "report": "Rapport partagé",
@@ -267,5 +325,36 @@
     "title": "Lancez votre premier audit",
     "description": "Nous explorons votre site une fois et vous montrons ce qu'il faut corriger, ce qu'il faut surveiller et ce qui passe déjà.",
     "confirm": "Lancer l'audit"
-  }
+  },
+  "findingStatus": "{{bucket}} · {{severity}}",
+  "progress": {"upTo_zero": "Exploration de {{cap}} page au maximum.",
+    "upTo_one": "Exploration de {{cap}} page au maximum.",
+    "upTo_two": "Exploration de {{cap}} pages au maximum.",
+    "upTo_few": "Exploration de {{cap}} pages au maximum.",
+    "upTo_many": "Exploration de {{cap}} pages au maximum.",
+    "upTo_other": "Exploration de {{cap}} pages au maximum."},
+  "dismissed": {"title_zero": "Écartés ({{count}})",
+    "title_one": "Écartés ({{count}})",
+    "title_two": "Écartés ({{count}})",
+    "title_few": "Écartés ({{count}})",
+    "title_many": "Écartés ({{count}})",
+    "title_other": "Écartés ({{count}})",
+    "stillDetected_zero": "Toujours détecté lors du dernier audit : {{count}} pages concernées.",
+    "stillDetected_one": "Toujours détecté lors du dernier audit : {{count}} page concernée.",
+    "stillDetected_two": "Toujours détecté lors du dernier audit : {{count}} pages concernées.",
+    "stillDetected_few": "Toujours détecté lors du dernier audit : {{count}} pages concernées.",
+    "stillDetected_many": "Toujours détecté lors du dernier audit : {{count}} pages concernées.",
+    "stillDetected_other": "Toujours détecté lors du dernier audit : {{count}} pages concernées.",
+    "resurfaced_zero": "Écarté, mais {{count}} pages de plus sont désormais concernées.",
+    "resurfaced_one": "Écarté, mais {{count}} page de plus est désormais concernée.",
+    "resurfaced_two": "Écarté, mais {{count}} pages de plus sont désormais concernées.",
+    "resurfaced_few": "Écarté, mais {{count}} pages de plus sont désormais concernées.",
+    "resurfaced_many": "Écarté, mais {{count}} pages de plus sont désormais concernées.",
+    "resurfaced_other": "Écarté, mais {{count}} pages de plus sont désormais concernées."},
+  "stale": {"title_zero": "Dernier audit il y a {{count}} jour",
+    "title_one": "Dernier audit il y a {{count}} jour",
+    "title_two": "Dernier audit il y a {{count}} jours",
+    "title_few": "Dernier audit il y a {{count}} jours",
+    "title_many": "Dernier audit il y a {{count}} jours",
+    "title_other": "Dernier audit il y a {{count}} jours"}
 }

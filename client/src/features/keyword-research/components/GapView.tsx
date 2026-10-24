@@ -158,7 +158,7 @@ export const GapView = () => {
                   data-testid="kw-gap-site"
                 >
                   {sites.map((site) => (
-                    <option key={site.id} value={site.id}>
+                    <option key={site.id} value={site.id} dir="auto">
                       {siteLabel(site)}
                     </option>
                   ))}

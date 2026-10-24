@@ -22,20 +22,30 @@
   },
   "list": {
     "title": "你的规则",
-    "capUsed": "已使用 {{count}} 条规则。",
+    "capUsed_one": "已使用 {{count}} 条规则。",
     "type": "类型",
     "threshold": "阈值",
     "channels": "渠道",
     "state": "状态",
     "actions": "操作",
-    "emailCount": "{{count}} 位邮件接收人",
+    "emailCount_one": "{{count}} 位邮件接收人",
     "secretTail": "签名密钥以 {{tail}} 结尾",
     "enabled": "已启用",
     "disabled": "已停用",
     "enable": "启用",
     "disable": "停用",
     "viewLog": "查看记录",
-    "delete": "删除"
+    "delete": "删除",
+    "capUsed_zero": "已使用 {{count}} 条规则。",
+    "capUsed_two": "已使用 {{count}} 条规则。",
+    "capUsed_few": "已使用 {{count}} 条规则。",
+    "capUsed_many": "已使用 {{count}} 条规则。",
+    "capUsed_other": "已使用 {{count}} 条规则。",
+    "emailCount_zero": "{{count}} 位邮件接收人",
+    "emailCount_two": "{{count}} 位邮件接收人",
+    "emailCount_few": "{{count}} 位邮件接收人",
+    "emailCount_many": "{{count}} 位邮件接收人",
+    "emailCount_other": "{{count}} 位邮件接收人"
   },
   "builder": {
     "title": "新建规则",
@@ -68,7 +78,7 @@
     "rankPair": "{{beforeAt}} 为第 {{before}} 位，{{afterAt}} 为第 {{after}} 位。",
     "linkPair": "{{beforeAt}} 有 {{beforeCount}} 个域名，{{afterAt}} 有 {{afterCount}} 个。",
     "notRanked": "未进入前 100 名",
-    "domainCount": "{{count}} 个域名发生变化",
+    "domainCount_one": "{{count}} 个域名发生变化",
     "attempt": "第 {{attempt}} 次尝试",
     "statusLabel": {
       "pending": "发送中",
@@ -91,12 +101,17 @@
       "unsafe_url": "该地址已不再安全可达。",
       "channel_timeout": "渠道响应超时。",
       "retries_exhausted": "三次失败后已停止重试。"
-    }
+    },
+    "domainCount_zero": "{{count}} 个域名发生变化",
+    "domainCount_two": "{{count}} 个域名发生变化",
+    "domainCount_few": "{{count}} 个域名发生变化",
+    "domainCount_many": "{{count}} 个域名发生变化",
+    "domainCount_other": "{{count}} 个域名发生变化"
   },
   "states": {
     "cap": {
       "title": "已达规则上限",
-      "body": "你已用完当前套餐的全部提醒规则。"
+      "body": "目前无法再添加提醒规则。"
     },
     "tierLocked": {
       "title": "该渠道需要更高套餐",

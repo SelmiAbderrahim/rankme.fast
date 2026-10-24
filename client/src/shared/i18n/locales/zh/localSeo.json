@@ -6,8 +6,13 @@
   "emptyCta": "获取本地数据",
   "refresh": {
     "button": "刷新本地 SEO",
-    "cooldown": "{{seconds}} 秒后可刷新",
-    "failed": "无法刷新本地 SEO,请稍后再试。"
+    "cooldown_one": "{{seconds}} 秒后可刷新",
+    "failed": "无法刷新本地 SEO,请稍后再试。",
+    "cooldown_zero": "{{seconds}} 秒后可刷新",
+    "cooldown_two": "{{seconds}} 秒后可刷新",
+    "cooldown_few": "{{seconds}} 秒后可刷新",
+    "cooldown_many": "{{seconds}} 秒后可刷新",
+    "cooldown_other": "{{seconds}} 秒后可刷新"
   },
   "loadFailed": "无法加载本地 SEO。",
   "locked": {
@@ -37,5 +42,11 @@
     "position": "排名",
     "packSize": "组合数量",
     "notRanked": "未进入地图组合"
-  }
+  },
+  "setup": {"resultsLegend_zero": "找到 {{count}} 个与“{{query}}”匹配的结果。请选择您的商家：",
+    "resultsLegend_one": "找到 {{count}} 个与“{{query}}”匹配的结果。请选择您的商家：",
+    "resultsLegend_two": "找到 {{count}} 个与“{{query}}”匹配的结果。请选择您的商家：",
+    "resultsLegend_few": "找到 {{count}} 个与“{{query}}”匹配的结果。请选择您的商家：",
+    "resultsLegend_many": "找到 {{count}} 个与“{{query}}”匹配的结果。请选择您的商家：",
+    "resultsLegend_other": "找到 {{count}} 个与“{{query}}”匹配的结果。请选择您的商家："}
 }

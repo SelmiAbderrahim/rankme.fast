@@ -83,7 +83,7 @@
     "empty": "Google не сообщил о появлении в генеративном ИИ.",
     "reconnect": "Переподключите Google Search Console, чтобы увидеть этот раздел.",
     "window": "Окно: {{start}} → {{end}}",
-    "row": "{{appearance}} — {{clicks}} кликов, {{impressions}} показов",
+    "row": "{{appearance}} — клики: {{clicks}} · показы: {{impressions}}",
     "loading": "Загрузка данных Google Search Console…",
     "unknown": "Неизвестное появление ({{raw}})",
     "noData": "Данных Search Console пока нет. Подключите Google Search Console, чтобы увидеть этот раздел, или загляните после следующей ежедневной синхронизации."

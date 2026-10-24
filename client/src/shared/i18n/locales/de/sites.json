@@ -48,6 +48,7 @@
   "pauseFailed": "Die Website konnte nicht pausiert werden.",
   "resumeFailed": "Die Website konnte nicht fortgesetzt werden.",
   "paused": {
+    "actionBlocked": "Aktivieren Sie diese Website wieder, um Prüfungen, Audits oder geplante Aufgaben auszuführen.",
     "chip": "Pausiert",
     "menuPause": "Website pausieren",
     "menuResume": "Website fortsetzen",
@@ -59,7 +60,8 @@
     "banner": "Diese Website ist pausiert — keine Prüfungen oder Audits laufen. Pausiert {{when}}.",
     "resumeCta": "Fortsetzen",
     "pausing": "Wird pausiert…",
-    "resuming": "Wird fortgesetzt…"
+    "resuming": "Wird fortgesetzt…",
+    "optionSuffix": "pausiert"
   },
   "errors": {
     "urlRequired": "Geben Sie die URL Ihrer Website ein.",
@@ -103,7 +105,34 @@
     },
     "navigationLabel": "Arbeitsbereichsansicht",
     "activeGroupLabel": "{{group}} · {{current}}",
-    "upgradeHint": "Upgraden Sie Ihren Plan, um diesen Tab freizuschalten."
+    "upgradeHint": "Upgraden Sie Ihren Plan, um diesen Tab freizuschalten.",
+    "switchSite": "Website wechseln",
+    "loadingSite": "Website wird geladen…",
+    "filterSites": "Websites filtern…",
+    "filterPages": "Seiten filtern…",
+    "choosePage": "Seite auswählen",
+    "choosePageDescription": "Eine Seite dieser Website öffnen.",
+    "siblingPages": "Seiten in diesem Bereich",
+    "noSites": "Keine Websites gefunden",
+    "activeSubViewLabel": "{{tab}} · {{view}}",
+    "navLandmark": "Website",
+    "switchSiteNamed": "Website wechseln · {{site}}",
+    "currentSite": "Aktuelle Website",
+    "recentSites": "Zuletzt geöffnet",
+    "allSites": "Alle Websites",
+    "noSitesMatch": "Keine Website passt zu „{{query}}“",
+    "addSite": "Website hinzufügen",
+    "manageSites": "Websites verwalten",
+    "collapseSiteMenu": "Website-Menü einklappen",
+    "expandSiteMenu": "Website-Menü ausklappen",
+    "filterPagesShort": "Seiten filtern",
+    "clearFilter": "Filter löschen",
+    "noPagesMatch": "Keine Seite passt zu „{{query}}“",
+    "unknownTab": {
+      "title": "Diesen Bereich gibt es nicht",
+      "body": "Dieser Bereich ist in diesem Arbeitsbereich nicht verfügbar, deshalb wird stattdessen die Übersicht angezeigt."
+    },
+    "unknownSite": "Unbekannte Website"
   },
   "overview": {
     "next": {
@@ -205,5 +234,12 @@
   "lookupFailed": {
     "title": "Diese Website konnte nicht geladen werden",
     "description": "Wir konnten diese Website gerade nicht prüfen. Versuchen Sie es gleich noch einmal."
+  },
+  "picker": {
+    "loading": "Ihre Websites werden geladen…",
+    "loadFailed": "Ihre Websites konnten nicht geladen werden.",
+    "empty": "Sie haben noch keine Websites.",
+    "addSite": "Website hinzufügen",
+    "truncated": "Hier werden nur Ihre ersten {{shown, number}} Websites aufgeführt."
   }
 }

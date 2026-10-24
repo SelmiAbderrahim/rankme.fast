@@ -4,7 +4,7 @@
   "searchTitle": "ابحث في مجموعة كلمات رئيسية",
   "inputLabel": "الكلمات الرئيسية للبحث",
   "inputPlaceholder": "اكتب كلمة رئيسية واضغط Enter",
-  "selectionCount": "تم تحديد {{count}} من {{max}}",
+  "selectionCount_one": "تم تحديد {{count}} من {{max}}",
   "removeKeyword": "إزالة {{phrase}}",
   "tracked": {
     "title": "الكلمات الرئيسية المتتبعة",
@@ -18,7 +18,12 @@
     "emptyCta": "الانتقال إلى الكلمات المتتبعة",
     "noMatch": "لا توجد كلمات رئيسية متتبعة تطابق الموقع واللغة المحددين.",
     "allSelected": "تم تحديد جميع الكلمات الرئيسية المتطابقة.",
-    "limitReached": "لقد حددت الحد الأقصى وهو {{max}} كلمة رئيسية."
+    "limitReached_one": "لقد حددت الحد الأقصى وهو {{max}} كلمة رئيسية.",
+    "limitReached_zero": "لقد حددت الحد الأقصى وهو {{max}} كلمات رئيسية.",
+    "limitReached_two": "لقد حددت الحد الأقصى وهو كلمتان رئيسيتان ({{max}}).",
+    "limitReached_few": "لقد حددت الحد الأقصى وهو {{max}} كلمات رئيسية.",
+    "limitReached_many": "لقد حددت الحد الأقصى وهو {{max}} كلمة رئيسية.",
+    "limitReached_other": "لقد حددت الحد الأقصى وهو {{max}} كلمة رئيسية."
   },
   "locationLabel": "الموقع",
   "languageLabel": "اللغة",
@@ -131,7 +136,7 @@
     "columnSearchVolume": "الحجم",
     "emptyPair": "لا كلمات متداخلة مع هذا المنافس.",
     "emptyResults": "لم يتم العثور على فجوة كلمات للمنافسين المحددين.",
-    "resultCount": "تم العثور على {{count}} كلمة",
+    "resultCount_one": "تم العثور على {{count}} كلمة",
     "cachedBadge": "من الذاكرة",
     "freshBadge": "مباشر",
     "pairPickerLabel": "اختر منافسًا",
@@ -157,7 +162,12 @@
     },
     "idle": "شغّل تحليل الفجوة لترى الكلمات المفتاحية التي يتصدّرها منافسوك دونك.",
     "loadFailed": "تعذّر تشغيل تحليل فجوة الكلمات المفتاحية.",
-    "siteWorkspaceLink": "افتح هذا الإعداد في مساحة منافسي الموقع"
+    "siteWorkspaceLink": "افتح هذا الإعداد في مساحة منافسي الموقع",
+    "resultCount_zero": "تم العثور على {{count}} كلمات",
+    "resultCount_two": "تم العثور على {{count}} من الكلمات",
+    "resultCount_few": "تم العثور على {{count}} كلمات",
+    "resultCount_many": "تم العثور على {{count}} كلمة",
+    "resultCount_other": "تم العثور على {{count}} كلمة"
   },
   "overview": {
     "title": "نظرة عامة على نتائج البحث",
@@ -295,7 +305,13 @@
     "loadMore": "تحميل المزيد",
     "loading": "جارٍ التحميل…",
     "loadFailed": "تعذر تحميل سجل الأبحاث.",
-    "back": "العودة إلى بحث الكلمات الرئيسية"
+    "back": "العودة إلى بحث الكلمات الرئيسية",
+    "shown_zero": "لا توجد عمليات بحث محفوظة",
+    "shown_one": "عرض {{loaded}} من {{count}} عملية بحث محفوظة",
+    "shown_two": "عرض {{loaded}} من {{count}} عمليتي بحث محفوظتين",
+    "shown_few": "عرض {{loaded}} من {{count}} عمليات بحث محفوظة",
+    "shown_many": "عرض {{loaded}} من {{count}} عملية بحث محفوظة",
+    "shown_other": "عرض {{loaded}} من {{count}} عملية بحث محفوظة"
   },
   "previewFailed": "تعذّر تحميل معاينة التكلفة.",
   "tabs": {
@@ -323,7 +339,7 @@
     "title": "مجموعات الكلمات المفتاحية بالذكاء الاصطناعي",
     "description": "جمّع بين 10 و200 من عباراتك المخزّنة في موضوعات عبر جولة ذكاء اصطناعي واحدة. يقرأ الذكاء الاصطناعي الصفوف التي جلبتها سابقًا فقط — ولا يستدعي مزوّد البحث أبدًا.",
     "noCandidates": "لا توجد عبارات مخزّنة بعد. شغّل بحث الكلمات المفتاحية أولًا — يعتمد التجميع على صفوفك المخزّنة.",
-    "selectionCount": "{{count}} محددة (المطلوب {{min}}–{{max}})",
+    "selectionCount_one": "{{count}} محددة (المطلوب {{min}}–{{max}})",
     "source": {
       "metrics": "بحث",
       "ideas": "فكرة",
@@ -341,7 +357,7 @@
     "listFailed": "تعذّر تحميل جولات التجميع المخزّنة.",
     "detailFailed": "تعذّر تحميل جولة التجميع تلك.",
     "decisionFailed": "تعذّر حفظ القرار.",
-    "resultTitle": "{{count}} مجموعة",
+    "resultTitle_one": "{{count}} مجموعة",
     "cachedRun": "جولة مخزّنة — قراءة مجانية",
     "freshRun": "جولة جديدة",
     "aiProfileLine": "ملف الذكاء الاصطناعي {{name}} الإصدار {{version}}",
@@ -357,7 +373,7 @@
     "noFilterMatch": "لا توجد مجموعات مطابقة لتصفية القرار الحالية.",
     "runsTitle": "جولات التجميع المخزّنة",
     "runsEmpty": "لا توجد جولات تجميع مخزّنة بعد.",
-    "runRowTitle": "{{count}} مجموعة",
+    "runRowTitle_one": "{{count}} مجموعة",
     "runRowMembers": "عبارة",
     "openRun": "فتح",
     "route": {
@@ -371,7 +387,7 @@
     },
     "confidenceNote": "تُحسب الثقة حتميًا من عدد الأعضاء وتجانس النية — يقترح الذكاء الاصطناعي التجميع؛ أما التصنيف فليس درجة من الذكاء الاصطناعي.",
     "summedVolume": "إجمالي حجم البحث الشهري: {{volume}}",
-    "membersToggle": "عرض {{count}} كلمة مفتاحية عضوًا",
+    "membersToggle_one": "عرض {{count}} كلمة مفتاحية عضوًا",
     "memberSource": {
       "vendor_cache": "صف مزوّد مخزّن",
       "history": "سجلّ البحث"
@@ -395,7 +411,33 @@
     "dismissBody": "الرفض نهائي لهذه المجموعة — سجلّ القرارات يُضاف إليه فقط ولا يمكن عكسه لاحقًا.",
     "dismissConfirm": "رفض المجموعة",
     "dismissSuccess": "رُفضت المجموعة.",
-    "dismissReplayHint": "هذه المجموعة مرفوضة بالفعل."
+    "dismissReplayHint": "هذه المجموعة مرفوضة بالفعل.",
+    "selectionCount_zero": "{{count}} محددة (المطلوب {{min}}–{{max}})",
+    "selectionCount_two": "{{count}} محددة (المطلوب {{min}}–{{max}})",
+    "selectionCount_few": "{{count}} محددة (المطلوب {{min}}–{{max}})",
+    "selectionCount_many": "{{count}} محددة (المطلوب {{min}}–{{max}})",
+    "selectionCount_other": "{{count}} محددة (المطلوب {{min}}–{{max}})",
+    "resultTitle_zero": "{{count}} مجموعات",
+    "resultTitle_two": "{{count}} من المجموعات",
+    "resultTitle_few": "{{count}} مجموعات",
+    "resultTitle_many": "{{count}} مجموعة",
+    "resultTitle_other": "{{count}} مجموعة",
+    "runRowTitle_zero": "{{count}} مجموعات",
+    "runRowTitle_two": "{{count}} من المجموعات",
+    "runRowTitle_few": "{{count}} مجموعات",
+    "runRowTitle_many": "{{count}} مجموعة",
+    "runRowTitle_other": "{{count}} مجموعة",
+    "membersToggle_zero": "عرض {{count}} كلمات مفتاحية أعضاء",
+    "membersToggle_two": "عرض {{count}} من الكلمات المفتاحية الأعضاء",
+    "membersToggle_few": "عرض {{count}} كلمات مفتاحية أعضاء",
+    "membersToggle_many": "عرض {{count}} كلمة مفتاحية عضوًا",
+    "membersToggle_other": "عرض {{count}} كلمة مفتاحية عضوًا",
+    "truncatedNote_zero": "الكلمات المفتاحية المخزّنة المعروضة: {{count}} من {{total}}. استخدم البحث لتضييق القائمة.",
+    "truncatedNote_one": "الكلمات المفتاحية المخزّنة المعروضة: {{count}} من {{total}}. استخدم البحث لتضييق القائمة.",
+    "truncatedNote_two": "الكلمات المفتاحية المخزّنة المعروضة: {{count}} من {{total}}. استخدم البحث لتضييق القائمة.",
+    "truncatedNote_few": "الكلمات المفتاحية المخزّنة المعروضة: {{count}} من {{total}}. استخدم البحث لتضييق القائمة.",
+    "truncatedNote_many": "الكلمات المفتاحية المخزّنة المعروضة: {{count}} من {{total}}. استخدم البحث لتضييق القائمة.",
+    "truncatedNote_other": "الكلمات المفتاحية المخزّنة المعروضة: {{count}} من {{total}}. استخدم البحث لتضييق القائمة."
   },
   "liveTrends": {
     "title": "أهمية البحث المباشر",
@@ -414,8 +456,6 @@
     },
     "preview": {
       "title": "تقدير التكلفة",
-      "units": "سيتم استهلاك {{count}} وحدة.",
-      "units_other": "سيتم استهلاك {{count}} وحدات.",
       "cached": "مخزّن",
       "fresh_required": "جلب جديد",
       "mixed": "مختلط",
@@ -427,14 +467,14 @@
     },
     "states": {
       "unavailableTitle": "الاستكشاف المباشر متوقف مؤقتًا",
-    "unavailableBody": "هذه الأداة متوقفة. يمكنك قراءة الاستكشافات السابقة.",
-    "capBody": "لقد بلغت حصتك الشهرية للاستكشاف المباشر.",
-    "capPackName": "حزمة استكشاف الاتجاهات",
-    "failedTitle": "تعذّر إكمال الاستكشاف",
-    "providerFailedTitle": "لم يستجب مزوّد الاتجاهات",
-    "emptyTitle": "لم تُرجع أي سلاسل لأهمية البحث",
-    "emptyBody": "أكمل المزوّد الاستكشاف لكنه لم يُرجع سلاسل لهذا السوق. تم استهلاك الوحدة.",
-    "sparseTitle": "التاريخ محدود لهذا السوق",
+      "unavailableBody": "هذه الأداة متوقفة. يمكنك قراءة الاستكشافات السابقة.",
+      "capBody": "لقد بلغت حصتك الشهرية للاستكشاف المباشر.",
+      "capPackName": "حزمة استكشاف الاتجاهات",
+      "failedTitle": "تعذّر إكمال الاستكشاف",
+      "providerFailedTitle": "لم يستجب مزوّد الاتجاهات",
+      "emptyTitle": "لم تُرجع أي سلاسل لأهمية البحث",
+      "emptyBody": "أكمل المزوّد الاستكشاف لكنه لم يُرجع سلاسل لهذا السوق. تم استهلاك الوحدة.",
+      "sparseTitle": "التاريخ محدود لهذا السوق",
       "sparseBody": "يلزم 24 شهرًا على الأقل للموسمية و 56 أسبوعًا للمقارنة السنوية."
     },
     "readouts": {
@@ -490,5 +530,10 @@
       "body": "أهمية البحث المباشر متاحة اعتبارًا من باقة Starter، رغم أن بقية مساحة العمل هذه تتطلب Pro.",
       "cta": "افتح أهمية البحث المباشر"
     }
-  }
+  },
+  "selectionCount_zero": "تم تحديد {{count}} من {{max}}",
+  "selectionCount_two": "تم تحديد {{count}} من {{max}}",
+  "selectionCount_few": "تم تحديد {{count}} من {{max}}",
+  "selectionCount_many": "تم تحديد {{count}} من {{max}}",
+  "selectionCount_other": "تم تحديد {{count}} من {{max}}"
 }

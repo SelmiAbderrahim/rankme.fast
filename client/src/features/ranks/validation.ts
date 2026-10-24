@@ -21,7 +21,7 @@ export const buildAddKeywordSchema = (t: TFunction<'ranks'>) =>
       }
     }),
     locationCode: z.coerce
-      .number({ invalid_type_error: t('errors.locationInvalid') })
+      .number<number>({ error: t('errors.locationInvalid') })
       .int(t('errors.locationInvalid'))
       .positive(t('errors.locationInvalid')),
     languageCode: z

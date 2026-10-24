@@ -1,3 +1,4 @@
+import { Bdi } from '@shared/components/Bdi';
 import { useEffect, useMemo, useRef, useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
@@ -478,7 +479,7 @@ function PagesResults({
               <TableRow key={row.pageId} data-testid="pages-desktop-row">
                 <TableCell className="max-w-80 whitespace-normal">
                   <div className="flex min-w-0 flex-col gap-1">
-                    <span className="break-words font-medium">{row.title || t('table.untitled')}</span>
+                    <span className="break-words font-medium"><Bdi>{row.title || t('table.untitled')}</Bdi></span>
                     {/* eslint-disable-next-line react/jsx-no-target-blank -- SAFE_EXTERNAL_REL includes noopener and noreferrer. */}
                     <a
                       href={safeExternalHref(row.url)}
@@ -486,7 +487,7 @@ function PagesResults({
                       rel={SAFE_EXTERNAL_REL}
                       className="inline-flex w-fit max-w-full items-center gap-1 break-all text-xs text-muted-foreground underline underline-offset-4 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
                     >
-                      {row.displayUrl}
+                      <Bdi>{row.displayUrl}</Bdi>
                       <ExternalLink aria-hidden="true" className="shrink-0" />
                     </a>
                   </div>
@@ -537,7 +538,7 @@ function PagesResults({
         {rows.map((row) => (
           <Card key={row.pageId} className="min-w-0" data-testid="pages-mobile-card">
             <CardHeader className="min-w-0">
-              <CardTitle className="break-words text-base">{row.title || t('table.untitled')}</CardTitle>
+              <CardTitle className="break-words text-base"><Bdi>{row.title || t('table.untitled')}</Bdi></CardTitle>
               {/* eslint-disable-next-line react/jsx-no-target-blank -- SAFE_EXTERNAL_REL includes noopener and noreferrer. */}
               <a
                 href={safeExternalHref(row.url)}
@@ -545,7 +546,7 @@ function PagesResults({
                 rel={SAFE_EXTERNAL_REL}
                 className="inline-flex min-h-11 max-w-full items-center gap-1 break-all py-2 text-xs text-muted-foreground underline underline-offset-4 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
               >
-                <span className="min-w-0 break-all">{row.displayUrl}</span>
+                <span className="min-w-0 break-all"><Bdi>{row.displayUrl}</Bdi></span>
                 <ExternalLink aria-hidden="true" className="shrink-0" />
               </a>
             </CardHeader>
@@ -1001,6 +1002,7 @@ export function PagesPanel({ siteId }: PagesPanelProps) {
           <nav className="flex flex-col gap-3 border-t border-border pt-4 sm:flex-row sm:items-center sm:justify-between" aria-label={t('pagination.label')}>
             <p className="text-sm text-muted-foreground">
               {t('pagination.context', {
+                count: data.pageInfo.totalFiltered,
                 shown: data.items.length,
                 total: data.pageInfo.totalFiltered,
               })}

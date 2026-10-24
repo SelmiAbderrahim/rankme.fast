@@ -1,3 +1,4 @@
+import { Bdi } from '@shared/components/Bdi';
 /**
  * Live Keyword Trends standalone view.
  *
@@ -168,7 +169,7 @@ function ChartLegend({ series }: { series: readonly { keyword: string }[] }) {
             aria-hidden="true"
             className={`inline-block size-2 rounded-full ${CHART_DOT_CLASSES[i] ?? CHART_DOT_CLASSES[0]!}`}
           />
-          <span>{s.keyword}</span>
+          <span><Bdi>{s.keyword}</Bdi></span>
         </li>
       ))}
     </ul>
@@ -201,7 +202,7 @@ function SeriesDataTable({ series }: { series: readonly TrendsSeriesDto[] }) {
             const ordered = orderPoints(s.points);
             return ordered.map((p) => (
               <TableRow key={`${s.keyword}-${p.year}-${p.month}`}>
-                <TableCell className="break-words">{s.keyword}</TableCell>
+                <TableCell className="break-words"><Bdi>{s.keyword}</Bdi></TableCell>
                 <TableCell>
                   {monthLabel(p.month)} {p.year}
                 </TableCell>
@@ -264,7 +265,7 @@ function ReadoutsRow({ keyword, readouts }: { keyword: string; readouts: TrendsR
       data-testid={`live-trends-readouts-${slug}`}
     >
       <div className="flex flex-wrap items-center justify-between gap-2">
-        <p className="text-sm font-medium break-words">{keyword}</p>
+        <p className="text-sm font-medium break-words"><Bdi>{keyword}</Bdi></p>
         <EstimateBadge noteKey={noteKey} />
       </div>
       <dl className="grid grid-cols-1 gap-x-6 gap-y-2 text-sm sm:grid-cols-3">

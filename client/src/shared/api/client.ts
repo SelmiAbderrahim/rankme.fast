@@ -1,3 +1,4 @@
+import { dropInFlight } from '@shared/lib/inFlight';
 import { toast } from 'sonner';
 import i18n from 'i18next';
 import { normalizeApiBaseUrl } from './base-url';
@@ -202,6 +203,7 @@ export interface ApiFetchOptions extends RequestInit, ApiContextOptions {
 }
 
 const MUTATING_METHODS = new Set(['POST', 'PUT', 'PATCH', 'DELETE']);
+let mutationGeneration = 0;
 
 export type ApiErrorCode = 'http' | 'network' | 'parse' | 'timeout' | 'language';
 
@@ -389,7 +391,11 @@ const parseResponseBody = async (response: Response): Promise<unknown> => {
 };
 
 const isDomExceptionNamed = (err: unknown, name: string): boolean =>
-  err instanceof DOMException && err.name === name;
+  (err instanceof DOMException || Object.prototype.toString.call(err) === '[object DOMException]') &&
+  (err as DOMException).name === name;
+
+/** Shared abort classification, including DOMExceptions from another realm. */
+export const isAbortError = (err: unknown): boolean => isDomExceptionNamed(err, 'AbortError');
 
 const combinedSignal = (signals: AbortSignal[]): AbortSignal | undefined => {
   if (signals.length === 0) return undefined;
@@ -429,6 +435,8 @@ const fetchWithLocaleContract = async (
       signal: combinedSignal(signals),
     });
 
+    // Even a stale-locale mutation may have changed server state.
+    if (response.ok && MUTATING_METHODS.has(method)) mutationGeneration += 1;
     const stale = !isCurrentRequestLocale(context);
     if (
       stale &&
@@ -457,11 +465,11 @@ const fetchWithLocaleContract = async (
     }
     const isTimeout =
       isDomExceptionNamed(error, 'TimeoutError') ||
-      (isDomExceptionNamed(error, 'AbortError') && timeoutSignal?.aborted === true);
+      (isAbortError(error) && timeoutSignal?.aborted === true);
     if (isTimeout) {
       throw new ApiError('Request timed out', 0, null, 'timeout');
     }
-    if (isDomExceptionNamed(error, 'AbortError')) throw error;
+    if (isAbortError(error)) throw error;
     throw new ApiError('Network request failed', 0, null, 'network');
   } finally {
     untrackPresentationRead(context, generationController);
@@ -544,7 +552,7 @@ export const apiFetch = async (
  * A 401 on a product route means the session is gone (expired or revoked);
  * surface it once as a localized toast so the redirect to /login isn't mute.
  */
-export const apiClient = async <T = unknown>(
+const apiClientOnce = async <T = unknown>(
   path: string,
   options: ApiClientOptions = {},
 ): Promise<T> => {
@@ -652,6 +660,53 @@ export const apiClient = async <T = unknown>(
   }
 
   return data as T;
+};
+
+/** Context identity is invalidated on account reset and workspace transitions. */
+let readContextGeneration = 0;
+export const invalidateApiReadContext = (): void => {
+  readContextGeneration += 1;
+  dropInFlight('');
+};
+
+const BOOTSTRAP_READ_PATHS = new Set(['/sites', '/team/invitations', '/team/workspaces']);
+const isBootstrapRead = (path: string, options: ApiClientOptions): boolean =>
+  (options.method ?? (options.body == null ? 'GET' : 'POST')).toUpperCase() === 'GET' &&
+  BOOTSTRAP_READ_PATHS.has(path.split('?')[0]!) &&
+  (options.localeMode === undefined || options.localeMode === 'presentation') &&
+  options.locale === undefined && options.presentationGeneration === undefined &&
+  !new Headers(options.headers).has(LANGUAGE_HEADER);
+
+/**
+ * Bootstrap reads survive one presentation change by asking for fresh data.
+ * They retain caller cancellation and account/workspace identity throughout.
+ * The existing thunk helper remains the only identical-read coordinator.
+ */
+export const apiClient = async <T = unknown>(path: string, options: ApiClientOptions = {}): Promise<T> => {
+  if (!isBootstrapRead(path, options)) return apiClientOnce<T>(path, options);
+  const generation = readContextGeneration;
+  const mutations = mutationGeneration;
+  const workspace = workspaceIdProvider?.() ?? null;
+  const isCurrentContext = (): boolean => generation === readContextGeneration &&
+    workspace === (workspaceIdProvider?.() ?? null) && options.signal?.aborted !== true;
+  const read = async (): Promise<T> => {
+    if (!isCurrentContext()) throw new DOMException('Request context changed', 'AbortError');
+    const data = await apiClientOnce<T>(path, options);
+    if (!isCurrentContext()) throw new DOMException('Request context changed', 'AbortError');
+    return data;
+  };
+  const presentation = getPresentationLocaleSnapshot().generation;
+  try {
+    return await read();
+  } catch (error) {
+    if (
+      !isAbortError(error) ||
+      !isCurrentContext() ||
+      mutations !== mutationGeneration ||
+      presentation === getPresentationLocaleSnapshot().generation
+    ) throw error;
+    return read();
+  }
 };
 
 /** Test-only: reset the module-scope CSRF token cache. */

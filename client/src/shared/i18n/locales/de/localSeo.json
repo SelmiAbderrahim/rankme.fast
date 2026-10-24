@@ -6,8 +6,13 @@
   "emptyCta": "Lokale Daten abrufen",
   "refresh": {
     "button": "Lokale SEO aktualisieren",
-    "cooldown": "Aktualisierung in {{seconds}} s",
-    "failed": "Lokale SEO konnte nicht aktualisiert werden. Bitte gleich noch einmal versuchen."
+    "cooldown_one": "Aktualisierung in {{seconds}} s",
+    "failed": "Lokale SEO konnte nicht aktualisiert werden. Bitte gleich noch einmal versuchen.",
+    "cooldown_zero": "Aktualisierung in {{seconds}} s",
+    "cooldown_two": "Aktualisierung in {{seconds}} s",
+    "cooldown_few": "Aktualisierung in {{seconds}} s",
+    "cooldown_many": "Aktualisierung in {{seconds}} s",
+    "cooldown_other": "Aktualisierung in {{seconds}} s"
   },
   "loadFailed": "Lokale SEO konnte nicht geladen werden.",
   "locked": {
@@ -37,5 +42,11 @@
     "position": "Position",
     "packSize": "Paketgröße",
     "notRanked": "Nicht im Kartenpaket"
-  }
+  },
+  "setup": {"resultsLegend_zero": "{{count}} Treffer für „{{query}}“. Wählen Sie Ihr Unternehmen:",
+    "resultsLegend_one": "{{count}} Treffer für „{{query}}“. Wählen Sie Ihr Unternehmen:",
+    "resultsLegend_two": "{{count}} Treffer für „{{query}}“. Wählen Sie Ihr Unternehmen:",
+    "resultsLegend_few": "{{count}} Treffer für „{{query}}“. Wählen Sie Ihr Unternehmen:",
+    "resultsLegend_many": "{{count}} Treffer für „{{query}}“. Wählen Sie Ihr Unternehmen:",
+    "resultsLegend_other": "{{count}} Treffer für „{{query}}“. Wählen Sie Ihr Unternehmen:"}
 }

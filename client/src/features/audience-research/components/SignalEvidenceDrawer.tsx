@@ -1,3 +1,4 @@
+import { Bdi } from '@shared/components/Bdi';
 import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import {
@@ -78,7 +79,7 @@ export function SignalEvidenceDrawer({
       >
         <SheetHeader>
           <SheetTitle>
-            {signal ? signal.title : t('signals.evidence.title')}
+            <Bdi>{signal ? signal.title : t('signals.evidence.title')}</Bdi>
           </SheetTitle>
           <SheetDescription>{t('signals.evidence.description')}</SheetDescription>
         </SheetHeader>

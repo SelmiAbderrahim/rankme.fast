@@ -65,12 +65,22 @@
     "title": "Was dieser Abgleich kostet",
     "description": "Das ist eine Schätzung. Vor Ihrer Bestätigung wird nichts ausgegeben.",
     "units": "Verbraucht {{units}} Abgleich",
-    "perSource": "Deckt {{sources}} Quellen ab",
-    "depth": "Ruft bis zu {{depth}} Bewertungen je Quelle ab",
+    "perSource_one": "Deckt {{sources}} Quelle ab",
+    "depth_one": "Ruft bis zu {{depth}} Bewertung je Quelle ab",
     "available": "Passt in Ihr Kontingent",
     "unavailable": "Über Ihrem Kontingent",
     "baseRemaining": "Verbleibende Abgleiche im Tarif: {{remaining}}",
-    "packRemaining": "Verbleibende Abgleiche im Paket: {{remaining}}"
+    "packRemaining": "Verbleibende Abgleiche im Paket: {{remaining}}",
+    "depth_zero": "Ruft bis zu {{depth}} Bewertungen je Quelle ab",
+    "depth_two": "Ruft bis zu {{depth}} Bewertungen je Quelle ab",
+    "depth_few": "Ruft bis zu {{depth}} Bewertungen je Quelle ab",
+    "depth_many": "Ruft bis zu {{depth}} Bewertungen je Quelle ab",
+    "depth_other": "Ruft bis zu {{depth}} Bewertungen je Quelle ab",
+    "perSource_zero": "Deckt {{sources}} Quellen ab",
+    "perSource_two": "Deckt {{sources}} Quellen ab",
+    "perSource_few": "Deckt {{sources}} Quellen ab",
+    "perSource_many": "Deckt {{sources}} Quellen ab",
+    "perSource_other": "Deckt {{sources}} Quellen ab"
   },
   "runs": {
     "title": "Abgleichverlauf",
@@ -122,10 +132,10 @@
     "filterAll": "Alle",
     "searchPlaceholder": "Bewertungen durchsuchen",
     "apply": "Anwenden",
-    "stars": "{{stars}} Sterne",
+    "stars_one": "{{stars}} Stern",
     "unrated": "Ohne Wertung",
     "anonymous": "Ohne Namen",
-    "page": "Seite {{page}} von {{total}} Bewertungen",
+    "page_one": "Seite {{page}} von {{total}} Bewertung",
     "previous": "Zurück",
     "next": "Weiter",
     "export": "CSV herunterladen",
@@ -138,16 +148,31 @@
       "source": "Quelle",
       "text": "Bewertung",
       "author": "Verfasser"
-    }
+    },
+    "stars_zero": "{{stars}} Sterne",
+    "stars_two": "{{stars}} Sterne",
+    "stars_few": "{{stars}} Sterne",
+    "stars_many": "{{stars}} Sterne",
+    "stars_other": "{{stars}} Sterne",
+    "page_zero": "Seite {{page}} von {{total}} Bewertungen",
+    "page_two": "Seite {{page}} von {{total}} Bewertungen",
+    "page_few": "Seite {{page}} von {{total}} Bewertungen",
+    "page_many": "Seite {{page}} von {{total}} Bewertungen",
+    "page_other": "Seite {{page}} von {{total}} Bewertungen"
   },
   "stats": {
     "title": "Zustand der Bewertungen",
     "empty": "Noch nichts darzustellen.",
-    "total": "{{total}} Bewertungen gespeichert",
+    "total_one": "{{total}} Bewertung gespeichert",
     "distribution": {
       "title": "Sterneverteilung",
-      "stars": "{{stars}} Sterne",
-      "unrated": "Ohne Wertung"
+      "stars_one": "{{stars}} Stern",
+      "unrated": "Ohne Wertung",
+      "stars_zero": "{{stars}} Sterne",
+      "stars_two": "{{stars}} Sterne",
+      "stars_few": "{{stars}} Sterne",
+      "stars_many": "{{stars}} Sterne",
+      "stars_other": "{{stars}} Sterne"
     },
     "velocity": {
       "title": "Bewertungen pro Monat",
@@ -156,7 +181,12 @@
     },
     "sourceMix": {
       "title": "Woher sie kommen"
-    }
+    },
+    "total_zero": "{{total}} Bewertungen gespeichert",
+    "total_two": "{{total}} Bewertungen gespeichert",
+    "total_few": "{{total}} Bewertungen gespeichert",
+    "total_many": "{{total}} Bewertungen gespeichert",
+    "total_other": "{{total}} Bewertungen gespeichert"
   },
   "trend": {
     "title": "Durchschnittswertung im Zeitverlauf",
@@ -174,7 +204,7 @@
     "complaints": "Häufige Beschwerden",
     "praise": "Häufiges Lob",
     "citations": "Zugehörige Bewertungen zeigen",
-    "citationCount": "{{citations}} Bewertungen",
+    "citationCount_one": "{{citations}} Bewertung",
     "citationSource": "{{source}} · {{rating}} · {{date}}",
     "sectionEmpty": "Hier gibt es nichts für diesen Abgleich.",
     "pending": "Der Themenlauf ist noch nicht fertig.",
@@ -186,7 +216,12 @@
       "title": "Themen konnten nicht gebildet werden",
       "description": "Der Zusammenfassungsschritt ist fehlgeschlagen. Ihre Bewertungen sind sicher angekommen und unten weiterhin lesbar.",
       "link": "Zu den Bewertungen"
-    }
+    },
+    "citationCount_zero": "{{citations}} Bewertungen",
+    "citationCount_two": "{{citations}} Bewertungen",
+    "citationCount_few": "{{citations}} Bewertungen",
+    "citationCount_many": "{{citations}} Bewertungen",
+    "citationCount_other": "{{citations}} Bewertungen"
   },
   "provenance": {
     "first_party": "Eigene Daten",
@@ -194,7 +229,12 @@
     "estimate": "Schätzung",
     "ai_interpretation": "KI-Interpretation",
     "observedAt": "Beobachtet am {{date}}",
-    "sampleCount": "{{count}} Bewertungen in der Stichprobe"
+    "sampleCount_one": "{{count}} Bewertung in der Stichprobe",
+    "sampleCount_zero": "{{count}} Bewertungen in der Stichprobe",
+    "sampleCount_two": "{{count}} Bewertungen in der Stichprobe",
+    "sampleCount_few": "{{count}} Bewertungen in der Stichprobe",
+    "sampleCount_many": "{{count}} Bewertungen in der Stichprobe",
+    "sampleCount_other": "{{count}} Bewertungen in der Stichprobe"
   },
   "errors": {
     "sourcesFailed": "Wir konnten Ihre Bewertungsquellen nicht laden.",

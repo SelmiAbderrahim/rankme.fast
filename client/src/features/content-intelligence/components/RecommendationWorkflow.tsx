@@ -1,3 +1,4 @@
+import { Bdi } from '@shared/components/Bdi';
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import { Link, useSearchParams } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
@@ -788,7 +789,7 @@ export function RecommendationWorkflow({ analysis, onChanged }: RecommendationWo
                                   <bdi>{citation.title ?? citation.url}</bdi>
                                 </a>
                               ) : (
-                                <span>{citation?.title ?? t('opportunities.ownedEvidence')}</span>
+                                <span><Bdi>{citation?.title ?? t('opportunities.ownedEvidence')}</Bdi></span>
                               )}
                             </li>
                           );

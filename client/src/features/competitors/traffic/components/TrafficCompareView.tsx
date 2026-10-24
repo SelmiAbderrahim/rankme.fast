@@ -1,3 +1,4 @@
+import { Bdi } from '@shared/components/Bdi';
 import { useEffect, useMemo, useState } from 'react';
 import { useSearchParams } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
@@ -187,7 +188,7 @@ export const TrafficCompareView = ({ ids, siteId, onCollapse }: TrafficCompareVi
                 <CardHeader>
                   <div className="flex items-start justify-between gap-2">
                     <div className="min-w-0 text-start">
-                      <CardTitle className="break-all text-base">{snapshot.targetDomain}</CardTitle>
+                      <CardTitle className="break-all text-base"><Bdi>{snapshot.targetDomain}</Bdi></CardTitle>
                       <CardDescription>
                         {date.format(new Date(snapshot.capturedAt))}
                       </CardDescription>

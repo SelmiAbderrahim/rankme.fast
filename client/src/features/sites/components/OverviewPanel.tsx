@@ -1,3 +1,5 @@
+import { isolateText } from '@shared/lib/bidi';
+import { Bdi } from '@shared/components/Bdi';
 /**
  * Action-first site overview — the default `?tab=overview` surface.
  *
@@ -348,7 +350,7 @@ export const OverviewPanel = ({ siteId }: Props) => {
             <CardAction>
               <Button asChild data-testid="overview-primary-action">
                 <Link to={primaryAction.to}>
-                  {primaryAction.label}
+                  <Bdi>{primaryAction.label}</Bdi>
                   <ArrowRight aria-hidden="true" className="rtl:rotate-180" />
                 </Link>
               </Button>
@@ -615,8 +617,8 @@ export const OverviewPanel = ({ siteId }: Props) => {
                       <p className="text-xs text-muted-foreground">
                         {t('sites:overview.search.topQuery')}
                       </p>
-                      <p className="mt-1 truncate font-medium" title={gsc.topQueries[0].query}>
-                        {gsc.topQueries[0].query}
+                      <p className="mt-1 truncate font-medium" title={isolateText(gsc.topQueries[0].query)}>
+                        <Bdi>{gsc.topQueries[0].query}</Bdi>
                       </p>
                     </div>
                   ) : null}
@@ -633,8 +635,8 @@ export const OverviewPanel = ({ siteId }: Props) => {
                     <EmptyMedia variant="icon">
                       <Search aria-hidden="true" />
                     </EmptyMedia>
-                    <EmptyTitle>{searchEmptyCopy.title}</EmptyTitle>
-                    <EmptyDescription>{searchEmptyCopy.description}</EmptyDescription>
+                    <EmptyTitle><Bdi>{searchEmptyCopy.title}</Bdi></EmptyTitle>
+                    <EmptyDescription><Bdi>{searchEmptyCopy.description}</Bdi></EmptyDescription>
                   </EmptyHeader>
                   <EmptyContent>
                     <Button asChild variant="outline" size="sm">
@@ -711,8 +713,8 @@ export const OverviewPanel = ({ siteId }: Props) => {
                     <EmptyMedia variant="icon">
                       <Gauge aria-hidden="true" />
                     </EmptyMedia>
-                    <EmptyTitle>{pageSpeedEmptyCopy.title}</EmptyTitle>
-                    <EmptyDescription>{pageSpeedEmptyCopy.description}</EmptyDescription>
+                    <EmptyTitle><Bdi>{pageSpeedEmptyCopy.title}</Bdi></EmptyTitle>
+                    <EmptyDescription><Bdi>{pageSpeedEmptyCopy.description}</Bdi></EmptyDescription>
                   </EmptyHeader>
                 </Empty>
               )}
@@ -772,8 +774,8 @@ export const OverviewPanel = ({ siteId }: Props) => {
                     return (
                       <li key={keyword.id} className="flex items-center justify-between gap-4 p-4">
                         <div className="min-w-0">
-                          <p className="truncate font-medium" title={keyword.phrase}>
-                            {keyword.phrase}
+                          <p className="truncate font-medium" title={isolateText(keyword.phrase)}>
+                            <Bdi>{keyword.phrase}</Bdi>
                           </p>
                           <p className="text-xs text-muted-foreground">
                             {keyword.lastCheckedAt
@@ -961,8 +963,8 @@ export const OverviewPanel = ({ siteId }: Props) => {
                         key={competitor.domain}
                         className="flex items-center justify-between gap-4 p-4"
                       >
-                        <span className="min-w-0 truncate font-medium" title={competitor.domain}>
-                          {competitor.domain}
+                        <span className="min-w-0 truncate font-medium" title={isolateText(competitor.domain)}>
+                          <Bdi>{competitor.domain}</Bdi>
                         </span>
                         <div className="shrink-0 text-end text-sm">
                           <p className="font-medium tabular-nums">

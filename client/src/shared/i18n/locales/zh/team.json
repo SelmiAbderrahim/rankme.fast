@@ -74,7 +74,13 @@
       "saving": "正在保存…",
       "cancel": "取消"
     },
-    "joinedOn": "加入于 {{date}}"
+    "joinedOn": "加入于 {{date}}",
+    "total_zero": "没有成员",
+    "total_one": "共 {{count}} 位成员",
+    "total_two": "共 {{count}} 位成员",
+    "total_few": "共 {{count}} 位成员",
+    "total_many": "共 {{count}} 位成员",
+    "total_other": "共 {{count}} 位成员"
   },
   "accept": {
     "title": "接受邀请",
@@ -125,7 +131,13 @@
     "siteCount_two": "{{count}} 个网站",
     "siteCount_few": "{{count}} 个网站",
     "siteCount_many": "{{count}} 个网站",
-    "siteCount_other": "{{count}} 个网站"
+    "siteCount_other": "{{count}} 个网站",
+    "outsideYourAccess_zero": "另有 {{count}} 个网站不在您的访问范围内",
+    "outsideYourAccess_one": "另有 {{count}} 个网站不在您的访问范围内",
+    "outsideYourAccess_two": "另有 {{count}} 个网站不在您的访问范围内",
+    "outsideYourAccess_few": "另有 {{count}} 个网站不在您的访问范围内",
+    "outsideYourAccess_many": "另有 {{count}} 个网站不在您的访问范围内",
+    "outsideYourAccess_other": "另有 {{count}} 个网站不在您的访问范围内"
   },
   "decision": {
     "loading": "正在检查邀请…",
@@ -159,7 +171,7 @@
   },
   "inbox": {
     "buttonLabel": "团队邀请",
-    "buttonLabelWithCount": "团队邀请，{{count}} 个待处理",
+    "buttonLabelWithCount_one": "团队邀请，{{count}} 个待处理",
     "title": "团队邀请",
     "description": "查看等待你决定的邀请。",
     "emptyTitle": "没有待处理邀请",
@@ -173,6 +185,17 @@
     "rejectTitle": "拒绝此邀请？",
     "rejectBody": "你将不会加入 {{team}}。",
     "cancel": "取消",
-    "loadFailed": "无法加载你的团队邀请。"
-  }
+    "loadFailed": "无法加载你的团队邀请。",
+    "buttonLabelWithCount_zero": "团队邀请，{{count}} 个待处理",
+    "buttonLabelWithCount_two": "团队邀请，{{count}} 个待处理",
+    "buttonLabelWithCount_few": "团队邀请，{{count}} 个待处理",
+    "buttonLabelWithCount_many": "团队邀请，{{count}} 个待处理",
+    "buttonLabelWithCount_other": "团队邀请，{{count}} 个待处理"
+  },
+  "received": {"pending_zero": "有 {{count}} 个来自其他团队的邀请等待您处理。",
+    "pending_one": "有 {{count}} 个来自其他团队的邀请等待您处理。",
+    "pending_two": "有 {{count}} 个来自其他团队的邀请等待您处理。",
+    "pending_few": "有 {{count}} 个来自其他团队的邀请等待您处理。",
+    "pending_many": "有 {{count}} 个来自其他团队的邀请等待您处理。",
+    "pending_other": "有 {{count}} 个来自其他团队的邀请等待您处理。"}
 }

@@ -116,7 +116,7 @@
     "back": "Zurück zu den Scans",
     "loading": "Dieser Scan wird geladen",
     "errorTitle": "Dieser Scan konnte nicht geladen werden",
-    "mentionCount": "{{count}} Erwähnung gefunden",
+    "mentionCount_one": "{{count}} Erwähnung gefunden",
     "mentionCount_other": "{{count}} Erwähnungen gefunden",
     "market": "Markt",
     "outputLocale": "Ausgabesprache",
@@ -186,9 +186,13 @@
       "pending": "Die Zusammenfassung wird noch geschrieben.",
       "absent": "Für diesen Scan wurde keine Zusammenfassung erstellt.",
       "withheld": "Die Zusammenfassung wurde zurückgehalten, weil kein Satz einer Erwähnung zugeordnet werden konnte.",
-      "citations": "{{count}} Quelle",
+      "citations_one": "{{count}} Quelle",
       "citations_other": "{{count}} Quellen",
-      "citationMissing": "Quelle nicht auf dieser Seite"
+      "citationMissing": "Quelle nicht auf dieser Seite",
+      "citations_zero": "{{count}} Quellen",
+      "citations_two": "{{count}} Quellen",
+      "citations_few": "{{count}} Quellen",
+      "citations_many": "{{count}} Quellen"
     },
     "mentions": {
       "title": "Erwähnungen",
@@ -219,7 +223,11 @@
         "sentiment": "Ton",
         "observedAt": "Gesehen"
       }
-    }
+    },
+    "mentionCount_zero": "{{count}} Erwähnungen gefunden",
+    "mentionCount_two": "{{count}} Erwähnungen gefunden",
+    "mentionCount_few": "{{count}} Erwähnungen gefunden",
+    "mentionCount_many": "{{count}} Erwähnungen gefunden"
   },
   "errors": {
     "previewTitle": "Kosten konnten nicht berechnet werden",

@@ -292,10 +292,10 @@ export const de: DictionaryShape = {
             andMore: 'und {{count}} weitere',
             rankDrop: {
                 subject: 'Positionswarnung: "{{keyword}}"',
-                body: 'Deine Warnung greift ab Position {{threshold}} oder schlechter.\n\n' +
+                body: 'Ihre Warnung greift ab Position {{threshold}} oder schlechter.\n\n' +
                     'Vorher: Position {{before}} am {{beforeAt}}\n' +
                     'Nachher: Position {{after}} am {{afterAt}}\n\n' +
-                    'Melde dich an, um das Keyword zu prüfen.\n',
+                    'Melden Sie sich an, um das Keyword zu prüfen.\n',
             },
             newBacklink: {
                 subject: 'Linkwarnung: {{count}} neue verweisende Domains',
@@ -688,7 +688,7 @@ export const de: DictionaryShape = {
             missingScope: 'Die Berechtigung für die Google Search Console ist erforderlich. Bitte erneut zustimmen und die „Nur-Lesen“-Option aktivieren.',
             notConnected: 'Für dieses Konto besteht keine Verbindung zur Google Search Console.',
             accountMismatch: 'Verwenden Sie dieselbe Google-Identität, die bereits mit diesem Konto verbunden ist.',
-            invalidProperty: 'Diese Property gehört nicht zu deinen bestätigten Search-Console-Properties. Wähle eine aus der Liste.',
+            invalidProperty: 'Diese Property gehört nicht zu Ihren bestätigten Search-Console-Properties. Wählen Sie eine aus der Liste.',
             missingGa4Scope: 'Die Google-Analytics-Berechtigung ist erforderlich. Aktivieren Sie Google Analytics, um Nur-Lese-Zugriff zu gewähren.',
             invalidGa4Property: 'Diese Property gehört nicht zu Ihren Google-Analytics-Properties. Wählen Sie eine aus der Liste.',
             quotaExceeded: 'Google begrenzt die Anzahl der pro Tag prüfbaren URLs. Versuchen Sie es morgen erneut — Ihr Report bleibt vollständig.',
@@ -746,13 +746,12 @@ export const de: DictionaryShape = {
         },
         trends: {
             errors: {
-                overCap: 'Dein Keyword-Trends-Kontingent ({{used}}/{{limit}} {{metric}}) ist erschöpft. Upgrade oder ergänze Guthaben, um weiter zu forschen.',
                 unavailable: 'Keyword-Trends ist vorübergehend nicht verfügbar. Bitte gleich erneut versuchen.',
                 providerFailed: 'Der Trends-Anbieter ist vorübergehend nicht verfügbar. Bitte gleich erneut versuchen.',
                 notFound: 'Diese Trends-Analyse wurde nicht gefunden.',
                 runIdInvalid: 'Diese Run-ID ist nicht gültig.',
                 keywordsRequired: 'Gib mindestens ein Keyword zum Erkunden ein.',
-                tooManyKeywords: 'Du kannst pro Run bis zu fünf Keywords erkunden.',
+                tooManyKeywords: 'Sie können pro Run bis zu fünf Keywords erkunden.',
                 phraseRequired: 'Gib ein Keyword zum Erkunden ein.',
                 phraseTooLong: 'Dieses Keyword ist zu lang (max. 200 Zeichen).',
                 geoInvalid: 'Gib einen gültigen Standortcode ein (z. B. us oder gb-london).',
@@ -785,7 +784,6 @@ export const de: DictionaryShape = {
                 runNotReady: 'Diese Linkprüfung kann noch nicht exportiert werden.',
             },
             preview: {
-                packOverflow: 'Füge das Paket {{slug}} ({{units}} Prüfungen) hinzu, wenn dein Inklusivkontingent aufgebraucht ist.',
             },
         },
         errors: {
@@ -986,7 +984,6 @@ export const de: DictionaryShape = {
     alerts: {
         errors: {
             unavailable: 'Warnungen sind vorübergehend nicht verfügbar. Bitte später erneut versuchen.',
-            capExceeded: 'Du hast alle Warnregeln deines Tarifs verbraucht.',
             channelNotOnPlan: 'Slack- und Webhook-Kanäle erfordern mindestens den Pro-Tarif.',
             rateLimited: 'Zu viele Warnungsanfragen. Versuche es in einer Minute erneut.',
             siteNotFound: 'Website nicht gefunden.',
@@ -998,7 +995,7 @@ export const de: DictionaryShape = {
             noChannel: 'Wähle mindestens einen Kanal.',
             duplicateRecipient: 'Jeder Empfänger lässt sich nur einmal hinzufügen.',
             emptyUpdate: 'Nichts zu ändern.',
-            noWebhookToRotate: 'Füge eine Webhook-Adresse hinzu, bevor du ihren Signaturschlüssel erneuerst.',
+            noWebhookToRotate: 'Fügen Sie eine Webhook-Adresse hinzu, bevor Sie ihren Signaturschlüssel erneuern.',
         },
         slack: {
             rankDrop: '"{{keyword}}" fiel von Position {{before}} am {{beforeAt}} auf Position {{after}} am {{afterAt}}.',
@@ -1060,7 +1057,6 @@ export const de: DictionaryShape = {
             invalidSelection: 'Wählen Sie mindestens zwei verschiedene Traffic-Snapshots zum Vergleichen aus.',
         },
         errors: {
-            overCap: 'Du hast alle Traffic-Snapshots deines Tarifs für diesen Monat verwendet.',
             productUnavailable: 'Traffic Insights ist vorübergehend nicht verfügbar. Bitte versuche es später erneut.',
             notFound: 'Traffic-Snapshot wurde nicht gefunden.',
             invalidDomain: 'Gib eine gültige öffentliche Domain wie example.com ein.',
@@ -1632,29 +1628,23 @@ export const de: DictionaryShape = {
                 invalidAppId: 'Gib eine gültige App-ID für den gewählten Store ein.',
                 appIdCount: 'Wähle zwischen zwei und zwanzig eindeutigen Apps.',
                 ownAppRequired: 'Nimm die App des ausgewählten Profils in den Vergleich auf.',
-                keywordAllowanceExhausted: 'Du hast die verfügbaren App-Recherchen für diesen Zeitraum aufgebraucht.',
-                competitorAllowanceExhausted: 'Du hast die verfügbaren App-Wettbewerberabfragen für diesen Zeitraum aufgebraucht.',
             },
         },
         errors: {
             productUnavailable: 'App-SEO ist vorübergehend nicht verfügbar.',
             notFound: 'App-Profil nicht gefunden.',
-            profileLimitReached: 'Du hast das App-Profil-Limit für diesen Tarif erreicht.',
-            duplicate: 'Diese App ist bereits für dein Konto registriert.',
+            duplicate: 'Diese App ist bereits für Ihr Konto registriert.',
             rateLimited: 'Zu viele App-Profil-Anfragen. Versuche es gleich noch einmal.',
             storeIdRequired: 'Gib eine Google-Play-Paket-ID oder eine App-Store-ID ein.',
             pairedStoreIdsRequired: 'Verknüpfte Profile benötigen beide Store-IDs.',
             keywordNotFound: 'Getracktes App-Keyword nicht gefunden.',
             keywordTrackingUnavailable: 'App-Keyword-Tracking ist vorübergehend nicht verfügbar.',
-            keywordSlotLimitReached: 'Du hast das Limit für getrackte App-Keywords in diesem Tarif erreicht.',
-            keywordChecksExhausted: 'Du hast die verfügbaren App-Keyword-Checks für diesen Zeitraum aufgebraucht.',
             duplicateKeyword: 'Dieses Keyword und dieser Store werden für die ausgewählte App bereits getrackt.',
             chartSubscriptionNotFound: 'App-Chart-Abonnement nicht gefunden.',
             chartTrackingUnavailable: 'App-Chart-Tracking ist vorübergehend nicht verfügbar.',
             invalidChartSelection: 'Wähle einen unterstützten Chart und eine Kategorie für diesen Store.',
-            chartSubscriptionLimit: 'Du kannst pro App-Profil bis zu zwei Charts tracken.',
+            chartSubscriptionLimit: 'Sie können pro App-Profil bis zu zwei Charts tracken.',
             duplicateChartSubscription: 'Dieser Chart und diese Kategorie werden für die ausgewählte App bereits getrackt.',
-            chartChecksExhausted: 'Du hast die verfügbaren App-Chart-Checks für diesen Zeitraum aufgebraucht.',
         },
     },
     reportExports: {

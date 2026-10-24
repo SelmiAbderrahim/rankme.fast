@@ -65,12 +65,22 @@
     "title": "Во что обойдётся эта загрузка",
     "description": "Это оценка. Ничего не списывается, пока вы не подтвердите.",
     "units": "Расходует {{units}} загрузку",
-    "perSource": "Охватывает источников: {{sources}}",
-    "depth": "Загружает до {{depth}} отзывов из каждого источника",
+    "perSource_one": "Охватывает источников: {{sources}}",
+    "depth_one": "Загружает до {{depth}} отзыва из каждого источника",
     "available": "Укладывается в лимит",
     "unavailable": "Превышает лимит",
     "baseRemaining": "Осталось загрузок по тарифу: {{remaining}}",
-    "packRemaining": "Осталось загрузок в пакете: {{remaining}}"
+    "packRemaining": "Осталось загрузок в пакете: {{remaining}}",
+    "depth_zero": "Загружает до {{depth}} отзывов из каждого источника",
+    "depth_two": "Загружает до {{depth}} отзывов из каждого источника",
+    "depth_few": "Загружает до {{depth}} отзывов из каждого источника",
+    "depth_many": "Загружает до {{depth}} отзывов из каждого источника",
+    "depth_other": "Загружает до {{depth}} отзывов из каждого источника",
+    "perSource_zero": "Охватывает источников: {{sources}}",
+    "perSource_two": "Охватывает источников: {{sources}}",
+    "perSource_few": "Охватывает источников: {{sources}}",
+    "perSource_many": "Охватывает источников: {{sources}}",
+    "perSource_other": "Охватывает источников: {{sources}}"
   },
   "runs": {
     "title": "История загрузок",
@@ -122,10 +132,10 @@
     "filterAll": "Все",
     "searchPlaceholder": "Искать в отзывах",
     "apply": "Применить",
-    "stars": "Звёзд: {{stars}}",
+    "stars_one": "Звёзд: {{stars}}",
     "unrated": "Без оценки",
     "anonymous": "Без имени",
-    "page": "Страница {{page}}, всего отзывов: {{total}}",
+    "page_one": "Страница {{page}}, всего отзывов: {{total}}",
     "previous": "Назад",
     "next": "Вперёд",
     "export": "Скачать CSV",
@@ -138,16 +148,31 @@
       "source": "Источник",
       "text": "Отзыв",
       "author": "Автор"
-    }
+    },
+    "stars_zero": "Звёзд: {{stars}}",
+    "stars_two": "Звёзд: {{stars}}",
+    "stars_few": "Звёзд: {{stars}}",
+    "stars_many": "Звёзд: {{stars}}",
+    "stars_other": "Звёзд: {{stars}}",
+    "page_zero": "Страница {{page}}, всего отзывов: {{total}}",
+    "page_two": "Страница {{page}}, всего отзывов: {{total}}",
+    "page_few": "Страница {{page}}, всего отзывов: {{total}}",
+    "page_many": "Страница {{page}}, всего отзывов: {{total}}",
+    "page_other": "Страница {{page}}, всего отзывов: {{total}}"
   },
   "stats": {
     "title": "Состояние отзывов",
     "empty": "Пока нечего показать на графике.",
-    "total": "Сохранено отзывов: {{total}}",
+    "total_one": "Сохранено отзывов: {{total}}",
     "distribution": {
       "title": "Распределение звёзд",
-      "stars": "Звёзд: {{stars}}",
-      "unrated": "Без оценки"
+      "stars_one": "Звёзд: {{stars}}",
+      "unrated": "Без оценки",
+      "stars_zero": "Звёзд: {{stars}}",
+      "stars_two": "Звёзд: {{stars}}",
+      "stars_few": "Звёзд: {{stars}}",
+      "stars_many": "Звёзд: {{stars}}",
+      "stars_other": "Звёзд: {{stars}}"
     },
     "velocity": {
       "title": "Отзывов в месяц",
@@ -156,7 +181,12 @@
     },
     "sourceMix": {
       "title": "Откуда они приходят"
-    }
+    },
+    "total_zero": "Сохранено отзывов: {{total}}",
+    "total_two": "Сохранено отзывов: {{total}}",
+    "total_few": "Сохранено отзывов: {{total}}",
+    "total_many": "Сохранено отзывов: {{total}}",
+    "total_other": "Сохранено отзывов: {{total}}"
   },
   "trend": {
     "title": "Средняя оценка со временем",
@@ -174,7 +204,7 @@
     "complaints": "Частые жалобы",
     "praise": "Частые похвалы",
     "citations": "Показать отзывы, подтверждающие это",
-    "citationCount": "Отзывов: {{citations}}",
+    "citationCount_one": "Отзывов: {{citations}}",
     "citationSource": "{{source}} · {{rating}} · {{date}}",
     "sectionEmpty": "Для этой загрузки здесь ничего нет.",
     "pending": "Разбор тем ещё не завершён.",
@@ -186,7 +216,12 @@
       "title": "Темы собрать не удалось",
       "description": "Шаг обобщения завершился ошибкой. Ваши отзывы получены и по-прежнему доступны ниже.",
       "link": "Перейти к отзывам"
-    }
+    },
+    "citationCount_zero": "Отзывов: {{citations}}",
+    "citationCount_two": "Отзывов: {{citations}}",
+    "citationCount_few": "Отзывов: {{citations}}",
+    "citationCount_many": "Отзывов: {{citations}}",
+    "citationCount_other": "Отзывов: {{citations}}"
   },
   "provenance": {
     "first_party": "Собственные данные",
@@ -194,7 +229,12 @@
     "estimate": "Оценка",
     "ai_interpretation": "Интерпретация ИИ",
     "observedAt": "Наблюдение: {{date}}",
-    "sampleCount": "Отзывов в выборке: {{count}}"
+    "sampleCount_one": "Отзывов в выборке: {{count}}",
+    "sampleCount_zero": "Отзывов в выборке: {{count}}",
+    "sampleCount_two": "Отзывов в выборке: {{count}}",
+    "sampleCount_few": "Отзывов в выборке: {{count}}",
+    "sampleCount_many": "Отзывов в выборке: {{count}}",
+    "sampleCount_other": "Отзывов в выборке: {{count}}"
   },
   "errors": {
     "sourcesFailed": "Не удалось загрузить источники отзывов.",

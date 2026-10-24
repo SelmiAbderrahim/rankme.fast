@@ -1,3 +1,4 @@
+import { Bdi } from '@shared/components/Bdi';
 /**
  * Dismiss-cluster confirmation dialog. Dismissals are
  * terminal on the append-only decision log — the copy says so before the
@@ -78,7 +79,7 @@ export const DismissClusterDialog = ({
         </DialogHeader>
         <p className="break-words text-sm">
           <strong>{t('keywordResearch:clusters.clusterLabel')}: </strong>
-          {cluster.label}
+          <Bdi>{cluster.label}</Bdi>
         </p>
         {alreadyDismissed ? (
           <p

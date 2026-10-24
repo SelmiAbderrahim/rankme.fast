@@ -8,7 +8,7 @@
  */
 /*
  * Self-hosted Inter UI/body face (SEC-07). One sans family across the whole
- * product — app, marketing, auth — so type renders identically on every OS
+ * product — app and auth — so type renders identically on every OS
  * instead of falling back to each platform's system stack. WOFF2 vendored
  * under client/public/fonts, served same-origin at /fonts/*, latin subset,
  * `swap` so the fallback paints immediately. Weights 400/500/600/700 cover
@@ -43,6 +43,17 @@
   src: url('/fonts/inter-latin-700-normal.woff2') format('woff2');
 }
 
+/* Self-hosted Arabic fallback, SIL OFL 1.1. Inter supplies Latin glyphs;
+ * the Arabic subset serves mixed-script content in every UI locale. */
+@font-face {
+  font-family: 'Noto Sans Arabic';
+  font-style: normal;
+  font-display: swap;
+  font-weight: 100 900;
+  src: url('/fonts/noto-sans-arabic-arabic-wght-normal.woff2') format('woff2');
+  unicode-range: U+0600-06FF, U+0750-077F, U+0870-088E, U+0890-0891, U+0897-08E1, U+08E3-08FF, U+200C-200E, U+2010-2011, U+204F, U+2E41, U+FB50-FDFF, U+FE70-FE74, U+FE76-FEFC, U+102E0-102FB, U+10E60-10E7E, U+10EC2-10EC4, U+10EFC-10EFF, U+1EE00-1EE03, U+1EE05-1EE1F, U+1EE21-1EE22, U+1EE24, U+1EE27, U+1EE29-1EE32, U+1EE34-1EE37, U+1EE39, U+1EE3B, U+1EE42, U+1EE47, U+1EE49, U+1EE4B, U+1EE4D-1EE4F, U+1EE51-1EE52, U+1EE54, U+1EE57, U+1EE59, U+1EE5B, U+1EE5D, U+1EE5F, U+1EE61-1EE62, U+1EE64, U+1EE67-1EE6A, U+1EE6C-1EE72, U+1EE74-1EE77, U+1EE79-1EE7C, U+1EE7E, U+1EE80-1EE89, U+1EE8B-1EE9B, U+1EEA1-1EEA3, U+1EEA5-1EEA9, U+1EEAB-1EEBB, U+1EEF0-1EEF1;
+}
+
 @font-face {
   font-family: 'Instrument Serif';
   font-style: normal;
@@ -73,6 +84,8 @@
  * as destructive across the dashboard.
  */
 :root {
+  --site-sidebar-width: 15rem;
+  --site-sidebar-width-icon: 3.5rem;
   color-scheme: light;
   --radius: 0.5rem;
 
@@ -89,7 +102,7 @@
   --primary: #1c1a18;
   --primary-foreground: #f5f3f0;
 
-  /* Taupe band fill (marketing closing CTA) + secondary buttons. */
+  /* Secondary surfaces and buttons. */
   --secondary: #dcd8d1;
   --secondary-foreground: #191715;
 
@@ -111,7 +124,7 @@
   --success: #166534;
   --success-foreground: #ffffff;
 
-  --warning: #92400e;
+  --warning: #854d0e;
   --warning-foreground: #ffffff;
 
   --info: #4338ca;
@@ -133,6 +146,7 @@
   --ring: #3d3833;
 
   /* Sidebar surface tokens (shadcn Sidebar). */
+  --overlay: rgb(28 26 24 / 0.62);
   --sidebar: #edeae6;
   --sidebar-foreground: #191715;
   --sidebar-primary: #1c1a18;
@@ -197,6 +211,7 @@
   --input: #71685f;
   --ring: #c9c4bd;
 
+  --overlay: rgb(0 0 0 / 0.72);
   --sidebar: #141312;
   --sidebar-foreground: #f2f0ed;
   --sidebar-primary: #f2f0ed;
@@ -256,7 +271,7 @@
   --success: #166534;
   --success-foreground: #ffffff;
 
-  --warning: #92400e;
+  --warning: #854d0e;
   --warning-foreground: #ffffff;
 
   --info: #4338ca;
@@ -320,7 +335,7 @@
   --warning: #fbbf24;
   --warning-foreground: #0a0a09;
 
-  --info: #818cf8;
+  --info: #a5b4fc;
   --info-foreground: #0a0a09;
 
   --highlight: #60a5fa;
@@ -402,6 +417,7 @@
   --color-chart-3: var(--chart-3);
   --color-chart-4: var(--chart-4);
   --color-chart-5: var(--chart-5);
+  --color-overlay: var(--overlay);
 
   --radius-sm: calc(var(--radius) - 4px);
   --radius-md: calc(var(--radius) - 2px);
@@ -409,7 +425,7 @@
   --radius-xl: calc(var(--radius) + 4px);
 
   --font-sans:
-    'Inter', system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+    'Inter', 'Noto Sans Arabic', system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
   --font-mono: 'JetBrains Mono', ui-monospace, monospace;
   /* Accent display face — self-hosted Instrument Serif (SEC-07). Used for the
      italic-serif marketing accent words; falls back to a system serif stack. */
@@ -417,6 +433,25 @@
 }
 
 @layer base {
+  /* A desktop app frame owns its content scroller. Public pages retain
+     document scrolling; mobile app anchors clear the sticky topbar. */
+  html:has([data-app-frame]) {
+    scroll-padding-top: 4.5rem;
+  }
+  @media (min-width: 48rem) {
+    html:has([data-app-frame]),
+    html:has([data-app-frame]) body {
+      overscroll-behavior-y: none;
+    }
+  }
+  /* Ellipsis follows the isolated label's direction. */
+  .truncate > bdi {
+    display: block;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
   * {
     @apply border-border outline-ring/50;
   }
@@ -436,4 +471,26 @@
   svg {
     max-width: 100%;
   }
+}
+
+/* Shared navigation overflow: scroll the list, with fades only at hidden edges. */
+@utility nav-scroll {
+  overflow-x: hidden;
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  scrollbar-width: thin;
+  scrollbar-gutter: stable;
+  scrollbar-color: var(--border) transparent;
+  --nav-fade-top: 0px;
+  --nav-fade-bottom: 0px;
+  mask-image: linear-gradient(to bottom, transparent 0, #000 var(--nav-fade-top), #000 calc(100% - var(--nav-fade-bottom)), transparent 100%);
+  &[data-fade-top='true'] { --nav-fade-top: 1rem; }
+  &[data-fade-bottom='true'] { --nav-fade-bottom: 1rem; }
+}
+
+/* Narrow rails retain scrolling without reserving room for a scrollbar. */
+@utility nav-scroll-rail {
+  scrollbar-width: none;
+  scrollbar-gutter: auto;
+  &::-webkit-scrollbar { display: none; }
 }

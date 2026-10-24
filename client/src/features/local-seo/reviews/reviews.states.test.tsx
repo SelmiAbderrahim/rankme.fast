@@ -431,7 +431,7 @@ describe('Review Intelligence states', () => {
     await user.click(await screen.findByTestId('reviews-sync-source-google'));
     await user.click(screen.getByTestId('reviews-sync-estimate'));
     expect(await screen.findByTestId('reviews-preview-sources')).toHaveTextContent(
-      'Covers 1 sources',
+      'Covers 1 source',
     );
     await user.click(screen.getByTestId('reviews-sync-cancel'));
     await waitFor(() => expect(screen.queryByTestId('reviews-preview')).not.toBeInTheDocument());

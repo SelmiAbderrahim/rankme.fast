@@ -11,9 +11,14 @@
   },
   "scope": {
     "title": "Palabras clave de esta ejecución",
-    "description": "{{count}} palabras clave seleccionadas. Cada palabra clave seleccionada debe tener un resultado reciente y utilizable de Google.",
+    "description_one": "{{count}} palabra clave seleccionada. Cada palabra clave seleccionada debe tener un resultado reciente y utilizable de Google.",
     "empty": "Este sitio aún no tiene palabras clave activas de Google.",
-    "minimum": "Selecciona al menos dos palabras clave antes de previsualizar la ejecución."
+    "minimum": "Selecciona al menos dos palabras clave antes de previsualizar la ejecución.",
+    "description_zero": "{{count}} palabras clave seleccionadas. Cada palabra clave seleccionada debe tener un resultado reciente y utilizable de Google.",
+    "description_two": "{{count}} palabras clave seleccionadas. Cada palabra clave seleccionada debe tener un resultado reciente y utilizable de Google.",
+    "description_few": "{{count}} palabras clave seleccionadas. Cada palabra clave seleccionada debe tener un resultado reciente y utilizable de Google.",
+    "description_many": "{{count}} palabras clave seleccionadas. Cada palabra clave seleccionada debe tener un resultado reciente y utilizable de Google.",
+    "description_other": "{{count}} palabras clave seleccionadas. Cada palabra clave seleccionada debe tener un resultado reciente y utilizable de Google."
   },
   "newRun": {
     "title": "Preparar una ejecución de agrupación",
@@ -22,7 +27,7 @@
     "unitLabel": "Cuota",
     "unitValue": "{{count}} ejecución de agrupación",
     "scopeLabel": "Palabras clave listas",
-    "scopeValue": "{{count}} palabras clave rastreadas califican",
+    "scopeValue_one": "{{count}} palabra clave rastreada califica",
     "method": "Dos palabras clave se agrupan cuando comparten al menos {{shared}} de sus {{window}} primeros resultados, de una comprobación de posición de los últimos {{days}} días.",
     "remaining": "Quedan {{count}} ejecuciones antes de esta.",
     "labelingIncluded": "Las etiquetas de grupo opcionales con IA están incluidas en esta ejecución y nunca cambian la pertenencia a los grupos.",
@@ -30,7 +35,12 @@
     "previewing": "Comprobando resultados almacenados…",
     "confirm": "Iniciar la agrupación",
     "starting": "Iniciando…",
-    "cancel": "Cancelar"
+    "cancel": "Cancelar",
+    "scopeValue_zero": "{{count}} palabras clave rastreadas califican",
+    "scopeValue_two": "{{count}} palabras clave rastreadas califican",
+    "scopeValue_few": "{{count}} palabras clave rastreadas califican",
+    "scopeValue_many": "{{count}} palabras clave rastreadas califican",
+    "scopeValue_other": "{{count}} palabras clave rastreadas califican"
   },
   "states": {
     "ranksCta": "Ejecutar una comprobación de posición",
@@ -84,15 +94,25 @@
     "open": "Abrir ejecución"
   },
   "blocked": {
-    "title": "{{count}} palabras clave no pudieron participar",
+    "title_one": "{{count}} palabra clave no pudo participar",
     "body": "Estas palabras clave rastreadas aún no tienen un resultado almacenado utilizable. Ejecuta una comprobación de posición y calificarán para la próxima ejecución.",
-    "more": "y {{count}} más",
+    "more_one": "y {{count}} más",
     "observedAt": "última comprobación {{date}}",
     "reason": {
       "missing": "Nunca comprobada",
       "stale": "Comprobación demasiado antigua",
       "empty": "Sin resultados almacenados"
-    }
+    },
+    "more_zero": "y {{count}} más",
+    "more_two": "y {{count}} más",
+    "more_few": "y {{count}} más",
+    "more_many": "y {{count}} más",
+    "more_other": "y {{count}} más",
+    "title_zero": "{{count}} palabras clave no pudieron participar",
+    "title_two": "{{count}} palabras clave no pudieron participar",
+    "title_few": "{{count}} palabras clave no pudieron participar",
+    "title_many": "{{count}} palabras clave no pudieron participar",
+    "title_other": "{{count}} palabras clave no pudieron participar"
   },
   "results": {
     "title": "Grupos",
@@ -110,15 +130,15 @@
   "cluster": {
     "unlabeled": "Grupo sin nombre",
     "aiSuggestion": "Sugerencia de IA",
-    "grouped": "{{count}} palabras clave",
+    "grouped_one": "{{count}} palabra clave",
     "singleton": "Sin agrupar",
-    "commonCore": "{{count}} resultados compartidos por todas las palabras clave",
+    "commonCore_one": "{{count}} resultado compartido por todas las palabras clave",
     "noCommonCore": "Ningún resultado es compartido por todas las palabras clave de este grupo",
     "showEvidence": "Mostrar solapamiento",
     "hideEvidence": "Ocultar solapamiento",
     "pivot": "Referencia",
-    "pivotWindow": "{{count}} resultados almacenados comparados",
-    "sharedWithPivot": "{{count}} compartidos con la palabra clave de referencia",
+    "pivotWindow_one": "{{count}} resultado almacenado comparado",
+    "sharedWithPivot_one": "{{count}} compartido con la palabra clave de referencia",
     "evidenceTitle": "Qué resultados se solapan",
     "evidenceBody": "Cada palabra clave de abajo está agrupada porque comparte estas URL de resultados almacenados con la palabra clave de referencia.",
     "singletonEvidence": "Esta palabra clave compartió demasiados pocos resultados con cualquier otra palabra clave rastreada como para agruparse.",
@@ -126,6 +146,44 @@
       "keyword": "Palabra clave",
       "observedAt": "Resultado observado",
       "sharedUrls": "Solapamiento"
-    }
-  }
+    },
+    "sharedWithPivot_zero": "{{count}} compartidos con la palabra clave de referencia",
+    "sharedWithPivot_two": "{{count}} compartidos con la palabra clave de referencia",
+    "sharedWithPivot_few": "{{count}} compartidos con la palabra clave de referencia",
+    "sharedWithPivot_many": "{{count}} compartidos con la palabra clave de referencia",
+    "sharedWithPivot_other": "{{count}} compartidos con la palabra clave de referencia",
+    "grouped_zero": "{{count}} palabras clave",
+    "grouped_two": "{{count}} palabras clave",
+    "grouped_few": "{{count}} palabras clave",
+    "grouped_many": "{{count}} palabras clave",
+    "grouped_other": "{{count}} palabras clave",
+    "commonCore_zero": "{{count}} resultados compartidos por todas las palabras clave",
+    "commonCore_two": "{{count}} resultados compartidos por todas las palabras clave",
+    "commonCore_few": "{{count}} resultados compartidos por todas las palabras clave",
+    "commonCore_many": "{{count}} resultados compartidos por todas las palabras clave",
+    "commonCore_other": "{{count}} resultados compartidos por todas las palabras clave",
+    "pivotWindow_zero": "{{count}} resultados almacenados comparados",
+    "pivotWindow_two": "{{count}} resultados almacenados comparados",
+    "pivotWindow_few": "{{count}} resultados almacenados comparados",
+    "pivotWindow_many": "{{count}} resultados almacenados comparados",
+    "pivotWindow_other": "{{count}} resultados almacenados comparados"
+  },
+  "eligibility": {"needCheck_zero": "{{count}} de {{total}} palabras clave necesitan una nueva comprobación de posiciones.",
+    "needCheck_one": "{{count}} de {{total}} palabras clave necesita una nueva comprobación de posiciones.",
+    "needCheck_two": "{{count}} de {{total}} palabras clave necesitan una nueva comprobación de posiciones.",
+    "needCheck_few": "{{count}} de {{total}} palabras clave necesitan una nueva comprobación de posiciones.",
+    "needCheck_many": "{{count}} de {{total}} palabras clave necesitan una nueva comprobación de posiciones.",
+    "needCheck_other": "{{count}} de {{total}} palabras clave necesitan una nueva comprobación de posiciones.",
+    "ready_zero": "{{count}} están listas.",
+    "ready_one": "{{count}} está lista.",
+    "ready_two": "{{count}} están listas.",
+    "ready_few": "{{count}} están listas.",
+    "ready_many": "{{count}} están listas.",
+    "ready_other": "{{count}} están listas.",
+    "minimum_zero": "La agrupación necesita al menos {{count}} palabras clave listas.",
+    "minimum_one": "La agrupación necesita al menos {{count}} palabra clave lista.",
+    "minimum_two": "La agrupación necesita al menos {{count}} palabras clave listas.",
+    "minimum_few": "La agrupación necesita al menos {{count}} palabras clave listas.",
+    "minimum_many": "La agrupación necesita al menos {{count}} palabras clave listas.",
+    "minimum_other": "La agrupación necesita al menos {{count}} palabras clave listas."}
 }

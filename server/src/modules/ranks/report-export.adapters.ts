@@ -36,7 +36,7 @@ const currentSelectionSchema = z
     .strict();
 const historySelectionSchema = z
     .object({
-    keywordIds: z.array(z.string().uuid()).min(1).max(25),
+    keywordIds: z.array(z.string().guid()).min(1).max(25),
     from: z.string().datetime({ offset: true }).optional(),
     to: z.string().datetime({ offset: true }).optional(),
     engine: z.enum(RANK_ENGINES).optional(),
@@ -49,7 +49,7 @@ const historySelectionSchema = z
 });
 const serpSelectionSchema = z
     .object({
-    keywordIds: z.array(z.string().uuid()).min(1).max(2000).optional(),
+    keywordIds: z.array(z.string().guid()).min(1).max(2000).optional(),
     latest: z.boolean().default(true),
     from: z.string().datetime({ offset: true }).optional(),
     to: z.string().datetime({ offset: true }).optional(),

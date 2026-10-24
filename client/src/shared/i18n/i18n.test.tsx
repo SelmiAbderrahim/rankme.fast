@@ -18,23 +18,9 @@ import { RESOURCES } from './resources';
 import { LanguageSwitcher } from './LanguageSwitcher';
 import { LANGUAGE_COOKIE } from './locales';
 import { classifyValue, collectQualityIssues } from './translation-quality';
+import { flatten, placeholderNames as placeholders } from './localeParity';
 
-const collectKeys = (obj: unknown, prefix = ''): string[] => {
-  if (obj == null || typeof obj !== 'object') return [];
-  const out: string[] = [];
-  for (const [k, v] of Object.entries(obj as Record<string, unknown>)) {
-    const path = prefix ? `${prefix}.${k}` : k;
-    if (typeof v === 'string') out.push(path);
-    else if (v && typeof v === 'object') out.push(...collectKeys(v, path));
-  }
-  return out;
-};
-
-const placeholders = (s: string): string[] =>
-  Array.from(s.matchAll(/\{\{\s*([a-zA-Z0-9_]+)\s*\}\}/g))
-    .map((m) => m[1] ?? '')
-    .filter(Boolean)
-    .sort();
+const collectKeys = (obj: unknown, prefix = ''): string[] => [...flatten(obj, prefix).keys()];
 
 const collectStrings = (value: unknown): string[] => {
   if (typeof value === 'string') return [value];

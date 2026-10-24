@@ -28,7 +28,12 @@
   "queued": { "title": "Prüfung läuft", "description": "Der Bericht wird aktualisiert, sobald die gespeicherten Beobachtungen bereit sind." },
   "run": { "title": "Store-Eintrag prüfen", "description": "Beobachten Sie die aktuellen Store-Einträge und erstellen Sie eine deterministische Maßnahmenliste.", "profile": "App-Profil", "previewing": "Kapazität wird geprüft…", "button": "Lauf prüfen", "bound": "Eine Einheit deckt alle Stores dieses Profils ab." },
   "report": { "title": "Neuester Bericht", "description": "Starten Sie eine Prüfung, um den ersten Bericht zu speichern.", "capturedAt": "Beobachtet am {{date}}", "keywordsCta": "Beobachtete Suchbegriffe verwalten", "empty": "Für dieses Profil wurde noch kein Bericht gespeichert." },
-  "store": { "rating": "Bewertung", "reviews": "Rezensionen", "category": "Hauptkategorie", "updated": "Letztes Update", "screenshots": "Beobachtete Screenshot-Links", "installs": "Veröffentlichte Installationen", "description": "Store-Beschreibung", "openListing": "Store-Eintrag öffnen", "screenshotLink": "Screenshot-Link {{number}}", "moreScreenshots": "{{count}} weitere Screenshot-Links" },
+  "store": { "rating": "Bewertung", "reviews": "Rezensionen", "category": "Hauptkategorie", "updated": "Letztes Update", "screenshots": "Beobachtete Screenshot-Links", "installs": "Veröffentlichte Installationen", "description": "Store-Beschreibung", "openListing": "Store-Eintrag öffnen", "screenshotLink": "Screenshot-Link {{number}}", "moreScreenshots_one": "{{count}} weiterer Screenshot-Link",
+    "moreScreenshots_zero": "{{count}} weitere Screenshot-Links",
+    "moreScreenshots_two": "{{count}} weitere Screenshot-Links",
+    "moreScreenshots_few": "{{count}} weitere Screenshot-Links",
+    "moreScreenshots_many": "{{count}} weitere Screenshot-Links",
+    "moreScreenshots_other": "{{count}} weitere Screenshot-Links" },
   "parity": { "title": "Konsistenz gekoppelter Stores", "description": "Verglichen werden nur Stores, die Sie für diese App ausdrücklich gekoppelt haben.", "provenance": "Vom Benutzer gekoppelt" },
   "history": { "title": "Verlauf der Store-Einträge", "description": "Gespeicherte Läufe bleiben lesbar, wenn neue Prüfungen nicht verfügbar sind.", "empty": "Noch kein Verlauf vorhanden.", "partial": "Teilweise Beobachtung", "counts": { "fixNow": "Jetzt beheben: {{count}}", "watch": "Beobachten: {{count}}", "advisory": "Hinweise: {{count}}" } }
 }

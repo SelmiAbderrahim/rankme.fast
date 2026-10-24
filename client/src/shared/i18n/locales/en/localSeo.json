@@ -6,8 +6,13 @@
   "emptyCta": "Fetch local data",
   "refresh": {
     "button": "Refresh Local SEO",
-    "cooldown": "Refresh in {{seconds}}s",
-    "failed": "Could not refresh Local SEO. Try again in a moment."
+    "cooldown_one": "Refresh in {{seconds}}s",
+    "failed": "Could not refresh Local SEO. Try again in a moment.",
+    "cooldown_zero": "Refresh in {{seconds}}s",
+    "cooldown_two": "Refresh in {{seconds}}s",
+    "cooldown_few": "Refresh in {{seconds}}s",
+    "cooldown_many": "Refresh in {{seconds}}s",
+    "cooldown_other": "Refresh in {{seconds}}s"
   },
   "loadFailed": "Could not load Local SEO.",
   "locked": {
@@ -37,5 +42,11 @@
     "position": "Position",
     "packSize": "Pack size",
     "notRanked": "Not in map pack"
-  }
+  },
+  "setup": {"resultsLegend_zero": "{{count}} results for “{{query}}”. Pick yours:",
+    "resultsLegend_one": "{{count}} result for “{{query}}”. Pick yours:",
+    "resultsLegend_two": "{{count}} results for “{{query}}”. Pick yours:",
+    "resultsLegend_few": "{{count}} results for “{{query}}”. Pick yours:",
+    "resultsLegend_many": "{{count}} results for “{{query}}”. Pick yours:",
+    "resultsLegend_other": "{{count}} results for “{{query}}”. Pick yours:"}
 }

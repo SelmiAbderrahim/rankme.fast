@@ -4,7 +4,7 @@
   "searchTitle": "研究一组关键词",
   "inputLabel": "要研究的关键词",
   "inputPlaceholder": "输入关键词并按下 Enter",
-  "selectionCount": "已选择 {{count}} / {{max}}",
+  "selectionCount_one": "已选择 {{count}} / {{max}}",
   "removeKeyword": "移除 {{phrase}}",
   "tracked": {
     "title": "已跟踪关键词",
@@ -18,7 +18,12 @@
     "emptyCta": "前往已跟踪关键词",
     "noMatch": "没有已跟踪关键词与所选地区和语言匹配。",
     "allSelected": "所有匹配的已跟踪关键词均已选择。",
-    "limitReached": "已达到 {{max}} 个关键词的选择上限。"
+    "limitReached_one": "已达到 {{max}} 个关键词的选择上限。",
+    "limitReached_zero": "已达到 {{max}} 个关键词的选择上限。",
+    "limitReached_two": "已达到 {{max}} 个关键词的选择上限。",
+    "limitReached_few": "已达到 {{max}} 个关键词的选择上限。",
+    "limitReached_many": "已达到 {{max}} 个关键词的选择上限。",
+    "limitReached_other": "已达到 {{max}} 个关键词的选择上限。"
   },
   "locationLabel": "地区",
   "languageLabel": "语言",
@@ -131,7 +136,7 @@
     "columnSearchVolume": "搜索量",
     "emptyPair": "与此竞争对手没有重叠关键词。",
     "emptyResults": "所选竞争对手中未找到关键词差距。",
-    "resultCount": "找到 {{count}} 个关键词",
+    "resultCount_one": "找到 {{count}} 个关键词",
     "cachedBadge": "缓存",
     "freshBadge": "实时",
     "pairPickerLabel": "选择一个竞争对手",
@@ -157,7 +162,12 @@
     },
     "idle": "运行差距分析，查看竞争对手正在排名而你没有的关键词。",
     "loadFailed": "无法运行关键词差距分析。",
-    "siteWorkspaceLink": "在站点竞争对手工作区中打开此设置"
+    "siteWorkspaceLink": "在站点竞争对手工作区中打开此设置",
+    "resultCount_zero": "找到 {{count}} 个关键词",
+    "resultCount_two": "找到 {{count}} 个关键词",
+    "resultCount_few": "找到 {{count}} 个关键词",
+    "resultCount_many": "找到 {{count}} 个关键词",
+    "resultCount_other": "找到 {{count}} 个关键词"
   },
   "overview": {
     "title": "SERP 概览",
@@ -295,7 +305,13 @@
     "loadMore": "加载更多",
     "loading": "加载中…",
     "loadFailed": "无法加载研究历史。",
-    "back": "返回关键词研究"
+    "back": "返回关键词研究",
+    "shown_zero": "没有已保存的查询",
+    "shown_one": "已显示 {{loaded}} / {{count}} 条已保存的查询",
+    "shown_two": "已显示 {{loaded}} / {{count}} 条已保存的查询",
+    "shown_few": "已显示 {{loaded}} / {{count}} 条已保存的查询",
+    "shown_many": "已显示 {{loaded}} / {{count}} 条已保存的查询",
+    "shown_other": "已显示 {{loaded}} / {{count}} 条已保存的查询"
   },
   "previewFailed": "无法加载费用预览。",
   "tabs": {
@@ -323,7 +339,7 @@
     "title": "AI 关键词聚类",
     "description": "通过一次 AI 处理，把 10–200 条已存储的短语归类为主题。AI 只读取你已获取的行——绝不会调用搜索供应商。",
     "noCandidates": "还没有已存储的短语。请先运行关键词研究——聚类读取的是你已存储的行。",
-    "selectionCount": "已选 {{count}} 条（需要 {{min}}–{{max}} 条）",
+    "selectionCount_one": "已选 {{count}} 条（需要 {{min}}–{{max}} 条）",
     "source": {
       "metrics": "研究",
       "ideas": "创意",
@@ -341,7 +357,7 @@
     "listFailed": "无法加载已存储的聚类记录。",
     "detailFailed": "无法加载该聚类记录。",
     "decisionFailed": "无法保存该决定。",
-    "resultTitle": "{{count}} 个聚类",
+    "resultTitle_one": "{{count}} 个聚类",
     "cachedRun": "已存储的结果——免费读取",
     "freshRun": "全新运行",
     "aiProfileLine": "AI 配置 {{name}} v{{version}}",
@@ -357,7 +373,7 @@
     "noFilterMatch": "没有符合当前决定筛选的聚类。",
     "runsTitle": "已存储的聚类记录",
     "runsEmpty": "还没有已存储的聚类记录。",
-    "runRowTitle": "{{count}} 个聚类",
+    "runRowTitle_one": "{{count}} 个聚类",
     "runRowMembers": "条短语",
     "openRun": "打开",
     "route": {
@@ -371,7 +387,7 @@
     },
     "confidenceNote": "置信度由成员数量与意图同质性确定性地计算——AI 提出分组建议；该标签并非 AI 打分。",
     "summedVolume": "合计每月搜索量：{{volume}}",
-    "membersToggle": "显示 {{count}} 个成员关键词",
+    "membersToggle_one": "显示 {{count}} 个成员关键词",
     "memberSource": {
       "vendor_cache": "已存储的供应商行",
       "history": "研究历史"
@@ -395,7 +411,33 @@
     "dismissBody": "忽略对此聚类是最终决定——决定日志只可追加，之后无法撤销。",
     "dismissConfirm": "忽略聚类",
     "dismissSuccess": "聚类已忽略。",
-    "dismissReplayHint": "此聚类已被忽略。"
+    "dismissReplayHint": "此聚类已被忽略。",
+    "selectionCount_zero": "已选 {{count}} 条（需要 {{min}}–{{max}} 条）",
+    "selectionCount_two": "已选 {{count}} 条（需要 {{min}}–{{max}} 条）",
+    "selectionCount_few": "已选 {{count}} 条（需要 {{min}}–{{max}} 条）",
+    "selectionCount_many": "已选 {{count}} 条（需要 {{min}}–{{max}} 条）",
+    "selectionCount_other": "已选 {{count}} 条（需要 {{min}}–{{max}} 条）",
+    "resultTitle_zero": "{{count}} 个聚类",
+    "resultTitle_two": "{{count}} 个聚类",
+    "resultTitle_few": "{{count}} 个聚类",
+    "resultTitle_many": "{{count}} 个聚类",
+    "resultTitle_other": "{{count}} 个聚类",
+    "runRowTitle_zero": "{{count}} 个聚类",
+    "runRowTitle_two": "{{count}} 个聚类",
+    "runRowTitle_few": "{{count}} 个聚类",
+    "runRowTitle_many": "{{count}} 个聚类",
+    "runRowTitle_other": "{{count}} 个聚类",
+    "membersToggle_zero": "显示 {{count}} 个成员关键词",
+    "membersToggle_two": "显示 {{count}} 个成员关键词",
+    "membersToggle_few": "显示 {{count}} 个成员关键词",
+    "membersToggle_many": "显示 {{count}} 个成员关键词",
+    "membersToggle_other": "显示 {{count}} 个成员关键词",
+    "truncatedNote_zero": "已显示的已保存关键词：{{count}} / {{total}}。搜索以缩小列表范围。",
+    "truncatedNote_one": "已显示的已保存关键词：{{count}} / {{total}}。搜索以缩小列表范围。",
+    "truncatedNote_two": "已显示的已保存关键词：{{count}} / {{total}}。搜索以缩小列表范围。",
+    "truncatedNote_few": "已显示的已保存关键词：{{count}} / {{total}}。搜索以缩小列表范围。",
+    "truncatedNote_many": "已显示的已保存关键词：{{count}} / {{total}}。搜索以缩小列表范围。",
+    "truncatedNote_other": "已显示的已保存关键词：{{count}} / {{total}}。搜索以缩小列表范围。"
   },
   "liveTrends": {
     "title": "实时搜索热度",
@@ -414,8 +456,6 @@
     },
     "preview": {
       "title": "成本估算",
-      "units": "将使用 {{count}} 个单位。",
-      "units_other": "将使用 {{count}} 个单位。",
       "cached": "已缓存",
       "fresh_required": "重新抓取",
       "mixed": "混合",
@@ -427,14 +467,14 @@
     },
     "states": {
       "unavailableTitle": "实时趋势暂时不可用",
-    "unavailableBody": "该工具已暂停。已保存的探索仍可查看。",
-    "capBody": "您已达到本月实时趋势的额度。",
-    "capPackName": "关键词趋势包",
-    "failedTitle": "探索未能完成",
-    "providerFailedTitle": "趋势数据源未响应",
-    "emptyTitle": "未返回搜索热度系列",
-    "emptyBody": "数据源已完成探索，但未返回此市场的系列。该单位仍已使用。",
-    "sparseTitle": "此市场的历史数据较少",
+      "unavailableBody": "该工具已暂停。已保存的探索仍可查看。",
+      "capBody": "您已达到本月实时趋势的额度。",
+      "capPackName": "关键词趋势包",
+      "failedTitle": "探索未能完成",
+      "providerFailedTitle": "趋势数据源未响应",
+      "emptyTitle": "未返回搜索热度系列",
+      "emptyBody": "数据源已完成探索，但未返回此市场的系列。该单位仍已使用。",
+      "sparseTitle": "此市场的历史数据较少",
       "sparseBody": "季节性至少需要 24 个月的历史数据，年度对比需要 56 周。"
     },
     "readouts": {
@@ -490,5 +530,10 @@
       "body": "实时搜索热度从 Starter 套餐起即可使用，尽管此工作区的其他功能需要 Pro。",
       "cta": "打开实时搜索热度"
     }
-  }
+  },
+  "selectionCount_zero": "已选择 {{count}} / {{max}}",
+  "selectionCount_two": "已选择 {{count}} / {{max}}",
+  "selectionCount_few": "已选择 {{count}} / {{max}}",
+  "selectionCount_many": "已选择 {{count}} / {{max}}",
+  "selectionCount_other": "已选择 {{count}} / {{max}}"
 }

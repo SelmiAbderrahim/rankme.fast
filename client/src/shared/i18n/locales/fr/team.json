@@ -74,7 +74,13 @@
       "saving": "Enregistrement…",
       "cancel": "Annuler"
     },
-    "joinedOn": "Rejoint le {{date}}"
+    "joinedOn": "Rejoint le {{date}}",
+    "total_zero": "Aucun membre",
+    "total_one": "{{count}} membre",
+    "total_two": "{{count}} membres",
+    "total_few": "{{count}} membres",
+    "total_many": "{{count}} membres",
+    "total_other": "{{count}} membres"
   },
   "accept": {
     "title": "Accepter l'invitation",
@@ -125,7 +131,13 @@
     "siteCount_two": "{{count}} sites",
     "siteCount_few": "{{count}} sites",
     "siteCount_many": "{{count}} sites",
-    "siteCount_other": "{{count}} sites"
+    "siteCount_other": "{{count}} sites",
+    "outsideYourAccess_zero": "{{count}} autre site hors de votre accès",
+    "outsideYourAccess_one": "{{count}} autre site hors de votre accès",
+    "outsideYourAccess_two": "{{count}} autres sites hors de votre accès",
+    "outsideYourAccess_few": "{{count}} autres sites hors de votre accès",
+    "outsideYourAccess_many": "{{count}} autres sites hors de votre accès",
+    "outsideYourAccess_other": "{{count}} autres sites hors de votre accès"
   },
   "decision": {
     "loading": "Vérification de l’invitation…",
@@ -159,7 +171,7 @@
   },
   "inbox": {
     "buttonLabel": "Invitations d’équipe",
-    "buttonLabelWithCount": "Invitations d’équipe, {{count}} en attente",
+    "buttonLabelWithCount_one": "Invitations d’équipe, {{count}} en attente",
     "title": "Invitations d’équipe",
     "description": "Consultez les invitations en attente de votre décision.",
     "emptyTitle": "Aucune invitation en attente",
@@ -173,6 +185,17 @@
     "rejectTitle": "Refuser cette invitation ?",
     "rejectBody": "Vous ne rejoindrez pas {{team}}.",
     "cancel": "Annuler",
-    "loadFailed": "Impossible de charger vos invitations d’équipe."
-  }
+    "loadFailed": "Impossible de charger vos invitations d’équipe.",
+    "buttonLabelWithCount_zero": "Invitations d’équipe, {{count}} en attente",
+    "buttonLabelWithCount_two": "Invitations d’équipe, {{count}} en attente",
+    "buttonLabelWithCount_few": "Invitations d’équipe, {{count}} en attente",
+    "buttonLabelWithCount_many": "Invitations d’équipe, {{count}} en attente",
+    "buttonLabelWithCount_other": "Invitations d’équipe, {{count}} en attente"
+  },
+  "received": {"pending_zero": "{{count}} invitations d’autres équipes vous attendent.",
+    "pending_one": "{{count}} invitation d’une autre équipe vous attend.",
+    "pending_two": "{{count}} invitations d’autres équipes vous attendent.",
+    "pending_few": "{{count}} invitations d’autres équipes vous attendent.",
+    "pending_many": "{{count}} invitations d’autres équipes vous attendent.",
+    "pending_other": "{{count}} invitations d’autres équipes vous attendent."}
 }

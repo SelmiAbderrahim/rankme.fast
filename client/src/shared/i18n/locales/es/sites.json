@@ -48,6 +48,7 @@
   "pauseFailed": "No se pudo pausar el sitio.",
   "resumeFailed": "No se pudo reanudar el sitio.",
   "paused": {
+    "actionBlocked": "Reanude este sitio para ejecutar comprobaciones, auditorías o tareas programadas.",
     "chip": "Pausado",
     "menuPause": "Pausar sitio",
     "menuResume": "Reanudar sitio",
@@ -59,7 +60,8 @@
     "banner": "Este sitio está pausado — no se ejecutan comprobaciones ni auditorías. Pausado {{when}}.",
     "resumeCta": "Reanudar",
     "pausing": "Pausando…",
-    "resuming": "Reanudando…"
+    "resuming": "Reanudando…",
+    "optionSuffix": "en pausa"
   },
   "errors": {
     "urlRequired": "Introduce la URL de tu sitio.",
@@ -103,7 +105,34 @@
     },
     "navigationLabel": "Vista del espacio de trabajo",
     "activeGroupLabel": "{{group}} · {{current}}",
-    "upgradeHint": "Mejora tu plan para desbloquear esta pestaña."
+    "upgradeHint": "Mejora tu plan para desbloquear esta pestaña.",
+    "switchSite": "Cambiar de sitio",
+    "loadingSite": "Cargando sitio…",
+    "filterSites": "Filtrar sitios…",
+    "filterPages": "Filtrar páginas…",
+    "choosePage": "Elegir una página",
+    "choosePageDescription": "Abre una página del sitio.",
+    "siblingPages": "Páginas de esta sección",
+    "noSites": "No se encontraron sitios",
+    "activeSubViewLabel": "{{tab}} · {{view}}",
+    "navLandmark": "Sitio",
+    "switchSiteNamed": "Cambiar de sitio · {{site}}",
+    "currentSite": "Sitio actual",
+    "recentSites": "Recientes",
+    "allSites": "Todos los sitios",
+    "noSitesMatch": "Ningún sitio coincide con «{{query}}»",
+    "addSite": "Añadir sitio",
+    "manageSites": "Gestionar sitios",
+    "collapseSiteMenu": "Contraer el menú del sitio",
+    "expandSiteMenu": "Expandir el menú del sitio",
+    "filterPagesShort": "Filtrar páginas",
+    "clearFilter": "Borrar filtro",
+    "noPagesMatch": "Ninguna página coincide con «{{query}}»",
+    "unknownTab": {
+      "title": "Esa sección no existe",
+      "body": "Esta sección no está disponible en este espacio de trabajo, así que se muestra el resumen."
+    },
+    "unknownSite": "Sitio desconocido"
   },
   "overview": {
     "next": {
@@ -205,5 +234,12 @@
   "lookupFailed": {
     "title": "No se pudo cargar este sitio",
     "description": "No pudimos comprobar este sitio ahora mismo. Inténtalo de nuevo en un momento."
+  },
+  "picker": {
+    "loading": "Cargando tus sitios…",
+    "loadFailed": "No pudimos cargar tus sitios.",
+    "empty": "Todavía no tienes sitios.",
+    "addSite": "Añadir un sitio",
+    "truncated": "Aquí solo aparecen tus primeros {{shown, number}} sitios."
   }
 }

@@ -1,10 +1,10 @@
 /**
- * Content Intelligence — router + service integration tests (prompt 04).
+ * Content Intelligence — router + service integration tests.
  *
  * Real PGlite Postgres (with the 0035 migration applied by the shared
  * harness), real mongodb-memory-server, real Better Auth-backed sessions
  * via the test auth harness, and an in-process fake queue. Covers every
- * load-bearing invariant the prompt requires:
+ * core behavior required by the service contract:
  *
  *   - cross-account 404 (no existence leak);
  *   - unverified site → 404, off-origin URL → 400, private-IP URL → 400;
@@ -965,7 +965,7 @@ describe('POST /api/sites/:siteId/content-analyses/preflight — no spend', () =
     expect(await ContentAnalysis.countDocuments({ accountId: user.id })).toBe(0);
   });
 
-  it('returns reason=not_owned for a site the caller does not own', async () => {
+  it('returns the standard 404 for a site the caller does not own without writing', async () => {
     const alice = await signupVerifiedUser(app, {
       email: 'alice-pf@example.com',
       password: 'CorrectHorseBattery9!',
@@ -983,9 +983,12 @@ describe('POST /api/sites/:siteId/content-analyses/preflight — no spend', () =
         keyword: 'seo audit',
         locale: 'en',
       });
-    expect(res.status).toBe(200);
-    expect(res.body.ok).toBe(false);
-    expect(res.body.reason).toBe('not_owned');
+    expect(res.status).toBe(404);
+    expect(res.body.error).toMatchObject({
+      code: 'SITE_NOT_FOUND',
+      messageKey: 'sites.errors.notFound',
+    });
+    expect(await ContentAnalysis.countDocuments({ accountId: bob.id })).toBe(0);
   });
 
   it('returns reason=off_origin when URL does not share the site origin', async () => {
@@ -1629,7 +1632,7 @@ describe('rate limit — content_intelligence_create bucket', () => {
   });
 });
 
-describe('CONTENT_INTELLIGENCE_ENABLED kill switch (prompt 15)', () => {
+describe('CONTENT_INTELLIGENCE_ENABLED kill switch', () => {
   it('returns a localized 503 on create/preflight/regenerate while reads and cancel stay open', async () => {
     const user = await signupVerifiedUser(app, {
       email: `kill-switch-${Math.random().toString(36).slice(2, 10)}@example.com`,

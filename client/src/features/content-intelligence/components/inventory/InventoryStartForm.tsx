@@ -1,4 +1,4 @@
-import { useCallback, useId, useMemo, useState } from 'react';
+import { useCallback, useId, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@shared/ui/card';
 import { Button } from '@shared/ui/button';
@@ -17,7 +17,6 @@ import {
   INVENTORY_MAX_PAGES,
   INVENTORY_MAX_PATHS,
   INVENTORY_MAX_SEEDS,
-  inventoryBlocksForPages,
 } from '../../types';
 
 interface InventoryStartFormProps {
@@ -42,10 +41,9 @@ function makeClientKey(): string {
 }
 
 /**
- * Start a paid inventory run. Page limit drives a LIVE block calc (four pages
- * per reserved block) shown before submit. Allow/exclude paths + sitemap seeds
- * are validated client-side against the same ceilings the server enforces;
- * the server re-validates and owns the reservation.
+ * Preview the inventory page limit before starting a run. Allow/exclude paths
+ * and sitemap seeds are checked against the same ceilings the server enforces;
+ * the server validates every request again.
  */
 export function InventoryStartForm({ siteId, disabled, onStarted }: InventoryStartFormProps) {
   const { t, i18n } = useTranslation('contentIntelligence');
@@ -67,10 +65,6 @@ export function InventoryStartForm({ siteId, disabled, onStarted }: InventorySta
   const pageLimitNum = Number.parseInt(pageLimit, 10);
   const validPageLimit =
     Number.isInteger(pageLimitNum) && pageLimitNum >= 1 && pageLimitNum <= INVENTORY_MAX_PAGES;
-  const blocks = useMemo(
-    () => (validPageLimit ? inventoryBlocksForPages(pageLimitNum) : 0),
-    [validPageLimit, pageLimitNum],
-  );
 
   const onField = useCallback(() => {
     setInlineErrorKey(null);
@@ -172,7 +166,7 @@ export function InventoryStartForm({ siteId, disabled, onStarted }: InventorySta
             <p className="text-sm font-medium">{t('inventory.start.blocksTitle')}</p>
             <p className="text-muted-foreground mt-1 text-sm">
               {validPageLimit
-                ? t('inventory.start.blocks', { count: blocks, pages: pageLimitNum })
+                ? t('inventory.start.blocks', { pages: pageLimitNum })
                 : t('inventory.start.blocksInvalid')}
             </p>
           </div>

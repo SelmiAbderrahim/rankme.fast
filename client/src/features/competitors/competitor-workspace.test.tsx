@@ -780,7 +780,8 @@ describe('unified competitor workspace', () => {
     };
     mocked.fetchLandscapeDetail.mockResolvedValue(partial);
     renderWorkspace(`/sites/site-1?tab=competitors&view=reports&report=${run.id}&class=missing&domain=one&q=term`);
-    expect(await screen.findByText(/1 of 1 competitors produced usable data/i)).toBeInTheDocument();
+    expect(await screen.findByText('Competitors with usable data: 1 of 1. Failed source steps: 0. Missing values were not inferred.')).toBeInTheDocument();
+    expect(screen.getByRole('option', { name: 'one.example' })).toHaveAttribute('dir', 'auto');
     await userEvent.selectOptions(screen.getByLabelText(/keyword class/i), '');
     await userEvent.selectOptions(document.querySelector('#landscape-domain')!, '');
     await userEvent.clear(screen.getByLabelText(/search keywords/i));

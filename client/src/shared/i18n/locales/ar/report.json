@@ -20,10 +20,15 @@
     "passed": "اجتاز"
   },
   "row": {
-    "affectedPages": "{{count}} صفحة متأثرة",
+    "affectedPages_one": "{{count}} صفحة متأثرة",
     "affectedPagesOne": "صفحة واحدة متأثرة",
     "siteWide": "فحص على مستوى الموقع",
-    "passedSummary": "هذا الفحص ناجح."
+    "passedSummary": "هذا الفحص ناجح.",
+    "affectedPages_zero": "{{count}} صفحات متأثرة",
+    "affectedPages_two": "{{count}} من الصفحات متأثرة",
+    "affectedPages_few": "{{count}} صفحات متأثرة",
+    "affectedPages_many": "{{count}} صفحة متأثرة",
+    "affectedPages_other": "{{count}} صفحة متأثرة"
   },
   "severity": {
     "critical": "حرج",
@@ -56,7 +61,19 @@
       "okChip": "سليم",
       "problemChip": "يحتاج إلى إصلاح",
       "unknownChip": "لم يُفحص"
-    }
+    },
+    "measured": {"words_zero": "{{count}} كلمة",
+      "words_one": "كلمة واحدة ({{count}})",
+      "words_two": "كلمتان ({{count}})",
+      "words_few": "{{count}} كلمات",
+      "words_many": "{{count}} كلمة",
+      "words_other": "{{count}} كلمة",
+      "characters_zero": "{{count}} حرف",
+      "characters_one": "حرف واحد ({{count}})",
+      "characters_two": "حرفان ({{count}})",
+      "characters_few": "{{count}} أحرف",
+      "characters_many": "{{count}} حرفًا",
+      "characters_other": "{{count}} حرف"}
   },
   "retest": {
     "cta": "إعادة الفحص",
@@ -69,7 +86,12 @@
     "label": "عدد الصفحات المراد فحصها",
     "max": "الحد الأقصى المسموح",
     "help": "يحدد عدد الصفحات التي يفحصها الزاحف. يغطي «الحد الأقصى المسموح» أكبر عدد من الصفحات يسمح به هذا الخادم، وكلما قلّ العدد انتهى الفحص أسرع.",
-    "pages": "{{pages}} صفحة"
+    "pages_one": "{{pages}} صفحة",
+    "pages_zero": "{{pages}} صفحات",
+    "pages_two": "{{pages}} من الصفحات",
+    "pages_few": "{{pages}} صفحات",
+    "pages_many": "{{pages}} صفحة",
+    "pages_other": "{{pages}} صفحة"
   },
   "empty": {
     "fix-now": {
@@ -110,7 +132,7 @@
     "noFieldDataTitle": "لا توجد بيانات زوار كافية بعد",
     "noFieldDataBody": "يبلّغ Chrome عن سرعة الزوار الحقيقيين فقط بعد تحقيق حركة كافية. مع نمو الزيارات سيمتلئ هذا القسم تلقائياً.",
     "originFallback": "بيانات على مستوى النطاق (وليس هذه الصفحة فقط)",
-    "sampleLabel": "تم اختيار {{count}} صفحة",
+    "sampleLabel_one": "تم اختيار {{count}} صفحة",
     "sampleLabelOne": "تم اختيار صفحة واحدة",
     "metrics": {
       "lcp": "LCP",
@@ -122,7 +144,12 @@
       "good": "جيد",
       "needs-improvement": "بحاجة إلى تحسين",
       "poor": "ضعيف"
-    }
+    },
+    "sampleLabel_zero": "تم اختيار {{count}} صفحات",
+    "sampleLabel_two": "تم اختيار {{count}} من الصفحات",
+    "sampleLabel_few": "تم اختيار {{count}} صفحات",
+    "sampleLabel_many": "تم اختيار {{count}} صفحة",
+    "sampleLabel_other": "تم اختيار {{count}} صفحة"
   },
   "aiSummary": {
     "cardTitle": "ملخّص الذكاء الاصطناعي للإصلاحات",
@@ -135,7 +162,13 @@
     "errors": {
       "unavailable": "ملخّص الذكاء الاصطناعي غير متاح مؤقتًا — لن تتأثر قائمة الإصلاحات.",
       "capReached": "لقد استنفدت الحد الشهري لملخّصات الذكاء الاصطناعي. رقّ خطتك أو أضف رصيدًا للمتابعة."
-    }
+    },
+    "basis_zero": "مبني على {{count}} نتيجة مفتوحة",
+    "basis_one": "مبني على النتيجة المفتوحة ({{count}})",
+    "basis_two": "مبني على النتيجتين المفتوحتين ({{count}})",
+    "basis_few": "مبني على {{count}} نتائج مفتوحة",
+    "basis_many": "مبني على {{count}} نتيجة مفتوحة",
+    "basis_other": "مبني على {{count}} نتيجة مفتوحة"
   },
   "pdf": {
     "download": "تنزيل PDF",
@@ -173,11 +206,26 @@
     "noSitemapsTitle": "لم يتم إرسال أي خريطة موقع إلى Google",
     "noSitemapsBody": "أرسل خريطة موقعك في Google Search Console حتى يتمكن Google من العثور على كل صفحة تريد فهرستها.",
     "sitemapHealthy": "سليمة",
-    "sitemapErrors": "{{count}} أخطاء",
-    "sitemapWarnings": "{{count}} تحذيرات",
-    "sitemapProcessed": "تم إرسال {{count}} رابط",
+    "sitemapErrors_one": "{{count}} خطأ",
+    "sitemapWarnings_one": "{{count}} تحذير",
+    "sitemapProcessed_one": "تم إرسال {{count}} رابط",
     "sitemapLastDownloaded": "آخر قراءة بواسطة Google: {{date}}",
-    "sitemapNeverDownloaded": "لم تتم قراءتها بواسطة Google بعد"
+    "sitemapNeverDownloaded": "لم تتم قراءتها بواسطة Google بعد",
+    "sitemapErrors_zero": "{{count}} أخطاء",
+    "sitemapErrors_two": "{{count}} من الأخطاء",
+    "sitemapErrors_few": "{{count}} أخطاء",
+    "sitemapErrors_many": "{{count}} خطأ",
+    "sitemapErrors_other": "{{count}} خطأ",
+    "sitemapWarnings_zero": "{{count}} تحذيرات",
+    "sitemapWarnings_two": "{{count}} من التحذيرات",
+    "sitemapWarnings_few": "{{count}} تحذيرات",
+    "sitemapWarnings_many": "{{count}} تحذير",
+    "sitemapWarnings_other": "{{count}} تحذير",
+    "sitemapProcessed_zero": "تم إرسال {{count}} روابط",
+    "sitemapProcessed_two": "تم إرسال {{count}} من الروابط",
+    "sitemapProcessed_few": "تم إرسال {{count}} روابط",
+    "sitemapProcessed_many": "تم إرسال {{count}} رابط",
+    "sitemapProcessed_other": "تم إرسال {{count}} رابط"
   },
   "aiVisibilityBlock": {
     "title": "رؤية الذكاء الاصطناعي",
@@ -214,8 +262,13 @@
     "unansweredQuestions": "أسئلة بلا إجابة",
     "localPack": "حزمة الخرائط المحلية",
     "notRanked": "غير مدرج في حزمة الخرائط",
-    "packSize": "{{count}} نتيجة",
-    "noData": "لا توجد بيانات"
+    "packSize_one": "{{count}} نتيجة",
+    "noData": "لا توجد بيانات",
+    "packSize_zero": "{{count}} نتائج",
+    "packSize_two": "{{count}} من النتائج",
+    "packSize_few": "{{count}} نتائج",
+    "packSize_many": "{{count}} نتيجة",
+    "packSize_other": "{{count}} نتيجة"
   },
   "exportUi": {
     "trigger": "تصدير أو مشاركة", "loading": "جارٍ تحميل خيارات التصدير…", "preparing": "جارٍ تجهيز الملف…", "ready": "التصدير جاهز. حُفظت نسخة أيضًا في «التصديرات والمشاركات».", "unavailable": "التصدير غير متاح", "empty": "لا يوجد ما يمكن تصديره بعد", "formatsLabel": "تنسيقات الملفات",
@@ -227,7 +280,12 @@
     "errors": { "capabilities": "تعذر تحميل خيارات التصدير.", "create": "تعذر تصدير التقرير. قلّل النطاق وحاول مرة أخرى.", "download": "تعذر تنزيل الملف المحفوظ.", "list": "تعذر تحميل التصديرات المحفوظة.", "delete": "تعذر حذف التصدير المحفوظ.", "share": "تعذر إنشاء رابط المشاركة.", "revoke": "تعذر إلغاء رابط المشاركة.", "copy": "تعذر نسخ الرابط." },
     "share": { "action": "إنشاء رابط مشاركة", "title": "مشاركة تقرير ثابت", "description": "اختر ما يمكن للمستلمين فتحه. لن يتغير التقرير بعد إنشاء الرابط.", "locale": "لغة التقرير", "expiry": "تنتهي الصلاحية بعد", "expiryHelp": "اختر من يوم واحد إلى 90 يومًا.", "permissions": "التنسيقات المسموح بها", "create": "إنشاء الرابط", "creating": "جارٍ إنشاء الرابط…", "showOnce": "انسخ هذا الرابط الآن", "linkLabel": "رابط المشاركة", "copy": "نسخ الرابط", "copied": "تم النسخ", "savedWithoutToken": "لأسباب أمنية، لا يحفظ RankMeFast الرابط القابل للقراءة. يظل بإمكانك إلغاؤه من مركز التصدير.", "existing": "روابط هذه اللقطة", "refresh": "تحديث" },
     "confirm": { "revokeTitle": "هل تريد إلغاء هذا الرابط؟", "revokeBody": "سيفقد كل من يستخدمه إمكانية الوصول فورًا.", "deleteTitle": "هل تريد حذف هذا التصدير المحفوظ؟", "deleteBody": "سيتوقف الملف عن العمل وستُلغى جميع روابط المشاركة المرتبطة به." },
-    "center": { "title": "التصديرات والمشاركات", "description": "نزّل لقطات التقارير المحفوظة وأدر الروابط العامة.", "tabsLabel": "أقسام مركز التصدير", "downloads": "التنزيلات", "shares": "المشاركات", "disabledTitle": "التصديرات الجديدة متوقفة مؤقتًا", "disabledBody": "قد تظل الملفات الحالية متاحة، لكن لا يمكن إنشاء ملفات أو روابط جديدة الآن.", "emptyDownloadsTitle": "لا توجد تصديرات محفوظة بعد", "emptyDownloadsBody": "أنشئ تصديرًا من أي تقرير عبر خيار التصدير أو المشاركة.", "emptySharesTitle": "لا توجد روابط مشاركة بعد", "emptySharesBody": "شارك تقريرًا مؤهلًا لإدارة رابطه هنا.", "deletedReport": "تقرير محذوف أو منتهي الصلاحية", "noSite": "الحساب بالكامل", "more": "تحميل المزيد", "expiresValue": "تنتهي الصلاحية في {{date}}", "views": "{{count}} مشاهدة", "columns": { "report": "التقرير", "site": "الموقع", "format": "التنسيق", "created": "تاريخ الإنشاء", "expires": "انتهاء الصلاحية", "actions": "الإجراءات" } }
+    "center": { "title": "التصديرات والمشاركات", "description": "نزّل لقطات التقارير المحفوظة وأدر الروابط العامة.", "tabsLabel": "أقسام مركز التصدير", "downloads": "التنزيلات", "shares": "المشاركات", "disabledTitle": "التصديرات الجديدة متوقفة مؤقتًا", "disabledBody": "قد تظل الملفات الحالية متاحة، لكن لا يمكن إنشاء ملفات أو روابط جديدة الآن.", "emptyDownloadsTitle": "لا توجد تصديرات محفوظة بعد", "emptyDownloadsBody": "أنشئ تصديرًا من أي تقرير عبر خيار التصدير أو المشاركة.", "emptySharesTitle": "لا توجد روابط مشاركة بعد", "emptySharesBody": "شارك تقريرًا مؤهلًا لإدارة رابطه هنا.", "deletedReport": "تقرير محذوف أو منتهي الصلاحية", "noSite": "الحساب بالكامل", "more": "تحميل المزيد", "expiresValue": "تنتهي الصلاحية في {{date}}", "views_one": "{{count}} مشاهدة", "columns": { "report": "التقرير", "site": "الموقع", "format": "التنسيق", "created": "تاريخ الإنشاء", "expires": "انتهاء الصلاحية", "actions": "الإجراءات" },
+      "views_zero": "{{count}} مشاهدات",
+      "views_two": "{{count}} من المشاهدات",
+      "views_few": "{{count}} مشاهدات",
+      "views_many": "{{count}} مشاهدة",
+      "views_other": "{{count}} مشاهدة" }
   },
   "publicShare": {
     "report": "تقرير مشترك",
@@ -267,5 +325,36 @@
     "title": "شغّل أول تدقيق",
     "description": "نزحف إلى موقعك مرة واحدة ونعرض ما يجب إصلاحه وما يجب مراقبته وما اجتاز الفحص بالفعل.",
     "confirm": "بدء التدقيق"
-  }
+  },
+  "findingStatus": "{{bucket}} · {{severity}}",
+  "progress": {"upTo_zero": "جارٍ الزحف إلى ما يصل إلى {{cap}} صفحات.",
+    "upTo_one": "جارٍ الزحف إلى ما يصل إلى {{cap}} صفحة.",
+    "upTo_two": "جارٍ الزحف إلى ما يصل إلى صفحتين ({{cap}}).",
+    "upTo_few": "جارٍ الزحف إلى ما يصل إلى {{cap}} صفحات.",
+    "upTo_many": "جارٍ الزحف إلى ما يصل إلى {{cap}} صفحة.",
+    "upTo_other": "جارٍ الزحف إلى ما يصل إلى {{cap}} صفحة."},
+  "dismissed": {"title_zero": "المستبعدة ({{count}})",
+    "title_one": "المستبعدة ({{count}})",
+    "title_two": "المستبعدة ({{count}})",
+    "title_few": "المستبعدة ({{count}})",
+    "title_many": "المستبعدة ({{count}})",
+    "title_other": "المستبعدة ({{count}})",
+    "stillDetected_zero": "ما زالت مرصودة في أحدث تدقيق: {{count}} صفحات متأثرة.",
+    "stillDetected_one": "ما زالت مرصودة في أحدث تدقيق: {{count}} صفحة متأثرة.",
+    "stillDetected_two": "ما زالت مرصودة في أحدث تدقيق: {{count}} من الصفحات متأثرة.",
+    "stillDetected_few": "ما زالت مرصودة في أحدث تدقيق: {{count}} صفحات متأثرة.",
+    "stillDetected_many": "ما زالت مرصودة في أحدث تدقيق: {{count}} صفحة متأثرة.",
+    "stillDetected_other": "ما زالت مرصودة في أحدث تدقيق: {{count}} صفحة متأثرة.",
+    "resurfaced_zero": "مستبعدة، لكن {{count}} صفحات إضافية صارت متأثرة.",
+    "resurfaced_one": "مستبعدة، لكن {{count}} صفحة إضافية صارت متأثرة.",
+    "resurfaced_two": "مستبعدة، لكن {{count}} من الصفحات الإضافية صارت متأثرة.",
+    "resurfaced_few": "مستبعدة، لكن {{count}} صفحات إضافية صارت متأثرة.",
+    "resurfaced_many": "مستبعدة، لكن {{count}} صفحة إضافية صارت متأثرة.",
+    "resurfaced_other": "مستبعدة، لكن {{count}} صفحة إضافية صارت متأثرة."},
+  "stale": {"title_zero": "آخر تدقيق قبل {{count}} يوم",
+    "title_one": "آخر تدقيق منذ يوم ({{count}})",
+    "title_two": "آخر تدقيق منذ يومين ({{count}})",
+    "title_few": "آخر تدقيق قبل {{count}} أيام",
+    "title_many": "آخر تدقيق قبل {{count}} يومًا",
+    "title_other": "آخر تدقيق قبل {{count}} يوم"}
 }

@@ -1,3 +1,4 @@
+import { Bdi } from '@shared/components/Bdi';
 import { useEffect, useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
@@ -487,7 +488,7 @@ export const AddKeywordForm = ({
                                 />
                               </TableCell>
                               <TableCell className="max-w-64 whitespace-normal font-medium">
-                                {candidate.rankingUrl ? (
+                                <Bdi>{candidate.rankingUrl ? (
                                   <a
                                     className="underline-offset-4 hover:underline focus-visible:underline"
                                     href={safeExternalHref(candidate.rankingUrl)}
@@ -498,7 +499,7 @@ export const AddKeywordForm = ({
                                   </a>
                                 ) : (
                                   candidate.keyword
-                                )}
+                                )}</Bdi>
                               </TableCell>
                               <TableCell>
                                 {candidate.searchVolume?.toLocaleString(i18n.language) ?? '—'}

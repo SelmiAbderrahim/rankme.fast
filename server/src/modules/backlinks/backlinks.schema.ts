@@ -6,7 +6,7 @@ export const siteIdParamsSchema = z.object({
 export const backlinksListQuerySchema = z.object({
     cursor: z.string().optional(),
     limit: z.coerce
-        .number({ invalid_type_error: 'backlinks.errors.limitInvalid' })
+        .number({ error: 'backlinks.errors.limitInvalid' })
         .int()
         .positive()
         .optional(),

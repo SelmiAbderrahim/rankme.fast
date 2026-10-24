@@ -2,6 +2,7 @@ import { z } from 'zod';
 
 export const MARKET_CATALOG_SURFACES = [
   'seo',
+  'serp',
   'brand-radar',
   'app-google-play',
   'app-store',

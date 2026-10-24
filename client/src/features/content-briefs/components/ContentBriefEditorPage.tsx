@@ -1,3 +1,4 @@
+import { isolateText } from '@shared/lib/bidi';
 import { useEffect, useRef, useState } from 'react';
 import { Link, useParams } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
@@ -120,7 +121,7 @@ export function ContentBriefEditorPage() {
       <div className="flex flex-wrap items-start justify-between gap-3">
         <div>
           <Button asChild variant="ghost" className="px-0"><Link to={backHref}>{t('briefs.actions.back')}</Link></Button>
-          <h1 className="text-3xl font-semibold tracking-tight">{t('briefs.editor.title', { keyword: detail.keyword })}</h1>
+          <h1 className="text-3xl font-semibold tracking-tight">{t('briefs.editor.title', { keyword: isolateText(detail.keyword) })}</h1>
           <p className="mt-2 text-muted-foreground">{t('briefs.editor.description')}</p>
         </div>
         <ReportExportControl

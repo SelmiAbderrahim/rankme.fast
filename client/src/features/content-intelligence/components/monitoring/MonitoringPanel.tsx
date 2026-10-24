@@ -1,3 +1,4 @@
+import { Bdi } from '@shared/components/Bdi';
 import { useCallback, useEffect, useMemo, useRef } from 'react';
 import { useSearchParams } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
@@ -247,7 +248,7 @@ function MonitorDetailView({ siteId, monitorId, onBack }: MonitorDetailViewProps
             <StatusChip tone={monitorStatusTone(monitor.status)}>
               {t(`monitoring.status.${monitor.status}`)}
             </StatusChip>
-            <span className="text-sm font-normal break-all">{monitor.targetUrl}</span>
+            <span className="text-sm font-normal break-all"><Bdi>{monitor.targetUrl}</Bdi></span>
           </CardTitle>
         </CardHeader>
         <CardContent>
