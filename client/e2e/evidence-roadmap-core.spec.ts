@@ -51,7 +51,8 @@
 
 import { expect, test, type APIRequestContext } from '@playwright/test';
 
-import { freshAccount, grantE2eTier, signUp } from './helpers/account';
+import { freshAccount, signUp } from './helpers/account';
+import { openSiteTab } from './helpers/navigation';
 import { collectDenials, denyNonLoopback } from './helpers/denyNonLoopback';
 
 test.describe.configure({ mode: 'serial' });
@@ -90,7 +91,6 @@ test('Journey A — site setup, URL/tab state, non-reserving preview, cross-acco
 
   await test.step('sign up and verify', async () => {
     await signUp(page, account);
-    grantE2eTier(account.email);
     await expect(page).toHaveURL(/\/(sites|dashboard|add-site)/);
   });
 
@@ -119,8 +119,7 @@ test('Journey A — site setup, URL/tab state, non-reserving preview, cross-acco
 
   await test.step('switching a tab writes `?tab=<name>` and survives reload', async () => {
     // `keywords` is one of the always-available `SITE_TABS`.
-    await page.getByTestId('site-nav-group-search').click();
-    await page.getByTestId('site-tab-keywords').click();
+    await openSiteTab(page, 'keywords');
     await expect(page).toHaveURL(/[?&]tab=keywords\b/);
     await page.reload();
     await expect(page).toHaveURL(/[?&]tab=keywords\b/);
@@ -135,8 +134,7 @@ test('Journey A — site setup, URL/tab state, non-reserving preview, cross-acco
     // Forward returns to the workspace with the LATEST tab still in the
     // URL — the tab state survives the round-trip via the URL, not via a
     // per-click history entry.
-    await page.getByTestId('site-nav-group-audit-reports').click();
-    await page.getByTestId('site-tab-report').click();
+    await openSiteTab(page, 'report');
     await expect(page).toHaveURL(/[?&]tab=report\b/);
     await page.goBack();
     await expect(page).toHaveURL(/\/sites(?:[?#]|$)/);
@@ -153,30 +151,20 @@ test('Journey A — site setup, URL/tab state, non-reserving preview, cross-acco
     await expect(page.getByTestId('overview-panel')).toBeVisible();
   });
 
-  await test.step('spend preview is non-reserving — no metered event', async () => {
-    // Usage baseline via the shipped `/api/billing/usage` read. NOTE: this
-    // must ride the signed-in page's cookie jar (`page.request`) — the bare
-    // `request` fixture is a separate, unauthenticated context and 401s.
-    const baseline = await jsonOrNull(page.request, '/api/billing/usage');
-    expect(baseline.status).toBe(200);
-
-    // Query the shipped audit preview endpoint.
-    // `siteId` is derived from the current workspace URL.
+  await test.step('audit preview is a read — it starts no run', async () => {
     const siteId = capturedSiteUrl().split('/').pop();
     expect(siteId, 'siteId parsed from workspace URL').toBeTruthy();
+    // Must ride the signed-in page's cookie jar (`page.request`).
+    const baseline = await jsonOrNull(page.request, `/api/sites/${siteId}/audits?limit=50`);
+    expect(baseline.status).toBe(200);
 
-    // The preview surface is `GET`, has no request body, and MUST NOT
-    // mutate usage regardless of tier state.
     const preview = await jsonOrNull(
       page.request,
       `/api/audits/preview?siteId=${encodeURIComponent(siteId!)}`,
     );
-    // 200 (preview available for the fake tier) or 402 (over cap / not
-    // configured) are both acceptable — either way this is a *read*.
-    expect([200, 402, 404]).toContain(preview.status);
+    expect([200, 404]).toContain(preview.status);
 
-    // Re-read usage; the meter for `audits` MUST be identical.
-    const after = await jsonOrNull(page.request, '/api/billing/usage');
+    const after = await jsonOrNull(page.request, `/api/sites/${siteId}/audits?limit=50`);
     expect(after.status).toBe(200);
     expect(JSON.stringify(after.body)).toBe(JSON.stringify(baseline.body));
   });

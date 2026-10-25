@@ -16,6 +16,7 @@ import { keywordResearchReducer } from '@features/keyword-research';
 import { ranksReducer } from '@features/ranks';
 import { reportReducer } from '@features/report';
 import { ApiError } from '@shared/api/client';
+import { MarketProvenance } from '@shared/markets';
 import * as sitesApi from '../api';
 import { sitesReducer } from '../store/slice';
 import { SITE_TABS, getSiteTabLabelKey, type SiteTab } from '../tabState';
@@ -53,6 +54,7 @@ vi.mock('@features/keyword-research', async (importOriginal) => ({
   KeywordResearchPage: ({ siteId }: { siteId?: string | null }) => (
     <div data-testid="mock-keyword-research" data-site={siteId}>
       keyword-research-mock
+      <MarketProvenance />
     </div>
   ),
 }));
@@ -439,6 +441,14 @@ describe('SiteWorkspacePage — default tab, deep link, invalid tab, switching',
     expect(
       await screen.findByTestId('mock-keyword-research', {}, { timeout: 3000 }),
     ).toHaveAttribute('data-site', 'site-1');
+  });
+
+  it('opens the market editor from the market note and closes it again', async () => {
+    renderAt('/sites/site-1?tab=research');
+    await userEvent.setup().click(await screen.findByTestId('market-provenance-edit'));
+    expect(await screen.findByTestId('site-market-dialog')).toBeInTheDocument();
+    await userEvent.setup().click(screen.getByRole('button', { name: i18n.t('market.cancel', { ns: 'sites' }) }));
+    await waitFor(() => expect(screen.queryByTestId('site-market-dialog')).not.toBeInTheDocument());
   });
 
   it('deep-link ?tab=content mounts content intelligence with the owned site id', async () => {

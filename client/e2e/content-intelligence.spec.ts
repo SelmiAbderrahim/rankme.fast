@@ -2,19 +2,13 @@ import AxeBuilder from '@axe-core/playwright';
 import { expect, test, type APIRequestContext, type Page } from '@playwright/test';
 import { readFile } from 'node:fs/promises';
 
-import type { UsageResponse } from '../src/features/billing';
 import type { ContentAnalysis } from '../src/features/content-intelligence';
 import { freshAccount, signUp } from './helpers/account';
-import { runComposePsql } from './helpers/compose';
 import { csrfHeaders } from './helpers/csrf';
 
 test.describe.configure({ mode: 'serial' });
 
 const WCAG_TAGS = ['wcag2a', 'wcag2aa', 'wcag21a', 'wcag21aa'];
-
-interface SessionResponse {
-  user?: { id?: string };
-}
 
 interface SiteResponse {
   site: { id: string; url: string };
@@ -25,41 +19,6 @@ async function scan(page: Page, label: string): Promise<void> {
   expect(result.violations, `${label}: axe violations`).toEqual([]);
 }
 
-async function accountId(request: APIRequestContext): Promise<string> {
-  const response = await request.get('/api/auth/get-session');
-  expect(response.status()).toBe(200);
-  const body = (await response.json()) as SessionResponse;
-  expect(body.user?.id).toBeTruthy();
-  return body.user!.id!;
-}
-
-function setTier(id: string, tier: 'none' | 'starter'): void {
-  runComposePsql(
-    `INSERT INTO subscriptions (account_id, tier, status)
-       VALUES (:'accountId', :'tier', 'active')
-       ON CONFLICT (account_id)
-       DO UPDATE SET tier = :'tier', status = 'active', updated_at = now();`,
-    { variables: { accountId: id, tier } },
-  );
-}
-
-function setContentUsage(id: string, used: number, limit: number): void {
-  runComposePsql(
-    `INSERT INTO usage_counters (account_id, period, metric, used, "limit")
-       VALUES (:'accountId', to_char(now() AT TIME ZONE 'UTC', 'YYYY-MM'),
-               'content_analyses', :'used'::bigint, :'limit'::bigint)
-       ON CONFLICT (account_id, period, metric)
-       DO UPDATE SET used = :'used'::bigint, "limit" = :'limit'::bigint;`,
-    {
-      variables: {
-        accountId: id,
-        used: String(used),
-        limit: String(limit),
-      },
-    },
-  );
-}
-
 async function createSite(request: APIRequestContext): Promise<{ id: string; url: string }> {
   const response = await request.post('/api/sites', {
     data: { url: 'https://example.com', label: 'Content Intelligence Journey' },
@@ -67,17 +26,6 @@ async function createSite(request: APIRequestContext): Promise<{ id: string; url
   });
   expect(response.status()).toBe(201);
   return ((await response.json()) as SiteResponse).site;
-}
-
-async function contentUsage(request: APIRequestContext): Promise<{ used: number; cap: number }> {
-  const response = await request.get('/api/billing/usage');
-  expect(response.status()).toBe(200);
-  const usage = (await response.json()) as UsageResponse;
-  expect(usage.contentAnalyses?.cap).toBeGreaterThan(0);
-  return {
-    used: usage.contentAnalyses?.used ?? 0,
-    cap: usage.contentAnalyses!.cap!,
-  };
 }
 
 async function waitForCompleted(
@@ -111,16 +59,22 @@ function partialAnalysis(
     locale: 'en',
     status: 'partial',
     stages: [],
-    warnings: [{ code: warningCode, messageKey: `contentIntelligence.${warningCode}` }],
+    warnings: [
+      {
+        code: warningCode,
+        messageKey: `contentIntelligence.${warningCode}`,
+        message: malicious,
+      },
+    ],
     scorecard: null,
     schemaVersion: '2026-07-15.1',
     scorecardV2: {
       version: '2026-07-15.1',
       total: 64,
       sections: [
-        { key: 'readability', score: 72, weight: 40, confidence: 0.9, reason: malicious },
-        { key: 'coverage', score: 58, weight: 35, confidence: 0.7, reason: malicious },
-        { key: 'structure', score: 60, weight: 25, confidence: 0.8, reason: malicious },
+        { key: 'readability', reasonKey: 'contentIntelligence.reason.readability', reasonText: malicious, score: 72, weight: 40, confidence: 0.9, reason: malicious },
+        { key: 'coverage', reasonKey: 'contentIntelligence.reason.coverage', reasonText: malicious, score: 58, weight: 35, confidence: 0.7, reason: malicious },
+        { key: 'structure', reasonKey: 'contentIntelligence.reason.structure', reasonText: malicious, score: 60, weight: 25, confidence: 0.8, reason: malicious },
       ],
     },
     owned: { url: 'https://example.com/guide', contentHash: 'safe-hash' },
@@ -175,23 +129,19 @@ async function mockPartialDetail(
   });
 }
 
-test('Content Intelligence workspace — paid run, lifecycle, gates, partial safety, responsive and RTL axe', async ({
+test('Content Intelligence workspace — run, lifecycle, partial safety, responsive and RTL axe', async ({
   page,
 }, testInfo) => {
   test.setTimeout(300_000);
 
   const account = freshAccount('content-intelligence');
   await signUp(page, account);
-  const id = await accountId(page.request);
-  setTier(id, 'starter');
   const site = await createSite(page.request);
 
-  await test.step('Starter form and list expose server-authoritative unit preview', async () => {
+  await test.step('The form and list render', async () => {
     await page.goto(`/sites/${site.id}?tab=content&view=analyses`);
     await expect(page.getByTestId('content-new-analysis-form')).toBeVisible({ timeout: 30_000 });
     await expect(page.getByTestId('content-analysis-list')).toBeVisible();
-    await expect(page.getByTestId('content-form-preview')).not.toHaveAttribute('aria-busy', 'true');
-    await expect(page.getByTestId('content-form-balance')).toBeVisible();
     await scan(page, 'content form and list, light desktop');
     await page.screenshot({ path: testInfo.outputPath('content-form-list-light-ltr.png'), fullPage: true });
   });
@@ -268,22 +218,7 @@ test('Content Intelligence workspace — paid run, lifecycle, gates, partial saf
     await page.setViewportSize({ width: 1280, height: 720 });
   });
 
-  await test.step('Free and exhausted paid states are honest catalog-backed gates', async () => {
-    setTier(id, 'none');
-    await page.reload();
-    await expect(page.getByTestId('content-locked-tier')).toBeVisible({ timeout: 30_000 });
-    await expect(page.getByTestId('content-new-analysis-form')).toHaveCount(0);
-
-    setTier(id, 'starter');
-    const usage = await contentUsage(page.request);
-    setContentUsage(id, usage.cap, usage.cap);
-    await page.reload();
-    await expect(page.getByTestId('content-form-exhausted')).toBeVisible({ timeout: 30_000 });
-    await expect(page.getByTestId('content-form-submit')).toBeDisabled();
-  });
-
   await test.step('partial AI and competitor data preserve the scorecard and keep hostile output inert', async () => {
-    setContentUsage(id, 0, (await contentUsage(page.request)).cap);
     const partialAiId = 'aaaaaaaaaaaaaaaaaaaaaaaa';
     await mockPartialDetail(page, site.id, partialAiId, 'brief_failed');
     await page.goto(`/sites/${site.id}?tab=content&view=analyses&analysis=${partialAiId}`);

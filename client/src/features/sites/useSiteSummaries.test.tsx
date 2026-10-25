@@ -29,3 +29,15 @@ it('reports a failed summary read and clears it when the page becomes empty', as
   await waitFor(() => expect(result.current).toMatchObject({ loading: false, failed: false }));
   expect(result.current.byId.size).toBe(0);
 });
+
+it('ignores a late failure for a previous Sites page', async () => {
+  let rejectOld!: (reason: unknown) => void;
+  fetch.mockReturnValueOnce(new Promise((_, reject) => { rejectOld = reject; }));
+  fetch.mockResolvedValueOnce({ summaries: [] });
+  const { result, rerender } = renderHook(({ ids }) => useSiteSummaries(ids), { initialProps: { ids: ['old'] } });
+  rerender({ ids: ['new'] });
+  await waitFor(() => expect(result.current.loading).toBe(false));
+  await act(async () => { rejectOld(new Error('offline')); });
+  expect(result.current.failed).toBe(false);
+});
+

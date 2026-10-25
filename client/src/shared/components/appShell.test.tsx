@@ -625,6 +625,23 @@ describe('MinimalLayout', () => {
     expect(screen.getByText('AUTH CARD')).toBeInTheDocument();
     expect(screen.getByText(/All Rights Reserved/)).toBeInTheDocument();
   });
+
+  it('puts the skip link before the release banner so it is the first tab stop', () => {
+    setSession(null);
+    render(
+      <Wrap entries={['/login']}>
+        <Routes>
+          <Route element={<MinimalLayout />}>
+            <Route path="/login" element={<div>AUTH CARD</div>} />
+          </Route>
+        </Routes>
+      </Wrap>,
+    );
+    const skip = screen.getByRole('link', { name: 'Skip to content' });
+    expect(skip).toHaveAttribute('href', '#main-content');
+    const links = screen.getAllByRole('link');
+    expect(links[0]).toBe(skip);
+  });
 });
 
 describe('AppSidebar workspace-role gating', () => {

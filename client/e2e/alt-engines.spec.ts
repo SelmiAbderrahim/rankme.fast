@@ -29,8 +29,6 @@ import {
   assertComposeRuntimeParity,
   captureInheritedComposeEnvironment,
   recreateComposeServices,
-  runComposePsql,
-  runComposePsqlOutput,
 } from './helpers/compose';
 import { csrfHeaders } from './helpers/csrf';
 
@@ -40,10 +38,6 @@ const WCAG_TAGS = ['wcag2a', 'wcag2aa', 'wcag21a', 'wcag21aa'];
 
 /** Localized (en) `ranks.errors.altEnginesUnavailable`. */
 const UNAVAILABLE_MESSAGE = 'Bing, YouTube, and Amazon tracking is turned off right now.';
-/** Pro base caps from the tier catalog. */
-const PRO_SLOTS = 5;
-const PRO_CHECKS = 20;
-
 async function scan(page: Page, label: string): Promise<void> {
   const result = await new AxeBuilder({ page }).withTags(WCAG_TAGS).analyze();
   expect(result.violations, `${label}: axe violations`).toEqual([]);
@@ -93,52 +87,6 @@ async function sessionUserId(page: Page): Promise<string> {
   return body.user.id;
 }
 
-function seedProTier(accountId: string): void {
-  runComposePsql(
-    `INSERT INTO subscriptions (account_id, tier, status)
-     VALUES (:'accountId', 'pro', 'active')
-     ON CONFLICT (account_id) DO UPDATE SET tier = 'pro', status = 'active';`,
-    { variables: { accountId } },
-  );
-}
-
-/**
- * Occupy alt-engine slots directly so the structural refusal is reached in one
- * step instead of five UI submits. These are the account's OWN keyword rows —
- * the same shape `createKeyword` writes — so the refusal under test is the
- * shipped live-count check, not a mocked one.
- */
-function seedAltEngineKeywords(accountId: string, siteId: string, count: number): void {
-  for (let i = 0; i < count; i += 1) {
-    runComposePsql(
-      `INSERT INTO keywords (account_id, site_id, phrase, location_code, language_code, device, engine)
-       VALUES (:'accountId', :'siteId', :'phrase', 2840, 'en', 'desktop', 'bing')
-       ON CONFLICT DO NOTHING;`,
-      { variables: { accountId, siteId, phrase: `seeded slot phrase ${i}` } },
-    );
-  }
-}
-
-/** Drain the account's `alt_engine_checks` allowance without any vendor call. */
-function seedUsedChecks(accountId: string, used: string): void {
-  runComposePsql(
-    `INSERT INTO usage_counters (account_id, period, metric, used, "limit")
-     VALUES (:'accountId', to_char(now() AT TIME ZONE 'UTC', 'YYYY-MM'),
-             'alt_engine_checks', :'used'::bigint, ${PRO_CHECKS})
-     ON CONFLICT (account_id, period, metric)
-     DO UPDATE SET used = :'used'::bigint;`,
-    { variables: { accountId, used } },
-  );
-}
-
-function altEngineRowCount(accountId: string): string {
-  return runComposePsqlOutput(
-    `SELECT count(*) FROM keywords
-     WHERE account_id = :'accountId' AND engine <> 'google';`,
-    { variables: { accountId } },
-  ).trim();
-}
-
 async function openKeywords(page: Page, siteUrl: string): Promise<void> {
   await page.goto(`${siteUrl}?tab=keywords`);
   await expect(page.getByTestId('keyword-add')).toBeVisible({ timeout: 30_000 });
@@ -152,7 +100,7 @@ async function submitKeyword(page: Page): Promise<void> {
   await page.locator('[data-testid="keyword-add"] button[type="submit"]').click();
 }
 
-test('alt engines: preview, badge, filter, Amazon label, slots, cap, flag-off, RTL, axe', async ({
+test('alt engines: badge, filter, Amazon label, flag-off, RTL, axe', async ({
   page,
 }) => {
   // Multi-step composed-stack journey (signup, site, three keyword adds, a
@@ -167,17 +115,12 @@ test('alt engines: preview, badge, filter, Amazon label, slots, cap, flag-off, R
   const account = freshAccount('alt-engines');
   await signUp(page, account);
   const accountId = await sessionUserId(page);
-  seedProTier(accountId);
   const siteUrl = await addFirstSite(page);
   const siteId = siteUrl.split('/').pop() ?? '';
 
-  // ---- 1. Preview discloses the unit, the slots, and the pack -------------
+  // ---- 1. Choosing Bing needs no target field ----------------------------
   await openKeywords(page, siteUrl);
   await chooseEngine(page, 'bing');
-  const preview = page.getByTestId('alt-engine-preview');
-  await expect(preview).toBeVisible({ timeout: 30_000 });
-  await expect(page.getByTestId('alt-engine-preview-slots')).toContainText(`0 of ${PRO_SLOTS}`);
-  await expect(page.getByTestId('alt-engine-preview-checks')).toContainText(String(PRO_CHECKS));
   // Bing matches the tracked site domain — no target field is asked for.
   await expect(page.getByTestId('keyword-engine-target')).toHaveCount(0);
 
@@ -227,31 +170,7 @@ test('alt engines: preview, badge, filter, Amazon label, slots, cap, flag-off, R
   await scan(page, 'keywords workspace (dark)');
   await setTheme(page, 'light');
 
-  // ---- 6. Slot ceiling — the localized 402 -------------------------------
-  const beforeSlotSeed = Number(altEngineRowCount(accountId));
-  seedAltEngineKeywords(accountId, siteId, PRO_SLOTS - beforeSlotSeed);
-  await openKeywords(page, siteUrl);
-  await chooseEngine(page, 'bing');
-  await expect(page.getByTestId('alt-engine-slots-exhausted')).toBeVisible({
-    timeout: 30_000,
-  });
-  await page.locator('#keyword-phrase').fill('one keyword too many');
-  await submitKeyword(page);
-  await expect(page.getByTestId('keyword-add-error')).toContainText(
-    'Bing, YouTube, and Amazon keywords',
-    { timeout: 30_000 },
-  );
-
-  // ---- 7. Check allowance exhausted — the localized 402 -------------------
-  seedUsedChecks(accountId, String(PRO_CHECKS));
-  await openKeywords(page, siteUrl);
-  await chooseEngine(page, 'bing');
-  await page.locator('#keyword-phrase').fill('no checks left');
-  await submitKeyword(page);
-  await expect(page.getByTestId('keyword-add-error')).toBeVisible({ timeout: 30_000 });
-  seedUsedChecks(accountId, '0');
-
-  // ---- 8. Flag off: new non-Google refused, stored rows still readable ----
+  // ---- 6. Flag off: new non-Google refused, stored rows still readable ----
   try {
     recreateApiWithFlag('false');
     await awaitApiHealthy(page);
@@ -277,7 +196,7 @@ test('alt engines: preview, badge, filter, Amazon label, slots, cap, flag-off, R
     assertComposeRuntimeParity(inheritedRuntime);
   }
 
-  // ---- 9. Arabic RTL journey + axe ---------------------------------------
+  // ---- 7. Arabic RTL journey + axe ---------------------------------------
   await page.goto(`${siteUrl}?tab=keywords&lng=ar`);
   await page.locator('#language-switcher').selectOption('ar');
   await expect(page.locator('html')).toHaveAttribute('dir', 'rtl', { timeout: 30_000 });

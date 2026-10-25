@@ -94,9 +94,9 @@ describe('HealthRow metric states', () => {
 });
 
 describe('SiteHealthStrip', () => {
-  const renderStrip = (preloaded?: unknown) => {
+  const renderStrip = () => {
     const store = configureStore({ reducer: { dashboard: dashboardReducer, sites: sitesReducer, workspace: workspaceReducer },
-      preloadedState: { workspace: { ...workspaceInitialState } , ...(preloaded as object) } as never });
+      preloadedState: { workspace: { ...workspaceInitialState } } });
     render(<Provider store={store}><I18nextProvider i18n={i18n}><MemoryRouter><SiteHealthStrip /></MemoryRouter></I18nextProvider></Provider>);
     return store;
   };
@@ -143,7 +143,7 @@ describe('PausedSitesPanel resume', () => {
   const paused = (pausedAt: string | null) => health({ totalSites: 1, activeSites: 0, sites: [], pausedSites: 1,
     pausedList: [{ id: 'site-1', domain: 'example.com', displayName: 'Example', pausedAt }] });
   const mount = (value: SiteHealthResponse) => {
-    const store = configureStore({ reducer: { sites: sitesReducer, workspace: workspaceReducer }, preloadedState: owner as never });
+    const store = configureStore({ reducer: { sites: sitesReducer, workspace: workspaceReducer }, preloadedState: owner });
     render(<Provider store={store}><I18nextProvider i18n={i18n}><MemoryRouter><PausedSitesPanel health={value} /></MemoryRouter></I18nextProvider></Provider>);
   };
 
@@ -166,8 +166,8 @@ describe('PausedSitesPanel resume', () => {
     };
     const store = configureStore({
       reducer: { sites: sitesReducer, workspace: workspaceReducer },
-      preloadedState: owner as never,
-      middleware: (getDefault) => getDefault().prepend(answerWithBareRejection),
+      preloadedState: owner,
+      middleware: (getDefault) => getDefault().prepend(answerWithBareRejection) as never,
     });
     render(<Provider store={store}><I18nextProvider i18n={i18n}><MemoryRouter>
       <PausedSitesPanel health={paused(AT)} />

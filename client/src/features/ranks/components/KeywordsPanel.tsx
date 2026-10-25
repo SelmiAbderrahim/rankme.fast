@@ -307,8 +307,7 @@ export const KeywordsPanel = ({ siteId }: Props) => {
     let processed = 0;
     for (let offset = 0; offset < values.length; offset += BULK_KEYWORDS_PER_REQUEST) {
       const batch = values.slice(offset, offset + BULK_KEYWORDS_PER_REQUEST);
-      const first = batch[0];
-      if (!first) break;
+      const first = values[offset]!;
       const result = await dispatch(addKeywordsBulk({ siteId, phrases: batch.map((value) => value.phrase),
         locationCode: first.locationCode, languageCode: first.languageCode,
         device: first.device, engine: first.engine, engineTarget: first.engineTarget }));

@@ -6,27 +6,8 @@
  */
 import { expect, test } from '@playwright/test';
 import { freshAccount, signUp } from './helpers/account';
-import { runComposePsql } from './helpers/compose';
 
 test.describe.configure({ mode: 'serial' });
-
-/**
- * The journey runs one initial audit plus one retest (two `audits` units).
- * With billing enforced on the composed stack a fresh account has no plan
- * (zero caps), so the story needs a paid account.
- * Seed a Pro subscription through the same sanctioned psql seam the other
- * journey specs use (production only writes this row from the Polar
- * webhook path).
- */
-function bumpToPro(accountId: string): void {
-  runComposePsql(
-    `INSERT INTO subscriptions (account_id, tier, status)
-       VALUES (:'account_id', 'pro', 'active')
-       ON CONFLICT (account_id)
-         DO UPDATE SET tier = 'pro', status = 'active', updated_at = now();`,
-    { variables: { account_id: accountId } },
-  );
-}
 
 test('signup → add site → audit → report → retest → keywords → logout', async ({
   page,
@@ -40,7 +21,6 @@ test('signup → add site → audit → report → retest → keywords → logou
     expect(session.status()).toBe(200);
     const body = (await session.json()) as { user?: { id?: string } };
     expect(body.user?.id, 'session user id').toBeTruthy();
-    bumpToPro(body.user!.id!);
   });
 
   await test.step('add example.com', async () => {
@@ -138,11 +118,10 @@ test('signup → add site → audit → report → retest → keywords → logou
   });
 
   await test.step('logout redirects a protected route to login', async () => {
-    // The header renders logout as a nav link (shared Header), not a button.
-    await page
-      .getByRole('link', { name: /log ?out|sign out/i })
-      .first()
-      .click();
+    // Sign out lives in the account menu of the app top bar.
+    await page.getByRole('button', { name: /account menu/i }).click();
+    await page.getByRole('menuitem', { name: /sign out/i }).click();
+    await expect(page).toHaveURL(/\/login/);
     await page.goto('/sites');
     await expect(page).toHaveURL(/\/login/);
   });

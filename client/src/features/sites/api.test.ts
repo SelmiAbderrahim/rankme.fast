@@ -4,9 +4,12 @@ import {
   createSiteRequest,
   deleteSiteRequest,
   fetchSiteRequest,
+  fetchSiteMarketRequest,
+  fetchSiteSummariesRequest,
   fetchSitesRequest,
   pauseSiteRequest,
   resumeSiteRequest,
+  updateSiteMarketRequest,
   updateSiteRequest,
 } from './api';
 
@@ -76,5 +79,21 @@ describe('sites api wrappers', () => {
   it('resumeSiteRequest posts to the resume endpoint', async () => {
     await resumeSiteRequest('s-1');
     expect(apiClient).toHaveBeenCalledWith('/sites/s-1/resume', { method: 'POST' });
+  });
+
+  it('reads site summaries for a comma-separated, encoded list of ids', async () => {
+    await fetchSiteSummariesRequest(['a', 'b/c']);
+    expect(apiClient).toHaveBeenCalledWith('/dashboard/site-summaries?ids=a%2Cb%2Fc');
+  });
+
+  it('saves a default market and reads the resolved market, with and without an abort signal', async () => {
+    const market = { locationCode: 2276, languageCode: 'de', device: 'mobile' as const };
+    await updateSiteMarketRequest('a/b', market);
+    expect(apiClient).toHaveBeenCalledWith('/sites/a%2Fb', { method: 'PATCH', body: { defaultMarket: market } });
+    await fetchSiteMarketRequest('a/b');
+    expect(apiClient).toHaveBeenLastCalledWith('/sites/a%2Fb/market', {});
+    const { signal } = new AbortController();
+    await fetchSiteMarketRequest('a/b', signal);
+    expect(apiClient).toHaveBeenLastCalledWith('/sites/a%2Fb/market', { signal });
   });
 });

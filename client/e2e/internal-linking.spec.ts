@@ -1,6 +1,6 @@
 /**
  * Internal linking composed-stack proof: stored inventory only, paid preview/confirm,
- * evidence, neutralized export, honest stale/cap/flag states, free reopen,
+ * evidence, neutralized export, honest stale/flag states, reopen,
  * Arabic RTL, and axe in light/dark with retries disabled by the gate command.
  */
 import { readFile } from 'node:fs/promises';
@@ -16,9 +16,7 @@ import {
   recreateComposeServices,
   runComposeCommand,
   runComposePsql,
-  runComposePsqlOutput,
 } from './helpers/compose';
-import { csrfHeaders } from './helpers/csrf';
 
 test.describe.configure({ mode: 'serial' });
 
@@ -58,34 +56,6 @@ async function sessionUserId(page: Page): Promise<string> {
   const body = (await response.json()) as { user?: { id?: string } };
   if (!body.user?.id) throw new Error('internal linking e2e: missing session user');
   return body.user.id;
-}
-
-function seedProTier(accountId: string): void {
-  runComposePsql(
-    `INSERT INTO subscriptions (account_id, tier, status)
-     VALUES (:'accountId', 'pro', 'active')
-     ON CONFLICT (account_id) DO UPDATE SET tier = 'pro', status = 'active';`,
-    { variables: { accountId } },
-  );
-}
-
-function seedUsedRuns(accountId: string, used: string): void {
-  runComposePsql(
-    `INSERT INTO usage_counters (account_id, period, metric, used, "limit")
-     VALUES (:'accountId', to_char(now() AT TIME ZONE 'UTC', 'YYYY-MM'),
-             'internal_link_runs', :'used'::bigint, 4)
-     ON CONFLICT (account_id, period, metric)
-     DO UPDATE SET used = :'used'::bigint, "limit" = 4;`,
-    { variables: { accountId, used } },
-  );
-}
-
-function usedRuns(accountId: string): string {
-  return runComposePsqlOutput(
-    `SELECT coalesce(max(used), 0) FROM usage_counters
-     WHERE account_id = :'accountId' AND metric = 'internal_link_runs';`,
-    { variables: { accountId } },
-  ).trim();
 }
 
 function seedGscRows(accountId: string, siteId: string): void {
@@ -230,7 +200,7 @@ async function awaitApiHealthy(page: Page): Promise<void> {
     .toBe(200);
 }
 
-test('internal linking: stored inventory, evidence, CSV, cap, free reopen, flag, RTL and axe', async ({
+test('internal linking: stored inventory, evidence, CSV, reopen, flag, RTL and axe', async ({
   page,
 }, testInfo) => {
   const inheritedRuntime = captureInheritedComposeEnvironment([
@@ -241,8 +211,6 @@ test('internal linking: stored inventory, evidence, CSV, cap, free reopen, flag,
   const account = freshAccount('internal-links');
   await signUp(page, account);
   const accountId = await sessionUserId(page);
-  seedProTier(accountId);
-  seedUsedRuns(accountId, '3');
 
   const siteId = await addSite(page, 'https://example.com');
   const staleSiteId = await addSite(page, 'https://stale.example.com');
@@ -263,7 +231,7 @@ test('internal linking: stored inventory, evidence, CSV, cap, free reopen, flag,
 
   let runId = '';
   try {
-    await test.step('preview cancellation and stale inventory spend nothing', async () => {
+    await test.step('preview cancellation and a stale inventory start no run', async () => {
       await page.goto(`/sites/${siteId}?tab=internal-links&view=new`);
       await page.getByTestId('internal-links-preview-button').click();
       await expect(page.getByTestId('internal-links-preview-date')).toContainText(
@@ -273,7 +241,6 @@ test('internal linking: stored inventory, evidence, CSV, cap, free reopen, flag,
       await expect(page.getByTestId('internal-links-preview')).toContainText('1 internal-link run');
       await page.getByTestId('internal-links-cancel').click();
       await expect(page.getByTestId('internal-links-preview')).toHaveCount(0);
-      expect(usedRuns(accountId)).toBe('3');
 
       await page.goto(`/sites/${staleSiteId}?tab=internal-links&view=new`);
       await page.getByTestId('internal-links-preview-button').click();
@@ -281,7 +248,6 @@ test('internal linking: stored inventory, evidence, CSV, cap, free reopen, flag,
       await expect(
         page.getByTestId('internal-links-state-stale').getByRole('link'),
       ).toHaveAttribute('href', `/sites/${staleSiteId}?tab=content&view=inventory`);
-      expect(usedRuns(accountId)).toBe('3');
     });
 
     await test.step('a full run shows source, target, anchor, and stored evidence', async () => {
@@ -312,7 +278,6 @@ test('internal linking: stored inventory, evidence, CSV, cap, free reopen, flag,
       await expect(page.getByTestId('internal-links-inventory-date')).toBeVisible();
       runId = new URL(page.url()).searchParams.get('run') ?? '';
       expect(runId).toMatch(/^[0-9a-f]{24}$/u);
-      expect(usedRuns(accountId)).toBe('4');
       await scan(page, 'internal-links-result(light)');
       await setTheme(page, 'dark');
       await scan(page, 'internal-links-result(dark)');
@@ -337,24 +302,11 @@ test('internal linking: stored inventory, evidence, CSV, cap, free reopen, flag,
       expect(csv).toContain(SHARED_QUERY);
     });
 
-    await test.step('reopening is free and the N+1 request stays at the cap', async () => {
-      const before = usedRuns(accountId);
+    await test.step('a stored run reopens with its suggestions', async () => {
       await page.goto(`/sites/${siteId}?tab=internal-links`);
       await page.getByTestId(`internal-links-open-${runId}`).click();
       await expect(page.getByTestId('internal-links-suggestions')).toBeVisible({ timeout: 30_000 });
-      expect(usedRuns(accountId)).toBe(before);
 
-      await page.goto(`/sites/${siteId}?tab=internal-links&view=new`);
-      await page.getByTestId('internal-links-preview-button').click();
-      await expect(page.getByTestId('internal-links-state-cap')).toBeVisible();
-      const refused = await page.request.post(`/api/sites/${siteId}/internal-link-runs`, {
-        data: { locale: 'en' },
-        headers: await csrfHeaders(page.request),
-        failOnStatusCode: false,
-      });
-      expect(refused.status()).toBe(402);
-      expect(JSON.stringify(await refused.json())).toContain('internal_link_runs');
-      expect(usedRuns(accountId)).toBe('4');
     });
 
     await test.step('Arabic uses RTL and keyboard-accessible saved guidance', async () => {

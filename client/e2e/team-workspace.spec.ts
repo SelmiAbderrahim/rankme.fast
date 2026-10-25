@@ -8,6 +8,7 @@
  */
 import { randomUUID } from 'node:crypto';
 import { expect, test, type Browser, type BrowserContext, type Page } from '@playwright/test';
+import { csrfHeaders } from './helpers/csrf';
 import { freshAccount, signUp, type TestAccount } from './helpers/account';
 import {
   assertComposeRuntimeParity,
@@ -16,7 +17,6 @@ import {
   readCapturedE2eEmails,
   readComposeServiceEnvironment,
   recreateComposeServices,
-  runComposePsql,
   runComposePsqlOutput,
   type CapturedE2eEmail,
 } from './helpers/compose';
@@ -63,17 +63,6 @@ async function accountId(page: Page): Promise<string> {
   return id as string;
 }
 
-/** Seats belong to the workspace. Agency leaves room for every invitation. */
-function setAgencyTier(id: string): void {
-  runComposePsql(
-    `INSERT INTO subscriptions (account_id, tier, status)
-       VALUES (:'account_id', 'agency', 'active')
-       ON CONFLICT (account_id)
-         DO UPDATE SET tier = 'agency', status = 'active', updated_at = now();`,
-    { variables: { account_id: id } },
-  );
-}
-
 async function newSignedUpContext(
   browser: Browser,
   account: TestAccount,
@@ -87,16 +76,15 @@ async function newSignedUpContext(
 }
 
 async function createSite(page: Page, url: string): Promise<PublicSite> {
-  await page.goto('/sites');
-  await expect(page.locator('#site-url')).toBeVisible();
-  await page.locator('#site-url').fill(url);
-  const responsePromise = page.waitForResponse(
-    (response) => response.request().method() === 'POST' && response.url().endsWith('/api/sites'),
-  );
-  await page.getByRole('button', { name: /^add site$/i }).click();
-  const response = await responsePromise;
+  // The Sites screen swaps its inline form for an add-site dialog once a site
+  // exists, so setup goes through the same API the form calls.
+  const response = await page.request.post('/api/sites', {
+    data: { url },
+    headers: await csrfHeaders(page.request),
+  });
   expect(response.status()).toBe(201);
   const body = (await response.json()) as CreateSiteResponse;
+  await page.goto('/sites');
   await expect(page.getByRole('link', { name: body.site.domain }).first()).toBeVisible();
   return body.site;
 }
@@ -141,7 +129,7 @@ async function inviteFromTeamPage(
   );
   await ownerPage.getByRole('button', { name: /^send invite$/i }).click();
   expect((await inviteResponse).status()).toBe(201);
-  await expect(ownerPage.getByRole('status')).toContainText(input.email);
+  await expect(ownerPage.getByRole('status').filter({ hasText: input.email })).toBeVisible();
 }
 
 async function waitForInvitationEmail(email: string): Promise<InviteMailDetails> {
@@ -277,7 +265,6 @@ test('role- and site-scoped invitations support provisioned and existing recipie
 
     const ownerPage = await newSignedUpContext(browser, owner, contexts);
     const ownerId = await accountId(ownerPage);
-    setAgencyTier(ownerId);
 
     const allowedSite = await createSite(ownerPage, 'https://team-allowed.example');
     const hiddenSite = await createSite(ownerPage, 'https://team-hidden.example');
@@ -328,21 +315,20 @@ test('role- and site-scoped invitations support provisioned and existing recipie
     await provisionedPage.getByRole('button', { name: /^update password$/i }).click();
     expect((await passwordResponse).status()).toBe(200);
     // Once the temporary credential is replaced, the account remains
-    // provisional until it accepts one invitation. The provisional-account
-    // guard deliberately recovers into the authenticated inbox instead of
-    // retaining the bearer token in the browser URL.
-    await provisionedPage.waitForURL('/team/invitations', { timeout: 30_000 });
+    // provisional until it accepts one invitation. The validated invitation
+    // intent survives the sign-in and password change, so the user lands back
+    // on the invitation they opened.
+    await provisionedPage.waitForURL(/\/team\/accept\//u, { timeout: 30_000 });
     await expect(
-      provisionedPage.getByRole('heading', { level: 1, name: /^team invitations$/i }),
+      provisionedPage.getByRole('heading', { level: 1, name: /accept team invitation/i }),
     ).toBeVisible();
-    await expect(provisionedPage.getByText(owner.email)).toBeVisible();
     await expect(provisionedPage.getByText(allowedSite.domain)).toBeVisible();
     const acceptResponse = provisionedPage.waitForResponse(
       (response) =>
         response.request().method() === 'POST' &&
         /\/api\/team\/invitations\/[^/]+\/accept$/u.test(response.url()),
     );
-    await provisionedPage.getByRole('button', { name: /^accept$/i }).click();
+    await provisionedPage.getByRole('button', { name: /^accept invitation$/i }).click();
     expect((await acceptResponse).status()).toBe(200);
     await provisionedPage.waitForURL('/dashboard', { timeout: 30_000 });
     await assertWorkspaceMembership(provisionedPage, ownerId, 'member', {

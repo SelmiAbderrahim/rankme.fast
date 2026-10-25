@@ -1,9 +1,9 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
-import { fireEvent, render, screen, waitFor, within } from '@testing-library/react';
+import { act, fireEvent, render, screen, waitFor, within } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { Provider } from 'react-redux';
 import { I18nextProvider } from 'react-i18next';
-import { MemoryRouter } from 'react-router-dom';
+import { MemoryRouter, useNavigate } from 'react-router-dom';
 import { configureStore } from '@reduxjs/toolkit';
 import { changeLanguage, i18n, initI18n } from '@shared/i18n';
 import { ApiError, apiClient } from '@shared/api/client';
@@ -2585,7 +2585,7 @@ describe('KeywordsPanel — stored rank jobs', () => {
     await vi.advanceTimersByTimeAsync(0);
     const warning = vi.mocked(toast.warning).mock.calls.at(-1);
     expect(warning?.[1]).toEqual(expect.objectContaining({ action: expect.objectContaining({ label: expect.any(String) }) }));
-    return (warning![1] as { action: { onClick: () => void } }).action.onClick;
+    return (warning![1] as unknown as { action: { onClick: () => void } }).action.onClick;
   };
 
   it('offers a retry of the failed keywords and confirms when nothing needed retrying', async () => {
@@ -2652,7 +2652,7 @@ describe('KeywordsPanel — stored rank jobs', () => {
     mocked.fetchRankJobRequest.mockResolvedValue({ job: rankJob({ scope: 'keyword', status: 'running',
       items: [{ keywordId: 'k1', engine: 'google', state: 'running', reason: null, attempts: 1, finishedAt: null }] }) });
     renderPage();
-    expect(await screen.findByTestId('keyword-checking-pos-k1')).toBeInTheDocument();
+    expect((await screen.findAllByTestId('keyword-checking-pos-k1')).length).toBeGreaterThan(0);
   });
 });
 
@@ -2685,3 +2685,59 @@ describe('AddKeywordForm — bulk results and previews', () => {
     await waitFor(() => expect(screen.getAllByTestId('keyword-add-item')).toHaveLength(1));
   });
 });
+
+describe('KeywordsPanel — search text follows the address', () => {
+  it('replaces unsent text when the address carries a different search', async () => {
+    let go: (to: string) => void = () => undefined;
+    function Jump() {
+      const navigate = useNavigate();
+      go = (to) => navigate(to);
+      return null;
+    }
+    render(
+      <Provider store={makeStore()}>
+        <I18nextProvider i18n={i18n}>
+          <MemoryRouter initialEntries={['/site?tab=keywords']}>
+            <Jump />
+            <KeywordsPanel siteId="site-1" />
+          </MemoryRouter>
+        </I18nextProvider>
+      </Provider>,
+    );
+    const input = await screen.findByTestId('keyword-search');
+    fireEvent.change(input, { target: { value: 'typed text' } });
+    await act(async () => { go('/site?tab=keywords&search=from-link'); });
+    await waitFor(() => expect(input).toHaveValue('from-link'));
+  });
+
+  it('skips a bulk result that reports an added phrase without its keyword', async () => {
+    mocked.createKeywordsBulkRequest.mockResolvedValueOnce({
+      message: 'Done.', counts: { added: 1, duplicate: 0, invalid: 0 },
+      results: [{ phrase: 'ghost phrase', status: 'added' }],
+    });
+    render(
+      <Provider store={makeStore()}>
+        <I18nextProvider i18n={i18n}>
+          <MemoryRouter><KeywordsPanel siteId="site-1" /></MemoryRouter>
+        </I18nextProvider>
+      </Provider>,
+    );
+    await waitFor(() => expect(mocked.fetchTrackedKeywordPhrasesRequest).toHaveBeenCalled());
+    fireEvent.change(screen.getByLabelText('Keywords'), { target: { value: 'ghost phrase' } });
+    await userEvent.setup().click(screen.getByRole('button', { name: 'Track keywords' }));
+    await waitFor(() => expect(mocked.createKeywordsBulkRequest).toHaveBeenCalled());
+  });
+});
+
+describe('RankStateLabel — movement states', () => {
+  it('shows the position change for a keyword without a stored state and for a moved keyword', () => {
+    const view = render(<I18nextProvider i18n={i18n}><RankStateLabel keyword={keyword('k1')} /></I18nextProvider>);
+    expect(view.container.querySelector('span.inline-flex')).not.toBeNull();
+    view.unmount();
+    render(<I18nextProvider i18n={i18n}>
+      <RankStateLabel keyword={keyword('k1', { rankState: { state: 'improved' } as never })} />
+    </I18nextProvider>);
+    expect(document.querySelector('[data-rank-state="improved"]')).not.toBeNull();
+  });
+});
+

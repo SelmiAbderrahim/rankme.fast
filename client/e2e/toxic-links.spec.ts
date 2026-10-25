@@ -17,7 +17,6 @@ import {
   assertComposeRuntimeParity,
   captureInheritedComposeEnvironment,
   recreateComposeServices,
-  runComposePsql,
   runComposePsqlOutput,
 } from './helpers/compose';
 import { csrfHeaders } from './helpers/csrf';
@@ -82,16 +81,6 @@ async function accountId(request: APIRequestContext): Promise<string> {
   const id = ((await response.json()) as SessionResponse).user?.id;
   expect(id).toBeTruthy();
   return id as string;
-}
-
-function bumpToPro(id: string): void {
-  runComposePsql(
-    `INSERT INTO subscriptions (account_id, tier, status)
-       VALUES (:'account_id', 'pro', 'active')
-       ON CONFLICT (account_id)
-         DO UPDATE SET tier = 'pro', status = 'active', updated_at = now();`,
-    { variables: { account_id: id } },
-  );
 }
 
 function readToxicityUsage(id: string): number {
@@ -213,7 +202,6 @@ test('toxic links: metering, rubric, rationale, download-only builder, refund, c
     await test.step('preview-cancel is free and keyboard navigation opens the URL-backed tab', async () => {
       await signUp(page, primary);
       primaryAccountId = await accountId(page.request);
-      bumpToPro(primaryAccountId);
       await page.goto('/logout');
       await page.waitForURL('/login');
       await logIn(page, primary);
@@ -352,7 +340,6 @@ test('toxic links: metering, rubric, rationale, download-only builder, refund, c
       await page.waitForURL('/login');
       await signUp(page, failure);
       const failureAccountId = await accountId(page.request);
-      bumpToPro(failureAccountId);
       await page.goto('/logout');
       await page.waitForURL('/login');
       await logIn(page, failure);

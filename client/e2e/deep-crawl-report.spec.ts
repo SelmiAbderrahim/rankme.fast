@@ -101,7 +101,7 @@ test('setup: one finished fake-provider audit without the resource scan', async 
   expect(created.status()).toBe(201);
   siteId = ((await created.json()) as { site: { id: string } }).site.id;
   const runId = await auditWithoutResourceScan(page.request);
-  const res = await page.request.get(`/api/sites/${siteId}/audits/${runId}/report`);
+  const res = await page.request.get(`/api/audits/${runId}/report`);
   expect(res.status()).toBe(200);
   findings = ((await res.json()) as { findings: ReportFinding[] }).findings;
 });

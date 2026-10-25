@@ -391,14 +391,6 @@ export default defineConfig({
       workers: 1,
       use: { ...devices['Desktop Chrome'], reducedMotion: 'reduce' },
     },
-    // Superadmin market health/cost/queue/sensor/commerce panels,
-    // Member 404 concealment, guarded requeue, deep links, and light/dark axe.
-    {
-      name: 'superadmin-market',
-      testMatch: /(?:^|\/)superadmin-market\.spec\.ts$/,
-      workers: 1,
-      use: { ...devices['Desktop Chrome'], reducedMotion: 'reduce' },
-    },
     // Aggregate keyboard-only paid/upsell/export/operator flows
     // plus deep-link, reload, browser-history, normalization, and unrelated
     // parameter survival across every batch tab/filter grammar.
@@ -559,6 +551,14 @@ export default defineConfig({
       // Deep crawl findings: category filter, evidence, no-scan note, Pages issues.
       name: 'deep-crawl-report',
       testMatch: /(?:^|\/)deep-crawl-report\.spec\.ts$/,
+      workers: 1,
+      use: { ...devices['Desktop Chrome'], reducedMotion: 'reduce' },
+    },
+    {
+      // Resource scan: ticked by default, 1,000-page limit while scanning,
+      // opt-out per run, evaluated vs not-evaluated resource checks, axe.
+      name: 'resource-scan',
+      testMatch: /(?:^|\/)resource-scan\.spec\.ts$/,
       workers: 1,
       use: { ...devices['Desktop Chrome'], reducedMotion: 'reduce' },
     },

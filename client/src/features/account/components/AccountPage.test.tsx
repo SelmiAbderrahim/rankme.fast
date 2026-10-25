@@ -16,7 +16,7 @@ vi.mock('@features/settings', () => ({
 
 const LocationProbe = () => {
   const location = useLocation();
-  return <span data-testid="location">{location.pathname}{location.search}</span>;
+  return <span data-testid="location">{location.pathname}{location.search}{location.hash}</span>;
 };
 
 const renderAt = (entry: string) => render(
@@ -74,6 +74,12 @@ describe('AccountPage', () => {
     renderAt(`/settings/profile?tab=${tab}`);
     expect(screen.getByText(body)).toBeInTheDocument();
     expect(screen.getByTestId('location')).toHaveTextContent(path);
+  });
+
+  it('keeps the URL hash when it redirects an old tab', () => {
+    renderAt('/settings/profile?tab=branding#logo');
+    expect(screen.getByText('WORKSPACE_DESTINATION')).toBeInTheDocument();
+    expect(screen.getByTestId('location')).toHaveTextContent('/settings/workspace#logo');
   });
 
   it('shows the privacy tab with a link to the one deletion flow', () => {

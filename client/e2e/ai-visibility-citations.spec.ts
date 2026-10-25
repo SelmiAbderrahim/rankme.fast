@@ -43,7 +43,6 @@
 import { expect, test, type APIRequestContext } from '@playwright/test';
 
 import { freshAccount, signUp } from './helpers/account';
-import { runComposePsql } from './helpers/compose';
 import { csrfHeaders } from './helpers/csrf';
 import { collectDenials, denyNonLoopback } from './helpers/denyNonLoopback';
 
@@ -172,24 +171,6 @@ const CONTENT_ANALYSIS_TERMINAL_STATUSES = new Set([
   'cancelled',
 ]);
 
-/**
- * Bump an isolated account to Agency (active). The `aiVisibilityRouter` is
- * gated behind `requireFeature('aiVisibility')` (see
- * `server/src/shared/billing/tiers.ts` — `aiVisibility` is agency-only), and
- * `content_analyses` cap is 30 on agency, so seeding an agency row unlocks
- * BOTH surfaces in one shot. Test-only seam — production never inserts
- * subscription rows outside the Polar webhook path.
- */
-function bumpToAgency(accountId: string): void {
-  runComposePsql(
-    `INSERT INTO subscriptions (account_id, tier, status)
-       VALUES (:'account_id', 'agency', 'active')
-       ON CONFLICT (account_id)
-         DO UPDATE SET tier = 'agency', status = 'active', updated_at = now();`,
-    { variables: { account_id: accountId } },
-  );
-}
-
 async function readAccountId(request: APIRequestContext): Promise<string> {
   const response = await request.get('/api/auth/get-session');
   expect(response.status()).toBe(200);
@@ -275,7 +256,6 @@ test('Journey B — AI Visibility sampled evidence, citation gap, Content Intell
   await test.step('sign up, verify, bump the account to agency', async () => {
     await signUp(page, account);
     const accountId = await readAccountId(page.request);
-    bumpToAgency(accountId);
   });
 
   const baseline = await readUsage(page.request);
@@ -680,7 +660,6 @@ test('Journey B — AI Visibility sampled evidence, citation gap, Content Intell
     // The other account is agency-tier too, proving the isolation is
     // ownership-based (`Site.findOne({ _id, accountId })` → 404, never 403)
     // NOT feature-flag based.
-    bumpToAgency(otherAccountId);
 
     const aiVis = await otherPage.request.get(
       `/api/sites/${encodeURIComponent(siteId)}/ai-visibility`,

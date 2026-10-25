@@ -21,7 +21,7 @@
 import AxeBuilder from '@axe-core/playwright';
 import { expect, test, type BrowserContext, type Page } from '@playwright/test';
 
-import { freshAccount, grantE2eTier, signUp } from './helpers/account';
+import { freshAccount, signUp } from './helpers/account';
 import {
   assertComposeRuntimeParity,
   captureInheritedComposeEnvironment,
@@ -159,7 +159,6 @@ test('SERP feature capture: observation, ownership, history, honest states, flag
 
   const account = freshAccount('serp-features');
   await signUp(page, account);
-  grantE2eTier(account.email, 'agency');
   const siteUrl = await addFirstSite(page);
   const siteId = siteUrl.split('/').pop() ?? '';
   const accountId = await sessionUserId(page);
@@ -321,7 +320,6 @@ test('SERP feature capture: observation, ownership, history, honest states, flag
       const capturePausedPage = await capturePausedContext.newPage();
       const capturePausedAccount = freshAccount('serp-features-paused');
       await signUp(capturePausedPage, capturePausedAccount);
-      grantE2eTier(capturePausedAccount.email, 'agency');
       const capturePausedSiteUrl = await addFirstSite(
         capturePausedPage,
         'https://capture-paused.example',

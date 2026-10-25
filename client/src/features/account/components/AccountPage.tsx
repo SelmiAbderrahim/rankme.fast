@@ -57,10 +57,10 @@ const AccountTabs = () => {
 };
 
 export const AccountPage = () => {
-  const { search } = useLocation();
+  const { search, hash } = useLocation();
   const legacyTab = new URLSearchParams(search).get('tab');
   const destination = legacyTab !== null && Object.hasOwn(LEGACY_ACCOUNT_TAB_REDIRECTS, legacyTab)
     ? LEGACY_ACCOUNT_TAB_REDIRECTS[legacyTab] : undefined;
-  if (destination) return <Navigate to={destination} replace />;
+  if (destination) return <Navigate to={{ pathname: destination, hash }} replace />;
   return <AccountTabs />;
 };

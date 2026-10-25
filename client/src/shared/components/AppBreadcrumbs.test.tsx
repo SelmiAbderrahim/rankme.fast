@@ -197,4 +197,24 @@ describe('AppBreadcrumbs', () => {
     expect(screen.getByRole('link', { name: 'المواقع' })).toHaveAttribute('href', '/sites');
     await changeLanguage('en');
   });
+
+  it('falls back to the domain when a listed site has no name', () => {
+    render(
+      <Provider store={configureStore({
+        reducer: { sites: sitesReducer },
+        preloadedState: { sites: { ...sitesReducer(undefined, { type: '@@init' }), loaded: true,
+          items: [{ ...site, displayName: '' }] } },
+      })}>
+        <I18nextProvider i18n={i18n}>
+          <MemoryRouter initialEntries={['/sites/site-1']}><AppBreadcrumbs /></MemoryRouter>
+        </I18nextProvider>
+      </Provider>,
+    );
+    expect(screen.getByRole('link', { name: 'example.com' })).toHaveAttribute('href', '/sites/site-1');
+  });
+
+  it('keeps the root path as it is when matching a page trail', () => {
+    renderAt('/');
+    expect(screen.queryByRole('navigation')).toBeNull();
+  });
 });

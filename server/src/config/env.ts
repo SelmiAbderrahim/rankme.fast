@@ -268,7 +268,7 @@ export const envSchema = z.object({
     // actually deliver; otherwise the send throws so misconfig fails loudly instead
     // of dropping mail. Kept optional in schema so `sendEmail` remains a no-op on
     // an unconfigured stack.
-    CONTACT_FORM_RECIPIENT: z.string().email().optional(),
+    CONTACT_FORM_RECIPIENT: z.preprocess((v) => (v === '' ? undefined : v), z.string().email().optional()),
     // Optional failure-alert webhook. When set, `sendFailureAlert` POSTs the
     // alert payload here in addition to the Resend email.
     // docker-compose forwards `${ALERT_WEBHOOK_URL:-}`, which becomes an empty

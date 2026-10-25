@@ -126,3 +126,18 @@ export async function traverseHistoryWithStaticAssetNetworkRecovery(
 
   await expect(page).toHaveURL(expectedUrl);
 }
+
+/**
+ * Open a site workspace tab from the shared site navigation. Collapsed groups
+ * are expanded first, so the helper does not depend on which group is open.
+ */
+export async function openSiteTab(page: Page, tab: string): Promise<void> {
+  const link = page.locator(`[data-site-nav-link][href*="tab=${tab}"]`).first();
+  if (!(await link.isVisible())) {
+    const collapsed = page.locator('[data-testid="site-navigation"] button[aria-expanded="false"]');
+    for (let index = (await collapsed.count()) - 1; index >= 0; index -= 1) {
+      await collapsed.nth(index).click();
+    }
+  }
+  await link.click();
+}

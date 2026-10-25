@@ -40,7 +40,6 @@ import { expect, test, type BrowserContext, type Page } from '@playwright/test';
 import { collectDenials, denyNonLoopback } from './helpers/denyNonLoopback';
 import {
   freshAccount,
-  grantE2eTier,
   signUp,
   type TestAccount,
 } from './helpers/account';
@@ -104,7 +103,6 @@ async function withSignedInAccount(
 ): Promise<TestAccount> {
   const account = freshAccount(prefix);
   await signUp(page, account);
-  grantE2eTier(account.email, 'agency');
   return account;
 }
 

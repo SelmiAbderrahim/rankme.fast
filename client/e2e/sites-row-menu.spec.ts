@@ -10,7 +10,7 @@
  * Assert on the menu items (which stay in the tree), not the trigger.
  */
 import { expect, test } from '@playwright/test';
-import { freshAccount, grantE2eTier, signUp } from './helpers/account';
+import { freshAccount, signUp } from './helpers/account';
 
 test.describe.configure({ mode: 'serial' });
 
@@ -18,7 +18,6 @@ test('sites row ⋯ menu opens on click and navigates to a tab', async ({ page }
   const account = freshAccount('rowmenu');
 
   await signUp(page, account);
-  grantE2eTier(account.email);
 
   await page.goto('/sites');
   await page.getByRole('button', { name: /add site/i }).click();

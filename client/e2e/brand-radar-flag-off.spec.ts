@@ -22,7 +22,7 @@ import { randomUUID } from 'node:crypto';
 
 import { expect, test, type Page } from '@playwright/test';
 
-import { freshAccount, grantE2eTier, signUp } from './helpers/account';
+import { freshAccount, signUp } from './helpers/account';
 import {
   assertComposeRuntimeParity,
   captureInheritedComposeEnvironment,
@@ -188,7 +188,6 @@ test('a composed API booted with BRAND_RADAR_ENABLED=false refuses new runs and 
   const account = freshAccount('radar-flag-off');
   await signUp(page, account);
   const accountId = await sessionUserId(page);
-  grantE2eTier(account.email, 'agency');
   const siteId = await createSite(page);
   seedTerminalScan(accountId, siteId);
 

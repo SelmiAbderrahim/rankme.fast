@@ -65,36 +65,6 @@ async function accountId(request: APIRequestContext): Promise<string> {
   return session.user!.id!;
 }
 
-function setTier(id: string, tier: 'none' | 'starter' | 'agency'): void {
-  runComposePsql(
-    `UPDATE "user"
-        SET email_verified = true, updated_at = now()
-      WHERE id = :'account_id';
-
-     INSERT INTO subscriptions (account_id, tier, status)
-       VALUES (:'account_id', :'tier', 'active')
-       ON CONFLICT (account_id)
-         DO UPDATE SET tier = EXCLUDED.tier, status = 'active', updated_at = now();`,
-    { variables: { account_id: id, tier } },
-  );
-}
-
-function setTrafficUsage(id: string, used: number, limit: number): void {
-  runComposePsql(
-    `INSERT INTO usage_counters (account_id, period, metric, used, "limit")
-       VALUES (:'account_id', to_char(now(), 'YYYY-MM'), 'traffic_snapshots', :'used', :'limit')
-       ON CONFLICT (account_id, period, metric)
-         DO UPDATE SET used = EXCLUDED.used, "limit" = EXCLUDED."limit", updated_at = now();`,
-    {
-      variables: {
-        account_id: id,
-        used: String(used),
-        limit: String(limit),
-      },
-    },
-  );
-}
-
 async function createSite(
   request: APIRequestContext,
   url: string,
@@ -199,7 +169,6 @@ async function signUpAtTier(
   // Better Auth's post-signup hooks can finish after the first authenticated
   // navigation. Apply the verified/tier fixture after sign-out so no trailing
   // signup write can restore the initial unverified value before re-login.
-  setTier(id, tier);
   await logIn(page, account);
   return { account, id };
 }
@@ -422,7 +391,6 @@ test('Traffic Insights: metering, cache, refund, Agency compare, Arabic RTL, key
   });
 
   await test.step('cap and kill-switch surfaces pass axe in light and dark', async () => {
-    setTrafficUsage(agency.id, 80, 80);
     await gotoWithStaticAssetNetworkRecovery(page, `/sites/${agencySiteId}?tab=traffic`);
     await fillTrafficDomain(page, 'cap.example');
     await page.getByRole('button', { name: 'Preview snapshot' }).click();
@@ -441,7 +409,6 @@ test('Traffic Insights: metering, cache, refund, Agency compare, Arabic RTL, key
     await expect(page.getByTestId('traffic-cap-reached')).not.toContainText('$19.00');
     await scanBothThemes(page, 'traffic-cap-reached');
 
-    setTrafficUsage(agency.id, 2, 80);
     await reloadWithStaticAssetNetworkRecovery(page);
     await page.route('**/api/competitors/traffic-snapshots/preview', async (route) => {
       await route.fulfill({
@@ -465,7 +432,6 @@ test('Traffic Insights: metering, cache, refund, Agency compare, Arabic RTL, key
 
   await test.step('A no-plan account can reopen stored data while paid POST returns localized 402 disclosure', async () => {
     await logout(page);
-    setTier(first.id, 'none');
     await logIn(page, first.account);
     const stored = await json<SnapshotRun>(
       await page.request.get(`/api/competitors/traffic-snapshots/${firstRunId}`),

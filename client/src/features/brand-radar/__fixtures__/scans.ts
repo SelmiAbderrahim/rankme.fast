@@ -20,7 +20,6 @@ export const scanFixture = (
   queryHash: 'a'.repeat(64),
   priorScanId: null,
   retainedRowCount: 42,
-  refund: { state: 'none', unit: 1 },
   createdAt: '2026-07-20T10:00:00.000Z',
   updatedAt: '2026-07-20T10:05:00.000Z',
   terminalAt: '2026-07-20T10:05:00.000Z',

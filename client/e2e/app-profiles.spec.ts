@@ -15,7 +15,6 @@ import {
   assertComposeRuntimeParity,
   captureInheritedComposeEnvironment,
   recreateComposeServices,
-  runComposePsql,
 } from './helpers/compose';
 
 test.describe.configure({ mode: 'serial' });
@@ -49,16 +48,6 @@ async function accountId(request: APIRequestContext): Promise<string> {
   const body = (await response.json()) as { user?: { id?: string } };
   expect(body.user?.id).toBeTruthy();
   return body.user!.id!;
-}
-
-function seedProTier(id: string): void {
-  runComposePsql(
-    `INSERT INTO subscriptions (account_id, tier, status)
-     VALUES (:'accountId', 'pro', 'active')
-     ON CONFLICT (account_id)
-     DO UPDATE SET tier = 'pro', status = 'active', updated_at = now();`,
-    { variables: { accountId: id } },
-  );
 }
 
 async function createSite(request: APIRequestContext): Promise<string> {
@@ -98,27 +87,22 @@ test('app profiles: registration shapes, slot lifecycle, flag-off stored read, R
 
   const account = freshAccount('app-profiles');
   await signUp(page, account);
-  seedProTier(await accountId(page.request));
   const siteId = await createSite(page.request);
 
   try {
     await test.step('register Play-only and Apple-only profiles', async () => {
       await page.goto(`/sites/${siteId}?tab=apps&view=profiles`);
       await expect(page.getByTestId('apps-panel')).toBeVisible({ timeout: 30_000 });
-      await expect(page.getByTestId('app-profile-usage')).toContainText('0 of 2 profiles');
 
       await register(page, { play: 'com.rankme.playonly' });
       await expect(page.getByText('com.rankme.playonly', { exact: true }).first()).toBeVisible();
-      await expect(page.getByTestId('app-profile-usage')).toContainText('1 of 2 profiles');
 
       await register(page, { apple: '123456789' });
       await expect(page.getByText('123456789', { exact: true }).first()).toBeVisible();
-      await expect(page.getByTestId('app-profile-usage')).toContainText('2 of 2 profiles');
     });
 
-    await test.step('delete frees a slot, paired registration succeeds, and N+1 is refused', async () => {
+    await test.step('delete then a paired registration succeeds', async () => {
       await deleteProfile(page, 'com.rankme.playonly');
-      await expect(page.getByTestId('app-profile-usage')).toContainText('1 of 2 profiles');
 
       await register(page, {
         play: 'com.rankme.paired',
@@ -128,26 +112,10 @@ test('app profiles: registration shapes, slot lifecycle, flag-off stored read, R
       await expect(page.getByText('com.rankme.paired', { exact: true }).first()).toBeVisible();
       await expect(page.getByText('Paired', { exact: true })).toBeVisible();
 
-      // The local catalog disables the button at 2/2. The API assertion below
-      // proves the authoritative structural-limit refusal and its discriminator.
-      const capped = await page.request.post(`/api/sites/${siteId}/apps/profiles`, {
-        data: { playPackageId: 'com.rankme.capped', paired: false },
-        headers: await csrfHeaders(page.request),
-        failOnStatusCode: false,
-      });
-      expect(capped.status()).toBe(402);
-      const cappedBody = (await capped.json()) as {
-        error?: { message?: string; details?: { structuralLimit?: string } };
-      };
-      expect(cappedBody.error?.details?.structuralLimit).toBe('appProfiles');
-      expect(cappedBody.error?.message).toBe(
-        'You have reached the app profile limit for this plan.',
-      );
-      await expect(page.getByTestId('app-profile-limit')).toBeVisible();
-      await scan(page, 'profile limit');
+      await scan(page, 'profile list');
     });
 
-    await test.step('unregistering frees the slot for a fresh registration', async () => {
+    await test.step('unregistering allows a fresh registration', async () => {
       await deleteProfile(page, '123456789');
       await register(page, { play: 'com.rankme.replacement' });
       await expect(page.getByText('com.rankme.replacement', { exact: true }).first()).toBeVisible();

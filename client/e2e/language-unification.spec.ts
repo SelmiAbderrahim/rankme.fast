@@ -1,7 +1,7 @@
 import AxeBuilder from '@axe-core/playwright';
 import { expect, test, type APIRequestContext, type Page } from '@playwright/test';
 import { freshAccount, signUp } from './helpers/account';
-import { runComposePsql, runComposePsqlOutput } from './helpers/compose';
+import { runComposePsqlOutput } from './helpers/compose';
 import { csrfHeaders } from './helpers/csrf';
 import { collectDenials, denyNonLoopback } from './helpers/denyNonLoopback';
 
@@ -27,23 +27,9 @@ async function accountId(request: APIRequestContext): Promise<string> {
   return id!;
 }
 
-function grantPro(id: string): void {
-  runComposePsql(
-    `INSERT INTO subscriptions (account_id, tier, status)
-       VALUES (:'account_id', 'pro', 'active')
-       ON CONFLICT (account_id)
-         DO UPDATE SET tier = 'pro', status = 'active', updated_at = now();`,
-    { variables: { account_id: id } },
-  );
-}
-
 function sideEffectFingerprint(id: string): string {
   return runComposePsqlOutput(
-    `SELECT concat(
-       coalesce((SELECT sum(used) FROM usage_counters WHERE account_id = :'account_id'), 0),
-       '|',
-       (SELECT count(*) FROM vendor_responses WHERE account_id = :'account_id')
-     );`,
+    `SELECT count(*) FROM vendor_responses WHERE account_id = :'account_id';`,
     { variables: { account_id: id } },
   );
 }
@@ -105,7 +91,6 @@ test('language switch is atomic across reads, errors, report copy, and downloads
   const account = freshAccount('language-unification');
   await signUp(page, account);
   const id = await accountId(page.request);
-  grantPro(id);
   const siteId = await createSite(page.request);
   const runId = await runAudit(page.request, siteId);
   const englishReport = await localizedReport(page.request, runId, 'en');

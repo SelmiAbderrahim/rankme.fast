@@ -108,20 +108,6 @@ async function accountId(request: APIRequestContext): Promise<string> {
   return session.user!.id!;
 }
 
-function setTier(id: string, tier: Tier): void {
-  runComposePsql(
-    `UPDATE "user"
-        SET email_verified = true, updated_at = now()
-      WHERE id = :'account_id';
-
-     INSERT INTO subscriptions (account_id, tier, status)
-       VALUES (:'account_id', :'tier', 'active')
-       ON CONFLICT (account_id)
-         DO UPDATE SET tier = EXCLUDED.tier, status = 'active', updated_at = now();`,
-    { variables: { account_id: id, tier } },
-  );
-}
-
 /** Authoritative `brand_mention_scans` consumption for the current period. */
 function brandUsage(id: string): number {
   const raw = runComposePsqlOutput(
@@ -193,7 +179,6 @@ async function signUpAtTier(
   // Better Auth's post-signup hooks can finish after the first authenticated
   // navigation. Apply the verified/tier fixture after sign-out so no trailing
   // signup write can restore the initial unverified value before re-login.
-  setTier(id, tier);
   await logIn(page, account);
   activeSiteId = await createSite(
     page.request,

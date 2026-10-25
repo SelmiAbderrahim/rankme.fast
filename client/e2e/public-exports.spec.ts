@@ -46,16 +46,6 @@ async function accountId(request: APIRequestContext): Promise<string> {
   return id as string;
 }
 
-function bumpToAgency(id: string): void {
-  runComposePsql(
-    `INSERT INTO subscriptions (account_id, tier, status)
-       VALUES (:'account_id', 'agency', 'active')
-       ON CONFLICT (account_id)
-       DO UPDATE SET tier = 'agency', status = 'active', updated_at = now();`,
-    { variables: { account_id: id } },
-  );
-}
-
 async function createSite(request: APIRequestContext, url: string, label: string): Promise<string> {
   const response = await request.post('/api/sites', {
     data: { url, label },
@@ -219,7 +209,6 @@ test('public exports: bearer CSV, stored pagination, ownership, flag, localized 
   const primary = freshAccount('public-exports-primary');
   await signUp(page, primary);
   const primaryAccount = await accountId(page.request);
-  bumpToAgency(primaryAccount);
   const primarySite = await createSite(
     page.request,
     'https://export-primary.example',
@@ -306,7 +295,6 @@ test('public exports: bearer CSV, stored pagination, ownership, flag, localized 
         const foreign = freshAccount('public-exports-foreign');
         await signUp(foreignPage, foreign);
         const foreignAccount = await accountId(foreignPage.request);
-        bumpToAgency(foreignAccount);
         const foreignSite = await createSite(
           foreignPage.request,
           'https://export-foreign.example',

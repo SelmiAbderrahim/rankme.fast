@@ -24,7 +24,6 @@ const row = (overrides: Partial<BrandRadarRow> = {}): BrandRadarRow => ({
   status: 'completed',
   digestState: 'digest_present',
   retainedRowCount: 42,
-  refundState: 'none',
   createdAt: '2026-07-20T10:00:00.000Z',
   ...overrides,
   outputLocale: overrides.outputLocale === undefined ? 'en' : overrides.outputLocale,
@@ -136,21 +135,6 @@ describe('ScanListTable', () => {
     labels.forEach((label, index) => {
       expect(within(rows[index]!).getByText(label)).toBeInTheDocument();
     });
-  });
-
-  it('shows a refund chip only when the credit came back', () => {
-    renderUi(
-      <ScanListTable
-        {...listProps({
-          rows: [
-            row({ id: 'a', refundState: 'refunded' }),
-            row({ id: 'b', refundState: 'none' }),
-          ],
-        })}
-      />,
-    );
-    expect(screen.getAllByTestId('brand-radar-refund-chip')).toHaveLength(1);
-    expect(screen.queryByText(/not refunded/i)).not.toBeInTheDocument();
   });
 
   it('renders the optimistic row without a fabricated count or timestamp', () => {

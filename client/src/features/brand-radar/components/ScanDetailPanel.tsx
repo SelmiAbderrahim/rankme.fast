@@ -161,11 +161,6 @@ export const ScanDetailPanel = ({
                 {t(`status.${detail.status}`)}
               </StatusChip>
               <StatusChip tone="muted">{t(`digest.${detail.digestState}`)}</StatusChip>
-              {detail.refund.state === 'refunded' ? (
-                <StatusChip tone="success" data-testid="brand-radar-detail-refund">
-                  {t('refund.refunded')}
-                </StatusChip>
-              ) : null}
               {showAggregates ? (
                 <ReportExportControl
                   kind="brand.radar_scan"
@@ -292,11 +287,7 @@ export const ScanDetailPanel = ({
                       {t(`detail.halt.${brandRadarHaltKey(detail.halt)}`)}
                     </span>
                   ) : null}
-                  <span className="block">
-                    {detail.refund.state === 'refunded'
-                      ? t('detail.banners.failed.refunded')
-                      : t('detail.banners.failed.description')}
-                  </span>
+                  <span className="block">{t('detail.banners.failed.description')}</span>
                 </AlertDescription>
               </Alert>
             ) : null}

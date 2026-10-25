@@ -6,7 +6,7 @@
  * banner → banner + chip gone → the same spend action is accepted.
  */
 import { expect, test } from '@playwright/test';
-import { freshAccount, grantE2eTier, signUp } from './helpers/account';
+import { freshAccount, signUp } from './helpers/account';
 
 test.describe.configure({ mode: 'serial' });
 
@@ -14,7 +14,6 @@ test('pause stops new work with clear indication; resume restores it', async ({ 
   const account = freshAccount('sitepause');
 
   await signUp(page, account);
-  grantE2eTier(account.email);
 
   // Add a site.
   await page.goto('/sites');

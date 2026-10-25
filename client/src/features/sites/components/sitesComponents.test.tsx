@@ -337,6 +337,24 @@ describe('SitesPage', () => {
     expect(mocked.fetchSitesRequest).not.toHaveBeenCalled();
   });
 
+  it('opens the market editor from the row menu and closes it again', async () => {
+    const user = userEvent.setup();
+    renderWith(<SitesPage />, makeStore({ loaded: true, items: [site('a')] }));
+    await user.click(screen.getAllByRole('button', { name: 'Open menu for a.example.com' })[0]!);
+    await user.click(await screen.findByTestId('site-market-menu-a'));
+    expect(await screen.findByTestId('site-market-dialog')).toBeInTheDocument();
+    await user.click(screen.getByRole('button', { name: i18n.t('market.cancel', { ns: 'sites' }) }));
+    await waitFor(() => expect(screen.queryByTestId('site-market-dialog')).not.toBeInTheDocument());
+  });
+
+  it('names the status of a last audit that did not succeed', async () => {
+    mocked.fetchSiteSummariesRequest.mockResolvedValueOnce({ summaries: [{ id: 'a',
+      lastAudit: { state: 'value', finishedAt: '2026-07-02T00:00:00.000Z', asOf: '2026-07-02T00:00:00.000Z', status: 'failed' },
+      openFixNow: { state: 'unavailable', reason: 'no_audit' }, trackedKeywords: 0 }] });
+    renderWith(<SitesPage />, makeStore({ loaded: true, items: [site('a')] }));
+    expect((await screen.findAllByText(i18n.t('list.auditStatus.failed', { ns: 'sites' }))).length).toBeGreaterThan(0);
+  });
+
   it('renders Backlinks and Competitors items in the row menu', async () => {
     const user = userEvent.setup();
     const store = makeStore({ loaded: true, items: [site('a')] });

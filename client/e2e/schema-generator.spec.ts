@@ -34,8 +34,6 @@ import {
   captureInheritedComposeEnvironment,
   recreateComposeServices,
   runComposeCommand,
-  runComposePsql,
-  runComposePsqlOutput,
 } from './helpers/compose';
 
 test.describe.configure({ mode: 'serial' });
@@ -45,8 +43,6 @@ const WCAG_TAGS = ['wcag2a', 'wcag2aa', 'wcag21a', 'wcag21aa'];
 /** Localized (en) `schemaGenerator.errors.productUnavailable`. */
 const UNAVAILABLE_FRAGMENT = 'unavailable';
 
-/** Starter base cap for `schema_generations`. */
-const STARTER_CAP = 5;
 const PASTED_FIXTURE_URL = 'https://schema-fixture.example/guide';
 const PASTED_FIXTURE_ID = 'f'.repeat(24);
 const PREVIEW_ROUTE = '**/api/schema-generator/preview';
@@ -103,46 +99,6 @@ async function sessionUserId(page: Page): Promise<string> {
   const body = (await res.json()) as { user?: { id?: string } };
   if (!body.user?.id) throw new Error('schema-generator spec: no session user id');
   return body.user.id;
-}
-
-/** Starter tier: `schema_generations` cap 5, so the N+1 lands quickly. */
-function seedStarterTier(accountId: string): void {
-  runComposePsql(
-    `INSERT INTO subscriptions (account_id, tier, status)
-     VALUES (:'accountId', 'starter', 'active')
-     ON CONFLICT (account_id) DO UPDATE SET tier = 'starter', status = 'active';`,
-    { variables: { accountId } },
-  );
-}
-
-/** The audit that seeds the page facts must not be blocked by the audit cap. */
-function seedAuditAllowance(accountId: string): void {
-  runComposePsql(
-    `INSERT INTO usage_counters (account_id, period, metric, used, "limit")
-     VALUES (:'accountId', to_char(now() AT TIME ZONE 'UTC', 'YYYY-MM'), 'audits', 0, 1000000)
-     ON CONFLICT (account_id, period, metric)
-     DO UPDATE SET used = 0, "limit" = 1000000;`,
-    { variables: { accountId } },
-  );
-}
-
-function seedUsedGenerations(accountId: string, used: string): void {
-  runComposePsql(
-    `INSERT INTO usage_counters (account_id, period, metric, used, "limit")
-     VALUES (:'accountId', to_char(now() AT TIME ZONE 'UTC', 'YYYY-MM'),
-             'schema_generations', :'used'::bigint, 5)
-     ON CONFLICT (account_id, period, metric)
-     DO UPDATE SET used = :'used'::bigint;`,
-    { variables: { accountId, used } },
-  );
-}
-
-function usedGenerations(accountId: string): string {
-  return runComposePsqlOutput(
-    `SELECT coalesce(max(used), 0) FROM usage_counters
-     WHERE account_id = :'accountId' AND metric = 'schema_generations';`,
-    { variables: { accountId } },
-  ).trim();
 }
 
 /**
@@ -351,10 +307,10 @@ async function installPastedUrlFake(page: Page, siteId: string): Promise<() => P
   };
 }
 
-test('schema generator: evidence-backed markup, conformance, copy/download, cap, free reopen, flag-off, RTL, axe', async ({
+test('schema generator: evidence-backed markup, conformance, copy/download, reopen, flag-off, RTL, axe', async ({
   page,
 }) => {
-  // Multi-step composed-stack journey (signup, audit run, several metered
+  // Multi-step composed-stack journey (signup, audit run, several
   // generations, one api recreate pair) on a shared gate host. Retries stay 0.
   test.setTimeout(600_000);
   const inheritedRuntime = captureInheritedComposeEnvironment([
@@ -365,12 +321,9 @@ test('schema generator: evidence-backed markup, conformance, copy/download, cap,
   const account = freshAccount('schema-generator');
   await signUp(page, account);
   const accountId = await sessionUserId(page);
-  seedStarterTier(accountId);
-  seedAuditAllowance(accountId);
 
   const siteId = await createSite(page, 'https://example.com');
   await runAuditToCompletion(page, siteId);
-  seedUsedGenerations(accountId, '0');
 
   let firstGenerationId = '';
   let auditedPageUrl = '';
@@ -398,7 +351,6 @@ test('schema generator: evidence-backed markup, conformance, copy/download, cap,
       await expect(page.getByTestId('schema-omissions')).toBeVisible();
       // The verdict speaks only about schema.org requirements.
       await expect(page.getByTestId('schema-conformance-status')).toContainText('schema.org');
-      expect(usedGenerations(accountId)).toBe('1');
 
       const url = new URL(page.url());
       firstGenerationId = url.searchParams.get('generation') ?? '';
@@ -429,7 +381,6 @@ test('schema generator: evidence-backed markup, conformance, copy/download, cap,
       await expect(page.getByTestId('schema-required-gap-datePublished')).toBeVisible({
         timeout: 60_000,
       });
-      expect(usedGenerations(accountId)).toBe('2');
     });
 
     await test.step("the report's structured-data deep link preselects the page", async () => {
@@ -453,7 +404,6 @@ test('schema generator: evidence-backed markup, conformance, copy/download, cap,
     });
 
     await test.step('a pasted URL generates through deterministic fakes', async () => {
-      const before = usedGenerations(accountId);
       const uninstall = await installPastedUrlFake(page, siteId);
       try {
         await page.goto(`/sites/${siteId}?tab=schema`);
@@ -465,14 +415,12 @@ test('schema generator: evidence-backed markup, conformance, copy/download, cap,
         await page.getByTestId('schema-generate-button').click();
         await expect(page.getByTestId('schema-payload')).toContainText('Safely fetched fixture');
         await expect(page.getByTestId('schema-evidence-name')).toBeVisible();
-        expect(usedGenerations(accountId)).toBe(before);
       } finally {
         await uninstall();
       }
     });
 
-    await test.step('a pasted loopback address is refused and reserves nothing', async () => {
-      const before = usedGenerations(accountId);
+    await test.step('a pasted loopback address is refused', async () => {
       const refused = await csrfPost(page, '/api/schema-generator/generations', {
         siteId,
         source: 'url',
@@ -480,7 +428,6 @@ test('schema generator: evidence-backed markup, conformance, copy/download, cap,
         schemaType: 'WebPage',
       });
       expect(refused.status()).toBe(400);
-      expect(usedGenerations(accountId)).toBe(before);
 
       await page.goto(`/sites/${siteId}?tab=schema`);
       await page.getByLabel('Paste a URL').click();
@@ -489,45 +436,10 @@ test('schema generator: evidence-backed markup, conformance, copy/download, cap,
       await expect(page.getByTestId('schema-preview-button')).toBeDisabled();
     });
 
-    await test.step('the N+1 generation is blocked before spend', async () => {
-      seedUsedGenerations(accountId, String(STARTER_CAP - 1));
-      await generate(page, siteId, 'WebPage');
-      await expect(page.getByTestId('schema-payload')).toBeVisible({ timeout: 60_000 });
-      expect(usedGenerations(accountId)).toBe(String(STARTER_CAP));
-
-      // The preview is the pre-spend boundary. Once the allowance is empty it
-      // truthfully disables confirmation, so the browser must never force a
-      // click merely to manufacture a server error state.
-      await page.goto(`/sites/${siteId}?tab=schema`);
-      await expect(page.getByTestId('schema-page-picker')).toBeVisible({
-        timeout: 30_000,
-      });
-      await page.getByTestId('schema-audited-option-0').click();
-      await page.locator('#schema-type-option-WebPage').check();
-      await page.getByTestId('schema-preview-button').click();
-      await expect(page.getByTestId('schema-preview-nofit')).toBeVisible({
-        timeout: 30_000,
-      });
-      await expect(page.getByTestId('schema-generate-button')).toBeDisabled();
-
-      // The API independently enforces the same N+1 boundary if a client
-      // bypasses the disabled control.
-      const refused = await csrfPost(page, '/api/schema-generator/generations', {
-        siteId,
-        source: 'audited-page',
-        pageUrl: auditedPageUrl,
-        schemaType: 'WebPage',
-      });
-      expect(refused.status()).toBe(402);
-      expect(usedGenerations(accountId)).toBe(String(STARTER_CAP));
-    });
-
-    await test.step('re-opening a stored generation is free', async () => {
-      const before = usedGenerations(accountId);
+    await test.step('re-opening a stored generation works', async () => {
       await page.goto(`/sites/${siteId}?tab=schema`);
       await page.getByTestId(`schema-open-${firstGenerationId}`).click();
       await expect(page.getByTestId('schema-payload')).toBeVisible({ timeout: 30_000 });
-      expect(usedGenerations(accountId)).toBe(before);
     });
 
     await test.step('Arabic RTL renders the generator under logical layout', async () => {

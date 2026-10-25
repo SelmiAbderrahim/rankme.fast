@@ -24,58 +24,15 @@
  * free preview/history/decision reads fails loudly.
  */
 
-import { expect, test, type APIRequestContext, type Page } from '@playwright/test';
+import { expect, test, type Page } from '@playwright/test';
 
 import { freshAccount, signUp } from './helpers/account';
-import { runComposePsql } from './helpers/compose';
 import { collectDenials, denyNonLoopback } from './helpers/denyNonLoopback';
 
 test.describe.configure({ mode: 'serial' });
 
-interface UsageMetric {
-  used: number;
-  cap: number | null;
-}
-
-interface UsageResponse {
-  keywordLookups: UsageMetric;
-  aiSummaries: UsageMetric;
-  [key: string]: unknown;
-}
-
 interface SessionResponse {
   user?: { id?: string };
-}
-
-/**
- * Bump an isolated account to Pro (active). The `keyword_research` router
- * gates every route behind `requireTier('pro')`; without this seed every
- * request 402s and no meter-delta assertion is possible. Test-only seam —
- * production never inserts subscription rows outside the Polar webhook path.
- */
-function bumpToPro(accountId: string): void {
-  runComposePsql(
-    `INSERT INTO subscriptions (account_id, tier, status)
-       VALUES (:'account_id', 'pro', 'active')
-       ON CONFLICT (account_id)
-         DO UPDATE SET tier = 'pro', status = 'active', updated_at = now();`,
-    { variables: { account_id: accountId } },
-  );
-}
-
-async function readAccountId(request: APIRequestContext): Promise<string> {
-  const response = await request.get('/api/auth/get-session');
-  expect(response.status()).toBe(200);
-  const body = (await response.json()) as SessionResponse;
-  const id = body.user?.id;
-  expect(id, 'Better Auth session must return the current user id').toBeTruthy();
-  return id as string;
-}
-
-async function readUsage(request: APIRequestContext): Promise<UsageResponse> {
-  const response = await request.get('/api/billing/usage');
-  expect(response.status()).toBe(200);
-  return (await response.json()) as UsageResponse;
 }
 
 // Ten deterministic phrases → stored metrics rows the clustering pass reads.
@@ -102,7 +59,6 @@ async function addPhraseChips(
 test('Journey A — keyword-intelligence workspace UI: tabs, previews, runs, clustering identity, decisions', async ({
   page,
   context,
-  request,
   baseURL,
 }) => {
   // Multi-step composed-stack journey on a shared gate host: align with the
@@ -118,30 +74,9 @@ test('Journey A — keyword-intelligence workspace UI: tabs, previews, runs, clu
 
   const account = freshAccount('keyword-intel');
 
-  await test.step('sign up, verify, bump the account to pro', async () => {
+  await test.step('sign up and verify', async () => {
     await signUp(page, account);
-    const accountId = await readAccountId(page.request);
-    bumpToPro(accountId);
   });
-
-  const baseline = await readUsage(page.request);
-  let expectedKeywordLookups = baseline.keywordLookups.used;
-  let expectedAiSummaries = baseline.aiSummaries.used;
-  const expectDelta = async (
-    lookupsDelta: number,
-    summariesDelta: number,
-    label: string,
-  ): Promise<void> => {
-    expectedKeywordLookups += lookupsDelta;
-    expectedAiSummaries += summariesDelta;
-    const after = await readUsage(page.request);
-    expect(after.keywordLookups.used, `${label} — keyword_lookups.used`).toBe(
-      expectedKeywordLookups,
-    );
-    expect(after.aiSummaries.used, `${label} — ai_summaries.used`).toBe(
-      expectedAiSummaries,
-    );
-  };
 
   // The `live-trends` tab is covered by its own dedicated
   // journey — this Labs journey stays scoped to the four tabs it owns.
@@ -178,7 +113,6 @@ test('Journey A — keyword-intelligence workspace UI: tabs, previews, runs, clu
     await expect(page.getByTestId('keyword-research-table')).toBeVisible();
     // The shipped panel fires /metrics AND /intent for the same set — both
     // ride the same keyword_lookups meter (one unit per deduped phrase each).
-    await expectDelta(CLUSTER_PHRASES.length * 2, 0, 'research metrics+intent');
   });
 
   await test.step('gap: preview → cancel spends nothing', async () => {
@@ -195,7 +129,6 @@ test('Journey A — keyword-intelligence workspace UI: tabs, previews, runs, clu
     await expect(page.getByTestId('kw-preview-units')).toContainText('2');
     await page.getByTestId('kw-gap-cancel').click();
     await expect(page.getByTestId('kw-preview')).toHaveCount(0);
-    await expectDelta(0, 0, 'gap preview + cancel (free)');
   });
 
   await test.step('gap: confirm spends one unit per deduped competitor and renders per-pair tables with URL filters', async () => {
@@ -203,7 +136,6 @@ test('Journey A — keyword-intelligence workspace UI: tabs, previews, runs, clu
     await expect(page.getByTestId('kw-preview')).toBeVisible();
     await page.getByTestId('kw-gap-confirm').click();
     await expect(page.getByTestId('kw-gap-results')).toBeVisible();
-    await expectDelta(2, 0, 'gap fresh (two competitors)');
     // Two pair pickers; provenance labels on the pair card.
     await expect(page.getByTestId('kw-gap-pair-competitor-one-example')).toBeVisible();
     await expect(page.getByTestId('kw-gap-pair-competitor-two-example')).toBeVisible();
@@ -226,7 +158,6 @@ test('Journey A — keyword-intelligence workspace UI: tabs, previews, runs, clu
     );
     await expect(page).toHaveURL(/gapFilter=missing/);
     // Filtering a stored result never spends.
-    await expectDelta(0, 0, 'gap filters + reload (free)');
   });
 
   await test.step('trends: preview → confirm spends one unit per phrase; readouts stay labelled Estimate', async () => {
@@ -240,7 +171,6 @@ test('Journey A — keyword-intelligence workspace UI: tabs, previews, runs, clu
     await expect(page.getByTestId('kw-provenance-estimate').first()).toBeVisible();
     // Accessible table fallback accompanies every chart.
     await expect(page.getByTestId('kw-trends-table-seo-audit-tool')).toBeAttached();
-    await expectDelta(2, 0, 'trends fresh (two phrases)');
   });
 
   await test.step('overview: preview → confirm on the research tab; SERP chips + index-freshness copy', async () => {
@@ -253,13 +183,11 @@ test('Journey A — keyword-intelligence workspace UI: tabs, previews, runs, clu
     await expect(page.getByTestId('kw-overview-index-note')).toContainText(
       /provider's index/i,
     );
-    await expectDelta(2, 0, 'overview fresh (two phrases)');
   });
 
   await test.step('history reads are free', async () => {
     const response = await page.request.get('/api/keyword-research/history?limit=25');
     expect(response.status()).toBe(200);
-    await expectDelta(0, 0, 'history read (free)');
   });
 
   let runId: string | null = null;
@@ -277,7 +205,6 @@ test('Journey A — keyword-intelligence workspace UI: tabs, previews, runs, clu
     await expect(page.getByTestId('kw-clusters-count')).toContainText('10 selected');
     await page.getByTestId('kw-clusters-run').click();
     await expect(page.getByTestId('kw-clusters-result')).toBeVisible();
-    await expectDelta(0, 1, 'clusters fresh pass');
     // The run id lands in the URL for reload survival.
     await expect(page).toHaveURL(/run=[a-f0-9]{64}/);
     const url = new URL(page.url());
@@ -296,7 +223,6 @@ test('Journey A — keyword-intelligence workspace UI: tabs, previews, runs, clu
     // Identity-first: stored-run disclosure, same run id, zero spend.
     await expect(page.getByTestId('kw-clusters-cached')).toBeVisible();
     await expect(page).toHaveURL(new RegExp(`run=${runId}`));
-    await expectDelta(0, 0, 'clusters identical rerun (free)');
   });
 
   await test.step('add an owned site through the UI for the acceptance step', async () => {
@@ -309,7 +235,6 @@ test('Journey A — keyword-intelligence workspace UI: tabs, previews, runs, clu
     await expect(
       page.getByText('keyword-cluster-target.example').first(),
     ).toBeVisible({ timeout: 15_000 });
-    await expectDelta(0, 0, 'site creation (free)');
   });
 
   await test.step('accept one cluster into the owned site and follow the CI deep link (?tab=content&recommendation=)', async () => {
@@ -332,7 +257,6 @@ test('Journey A — keyword-intelligence workspace UI: tabs, previews, runs, clu
     await page.getByTestId('kw-accept-open-recommendation').click();
     await expect(page).toHaveURL(/\/sites\/[a-f0-9]{24}\?tab=content&recommendation=keyword-cluster%3A[a-f0-9]{32}/);
     // Decisions are free.
-    await expectDelta(0, 0, 'cluster accept + deep link (free)');
     // The generic Next Actions cross-link is reachable from the replayed dialog.
     await page.goto(`/keyword-research?tab=clusters&run=${runId}`);
     await expect(page.getByTestId('kw-clusters-result')).toBeVisible();
@@ -367,7 +291,6 @@ test('Journey A — keyword-intelligence workspace UI: tabs, previews, runs, clu
     await expect(page.getByTestId(`kw-cluster-decision-${clusterId}`)).toContainText(
       /dismissed/i,
     );
-    await expectDelta(0, 0, 'cluster dismissal (free)');
     // Reload drops session decision state; the append-only log is the
     // authority. A conflicting accept on the SAME cluster must surface the
     // localized 409 conflict banner — that is the terminality proof.
@@ -378,7 +301,6 @@ test('Journey A — keyword-intelligence workspace UI: tabs, previews, runs, clu
     await page.locator('[data-testid^="kw-accept-site-"]').first().click();
     await page.getByTestId('kw-accept-confirm').click();
     await expect(page.getByTestId(`kw-cluster-conflict-${clusterId}`)).toBeVisible();
-    await expectDelta(0, 0, 'conflicting decision replay (free)');
   });
 
   await test.step('cross-account read of the stored run returns 404', async () => {
@@ -387,24 +309,11 @@ test('Journey A — keyword-intelligence workspace UI: tabs, previews, runs, clu
     const secondPage = await secondContext.newPage();
     const secondAccount = freshAccount('keyword-intel-b');
     await signUp(secondPage, secondAccount);
-    const secondAccountId = await readAccountId(secondPage.request);
-    bumpToPro(secondAccountId);
     const isolation = await secondPage.request.get(
       `/api/keyword-research/clusters/${encodeURIComponent(runId!)}`,
     );
     expect(isolation.status()).toBe(404);
     await secondContext.close();
-  });
-
-  await test.step('below-Pro accounts see the honest locked workspace (UI-driven tier state)', async () => {
-    const freeContext = await context.browser()!.newContext({ baseURL });
-    await denyNonLoopback(freeContext, { onDeny: denials.onDeny });
-    const freePage = await freeContext.newPage();
-    const freeAccount2 = freshAccount('keyword-intel-free');
-    await signUp(freePage, freeAccount2);
-    await freePage.goto('/keyword-research');
-    await expect(freePage.getByTestId('keyword-research-locked')).toBeVisible();
-    await freeContext.close();
   });
 
   await test.step('Arabic RTL pass over the workspace via the shared locale switcher', async () => {

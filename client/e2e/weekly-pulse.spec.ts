@@ -62,7 +62,6 @@
 import { expect, test, type APIRequestContext } from '@playwright/test';
 
 import { freshAccount, signUp } from './helpers/account';
-import { runComposePsql } from './helpers/compose';
 import { csrfHeaders } from './helpers/csrf';
 import { collectDenials, denyNonLoopback } from './helpers/denyNonLoopback';
 
@@ -139,23 +138,6 @@ interface PulseHistoryPage {
   siteId: string;
   runs: unknown[];
   nextCursor: string | null;
-}
-
-/**
- * Bump an isolated account to Agency (active). `?tab=ai-visibility` is
- * gated in the UI (`isAgency(tier)`), so the workspace-navigation step
- * needs Agency; the underlying `/api/sites/:siteId/weekly-pulse` routes
- * are NOT tier-gated (server/src/modules/weekly-pulse/weekly-pulse.routes.ts)
- * so the API-level steps run identically on any tier. Test-only seam.
- */
-function bumpToAgency(accountId: string): void {
-  runComposePsql(
-    `INSERT INTO subscriptions (account_id, tier, status)
-       VALUES (:'account_id', 'agency', 'active')
-       ON CONFLICT (account_id)
-         DO UPDATE SET tier = 'agency', status = 'active', updated_at = now();`,
-    { variables: { account_id: accountId } },
-  );
 }
 
 async function readAccountId(request: APIRequestContext): Promise<string> {
@@ -239,7 +221,6 @@ test('Journey D — weekly-pulse consent, non-reserving preview, first-party GSC
   page,
   context,
   request,
-  baseURL,
 }) => {
   const denials = collectDenials();
   await denyNonLoopback(context, {
@@ -256,7 +237,6 @@ test('Journey D — weekly-pulse consent, non-reserving preview, first-party GSC
   });
 
   const accountId = await readAccountId(page.request);
-  bumpToAgency(accountId);
   const site = await createSite(page.request, 'https://weekly-pulse.example.com');
 
   await test.step('GET state — anonymous view before consent', async () => {

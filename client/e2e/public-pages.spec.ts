@@ -120,7 +120,7 @@ test.describe('public pages (docs-only self-hosted edition)', () => {
       expect(docsXml, `sitemap contains /docs/${slug}`).toContain(`/docs/${slug}<`);
     }
     expect(docsXml, 'no marketing routes in the sitemap').not.toMatch(
-      /<loc>[^<]*\/(pricing|free-audit|serp-sensor|alternatives|vs)\b[^<]*<\/loc>/,
+      /<loc>https?:\/\/[^/<]+\/(?:[a-z]{2}\/)?(?:pricing|free-audit|serp-sensor|alternatives|vs)(?:\/[^<]*)?<\/loc>/,
     );
   });
 
@@ -130,12 +130,13 @@ test.describe('public pages (docs-only self-hosted edition)', () => {
   }) => {
     // Only docs, portals, and report shares are server-rendered. Every other
     // path (including the removed marketing routes) is handed to the SPA with
-    // HTTP 200 and an empty root; the client router paints the shared NotFound.
+    // HTTP 200 and an unrendered root; the client router paints the shared NotFound.
     for (const path of ['/pricing', '/free-audit', '/schema-markup', '/nope', '/ar/pricing']) {
       const raw = await request.get(path, { maxRedirects: 0 });
       expect(raw.status(), `${path} raw status`).toBe(200);
       const html = await raw.text();
-      expect(html, `${path} is the CSR shell`).toContain('<div id="root"></div>');
+      // The shell may carry the pre-mount app frame, but never rendered content.
+      expect(html, `${path} is the CSR shell`).toMatch(/<div id="root"/);
       expect(html, `${path} is not server-rendered`).not.toContain('window.__SSR__=true');
 
       const response = await page.goto(path);

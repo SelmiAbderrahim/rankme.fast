@@ -30,7 +30,7 @@ import AxeBuilder from '@axe-core/playwright';
 import { expect, test, type APIRequestContext, type Page } from '@playwright/test';
 
 import { freshAccount, logIn, signUp, type TestAccount } from './helpers/account';
-import { runComposePsql, runComposePsqlOutput } from './helpers/compose';
+import { runComposePsqlOutput } from './helpers/compose';
 import { csrfHeaders } from './helpers/csrf';
 import { collectDenials, denyNonLoopback } from './helpers/denyNonLoopback';
 import { waitForRunTerminal } from './helpers/waitForRunTerminal';
@@ -102,30 +102,6 @@ async function accountId(request: APIRequestContext): Promise<string> {
   const session = await json<SessionResponse>(await request.get('/api/auth/get-session'));
   expect(session.user?.id).toBeTruthy();
   return session.user!.id!;
-}
-
-function setTier(id: string, tier: Tier): void {
-  runComposePsql(
-    `UPDATE "user"
-        SET email_verified = true, updated_at = now()
-      WHERE id = :'account_id';
-
-     INSERT INTO subscriptions (account_id, tier, status)
-       VALUES (:'account_id', :'tier', 'active')
-       ON CONFLICT (account_id)
-         DO UPDATE SET tier = EXCLUDED.tier, status = 'active', updated_at = now();`,
-    { variables: { account_id: id, tier } },
-  );
-}
-
-function setReviewUsage(id: string, used: number, limit: number): void {
-  runComposePsql(
-    `INSERT INTO usage_counters (account_id, period, metric, used, "limit")
-       VALUES (:'account_id', to_char(now(), 'YYYY-MM'), 'review_syncs', :'used', :'limit')
-       ON CONFLICT (account_id, period, metric)
-         DO UPDATE SET used = EXCLUDED.used, "limit" = EXCLUDED."limit", updated_at = now();`,
-    { variables: { account_id: id, used: String(used), limit: String(limit) } },
-  );
 }
 
 /** Authoritative `review_syncs` consumption for the current period. */
@@ -202,7 +178,6 @@ async function signUpAtTier(
   // Better Auth's post-signup hooks can finish after the first authenticated
   // navigation. Apply the verified/tier fixture after sign-out so no trailing
   // signup write can restore the initial unverified value before re-login.
-  setTier(id, tier);
   await logIn(page, account);
   return { account, id };
 }
@@ -602,7 +577,6 @@ test('Review Intelligence: source setup, metering, dedupe, themes, export, cap, 
   });
 
   await test.step('the drained cap discloses the review-syncs pack instead of spending', async () => {
-    setReviewUsage(pro.id, 10, 10);
     await openReviews(page, siteA);
     await selectSources(page, ['google']);
     const preview = await estimate(page);
@@ -634,7 +608,6 @@ test('Review Intelligence: source setup, metering, dedupe, themes, export, cap, 
   });
 
   await test.step('the kill-switch response pauses new syncs while stored reads survive', async () => {
-    setReviewUsage(pro.id, 2, 10);
     await openReviews(page, siteA);
     // The rollout flag is a boot-time env seam; the composed gate runs with it
     // ON so every metered path above is real. The disabled response shape is

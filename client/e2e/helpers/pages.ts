@@ -57,44 +57,6 @@ export function accountIdForEmail(email: string): string {
   return id;
 }
 
-export function setProTier(accountId: string): void {
-  runComposePsql(
-    `INSERT INTO subscriptions (account_id, tier, status)
-       VALUES (:'account_id', 'pro', 'active')
-       ON CONFLICT (account_id)
-       DO UPDATE SET tier = 'pro', status = 'active', updated_at = now();`,
-    { variables: { account_id: accountId } },
-  );
-}
-
-export function keywordUsage(accountId: string): number {
-  const raw = runComposePsqlOutput(
-    `SELECT coalesce(max(used), 0)
-       FROM usage_counters
-      WHERE account_id = :'account_id'
-        AND period = to_char(now(), 'YYYY-MM')
-        AND metric = 'keyword_lookups';`,
-    { variables: { account_id: accountId } },
-  );
-  return Number(raw);
-}
-
-export function setKeywordUsage(accountId: string, used: number, limit: number): void {
-  runComposePsql(
-    `INSERT INTO usage_counters (account_id, period, metric, used, "limit")
-       VALUES (:'account_id', to_char(now(), 'YYYY-MM'), 'keyword_lookups', :'used', :'limit')
-       ON CONFLICT (account_id, period, metric)
-       DO UPDATE SET used = EXCLUDED.used, "limit" = EXCLUDED."limit", updated_at = now();`,
-    {
-      variables: {
-        account_id: accountId,
-        used: String(used),
-        limit: String(limit),
-      },
-    },
-  );
-}
-
 export function seedGoogleConnection(input: {
   accountId: string;
   propertyUrl: string | null;

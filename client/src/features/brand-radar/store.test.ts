@@ -198,7 +198,6 @@ describe('brandRadar slice — create lifecycle', () => {
       id: 'new-scan',
       retainedRowCount: null,
       createdAt: null,
-      refundState: 'none',
     });
     expect(selectBrandRadarHasPending(store.getState() as RootState)).toBe(true);
   });

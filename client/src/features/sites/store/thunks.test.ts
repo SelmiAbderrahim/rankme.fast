@@ -163,6 +163,14 @@ describe('updateSiteMarket', () => {
     expect(mocked.updateSiteMarketRequest).toHaveBeenCalledWith(site.id, market);
     expect(store.getState().sites.items[0]?.defaultMarket).toEqual(updated.defaultMarket);
   });
+
+  it('rejects with the server-localized message', async () => {
+    mocked.updateSiteMarketRequest.mockRejectedValue(serverError('Market not supported.'));
+    const result = await makeStore().dispatch(updateSiteMarket({ id: site.id,
+      market: { locationCode: 1, languageCode: 'en', device: 'desktop' } }));
+    expect(updateSiteMarket.rejected.match(result)).toBe(true);
+    expect(result.payload).toBe('Market not supported.');
+  });
 });
 
 describe('removeSite', () => {

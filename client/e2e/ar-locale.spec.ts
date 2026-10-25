@@ -5,7 +5,7 @@
  */
 import { expect, test, type APIRequestContext } from '@playwright/test';
 import { freshAccount, logIn, signUp } from './helpers/account';
-import { runComposeApiScript, runComposePsql, runComposePsqlOutput } from './helpers/compose';
+import { runComposePsqlOutput } from './helpers/compose';
 import { csrfHeaders } from './helpers/csrf';
 import {
   E2E_RECOMMENDATION_ANALYSIS_ID,
@@ -24,58 +24,9 @@ async function accountId(request: APIRequestContext): Promise<string> {
   return id as string;
 }
 
-function promoteForSweep(id: string): void {
-  runComposePsql(
-    `UPDATE "user"
-        SET role = 'SuperAdmin',
-            two_factor_enabled = true,
-            email_verified = true,
-            updated_at = now()
-      WHERE id = :'account_id';
-
-     INSERT INTO subscriptions (account_id, tier, status, brand_radar)
-       VALUES (:'account_id', 'agency', 'active', true)
-       ON CONFLICT (account_id)
-         DO UPDATE SET tier = 'agency',
-                       status = 'active',
-                       brand_radar = true,
-                       updated_at = now();`,
-    { variables: { account_id: id } },
-  );
-  runComposeApiScript(
-    `
-      const mongooseModule = await import('mongoose');
-      const mongoose = mongooseModule.default;
-      await mongoose.connect(process.env.MONGODB_URI);
-      await mongoose.connection.db.collection('users').updateOne(
-        { _id: new mongoose.Types.ObjectId(process.env.SWEEP_ACCOUNT_ID) },
-        { $set: { role: 'SuperAdmin' } },
-      );
-      await mongoose.disconnect();
-    `,
-    { SWEEP_ACCOUNT_ID: id },
-  );
-}
-
 function localeSideEffectFingerprint(id: string): string {
   return runComposePsqlOutput(
-    `SELECT concat(
-       coalesce((SELECT sum(used) FROM usage_counters WHERE account_id = :'account_id'), 0),
-       '|',
-       (SELECT count(*) FROM vendor_responses WHERE account_id = :'account_id')
-     );`,
-    { variables: { account_id: id } },
-  );
-}
-
-function grantContentIntelligence(id: string): void {
-  runComposePsql(
-    `INSERT INTO subscriptions (account_id, tier, status)
-       VALUES (:'account_id', 'starter', 'active')
-       ON CONFLICT (account_id)
-         DO UPDATE SET tier = 'starter',
-                       status = 'active',
-                       updated_at = now();`,
+    `SELECT count(*) FROM vendor_responses WHERE account_id = :'account_id';`,
     { variables: { account_id: id } },
   );
 }
@@ -95,7 +46,6 @@ async function createSite(request: APIRequestContext): Promise<string> {
 test('ar (RTL) report screen renders with dir=rtl', async ({ page }) => {
   const account = freshAccount('ar');
   await signUp(page, account);
-  grantContentIntelligence(await accountId(page.request));
 
   await page.goto('/sites');
   await page.getByLabel(/url|رابط/i).fill('https://example.com');
@@ -107,9 +57,8 @@ test('ar (RTL) report screen renders with dir=rtl', async ({ page }) => {
   await dataRow.getByRole('button').last().click();
   await page.getByRole('menuitem', { name: /view report|عرض التقرير/i }).click();
   // Fresh site → no run yet → "Run your first audit" CTA opens the
-  // spend-preview confirmation dialog (locked contract): unit price, fresh-
-  // crawl disclosure, and allowance line render before one confirm click
-  // starts exactly one run. The preview surfaces must render under `ar` too.
+  // confirmation dialog: the run summary renders before one confirm click
+  // starts exactly one run. The summary must render under `ar` too.
   await page.getByTestId('report-retest').click();
   await expect(page.getByTestId('report-retest-dialog')).toBeVisible();
   await expect(page.getByTestId('retest-preview')).toBeVisible();
@@ -169,7 +118,7 @@ test('the Arabic locale root redirects to Arabic sign-in', async ({ page }) => {
   await expect(page.locator('html')).toHaveAttribute('dir', 'rtl');
 });
 
-test('authenticated locale persists in RTL without vendor or metered work', async ({ page }) => {
+test('authenticated locale persists in RTL without vendor work', async ({ page }) => {
   const account = freshAccount('ar-preference');
   await signUp(page, account);
   const id = await accountId(page.request);
@@ -228,8 +177,8 @@ test('authenticated locale persists in RTL without vendor or metered work', asyn
   await expect(page.locator('#language-switcher').first()).toHaveValue('ar');
 
   // Locale persistence is first-party control-plane work: it cannot enqueue
-  // or spend. The account's aggregate counters and normalized vendor archive
-  // remain byte-for-byte unchanged across the switch and reload.
+  // or spend. The account's normalized vendor archive stays unchanged across
+  // the switch and reload.
   expect(localeSideEffectFingerprint(id)).toBe(before);
 });
 
@@ -257,11 +206,9 @@ test('self-hosted workspaces honor Arabic RTL', async ({
   test.setTimeout(120_000);
   const account = freshAccount('ar-usability-sweep');
   await signUp(page, account);
-  const id = await accountId(page.request);
   await page.goto('/logout');
   await page.waitForURL('/login');
   await logIn(page, account);
-  promoteForSweep(id);
   const siteId = await createSite(page.request);
 
   const workspaces = [

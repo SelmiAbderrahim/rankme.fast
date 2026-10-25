@@ -51,8 +51,9 @@ for (const [legacy, canonical] of REDIRECTS) {
 
 test('a legacy deep link keeps its hash through the redirect', async () => {
   await gotoWithStaticAssetNetworkRecovery(page, '/profile?tab=branding#logo');
-  await expect.poll(() => new URL(page.url()).pathname).toBe('/settings/profile');
-  expect(new URL(page.url()).search).toBe('?tab=branding');
+  // Branding moved to the workspace settings page; the hash survives the hop.
+  await expect.poll(() => new URL(page.url()).pathname).toBe('/settings/workspace');
+  expect(new URL(page.url()).search).toBe('');
   expect(new URL(page.url()).hash).toBe('#logo');
 });
 

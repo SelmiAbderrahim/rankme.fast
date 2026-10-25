@@ -222,7 +222,6 @@ describe('Brand Radar keyboard parity', () => {
       screen.getByTestId('brand-radar-tab-scans'),
       screen.getByTestId('brand-radar-status-filter'),
       screen.getByRole('button', { name: 'About Summary' }),
-      screen.getByRole('button', { name: 'About Refund' }),
       openControl,
     ];
     for (const control of order) {

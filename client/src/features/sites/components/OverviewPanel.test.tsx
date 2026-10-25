@@ -955,6 +955,17 @@ describe('OverviewPanel', () => {
     expect(within(search).queryByText('Search data not available for this run')).not.toBeInTheDocument();
   });
 
+  it('shows a stored Search Console snapshot that has no top query', () => {
+    const summary: GoogleSearchSummary = {
+      totalClicks: 80, totalImpressions: 2000, averageCtr: 0.04, averagePosition: 3.2,
+      topQueries: [], topPages: [], asOf: '2026-07-12', previousPeriod: null,
+    };
+    renderPanel(buildStore({ report: richReport({ gscSearch: null }), searchSummary: summary }));
+    const search = screen.getByTestId('overview-search');
+    expect(within(search).getByText('80')).toBeInTheDocument();
+    expect(within(search).queryByText('Top query')).not.toBeInTheDocument();
+  });
+
   it('uses the shared readiness explanation when a property does not cover the site', async () => {
     const old = richReport().gscSearch;
     renderPanel(buildStore({ report: richReport({ gscSearch: old ? { ...old, status: 'no-data' } : null }) }),

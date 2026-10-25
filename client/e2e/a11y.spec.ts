@@ -13,7 +13,6 @@ import {
   type Page,
 } from '@playwright/test';
 import { freshAccount, signUp } from './helpers/account';
-import { runComposeApiScript, runComposePsql } from './helpers/compose';
 import { csrfHeaders } from './helpers/csrf';
 import {
   E2E_RECOMMENDATION_ANALYSIS_ID,
@@ -22,64 +21,10 @@ import {
 
 const WCAG_TAGS = ['wcag2a', 'wcag2aa', 'wcag21a', 'wcag21aa'];
 
-interface SessionResponse {
-  user?: { id?: string };
-}
-
 interface BatchSurface {
   path: string;
   marker: string;
   pendingMarker?: string;
-}
-
-async function accountId(request: APIRequestContext): Promise<string> {
-  const response = await request.get('/api/auth/get-session');
-  expect(response.status()).toBe(200);
-  const id = ((await response.json()) as SessionResponse).user?.id;
-  expect(id).toBeTruthy();
-  return id as string;
-}
-
-function provisionAgencyForA11y(id: string): void {
-  runComposePsql(
-    `UPDATE "user"
-        SET email_verified = true,
-            updated_at = now()
-      WHERE id = :'account_id';
-
-     INSERT INTO subscriptions (account_id, tier, status, brand_radar)
-       VALUES (:'account_id', 'agency', 'active', true)
-       ON CONFLICT (account_id)
-         DO UPDATE SET tier = 'agency',
-                       status = 'active',
-                       brand_radar = true,
-                       updated_at = now();`,
-    { variables: { account_id: id } },
-  );
-}
-
-function promoteForA11y(id: string): void {
-  runComposePsql(
-    `UPDATE "user"
-        SET role = 'SuperAdmin',
-            two_factor_enabled = true,
-            updated_at = now()
-      WHERE id = :'account_id';`,
-    { variables: { account_id: id } },
-  );
-  runComposeApiScript(
-    `
-      const mongooseModule = await import('mongoose');
-      const mongoose = mongooseModule.default;
-      await mongoose.connect(process.env.MONGODB_URI);
-      await mongoose.connection.db.collection('users').updateOne(
-        { _id: new mongoose.Types.ObjectId(process.env.SWEEP_ACCOUNT_ID) },
-        { $set: { role: 'SuperAdmin' } },
-      );
-      await mongoose.disconnect();
-    `,
-    { SWEEP_ACCOUNT_ID: id },
-  );
 }
 
 async function createSweepSite(request: APIRequestContext): Promise<string> {
@@ -97,15 +42,9 @@ async function createSweepSite(request: APIRequestContext): Promise<string> {
 async function prepareAuthenticatedSweep(
   page: Page,
   accountLabel: string,
-  options: { superadmin?: boolean } = {},
 ): Promise<string> {
   const account = freshAccount(accountLabel);
   await signUp(page, account);
-  const id = await accountId(page.request);
-  provisionAgencyForA11y(id);
-  if (options.superadmin) {
-    promoteForA11y(id);
-  }
   return createSweepSite(page.request);
 }
 
@@ -197,15 +136,9 @@ test('Pages workspace is overflow-safe and axe-clean across the required viewpor
       await expect(page.getByTestId('pages-panel')).toBeVisible({ timeout: 30_000 });
       await expect(page.locator('html')).toHaveAttribute('dir', locale === 'ar' ? 'rtl' : 'ltr');
       if (viewport.width < 768) {
-        await expect(page.getByTestId('site-nav-mobile')).toBeVisible();
-        await expect(page.getByTestId('site-nav-desktop')).toBeHidden();
-      } else {
-        await expect(page.getByTestId('site-nav-mobile')).toBeHidden();
-        await expect(page.getByTestId('site-nav-desktop')).toBeVisible();
-        await expect(page.getByTestId('site-nav-group-audit-reports')).toHaveAttribute(
-          'data-active',
-          'true',
-        );
+        await expect(page.getByTestId('site-mobile-bar')).toBeVisible();
+      } else if (viewport.width >= 1440) {
+        await expect(page.getByTestId('site-navigation')).toBeVisible();
       }
 
       for (const theme of ['light', 'dark'] as const) {
@@ -239,7 +172,6 @@ test('add-site form + report tabs (light) have no axe violations', async ({ page
   test.setTimeout(180_000);
   const account = freshAccount('a11y');
   await signUp(page, account);
-  provisionAgencyForA11y(await accountId(page.request));
 
   await page.goto('/sites');
   await scan(page, 'add-site');
@@ -248,8 +180,8 @@ test('add-site form + report tabs (light) have no axe violations', async ({ page
   await page.getByRole('button', { name: /add|save/i }).click();
 
   // Row ⋯ menu → "View report" → "Run your first audit" (report-retest).
-  // The CTA opens the spend-preview confirmation dialog (locked
-  // contract); scan it for violations before confirming the run.
+  // The CTA opens the confirmation dialog; scan it for violations before
+  // confirming the run.
   await page
     .getByRole('button', { name: /open menu for/i })
     .first()
@@ -311,7 +243,6 @@ test('ar (RTL) report screen has no axe violations', async ({ browser }) => {
 
   const account = freshAccount('a11y-ar');
   await signUp(page, account);
-  provisionAgencyForA11y(await accountId(page.request));
 
   await page.goto('/sites');
   await page.getByLabel(/url|رابط/i).fill('https://example.com');
@@ -322,8 +253,7 @@ test('ar (RTL) report screen has no axe violations', async ({ browser }) => {
   const dataRow = page.getByRole('row').nth(1);
   await dataRow.getByRole('button').last().click();
   await page.getByRole('menuitem', { name: /view report|عرض التقرير/i }).click();
-  // Locked contract: the CTA opens the spend-preview confirmation
-  // dialog; confirm to start the first run.
+  // The CTA opens the confirmation dialog; confirm to start the first run.
   await page.getByTestId('report-retest').click();
   await expect(page.getByTestId('report-retest-dialog')).toBeVisible();
   await expect(page.getByTestId('retest-preview-units')).toBeVisible();
@@ -451,23 +381,6 @@ test('authenticated product surfaces have zero light/dark axe violations', async
       path: `/sites/${siteId}?tab=ai-visibility`,
       marker: '[data-testid="weekly-pulse-card"]',
     },
-  ];
-
-  await scanBatchSurfaces(page, surfaces);
-});
-
-test('authenticated superadmin surfaces have zero light/dark axe violations', async ({
-  page,
-}) => {
-  test.setTimeout(240_000);
-  await prepareAuthenticatedSweep(page, 'a11y-superadmin', { superadmin: true });
-  const surfaces: BatchSurface[] = [
-    ...['overview', 'providers', 'costs', 'quality', 'queues', 'monitors'].map(
-      (section) => ({
-        path: `/superadmin?tab=intelligence&intel=${section}`,
-        marker: `[data-testid="intelligence-section-${section}"][data-state="active"]`,
-      }),
-    ),
   ];
 
   await scanBatchSurfaces(page, surfaces);
