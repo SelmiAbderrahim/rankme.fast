@@ -137,7 +137,6 @@ export const AlertsPage = () => {
 
   // The server is the authority on refusals; the builder only mirrors the
   // one it has already been told about so the right control disables.
-  const capReached = saveGate?.kind === 'cap' || listGate?.kind === 'cap';
   const flagDisabled = saveGate?.kind === 'disabled' || listGate?.kind === 'disabled';
 
   return (
@@ -256,7 +255,6 @@ export const AlertsPage = () => {
                     sites={sites}
                     siteId={url.siteId}
                     currentUserId={user?.id ?? null}
-                    capReached={capReached}
                     submitting={saveStatus === 'loading'}
                     onSubmit={handleCreate}
                   />

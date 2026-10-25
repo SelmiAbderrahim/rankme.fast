@@ -107,6 +107,9 @@
     "timeseriesTitle": "Clicks and impressions over time",
     "timeseriesSubtitle_one": "Daily totals for the last {{days}} day.",
     "timeseriesEmpty": "No daily data yet.",
+    "timeseriesNoActivity": "No activity in this period.",
+    "timeseriesNoClicks": "No clicks in this period.",
+    "timeseriesNoImpressions": "No impressions in this period.",
     "timeseriesChartLabel_one": "Daily {{metric}} for the last {{days}} day",
     "timeseriesTableCaption_one": "Daily search performance for the last {{days}} day",
     "tableDate": "Date",
@@ -179,10 +182,6 @@
     "devicesEmpty": "No device data yet.",
     "devicesTableCaption": "Sessions by device",
     "deviceHeader": "Device",
-    "locked": {
-      "body": "Google Analytics insights are included in the Pro plan and above. Upgrade to see sessions, engagement, and key events next to your search data.",
-      "upgrade": "Upgrade plan"
-    },
     "enableTitle": "Google Analytics is not enabled",
     "enableBody": "Grant read-only access to Google Analytics to see sessions, engagement, and key events for this site.",
     "enableCta": "Enable Google Analytics",

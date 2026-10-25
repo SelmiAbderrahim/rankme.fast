@@ -13,7 +13,7 @@ L'Intelligence mots-clés regroupe les gaps de mots-clés, les aperçus, les ten
 
 ## Ce que coûte chaque vérification
 
-- **Gap** compare votre domaine à ceux de vos concurrents. Il utilise une unité `keyword_lookups` par concurrent, après suppression des doublons.
+- **Gap** compare l’un de vos sites, choisi dans votre liste de sites, à ceux de vos concurrents. Il utilise une unité `keyword_lookups` par concurrent, après suppression des doublons.
 - **Aperçu** utilise une unité `keyword_lookups` par mot-clé consulté.
 - **Tendances** utilise une unité `keyword_lookups` par mot-clé.
 

@@ -1,5 +1,5 @@
 /**
- * Content inventory processor tests (prompt 08).
+ * Content inventory processor tests.
  *
  * Real mongodb-memory-server + PGlite. A controllable ContentSourceProvider +
  * fake AiProfileRunner + injected url-safety resolver drive every terminal path:

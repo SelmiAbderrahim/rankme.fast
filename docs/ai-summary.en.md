@@ -25,7 +25,7 @@ Search Console data, screenshots, billing details and your other sites are not s
 The audit gives the same result for the same input every time. The summary is a separate step that runs *after* the audit finishes and only reads the finished snapshot. Turning the summary off doesn't move any rule to a different tab.
 
 ## Regenerating
-Click **Regenerate** on the summary card to run it again. Each run uses one summary credit (see the AI summaries cap in [Plans, limits & credits](./plans-limits-credits.en.md)). Once you reach the cap, the card shows a limit notice instead, and those blocked attempts don't use credit.
+Click **Regenerate** on the summary card to run it again, which calls your configured AI provider. The card marks a summary **Out of date** when findings it covers were dismissed, fixed or reopened after it was written. Regenerate it so it matches your open fixes.
 
 ## Which model is used
 The summary uses the AI providers configured by whoever runs your RankMeFast installation, tried in order. Very long lists of findings are shortened before they're sent, and the card then shows a "shortened" note.

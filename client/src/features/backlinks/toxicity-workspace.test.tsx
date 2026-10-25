@@ -335,7 +335,7 @@ describe('scored rows and disavow builder', () => {
     await userEvent.setup().click(screen.getAllByRole('button', { name: 'Rationale' })[0]!);
     expect(await screen.findByText('Stored score and broken-link observation.')).toBeVisible();
 
-    const filter = screen.getByLabelText('Filter rows by rubric band');
+    const filter = screen.getByLabelText('Filter rows by risk level');
     await userEvent.setup().click(filter);
     await userEvent.setup().click(await screen.findByRole('option', { name: 'Watch' }));
     await waitFor(() =>
@@ -430,7 +430,7 @@ describe('scored rows and disavow builder', () => {
     expect(screen.getByTestId('toxicity-table')).toHaveTextContent('date-unavailable');
     await userEvent.setup().click(screen.getByRole('button', { name: 'Rationale' }));
     expect(
-      await screen.findByText('The AI abstained; the deterministic band is unchanged.'),
+      await screen.findByText('The AI gave no explanation; the rule-based risk level is unchanged.'),
     ).toBeVisible();
     await userEvent.setup().click(screen.getByRole('button', { name: 'Back to new review' }));
     expect(await screen.findByTestId('toxicity-start')).toBeInTheDocument();

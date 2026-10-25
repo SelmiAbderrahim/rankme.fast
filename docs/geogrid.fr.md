@@ -1,6 +1,6 @@
 ---
 title: 'Suivi local par grille'
-description: 'Comment les grilles de pack local par coordonnée sont collectées, ce que signifie une cellule en échec, et pourquoi les coordonnées se saisissent au lieu de se cliquer sur une carte.'
+description: 'Comment les grilles de pack local par coordonnée sont collectées, comment choisir le centre de la grille, et ce que signifie une cellule en échec.'
 locale: fr
 slug: geogrid
 section: product
@@ -33,13 +33,13 @@ Chaque cellule a sa propre heure de capture. Une grille est donc un ensemble de 
 
 Un balayage avec au moins une cellule exploitable consomme son unité. Vous n'êtes remboursé que si toutes les cellules échouent, car une grille partielle contient encore des observations utiles.
 
-Le forfait Agency inclut 6 balayages par mois. Pro accède aux grilles via le pack de crédits `geogrid-scans-10`, et Starter n'a aucun quota de grille.
+## Choisir le centre
 
-Pour les unités et les limites de forfait, voir [Tarifs](./pricing.fr.md).
+Le sélecteur **Centre de la grille** part de **Mon établissement**, l’emplacement enregistré avec l’établissement du site dans [SEO local](./local-seo.fr.md). Il est gratuit, et sans établissement enregistré il renvoie vers la configuration du SEO local. **Rechercher un lieu** cherche un nom d’établissement ou une adresse. Chaque recherche interroge une fois votre fournisseur de fiches locales, et choisir un résultat ne fait que remplir le centre : votre établissement du SEO local reste inchangé. **Saisir des coordonnées** est l’option avancée, avec le centre du dernier balayage à un clic (**Utiliser le centre du dernier balayage**). L’espacement propose des distances prédéfinies ou une distance personnalisée en kilomètres.
 
 ## Limites
 
-Vous saisissez les coordonnées à la main. RankMeFast n'utilise aucun fournisseur de tuiles cartographiques, il n'y a donc pas de carte interactive sur laquelle cliquer.
+Il n’y a pas de carte interactive sur laquelle cliquer, car RankMeFast n’utilise aucun fournisseur de tuiles cartographiques.
 
 Une grille montre ce que le fournisseur a vu depuis ces coordonnées à ce moment-là. Ce n'est pas une prévision, et cela ne dit pas ce que verra une personne en particulier.
 

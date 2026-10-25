@@ -160,4 +160,24 @@ describe('ranks api', () => {
       signal: controller.signal,
     });
   });
+
+  it('passes an abort signal to the stored reads that accept one', async () => {
+    await fetchTrackedKeywordPhrasesRequest('site-1');
+    expect(apiClient).toHaveBeenLastCalledWith('/sites/site-1/keywords/phrases', undefined);
+    await fetchKeywordMarketMoveRequest('site-1');
+    expect(apiClient).toHaveBeenLastCalledWith('/sites/site-1/keywords/market-move', undefined);
+    await fetchActiveRankJobRequest('site-1');
+    expect(apiClient).toHaveBeenLastCalledWith('/sites/site-1/rank-jobs/active', undefined);
+    await fetchRankJobRequest('site-1', 'job-1');
+    expect(apiClient).toHaveBeenLastCalledWith('/sites/site-1/rank-jobs/job-1', undefined);
+    const { signal } = new AbortController();
+    await fetchTrackedKeywordPhrasesRequest('site-1', signal);
+    expect(apiClient).toHaveBeenLastCalledWith('/sites/site-1/keywords/phrases', { signal });
+    await fetchKeywordMarketMoveRequest('site-1', signal);
+    expect(apiClient).toHaveBeenLastCalledWith('/sites/site-1/keywords/market-move', { signal });
+    await fetchActiveRankJobRequest('site-1', signal);
+    expect(apiClient).toHaveBeenLastCalledWith('/sites/site-1/rank-jobs/active', { signal });
+    await fetchRankJobRequest('site-1', 'job-1', signal);
+    expect(apiClient).toHaveBeenLastCalledWith('/sites/site-1/rank-jobs/job-1', { signal });
+  });
 });

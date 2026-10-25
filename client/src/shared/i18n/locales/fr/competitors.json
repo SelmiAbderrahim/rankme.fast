@@ -38,8 +38,7 @@
   },
   "locked": {
     "title": "Passez à la version supérieure pour débloquer l'analyse concurrentielle",
-    "body": "Les portefeuilles concurrents et les paysages de mots-clés commencent avec Pro. Agency ajoute des rapports plus étendus et la comparaison du contenu des pages classées.",
-    "upgrade": "Voir les plans"
+    "body": "Les portefeuilles concurrents et les paysages de mots-clés commencent avec Pro. Agency ajoute des rapports plus étendus et la comparaison du contenu des pages classées."
   },
   "example": {
     "title": "Exemple : ce que proposent Pro et Agency"
@@ -50,11 +49,6 @@
     "common": {
       "cancel": "Annuler"
     },
-    "tiers": {
-      "starter": "Starter",
-      "pro": "Pro",
-      "agency": "Agency"
-    },
     "views": {
       "label": "Vues de veille concurrentielle",
       "overview": "Aperçu",
@@ -63,11 +57,6 @@
       "monitoring": "Surveillance",
       "traffic": "Trafic",
       "reports": "Rapports"
-    },
-    "locked": {
-      "title": "La veille concurrentielle démarre sur Pro",
-      "description": "Passez à Pro pour confirmer des concurrents, créer des paysages de mots-clés et accepter des recommandations dans Prochaines actions.",
-      "action": "Comparer les formules"
     },
     "portfolio": {
       "title": "Portefeuille de concurrents confirmés",
@@ -87,7 +76,7 @@
       "emptyTitle": "Aucun concurrent confirmé",
       "empty": "Confirmez une suggestion de découverte ou ajoutez une URL publique de concurrent.",
       "domain": "Domaine",
-      "source": "Provenance",
+      "source": "Origine",
       "status": "Statut",
       "added": "Ajouté",
       "action": "Action",
@@ -132,9 +121,8 @@
       "empty": "Revenez à l'aperçu et ajoutez au moins un concurrent actif.",
       "previewAction": "Aperçu des dépenses du rapport",
       "previewing": "Préparation de l'aperçu du rapport…",
-      "previewTitle": "Aperçu des dépenses faisant autorité sur le serveur",
+      "previewTitle": "Aperçu de la consommation",
       "previewDescription": "Ce rapport utilise {{units}} unités de recherche de mots clés et peut conserver jusqu'à {{rows}} lignes. Il reste {{remaining}} unités avant le démarrage.",
-      "cacheCounts": "Les accès au cache sont pris en compte dans l'utilisation",
       "reviewAction": "Vérifier et confirmer",
       "confirmTitle": "Commencer ce rapport paysager ?",
       "confirmDescription": "Comparez {{count}} concurrents pour {{units}} unités de recherche de mots clés.",
@@ -171,7 +159,7 @@
     },
     "reports": {
       "title": "Rapports paysagers stockés",
-      "description": "Rouvrez les rapports immuables sans lancer une autre recherche de fournisseur.",
+      "description": "Rouvrez les rapports enregistrés sans lancer de nouvelle recherche.",
       "emptyTitle": "Aucun rapport de paysage",
       "empty": "Créez un rapport à partir de la vue paysage des mots clés.",
       "date": "Créé",
@@ -274,7 +262,6 @@
     "states": {
       "loading": "Rapport en cours",
       "partial": "Données partielles",
-      "cap": "Cette demande dépasse l'allocation restante. Mettez à niveau ou ajoutez un pack de crédits éligible avant de confirmer.",
       "disabled": "Les demandes de nouveaux concurrents sont temporairement désactivées. Les rapports stockés restent disponibles.",
       "unsafeLink": "Lien source dangereux masqué",
       "rateLimit": "Trop de demandes. Attendez et réessayez.",
@@ -293,7 +280,7 @@
     },
     "market": {
       "tracked_keyword_mode": "Marché à partir de mots-clés suivis",
-      "default": "Repli du marché par défaut"
+      "default": "Marché par défaut du site"
     },
     "confidence": {
       "high": "Élevé",

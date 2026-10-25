@@ -1,6 +1,6 @@
 /**
  * Content inventory + cannibalization — router + service integration tests
- * (prompt 08). Real PGlite Postgres (generated migrations), mongodb-memory-
+ *. Real PGlite Postgres (generated migrations), mongodb-memory-
  * server, Better Auth-backed sessions, and an in-process fake queue. Covers:
  *
  *   - cross-account 404 (no existence leak);

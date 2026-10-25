@@ -9,16 +9,6 @@
   },
   "states": {
     "signedOut": "登录后即可查看你的评价。",
-    "notOnPlan": {
-      "title": "评价功能属于 Pro 套餐",
-      "description": "升级到 Pro 或 Agency，即可从 Google、Trustpilot 和 Tripadvisor 拉取评价。",
-      "link": "查看套餐"
-    },
-    "capReached": {
-      "title": "本套餐的同步次数已用完",
-      "description": "请在账单中查看评价同步包当前是否可用。已经拉取的评价仍然可以查看。",
-      "link": "查看加量包选项"
-    },
     "disabled": {
       "title": "新的同步已暂停",
       "description": "我们暂时停止了新的评价同步。已经拉取的评价仍然可以查看。"
@@ -109,7 +99,6 @@
     "empty": "还没有同步记录。",
     "createdAt": "开始时间",
     "view": "打开",
-    "refunded": "额度已退回",
     "columns": {
       "status": "结果",
       "outcomes": "各来源",

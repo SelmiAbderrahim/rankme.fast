@@ -114,6 +114,7 @@ import {
 } from '@features/actions';
 import { triageChangedSinceLoad, uncountedDecisions } from '../findingDecisions';
 import { rootReducer } from '@app/store';
+import { PageHeading } from '@shared/components/PageHeader';
 
 // The report surface maps findings onto unified actions, so
 // the actions slice must exist on both the workspace-embedded and the
@@ -698,7 +699,7 @@ export const ReportPage = ({
     <div className="flex flex-col gap-6 px-4 py-8">
       <div className="flex flex-wrap items-start justify-between gap-4">
         <div>
-          <h1 className="text-2xl font-semibold">{t('title')}</h1>
+          <PageHeading className="text-2xl font-semibold">{t('title')}</PageHeading>
           <p className="text-muted-foreground text-sm">{t('subtitle')}</p>
           <div className="mt-1">
             <DocsLink slug="audit-report" />

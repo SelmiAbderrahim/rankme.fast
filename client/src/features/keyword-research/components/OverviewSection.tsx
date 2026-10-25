@@ -23,8 +23,6 @@ import { fetchKeywordPreview, runOverview } from '../store/thunks';
 import { clearPreview } from '../store/slice';
 import { selectOverview, selectPreview } from '../store/selectors';
 import {
-  DEFAULT_LANGUAGE_CODE,
-  DEFAULT_LOCATION_CODE,
   OVERVIEW_PHRASE_MAX,
   difficultyBand,
   overviewFormSchema,
@@ -36,6 +34,7 @@ import { PhraseChipsInput } from './PhraseChipsInput';
 import { ProvenanceBadge } from './ProvenanceBadge';
 import { SerpFeatureChips } from './SerpFeatureChips';
 import type { OverviewRequestBody } from '../api';
+import { useResearchMarket } from '../useResearchMarket';
 import type { KeywordOverviewRow } from '../types';
 
 const OverviewRow = ({ row }: { row: KeywordOverviewRow }) => {
@@ -88,8 +87,15 @@ export const OverviewSection = () => {
   const overview = useAppSelector(selectOverview);
 
   const [chips, setChips] = useState<string[]>([]);
-  const [locationCode, setLocationCode] = useState(DEFAULT_LOCATION_CODE);
-  const [languageCode, setLanguageCode] = useState(DEFAULT_LANGUAGE_CODE);
+  // The site's (or last used) market, never a hardcoded default.
+  const {
+    locationCode,
+    languageCode,
+    setLocationCode,
+    setLanguageCode,
+    adjustLocationCode,
+    adjustLanguageCode,
+  } = useResearchMarket();
   const [formError, setFormError] = useState('');
   const [pendingBody, setPendingBody] = useState<OverviewRequestBody | null>(null);
 
@@ -146,6 +152,8 @@ export const OverviewSection = () => {
               languageCode={languageCode}
               onLocationChange={setLocationCode}
               onLanguageChange={setLanguageCode}
+              onLocationAdjust={adjustLocationCode}
+              onLanguageAdjust={adjustLanguageCode}
               testIdPrefix="kw-overview"
             />
             {formError ? (

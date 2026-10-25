@@ -77,8 +77,7 @@ describe('AssistantMarkdown', () => {
   it('renders every supported markdown block', () => {
     const { container } = render(<AssistantMarkdown text={FIXTURE} />);
 
-    // Every reply heading is an h3 under the page h1 and the log h2 (QA round 3
-    // F-AQ), so a model "# Title" never adds a second h1; sizes follow the source level.
+    // Every reply heading is an h3 under the page h1 and the log h2, so a model "# Title" never adds a second h1; sizes follow the source level.
     expect(screen.getByRole('heading', { level: 3, name: 'Fix now' })).toHaveClass('text-base');
     expect(screen.getByRole('heading', { level: 3, name: 'Missing H1' })).toHaveClass('text-sm', 'text-foreground');
     expect(screen.getByRole('heading', { level: 3, name: 'Sitemap' })).toHaveClass('text-muted-foreground');
@@ -114,7 +113,7 @@ describe('AssistantMarkdown', () => {
     // wrapping normal, so columns are not crushed to one character wide.
     const table = container.querySelector('table')!;
     expect(table.parentElement).toHaveClass('max-w-full', 'overflow-x-auto');
-    // Keyboard users can focus the scroll region to scroll it (issue #54).
+    // Keyboard users can focus the scroll region to scroll it.
     expect(table.parentElement).toHaveAttribute('tabindex', '0');
     expect(table.parentElement).toHaveAttribute('data-slot', 'assistant-table-scroll');
     expect(table).toHaveClass('[overflow-wrap:normal]');
@@ -232,7 +231,7 @@ describe('SEC-OUT — assistant output never becomes markup', () => {
   });
 });
 
-describe('QA 58: internal ids never reach the reader', () => {
+describe('internal ids never reach the reader', () => {
   const RUN_ID = '6a7b5c38a1b2c3d4e5f60718';
   const DIGEST = '9f86d081884c7d659a2feaa0c55ad015a3bf4f1b2b0b822cd15d6c15b0f00a08';
 

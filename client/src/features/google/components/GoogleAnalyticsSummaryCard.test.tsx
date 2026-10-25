@@ -430,6 +430,25 @@ describe('GoogleAnalyticsSummaryCard — data states', () => {
     expect(table.querySelectorAll('tbody tr')).toHaveLength(2);
   });
 
+  it('says so when the chosen series has no activity, and reports no engagement rate without sessions', () => {
+    renderWith(
+      makeStore({
+        connection: configured,
+        analytics: loadedAnalytics({
+          summary: {
+            ...summary,
+            totalSessions: 0,
+            engagementRate: 0,
+            timeseries: summary.timeseries.map((point) => ({ ...point, sessions: 0, activeUsers: 0 })),
+          },
+        }),
+      }),
+    );
+    expect(screen.getByTestId('ga4-timeseries-no-activity')).toHaveTextContent('No activity in this period.');
+    expect(screen.getByTestId('google-analytics-engagement')).toHaveTextContent('No data');
+    expect(screen.getByTestId('google-analytics-engagement')).not.toHaveTextContent('0%');
+  });
+
   it('labels the four breakdowns by session share and engagement rate', () => {
     renderWith(makeStore({ connection: configured, analytics: loadedAnalytics() }));
     const channels = screen.getByTestId('google-analytics-channels');

@@ -5,9 +5,6 @@
     "loading": "Loading client reports…",
     "loadFailed": "We couldn't load client reports.",
     "retry": "Try again",
-    "lockedTitle": "Client reports are available on Agency",
-    "lockedDescription": "Upgrade to compose white-label reports, schedule delivery, and create client portals.",
-    "upgrade": "View plans",
     "disabledTitle": "New client reports are paused",
     "disabledDescription": "Stored schedules, delivery history, and portal links remain visible. You can still delete schedules or revoke links."
   },
@@ -26,7 +23,6 @@
   "schedules": {
     "title": "Scheduled delivery",
     "description": "Send the branded PDF weekly or monthly to up to ten recipients.",
-    "cap": "{{used}} of {{limit}} schedules used",
     "empty": "No scheduled reports yet.",
     "create": "Create schedule",
     "edit": "Edit",
@@ -49,7 +45,6 @@
     "deleteDescription": "Deleting {{name}} stops all future deliveries for this schedule.",
     "deleteFailed": "We couldn't delete that schedule.",
     "saveFailed": "We couldn't save that schedule.",
-    "capReached": "The 20-schedule limit is reached. Delete a schedule to create another.",
     "next": "Next delivery: {{date}}",
     "disabled": "Disabled",
     "localPreviewUnavailable": "Enter a valid day of the month to see when this report runs.",
@@ -79,7 +74,6 @@
   "portals": {
     "title": "Client portal links",
     "description": "Create revocable, read-only links with no login.",
-    "cap": "{{used}} of {{limit}} live links used",
     "empty": "No client portal links yet.",
     "create": "Create portal link",
     "dialogTitle": "Create client portal link",
@@ -100,7 +94,6 @@
     "cancel": "Cancel",
     "createFailed": "We couldn't create that portal link.",
     "revokeFailed": "We couldn't revoke that portal link.",
-    "capReached": "The 25-client limit is reached. Revoke a live link to create another.",
     "expiresAt": "Expires {{date}}"
   },
   "portal": {

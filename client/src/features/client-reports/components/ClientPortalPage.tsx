@@ -8,6 +8,7 @@ import {
 } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { AlertTriangle, CheckCircle2, Eye, Search } from 'lucide-react';
+import { FindingStatusChip } from '@shared/components/FindingStatusChip';
 import { ThemeToggle } from '@shared/components/ThemeToggle';
 import {
   DEFAULT_LOCALE,
@@ -25,7 +26,6 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@shared/ui/select';
-import { StatusChip } from '@shared/ui/status-chip';
 import {
   Table,
   TableBody,
@@ -181,9 +181,11 @@ export function ClientPortalPage() {
                     <CardHeader>
                       <div className="flex flex-wrap items-center justify-between gap-2">
                         <CardTitle className="text-base">{finding.title}</CardTitle>
-                        <StatusChip tone={finding.bucket === 'fix-now' ? 'destructive' : finding.bucket === 'watch' ? 'warning' : 'success'}>
-                          {t(`portal.${finding.bucket === 'fix-now' ? 'fixNow' : finding.bucket}`)}
-                        </StatusChip>
+                        <FindingStatusChip
+                          bucket={finding.bucket}
+                          severity={finding.severity}
+                          data-testid="portal-finding-status"
+                        />
                       </div>
                     </CardHeader>
                     <CardContent className="space-y-3 text-sm">

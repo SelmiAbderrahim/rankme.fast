@@ -1,6 +1,6 @@
 {
   "title": "Analyse du trafic",
-  "description": "Demandez et rouvrez des estimations de trafic issues de l’index du fournisseur pour tout domaine public.",
+  "description": "Demandez et rouvrez des estimations de trafic tierces pour n’importe quel domaine public.",
   "common": {
     "notAvailable": "Indisponible"
   },
@@ -109,16 +109,6 @@
     "locked": {
       "title": "Les nouveaux instantanés sont temporairement suspendus",
       "description": "L’analyse du trafic est temporairement indisponible pour les nouvelles demandes. Les instantanés enregistrés restent accessibles."
-    },
-    "cap": {
-      "title": "Quota d’instantanés atteint",
-      "description": "Cette demande dépasse vos quotas de base et de packs restants. Consultez la facturation pour connaître la disponibilité actuelle des packs.",
-      "link": "Voir les packs d’instantanés"
-    },
-    "upgrade": {
-      "title": "L’analyse du trafic n’est pas incluse dans votre offre",
-      "description": "Choisissez une offre payante pour demander des instantanés de trafic. Vous pouvez toujours ouvrir les instantanés enregistrés partagés avec cet espace.",
-      "link": "Comparer les offres"
     },
     "timeout": {
       "title": "La demande a pris trop de temps",

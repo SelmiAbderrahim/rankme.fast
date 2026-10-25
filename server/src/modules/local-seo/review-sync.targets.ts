@@ -1,5 +1,5 @@
 /**
- * Per-source review target rules (production QA #8).
+ * Per-source review target rules.
  *
  * `normalizeReviewTarget` is the single server authority; the client mirrors
  * it in `client/src/features/local-seo/reviews/targets.ts` and BOTH test

@@ -10,6 +10,7 @@ import {
   fetchSearchSummary,
   fetchSitemaps,
   getConnection,
+  getConnectionConfiguration,
   refreshAnalyticsSummary,
   refreshSearchSummary,
   revokeGoogleCredential,
@@ -39,6 +40,24 @@ beforeEach(() => {
 });
 
 describe('google api wrappers', () => {
+  it('getConnectionConfiguration returns the flattened connection, or null when none exists', async () => {
+    expect(await getConnectionConfiguration('site/1')).toBeNull();
+    expect(apiClient).toHaveBeenCalledWith('/sites/site%2F1/google/configuration');
+    apiClient.mockResolvedValueOnce({
+      configuration: {
+        connection: {
+          status: 'connected', googleAccountEmail: 'owner@example.com', connectedAt: '2026-08-01T00:00:00.000Z',
+          lastUsedAt: null, scopes: [], hasRefreshToken: true,
+        },
+        connectedSiteCount: 1,
+        gsc: { propertyUrl: 'sc-domain:example.com', source: 'auto', status: 'ok' },
+        ga4: { propertyId: null, propertyDisplayName: null, matchedWebStreamUri: null, source: null, status: 'no_property' },
+        autoMatch: { requestedAt: null, completedAt: null, failureClass: null },
+      },
+    } as never);
+    expect(await getConnectionConfiguration('site-1')).toMatchObject({ status: 'connected', propertyUrl: 'sc-domain:example.com' });
+  });
+
   it('getConnection fetches the site configuration', async () => {
     await getConnection('site/1');
     expect(apiClient).toHaveBeenCalledWith(

@@ -33,6 +33,14 @@ RankMeFast speichert Anbieterdaten 30 Tage lang zwischen, weil sich diese Werte 
 
 RankMeFast zeigt außerdem verwandte Phrasen und Fragevarianten, wenn sie verfügbar sind. Dafür gelten dieselben Werte für Volumen und Schwierigkeit.
 
+## Letzte Recherchen
+
+**Letzte Recherchen** listet jede Suche einmal auf, obwohl eine Suche mit Kennzahlen und Suchintention zwei Abfragen protokolliert. Bei einer Website zeigt die Liste die Abfragen für diese Website, die neuesten zuerst. **Ergebnisse ansehen** öffnet, was bei dieser Suche gespeichert wurde. Das ist kostenlos: Es erfolgt kein Aufruf beim Datenanbieter. Sind die gespeicherten Daten abgelaufen (nach 30 Tagen), sagt RankMeFast das und bietet **Erneut suchen** an. **Erneut suchen** führt immer eine neue Abfrage beim Datenanbieter aus, genau wie eine neue Suche.
+
+## Mehrere Keywords hinzufügen
+
+Tippen oder fügen Sie eine Liste ein. Ein Komma oder ein Zeilenumbruch beendet ein Keyword, daher fügt das Einfügen von `seo audit, rank tracker` zwei Keywords hinzu. Bereits hinzugefügte Keywords werden übersprungen, und RankMeFast nennt Ihnen, welche. Dieselben Regeln gelten für die anderen Recherchefelder, die eine Keyword-Liste annehmen.
+
 ## Von der Ranking-Verfolgung starten
 
 Wenn Sie im Formular zum Hinzufügen genau ein Google-Keyword mit höchstens 80 Zeichen eingeben, können Sie die Keyword-Recherche mit bereits ausgefüllter Phrase, Land und Sprache öffnen. Beim Öffnen startet keine Abfrage und es wird keine Einheit verbraucht. Sie entscheiden, wann die Recherche beginnt.

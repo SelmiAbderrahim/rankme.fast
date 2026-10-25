@@ -91,4 +91,80 @@ describe('KeywordMarketMove', () => {
     expect(onMoved).not.toHaveBeenCalled();
     expect(screen.queryByTestId('keyword-market-move-done')).not.toBeInTheDocument();
   });
+
+  it('shows nothing when the preview cannot be read, and ignores answers after unmounting', async () => {
+    mocked.fetchKeywordMarketMoveRequest.mockRejectedValueOnce(new Error('offline'));
+    const failed = renderMove();
+    await waitFor(() => expect(mocked.fetchKeywordMarketMoveRequest).toHaveBeenCalledTimes(1));
+    await waitFor(() => expect(screen.queryByTestId('keyword-market-move')).not.toBeInTheDocument());
+    failed.unmount();
+
+    let resolveLate: ((value: { preview: KeywordMarketMovePreview }) => void) | undefined;
+    mocked.fetchKeywordMarketMoveRequest.mockReturnValueOnce(new Promise((resolve) => { resolveLate = resolve; }));
+    const late = renderMove();
+    late.unmount();
+    resolveLate?.({ preview });
+
+    let rejectLate: ((reason: unknown) => void) | undefined;
+    mocked.fetchKeywordMarketMoveRequest.mockReturnValueOnce(new Promise((_, reject) => { rejectLate = reject; }));
+    const lateFailure = renderMove();
+    lateFailure.unmount();
+    rejectLate?.(new Error('offline'));
+    await Promise.resolve();
+    expect(screen.queryByTestId('keyword-market-move')).not.toBeInTheDocument();
+  });
+
+  it('names an unknown language code and a mobile target', async () => {
+    mocked.fetchKeywordMarketMoveRequest.mockResolvedValue({
+      preview: { ...preview, target: { locationCode: 2840, languageCode: 'zz-unknown', device: 'mobile' } },
+    });
+    renderMove();
+    expect(await screen.findByTestId('keyword-market-move')).toHaveTextContent('zz-unknown');
+    expect(screen.getByTestId('keyword-market-move')).toHaveTextContent(i18n.t('deviceMobile', { ns: 'ranks' }));
+  });
+
+  it('keeps working when browser storage is unavailable', async () => {
+    const user = userEvent.setup();
+    const read = vi.spyOn(Storage.prototype, 'getItem').mockImplementation(() => { throw new Error('blocked'); });
+    const write = vi.spyOn(Storage.prototype, 'setItem').mockImplementation(() => { throw new Error('blocked'); });
+    try {
+      renderMove();
+      await screen.findByTestId('keyword-market-move');
+      await user.click(screen.getByTestId('keyword-market-move-dismiss'));
+      expect(screen.queryByTestId('keyword-market-move')).not.toBeInTheDocument();
+    } finally {
+      read.mockRestore();
+      write.mockRestore();
+    }
+  });
+
+  it('reports a failed move and lets the reader cancel the dialog', async () => {
+    const user = userEvent.setup();
+    mocked.moveKeywordsToSiteMarketRequest.mockRejectedValueOnce(new ApiError('boom', 500, {}));
+    renderMove();
+    await screen.findByTestId('keyword-market-move');
+    await user.click(screen.getByTestId('keyword-market-move-review'));
+    await user.click(screen.getByTestId('keyword-market-move-confirm'));
+    expect((await screen.findAllByRole('alert')).length).toBeGreaterThan(0);
+    await user.click(screen.getByRole('button', { name: i18n.t('marketMove.cancel', { ns: 'ranks' }) }));
+    await waitFor(() => expect(screen.queryByTestId('keyword-market-move-dialog')).not.toBeInTheDocument());
+  });
+
+  it('keeps the dialog open while a move is running and ignores a failure for a previous site', async () => {
+    const user = userEvent.setup();
+    let rejectMove: ((reason: unknown) => void) | undefined;
+    mocked.moveKeywordsToSiteMarketRequest.mockReturnValueOnce(new Promise((_, reject) => { rejectMove = reject; }));
+    const view = renderMove('site-1');
+    await screen.findByTestId('keyword-market-move');
+    await user.click(screen.getByTestId('keyword-market-move-review'));
+    await user.click(screen.getByTestId('keyword-market-move-confirm'));
+    await user.keyboard('{Escape}');
+    expect(screen.getByTestId('keyword-market-move-dialog')).toBeInTheDocument();
+    view.rerender(<I18nextProvider i18n={i18n}>
+      <KeywordMarketMove siteId="site-2" keywordCount={5} onMoved={vi.fn()} />
+    </I18nextProvider>);
+    rejectMove?.(new ApiError('changed', 409, {}));
+    await waitFor(() => expect(mocked.fetchKeywordMarketMoveRequest).toHaveBeenLastCalledWith('site-2', expect.any(AbortSignal)));
+    expect(screen.queryByText(/keyword list changed/i)).not.toBeInTheDocument();
+  });
 });

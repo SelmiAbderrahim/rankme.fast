@@ -6,7 +6,7 @@
 import type { SupportedLocale } from '@shared/i18n';
 
 export type ChatMessageRole = 'user' | 'assistant';
-/** `incomplete`: the reply was cut off (QA4 issue 6). */
+/** `incomplete`: the reply was cut off. */
 export type ChatMessageStatus = 'complete' | 'incomplete' | 'error' | 'aborted';
 
 export type ChatMessagePart =

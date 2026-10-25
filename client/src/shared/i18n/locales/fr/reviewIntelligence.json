@@ -9,16 +9,6 @@
   },
   "states": {
     "signedOut": "Connectez-vous pour lire vos avis.",
-    "notOnPlan": {
-      "title": "Les avis font partie de l'offre Pro",
-      "description": "Passez à Pro ou Agency pour récupérer les avis de Google, Trustpilot et Tripadvisor.",
-      "link": "Voir les offres"
-    },
-    "capReached": {
-      "title": "Vous avez utilisé toutes les synchronisations de votre offre",
-      "description": "Consultez la facturation pour connaître la disponibilité actuelle du pack de synchronisations. Tout ce que vous avez déjà récupéré reste lisible.",
-      "link": "Voir les options de packs"
-    },
     "disabled": {
       "title": "Les nouvelles synchronisations sont en pause",
       "description": "Nous avons mis en pause les nouvelles synchronisations d'avis. Les avis déjà récupérés restent lisibles."
@@ -109,7 +99,6 @@
     "empty": "Aucune synchronisation pour l'instant.",
     "createdAt": "Démarrée",
     "view": "Ouvrir",
-    "refunded": "Unité recréditée",
     "columns": {
       "status": "Résultat",
       "outcomes": "Par source",

@@ -1,4 +1,5 @@
 import { Bdi } from '@shared/components/Bdi';
+import { MetricValue } from '@shared/components/MetricValue';
 import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { ReportExportControl } from '@features/report-export';
@@ -80,19 +81,13 @@ export const SnapshotDetail = ({ detail, loading, error = '' }: SnapshotDetailPr
     {
       key: 'rank',
       label: t('detail.rank'),
-      value:
-        payload.domainRank.value === null
-          ? t('common.notAvailable')
-          : number.format(payload.domainRank.value),
+      value: <MetricValue kind="count" value={payload.domainRank.value} />,
       observation: payload.domainRank.observation,
     },
     {
       key: 'keywords',
       label: t('detail.keywords'),
-      value:
-        payload.keywordCount.value === null
-          ? t('common.notAvailable')
-          : number.format(payload.keywordCount.value),
+      value: <MetricValue kind="count" value={payload.keywordCount.value} />,
       observation: payload.keywordCount.observation,
     },
   ];

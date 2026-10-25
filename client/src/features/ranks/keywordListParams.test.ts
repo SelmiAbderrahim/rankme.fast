@@ -24,3 +24,12 @@ describe('keyword list URL state', () => {
     expect(pageWindow(3, 5)).toEqual([1, 2, 3, 4, 5]);
   });
 });
+
+describe('page window edges', () => {
+  it('stays inside the available pages at both ends', () => {
+    expect(pageWindow(1, 10)).toEqual([1, 2, 'gap', 10]);
+    expect(pageWindow(10, 10)).toEqual([1, 'gap', 9, 10]);
+    expect(pageWindow(1, 1)).toEqual([1]);
+    expect(pageWindow(4, 10)).toEqual([1, 2, 3, 4, 5, 'gap', 10]);
+  });
+});

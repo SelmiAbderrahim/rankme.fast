@@ -83,6 +83,8 @@ describe('public compatibility documentation', () => {
       'get_backlinks_summary',
       'list_backlinks',
       'list_competitors',
+      'list_keyword_research_history',
+      'get_keyword_research_result',
       'get_ai_visibility_summary',
       'get_local_seo_summary',
       'get_reviews_summary',

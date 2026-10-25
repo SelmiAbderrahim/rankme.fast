@@ -1,5 +1,5 @@
 /**
- * Production-qa #11 (group G1) — stored-data Google read tools:
+ * Stored-data Google read tools:
  * get_gsc_search_summary, list_gsc_top_queries, list_gsc_top_pages,
  * get_ga4_summary. Real in-memory Mongo + PGlite; the Google provider and the
  * sync queue are spies that must never be touched.
@@ -416,7 +416,7 @@ describe('get_gsc_search_summary', () => {
     ).toMatchObject({
       status: 'unavailable',
       reason: 'gscNotLinked',
-      // QA 10: Google is connected, so the one step is choosing a property.
+      // Google is connected, so the one step is choosing a property.
       setupPath: `/sites/${unlinked}?tab=google`,
     });
   });

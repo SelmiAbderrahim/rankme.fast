@@ -39,7 +39,7 @@ Une convention récente qui indique aux assistants IA les pages que vous préfé
 - **Canonical manquant ou cassé** : Ajoutez un `<link rel="canonical">` valide.
 - **Données structurées manquantes** : Ajoutez le JSON-LD adapté.
 - **Liens internes cassés** : Corrigez ou supprimez les liens en erreur.
-- **Contenu trop léger** : Pages en-dessous d’environ 200 mots.
+- **Contenu trop léger** : Pages avec très peu de texte propre, jugées selon un seuil adapté à la langue de la page : environ 200 mots pour la plupart des langues, et l’équivalent en caractères pour le chinois, le japonais, le coréen et le thaï. Chaque page signalée indique la longueur mesurée.
 - **Aucun signal FAQ** : Ajoutez une section FAQ quand pertinent.
 - **Fichier llms.txt absent (informatif)** : Convention récente destinée aux robots d’IA.
 - **HTTPS non appliqué** : Redirigez http vers https.
@@ -73,6 +73,14 @@ Une convention récente qui indique aux assistants IA les pages que vous préfé
 - **Images, scripts ou styles cassés** : Fichiers nécessaires à la page qui renvoient une erreur. Vérification effectuée seulement pour un audit lancé avec l’analyse des ressources ; sinon, le rapport la classe dans Non évalué.
 - **Images plus grandes que nécessaire** : Images de plus de 500 Ko. Vérification liée à l’analyse complète des ressources, comme la précédente.
 - **Fichiers exclus du cache des navigateurs** : Images, scripts et feuilles de style envoyés avec des en-têtes qui empêchent leur mise en cache. Vérification liée à l’analyse complète des ressources.
+
+## Constats écartés et corrigés
+
+Écartez un constat qui ne vous concerne pas, ou marquez-le comme corrigé, depuis sa carte dans le rapport ou depuis [Prochaines actions](./next-actions.fr.md). L’écartement demande un motif : faux positif, ne sera pas corrigé, corrigé ailleurs ou autre motif. Les constats écartés passent dans une section **Écartés** sous les onglets, et les constats marqués corrigés dans un groupe **Marqué comme corrigé** à l’intérieur de leur onglet. Aucun n’est compté dans les totaux des onglets ni dans la vue d’ensemble. Chaque entrée écartée indique qui l’a écartée, quand et pourquoi, et si le dernier audit la détecte encore. **Restaurer** la remet dans la liste.
+
+Pour un constat de liens cassés, **Revérifier ces URL** interroge à nouveau vos propres pages et note celles qui échouent encore, celles qui fonctionnent désormais et celles qui n’ont pas pu être vérifiées. Cela ne lance pas de nouvel audit, et le rapport d’audit reste tel quel.
+
+Les URL concernées sont des liens. Une longue liste montre d’abord un échantillon, et **Télécharger les URL (CSV)** les enregistre toutes. Quand l’audit le plus récent a plus de 30 jours, un message **Dernier audit il y a N jours** avec **Lancer un nouvel audit** apparaît, car les résultats peuvent ne plus correspondre à votre site.
 
 ## Analyser les images, scripts et styles
 

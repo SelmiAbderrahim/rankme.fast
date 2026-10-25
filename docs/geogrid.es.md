@@ -1,6 +1,6 @@
 ---
 title: 'Seguimiento local por cuadrícula'
-description: 'Cómo se recogen las cuadrículas del paquete local por coordenada, qué significa una celda fallida y por qué las coordenadas se escriben en vez de elegirse en un mapa.'
+description: 'Cómo se recogen las cuadrículas del paquete local por coordenada, cómo elegir el centro de la cuadrícula y qué significa una celda fallida.'
 locale: es
 slug: geogrid
 section: product
@@ -33,13 +33,13 @@ Cada celda tiene su propia hora de captura. Una cuadrícula es un conjunto de co
 
 Un escaneo con al menos una celda utilizable consume su unidad. Solo se reembolsa si fallan todas las celdas, porque una cuadrícula parcial sigue aportando observaciones útiles.
 
-El plan Agency incluye 6 escaneos al mes. Pro accede a las cuadrículas con el paquete de créditos `geogrid-scans-10`, y Starter no tiene asignación de cuadrículas.
+## Elegir el centro
 
-Consulta [Precios](./pricing.es.md) para ver unidades y límites del plan.
+El selector **Centro de la cuadrícula** parte de **Mi negocio**, la ubicación guardada con el negocio del sitio en [SEO local](./local-seo.es.md). Es gratuito, y sin un negocio guardado el selector te lleva a la configuración de SEO local. **Buscar un lugar** busca un nombre de negocio o una dirección. Cada búsqueda consulta una vez a tu proveedor de fichas locales, y elegir un resultado solo rellena el centro: tu negocio de SEO local no cambia. **Introducir coordenadas** es la opción avanzada, con el centro del último escaneo a un clic (**Usar el centro del último escaneo**). El espaciado ofrece distancias predefinidas o una distancia personalizada en kilómetros.
 
 ## Límites
 
-Las coordenadas se escriben a mano. RankMeFast no usa ningún proveedor de teselas de mapa, así que no hay un mapa interactivo donde hacer clic.
+No hay un mapa interactivo en el que hacer clic, porque RankMeFast no usa ningún proveedor de teselas de mapa.
 
 Una cuadrícula muestra lo que vio el proveedor desde esas coordenadas en ese momento. No es un pronóstico, y no te dice lo que verá una persona concreta al buscar.
 

@@ -1,3 +1,4 @@
+import { Helmet } from 'react-helmet-async';
 import { useTranslation } from 'react-i18next';
 import { Link } from 'react-router-dom';
 import { Button } from '@shared/ui/button';
@@ -15,6 +16,10 @@ export const NotFound = () => {
   useAppTitleDetail([t('notFound.title')]);
   return (
     <div className="mx-auto flex max-w-md flex-col items-center py-16">
+      {/* A 404 must never be indexed. */}
+      <Helmet>
+        <meta name="robots" content="noindex, follow" />
+      </Helmet>
       <Empty>
         <EmptyContent>
           <EmptyTitle>{t('notFound.title')}</EmptyTitle>

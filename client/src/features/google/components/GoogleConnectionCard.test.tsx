@@ -297,6 +297,15 @@ describe('GoogleConnectionCard — connected state', () => {
     expect(screen.queryByRole('combobox')).not.toBeInTheDocument();
   });
 
+  it('retries the property list from the empty-list fallback', async () => {
+    mockedApi.getConnection.mockResolvedValue({ connection: { ...connected, propertyUrl: null } });
+    renderWith(
+      makeStore({ loaded: true, connection: { ...connected, propertyUrl: null }, properties: [] }),
+    );
+    await userEvent.click(screen.getByTestId('gsc-property-refresh'));
+    await waitFor(() => expect(mockedApi.getConnection).toHaveBeenCalledWith('site-1'));
+  });
+
   it('shows "Never used" when lastUsedAt is null', () => {
     renderWith(
       makeStore({ loaded: true, connection: { ...connected, lastUsedAt: null } }),

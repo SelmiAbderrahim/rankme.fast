@@ -1,5 +1,9 @@
 /**
- * Zero-spend read of research the account has already run.
+ * Zero-spend reads of research the account has already run.
+ *
+ * `listStoredKeywordCandidates` lists every phrase the account stored for one
+ * market (the seeds it searched plus the related / ideas / long-tail rows cached
+ * under them); it feeds the cluster picker and the clustering resolver.
  *
  * `readStoredResearchResult` re-opens ONE history row from the shared
  * cross-user `vendor_cache` by the SAME cache keys the lookups wrote. It is
@@ -11,11 +15,16 @@
  * phrase is only readable here when THIS account's history proves it ran the
  * lookup. Another account's row reads as unknown (404 at the controller).
  */
+import { and, desc, eq, inArray } from 'drizzle-orm';
 import type { Db } from '../../db/client.js';
-import type { KeywordResearchHistoryRow, KeywordResearchKind, } from '../../db/schema/keyword-research-history.js';
+import { keywordResearchHistory, type KeywordResearchHistoryRow, type KeywordResearchKind, } from '../../db/schema/keyword-research-history.js';
 import type { SearchIntent } from '../../shared/providers/index.js';
-import { computeKeywordCacheKey, createKeywordCacheRepo, expansionMapKey, normalizeCachePhrase, type ExpansionOperation, } from './keyword-research.cache.js';
+import { computeKeywordCacheKey, createKeywordCacheRepo, expansionMapKey, normalizeCachePhrase, type CachedExpansionRow, type ExpansionOperation, } from './keyword-research.cache.js';
 import { cachedRelatedToPayload, type RelatedKeywordPayload } from './keyword-research.service.js';
+/** Matches the request schemas' phrase ceiling — longer phrases can never be re-submitted. */
+export const STORED_PHRASE_MAX_LENGTH = 80;
+/** Most recent history rows scanned when assembling the candidate set. */
+export const STORED_HISTORY_SCAN_LIMIT = 500;
 export type StoredResearchStatus = 'available' | 'partial' | 'expired' | 'unsupported';
 export interface StoredKeywordRow {
     keyword: string;
@@ -158,4 +167,148 @@ export async function readStoredResearchResult(db: Db, row: KeywordResearchHisto
         fetchedAt: null,
         expiresAt: null,
     };
+}
+// ---------------------------------------------------------------------------
+// Cluster-candidate set
+// ---------------------------------------------------------------------------
+
+export type StoredCandidateSource = 'seed' | 'related' | 'idea' | 'long_tail';
+
+export interface StoredKeywordCandidate {
+  phrase: string;
+  source: StoredCandidateSource;
+  /** Volume stored with the expansion row; null for seeds (their metrics live in the lookup). */
+  searchVolume: number | null;
+  /** Latest time the phrase was stored (history time for seeds, fetch time for expansions). */
+  observedAt: Date;
+}
+
+const SEED_KINDS = ['metrics', 'intent', 'related', 'ideas', 'long_tail', 'overview', 'trends'] as const;
+
+const SOURCE_BY_OPERATION: Record<ExpansionOperation, StoredCandidateSource> = {
+  related: 'related',
+  ideas: 'idea',
+  long_tail: 'long_tail',
+};
+
+/**
+ * Every storable phrase the account has for one market, deduped by normalized
+ * phrase. Order is deterministic: seeds (newest lookup first), then expansion
+ * phrases by stored volume desc (nulls last) and phrase asc. A phrase that is
+ * both a seed and an expansion keeps its `seed` source.
+ *
+ * Only expansions whose SEED sits in the account's own history are read, so the
+ * account-agnostic cache never leaks rows the account did not look up.
+ */
+export async function collectStoredKeywordCandidates(
+  db: Db,
+  input: { accountId: string; locationCode: number; languageCode: string; now: Date },
+): Promise<StoredKeywordCandidate[]> {
+  const historyRows = await db
+    .select({
+      kind: keywordResearchHistory.kind,
+      phrases: keywordResearchHistory.phrases,
+      createdAt: keywordResearchHistory.createdAt,
+    })
+    .from(keywordResearchHistory)
+    .where(
+      and(
+        eq(keywordResearchHistory.accountId, input.accountId),
+        eq(keywordResearchHistory.locationCode, input.locationCode),
+        eq(keywordResearchHistory.languageCode, input.languageCode.toLowerCase()),
+        inArray(keywordResearchHistory.kind, [...SEED_KINDS]),
+      ),
+    )
+    .orderBy(desc(keywordResearchHistory.createdAt), desc(keywordResearchHistory.id))
+    .limit(STORED_HISTORY_SCAN_LIMIT);
+
+  const seen = new Set<string>();
+  const seeds: StoredKeywordCandidate[] = [];
+  const expansionRequests: Array<{ operation: ExpansionOperation; cacheKey: string }> = [];
+  const expansionKeys = new Set<string>();
+
+  for (const row of historyRows) {
+    for (const raw of row.phrases) {
+      const phrase = normalizeCachePhrase(raw);
+      if (phrase.length === 0 || phrase.length > STORED_PHRASE_MAX_LENGTH || seen.has(phrase)) continue;
+      seen.add(phrase);
+      seeds.push({ phrase, source: 'seed', searchVolume: null, observedAt: row.createdAt });
+    }
+    if (EXPANSION_KINDS.includes(row.kind)) {
+      const operation = row.kind as ExpansionOperation;
+      const seed = normalizeCachePhrase(row.phrases[0]!);
+      const cacheKey = computeKeywordCacheKey({
+        phrase: seed,
+        locationCode: input.locationCode,
+        languageCode: input.languageCode,
+      });
+      const mapKey = expansionMapKey(operation, cacheKey);
+      if (!expansionKeys.has(mapKey)) {
+        expansionKeys.add(mapKey);
+        expansionRequests.push({ operation, cacheKey });
+      }
+    }
+  }
+
+  const repo = createKeywordCacheRepo(db);
+  const hits: Map<string, CachedExpansionRow> = await repo.readExpansionsMany(
+    [...new Set(expansionRequests.map((r) => r.cacheKey))],
+    input.now,
+  );
+
+  const expansions: StoredKeywordCandidate[] = [];
+  for (const request of expansionRequests) {
+    const hit = hits.get(expansionMapKey(request.operation, request.cacheKey));
+    if (!hit) continue;
+    for (const item of hit.items) {
+      const phrase = normalizeCachePhrase(item.keyword);
+      if (phrase.length === 0 || phrase.length > STORED_PHRASE_MAX_LENGTH || seen.has(phrase)) continue;
+      seen.add(phrase);
+      expansions.push({
+        phrase,
+        source: SOURCE_BY_OPERATION[request.operation],
+        searchVolume: item.searchVolume,
+        observedAt: hit.fetchedAt,
+      });
+    }
+  }
+  expansions.sort((a, b) => {
+    if (a.searchVolume !== b.searchVolume) {
+      if (a.searchVolume === null) return 1;
+      if (b.searchVolume === null) return -1;
+      return b.searchVolume - a.searchVolume;
+    }
+    // Phrases are deduped above, so two candidates never compare equal.
+    return a.phrase < b.phrase ? -1 : 1;
+  });
+
+  return [...seeds, ...expansions];
+}
+
+export interface StoredKeywordCandidatesPage {
+  candidates: StoredKeywordCandidate[];
+  /** Candidates matching `q` BEFORE the `limit` cut. */
+  total: number;
+  truncated: boolean;
+}
+
+export async function listStoredKeywordCandidates(
+  db: Db,
+  input: {
+    accountId: string;
+    locationCode: number;
+    languageCode: string;
+    q?: string | undefined;
+    limit: number;
+    now: Date;
+  },
+): Promise<StoredKeywordCandidatesPage> {
+  const all = await collectStoredKeywordCandidates(db, input);
+  const needle = input.q ? normalizeCachePhrase(input.q) : '';
+  const matching = needle ? all.filter((c) => c.phrase.includes(needle)) : all;
+  return {
+    candidates: matching.slice(0, input.limit),
+    total: matching.length,
+    truncated: matching.length > input.limit,
+  };
 }

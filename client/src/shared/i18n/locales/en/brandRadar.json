@@ -26,7 +26,7 @@
     "filter": {
       "label": "Filter by status",
       "all": "All statuses",
-      "note": "Filtering applies only to the scans loaded on this page."
+      "note": "Filters apply to the scans shown below. Load more to include older scans."
     }
   },
   "status": {
@@ -63,21 +63,11 @@
       "description": "New scans are switched off right now.",
       "storedReads": "Scans you already ran stay readable."
     },
-    "notOnPlan": {
-      "title": "Brand Radar needs a higher plan",
-      "description": "Move to Pro or Agency to unlock brand scans.",
-      "link": "See plans"
-    },
     "addonRequired": {
       "title": "Add Brand Radar to your plan",
       "description": "Check Billing for current Brand Radar add-on availability.",
       "price": "{{price}} per month, {{units}} scans included.",
       "link": "View Brand Radar options"
-    },
-    "overCap": {
-      "title": "You have used every brand scan",
-      "description": "Check Billing for current {{slug}} pack availability.",
-      "link": "View scan credit options"
     }
   },
   "form": {

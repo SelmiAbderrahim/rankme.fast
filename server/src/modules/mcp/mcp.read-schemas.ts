@@ -119,6 +119,23 @@ export const listCompetitorsInputSchema = z
   })
   .strict();
 
+export const listKeywordResearchHistoryInputSchema = z
+  .object({
+    limit: limitSchema,
+    // History id of the last row of the previous page (uuid), as returned in
+    // `nextCursor`.
+    cursor: z.string().uuid().optional(),
+    locale: localeSchema,
+  })
+  .strict();
+
+export const getKeywordResearchResultInputSchema = z
+  .object({
+    historyId: z.string().uuid(),
+    locale: localeSchema,
+  })
+  .strict();
+
 export const getAiVisibilitySummaryInputSchema = z
   .object({ siteId: objectIdHex, locale: localeSchema })
   .strict();
@@ -144,6 +161,12 @@ export type GetPageDetailInput = z.infer<typeof getPageDetailInputSchema>;
 export type GetBacklinksSummaryInput = z.infer<typeof getBacklinksSummaryInputSchema>;
 export type ListBacklinksInput = z.infer<typeof listBacklinksInputSchema>;
 export type ListCompetitorsInput = z.infer<typeof listCompetitorsInputSchema>;
+export type ListKeywordResearchHistoryInput = z.infer<
+  typeof listKeywordResearchHistoryInputSchema
+>;
+export type GetKeywordResearchResultInput = z.infer<
+  typeof getKeywordResearchResultInputSchema
+>;
 export type GetAiVisibilitySummaryInput = z.infer<typeof getAiVisibilitySummaryInputSchema>;
 export type GetLocalSeoSummaryInput = z.infer<typeof getLocalSeoSummaryInputSchema>;
 export type GetReviewsSummaryInput = z.infer<typeof getReviewsSummaryInputSchema>;

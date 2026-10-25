@@ -141,7 +141,7 @@
   },
   "filters": {
     "title": "查找页面",
-    "description": "搜索和筛选由服务器处理，不会采集新的提供商数据。",
+    "description": "搜索和筛选不会获取任何新数据。",
     "searchLabel": "搜索页面和查询",
     "searchPlaceholder": "标题、路径、URL、查询或关键词",
     "insight": "机会",

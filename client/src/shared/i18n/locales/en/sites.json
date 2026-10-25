@@ -61,15 +61,16 @@
     "resumeCta": "Resume",
     "pausing": "Pausing…",
     "resuming": "Resuming…",
-    "optionSuffix": "paused"
+    "optionSuffix": "paused",
+    "help": "Paused: audits, rank checks, weekly reports, content monitoring, and alerts are off. Reports and history stay readable. Resume turns them back on."
   },
   "errors": {
     "urlRequired": "Enter your site URL, like https://example.com.",
-    "urlTooLong": "That URL is too long (2048 characters max).",
+    "urlTooLong": "Enter a URL of 2,048 characters or fewer.",
     "urlInvalid": "Enter a valid URL, like https://example.com.",
-    "urlScheme": "Only http:// and https:// URLs are supported.",
+    "urlScheme": "Enter a URL that starts with http:// or https://.",
     "urlUserinfo": "Remove the username and password from the URL.",
-    "urlIpLiteral": "IP addresses are not supported — use a domain name.",
+    "urlIpLiteral": "Enter a domain name, not an IP address.",
     "urlNoTld": "Enter a full domain name, like https://example.com."
   },
   "workspace": {
@@ -105,7 +106,6 @@
     },
     "navigationLabel": "Workspace view",
     "activeGroupLabel": "{{group}} · {{current}}",
-    "upgradeHint": "Upgrade your plan to unlock this tab.",
     "switchSite": "Switch site",
     "loadingSite": "Loading site…",
     "filterSites": "Filter sites…",
@@ -190,8 +190,7 @@
     "unlock": {
       "title": "More insight is available",
       "backlinksAndCompetitors": "Upgrade for backlink strength and competitor overlap.",
-      "competitors": "Upgrade to Agency for competitor overlap and gap keywords.",
-      "openPlans": "Compare plans"
+      "competitors": "Upgrade to Agency for competitor overlap and gap keywords."
     },
     "statError": "Couldn't load",
     "meta": {

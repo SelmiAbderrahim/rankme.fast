@@ -3,7 +3,7 @@ import type { RequestHandler } from 'express';
 import { asyncHandler } from '../../shared/utils/async-handler.js';
 import { env } from '../../config/env.js';
 import { requireAccountId } from '../../shared/utils/require-account-id.js';
-import { clusterListQuerySchema, clusterRunRequestSchema, decisionRequestSchema, gapRequestSchema, historyIdParamSchema, historyQuerySchema, ideasRequestSchema, intentRequestSchema, metricsRequestSchema, longTailRequestSchema, overviewRequestSchema, previewRequestSchema, relatedRequestSchema, runIdClusterIdParamSchema, runIdParamSchema, trendsExplorePreviewRequestSchema, trendsExploreRequestSchema, trendsListQuerySchema, trendsRequestSchema, trendsRunIdParamSchema, } from './keyword-research.schema.js';
+import { clusterListQuerySchema, clusterRunRequestSchema, decisionRequestSchema, gapRequestSchema, historyIdParamSchema, historyQuerySchema, ideasRequestSchema, intentRequestSchema, metricsRequestSchema, longTailRequestSchema, overviewRequestSchema, previewRequestSchema, relatedRequestSchema, runIdClusterIdParamSchema, runIdParamSchema, storedKeywordsQuerySchema, trendsExplorePreviewRequestSchema, trendsExploreRequestSchema, trendsListQuerySchema, trendsRequestSchema, trendsRunIdParamSchema, } from './keyword-research.schema.js';
 import { applyClusterDecision, serializeDecision, } from './keyword-research.decisions.js';
 import { getKeywordProvider, getKeywordResearchAiProviderOrder, getKeywordResearchAiRunner, getKeywordResearchCompetitorProvider, getKeywordResearchDb, getKeywordResearchTrendsProvider, } from './keyword-research.holder.js';
 import { computeClusterRunId, findClusterRunForAccount, listClusterRunsForAccount, runClustering, sortedNormalizedPhrases, type ClusterRunSummary, } from './keyword-research.clustering.js';
@@ -12,7 +12,7 @@ import { allowedTeamSiteIds, assertTeamSiteAccess, } from '../../shared/middlewa
 import { classifyIntentCached, dedupeKeywordPhrases, exploreTrendsLive, findTrendsRun, getGapCached, getIdeasCached, getLongTailSuggestionsCached, getMetricsCached, getOverviewCached, getRelatedCached, getTrendsCached, listTrendsRunsForAccount, serializeStoredRun, } from './keyword-research.service.js';
 import { computeGapCacheKey, computeKeywordCacheKey, createKeywordCacheRepo, normalizeCacheDomain, normalizeCachePhrase, } from './keyword-research.cache.js';
 import { findResearchHistoryRow, listResearchHistory, recordResearchHistory, } from './keyword-research.history.js';
-import { readStoredResearchResult } from './keyword-research.stored.js';
+import { listStoredKeywordCandidates, readStoredResearchResult } from './keyword-research.stored.js';
 import { getSite } from '../sites/index.js';
 import { assertSiteNotPaused, loadOwnedSite } from '../sites/sites.guard.js';
 /**
@@ -176,6 +176,33 @@ export const historyResultsHandler: RequestHandler = asyncHandler(async (req, re
     if (row.siteId !== null)
         assertTeamSiteAccess(req, row.siteId);
     res.status(200).json(await readStoredResearchResult(db, row, new Date()));
+});
+/**
+ * Every phrase the account has already stored for one market (searched seeds +
+ * cached related / ideas / long-tail rows). Read-only and free, like the
+ * history list it is derived from.
+ */
+export const storedKeywordsHandler: RequestHandler = asyncHandler(async (req, res) => {
+    const accountId = requireAccountId(req);
+    const query = storedKeywordsQuerySchema.parse(req.query);
+    const page = await listStoredKeywordCandidates(getKeywordResearchDb(), {
+        accountId,
+        locationCode: query.locationCode,
+        languageCode: query.languageCode,
+        q: query.q,
+        limit: query.limit,
+        now: new Date(),
+    });
+    res.status(200).json({
+        candidates: page.candidates.map((candidate) => ({
+            phrase: candidate.phrase,
+            source: candidate.source,
+            searchVolume: candidate.searchVolume,
+            observedAt: candidate.observedAt.toISOString(),
+        })),
+        total: page.total,
+        truncated: page.truncated,
+    });
 });
 // ---------------------------------------------------------------------------
 // Keyword gap / overview / trends / preview

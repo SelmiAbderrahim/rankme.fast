@@ -45,9 +45,6 @@
   "columnCpc": "CPC",
   "columnTrend": "12-mo trend",
   "columnActions": "Actions",
-  "lockedTitle": "Upgrade to unlock keyword research",
-  "lockedBody": "Volume, difficulty and related keywords are part of the Pro plan.",
-  "upgrade": "See plans",
   "exampleTitle": "Example: what you get on Pro",
   "columnIntent": "Intent",
   "getIdeas": "Get ideas from this seed",
@@ -108,8 +105,8 @@
     "clusterIdInvalid": "That cluster identifier is not valid.",
     "decisionConflict": "That cluster already has a different decision. Reload and try again.",
     "decisionKindInvalid": "Decision must be either accepted or dismissed.",
-    "idempotencyKeyRequired": "A client idempotency key is required.",
-    "idempotencyKeyTooLong": "That idempotency key is too long (200 characters max).",
+    "idempotencyKeyRequired": "This request couldn't be checked for duplicates. Refresh the page and try again.",
+    "idempotencyKeyTooLong": "This request couldn't be checked for duplicates. Refresh the page and try again.",
     "noteTooLong": "That note is too long (500 characters max).",
     "siteRequired": "Choose the site this recommendation should apply to.",
     "siteNotAllowed": "A site cannot be set when dismissing a cluster.",
@@ -334,27 +331,19 @@
     "observedAt": "Observed {{time}}",
     "freshUntil": "Fresh until {{time}}"
   },
-  "cap": {
-    "title": "Monthly allowance reached",
-    "packBody": "The configured keyword pack adds {{count}} lookups for {{price}} after your included allowance.",
-    "packCta": "Buy the keyword pack",
-    "aiBody": "AI summary units are part of your plan allowance. Upgrade your plan to run more clustering passes this month.",
-    "aiCta": "See plans and billing"
-  },
   "clusters": {
     "title": "AI keyword clusters",
-    "description": "Group 10–200 of your stored phrases into topics with one AI pass. The AI reads only rows you already fetched — it never calls the search vendor.",
-    "noCandidates": "No stored phrases yet. Run keyword research first — clustering reads your stored rows.",
+    "description": "Group 10–200 of your stored phrases into topics with one AI pass. The AI reads only rows you already fetched and never runs a new search.",
+    "noCandidates": "No stored phrases for this market yet. Change the market above or run keyword research first — clustering reads your stored rows.",
     "selectionCount_one": "{{count}} selected ({{min}}–{{max}} required)",
     "source": {
-      "metrics": "research",
-      "ideas": "idea",
-      "history": "history"
+      "seed": "searched",
+      "related": "related",
+      "idea": "idea",
+      "long_tail": "long-tail"
     },
     "disclosureUnit": "One clustering pass uses one AI summary unit.",
     "disclosureRerunFree": "Running the exact same selection again is free — it returns the stored run.",
-    "remainingAllowance": "{{remaining}} of {{cap}} AI summaries left this month",
-    "allowanceUnknown": "Your remaining allowance could not be loaded. The server still checks it before running.",
     "boundsError": "Select between {{min}} and {{max}} phrases.",
     "run": "Run clustering",
     "running": "Clustering…",
@@ -391,11 +380,11 @@
       "medium": "Medium confidence",
       "high": "High confidence"
     },
-    "confidenceNote": "Confidence is computed deterministically from member count and intent homogeneity — the AI suggests the grouping; the label is not an AI score.",
+    "confidenceNote": "Confidence comes from fixed rules: how many keywords a group has and how alike their intent is. The AI suggests the groups, but the confidence label is not an AI score.",
     "summedVolume": "Combined monthly search volume: {{volume}}",
     "membersToggle_one": "Show {{count}} member keyword",
     "memberSource": {
-      "vendor_cache": "stored provider row",
+      "vendor_cache": "saved keyword data",
       "history": "research history"
     },
     "accept": "Accept",
@@ -438,12 +427,25 @@
     "membersToggle_few": "Show {{count}} member keywords",
     "membersToggle_many": "Show {{count}} member keywords",
     "membersToggle_other": "Show {{count}} member keywords",
-    "truncatedNote_zero": "Stored keywords shown: {{count}} of {{total}}. Search to narrow the list.",
-    "truncatedNote_one": "Stored keywords shown: {{count}} of {{total}}. Search to narrow the list.",
-    "truncatedNote_two": "Stored keywords shown: {{count}} of {{total}}. Search to narrow the list.",
-    "truncatedNote_few": "Stored keywords shown: {{count}} of {{total}}. Search to narrow the list.",
-    "truncatedNote_many": "Stored keywords shown: {{count}} of {{total}}. Search to narrow the list.",
-    "truncatedNote_other": "Stored keywords shown: {{count}} of {{total}}. Search to narrow the list."
+    "truncatedNote_zero": "Stored keywords shown: {{count, number}} of {{total, number}}. Search to narrow the list.",
+    "truncatedNote_one": "Stored keywords shown: {{count, number}} of {{total, number}}. Search to narrow the list.",
+    "truncatedNote_two": "Stored keywords shown: {{count, number}} of {{total, number}}. Search to narrow the list.",
+    "truncatedNote_few": "Stored keywords shown: {{count, number}} of {{total, number}}. Search to narrow the list.",
+    "truncatedNote_many": "Stored keywords shown: {{count, number}} of {{total, number}}. Search to narrow the list.",
+    "truncatedNote_other": "Stored keywords shown: {{count, number}} of {{total, number}}. Search to narrow the list.",
+    "belowMinimum": "Stored keywords for this market: {{count}}. AI keyword topics need at least {{min}}, so run keyword research to store more.",
+    "candidatesFailed": "Could not load your stored keywords.",
+    "clearSelection": "Clear selection",
+    "findMore": "Find more keywords",
+    "limitReached": "You can select up to {{max}} phrases. Deselect some to add others.",
+    "noMatches": "No stored keywords match that search.",
+    "searchLabel": "Search stored keywords",
+    "searchPlaceholder": "Filter by word or phrase",
+    "selectAll": "Select all shown ({{count}})",
+    "crossLink": {
+      "body": "Want groups built from shared Google results for the keywords you track on a site?",
+      "cta": "See SERP overlap groups on your sites"
+    }
   },
   "liveTrends": {
     "title": "Live search interest",
@@ -465,17 +467,11 @@
       "cached": "Cached",
       "fresh_required": "Fresh fetch",
       "mixed": "Mixed",
-      "unknown": "Unknown",
-      "baseRemaining": "Base allowance remaining",
-      "packRemaining": "Pack units remaining",
-      "packTitle": "Need more?",
-      "packLink": "See credit packs"
+      "unknown": "Unknown"
     },
     "states": {
       "unavailableTitle": "Live trends is temporarily unavailable",
       "unavailableBody": "This tool is paused. Existing runs are still readable.",
-      "capBody": "You have reached your monthly live-trends allowance.",
-      "capPackName": "Keyword trends pack",
       "failedTitle": "The exploration could not complete",
       "providerFailedTitle": "The trends provider did not respond",
       "emptyTitle": "No search-interest series returned",
@@ -531,10 +527,6 @@
     },
     "explore": {
       "failed": "Live trends exploration failed."
-    },
-    "workspaceLocked": {
-      "body": "Live search interest is available from Starter up, even though the rest of this workspace needs Pro.",
-      "cta": "Open live search interest"
     }
   },
   "selectionCount_zero": "{{count}} of {{max}} selected",

@@ -23,7 +23,6 @@ interface RuleBuilderProps {
   /** Authenticated recipient for the "Email me" channel. */
   currentUserId: string | null;
   /** True once the account is at its rule ceiling. */
-  capReached: boolean;
   submitting: boolean;
   onSubmit: (input: CreateRuleInput) => void;
 }
@@ -111,7 +110,6 @@ export const RuleBuilder = ({
   sites,
   siteId,
   currentUserId,
-  capReached,
   submitting,
   onSubmit,
 }: RuleBuilderProps) => {
@@ -169,7 +167,7 @@ export const RuleBuilder = ({
 
   const handleSubmit = (event: FormEvent) => {
     event.preventDefault();
-    if (capReached || submitting) return;
+    if (submitting) return;
     setAttempted(true);
     setTouched({ slack: true, webhook: true });
     if (!valid) return;
@@ -348,7 +346,7 @@ export const RuleBuilder = ({
       </fieldset>
 
       <div>
-        <Button type="submit" disabled={capReached} loading={submitting}>
+        <Button type="submit" loading={submitting}>
           {t('builder.submit')}
         </Button>
       </div>

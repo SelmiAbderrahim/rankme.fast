@@ -1,6 +1,6 @@
 ---
 title: '有害链接与拒绝收录'
-description: 'RankMeFast 如何用确定性评分规则对外链分档、AI 何时可以对某行作出注解，以及为什么拒绝收录文件绝不会代你提交。'
+description: 'RankMeFast 如何用固定规则将外链分为不同风险等级、AI 何时可以对某行作出注解，以及为什么拒绝收录文件绝不会代你提交。'
 locale: zh
 slug: toxic-links
 section: product
@@ -9,15 +9,15 @@ order: 5
 
 # 有害链接与拒绝收录
 
-有害性审查用一套固定的评分规则，给你已抓取的外链行打分。之后你可以生成 Google 格式的拒绝收录文件。RankMeFast 从不替你提交。
+有害链接审查会按固定规则为你已获取的外链行评分，然后让你生成 Google 格式的拒绝收录文件。RankMeFast 绝不会替你提交该文件。
 
 <!-- docs-truth: metric=toxicity_reviews; unit=one-review-up-to-1000-stored-rows; cache-hits=count; refund=provider-failure-zero-retained; cadence=on-demand; estimates=rubric-observation -->
 
-## 行如何分档
+## 每行如何获得风险等级
 
-评分规则 `toxicity-rubric-v1` 读取每条已存外链行上的供应商垃圾分值，把它归入干净、观察或有害档位。失效链接和 nofollow 信号可能让档位上下浮动。
+规则（版本 `toxicity-rubric-v1`）读取每条已保存外链行的垃圾分值，并将其归入正常、观察或有害风险等级。失效链接和 nofollow 信号会调整该等级。
 
-同样的行、同样的垃圾分值，总会得到同样的档位，每个档位旁边都会列出它依据的证据。
+规则每次都给出相同结果：相同的已保存行和相同的垃圾分值始终得出相同的风险等级，并且每个等级都会显示其依据。
 
 ## 一次审查的成本
 
@@ -33,11 +33,13 @@ order: 5
 
 RankMeFast 只是把文件导出，供你自行复核并自行提交给 Google。它没有连接 Search Console 的拒绝收录工具，也无法代你上传。
 
-## 档位代表什么
+## 诚实的限制
 
-档位只是评分规则对一条链接的判断。它不预测 Google 处罚、人工操作或排名变化。
+风险等级描述的是规则在链接中发现的情况，绝不是对 Google 处罚、人工处置或排名变化的预测。
 
-AI 可以为规则已标记的行添加注解，但不能加入规则没有标记的域名。导出文件里的每个域名都能追溯到一条已存行。
+AI 可以为规则已标记的行添加注解，但绝不能添加规则未标记的域名。导出中的每个域名都能追溯到一条已保存的行。
+
+采取行动前，请将本指南与 RankMeFast 中显示的已存证据和状态进行核对。
 
 用量单位与套餐限制见 [价格](./pricing.zh.md)。
 

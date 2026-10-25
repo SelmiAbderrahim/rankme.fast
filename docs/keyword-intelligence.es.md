@@ -13,7 +13,7 @@ En Inteligencia de palabras clave puedes analizar gaps de palabras clave, resúm
 
 ## Qué cuesta cada comprobación
 
-- **Gap** compara tu dominio con los de tus competidores. Usa una unidad `keyword_lookups` por competidor, después de quitar duplicados.
+- **Gap** compara uno de tus sitios, elegido en tu lista de sitios, con los de tus competidores. Usa una unidad `keyword_lookups` por competidor, después de quitar duplicados.
 - **Resumen** usa una unidad `keyword_lookups` por cada palabra clave que consultas.
 - **Tendencias** usa una unidad `keyword_lookups` por palabra clave.
 

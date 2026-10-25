@@ -443,3 +443,17 @@ describe('TwoFactorSettings', () => {
     expect(await screen.findByRole('button', { name: 'Activer' })).toBeInTheDocument();
   });
 });
+
+describe('TwoFactorSettings without a password', () => {
+  it('points an account without a password to the password setup', () => {
+    initI18n({ initialLocale: 'en' });
+    render(
+      <I18nextProvider i18n={i18n}>
+        <MemoryRouter>
+          <TwoFactorSettings hasPassword={false} />
+        </MemoryRouter>
+      </I18nextProvider>,
+    );
+    expect(screen.getByRole('link', { name: i18n.t('setupPassword.title', { ns: 'auth' }) })).toHaveAttribute('href', '#password-setup');
+  });
+});

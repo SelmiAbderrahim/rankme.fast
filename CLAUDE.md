@@ -84,7 +84,7 @@ rankme.fast/
 │       ├── config/               # env.ts (zod), db.ts, logger.ts
 │       ├── db/                   # Drizzle client, migrations, schema/*, counters
 │       ├── modules/
-│       │   ├── actions/          # unified Next Actions — cross-source finding registry + append-only decision events
+│       │   ├── actions/          # unified Next Actions — cross-source finding registry + append-only decision events; audit finding triage (dismiss / marked fixed, recheck) feeds counters, AI summary, assistant and MCP
 │       │   ├── admin/            # admin panel — user list, MRR, webhook replay, providers (Admin-role, 404 for non-admins)
 │       │   ├── alerts/           # alert rules + channels (email / Slack / signed webhook) — AAD-bound channel secrets, exactly-once dispatch
 │       │   ├── ai-visibility/    # tracked-prompt AI Overview + LLM-mention checks, share-of-voice rollup
@@ -92,7 +92,7 @@ rankme.fast/
 │       │   ├── app-seo/          # site-scoped mobile app profiles + App Store Optimization workspace surfaces
 │       │   ├── audience-research/ # audience research pipeline — public-page discovery + AI clustering
 │       │   ├── audit/            # append-only audit log (owner-scoped read)
-│       │   ├── audits/           # audit pipeline — vendor crawl + rule engine
+│       │   ├── audits/           # audit pipeline — vendor crawl + rule engine (deep-crawl signals, resource scan on by default for runs of up to 1,000 pages, crawl evidence, finding triage, report browser)
 │       │   ├── auth/             # Better Auth instance + verified-email gate
 │       │   ├── backlinks/        # backlinks provider surface
 │       │   ├── brand-radar/      # Brand Radar mention scans — scan CRUD
@@ -105,6 +105,7 @@ rankme.fast/
 │       │   ├── content-intelligence/ # AI content recommendations from mixed evidence sources
 │       │   ├── competitor-content/ # Competitor content comparison — bounded scrapes + deterministic deltas
 │       │   ├── content-monitoring/ # Public-page change monitoring — Firecrawl webhooks + weekly checks + change detection
+│       │   ├── dashboard/        # stored dashboard reads — `/site-health` and `/site-summaries` (latest audit, rank movement, Google state; no vendor calls)
 │       │   ├── geogrid/          # local-pack geogrid rank scans
 │       │   ├── ga4-snapshots/    # GA4 daily metrics snapshot repository (Postgres)
 │       │   ├── google-connections/ # GSC OAuth link/unlink + inspection
@@ -112,14 +113,15 @@ rankme.fast/
 │       │   ├── health/           # /api/health, /api/metrics
 │       │   ├── internal-links/   # internal linking suggestions — stored inventory + GSC evidence, one bounded AI anchor pass
 │       │   ├── keyword-clusters/ # SERP-overlap keyword clustering — deterministic readiness, bounded AI labels, and persisted cluster runs
-│       │   ├── keyword-research/ # keyword provider + cache
+│       │   ├── keyword-research/ # keyword provider + cache + site-scoped research history with stored results
 │       │   ├── legal/            # data-rights (export / delete + grace period)
-│       │   ├── local-seo/        # NAP/reviews/Q&A snapshots + local-pack rank tracking
+│       │   ├── local-seo/        # chosen local business profile, NAP/reviews/Q&A snapshots + local-pack rank tracking
 │       │   ├── market-catalog/   # authenticated provider-market catalogs used by client pickers
 │       │   ├── mcp/              # RankMeFast MCP endpoint — MCP_ENABLED kill switch, api-key auth, `mcp` rate bucket, tool list generated from zod
 │       │   ├── mcp-permissions/  # account-level MCP permission defaults — per-tool toggles, allowed-sites, allow-spend (intersected with per-key scopes)
+│       │   ├── pages/            # page performance inventory — one crawled-page inventory joined with Search Console data, crawl state and audit evidence
 │       │   ├── public-api/       # read-only /api/v1 (bearer API-key auth, rate-limited)
-│       │   ├── ranks/            # SERP tracking, ranks history, cache policy, Bing/YouTube/Amazon engines
+│       │   ├── ranks/            # SERP tracking, ranks history, cache policy, Bing/YouTube/Amazon engines, durable rank-check jobs (bulk keyword add, batched SERP tasks), one rank-state model
 │       │   ├── report-exports/   # canonical report export adapters, immutable snapshots, and bounded downloads
 │       │   ├── schema-generator/ # schema.org markup generator — versioned seven-type registry, evidence assembly, deterministic conformance
 │       │   ├── seo/              # /robots.txt, /sitemap*.xml

@@ -5,9 +5,6 @@
     "loading": "正在加载客户报告…",
     "loadFailed": "无法加载客户报告。",
     "retry": "重试",
-    "lockedTitle": "客户报告仅适用于 Agency 套餐",
-    "lockedDescription": "升级后即可编制白标报告、安排定期发送和创建客户门户。",
-    "upgrade": "查看套餐",
     "disabledTitle": "新客户报告已暂停",
     "disabledDescription": "已保存的计划、发送记录和门户链接仍然可见。您仍可删除计划或撤销链接。"
   },
@@ -26,7 +23,6 @@
   "schedules": {
     "title": "定期发送",
     "description": "每周或每月向最多十位收件人发送品牌 PDF。",
-    "cap": "已使用 {{used}} 个，共 {{limit}} 个计划",
     "empty": "尚无定期报告。",
     "create": "创建计划",
     "edit": "编辑",
@@ -49,7 +45,6 @@
     "deleteDescription": "删除 {{name}} 后，此计划今后的所有发送都将停止。",
     "deleteFailed": "无法删除该计划。",
     "saveFailed": "无法保存该计划。",
-    "capReached": "已达到 20 个计划的上限。请删除一个计划后再创建。",
     "next": "下次发送：{{date}}",
     "disabled": "已停用",
     "localPreviewUnavailable": "请输入有效的日期，即可查看这份报告的发送时间。",
@@ -79,7 +74,6 @@
   "portals": {
     "title": "客户门户链接",
     "description": "创建无需登录、可撤销的只读链接。",
-    "cap": "已使用 {{used}} 个，共 {{limit}} 个有效链接",
     "empty": "尚无客户门户链接。",
     "create": "创建门户链接",
     "dialogTitle": "创建客户门户链接",
@@ -100,7 +94,6 @@
     "cancel": "取消",
     "createFailed": "无法创建该门户链接。",
     "revokeFailed": "无法撤销该门户链接。",
-    "capReached": "已达到 25 位客户的上限。请撤销一个有效链接后再创建。",
     "expiresAt": "有效期至 {{date}}"
   },
   "portal": {

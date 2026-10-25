@@ -151,6 +151,22 @@ export interface StoredResearchResult {
   expiresAt: string | null;
 }
 
+export type StoredCandidateSource = 'seed' | 'related' | 'idea' | 'long_tail';
+
+export interface StoredKeywordCandidate {
+  phrase: string;
+  source: StoredCandidateSource;
+  searchVolume: number | null;
+  observedAt: string;
+}
+
+export interface StoredKeywordsResponse {
+  candidates: StoredKeywordCandidate[];
+  /** Matches for the query BEFORE the limit cut. */
+  total: number;
+  truncated: boolean;
+}
+
 // ---------------------------------------------------------------------------
 // Keyword-intelligence workspace DTO mirrors (server contract:
 // server/src/modules/keyword-research/keyword-research.{service,controller}.ts).
@@ -504,11 +520,15 @@ export interface KeywordResearchState {
     error: string;
     /** Which paid form the preview belongs to (one preview slot at a time). */
     forOperation: KeywordPreviewOperation | null;
+    /** Server refusal attributed to the competitors field (gap form). */
+    competitorsError?: string;
   };
   gap: {
     loading: boolean;
     data: GapResponse | null;
     error: string;
+    /** Server refusal attributed to the competitors field. */
+    competitorsError?: string;
   };
   overview: {
     loading: boolean;
@@ -535,6 +555,14 @@ export interface KeywordResearchState {
     detailError: string;
     /** Keyed by `runId:clusterId`. */
     decisions: Record<string, ClusterDecisionState>;
+    /** Stored phrases the picker offers (free read, never calls a provider). */
+    candidates: {
+      loading: boolean;
+      error: string;
+      data: StoredKeywordsResponse | null;
+      /** requestId of the newest load; older responses that resolve later are dropped. */
+      requestId: string | null;
+    };
   };
   /** Live Keyword Trends sub-state. */
   liveTrends: LiveTrendsSubState;

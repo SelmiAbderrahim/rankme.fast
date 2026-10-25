@@ -61,15 +61,16 @@
     "resumeCta": "Réactiver",
     "pausing": "Mise en pause…",
     "resuming": "Réactivation…",
-    "optionSuffix": "en pause"
+    "optionSuffix": "en pause",
+    "help": "En pause : audits, vérifications de position, rapports hebdomadaires, surveillance de contenu et alertes sont désactivés. Les rapports et l'historique restent consultables. Reprendre les réactive."
   },
   "errors": {
     "urlRequired": "Saisissez l’URL de votre site, comme https://example.com.",
-    "urlTooLong": "Cette URL est trop longue (2048 caractères max).",
+    "urlTooLong": "Saisissez une URL de 2 048 caractères maximum.",
     "urlInvalid": "Saisissez une URL valide, comme https://example.com.",
-    "urlScheme": "Seules les URL http:// et https:// sont prises en charge.",
+    "urlScheme": "Saisissez une URL qui commence par http:// ou https://.",
     "urlUserinfo": "Retirez le nom d’utilisateur et le mot de passe de l’URL.",
-    "urlIpLiteral": "Les adresses IP ne sont pas prises en charge — utilisez un nom de domaine.",
+    "urlIpLiteral": "Saisissez un nom de domaine, pas une adresse IP.",
     "urlNoTld": "Saisissez un nom de domaine complet, comme https://example.com."
   },
   "workspace": {
@@ -105,7 +106,6 @@
     },
     "navigationLabel": "Vue de l’espace de travail",
     "activeGroupLabel": "{{group}} · {{current}}",
-    "upgradeHint": "Passez à une offre supérieure pour débloquer cet onglet.",
     "switchSite": "Changer de site",
     "loadingSite": "Chargement du site…",
     "filterSites": "Filtrer les sites…",
@@ -190,8 +190,7 @@
     "unlock": {
       "title": "Des données supplémentaires sont disponibles",
       "backlinksAndCompetitors": "Passez à une offre supérieure pour analyser la force des backlinks et le chevauchement concurrentiel.",
-      "competitors": "Passez à Agency pour le chevauchement concurrentiel et les mots-clés manquants.",
-      "openPlans": "Comparer les offres"
+      "competitors": "Passez à Agency pour le chevauchement concurrentiel et les mots-clés manquants."
     },
     "statError": "Échec du chargement",
     "meta": {

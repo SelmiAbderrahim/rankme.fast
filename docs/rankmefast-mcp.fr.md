@@ -13,7 +13,7 @@ RankMeFast fournit un endpoint distant [Model Context Protocol (MCP)](https://mo
 
 ## Configuration en cinq minutes
 
-1. Ouvrez [Paramètres → Clés API](/profile?tab=api-keys), sélectionnez **Créer une clé**, puis copiez la clé dès son affichage. RankMeFast ne montre la clé complète qu’une seule fois.
+1. Ouvrez [Paramètres → Clés API](/settings/profile?tab=api-keys), sélectionnez **Créer une clé**, puis copiez la clé dès son affichage. RankMeFast ne montre la clé complète qu’une seule fois.
 2. Utilisez l’endpoint MCP de RankMeFast :
 
    ```text
@@ -39,7 +39,7 @@ RankMeFast fournit un endpoint distant [Model Context Protocol (MCP)](https://mo
 
 ## Contrôler les autorisations et les portées de clés
 
-Ouvrez [Paramètres → MCP](/profile?tab=mcp) pour gérer les valeurs par défaut du compte partagées par MCP et l’Assistant IA connecté :
+Ouvrez [Paramètres → MCP](/settings/profile?tab=mcp) pour gérer les valeurs par défaut du compte partagées par MCP et l’Assistant IA connecté :
 
 1. Activez ou désactivez chaque outil RankMeFast.
 2. Laissez **Sites autorisés** sur tous les sites ou sélectionnez ceux que les outils peuvent utiliser.
@@ -48,7 +48,7 @@ Ouvrez [Paramètres → MCP](/profile?tab=mcp) pour gérer les valeurs par défa
 
 Les valeurs du compte sont entièrement permissives tant que vous ne les modifiez pas ; les clés existantes continuent donc de fonctionner. L’Assistant les utilise directement via votre session connectée.
 
-Vous pouvez ajouter des portées plus étroites lors de la création d’une clé dans [Paramètres → Clés API](/profile?tab=api-keys), puis les modifier ultérieurement. Les portées ne peuvent que restreindre l’accès. L’accès MCP effectif est toujours l’intersection :
+Vous pouvez ajouter des portées plus étroites lors de la création d’une clé dans [Paramètres → Clés API](/settings/profile?tab=api-keys), puis les modifier ultérieurement. Les portées ne peuvent que restreindre l’accès. L’accès MCP effectif est toujours l’intersection :
 
 - Un outil n’est disponible que si le compte et la clé l’autorisent.
 - Si le compte et la clé sélectionnent des sites, seuls ceux présents dans les deux listes sont disponibles.
@@ -405,6 +405,8 @@ Enregistrez cette configuration au niveau utilisateur et ne versionnez pas la cl
 | `get_backlinks_summary` | Renvoie le total des backlinks et les domaines référents distincts d’un site | Non |
 | `list_backlinks` | Liste les backlinks stockés, un par domaine référent | Non |
 | `list_competitors` | Liste le portefeuille de concurrents d’un site, actifs et archivés | Non |
+| `list_keyword_research_history` | Liste votre historique de recherche de mots-clés | Non |
+| `get_keyword_research_result` | Renvoie le résultat stocké d’une entrée de recherche de mots-clés | Non |
 | `get_ai_visibility_summary` | Renvoie les prompts AI Visibility, les dernières vérifications et la part de voix | Non |
 | `get_local_seo_summary` | Renvoie l’instantané du profil SEO local et les positions du pack local | Non |
 | `get_reviews_summary` | Renvoie les sources d’avis, les statistiques de notes et les thèmes stockés | Non |
@@ -421,6 +423,7 @@ Les outils ajoutés après les dix premiers lisent uniquement des données déj�
 - **Les autorisations s’appliquent à chaque appel.** Les interrupteurs du compte dans **Paramètres → MCP**, les portées de la clé et les listes de sites autorisés sont vérifiés à chaque appel. Un site inaccessible ou appartenant à un autre compte est renvoyé comme introuvable.
 - **Les nouveaux outils sont autorisés par défaut.** Ils suivent le même défaut que les autres outils de lecture, et les réglages d’autorisations enregistrés avant leur arrivée continuent de fonctionner.
 - **Les résultats sont bornés.** Les listes renvoient 100 lignes au plus et un résultat reste de taille modeste ; quand des lignes sont coupées, le résultat indique `truncated: true`.
+- **La recherche de mots-clés lit le cache stocké.** `get_keyword_research_result` rouvre une recherche depuis le cache partagé de mots-clés et indique `storedStatus` : `available`, `partial`, `expired` ou `unsupported`. Il n’actualise jamais les données. L’historique d’un site inaccessible est renvoyé comme introuvable.
 
 L’[assistant IA](./ai-assistant.fr.md) utilise les mêmes outils et les mêmes autorisations. Dans une conversation liée à un site, il utilise directement ce site et n’a pas besoin de lister d’abord vos sites.
 
@@ -436,13 +439,13 @@ L’[assistant IA](./ai-assistant.fr.md) utilise les mêmes outils et les mêmes
 - **503 Unavailable :** MCP est désactivé ou temporairement indisponible sur cette installation RankMeFast ; contactez son opérateur.
 - **Fonctionne en local, mais pas derrière un proxy :** vérifiez que le proxy transmet les en-têtes `Authorization`, `Content-Type` et `Accept` à `/api/mcp`.
 
-Pour remplacer une clé, créez-en une nouvelle, mettez à jour et vérifiez chaque client, puis révoquez l’ancienne depuis [Paramètres → Clés API](/profile?tab=api-keys). La révocation est immédiate.
+Pour remplacer une clé, créez-en une nouvelle, mettez à jour et vérifiez chaque client, puis révoquez l’ancienne depuis [Paramètres → Clés API](/settings/profile?tab=api-keys). La révocation est immédiate.
 
 ## Compatibilité
 
-Cette version contient les 23 outils listés ci-dessus. 21 sont en lecture seule, `set_action_state` écrit sans rien coûter, et `start_audit` est le seul qui dépense le budget fournisseur. Le Radar de marque, l’Intelligence des avis, l’Intelligence des liens, l’Analyse du trafic et les Tendances de mots-clés n’ont pas d’outil MCP. Les évolutions sont additives : les noms d’outils et la forme de leurs arguments restent les mêmes, et de nouveaux outils peuvent apparaître au fil des livraisons.
+Cette version contient les 25 outils listés ci-dessus. 23 sont en lecture seule, `set_action_state` écrit sans rien coûter, et `start_audit` est le seul qui dépense le budget fournisseur. Le Radar de marque, l’Intelligence des avis, l’Intelligence des liens, l’Analyse du trafic et les Tendances de mots-clés n’ont pas d’outil MCP. Les évolutions sont additives : les noms d’outils et la forme de leurs arguments restent les mêmes, et de nouveaux outils peuvent apparaître au fil des livraisons.
 
-<!-- mcp-tools: list_sites; get_latest_audit_report; list_keywords; get_rank_history; list_content_analyses; get_content_analysis; start_audit; get_audit_status; list_actions; set_action_state; get_gsc_search_summary; list_gsc_top_queries; list_gsc_top_pages; get_ga4_summary; list_pages; get_page_detail; get_backlinks_summary; list_backlinks; list_competitors; get_ai_visibility_summary; get_local_seo_summary; get_reviews_summary; list_client_reports -->
+<!-- mcp-tools: list_sites; get_latest_audit_report; list_keywords; get_rank_history; list_content_analyses; get_content_analysis; start_audit; get_audit_status; list_actions; set_action_state; get_gsc_search_summary; list_gsc_top_queries; list_gsc_top_pages; get_ga4_summary; list_pages; get_page_detail; get_backlinks_summary; list_backlinks; list_competitors; list_keyword_research_history; get_keyword_research_result; get_ai_visibility_summary; get_local_seo_summary; get_reviews_summary; list_client_reports -->
 
 ## Guides associés
 

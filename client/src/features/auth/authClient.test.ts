@@ -78,4 +78,18 @@ describe('authClient', () => {
     const fresh = await import('./authClient');
     expect(typeof fresh.authClient.useSession).toBe('function');
   });
+
+  it('sends a two-factor sign-in to the challenge screen', async () => {
+    const fetchMock = vi.fn<typeof fetch>().mockResolvedValue(
+      Response.json({ twoFactorRedirect: true, twoFactorMethods: ['totp'] }),
+    );
+    vi.stubGlobal('fetch', fetchMock);
+    try {
+      // Inside an inline challenge the redirect callback runs but does not navigate.
+      await withInlineTwoFactor(() => authClient.signIn.email({ email: 'user@example.test', password: 'synthetic-password' }));
+      expect(fetchMock).toHaveBeenCalled();
+    } finally {
+      vi.unstubAllGlobals();
+    }
+  });
 });

@@ -47,7 +47,8 @@ import {
   markerCallbackUrl,
   startGoogleLink,
 } from '../lib/googleLink';
-import { deviceLabelKey, formatDay, formatInt, formatPercent, windowStartDay } from '../lib/format';
+import { deviceLabelKey, formatDay, formatInt, windowStartDay } from '../lib/format';
+import { formatMetricValue } from '@shared/lib/metricValue';
 import { MetricTimeseriesChart } from './MetricTimeseriesChart';
 import { GscBreakdownList, type GscBreakdownRow } from './GscBreakdownList';
 import { GoogleRangeSelect } from './GoogleRangeSelect';
@@ -360,7 +361,11 @@ export const GoogleAnalyticsSummaryCard = ({
             data-testid="google-analytics-engagement"
           >
             {t('analytics.engagementRateLine', {
-              rate: formatPercent(locale, summary.engagementRate),
+              // No sessions means no engagement rate, not 0%.
+              rate:
+                formatMetricValue('ratio', summary.engagementRate, locale, {
+                  denominator: summary.totalSessions,
+                }) ?? t('common:metric.noData'),
             })}
           </p>
 
@@ -442,6 +447,7 @@ export const GoogleAnalyticsSummaryCard = ({
               tableCaption={t('analytics.timeseriesTableCaption', { count: days, days })}
               dateHeader={t('searchSummary.tableDate')}
               emptyLabel={t('searchSummary.timeseriesEmpty')}
+              noActivityLabel={() => t('searchSummary.timeseriesNoActivity')}
               testIdPrefix="ga4-timeseries"
             />
           </div>

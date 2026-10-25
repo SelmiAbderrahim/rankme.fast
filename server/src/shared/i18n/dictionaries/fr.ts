@@ -121,75 +121,12 @@ export const fr: DictionaryShape = {
         },
     },
     billing: {
-        checkout: {
-            title: 'Paiement',
-            submit: 'Payer maintenant',
-            success: 'Paiement reçu. Merci !',
-        },
-        portal: {
-            title: 'Facturation',
-        },
-        error: {
-            notConfigured: 'Le fournisseur de paiement n’est pas configuré.',
-            addonAlreadyActive: 'Ce module complémentaire est déjà actif sur votre compte.',
-            addonAlreadyIncluded: 'Votre forfait actuel inclut déjà ce module complémentaire.',
-            checkoutAlreadyOpen: 'Un paiement est déjà ouvert. Terminez-le ou annulez-le d’abord.',
-            packRequiresTier: 'Ce pack de crédits n’est pas disponible avec votre forfait actuel.',
-            subscriptionAlreadyExists: 'Ce compte a déjà un abonnement actif.',
-            productUnavailable: 'La facturation est temporairement indisponible. Réessayez plus tard.',
-            userNotFound: 'Utilisateur introuvable.',
-            noCustomer: 'Aucun client de facturation trouvé pour cet utilisateur.',
-            noSubscription: 'Aucun abonnement actif trouvé pour cet utilisateur.',
-            providerFailure: 'Erreur du fournisseur de paiement : {{message}}',
-            invalidResumeAt: 'La date de reprise n’est pas une date valide.',
-            resumeAtInPast: 'La date de reprise doit être dans le futur.',
-            pauseWindowExceeded: 'La durée de pause dépasse le maximum autorisé.',
-            alreadyPaused: 'Cet abonnement est déjà en pause.',
-            canceledSubscription: 'Un abonnement annulé ne peut pas être mis en pause.',
-            notPaused: 'Cet abonnement n’est pas en pause.',
-            unknownProduct: 'Ce produit n’est pas disponible au paiement.',
-            redirectOriginMismatch: 'Les URL de redirection après paiement doivent rester sur ce site.',
-            addonRequiresProOrAgency: 'Le module Brand Radar n’est disponible que sur les offres Pro et Agency.',
-        },
         errors: {
             capExceeded: 'Le quota {{metric}} de votre offre est épuisé. Passez à l’offre supérieure ou achetez un pack de crédits.',
             upgradeRequired: 'Cette fonctionnalité nécessite l’offre {{requiredTier}}.',
-            featureLocked: 'La fonctionnalité {{feature}} n’est pas incluse dans votre offre.',
-        },
-        overCap: {
-            audience_research_runs: 'Vous avez utilisé toutes vos exécutions de recherche d’audience ce mois-ci. Passez à une offre supérieure pour lancer davantage de recherches voix du client.',
-            trend_explorations: 'Vous avez utilisé toutes vos explorations de tendances de mots-clés ce mois-ci. Passez à une offre supérieure ou attendez le mois prochain pour en lancer davantage.',
-            traffic_snapshots: 'Vous avez utilisé tous vos instantanés de trafic ce mois-ci. Passez à une offre supérieure ou attendez le mois prochain pour en lancer davantage.',
-            link_intel_checks: 'Vous avez utilisé toutes vos vérifications d’intelligence des liens ce mois-ci. Passez à une offre supérieure ou attendez le mois prochain pour en lancer davantage.',
-            review_syncs: 'Vous avez utilisé toutes vos synchronisations d’avis ce mois-ci. Passez à une offre supérieure ou attendez le mois prochain pour en lancer davantage.',
-            brand_mention_scans: 'Vous avez utilisé toutes vos analyses de mentions de marque ce mois-ci. Passez à une offre supérieure ou ajoutez le module complémentaire Brand Radar pour en analyser davantage.',
-            keyword_cluster_runs: 'Vous avez utilisé tous vos regroupements de mots-clés ce mois-ci. Passez à une offre supérieure ou attendez le mois prochain pour en lancer davantage.',
-            cannibalization_reports: 'Vous avez utilisé tous vos rapports de cannibalisation ce mois-ci. Passez à une offre supérieure ou attendez le mois prochain pour en lancer davantage.',
-            alt_engine_checks: 'Vous avez utilisé toutes vos vérifications de position Bing, YouTube et Amazon ce mois-ci. Passez à une offre supérieure ou achetez un pack de crédits pour continuer le suivi.',
-            toxicity_reviews: 'Vous avez utilisé toutes vos analyses de liens toxiques ce mois-ci. Passez à une offre supérieure ou achetez un pack de crédits pour en analyser davantage.',
-            internal_link_runs: 'Vous avez utilisé toutes vos analyses de maillage interne ce mois-ci. Passez à une offre supérieure ou attendez le mois prochain pour en lancer davantage.',
-            content_briefs: 'Vous avez utilisé tous vos briefs de contenu ce mois-ci. Achetez un pack de crédits ou passez à une offre supérieure pour en rédiger davantage.',
-            geogrid_scans: 'Vous avez utilisé toutes vos analyses geogrid ce mois-ci. Achetez un pack de crédits ou passez à une offre supérieure pour analyser plus de zones.',
-            schema_generations: 'Vous avez utilisé toutes vos générations de balisage schema ce mois-ci. Passez à une offre supérieure ou attendez le mois prochain pour en générer davantage.',
-            ai_chat_messages: 'Vous avez utilisé tous les messages de l\'assistant IA de votre offre ce mois-ci. Achetez un pack de crédits ou passez à une offre supérieure pour continuer à discuter.',
-            ai_visibility_suggestion_runs: 'Vous avez utilisé toutes les générations de suggestions de visibilité IA de votre offre ce mois-ci. Passez à une offre supérieure ou attendez le mois prochain.',
-            app_keyword_checks: "Vous avez utilisé toutes les vérifications de mots-clés d'application de votre offre ce mois-ci. Ajoutez le module App SEO ou achetez un pack de crédits pour continuer le suivi.",
-            app_listing_audits: "Vous avez utilisé tous les contrôles de fiche d'application de votre offre ce mois-ci. Ajoutez le module App SEO ou attendez le mois prochain.",
-            app_chart_checks: "Vous avez utilisé toutes les vérifications de classement de votre offre ce mois-ci. Ajoutez le module App SEO ou attendez le mois prochain.",
-            app_keyword_lookups: "Vous avez utilisé toutes les recherches de mots-clés d'application de votre offre ce mois-ci. Ajoutez le module App SEO ou achetez un pack de crédits.",
-            app_competitor_lookups: "Vous avez utilisé toutes les recherches de concurrents d'application de votre offre ce mois-ci. Ajoutez le module App SEO ou achetez un pack de crédits.",
-            app_review_runs: "Vous avez utilisé toutes les extractions d'avis d'application de votre offre ce mois-ci. Ajoutez le module App SEO ou achetez un pack de crédits.",
         },
     },
     customPlan: DYNAMIC_PLAN_COPY.fr,
-    usage: {
-        metrics: {
-            audience_research_runs: {
-                label: 'Exécutions de recherche d’audience',
-                description: 'Une unité couvre une exécution complète de recherche voix du client, quels que soient le nombre de requêtes ou de pages collectées.',
-            },
-        },
-    },
     audienceResearch: {
         errors: {
             unsupportedMarket: 'La recherche d’audience n’est pas encore disponible dans ce marché. Choisissez un pays ou une langue pris en charge.',
@@ -214,14 +151,6 @@ export const fr: DictionaryShape = {
         contact: {
             confirmation: 'Votre e-mail a été envoyé. Nous vous répondrons rapidement.',
             notification: 'Message de {{name}} <{{email}}>\n\n{{message}}',
-        },
-        enterpriseLead: {
-            subject: 'Demande pour l’offre Entreprise : {{company}}',
-            company: 'Entreprise : {{company}}',
-            name: 'Nom : {{name}} <{{email}}>',
-            seats: 'Nombre de sièges : {{seats}}',
-            expectedVolumes: 'Volumes prévus : {{expectedVolumes}}',
-            notStated: 'Non précisé',
         },
         verifyEmail: {
             subject: 'Vérifiez votre adresse e-mail',
@@ -373,13 +302,9 @@ export const fr: DictionaryShape = {
             warningSubject: 'Votre compte RankMeFast sera supprimé',
             warningBody: 'Bonjour {{name}}, vous avez demandé la suppression de votre compte RankMeFast. Vos données seront définitivement supprimées le {{purgeAt}}.',
         },
-        twoFactor: {
-            adminRequired: 'L\'authentification à deux facteurs est obligatoire pour les comptes administrateurs. Activez un second facteur dans Paramètres → Sécurité pour continuer.',
-        },
     },
     audits: {
         started: 'Audit démarré.',
-        capClamped: 'Nombre maximal de pages d’audit limité à {{cap}} pages (limite du forfait).',
         errors: {
             recheckUnavailable: 'Ce constat ne peut pas être revérifié ici. Lancez un nouvel audit pour le vérifier à nouveau.',
             runInProgress: 'Un audit est déjà en cours pour ce site.',
@@ -408,10 +333,8 @@ export const fr: DictionaryShape = {
             noSnapshot: 'Aucune donnée de rapport datée n’est disponible pour les sections sélectionnées.',
             queueUnavailable: 'La livraison des rapports n’est pas configurée. Réessayez bientôt.',
             rateLimited: 'Trop de demandes de rapport. Réessayez bientôt.',
-            scheduleCapExceeded: 'Votre offre a atteint sa limite de rapports planifiés.',
             scheduleNotFound: 'Cette planification de rapport est introuvable.',
             deliveryNotFound: 'Cette entrée de livraison est introuvable.',
-            portalCapExceeded: 'Votre offre a atteint sa limite de portails clients.',
             portalNotFound: 'Ce lien de portail client est invalide, expiré ou révoqué.',
         },
         email: {
@@ -421,9 +344,10 @@ export const fr: DictionaryShape = {
     },
     branding: {
         errors: {
-            logoMalformed: 'Choisissez un logo PNG valide. Le fichier n’a pas été enregistré.',
-            logoTooLarge: 'Le logo est trop volumineux. Choisissez un PNG de 256 Ko maximum.',
-            logoDimensions: 'Les dimensions du logo sont trop grandes. Utilisez un PNG de 1 024 × 1 024 pixels maximum.',
+            logoMalformed: 'Choisissez un logo PNG, JPEG ou SVG valide. Le fichier n’a pas été enregistré.',
+            logoTooLarge: 'Le logo est trop volumineux. Choisissez un fichier de 256 Ko maximum.',
+            logoDimensions: 'Les dimensions du logo sont trop grandes. Utilisez une image de 1 024 × 1 024 pixels maximum.',
+            logoUnsafeSvg: 'Ce SVG contient des scripts, du contenu intégré ou des liens vers d’autres fichiers. Exportez un SVG simple ou importez un PNG ou un JPEG. Le fichier n’a pas été enregistré.',
         },
     },
     report: {
@@ -446,9 +370,9 @@ export const fr: DictionaryShape = {
             notRanked: 'Absent des résultats suivis',
             engines: { google: 'Google', bing: 'Bing', youtube: 'YouTube', amazon: 'Amazon' },
             gscSummary: 'Résumé Search Console ({{days}} jours)',
-            gscTotals: 'Clics {{clicks}} · Impressions {{impressions}} · CTR {{ctr}} % · Position moyenne {{position}} · Instantané {{date}}',
+            gscTotals: 'Clics {{clicks}} · Impressions {{impressions}} · CTR {{ctr}} · Position moyenne {{position}} · Instantané {{date}}',
             topQueries: 'Requêtes principales',
-            gscQueryRow: '{{query}} — {{clicks}} clics · {{impressions}} impressions · CTR {{ctr}} % · position {{position}} · instantané {{date}}',
+            gscQueryRow: '{{query}} — {{clicks}} clics · {{impressions}} impressions · CTR {{ctr}} · position {{position}} · instantané {{date}}',
             page: 'Page {{n}} sur {{total}}',
         },
     },
@@ -818,7 +742,6 @@ export const fr: DictionaryShape = {
             marketMoveNoDefault: 'Choisissez un marché pour le site avant de déplacer les mots-clés.',
             marketMoveStale: 'La liste des mots-clés ou le marché du site a changé. Vérifiez le déplacement et réessayez.',
             keywordDuplicate: 'Ce mot-clé est déjà suivi pour ce site.',
-            keywordCapExceeded: 'Votre forfait a atteint sa limite de mots-clés. Passez à un forfait supérieur pour en suivre davantage.',
             altEnginesUnavailable: 'Le suivi Bing, YouTube et Amazon est désactivé pour le moment.',
             altEngineSlotsExceeded: 'Votre forfait a atteint sa limite de {{limit}} mots-clés Bing, YouTube et Amazon. Passez à un forfait supérieur pour en suivre davantage.',
             altEngineChecksExhausted: 'Vous avez utilisé toutes vos vérifications Bing, YouTube et Amazon de la période. Achetez un pack ou changez de forfait.',
@@ -827,7 +750,6 @@ export const fr: DictionaryShape = {
             amazonAsinInvalid: 'Saisissez un ASIN Amazon de dix caractères, par exemple B08N5WRWNW.',
             engineTargetNotAllowed: 'Google et Bing suivent votre propre site : laissez ce champ vide.',
             keywordNotFound: 'Mot-clé introuvable.',
-            dailyRequiresUpgrade: 'Le suivi quotidien du classement nécessite un forfait supérieur.',
             checkCooldown: 'Une vérification du classement vient d’être lancée — veuillez patienter une minute avant de recommencer.',
             rankJobNotFound: 'Vérification du classement introuvable.',
             rankJobStillRunning: 'Cette vérification du classement est toujours en cours. Relancez les mots-clés en échec une fois qu’elle sera terminée.',
@@ -894,9 +816,7 @@ export const fr: DictionaryShape = {
             lookupIdInvalid: 'L’identifiant de la recherche n’est pas valide.',
             historyIdInvalid: 'L’identifiant de cette entrée d’historique n’est pas valide.',
             historyNotFound: 'Cette recherche est introuvable.',
-            upgradeRequired: 'La recherche de mots-clés est une fonctionnalité Pro. Passez au forfait supérieur pour débloquer le volume, la difficulté et les mots-clés associés.',
             unavailable: 'La recherche de mots-clés est momentanément indisponible. Veuillez réessayer sous peu.',
-            capExceeded: 'Le quota de recherches de mots-clés de votre forfait ({{used}}/{{limit}} {{metric}}) est épuisé. Passez au forfait supérieur ou achetez un pack de crédits pour rechercher plus de mots-clés.',
             competitorsRequired: 'Saisissez au moins un domaine concurrent.',
             tooManyCompetitors: 'Vous pouvez comparer jusqu’à trois domaines concurrents à la fois.',
             competitorsDuplicate: 'Supprimez le domaine concurrent en double.',
@@ -944,9 +864,6 @@ export const fr: DictionaryShape = {
             coverageNote: {
                 searchInterestIndex: 'Les valeurs correspondent à l’indice d’intérêt Google (0–100), pas au trafic brut — lis-les comme une forme, pas un volume.',
             },
-            preview: {
-                notOnPlan: 'Keyword Trends n’est pas inclus dans votre forfait.',
-            },
         },
     },
     backlinks: {
@@ -957,17 +874,13 @@ export const fr: DictionaryShape = {
                 runNotFound: 'Analyse de liens introuvable.',
                 runNotReady: 'Cette analyse de liens n’est pas encore prête à être exportée.',
             },
-            preview: {
-            },
         },
         errors: {
-            upgradeRequired: 'Les backlinks sont une fonctionnalité Pro. Passez à la version supérieure pour voir votre profil de liens et votre note de domaine.',
             unavailable: 'Les données de backlinks sont temporairement indisponibles — nous réessaierons au prochain rafraîchissement.',
             siteNotFound: 'Site introuvable.',
             domainInvalid: 'Saisissez un domaine valide, comme example.com.',
             gapDomainConflict: 'Votre propre domaine ne peut pas figurer parmi les concurrents.',
             limitInvalid: 'Saisissez une limite de lignes valide.',
-            capExceeded: 'Le quota de lignes de backlinks de votre forfait ({{used}}/{{limit}} {{metric}}) est épuisé. Passez à un forfait supérieur ou achetez un pack de crédits pour récupérer plus de lignes.',
             refreshCooldown: 'Limite de rafraîchissement atteinte. Réessayez dans {{seconds}} seconde(s).',
         },
         runStatus: {
@@ -984,14 +897,11 @@ export const fr: DictionaryShape = {
     },
     competitors: {
         errors: {
-            upgradeRequired: 'Cette ancienne vue de chevauchement nécessite Agency. Les paysages de mots-clés de la veille concurrentielle commencent avec Pro.',
             unavailable: 'Les données concurrents sont temporairement indisponibles — nous réessaierons au prochain rafraîchissement.',
             siteNotFound: 'Site introuvable.',
             competitorRequired: 'Saisissez un domaine concurrent.',
             competitorTooLong: 'Ce domaine est trop long.',
-            capExceeded: 'Vous avez utilisé toutes vos analyses de concurrents ({{used}}/{{limit}}). Passez à un forfait supérieur pour en lancer davantage.',
             refreshCooldown: 'Limite de rafraîchissement atteinte. Réessayez dans {{seconds}} seconde(s).',
-            suggestionCapExceeded: 'Vous avez utilisé toutes vos générations de suggestions pour ce mois-ci.',
             suggestionFailed: "Impossible de créer des suggestions pour le moment. Votre génération n'a pas été décomptée — réessayez sous peu.",
         },
         landscape: {
@@ -1008,10 +918,8 @@ export const fr: DictionaryShape = {
                 opportunityNotFound: 'Cette opportunité ne figure pas dans ce rapport.',
                 idempotencyInvalid: 'Utilisez une clé d’idempotence valide.',
                 cursorInvalid: 'Ce curseur de paysage concurrentiel est invalide.',
-                capExceeded: 'Votre quota de recherches de mots-clés est insuffisant pour ce rapport.',
                 competitorNotFound: 'Un ou plusieurs concurrents sélectionnés sont indisponibles.',
                 queueUnavailable: 'Le rapport n’a pas pu être mis en attente. Réessayez plus tard.',
-                selectionLimit: 'Sélectionnez moins de concurrents pour votre forfait.',
                 unavailable: 'L’intelligence concurrentielle est temporairement indisponible.',
             },
             opportunities: {
@@ -1054,27 +962,6 @@ export const fr: DictionaryShape = {
             competitorLandscape: 'Observé dans le rapport concurrentiel accepté.',
         },
     },
-    packs: {
-        unavailable: 'Ce pack de crédits n’est pas configuré pour l’achat actuellement.',
-        trafficSnapshots: {
-            available: 'Ajoutez {{units}} instantanés de trafic pour {{price}} lorsque votre quota est épuisé.',
-        },
-        trendExplorations: {
-            available: 'Ajoutez {{units}} explorations de tendances de mots-clés pour {{price}} lorsque votre quota est épuisé.',
-        },
-        reviewSyncs: {
-            available: 'Ajoutez {{units}} synchronisations d’avis pour {{price}} lorsque votre quota est épuisé.',
-        },
-        brandScans: {
-            available: 'Ajoutez {{units}} analyses de marque pour {{price}} lorsque votre quota est épuisé.',
-        },
-        altEngineChecks: {
-            available: 'Ajoutez {{units}} vérifications Bing, YouTube et Amazon pour {{price}} lorsque votre quota est épuisé.',
-        },
-        contentBriefs: {
-            available: 'Ajoutez {{units}} briefs de contenu pour {{price}} lorsque votre quota est épuisé.',
-        },
-    },
     cannibalization: {
         preview: {
             oneReport: 'Un rapport de cannibalisation.',
@@ -1083,7 +970,6 @@ export const fr: DictionaryShape = {
             notFound: 'Rapport de cannibalisation introuvable.',
             productUnavailable: 'Les rapports de cannibalisation sont momentanément indisponibles. Réessayez plus tard.',
             awaitingSync: 'Aucune ligne requête et page de la Search Console n’est encore stockée pour cette période. Elles arriveront à la prochaine synchronisation.',
-            overCap: 'Vous avez utilisé tous les rapports de cannibalisation de votre offre ce mois-ci.',
             rateLimited: 'Trop de demandes de rapport de cannibalisation. Réessayez dans une minute.',
             invalidWindow: 'Choisissez une période de sept, 28 ou 90 jours.',
         },
@@ -1095,7 +981,6 @@ export const fr: DictionaryShape = {
             productUnavailable: 'Les suggestions de liens internes sont momentanément indisponibles. Réessayez plus tard.',
             inventoryMissing: 'Lancez l’inventaire de contenu avant de créer des suggestions de liens internes.',
             inventoryStale: 'Relancez l’inventaire de contenu avant de créer des suggestions de liens internes.',
-            overCap: 'Vous avez utilisé toutes les exécutions de suggestions de liens internes de votre offre ce mois-ci.',
             rateLimited: 'Trop de demandes de suggestions de liens internes. Réessayez dans une minute.',
             queueFailed: 'L’exécution des suggestions n’a pas pu être mise en file d’attente. Réessayez plus tard.',
             processingFailed: 'L’exécution des suggestions a échoué. Votre inventaire stocké n’a pas été modifié.',
@@ -1107,7 +992,6 @@ export const fr: DictionaryShape = {
             notFound: 'Regroupement introuvable.',
             productUnavailable: 'Le regroupement de mots-clés est temporairement indisponible. Réessayez plus tard.',
             notEnoughKeywords: 'Au moins deux mots-clés suivis doivent avoir un relevé de position datant de moins de sept jours pour être regroupés.',
-            overCap: 'Vous avez utilisé tous les regroupements de mots-clés de votre offre ce mois-ci.',
             rateLimited: 'Trop de demandes de regroupement. Réessayez dans une minute.',
             queueFailed: "Le regroupement n'a pas pu être mis en file d'attente. Réessayez plus tard.",
             processingFailed: 'Le regroupement a échoué. Vos observations enregistrées sont inchangées.',
@@ -1125,7 +1009,6 @@ export const fr: DictionaryShape = {
         errors: {
             notFound: 'Brief de contenu introuvable.',
             unavailable: 'Les briefs de contenu sont temporairement indisponibles. Réessayez plus tard.',
-            overCap: 'Vous avez utilisé tous les briefs de contenu de votre forfait ce mois-ci.',
             keywordNotTracked: 'Suivez ce mot-clé Google avant de demander un brief de contenu.',
             draftLimit: 'Ce brief contient déjà le nombre maximal de versions du brouillon.',
             notReady: 'Attendez la fin du brief avant de noter un brouillon.',
@@ -1144,7 +1027,6 @@ export const fr: DictionaryShape = {
         errors: {
             unavailable: 'Les scans géogrille sont temporairement indisponibles. Réessayez plus tard.',
             notFound: 'Scan géogrille introuvable.',
-            capExceeded: 'Vous avez utilisé tous les scans géogrille de votre offre ce mois-ci.',
             keywordNotTracked: 'Suivez ce mot-clé Google avant de lancer un scan géogrille.',
             rateLimited: 'Trop de requêtes géogrille. Réessayez dans une minute.',
         },
@@ -1158,7 +1040,6 @@ export const fr: DictionaryShape = {
     alerts: {
         errors: {
             unavailable: 'Les alertes sont momentanément indisponibles. Réessayez plus tard.',
-            channelNotOnPlan: 'Les canaux Slack et webhook exigent le forfait Pro ou supérieur.',
             rateLimited: 'Trop de requêtes d’alerte. Réessayez dans une minute.',
             siteNotFound: 'Site introuvable.',
             ruleNotFound: 'Règle d’alerte introuvable.',
@@ -1197,8 +1078,6 @@ export const fr: DictionaryShape = {
         errors: {
             notFound: 'Analyse de marque introuvable.',
             productUnavailable: 'Brand Radar est momentanément indisponible. Réessayez plus tard.',
-            overCap: 'Vous avez utilisé toutes les analyses de marque de votre offre ce mois-ci.',
-            notOnPlan: 'Brand Radar nécessite l’offre Pro ou Agency. Sur Pro, il faut aussi l’option Brand Radar.',
             addonRequired: 'Ajoutez l’option Brand Radar pour lancer des analyses de marque sur votre offre.',
             rateLimited: 'Trop de demandes d’analyse de marque. Réessayez dans une minute.',
             invalidCursor: 'Le curseur de page des analyses de marque est invalide.',
@@ -1211,11 +1090,7 @@ export const fr: DictionaryShape = {
         },
     },
     reviewIntelligence: {
-        preview: {
-            notOnPlan: 'Review Intelligence n’est pas inclus dans votre offre.',
-        },
         errors: {
-            overCap: 'Vous avez utilisé toutes les synchronisations d’avis de votre offre ce mois-ci.',
             productUnavailable: 'Review Intelligence est momentanément indisponible. Réessayez plus tard.',
             notFound: 'Données d’avis introuvables.',
             invalidTarget: 'Saisissez un identifiant d’entreprise valide pour cette source d’avis.',
@@ -1226,9 +1101,6 @@ export const fr: DictionaryShape = {
         },
     },
     trafficInsights: {
-        preview: {
-            notOnPlan: 'Traffic Insights n’est pas inclus dans votre forfait.',
-        },
         compare: {
             clamped: 'Seuls les {{count}} premiers instantanés ont été comparés.',
             invalidSelection: 'Choisissez au moins deux instantanés de trafic différents à comparer.',
@@ -1247,13 +1119,11 @@ export const fr: DictionaryShape = {
         errors: {
             unavailable: 'La visibilité IA est temporairement indisponible. Réessayez bientôt.',
             suggestionFailed: 'Nous n’avons pas pu générer de suggestions d’invites. Veuillez réessayer.',
-            suggestionCapExceeded: 'Vous avez utilisé toutes vos générations de suggestions pour ce mois-ci.',
             promptCapReached: 'Vous pouvez suivre jusqu\'à dix requêtes IA par site.',
             promptAlreadyTracked: 'Vous suivez déjà cette requête.',
             promptRequired: 'Saisissez une requête à suivre.',
             promptNotFound: 'Requête suivie introuvable.',
             siteNotFound: 'Site introuvable.',
-            capExceeded: 'Vous avez utilisé toutes vos vérifications de visibilité IA pour ce mois-ci.',
             refreshCooldown: 'Limite de vérifications atteinte. Réessayez dans {{seconds}} seconde(s).',
             refreshCooldown_zero: 'Limite de vérifications atteinte. Réessayez dans {{seconds}} seconde.',
             refreshCooldown_one: 'Limite de vérifications atteinte. Réessayez dans {{seconds}} seconde.',
@@ -1268,7 +1138,6 @@ export const fr: DictionaryShape = {
             siteNotFound: 'Site introuvable.',
             keywordNotFound: 'Mot-clé suivi introuvable.',
             unavailable: 'Les données de référencement local sont temporairement indisponibles. Réessayez bientôt.',
-            capExceeded: 'Vous avez utilisé toutes vos vérifications de fiches locales pour ce mois-ci.',
             refreshCooldown: "Limite d'actualisation atteinte. Réessayez dans {{seconds}} seconde(s).",
             refreshCooldown_zero: 'Limite d\'actualisation atteinte. Réessayez dans {{seconds}} seconde.',
             refreshCooldown_one: 'Limite d\'actualisation atteinte. Réessayez dans {{seconds}} seconde.',
@@ -1304,7 +1173,6 @@ export const fr: DictionaryShape = {
             urlNoTld: 'Saisissez un nom de domaine complet, comme https://example.com.',
             duplicate: 'Ce site est déjà dans votre compte.',
             duplicateAlias: 'Ce site est déjà dans votre compte sous le nom {{domain}}. Les adresses avec et sans www comptent pour un seul site.',
-            capExceeded: 'Votre forfait a atteint sa limite de sites. Passez à un forfait supérieur pour en ajouter.',
             notFound: 'Site introuvable.',
             deleteWhileRunning: 'Attendez la fin de l’audit en cours avant de supprimer ce site.',
             paused: 'Ce site est en pause. Réactivez-le pour lancer des vérifications et des audits.',
@@ -1312,43 +1180,6 @@ export const fr: DictionaryShape = {
             notPaused: 'Ce site n’est pas en pause.',
             invalidMarket: 'Choisissez un pays et une langue dans la liste pour ce site.',
             marketsUnavailable: 'Impossible de charger la liste des pays et des langues. Réessayez dans un instant.',
-        },
-    },
-    admin: {
-        errors: {
-            cannotDemoteLastAdmin: 'Vous ne pouvez pas retirer votre propre rôle admin — vous êtes le dernier admin.',
-            cannotSuspendLastAdmin: 'Vous ne pouvez pas suspendre votre propre compte — vous êtes le dernier admin actif.',
-            cannotModifySuperAdmin: "Un compte SuperAdmin ne peut pas être modifié depuis le panneau d'administration.",
-            webhookReplayFailed: 'Échec de la relecture du webhook.',
-            webhookNotFound: 'Événement webhook introuvable.',
-            webhookNoPayload: 'Cet événement webhook n’a pas de charge utile enregistrée à rejouer.',
-        },
-        refund: {
-            errors: {
-                notFound: 'Commande introuvable.',
-                notRefundable: 'Cette commande ne peut pas être remboursée.',
-                providerFailure: 'Le prestataire de paiement a rejeté le remboursement. Veuillez réessayer.',
-            },
-        },
-    },
-    enterprise: {
-        leadReceived: 'Merci — notre équipe vous contactera très prochainement.',
-        agreementSaved: 'Accord enregistré.',
-        agreementActivated: 'Accord activé.',
-        agreementSuspended: 'Accord suspendu.',
-        agreementEnded: 'Accord clôturé.',
-        leadStatusUpdated: 'Statut du prospect mis à jour.',
-        errors: {
-            agreementNotFound: 'Aucun accord entreprise n\'existe pour ce compte.',
-            agreementEnded: 'Cet accord est clôturé et ne peut plus être modifié.',
-            productIdTaken: 'Ce produit Polar est déjà lié à un autre accord.',
-            productIdReserved: 'Cet identifiant de produit Polar appartient à une offre standard ou à un pack.',
-            invalidCaps: 'Les limites Enterprise doivent utiliser des métriques connues et des nombres entiers finis.',
-            invalidCap: '{{metric}} doit être un nombre entier compris entre 0 et {{maximum}} pour un accord Enterprise.',
-            invalidSeats: 'Le nombre de places Enterprise doit être un entier compris entre 1 et {{maximum}}.',
-            priceBelowFloor: 'Le prix convenu est inférieur au seuil commercial et de marge Enterprise. Le minimum est de {{floorCents}} centimes par mois.',
-            leadNotFound: 'Ce prospect n\'existe plus.',
-            notEnterprise: 'Ce compte ne relève pas d\'un accord entreprise.',
         },
     },
     team: {
@@ -1359,7 +1190,6 @@ export const fr: DictionaryShape = {
         roleChanged: 'Rôle mis à jour.',
         inviteResent: 'Un nouveau lien d\'invitation a été envoyé à {{email}}.',
         errors: {
-            seatCapExceeded: 'Vous avez utilisé toutes les places de votre offre. Passez à une offre supérieure pour inviter plus de collaborateurs.',
             alreadyInvited: 'Une invitation est déjà en attente pour cette adresse.',
             alreadyMember: 'Cette adresse fait déjà partie de l\'équipe.',
             inviteNotFound: 'Ce lien d\'invitation n\'est pas valide.',
@@ -1373,15 +1203,6 @@ export const fr: DictionaryShape = {
             inviteDeliveryFailed: 'L’e-mail d’invitation n’a pas pu être livré. Aucune invitation n’a été créée.',
             provisionalRestricted: 'Modifiez votre mot de passe temporaire et acceptez une invitation pour continuer.',
             inviteBeingCleaned: 'Le compte invité est en cours de nettoyage. Réessayez bientôt.',
-        },
-    },
-    superadmin: {
-        errors: {
-            invalidSort: "Cette colonne de tri n'est pas autorisée.",
-            cannotSelfDemote: "Vous ne pouvez pas retirer votre propre rôle SuperAdmin.",
-            cannotDeleteSelf: "Vous ne pouvez pas supprimer votre propre compte SuperAdmin.",
-            cannotDemoteLastSuperAdmin: "Vous ne pouvez pas retirer le dernier SuperAdmin.",
-            cannotSuspendLastSuperAdmin: "Vous ne pouvez pas suspendre le dernier SuperAdmin.",
         },
     },
     apiKeys: {
@@ -1437,6 +1258,8 @@ export const fr: DictionaryShape = {
             getBacklinksSummary: { description: 'Retourne le résumé des backlinks stocké d\'un site possédé : nombre total de backlinks, domaines référents distincts et date de récupération. Lecture seule ; ne récupère jamais de données fraîches et n\'utilise jamais de lignes de backlinks. Citez la date de récupération et distinguez les deux nombres.' },
             listBacklinks: { description: 'Liste les backlinks stockés d\'un site possédé, un lien par domaine référent, avec des signaux de suspicion qui sont suspectés et non vérifiés. Lecture seule ; ne lit que les lignes stockées et n\'utilise jamais de lignes de backlinks. Citez la date de récupération et le périmètre.' },
             listCompetitors: { description: 'Liste le portefeuille de concurrents d\'un site possédé, profils actifs et archivés. Lecture seule ; aucune collecte et aucune dépense.' },
+            listKeywordResearchHistory: { description: 'Liste l\'historique de recherche de mots-clés stocké du compte : ce qui a été recherché, quand, ainsi que le lieu et la langue. Lecture seule ; n\'appelle jamais le fournisseur de données.' },
+            getKeywordResearchResult: { description: 'Retourne le résultat stocké d\'une entrée de l\'historique de recherche de mots-clés, avec le statut available, partial, expired ou unsupported. Lit uniquement le cache stocké ; n\'actualise jamais et n\'appelle jamais le fournisseur de données. Citez la date de récupération.' },
             getAiVisibilitySummary: { description: 'Retourne le résumé AI Visibility stocké d\'un site possédé : prompts suivis, dernières vérifications par moteur et part de voix. Lecture seule ; ne lance jamais de vérification. Citez les dates de vérification et signalez quand les preuves sont limitées.' },
             getLocalSeoSummary: { description: 'Retourne le résumé SEO local stocké d\'un site possédé : instantané de la fiche d\'établissement, cohérence nom-adresse-téléphone et positions dans le pack local. Lecture seule ; n\'actualise jamais les fiches.' },
             getReviewsSummary: { description: 'Retourne le résumé des avis stocké d\'un site possédé : sources d\'avis et état de préparation, statistiques de notes et thèmes stockés. Lecture seule ; ne lance jamais de synchronisation des avis.' },
@@ -1564,7 +1387,6 @@ export const fr: DictionaryShape = {
                 runInFlight: "Un inventaire est déjà en cours pour ce site. Attendez qu'il se termine avant d'en lancer un autre.",
                 originUnsafe: "L'adresse de ce site pointe vers un emplacement bloqué ou interne et ne peut pas être explorée.",
                 seedUnsafe: "Une adresse de sitemap que vous avez fournie pointe vers un emplacement bloqué ou interne.",
-                capExceeded: "Vous avez utilisé tous vos blocs de pages d'inventaire de contenu pour ce mois.",
                 queueUnavailable: "La file d'attente de l'inventaire est indisponible. Veuillez réessayer sous peu.",
                 notFound: "Inventaire introuvable.",
                 notCancellable: "Cet inventaire est déjà terminé.",
@@ -1600,7 +1422,6 @@ export const fr: DictionaryShape = {
                 reviewedTargetsInvalid: 'Les pages vérifiées ne sont plus sûres ou à jour.',
                 unavailable: 'L\'intelligence de contenu concurrent est momentanément indisponible. Veuillez réessayer plus tard.',
                 runInFlight: 'Une comparaison de concurrents est déjà en cours pour ce site. Attendez qu\'elle se termine avant d\'en lancer une autre.',
-                capExceeded: 'Vous avez utilisé toutes vos comparaisons de concurrents pour ce mois-ci.',
                 queueUnavailable: 'La file d\'attente de comparaison est indisponible. Veuillez réessayer sous peu.',
                 notFound: 'Comparaison de concurrents introuvable.',
                 notCancellable: 'Cette comparaison de concurrents est déjà terminée.',
@@ -1650,7 +1471,6 @@ export const fr: DictionaryShape = {
                 cursorInvalid: 'Ce curseur de page est invalide.',
             },
             warnings: {
-                capExhausted: "Vous avez utilisé toutes vos vérifications de surveillance pour ce mois-ci ; cette surveillance est donc suspendue jusqu'au mois prochain.",
                 providerDrift: 'Cette surveillance était désynchronisée du fournisseur et a été resynchronisée.',
             },
         },
@@ -1912,7 +1732,6 @@ export const fr: DictionaryShape = {
             siteNotFound: 'Site introuvable.',
             pageNotFound: 'Page introuvable dans l’inventaire actuel de la source.',
             rateLimited: 'Trop de requêtes Pages. Réessayez dans un instant.',
-            capExceeded: 'Vous avez atteint le quota de recherches de mots-clés pour cette période.',
             gscUnavailable: 'Les données Search Console sont temporairement indisponibles. Les dernières données réussies restent disponibles si possible.',
             providerUnavailable: 'Les données de classement sont temporairement indisponibles. Réessayez plus tard.',
             refreshFailed: 'L’actualisation des Pages n’a pas pu être enregistrée. Les dernières données réussies ont été conservées.',

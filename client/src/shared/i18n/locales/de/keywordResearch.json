@@ -45,9 +45,6 @@
   "columnCpc": "CPC",
   "columnTrend": "12-Monats-Trend",
   "columnActions": "Aktionen",
-  "lockedTitle": "Führen Sie ein Upgrade durch, um die Keyword-Recherche freizuschalten",
-  "lockedBody": "Volumen, Schwierigkeit und verwandte Keywords sind Teil des Pro-Plans.",
-  "upgrade": "Tarife anzeigen",
   "exampleTitle": "Beispiel: Das erhalten Sie mit Pro",
   "columnIntent": "Absicht",
   "getIdeas": "Ideen aus diesem Keyword holen",
@@ -108,8 +105,8 @@
     "clusterIdInvalid": "Diese Cluster-ID ist nicht gültig.",
     "decisionConflict": "Für diesen Cluster gibt es bereits eine andere Entscheidung. Neu laden und erneut versuchen.",
     "decisionKindInvalid": "Die Entscheidung muss entweder „angenommen“ oder „verworfen“ sein.",
-    "idempotencyKeyRequired": "Ein Client-Idempotenzschlüssel ist erforderlich.",
-    "idempotencyKeyTooLong": "Dieser Idempotenzschlüssel ist zu lang (max. 200 Zeichen).",
+    "idempotencyKeyRequired": "Diese Anfrage konnte nicht auf Duplikate geprüft werden. Laden Sie die Seite neu und versuchen Sie es erneut.",
+    "idempotencyKeyTooLong": "Diese Anfrage konnte nicht auf Duplikate geprüft werden. Laden Sie die Seite neu und versuchen Sie es erneut.",
     "noteTooLong": "Dieser Hinweis ist zu lang (max. 500 Zeichen).",
     "siteRequired": "Wähle die Website, für die diese Empfehlung gelten soll.",
     "siteNotAllowed": "Beim Verwerfen eines Clusters darf keine Website angegeben werden.",
@@ -334,27 +331,19 @@
     "observedAt": "Beobachtet am {{time}}",
     "freshUntil": "Gültig bis {{time}}"
   },
-  "cap": {
-    "title": "Monatliches Kontingent erreicht",
-    "packBody": "Das konfigurierte Keyword-Paket fügt nach Ihrem enthaltenen Kontingent {{count}} Abfragen für {{price}} hinzu.",
-    "packCta": "Keyword-Paket kaufen",
-    "aiBody": "KI-Zusammenfassungs-Einheiten gehören zum Kontingent Ihres Tarifs. Führen Sie ein Upgrade durch, um diesen Monat weitere Cluster-Läufe zu starten.",
-    "aiCta": "Tarife und Abrechnung ansehen"
-  },
   "clusters": {
     "title": "KI-Keyword-Cluster",
-    "description": "Gruppieren Sie 10–200 Ihrer gespeicherten Phrasen mit einem KI-Durchlauf zu Themen. Die KI liest nur bereits abgerufene Zeilen — sie ruft nie den Suchanbieter auf.",
-    "noCandidates": "Noch keine gespeicherten Phrasen. Führen Sie zuerst eine Keyword-Recherche durch — das Clustering liest Ihre gespeicherten Zeilen.",
+    "description": "Gruppieren Sie 10–200 Ihrer gespeicherten Phrasen mit einem KI-Durchlauf zu Themen. Die KI liest nur bereits abgerufene Zeilen und startet nie eine neue Suche.",
+    "noCandidates": "Für diesen Markt gibt es noch keine gespeicherten Phrasen. Wechseln Sie oben den Markt oder führen Sie zuerst eine Keyword-Recherche durch — das Clustering liest Ihre gespeicherten Zeilen.",
     "selectionCount_one": "{{count}} ausgewählt ({{min}}–{{max}} erforderlich)",
     "source": {
-      "metrics": "Recherche",
-      "ideas": "Idee",
-      "history": "Verlauf"
+      "seed": "gesucht",
+      "related": "verwandt",
+      "idea": "Idee",
+      "long_tail": "Long-Tail"
     },
     "disclosureUnit": "Ein Cluster-Durchlauf verbraucht eine KI-Zusammenfassungs-Einheit.",
     "disclosureRerunFree": "Die exakt gleiche Auswahl erneut auszuführen ist kostenlos — der gespeicherte Durchlauf wird zurückgegeben.",
-    "remainingAllowance": "{{remaining}} von {{cap}} KI-Zusammenfassungen diesen Monat übrig",
-    "allowanceUnknown": "Ihr verbleibendes Kontingent konnte nicht geladen werden. Der Server prüft es vor der Ausführung ohnehin.",
     "boundsError": "Wählen Sie zwischen {{min}} und {{max}} Phrasen aus.",
     "run": "Clustering starten",
     "running": "Clustering läuft…",
@@ -391,11 +380,11 @@
       "medium": "Mittlere Konfidenz",
       "high": "Hohe Konfidenz"
     },
-    "confidenceNote": "Die Konfidenz wird deterministisch aus Mitgliederzahl und Intent-Homogenität berechnet — die KI schlägt die Gruppierung vor; das Label ist kein KI-Score.",
+    "confidenceNote": "Die Zuverlässigkeit folgt festen Regeln: wie viele Keywords eine Gruppe hat und wie ähnlich ihre Suchabsicht ist. Die KI schlägt die Gruppen vor, die Zuverlässigkeitsangabe ist aber keine KI-Bewertung.",
     "summedVolume": "Summiertes monatliches Suchvolumen: {{volume}}",
     "membersToggle_one": "{{count}} Mitglieds-Keyword anzeigen",
     "memberSource": {
-      "vendor_cache": "gespeicherte Anbieterzeile",
+      "vendor_cache": "gespeicherte Keyword-Daten",
       "history": "Recherche-Verlauf"
     },
     "accept": "Annehmen",
@@ -438,12 +427,25 @@
     "membersToggle_few": "{{count}} Mitglieds-Keywords anzeigen",
     "membersToggle_many": "{{count}} Mitglieds-Keywords anzeigen",
     "membersToggle_other": "{{count}} Mitglieds-Keywords anzeigen",
-    "truncatedNote_zero": "Gespeicherte Keywords: {{count}} von {{total}}. Grenzen Sie die Liste per Suche ein.",
-    "truncatedNote_one": "Gespeicherte Keywords: {{count}} von {{total}}. Grenzen Sie die Liste per Suche ein.",
-    "truncatedNote_two": "Gespeicherte Keywords: {{count}} von {{total}}. Grenzen Sie die Liste per Suche ein.",
-    "truncatedNote_few": "Gespeicherte Keywords: {{count}} von {{total}}. Grenzen Sie die Liste per Suche ein.",
-    "truncatedNote_many": "Gespeicherte Keywords: {{count}} von {{total}}. Grenzen Sie die Liste per Suche ein.",
-    "truncatedNote_other": "Gespeicherte Keywords: {{count}} von {{total}}. Grenzen Sie die Liste per Suche ein."
+    "truncatedNote_zero": "Gespeicherte Keywords: {{count, number}} von {{total, number}}. Grenzen Sie die Liste per Suche ein.",
+    "truncatedNote_one": "Gespeicherte Keywords: {{count, number}} von {{total, number}}. Grenzen Sie die Liste per Suche ein.",
+    "truncatedNote_two": "Gespeicherte Keywords: {{count, number}} von {{total, number}}. Grenzen Sie die Liste per Suche ein.",
+    "truncatedNote_few": "Gespeicherte Keywords: {{count, number}} von {{total, number}}. Grenzen Sie die Liste per Suche ein.",
+    "truncatedNote_many": "Gespeicherte Keywords: {{count, number}} von {{total, number}}. Grenzen Sie die Liste per Suche ein.",
+    "truncatedNote_other": "Gespeicherte Keywords: {{count, number}} von {{total, number}}. Grenzen Sie die Liste per Suche ein.",
+    "belowMinimum": "Gespeicherte Keywords für diesen Markt: {{count}}. KI-Keyword-Themen brauchen mindestens {{min}}. Führen Sie eine Keyword-Recherche durch, um mehr zu speichern.",
+    "candidatesFailed": "Ihre gespeicherten Keywords konnten nicht geladen werden.",
+    "clearSelection": "Auswahl aufheben",
+    "findMore": "Weitere Keywords finden",
+    "limitReached": "Sie können bis zu {{max}} Phrasen auswählen. Heben Sie einige ab, um andere hinzuzufügen.",
+    "noMatches": "Keine gespeicherten Keywords passen zu dieser Suche.",
+    "searchLabel": "Gespeicherte Keywords durchsuchen",
+    "searchPlaceholder": "Nach Wort oder Phrase filtern",
+    "selectAll": "Alle angezeigten auswählen ({{count}})",
+    "crossLink": {
+      "body": "Sie möchten Gruppen aus gemeinsamen Google-Ergebnissen der Keywords, die Sie für eine Website verfolgen?",
+      "cta": "SERP-Überschneidungsgruppen Ihrer Websites ansehen"
+    }
   },
   "liveTrends": {
     "title": "Live-Suchinteresse",
@@ -465,17 +467,11 @@
       "cached": "Zwischengespeichert",
       "fresh_required": "Neuabruf",
       "mixed": "Gemischt",
-      "unknown": "Unbekannt",
-      "baseRemaining": "Grundkontingent verbleibend",
-      "packRemaining": "Paketeinheiten verbleibend",
-      "packTitle": "Mehr nötig?",
-      "packLink": "Guthabenpakete anzeigen"
+      "unknown": "Unbekannt"
     },
     "states": {
       "unavailableTitle": "Live-Trends sind vorübergehend nicht verfügbar",
       "unavailableBody": "Dieses Werkzeug pausiert. Bereits gespeicherte Erkundungen bleiben lesbar.",
-      "capBody": "Sie haben Ihr monatliches Live-Trend-Kontingent erreicht.",
-      "capPackName": "Keyword-Trends-Paket",
       "failedTitle": "Die Erkundung konnte nicht abgeschlossen werden",
       "providerFailedTitle": "Der Trend-Anbieter antwortete nicht",
       "emptyTitle": "Keine Suchinteresse-Reihen zurückgegeben",
@@ -531,10 +527,6 @@
     },
     "explore": {
       "failed": "Live-Trend-Erkundung fehlgeschlagen."
-    },
-    "workspaceLocked": {
-      "body": "Live-Suchinteresse ist ab Starter verfügbar, auch wenn der Rest dieses Arbeitsbereichs Pro erfordert.",
-      "cta": "Live-Suchinteresse öffnen"
     }
   },
   "selectionCount_zero": "{{count}} von {{max}} ausgewählt",

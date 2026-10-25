@@ -9,7 +9,7 @@ order: 2
 
 # Keyword-Clustering
 
-Das Clustering gruppiert Ihre verfolgten Keywords danach, wie viele Ergebnis-URLs sie teilen. Es arbeitet nur mit SERP-Beobachtungen, die RankMeFast bereits gespeichert hat, und startet nie eine Rankingprüfung, um eine Lücke zu füllen.
+Das Clustering gruppiert Ihre verfolgten Keywords danach, wie viele Ergebnis-URLs sie teilen. Es arbeitet nur mit SERP-Beobachtungen, die RankMeFast bereits gespeichert hat, und startet nie eine Rankingprüfung, um eine Lücke zu füllen. In der App sind das die **SERP-Überschneidungsgruppen** im Tab **Keyword-Cluster** einer Website. Das ist nicht der Tab **Cluster** der Keyword-Recherche, der recherchierte Keywords in einem KI-Durchlauf gruppiert.
 
 <!-- docs-truth: metric=keyword_cluster_runs; unit=one-run-up-to-200-keywords; cache-hits=count; refund=none-blocked-keywords-are-reported; cadence=on-demand; estimates=shared-url-arithmetic -->
 

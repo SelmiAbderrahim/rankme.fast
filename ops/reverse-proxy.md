@@ -30,6 +30,38 @@ terminates TLS in front of the loopback-published `web` and `api` ports.
 3. `/api/*` goes to the `api` port with the prefix preserved; everything else
    on either host goes to the `web` port with `Host` and `X-Forwarded-*`
    headers intact.
+4. **Never add frame headers in the proxy.** The `web` and `api` containers
+   already send exactly one `X-Frame-Options: DENY` and a CSP with
+   `frame-ancestors 'none'` on every response (pinned by
+   `client/src/web-server.test.ts` and
+   `server/src/shared/middleware/security.test.ts`). A proxy
+   `add_header X-Frame-Options ...` stacks a second, conflicting header that
+   browsers treat as invalid. Do not set `X-Frame-Options`, a second
+   `Content-Security-Policy`, or `proxy_hide_header` for them here.
+
+## If a response carries two frame headers
+
+A `curl -sI` that shows two `X-Frame-Options` lines (the application's `DENY`
+followed by another value such as `SAMEORIGIN`) means the host nginx adds one.
+The repository cannot remove it; the operator does:
+
+1. Find the directive: `sudo grep -rn "X-Frame-Options" /etc/nginx/` (common
+   places: an `ssl-params.conf` or `security-headers.conf` snippet, or a server
+   block copied from a hardening guide).
+2. Delete the `add_header X-Frame-Options ...` line for the RankMeFast server
+   blocks, or stop including that snippet there. Keep the CSP the application
+   sends.
+3. `sudo nginx -t && sudo systemctl reload nginx`.
+4. Verify each path type shows exactly one `x-frame-options: DENY` and
+   `frame-ancestors 'none'`:
+
+   ```bash
+   for u in https://app.example.com/ https://app.example.com/dashboard \
+            https://app.example.com/api/health https://docs.example.com/ \
+            https://docs.example.com/robots.txt https://docs.example.com/docs; do
+     echo "== $u"; curl -sI "$u" | grep -i 'x-frame-options\|frame-ancestors'
+   done
+   ```
 
 ## Reference nginx server blocks
 

@@ -135,6 +135,19 @@ beforeEach(async () => {
 });
 
 describe('SerpFeaturesPanel — list states', () => {
+  it('keeps the export at the end of the title row', async () => {
+    mocked.fetchSerpFeaturesRequest.mockResolvedValue(list([]));
+    renderPanel();
+    await screen.findByTestId('serp-features-empty');
+    const header = screen.getByTestId('serp-features-header');
+    expect(
+      within(header).getByRole('heading', { level: 2, name: 'SERP features' }),
+    ).toHaveClass('text-2xl');
+    expect(within(header).getByRole('heading').parentElement).toHaveClass('min-w-0', 'flex-1');
+    const actions = screen.getByTestId('serp-features-header-actions');
+    expect(actions).toHaveClass('ms-auto', 'items-end', 'max-w-xs', 'shrink-0');
+  });
+
   it('renders the skeleton while the first read is in flight', async () => {
     let resolve!: (value: SerpFeaturesResponse) => void;
     mocked.fetchSerpFeaturesRequest.mockReturnValue(

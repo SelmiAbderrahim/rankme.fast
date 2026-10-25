@@ -26,8 +26,11 @@ Search Console est l’outil gratuit de Google. Une fois connecté à RankMeFast
 ## Déconnecter
 Cliquez sur **Déconnecter** : le jeton est supprimé immédiatement. Vous pouvez aussi révoquer l’accès sur https://myaccount.google.com/permissions.
 
-## « Reconnexion requise »
-Si Google invalide le jeton, une bannière rouge apparaît. Les trois règles repassent en « données insuffisantes » jusqu’à la reconnexion.
+## Quand Google demande de se reconnecter
+Si Google invalide le jeton (par exemple après un changement de mot de passe de votre compte), la carte Google Search Console de l’onglet **Google** du site affiche une alerte rouge, **Votre connexion Google doit être renouvelée**, avec un bouton **Reconnecter**. Les cartes qui lisent Search Console ou Google Analytics affichent **Search Console n’est pas connecté** ou **Google Analytics n’est pas connecté**, avec **Connecter Google**. Tant que vous ne vous reconnectez pas, les trois règles repassent en « données insuffisantes ».
+
+## Choisir la propriété
+L’onglet **Google** du site associe automatiquement votre site à une propriété Search Console. Si aucune ne correspond, ou si plusieurs correspondent, RankMeFast vous demande d’en choisir une. Une propriété qui appartient à un autre site ne peut être liée qu’après votre confirmation, car ses données de recherche s’afficheraient alors sur ce site. Google Analytics fonctionne de la même façon. Si les données Google Analytics les plus récentes sont plus anciennes que prévu, un message l’indique et **Actualiser** relance la synchronisation ; RankMeFast la lance aussi une fois par jour.
 
 ## Performances dans Pages
 

@@ -27,3 +27,20 @@ it('stops waiting when Better Auth cannot finish its session refresh', async () 
   await assertion;
   expect(unlisten).toHaveBeenCalledTimes(1);
 });
+
+it('rejects when the refreshed session reports an error', async () => {
+  const unlisten = vi.fn();
+  const session = {
+    get: () => ({ isRefetching: true }),
+    listen: (callback: (state: { isRefetching: boolean; error?: unknown }) => void) => {
+      queueMicrotask(() => {
+        callback({ isRefetching: true });
+        callback({ isRefetching: false, error: new Error('read failed') });
+      });
+      return unlisten;
+    },
+  };
+  (authClient.$store.atoms as { session?: unknown }).session = session;
+  await expect(sessionMutation(async () => ({ error: null }))).rejects.toThrow('Session refresh unavailable');
+  expect(unlisten).toHaveBeenCalledTimes(1);
+});

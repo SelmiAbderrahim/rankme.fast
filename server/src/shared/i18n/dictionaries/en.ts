@@ -120,75 +120,12 @@ export const en = {
         },
     },
     billing: {
-        checkout: {
-            title: 'Checkout',
-            submit: 'Pay now',
-            success: 'Payment received. Thank you!',
-        },
-        portal: {
-            title: 'Billing',
-        },
-        error: {
-            notConfigured: 'Payment provider is not configured.',
-            addonAlreadyActive: 'This add-on is already active on your account.',
-            addonAlreadyIncluded: 'Your current plan already includes this add-on.',
-            checkoutAlreadyOpen: 'A checkout is already open. Finish or cancel it first.',
-            packRequiresTier: 'This credit pack is not available on your current plan.',
-            subscriptionAlreadyExists: 'This account already has an active subscription.',
-            productUnavailable: 'Billing is temporarily unavailable. Please try again later.',
-            userNotFound: 'User not found.',
-            noCustomer: 'No billing customer found for this user.',
-            noSubscription: 'No active subscription found for this user.',
-            providerFailure: 'Payment provider error: {{message}}',
-            invalidResumeAt: 'The resume date is not a valid timestamp.',
-            resumeAtInPast: 'The resume date must be in the future.',
-            pauseWindowExceeded: 'Pause window exceeds the maximum allowed.',
-            alreadyPaused: 'This subscription is already paused.',
-            canceledSubscription: 'A canceled subscription cannot be paused.',
-            notPaused: 'This subscription is not paused.',
-            unknownProduct: 'That product is not available for checkout.',
-            redirectOriginMismatch: 'Checkout redirect URLs must stay on this site.',
-            addonRequiresProOrAgency: 'The Brand Radar add-on is only available on the Pro and Agency plans.',
-        },
         errors: {
             capExceeded: 'Your plan cap for {{metric}} is exhausted. Upgrade or buy a credit pack to keep going.',
             upgradeRequired: 'This feature requires the {{requiredTier}} plan.',
-            featureLocked: 'The {{feature}} feature is not included on your plan.',
-        },
-        overCap: {
-            audience_research_runs: 'You have used every audience research run on your plan this month. Upgrade to run more voice-of-customer research.',
-            trend_explorations: 'You have used every keyword trends exploration on your plan this month. Upgrade or wait for next month to run more.',
-            traffic_snapshots: 'You have used every traffic snapshot on your plan this month. Upgrade or wait for next month to run more.',
-            link_intel_checks: 'You have used every link intelligence check on your plan this month. Upgrade or wait for next month to run more.',
-            review_syncs: 'You have used every review sync on your plan this month. Upgrade or wait for next month to run more.',
-            brand_mention_scans: 'You have used every brand mention scan on your plan this month. Upgrade or add the Brand Radar add-on to scan more.',
-            keyword_cluster_runs: 'You have used every keyword cluster run on your plan this month. Upgrade or wait for next month to run more.',
-            cannibalization_reports: 'You have used every cannibalization report on your plan this month. Upgrade or wait for next month to run more.',
-            alt_engine_checks: 'You have used every Bing, YouTube and Amazon rank check on your plan this month. Upgrade or buy a credit pack to keep tracking.',
-            toxicity_reviews: 'You have used every toxic-link review on your plan this month. Upgrade or buy a credit pack to review more links.',
-            internal_link_runs: 'You have used every internal linking run on your plan this month. Upgrade or wait for next month to run more.',
-            content_briefs: 'You have used every content brief on your plan this month. Buy a credit pack or upgrade to write more briefs.',
-            geogrid_scans: 'You have used every geogrid scan on your plan this month. Buy a credit pack or upgrade to scan more locations.',
-            schema_generations: 'You have used every schema markup generation on your plan this month. Upgrade or wait for next month to generate more.',
-            ai_chat_messages: 'You have used every AI assistant message on your plan this month. Buy a credit pack or upgrade to keep chatting.',
-            ai_visibility_suggestion_runs: 'You have used every AI-visibility suggestion generation on your plan this month. Upgrade or wait for next month to generate more.',
-            app_keyword_checks: 'You have used every app keyword check on your plan this month. Add the App SEO add-on or buy a credit pack to keep tracking.',
-            app_listing_audits: 'You have used every app listing check on your plan this month. Add the App SEO add-on or wait for next month.',
-            app_chart_checks: 'You have used every app chart check on your plan this month. Add the App SEO add-on or wait for next month.',
-            app_keyword_lookups: 'You have used every app keyword research lookup on your plan this month. Add the App SEO add-on or buy a credit pack to research more.',
-            app_competitor_lookups: 'You have used every app competitor lookup on your plan this month. Add the App SEO add-on or buy a credit pack to find more competitors.',
-            app_review_runs: 'You have used every app review pull on your plan this month. Add the App SEO add-on or buy a credit pack to read more reviews.',
         },
     },
     customPlan: DYNAMIC_PLAN_COPY.en,
-    usage: {
-        metrics: {
-            audience_research_runs: {
-                label: 'Audience research runs',
-                description: 'One whole voice-of-customer research run per unit, regardless of how many searches or scrapes it makes.',
-            },
-        },
-    },
     audienceResearch: {
         errors: {
             unsupportedMarket: 'Audience research is not available in that market yet. Try a supported country or language.',
@@ -213,14 +150,6 @@ export const en = {
         contact: {
             confirmation: 'Your email has been sent. We will be in touch with you soon.',
             notification: 'Contact from {{name}} <{{email}}>\n\n{{message}}',
-        },
-        enterpriseLead: {
-            subject: 'Enterprise enquiry: {{company}}',
-            company: 'Company: {{company}}',
-            name: 'Name: {{name}} <{{email}}>',
-            seats: 'Seats: {{seats}}',
-            expectedVolumes: 'Expected volumes: {{expectedVolumes}}',
-            notStated: 'Not stated',
         },
         verifyEmail: {
             subject: 'Verify your email address',
@@ -372,13 +301,9 @@ export const en = {
             warningSubject: 'Your RankMeFast account will be deleted',
             warningBody: 'Hi {{name}},\n\nYou requested to delete your RankMeFast account. Your data will be permanently purged at {{purgeAt}}.\n\nIf you change your mind, sign in and cancel the deletion before that time.',
         },
-        twoFactor: {
-            adminRequired: 'Two-factor authentication is required for admin accounts. Enrol a second factor in Settings → Security to continue.',
-        },
     },
     audits: {
         started: 'Audit started.',
-        capClamped: 'Audit page cap clamped to {{cap}} pages (plan limit).',
         errors: {
             recheckUnavailable: 'This finding cannot be re-checked here. Run a new audit to check it again.',
             runInProgress: 'An audit is already running for this site.',
@@ -407,10 +332,8 @@ export const en = {
             noSnapshot: 'No dated report data is available for the selected sections.',
             queueUnavailable: 'Report delivery is not configured. Try again shortly.',
             rateLimited: 'Too many report requests. Try again shortly.',
-            scheduleCapExceeded: 'Your plan has reached its scheduled-report limit.',
             scheduleNotFound: 'That report schedule was not found.',
             deliveryNotFound: 'That delivery entry was not found.',
-            portalCapExceeded: 'Your plan has reached its client-portal limit.',
             portalNotFound: 'That client portal link is invalid, expired, or revoked.',
         },
         email: {
@@ -420,9 +343,10 @@ export const en = {
     },
     branding: {
         errors: {
-            logoMalformed: 'Choose a valid PNG logo. The file was not saved.',
-            logoTooLarge: 'The logo file is too large. Choose a PNG up to 256 KB.',
-            logoDimensions: 'The logo dimensions are too large. Use a PNG up to 1,024 by 1,024 pixels.',
+            logoMalformed: 'Choose a valid PNG, JPEG or SVG logo. The file was not saved.',
+            logoTooLarge: 'The logo file is too large. Choose a file up to 256 KB.',
+            logoDimensions: 'The logo dimensions are too large. Use an image up to 1,024 by 1,024 pixels.',
+            logoUnsafeSvg: 'This SVG contains scripts, embedded content or links to other files. Export a plain SVG, or upload a PNG or JPEG. The file was not saved.',
         },
     },
     report: {
@@ -446,9 +370,9 @@ export const en = {
             notRanked: 'Not in tracked results',
             engines: { google: 'Google', bing: 'Bing', youtube: 'YouTube', amazon: 'Amazon' },
             gscSummary: 'Search Console summary ({{days}} days)',
-            gscTotals: 'Clicks {{clicks}} · Impressions {{impressions}} · CTR {{ctr}}% · Average position {{position}} · Snapshot {{date}}',
+            gscTotals: 'Clicks {{clicks}} · Impressions {{impressions}} · CTR {{ctr}} · Average position {{position}} · Snapshot {{date}}',
             topQueries: 'Top queries',
-            gscQueryRow: '{{query}} — {{clicks}} clicks · {{impressions}} impressions · {{ctr}}% CTR · position {{position}} · snapshot {{date}}',
+            gscQueryRow: '{{query}} — {{clicks}} clicks · {{impressions}} impressions · {{ctr}} CTR · position {{position}} · snapshot {{date}}',
             page: 'Page {{n}} of {{total}}',
         },
     },
@@ -818,7 +742,6 @@ export const en = {
             marketMoveNoDefault: 'Choose a site market before moving keywords.',
             marketMoveStale: 'The keyword list or site market changed. Review the move and try again.',
             keywordDuplicate: 'That keyword is already tracked for this site.',
-            keywordCapExceeded: 'Your plan has reached its keyword limit. Upgrade to track more keywords.',
             altEnginesUnavailable: 'Bing, YouTube, and Amazon tracking is turned off right now.',
             altEngineSlotsExceeded: 'Your plan has reached its limit of {{limit}} Bing, YouTube, and Amazon keywords. Upgrade to track more.',
             altEngineChecksExhausted: 'You have used every Bing, YouTube, and Amazon check in this plan period. Buy a check pack or upgrade.',
@@ -827,7 +750,6 @@ export const en = {
             amazonAsinInvalid: 'Enter a ten-character Amazon ASIN, for example B08N5WRWNW.',
             engineTargetNotAllowed: 'Google and Bing follow your own site, so leave this field empty.',
             keywordNotFound: 'Keyword not found.',
-            dailyRequiresUpgrade: 'Daily rank tracking requires an upgraded plan.',
             checkCooldown: 'A rank check just ran — please wait a minute before checking again.',
             rankJobNotFound: 'Rank check not found.',
             rankJobStillRunning: 'That rank check is still running. Retry the failed keywords once it finishes.',
@@ -894,9 +816,7 @@ export const en = {
             lookupIdInvalid: 'The lookup identifier is not valid.',
             historyIdInvalid: 'That history entry identifier is not valid.',
             historyNotFound: 'That research entry was not found.',
-            upgradeRequired: 'Keyword research is a Pro feature. Upgrade to unlock volume, difficulty, and related keywords.',
             unavailable: 'Keyword research is temporarily unavailable. Please try again shortly.',
-            capExceeded: 'Your plan\'s keyword lookup cap ({{used}}/{{limit}} {{metric}}) is exhausted. Upgrade or buy a credit pack to research more keywords.',
             competitorsRequired: 'Enter at least one competitor domain.',
             tooManyCompetitors: 'You can compare up to three competitor domains at a time.',
             competitorsDuplicate: 'Remove the duplicate competitor domain.',
@@ -944,9 +864,6 @@ export const en = {
             coverageNote: {
                 searchInterestIndex: 'Values are Google\'s 0–100 search-interest index, not raw traffic — read as a shape, not a volume.',
             },
-            preview: {
-                notOnPlan: 'Keyword Trends is not on your plan.',
-            },
         },
     },
     backlinks: {
@@ -957,17 +874,13 @@ export const en = {
                 runNotFound: 'Link review not found.',
                 runNotReady: 'This link review is not ready to export yet.',
             },
-            preview: {
-            },
         },
         errors: {
-            upgradeRequired: 'Backlinks are a Pro feature. Upgrade to see your link profile and domain rating.',
             unavailable: 'Backlink data is temporarily unavailable — we\'ll retry on the next run.',
             siteNotFound: 'Site not found.',
             domainInvalid: 'Enter a valid domain, like example.com.',
             gapDomainConflict: 'Your own domain cannot be listed as a competitor.',
             limitInvalid: 'Enter a valid row limit.',
-            capExceeded: 'Your plan\'s backlink row cap ({{used}}/{{limit}} {{metric}}) is exhausted. Upgrade or buy a credit pack to fetch more rows.',
             refreshCooldown: 'Refresh limit reached. Try again in {{seconds}} second(s).',
         },
         runStatus: {
@@ -984,14 +897,11 @@ export const en = {
     },
     competitors: {
         errors: {
-            upgradeRequired: 'This legacy competitor overlap view requires Agency. Competitor Intelligence keyword landscapes start on Pro.',
             unavailable: 'Competitor data is temporarily unavailable — we\'ll retry on the next run.',
             siteNotFound: 'Site not found.',
             competitorRequired: 'Enter a competitor domain.',
             competitorTooLong: 'That domain is too long.',
-            capExceeded: 'You\'ve used all your competitor lookups ({{used}}/{{limit}}). Upgrade your plan to run more.',
             refreshCooldown: 'Refresh limit reached. Try again in {{seconds}} second(s).',
-            suggestionCapExceeded: 'You have used all your suggestion generations for this month.',
             suggestionFailed: 'We could not build suggestions right now. Your generation was not counted — try again shortly.',
         },
         landscape: {
@@ -1000,10 +910,8 @@ export const en = {
                 opportunityNotFound: 'That opportunity is not in this report.',
                 idempotencyInvalid: 'Use a valid idempotency key.',
                 cursorInvalid: 'That landscape cursor is invalid.',
-                capExceeded: 'You do not have enough keyword lookups for this landscape.',
                 competitorNotFound: 'One or more selected competitors are unavailable.',
                 queueUnavailable: 'The landscape could not be queued. Try again later.',
-                selectionLimit: 'Choose fewer competitors for your plan.',
                 unavailable: 'Competitor Intelligence is temporarily unavailable.',
                 pageMatchInvalid: 'Choose approve or reject and provide both reviewed page URLs when approving.',
                 pageMatchNotFound: 'That ranking-page suggestion is not in this report.',
@@ -1054,27 +962,6 @@ export const en = {
             competitorLandscape: 'Observed in the accepted competitor landscape report.',
         },
     },
-    packs: {
-        unavailable: 'This credit pack is not configured for purchase right now.',
-        trafficSnapshots: {
-            available: 'Add {{units}} traffic snapshots for {{price}} when your allowance runs out.',
-        },
-        trendExplorations: {
-            available: 'Add {{units}} keyword-trend explorations for {{price}} when your allowance runs out.',
-        },
-        reviewSyncs: {
-            available: 'Add {{units}} review syncs for {{price}} when your allowance runs out.',
-        },
-        brandScans: {
-            available: 'Add {{units}} brand scans for {{price}} when your allowance runs out.',
-        },
-        altEngineChecks: {
-            available: 'Add {{units}} Bing, YouTube, and Amazon checks for {{price}} when your allowance runs out.',
-        },
-        contentBriefs: {
-            available: 'Add {{units}} content briefs for {{price}} when your allowance runs out.',
-        },
-    },
     cannibalization: {
         preview: {
             oneReport: 'One cannibalization report.',
@@ -1083,7 +970,6 @@ export const en = {
             notFound: 'Cannibalization report not found.',
             productUnavailable: 'Cannibalization reports are temporarily unavailable. Please try again later.',
             awaitingSync: 'No Search Console query and page rows are stored for this window yet. They arrive with the next sync.',
-            overCap: 'You have used every cannibalization report on your plan this month.',
             rateLimited: 'Too many cannibalization report requests. Try again in a minute.',
             invalidWindow: 'Choose a window of seven, 28, or 90 days.',
         },
@@ -1095,7 +981,6 @@ export const en = {
             productUnavailable: 'Internal-link suggestions are temporarily unavailable. Please try again later.',
             inventoryMissing: 'Run your content inventory before creating internal-link suggestions.',
             inventoryStale: 'Re-run your content inventory before creating internal-link suggestions.',
-            overCap: 'You have used every internal-link suggestion run on your plan this month.',
             rateLimited: 'Too many internal-link suggestion requests. Try again in a minute.',
             queueFailed: 'The suggestion run could not be queued. Please try again later.',
             processingFailed: 'The suggestion run failed. Your stored inventory was not changed.',
@@ -1107,7 +992,6 @@ export const en = {
             notFound: 'Clustering run not found.',
             productUnavailable: 'Keyword clustering is temporarily unavailable. Please try again later.',
             notEnoughKeywords: 'At least two tracked keywords need a rank check from the last seven days before they can be clustered.',
-            overCap: 'You have used every keyword clustering run on your plan this month.',
             rateLimited: 'Too many clustering requests. Try again in a minute.',
             queueFailed: 'The clustering run could not be queued. Please try again later.',
             processingFailed: 'The clustering run failed. Your stored observations were not changed.',
@@ -1125,7 +1009,6 @@ export const en = {
         errors: {
             notFound: 'Content brief not found.',
             unavailable: 'Content briefs are temporarily unavailable. Please try again later.',
-            overCap: 'You have used every content brief available to your plan this month.',
             keywordNotTracked: 'Track this Google keyword before requesting a content brief.',
             draftLimit: 'This brief already has the maximum number of draft versions.',
             notReady: 'Wait until the brief finishes before scoring a draft.',
@@ -1144,7 +1027,6 @@ export const en = {
         errors: {
             unavailable: 'Geogrid scans are temporarily unavailable. Please try again later.',
             notFound: 'Geogrid scan not found.',
-            capExceeded: 'You have used every geogrid scan available to your plan this month.',
             keywordNotTracked: 'Track this Google keyword before running a geogrid scan.',
             rateLimited: 'Too many geogrid requests. Try again in a minute.',
         },
@@ -1158,7 +1040,6 @@ export const en = {
     alerts: {
         errors: {
             unavailable: 'Alerts are temporarily unavailable. Please try again later.',
-            channelNotOnPlan: 'Slack and webhook channels need the Pro plan or higher.',
             rateLimited: 'Too many alert requests. Try again in a minute.',
             siteNotFound: 'Site not found.',
             ruleNotFound: 'Alert rule not found.',
@@ -1197,8 +1078,6 @@ export const en = {
         errors: {
             notFound: 'Brand scan not found.',
             productUnavailable: 'Brand Radar is temporarily unavailable. Please try again later.',
-            overCap: 'You have used every brand scan on your plan this month.',
-            notOnPlan: 'Brand Radar needs the Pro or Agency plan. On Pro it also needs the Brand Radar add-on.',
             addonRequired: 'Add the Brand Radar add-on to run brand scans on your plan.',
             rateLimited: 'Too many brand scan requests. Try again in a minute.',
             invalidCursor: 'The brand scan page cursor is invalid.',
@@ -1211,11 +1090,7 @@ export const en = {
         },
     },
     reviewIntelligence: {
-        preview: {
-            notOnPlan: 'Review Intelligence is not on your plan.',
-        },
         errors: {
-            overCap: 'You have used every review sync on your plan this month.',
             productUnavailable: 'Review Intelligence is temporarily unavailable. Please try again later.',
             notFound: 'Review data not found.',
             invalidTarget: 'Enter a valid business ID for that review source.',
@@ -1226,9 +1101,6 @@ export const en = {
         },
     },
     trafficInsights: {
-        preview: {
-            notOnPlan: 'Traffic Insights is not on your plan.',
-        },
         compare: {
             clamped: 'Only the first {{count}} snapshots were compared.',
             invalidSelection: 'Choose at least two different traffic snapshots to compare.',
@@ -1247,13 +1119,11 @@ export const en = {
         errors: {
             unavailable: 'AI visibility is temporarily unavailable. Try again shortly.',
             suggestionFailed: 'We could not generate prompt suggestions. Please try again.',
-            suggestionCapExceeded: 'You have used all your suggestion generations for this month.',
             promptCapReached: 'You can track up to ten AI prompts per site.',
             promptAlreadyTracked: 'You already track this prompt.',
             promptRequired: 'Enter a prompt to track.',
             promptNotFound: 'Tracked prompt not found.',
             siteNotFound: 'Site not found.',
-            capExceeded: 'You have used all your AI visibility checks for this month.',
             refreshCooldown: 'Check limit reached. Try again in {{seconds}} second(s).',
             refreshCooldown_zero: 'Check limit reached. Try again in {{seconds}} seconds.',
             refreshCooldown_one: 'Check limit reached. Try again in {{seconds}} second.',
@@ -1268,7 +1138,6 @@ export const en = {
             siteNotFound: 'Site not found.',
             keywordNotFound: 'Tracked keyword not found.',
             unavailable: 'Local SEO data is temporarily unavailable. Try again shortly.',
-            capExceeded: 'You have used all your local listing checks for this month.',
             refreshCooldown: 'Refresh limit reached. Try again in {{seconds}} second(s).',
             refreshCooldown_zero: 'Refresh limit reached. Try again in {{seconds}} seconds.',
             refreshCooldown_one: 'Refresh limit reached. Try again in {{seconds}} second.',
@@ -1304,7 +1173,6 @@ export const en = {
             urlNoTld: 'Enter a full domain name, like https://example.com.',
             duplicate: 'That site is already in your account.',
             duplicateAlias: 'That site is already in your account as {{domain}}. The www and non-www addresses count as one site.',
-            capExceeded: 'Your plan has reached its site limit. Upgrade to add more sites.',
             notFound: 'Site not found.',
             deleteWhileRunning: 'Wait for the running audit to finish before removing this site.',
             paused: 'This site is paused. Resume it to run checks and audits.',
@@ -1312,43 +1180,6 @@ export const en = {
             notPaused: 'This site is not paused.',
             invalidMarket: 'Choose a country and language from the list for this site.',
             marketsUnavailable: 'The list of countries and languages could not be loaded. Try again in a moment.',
-        },
-    },
-    admin: {
-        errors: {
-            cannotDemoteLastAdmin: 'You cannot remove your own admin role — you are the last admin.',
-            cannotSuspendLastAdmin: 'You cannot suspend your own account — you are the last active admin.',
-            cannotModifySuperAdmin: "A SuperAdmin account cannot be modified from the admin panel.",
-            webhookReplayFailed: 'Webhook replay failed.',
-            webhookNotFound: 'Webhook event not found.',
-            webhookNoPayload: 'This webhook event has no captured payload to replay.',
-        },
-        refund: {
-            errors: {
-                notFound: 'Order not found.',
-                notRefundable: 'This order cannot be refunded.',
-                providerFailure: 'The payment provider rejected the refund. Please try again.',
-            },
-        },
-    },
-    enterprise: {
-        leadReceived: 'Thanks — our team will be in touch shortly.',
-        agreementSaved: 'Agreement saved.',
-        agreementActivated: 'Agreement activated.',
-        agreementSuspended: 'Agreement suspended.',
-        agreementEnded: 'Agreement ended.',
-        leadStatusUpdated: 'Lead status updated.',
-        errors: {
-            agreementNotFound: 'No enterprise agreement exists for that account.',
-            agreementEnded: 'That agreement has ended and can no longer be edited.',
-            productIdTaken: 'That Polar product is already linked to another agreement.',
-            productIdReserved: 'That Polar product id belongs to a standard plan or pack.',
-            invalidCaps: 'Enterprise limits must use known metrics and finite whole numbers.',
-            invalidCap: '{{metric}} must be a whole number from 0 to {{maximum}} for an Enterprise agreement.',
-            invalidSeats: 'Enterprise seats must be a whole number from 1 to {{maximum}}.',
-            priceBelowFloor: 'The agreed price is below the Enterprise commercial and margin floor. The minimum is {{floorCents}} cents per month.',
-            leadNotFound: 'That lead no longer exists.',
-            notEnterprise: 'That account is not on an enterprise agreement.',
         },
     },
     team: {
@@ -1359,7 +1190,6 @@ export const en = {
         roleChanged: 'Role updated.',
         inviteResent: 'A new invite link was sent to {{email}}.',
         errors: {
-            seatCapExceeded: 'You have used every seat on your plan. Upgrade to invite more teammates.',
             alreadyInvited: 'That email already has a pending invite.',
             alreadyMember: 'That email is already a member of the team.',
             inviteNotFound: 'That invite link is invalid.',
@@ -1373,15 +1203,6 @@ export const en = {
             inviteDeliveryFailed: 'The invitation email could not be delivered. No invitation was created.',
             provisionalRestricted: 'Change your temporary password and accept an invitation to continue.',
             inviteBeingCleaned: 'That invited account is being cleaned up. Try again shortly.',
-        },
-    },
-    superadmin: {
-        errors: {
-            invalidSort: 'That sort column is not allowed.',
-            cannotSelfDemote: 'You cannot remove your own SuperAdmin role.',
-            cannotDeleteSelf: 'You cannot delete your own SuperAdmin account.',
-            cannotDemoteLastSuperAdmin: 'You cannot remove the last SuperAdmin.',
-            cannotSuspendLastSuperAdmin: 'You cannot suspend the last SuperAdmin.',
         },
     },
     apiKeys: {
@@ -1437,6 +1258,8 @@ export const en = {
             getBacklinksSummary: { description: 'Return the stored backlink summary for an owned site: total backlinks, distinct referring domains, and when it was fetched. Read-only; it never fetches fresh data and never uses backlink rows. Quote the fetched date and keep the two counts apart.' },
             listBacklinks: { description: 'List stored backlinks for an owned site, one link per referring domain, with suspicion flags that are suspected and not verified. Read-only; reads only stored rows and never uses backlink rows. Quote the fetched date and the scope.' },
             listCompetitors: { description: 'List the competitor portfolio for an owned site, active and archived profiles. Read-only; no scraping and no spend.' },
+            listKeywordResearchHistory: { description: 'List the account\'s stored keyword research history: what was searched, when, and the location and language. Read-only; never calls the data provider.' },
+            getKeywordResearchResult: { description: 'Return the stored result for one keyword research history entry, with status available, partial, expired, or unsupported. Reads the stored cache only; never refreshes and never calls the data provider. Quote the fetched date.' },
             getAiVisibilitySummary: { description: 'Return the stored AI Visibility summary for an owned site: tracked prompts, the latest checks per engine, and share of voice. Read-only; never runs a check. Quote the check dates and say when evidence is limited.' },
             getLocalSeoSummary: { description: 'Return the stored Local SEO summary for an owned site: business profile snapshot, name-address-phone consistency, and local-pack ranks. Read-only; never refreshes listings.' },
             getReviewsSummary: { description: 'Return the stored reviews summary for an owned site: review sources and readiness, rating stats, and stored themes. Read-only; never starts a review sync.' },
@@ -1564,7 +1387,6 @@ export const en = {
                 runInFlight: 'An inventory run is already in progress for this site. Wait for it to finish before starting another.',
                 originUnsafe: 'This site address points to a blocked or internal location and cannot be crawled.',
                 seedUnsafe: 'A sitemap address you provided points to a blocked or internal location.',
-                capExceeded: 'You have used all of your content inventory page blocks for this month.',
                 queueUnavailable: 'The inventory queue is unavailable. Please try again shortly.',
                 notFound: 'Inventory run not found.',
                 notCancellable: 'This inventory run has already finished.',
@@ -1593,7 +1415,6 @@ export const en = {
             errors: {
                 unavailable: 'Competitor content intelligence is temporarily unavailable. Please try again later.',
                 runInFlight: 'A competitor comparison is already in progress for this site. Wait for it to finish before starting another.',
-                capExceeded: 'You have used all of your competitor comparison runs for this month.',
                 queueUnavailable: 'The comparison queue is unavailable. Please try again shortly.',
                 notFound: 'Competitor comparison not found.',
                 notCancellable: 'This competitor comparison has already finished.',
@@ -1650,7 +1471,6 @@ export const en = {
                 cursorInvalid: 'That page cursor is invalid.',
             },
             warnings: {
-                capExhausted: 'You have used all of your monitoring checks for this month, so this monitor is paused until next month.',
                 providerDrift: 'This monitor was out of step with the provider and has been brought back in sync.',
             },
         },
@@ -1912,7 +1732,6 @@ export const en = {
             siteNotFound: 'Site not found.',
             pageNotFound: 'Page not found in the current source inventory.',
             rateLimited: 'Too many Pages requests. Try again shortly.',
-            capExceeded: 'You have reached the keyword lookup allowance for this period.',
             gscUnavailable: 'Search Console data is temporarily unavailable. Your last successful data is still available when possible.',
             providerUnavailable: 'Ranking data is temporarily unavailable. Try the refresh again later.',
             refreshFailed: 'The Pages refresh could not be saved. Your last successful data was kept.',

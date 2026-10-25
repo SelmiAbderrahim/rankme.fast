@@ -80,7 +80,7 @@ describe('AssistantToolCard', () => {
     expect(screen.getByText('empty keyword')).toBeInTheDocument();
   });
 
-  it('shows each check\'s position change with the shared PositionDelta (production QA 3, F-AE)', async () => {
+  it('shows each check\'s position change with the shared PositionDelta', async () => {
     await renderOpen(
       call('get_rank_history'),
       result('get_rank_history', {
@@ -308,7 +308,7 @@ describe('AssistantToolCard', () => {
   });
 });
 
-describe('AssistantToolCard — stored-read dates (QA round 2, T6)', () => {
+describe('AssistantToolCard — stored-read dates', () => {
   afterEach(() => {
     vi.unstubAllGlobals();
   });
@@ -340,7 +340,7 @@ describe('AssistantToolCard — stored-read dates (QA round 2, T6)', () => {
     },
   );
 
-  describe('QA 03: a failed step explains itself and never shows raw JSON', () => {
+  describe('a failed step explains itself and never shows raw JSON', () => {
     const failed = (errorCode?: string) =>
       result(
         'list_actions',

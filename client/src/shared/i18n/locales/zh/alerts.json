@@ -132,14 +132,6 @@
     }
   },
   "states": {
-    "cap": {
-      "title": "已达规则上限",
-      "body": "目前无法再添加提醒规则。"
-    },
-    "tierLocked": {
-      "title": "该渠道需要更高套餐",
-      "body": "Slack 与 Webhook 渠道需要 Pro 及以上套餐。"
-    },
     "disabled": {
       "title": "提醒已暂停",
       "body": "提醒功能暂时不可用。你的规则与记录仍然保留。"

@@ -13,6 +13,7 @@ import type {
   MetricsResponse,
   OverviewResponse,
   RelatedResponse,
+  StoredKeywordsResponse,
   StoredResearchResult,
   TrendsExplorationDto,
   TrendsListResponse,
@@ -125,6 +126,26 @@ export const fetchStoredResultRequest = (
   apiClient<StoredResearchResult>(
     `/keyword-research/history/${encodeURIComponent(historyId)}/results`,
   );
+
+export interface StoredKeywordsRequestArgs {
+  locationCode: number;
+  languageCode: string;
+  q?: string;
+  limit?: number;
+}
+
+/** Every phrase the account already stored for one market. Never calls a provider. */
+export const fetchStoredKeywordsRequest = (
+  args: StoredKeywordsRequestArgs,
+): Promise<StoredKeywordsResponse> => {
+  const params = new URLSearchParams({
+    locationCode: String(args.locationCode),
+    languageCode: args.languageCode,
+  });
+  if (args.q) params.set('q', args.q);
+  if (args.limit !== undefined) params.set('limit', String(args.limit));
+  return apiClient<StoredKeywordsResponse>(`/keyword-research/stored-keywords?${params.toString()}`);
+};
 
 // ---------------------------------------------------------------------------
 // Gap / overview / trends / preview / clusters / decisions.

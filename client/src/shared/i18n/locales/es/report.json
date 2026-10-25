@@ -315,8 +315,7 @@
   "pdf": {
     "download": "Descargar PDF",
     "downloading": "Preparando el PDF…",
-    "error": "No se pudo preparar el PDF. Inténtalo de nuevo.",
-    "upgradeHint": "Los informes en PDF están disponibles en los planes Pro y Agency."
+    "error": "No se pudo preparar el PDF. Inténtalo de nuevo."
   },
   "gscBlock": {
     "sectionTitle": "Rendimiento de búsqueda de Google (últimos 28 días)",

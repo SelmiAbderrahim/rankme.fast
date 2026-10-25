@@ -15,7 +15,7 @@ Traffic Insights saves a snapshot of a competitor domain: modeled monthly organi
 
 ## What one unit covers
 
-Each target-domain snapshot you submit uses one `traffic_snapshots` unit. If you preview several domains at once, the preview shows one unit per domain, and each confirmed domain becomes its own snapshot. Previewing, or cancelling a preview, costs nothing.
+Each target-domain snapshot you submit uses one `traffic_snapshots` unit. If you preview several domains at once, the preview shows one unit per domain, and each confirmed domain becomes its own snapshot. Previewing, or canceling a preview, costs nothing.
 
 Current monthly allowances and pack prices are on [Pricing](./pricing.en.md). Opening, filtering or comparing snapshots you already have only reads saved data, so it uses no new unit.
 
@@ -30,6 +30,8 @@ The compare view lines up to five saved snapshots side by side. It doesn't fill 
 A cached snapshot still counts as one unit, and so does a successful snapshot that comes back empty.
 
 Each snapshot combines several related lookups. If all of them fail and RankMeFast keeps no result, the unit is returned once. If any usable part is kept, the snapshot is saved as partial or complete and the unit stays spent. A network retry can't refund the same unit twice.
+
+Choose the **Market** (country and language) for the estimate; it starts from the site's own market. Paste a full address and RankMeFast keeps only the domain. A domain you typed stays in the field while the page finishes loading.
 
 ## When to refresh
 

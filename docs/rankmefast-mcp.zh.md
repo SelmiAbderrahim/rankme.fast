@@ -13,7 +13,7 @@ RankMeFast 提供远程 [Model Context Protocol (MCP)](https://modelcontextproto
 
 ## 五分钟完成设置
 
-1. 打开[设置 → API 密钥](/profile?tab=api-keys)，选择**创建密钥**，并在密钥出现后立即复制。RankMeFast 只会完整显示一次密钥。
+1. 打开[设置 → API 密钥](/settings/profile?tab=api-keys)，选择**创建密钥**，并在密钥出现后立即复制。RankMeFast 只会完整显示一次密钥。
 2. 使用 RankMeFast MCP 端点：
 
    ```text
@@ -39,7 +39,7 @@ RankMeFast 提供远程 [Model Context Protocol (MCP)](https://modelcontextproto
 
 ## 控制权限与密钥范围
 
-打开[设置 → MCP](/profile?tab=mcp)，可管理 MCP 与登录状态下的 AI 助手共同使用的账户默认权限：
+打开[设置 → MCP](/settings/profile?tab=mcp)，可管理 MCP 与登录状态下的 AI 助手共同使用的账户默认权限：
 
 1. 开启或关闭每个 RankMeFast 工具。
 2. 将**允许的站点**保留为全部站点，或选择工具可以使用的站点。
@@ -48,7 +48,7 @@ RankMeFast 提供远程 [Model Context Protocol (MCP)](https://modelcontextproto
 
 在你主动修改之前，账户默认权限全部开放，因此现有密钥会继续工作。助手通过你的登录会话直接使用这些默认权限。
 
-你可以在[设置 → API 密钥](/profile?tab=api-keys)中创建密钥时添加更严格的范围，也可以之后编辑。密钥范围只能收紧访问权限。MCP 的最终访问权限始终是两者的交集：
+你可以在[设置 → API 密钥](/settings/profile?tab=api-keys)中创建密钥时添加更严格的范围，也可以之后编辑。密钥范围只能收紧访问权限。MCP 的最终访问权限始终是两者的交集：
 
 - 只有账户和密钥都允许时，工具才可用。
 - 如果账户和密钥都选择了站点，则只有同时出现在两个列表中的站点可用。
@@ -405,6 +405,8 @@ Visual Studio、JetBrains IDE、Xcode 和 Eclipse 中的 GitHub Copilot 使用�
 | `get_backlinks_summary` | 返回某个站点的反向链接总数和不同的引用域名数 | 否 |
 | `list_backlinks` | 列出已存储的反向链接，每个引用域名一条 | 否 |
 | `list_competitors` | 列出站点的竞争对手组合，包括活跃和已归档的 | 否 |
+| `list_keyword_research_history` | 列出你的关键词研究历史 | 否 |
+| `get_keyword_research_result` | 返回某条关键词研究记录已存储的结果 | 否 |
 | `get_ai_visibility_summary` | 返回 AI Visibility 提示词、最新检查和声量份额 | 否 |
 | `get_local_seo_summary` | 返回本地 SEO 资料快照和本地包排名 | 否 |
 | `get_reviews_summary` | 返回评价来源、评分统计和已存储的主题 | 否 |
@@ -421,6 +423,7 @@ Visual Studio、JetBrains IDE、Xcode 和 Eclipse 中的 GitHub Copilot 使用�
 - **权限在每次调用时生效。** 每次调用都会检查 **设置 → MCP** 中的账户开关、密钥自身的范围以及允许的站点列表。你无法访问或属于其他账户的站点会按未找到返回。
 - **新工具默认允许。** 它们与其他只读工具使用相同的默认值，在它们出现之前保存的权限设置会继续照常工作。
 - **结果有大小限制。** 列表最多返回 100 行，结果也保持较小；行被截断时，结果会标明 `truncated: true`。
+- **关键词研究读取已存储的缓存。** `get_keyword_research_result` 从共享关键词缓存中重新打开一次查询，并将 `storedStatus` 报告为 `available`、`partial`、`expired` 或 `unsupported`。它从不刷新数据。你无权访问的站点的历史记录会返回为未找到。
 
 [AI 助手](./ai-assistant.zh.md)使用相同的工具和相同的权限。在关联了站点的对话中，它会直接使用该站点，不需要先列出你的站点。
 
@@ -436,13 +439,13 @@ Visual Studio、JetBrains IDE、Xcode 和 Eclipse 中的 GitHub Copilot 使用�
 - **503 Unavailable：**该 RankMeFast 安装的 MCP 已禁用或暂时不可用；请联系其运维人员。
 - **本地可用，但通过代理后不可用：**确保代理将 `Authorization`、`Content-Type` 和 `Accept` 请求头转发到 `/api/mcp`。
 
-如需更换密钥，请先创建新密钥，更新并验证每个客户端，然后从[设置 → API 密钥](/profile?tab=api-keys)吊销旧密钥。吊销会立即生效。
+如需更换密钥，请先创建新密钥，更新并验证每个客户端，然后从[设置 → API 密钥](/settings/profile?tab=api-keys)吊销旧密钥。吊销会立即生效。
 
 ## 兼容性
 
-此版本包含上表中的 23 个工具。其中 21 个只读，`set_action_state` 会写入但不产生费用，`start_audit` 是唯一消耗服务商预算的工具。品牌雷达、评论智能、链接智能、流量洞察和关键词趋势均没有 MCP 工具。变更只做增量：现有工具的名称和参数结构保持不变，新功能上线时可能增加新工具。
+此版本包含上表中的 25 个工具。其中 23 个只读，`set_action_state` 会写入但不产生费用，`start_audit` 是唯一消耗服务商预算的工具。品牌雷达、评论智能、链接智能、流量洞察和关键词趋势均没有 MCP 工具。变更只做增量：现有工具的名称和参数结构保持不变，新功能上线时可能增加新工具。
 
-<!-- mcp-tools: list_sites; get_latest_audit_report; list_keywords; get_rank_history; list_content_analyses; get_content_analysis; start_audit; get_audit_status; list_actions; set_action_state; get_gsc_search_summary; list_gsc_top_queries; list_gsc_top_pages; get_ga4_summary; list_pages; get_page_detail; get_backlinks_summary; list_backlinks; list_competitors; get_ai_visibility_summary; get_local_seo_summary; get_reviews_summary; list_client_reports -->
+<!-- mcp-tools: list_sites; get_latest_audit_report; list_keywords; get_rank_history; list_content_analyses; get_content_analysis; start_audit; get_audit_status; list_actions; set_action_state; get_gsc_search_summary; list_gsc_top_queries; list_gsc_top_pages; get_ga4_summary; list_pages; get_page_detail; get_backlinks_summary; list_backlinks; list_competitors; list_keyword_research_history; get_keyword_research_result; get_ai_visibility_summary; get_local_seo_summary; get_reviews_summary; list_client_reports -->
 
 ## 相关指南
 

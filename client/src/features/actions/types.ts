@@ -152,6 +152,8 @@ export interface ActionHistoryEntry {
   /** True when the signed-in user made this change. */
   actorIsYou?: boolean;
   note: string | null;
+  /** Set when the system, not a team member, wrote the entry. */
+  reasonCode?: 'audit_regression' | null;
   createdAt: string;
 }
 

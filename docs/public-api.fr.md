@@ -15,7 +15,7 @@ Content Intelligence ne fait pas partie de `/api/v1` : lancer une analyse ou mod
 
 ## Authentification
 
-Créez une clé dans **Compte → Clés API** (`/profile?tab=api-keys`). La clé complète n'est affichée **qu'une seule fois** : copiez-la immédiatement ; ensuite seul son préfixe reste visible. Vous pouvez détenir jusqu'à dix clés actives et en révoquer à tout moment. Une clé révoquée cesse de fonctionner immédiatement.
+Créez une clé dans **Compte → Clés API** (`/settings/profile?tab=api-keys`). La clé complète n'est affichée **qu'une seule fois** : copiez-la immédiatement ; ensuite seul son préfixe reste visible. Vous pouvez détenir jusqu'à dix clés actives et en révoquer à tout moment. Une clé révoquée cesse de fonctionner immédiatement.
 
 Envoyez la clé comme jeton bearer sur chaque requête :
 

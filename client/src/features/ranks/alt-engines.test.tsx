@@ -259,7 +259,7 @@ describe('AddKeywordForm — engine picker', () => {
     await user.click(screen.getByRole('button', { name: /track/i }));
 
     expect(
-      await screen.findByText('Tell us which channel or product to follow on this engine.'),
+      await screen.findByText('Enter the channel or product to follow on this engine.'),
     ).toBeInTheDocument();
     expect(onSubmit).not.toHaveBeenCalled();
   });

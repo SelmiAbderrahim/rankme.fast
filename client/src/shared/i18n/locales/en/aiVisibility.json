@@ -120,7 +120,6 @@
     "aiGenerated": "AI suggested",
     "generate": "Generate suggestions",
     "cooldown_one": "Wait {{seconds}}s before generating again.",
-    "capReached": "You have used all your suggestion generations this month.",
     "emptyGenerated": "We could not build questions from your data yet. Add tracked keywords or run an audit, then generate again.",
     "generatedAt": "Generated {{date}}",
     "outputLocale": "Output language: {{locale}}",
@@ -144,10 +143,6 @@
     "regenerate": "Regenerate suggestions",
     "staleBody": "They were made before suggestions used only this site's own data, so we've hidden them. Generate a new set with the button above. Nothing is used until you click it.",
     "staleTitle": "These suggestions are out of date"
-  },
-  "locked": {
-    "body": "AI Visibility is available on the Agency plan.",
-    "upgrade": "See plans"
   },
   "add": {
     "failed": "Could not add that prompt."

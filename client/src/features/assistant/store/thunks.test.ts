@@ -183,7 +183,7 @@ describe('assistant streaming thunk', () => {
   it.each([
     ['server status', { finishReason: 'stop', status: 'incomplete' }],
     ['length finish from an older server', { finishReason: 'length' }],
-  ])('marks a cut-off reply incomplete without a stream error (QA4 issue 6) — %s', async (_label, done) => {
+  ])('marks a cut-off reply incomplete without a stream error — %s', async (_label, done) => {
     vi.spyOn(globalThis, 'fetch').mockResolvedValue(
       streamResponse([
         frame('meta', { conversationId: 'c1', userMessageId: 'u1', assistantMessageId: 'a1', responseLocale: 'en' }),

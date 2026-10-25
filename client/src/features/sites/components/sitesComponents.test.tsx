@@ -106,7 +106,7 @@ describe('AddSiteForm', () => {
     await user.type(input, 'ftp://example.com');
     await user.click(screen.getByRole('button', { name: 'Add site' }));
 
-    const error = await screen.findByText('Only http:// and https:// URLs are supported.');
+    const error = await screen.findByText('Enter a URL that starts with http:// or https://.');
     expect(error).toHaveAttribute('id', 'site-url-error');
     expect(input).toHaveAttribute('aria-describedby', 'site-url-error');
     expect(input).toHaveAttribute('aria-invalid', 'true');
@@ -251,6 +251,13 @@ describe('SitesPage', () => {
     expect(screen.getAllByText('My blog').length).toBeGreaterThan(0);
     expect(screen.getAllByText('b.example.com').length).toBeGreaterThan(0);
     expect(screen.getByRole('columnheader', { name: 'Added' })).toBeInTheDocument();
+  });
+
+  it('shows no pager when the whole list fits on one page', () => {
+    const store = makeStore({ loaded: true, items: [site('a')], nextCursor: null, cursorStack: [] });
+    renderWith(<SitesPage />, store);
+    expect(screen.queryByRole('button', { name: 'Next' })).toBeNull();
+    expect(screen.queryByRole('button', { name: 'Previous' })).toBeNull();
   });
 
   it('paginates forward and back through cursors', async () => {
@@ -450,6 +457,22 @@ describe('SitesTable', () => {
     await waitFor(() => expect(dialog).not.toBeInTheDocument());
   });
 
+  it('opens the rename field on the domain a never-renamed site shows, and saving it unchanged keeps the default name', async () => {
+    const user = userEvent.setup();
+    mocked.updateSiteRequest.mockResolvedValue({ site: site('a'), message: 'Site updated.' });
+    renderWith(
+      <SitesTable sites={[site('a')]} deletingId={null} onDelete={vi.fn()} />,
+    );
+    await user.click(
+      screen.getAllByRole('button', { name: 'Open menu for a.example.com' })[0]!,
+    );
+    await user.click(await screen.findByRole('menuitem', { name: 'Edit display name' }));
+    const input = await screen.findByLabelText('Display name');
+    expect(input).toHaveValue('a.example.com');
+    await user.click(screen.getByRole('button', { name: 'Save' }));
+    await waitFor(() => expect(mocked.updateSiteRequest).toHaveBeenCalledWith('a', ''));
+  });
+
   it('surfaces a rename failure inline and keeps the dialog open', async () => {
     const user = userEvent.setup();
     mocked.updateSiteRequest.mockRejectedValue(new TypeError('offline'));
@@ -591,6 +614,16 @@ describe('SitesTable — pause and resume', () => {
       expect(chip).toHaveAttribute('data-tone', 'warning');
       expect(chip).toHaveTextContent('Paused');
     }
+  });
+
+  it('explains what pausing does from a focusable help button next to the chip', async () => {
+    const user = userEvent.setup();
+    renderWith(
+      <SitesTable sites={[pausedSite()]} deletingId={null} onDelete={vi.fn()} />,
+    );
+    const [help] = screen.getAllByRole('button', { name: /About Paused/u });
+    await user.click(help!);
+    expect((await screen.findAllByText(/audits, rank checks, weekly reports/u)).length).toBeGreaterThan(0);
   });
 
   it('renders no chip for an unpaused site', () => {

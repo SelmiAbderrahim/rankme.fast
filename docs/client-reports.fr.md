@@ -17,6 +17,8 @@ Les rapports clients transforment des instantanés stockés d'audit, de position
 
 Chaque rapport rassemble les derniers constats d'audit ainsi que des sections de position et Search Console, sous le nom d'entreprise, la couleur d'accent et le logo de votre compte.
 
+Vous définissez le nom de l’entreprise, la couleur d’accent et le logo sur la page **Espace de travail** des paramètres (`/settings/workspace`), et seul le propriétaire de l’espace peut les modifier. Importez le logo en PNG, JPEG ou SVG, jusqu’à 256 Ko. Il est enregistré en PNG, et un SVG qui contient des scripts ou des liens vers d’autres fichiers est refusé.
+
 Rien n'est récupéré au moment de l'envoi : le rapport est construit à partir d'instantanés stockés. C'est pourquoi chaque chiffre est imprimé à côté de sa date d'observation.
 
 Une section sans instantané stocké est marquée comme non encore observée. Elle n'est jamais remplie par une estimation.
@@ -35,10 +37,8 @@ Pas de connexion, pas de commentaires, pas de sièges clients. Toute personne qu
 
 La révocation prend effet à la requête suivante : quiconque n'a pas déjà chargé la page perd l'accès immédiatement.
 
-## Forfait et limites
+## Limites
 
-Les rapports clients sont réservés au forfait Agency. Vous pouvez avoir jusqu'à 20 planifications et 25 liens de portail.
-
-Les briefs de contenu ne font pas partie des rapports v1. Pour les unités et les limites de forfait, voir [Tarifs](./pricing.fr.md).
+Les briefs de contenu ne sont pas inclus dans les rapports v1. Un rapport ne contient que ce qui a déjà été collecté : une section apparaît dès que les instantanés qui la fondent existent.
 
 [Retour à l'index de la documentation](./index.fr.md)

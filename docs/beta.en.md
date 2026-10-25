@@ -21,7 +21,7 @@ Some screens are still being finished. Wording and layout can change between rel
 
 ## Report a bug
 
-Use **Report a bug** in the beta banner at the top of the page. It opens the [GitHub issue form](https://github.com/SelmiAbderrahim/rankme.fast/issues/new/choose). If you hid the banner or don't have a GitHub account, email support@rankme.fast instead.
+Use **Report a bug** in the beta banner at the top of the page. A dialog lets you choose where to report: **Open GitHub issue chooser**, when the project's GitHub address is set up for this installation, or **Email support** to support@rankme.fast. Nothing is sent automatically, so include the details below yourself. The email address works even if you hid the banner or don't have a GitHub account.
 
 A useful report says:
 

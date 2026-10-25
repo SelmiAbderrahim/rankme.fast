@@ -109,6 +109,15 @@ describe('Login', () => {
     expect(screen.getByTestId('location')).toHaveTextContent('/');
   });
 
+  it('asks the user to reconnect when the sign-in request cannot finish', async () => {
+    signInEmail.mockRejectedValue(new Error('offline'));
+    renderAt(<Login />);
+    fireEvent.change(screen.getByLabelText('Email'), { target: { value: 'a@b.co' } });
+    fireEvent.change(screen.getByLabelText('Password'), { target: { value: 'hunter2!' } });
+    fireEvent.click(screen.getByRole('button', { name: 'Log in' }));
+    expect(await screen.findByRole('alert')).toHaveTextContent(i18n.t('sessionUnavailable', { ns: 'auth' }));
+  });
+
   it('navigates to the dashboard after a verified sign-in', async () => {
     signInEmail.mockResolvedValue(ok({ user: { emailVerified: true } }));
     renderAt(<Login />, '/login');

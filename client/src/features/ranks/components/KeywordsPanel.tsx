@@ -23,6 +23,7 @@ import { Input } from '@shared/ui/input';
 import { Label } from '@shared/ui/label';
 import { Alert, AlertDescription } from '@shared/ui/alert';
 import { Button } from '@shared/ui/button';
+import { PageHeader } from '@shared/components/PageHeader';
 import { RefreshButton } from '@shared/components/RefreshButton';
 import { Empty, EmptyDescription, EmptyHeader, EmptyTitle } from '@shared/ui/empty';
 import { Skeleton } from '@shared/ui/skeleton';
@@ -48,6 +49,7 @@ import {
   selectCheckingKeywordId,
   selectCheckingNow,
   selectHistory,
+  selectHistoryMissedChecks,
   selectHistoryError,
   selectHistoryKeywordId,
   selectHistoryLoading,
@@ -137,6 +139,7 @@ export const KeywordsPanel = ({ siteId }: Props) => {
   const checkCooldownUntil = useAppSelector(selectCheckCooldownUntil);
   const selectedId = useAppSelector(selectSelectedKeywordId);
   const history = useAppSelector(selectHistory);
+  const missedChecks = useAppSelector(selectHistoryMissedChecks);
   const historyKeywordId = useAppSelector(selectHistoryKeywordId);
   const historyLoading = useAppSelector(selectHistoryLoading);
   const historyError = useAppSelector(selectHistoryError);
@@ -430,27 +433,41 @@ export const KeywordsPanel = ({ siteId }: Props) => {
         </p>
       );
     }
-    return <RankTrendChart keyword={selectedKeyword} series={history} />;
+    return <RankTrendChart keyword={selectedKeyword} series={history} missedChecks={missedChecks} />;
   };
+
+  // Title row like every other workspace tab (Backlinks, Keyword clusters): the
+  // site name is the page h1, so the tab title is an h2 at the same size.
+  const header = (
+    <PageHeader
+      data-testid="keywords-header"
+      title={t('panelTitle')}
+      description={t('panelDescription')}
+    />
+  );
 
   if (!loaded) {
     return (
-      <div
-        className="flex flex-col gap-3"
-        aria-busy="true"
-        aria-live="polite"
-        data-testid="keywords-loading"
-      >
-        <p className="text-muted-foreground text-sm">{t('loading')}</p>
-        <Skeleton className="h-10 w-full" data-testid="keywords-skeleton" />
-        <Skeleton className="h-10 w-full" />
-        <Skeleton className="h-10 w-2/3" />
+      <div className="flex flex-col gap-6">
+        {header}
+        <div
+          className="flex flex-col gap-3"
+          aria-busy="true"
+          aria-live="polite"
+          data-testid="keywords-loading"
+        >
+          <p className="text-muted-foreground text-sm">{t('loading')}</p>
+          <Skeleton className="h-10 w-full" data-testid="keywords-skeleton" />
+          <Skeleton className="h-10 w-full" />
+          <Skeleton className="h-10 w-2/3" />
+        </div>
       </div>
     );
   }
   if (error) {
     return (
       <div className="flex flex-col gap-4">
+        {header}
         <Alert variant="destructive" role="alert" data-testid="keywords-error">
           <AlertDescription>{error}</AlertDescription>
         </Alert>
@@ -465,10 +482,11 @@ export const KeywordsPanel = ({ siteId }: Props) => {
   }
   return (
     <div className="flex flex-col gap-6">
-      <h2 className="text-lg font-semibold" data-testid="keyword-list-heading">
+      {header}
+      <h3 className="text-lg font-semibold" data-testid="keyword-list-heading">
         {t(search || requestedEngine ? 'keywordList.headingFiltered' : 'keywordList.heading',
           search || requestedEngine ? { matched: total, total: siteTotal } : { total: siteTotal })}
-      </h2>
+      </h3>
       <KeywordMarketMove siteId={siteId} keywordCount={siteTotal} onMoved={() => { void reloadKeywords(); }} />
       <div className="flex flex-wrap items-center justify-between gap-4">
         <CadenceToggle

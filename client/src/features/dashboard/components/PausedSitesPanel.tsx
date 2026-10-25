@@ -7,11 +7,10 @@ import { isolateText } from '@shared/lib/bidi';
 import { siteLabel } from '@shared/lib/siteLabel';
 import { formatRelativeDate } from '@shared/lib/datetime';
 import { useAppDispatch, useAppSelector } from '@shared/hooks/redux';
-import { resumeSite, selectPausingSiteId } from '@features/sites';
+import { PausedChip, resumeSite, selectPausingSiteId } from '@features/sites';
 import { selectActiveWorkspaceRole } from '@features/workspace';
 import { Button } from '@shared/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@shared/ui/card';
-import { StatusChip } from '@shared/ui/status-chip';
 import type { SiteHealthResponse } from '../types';
 
 export function PausedSitesPanel({ health }: { health: SiteHealthResponse }) {
@@ -33,7 +32,7 @@ export function PausedSitesPanel({ health }: { health: SiteHealthResponse }) {
       return <li key={site.id} className="flex flex-wrap items-center justify-between gap-3 rounded-lg border p-3">
         <div className="flex flex-wrap items-center gap-2">
           <Link to={`/sites/${encodeURIComponent(site.id)}`} className="font-medium underline"><Bdi>{name}</Bdi></Link>
-          <StatusChip tone="warning">{t('sites:paused.chip')}</StatusChip>
+          <PausedChip siteId={site.id} />
           {site.pausedAt ? <span className="text-sm text-muted-foreground">{t('common:dashboard.health.paused.since', { when: formatRelativeDate(site.pausedAt, i18n.language) })}</span> : null}
         </div>
         {role === 'owner' ? <Button type="button" variant="outline" size="sm" loading={pausingId === site.id}

@@ -15,6 +15,7 @@ import {
   fetchMetricsRequest,
   fetchOverviewRequest,
   fetchRelatedRequest,
+  fetchStoredKeywordsRequest,
   fetchStoredResultRequest,
   fetchTrendsRequest,
   postClusterDecisionRequest,
@@ -28,9 +29,11 @@ import {
   type LiveTrendsListRequestArgs,
   type OverviewRequestBody,
   type PreviewRequestBody,
+  type StoredKeywordsRequestArgs,
   type TrendsRequestBody,
 } from '../api';
 import { apiErrorStatus, keywordResearchErrorMessage } from '../errorMessage';
+import { apiErrorFieldMessage } from '@shared/api/errorMessage';
 import type {
   ClusterDecisionResponse,
   ClusterRun,
@@ -47,6 +50,7 @@ import type {
   OverviewResponse,
   RelatedKeyword,
   RelatedResponse,
+  StoredKeywordsResponse,
   StoredResearchResult,
   TrendsExplorationDto,
   TrendsListResponse,
@@ -226,6 +230,21 @@ export const openStoredResearch = createAsyncThunk<
   }
 });
 
+/** Cluster-picker candidates: stored phrases for one market. Never calls a provider. */
+export const loadStoredKeywords = createAsyncThunk<
+  StoredKeywordsResponse,
+  StoredKeywordsRequestArgs,
+  { rejectValue: string }
+>('keywordResearch/loadStoredKeywords', async (args, { rejectWithValue }) => {
+  try {
+    return await fetchStoredKeywordsRequest(args);
+  } catch (err) {
+    return rejectWithValue(
+      keywordResearchErrorMessage(err, 'keywordResearch:clusters.candidatesFailed'),
+    );
+  }
+});
+
 /**
  * Every successful research call lands a row in the server's research
  * history, so a history list already on screen ("Recent research", the
@@ -259,12 +278,15 @@ function refreshHistoryAfterResearch(
 export interface PaidRejectPayload {
   error: string;
   status: number | null;
+  /** Display-safe server message attributed to the competitors field, if any. */
+  competitorsError?: string | null;
 }
 
 function toPaidReject(err: unknown, fallbackKey: string): PaidRejectPayload {
   return {
     error: keywordResearchErrorMessage(err, fallbackKey),
     status: apiErrorStatus(err),
+    competitorsError: apiErrorFieldMessage(err, 'competitors'),
   };
 }
 

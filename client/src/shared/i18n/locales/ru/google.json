@@ -107,6 +107,9 @@
     "timeseriesTitle": "Клики и показы во времени",
     "timeseriesSubtitle_one": "Ежедневные итоги за последний {{days}} день.",
     "timeseriesEmpty": "Пока нет ежедневных данных.",
+    "timeseriesNoActivity": "В этот период активности не было.",
+    "timeseriesNoClicks": "Нет кликов за этот период.",
+    "timeseriesNoImpressions": "Нет показов за этот период.",
     "timeseriesChartLabel_one": "Ежедневные {{metric}} за последний {{days}} день",
     "timeseriesTableCaption_one": "Ежедневная эффективность поиска за последний {{days}} день",
     "tableDate": "Дата",
@@ -179,10 +182,6 @@
     "devicesEmpty": "Пока нет данных по устройствам.",
     "devicesTableCaption": "Сеансы по устройствам",
     "deviceHeader": "Устройство",
-    "locked": {
-      "body": "Статистика Google Analytics доступна в тарифе Pro и выше. Перейдите на более высокий тариф, чтобы видеть сеансы, вовлечённость и ключевые события рядом с данными поиска.",
-      "upgrade": "Повысить тариф"
-    },
     "enableTitle": "Google Analytics не подключён",
     "enableBody": "Предоставьте доступ только для чтения к Google Analytics, чтобы видеть сеансы, вовлечённость и ключевые события этого сайта.",
     "enableCta": "Подключить Google Analytics",

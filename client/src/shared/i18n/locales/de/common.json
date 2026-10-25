@@ -6,9 +6,7 @@
   "yes": "Ja",
   "no": "Nein",
   "capacity": {
-    "selfHost": "Auf diesem Server werden keine Nutzungslimits angewendet.",
-    "selfHostPlan": "Selbst gehostet",
-    "selfHostSlots": "{{used}} belegt; auf diesem Server werden keine Nutzungslimits angewendet."
+    "selfHost": "Auf diesem Server werden keine Nutzungslimits angewendet."
   },
   "logPanel": {
     "title": "Sicherungsausgabe",
@@ -34,8 +32,6 @@
     "sites": "Websites",
     "keywordResearch": "Keyword-Recherche",
     "google": "Google",
-    "billing": "Abrechnung",
-    "creditPacks": "Guthabenpakete",
     "notifications": "Benachrichtigungen",
     "logout": "Abmelden",
     "logOut": "Abmelden",
@@ -303,9 +299,6 @@
     "signOut": "Abmelden",
     "collapse": "Seitenleiste einklappen",
     "expand": "Seitenleiste ausklappen",
-    "upgradeTitle": "Mehr Audits freischalten",
-    "upgradeBody": "Upgraden Sie für höhere Limits und ausführlichere Berichte.",
-    "upgradeCta": "Upgrade",
     "groupSuperAdmin": "Plattform",
     "opensInNewTab": "Öffnet in einem neuen Tab",
     "searchSitesLoading": "Ihre Websites werden geladen…",
@@ -316,10 +309,6 @@
   },
   "locked": "Gesperrt",
   "retry": "Erneut versuchen",
-  "tierBadge": {
-    "pro": "Pro",
-    "agency": "Agency"
-  },
   "tableHelp": {
     "about": "Informationen zu {{column}}",
     "kind": "Der Forschungsvorgang dieser Zeile: Kennzahlen, verwandte Keywords, Absicht, Ideen, Lücke, Übersicht, Trends oder Cluster.",
@@ -351,10 +340,10 @@
     "domainRank": "Der vergleichende Domainstärke-Wert des Anbieters; höhere Werte weisen auf ein stärkeres Linkprofil hin.",
     "referringDomains": "Die Anzahl unterschiedlicher Domains, die auf das Ziel verlinken.",
     "dofollow": "Ob der gespeicherte Link übliche Rankingsignale weitergeben kann, statt ein Nofollow-Attribut zu tragen.",
-    "toxicityScore": "Ein deterministischer Prüfwert von 0 bis 100 für gespeicherte Linkbeobachtungen; höher bedeutet mehr passende Warnsignale.",
-    "rubricBand": "Der Bereich der festgeschriebenen Bewertungsregel: sauber, beobachten oder toxisch. Er sagt keine Suchmaschinenaktion voraus.",
-    "contributingSignals": "Die gespeicherten Beobachtungen, die den deterministischen Bewertungswert verursacht haben.",
-    "rationale": "Eine optionale KI-Erklärung der gespeicherten Signale; sie ändert niemals den deterministischen Bereich.",
+    "toxicityScore": "Eine Bewertung von 0 bis 100 nach festen Regeln für jeden gespeicherten Backlink; je höher, desto mehr Warnzeichen treffen zu.",
+    "rubricBand": "Die Risikostufe, in die die Bewertung fällt: unauffällig, beobachten oder toxisch. Sie sagt nicht voraus, was eine Suchmaschine tun wird.",
+    "contributingSignals": "Die gespeicherten Signale, die diese Bewertung erhöht haben.",
+    "rationale": "Eine optionale KI-Erklärung der gespeicherten Signale; sie ändert nie die Risikostufe.",
     "disavowScope": "Ob der Export die gesamte verweisende Domain oder nur die genaue Link-URL enthält.",
     "geogridPoint": "Der nummerierte Kartenmesspunkt, den diese Zeile darstellt.",
     "localPackPosition": "Der Rang des Unternehmens im beobachteten lokalen Ergebnispaket; 1 ist der höchste.",
@@ -560,5 +549,10 @@
     "limit": "Sie können bis zu {{max}} Wettbewerber-Domains gleichzeitig vergleichen. Entfernen Sie eine, um eine andere hinzuzufügen.",
     "remove": "{{domain}} entfernen",
     "placeholder": "z. B. competitor.com"
+  },
+  "breadcrumbs": {
+    "label": "Brotkrumennavigation",
+    "unknownSite": "Unbekannte Website",
+    "loadingSite": "Website wird geladen …"
   }
 }

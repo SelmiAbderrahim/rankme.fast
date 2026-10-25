@@ -1,5 +1,5 @@
 /**
- * Audience Research — router + service smoke integration test (prompt 10e).
+ * Audience Research — router + service smoke integration test.
  *
  * Real PGlite Postgres (with all migrations applied by the shared harness),
  * real mongodb-memory-server, real Better Auth-backed sessions via the test

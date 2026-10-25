@@ -23,6 +23,7 @@ import { setRanksDb } from '../ranks/index.js';
 import { Site } from '../sites/index.js';
 import { createKeywordCacheRepo, computeKeywordCacheKey, expansionMapKey } from './keyword-research.cache.js';
 import { readStoredResearchResult } from './keyword-research.stored.js';
+import { listResearchHistory } from './keyword-research.history.js';
 
 const app = createApp();
 
@@ -171,6 +172,27 @@ describe('GET /history scoped to a site', () => {
     const other = await seedUser('hist-other@x.co');
     const siteId = await seedSite(owner.id, 'private.example');
     await request(app).get(`/api/keyword-research/history?siteId=${siteId}`).set('Cookie', other.cookie).expect(404);
+  });
+});
+
+describe('listResearchHistory restricted to a list of sites', () => {
+  it('keeps only rows of the listed sites, hides account-level rows and treats an empty list as no sites', async () => {
+    const user = await seedUser('hist-sites-list@x.co');
+    const siteA = await seedSite(user.id, 'a.example');
+    const siteB = await seedSite(user.id, 'b.example');
+    const common = { locationCode: 2840, languageCode: 'en' };
+    for (const [index, siteId] of [siteA, siteB, undefined].entries()) {
+      await request(app).post('/api/keyword-research/metrics').set('Cookie', user.cookie)
+        .send({ keywords: [`phrase ${index}`], ...common, ...(siteId ? { siteId } : {}) }).expect(200);
+    }
+    const db = getTestDb();
+    const onlyA = await listResearchHistory(db as never, { accountId: user.id, siteIds: [siteA], limit: 10 });
+    expect(onlyA.items.map((item) => item.phrases)).toEqual([['phrase 0']]);
+    expect(onlyA.total).toBe(1);
+    const both = await listResearchHistory(db as never, { accountId: user.id, siteIds: [siteA, siteB], limit: 10 });
+    expect(both.items).toHaveLength(2);
+    const none = await listResearchHistory(db as never, { accountId: user.id, siteIds: [], limit: 10 });
+    expect(none).toMatchObject({ items: [], total: 0, nextCursor: null });
   });
 });
 

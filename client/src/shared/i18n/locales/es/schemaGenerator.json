@@ -140,15 +140,6 @@
       "title": "Aún no hay auditoría",
       "body": "Lanza una auditoría de este sitio y sus páginas se podrán elegir aquí."
     },
-    "cap": {
-      "title": "Cuota mensual agotada",
-      "body": "Has usado todas las generaciones de marcado de tu plan este mes.",
-      "link": "Ver planes"
-    },
-    "notOnPlan": {
-      "title": "No está en tu plan",
-      "body": "La generación de marcado empieza en el plan Starter."
-    },
     "killSwitch": {
       "title": "No disponible temporalmente",
       "body": "Las generaciones nuevas están en pausa. El marcado que ya generaste sigue disponible."

@@ -315,8 +315,7 @@
   "pdf": {
     "download": "تنزيل PDF",
     "downloading": "جارٍ تجهيز الملف…",
-    "error": "تعذّر تجهيز ملف PDF. حاول مرة أخرى.",
-    "upgradeHint": "تقارير PDF متاحة في خطتي Pro وAgency."
+    "error": "تعذّر تجهيز ملف PDF. حاول مرة أخرى."
   },
   "gscBlock": {
     "sectionTitle": "أداء البحث في Google (آخر 28 يومًا)",

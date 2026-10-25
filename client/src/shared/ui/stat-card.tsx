@@ -63,7 +63,7 @@ type KpiProps = {
   delta?: {
     value: number | null;
     goodDirection?: 'up' | 'down';
-    format?: (n: number) => string;
+    options?: Omit<Intl.NumberFormatOptions, 'signDisplay'>;
     testId?: string;
   };
   context?: string;
@@ -173,7 +173,7 @@ export function StatCard(props: StatCardProps) {
           <DeltaPill
             value={props.delta.value}
             goodDirection={props.delta.goodDirection}
-            format={props.delta.format}
+            options={props.delta.options}
             data-testid={props.delta.testId}
           />
         ) : null}

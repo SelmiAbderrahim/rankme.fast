@@ -155,7 +155,9 @@
     "actor": "团队成员",
     "from": "自「{{state}}」",
     "close": "关闭",
-    "actorYou": "您"
+    "actorYou": "您",
+    "observed": "已发现",
+    "actorSystem": "自动检查"
   },
   "retest": {
     "title": "要重新检测此发现吗？",
@@ -164,8 +166,6 @@
     "unitsValue": "1",
     "freshRun": "重新检测始终重新抓取——结果绝不来自缓存。",
     "selfHosted": "此服务器不应用用量限制。",
-    "remaining": "本周期剩余 {{remaining}} / {{cap}} 次审计",
-    "allowanceUnknown": "无法加载剩余额度。服务器在运行前仍会检查你的限额。",
     "confirm": "开始重新检测",
     "starting": "正在启动…",
     "queued": "重新检测已加入队列。请在报告标签页跟踪进度。",

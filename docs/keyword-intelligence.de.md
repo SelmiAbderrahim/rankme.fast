@@ -13,7 +13,7 @@ In der Keyword-Intelligenz führen Sie Keyword-Gaps, Überblicke, Trends und KI-
 
 ## Was jeder Check kostet
 
-- **Gap** vergleicht Ihre Domain mit Wettbewerbern und verbraucht eine `keyword_lookups`-Einheit pro Wettbewerber. Duplikate werden vorher entfernt.
+- **Gap** vergleicht eine Ihrer Websites, die Sie aus Ihrer Website-Liste wählen, mit Wettbewerbern und verbraucht eine `keyword_lookups`-Einheit pro Wettbewerber. Duplikate werden vorher entfernt.
 - **Überblick** verbraucht eine `keyword_lookups`-Einheit pro nachgeschlagenem Keyword.
 - **Trends** verbraucht eine `keyword_lookups`-Einheit pro Keyword.
 

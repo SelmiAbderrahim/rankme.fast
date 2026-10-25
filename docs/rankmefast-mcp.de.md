@@ -13,7 +13,7 @@ RankMeFast stellt einen Remote-Endpunkt für das [Model Context Protocol (MCP)](
 
 ## In fünf Minuten einrichten
 
-1. Öffnen Sie [Einstellungen → API-Schlüssel](/profile?tab=api-keys), wählen Sie **Schlüssel erstellen** und kopieren Sie den Schlüssel, sobald er angezeigt wird. RankMeFast zeigt den vollständigen Schlüssel nur einmal an.
+1. Öffnen Sie [Einstellungen → API-Schlüssel](/settings/profile?tab=api-keys), wählen Sie **Schlüssel erstellen** und kopieren Sie den Schlüssel, sobald er angezeigt wird. RankMeFast zeigt den vollständigen Schlüssel nur einmal an.
 2. Verwenden Sie den RankMeFast-MCP-Endpunkt:
 
    ```text
@@ -39,7 +39,7 @@ RankMeFast stellt einen Remote-Endpunkt für das [Model Context Protocol (MCP)](
 
 ## Berechtigungen und Schlüsselbereiche steuern
 
-Unter [Einstellungen → MCP](/profile?tab=mcp) verwalten Sie die Kontovorgaben, die MCP und der angemeldete KI-Assistent gemeinsam nutzen:
+Unter [Einstellungen → MCP](/settings/profile?tab=mcp) verwalten Sie die Kontovorgaben, die MCP und der angemeldete KI-Assistent gemeinsam nutzen:
 
 1. Aktivieren oder deaktivieren Sie jedes RankMeFast-Werkzeug.
 2. Lassen Sie **Erlaubte Websites** auf allen Websites oder wählen Sie die Websites aus, die Werkzeuge verwenden dürfen.
@@ -48,7 +48,7 @@ Unter [Einstellungen → MCP](/profile?tab=mcp) verwalten Sie die Kontovorgaben,
 
 Die Kontovorgaben sind vollständig freizügig, bis Sie sie ändern. Bestehende Schlüssel funktionieren deshalb weiter. Der Assistent nutzt diese Vorgaben direkt über Ihre angemeldete Sitzung.
 
-Beim Erstellen eines Schlüssels unter [Einstellungen → API-Schlüssel](/profile?tab=api-keys) können Sie engere Bereiche festlegen und später bearbeiten. Schlüsselbereiche können Zugriff nur einschränken. Der wirksame MCP-Zugriff ist immer die Schnittmenge:
+Beim Erstellen eines Schlüssels unter [Einstellungen → API-Schlüssel](/settings/profile?tab=api-keys) können Sie engere Bereiche festlegen und später bearbeiten. Schlüsselbereiche können Zugriff nur einschränken. Der wirksame MCP-Zugriff ist immer die Schnittmenge:
 
 - Ein Werkzeug ist nur verfügbar, wenn Konto und Schlüssel es erlauben.
 - Wenn Konto und Schlüssel Websites auswählen, sind nur Websites in beiden Listen verfügbar.
@@ -405,6 +405,8 @@ Speichern Sie dies als Konfiguration auf Benutzerebene und übertragen Sie den S
 | `get_backlinks_summary` | Gibt die Gesamtzahl der Backlinks und die eindeutigen verweisenden Domains einer Website zurück | Nein |
 | `list_backlinks` | Listet gespeicherte Backlinks, einen pro verweisender Domain | Nein |
 | `list_competitors` | Listet das Wettbewerber-Portfolio einer Website, aktiv und archiviert | Nein |
+| `list_keyword_research_history` | Listet Ihren Verlauf der Keyword-Recherche | Nein |
+| `get_keyword_research_result` | Gibt das gespeicherte Ergebnis eines Eintrags der Keyword-Recherche zurück | Nein |
 | `get_ai_visibility_summary` | Gibt KI-Sichtbarkeits-Prompts, letzte Prüfungen und Share of Voice zurück | Nein |
 | `get_local_seo_summary` | Gibt die Momentaufnahme des Local-SEO-Profils und die Ränge im lokalen Pack zurück | Nein |
 | `get_reviews_summary` | Gibt Bewertungsquellen, Bewertungsstatistiken und gespeicherte Themen zurück | Nein |
@@ -421,6 +423,7 @@ Die nach den ersten zehn hinzugefügten Tools lesen nur Daten, die RankMeFast be
 - **Berechtigungen gelten bei jedem Aufruf.** Die Kontoschalter unter **Einstellungen → MCP**, die Bereiche des Schlüssels und die Listen erlaubter Websites werden bei jedem Aufruf geprüft. Eine Website, auf die Sie keinen Zugriff haben oder die zu einem anderen Konto gehört, wird als nicht gefunden zurückgegeben.
 - **Neue Tools sind standardmäßig erlaubt.** Sie folgen demselben Standard wie die anderen Lese-Tools, und vor ihrem Erscheinen gespeicherte Berechtigungseinstellungen funktionieren unverändert weiter.
 - **Ergebnisse sind begrenzt.** Listen liefern höchstens 100 Zeilen und ein Ergebnis bleibt klein; werden Zeilen gekürzt, steht im Ergebnis `truncated: true`.
+- **Die Keyword-Recherche liest den gespeicherten Cache.** `get_keyword_research_result` öffnet eine Abfrage aus dem gemeinsamen Keyword-Cache erneut und meldet `storedStatus` als `available`, `partial`, `expired` oder `unsupported`. Es aktualisiert nie Daten. Der Verlauf einer Website, auf die Sie keinen Zugriff haben, wird als nicht gefunden zurückgegeben.
 
 Der [KI-Assistent](./ai-assistant.de.md) nutzt dieselben Tools und dieselben Berechtigungen. In einer mit einer Website verknüpften Unterhaltung verwendet er diese Website direkt und muss Ihre Websites nicht zuerst auflisten.
 
@@ -436,13 +439,13 @@ Der [KI-Assistent](./ai-assistant.de.md) nutzt dieselben Tools und dieselben Ber
 - **503 Unavailable:** MCP ist auf dieser RankMeFast-Installation deaktiviert oder vorübergehend nicht verfügbar. Wenden Sie sich an deren Betreiber.
 - **Funktioniert lokal, aber nicht über einen Proxy:** Stellen Sie sicher, dass der Proxy die Header `Authorization`, `Content-Type` und `Accept` an `/api/mcp` weiterleitet.
 
-Um einen Schlüssel zu ersetzen, erstellen Sie einen neuen, aktualisieren und prüfen Sie jeden Client und widerrufen Sie anschließend den alten Schlüssel unter [Einstellungen → API-Schlüssel](/profile?tab=api-keys). Der Widerruf wird sofort wirksam.
+Um einen Schlüssel zu ersetzen, erstellen Sie einen neuen, aktualisieren und prüfen Sie jeden Client und widerrufen Sie anschließend den alten Schlüssel unter [Einstellungen → API-Schlüssel](/settings/profile?tab=api-keys). Der Widerruf wird sofort wirksam.
 
 ## Kompatibilität
 
-Dieses Release enthält die 23 oben aufgeführten Werkzeuge. 21 sind schreibgeschützt, `set_action_state` schreibt kostenfrei, und nur `start_audit` verbraucht Anbieter-Budget. Für Markenradar, Bewertungsanalyse, Link-Intelligenz, Traffic-Analyse und Keyword-Trends gibt es keine MCP-Werkzeuge. Änderungen sind additiv: Vorhandene Werkzeugnamen und Argumentformen bleiben gleich, und mit neuen Funktionen können neue Werkzeuge hinzukommen.
+Dieses Release enthält die 25 oben aufgeführten Werkzeuge. 23 sind schreibgeschützt, `set_action_state` schreibt kostenfrei, und nur `start_audit` verbraucht Anbieter-Budget. Für Markenradar, Bewertungsanalyse, Link-Intelligenz, Traffic-Analyse und Keyword-Trends gibt es keine MCP-Werkzeuge. Änderungen sind additiv: Vorhandene Werkzeugnamen und Argumentformen bleiben gleich, und mit neuen Funktionen können neue Werkzeuge hinzukommen.
 
-<!-- mcp-tools: list_sites; get_latest_audit_report; list_keywords; get_rank_history; list_content_analyses; get_content_analysis; start_audit; get_audit_status; list_actions; set_action_state; get_gsc_search_summary; list_gsc_top_queries; list_gsc_top_pages; get_ga4_summary; list_pages; get_page_detail; get_backlinks_summary; list_backlinks; list_competitors; get_ai_visibility_summary; get_local_seo_summary; get_reviews_summary; list_client_reports -->
+<!-- mcp-tools: list_sites; get_latest_audit_report; list_keywords; get_rank_history; list_content_analyses; get_content_analysis; start_audit; get_audit_status; list_actions; set_action_state; get_gsc_search_summary; list_gsc_top_queries; list_gsc_top_pages; get_ga4_summary; list_pages; get_page_detail; get_backlinks_summary; list_backlinks; list_competitors; list_keyword_research_history; get_keyword_research_result; get_ai_visibility_summary; get_local_seo_summary; get_reviews_summary; list_client_reports -->
 
 ## Verwandte Leitfäden
 

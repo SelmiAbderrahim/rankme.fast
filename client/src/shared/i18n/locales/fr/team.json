@@ -1,7 +1,6 @@
 {
   "title": "Équipe",
   "description": "Invitez des coéquipiers et gérez les places de votre offre.",
-  "seatUsage": "{{used}} sur {{limit}} places utilisées",
   "invite": {
     "heading": "Inviter un coéquipier",
     "emailLabel": "E-mail",
@@ -9,8 +8,6 @@
     "emailInvalid": "Saisissez une adresse e-mail valide",
     "submit": "Envoyer l'invitation",
     "submitting": "Envoi…",
-    "atCap": "Vous avez utilisé toutes vos places. Passez à une offre supérieure pour en inviter plus.",
-    "upgradeCta": "Mettre à niveau",
     "description": "Choisissez un rôle et précisément les sites auxquels cette personne aura accès.",
     "roleLabel": "Rôle",
     "adminRoleLimit": "Les administrateurs peuvent inviter uniquement des membres."
@@ -192,10 +189,12 @@
     "buttonLabelWithCount_many": "Invitations d’équipe, {{count}} en attente",
     "buttonLabelWithCount_other": "Invitations d’équipe, {{count}} en attente"
   },
-  "received": {"pending_zero": "{{count}} invitations d’autres équipes vous attendent.",
+  "received": {
+    "pending_zero": "{{count}} invitations d’autres équipes vous attendent.",
     "pending_one": "{{count}} invitation d’une autre équipe vous attend.",
     "pending_two": "{{count}} invitations d’autres équipes vous attendent.",
     "pending_few": "{{count}} invitations d’autres équipes vous attendent.",
     "pending_many": "{{count}} invitations d’autres équipes vous attendent.",
-    "pending_other": "{{count}} invitations d’autres équipes vous attendent."}
+    "pending_other": "{{count}} invitations d’autres équipes vous attendent."
+  }
 }

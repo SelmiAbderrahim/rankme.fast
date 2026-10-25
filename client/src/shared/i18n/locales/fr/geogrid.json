@@ -2,8 +2,7 @@
   "title": "Suivi de position locale en géogrille",
   "description": "Voyez où votre établissement se classe dans le pack local sur une grille de coordonnées. Un scan couvre toute la grille et coûte un scan géogrille.",
   "locked": {
-    "body": "Les scans géogrille sont inclus dans les offres Pro et Agence.",
-    "cta": "Voir les offres"
+    "body": "Les scans géogrille sont inclus dans les offres Pro et Agence."
   },
   "form": {
     "keyword": "Mot-clé suivi",
@@ -101,9 +100,7 @@
     "failedRefunded": "Aucun point n'a répondu ; le scan a été recrédité sur votre quota."
   },
   "gates": {
-    "cap": "Vous n'avez plus de scans géogrille",
     "killSwitch": "Les scans géogrille sont en pause",
-    "notOnPlan": "Pas inclus dans votre offre",
     "notFound": "Introuvable",
     "rateLimited": "Trop de requêtes",
     "invalid": "Vérifiez les réglages de la grille",

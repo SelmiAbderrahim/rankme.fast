@@ -1,5 +1,5 @@
 /**
- * /api/audits + /api/sites/:siteId/audits HTTP tests (prompt 07).
+ * /api/audits + /api/sites/:siteId/audits HTTP tests.
  */
 import { afterAll, afterEach, beforeAll, beforeEach, describe, expect, it } from 'vitest';
 import request from 'supertest';

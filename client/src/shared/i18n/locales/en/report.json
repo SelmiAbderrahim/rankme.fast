@@ -315,8 +315,7 @@
   "pdf": {
     "download": "Download PDF",
     "downloading": "Preparing PDF…",
-    "error": "Could not prepare the PDF. Please try again.",
-    "upgradeHint": "PDF reports are available on the Pro and Agency plans."
+    "error": "Could not prepare the PDF. Please try again."
   },
   "gscBlock": {
     "sectionTitle": "Google search performance (last 28 days)",

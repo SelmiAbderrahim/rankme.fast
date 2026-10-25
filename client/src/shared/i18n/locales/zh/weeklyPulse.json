@@ -97,7 +97,6 @@
   },
   "errors": {
     "unexpected": "出现了问题 — 请重试。",
-    "overCap": "您的套餐已耗尽。请升级或购买信用额度以接收每周脉搏。",
     "acknowledgePreviewRequired": "启用前请预览支出。",
     "reconnectRequired": "请重新连接 Google Search Console 以加载此数据。",
     "unauthorized": "请登录以查看每周脉搏。"

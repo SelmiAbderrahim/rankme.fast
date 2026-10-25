@@ -53,17 +53,12 @@
     "cooldown_many": "Espera {{seconds}} s antes de actualizar.",
     "cooldown_other": "Espera {{seconds}} s antes de actualizar."
   },
-  "locked": {
-    "title": "Mejora tu plan para desbloquear los backlinks",
-    "body": "La valoración del dominio, los dominios de referencia y tu lista de backlinks forman parte del plan Pro.",
-    "upgrade": "Ver planes"
-  },
   "errors": {
     "capExceeded": "El límite de filas de backlinks de tu plan ({{used}}/{{limit}} {{metric}}) se ha agotado. Mejora tu plan o compra un paquete de créditos para obtener más filas."
   },
   "intelligence": {
     "title": "Inteligencia de enlaces",
-    "description": "Revisa la evidencia guardada y decide cuándo gastar unidades en una nueva consulta.",
+    "description": "Revisa los datos guardados de backlinks y decide cuándo obtener datos nuevos.",
     "tabs": {
       "label": "Vistas de inteligencia de enlaces",
       "overview": "Resumen",
@@ -77,14 +72,11 @@
     "preview": {
       "title": "Vista previa del gasto",
       "description": "Esta estimación es gratuita. Las unidades se reservan solo al confirmar.",
-      "units": "{{count}} unidad",
       "cached": "Resultado en caché",
       "mixed": "Caché mixta",
-      "fresh": "Se necesita una consulta nueva",
+      "fresh": "Se necesitan datos nuevos",
       "available": "Saldo disponible",
       "unavailable": "Saldo agotado",
-      "baseRemaining": "Quedan {{count}} unidades base",
-      "packRemaining": "Quedan {{count}} unidades del paquete",
       "confirm": "Confirmar y ejecutar la consulta",
       "cancel": "Cancelar",
       "button": "Ver gasto"
@@ -92,18 +84,13 @@
     "states": {
       "default": "Aún no hay una lista guardada. La vista general solo muestra totales; esta lista es una consulta aparte. Previsualízala antes de ejecutarla.",
       "emptyTitle": "No se encontraron resultados",
-      "emptyBody": "El proveedor terminó sin encontrar filas coincidentes.",
+      "emptyBody": "La consulta terminó sin encontrar filas coincidentes.",
       "partialTitle": "Resultado parcial",
-      "partialBody": "Se conservaron algunas filas antes de que el proveedor dejara de responder.",
-      "providerTitle": "Falló la consulta al proveedor",
-      "providerBody": "No se conservaron filas y se reembolsó la unidad reservada.",
-      "capTitle": "Se alcanzó el saldo de inteligencia de enlaces",
-      "capBody": "Usa el paquete {{pack}} o espera a que se renueve el saldo.",
+      "partialBody": "Se guardaron algunas filas antes de que la fuente de datos dejara de responder.",
+      "providerTitle": "No se pudieron obtener datos nuevos",
+      "providerBody": "No se guardó nada.",
       "disabledTitle": "La inteligencia de enlaces está desactivada temporalmente",
-      "disabledBody": "Los resultados guardados siguen disponibles, pero las nuevas consultas están pausadas.",
-      "lockedTitle": "Mejora tu plan para desbloquearla",
-      "lockedBody": "Las consultas profundas están disponibles en Pro y Agency.",
-      "upgrade": "Ver planes",
+      "disabledBody": "Los resultados guardados siguen disponibles, pero la obtención de datos nuevos está en pausa.",
       "errorTitle": "No se pudo cargar la inteligencia de enlaces"
     },
     "provenance": {
@@ -126,7 +113,7 @@
     },
     "bulk": {
       "title": "Rango de dominios en lote",
-      "description": "Consulta el rango de hasta 100 dominios únicos.",
+      "description": "Consulta el rango de dominio de hasta 100 dominios únicos.",
       "label": "Dominios",
       "help": "Introduce un dominio por línea o sepáralos con comas.",
       "invalid": "Introduce entre 1 y 100 dominios válidos.",
@@ -155,7 +142,7 @@
     },
     "errors": {
       "preview": "No se pudo preparar la vista previa.",
-      "submit": "No se pudo iniciar la consulta.",
+      "submit": "No se pudo empezar a obtener datos nuevos.",
       "load": "No se pudo cargar el resultado guardado."
     }
   },
@@ -178,11 +165,8 @@
     },
     "preview": {
       "title": "Vista previa del gasto",
-      "units": "{{n}} unidades",
-      "remainingBase": "Quedan {{n}} unidades base",
-      "remainingPack": "Quedan {{n}} unidades del paquete",
       "cached": "Datos en caché",
-      "fresh": "Nueva consulta al proveedor",
+      "fresh": "Datos nuevos",
       "confirm": "Confirmar y ejecutar el análisis de brechas",
       "cancel": "Cancelar",
       "button": "Previsualizar gasto"
@@ -198,7 +182,7 @@
     },
     "legStatus": {
       "ok": "Completado · unidad consumida",
-      "provider_failed_refunded": "Falló el proveedor · unidad reembolsada",
+      "provider_failed_refunded": "Falló la fuente de datos",
       "zero_retained_consumed": "Sin filas retenidas · unidad consumida",
       "zero_retained_refunded": "Sin filas retenidas · unidad reembolsada"
     },
@@ -225,25 +209,19 @@
   "toxicity": {
     "start": {
       "title": "Revisar observaciones de backlinks",
-      "description": "Puntúa hasta 1000 filas guardadas con una rúbrica determinista antes de decidir qué incluir en la exportación."
+      "description": "Puntúa hasta 1000 backlinks guardados con reglas de alerta fijas antes de decidir qué exportar."
     },
     "preview": {
       "unit": "1 unidad de revisión de enlaces",
       "rowClamp": "Hasta 1000 filas · 100 dominios puntuados",
       "available": "Cuota disponible",
-      "capReached": "Cuota alcanzada",
-      "explanation": "La ejecución usa una unidad toxicity_reviews. El paquete toxicity-reviews-10 está disponible al agotar la cuota incluida. Previsualizar y cancelar no gasta unidades.",
       "confirm": "Confirmar y usar 1 unidad",
       "cancel": "Cancelar",
       "button": "Previsualizar el coste"
     },
     "states": {
-      "lockedTitle": "Mejora el plan para revisar backlinks",
-      "lockedBody": "La revisión de enlaces y la creación del archivo de desautorización están disponibles en Pro y Agency.",
       "disabledTitle": "Las nuevas revisiones están pausadas",
       "disabledBody": "Las revisiones guardadas siguen disponibles mientras las nuevas puntuaciones están pausadas.",
-      "capTitle": "Cuota de revisión alcanzada",
-      "capBody": "Añade el paquete toxicity-reviews-10 o espera a que se renueve la cuota.",
       "errorTitle": "No se pudo cargar la revisión",
       "errorBody": "Inténtalo de nuevo en breve. Los resultados guardados y las descargas anteriores no cambian.",
       "listError": "No se pudieron cargar las revisiones guardadas.",
@@ -256,8 +234,6 @@
       "emptyBody": "La ejecución terminó sin conservar filas de backlinks puntuadas."
     },
     "actions": {
-      "viewPlans": "Ver planes",
-      "viewPacks": "Ver paquetes de créditos",
       "open": "Abrir",
       "back": "Volver a una nueva revisión"
     },
@@ -273,7 +249,7 @@
     "filters": {
       "status": "Filtrar revisiones por estado",
       "allStatuses": "Todos los estados",
-      "band": "Filtrar filas por banda",
+      "band": "Filtrar filas por nivel de riesgo",
       "allBands": "Todas las bandas"
     },
     "status": {
@@ -284,15 +260,15 @@
     },
     "results": {
       "title": "Resultados de la revisión",
-      "rubric": "Rúbrica {{version}}",
+      "rubric": "Versión de las reglas {{version}}",
       "rowsTitle": "Filas de backlinks puntuadas",
-      "observationCopy": "Las bandas describen observaciones guardadas del proveedor según la rúbrica fijada. No predicen una acción del buscador.",
-      "providerObservation": "Observación del proveedor · rúbrica determinista"
+      "observationCopy": "Los niveles de riesgo describen los datos de backlinks guardados según esta versión de las reglas. No predicen lo que hará un buscador.",
+      "providerObservation": "Datos de backlinks guardados · puntuación basada en reglas"
     },
     "columns": {
       "domain": "Dominio de referencia",
       "score": "Puntuación de spam",
-      "band": "Banda de la rúbrica",
+      "band": "Nivel de riesgo",
       "signals": "Señales contribuyentes",
       "firstSeen": "Primera detección",
       "lastSeen": "Última detección",
@@ -315,8 +291,8 @@
       "toggle": "Justificación",
       "not_requested": "No se solicitó justificación para esta fila.",
       "annotated": "Justificación guardada",
-      "abstained": "La IA se abstuvo; la banda determinista no cambia.",
-      "failed": "No hay justificación; la banda determinista no cambia."
+      "abstained": "La IA no dio ninguna explicación; el nivel de riesgo basado en reglas no cambia.",
+      "failed": "No había ninguna explicación disponible; el nivel de riesgo basado en reglas no cambia."
     },
     "disavow": {
       "title": "Crear un archivo de desautorización",
@@ -335,18 +311,9 @@
       "urlScope": "URL exacta"
     }
   },
-  "cap": {
-    "reached": "No queda cuota de {{metric}}",
-    "pack": "{{name}} añade {{units}} unidades por {{price}}.",
-    "upgrade": "Ver opciones de facturación"
-  },
   "killswitch": {
     "title": "La brecha de enlaces no está disponible temporalmente",
     "disabled": "Los nuevos análisis están pausados. Los resultados guardados siguen disponibles."
-  },
-  "tier": {
-    "locked": "Mejora tu plan para desbloquear la brecha de enlaces",
-    "lockedBody": "El análisis de brecha de enlaces está disponible en los planes Pro y Agency."
   },
   "suspicion": {
     "badge": "Posible spam",

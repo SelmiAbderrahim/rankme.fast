@@ -141,7 +141,7 @@
   },
   "filters": {
     "title": "Trouver des pages",
-    "description": "La recherche et les filtres sont traités par le serveur et ne collectent aucune nouvelle donnée fournisseur.",
+    "description": "La recherche et les filtres ne récupèrent jamais de nouvelles données.",
     "searchLabel": "Rechercher dans les pages et requêtes",
     "searchPlaceholder": "Titre, chemin, URL, requête ou mot-clé",
     "insight": "Opportunité",

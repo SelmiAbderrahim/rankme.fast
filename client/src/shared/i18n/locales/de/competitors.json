@@ -38,8 +38,7 @@
   },
   "locked": {
     "title": "Führen Sie ein Upgrade durch, um die Wettbewerbsanalyse freizuschalten",
-    "body": "Wettbewerber-Portfolios und Keyword-Landschaften beginnen mit Pro. Agency ergänzt größere Berichte und den Content-Vergleich von Ranking-Seiten.",
-    "upgrade": "Pläne ansehen"
+    "body": "Wettbewerber-Portfolios und Keyword-Landschaften beginnen mit Pro. Agency ergänzt größere Berichte und den Content-Vergleich von Ranking-Seiten."
   },
   "example": {
     "title": "Beispiel: Was Pro und Agency bieten"
@@ -50,11 +49,6 @@
     "common": {
       "cancel": "Abbrechen"
     },
-    "tiers": {
-      "starter": "Starter",
-      "pro": "Pro",
-      "agency": "Agency"
-    },
     "views": {
       "label": "Ansichten der Wettbewerbsanalyse",
       "overview": "Übersicht",
@@ -63,11 +57,6 @@
       "monitoring": "Monitoring",
       "traffic": "Traffic",
       "reports": "Berichte"
-    },
-    "locked": {
-      "title": "Die Wettbewerbsanalyse beginnt mit Pro",
-      "description": "Wechseln Sie zu Pro, um Wettbewerber zu bestätigen, Keyword-Landschaften zu erstellen und Empfehlungen in Nächste Aktionen zu übernehmen.",
-      "action": "Tarife vergleichen"
     },
     "portfolio": {
       "title": "Bestätigtes Wettbewerberportfolio",
@@ -87,7 +76,7 @@
       "emptyTitle": "Keine bestätigten Konkurrenten",
       "empty": "Bestätigen Sie einen Entdeckungsvorschlag oder fügen Sie eine öffentliche Mitbewerber-URL hinzu.",
       "domain": "Domäne",
-      "source": "Provenienz",
+      "source": "Quelle",
       "status": "Status",
       "added": "Hinzugefügt",
       "action": "Aktion",
@@ -132,9 +121,8 @@
       "empty": "Kehren Sie zur Übersicht zurück und fügen Sie mindestens einen aktiven Konkurrenten hinzu.",
       "previewAction": "Vorschau der Berichtsausgaben",
       "previewing": "Berichtsvorschau wird vorbereitet…",
-      "previewTitle": "Serverautoritative Ausgabenvorschau",
+      "previewTitle": "Verbrauchsvorschau",
       "previewDescription": "Dieser Bericht verwendet {{units}} Schlüsselwortsucheinheiten und kann bis zu {{rows}} Zeilen speichern. {{remaining}} Einheiten bleiben vor dem Start übrig.",
-      "cacheCounts": "Cache-Treffer zählen zur Nutzung",
       "reviewAction": "Überprüfen und bestätigen Sie",
       "confirmTitle": "Diesen Landschaftsbericht starten?",
       "confirmDescription": "Vergleichen Sie {{count}} Mitbewerber für {{units}} Keyword-Sucheinheiten.",
@@ -171,7 +159,7 @@
     },
     "reports": {
       "title": "Gespeicherte Landschaftsberichte",
-      "description": "Öffnen Sie unveränderliche Berichte erneut, ohne eine weitere Anbietersuche zu starten.",
+      "description": "Öffnen Sie gespeicherte Berichte erneut, ohne eine weitere Abfrage zu starten.",
       "emptyTitle": "Keine Landschaftsberichte",
       "empty": "Erstellen Sie einen Bericht aus der Keyword-Landschaftsansicht.",
       "date": "Erstellt",
@@ -274,7 +262,6 @@
     "states": {
       "loading": "Bericht in Bearbeitung",
       "partial": "Teildaten",
-      "cap": "Dieser Antrag übersteigt den verbleibenden Betrag. Führen Sie vor der Bestätigung ein Upgrade durch oder fügen Sie ein berechtigtes Guthabenpaket hinzu.",
       "disabled": "Neue Mitbewerberanfragen sind vorübergehend deaktiviert. Gespeicherte Berichte bleiben verfügbar.",
       "unsafeLink": "Unsicherer Quelllink ausgeblendet",
       "rateLimit": "Zu viele Anfragen. Warten Sie und versuchen Sie es erneut.",
@@ -293,7 +280,7 @@
     },
     "market": {
       "tracked_keyword_mode": "Markt anhand von verfolgten Schlüsselwörtern",
-      "default": "Standardmarkt-Fallback"
+      "default": "Standardmarkt der Website"
     },
     "confidence": {
       "high": "Hoch",

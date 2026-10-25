@@ -140,15 +140,6 @@
       "title": "Aucun audit pour l'instant",
       "body": "Lancez un audit pour ce site et ses pages deviendront sélectionnables ici."
     },
-    "cap": {
-      "title": "Quota mensuel épuisé",
-      "body": "Vous avez utilisé toutes les générations de balisage de votre offre ce mois-ci.",
-      "link": "Voir les offres"
-    },
-    "notOnPlan": {
-      "title": "Absent de votre offre",
-      "body": "La génération de balisage commence avec l'offre Starter."
-    },
     "killSwitch": {
       "title": "Temporairement indisponible",
       "body": "Les nouvelles générations sont suspendues. Les balisages déjà générés restent consultables."

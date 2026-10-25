@@ -22,6 +22,12 @@ Open the site view, click **Add keyword** and type the phrase you want to track.
 ## Weekly vs daily
 Every plan includes **weekly** checks. **Daily** checks are a paid add-on, because checking Google's results every day costs a lot more to run.
 
+## Adding several at once
+Type or paste a list into **Add keyword**. A comma or a new line ends a keyword, so pasting `seo audit, rank tracker` adds two keywords. Up to 100 keywords go in per request. Keywords you already track are skipped, and RankMeFast tells you which ones.
+
+## Check now
+**Check now** runs a check right away instead of waiting for the next scheduled one. On a keyword row it checks that keyword; at the top of the list it checks every active keyword. A confirmation names what will be checked before anything runs. A check of the whole site runs in the background as one job: you can leave the page and come back, and the result says how many keywords were checked, how many failed and how many were not reached in time. A keyword that was never reached is not shown as a failed check.
+
 ## Trend chart
 Select a keyword to see its position over time. A rising line is bad (a higher number means a worse rank) and a falling line is good. Below the chart, an accessible data table lists the same numbers.
 

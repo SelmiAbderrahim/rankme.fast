@@ -1,6 +1,6 @@
 ---
 title: 'Toxische Links und Disavow'
-description: 'Wie RankMeFast Backlinks mit einem deterministischen Regelwerk einstuft, wann die KI eine Zeile kommentieren darf und warum die Disavow-Datei nie für Sie eingereicht wird.'
+description: 'Wie RankMeFast Backlinks mit festen Regeln in Risikostufen einordnet, wann die KI eine Zeile kommentieren darf und warum die Disavow-Datei nie für Sie eingereicht wird.'
 locale: de
 slug: toxic-links
 section: product
@@ -9,15 +9,15 @@ order: 5
 
 # Toxische Links und Disavow
 
-Eine Toxizitätsprüfung bewertet bereits abgerufene Backlink-Zeilen anhand eines festen Regelwerks. Daraus können Sie eine Disavow-Datei im Google-Format bauen. RankMeFast reicht sie nie für Sie ein.
+Eine Toxizitätsprüfung bewertet bereits abgerufene Backlink-Zeilen nach festen Regeln und lässt Sie dann eine Disavow-Datei im Google-Format erstellen. RankMeFast reicht diese Datei nie ein.
 
 <!-- docs-truth: metric=toxicity_reviews; unit=one-review-up-to-1000-stored-rows; cache-hits=count; refund=provider-failure-zero-retained; cadence=on-demand; estimates=rubric-observation -->
 
-## Wie Zeilen eingestuft werden
+## Wie Zeilen eine Risikostufe erhalten
 
-Das Regelwerk `toxicity-rubric-v1` liest den Spam-Score des Anbieters zu jeder gespeicherten Backlink-Zeile und ordnet die Zeile einem der Bänder sauber, beobachten oder toxisch zu. Signale für tote Links und nofollow können das Band verschieben.
+Die Regeln (Version `toxicity-rubric-v1`) lesen den Spam-Score jeder gespeicherten Backlink-Zeile und ordnen sie der Risikostufe unauffällig, beobachten oder toxisch zu. Signale für defekte Links und nofollow passen die Stufe an.
 
-Dieselben Zeilen mit denselben Spam-Scores landen immer in denselben Bändern, und jedes Band steht neben dem Beleg, auf dem es beruht.
+Die Regeln liefern jedes Mal dasselbe Ergebnis: Dieselben gespeicherten Zeilen und Spam-Scores ergeben immer dieselben Risikostufen, und jede Stufe wird mit den Belegen angezeigt, auf denen sie beruht.
 
 ## Was eine Prüfung kostet
 
@@ -33,11 +33,13 @@ Zu einer markierten Zeile können Sie eine KI-Begründung anfordern. Sie zitiert
 
 RankMeFast exportiert die Datei zu Ihrer eigenen Prüfung und Einreichung bei Google. Es ist nicht mit dem Disavow-Werkzeug der Search Console verbunden und kann nichts in Ihrem Namen hochladen.
 
-## Was ein Band bedeutet
+## Ehrliche Grenzen
 
-Ein Band ist die Einschätzung des Regelwerks zu einem Link. Es sagt keine Google-Strafe, keine manuelle Maßnahme und keine Rankingänderung voraus.
+Eine Risikostufe beschreibt, was die Regeln in einem Link gefunden haben. Sie ist nie eine Vorhersage einer Google-Abstrafung, einer manuellen Maßnahme oder einer Ranking-Änderung.
 
-Die KI kann eine Zeile kommentieren, die das Regelwerk bereits markiert hat, aber keine Domain hinzufügen, die es nicht markiert hat. Jede Domain im Export lässt sich auf eine gespeicherte Zeile zurückführen.
+Die KI darf eine Zeile kommentieren, die die Regeln bereits markiert haben, aber niemals eine Domain hinzufügen, die die Regeln nicht markiert haben. Jede Domain im Export lässt sich auf eine gespeicherte Zeile zurückführen.
+
+Vergleichen Sie diese Anleitung vor einer Änderung mit den gespeicherten Belegen und dem in RankMeFast angezeigten Status.
 
 Einheiten und Tarifgrenzen finden Sie unter [Preise](./pricing.de.md).
 

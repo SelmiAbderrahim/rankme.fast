@@ -54,8 +54,41 @@ describe('site Google readiness context', () => {
     expect(screen.getByTestId('resolved-readiness')).toHaveTextContent('not_connected');
   });
 
+  it('keeps the site response when the current configuration carries no readiness yet', () => {
+    renderProvider({ ...googleReducer(undefined, { type: '@@init' }), loaded: true, connectionSiteId: 'site-1',
+      connection: { status: 'connected', googleAccountEmail: 'owner@example.com', propertyUrl: null, connectedAt: '2026-10-01T00:00:00Z', lastUsedAt: null },
+      readiness: null,
+    });
+    expect(screen.getByTestId('resolved-readiness')).toHaveTextContent('no_property');
+  });
+
+  it('renders no notice outside a provider', () => {
+    const { container } = render(<SiteGoogleNotice product="gsc" />);
+    expect(container).toBeEmptyDOMElement();
+  });
+
   it('has no value outside a provider', () => {
     render(<Probe />);
     expect(screen.getByTestId('resolved-readiness')).toHaveTextContent('unknown');
+  });
+
+  it('hides a not-connected notice that has no action, and keeps one that is actionable', () => {
+    const store = configureStore({ reducer: { google: googleReducer } });
+    const notConnected: SiteGoogleReadiness = {
+      gsc: { status: 'not_connected', matching: false },
+      ga4: { status: 'not_connected', matching: false },
+    };
+    const { container, rerender } = render(<Provider store={store}><I18nextProvider i18n={i18n}><MemoryRouter>
+      <SiteGoogleReadinessProvider siteId="site-1" domain="example.com" readiness={notConnected}>
+        <SiteGoogleNotice product="gsc" showAction={false} />
+      </SiteGoogleReadinessProvider>
+    </MemoryRouter></I18nextProvider></Provider>);
+    expect(container).toBeEmptyDOMElement();
+    rerender(<Provider store={store}><I18nextProvider i18n={i18n}><MemoryRouter>
+      <SiteGoogleReadinessProvider siteId="site-1" domain="example.com" readiness={fromSite}>
+        <SiteGoogleNotice product="gsc" showAction={false} />
+      </SiteGoogleReadinessProvider>
+    </MemoryRouter></I18nextProvider></Provider>);
+    expect(container).not.toBeEmptyDOMElement();
   });
 });

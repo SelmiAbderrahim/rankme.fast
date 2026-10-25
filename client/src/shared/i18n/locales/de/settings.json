@@ -53,8 +53,6 @@
     "revokeConfirmTitle": "Diesen API-Schlüssel widerrufen?",
     "revokeConfirmDescription": "„{{name}}“ funktioniert sofort nicht mehr. Dies kann nicht rückgängig gemacht werden.",
     "empty": "Noch keine API-Schlüssel.",
-    "upgradeHint": "API-Schlüssel für MCP sind ab dem Starter-Plan verfügbar; die öffentliche REST-API erfordert Agency. Upgraden Sie, um einen MCP-Client zu verbinden.",
-    "upgradeCta": "Pläne ansehen",
     "scopes": {
       "column": "Zugriff",
       "edit": "Zugriff bearbeiten",
@@ -98,6 +96,7 @@
         "search": "Search Console und Analytics",
         "pages": "Seiten",
         "links": "Backlinks und Wettbewerber",
+        "research": "Keyword-Recherche",
         "visibility": "KI-Sichtbarkeit, lokales SEO und Bewertungen",
         "reports": "Kundenberichte"
       },
@@ -120,6 +119,8 @@
       "get_backlinks_summary": { "name": "Backlink-Zusammenfassung abrufen", "description": "Gespeicherte Anzahlen von Backlinks und verweisenden Domains lesen." },
       "list_backlinks": { "name": "Backlinks auflisten", "description": "Gespeicherte Backlinks ansehen, einer pro verweisender Domain." },
       "list_competitors": { "name": "Wettbewerber auflisten", "description": "Das Wettbewerber-Portfolio einer Website ansehen." },
+      "list_keyword_research_history": { "name": "Keyword-Recherche-Verlauf auflisten", "description": "Ansehen, welche Keyword-Recherchen wann durchgeführt wurden." },
+      "get_keyword_research_result": { "name": "Keyword-Recherche-Ergebnis abrufen", "description": "Ein gespeichertes Recherche-Ergebnis erneut öffnen, ohne den Datenanbieter aufzurufen." },
       "get_ai_visibility_summary": { "name": "KI-Sichtbarkeitszusammenfassung abrufen", "description": "Gespeicherte Prüfungen von KI-Antworten und den Share of Voice lesen." },
       "get_local_seo_summary": { "name": "Local-SEO-Zusammenfassung abrufen", "description": "Das gespeicherte Unternehmensprofil und die Ränge im lokalen Pack lesen." },
       "get_reviews_summary": { "name": "Bewertungszusammenfassung abrufen", "description": "Gespeicherte Bewertungsquellen, Bewertungen und Themen lesen." },
@@ -159,6 +160,13 @@
     }
   },
   "branding": {
+    "companyNameRequired": "Geben Sie den Namen Ihres Unternehmens ein.",
+    "preview": {
+      "title": "Vorschau der PDF-Kopfzeile",
+      "caption": "Die Kopfzeile jedes PDF-Berichts verwendet diesen Namen, dieses Logo und diese Farbe.",
+      "reportTitle": "SEO-Audit-Bericht",
+      "sectionHeading": "Jetzt beheben"
+    },
     "title": "PDF-Branding",
     "description": "Versehen Sie heruntergeladene Bericht-PDFs mit Ihrem eigenen Namen. Firmenname und Akzentfarbe erscheinen im PDF-Kopf.",
     "companyName": "Firmenname",
@@ -167,14 +175,15 @@
     "invalidColor": "Geben Sie eine Farbe wie #b5321e ein oder lassen Sie das Feld leer.",
     "save": "Branding speichern",
     "saved": "Branding gespeichert.",
-    "upgradeHint": "White-Label-PDF-Berichte sind in den Plänen Pro und Agency verfügbar. Upgraden Sie, um Ihre Berichte anzupassen.",
-    "upgradeCta": "Pläne ansehen",
     "logo": {
       "label": "Firmenlogo",
-      "help": "Nur PNG, maximal 256 KB. Bilder werden vor dem Speichern verkleinert und neu codiert.",
-      "invalidType": "Wählen Sie ein PNG-Bild aus.",
-      "tooLarge": "Wählen Sie ein PNG-Bild unter 256 KB aus.",
-      "readFailed": "Dieses Bild konnte nicht gelesen werden. Wählen Sie eine andere PNG-Datei.",
+      "help": "PNG, JPEG oder SVG, maximal 256 KB. Bilder werden verkleinert und als PNG gespeichert. SVG-Dateien dürfen keine Skripte oder Verweise auf andere Dateien enthalten.",
+      "invalidType": "Wählen Sie ein Bild im Format PNG, JPEG oder SVG.",
+      "tooLarge": "Wählen Sie ein Bild unter 256 KB.",
+      "readFailed": "Dieses Bild konnte nicht gelesen werden. Wählen Sie eine andere Datei.",
+      "choose": "Bild auswählen",
+      "noFile": "Keine Datei ausgewählt",
+      "saved": "Gespeichertes Logo wird verwendet",
       "previewAlt": "Vorschau des Firmenlogos",
       "remove": "Logo entfernen"
     },

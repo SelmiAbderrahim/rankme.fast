@@ -66,6 +66,10 @@ If your account has the **Admin** role, two-factor authentication is required. Y
 
 Use one of your backup codes on the sign-in challenge screen. The same screen has a **Use a backup code** link. Each code works once; if you run out, an admin on your team can reset the second factor from the admin panel.
 
+## Active sessions
+
+The **Active sessions** list shows each device signed in to your account: the browser and system, an icon for a computer, phone or tablet, and the IP address when one was recorded. You may be asked to confirm your identity before the list appears. This device reads "Active now". Other devices show the day they were last used, because the sign-in record is refreshed about once a day. No location is shown, since that would need an IP lookup service. Revoke any device you don't recognize, or use **Sign out all other devices**. Before a device is revoked, a confirmation names it; that device then has to sign in again.
+
 ## Your data rights
 
 You can request an export or deletion of your account data. The export covers only the datasets in the generated file. It leaves out Pages snapshots and your GSC and rank history. Deletion goes further: after the grace period, it removes all stored account data, including data the export doesn't contain. You can cancel the deletion request during that window. See [Page performance](./pages-performance.en.md) for how long Pages data is kept.

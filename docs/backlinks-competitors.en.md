@@ -21,6 +21,8 @@ Open a site and choose **Competitors**. The workspace keeps the portfolio, keywo
 
 Starter accounts can read the upgrade explanation. If an operator pauses new work, stored reports remain readable. A plan downgrade can also leave stored data in read-only mode.
 
+Opening **Backlinks** or **Competitors** reads the data RankMeFast has already saved, even if it is older than the cache period, and never calls the data provider. A fresh pull happens only when you select **Refresh**. **Load more** on the backlink list asks the provider for the next page and says so before you use it. A competitor list that has never been checked shows **Competitors not checked yet** until you refresh.
+
 ## Units and confirmation
 
 A landscape report uses one `keyword_lookups` unit for each selected competitor. Comparing three competitors uses three units. Before you confirm, RankMeFast shows how many units and rows the report will use. Cache hits still count. A discovery refresh is optional. It uses one more `keyword_lookups` unit, and only after its own preview and confirmation.

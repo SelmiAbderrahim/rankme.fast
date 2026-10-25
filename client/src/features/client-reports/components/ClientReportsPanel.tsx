@@ -74,6 +74,8 @@ import type {
   ScheduledReportInput,
 } from '../types';
 
+import { PageHeader } from '@shared/components/PageHeader';
+
 interface ClientReportsPanelProps {
   siteId: string;
 }
@@ -863,14 +865,12 @@ export function ClientReportsPanel({ siteId }: ClientReportsPanelProps) {
       aria-labelledby="client-reports-title"
       data-testid="client-reports-panel"
     >
-      <div>
-        <h2 id="client-reports-title" className="text-2xl font-semibold">
-          {t('clientReports:dashboard.title')}
-        </h2>
-        <p className="text-muted-foreground mt-1 text-sm">
-          {t('clientReports:dashboard.description')}
-        </p>
-      </div>
+      <PageHeader
+        headingLevel={2}
+        titleId="client-reports-title"
+        title={t('clientReports:dashboard.title')}
+        description={t('clientReports:dashboard.description')}
+      />
 
       {reportDisabled ? (
         <Alert data-testid="client-reports-disabled">

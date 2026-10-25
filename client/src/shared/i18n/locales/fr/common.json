@@ -6,9 +6,7 @@
   "yes": "Oui",
   "no": "Non",
   "capacity": {
-    "selfHost": "Les limites d’utilisation ne sont pas appliquées sur ce serveur.",
-    "selfHostPlan": "Auto-hébergé",
-    "selfHostSlots": "{{used}} utilisés ; les limites d’utilisation ne sont pas appliquées sur ce serveur."
+    "selfHost": "Les limites d’utilisation ne sont pas appliquées sur ce serveur."
   },
   "logPanel": {
     "title": "Sortie de sauvegarde",
@@ -34,8 +32,6 @@
     "sites": "Sites",
     "keywordResearch": "Recherche de mots-clés",
     "google": "Google",
-    "billing": "Facturation",
-    "creditPacks": "Packs de crédits",
     "notifications": "Notifications",
     "logout": "Se déconnecter",
     "logOut": "Se déconnecter",
@@ -303,9 +299,6 @@
     "signOut": "Se déconnecter",
     "collapse": "Réduire la barre latérale",
     "expand": "Développer la barre latérale",
-    "upgradeTitle": "Débloquez plus d'audits",
-    "upgradeBody": "Passez à un forfait supérieur pour des limites plus élevées et des rapports plus détaillés.",
-    "upgradeCta": "Mettre à niveau",
     "groupSuperAdmin": "Plateforme",
     "opensInNewTab": "S'ouvre dans un nouvel onglet",
     "searchSitesLoading": "Chargement de vos sites…",
@@ -316,10 +309,6 @@
   },
   "locked": "Verrouillé",
   "retry": "Réessayer",
-  "tierBadge": {
-    "pro": "Pro",
-    "agency": "Agency"
-  },
   "tableHelp": {
     "about": "À propos de {{column}}",
     "kind": "L'opération de recherche de cette ligne : métriques, mots-clés associés, intention, idées, écart, vue d'ensemble, tendances ou groupes.",
@@ -351,10 +340,10 @@
     "domainRank": "Le score comparatif de puissance du domaine fourni par le prestataire ; une valeur élevée indique un profil de liens plus fort.",
     "referringDomains": "Le nombre de domaines distincts qui pointent vers la cible.",
     "dofollow": "Indique si le lien stocké peut transmettre les signaux de classement habituels au lieu de porter un attribut nofollow.",
-    "toxicityScore": "Un score déterministe de 0 à 100 pour les observations de liens stockées ; un score élevé signifie davantage de signaux d'alerte.",
-    "rubricBand": "La tranche attribuée par la grille figée : sain, à surveiller ou toxique. Elle ne prédit pas une action du moteur de recherche.",
-    "contributingSignals": "Les observations stockées ayant produit le score déterministe de la grille.",
-    "rationale": "Une explication IA facultative des signaux stockés ; elle ne modifie jamais la tranche déterministe.",
+    "toxicityScore": "Un score de 0 à 100, calculé selon des règles fixes pour chaque backlink enregistré ; plus il est élevé, plus il y a de signaux d’alerte.",
+    "rubricBand": "Le niveau de risque du score : sain, à surveiller ou toxique. Il ne prédit pas ce que fera un moteur de recherche.",
+    "contributingSignals": "Les signaux enregistrés qui ont fait monter ce score.",
+    "rationale": "Une explication facultative de l’IA sur les signaux enregistrés ; elle ne change jamais le niveau de risque.",
     "disavowScope": "Indique si l'export inclut tout le domaine référent ou seulement l'URL exacte du lien.",
     "geogridPoint": "L'emplacement d'échantillonnage numéroté sur la carte représenté par cette ligne.",
     "localPackPosition": "Le rang de l'établissement dans le pack local observé ; 1 est la meilleure position.",
@@ -560,5 +549,10 @@
     "limit": "Vous pouvez comparer jusqu'à {{max}} domaines concurrents à la fois. Retirez-en un pour en ajouter un autre.",
     "remove": "Retirer {{domain}}",
     "placeholder": "p. ex. competitor.com"
+  },
+  "breadcrumbs": {
+    "label": "Fil d’Ariane",
+    "unknownSite": "Site inconnu",
+    "loadingSite": "Chargement du site…"
   }
 }

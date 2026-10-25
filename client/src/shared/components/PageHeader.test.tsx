@@ -2,7 +2,7 @@ import { createRef } from 'react';
 import { render, screen } from '@testing-library/react';
 import { LayoutDashboard } from 'lucide-react';
 import { APP_PAGE_ICONS, SIDEBAR_ICON_KEYS } from '@shared/navigation/appPageIcons';
-import { PageHeader } from './PageHeader';
+import { PageHeader, PageHeading, PageHeadingLevelProvider } from './PageHeader';
 
 describe('PageHeader', () => {
   it('keeps the icon decorative and exposes the localized title as the h1 name', () => {
@@ -53,6 +53,34 @@ describe('PageHeader', () => {
     expect(titleRef.current).toBe(heading);
     expect(heading.closest('.page-class')).toHaveClass('page-class');
     expect(heading.parentElement).toHaveTextContent('Guide');
+  });
+});
+
+describe('PageHeader heading level and optional parts', () => {
+  it('omits the icon tile and renders the help link under the description', () => {
+    render(<PageHeader title="Keywords" description="Track rankings" helpLink={<a href="/docs">Learn more</a>} />);
+    expect(document.querySelector('[data-slot="page-header-icon"]')).toBeNull();
+    expect(screen.getByRole('heading', { level: 1, name: 'Keywords' })).toBeInTheDocument();
+    expect(screen.getByRole('link', { name: 'Learn more' }).closest('[data-slot="page-header-help"]')).not.toBeNull();
+  });
+
+  it('follows the surrounding heading level unless a header sets its own', () => {
+    render(
+      <PageHeadingLevelProvider level={2}>
+        <PageHeader title="Inherited" />
+        <PageHeader title="Explicit" headingLevel={1} />
+        <PageHeading className="panel-title">Plain title</PageHeading>
+      </PageHeadingLevelProvider>,
+    );
+    expect(screen.getByRole('heading', { level: 2, name: 'Inherited' })).toBeInTheDocument();
+    expect(screen.getByRole('heading', { level: 1, name: 'Explicit' })).toBeInTheDocument();
+    expect(screen.getByRole('heading', { level: 2, name: 'Plain title' })).toHaveClass('panel-title');
+  });
+
+  it('is an h1 by default and forwards a ref', () => {
+    const ref = createRef<HTMLHeadingElement>();
+    render(<PageHeading ref={ref}>Standalone</PageHeading>);
+    expect(screen.getByRole('heading', { level: 1, name: 'Standalone' })).toBe(ref.current);
   });
 });
 

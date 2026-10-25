@@ -17,6 +17,8 @@ Los informes de cliente convierten instantáneas guardadas de auditoría, posici
 
 Cada informe reúne los últimos hallazgos de auditoría con secciones de posiciones y de Search Console, bajo el nombre de empresa, el color de acento y el logotipo de tu cuenta.
 
+El nombre de la empresa, el color de acento y el logotipo se definen en la página **Espacio de trabajo** de los ajustes (`/settings/workspace`), y solo el propietario del espacio puede cambiarlos. Sube el logotipo como PNG, JPEG o SVG de hasta 256 KB. Se guarda como PNG, y se rechaza un SVG que contenga scripts o enlaces a otros archivos.
+
 Al enviar un informe no se descarga nada; se compone con instantáneas guardadas. Por eso cada cifra aparece junto a la fecha en que se observó.
 
 Una sección sin instantánea guardada se marca como aún no observada. Nunca se rellena con una estimación.
@@ -35,10 +37,8 @@ No hay inicio de sesión, ni comentarios, ni asientos de cliente. Quien tenga el
 
 La revocación surte efecto en la siguiente petición, así que quien no haya cargado ya la página se queda fuera al instante.
 
-## Plan y límites
+## Límites
 
-Los informes de cliente son una función de Agency. Puedes tener hasta 20 programaciones y 25 enlaces de portal.
-
-Los briefs de contenido no se incluyen en los informes v1. Consulta [Precios](./pricing.es.md) para ver unidades y límites del plan.
+Los briefs de contenido no se incluyen en los informes v1. Un informe solo contiene lo que ya se recopiló: una sección aparece cuando existen las instantáneas en las que se basa.
 
 [Volver al índice de documentación](./index.es.md)

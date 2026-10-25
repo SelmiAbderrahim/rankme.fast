@@ -120,7 +120,6 @@
     "aiGenerated": "AI-Vorschlag",
     "generate": "Vorschläge generieren",
     "cooldown_one": "Warten Sie {{seconds}} Sekunde, bevor Sie erneut generieren.",
-    "capReached": "Sie haben alle Vorschlagsgenerierungen in diesem Monat verbraucht.",
     "emptyGenerated": "Aus Ihren Daten ließen sich noch keine Fragen bilden. Fügen Sie verfolgte Keywords hinzu oder starten Sie einen Audit und generieren Sie dann erneut.",
     "generatedAt": "Generiert am {{date}}",
     "outputLocale": "Ausgabesprache: {{locale}}",
@@ -144,10 +143,6 @@
     "regenerate": "Vorschläge neu erstellen",
     "staleBody": "Sie wurden erstellt, bevor Vorschläge nur noch die Daten dieser Website nutzten, daher haben wir sie ausgeblendet. Erstellen Sie mit der Schaltfläche oben neue Vorschläge. Erst Ihr Klick wird angerechnet.",
     "staleTitle": "Diese Vorschläge sind veraltet"
-  },
-  "locked": {
-    "body": "AI-Sichtbarkeit ist im Agency-Tarif verfügbar.",
-    "upgrade": "Tarife ansehen"
   },
   "add": {
     "failed": "Dieser Prompt konnte nicht hinzugefügt werden."

@@ -451,12 +451,35 @@ describe('MCP tool handlers', () => {
     );
     mocks.listKeywords.mockResolvedValueOnce({ keywords: [{ id: 'k1', phrase: 'rank me',
       rankState: neverRankState, lastOutcome: null }] });
+    mocks.summarizeSiteRankStates.mockResolvedValueOnce({ baseline: 'previous_check', total: 3,
+      counts: { improved: 2, never_checked: 1, declined: 0 }, movement: { compared: 2, improved: 2,
+        declined: 0, unchanged: 0, failed: 0, unranked: 0, noPair: 1 } });
     const result = await toolListKeywords({ siteId: SITE_ID, limit: 2 }, context);
-    expect(result.content[0]?.text).toContain('rank me');
+    expect(result.content[0]?.text).toContain('rank me: Never checked');
+    expect(result.content[0]?.text).toContain('Improved: 2, Never checked: 1');
+    expect(result.content[0]?.text).not.toContain('Declined: 0');
     expect(mocks.listKeywords).toHaveBeenLastCalledWith(
       expect.objectContaining({ limit: 2 }),
       expect.any(Object),
     );
+  });
+
+  it('keeps a failed check out of the position fields and reports the last known position', async () => {
+    mocks.listKeywords.mockResolvedValueOnce({ keywords: [{ id: 'k9', phrase: 'flaky',
+      rankState: { state: 'failed_last_check', comparison: null, baseline: 'previous_check', position: 7,
+        baselinePosition: 5, change: -2, checkedAt: '2026-10-01T00:00:00.000Z',
+        baselineCheckedAt: null, failedAt: '2026-10-02T00:00:00.000Z' }, lastOutcome: null }] });
+    const result = await toolListKeywords({ siteId: SITE_ID }, context);
+    expect(result.structuredContent.keywords).toEqual([expect.objectContaining({
+      status: 'failed', position: null, baselinePosition: null, change: null, lastKnownPosition: 7 })]);
+  });
+
+  it('reads tools called without any arguments as invalid input, never as a crash', async () => {
+    for (const tool of [toolListKeywords, toolListContentAnalyses, toolListActions]) {
+      const result = await tool(undefined, context);
+      expect(result.isError).toBe(true);
+      expect(result.structuredContent).toMatchObject({ error: { code: 'mcp.errors.invalidInput' } });
+    }
   });
 
   it('joins bounded rank histories and preserves optional dates', async () => {

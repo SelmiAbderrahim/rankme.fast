@@ -19,6 +19,7 @@ import {
   loadLiveTrendsRun,
   loadMetrics,
   loadRelated,
+  loadStoredKeywords,
   openStoredResearch,
   previewLiveTrends,
   runClusters,
@@ -128,6 +129,7 @@ export const initialState: KeywordResearchState = {
     detailLoading: false,
     detailError: '',
     decisions: {},
+    candidates: { loading: false, error: '', data: null, requestId: null },
   },
   liveTrends: {
     preview: { loading: false, data: null, error: '', errorKind: null },
@@ -346,6 +348,7 @@ const slice = createSlice({
       .addCase(fetchKeywordPreview.pending, (state, action) => {
         state.preview.loading = true;
         state.preview.error = '';
+        state.preview.competitorsError = '';
         state.preview.forOperation = action.meta.arg.operation;
       })
       .addCase(fetchKeywordPreview.fulfilled, (state, action) => {
@@ -357,11 +360,13 @@ const slice = createSlice({
         state.preview.data = null;
         /* v8 ignore next -- fetchKeywordPreview always populates payload via rejectWithValue; the null-payload fallback is defence. */
         state.preview.error = action.payload?.error ?? '';
+        state.preview.competitorsError = action.payload?.competitorsError ?? '';
       })
       // --- gap ------------------------------------------------------------
       .addCase(runGap.pending, (state) => {
         state.gap.loading = true;
         state.gap.error = '';
+        state.gap.competitorsError = '';
       })
       .addCase(runGap.fulfilled, (state, action) => {
         state.gap.loading = false;
@@ -372,6 +377,7 @@ const slice = createSlice({
         state.gap.loading = false;
         /* v8 ignore next -- runGap always populates payload via rejectWithValue; the null-payload fallback is defence. */
         state.gap.error = action.payload?.error ?? '';
+        state.gap.competitorsError = action.payload?.competitorsError ?? '';
       })
       // --- overview -------------------------------------------------------
       .addCase(runOverview.pending, (state) => {
@@ -426,6 +432,23 @@ const slice = createSlice({
         state.clusters.running = false;
         /* v8 ignore next -- runClusters always populates payload via rejectWithValue; the null-payload fallback is defence. */
         state.clusters.runError = action.payload?.error ?? '';
+      })
+      // --- stored candidates (cluster picker) ------------------------------
+      .addCase(loadStoredKeywords.pending, (state, action) => {
+        state.clusters.candidates.loading = true;
+        state.clusters.candidates.error = '';
+        state.clusters.candidates.requestId = action.meta.requestId;
+      })
+      .addCase(loadStoredKeywords.fulfilled, (state, action) => {
+        // Older responses (a slower, earlier search) never overwrite a newer one.
+        if (state.clusters.candidates.requestId !== action.meta.requestId) return;
+        state.clusters.candidates.loading = false;
+        state.clusters.candidates.data = action.payload;
+      })
+      .addCase(loadStoredKeywords.rejected, (state, action) => {
+        if (state.clusters.candidates.requestId !== action.meta.requestId) return;
+        state.clusters.candidates.loading = false;
+        state.clusters.candidates.error = action.payload ?? '';
       })
       // --- clusters list --------------------------------------------------
       .addCase(loadClusterRuns.pending, (state) => {

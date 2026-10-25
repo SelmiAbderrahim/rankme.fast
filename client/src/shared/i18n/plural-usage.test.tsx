@@ -66,7 +66,6 @@ const countPhrases = {
   ],
   "audienceResearch": [
     "confirm.body",
-    "preview.maxPages",
     "progress.counts.sources",
     "progress.counts.signals",
     "signals.citationCount"

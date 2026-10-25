@@ -474,7 +474,7 @@ describe('ComparisonOverview', () => {
     );
     expect(screen.getByTestId('competitor-partial-domains')).toHaveTextContent('blocked.com');
     expect(screen.getByTestId('competitor-delta-rival.com')).toHaveTextContent('+200');
-    expect(screen.getByTestId('competitor-delta-other.com')).toHaveTextContent('-50');
+    expect(screen.getByTestId('competitor-delta-other.com')).toHaveTextContent('−50');
   });
 
   it('filters by domain + dimension through the URL and clears on no-match', async () => {

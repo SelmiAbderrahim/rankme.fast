@@ -1,12 +1,19 @@
-import { beforeEach, describe, expect, it } from 'vitest';
-import { render, screen } from '@testing-library/react';
+import { beforeEach, describe, expect, it, vi } from 'vitest';
+import { render, screen, waitFor } from '@testing-library/react';
 import { Provider } from 'react-redux';
 import { I18nextProvider } from 'react-i18next';
 import { MemoryRouter } from 'react-router-dom';
 import { configureStore } from '@reduxjs/toolkit';
 import { i18n, initI18n, changeLanguage } from '@shared/i18n';
 import { sitesReducer } from '@features/sites';
+import { ApiError } from '@shared/api/client';
 import { AppBreadcrumbs } from './AppBreadcrumbs';
+
+const fetchSiteRequest = vi.hoisted(() => vi.fn());
+vi.mock('@features/sites/api', async (importOriginal) => ({
+  ...(await importOriginal<typeof import('@features/sites/api')>()),
+  fetchSiteRequest,
+}));
 
 const site = {
   id: 'site-1',
@@ -43,6 +50,7 @@ const renderAt = (entry: string, withSite = true) =>
   );
 
 beforeEach(async () => {
+  fetchSiteRequest.mockReset();
   initI18n({ initialLocale: 'en' });
   await changeLanguage('en');
 });
@@ -109,13 +117,77 @@ describe('AppBreadcrumbs', () => {
     expect(screen.getByText('Overview')).toBeInTheDocument();
   });
 
-  it('falls back to the site id when the site record is not loaded', () => {
-    renderAt('/sites/site-1', false);
-    expect(screen.getByRole('link', { name: 'site-1' })).toHaveAttribute('href', '/sites/site-1');
+  it('reads a site that is not on the loaded page of the list and never shows its raw id', async () => {
+    fetchSiteRequest.mockResolvedValue({ site: { ...site, id: 'site-9', displayName: 'Later page' } });
+    renderAt('/sites/site-9', false);
+    expect(await screen.findByRole('link', { name: 'Later page' })).toHaveAttribute('href', '/sites/site-9');
+    expect(screen.queryByText('site-9')).not.toBeInTheDocument();
+  });
+
+  it('shows a neutral loading crumb, not the id, while the site is being read', async () => {
+    fetchSiteRequest.mockReturnValue(new Promise(() => undefined));
+    renderAt('/sites/site-9', false);
+    expect(await screen.findByRole('status')).toHaveTextContent('Loading site…');
+    expect(screen.queryByText('site-9')).not.toBeInTheDocument();
+  });
+
+  it('names an unknown site as the current page and adds no tab crumb', async () => {
+    fetchSiteRequest.mockRejectedValue(new ApiError('Not found', 404, null));
+    renderAt('/sites/site-9?tab=backlinks', false);
+    expect(await screen.findByText('Unknown site')).toBeInTheDocument();
+    expect(screen.queryByText('Backlinks')).not.toBeInTheDocument();
+    await waitFor(() => expect(fetchSiteRequest).toHaveBeenCalledTimes(1));
+  });
+
+  it('treats a failed read like an unknown site rather than showing the id', async () => {
+    fetchSiteRequest.mockRejectedValue(new TypeError('offline'));
+    renderAt('/sites/site-9', false);
+    expect(await screen.findByText('Unknown site')).toBeInTheDocument();
+  });
+
+  it('adds one level for an explicit nested view and links the tab back to its default', () => {
+    renderAt('/sites/site-1?tab=competitors&view=traffic');
+    expect(screen.getByRole('link', { name: 'Competitors' })).toHaveAttribute(
+      'href',
+      '/sites/site-1?tab=competitors',
+    );
+    expect(screen.getByText('Traffic')).toBeInTheDocument();
+  });
+
+  it('reads a tab at its default view at the same depth as every other tab', () => {
+    renderAt('/sites/site-1?tab=competitors&view=overview');
+    expect(screen.getByText('Competitors').closest('[aria-current="page"]')).not.toBeNull();
+    expect(screen.queryByText('Overview')).not.toBeInTheDocument();
+  });
+
+  it.each([
+    ['/sites', ['Sites']],
+    ['/assistant', ['AI Assistant']],
+    ['/keyword-research', ['Keyword research']],
+    ['/keyword-research/history/', ['Keyword research', 'Research history']],
+    ['/keyword-research/live-trends', ['Keyword research', 'Live search interest']],
+    ['/dashboard/alerts', ['Alerts']],
+    ['/exports', ['Exports and shares']],
+    ['/settings/profile', ['Profile']],
+    ['/settings/team', ['Team']],
+    ['/settings/notifications', ['Notifications']],
+    ['/settings/security', ['Security']],
+  ])('shows Dashboard › … on %s', (path, labels) => {
+    renderAt(path);
+    expect(screen.getByRole('link', { name: 'Dashboard' })).toHaveAttribute('href', '/dashboard');
+    for (const label of labels) expect(screen.getAllByText(label).length).toBeGreaterThan(0);
+    expect(screen.getByRole('navigation', { name: 'Breadcrumb' })).toBeInTheDocument();
+  });
+
+  it('shows the Dashboard as its own only, current crumb', () => {
+    renderAt('/dashboard');
+    expect(screen.getByRole('navigation', { name: 'Breadcrumb' })).toBeInTheDocument();
+    expect(screen.getByText('Dashboard').closest('[aria-current="page"]')).not.toBeNull();
+    expect(document.querySelector('a[href]')).toBeNull();
   });
 
   it('renders nothing on pages without a defined trail', () => {
-    const { container } = renderAt('/dashboard');
+    const { container } = renderAt('/team/invitations/extra');
     expect(container.querySelector('[data-slot="breadcrumb"]')).toBeNull();
   });
 

@@ -755,7 +755,7 @@ describe('name precedence evidence', () => {
   const ld = (value: unknown) => `<script type="application/ld+json">${JSON.stringify(value)}</script>`;
 
   it('derives the brand part of a title only when it is confident', () => {
-    // The QA sample: a generic greeting segment beside the brand.
+    // A generic greeting segment beside the brand.
     expect(deriveTitleBrand('Welcome - Cashback', 'cashback.sa')).toBe('Cashback');
     expect(deriveTitleBrand('Welcome - Cashback', 'unrelated.example')).toBe('Cashback');
     expect(deriveTitleBrand('Welcome to Acme', 'acme.com')).toBe('Acme');

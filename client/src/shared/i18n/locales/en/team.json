@@ -1,7 +1,6 @@
 {
   "title": "Team",
   "description": "Invite teammates and manage seats on your plan.",
-  "seatUsage": "{{used}} of {{limit}} seats used",
   "invite": {
     "heading": "Invite a teammate",
     "emailLabel": "Email",
@@ -9,8 +8,6 @@
     "emailInvalid": "Enter a valid email address",
     "submit": "Send invite",
     "submitting": "Sending…",
-    "atCap": "You've used all your seats. Upgrade to invite more.",
-    "upgradeCta": "Upgrade plan",
     "description": "Choose a role and exactly which sites this teammate can use.",
     "roleLabel": "Role",
     "adminRoleLimit": "Admins can invite Members only."
@@ -192,10 +189,12 @@
     "buttonLabelWithCount_many": "Team invitations, {{count}} pending",
     "buttonLabelWithCount_other": "Team invitations, {{count}} pending"
   },
-  "received": {"pending_zero": "{{count}} invitations from other teams are waiting for you.",
+  "received": {
+    "pending_zero": "{{count}} invitations from other teams are waiting for you.",
     "pending_one": "{{count}} invitation from another team is waiting for you.",
     "pending_two": "{{count}} invitations from other teams are waiting for you.",
     "pending_few": "{{count}} invitations from other teams are waiting for you.",
     "pending_many": "{{count}} invitations from other teams are waiting for you.",
-    "pending_other": "{{count}} invitations from other teams are waiting for you."}
+    "pending_other": "{{count}} invitations from other teams are waiting for you."
+  }
 }

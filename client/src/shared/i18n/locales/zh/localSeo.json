@@ -17,8 +17,7 @@
   "loadFailed": "无法加载本地 SEO。",
   "locked": {
     "title": "本地 SEO 是 Pro 功能",
-    "body": "升级到 Pro,即可跟踪您的商家在各目录和本地地图组合中的一致性。",
-    "upgrade": "查看套餐"
+    "body": "升级到 Pro,即可跟踪您的商家在各目录和本地地图组合中的一致性。"
   },
   "listings": {
     "title": "商家信息",

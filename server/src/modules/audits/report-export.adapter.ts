@@ -6,6 +6,7 @@ import { getSite } from '../sites/index.js';
 import { getAuditRun, resolveOwnedAuditRunSiteId } from './audits.service.js';
 import { deepCrawlEvidenceLines } from './deep-crawl-evidence.js';
 import { getAuditReport, type AuditReport } from './report.service.js';
+import { metricOrNull, percentOrNull } from '../../shared/utils/metric-value.js';
 const AUDIT_SECTIONS = [
     'findings',
     'pagespeed',
@@ -246,9 +247,10 @@ function auditBlocks(locale: ReportDocumentV1['locale'], report: AuditReport, se
                 type: 'kpi_group', id: 'gsc-totals', items: [
                     ['clicks', 'fields.clicks', report.gscSearch.totalClicks],
                     ['impressions', 'fields.impressions', report.gscSearch.totalImpressions],
-                    ['ctr', 'fields.ctr', report.gscSearch.averageCtr * 100],
-                    ['position', 'fields.position', report.gscSearch.averagePosition],
-                ].map(([id, key, value]) => ({ id: String(id), label: reportCopy(locale, String(key)), value: { type: 'number' as const, value: Number(value) }, ...(id === 'ctr' ? { unit: '%' } : {}), sourceDateId: 'audit-gsc' })),
+                    // No impressions means no CTR or position (null), never 0.
+                    ['ctr', 'fields.ctr', percentOrNull(report.gscSearch.averageCtr, report.gscSearch.totalImpressions)],
+                    ['position', 'fields.position', metricOrNull('position', report.gscSearch.averagePosition, report.gscSearch.totalImpressions)],
+                ].map(([id, key, value]) => ({ id: String(id), label: reportCopy(locale, String(key)), value: value === null ? { type: 'null' as const, value: null } : { type: 'number' as const, value: Number(value) }, ...(id === 'ctr' ? { unit: '%' } : {}), sourceDateId: 'audit-gsc' })),
             });
             const analyticsColumns = [
                 { key: 'item', label: reportCopy(locale, 'fields.item'), valueType: 'string' as const },
@@ -257,8 +259,8 @@ function auditBlocks(locale: ReportDocumentV1['locale'], report: AuditReport, se
                 { key: 'ctr', label: reportCopy(locale, 'fields.ctr'), valueType: 'number' as const, unit: '%' },
                 { key: 'position', label: reportCopy(locale, 'fields.position'), valueType: 'number' as const },
             ];
-            blocks.push(reportTable({ id: 'gsc-queries', columns: analyticsColumns, rows: report.gscSearch.topQueries.map((row, index) => ({ id: `query-${index + 1}`, values: [row.query, row.clicks, row.impressions, row.ctr * 100, row.position], sourceDateId: 'audit-gsc' })) }));
-            blocks.push(reportTable({ id: 'gsc-pages', columns: analyticsColumns, rows: report.gscSearch.topPages.map((row, index) => ({ id: `page-${index + 1}`, values: [row.url, row.clicks, row.impressions, row.ctr * 100, row.position], sourceDateId: 'audit-gsc' })) }));
+            blocks.push(reportTable({ id: 'gsc-queries', columns: analyticsColumns, rows: report.gscSearch.topQueries.map((row, index) => ({ id: `query-${index + 1}`, values: [row.query, row.clicks, row.impressions, percentOrNull(row.ctr, row.impressions), metricOrNull('position', row.position, row.impressions)], sourceDateId: 'audit-gsc' })) }));
+            blocks.push(reportTable({ id: 'gsc-pages', columns: analyticsColumns, rows: report.gscSearch.topPages.map((row, index) => ({ id: `page-${index + 1}`, values: [row.url, row.clicks, row.impressions, percentOrNull(row.ctr, row.impressions), metricOrNull('position', row.position, row.impressions)], sourceDateId: 'audit-gsc' })) }));
         }
         if (report.indexStatus?.status === 'ok') {
             blocks.push(reportTable({

@@ -40,7 +40,6 @@
   },
   "states": {
     "ranksCta": "Positionsprüfung ausführen",
-    "planCta": "Tarife ansehen",
     "emptyRuns": {
       "title": "Noch keine gespeicherten Läufe",
       "body": "Sehen Sie sich einen neuen Lauf an, um zu erfahren, welche verfolgten Keywords sich qualifizieren."
@@ -52,10 +51,6 @@
     "notEnoughKeywords": {
       "title": "Nicht genügend aktuelle Positionsprüfungen",
       "body": "Weniger als zwei verfolgte Keywords haben eine verwertbare Ranking-Prüfung aus den letzten sieben Tagen. Es wurde kein Lauf verbraucht."
-    },
-    "cap": {
-      "title": "Monatliches Kontingent erreicht",
-      "body": "Diese Anfrage wurde nicht gestartet. Warten Sie auf die nächste Kontingentperiode oder prüfen Sie die verfügbaren Tarife."
     },
     "disabled": {
       "title": "Clustering-Läufe nicht verfügbar",

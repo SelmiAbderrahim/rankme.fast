@@ -2,6 +2,7 @@ import { act, render } from '@testing-library/react';
 import { Provider } from 'react-redux';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 import { useAuthSession, type AuthSessionState } from '@features/auth';
+import { shareInFlight } from '@shared/lib/inFlight';
 import { makeStore } from './store';
 import { PrincipalStateBoundary } from './PrincipalStateBoundary';
 
@@ -64,6 +65,33 @@ describe('PrincipalStateBoundary', () => {
 
     expect(accountAStore.getState().sites.loaded).toBe(false);
     expect(accountAStore.getState().sites.message).toBe('');
+  });
+
+  it('forgets shared in-flight reads whenever the principal changes, and only then', async () => {
+    const start = vi.fn(() => new Promise<string>(() => undefined));
+    void shareInFlight('principal-test', start);
+    const store = makeStore();
+    const view = render(
+      <Provider store={store}>
+        <PrincipalStateBoundary />
+      </Provider>,
+    );
+    act(() => view.rerender(
+      <Provider store={store}>
+        <PrincipalStateBoundary />
+      </Provider>,
+    ));
+    void shareInFlight('principal-test', start);
+    expect(start).toHaveBeenCalledTimes(1);
+
+    vi.mocked(useAuthSession).mockReturnValue(session('account-b'));
+    act(() => view.rerender(
+      <Provider store={store}>
+        <PrincipalStateBoundary />
+      </Provider>,
+    ));
+    void shareInFlight('principal-test', start);
+    expect(start).toHaveBeenCalledTimes(2);
   });
 
   it('clears account state on session expiry or logout', () => {

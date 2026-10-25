@@ -82,6 +82,8 @@
       "getBacklinksSummary": "Get backlinks summary",
       "listBacklinks": "List backlinks",
       "listCompetitors": "List competitors",
+      "listKeywordResearchHistory": "List keyword research history",
+      "getKeywordResearchResult": "Get keyword research result",
       "getAiVisibilitySummary": "Get AI visibility summary",
       "getLocalSeoSummary": "Get local SEO summary",
       "getReviewsSummary": "Get reviews summary",

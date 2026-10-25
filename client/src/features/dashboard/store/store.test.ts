@@ -44,3 +44,14 @@ it('uses safe initial selectors in a store without the dashboard slice', () => {
   expect(selectSiteHealth(partial)).toBeNull();
   expect(selectSiteHealthError(partial)).toBe('');
 });
+
+it('keeps an empty message for a rejection without a payload and tolerates a store without the slice', async () => {
+  const store = configureStore({ reducer: { dashboard: dashboardReducer } });
+  store.dispatch(loadSiteHealth.rejected(new Error('aborted'), 'request-1', undefined));
+  expect(selectSiteHealthError(store.getState() as RootState)).toBe('');
+  expect(store.getState().dashboard.loadedAt).toBeNull();
+
+  const bare = configureStore({ reducer: { other: (state: number = 0) => state } });
+  await bare.dispatch(loadSiteHealth() as never);
+  expect(fetch).toHaveBeenCalled();
+});

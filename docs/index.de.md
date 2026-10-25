@@ -52,11 +52,11 @@ order: 0
 - [Keyword-Clustering](./keyword-clustering.de.md): Wie RankMeFast verfolgte Keywords anhand gemeinsamer Ergebnis-URLs gruppiert und warum das Arithmetik ist und kein Ähnlichkeitswert.
 - [Bing-, YouTube- und Amazon-Tracking](./alt-engine-tracking.de.md): Wie RankMeFast Nicht-Google-Engines verfolgt, was ein exaktes Ziel-Token ist und warum eine Amazon-Position eine Indexposition ist.
 - [Keyword-Kannibalisierung](./cannibalization.de.md): Wie RankMeFast Suchanfragen findet, bei denen mehrere Ihrer Seiten konkurrieren, allein anhand bereits gespeicherten Search-Console-Zeilen.
-- [Toxische Links und Disavow](./toxic-links.de.md): Wie RankMeFast Backlinks mit einem deterministischen Regelwerk einstuft, wann die KI eine Zeile kommentieren darf und warum die Disavow-Datei nie für Sie eingereicht wird.
+- [Toxische Links und Disavow](./toxic-links.de.md): Wie RankMeFast Backlinks mit festen Regeln in Risikostufen einordnet, wann die KI eine Zeile kommentieren darf und warum die Disavow-Datei nie für Sie eingereicht wird.
 - [Benachrichtigungen](./alerts.de.md): Welche Benachrichtigungen auslösen, wie Exactly-once-Zustellung funktioniert und wann eine Ranking-Abfall-Regel zustellt.
 - [Vorschläge zur internen Verlinkung](./internal-linking.de.md): Wie RankMeFast verwaiste und schwach verlinkte Seiten in Ihrem gespeicherten Content-Inventar findet und Ankertexte entwirft, die ihre Belege zitieren.
 - [Content-Briefings](./content-briefs.de.md): Wie ein Briefing aus den gespeicherten Top-10-Ergebnissen und bis zu zehn Seitenabrufen entsteht und warum jeder Gliederungspunkt einen gelieferten Beleg zitieren muss.
-- [Lokales Raster-Tracking](./geogrid.de.md): Wie Local-Pack-Raster je Koordinate erhoben werden, was eine fehlgeschlagene Zelle bedeutet und warum Koordinaten eingetippt statt auf einer Karte gewählt werden.
+- [Lokales Raster-Tracking](./geogrid.de.md): Wie Local-Pack-Raster je Koordinate erhoben werden, wie Sie die Mitte des Rasters wählen und was eine fehlgeschlagene Zelle bedeutet.
 - [Schema-Markup-Generator](./schema-markup.de.md): Wie RankMeFast JSON-LD aus gespeicherten Seitenfakten baut, was Konformität hier bedeutet und warum eine fehlende Eigenschaft weggelassen statt erfunden wird.
 - [Kundenberichte und Portal](./client-reports.de.md): Wie White-Label-PDF-Berichte aus gespeicherten Momentaufnahmen entstehen, wie Zeitpläne zustellen und was ein widerrufbarer Portallink ist und was nicht.
 - [Berichte herunterladen und teilen](./report-exports.de.md): Passendes Format wählen, Filter bewahren und private Freigabelinks verwalten.

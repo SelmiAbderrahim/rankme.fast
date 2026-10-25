@@ -1,7 +1,6 @@
 import type { RequestHandler } from 'express';
 import { Types } from 'mongoose';
 import { env } from '../../config/env.js';
-import { db as productionDb } from '../../db/client.js';
 import { HttpError } from '../../shared/utils/http-error.js';
 import { sendLocalizedMessage } from '../../shared/i18n/localized-response.js';
 import { asyncHandler } from '../../shared/utils/async-handler.js';
@@ -14,7 +13,7 @@ import { getAuditReport } from './report.service.js';
 import { applyDismissals } from './report-dismissals.js';
 import { findingUrlsFromReport, toBrowserAuditReport } from './report-browser.js';
 import { previewFindingRecheck, runFindingRecheck } from './finding-recheck.service.js';
-import { getSummaryDb } from './summary.db-holder.js';
+import { resolveSummaryDb } from './summary.db-holder.js';
 import { renderAuditReportPdf } from './report-pdf.service.js';
 import { AuditRun } from './audit-run.model.js';
 import { Site } from '../sites/index.js';
@@ -57,8 +56,6 @@ export const getRun: RequestHandler = asyncHandler(async (req, res) => {
     const result = await getAuditRun({ accountId, runId });
     res.status(200).json(result);
 });
-/* c8 ignore next -- production seam: tests inject a PGlite db via setSummaryDb(); the productionDb fallback fires only at boot. */
-const resolveDecisionsDb = () => getSummaryDb() ?? productionDb;
 /** The site a run belongs to, for a caller that owns the run; otherwise the standard 404. */
 async function ownedRunSiteId(accountId: string, runId: string): Promise<string> {
     if (!Types.ObjectId.isValid(runId))
@@ -76,12 +73,12 @@ export const getReport: RequestHandler = asyncHandler(async (req, res) => {
     const siteId = await ownedRunSiteId(accountId, runId);
     // The latest view and the pinned-run view read this one endpoint, and both
     // get the site's decisions applied the same way.
-    const report = await applyDismissals(await getAuditReport({ accountId, runId, locale: req.language }), { accountId, siteId, db: resolveDecisionsDb() });
+    const report = await applyDismissals(await getAuditReport({ accountId, runId, locale: req.language }), { accountId, siteId, db: resolveSummaryDb() });
     const aiSummaryEnabled = env.AI_SUMMARY_ENABLED && getSummaryProvider() !== null;
     // A stored summary is flagged (never regenerated) when the owner has since
     // dismissed, fixed or reopened a finding it was built from.
     const aiSummaryFreshness = report.aiSummary
-        ? (await getAuditSummaryState({ accountId, runId, locale: req.language }, { db: resolveDecisionsDb() })).freshness ?? null
+        ? (await getAuditSummaryState({ accountId, runId, locale: req.language }, { db: resolveSummaryDb() })).freshness ?? null
         : null;
     res.setHeader('Content-Language', req.language);
     // `auditFreshDays` is the one staleness threshold the Actions evidence uses
@@ -115,7 +112,7 @@ async function recheckInput(req: Parameters<RequestHandler>[0]) {
     const accountId = requireAccountId(req);
     const { runId, ruleId } = findingRuleParamsSchema.parse(req.params);
     const siteId = await ownedRunSiteId(accountId, runId);
-    return { accountId, siteId, runId, ruleId, locale: req.language, db: resolveDecisionsDb() };
+    return { accountId, siteId, runId, ruleId, locale: req.language, db: resolveSummaryDb() };
 }
 export const getFindingRecheck: RequestHandler = asyncHandler(async (req, res) => {
     res.status(200).json(await previewFindingRecheck(await recheckInput(req)));
@@ -177,7 +174,7 @@ export const getSummary: RequestHandler = asyncHandler(async (req, res) => {
     }
     const accountId = requireAccountId(req);
     const { runId } = runIdParamsSchema.parse(req.params);
-    const state = await getAuditSummaryState({ accountId, runId, locale: req.language }, { db: resolveDecisionsDb() });
+    const state = await getAuditSummaryState({ accountId, runId, locale: req.language }, { db: resolveSummaryDb() });
     // Stage, elapsed time and failure reason of the latest job.
     const progress = await getAuditSummaryProgress({ accountId, runId, locale: req.language });
     res.setHeader('Content-Language', req.language);
@@ -198,7 +195,7 @@ export const postSummary: RequestHandler = asyncHandler(async (req, res) => {
     const accountId = requireAccountId(req);
     const { runId } = runIdParamsSchema.parse(req.params);
     const state = await startAuditSummary({ accountId, runId, locale: req.language }, {
-        db: resolveDecisionsDb(),
+        db: resolveSummaryDb(),
         provider: getSummaryProvider(),
         queue: getAuditsQueue(),
     });

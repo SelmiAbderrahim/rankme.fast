@@ -330,10 +330,11 @@ describe('ActionsPanel — load, order, filters, pagination', () => {
     await waitFor(() => expect(capturedSearch).toBe('?tab=actions'));
   });
 
-  it('disables Next when the server reports no further page', async () => {
+  it('shows no pager at all when the whole list fits on one page', async () => {
     renderPanel();
     await screen.findAllByTestId('action-card');
-    expect(screen.getByTestId('actions-next')).toBeDisabled();
+    expect(screen.queryByTestId('actions-next')).not.toBeInTheDocument();
+    expect(screen.queryByTestId('actions-prev')).not.toBeInTheDocument();
   });
 
   it('keeps the current list visible while refreshing', async () => {

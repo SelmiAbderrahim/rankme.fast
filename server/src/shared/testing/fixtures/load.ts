@@ -1,5 +1,5 @@
 /**
- * Recorded-fixture loader (prompt 05).
+ * Recorded-fixture loader.
  *
  * Convention: `fixtures/<provider>/<operation>/<case>.json` where `case` is
  * one of `success`, `timeout`, `malformed`, `quota`, plus operation-specific

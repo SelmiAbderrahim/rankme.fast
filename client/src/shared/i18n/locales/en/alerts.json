@@ -132,14 +132,6 @@
     }
   },
   "states": {
-    "cap": {
-      "title": "Rule limit reached",
-      "body": "Another alert rule cannot be added right now."
-    },
-    "tierLocked": {
-      "title": "Channel needs a higher plan",
-      "body": "Slack and webhook channels need the Pro plan or higher."
-    },
     "disabled": {
       "title": "Alerts are paused",
       "body": "Alerts are temporarily unavailable. Your rules and log are still here."

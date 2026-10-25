@@ -21,9 +21,9 @@ Consultamos la API de Search Console con `dimensions=['searchAppearance']` para 
 ## Estados
 
 - **Disponible**: Google devolvió al menos una fila generativa reconocida. La tarjeta muestra, fila por fila, los clics, impresiones, CTR y posición media que envió Google.
-- **No disponible**: Google no devolvió ninguna fila generativa reconocida para esta propiedad y periodo. No es lo mismo que cero: Google no informó nada, así que dejamos el dato vacío en lugar de mostrar 0.
-- **Parcial**: Google devolvió filas pero marcó la respuesta como parcial (por límite de solicitudes o truncamiento). Las filas recibidas se siguen mostrando.
-- **Reconexión necesaria**: hay que volver a conectar Google. Abre el workspace de Google del sitio y sigue el aviso de reconexión.
+- **Aún no aparece**: Google no devolvió ninguna fila generativa reconocida para esta propiedad y periodo. No es lo mismo que cero: Google no informó nada, así que dejamos el dato vacío en lugar de mostrar 0.
+- **Datos parciales**: Google devolvió filas pero marcó la respuesta como parcial (por límite de solicitudes o truncamiento). Las filas recibidas se siguen mostrando.
+- **Vuelve a conectar Google Search Console**: hay que volver a conectar Google. Abre el workspace de Google del sitio y sigue el aviso de reconexión.
 
 ## Separado de las métricas del proveedor
 

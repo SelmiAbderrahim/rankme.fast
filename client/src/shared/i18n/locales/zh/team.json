@@ -1,7 +1,6 @@
 {
   "title": "团队",
   "description": "邀请团队成员并管理套餐中的席位。",
-  "seatUsage": "已使用 {{used}} / {{limit}} 个席位",
   "invite": {
     "heading": "邀请团队成员",
     "emailLabel": "邮箱",
@@ -9,8 +8,6 @@
     "emailInvalid": "请输入有效的电子邮件地址",
     "submit": "发送邀请",
     "submitting": "正在发送…",
-    "atCap": "所有席位已使用完。请升级套餐以邀请更多成员。",
-    "upgradeCta": "升级套餐",
     "description": "选择角色，并明确指定该成员可访问的网站。",
     "roleLabel": "角色",
     "adminRoleLimit": "管理员只能邀请普通成员。"
@@ -192,10 +189,12 @@
     "buttonLabelWithCount_many": "团队邀请，{{count}} 个待处理",
     "buttonLabelWithCount_other": "团队邀请，{{count}} 个待处理"
   },
-  "received": {"pending_zero": "有 {{count}} 个来自其他团队的邀请等待您处理。",
+  "received": {
+    "pending_zero": "有 {{count}} 个来自其他团队的邀请等待您处理。",
     "pending_one": "有 {{count}} 个来自其他团队的邀请等待您处理。",
     "pending_two": "有 {{count}} 个来自其他团队的邀请等待您处理。",
     "pending_few": "有 {{count}} 个来自其他团队的邀请等待您处理。",
     "pending_many": "有 {{count}} 个来自其他团队的邀请等待您处理。",
-    "pending_other": "有 {{count}} 个来自其他团队的邀请等待您处理。"}
+    "pending_other": "有 {{count}} 个来自其他团队的邀请等待您处理。"
+  }
 }

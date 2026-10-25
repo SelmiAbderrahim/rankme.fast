@@ -2,8 +2,7 @@
   "title": "Geogrid local rank tracking",
   "description": "Check where your business ranks in the local pack across a grid of coordinates. One scan covers the whole grid and costs one geogrid scan.",
   "locked": {
-    "body": "Geogrid scans are on the Pro and Agency plans.",
-    "cta": "See plans"
+    "body": "Geogrid scans are on the Pro and Agency plans."
   },
   "form": {
     "keyword": "Tracked keyword",
@@ -101,9 +100,7 @@
     "failedRefunded": "No point answered, so we gave the scan back to your allowance."
   },
   "gates": {
-    "cap": "You are out of geogrid scans",
     "killSwitch": "Geogrid scans are paused",
-    "notOnPlan": "Not on your plan",
     "notFound": "Not found",
     "rateLimited": "Too many requests",
     "invalid": "Check the grid settings",

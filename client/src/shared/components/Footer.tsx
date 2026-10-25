@@ -24,10 +24,14 @@ export const Footer = () => {
   const links = authenticated ? AUTHED_LINKS : ANON_LINKS;
 
   return (
-    <footer className="mt-auto border-t">
-      <div className="text-muted-foreground container mx-auto flex flex-col items-center gap-4 px-4 py-6 text-sm sm:flex-row sm:justify-between">
+    <footer className="@container mt-auto border-t">
+      {/* The footer sits beside the app sidebar, so its room depends on the
+          column width, not the viewport: container queries pick the layout.
+          Items wrap onto a second row before any of them has to break
+          mid-phrase. */}
+      <div className="text-muted-foreground container mx-auto flex flex-col items-center gap-x-6 gap-y-4 px-4 py-6 text-sm @2xl:flex-row @2xl:flex-wrap @2xl:justify-between">
         <nav>
-          <ul className="flex flex-wrap items-center gap-4">
+          <ul className="flex flex-wrap items-center justify-center gap-x-4 gap-y-2">
             {links.map((link) => (
               <li key={link.to}>
                 <Link to={link.to} className="hover:text-foreground transition-colors">
@@ -51,9 +55,9 @@ export const Footer = () => {
             ) : null}
           </ul>
         </nav>
-        <p className="text-muted-foreground" dir="ltr" title={appBuildIdentifier} data-testid="footer-version">{t('footer.version', { version: appDisplayVersion, stage: releaseStage() })}</p>
-        <Separator className="sm:hidden" />
-        <p>{t('footer.copyright', { year, brand: BRAND_NAME })}</p>
+        <p className="text-muted-foreground whitespace-nowrap" dir="ltr" title={appBuildIdentifier} data-testid="footer-version">{t('footer.version', { version: appDisplayVersion, stage: releaseStage() })}</p>
+        <Separator className="@2xl:hidden" />
+        <p className="text-center">{t('footer.copyright', { year, brand: BRAND_NAME })}</p>
       </div>
     </footer>
   );

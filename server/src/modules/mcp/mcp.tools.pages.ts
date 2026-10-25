@@ -5,11 +5,10 @@
  * Both read through the SAME Pages service the dashboard uses, built with a
  * refusing fallback-refresh port and no GSC sync port, so they can only read
  * stored rows (GSC snapshots, page-performance snapshots, the latest completed
- * audit inventory). They never refresh, never reserve `keyword_lookups`, and
- * never reach a provider. The Pages API has no tier gate and allows paused
- * sites, so neither do these tools.
+ * audit inventory). They never refresh, and never
+ * reach a provider. The Pages API allows paused sites, so these tools do too.
  *
- * Output carries the canonical #14 states: `crawlState` + `crawlEvidence`
+ * Output carries the canonical states: `crawlState` + `crawlEvidence`
  * (`finalUrl`, `redirectChain`, `failureKind`, `status`) and
  * `metrics.associatedQueryCount` (`number | null`) with
  * `associatedQueryState` (`unavailable | anonymized | observed`).

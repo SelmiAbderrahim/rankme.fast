@@ -1,6 +1,6 @@
 # Audit Rule Catalogue
 
-Developer-facing reference. Every rule listed here has stable id, deterministic bucket policy, and localized copy in all seven locales (`en, ar, fr, de, es, ru, zh`) under the `auditRules` namespace. Prompt 20 turns this file into user-facing docs.
+Developer-facing reference. Every rule listed here has stable id, deterministic bucket policy, and localized copy in all seven locales (`en, ar, fr, de, es, ru, zh`) under the `auditRules` namespace. The user-facing version lives in the audit report guide under `docs/`.
 
 | id | trigger | bucket policy |
 |----|---------|---------------|

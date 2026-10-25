@@ -854,7 +854,7 @@ describe('engine filter and stored-data endpoints', () => {
     expect(await getTestDb().select().from(vendorResponses)).toEqual([]);
   });
 
-  it('filters rank history by the Prompt 03 enum and localizes unknown engines', async () => {
+  it('filters rank history by the engine enum and localizes unknown engines', async () => {
     const { user, key } = await seedUserWithKey('engines@x.co');
     const siteId = await seedSite(user.id, 'engines.example.com');
     await seedKeyword(user.id, siteId, 'google phrase', 'google');

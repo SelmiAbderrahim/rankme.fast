@@ -221,7 +221,8 @@ describe('TrafficCompareView', () => {
     });
     renderCompare([first.id, snapshot(2).id]);
 
-    expect((await screen.findAllByText('Not available')).length).toBeGreaterThanOrEqual(2);
+    // Missing estimates read "—" and "No data".
+    expect((await screen.findAllByText('No data')).length).toBeGreaterThanOrEqual(2);
     expect(screen.getAllByText('—').length).toBeGreaterThan(0);
   });
 

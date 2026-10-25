@@ -205,7 +205,7 @@ export const SiteSwitcher = ({ variant = 'expanded' }: { variant?: SiteSwitcherV
   const listed = useAppSelector(selectSites).find((site) => site.id === siteId);
   // A site missing from the loaded list (a later page, or a route that never
   // loads the list) is read directly (shared request), so the label settles
-  // instead of staying on "Loading site…" (QA round 3, F-Z).
+  // instead of staying on "Loading site…".
   const lookup = useSiteLookup(siteId ?? '', !listed);
   const current = listed ?? lookup.site ?? undefined;
   const currentLabel = current

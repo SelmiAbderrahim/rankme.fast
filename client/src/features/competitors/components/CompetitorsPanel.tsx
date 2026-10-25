@@ -71,6 +71,7 @@ import {
   selectSelectedCompetitor,
 } from '../store/selectors';
 import { TrafficInsightsPanel } from '../traffic/components/TrafficInsightsPanel';
+import { PageHeading } from '@shared/components/PageHeader';
 
 interface Props {
   siteId: string;
@@ -210,7 +211,7 @@ export const CompetitorsPanel = ({ siteId }: Props) => {
     <div className="flex flex-col gap-6 px-4 py-8" data-testid="competitors-panel">
       <div className="flex flex-wrap items-start justify-between gap-2">
         <div>
-          <h1 className="text-2xl font-semibold">{t('competitors:title')}</h1>
+          <PageHeading className="text-2xl font-semibold">{t('competitors:title')}</PageHeading>
           <p className="text-muted-foreground text-sm">{t('competitors:description')}</p>
         </div>
         <div className="flex flex-col items-end gap-2">

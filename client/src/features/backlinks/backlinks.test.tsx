@@ -647,7 +647,7 @@ describe('BacklinksPanel', () => {
     withProviders(<BacklinksPanel siteId="site-1" />);
     await waitFor(() => {
       expect(screen.getByTestId('backlinks-delta-links')).toHaveTextContent('+100');
-      expect(screen.getByTestId('backlinks-delta-refdomains')).toHaveTextContent('-5');
+      expect(screen.getByTestId('backlinks-delta-refdomains')).toHaveTextContent('−5');
       expect(screen.getByTestId('backlinks-delta-dr')).toHaveTextContent('—');
     });
   });

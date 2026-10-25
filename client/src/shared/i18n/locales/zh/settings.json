@@ -53,8 +53,6 @@
     "revokeConfirmTitle": "吊销此 API 密钥？",
     "revokeConfirmDescription": "“{{name}}” 将立即失效。此操作无法撤销。",
     "empty": "还没有 API 密钥。",
-    "upgradeHint": "Starter 及以上套餐可创建 MCP API 密钥；公共 REST API 仅限 Agency。升级即可连接 MCP 客户端。",
-    "upgradeCta": "查看套餐",
     "scopes": {
       "column": "访问权限",
       "edit": "编辑权限",
@@ -98,6 +96,7 @@
         "search": "Search Console 与分析",
         "pages": "页面",
         "links": "反向链接与竞争对手",
+        "research": "关键词研究",
         "visibility": "AI Visibility、本地 SEO 与评价",
         "reports": "客户报告"
       },
@@ -120,6 +119,8 @@
       "get_backlinks_summary": { "name": "获取反向链接摘要", "description": "读取已存储的反向链接和引用域名数量。" },
       "list_backlinks": { "name": "列出反向链接", "description": "查看已存储的反向链接，每个引用域名一条。" },
       "list_competitors": { "name": "列出竞争对手", "description": "查看网站的竞争对手组合。" },
+      "list_keyword_research_history": { "name": "列出关键词研究历史", "description": "查看运行过哪些关键词研究以及时间。" },
+      "get_keyword_research_result": { "name": "获取关键词研究结果", "description": "重新打开已存储的关键词研究结果，不调用数据提供方。" },
       "get_ai_visibility_summary": { "name": "获取 AI Visibility 摘要", "description": "读取已存储的 AI 回答检查和声量份额。" },
       "get_local_seo_summary": { "name": "获取本地 SEO 摘要", "description": "读取已存储的商家资料和本地包排名。" },
       "get_reviews_summary": { "name": "获取评价摘要", "description": "读取已存储的评价来源、评分和主题。" },
@@ -159,6 +160,13 @@
     }
   },
   "branding": {
+    "companyNameRequired": "请输入公司名称。",
+    "preview": {
+      "title": "PDF 页眉预览",
+      "caption": "每份 PDF 报告的顶部都会使用此名称、徽标和颜色。",
+      "reportTitle": "SEO 审核报告",
+      "sectionHeading": "立即修复"
+    },
     "title": "PDF 品牌设置",
     "description": "在下载的报告 PDF 上使用您自己的名称。公司名称和强调色会显示在 PDF 页眉中。",
     "companyName": "公司名称",
@@ -167,14 +175,15 @@
     "invalidColor": "请输入类似 #b5321e 的颜色，或留空。",
     "save": "保存品牌设置",
     "saved": "品牌设置已保存。",
-    "upgradeHint": "白标 PDF 报告适用于 Pro 和 Agency 方案。升级即可自定义您的报告。",
-    "upgradeCta": "查看方案",
     "logo": {
       "label": "公司标志",
-      "help": "仅支持 PNG，最大 256 KB。图像在存储前会调整尺寸并重新编码。",
-      "invalidType": "请选择 PNG 图像。",
-      "tooLarge": "请选择小于 256 KB 的 PNG 图像。",
-      "readFailed": "无法读取该图像，请选择另一个 PNG 文件。",
+      "help": "支持 PNG、JPEG 或 SVG，最大 256 KB。图像会调整尺寸并保存为 PNG。SVG 文件不能包含脚本或指向其他文件的链接。",
+      "invalidType": "请选择 PNG、JPEG 或 SVG 图像。",
+      "tooLarge": "请选择小于 256 KB 的图像。",
+      "readFailed": "无法读取该图像。请选择其他文件。",
+      "choose": "选择图像",
+      "noFile": "未选择文件",
+      "saved": "正在使用已保存的标志",
       "previewAlt": "公司标志预览",
       "remove": "移除标志"
     },

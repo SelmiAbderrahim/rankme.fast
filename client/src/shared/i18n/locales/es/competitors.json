@@ -38,8 +38,7 @@
   },
   "locked": {
     "title": "Mejora tu plan para desbloquear el análisis de competidores",
-    "body": "Las carteras de competidores y los panoramas de palabras clave comienzan en Pro. Agency añade informes más amplios y comparación del contenido de páginas posicionadas.",
-    "upgrade": "Ver planes"
+    "body": "Las carteras de competidores y los panoramas de palabras clave comienzan en Pro. Agency añade informes más amplios y comparación del contenido de páginas posicionadas."
   },
   "example": {
     "title": "Ejemplo: lo que ofrecen Pro y Agency"
@@ -50,11 +49,6 @@
     "common": {
       "cancel": "Cancelar"
     },
-    "tiers": {
-      "starter": "Starter",
-      "pro": "Pro",
-      "agency": "Agency"
-    },
     "views": {
       "label": "Vistas de Competitor Intelligence",
       "overview": "Descripción general",
@@ -63,11 +57,6 @@
       "monitoring": "Monitoreo",
       "traffic": "Tráfico",
       "reports": "Informes"
-    },
-    "locked": {
-      "title": "Competitor Intelligence comienza en Pro",
-      "description": "Mejora a Pro para confirmar competidores, crear panoramas de palabras clave y aceptar recomendaciones en Próximas acciones.",
-      "action": "Comparar planes"
     },
     "portfolio": {
       "title": "Cartera de competidores confirmada",
@@ -87,7 +76,7 @@
       "emptyTitle": "No hay competidores confirmados",
       "empty": "Confirme una sugerencia de descubrimiento o agregue una URL pública de un competidor.",
       "domain": "Dominio",
-      "source": "Procedencia",
+      "source": "Fuente",
       "status": "Estado",
       "added": "Añadido",
       "action": "acción",
@@ -132,9 +121,8 @@
       "empty": "Regrese a Descripción general y agregue al menos un competidor activo.",
       "previewAction": "Vista previa del informe de gastos",
       "previewing": "Preparando vista previa del informe...",
-      "previewTitle": "Vista previa del gasto autorizado por el servidor",
+      "previewTitle": "Vista previa del consumo",
       "previewDescription": "Este informe utiliza {{units}} unidades de búsqueda de palabras clave y puede retener hasta {{rows}} filas. Quedan {{remaining}} unidades antes de que comience.",
-      "cacheCounts": "Los aciertos de caché cuentan para el uso",
       "reviewAction": "Revisar y confirmar",
       "confirmTitle": "¿Iniciar este informe panorámico?",
       "confirmDescription": "Compare {{count}} competidores para {{units}} unidades de búsqueda de palabras clave.",
@@ -171,7 +159,7 @@
     },
     "reports": {
       "title": "Informes panorámicos almacenados",
-      "description": "Vuelva a abrir informes inmutables sin iniciar otra búsqueda de proveedores.",
+      "description": "Vuelva a abrir los informes guardados sin iniciar otra búsqueda.",
       "emptyTitle": "No hay informes panorámicos",
       "empty": "Cree un informe desde la vista panorámica de palabras clave.",
       "date": "Creado",
@@ -274,7 +262,6 @@
     "states": {
       "loading": "Informe en progreso",
       "partial": "Datos parciales",
-      "cap": "Esta solicitud excede la asignación restante. Actualice o agregue un paquete de crédito elegible antes de confirmar.",
       "disabled": "Las solicitudes de nuevos competidores están temporalmente deshabilitadas. Los informes almacenados permanecen disponibles.",
       "unsafeLink": "Enlace de fuente inseguro oculto",
       "rateLimit": "Demasiadas solicitudes. Espere y vuelva a intentarlo.",
@@ -293,7 +280,7 @@
     },
     "market": {
       "tracked_keyword_mode": "Comercializar a partir de palabras clave rastreadas",
-      "default": "Retroceso del mercado predeterminado"
+      "default": "Mercado predeterminado del sitio"
     },
     "confidence": {
       "high": "Alto",

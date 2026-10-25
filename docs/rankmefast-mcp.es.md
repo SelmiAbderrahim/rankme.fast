@@ -13,7 +13,7 @@ RankMeFast ofrece un endpoint remoto de [Model Context Protocol (MCP)](https://m
 
 ## Configúralo en cinco minutos
 
-1. Abre [Ajustes → Claves de API](/profile?tab=api-keys), selecciona **Crear clave** y copia la clave cuando aparezca. RankMeFast solo muestra la clave completa una vez.
+1. Abre [Ajustes → Claves de API](/settings/profile?tab=api-keys), selecciona **Crear clave** y copia la clave cuando aparezca. RankMeFast solo muestra la clave completa una vez.
 2. Usa el endpoint MCP de RankMeFast:
 
    ```text
@@ -39,7 +39,7 @@ RankMeFast ofrece un endpoint remoto de [Model Context Protocol (MCP)](https://m
 
 ## Controlar permisos y ámbitos de clave
 
-Abre [Ajustes → MCP](/profile?tab=mcp) para administrar los valores predeterminados de la cuenta que comparten MCP y el Asistente de IA con sesión iniciada:
+Abre [Ajustes → MCP](/settings/profile?tab=mcp) para administrar los valores predeterminados de la cuenta que comparten MCP y el Asistente de IA con sesión iniciada:
 
 1. Activa o desactiva cada herramienta de RankMeFast.
 2. Deja **Sitios permitidos** en todos los sitios o selecciona los que pueden usar las herramientas.
@@ -48,7 +48,7 @@ Abre [Ajustes → MCP](/profile?tab=mcp) para administrar los valores predetermi
 
 Los valores de la cuenta son totalmente permisivos hasta que los cambias, por lo que las claves existentes siguen funcionando. El Asistente los usa directamente mediante tu sesión iniciada.
 
-Puedes añadir ámbitos más estrictos al crear una clave en [Ajustes → Claves de API](/profile?tab=api-keys) y editarlos más adelante. Los ámbitos solo pueden restringir el acceso. El acceso efectivo de MCP siempre es la intersección:
+Puedes añadir ámbitos más estrictos al crear una clave en [Ajustes → Claves de API](/settings/profile?tab=api-keys) y editarlos más adelante. Los ámbitos solo pueden restringir el acceso. El acceso efectivo de MCP siempre es la intersección:
 
 - Una herramienta solo está disponible si la cuenta y la clave la permiten.
 - Si la cuenta y la clave seleccionan sitios, solo están disponibles los incluidos en ambas listas.
@@ -405,6 +405,8 @@ Guarda esto como configuración de usuario y no confirmes la clave en el reposit
 | `get_backlinks_summary` | Devuelve el total de backlinks y los dominios de referencia distintos de un sitio | No |
 | `list_backlinks` | Lista los backlinks almacenados, uno por dominio de referencia | No |
 | `list_competitors` | Lista la cartera de competidores de un sitio, activos y archivados | No |
+| `list_keyword_research_history` | Lista tu historial de investigación de palabras clave | No |
+| `get_keyword_research_result` | Devuelve el resultado almacenado de una entrada de investigación de palabras clave | No |
 | `get_ai_visibility_summary` | Devuelve los prompts de AI Visibility, las últimas comprobaciones y la cuota de voz | No |
 | `get_local_seo_summary` | Devuelve la instantánea del perfil de SEO local y las posiciones del paquete local | No |
 | `get_reviews_summary` | Devuelve las fuentes de reseñas, las estadísticas de valoración y los temas almacenados | No |
@@ -421,6 +423,7 @@ Las herramientas añadidas después de las diez primeras solo leen datos que Ran
 - **Los permisos se aplican en cada llamada.** Los interruptores de la cuenta en **Ajustes → MCP**, los alcances de la propia clave y las listas de sitios permitidos se comprueban en cada llamada. Un sitio al que no puedes acceder, o que pertenece a otra cuenta, se devuelve como no encontrado.
 - **Las herramientas nuevas empiezan permitidas.** Siguen el mismo valor predeterminado que las demás herramientas de lectura, y los permisos guardados antes de que existieran siguen funcionando igual.
 - **Los resultados tienen tope.** Las listas devuelven 100 filas como máximo y un resultado se mantiene pequeño; cuando se recortan filas, el resultado indica `truncated: true`.
+- **La investigación de palabras clave lee la caché almacenada.** `get_keyword_research_result` reabre una consulta desde la caché compartida de palabras clave e indica `storedStatus` como `available`, `partial`, `expired` o `unsupported`. Nunca actualiza datos. El historial de un sitio al que no tienes acceso se devuelve como no encontrado.
 
 El [asistente de IA](./ai-assistant.es.md) usa las mismas herramientas y los mismos permisos. En una conversación vinculada a un sitio, usa ese sitio directamente y no necesita listar antes tus sitios.
 
@@ -436,13 +439,13 @@ El [asistente de IA](./ai-assistant.es.md) usa las mismas herramientas y los mis
 - **503 Unavailable:** MCP está desactivado o temporalmente no disponible en esa instalación de RankMeFast; consulta a su operador.
 - **Funciona en local, pero no a través de un proxy:** asegúrate de que el proxy reenvía las cabeceras `Authorization`, `Content-Type` y `Accept` a `/api/mcp`.
 
-Para sustituir una clave, crea una nueva, actualiza y comprueba todos los clientes y, después, revoca la antigua desde [Ajustes → Claves de API](/profile?tab=api-keys). La revocación es inmediata.
+Para sustituir una clave, crea una nueva, actualiza y comprueba todos los clientes y, después, revoca la antigua desde [Ajustes → Claves de API](/settings/profile?tab=api-keys). La revocación es inmediata.
 
 ## Compatibilidad
 
-Esta versión incluye las 23 herramientas de la tabla. 21 son de solo lectura, `set_action_state` escribe sin coste y `start_audit` es la única que gasta presupuesto del proveedor. Radar de marca, Inteligencia de reseñas, Inteligencia de enlaces, Información de tráfico y Tendencias de palabras clave no tienen herramientas MCP. Los cambios son acumulativos: los nombres de herramientas y la forma de sus argumentos se mantienen, y pueden aparecer herramientas nuevas a medida que se publican funciones.
+Esta versión incluye las 25 herramientas de la tabla. 23 son de solo lectura, `set_action_state` escribe sin coste y `start_audit` es la única que gasta presupuesto del proveedor. Radar de marca, Inteligencia de reseñas, Inteligencia de enlaces, Información de tráfico y Tendencias de palabras clave no tienen herramientas MCP. Los cambios son acumulativos: los nombres de herramientas y la forma de sus argumentos se mantienen, y pueden aparecer herramientas nuevas a medida que se publican funciones.
 
-<!-- mcp-tools: list_sites; get_latest_audit_report; list_keywords; get_rank_history; list_content_analyses; get_content_analysis; start_audit; get_audit_status; list_actions; set_action_state; get_gsc_search_summary; list_gsc_top_queries; list_gsc_top_pages; get_ga4_summary; list_pages; get_page_detail; get_backlinks_summary; list_backlinks; list_competitors; get_ai_visibility_summary; get_local_seo_summary; get_reviews_summary; list_client_reports -->
+<!-- mcp-tools: list_sites; get_latest_audit_report; list_keywords; get_rank_history; list_content_analyses; get_content_analysis; start_audit; get_audit_status; list_actions; set_action_state; get_gsc_search_summary; list_gsc_top_queries; list_gsc_top_pages; get_ga4_summary; list_pages; get_page_detail; get_backlinks_summary; list_backlinks; list_competitors; list_keyword_research_history; get_keyword_research_result; get_ai_visibility_summary; get_local_seo_summary; get_reviews_summary; list_client_reports -->
 
 ## Guías relacionadas
 

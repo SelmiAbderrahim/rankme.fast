@@ -315,8 +315,7 @@
   "pdf": {
     "download": "PDF herunterladen",
     "downloading": "PDF wird vorbereitet…",
-    "error": "Das PDF konnte nicht erstellt werden. Bitte versuchen Sie es erneut.",
-    "upgradeHint": "PDF-Berichte sind in den Plänen Pro und Agency verfügbar."
+    "error": "Das PDF konnte nicht erstellt werden. Bitte versuchen Sie es erneut."
   },
   "gscBlock": {
     "sectionTitle": "Google-Suchleistung (letzte 28 Tage)",

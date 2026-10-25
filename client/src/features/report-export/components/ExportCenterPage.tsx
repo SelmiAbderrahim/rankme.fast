@@ -208,10 +208,11 @@ export function ExportCenterPage() {
                         </TableCell>
                         <TableCell>{date(snapshot.createdAt, i18n.language)}</TableCell>
                         <TableCell>{date(snapshot.expiresAt, i18n.language)}</TableCell>
-                        <TableCell>
+                        <TableCell className="w-px text-end">
                           <SnapshotActions
                             snapshot={snapshot}
                             operation={operation}
+                            layout="table"
                             onDownload={download}
                           />
                         </TableCell>
@@ -239,6 +240,7 @@ export function ExportCenterPage() {
                       <SnapshotActions
                         snapshot={snapshot}
                         operation={operation}
+                        layout="card"
                         onDownload={download}
                       />
                     </CardContent>
@@ -426,10 +428,17 @@ function CenterEmpty({
 function SnapshotActions({
   snapshot,
   operation,
+  layout,
   onDownload,
 }: {
   snapshot: ReportSnapshotSummary;
   operation: string | null;
+  /**
+   * `table` keeps Download and Delete side by side on one line, end-aligned
+   * like every other table's row actions (the table scrolls horizontally when
+   * narrow). `card` lets the pair wrap on the narrow mobile cards.
+   */
+  layout: 'table' | 'card';
   onDownload: (snapshot: ReportSnapshotSummary) => unknown;
 }) {
   const { t, i18n } = useTranslation('report');
@@ -437,7 +446,15 @@ function SnapshotActions({
   const downloading = operation === `download:${snapshot.id}`;
   const deleting = operation === `delete:${snapshot.id}`;
   return (
-    <div className="flex flex-wrap justify-end gap-2">
+    <div
+      data-testid="snapshot-actions"
+      data-layout={layout}
+      className={
+        layout === 'table'
+          ? 'flex flex-nowrap items-center justify-end gap-2'
+          : 'flex flex-wrap items-center gap-2'
+      }
+    >
       <Button
         type="button"
         variant="outline"

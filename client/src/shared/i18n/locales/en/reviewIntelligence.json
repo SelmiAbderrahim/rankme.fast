@@ -9,16 +9,6 @@
   },
   "states": {
     "signedOut": "Sign in to read your reviews.",
-    "notOnPlan": {
-      "title": "Reviews are on the Pro plan",
-      "description": "Move to Pro or Agency to pull reviews from Google, Trustpilot and Tripadvisor.",
-      "link": "See the plans"
-    },
-    "capReached": {
-      "title": "You have used every sync on your plan",
-      "description": "Check Billing for current review-sync pack availability. Everything you already synced stays readable.",
-      "link": "View pack options"
-    },
     "disabled": {
       "title": "New syncs are paused",
       "description": "We have paused new review syncs for now. Reviews you already pulled stay readable."
@@ -109,7 +99,6 @@
     "empty": "No syncs yet.",
     "createdAt": "Started",
     "view": "Open",
-    "refunded": "Unit refunded",
     "columns": {
       "status": "Result",
       "outcomes": "Per source",

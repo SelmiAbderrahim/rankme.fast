@@ -27,13 +27,15 @@ Los mismos datos dan siempre el mismo orden, y no hay ninguna puntuación oculta
 
 Puedes **Planificar**, **Descartar**, **Completar** o **Reabrir** un elemento. Cada decisión se añade a su historial; nada se sobrescribe ni se borra.
 
+La lista se abre en los elementos **Abiertas y planificadas**. Elige **Todas** en el filtro **Estado** para incluir los descartados y completados; la elección queda en la dirección de la página (`state=all`), así que un enlace la conserva. Una tarjeta que resuelves permanece en su sitio hasta que la lista se vuelve a cargar. Las URL afectadas de una tarjeta son enlaces. Cuando una tarjeta solo muestra una muestra, **Ver las N URL en el informe** abre la lista completa.
+
 ## Descartar un hallazgo no cambia la auditoría
 
 Si descartas un hallazgo de auditoría como falso positivo, sale de la lista. El informe de auditoría no se toca y el hallazgo sigue en él tal como se detectó.
 
 ## Marcar un hallazgo como corregido
 
-Marca un hallazgo de auditoría como corregido cuando ya hayas hecho el cambio. Las decisiones se guardan por hallazgo, así que una auditoría posterior no las reinicia. Si una auditoría posterior sigue encontrando el mismo problema, el elemento se marca como *se sigue detectando tras marcarlo como corregido* en lugar de quedarse cerrado sin avisar.
+Marca un hallazgo de auditoría como corregido cuando hayas hecho el cambio. Las decisiones se guardan por hallazgo, así que una auditoría posterior no las reinicia. Si una auditoría terminada después de marcarlo sigue informando del mismo hallazgo, RankMeFast lo reabre automáticamente y registra el cambio en el historial del elemento. Una auditoría terminada antes de marcarlo nunca lo reabre.
 
 ## Repetir la prueba
 

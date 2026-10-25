@@ -53,8 +53,6 @@
     "revokeConfirmTitle": "Révoquer cette clé API ?",
     "revokeConfirmDescription": "« {{name}} » cessera de fonctionner immédiatement. Cette action est irréversible.",
     "empty": "Aucune clé API pour l'instant.",
-    "upgradeHint": "L’accès MCP et ses clés sont disponibles dès le plan Starter. L’API REST publique nécessite Agency. Passez à une offre supérieure pour connecter un client MCP.",
-    "upgradeCta": "Voir les plans",
     "scopes": {
       "column": "Accès",
       "edit": "Modifier l’accès",
@@ -98,6 +96,7 @@
         "search": "Search Console et analytics",
         "pages": "Pages",
         "links": "Backlinks et concurrents",
+        "research": "Recherche de mots-clés",
         "visibility": "Visibilité IA, SEO local et avis",
         "reports": "Rapports clients"
       },
@@ -120,6 +119,8 @@
       "get_backlinks_summary": { "name": "Obtenir le résumé des backlinks", "description": "Lire les nombres stockés de backlinks et de domaines référents." },
       "list_backlinks": { "name": "Lister les backlinks", "description": "Voir les backlinks stockés, un par domaine référent." },
       "list_competitors": { "name": "Lister les concurrents", "description": "Voir le portefeuille de concurrents d’un site." },
+      "list_keyword_research_history": { "name": "Lister l’historique de recherche de mots-clés", "description": "Voir quelles recherches de mots-clés ont été lancées et quand." },
+      "get_keyword_research_result": { "name": "Obtenir un résultat de recherche de mots-clés", "description": "Rouvrir un résultat stocké sans appeler le fournisseur de données." },
       "get_ai_visibility_summary": { "name": "Obtenir le résumé de Visibilité IA", "description": "Lire les vérifications de réponses IA et la part de voix stockées." },
       "get_local_seo_summary": { "name": "Obtenir le résumé SEO local", "description": "Lire la fiche d’établissement stockée et les positions du pack local." },
       "get_reviews_summary": { "name": "Obtenir le résumé des avis", "description": "Lire les sources d’avis, notes et thèmes stockés." },
@@ -159,6 +160,13 @@
     }
   },
   "branding": {
+    "companyNameRequired": "Saisissez le nom de votre entreprise.",
+    "preview": {
+      "title": "Aperçu de l’en-tête du PDF",
+      "caption": "L’en-tête de chaque rapport PDF utilise ce nom, ce logo et cette couleur.",
+      "reportTitle": "Rapport d’audit SEO",
+      "sectionHeading": "À corriger"
+    },
     "title": "Image de marque des PDF",
     "description": "Apposez votre propre nom sur les rapports PDF téléchargés. Le nom de la société et la couleur d’accent apparaissent dans l’en-tête du PDF.",
     "companyName": "Nom de la société",
@@ -167,14 +175,15 @@
     "invalidColor": "Saisissez une couleur comme #b5321e, ou laissez le champ vide.",
     "save": "Enregistrer la marque",
     "saved": "Image de marque enregistrée.",
-    "upgradeHint": "Les rapports PDF en marque blanche sont disponibles avec les forfaits Pro et Agency. Passez à l’offre supérieure pour personnaliser vos rapports.",
-    "upgradeCta": "Voir les forfaits",
     "logo": {
       "label": "Logo de la société",
-      "help": "PNG uniquement, 256 Ko maximum. Les images sont redimensionnées et réencodées avant leur stockage.",
-      "invalidType": "Choisissez une image PNG.",
-      "tooLarge": "Choisissez une image PNG de moins de 256 Ko.",
-      "readFailed": "Impossible de lire cette image. Choisissez un autre fichier PNG.",
+      "help": "PNG, JPEG ou SVG, 256 Ko maximum. Les images sont redimensionnées et enregistrées en PNG. Les fichiers SVG ne peuvent pas contenir de scripts ni de liens vers d’autres fichiers.",
+      "invalidType": "Choisissez une image PNG, JPEG ou SVG.",
+      "tooLarge": "Choisissez une image de moins de 256 Ko.",
+      "readFailed": "Impossible de lire cette image. Choisissez un autre fichier.",
+      "choose": "Choisir une image",
+      "noFile": "Aucun fichier choisi",
+      "saved": "Logo enregistré utilisé",
       "previewAlt": "Aperçu du logo de la société",
       "remove": "Supprimer le logo"
     },

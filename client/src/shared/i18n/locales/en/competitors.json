@@ -38,8 +38,7 @@
   },
   "locked": {
     "title": "Upgrade to unlock competitor analysis",
-    "body": "Competitor portfolios and keyword landscapes start on Pro. Agency adds larger reports and ranking-page content comparison.",
-    "upgrade": "See plans"
+    "body": "Competitor portfolios and keyword landscapes start on Pro. Agency adds larger reports and ranking-page content comparison."
   },
   "example": {
     "title": "Example: what you get on Pro and Agency"
@@ -50,11 +49,6 @@
     "common": {
       "cancel": "Cancel"
     },
-    "tiers": {
-      "starter": "Starter",
-      "pro": "Pro",
-      "agency": "Agency"
-    },
     "views": {
       "label": "Competitor Intelligence views",
       "overview": "Overview",
@@ -63,11 +57,6 @@
       "monitoring": "Monitoring",
       "traffic": "Traffic",
       "reports": "Reports"
-    },
-    "locked": {
-      "title": "Competitor Intelligence starts on Pro",
-      "description": "Upgrade to confirm competitors, run keyword landscape reports, and accept recommendations into Next Actions.",
-      "action": "Compare plans"
     },
     "portfolio": {
       "title": "Confirmed competitor portfolio",
@@ -87,7 +76,7 @@
       "emptyTitle": "No confirmed competitors",
       "empty": "Confirm a discovery suggestion or add a public competitor URL.",
       "domain": "Domain",
-      "source": "Provenance",
+      "source": "Source",
       "status": "Status",
       "added": "Added",
       "action": "Action",
@@ -132,9 +121,8 @@
       "empty": "Return to Overview and add at least one active competitor.",
       "previewAction": "Preview report spend",
       "previewing": "Preparing report preview…",
-      "previewTitle": "Server-authoritative spend preview",
+      "previewTitle": "Usage preview",
       "previewDescription": "This report uses {{units}} keyword lookup units and can retain up to {{rows}} rows. {{remaining}} units remain before it starts.",
-      "cacheCounts": "Cache hits count toward usage",
       "reviewAction": "Review and confirm",
       "confirmTitle": "Start this landscape report?",
       "confirmDescription": "Compare {{count}} competitors for {{units}} keyword lookup units.",
@@ -171,7 +159,7 @@
     },
     "reports": {
       "title": "Stored landscape reports",
-      "description": "Reopen immutable reports without starting another vendor lookup.",
+      "description": "Reopen saved reports without running another lookup.",
       "emptyTitle": "No landscape reports",
       "empty": "Create a report from the Keyword landscape view.",
       "date": "Created",
@@ -274,7 +262,6 @@
     "states": {
       "loading": "Report in progress",
       "partial": "Partial data",
-      "cap": "This request exceeds the remaining allowance. Upgrade or add an eligible credit pack before confirming.",
       "disabled": "New competitor requests are temporarily disabled. Stored reports remain available.",
       "unsafeLink": "Unsafe source link hidden",
       "rateLimit": "Too many requests. Wait and try again.",
@@ -293,7 +280,7 @@
     },
     "market": {
       "tracked_keyword_mode": "Market from tracked keywords",
-      "default": "Default market fallback"
+      "default": "Site's default market"
     },
     "confidence": {
       "high": "High",

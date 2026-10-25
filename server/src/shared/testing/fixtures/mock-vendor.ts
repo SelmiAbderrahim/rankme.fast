@@ -1,12 +1,12 @@
 /**
- * Vendor HTTP mocking for tests (prompt 05).
+ * Vendor HTTP mocking for tests.
  *
  * WHY msw (not nock): the vendor client (`shared/providers/http.ts`) uses
  * Node 20's built-in `fetch` (undici). msw's node interceptor patches undici
  * at the dispatcher level, so native fetch is intercepted first-class —
  * nock's fetch interception only arrived in v14 and its matching API is
  * ClientRequest-centric. msw's handlers are also reusable verbatim in the
- * Playwright browser suites (prompt 19).
+ * Playwright browser suites.
  *
  * Usage per test file:
  *   beforeAll(() => vendorMockServer.listen({ onUnhandledRequest: 'error' }));

@@ -64,11 +64,11 @@
   },
   "queued": {
     "title": "Listing check in progress",
-    "description": "The report will refresh when the stored observations are ready."
+    "description": "The report will refresh when the saved data is ready."
   },
   "run": {
     "title": "Check listing health",
-    "description": "Observe the current store listings and create a deterministic fix list.",
+    "description": "Check the current store listings and get a rule-based fix list.",
     "profile": "App profile",
     "previewing": "Checking capacity…",
     "button": "Preview run",

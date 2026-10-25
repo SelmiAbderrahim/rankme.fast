@@ -286,6 +286,14 @@ export default defineConfig({
       use: { ...devices['Desktop Chrome'], reducedMotion: 'reduce' },
     },
     {
+      // Canonical route scheme, legacy redirects and the breadcrumb rule on one
+      // serial signed-in account.
+      name: 'route-scheme',
+      testMatch: /(?:^|\/)route-scheme\.spec\.ts$/,
+      workers: 1,
+      use: { ...devices['Desktop Chrome'], reducedMotion: 'reduce' },
+    },
+    {
       name: 'cwv',
       testMatch: /(?:^|\/)cwv\.spec\.ts$/,
       use: { ...devices['Desktop Chrome'] },

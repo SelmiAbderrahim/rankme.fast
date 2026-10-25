@@ -192,7 +192,7 @@ describe('ScanListTable', () => {
     renderUi(<ScanListTable {...props} />);
     expect(screen.getAllByTestId('brand-radar-row')).toHaveLength(1);
     expect(
-      screen.getByText('Filtering applies only to the scans loaded on this page.'),
+      screen.getByText('Filters apply to the scans shown below. Load more to include older scans.'),
     ).toBeInTheDocument();
 
     await userEvent.selectOptions(screen.getByTestId('brand-radar-status-filter'), 'queued');

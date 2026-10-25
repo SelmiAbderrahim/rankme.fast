@@ -1,6 +1,7 @@
 import { useEffect, useLayoutEffect, useRef } from 'react';
 import { useAuthSession } from '@features/auth';
 import { useAppDispatch } from '@shared/hooks/redux';
+import { dropInFlight } from '@shared/lib/inFlight';
 import { resetAccountState } from './store';
 
 const UNRESOLVED = Symbol('unresolved-principal');
@@ -30,6 +31,8 @@ export const PrincipalStateBoundary = () => {
       return;
     }
     if (previous.current !== current) {
+      // A read started for the previous person must not answer the next one.
+      dropInFlight('');
       dispatch(resetAccountState());
       previous.current = current;
     }

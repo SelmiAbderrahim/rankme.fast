@@ -193,7 +193,7 @@ describe('ConfirmRunDialog', () => {
         onConfirm={onConfirm}
       />,
     );
-    expect(screen.getByTestId('audience-research-confirm-market')).toHaveTextContent('United States · English · all');
+    expect(screen.getByTestId('audience-research-confirm-market')).toHaveTextContent('United States · English · All devices');
     expect(screen.getByTestId('audience-research-confirm-competitors')).toHaveTextContent('a.com');
     expect(screen.getByTestId('audience-research-confirm-topics')).toHaveTextContent('pricing');
     await userEvent.click(screen.getByTestId('audience-research-confirm-submit'));
@@ -229,7 +229,7 @@ describe('ConfirmRunDialog', () => {
       />,
     );
     expect(screen.getByTestId('audience-research-confirm-market')).toHaveTextContent(
-      'Unknown country · Unknown language · all',
+      'Unknown country · Unknown language · All devices',
     );
   });
 });
@@ -564,7 +564,17 @@ describe('NewRunForm', () => {
     setState({}, ['a.com']);
     renderInRouter(<NewRunForm siteId="s1" />);
     expect(competitorsMock.loadCompetitorPortfolio).toHaveBeenCalledWith({ siteId: 's1' });
+    expect(screen.getByTestId('audience-research-start-button')).toBeDisabled();
+    expect(screen.getByTestId('audience-research-start-requirement')).toHaveTextContent(
+      'Add at least one topic or pick a competitor',
+    );
+  });
+
+  it('enables start once the form has a topic or a competitor', () => {
+    setState({ form: { market: DEFAULT_FORM_MARKET, competitors: ['a.com'], topics: [] } }, ['a.com']);
+    renderInRouter(<NewRunForm siteId="s1" />);
     expect(screen.getByTestId('audience-research-start-button')).toBeEnabled();
+    expect(screen.queryByTestId('audience-research-start-requirement')).toBeNull();
   });
 
   it('changes country, language, and device via the market selects', async () => {
@@ -585,7 +595,7 @@ describe('NewRunForm', () => {
     );
 
     await user.click(screen.getByTestId('audience-research-form-device'));
-    await user.click(await screen.findByRole('option', { name: 'mobile' }));
+    await user.click(await screen.findByRole('option', { name: 'Mobile' }));
     expect(hooks.dispatch).toHaveBeenCalledWith(
       expect.objectContaining({ type: 'audienceResearch/updateFormMarket', payload: { device: 'mobile' } }),
     );
@@ -864,7 +874,7 @@ describe('NewRunForm', () => {
   });
 
   it('opens the confirm flow and starts a run', async () => {
-    setState({ form: { market: DEFAULT_FORM_MARKET, competitors: [], topics: [] } });
+    setState({ form: { market: DEFAULT_FORM_MARKET, competitors: [], topics: ['pricing'] } });
     renderInRouter(<NewRunForm siteId="s1" />);
     await userEvent.click(screen.getByTestId('audience-research-start-button'));
     expect(screen.getByTestId('audience-research-confirm-dialog')).toBeInTheDocument();
@@ -990,7 +1000,7 @@ describe('NewRunForm', () => {
   });
 
   it('closes the confirm dialog after startRun fulfils', async () => {
-    setState({ form: { market: DEFAULT_FORM_MARKET, competitors: [], topics: [] } });
+    setState({ form: { market: DEFAULT_FORM_MARKET, competitors: [], topics: ['pricing'] } });
     api.startAudienceResearchRun.mockResolvedValue({
       runId: 'newrun',
       status: 'queued',
@@ -1007,7 +1017,7 @@ describe('NewRunForm', () => {
   });
 
   it('keeps the confirm dialog open when startRun rejects', async () => {
-    setState({ form: { market: DEFAULT_FORM_MARKET, competitors: [], topics: [] } });
+    setState({ form: { market: DEFAULT_FORM_MARKET, competitors: [], topics: ['pricing'] } });
     api.startAudienceResearchRun.mockRejectedValue(new Error('boom'));
     renderInRouter(<NewRunForm siteId="s1" />);
     await userEvent.click(screen.getByTestId('audience-research-start-button'));

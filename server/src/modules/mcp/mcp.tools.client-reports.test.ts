@@ -115,7 +115,8 @@ async function seedReporting(accountId: string, siteId: string) {
       name: 'Monthly client report',
       frequency: 'monthly',
       weekdayUtc: null,
-      monthdayUtc: 1,
+      monthdayUtc: -1,
+      timezone: 'Europe/Paris',
       localHour: 8,
       minuteUtc: 30,
       locale: 'en',
@@ -209,12 +210,16 @@ describe('list_client_reports', () => {
     expect(schedules[0]).toMatchObject({
       name: 'Monthly client report',
       frequency: 'monthly',
+      monthdayUtc: -1,
+      timezone: 'Europe/Paris',
+      localHour: 8,
       recipientCount: 2,
       recipients: ['j***@client.example', 'o***@client.example'],
       enabled: true,
       nextRunAt: '2026-08-01T08:30:00.000Z',
       lastRunAt: '2026-07-01T08:30:00.000Z',
     });
+    expect(schedules[0]).not.toHaveProperty('hourUtc');
     const portals = data.portals as Array<{ clientLabel: string; status: string }>;
     expect(Object.fromEntries(portals.map((row) => [row.clientLabel, row.status]))).toEqual({
       'Active client': 'active',

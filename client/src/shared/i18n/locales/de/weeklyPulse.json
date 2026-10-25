@@ -97,7 +97,6 @@
   },
   "errors": {
     "unexpected": "Etwas ist schiefgelaufen — bitte erneut versuchen.",
-    "overCap": "Ihr Tarif-Limit ist erschöpft. Upgraden oder Credits kaufen, um Wochenpulse zu erhalten.",
     "acknowledgePreviewRequired": "Vor der Aktivierung die Ausgaben vorschauen.",
     "reconnectRequired": "Google Search Console erneut verbinden, um diese Daten zu laden.",
     "unauthorized": "Bitte anmelden, um den Wochenpuls zu sehen."

@@ -237,6 +237,8 @@ function renderInRouter(node: React.ReactNode, path = '/keyword-research') {
 }
 
 beforeEach(() => {
+  // The market picker remembers the last market used; start every test clean.
+  window.localStorage.clear();
   hooks.dispatch.mockReset();
   hooks.state = {};
   sitesMock.loadSites.mockClear();
@@ -798,35 +800,76 @@ describe('GapResultsTable', () => {
 });
 
 describe('GapView', () => {
-  it('rejects a duplicate competitor with the localized zod message (no request)', () => {
+  const addCompetitor = (value: string) => {
+    const input = screen.getByTestId('kw-gap-competitor-input');
+    fireEvent.change(input, { target: { value } });
+    fireEvent.keyDown(input, { key: 'Enter' });
+  };
+
+  it('says a repeated competitor is already added and keeps one chip (no request)', () => {
     renderInRouter(<GapView />);
     fireEvent.change(screen.getByTestId('kw-gap-own-domain'), {
       target: { value: 'own.example' },
     });
-    const input = screen.getByTestId('kw-gap-competitor-input');
-    for (const value of ['rival.example', 'rival.example.']) {
-      fireEvent.change(input, { target: { value } });
-      fireEvent.keyDown(input, { key: 'Enter' });
-    }
-    fireEvent.submit(screen.getByTestId('kw-gap-form'));
-    expect(screen.getByTestId('kw-gap-form-error')).toHaveTextContent(
-      /duplicate competitor/i,
-    );
+    addCompetitor('rival.example');
+    addCompetitor('rival.example.');
+    expect(screen.getAllByTestId(/^kw-gap-competitor-chip-/)).toHaveLength(1);
+    expect(screen.getByTestId('kw-gap-competitor-duplicate')).toHaveTextContent('rival.example');
     expect(api.fetchKeywordPreviewRequest).not.toHaveBeenCalled();
   });
 
-  it('rejects the own domain listed as a competitor', () => {
+  it('refuses the own domain as a competitor, with or without www', () => {
     renderInRouter(<GapView />);
     fireEvent.change(screen.getByTestId('kw-gap-own-domain'), {
       target: { value: 'own.example' },
     });
-    const input = screen.getByTestId('kw-gap-competitor-input');
-    fireEvent.change(input, { target: { value: 'OWN.example' } });
-    fireEvent.keyDown(input, { key: 'Enter' });
-    fireEvent.submit(screen.getByTestId('kw-gap-form'));
-    expect(screen.getByTestId('kw-gap-form-error')).toHaveTextContent(
-      /cannot be listed/i,
+    addCompetitor('WWW.OWN.example');
+    expect(screen.queryAllByTestId(/^kw-gap-competitor-chip-/)).toHaveLength(0);
+    expect(screen.getByTestId('kw-gap-competitor-own')).toHaveTextContent(/your own site/i);
+    expect(screen.getByTestId('kw-gap-competitor-input')).toHaveAttribute('aria-invalid', 'true');
+  });
+
+  it('shows the server message that names the competitors field under that field', () => {
+    setState({
+      preview: {
+        loading: false,
+        data: null,
+        error: 'Validation failed.',
+        competitorsError: 'Remove the duplicate competitor domain.',
+        forOperation: 'gap',
+      },
+    });
+    renderInRouter(<GapView />);
+    expect(screen.getByTestId('kw-gap-competitor-error')).toHaveTextContent(
+      'Remove the duplicate competitor domain.',
     );
+    expect(screen.getByTestId('kw-gap-competitor-input')).toHaveAttribute('aria-invalid', 'true');
+    expect(screen.queryByTestId('kw-gap-preview-error')).toBeNull();
+  });
+
+  it('shows a run refusal that names the competitors field under that field', () => {
+    setState({
+      gap: {
+        loading: false,
+        data: null,
+        error: 'Validation failed.',
+        competitorsError: 'Enter a competitor domain.',
+      },
+    });
+    renderInRouter(<GapView />);
+    expect(screen.getByTestId('kw-gap-competitor-error')).toHaveTextContent('Enter a competitor domain.');
+    expect(screen.queryByTestId('kw-gap-error')).toBeNull();
+  });
+
+  it('keeps a refusal that names no field in the page alerts', () => {
+    setState({
+      preview: { loading: false, data: null, error: 'Try again later.', forOperation: 'gap' },
+      gap: { loading: false, data: null, error: 'Run failed.' },
+    });
+    renderInRouter(<GapView />);
+    expect(screen.getByTestId('kw-gap-preview-error')).toHaveTextContent('Try again later.');
+    expect(screen.getByTestId('kw-gap-error')).toHaveTextContent('Run failed.');
+    expect(screen.queryByTestId('kw-gap-competitor-error')).toBeNull();
   });
 
   it('rejects an invalid domain', () => {
@@ -1355,7 +1398,7 @@ describe('TrendsView', () => {
     expect(screen.getByTestId('kw-trends-card-seo-audit')).toBeInTheDocument();
     expect(screen.getByTestId('kw-provenance-estimate')).toBeInTheDocument();
     expect(screen.getByTestId('kw-trends-yoy-seo-audit')).toHaveTextContent('+25%');
-    expect(screen.getByTestId('kw-trends-momentum-seo-audit')).toHaveTextContent('-10%');
+    expect(screen.getByTestId('kw-trends-momentum-seo-audit')).toHaveTextContent('−10%');
     expect(screen.getByTestId('kw-trends-peak-seo-audit')).toHaveTextContent('Dec');
     expect(screen.getByTestId('kw-trends-trough-seo-audit')).toHaveTextContent('Jun');
     // Accessible table fallback in chronological order.

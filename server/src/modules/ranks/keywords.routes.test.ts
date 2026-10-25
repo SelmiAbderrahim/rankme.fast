@@ -51,6 +51,7 @@ import {
 } from './keywords.service.js';
 import { finalizeRankJob, readRankJob, settleRankJobItem } from './rank-jobs.repo.js';
 import { rankCheckJobItems } from '../../db/schema/rank-check-jobs.js';
+import { recordOutcome } from './rank-outcomes.repo.js';
 import { moveKeywordsToSiteMarket, previewKeywordMarketMove } from './keyword-market-move.service.js';
 
 const app = createApp();
@@ -1686,6 +1687,36 @@ describe('GET /api/keywords/:id/history', () => {
     expect(res.body.series[1].aiOverviewPresent).toBe(true);
     expect(res.body.series[1].aiCited).toBe(false);
     expect(res.body.series[1].aiCitedUrl).toBeNull();
+  });
+
+  it('lists failed and skipped scheduled checks as stored evidence, never as ranks', async () => {
+    const user = await seedUser();
+    const siteId = await seedSite(user.id);
+    const db = getTestDb();
+    const kw = (await db
+      .insert(keywordsTable)
+      .values({ accountId: user.id, siteId, phrase: 'k', locationCode: 1, languageCode: 'en', device: 'desktop' })
+      .returning())[0]!;
+    await db.insert(rankingsTable).values({
+      keywordId: kw.id, position: 5, rankAbsolute: 5, source: 'fresh', checkedAt: new Date('2026-07-01T00:00:00Z'),
+    });
+    const base = { accountId: user.id, siteId, keywordId: kw.id, cadence: 'daily' as const };
+    await recordOutcome(db as never, { ...base, periodKey: '2026-07-02', status: 'failed', reason: 'vendor_unavailable', at: new Date('2026-07-02T03:00:00Z') });
+    await recordOutcome(db as never, { ...base, periodKey: '2026-07-03', status: 'skipped', reason: null, at: new Date('2026-07-03T03:00:00Z') });
+    await recordOutcome(db as never, { ...base, periodKey: '2026-07-04', status: 'checked', reason: null, at: new Date('2026-07-04T03:00:00Z') });
+    const res = await request(app)
+      .get(`/api/keywords/${kw.id}/history?from=2026-06-01T00:00:00.000Z&to=2026-07-30T00:00:00.000Z`)
+      .set('Cookie', user.cookie);
+    expect(res.status).toBe(200);
+    expect(res.body.series).toHaveLength(1);
+    expect(res.body.missedChecks).toEqual([
+      { periodKey: '2026-07-02', status: 'failed', reason: 'vendor_unavailable', attemptedAt: '2026-07-02T03:00:00.000Z' },
+      { periodKey: '2026-07-03', status: 'skipped', reason: null, attemptedAt: '2026-07-03T03:00:00.000Z' },
+    ]);
+    const bounded = await request(app)
+      .get(`/api/keywords/${kw.id}/history?from=2026-07-03T00:00:00.000Z&to=2026-07-03T12:00:00.000Z`)
+      .set('Cookie', user.cookie);
+    expect(bounded.body.missedChecks).toHaveLength(1);
   });
 
   it('honours ?from&to bounds', async () => {

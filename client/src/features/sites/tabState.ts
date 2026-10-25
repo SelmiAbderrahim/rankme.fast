@@ -102,7 +102,7 @@ export function resolveSiteTab(value: string | null): SiteTabResolution {
  * `replace: true` on switch. Legacy/long slugs resolve to their canonical tab
  * and the URL is rewritten in place; a truly unknown value falls back to the
  * default and is returned as the third tuple member so the workspace can say
- * so instead of silently showing Overview (GitHub issue #21). The unknown
+ * so instead of silently showing Overview. The unknown
  * value is cleared as soon as the user picks a tab.
  */
 export function useSiteTab(): [SiteTab, (tab: SiteTab) => void, string | null] {
@@ -181,4 +181,75 @@ export function isAppSeoView(value: unknown): value is AppSeoView {
 /** URL-backed drill-in state for the App SEO workspace panel. */
 export function useAppSeoView(): [AppSeoView, (view: AppSeoView) => void] {
   return useTabParam<AppSeoView>(DEFAULT_APP_SEO_VIEW, APP_SEO_VIEWS, 'view');
+}
+
+/** Backlinks' embedded views, mirrored here so the tab trail needs no import of the feature. */
+export const SITE_BACKLINK_VIEWS = [
+  'overview',
+  'rows',
+  'domains',
+  'anchors',
+  'history',
+  'gap',
+  'toxicity',
+] as const;
+
+export interface SiteNestedView {
+  /** The active nested view. */
+  view: string;
+  /** i18n key (`namespace:path`) of the view's label. */
+  labelKey: string;
+}
+
+/**
+ * Nested `?view=` vocabularies of the site tabs that have them, mirrored from
+ * each feature (a parity test pins the lists) so the breadcrumb and the
+ * workspace navigation can name the view without importing every panel.
+ */
+const SITE_TAB_SUB_VIEWS = {
+  content: {
+    views: ['analyses', 'inventory', 'competitors', 'monitoring', 'briefs'],
+    defaultView: 'analyses',
+    labelKey: (view: string) => `contentIntelligence:views.${view}`,
+  },
+  competitors: {
+    views: ['overview', 'keywords', 'content', 'monitoring', 'traffic', 'reports'],
+    defaultView: 'overview',
+    labelKey: (view: string) => `competitors:intelligence.views.${view}`,
+  },
+  google: {
+    views: GOOGLE_SEARCH_VIEWS as readonly string[],
+    defaultView: null,
+    labelKey: (view: string) => `google:searchDetail.views.${view}`,
+  },
+  backlinks: {
+    views: SITE_BACKLINK_VIEWS as readonly string[],
+    defaultView: 'overview',
+    labelKey: (view: string) => `backlinks:intelligence.tabs.${view}`,
+  },
+  apps: {
+    views: APP_SEO_VIEWS as readonly string[],
+    defaultView: DEFAULT_APP_SEO_VIEW,
+    labelKey: (view: string) => `appSeo:views.${view}`,
+  },
+} as const;
+
+/**
+ * The nested `?view=` a site tab is showing when it is not the tab's own
+ * default, with the label key that names it. The breadcrumb names only these,
+ * so a tab's default reads at the same depth as every other tab
+ * ("Competitors", not "Competitors · Overview") and an explicit view always
+ * adds one level. An unknown value is the default view, as each panel falls
+ * back, so the label never names a view the panel is not showing.
+ */
+export function getExplicitSubView(
+  tab: SiteTab,
+  search: string | URLSearchParams,
+): SiteNestedView | null {
+  if (!Object.hasOwn(SITE_TAB_SUB_VIEWS, tab)) return null;
+  const config = SITE_TAB_SUB_VIEWS[tab as keyof typeof SITE_TAB_SUB_VIEWS];
+  const params = typeof search === 'string' ? new URLSearchParams(search) : search;
+  const view = params.get('view');
+  if (view === null || !(config.views as readonly string[]).includes(view) || view === config.defaultView) return null;
+  return { view, labelKey: config.labelKey(view) };
 }

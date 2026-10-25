@@ -38,8 +38,7 @@
   },
   "locked": {
     "title": "升级以解锁竞争对手分析",
-    "body": "竞品组合和关键词版图从 Pro 开始提供。Agency 还可生成更大规模的报告，并比较排名页面内容。",
-    "upgrade": "查看计划"
+    "body": "竞品组合和关键词版图从 Pro 开始提供。Agency 还可生成更大规模的报告，并比较排名页面内容。"
   },
   "example": {
     "title": "示例：Pro 与 Agency 提供的功能"
@@ -50,11 +49,6 @@
     "common": {
       "cancel": "取消"
     },
-    "tiers": {
-      "starter": "入门版",
-      "pro": "专业版",
-      "agency": "代理商版"
-    },
     "views": {
       "label": "竞品分析视图",
       "overview": "概述",
@@ -63,11 +57,6 @@
       "monitoring": "监控",
       "traffic": "流量",
       "reports": "报告"
-    },
-    "locked": {
-      "title": "竞品分析从 Pro 开始提供",
-      "description": "升级到 Pro 后，你可以确认竞品、生成关键词版图，并把建议接受到后续操作中。",
-      "action": "比较计划"
     },
     "portfolio": {
       "title": "已确认的竞争对手组合",
@@ -87,7 +76,7 @@
       "emptyTitle": "没有确认的竞争对手",
       "empty": "确认发现建议或添加公开竞争对手 URL。",
       "domain": "域名",
-      "source": "出处",
+      "source": "来源",
       "status": "状态",
       "added": "已添加",
       "action": "行动",
@@ -132,9 +121,8 @@
       "empty": "返回概述并添加至少一名活跃竞争对手。",
       "previewAction": "预览报告支出",
       "previewing": "正在准备报告预览...",
-      "previewTitle": "服务器权威支出预览",
+      "previewTitle": "用量预览",
       "previewDescription": "此报告使用 {{units}} 关键字查找单元，最多可保留 {{rows}} 行。在开始之前剩余 {{remaining}} 单位。",
-      "cacheCounts": "缓存命中数计入使用量",
       "reviewAction": "审核并确认",
       "confirmTitle": "开始这份景观报告吗？",
       "confirmDescription": "比较 {{count}} 竞争对手的 {{units}} 关键字查找单位。",
@@ -171,7 +159,7 @@
     },
     "reports": {
       "title": "存储的景观报告",
-      "description": "重新打开不可变的报告，而无需开始另一个供应商查找。",
+      "description": "重新打开已保存的报告，无需再次查询。",
       "emptyTitle": "没有景观报告",
       "empty": "从关键字横向视图创建报告。",
       "date": "已创建",
@@ -274,7 +262,6 @@
     "states": {
       "loading": "报告进行中",
       "partial": "部分数据",
-      "cap": "该请求超出了剩余津贴。在确认之前升级或添加符合条件的积分包。",
       "disabled": "暂时禁止新的竞争对手请求。存储的报告仍然可用。",
       "unsafeLink": "隐藏不安全来源链接",
       "rateLimit": "请求太多。等待并重试。",
@@ -293,7 +280,7 @@
     },
     "market": {
       "tracked_keyword_mode": "来自跟踪关键字的市场",
-      "default": "默认市场回落"
+      "default": "网站的默认市场"
     },
     "confidence": {
       "high": "高",

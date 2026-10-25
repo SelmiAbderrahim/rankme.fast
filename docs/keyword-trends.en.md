@@ -15,7 +15,7 @@ Keyword Trends shows how search interest changes over time. For up to five keywo
 
 ## What one unit covers
 
-Each exploration you confirm uses one `trend_explorations` unit, whether it has one keyword or five. Previewing, cancelling a preview, reopening a saved run or picking a related-query follow-up costs nothing until you confirm. A confirmed follow-up counts as a new exploration.
+Each exploration you confirm uses one `trend_explorations` unit, whether it has one keyword or five. Previewing, canceling a preview, reopening a saved run or picking a related-query follow-up costs nothing until you confirm. A confirmed follow-up counts as a new exploration.
 
 See [Pricing](./pricing.en.md) for current allowances and pack prices.
 

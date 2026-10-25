@@ -53,8 +53,6 @@
     "revokeConfirmTitle": "¿Revocar esta clave de API?",
     "revokeConfirmDescription": "“{{name}}” dejará de funcionar de inmediato. Esto no se puede deshacer.",
     "empty": "Aún no hay claves de API.",
-    "upgradeHint": "Las claves de API para MCP están disponibles desde Starter; la API REST pública requiere Agency. Mejora tu plan para conectar un cliente MCP.",
-    "upgradeCta": "Ver planes",
     "scopes": {
       "column": "Acceso",
       "edit": "Editar acceso",
@@ -98,6 +96,7 @@
         "search": "Search Console y analítica",
         "pages": "Páginas",
         "links": "Backlinks y competidores",
+        "research": "Investigación de palabras clave",
         "visibility": "Visibilidad en IA, SEO local y reseñas",
         "reports": "Informes de clientes"
       },
@@ -120,6 +119,8 @@
       "get_backlinks_summary": { "name": "Obtener resumen de backlinks", "description": "Lee los recuentos almacenados de backlinks y dominios de referencia." },
       "list_backlinks": { "name": "Listar backlinks", "description": "Consulta los backlinks almacenados, uno por dominio de referencia." },
       "list_competitors": { "name": "Listar competidores", "description": "Consulta la cartera de competidores de un sitio." },
+      "list_keyword_research_history": { "name": "Listar historial de investigación de palabras clave", "description": "Consulta qué investigaciones de palabras clave se hicieron y cuándo." },
+      "get_keyword_research_result": { "name": "Obtener resultado de investigación de palabras clave", "description": "Reabre un resultado almacenado sin llamar al proveedor de datos." },
       "get_ai_visibility_summary": { "name": "Obtener resumen de Visibilidad en IA", "description": "Lee las comprobaciones de respuestas de IA y la cuota de voz almacenadas." },
       "get_local_seo_summary": { "name": "Obtener resumen de SEO local", "description": "Lee el perfil de negocio almacenado y las posiciones del paquete local." },
       "get_reviews_summary": { "name": "Obtener resumen de reseñas", "description": "Lee las fuentes de reseñas, valoraciones y temas almacenados." },
@@ -159,6 +160,13 @@
     }
   },
   "branding": {
+    "companyNameRequired": "Introduce el nombre de tu empresa.",
+    "preview": {
+      "title": "Vista previa de la cabecera del PDF",
+      "caption": "La cabecera de cada informe PDF usa este nombre, logotipo y color.",
+      "reportTitle": "Informe de auditoría SEO",
+      "sectionHeading": "Corregir ahora"
+    },
     "title": "Marca de los PDF",
     "description": "Pon tu propio nombre en los informes PDF descargados. El nombre de la empresa y el color de acento aparecen en la cabecera del PDF.",
     "companyName": "Nombre de la empresa",
@@ -167,14 +175,15 @@
     "invalidColor": "Introduce un color como #b5321e o déjalo vacío.",
     "save": "Guardar marca",
     "saved": "Marca guardada.",
-    "upgradeHint": "Los informes PDF de marca blanca están disponibles en los planes Pro y Agency. Mejora tu plan para personalizar tus informes.",
-    "upgradeCta": "Ver planes",
     "logo": {
       "label": "Logotipo de la empresa",
-      "help": "Solo PNG, hasta 256 KB. Las imágenes se redimensionan y recodifican antes de guardarse.",
-      "invalidType": "Elige una imagen PNG.",
-      "tooLarge": "Elige una imagen PNG de menos de 256 KB.",
-      "readFailed": "No pudimos leer esa imagen. Elige otro archivo PNG.",
+      "help": "PNG, JPEG o SVG, hasta 256 KB. Las imágenes se redimensionan y se guardan como PNG. Los archivos SVG no pueden incluir scripts ni enlaces a otros archivos.",
+      "invalidType": "Elige una imagen PNG, JPEG o SVG.",
+      "tooLarge": "Elige una imagen de menos de 256 KB.",
+      "readFailed": "No pudimos leer esa imagen. Elige otro archivo.",
+      "choose": "Elegir imagen",
+      "noFile": "Ningún archivo elegido",
+      "saved": "Se usa el logotipo guardado",
       "previewAlt": "Vista previa del logotipo de la empresa",
       "remove": "Quitar logotipo"
     },

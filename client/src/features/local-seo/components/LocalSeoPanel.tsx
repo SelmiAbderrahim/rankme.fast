@@ -54,6 +54,7 @@ import {
   selectLocalSeoSiteId,
   selectLocalSeoSnapshot,
 } from '../store/selectors';
+import { PageHeading } from '@shared/components/PageHeader';
 
 interface Props {
   siteId: string;
@@ -128,7 +129,7 @@ export const LocalSeoPanel = ({ siteId }: Props) => {
     <div className="flex flex-col gap-6 px-4 py-8" data-testid="local-seo-panel">
       <div className="flex flex-wrap items-start justify-between gap-2">
         <div>
-          <h1 className="text-2xl font-semibold">{t('title')}</h1>
+          <PageHeading className="text-2xl font-semibold">{t('title')}</PageHeading>
           <p className="text-muted-foreground text-sm">{t('description')}</p>
         </div>
         <div className="flex flex-col items-end gap-2">

@@ -281,7 +281,7 @@ function handleStreamEvent(
     };
     accumulator.finishReason = done.finishReason;
     accumulator.tokens = done.tokens;
-    // QA4 issue 6: the server marks a reply cut off by the output limit, an
+    // The server marks a reply cut off by the output limit, an
     // error finish or an empty final section; older servers only send the
     // finish reason, so `length` is read the same way.
     const cutOff = data.status === 'incomplete' || done.finishReason === 'length';

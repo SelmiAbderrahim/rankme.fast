@@ -1,4 +1,5 @@
 import { Bdi } from '@shared/components/Bdi';
+import { MetricValue } from '@shared/components/MetricValue';
 import { useEffect, useMemo, useState } from 'react';
 import { useSearchParams } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
@@ -35,7 +36,7 @@ const CompareStat = ({
   observation: ObservationMeta;
   value: number | null;
 }) => {
-  const { t, i18n } = useTranslation('competitorsTraffic');
+  const { t } = useTranslation('competitorsTraffic');
   return (
     <div>
       <dt className="text-sm text-muted-foreground">
@@ -43,9 +44,7 @@ const CompareStat = ({
       </dt>
       <dd className="flex flex-col gap-1">
         <span className="text-2xl font-semibold tabular-nums">
-          {value === null
-            ? t('common.notAvailable')
-            : new Intl.NumberFormat(i18n.language).format(value)}
+          <MetricValue kind="count" value={value} />
         </span>
         <CoverageNote observation={observation} />
       </dd>

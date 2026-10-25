@@ -40,7 +40,6 @@
   },
   "states": {
     "ranksCta": "Lancer un relevé de position",
-    "planCta": "Voir les offres",
     "emptyRuns": {
       "title": "Aucun regroupement enregistré",
       "body": "Prévisualisez un regroupement pour voir quels mots-clés suivis sont éligibles."
@@ -52,10 +51,6 @@
     "notEnoughKeywords": {
       "title": "Relevés de position récents insuffisants",
       "body": "Moins de deux mots-clés suivis ont une vérification de classement exploitable datant des sept derniers jours. Aucune exécution n'a été consommée."
-    },
-    "cap": {
-      "title": "Quota mensuel atteint",
-      "body": "Cette demande n'a pas été lancée. Attendez la prochaine période de quota ou consultez les offres disponibles."
     },
     "disabled": {
       "title": "Regroupements indisponibles",

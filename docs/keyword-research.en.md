@@ -33,6 +33,14 @@ RankMeFast caches provider results for 30 days because these figures do not chan
 
 When available, RankMeFast also shows related phrases and question variants. They use the same volume and difficulty measures.
 
+## Recent research
+
+**Recent research** lists each search once, even though a search with metrics and search intent logs two lookups. On a site, it lists the lookups run for that site, newest first. **View results** opens what was saved from that search. It is free: it makes no call to the data provider. If the saved data has expired (after 30 days), RankMeFast says so and offers **Search again**. **Search again** always runs a fresh lookup with the data provider, the same as a new search.
+
+## Adding several keywords
+
+Type or paste a list. A comma or a new line ends a keyword, so pasting `seo audit, rank tracker` adds two keywords. Keywords you already added are skipped, and RankMeFast tells you which ones. The same rules apply to the other research fields that take a list of keywords.
+
 ## Start from Rank Tracking
 
 When you enter exactly one Google keyword of 80 characters or fewer in the Add Keyword form, you can open Keyword Research with that phrase, country, and language already filled in. Opening the page does not run a lookup or use a unit. You choose when to start the research.

@@ -9,7 +9,7 @@ order: 3
 
 # Travailler avec l’Assistant IA
 
-L’Assistant IA disponible sur [/assistant](/assistant) réunit vos conversations RankMeFast dans un même espace. Il affiche les réponses au fil de leur génération et peut utiliser les outils RankMeFast autorisés pour lire les preuves SEO enregistrées ou lancer un audit. Il est inclus dans Starter, Pro et Agency ; les comptes sans offre payante voient un écran de mise à niveau.
+L’Assistant IA, sur [/assistant](/assistant), réunit vos conversations RankMeFast dans un seul espace. Il diffuse les réponses au fil de leur production et peut utiliser les outils RankMeFast autorisés pour lire les preuves SEO enregistrées ou lancer un audit.
 
 ## Démarrer une conversation
 
@@ -21,6 +21,8 @@ L’Assistant IA disponible sur [/assistant](/assistant) réunit vos conversatio
 
 Les conversations sont enregistrées automatiquement et restent disponibles après rechargement. Créez-en une nouvelle pour travailler sans site ou avec un autre site.
 
+Quand un site est choisi, les questions suggérées portent sur ce site. Avec **Aucun site — conseils généraux**, elles couvrent à la place votre compte et des questions SEO générales. Chaque conversation porte le nom de votre premier message, auquel s’ajoute le domaine du site quand cela distingue des conversations semblables. Pour en supprimer une, sélectionnez l’icône de corbeille à côté et confirmez ; **Annuler** la conserve. Si une réponse est interrompue avant la fin, la partie reçue reste dans la conversation avec un message et un bouton **Réessayer**.
+
 ## Outils disponibles
 
 L’Assistant utilise le même registre d’outils que RankMeFast MCP. Selon vos autorisations, il peut lancer :
@@ -29,32 +31,28 @@ L’Assistant utilise le même registre d’outils que RankMeFast MCP. Selon vos
 - `list_content_analyses` et `get_content_analysis` pour les travaux Content Intelligence enregistrés.
 - `start_audit` pour lancer un audit et `get_audit_status` pour suivre son avancement.
 
-Les outils de lecture consultent des données déjà stockées dans RankMeFast. `start_audit` est le seul outil payant : il consomme aussi un audit de votre forfait. Considérez les réponses comme des conseils et vérifiez les changements importants à partir des preuves affichées.
+Les outils de lecture utilisent des données déjà enregistrées dans RankMeFast, sans appeler de fournisseur de données. Les cartes d’outils indiquent l’outil exécuté, et [RankMeFast MCP](./rankmefast-mcp.fr.md) les liste tous. `start_audit` est le seul outil qui dépense : il lance un audit et consomme le crédit de votre propre compte fournisseur. Considérez les réponses de l’Assistant comme des indications et vérifiez les changements importants avec les preuves affichées.
 
 ## Autorisations
 
-Ouvrez [Paramètres → MCP](/profile?tab=mcp) pour définir les valeurs par défaut du compte utilisées par l’Assistant et les clients MCP. Vous pouvez activer ou désactiver chaque outil, limiter l’accès à certains sites et bloquer les actions payantes. Les réglages initiaux sont permissifs afin que les comptes existants continuent de fonctionner tant que vous ne les restreignez pas.
+Ouvrez [Paramètres → MCP](/settings/profile?tab=mcp) pour définir les valeurs par défaut du compte utilisées par l’Assistant et les clients MCP. Vous pouvez activer ou désactiver chaque outil, limiter l’accès à certains sites et bloquer les actions payantes. Les réglages initiaux sont permissifs afin que les comptes existants continuent de fonctionner tant que vous ne les restreignez pas.
 
 L’Assistant passe par votre session connectée : seules ces valeurs du compte s’appliquent à lui. Un outil désactivé n’est pas proposé au modèle, un site bloqué apparaît comme introuvable et `start_audit` exige aussi **Autoriser les actions payantes**. Les portées de clé API ne concernent que les clients MCP externes, où une clé peut restreindre les valeurs du compte sans jamais les élargir. Les détails sont dans [RankMeFast MCP](./rankmefast-mcp.fr.md).
 
-## Messages, limites et crédits
+## Messages et limites
 
-Chaque message accepté que vous envoyez utilise une unité `ai_chat_messages`. Les quotas mensuels sont de 100 pour Starter, 200 pour Pro et 400 pour Agency. Arrêter une réponse compte tout de même, car le travail a déjà commencé. Un audit lancé depuis le chat consomme séparément un audit.
-
-Lorsque le quota est épuisé, la zone de saisie propose une mise à niveau ou des crédits avant tout nouvel appel à l’IA. Un pack ponctuel **Chat IA** ajoute 100 messages pour 19 $ depuis **Facturation → Crédits**. Consultez [Plans, limites et crédits](./plans-limits-credits.fr.md) pour les quotas actuels.
+Chaque message envoyé ouvre une réponse IA diffusée, c’est pourquoi l’Assistant est limité en débit par compte : si vous envoyez beaucoup de messages en peu de temps, patientez un instant puis réessayez. Arrêter une réponse conserve ce qui était déjà écrit. Lancer un audit depuis le chat consomme les mêmes crédits fournisseur que de le lancer vous-même. L’opérateur de votre installation peut désactiver l’Assistant avec `CHAT_ENABLED` et borne la longueur de chaque réponse.
 
 ## Résolution des problèmes
 
-- **L’Assistant est verrouillé :** le compte n’a pas d’offre payante. Passez à Starter ou au-dessus.
-- **Limite de messages atteinte :** attendez la remise à zéro mensuelle, changez de forfait ou ajoutez un pack Chat IA.
-- **Un outil manque :** vérifiez son interrupteur dans **Paramètres → MCP**. Les portées des clés MCP ne modifient pas l’accès de l’Assistant connecté.
-- **Un site est indisponible :** vérifiez le site lié à la conversation et son autorisation dans les réglages du compte.
-- **Un audit ne démarre pas :** activez l’outil et les actions payantes, puis vérifiez votre quota d’audits.
-- **Assistant indisponible :** l’installation a désactivé `CHAT_ENABLED` ou le service est momentanément indisponible. Réessayez ou contactez l’opérateur.
-- **Le flux s’interrompt :** renvoyez le message. Une réponse partielle peut rester dans la conversation.
+- **Un outil manque :** vérifiez son interrupteur dans **Paramètres → MCP**. Les portées des clés MCP ne changent pas l’accès de l’Assistant en session.
+- **Un site est indisponible :** vérifiez que la conversation est liée au bon site et que ce site est autorisé dans les valeurs par défaut du compte.
+- **Un audit ne démarre pas :** activez l’outil et les actions de dépense, et vérifiez qu’aucun audit n’est déjà en cours pour le site.
+- **Trop de requêtes :** patientez un instant puis réessayez.
+- **Assistant indisponible :** l’installation a désactivé `CHAT_ENABLED` ou le service est momentanément indisponible. Réessayez plus tard ou contactez l’opérateur.
+- **Le flux s’arrête de façon inattendue :** utilisez **Réessayer** sur le message. La réponse partielle reste dans la conversation.
 
 ## Guides associés
 
 - [RankMeFast MCP](./rankmefast-mcp.fr.md) : connectez un client IA externe et limitez sa clé.
-- [Plans, limites et crédits](./plans-limits-credits.fr.md) : comparez les quotas de messages et d’audits.
 - [Retour à l’index de la documentation](./index.fr.md)

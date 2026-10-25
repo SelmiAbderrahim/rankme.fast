@@ -31,6 +31,8 @@ Una instantánea servida desde caché cuenta como una unidad, igual que un resul
 
 La instantánea reúne varias observaciones relacionadas. Si todas fallan y RankMeFast no conserva ningún resultado, la unidad se devuelve una sola vez. Si se guarda cualquier observación útil, la instantánea parcial o completa permanece consumida. Un reintento no puede devolver dos veces la misma unidad.
 
+Elige el **Mercado** (país e idioma) de la estimación; parte del mercado del propio sitio. Pega una dirección completa y RankMeFast conserva solo el dominio. Un dominio que hayas escrito se queda en el campo mientras la página termina de cargarse.
+
 ## Cuándo actualizar
 
 Información de tráfico funciona **bajo demanda** y no monitoriza competidores continuamente. Crea otra instantánea cuando necesites una estimación más reciente. Si se pausan las solicitudes nuevas, tus listas, detalles y comparaciones guardadas siguen disponibles.

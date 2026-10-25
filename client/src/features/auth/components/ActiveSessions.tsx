@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useRef, useState } from 'react';
-import { useTranslation } from 'react-i18next';
+import { Trans, useTranslation } from 'react-i18next';
 import { Monitor } from 'lucide-react';
 import { Button } from '@shared/ui/button';
 import { Alert, AlertDescription } from '@shared/ui/alert';
@@ -8,6 +8,7 @@ import { Card, CardContent, CardHeader, CardTitle } from '@shared/ui/card';
 import { Skeleton } from '@shared/ui/skeleton';
 import { Empty, EmptyDescription, EmptyHeader, EmptyTitle } from '@shared/ui/empty';
 import { AlertDialog, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle } from '@shared/ui/alert-dialog';
+import { RelativeTime } from '@shared/components/RelativeTime';
 import { isolateText } from '@shared/lib/bidi';
 import { authClient } from '../authClient';
 import { parseUserAgent } from '../userAgent';
@@ -33,7 +34,7 @@ const revokeSessionById = (sessionId: string) => authClient.$fetch<{ status: boo
  * identified by session id and cannot revoke itself from this panel.
  */
 export const ActiveSessions = ({ hasPassword = true }: { hasPassword?: boolean } = {}) => {
-  const { t, i18n } = useTranslation(['auth', 'common']);
+  const { t } = useTranslation(['auth', 'common']);
   const { data: sessionData } = authClient.useSession();
   const currentId = sessionData?.session.id ?? '';
   const email = sessionData?.user.email ?? '';
@@ -105,15 +106,11 @@ export const ActiveSessions = ({ hasPassword = true }: { hasPassword?: boolean }
     return t('security.sessions.unknownDevice');
   };
 
-  const lastActive = (s: SessionRow): string | null => {
-    const at = new Date(s.updatedAt ?? s.createdAt ?? Number.NaN);
-    if (Number.isNaN(at.getTime())) return null;
-    return t('security.sessions.lastActive', {
-      date: new Intl.DateTimeFormat(i18n.language, {
-        dateStyle: 'medium',
-        timeStyle: 'short',
-      }).format(at),
-    });
+  /** The stored time is refreshed about once a day, so other devices read by calendar day. */
+  const lastActiveAt = (s: SessionRow): string | number | null => {
+    const raw = s.updatedAt ?? s.createdAt;
+    if (raw === undefined || raw === null) return null;
+    return Number.isNaN(new Date(raw).getTime()) ? null : (raw as string | number);
   };
 
   const others = (sessions ?? []).filter((s) => s.id !== currentId);
@@ -160,7 +157,7 @@ export const ActiveSessions = ({ hasPassword = true }: { hasPassword?: boolean }
             <ul className="flex flex-col gap-2">
               {sessions.map((s) => {
                 const isCurrent = s.id === currentId;
-                const activity = lastActive(s);
+                const activeAt = lastActiveAt(s);
                 return (
                   <li
                     key={s.id}
@@ -177,7 +174,19 @@ export const ActiveSessions = ({ hasPassword = true }: { hasPassword?: boolean }
                             {t('security.sessions.ip', { ip: isolateText(s.ipAddress) })}
                           </span>
                         ) : null}
-                        <span className="text-muted-foreground text-xs">{isCurrent ? t('security.sessions.activeNow') : activity}</span>
+                        {isCurrent || activeAt !== null ? (
+                          <span className="text-muted-foreground text-xs" data-testid="session-last-active">
+                            {isCurrent ? (
+                              t('security.sessions.activeNow')
+                            ) : (
+                              <Trans
+                                t={t}
+                                i18nKey="security.sessions.lastActive"
+                                components={{ when: <RelativeTime value={activeAt!} granularity="day" /> }}
+                              />
+                            )}
+                          </span>
+                        ) : null}
                       </div>
                     </div>
                     {isCurrent ? (

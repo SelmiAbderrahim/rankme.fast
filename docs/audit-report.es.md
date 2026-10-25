@@ -39,7 +39,7 @@ Una convención reciente que indica a los asistentes de IA qué páginas prefier
 - **Canonical ausente o roto**: Coloca un `<link rel="canonical">` válido.
 - **Datos estructurados ausentes**: Añade JSON-LD adecuado.
 - **Enlaces internos rotos**: Corrige o elimina los enlaces con error.
-- **Contenido escaso**: Páginas por debajo de ~200 palabras.
+- **Contenido escaso**: Páginas con muy poco texto propio, juzgadas con un umbral según el idioma de la página: unas 200 palabras para la mayoría de los idiomas y el equivalente en caracteres para chino, japonés, coreano y tailandés. Cada página señalada muestra la longitud medida.
 - **Sin señales de FAQ**: Añade sección de preguntas frecuentes.
 - **Falta llms.txt (informativo)**: Convención reciente para los bots de IA.
 - **HTTPS no forzado**: Redirige http a https.
@@ -73,6 +73,14 @@ Una convención reciente que indica a los asistentes de IA qué páginas prefier
 - **Imágenes, scripts o estilos rotos**: Archivos que necesita una página y que responden con un error. Solo se comprueba en una auditoría iniciada con el análisis de recursos; si no, aparece en No evaluado.
 - **Imágenes más grandes de lo necesario**: Imágenes de más de 500 KB. Se comprueba con el análisis completo de recursos, como la anterior.
 - **Archivos que los navegadores no pueden guardar en caché**: Imágenes, scripts y hojas de estilo enviados con cabeceras que impiden que el navegador los guarde en caché. Se comprueba con el análisis completo de recursos.
+
+## Hallazgos descartados y corregidos
+
+Descarta un hallazgo que no te afecte, o márcalo como corregido, desde su tarjeta del informe o desde [Próximas acciones](./next-actions.es.md). Al descartar se pide un motivo: falso positivo, no se corregirá, corregido en otro sitio u otro motivo. Los hallazgos descartados pasan a una sección **Descartados** bajo las pestañas, y los marcados como corregidos a un grupo **Marcado como corregido** dentro de su pestaña. Ninguno cuenta en los totales de las pestañas ni en el resumen. Cada entrada descartada indica quién la descartó, cuándo y por qué, y si la última auditoría todavía la detecta. **Restaurar** la devuelve a la lista.
+
+En un hallazgo de enlaces rotos, **Volver a comprobar estas URL** consulta de nuevo tus propias páginas y registra cuáles siguen fallando, cuáles funcionan ya y cuáles no se pudieron comprobar. No inicia una auditoría nueva, y el informe de auditoría queda como estaba.
+
+Las URL afectadas son enlaces. Una lista larga muestra primero una muestra, y **Descargar URL (CSV)** las guarda todas. Cuando la auditoría más reciente supera los 30 días, aparece un aviso **Última auditoría hace N días** con **Ejecutar una auditoría nueva**, porque los resultados pueden ya no coincidir con tu sitio.
 
 ## Analizar imágenes, scripts y estilos
 

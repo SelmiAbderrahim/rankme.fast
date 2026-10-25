@@ -1,5 +1,5 @@
 /**
- * Content inventory service unit tests (prompt 08) — fine-grained branches the
+ * Content inventory service unit tests — fine-grained branches the
  * router test cannot reach directly: queue-null 503, invalid-id 404s, the
  * concurrent duplicate-start race, cursor pagination + invalid cursor,
  * findings/pages serialization, and the cancel edge cases.

@@ -16,11 +16,12 @@ import type { z } from 'zod';
 import { MCP_TOOL_NAMES, type McpToolName } from './mcp.tool-names.js';
 import { translate, type SupportedLocale } from '../../shared/i18n/index.js';
 import { BEARER_DEFAULT_LOCALE } from '../../shared/middleware/bearer-language.js';
-import { getGscSearchSummaryInputSchema, listGscTopQueriesInputSchema, listGscTopPagesInputSchema, getGa4SummaryInputSchema, listPagesInputSchema, getPageDetailInputSchema, getBacklinksSummaryInputSchema, listBacklinksInputSchema, listCompetitorsInputSchema, getAiVisibilitySummaryInputSchema, getLocalSeoSummaryInputSchema, getReviewsSummaryInputSchema, listClientReportsInputSchema, } from './mcp.read-schemas.js';
+import { getGscSearchSummaryInputSchema, listGscTopQueriesInputSchema, listGscTopPagesInputSchema, getGa4SummaryInputSchema, listPagesInputSchema, getPageDetailInputSchema, getBacklinksSummaryInputSchema, listBacklinksInputSchema, listCompetitorsInputSchema, listKeywordResearchHistoryInputSchema, getKeywordResearchResultInputSchema, getAiVisibilitySummaryInputSchema, getLocalSeoSummaryInputSchema, getReviewsSummaryInputSchema, listClientReportsInputSchema, } from './mcp.read-schemas.js';
 import { toolGetGscSearchSummary, toolListGscTopQueries, toolListGscTopPages, toolGetGa4Summary, } from './mcp.tools.google.js';
 import { toolListPages, toolGetPageDetail } from './mcp.tools.pages.js';
 import { toolGetBacklinksSummary, toolListBacklinks } from './mcp.tools.backlinks.js';
 import { toolListCompetitors } from './mcp.tools.competitors.js';
+import { toolListKeywordResearchHistory, toolGetKeywordResearchResult } from './mcp.tools.keyword-research.js';
 import { toolGetAiVisibilitySummary } from './mcp.tools.visibility.js';
 import { toolGetLocalSeoSummary, toolGetReviewsSummary } from './mcp.tools.local.js';
 import { toolListClientReports } from './mcp.tools.client-reports.js';
@@ -37,7 +38,7 @@ export type McpToolDescriptionKey = 'mcp.tools.listSites.description' | 'mcp.too
     | 'mcp.tools.getBacklinksSummary.description'
     | 'mcp.tools.listBacklinks.description'
     | 'mcp.tools.listCompetitors.description'
-    | 'mcp.tools.getAiVisibilitySummary.description'
+    | 'mcp.tools.listKeywordResearchHistory.description' | 'mcp.tools.getKeywordResearchResult.description' | 'mcp.tools.getAiVisibilitySummary.description'
     | 'mcp.tools.getLocalSeoSummary.description'
     | 'mcp.tools.getReviewsSummary.description'
     | 'mcp.tools.listClientReports.description';
@@ -163,6 +164,16 @@ export const MCP_TOOL_REGISTRY = {
         inputSchema: listCompetitorsInputSchema,
         spend: false,
         execute: toolListCompetitors,
+    }),
+    list_keyword_research_history: defineTool('mcp.tools.listKeywordResearchHistory.description', {
+        inputSchema: listKeywordResearchHistoryInputSchema,
+        spend: false,
+        execute: toolListKeywordResearchHistory,
+    }),
+    get_keyword_research_result: defineTool('mcp.tools.getKeywordResearchResult.description', {
+        inputSchema: getKeywordResearchResultInputSchema,
+        spend: false,
+        execute: toolGetKeywordResearchResult,
     }),
     get_ai_visibility_summary: defineTool('mcp.tools.getAiVisibilitySummary.description', {
         inputSchema: getAiVisibilitySummaryInputSchema,

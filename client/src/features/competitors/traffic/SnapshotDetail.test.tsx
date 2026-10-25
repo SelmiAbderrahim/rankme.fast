@@ -102,7 +102,10 @@ describe('SnapshotDetail', () => {
     expect(screen.getByTestId('traffic-detail-partial')).toHaveTextContent(
       '2 of three provider operations were retained',
     );
-    expect(screen.getAllByText('Not available')).toHaveLength(3);
+    // Two stats say "No data" through the shared metric value; the retention
+    // table keeps its own "Not available" cell.
+    expect(screen.getAllByText('No data')).toHaveLength(2);
+    expect(screen.getAllByText('Not available')).toHaveLength(1);
   });
 
   it('renders failed, queued, loading, error, empty-detail, and empty-history states', () => {

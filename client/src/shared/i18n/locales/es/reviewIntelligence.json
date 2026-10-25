@@ -9,16 +9,6 @@
   },
   "states": {
     "signedOut": "Inicia sesión para leer tus reseñas.",
-    "notOnPlan": {
-      "title": "Las reseñas están en el plan Pro",
-      "description": "Cambia a Pro o Agency para traer reseñas de Google, Trustpilot y Tripadvisor.",
-      "link": "Ver los planes"
-    },
-    "capReached": {
-      "title": "Has usado todas las sincronizaciones de tu plan",
-      "description": "Consulta Facturación para comprobar la disponibilidad actual del paquete de sincronizaciones. Todo lo que ya trajiste sigue disponible.",
-      "link": "Ver opciones de paquetes"
-    },
     "disabled": {
       "title": "Las sincronizaciones nuevas están en pausa",
       "description": "Hemos pausado las sincronizaciones nuevas de reseñas. Las reseñas que ya trajiste siguen disponibles."
@@ -109,7 +99,6 @@
     "empty": "Todavía no hay sincronizaciones.",
     "createdAt": "Iniciada",
     "view": "Abrir",
-    "refunded": "Unidad devuelta",
     "columns": {
       "status": "Resultado",
       "outcomes": "Por fuente",

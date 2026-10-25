@@ -23,6 +23,9 @@ export const securityHeaders: RequestHandler = helmet({
             formAction: ["'self'"],
         },
     },
+    // The same single `X-Frame-Options: DENY` as every web response (helmet's
+    // default is SAMEORIGIN), next to `frame-ancestors 'none'`.
+    frameguard: { action: 'deny' },
     crossOriginEmbedderPolicy: false,
     crossOriginResourcePolicy: { policy: 'same-site' },
     referrerPolicy: { policy: 'no-referrer' },

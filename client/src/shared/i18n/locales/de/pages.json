@@ -141,7 +141,7 @@
   },
   "filters": {
     "title": "Seiten finden",
-    "description": "Suche und Filter werden auf dem Server ausgewertet und erfassen keine neuen Anbieterdaten.",
+    "description": "Suchen und Filtern rufen nie neue Daten ab.",
     "searchLabel": "Seiten und Suchanfragen durchsuchen",
     "searchPlaceholder": "Titel, Pfad, URL, Suchanfrage oder Keyword",
     "insight": "Chance",

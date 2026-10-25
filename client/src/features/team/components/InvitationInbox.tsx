@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { UserPlus } from 'lucide-react';
+import { Inbox } from 'lucide-react';
 import { loadWorkspaces } from '@features/workspace';
 import { useAppDispatch, useAppSelector } from '@shared/hooks/redux';
 import { Alert, AlertDescription } from '@shared/ui/alert';
@@ -98,7 +98,7 @@ export const InvitationInbox = () => {
                     ? t('inbox.buttonLabelWithCount', { count })
                     : t('inbox.buttonLabel')}
                 >
-                  <UserPlus aria-hidden="true" />
+                  <Inbox aria-hidden="true" />
                   {count > 0 ? (
                     <Badge aria-hidden="true" className="absolute -end-2 -top-2 min-w-5 px-1">
                       {count > 99 ? '99+' : count}

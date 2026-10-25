@@ -1,6 +1,6 @@
 {
   "title": "Traffic-Einblicke",
-  "description": "Fordern Sie indexbasierte Traffic-Schätzungen für öffentliche Domains an und öffnen Sie sie erneut.",
+  "description": "Fordern Sie Traffic-Schätzungen von Drittanbietern für jede öffentliche Domain an und öffnen Sie sie erneut.",
   "common": {
     "notAvailable": "Nicht verfügbar"
   },
@@ -109,16 +109,6 @@
     "locked": {
       "title": "Neue Snapshots sind vorübergehend pausiert",
       "description": "Traffic-Einblicke sind für neue Anfragen vorübergehend nicht verfügbar. Gespeicherte Snapshots bleiben verfügbar."
-    },
-    "cap": {
-      "title": "Snapshot-Kontingent erreicht",
-      "description": "Diese Anfrage passt nicht in Ihr verbleibendes Basis- und Paketkontingent. Prüfen Sie unter Abrechnung, welche Pakete derzeit verfügbar sind.",
-      "link": "Snapshot-Pakete ansehen"
-    },
-    "upgrade": {
-      "title": "Traffic-Einblicke sind nicht in Ihrem Tarif enthalten",
-      "description": "Wählen Sie einen kostenpflichtigen Tarif, um Traffic-Snapshots anzufordern. Mit diesem Arbeitsbereich geteilte gespeicherte Snapshots können Sie weiterhin öffnen.",
-      "link": "Tarife vergleichen"
     },
     "timeout": {
       "title": "Die Anfrage hat zu lange gedauert",

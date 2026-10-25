@@ -21,6 +21,17 @@ describe('security middleware wiring', () => {
     expect(res.headers['x-powered-by']).toBeUndefined();
   });
 
+  it('sends exactly one X-Frame-Options: DENY with frame-ancestors none on every API response path', async () => {
+    for (const path of ['/api/health', '/api/auth/get-session', '/api/does-not-exist', '/robots.txt', '/sitemap.xml']) {
+      const res = await request(app).get(path);
+      const rawHeaders = (res as unknown as { res: { rawHeaders: string[] } }).res.rawHeaders;
+      const raw = rawHeaders.filter((name, i) => i % 2 === 0 && name.toLowerCase() === 'x-frame-options');
+      expect(raw, path).toHaveLength(1);
+      expect(res.headers['x-frame-options'], path).toBe('DENY');
+      expect(res.headers['content-security-policy'], path).toContain("frame-ancestors 'none'");
+    }
+  });
+
   it('sets a strict Content-Security-Policy on API responses', async () => {
     const res = await request(app).get('/api/health');
     const csp = res.headers['content-security-policy'];

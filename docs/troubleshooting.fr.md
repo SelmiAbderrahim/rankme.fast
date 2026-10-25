@@ -17,8 +17,8 @@ order: 3
 ## Contrôle de position indisponible
 Généralement temporaire ; la prochaine exécution réessaie.
 
-## « Reconnexion requise » Search Console
-Ouvrez Paramètres et reconnectez.
+## Search Console demande de se reconnecter
+Google a invalidé notre jeton. Dans l’onglet **Google** du site, la carte Google Search Console affiche **Votre connexion Google doit être renouvelée** ; sélectionnez **Reconnecter**. Cela peut arriver si vous avez changé votre mot de passe Google ou révoqué l’application.
 
 ## Plafond atteint
 Voir [Plans, limites & crédits](./plans-limits-credits.fr.md).
@@ -35,8 +35,8 @@ La vérification ne peut pas s'exécuter pour ce moteur ou ce marché. La partie
 ## Indisponible (pas zéro)
 Aucune donnée n'est revenue pour la fenêtre. `unavailable ≠ 0` : traitez-le comme un inconnu, pas comme une chute à zéro. Vous le verrez sur la part de voix et sur les cartes IA génératives de Search Console.
 
-## « Reconnexion requise » sur les cartes analytics ou IA générative
-Même cause que la reconnexion Search Console ci-dessus : Google a révoqué le jeton. Reconnectez depuis l'espace Google du site ; les cartes se rétablissent à la prochaine lecture.
+## « Search Console n’est pas connecté » sur les cartes analytics ou IA générative
+Les cartes qui lisent Search Console ou Google Analytics affichent **Search Console n’est pas connecté** ou **Google Analytics n’est pas connecté** tant que Google n’est pas reconnecté, puis se rétablissent à la lecture suivante.
 
 ## E-mail de vérification manquant
 Vérifiez le spam ; le lien expire au bout de 24 h.

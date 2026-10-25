@@ -26,6 +26,7 @@ import { translate, type SupportedLocale, type TranslationVars, } from '../../sh
 import type { AuditReport, LocalizedFinding } from './report.service.js';
 import { createReportPdfContext, drawReportPdfText, measureReportPdfText, type ReportPdfContext } from '../../shared/report-exports/pdf-support.js';
 import { containsArabic, shapeArabic, toVisualRtlLine } from './pdf/rtl.js';
+import { metricOrNull } from '../../shared/utils/metric-value.js';
 export interface ReportPdfBranding {
     companyName: string;
     /** `'#rrggbb'` or `''` — anything else falls back to the ink default. */
@@ -278,6 +279,16 @@ function formatDecimal(locale: SupportedLocale, value: number, maximumFractionDi
     const numberLocale = locale === 'ar' ? 'ar-u-nu-latn' : locale;
     return new Intl.NumberFormat(numberLocale, { maximumFractionDigits }).format(value);
 }
+function formatDecimalOrDash(locale: SupportedLocale, value: number | null): string {
+    return value === null ? '—' : formatDecimal(locale, value, 1);
+}
+/** Locales that write a space before the percent sign in these reports. */
+const SPACED_PERCENT: ReadonlySet<SupportedLocale> = new Set<SupportedLocale>(['fr', 'de', 'es', 'ru']);
+function formatPercentOrDash(locale: SupportedLocale, ratio: number | null): string {
+    if (ratio === null)
+        return '—';
+    return `${formatDecimal(locale, ratio * 100, 1)}${SPACED_PERCENT.has(locale) ? ' ' : ''}%`;
+}
 async function drawBrandHeader(ctx: RenderCtx, brandName: string, logoPngBytes: Uint8Array | null | undefined): Promise<void> {
     if (!logoPngBytes || logoPngBytes.length === 0) {
         drawParagraph(ctx, brandName, { font: ctx.bold, size: 20, color: INK, spacingAfter: 6 });
@@ -363,8 +374,9 @@ function drawGscSummary(ctx: RenderCtx, summary: ReportPdfGscSummary, locale: Su
     drawParagraph(ctx, t('gscTotals', {
         clicks: formatDecimal(locale, summary.totalClicks, 0),
         impressions: formatDecimal(locale, summary.totalImpressions, 0),
-        ctr: formatDecimal(locale, summary.averageCtr * 100, 1),
-        position: formatDecimal(locale, summary.averagePosition, 1),
+        // No impressions means no CTR or position, shown as a dash.
+        ctr: formatPercentOrDash(locale, metricOrNull('ratio', summary.averageCtr, summary.totalImpressions)),
+        position: formatDecimalOrDash(locale, metricOrNull('position', summary.averagePosition, summary.totalImpressions)),
         date: sectionDate,
     }), { font: ctx.regular, size: 10, color: BODY, spacingAfter: 6 });
     const queries = summary.topQueries.slice(0, CLIENT_REPORT_MAX_GSC_QUERIES);
@@ -380,8 +392,8 @@ function drawGscSummary(ctx: RenderCtx, summary: ReportPdfGscSummary, locale: Su
                 query: query.query,
                 clicks: formatDecimal(locale, query.clicks, 0),
                 impressions: formatDecimal(locale, query.impressions, 0),
-                ctr: formatDecimal(locale, query.ctr * 100, 1),
-                position: formatDecimal(locale, query.position, 1),
+                ctr: formatPercentOrDash(locale, metricOrNull('ratio', query.ctr, query.impressions)),
+                position: formatDecimalOrDash(locale, metricOrNull('position', query.position, query.impressions)),
                 date: formatStoredDate(locale, query.snapshotDate),
             }), { font: ctx.regular, size: 9, color: BODY, indent: 8, spacingAfter: 3 });
         }

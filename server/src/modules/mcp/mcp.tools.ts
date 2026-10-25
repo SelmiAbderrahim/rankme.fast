@@ -284,7 +284,7 @@ export async function toolListKeywords(rawInput: unknown, context: McpToolContex
     return runTool('list_keywords', rawInput, context, async (locale) => {
         const input = listKeywordsInputSchema.parse(rawInput ?? {});
         assertSiteAllowed(context.permissions, input.siteId);
-        const limit = input.limit ?? MCP_PAGE_LIMIT_DEFAULT;
+        const limit = input.limit;
         const page = await listKeywords({
             accountId: context.accountId,
             siteId: input.siteId,
@@ -361,7 +361,7 @@ export async function toolListContentAnalyses(rawInput: unknown, context: McpToo
     return runTool('list_content_analyses', rawInput, context, async (locale) => {
         const input = listContentAnalysesInputSchema.parse(rawInput ?? {});
         assertSiteAllowed(context.permissions, input.siteId);
-        const limit = input.limit ?? MCP_PAGE_LIMIT_DEFAULT;
+        const limit = input.limit;
         const result = await ciListAnalyses({
             accountId: context.accountId,
             siteId: input.siteId,
@@ -489,7 +489,7 @@ export async function toolListActions(rawInput: unknown, context: McpToolContext
             siteId: input.siteId,
             locale,
             db: getMcpDb(),
-            ...(Object.keys(filters).length > 0 ? { filters } : {}),
+            filters,
             ...(typeof input.limit === 'number' ? { limit: input.limit } : {}),
             ...(input.cursor ? { cursor: input.cursor } : {}),
         });

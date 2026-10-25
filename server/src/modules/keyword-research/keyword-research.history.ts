@@ -11,7 +11,7 @@
  * lookup, so a failed bookkeeping insert logs and moves on rather than turning
  * a delivered result into a 500.
  */
-import { and, desc, eq, sql } from 'drizzle-orm';
+import { and, desc, eq, inArray, sql } from 'drizzle-orm';
 import type { Db } from '../../db/client.js';
 import { keywordResearchHistory, type KeywordResearchHistoryRow, type KeywordResearchKind, } from '../../db/schema/index.js';
 import { logger } from '../../config/logger.js';
@@ -66,6 +66,12 @@ export interface ListResearchHistoryInput {
     accountId: string;
     /** When set, only lookups attributed to this site (the site Research tab). */
     siteId?: string;
+    /**
+     * Restrict to lookups attributed to one of these sites (an API key or
+     * account limited to some sites). Account-level rows belong to no site and
+     * are left out. An empty list matches nothing.
+     */
+    siteIds?: readonly string[];
     cursor?: string;
     limit: number;
 }
@@ -79,6 +85,9 @@ export async function listResearchHistory(db: Db, input: ListResearchHistoryInpu
     const filters = [eq(keywordResearchHistory.accountId, input.accountId)];
     if (input.siteId !== undefined) {
         filters.push(eq(keywordResearchHistory.siteId, input.siteId));
+    }
+    if (input.siteIds !== undefined) {
+        filters.push(input.siteIds.length > 0 ? inArray(keywordResearchHistory.siteId, [...input.siteIds]) : sql `false`);
     }
     // The count ignores the cursor: it is the size of the whole list, so a
     // reader can tell how much older history is still to come.

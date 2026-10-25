@@ -17,7 +17,7 @@ Review Intelligence collects public reviews from the Google, Trustpilot, and Tri
 
 One confirmed sync uses one `review_syncs` unit for the whole job. You may select one, two, or three configured sources and choose a depth up to 100 reviews per source; the cost doesn't go up with the number of sources. The theme pass is included.
 
-Previewing or cancelling spends nothing. See [Pricing](./pricing.en.md) for current monthly allowances and pack prices.
+Previewing or canceling spends nothing. See [Pricing](./pricing.en.md) for current monthly allowances and pack prices.
 
 ## Understand cache, deduplication, and refunds
 

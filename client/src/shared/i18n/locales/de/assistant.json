@@ -82,6 +82,8 @@
       "getBacklinksSummary": "Backlink-Zusammenfassung abrufen",
       "listBacklinks": "Backlinks auflisten",
       "listCompetitors": "Wettbewerber auflisten",
+      "listKeywordResearchHistory": "Keyword-Recherche-Verlauf auflisten",
+      "getKeywordResearchResult": "Keyword-Recherche-Ergebnis abrufen",
       "getAiVisibilitySummary": "KI-Sichtbarkeitszusammenfassung abrufen",
       "getLocalSeoSummary": "Local-SEO-Zusammenfassung abrufen",
       "getReviewsSummary": "Bewertungszusammenfassung abrufen",

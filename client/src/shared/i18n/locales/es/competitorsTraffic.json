@@ -1,6 +1,6 @@
 {
   "title": "Información de tráfico",
-  "description": "Solicita y vuelve a abrir estimaciones de tráfico del índice del proveedor para cualquier dominio público.",
+  "description": "Solicita y vuelve a abrir estimaciones de tráfico de terceros para cualquier dominio público.",
   "common": {
     "notAvailable": "No disponible"
   },
@@ -109,16 +109,6 @@
     "locked": {
       "title": "Las nuevas instantáneas están pausadas temporalmente",
       "description": "La información de tráfico no está disponible temporalmente para solicitudes nuevas. Las instantáneas guardadas siguen disponibles."
-    },
-    "cap": {
-      "title": "Se alcanzó el límite de instantáneas",
-      "description": "Esta solicitud supera tu asignación base y de paquetes restante. Consulta Facturación para comprobar la disponibilidad actual de los paquetes.",
-      "link": "Ver paquetes de instantáneas"
-    },
-    "upgrade": {
-      "title": "Tu plan no incluye información de tráfico",
-      "description": "Elige un plan de pago para solicitar instantáneas de tráfico. Aún puedes abrir las instantáneas guardadas compartidas con este espacio.",
-      "link": "Comparar planes"
     },
     "timeout": {
       "title": "La solicitud tardó demasiado",

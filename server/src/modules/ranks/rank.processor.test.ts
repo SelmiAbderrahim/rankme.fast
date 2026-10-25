@@ -2066,10 +2066,10 @@ describe('createRankProcessor — replay suppression', () => {
 });
 
 // -----------------------------------------------------------------------------
-// Prompt 31 — opt-in local-pack (map pack) tracking, parallel to organic.
+// opt-in local-pack (map pack) tracking, parallel to organic.
 // -----------------------------------------------------------------------------
 
-describe('createRankProcessor — opt-in local-pack tracking (prompt 31)', () => {
+describe('createRankProcessor — opt-in local-pack tracking', () => {
   async function seedKeyword(
     ids: { accountId: string; siteId: string },
     overrides: { trackLocalPack?: boolean } = {},

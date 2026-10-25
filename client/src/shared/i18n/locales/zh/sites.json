@@ -61,15 +61,16 @@
     "resumeCta": "恢复",
     "pausing": "正在暂停…",
     "resuming": "正在恢复…",
-    "optionSuffix": "已暂停"
+    "optionSuffix": "已暂停",
+    "help": "已暂停：审计、排名检查、每周报告、内容监控和提醒均已关闭。报告和历史记录仍可查看。恢复后即可重新开启。"
   },
   "errors": {
     "urlRequired": "请输入您的网站网址，例如 https://example.com。",
-    "urlTooLong": "该网址过长（最多 2048 个字符）。",
+    "urlTooLong": "请输入不超过 2048 个字符的网址。",
     "urlInvalid": "请输入有效的网址，例如 https://example.com。",
-    "urlScheme": "仅支持 http:// 和 https:// 网址。",
+    "urlScheme": "请输入以 http:// 或 https:// 开头的网址。",
     "urlUserinfo": "请从网址中移除用户名和密码。",
-    "urlIpLiteral": "不支持 IP 地址——请使用域名。",
+    "urlIpLiteral": "请输入域名，而不是 IP 地址。",
     "urlNoTld": "请输入完整的域名，例如 https://example.com。"
   },
   "workspace": {
@@ -105,7 +106,6 @@
     },
     "navigationLabel": "工作区视图",
     "activeGroupLabel": "{{group}} · {{current}}",
-    "upgradeHint": "升级您的方案以解锁该标签页。",
     "switchSite": "切换网站",
     "loadingSite": "正在加载网站…",
     "filterSites": "筛选网站…",
@@ -190,8 +190,7 @@
     "unlock": {
       "title": "还有更多洞察可用",
       "backlinksAndCompetitors": "升级以查看反向链接强度和竞争重叠。",
-      "competitors": "升级到 Agency 以查看竞争重叠和关键词差距。",
-      "openPlans": "比较套餐"
+      "competitors": "升级到 Agency 以查看竞争重叠和关键词差距。"
     },
     "statError": "无法加载",
     "meta": {

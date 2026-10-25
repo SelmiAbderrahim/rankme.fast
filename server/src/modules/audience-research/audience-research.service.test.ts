@@ -1,5 +1,5 @@
 /**
- * Prompt 10e — HTTP-side service invariants.
+ * HTTP-side service invariants.
  *
  * Exercises `audience-research.service.ts` directly (real memory Mongo) so the
  * read/list/start compensation paths that the router smoke test cannot reach

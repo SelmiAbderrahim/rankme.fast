@@ -53,17 +53,12 @@
     "cooldown_many": "Warten Sie {{seconds}} s vor der nächsten Aktualisierung.",
     "cooldown_other": "Warten Sie {{seconds}} s vor der nächsten Aktualisierung."
   },
-  "locked": {
-    "title": "Führen Sie ein Upgrade durch, um Backlinks freizuschalten",
-    "body": "Domain-Bewertung, verweisende Domains und Ihre Backlink-Liste sind Teil des Pro-Plans.",
-    "upgrade": "Pläne ansehen"
-  },
   "errors": {
     "capExceeded": "Das Backlink-Zeilenlimit Ihres Tarifs ({{used}}/{{limit}} {{metric}}) ist erschöpft. Führen Sie ein Upgrade durch oder kaufen Sie ein Credit-Paket, um weitere Zeilen abzurufen."
   },
   "intelligence": {
     "title": "Link-Intelligence",
-    "description": "Prüfen Sie gespeicherte Backlink-Belege und entscheiden Sie, wann Einheiten für einen neuen Anbieterabruf verwendet werden.",
+    "description": "Prüfen Sie gespeicherte Backlink-Daten und entscheiden Sie, wann neue Daten abgerufen werden.",
     "tabs": {
       "label": "Link-Intelligence-Ansichten",
       "overview": "Übersicht",
@@ -77,14 +72,11 @@
     "preview": {
       "title": "Verbrauchsvorschau",
       "description": "Diese Schätzung ist kostenlos. Einheiten werden erst nach Ihrer Bestätigung reserviert.",
-      "units": "{{count}} Einheit",
       "cached": "Gespeichertes Ergebnis",
       "mixed": "Gemischter Cache",
-      "fresh": "Neuer Abruf erforderlich",
+      "fresh": "Neue Daten erforderlich",
       "available": "Kontingent verfügbar",
       "unavailable": "Kontingent erreicht",
-      "baseRemaining": "{{count}} Basiseinheiten verbleiben",
-      "packRemaining": "{{count}} Paketeinheiten verbleiben",
       "confirm": "Bestätigen und Abruf starten",
       "cancel": "Abbrechen",
       "button": "Verbrauch prüfen"
@@ -92,18 +84,13 @@
     "states": {
       "default": "Noch keine gespeicherte Liste. Die Übersicht zeigt nur Summen; diese Liste ist ein eigener Abruf. Sehen Sie sich die Vorschau an, bevor Sie ihn starten.",
       "emptyTitle": "Keine Ergebnisse gefunden",
-      "emptyBody": "Der Anbieter hat den Abruf ohne passende Zeilen abgeschlossen.",
+      "emptyBody": "Die Abfrage wurde abgeschlossen, ohne passende Zeilen zu finden.",
       "partialTitle": "Teilergebnis",
-      "partialBody": "Einige Zeilen wurden gespeichert, bevor der Anbieter nicht mehr antwortete.",
-      "providerTitle": "Anbieterabruf fehlgeschlagen",
-      "providerBody": "Keine Zeilen wurden gespeichert; die reservierte Einheit wurde erstattet.",
-      "capTitle": "Link-Intelligence-Kontingent erreicht",
-      "capBody": "Nutzen Sie das Überlaufpaket {{pack}} oder warten Sie auf die Erneuerung.",
+      "partialBody": "Einige Zeilen wurden gespeichert, bevor die Datenquelle nicht mehr antwortete.",
+      "providerTitle": "Neue Daten konnten nicht abgerufen werden",
+      "providerBody": "Es wurde nichts gespeichert.",
       "disabledTitle": "Link-Intelligence ist vorübergehend deaktiviert",
-      "disabledBody": "Gespeicherte Ergebnisse bleiben verfügbar, neue Abrufe sind pausiert.",
-      "lockedTitle": "Upgrade für Link-Intelligence",
-      "lockedBody": "Tiefe Backlink-Abrufe sind in Pro und Agency verfügbar.",
-      "upgrade": "Pläne ansehen",
+      "disabledBody": "Gespeicherte Ergebnisse bleiben verfügbar, aber das Abrufen neuer Daten ist pausiert.",
       "errorTitle": "Link-Intelligence konnte nicht geladen werden"
     },
     "provenance": {
@@ -126,7 +113,7 @@
     },
     "bulk": {
       "title": "Domainrang-Stapelprüfung",
-      "description": "Prüfen Sie den Anbieterrang für bis zu 100 eindeutige Domains.",
+      "description": "Prüfen Sie den Domain-Rang für bis zu 100 eindeutige Domains.",
       "label": "Domains",
       "help": "Eine Domain pro Zeile oder durch Kommas getrennt eingeben.",
       "invalid": "Geben Sie 1 bis 100 gültige Domains ein.",
@@ -155,7 +142,7 @@
     },
     "errors": {
       "preview": "Verbrauchsvorschau konnte nicht erstellt werden.",
-      "submit": "Anbieterabruf konnte nicht gestartet werden.",
+      "submit": "Das Abrufen neuer Daten konnte nicht gestartet werden.",
       "load": "Gespeichertes Ergebnis konnte nicht geladen werden."
     }
   },
@@ -178,11 +165,8 @@
     },
     "preview": {
       "title": "Verbrauchsvorschau für die Link-Lücke",
-      "units": "{{n}} Einheiten",
-      "remainingBase": "{{n}} Basiseinheiten verbleiben",
-      "remainingPack": "{{n}} Paketeinheiten verbleiben",
       "cached": "Gespeicherte Daten",
-      "fresh": "Neuer Anbieterabruf",
+      "fresh": "Neue Daten",
       "confirm": "Bestätigen und Lückenanalyse starten",
       "cancel": "Abbrechen",
       "button": "Verbrauch prüfen"
@@ -198,7 +182,7 @@
     },
     "legStatus": {
       "ok": "Abgeschlossen · Einheit verbraucht",
-      "provider_failed_refunded": "Anbieter fehlgeschlagen · Einheit erstattet",
+      "provider_failed_refunded": "Datenquelle fehlgeschlagen",
       "zero_retained_consumed": "Keine Zeilen behalten · Einheit verbraucht",
       "zero_retained_refunded": "Keine Zeilen behalten · Einheit erstattet"
     },
@@ -231,19 +215,13 @@
       "unit": "1 Linkprüfungs-Einheit",
       "rowClamp": "Bis zu 1.000 Zeilen · 100 bewertete Domains",
       "available": "Kontingent verfügbar",
-      "capReached": "Kontingent erreicht",
-      "explanation": "Der Lauf nutzt eine toxicity_reviews-Einheit. Nach dem Inklusivkontingent ist das Paket toxicity-reviews-10 verfügbar. Vorschau und Abbruch verbrauchen keine Einheit.",
       "confirm": "Bestätigen und 1 Einheit nutzen",
       "cancel": "Abbrechen",
       "button": "Kosten der Prüfung ansehen"
     },
     "states": {
-      "lockedTitle": "Upgrade für die Backlink-Prüfung",
-      "lockedBody": "Linkprüfung und Disavow-Datei sind in Pro und Agency verfügbar.",
       "disabledTitle": "Neue Linkprüfungen sind pausiert",
       "disabledBody": "Gespeicherte Prüfungen bleiben lesbar, während neue Bewertungen ausgesetzt sind.",
-      "capTitle": "Linkprüfungs-Kontingent erreicht",
-      "capBody": "Füge das Paket toxicity-reviews-10 hinzu oder warte auf die Erneuerung.",
       "errorTitle": "Linkprüfung konnte nicht geladen werden",
       "errorBody": "Versuche es gleich noch einmal. Gespeicherte Ergebnisse und frühere Downloads bleiben unverändert.",
       "listError": "Gespeicherte Linkprüfungen konnten nicht geladen werden.",
@@ -256,8 +234,6 @@
       "emptyBody": "Der Lauf wurde ohne gespeicherte bewertete Backlink-Zeile abgeschlossen."
     },
     "actions": {
-      "viewPlans": "Tarife ansehen",
-      "viewPacks": "Credit-Pakete ansehen",
       "open": "Öffnen",
       "back": "Zurück zu einer neuen Prüfung"
     },
@@ -273,7 +249,7 @@
     "filters": {
       "status": "Prüfungen nach Status filtern",
       "allStatuses": "Alle Status",
-      "band": "Zeilen nach Rasterband filtern",
+      "band": "Zeilen nach Risikostufe filtern",
       "allBands": "Alle Bänder"
     },
     "status": {
@@ -284,15 +260,15 @@
     },
     "results": {
       "title": "Ergebnisse der Linkprüfung",
-      "rubric": "Raster {{version}}",
+      "rubric": "Regelversion {{version}}",
       "rowsTitle": "Bewertete Backlink-Zeilen",
-      "observationCopy": "Die Bänder beschreiben gespeicherte Anbieterbeobachtungen nach dem festgelegten Raster. Sie sagen keine Suchmaschinenaktion voraus.",
-      "providerObservation": "Anbieterbeobachtung · deterministisches Raster"
+      "observationCopy": "Die Risikostufen beschreiben die gespeicherten Backlink-Daten nach dieser Regelversion. Sie sagen nicht voraus, was eine Suchmaschine tun wird.",
+      "providerObservation": "Gespeicherte Backlink-Daten · regelbasierte Bewertung"
     },
     "columns": {
       "domain": "Verweisende Domain",
       "score": "Spam-Wert",
-      "band": "Rasterband",
+      "band": "Risikostufe",
       "signals": "Beitragende Signale",
       "firstSeen": "Zuerst gesehen",
       "lastSeen": "Zuletzt gesehen",
@@ -315,8 +291,8 @@
       "toggle": "Begründung",
       "not_requested": "Für diese Zeile wurde keine Begründung angefordert.",
       "annotated": "Gespeicherte Begründung",
-      "abstained": "Die KI hat sich enthalten; das deterministische Band bleibt unverändert.",
-      "failed": "Keine Begründung verfügbar; das deterministische Band bleibt unverändert."
+      "abstained": "Die KI hat keine Erklärung gegeben; die regelbasierte Risikostufe bleibt unverändert.",
+      "failed": "Es war keine Erklärung verfügbar; die regelbasierte Risikostufe bleibt unverändert."
     },
     "disavow": {
       "title": "Disavow-Datei erstellen",
@@ -335,18 +311,9 @@
       "urlScope": "Exakte URL"
     }
   },
-  "cap": {
-    "reached": "Kein {{metric}}-Kontingent mehr verfügbar",
-    "pack": "{{name}} fügt {{units}} Einheiten für {{price}} hinzu.",
-    "upgrade": "Abrechnungsoptionen ansehen"
-  },
   "killswitch": {
     "title": "Link-Lücke ist vorübergehend nicht verfügbar",
     "disabled": "Neue Analysen sind pausiert. Gespeicherte Ergebnisse bleiben lesbar."
-  },
-  "tier": {
-    "locked": "Upgrade für Link-Lücken",
-    "lockedBody": "Die Link-Lücken-Analyse ist in Pro und Agency verfügbar."
   },
   "suspicion": {
     "badge": "Verdacht auf Spam",

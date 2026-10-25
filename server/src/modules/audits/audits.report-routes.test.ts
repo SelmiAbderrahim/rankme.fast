@@ -1,5 +1,5 @@
 /**
- * HTTP tests for GET /api/audits/:runId/report (prompt 08).
+ * HTTP tests for GET /api/audits/:runId/report.
  *
  * Locale negotiation runs through the real language middleware, so the
  * parameterized locale test proves the report endpoint really is

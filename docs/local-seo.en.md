@@ -11,6 +11,12 @@ order: 5
 
 If customers find you by searching for a place ("plumber near me", "coffee shop downtown"), most of that traffic comes from map results and business listings rather than the regular blue links. Local SEO tracks the three things that decide whether you show up there. It's available on **Pro** and **Agency**.
 
+## Choose your business first
+
+Local SEO reports on one business: the one you pick for the site. Open the site's **Local SEO** tab and search by business name, street address, or Google place ID. Each result shows the business name and address, so two branches with the same name are easy to tell apart. Pick yours and choose **Use this business**. Until you do, refresh stays off. Each search asks your local listings provider once, and saving the business you pick is free.
+
+To switch later, choose **Change business** and search again. Your current business stays in place until you save a new one. Data refreshed before you chose a business is marked as older data looked up by your website.
+
 ## Listing accuracy
 
 Search engines trust a business whose details match everywhere they appear. RankMeFast checks that your **business name, address and phone number** are the same across the listings we can see. Mismatches, like an old address, a second phone number or a shortened name, can push you down in local results without you noticing. We flag each one so you can fix it where it's listed.

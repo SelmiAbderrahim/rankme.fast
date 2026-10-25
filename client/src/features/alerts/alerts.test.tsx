@@ -446,22 +446,16 @@ describe('AlertsPage — rules tab', () => {
     expect(screen.getByTestId('alerts-rule-builder')).toBeInTheDocument();
   });
 
-  it('renders the cap refusal with the server message and a plans link', async () => {
+  it('renders an unexpected payment status as a plain failure with the server message', async () => {
     routeApi({
       rules: () => {
-        throw new ApiError('Payment Required', 402, {
-          error: {
-            message: 'You have used every alert rule on your plan.',
-            details: { structuralLimit: 'alertRules', used: 2, limit: 2 },
-          },
-        });
+        throw new ApiError('Payment Required', 402, { error: { message: 'The server said no.' } });
       },
     });
     renderPage();
 
-    expect(await screen.findByTestId('alerts-state-cap')).toBeInTheDocument();
-    expect(screen.getByText('You have used every alert rule on your plan.')).toBeInTheDocument();
-    expect(screen.queryByRole('link', { name: 'See plans' })).not.toBeInTheDocument();
+    expect(await screen.findByTestId('alerts-state-failed')).toBeInTheDocument();
+    expect(screen.getByText('The server said no.')).toBeInTheDocument();
   });
 
   it('keeps stored rules readable when the kill switch is off', async () => {
@@ -590,7 +584,6 @@ interface BuilderOverrides {
   sites?: Array<{ id: string; domain: string; displayName: string; paused?: boolean }>;
   siteId?: string | null;
   currentUserId?: string | null;
-  capReached?: boolean;
   submitting?: boolean;
 }
 
@@ -603,7 +596,6 @@ const renderBuilder = (overrides: BuilderOverrides = {}) => {
           sites={overrides.sites ?? [{ id: SITE_ID, domain: 'example.test', displayName: 'Example' }]}
           siteId={overrides.siteId === undefined ? null : overrides.siteId}
           currentUserId={overrides.currentUserId === undefined ? 'u1' : overrides.currentUserId}
-          capReached={overrides.capReached ?? false}
           submitting={overrides.submitting ?? false}
           onSubmit={onSubmit}
         />
@@ -766,13 +758,7 @@ describe('RuleBuilder', () => {
     });
   });
 
-  it('disables the button at the rule limit and ignores a forged submit while saving or full', () => {
-    const full = renderBuilder({ sites: [], capReached: true });
-    expect(screen.getByRole('button', { name: 'Create rule' })).toBeDisabled();
-    fireEvent.submit(screen.getByTestId('alerts-rule-builder'));
-    expect(full.onSubmit).not.toHaveBeenCalled();
-    full.unmount();
-
+  it('ignores a forged submit while a save is in flight', () => {
     const saving = renderBuilder({ siteId: SITE_ID, submitting: true });
     fireEvent.submit(screen.getByTestId('alerts-rule-builder'));
     expect(saving.onSubmit).not.toHaveBeenCalled();
@@ -1072,22 +1058,10 @@ describe('StateNotice', () => {
 });
 
 describe('toAlertGate', () => {
-  it('separates a structural cap from a channel tier refusal on the same 402', () => {
-    const cap = toAlertGate(
-      new ApiError('x', 402, {
-        error: { message: 'cap', details: { structuralLimit: 'alertRules' } },
-      }),
-      'fallback',
-    );
-    expect(cap).toEqual({ kind: 'cap', message: 'cap' });
-
-    const tier = toAlertGate(
-      new ApiError('x', 402, {
-        error: { message: 'tier', details: { requiredTier: 'pro' } },
-      }),
-      'fallback',
-    );
-    expect(tier).toEqual({ kind: 'tierLocked', message: 'tier' });
+  it('treats an unexpected payment status as a plain failure that keeps the server message', () => {
+    expect(
+      toAlertGate(new ApiError('x', 402, { error: { message: 'no' } }), 'fallback'),
+    ).toEqual({ kind: 'failed', message: 'no' });
   });
 
   it('maps every other disclosed status and falls back for the rest', () => {
@@ -1134,9 +1108,9 @@ describe('alerts slice', () => {
         rules: [rule()],
         capUsed: 1,
         listStatus: 'failed' as const,
-        listGate: { kind: 'cap' as const, message: 'cap' },
+        listGate: { kind: 'disabled' as const, message: 'paused' },
         saveStatus: 'loading' as const,
-        saveGate: { kind: 'tierLocked' as const, message: 'tier' },
+        saveGate: { kind: 'invalid' as const, message: 'bad' },
         revealedSecret: { ruleId: RULE_ID, secret: 'secret' },
         deliveries: [delivery()],
         logStatus: 'succeeded' as const,
@@ -1149,9 +1123,9 @@ describe('alerts slice', () => {
     expect(selectAlertRules(state as never)).toHaveLength(1);
     expect(selectAlertCapUsed(state as never)).toBe(1);
     expect(selectAlertListStatus(state as never)).toBe('failed');
-    expect(selectAlertListGate(state as never)?.kind).toBe('cap');
+    expect(selectAlertListGate(state as never)?.kind).toBe('disabled');
     expect(selectAlertSaveStatus(state as never)).toBe('loading');
-    expect(selectAlertSaveGate(state as never)?.kind).toBe('tierLocked');
+    expect(selectAlertSaveGate(state as never)?.kind).toBe('invalid');
     expect(selectRevealedSecret(state as never)?.secret).toBe('secret');
     expect(selectAlertDeliveries(state as never)).toHaveLength(1);
     expect(selectAlertLogStatus(state as never)).toBe('succeeded');

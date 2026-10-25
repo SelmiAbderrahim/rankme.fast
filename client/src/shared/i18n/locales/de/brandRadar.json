@@ -26,7 +26,7 @@
     "filter": {
       "label": "Nach Status filtern",
       "all": "Alle Status",
-      "note": "Der Filter gilt nur für die auf dieser Seite geladenen Scans."
+      "note": "Der Filter gilt für die unten angezeigten Scans. Laden Sie mehr, um ältere Scans einzubeziehen."
     }
   },
   "status": {
@@ -63,21 +63,11 @@
       "description": "Neue Scans sind derzeit abgeschaltet.",
       "storedReads": "Bereits gelaufene Scans bleiben lesbar."
     },
-    "notOnPlan": {
-      "title": "Brand Radar braucht einen höheren Tarif",
-      "description": "Wechseln Sie zu Pro oder Agency, um Markenscans freizuschalten.",
-      "link": "Tarife ansehen"
-    },
     "addonRequired": {
       "title": "Brand Radar zum Tarif hinzufügen",
       "description": "Prüfen Sie unter Abrechnung, ob die Brand-Radar-Option derzeit verfügbar ist.",
       "price": "{{price}} pro Monat, {{units}} Scans enthalten.",
       "link": "Brand-Radar-Optionen ansehen"
-    },
-    "overCap": {
-      "title": "Alle Markenscans verbraucht",
-      "description": "Prüfen Sie unter Abrechnung, ob das Paket {{slug}} derzeit verfügbar ist.",
-      "link": "Scan-Guthabenoptionen ansehen"
     }
   },
   "form": {

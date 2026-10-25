@@ -65,6 +65,7 @@ import {
   type ActionsQueryState,
 } from '../tabState';
 import { ActionCard } from './ActionCard';
+import { PageHeader } from '@shared/components/PageHeader';
 import { translateApiMessageKey } from '@shared/api/errorMessage';
 import {
   presentationRequestIdentity,
@@ -200,19 +201,19 @@ export const ActionsPanel = ({ siteId }: ActionsPanelProps) => {
       data-testid="actions-panel"
       aria-labelledby="actions-panel-title"
     >
-      <div className="flex flex-wrap items-start justify-between gap-3">
-        <div>
-          <h2 id="actions-panel-title" className="text-lg font-semibold">
-            {t('title')}
-          </h2>
-          <p className="text-muted-foreground text-sm">{t('description')}</p>
-        </div>
-        <ReportExportControl
-          kind="actions.plan"
-          target={{ scope: 'site', siteId }}
-          selection={filtersFromQuery(query)}
-        />
-      </div>
+      <PageHeader
+        headingLevel={2}
+        titleId="actions-panel-title"
+        title={t('title')}
+        description={t('description')}
+        actions={
+          <ReportExportControl
+            kind="actions.plan"
+            target={{ scope: 'site', siteId }}
+            selection={filtersFromQuery(query)}
+          />
+        }
+      />
 
       <div
         role="group"
@@ -368,28 +369,31 @@ export const ActionsPanel = ({ siteId }: ActionsPanelProps) => {
               </li>
             ))}
           </ol>
-          <div className="flex items-center justify-end gap-2">
-            <Button
-              type="button"
-              variant="outline"
-              size="sm"
-              disabled={query.cursor === null}
-              onClick={() => setQuery({ cursor: null })}
-              data-testid="actions-prev"
-            >
-              {t('pagination.previous')}
-            </Button>
-            <Button
-              type="button"
-              variant="outline"
-              size="sm"
-              disabled={nextCursor === null}
-              onClick={() => setQuery({ cursor: nextCursor })}
-              data-testid="actions-next"
-            >
-              {t('pagination.next')}
-            </Button>
-          </div>
+          {/* One page needs no pager. */}
+          {query.cursor !== null || nextCursor !== null ? (
+            <div className="flex items-center justify-end gap-2">
+              <Button
+                type="button"
+                variant="outline"
+                size="sm"
+                disabled={query.cursor === null}
+                onClick={() => setQuery({ cursor: null })}
+                data-testid="actions-prev"
+              >
+                {t('pagination.previous')}
+              </Button>
+              <Button
+                type="button"
+                variant="outline"
+                size="sm"
+                disabled={nextCursor === null}
+                onClick={() => setQuery({ cursor: nextCursor })}
+                data-testid="actions-next"
+              >
+                {t('pagination.next')}
+              </Button>
+            </div>
+          ) : null}
         </>
       )}
     </section>

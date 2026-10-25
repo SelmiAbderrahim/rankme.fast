@@ -1,5 +1,5 @@
 /**
- * Provider contract-test template (prompt 05).
+ * Provider contract-test template.
  *
  * Every concrete provider adapter (prompts 06+) instantiates this once per
  * operation. It asserts the four paths every provider must survive:

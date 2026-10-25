@@ -12,7 +12,7 @@ import { fileURLToPath } from 'node:url';
 import { describe, expect, it } from 'vitest';
 import { DICTIONARIES, SUPPORTED_LOCALES, translate } from '../../shared/i18n/index.js';
 import { CHAT_TOOL_JSON_SCHEMAS } from '../chat/chat.tools.js';
-import { MCP_TOOL_NAMES, MCP_TOOL_REGISTRY, resolveMcpToolDefinition } from './index.js';
+import { MCP_INPUT_SCHEMAS, MCP_TOOL_NAMES, MCP_TOOL_REGISTRY, resolveMcpToolDefinition } from './index.js';
 
 const REPO_ROOT = resolve(dirname(fileURLToPath(import.meta.url)), '../../../..');
 const read = (relative: string) => readFileSync(resolve(REPO_ROOT, relative), 'utf8');
@@ -43,6 +43,18 @@ describe('MCP tool registry parity', () => {
       expect(Object.keys(CHAT_TOOL_JSON_SCHEMAS)).toContain(name);
     }
     expect(Object.keys(CHAT_TOOL_JSON_SCHEMAS)).toEqual([...MCP_TOOL_NAMES]);
+  });
+
+  it('exposes the registry schemas through a view that ignores unknown keys', () => {
+    expect(Object.keys(MCP_INPUT_SCHEMAS)).toEqual([...MCP_TOOL_NAMES]);
+    expect(MCP_INPUT_SCHEMAS.list_sites).toBe(MCP_TOOL_REGISTRY.list_sites.inputSchema);
+    const view = MCP_INPUT_SCHEMAS as unknown as Record<string | symbol, unknown>;
+    expect(view.not_a_tool).toBeUndefined();
+    expect(view[Symbol.iterator]).toBeUndefined();
+    expect(Object.getOwnPropertyDescriptor(MCP_INPUT_SCHEMAS, 'not_a_tool')).toBeUndefined();
+    expect(Object.getOwnPropertyDescriptor(MCP_INPUT_SCHEMAS, 'list_sites')?.value).toBe(
+      MCP_TOOL_REGISTRY.list_sites.inputSchema,
+    );
   });
 
   it('marks only start_audit as spending', () => {

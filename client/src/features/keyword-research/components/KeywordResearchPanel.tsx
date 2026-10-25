@@ -126,6 +126,7 @@ import {
 } from '../validation';
 import { useKeywordWorkspaceQuery } from '../tabState';
 import { useResearchWorkspaceState } from '../researchWorkspaceState';
+import { useResearchMarket } from '../useResearchMarket';
 import { KeywordResearchHeader } from './KeywordResearchHeader';
 import { ResearchHistoryTable } from './ResearchHistoryTable';
 import { MarketSelects } from './MarketSelects';
@@ -314,12 +315,21 @@ export const KeywordResearchPanel = ({ siteId, hideHeader = false }: Props) => {
   const setChips = workspaceState?.setChips ?? setLocalChips;
   const [workspaceQuery, setWorkspaceQuery] = useKeywordWorkspaceQuery();
   const [draft, setDraft] = useState('');
-  const [locationCode, setLocationCode] = useState<number>(
-    () => parsePrefillParams(searchParams).locationCode,
-  );
-  const [languageCode, setLanguageCode] = useState<string>(
-    () => parsePrefillParams(searchParams).languageCode,
-  );
+  // A "Search again" link's market wins; otherwise the site's default market
+  // (or the last one used here), never a hardcoded default.
+  const [linkMarket] = useState(() => {
+    if (!searchParams.has('location')) return null;
+    const prefill = parsePrefillParams(searchParams);
+    return { locationCode: prefill.locationCode, languageCode: prefill.languageCode };
+  });
+  const {
+    locationCode,
+    languageCode,
+    setLocationCode,
+    setLanguageCode,
+    adjustLocationCode,
+    adjustLanguageCode,
+  } = useResearchMarket(linkMarket);
   const matchingTrackedKeywords = useMemo(
     () =>
       siteId && trackedSiteId === siteId
@@ -412,7 +422,7 @@ export const KeywordResearchPanel = ({ siteId, hideHeader = false }: Props) => {
     setChips(result.phrases);
     setLocationCode(result.locationCode);
     setLanguageCode(result.languageCode);
-  }, [setChips, stored.result]);
+  }, [setChips, setLanguageCode, setLocationCode, stored.result]);
 
   const handleViewResults = (item: ResearchHistoryItem) => {
     setWorkspaceQuery({ stored: item.id });
@@ -763,6 +773,8 @@ export const KeywordResearchPanel = ({ siteId, hideHeader = false }: Props) => {
               languageCode={languageCode}
               onLocationChange={setLocationCode}
               onLanguageChange={setLanguageCode}
+              onLocationAdjust={adjustLocationCode}
+              onLanguageAdjust={adjustLanguageCode}
               testIdPrefix="keyword-research"
             />
             {renderTrackedKeywordSuggestions()}

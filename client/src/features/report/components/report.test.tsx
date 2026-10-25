@@ -2837,7 +2837,7 @@ describe('GscBlock — search section', () => {
     // Delta badges: positive outline, negative destructive.
     expect(screen.getByTestId('report-gsc-delta-clicks')).toHaveTextContent('+12');
     expect(screen.getByTestId('report-gsc-delta-impressions')).toHaveTextContent(
-      '-340',
+      '−340',
     );
     // Honest sampling footnote.
     expect(screen.getByText(/Sampled by Google/)).toBeInTheDocument();

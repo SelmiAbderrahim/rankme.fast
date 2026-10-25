@@ -26,7 +26,7 @@
     "filter": {
       "label": "Filtrer par statut",
       "all": "Tous les statuts",
-      "note": "Le filtre ne porte que sur les analyses chargées sur cette page."
+      "note": "Le filtre s’applique aux analyses affichées ci-dessous. Chargez-en plus pour inclure les plus anciennes."
     }
   },
   "status": {
@@ -63,21 +63,11 @@
       "description": "Les nouvelles analyses sont désactivées pour le moment.",
       "storedReads": "Les analyses déjà lancées restent consultables."
     },
-    "notOnPlan": {
-      "title": "Brand Radar demande une offre supérieure",
-      "description": "Passez à Pro ou Agency pour débloquer les analyses de marque.",
-      "link": "Voir les offres"
-    },
     "addonRequired": {
       "title": "Ajoutez Brand Radar à votre offre",
       "description": "Consultez la facturation pour connaître la disponibilité actuelle de l’option Brand Radar.",
       "price": "{{price}} par mois, {{units}} analyses incluses.",
       "link": "Voir les options Brand Radar"
-    },
-    "overCap": {
-      "title": "Vous avez utilisé toutes vos analyses",
-      "description": "Consultez la facturation pour connaître la disponibilité actuelle du pack {{slug}}.",
-      "link": "Voir les options de crédits"
     }
   },
   "form": {

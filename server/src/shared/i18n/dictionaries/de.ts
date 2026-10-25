@@ -121,75 +121,12 @@ export const de: DictionaryShape = {
         },
     },
     billing: {
-        checkout: {
-            title: 'Kasse',
-            submit: 'Jetzt bezahlen',
-            success: 'Zahlung erhalten. Vielen Dank!',
-        },
-        portal: {
-            title: 'Abrechnung',
-        },
-        error: {
-            notConfigured: 'Zahlungsanbieter ist nicht konfiguriert.',
-            addonAlreadyActive: 'Dieses Add-on ist in Ihrem Konto bereits aktiv.',
-            addonAlreadyIncluded: 'Ihr aktueller Tarif enthält dieses Add-on bereits.',
-            checkoutAlreadyOpen: 'Ein Bezahlvorgang ist bereits offen. Schließen Sie ihn ab oder brechen Sie ihn ab.',
-            packRequiresTier: 'Dieses Guthabenpaket ist in Ihrem aktuellen Tarif nicht verfügbar.',
-            subscriptionAlreadyExists: 'Dieses Konto hat bereits ein aktives Abonnement.',
-            productUnavailable: 'Die Abrechnung ist vorübergehend nicht verfügbar. Bitte versuchen Sie es später erneut.',
-            userNotFound: 'Benutzer nicht gefunden.',
-            noCustomer: 'Kein Abrechnungs-Kunde für diesen Benutzer gefunden.',
-            noSubscription: 'Kein aktives Abonnement für diesen Benutzer gefunden.',
-            providerFailure: 'Fehler des Zahlungsanbieters: {{message}}',
-            invalidResumeAt: 'Das Fortsetzungsdatum ist kein gültiger Zeitstempel.',
-            resumeAtInPast: 'Das Fortsetzungsdatum muss in der Zukunft liegen.',
-            pauseWindowExceeded: 'Der Pausenzeitraum überschreitet das erlaubte Maximum.',
-            alreadyPaused: 'Dieses Abonnement ist bereits pausiert.',
-            canceledSubscription: 'Ein gekündigtes Abonnement kann nicht pausiert werden.',
-            notPaused: 'Dieses Abonnement ist nicht pausiert.',
-            unknownProduct: 'Dieses Produkt ist im Checkout nicht verfügbar.',
-            redirectOriginMismatch: 'Checkout-Weiterleitungen müssen auf dieser Website bleiben.',
-            addonRequiresProOrAgency: 'Das Brand Radar-Add-on ist nur in den Plänen Pro und Agency verfügbar.',
-        },
         errors: {
             capExceeded: 'Ihr Tarif-Limit für {{metric}} ist erschöpft. Upgraden oder ein Credit-Paket kaufen.',
             upgradeRequired: 'Diese Funktion erfordert den {{requiredTier}}-Tarif.',
-            featureLocked: 'Die Funktion {{feature}} ist in Ihrem Tarif nicht enthalten.',
-        },
-        overCap: {
-            audience_research_runs: 'Sie haben in diesem Monat alle Zielgruppen-Recherchen Ihres Tarifs verbraucht. Upgraden Sie, um mehr Voice-of-Customer-Recherchen durchzuführen.',
-            trend_explorations: 'Sie haben in diesem Monat alle Keyword-Trend-Auswertungen Ihres Tarifs verbraucht. Upgraden Sie oder warten Sie auf den nächsten Monat, um weitere durchzuführen.',
-            traffic_snapshots: 'Sie haben in diesem Monat alle Traffic-Snapshots Ihres Tarifs verbraucht. Upgraden Sie oder warten Sie auf den nächsten Monat, um weitere durchzuführen.',
-            link_intel_checks: 'Sie haben in diesem Monat alle Link-Intelligenz-Prüfungen Ihres Tarifs verbraucht. Upgraden Sie oder warten Sie auf den nächsten Monat, um weitere durchzuführen.',
-            review_syncs: 'Sie haben in diesem Monat alle Bewertungs-Synchronisierungen Ihres Tarifs verbraucht. Upgraden Sie oder warten Sie auf den nächsten Monat, um weitere durchzuführen.',
-            brand_mention_scans: 'Sie haben in diesem Monat alle Markennennungs-Scans Ihres Tarifs verbraucht. Upgraden Sie oder buchen Sie das Brand-Radar-Add-on für weitere Scans.',
-            keyword_cluster_runs: 'Sie haben in diesem Monat alle Keyword-Clusterläufe Ihres Tarifs verbraucht. Upgraden Sie oder warten Sie auf den nächsten Monat, um weitere durchzuführen.',
-            cannibalization_reports: 'Sie haben in diesem Monat alle Kannibalisierungsberichte Ihres Tarifs verbraucht. Upgraden Sie oder warten Sie auf den nächsten Monat, um weitere zu erstellen.',
-            alt_engine_checks: 'Sie haben in diesem Monat alle Bing-, YouTube- und Amazon-Rankingprüfungen Ihres Tarifs verbraucht. Upgraden Sie oder kaufen Sie ein Guthabenpaket, um weiter zu tracken.',
-            toxicity_reviews: 'Sie haben in diesem Monat alle Prüfungen toxischer Links Ihres Tarifs verbraucht. Upgraden Sie oder kaufen Sie ein Guthabenpaket, um mehr Links zu prüfen.',
-            internal_link_runs: 'Sie haben in diesem Monat alle Interne-Verlinkung-Läufe Ihres Tarifs verbraucht. Upgraden Sie oder warten Sie auf den nächsten Monat, um weitere durchzuführen.',
-            content_briefs: 'Sie haben in diesem Monat alle Content-Briefings Ihres Tarifs verbraucht. Kaufen Sie ein Guthabenpaket oder upgraden Sie, um weitere zu schreiben.',
-            geogrid_scans: 'Sie haben in diesem Monat alle Geogrid-Scans Ihres Tarifs verbraucht. Kaufen Sie ein Guthabenpaket oder upgraden Sie, um mehr Standorte zu scannen.',
-            schema_generations: 'Sie haben in diesem Monat alle Schema-Markup-Generierungen Ihres Tarifs verbraucht. Upgraden Sie oder warten Sie auf den nächsten Monat, um weitere zu erzeugen.',
-            ai_chat_messages: 'Sie haben in diesem Monat alle KI-Assistent-Nachrichten Ihres Tarifs verbraucht. Kaufen Sie ein Guthaben-Paket oder upgraden Sie, um weiter zu chatten.',
-            ai_visibility_suggestion_runs: 'Sie haben diesen Monat alle Vorschlagsgenerierungen für die KI-Sichtbarkeit Ihres Tarifs verbraucht. Führen Sie ein Upgrade durch oder warten Sie auf den nächsten Monat.',
-            app_keyword_checks: 'Sie haben diesen Monat alle App-Keyword-Prüfungen Ihres Tarifs verbraucht. Buchen Sie das App-SEO-Add-on oder kaufen Sie ein Guthabenpaket, um weiter zu tracken.',
-            app_listing_audits: 'Sie haben diesen Monat alle App-Eintragsprüfungen Ihres Tarifs verbraucht. Buchen Sie das App-SEO-Add-on oder warten Sie auf den nächsten Monat.',
-            app_chart_checks: 'Sie haben diesen Monat alle Chart-Platzierungsprüfungen Ihres Tarifs verbraucht. Buchen Sie das App-SEO-Add-on oder warten Sie auf den nächsten Monat.',
-            app_keyword_lookups: 'Sie haben diesen Monat alle App-Keyword-Recherchen Ihres Tarifs verbraucht. Buchen Sie das App-SEO-Add-on oder kaufen Sie ein Guthabenpaket.',
-            app_competitor_lookups: 'Sie haben diesen Monat alle App-Wettbewerbsanalysen Ihres Tarifs verbraucht. Buchen Sie das App-SEO-Add-on oder kaufen Sie ein Guthabenpaket.',
-            app_review_runs: 'Sie haben diesen Monat alle App-Bewertungsabrufe Ihres Tarifs verbraucht. Buchen Sie das App-SEO-Add-on oder kaufen Sie ein Guthabenpaket.',
         },
     },
     customPlan: DYNAMIC_PLAN_COPY.de,
-    usage: {
-        metrics: {
-            audience_research_runs: {
-                label: 'Zielgruppen-Recherchen',
-                description: 'Eine Einheit deckt einen vollständigen Voice-of-Customer-Lauf ab, unabhängig davon, wie viele Suchen oder Seitenabrufe er ausführt.',
-            },
-        },
-    },
     audienceResearch: {
         errors: {
             unsupportedMarket: 'Zielgruppen-Recherche ist in diesem Markt noch nicht verfügbar. Wählen Sie ein unterstütztes Land oder eine unterstützte Sprache.',
@@ -214,14 +151,6 @@ export const de: DictionaryShape = {
         contact: {
             confirmation: 'Ihre Nachricht wurde gesendet. Wir melden uns bald bei Ihnen.',
             notification: 'Nachricht von {{name}} <{{email}}>\n\n{{message}}',
-        },
-        enterpriseLead: {
-            subject: 'Enterprise-Anfrage: {{company}}',
-            company: 'Unternehmen: {{company}}',
-            name: 'Name: {{name}} <{{email}}>',
-            seats: 'Nutzerplätze: {{seats}}',
-            expectedVolumes: 'Erwartetes Volumen: {{expectedVolumes}}',
-            notStated: 'Nicht angegeben',
         },
         verifyEmail: {
             subject: 'Bestätigen Sie Ihre E-Mail-Adresse',
@@ -373,13 +302,9 @@ export const de: DictionaryShape = {
             warningSubject: 'Ihr RankMeFast-Konto wird gelöscht',
             warningBody: 'Hallo {{name}},\n\nSie haben die Löschung Ihres RankMeFast-Kontos angefordert. Ihre Daten werden am {{purgeAt}} unwiderruflich gelöscht.',
         },
-        twoFactor: {
-            adminRequired: 'Für Admin-Konten ist Zwei-Faktor-Authentifizierung erforderlich. Richten Sie unter Einstellungen → Sicherheit einen zweiten Faktor ein, um fortzufahren.',
-        },
     },
     audits: {
         started: 'Audit gestartet.',
-        capClamped: 'Maximale Audit-Seitenzahl auf {{cap}} Seiten begrenzt (Tariflimit).',
         errors: {
             recheckUnavailable: 'Dieser Befund kann hier nicht erneut geprüft werden. Starten Sie ein neues Audit, um ihn erneut zu prüfen.',
             runInProgress: 'Für diese Website läuft bereits ein Audit.',
@@ -408,10 +333,8 @@ export const de: DictionaryShape = {
             noSnapshot: 'Für die ausgewählten Abschnitte sind keine datierten Berichtsdaten verfügbar.',
             queueUnavailable: 'Der Berichtsversand ist nicht eingerichtet. Versuchen Sie es gleich erneut.',
             rateLimited: 'Zu viele Berichtsanfragen. Versuchen Sie es gleich erneut.',
-            scheduleCapExceeded: 'Ihr Tarif hat das Limit für geplante Berichte erreicht.',
             scheduleNotFound: 'Dieser Berichtszeitplan wurde nicht gefunden.',
             deliveryNotFound: 'Dieser Zustelleintrag wurde nicht gefunden.',
-            portalCapExceeded: 'Ihr Tarif hat das Limit für Kundenportale erreicht.',
             portalNotFound: 'Dieser Kundenportal-Link ist ungültig, abgelaufen oder widerrufen.',
         },
         email: {
@@ -421,9 +344,10 @@ export const de: DictionaryShape = {
     },
     branding: {
         errors: {
-            logoMalformed: 'Wählen Sie ein gültiges PNG-Logo. Die Datei wurde nicht gespeichert.',
-            logoTooLarge: 'Die Logodatei ist zu groß. Wählen Sie ein PNG mit höchstens 256 KB.',
-            logoDimensions: 'Die Logoabmessungen sind zu groß. Verwenden Sie ein PNG mit höchstens 1.024 × 1.024 Pixeln.',
+            logoMalformed: 'Wählen Sie ein gültiges Logo im Format PNG, JPEG oder SVG. Die Datei wurde nicht gespeichert.',
+            logoTooLarge: 'Die Logodatei ist zu groß. Wählen Sie eine Datei mit höchstens 256 KB.',
+            logoDimensions: 'Die Logoabmessungen sind zu groß. Verwenden Sie ein Bild mit höchstens 1.024 × 1.024 Pixeln.',
+            logoUnsafeSvg: 'Diese SVG-Datei enthält Skripte, eingebettete Inhalte oder Verweise auf andere Dateien. Exportieren Sie eine einfache SVG-Datei oder laden Sie ein PNG oder JPEG hoch. Die Datei wurde nicht gespeichert.',
         },
     },
     report: {
@@ -446,9 +370,9 @@ export const de: DictionaryShape = {
             notRanked: 'Nicht in den erfassten Ergebnissen',
             engines: { google: 'Google', bing: 'Bing', youtube: 'YouTube', amazon: 'Amazon' },
             gscSummary: 'Search-Console-Zusammenfassung ({{days}} Tage)',
-            gscTotals: 'Klicks {{clicks}} · Impressionen {{impressions}} · CTR {{ctr}} % · Durchschnittsposition {{position}} · Datenstand {{date}}',
+            gscTotals: 'Klicks {{clicks}} · Impressionen {{impressions}} · CTR {{ctr}} · Durchschnittsposition {{position}} · Datenstand {{date}}',
             topQueries: 'Wichtigste Suchanfragen',
-            gscQueryRow: '{{query}} — {{clicks}} Klicks · {{impressions}} Impressionen · CTR {{ctr}} % · Position {{position}} · Datenstand {{date}}',
+            gscQueryRow: '{{query}} — {{clicks}} Klicks · {{impressions}} Impressionen · CTR {{ctr}} · Position {{position}} · Datenstand {{date}}',
             page: 'Seite {{n}} von {{total}}',
         },
     },
@@ -818,7 +742,6 @@ export const de: DictionaryShape = {
             marketMoveNoDefault: 'Wählen Sie einen Markt für die Website, bevor Sie Keywords verschieben.',
             marketMoveStale: 'Die Keyword-Liste oder der Markt der Website hat sich geändert. Prüfen Sie die Verschiebung und versuchen Sie es erneut.',
             keywordDuplicate: 'Dieses Keyword wird für diese Website bereits verfolgt.',
-            keywordCapExceeded: 'Ihr Tarif hat sein Keyword-Limit erreicht. Führen Sie ein Upgrade durch, um mehr zu verfolgen.',
             altEnginesUnavailable: 'Das Tracking für Bing, YouTube und Amazon ist derzeit abgeschaltet.',
             altEngineSlotsExceeded: 'Ihr Tarif hat sein Limit von {{limit}} Keywords für Bing, YouTube und Amazon erreicht. Führen Sie ein Upgrade durch, um mehr zu verfolgen.',
             altEngineChecksExhausted: 'Sie haben alle Bing-, YouTube- und Amazon-Prüfungen dieser Periode verbraucht. Kaufen Sie ein Prüfpaket oder wechseln Sie den Tarif.',
@@ -827,7 +750,6 @@ export const de: DictionaryShape = {
             amazonAsinInvalid: 'Geben Sie eine zehnstellige Amazon-ASIN ein, zum Beispiel B08N5WRWNW.',
             engineTargetNotAllowed: 'Google und Bing verfolgen Ihre eigene Website — lassen Sie dieses Feld leer.',
             keywordNotFound: 'Keyword nicht gefunden.',
-            dailyRequiresUpgrade: 'Tägliches Ranking-Tracking erfordert einen höheren Tarif.',
             checkCooldown: 'Eine Ranking-Prüfung wurde gerade ausgeführt — bitte warten Sie eine Minute, bevor Sie erneut prüfen.',
             rankJobNotFound: 'Ranking-Prüfung nicht gefunden.',
             rankJobStillRunning: 'Diese Ranking-Prüfung läuft noch. Wiederholen Sie die fehlgeschlagenen Keywords, sobald sie abgeschlossen ist.',
@@ -894,9 +816,7 @@ export const de: DictionaryShape = {
             lookupIdInvalid: 'Die Kennung der Abfrage ist ungültig.',
             historyIdInvalid: 'Die Kennung dieses Verlaufseintrags ist ungültig.',
             historyNotFound: 'Dieser Recherche-Eintrag wurde nicht gefunden.',
-            upgradeRequired: 'Keyword-Recherche ist eine Pro-Funktion. Führen Sie ein Upgrade durch, um Suchvolumen, Schwierigkeit und verwandte Keywords freizuschalten.',
             unavailable: 'Die Keyword-Recherche ist vorübergehend nicht verfügbar. Bitte versuchen Sie es später erneut.',
-            capExceeded: 'Ihr Keyword-Recherche-Kontingent ({{used}}/{{limit}} {{metric}}) ist aufgebraucht. Führen Sie ein Upgrade durch oder kaufen Sie ein Credit-Paket, um mehr Keywords zu recherchieren.',
             competitorsRequired: 'Geben Sie mindestens eine Wettbewerber-Domain an.',
             tooManyCompetitors: 'Sie können bis zu drei Wettbewerber-Domains gleichzeitig vergleichen.',
             competitorsDuplicate: 'Entfernen Sie die doppelte Wettbewerber-Domain.',
@@ -944,9 +864,6 @@ export const de: DictionaryShape = {
             coverageNote: {
                 searchInterestIndex: 'Werte sind Googles Suchinteresse-Index von 0–100, nicht Roh-Traffic — lies sie als Form, nicht als Volumen.',
             },
-            preview: {
-                notOnPlan: 'Keyword Trends ist in Ihrem Tarif nicht enthalten.',
-            },
         },
     },
     backlinks: {
@@ -957,17 +874,13 @@ export const de: DictionaryShape = {
                 runNotFound: 'Linkprüfung nicht gefunden.',
                 runNotReady: 'Diese Linkprüfung kann noch nicht exportiert werden.',
             },
-            preview: {
-            },
         },
         errors: {
-            upgradeRequired: 'Backlinks sind eine Pro-Funktion. Führen Sie ein Upgrade durch, um Ihr Linkprofil und die Domain-Bewertung zu sehen.',
             unavailable: 'Backlink-Daten sind vorübergehend nicht verfügbar — wir versuchen es beim nächsten Lauf erneut.',
             siteNotFound: 'Website nicht gefunden.',
             domainInvalid: 'Geben Sie eine gültige Domain wie example.com ein.',
             gapDomainConflict: 'Ihre eigene Domain darf nicht als Wettbewerber aufgeführt werden.',
             limitInvalid: 'Geben Sie ein gültiges Zeilenlimit ein.',
-            capExceeded: 'Das Backlink-Zeilenlimit Ihres Tarifs ({{used}}/{{limit}} {{metric}}) ist erschöpft. Führen Sie ein Upgrade durch oder kaufen Sie ein Credit-Paket, um weitere Zeilen abzurufen.',
             refreshCooldown: 'Aktualisierungslimit erreicht. Versuchen Sie es in {{seconds}} Sekunde(n) erneut.',
         },
         runStatus: {
@@ -984,14 +897,11 @@ export const de: DictionaryShape = {
     },
     competitors: {
         errors: {
-            upgradeRequired: 'Diese bisherige Überschneidungsansicht erfordert Agency. Keyword-Landschaften der Wettbewerbsanalyse beginnen mit Pro.',
             unavailable: 'Wettbewerbsdaten sind vorübergehend nicht verfügbar — wir versuchen es beim nächsten Lauf erneut.',
             siteNotFound: 'Website nicht gefunden.',
             competitorRequired: 'Geben Sie eine Wettbewerber-Domain ein.',
             competitorTooLong: 'Diese Domain ist zu lang.',
-            capExceeded: 'Sie haben alle Ihre Wettbewerber-Abfragen aufgebraucht ({{used}}/{{limit}}). Führen Sie ein Upgrade durch, um weitere auszuführen.',
             refreshCooldown: 'Aktualisierungslimit erreicht. Versuchen Sie es in {{seconds}} Sekunde(n) erneut.',
-            suggestionCapExceeded: 'Sie haben alle Vorschlagsgenerierungen für diesen Monat verbraucht.',
             suggestionFailed: 'Vorschläge konnten gerade nicht erstellt werden. Ihre Generierung wurde nicht gezählt — versuchen Sie es in Kürze erneut.',
         },
         landscape: {
@@ -1008,10 +918,8 @@ export const de: DictionaryShape = {
                 opportunityNotFound: 'Diese Chance gehört nicht zu diesem Bericht.',
                 idempotencyInvalid: 'Verwenden Sie einen gültigen Idempotenzschlüssel.',
                 cursorInvalid: 'Dieser Cursor der Wettbewerbslandschaft ist ungültig.',
-                capExceeded: 'Für diesen Bericht sind nicht genügend Keyword-Abfragen verfügbar.',
                 competitorNotFound: 'Mindestens ein ausgewählter Wettbewerber ist nicht verfügbar.',
                 queueUnavailable: 'Der Bericht konnte nicht eingereiht werden. Versuchen Sie es später erneut.',
-                selectionLimit: 'Wählen Sie für Ihren Tarif weniger Wettbewerber aus.',
                 unavailable: 'Competitor Intelligence ist vorübergehend nicht verfügbar.',
             },
             opportunities: {
@@ -1054,27 +962,6 @@ export const de: DictionaryShape = {
             competitorLandscape: 'Im angenommenen Wettbewerbsbericht beobachtet.',
         },
     },
-    packs: {
-        unavailable: 'Dieses Guthabenpaket ist derzeit nicht zum Kauf konfiguriert.',
-        trafficSnapshots: {
-            available: 'Fügen Sie {{units}} Traffic-Snapshots für {{price}} hinzu, wenn Ihr Kontingent aufgebraucht ist.',
-        },
-        trendExplorations: {
-            available: 'Fügen Sie {{units}} Keyword-Trend-Erkundungen für {{price}} hinzu, wenn Ihr Kontingent aufgebraucht ist.',
-        },
-        reviewSyncs: {
-            available: 'Fügen Sie {{units}} Bewertungs-Synchronisierungen für {{price}} hinzu, wenn Ihr Kontingent aufgebraucht ist.',
-        },
-        brandScans: {
-            available: 'Fügen Sie {{units}} Markenscans für {{price}} hinzu, wenn Ihr Kontingent aufgebraucht ist.',
-        },
-        altEngineChecks: {
-            available: 'Fügen Sie {{units}} Bing-, YouTube- und Amazon-Prüfungen für {{price}} hinzu, wenn Ihr Kontingent aufgebraucht ist.',
-        },
-        contentBriefs: {
-            available: 'Fügen Sie {{units}} Content-Briefings für {{price}} hinzu, wenn Ihr Kontingent aufgebraucht ist.',
-        },
-    },
     cannibalization: {
         preview: {
             oneReport: 'Ein Kannibalisierungsbericht.',
@@ -1083,7 +970,6 @@ export const de: DictionaryShape = {
             notFound: 'Kannibalisierungsbericht nicht gefunden.',
             productUnavailable: 'Kannibalisierungsberichte sind vorübergehend nicht verfügbar. Bitte später erneut versuchen.',
             awaitingSync: 'Für diesen Zeitraum sind noch keine Suchanfrage-und-Seite-Zeilen aus der Search Console gespeichert. Sie kommen mit der nächsten Synchronisierung.',
-            overCap: 'Sie haben diesen Monat alle Kannibalisierungsberichte Ihres Tarifs verbraucht.',
             rateLimited: 'Zu viele Anfragen für Kannibalisierungsberichte. Versuchen Sie es in einer Minute erneut.',
             invalidWindow: 'Wählen Sie einen Zeitraum von sieben, 28 oder 90 Tagen.',
         },
@@ -1095,7 +981,6 @@ export const de: DictionaryShape = {
             productUnavailable: 'Interne Linkvorschläge sind vorübergehend nicht verfügbar. Bitte versuchen Sie es später erneut.',
             inventoryMissing: 'Führen Sie zuerst die Inhaltsinventur aus, bevor Sie interne Linkvorschläge erstellen.',
             inventoryStale: 'Führen Sie die Inhaltsinventur erneut aus, bevor Sie interne Linkvorschläge erstellen.',
-            overCap: 'Sie haben diesen Monat alle Läufe für interne Linkvorschläge Ihres Tarifs verbraucht.',
             rateLimited: 'Zu viele Anfragen für interne Linkvorschläge. Versuchen Sie es in einer Minute erneut.',
             queueFailed: 'Der Vorschlagslauf konnte nicht eingereiht werden. Bitte versuchen Sie es später erneut.',
             processingFailed: 'Der Vorschlagslauf ist fehlgeschlagen. Ihre gespeicherte Inhaltsinventur wurde nicht geändert.',
@@ -1107,7 +992,6 @@ export const de: DictionaryShape = {
             notFound: 'Clustering-Lauf nicht gefunden.',
             productUnavailable: 'Keyword-Clustering ist vorübergehend nicht verfügbar. Bitte später erneut versuchen.',
             notEnoughKeywords: 'Mindestens zwei verfolgte Keywords brauchen eine Positionsprüfung aus den letzten sieben Tagen, bevor sie geclustert werden können.',
-            overCap: 'Sie haben alle Keyword-Clustering-Läufe Ihres Tarifs in diesem Monat verbraucht.',
             rateLimited: 'Zu viele Clustering-Anfragen. Versuchen Sie es in einer Minute erneut.',
             queueFailed: 'Der Clustering-Lauf konnte nicht eingereiht werden. Bitte später erneut versuchen.',
             processingFailed: 'Der Clustering-Lauf ist fehlgeschlagen. Ihre gespeicherten Beobachtungen wurden nicht verändert.',
@@ -1125,7 +1009,6 @@ export const de: DictionaryShape = {
         errors: {
             notFound: 'Content-Briefing nicht gefunden.',
             unavailable: 'Content-Briefings sind vorübergehend nicht verfügbar. Bitte versuchen Sie es später erneut.',
-            overCap: 'Sie haben diesen Monat alle Content-Briefings Ihres Tarifs verwendet.',
             keywordNotTracked: 'Tracken Sie dieses Google-Keyword, bevor Sie ein Content-Briefing anfordern.',
             draftLimit: 'Dieses Briefing enthält bereits die maximale Anzahl an Entwurfsversionen.',
             notReady: 'Warten Sie, bis das Briefing fertig ist, bevor Sie einen Entwurf bewerten.',
@@ -1144,7 +1027,6 @@ export const de: DictionaryShape = {
         errors: {
             unavailable: 'Geogrid-Scans sind vorübergehend nicht verfügbar. Bitte später erneut versuchen.',
             notFound: 'Geogrid-Scan nicht gefunden.',
-            capExceeded: 'Sie haben diesen Monat alle Geogrid-Scans Ihres Tarifs verbraucht.',
             keywordNotTracked: 'Verfolgen Sie dieses Google-Keyword, bevor Sie einen Geogrid-Scan starten.',
             rateLimited: 'Zu viele Geogrid-Anfragen. Bitte in einer Minute erneut versuchen.',
         },
@@ -1158,7 +1040,6 @@ export const de: DictionaryShape = {
     alerts: {
         errors: {
             unavailable: 'Warnungen sind vorübergehend nicht verfügbar. Bitte später erneut versuchen.',
-            channelNotOnPlan: 'Slack- und Webhook-Kanäle erfordern mindestens den Pro-Tarif.',
             rateLimited: 'Zu viele Warnungsanfragen. Versuche es in einer Minute erneut.',
             siteNotFound: 'Website nicht gefunden.',
             ruleNotFound: 'Warnregel nicht gefunden.',
@@ -1197,8 +1078,6 @@ export const de: DictionaryShape = {
         errors: {
             notFound: 'Markenscan nicht gefunden.',
             productUnavailable: 'Brand Radar ist vorübergehend nicht verfügbar. Bitte später erneut versuchen.',
-            overCap: 'Sie haben diesen Monat alle Markenscans Ihres Tarifs verbraucht.',
-            notOnPlan: 'Brand Radar erfordert den Pro- oder Agency-Tarif. Bei Pro zusätzlich das Brand-Radar-Add-on.',
             addonRequired: 'Fügen Sie das Brand-Radar-Add-on hinzu, um Markenscans in Ihrem Tarif zu starten.',
             rateLimited: 'Zu viele Markenscan-Anfragen. Versuchen Sie es in einer Minute erneut.',
             invalidCursor: 'Der Seitenzeiger für Markenscans ist ungültig.',
@@ -1211,11 +1090,7 @@ export const de: DictionaryShape = {
         },
     },
     reviewIntelligence: {
-        preview: {
-            notOnPlan: 'Review Intelligence ist in Ihrem Tarif nicht enthalten.',
-        },
         errors: {
-            overCap: 'Sie haben diesen Monat alle Bewertungs-Synchronisierungen Ihres Tarifs verbraucht.',
             productUnavailable: 'Review Intelligence ist vorübergehend nicht verfügbar. Bitte später erneut versuchen.',
             notFound: 'Bewertungsdaten nicht gefunden.',
             invalidTarget: 'Geben Sie eine gültige Unternehmens-ID für diese Bewertungsquelle ein.',
@@ -1226,9 +1101,6 @@ export const de: DictionaryShape = {
         },
     },
     trafficInsights: {
-        preview: {
-            notOnPlan: 'Traffic Insights ist in Ihrem Tarif nicht enthalten.',
-        },
         compare: {
             clamped: 'Nur die ersten {{count}} Snapshots wurden verglichen.',
             invalidSelection: 'Wählen Sie mindestens zwei verschiedene Traffic-Snapshots zum Vergleichen aus.',
@@ -1247,13 +1119,11 @@ export const de: DictionaryShape = {
         errors: {
             unavailable: 'AI-Sichtbarkeit ist vorübergehend nicht verfügbar. Bitte gleich noch einmal versuchen.',
             suggestionFailed: 'Wir konnten keine Prompt-Vorschläge erzeugen. Bitte erneut versuchen.',
-            suggestionCapExceeded: 'Sie haben alle Vorschlagsgenerierungen für diesen Monat verbraucht.',
             promptCapReached: 'Sie können bis zu zehn AI-Prompts pro Website verfolgen.',
             promptAlreadyTracked: 'Sie verfolgen diesen Prompt bereits.',
             promptRequired: 'Geben Sie einen Prompt zum Verfolgen ein.',
             promptNotFound: 'Verfolgter Prompt nicht gefunden.',
             siteNotFound: 'Website nicht gefunden.',
-            capExceeded: 'Sie haben alle Ihre AI-Sichtbarkeitsprüfungen für diesen Monat aufgebraucht.',
             refreshCooldown: 'Prüflimit erreicht. Bitte in {{seconds}} Sekunde(n) erneut versuchen.',
             refreshCooldown_zero: 'Prüflimit erreicht. Bitte in {{seconds}} Sekunden erneut versuchen.',
             refreshCooldown_one: 'Prüflimit erreicht. Bitte in {{seconds}} Sekunde erneut versuchen.',
@@ -1268,7 +1138,6 @@ export const de: DictionaryShape = {
             siteNotFound: 'Website nicht gefunden.',
             keywordNotFound: 'Verfolgtes Keyword nicht gefunden.',
             unavailable: 'Local-SEO-Daten sind vorübergehend nicht verfügbar. Versuchen Sie es in Kürze erneut.',
-            capExceeded: 'Sie haben alle Ihre lokalen Eintragsprüfungen für diesen Monat verbraucht.',
             refreshCooldown: 'Aktualisierungslimit erreicht. Versuchen Sie es in {{seconds}} Sekunde(n) erneut.',
             refreshCooldown_zero: 'Aktualisierungslimit erreicht. Versuchen Sie es in {{seconds}} Sekunden erneut.',
             refreshCooldown_one: 'Aktualisierungslimit erreicht. Versuchen Sie es in {{seconds}} Sekunde erneut.',
@@ -1304,7 +1173,6 @@ export const de: DictionaryShape = {
             urlNoTld: 'Geben Sie einen vollständigen Domainnamen ein, z. B. https://example.com.',
             duplicate: 'Diese Website ist bereits in Ihrem Konto.',
             duplicateAlias: 'Diese Website ist bereits als {{domain}} in Ihrem Konto. Die Adressen mit und ohne www zählen als eine Website.',
-            capExceeded: 'Ihr Tarif hat sein Website-Limit erreicht. Führen Sie ein Upgrade durch, um weitere hinzuzufügen.',
             notFound: 'Website nicht gefunden.',
             deleteWhileRunning: 'Warten Sie, bis das laufende Audit abgeschlossen ist, bevor Sie diese Website entfernen.',
             paused: 'Diese Website ist pausiert. Setzen Sie sie fort, um Prüfungen und Audits auszuführen.',
@@ -1312,43 +1180,6 @@ export const de: DictionaryShape = {
             notPaused: 'Diese Website ist nicht pausiert.',
             invalidMarket: 'Wählen Sie für diese Website ein Land und eine Sprache aus der Liste.',
             marketsUnavailable: 'Die Liste der Länder und Sprachen konnte nicht geladen werden. Versuchen Sie es gleich noch einmal.',
-        },
-    },
-    admin: {
-        errors: {
-            cannotDemoteLastAdmin: 'Sie können Ihre eigene Admin-Rolle nicht entfernen — Sie sind der letzte Admin.',
-            cannotSuspendLastAdmin: 'Sie können Ihr eigenes Konto nicht sperren — Sie sind der letzte aktive Admin.',
-            cannotModifySuperAdmin: "Ein SuperAdmin-Konto kann nicht über das Admin-Panel geändert werden.",
-            webhookReplayFailed: 'Webhook-Wiederholung fehlgeschlagen.',
-            webhookNotFound: 'Webhook-Ereignis nicht gefunden.',
-            webhookNoPayload: 'Für dieses Webhook-Ereignis wurde keine Nutzlast erfasst, die wiedergegeben werden könnte.',
-        },
-        refund: {
-            errors: {
-                notFound: 'Bestellung nicht gefunden.',
-                notRefundable: 'Diese Bestellung kann nicht erstattet werden.',
-                providerFailure: 'Der Zahlungsanbieter hat die Erstattung abgelehnt. Bitte versuchen Sie es erneut.',
-            },
-        },
-    },
-    enterprise: {
-        leadReceived: 'Danke — unser Team meldet sich in Kürze bei Ihnen.',
-        agreementSaved: 'Vereinbarung gespeichert.',
-        agreementActivated: 'Vereinbarung aktiviert.',
-        agreementSuspended: 'Vereinbarung ausgesetzt.',
-        agreementEnded: 'Vereinbarung beendet.',
-        leadStatusUpdated: 'Lead-Status aktualisiert.',
-        errors: {
-            agreementNotFound: 'Für dieses Konto besteht keine Enterprise-Vereinbarung.',
-            agreementEnded: 'Diese Vereinbarung ist beendet und kann nicht mehr bearbeitet werden.',
-            productIdTaken: 'Dieses Polar-Produkt ist bereits mit einer anderen Vereinbarung verknüpft.',
-            productIdReserved: 'Diese Polar-Produkt-ID gehört zu einem Standardtarif oder Guthabenpaket.',
-            invalidCaps: 'Enterprise-Limits müssen bekannte Metriken und endliche Ganzzahlen verwenden.',
-            invalidCap: '{{metric}} muss für eine Enterprise-Vereinbarung eine Ganzzahl zwischen 0 und {{maximum}} sein.',
-            invalidSeats: 'Enterprise-Plätze müssen eine Ganzzahl zwischen 1 und {{maximum}} sein.',
-            priceBelowFloor: 'Der vereinbarte Preis liegt unter der Enterprise-Untergrenze für Preis und Marge. Das Minimum beträgt {{floorCents}} Cent pro Monat.',
-            leadNotFound: 'Dieser Lead existiert nicht mehr.',
-            notEnterprise: 'Dieses Konto hat keine Enterprise-Vereinbarung.',
         },
     },
     team: {
@@ -1359,7 +1190,6 @@ export const de: DictionaryShape = {
         roleChanged: 'Rolle aktualisiert.',
         inviteResent: 'Ein neuer Einladungslink wurde an {{email}} gesendet.',
         errors: {
-            seatCapExceeded: 'Alle Plätze Ihres Tarifs sind belegt. Führen Sie ein Upgrade durch, um weitere Teammitglieder einzuladen.',
             alreadyInvited: 'Für diese E-Mail-Adresse gibt es bereits eine offene Einladung.',
             alreadyMember: 'Diese E-Mail-Adresse ist bereits Teammitglied.',
             inviteNotFound: 'Dieser Einladungslink ist ungültig.',
@@ -1373,15 +1203,6 @@ export const de: DictionaryShape = {
             inviteDeliveryFailed: 'Die Einladungs-E-Mail konnte nicht zugestellt werden. Es wurde keine Einladung erstellt.',
             provisionalRestricted: 'Ändern Sie Ihr temporäres Passwort und nehmen Sie eine Einladung an, um fortzufahren.',
             inviteBeingCleaned: 'Das eingeladene Konto wird bereinigt. Versuchen Sie es gleich erneut.',
-        },
-    },
-    superadmin: {
-        errors: {
-            invalidSort: "Diese Sortierspalte ist nicht zulässig.",
-            cannotSelfDemote: "Sie können Ihre eigene SuperAdmin-Rolle nicht entfernen.",
-            cannotDeleteSelf: "Sie können Ihr eigenes SuperAdmin-Konto nicht löschen.",
-            cannotDemoteLastSuperAdmin: "Sie können den letzten SuperAdmin nicht entfernen.",
-            cannotSuspendLastSuperAdmin: "Sie können den letzten SuperAdmin nicht sperren.",
         },
     },
     apiKeys: {
@@ -1437,6 +1258,8 @@ export const de: DictionaryShape = {
             getBacklinksSummary: { description: 'Gibt die gespeicherte Backlink-Zusammenfassung einer eigenen Website zurück: Gesamtzahl der Backlinks, eindeutige verweisende Domains und den Abrufzeitpunkt. Schreibgeschützt; ruft nie frische Daten ab und verbraucht nie Backlink-Zeilen. Zitieren Sie das Abrufdatum und halten Sie beide Zahlen getrennt.' },
             listBacklinks: { description: 'Listet gespeicherte Backlinks einer eigenen Website auf, ein Link pro verweisender Domain, mit Verdachtsmarkierungen, die vermutet und nicht verifiziert sind. Schreibgeschützt; liest nur gespeicherte Zeilen und verbraucht nie Backlink-Zeilen. Zitieren Sie das Abrufdatum und den Umfang.' },
             listCompetitors: { description: 'Listet das Wettbewerber-Portfolio einer eigenen Website auf, aktive und archivierte Profile. Schreibgeschützt; kein Scraping und keine Kosten.' },
+            listKeywordResearchHistory: { description: 'Listet den gespeicherten Keyword-Recherche-Verlauf des Kontos auf: was gesucht wurde, wann sowie Standort und Sprache. Schreibgeschützt; ruft nie den Datenanbieter auf.' },
+            getKeywordResearchResult: { description: 'Gibt das gespeicherte Ergebnis eines Eintrags im Keyword-Recherche-Verlauf zurück, mit Status available, partial, expired oder unsupported. Liest nur den gespeicherten Cache; aktualisiert nie und ruft nie den Datenanbieter auf. Zitieren Sie das Abrufdatum.' },
             getAiVisibilitySummary: { description: 'Gibt die gespeicherte KI-Sichtbarkeitszusammenfassung einer eigenen Website zurück: verfolgte Prompts, die letzten Prüfungen je Engine und den Share of Voice. Schreibgeschützt; startet nie eine Prüfung. Zitieren Sie die Prüfdaten und sagen Sie, wenn die Belege begrenzt sind.' },
             getLocalSeoSummary: { description: 'Gibt die gespeicherte Local-SEO-Zusammenfassung einer eigenen Website zurück: Momentaufnahme des Unternehmensprofils, Konsistenz von Name, Adresse und Telefonnummer sowie Ränge im lokalen Pack. Schreibgeschützt; aktualisiert nie Einträge.' },
             getReviewsSummary: { description: 'Gibt die gespeicherte Bewertungszusammenfassung einer eigenen Website zurück: Bewertungsquellen und Bereitschaft, Bewertungsstatistiken und gespeicherte Themen. Schreibgeschützt; startet nie eine Bewertungssynchronisierung.' },
@@ -1564,7 +1387,6 @@ export const de: DictionaryShape = {
                 runInFlight: 'Für diese Website läuft bereits ein Inventarlauf. Warten Sie, bis er abgeschlossen ist, bevor Sie einen weiteren starten.',
                 originUnsafe: 'Diese Website-Adresse verweist auf einen gesperrten oder internen Ort und kann nicht durchsucht werden.',
                 seedUnsafe: 'Eine von Ihnen angegebene Sitemap-Adresse verweist auf einen gesperrten oder internen Ort.',
-                capExceeded: 'Sie haben alle Ihre Inhaltsinventar-Seitenblöcke für diesen Monat verbraucht.',
                 queueUnavailable: 'Die Inventar-Warteschlange ist nicht verfügbar. Bitte versuchen Sie es in Kürze erneut.',
                 notFound: 'Inventarlauf nicht gefunden.',
                 notCancellable: 'Dieser Inventarlauf ist bereits abgeschlossen.',
@@ -1600,7 +1422,6 @@ export const de: DictionaryShape = {
                 reviewedTargetsInvalid: 'Die geprüften Seiten sind nicht mehr sicher oder aktuell.',
                 unavailable: 'Die Wettbewerber-Content-Intelligence ist vorübergehend nicht verfügbar. Bitte versuchen Sie es später erneut.',
                 runInFlight: 'Für diese Website läuft bereits ein Wettbewerbervergleich. Warten Sie, bis er abgeschlossen ist, bevor Sie einen weiteren starten.',
-                capExceeded: 'Sie haben alle Wettbewerbervergleiche für diesen Monat aufgebraucht.',
                 queueUnavailable: 'Die Vergleichs-Warteschlange ist nicht verfügbar. Bitte versuchen Sie es in Kürze erneut.',
                 notFound: 'Wettbewerbervergleich nicht gefunden.',
                 notCancellable: 'Dieser Wettbewerbervergleich ist bereits abgeschlossen.',
@@ -1650,7 +1471,6 @@ export const de: DictionaryShape = {
                 cursorInvalid: 'Dieser Seiten-Cursor ist ungültig.',
             },
             warnings: {
-                capExhausted: 'Sie haben alle Überwachungsprüfungen für diesen Monat verbraucht, daher ist diese Überwachung bis zum nächsten Monat pausiert.',
                 providerDrift: 'Diese Überwachung war nicht mit dem Anbieter synchron und wurde wieder synchronisiert.',
             },
         },
@@ -1912,7 +1732,6 @@ export const de: DictionaryShape = {
             siteNotFound: 'Website nicht gefunden.',
             pageNotFound: 'Die Seite wurde im aktuellen Quellenbestand nicht gefunden.',
             rateLimited: 'Zu viele Pages-Anfragen. Versuchen Sie es gleich noch einmal.',
-            capExceeded: 'Das Kontingent für Keyword-Abfragen ist für diesen Zeitraum erreicht.',
             gscUnavailable: 'Search-Console-Daten sind vorübergehend nicht verfügbar. Die letzten erfolgreichen Daten bleiben nach Möglichkeit sichtbar.',
             providerUnavailable: 'Ranking-Daten sind vorübergehend nicht verfügbar. Versuchen Sie die Aktualisierung später erneut.',
             refreshFailed: 'Die Pages-Aktualisierung konnte nicht gespeichert werden. Die letzten erfolgreichen Daten wurden beibehalten.',

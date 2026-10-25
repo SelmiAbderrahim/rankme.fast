@@ -7,7 +7,7 @@
  * `fresh` pull and no cursor path, so a call can never reach the provider
  * or enqueue a deep pull.
  *
- * Truthful counts (#15): `totalLinks` is every link the vendor knows about,
+ * Truthful counts: `totalLinks` is every link the vendor knows about,
  * `referringDomains` is the number of distinct domains, and the list holds ONE
  * link per referring domain, so `rowsReturned` is bounded by
  * `referringDomains` and is usually far below `totalLinks`.

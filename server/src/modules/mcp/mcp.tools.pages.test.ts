@@ -210,7 +210,7 @@ describe('list_pages', () => {
     ['gsc_needs_reconnect', 'googleReconnect'],
     ['gsc_revoked', 'googleReconnect'],
     ['gsc_property_unmatched', 'gscPropertyMismatch'],
-  ])('reports %s as empty with reason %s — a setup state, not a failure (QA round 2, P0-5)', async (fallbackReason, reason) => {
+  ])('reports %s as empty with reason %s — a setup state, not a failure', async (fallbackReason, reason) => {
     gscReason = fallbackReason;
     const result = await toolListPages({ siteId, range: '7d' }, context());
     expect(structured(result)).toMatchObject({ status: 'empty', reason, range: '7d' });

@@ -9,7 +9,12 @@
       "label": "Market",
       "country": "Country",
       "language": "Language",
-      "device": "Device"
+      "device": "Device",
+      "devices": {
+        "desktop": "Desktop",
+        "mobile": "Mobile",
+        "all": "All devices"
+      }
     },
     "competitors": {
       "label": "Competitors",
@@ -31,28 +36,8 @@
       "validationEmpty": "Enter a topic before adding it.",
       "validationMax": "You can add up to {{max}} topics."
     },
-    "reviewButton": "Review",
-    "submitting": "Working…"
-  },
-  "preview": {
-    "unitLabel": "1 audience research run",
-    "remainingLabel": "{{remaining}} of {{cap}} remaining this month",
-    "operationCeilings": "What this run will do",
-    "cached": "Cached",
-    "fresh": "Fresh",
-    "supported": "This market is fully supported.",
-    "unsupported": "This market has limited support — results may be thinner.",
-    "maxPages_one": "Up to {{max}} public page",
-    "totalBudget": "Total budget: {{micros}} micro-USD",
-    "aiBudget": "AI budget: {{micros}} micro-USD",
-    "coverageOk": "Full provider coverage",
-    "coverageDegraded": "Degraded provider coverage — results may be partial.",
-    "coverageBlocked": "Zero-data-retention scraping is blocked for this account.",
-    "maxPages_zero": "Up to {{max}} public pages",
-    "maxPages_two": "Up to {{max}} public pages",
-    "maxPages_few": "Up to {{max}} public pages",
-    "maxPages_many": "Up to {{max}} public pages",
-    "maxPages_other": "Up to {{max}} public pages"
+    "submitting": "Working…",
+    "startRequirement": "Add at least one topic or pick a competitor to start a run. Without either, the run has nothing to search for."
   },
   "confirm": {
     "title": "Start this audience research run?",
@@ -117,8 +102,7 @@
       "state": "State",
       "sources": "Sources",
       "signals": "Signals",
-      "coverage": "Coverage",
-      "unit": "Unit"
+      "coverage": "Coverage"
     },
     "empty": {
       "title": "No runs yet",
@@ -131,24 +115,6 @@
     "marketUnavailable": "—",
     "coverageNote": "Partial coverage — open the run for details",
     "coverageFull": "Full coverage"
-  },
-  "locked": {
-    "title": "Audience research is not included in your plan",
-    "body": "Upgrade to Starter, Pro, or Agency to run voice-of-customer research and turn public feedback into content, product, and SEO opportunities.",
-    "cta": "See plans"
-  },
-  "usage": {
-    "metrics": {
-      "audience_research_runs": {
-        "label": "Audience research runs",
-        "description": "One whole voice-of-customer research run per unit, regardless of how many searches or scrapes it makes."
-      }
-    }
-  },
-  "billing": {
-    "overCap": {
-      "audience_research_runs": "You have used every audience research run on your plan this month. Upgrade to run more voice-of-customer research."
-    }
   },
   "signals": {
     "empty": {

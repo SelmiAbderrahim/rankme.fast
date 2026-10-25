@@ -92,6 +92,10 @@ export const CHAT_TOOL_JSON_SCHEMAS: Readonly<Record<McpToolName, AiJsonSchema>>
     get_backlinks_summary: toolObject({ siteId: objectIdProperty }, ['siteId']),
     list_backlinks: toolObject({ siteId: objectIdProperty, limit: limitProperty }, ['siteId']),
     list_competitors: toolObject({ siteId: objectIdProperty, status: { enum: ['active', 'archived', 'all'] } }, ['siteId']),
+    list_keyword_research_history: toolObject(
+        { limit: limitProperty, cursor: { type: 'string', format: 'uuid' } },
+        []),
+    get_keyword_research_result: toolObject({ historyId: { type: 'string', format: 'uuid' } }, ['historyId']),
     get_ai_visibility_summary: toolObject({ siteId: objectIdProperty }, ['siteId']),
     get_local_seo_summary: toolObject({ siteId: objectIdProperty }, ['siteId']),
     get_reviews_summary: toolObject({ siteId: objectIdProperty }, ['siteId']),

@@ -1,7 +1,6 @@
 {
   "title": "Equipo",
   "description": "Invita a compañeros y gestiona los puestos de tu plan.",
-  "seatUsage": "{{used}} de {{limit}} puestos usados",
   "invite": {
     "heading": "Invitar a un compañero",
     "emailLabel": "Correo",
@@ -9,8 +8,6 @@
     "emailInvalid": "Introduce un correo electrónico válido",
     "submit": "Enviar invitación",
     "submitting": "Enviando…",
-    "atCap": "Has ocupado todos tus puestos. Mejora tu plan para invitar a más personas.",
-    "upgradeCta": "Mejorar plan",
     "description": "Elige un rol y exactamente qué sitios puede usar esta persona.",
     "roleLabel": "Rol",
     "adminRoleLimit": "Los administradores solo pueden invitar a miembros."
@@ -192,10 +189,12 @@
     "buttonLabelWithCount_many": "Invitaciones de equipo, {{count}} pendientes",
     "buttonLabelWithCount_other": "Invitaciones de equipo, {{count}} pendientes"
   },
-  "received": {"pending_zero": "{{count}} invitaciones de otros equipos te están esperando.",
+  "received": {
+    "pending_zero": "{{count}} invitaciones de otros equipos te están esperando.",
     "pending_one": "{{count}} invitación de otro equipo te está esperando.",
     "pending_two": "{{count}} invitaciones de otros equipos te están esperando.",
     "pending_few": "{{count}} invitaciones de otros equipos te están esperando.",
     "pending_many": "{{count}} invitaciones de otros equipos te están esperando.",
-    "pending_other": "{{count}} invitaciones de otros equipos te están esperando."}
+    "pending_other": "{{count}} invitaciones de otros equipos te están esperando."
+  }
 }

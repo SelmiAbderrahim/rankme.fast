@@ -1,5 +1,5 @@
 /**
- * Docs integrity — prompt 20.
+ * Docs integrity.
  *
  * Guards the public /docs surface: every slug ships in every locale, each
  * markdown file has valid frontmatter with matching `locale`/`slug`, every
@@ -398,7 +398,7 @@ describe('docs generator', () => {
   });
 });
 
-describe('docs integrity — Prompt 12 feature navigation', () => {
+describe('docs integrity — feature navigation', () => {
   const featureSlugs = [
     'link-intelligence',
     'traffic-insights',
@@ -414,7 +414,7 @@ describe('docs integrity — Prompt 12 feature navigation', () => {
       }
     });
 
-    it(`${locale}: the changelog links every Prompt 12 guide`, () => {
+    it(`${locale}: the changelog links every feature guide`, () => {
       const changelog = readDoc('changelog', locale);
       for (const slug of featureSlugs) {
         expect(changelog, `changelog → ${slug}`).toContain(`./${slug}.${locale}.md`);

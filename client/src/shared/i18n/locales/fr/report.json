@@ -315,8 +315,7 @@
   "pdf": {
     "download": "Télécharger le PDF",
     "downloading": "Préparation du PDF…",
-    "error": "Impossible de préparer le PDF. Veuillez réessayer.",
-    "upgradeHint": "Les rapports PDF sont disponibles avec les forfaits Pro et Agency."
+    "error": "Impossible de préparer le PDF. Veuillez réessayer."
   },
   "gscBlock": {
     "sectionTitle": "Performance de recherche Google (28 derniers jours)",

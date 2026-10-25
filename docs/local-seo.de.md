@@ -11,6 +11,12 @@ order: 5
 
 Wenn Kunden Sie über die Suche nach einem Ort finden („Klempner in der Nähe“, „Café in der Innenstadt“), stammt der größte Teil dieses Traffics aus den Kartenergebnissen und Unternehmenseinträgen, nicht aus den gewöhnlichen blauen Links. Die lokale Suchoptimierung verfolgt die drei Dinge, die darüber entscheiden, ob Sie dort auftauchen. Sie ist in **Pro** und **Agency** verfügbar.
 
+## Zuerst Ihr Unternehmen wählen
+
+Lokales SEO berichtet über ein einziges Unternehmen: das, das Sie für die Website auswählen. Öffnen Sie den Tab **Lokales SEO** der Website und suchen Sie nach Unternehmensname, Straßenadresse oder Google-Place-ID. Jedes Ergebnis zeigt Namen und Adresse, sodass sich zwei Filialen mit gleichem Namen leicht unterscheiden lassen. Wählen Sie Ihres und dann **Dieses Unternehmen verwenden**. Bis dahin bleibt die Aktualisierung deaktiviert. Jede Suche fragt Ihren Anbieter für lokale Einträge einmal ab, das Speichern des gewählten Unternehmens ist kostenlos.
+
+Zum späteren Wechsel wählen Sie **Unternehmen ändern** und suchen erneut. Ihr aktuelles Unternehmen bleibt bestehen, bis Sie ein neues speichern. Daten, die vor der Auswahl eines Unternehmens aktualisiert wurden, sind als ältere Daten gekennzeichnet, die über Ihre Website abgerufen wurden.
+
 ## Richtigkeit des Eintrags
 
 Suchmaschinen vertrauen einem Unternehmen, dessen Angaben überall übereinstimmen, wo sie erscheinen. RankMeFast prüft, ob **Name, Adresse und Telefonnummer** Ihres Unternehmens über die Einträge, die wir sehen können, einheitlich sind. Abweichungen wie eine alte Adresse, eine zweite Telefonnummer oder ein verkürzter Name können Sie in den lokalen Ergebnissen nach unten drücken, ohne dass Sie es merken. Wir markieren jede Abweichung, damit Sie sie dort beheben können, wo der Eintrag steht.

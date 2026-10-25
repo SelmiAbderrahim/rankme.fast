@@ -40,7 +40,6 @@
   },
   "states": {
     "ranksCta": "Ejecutar una comprobación de posición",
-    "planCta": "Ver planes",
     "emptyRuns": {
       "title": "Aún no hay ejecuciones guardadas",
       "body": "Previsualiza una ejecución para ver qué palabras clave rastreadas califican."
@@ -52,10 +51,6 @@
     "notEnoughKeywords": {
       "title": "No hay suficientes comprobaciones recientes",
       "body": "Menos de dos palabras clave seguidas tienen una comprobación de posiciones válida de los últimos siete días. No se ha gastado ninguna ejecución."
-    },
-    "cap": {
-      "title": "Cuota mensual alcanzada",
-      "body": "Esta solicitud no se inició. Espera al siguiente periodo de cuota o revisa los planes disponibles."
     },
     "disabled": {
       "title": "Las ejecuciones de agrupación no están disponibles",

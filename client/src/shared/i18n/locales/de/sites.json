@@ -61,15 +61,16 @@
     "resumeCta": "Fortsetzen",
     "pausing": "Wird pausiert…",
     "resuming": "Wird fortgesetzt…",
-    "optionSuffix": "pausiert"
+    "optionSuffix": "pausiert",
+    "help": "Pausiert: Audits, Positionsprüfungen, wöchentliche Berichte, Inhaltsüberwachung und Warnungen sind aus. Berichte und Verlauf bleiben lesbar. Mit „Fortsetzen“ laufen sie wieder."
   },
   "errors": {
     "urlRequired": "Geben Sie die URL Ihrer Website ein, z. B. https://example.com.",
-    "urlTooLong": "Diese URL ist zu lang (maximal 2048 Zeichen).",
+    "urlTooLong": "Geben Sie eine URL mit höchstens 2.048 Zeichen ein.",
     "urlInvalid": "Geben Sie eine gültige URL ein, z. B. https://example.com.",
-    "urlScheme": "Nur http://- und https://-URLs werden unterstützt.",
+    "urlScheme": "Geben Sie eine URL ein, die mit http:// oder https:// beginnt.",
     "urlUserinfo": "Entfernen Sie Benutzername und Passwort aus der URL.",
-    "urlIpLiteral": "IP-Adressen werden nicht unterstützt — verwenden Sie einen Domainnamen.",
+    "urlIpLiteral": "Geben Sie einen Domainnamen ein, keine IP-Adresse.",
     "urlNoTld": "Geben Sie einen vollständigen Domainnamen ein, z. B. https://example.com."
   },
   "workspace": {
@@ -105,7 +106,6 @@
     },
     "navigationLabel": "Arbeitsbereichsansicht",
     "activeGroupLabel": "{{group}} · {{current}}",
-    "upgradeHint": "Upgraden Sie Ihren Plan, um diesen Tab freizuschalten.",
     "switchSite": "Website wechseln",
     "loadingSite": "Website wird geladen…",
     "filterSites": "Websites filtern…",
@@ -190,8 +190,7 @@
     "unlock": {
       "title": "Weitere Einblicke sind verfügbar",
       "backlinksAndCompetitors": "Upgraden Sie für Backlink-Stärke und Wettbewerbsüberschneidungen.",
-      "competitors": "Upgraden Sie auf Agency für Wettbewerbsüberschneidungen und Keyword-Lücken.",
-      "openPlans": "Tarife vergleichen"
+      "competitors": "Upgraden Sie auf Agency für Wettbewerbsüberschneidungen und Keyword-Lücken."
     },
     "statError": "Konnte nicht geladen werden",
     "meta": {

@@ -121,75 +121,12 @@ export const es: DictionaryShape = {
         },
     },
     billing: {
-        checkout: {
-            title: 'Pago',
-            submit: 'Pagar ahora',
-            success: 'Pago recibido. ¡Gracias!',
-        },
-        portal: {
-            title: 'Facturación',
-        },
-        error: {
-            notConfigured: 'El proveedor de pagos no está configurado.',
-            addonAlreadyActive: 'Este complemento ya está activo en tu cuenta.',
-            addonAlreadyIncluded: 'Tu plan actual ya incluye este complemento.',
-            checkoutAlreadyOpen: 'Ya hay un pago abierto. Termínalo o cancélalo primero.',
-            packRequiresTier: 'Este paquete de créditos no está disponible en tu plan actual.',
-            subscriptionAlreadyExists: 'Esta cuenta ya tiene una suscripción activa.',
-            productUnavailable: 'La facturación no está disponible temporalmente. Inténtalo de nuevo más tarde.',
-            userNotFound: 'Usuario no encontrado.',
-            noCustomer: 'No se encontró un cliente de facturación para este usuario.',
-            noSubscription: 'No se encontró una suscripción activa para este usuario.',
-            providerFailure: 'Error del proveedor de pagos: {{message}}',
-            invalidResumeAt: 'La fecha de reanudación no es una marca de tiempo válida.',
-            resumeAtInPast: 'La fecha de reanudación debe estar en el futuro.',
-            pauseWindowExceeded: 'La duración de la pausa supera el máximo permitido.',
-            alreadyPaused: 'Esta suscripción ya está en pausa.',
-            canceledSubscription: 'Una suscripción cancelada no se puede pausar.',
-            notPaused: 'Esta suscripción no está en pausa.',
-            unknownProduct: 'Este producto no está disponible para el pago.',
-            redirectOriginMismatch: 'Las URLs de redirección tras el pago deben permanecer en este sitio.',
-            addonRequiresProOrAgency: 'El complemento Brand Radar solo está disponible en los planes Pro y Agency.',
-        },
         errors: {
             capExceeded: 'Se ha agotado el límite de {{metric}} de tu plan. Actualiza o compra un paquete de créditos.',
             upgradeRequired: 'Esta función requiere el plan {{requiredTier}}.',
-            featureLocked: 'La función {{feature}} no está incluida en tu plan.',
-        },
-        overCap: {
-            audience_research_runs: 'Has usado todas las ejecuciones de investigación de audiencia de tu plan este mes. Actualiza para lanzar más investigaciones de voz del cliente.',
-            trend_explorations: 'Has usado todas las exploraciones de tendencias de palabras clave de tu plan este mes. Actualiza o espera al próximo mes para ejecutar más.',
-            traffic_snapshots: 'Has usado todas las instantáneas de tráfico de tu plan este mes. Actualiza o espera al próximo mes para ejecutar más.',
-            link_intel_checks: 'Has usado todas las comprobaciones de inteligencia de enlaces de tu plan este mes. Actualiza o espera al próximo mes para ejecutar más.',
-            review_syncs: 'Has usado todas las sincronizaciones de reseñas de tu plan este mes. Actualiza o espera al próximo mes para ejecutar más.',
-            brand_mention_scans: 'Has usado todos los escaneos de menciones de marca de tu plan este mes. Actualiza o añade el complemento Brand Radar para escanear más.',
-            keyword_cluster_runs: 'Has usado todas las agrupaciones de palabras clave de tu plan este mes. Actualiza o espera al próximo mes para ejecutar más.',
-            cannibalization_reports: 'Has usado todos los informes de canibalización de tu plan este mes. Actualiza o espera al próximo mes para generar más.',
-            alt_engine_checks: 'Has usado todas las comprobaciones de posición en Bing, YouTube y Amazon de tu plan este mes. Actualiza o compra un paquete de créditos para seguir midiendo.',
-            toxicity_reviews: 'Has usado todas las revisiones de enlaces tóxicos de tu plan este mes. Actualiza o compra un paquete de créditos para revisar más enlaces.',
-            internal_link_runs: 'Has usado todos los análisis de enlazado interno de tu plan este mes. Actualiza o espera al próximo mes para ejecutar más.',
-            content_briefs: 'Has usado todos los briefs de contenido de tu plan este mes. Compra un paquete de créditos o actualiza para redactar más.',
-            geogrid_scans: 'Has usado todos los escaneos geogrid de tu plan este mes. Compra un paquete de créditos o actualiza para escanear más ubicaciones.',
-            schema_generations: 'Has usado todas las generaciones de marcado schema de tu plan este mes. Actualiza o espera al próximo mes para generar más.',
-            ai_chat_messages: 'Has usado todos los mensajes del asistente de IA de tu plan este mes. Compra un paquete de créditos o actualiza para seguir conversando.',
-            ai_visibility_suggestion_runs: 'Has usado todas las generaciones de sugerencias de visibilidad en IA de tu plan este mes. Mejora tu plan o espera al mes que viene para generar más.',
-            app_keyword_checks: 'Has usado todas las comprobaciones de palabras clave de apps de tu plan este mes. Añade el complemento App SEO o compra un paquete de créditos para seguir midiendo.',
-            app_listing_audits: 'Has usado todas las revisiones de ficha de app de tu plan este mes. Añade el complemento App SEO o espera al mes que viene.',
-            app_chart_checks: 'Has usado todas las comprobaciones de puesto en el ranking de tu plan este mes. Añade el complemento App SEO o espera al mes que viene.',
-            app_keyword_lookups: 'Has usado todas las búsquedas de palabras clave de apps de tu plan este mes. Añade el complemento App SEO o compra un paquete de créditos.',
-            app_competitor_lookups: 'Has usado todas las búsquedas de competidores de apps de tu plan este mes. Añade el complemento App SEO o compra un paquete de créditos.',
-            app_review_runs: 'Has usado todas las descargas de reseñas de apps de tu plan este mes. Añade el complemento App SEO o compra un paquete de créditos.',
         },
     },
     customPlan: DYNAMIC_PLAN_COPY.es,
-    usage: {
-        metrics: {
-            audience_research_runs: {
-                label: 'Ejecuciones de investigación de audiencia',
-                description: 'Una unidad cubre una ejecución completa de voz del cliente, sin importar cuántas búsquedas o extracciones realice.',
-            },
-        },
-    },
     audienceResearch: {
         errors: {
             unsupportedMarket: 'La investigación de audiencia aún no está disponible en ese mercado. Prueba con un país o idioma admitido.',
@@ -214,14 +151,6 @@ export const es: DictionaryShape = {
         contact: {
             confirmation: 'Tu mensaje ha sido enviado. Te contactaremos pronto.',
             notification: 'Mensaje de {{name}} <{{email}}>\n\n{{message}}',
-        },
-        enterpriseLead: {
-            subject: 'Consulta para empresas: {{company}}',
-            company: 'Empresa: {{company}}',
-            name: 'Nombre: {{name}} <{{email}}>',
-            seats: 'Puestos: {{seats}}',
-            expectedVolumes: 'Volúmenes previstos: {{expectedVolumes}}',
-            notStated: 'No indicado',
         },
         verifyEmail: {
             subject: 'Verifica tu dirección de correo electrónico',
@@ -373,13 +302,9 @@ export const es: DictionaryShape = {
             warningSubject: 'Se eliminará tu cuenta de RankMeFast',
             warningBody: 'Hola {{name}}, solicitaste eliminar tu cuenta de RankMeFast. Tus datos se eliminarán definitivamente el {{purgeAt}}.',
         },
-        twoFactor: {
-            adminRequired: 'Las cuentas de administrador requieren autenticación de dos factores. Configura un segundo factor en Ajustes → Seguridad para continuar.',
-        },
     },
     audits: {
         started: 'Auditoría iniciada.',
-        capClamped: 'Número máximo de páginas de auditoría limitado a {{cap}} (límite del plan).',
         errors: {
             recheckUnavailable: 'Este hallazgo no se puede volver a comprobar aquí. Ejecuta una nueva auditoría para comprobarlo de nuevo.',
             runInProgress: 'Ya se está ejecutando una auditoría para este sitio.',
@@ -408,10 +333,8 @@ export const es: DictionaryShape = {
             noSnapshot: 'No hay datos de informe con fecha para las secciones seleccionadas.',
             queueUnavailable: 'La entrega de informes no está configurada. Inténtalo de nuevo en breve.',
             rateLimited: 'Demasiadas solicitudes de informes. Inténtalo de nuevo en breve.',
-            scheduleCapExceeded: 'Tu plan ha alcanzado el límite de informes programados.',
             scheduleNotFound: 'No se encontró esa programación de informe.',
             deliveryNotFound: 'No se encontró esa entrega.',
-            portalCapExceeded: 'Tu plan ha alcanzado el límite de portales de clientes.',
             portalNotFound: 'Ese enlace del portal de cliente no es válido, ha caducado o fue revocado.',
         },
         email: {
@@ -421,9 +344,10 @@ export const es: DictionaryShape = {
     },
     branding: {
         errors: {
-            logoMalformed: 'Elige un logotipo PNG válido. El archivo no se guardó.',
-            logoTooLarge: 'El logotipo es demasiado grande. Elige un PNG de hasta 256 KB.',
-            logoDimensions: 'Las dimensiones del logotipo son demasiado grandes. Usa un PNG de hasta 1024 × 1024 píxeles.',
+            logoMalformed: 'Elige un logotipo PNG, JPEG o SVG válido. El archivo no se guardó.',
+            logoTooLarge: 'El logotipo es demasiado grande. Elige un archivo de hasta 256 KB.',
+            logoDimensions: 'Las dimensiones del logotipo son demasiado grandes. Usa una imagen de hasta 1024 × 1024 píxeles.',
+            logoUnsafeSvg: 'Este SVG contiene scripts, contenido incrustado o enlaces a otros archivos. Exporta un SVG sencillo o sube un PNG o JPEG. El archivo no se guardó.',
         },
     },
     report: {
@@ -446,9 +370,9 @@ export const es: DictionaryShape = {
             notRanked: 'Fuera de los resultados seguidos',
             engines: { google: 'Google', bing: 'Bing', youtube: 'YouTube', amazon: 'Amazon' },
             gscSummary: 'Resumen de Search Console ({{days}} días)',
-            gscTotals: 'Clics {{clicks}} · Impresiones {{impressions}} · CTR {{ctr}} % · Posición media {{position}} · Instantánea {{date}}',
+            gscTotals: 'Clics {{clicks}} · Impresiones {{impressions}} · CTR {{ctr}} · Posición media {{position}} · Instantánea {{date}}',
             topQueries: 'Consultas principales',
-            gscQueryRow: '{{query}} — {{clicks}} clics · {{impressions}} impresiones · CTR {{ctr}} % · posición {{position}} · instantánea {{date}}',
+            gscQueryRow: '{{query}} — {{clicks}} clics · {{impressions}} impresiones · CTR {{ctr}} · posición {{position}} · instantánea {{date}}',
             page: 'Página {{n}} de {{total}}',
         },
     },
@@ -818,7 +742,6 @@ export const es: DictionaryShape = {
             marketMoveNoDefault: 'Elija un mercado para el sitio antes de mover las palabras clave.',
             marketMoveStale: 'La lista de palabras clave o el mercado del sitio ha cambiado. Revise el cambio e inténtelo de nuevo.',
             keywordDuplicate: 'Esa palabra clave ya se sigue para este sitio.',
-            keywordCapExceeded: 'Tu plan alcanzó su límite de palabras clave. Mejora tu plan para seguir más.',
             altEnginesUnavailable: 'El seguimiento de Bing, YouTube y Amazon está desactivado ahora mismo.',
             altEngineSlotsExceeded: 'Tu plan alcanzó su límite de {{limit}} palabras clave de Bing, YouTube y Amazon. Mejora tu plan para seguir más.',
             altEngineChecksExhausted: 'Has usado todas las comprobaciones de Bing, YouTube y Amazon de este periodo. Compra un paquete o mejora tu plan.',
@@ -827,7 +750,6 @@ export const es: DictionaryShape = {
             amazonAsinInvalid: 'Escribe un ASIN de Amazon de diez caracteres, por ejemplo B08N5WRWNW.',
             engineTargetNotAllowed: 'Google y Bing siguen tu propio sitio, así que deja este campo vacío.',
             keywordNotFound: 'Palabra clave no encontrada.',
-            dailyRequiresUpgrade: 'El seguimiento diario de posiciones requiere un plan superior.',
             checkCooldown: 'Se acaba de ejecutar una comprobación de posiciones: espere un minuto antes de volver a comprobar.',
             rankJobNotFound: 'No se encontró la comprobación de posiciones.',
             rankJobStillRunning: 'Esta comprobación de posiciones sigue en curso. Reintente las palabras clave fallidas cuando termine.',
@@ -894,9 +816,7 @@ export const es: DictionaryShape = {
             lookupIdInvalid: 'El identificador de la búsqueda no es válido.',
             historyIdInvalid: 'El identificador de esta entrada del historial no es válido.',
             historyNotFound: 'No se encontró esa búsqueda.',
-            upgradeRequired: 'La investigación de palabras clave es una función Pro. Mejora tu plan para desbloquear volumen, dificultad y palabras clave relacionadas.',
             unavailable: 'La investigación de palabras clave no está disponible temporalmente. Vuelve a intentarlo en unos instantes.',
-            capExceeded: 'El límite de búsquedas de palabras clave de tu plan ({{used}}/{{limit}} {{metric}}) está agotado. Mejora tu plan o compra un pack de créditos para investigar más palabras clave.',
             competitorsRequired: 'Introduce al menos un dominio competidor.',
             tooManyCompetitors: 'Puedes comparar hasta tres dominios competidores a la vez.',
             competitorsDuplicate: 'Elimina el dominio competidor duplicado.',
@@ -944,9 +864,6 @@ export const es: DictionaryShape = {
             coverageNote: {
                 searchInterestIndex: 'Los valores son el índice de interés de búsqueda de Google (0-100), no tráfico real: léelos como forma, no como volumen.',
             },
-            preview: {
-                notOnPlan: 'Keyword Trends no está incluido en tu plan.',
-            },
         },
     },
     backlinks: {
@@ -957,17 +874,13 @@ export const es: DictionaryShape = {
                 runNotFound: 'No se encontró la revisión de enlaces.',
                 runNotReady: 'Esta revisión de enlaces aún no está lista para exportar.',
             },
-            preview: {
-            },
         },
         errors: {
-            upgradeRequired: 'Los backlinks son una función Pro. Mejora tu plan para ver tu perfil de enlaces y la valoración del dominio.',
             unavailable: 'Los datos de backlinks no están disponibles temporalmente — reintentaremos en la próxima ejecución.',
             siteNotFound: 'Sitio no encontrado.',
             domainInvalid: 'Introduce un dominio válido, como example.com.',
             gapDomainConflict: 'Tu propio dominio no puede aparecer como competidor.',
             limitInvalid: 'Introduce un límite de filas válido.',
-            capExceeded: 'El límite de filas de backlinks de tu plan ({{used}}/{{limit}} {{metric}}) se ha agotado. Mejora tu plan o compra un paquete de créditos para obtener más filas.',
             refreshCooldown: 'Límite de actualización alcanzado. Inténtalo de nuevo en {{seconds}} segundo(s).',
         },
         runStatus: {
@@ -984,14 +897,11 @@ export const es: DictionaryShape = {
     },
     competitors: {
         errors: {
-            upgradeRequired: 'Esta vista anterior de superposición requiere Agency. Los panoramas de palabras clave de Competitor Intelligence comienzan en Pro.',
             unavailable: 'Los datos de competidores no están disponibles temporalmente — reintentaremos en la próxima ejecución.',
             siteNotFound: 'Sitio no encontrado.',
             competitorRequired: 'Introduce un dominio competidor.',
             competitorTooLong: 'Ese dominio es demasiado largo.',
-            capExceeded: 'Has usado todas tus consultas de competidores ({{used}}/{{limit}}). Mejora tu plan para ejecutar más.',
             refreshCooldown: 'Límite de actualización alcanzado. Inténtalo de nuevo en {{seconds}} segundo(s).',
-            suggestionCapExceeded: 'Has usado todas tus generaciones de sugerencias de este mes.',
             suggestionFailed: 'No hemos podido crear sugerencias ahora mismo. Tu generación no se ha contabilizado; inténtalo de nuevo en breve.',
         },
         landscape: {
@@ -1008,10 +918,8 @@ export const es: DictionaryShape = {
                 opportunityNotFound: 'Esa oportunidad no pertenece a este informe.',
                 idempotencyInvalid: 'Usa una clave de idempotencia válida.',
                 cursorInvalid: 'Ese cursor del panorama competitivo no es válido.',
-                capExceeded: 'No tienes suficientes consultas de palabras clave para este informe.',
                 competitorNotFound: 'Uno o más competidores seleccionados no están disponibles.',
                 queueUnavailable: 'No se pudo poner el informe en cola. Inténtalo más tarde.',
-                selectionLimit: 'Elige menos competidores para tu plan.',
                 unavailable: 'La inteligencia competitiva no está disponible temporalmente.',
             },
             opportunities: {
@@ -1054,27 +962,6 @@ export const es: DictionaryShape = {
             competitorLandscape: 'Observado en el informe competitivo aceptado.',
         },
     },
-    packs: {
-        unavailable: 'Este paquete de créditos no está configurado para su compra en este momento.',
-        trafficSnapshots: {
-            available: 'Añade {{units}} instantáneas de tráfico por {{price}} cuando se agote tu saldo.',
-        },
-        trendExplorations: {
-            available: 'Añade {{units}} exploraciones de tendencias de palabras clave por {{price}} cuando se agote tu saldo.',
-        },
-        reviewSyncs: {
-            available: 'Añade {{units}} sincronizaciones de reseñas por {{price}} cuando se agote tu saldo.',
-        },
-        brandScans: {
-            available: 'Añade {{units}} análisis de marca por {{price}} cuando se agote tu saldo.',
-        },
-        altEngineChecks: {
-            available: 'Añade {{units}} comprobaciones de Bing, YouTube y Amazon por {{price}} cuando se agote tu saldo.',
-        },
-        contentBriefs: {
-            available: 'Añade {{units}} briefs de contenido por {{price}} cuando se agote tu saldo.',
-        },
-    },
     cannibalization: {
         preview: {
             oneReport: 'Un informe de canibalización.',
@@ -1083,7 +970,6 @@ export const es: DictionaryShape = {
             notFound: 'Informe de canibalización no encontrado.',
             productUnavailable: 'Los informes de canibalización no están disponibles temporalmente. Inténtalo más tarde.',
             awaitingSync: 'Aún no hay filas de consulta y página de Search Console guardadas para este periodo. Llegarán con la próxima sincronización.',
-            overCap: 'Has usado todos los informes de canibalización de tu plan este mes.',
             rateLimited: 'Demasiadas solicitudes de informes de canibalización. Inténtalo en un minuto.',
             invalidWindow: 'Elige un periodo de siete, 28 o 90 días.',
         },
@@ -1095,7 +981,6 @@ export const es: DictionaryShape = {
             productUnavailable: 'Las sugerencias de enlaces internos no están disponibles temporalmente. Inténtalo más tarde.',
             inventoryMissing: 'Ejecuta el inventario de contenido antes de crear sugerencias de enlaces internos.',
             inventoryStale: 'Vuelve a ejecutar el inventario de contenido antes de crear sugerencias de enlaces internos.',
-            overCap: 'Has utilizado todas las ejecuciones de sugerencias de enlaces internos de tu plan este mes.',
             rateLimited: 'Demasiadas solicitudes de sugerencias de enlaces internos. Inténtalo en un minuto.',
             queueFailed: 'No se pudo poner en cola la ejecución de sugerencias. Inténtalo más tarde.',
             processingFailed: 'La ejecución de sugerencias falló. Tu inventario guardado no cambió.',
@@ -1107,7 +992,6 @@ export const es: DictionaryShape = {
             notFound: 'No se encontró la ejecución de agrupación.',
             productUnavailable: 'La agrupación de palabras clave no está disponible temporalmente. Inténtalo más tarde.',
             notEnoughKeywords: 'Al menos dos palabras clave rastreadas necesitan una comprobación de posición de los últimos siete días para poder agruparse.',
-            overCap: 'Has usado todas las ejecuciones de agrupación de palabras clave de tu plan este mes.',
             rateLimited: 'Demasiadas solicitudes de agrupación. Inténtalo de nuevo en un minuto.',
             queueFailed: 'No se pudo poner en cola la ejecución de agrupación. Inténtalo más tarde.',
             processingFailed: 'La ejecución de agrupación falló. Tus observaciones almacenadas no se modificaron.',
@@ -1125,7 +1009,6 @@ export const es: DictionaryShape = {
         errors: {
             notFound: 'Brief de contenido no encontrado.',
             unavailable: 'Los briefs de contenido no están disponibles temporalmente. Inténtalo más tarde.',
-            overCap: 'Has usado todos los briefs de contenido de tu plan este mes.',
             keywordNotTracked: 'Sigue esta palabra clave de Google antes de solicitar un brief de contenido.',
             draftLimit: 'Este brief ya tiene el máximo de versiones del borrador.',
             notReady: 'Espera a que termine el brief antes de puntuar un borrador.',
@@ -1144,7 +1027,6 @@ export const es: DictionaryShape = {
         errors: {
             unavailable: 'Los escaneos de geocuadrícula no están disponibles temporalmente. Inténtalo más tarde.',
             notFound: 'Escaneo de geocuadrícula no encontrado.',
-            capExceeded: 'Has usado todos los escaneos de geocuadrícula de tu plan este mes.',
             keywordNotTracked: 'Haz seguimiento de esta palabra clave de Google antes de lanzar un escaneo de geocuadrícula.',
             rateLimited: 'Demasiadas solicitudes de geocuadrícula. Inténtalo en un minuto.',
         },
@@ -1158,7 +1040,6 @@ export const es: DictionaryShape = {
     alerts: {
         errors: {
             unavailable: 'Los avisos no están disponibles por ahora. Inténtalo más tarde.',
-            channelNotOnPlan: 'Los canales de Slack y webhook requieren el plan Pro o superior.',
             rateLimited: 'Demasiadas solicitudes de avisos. Inténtalo en un minuto.',
             siteNotFound: 'Sitio no encontrado.',
             ruleNotFound: 'Regla de aviso no encontrada.',
@@ -1197,8 +1078,6 @@ export const es: DictionaryShape = {
         errors: {
             notFound: 'No se encontró el análisis de marca.',
             productUnavailable: 'Brand Radar no está disponible temporalmente. Inténtalo de nuevo más tarde.',
-            overCap: 'Has usado todos los análisis de marca de tu plan este mes.',
-            notOnPlan: 'Brand Radar requiere el plan Pro o Agency. En Pro también requiere el complemento Brand Radar.',
             addonRequired: 'Añade el complemento Brand Radar para ejecutar análisis de marca en tu plan.',
             rateLimited: 'Demasiadas solicitudes de análisis de marca. Inténtalo dentro de un minuto.',
             invalidCursor: 'El cursor de página de análisis de marca no es válido.',
@@ -1211,11 +1090,7 @@ export const es: DictionaryShape = {
         },
     },
     reviewIntelligence: {
-        preview: {
-            notOnPlan: 'Review Intelligence no está incluido en tu plan.',
-        },
         errors: {
-            overCap: 'Has usado todas las sincronizaciones de reseñas de tu plan este mes.',
             productUnavailable: 'Review Intelligence no está disponible temporalmente. Inténtalo más tarde.',
             notFound: 'No se encontraron datos de reseñas.',
             invalidTarget: 'Introduce un identificador de negocio válido para esa fuente de reseñas.',
@@ -1226,9 +1101,6 @@ export const es: DictionaryShape = {
         },
     },
     trafficInsights: {
-        preview: {
-            notOnPlan: 'Traffic Insights no está incluido en tu plan.',
-        },
         compare: {
             clamped: 'Solo se compararon las primeras {{count}} instantáneas.',
             invalidSelection: 'Elige al menos dos instantáneas de tráfico diferentes para comparar.',
@@ -1247,13 +1119,11 @@ export const es: DictionaryShape = {
         errors: {
             unavailable: 'AI Visibility no está disponible temporalmente. Inténtalo de nuevo en breve.',
             suggestionFailed: 'No hemos podido generar sugerencias de prompts. Inténtalo de nuevo.',
-            suggestionCapExceeded: 'Has usado todas tus generaciones de sugerencias de este mes.',
             promptCapReached: 'Puedes seguir hasta diez prompts de AI por sitio.',
             promptAlreadyTracked: 'Ya sigues este prompt.',
             promptRequired: 'Introduce un prompt para seguir.',
             promptNotFound: 'Prompt seguido no encontrado.',
             siteNotFound: 'Sitio no encontrado.',
-            capExceeded: 'Has usado todas tus comprobaciones de AI Visibility de este mes.',
             refreshCooldown: 'Límite de comprobaciones alcanzado. Inténtalo de nuevo en {{seconds}} segundo(s).',
             refreshCooldown_zero: 'Límite de comprobaciones alcanzado. Inténtalo de nuevo en {{seconds}} segundos.',
             refreshCooldown_one: 'Límite de comprobaciones alcanzado. Inténtalo de nuevo en {{seconds}} segundo.',
@@ -1268,7 +1138,6 @@ export const es: DictionaryShape = {
             siteNotFound: 'Sitio no encontrado.',
             keywordNotFound: 'Palabra clave seguida no encontrada.',
             unavailable: 'Los datos de SEO local no están disponibles temporalmente. Inténtalo de nuevo en breve.',
-            capExceeded: 'Has usado todas tus verificaciones de fichas locales de este mes.',
             refreshCooldown: 'Límite de actualización alcanzado. Inténtalo de nuevo en {{seconds}} segundo(s).',
             refreshCooldown_zero: 'Límite de actualización alcanzado. Inténtalo de nuevo en {{seconds}} segundos.',
             refreshCooldown_one: 'Límite de actualización alcanzado. Inténtalo de nuevo en {{seconds}} segundo.',
@@ -1304,7 +1173,6 @@ export const es: DictionaryShape = {
             urlNoTld: 'Introduce un nombre de dominio completo, como https://example.com.',
             duplicate: 'Ese sitio ya está en tu cuenta.',
             duplicateAlias: 'Ese sitio ya está en tu cuenta como {{domain}}. Las direcciones con y sin www cuentan como un solo sitio.',
-            capExceeded: 'Tu plan alcanzó su límite de sitios. Mejora tu plan para añadir más.',
             notFound: 'Sitio no encontrado.',
             deleteWhileRunning: 'Espera a que termine la auditoría en curso antes de eliminar este sitio.',
             paused: 'Este sitio está pausado. Reanúdalo para ejecutar comprobaciones y auditorías.',
@@ -1312,43 +1180,6 @@ export const es: DictionaryShape = {
             notPaused: 'Este sitio no está pausado.',
             invalidMarket: 'Elige un país y un idioma de la lista para este sitio.',
             marketsUnavailable: 'No se pudo cargar la lista de países e idiomas. Vuelve a intentarlo en un momento.',
-        },
-    },
-    admin: {
-        errors: {
-            cannotDemoteLastAdmin: 'No puedes quitar tu propio rol de administrador — eres el último administrador.',
-            cannotSuspendLastAdmin: 'No puedes suspender tu propia cuenta — eres el último administrador activo.',
-            cannotModifySuperAdmin: "Una cuenta SuperAdmin no se puede modificar desde el panel de administración.",
-            webhookReplayFailed: 'Falló la repetición del webhook.',
-            webhookNotFound: 'Evento de webhook no encontrado.',
-            webhookNoPayload: 'Este evento de webhook no tiene una carga capturada para repetir.',
-        },
-        refund: {
-            errors: {
-                notFound: 'Pedido no encontrado.',
-                notRefundable: 'Este pedido no se puede reembolsar.',
-                providerFailure: 'El proveedor de pago rechazó el reembolso. Inténtalo de nuevo.',
-            },
-        },
-    },
-    enterprise: {
-        leadReceived: 'Gracias — nuestro equipo se pondrá en contacto en breve.',
-        agreementSaved: 'Acuerdo guardado.',
-        agreementActivated: 'Acuerdo activado.',
-        agreementSuspended: 'Acuerdo suspendido.',
-        agreementEnded: 'Acuerdo finalizado.',
-        leadStatusUpdated: 'Estado del contacto actualizado.',
-        errors: {
-            agreementNotFound: 'No existe ningún acuerdo empresarial para esa cuenta.',
-            agreementEnded: 'Ese acuerdo ha finalizado y ya no se puede editar.',
-            productIdTaken: 'Ese producto de Polar ya está vinculado a otro acuerdo.',
-            productIdReserved: 'Ese id de producto de Polar pertenece a un plan estándar o a un paquete.',
-            invalidCaps: 'Los límites Enterprise deben usar métricas conocidas y números enteros finitos.',
-            invalidCap: '{{metric}} debe ser un número entero entre 0 y {{maximum}} para un acuerdo Enterprise.',
-            invalidSeats: 'Los puestos Enterprise deben ser un número entero entre 1 y {{maximum}}.',
-            priceBelowFloor: 'El precio acordado está por debajo del mínimo comercial y de margen de Enterprise. El mínimo es {{floorCents}} céntimos al mes.',
-            leadNotFound: 'Ese contacto ya no existe.',
-            notEnterprise: 'Esa cuenta no tiene un acuerdo empresarial.',
         },
     },
     team: {
@@ -1359,7 +1190,6 @@ export const es: DictionaryShape = {
         roleChanged: 'Rol actualizado.',
         inviteResent: 'Se ha enviado un nuevo enlace de invitación a {{email}}.',
         errors: {
-            seatCapExceeded: 'Has ocupado todos los puestos de tu plan. Mejora tu plan para invitar a más compañeros.',
             alreadyInvited: 'Ya hay una invitación pendiente para ese correo.',
             alreadyMember: 'Ese correo ya es miembro del equipo.',
             inviteNotFound: 'Ese enlace de invitación no es válido.',
@@ -1373,15 +1203,6 @@ export const es: DictionaryShape = {
             inviteDeliveryFailed: 'No se pudo entregar el correo de invitación. No se creó ninguna invitación.',
             provisionalRestricted: 'Cambia tu contraseña temporal y acepta una invitación para continuar.',
             inviteBeingCleaned: 'La cuenta invitada se está limpiando. Inténtalo de nuevo en breve.',
-        },
-    },
-    superadmin: {
-        errors: {
-            invalidSort: "Esa columna de ordenación no está permitida.",
-            cannotSelfDemote: "No puedes quitar tu propio rol de SuperAdmin.",
-            cannotDeleteSelf: "No puedes eliminar tu propia cuenta de SuperAdmin.",
-            cannotDemoteLastSuperAdmin: "No puedes quitar al último SuperAdmin.",
-            cannotSuspendLastSuperAdmin: "No puedes suspender al último SuperAdmin.",
         },
     },
     apiKeys: {
@@ -1437,6 +1258,8 @@ export const es: DictionaryShape = {
             getBacklinksSummary: { description: 'Devuelve el resumen de backlinks almacenado de un sitio propio: total de backlinks, dominios de referencia distintos y cuándo se obtuvo. Solo lectura; nunca obtiene datos nuevos ni usa filas de backlinks. Cita la fecha de obtención y mantén separados los dos recuentos.' },
             listBacklinks: { description: 'Lista los backlinks almacenados de un sitio propio, un enlace por dominio de referencia, con marcas de sospecha que son sospechas y no verificaciones. Solo lectura; lee únicamente filas almacenadas y nunca usa filas de backlinks. Cita la fecha de obtención y el alcance.' },
             listCompetitors: { description: 'Lista la cartera de competidores de un sitio propio, perfiles activos y archivados. Solo lectura; sin rastreo ni gasto.' },
+            listKeywordResearchHistory: { description: 'Lista el historial almacenado de investigación de palabras clave de la cuenta: qué se buscó, cuándo, y la ubicación y el idioma. Solo lectura; nunca llama al proveedor de datos.' },
+            getKeywordResearchResult: { description: 'Devuelve el resultado almacenado de una entrada del historial de investigación de palabras clave, con estado available, partial, expired o unsupported. Lee solo la caché almacenada; nunca actualiza ni llama al proveedor de datos. Cita la fecha de obtención.' },
             getAiVisibilitySummary: { description: 'Devuelve el resumen almacenado de AI Visibility de un sitio propio: prompts seguidos, últimas comprobaciones por motor y cuota de voz. Solo lectura; nunca ejecuta una comprobación. Cita las fechas de comprobación e indica cuándo la evidencia es limitada.' },
             getLocalSeoSummary: { description: 'Devuelve el resumen almacenado de SEO local de un sitio propio: instantánea del perfil del negocio, coherencia de nombre, dirección y teléfono, y posiciones en el paquete local. Solo lectura; nunca actualiza fichas.' },
             getReviewsSummary: { description: 'Devuelve el resumen almacenado de reseñas de un sitio propio: fuentes de reseñas y su preparación, estadísticas de valoración y temas almacenados. Solo lectura; nunca inicia una sincronización de reseñas.' },
@@ -1564,7 +1387,6 @@ export const es: DictionaryShape = {
                 runInFlight: 'Ya hay un inventario en curso para este sitio. Espera a que termine antes de iniciar otro.',
                 originUnsafe: 'La dirección de este sitio apunta a una ubicación bloqueada o interna y no se puede rastrear.',
                 seedUnsafe: 'Una dirección de sitemap que proporcionaste apunta a una ubicación bloqueada o interna.',
-                capExceeded: 'Has usado todos tus bloques de páginas de inventario de contenido de este mes.',
                 queueUnavailable: 'La cola del inventario no está disponible. Inténtalo de nuevo en breve.',
                 notFound: 'Inventario no encontrado.',
                 notCancellable: 'Este inventario ya ha finalizado.',
@@ -1600,7 +1422,6 @@ export const es: DictionaryShape = {
                 reviewedTargetsInvalid: 'Las páginas revisadas ya no son seguras o actuales.',
                 unavailable: 'La inteligencia de contenido de la competencia no está disponible temporalmente. Inténtalo de nuevo más tarde.',
                 runInFlight: 'Ya hay una comparación de competidores en curso para este sitio. Espera a que termine antes de iniciar otra.',
-                capExceeded: 'Has usado todas tus comparaciones de competidores de este mes.',
                 queueUnavailable: 'La cola de comparación no está disponible. Inténtalo de nuevo en breve.',
                 notFound: 'Comparación de competidores no encontrada.',
                 notCancellable: 'Esta comparación de competidores ya ha finalizado.',
@@ -1650,7 +1471,6 @@ export const es: DictionaryShape = {
                 cursorInvalid: 'Ese cursor de página no es válido.',
             },
             warnings: {
-                capExhausted: 'Has utilizado todas tus comprobaciones de monitorización de este mes, por lo que este monitor está en pausa hasta el mes que viene.',
                 providerDrift: 'Este monitor estaba desincronizado con el proveedor y se ha vuelto a sincronizar.',
             },
         },
@@ -1912,7 +1732,6 @@ export const es: DictionaryShape = {
             siteNotFound: 'No se encontró el sitio.',
             pageNotFound: 'No se encontró la página en el inventario actual de la fuente.',
             rateLimited: 'Demasiadas solicitudes de Pages. Inténtalo de nuevo en breve.',
-            capExceeded: 'Has alcanzado el límite de consultas de palabras clave de este periodo.',
             gscUnavailable: 'Los datos de Search Console no están disponibles temporalmente. Se conservarán los últimos datos correctos cuando sea posible.',
             providerUnavailable: 'Los datos de posicionamiento no están disponibles temporalmente. Intenta actualizar más tarde.',
             refreshFailed: 'No se pudo guardar la actualización de Pages. Se conservaron los últimos datos correctos.',

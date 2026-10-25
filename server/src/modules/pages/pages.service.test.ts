@@ -733,7 +733,7 @@ describe('Pages GSC precedence and refresh', () => {
   });
 });
 
-describe('Pages opportunity ordering and query-count semantics (QA #14)', () => {
+describe('Pages opportunity ordering and query-count semantics', () => {
   const day = '2026-08-06';
   const fetchedAt = new Date('2026-08-09T00:00:00Z');
   const url = (name: string) => `https://example.com/${name}`;

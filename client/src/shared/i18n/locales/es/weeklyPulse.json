@@ -97,7 +97,6 @@
   },
   "errors": {
     "unexpected": "Algo salió mal — inténtalo de nuevo.",
-    "overCap": "Se ha agotado el límite de tu plan. Actualiza o compra créditos para recibir los pulsos semanales.",
     "acknowledgePreviewRequired": "Previsualiza el gasto antes de activar.",
     "reconnectRequired": "Vuelve a conectar Google Search Console para cargar estos datos.",
     "unauthorized": "Inicia sesión para ver el pulso semanal."

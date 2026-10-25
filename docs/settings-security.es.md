@@ -65,6 +65,10 @@ Si tu cuenta tiene el rol **Admin**, la autenticación de dos factores es obliga
 
 Usa un código de respaldo en la pantalla de verificación: hay un enlace **Usar un código de respaldo**. Si te quedas sin códigos, un admin puede restablecer el segundo factor desde el panel.
 
+## Sesiones activas
+
+La lista **Sesiones activas** muestra cada dispositivo con sesión iniciada en tu cuenta: el navegador y el sistema, un icono de ordenador, móvil o tableta, y la dirección IP si se registró. Es posible que se te pida confirmar tu identidad antes de mostrar la lista. Este dispositivo indica «Activo ahora». Los demás muestran el día de su último uso, porque el registro de inicio de sesión se actualiza una vez al día aproximadamente. No se muestra ninguna ubicación, ya que haría falta un servicio de consulta de IP. Revoca cualquier dispositivo que no reconozcas o usa **Cerrar sesión en los demás dispositivos**. Antes de revocar, una confirmación nombra el dispositivo; después deberá iniciar sesión de nuevo.
+
 ## Tus derechos sobre los datos
 
 Puedes solicitar una exportación o la eliminación de los datos de tu cuenta. La exportación actual se limita a los conjuntos presentes en el archivo generado y excluye las instantáneas de Páginas y el historial temporal de GSC y del seguimiento de posiciones. La eliminación tiene un alcance mayor: después del periodo de gracia borra los datos guardados de la cuenta aunque no formen parte de la exportación. Puedes cancelar la solicitud durante ese periodo. Consulta [Rendimiento de páginas](./pages-performance.es.md) para conocer la conservación de esos datos.

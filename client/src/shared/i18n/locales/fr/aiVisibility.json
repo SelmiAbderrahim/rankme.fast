@@ -120,7 +120,6 @@
     "aiGenerated": "Suggestion IA",
     "generate": "Générer des suggestions",
     "cooldown_one": "Attendez {{seconds}} s avant de générer à nouveau.",
-    "capReached": "Vous avez utilisé toutes vos générations de suggestions ce mois-ci.",
     "emptyGenerated": "Nous n'avons pas encore pu créer de questions à partir de vos données. Ajoutez des mots-clés suivis ou lancez un audit, puis générez à nouveau.",
     "generatedAt": "Généré le {{date}}",
     "outputLocale": "Langue de sortie : {{locale}}",
@@ -144,10 +143,6 @@
     "regenerate": "Régénérer les suggestions",
     "staleBody": "Elles ont été créées avant que les suggestions n’utilisent que les données de ce site, nous les avons donc masquées. Générez un nouvel ensemble avec le bouton ci-dessus. Rien n’est décompté avant votre clic.",
     "staleTitle": "Ces suggestions sont périmées"
-  },
-  "locked": {
-    "body": "AI Visibility est disponible avec le forfait Agency.",
-    "upgrade": "Voir les forfaits"
   },
   "add": {
     "failed": "Impossible d'ajouter cette requête."

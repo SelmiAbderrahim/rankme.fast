@@ -21,7 +21,6 @@ vi.mock('../ranks/index.js', () => ({}));
 vi.mock('../content-intelligence/index.js', () => ({}));
 vi.mock('../api-keys/index.js', () => ({ getApiKeysDb: mocks.getApiKeysDb }));
 import { DICTIONARIES } from '../../shared/i18n/index.js';
-import { HttpError } from '../../shared/utils/http-error.js';
 import {
   STORED_READ_MAX_BYTES,
   STORED_READ_REASONS,

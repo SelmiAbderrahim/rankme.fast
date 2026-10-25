@@ -18,6 +18,7 @@ import {
 } from './DeepPullViews';
 import { GapWorkspace } from './GapWorkspace';
 import { ToxicityWorkspace } from './ToxicityWorkspace';
+import { PageHeading } from '@shared/components/PageHeader';
 
 interface BacklinksWorkspaceProps {
   siteId: string;
@@ -63,7 +64,7 @@ export function BacklinksWorkspace({ siteId, embedded = false }: BacklinksWorksp
           {embedded ? (
             <h2 className="text-2xl font-semibold">{t('intelligence.title')}</h2>
           ) : (
-            <h1 className="text-2xl font-semibold">{t('intelligence.title')}</h1>
+            <PageHeading className="text-2xl font-semibold">{t('intelligence.title')}</PageHeading>
           )}
           <p className="text-muted-foreground text-sm">{t('intelligence.description')}</p>
         </div>

@@ -21,9 +21,9 @@ We ask the Search Console API for `dimensions=['searchAppearance']` over the las
 ## States
 
 - **Available**: Google returned at least one recognized generative AI row. The card shows the clicks, impressions, CTR and average position Google sent for each row.
-- **Unavailable**: Google returned no recognized generative AI row for this property and time window. That's different from zero. Google didn't report the feature at all, so we leave it blank instead of showing 0.
-- **Partial**: Google returned rows but marked the response as partial (because of a rate limit or truncation). The rows we did get are still shown.
-- **Reconnect required**: your Google connection needs to be reconnected. Open the site's Google workspace and follow the reconnect prompt.
+- **Not appearing yet**: Google returned no recognized generative AI row for this property and time window. That's different from zero. Google didn't report the feature at all, so we leave it blank instead of showing 0.
+- **Partial data**: Google returned rows but marked the response as partial (because of a rate limit or truncation). The rows we did get are still shown.
+- **Reconnect Google Search Console**: your Google connection needs to be reconnected. Open the site's Google workspace and follow the reconnect prompt.
 
 ## Separate from provider metrics
 

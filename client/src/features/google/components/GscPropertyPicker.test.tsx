@@ -49,4 +49,26 @@ describe('Search Console property choice', () => {
     await user.click(screen.getByTestId('gsc-property-refresh'));
     expect(onRefresh).toHaveBeenCalledOnce();
   });
+
+  it('names a URL-prefix property by its host and keeps an unparseable value readable', async () => {
+    const user = userEvent.setup();
+    show({ properties: [
+      { siteUrl: 'https://example.com/', permissionLevel: 'siteOwner', matchesSite: true },
+      { siteUrl: 'https://other.example/path', permissionLevel: 'siteOwner', matchesSite: false },
+      { siteUrl: 'not a url', permissionLevel: 'siteOwner', matchesSite: false,
+        inUseBy: [{ siteId: 's2', domain: 'used.example', displayName: '' }] },
+    ] as never });
+    await user.click(screen.getByRole('button', { name: 'Link a different property' }));
+    await chooseOption(user, screen.getByRole('combobox', { name: 'Property from a different site' }), 'https://other.example/path');
+    expect(within(screen.getByTestId('gsc-property-mismatch-dialog')).getByRole('heading')).toHaveTextContent('other.example');
+    await user.click(within(screen.getByTestId('gsc-property-mismatch-dialog')).getByRole('button', { name: 'Cancel' }));
+    await chooseOption(user, screen.getByRole('combobox', { name: 'Property from a different site' }), /not a url — used\.example/);
+    expect(within(screen.getByTestId('gsc-property-mismatch-dialog')).getByRole('heading')).toHaveTextContent('not a url');
+  });
+
+  it('opens the other-property section when the linked property belongs to another site', () => {
+    show({ propertyUrl: 'sc-domain:other.example' });
+    expect(screen.getByTestId('gsc-property-other-select')).toHaveTextContent('sc-domain:other.example');
+    expect(screen.getByTestId('gsc-property-other-toggle')).toHaveAttribute('aria-expanded', 'true');
+  });
 });

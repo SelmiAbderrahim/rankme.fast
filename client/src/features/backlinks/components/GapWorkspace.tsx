@@ -19,6 +19,7 @@ import {
 } from '@shared/ui/card';
 import { Empty, EmptyDescription, EmptyHeader, EmptyTitle } from '@shared/ui/empty';
 import { Field, FieldDescription, FieldGroup, FieldLabel } from '@shared/ui/field';
+import { MetricValue } from '@shared/components/MetricValue';
 import { Input } from '@shared/ui/input';
 import { Skeleton } from '@shared/ui/skeleton';
 import { StatusChip, type StatusTone } from '@shared/ui/status-chip';
@@ -416,7 +417,9 @@ export function GapCompetitorCard({ leg }: { leg: LinkGapLeg }) {
                       row.domain
                     )}</Bdi>
                   </TableCell>
-                  <TableCell>{row.rank ?? '—'}</TableCell>
+                  <TableCell>
+                    <MetricValue kind="count" value={row.rank} />
+                  </TableCell>
                   <TableCell>{formatGapFirstSeen(row.firstSeen, i18n.language)}</TableCell>
                 </TableRow>
               ))}
@@ -452,12 +455,12 @@ export function GapOverlapStats({
     <dl className="grid gap-3 sm:grid-cols-3" data-testid="gap-overlap-stats">
       <div>
         <dt className="text-muted-foreground text-xs">{t('gap.overlap.totalUnique')}</dt>
-        <dd className="font-semibold">{overlap ? integer.format(overlap.totalUnique) : '—'}</dd>
+        <dd className="font-semibold">{overlap ? integer.format(overlap.totalUnique) : <MetricValue kind="count" value={null} />}</dd>
       </div>
       <div>
         <dt className="text-muted-foreground text-xs">{t('gap.overlap.exclusiveToCompetitor')}</dt>
         <dd className="font-semibold">
-          {overlap ? integer.format(overlap.exclusiveToCompetitor) : '—'}
+          {overlap ? integer.format(overlap.exclusiveToCompetitor) : <MetricValue kind="count" value={null} />}
         </dd>
       </div>
       <div>
@@ -465,7 +468,7 @@ export function GapOverlapStats({
         <dd className="font-semibold">
           {overlap
             ? t('gap.overlap.exclusivePct', { pct: percentage.format(overlap.exclusivePct) })
-            : '—'}
+            : <MetricValue kind="ratio" value={null} />}
         </dd>
       </div>
     </dl>

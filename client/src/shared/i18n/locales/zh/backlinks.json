@@ -53,17 +53,12 @@
     "cooldown_many": "请等待 {{seconds}} 秒后再刷新。",
     "cooldown_other": "请等待 {{seconds}} 秒后再刷新。"
   },
-  "locked": {
-    "title": "升级以解锁反向链接",
-    "body": "域名评分、引用域名和您的反向链接列表都是 Pro 计划的一部分。",
-    "upgrade": "查看计划"
-  },
   "errors": {
     "capExceeded": "您套餐的反向链接行数额度（{{used}}/{{limit}} {{metric}}）已用尽。请升级套餐或购买信用包以获取更多行。"
   },
   "intelligence": {
     "title": "链接情报",
-    "description": "查看已保存的反向链接证据，并选择何时花费额度进行新的提供商查询。",
+    "description": "查看已保存的反向链接数据，并选择何时获取最新数据。",
     "tabs": {
       "label": "链接情报视图",
       "overview": "概览",
@@ -77,14 +72,11 @@
     "preview": {
       "title": "花费预览",
       "description": "此估算免费。仅在确认后预留额度。",
-      "units": "{{count}} 个额度",
       "cached": "缓存结果",
       "mixed": "混合缓存",
-      "fresh": "需要新查询",
+      "fresh": "需要最新数据",
       "available": "额度可用",
       "unavailable": "额度已用尽",
-      "baseRemaining": "剩余 {{count}} 个基础额度",
-      "packRemaining": "剩余 {{count}} 个加购额度",
       "confirm": "确认并开始查询",
       "cancel": "取消",
       "button": "预览花费"
@@ -92,18 +84,13 @@
     "states": {
       "default": "尚无已保存的列表。概览只显示总数，此列表需单独查询。运行前请先预览。",
       "emptyTitle": "未找到结果",
-      "emptyBody": "提供商已完成查询，但没有找到匹配行。",
+      "emptyBody": "检查已完成，但没有找到匹配的行。",
       "partialTitle": "部分结果",
-      "partialBody": "提供商停止响应前已保留部分行。",
-      "providerTitle": "提供商查询失败",
-      "providerBody": "未保留任何行，预留额度已退回。",
-      "capTitle": "链接情报额度已用尽",
-      "capBody": "请使用 {{pack}} 加购包或等待额度续期。",
+      "partialBody": "数据源停止响应前已保存部分行。",
+      "providerTitle": "无法获取最新数据",
+      "providerBody": "未保存任何内容。",
       "disabledTitle": "链接情报暂时停用",
-      "disabledBody": "仍可查看已保存结果，但新查询已暂停。",
-      "lockedTitle": "升级以解锁链接情报",
-      "lockedBody": "深度反向链接查询适用于 Pro 和 Agency 套餐。",
-      "upgrade": "查看套餐",
+      "disabledBody": "已保存的结果仍可查看，但获取最新数据已暂停。",
       "errorTitle": "无法加载链接情报"
     },
     "provenance": {
@@ -126,7 +113,7 @@
     },
     "bulk": {
       "title": "批量域名评分",
-      "description": "查询最多 100 个唯一域名的提供商评分。",
+      "description": "查看最多 100 个不同域名的域名排名。",
       "label": "域名",
       "help": "每行输入一个域名，或使用逗号分隔。",
       "invalid": "请输入 1 到 100 个有效域名。",
@@ -155,7 +142,7 @@
     },
     "errors": {
       "preview": "无法准备花费预览。",
-      "submit": "无法启动提供商查询。",
+      "submit": "无法开始获取最新数据。",
       "load": "无法加载已保存结果。"
     }
   },
@@ -178,11 +165,8 @@
     },
     "preview": {
       "title": "链接缺口消耗预览",
-      "units": "{{n}} 个单位",
-      "remainingBase": "剩余 {{n}} 个基础单位",
-      "remainingPack": "剩余 {{n}} 个包单位",
       "cached": "缓存证据",
-      "fresh": "需要新的提供商请求",
+      "fresh": "最新数据",
       "confirm": "确认并开始差距分析",
       "cancel": "取消",
       "button": "预览缺口消耗"
@@ -198,7 +182,7 @@
     },
     "legStatus": {
       "ok": "已完成 · 已消耗单位",
-      "provider_failed_refunded": "提供商失败 · 已退还单位",
+      "provider_failed_refunded": "数据来源失败",
       "zero_retained_consumed": "无保留行 · 已消耗单位",
       "zero_retained_refunded": "无保留行 · 已退还单位"
     },
@@ -225,25 +209,19 @@
   "toxicity": {
     "start": {
       "title": "审核反向链接观测",
-      "description": "使用确定性规则为最多 1000 条已存反向链接评分，再决定导出内容。"
+      "description": "在决定导出内容之前，按固定的预警规则为最多 1,000 条已保存的反向链接评分。"
     },
     "preview": {
       "unit": "1 个链接审核单位",
       "rowClamp": "最多 1000 行 · 100 个评分域名",
       "available": "配额可用",
-      "capReached": "配额已用完",
-      "explanation": "每次运行使用 1 个 toxicity_reviews 单位。包含配额用完后可购买 toxicity-reviews-10 包。预览和取消不会消耗单位。",
       "confirm": "确认并使用 1 个单位",
       "cancel": "取消",
       "button": "预览审核消耗"
     },
     "states": {
-      "lockedTitle": "升级以审核反向链接",
-      "lockedBody": "Pro 和 Agency 套餐可使用链接审核和拒绝链接文件生成器。",
       "disabledTitle": "新链接审核已暂停",
       "disabledBody": "暂停新评分期间，已保存的审核仍可查看。",
-      "capTitle": "链接审核配额已用完",
-      "capBody": "添加 toxicity-reviews-10 包或等待配额刷新。",
       "errorTitle": "无法加载链接审核",
       "errorBody": "请稍后重试。已保存结果和此前下载不受影响。",
       "listError": "无法加载已保存的链接审核。",
@@ -256,8 +234,6 @@
       "emptyBody": "运行已完成，但未保留评分后的反向链接行。"
     },
     "actions": {
-      "viewPlans": "查看套餐",
-      "viewPacks": "查看点数包",
       "open": "打开",
       "back": "返回新审核"
     },
@@ -273,7 +249,7 @@
     "filters": {
       "status": "按状态筛选审核",
       "allStatuses": "全部状态",
-      "band": "按规则分组筛选行",
+      "band": "按风险等级筛选行",
       "allBands": "全部分组"
     },
     "status": {
@@ -284,15 +260,15 @@
     },
     "results": {
       "title": "链接审核结果",
-      "rubric": "规则 {{version}}",
+      "rubric": "规则版本 {{version}}",
       "rowsTitle": "已评分的反向链接行",
-      "observationCopy": "分组描述固定规则下已保存的提供商观测，不预测搜索引擎会采取的操作。",
-      "providerObservation": "提供商观测 · 确定性规则"
+      "observationCopy": "风险等级按此版本的规则描述已保存的反向链接数据，不预测搜索引擎会如何处理。",
+      "providerObservation": "已保存的反向链接数据 · 基于规则的评分"
     },
     "columns": {
       "domain": "来源域名",
       "score": "垃圾评分",
-      "band": "规则分组",
+      "band": "风险等级",
       "signals": "影响信号",
       "firstSeen": "首次发现",
       "lastSeen": "最后发现",
@@ -315,8 +291,8 @@
       "toggle": "说明",
       "not_requested": "此行未请求说明。",
       "annotated": "已保存说明",
-      "abstained": "AI 选择不作说明；确定性分组未改变。",
-      "failed": "说明不可用；确定性分组未改变。"
+      "abstained": "AI 未给出解释；基于规则的风险等级不变。",
+      "failed": "暂无解释；基于规则的风险等级不变。"
     },
     "disavow": {
       "title": "生成拒绝链接文件",
@@ -335,18 +311,9 @@
       "urlScope": "精确 URL"
     }
   },
-  "cap": {
-    "reached": "{{metric}} 配额已用完",
-    "pack": "{{name}} 以 {{price}} 增加 {{units}} 个单位。",
-    "upgrade": "查看计费选项"
-  },
   "killswitch": {
     "title": "链接缺口暂时不可用",
     "disabled": "新分析已暂停。已保存的链接缺口结果仍可查看。"
-  },
-  "tier": {
-    "locked": "升级以解锁链接缺口",
-    "lockedBody": "链接缺口分析适用于 Pro 和 Agency 套餐。"
   },
   "suspicion": {
     "badge": "疑似垃圾链接",

@@ -155,7 +155,9 @@
     "actor": "Membre de l'équipe",
     "from": "depuis {{state}}",
     "close": "Fermer",
-    "actorYou": "Vous"
+    "actorYou": "Vous",
+    "observed": "Constaté",
+    "actorSystem": "Contrôle automatique"
   },
   "retest": {
     "title": "Retester ce constat ?",
@@ -164,8 +166,6 @@
     "unitsValue": "1",
     "freshRun": "Un retest lance toujours une exploration à neuf — les résultats ne proviennent jamais d'un cache.",
     "selfHosted": "Les limites d’utilisation ne sont pas appliquées sur ce serveur.",
-    "remaining": "{{remaining}} audits restants sur {{cap}} pour cette période",
-    "allowanceUnknown": "Impossible de charger votre quota restant. Le serveur vérifiera votre limite avant l'exécution.",
     "confirm": "Lancer le retest",
     "starting": "Lancement…",
     "queued": "Retest en file d'attente. Suivez la progression dans l'onglet Rapport.",

@@ -1,5 +1,5 @@
 /**
- * QA round 2, P1-23 / F8: the shared site picker isolates each site name, keeps
+ * The shared site picker isolates each site name, keeps
  * the localized "paused" suffix outside the isolate, and says when the list is
  * partial instead of passing a truncated list for the whole account.
  */

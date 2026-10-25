@@ -44,6 +44,7 @@ import { NewRunPanel } from './NewRunPanel';
 import { RunList } from './RunList';
 import { StateNotice } from './StateNotice';
 import { SuggestionList } from './SuggestionList';
+import { PageHeading } from '@shared/components/PageHeader';
 
 const POLL_INTERVAL_MS = 1_500;
 
@@ -215,7 +216,7 @@ export const InternalLinksPage = ({ siteId }: InternalLinksPageProps) => {
     >
       <div className="flex flex-wrap items-start justify-between gap-3">
         <div className="space-y-2">
-          <h1 className="text-2xl font-semibold tracking-tight">{t('title')}</h1>
+          <PageHeading className="text-2xl font-semibold tracking-tight">{t('title')}</PageHeading>
           <p className="max-w-3xl text-sm text-muted-foreground">{t('subtitle')}</p>
         </div>
         <Button asChild variant="outline" size="sm">

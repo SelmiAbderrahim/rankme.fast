@@ -21,9 +21,9 @@ Nous interrogeons l'API Search Console avec `dimensions=['searchAppearance']` su
 ## États
 
 - **Disponible** : Google a renvoyé au moins une ligne générative reconnue. La carte affiche, pour chaque ligne, les clics, impressions, CTR et position moyenne envoyés par Google.
-- **Indisponible** : Google n'a renvoyé aucune ligne générative reconnue pour cette propriété et cette période. Ce n'est pas un zéro : Google n'a rien signalé du tout, donc nous laissons la case vide au lieu d'afficher 0.
-- **Partiel** : Google a renvoyé des lignes mais a marqué la réponse comme partielle (limite de débit ou troncature). Les lignes reçues restent affichées.
-- **Reconnexion requise** : la connexion Google doit être renouvelée. Ouvrez l'espace Google du site et suivez l'invite de reconnexion.
+- **Pas encore d’apparition** : Google n'a renvoyé aucune ligne générative reconnue pour cette propriété et cette période. Ce n'est pas un zéro : Google n'a rien signalé du tout, donc nous laissons la case vide au lieu d'afficher 0.
+- **Données partielles** : Google a renvoyé des lignes mais a marqué la réponse comme partielle (limite de débit ou troncature). Les lignes reçues restent affichées.
+- **Reconnecter Google Search Console** : la connexion Google doit être renouvelée. Ouvrez l'espace Google du site et suivez l'invite de reconnexion.
 
 ## Distinct des métriques fournisseur
 

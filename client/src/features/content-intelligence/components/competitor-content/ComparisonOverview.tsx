@@ -1,4 +1,5 @@
 import { Bdi } from '@shared/components/Bdi';
+import { SignedNumber } from '@shared/components/SignedNumber';
 import { useMemo } from 'react';
 import { useSearchParams } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
@@ -37,10 +38,6 @@ function matchesDimension(delta: CompetitorDelta, dim: Dimension): boolean {
     default:
       return true;
   }
-}
-
-function signed(value: number): string {
-  return value > 0 ? `+${value}` : String(value);
 }
 
 /**
@@ -197,16 +194,16 @@ export function ComparisonOverview({ deltas, partialDomains }: ComparisonOvervie
                           {d.competitorDomain}
                         </TableCell>
                         <TableCell className="text-end tabular-nums">
-                          {signed(d.wordCountDelta)}
+                          <SignedNumber value={d.wordCountDelta} />
                         </TableCell>
                         <TableCell className="text-end tabular-nums">
-                          {signed(d.headingCountDelta)}
+                          <SignedNumber value={d.headingCountDelta} />
                         </TableCell>
                         <TableCell className="text-end tabular-nums">
-                          {signed(d.internalLinkDelta)}
+                          <SignedNumber value={d.internalLinkDelta} />
                         </TableCell>
                         <TableCell className="text-end tabular-nums">
-                          {signed(d.externalLinkDelta)}
+                          <SignedNumber value={d.externalLinkDelta} />
                         </TableCell>
                         <TableCell>
                           <div className="flex flex-wrap gap-1">

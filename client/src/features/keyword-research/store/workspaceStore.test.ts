@@ -25,6 +25,7 @@ vi.mock('../api', async () => {
     fetchClusterRunsRequest: vi.fn(),
     fetchClusterRunRequest: vi.fn(),
     postClusterDecisionRequest: vi.fn(),
+    fetchStoredKeywordsRequest: vi.fn(),
   };
 });
 
@@ -35,6 +36,7 @@ import {
   fetchKeywordPreview,
   loadClusterRun,
   loadClusterRuns,
+  loadStoredKeywords,
   runClusters,
   runGap,
   runOverview,
@@ -127,6 +129,7 @@ beforeEach(() => {
   vi.mocked(api.fetchClusterRunsRequest).mockReset();
   vi.mocked(api.fetchClusterRunRequest).mockReset();
   vi.mocked(api.postClusterDecisionRequest).mockReset();
+  vi.mocked(api.fetchStoredKeywordsRequest).mockReset();
 });
 
 describe('fetchKeywordPreview', () => {
@@ -345,6 +348,63 @@ describe('runClusters', () => {
     await store.dispatch(runClusters(args));
     expect(store.getState().keywordResearch.clusters.runError).not.toBe('');
     expect(store.getState().keywordResearch.clusters.running).toBe(false);
+  });
+});
+
+describe('loadStoredKeywords', () => {
+  const page = (phrase: string) => ({
+    candidates: [{ phrase, source: 'seed' as const, searchVolume: null, observedAt: '2026-07-01T00:00:00.000Z' }],
+    total: 1,
+    truncated: false,
+  });
+  const args = { locationCode: 2840, languageCode: 'en' };
+
+  it('loads the picker candidates and flips loading around the request', async () => {
+    const store = makeStore();
+    vi.mocked(api.fetchStoredKeywordsRequest).mockReturnValueOnce(new Promise(() => {}));
+    void store.dispatch(loadStoredKeywords(args));
+    expect(store.getState().keywordResearch.clusters.candidates.loading).toBe(true);
+    vi.mocked(api.fetchStoredKeywordsRequest).mockResolvedValueOnce(page('alpha'));
+    await store.dispatch(loadStoredKeywords(args));
+    const { candidates } = store.getState().keywordResearch.clusters;
+    expect(candidates.loading).toBe(false);
+    expect(candidates.data?.candidates[0]?.phrase).toBe('alpha');
+  });
+
+  it('never lets a slower, earlier response overwrite the newest one', async () => {
+    const store = makeStore();
+    let resolveSlow: (value: ReturnType<typeof page>) => void = () => undefined;
+    vi.mocked(api.fetchStoredKeywordsRequest)
+      .mockReturnValueOnce(new Promise((resolve) => { resolveSlow = resolve; }))
+      .mockResolvedValueOnce(page('newest'));
+    const slow = store.dispatch(loadStoredKeywords({ ...args, q: 'a' }));
+    await store.dispatch(loadStoredKeywords({ ...args, q: 'ab' }));
+    resolveSlow(page('stale'));
+    await slow;
+    expect(store.getState().keywordResearch.clusters.candidates.data?.candidates[0]?.phrase).toBe('newest');
+  });
+
+  it('keeps a localized message for a failed load, and ignores a failure from an older request', async () => {
+    const store = makeStore();
+    vi.mocked(api.fetchStoredKeywordsRequest).mockRejectedValueOnce(new Error('network down'));
+    await store.dispatch(loadStoredKeywords(args));
+    expect(store.getState().keywordResearch.clusters.candidates.error).toBe(
+      'Could not load your stored keywords.',
+    );
+    expect(store.getState().keywordResearch.clusters.candidates.loading).toBe(false);
+    // A rejection that belongs to an older request is dropped.
+    const stale = keywordResearchReducer(
+      store.getState().keywordResearch,
+      loadStoredKeywords.rejected(new Error('x'), 'older-request', args, 'older'),
+    );
+    expect(stale.clusters.candidates.error).toBe('Could not load your stored keywords.');
+    // A rejection without a payload empties the error instead of crashing.
+    const pending = keywordResearchReducer(
+      initialState,
+      loadStoredKeywords.pending('req-1', args),
+    );
+    const bare = keywordResearchReducer(pending, loadStoredKeywords.rejected(new Error('x'), 'req-1', args));
+    expect(bare.clusters.candidates.error).toBe('');
   });
 });
 

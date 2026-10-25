@@ -30,6 +30,7 @@ import { AiInvalidInputError, type AiGenerationProviderKey } from '../../shared/
 import { keywordResearchHistory } from '../../db/schema/keyword-research-history.js';
 import { vendorCache } from '../../db/schema/vendor-cache.js';
 import { normalizeCachePhrase, computeKeywordCacheKey } from './keyword-research.cache.js';
+import { collectStoredKeywordCandidates } from './keyword-research.stored.js';
 import { KeywordClusterRun, type KeywordClusterRunDocument, } from './keyword-cluster-runs.model.js';
 const AI_PROFILE_NAME = 'keyword_clustering' as const;
 const AI_PROFILE_VERSION = '1.0.0';
@@ -235,6 +236,32 @@ export async function resolvePhrasesToStoredRows(db: Db, input: {
                 source: 'history',
                 observedAt: seen,
                 searchVolume: null,
+                intent: null,
+            });
+        }
+    }
+    // 3. Fill remaining from the account's stored seed expansions (related /
+    // ideas / long-tail rows cached under seeds it searched). These phrases have
+    // no cache row of their own: they are the same read-only set the cluster
+    // picker offers, so a phrase picked from the picker always resolves here.
+    const stillMissing = normalized.filter((phrase) => !resolved.has(phrase));
+    if (stillMissing.length > 0) {
+        const stored = await collectStoredKeywordCandidates(db, {
+            accountId: input.accountId,
+            locationCode: input.locationCode,
+            languageCode: input.languageCode,
+            now,
+        });
+        const storedByPhrase = new Map(stored.map((candidate) => [candidate.phrase, candidate]));
+        for (const phrase of stillMissing) {
+            const candidate = storedByPhrase.get(phrase);
+            if (!candidate)
+                continue;
+            resolved.set(phrase, {
+                keyword: phrase,
+                source: 'vendor_cache',
+                observedAt: candidate.observedAt,
+                searchVolume: candidate.searchVolume,
                 intent: null,
             });
         }

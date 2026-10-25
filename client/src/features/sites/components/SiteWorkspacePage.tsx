@@ -14,7 +14,7 @@ import { Suspense, lazy, useCallback, useEffect, useState, type ReactNode } from
 import { Link, useParams } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { Pause, Play, SearchX } from 'lucide-react';
-import { PageHeader } from '@shared/components/PageHeader';
+import { PageHeader, PageHeadingLevelProvider } from '@shared/components/PageHeader';
 import { Alert, AlertDescription, AlertTitle } from '@shared/ui/alert';
 import { Button } from '@shared/ui/button';
 import { formatRelativeTime } from '@shared/lib/datetime';
@@ -540,7 +540,7 @@ export const SiteWorkspacePage = () => {
       >
         <SiteGoogleReadinessProvider siteId={siteId} domain={site.domain} readiness={site.google}>
           <SiteMarketProvider market={siteMarket} onEditMarket={openMarketEditor}>
-            {panels[activeTab]}
+            <PageHeadingLevelProvider level={2}>{panels[activeTab]}</PageHeadingLevelProvider>
           </SiteMarketProvider>
         </SiteGoogleReadinessProvider>
       </section>

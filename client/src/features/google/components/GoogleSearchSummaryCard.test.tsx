@@ -337,8 +337,8 @@ describe('GoogleSearchSummaryCard', () => {
     mockedApi.fetchSearchSummary.mockResolvedValue({ summary });
     renderWith(makeStore({ connection: connected }));
     expect(await screen.findByText('1,234')).toBeInTheDocument();
-    // Time-series chart (the only role=img on the card).
-    expect(screen.getByRole('img')).toBeInTheDocument();
+    // Time-series chart.
+    expect(screen.getByTestId('gsc-timeseries-svg')).toBeInTheDocument();
     // Countries: ISO-3166 alpha-3 values get localized display names.
     const countries = screen.getByTestId('google-summary-countries');
     expect(within(countries).getByText('United States')).toBeInTheDocument();
@@ -474,5 +474,50 @@ describe('GoogleSearchSummaryCard', () => {
     expect(
       await screen.findByText('Search performance (last 90 days)'),
     ).toBeInTheDocument();
+  });
+
+  it('ranks the country and device breakdowns by impressions when the period has no clicks', async () => {
+    mockedApi.fetchSearchSummary.mockResolvedValue({
+      summary: {
+        ...summary,
+        totalClicks: 0,
+        countries: [
+          { country: 'usa', clicks: 0, impressions: 100, ctr: 0, position: 3 },
+          { country: 'fra', clicks: 0, impressions: 900, ctr: 0, position: 4 },
+        ],
+        devices: [
+          { device: 'DESKTOP', clicks: 0, impressions: 50, ctr: 0, position: 3 },
+          { device: 'MOBILE', clicks: 0, impressions: 450, ctr: 0, position: 3 },
+        ],
+        dimensionTotals: {
+          country: { rows: 5, clicks: 0, impressions: 1500 },
+          device: { rows: 6, clicks: 0, impressions: 900 },
+        },
+      },
+    });
+    renderWith(makeStore({ connection: connected }));
+    expect(await screen.findByTestId('google-search-summary-card')).toBeInTheDocument();
+    const labels = await screen.findAllByText(/^(France|United States)$/);
+    expect(labels.map((node) => node.textContent)).toEqual(['France', 'United States']);
+  });
+
+  it('ranks the breakdowns by clicks and sums rows when no stored dimension totals exist', async () => {
+    mockedApi.fetchSearchSummary.mockResolvedValue({
+      summary: {
+        ...summary,
+        countries: [
+          { country: 'usa', clicks: 20, impressions: 700, ctr: 0.1, position: 3 },
+          { country: 'fra', clicks: 70, impressions: 400, ctr: 0.05, position: 4 },
+        ],
+        devices: [
+          { device: 'DESKTOP', clicks: 15, impressions: 650, ctr: 0.1, position: 3 },
+          { device: 'MOBILE', clicks: 65, impressions: 150, ctr: 0.1, position: 3 },
+        ],
+        dimensionTotals: { country: { rows: 9, clicks: 200, impressions: 3000 } },
+      },
+    });
+    renderWith(makeStore({ connection: connected }));
+    const labels = await screen.findAllByText(/^(France|United States)$/);
+    expect(labels.map((node) => node.textContent)).toEqual(['France', 'United States']);
   });
 });

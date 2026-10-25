@@ -140,15 +140,6 @@
       "title": "No audit yet",
       "body": "Run an audit for this site and its pages become pickable here."
     },
-    "cap": {
-      "title": "Monthly allowance used",
-      "body": "You have used every markup generation on your plan this month.",
-      "link": "See plans"
-    },
-    "notOnPlan": {
-      "title": "Not on your plan",
-      "body": "Markup generation starts on the Starter plan."
-    },
     "killSwitch": {
       "title": "Temporarily unavailable",
       "body": "New generations are paused right now. Markup you already generated stays readable."

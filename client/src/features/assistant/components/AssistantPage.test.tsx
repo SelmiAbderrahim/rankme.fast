@@ -523,6 +523,48 @@ describe('AssistantPage', () => {
     expect(screen.getByRole('textbox')).toHaveValue('Something new');
   });
 
+  it('re-asks the last question when a cut-off reply is retried, and does nothing without one', async () => {
+    const fetchSpy = vi.spyOn(globalThis, 'fetch').mockResolvedValue(
+      new Response(JSON.stringify({ error: { message: 'Boom', code: 'INTERNAL' } }), {
+        status: 500,
+        headers: { 'Content-Type': 'application/json' },
+      }),
+    );
+    const user = (text: string): ChatMessage => ({
+      ...message('u1', text),
+      role: 'user',
+    });
+    const cutOff: ChatMessage = { ...message('a1', 'Partial'), status: 'incomplete' };
+    renderPage(
+      assistantState({
+        conversations: [conversation()],
+        activeConversationId: 'c1',
+        messagesByConversation: { c1: [user('Summarize my audit'), cutOff] },
+        detailStatus: { c1: 'succeeded' },
+      }),
+    );
+    await userEvent.click(screen.getByRole('button', { name: 'Retry' }));
+    await waitFor(() => expect(fetchSpy).toHaveBeenCalled());
+    expect(JSON.parse(String(fetchSpy.mock.calls[0]![1]!.body))).toEqual({
+      text: 'Summarize my audit',
+    });
+  });
+
+  it('offers no retry for a cut-off reply when no question can be found to re-ask', async () => {
+    const fetchSpy = vi.spyOn(globalThis, 'fetch');
+    const cutOff: ChatMessage = { ...message('a1', 'Partial'), status: 'incomplete' };
+    renderPage(
+      assistantState({
+        conversations: [conversation()],
+        activeConversationId: 'c1',
+        messagesByConversation: { c1: [cutOff] },
+        detailStatus: { c1: 'succeeded' },
+      }),
+    );
+    await userEvent.click(screen.getByRole('button', { name: 'Retry' }));
+    expect(fetchSpy).not.toHaveBeenCalled();
+  });
+
   it('retries a failed conversation detail', async () => {
     const saved = conversation();
     api.getAssistantConversation.mockResolvedValue({

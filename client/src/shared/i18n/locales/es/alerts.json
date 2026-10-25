@@ -132,14 +132,6 @@
     }
   },
   "states": {
-    "cap": {
-      "title": "Límite de reglas alcanzado",
-      "body": "No se puede añadir otra regla de alerta en este momento."
-    },
-    "tierLocked": {
-      "title": "El canal necesita un plan superior",
-      "body": "Los canales de Slack y webhook requieren el plan Pro o superior."
-    },
     "disabled": {
       "title": "Avisos en pausa",
       "body": "Los avisos no están disponibles por ahora. Tus reglas y tu registro siguen aquí."

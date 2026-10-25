@@ -1,13 +1,16 @@
 /**
  * Country + language pickers shared by the workspace forms.
  */
-import { useEffect } from 'react';
+import { useEffect, useMemo } from 'react';
+import { Button } from '@shared/ui/button';
 import { NativeSelect } from '@shared/ui/native-select';
 import { useTranslation } from 'react-i18next';
 import {
   CountryCombobox,
   countryCodeForLocation,
   languageName,
+  pickFallbackLanguage,
+  pickFallbackMarket,
   useMarketCatalog,
 } from '@shared/markets';
 import { LANGUAGE_OPTIONS } from '../validation';
@@ -19,6 +22,19 @@ interface MarketSelectsProps {
   languageCode: string;
   onLocationChange: (code: number) => void;
   onLanguageChange: (code: string) => void;
+  /**
+   * Automatic corrections (a country the catalog lacks, a language it does
+   * not offer for the country). They default to the change handlers; views
+   * with a seeded market pass handlers that do not count as the owner's choice.
+   */
+  onLocationAdjust?: (code: number) => void;
+  onLanguageAdjust?: (code: string) => void;
+  /**
+   * Countries this view can actually run (ISO 3166 alpha-2). The picker offers
+   * only these, and a starting market outside them is corrected instead of
+   * failing on submit.
+   */
+  countryCodes?: readonly string[];
   testIdPrefix: string;
 }
 
@@ -27,31 +43,43 @@ export const MarketSelects = ({
   languageCode,
   onLocationChange,
   onLanguageChange,
+  onLocationAdjust = onLocationChange,
+  onLanguageAdjust = onLanguageChange,
+  countryCodes,
   testIdPrefix,
 }: MarketSelectsProps) => {
   const { t, i18n } = useTranslation();
   const catalog = useMarketCatalog('seo');
-  const selectedMarket = catalog.markets.find((market) => market.locationCode === locationCode);
+  const markets = useMemo(
+    () =>
+      countryCodes
+        ? catalog.markets.filter((market) => countryCodes.includes(market.countryCode))
+        : catalog.markets,
+    [catalog.markets, countryCodes],
+  );
+  const selectedMarket = markets.find((market) => market.locationCode === locationCode);
   const languages = selectedMarket?.languageCodes ?? FALLBACK_LANGUAGES;
 
   useEffect(() => {
     if (catalog.loading || catalog.error || selectedMarket) return;
-    const fallback = catalog.markets.find((market) => market.countryCode === 'US')
-      ?? catalog.markets[0];
-    if (fallback?.locationCode) onLocationChange(fallback.locationCode);
-  }, [catalog.error, catalog.loading, catalog.markets, onLocationChange, selectedMarket]);
+    const fallback = pickFallbackMarket(markets, { locale: i18n.language });
+    if (fallback?.locationCode) onLocationAdjust(fallback.locationCode);
+  }, [catalog.error, catalog.loading, i18n.language, markets, onLocationAdjust, selectedMarket]);
 
+  // Only correct the language against a loaded catalog: while it reloads (a
+  // language switch refetches it) the fallback list would "correct" an Arabic
+  // or Russian market to English.
   useEffect(() => {
-    if (languages.includes(languageCode)) return;
-    const first = languages[0];
-    if (first) onLanguageChange(first);
-  }, [languageCode, languages, onLanguageChange]);
+    if (catalog.loading || catalog.error || languages.includes(languageCode)) return;
+    const next = pickFallbackLanguage(languages, languageCode, i18n.language);
+    if (next && next !== languageCode) onLanguageAdjust(next);
+  }, [catalog.error, catalog.loading, i18n.language, languageCode, languages, onLanguageAdjust]);
 
   return (
     <div className="flex flex-wrap gap-2">
       <CountryCombobox
         value={selectedMarket?.countryCode ?? countryCodeForLocation(locationCode)}
-        markets={catalog.markets}
+        markets={markets}
         loading={catalog.loading}
         disabled={catalog.error}
         invalid={catalog.error}
@@ -76,9 +104,12 @@ export const MarketSelects = ({
         ))}
       </NativeSelect>
       {catalog.error ? (
-        <p className="text-destructive basis-full text-sm" role="alert">
-          {t('common:market.loadError')}
-        </p>
+        <div className="flex basis-full flex-wrap items-center gap-2" role="alert">
+          <p className="text-destructive text-sm">{t('common:market.loadError')}</p>
+          <Button type="button" variant="outline" size="sm" onClick={catalog.retry}>
+            {t('common:retry')}
+          </Button>
+        </div>
       ) : null}
     </div>
   );

@@ -78,11 +78,6 @@
       "title": "En attente de la prochaine synchro",
       "body": "Aucune ligne requête et page de la Search Console n’est encore stockée pour cette période. Elles arriveront à la prochaine synchronisation."
     },
-    "cap": {
-      "title": "Quota mensuel épuisé",
-      "body": "Vous avez utilisé tous les rapports de cannibalisation de votre offre ce mois-ci.",
-      "link": "Voir les offres"
-    },
     "disabled": {
       "title": "Momentanément indisponible",
       "body": "Les rapports de cannibalisation sont en pause. Ceux déjà générés restent consultables."

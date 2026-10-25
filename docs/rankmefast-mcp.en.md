@@ -13,7 +13,7 @@ RankMeFast has a remote [Model Context Protocol (MCP)](https://modelcontextproto
 
 ## Set up in five minutes
 
-1. Open [Settings → API keys](/profile?tab=api-keys), select **Create key**, and copy the key when it appears. RankMeFast shows the full key only once.
+1. Open [Settings → API keys](/settings/profile?tab=api-keys), select **Create key**, and copy the key when it appears. RankMeFast shows the full key only once.
 2. Use the RankMeFast MCP endpoint:
 
    ```text
@@ -39,7 +39,7 @@ RankMeFast has a remote [Model Context Protocol (MCP)](https://modelcontextproto
 
 ## Control permissions and key scopes
 
-Open [Settings → MCP](/profile?tab=mcp) to manage the account defaults shared by MCP and the signed-in AI Assistant:
+Open [Settings → MCP](/settings/profile?tab=mcp) to manage the account defaults shared by MCP and the signed-in AI Assistant:
 
 1. Turn each RankMeFast tool on or off.
 2. Leave **Allowed sites** at all sites, or select the sites tools may use.
@@ -48,7 +48,7 @@ Open [Settings → MCP](/profile?tab=mcp) to manage the account defaults shared 
 
 Account defaults are fully permissive until you change them, so existing keys keep working. The Assistant uses these account defaults directly because it runs through your signed-in session.
 
-You can add narrower scopes while creating a key under [Settings → API keys](/profile?tab=api-keys), or edit an existing key later. Key scopes can only restrict access. Effective MCP access is always the intersection:
+You can add narrower scopes while creating a key under [Settings → API keys](/settings/profile?tab=api-keys), or edit an existing key later. Key scopes can only restrict access. Effective MCP access is always the intersection:
 
 - A tool is available only when both the account and the key allow it.
 - When account and key both select sites, only sites present in both lists are available.
@@ -405,6 +405,8 @@ Store this as user-level configuration and do not commit the key. Follow GitHub'
 | `get_backlinks_summary` | Returns total backlinks and distinct referring domains for a site | No |
 | `list_backlinks` | Lists stored backlinks, one per referring domain | No |
 | `list_competitors` | Lists a site's competitor portfolio, active and archived | No |
+| `list_keyword_research_history` | Lists your keyword research history | No |
+| `get_keyword_research_result` | Returns the stored result of one keyword research entry | No |
 | `get_ai_visibility_summary` | Returns AI Visibility prompts, latest checks, and share of voice | No |
 | `get_local_seo_summary` | Returns the Local SEO profile snapshot and local-pack ranks | No |
 | `get_reviews_summary` | Returns review sources, rating stats, and stored themes | No |
@@ -421,6 +423,7 @@ The tools added after the first ten only read data RankMeFast has already stored
 - **Permissions apply at call time.** The account toggles under **Settings → MCP**, the key's own scopes, and the allowed-sites lists are checked on every call. A site you cannot reach, or that belongs to another account, is returned as not found.
 - **New tools start allowed.** They follow the same default as the other read tools, and permission settings saved before they existed keep working unchanged.
 - **Results are bounded.** Lists return at most 100 rows and a result stays small; when rows are cut, the result says `truncated: true`.
+- **Keyword research reads the stored cache.** `get_keyword_research_result` re-opens a lookup from the shared keyword cache and reports `storedStatus` as `available`, `partial`, `expired`, or `unsupported`. It never refreshes data. History from a site you cannot reach is returned as not found.
 
 The [AI Assistant](./ai-assistant.en.md) uses the same tools and the same permissions. In a conversation linked to a site, it uses that site directly and does not need to list your sites first.
 
@@ -436,13 +439,13 @@ The [AI Assistant](./ai-assistant.en.md) uses the same tools and the same permis
 - **503 Unavailable:** MCP is disabled or temporarily unavailable on that RankMeFast installation; ask its operator.
 - **Works locally but not through a proxy:** make sure the proxy forwards `Authorization`, `Content-Type`, and `Accept` headers to `/api/mcp`.
 
-To replace a key, create a new one, update and verify every client, then revoke the old key from [Settings → API keys](/profile?tab=api-keys). Revocation is immediate.
+To replace a key, create a new one, update and verify every client, then revoke the old key from [Settings → API keys](/settings/profile?tab=api-keys). Revocation is immediate.
 
 ## Compatibility
 
-This release has the 23 tools listed above. 21 are read-only, `set_action_state` writes but costs nothing, and `start_audit` is the only one that spends vendor budget. Brand Radar, Review Intelligence, Link Intelligence, Traffic Insights, and Keyword Trends have no MCP tools. Changes are additive: existing tool names and argument shapes stay the same, and new tools may appear as features ship.
+This release has the 25 tools listed above. 23 are read-only, `set_action_state` writes but costs nothing, and `start_audit` is the only one that spends vendor budget. Brand Radar, Review Intelligence, Link Intelligence, Traffic Insights, and Keyword Trends have no MCP tools. Changes are additive: existing tool names and argument shapes stay the same, and new tools may appear as features ship.
 
-<!-- mcp-tools: list_sites; get_latest_audit_report; list_keywords; get_rank_history; list_content_analyses; get_content_analysis; start_audit; get_audit_status; list_actions; set_action_state; get_gsc_search_summary; list_gsc_top_queries; list_gsc_top_pages; get_ga4_summary; list_pages; get_page_detail; get_backlinks_summary; list_backlinks; list_competitors; get_ai_visibility_summary; get_local_seo_summary; get_reviews_summary; list_client_reports -->
+<!-- mcp-tools: list_sites; get_latest_audit_report; list_keywords; get_rank_history; list_content_analyses; get_content_analysis; start_audit; get_audit_status; list_actions; set_action_state; get_gsc_search_summary; list_gsc_top_queries; list_gsc_top_pages; get_ga4_summary; list_pages; get_page_detail; get_backlinks_summary; list_backlinks; list_competitors; list_keyword_research_history; get_keyword_research_result; get_ai_visibility_summary; get_local_seo_summary; get_reviews_summary; list_client_reports -->
 
 ## Related guides
 

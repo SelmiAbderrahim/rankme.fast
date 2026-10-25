@@ -329,6 +329,27 @@ describe('client report export composition', () => {
     });
   });
 
+  it('exports no CTR or position when the period had no impressions, never zero', async () => {
+    vi.mocked(composeClientReport).mockResolvedValueOnce(snapshot({
+      gsc: {
+        ...gscSection(),
+        totalClicks: 0, totalImpressions: 0, averageCtr: 0, averagePosition: 0,
+        topQueries: [{ query: 'idle', clicks: 0, impressions: 0, ctr: 0, position: 0, snapshotDate }],
+      },
+    }) as never);
+    const adapter = createClientReportExportAdapter(db);
+    const result = await adapter.compose(composeContext());
+    const totals = result.document.blocks.find((block) => block.id === 'client-gsc-totals') as
+      { items: { id: string; value: unknown }[] };
+    expect(totals.items.find((item) => item.id === 'ctr')!.value).toEqual({ type: 'null', value: null });
+    expect(totals.items.find((item) => item.id === 'position')!.value).toEqual({ type: 'null', value: null });
+    const queries = result.document.blocks.find((block) => block.id === 'client-gsc-queries') as
+      { rows: { cells: { value: unknown }[] }[] };
+    expect(queries.rows[0]!.cells.slice(3, 5).map((cell) => cell.value)).toEqual([
+      { type: 'null', value: null }, { type: 'null', value: null },
+    ]);
+  });
+
   it('uses one derived state source for wholly unavailable selected sections', async () => {
     mocked.compose.mockResolvedValueOnce(snapshot({ audit: null, ranks: null, gsc: null }));
     mocked.inspect.mockResolvedValueOnce(completeness({

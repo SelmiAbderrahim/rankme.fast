@@ -1,4 +1,6 @@
 import { Bdi } from '@shared/components/Bdi';
+import { SignedNumber } from '@shared/components/SignedNumber';
+import { formatAbsoluteDate } from '@shared/lib/datetime';
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import { Link, useSearchParams } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
@@ -257,10 +259,6 @@ function OutcomeSeries({ source, points }: { source: 'gsc' | 'rank'; points: Out
     () => new Intl.NumberFormat(i18n.language, { style: 'percent', maximumFractionDigits: 2 }),
     [i18n.language],
   );
-  const date = useMemo(
-    () => new Intl.DateTimeFormat(i18n.language, { dateStyle: 'medium' }),
-    [i18n.language],
-  );
   const chartValues = points.flatMap((point) => {
     const value = source === 'rank' ? point.rankPosition : point.clicks;
     return value === null ? [] : [value];
@@ -334,7 +332,11 @@ function OutcomeSeries({ source, points }: { source: 'gsc' | 'rank'; points: Out
           <TableBody>
             {points.map((point) => (
               <TableRow key={`${point.source}-${point.observedAt}`}>
-                <TableCell>{date.format(new Date(point.observedAt))}</TableCell>
+                {/* Each point is a calendar day sent as its UTC midnight: read it in
+                    UTC so it never shows as the day before. */}
+                <TableCell>
+                  {formatAbsoluteDate(point.observedAt, i18n.language, { timeZone: 'UTC' })}
+                </TableCell>
                 <TableCell>{t(`opportunities.outcomes.phases.${point.phase}`)}</TableCell>
                 {source === 'gsc' ? (
                   <>
@@ -479,10 +481,24 @@ function OutcomeView({ outcome, siteId }: { outcome: RecommendationOutcome; site
                 <TableCell className="text-end">{formatMetric(key, value.baseline)}</TableCell>
                 <TableCell className="text-end">{formatMetric(key, value.following)}</TableCell>
                 <TableCell className="text-end">
-                  {formatMetric(key, value.delta.absolute)}
+                  {value.delta.absolute === null ? (
+                    '—'
+                  ) : (
+                    <SignedNumber
+                      value={value.delta.absolute}
+                      options={{ style: key === 'ctr' ? 'percent' : 'decimal', maximumFractionDigits: 2 }}
+                    />
+                  )}
                 </TableCell>
                 <TableCell className="text-end">
-                  {value.delta.relative === null ? '—' : percent.format(value.delta.relative)}
+                  {value.delta.relative === null ? (
+                    '—'
+                  ) : (
+                    <SignedNumber
+                      value={value.delta.relative}
+                      options={{ style: 'percent', maximumFractionDigits: 2 }}
+                    />
+                  )}
                 </TableCell>
               </TableRow>
             ))}

@@ -25,28 +25,23 @@ import { fetchKeywordPreview, runTrends } from '../store/thunks';
 import { clearPreview } from '../store/slice';
 import { selectPreview, selectTrends } from '../store/selectors';
 import {
-  DEFAULT_LANGUAGE_CODE,
-  DEFAULT_LOCATION_CODE,
   TRENDS_PHRASE_MAX,
   trendsFormSchema,
 } from '../validation';
 import { KeywordSpendPreviewCard } from './KeywordSpendPreviewCard';
 import { keywordSlug } from './KeywordResearchPanel';
 import { MarketSelects } from './MarketSelects';
+import { SignedNumber } from '@shared/components/SignedNumber';
 import { PhraseChipsInput } from './PhraseChipsInput';
 import { ProvenanceBadge } from './ProvenanceBadge';
 import { TrendsChart, sortMonthlySeries } from './TrendsChart';
 import type { TrendsRequestBody } from '../api';
+import { useResearchMarket } from '../useResearchMarket';
 import type { KeywordTrendsRow } from '../types';
 
 const TrendsReadouts = ({ row }: { row: KeywordTrendsRow }) => {
-  const { t, i18n } = useTranslation();
-  const formatRatio = (value: number): string =>
-    new Intl.NumberFormat(i18n.language, {
-      style: 'percent',
-      maximumFractionDigits: 1,
-      signDisplay: 'exceptZero',
-    }).format(value);
+  const { t } = useTranslation();
+  const percentOptions = { style: 'percent', maximumFractionDigits: 1 } as const;
 
   const monthLabel = (month: number | null): string =>
     month === null
@@ -60,7 +55,7 @@ const TrendsReadouts = ({ row }: { row: KeywordTrendsRow }) => {
         <dd className="tabular-nums" data-testid={`kw-trends-yoy-${keywordSlug(row.keyword)}`}>
           {row.trends.yoyDelta === null
             ? t('keywordResearch:trends.insufficientYoy')
-            : formatRatio(row.trends.yoyDelta)}
+            : <SignedNumber value={row.trends.yoyDelta} options={percentOptions} />}
         </dd>
       </div>
       <div>
@@ -70,7 +65,7 @@ const TrendsReadouts = ({ row }: { row: KeywordTrendsRow }) => {
         <dd className="tabular-nums" data-testid={`kw-trends-momentum-${keywordSlug(row.keyword)}`}>
           {row.trends.twelveMonthMomentum === null
             ? t('keywordResearch:trends.insufficientMomentum')
-            : formatRatio(row.trends.twelveMonthMomentum)}
+            : <SignedNumber value={row.trends.twelveMonthMomentum} options={percentOptions} />}
         </dd>
       </div>
       <div>
@@ -157,8 +152,15 @@ export const TrendsView = () => {
   const trends = useAppSelector(selectTrends);
 
   const [chips, setChips] = useState<string[]>([]);
-  const [locationCode, setLocationCode] = useState(DEFAULT_LOCATION_CODE);
-  const [languageCode, setLanguageCode] = useState(DEFAULT_LANGUAGE_CODE);
+  // The site's (or last used) market, never a hardcoded default.
+  const {
+    locationCode,
+    languageCode,
+    setLocationCode,
+    setLanguageCode,
+    adjustLocationCode,
+    adjustLanguageCode,
+  } = useResearchMarket();
   const [formError, setFormError] = useState('');
   const [pendingBody, setPendingBody] = useState<TrendsRequestBody | null>(null);
 
@@ -208,6 +210,8 @@ export const TrendsView = () => {
               languageCode={languageCode}
               onLocationChange={setLocationCode}
               onLanguageChange={setLanguageCode}
+              onLocationAdjust={adjustLocationCode}
+              onLanguageAdjust={adjustLanguageCode}
               testIdPrefix="kw-trends"
             />
             {formError ? (

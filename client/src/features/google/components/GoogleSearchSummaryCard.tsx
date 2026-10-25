@@ -41,10 +41,9 @@ import {
   formatDate,
   formatDay,
   formatInt,
-  formatPercent,
-  formatPosition,
   windowStartDay,
 } from '../lib/format';
+import { MetricValue } from '@shared/components/MetricValue';
 import { GscTimeseriesChart } from './GscTimeseriesChart';
 import { GscBreakdownList } from './GscBreakdownList';
 import { GscTotalsNote } from './GscTotalsNote';
@@ -272,7 +271,7 @@ export const GoogleSearchSummaryCard = ({ siteId }: GoogleSearchSummaryCardProps
                 {t('searchSummary.ctr')}
               </dt>
               <dd className="mt-1 text-lg font-semibold tabular-nums" dir="ltr">
-                {formatPercent(locale, summary.averageCtr)}
+                <MetricValue kind="ratio" value={summary.averageCtr} denominator={summary.totalImpressions} />
               </dd>
             </div>
             <div className="rounded-lg border p-3">
@@ -280,7 +279,11 @@ export const GoogleSearchSummaryCard = ({ siteId }: GoogleSearchSummaryCardProps
                 {t('searchSummary.position')}
               </dt>
               <dd className="mt-1 text-lg font-semibold tabular-nums" dir="ltr">
-                {formatPosition(locale, summary.averagePosition)}
+                <MetricValue
+                  kind="position"
+                  value={summary.averagePosition}
+                  denominator={summary.totalImpressions}
+                />
               </dd>
             </div>
           </dl>
@@ -339,7 +342,8 @@ export const GoogleSearchSummaryCard = ({ siteId }: GoogleSearchSummaryCardProps
                         <Bdi>{query.query}</Bdi>
                       </span>
                       <span className="text-muted-foreground shrink-0 tabular-nums" dir="ltr">
-                        {formatInt(locale, query.clicks)} · {formatPercent(locale, query.ctr)}
+                        {formatInt(locale, query.clicks)} ·{' '}
+                        <MetricValue kind="ratio" value={query.ctr} denominator={query.impressions} />
                       </span>
                     </li>
                   ))}
@@ -362,7 +366,8 @@ export const GoogleSearchSummaryCard = ({ siteId }: GoogleSearchSummaryCardProps
                         {page.url}
                       </span>
                       <span className="text-muted-foreground shrink-0 tabular-nums" dir="ltr">
-                        {formatInt(locale, page.clicks)} · {formatPercent(locale, page.ctr)}
+                        {formatInt(locale, page.clicks)} ·{' '}
+                        <MetricValue kind="ratio" value={page.ctr} denominator={page.impressions} />
                       </span>
                     </li>
                   ))}

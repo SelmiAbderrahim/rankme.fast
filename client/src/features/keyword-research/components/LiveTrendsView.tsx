@@ -1,4 +1,6 @@
 import { Bdi } from '@shared/components/Bdi';
+import { formatYearMonth } from '@shared/lib/datetime';
+import { SignedNumber } from '@shared/components/SignedNumber';
 /**
  * Live Keyword Trends standalone view.
  *
@@ -49,6 +51,7 @@ import {
 import {
   DEFAULT_LIVE_TRENDS_GEO,
   DEFAULT_LIVE_TRENDS_LANGUAGE,
+  LIVE_TRENDS_COUNTRY_CODES,
   LIVE_TRENDS_MAX_QUERY_CHARS,
   LIVE_TRENDS_PHRASE_MAX,
   LIVE_TRENDS_PHRASE_MAX_LENGTH,
@@ -57,6 +60,7 @@ import {
   locationCodeToGeo,
   normalizeLiveTrendsKeywords,
 } from '../validation';
+import { useResearchMarket } from '../useResearchMarket';
 import {
   LIVE_TRENDS_HISTORY_FILTERS,
   useLiveTrendsQuery,
@@ -180,7 +184,6 @@ function ChartLegend({ series }: { series: readonly { keyword: string }[] }) {
 function SeriesDataTable({ series }: { series: readonly TrendsSeriesDto[] }) {
   const { t, i18n } = useTranslation();
   const fmt = new Intl.NumberFormat(i18n.language);
-  const monthLabel = (m: number) => t(`keywordResearch:trends.monthName.${m}`);
   return (
     <div className="overflow-x-auto">
       <Table data-testid="live-trends-table">
@@ -204,7 +207,7 @@ function SeriesDataTable({ series }: { series: readonly TrendsSeriesDto[] }) {
               <TableRow key={`${s.keyword}-${p.year}-${p.month}`}>
                 <TableCell className="break-words"><Bdi>{s.keyword}</Bdi></TableCell>
                 <TableCell>
-                  {monthLabel(p.month)} {p.year}
+                  {formatYearMonth(p.year, p.month, i18n.language)}
                 </TableCell>
                 <TableCell className="text-end tabular-nums">{fmt.format(p.value)}</TableCell>
               </TableRow>
@@ -250,13 +253,8 @@ function directionBadgeTone(
 }
 
 function ReadoutsRow({ keyword, readouts }: { keyword: string; readouts: TrendsReadoutDto }) {
-  const { t, i18n } = useTranslation();
+  const { t } = useTranslation();
   const slug = keywordSlug(keyword);
-  const percent = new Intl.NumberFormat(i18n.language, {
-    style: 'percent',
-    maximumFractionDigits: 1,
-    signDisplay: 'exceptZero',
-  });
   const monthName = (m: number) => t(`keywordResearch:trends.monthName.${m}`);
   const noteKey = readouts.yoy.observationMeta.searchInterestIndexKey;
   return (
@@ -276,7 +274,7 @@ function ReadoutsRow({ keyword, readouts }: { keyword: string; readouts: TrendsR
           <dd data-testid={`live-trends-yoy-${slug}`} className="tabular-nums">
             {readouts.yoy.deltaFraction === null
               ? t('keywordResearch:liveTrends.readouts.needMoreYoy')
-              : percent.format(readouts.yoy.deltaFraction)}
+              : <SignedNumber value={readouts.yoy.deltaFraction} options={{ style: 'percent', maximumFractionDigits: 1 }} />}
           </dd>
         </div>
         <div>
@@ -395,7 +393,9 @@ function StoredHistoryRow({
           {fmtDate.format(new Date(row.createdAt))}
         </span>
       </div>
-      <p className="text-muted-foreground text-xs break-words">{row.inputs.keywords.join(', ')}</p>
+      <p className="text-muted-foreground text-xs break-words">
+        <Bdi>{row.inputs.keywords.join(', ')}</Bdi>
+      </p>
       <p className="text-muted-foreground text-xs">
         {t('keywordResearch:liveTrends.storedRun.counts', {
           series: row.seriesCount,
@@ -546,12 +546,24 @@ export const LiveTrendsView = () => {
   const [query, setQuery] = useLiveTrendsQuery();
 
   const [chips, setChips] = useState<string[]>(query.keywords);
-  const [locationCode, setLocationCode] = useState<number>(
-    geoToLocationCode(query.geo ?? DEFAULT_LIVE_TRENDS_GEO),
+  // A shared link's geo/language wins; otherwise the site's (or last used)
+  // market, never a hardcoded US.
+  const [linkMarket] = useState(() =>
+    query.geo
+      ? {
+          locationCode: geoToLocationCode(query.geo),
+          languageCode: query.language ?? DEFAULT_LIVE_TRENDS_LANGUAGE,
+        }
+      : null,
   );
-  const [languageCode, setLanguageCode] = useState<string>(
-    query.language ?? DEFAULT_LIVE_TRENDS_LANGUAGE,
-  );
+  const {
+    locationCode,
+    languageCode,
+    setLocationCode,
+    setLanguageCode,
+    adjustLocationCode,
+    adjustLanguageCode,
+  } = useResearchMarket(linkMarket);
   const [formError, setFormError] = useState('');
 
   // Load stored history once per mount.
@@ -720,6 +732,9 @@ export const LiveTrendsView = () => {
                 setLanguageCode(lang);
                 persistUrl(chips, locationCode, lang);
               }}
+              onLocationAdjust={adjustLocationCode}
+              onLanguageAdjust={adjustLanguageCode}
+              countryCodes={LIVE_TRENDS_COUNTRY_CODES}
               testIdPrefix="live-trends"
             />
             {formError ? (
@@ -921,7 +936,7 @@ export const LiveTrendsView = () => {
                   })}
                 </span>
                 <span className="text-muted-foreground">
-                  {storedRun.data.inputs.keywords.join(', ')}
+                  <Bdi>{storedRun.data.inputs.keywords.join(', ')}</Bdi>
                 </span>
               </AlertDescription>
             </Alert>

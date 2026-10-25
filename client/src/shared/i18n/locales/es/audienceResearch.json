@@ -9,7 +9,12 @@
       "label": "Mercado",
       "country": "País",
       "language": "Idioma",
-      "device": "Dispositivo"
+      "device": "Dispositivo",
+      "devices": {
+        "desktop": "Escritorio",
+        "mobile": "Móvil",
+        "all": "Todos los dispositivos"
+      }
     },
     "competitors": {
       "label": "Competidores",
@@ -31,28 +36,8 @@
       "validationEmpty": "Escribe un tema antes de añadirlo.",
       "validationMax": "Puedes añadir hasta {{max}} temas."
     },
-    "reviewButton": "Revisar",
-    "submitting": "Procesando…"
-  },
-  "preview": {
-    "unitLabel": "1 ejecución de investigación de audiencia",
-    "remainingLabel": "{{remaining}} de {{cap}} restantes este mes",
-    "operationCeilings": "Qué hará esta ejecución",
-    "cached": "En caché",
-    "fresh": "Reciente",
-    "supported": "Este mercado tiene soporte completo.",
-    "unsupported": "Este mercado tiene soporte limitado — los resultados pueden ser más escasos.",
-    "maxPages_one": "Hasta {{max}} página pública",
-    "totalBudget": "Presupuesto total: {{micros}} micro-USD",
-    "aiBudget": "Presupuesto de IA: {{micros}} micro-USD",
-    "coverageOk": "Cobertura completa del proveedor",
-    "coverageDegraded": "Cobertura degradada del proveedor — los resultados pueden ser parciales.",
-    "coverageBlocked": "La extracción sin retención de datos está bloqueada para esta cuenta.",
-    "maxPages_zero": "Hasta {{max}} páginas públicas",
-    "maxPages_two": "Hasta {{max}} páginas públicas",
-    "maxPages_few": "Hasta {{max}} páginas públicas",
-    "maxPages_many": "Hasta {{max}} páginas públicas",
-    "maxPages_other": "Hasta {{max}} páginas públicas"
+    "submitting": "Procesando…",
+    "startRequirement": "Añade al menos un tema o elige un competidor para iniciar una ejecución. Sin ninguno de los dos, la ejecución no tiene nada que buscar."
   },
   "confirm": {
     "title": "¿Iniciar esta ejecución de investigación de audiencia?",
@@ -117,8 +102,7 @@
       "state": "Estado",
       "sources": "Fuentes",
       "signals": "Señales",
-      "coverage": "Cobertura",
-      "unit": "Unidad"
+      "coverage": "Cobertura"
     },
     "empty": {
       "title": "Aún no hay ejecuciones",
@@ -131,24 +115,6 @@
     "marketUnavailable": "—",
     "coverageNote": "Cobertura parcial — abre la ejecución para más detalles",
     "coverageFull": "Cobertura completa"
-  },
-  "locked": {
-    "title": "La investigación de audiencia no está incluida en tu plan",
-    "body": "Actualiza a Starter, Pro o Agency para ejecutar investigaciones de voz del cliente y convertir los comentarios públicos en oportunidades de contenido, producto y SEO.",
-    "cta": "Ver planes"
-  },
-  "usage": {
-    "metrics": {
-      "audience_research_runs": {
-        "label": "Ejecuciones de investigación de audiencia",
-        "description": "Una unidad cubre una ejecución completa de voz del cliente, sin importar cuántas búsquedas o extracciones realice."
-      }
-    }
-  },
-  "billing": {
-    "overCap": {
-      "audience_research_runs": "Has usado todas las ejecuciones de investigación de audiencia de tu plan este mes. Actualiza para lanzar más investigaciones de voz del cliente."
-    }
   },
   "signals": {
     "empty": {

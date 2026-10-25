@@ -588,6 +588,25 @@ describe('ReportShareDialog', () => {
 });
 
 describe('ExportCenterPage', () => {
+  it("keeps each row's Download and Delete actions on one aligned line", async () => {
+    mockedListSnapshots.mockResolvedValue({ items: [snapshot()], nextCursor: null });
+    mockedListAllShares.mockResolvedValue({ items: [], nextCursor: null });
+    renderWithStore(<ExportCenterPage />, state({ snapshots: [snapshot()] }));
+
+    const groups = await screen.findAllByTestId('snapshot-actions');
+    const tableGroup = groups.find((group) => group.dataset.layout === 'table')!;
+    const cardGroup = groups.find((group) => group.dataset.layout === 'card')!;
+    for (const group of [tableGroup, cardGroup]) {
+      expect(within(group).getByRole('button', { name: 'Download' })).toBeInTheDocument();
+      expect(within(group).getByRole('button', { name: 'Delete' })).toBeInTheDocument();
+      expect(group).toHaveClass('flex', 'items-center', 'gap-2');
+    }
+    expect(tableGroup).toHaveClass('flex-nowrap', 'justify-end');
+    expect(tableGroup).not.toHaveClass('flex-col');
+    expect(tableGroup.closest('td')).toHaveClass('w-px', 'text-end');
+    expect(cardGroup).toHaveClass('flex-wrap');
+  });
+
   it('keeps the active tab in the URL and supports paged downloads, deletion, and share revocation', async () => {
     const active = centerShare();
     const revoked = centerShare({

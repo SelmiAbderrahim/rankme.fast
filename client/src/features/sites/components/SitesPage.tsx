@@ -101,7 +101,7 @@ export const SitesPage = () => {
         <Button
           variant="outline"
           className="self-start"
-          onClick={() => void dispatch(loadSites({ direction: 'initial' }))}
+          onClick={() => void dispatch(loadSites({ direction: 'initial', force: true }))}
         >
           {t('retry')}
         </Button>
@@ -147,24 +147,28 @@ export const SitesPage = () => {
         </Alert>
       ) : null}
       <SitesTable sites={sites} deletingId={deletingId} onDelete={handleDelete} openTab={openTab} summaries={summaries} />
-      <div className="flex items-center justify-end gap-2">
-        <Button
-          variant="outline"
-          size="sm"
-          disabled={loading || cursorStack.length === 0}
-          onClick={goPrevious}
-        >
-          {t('previous')}
-        </Button>
-        <Button
-          variant="outline"
-          size="sm"
-          disabled={loading || nextCursor === null}
-          onClick={goNext}
-        >
-          {t('next')}
-        </Button>
-      </div>
+      {/* One page needs no pager: the controls appear only when there is a
+          page to go to or come back from. */}
+      {cursorStack.length > 0 || nextCursor !== null ? (
+        <div className="flex items-center justify-end gap-2">
+          <Button
+            variant="outline"
+            size="sm"
+            disabled={loading || cursorStack.length === 0}
+            onClick={goPrevious}
+          >
+            {t('previous')}
+          </Button>
+          <Button
+            variant="outline"
+            size="sm"
+            disabled={loading || nextCursor === null}
+            onClick={goNext}
+          >
+            {t('next')}
+          </Button>
+        </div>
+      ) : null}
     </div>
   );
 };

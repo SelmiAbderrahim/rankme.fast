@@ -78,11 +78,6 @@
       "title": "Warten auf die nächste Synchronisierung",
       "body": "Für diesen Zeitraum sind noch keine Suchanfrage-und-Seite-Zeilen aus der Search Console gespeichert. Sie kommen mit der nächsten Synchronisierung."
     },
-    "cap": {
-      "title": "Monatskontingent aufgebraucht",
-      "body": "Sie haben diesen Monat alle Kannibalisierungsberichte Ihres Tarifs verbraucht.",
-      "link": "Tarife ansehen"
-    },
     "disabled": {
       "title": "Vorübergehend nicht verfügbar",
       "body": "Kannibalisierungsberichte pausieren gerade. Bereits erstellte Berichte bleiben lesbar."

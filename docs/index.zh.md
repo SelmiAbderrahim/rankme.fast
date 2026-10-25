@@ -52,11 +52,11 @@ order: 0
 - [关键词聚类](./keyword-clustering.zh.md)：RankMeFast 如何按共享结果 URL 对被跟踪关键词分组，以及为什么这是算术而非相似度评分。
 - [Bing、YouTube 与 Amazon 排名跟踪](./alt-engine-tracking.zh.md)：RankMeFast 如何跟踪非 Google 引擎、什么是精确目标标识，以及为什么 Amazon 位次是索引内位次。
 - [关键词自相蚕食](./cannibalization.zh.md)：RankMeFast 如何仅凭已存储的 Search Console 行，找出你有两个以上页面相互竞争的查询。
-- [有害链接与拒绝收录](./toxic-links.zh.md)：RankMeFast 如何用确定性评分规则对外链分档、AI 何时可以对某行作出注解，以及为什么拒绝收录文件绝不会代你提交。
+- [有害链接与拒绝收录](./toxic-links.zh.md)：RankMeFast 如何用固定规则将外链分为不同风险等级、AI 何时可以对某行作出注解，以及为什么拒绝收录文件绝不会代你提交。
 - [提醒](./alerts.zh.md)：哪些提醒会触发、恰好一次投递如何工作，以及排名下跌规则何时投递。
 - [内链建议](./internal-linking.zh.md)：RankMeFast 如何在你已保存的内容清单中找出孤立页与弱链接页，并给出引用其证据的锚文本草稿。
 - [内容简报](./content-briefs.zh.md)：简报如何基于已存的前十名搜索结果与至多十次页面抓取生成，以及为什么每个大纲节点都必须引用所提供的证据。
-- [本地网格排名跟踪](./geogrid.zh.md)：逐坐标的本地组合网格如何采集、失败单元格意味着什么，以及为什么坐标是手动输入而非在地图上点选。
+- [本地网格排名跟踪](./geogrid.zh.md)：逐坐标的本地组合网格如何采集、如何选择网格中心，以及失败单元格意味着什么。
 - [Schema 标记生成器](./schema-markup.zh.md)：RankMeFast 如何基于已存的页面事实生成 JSON-LD、此处的"符合规范"指什么，以及为什么缺失的属性会被省略而非虚构。
 - [客户报告与门户](./client-reports.zh.md)：白标 PDF 报告如何由已存快照拼装、定时任务如何投递，以及可撤销门户链接是什么、不是什么。
 - [下载与分享报告](./report-exports.zh.md)：选择合适格式、保留筛选条件并管理私密分享链接。

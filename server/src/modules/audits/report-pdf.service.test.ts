@@ -281,6 +281,25 @@ describe('renderAuditReportPdf', () => {
     await expect(PDFDocument.load(bytes)).resolves.toBeDefined();
   });
 
+  it('draws a dash for a query without impressions and a spaced percent sign where the language uses one', async () => {
+    const gscSummary = {
+      snapshotDate: '2026-07-05',
+      windowDays: 28 as const,
+      totalClicks: 10,
+      totalImpressions: 100,
+      averageCtr: 0.1,
+      averagePosition: 4.2,
+      topQueries: [
+        { query: 'idle', clicks: 0, impressions: 0, ctr: 0, position: 0, snapshotDate: '2026-07-05' },
+        { query: 'busy', clicks: 10, impressions: 100, ctr: 0.1, position: 4.2, snapshotDate: '2026-07-05' },
+      ],
+    };
+    for (const locale of ['en', 'fr'] as const) {
+      const bytes = await renderAuditReportPdf(makeInput({ report: null, locale, gscSummary }));
+      await expect(PDFDocument.load(bytes)).resolves.toBeDefined();
+    }
+  });
+
   it('clips findings at PDF_MAX_FINDINGS across buckets and spills onto extra pages', async () => {
     const findings: LocalizedFinding[] = [];
     for (let i = 0; i < PDF_MAX_FINDINGS; i += 1) findings.push(makeFinding(i, 'fix-now'));

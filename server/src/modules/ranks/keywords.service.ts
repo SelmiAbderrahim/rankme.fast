@@ -11,6 +11,7 @@ import { and, asc, count, desc, eq, gte, inArray, lte, sql, type SQL } from 'dri
 import { z } from 'zod';
 import type { Db } from '../../db/client.js';
 import { domainStates, isAltRankEngine, keywords, rankings, type Keyword, type RankCadenceKind, type RankCheckFailureReason, type RankEngineKind, } from '../../db/schema/keywords.js';
+import { rankCheckOutcomes } from '../../db/schema/rank-check-outcomes.js';
 import { env } from '../../config/env.js';
 import { logger } from '../../config/logger.js';
 import { HttpError } from '../../shared/utils/http-error.js';
@@ -1170,6 +1171,16 @@ export interface RankHistoryPoint {
     /** Provider provenance for this stored observation. */
     observationMeta: ObservationMeta | null;
 }
+/**
+ * A scheduled check that produced no observation. Stored evidence only: it
+ * comes from the attempt record, never from an interpolated rank.
+ */
+export interface RankHistoryMissedCheck {
+    periodKey: string;
+    status: 'failed' | 'skipped';
+    reason: string | null;
+    attemptedAt: string;
+}
 export interface RankHistoryQueryInput {
     accountId: string;
     keywordId: string;
@@ -1180,7 +1191,7 @@ export interface RankHistoryQueryInput {
 export const HISTORY_MAX_POINTS = 730;
 /** Default range when no `from` is supplied (24 months). */
 export const HISTORY_DEFAULT_WINDOW_MS = 730 * 24 * 60 * 60 * 1000;
-function defaultHistoryFrom(now: Date, explicitFrom: string | undefined): Date | undefined {
+function defaultHistoryFrom(now: Date, explicitFrom: string | undefined): Date {
     if (explicitFrom !== undefined)
         return new Date(explicitFrom);
     // No explicit from means "last 24 months" (a bounded
@@ -1190,6 +1201,7 @@ function defaultHistoryFrom(now: Date, explicitFrom: string | undefined): Date |
 export async function getKeywordHistory(input: RankHistoryQueryInput, deps: KeywordsServiceDeps): Promise<{
     keywordId: string;
     series: RankHistoryPoint[];
+    missedChecks: RankHistoryMissedCheck[];
 }> {
     const keyword = await assertKeywordOwnership(deps.db, input.accountId, input.keywordId);
     const filters = [eq(rankings.keywordId, keyword.id)];
@@ -1216,8 +1228,33 @@ export async function getKeywordHistory(input: RankHistoryQueryInput, deps: Keyw
         .where(and(...filters))
         .orderBy(asc(rankings.checkedAt))
         .limit(HISTORY_MAX_POINTS);
+    const missedFilters = [
+        eq(rankCheckOutcomes.accountId, input.accountId),
+        eq(rankCheckOutcomes.keywordId, keyword.id),
+        inArray(rankCheckOutcomes.status, ['failed', 'skipped']),
+        gte(rankCheckOutcomes.lastAttemptAt, from),
+    ];
+    if (input.to)
+        missedFilters.push(lte(rankCheckOutcomes.lastAttemptAt, new Date(input.to)));
+    const missed = await deps.db
+        .select({
+        periodKey: rankCheckOutcomes.periodKey,
+        status: rankCheckOutcomes.status,
+        reason: rankCheckOutcomes.reason,
+        attemptedAt: rankCheckOutcomes.lastAttemptAt,
+    })
+        .from(rankCheckOutcomes)
+        .where(and(...missedFilters))
+        .orderBy(asc(rankCheckOutcomes.lastAttemptAt))
+        .limit(HISTORY_MAX_POINTS);
     return {
         keywordId: keyword.id,
+        missedChecks: missed.map((m) => ({
+            periodKey: m.periodKey,
+            status: m.status as 'failed' | 'skipped',
+            reason: m.reason,
+            attemptedAt: m.attemptedAt.toISOString(),
+        })),
         series: rows.map((r) => ({
             checkedAt: r.checkedAt.toISOString(),
             position: r.position,

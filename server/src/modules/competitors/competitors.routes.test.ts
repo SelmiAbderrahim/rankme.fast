@@ -1,5 +1,5 @@
 /**
- * Prompt 15 — competitors route + failure-isolation tests.
+ * competitors route + failure-isolation tests.
  */
 import {
   afterAll,

@@ -9,16 +9,6 @@
   },
   "states": {
     "signedOut": "Melden Sie sich an, um Ihre Bewertungen zu lesen.",
-    "notOnPlan": {
-      "title": "Bewertungen gehören zum Pro-Tarif",
-      "description": "Wechseln Sie zu Pro oder Agency, um Bewertungen von Google, Trustpilot und Tripadvisor zu holen.",
-      "link": "Tarife ansehen"
-    },
-    "capReached": {
-      "title": "Sie haben alle Abgleiche Ihres Tarifs verbraucht",
-      "description": "Prüfen Sie unter Abrechnung, ob das Bewertungspaket derzeit verfügbar ist. Alles bereits Geholte bleibt lesbar.",
-      "link": "Paketoptionen ansehen"
-    },
     "disabled": {
       "title": "Neue Abgleiche sind pausiert",
       "description": "Wir haben neue Bewertungsabgleiche vorerst pausiert. Bereits geholte Bewertungen bleiben lesbar."
@@ -109,7 +99,6 @@
     "empty": "Noch keine Abgleiche.",
     "createdAt": "Gestartet",
     "view": "Öffnen",
-    "refunded": "Einheit gutgeschrieben",
     "columns": {
       "status": "Ergebnis",
       "outcomes": "Pro Quelle",

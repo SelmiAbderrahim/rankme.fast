@@ -121,75 +121,12 @@ export const zh: DictionaryShape = {
         },
     },
     billing: {
-        checkout: {
-            title: '结算',
-            submit: '立即支付',
-            success: '已收到付款。感谢！',
-        },
-        portal: {
-            title: '账单',
-        },
-        error: {
-            notConfigured: '支付提供方未配置。',
-            addonAlreadyActive: '该附加功能已在您的账户中启用。',
-            addonAlreadyIncluded: '您当前的套餐已包含该附加功能。',
-            checkoutAlreadyOpen: '已有一个结账流程在进行中。请先完成或取消。',
-            packRequiresTier: '当前套餐无法购买此额度包。',
-            subscriptionAlreadyExists: '该账户已有有效订阅。',
-            productUnavailable: '账单服务暂时不可用，请稍后重试。',
-            userNotFound: '未找到用户。',
-            noCustomer: '未找到此用户的账单客户。',
-            noSubscription: '未找到此用户的有效订阅。',
-            providerFailure: '支付提供方错误：{{message}}',
-            invalidResumeAt: '恢复日期不是有效的时间戳。',
-            resumeAtInPast: '恢复日期必须在未来。',
-            pauseWindowExceeded: '暂停时长超过允许的上限。',
-            alreadyPaused: '此订阅已处于暂停状态。',
-            canceledSubscription: '已取消的订阅无法暂停。',
-            notPaused: '此订阅未处于暂停状态。',
-            unknownProduct: '此产品无法通过结账购买。',
-            redirectOriginMismatch: '结账后的重定向 URL 必须停留在本站。',
-            addonRequiresProOrAgency: 'Brand Radar 附加服务仅在 Pro 与 Agency 套餐中提供。',
-        },
         errors: {
             capExceeded: '您的套餐 {{metric}} 已用尽。请升级或购买信用包以继续使用。',
             upgradeRequired: '此功能需要 {{requiredTier}} 套餐。',
-            featureLocked: '{{feature}} 功能未包含在您的套餐中。',
-        },
-        overCap: {
-            audience_research_runs: '您本月已用完套餐中的所有受众研究运行次数。升级以运行更多客户之声研究。',
-            trend_explorations: '您本月已用完套餐中的所有关键词趋势探索次数。请升级或等待下月以运行更多。',
-            traffic_snapshots: '您本月已用完套餐中的所有流量快照次数。请升级或等待下月以运行更多。',
-            link_intel_checks: '您本月已用完套餐中的所有链接情报检查次数。请升级或等待下月以运行更多。',
-            review_syncs: '您本月已用完套餐中的所有评价同步次数。请升级或等待下月以运行更多。',
-            brand_mention_scans: '您本月已用完套餐中的所有品牌提及扫描次数。请升级或添加 Brand Radar 附加组件以扫描更多。',
-            keyword_cluster_runs: '您本月已用完套餐中的所有关键词聚类次数。请升级或等待下月以运行更多。',
-            cannibalization_reports: '您本月已用完套餐中的所有关键词自相竞争报告次数。请升级或等待下月以生成更多。',
-            alt_engine_checks: '您本月已用完套餐中的所有 Bing、YouTube 与 Amazon 排名检查次数。请升级或购买积分包以继续跟踪。',
-            toxicity_reviews: '您本月已用完套餐中的所有有害链接审查次数。请升级或购买积分包以审查更多链接。',
-            internal_link_runs: '您本月已用完套餐中的所有内链建议运行次数。请升级或等待下月以运行更多。',
-            content_briefs: '您本月已用完套餐中的所有内容大纲次数。请购买积分包或升级以撰写更多。',
-            geogrid_scans: '您本月已用完套餐中的所有地理网格扫描次数。请购买积分包或升级以扫描更多地点。',
-            schema_generations: '您本月已用完套餐中的所有 schema 标记生成次数。请升级或等待下月以生成更多。',
-            ai_chat_messages: '您本月已用完套餐中的所有 AI 助手消息。购买积分包或升级套餐即可继续对话。',
-            ai_visibility_suggestion_runs: '本月您已用完套餐内全部的 AI 可见性建议生成次数。请升级套餐或等待下月重置。',
-            app_keyword_checks: '本月您已用完套餐内全部的应用关键词排名检查次数。请加购 App SEO 附加包或购买信用包以继续跟踪。',
-            app_listing_audits: '本月您已用完套餐内全部的应用商店页面检查次数。请加购 App SEO 附加包或等待下月重置。',
-            app_chart_checks: '本月您已用完套餐内全部的榜单排名检查次数。请加购 App SEO 附加包或等待下月重置。',
-            app_keyword_lookups: '本月您已用完套餐内全部的应用关键词研究次数。请加购 App SEO 附加包或购买信用包以继续研究。',
-            app_competitor_lookups: '本月您已用完套餐内全部的应用竞品查询次数。请加购 App SEO 附加包或购买信用包以发现更多竞品。',
-            app_review_runs: '本月您已用完套餐内全部的应用评论拉取次数。请加购 App SEO 附加包或购买信用包以阅读更多评论。',
         },
     },
     customPlan: DYNAMIC_PLAN_COPY.zh,
-    usage: {
-        metrics: {
-            audience_research_runs: {
-                label: '受众研究运行',
-                description: '一个单位对应一次完整的客户之声研究运行，无论其内部搜索或抓取次数多少。',
-            },
-        },
-    },
     audienceResearch: {
         errors: {
             unsupportedMarket: '该市场暂不支持受众研究。请选择受支持的国家或语言。',
@@ -214,14 +151,6 @@ export const zh: DictionaryShape = {
         contact: {
             confirmation: '您的邮件已发送。我们会尽快与您联系。',
             notification: '来自 {{name}} <{{email}}> 的联系消息\n\n{{message}}',
-        },
-        enterpriseLead: {
-            subject: '企业咨询：{{company}}',
-            company: '公司：{{company}}',
-            name: '姓名：{{name}} <{{email}}>',
-            seats: '席位数：{{seats}}',
-            expectedVolumes: '预计用量：{{expectedVolumes}}',
-            notStated: '未说明',
         },
         verifyEmail: {
             subject: '验证您的电子邮件地址',
@@ -373,13 +302,9 @@ export const zh: DictionaryShape = {
             warningSubject: '您的 RankMeFast 账户将被删除',
             warningBody: '您好 {{name}}，您请求删除 RankMeFast 账户。您的数据将于 {{purgeAt}} 永久删除。',
         },
-        twoFactor: {
-            adminRequired: '管理员账户必须启用双因素身份验证。请在“设置 → 安全”中启用第二因素后继续。',
-        },
     },
     audits: {
         started: '审计已启动。',
-        capClamped: '审计最大页数限制为 {{cap}} 页（套餐限制）。',
         errors: {
             recheckUnavailable: '此处无法重新检查这项问题。请运行新的审计再次检查。',
             runInProgress: '该网站已经有一个正在进行的审计。',
@@ -408,10 +333,8 @@ export const zh: DictionaryShape = {
             noSnapshot: '所选部分没有带日期的报告数据。',
             queueUnavailable: '报告发送尚未配置，请稍后重试。',
             rateLimited: '报告请求过多，请稍后重试。',
-            scheduleCapExceeded: '您的方案已达到定期报告数量上限。',
             scheduleNotFound: '找不到该报告计划。',
             deliveryNotFound: '找不到该发送记录。',
-            portalCapExceeded: '您的方案已达到客户门户数量上限。',
             portalNotFound: '该客户门户链接无效、已过期或已撤销。',
         },
         email: {
@@ -421,9 +344,10 @@ export const zh: DictionaryShape = {
     },
     branding: {
         errors: {
-            logoMalformed: '请选择有效的 PNG 徽标。文件未保存。',
-            logoTooLarge: '徽标文件过大。请选择不超过 256 KB 的 PNG。',
-            logoDimensions: '徽标尺寸过大。请使用不超过 1024 × 1024 像素的 PNG。',
+            logoMalformed: '请选择有效的 PNG、JPEG 或 SVG 徽标。文件未保存。',
+            logoTooLarge: '徽标文件过大。请选择不超过 256 KB 的文件。',
+            logoDimensions: '徽标尺寸过大。请使用不超过 1024 × 1024 像素的图片。',
+            logoUnsafeSvg: '此 SVG 包含脚本、嵌入内容或指向其他文件的链接。请导出简单的 SVG，或上传 PNG 或 JPEG。文件未保存。',
         },
     },
     report: {
@@ -446,9 +370,9 @@ export const zh: DictionaryShape = {
             notRanked: '未进入跟踪结果',
             engines: { google: 'Google', bing: '必应', youtube: '优兔', amazon: '亚马逊' },
             gscSummary: 'Search Console 摘要（{{days}} 天）',
-            gscTotals: '点击 {{clicks}} · 展示 {{impressions}} · 点击率 {{ctr}}% · 平均排名 {{position}} · 快照 {{date}}',
+            gscTotals: '点击 {{clicks}} · 展示 {{impressions}} · 点击率 {{ctr}} · 平均排名 {{position}} · 快照 {{date}}',
             topQueries: '热门查询',
-            gscQueryRow: '{{query}} — 点击 {{clicks}} · 展示 {{impressions}} · 点击率 {{ctr}}% · 排名 {{position}} · 快照 {{date}}',
+            gscQueryRow: '{{query}} — 点击 {{clicks}} · 展示 {{impressions}} · 点击率 {{ctr}} · 排名 {{position}} · 快照 {{date}}',
             page: '第 {{n}} 页，共 {{total}} 页',
         },
     },
@@ -818,7 +742,6 @@ export const zh: DictionaryShape = {
             marketMoveNoDefault: '请先选择网站市场，再移动关键词。',
             marketMoveStale: '关键词列表或网站市场已更改。请检查移动内容后重试。',
             keywordDuplicate: '此网站已在跟踪该关键词。',
-            keywordCapExceeded: '您的套餐已达到关键词数量上限。升级以跟踪更多关键词。',
             altEnginesUnavailable: 'Bing、YouTube 和 Amazon 排名跟踪当前已关闭。',
             altEngineSlotsExceeded: '您的套餐已达到 {{limit}} 个 Bing、YouTube 和 Amazon 关键词的上限。升级以跟踪更多关键词。',
             altEngineChecksExhausted: '本周期的 Bing、YouTube 和 Amazon 检查次数已用完。请购买检查包或升级套餐。',
@@ -827,7 +750,6 @@ export const zh: DictionaryShape = {
             amazonAsinInvalid: '请输入十位的 Amazon ASIN，例如 B08N5WRWNW。',
             engineTargetNotAllowed: 'Google 和 Bing 跟踪的是您自己的网站，请留空此字段。',
             keywordNotFound: '未找到该关键词。',
-            dailyRequiresUpgrade: '每日排名跟踪需要升级套餐。',
             checkCooldown: '刚刚执行了一次排名检查——请等待一分钟后再检查。',
             rankJobNotFound: '未找到该排名检查。',
             rankJobStillRunning: '该排名检查仍在运行。完成后再重试失败的关键词。',
@@ -894,9 +816,7 @@ export const zh: DictionaryShape = {
             lookupIdInvalid: '查询标识无效。',
             historyIdInvalid: '该历史记录标识无效。',
             historyNotFound: '未找到该调研记录。',
-            upgradeRequired: '关键词研究是 Pro 功能。升级即可解锁搜索量、难度和相关关键词。',
             unavailable: '关键词研究暂时不可用，请稍后再试。',
-            capExceeded: '您的套餐关键词查询配额（{{used}}/{{limit}} {{metric}}）已用完。请升级套餐或购买积分包以研究更多关键词。',
             competitorsRequired: '请至少输入一个竞争对手域名。',
             tooManyCompetitors: '每次最多可比较三个竞争对手域名。',
             competitorsDuplicate: '请移除重复的竞争对手域名。',
@@ -944,9 +864,6 @@ export const zh: DictionaryShape = {
             coverageNote: {
                 searchInterestIndex: '数值为 Google 的 0–100 搜索兴趣指数，并非真实流量——请将其视为趋势形态而非流量规模。',
             },
-            preview: {
-                notOnPlan: '您的套餐不包含关键词趋势。',
-            },
         },
     },
     backlinks: {
@@ -957,17 +874,13 @@ export const zh: DictionaryShape = {
                 runNotFound: '未找到链接审核。',
                 runNotReady: '此链接审核尚未准备好导出。',
             },
-            preview: {
-            },
         },
         errors: {
-            upgradeRequired: '反向链接是 Pro 功能。升级即可查看您的链接概况和域名评分。',
             unavailable: '反向链接数据暂时不可用——我们将在下次运行时重试。',
             siteNotFound: '未找到网站。',
             domainInvalid: '请输入有效的域名，例如 example.com。',
             gapDomainConflict: '不能将您自己的域名列为竞争对手。',
             limitInvalid: '请输入有效的行数限制。',
-            capExceeded: '您套餐的反向链接行数额度（{{used}}/{{limit}} {{metric}}）已用尽。请升级套餐或购买信用包以获取更多行。',
             refreshCooldown: '已达到刷新限制。请在 {{seconds}} 秒后重试。',
         },
         runStatus: {
@@ -984,14 +897,11 @@ export const zh: DictionaryShape = {
     },
     competitors: {
         errors: {
-            upgradeRequired: '旧版竞品重叠视图需要 Agency。新版竞品关键词版图从 Pro 开始提供。',
             unavailable: '竞争对手数据暂时不可用——我们将在下次运行时重试。',
             siteNotFound: '未找到网站。',
             competitorRequired: '请输入竞争对手域名。',
             competitorTooLong: '该域名过长。',
-            capExceeded: '您的竞争对手查询次数已用完（{{used}}/{{limit}}）。请升级方案以运行更多查询。',
             refreshCooldown: '已达到刷新限制。请在 {{seconds}} 秒后重试。',
-            suggestionCapExceeded: '本月您已用完全部建议生成次数。',
             suggestionFailed: '目前无法生成建议。本次生成未计入配额，请稍后重试。',
         },
         landscape: {
@@ -1008,10 +918,8 @@ export const zh: DictionaryShape = {
                 opportunityNotFound: '此机会不在该报告中。',
                 idempotencyInvalid: '请使用有效的幂等键。',
                 cursorInvalid: '该竞争格局游标无效。',
-                capExceeded: '您的关键词查询额度不足以生成此报告。',
                 competitorNotFound: '一个或多个所选竞争对手不可用。',
                 queueUnavailable: '无法将报告加入队列，请稍后重试。',
-                selectionLimit: '请根据当前方案减少竞争对手数量。',
                 unavailable: '竞争情报暂时不可用。',
             },
             opportunities: {
@@ -1054,27 +962,6 @@ export const zh: DictionaryShape = {
             competitorLandscape: '观察自已接受的竞争格局报告。',
         },
     },
-    packs: {
-        unavailable: '此额度包目前尚未配置购买。',
-        trafficSnapshots: {
-            available: '额度用完后，可用 {{price}} 添加 {{units}} 个流量快照。',
-        },
-        trendExplorations: {
-            available: '额度用完后，可用 {{price}} 添加 {{units}} 次关键词趋势探索。',
-        },
-        reviewSyncs: {
-            available: '额度用完后，可用 {{price}} 添加 {{units}} 次评价同步。',
-        },
-        brandScans: {
-            available: '额度用完后，可用 {{price}} 添加 {{units}} 次品牌扫描。',
-        },
-        altEngineChecks: {
-            available: '额度用完后，可用 {{price}} 添加 {{units}} 次 Bing、YouTube 和 Amazon 检查。',
-        },
-        contentBriefs: {
-            available: '额度用完后，可用 {{price}} 添加 {{units}} 份内容简报。',
-        },
-    },
     cannibalization: {
         preview: {
             oneReport: '一份关键词相互竞争报告。',
@@ -1083,7 +970,6 @@ export const zh: DictionaryShape = {
             notFound: '未找到关键词相互竞争报告。',
             productUnavailable: '关键词相互竞争报告暂时不可用，请稍后重试。',
             awaitingSync: '该时间段尚未存储 Search Console 的搜索词与页面数据，将在下次同步时到达。',
-            overCap: '本月套餐内的关键词相互竞争报告已全部用完。',
             rateLimited: '关键词相互竞争报告请求过于频繁，请一分钟后重试。',
             invalidWindow: '请选择七天、28 天或 90 天的时间段。',
         },
@@ -1095,7 +981,6 @@ export const zh: DictionaryShape = {
             productUnavailable: '内部链接建议暂时不可用，请稍后重试。',
             inventoryMissing: '请先运行内容清单，再创建内部链接建议。',
             inventoryStale: '请重新运行内容清单，再创建内部链接建议。',
-            overCap: '你已用完本月套餐内的内部链接建议运行次数。',
             rateLimited: '内部链接建议请求过多，请一分钟后重试。',
             queueFailed: '无法将建议运行加入队列，请稍后重试。',
             processingFailed: '建议运行失败。已存储的内容清单未被更改。',
@@ -1107,7 +992,6 @@ export const zh: DictionaryShape = {
             notFound: '未找到该聚类运行。',
             productUnavailable: '关键词聚类暂时不可用，请稍后再试。',
             notEnoughKeywords: '至少需要两个已跟踪关键词在过去七天内有排名检查，才能进行聚类。',
-            overCap: '本月你的套餐内关键词聚类运行次数已用完。',
             rateLimited: '聚类请求过于频繁，请一分钟后再试。',
             queueFailed: '聚类运行无法排入队列，请稍后再试。',
             processingFailed: '聚类运行失败。你已存储的观测数据未被更改。',
@@ -1125,7 +1009,6 @@ export const zh: DictionaryShape = {
         errors: {
             notFound: '未找到内容简报。',
             unavailable: '内容简报暂时不可用，请稍后重试。',
-            overCap: '你已用完本月套餐内的全部内容简报。',
             keywordNotTracked: '请先跟踪该 Google 关键词，再请求内容简报。',
             draftLimit: '该简报的草稿版本数已达上限。',
             notReady: '请等待简报完成后再为草稿评分。',
@@ -1144,7 +1027,6 @@ export const zh: DictionaryShape = {
         errors: {
             unavailable: '地理网格扫描暂时不可用，请稍后再试。',
             notFound: '未找到该地理网格扫描。',
-            capExceeded: '本月你的套餐内地理网格扫描已用完。',
             keywordNotTracked: '请先跟踪该 Google 关键词，再运行地理网格扫描。',
             rateLimited: '地理网格请求过多，请一分钟后再试。',
         },
@@ -1158,7 +1040,6 @@ export const zh: DictionaryShape = {
     alerts: {
         errors: {
             unavailable: '提醒功能暂时不可用，请稍后再试。',
-            channelNotOnPlan: 'Slack 与 Webhook 渠道需要 Pro 及以上套餐。',
             rateLimited: '提醒请求过于频繁，请一分钟后再试。',
             siteNotFound: '未找到该站点。',
             ruleNotFound: '未找到该提醒规则。',
@@ -1197,8 +1078,6 @@ export const zh: DictionaryShape = {
         errors: {
             notFound: '未找到该品牌扫描。',
             productUnavailable: 'Brand Radar 暂时不可用，请稍后再试。',
-            overCap: '本月套餐内的品牌扫描次数已全部用完。',
-            notOnPlan: 'Brand Radar 需要 Pro 或 Agency 套餐；在 Pro 套餐上还需加购 Brand Radar 附加包。',
             addonRequired: '请加购 Brand Radar 附加包，以在当前套餐上运行品牌扫描。',
             rateLimited: '品牌扫描请求过多，请一分钟后重试。',
             invalidCursor: '品牌扫描分页游标无效。',
@@ -1211,11 +1090,7 @@ export const zh: DictionaryShape = {
         },
     },
     reviewIntelligence: {
-        preview: {
-            notOnPlan: '您的套餐不包含评价智能。',
-        },
         errors: {
-            overCap: '本月套餐内的评价同步次数已全部用完。',
             productUnavailable: '评价智能暂时不可用，请稍后重试。',
             notFound: '未找到评价数据。',
             invalidTarget: '请输入该评价来源的有效商家标识。',
@@ -1226,9 +1101,6 @@ export const zh: DictionaryShape = {
         },
     },
     trafficInsights: {
-        preview: {
-            notOnPlan: '您的套餐不包含流量洞察。',
-        },
         compare: {
             clamped: '仅比较前 {{count}} 个快照。',
             invalidSelection: '请至少选择两个不同的流量快照进行比较。',
@@ -1247,13 +1119,11 @@ export const zh: DictionaryShape = {
         errors: {
             unavailable: 'AI 可见度暂时不可用。请稍后再试。',
             suggestionFailed: '无法生成提示词建议。请稍后再试。',
-            suggestionCapExceeded: '本月您已用完全部建议生成次数。',
             promptCapReached: '每个站点最多可跟踪十个 AI 提问。',
             promptAlreadyTracked: '您已在跟踪这个提问。',
             promptRequired: '请输入要跟踪的提问。',
             promptNotFound: '未找到跟踪的提问。',
             siteNotFound: '未找到该站点。',
-            capExceeded: '您本月的 AI 可见度检查次数已用完。',
             refreshCooldown: '已达到检查上限。请在 {{seconds}} 秒后重试。',
             refreshCooldown_zero: '已达到检查上限。请在 {{seconds}} 秒后重试。',
             refreshCooldown_one: '已达到检查上限。请在 {{seconds}} 秒后重试。',
@@ -1268,7 +1138,6 @@ export const zh: DictionaryShape = {
             siteNotFound: '未找到该站点。',
             keywordNotFound: '未找到跟踪的关键词。',
             unavailable: '本地 SEO 数据暂时不可用，请稍后重试。',
-            capExceeded: '您本月的本地信息检查次数已用完。',
             refreshCooldown: '已达到刷新限制，请在 {{seconds}} 秒后重试。',
             refreshCooldown_zero: '已达到刷新限制，请在 {{seconds}} 秒后重试。',
             refreshCooldown_one: '已达到刷新限制，请在 {{seconds}} 秒后重试。',
@@ -1304,7 +1173,6 @@ export const zh: DictionaryShape = {
             urlNoTld: '请输入完整的域名，例如 https://example.com。',
             duplicate: '该网站已在您的账户中。',
             duplicateAlias: '该网站已作为 {{domain}} 在您的账户中。带 www 和不带 www 的地址视为同一个网站。',
-            capExceeded: '您的套餐已达到网站数量上限。升级以添加更多网站。',
             notFound: '未找到该网站。',
             deleteWhileRunning: '请等待正在进行的审核完成，然后再移除此网站。',
             paused: '该网站已暂停。恢复后才能运行检查和审核。',
@@ -1312,43 +1180,6 @@ export const zh: DictionaryShape = {
             notPaused: '该网站未处于暂停状态。',
             invalidMarket: '请从列表中为此网站选择国家/地区和语言。',
             marketsUnavailable: '无法加载国家/地区和语言列表，请稍后重试。',
-        },
-    },
-    admin: {
-        errors: {
-            cannotDemoteLastAdmin: '您无法删除自己的管理员角色 — 您是最后一位管理员。',
-            cannotSuspendLastAdmin: '您无法暂停自己的账户 — 您是最后一位活跃管理员。',
-            cannotModifySuperAdmin: "无法从管理面板修改 SuperAdmin 账户。",
-            webhookReplayFailed: 'Webhook 重放失败。',
-            webhookNotFound: '未找到 Webhook 事件。',
-            webhookNoPayload: '此 Webhook 事件没有可重放的已捕获载荷。',
-        },
-        refund: {
-            errors: {
-                notFound: '未找到订单。',
-                notRefundable: '此订单无法退款。',
-                providerFailure: '支付服务商拒绝了退款。请稍后重试。',
-            },
-        },
-    },
-    enterprise: {
-        leadReceived: '感谢您的咨询 — 我们的团队会尽快与您联系。',
-        agreementSaved: '协议已保存。',
-        agreementActivated: '协议已启用。',
-        agreementSuspended: '协议已暂停。',
-        agreementEnded: '协议已终止。',
-        leadStatusUpdated: '线索状态已更新。',
-        errors: {
-            agreementNotFound: '该账户没有企业协议。',
-            agreementEnded: '该协议已终止，无法再编辑。',
-            productIdTaken: '该 Polar 商品已关联到另一份协议。',
-            productIdReserved: '该 Polar 商品 ID 属于标准套餐或加量包。',
-            invalidCaps: 'Enterprise 额度必须使用已知指标和有限整数。',
-            invalidCap: 'Enterprise 协议中的 {{metric}} 必须是 0 到 {{maximum}} 之间的整数。',
-            invalidSeats: 'Enterprise 席位数必须是 1 到 {{maximum}} 之间的整数。',
-            priceBelowFloor: '约定价格低于 Enterprise 商业与利润率底线。每月最低为 {{floorCents}} 分。',
-            leadNotFound: '该线索已不存在。',
-            notEnterprise: '该账户不在企业协议范围内。',
         },
     },
     team: {
@@ -1359,7 +1190,6 @@ export const zh: DictionaryShape = {
         roleChanged: '角色已更新。',
         inviteResent: '新的邀请链接已发送至 {{email}}。',
         errors: {
-            seatCapExceeded: '您的套餐席位已用完。请升级套餐以邀请更多成员。',
             alreadyInvited: '该邮箱已有待处理的邀请。',
             alreadyMember: '该邮箱已是团队成员。',
             inviteNotFound: '该邀请链接无效。',
@@ -1373,15 +1203,6 @@ export const zh: DictionaryShape = {
             inviteDeliveryFailed: '邀请邮件无法送达，因此未创建邀请。',
             provisionalRestricted: '请更改临时密码并接受邀请后继续。',
             inviteBeingCleaned: '受邀账户正在清理，请稍后重试。',
-        },
-    },
-    superadmin: {
-        errors: {
-            invalidSort: "不允许使用该排序列。",
-            cannotSelfDemote: "你不能移除自己的 SuperAdmin 角色。",
-            cannotDeleteSelf: "你不能删除自己的 SuperAdmin 账户。",
-            cannotDemoteLastSuperAdmin: "你不能移除最后一个 SuperAdmin。",
-            cannotSuspendLastSuperAdmin: "你不能停用最后一个 SuperAdmin。",
         },
     },
     apiKeys: {
@@ -1437,6 +1258,8 @@ export const zh: DictionaryShape = {
             getBacklinksSummary: { description: '返回自有网站已存储的反向链接摘要：反向链接总数、不同的引用域名数以及获取时间。只读；从不获取新数据，也从不消耗反向链接行数。请引用获取日期，并区分这两个数字。' },
             listBacklinks: { description: '列出自有网站已存储的反向链接，每个引用域名一条链接，并附带可疑标记（属于疑似，未经验证）。只读；仅读取已存储的行，从不消耗反向链接行数。请引用获取日期和范围。' },
             listCompetitors: { description: '列出自有网站的竞争对手组合，包括活跃和已归档的档案。只读；不抓取，不产生费用。' },
+            listKeywordResearchHistory: { description: '列出账户已存储的关键词研究历史：搜索了什么、何时搜索，以及地区和语言。只读；从不调用数据提供方。' },
+            getKeywordResearchResult: { description: '返回某条关键词研究历史记录已存储的结果，状态为 available、partial、expired 或 unsupported。仅读取已存储的缓存；从不刷新，也从不调用数据提供方。请引用获取日期。' },
             getAiVisibilitySummary: { description: '返回自有网站已存储的 AI Visibility 摘要：已跟踪的提示词、各引擎的最新检查以及声量份额。只读；从不运行检查。请引用检查日期，并在证据有限时说明。' },
             getLocalSeoSummary: { description: '返回自有网站已存储的本地 SEO 摘要：商家资料快照、名称、地址和电话的一致性，以及本地包排名。只读；从不刷新商家信息。' },
             getReviewsSummary: { description: '返回自有网站已存储的评价摘要：评价来源及就绪状态、评分统计和已存储的主题。只读；从不启动评价同步。' },
@@ -1564,7 +1387,6 @@ export const zh: DictionaryShape = {
                 runInFlight: '该网站已有一个清点任务在进行中。请等待其完成后再启动新的任务。',
                 originUnsafe: '该网站地址指向被阻止或内部的位置，无法抓取。',
                 seedUnsafe: '您提供的某个站点地图地址指向被阻止或内部的位置。',
-                capExceeded: '您本月的内容清点页面块已全部用完。',
                 queueUnavailable: '清点队列不可用。请稍后重试。',
                 notFound: '未找到清点任务。',
                 notCancellable: '此清点任务已经结束。',
@@ -1600,7 +1422,6 @@ export const zh: DictionaryShape = {
                 reviewedTargetsInvalid: '已审核页面已不安全或不再是最新状态。',
                 unavailable: '竞争对手内容分析暂时不可用。请稍后重试。',
                 runInFlight: '该站点已有一个竞争对手对比正在进行。请等待其完成后再开始新的对比。',
-                capExceeded: '您本月的竞争对手对比次数已用完。',
                 queueUnavailable: '对比队列不可用。请稍后重试。',
                 notFound: '未找到竞争对手对比。',
                 notCancellable: '此竞争对手对比已完成。',
@@ -1650,7 +1471,6 @@ export const zh: DictionaryShape = {
                 cursorInvalid: '该页面游标无效。',
             },
             warnings: {
-                capExhausted: '您本月的监控检查次数已全部用完，因此此监控已暂停，将于下月恢复。',
                 providerDrift: '此监控与服务提供方不同步，现已重新同步。',
             },
         },
@@ -1912,7 +1732,6 @@ export const zh: DictionaryShape = {
             siteNotFound: '未找到网站。',
             pageNotFound: '当前来源清单中未找到该页面。',
             rateLimited: 'Pages 请求过多，请稍后重试。',
-            capExceeded: '本周期的关键词查询额度已用完。',
             gscUnavailable: 'Search Console 数据暂时不可用；如有可能，系统会保留上次成功的数据。',
             providerUnavailable: '排名数据暂时不可用，请稍后再次刷新。',
             refreshFailed: '无法保存 Pages 刷新结果；上次成功的数据已保留。',

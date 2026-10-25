@@ -471,17 +471,29 @@ export const SerpFeaturesPanel = ({ siteId }: SerpFeaturesPanelProps) => {
 
   return (
     <section className="flex flex-col gap-4" data-testid="serp-features-panel">
-      <div className="flex flex-wrap items-start justify-between gap-3">
-        <div>
-          <h2 className="text-lg font-semibold">{t('serpFeatures.title')}</h2>
+      {/* Title row like every other workspace tab: the title block takes the
+          free width and the export sits at the end of the row. The disabled
+          hint is capped so it can no longer widen the action column and push
+          it onto its own line, where it floated mid-page. */}
+      <div
+        className="flex flex-wrap items-start justify-between gap-3"
+        data-testid="serp-features-header"
+      >
+        <div className="flex min-w-0 flex-1 flex-col gap-1">
+          <h2 className="text-2xl font-semibold">{t('serpFeatures.title')}</h2>
           <p className="text-muted-foreground text-sm">{t('serpFeatures.description')}</p>
         </div>
-        <ReportExportControl
-          kind="ranks.serp_features"
-          target={{ scope: 'site', siteId }}
-          selection={{}}
-          empty={rows.length === 0}
-        />
+        <div
+          className="ms-auto flex max-w-xs shrink-0 flex-col items-end gap-1 text-end"
+          data-testid="serp-features-header-actions"
+        >
+          <ReportExportControl
+            kind="ranks.serp_features"
+            target={{ scope: 'site', siteId }}
+            selection={{}}
+            empty={rows.length === 0}
+          />
+        </div>
       </div>
       {capturePausedBanner}
       {rows.length === 0 ? (

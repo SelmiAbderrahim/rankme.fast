@@ -97,7 +97,6 @@
   },
   "errors": {
     "unexpected": "Something went wrong — try again.",
-    "overCap": "Your plan cap is exhausted. Upgrade or buy credits to receive weekly pulses.",
     "acknowledgePreviewRequired": "Preview the spend before enabling.",
     "reconnectRequired": "Reconnect Google Search Console to load this data.",
     "unauthorized": "Please sign in to view the weekly pulse."

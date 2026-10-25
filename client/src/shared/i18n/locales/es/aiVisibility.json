@@ -120,7 +120,6 @@
     "aiGenerated": "Sugerido por AI",
     "generate": "Generar sugerencias",
     "cooldown_one": "Espera {{seconds}} s antes de volver a generar.",
-    "capReached": "Has usado todas tus generaciones de sugerencias este mes.",
     "emptyGenerated": "Todavía no hemos podido crear preguntas con tus datos. Añade palabras clave en seguimiento o ejecuta una auditoría y vuelve a generar.",
     "generatedAt": "Generado el {{date}}",
     "outputLocale": "Idioma de salida: {{locale}}",
@@ -144,10 +143,6 @@
     "regenerate": "Volver a generar sugerencias",
     "staleBody": "Se crearon antes de que las sugerencias usaran solo los datos de este sitio, así que las ocultamos. Genera un conjunto nuevo con el botón de arriba. No se descuenta nada hasta que hagas clic.",
     "staleTitle": "Estas sugerencias están desactualizadas"
-  },
-  "locked": {
-    "body": "AI Visibility está disponible en el plan Agency.",
-    "upgrade": "Ver planes"
   },
   "add": {
     "failed": "No se pudo añadir ese prompt."

@@ -26,6 +26,8 @@ import {
   fetchMetricsRequest,
   fetchOverviewRequest,
   fetchRelatedRequest,
+  fetchStoredKeywordsRequest,
+  fetchStoredResultRequest,
   fetchTrendsRequest,
   postClusterDecisionRequest,
   runClustersRequest,
@@ -112,6 +114,39 @@ describe('keyword-research api', () => {
     await fetchHistoryRequest({ cursor: 'abc-123', limit: 5 });
     expect(apiClient).toHaveBeenCalledWith(
       '/keyword-research/history?cursor=abc-123&limit=5',
+    );
+  });
+
+  it('GETs /keyword-research/history scoped to a site', async () => {
+    await fetchHistoryRequest({ siteId: 'a'.repeat(24), limit: 20 });
+    expect(apiClient).toHaveBeenCalledWith(
+      `/keyword-research/history?limit=20&siteId=${'a'.repeat(24)}`,
+    );
+  });
+
+  it('GETs the saved results of one history row with the id encoded', async () => {
+    await fetchStoredResultRequest('row/1');
+    expect(apiClient).toHaveBeenCalledWith('/keyword-research/history/row%2F1/results');
+  });
+
+  it('forwards the site and shared lookup id on the lookup bodies', async () => {
+    const body = { keywords: ['a'], locationCode: 2840, languageCode: 'en', siteId: 's', lookupId: 'l' };
+    await fetchMetricsRequest(body);
+    await fetchIntentRequest(body);
+    expect(apiClient).toHaveBeenCalledWith('/keyword-research/metrics', { method: 'POST', body });
+    expect(apiClient).toHaveBeenCalledWith('/keyword-research/intent', { method: 'POST', body });
+  });
+});
+
+describe('stored keywords api', () => {
+  it('GETs the stored phrases of one market, with the search and limit only when given', async () => {
+    await fetchStoredKeywordsRequest({ locationCode: 2840, languageCode: 'en' });
+    expect(apiClient).toHaveBeenLastCalledWith(
+      '/keyword-research/stored-keywords?locationCode=2840&languageCode=en',
+    );
+    await fetchStoredKeywordsRequest({ locationCode: 2250, languageCode: 'fr', q: 'seo', limit: 1000 });
+    expect(apiClient).toHaveBeenLastCalledWith(
+      '/keyword-research/stored-keywords?locationCode=2250&languageCode=fr&q=seo&limit=1000',
     );
   });
 });

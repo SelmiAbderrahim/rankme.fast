@@ -155,7 +155,9 @@
     "actor": "Teammitglied",
     "from": "von {{state}}",
     "close": "Schließen",
-    "actorYou": "Sie"
+    "actorYou": "Sie",
+    "observed": "Festgestellt",
+    "actorSystem": "Automatische Prüfung"
   },
   "retest": {
     "title": "Diesen Befund erneut prüfen?",
@@ -164,8 +166,6 @@
     "unitsValue": "1",
     "freshRun": "Eine erneute Prüfung crawlt immer neu — Ergebnisse kommen nie aus einem Cache.",
     "selfHosted": "Auf diesem Server werden keine Nutzungslimits angewendet.",
-    "remaining": "{{remaining}} von {{cap}} Audit-Läufen in diesem Zeitraum übrig",
-    "allowanceUnknown": "Ihr verbleibendes Kontingent konnte nicht geladen werden. Der Server prüft Ihr Limit vor dem Start trotzdem.",
     "confirm": "Erneute Prüfung starten",
     "starting": "Wird gestartet…",
     "queued": "Erneute Prüfung eingereiht. Verfolgen Sie den Fortschritt im Bericht-Tab.",

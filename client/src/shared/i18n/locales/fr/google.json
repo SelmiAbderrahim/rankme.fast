@@ -107,6 +107,9 @@
     "timeseriesTitle": "Clics et impressions au fil du temps",
     "timeseriesSubtitle_one": "Totaux quotidiens du dernier jour ({{days}}).",
     "timeseriesEmpty": "Pas encore de données quotidiennes.",
+    "timeseriesNoActivity": "Aucune activité sur cette période.",
+    "timeseriesNoClicks": "Aucun clic sur cette période.",
+    "timeseriesNoImpressions": "Aucune impression sur cette période.",
     "timeseriesChartLabel_one": "{{metric}} par jour sur le dernier jour ({{days}})",
     "timeseriesTableCaption_one": "Performance de recherche quotidienne du dernier jour ({{days}})",
     "tableDate": "Date",
@@ -179,10 +182,6 @@
     "devicesEmpty": "Pas encore de données par appareil.",
     "devicesTableCaption": "Sessions par appareil",
     "deviceHeader": "Appareil",
-    "locked": {
-      "body": "Les statistiques Google Analytics sont incluses dans le plan Pro et au-delà. Passez à un plan supérieur pour voir les sessions, l'engagement et les événements clés à côté de vos données de recherche.",
-      "upgrade": "Mettre à niveau"
-    },
     "enableTitle": "Google Analytics n'est pas activé",
     "enableBody": "Accordez un accès en lecture seule à Google Analytics pour voir les sessions, l'engagement et les événements clés de ce site.",
     "enableCta": "Activer Google Analytics",

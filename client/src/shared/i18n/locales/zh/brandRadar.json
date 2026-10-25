@@ -26,7 +26,7 @@
     "filter": {
       "label": "按状态筛选",
       "all": "全部状态",
-      "note": "筛选仅作用于本页已加载的扫描。"
+      "note": "筛选仅作用于下方显示的扫描。加载更多即可包含更早的扫描。"
     }
   },
   "status": {
@@ -63,21 +63,11 @@
       "description": "目前无法发起新的扫描。",
       "storedReads": "已经运行过的扫描仍可查看。"
     },
-    "notOnPlan": {
-      "title": "品牌雷达需要更高的套餐",
-      "description": "升级到 Pro 或 Agency 即可解锁品牌扫描。",
-      "link": "查看套餐"
-    },
     "addonRequired": {
       "title": "为套餐添加品牌雷达",
       "description": "请在账单中查看品牌雷达附加项当前是否可用。",
       "price": "每月 {{price}}，包含 {{units}} 次扫描。",
       "link": "查看品牌雷达选项"
-    },
-    "overCap": {
-      "title": "本月品牌扫描已用完",
-      "description": "请在账单中查看 {{slug}} 加量包当前是否可用。",
-      "link": "查看扫描额度选项"
     }
   },
   "form": {

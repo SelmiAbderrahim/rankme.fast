@@ -43,8 +43,9 @@ import {
 } from '@shared/ui/empty';
 import { Skeleton } from '@shared/ui/skeleton';
 import { StatCard } from '@shared/ui/stat-card';
+import { MetricValue } from '@shared/components/MetricValue';
+import { PositionDelta } from '@shared/components/PositionDelta';
 import { StatusChip } from '@shared/ui/status-chip';
-import { DeltaPill } from '@shared/ui/delta-pill';
 import {
   CodeFixPromptButton,
   type CodeFixPromptInput,
@@ -298,13 +299,6 @@ export const OverviewPanel = ({ siteId }: Props) => {
   const decimal = (value: number | null | undefined): string =>
     typeof value === 'number'
       ? new Intl.NumberFormat(locale, { maximumFractionDigits: 1 }).format(value)
-      : NA;
-  const percent = (value: number | null | undefined): string =>
-    typeof value === 'number'
-      ? new Intl.NumberFormat(locale, {
-          style: 'percent',
-          maximumFractionDigits: 1,
-        }).format(value)
       : NA;
   const date = (value: string): string =>
     new Intl.DateTimeFormat(locale, { dateStyle: 'medium' }).format(new Date(value));
@@ -704,12 +698,25 @@ export const OverviewPanel = ({ siteId }: Props) => {
                     <StatCard
                       variant="kpi"
                       label={t('report:gscBlock.averageCtr')}
-                      value={percent(searchData.averageCtr)}
+                      // No impressions means no CTR or position, not 0.
+                      value={
+                        <MetricValue
+                          kind="ratio"
+                          value={searchData.averageCtr}
+                          denominator={searchData.totalImpressions}
+                        />
+                      }
                     />
                     <StatCard
                       variant="kpi"
                       label={t('report:gscBlock.averagePosition')}
-                      value={decimal(searchData.averagePosition)}
+                      value={
+                        <MetricValue
+                          kind="position"
+                          value={searchData.averagePosition}
+                          denominator={searchData.totalImpressions}
+                        />
+                      }
                     />
                   </div>
                   {searchData.asOf ? <p className="text-muted-foreground text-xs">{t('sites:overview.search.asOf', { date: date(searchData.asOf) })}</p> : null}
@@ -916,11 +923,11 @@ export const OverviewPanel = ({ siteId }: Props) => {
                                   : t('sites:overview.keywords.awaiting')}
                             </StatusChip>
                           )}
-                          {state === 'ranked' ? (
-                            <DeltaPill
-                              value={keyword.delta}
-                              format={(value) => count(value)}
-                              aria-label={t('ranks:columnDelta')}
+                          {state === 'ranked' || state === 'not-ranking' ? (
+                            <PositionDelta
+                              change={keyword.positionChange}
+                              movement={keyword.movement}
+                              fallbackDelta={keyword.delta}
                             />
                           ) : null}
                         </div>
@@ -992,7 +999,7 @@ export const OverviewPanel = ({ siteId }: Props) => {
                         backlinkSummary.delta
                           ? {
                               value: backlinkSummary.delta.domainRating,
-                              format: (value) => decimal(value),
+                              options: { maximumFractionDigits: 1 },
                             }
                           : undefined
                       }
@@ -1005,7 +1012,6 @@ export const OverviewPanel = ({ siteId }: Props) => {
                         backlinkSummary.delta
                           ? {
                               value: backlinkSummary.delta.referringDomains,
-                              format: (value) => count(value),
                             }
                           : undefined
                       }
@@ -1018,7 +1024,6 @@ export const OverviewPanel = ({ siteId }: Props) => {
                         backlinkSummary.delta
                           ? {
                               value: backlinkSummary.delta.backlinks,
-                              format: (value) => count(value),
                             }
                           : undefined
                       }
@@ -1032,7 +1037,6 @@ export const OverviewPanel = ({ siteId }: Props) => {
                           ? {
                               value: backlinkSummary.delta.brokenBacklinks,
                               goodDirection: 'down',
-                              format: (value) => count(value),
                             }
                           : undefined
                       }
@@ -1082,7 +1086,8 @@ export const OverviewPanel = ({ siteId }: Props) => {
                             {t('competitors:table.overlap')}: {count(competitor.intersections)}
                           </p>
                           <p className="text-xs text-muted-foreground tabular-nums">
-                            {t('competitors:table.avgPosition')}: {decimal(competitor.avgPosition)}
+                            {t('competitors:table.avgPosition')}:{' '}
+                            <MetricValue kind="position" value={competitor.avgPosition} />
                           </p>
                         </div>
                       </li>

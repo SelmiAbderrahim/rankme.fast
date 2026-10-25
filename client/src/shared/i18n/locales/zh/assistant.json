@@ -82,6 +82,8 @@
       "getBacklinksSummary": "获取反向链接摘要",
       "listBacklinks": "列出反向链接",
       "listCompetitors": "列出竞争对手",
+      "listKeywordResearchHistory": "列出关键词研究历史",
+      "getKeywordResearchResult": "获取关键词研究结果",
       "getAiVisibilitySummary": "获取 AI Visibility 摘要",
       "getLocalSeoSummary": "获取本地 SEO 摘要",
       "getReviewsSummary": "获取评价摘要",

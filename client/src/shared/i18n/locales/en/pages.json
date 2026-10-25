@@ -141,7 +141,7 @@
   },
   "filters": {
     "title": "Find pages",
-    "description": "Search and filters are evaluated on the server and never collect new vendor data.",
+    "description": "Searching and filtering never fetch new data.",
     "searchLabel": "Search pages and queries",
     "searchPlaceholder": "Title, path, URL, query, or keyword",
     "insight": "Insight",

@@ -89,11 +89,10 @@ describe('ActiveSessions device labels', () => {
     );
     renderWithLocale();
     await screen.findByText('Chrome 154 on macOS');
-    const expected = new Intl.DateTimeFormat('en', {
-      dateStyle: 'medium',
-      timeStyle: 'short',
-    }).format(new Date('2026-10-05T10:30:00.000Z'));
-    expect(screen.getByText(`Last active ${expected}`)).toBeInTheDocument();
+    const [lastActive] = screen.getAllByTestId('session-last-active').filter((node) => /Last active/.test(node.textContent ?? ''));
+    expect(lastActive).toBeDefined();
+    // Other devices read by calendar day; the exact date is on the element.
+    expect(lastActive!.querySelector('time')).toHaveAttribute('datetime', '2026-10-05T10:30:00.000Z');
     expect(screen.getAllByText(/Last active/)).toHaveLength(1);
     expect(screen.getByText('Active now')).toBeInTheDocument();
   });
@@ -236,5 +235,61 @@ describe('ActiveSessions', () => {
     listSessions.mockResolvedValue(ok([sess('cur')]));
     renderWithLocale('ar');
     expect(await screen.findByText('هذا الجهاز')).toBeInTheDocument();
+  });
+
+  it('shows a load error and a retry when reading the sessions throws', async () => {
+    listSessions.mockRejectedValueOnce(new Error('offline')).mockResolvedValueOnce(ok([sess('cur')]));
+    renderWithLocale();
+    expect(await screen.findByText('Could not load your sessions.')).toBeInTheDocument();
+    fireEvent.click(screen.getByRole('button', { name: 'Try again' }));
+    expect(await screen.findByText('This device')).toBeInTheDocument();
+  });
+
+  it('offers no retry for a load error the server will repeat', async () => {
+    listSessions.mockResolvedValue(fail({ status: 403 }));
+    renderWithLocale();
+    expect(await screen.findByText('Could not load your sessions.')).toBeInTheDocument();
+    expect(screen.queryByRole('button', { name: 'Try again' })).not.toBeInTheDocument();
+  });
+
+  it('surfaces an error alert when a revoke request throws', async () => {
+    listSessions.mockResolvedValue(ok([sess('cur'), sess('other', null, null)]));
+    revokeSession.mockRejectedValue(new Error('offline'));
+    renderWithLocale();
+    fireEvent.click(await screen.findByRole('button', { name: 'Revoke' }));
+    fireEvent.click(screen.getByRole('button', { name: 'Revoke session' }));
+    expect(await screen.findByRole('alert')).toHaveTextContent('Could not revoke that session. Try again.');
+  });
+
+  it('surfaces an error alert when signing out other devices throws', async () => {
+    listSessions.mockResolvedValue(ok([sess('cur'), sess('other')]));
+    revokeOtherSessions.mockRejectedValue(new Error('offline'));
+    renderWithLocale();
+    fireEvent.click(await screen.findByRole('button', { name: 'Sign out all other devices' }));
+    expect(await screen.findByRole('alert')).toHaveTextContent('Could not revoke that session. Try again.');
+  });
+
+  it('omits the last-active line when the stored time is missing or invalid', async () => {
+    listSessions.mockResolvedValue(ok([
+      { ...sess('a', 'curl/8.4.0'), createdAt: 'not a date' },
+      { ...sess('b', 'curl/8.4.0'), updatedAt: null, createdAt: null },
+    ]));
+    renderWithLocale();
+    expect(await screen.findAllByText('Unknown device')).toHaveLength(2);
+    expect(screen.queryByTestId('session-last-active')).not.toBeInTheDocument();
+  });
+
+  it('keeps the confirmation open while a revoke is in flight', async () => {
+    listSessions.mockResolvedValue(ok([sess('cur'), sess('other')]));
+    let finish: (value: unknown) => void = () => undefined;
+    revokeSession.mockImplementation(() => new Promise((resolve) => { finish = resolve; }));
+    renderWithLocale();
+    fireEvent.click(await screen.findByRole('button', { name: 'Revoke' }));
+    fireEvent.click(screen.getByRole('button', { name: 'Revoke session' }));
+    await waitFor(() => expect(revokeSession).toHaveBeenCalled());
+    fireEvent.keyDown(screen.getByRole('alertdialog'), { key: 'Escape' });
+    expect(screen.getByRole('alertdialog')).toBeInTheDocument();
+    finish(fail());
+    expect(await screen.findByText('Could not revoke that session. Try again.')).toBeInTheDocument();
   });
 });

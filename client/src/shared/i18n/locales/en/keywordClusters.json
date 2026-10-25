@@ -40,7 +40,6 @@
   },
   "states": {
     "ranksCta": "Run a rank check",
-    "planCta": "See plans",
     "emptyRuns": {
       "title": "No saved runs yet",
       "body": "Preview a new run to see which tracked keywords qualify."
@@ -52,10 +51,6 @@
     "notEnoughKeywords": {
       "title": "Not enough recent rank checks",
       "body": "Fewer than two tracked keywords have a usable rank check from the last seven days. No run was spent."
-    },
-    "cap": {
-      "title": "Monthly run allowance reached",
-      "body": "This request was not started. Wait for the next allowance period or review available plans."
     },
     "disabled": {
       "title": "Clustering runs are unavailable",

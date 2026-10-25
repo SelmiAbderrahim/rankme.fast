@@ -45,19 +45,19 @@ const readWithDeadline = async (
   parent: AbortSignal | null | undefined,
 ): Promise<Response> => {
   const controller = new AbortController();
-  let timer: ReturnType<typeof setTimeout> | undefined;
-  let cancel: (() => void) | undefined;
-  const deadline = new Promise<never>((_, reject) => {
-    cancel = () => {
-      controller.abort();
-      reject(abortError());
-    };
-    parent?.addEventListener('abort', cancel, { once: true });
-    timer = setTimeout(() => {
-      controller.abort();
-      reject(timeoutError());
-    }, SESSION_TIMEOUT_MS);
+  let reject!: (reason: unknown) => void;
+  const deadline = new Promise<never>((_, rejectDeadline) => {
+    reject = rejectDeadline;
   });
+  const cancel = () => {
+    controller.abort();
+    reject(abortError());
+  };
+  parent?.addEventListener('abort', cancel, { once: true });
+  const timer = setTimeout(() => {
+    controller.abort();
+    reject(timeoutError());
+  }, SESSION_TIMEOUT_MS);
   try {
     return await Promise.race([
       (async () => {
@@ -78,7 +78,7 @@ const readWithDeadline = async (
     ]);
   } finally {
     clearTimeout(timer);
-    if (cancel) parent?.removeEventListener('abort', cancel);
+    parent?.removeEventListener('abort', cancel);
   }
 };
 

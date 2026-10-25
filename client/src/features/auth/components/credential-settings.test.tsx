@@ -63,3 +63,11 @@ it('does not guess the credential state when lookup fails', async () => {
   expect(screen.queryByText(/secret/)).not.toBeInTheDocument();
   expect(screen.queryByText('Change credential password')).not.toBeInTheDocument();
 });
+
+it('shows no password card for a social-only account without an email address', async () => {
+  mocks.user = { id: 'owner' } as typeof mocks.user;
+  mocks.listAccounts.mockResolvedValue({ data: [{ providerId: 'google' }] });
+  mount();
+  expect(await screen.findByText('Password needed for two-factor')).toBeInTheDocument();
+  expect(screen.queryByRole('button', { name: 'Set a password' })).not.toBeInTheDocument();
+});

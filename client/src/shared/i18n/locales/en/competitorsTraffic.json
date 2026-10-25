@@ -1,6 +1,6 @@
 {
   "title": "Traffic Insights",
-  "description": "Request and reopen provider-index traffic estimates for any public domain.",
+  "description": "Request and reopen third-party traffic estimates for any public domain.",
   "common": {
     "notAvailable": "Not available"
   },
@@ -109,16 +109,6 @@
     "locked": {
       "title": "New snapshots are temporarily paused",
       "description": "Traffic Insights is temporarily unavailable for new requests. Stored snapshots remain available."
-    },
-    "cap": {
-      "title": "Snapshot allowance reached",
-      "description": "This request does not fit your remaining base and pack allowance. Check Billing for current pack availability.",
-      "link": "View snapshot packs"
-    },
-    "upgrade": {
-      "title": "Traffic Insights is not on your plan",
-      "description": "Choose a paid plan to request traffic snapshots. You can still open any stored snapshots shared with this workspace.",
-      "link": "Compare plans"
     },
     "timeout": {
       "title": "The request took too long",

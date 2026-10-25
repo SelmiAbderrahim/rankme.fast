@@ -109,6 +109,10 @@ También puedes abrir un análisis de contenido específico desde una oportunida
 del informe. La URL propia, la palabra clave y la página competidora revisada
 aparecen rellenadas, pero debes confirmar el análisis antes de iniciarlo.
 
+## Cuando falla un análisis
+
+Un análisis fallido explica con palabras sencillas qué pasó: un bloqueo de robots.txt, protección contra bots o un muro de inicio de sesión, un error HTTP, una página lenta, un bucle de redirecciones o más de cinco redirecciones, o una dirección que sirve un archivo en lugar de una página web. Una página redirigida se lee en su dirección final. Una página que responde con un error 4xx hace fallar el análisis, mientras que un problema temporal del servidor (HTTP 429 o 5xx) merece otro intento. Cada motivo viene con un paso para resolverlo. **Reintentar** pide confirmación y luego inicia un análisis nuevo de la misma página y palabra clave. Si la dirección es incorrecta, **Editar la URL** vuelve al formulario ya rellenado. Un análisis admite una sola consulta de búsqueda, así que una lista de palabras clave pegada se rechaza con un mensaje: inicia un análisis aparte para cada palabra clave.
+
 ## Gestionar cuota y pack de 20
 
 La cuota mensual depende del plan, ver

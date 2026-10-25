@@ -295,6 +295,28 @@ describe('audit report export composition helpers', () => {
     expect(internals.sourceDates('en', finishedAt, report({ aiSummary: null }))).toHaveLength(5);
   });
 
+  it('exports no CTR or position when the period had no impressions, never zero', () => {
+    const quiet = report({
+      gscSearch: {
+        status: 'ok', totalClicks: 0, totalImpressions: 0, averageCtr: 0, averagePosition: 0,
+        topQueries: [{ query: 'idle', clicks: 0, impressions: 0, ctr: 0, position: 0 }],
+        topPages: [{ url: 'https://example.test/idle', clicks: 0, impressions: 0, ctr: 0, position: 0 }],
+        delta: { clicks: null, impressions: null },
+      },
+    });
+    const built = internals.auditBlocks('en', quiet, composeContext().selection);
+    const totals = built.blocks.find((block) => block.id === 'gsc-totals') as { items: { id: string; value: unknown }[] };
+    expect(totals.items.find((item) => item.id === 'ctr')!.value).toEqual({ type: 'null', value: null });
+    expect(totals.items.find((item) => item.id === 'position')!.value).toEqual({ type: 'null', value: null });
+    expect(totals.items.find((item) => item.id === 'clicks')!.value).toEqual({ type: 'number', value: 0 });
+    for (const id of ['gsc-queries', 'gsc-pages']) {
+      const table = built.blocks.find((block) => block.id === id) as { rows: { cells: { value: unknown }[] }[] };
+      expect(table.rows[0]!.cells.slice(3).map((cell) => cell.value)).toEqual([
+        { type: 'null', value: null }, { type: 'null', value: null },
+      ]);
+    }
+  });
+
   it('renders unavailable and omitted optional sections without inventing evidence', () => {
     const unavailable = report({
       pageSpeed: { status: 'unavailable', samples: [] },

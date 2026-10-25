@@ -21,7 +21,6 @@
   },
   "states": {
     "inventoryCta": "Re-run content inventory",
-    "planCta": "See plans",
     "emptyRuns": {
       "title": "No saved runs yet",
       "body": "Preview a new run to see which stored inventory snapshot it will use.",
@@ -39,10 +38,6 @@
     "stale": {
       "title": "Content inventory is out of date",
       "body": "Re-run your content inventory so suggestions use a recent stored snapshot. No run was spent."
-    },
-    "cap": {
-      "title": "Monthly run allowance reached",
-      "body": "This request was not started. Wait for the next allowance period or review available plans."
     },
     "disabled": {
       "title": "Suggestion runs are unavailable",

@@ -6,9 +6,7 @@
   "yes": "Yes",
   "no": "No",
   "capacity": {
-    "selfHost": "Usage limits aren't applied on this server.",
-    "selfHostPlan": "Self-hosted",
-    "selfHostSlots": "{{used}} in use; usage limits aren't applied on this server."
+    "selfHost": "Usage limits aren't applied on this server."
   },
   "logPanel": {
     "title": "Backup output",
@@ -34,8 +32,6 @@
     "sites": "Sites",
     "keywordResearch": "Keyword research",
     "google": "Google",
-    "billing": "Billing",
-    "creditPacks": "Credit packs",
     "notifications": "Notifications",
     "logout": "Sign out",
     "logOut": "Log out",
@@ -303,9 +299,6 @@
     "signOut": "Sign out",
     "collapse": "Collapse sidebar",
     "expand": "Expand sidebar",
-    "upgradeTitle": "Unlock more audits",
-    "upgradeBody": "Upgrade for higher caps and deeper reports.",
-    "upgradeCta": "Upgrade",
     "groupSuperAdmin": "Platform",
     "opensInNewTab": "Opens in a new tab",
     "searchSitesLoading": "Loading your sites…",
@@ -316,10 +309,6 @@
   },
   "locked": "Locked",
   "retry": "Try again",
-  "tierBadge": {
-    "pro": "Pro",
-    "agency": "Agency"
-  },
   "tableHelp": {
     "about": "About {{column}}",
     "kind": "The research operation used for this row: metrics, related keywords, intent, ideas, gap, overview, trends, or clusters.",
@@ -351,10 +340,10 @@
     "domainRank": "The provider's comparative domain-strength score; higher values indicate a stronger backlink profile.",
     "referringDomains": "The number of distinct domains linking to the target.",
     "dofollow": "Whether the stored link can pass standard ranking signals rather than carrying a nofollow attribute.",
-    "toxicityScore": "A deterministic 0–100 review score for stored backlink observations; higher means more warning signals matched.",
-    "rubricBand": "The score range assigned by the pinned rubric: clean, watch, or toxic. It does not predict a search-engine action.",
-    "contributingSignals": "The stored observations that caused the deterministic rubric score.",
-    "rationale": "An optional AI explanation of the stored signals; it never changes the deterministic band.",
+    "toxicityScore": "A 0–100 score from fixed rules for each saved backlink; higher means more warning signs matched.",
+    "rubricBand": "The risk level the score falls in: clean, watch, or toxic. It doesn't predict what a search engine will do.",
+    "contributingSignals": "The saved signals that raised this score.",
+    "rationale": "An optional AI explanation of the saved signals; it never changes the risk level.",
     "disavowScope": "Whether the export includes the whole referring domain or only the exact backlink URL.",
     "geogridPoint": "The numbered map sample location represented by this row.",
     "localPackPosition": "The business's rank within the observed local result pack; 1 is highest.",
@@ -560,5 +549,10 @@
     "limit": "You can compare up to {{max}} competitor domains at a time. Remove one to add another.",
     "remove": "Remove {{domain}}",
     "placeholder": "e.g. competitor.com"
+  },
+  "breadcrumbs": {
+    "label": "Breadcrumb",
+    "unknownSite": "Unknown site",
+    "loadingSite": "Loading site…"
   }
 }

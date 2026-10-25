@@ -38,8 +38,10 @@ export function HistoryChart({ points }: { points: readonly HistoryPoint[] }) {
   const firstX = coordinates[0]?.x ?? padding;
   const lastX = coordinates.at(-1)?.x ?? padding;
   const area = `${line} L ${lastX} ${baseline} L ${firstX} ${baseline} Z`;
+  // A calendar month built as UTC midnight on its first day: format it in UTC
+  // so viewers west of UTC never see the previous month.
   const month = (point: HistoryPoint) =>
-    new Intl.DateTimeFormat(i18n.language, { month: 'short', year: 'numeric' }).format(
+    new Intl.DateTimeFormat(i18n.language, { month: 'short', year: 'numeric', timeZone: 'UTC' }).format(
       new Date(Date.UTC(point.year, point.month - 1, 1)),
     );
 

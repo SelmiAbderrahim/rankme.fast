@@ -6,9 +6,7 @@
   "yes": "Sí",
   "no": "No",
   "capacity": {
-    "selfHost": "En este servidor no se aplican límites de uso.",
-    "selfHostPlan": "Autoalojado",
-    "selfHostSlots": "{{used}} en uso; en este servidor no se aplican límites de uso."
+    "selfHost": "En este servidor no se aplican límites de uso."
   },
   "logPanel": {
     "title": "Salida de la copia",
@@ -34,8 +32,6 @@
     "sites": "Sitios",
     "keywordResearch": "Investigación de palabras clave",
     "google": "Google",
-    "billing": "Facturación",
-    "creditPacks": "Paquetes de créditos",
     "notifications": "Notificaciones",
     "logout": "Cerrar sesión",
     "logOut": "Cerrar sesión",
@@ -303,9 +299,6 @@
     "signOut": "Cerrar sesión",
     "collapse": "Contraer barra lateral",
     "expand": "Expandir barra lateral",
-    "upgradeTitle": "Desbloquea más auditorías",
-    "upgradeBody": "Mejora tu plan para límites más altos e informes más detallados.",
-    "upgradeCta": "Mejorar plan",
     "groupSuperAdmin": "Plataforma",
     "opensInNewTab": "Se abre en una pestaña nueva",
     "searchSitesLoading": "Cargando tus sitios…",
@@ -316,10 +309,6 @@
   },
   "locked": "Bloqueado",
   "retry": "Reintentar",
-  "tierBadge": {
-    "pro": "Pro",
-    "agency": "Agency"
-  },
   "tableHelp": {
     "about": "Acerca de {{column}}",
     "kind": "La operación de investigación de esta fila: métricas, palabras relacionadas, intención, ideas, brecha, resumen, tendencias o grupos.",
@@ -351,10 +340,10 @@
     "domainRank": "La puntuación comparativa de fortaleza del dominio del proveedor; valores altos indican un perfil de enlaces más fuerte.",
     "referringDomains": "El número de dominios distintos que enlazan al objetivo.",
     "dofollow": "Indica si el enlace guardado puede transmitir señales de posicionamiento normales en lugar de tener un atributo nofollow.",
-    "toxicityScore": "Una puntuación determinista de 0 a 100 para observaciones de enlaces guardadas; cuanto mayor, más señales de advertencia coinciden.",
-    "rubricBand": "El tramo asignado por la regla fijada: limpio, en observación o tóxico. No predice una acción del buscador.",
-    "contributingSignals": "Las observaciones guardadas que produjeron la puntuación determinista.",
-    "rationale": "Una explicación opcional de IA sobre las señales guardadas; nunca cambia el tramo determinista.",
+    "toxicityScore": "Una puntuación de 0 a 100, según reglas fijas, para cada backlink guardado; cuanto más alta, más señales de alerta coinciden.",
+    "rubricBand": "El nivel de riesgo en el que cae la puntuación: limpio, vigilar o tóxico. No predice lo que hará un buscador.",
+    "contributingSignals": "Las señales guardadas que subieron esta puntuación.",
+    "rationale": "Una explicación opcional de la IA sobre las señales guardadas; nunca cambia el nivel de riesgo.",
     "disavowScope": "Indica si la exportación incluye todo el dominio referente o solo la URL exacta del enlace.",
     "geogridPoint": "La ubicación de muestra numerada del mapa representada por esta fila.",
     "localPackPosition": "La posición del negocio en el paquete local observado; 1 es la más alta.",
@@ -560,5 +549,10 @@
     "limit": "Puedes comparar hasta {{max}} dominios de la competencia a la vez. Quita uno para añadir otro.",
     "remove": "Quitar {{domain}}",
     "placeholder": "p. ej. competitor.com"
+  },
+  "breadcrumbs": {
+    "label": "Ruta de navegación",
+    "unknownSite": "Sitio desconocido",
+    "loadingSite": "Cargando sitio…"
   }
 }

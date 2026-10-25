@@ -2182,7 +2182,7 @@ describe('clearPlaintextRefreshToken — error swallowing', () => {
 });
 
 // ---------------------------------------------------------------------------
-// createCollectGscInsights (prompt 24)
+// createCollectGscInsights
 // ---------------------------------------------------------------------------
 
 const FIXED_NOW = () => new Date('2026-07-07T12:00:00.000Z');
@@ -2193,7 +2193,7 @@ const EXPECTED_START = '2026-06-07';
 const EXPECTED_START_7 = '2026-06-28';
 const EXPECTED_START_90 = '2026-04-06';
 /** The (dimension, window) fetch plan: date once at 90d, aggregates ×3 windows.
- * `query,page` (prompt 04) is an aggregate set like the rest — its addition
+ * `query,page` is an aggregate set like the rest — its addition
  * must not disturb the order or the windows of the five historical sets. */
 const EXPECTED_PLAN: Array<[string, number]> = [
   ['date', 90],
@@ -2863,7 +2863,7 @@ describe('createCollectGscInsights', () => {
 });
 
 // ---------------------------------------------------------------------------
-// GET /api/sites/:siteId/google/search-summary (prompt 24)
+// GET /api/sites/:siteId/google/search-summary
 // ---------------------------------------------------------------------------
 
 describe('GET /api/sites/:siteId/google/search-summary', () => {
@@ -3251,7 +3251,7 @@ describe('GET /api/sites/:siteId/google/search-summary', () => {
 });
 
 // ---------------------------------------------------------------------------
-// runGscSync (prompt 24) — on-demand / queue-driven five-dimension sync
+// runGscSync — on-demand / queue-driven five-dimension sync
 // ---------------------------------------------------------------------------
 
 describe('runGscSync', () => {
@@ -3283,7 +3283,7 @@ describe('runGscSync', () => {
       page: 3,
       country: 2,
       device: 3,
-      // Prompt 04 — the fake's default `query,page` fixture (5 rows).
+      // the fake's default `query,page` fixture (5 rows).
       'query,page': 5,
     });
     expect(result.sitemaps).toBe(2);
@@ -3312,7 +3312,7 @@ describe('runGscSync', () => {
   });
 
   // -------------------------------------------------------------------------
-  // Prompt 04 — the `query,page` producer + backward compatibility
+  // the `query,page` producer + backward compatibility
   // -------------------------------------------------------------------------
 
   it('persists capped, separator-joined query,page rows the inventory reader can read back', async () => {
@@ -3531,7 +3531,7 @@ describe('runGscSync', () => {
 });
 
 // ---------------------------------------------------------------------------
-// POST /api/sites/:siteId/google/search-refresh (prompt 24)
+// POST /api/sites/:siteId/google/search-refresh
 // ---------------------------------------------------------------------------
 
 describe('POST /api/sites/:siteId/google/search-refresh', () => {
@@ -3705,7 +3705,7 @@ describe('POST /api/sites/:siteId/google/search-refresh', () => {
 });
 
 // ---------------------------------------------------------------------------
-// Site-scoped connect/binding enqueue paths (prompt 24)
+// Site-scoped connect/binding enqueue paths
 // ---------------------------------------------------------------------------
 
 describe('Site-scoped GSC enqueue paths', () => {
@@ -4418,7 +4418,7 @@ describe('GET /api/sites/:siteId/google/sitemaps', () => {
 });
 
 // ---------------------------------------------------------------------------
-// GET /api/sites/:siteId/google/generative-appearance (prompt 12d)
+// GET /api/sites/:siteId/google/generative-appearance
 // ---------------------------------------------------------------------------
 
 describe('GET /api/sites/:siteId/google/generative-appearance', () => {

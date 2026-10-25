@@ -120,7 +120,6 @@
     "aiGenerated": "AI 建议",
     "generate": "生成建议",
     "cooldown_one": "请等待 {{seconds}} 秒后再次生成。",
-    "capReached": "本月您已用完全部建议生成次数。",
     "emptyGenerated": "暂时无法根据您的数据生成问题。请添加跟踪关键词或运行一次审计，然后重新生成。",
     "generatedAt": "生成于 {{date}}",
     "outputLocale": "输出语言：{{locale}}",
@@ -144,10 +143,6 @@
     "regenerate": "重新生成建议",
     "staleBody": "它们是在建议只使用本网站自身数据之前生成的，因此我们已将其隐藏。请使用上方按钮生成新的一组建议，点击之前不会消耗任何额度。",
     "staleTitle": "这些建议已过时"
-  },
-  "locked": {
-    "body": "AI 可见度功能适用于 Agency 方案。",
-    "upgrade": "查看套餐"
   },
   "add": {
     "failed": "无法添加该提问。"

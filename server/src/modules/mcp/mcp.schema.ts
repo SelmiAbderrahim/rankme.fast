@@ -45,7 +45,7 @@ export const getLatestAuditReportInputSchema = z
 export const listKeywordsInputSchema = z
     .object({
     siteId: objectIdHex,
-    limit: limitSchema.optional(),
+    limit: limitSchema,
     locale: localeSchema,
 })
     .strict();
@@ -60,7 +60,7 @@ export const getRankHistoryInputSchema = z
 export const listContentAnalysesInputSchema = z
     .object({
     siteId: objectIdHex,
-    limit: limitSchema.optional(),
+    limit: limitSchema,
     cursor: cursorSchema,
     locale: localeSchema,
 })

@@ -132,14 +132,6 @@
     }
   },
   "states": {
-    "cap": {
-      "title": "Regelgrenze erreicht",
-      "body": "Eine weitere Warnregel kann derzeit nicht hinzugefügt werden."
-    },
-    "tierLocked": {
-      "title": "Kanal erfordert höheren Tarif",
-      "body": "Slack- und Webhook-Kanäle erfordern mindestens den Pro-Tarif."
-    },
     "disabled": {
       "title": "Warnungen pausiert",
       "body": "Warnungen sind vorübergehend nicht verfügbar. Regeln und Protokoll bleiben erhalten."

@@ -65,6 +65,10 @@ Si votre compte a le rôle **Admin**, l'authentification à deux facteurs est ob
 
 Utilisez un code de secours sur l'écran de vérification : un lien **Utiliser un code de secours** y figure. Si vous n'avez plus de codes, un admin peut réinitialiser le second facteur depuis le panneau admin.
 
+## Sessions actives
+
+La liste **Sessions actives** affiche chaque appareil connecté à votre compte : le navigateur et le système, une icône d’ordinateur, de téléphone ou de tablette, et l’adresse IP lorsqu’elle a été enregistrée. Il se peut que l’on vous demande de confirmer votre identité avant d’afficher la liste. L’appareil actuel indique « Actif maintenant ». Les autres affichent le jour de leur dernière utilisation, car l’enregistrement de connexion est actualisé environ une fois par jour. Aucun lieu n’est affiché, car cela nécessiterait un service de géolocalisation d’adresses IP. Révoquez tout appareil que vous ne reconnaissez pas, ou utilisez **Déconnecter tous les autres appareils**. Avant la révocation, une confirmation nomme l’appareil ; il devra ensuite se reconnecter.
+
 ## Vos droits sur les données
 
 Vous pouvez demander un export ou une suppression des données de votre compte. L'export actuel se limite aux jeux de données présents dans le fichier généré et exclut les instantanés Pages ainsi que l'historique chronologique de GSC et du suivi de positions. La suppression est plus large : après le délai de grâce, elle efface les données stockées du compte même lorsqu'elles ne figurent pas dans l'export. Vous pouvez annuler la demande pendant ce délai. Consultez [Performance des pages](./pages-performance.fr.md) pour la règle de conservation des données Pages.

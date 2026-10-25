@@ -285,6 +285,17 @@ describe('KeywordsPanel — clipboard export', () => {
 });
 
 describe('KeywordsPanel — table layout', () => {
+  it('opens with a tab header before the keyword list', async () => {
+    mocked.fetchKeywordsRequest.mockResolvedValue(listPage({
+      keywords: [keyword('k1')], total: 1, siteTotal: 1, page: 1, pageSize: 50,
+    }));
+    renderPage({ initialEntry: '/site?tab=keywords' });
+    const header = await screen.findByTestId('keywords-header');
+    expect(within(header).getByRole('heading', { level: 1, name: 'Rank tracking' })).toBeInTheDocument();
+    expect(within(header).getByText('Track how your keywords rank in Google.')).toBeInTheDocument();
+    expect(screen.getByTestId('keyword-list-heading').tagName).toBe('H3');
+  });
+
   it('loads a shared filtered page and moves to the next page through the URL', async () => {
     mocked.fetchKeywordsRequest.mockResolvedValue(listPage({
       keywords: [keyword('b1', { engine: 'bing' })], total: 120, siteTotal: 200,
@@ -1539,7 +1550,7 @@ describe('trend chart — <2 datapoints, selection, chart render + a11y table', 
     const user = userEvent.setup();
     await user.click(screen.getByTestId('keyword-select-k1'));
     expect(await screen.findByTestId('rank-trend-latest')).toHaveTextContent('Not in top 100');
-    expect(screen.getByTestId('rank-trend-delta')).toHaveTextContent('No change');
+    expect(screen.getByTestId('rank-trend-delta')).toHaveTextContent('No change in position');
   });
 
   it('renders all four AI Overview badge states', async () => {
@@ -1582,7 +1593,7 @@ describe('trend chart — <2 datapoints, selection, chart render + a11y table', 
         />
       </I18nextProvider>,
     );
-    expect(screen.getByTestId('rank-trend-delta')).toHaveTextContent('Down 1 position');
+    expect(screen.getByTestId('rank-trend-delta')).toHaveTextContent('Declined by 1 position');
   });
 
   it('trend chart plural down copy for delta < -1', () => {
@@ -1594,7 +1605,7 @@ describe('trend chart — <2 datapoints, selection, chart render + a11y table', 
         />
       </I18nextProvider>,
     );
-    expect(screen.getByTestId('rank-trend-delta')).toHaveTextContent('Down 2 positions');
+    expect(screen.getByTestId('rank-trend-delta')).toHaveTextContent('Declined by 2 positions');
   });
 
   it('trend chart singular up copy for delta === 1', () => {
@@ -1606,10 +1617,10 @@ describe('trend chart — <2 datapoints, selection, chart render + a11y table', 
         />
       </I18nextProvider>,
     );
-    expect(screen.getByTestId('rank-trend-delta')).toHaveTextContent('Up 1 position');
+    expect(screen.getByTestId('rank-trend-delta')).toHaveTextContent('Improved by 1 position');
   });
 
-  it('trend chart null delta uses flat copy', () => {
+  it('trend chart null delta says there is no previous data', () => {
     render(
       <I18nextProvider i18n={i18n}>
         <RankTrendChart
@@ -1618,10 +1629,10 @@ describe('trend chart — <2 datapoints, selection, chart render + a11y table', 
         />
       </I18nextProvider>,
     );
-    expect(screen.getByTestId('rank-trend-delta')).toHaveTextContent('No change');
+    expect(screen.getByTestId('rank-trend-delta')).toHaveTextContent('No previous data');
   });
 
-  it('trend chart skips null-position points in the SVG path', () => {
+  it('trend chart plots a check with no position in its own lane, not in the position line', () => {
     render(
       <I18nextProvider i18n={i18n}>
         <RankTrendChart
@@ -1643,10 +1654,12 @@ describe('trend chart — <2 datapoints, selection, chart render + a11y table', 
         />
       </I18nextProvider>,
     );
-    // Table still shows only the non-null rows (2 points => 2 body rows).
+    // Every stored check is kept: 2 ranked rows plus the not-in-top-100 one.
     const table = screen.getByTestId('rank-trend-table');
     const bodyRows = within(table.querySelector('tbody')!).getAllByRole('row');
-    expect(bodyRows).toHaveLength(2);
+    expect(bodyRows).toHaveLength(3);
+    expect(screen.getAllByTestId('rank-trend-point')).toHaveLength(2);
+    expect(screen.getByTestId('rank-trend-unranked')).toBeInTheDocument();
   });
 });
 
@@ -2493,5 +2506,182 @@ describe('component units', () => {
     const { languagesForLocation, LOCATION_OPTIONS } = await import('./validation');
     expect(languagesForLocation(2682)).toEqual(['ar']);
     expect(languagesForLocation(-1)).toEqual(LOCATION_OPTIONS[0]!.languages);
+  });
+});
+
+describe('KeywordsPanel — list filters, paging and market move', () => {
+  const emptyFiltered = () => mocked.fetchKeywordsRequest.mockResolvedValue(listPage({ keywords: [], total: 0, siteTotal: 4 } as never));
+
+  it('searches after a short pause and restarts the pause when the text changes again', async () => {
+    renderPage();
+    const input = await screen.findByTestId('keyword-search');
+    fireEvent.change(input, { target: { value: 'ab' } });
+    fireEvent.change(input, { target: { value: 'abc' } });
+    await waitFor(() => expect(mocked.fetchKeywordsRequest).toHaveBeenLastCalledWith(
+      'site-1', undefined, expect.objectContaining({ search: 'abc' })));
+  });
+
+  it('clears a filter that matched nothing', async () => {
+    emptyFiltered();
+    const user = userEvent.setup();
+    renderPage({ initialEntry: '/site?tab=keywords&search=zzz' });
+    await user.click(await screen.findByRole('button', { name: i18n.t('keywordList.clearFilters', { ns: 'ranks' }) }));
+    await waitFor(() => expect(mocked.fetchKeywordsRequest).toHaveBeenLastCalledWith(
+      'site-1', undefined, expect.not.objectContaining({ search: expect.anything() })));
+  });
+
+  it('moves back to the last page when the requested page no longer exists', async () => {
+    mocked.fetchKeywordsRequest.mockResolvedValue(listPage({ total: 2, siteTotal: 2, page: 1, pageSize: 25 } as never));
+    renderPage({ initialEntry: '/site?tab=keywords&page=9' });
+    await waitFor(() => expect(mocked.fetchKeywordsRequest).toHaveBeenLastCalledWith(
+      'site-1', undefined, expect.objectContaining({ page: 1 })));
+  });
+
+  it('changes the page size from the pagination footer', async () => {
+    mocked.fetchKeywordsRequest.mockResolvedValue(listPage({ total: 60, siteTotal: 60, page: 1, pageSize: 25 } as never));
+    const user = userEvent.setup();
+    renderPage();
+    const size = await screen.findByRole('combobox', { name: i18n.t('keywordList.pagination.rowsPerPage', { ns: 'ranks' }) });
+    await user.click(size);
+    await user.click(await screen.findByRole('option', { name: '50' }));
+    await waitFor(() => expect(mocked.fetchKeywordsRequest).toHaveBeenLastCalledWith(
+      'site-1', undefined, expect.objectContaining({ pageSize: 50 })));
+  });
+
+  it('reloads the list after the tracked keywords are moved to the site market', async () => {
+    const preview = { target: { locationCode: 2840, languageCode: 'en', device: 'desktop' as const },
+      tracked: 2, inTarget: 0, movable: 2, alreadyTracked: 0, withHistory: 0, resumesHistory: 0, token: 'token-1' };
+    mocked.fetchKeywordMarketMoveRequest.mockResolvedValue({ preview });
+    mocked.moveKeywordsToSiteMarketRequest.mockResolvedValue({ moved: 2, preview: { ...preview, movable: 0 } });
+    const user = userEvent.setup();
+    renderPage();
+    await user.click(await screen.findByTestId('keyword-market-move-review'));
+    const before = mocked.fetchKeywordsRequest.mock.calls.length;
+    await user.click(screen.getByTestId('keyword-market-move-confirm'));
+    await waitFor(() => expect(mocked.fetchKeywordsRequest.mock.calls.length).toBeGreaterThan(before));
+  });
+});
+
+describe('KeywordsPanel — stored rank jobs', () => {
+  const partialJob = (over: Partial<RankJob> = {}) => rankJob({
+    status: 'partial', finishedAt: '2026-07-13T00:00:02.000Z',
+    totals: { total: 2, queued: 0, running: 0, succeeded: 1, failed: 1, expired: 0, cancelled: 0 },
+    items: [
+      { keywordId: 'k1', engine: 'google', state: 'succeeded', reason: null, attempts: 1, finishedAt: '2026-07-13T00:00:02.000Z' },
+      { keywordId: 'k2', engine: 'google', state: 'failed', reason: 'vendor_error', attempts: 1, finishedAt: '2026-07-13T00:00:02.000Z' },
+    ],
+    ...over,
+  });
+
+  const settleStoredJob = async (retry: () => void) => {
+    vi.useFakeTimers();
+    vi.setSystemTime(new Date('2026-07-13T00:00:00.000Z'));
+    mocked.fetchActiveRankJobRequest.mockResolvedValueOnce({ job: rankJob() });
+    mocked.fetchRankJobRequest.mockResolvedValueOnce({ job: partialJob() });
+    retry();
+    renderPage();
+    await vi.advanceTimersByTimeAsync(0);
+    await vi.advanceTimersByTimeAsync(2_100);
+    await vi.advanceTimersByTimeAsync(0);
+    const warning = vi.mocked(toast.warning).mock.calls.at(-1);
+    expect(warning?.[1]).toEqual(expect.objectContaining({ action: expect.objectContaining({ label: expect.any(String) }) }));
+    return (warning![1] as { action: { onClick: () => void } }).action.onClick;
+  };
+
+  it('offers a retry of the failed keywords and confirms when nothing needed retrying', async () => {
+    const onClick = await settleStoredJob(() => mocked.retryFailedRankJobRequest.mockResolvedValueOnce({ message: 'Nothing to retry.' } as never));
+    onClick();
+    await vi.advanceTimersByTimeAsync(0);
+    expect(toast.success).toHaveBeenCalledWith('Nothing to retry.');
+  });
+
+  it('follows the new job a retry queues', async () => {
+    const onClick = await settleStoredJob(() => mocked.retryFailedRankJobRequest.mockResolvedValueOnce({
+      message: 'Retrying 1 keyword.', job: rankJob({ id: 'job-2' }) } as never));
+    mocked.fetchRankJobRequest.mockResolvedValue({ job: rankJob({ id: 'job-2' }) });
+    onClick();
+    await vi.advanceTimersByTimeAsync(0);
+    expect(toast.loading).toHaveBeenCalledWith('Retrying 1 keyword.', { id: 'rank-job-job-2' });
+    expect(window.localStorage.getItem('rmf.rankJob.site-1')).toBe('job-2');
+  });
+
+  it('reports a retry that could not be queued', async () => {
+    const onClick = await settleStoredJob(() => mocked.retryFailedRankJobRequest.mockRejectedValueOnce(new Error('offline')));
+    onClick();
+    await vi.advanceTimersByTimeAsync(0);
+    expect(toast.error).toHaveBeenCalledWith(i18n.t('checkFailed', { ns: 'ranks' }));
+  });
+
+  it('refreshes the trend of the selected keyword when a stored job settles', async () => {
+    vi.useFakeTimers();
+    vi.setSystemTime(new Date('2026-07-13T00:00:00.000Z'));
+    mocked.fetchActiveRankJobRequest.mockResolvedValueOnce({ job: rankJob() });
+    mocked.fetchRankJobRequest.mockResolvedValueOnce({ job: partialJob() });
+    renderPage();
+    await vi.advanceTimersByTimeAsync(0);
+    fireEvent.click(screen.getByTestId('keyword-select-k1'));
+    await vi.advanceTimersByTimeAsync(0);
+    const historyReads = mocked.fetchKeywordHistoryRequest.mock.calls.length;
+    await vi.advanceTimersByTimeAsync(2_100);
+    await vi.advanceTimersByTimeAsync(0);
+    expect(mocked.fetchKeywordHistoryRequest.mock.calls.length).toBeGreaterThan(historyReads);
+  });
+
+  it('keeps working when the stored job cannot be read, and resumes a remembered job', async () => {
+    mocked.fetchActiveRankJobRequest.mockRejectedValueOnce(new Error('offline'));
+    const view = renderPage();
+    expect(await screen.findByTestId('keyword-check-now')).toBeInTheDocument();
+    expect(view).toBeDefined();
+  });
+
+  it('polls a job remembered by this browser instead of asking for the active one', async () => {
+    window.localStorage.setItem('rmf.rankJob.site-1', 'job-7');
+    mocked.fetchRankJobRequest.mockResolvedValue({ job: rankJob({ id: 'job-7' }) });
+    renderPage();
+    await waitFor(() => expect(mocked.fetchRankJobRequest).toHaveBeenCalledWith('site-1', 'job-7', expect.any(AbortSignal)));
+    expect(mocked.fetchActiveRankJobRequest).not.toHaveBeenCalled();
+  });
+
+  it('marks the one keyword a stored keyword job is checking', async () => {
+    mocked.fetchActiveRankJobRequest.mockResolvedValueOnce({ job: rankJob({
+      scope: 'keyword',
+      totals: { total: 1, queued: 0, running: 1, succeeded: 0, failed: 0, expired: 0, cancelled: 0 },
+      items: [{ keywordId: 'k1', engine: 'google', state: 'running', reason: null, attempts: 1, finishedAt: null }],
+      status: 'running',
+    }) });
+    mocked.fetchRankJobRequest.mockResolvedValue({ job: rankJob({ scope: 'keyword', status: 'running',
+      items: [{ keywordId: 'k1', engine: 'google', state: 'running', reason: null, attempts: 1, finishedAt: null }] }) });
+    renderPage();
+    expect(await screen.findByTestId('keyword-checking-pos-k1')).toBeInTheDocument();
+  });
+});
+
+describe('AddKeywordForm — bulk results and previews', () => {
+  it('summarises duplicates, long phrases and other invalid phrases from the server', async () => {
+    mocked.createKeywordsBulkRequest.mockResolvedValueOnce({
+      message: 'Done.', counts: { added: 1, duplicate: 1, invalid: 2 },
+      results: [
+        { phrase: 'fresh phrase', status: 'added', keyword: keyword('k9', { phrase: 'fresh phrase' }) },
+        { phrase: 'old phrase', status: 'duplicate', reason: 'already_tracked' },
+        { phrase: 'long phrase', status: 'invalid', reason: 'too_long' },
+        { phrase: 'odd phrase', status: 'invalid', reason: 'empty' },
+      ],
+    });
+    renderPage();
+    await waitFor(() => expect(mocked.fetchTrackedKeywordPhrasesRequest).toHaveBeenCalled());
+    fireEvent.change(screen.getByLabelText('Keywords'), { target: { value: 'fresh phrase\nold phrase\nlong phrase\nodd phrase' } });
+    await userEvent.setup().click(screen.getByRole('button', { name: 'Track keywords' }));
+    const summary = await screen.findByTestId('keyword-add-summary');
+    expect(summary.textContent ?? '').toMatch(/·/);
+  });
+
+  it('removes a phrase from the review list and tolerates an unavailable tracked-phrase read', async () => {
+    mocked.fetchTrackedKeywordPhrasesRequest.mockRejectedValue(new Error('offline'));
+    renderPage();
+    await waitFor(() => expect(mocked.fetchTrackedKeywordPhrasesRequest).toHaveBeenCalled());
+    fireEvent.change(screen.getByLabelText('Keywords'), { target: { value: 'first phrase\nsecond phrase' } });
+    await waitFor(() => expect(screen.getAllByTestId('keyword-add-item')).toHaveLength(2));
+    await userEvent.setup().click(screen.getAllByRole('button', { name: /^Remove/ })[0]!);
+    await waitFor(() => expect(screen.getAllByTestId('keyword-add-item')).toHaveLength(1));
   });
 });

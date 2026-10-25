@@ -1,5 +1,5 @@
 /**
- * Content inventory evidence loader tests (prompt 08).
+ * Content inventory evidence loader tests.
  *
  * Real PGlite Postgres with the generated migrations applied by the shared
  * harness. Seeds GSC `query,page` snapshots + tracked keywords + rankings and

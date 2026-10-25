@@ -275,9 +275,19 @@ export interface RankHistoryPoint {
   observationMeta: ObservationMeta | null;
 }
 
+/** A scheduled check that produced no observation. */
+export interface RankHistoryMissedCheck {
+  periodKey: string;
+  status: 'failed' | 'skipped';
+  reason: string | null;
+  attemptedAt: string;
+}
+
 export interface RankHistoryResponse {
   keywordId: string;
   series: RankHistoryPoint[];
+  /** Absent on responses from before missed checks were reported. */
+  missedChecks?: RankHistoryMissedCheck[];
 }
 
 // ---------------------------------------------------------------------------
@@ -391,6 +401,7 @@ export interface RanksState {
   message: string;
   selectedKeywordId: string | null;
   history: RankHistoryPoint[];
+  historyMissedChecks: RankHistoryMissedCheck[];
   historyKeywordId: string | null;
   historyLoading: boolean;
   historyError: string;

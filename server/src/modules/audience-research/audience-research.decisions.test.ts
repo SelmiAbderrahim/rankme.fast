@@ -1,5 +1,5 @@
 /**
- * Prompt 11a — signal decision service tests.
+ * signal decision service tests.
  *
  * Focused unit tests against `decideAudienceResearchSignal`:
  *   - accept path (content + comparison_page + product + seo)

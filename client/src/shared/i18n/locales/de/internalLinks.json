@@ -21,7 +21,6 @@
   },
   "states": {
     "inventoryCta": "Inhaltsinventar erneut ausführen",
-    "planCta": "Tarife ansehen",
     "emptyRuns": {
       "title": "Noch keine gespeicherten Läufe",
       "body": "Prüfen Sie einen neuen Lauf, um den verwendeten Inventarstand zu sehen.",
@@ -39,10 +38,6 @@
     "stale": {
       "title": "Das Inhaltsinventar ist veraltet",
       "body": "Führen Sie das Inventar erneut aus, damit ein aktueller gespeicherter Stand verwendet wird. Es wurde kein Lauf verbraucht."
-    },
-    "cap": {
-      "title": "Monatliches Kontingent erreicht",
-      "body": "Die Anfrage wurde nicht gestartet. Warten Sie auf den nächsten Zeitraum oder prüfen Sie die verfügbaren Tarife."
     },
     "disabled": {
       "title": "Vorschlagsläufe sind nicht verfügbar",

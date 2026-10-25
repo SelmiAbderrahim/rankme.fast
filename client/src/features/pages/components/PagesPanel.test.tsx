@@ -339,7 +339,7 @@ describe('PagesPanel source-aware list and detail', () => {
     await userEvent.setup().click(screen.getAllByRole('button', { name: 'Inspect page' })[0]!);
     expect(await screen.findByTestId('pages-detail-sheet')).toBeInTheDocument();
     expect(await screen.findByText('example query')).toBeVisible();
-    // The crawled page title in the sheet heading is isolated (F8).
+    // The crawled page title in the sheet heading is isolated.
     const sheetTitle = screen.getByRole('heading', { name: 'Example page' });
     expect(sheetTitle.querySelector('bdi[dir="ltr"]')).toHaveTextContent('Example page');
     expect(screen.getByText(/capped at 100 rows/)).toBeVisible();

@@ -140,15 +140,6 @@
       "title": "Noch keine Prüfung",
       "body": "Starten Sie eine Prüfung für diese Website, dann lassen sich ihre Seiten hier auswählen."
     },
-    "cap": {
-      "title": "Monatskontingent aufgebraucht",
-      "body": "Sie haben diesen Monat alle Markup-Erzeugungen Ihres Tarifs verbraucht.",
-      "link": "Tarife ansehen"
-    },
-    "notOnPlan": {
-      "title": "Nicht in Ihrem Tarif",
-      "body": "Die Markup-Erzeugung beginnt mit dem Starter-Tarif."
-    },
     "killSwitch": {
       "title": "Vorübergehend nicht verfügbar",
       "body": "Neue Erzeugungen pausieren. Bereits erzeugtes Markup bleibt lesbar."

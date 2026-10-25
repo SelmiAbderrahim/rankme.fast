@@ -17,8 +17,8 @@ order: 3
 ## Rank-Check nicht verfügbar
 Meist vorübergehend; nächster Lauf wiederholt automatisch.
 
-## „Erneut verbinden" bei Search Console
-Einstellungen öffnen und neu verbinden.
+## Search Console fordert zum erneuten Verbinden auf
+Google hat unseren Token ungültig gemacht. Im Tab **Google** der Website zeigt die Karte Google Search Console **Ihre Google-Verbindung muss erneuert werden**; wählen Sie **Neu verbinden**. Das kann passieren, wenn Sie Ihr Google-Passwort geändert oder die App widerrufen haben. Karten, die Search Console oder Google Analytics lesen, zeigen **Search Console ist nicht verbunden** oder **Google Analytics ist nicht verbunden**, bis Google wieder verbunden ist, und erholen sich beim nächsten Lesen.
 
 ## Limit erreicht
 Siehe [Pläne, Limits & Credits](./plans-limits-credits.de.md).

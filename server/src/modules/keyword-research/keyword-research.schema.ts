@@ -24,6 +24,22 @@ const languageCodeSchema = z
 const researchSiteIdSchema = z
     .string()
     .regex(/^[a-f0-9]{24}$/, 'keywordResearch.errors.siteIdInvalid');
+export const STORED_KEYWORD_LIMIT_DEFAULT = 500;
+export const STORED_KEYWORD_LIMIT_MAX = 1000;
+// `GET /stored-keywords` — every phrase the account has already stored for one
+// market (history seeds + cached related / ideas / long-tail rows). Read-only:
+// it feeds the cluster picker and never calls a provider.
+export const storedKeywordsQuerySchema = z.object({
+    locationCode: z.coerce
+        .number({ error: 'keywordResearch.errors.locationInvalid' })
+        .int('keywordResearch.errors.locationInvalid')
+        .positive('keywordResearch.errors.locationInvalid'),
+    languageCode: languageCodeSchema,
+    // Substring filter on the normalized phrase.
+    q: z.string().trim().max(80, 'keywordResearch.errors.phraseTooLong').optional(),
+    limit: z.coerce.number().int().min(1).max(STORED_KEYWORD_LIMIT_MAX).default(STORED_KEYWORD_LIMIT_DEFAULT),
+});
+export type StoredKeywordsQuery = z.infer<typeof storedKeywordsQuerySchema>;
 // One Research press fires /metrics AND /intent. The client mints one UUID per
 // press and sends it on both so the history list can fold the pair into one
 // row. Optional: older clients and API callers omit it.

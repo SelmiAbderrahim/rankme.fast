@@ -2,8 +2,7 @@
   "title": "Seguimiento local con geocuadrícula",
   "description": "Comprueba en qué posición aparece tu negocio en el pack local a lo largo de una cuadrícula de coordenadas. Un escaneo cubre toda la cuadrícula y cuesta un escaneo de geocuadrícula.",
   "locked": {
-    "body": "Los escaneos de geocuadrícula están en los planes Pro y Agencia.",
-    "cta": "Ver planes"
+    "body": "Los escaneos de geocuadrícula están en los planes Pro y Agencia."
   },
   "form": {
     "keyword": "Palabra clave en seguimiento",
@@ -101,9 +100,7 @@
     "failedRefunded": "Ningún punto respondió, así que devolvimos el escaneo a tu cuota."
   },
   "gates": {
-    "cap": "Te has quedado sin escaneos de geocuadrícula",
     "killSwitch": "Los escaneos de geocuadrícula están en pausa",
-    "notOnPlan": "No está en tu plan",
     "notFound": "No encontrado",
     "rateLimited": "Demasiadas solicitudes",
     "invalid": "Revisa los ajustes de la cuadrícula",

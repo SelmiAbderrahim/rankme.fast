@@ -52,11 +52,11 @@ order: 0
 - [Keyword clustering](./keyword-clustering.en.md): How RankMeFast groups tracked keywords by shared result URLs, and why grouping is arithmetic rather than a similarity score.
 - [Bing, YouTube, and Amazon tracking](./alt-engine-tracking.en.md): How RankMeFast tracks non-Google engines, what an exact target token is, and why an Amazon position is an index position.
 - [Keyword cannibalization](./cannibalization.en.md): How RankMeFast finds queries where two or more of your pages compete, using only the Search Console rows it already stores.
-- [Toxic links and disavow](./toxic-links.en.md): How RankMeFast bands backlinks with a fixed rubric, when AI may annotate a row, and why the disavow file is never submitted for you.
+- [Toxic links and disavow](./toxic-links.en.md): How RankMeFast sorts backlinks into risk levels with fixed rules, when AI may annotate a row, and why the disavow file is never submitted for you.
 - [Alerts](./alerts.en.md): Which alerts fire, how exactly-once delivery works, and when a rank-drop rule delivers.
 - [Internal linking suggestions](./internal-linking.en.md): How RankMeFast finds orphan and weakly-linked pages in your stored content inventory and drafts anchors that cite the evidence behind them.
 - [Content briefs](./content-briefs.en.md): How a brief is built from the stored top-ten SERP and up to ten page scrapes, and why every outline node must cite supplied evidence.
-- [Local grid tracking](./geogrid.en.md): How per-coordinate local-pack grids are collected, what a failed cell means, and why coordinates are typed rather than picked from a map.
+- [Local grid tracking](./geogrid.en.md): How per-coordinate local-pack grids are collected, how to choose the center of the grid, and what a failed cell means.
 - [Schema markup generator](./schema-markup.en.md): How RankMeFast builds JSON-LD from stored page facts, what conformance means here, and why a missing property is omitted rather than invented.
 - [Client reports and portal](./client-reports.en.md): How white-label PDF reports are composed from stored snapshots, how schedules deliver, and what a revocable portal link is and is not.
 - [Download and share reports](./report-exports.en.md): Choose the right format, keep filters, and manage private share links.

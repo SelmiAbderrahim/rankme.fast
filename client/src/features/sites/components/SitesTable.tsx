@@ -6,7 +6,6 @@ import { siteLabel } from '@shared/lib/siteLabel';
 import { useTranslation } from 'react-i18next';
 import { ArrowDown, ArrowUp, ArrowUpDown, Cable, FileText, Globe2, Link2, MoreHorizontal, PanelsTopLeft, Pause, Pencil, Play, Search, Trash2, UsersRound } from 'lucide-react';
 import { useAppDispatch, useAppSelector } from '@shared/hooks/redux';
-import { StatusChip } from '@shared/ui/status-chip';
 import { Avatar, AvatarFallback } from '@shared/ui/avatar';
 import { Button } from '@shared/ui/button';
 import { Input } from '@shared/ui/input';
@@ -46,6 +45,8 @@ import {
 } from '@shared/ui/dialog';
 import { Alert, AlertDescription } from '@shared/ui/alert';
 import { Card, CardContent } from '@shared/ui/card';
+import { RelativeTime } from '@shared/components/RelativeTime';
+import { PausedChip } from './PausedChip';
 import { pauseSite, renameSite, resumeSite } from '../store/thunks';
 import {
   selectPausingSiteId,
@@ -144,7 +145,9 @@ export const SitesTable = ({ sites, deletingId, onDelete, openTab, summaries }: 
     sort?.key === key ? (sort.dir === 'asc' ? 'ascending' : 'descending') : 'none';
 
   const openRename = (site: Site) => {
-    setRenameValue(site.displayName);
+    // A never-renamed site shows its domain as its name everywhere, so the
+    // field opens on that same name instead of an empty box.
+    setRenameValue(siteLabel(site));
     setRenaming(site);
   };
 
@@ -154,20 +157,16 @@ export const SitesTable = ({ sites, deletingId, onDelete, openTab, summaries }: 
   };
 
   const submitRename = async (site: Site) => {
-    const result = await dispatch(
-      renameSite({ id: site.id, displayName: renameValue.trim() }),
-    );
+    // Saving the domain back unchanged keeps the site on its default name.
+    const typed = renameValue.trim();
+    const displayName = typed.toLowerCase() === site.domain.toLowerCase() ? '' : typed;
+    const result = await dispatch(renameSite({ id: site.id, displayName }));
     if (renameSite.fulfilled.match(result)) {
       closeRename();
     }
   };
 
-  const pausedChip = (site: Site) =>
-    site.paused ? (
-      <StatusChip tone="warning" data-testid={`site-paused-chip-${site.id}`}>
-        {t('paused.chip')}
-      </StatusChip>
-    ) : null;
+  const pausedChip = (site: Site) => (site.paused ? <PausedChip siteId={site.id} /> : null);
 
   const summaryOf = (site: Site) => summaries?.byId.get(site.id);
   const summaryPending = (site: Site) => Boolean(summaries?.loading) && !summaryOf(site);
@@ -175,8 +174,9 @@ export const SitesTable = ({ sites, deletingId, onDelete, openTab, summaries }: 
     if (summaryPending(site)) return <Skeleton className="h-4 w-20" />;
     const audit = summaryOf(site)?.lastAudit;
     if (!audit || audit.state === 'unavailable') return <span className="text-muted-foreground">{t('list.noAudit')}</span>;
-    return <span title={formatAdded(audit.finishedAt, i18n.language)}>{audit.status === 'succeeded'
-      ? formatAdded(audit.finishedAt, i18n.language) : t(`list.auditStatus.${audit.status}`)}</span>;
+    return audit.status === 'succeeded'
+      ? <RelativeTime value={audit.finishedAt} />
+      : <span>{t(`list.auditStatus.${audit.status}`)}</span>;
   };
   const health = (site: Site) => {
     if (summaryPending(site)) return <Skeleton className="h-4 w-16" />;

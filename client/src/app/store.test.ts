@@ -9,13 +9,13 @@ describe('store after Better Auth migration', () => {
   it('registers sites and traffic snapshot slices', () => {
     expect(state).toHaveProperty('sites');
     expect(state).toHaveProperty('trafficSnapshots');
+    expect(state).toHaveProperty('dashboard');
   });
 
-  it('does NOT register removed slices (auth lives in the session hook; dashboard has no state)', () => {
+  it('does NOT register removed slices (auth lives in the session hook)', () => {
     expect(state).not.toHaveProperty('auth');
     expect(state).not.toHaveProperty('projects');
     expect(state).not.toHaveProperty('snapshots');
-    expect(state).not.toHaveProperty('dashboard');
     expect(state).not.toHaveProperty('billing');
   });
 

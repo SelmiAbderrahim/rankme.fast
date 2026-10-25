@@ -82,6 +82,8 @@
       "getBacklinksSummary": "Obtenir le résumé des backlinks",
       "listBacklinks": "Lister les backlinks",
       "listCompetitors": "Lister les concurrents",
+      "listKeywordResearchHistory": "Lister l’historique de recherche de mots-clés",
+      "getKeywordResearchResult": "Obtenir un résultat de recherche de mots-clés",
       "getAiVisibilitySummary": "Obtenir le résumé de Visibilité IA",
       "getLocalSeoSummary": "Obtenir le résumé SEO local",
       "getReviewsSummary": "Obtenir le résumé des avis",

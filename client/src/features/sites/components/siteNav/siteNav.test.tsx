@@ -729,7 +729,7 @@ describe('SiteSwitcher', () => {
   });
 });
 
-describe('SiteSwitcher — unknown site (QA round 3, F-Z)', () => {
+describe('SiteSwitcher — unknown site', () => {
   it('settles on "Unknown site" instead of "Loading site…" when the direct read fails', async () => {
     vi.mocked(api.fetchSiteRequest).mockRejectedValueOnce(new Error('gone'));
     renderWith(<SiteSwitcher variant="rail" />, {

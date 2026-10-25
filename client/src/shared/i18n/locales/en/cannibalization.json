@@ -78,11 +78,6 @@
       "title": "Waiting for the next sync",
       "body": "We have not stored Search Console query and page rows for this window yet. They arrive with the next sync."
     },
-    "cap": {
-      "title": "Monthly allowance used",
-      "body": "You have used every cannibalization report on your plan this month.",
-      "link": "See plans"
-    },
     "disabled": {
       "title": "Temporarily unavailable",
       "body": "Cannibalization reports are paused right now. Reports you already ran stay readable."

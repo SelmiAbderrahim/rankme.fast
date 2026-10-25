@@ -39,7 +39,7 @@ Eine neuere Konvention, die KI-Assistenten auf Ihre bevorzugten Seiten hinweist.
 - **Canonical fehlt oder defekt**: Setzen Sie einen gültigen `<link rel="canonical">`.
 - **Strukturierte Daten fehlen**: Fügen Sie passendes JSON-LD hinzu.
 - **Defekte interne Links**: Korrigieren oder entfernen Sie fehlerhafte Links.
-- **Dünner Inhalt**: Seiten unter etwa 200 Wörtern.
+- **Dünner Inhalt**: Seiten mit sehr wenig eigenem Text, bewertet nach einem Schwellenwert für die Sprache der Seite: etwa 200 Wörter für die meisten Sprachen und das Zeichen-Äquivalent für Chinesisch, Japanisch, Koreanisch und Thai. Jede markierte Seite zeigt die gemessene Länge.
 - **Keine FAQ-Signale**: FAQ-Abschnitt hinzufügen, wo sinnvoll.
 - **llms.txt fehlt (Hinweis)**: Neue Konvention für KI-Crawler.
 - **HTTPS nicht erzwungen**: Leiten Sie http auf https um.
@@ -73,6 +73,14 @@ Eine neuere Konvention, die KI-Assistenten auf Ihre bevorzugten Seiten hinweist.
 - **Defekte Bilder, Skripte oder Styles**: Benötigte Dateien, die mit einem Fehler antworten. Läuft nur bei einem Audit, das mit dem Ressourcen-Scan gestartet wurde, sonst steht die Prüfung unter „Nicht geprüft“.
 - **Bilder, die größer als nötig sind**: Bilder über 500 KB. Läuft wie die Prüfung darüber mit dem vollständigen Ressourcen-Scan.
 - **Dateien, die Browser nicht speichern sollen**: Bilder, Skripte und Stylesheets mit Headern, die das Caching im Browser verhindern. Läuft mit dem vollständigen Ressourcen-Scan.
+
+## Verworfene und behobene Befunde
+
+Verwerfen Sie einen Befund, der nicht zutrifft, oder markieren Sie ihn als behoben, über seine Karte im Bericht oder unter [Nächste Aktionen](./next-actions.de.md). Beim Verwerfen wird nach einem Grund gefragt: Fehlalarm, wird nicht behoben, anderswo behoben oder ein anderer Grund. Verworfene Befunde wandern in den Bereich **Verworfen** unter den Tabs, als behoben markierte Befunde in die Gruppe **Als behoben markiert** innerhalb ihres Tabs. Keine der beiden zählt in den Tab-Summen oder in der Übersicht. Jeder verworfene Eintrag zeigt, wer ihn verworfen hat, wann und warum und ob das neueste Audit ihn noch erkennt. **Wiederherstellen** bringt ihn zurück in die Liste.
+
+Bei einem Befund zu defekten Links fragt **Diese URLs erneut prüfen** Ihre eigenen Seiten noch einmal ab und hält fest, welche weiterhin fehlschlagen, welche jetzt funktionieren und welche nicht geprüft werden konnten. Es startet kein neues Audit, und der Audit-Bericht bleibt unverändert.
+
+Betroffene URLs sind Links. Eine lange Liste zeigt zuerst eine Stichprobe, und **URLs herunterladen (CSV)** speichert alle. Ist das neueste Audit älter als 30 Tage, erscheint der Hinweis **Letztes Audit vor N Tagen** mit **Neues Audit starten**, weil die Ergebnisse womöglich nicht mehr zu Ihrer Website passen.
 
 ## Bilder, Skripte und Styles prüfen
 

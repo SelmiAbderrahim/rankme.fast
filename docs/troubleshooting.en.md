@@ -20,8 +20,8 @@ Try again in a few minutes. If it keeps failing, change your firewall or robots.
 ## Rank check unavailable
 A single keyword can come back unavailable if the search-results provider is rate-limited or Google showed a captcha. This is temporary and the next scheduled run tries again, so you don't need to do anything.
 
-## "Reconnect needed" on Search Console
-Google cancelled our access token. Open Settings → Google Search Console → **Reconnect**. This can happen if you changed your Google password or revoked the app.
+## Search Console asks you to reconnect
+Google invalidated our token. On the site's **Google** tab, the Google Search Console card shows **Your Google connection needs to be reconnected**; select **Reconnect**. This can happen if you changed your Google password or revoked the app.
 
 ## Cap reached
 See [Plans, limits & credits](./plans-limits-credits.en.md). You can upgrade, buy a small credit pack, or wait for the next billing period.
@@ -38,8 +38,8 @@ The check can't run for that engine or market, so that part is left out of the r
 ## Unavailable (not zero)
 No data came back for the period. `unavailable ≠ 0`: read it as unknown rather than a drop to zero. You will see this on share-of-voice and Search Console generative-AI cards.
 
-## "Reconnect needed" on analytics or generative-AI cards
-Same cause as the Search Console reconnect above: Google cancelled the token. Reconnect from the site's Google workspace and the cards update the next time they load.
+## "Search Console isn't connected" on analytics or generative-AI cards
+Cards that read Search Console or Google Analytics show **Search Console isn't connected** or **Google Analytics isn't connected** until Google is connected again, then recover on the next read.
 
 ## Verification email missing
 Check spam. The link expires after 24 hours. If it really didn't arrive:

@@ -97,7 +97,6 @@
   },
   "errors": {
     "unexpected": "حدث خطأ — حاول مرة أخرى.",
-    "overCap": "تجاوزت حد خطتك. قم بالترقية أو اشترِ رصيداً لتلقي النبض الأسبوعي.",
     "acknowledgePreviewRequired": "قم بمعاينة الإنفاق قبل التفعيل.",
     "reconnectRequired": "أعد ربط Google Search Console لتحميل هذه البيانات.",
     "unauthorized": "يرجى تسجيل الدخول لعرض النبض الأسبوعي."

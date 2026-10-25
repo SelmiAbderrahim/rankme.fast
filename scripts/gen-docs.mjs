@@ -551,7 +551,7 @@ const RULE_PLAIN = {
     ['Canonical link missing or broken', 'A `<link rel="canonical">` tells Google which URL is the main version of a page. It causes problems when it is missing or points to another site.'],
     ['Structured data missing or broken', 'Machine-readable tags (JSON-LD) that help Google understand articles, products and FAQs.'],
     ['Broken internal links', 'Links from one of your pages to another that return an error. Fix or remove them.'],
-    ['Thin content', 'Pages with fewer than about 200 words look empty to Google. Expand the ones you want to rank.'],
+    ['Thin content', 'Pages with very little text of their own, judged against a threshold for the page\'s language: about 200 words for most languages, and the equivalent in characters for Chinese, Japanese, Korean and Thai. Each flagged page shows the length we measured.'],
     ['No FAQ signals found', 'We found no question-and-answer sections. FAQs help both visitors and AI assistants.'],
     ['llms.txt file missing (advisory)', 'A newer convention: a `/llms.txt` file that points AI crawlers to your best content. It is optional, so this rule is advisory only.'],
     ['HTTPS not enforced', 'Your site should redirect http to https and use the https version as the canonical URL.'],
@@ -559,7 +559,7 @@ const RULE_PLAIN = {
     ['Low lab performance estimate', 'Our Lighthouse test run scored low. Scores vary by about 10 points between runs, so use this as a hint.'],
     ['Not mobile-friendly', 'The page doesn’t display well on phones. Check tap-target sizes and the viewport meta tag.'],
     ['Not indexed by Google', 'Google looked at the page but didn’t add it to search results. If this rule can’t get data, reconnect Google Search Console.'],
-    ['Rich results issues', 'Google recognised your structured data but found errors that keep the page from showing enhanced results.'],
+    ['Rich results issues', 'Google recognized your structured data but found errors that keep the page from showing enhanced results.'],
     ['Indexed with warnings', 'The page is indexed, but Google flagged a canonical or duplicate-content problem.'],
     ['Pages that answer with an error', 'Crawled addresses that returned an error (4xx or 5xx). Bring the page back or redirect the address. Addresses that refused our crawler (401, 403 or 429) may be bot protection, so check them in a browser first.'],
     ['Redirect chains and loops', 'Addresses that take two or more redirects to reach a page, or never reach one. Point the first address straight at the final page.'],
@@ -599,7 +599,7 @@ const RULE_PLAIN = {
     ['رابط canonical مفقود أو معطّل', 'أضف `<link rel="canonical">` صحيحًا.'],
     ['البيانات المهيكلة مفقودة', 'أضِف JSON-LD الملائم للنوع.'],
     ['روابط داخلية مكسورة', 'أصلح أو احذف الروابط التي تُرجع خطأ.'],
-    ['محتوى قليل', 'صفحات بأقل من 200 كلمة تقريبًا.'],
+    ['محتوى قليل', 'صفحات تحتوي على نص قليل جدًا خاص بها، ويُحكم عليها بحدّ يناسب لغة الصفحة: نحو 200 كلمة لمعظم اللغات، وما يعادلها بالأحرف للصينية واليابانية والكورية والتايلاندية. تعرض كل صفحة مُعلَّمة الطول الذي قسناه.'],
     ['لا توجد إشارات أسئلة/إجابات', 'أضِف قسم أسئلة شائعة عند الحاجة.'],
     ['ملف llms.txt مفقود (اختياري)', 'عُرف جديد يرشد روبوتات الذكاء الاصطناعي إلى أفضل محتواك.'],
     ['HTTPS غير مُلزَم', 'أعد التوجيه من http إلى https.'],
@@ -643,7 +643,7 @@ const RULE_PLAIN = {
     ['Canonical manquant ou cassé', 'Ajoutez un `<link rel="canonical">` valide.'],
     ['Données structurées manquantes', 'Ajoutez le JSON-LD adapté.'],
     ['Liens internes cassés', 'Corrigez ou supprimez les liens en erreur.'],
-    ['Contenu trop léger', 'Pages en-dessous d’environ 200 mots.'],
+    ['Contenu trop léger', 'Pages avec très peu de texte propre, jugées selon un seuil adapté à la langue de la page : environ 200 mots pour la plupart des langues, et l’équivalent en caractères pour le chinois, le japonais, le coréen et le thaï. Chaque page signalée indique la longueur mesurée.'],
     ['Aucun signal FAQ', 'Ajoutez une section FAQ quand pertinent.'],
     ['Fichier llms.txt absent (informatif)', 'Convention récente destinée aux robots d’IA.'],
     ['HTTPS non appliqué', 'Redirigez http vers https.'],
@@ -687,7 +687,7 @@ const RULE_PLAIN = {
     ['Canonical fehlt oder defekt', 'Setzen Sie einen gültigen `<link rel="canonical">`.'],
     ['Strukturierte Daten fehlen', 'Fügen Sie passendes JSON-LD hinzu.'],
     ['Defekte interne Links', 'Korrigieren oder entfernen Sie fehlerhafte Links.'],
-    ['Dünner Inhalt', 'Seiten unter etwa 200 Wörtern.'],
+    ['Dünner Inhalt', 'Seiten mit sehr wenig eigenem Text, bewertet nach einem Schwellenwert für die Sprache der Seite: etwa 200 Wörter für die meisten Sprachen und das Zeichen-Äquivalent für Chinesisch, Japanisch, Koreanisch und Thai. Jede markierte Seite zeigt die gemessene Länge.'],
     ['Keine FAQ-Signale', 'FAQ-Abschnitt hinzufügen, wo sinnvoll.'],
     ['llms.txt fehlt (Hinweis)', 'Neue Konvention für KI-Crawler.'],
     ['HTTPS nicht erzwungen', 'Leiten Sie http auf https um.'],
@@ -731,7 +731,7 @@ const RULE_PLAIN = {
     ['Canonical ausente o roto', 'Coloca un `<link rel="canonical">` válido.'],
     ['Datos estructurados ausentes', 'Añade JSON-LD adecuado.'],
     ['Enlaces internos rotos', 'Corrige o elimina los enlaces con error.'],
-    ['Contenido escaso', 'Páginas por debajo de ~200 palabras.'],
+    ['Contenido escaso', 'Páginas con muy poco texto propio, juzgadas con un umbral según el idioma de la página: unas 200 palabras para la mayoría de los idiomas y el equivalente en caracteres para chino, japonés, coreano y tailandés. Cada página señalada muestra la longitud medida.'],
     ['Sin señales de FAQ', 'Añade sección de preguntas frecuentes.'],
     ['Falta llms.txt (informativo)', 'Convención reciente para los bots de IA.'],
     ['HTTPS no forzado', 'Redirige http a https.'],
@@ -775,7 +775,7 @@ const RULE_PLAIN = {
     ['Canonical отсутствует или сломан', 'Добавьте корректный `<link rel="canonical">`.'],
     ['Структурированные данные отсутствуют', 'Добавьте нужный JSON-LD.'],
     ['Битые внутренние ссылки', 'Исправьте или удалите.'],
-    ['Тонкий контент', 'Страницы короче ~200 слов.'],
+    ['Тонкий контент', 'Страницы, на которых очень мало собственного текста; оценка идёт по порогу для языка страницы: около 200 слов для большинства языков и эквивалент в символах для китайского, японского, корейского и тайского. Для каждой отмеченной страницы показана измеренная длина.'],
     ['Нет сигналов FAQ', 'Добавьте раздел вопросов и ответов.'],
     ['Файл llms.txt отсутствует (справочно)', 'Новое соглашение для ИИ-ботов.'],
     ['HTTPS не включён принудительно', 'Перенаправляйте http на https.'],
@@ -819,7 +819,7 @@ const RULE_PLAIN = {
     ['canonical 缺失或错误', '设置正确的 `<link rel="canonical">`。'],
     ['结构化数据缺失', '添加合适的 JSON-LD。'],
     ['内部链接失效', '修复或删除错误链接。'],
-    ['内容过少', '页面少于约 200 字。'],
+    ['内容过少', '自身文字很少的页面，按页面语言对应的阈值判断：大多数语言约 200 个词，中文、日文、韩文和泰文则取相当的字符数。每个被标记的页面都会显示我们测得的长度。'],
     ['未发现 FAQ 信号', '合适时添加常见问题区块。'],
     ['缺少 llms.txt（建议性）', '一种面向 AI 爬虫的较新约定。'],
     ['未强制 HTTPS', '将 http 重定向到 https。'],
@@ -1036,6 +1036,65 @@ Una convención reciente que indica a los asistentes de IA qué páginas prefier
 `,
 };
 
+const AUDIT_TRIAGE_SECTION = {
+  en: `## Dismissed and fixed findings
+
+Dismiss a finding that doesn't apply, or mark it fixed, from its card in the report or from [Next actions](./next-actions.en.md). Dismissing asks for a reason: false positive, won't fix, fixed elsewhere, or another reason. Dismissed findings move to a **Dismissed** section under the tabs, and findings marked fixed to a **Marked fixed** group inside their tab. Neither is counted in the tab totals or on the Overview. Each dismissed entry shows who dismissed it, when and why, and whether the latest audit still detects it. **Restore** puts it back on the list.
+
+For a broken-link finding, **Re-check these URLs** asks your own pages again and records which still fail, which work now and which could not be checked. It does not start a new audit, and the audit report itself stays as it was.
+
+Affected URLs are links. A long list shows a sample first, and **Download URLs (CSV)** saves every one of them. Once the newest audit is more than 30 days old, a **Last audited N days ago** notice with **Run a new audit** appears, because the results may no longer match your site.
+`,
+  ar: `## النتائج المستبعدة والمُصلَحة
+
+استبعد نتيجة لا تنطبق عليك، أو ضع عليها علامة «تم الإصلاح»، من بطاقتها في التقرير أو من [الإجراءات التالية](./next-actions.ar.md). يطلب الاستبعاد سببًا: نتيجة خاطئة، أو لن أصلحها، أو أُصلحت في مكان آخر، أو سبب آخر. تنتقل النتائج المستبعدة إلى قسم **المستبعدة** أسفل التبويبات، وتنتقل النتائج المعلَّمة بالإصلاح إلى مجموعة **تم وضع علامة الإصلاح** داخل تبويبها. ولا تُحتسب أيٌّ منهما في مجاميع التبويبات ولا في النظرة العامة. يعرض كل عنصر مستبعد من استبعده ومتى ولماذا، وهل لا يزال آخر تدقيق يكتشفه. **استعادة** تعيده إلى القائمة.
+
+بالنسبة إلى نتيجة الروابط المعطلة، يطلب **أعد فحص هذه العناوين** صفحاتك مرة أخرى ويسجّل ما لا يزال يفشل وما يعمل الآن وما تعذّر فحصه. وهو لا يبدأ تدقيقًا جديدًا، ويبقى تقرير التدقيق نفسه كما كان.
+
+عناوين URL المتأثرة روابط. تعرض القائمة الطويلة عيّنة أولًا، ويحفظ **تنزيل عناوين URL ‏(CSV)** كل العناوين. وحين يتجاوز عمر أحدث تدقيق 30 يومًا يظهر إشعار **آخر تدقيق قبل N يوم** مع **تشغيل تدقيق جديد**، لأن النتائج قد لا تطابق موقعك بعد الآن.
+`,
+  fr: `## Constats écartés et corrigés
+
+Écartez un constat qui ne vous concerne pas, ou marquez-le comme corrigé, depuis sa carte dans le rapport ou depuis [Prochaines actions](./next-actions.fr.md). L’écartement demande un motif : faux positif, ne sera pas corrigé, corrigé ailleurs ou autre motif. Les constats écartés passent dans une section **Écartés** sous les onglets, et les constats marqués corrigés dans un groupe **Marqué comme corrigé** à l’intérieur de leur onglet. Aucun n’est compté dans les totaux des onglets ni dans la vue d’ensemble. Chaque entrée écartée indique qui l’a écartée, quand et pourquoi, et si le dernier audit la détecte encore. **Restaurer** la remet dans la liste.
+
+Pour un constat de liens cassés, **Revérifier ces URL** interroge à nouveau vos propres pages et note celles qui échouent encore, celles qui fonctionnent désormais et celles qui n’ont pas pu être vérifiées. Cela ne lance pas de nouvel audit, et le rapport d’audit reste tel quel.
+
+Les URL concernées sont des liens. Une longue liste montre d’abord un échantillon, et **Télécharger les URL (CSV)** les enregistre toutes. Quand l’audit le plus récent a plus de 30 jours, un message **Dernier audit il y a N jours** avec **Lancer un nouvel audit** apparaît, car les résultats peuvent ne plus correspondre à votre site.
+`,
+  de: `## Verworfene und behobene Befunde
+
+Verwerfen Sie einen Befund, der nicht zutrifft, oder markieren Sie ihn als behoben, über seine Karte im Bericht oder unter [Nächste Aktionen](./next-actions.de.md). Beim Verwerfen wird nach einem Grund gefragt: Fehlalarm, wird nicht behoben, anderswo behoben oder ein anderer Grund. Verworfene Befunde wandern in den Bereich **Verworfen** unter den Tabs, als behoben markierte Befunde in die Gruppe **Als behoben markiert** innerhalb ihres Tabs. Keine der beiden zählt in den Tab-Summen oder in der Übersicht. Jeder verworfene Eintrag zeigt, wer ihn verworfen hat, wann und warum und ob das neueste Audit ihn noch erkennt. **Wiederherstellen** bringt ihn zurück in die Liste.
+
+Bei einem Befund zu defekten Links fragt **Diese URLs erneut prüfen** Ihre eigenen Seiten noch einmal ab und hält fest, welche weiterhin fehlschlagen, welche jetzt funktionieren und welche nicht geprüft werden konnten. Es startet kein neues Audit, und der Audit-Bericht bleibt unverändert.
+
+Betroffene URLs sind Links. Eine lange Liste zeigt zuerst eine Stichprobe, und **URLs herunterladen (CSV)** speichert alle. Ist das neueste Audit älter als 30 Tage, erscheint der Hinweis **Letztes Audit vor N Tagen** mit **Neues Audit starten**, weil die Ergebnisse womöglich nicht mehr zu Ihrer Website passen.
+`,
+  es: `## Hallazgos descartados y corregidos
+
+Descarta un hallazgo que no te afecte, o márcalo como corregido, desde su tarjeta del informe o desde [Próximas acciones](./next-actions.es.md). Al descartar se pide un motivo: falso positivo, no se corregirá, corregido en otro sitio u otro motivo. Los hallazgos descartados pasan a una sección **Descartados** bajo las pestañas, y los marcados como corregidos a un grupo **Marcado como corregido** dentro de su pestaña. Ninguno cuenta en los totales de las pestañas ni en el resumen. Cada entrada descartada indica quién la descartó, cuándo y por qué, y si la última auditoría todavía la detecta. **Restaurar** la devuelve a la lista.
+
+En un hallazgo de enlaces rotos, **Volver a comprobar estas URL** consulta de nuevo tus propias páginas y registra cuáles siguen fallando, cuáles funcionan ya y cuáles no se pudieron comprobar. No inicia una auditoría nueva, y el informe de auditoría queda como estaba.
+
+Las URL afectadas son enlaces. Una lista larga muestra primero una muestra, y **Descargar URL (CSV)** las guarda todas. Cuando la auditoría más reciente supera los 30 días, aparece un aviso **Última auditoría hace N días** con **Ejecutar una auditoría nueva**, porque los resultados pueden ya no coincidir con tu sitio.
+`,
+  ru: `## Отклонённые и исправленные находки
+
+Отклоните находку, которая вас не касается, или отметьте её как исправленную — на её карточке в отчёте или в разделе [Следующие действия](./next-actions.ru.md). При отклонении нужно указать причину: ложное срабатывание, не будет исправлено, исправлено в другом месте или другая причина. Отклонённые находки переходят в раздел **Отклонённые** под вкладками, а отмеченные как исправленные — в группу **Отмечено как исправленное** внутри своей вкладки. Ни те, ни другие не входят в итоги вкладок и в обзор. У каждой отклонённой записи указано, кто её отклонил, когда и почему, и обнаруживает ли её последний аудит. **Восстановить** возвращает её в список.
+
+Для находки о неработающих ссылках **Перепроверить эти URL** повторно запрашивает ваши страницы и записывает, какие по-прежнему не работают, какие теперь работают и какие проверить не удалось. Новый аудит при этом не запускается, а сам отчёт аудита остаётся прежним.
+
+Затронутые URL — это ссылки. Длинный список сначала показывает выборку, а **Скачать URL (CSV)** сохраняет все адреса. Когда самому свежему аудиту больше 30 дней, появляется уведомление **Последний аудит был N дней назад** с кнопкой **Запустить новый аудит**: результаты могут уже не соответствовать вашему сайту.
+`,
+  zh: `## 已忽略和已修复的发现
+
+对不适用的发现，可以在报告中它的卡片上或在[下一步行动](./next-actions.zh.md)里将其忽略，或标记为已修复。忽略时需要说明原因：误报、不会修复、已在别处修复或其他原因。已忽略的发现会移到标签下方的**已忽略**区域，标记为已修复的发现会移到所在标签内的**已标记为已修复**分组。它们都不计入各标签的合计和概览。每条已忽略的记录会显示是谁、何时、为何忽略的，以及最新审计是否仍能检测到。**恢复**可将其放回列表。
+
+对于失效链接的发现，**重新检查这些网址**会再次请求你自己的页面，并记录哪些仍然失败、哪些现在可用、哪些无法检查。它不会启动新的审计，审计报告本身保持原样。
+
+受影响的网址都是链接。较长的列表先显示一部分样本，**下载 URL（CSV）**会保存全部网址。最新审计超过 30 天后，会出现**上次审计是 N 天前**的提示和**运行新的审计**按钮，因为结果可能已不再符合你的网站。
+`,
+};
+
 // How a single audit takes part in the resource scan (images, scripts and styles).
 const AUDIT_RESOURCE_SCAN_SECTION = {
   en: `## Scanning images, scripts and styles
@@ -1110,7 +1169,7 @@ for (const loc of LOCALES) {
     const list = RULE_PLAIN[loc]
       .map(([label, plain]) => `- **${label}**${separator}${plain}`)
       .join('\n');
-    return auditReportHead[loc] + list + '\n\n' + AUDIT_RESOURCE_SCAN_SECTION[loc];
+    return auditReportHead[loc] + list + '\n\n' + AUDIT_TRIAGE_SECTION[loc] + '\n' + AUDIT_RESOURCE_SCAN_SECTION[loc];
   };
 }
 
@@ -1130,6 +1189,12 @@ Open the site view, click **Add keyword** and type the phrase you want to track.
 
 ## Weekly vs daily
 Every plan includes **weekly** checks. **Daily** checks are a paid add-on, because checking Google's results every day costs a lot more to run.
+
+## Adding several at once
+Type or paste a list into **Add keyword**. A comma or a new line ends a keyword, so pasting \`seo audit, rank tracker\` adds two keywords. Up to 100 keywords go in per request. Keywords you already track are skipped, and RankMeFast tells you which ones.
+
+## Check now
+**Check now** runs a check right away instead of waiting for the next scheduled one. On a keyword row it checks that keyword; at the top of the list it checks every active keyword. A confirmation names what will be checked before anything runs. A check of the whole site runs in the background as one job: you can leave the page and come back, and the result says how many keywords were checked, how many failed and how many were not reached in time. A keyword that was never reached is not shown as a failed check.
 
 ## Trend chart
 Select a keyword to see its position over time. A rising line is bad (a higher number means a worse rank) and a falling line is good. Below the chart, an accessible data table lists the same numbers.
@@ -1162,6 +1227,12 @@ The [Page performance guide](./pages-performance.en.md) covers the separate Page
 ## أسبوعي مقابل يومي
 كل الخطط تشمل فحصًا **أسبوعيًا**. الفحص **اليومي** إضافة مدفوعة.
 
+## إضافة عدة كلمات دفعة واحدة
+اكتب قائمة أو الصقها في **إضافة كلمة مفتاحية**. تُنهي الفاصلة أو السطر الجديد كلمة، فلصق \`seo audit, rank tracker\` يضيف كلمتين. يمكن إدخال حتى 100 كلمة في الطلب الواحد. تُتخطّى الكلمات التي تتابعها بالفعل، ويخبرك RankMeFast بها.
+
+## تحقق الآن
+يشغّل **تحقق الآن** فحصًا فورًا بدل انتظار الفحص المجدول التالي. في صف كلمة مفتاحية يفحص تلك الكلمة؛ وفي أعلى القائمة يفحص كل الكلمات النشطة. يذكر مربع التأكيد ما سيُفحص قبل أن يبدأ أي شيء. ويعمل فحص الموقع كاملًا في الخلفية كمهمة واحدة: يمكنك مغادرة الصفحة والعودة، وتذكر النتيجة عدد الكلمات التي فُحصت وعدد ما فشل وعدد ما لم يصله الفحص في الوقت المناسب. والكلمة التي لم يصلها الفحص أبدًا لا تظهر كفحص فاشل.
+
 ## مخطّط الاتّجاه
 عند اختيار كلمة يظهر منحنى ترتيبها، ومعه جدول بيانات تستطيع قارئات الشاشة قراءته.
 
@@ -1187,6 +1258,12 @@ Depuis la vue du site, utilisez **Ajouter un mot-clé**. Nous vérifions votre p
 
 ## Hebdo ou quotidien
 Toutes les offres incluent un contrôle **hebdomadaire**. Le contrôle **quotidien** est une option payante.
+
+## Ajouter plusieurs mots-clés à la fois
+Saisissez ou collez une liste dans **Ajouter un mot-clé**. Une virgule ou un retour à la ligne termine un mot-clé : coller \`seo audit, rank tracker\` en ajoute deux. Jusqu’à 100 mots-clés peuvent être ajoutés par envoi. Les mots-clés déjà suivis sont ignorés, et RankMeFast vous indique lesquels.
+
+## Vérifier maintenant
+**Vérifier maintenant** lance un contrôle tout de suite au lieu d’attendre le prochain contrôle planifié. Sur une ligne de mot-clé, il contrôle ce mot-clé ; en haut de la liste, il contrôle tous les mots-clés actifs. Une confirmation indique ce qui sera contrôlé avant tout lancement. Le contrôle de tout le site s’exécute en arrière-plan comme une seule tâche : vous pouvez quitter la page et revenir, et le résultat indique combien de mots-clés ont été contrôlés, combien ont échoué et combien n’ont pas été atteints à temps. Un mot-clé jamais atteint n’est pas présenté comme un contrôle en échec.
 
 ## Graphique de tendance
 Sélectionnez un mot-clé pour afficher sa courbe, accompagnée d’un tableau de données accessible.
@@ -1214,6 +1291,12 @@ Klicken Sie in der Website-Ansicht auf **Keyword hinzufügen**. Dabei wird Ihr L
 ## Wöchentlich oder täglich
 Jeder Plan enthält **wöchentliche** Prüfungen. **Tägliche** Prüfungen sind eine kostenpflichtige Zusatzoption.
 
+## Mehrere Keywords auf einmal hinzufügen
+Tippen oder fügen Sie eine Liste in **Keyword hinzufügen** ein. Ein Komma oder ein Zeilenumbruch beendet ein Keyword, daher fügt das Einfügen von \`seo audit, rank tracker\` zwei Keywords hinzu. Pro Anfrage sind bis zu 100 Keywords möglich. Keywords, die Sie bereits verfolgen, werden übersprungen, und RankMeFast nennt Ihnen, welche.
+
+## Jetzt prüfen
+**Jetzt prüfen** startet sofort eine Prüfung, statt auf die nächste geplante zu warten. In einer Keyword-Zeile prüft es dieses Keyword; oben in der Liste prüft es alle aktiven Keywords. Eine Bestätigung nennt vor dem Start, was geprüft wird. Die Prüfung der gesamten Website läuft als eine einzige Aufgabe im Hintergrund: Sie können die Seite verlassen und später zurückkehren, und das Ergebnis nennt, wie viele Keywords geprüft wurden, wie viele fehlgeschlagen sind und wie viele nicht rechtzeitig erreicht wurden. Ein Keyword, das nie erreicht wurde, erscheint nicht als fehlgeschlagene Prüfung.
+
 ## Trend-Diagramm
 Wählen Sie ein Keyword aus, um seinen Verlauf zu sehen. Darunter steht eine barrierefreie Tabelle mit denselben Werten.
 
@@ -1239,6 +1322,12 @@ En la vista del sitio pulsa **Añadir palabra clave**. Comprobamos tu tope (cons
 
 ## Semanal o diario
 Todos los planes incluyen comprobaciones **semanales**. Las **diarias** son un complemento de pago.
+
+## Añadir varias palabras clave a la vez
+Escribe o pega una lista en **Añadir palabra clave**. Una coma o un salto de línea cierra una palabra clave, así que pegar \`seo audit, rank tracker\` añade dos. Se admiten hasta 100 palabras clave por envío. Las que ya sigues se omiten, y RankMeFast te dice cuáles.
+
+## Comprobar ahora
+**Comprobar ahora** lanza una comprobación al instante en lugar de esperar a la siguiente programada. En la fila de una palabra clave comprueba esa palabra; arriba de la lista comprueba todas las activas. Una confirmación indica qué se va a comprobar antes de empezar. La comprobación de todo el sitio se ejecuta en segundo plano como una sola tarea: puedes salir de la página y volver, y el resultado indica cuántas palabras clave se comprobaron, cuántas fallaron y cuántas no se alcanzaron a tiempo. Una palabra clave a la que nunca se llegó no se muestra como comprobación fallida.
 
 ## Gráfico de tendencia
 Selecciona una palabra clave para ver su evolución, junto con una tabla de datos accesible.
@@ -1266,6 +1355,12 @@ La [guía de rendimiento de páginas](./pages-performance.es.md) describe la ins
 ## Еженедельно или ежедневно
 Все тарифы включают **еженедельные** проверки. **Ежедневные** доступны как платное дополнение.
 
+## Добавление нескольких ключей сразу
+Введите или вставьте список в поле **Добавить ключ**. Запятая или перевод строки завершает ключ, поэтому вставка \`seo audit, rank tracker\` добавляет два ключа. За один раз можно добавить до 100 ключей. Ключи, которые вы уже отслеживаете, пропускаются, и RankMeFast сообщает, какие именно.
+
+## Проверить сейчас
+**Проверить сейчас** запускает проверку немедленно, не дожидаясь следующей по расписанию. В строке ключа проверяется этот ключ; над списком — все активные ключи. Перед запуском подтверждение называет, что будет проверено. Проверка всего сайта идёт в фоне как одна задача: можно уйти со страницы и вернуться, а результат покажет, сколько ключей проверено, сколько завершились ошибкой и до скольких не дошли вовремя. Ключ, до которого не дошли, не показывается как неудачная проверка.
+
 ## График
 Выберите ключ, чтобы увидеть график позиций и доступную таблицу с теми же данными.
 
@@ -1291,6 +1386,12 @@ La [guía de rendimiento de páginas](./pages-performance.es.md) describe la ins
 
 ## 每周与每日
 所有方案都包含 **每周** 检查。**每日** 检查为付费附加项。
+
+## 一次添加多个关键词
+在**添加关键词**中输入或粘贴一个列表。逗号或换行会结束一个关键词，所以粘贴 \`seo audit, rank tracker\` 会添加两个关键词。每次请求最多添加 100 个关键词。已在跟踪的关键词会被跳过，RankMeFast 会告诉你是哪些。
+
+## 立即检查
+**立即检查**会马上运行一次检查，而不是等待下一次计划检查。在关键词所在行上，它检查该关键词；在列表顶部，它检查所有活跃关键词。运行前会有确认提示，说明将检查什么。整站检查作为一个任务在后台运行：你可以离开页面稍后再回来，结果会说明已检查多少关键词、多少失败、多少未能及时检查到。从未检查到的关键词不会显示为检查失败。
 
 ## 趋势图
 选中关键词即可查看排名曲线，下方附有无障碍数据表。
@@ -1447,7 +1548,7 @@ Search Console is Google's free tool that shows how Google sees your site. Once 
 - **Indexed with warnings**: has Google flagged a canonical or duplicate-content problem?
 
 ## Why connect
-Without a connection, these rules stay in **Watch** with "insufficient data". Once connected, they land in the right tab and list the pages you need to fix.
+Without a connection, these rules show under **Not evaluated** in the report. They are not counted as Watch issues and do not appear in Next actions. Once connected, they land in the right tab and list the pages you need to fix.
 
 ## What we can access
 - We ask Google for the **read-only** Search Console scope, \`webmasters.readonly\`. It's the smallest scope that lets us call the URL Inspection API.
@@ -1462,8 +1563,11 @@ Without a connection, these rules stay in **Watch** with "insufficient data". On
 ## Disconnecting or revoking
 Click **Disconnect** in the same panel and confirm. We delete the stored token right away. You can also revoke our access at any time from https://myaccount.google.com/permissions.
 
-## "Reconnect needed"
-If Google invalidates the token (for example after you change your account password), the card shows a red **Reconnect needed** banner. Until you reconnect, the three rules go back to "insufficient data".
+## When Google asks you to reconnect
+If Google invalidates the token (for example after you change your account password), the Google Search Console card on the site's **Google** tab shows a red alert, **Your Google connection needs to be reconnected**, with a **Reconnect** button. Cards that read Search Console or Google Analytics show **Search Console isn't connected** or **Google Analytics isn't connected**, with **Connect Google**. Until you reconnect, the three rules go back to "insufficient data".
+
+## Choosing the property
+The site's **Google** tab matches your site to a Search Console property automatically. If none matches, or several do, RankMeFast asks you to choose one. A property that belongs to a different site can be linked only after you confirm it, because its search data then appears on this site. Google Analytics works the same way. If the newest Google Analytics data is older than expected, a notice says so and **Refresh** syncs it again; RankMeFast also syncs it once a day.
 
 ## Search performance in Pages
 
@@ -1474,7 +1578,7 @@ The [Page performance guide](./pages-performance.en.md) explains how the Pages t
 Search Console أداة مجانيّة من Google تُظهر كيف يرى Google موقعك. بعد الربط تعتمد ثلاث قواعد على إجابة Google نفسها بدلًا من التقدير.
 
 ## لماذا نربط
-دون ربط، تبقى هذه القواعد في **راقب** بحالة "بيانات غير كافية".
+دون ربط، تظهر هذه القواعد ضمن **لم يُقيَّم** في التقرير. فلا تُحتسب كمشكلات في «راقب» ولا تظهر في الإجراءات التالية.
 
 ## ما الذي نصل إليه
 - نطلب صلاحيّة قراءة فقط: \`webmasters.readonly\`.
@@ -1488,8 +1592,11 @@ Search Console أداة مجانيّة من Google تُظهر كيف يرى Goog
 ## قطع الربط
 اضغط **قطع الربط** في اللوحة نفسها، فنحذف الرمز المخزّن فورًا. يمكنك أيضًا إلغاء الوصول من https://myaccount.google.com/permissions.
 
-## "يحتاج إعادة ربط"
-إذا أبطل Google الرمز يظهر شريط أحمر. أعد الربط لتعود القواعد الثلاث إلى العمل.
+## عندما يطلب Google إعادة الربط
+إذا أبطل Google الرمز (مثلًا بعد تغيير كلمة مرور حسابك)، تعرض بطاقة Google Search Console في تبويب **Google** للموقع تنبيهًا أحمر: **اتصالك بجوجل يحتاج إلى إعادة الربط** مع زر **إعادة الربط**. وتعرض البطاقات التي تقرأ Search Console أو Google Analytics الرسالة **Search Console غير مرتبط** أو **Google Analytics غير مرتبط** مع **ربط Google**. وإلى أن تعيد الربط تعود القواعد الثلاث إلى «بيانات غير كافية».
+
+## اختيار الموقع المرتبط
+يطابق تبويب **Google** في الموقع موقعك مع موقع Search Console تلقائيًا. إن لم يتطابق أي موقع أو تطابق عدة مواقع، يطلب منك RankMeFast الاختيار. ولا يمكن ربط موقع يخص موقعًا آخر إلا بعد تأكيدك، لأن بيانات البحث الخاصة به ستظهر في هذا الموقع. ويعمل Google Analytics بالطريقة نفسها. وإذا كانت أحدث بيانات Google Analytics أقدم مما هو متوقع، يظهر إشعار بذلك ويعيد **تحديث** المزامنة؛ كما يزامنها RankMeFast مرة يوميًا.
 
 ## أداء البحث في الصفحات
 
@@ -1514,8 +1621,11 @@ Search Console est l’outil gratuit de Google. Une fois connecté à RankMeFast
 ## Déconnecter
 Cliquez sur **Déconnecter** : le jeton est supprimé immédiatement. Vous pouvez aussi révoquer l’accès sur https://myaccount.google.com/permissions.
 
-## « Reconnexion requise »
-Si Google invalide le jeton, une bannière rouge apparaît. Les trois règles repassent en « données insuffisantes » jusqu’à la reconnexion.
+## Quand Google demande de se reconnecter
+Si Google invalide le jeton (par exemple après un changement de mot de passe de votre compte), la carte Google Search Console de l’onglet **Google** du site affiche une alerte rouge, **Votre connexion Google doit être renouvelée**, avec un bouton **Reconnecter**. Les cartes qui lisent Search Console ou Google Analytics affichent **Search Console n’est pas connecté** ou **Google Analytics n’est pas connecté**, avec **Connecter Google**. Tant que vous ne vous reconnectez pas, les trois règles repassent en « données insuffisantes ».
+
+## Choisir la propriété
+L’onglet **Google** du site associe automatiquement votre site à une propriété Search Console. Si aucune ne correspond, ou si plusieurs correspondent, RankMeFast vous demande d’en choisir une. Une propriété qui appartient à un autre site ne peut être liée qu’après votre confirmation, car ses données de recherche s’afficheraient alors sur ce site. Google Analytics fonctionne de la même façon. Si les données Google Analytics les plus récentes sont plus anciennes que prévu, un message l’indique et **Actualiser** relance la synchronisation ; RankMeFast la lance aussi une fois par jour.
 
 ## Performances dans Pages
 
@@ -1537,8 +1647,11 @@ Die Search Console ist das kostenlose Google-Tool, das zeigt, wie Google Ihre We
 ## Trennen
 Klicken Sie auf **Trennen**. Der Token wird sofort gelöscht. Sie können den Zugriff auch jederzeit über https://myaccount.google.com/permissions widerrufen.
 
-## „Erneut verbinden"
-Wird der Token ungültig, erscheint ein rotes Banner. Bis Sie neu verbinden, zeigen die drei Regeln wieder "unzureichende Daten".
+## Wenn Google zur erneuten Verbindung auffordert
+Macht Google den Token ungültig (zum Beispiel nach einer Änderung Ihres Kontopassworts), zeigt die Karte Google Search Console im Tab **Google** der Website eine rote Meldung, **Ihre Google-Verbindung muss erneuert werden**, mit der Schaltfläche **Neu verbinden**. Karten, die Search Console oder Google Analytics lesen, zeigen **Search Console ist nicht verbunden** oder **Google Analytics ist nicht verbunden** mit **Google verbinden**. Bis Sie neu verbinden, zeigen die drei Regeln wieder „unzureichende Daten“.
+
+## Property auswählen
+Der Tab **Google** der Website ordnet Ihre Website automatisch einer Search-Console-Property zu. Passt keine oder passen mehrere, bittet RankMeFast Sie um eine Auswahl. Eine Property, die zu einer anderen Website gehört, lässt sich nur nach Ihrer Bestätigung verknüpfen, weil deren Suchdaten dann auf dieser Website erscheinen. Google Analytics funktioniert genauso. Sind die neuesten Google-Analytics-Daten älter als erwartet, weist ein Hinweis darauf hin, und **Aktualisieren** startet die Synchronisierung erneut; RankMeFast synchronisiert außerdem einmal täglich.
 
 ## Suchleistung im Seiten-Tab
 
@@ -1560,8 +1673,11 @@ Search Console es la herramienta gratuita de Google que muestra cómo ve Google 
 ## Desconectar
 Pulsa **Desconectar** y eliminamos el token al momento. También puedes revocar el acceso en https://myaccount.google.com/permissions.
 
-## "Se requiere reconexión"
-Si Google invalida el token, aparece un aviso rojo. Hasta que vuelvas a conectar, las tres reglas vuelven a "datos insuficientes".
+## Cuando Google pide volver a conectar
+Si Google invalida el token (por ejemplo, tras cambiar la contraseña de tu cuenta), la tarjeta de Google Search Console de la pestaña **Google** del sitio muestra una alerta roja, **Tu conexión con Google necesita renovarse**, con un botón **Reconectar**. Las tarjetas que leen Search Console o Google Analytics muestran **Search Console no está conectado** o **Google Analytics no está conectado**, con **Conectar Google**. Hasta que vuelvas a conectar, las tres reglas vuelven a "datos insuficientes".
+
+## Elegir la propiedad
+La pestaña **Google** del sitio asocia automáticamente tu sitio a una propiedad de Search Console. Si ninguna coincide, o coinciden varias, RankMeFast te pide que elijas una. Una propiedad que pertenece a otro sitio solo se puede vincular tras tu confirmación, porque sus datos de búsqueda aparecerían entonces en este sitio. Google Analytics funciona igual. Si los datos más recientes de Google Analytics son más antiguos de lo esperado, un aviso lo indica y **Actualizar** vuelve a sincronizarlos; RankMeFast también los sincroniza una vez al día.
 
 ## Rendimiento en Páginas
 
@@ -1583,8 +1699,11 @@ Search Console — бесплатный инструмент Google, котор�
 ## Отключение
 Нажмите **Отключить**, и мы сразу удалим токен. Отозвать доступ можно и на https://myaccount.google.com/permissions.
 
-## «Нужно переподключение»
-Если Google отзывает токен, появляется красный баннер. Пока вы не подключитесь заново, правила снова показывают «недостаточно данных».
+## Когда Google просит подключиться заново
+Если Google отзывает токен (например, после смены пароля аккаунта), карточка Google Search Console на вкладке **Google** сайта показывает красное предупреждение **Соединение с Google нужно переустановить** с кнопкой **Переподключить**. Карточки, читающие Search Console или Google Analytics, показывают **Search Console не подключен** или **Google Analytics не подключен** с кнопкой **Подключить Google**. Пока вы не подключитесь заново, правила снова показывают «недостаточно данных».
+
+## Выбор ресурса
+Вкладка **Google** сайта автоматически сопоставляет ваш сайт с ресурсом Search Console. Если ничего не подошло или подошло несколько, RankMeFast предложит выбрать один. Ресурс другого сайта можно привязать только после вашего подтверждения, потому что его данные поиска тогда появятся на этом сайте. Google Analytics работает так же. Если самые свежие данные Google Analytics старше ожидаемого, появится уведомление, а **Обновить** запустит синхронизацию заново; RankMeFast также синхронизирует их раз в день.
 
 ## Поисковые показатели на вкладке Страницы
 
@@ -1606,8 +1725,11 @@ Search Console 是 Google 的免费工具，展示 Google 如何看待您的网�
 ## 断开或撤销
 点击 **断开**，我们会立即删除令牌。也可以随时在 https://myaccount.google.com/permissions 撤销授权。
 
-## “需要重新连接”
-如果 Google 使令牌失效，会出现红色横幅。在重新连接之前，这三条规则会显示“数据不足”。
+## 当 Google 要求重新连接时
+如果 Google 使令牌失效（例如您修改账号密码之后），站点 **Google** 标签中的 Google Search Console 卡片会显示红色提示 **您的 Google 连接需要重新授权**，并带有**重新连接**按钮。读取 Search Console 或 Google Analytics 的卡片会显示 **Search Console 未连接** 或 **Google Analytics 未连接**，并带有**连接 Google**。在重新连接之前，这三条规则会显示“数据不足”。
+
+## 选择资源
+站点的 **Google** 标签会自动把你的站点与某个 Search Console 资源匹配。如果没有匹配项或有多个匹配项，RankMeFast 会请你选择一个。属于其他站点的资源只有在你确认后才能关联，因为它的搜索数据随后会显示在这个站点上。Google Analytics 的处理方式相同。如果最新的 Google Analytics 数据比预期的更旧，会有提示，点击**刷新**可再次同步；RankMeFast 也会每天同步一次。
 
 ## 页面标签中的搜索表现
 
@@ -2037,7 +2159,7 @@ Search Console data, screenshots, billing details and your other sites are not s
 The audit gives the same result for the same input every time. The summary is a separate step that runs *after* the audit finishes and only reads the finished snapshot. Turning the summary off doesn't move any rule to a different tab.
 
 ## Regenerating
-Click **Regenerate** on the summary card to run it again. Each run uses one summary credit (see the AI summaries cap in [Plans, limits & credits](./plans-limits-credits.en.md)). Once you reach the cap, the card shows a limit notice instead, and those blocked attempts don't use credit.
+Click **Regenerate** on the summary card to run it again, which calls your configured AI provider. The card marks a summary **Out of date** when findings it covers were dismissed, fixed or reopened after it was written. Regenerate it so it matches your open fixes.
 
 ## Which model is used
 The summary uses the AI providers configured by whoever runs your RankMeFast installation, tried in order. Very long lists of findings are shortened before they're sent, and the card then shows a "shortened" note.
@@ -2059,7 +2181,7 @@ The summary uses the AI providers configured by whoever runs your RankMeFast ins
 يعطي الفحص النتيجة نفسها في كل مرة للمدخلات نفسها. أما الملخّص فخطوة منفصلة تأتي بعد انتهاء الفحص وتقرأ نتيجته فقط.
 
 ## إعادة الإنشاء
-اضغط **إعادة الإنشاء** لكتابة ملخّص جديد. يُحتسب ذلك من حصّة الملخّصات (انظر [الخطط والحدود والائتمانات](./plans-limits-credits.ar.md)).
+اضغط **إعادة الإنشاء** لكتابة ملخّص جديد، وهذا يستدعي مزوّد الذكاء الاصطناعي المضبوط لديك. تضع البطاقة علامة **قديم** على الملخّص إذا استُبعدت نتائج يغطيها أو أُصلحت أو أُعيد فتحها بعد كتابته. أعد إنشاءه ليطابق إصلاحاتك المفتوحة.
 `,
   fr: () => `# Résumé IA
 
@@ -2078,7 +2200,7 @@ Ni données Search Console, ni captures d’écran, ni informations de facturati
 Pour les mêmes données, l’audit donne toujours le même résultat. Le résumé est une étape à part, qui se contente de lire l’audit terminé.
 
 ## Régénérer
-Cliquez sur **Régénérer** pour relancer le résumé. Chaque relance consomme un crédit de résumé (voir [Plans, limites & crédits](./plans-limits-credits.fr.md)).
+Cliquez sur **Régénérer** pour relancer le résumé, ce qui appelle votre fournisseur d’IA configuré. La carte marque un résumé **Obsolète** lorsque des constats qu’il couvre ont été écartés, corrigés ou rouverts après sa rédaction. Régénérez-le pour qu’il corresponde à vos corrections ouvertes.
 `,
   de: () => `# KI-Zusammenfassung
 
@@ -2097,7 +2219,7 @@ Keine Search-Console-Daten, keine Screenshots, keine Abrechnungsdaten.
 Der Audit liefert bei gleichen Eingaben immer dasselbe Ergebnis. Die Zusammenfassung ist ein eigener Schritt, der den fertigen Audit nur liest.
 
 ## Neu erstellen
-Klicken Sie auf **Neu erstellen**. Das verbraucht einen Zusammenfassungs-Credit (siehe [Pläne, Limits & Credits](./plans-limits-credits.de.md)).
+Klicken Sie auf **Neu erstellen**. Das ruft Ihren konfigurierten KI-Anbieter auf. Die Karte kennzeichnet eine Zusammenfassung als **Veraltet**, wenn Befunde, die sie abdeckt, nach dem Schreiben verworfen, behoben oder wieder geöffnet wurden. Erstellen Sie sie neu, damit sie zu Ihren offenen Korrekturen passt.
 `,
   es: () => `# Resumen con IA
 
@@ -2116,7 +2238,7 @@ No enviamos datos de Search Console, capturas ni información de facturación.
 Con los mismos datos, la auditoría siempre da el mismo resultado. El resumen es un paso aparte que solo lee la auditoría terminada.
 
 ## Regenerar
-Pulsa **Regenerar** para volver a generarlo. Cada vez consume un crédito de resumen (consulta [Planes, límites y créditos](./plans-limits-credits.es.md)).
+Pulsa **Regenerar** para volver a generarlo, lo que llama a tu proveedor de IA configurado. La tarjeta marca un resumen como **Desactualizado** cuando hallazgos que cubre se descartaron, corrigieron o reabrieron después de escribirlo. Regéneralo para que coincida con tus correcciones abiertas.
 `,
   ru: () => `# ИИ-резюме
 
@@ -2135,7 +2257,7 @@ Pulsa **Regenerar** para volver a generarlo. Cada vez consume un crédito de res
 При одних и тех же данных аудит всегда даёт один и тот же результат. Резюме — отдельный шаг, который только читает готовый аудит.
 
 ## Пересоздание
-Нажмите **Пересоздать**, чтобы получить новое резюме. Это расходует один кредит резюме (см. [Планы, лимиты и кредиты](./plans-limits-credits.ru.md)).
+Нажмите **Пересоздать**, чтобы получить новое резюме; при этом вызывается настроенный у вас поставщик ИИ. Карточка помечает резюме как **Устарело**, если охваченные им находки были отклонены, исправлены или открыты заново после его написания. Пересоздайте его, чтобы оно соответствовало вашим открытым исправлениям.
 `,
   zh: () => `# AI 摘要
 
@@ -2154,7 +2276,7 @@ AI 摘要位于报告标签上方，会用您的语言写一小段说明。
 同样的输入，审计每次都给出同样的结果。摘要是审计完成后单独进行的一步，只读取审计结果。
 
 ## 重新生成
-点击 **重新生成** 可再写一版，消耗一个摘要额度（参见[方案、限额与额度](./plans-limits-credits.zh.md)）。
+点击 **重新生成** 可再写一版，这会调用你配置的 AI 服务商。如果摘要所涵盖的发现在写成之后被忽略、修复或重新打开，卡片会把该摘要标记为**已过时**。重新生成即可与你未处理的修复保持一致。
 `,
 };
 
@@ -2173,8 +2295,8 @@ Try again in a few minutes. If it keeps failing, adjust firewall/robots.txt to a
 ## Rank check unavailable
 A single keyword can come back unavailable if the SERP provider is rate-limited or Google served a captcha. It is temporary — the next scheduled run retries. Nothing to do.
 
-## "Reconnect needed" on Search Console
-Google invalidated our token. Open Settings → Google Search Console → **Reconnect**. This can happen if you changed your Google password or revoked the app.
+## Search Console asks you to reconnect
+Google invalidated our token. On the site's **Google** tab, the Google Search Console card shows **Your Google connection needs to be reconnected**; select **Reconnect**. This can happen if you changed your Google password or revoked the app. Cards that read Search Console or Google Analytics show **Search Console isn't connected** or **Google Analytics isn't connected** until Google is connected again, then recover on the next read.
 
 ## Cap reached
 See [Plans, limits & credits](./plans-limits-credits.en.md). Options are: upgrade tier, buy a small credit pack, or wait until the next billing period.
@@ -2201,8 +2323,8 @@ Hard-refresh the page (⌘/Ctrl + Shift + R). Clear the local cache if that does
 ## فحص ترتيب غير متاح
 غالبًا مؤقّت — يُعاد في التشغيل التالي.
 
-## "يحتاج إعادة ربط" على Search Console
-افتح الإعدادات وأعد الربط.
+## يطلب Search Console إعادة الربط
+أبطل Google الرمز لدينا. في تبويب **Google** للموقع تعرض بطاقة Google Search Console الرسالة **اتصالك بجوجل يحتاج إلى إعادة الربط**؛ اختر **إعادة الربط**. قد يحدث هذا إذا غيّرت كلمة مرور Google أو ألغيت صلاحية التطبيق. وتعرض البطاقات التي تقرأ Search Console أو Google Analytics الرسالة **Search Console غير مرتبط** أو **Google Analytics غير مرتبط** إلى أن يُربط Google من جديد، ثم تتعافى عند القراءة التالية.
 
 ## بلوغ الحدّ
 راجع [الخطط والحدود والائتمانات](./plans-limits-credits.ar.md).
@@ -2226,8 +2348,8 @@ Hard-refresh the page (⌘/Ctrl + Shift + R). Clear the local cache if that does
 ## Contrôle de position indisponible
 Généralement temporaire ; le prochain run réessaie.
 
-## « Reconnexion requise » Search Console
-Ouvrez Paramètres et reconnectez.
+## Search Console demande de se reconnecter
+Google a invalidé notre jeton. Dans l’onglet **Google** du site, la carte Google Search Console affiche **Votre connexion Google doit être renouvelée** ; sélectionnez **Reconnecter**. Cela peut arriver si vous avez changé votre mot de passe Google ou révoqué l’application. Les cartes qui lisent Search Console ou Google Analytics affichent **Search Console n’est pas connecté** ou **Google Analytics n’est pas connecté** tant que Google n’est pas reconnecté, puis se rétablissent à la lecture suivante.
 
 ## Plafond atteint
 Voir [Plans, limites & crédits](./plans-limits-credits.fr.md).
@@ -2251,8 +2373,8 @@ Rafraîchissement dur (⌘/Ctrl + Maj + R). Sinon, contactez le support.
 ## Rank-Check nicht verfügbar
 Meist vorübergehend; nächster Lauf wiederholt automatisch.
 
-## „Erneut verbinden" bei Search Console
-Einstellungen öffnen und neu verbinden.
+## Search Console fordert zum erneuten Verbinden auf
+Google hat unseren Token ungültig gemacht. Im Tab **Google** der Website zeigt die Karte Google Search Console **Ihre Google-Verbindung muss erneuert werden**; wählen Sie **Neu verbinden**. Das kann passieren, wenn Sie Ihr Google-Passwort geändert oder die App widerrufen haben. Karten, die Search Console oder Google Analytics lesen, zeigen **Search Console ist nicht verbunden** oder **Google Analytics ist nicht verbunden**, bis Google wieder verbunden ist, und erholen sich beim nächsten Lesen.
 
 ## Limit erreicht
 Siehe [Pläne, Limits & Credits](./plans-limits-credits.de.md).
@@ -2276,8 +2398,8 @@ Harter Refresh (⌘/Strg + Umschalt + R). Sonst Support kontaktieren.
 ## Comprobación de posición no disponible
 Suele ser temporal; el siguiente run reintenta.
 
-## "Reconexión requerida" en Search Console
-Abre Ajustes y reconecta.
+## Search Console pide volver a conectar
+Google invalidó nuestro token. En la pestaña **Google** del sitio, la tarjeta de Google Search Console muestra **Tu conexión con Google necesita renovarse**; selecciona **Reconectar**. Puede ocurrir si cambiaste tu contraseña de Google o revocaste la aplicación. Las tarjetas que leen Search Console o Google Analytics muestran **Search Console no está conectado** o **Google Analytics no está conectado** hasta que Google vuelva a conectarse, y se recuperan en la siguiente lectura.
 
 ## Tope alcanzado
 Véase [Planes, límites y créditos](./plans-limits-credits.es.md).
@@ -2301,8 +2423,8 @@ Refresco completo (⌘/Ctrl + Mayús + R). Si persiste, contacta soporte.
 ## Проверка позиции недоступна
 Обычно временно — следующий запуск повторит.
 
-## "Нужно переподключение" Search Console
-Настройки → **Переподключить**.
+## Search Console просит подключиться заново
+Google отозвал наш токен. На вкладке **Google** сайта карточка Google Search Console показывает **Соединение с Google нужно переустановить**; выберите **Переподключить**. Так бывает, если вы сменили пароль Google или отозвали доступ приложению. Карточки, читающие Search Console или Google Analytics, показывают **Search Console не подключен** или **Google Analytics не подключен**, пока Google не подключён снова, и восстанавливаются при следующем чтении.
 
 ## Достигнут лимит
 См. [Планы, лимиты и кредиты](./plans-limits-credits.ru.md).
@@ -2326,8 +2448,8 @@ Refresco completo (⌘/Ctrl + Mayús + R). Si persiste, contacta soporte.
 ## 排名检查不可用
 通常是暂时的；下一次调度会自动重试。
 
-## Search Console 提示 "需要重新连接"
-在设置中重新连接。
+## Search Console 提示需要重新连接
+Google 使我们的令牌失效了。在站点的 **Google** 标签中，Google Search Console 卡片会显示**您的 Google 连接需要重新授权**；请选择**重新连接**。如果您修改过 Google 密码或撤销了应用授权，就可能出现这种情况。读取 Search Console 或 Google Analytics 的卡片，在 Google 重新连接之前会显示 **Search Console 未连接** 或 **Google Analytics 未连接**，之后在下次读取时恢复。
 
 ## 达到上限
 参见 [方案、限额与额度](./plans-limits-credits.zh.md)。

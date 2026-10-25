@@ -21,7 +21,7 @@ Algunas pantallas aún se están terminando. Los textos y el diseño pueden camb
 
 ## Informar de un error
 
-Usa **Informar de un error** en el aviso de beta de la parte superior de la página. Abre el [formulario de incidencias en GitHub](https://github.com/SelmiAbderrahim/rankme.fast/issues/new/choose). Si ocultaste el aviso o no tienes cuenta de GitHub, escribe a support@rankme.fast.
+Usa **Informar de un error** en el banner de la beta, en la parte superior de la página. Un cuadro de diálogo te deja elegir dónde informar: **Abrir las opciones de incidencias de GitHub**, si la dirección de GitHub del proyecto está configurada en esta instalación, o **Enviar un correo a soporte** en support@rankme.fast. No se envía nada automáticamente, así que incluye tú los detalles de abajo. La dirección de correo funciona aunque hayas ocultado el banner o no tengas cuenta de GitHub.
 
 Un buen informe explica:
 

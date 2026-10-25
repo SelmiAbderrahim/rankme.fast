@@ -1,4 +1,5 @@
 import { z } from 'zod';
+import { COMPETITOR_DOMAINS_MAX } from '@shared/lib/competitorDomains';
 import type { GapRow, ResearchHistoryItem } from './types';
 import { countryCodeForLocation, locationCodeForCountry } from '@shared/markets';
 
@@ -107,7 +108,7 @@ export function buildViewResultsUrl(historyId: string): string {
 // `server/src/modules/keyword-research/keyword-research.schema.ts`.
 // ---------------------------------------------------------------------------
 
-export const GAP_COMPETITORS_MAX = 3;
+export const GAP_COMPETITORS_MAX = COMPETITOR_DOMAINS_MAX;
 export const OVERVIEW_PHRASE_MAX = 20;
 export const TRENDS_PHRASE_MAX = 10;
 export const CLUSTER_PHRASE_MIN = 10;
@@ -220,6 +221,10 @@ export const LIVE_TRENDS_GEO_OPTIONS = [
   { value: 'fr', labelKey: 'keywordResearch:locations.fr' },
 ] as const;
 export const DEFAULT_LIVE_TRENDS_GEO = 'us';
+/** The countries Live Trends runs in, as market-catalog country codes. */
+export const LIVE_TRENDS_COUNTRY_CODES: readonly string[] = LIVE_TRENDS_GEO_OPTIONS.map((option) =>
+  option.value.toUpperCase(),
+);
 
 export const LIVE_TRENDS_LANGUAGE_OPTIONS = LANGUAGE_OPTIONS;
 export const DEFAULT_LIVE_TRENDS_LANGUAGE = 'en';

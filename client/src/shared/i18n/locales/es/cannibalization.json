@@ -78,11 +78,6 @@
       "title": "Esperando la próxima sincronización",
       "body": "Aún no hay filas de consulta y página de Search Console guardadas para este periodo. Llegarán con la próxima sincronización."
     },
-    "cap": {
-      "title": "Cupo mensual agotado",
-      "body": "Has usado todos los informes de canibalización de tu plan este mes.",
-      "link": "Ver planes"
-    },
     "disabled": {
       "title": "No disponible temporalmente",
       "body": "Los informes de canibalización están en pausa. Los que ya generaste siguen siendo legibles."

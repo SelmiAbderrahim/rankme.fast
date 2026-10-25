@@ -17,8 +17,7 @@
   "loadFailed": "Could not load Local SEO.",
   "locked": {
     "title": "Local SEO is a Pro feature",
-    "body": "Upgrade to Pro to track how consistently your business appears across directories and the local map pack.",
-    "upgrade": "See plans"
+    "body": "Upgrade to Pro to track how consistently your business appears across directories and the local map pack."
   },
   "listings": {
     "title": "Business listings",

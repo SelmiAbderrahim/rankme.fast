@@ -9,7 +9,7 @@ order: 2
 
 # 关键词聚类
 
-聚类按关键词之间共享的结果 URL 数量，把你跟踪的关键词分组。它只使用 RankMeFast 已保存的 SERP 观测，从不为了补缺口去跑排名检查。
+聚类按关键词之间共享的结果 URL 数量，把你跟踪的关键词分组。它只使用 RankMeFast 已保存的 SERP 观测，从不为了补缺口去跑排名检查。 在应用中，它对应站点的**关键词聚类**标签里的**搜索结果重叠分组**。它不同于关键词调研中的**聚类**标签，后者用一次 AI 处理为你调研过的关键词分组。
 
 <!-- docs-truth: metric=keyword_cluster_runs; unit=one-run-up-to-200-keywords; cache-hits=count; refund=none-blocked-keywords-are-reported; cadence=on-demand; estimates=shared-url-arithmetic -->
 

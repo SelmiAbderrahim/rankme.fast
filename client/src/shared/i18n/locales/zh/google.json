@@ -107,6 +107,9 @@
     "timeseriesTitle": "点击次数和展示次数随时间变化",
     "timeseriesSubtitle_one": "过去 {{days}} 天的每日总计。",
     "timeseriesEmpty": "暂无每日数据。",
+    "timeseriesNoActivity": "此期间没有活动。",
+    "timeseriesNoClicks": "此期间没有点击。",
+    "timeseriesNoImpressions": "此期间没有展示。",
     "timeseriesChartLabel_one": "过去 {{days}} 天的每日{{metric}}",
     "timeseriesTableCaption_one": "过去 {{days}} 天的每日搜索表现",
     "tableDate": "日期",
@@ -179,10 +182,6 @@
     "devicesEmpty": "暂无设备数据。",
     "devicesTableCaption": "按设备的会话数",
     "deviceHeader": "设备",
-    "locked": {
-      "body": "Google Analytics 数据分析包含在 Pro 及更高级别的方案中。升级后即可在搜索数据旁查看会话、互动和关键事件。",
-      "upgrade": "升级方案"
-    },
     "enableTitle": "尚未启用 Google Analytics",
     "enableBody": "授予对 Google Analytics 的只读访问权限，即可查看此网站的会话、互动和关键事件。",
     "enableCta": "启用 Google Analytics",

@@ -1,5 +1,5 @@
 /**
- * Prompt 10d — BullMQ processor envelope invariants (spec §7.1).
+ * BullMQ processor envelope invariants (spec §7.1).
  *
  * Guarantees exercised:
  *   - malformed payload → UnrecoverableError (dead-letter, no retry burn)

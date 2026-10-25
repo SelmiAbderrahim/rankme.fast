@@ -60,3 +60,77 @@ it('uses Google for an account without a password', async () => {
     provider: 'google', callbackURL: '/settings/security',
   }));
 });
+
+const text = (key: string) => i18n.t(key, { ns: 'auth' });
+const submitPassword = (value = 'synthetic-password') => {
+  if (value) fireEvent.change(screen.getByLabelText('Confirm your password'), { target: { value } });
+  fireEvent.click(screen.getByRole('button', { name: 'Confirm' }));
+};
+
+it('asks for a password before contacting the server', async () => {
+  renderPanel(true);
+  submitPassword('');
+  expect(await screen.findByText(text('twoFactor.passwordRequired'))).toBeInTheDocument();
+  expect(screen.getByLabelText('Confirm your password')).toHaveAttribute('aria-invalid', 'true');
+  expect(authClient.signIn.email).not.toHaveBeenCalled();
+});
+
+it('tells a wrong password apart from other sign-in failures', async () => {
+  vi.mocked(authClient.signIn.email).mockResolvedValueOnce({ data: null, error: { status: 401 } } as never);
+  renderPanel(true);
+  submitPassword();
+  expect(await screen.findByText(text('change.wrongCurrent'))).toBeInTheDocument();
+
+  vi.mocked(authClient.signIn.email).mockResolvedValueOnce({ data: null, error: { code: 'INVALID_EMAIL_OR_PASSWORD' } } as never);
+  submitPassword();
+  await waitFor(() => expect(authClient.signIn.email).toHaveBeenCalledTimes(2));
+  expect(await screen.findByText(text('change.wrongCurrent'))).toBeInTheDocument();
+
+  vi.mocked(authClient.signIn.email).mockResolvedValueOnce({ data: null, error: { status: 500 } } as never);
+  submitPassword();
+  expect(await screen.findByText(text('security.sessions.reauth.failed'))).toBeInTheDocument();
+
+  vi.mocked(authClient.signIn.email).mockResolvedValueOnce({ data: null, error: null } as never);
+  submitPassword();
+  await waitFor(() => expect(authClient.signIn.email).toHaveBeenCalledTimes(4));
+  expect(await screen.findByText(text('security.sessions.reauth.failed'))).toBeInTheDocument();
+
+  vi.mocked(authClient.signIn.email).mockRejectedValueOnce(new Error('offline'));
+  submitPassword();
+  await waitFor(() => expect(authClient.signIn.email).toHaveBeenCalledTimes(5));
+  expect(await screen.findByText(text('security.sessions.reauth.failed'))).toBeInTheDocument();
+});
+
+it('rejects an empty, wrong or failed two-factor code', async () => {
+  vi.mocked(authClient.signIn.email).mockResolvedValue({ data: { twoFactorRedirect: true }, error: null } as never);
+  const confirmed = renderPanel(true);
+  submitPassword();
+  const code = await screen.findByLabelText('Six-digit code');
+  fireEvent.click(screen.getByRole('button', { name: 'Confirm' }));
+  expect(await screen.findByText(text('twoFactor.invalidCode'))).toBeInTheDocument();
+  expect(code).toHaveAttribute('aria-invalid', 'true');
+
+  vi.mocked(authClient.twoFactor.verifyTotp).mockResolvedValueOnce({ data: null, error: { status: 400 } } as never);
+  fireEvent.change(code, { target: { value: ' 123456 ' } });
+  expect(code).toHaveValue('123456');
+  fireEvent.click(screen.getByRole('button', { name: 'Confirm' }));
+  await waitFor(() => expect(authClient.twoFactor.verifyTotp).toHaveBeenCalledWith({ code: '123456' }));
+  expect(await screen.findByText(text('twoFactor.invalidCode'))).toBeInTheDocument();
+
+  vi.mocked(authClient.twoFactor.verifyTotp).mockRejectedValueOnce(new Error('offline'));
+  fireEvent.click(screen.getByRole('button', { name: 'Confirm' }));
+  expect(await screen.findByText(text('security.sessions.reauth.failed'))).toBeInTheDocument();
+  expect(confirmed).not.toHaveBeenCalled();
+});
+
+it('reports a Google confirmation that fails or is rejected', async () => {
+  vi.mocked(authClient.signIn.social).mockResolvedValueOnce({ data: null, error: { status: 400 } } as never);
+  renderPanel(false);
+  fireEvent.click(screen.getByRole('button', { name: 'Continue with Google' }));
+  expect(await screen.findByText(text('google.error'))).toBeInTheDocument();
+
+  vi.mocked(authClient.signIn.social).mockRejectedValueOnce(new Error('offline'));
+  fireEvent.click(screen.getByRole('button', { name: 'Continue with Google' }));
+  await waitFor(() => expect(authClient.signIn.social).toHaveBeenCalledTimes(2));
+  expect(await screen.findByText(text('google.error'))).toBeInTheDocument();
+});

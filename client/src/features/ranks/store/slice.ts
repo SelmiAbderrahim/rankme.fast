@@ -40,6 +40,7 @@ const initialState: RanksState = {
   message: '',
   selectedKeywordId: null,
   history: [],
+  historyMissedChecks: [],
   historyKeywordId: null,
   historyLoading: false,
   historyError: '',
@@ -89,6 +90,7 @@ const ranksSlice = createSlice({
           state.loaded = false;
           state.selectedKeywordId = null;
           state.history = [];
+          state.historyMissedChecks = [];
           state.historyKeywordId = null;
         }
       })
@@ -212,6 +214,7 @@ const ranksSlice = createSlice({
         if (action.meta.arg.keywordId !== state.historyKeywordId) return;
         state.historyLoading = false;
         state.history = action.payload.series;
+        state.historyMissedChecks = action.payload.missedChecks ?? [];
       })
       .addCase(loadKeywordHistory.rejected, (state, action) => {
         if (action.meta.aborted) return;

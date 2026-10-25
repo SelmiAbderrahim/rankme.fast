@@ -2,8 +2,7 @@
   "title": "Geogrid-Tracking lokaler Platzierungen",
   "description": "Sehen Sie, wo Ihr Eintrag im Local Pack über ein Koordinatenraster steht. Ein Scan deckt das ganze Raster ab und kostet einen Geogrid-Scan.",
   "locked": {
-    "body": "Geogrid-Scans gibt es in den Tarifen Pro und Agency.",
-    "cta": "Tarife ansehen"
+    "body": "Geogrid-Scans gibt es in den Tarifen Pro und Agency."
   },
   "form": {
     "keyword": "Verfolgtes Keyword",
@@ -101,9 +100,7 @@
     "failedRefunded": "Kein Punkt hat geantwortet, deshalb haben wir den Scan Ihrem Kontingent gutgeschrieben."
   },
   "gates": {
-    "cap": "Ihre Geogrid-Scans sind aufgebraucht",
     "killSwitch": "Geogrid-Scans sind pausiert",
-    "notOnPlan": "Nicht in Ihrem Tarif",
     "notFound": "Nicht gefunden",
     "rateLimited": "Zu viele Anfragen",
     "invalid": "Prüfen Sie die Rastereinstellungen",

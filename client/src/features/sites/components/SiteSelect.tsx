@@ -1,6 +1,5 @@
 /**
- * One site picker for forms that work on one of the account's sites (QA
- * round 2, P1-23). Lists every site, labelled by the shared naming policy
+ * One site picker for forms that work on one of the account's sites. Lists every site, labelled by the shared naming policy
  * ("Name · domain", paused sites marked), and handles loading, failure and
  * the no-site case itself so each form only receives the chosen site. The
  * form owns the list (`useAllSites`), so it can preselect or look up a site.

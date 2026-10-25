@@ -25,7 +25,7 @@ See [Pricing](./pricing.en.md) for current plan allowances and pack prices. The 
 
 A result served from cache still counts. So does a successful check with no rows: it tells you the source had no matching links at that time.
 
-If the source fails before RankMeFast has saved any row, that unit is returned once. In a gap run with several competitors, each competitor is settled on its own: the ones that returned data stay charged, and a failed one with no data is refunded. Previews, cancelled previews and opening saved results never use a unit.
+If the source fails before RankMeFast has saved any row, that unit is returned once. In a gap run with several competitors, each competitor is settled on its own: the ones that returned data stay charged, and a failed one with no data is refunded. Previews, canceled previews and opening saved results never use a unit.
 
 ## Reading the results
 

@@ -364,9 +364,7 @@ export const GoogleConnectionCard = ({ siteId, domain = '' }: GoogleConnectionCa
               onRefresh={() => { void dispatch(loadConnection(siteId)); }}
             />
           ) : (
-            <p className="text-foreground font-medium">
-              {connection.propertyUrl ?? t('connected.propertyMissing')}
-            </p>
+            <p className="text-foreground font-medium">{connection.propertyUrl}</p>
           )}
           {setPropertyError ? (
             <p role="alert" className="text-destructive text-sm">

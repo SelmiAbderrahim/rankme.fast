@@ -13,7 +13,7 @@ import { remarkSoftBreaks } from '../markdownBreaks';
  */
 
 // A reply sits under the page h1 and the log's h2, so every markdown heading
-// renders as an h3 (QA round 3 F-AQ): a model "# Title" never adds a second h1
+// renders as an h3: a model "# Title" never adds a second h1
 // and a "### Note" never skips a level. The original level keeps its size.
 const H1 = ({ children }: PropsWithChildren) => (
   <h3 className="mt-1 text-base font-semibold text-foreground">{children}</h3>
@@ -98,7 +98,7 @@ const components: Components = {
  * so ordinary words and plain numbers are never touched, and it must not be
  * part of a path, query, or word, so links that carry an id keep working.
  * Ids never help the reader (the app links the thing they name), and the model
- * only repeats them because a tool returned them (QA 58).
+ * only repeats them because a tool returned them.
  */
 const INTERNAL_ID = / ?(?<![\w/=:.#-])(?=[0-9a-f]*\d)(?=[0-9a-f]*[a-f])[0-9a-f]{8,64}(?![\w/=-])(?:…|\.{3})?/gi;
 

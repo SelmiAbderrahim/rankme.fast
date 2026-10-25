@@ -57,6 +57,8 @@ const TOOL_LABEL_KEYS: Record<string, string> = {
   get_backlinks_summary: 'tool.names.getBacklinksSummary',
   list_backlinks: 'tool.names.listBacklinks',
   list_competitors: 'tool.names.listCompetitors',
+  list_keyword_research_history: 'tool.names.listKeywordResearchHistory',
+  get_keyword_research_result: 'tool.names.getKeywordResearchResult',
   get_ai_visibility_summary: 'tool.names.getAiVisibilitySummary',
   get_local_seo_summary: 'tool.names.getLocalSeoSummary',
   get_reviews_summary: 'tool.names.getReviewsSummary',
@@ -116,7 +118,7 @@ interface RankRow {
   phrase: string;
   checkedAt: string | null;
   position: number | null;
-  /** Movement against the keyword's previous point (production QA 3, F-AE). */
+  /** Movement against the keyword's previous point. */
   movement: RankMovementValue;
 }
 
@@ -165,7 +167,7 @@ function rankRows(content: Record<string, unknown>): RankRow[] | null {
   return rows;
 }
 
-/** A date-only day (`2026-09-30`) stays on that day in every time zone (QA round 2, T6). */
+/** A date-only day (`2026-09-30`) stays on that day in every time zone. */
 function formatDate(value: string | null, locale: string, fallback: string): string {
   if (!value) return fallback;
   if (Number.isNaN(Date.parse(value))) return value;

@@ -1,7 +1,6 @@
 {
   "title": "Team",
   "description": "Laden Sie Teammitglieder ein und verwalten Sie die Plätze Ihres Tarifs.",
-  "seatUsage": "{{used}} von {{limit}} Plätzen belegt",
   "invite": {
     "heading": "Teammitglied einladen",
     "description": "Wählen Sie eine Rolle und genau die Websites aus, die dieses Teammitglied nutzen darf.",
@@ -10,8 +9,6 @@
     "emailInvalid": "Gib eine gültige E-Mail-Adresse ein",
     "submit": "Einladung senden",
     "submitting": "Wird gesendet…",
-    "atCap": "Alle Plätze sind belegt. Führen Sie ein Upgrade durch, um weitere Personen einzuladen.",
-    "upgradeCta": "Tarif upgraden",
     "roleLabel": "Rolle",
     "adminRoleLimit": "Administratoren können nur Mitglieder einladen."
   },
@@ -192,10 +189,12 @@
       "body": "Abrechnung, Verbindungen, Schlüssel und Kontoeinstellungen bleiben beim Inhaber des Arbeitsbereichs. Wechseln Sie zurück, um Ihre eigenen zu verwalten."
     }
   },
-  "received": {"pending_zero": "{{count}} Einladungen anderer Teams warten auf Sie.",
+  "received": {
+    "pending_zero": "{{count}} Einladungen anderer Teams warten auf Sie.",
     "pending_one": "{{count}} Einladung eines anderen Teams wartet auf Sie.",
     "pending_two": "{{count}} Einladungen anderer Teams warten auf Sie.",
     "pending_few": "{{count}} Einladungen anderer Teams warten auf Sie.",
     "pending_many": "{{count}} Einladungen anderer Teams warten auf Sie.",
-    "pending_other": "{{count}} Einladungen anderer Teams warten auf Sie."}
+    "pending_other": "{{count}} Einladungen anderer Teams warten auf Sie."
+  }
 }

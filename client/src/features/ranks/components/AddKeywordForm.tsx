@@ -15,6 +15,7 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@
 import { TableHeaderHelp } from '@shared/ui/table-header-help';
 import { Textarea } from '@shared/ui/textarea';
 import { cn } from '@shared/lib/utils';
+import { MetricValue } from '@shared/components/MetricValue';
 import { PhraseListPreview } from '@shared/components/PhraseListPreview';
 import { formatPhraseList, normalizePhraseKey, removePhraseAt, reviewPhraseList } from '@shared/lib/phraseList';
 import {
@@ -549,21 +550,22 @@ export const AddKeywordForm = ({
                                 )}</Bdi>
                               </TableCell>
                               <TableCell>
-                                {candidate.searchVolume?.toLocaleString(i18n.language) ?? '—'}
+                                <MetricValue kind="count" value={candidate.searchVolume} />
                               </TableCell>
                               {showsRankingColumns ? (
                                 <TableCell>
-                                  {candidate.currentPosition?.toLocaleString(i18n.language, {
-                                    maximumFractionDigits: 1,
-                                  }) ?? '—'}
+                                  {/* Position 0 means no data. */}
+                                  <MetricValue kind="position" value={candidate.currentPosition} />
                                 </TableCell>
                               ) : null}
                               {showsDifficulty ? (
-                                <TableCell>{candidate.difficulty ?? '—'}</TableCell>
+                                <TableCell>
+                                  <MetricValue kind="count" value={candidate.difficulty} />
+                                </TableCell>
                               ) : null}
                               {showsRankingColumns ? (
                                 <TableCell>
-                                  {candidate.estimatedTraffic?.toLocaleString(i18n.language) ?? '—'}
+                                  <MetricValue kind="count" value={candidate.estimatedTraffic} />
                                 </TableCell>
                               ) : null}
                               {isBlended ? (

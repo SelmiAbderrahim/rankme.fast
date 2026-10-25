@@ -33,6 +33,14 @@ RankMeFast guarda los resultados del proveedor durante 30 días porque estas cif
 
 RankMeFast también muestra frases relacionadas y variantes en forma de pregunta cuando están disponibles. Usan las mismas medidas de volumen y dificultad.
 
+## Investigaciones recientes
+
+**Investigaciones recientes** lista cada búsqueda una sola vez, aunque una búsqueda con métricas e intención de búsqueda registre dos consultas. En un sitio, muestra las consultas hechas para ese sitio, las más recientes primero. **Ver resultados** abre lo que se guardó de esa búsqueda. Es gratis: no llama al proveedor de datos. Si los datos guardados han caducado (a los 30 días), RankMeFast lo indica y ofrece **Buscar de nuevo**. **Buscar de nuevo** siempre ejecuta una consulta nueva con el proveedor de datos, igual que una búsqueda nueva.
+
+## Añadir varias palabras clave
+
+Escribe o pega una lista. Una coma o un salto de línea cierra una palabra clave, así que pegar `seo audit, rank tracker` añade dos. Las palabras clave ya añadidas se omiten, y RankMeFast te dice cuáles. Las mismas reglas valen para los demás campos de investigación que aceptan una lista de palabras clave.
+
 ## Empezar desde el seguimiento de posiciones
 
 Si introduces una sola palabra clave de Google de hasta 80 caracteres en el formulario para añadir palabras, puedes abrir la investigación con la frase, el país y el idioma ya completados. Abrir la página no ejecuta una consulta ni usa una unidad. Tú decides cuándo empezar la investigación.

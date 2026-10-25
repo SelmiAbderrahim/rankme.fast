@@ -97,7 +97,6 @@
   },
   "errors": {
     "unexpected": "Une erreur est survenue — réessayez.",
-    "overCap": "Le quota de votre plan est épuisé. Mettez à niveau ou achetez des crédits pour recevoir les bilans hebdomadaires.",
     "acknowledgePreviewRequired": "Prévisualisez la dépense avant l’activation.",
     "reconnectRequired": "Reconnectez Google Search Console pour charger ces données.",
     "unauthorized": "Connectez-vous pour voir le bilan hebdomadaire."

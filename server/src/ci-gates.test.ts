@@ -9,7 +9,7 @@ import {
   SERVER_COVERAGE_THRESHOLDS,
 } from './shared/testing/owned-source-policy.js';
 
-// Prompt 11: the coverage + audit gates are declared exactly once. A stray
+// The coverage + audit gates are declared exactly once. A stray
 // duplicate or a downgrade to below 100% must fail CI locally BEFORE the
 // GitHub run — so we assert the declarations directly.
 
@@ -84,9 +84,12 @@ describe('CI gate declarations', () => {
     const digest = createHash('sha256').update(findings.sort().join('\n')).digest('hex');
     // The COUNT is the anti-growth invariant and must never rise. The digest
     // moves only when an existing pragma's text changes. Ratcheting the pin
-    // down is the point of the invariant — it may never rise again.
-    expect(findings).toHaveLength(107);
-    expect(digest).toBe('de96e00d7795042684fb8d9d7eec26f7d58a917f0292e1a8d5fc081bf6d70172');
+    // down is the point of the invariant — it may never rise again. It fell
+    // from 107 to 104 when the On-Page adapter's paged walks moved onto one
+    // tested `collectPaged` helper: three ignored "unreachable" fallbacks became
+    // executable branches covered by the beyond-100-pages tests.
+    expect(findings).toHaveLength(104);
+    expect(digest).toBe('791e7faa99ad5601d2511ef938d15a6ed9ba3022946204f4856f6bb7969d5686');
   });
 
   it('client vitest declares 100% v8 coverage thresholds', () => {

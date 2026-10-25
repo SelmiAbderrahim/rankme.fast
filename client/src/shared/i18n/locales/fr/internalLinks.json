@@ -21,7 +21,6 @@
   },
   "states": {
     "inventoryCta": "Relancer l’inventaire de contenu",
-    "planCta": "Voir les offres",
     "emptyRuns": {
       "title": "Aucune exécution enregistrée",
       "body": "Prévisualisez une nouvelle exécution pour connaître l’inventaire stocké qui sera utilisé.",
@@ -39,10 +38,6 @@
     "stale": {
       "title": "L’inventaire de contenu est obsolète",
       "body": "Relancez l’inventaire afin d’utiliser un instantané récent. Aucun quota n’a été dépensé."
-    },
-    "cap": {
-      "title": "Quota mensuel atteint",
-      "body": "La demande n’a pas démarré. Attendez la prochaine période ou consultez les offres disponibles."
     },
     "disabled": {
       "title": "Suggestions indisponibles",

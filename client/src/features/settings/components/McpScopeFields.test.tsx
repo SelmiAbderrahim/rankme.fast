@@ -5,7 +5,7 @@ import { beforeEach, describe, expect, it } from 'vitest';
 import type { Site } from '@features/sites';
 import { changeLanguage, initI18n } from '@shared/i18n';
 import { createPermissiveMcpSettings } from '../mcpScopes';
-import { MCP_TOOL_NAMES, type McpPermissionSettings } from '../types';
+import { MCP_TOOL_GROUPS, MCP_TOOL_NAMES, type McpPermissionSettings } from '../types';
 import { McpScopeFields } from './McpScopeFields';
 
 const sites: Site[] = [
@@ -72,6 +72,15 @@ describe('McpScopeFields', () => {
     await userEvent.click(spend);
     expect(listSites).not.toBeChecked();
     expect(spend).not.toBeChecked();
+  });
+
+  it('lists every tool in exactly one labelled group', () => {
+    const grouped = MCP_TOOL_GROUPS.flatMap((group) => [...group.tools]);
+    expect([...grouped].sort()).toEqual([...MCP_TOOL_NAMES].sort());
+    render(<Harness />);
+    expect(screen.getByText('Search Console and analytics')).toBeInTheDocument();
+    expect(screen.getByText('Backlinks and competitors')).toBeInTheDocument();
+    expect(screen.getByText(/never start crawls or lookups/)).toBeInTheDocument();
   });
 
   it('switches from all sites to a non-empty selection and edits that selection', async () => {

@@ -1,5 +1,5 @@
 /**
- * Content Intelligence — processor orchestration tests (prompt 05, Phase A6).
+ * Content Intelligence — processor orchestration tests.
  *
  * Covers the full worker pipeline over real memory-Mongo documents with
  * inline provider fakes:

@@ -132,14 +132,6 @@
     }
   },
   "states": {
-    "cap": {
-      "title": "Limite de règles atteinte",
-      "body": "Il est impossible d’ajouter une autre règle d’alerte pour le moment."
-    },
-    "tierLocked": {
-      "title": "Ce canal exige un forfait supérieur",
-      "body": "Les canaux Slack et webhook exigent le forfait Pro ou supérieur."
-    },
     "disabled": {
       "title": "Alertes en pause",
       "body": "Les alertes sont momentanément indisponibles. Vos règles et votre journal restent accessibles."

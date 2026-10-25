@@ -21,7 +21,6 @@
   },
   "states": {
     "inventoryCta": "Volver a ejecutar el inventario",
-    "planCta": "Ver planes",
     "emptyRuns": {
       "title": "Aún no hay ejecuciones guardadas",
       "body": "Previsualiza una nueva ejecución para ver qué inventario guardado utilizará.",
@@ -39,10 +38,6 @@
     "stale": {
       "title": "El inventario está desactualizado",
       "body": "Vuelve a ejecutar el inventario para usar una instantánea reciente. No se gastó ninguna ejecución."
-    },
-    "cap": {
-      "title": "Cupo mensual alcanzado",
-      "body": "La solicitud no se inició. Espera al próximo periodo o revisa los planes disponibles."
     },
     "disabled": {
       "title": "Las sugerencias no están disponibles",

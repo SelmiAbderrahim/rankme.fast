@@ -21,9 +21,9 @@ Wir fragen die Search-Console-API mit `dimensions=['searchAppearance']` für die
 ## Zustände
 
 - **Verfügbar**: Google hat mindestens eine erkannte generative Zeile geliefert. Die Karte zeigt pro Zeile die Klicks, Impressionen, CTR und durchschnittliche Position, die Google gesendet hat.
-- **Nicht verfügbar**: Google hat für diese Property und diesen Zeitraum keine erkannte generative Zeile geliefert. Das ist nicht dasselbe wie null. Google hat dazu schlicht nichts gemeldet, deshalb zeigen wir statt 0 ein leeres Feld.
-- **Teilweise**: Google hat Zeilen geliefert, die Antwort aber als unvollständig markiert (Rate-Limit oder Kürzung). Die erhaltenen Zeilen werden trotzdem angezeigt.
-- **Neu verbinden erforderlich**: Die Google-Verbindung muss erneuert werden. Öffnen Sie den Google-Workspace der Site und folgen Sie dem Hinweis zum Neuverbinden.
+- **Noch nicht erschienen**: Google hat für diese Property und diesen Zeitraum keine erkannte generative Zeile geliefert. Das ist nicht dasselbe wie null. Google hat dazu schlicht nichts gemeldet, deshalb zeigen wir statt 0 ein leeres Feld.
+- **Teilweise Daten**: Google hat Zeilen geliefert, die Antwort aber als unvollständig markiert (Rate-Limit oder Kürzung). Die erhaltenen Zeilen werden trotzdem angezeigt.
+- **Google Search Console erneut verbinden**: Die Google-Verbindung muss erneuert werden. Öffnen Sie den Google-Workspace der Site und folgen Sie dem Hinweis zum Neuverbinden.
 
 ## Getrennt von Anbieter-Metriken
 

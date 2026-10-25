@@ -6,9 +6,7 @@
   "yes": "是",
   "no": "否",
   "capacity": {
-    "selfHost": "此服务器不应用用量限制。",
-    "selfHostPlan": "自托管",
-    "selfHostSlots": "已使用 {{used}}；此服务器不应用用量限制。"
+    "selfHost": "此服务器不应用用量限制。"
   },
   "logPanel": {
     "title": "备份输出",
@@ -34,8 +32,6 @@
     "sites": "站点",
     "keywordResearch": "关键词研究",
     "google": "Google",
-    "billing": "账单",
-    "creditPacks": "积分包",
     "notifications": "通知",
     "logout": "退出登录",
     "logOut": "退出登录",
@@ -303,9 +299,6 @@
     "signOut": "退出登录",
     "collapse": "收起侧边栏",
     "expand": "展开侧边栏",
-    "upgradeTitle": "解锁更多审计",
-    "upgradeBody": "升级以获得更高额度和更深入的报告。",
-    "upgradeCta": "升级",
     "groupSuperAdmin": "平台",
     "opensInNewTab": "在新标签页中打开",
     "searchSitesLoading": "正在加载站点…",
@@ -316,10 +309,6 @@
   },
   "locked": "已锁定",
   "retry": "重试",
-  "tierBadge": {
-    "pro": "Pro",
-    "agency": "Agency"
-  },
   "tableHelp": {
     "about": "关于{{column}}",
     "kind": "此行使用的研究操作：指标、相关关键词、意图、创意、差距、概览、趋势或聚类。",
@@ -351,10 +340,10 @@
     "domainRank": "提供商给出的域名强度比较分数；数值越高表示外链资料越强。",
     "referringDomains": "链接到目标的不同域名数量。",
     "dofollow": "已保存链接是否可传递常规排名信号，而不是带有 nofollow 属性。",
-    "toxicityScore": "针对已保存外链观测的 0 到 100 确定性评分；分数越高表示匹配的警示信号越多。",
-    "rubricBand": "固定规则分配的区间：正常、关注或有害。它不预测搜索引擎会采取的操作。",
-    "contributingSignals": "产生确定性规则分数的已保存观测。",
-    "rationale": "对已保存信号的可选 AI 解释；它不会改变确定性区间。",
+    "toxicityScore": "按固定规则为每条已保存的反向链接给出的 0–100 分；分数越高，命中的预警信号越多。",
+    "rubricBand": "分数所属的风险等级：正常、观察或有害。它不预测搜索引擎会如何处理。",
+    "contributingSignals": "提高该分数的已保存信号。",
+    "rationale": "AI 对已保存信号的可选解释；它不会改变风险等级。",
     "disavowScope": "导出包含整个引荐域名，还是仅包含确切的外链网址。",
     "geogridPoint": "此行表示的地图编号采样位置。",
     "localPackPosition": "商家在观察到的本地结果包中的排名；第 1 位最高。",
@@ -560,5 +549,10 @@
     "limit": "一次最多可对比 {{max}} 个竞争对手域名。请先移除一个再添加。",
     "remove": "移除 {{domain}}",
     "placeholder": "例如 competitor.com"
+  },
+  "breadcrumbs": {
+    "label": "面包屑导航",
+    "unknownSite": "未知站点",
+    "loadingSite": "正在加载站点…"
   }
 }

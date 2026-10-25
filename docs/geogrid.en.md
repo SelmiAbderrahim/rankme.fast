@@ -1,6 +1,6 @@
 ---
 title: 'Local grid tracking'
-description: 'How per-coordinate local-pack grids are collected, what a failed cell means, and why coordinates are typed rather than picked from a map.'
+description: 'How per-coordinate local-pack grids are collected, how to choose the center of the grid, and what a failed cell means.'
 locale: en
 slug: geogrid
 section: product
@@ -9,7 +9,7 @@ order: 9
 
 # Local grid tracking
 
-A grid scan checks the local pack from many points around a location in one go. You see how visibility shifts across a neighbourhood instead of from a single spot.
+A grid scan checks the local pack from many points around a location in one go. You see how visibility shifts across a neighborhood instead of from a single spot.
 
 <!-- docs-truth: metric=geogrid_scans; unit=one-grid-scan-up-to-49-cells; cache-hits=count; refund=all-cell-failure-only; cadence=on-demand; estimates=provider-observation -->
 
@@ -33,13 +33,13 @@ Every cell has its own capture time. A grid is a set of checks taken close toget
 
 A scan with at least one usable cell uses its unit. You're refunded only if every cell fails, since a partial grid still has usable observations.
 
-The Agency plan includes 6 scans a month. Pro gets grids through the `geogrid-scans-10` credit pack, and Starter has no grid allowance.
+## Choosing the center
 
-See [Pricing](./pricing.en.md) for units and plan limits.
+The **Grid center** picker starts from **My business**, the location saved with the site's business in [Local SEO](./local-seo.en.md). Using it costs nothing, and without a saved business the picker links to Local SEO setup. **Search for a place** looks up a business name or street address. Each search asks your local listings provider once, and picking a result only fills in the center: it leaves your Local SEO business unchanged. **Enter coordinates** is the advanced option, with the last scan's center one click away (**Use last scan's center**). Spacing offers preset distances or a custom distance in kilometers.
 
 ## Limits
 
-You type coordinates in by hand. RankMeFast doesn't use a map-tile vendor, so there's no interactive map to click on.
+There's no interactive map to click on, because RankMeFast doesn't use a map-tile vendor.
 
 A grid shows what the provider saw from those coordinates at that time. It isn't a prediction, and it doesn't tell you what any particular searcher will see.
 

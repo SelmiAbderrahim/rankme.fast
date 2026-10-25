@@ -45,9 +45,6 @@
   "columnCpc": "每次点击费用",
   "columnTrend": "12 个月趋势",
   "columnActions": "操作",
-  "lockedTitle": "升级即可解锁关键词研究",
-  "lockedBody": "搜索量、难度和相关关键词属于 Pro 计划。",
-  "upgrade": "查看计划",
   "exampleTitle": "示例:Pro 计划中包含的内容",
   "columnIntent": "意图",
   "getIdeas": "根据该关键词获取创意",
@@ -108,8 +105,8 @@
     "clusterIdInvalid": "该聚类标识无效。",
     "decisionConflict": "该聚类已有不同的决策，请刷新后重试。",
     "decisionKindInvalid": "决策必须为“接受”或“忽略”。",
-    "idempotencyKeyRequired": "需要客户端幂等键。",
-    "idempotencyKeyTooLong": "幂等键过长（最多 200 个字符）。",
+    "idempotencyKeyRequired": "无法检查此请求是否重复。请刷新页面后重试。",
+    "idempotencyKeyTooLong": "无法检查此请求是否重复。请刷新页面后重试。",
     "noteTooLong": "备注过长（最多 500 个字符）。",
     "siteRequired": "请选择要应用此建议的站点。",
     "siteNotAllowed": "忽略聚类时不能指定站点。",
@@ -334,27 +331,19 @@
     "observedAt": "观测于 {{time}}",
     "freshUntil": "有效期至 {{time}}"
   },
-  "cap": {
-    "title": "已达到本月额度上限",
-    "packBody": "已配置的关键词包会在包含额度之后，以 {{price}} 增加 {{count}} 次查询。",
-    "packCta": "购买关键词积分包",
-    "aiBody": "AI 摘要单位属于套餐额度的一部分。升级套餐即可在本月运行更多聚类。",
-    "aiCta": "查看套餐与账单"
-  },
   "clusters": {
     "title": "AI 关键词聚类",
-    "description": "通过一次 AI 处理，把 10–200 条已存储的短语归类为主题。AI 只读取你已获取的行——绝不会调用搜索供应商。",
-    "noCandidates": "还没有已存储的短语。请先运行关键词研究——聚类读取的是你已存储的行。",
+    "description": "通过一次 AI 处理，把 10–200 条已存储的短语归类为主题。AI 只读取你已获取的行，绝不会发起新的搜索。",
+    "noCandidates": "这个市场还没有已存储的短语。请更换上方的市场，或先运行关键词研究——聚类读取的是你已存储的行。",
     "selectionCount_one": "已选 {{count}} 条（需要 {{min}}–{{max}} 条）",
     "source": {
-      "metrics": "研究",
-      "ideas": "创意",
-      "history": "历史"
+      "seed": "已搜索",
+      "related": "相关",
+      "idea": "创意",
+      "long_tail": "长尾"
     },
     "disclosureUnit": "每次聚类消耗一个 AI 摘要单位。",
     "disclosureRerunFree": "再次运行完全相同的选择是免费的——会返回已存储的结果。",
-    "remainingAllowance": "本月剩余 {{remaining}} / {{cap}} 个 AI 摘要",
-    "allowanceUnknown": "无法加载剩余额度。服务器在运行前仍会进行校验。",
     "boundsError": "请选择 {{min}} 到 {{max}} 条短语。",
     "run": "运行聚类",
     "running": "聚类中…",
@@ -391,11 +380,11 @@
       "medium": "置信度中",
       "high": "置信度高"
     },
-    "confidenceNote": "置信度由成员数量与意图同质性确定性地计算——AI 提出分组建议；该标签并非 AI 打分。",
+    "confidenceNote": "置信度由固定规则得出：分组中的关键词数量以及它们的意图有多相近。AI 只建议分组，置信度标签并不是 AI 评分。",
     "summedVolume": "合计每月搜索量：{{volume}}",
     "membersToggle_one": "显示 {{count}} 个成员关键词",
     "memberSource": {
-      "vendor_cache": "已存储的供应商行",
+      "vendor_cache": "已保存的关键词数据",
       "history": "研究历史"
     },
     "accept": "接受",
@@ -438,12 +427,25 @@
     "membersToggle_few": "显示 {{count}} 个成员关键词",
     "membersToggle_many": "显示 {{count}} 个成员关键词",
     "membersToggle_other": "显示 {{count}} 个成员关键词",
-    "truncatedNote_zero": "已显示的已保存关键词：{{count}} / {{total}}。搜索以缩小列表范围。",
-    "truncatedNote_one": "已显示的已保存关键词：{{count}} / {{total}}。搜索以缩小列表范围。",
-    "truncatedNote_two": "已显示的已保存关键词：{{count}} / {{total}}。搜索以缩小列表范围。",
-    "truncatedNote_few": "已显示的已保存关键词：{{count}} / {{total}}。搜索以缩小列表范围。",
-    "truncatedNote_many": "已显示的已保存关键词：{{count}} / {{total}}。搜索以缩小列表范围。",
-    "truncatedNote_other": "已显示的已保存关键词：{{count}} / {{total}}。搜索以缩小列表范围。"
+    "truncatedNote_zero": "已显示的已保存关键词：{{count, number}} / {{total, number}}。搜索以缩小列表范围。",
+    "truncatedNote_one": "已显示的已保存关键词：{{count, number}} / {{total, number}}。搜索以缩小列表范围。",
+    "truncatedNote_two": "已显示的已保存关键词：{{count, number}} / {{total, number}}。搜索以缩小列表范围。",
+    "truncatedNote_few": "已显示的已保存关键词：{{count, number}} / {{total, number}}。搜索以缩小列表范围。",
+    "truncatedNote_many": "已显示的已保存关键词：{{count, number}} / {{total, number}}。搜索以缩小列表范围。",
+    "truncatedNote_other": "已显示的已保存关键词：{{count, number}} / {{total, number}}。搜索以缩小列表范围。",
+    "belowMinimum": "此市场已存储的关键词：{{count}} 个。AI 关键词主题至少需要 {{min}} 个，请运行关键词研究以存储更多。",
+    "candidatesFailed": "无法加载你已保存的关键词。",
+    "clearSelection": "清除选择",
+    "findMore": "查找更多关键词",
+    "limitReached": "最多可选 {{max}} 条短语。请取消部分选择后再添加其他短语。",
+    "noMatches": "没有与该搜索匹配的已保存关键词。",
+    "searchLabel": "搜索已保存的关键词",
+    "searchPlaceholder": "按词或短语筛选",
+    "selectAll": "全选当前显示（{{count}} 条）",
+    "crossLink": {
+      "body": "想按你在网站上跟踪的关键词的共同 Google 结果分组？",
+      "cta": "在你的网站中查看搜索结果重叠分组"
+    }
   },
   "liveTrends": {
     "title": "实时搜索热度",
@@ -465,17 +467,11 @@
       "cached": "已缓存",
       "fresh_required": "重新抓取",
       "mixed": "混合",
-      "unknown": "未知",
-      "baseRemaining": "基础额度剩余",
-      "packRemaining": "包剩余单位",
-      "packTitle": "需要更多？",
-      "packLink": "查看积分包"
+      "unknown": "未知"
     },
     "states": {
       "unavailableTitle": "实时趋势暂时不可用",
       "unavailableBody": "该工具已暂停。已保存的探索仍可查看。",
-      "capBody": "您已达到本月实时趋势的额度。",
-      "capPackName": "关键词趋势包",
       "failedTitle": "探索未能完成",
       "providerFailedTitle": "趋势数据源未响应",
       "emptyTitle": "未返回搜索热度系列",
@@ -531,10 +527,6 @@
     },
     "explore": {
       "failed": "实时趋势探索失败。"
-    },
-    "workspaceLocked": {
-      "body": "实时搜索热度从 Starter 套餐起即可使用，尽管此工作区的其他功能需要 Pro。",
-      "cta": "打开实时搜索热度"
     }
   },
   "selectionCount_zero": "已选择 {{count}} / {{max}}",

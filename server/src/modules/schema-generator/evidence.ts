@@ -118,7 +118,7 @@ export interface ExtractedPage {
     readonly articleModifiedTime: string | null;
     /** `<meta property="og:site_name">` (name precedence #1). */
     readonly ogSiteName: string | null;
-    /** First `name` of an `Organization` / `WebSite` node in the page's JSON-LD (#2). */
+    /** First `name` of an `Organization` / `WebSite` node in the page's JSON-LD. */
     readonly jsonLdName: string | null;
 }
 export interface ExtractedFaqAnswer {

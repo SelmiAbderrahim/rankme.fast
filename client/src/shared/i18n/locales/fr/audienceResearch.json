@@ -9,7 +9,12 @@
       "label": "Marché",
       "country": "Pays",
       "language": "Langue",
-      "device": "Appareil"
+      "device": "Appareil",
+      "devices": {
+        "desktop": "Ordinateur",
+        "mobile": "Mobile",
+        "all": "Tous les appareils"
+      }
     },
     "competitors": {
       "label": "Concurrents",
@@ -31,28 +36,8 @@
       "validationEmpty": "Saisissez un sujet avant de l’ajouter.",
       "validationMax": "Vous pouvez ajouter jusqu’à {{max}} sujets."
     },
-    "reviewButton": "Vérifier",
-    "submitting": "En cours…"
-  },
-  "preview": {
-    "unitLabel": "1 exécution de recherche d’audience",
-    "remainingLabel": "{{remaining}} sur {{cap}} restantes ce mois-ci",
-    "operationCeilings": "Ce que fera cette exécution",
-    "cached": "En cache",
-    "fresh": "Récent",
-    "supported": "Ce marché est entièrement pris en charge.",
-    "unsupported": "Ce marché n’est pris en charge que partiellement — les résultats peuvent être plus limités.",
-    "maxPages_one": "Jusqu’à {{max}} page publique",
-    "totalBudget": "Budget total : {{micros}} micro-USD",
-    "aiBudget": "Budget IA : {{micros}} micro-USD",
-    "coverageOk": "Couverture complète du fournisseur",
-    "coverageDegraded": "Couverture dégradée du fournisseur — les résultats peuvent être partiels.",
-    "coverageBlocked": "L’extraction sans conservation des données est bloquée pour ce compte.",
-    "maxPages_zero": "Jusqu’à {{max}} page publique",
-    "maxPages_two": "Jusqu’à {{max}} pages publiques",
-    "maxPages_few": "Jusqu’à {{max}} pages publiques",
-    "maxPages_many": "Jusqu’à {{max}} pages publiques",
-    "maxPages_other": "Jusqu’à {{max}} pages publiques"
+    "submitting": "En cours…",
+    "startRequirement": "Ajoutez au moins un sujet ou choisissez un concurrent pour lancer une exécution. Sans l’un ou l’autre, l’exécution n’a rien à rechercher."
   },
   "confirm": {
     "title": "Lancer cette exécution de recherche d’audience ?",
@@ -117,8 +102,7 @@
       "state": "État",
       "sources": "Sources",
       "signals": "Signaux",
-      "coverage": "Couverture",
-      "unit": "Unité"
+      "coverage": "Couverture"
     },
     "empty": {
       "title": "Aucune exécution pour l’instant",
@@ -131,24 +115,6 @@
     "marketUnavailable": "—",
     "coverageNote": "Couverture partielle — ouvrez l’exécution pour plus de détails",
     "coverageFull": "Couverture complète"
-  },
-  "locked": {
-    "title": "La recherche d’audience n’est pas incluse dans votre offre",
-    "body": "Passez à l’offre Starter, Pro ou Agency pour lancer des recherches voix du client et transformer les retours publics en opportunités de contenu, de produit et de SEO.",
-    "cta": "Voir les offres"
-  },
-  "usage": {
-    "metrics": {
-      "audience_research_runs": {
-        "label": "Exécutions de recherche d’audience",
-        "description": "Une unité couvre une exécution complète de recherche voix du client, quels que soient le nombre de requêtes ou de pages collectées."
-      }
-    }
-  },
-  "billing": {
-    "overCap": {
-      "audience_research_runs": "Vous avez utilisé toutes vos exécutions de recherche d’audience ce mois-ci. Passez à une offre supérieure pour lancer davantage de recherches voix du client."
-    }
   },
   "signals": {
     "empty": {

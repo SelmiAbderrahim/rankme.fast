@@ -4,7 +4,8 @@
  * public API (the only cross-feature import the dialogs make).
  */
 import type React from 'react';
-import { act, fireEvent, render, screen, waitFor } from '@testing-library/react';
+import { act, fireEvent, render, screen, waitFor, within } from '@testing-library/react';
+import userEvent from '@testing-library/user-event';
 import i18next from 'i18next';
 import { I18nextProvider, initReactI18next } from 'react-i18next';
 import { MemoryRouter, Route, Routes, useLocation } from 'react-router-dom';
@@ -31,6 +32,7 @@ const api = vi.hoisted(() => ({
   fetchGapRequest: vi.fn(),
   fetchOverviewRequest: vi.fn(),
   fetchTrendsRequest: vi.fn(),
+  fetchStoredKeywordsRequest: vi.fn(),
 }));
 
 const sitesMock = vi.hoisted(() => ({
@@ -45,6 +47,16 @@ const sitesMock = vi.hoisted(() => ({
 
 const toastMock = vi.hoisted(() => ({ success: vi.fn(), error: vi.fn() }));
 
+const marketCatalog = vi.hoisted(() => ({
+  markets: [
+    { countryCode: 'US', locationCode: 2840, languageCodes: ['en', 'fr'] },
+    { countryCode: 'FR', locationCode: 2250, languageCodes: ['fr'] },
+  ],
+  loading: false,
+  error: false,
+  retry: () => undefined,
+}));
+
 vi.mock('@shared/hooks/redux', () => ({
   useAppDispatch: () => hooks.dispatch,
   useAppSelector: (selector: (state: Record<string, unknown>) => unknown) =>
@@ -55,6 +67,11 @@ vi.mock('../api', async () => {
   const actual = await vi.importActual<typeof import('../api')>('../api');
   return { ...actual, ...api };
 });
+
+vi.mock('@shared/markets', async (importOriginal) => ({
+  ...(await importOriginal<typeof import('@shared/markets')>()),
+  useMarketCatalog: () => marketCatalog,
+}));
 
 vi.mock('@features/sites', () => sitesMock);
 vi.mock('sonner', () => ({ toast: toastMock }));
@@ -67,7 +84,7 @@ vi.mock('./KeywordResearchPanel', () => ({
 
 import { AcceptClusterDialog, newIdempotencyKey } from './AcceptClusterDialog';
 import { ClusterCard } from './ClusterCard';
-import { ClustersView, collectCandidatePhrases } from './ClustersView';
+import { ClustersView } from './ClustersView';
 import { DismissClusterDialog } from './DismissClusterDialog';
 import { decideCluster } from '../store/thunks';
 
@@ -206,6 +223,8 @@ function renderInRouter(node: React.ReactNode, path = '/keyword-research?tab=clu
 }
 
 beforeEach(() => {
+  // The market picker remembers the last market used; start every test clean.
+  window.localStorage.clear();
   hooks.dispatch.mockReset();
   installThunkDispatch();
   for (const mock of Object.values(api)) mock.mockReset();
@@ -215,6 +234,7 @@ beforeEach(() => {
   api.fetchClusterRunRequest.mockResolvedValue(clusterRun());
   api.runClustersRequest.mockResolvedValue(clusterRun());
   api.postClusterDecisionRequest.mockResolvedValue(decisionResponse());
+  api.fetchStoredKeywordsRequest.mockResolvedValue({ candidates: [], total: 0, truncated: false });
   setState();
 });
 
@@ -232,26 +252,6 @@ function decisionResponse(
     ...overrides,
   };
 }
-
-// ---------------------------------------------------------------------------
-// collectCandidatePhrases
-// ---------------------------------------------------------------------------
-
-describe('collectCandidatePhrases', () => {
-  it('dedupes across sources with metrics > ideas > history precedence', () => {
-    const out = collectCandidatePhrases({
-      metrics: [{ keyword: 'alpha' }, { keyword: 'beta' }],
-      ideas: [{ keyword: 'Beta' }, { keyword: 'gamma' }],
-      historyPhrases: ['gamma', 'delta', '', '  '],
-    });
-    expect(out).toEqual([
-      { phrase: 'alpha', sourceKey: 'metrics' },
-      { phrase: 'beta', sourceKey: 'metrics' },
-      { phrase: 'gamma', sourceKey: 'ideas' },
-      { phrase: 'delta', sourceKey: 'history' },
-    ]);
-  });
-});
 
 // ---------------------------------------------------------------------------
 // ClusterCard
@@ -291,13 +291,13 @@ describe('ClusterCard', () => {
     // ref renders the keyword alone (no fabricated citation).
     expect(
       screen.getByTestId(`kw-cluster-member-${CLUSTER_ID}-seo-audit`),
-    ).toHaveTextContent(/stored provider row/i);
+    ).toHaveTextContent(/saved keyword data/i);
     expect(
       screen.getByTestId(`kw-cluster-member-${CLUSTER_ID}-rank-tracker`),
     ).toHaveTextContent(/research history/i);
     expect(
       screen.getByTestId(`kw-cluster-member-${CLUSTER_ID}-orphan-keyword`).textContent,
-    ).not.toMatch(/stored provider row|research history/i);
+    ).not.toMatch(/saved keyword data|research history/i);
     // Collapse again.
     fireEvent.click(screen.getByTestId(`kw-cluster-members-toggle-${CLUSTER_ID}`));
     expect(screen.queryByTestId(`kw-cluster-members-${CLUSTER_ID}`)).toBeNull();
@@ -923,29 +923,59 @@ describe('DismissClusterDialog', () => {
 // ClustersView
 // ---------------------------------------------------------------------------
 
-function metricsRows(count: number) {
-  return Array.from({ length: count }, (_, i) => ({
-    keyword: `stored phrase ${i}`,
+type CandidateSource = 'seed' | 'related' | 'idea' | 'long_tail';
+
+interface CandidateRow {
+  phrase: string;
+  source: CandidateSource;
+  searchVolume: number | null;
+  observedAt: string;
+}
+
+function storedCandidates(count: number, source: CandidateSource = 'seed'): CandidateRow[] {
+  return Array.from({ length: count }, (_, i): CandidateRow => ({
+    phrase: `stored phrase ${i}`,
+    source,
     searchVolume: 10,
-    difficulty: 10,
-    cpc: null,
-    monthlySearches: [],
-    cached: true,
-    fetchedAt: '2026-07-01T00:00:00.000Z',
-    expiresAt: '2026-08-01T00:00:00.000Z',
+    observedAt: '2026-07-01T00:00:00.000Z',
   }));
+}
+
+/** Puts the stored-phrase picker in its loaded state (the store is static in this harness). */
+function candidateState(
+  candidates: CandidateRow[],
+  extra: { total?: number; truncated?: boolean } = {},
+) {
+  return {
+    ...initialState.clusters,
+    candidates: {
+      loading: false,
+      error: '',
+      requestId: 'req-1',
+      data: {
+        candidates,
+        total: extra.total ?? candidates.length,
+        truncated: extra.truncated ?? false,
+      },
+    },
+  };
 }
 
 describe('ClustersView', () => {
   it('shows the no-candidates state when nothing is stored', () => {
+    setState({ clusters: candidateState([]) });
     renderInRouter(<ClustersView />);
     expect(screen.getByTestId('kw-clusters-no-candidates')).toBeInTheDocument();
+    expect(screen.getByRole('link', { name: 'Find more keywords' })).toHaveAttribute(
+      'href',
+      '/keyword-research?tab=research',
+    );
     // Stored runs list loads on mount.
     expect(api.fetchClusterRunsRequest).toHaveBeenCalled();
   });
 
   it('enforces the 10-phrase minimum with a visible count and bounds error', () => {
-    setState({ metrics: metricsRows(12) });
+    setState({ clusters: candidateState(storedCandidates(12)) });
     renderInRouter(<ClustersView />);
     expect(screen.getByTestId('kw-clusters-count')).toHaveTextContent(
       '0 selected (10–200 required)',
@@ -960,7 +990,7 @@ describe('ClustersView', () => {
   });
 
   it('discloses the exact spend and the free-rerun copy', () => {
-    setState({ metrics: metricsRows(10) });
+    setState({ clusters: candidateState(storedCandidates(10)) });
     renderInRouter(<ClustersView />);
     const disclosure = screen.getByTestId('kw-clusters-disclosure');
     expect(disclosure).toHaveTextContent(/one AI summary unit/i);
@@ -968,7 +998,7 @@ describe('ClustersView', () => {
   });
 
   it('runs a clustering pass with the selected phrases and writes ?run= into the URL', async () => {
-    setState({ metrics: metricsRows(10) });
+    setState({ clusters: candidateState(storedCandidates(10)) });
     renderInRouter(<ClustersView />);
     for (let i = 0; i < 10; i += 1) {
       fireEvent.click(screen.getByTestId(`kw-clusters-candidate-stored-phrase-${i}`));
@@ -1003,9 +1033,8 @@ describe('ClustersView', () => {
 
   it('renders the run result with cluster cards, cached disclosure, and the decision filter', () => {
     setState({
-      metrics: metricsRows(10),
       clusters: {
-        ...initialState.clusters,
+        ...candidateState(storedCandidates(10)),
         run: clusterRun({ cached: true }),
         runsLoaded: true,
         decisions: {
@@ -1180,29 +1209,161 @@ describe('ClustersView', () => {
     expect(api.postClusterDecisionRequest).not.toHaveBeenCalled();
   });
 
-  it('offers stored research-history phrases as cluster candidates', () => {
+  it('lists the stored phrases of the market with where each one came from', () => {
+    const candidates = [
+      { phrase: 'searched phrase', source: 'seed' as const, searchVolume: null, observedAt: '2026-07-01T00:00:00.000Z' },
+      { phrase: 'related phrase', source: 'related' as const, searchVolume: 5, observedAt: '2026-07-01T00:00:00.000Z' },
+      { phrase: 'idea phrase', source: 'idea' as const, searchVolume: 5, observedAt: '2026-07-01T00:00:00.000Z' },
+      { phrase: 'long tail phrase', source: 'long_tail' as const, searchVolume: 5, observedAt: '2026-07-01T00:00:00.000Z' },
+    ];
+    setState({ clusters: candidateState(candidates) });
+    renderInRouter(<ClustersView />);
+    const list = screen.getByTestId('kw-clusters-candidates');
+    expect(within(list).getByTestId('kw-clusters-candidate-searched-phrase')).toBeInTheDocument();
+    expect(list).toHaveTextContent('searched');
+    expect(list).toHaveTextContent('related');
+    expect(list).toHaveTextContent('idea');
+    expect(list).toHaveTextContent('long-tail');
+  });
+
+  it('reads the stored phrases of the chosen market without a provider call', async () => {
+    renderInRouter(<ClustersView />);
+    await waitFor(() =>
+      expect(api.fetchStoredKeywordsRequest).toHaveBeenCalledWith({
+        locationCode: 2840,
+        languageCode: 'en',
+        limit: 1000,
+      }),
+    );
+  });
+
+  it('searches the stored phrases after a short pause and says when nothing matches', async () => {
+    setState({ clusters: candidateState([]) });
+    renderInRouter(<ClustersView />);
+    fireEvent.change(screen.getByTestId('kw-clusters-search'), { target: { value: '  zzz ' } });
+    await waitFor(() =>
+      expect(api.fetchStoredKeywordsRequest).toHaveBeenCalledWith({
+        locationCode: 2840,
+        languageCode: 'en',
+        limit: 1000,
+        q: 'zzz',
+      }),
+    );
+    await waitFor(() =>
+      expect(screen.getByTestId('kw-clusters-no-candidates')).toHaveTextContent(
+        'No stored keywords match that search.',
+      ),
+    );
+    // A search is not "no stored keywords": no pointer to run research first.
+    expect(screen.queryByRole('link', { name: 'Find more keywords' })).toBeNull();
+  });
+
+  it('shows the loading skeleton and a load failure for the stored phrases', () => {
     setState({
-      history: [
-        {
-          id: 'h1',
-          kind: 'overview',
-          phrases: ['history phrase one', 'history phrase two'],
-          locationCode: 2840,
-          languageCode: 'en',
-          resultCount: 2,
-          cached: true,
-          lookupId: null,
-          createdAt: '2026-07-01T00:00:00.000Z',
-        },
-      ],
+      clusters: {
+        ...initialState.clusters,
+        candidates: { loading: true, error: '', data: null, requestId: 'req-1' },
+      },
+    });
+    const first = renderInRouter(<ClustersView />);
+    expect(screen.getByTestId('kw-clusters-candidates-loading')).toBeInTheDocument();
+    expect(screen.queryByTestId('kw-clusters-no-candidates')).toBeNull();
+    first.unmount();
+    setState({
+      clusters: {
+        ...initialState.clusters,
+        candidates: { loading: false, error: 'Could not load your stored keywords.', data: null, requestId: 'req-1' },
+      },
     });
     renderInRouter(<ClustersView />);
-    expect(
-      screen.getByTestId('kw-clusters-candidate-history-phrase-one'),
-    ).toBeInTheDocument();
-    expect(
-      screen.getByTestId('kw-clusters-candidate-history-phrase-two'),
-    ).toBeInTheDocument();
+    expect(screen.getByTestId('kw-clusters-candidates-error')).toHaveTextContent(
+      'Could not load your stored keywords.',
+    );
+  });
+
+  it('points to keyword research when fewer stored phrases exist than a run needs', () => {
+    setState({ clusters: candidateState(storedCandidates(4)) });
+    renderInRouter(<ClustersView />);
+    expect(screen.getByTestId('kw-clusters-below-minimum')).toHaveTextContent(
+      'Stored keywords for this market: 4.',
+    );
+    expect(screen.getByTestId('kw-clusters-below-minimum')).toHaveTextContent('at least 10');
+  });
+
+  it('says how many stored phrases are not shown when the list was cut', () => {
+    setState({
+      clusters: candidateState(storedCandidates(12), { total: 1500, truncated: true }),
+    });
+    renderInRouter(<ClustersView />);
+    expect(screen.getByTestId('kw-clusters-truncated')).toHaveTextContent(
+      'Stored keywords shown: 12 of 1,500.',
+    );
+    expect(screen.queryByTestId('kw-clusters-below-minimum')).toBeNull();
+  });
+
+  it('selects every shown phrase up to the maximum and clears the selection', () => {
+    setState({ clusters: candidateState(storedCandidates(12)) });
+    renderInRouter(<ClustersView />);
+    expect(screen.getByTestId('kw-clusters-clear')).toBeDisabled();
+    fireEvent.click(screen.getByTestId('kw-clusters-select-all'));
+    expect(screen.getByTestId('kw-clusters-count')).toHaveTextContent('12 selected');
+    expect(screen.queryByTestId('kw-clusters-limit')).toBeNull();
+    expect(screen.getByTestId('kw-clusters-run')).not.toBeDisabled();
+    fireEvent.click(screen.getByTestId('kw-clusters-clear'));
+    expect(screen.getByTestId('kw-clusters-count')).toHaveTextContent('0 selected');
+  });
+
+  it('stops select-all at 200 phrases and says so', { timeout: 30000 }, () => {
+    setState({ clusters: candidateState(storedCandidates(205)) });
+    renderInRouter(<ClustersView />);
+    fireEvent.click(screen.getByTestId('kw-clusters-select-all'));
+    expect(screen.getByTestId('kw-clusters-count')).toHaveTextContent('200 selected');
+    expect(screen.getByTestId('kw-clusters-limit')).toHaveTextContent('up to 200 phrases');
+  });
+
+  it('starts a fresh selection when the market changes and reads that market', async () => {
+    setState({ clusters: candidateState(storedCandidates(12)) });
+    renderInRouter(<ClustersView />);
+    fireEvent.click(screen.getByTestId('kw-clusters-select-all'));
+    expect(screen.getByTestId('kw-clusters-count')).toHaveTextContent('12 selected');
+    fireEvent.change(screen.getByTestId('kw-clusters-language'), { target: { value: 'fr' } });
+    expect(screen.getByTestId('kw-clusters-count')).toHaveTextContent('0 selected');
+    await waitFor(() =>
+      expect(api.fetchStoredKeywordsRequest).toHaveBeenCalledWith(
+        expect.objectContaining({ locationCode: 2840, languageCode: 'fr' }),
+      ),
+    );
+  });
+
+  it('starts a fresh selection when the country changes and corrects the language to the new market', async () => {
+    const user = userEvent.setup();
+    setState({ clusters: candidateState(storedCandidates(12)) });
+    renderInRouter(<ClustersView />);
+    fireEvent.click(screen.getByTestId('kw-clusters-select-all'));
+    expect(screen.getByTestId('kw-clusters-count')).toHaveTextContent('12 selected');
+    await user.click(screen.getByTestId('kw-clusters-location'));
+    await user.click(screen.getByRole('option', { name: /France/ }));
+    expect(screen.getByTestId('kw-clusters-count')).toHaveTextContent('0 selected');
+    await waitFor(() =>
+      expect(api.fetchStoredKeywordsRequest).toHaveBeenCalledWith(
+        expect.objectContaining({ locationCode: 2250, languageCode: 'fr' }),
+      ),
+    );
+  });
+
+  it('select-all keeps what is already selected and changing the market with nothing selected is harmless', () => {
+    setState({ clusters: candidateState(storedCandidates(12)) });
+    renderInRouter(<ClustersView />);
+    fireEvent.change(screen.getByTestId('kw-clusters-language'), { target: { value: 'fr' } });
+    expect(screen.getByTestId('kw-clusters-count')).toHaveTextContent('0 selected');
+    fireEvent.click(screen.getByTestId('kw-clusters-candidate-stored-phrase-3'));
+    fireEvent.click(screen.getByTestId('kw-clusters-select-all'));
+    expect(screen.getByTestId('kw-clusters-count')).toHaveTextContent('12 selected');
+  });
+
+  it('links to the per-site SERP overlap groups', () => {
+    renderInRouter(<ClustersView />);
+    expect(screen.getByRole('link', { name: /SERP overlap groups/ })).toHaveAttribute('href', '/sites');
   });
 
   it('a decision 409 refetches the stored run so the view shows the latest state', async () => {
@@ -1253,7 +1414,7 @@ describe('ClustersView', () => {
   });
 
   it('the run guard never spends when the selection is out of bounds (defensive)', () => {
-    setState({ metrics: metricsRows(12) });
+    setState({ clusters: candidateState(storedCandidates(12)) });
     renderInRouter(<ClustersView />);
     fireEvent.click(screen.getByTestId('kw-clusters-candidate-stored-phrase-0'));
     const runBtn = screen.getByTestId('kw-clusters-run');
@@ -1265,8 +1426,8 @@ describe('ClustersView', () => {
     expect(api.runClustersRequest).not.toHaveBeenCalled();
   });
 
-  it('caps the selection at 200 phrases — extra clicks neither add nor remove', { timeout: 30000 }, () => {
-    setState({ metrics: metricsRows(201) });
+  it('caps the selection at 200 phrases — an extra click neither adds nor removes and says why', { timeout: 30000 }, () => {
+    setState({ clusters: candidateState(storedCandidates(201)) });
     renderInRouter(<ClustersView />);
     const candidates = Array.from({ length: 200 }, (_, index) =>
       screen.getByTestId(`kw-clusters-candidate-stored-phrase-${index}`),
@@ -1285,16 +1446,20 @@ describe('ClustersView', () => {
     expect(screen.getByTestId('kw-clusters-count')).toHaveTextContent('200 selected');
     expect(firstCandidate).toBeChecked();
     expect(lastCandidate).toBeChecked();
-    // The 201st phrase is silently ignored — the ceiling is a hard bound.
-    act(() => {
-      toggle(overflowCandidate)();
-    });
+    expect(screen.queryByTestId('kw-clusters-limit')).toBeNull();
+    // The 201st phrase is ignored — the ceiling is a hard bound — and the view says so.
+    fireEvent.click(overflowCandidate);
     expect(screen.getByTestId('kw-clusters-count')).toHaveTextContent('200 selected');
     expect(overflowCandidate).not.toBeChecked();
+    expect(screen.getByTestId('kw-clusters-limit')).toBeInTheDocument();
+    // Deselecting one clears the notice and frees a slot.
+    fireEvent.click(firstCandidate);
+    expect(screen.queryByTestId('kw-clusters-limit')).toBeNull();
+    expect(screen.getByTestId('kw-clusters-count')).toHaveTextContent('199 selected');
   });
 
   it('a failed clustering run never writes ?run= into the URL', async () => {
-    setState({ metrics: metricsRows(10) });
+    setState({ clusters: candidateState(storedCandidates(10)) });
     const { ApiError } = await import('@shared/api/client');
     api.runClustersRequest.mockRejectedValue(
       new ApiError('down', 503, { error: { message: 'down' } }),

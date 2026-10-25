@@ -477,9 +477,9 @@ describe('unified competitor workspace', () => {
     for (const choice of choices) await userEvent.click(choice);
     expect(toast.error).toHaveBeenCalled();
     await userEvent.click(screen.getByRole('button', { name: /preview report spend/i }));
-    await screen.findByText(/server-authoritative spend preview/i);
+    await screen.findByText(/usage preview/i);
     await userEvent.click(screen.getByRole('button', { name: /^cancel$/i }));
-    expect(screen.queryByText(/server-authoritative spend preview/i)).not.toBeInTheDocument();
+    expect(screen.queryByText(/usage preview/i)).not.toBeInTheDocument();
     unmount();
 
     mocked.startLandscapeRun.mockResolvedValueOnce({

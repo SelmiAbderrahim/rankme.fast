@@ -50,6 +50,7 @@ import {
   selectRefreshError,
   selectSummary,
 } from '../store/selectors';
+import { PageHeading } from '@shared/components/PageHeader';
 
 interface Props {
   siteId: string;
@@ -136,7 +137,7 @@ export const BacklinksPanel = ({ siteId, view = 'all', managedExternally = false
       {view === 'all' ? (
         <div className="flex flex-wrap items-start justify-between gap-2">
           <div>
-            <h1 className="text-2xl font-semibold">{t('backlinks:title')}</h1>
+            <PageHeading className="text-2xl font-semibold">{t('backlinks:title')}</PageHeading>
             <p className="text-muted-foreground text-sm">{t('backlinks:description')}</p>
           </div>
           <RefreshButton

@@ -21,7 +21,7 @@ Certains écrans sont encore en cours de finition. Les textes et la mise en page
 
 ## Signaler un bug
 
-Utilisez **Signaler un bug** dans le bandeau bêta en haut de la page. Ce lien ouvre le [formulaire de signalement sur GitHub](https://github.com/SelmiAbderrahim/rankme.fast/issues/new/choose). Si vous avez masqué le bandeau ou n’avez pas de compte GitHub, écrivez à support@rankme.fast.
+Utilisez **Signaler un bug** dans la bannière bêta en haut de la page. Une boîte de dialogue vous laisse choisir où signaler : **Ouvrir les options de signalement GitHub**, si l’adresse GitHub du projet est configurée pour cette installation, ou **Envoyer un e-mail à l’assistance** à support@rankme.fast. Rien n’est envoyé automatiquement, indiquez donc vous-même les détails ci-dessous. L’adresse e-mail fonctionne même si vous avez masqué la bannière ou n’avez pas de compte GitHub.
 
 Un bon signalement indique :
 

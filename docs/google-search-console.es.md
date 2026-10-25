@@ -23,8 +23,11 @@ Search Console es la herramienta gratuita de Google que muestra cómo ve Google 
 ## Desconectar
 Pulsa **Desconectar** y eliminamos el token al momento. También puedes revocar el acceso en https://myaccount.google.com/permissions.
 
-## "Se requiere reconexión"
-Si Google invalida el token, aparece un aviso rojo. Hasta que vuelvas a conectar, las tres reglas vuelven a "datos insuficientes".
+## Cuando Google pide volver a conectar
+Si Google invalida el token (por ejemplo, tras cambiar la contraseña de tu cuenta), la tarjeta de Google Search Console de la pestaña **Google** del sitio muestra una alerta roja, **Tu conexión con Google necesita renovarse**, con un botón **Reconectar**. Las tarjetas que leen Search Console o Google Analytics muestran **Search Console no está conectado** o **Google Analytics no está conectado**, con **Conectar Google**. Hasta que vuelvas a conectar, las tres reglas vuelven a "datos insuficientes".
+
+## Elegir la propiedad
+La pestaña **Google** del sitio asocia automáticamente tu sitio a una propiedad de Search Console. Si ninguna coincide, o coinciden varias, RankMeFast te pide que elijas una. Una propiedad que pertenece a otro sitio solo se puede vincular tras tu confirmación, porque sus datos de búsqueda aparecerían entonces en este sitio. Google Analytics funciona igual. Si los datos más recientes de Google Analytics son más antiguos de lo esperado, un aviso lo indica y **Actualizar** vuelve a sincronizarlos; RankMeFast también los sincroniza una vez al día.
 
 ## Rendimiento en Páginas
 

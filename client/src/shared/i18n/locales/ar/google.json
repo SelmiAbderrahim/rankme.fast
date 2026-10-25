@@ -107,6 +107,9 @@
     "timeseriesTitle": "النقرات ومرات الظهور عبر الزمن",
     "timeseriesSubtitle_one": "الإجماليات اليومية لآخر {{days}} يومًا.",
     "timeseriesEmpty": "لا توجد بيانات يومية بعد.",
+    "timeseriesNoActivity": "لا يوجد نشاط في هذه الفترة.",
+    "timeseriesNoClicks": "لا نقرات في هذه الفترة.",
+    "timeseriesNoImpressions": "لا مرات ظهور في هذه الفترة.",
     "timeseriesChartLabel_one": "{{metric}} يوميًا لآخر {{days}} يومًا",
     "timeseriesTableCaption_one": "أداء البحث اليومي لآخر {{days}} يومًا",
     "tableDate": "التاريخ",
@@ -179,10 +182,6 @@
     "devicesEmpty": "لا توجد بيانات أجهزة بعد.",
     "devicesTableCaption": "الجلسات حسب الجهاز",
     "deviceHeader": "الجهاز",
-    "locked": {
-      "body": "إحصاءات Google Analytics متاحة في خطة Pro وما فوق. قم بالترقية لعرض الجلسات والتفاعل والأحداث الرئيسية إلى جانب بيانات البحث.",
-      "upgrade": "ترقية الخطة"
-    },
     "enableTitle": "Google Analytics غير مفعّل",
     "enableBody": "امنح صلاحية قراءة فقط لـ Google Analytics لعرض الجلسات والتفاعل والأحداث الرئيسية لهذا الموقع.",
     "enableCta": "تفعيل Google Analytics",

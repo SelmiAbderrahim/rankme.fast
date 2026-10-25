@@ -82,6 +82,8 @@
       "getBacklinksSummary": "جلب ملخص الروابط الخلفية",
       "listBacklinks": "عرض الروابط الخلفية",
       "listCompetitors": "عرض المنافسين",
+      "listKeywordResearchHistory": "عرض سجل أبحاث الكلمات المفتاحية",
+      "getKeywordResearchResult": "جلب نتيجة بحث كلمات مفتاحية",
       "getAiVisibilitySummary": "جلب ملخص ظهور الذكاء الاصطناعي",
       "getLocalSeoSummary": "جلب ملخص السيو المحلي",
       "getReviewsSummary": "جلب ملخص المراجعات",

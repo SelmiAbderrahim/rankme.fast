@@ -155,7 +155,9 @@
     "actor": "Miembro del equipo",
     "from": "desde {{state}}",
     "close": "Cerrar",
-    "actorYou": "Tú"
+    "actorYou": "Tú",
+    "observed": "Detectado",
+    "actorSystem": "Comprobación automática"
   },
   "retest": {
     "title": "¿Reanalizar este hallazgo?",
@@ -164,8 +166,6 @@
     "unitsValue": "1",
     "freshRun": "Un reanálisis siempre rastrea de nuevo — los resultados nunca provienen de una caché.",
     "selfHosted": "En este servidor no se aplican límites de uso.",
-    "remaining": "Quedan {{remaining}} de {{cap}} auditorías en este período",
-    "allowanceUnknown": "No pudimos cargar tu saldo restante. El servidor comprobará tu límite antes de ejecutar de todos modos.",
     "confirm": "Iniciar reanálisis",
     "starting": "Iniciando…",
     "queued": "Reanálisis en cola. Sigue el progreso en la pestaña de informe.",

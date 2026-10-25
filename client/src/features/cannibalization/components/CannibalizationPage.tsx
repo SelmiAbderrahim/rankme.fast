@@ -48,6 +48,7 @@ import {
   type CannibalizationConfidenceFilter,
   type CannibalizationView,
 } from '../urlState';
+import { PageHeading } from '@shared/components/PageHeader';
 
 export interface CannibalizationPageProps {
   /** Owning site — supplied by the workspace route, never picked in-panel. */
@@ -121,7 +122,7 @@ export const CannibalizationPage = ({ siteId }: CannibalizationPageProps) => {
     <div className="flex w-full min-w-0 flex-col gap-6" data-testid="cannibalization-page">
       <div className="flex flex-wrap items-start justify-between gap-3">
         <div className="flex flex-col gap-2">
-          <h1 className="text-2xl font-semibold tracking-tight">{t('title')}</h1>
+          <PageHeading className="text-2xl font-semibold tracking-tight">{t('title')}</PageHeading>
           <p className="text-muted-foreground text-sm">{t('subtitle')}</p>
         </div>
         {detail ? (

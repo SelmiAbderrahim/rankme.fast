@@ -53,17 +53,12 @@
     "cooldown_many": "Attendez {{seconds}} s avant d'actualiser.",
     "cooldown_other": "Attendez {{seconds}} s avant d'actualiser."
   },
-  "locked": {
-    "title": "Passez à la version supérieure pour débloquer les backlinks",
-    "body": "La note du domaine, les domaines référents et la liste de backlinks font partie du plan Pro.",
-    "upgrade": "Voir les plans"
-  },
   "errors": {
     "capExceeded": "Le quota de lignes de backlinks de votre forfait ({{used}}/{{limit}} {{metric}}) est épuisé. Passez à un forfait supérieur ou achetez un pack de crédits pour récupérer plus de lignes."
   },
   "intelligence": {
     "title": "Intelligence des liens",
-    "description": "Consultez les preuves enregistrées et choisissez quand dépenser des unités pour une nouvelle collecte.",
+    "description": "Consultez les données de backlinks enregistrées et choisissez quand récupérer des données récentes.",
     "tabs": {
       "label": "Vues d’intelligence des liens",
       "overview": "Vue d’ensemble",
@@ -77,14 +72,11 @@
     "preview": {
       "title": "Aperçu de la dépense",
       "description": "Cette estimation est gratuite. Les unités ne sont réservées qu’après confirmation.",
-      "units": "{{count}} unité",
       "cached": "Résultat en cache",
       "mixed": "Cache mixte",
-      "fresh": "Nouvelle collecte requise",
+      "fresh": "Nouvelles données nécessaires",
       "available": "Quota disponible",
       "unavailable": "Quota atteint",
-      "baseRemaining": "{{count}} unités de base restantes",
-      "packRemaining": "{{count}} unités de pack restantes",
       "confirm": "Confirmer et lancer la collecte",
       "cancel": "Annuler",
       "button": "Prévisualiser la dépense"
@@ -92,18 +84,13 @@
     "states": {
       "default": "Aucune liste enregistrée. La vue d’ensemble n’affiche que les totaux ; cette liste est une collecte distincte. Prévisualisez-la avant de la lancer.",
       "emptyTitle": "Aucun résultat",
-      "emptyBody": "Le fournisseur a terminé sans trouver de ligne correspondante.",
+      "emptyBody": "La vérification s’est terminée sans trouver de lignes correspondantes.",
       "partialTitle": "Résultat partiel",
-      "partialBody": "Certaines lignes ont été conservées avant l’arrêt du fournisseur.",
-      "providerTitle": "Échec de la collecte",
-      "providerBody": "Aucune ligne conservée ; l’unité réservée a été remboursée.",
-      "capTitle": "Quota d’intelligence des liens atteint",
-      "capBody": "Utilisez le pack {{pack}} ou attendez le renouvellement du quota.",
+      "partialBody": "Certaines lignes ont été enregistrées avant que la source de données ne cesse de répondre.",
+      "providerTitle": "Impossible de récupérer des données à jour",
+      "providerBody": "Rien n'a été enregistré.",
       "disabledTitle": "Intelligence des liens temporairement désactivée",
-      "disabledBody": "Les résultats enregistrés restent disponibles, mais les nouvelles collectes sont suspendues.",
-      "lockedTitle": "Passez à un forfait supérieur",
-      "lockedBody": "Les collectes approfondies sont disponibles avec Pro et Agency.",
-      "upgrade": "Voir les forfaits",
+      "disabledBody": "Les résultats enregistrés restent disponibles, mais la récupération de nouvelles données est suspendue.",
       "errorTitle": "Impossible de charger l’intelligence des liens"
     },
     "provenance": {
@@ -126,7 +113,7 @@
     },
     "bulk": {
       "title": "Note de domaines en lot",
-      "description": "Vérifiez la note fournisseur de 100 domaines uniques au maximum.",
+      "description": "Vérifiez le rang de domaine de 100 domaines uniques au maximum.",
       "label": "Domaines",
       "help": "Saisissez un domaine par ligne ou séparez-les par des virgules.",
       "invalid": "Saisissez entre 1 et 100 domaines valides.",
@@ -155,7 +142,7 @@
     },
     "errors": {
       "preview": "Impossible de préparer l’aperçu.",
-      "submit": "Impossible de lancer la collecte.",
+      "submit": "Impossible de lancer la récupération de nouvelles données.",
       "load": "Impossible de charger le résultat enregistré."
     }
   },
@@ -178,11 +165,8 @@
     },
     "preview": {
       "title": "Prévisualisation du coût",
-      "units": "{{n}} unités",
-      "remainingBase": "{{n}} unités de base restantes",
-      "remainingPack": "{{n}} unités de pack restantes",
       "cached": "Données en cache",
-      "fresh": "Nouvelle collecte fournisseur",
+      "fresh": "Données à jour",
       "confirm": "Confirmer et lancer l’analyse des écarts",
       "cancel": "Annuler",
       "button": "Prévisualiser le coût"
@@ -198,7 +182,7 @@
     },
     "legStatus": {
       "ok": "Terminé · unité consommée",
-      "provider_failed_refunded": "Échec du fournisseur · unité remboursée",
+      "provider_failed_refunded": "Échec de la source de données",
       "zero_retained_consumed": "Aucune ligne conservée · unité consommée",
       "zero_retained_refunded": "Aucune ligne conservée · unité remboursée"
     },
@@ -225,25 +209,19 @@
   "toxicity": {
     "start": {
       "title": "Analyser les observations de backlinks",
-      "description": "Évaluez jusqu’à 1 000 lignes enregistrées avec une grille déterministe avant de choisir le contenu de l’export."
+      "description": "Notez jusqu’à 1 000 backlinks enregistrés selon des règles d’alerte fixes avant de décider quoi exporter."
     },
     "preview": {
       "unit": "1 unité d’analyse de liens",
       "rowClamp": "Jusqu’à 1 000 lignes · 100 domaines évalués",
       "available": "Quota disponible",
-      "capReached": "Quota atteint",
-      "explanation": "L’exécution utilise une unité toxicity_reviews. Le pack toxicity-reviews-10 est disponible après le quota inclus. Prévisualiser puis annuler ne dépense aucune unité.",
       "confirm": "Confirmer et utiliser 1 unité",
       "cancel": "Annuler",
       "button": "Prévisualiser le coût"
     },
     "states": {
-      "lockedTitle": "Passez à une offre supérieure pour analyser les liens",
-      "lockedBody": "L’analyse des liens et la création du fichier de désaveu sont disponibles avec Pro et Agency.",
       "disabledTitle": "Les nouvelles analyses sont suspendues",
       "disabledBody": "Les analyses enregistrées restent consultables pendant la suspension des nouveaux scores.",
-      "capTitle": "Quota d’analyse de liens atteint",
-      "capBody": "Ajoutez le pack toxicity-reviews-10 ou attendez le renouvellement du quota.",
       "errorTitle": "Impossible de charger l’analyse de liens",
       "errorBody": "Réessayez dans un instant. Les résultats enregistrés et téléchargements précédents sont inchangés.",
       "listError": "Impossible de charger les analyses enregistrées.",
@@ -256,8 +234,6 @@
       "emptyBody": "L’exécution s’est terminée sans conserver de backlink évalué."
     },
     "actions": {
-      "viewPlans": "Voir les offres",
-      "viewPacks": "Voir les packs de crédits",
       "open": "Ouvrir",
       "back": "Revenir à une nouvelle analyse"
     },
@@ -273,7 +249,7 @@
     "filters": {
       "status": "Filtrer les analyses par état",
       "allStatuses": "Tous les états",
-      "band": "Filtrer les lignes par catégorie",
+      "band": "Filtrer les lignes par niveau de risque",
       "allBands": "Toutes les catégories"
     },
     "status": {
@@ -284,15 +260,15 @@
     },
     "results": {
       "title": "Résultats de l’analyse des liens",
-      "rubric": "Grille {{version}}",
+      "rubric": "Version des règles {{version}}",
       "rowsTitle": "Backlinks évalués",
-      "observationCopy": "Les catégories décrivent les observations enregistrées du fournisseur selon la grille fixée. Elles ne prédisent aucune action d’un moteur de recherche.",
-      "providerObservation": "Observation du fournisseur · grille déterministe"
+      "observationCopy": "Les niveaux de risque décrivent les données de backlinks enregistrées selon cette version des règles. Ils ne prédisent pas ce que fera un moteur de recherche.",
+      "providerObservation": "Données de backlinks enregistrées · score fondé sur des règles"
     },
     "columns": {
       "domain": "Domaine référent",
       "score": "Score de spam",
-      "band": "Catégorie",
+      "band": "Niveau de risque",
       "signals": "Signaux contributifs",
       "firstSeen": "Première détection",
       "lastSeen": "Dernière détection",
@@ -315,8 +291,8 @@
       "toggle": "Justification",
       "not_requested": "Aucune justification demandée pour cette ligne.",
       "annotated": "Justification enregistrée",
-      "abstained": "L’IA s’est abstenue ; la catégorie déterministe est inchangée.",
-      "failed": "Justification indisponible ; la catégorie déterministe est inchangée."
+      "abstained": "L’IA n’a donné aucune explication ; le niveau de risque fondé sur les règles reste inchangé.",
+      "failed": "Aucune explication n’était disponible ; le niveau de risque fondé sur les règles reste inchangé."
     },
     "disavow": {
       "title": "Créer un fichier de désaveu",
@@ -335,18 +311,9 @@
       "urlScope": "URL exacte"
     }
   },
-  "cap": {
-    "reached": "Aucun quota {{metric}} restant",
-    "pack": "{{name}} ajoute {{units}} unités pour {{price}}.",
-    "upgrade": "Voir les options de facturation"
-  },
   "killswitch": {
     "title": "L’écart de liens est temporairement indisponible",
     "disabled": "Les nouvelles analyses sont suspendues. Les résultats enregistrés restent lisibles."
-  },
-  "tier": {
-    "locked": "Passez à une offre supérieure pour débloquer l’écart de liens",
-    "lockedBody": "L’analyse d’écart de liens est disponible avec les offres Pro et Agency."
   },
   "suspicion": {
     "badge": "Spam présumé",

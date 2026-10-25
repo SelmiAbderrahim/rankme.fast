@@ -9,7 +9,12 @@
       "label": "Markt",
       "country": "Land",
       "language": "Sprache",
-      "device": "Gerät"
+      "device": "Gerät",
+      "devices": {
+        "desktop": "Desktop",
+        "mobile": "Mobil",
+        "all": "Alle Geräte"
+      }
     },
     "competitors": {
       "label": "Wettbewerber",
@@ -31,28 +36,8 @@
       "validationEmpty": "Geben Sie ein Thema ein, bevor Sie es hinzufügen.",
       "validationMax": "Sie können bis zu {{max}} Themen hinzufügen."
     },
-    "reviewButton": "Prüfen",
-    "submitting": "Wird bearbeitet…"
-  },
-  "preview": {
-    "unitLabel": "1 Zielgruppen-Recherche",
-    "remainingLabel": "{{remaining}} von {{cap}} in diesem Monat verbleibend",
-    "operationCeilings": "Was dieser Lauf tun wird",
-    "cached": "Zwischengespeichert",
-    "fresh": "Aktuell",
-    "supported": "Dieser Markt wird vollständig unterstützt.",
-    "unsupported": "Dieser Markt wird nur eingeschränkt unterstützt — die Ergebnisse können dünner ausfallen.",
-    "maxPages_one": "Bis zu {{max}} öffentlicher Seite",
-    "totalBudget": "Gesamtbudget: {{micros}} Mikro-USD",
-    "aiBudget": "KI-Budget: {{micros}} Mikro-USD",
-    "coverageOk": "Vollständige Anbieterabdeckung",
-    "coverageDegraded": "Eingeschränkte Anbieterabdeckung — Ergebnisse können unvollständig sein.",
-    "coverageBlocked": "Scraping ohne Datenspeicherung ist für dieses Konto blockiert.",
-    "maxPages_zero": "Bis zu {{max}} öffentlichen Seiten",
-    "maxPages_two": "Bis zu {{max}} öffentlichen Seiten",
-    "maxPages_few": "Bis zu {{max}} öffentlichen Seiten",
-    "maxPages_many": "Bis zu {{max}} öffentlichen Seiten",
-    "maxPages_other": "Bis zu {{max}} öffentlichen Seiten"
+    "submitting": "Wird bearbeitet…",
+    "startRequirement": "Fügen Sie mindestens ein Thema hinzu oder wählen Sie einen Wettbewerber, um einen Lauf zu starten. Ohne beides hat der Lauf nichts, wonach er suchen kann."
   },
   "confirm": {
     "title": "Diese Zielgruppen-Recherche starten?",
@@ -117,8 +102,7 @@
       "state": "Status",
       "sources": "Quellen",
       "signals": "Signale",
-      "coverage": "Abdeckung",
-      "unit": "Einheit"
+      "coverage": "Abdeckung"
     },
     "empty": {
       "title": "Noch keine Läufe",
@@ -131,24 +115,6 @@
     "marketUnavailable": "—",
     "coverageNote": "Teilweise Abdeckung — öffnen Sie den Lauf für Details",
     "coverageFull": "Vollständige Abdeckung"
-  },
-  "locked": {
-    "title": "Zielgruppen-Recherche ist in Ihrem Tarif nicht enthalten",
-    "body": "Wechseln Sie zu Starter, Pro oder Agency, um Voice-of-Customer-Recherchen durchzuführen und öffentliches Feedback in Content-, Produkt- und SEO-Chancen zu verwandeln.",
-    "cta": "Tarife ansehen"
-  },
-  "usage": {
-    "metrics": {
-      "audience_research_runs": {
-        "label": "Zielgruppen-Recherchen",
-        "description": "Eine Einheit deckt einen vollständigen Voice-of-Customer-Lauf ab, unabhängig davon, wie viele Suchen oder Seitenabrufe er ausführt."
-      }
-    }
-  },
-  "billing": {
-    "overCap": {
-      "audience_research_runs": "Sie haben in diesem Monat alle Zielgruppen-Recherchen Ihres Tarifs verbraucht. Upgraden Sie, um mehr Voice-of-Customer-Recherchen durchzuführen."
-    }
   },
   "signals": {
     "empty": {

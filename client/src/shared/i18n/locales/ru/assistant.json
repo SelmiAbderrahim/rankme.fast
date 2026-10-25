@@ -82,6 +82,8 @@
       "getBacklinksSummary": "Получить сводку по обратным ссылкам",
       "listBacklinks": "Показать обратные ссылки",
       "listCompetitors": "Показать конкурентов",
+      "listKeywordResearchHistory": "Показать историю исследования ключевых слов",
+      "getKeywordResearchResult": "Получить результат исследования ключевых слов",
       "getAiVisibilitySummary": "Получить сводку AI Visibility",
       "getLocalSeoSummary": "Получить сводку по локальному SEO",
       "getReviewsSummary": "Получить сводку по отзывам",

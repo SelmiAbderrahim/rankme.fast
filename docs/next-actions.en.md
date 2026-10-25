@@ -27,13 +27,15 @@ The same evidence always gives the same order, and there's no hidden score. Item
 
 You can **Plan**, **Dismiss**, **Complete** or **Reopen** an item. Each decision is added to the item's history; nothing is overwritten or deleted.
 
+The list opens on **Open and planned** items. Choose **All** in the **State** filter to include dismissed and completed ones; the choice stays in the page address (`state=all`), so a link keeps it. A card you resolve stays in place until the list loads again. The affected URLs on a card are links. When a card shows only a sample, **See all N URLs in the report** opens the full list.
+
 ## Dismissing a finding doesn't change the audit
 
 If you dismiss an audit finding as a false positive, it leaves the list. The audit report itself isn't touched, and the finding stays in the report as it was found.
 
 ## Marking a finding fixed
 
-Mark an audit finding as fixed once you've made the change. Decisions are kept per finding, so a later audit doesn't reset them. If a later audit still finds the same problem, the item is flagged as *still detected after being marked fixed* instead of quietly staying closed.
+Mark an audit finding as fixed once you've made the change. Decisions are kept per finding, so a later audit doesn't reset them. If an audit that finished after you marked it fixed still reports the same finding, RankMeFast reopens it automatically and records the change in the item's history. An audit that finished before you marked it fixed never reopens it.
 
 ## Retest
 

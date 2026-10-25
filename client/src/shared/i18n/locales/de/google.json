@@ -107,6 +107,9 @@
     "timeseriesTitle": "Klicks und Impressionen im Zeitverlauf",
     "timeseriesSubtitle_one": "Tägliche Summen des letzten Tages ({{days}}).",
     "timeseriesEmpty": "Noch keine Tagesdaten.",
+    "timeseriesNoActivity": "Keine Aktivität in diesem Zeitraum.",
+    "timeseriesNoClicks": "Keine Klicks in diesem Zeitraum.",
+    "timeseriesNoImpressions": "Keine Impressionen in diesem Zeitraum.",
     "timeseriesChartLabel_one": "Tägliche {{metric}} des letzten Tages ({{days}})",
     "timeseriesTableCaption_one": "Tägliche Suchleistung des letzten Tages ({{days}})",
     "tableDate": "Datum",
@@ -179,10 +182,6 @@
     "devicesEmpty": "Noch keine Gerätedaten.",
     "devicesTableCaption": "Sitzungen nach Gerät",
     "deviceHeader": "Gerät",
-    "locked": {
-      "body": "Google-Analytics-Einblicke sind im Pro-Plan und höher enthalten. Führen Sie ein Upgrade durch, um Sitzungen, Interaktionen und Schlüsselereignisse neben Ihren Suchdaten zu sehen.",
-      "upgrade": "Plan upgraden"
-    },
     "enableTitle": "Google Analytics ist nicht aktiviert",
     "enableBody": "Erteilen Sie Nur-Lese-Zugriff auf Google Analytics, um Sitzungen, Interaktionen und Schlüsselereignisse für diese Website zu sehen.",
     "enableCta": "Google Analytics aktivieren",

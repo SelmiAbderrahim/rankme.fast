@@ -110,7 +110,7 @@ export const ACCOUNT_ROUTES: ReadonlySet<string> = new Set([
     'POST /api/backlinks/gap/preview', 'GET /api/backlinks/runs', 'GET /api/backlinks/toxicity', 'POST /api/backlinks/toxicity', 'POST /api/backlinks/toxicity/preview',
     'GET /api/chat/conversations', 'POST /api/chat/conversations',
     'GET /api/competitors/traffic-snapshots', 'POST /api/competitors/traffic-snapshots', 'GET /api/competitors/traffic-snapshots/compare', 'POST /api/competitors/traffic-snapshots/preview',
-    'GET /api/keyword-research/clusters', 'POST /api/keyword-research/clusters', 'POST /api/keyword-research/gap', 'GET /api/keyword-research/history',
+    'GET /api/keyword-research/clusters', 'POST /api/keyword-research/clusters', 'POST /api/keyword-research/gap', 'GET /api/keyword-research/history', 'GET /api/keyword-research/stored-keywords',
     'POST /api/keyword-research/ideas', 'POST /api/keyword-research/intent', 'POST /api/keyword-research/long-tail', 'POST /api/keyword-research/metrics',
     'POST /api/keyword-research/overview', 'POST /api/keyword-research/preview', 'POST /api/keyword-research/related',
     'GET /api/keyword-research/trends', 'POST /api/keyword-research/trends', 'POST /api/keyword-research/trends/explore', 'POST /api/keyword-research/trends/explore/preview',

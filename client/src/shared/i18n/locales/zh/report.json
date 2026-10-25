@@ -315,8 +315,7 @@
   "pdf": {
     "download": "下载 PDF",
     "downloading": "正在生成 PDF…",
-    "error": "无法生成 PDF，请重试。",
-    "upgradeHint": "PDF 报告适用于 Pro 和 Agency 方案。"
+    "error": "无法生成 PDF，请重试。"
   },
   "gscBlock": {
     "sectionTitle": "Google 搜索表现（过去 28 天）",

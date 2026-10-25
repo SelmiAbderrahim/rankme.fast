@@ -1,15 +1,19 @@
 import type { RouteObject } from 'react-router-dom';
 import { expect, it } from 'vitest';
 import { appShellRoutes } from './routes';
+import { LEGACY_APP_REDIRECTS } from './legacyRedirects';
 import { SUPPORTED_LOCALES } from '@shared/i18n';
 import { RESOURCES } from '@shared/i18n/resources';
 import { resolveAppTitleTarget } from '@shared/navigation/appTitle';
 import { SITE_TABS } from '@features/sites';
 
+const LEGACY_REDIRECT_PATHS = new Set(LEGACY_APP_REDIRECTS.map((entry) => entry.from));
 function paths(routes: RouteObject[], prefix = ''): string[] {
   return routes.flatMap((route) => {
     const path = `${prefix}/${route.path ?? ''}`.replace(/\/{2,}/g, '/');
     if (route.children) return paths(route.children, path);
+    // A moved path only redirects; the destination page carries the title.
+    if (LEGACY_REDIRECT_PATHS.has(route.path ?? '')) return [];
     return route.path === '*' ? [] : [path.replace(/:[^/]+/g, 'fixture')];
   });
 }

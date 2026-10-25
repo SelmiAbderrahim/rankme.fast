@@ -1,7 +1,7 @@
 import { useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
-import { Smartphone } from 'lucide-react';
 import { APP_SEO_VIEWS, useAppSeoView, type AppSeoView } from '@features/sites';
+import { PageHeader } from '@shared/components/PageHeader';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@shared/ui/tabs';
 import { useAppDispatch } from '@shared/hooks/redux';
 import { AppProfileForm } from './AppProfileForm';
@@ -65,29 +65,24 @@ export const AppsPanel = ({ siteId }: AppsPanelProps) => {
       aria-labelledby="app-seo-heading"
       data-testid="apps-panel"
     >
-      <div className="flex items-start gap-3">
-        <Smartphone aria-hidden="true" className="mt-1 size-5 shrink-0" />
-        <div>
-          <h2 id="app-seo-heading" className="text-xl font-semibold">
-            {t('title')}
-          </h2>
-          <p className="text-muted-foreground text-sm">{t('description')}</p>
-        </div>
-      </div>
+      <PageHeader
+        headingLevel={2}
+        titleId="app-seo-heading"
+        title={t('title')}
+        description={t('description')}
+      />
       <Tabs value={view} onValueChange={(next) => setView(next as AppSeoView)}>
-        <div className="w-full overflow-x-auto pb-2">
-          <TabsList variant="line" className="h-auto w-max min-w-full justify-start">
-            {APP_SEO_VIEWS.map((candidate) => (
-              <TabsTrigger
-                key={candidate}
-                value={candidate}
-                data-testid={`app-seo-view-tab-${candidate}`}
-              >
-                {t(`views.${candidate}`)}
-              </TabsTrigger>
-            ))}
-          </TabsList>
-        </div>
+        <TabsList>
+          {APP_SEO_VIEWS.map((candidate) => (
+            <TabsTrigger
+              key={candidate}
+              value={candidate}
+              data-testid={`app-seo-view-tab-${candidate}`}
+            >
+              {t(`views.${candidate}`)}
+            </TabsTrigger>
+          ))}
+        </TabsList>
         {APP_SEO_VIEWS.map((candidate) => (
           <TabsContent key={candidate} value={candidate} className="mt-0">
             {renderView(candidate, siteId)}

@@ -67,6 +67,7 @@ import { AiVisibilityKpis } from './AiVisibilityKpis';
 import { PromptEngineDetails } from './PromptEngineDetails';
 import { AiVisibilityTrendChart } from './AiVisibilityTrendChart';
 import { trackedPromptKey } from '../promptKey';
+import { PageHeading } from '@shared/components/PageHeader';
 
 interface Props {
   siteId: string;
@@ -266,7 +267,7 @@ export const AiVisibilityPanel = ({ siteId, pulse }: Props) => {
           it, like every other tab. */}
       <div className="flex flex-wrap items-start justify-between gap-3">
         <div className="min-w-0">
-          <h1 className="text-2xl font-semibold">{t('title')}</h1>
+          <PageHeading className="text-2xl font-semibold">{t('title')}</PageHeading>
           <p className="text-muted-foreground text-sm">{t('description')}</p>
           <div className="text-muted-foreground mt-1 flex flex-wrap items-center gap-x-3 gap-y-1 text-xs">
             <span data-testid="ai-visibility-last-checked">{lastCheckedLabel}</span>
