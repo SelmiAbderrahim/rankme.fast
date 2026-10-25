@@ -7,6 +7,7 @@ import {
   fetchSchemaSources,
   fetchSchemaTypes,
   previewSchemaGeneration,
+  regenerateSchemaGeneration,
   type GenerationRequest,
 } from '../api';
 import { toSchemaGate } from '../gate';
@@ -17,6 +18,7 @@ import type {
   SchemaSources,
   SchemaSpendPreview,
   SchemaTypesResponse,
+  UserFacts,
 } from '../types';
 
 const fallback = () => i18n.t('schemaGenerator:states.failed.body');
@@ -89,6 +91,18 @@ export const createSchemaGenerationThunk = createAsyncThunk<
 >('schemaGenerator/create', async (request, { rejectWithValue }) => {
   try {
     return await createSchemaGeneration(request);
+  } catch (error) {
+    return rejectWithValue(toSchemaGate(error, fallback()));
+  }
+});
+
+export const regenerateSchemaGenerationThunk = createAsyncThunk<
+  GenerationDetail,
+  { generationId: string; facts: UserFacts },
+  { rejectValue: SchemaGate }
+>('schemaGenerator/regenerate', async ({ generationId, facts }, { rejectWithValue }) => {
+  try {
+    return await regenerateSchemaGeneration(generationId, facts);
   } catch (error) {
     return rejectWithValue(toSchemaGate(error, fallback()));
   }

@@ -12,7 +12,7 @@ import { readFileSync, readdirSync } from 'node:fs';
 import path from 'node:path';
 import { render, screen } from '@testing-library/react';
 import { describe, expect, it } from 'vitest';
-import { AssistantMarkdown } from './AssistantMarkdown';
+import { AssistantMarkdown, hideInternalIds } from './AssistantMarkdown';
 
 const FEATURE_DIR = path.resolve(__dirname, '..');
 
@@ -63,7 +63,7 @@ const FIXTURE = [
   '| Low page speed | Compress images |',
   '',
   '```',
-  'Sitemap: https://cashback.sa/sitemap.xml',
+  'Sitemap: https://rewards.example.sa/sitemap.xml',
   '```',
   '',
   '---',
@@ -77,10 +77,13 @@ describe('AssistantMarkdown', () => {
   it('renders every supported markdown block', () => {
     const { container } = render(<AssistantMarkdown text={FIXTURE} />);
 
-    expect(screen.getByRole('heading', { level: 1, name: 'Fix now' })).toBeInTheDocument();
-    expect(screen.getByRole('heading', { level: 2, name: 'Missing H1' })).toBeInTheDocument();
-    expect(screen.getByRole('heading', { level: 3, name: 'Sitemap' })).toBeInTheDocument();
-    // h4–h6 share the h3 renderer, so they render as level-3 headings.
+    // Every reply heading is an h3 under the page h1 and the log h2 (QA round 3
+    // F-AQ), so a model "# Title" never adds a second h1; sizes follow the source level.
+    expect(screen.getByRole('heading', { level: 3, name: 'Fix now' })).toHaveClass('text-base');
+    expect(screen.getByRole('heading', { level: 3, name: 'Missing H1' })).toHaveClass('text-sm', 'text-foreground');
+    expect(screen.getByRole('heading', { level: 3, name: 'Sitemap' })).toHaveClass('text-muted-foreground');
+    expect(screen.queryByRole('heading', { level: 1 })).toBeNull();
+    expect(screen.queryByRole('heading', { level: 2 })).toBeNull();
     expect(screen.getByRole('heading', { level: 3, name: 'Canonical' })).toBeInTheDocument();
     expect(screen.getByRole('heading', { level: 3, name: 'Meta description' })).toBeInTheDocument();
     expect(screen.getByRole('heading', { level: 3, name: 'Structured data' })).toBeInTheDocument();
@@ -97,8 +100,26 @@ describe('AssistantMarkdown', () => {
     expect(screen.getByRole('cell', { name: 'Low page speed' })).toBeInTheDocument();
 
     const pre = container.querySelector('pre');
-    expect(pre).toHaveTextContent('Sitemap: https://cashback.sa/sitemap.xml');
+    expect(pre).toHaveTextContent('Sitemap: https://rewards.example.sa/sitemap.xml');
     expect(pre?.className).toContain('overflow-x-auto');
+  });
+
+  it('keeps wide tables and long words inside the bubble', () => {
+    const { container } = render(
+      <AssistantMarkdown
+        text={'| Site | URL | Created | Status | Pages |\n| --- | --- | --- | --- | --- |\n| Episode Brief | https://episodebrief.com | 2026-09-01 | active | 42 |\n\nsupercalifragilisticexpialidocious-content-analysis'}
+      />,
+    );
+    // The table scrolls horizontally in its own bounded wrapper and keeps word
+    // wrapping normal, so columns are not crushed to one character wide.
+    const table = container.querySelector('table')!;
+    expect(table.parentElement).toHaveClass('max-w-full', 'overflow-x-auto');
+    // Keyboard users can focus the scroll region to scroll it (issue #54).
+    expect(table.parentElement).toHaveAttribute('tabindex', '0');
+    expect(table.parentElement).toHaveAttribute('data-slot', 'assistant-table-scroll');
+    expect(table).toHaveClass('[overflow-wrap:normal]');
+    // Prose may break anywhere, so a long token wraps instead of being clipped.
+    expect(container.firstElementChild).toHaveClass('min-w-0', '[overflow-wrap:anywhere]');
   });
 
   it('opens external links through the shared scheme guard', () => {
@@ -208,5 +229,48 @@ describe('SEC-OUT — assistant output never becomes markup', () => {
       physical.test(readFileSync(file, 'utf8')),
     );
     expect(offenders).toEqual([]);
+  });
+});
+
+describe('QA 58: internal ids never reach the reader', () => {
+  const RUN_ID = '6a7b5c38a1b2c3d4e5f60718';
+  const DIGEST = '9f86d081884c7d659a2feaa0c55ad015a3bf4f1b2b0b822cd15d6c15b0f00a08';
+
+  it.each([
+    ['audit 6a7b5c38a… (Aug 11) found two issues', 'audit (Aug 11) found two issues'],
+    ['audit 6a7b5c38a... (Aug 11)', 'audit (Aug 11)'],
+    [`Run ${RUN_ID} finished, then it stopped.`, 'Run finished, then it stopped.'],
+    [`Action ${DIGEST}, which is open`, 'Action, which is open'],
+    [`(${RUN_ID})`, '()'],
+  ])('removes a stand-alone id from "%s"', (input, expected) => {
+    expect(hideInternalIds(input)).toBe(expected);
+  });
+
+  it.each([
+    // Links and paths that carry an id keep working.
+    `[the report](/sites/${RUN_ID}/report/${RUN_ID})`,
+    `https://app.example.test/sites/x?runId=${RUN_ID}`,
+    `see /sites/${RUN_ID}`,
+    // Ordinary text and numbers are never touched.
+    'Your site ranks #46 for "KSA shopping rewards app" since 2026-10-12.',
+    'Version 2026101412 shipped with 12345678 impressions.',
+    'A decade-old facade added dead links.',
+    'abcdefabcdef is letters only',
+    '123456789012 is digits only',
+  ])('leaves "%s" alone', (input) => {
+    expect(hideInternalIds(input)).toBe(input);
+  });
+
+  it('applies to rendered assistant replies and keeps the links', () => {
+    render(
+      <AssistantMarkdown
+        text={`Audit ${RUN_ID} is [here](https://example.com/report/${RUN_ID}).`}
+      />,
+    );
+    expect(screen.getByText(/^Audit is/).textContent).toBe('Audit is here.');
+    expect(screen.getByRole('link', { name: 'here' })).toHaveAttribute(
+      'href',
+      `https://example.com/report/${RUN_ID}`,
+    );
   });
 });

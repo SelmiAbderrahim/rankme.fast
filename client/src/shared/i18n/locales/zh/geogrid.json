@@ -8,12 +8,12 @@
   "form": {
     "keyword": "已跟踪关键词",
     "keywordPlaceholder": "选择一个关键词",
-    "coordinateHelp": "请以数字输入中心点。这里没有地图选点——我们不购买地图瓦片。",
+    "coordinateHelp": "请以十进制度数输入中心点的纬度和经度。查找方法：在 Google 地图中右键点击您的商家，再点击菜单顶部的数字即可复制。",
     "latitude": "中心纬度",
     "longitude": "中心经度",
     "spacing": "点之间的间距",
     "spacingOption": "{{km}} 公里",
-    "spacingCustom": "自定义间距（米）",
+    "spacingCustom": "自定义间距（公里）",
     "size": "网格大小",
     "sizeOption": "{{size}} × {{size}}（{{cells}} 个点）",
     "zoom": "地图缩放",
@@ -21,11 +21,16 @@
     "previewing": "估算中…",
     "errors": {
       "keyword": "请先选择一个已跟踪的关键词。",
-      "latitude": "纬度必须在 -{{max}} 到 {{max}} 之间。",
-      "longitude": "经度必须在 -180 到 180 之间。",
-      "spacing": "间距必须在 {{min}} 到 {{max}} 米之间，且为 {{step}} 的整数倍。",
-      "zoom": "缩放必须在 {{min}} 到 {{max}} 之间。"
-    }
+      "latitude": "请输入 -{{max}} 到 {{max}} 之间的纬度。",
+      "longitude": "请输入 -180 到 180 之间的经度。",
+      "spacing": "请选择 {{min}} 到 {{max}} 公里之间的间距，且为 {{step}} 公里的整数倍。",
+      "zoom": "请输入 {{min}} 到 {{max}} 之间的缩放级别。"
+    },
+    "zoomHelp": "每个点上 Google 地图的缩放程度:{{min}} 显示大片区域,{{max}} 只显示几条街道。数值越高越接近在附近搜索的用户;{{default}} 为街道级别。",
+    "useLastCenter": "使用上次扫描的中心点",
+    "keywordEmpty": "该网站还没有已跟踪的关键词。每次地理网格扫描只检查一个已跟踪关键词。",
+    "keywordEmptyCta": "跟踪关键词",
+    "spacingCustomOption": "自定义"
   },
   "preview": {
     "title": "这次扫描的花费",
@@ -110,10 +115,38 @@
     "previewFailed": "无法估算这次扫描。",
     "submitFailed": "无法启动这次扫描。"
   },
-  "center": {"place": {"resultsLegend_zero": "“{{query}}”共找到 {{count}} 个地点。请选择中心：",
+  "center": {
+    "place": {
+      "label": "地点名称或地址",
+      "placeholder": "北京市朝阳区建国路 1 号",
+      "hint": "每次搜索会调用一次您的本地商家信息提供商。选择结果不会发送请求，也不会更改本地 SEO 中的任何内容。",
+      "search": "搜索",
+      "searching": "正在搜索…",
+      "invalid": "请输入 {{min}} 到 {{max}} 个字符。",
+      "searchFailed": "搜索失败。请稍后再试。",
+      "noResults": "未找到“{{query}}”对应的、带地图位置的地点。请尝试更完整的地址，或直接输入坐标。",
+      "resultsLegend_zero": "“{{query}}”共找到 {{count}} 个地点。请选择中心：",
       "resultsLegend_one": "“{{query}}”共找到 {{count}} 个地点。请选择中心：",
       "resultsLegend_two": "“{{query}}”共找到 {{count}} 个地点。请选择中心：",
       "resultsLegend_few": "“{{query}}”共找到 {{count}} 个地点。请选择中心：",
       "resultsLegend_many": "“{{query}}”共找到 {{count}} 个地点。请选择中心：",
-      "resultsLegend_other": "“{{query}}”共找到 {{count}} 个地点。请选择中心："}}
+      "resultsLegend_other": "“{{query}}”共找到 {{count}} 个地点。请选择中心："
+    },
+    "legend": "网格中心",
+    "mode": {
+      "business": "我的商家",
+      "place": "搜索地点",
+      "coordinates": "输入坐标"
+    },
+    "business": {
+      "loading": "正在加载你的商家…",
+      "loadFailed": "无法加载你的商家。请搜索地点或直接输入坐标。",
+      "none": "此站点尚未设置商家。在本地 SEO 中选择后，网格即可从其位置开始。",
+      "setUp": "设置你的商家",
+      "noLocation": "该商家的信息中没有地图位置。请搜索地点或直接输入坐标。"
+    },
+    "noAddress": "未列出地址",
+    "current": "网格中心将设在",
+    "required": "请为网格选择一个中心。"
+  }
 }

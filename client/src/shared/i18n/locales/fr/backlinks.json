@@ -167,13 +167,12 @@
     "form": {
       "ownDomainLabel": "Votre domaine",
       "competitorsLabel": "Domaines concurrents",
-      "competitorsHelp": "Saisissez de {{min}} à {{max}} domaines, un par ligne ou séparés par des virgules. Les doublons sont supprimés.",
+      "competitorsHelp": "Saisissez de {{min}} à {{max}} domaines. Appuyez sur Entrée ou tapez une virgule après chacun. Les doublons sont supprimés.",
       "prefilled": "Rempli à partir de vos concurrents confirmés. Modifiez la liste si besoin.",
       "errors": {
         "ownAmongCompetitors": "Votre propre domaine ne peut pas être un concurrent.",
         "duplicate": "Les concurrents en double ont été supprimés.",
         "atLeastOne": "Saisissez au moins un domaine concurrent.",
-        "tooMany": "Saisissez au maximum trois domaines concurrents.",
         "invalid": "Saisissez des noms de domaine valides."
       }
     },

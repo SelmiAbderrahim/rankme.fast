@@ -1,4 +1,5 @@
 import { useTranslation } from 'react-i18next';
+import { formatAbsoluteDate } from '@shared/lib/datetime';
 import { Button } from '@shared/ui/button';
 import {
   Table,
@@ -22,10 +23,9 @@ export const ReportListTable = ({
   onOpen,
 }: ReportListTableProps) => {
   const { t, i18n } = useTranslation('cannibalization');
-  const formatDate = (iso: string) =>
-    new Intl.DateTimeFormat(i18n.language, { dateStyle: 'medium' }).format(
-      new Date(iso),
-    );
+  // `snapshotDate` is a calendar day (`YYYY-MM-DD`): formatAbsoluteDate keeps
+  // it on that day in every time zone.
+  const formatDate = (value: string) => formatAbsoluteDate(value, i18n.language);
   return (
     <Table data-testid="cannibalization-report-list">
       <TableHeader>
@@ -46,7 +46,7 @@ export const ReportListTable = ({
           >
             <TableCell>{formatDate(report.generatedAt)}</TableCell>
             <TableCell>{t('counts.windowDays', { count: report.windowDays })}</TableCell>
-            <TableCell>{report.snapshotDate}</TableCell>
+            <TableCell>{formatDate(report.snapshotDate)}</TableCell>
             <TableCell className="text-end">{report.candidateCount}</TableCell>
             <TableCell className="text-end">
               <Button

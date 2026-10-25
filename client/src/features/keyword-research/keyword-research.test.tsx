@@ -658,6 +658,7 @@ const historyItem = (overrides: Partial<ResearchHistoryItem> = {}): ResearchHist
   languageCode: 'en',
   resultCount: 3,
   cached: false,
+  lookupId: null,
   createdAt: '2026-07-10T00:00:00.000Z',
   ...overrides,
 });
@@ -1467,6 +1468,7 @@ describe('prefill (?q=&location=&lang=)', () => {
       languageCode: 'de',
       resultCount: 2,
       cached: true,
+      lookupId: null,
       createdAt: '2026-07-01T00:00:00.000Z',
     };
     const url = buildSearchAgainUrl(item);

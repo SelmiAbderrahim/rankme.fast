@@ -73,6 +73,7 @@ export {
   type Branding,
   type BrandingState,
   type CreatedApiKey,
+  MCP_TOOL_GROUPS,
   MCP_TOOL_NAMES,
   type McpPermissionSettings,
   type McpPermissionSpec,

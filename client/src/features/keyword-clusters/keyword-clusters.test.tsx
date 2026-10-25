@@ -7,6 +7,8 @@ import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import { ApiError, apiClient } from '@shared/api/client';
 import type { ReportExportControlProps } from '@features/report-export';
 import { changeLanguage, i18n, initI18n } from '@shared/i18n';
+import { formatAbsoluteDate } from '@shared/lib/datetime';
+import { visibleText } from '@/test/textContent';
 import { BlockedKeywords } from './components/BlockedKeywords';
 import { ClusterList } from './components/ClusterList';
 import {
@@ -15,7 +17,6 @@ import {
   ranksSurfaceHref,
 } from './components/KeywordClustersPage';
 import { NewRunPanel } from './components/NewRunPanel';
-import { EligibilityBanner } from './components/EligibilityBanner';
 import { RunList } from './components/RunList';
 import { StateNotice, type KeywordClusterNoticeKind } from './components/StateNotice';
 import { keywordClusterGate } from './gate';
@@ -152,6 +153,7 @@ const readyPreview = (
 });
 
 interface ApiHandlers {
+  keywords?: () => unknown;
   sites?: () => unknown;
   list?: () => unknown;
   preview?: () => unknown;
@@ -170,6 +172,7 @@ const resolved = (fn: (() => unknown) | undefined, fallback: unknown) => {
 const routeApi = (handlers: ApiHandlers = {}) => {
   mockedApi.mockImplementation((path: string, options?: { method?: string }) => {
     if (/^\/sites\/[^/]+\/keywords(?:\?|$)/u.test(path)) {
+      if (handlers.keywords) return resolved(handlers.keywords, null);
       return Promise.resolve({
         keywords: [1, 2, 3].map((index) => ({
           id: kwId(index),
@@ -278,6 +281,7 @@ describe('StateNotice', () => {
     'notEnoughKeywords',
     'failed',
     'emptyRuns',
+    'noTrackedKeywords',
     'emptyClusters',
   ] as const)('renders localized copy for %s', (kind: KeywordClusterNoticeKind) => {
     renderWithI18n(<StateNotice kind={kind} ranksHref="/sites/x?tab=ranks" />);
@@ -285,6 +289,24 @@ describe('StateNotice', () => {
     expect(
       screen.getByText(i18n.t(`states.${kind}.title`, { ns: 'keywordClusters' })),
     ).toBeInTheDocument();
+  });
+
+  it('links the no-tracked-keywords state to the Keywords tab only when given a href', () => {
+    const withHref = renderWithI18n(
+      <StateNotice kind="noTrackedKeywords" ranksHref={`/sites/${SITE}?tab=keywords`} />,
+    );
+    expect(screen.getByRole('link', { name: 'Track keywords' })).toHaveAttribute(
+      'href',
+      `/sites/${SITE}?tab=keywords`,
+    );
+    expect(screen.getByTestId('keyword-clusters-state-noTrackedKeywords')).toHaveAttribute(
+      'role',
+      'status',
+    );
+    withHref.unmount();
+
+    renderWithI18n(<StateNotice kind="noTrackedKeywords" />);
+    expect(screen.queryByRole('link', { name: 'Track keywords' })).toBeNull();
   });
 
   it('offers the rank-check CTA only for the not-enough-keywords state', () => {
@@ -309,7 +331,15 @@ describe('BlockedKeywords', () => {
     expect(container.querySelector('[data-testid="keyword-clusters-blocked"]')).toBeNull();
   });
 
-  it.each(['missing', 'stale', 'empty'] as const)(
+  it.each([
+    'missing',
+    'stale',
+    'empty',
+    'check_too_old',
+    'no_serp_snapshot',
+    'never_checked',
+    'failed_last_check',
+  ] as const)(
     'names the %s reason for every blocked keyword',
     async (reason) => {
       const user = userEvent.setup();
@@ -360,7 +390,7 @@ describe('RunList', () => {
     renderWithI18n(
       <RunList runs={[summary()]} activeRunId={null} onOpen={onOpen} />,
     );
-    expect(screen.getByText(/1 groups from 3 keywords/i)).toBeInTheDocument();
+    expect(screen.getByText(/Groups: 1 · source keywords: 3/i)).toBeInTheDocument();
     await user.click(screen.getByTestId(`keyword-clusters-open-${RUN}`));
     expect(onOpen).toHaveBeenCalledWith(RUN);
   });
@@ -409,7 +439,7 @@ describe('ClusterList', () => {
       />,
     );
     const member = screen.getByTestId(`keyword-cluster-member-${kwId(2)}`);
-    expect(within(member).getByText(DATE)).toBeInTheDocument();
+    expect(within(member).getByText(formatAbsoluteDate(DATE, 'en'))).toBeInTheDocument();
     expect(
       within(member).getByText(/3 shared with the reference keyword/i),
     ).toBeInTheDocument();
@@ -510,49 +540,12 @@ describe('NewRunPanel', () => {
     expect(screen.getByTestId('keyword-clusters-state-disabled')).toBeInTheDocument();
   });
 
-  it('shows the not-enough-keywords refusal with its blocked list', async () => {
-    const user = userEvent.setup();
+  it('shows the not-enough-keywords refusal without eligibility counts as the plain notice', () => {
     renderWithI18n(
-      <NewRunPanel
-        {...props}
-        preview={readyPreview({ ready: false, reason: 'notEnoughKeywords' })}
-      />,
+      <NewRunPanel {...props} preview={readyPreview({ ready: false, reason: 'notEnoughKeywords' })} />,
     );
-    expect(
-      screen.getByTestId('keyword-clusters-eligibility-banner'),
-    ).toBeInTheDocument();
-    expect(screen.getByTestId('keyword-clusters-eligibility-counts')).toHaveTextContent(
-      '1 of 4 keywords needs a fresh rank check',
-    );
-    expect(screen.getAllByRole('link', { name: 'Run a rank check' })).toHaveLength(1);
-    await user.click(screen.getByRole('button', { name: /could not take part/i }));
-    expect(screen.getByText('never checked')).toBeInTheDocument();
-  });
-
-  it('uses full reason counts when the blocked keyword list is only a sample', () => {
-    renderWithI18n(<NewRunPanel {...props} preview={readyPreview({
-      ready: false, reason: 'notEnoughKeywords', blockedTotal: 25,
-      reasonCounts: { missing: 10, stale: 10, empty: 5 },
-    })} />);
-    expect(screen.getByTestId('keyword-clusters-eligibility-counts')).toHaveTextContent('25 of 28');
-    expect(screen.getByTestId('keyword-clusters-eligibility-reasons')).toHaveTextContent('Never checked: 10');
-    expect(screen.getByTestId('keyword-clusters-eligibility-reasons')).toHaveTextContent('Check too old: 10');
-    expect(screen.getByTestId('keyword-clusters-eligibility-reasons')).toHaveTextContent('No stored results: 5');
-    expect(screen.getByTestId('keyword-clusters-eligibility-snapshot-note')).toHaveTextContent('full results page');
-  });
-
-  it('does not infer reason counts from a capped blocked sample', () => {
-    renderWithI18n(<EligibilityBanner preview={readyPreview({
-      ready: false, reason: 'notEnoughKeywords', blockedTotal: 25,
-    })} />);
-    expect(screen.getByTestId('keyword-clusters-eligibility-counts')).toHaveTextContent('25 of 28');
-    expect(screen.queryByTestId('keyword-clusters-eligibility-reasons')).toBeNull();
-    expect(screen.queryByTestId('keyword-clusters-run-rank-check')).toBeNull();
-  });
-
-  it('does not show a blocked banner when the preview can run', () => {
-    const view = renderWithI18n(<EligibilityBanner preview={readyPreview()} />);
-    expect(view.container).toBeEmptyDOMElement();
+    expect(screen.getByTestId('keyword-clusters-state-notEnoughKeywords')).toBeInTheDocument();
+    expect(screen.queryByTestId('keyword-clusters-eligibility-banner')).toBeNull();
   });
 
   it('discloses the scope and method before confirmation', () => {
@@ -608,6 +601,43 @@ describe('KeywordClustersPage', () => {
     expect(
       await screen.findByTestId('keyword-clusters-state-emptyRuns'),
     ).toBeInTheDocument();
+  });
+
+  it('asks to track keywords first when the site tracks none', async () => {
+    routeApi({
+      list: () => ({ items: [] }),
+      keywords: () => ({ keywords: [], nextCursor: null }),
+    });
+    renderPage();
+    const notice = await screen.findByTestId('keyword-clusters-state-noTrackedKeywords');
+    expect(notice).toHaveTextContent('Track keywords first');
+    expect(within(notice).getByRole('link', { name: 'Track keywords' })).toHaveAttribute(
+      'href',
+      `/sites/${SITE}?tab=keywords`,
+    );
+    expect(screen.queryByTestId('keyword-clusters-state-emptyRuns')).toBeNull();
+  });
+
+  it('keeps the plain empty state when the keyword scope failed to load', async () => {
+    routeApi({
+      list: () => ({ items: [] }),
+      keywords: () => Promise.reject(new ApiError('nope', 500, null)),
+    });
+    renderPage();
+    expect(
+      await screen.findByTestId('keyword-clusters-state-emptyRuns'),
+    ).toBeInTheDocument();
+    expect(screen.queryByTestId('keyword-clusters-state-noTrackedKeywords')).toBeNull();
+  });
+
+  it('is named SERP overlap groups and links to AI keyword topics', async () => {
+    routeApi();
+    renderPage();
+    expect(await screen.findByRole('heading', { name: 'SERP overlap groups' })).toBeInTheDocument();
+    const cross = screen.getByTestId('keyword-clusters-cross-link');
+    expect(cross).toHaveTextContent("Want topics from keywords you've researched, not only the ones you track?");
+    expect(cross.querySelector('a')).toHaveAttribute('href', '/keyword-research?tab=clusters');
+    expect(cross).toHaveTextContent('Open AI keyword topics');
   });
 
   it.each([
@@ -789,5 +819,196 @@ describe('KeywordClustersPage', () => {
     ).toBeInTheDocument();
     expect(i18n.dir()).toBe('rtl');
     await changeLanguage('en');
+  });
+});
+
+describe('localized dates', () => {
+  it.each(['en', 'ar', 'de'] as const)(
+    'formats observation and request dates for %s instead of raw ISO strings',
+    async (locale) => {
+      await changeLanguage(locale);
+      const day = formatAbsoluteDate(DATE, locale);
+      const dayAndTime = formatAbsoluteDate(DATE, locale, { withTime: true });
+      renderWithI18n(
+        <>
+          <ClusterList clusters={[groupedCluster()]} openClusterId={null} onToggle={vi.fn()} />
+          <RunList runs={[summary()]} activeRunId={null} onOpen={vi.fn()} />
+          <BlockedKeywords
+            blocked={[{ keywordId: kwId(8), phrase: 'stale one', reason: 'stale', observedAt: DATE }]}
+            total={1}
+          />
+        </>,
+      );
+      const member = screen.getByTestId(`keyword-cluster-member-${kwId(2)}`);
+      expect(within(member).getByText(day)).toBeInTheDocument();
+      const run = screen.getByTestId(`keyword-clusters-run-${RUN}`);
+      expect(visibleText(run)).toContain(
+        i18n.t('runs.requestedAt', { ns: 'keywordClusters', lng: locale, date: dayAndTime }),
+      );
+      expect(visibleText(run)).not.toContain(DATE);
+      await userEvent.click(
+        screen.getByRole('button', {
+          name: i18n.t('blocked.title', { ns: 'keywordClusters', lng: locale, count: 1 }),
+        }),
+      );
+      const blocked = await screen.findByTestId('keyword-clusters-blocked-stale');
+      expect(visibleText(blocked)).toContain(
+        i18n.t('blocked.observedAt', { ns: 'keywordClusters', lng: locale, date: day }),
+      );
+      await changeLanguage('en');
+    },
+  );
+});
+
+describe('eligibility banner', () => {
+  const props = {
+    ranksHref: '/sites/x?tab=keywords',
+    previewing: false,
+    starting: false,
+    gate: null as KeywordClusterUiState | null,
+    canPreview: true,
+    onPreview: vi.fn(),
+    onCancel: vi.fn(),
+    onConfirm: vi.fn(),
+  };
+  const counts = (overrides: Partial<Record<string, number>> = {}) => ({
+    check_too_old: 0,
+    no_serp_snapshot: 0,
+    never_checked: 0,
+    failed_last_check: 0,
+    ...overrides,
+  });
+  const rankCheckLinks = () =>
+    screen.queryAllByRole('link', { name: i18n.t('states.ranksCta', { ns: 'keywordClusters' }) });
+
+  it('8 ready and 2 too old: no banner, the run can start, one rank-check action', () => {
+    renderWithI18n(
+      <NewRunPanel
+        {...props}
+        preview={readyPreview({
+          readyCount: 8,
+          blockedTotal: 2,
+          eligibility: {
+            canRun: true,
+            blockingReasonCode: null,
+            total: 10,
+            eligibleCount: 8,
+            ineligibleCount: 2,
+            reasonCounts: counts({ check_too_old: 2 }),
+          },
+        })}
+      />,
+    );
+    expect(screen.queryByTestId('keyword-clusters-eligibility-banner')).toBeNull();
+    expect(screen.queryByTestId('keyword-clusters-state-notEnoughKeywords')).toBeNull();
+    expect(screen.getByTestId('keyword-clusters-confirm')).toBeEnabled();
+    expect(rankCheckLinks().length).toBeLessThanOrEqual(1);
+  });
+
+  it.each([
+    [0, 3],
+    [1, 9],
+  ])('%i of the keywords ready: the banner states the counts and owns the only rank-check action', async (ready, needs) => {
+    const user = userEvent.setup();
+    renderWithI18n(
+      <NewRunPanel
+        {...props}
+        preview={readyPreview({
+          ready: false,
+          reason: 'notEnoughKeywords',
+          readyCount: ready,
+          blockedTotal: needs,
+          eligibility: {
+            canRun: false,
+            blockingReasonCode: 'not_enough_eligible',
+            total: ready + needs,
+            eligibleCount: ready,
+            ineligibleCount: needs,
+            reasonCounts: counts({ check_too_old: needs - 1, no_serp_snapshot: 1 }),
+          },
+        })}
+      />,
+    );
+    const banner = screen.getByTestId('keyword-clusters-eligibility-banner');
+    const total = ready + needs;
+    expect(within(banner).getByTestId('keyword-clusters-eligibility-counts')).toHaveTextContent(
+      [
+        i18n.t('eligibility.needCheck', { ns: 'keywordClusters', count: needs, total }),
+        i18n.t('eligibility.ready', { ns: 'keywordClusters', count: ready }),
+        i18n.t('eligibility.minimum', { ns: 'keywordClusters', count: 2 }),
+      ].join(' '),
+    );
+    const reasons = within(banner).getByTestId('keyword-clusters-eligibility-reasons');
+    expect(reasons).toHaveTextContent(
+      `${i18n.t('blocked.reason.check_too_old', { ns: 'keywordClusters' })}: ${needs - 1}`,
+    );
+    expect(within(banner).getByTestId('keyword-clusters-eligibility-snapshot-note')).toBeInTheDocument();
+    expect(rankCheckLinks()).toHaveLength(1);
+    // The list below names keywords but carries no second action.
+    await user.click(screen.getByRole('button', { name: /could not take part/i }));
+    expect(rankCheckLinks()).toHaveLength(1);
+  });
+
+  it('English copy reads "2 of 10 keywords need a fresh rank check. 8 are ready."', async () => {
+    await changeLanguage('en');
+    expect(
+      `${i18n.t('eligibility.needCheck', { ns: 'keywordClusters', count: 2, total: 10 })} ${i18n.t(
+        'eligibility.ready',
+        { ns: 'keywordClusters', count: 8 },
+      )}`,
+    ).toBe('2 of 10 keywords need a fresh rank check. 8 are ready.');
+  });
+
+  it('omits the reason list, the snapshot note and the action when there is nothing to name', () => {
+    renderWithI18n(
+      <NewRunPanel
+        {...props}
+        ranksHref={undefined}
+        preview={readyPreview({
+          ready: false,
+          reason: 'notEnoughKeywords',
+          readyCount: 1,
+          blocked: [],
+          blockedTotal: 0,
+          eligibility: {
+            canRun: false,
+            blockingReasonCode: 'not_enough_eligible',
+            total: 1,
+            eligibleCount: 1,
+            ineligibleCount: 0,
+            reasonCounts: counts(),
+          },
+        })}
+      />,
+    );
+    expect(screen.getByTestId('keyword-clusters-eligibility-banner')).toBeInTheDocument();
+    expect(screen.queryByTestId('keyword-clusters-eligibility-reasons')).toBeNull();
+    expect(screen.queryByTestId('keyword-clusters-eligibility-snapshot-note')).toBeNull();
+    expect(rankCheckLinks()).toHaveLength(0);
+  });
+
+  it('no tracked Google keyword: the track-keywords notice replaces the banner', () => {
+    renderWithI18n(
+      <NewRunPanel
+        {...props}
+        preview={readyPreview({
+          ready: false,
+          reason: 'notEnoughKeywords',
+          readyCount: 0,
+          blocked: [],
+          blockedTotal: 0,
+          eligibility: {
+            canRun: false,
+            blockingReasonCode: 'no_tracked_keywords',
+            total: 0,
+            eligibleCount: 0,
+            ineligibleCount: 0,
+            reasonCounts: counts(),
+          },
+        })}
+      />,
+    );
+    expect(screen.getByTestId('keyword-clusters-state-noTrackedKeywords')).toBeInTheDocument();
+    expect(screen.queryByTestId('keyword-clusters-eligibility-banner')).toBeNull();
   });
 });

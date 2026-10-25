@@ -1,5 +1,5 @@
 import { Router } from 'express';
-import { clustersDetailHandler, clustersListHandler, clustersRunHandler, decisionHandler, gapHandler, historyHandler, ideasHandler, longTailHandler, intentHandler, metricsHandler, overviewHandler, previewHandler, relatedHandler, trendsExploreHandler, trendsExplorePreviewHandler, trendsGetHandler, trendsHandler, trendsListHandler, } from './keyword-research.controller.js';
+import { clustersDetailHandler, clustersListHandler, clustersRunHandler, decisionHandler, gapHandler, historyHandler, historyResultsHandler, ideasHandler, longTailHandler, intentHandler, metricsHandler, overviewHandler, previewHandler, relatedHandler, trendsExploreHandler, trendsExplorePreviewHandler, trendsGetHandler, trendsHandler, trendsListHandler, } from './keyword-research.controller.js';
 import { createBatchRateLimiter } from '../../shared/middleware/rate-limit.js';
 /**
  * Keyword research routes. Every route sits behind the app-level
@@ -19,6 +19,9 @@ keywordResearchRouter.post('/overview', overviewHandler);
 keywordResearchRouter.post('/trends', trendsHandler);
 keywordResearchRouter.post('/preview', previewHandler);
 keywordResearchRouter.get('/history', historyHandler);
+// Stored read: re-open one history row's results from the shared cache. It
+// never reaches a provider and writes no history row.
+keywordResearchRouter.get('/history/:id/results', historyResultsHandler);
 // Cited AI clustering pass over stored keyword rows. `POST` runs
 // (or free-reads on identical rerun); the two GET routes are free reads of
 // stored run data, scoped to the calling account (cross-account 404).

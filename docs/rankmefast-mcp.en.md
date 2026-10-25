@@ -37,8 +37,6 @@ RankMeFast has a remote [Model Context Protocol (MCP)](https://modelcontextproto
 
 > Treat the key like a password. Keep it in an environment variable, a password prompt, or user-level config, and never commit it to a repository. You can narrow each key's scopes (see below), and remember that `start_audit` uses your monthly audit allowance.
 
-MCP access is included with Starter, Pro, and Agency. Agency keys also work with the read-only public REST API.
-
 ## Control permissions and key scopes
 
 Open [Settings → MCP](/profile?tab=mcp) to manage the account defaults shared by MCP and the signed-in AI Assistant:
@@ -386,7 +384,7 @@ Store this as user-level configuration and do not commit the key. Follow GitHub'
 
 ## Available RankMeFast tools
 
-| Tool | What it does | Uses plan allowance? |
+| Tool | What it does | Spends vendor budget? |
 | --- | --- | --- |
 | `list_sites` | Lists sites owned by your account | No |
 | `get_latest_audit_report` | Returns the latest completed audit for a site | No |
@@ -394,12 +392,37 @@ Store this as user-level configuration and do not commit the key. Follow GitHub'
 | `get_rank_history` | Returns keyword rank history for a site | No |
 | `list_content_analyses` | Lists Content Intelligence analyses | No |
 | `get_content_analysis` | Returns one Content Intelligence analysis | No |
-| `start_audit` | Starts a site audit, within your plan's page cap | **Yes, one audit** |
+| `start_audit` | Starts a site audit | **Yes, one crawl** |
 | `get_audit_status` | Checks an audit run | No |
 | `list_actions` | Lists the prioritized next actions for a site | No |
 | `set_action_state` | Marks an action planned, dismissed, completed, or open | No |
+| `get_gsc_search_summary` | Search Console clicks, impressions, click-through rate, and position for 7, 28, or 90 days | No |
+| `list_gsc_top_queries` | Top stored Search Console searches for a site and range | No |
+| `list_gsc_top_pages` | Top stored Search Console pages for a site and range | No |
+| `get_ga4_summary` | Google Analytics 4 sessions, users, and key events for 7, 28, or 90 days | No |
+| `list_pages` | Lists the stored pages inventory with each page's crawl state | No |
+| `get_page_detail` | Returns the stored detail for one page | No |
+| `get_backlinks_summary` | Returns total backlinks and distinct referring domains for a site | No |
+| `list_backlinks` | Lists stored backlinks, one per referring domain | No |
+| `list_competitors` | Lists a site's competitor portfolio, active and archived | No |
+| `get_ai_visibility_summary` | Returns AI Visibility prompts, latest checks, and share of voice | No |
+| `get_local_seo_summary` | Returns the Local SEO profile snapshot and local-pack ranks | No |
+| `get_reviews_summary` | Returns review sources, rating stats, and stored themes | No |
+| `list_client_reports` | Lists a site's client reports, schedules, and deliveries | No |
 
 Everything is scoped to the account that owns the key, so a site, analysis, or run ID from another account returns not found. If a tool you expect is missing, check permissions before debugging the connection.
+
+## Reading stored data
+
+The tools added after the first ten only read data RankMeFast has already stored. They do not call Google or any other vendor, do not refresh anything, and do not start a job.
+
+- **Scope is named.** Search Console and Google Analytics results include the `range` (7d, 28d, or 90d), the start and end dates, the `asOf` date, and the source, so an answer such as "clicks in the last 28 days" can quote exactly what it covers. The site total and the searches, pages, countries, and devices tables can differ, and the result says why.
+- **Missing data is explicit.** If Google is not connected, a property is not linked, or no snapshot exists yet, the result has `status: "unavailable"` or `"empty"` with a plain reason. It never returns zeros in place of missing data.
+- **Permissions apply at call time.** The account toggles under **Settings → MCP**, the key's own scopes, and the allowed-sites lists are checked on every call. A site you cannot reach, or that belongs to another account, is returned as not found.
+- **New tools start allowed.** They follow the same default as the other read tools, and permission settings saved before they existed keep working unchanged.
+- **Results are bounded.** Lists return at most 100 rows and a result stays small; when rows are cut, the result says `truncated: true`.
+
+The [AI Assistant](./ai-assistant.en.md) uses the same tools and the same permissions. In a conversation linked to a site, it uses that site directly and does not need to list your sites first.
 
 ## Troubleshooting
 
@@ -408,7 +431,6 @@ Everything is scoped to the account that owns the key, so a site, analysis, or r
 - **A site returns not found:** confirm that the account and key scopes both allow it. Blocked and non-owned sites intentionally use the same response.
 - **Spending is not allowed:** allow `start_audit` and spending actions at both levels, or keep it disabled for a read-only client.
 - **401 Unauthorized:** use the exact `Authorization: Bearer rmf_…` header. The key may be mistyped, revoked, or attached to an inactive account.
-- **402 Upgrade required:** MCP needs Starter, Pro, or Agency. See [Plans, limits & credits](./plans-limits-credits.en.md).
 - **405 Method not allowed in a browser:** this is expected because the endpoint accepts MCP `POST` requests, not ordinary browser `GET` requests.
 - **429 Too many requests:** wait for the rate-limit window shown in the response headers, then retry.
 - **503 Unavailable:** MCP is disabled or temporarily unavailable on that RankMeFast installation; ask its operator.
@@ -418,13 +440,13 @@ To replace a key, create a new one, update and verify every client, then revoke 
 
 ## Compatibility
 
-This release has the ten tools listed above. Eight are read-only, `set_action_state` writes but costs nothing, and `start_audit` is the only one that spends plan allowance. Brand Radar, Review Intelligence, Link Intelligence, Traffic Insights, and Keyword Trends have no MCP tools. Changes are additive: existing tool names and argument shapes stay the same, and new tools may appear as features ship.
+This release has the 23 tools listed above. 21 are read-only, `set_action_state` writes but costs nothing, and `start_audit` is the only one that spends vendor budget. Brand Radar, Review Intelligence, Link Intelligence, Traffic Insights, and Keyword Trends have no MCP tools. Changes are additive: existing tool names and argument shapes stay the same, and new tools may appear as features ship.
 
-<!-- mcp-tools: list_sites; get_latest_audit_report; list_keywords; get_rank_history; list_content_analyses; get_content_analysis; start_audit; get_audit_status; list_actions; set_action_state -->
+<!-- mcp-tools: list_sites; get_latest_audit_report; list_keywords; get_rank_history; list_content_analyses; get_content_analysis; start_audit; get_audit_status; list_actions; set_action_state; get_gsc_search_summary; list_gsc_top_queries; list_gsc_top_pages; get_ga4_summary; list_pages; get_page_detail; get_backlinks_summary; list_backlinks; list_competitors; get_ai_visibility_summary; get_local_seo_summary; get_reviews_summary; list_client_reports -->
 
 ## Related guides
 
 - [AI Assistant](./ai-assistant.en.md): use the same approved tools in RankMeFast chat.
-- [Public API](./public-api.en.md): the Agency-only read API.
+- [Public API](./public-api.en.md): the read-only API.
 - [Content Intelligence](./content-intelligence.en.md): understand the analysis data returned by MCP.
 - [Account security](./settings-security.en.md): keep your account and keys safe.

@@ -31,14 +31,22 @@ import {
   selectLocalSeoCooldownUntil,
   selectLocalSeoRefreshError,
 } from './index';
-import type { LocalSeoRefreshResult, LocalSeoSnapshot } from './types';
+import type {
+  LocalBusinessCandidate,
+  LocalBusinessSetup,
+  LocalSeoRefreshResult,
+  LocalSeoSnapshot,
+} from './types';
 
 vi.mock('./api', () => ({
   fetchLocalSeo: vi.fn(),
   refreshLocalSeo: vi.fn(),
+  fetchLocalBusinessSetup: vi.fn(),
+  searchLocalBusinessRequest: vi.fn(),
+  selectLocalBusinessRequest: vi.fn(),
 }));
 
-vi.mock('sonner', () => ({ toast: { error: vi.fn() } }));
+vi.mock('sonner', () => ({ toast: { error: vi.fn(), success: vi.fn() } }));
 
 const mocked = vi.mocked(api);
 
@@ -46,6 +54,7 @@ const makeStore = () =>
   configureStore({ reducer: { localSeo: localSeoReducer } });
 
 const snapshot = (overrides: Partial<LocalSeoSnapshot> = {}): LocalSeoSnapshot => ({
+  provenance: { kind: 'business', name: 'Acme Corp', ref: 'place_id:ChIJacme' },
   listings: [
     {
       source: 'Google Business',
@@ -84,6 +93,7 @@ const snapshot = (overrides: Partial<LocalSeoSnapshot> = {}): LocalSeoSnapshot =
 const refreshResult = (
   overrides: Partial<LocalSeoRefreshResult> = {},
 ): LocalSeoRefreshResult => ({
+  provenance: { kind: 'business', name: 'Acme Corp', ref: 'place_id:ChIJacme' },
   fetchedAt: '2026-07-02T00:00:00.000Z',
   listings: [
     {
@@ -99,6 +109,46 @@ const refreshResult = (
   ...overrides,
 });
 
+const candidate = (overrides: Partial<LocalBusinessCandidate> = {}): LocalBusinessCandidate => ({
+  candidateId: '11111111-1111-4111-8111-111111111111',
+  placeId: 'ChIJacme',
+  cid: null,
+  name: 'Acme Corp',
+  address: '123 Main St',
+  phone: '+1-555-0100',
+  domain: 'acme.example',
+  category: 'Plumber',
+  latitude: 30.2672,
+  longitude: -97.7431,
+  ...overrides,
+});
+
+const selectedSetup = (overrides: Partial<LocalBusinessSetup> = {}): LocalBusinessSetup => {
+  const { candidateId: _id, ...business } = candidate();
+  return {
+    selected: { ...business, locationCode: 2840, languageCode: 'en', selectedAt: '2026-07-01T00:00:00.000Z' },
+    candidates: [],
+    query: null,
+    candidatesExpireAt: null,
+    ...overrides,
+  };
+};
+
+const emptySetup = (): LocalBusinessSetup => ({
+  selected: null,
+  candidates: [],
+  query: null,
+  candidatesExpireAt: null,
+});
+
+/** Refresh waits for the saved business to load: wait, then click. */
+async function refresh() {
+  const button = await screen.findByTestId('local-seo-refresh');
+  await waitFor(() => expect(button).toBeEnabled());
+  await userEvent.click(button);
+  return button;
+}
+
 const withProviders = (ui: React.ReactNode, store = makeStore()) =>
   render(
     <Provider store={store}>
@@ -113,6 +163,9 @@ beforeEach(async () => {
   await changeLanguage('en');
   mocked.fetchLocalSeo.mockReset();
   mocked.refreshLocalSeo.mockReset();
+  mocked.fetchLocalBusinessSetup.mockReset().mockResolvedValue(selectedSetup());
+  mocked.searchLocalBusinessRequest.mockReset();
+  mocked.selectLocalBusinessRequest.mockReset();
 });
 
 afterEach(() => vi.restoreAllMocks());
@@ -430,6 +483,53 @@ describe('api helpers', async () => {
   });
 });
 
+describe('business setup api helpers', async () => {
+  const realApi = await vi.importActual<typeof import('./api')>('./api');
+
+  /** Answers every request with JSON; CSRF bootstrap calls get a token. */
+  function stubFetch(body: unknown) {
+    return vi.spyOn(globalThis, 'fetch').mockImplementation(async (input: RequestInfo | URL) =>
+      new Response(JSON.stringify(String(input).includes('csrf') ? { csrfToken: 'tok' } : body), {
+        status: 200,
+        headers: { 'content-type': 'application/json' },
+      }),
+    );
+  }
+
+  function callTo(spy: ReturnType<typeof stubFetch>, path: string) {
+    const call = spy.mock.calls.find(([input]) => String(input).includes(path));
+    expect(call).toBeDefined();
+    return call![1] as RequestInit;
+  }
+
+  it('reads setup with GET', async () => {
+    const spy = stubFetch(emptySetup());
+    await realApi.fetchLocalBusinessSetup('s');
+    expect(callTo(spy, '/sites/s/local-seo/business').method ?? 'GET').toBe('GET');
+  });
+
+  it('searches with POST and saves with PUT', async () => {
+    const spy = stubFetch(emptySetup());
+    await realApi.searchLocalBusinessRequest('s', 'Acme');
+    const search = callTo(spy, '/sites/s/local-seo/business/search');
+    expect(search.method).toBe('POST');
+    expect(JSON.parse(String(search.body))).toEqual({ query: 'Acme' });
+    spy.mockClear();
+    await realApi.selectLocalBusinessRequest('s', 'cand-1');
+    const select = callTo(spy, '/sites/s/local-seo/business');
+    expect(select.method).toBe('PUT');
+    expect(JSON.parse(String(select.body))).toEqual({ candidateId: 'cand-1' });
+  });
+
+  it('searches places with POST', async () => {
+    const spy = stubFetch({ query: 'x', places: [] });
+    await realApi.searchLocalPlacesRequest('s', 'Main St');
+    const search = callTo(spy, '/sites/s/local-seo/places/search');
+    expect(search.method).toBe('POST');
+    expect(JSON.parse(String(search.body))).toEqual({ query: 'Main St' });
+  });
+});
+
 // ---------------------------------------------------------------------------
 // Refresh thunk + slice
 // ---------------------------------------------------------------------------
@@ -657,19 +757,21 @@ describe('LocalSeoPanel', () => {
     await waitFor(() => {
       expect(screen.getByTestId('local-seo-empty')).toBeInTheDocument();
     });
-    // Empty renders a title, description, and a refresh CTA.
+    // Empty renders a title and a description that points at the single
+    // header refresh button — no second CTA doing the same thing.
     expect(screen.getByText(i18n.t('localSeo:emptyTitle'))).toBeInTheDocument();
-    expect(screen.getByTestId('local-seo-empty-refresh')).toBeInTheDocument();
+    expect(screen.getByTestId('local-seo-empty')).toHaveTextContent('Refresh Local SEO');
+    expect(screen.getAllByRole('button', { name: /Refresh Local SEO|Fetch local data/ })).toHaveLength(1);
   });
 
-  it('empty-state CTA dispatches a Local SEO refresh', async () => {
+  it('the header refresh button fetches Local SEO from the empty state', async () => {
     mocked.fetchLocalSeo.mockResolvedValueOnce(
       snapshot({ listings: [], reviews: null, reviewsFetchedAt: null, localPack: [] }),
     );
     mocked.refreshLocalSeo.mockResolvedValueOnce(refreshResult());
     withProviders(<LocalSeoPanel siteId="site-1" />);
-    const cta = await screen.findByTestId('local-seo-empty-refresh');
-    await userEvent.click(cta);
+    await screen.findByTestId('local-seo-empty');
+    await refresh();
     await waitFor(() =>
       expect(mocked.refreshLocalSeo).toHaveBeenCalledWith('site-1'),
     );
@@ -805,13 +907,13 @@ describe('LocalSeoPanel refresh button', () => {
     mocked.refreshLocalSeo.mockResolvedValueOnce(refreshResult());
     withProviders(<LocalSeoPanel siteId="site-9" />);
     const button = await screen.findByTestId('local-seo-refresh');
-    expect(button).toBeEnabled();
+    await waitFor(() => expect(button).toBeEnabled());
     expect(button).toHaveAccessibleName(i18n.t('localSeo:refresh.button'));
-    await userEvent.click(button);
+    await refresh();
     await waitFor(() =>
       expect(mocked.refreshLocalSeo).toHaveBeenCalledWith('site-9'),
     );
-    expect(button).toBeEnabled();
+    await waitFor(() => expect(button).toBeEnabled());
   });
 
   it('disables and spins while the refresh is in flight', async () => {
@@ -821,8 +923,7 @@ describe('LocalSeoPanel refresh button', () => {
       () => new Promise((resolve) => (resolveRefresh = resolve)),
     );
     withProviders(<LocalSeoPanel siteId="site-9" />);
-    const button = await screen.findByTestId('local-seo-refresh');
-    await userEvent.click(button);
+    const button = await refresh();
     await waitFor(() => expect(button).toBeDisabled());
     expect(button.querySelector('svg')).toHaveClass('animate-spin');
     resolveRefresh(refreshResult());
@@ -837,7 +938,7 @@ describe('LocalSeoPanel refresh button', () => {
       }),
     );
     withProviders(<LocalSeoPanel siteId="site-9" />);
-    await userEvent.click(await screen.findByTestId('local-seo-refresh'));
+    await refresh();
     const button = await screen.findByTestId('local-seo-refresh');
     await waitFor(() => expect(button).toBeDisabled());
     expect(button).toHaveTextContent(/Refresh in (20|19)s/);
@@ -850,7 +951,7 @@ describe('LocalSeoPanel refresh button', () => {
     );
     withProviders(<LocalSeoPanel siteId="site-9" />);
     await screen.findByText('Google Business');
-    await userEvent.click(await screen.findByTestId('local-seo-refresh'));
+    await refresh();
     await waitFor(() => expect(toast.error).toHaveBeenCalledWith('vendor down'));
     expect(screen.getByText('Google Business')).toBeInTheDocument();
   });
@@ -870,7 +971,7 @@ describe('LocalSeoPanel refresh button', () => {
       </>,
     );
     const before = search;
-    await userEvent.click(await screen.findByTestId('local-seo-refresh'));
+    await refresh();
     await waitFor(() => expect(mocked.refreshLocalSeo).toHaveBeenCalled());
     expect(search).toBe(before);
     expect(search).not.toContain('refresh');

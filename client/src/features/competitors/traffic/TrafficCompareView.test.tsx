@@ -225,6 +225,17 @@ describe('TrafficCompareView', () => {
     expect(screen.getAllByText('—').length).toBeGreaterThan(0);
   });
 
+  it('says no country data was kept when no compared snapshot has countries', async () => {
+    mockedApiClient.mockResolvedValueOnce({
+      snapshots: [snapshot(1), snapshot(2)],
+      axes: { countryCodes: [] },
+    });
+    renderCompare([snapshot(1).id, snapshot(2).id]);
+    expect(await screen.findByTestId('traffic-compare-country-empty')).toHaveTextContent(
+      'No country data was kept for these snapshots.',
+    );
+  });
+
   it('uses the unknown-country label when an axis code cannot be localized', async () => {
     mockedApiClient.mockResolvedValueOnce({
       snapshots: [snapshot(1), snapshot(2)],

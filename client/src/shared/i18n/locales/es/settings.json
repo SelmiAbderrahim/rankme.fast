@@ -86,28 +86,48 @@
     "saving": "Guardando permisos…",
     "saved": "Permisos de MCP guardados.",
     "retry": "Intentar de nuevo",
-    "locked": {
-      "title": "Conecta MCP con Starter o un plan superior",
-      "description": "Mejora tu plan para crear claves de API y conectar RankMeFast con un cliente MCP.",
-      "cta": "Ver planes"
-    },
     "tools": {
       "title": "Herramientas permitidas",
       "description": "Desactiva las herramientas que los clientes MCP y el Asistente no deban usar.",
+      "readNote": "Las herramientas que solo leen datos almacenados nunca inician rastreos ni consultas. Devuelven lo que ya está guardado e indican cuándo falta algo.",
+      "groups": {
+        "sites": "Sitios y auditorías",
+        "rankings": "Palabras clave y posiciones",
+        "content": "Análisis de contenido",
+        "actions": "Próximas acciones",
+        "search": "Search Console y analítica",
+        "pages": "Páginas",
+        "links": "Backlinks y competidores",
+        "visibility": "Visibilidad en IA, SEO local y reseñas",
+        "reports": "Informes de clientes"
+      },
       "list_sites": { "name": "Listar sitios", "description": "Ver los sitios de esta cuenta." },
       "get_latest_audit_report": { "name": "Obtener el último informe de auditoría", "description": "Leer la auditoría completada más reciente de un sitio." },
       "list_keywords": { "name": "Listar palabras clave", "description": "Ver las palabras clave seguidas de un sitio." },
       "get_rank_history": { "name": "Obtener historial de posiciones", "description": "Leer posiciones recientes de palabras clave seguidas." },
       "list_content_analyses": { "name": "Listar análisis de contenido", "description": "Ver análisis de Content Intelligence de un sitio." },
       "get_content_analysis": { "name": "Obtener análisis de contenido", "description": "Leer un análisis de Content Intelligence." },
-      "start_audit": { "name": "Iniciar auditoría", "description": "Iniciar una auditoría que usa la cuota mensual de la cuenta." },
+      "start_audit": { "name": "Iniciar auditoría", "description": "Iniciar una auditoría nueva. Rastrea el sitio con el proveedor configurado, por lo que el gasto debe estar permitido." },
       "get_audit_status": { "name": "Obtener estado de auditoría", "description": "Comprobar si una auditoría está en cola, en curso o completada." },
       "list_actions": { "name": "Listar próximas acciones", "description": "Leer la lista priorizada de arreglos de un sitio, con el estado de cada elemento." },
-      "set_action_state": { "name": "Actualizar una acción", "description": "Marcar una acción como planificada, descartada, completada o abierta de nuevo." }
+      "set_action_state": { "name": "Actualizar una acción", "description": "Marcar una acción como planificada, descartada, completada o abierta de nuevo." },
+      "get_gsc_search_summary": { "name": "Obtener resumen de Search Console", "description": "Lee los clics, impresiones, CTR y posición almacenados de los últimos 7, 28 o 90 días." },
+      "list_gsc_top_queries": { "name": "Listar las búsquedas principales", "description": "Lee las principales búsquedas de Search Console almacenadas de un sitio." },
+      "list_gsc_top_pages": { "name": "Listar las páginas principales de búsqueda", "description": "Lee las principales páginas de Search Console almacenadas de un sitio." },
+      "get_ga4_summary": { "name": "Obtener resumen de Analytics", "description": "Lee las sesiones, usuarios y eventos clave de Google Analytics 4 almacenados." },
+      "list_pages": { "name": "Listar páginas", "description": "Consulta el inventario de páginas almacenado y el estado de rastreo de un sitio." },
+      "get_page_detail": { "name": "Obtener detalle de una página", "description": "Lee las evidencias de rastreo y las métricas almacenadas de una página." },
+      "get_backlinks_summary": { "name": "Obtener resumen de backlinks", "description": "Lee los recuentos almacenados de backlinks y dominios de referencia." },
+      "list_backlinks": { "name": "Listar backlinks", "description": "Consulta los backlinks almacenados, uno por dominio de referencia." },
+      "list_competitors": { "name": "Listar competidores", "description": "Consulta la cartera de competidores de un sitio." },
+      "get_ai_visibility_summary": { "name": "Obtener resumen de Visibilidad en IA", "description": "Lee las comprobaciones de respuestas de IA y la cuota de voz almacenadas." },
+      "get_local_seo_summary": { "name": "Obtener resumen de SEO local", "description": "Lee el perfil de negocio almacenado y las posiciones del paquete local." },
+      "get_reviews_summary": { "name": "Obtener resumen de reseñas", "description": "Lee las fuentes de reseñas, valoraciones y temas almacenados." },
+      "list_client_reports": { "name": "Listar informes de clientes", "description": "Consulta programaciones, entregas y estado del portal. Sin archivos ni enlaces." }
     },
     "spend": {
       "title": "Acciones que consumen cuota",
-      "label": "Permitir herramientas que usan la cuota del plan",
+      "label": "Permitir herramientas que gastan el presupuesto del proveedor",
       "description": "Si se desactiva, las herramientas como Iniciar auditoría quedan bloqueadas aunque su control esté activo."
     },
     "sites": {
@@ -121,7 +141,7 @@
     },
     "quickStart": {
       "title": "Inicio rápido",
-      "description": "Crea una clave de API y copia el endpoint o una configuración de cliente lista para usar.",
+      "description": "Crea una clave de API y guárdala en la variable de entorno {{envVar}}. Las dos configuraciones de abajo leen la clave de esa variable.",
       "endpoint": "Endpoint de MCP",
       "copyEndpoint": "Copiar endpoint de MCP",
       "copy": "Copiar",

@@ -23,7 +23,7 @@ Ein Abschnitt ohne gespeicherte Momentaufnahme wird als noch nicht beobachtet ma
 
 ## Zeitpläne
 
-Berichte gehen wöchentlich oder monatlich per E-Mail hinaus. Das Zustellprotokoll hat einen Eintrag je Empfänger: ausstehend, gesendet, fehlgeschlagen oder unterdrückt.
+Berichte gehen wöchentlich oder monatlich per E-Mail hinaus. Das Zustellprotokoll hat einen Eintrag je Empfänger: ausstehend, gesendet, fehlgeschlagen oder unterdrückt. Sie wählen die Zeitzone und die Uhrzeit in dieser Zone, und der Zeitplan behält diese Ortszeit bei, wenn die Uhren auf Sommer- oder Winterzeit umgestellt werden.
 
 Erstellen und Versenden ruft keinen Anbieter auf und verbraucht keine abgerechnete Einheit. Die Kosten entstehen in unserer eigenen Infrastruktur, deshalb begrenzen strukturelle Limits sie stattdessen.
 

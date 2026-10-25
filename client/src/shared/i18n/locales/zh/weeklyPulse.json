@@ -1,14 +1,15 @@
 {
   "card": {
     "title": "每周脉搏",
-    "description": "每个站点一份确定的每周摘要 — 新增/丢失引用、已确认排名下降、行动变化以及接下来的三个行动。每个站点每周消耗一次 AI 提及检查。",
-    "unitDisclosure": "每个站点每周一次 AI 提及检查。",
+    "description": "此站点的每周摘要：新增和丢失的 AI 引用、已确认的排名下降、行动清单的变化，以及接下来的三个行动。",
+    "unitDisclosure": "此站点每周运行一次 AI 提及检查。",
     "nextRun": "下次运行:{{when}}",
     "lastRun": "上次运行:{{when}}",
     "lastStatus": "上次状态:{{status}}",
     "enableCta": "开启每周脉搏",
+    "enableHint": "请先预览运行，然后才能开启每周脉搏。",
     "disableCta": "关闭每周脉搏",
-    "previewCta": "预览支出",
+    "previewCta": "预览运行",
     "historyLink": "查看历史摘要"
   },
   "status": {
@@ -23,7 +24,7 @@
   },
   "confirm": {
     "enableTitle": "开启每周脉搏?",
-    "enableBody": "计划任务将为该站点每周消耗一次 AI 提及检查。",
+    "enableBody": "计划任务将为该站点每周运行一次 AI 提及检查。",
     "enableAck": "我了解并希望接收每周脉搏。",
     "disableTitle": "关闭每周脉搏?",
     "disableBody": "您将不再收到摘要。历史记录仍可查看。",
@@ -65,10 +66,8 @@
     "openLabel": "打开 {{isoWeek}} 的脉搏"
   },
   "preview": {
-    "title": "支出预览",
-    "productUnits": "每周 1 次 AI 提及检查",
-    "remaining": "本月剩余:{{remaining}}",
-    "capBlocked": "您的套餐已耗尽。启用将失败 — 请升级或购买信用额度以解锁。"
+    "title": "运行预览",
+    "productUnits": "每周一次 AI 提及检查。"
   },
   "gsc": {
     "title": "Google 生成式 AI 展示",

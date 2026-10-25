@@ -1,6 +1,5 @@
 {
-  "eyebrow": "Hinweise aus dem gespeicherten Inventar",
-  "title": "Vorschläge für interne Links",
+  "title": "Interne Links",
   "subtitle": "Prüfen Sie Verknüpfungen zwischen Quell- und Zielseiten aus dem neuesten Inhaltsinventar und gespeicherten Search-Console-Daten. An der Website wird nichts geändert.",
   "site": {
     "inventoryLink": "Inhaltsinventar öffnen"
@@ -11,12 +10,9 @@
   },
   "newRun": {
     "title": "Vorschlagslauf vorbereiten",
-    "description": "Prüfen Sie den genauen Inventarstand und das Kontingent, bevor ein Lauf verbraucht wird.",
+    "description": "Prüfen Sie den genauen Inventarstand, bevor der Lauf startet.",
     "guidanceOnly": "Die Vorschläge dienen nur als Orientierung. RankMeFast ändert weder Ihr CMS noch den HTML-Code Ihrer Seiten.",
-    "unitLabel": "Kontingent",
-    "unitValue": "{{count}} Lauf für interne Links",
     "inventoryLabel": "Inventarstand",
-    "remaining": "Vor diesem Lauf sind noch {{count}} Läufe verfügbar.",
     "preview": "Lauf prüfen",
     "previewing": "Inventar wird geprüft…",
     "confirm": "Vorschlagslauf starten",
@@ -28,11 +24,13 @@
     "planCta": "Tarife ansehen",
     "emptyRuns": {
       "title": "Noch keine gespeicherten Läufe",
-      "body": "Prüfen Sie einen neuen Lauf, um den verwendeten Inventarstand zu sehen."
+      "body": "Prüfen Sie einen neuen Lauf, um den verwendeten Inventarstand zu sehen.",
+      "action": "Durchlauf starten"
     },
     "emptySuggestions": {
-      "title": "Keine passenden Vorschläge",
-      "body": "Der Lauf fand keine geeigneten Paare oder die Filter in der URL blenden sie aus."
+      "title": "Keine Vorschläge passen zu diesen Filtern",
+      "body": "Setzen Sie die Filter zurück, um alle Vorschläge dieses Durchlaufs zu sehen.",
+      "action": "Filter zurücksetzen"
     },
     "missing": {
       "title": "Inhaltsinventar erforderlich",
@@ -65,14 +63,20 @@
     "running": {
       "title": "Vorschläge werden erstellt",
       "body": "Gespeicherte Kandidaten werden sortiert und Ankertexte entworfen. Die Ansicht wird automatisch aktualisiert."
+    },
+    "inventoryRunCta": "Inhaltsinventar ausführen",
+    "inventoryDifference": "Der Tab „Seiten“ listet die Seiten aus Ihrem Website-Audit; Vorschläge benötigen ein Inhaltsinventar, das den Text jeder Seite liest.",
+    "noSuggestions": {
+      "title": "Keine Vorschläge in diesem Durchlauf",
+      "body": "Dieser Durchlauf hat keine Seitenpaare gefunden, die sich zu verlinken lohnen. Aktualisieren Sie Ihr Content-Inventar und starten Sie dann einen neuen Durchlauf.",
+      "action": "Neuen Durchlauf starten"
     }
   },
   "status": {
     "queued": "Eingereiht",
     "processing": "In Bearbeitung",
     "completed": "Abgeschlossen",
-    "failed": "Fehlgeschlagen",
-    "refunded": "Lauf zurückgegeben"
+    "failed": "Fehlgeschlagen"
   },
   "runs": {
     "snapshot": "Inventar: {{date}}",
@@ -103,7 +107,7 @@
     "codeFixProblem": "Ein relevanter interner Link fehlt.",
     "codeFixWhy": "Die Zielseite hat wenige eingehende interne Links und teilt relevanten Such- oder Überschriftenkontext mit der Quellseite.",
     "codeFixRecommendation": "Fügen Sie den Link im passendsten Abschnitt der Quellseite ein und verwenden Sie den vorgeschlagenen Ankertext, wenn er sich natürlich liest.",
-    "fallback": "Die KI-Sortierung war nicht verfügbar oder wurde verworfen. Stattdessen werden deterministische Kandidaten mit Belegen angezeigt."
+    "fallback": "Die KI-Sortierung war nicht verfügbar oder wurde verworfen, daher stammen diese Vorschläge aus festen Regeln und den Daten Ihrer Website."
   },
   "evidence": {
     "title": "Warum dieses Paar vorgeschlagen wurde",

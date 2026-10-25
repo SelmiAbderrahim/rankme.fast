@@ -9,8 +9,9 @@ import { KeywordIntelligenceWorkspace } from './KeywordIntelligenceWorkspace';
  * Route entrypoint (`/keyword-research`, no siteId) and site-workspace panel
  * (`?tab=research`, siteId set → the panel shows its track-keyword action).
  *
- * On mount it loads the account's recent research history, which populates
- * the "Recent research" list the panel shows. The read is free (Postgres), so
+ * On mount it loads the recent research history (the account's on the
+ * standalone route, only that site's own lookups on a site's Research tab),
+ * which populates the "Recent research" list the panel shows. The read is free (Postgres), so
  * we refetch on every mount for freshness.
  *
  * The STANDALONE route renders the keyword-intelligence workspace
@@ -21,8 +22,10 @@ import { KeywordIntelligenceWorkspace } from './KeywordIntelligenceWorkspace';
 export const KeywordResearchPage = ({ siteId }: { siteId?: string | null }) => {
   const dispatch = useAppDispatch();
   useEffect(() => {
-    void dispatch(loadHistory({}));
-  }, [dispatch]);
+    // A site's Research tab lists only that site's lookups; the standalone
+    // route keeps the account-wide list.
+    void dispatch(loadHistory(siteId ? { siteId } : {}));
+  }, [dispatch, siteId]);
 
   useEffect(() => {
     if (!siteId) return;

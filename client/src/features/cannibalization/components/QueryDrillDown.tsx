@@ -6,6 +6,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@shar
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@shared/ui/table';
 import { TableHeaderHelp } from '@shared/ui/table-header-help';
 import type { CannibalizationCandidate } from '../types';
+import { formatAbsoluteDate } from '@shared/lib/datetime';
 
 interface QueryDrillDownProps {
   candidate: CannibalizationCandidate;
@@ -30,7 +31,7 @@ export const QueryDrillDown = ({ candidate }: QueryDrillDownProps) => {
         <CardDescription>
           {t('drilldown.provenance', {
             days: candidate.windowDays,
-            date: candidate.snapshotDate,
+            date: formatAbsoluteDate(candidate.snapshotDate, i18n.language),
           })}
         </CardDescription>
       </CardHeader>

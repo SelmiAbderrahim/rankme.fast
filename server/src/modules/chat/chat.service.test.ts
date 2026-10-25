@@ -8,6 +8,7 @@ import {
   stopMemoryMongo,
 } from '../../shared/testing/mongo.js';
 import { HttpError } from '../../shared/utils/http-error.js';
+import { DICTIONARIES } from '../../shared/i18n/index.js';
 import { Site } from '../sites/index.js';
 import { ChatConversation, ChatMessage } from './chat.models.js';
 import { resolveOwnedConversationSiteId } from './chat.service.js';
@@ -193,14 +194,37 @@ describe('list / get / delete', () => {
 });
 
 describe('appendUserMessage', () => {
-  it('derives the title from the FIRST user message only, truncated to 120 chars', async () => {
+  it('derives a bounded title from the FIRST user message only', async () => {
     const conversation = await createConversation({ accountId: ACCOUNT, locale: 'en' });
     const long = 'q'.repeat(300);
     const first = await appendUserMessage(ACCOUNT, conversation.id, long);
-    expect(first.conversation.title).toBe('q'.repeat(120));
+    expect(first.conversation.title).toBe(`Q${'q'.repeat(59)}\u2026`);
+    expect(first.conversation.title.length).toBeLessThanOrEqual(120);
     const second = await appendUserMessage(ACCOUNT, conversation.id, 'later message');
-    expect(second.conversation.title).toBe('q'.repeat(120));
+    expect(second.conversation.title).toBe(first.conversation.title);
     expect(second.conversation.messageCount).toBe(2);
+  });
+
+  it('gives two conversations from the same starter prompt different titles', async () => {
+    const siteA = await insertSite(ACCOUNT, 'alpha.example.com');
+    const siteB = await insertSite(ACCOUNT, 'beta.example.com');
+    const starter = 'Please summarize the most important issues. Thanks!';
+    const a = await createConversation({ accountId: ACCOUNT, siteId: String(siteA._id), locale: 'en' });
+    const b = await createConversation({ accountId: ACCOUNT, siteId: String(siteB._id), locale: 'en' });
+    const c = await createConversation({ accountId: ACCOUNT, siteId: String(siteB._id), locale: 'en' });
+    const titleA = (await appendUserMessage(ACCOUNT, a.id, starter)).conversation.title;
+    const titleB = (await appendUserMessage(ACCOUNT, b.id, starter)).conversation.title;
+    const titleC = (await appendUserMessage(ACCOUNT, c.id, starter)).conversation.title;
+    expect(titleA).toBe('Summarize the most important issues \u00b7 alpha.example.com');
+    expect(titleB).toBe('Summarize the most important issues \u00b7 beta.example.com');
+    expect(titleC).toBe('Summarize the most important issues \u00b7 beta.example.com \u00b7 2');
+    expect(new Set([titleA, titleB, titleC]).size).toBe(3);
+  });
+
+  it('falls back to the localized untitled title for emoji-only input', async () => {
+    const conversation = await createConversation({ accountId: ACCOUNT, locale: 'fr' });
+    const result = await appendUserMessage(ACCOUNT, conversation.id, '\u{1F680}\u{1F680}');
+    expect(result.conversation.title).toBe('Nouvelle conversation');
   });
 
   it('returns the linked-site domain, null when unlinked, and 404 once the site is removed', async () => {
@@ -252,6 +276,117 @@ describe('appendUserMessage', () => {
     await expect(
       appendUserMessage(ACCOUNT, conversation.id, 'one too many'),
     ).rejects.toMatchObject({ status: 409, message: 'chat.errors.conversationFull' });
+  });
+});
+
+describe('legacy conversation titles', () => {
+  const STARTER = 'Summarize the most important fixes from my latest audit.';
+
+  async function legacyConversation(input: {
+    title: string;
+    createdAt: Date;
+    siteId?: unknown;
+    parts?: Array<Record<string, unknown>> | null;
+    messageCount?: number;
+  }) {
+    // Raw insert: rows written before titles were versioned have no field.
+    const { insertedId } = await ChatConversation.collection.insertOne({
+      accountId: ACCOUNT,
+      siteId: input.siteId ?? null,
+      title: input.title,
+      locale: 'en',
+      lastMessageAt: input.createdAt,
+      messageCount: input.messageCount ?? 2,
+      createdAt: input.createdAt,
+      updatedAt: input.createdAt,
+    });
+    if (input.parts !== null) {
+      await ChatMessage.create({
+        conversationId: insertedId,
+        accountId: ACCOUNT,
+        role: 'user',
+        parts: input.parts ?? [{ type: 'text', text: STARTER }],
+      });
+    }
+    return String(insertedId);
+  }
+
+  it('retitles truncated duplicates from their first message, oldest first, unique, without touching order', async () => {
+    const site = await insertSite(ACCOUNT, 'rewards.example');
+    const ids = [];
+    for (let i = 0; i < 3; i += 1) {
+      ids.push(
+        await legacyConversation({
+          title: 'Summarize the most im\u2026',
+          createdAt: new Date(Date.UTC(2026, 9, 1 + i)),
+          siteId: site._id,
+        }),
+      );
+    }
+    const kept = await createConversation({ accountId: ACCOUNT, locale: 'en' });
+    await appendUserMessage(ACCOUNT, kept.id, 'Check my rankings');
+
+    const listed = await listConversations(ACCOUNT);
+    const byId = new Map(listed.map((c) => [c.id, c.title]));
+    expect(byId.get(ids[0]!)).toBe('Summarize the most important fixes from my latest audit \u00b7 rewards.example');
+    expect(byId.get(ids[1]!)).toBe('Summarize the most important fixes from my latest audit \u00b7 rewards.example \u00b7 2');
+    expect(byId.get(ids[2]!)).toBe('Summarize the most important fixes from my latest audit \u00b7 rewards.example \u00b7 3');
+    expect(byId.get(kept.id)).toBe('Check my rankings');
+    // Retitling never reorders the list or bumps activity.
+    expect(listed.map((c) => c.id)).toEqual([kept.id, ids[2], ids[1], ids[0]]);
+    const stored = await ChatConversation.findById(ids[0]).lean();
+    expect(stored).toMatchObject({ titleVersion: 1 });
+    expect(stored!.updatedAt.toISOString()).toBe('2026-10-01T00:00:00.000Z');
+
+    // Idempotent: a second read writes nothing and returns the same titles.
+    const spy = vi.spyOn(ChatConversation, 'updateOne');
+    const again = await listConversations(ACCOUNT);
+    expect(again.map((c) => c.title)).toEqual(listed.map((c) => c.title));
+    expect(spy).not.toHaveBeenCalled();
+    spy.mockRestore();
+  });
+
+  it('falls back to the untitled title when no readable first message is stored, and skips empty conversations', async () => {
+    const noMessage = await legacyConversation({ title: 'Old', createdAt: new Date('2026-10-01'), parts: null });
+    const toolOnly = await legacyConversation({
+      title: 'Old',
+      createdAt: new Date('2026-10-02'),
+      parts: [{ type: 'tool_call', toolCallId: 't', toolName: 'list_sites' }],
+    });
+    const empty = await legacyConversation({ title: '', createdAt: new Date('2026-10-03'), parts: null, messageCount: 0 });
+    const listed = new Map((await listConversations(ACCOUNT)).map((c) => [c.id, c.title]));
+    expect(listed.get(noMessage)).toBe('New conversation');
+    expect(listed.get(toolOnly)).toBe('New conversation \u00b7 2');
+    expect(listed.get(empty)).toBe('');
+  });
+
+  it('a site-scoped (MCP) listing never retitles', async () => {
+    const site = await insertSite(ACCOUNT, 'scoped.example');
+    const id = await legacyConversation({ title: 'Summarize the most im\u2026', createdAt: new Date('2026-10-01'), siteId: site._id });
+    const scoped = await listConversations(ACCOUNT, [String(site._id)]);
+    expect(scoped.find((c) => c.id === id)?.title).toBe('Summarize the most im\u2026');
+  });
+
+  it('keeps titles unique against conversations hidden because their site was removed', async () => {
+    const gone = await insertSite(ACCOUNT, 'gone.example');
+    await ChatConversation.create({
+      accountId: ACCOUNT,
+      siteId: gone._id,
+      title: 'Check my rankings',
+      titleVersion: 1,
+      locale: 'en',
+      lastMessageAt: new Date(),
+      messageCount: 1,
+    });
+    await Site.updateOne({ _id: gone._id }, { $set: { deletionStartedAt: new Date() } });
+    const id = await legacyConversation({
+      title: 'hi',
+      createdAt: new Date('2026-10-01'),
+      parts: [{ type: 'text', text: 'Check my rankings' }],
+    });
+    const listed = await listConversations(ACCOUNT);
+    expect(listed.map((c) => c.id)).toEqual([id]);
+    expect(listed[0]!.title).toBe('Check my rankings \u00b7 2');
   });
 });
 
@@ -348,6 +483,24 @@ describe('buildChatSystemInstruction', () => {
     );
     // The selected site must steer tool use: reuse the id, skip discovery.
     expect(seeded.text).toContain('do not call list_sites');
+  });
+
+  it.each(['en', 'ar', 'fr', 'de', 'es', 'ru', 'zh'] as const)(
+    'tells the model, in %s, never to write internal ids and to quote rank-state counts from the tool',
+    (locale) => {
+      const text = buildChatSystemInstruction(null, locale).text;
+      expect(text).toContain(DICTIONARIES[locale].chat.systemInstruction.noInternalIds);
+      expect(text).toContain(DICTIONARIES[locale].chat.systemInstruction.rankStates);
+      expect(text).toContain('list_keywords');
+      expect(text).toContain('rankStates');
+    },
+  );
+
+  it('names the tools the account switched off, and omits the line when none are', () => {
+    const none = buildChatSystemInstruction(null, 'en');
+    expect(none.text).not.toContain('Switched off');
+    const some = buildChatSystemInstruction(null, 'en', ['get_ga4_summary', 'list_pages']);
+    expect(some.text).toContain('Switched off in Account \u2192 MCP permissions: get_ga4_summary, list_pages.');
   });
 
   it.each([

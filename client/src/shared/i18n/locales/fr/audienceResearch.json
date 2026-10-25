@@ -23,6 +23,7 @@
     },
     "topics": {
       "label": "Sujets",
+      "add": "Ajouter",
       "placeholder": "Ajoutez un sujet et appuyez sur Entrée",
       "chipRemove": "Retirer {{topic}}",
       "count": "{{count}} / {{max}}",

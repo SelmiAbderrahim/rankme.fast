@@ -300,11 +300,32 @@ describe('inventory table', () => {
     expect(await screen.findByTestId('reviews-inventory-empty')).toHaveTextContent(
       'No reviews stored yet.',
     );
+    // Nothing to narrow or download yet: no toolbar, no export in the header.
+    expect(screen.queryByTestId('reviews-filter-source')).not.toBeInTheDocument();
+    expect(screen.queryByTestId('reviews-export')).not.toBeInTheDocument();
+    expect(screen.queryByRole('button', { name: i18n.t('report:exportUi.trigger') })).not.toBeInTheDocument();
     unmount();
     renderAt(<ReviewsPanel siteId="site-1" />, '/sites/site-1?tab=reviews&rating=1');
     expect(await screen.findByTestId('reviews-inventory-no-matches')).toHaveTextContent(
       'No reviews match these filters.',
     );
+  });
+
+  it('offers the header export and the toolbar once the selection holds a review', async () => {
+    wireInventory(inventoryResponse({ total: 3 }));
+    renderAt(<ReviewsPanel siteId="site-1" />, '/sites/site-1?tab=reviews');
+    expect(await screen.findByTestId('reviews-filter-source')).toBeInTheDocument();
+    expect(screen.getByRole('button', { name: i18n.t('report:exportUi.trigger') })).toBeInTheDocument();
+  });
+
+  it('keeps the header export for a filtered selection that still holds reviews', async () => {
+    wireInventory(inventoryResponse({ total: 3 }));
+    renderAt(
+      <ReviewsPanel siteId="site-1" />,
+      '/sites/site-1?tab=reviews&run=run-1&src=google&rating=5&q=wait',
+    );
+    expect(await screen.findByTestId('reviews-filter-source')).toBeInTheDocument();
+    expect(screen.getByRole('button', { name: i18n.t('report:exportUi.trigger') })).toBeInTheDocument();
   });
 
   it('renders a loading skeleton before the first page lands', () => {

@@ -23,6 +23,7 @@
     },
     "topics": {
       "label": "Topics",
+      "add": "Add",
       "placeholder": "Add a topic and press Enter",
       "chipRemove": "Remove {{topic}}",
       "count": "{{count}} / {{max}}",

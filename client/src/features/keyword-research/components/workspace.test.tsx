@@ -274,6 +274,7 @@ describe('KeywordIntelligenceWorkspace', () => {
           languageCode: 'en',
           resultCount: 1,
           cached: false,
+          lookupId: null,
           createdAt: '2026-07-19T00:00:00.000Z',
         },
       ],
@@ -292,6 +293,7 @@ describe('KeywordIntelligenceWorkspace', () => {
       languageCode: 'en',
       resultCount,
       cached: false,
+      lookupId: null,
       createdAt: '2026-07-19T00:00:00.000Z',
     });
     const { unmount } = renderInRouter(<KeywordIntelligenceWorkspace />);

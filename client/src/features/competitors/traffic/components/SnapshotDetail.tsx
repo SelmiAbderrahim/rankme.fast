@@ -142,37 +142,47 @@ export const SnapshotDetail = ({ detail, loading, error = '' }: SnapshotDetailPr
           <CardTitle>{t('detail.countries.title')}</CardTitle>
           <CardDescription>{t('detail.countries.description')}</CardDescription>
         </CardHeader>
-        <CardContent className="p-0">
-          <Table data-testid="traffic-country-table">
-            <caption className="sr-only">{t('detail.countries.title')}</caption>
-            <TableHeader>
-              <TableRow>
-                <TableHead className="text-start">{t('detail.countries.country')}</TableHead>
-                <TableHead className="text-end">
-                  <TableHeaderHelp
-                    label={t('detail.countries.visits')}
-                    description={t('common:tableHelp.estimatedTraffic')}
-                  />
-                </TableHead>
-              </TableRow>
-            </TableHeader>
-            <TableBody>
-              {payload.topCountries.map((country) => (
-                <TableRow key={country.countryCode}>
-                  <TableCell className="text-start">
-                    {countries.of(country.countryCode) ?? country.countryCode}
-                  </TableCell>
-                  <TableCell className="text-end">
-                    <span className="flex flex-col items-end gap-1">
-                      <span className="tabular-nums">{number.format(country.visits.value)}</span>
-                      <CoverageNote observation={country.visits.observation} />
-                    </span>
-                  </TableCell>
+        {/* A snapshot with no retained countries says so instead of rendering an
+            empty table shell (same pattern as the history). */}
+        {payload.topCountries.length === 0 ? (
+          <CardContent>
+            <p className="text-sm text-muted-foreground" data-testid="traffic-country-empty">
+              {t('detail.countries.empty')}
+            </p>
+          </CardContent>
+        ) : (
+          <CardContent className="p-0">
+            <Table data-testid="traffic-country-table">
+              <caption className="sr-only">{t('detail.countries.title')}</caption>
+              <TableHeader>
+                <TableRow>
+                  <TableHead className="text-start">{t('detail.countries.country')}</TableHead>
+                  <TableHead className="text-end">
+                    <TableHeaderHelp
+                      label={t('detail.countries.visits')}
+                      description={t('common:tableHelp.estimatedTraffic')}
+                    />
+                  </TableHead>
                 </TableRow>
-              ))}
-            </TableBody>
-          </Table>
-        </CardContent>
+              </TableHeader>
+              <TableBody>
+                {payload.topCountries.map((country) => (
+                  <TableRow key={country.countryCode}>
+                    <TableCell className="text-start">
+                      {countries.of(country.countryCode) ?? country.countryCode}
+                    </TableCell>
+                    <TableCell className="text-end">
+                      <span className="flex flex-col items-end gap-1">
+                        <span className="tabular-nums">{number.format(country.visits.value)}</span>
+                        <CoverageNote observation={country.visits.observation} />
+                      </span>
+                    </TableCell>
+                  </TableRow>
+                ))}
+              </TableBody>
+            </Table>
+          </CardContent>
+        )}
       </Card>
       <Card>
         <CardHeader>

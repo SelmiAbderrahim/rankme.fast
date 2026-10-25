@@ -7,7 +7,6 @@
 import './index.js';
 import { afterAll, beforeAll, beforeEach, describe, expect, it, vi } from 'vitest';
 import mongoose from 'mongoose';
-import { env } from '../../config/env.js';
 import {
   clearCollections,
   startMemoryMongo,
@@ -19,8 +18,7 @@ import {
   stopTestPostgres,
   truncateAllTables,
 } from '../../shared/testing/postgres.js';
-import { subscriptions } from '../../db/schema/subscriptions.js';
-import { usageCounters } from '../../db/schema/usage-counters.js';
+import { vendorCache, vendorResponses } from '../../db/schema/vendor-cache.js';
 import { keywords } from '../../db/schema/keywords.js';
 import {
   resolveEffectivePermissions,
@@ -88,13 +86,6 @@ function context(
   };
 }
 
-async function seedTier(accountId: string, tier: 'starter' | 'pro') {
-  await getTestDb()
-    .insert(subscriptions)
-    .values({ accountId, tier, status: 'active' })
-    .onConflictDoNothing();
-}
-
 async function seedSite(accountId: string, domain = 'example.com', paused = false) {
   const site = await Site.create({
     accountId,
@@ -105,9 +96,12 @@ async function seedSite(accountId: string, domain = 'example.com', paused = fals
   return String(site._id);
 }
 
+/** Row counts of the vendor cache + archive: a stored read must not write either. */
 async function usageSnapshot() {
-  const rows = await getTestDb().select().from(usageCounters);
-  return JSON.stringify(rows.map((row) => [row.accountId, row.metric, row.used]).sort());
+  const db = getTestDb();
+  const cache = await db.select().from(vendorCache);
+  const archive = await db.select().from(vendorResponses);
+  return `${cache.length}:${archive.length}`;
 }
 
 type Structured = Record<string, unknown> & { error?: { code: string } };
@@ -125,7 +119,6 @@ afterAll(async () => {
   setLocalSeoProvider(null);
   setLocalSeoRankProvider(null);
   setReviewSyncQueue(null);
-  (env as { PAYMENT_PROVIDER: string }).PAYMENT_PROVIDER = 'none';
   await stopTestPostgres();
   await stopMemoryMongo();
 });
@@ -134,7 +127,6 @@ beforeEach(async () => {
   await truncateAllTables();
   providerCalls.length = 0;
   queueAdd.mockClear();
-  (env as { PAYMENT_PROVIDER: string }).PAYMENT_PROVIDER = 'polar';
 });
 
 async function seedLocalSnapshot(accountId: string, siteId: string) {
@@ -186,7 +178,6 @@ async function seedLocalSnapshot(accountId: string, siteId: string) {
 describe('get_local_seo_summary', () => {
   it('returns the stored listing, reviews and local-pack snapshot with consistency counts', async () => {
     const accountId = await newAccount();
-    await seedTier(accountId, 'pro');
     const siteId = await seedSite(accountId, 'acme.example.com', true);
     await seedLocalSnapshot(accountId, siteId);
 
@@ -213,7 +204,6 @@ describe('get_local_seo_summary', () => {
 
   it('is empty/notConfigured before the first listing refresh', async () => {
     const accountId = await newAccount();
-    await seedTier(accountId, 'pro');
     const siteId = await seedSite(accountId);
 
     const data = dataOf(await toolGetLocalSeoSummary({ siteId }, context(accountId)));
@@ -221,23 +211,9 @@ describe('get_local_seo_summary', () => {
     expect(data).toMatchObject({ status: 'empty', reason: 'notConfigured' });
   });
 
-  it('returns locked below the localSeo feature tier', async () => {
-    const accountId = await newAccount();
-    await seedTier(accountId, 'starter');
-    const siteId = await seedSite(accountId);
-    await seedLocalSnapshot(accountId, siteId);
-
-    const data = dataOf(await toolGetLocalSeoSummary({ siteId }, context(accountId)));
-
-    expect(data).toMatchObject({ status: 'locked', reason: 'featureLocked', feature: 'localSeo' });
-    expect(data.listings).toBeUndefined();
-  });
-
   it('hides another account\'s site and honors allowed-site + key-scope intersection', async () => {
     const owner = await newAccount();
     const stranger = await newAccount();
-    await seedTier(owner, 'pro');
-    await seedTier(stranger, 'pro');
     const siteA = await seedSite(owner, 'a.example.com');
     const siteB = await seedSite(owner, 'b.example.com');
 
@@ -259,7 +235,6 @@ describe('get_local_seo_summary', () => {
 
   it('bounds the local-pack list to 100 rows and flags truncation', async () => {
     const accountId = await newAccount();
-    await seedTier(accountId, 'pro');
     const siteId = await seedSite(accountId);
     const db = getTestDb();
     const inserted = await db
@@ -294,7 +269,6 @@ describe('get_local_seo_summary', () => {
 
   it('never spends, enqueues, or calls a provider', async () => {
     const accountId = await newAccount();
-    await seedTier(accountId, 'pro');
     const siteId = await seedSite(accountId);
     await seedLocalSnapshot(accountId, siteId);
     const before = await usageSnapshot();
@@ -469,9 +443,8 @@ describe('get_reviews_summary', () => {
     );
   });
 
-  it('keeps stored reads available after a downgrade and never spends or enqueues', async () => {
+  it('never spends or enqueues', async () => {
     const accountId = await newAccount();
-    await seedTier(accountId, 'starter');
     const siteId = await seedSite(accountId);
     await seedReviews(accountId, siteId);
     const before = await usageSnapshot();

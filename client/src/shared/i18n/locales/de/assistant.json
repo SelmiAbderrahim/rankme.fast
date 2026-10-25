@@ -49,7 +49,9 @@
     "assistant": "Antwort des Assistenten",
     "streaming": "Der Assistent antwortet",
     "stopped": "Antwort gestoppt",
-    "loading": "Unterhaltung wird geladen…"
+    "loading": "Unterhaltung wird geladen…",
+    "cutOff": "Die Antwort wurde abgeschnitten, bevor sie fertig war.",
+    "retryCutOff": "Erneut versuchen"
   },
   "tool": {
     "arguments": "Argumente",
@@ -70,7 +72,33 @@
       "startAudit": "Audit starten",
       "auditStatus": "Audit-Status",
       "listActions": "Nächste Schritte",
-      "setActionState": "Aufgabe aktualisieren"
+      "setActionState": "Aufgabe aktualisieren",
+      "getGscSearchSummary": "Search-Console-Zusammenfassung abrufen",
+      "listGscTopQueries": "Top-Suchanfragen auflisten",
+      "listGscTopPages": "Top-Seiten der Suche auflisten",
+      "getGa4Summary": "Analytics-Zusammenfassung abrufen",
+      "listPages": "Seiten auflisten",
+      "getPageDetail": "Seitendetails abrufen",
+      "getBacklinksSummary": "Backlink-Zusammenfassung abrufen",
+      "listBacklinks": "Backlinks auflisten",
+      "listCompetitors": "Wettbewerber auflisten",
+      "getAiVisibilitySummary": "KI-Sichtbarkeitszusammenfassung abrufen",
+      "getLocalSeoSummary": "Local-SEO-Zusammenfassung abrufen",
+      "getReviewsSummary": "Bewertungszusammenfassung abrufen",
+      "listClientReports": "Kundenberichte auflisten"
+    },
+    "errors": {
+      "forbiddenOutput": "Das Ergebnis dieses Schritts wurde zurückgehalten, weil es Inhalt enthielt, der nicht sicher angezeigt werden kann. Fragen Sie erneut.",
+      "invalidInput": "Dieser Schritt konnte nicht ausgeführt werden, weil die Anfrage ungültig war. Formulieren Sie Ihre Frage um.",
+      "notFound": "Die Website zu diesem Schritt ist in dieser Unterhaltung nicht verfügbar.",
+      "internal": "Bei diesem Schritt ist auf unserer Seite ein Fehler aufgetreten. Versuchen Sie es erneut.",
+      "generic": "Dieser Schritt konnte nicht abgeschlossen werden. Versuchen Sie es erneut."
+    },
+    "retry": "Erneut fragen",
+    "storedStatus": {
+      "ok": "Gespeicherte Daten",
+      "empty": "Nichts gespeichert",
+      "unavailable": "Nicht verfügbar"
     }
   },
   "results": {
@@ -86,7 +114,14 @@
     "topFindings": "Wichtigste Befunde",
     "noFindings": "Es wurden keine Befunde zurückgegeben.",
     "domain": "Domain",
-    "url": "URL"
+    "url": "URL",
+    "change": "Veränderung",
+    "truncated": "Es werden nur die ersten Zeilen angezeigt.",
+    "scopeSource": "Quelle",
+    "scopeRange": "Zeitraum",
+    "scopePeriod": "Daten",
+    "scopeAsOf": "Stand",
+    "scopeTimezone": "Zeitzone"
   },
   "states": {
     "locked": {

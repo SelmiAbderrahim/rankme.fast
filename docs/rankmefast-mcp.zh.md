@@ -37,8 +37,6 @@ RankMeFast 提供远程 [Model Context Protocol (MCP)](https://modelcontextproto
 
 > 请像保管密码一样保管密钥：放在环境变量、密码输入框或用户级配置中，绝不要提交到代码仓库。你可以收紧每个密钥的范围（见下文）。注意 `start_audit` 会消耗每月审计额度。
 
-Starter、Pro 和 Agency 套餐均包含 MCP 访问权限。Agency 密钥还可用于只读公共 REST API。
-
 ## 控制权限与密钥范围
 
 打开[设置 → MCP](/profile?tab=mcp)，可管理 MCP 与登录状态下的 AI 助手共同使用的账户默认权限：
@@ -386,7 +384,7 @@ Visual Studio、JetBrains IDE、Xcode 和 Eclipse 中的 GitHub Copilot 使用�
 
 ## 可用的 RankMeFast 工具
 
-| 工具 | 功能 | 是否消耗套餐额度？ |
+| 工具 | 功能 | 是否消耗服务商预算？ |
 | --- | --- | --- |
 | `list_sites` | 列出你的账户所拥有的站点 | 否 |
 | `get_latest_audit_report` | 返回某个站点最近完成的审计 | 否 |
@@ -394,12 +392,37 @@ Visual Studio、JetBrains IDE、Xcode 和 Eclipse 中的 GitHub Copilot 使用�
 | `get_rank_history` | 返回关键词排名历史 | 否 |
 | `list_content_analyses` | 列出 Content Intelligence 分析 | 否 |
 | `get_content_analysis` | 返回一项 Content Intelligence 分析 | 否 |
-| `start_audit` | 在套餐页面上限内启动站点审计 | **是, 一次审计** |
+| `start_audit` | 启动站点审计 | **是，一次抓取** |
 | `get_audit_status` | 检查审计任务 | 否 |
 | `list_actions` | 列出站点按优先级排序的后续行动 | 否 |
 | `set_action_state` | 将行动标记为已计划、已忽略、已完成或重新打开 | 否 |
+| `get_gsc_search_summary` | 返回 7、28 或 90 天的 Search Console 点击、展示、点击率和排名 | 否 |
+| `list_gsc_top_queries` | 列出某个站点和时间范围内已存储的 Search Console 热门搜索词 | 否 |
+| `list_gsc_top_pages` | 列出某个站点和时间范围内已存储的 Search Console 热门页面 | 否 |
+| `get_ga4_summary` | 返回 7、28 或 90 天的 Google Analytics 4 会话、用户和关键事件 | 否 |
+| `list_pages` | 列出已存储的页面清单及每个页面的抓取状态 | 否 |
+| `get_page_detail` | 返回某个页面已存储的详情 | 否 |
+| `get_backlinks_summary` | 返回某个站点的反向链接总数和不同的引用域名数 | 否 |
+| `list_backlinks` | 列出已存储的反向链接，每个引用域名一条 | 否 |
+| `list_competitors` | 列出站点的竞争对手组合，包括活跃和已归档的 | 否 |
+| `get_ai_visibility_summary` | 返回 AI Visibility 提示词、最新检查和声量份额 | 否 |
+| `get_local_seo_summary` | 返回本地 SEO 资料快照和本地包排名 | 否 |
+| `get_reviews_summary` | 返回评价来源、评分统计和已存储的主题 | 否 |
+| `list_client_reports` | 列出站点的客户报告、计划和发送记录 | 否 |
 
 所有内容都限定在密钥所属的账户内，因此其他账户的站点、分析或任务 ID 会返回“未找到”。如果缺少某个预期的工具，请先检查权限，再排查连接。
+
+## 读取已存储的数据
+
+在前十个工具之后新增的工具只读取 RankMeFast 已经存储的数据。它们不会调用 Google 或任何其他供应商，不会刷新任何内容，也不会启动任务。
+
+- **范围会写明。** Search Console 和 Google Analytics 的结果包含 `range`（7d、28d 或 90d）、起止日期、`asOf` 日期和来源，因此“最近 28 天的点击量”这类回答可以准确引用其覆盖范围。站点总数与搜索词、页面、国家和设备表格可能不同，结果会说明原因。
+- **缺失的数据会明确说明。** 如果未连接 Google、未关联资源或还没有快照，结果会带有 `status: "unavailable"` 或 `"empty"` 以及清晰的原因。它不会用零来代替缺失的数据。
+- **权限在每次调用时生效。** 每次调用都会检查 **设置 → MCP** 中的账户开关、密钥自身的范围以及允许的站点列表。你无法访问或属于其他账户的站点会按未找到返回。
+- **新工具默认允许。** 它们与其他只读工具使用相同的默认值，在它们出现之前保存的权限设置会继续照常工作。
+- **结果有大小限制。** 列表最多返回 100 行，结果也保持较小；行被截断时，结果会标明 `truncated: true`。
+
+[AI 助手](./ai-assistant.zh.md)使用相同的工具和相同的权限。在关联了站点的对话中，它会直接使用该站点，不需要先列出你的站点。
 
 ## 故障排除
 
@@ -408,7 +431,6 @@ Visual Studio、JetBrains IDE、Xcode 和 Eclipse 中的 GitHub Copilot 使用�
 - **站点显示未找到：**确认账户与密钥范围都允许该站点。被阻止的站点和不属于账户的站点会有意返回相同结果。
 - **不允许产生支出的操作：**在两个层级都允许 `start_audit` 和产生支出的操作，或为只读客户端保持关闭。
 - **401 Unauthorized：**使用完全一致的 `Authorization: Bearer rmf_…` 请求头。密钥可能输入有误、已被吊销，或属于非活跃账户。
-- **402 Upgrade required：**MCP 要求 Starter、Pro 或 Agency 套餐。请参阅[套餐、限额与额度](./plans-limits-credits.zh.md)。
 - **浏览器中出现 405 Method not allowed：**这是正常现象，因为该端点接收 MCP `POST` 请求，而不是普通浏览器 `GET` 请求。
 - **429 Too many requests：**等待响应头所示的限流窗口结束，然后重试。
 - **503 Unavailable：**该 RankMeFast 安装的 MCP 已禁用或暂时不可用；请联系其运维人员。
@@ -418,13 +440,13 @@ Visual Studio、JetBrains IDE、Xcode 和 Eclipse 中的 GitHub Copilot 使用�
 
 ## 兼容性
 
-此版本包含上表中的十个工具。其中八个只读，`set_action_state` 会写入但不消耗额度，`start_audit` 是唯一消耗套餐额度的工具。品牌雷达、评论智能、链接智能、流量洞察和关键词趋势均没有 MCP 工具。变更只做增量：现有工具的名称和参数结构保持不变，新功能上线时可能增加新工具。
+此版本包含上表中的 23 个工具。其中 21 个只读，`set_action_state` 会写入但不产生费用，`start_audit` 是唯一消耗服务商预算的工具。品牌雷达、评论智能、链接智能、流量洞察和关键词趋势均没有 MCP 工具。变更只做增量：现有工具的名称和参数结构保持不变，新功能上线时可能增加新工具。
 
-<!-- mcp-tools: list_sites; get_latest_audit_report; list_keywords; get_rank_history; list_content_analyses; get_content_analysis; start_audit; get_audit_status; list_actions; set_action_state -->
+<!-- mcp-tools: list_sites; get_latest_audit_report; list_keywords; get_rank_history; list_content_analyses; get_content_analysis; start_audit; get_audit_status; list_actions; set_action_state; get_gsc_search_summary; list_gsc_top_queries; list_gsc_top_pages; get_ga4_summary; list_pages; get_page_detail; get_backlinks_summary; list_backlinks; list_competitors; get_ai_visibility_summary; get_local_seo_summary; get_reviews_summary; list_client_reports -->
 
 ## 相关指南
 
 - [AI 助手](./ai-assistant.zh.md)：在 RankMeFast 聊天中使用相同的已获准工具。
-- [公共 API](./public-api.zh.md)：仅限 Agency 套餐的只读 API。
+- [公共 API](./public-api.zh.md)：只读 API。
 - [Content Intelligence](./content-intelligence.zh.md)：了解 MCP 返回的分析数据。
 - [账户安全](./settings-security.zh.md)：保护你的账户和密钥。

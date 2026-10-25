@@ -311,7 +311,13 @@
     "shown_two": "已显示 {{loaded}} / {{count}} 条已保存的查询",
     "shown_few": "已显示 {{loaded}} / {{count}} 条已保存的查询",
     "shown_many": "已显示 {{loaded}} / {{count}} 条已保存的查询",
-    "shown_other": "已显示 {{loaded}} / {{count}} 条已保存的查询"
+    "shown_other": "已显示 {{loaded}} / {{count}} 条已保存的查询",
+    "viewResults": "查看结果",
+    "viewResultsFor": "查看“{{query}}”已保存的结果",
+    "viewResultsHint": "“查看结果”会打开该次搜索保存的内容，不会再次调用数据提供方。",
+    "searchAgainFor": "再次搜索“{{query}}”",
+    "searchAgainHint": "“再次搜索”会向数据提供方重新执行查询，与新搜索相同。",
+    "emptySite": "此站点还没有研究记录。您在这里运行的查询会显示在此列表中。"
   },
   "previewFailed": "无法加载费用预览。",
   "tabs": {
@@ -535,5 +541,17 @@
   "selectionCount_two": "已选择 {{count}} / {{max}}",
   "selectionCount_few": "已选择 {{count}} / {{max}}",
   "selectionCount_many": "已选择 {{count}} / {{max}}",
-  "selectionCount_other": "已选择 {{count}} / {{max}}"
+  "selectionCount_other": "已选择 {{count}} / {{max}}",
+  "recentDescriptionSite": "为此站点运行的关键词查询，最新的在前。",
+  "stored": {
+    "title": "已保存的结果",
+    "freeNote": "来自已保存的数据，没有重新查询任何内容。",
+    "close": "关闭已保存的结果",
+    "expired": "这次搜索已保存的结果已不可用。请再次搜索以重新获取。",
+    "unsupported": "这类搜索在此没有已保存的视图。请打开它自己的标签页查看。",
+    "storedOn": "保存于 {{date}}",
+    "partial": "仍保存的关键词：{{stored}} / {{requested}}",
+    "searchAgain": "再次搜索",
+    "loadFailed": "无法加载已保存的结果。"
+  }
 }

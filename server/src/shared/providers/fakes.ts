@@ -17,7 +17,7 @@ import { appBulkMetricsInputSchema, appChartInputSchema, appInfoInputSchema, app
 import { buildAltEngineObservationMeta, matchHostInRows, matchTokenInRows, } from './dataforseo/alt-engines.js';
 import { normalizeSerpDomain, type SerpTaskQueue, type SerpTaskPostOutcome, type SerpTaskPoll, } from './serp-normalization.js';
 import type { PublicPageDiscoveryInput, PublicPageDiscoveryResult, PublicPageDiscoveryRow, PublicPageSourceHint, } from './types.js';
-import type { AiAnswerInput, AiAnswerRow, AiKeywordVolume, AiMentionCheckInput, AiMentionRow, AiVisibilityProvider, AuditProvider, AuditResource, AuditResult, AuditStatus, ContentAnalysisMentionQuery, ContentAnalysisMentionRow, ContentAnalysisMentionSummary, ContentAnalysisProvider, ReviewRow, ReviewsInput, ReviewsProvider, ReviewsResult, ReviewsSource, BacklinkAnchorRow, BacklinkBulkRankRow, BacklinkCompetitorRow, BacklinkHistoryPoint, BacklinkListPage, BacklinkProvider, BacklinkReferringDomainRow, BacklinkSpamScoreRow, BacklinkSummary, BusinessListingRow, CompetitorEntry, CompetitorProvider, DomainComparisonResult, DomainComparisonRow, DomainIntersectionRow, DomainRankOverviewRow, HistoricalRankOverviewResult, TrafficEstimationCountry, TrafficEstimationRow, TechStackEntry, Ga4Property, Ga4Provider, Ga4RunReportInput, Ga4RunReportResult, Ga4WebDataStream, GscProperty, GscSearchAnalyticsResult, GscSitemapEntry, GscUrlInspection, AltEngineRankInput, AltEngineRankResult, AltEngineRankRow, AltRankEngine, IntentResult, KeywordHistoricalVolume, KeywordMetrics, KeywordOverview, KeywordProvider, LocalListingsProvider, LocalPackCoordinate, LocalPackResult, PageSpeedProvider, PageSpeedResult, ProviderMarket, QaSummary, RankCheckResult, RankProvider, ReviewsSummary, SerpFeatureSnapshot, SiteKeywordCandidate, SiteKeywordProvider, TrendsExploreInput, TrendsExploreResult, TrendsMonthlyPoint, TrendsProvider, TrendsRelatedQuery, TrendsSeries, } from './types.js';
+import type { AiAnswerInput, AiAnswerRow, AiKeywordVolume, AiMentionCheckInput, AiMentionRow, AiVisibilityProvider, AuditProvider, AuditResource, AuditResult, AuditStatus, ContentAnalysisMentionQuery, ContentAnalysisMentionRow, ContentAnalysisMentionSummary, ContentAnalysisProvider, ReviewRow, ReviewsInput, ReviewsProvider, ReviewsResult, ReviewsSource, BacklinkAnchorRow, BacklinkBulkRankRow, BacklinkCompetitorRow, BacklinkHistoryPoint, BacklinkListPage, BacklinkProvider, BacklinkReferringDomainRow, BacklinkSpamScoreRow, BacklinkSummary, BusinessListingRow, LocalBusinessCandidate, LocalListingTarget, CompetitorEntry, CompetitorProvider, DomainComparisonResult, DomainComparisonRow, DomainIntersectionRow, DomainRankOverviewRow, HistoricalRankOverviewResult, TrafficEstimationCountry, TrafficEstimationRow, TechStackEntry, Ga4Property, Ga4Provider, Ga4RunReportInput, Ga4RunReportResult, Ga4WebDataStream, GscProperty, GscSearchAnalyticsResult, GscSitemapEntry, GscUrlInspection, AltEngineRankInput, AltEngineRankResult, AltEngineRankRow, AltRankEngine, IntentResult, KeywordHistoricalVolume, KeywordMetrics, KeywordOverview, KeywordProvider, LocalListingsProvider, LocalPackCoordinate, LocalPackResult, PageSpeedProvider, PageSpeedResult, ProviderMarket, QaSummary, RankCheckResult, RankProvider, ReviewsSummary, SerpFeatureSnapshot, SiteKeywordCandidate, SiteKeywordProvider, TrendsExploreInput, TrendsExploreResult, TrendsMonthlyPoint, TrendsProvider, TrendsRelatedQuery, TrendsSeries, } from './types.js';
 import type { GoogleGscProvider } from './google/gsc.js';
 /** Fixed instant so fake output is bit-for-bit reproducible across runs. */
 export const FAKE_CLOCK = new Date('2026-01-01T00:00:00.000Z');
@@ -758,6 +758,8 @@ export function createFakeRankProvider(opts: FakeRankProviderOptions & FakeDisco
 // Local listings
 // ---------------------------------------------------------------------------
 export interface FakeLocalListingsProviderOptions extends FakeProviderOptions {
+    /** Setup search universe, matched by query words. */
+    businessCandidates?: LocalBusinessCandidate[];
     businessListings?: BusinessListingRow[];
     reviews?: ReviewsSummary;
     questionsAndAnswers?: QaSummary;
@@ -785,6 +787,67 @@ export const FAKE_BUSINESS_LISTINGS: BusinessListingRow[] = [
         consistent: false,
     },
 ];
+/**
+ * Two businesses with the same name in different places, so the setup flow
+ * has to show addresses and can never silently take the first match.
+ */
+export const FAKE_BUSINESS_CANDIDATES: LocalBusinessCandidate[] = [
+    {
+        placeId: 'ChIJFakeDentalDowntown01',
+        cid: '1000000000000000001',
+        name: 'Example Dental Studio',
+        address: '100 Main St, Austin, TX 78701',
+        phone: '+1 512-555-0100',
+        domain: 'example.com',
+        category: 'Dentist',
+        latitude: 30.2672,
+        longitude: -97.7431,
+    },
+    {
+        placeId: 'ChIJFakeDentalNorth00002',
+        cid: '1000000000000000002',
+        name: 'Example Dental Studio North',
+        address: '9000 Research Blvd, Austin, TX 78758',
+        phone: '+1 512-555-0200',
+        domain: null,
+        category: 'Dentist',
+        latitude: 30.3751,
+        longitude: -97.7194,
+    },
+];
+/**
+ * Words of three or more letters must all appear in the name, address or
+ * identifiers; an exact place ID or CID (with or without the vendor's
+ * `place_id:` / `cid:` prefix) matches that business alone.
+ */
+export function matchFakeBusinesses(universe: readonly LocalBusinessCandidate[], query: string): LocalBusinessCandidate[] {
+    const text = query.trim().toLowerCase();
+    const id = text.replace(/^(place_id|cid):/, '');
+    const exact = universe.filter((c) => c.placeId?.toLowerCase() === id || c.cid === id);
+    if (exact.length > 0)
+        return exact;
+    const words = text.split(/[^\p{L}\p{N}]+/u).filter((word) => word.length >= 3);
+    if (words.length === 0)
+        return [];
+    return universe.filter((c) => {
+        const haystack = [c.name, c.address ?? '', c.placeId ?? '', c.cid ?? ''].join(' ').toLowerCase();
+        return words.every((word) => haystack.includes(word));
+    });
+}
+function fakeCandidateFor(universe: readonly LocalBusinessCandidate[], target: LocalListingTarget): LocalBusinessCandidate | undefined {
+    const business = target.business;
+    if (!business)
+        return undefined;
+    return universe.find((c) => (business.placeId !== null && c.placeId === business.placeId) || (business.cid !== null && c.cid === business.cid));
+}
+/** Listings that describe the chosen fake business: two matching directories and one stale one. */
+export function fakeListingsFor(business: LocalBusinessCandidate): BusinessListingRow[] {
+    return [
+        { source: 'google', name: business.name, address: business.address, phone: business.phone, consistent: true },
+        { source: 'yelp', name: business.name, address: business.address, phone: business.phone, consistent: true },
+        { source: 'bing-places', name: business.name, address: business.address, phone: '+1 512-555-9999', consistent: false },
+    ];
+}
 export const FAKE_REVIEWS_SUMMARY: ReviewsSummary = {
     averageRating: 4.6,
     reviewCount: 128,
@@ -798,10 +861,16 @@ export function createFakeLocalListingsProvider(opts: FakeLocalListingsProviderO
     const businessListings = opts.businessListings ?? FAKE_BUSINESS_LISTINGS;
     const reviews = opts.reviews ?? FAKE_REVIEWS_SUMMARY;
     const questionsAndAnswers = opts.questionsAndAnswers ?? FAKE_QA_SUMMARY;
+    const businessCandidates = opts.businessCandidates ?? FAKE_BUSINESS_CANDIDATES;
     return {
-        async getBusinessListings() {
+        async searchBusinesses(input) {
             maybeFail(opts.failure);
-            return businessListings;
+            return matchFakeBusinesses(businessCandidates, input.query);
+        },
+        async getBusinessListings(target) {
+            maybeFail(opts.failure);
+            const chosen = opts.businessListings ? undefined : fakeCandidateFor(businessCandidates, target);
+            return chosen ? fakeListingsFor(chosen) : businessListings;
         },
         async getReviews() {
             maybeFail(opts.failure);

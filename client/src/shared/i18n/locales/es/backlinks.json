@@ -167,13 +167,12 @@
     "form": {
       "ownDomainLabel": "Tu dominio",
       "competitorsLabel": "Dominios competidores",
-      "competitorsHelp": "Introduce de {{min}} a {{max}} dominios, uno por línea o separados por comas. Los duplicados se eliminan.",
+      "competitorsHelp": "Introduce de {{min}} a {{max}} dominios. Pulsa Intro o escribe una coma después de cada uno. Los duplicados se eliminan.",
       "prefilled": "Rellenado con tus competidores confirmados. Edita la lista si hace falta.",
       "errors": {
         "ownAmongCompetitors": "Tu propio dominio no puede ser un competidor.",
         "duplicate": "Se eliminaron los competidores duplicados.",
         "atLeastOne": "Introduce al menos un dominio competidor.",
-        "tooMany": "Introduce como máximo tres dominios competidores.",
         "invalid": "Introduce nombres de dominio válidos."
       }
     },

@@ -83,6 +83,7 @@ export const SITE_SCOPED_MONGO_MODEL_NAMES = [
     'FindingDismissal',
     'InternalLinkRun',
     'LinkGapRun',
+    'LocalBusinessProfile',
     'LocalSeoReviewRow',
     'LocalSeoReviewSource',
     'LocalSeoReviewSyncRun',

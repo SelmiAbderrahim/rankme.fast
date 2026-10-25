@@ -19,3 +19,11 @@ export const selectLocalSeoCooldownUntil = (state: RootState) =>
   selectSlice(state).cooldownUntil;
 export const selectLocalSeoRefreshError = (state: RootState) =>
   selectSlice(state).refreshError;
+export const selectLocalBusinessSetup = (state: RootState) => selectSlice(state).setup;
+export const selectLocalBusinessSetupLoaded = (state: RootState) => selectSlice(state).setupLoaded;
+export const selectLocalBusinessSetupError = (state: RootState) => selectSlice(state).setupError;
+export const selectLocalBusinessSearching = (state: RootState) => selectSlice(state).searching;
+export const selectLocalBusinessSearchError = (state: RootState) => selectSlice(state).searchError;
+export const selectLocalBusinessSearched = (state: RootState) => selectSlice(state).searched;
+export const selectLocalBusinessSelecting = (state: RootState) => selectSlice(state).selecting;
+export const selectLocalBusinessSelectError = (state: RootState) => selectSlice(state).selectError;

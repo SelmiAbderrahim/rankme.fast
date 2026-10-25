@@ -19,6 +19,9 @@ import { apiClient } from '@shared/api/client';
 import {
   cancelAnalysis,
   getAnalysis,
+  getAnalysisRetryPreview,
+  getAnalysisStatus,
+  retryAnalysis,
   listAnalyses,
   preflightAnalysis,
   regenerateAnalysis,
@@ -438,5 +441,28 @@ describe('content-monitoring api', () => {
       expect(call[1]).toMatchObject({ signal });
     }
     expect(mocked.mock.calls[2]![0]).toContain('cursor=only');
+  });
+
+  it('reads the slim status, the retry preview, and starts a retry with the consent given', async () => {
+    const controller = new AbortController();
+    await getAnalysisStatus('a/1', { signal: controller.signal });
+    expect(mocked).toHaveBeenLastCalledWith(
+      '/content-analyses/a%2F1/status',
+      expect.objectContaining({ method: 'GET', signal: controller.signal }),
+    );
+    await getAnalysisStatus('a1');
+    expect(mocked.mock.calls.at(-1)![1]).not.toHaveProperty('signal');
+    await getAnalysisRetryPreview('a1', { signal: controller.signal });
+    expect(mocked).toHaveBeenLastCalledWith(
+      '/content-analyses/a1/retry',
+      expect.objectContaining({ method: 'GET', signal: controller.signal }),
+    );
+    await getAnalysisRetryPreview('a1');
+    expect(mocked.mock.calls.at(-1)![1]).not.toHaveProperty('signal');
+    await retryAnalysis('a1', true);
+    expect(mocked).toHaveBeenLastCalledWith(
+      '/content-analyses/a1/retry',
+      expect.objectContaining({ method: 'POST', body: { consent: true } }),
+    );
   });
 });

@@ -298,7 +298,10 @@ const slice = createSlice({
         );
         if (conversation) {
           if (conversation.title.length === 0) {
-            conversation.title = action.payload.userText.slice(0, 120);
+            // Prefer the server's deterministic, de-duplicated title; the raw
+            // text is only a fallback for streams that do not carry one.
+            conversation.title =
+              action.payload.conversationTitle ?? action.payload.userText.slice(0, 120);
           }
           conversation.lastMessageAt = action.payload.createdAt;
         }
@@ -351,8 +354,9 @@ const slice = createSlice({
           message.status = action.payload.status;
           message.tokens = action.payload.tokens;
         }
+        // A cut-off reply still finished: its notice and Retry live on the message.
         state.stream.status =
-          action.payload.status === 'complete' ? 'succeeded' : 'aborted';
+          action.payload.status === 'aborted' ? 'aborted' : 'succeeded';
         state.stream.finishReason = action.payload.finishReason;
         state.stream.tokens = action.payload.tokens;
       })

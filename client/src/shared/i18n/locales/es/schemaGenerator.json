@@ -1,5 +1,5 @@
 {
-  "title": "Generador de marcado schema",
+  "title": "Marcado schema",
   "description": "Crea JSON-LD para una página a partir de datos que ya guardamos sobre ella. Nada se inventa: si no podemos respaldar un campo con un dato, lo dejamos fuera y explicamos por qué.",
   "new": {
     "title": "Generar marcado",
@@ -41,13 +41,22 @@
     "crawledPages_two": "{{count}} páginas rastreadas",
     "crawledPages_few": "{{count}} páginas rastreadas",
     "crawledPages_many": "{{count}} páginas rastreadas",
-    "crawledPages_other": "{{count}} páginas rastreadas"
+    "crawledPages_other": "{{count}} páginas rastreadas",
+    "filterLabel": "Buscar una página",
+    "filterPlaceholder": "Escribe parte de la dirección o del título",
+    "filterCount": "Se muestran {{shown}} de {{total}}",
+    "filterNoMatches": "Ninguna página coincide con esa búsqueda.",
+    "groupRoot": "Páginas de primer nivel"
   },
   "type": {
     "legend": "Tipo de schema.org",
     "required": "Obligatorias: {{n}}",
     "recommended": "Recomendadas: {{n}}",
-    "alreadyDeclared": "Esta página ya declara este tipo."
+    "alreadyDeclared": "Esta página ya declara este tipo.",
+    "note": {
+      "FAQPage": "Google solo muestra respuestas de preguntas frecuentes en los resultados de búsqueda para sitios gubernamentales y de salud reconocidos. El marcado sigue siendo válido.",
+      "HowTo": "Google ya no muestra los pasos HowTo en los resultados de búsqueda. El marcado sigue siendo válido."
+    }
   },
   "preview": {
     "title": "Lo que cuesta",
@@ -69,14 +78,14 @@
     "failedTitle": "No se generó nada",
     "failedProvider": "El modelo no respondió, así que no se guardó ningún marcado.",
     "failedRejected": "Todos los campos que ofreció el modelo fallaron nuestra comprobación de datos; solo guardamos lo demostrable.",
-    "refunded": "Te devolvimos la unidad a tu cuota.",
     "evidence": "De dónde sale cada campo",
     "evidenceDescription": "Una línea por campo del marcado, con el dato guardado que lo respalda.",
     "evidenceFrom": "de {{fact}}",
     "evidenceEmpty": "Ningún campo pudo rellenarse con un dato guardado.",
     "omissions": "Lo que dejamos fuera",
     "omissionsDescription": "Campos sin un dato detrás y el motivo de cada ausencia.",
-    "omissionsEmpty": "No se dejó nada fuera."
+    "omissionsEmpty": "No se dejó nada fuera.",
+    "regenerated": "Reconstruido a partir de una generación anterior con los datos que aportaste. No se usó ninguna generación."
   },
   "fact": {
     "pageUrl": "URL de la página",
@@ -91,7 +100,11 @@
     "articleModifiedTime": "Hora de modificación del artículo",
     "siteOrigin": "Origen del sitio",
     "siteDomain": "Dominio del sitio",
-    "siteName": "Nombre del sitio"
+    "siteName": "Nombre del sitio",
+    "ogSiteName": "Etiqueta de nombre del sitio (og:site_name)",
+    "jsonLdName": "Nombre en los datos estructurados actuales de la página",
+    "titleBrand": "Nombre de marca en el título de la página",
+    "providedByYou": "Aportado por ti"
   },
   "reason": {
     "no_evidence": "no tenemos ningún dato al respecto",
@@ -155,6 +168,29 @@
     "failed": {
       "title": "Algo salió mal",
       "body": "No pudimos terminar esto. Inténtalo otra vez."
+    }
+  },
+  "userFacts": {
+    "title": "Añade lo que dejamos fuera",
+    "description": "Escribe un dato que solo tú conoces. Lo añadimos tal cual y lo marcamos como «Aportado por ti».",
+    "submit": "Reconstruir con mis datos",
+    "free": "Gratis: reutilizamos los datos ya encontrados y no usamos ninguna generación.",
+    "required": "Rellena al menos un campo.",
+    "hint": {
+      "language": "Un código de idioma como en o pt-BR.",
+      "date": "Una fecha como 2026-10-01.",
+      "url": "Una dirección pública que empiece por https://."
+    },
+    "label": {
+      "name": "Nombre",
+      "headline": "Titular",
+      "description": "Descripción",
+      "inLanguage": "Idioma",
+      "datePublished": "Fecha de publicación",
+      "dateModified": "Fecha de última actualización",
+      "logo": "Dirección del logotipo",
+      "image": "Dirección de la imagen",
+      "primaryImageOfPage": "Dirección de la imagen principal"
     }
   }
 }

@@ -122,7 +122,7 @@ async function createSite(
 }
 
 async function primeBacklinkArchive(request: APIRequestContext, siteId: string): Promise<void> {
-  const response = await request.get(`/api/sites/${siteId}/backlinks?limit=100`);
+  const response = await request.get(`/api/sites/${siteId}/backlinks?limit=100&fresh=true`);
   expect(response.status()).toBe(200);
 }
 

@@ -4,13 +4,15 @@ import { asyncHandler } from '../../shared/utils/async-handler.js';
 import { HttpError } from '../../shared/utils/http-error.js';
 import { requireAccountId } from '../../shared/utils/require-account-id.js';
 import { getLocalSeoCooldown, getLocalSeoDb, getLocalSeoProvider, getLocalSeoRankProvider, } from './local-seo.holder.js';
-import { keywordRankParamsSchema, siteIdParamsSchema } from './local-seo.schema.js';
+import { businessSearchBodySchema, businessSelectBodySchema, keywordRankParamsSchema, siteIdParamsSchema, } from './local-seo.schema.js';
 import { checkLocalPackRank, readLatestSnapshot, refreshLocalListings } from './local-seo.service.js';
-function mapCooldown(req: Parameters<RequestHandler>[0], err: CooldownError): never {
+import { clearLocalBusiness, readLocalBusinessSetup, searchLocalBusinesses, searchLocalPlaces, selectLocalBusiness, } from './local-business.service.js';
+function mapCooldown(req: Parameters<RequestHandler>[0], err: CooldownError, kind: 'refresh' | 'search' = 'refresh'): never {
+    const seconds = Math.ceil(err.retryAfterMs / 1000);
     throw HttpError.tooMany({
-        code: 'LOCAL_SEO_REFRESH_COOLDOWN',
-        messageKey: 'localSeo.errors.refreshCooldown',
-        vars: { seconds: Math.ceil(err.retryAfterMs / 1000) },
+        code: kind === 'search' ? 'LOCAL_SEO_SEARCH_COOLDOWN' : 'LOCAL_SEO_REFRESH_COOLDOWN',
+        messageKey: kind === 'search' ? 'localSeo.errors.searchCooldown' : 'localSeo.errors.refreshCooldown',
+        vars: { count: seconds, seconds },
     }, { retryAfterMs: err.retryAfterMs });
 }
 export const readLocalSeoHandler: RequestHandler = asyncHandler(async (req, res) => {
@@ -46,4 +48,68 @@ export const localPackRankHandler: RequestHandler = asyncHandler(async (req, res
         rankProvider: getLocalSeoRankProvider(),
     });
     res.status(200).json(result);
+});
+/** Malformed setup input is a localized 400 that leaves the stored setup alone. */
+function parseBody<T>(schema: {
+    safeParse(value: unknown): {
+        success: true;
+        data: T;
+    } | {
+        success: false;
+    };
+}, body: unknown): T {
+    const parsed = schema.safeParse(body);
+    if (!parsed.success) {
+        throw HttpError.badRequest({ code: 'LOCAL_SEO_ERRORS_QUERY_INVALID', messageKey: 'localSeo.errors.queryInvalid' });
+    }
+    return parsed.data;
+}
+export const readLocalBusinessHandler: RequestHandler = asyncHandler(async (req, res) => {
+    const accountId = requireAccountId(req);
+    const { siteId } = siteIdParamsSchema.parse(req.params);
+    res.status(200).json(await readLocalBusinessSetup({ accountId, siteId }, {}));
+});
+export const searchBusinessHandler: RequestHandler = asyncHandler(async (req, res) => {
+    const accountId = requireAccountId(req);
+    const { siteId } = siteIdParamsSchema.parse(req.params);
+    const { query } = parseBody(businessSearchBodySchema, req.body);
+    try {
+        const result = await searchLocalBusinesses({ accountId, siteId, query }, { db: getLocalSeoDb(), provider: getLocalSeoProvider(), cooldown: getLocalSeoCooldown() });
+        res.status(200).json(result);
+    }
+    catch (err) {
+        if (err instanceof CooldownError)
+            mapCooldown(req, err, 'search');
+        throw err;
+    }
+});
+/** A place search that only fills a geogrid centre; nothing is stored. */
+export const searchPlacesHandler: RequestHandler = asyncHandler(async (req, res) => {
+    const accountId = requireAccountId(req);
+    const { siteId } = siteIdParamsSchema.parse(req.params);
+    const { query } = parseBody(businessSearchBodySchema, req.body);
+    try {
+        const result = await searchLocalPlaces({ accountId, siteId, query }, { db: getLocalSeoDb(), provider: getLocalSeoProvider(), cooldown: getLocalSeoCooldown() });
+        res.status(200).json(result);
+    }
+    catch (err) {
+        if (err instanceof CooldownError)
+            mapCooldown(req, err, 'search');
+        throw err;
+    }
+});
+export const selectBusinessHandler: RequestHandler = asyncHandler(async (req, res) => {
+    const accountId = requireAccountId(req);
+    const { siteId } = siteIdParamsSchema.parse(req.params);
+    const parsed = businessSelectBodySchema.safeParse(req.body);
+    // A malformed id can never name a stored candidate: same answer as stale.
+    if (!parsed.success) {
+        throw HttpError.conflict({ code: 'LOCAL_SEO_ERRORS_SELECTION_STALE', messageKey: 'localSeo.errors.selectionStale' });
+    }
+    res.status(200).json(await selectLocalBusiness({ accountId, siteId, candidateId: parsed.data.candidateId }, {}));
+});
+export const clearBusinessHandler: RequestHandler = asyncHandler(async (req, res) => {
+    const accountId = requireAccountId(req);
+    const { siteId } = siteIdParamsSchema.parse(req.params);
+    res.status(200).json(await clearLocalBusiness({ accountId, siteId }, {}));
 });

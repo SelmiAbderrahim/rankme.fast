@@ -72,6 +72,19 @@ describe('Traffic Insights spend preview', () => {
       .set('Cookie', user.cookie)
       .send({ domains: [] })
       .expect(400);
+    // A selected market and pasted URLs are accepted; a malformed market is not.
+    await request(app)
+      .post('/api/competitors/traffic-snapshots/preview')
+      .set('Cookie', user.cookie)
+      .send({ domains: ['https://one.example/page'], locationCode: 2276, languageCode: 'de' })
+      .expect(200);
+    const badMarket = await request(app)
+      .post('/api/competitors/traffic-snapshots/preview')
+      .set('Cookie', user.cookie)
+      .set('Accept-Language', 'de')
+      .send({ domains: ['one.example'], languageCode: 'deu' })
+      .expect(400);
+    expect(JSON.stringify(badMarket.body)).toContain(translate('de', 'trafficInsights.errors.invalidMarket'));
   });
 
   it('rejects disabled previews and strict one-to-five unique-domain inputs', async () => {

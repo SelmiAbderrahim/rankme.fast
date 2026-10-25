@@ -3,6 +3,8 @@
   "description": "查看您与哪些网站竞争，以及他们排名的关键词。",
   "empty": "尚未找到此域名的竞争对手。跟踪几个关键词，我们将分析在这些搜索结果中占据主导地位的网站。",
   "emptyTitle": "尚无竞争对手",
+  "notFetchedTitle": "尚未检查竞争对手",
+  "notFetched": "刷新以找到与你的网站竞争的网站。数据来自你的搜索数据提供商，因此可能需要一点时间。",
   "loadFailed": "无法加载竞争对手。",
   "intersectionFailed": "无法加载差距关键词。",
   "table": {
@@ -43,7 +45,7 @@
     "title": "示例：Pro 与 Agency 提供的功能"
   },
   "intelligence": {
-    "title": "竞争对手情报",
+    "title": "竞争对手",
     "description": "管理已确认的竞争对手、比较关键词情况，并在一个网站工作区中保留已接受的建议。",
     "common": {
       "cancel": "取消"
@@ -72,6 +74,8 @@
       "description": "{{active}} 的 {{max}} 活跃竞争对手位置正在使用中。管理此列表不使用津贴。",
       "manualLabel": "添加公开竞争对手 URL",
       "manualPlaceholder": "https://competitor.example/",
+      "manualInvalid": "请输入公开网站，例如 competitor.com 或 https://competitor.com。",
+      "ownDomain": "这是您自己站点的域名。请添加其他网站作为竞争对手。",
       "add": "添加竞争对手",
       "adding": "添加竞争对手...",
       "confirmed": "竞争对手确认。",
@@ -115,9 +119,9 @@
       "confirmAction": "确认刷新"
     },
     "technology": {
-      "title": "当前投资组合摘要",
-      "description": "此摘要仅使用存储的投资组合事实。它不会启动技术检测或其他付费查找。",
-      "summary": "{{manual}} 竞争对手是手动添加的，{{suggested}} 来自已确认的发现建议。在存在单独预览的查找之前，技术详细信息将保持不可用。"
+      "title": "按来源统计的活跃竞争对手",
+      "description": "仅基于已保存的数据，这里不会运行技术检测或发起新的数据请求。",
+      "summary": "手动添加：{{manual}}。来自已确认的发现建议：{{suggested}}。技术详情暂不可用。"
     },
     "landscape": {
       "title": "建立关键词景观",

@@ -23,7 +23,7 @@ Una sección sin instantánea guardada se marca como aún no observada. Nunca se
 
 ## Programaciones
 
-Los informes se envían por correo, cada semana o cada mes. El registro de entregas tiene una entrada por destinatario: pendiente, enviada, fallida o suprimida.
+Los informes se envían por correo, cada semana o cada mes. El registro de entregas tiene una entrada por destinatario: pendiente, enviada, fallida o suprimida. Eliges la zona horaria y la hora en esa zona, y la programación mantiene esa hora local cuando cambia el horario de verano.
 
 Componer y enviar un informe no llama a ningún proveedor ni consume unidades medidas. El coste es de nuestra propia infraestructura, así que lo acotan límites estructurales.
 

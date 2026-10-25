@@ -377,8 +377,9 @@ export function NewRunForm({ siteId }: NewRunFormProps) {
               variant="outline"
               onClick={addTopic}
               disabled={form.topics.length >= MAX_TOPICS || topicDraft.trim().length === 0}
+              data-testid="audience-research-topic-add"
             >
-              {t('form.topics.label')}
+              {t('form.topics.add')}
             </Button>
           </div>
           {topicValidationKey ? (

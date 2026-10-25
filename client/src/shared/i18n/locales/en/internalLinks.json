@@ -1,6 +1,5 @@
 {
-  "eyebrow": "Stored-inventory guidance",
-  "title": "Internal linking suggestions",
+  "title": "Internal links",
   "subtitle": "Review source-to-target opportunities derived from your latest content inventory and stored Search Console evidence. Nothing is applied to your site.",
   "site": {
     "inventoryLink": "Open content inventory"
@@ -11,12 +10,9 @@
   },
   "newRun": {
     "title": "Prepare a suggestion run",
-    "description": "Preview the exact inventory snapshot and allowance before you spend one run.",
+    "description": "Preview the exact inventory snapshot before you start a run.",
     "guidanceOnly": "Suggestions are guidance only. RankMeFast does not edit your CMS or page HTML.",
-    "unitLabel": "Allowance",
-    "unitValue": "{{count}} internal-link run",
     "inventoryLabel": "Inventory snapshot",
-    "remaining": "{{count}} runs remain before this run.",
     "preview": "Preview run",
     "previewing": "Checking inventory…",
     "confirm": "Start suggestion run",
@@ -28,11 +24,13 @@
     "planCta": "See plans",
     "emptyRuns": {
       "title": "No saved runs yet",
-      "body": "Preview a new run to see which stored inventory snapshot it will use."
+      "body": "Preview a new run to see which stored inventory snapshot it will use.",
+      "action": "Start a run"
     },
     "emptySuggestions": {
-      "title": "No suggestions match",
-      "body": "This run found no eligible pairs, or the current URL-backed filters hide them."
+      "title": "No suggestions match these filters",
+      "body": "Clear the filters to see every suggestion in this run.",
+      "action": "Clear filters"
     },
     "missing": {
       "title": "Content inventory required",
@@ -65,14 +63,20 @@
     "running": {
       "title": "Building suggestions",
       "body": "The worker is ranking stored candidates and drafting anchors. This view updates automatically."
+    },
+    "inventoryRunCta": "Run content inventory",
+    "inventoryDifference": "The Pages tab lists pages found by your site audit; suggestions need a content inventory, which reads each page's text.",
+    "noSuggestions": {
+      "title": "No suggestions in this run",
+      "body": "This run found no page pairs worth linking. Update your content inventory, then start a new run.",
+      "action": "Start a new run"
     }
   },
   "status": {
     "queued": "Queued",
     "processing": "Processing",
     "completed": "Completed",
-    "failed": "Failed",
-    "refunded": "Run returned"
+    "failed": "Failed"
   },
   "runs": {
     "snapshot": "Inventory: {{date}}",
@@ -103,7 +107,7 @@
     "codeFixProblem": "A relevant internal link is missing.",
     "codeFixWhy": "The target has few inbound internal links and shares relevant search or heading context with the source.",
     "codeFixRecommendation": "Add the link in the most relevant section of the source page, using the suggested anchor text when it reads naturally.",
-    "fallback": "AI ranking was unavailable or rejected. Deterministic, evidence-backed candidates are shown instead."
+    "fallback": "AI ranking was unavailable or rejected, so these suggestions come from fixed rules and your site's data."
   },
   "evidence": {
     "title": "Why this pair was suggested",

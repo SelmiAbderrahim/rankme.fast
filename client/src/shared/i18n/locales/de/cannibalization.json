@@ -71,7 +71,8 @@
   "states": {
     "empty": {
       "title": "Noch nichts zu zeigen",
-      "body": "Erstellen Sie einen Bericht, um zu sehen, um welche Suchanfragen Ihre Seiten konkurrieren."
+      "body": "Erstellen Sie einen Bericht, um zu sehen, um welche Suchanfragen Ihre Seiten konkurrieren.",
+      "action": "Bericht erstellen"
     },
     "awaitingSync": {
       "title": "Warten auf die nächste Synchronisierung",
@@ -97,6 +98,21 @@
     "failed": {
       "title": "Etwas ist schiefgelaufen",
       "body": "Das konnte nicht geladen werden. Versuchen Sie es erneut."
+    },
+    "noCandidates": {
+      "title": "Keine konkurrierenden Seiten gefunden",
+      "body": "In diesem Zeitraum haben keine zwei Ihrer Seiten um dieselbe Suchanfrage konkurriert.",
+      "action": "Neuen Bericht erstellen"
+    },
+    "filtered": {
+      "title": "Keine Fälle mit dieser Konfidenz",
+      "body": "Zeigen Sie alle Konfidenzstufen an, um die Fälle dieses Berichts zu sehen.",
+      "action": "Alle anzeigen"
+    },
+    "needsGsc": "Neue Berichte brauchen eine nutzbare Search-Console-Property. Beheben Sie zuerst den Status oben und kehren Sie dann hierher zurück.",
+    "emptyNoGsc": {
+      "title": "Noch nichts zu zeigen",
+      "body": "Berichte entstehen aus Ihren gespeicherten Search-Console-Daten. Verbinden Sie eine Search-Console-Property für diese Website und erstellen Sie dann Ihren ersten Bericht."
     }
   },
   "counts": {

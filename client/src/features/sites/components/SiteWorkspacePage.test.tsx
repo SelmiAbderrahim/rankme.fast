@@ -1,4 +1,5 @@
 import { beforeEach, describe, expect, it, vi } from 'vitest';
+import type { ReactNode } from 'react';
 import { render, screen, waitFor, within } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { Provider } from 'react-redux';
@@ -109,9 +110,10 @@ vi.mock('@features/competitors/traffic', async (importOriginal) => ({
 
 vi.mock('@features/ai-visibility', async (importOriginal) => ({
   ...(await importOriginal<typeof import('@features/ai-visibility')>()),
-  AiVisibilityPage: ({ siteId }: { siteId?: string }) => (
+  AiVisibilityPage: ({ siteId, pulse }: { siteId?: string; pulse?: ReactNode }) => (
     <div data-testid="mock-ai-visibility" data-site={siteId}>
       ai-visibility-mock
+      {pulse}
     </div>
   ),
 }));
@@ -588,10 +590,11 @@ describe('SiteWorkspacePage — every destination is open', () => {
 
   it('lazy-loads the weekly pulse card (and injects its reducer) on ?tab=ai-visibility', async () => {
     renderAt('/sites/site-1?tab=ai-visibility');
-    expect(await screen.findByTestId('mock-weekly-pulse', {}, { timeout: 3000 })).toHaveAttribute(
-      'data-site',
-      'site-1',
-    );
+    const pulse = await screen.findByTestId('mock-weekly-pulse', {}, { timeout: 3000 });
+    expect(pulse).toHaveAttribute('data-site', 'site-1');
+    // The pulse is a sub-section handed to the AI Visibility page (rendered
+    // under its title), not a sibling card stacked above the page.
+    expect(screen.getByTestId('mock-ai-visibility')).toContainElement(pulse);
   });
 
   it('lazy-loads the GSC generative-appearance card on ?tab=google', async () => {

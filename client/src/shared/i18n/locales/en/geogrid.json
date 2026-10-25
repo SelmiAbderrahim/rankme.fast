@@ -8,12 +8,12 @@
   "form": {
     "keyword": "Tracked keyword",
     "keywordPlaceholder": "Choose a keyword",
-    "coordinateHelp": "Type the centre point as numbers. There is no map picker — we do not buy map tiles.",
-    "latitude": "Centre latitude",
-    "longitude": "Centre longitude",
+    "coordinateHelp": "Enter the center point as latitude and longitude in decimal degrees. To find them, right-click your business in Google Maps and click the numbers at the top of the menu to copy them.",
+    "latitude": "Center latitude",
+    "longitude": "Center longitude",
     "spacing": "Spacing between points",
     "spacingOption": "{{km}} km",
-    "spacingCustom": "Custom spacing (m)",
+    "spacingCustom": "Custom spacing in km",
     "size": "Grid size",
     "sizeOption": "{{size}} by {{size}} ({{cells}} points)",
     "zoom": "Map zoom",
@@ -21,11 +21,16 @@
     "previewing": "Estimating…",
     "errors": {
       "keyword": "Choose a tracked keyword first.",
-      "latitude": "Latitude must be between -{{max}} and {{max}}.",
-      "longitude": "Longitude must be between -180 and 180.",
-      "spacing": "Spacing must be between {{min}} and {{max}} metres, in steps of {{step}}.",
-      "zoom": "Zoom must be between {{min}} and {{max}}."
-    }
+      "latitude": "Enter a latitude between -{{max}} and {{max}}.",
+      "longitude": "Enter a longitude between -180 and 180.",
+      "spacing": "Choose a spacing between {{min}} and {{max}} km, in steps of {{step}} km.",
+      "zoom": "Enter a zoom level between {{min}} and {{max}}."
+    },
+    "zoomHelp": "How far Google Maps is zoomed in at each point: {{min}} shows a wide region, {{max}} a few streets. Higher values match someone searching close by; {{default}} is street level.",
+    "useLastCenter": "Use last scan's center",
+    "keywordEmpty": "This site has no tracked keywords yet. A geogrid scan checks one tracked keyword.",
+    "keywordEmptyCta": "Track a keyword",
+    "spacingCustomOption": "Custom"
   },
   "preview": {
     "title": "What this scan costs",
@@ -110,10 +115,38 @@
     "previewFailed": "We could not estimate this scan.",
     "submitFailed": "We could not start this scan."
   },
-  "center": {"place": {"resultsLegend_zero": "{{count}} places for “{{query}}”. Pick the center:",
+  "center": {
+    "place": {
+      "label": "Place name or address",
+      "placeholder": "1 Main Street, Austin",
+      "hint": "Each search asks your local listings provider once. Picking a result makes no request and changes nothing in Local SEO.",
+      "search": "Search",
+      "searching": "Searching…",
+      "invalid": "Enter between {{min}} and {{max}} characters.",
+      "searchFailed": "Search failed. Try again in a moment.",
+      "noResults": "No places with a map location found for “{{query}}”. Try a fuller address, or enter coordinates.",
+      "resultsLegend_zero": "{{count}} places for “{{query}}”. Pick the center:",
       "resultsLegend_one": "{{count}} place for “{{query}}”. Pick the center:",
       "resultsLegend_two": "{{count}} places for “{{query}}”. Pick the center:",
       "resultsLegend_few": "{{count}} places for “{{query}}”. Pick the center:",
       "resultsLegend_many": "{{count}} places for “{{query}}”. Pick the center:",
-      "resultsLegend_other": "{{count}} places for “{{query}}”. Pick the center:"}}
+      "resultsLegend_other": "{{count}} places for “{{query}}”. Pick the center:"
+    },
+    "legend": "Grid center",
+    "mode": {
+      "business": "My business",
+      "place": "Search for a place",
+      "coordinates": "Enter coordinates"
+    },
+    "business": {
+      "loading": "Loading your business…",
+      "loadFailed": "Could not load your business. Search for a place or enter coordinates instead.",
+      "none": "This site has no business set up yet. Choose it in Local SEO and the grid can start from its location.",
+      "setUp": "Set up your business",
+      "noLocation": "This business has no map location in its listing. Search for a place or enter coordinates instead."
+    },
+    "noAddress": "No address listed",
+    "current": "The grid will be centered on",
+    "required": "Choose a center for the grid."
+  }
 }

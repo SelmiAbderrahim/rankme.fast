@@ -1,5 +1,5 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
-import { render, screen, waitFor } from '@testing-library/react';
+import { render, screen, waitFor, within } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { configureStore } from '@reduxjs/toolkit';
 import { Provider } from 'react-redux';
@@ -7,6 +7,12 @@ import { I18nextProvider } from 'react-i18next';
 import { MemoryRouter, useLocation } from 'react-router-dom';
 import { ApiError, apiClient } from '@shared/api/client';
 import { changeLanguage, i18n, initI18n } from '@shared/i18n';
+import { formatAbsoluteDate } from '@shared/lib/datetime';
+import {
+  googleReducer,
+  SiteGoogleReadinessProvider,
+  type SiteGoogleReadiness,
+} from '@features/google';
 import { CannibalizationPage } from './components/CannibalizationPage';
 import { QueryDrillDown } from './components/QueryDrillDown';
 import { StateNotice } from './components/StateNotice';
@@ -28,6 +34,11 @@ vi.mock('@shared/api/client', async (importOriginal) => ({
 const mockedApiClient = vi.mocked(apiClient);
 
 const SITE_ID = 'a'.repeat(24);
+/** The stored `2026-07-01` snapshot day, formatted as that calendar day in any zone. */
+const julyFirst = (locale: string) =>
+  new Intl.DateTimeFormat(locale, { dateStyle: 'medium', timeZone: 'UTC' }).format(
+    Date.UTC(2026, 6, 1),
+  );
 const REPORT_ID = 'b'.repeat(24);
 
 const candidate = (
@@ -89,16 +100,28 @@ const LocationProbe = () => {
   return null;
 };
 
-const renderPage = (entry = `/sites/${SITE_ID}?tab=cannibalization`) => {
+const renderPage = (
+  entry = `/sites/${SITE_ID}?tab=cannibalization`,
+  readiness?: SiteGoogleReadiness,
+) => {
   search = '';
-  const store = configureStore({ reducer: { cannibalization: cannibalizationReducer } });
+  const store = configureStore({
+    reducer: { cannibalization: cannibalizationReducer, google: googleReducer },
+  });
+  const page = <CannibalizationPage siteId={SITE_ID} />;
   return {
     store,
     ...render(
       <Provider store={store}>
         <I18nextProvider i18n={i18n}>
           <MemoryRouter initialEntries={[entry]}>
-            <CannibalizationPage siteId={SITE_ID} />
+            {readiness ? (
+              <SiteGoogleReadinessProvider siteId={SITE_ID} domain="example.test" readiness={readiness}>
+                {page}
+              </SiteGoogleReadinessProvider>
+            ) : (
+              page
+            )}
             <LocationProbe />
           </MemoryRouter>
         </I18nextProvider>
@@ -195,7 +218,7 @@ describe('CannibalizationPage — reports tab', () => {
     expect(screen.getByTestId('cannibalization-candidate-cannibal-0')).toBeInTheDocument();
     expect(screen.getByTestId('cannibalization-candidate-cannibal-1')).toBeInTheDocument();
     expect(screen.getByTestId('cannibalization-provenance').textContent).toContain(
-      '2026-07-01',
+      julyFirst('en'),
     );
 
     await user.click(screen.getByTestId('cannibalization-inspect-cannibal-0'));
@@ -242,18 +265,17 @@ describe('CannibalizationPage — reports tab', () => {
     ).toBeInTheDocument();
   });
 
-  it('renders the Search Console connection state only when a site exists but GSC does not', async () => {
+  it('explains that new reports need Search Console when the property is not connected', async () => {
     routeApi({
       connection: () => ({
         configuration: { connection: null, gsc: { propertyUrl: null } },
       }),
     });
     renderPage(`/sites/${SITE_ID}?tab=cannibalization&view=new`);
-    const notice = await screen.findByTestId('gsc-required-notice');
-    expect(notice).toHaveTextContent('Connect Google Search Console');
-    expect(
-      screen.getByRole('link', { name: 'Connect Google Search Console' }),
-    ).toHaveAttribute('href', `/sites/${SITE_ID}?tab=google`);
+    expect(await screen.findByTestId('cannibalization-needs-gsc')).toHaveTextContent(
+      'New reports need a usable Search Console property.',
+    );
+    expect(screen.queryByTestId('cannibalization-preview-button')).toBeNull();
   });
 
   it('explains that Search Console is needed instead of a bare empty list when nothing is connected', async () => {
@@ -264,20 +286,20 @@ describe('CannibalizationPage — reports tab', () => {
       list: () => ({ items: [] }),
     });
     renderPage();
-    const notice = await screen.findByTestId('gsc-required-notice');
-    expect(notice).toHaveTextContent('Keyword cannibalization reports are built from your Search Console data');
-    expect(screen.getByRole('link', { name: 'Connect Google Search Console' })).toHaveAttribute(
-      'href',
-      `/sites/${SITE_ID}?tab=google`,
-    );
+    const notice = await screen.findByTestId('cannibalization-state-emptyNoGsc');
+    expect(notice).toHaveTextContent('Reports are built from your stored Search Console data.');
+    expect(within(notice).queryByRole('button')).toBeNull();
     expect(screen.queryByTestId('cannibalization-state-empty')).toBeNull();
   });
 
-  it('keeps the plain empty state when Search Console is connected', async () => {
+  it('keeps the plain empty state, with a way to create a report, when Search Console is connected', async () => {
     routeApi({ list: () => ({ items: [] }) });
     renderPage();
-    expect(await screen.findByTestId('cannibalization-state-empty')).toBeInTheDocument();
-    expect(screen.queryByTestId('gsc-required-notice')).toBeNull();
+    const notice = await screen.findByTestId('cannibalization-state-empty');
+    expect(notice).toHaveTextContent('Nothing to show yet');
+    await userEvent.click(screen.getByRole('button', { name: 'Create a report' }));
+    expect(new URLSearchParams(search).get('view')).toBe('new');
+    expect(screen.queryByTestId('cannibalization-state-emptyNoGsc')).toBeNull();
   });
 
   it('renders the detail refusal when a stored report is gone', async () => {
@@ -294,10 +316,23 @@ describe('CannibalizationPage — reports tab', () => {
     ).toBeInTheDocument();
   });
 
-  it('shows the empty state when a confidence filter matches nothing', async () => {
+  it('says the filter hides every candidate and offers to show all', async () => {
     routeApi();
     renderPage(`/sites/${SITE_ID}?tab=cannibalization&report=${REPORT_ID}&confidence=low`);
-    expect(await screen.findByTestId('cannibalization-state-empty')).toBeInTheDocument();
+    const notice = await screen.findByTestId('cannibalization-state-filtered');
+    expect(notice).toHaveTextContent('No candidates at this confidence');
+    await userEvent.click(screen.getByTestId('cannibalization-state-filtered-action'));
+    expect(new URLSearchParams(search).get('confidence')).toBeNull();
+    expect(await screen.findAllByRole('row')).not.toHaveLength(0);
+  });
+
+  it('says a report found no competing pages and offers a new report', async () => {
+    routeApi({ report: () => detail([]) });
+    renderPage(`/sites/${SITE_ID}?tab=cannibalization&report=${REPORT_ID}`);
+    const notice = await screen.findByTestId('cannibalization-state-noCandidates');
+    expect(notice).toHaveTextContent('No competing pages found');
+    await userEvent.click(screen.getByTestId('cannibalization-state-noCandidates-action'));
+    expect(new URLSearchParams(search).get('view')).toBe('new');
   });
 });
 
@@ -371,7 +406,9 @@ describe('URL-backed controls', () => {
     const user = userEvent.setup();
     routeApi();
     renderPage();
-    await screen.findByTestId('cannibalization-report-list');
+    // The filter belongs to an open report with candidates.
+    await user.click(await screen.findByTestId(`cannibalization-open-${REPORT_ID}`));
+    await screen.findByTestId('cannibalization-candidates');
 
     await user.click(screen.getByRole('combobox', { name: 'Confidence' }));
     await user.click(await screen.findByRole('option', { name: 'High' }));
@@ -381,6 +418,45 @@ describe('URL-backed controls', () => {
     await waitFor(() => expect(search).toContain('view=new'));
   });
 
+});
+
+describe('confidence filter visibility', () => {
+  it('is hidden while there is no report data to filter', async () => {
+    routeApi({ list: () => ({ items: [] }) });
+    renderPage();
+    await screen.findByText('Nothing to show yet');
+    expect(screen.queryByRole('combobox', { name: 'Confidence' })).not.toBeInTheDocument();
+  });
+
+  it('is hidden with a stored report list that has not been opened', async () => {
+    routeApi();
+    renderPage();
+    await screen.findByTestId('cannibalization-report-list');
+    expect(screen.queryByRole('combobox', { name: 'Confidence' })).not.toBeInTheDocument();
+  });
+
+  it('shows once an opened report has candidates', async () => {
+    routeApi();
+    renderPage(`/sites/${SITE_ID}?tab=cannibalization&report=${REPORT_ID}`);
+    await screen.findByTestId('cannibalization-candidates');
+    expect(screen.getByRole('combobox', { name: 'Confidence' })).toBeInTheDocument();
+  });
+
+  it('stays visible when an active filter matches nothing, so it can be cleared', async () => {
+    routeApi();
+    renderPage(`/sites/${SITE_ID}?tab=cannibalization&report=${REPORT_ID}&confidence=low`);
+    await waitFor(() =>
+      expect(screen.getByRole('combobox', { name: 'Confidence' })).toBeInTheDocument(),
+    );
+    expect(screen.queryByTestId('cannibalization-candidates')).not.toBeInTheDocument();
+  });
+
+  it('stays visible for an active filter even when the report list is empty', async () => {
+    routeApi({ list: () => ({ items: [] }) });
+    renderPage(`/sites/${SITE_ID}?tab=cannibalization&confidence=high`);
+    await screen.findByText('Nothing to show yet');
+    expect(screen.getByRole('combobox', { name: 'Confidence' })).toBeInTheDocument();
+  });
 });
 
 describe('URL state normalization', () => {
@@ -453,6 +529,35 @@ describe('hostile content stays inert', () => {
     expect(links[0]?.getAttribute('rel')).toBe('nofollow ugc noopener noreferrer');
     expect(links[1]?.getAttribute('href')).toBe('https://example.test/safe');
   });
+});
+
+describe('localized snapshot dates', () => {
+  it.each(['en', 'ar', 'de'] as const)(
+    'shows the 2026-07-01 snapshot day and generation date for %s',
+    async (locale) => {
+      await changeLanguage(locale);
+      const user = userEvent.setup();
+      routeApi();
+      renderPage();
+      const row = await screen.findByTestId(`cannibalization-report-row-${REPORT_ID}`);
+      expect(within(row).getByText(julyFirst(locale))).toBeInTheDocument();
+      expect(within(row).getByText(formatAbsoluteDate('2026-07-02T10:00:00.000Z', locale))).toBeInTheDocument();
+      expect(row.textContent).not.toContain('2026-07-01');
+      await user.click(screen.getByTestId(`cannibalization-open-${REPORT_ID}`));
+      const provenance = await screen.findByTestId('cannibalization-provenance');
+      expect(provenance.textContent).toContain(julyFirst(locale));
+      expect(provenance.textContent).not.toContain('2026-07-01');
+      render(
+        <I18nextProvider i18n={i18n}>
+          <QueryDrillDown candidate={candidate()} />
+        </I18nextProvider>,
+      );
+      const drill = screen.getByTestId('cannibalization-drilldown');
+      expect(drill.textContent).toContain(julyFirst(locale));
+      expect(drill.textContent).not.toContain('2026-07-01');
+      await changeLanguage('en');
+    },
+  );
 });
 
 describe('Arabic RTL', () => {
@@ -528,3 +633,71 @@ describe('StateNotice', () => {
     );
   });
 });
+
+describe('CannibalizationPage — shared Google readiness', () => {
+  const readiness = (status: SiteGoogleReadiness['gsc']['status']): SiteGoogleReadiness => ({
+    gsc: { status, matching: false },
+    ga4: { status: 'ok', matching: false },
+  });
+
+  it.each(['no_property', 'property_mismatch', 'not_connected', 'error'] as const)(
+    'with %s the banner shows on the default Reports view, the New tab explains, and no empty state competes',
+    async (status) => {
+      routeApi({ list: () => ({ items: [] }), report: () => detail([]) });
+      renderPage(`/sites/${SITE_ID}?tab=cannibalization`, readiness(status));
+      const notice = await screen.findByTestId('google-readiness-gsc');
+      expect(notice).toHaveAttribute('data-status', status);
+      // The banner's one CTA is the empty state's action here.
+      expect(within(notice).getAllByRole('link')).toHaveLength(1);
+      await waitFor(() => expect(screen.queryByTestId('cannibalization-list-loading')).not.toBeInTheDocument());
+      // The create-a-report empty state does not compete with the banner, but
+      // the empty tab still says what is missing and why, with no link.
+      expect(screen.queryByTestId('cannibalization-state-empty')).not.toBeInTheDocument();
+      const noReports = screen.getByTestId('cannibalization-state-emptyNoGsc');
+      expect(noReports).toHaveTextContent('Nothing to show yet');
+      expect(noReports).toHaveTextContent('Reports are built from your stored Search Console data.');
+      expect(within(noReports).queryByRole('link')).toBeNull();
+      expect(within(noReports).queryByRole('button')).toBeNull();
+      await userEvent.click(screen.getByTestId('cannibalization-tab-new'));
+      expect(await screen.findByTestId('cannibalization-needs-gsc')).toHaveTextContent(
+        'New reports need a usable Search Console property.',
+      );
+      expect(screen.queryByTestId('cannibalization-preview-button')).not.toBeInTheDocument();
+      expect(screen.getAllByTestId('google-readiness-gsc')).toHaveLength(1);
+    },
+  );
+
+  it('a stored report with no candidates offers no new report while Search Console is unusable', async () => {
+    routeApi({ report: () => detail([]) });
+    renderPage(`/sites/${SITE_ID}?tab=cannibalization&report=${REPORT_ID}`, readiness('no_property'));
+    expect(await screen.findByTestId('cannibalization-state-noCandidates')).toBeInTheDocument();
+    expect(screen.queryByTestId('cannibalization-state-noCandidates-action')).not.toBeInTheDocument();
+    // an empty report cannot be exported or shared, and the page says so.
+    expect(screen.getByRole('button', { name: /export or share/i })).toHaveAccessibleDescription('Nothing to export yet');
+  });
+
+  it.each([
+    ['no_property', 'Choose a Search Console property', 'Select a Search Console property'],
+    ['property_mismatch', "This property doesn't cover the site", 'Select a Search Console property'],
+    ['not_connected', "Search Console isn't connected", 'Connect Google'],
+  ] as const)('shows the same %s status and CTA as every page', async (status, title, cta) => {
+    routeApi();
+    renderPage(`/sites/${SITE_ID}?tab=cannibalization&view=new`, readiness(status));
+    const notice = await screen.findByTestId('google-readiness-gsc');
+    expect(notice).toHaveAttribute('data-status', status);
+    expect(notice).toHaveTextContent(title);
+    const link = notice.querySelector('a');
+    expect(link).toHaveTextContent(cta);
+    expect(link).toHaveAttribute('href', `/sites/${SITE_ID}?tab=google`);
+    expect(screen.queryByTestId('cannibalization-state-disconnected')).not.toBeInTheDocument();
+  });
+
+  it('offers the report form once the shared readiness is ok', async () => {
+    routeApi();
+    renderPage(`/sites/${SITE_ID}?tab=cannibalization&view=new`, readiness('ok'));
+    expect(await screen.findByTestId('cannibalization-preview-button')).toBeInTheDocument();
+    expect(screen.queryByTestId('google-readiness-gsc')).not.toBeInTheDocument();
+    expect(screen.queryByTestId('cannibalization-state-disconnected')).not.toBeInTheDocument();
+  });
+});
+

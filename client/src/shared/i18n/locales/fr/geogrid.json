@@ -8,12 +8,12 @@
   "form": {
     "keyword": "Mot-clé suivi",
     "keywordPlaceholder": "Choisissez un mot-clé",
-    "coordinateHelp": "Saisissez le point central en chiffres. Il n'y a pas de sélecteur sur carte — nous n'achetons pas de tuiles cartographiques.",
+    "coordinateHelp": "Saisissez le point central en latitude et longitude, en degrés décimaux. Pour les trouver, faites un clic droit sur votre établissement dans Google Maps, puis cliquez sur les chiffres en haut du menu pour les copier.",
     "latitude": "Latitude du centre",
     "longitude": "Longitude du centre",
     "spacing": "Écart entre les points",
     "spacingOption": "{{km}} km",
-    "spacingCustom": "Écart personnalisé (m)",
+    "spacingCustom": "Écart personnalisé en km",
     "size": "Taille de la grille",
     "sizeOption": "{{size}} sur {{size}} ({{cells}} points)",
     "zoom": "Zoom de la carte",
@@ -21,11 +21,16 @@
     "previewing": "Estimation…",
     "errors": {
       "keyword": "Choisissez d'abord un mot-clé suivi.",
-      "latitude": "La latitude doit être comprise entre -{{max}} et {{max}}.",
-      "longitude": "La longitude doit être comprise entre -180 et 180.",
-      "spacing": "L'écart doit être compris entre {{min}} et {{max}} mètres, par pas de {{step}}.",
-      "zoom": "Le zoom doit être compris entre {{min}} et {{max}}."
-    }
+      "latitude": "Saisissez une latitude comprise entre -{{max}} et {{max}}.",
+      "longitude": "Saisissez une longitude comprise entre -180 et 180.",
+      "spacing": "Choisissez un écart compris entre {{min}} et {{max}} km, par pas de {{step}} km.",
+      "zoom": "Saisissez un niveau de zoom compris entre {{min}} et {{max}}."
+    },
+    "zoomHelp": "Niveau de zoom de Google Maps à chaque point : {{min}} affiche une large région, {{max}} quelques rues. Une valeur élevée correspond à une recherche faite tout près ; {{default}} correspond au niveau de la rue.",
+    "useLastCenter": "Reprendre le centre du dernier scan",
+    "keywordEmpty": "Ce site n'a pas encore de mot-clé suivi. Un scan géogrille vérifie un seul mot-clé suivi.",
+    "keywordEmptyCta": "Suivre un mot-clé",
+    "spacingCustomOption": "Personnalisé"
   },
   "preview": {
     "title": "Ce que coûte ce scan",
@@ -110,10 +115,38 @@
     "previewFailed": "Nous n'avons pas pu estimer ce scan.",
     "submitFailed": "Nous n'avons pas pu lancer ce scan."
   },
-  "center": {"place": {"resultsLegend_zero": "{{count}} lieux pour « {{query}} ». Choisissez le centre :",
+  "center": {
+    "place": {
+      "label": "Nom ou adresse du lieu",
+      "placeholder": "1 rue de Rivoli, Paris",
+      "hint": "Chaque recherche interroge une fois votre fournisseur de fiches locales. Choisir un résultat n'envoie aucune requête et ne change rien dans SEO local.",
+      "search": "Rechercher",
+      "searching": "Recherche…",
+      "invalid": "Saisissez entre {{min}} et {{max}} caractères.",
+      "searchFailed": "La recherche a échoué. Réessayez dans un instant.",
+      "noResults": "Aucun lieu avec un emplacement sur la carte pour « {{query}} ». Essayez une adresse plus complète ou saisissez des coordonnées.",
+      "resultsLegend_zero": "{{count}} lieux pour « {{query}} ». Choisissez le centre :",
       "resultsLegend_one": "{{count}} lieu pour « {{query}} ». Choisissez le centre :",
       "resultsLegend_two": "{{count}} lieux pour « {{query}} ». Choisissez le centre :",
       "resultsLegend_few": "{{count}} lieux pour « {{query}} ». Choisissez le centre :",
       "resultsLegend_many": "{{count}} lieux pour « {{query}} ». Choisissez le centre :",
-      "resultsLegend_other": "{{count}} lieux pour « {{query}} ». Choisissez le centre :"}}
+      "resultsLegend_other": "{{count}} lieux pour « {{query}} ». Choisissez le centre :"
+    },
+    "legend": "Centre de la grille",
+    "mode": {
+      "business": "Mon établissement",
+      "place": "Rechercher un lieu",
+      "coordinates": "Saisir des coordonnées"
+    },
+    "business": {
+      "loading": "Chargement de votre établissement…",
+      "loadFailed": "Impossible de charger votre établissement. Recherchez un lieu ou saisissez des coordonnées.",
+      "none": "Aucun établissement n’est encore configuré pour ce site. Choisissez-le dans SEO local pour que la grille parte de son emplacement.",
+      "setUp": "Configurer votre établissement",
+      "noLocation": "La fiche de cet établissement n’indique aucun emplacement sur la carte. Recherchez un lieu ou saisissez des coordonnées."
+    },
+    "noAddress": "Aucune adresse indiquée",
+    "current": "La grille sera centrée sur",
+    "required": "Choisissez un centre pour la grille."
+  }
 }

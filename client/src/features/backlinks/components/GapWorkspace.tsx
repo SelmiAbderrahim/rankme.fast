@@ -4,6 +4,7 @@ import { useLocation, useNavigate } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { fetchCompetitorProfiles } from '@features/competitors';
 import { ReportExportControl } from '@features/report-export';
+import { CompetitorDomainsInput } from '@shared/components/CompetitorDomainsInput';
 import { useAppDispatch, useAppSelector } from '@shared/hooks/redux';
 import { SAFE_EXTERNAL_REL, safeExternalHref } from '@shared/security';
 import { Alert, AlertDescription, AlertTitle } from '@shared/ui/alert';
@@ -17,13 +18,12 @@ import {
   CardTitle,
 } from '@shared/ui/card';
 import { Empty, EmptyDescription, EmptyHeader, EmptyTitle } from '@shared/ui/empty';
-import { Field, FieldDescription, FieldError, FieldGroup, FieldLabel } from '@shared/ui/field';
+import { Field, FieldDescription, FieldGroup, FieldLabel } from '@shared/ui/field';
 import { Input } from '@shared/ui/input';
 import { Skeleton } from '@shared/ui/skeleton';
 import { StatusChip, type StatusTone } from '@shared/ui/status-chip';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@shared/ui/table';
 import { TableHeaderHelp } from '@shared/ui/table-header-help';
-import { Textarea } from '@shared/ui/textarea';
 import { cancelGapPreview } from '../store/slice';
 import { selectGap } from '../store/selectors';
 import { loadGapRun, previewGap, submitGap } from '../store/thunks';
@@ -38,7 +38,6 @@ import {
   LINK_GAP_MAX_COMPETITORS,
   LINK_GAP_MIN_COMPETITORS,
   linkGapFormSchema,
-  splitGapCompetitors,
   type LinkGapFormValues,
 } from '../validation';
 import { SpendPreviewPanel } from './SpendPreviewPanel';
@@ -51,7 +50,6 @@ interface GapWorkspaceProps {
 function gapValidationMessage(issue: string, t: (key: string) => string): string {
   if (issue === 'ownAmongCompetitors') return t('gap.form.errors.ownAmongCompetitors');
   if (issue === 'atLeastOne') return t('gap.form.errors.atLeastOne');
-  if (issue === 'tooMany') return t('gap.form.errors.tooMany');
   return t('gap.form.errors.invalid');
 }
 
@@ -90,7 +88,7 @@ export function GapWorkspace({ siteId, ownDomain: selectedDomain }: GapWorkspace
   const gap = useAppSelector(selectGap);
   const runId = new URLSearchParams(location.search).get('runId');
   const [ownDomain, setOwnDomain] = useState(selectedDomain);
-  const [competitorsText, setCompetitorsText] = useState('');
+  const [competitors, setCompetitors] = useState<string[]>([]);
   const [validationError, setValidationError] = useState('');
   const [confirmedInput, setConfirmedInput] = useState<LinkGapFormValues | null>(null);
   const ownDomainEdited = useRef(false);
@@ -109,7 +107,7 @@ export function GapWorkspace({ siteId, ownDomain: selectedDomain }: GapWorkspace
           LINK_GAP_MAX_COMPETITORS,
         );
         if (competitorsEdited.current || domains.length === 0) return;
-        setCompetitorsText(domains.join('\n'));
+        setCompetitors(domains);
         setPrefilled(true);
       },
       () => undefined,
@@ -136,7 +134,7 @@ export function GapWorkspace({ siteId, ownDomain: selectedDomain }: GapWorkspace
     event.preventDefault();
     const parsed = linkGapFormSchema.safeParse({
       ownDomain,
-      competitors: splitGapCompetitors(competitorsText),
+      competitors,
     });
     if (!parsed.success) {
       setValidationError(gapValidationMessage(parsed.error.issues[0]!.message, t));
@@ -189,32 +187,32 @@ export function GapWorkspace({ siteId, ownDomain: selectedDomain }: GapWorkspace
               />
             </Field>
             <Field data-invalid={Boolean(validationError)}>
-              <FieldLabel htmlFor="gap-competitors">{t('gap.form.competitorsLabel')}</FieldLabel>
-              <Textarea
+              <CompetitorDomainsInput
                 id="gap-competitors"
-                value={competitorsText}
-                onChange={(event) => {
+                label={t('gap.form.competitorsLabel')}
+                value={competitors}
+                onChange={(domains) => {
                   competitorsEdited.current = true;
-                  setCompetitorsText(event.target.value);
+                  setCompetitors(domains);
                   clearStalePreview();
                 }}
-                aria-invalid={Boolean(validationError)}
-                aria-describedby="gap-competitors-help"
-                rows={4}
-                data-testid="link-gap-competitors"
+                ownDomain={ownDomain}
+                error={validationError}
+                testIdPrefix="link-gap-competitors"
+                help={
+                  <FieldDescription id="gap-competitors-help">
+                    {t('gap.form.competitorsHelp', {
+                      min: LINK_GAP_MIN_COMPETITORS,
+                      max: LINK_GAP_MAX_COMPETITORS,
+                    })}
+                    {prefilled ? (
+                      <span className="block" data-testid="link-gap-prefilled">
+                        {t('gap.form.prefilled')}
+                      </span>
+                    ) : null}
+                  </FieldDescription>
+                }
               />
-              <FieldDescription id="gap-competitors-help">
-                {t('gap.form.competitorsHelp', {
-                  min: LINK_GAP_MIN_COMPETITORS,
-                  max: LINK_GAP_MAX_COMPETITORS,
-                })}
-                {prefilled ? (
-                  <span className="block" data-testid="link-gap-prefilled">
-                    {t('gap.form.prefilled')}
-                  </span>
-                ) : null}
-              </FieldDescription>
-              <FieldError>{validationError}</FieldError>
             </Field>
           </FieldGroup>
 

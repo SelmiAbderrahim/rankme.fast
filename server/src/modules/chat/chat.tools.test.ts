@@ -48,6 +48,7 @@ vi.mock('../mcp-permissions/index.js', () => ({
   getAccountMcpSpec: mocks.getAccountMcpSpec,
 }));
 
+import { HttpError } from '../../shared/utils/http-error.js';
 import { MCP_INPUT_SCHEMAS, MCP_TOOL_NAMES } from '../mcp/index.js';
 import { CHAT_TOOL_JSON_SCHEMAS, buildChatTools } from './chat.tools.js';
 
@@ -151,6 +152,28 @@ describe('buildChatTools', () => {
       );
     });
 
+    it('tells the model list_sites is not needed, and says plainly when the linked site is gone', async () => {
+      const linked = await buildChatTools('account-1', 'en', null, SITE_ID);
+      expect(linked.tools.list_sites!.description).toContain('already has a linked site id');
+      const unlinked = await buildChatTools('account-1', 'en');
+      expect(unlinked.tools.list_sites!.description).not.toContain('already has a linked site id');
+
+      mocks.listKeywords.mockRejectedValue(
+        HttpError.notFound({ code: 'SITES_ERRORS_NOT_FOUND', messageKey: 'sites.errors.notFound' }),
+      );
+      const gone = await linked.tools.list_keywords!.execute({});
+      expect(gone).toMatchObject({
+        ok: false,
+        structuredContent: { error: { tool: 'list_keywords', code: 'mcp.errors.siteUnavailable' } },
+      });
+      // A site the model asked about explicitly keeps the ordinary not-found error.
+      const other = await linked.tools.list_keywords!.execute({ siteId: OTHER_SITE_ID });
+      expect(other).toMatchObject({
+        ok: false,
+        structuredContent: { error: { code: 'sites.errors.notFound' } },
+      });
+    });
+
     it('does not inject a siteId for non-site tools or malformed input', async () => {
       const { tools } = await buildChatTools('account-1', 'en', null, SITE_ID);
       const outcome = await tools.get_audit_status!.execute({ runId: SITE_ID });
@@ -173,6 +196,9 @@ describe('buildChatTools', () => {
     expect(tools.start_audit).toBeUndefined();
     expect(tools.get_rank_history).toBeUndefined();
     expect(tools.list_sites).toBeDefined();
+    // The names go into the system instruction so the model says they are switched off.
+    const { disabledTools } = await buildChatTools('account-1', 'en');
+    expect([...disabledTools].sort()).toEqual(['get_rank_history', 'start_audit']);
   });
 
   it('filters the site intersection: blocked site ≡ non-owned site tool error', async () => {

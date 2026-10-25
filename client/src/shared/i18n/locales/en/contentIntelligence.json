@@ -88,7 +88,7 @@
       "description": "These public ranking pages came from your approved landscape match. You still choose whether to start this analysis."
     },
     "included": {
-      "title": "What one credit includes",
+      "title": "What this analysis includes",
       "owned": "One owned page",
       "competitors": "Up to three public organic comparison pages",
       "scorecard": "One scorecard",
@@ -107,7 +107,9 @@
     "invalidUrl": "Enter a valid URL.",
     "urlRequired": "Enter or choose a page URL.",
     "keywordRequired": "Enter or choose a target keyword.",
-    "keywordTooLong": "Keep the target keyword under 200 characters.",
+    "keywordTooLong": "Use {{max}} characters or fewer.",
+    "keywordList": "Enter one search query, not a list. Start a separate analysis for each keyword.",
+    "keywordCounter": "{{length}}/{{max}} characters",
     "offOrigin": "URL must match your site's origin.",
     "urlUnsafe": "URL is not publicly reachable.",
     "urlNotOwned": "That URL does not belong to a site you own.",
@@ -120,6 +122,7 @@
       "step": "Step {{current}} of {{total}}",
       "percentComplete": "{{percent}}% complete",
       "autoRefresh": "This page updates automatically while the analysis runs.",
+      "stillRunning": "Still running. You can leave this page and come back later; the result will be here.",
       "errorTitle": "This analysis stopped early",
       "errorGeneric": "The analysis stopped before it finished."
     },
@@ -136,6 +139,57 @@
       "cancelled": "This analysis was cancelled.",
       "unexpected": "The analysis stopped because of an unexpected error."
     },
+    "failureReason": {
+      "robots_blocked": "Your site's robots.txt blocks our reader from this page.",
+      "access_denied": "Your site refused access to this page, for example through bot protection or a login wall.",
+      "http_error": "Your page answered with HTTP status {{status}} instead of its content.",
+      "timeout": "Your page took too long to load.",
+      "temporarily_unavailable": "The page could not be loaded this time.",
+      "empty_content": "We found no readable text on the page. It may be empty or load its content only with JavaScript.",
+      "too_large": "The page is too large to read in one pass.",
+      "unsafe_url": "The page address, or a page it redirects to, is not publicly reachable.",
+      "unreadable": "The page came back in a form we could not read.",
+      "redirect_loop": "Your page's redirects loop back on themselves.",
+      "redirect_limit": "Your page redirects more than five times, so we stopped following.",
+      "unsafe_redirect": "Your page redirects to an address that is not publicly reachable.",
+      "non_html": "This address serves {{type}}, not a web page."
+    },
+    "failureReasonUnknown": "We did not record the exact cause. The usual ones are a robots.txt block, bot protection or a login wall, an HTTP error, a slow response, or text that only appears after JavaScript runs. Check that the page opens in a private browser window, then try again.",
+    "failureCode": {
+      "provider_unavailable": "Our content service is unavailable right now.",
+      "page_unreachable": "We could not read your page.",
+      "page_blocked": "Your page blocks our reader, for example through robots.txt, bot protection or a login wall.",
+      "page_too_large": "Your page is too large to read in one pass.",
+      "timeout": "Your page or our content service took too long to respond.",
+      "internal": "Something went wrong on our side."
+    },
+    "failureHint": {
+      "robots_blocked": "Allow crawlers to read this page in robots.txt, then try again.",
+      "access_denied": "Allow automated visits to this page or make it public, then try again.",
+      "http_error": "Check that the URL is correct and that the page opens in a private browser window, then try again.",
+      "timeout": "This is often temporary. Try again, and check that the page loads quickly.",
+      "temporarily_unavailable": "This is usually temporary. Try again in a few minutes.",
+      "empty_content": "Make sure the main text is in the page HTML (server-rendered), then try again.",
+      "too_large": "Try a shorter page, or split very long content across several pages.",
+      "unsafe_url": "Use the page's public address and check its redirects, then try again.",
+      "unreadable": "Try again. If it keeps failing, check that the page opens normally in a browser.",
+      "redirect_loop": "Fix the redirect so it ends on one page, then try again.",
+      "redirect_limit": "Point the address straight at the final page, then try again.",
+      "unsafe_redirect": "Redirect to a public address instead, then try again.",
+      "non_html": "Use the address of the page itself, not a file, then try again."
+    },
+    "failureEvidence": {
+      "redirectPath": "Redirect path: {{path}}"
+    },
+    "failedNoOutput": "This run stopped before it produced anything, so there are no content opportunities, brief or draft to show.",
+    "retryDialog": {
+      "title": "Try this analysis again?",
+      "description": "This starts a new analysis of the same page and keyword.",
+      "confirm": "Try again",
+      "back": "Cancel",
+      "loading": "Loading the details of this analysis…",
+      "loadFailed": "The details of this analysis could not be loaded."
+    },
     "back": "Back to analyses",
     "meta": {
       "page": "Page",
@@ -143,6 +197,7 @@
       "locale": "Locale",
       "requested": "Requested",
       "completed": "Completed",
+      "readAt": "Read at {{url}} after a redirect",
       "cost": "Analysis cost: {{units}} credit"
     },
     "explanation": "This is a content-readiness comparison, not a search-engine score.",
@@ -241,7 +296,9 @@
     },
     "actions": {
       "cancel": "Cancel analysis",
-      "regenerate": "Regenerate (uses one credit)"
+      "regenerate": "Regenerate",
+      "retry": "Try again",
+      "editUrl": "Edit the URL"
     }
   },
   "confirm": {

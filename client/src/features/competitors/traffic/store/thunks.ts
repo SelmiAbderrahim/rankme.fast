@@ -48,9 +48,9 @@ export const previewSnapshot = createAsyncThunk<
   TrafficSpendPreview,
   TrafficSnapshotPreviewInput,
   { rejectValue: TrafficThunkError }
->('traffic-snapshots/preview', async ({ domains }, { rejectWithValue }) => {
+>('traffic-snapshots/preview', async ({ domains, market }, { rejectWithValue }) => {
   try {
-    return await previewTrafficSnapshot(domains);
+    return await previewTrafficSnapshot(domains, market);
   } catch (error) {
     return rejectWithValue(requestError(error, 'competitorsTraffic:errors.previewFailed'));
   }

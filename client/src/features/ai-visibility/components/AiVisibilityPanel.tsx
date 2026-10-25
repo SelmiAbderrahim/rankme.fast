@@ -1,7 +1,7 @@
 import { Bdi } from '@shared/components/Bdi';
-import { FormEvent, Fragment, useEffect, useMemo, useRef, useState } from 'react';
+import { FormEvent, Fragment, useEffect, useMemo, useRef, useState, type ReactNode } from 'react';
 import { useTranslation } from 'react-i18next';
-import { ChevronDown, ChevronRight, ListPlus, Plus, Trash2 } from 'lucide-react';
+import { ChevronDown, ChevronRight, Info, ListPlus, Plus, Trash2 } from 'lucide-react';
 import { toast } from 'sonner';
 import { ReportExportControl } from '@features/report-export';
 import { RefreshButton } from '@shared/components/RefreshButton';
@@ -20,6 +20,7 @@ import { Empty, EmptyContent, EmptyDescription, EmptyHeader, EmptyTitle } from '
 import { Input } from '@shared/ui/input';
 import { Label } from '@shared/ui/label';
 import { Skeleton } from '@shared/ui/skeleton';
+import { Spinner } from '@shared/ui/spinner';
 import { StatusChip, type StatusTone } from '@shared/ui/status-chip';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@shared/ui/table';
 import { TableHeaderHelp } from '@shared/ui/table-header-help';
@@ -51,8 +52,10 @@ import {
   selectAiVisibilitySuggestions,
   selectAiVisibilitySuggestionsError,
   selectAiVisibilitySuggestionsLoading,
+  selectAiVisibilitySuggestionsEvidence,
   selectAiVisibilitySuggestionsGeneratedAt,
   selectAiVisibilitySuggestionsOutputLocale,
+  selectAiVisibilitySuggestionsStale,
   selectAiVisibilitySuggestionsGenerating,
   selectAiVisibilitySuggestionsCooldownUntil,
   selectAiVisibilityTrend,
@@ -63,9 +66,15 @@ import type { AiSentiment, AiTrackedPrompt, AiVisibilitySnapshot } from '../type
 import { AiVisibilityKpis } from './AiVisibilityKpis';
 import { PromptEngineDetails } from './PromptEngineDetails';
 import { AiVisibilityTrendChart } from './AiVisibilityTrendChart';
+import { trackedPromptKey } from '../promptKey';
 
 interface Props {
   siteId: string;
+  /**
+   * Optional section slot, placed directly under the page header. The
+   * workspace uses it for the weekly pulse card.
+   */
+  pulse?: ReactNode;
 }
 
 const sentimentTone: Record<AiSentiment, StatusTone> = {
@@ -77,10 +86,11 @@ const sentimentTone: Record<AiSentiment, StatusTone> = {
 export const resolveAiVisibilityOutputLocale = (resolvedLanguage: unknown) =>
   isSupportedLocale(resolvedLanguage) ? resolvedLanguage : DEFAULT_LOCALE;
 
-export const AiVisibilityPanel = ({ siteId }: Props) => {
+export const AiVisibilityPanel = ({ siteId, pulse }: Props) => {
   const { t, i18n } = useTranslation(['aiVisibility', 'language']);
   const dispatch = useAppDispatch();
   const promptInputRef = useRef<HTMLInputElement>(null);
+  const generationRef = useRef<{ abort: () => void } | null>(null);
   const [prompt, setPrompt] = useState('');
   const [pendingRemove, setPendingRemove] = useState<AiTrackedPrompt | null>(null);
   const [expandedPrompt, setExpandedPrompt] = useState<string | null>(null);
@@ -92,7 +102,9 @@ export const AiVisibilityPanel = ({ siteId }: Props) => {
   const error = useAppSelector(selectAiVisibilityError);
   const suggestionsError = useAppSelector(selectAiVisibilitySuggestionsError);
   const suggestionsGeneratedAt = useAppSelector(selectAiVisibilitySuggestionsGeneratedAt);
+  const suggestionsEvidence = useAppSelector(selectAiVisibilitySuggestionsEvidence);
   const suggestionsOutputLocale = useAppSelector(selectAiVisibilitySuggestionsOutputLocale);
+  const suggestionsStale = useAppSelector(selectAiVisibilitySuggestionsStale);
   const suggestionsGenerating = useAppSelector(selectAiVisibilitySuggestionsGenerating);
   const suggestionsCooldownUntil = useAppSelector(selectAiVisibilitySuggestionsCooldownUntil);
   const isRefreshing = useAppSelector(selectAiVisibilityRefreshing);
@@ -186,10 +198,20 @@ export const AiVisibilityPanel = ({ siteId }: Props) => {
     : '';
 
   const generate = () => {
-    void dispatch(generateSuggestions({ siteId, outputLocale: activeOutputLocale })).then((action) => {
+    const generation = dispatch(generateSuggestions({ siteId, outputLocale: activeOutputLocale }));
+    generationRef.current = generation;
+    void generation.then((action) => {
+      generationRef.current = null;
       if (!generateSuggestions.fulfilled.match(action)) return;
       toast.success(t('suggestions.generated', { count: action.payload.suggestions.length }));
     });
+  };
+
+  // "Stop waiting" only abandons the request in this tab: a generation the
+  // server already started still finishes and is stored, which the toast says.
+  const cancelGeneration = () => {
+    generationRef.current?.abort();
+    toast.info(t('suggestions.cancelled'));
   };
 
   const runCheck = () => {
@@ -215,13 +237,14 @@ export const AiVisibilityPanel = ({ siteId }: Props) => {
 
   const focusPromptInput = () => promptInputRef.current!.focus();
 
-  const trackedLower = useMemo(
-    () => new Set(promptRows.map((row) => row.prompt.toLowerCase())),
+  // A suggestion the site already tracks is not offered again.
+  const trackedKeys = useMemo(
+    () => new Set(promptRows.map((row) => trackedPromptKey(row.prompt))),
     [promptRows],
   );
   const untrackedSuggestions = useMemo(
-    () => suggestions.filter((item) => !trackedLower.has(item.prompt.toLowerCase())),
-    [suggestions, trackedLower],
+    () => suggestions.filter((item) => !trackedKeys.has(trackedPromptKey(item.prompt))),
+    [suggestions, trackedKeys],
   );
 
   const trackAll = () => {
@@ -239,12 +262,20 @@ export const AiVisibilityPanel = ({ siteId }: Props) => {
 
   return (
     <div className="flex flex-col gap-6 px-4 py-8" data-testid="ai-visibility-panel">
+      {/* Title row: the actions sit beside the title and the status line under
+          it, like every other tab. */}
       <div className="flex flex-wrap items-start justify-between gap-3">
-        <div>
+        <div className="min-w-0">
           <h1 className="text-2xl font-semibold">{t('title')}</h1>
           <p className="text-muted-foreground text-sm">{t('description')}</p>
+          <div className="text-muted-foreground mt-1 flex flex-wrap items-center gap-x-3 gap-y-1 text-xs">
+            <span data-testid="ai-visibility-last-checked">{lastCheckedLabel}</span>
+            {promptCount === 0 ? (
+              <span data-testid="ai-visibility-check-needs-prompts">{t('refresh.needPrompts')}</span>
+            ) : null}
+          </div>
         </div>
-        <div className="flex flex-col items-end gap-1">
+        <div className="flex flex-wrap items-start gap-2" data-testid="ai-visibility-header-actions">
           <ReportExportControl
             kind="ai.visibility"
             target={{ scope: 'site', siteId }}
@@ -255,15 +286,15 @@ export const AiVisibilityPanel = ({ siteId }: Props) => {
             isRefreshing={isRefreshing}
             cooldownUntil={cooldownUntil}
             disabled={promptCount === 0}
+            variant="outline"
             labelKey="aiVisibility:refresh.button"
             cooldownKey="aiVisibility:refresh.cooldown"
             data-testid="ai-visibility-refresh"
           />
-          <p className="text-muted-foreground text-xs" data-testid="ai-visibility-last-checked">
-            {lastCheckedLabel}
-          </p>
         </div>
       </div>
+
+      {pulse}
 
       {error ? (
         <div className="flex flex-col gap-3">
@@ -321,49 +352,6 @@ export const AiVisibilityPanel = ({ siteId }: Props) => {
         </p>
       </form>
 
-      <div className="rounded-lg border" data-testid="ai-visibility-share">
-        <div className="border-b px-4 py-3">
-          <p className="text-sm font-semibold">{t('share.title')}</p>
-          <p className="text-muted-foreground text-xs">{t('share.description')}</p>
-        </div>
-        <div className="px-4 py-3">
-          <div className="flex h-3 overflow-hidden rounded-sm border bg-muted">
-            <div
-              className="bg-chart-1"
-              style={{ width: `${overview?.shareOfVoicePct ?? 0}%` }}
-              data-testid="ai-visibility-brand-bar"
-            />
-            <div
-              className="bg-chart-2"
-              style={{ width: `${100 - (overview?.shareOfVoicePct ?? 0)}%` }}
-              data-testid="ai-visibility-competitor-bar"
-            />
-          </div>
-          <dl className="mt-3 flex flex-wrap gap-x-6 gap-y-1 text-sm">
-            <div className="flex gap-2">
-              <dt className="text-muted-foreground">{t('share.brand')}</dt>
-              <dd className="font-medium tabular-nums" dir="ltr">
-                {overview?.shareOfVoicePct === null || overview?.shareOfVoicePct === undefined
-                  ? t('share.noData')
-                  : new Intl.NumberFormat(i18n.language, { style: 'percent' }).format(
-                      overview.shareOfVoicePct / 100,
-                    )}
-              </dd>
-            </div>
-            <div className="flex gap-2">
-              <dt className="text-muted-foreground">{t('share.competitors')}</dt>
-              <dd className="font-medium tabular-nums" dir="ltr">
-                {overview?.shareOfVoicePct === null || overview?.shareOfVoicePct === undefined
-                  ? t('share.noData')
-                  : new Intl.NumberFormat(i18n.language, { style: 'percent' }).format(
-                      (100 - overview.shareOfVoicePct) / 100,
-                    )}
-              </dd>
-            </div>
-          </dl>
-        </div>
-      </div>
-
       <div className="rounded-lg border" data-testid="ai-visibility-trend-card">
         <div className="border-b px-4 py-3">
           <p className="text-sm font-semibold">{t('trend.title')}</p>
@@ -384,7 +372,7 @@ export const AiVisibilityPanel = ({ siteId }: Props) => {
         </div>
       </div>
 
-      {overview && overview.notMentionedPrompts.length > 0 ? (
+      {overview && overview.checkedAt !== null && overview.notMentionedPrompts.length > 0 ? (
         <div className="rounded-lg border" data-testid="ai-visibility-not-mentioned">
           <div className="border-b px-4 py-3">
             <p className="text-sm font-semibold">{t('notMentioned.title')}</p>
@@ -486,8 +474,16 @@ export const AiVisibilityPanel = ({ siteId }: Props) => {
                       </TableCell>
                       <TableCell className="whitespace-normal"><Bdi>{row.prompt}</Bdi></TableCell>
                       <TableCell>
-                        <StatusChip tone={latest?.mentioned ? 'success' : 'muted'}>
-                          {latest?.mentioned ? t('prompts.mentioned') : t('prompts.notMentioned')}
+                        {/* No completed check means no outcome yet. */}
+                        <StatusChip
+                          tone={latest?.mentioned ? 'success' : 'muted'}
+                          data-testid="ai-visibility-prompt-status"
+                        >
+                          {latest === undefined
+                            ? t('neverChecked')
+                            : latest.mentioned
+                              ? t('prompts.mentioned')
+                              : t('prompts.notMentioned')}
                         </StatusChip>
                       </TableCell>
                       <TableCell>
@@ -527,8 +523,10 @@ export const AiVisibilityPanel = ({ siteId }: Props) => {
       </div>
 
       <div className="rounded-lg border" data-testid="ai-visibility-suggestions">
-        <div className="flex flex-wrap items-center justify-between gap-2 border-b px-4 py-3">
-          <div>
+        {/* The status line wraps inside its own column so the Generate button
+            never shifts under the pointer. */}
+        <div className="flex items-start justify-between gap-2 border-b px-4 py-3">
+          <div className="min-w-0 flex-1">
             <p className="text-sm font-semibold">{t('suggestions.title')}</p>
             <p className="text-muted-foreground text-xs">
               {[
@@ -543,12 +541,16 @@ export const AiVisibilityPanel = ({ siteId }: Props) => {
                 .join(' · ')}
             </p>
           </div>
-          <div className="flex flex-wrap items-center gap-2">
+          <div className="flex shrink-0 flex-wrap items-center justify-end gap-2">
             <RefreshButton
               onRefresh={generate}
               isRefreshing={suggestionsGenerating}
               cooldownUntil={suggestionsCooldownUntil}
-              labelKey="aiVisibility:suggestions.generate"
+              labelKey={
+                suggestionsStale
+                  ? 'aiVisibility:suggestions.regenerate'
+                  : 'aiVisibility:suggestions.generate'
+              }
               cooldownKey="aiVisibility:suggestions.cooldown"
               data-testid="ai-visibility-generate-suggestions"
             />
@@ -569,6 +571,26 @@ export const AiVisibilityPanel = ({ siteId }: Props) => {
             ) : null}
           </div>
         </div>
+        {suggestionsGenerating ? (
+          <div
+            className="flex flex-wrap items-center gap-2 border-b px-4 py-3 text-sm"
+            role="status"
+            aria-live="polite"
+            data-testid="ai-visibility-suggestions-progress"
+          >
+            <Spinner />
+            <span className="text-muted-foreground">{t('suggestions.generatingHint')}</span>
+            <Button
+              type="button"
+              size="sm"
+              variant="ghost"
+              onClick={cancelGeneration}
+              data-testid="ai-visibility-suggestions-cancel"
+            >
+              {t('suggestions.cancel')}
+            </Button>
+          </div>
+        ) : null}
         {suggestionsLoading ? (
           <div className="px-4 py-3" aria-busy="true">
             <Skeleton className="h-8 w-full" />
@@ -577,6 +599,17 @@ export const AiVisibilityPanel = ({ siteId }: Props) => {
           <Alert variant="destructive" role="alert" className="m-4">
             <AlertDescription>{suggestionsError}</AlertDescription>
           </Alert>
+        ) : suggestionsStale ? (
+          <div className="px-4 py-3">
+            {/* A stored set built before suggestions used only this site's data
+                is withheld until the owner clicks "Regenerate suggestions". */}
+            <Empty data-testid="ai-visibility-suggestions-stale">
+              <EmptyHeader>
+                <EmptyTitle>{t('suggestions.staleTitle')}</EmptyTitle>
+                <EmptyDescription>{t('suggestions.staleBody')}</EmptyDescription>
+              </EmptyHeader>
+            </Empty>
+          </div>
         ) : suggestions.length === 0 ? (
           <div className="px-4 py-3">
             {/* Two distinct empties: never generated (the button is the next
@@ -604,31 +637,48 @@ export const AiVisibilityPanel = ({ siteId }: Props) => {
             </Empty>
           </div>
         ) : (
-          <div className="divide-y">
-            {suggestions.map((item) => (
-              <div key={item.prompt} className="flex items-center justify-between gap-3 px-4 py-3">
-                <div>
-                  <p className="text-sm font-medium">
-                    <Bdi>{item.prompt}</Bdi>
-                    {item.source === 'ai' ? (
-                      <StatusChip tone="info" className="ms-2">
-                        {t('suggestions.aiGenerated')}
-                      </StatusChip>
-                    ) : null}
-                  </p>
+          <>
+            {/* Thin evidence is said plainly: the questions are only as specific
+                as what the audit, keywords and Search Console let us read. */}
+            {suggestionsEvidence === 'limited' || suggestionsEvidence === 'none' ? (
+              <Alert className="m-4" data-testid="ai-visibility-suggestions-evidence">
+                <Info aria-hidden="true" />
+                <AlertDescription>
+                  {suggestionsEvidence === 'none'
+                    ? t('suggestions.evidenceNone')
+                    : t('suggestions.evidenceLimited')}
+                </AlertDescription>
+              </Alert>
+            ) : null}
+            <div className="divide-y">
+              {untrackedSuggestions.map((item) => (
+                <div key={item.prompt} className="flex items-center justify-between gap-3 px-4 py-3">
+                  <div>
+                    <p className="text-sm font-medium">
+                      {/* A site can get prompts in two languages: isolate each. */}
+                      <Bdi>
+                        <span lang={item.language}>{item.prompt}</span>
+                      </Bdi>
+                      {item.source === 'ai' ? (
+                        <StatusChip tone="info" className="ms-2">
+                          {t('suggestions.aiGenerated')}
+                        </StatusChip>
+                      ) : null}
+                    </p>
+                  </div>
+                  <Button
+                    type="button"
+                    size="sm"
+                    variant="outline"
+                    disabled={capReached || adding || addingAll}
+                    onClick={() => void dispatch(addPrompt({ siteId, prompt: item.prompt }))}
+                  >
+                    {t('suggestions.track')}
+                  </Button>
                 </div>
-                <Button
-                  type="button"
-                  size="sm"
-                  variant="outline"
-                  disabled={capReached || adding || addingAll}
-                  onClick={() => void dispatch(addPrompt({ siteId, prompt: item.prompt }))}
-                >
-                  {t('suggestions.track')}
-                </Button>
-              </div>
-            ))}
-          </div>
+              ))}
+            </div>
+          </>
         )}
       </div>
 

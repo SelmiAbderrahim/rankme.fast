@@ -13,9 +13,9 @@
  *     `range` days inclusive ending on `asOf`, so `startDate = asOf - (days - 1)`
  *     and `endDate = asOf` — exactly what the Google tab prints.
  *   - Search Console reports its days in Pacific Time, hence `timezone`.
- *   - Site totals are the sum of the DAILY rows; the
- *     query/page/country/device tables only add up their own rows and can
- *     differ from the site total (`scopeNote`).
+ *   - Site totals add up the stored query rows. The page/country/device
+ *     tables only add up their own rows, so they can differ from the site
+ *     total (`scopeNote`).
  *   - `ctr` values are fractions (0.05 = 5%); `position` is the average
  *     Search Console position.
  */

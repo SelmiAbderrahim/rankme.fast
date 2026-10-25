@@ -62,6 +62,7 @@ export const CROSS_ACCOUNT_REGISTRY: Readonly<Record<string, CrossAccountCoverag
     'GET /api/keyword-cluster-runs/:runId': { kind: 'test', file: 'modules/keyword-clusters/keyword-clusters.routes.test.ts' },
     'GET /api/keyword-research/clusters/:runId': { kind: 'test', file: 'modules/keyword-research/keyword-research.clustering.test.ts' },
     'POST /api/keyword-research/clusters/:runId/clusters/:clusterId/decision': { kind: 'test', file: 'modules/keyword-research/keyword-research.decisions.test.ts' },
+    'GET /api/keyword-research/history/:id/results': { kind: 'test', file: 'modules/keyword-research/keyword-research.site-history.test.ts' },
     'GET /api/keyword-research/trends/:runId': { kind: 'test', file: 'modules/keyword-research/keyword-research.trends.routes.test.ts' },
     'DELETE /api/keywords/:id': { kind: 'test', file: 'modules/ranks/keywords.routes.test.ts' },
     'POST /api/keywords/:id/check': { kind: 'test', file: 'modules/ranks/keywords.routes.test.ts' },

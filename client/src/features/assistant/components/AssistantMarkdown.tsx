@@ -12,12 +12,15 @@ import { remarkSoftBreaks } from '../markdownBreaks';
  * the shared scheme guard. Single newlines render as `<br>` (`remarkSoftBreaks`). See `.claude/rules/output-encoding.md`.
  */
 
+// A reply sits under the page h1 and the log's h2, so every markdown heading
+// renders as an h3 (QA round 3 F-AQ): a model "# Title" never adds a second h1
+// and a "### Note" never skips a level. The original level keeps its size.
 const H1 = ({ children }: PropsWithChildren) => (
-  <h1 className="mt-1 text-base font-semibold text-foreground">{children}</h1>
+  <h3 className="mt-1 text-base font-semibold text-foreground">{children}</h3>
 );
 
 const H2 = ({ children }: PropsWithChildren) => (
-  <h2 className="mt-1 text-sm font-semibold text-foreground">{children}</h2>
+  <h3 className="mt-1 text-sm font-semibold text-foreground">{children}</h3>
 );
 
 // ponytail: h4–h6 reuse this renderer — a chat bubble has no room for six sizes.
@@ -38,9 +41,15 @@ const components: Components = {
     <blockquote className="border-s-2 ps-3 text-muted-foreground">{children}</blockquote>
   ),
   hr: () => <hr className="border-border" />,
+  // A wide table scrolls sideways inside its own bounded wrapper instead of
+  // being clipped by the bubble; `tabIndex` lets keyboard users scroll it.
   table: ({ children }) => (
-    <div className="overflow-x-auto rounded-md border">
-      <table className="w-full border-collapse text-xs">{children}</table>
+    <div
+      data-slot="assistant-table-scroll"
+      tabIndex={0}
+      className="max-w-full overflow-x-auto rounded-md border outline-none focus-visible:ring-[3px] focus-visible:ring-ring/50"
+    >
+      <table className="w-full border-collapse text-xs [overflow-wrap:normal]">{children}</table>
     </div>
   ),
   th: ({ children }) => (
@@ -50,7 +59,7 @@ const components: Components = {
   // The chip styling below is flattened inside `pre`, so fenced blocks with and
   // without a language info string both render as one plain code box.
   pre: ({ children }) => (
-    <pre className="overflow-x-auto rounded-md border bg-muted p-3 font-mono text-xs [&_code]:border-0 [&_code]:bg-transparent [&_code]:p-0 [&_code]:text-inherit">
+    <pre className="max-w-full overflow-x-auto rounded-md border bg-muted p-3 font-mono text-xs [&_code]:border-0 [&_code]:bg-transparent [&_code]:p-0 [&_code]:text-inherit">
       {children}
     </pre>
   ),
@@ -83,14 +92,31 @@ const components: Components = {
 };
 
 /**
+ * A stand-alone internal identifier in assistant prose: a 24-character
+ * database id, a 64-character digest, or the shortened `6a7b5c38a…` form the
+ * model writes when it abbreviates one. It needs both a digit and a hex letter,
+ * so ordinary words and plain numbers are never touched, and it must not be
+ * part of a path, query, or word, so links that carry an id keep working.
+ * Ids never help the reader (the app links the thing they name), and the model
+ * only repeats them because a tool returned them (QA 58).
+ */
+const INTERNAL_ID = / ?(?<![\w/=:.#-])(?=[0-9a-f]*\d)(?=[0-9a-f]*[a-f])[0-9a-f]{8,64}(?![\w/=-])(?:…|\.{3})?/gi;
+
+/** Assistant text with stand-alone internal ids removed; everything else is untouched. */
+export function hideInternalIds(text: string): string {
+  // One space before the id goes with it ("audit 6a7b… (Aug 11)" → "audit (Aug 11)").
+  return text.replace(INTERNAL_ID, '');
+}
+
+/**
  * Memoized so a streaming delta only re-parses the growing text part, not every
  * completed part and earlier message in the log.
  */
 export const AssistantMarkdown = memo(function AssistantMarkdown({ text }: { text: string }) {
   return (
-    <div className="assistant-markdown space-y-3 break-words leading-6">
+    <div className="assistant-markdown min-w-0 space-y-3 leading-6 [overflow-wrap:anywhere]">
       <ReactMarkdown remarkPlugins={[remarkGfm, remarkSoftBreaks]} components={components}>
-        {text}
+        {hideInternalIds(text)}
       </ReactMarkdown>
     </div>
   );

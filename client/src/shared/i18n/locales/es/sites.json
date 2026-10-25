@@ -185,7 +185,7 @@
     "competitors": {
       "open": "Abrir competidores",
       "notLoadedTitle": "Los datos de competidores están disponibles bajo demanda",
-      "notLoadedDescription": "Abre competidores para ejecutar una consulta. El resumen reutilizará el resultado sin consumir otra consulta."
+      "notLoadedDescription": "Añade los competidores que ya conoces o previsualiza una actualización del descubrimiento en la página Competidores. No se obtiene nada hasta que confirmes la actualización."
     },
     "unlock": {
       "title": "Hay más información disponible",

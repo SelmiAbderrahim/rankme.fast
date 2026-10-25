@@ -40,7 +40,7 @@ vi.mock('../pages/index.js', async () => {
 // Enter through the module barrel first: it fixes the evaluation order of the
 // registry <-> mcp-permissions import cycle (see index.ts).
 import { MCP_INPUT_SCHEMAS, MCP_TOOL_NAMES } from './index.js';
-import { creditLedger, usageCounters } from '../../db/schema/index.js';
+import { vendorCache, vendorResponses } from '../../db/schema/vendor-cache.js';
 import { resolveEffectivePermissions } from '../../shared/mcp-permissions/index.js';
 import { clearCollections, startMemoryMongo, stopMemoryMongo } from '../../shared/testing/mongo.js';
 import {
@@ -171,11 +171,12 @@ beforeEach(async () => {
   siteId = await seedSite();
 });
 
+/** Row counts of the vendor cache + archive: a stored read must not write either. */
 async function spendSnapshot() {
   const db = getTestDb();
   return {
-    counters: await db.select().from(usageCounters),
-    ledger: await db.select().from(creditLedger),
+    cache: (await db.select().from(vendorCache)).length,
+    archive: (await db.select().from(vendorResponses)).length,
   };
 }
 
@@ -437,7 +438,7 @@ describe('list_pages', () => {
     expect(structured(await toolListPages({ siteId }, context())).status).toBe('ok');
   });
 
-  it('does not move usage counters, credits or call a refresh port', async () => {
+  it('writes nothing to the vendor cache and calls no refresh port', async () => {
     await seedSnapshot([{ url: 'https://example.com/a', keyword: 'k', position: 3 }]);
     const before = await spendSnapshot();
     await toolListPages({ siteId }, context());

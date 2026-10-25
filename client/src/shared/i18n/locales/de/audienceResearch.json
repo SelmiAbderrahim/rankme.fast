@@ -23,6 +23,7 @@
     },
     "topics": {
       "label": "Themen",
+      "add": "Hinzufügen",
       "placeholder": "Thema hinzufügen und Eingabetaste drücken",
       "chipRemove": "{{topic}} entfernen",
       "count": "{{count}} / {{max}}",

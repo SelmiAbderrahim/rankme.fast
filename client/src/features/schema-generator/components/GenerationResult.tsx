@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useState, type FormEvent } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Check, Copy, Download } from 'lucide-react';
 import { Alert, AlertDescription, AlertTitle } from '@shared/ui/alert';
@@ -11,12 +11,25 @@ import {
   CardHeader,
   CardTitle,
 } from '@shared/ui/card';
+import { Field, FieldDescription, FieldGroup, FieldLabel } from '@shared/ui/field';
+import { Input } from '@shared/ui/input';
+import { Textarea } from '@shared/ui/textarea';
 import { writeToClipboard } from '@shared/lib/clipboard';
 import { downloadSchemaGeneration } from '../api';
-import type { GenerationDetail } from '../types';
+import {
+  USER_FACT_INPUTS,
+  type GenerationDetail,
+  type UserFactProperty,
+  type UserFacts,
+} from '../types';
 
 interface GenerationResultProps {
   detail: GenerationDetail;
+  /** Rebuild with user-supplied facts. */
+  onRegenerate?: (facts: UserFacts) => void;
+  regenerating?: boolean;
+  /** Server-authored refusal of the last rebuild, shown beside the form. */
+  regenerateError?: string | null;
 }
 
 const FACT_LABEL_KEYS: Readonly<Record<string, string>> = {
@@ -33,6 +46,113 @@ const FACT_LABEL_KEYS: Readonly<Record<string, string>> = {
   'site.origin': 'siteOrigin',
   'site.domain': 'siteDomain',
   'site.label': 'siteName',
+  'page.ogSiteName': 'ogSiteName',
+  'page.jsonLdName': 'jsonLdName',
+  'page.titleBrand': 'titleBrand',
+};
+
+/** Same ceilings the server enforces on each kind of user-supplied fact. */
+const USER_FACT_MAX_LENGTH = { text: 300, longText: 500, language: 16, date: 64, url: 2048 } as const;
+
+/** User-supplied values carry `user.<property>` fact ids. */
+const isUserFact = (factId: string): boolean => factId.startsWith('user.');
+
+const isUserFactProperty = (property: string): property is UserFactProperty =>
+  Object.prototype.hasOwnProperty.call(USER_FACT_INPUTS, property);
+
+/**
+ * "What we left out" is not a dead end: every omitted property the user can
+ * state gets an input. Submitting rebuilds the markup with those values, marked
+ * "provided by you" — it reuses the facts already found and makes no new AI
+ * call.
+ */
+const UserFactsForm = ({
+  properties,
+  onSubmit,
+  submitting,
+  error,
+}: {
+  properties: UserFactProperty[];
+  onSubmit: (facts: UserFacts) => void;
+  submitting: boolean;
+  error: string | null;
+}) => {
+  const { t } = useTranslation('schemaGenerator');
+  const [values, setValues] = useState<UserFacts>({});
+  const [empty, setEmpty] = useState(false);
+
+  const submit = (event: FormEvent<HTMLFormElement>) => {
+    event.preventDefault();
+    const facts = Object.fromEntries(
+      Object.entries(values).filter(([, value]) => value.trim().length > 0),
+    ) as UserFacts;
+    setEmpty(Object.keys(facts).length === 0);
+    if (Object.keys(facts).length > 0) onSubmit(facts);
+  };
+
+  return (
+    <form className="flex flex-col gap-3 border-t pt-4" onSubmit={submit} data-testid="schema-user-facts" noValidate>
+      <div>
+        <h4 className="text-sm font-semibold">{t('userFacts.title')}</h4>
+        <p className="text-muted-foreground text-sm">{t('userFacts.description')}</p>
+      </div>
+      <FieldGroup className="gap-3">
+        {properties.map((property) => {
+          const kind = USER_FACT_INPUTS[property];
+          const id = `schema-user-fact-${property}`;
+          const hint = kind === 'text' || kind === 'longText' ? null : t(`userFacts.hint.${kind}`);
+          const common = {
+            id,
+            value: values[property] ?? '',
+            'aria-describedby': hint ? `${id}-hint` : undefined,
+            'data-testid': id,
+            onChange: (event: { target: { value: string } }) =>
+              setValues((current) => ({ ...current, [property]: event.target.value })),
+          };
+          return (
+            <Field key={property}>
+              <FieldLabel htmlFor={id}>{t(`userFacts.label.${property}`)}</FieldLabel>
+              {kind === 'longText' ? (
+                <Textarea {...common} maxLength={USER_FACT_MAX_LENGTH.longText} rows={3} />
+              ) : (
+                <Input
+                  {...common}
+                  maxLength={USER_FACT_MAX_LENGTH[kind]}
+                  type={kind === 'url' ? 'url' : 'text'}
+                  dir={kind === 'text' ? undefined : 'ltr'}
+                  inputMode={kind === 'url' ? 'url' : undefined}
+                />
+              )}
+              {hint ? <FieldDescription id={`${id}-hint`}>{hint}</FieldDescription> : null}
+            </Field>
+          );
+        })}
+      </FieldGroup>
+      {empty ? (
+        <p className="text-destructive text-sm" role="alert" data-testid="schema-user-facts-empty">
+          {t('userFacts.required')}
+        </p>
+      ) : null}
+      {error ? (
+        <Alert role="alert" data-testid="schema-user-facts-error">
+          <AlertDescription>{error}</AlertDescription>
+        </Alert>
+      ) : null}
+      <div className="flex flex-wrap items-center gap-3">
+        <Button
+          type="submit"
+          variant="outline"
+          size="sm"
+          loading={submitting}
+          loadingLabel={t('userFacts.submit')}
+          data-testid="schema-user-facts-submit"
+        >
+          {t('userFacts.submit')}
+        </Button>
+        <span className="text-muted-foreground text-xs">{t('userFacts.free')}</span>
+      </div>
+    </form>
+  );
 };
 
 const factFamily = (factId: string): string => factId.replace(/\[\d+\]$/, '');
@@ -165,8 +285,14 @@ const PayloadBlock = ({
   );
 };
 
-export const GenerationResult = ({ detail }: GenerationResultProps) => {
+export const GenerationResult = ({
+  detail,
+  onRegenerate,
+  regenerating = false,
+  regenerateError = null,
+}: GenerationResultProps) => {
   const { t } = useTranslation('schemaGenerator');
+  const suppliable = detail.omissions.map((row) => row.property).filter(isUserFactProperty);
 
   return (
     <div className="flex flex-col gap-4" data-testid="schema-result">
@@ -189,11 +315,14 @@ export const GenerationResult = ({ detail }: GenerationResultProps) => {
                     ? t('result.failedProvider')
                     : t('result.failedRejected')}
                 </span>
-                {detail.refunded ? (
-                  <span data-testid="schema-result-refunded">{t('result.refunded')}</span>
-                ) : null}
               </AlertDescription>
             </Alert>
+          ) : null}
+
+          {detail.regeneratedFrom ? (
+            <p className="text-muted-foreground text-sm" data-testid="schema-result-regenerated">
+              {t('result.regenerated')}
+            </p>
           ) : null}
 
           {detail.payload !== null ? (
@@ -228,13 +357,19 @@ export const GenerationResult = ({ detail }: GenerationResultProps) => {
                   <Badge variant="outline" className="font-mono">
                     {row.property}
                   </Badge>
-                  <span className="text-muted-foreground">
-                    {t('result.evidenceFrom', {
-                      fact: FACT_LABEL_KEYS[factFamily(row.factId)]
-                        ? t(`fact.${FACT_LABEL_KEYS[factFamily(row.factId)]}`)
-                        : row.factId,
-                    })}
-                  </span>
+                  {isUserFact(row.factId) ? (
+                    <Badge variant="secondary" data-testid={`schema-provided-by-you-${row.property}`}>
+                      {t('fact.providedByYou')}
+                    </Badge>
+                  ) : (
+                    <span className="text-muted-foreground">
+                      {t('result.evidenceFrom', {
+                        fact: FACT_LABEL_KEYS[factFamily(row.factId)]
+                          ? t(`fact.${FACT_LABEL_KEYS[factFamily(row.factId)]}`)
+                          : row.factId,
+                      })}
+                    </span>
+                  )}
                   <span className="break-all" dir="auto">{row.value}</span>
                 </li>
               ))}
@@ -274,6 +409,16 @@ export const GenerationResult = ({ detail }: GenerationResultProps) => {
               ))}
             </ul>
           )}
+          {onRegenerate && detail.payload !== null && suppliable.length > 0 ? (
+            <UserFactsForm
+              // A rebuilt generation starts with an empty form.
+              key={detail.id}
+              properties={suppliable}
+              onSubmit={onRegenerate}
+              submitting={regenerating}
+              error={regenerateError}
+            />
+          ) : null}
         </CardContent>
       </Card>
 

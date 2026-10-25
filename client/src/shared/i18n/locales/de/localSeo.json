@@ -1,9 +1,8 @@
 {
   "title": "Lokale SEO",
   "description": "Firmeneinträge, Bewertungen und Ranking im Kartenpaket für Ihre Seite.",
-  "empty": "Noch keine lokalen SEO-Daten — klicken Sie auf Aktualisieren, um Einträge, Bewertungen und Fragen zu laden.",
+  "empty": "Noch keine lokalen SEO-Daten. Klicken Sie oben auf „Lokale SEO aktualisieren“, um Einträge, Bewertungen und Fragen zu laden.",
   "emptyTitle": "Noch keine lokalen Daten",
-  "emptyCta": "Lokale Daten abrufen",
   "refresh": {
     "button": "Lokale SEO aktualisieren",
     "cooldown_one": "Aktualisierung in {{seconds}} s",
@@ -12,7 +11,8 @@
     "cooldown_two": "Aktualisierung in {{seconds}} s",
     "cooldown_few": "Aktualisierung in {{seconds}} s",
     "cooldown_many": "Aktualisierung in {{seconds}} s",
-    "cooldown_other": "Aktualisierung in {{seconds}} s"
+    "cooldown_other": "Aktualisierung in {{seconds}} s",
+    "needsSetup": "Wählen Sie unten Ihr Unternehmen aus, bevor Sie aktualisieren."
   },
   "loadFailed": "Lokale SEO konnte nicht geladen werden.",
   "locked": {
@@ -43,10 +43,38 @@
     "packSize": "Paketgröße",
     "notRanked": "Nicht im Kartenpaket"
   },
-  "setup": {"resultsLegend_zero": "{{count}} Treffer für „{{query}}“. Wählen Sie Ihr Unternehmen:",
+  "setup": {
+    "resultsLegend_zero": "{{count}} Treffer für „{{query}}“. Wählen Sie Ihr Unternehmen:",
     "resultsLegend_one": "{{count}} Treffer für „{{query}}“. Wählen Sie Ihr Unternehmen:",
     "resultsLegend_two": "{{count}} Treffer für „{{query}}“. Wählen Sie Ihr Unternehmen:",
     "resultsLegend_few": "{{count}} Treffer für „{{query}}“. Wählen Sie Ihr Unternehmen:",
     "resultsLegend_many": "{{count}} Treffer für „{{query}}“. Wählen Sie Ihr Unternehmen:",
-    "resultsLegend_other": "{{count}} Treffer für „{{query}}“. Wählen Sie Ihr Unternehmen:"}
+    "resultsLegend_other": "{{count}} Treffer für „{{query}}“. Wählen Sie Ihr Unternehmen:",
+    "title": "Unternehmen auswählen",
+    "description": "Suchen Sie das Unternehmen, zu dem diese Website gehört. Lokale SEO berichtet über das Unternehmen, das Sie auswählen.",
+    "changeDescription": "Suchen Sie erneut und wählen Sie ein anderes Unternehmen. Das aktuelle bleibt bestehen, bis Sie eine neue Auswahl speichern.",
+    "queryLabel": "Name, Adresse oder Place-ID des Unternehmens",
+    "queryPlaceholder": "Zahnarztpraxis Beispiel, Berlin",
+    "queryHint": "Jede Suche ruft Ihren Anbieter für lokale Einträge einmal auf. Das Speichern eines Treffers sendet keine Anfrage.",
+    "queryInvalid": "Geben Sie zwischen {{min}} und {{max}} Zeichen ein.",
+    "search": "Suchen",
+    "searching": "Wird gesucht…",
+    "noAddress": "Keine Adresse angegeben",
+    "source": "Google-Unternehmensprofil",
+    "noResults": "Für „{{query}}“ wurde kein Unternehmen gefunden. Prüfen Sie die Schreibweise oder versuchen Sie es mit der Adresse oder der Google-Place-ID.",
+    "save": "Dieses Unternehmen verwenden",
+    "saving": "Wird gespeichert…",
+    "saved": "Lokale SEO berichtet jetzt über {{name}}.",
+    "loadFailed": "Ihre Unternehmenseinrichtung konnte nicht geladen werden.",
+    "searchFailed": "Die Suche ist fehlgeschlagen. Versuchen Sie es gleich noch einmal.",
+    "selectFailed": "Dieses Unternehmen konnte nicht gespeichert werden. Versuchen Sie es erneut."
+  },
+  "business": {
+    "label": "Unternehmen",
+    "change": "Unternehmen ändern"
+  },
+  "provenance": {
+    "business": "Daten für <bdi>{{name}}</bdi>.",
+    "domain": "Ältere Daten, über die Website <bdi>{{domain}}</bdi> abgerufen."
+  }
 }

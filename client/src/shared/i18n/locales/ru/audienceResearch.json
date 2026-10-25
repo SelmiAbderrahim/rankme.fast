@@ -23,6 +23,7 @@
     },
     "topics": {
       "label": "Темы",
+      "add": "Добавить",
       "placeholder": "Добавьте тему и нажмите Enter",
       "chipRemove": "Убрать {{topic}}",
       "count": "{{count}} / {{max}}",

@@ -5,6 +5,7 @@ import { env } from '../../../config/env.js';
 import { competitorProfiles, keywords } from '../../../db/schema/index.js';
 import { competitorLandscapeJobId, enqueueCompetitorLandscapeJob, } from '../../../shared/queue/index.js';
 import { HttpError } from '../../../shared/utils/http-error.js';
+import { isOwnSiteDomain } from '../../competitor-content/index.js';
 import { Site } from '../../sites/index.js';
 import { assertSiteNotPaused } from '../../sites/sites.guard.js';
 import { sha256CanonicalLandscape } from './landscape.canonical.js';
@@ -96,13 +97,15 @@ async function resolveLandscapeInput(db: ApplicationDb, accountId: string, siteI
     allowPaused: boolean;
 }): Promise<ResolvedLandscapeInput> {
     const site = await loadOwnedLandscapeSite(accountId, siteId, options);
-    const profiles = await db
+    const selected = await db
         .select({
         id: competitorProfiles.id,
         domain: competitorProfiles.registrableDomain,
     })
         .from(competitorProfiles)
         .where(and(eq(competitorProfiles.accountId, accountId), eq(competitorProfiles.siteId, siteId), eq(competitorProfiles.status, 'active'), inArray(competitorProfiles.id, [...profileIds])));
+    // A stored row naming the site itself is never a competitor to compare.
+    const profiles = selected.filter((profile) => !isOwnSiteDomain(profile.domain, site.domain));
     if (profiles.length !== profileIds.length) {
         throw HttpError.notFound({ code: 'COMPETITORS_LANDSCAPE_ERRORS_COMPETITOR_NOT_FOUND', messageKey: 'competitors.landscape.errors.competitorNotFound' });
     }

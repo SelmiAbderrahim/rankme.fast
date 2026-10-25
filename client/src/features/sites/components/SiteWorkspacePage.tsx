@@ -174,7 +174,7 @@ const LazyAudienceResearchPage = lazy(async () => {
   return { default: AudienceResearchPanel };
 });
 
-// Weekly Pulse card lives at the top of the AI Visibility tab,
+// Weekly Pulse card is a section under the AI Visibility title,
 // and the GSC generative appearance card sits at the top of the Google tab.
 // Both lazy-inject the shared `weeklyPulse` reducer via `combineSlices.inject`
 // (idempotent by reducerPath).
@@ -405,18 +405,20 @@ export const SiteWorkspacePage = () => {
     ),
     competitors: (
       <Suspense fallback={<LazyPanelFallback />}>
-        <LazyCompetitorsPage siteId={siteId} />
+        <LazyCompetitorsPage siteId={siteId} siteDomain={site.domain} />
       </Suspense>
     ),
     'ai-visibility': (
-      <div className="flex flex-col gap-4">
-        <Suspense fallback={<LazyPanelFallback />}>
-          <LazyWeeklyPulseCard siteId={siteId} />
-        </Suspense>
-        <Suspense fallback={<LazyPanelFallback />}>
-          <LazyAiVisibilityPage siteId={siteId} />
-        </Suspense>
-      </div>
+      <Suspense fallback={<LazyPanelFallback />}>
+        <LazyAiVisibilityPage
+          siteId={siteId}
+          pulse={
+            <Suspense fallback={<LazyPanelFallback />}>
+              <LazyWeeklyPulseCard siteId={siteId} />
+            </Suspense>
+          }
+        />
+      </Suspense>
     ),
     'brand-radar': (
       <Suspense fallback={<LazyPanelFallback />}>

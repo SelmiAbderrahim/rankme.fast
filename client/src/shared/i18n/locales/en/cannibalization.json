@@ -71,7 +71,8 @@
   "states": {
     "empty": {
       "title": "Nothing to show yet",
-      "body": "Generate a report to see which queries your pages compete over."
+      "body": "Generate a report to see which queries your pages compete over.",
+      "action": "Create a report"
     },
     "awaitingSync": {
       "title": "Waiting for the next sync",
@@ -97,6 +98,21 @@
     "failed": {
       "title": "Something went wrong",
       "body": "We could not load this. Try again."
+    },
+    "noCandidates": {
+      "title": "No competing pages found",
+      "body": "In this window, no two of your pages competed for the same search query.",
+      "action": "Create a new report"
+    },
+    "filtered": {
+      "title": "No candidates at this confidence",
+      "body": "Show every confidence level to see this report's candidates.",
+      "action": "Show all"
+    },
+    "needsGsc": "New reports need a usable Search Console property. Fix the status above, then come back here.",
+    "emptyNoGsc": {
+      "title": "Nothing to show yet",
+      "body": "Reports are built from your stored Search Console data. Connect a Search Console property for this site, then create your first report."
     }
   },
   "counts": {

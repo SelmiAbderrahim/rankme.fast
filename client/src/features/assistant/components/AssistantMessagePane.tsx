@@ -18,6 +18,7 @@ import { isRtl } from '@shared/i18n';
 import type { AssistantClientError, ChatMessage, ChatMessagePart } from '../types';
 import type { AssistantLoadStatus } from '../store/slice';
 import { AssistantMarkdown } from './AssistantMarkdown';
+import { BOUNDED_SCROLL_AREA_CLASS } from './scrollAreaLayout';
 import { AssistantToolCard } from './AssistantToolCard';
 
 interface AssistantMessagePaneProps {
@@ -28,12 +29,45 @@ interface AssistantMessagePaneProps {
   assistantMessageId: string | null;
   onPromptSelect: (prompt: string) => void;
   onRetry?: () => void;
+  /** Re-ask the last question after a failed tool step or a cut-off reply; offered on the newest reply only. */
+  onRetryTool?: () => void;
 }
 
 type ToolCallPart = Extract<ChatMessagePart, { type: 'tool_call' }>;
 type ToolResultPart = Extract<ChatMessagePart, { type: 'tool_result' }>;
 
-function MessageParts({ parts, role }: { parts: ChatMessagePart[]; role: ChatMessage['role'] }) {
+/**
+ * A reply that was cut off (output limit, empty final answer or a dropped
+ * stream) is stored as `incomplete`. It keeps its notice after a reload, and
+ * the newest one offers Retry (re-asks the last question).
+ */
+function CutOffNotice({ onRetry, retryDisabled }: { onRetry?: () => void; retryDisabled: boolean }) {
+  const { t } = useTranslation('assistant');
+  return (
+    <Alert data-testid="assistant-cut-off">
+      <AlertDescription className="flex flex-wrap items-center gap-2">
+        <span>{t('messages.cutOff')}</span>
+        {onRetry ? (
+          <Button type="button" variant="outline" size="sm" disabled={retryDisabled} onClick={onRetry}>
+            {t('messages.retryCutOff')}
+          </Button>
+        ) : null}
+      </AlertDescription>
+    </Alert>
+  );
+}
+
+function MessageParts({
+  parts,
+  role,
+  onRetryTool,
+  retryDisabled,
+}: {
+  parts: ChatMessagePart[];
+  role: ChatMessage['role'];
+  onRetryTool?: (() => void) | undefined;
+  retryDisabled: boolean;
+}) {
   const callIds = new Set(
     parts
       .filter((part): part is ToolCallPart => part.type === 'tool_call')
@@ -46,7 +80,7 @@ function MessageParts({ parts, role }: { parts: ChatMessagePart[]; role: ChatMes
       return role === 'assistant' ? (
         <AssistantMarkdown key={`text-${index}`} text={part.text} />
       ) : (
-        <p key={`text-${index}`} className="whitespace-pre-wrap break-words">
+        <p key={`text-${index}`} className="whitespace-pre-wrap [overflow-wrap:anywhere]">
           <Bdi>{part.text}</Bdi>
         </p>
       );
@@ -56,7 +90,15 @@ function MessageParts({ parts, role }: { parts: ChatMessagePart[]; role: ChatMes
         (candidate): candidate is ToolResultPart =>
           candidate.type === 'tool_result' && candidate.toolCallId === part.toolCallId,
       );
-      return <AssistantToolCard key={`call-${part.toolCallId}-${index}`} call={part} result={result} />;
+      return (
+        <AssistantToolCard
+          key={`call-${part.toolCallId}-${index}`}
+          call={part}
+          result={result}
+          onRetry={onRetryTool}
+          retryDisabled={retryDisabled}
+        />
+      );
     }
     if (callIds.has(part.toolCallId)) return null;
     const syntheticCall: ToolCallPart = {
@@ -70,6 +112,8 @@ function MessageParts({ parts, role }: { parts: ChatMessagePart[]; role: ChatMes
         key={`result-${part.toolCallId}-${index}`}
         call={syntheticCall}
         result={part}
+        onRetry={onRetryTool}
+        retryDisabled={retryDisabled}
       />
     );
   });
@@ -143,6 +187,7 @@ export function AssistantMessagePane({
   assistantMessageId,
   onPromptSelect,
   onRetry,
+  onRetryTool,
 }: AssistantMessagePaneProps) {
   const { t } = useTranslation(['assistant', 'common']);
   const hasStreamingMessage = Boolean(
@@ -173,13 +218,18 @@ export function AssistantMessagePane({
   if (loadStatus === 'loading') return <ConversationLoading />;
 
   return (
-    <ScrollArea className="min-h-80 flex-1 lg:min-h-0" onScrollCapture={trackPinned}>
+    <ScrollArea
+      className={`min-h-80 min-w-0 flex-1 lg:min-h-0 ${BOUNDED_SCROLL_AREA_CLASS}`}
+      onScrollCapture={trackPinned}
+    >
       <div
         className="flex min-h-80 flex-col justify-end gap-6 p-4 sm:p-6"
         role="log"
         aria-live="polite"
         aria-label={t('assistant:messages.label')}
       >
+        {/* The page h1 → this h2 → reply headings and tool cards (h3). */}
+        <h2 className="sr-only">{t('assistant:messages.label')}</h2>
         {messages.length === 0 && !streaming ? (
           <ConversationEmpty onPromptSelect={onPromptSelect} />
         ) : null}
@@ -213,12 +263,25 @@ export function AssistantMessagePane({
                     : 'min-w-0 flex-1 pt-1 text-foreground'
                 }`}
               >
-                <MessageParts parts={message.parts} role={message.role} />
+                <MessageParts
+                  parts={message.parts}
+                  role={message.role}
+                  onRetryTool={!outgoing && message.id === messages.at(-1)?.id ? onRetryTool : undefined}
+                  retryDisabled={streaming}
+                />
                 {streaming && message.id === assistantMessageId ? <StreamingCaret /> : null}
                 {!outgoing && message.status === 'aborted' ? (
                   <p className="text-xs text-muted-foreground">
                     {t('assistant:messages.stopped')}
                   </p>
+                ) : null}
+                {!outgoing &&
+                message.status === 'incomplete' &&
+                !(streaming && message.id === assistantMessageId) ? (
+                  <CutOffNotice
+                    onRetry={message.id === messages.at(-1)?.id ? onRetryTool : undefined}
+                    retryDisabled={streaming}
+                  />
                 ) : null}
               </div>
             </article>

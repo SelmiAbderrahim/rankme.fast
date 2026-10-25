@@ -4,7 +4,7 @@
   "loadFailed": "无法加载 AI 可见度数据。",
   "form": {
     "label": "跟踪的提问",
-    "placeholder": "最适合代理机构的 SEO 审计工具",
+    "placeholder": "客户可能会向 AI 助手提出的问题",
     "add": "跟踪提问",
     "adding": "正在添加...",
     "cap": "已跟踪 {{count}}/{{cap}} 个提问",
@@ -33,7 +33,6 @@
     "cooldown_one": "请等待 {{seconds}} 秒后再检查。",
     "failed": "目前无法检查 AI 可见度。仍显示您最近的数据。",
     "success_one": "已检查 {{total}} 个提问 — 其中 {{mentioned}} 个的 AI 回答提到了您。",
-    "cost": "将使用本月剩余 {{remaining}} 次检查中的 {{prompts}} 次。",
     "cooldown_zero": "请等待 {{seconds}} 秒后再检查。",
     "cooldown_two": "请等待 {{seconds}} 秒后再检查。",
     "cooldown_few": "请等待 {{seconds}} 秒后再检查。",
@@ -43,7 +42,8 @@
     "success_two": "已检查 {{total}} 个提问 — 其中 {{mentioned}} 个的 AI 回答提到了您。",
     "success_few": "已检查 {{total}} 个提问 — 其中 {{mentioned}} 个的 AI 回答提到了您。",
     "success_many": "已检查 {{total}} 个提问 — 其中 {{mentioned}} 个的 AI 回答提到了您。",
-    "success_other": "已检查 {{total}} 个提问 — 其中 {{mentioned}} 个的 AI 回答提到了您。"
+    "success_other": "已检查 {{total}} 个提问 — 其中 {{mentioned}} 个的 AI 回答提到了您。",
+    "needPrompts": "请先在下方跟踪至少一个短语,再运行检查。"
   },
   "lastChecked": "上次检查 {{date}}",
   "neverChecked": "尚未检查",
@@ -99,10 +99,7 @@
     "needKeywords": "在关键词标签页跟踪关键词或运行一次审计以解锁建议。"
   },
   "share": {
-    "title": "声量份额",
     "description": "AI 回答提到您与竞争对手的频率对比。",
-    "brand": "您",
-    "competitors": "竞争对手",
     "noData": "暂无数据"
   },
   "sentiment": {
@@ -123,7 +120,6 @@
     "aiGenerated": "AI 建议",
     "generate": "生成建议",
     "cooldown_one": "请等待 {{seconds}} 秒后再次生成。",
-    "cost": "将消耗本月剩余 {{remaining}} 次生成中的一次。",
     "capReached": "本月您已用完全部建议生成次数。",
     "emptyGenerated": "暂时无法根据您的数据生成问题。请添加跟踪关键词或运行一次审计，然后重新生成。",
     "generatedAt": "生成于 {{date}}",
@@ -139,7 +135,15 @@
     "generated_two": "已生成 {{count}} 条建议提问。",
     "generated_few": "已生成 {{count}} 条建议提问。",
     "generated_many": "已生成 {{count}} 条建议提问。",
-    "generated_other": "已生成 {{count}} 条建议提问。"
+    "generated_other": "已生成 {{count}} 条建议提问。",
+    "cancel": "停止等待",
+    "cancelled": "已停止等待。如果生成完成,建议会在您下次打开此标签页时显示。",
+    "evidenceLimited": "这些建议依据的网站信息有限。请运行一次审计、跟踪关键词或连接 Search Console，以获得基于您所提供内容的问题。",
+    "evidenceNone": "我们还没有发现您网站提供内容的依据，因此这些问题只提到了您的域名。请运行一次审计、跟踪关键词或连接 Search Console，然后重新生成。",
+    "generatingHint": "正在生成建议……最多可能需要一分钟。",
+    "regenerate": "重新生成建议",
+    "staleBody": "它们是在建议只使用本网站自身数据之前生成的，因此我们已将其隐藏。请使用上方按钮生成新的一组建议，点击之前不会消耗任何额度。",
+    "staleTitle": "这些建议已过时"
   },
   "locked": {
     "body": "AI 可见度功能适用于 Agency 方案。",

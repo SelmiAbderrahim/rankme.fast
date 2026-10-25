@@ -30,7 +30,9 @@ export const initialState: AiVisibilityState = {
   addingAll: false,
   removingId: null,
   suggestionsGeneratedAt: null,
+  suggestionsEvidence: null,
   suggestionsOutputLocale: null,
+  suggestionsStale: false,
   suggestionsGenerating: false,
   suggestionsCooldownUntil: null,
 };
@@ -116,6 +118,8 @@ const slice = createSlice({
         state.suggestionsError = '';
         state.suggestions = [];
         state.suggestionsGeneratedAt = null;
+        state.suggestionsEvidence = null;
+        state.suggestionsStale = false;
         state.suggestionsOutputLocale = action.meta.arg.outputLocale;
       })
       .addCase(loadStoredSuggestions.fulfilled, (state, action) => {
@@ -123,6 +127,8 @@ const slice = createSlice({
         state.suggestionsLoading = false;
         state.suggestions = action.payload.suggestions;
         state.suggestionsGeneratedAt = action.payload.generatedAt;
+        state.suggestionsEvidence = action.payload.evidence ?? null;
+        state.suggestionsStale = action.payload.stale === true;
         state.suggestionsOutputLocale = action.payload.outputLocale;
       })
       // Writes ONLY `suggestionsError`. It must not touch the shared
@@ -146,6 +152,8 @@ const slice = createSlice({
         state.suggestionsGenerating = false;
         state.suggestions = action.payload.suggestions;
         state.suggestionsGeneratedAt = action.payload.generatedAt;
+        state.suggestionsEvidence = action.payload.evidence ?? null;
+        state.suggestionsStale = action.payload.stale === true;
         state.suggestionsOutputLocale = action.payload.outputLocale;
       })
       .addCase(generateSuggestions.rejected, (state, action) => {

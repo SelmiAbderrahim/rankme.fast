@@ -22,10 +22,11 @@
     "title": "Solicitar una instantánea",
     "description": "Consulta el impacto exacto en tu asignación antes de iniciar una instantánea de pago.",
     "marketLabel": "Mercado",
-    "marketValue": "Estados Unidos · inglés",
+    "countryLabel": "País",
+    "languageLabel": "Idioma",
     "domainLabel": "Dominio",
     "domainPlaceholder": "example.com",
-    "domainHelp": "Introduce un dominio público sin http://, https://, ruta ni credenciales.",
+    "domainHelp": "Introduce un dominio público o pega una URL completa; solo se conserva el nombre de host.",
     "preview": "Vista previa de la instantánea",
     "previewing": "Preparando la vista previa…",
     "confirm": "Confirmar instantánea",
@@ -61,7 +62,8 @@
       "title": "Distribución estimada por país",
       "description": "Principales países conservados por el índice del proveedor.",
       "country": "País",
-      "visits": "Visitas estimadas"
+      "visits": "Visitas estimadas",
+      "empty": "No se guardaron datos de países para esta instantánea."
     },
     "history": {
       "title": "Historial estimado de tráfico",
@@ -129,7 +131,7 @@
     "succeeded": "Instantánea completada"
   },
   "errors": {
-    "invalidDomain": "Introduce un dominio público válido sin esquema ni ruta.",
+    "invalidDomain": "Introduce un dominio público válido, como example.com.",
     "requestFailed": "No se pudo iniciar la instantánea de tráfico.",
     "previewFailed": "No se pudo preparar la vista previa del gasto.",
     "listFailed": "No se pudieron cargar las instantáneas de tráfico guardadas.",
@@ -146,6 +148,7 @@
     "button_one": "Comparar {{count}} instantánea",
     "remove": "Quitar {{domain}} de la comparación",
     "countriesTitle": "Distribución estimada por país alineada",
+    "countriesEmpty": "No se guardaron datos de países para estas instantáneas.",
     "historyTitle": "Historial estimado de tráfico superpuesto",
     "historyDescription": "Los colores siguen el orden de las instantáneas y usan la paleta compartida de gráficos.",
     "chartLabel": "Historial estimado de tráfico superpuesto para las instantáneas seleccionadas",

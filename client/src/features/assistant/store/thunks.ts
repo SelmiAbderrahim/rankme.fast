@@ -55,7 +55,7 @@ export const toolResultReceived = createAction<
 export const messageFinished = createAction<
   StreamActionBase &
     Pick<ChatStreamDone, 'finishReason' | 'tokens'> & {
-      status: 'complete' | 'aborted';
+      status: 'complete' | 'incomplete' | 'aborted';
     }
 >('assistant/messageFinished');
 
@@ -209,11 +209,13 @@ function handleStreamEvent(
   const base = { requestId: input.requestId, conversationId: input.conversationId };
 
   if (event.event === 'meta') {
+    const conversationTitle = optionalStringField(data, 'conversationTitle');
     const meta: ChatStreamMeta = {
       conversationId: stringField(data, 'conversationId'),
       userMessageId: stringField(data, 'userMessageId'),
       assistantMessageId: stringField(data, 'assistantMessageId'),
       responseLocale: localeField(data, 'responseLocale'),
+      ...(conversationTitle ? { conversationTitle } : {}),
     };
     if (meta.conversationId !== input.conversationId) {
       throw new Error('assistant-stream-conversation-mismatch');
@@ -279,7 +281,11 @@ function handleStreamEvent(
     };
     accumulator.finishReason = done.finishReason;
     accumulator.tokens = done.tokens;
-    dispatch(messageFinished({ ...base, ...done, status: 'complete' }));
+    // QA4 issue 6: the server marks a reply cut off by the output limit, an
+    // error finish or an empty final section; older servers only send the
+    // finish reason, so `length` is read the same way.
+    const cutOff = data.status === 'incomplete' || done.finishReason === 'length';
+    dispatch(messageFinished({ ...base, ...done, status: cutOff ? 'incomplete' : 'complete' }));
     return;
   }
 

@@ -71,7 +71,8 @@
   "states": {
     "empty": {
       "title": "Todavía no hay nada",
-      "body": "Genera un informe para ver por qué consultas compiten tus páginas."
+      "body": "Genera un informe para ver por qué consultas compiten tus páginas.",
+      "action": "Crear un informe"
     },
     "awaitingSync": {
       "title": "Esperando la próxima sincronización",
@@ -97,6 +98,21 @@
     "failed": {
       "title": "Algo salió mal",
       "body": "No se pudo cargar. Inténtalo de nuevo."
+    },
+    "noCandidates": {
+      "title": "No se encontraron páginas en competencia",
+      "body": "En este periodo, ninguna de tus páginas compitió con otra por la misma búsqueda.",
+      "action": "Crear un informe nuevo"
+    },
+    "filtered": {
+      "title": "No hay casos con esta confianza",
+      "body": "Muestra todos los niveles de confianza para ver los casos de este informe.",
+      "action": "Mostrar todo"
+    },
+    "needsGsc": "Los informes nuevos necesitan una propiedad de Search Console utilizable. Corrige el estado de arriba y luego vuelve aquí.",
+    "emptyNoGsc": {
+      "title": "Todavía no hay nada",
+      "body": "Los informes se crean a partir de tus datos guardados de Search Console. Conecta una propiedad de Search Console para este sitio y crea tu primer informe."
     }
   },
   "counts": {

@@ -11,9 +11,13 @@ export interface ScheduledReport {
   siteId: string;
   name: string;
   frequency: 'weekly' | 'monthly';
+  /** Weekday / month day / hour are wall-clock values in `timezone`. */
   weekdayUtc: number | null;
   monthdayUtc: number | null;
-  hourUtc: number;
+  /** IANA zone the schedule is written in, e.g. "Asia/Riyadh". */
+  timezone: string;
+  /** Hour 0..23 in `timezone`; never a pre-converted UTC hour. */
+  localHour: number;
   minuteUtc: number;
   locale: SupportedLocale;
   recipients: string[];

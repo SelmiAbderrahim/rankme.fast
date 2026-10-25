@@ -34,7 +34,7 @@ describe('MCP quick start', () => {
       mcpServers: {
         rankmefast: {
           url: endpoint,
-          headers: { Authorization: 'Bearer rmf_REPLACE_WITH_YOUR_KEY' },
+          headers: { Authorization: 'Bearer ${env:RANKMEFAST_API_KEY}' },
         },
       },
     });

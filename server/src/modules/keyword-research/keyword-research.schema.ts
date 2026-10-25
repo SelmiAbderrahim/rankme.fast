@@ -18,6 +18,16 @@ const languageCodeSchema = z
     .trim()
     .min(2, 'keywordResearch.errors.languageInvalid')
     .max(10, 'keywordResearch.errors.languageInvalid');
+// Optional site attribution for research run from a site's Research tab: the
+// lookup's history row carries the site so that tab lists only its own
+// research. 24-hex Mongo ObjectId.
+const researchSiteIdSchema = z
+    .string()
+    .regex(/^[a-f0-9]{24}$/, 'keywordResearch.errors.siteIdInvalid');
+// One Research press fires /metrics AND /intent. The client mints one UUID per
+// press and sends it on both so the history list can fold the pair into one
+// row. Optional: older clients and API callers omit it.
+const lookupIdSchema = z.string().uuid('keywordResearch.errors.lookupIdInvalid');
 export const metricsRequestSchema = z.object({
     keywords: z
         .array(phraseSchema)
@@ -29,12 +39,15 @@ export const metricsRequestSchema = z.object({
     // requests behave identically except they are excluded from the
     // research-history log.
     probe: z.boolean().optional().default(false),
+    siteId: researchSiteIdSchema.optional(),
+    lookupId: lookupIdSchema.optional(),
 });
 export type MetricsRequest = z.infer<typeof metricsRequestSchema>;
 export const relatedRequestSchema = z.object({
     keyword: phraseSchema,
     locationCode: locationCodeSchema,
     languageCode: languageCodeSchema,
+    siteId: researchSiteIdSchema.optional(),
 });
 export type RelatedRequest = z.infer<typeof relatedRequestSchema>;
 // Search-intent classification — same phrase-list contract as /metrics.
@@ -45,6 +58,8 @@ export const intentRequestSchema = z.object({
         .max(CLIENT_KEYWORD_LIMIT, 'keywordResearch.errors.tooManyKeywords'),
     locationCode: locationCodeSchema,
     languageCode: languageCodeSchema,
+    siteId: researchSiteIdSchema.optional(),
+    lookupId: lookupIdSchema.optional(),
 });
 export type IntentRequest = z.infer<typeof intentRequestSchema>;
 // Keyword ideas from a single seed. `limit` is optional (service clamps 1..1000).
@@ -53,12 +68,14 @@ export const ideasRequestSchema = z.object({
     locationCode: locationCodeSchema,
     languageCode: languageCodeSchema,
     limit: z.number().int().positive().max(1000).optional(),
+    siteId: researchSiteIdSchema.optional(),
 });
 export type IdeasRequest = z.infer<typeof ideasRequestSchema>;
 export const longTailRequestSchema = z.object({
     seed: phraseSchema,
     locationCode: locationCodeSchema,
     languageCode: languageCodeSchema,
+    siteId: researchSiteIdSchema.optional(),
 });
 export type LongTailRequest = z.infer<typeof longTailRequestSchema>;
 // Research-history list — keyset cursor + bounded page size (mirrors the
@@ -66,8 +83,14 @@ export type LongTailRequest = z.infer<typeof longTailRequestSchema>;
 export const historyQuerySchema = z.object({
     cursor: z.string().min(1).optional(),
     limit: z.coerce.number().int().min(1).max(100).default(20),
+    // Site Research tab: only lookups attributed to this site.
+    siteId: researchSiteIdSchema.optional(),
 });
 export type HistoryQuery = z.infer<typeof historyQuerySchema>;
+// `GET /history/:id/results` — a stored (zero-spend) read of one history row.
+export const historyIdParamSchema = z.object({
+    id: z.string().uuid('keywordResearch.errors.historyIdInvalid'),
+});
 // ---------------------------------------------------------------------------
 // Keyword gap / overview / trends / preview
 // ---------------------------------------------------------------------------

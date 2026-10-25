@@ -311,7 +311,13 @@
     "shown_two": "Mostrando {{loaded}} de {{count}} búsquedas guardadas",
     "shown_few": "Mostrando {{loaded}} de {{count}} búsquedas guardadas",
     "shown_many": "Mostrando {{loaded}} de {{count}} búsquedas guardadas",
-    "shown_other": "Mostrando {{loaded}} de {{count}} búsquedas guardadas"
+    "shown_other": "Mostrando {{loaded}} de {{count}} búsquedas guardadas",
+    "viewResults": "Ver resultados",
+    "viewResultsFor": "Ver los resultados guardados de {{query}}",
+    "viewResultsHint": "«Ver resultados» abre lo que se guardó en esa búsqueda. No vuelve a consultar al proveedor de datos.",
+    "searchAgainFor": "Buscar de nuevo {{query}}",
+    "searchAgainHint": "«Buscar de nuevo» vuelve a ejecutar la consulta con el proveedor de datos, igual que una búsqueda nueva.",
+    "emptySite": "Aún no hay investigaciones para este sitio. Las consultas que ejecutes aquí aparecerán en esta lista."
   },
   "previewFailed": "No se pudo cargar la vista previa del coste.",
   "tabs": {
@@ -535,5 +541,17 @@
   "selectionCount_two": "{{count}} de {{max}} seleccionadas",
   "selectionCount_few": "{{count}} de {{max}} seleccionadas",
   "selectionCount_many": "{{count}} de {{max}} seleccionadas",
-  "selectionCount_other": "{{count}} de {{max}} seleccionadas"
+  "selectionCount_other": "{{count}} de {{max}} seleccionadas",
+  "recentDescriptionSite": "Búsquedas de palabras clave de este sitio, de la más reciente a la más antigua.",
+  "stored": {
+    "title": "Resultados guardados",
+    "freeNote": "Abierto desde datos guardados. No se volvió a consultar nada.",
+    "close": "Cerrar los resultados guardados",
+    "expired": "Los resultados guardados de esta búsqueda ya no están disponibles. Busca de nuevo para obtenerlos otra vez.",
+    "unsupported": "Este tipo de búsqueda no tiene una vista guardada aquí. Abre su propia pestaña para verla.",
+    "storedOn": "Guardado el {{date}}",
+    "partial": "Palabras clave aún guardadas: {{stored}} de {{requested}}",
+    "searchAgain": "Buscar de nuevo",
+    "loadFailed": "No se pudieron cargar los resultados guardados."
+  }
 }

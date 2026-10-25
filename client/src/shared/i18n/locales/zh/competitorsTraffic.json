@@ -22,10 +22,11 @@
     "title": "请求快照",
     "description": "在启动付费快照前预览对额度的确切影响。",
     "marketLabel": "市场",
-    "marketValue": "美国 · 英语",
+    "countryLabel": "国家/地区",
+    "languageLabel": "语言",
     "domainLabel": "域名",
     "domainPlaceholder": "example.com",
-    "domainHelp": "请输入不含 http://、https://、路径或凭据的公共域名。",
+    "domainHelp": "输入公共域名，或粘贴完整网址（仅保留主机名）。",
     "preview": "预览快照",
     "previewing": "正在准备预览…",
     "confirm": "确认快照",
@@ -61,7 +62,8 @@
       "title": "估算国家/地区分布",
       "description": "提供商索引保留的主要国家和地区。",
       "country": "国家/地区",
-      "visits": "估算访问量"
+      "visits": "估算访问量",
+      "empty": "此快照未保留任何国家/地区数据。"
     },
     "history": {
       "title": "估算流量历史",
@@ -129,7 +131,7 @@
     "succeeded": "快照已完成"
   },
   "errors": {
-    "invalidDomain": "请输入不含协议或路径的有效公共域名。",
+    "invalidDomain": "请输入有效的公共域名，例如 example.com。",
     "requestFailed": "无法启动流量快照。",
     "previewFailed": "无法准备用量预览。",
     "listFailed": "无法加载已存储的流量快照。",
@@ -146,6 +148,7 @@
     "button_one": "比较 {{count}} 个快照",
     "remove": "从比较中移除 {{domain}}",
     "countriesTitle": "对齐的国家/地区估算分布",
+    "countriesEmpty": "这些快照未保留任何国家/地区数据。",
     "historyTitle": "叠加的估算流量历史",
     "historyDescription": "系列颜色按快照顺序显示，并使用共享图表色板。",
     "chartLabel": "所选快照的叠加估算流量历史",

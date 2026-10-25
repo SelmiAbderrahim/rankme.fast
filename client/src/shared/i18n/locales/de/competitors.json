@@ -3,6 +3,8 @@
   "description": "Sehen Sie, mit welchen Websites Sie konkurrieren und auf welchen Keywords sie ranken.",
   "empty": "Für diese Domain wurden noch keine Wettbewerber gefunden. Verfolgen Sie einige Keywords, und wir analysieren die Websites, die diese Suchergebnisse dominieren.",
   "emptyTitle": "Noch keine Wettbewerber",
+  "notFetchedTitle": "Wettbewerber noch nicht geprüft",
+  "notFetched": "Aktualisieren Sie, um die Websites zu finden, die mit Ihrer konkurrieren. Die Daten stammen von Ihrem Anbieter für Suchdaten, das kann einen Moment dauern.",
   "loadFailed": "Wettbewerber konnten nicht geladen werden.",
   "intersectionFailed": "Gap-Keywords konnten nicht geladen werden.",
   "table": {
@@ -43,7 +45,7 @@
     "title": "Beispiel: Was Pro und Agency bieten"
   },
   "intelligence": {
-    "title": "Wettbewerbsinformationen",
+    "title": "Wettbewerber",
     "description": "Verwalten Sie bestätigte Konkurrenten, vergleichen Sie Keyword-Landschaften und behalten Sie akzeptierte Empfehlungen in einem Site-Workspace bei.",
     "common": {
       "cancel": "Abbrechen"
@@ -72,6 +74,8 @@
       "description": "{{active}} von {{max}} aktiven Wettbewerber-Slots sind belegt. Für die Verwaltung dieser Liste wird kein Zuschlag verwendet.",
       "manualLabel": "Fügen Sie eine öffentliche Mitbewerber-URL hinzu",
       "manualPlaceholder": "https://competitor.example/",
+      "manualInvalid": "Geben Sie eine öffentliche Website ein, z. B. competitor.com oder https://competitor.com.",
+      "ownDomain": "Das ist die Domain Ihrer eigenen Website. Fügen Sie eine andere Website als Wettbewerber hinzu.",
       "add": "Mitbewerber hinzufügen",
       "adding": "Wettbewerber wird hinzugefügt…",
       "confirmed": "Wettbewerber bestätigt.",
@@ -115,9 +119,9 @@
       "confirmAction": "Bestätigen Sie die Aktualisierung"
     },
     "technology": {
-      "title": "Aktuelle Portfolioübersicht",
-      "description": "Diese Zusammenfassung verwendet ausschließlich gespeicherte Portfolio-Fakten. Es wird keine Technologieerkennung oder eine andere kostenpflichtige Suche gestartet.",
-      "summary": "{{manual}} Konkurrenten wurden manuell hinzugefügt und {{suggested}} stammten aus bestätigten Entdeckungsvorschlägen. Technologiedetails bleiben erst verfügbar, wenn eine separate Vorschau-Suche vorliegt."
+      "title": "Aktive Wettbewerber nach Quelle",
+      "description": "Basiert nur auf gespeicherten Daten. Hier läuft weder eine Technologieerkennung noch eine neue Datenabfrage.",
+      "summary": "Manuell hinzugefügt: {{manual}}. Aus bestätigten Entdeckungsvorschlägen: {{suggested}}. Technologiedetails sind noch nicht verfügbar."
     },
     "landscape": {
       "title": "Erstellen Sie eine Keyword-Landschaft",

@@ -13,6 +13,7 @@ import type {
   MetricsResponse,
   OverviewResponse,
   RelatedResponse,
+  StoredResearchResult,
   TrendsExplorationDto,
   TrendsListResponse,
   TrendsResponse,
@@ -24,6 +25,10 @@ export interface MetricsRequestBody {
   keywords: string[];
   locationCode: number;
   languageCode: string;
+  /** Site Research tab: attributes the history row to this site. */
+  siteId?: string;
+  /** One UUID per Research press, sent on BOTH the metrics and intent calls. */
+  lookupId?: string;
 }
 
 export const fetchMetricsRequest = (
@@ -38,6 +43,7 @@ export interface RelatedRequestBody {
   keyword: string;
   locationCode: number;
   languageCode: string;
+  siteId?: string;
 }
 
 export const fetchRelatedRequest = (
@@ -52,6 +58,10 @@ export interface IntentRequestBody {
   keywords: string[];
   locationCode: number;
   languageCode: string;
+  /** Site Research tab: attributes the history row to this site. */
+  siteId?: string;
+  /** Same UUID as the paired metrics call. */
+  lookupId?: string;
 }
 
 export const fetchIntentRequest = (
@@ -66,6 +76,7 @@ export interface IdeasRequestBody {
   seed: string;
   locationCode: number;
   languageCode: string;
+  siteId?: string;
 }
 
 export const fetchIdeasRequest = (
@@ -87,6 +98,8 @@ export const fetchLongTailRequest = (
 export interface HistoryRequestArgs {
   cursor?: string;
   limit?: number;
+  /** Site Research tab: only that site's lookups (server-filtered). */
+  siteId?: string;
 }
 
 export const fetchHistoryRequest = (
@@ -95,11 +108,23 @@ export const fetchHistoryRequest = (
   const params = new URLSearchParams();
   if (args.cursor !== undefined) params.set('cursor', args.cursor);
   if (args.limit !== undefined) params.set('limit', String(args.limit));
+  if (args.siteId !== undefined) params.set('siteId', args.siteId);
   const qs = params.toString();
   return apiClient<HistoryResponse>(
     `/keyword-research/history${qs ? `?${qs}` : ''}`,
   );
 };
+
+/**
+ * Re-open one history row from the shared cache. No provider is called and no
+ * history row is written (server `historyResultsHandler`).
+ */
+export const fetchStoredResultRequest = (
+  historyId: string,
+): Promise<StoredResearchResult> =>
+  apiClient<StoredResearchResult>(
+    `/keyword-research/history/${encodeURIComponent(historyId)}/results`,
+  );
 
 // ---------------------------------------------------------------------------
 // Gap / overview / trends / preview / clusters / decisions.

@@ -58,7 +58,7 @@ describe('provider registry', () => {
       }),
     ).resolves.toMatchObject({ position: 3 });
     await expect(registry.keyword.getMetrics(['k'], 2840, 'en')).resolves.toHaveLength(2);
-    await expect(registry.localListings.getBusinessListings('example.com')).resolves.toHaveLength(
+    await expect(registry.localListings.getBusinessListings({ domain: 'example.com', business: null, locationCode: 2840, languageCode: 'en' })).resolves.toHaveLength(
       3,
     );
     await expect(registry.backlink.getSummary('example.com')).resolves.toMatchObject({

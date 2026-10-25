@@ -85,7 +85,7 @@
     "consentRequired": "Zustimmung ist erforderlich.",
     "reviewedSources": { "title": "Geprüfte Vergleichsseiten", "description": "Diese öffentlichen Ranking-Seiten stammen aus Ihrem genehmigten Landschaftsabgleich. Sie bestätigen den Start weiterhin selbst." },
     "included": {
-      "title": "Was ein Guthaben enthält",
+      "title": "Was diese Analyse enthält",
       "owned": "Eine eigene Seite",
       "competitors": "Bis zu drei öffentliche organische Vergleichsseiten",
       "scorecard": "Eine Scorecard",
@@ -104,7 +104,9 @@
     "invalidUrl": "Gültige URL eingeben.",
     "urlRequired": "Gib eine Seiten-URL ein oder wähle sie aus.",
     "keywordRequired": "Gib ein Ziel-Keyword ein oder wähle es aus.",
-    "keywordTooLong": "Begrenze das Ziel-Keyword auf 200 Zeichen.",
+    "keywordTooLong": "Verwenden Sie höchstens {{max}} Zeichen.",
+    "keywordList": "Geben Sie eine einzelne Suchanfrage ein, keine Liste. Starten Sie für jedes Keyword eine eigene Analyse.",
+    "keywordCounter": "{{length}}/{{max}} Zeichen",
     "offOrigin": "URL muss der Herkunft Ihrer Website entsprechen.",
     "urlUnsafe": "URL ist nicht öffentlich erreichbar.",
     "urlNotOwned": "Diese URL gehört zu keiner Website in Ihrem Besitz.",
@@ -117,6 +119,7 @@
       "step": "Schritt {{current}} von {{total}}",
       "percentComplete": "{{percent}} % abgeschlossen",
       "autoRefresh": "Diese Seite wird während der Analyse automatisch aktualisiert.",
+      "stillRunning": "Läuft noch. Sie können diese Seite verlassen und später zurückkehren; das Ergebnis finden Sie dann hier.",
       "errorTitle": "Diese Analyse wurde vorzeitig beendet",
       "errorGeneric": "Die Analyse wurde vor dem Abschluss beendet."
     },
@@ -133,6 +136,57 @@
       "cancelled": "Diese Analyse wurde abgebrochen.",
       "unexpected": "Die Analyse wurde aufgrund eines unerwarteten Fehlers beendet."
     },
+    "failureReason": {
+      "robots_blocked": "Die robots.txt Ihrer Website sperrt unseren Leser für diese Seite.",
+      "access_denied": "Ihre Website hat den Zugriff auf diese Seite verweigert, etwa durch einen Bot-Schutz oder eine Anmeldeseite.",
+      "http_error": "Ihre Seite hat mit HTTP-Status {{status}} statt mit ihrem Inhalt geantwortet.",
+      "timeout": "Ihre Seite hat zu lange zum Laden gebraucht.",
+      "temporarily_unavailable": "Die Seite konnte diesmal nicht geladen werden.",
+      "empty_content": "Auf der Seite wurde kein lesbarer Text gefunden. Sie ist vielleicht leer oder lädt ihren Inhalt nur per JavaScript.",
+      "too_large": "Die Seite ist zu groß, um sie in einem Durchgang zu lesen.",
+      "unsafe_url": "Die Seitenadresse oder eine Seite, auf die sie weiterleitet, ist nicht öffentlich erreichbar.",
+      "unreadable": "Die Seite kam in einer Form zurück, die wir nicht lesen konnten.",
+      "redirect_loop": "Die Weiterleitungen Ihrer Seite führen im Kreis.",
+      "redirect_limit": "Ihre Seite leitet mehr als fünfmal weiter, deshalb folgen wir nicht weiter.",
+      "unsafe_redirect": "Ihre Seite leitet auf eine Adresse weiter, die nicht öffentlich erreichbar ist.",
+      "non_html": "Diese Adresse liefert {{type}}, keine Webseite."
+    },
+    "failureReasonUnknown": "Die genaue Ursache wurde nicht erfasst. Häufige Gründe sind eine Sperre in robots.txt, Bot-Schutz oder eine Login-Seite, ein HTTP-Fehler, eine langsame Antwort oder Text, der erst nach JavaScript erscheint. Prüfen Sie, ob die Seite in einem privaten Browserfenster öffnet, und versuchen Sie es dann erneut.",
+    "failureCode": {
+      "provider_unavailable": "Unser Inhaltsdienst ist gerade nicht verfügbar.",
+      "page_unreachable": "Wir konnten Ihre Seite nicht lesen.",
+      "page_blocked": "Ihre Seite sperrt unseren Leser aus, zum Beispiel per robots.txt, Bot-Schutz oder Anmeldeseite.",
+      "page_too_large": "Ihre Seite ist zu groß, um sie in einem Durchgang zu lesen.",
+      "timeout": "Ihre Seite oder unser Inhaltsdienst hat zu lange gebraucht, um zu antworten.",
+      "internal": "Bei uns ist ein Fehler aufgetreten."
+    },
+    "failureHint": {
+      "robots_blocked": "Erlauben Sie Crawlern in der robots.txt, diese Seite zu lesen, und versuchen Sie es dann erneut.",
+      "access_denied": "Erlauben Sie automatisierte Besuche dieser Seite oder machen Sie sie öffentlich, und versuchen Sie es dann erneut.",
+      "http_error": "Prüfen Sie, ob die URL stimmt und die Seite in einem privaten Browserfenster öffnet, und versuchen Sie es dann erneut.",
+      "timeout": "Das ist oft nur vorübergehend. Versuchen Sie es erneut und prüfen Sie, ob die Seite schnell lädt.",
+      "temporarily_unavailable": "Das ist meist nur vorübergehend. Versuchen Sie es in ein paar Minuten erneut.",
+      "empty_content": "Stellen Sie sicher, dass der Haupttext im HTML der Seite steht (serverseitig gerendert), und versuchen Sie es dann erneut.",
+      "too_large": "Versuchen Sie eine kürzere Seite oder verteilen Sie sehr langen Inhalt auf mehrere Seiten.",
+      "unsafe_url": "Verwenden Sie die öffentliche Adresse der Seite und prüfen Sie ihre Weiterleitungen, und versuchen Sie es dann erneut.",
+      "unreadable": "Versuchen Sie es erneut. Wenn es weiter fehlschlägt, prüfen Sie, ob die Seite im Browser normal öffnet.",
+      "redirect_loop": "Korrigieren Sie die Weiterleitung, damit sie auf einer Seite endet, und versuchen Sie es erneut.",
+      "redirect_limit": "Richten Sie die Adresse direkt auf die Zielseite aus und versuchen Sie es erneut.",
+      "unsafe_redirect": "Leiten Sie stattdessen auf eine öffentliche Adresse weiter und versuchen Sie es erneut.",
+      "non_html": "Verwenden Sie die Adresse der Seite selbst, nicht einer Datei, und versuchen Sie es erneut."
+    },
+    "failureEvidence": {
+      "redirectPath": "Weiterleitungspfad: {{path}}"
+    },
+    "failedNoOutput": "Diese Analyse wurde beendet, bevor etwas entstanden ist. Deshalb gibt es keine Content-Chancen, keinen Brief und keinen Entwurf zu zeigen.",
+    "retryDialog": {
+      "title": "Diese Analyse erneut versuchen?",
+      "description": "Dadurch startet eine neue Analyse derselben Seite mit demselben Keyword.",
+      "confirm": "Erneut versuchen",
+      "back": "Abbrechen",
+      "loading": "Details dieser Analyse werden geladen …",
+      "loadFailed": "Die Details dieser Analyse konnten nicht geladen werden."
+    },
     "back": "Zurück zu den Analysen",
     "meta": {
       "page": "Seite",
@@ -140,6 +194,7 @@
       "locale": "Sprache",
       "requested": "Angefordert",
       "completed": "Abgeschlossen",
+      "readAt": "Nach einer Weiterleitung gelesen unter {{url}}",
       "cost": "Analysekosten: {{units}} Guthaben"
     },
     "explanation": "Dies ist ein Vergleich der Inhaltsbereitschaft, kein Suchmaschinen-Score.",
@@ -218,7 +273,9 @@
     },
     "actions": {
       "cancel": "Analyse abbrechen",
-      "regenerate": "Neu generieren (verbraucht ein Guthaben)"
+      "regenerate": "Neu generieren",
+      "retry": "Erneut versuchen",
+      "editUrl": "URL bearbeiten"
     }
   },
   "confirm": {

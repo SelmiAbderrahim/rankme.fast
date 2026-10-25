@@ -23,7 +23,7 @@ A section with no stored snapshot is marked as not yet observed. It's never fill
 
 ## Schedules
 
-Reports go out by email, weekly or monthly. The delivery log has an entry per recipient: pending, sent, failed, or suppressed.
+Reports go out by email, weekly or monthly. The delivery log has an entry per recipient: pending, sent, failed, or suppressed. You pick the time zone and the hour in that zone, and the schedule keeps that local time when clocks change for daylight saving.
 
 Building and sending a report doesn't call any vendor or use a metered unit. The cost is our own infrastructure, so structural limits cap it instead.
 

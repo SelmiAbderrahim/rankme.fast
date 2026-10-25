@@ -232,50 +232,58 @@ export const TrafficCompareView = ({ ids, siteId, onCollapse }: TrafficCompareVi
               <CardTitle>{t('compare.countriesTitle')}</CardTitle>
               <CardDescription>{t('estimate.coverage')}</CardDescription>
             </CardHeader>
-            <CardContent>
-              <Table>
-                <caption className="sr-only">{t('compare.countriesTitle')}</caption>
-                <TableHeader>
-                  <TableRow>
-                    <TableHead className="text-start">{t('detail.countries.country')}</TableHead>
-                    {data.snapshots.map((snapshot) => (
-                      <TableHead key={snapshot.id} className="text-end">
-                        <TableHeaderHelp
-                          label={`${snapshot.targetDomain} · ${t('estimate.label')}`}
-                          description={t('common:tableHelp.estimatedTraffic')}
-                        />
-                      </TableHead>
-                    ))}
-                  </TableRow>
-                </TableHeader>
-                <TableBody>
-                  {data.axes.countryCodes.map((countryCode) => (
-                    <TableRow key={countryCode}>
-                      <TableCell className="text-start">
-                        {countryName(countryCode, i18n.language) ?? t('common:market.unknownCountry')}
-                      </TableCell>
-                      {data.snapshots.map((snapshot) => {
-                        const country = snapshot.payload.topCountries.find(
-                          (candidate) => candidate.countryCode === countryCode,
-                        );
-                        return (
-                          <TableCell key={snapshot.id} className="text-end tabular-nums">
-                            {country ? (
-                              <span className="flex flex-col items-end gap-1">
-                                <span>{number.format(country.visits.value)}</span>
-                                <CoverageNote observation={country.visits.observation} />
-                              </span>
-                            ) : (
-                              '—'
-                            )}
-                          </TableCell>
-                        );
-                      })}
+            {data.axes.countryCodes.length === 0 ? (
+              <CardContent>
+                <p className="text-sm text-muted-foreground" data-testid="traffic-compare-country-empty">
+                  {t('compare.countriesEmpty')}
+                </p>
+              </CardContent>
+            ) : (
+              <CardContent>
+                <Table>
+                  <caption className="sr-only">{t('compare.countriesTitle')}</caption>
+                  <TableHeader>
+                    <TableRow>
+                      <TableHead className="text-start">{t('detail.countries.country')}</TableHead>
+                      {data.snapshots.map((snapshot) => (
+                        <TableHead key={snapshot.id} className="text-end">
+                          <TableHeaderHelp
+                            label={`${snapshot.targetDomain} · ${t('estimate.label')}`}
+                            description={t('common:tableHelp.estimatedTraffic')}
+                          />
+                        </TableHead>
+                      ))}
                     </TableRow>
-                  ))}
-                </TableBody>
-              </Table>
-            </CardContent>
+                  </TableHeader>
+                  <TableBody>
+                    {data.axes.countryCodes.map((countryCode) => (
+                      <TableRow key={countryCode}>
+                        <TableCell className="text-start">
+                          {countryName(countryCode, i18n.language) ?? t('common:market.unknownCountry')}
+                        </TableCell>
+                        {data.snapshots.map((snapshot) => {
+                          const country = snapshot.payload.topCountries.find(
+                            (candidate) => candidate.countryCode === countryCode,
+                          );
+                          return (
+                            <TableCell key={snapshot.id} className="text-end tabular-nums">
+                              {country ? (
+                                <span className="flex flex-col items-end gap-1">
+                                  <span>{number.format(country.visits.value)}</span>
+                                  <CoverageNote observation={country.visits.observation} />
+                                </span>
+                              ) : (
+                                '—'
+                              )}
+                            </TableCell>
+                          );
+                        })}
+                      </TableRow>
+                    ))}
+                  </TableBody>
+                </Table>
+              </CardContent>
+            )}
           </Card>
 
           <Card>

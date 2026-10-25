@@ -5,7 +5,8 @@ export { DEFAULT_KEYWORD_CACHE_TTL_DAYS, LONG_TAIL_SUGGESTION_LIMIT, TRENDS_MAX_
 export { createKeywordResearchReportExportAdapters } from './report-export.adapters.js';
 export { SEARCH_INTEREST_INDEX_KEY, momentum, seasonalityMonths, yearOverYear, estimateEnvelope, type WeeklyPoint, type YoyResult, type MomentumResult, type SeasonalityResult, } from './keyword-research.trends.js';
 export { TrendsExplorationRun, TRENDS_EXPLORATION_STATUSES, type TrendsExplorationRunDoc, type TrendsExplorationStatus, } from './trends-explorations.model.js';
-export { listResearchHistory, recordResearchHistory, type ResearchHistoryItem, type ResearchHistoryPage, } from './keyword-research.history.js';
+export { findResearchHistoryRow, listResearchHistory, recordResearchHistory, type ResearchHistoryItem, type ResearchHistoryPage, } from './keyword-research.history.js';
+export { readStoredResearchResult, type StoredKeywordRow, type StoredResearchResult, type StoredResearchStatus, } from './keyword-research.stored.js';
 export { clusterListQuerySchema, clusterRunRequestSchema, decisionRequestSchema, runIdClusterIdParamSchema, runIdParamSchema, gapRequestSchema, historyQuerySchema, ideasRequestSchema, longTailRequestSchema, intentRequestSchema, metricsRequestSchema, overviewRequestSchema, previewRequestSchema, relatedRequestSchema, trendsExplorePreviewRequestSchema, trendsExploreRequestSchema, trendsListQuerySchema, trendsRequestSchema, trendsRunIdParamSchema, TRENDS_EXPLORE_PHRASE_MAX, CLIENT_KEYWORD_LIMIT, CLUSTER_PHRASE_MIN, CLUSTER_PHRASE_MAX, DECISION_IDEMPOTENCY_KEY_MAX_LEN, DECISION_NOTE_MAX_LEN, } from './keyword-research.schema.js';
 export { applyClusterDecision, serializeDecision, type ApplyDecisionInput, type ApplyDecisionResult, } from './keyword-research.decisions.js';
 export { KeywordClusterRun, type KeywordClusterRunDocument, type KeywordClusterRunHydrated, } from './keyword-cluster-runs.model.js';

@@ -1,5 +1,5 @@
 {
-  "title": "Schema-Markup-Generator",
+  "title": "Schema-Markup",
   "description": "Erzeugt JSON-LD für eine Seite aus Fakten, die wir bereits gespeichert haben. Nichts wird erfunden: Ein Feld ohne belegbaren Fakt bleibt weg, und wir nennen den Grund.",
   "new": {
     "title": "Markup erzeugen",
@@ -41,13 +41,22 @@
     "crawledPages_two": "{{count}} gecrawlten Seiten",
     "crawledPages_few": "{{count}} gecrawlten Seiten",
     "crawledPages_many": "{{count}} gecrawlten Seiten",
-    "crawledPages_other": "{{count}} gecrawlten Seiten"
+    "crawledPages_other": "{{count}} gecrawlten Seiten",
+    "filterLabel": "Seite suchen",
+    "filterPlaceholder": "Teil der Adresse oder des Titels eingeben",
+    "filterCount": "{{shown}} von {{total}} angezeigt",
+    "filterNoMatches": "Keine Seite passt zu dieser Suche.",
+    "groupRoot": "Seiten der obersten Ebene"
   },
   "type": {
     "legend": "schema.org-Typ",
     "required": "Pflicht: {{n}}",
     "recommended": "Empfohlen: {{n}}",
-    "alreadyDeclared": "Diese Seite gibt diesen Typ bereits an."
+    "alreadyDeclared": "Diese Seite gibt diesen Typ bereits an.",
+    "note": {
+      "FAQPage": "Google zeigt FAQ-Antworten in den Suchergebnissen nur für bekannte Websites von Behörden und aus dem Gesundheitsbereich. Das Markup bleibt gültig.",
+      "HowTo": "Google zeigt HowTo-Schritte nicht mehr in den Suchergebnissen. Das Markup bleibt gültig."
+    }
   },
   "preview": {
     "title": "Was das kostet",
@@ -69,14 +78,14 @@
     "failedTitle": "Es wurde nichts erzeugt",
     "failedProvider": "Das Modell hat nicht geantwortet, daher wurde kein Markup behalten.",
     "failedRejected": "Alle vom Modell angebotenen Felder fielen bei unserer Faktenprüfung durch; wir haben nur Belegbares behalten.",
-    "refunded": "Ihr Kontingent wurde zurückgebucht.",
     "evidence": "Woher jedes Feld stammt",
     "evidenceDescription": "Eine Zeile je Feld im Markup, mit dem gespeicherten Fakt dahinter.",
     "evidenceFrom": "aus {{fact}}",
     "evidenceEmpty": "Kein Feld ließ sich aus einem gespeicherten Fakt füllen.",
     "omissions": "Was wir weggelassen haben",
     "omissionsDescription": "Felder ohne Fakt dahinter und der Grund für jede Lücke.",
-    "omissionsEmpty": "Es wurde nichts weggelassen."
+    "omissionsEmpty": "Es wurde nichts weggelassen.",
+    "regenerated": "Aus einer früheren Generierung mit Ihren Angaben neu aufgebaut. Es wurde keine Generierung verbraucht."
   },
   "fact": {
     "pageUrl": "Seiten-URL",
@@ -91,7 +100,11 @@
     "articleModifiedTime": "Änderungszeit des Artikels",
     "siteOrigin": "Website-Ursprung",
     "siteDomain": "Website-Domain",
-    "siteName": "Website-Name"
+    "siteName": "Website-Name",
+    "ogSiteName": "Website-Namens-Tag (og:site_name)",
+    "jsonLdName": "Name in den vorhandenen strukturierten Daten der Seite",
+    "titleBrand": "Markenname im Seitentitel",
+    "providedByYou": "Von Ihnen angegeben"
   },
   "reason": {
     "no_evidence": "wir haben dazu keinen Fakt",
@@ -155,6 +168,29 @@
     "failed": {
       "title": "Etwas ist schiefgelaufen",
       "body": "Wir konnten das nicht abschließen. Versuchen Sie es erneut."
+    }
+  },
+  "userFacts": {
+    "title": "Ergänzen, was fehlt",
+    "description": "Tragen Sie eine Angabe ein, die nur Sie kennen. Wir übernehmen sie genau so und kennzeichnen sie mit „Von Ihnen angegeben“.",
+    "submit": "Mit meinen Angaben neu aufbauen",
+    "free": "Kostenlos: Wir verwenden die bereits gefundenen Angaben wieder und verbrauchen keine Generierung.",
+    "required": "Füllen Sie mindestens ein Feld aus.",
+    "hint": {
+      "language": "Ein Sprachcode wie en oder pt-BR.",
+      "date": "Ein Datum wie 2026-10-01.",
+      "url": "Eine öffentliche Adresse, die mit https:// beginnt."
+    },
+    "label": {
+      "name": "Name",
+      "headline": "Überschrift",
+      "description": "Beschreibung",
+      "inLanguage": "Sprache",
+      "datePublished": "Veröffentlichungsdatum",
+      "dateModified": "Datum der letzten Änderung",
+      "logo": "Logo-Adresse",
+      "image": "Bildadresse",
+      "primaryImageOfPage": "Adresse des Hauptbilds"
     }
   }
 }

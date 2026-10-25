@@ -1,5 +1,6 @@
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 import * as client from '@shared/api/client';
+import { MCP_TOOL_NAMES, type McpToolName } from './types';
 import {
   createApiKeyRequest,
   getBrandingRequest,
@@ -76,16 +77,8 @@ describe('settings api wrappers', () => {
   it('gets and replaces account MCP permissions', async () => {
     const settings = {
       tools: {
-        list_sites: true,
-        get_latest_audit_report: true,
-        list_keywords: true,
-        get_rank_history: true,
-        list_content_analyses: true,
-        get_content_analysis: true,
+        ...(Object.fromEntries(MCP_TOOL_NAMES.map((name) => [name, true])) as Record<McpToolName, boolean>),
         start_audit: false,
-        get_audit_status: true,
-        list_actions: true,
-        set_action_state: true,
       },
       allowedSiteIds: [],
       allowSpend: false,

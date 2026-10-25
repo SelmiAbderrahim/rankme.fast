@@ -206,7 +206,7 @@ describe('get_ai_visibility_summary', () => {
         competitors: [],
         gscQueries: [],
         evidenceLevel: 'limited',
-        // Every run generated since QA round 2, P0-1 records that its seeds
+        // Every newer run records that its seeds
         // were read from this site only; older runs are re-checked on read.
         provenance: 'site',
       },
@@ -231,7 +231,7 @@ describe('get_ai_visibility_summary', () => {
     // Untrusted markup in a cited URL is neutralized.
     expect(JSON.stringify(data)).not.toContain('<b x>');
     expect(data.shareOfVoice).toMatchObject({ pct: 50 });
-    // QA4 issue 4: never checked, so not checked rather than not mentioned.
+    // Never checked, so not checked rather than not mentioned.
     expect(data.notMentionedPrompts).toEqual([]);
     expect(data.notCheckedPrompts).toEqual(['cheap rank tracker']);
     expect(data.suggestions).toMatchObject({

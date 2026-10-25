@@ -1,0 +1,60 @@
+{
+  "version": "0.1.20260711",
+  "status_code": 20000,
+  "status_message": "Ok.",
+  "time": "0.118 sec.",
+  "cost": 0.0192,
+  "tasks_count": 1,
+  "tasks_error": 0,
+  "tasks": [
+    {
+      "id": "TASK_ID",
+      "status_code": 20000,
+      "status_message": "Ok.",
+      "cost": 0.0192,
+      "result_count": 1,
+      "result": [
+        {
+          "total_count": 4,
+          "count": 4,
+          "items": [
+            {
+              "type": "business_listing",
+              "source": "google",
+              "title": "Example Dental Studio",
+              "address": "100 Main St, Austin, TX 78701",
+              "phone": "+1 512-555-0100",
+              "domain": "example.com",
+              "place_id": "ChIJFakeDentalDowntown01",
+              "cid": "1000000000000000001"
+            },
+            {
+              "type": "business_listing",
+              "source": "yelp",
+              "title": "Example Dental",
+              "address": "100 Main Street, Austin, TX 78701",
+              "phone": "+1 512-555-0100",
+              "domain": "example.com"
+            },
+            {
+              "type": "business_listing",
+              "source": "google",
+              "title": "Example Dental Studio North",
+              "address": "9000 Research Blvd, Austin, TX 78758",
+              "phone": "+1 512-555-0200",
+              "place_id": "ChIJFakeDentalNorth00002"
+            },
+            {
+              "type": "business_listing",
+              "source": "apple-maps",
+              "title": "Someone Else",
+              "address": "5 Elm St",
+              "phone": "+1 512-555-0300",
+              "domain": "other.example"
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

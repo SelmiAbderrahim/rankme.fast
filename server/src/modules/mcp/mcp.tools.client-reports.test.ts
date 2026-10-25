@@ -20,8 +20,7 @@ import {
   stopTestPostgres,
   truncateAllTables,
 } from '../../shared/testing/postgres.js';
-import { subscriptions } from '../../db/schema/subscriptions.js';
-import { usageCounters } from '../../db/schema/usage-counters.js';
+import { vendorCache, vendorResponses } from '../../db/schema/vendor-cache.js';
 import {
   scheduledReportDeliveries,
   scheduledReports,
@@ -73,21 +72,17 @@ function context(
   };
 }
 
-async function seedTier(accountId: string, tier: 'pro' | 'agency') {
-  await getTestDb()
-    .insert(subscriptions)
-    .values({ accountId, tier, status: 'active' })
-    .onConflictDoNothing();
-}
-
 async function seedSite(accountId: string, domain = 'example.com') {
   const site = await Site.create({ accountId, url: `https://${domain}`, domain });
   return String(site._id);
 }
 
+/** Row counts of the vendor cache + archive: a stored read must not write either. */
 async function usageSnapshot() {
-  const rows = await getTestDb().select().from(usageCounters);
-  return JSON.stringify(rows.map((row) => [row.accountId, row.metric, row.used]).sort());
+  const db = getTestDb();
+  const cache = await db.select().from(vendorCache);
+  const archive = await db.select().from(vendorResponses);
+  return `${cache.length}:${archive.length}`;
 }
 
 type Structured = Record<string, unknown> & { error?: { code: string } };
@@ -101,7 +96,6 @@ beforeAll(async () => {
 afterAll(async () => {
   setApiKeysDb(null);
   setClientReportsQueue(null);
-  (env as { PAYMENT_PROVIDER: string }).PAYMENT_PROVIDER = 'none';
   await stopTestPostgres();
   await stopMemoryMongo();
 });
@@ -109,7 +103,6 @@ beforeEach(async () => {
   await clearCollections();
   await truncateAllTables();
   queueAdd.mockClear();
-  (env as { PAYMENT_PROVIDER: string }).PAYMENT_PROVIDER = 'polar';
 });
 
 async function seedReporting(accountId: string, siteId: string) {
@@ -202,7 +195,6 @@ describe('maskRecipient', () => {
 describe('list_client_reports', () => {
   it('lists schedules, portals and recent deliveries with masked recipients and no secrets', async () => {
     const accountId = await newAccount();
-    await seedTier(accountId, 'agency');
     const siteId = await seedSite(accountId);
     await seedReporting(accountId, siteId);
 
@@ -235,7 +227,6 @@ describe('list_client_reports', () => {
       ['j***@client.example', 'sent'],
       ['o***@client.example', 'pending'],
     ]);
-    expect(data.scheduleCap).toEqual(expect.objectContaining({ used: 1 }));
     expect(typeof data.featureEnabled).toBe('boolean');
 
     const serialized = JSON.stringify(data);
@@ -257,7 +248,6 @@ describe('list_client_reports', () => {
 
   it('flags truncation when more deliveries exist than the recent window', async () => {
     const accountId = await newAccount();
-    await seedTier(accountId, 'agency');
     const siteId = await seedSite(accountId);
     await seedReporting(accountId, siteId);
     const db = getTestDb();
@@ -284,7 +274,6 @@ describe('list_client_reports', () => {
 
   it('is empty/notConfigured when nothing is set up and exposes the feature flag', async () => {
     const accountId = await newAccount();
-    await seedTier(accountId, 'agency');
     const siteId = await seedSite(accountId);
 
     const data = dataOf(await toolListClientReports({ siteId }, context(accountId)));
@@ -296,23 +285,9 @@ describe('list_client_reports', () => {
     });
   });
 
-  it('returns locked below the Agency tier without reading stored rows', async () => {
-    const accountId = await newAccount();
-    await seedTier(accountId, 'pro');
-    const siteId = await seedSite(accountId);
-    await seedReporting(accountId, siteId);
-
-    const data = dataOf(await toolListClientReports({ siteId }, context(accountId)));
-
-    expect(data).toMatchObject({ status: 'locked', reason: 'featureLocked' });
-    expect(data.schedules).toBeUndefined();
-  });
-
   it('hides another account\'s site and honors allowed-site + key-scope intersection', async () => {
     const owner = await newAccount();
     const stranger = await newAccount();
-    await seedTier(owner, 'agency');
-    await seedTier(stranger, 'agency');
     const siteA = await seedSite(owner, 'a.example.com');
     const siteB = await seedSite(owner, 'b.example.com');
     await seedReporting(owner, siteA);
@@ -335,7 +310,6 @@ describe('list_client_reports', () => {
 
   it('never spends or enqueues', async () => {
     const accountId = await newAccount();
-    await seedTier(accountId, 'agency');
     const siteId = await seedSite(accountId);
     await seedReporting(accountId, siteId);
     const before = await usageSnapshot();

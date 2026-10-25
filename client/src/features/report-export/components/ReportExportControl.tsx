@@ -50,6 +50,8 @@ export interface ReportExportControlProps {
   label?: string;
   /** Accessible name when it must say more than the visible `label` (for example, which item). */
   ariaLabel?: string;
+  /** Id of visible text that explains why the control is disabled. */
+  describedBy?: string;
 }
 
 export function ReportExportControl({
@@ -63,6 +65,7 @@ export function ReportExportControl({
   clipboardText,
   label,
   ariaLabel,
+  describedBy,
 }: ReportExportControlProps) {
   const { t, i18n } = useTranslation('report');
   const dispatch = useAppDispatch();
@@ -79,6 +82,10 @@ export function ReportExportControl({
   const operationKey = `${kind}:${target.scope}:${'resourceId' in target ? target.resourceId : target.siteId}`;
   const busy = activeOperation === operationKey;
   const [shareOpen, setShareOpen] = useState(false);
+  const [menuOpen, setMenuOpen] = useState(false);
+  // A disabled trigger never opens the menu, whatever event reaches it: the
+  // open state is controlled and gated on it.
+  const triggerDisabled = disabled || Boolean(capabilitiesError);
   const [localError, setLocalError] = useState('');
   const [retryFormat, setRetryFormat] = useState<ReportFormat | null>(null);
 
@@ -154,16 +161,21 @@ export function ReportExportControl({
 
   return (
     <div className="flex flex-col items-stretch gap-2 sm:items-end">
-      <DropdownMenu dir={i18n.dir()}>
-        <DropdownMenuTrigger asChild>
+      <DropdownMenu
+        dir={i18n.dir()}
+        open={menuOpen && !triggerDisabled}
+        onOpenChange={(next) => setMenuOpen(next && !triggerDisabled)}
+      >
+        <DropdownMenuTrigger asChild disabled={triggerDisabled}>
           <Button
             type="button"
             variant="outline"
             loading={loading || busy}
             loadingLabel={t(busy ? 'exportUi.preparing' : 'exportUi.loading')}
-            disabled={disabled || Boolean(capabilitiesError)}
+            disabled={triggerDisabled}
             className={className}
             aria-label={ariaLabel ?? label ?? t('exportUi.trigger')}
+            aria-describedby={describedBy}
           >
             <Download data-icon="inline-start" />
             {label ?? t('exportUi.trigger')}

@@ -3,7 +3,7 @@ import type { RequestHandler } from 'express';
 import { asyncHandler } from '../../shared/utils/async-handler.js';
 import { env } from '../../config/env.js';
 import { requireAccountId } from '../../shared/utils/require-account-id.js';
-import { clusterListQuerySchema, clusterRunRequestSchema, decisionRequestSchema, gapRequestSchema, historyQuerySchema, ideasRequestSchema, intentRequestSchema, metricsRequestSchema, longTailRequestSchema, overviewRequestSchema, previewRequestSchema, relatedRequestSchema, runIdClusterIdParamSchema, runIdParamSchema, trendsExplorePreviewRequestSchema, trendsExploreRequestSchema, trendsListQuerySchema, trendsRequestSchema, trendsRunIdParamSchema, } from './keyword-research.schema.js';
+import { clusterListQuerySchema, clusterRunRequestSchema, decisionRequestSchema, gapRequestSchema, historyIdParamSchema, historyQuerySchema, ideasRequestSchema, intentRequestSchema, metricsRequestSchema, longTailRequestSchema, overviewRequestSchema, previewRequestSchema, relatedRequestSchema, runIdClusterIdParamSchema, runIdParamSchema, trendsExplorePreviewRequestSchema, trendsExploreRequestSchema, trendsListQuerySchema, trendsRequestSchema, trendsRunIdParamSchema, } from './keyword-research.schema.js';
 import { applyClusterDecision, serializeDecision, } from './keyword-research.decisions.js';
 import { getKeywordProvider, getKeywordResearchAiProviderOrder, getKeywordResearchAiRunner, getKeywordResearchCompetitorProvider, getKeywordResearchDb, getKeywordResearchTrendsProvider, } from './keyword-research.holder.js';
 import { computeClusterRunId, findClusterRunForAccount, listClusterRunsForAccount, runClustering, sortedNormalizedPhrases, type ClusterRunSummary, } from './keyword-research.clustering.js';
@@ -11,12 +11,28 @@ import { HttpError } from '../../shared/utils/http-error.js';
 import { allowedTeamSiteIds, assertTeamSiteAccess, } from '../../shared/middleware/team-site-access.js';
 import { classifyIntentCached, dedupeKeywordPhrases, exploreTrendsLive, findTrendsRun, getGapCached, getIdeasCached, getLongTailSuggestionsCached, getMetricsCached, getOverviewCached, getRelatedCached, getTrendsCached, listTrendsRunsForAccount, serializeStoredRun, } from './keyword-research.service.js';
 import { computeGapCacheKey, computeKeywordCacheKey, createKeywordCacheRepo, normalizeCacheDomain, normalizeCachePhrase, } from './keyword-research.cache.js';
-import { listResearchHistory, recordResearchHistory, } from './keyword-research.history.js';
+import { findResearchHistoryRow, listResearchHistory, recordResearchHistory, } from './keyword-research.history.js';
+import { readStoredResearchResult } from './keyword-research.stored.js';
 import { getSite } from '../sites/index.js';
-import { assertSiteNotPaused } from '../sites/sites.guard.js';
+import { assertSiteNotPaused, loadOwnedSite } from '../sites/sites.guard.js';
+/**
+ * Ownership check for an optional site attribution on a research lookup or a
+ * site-scoped history read. Cross-account / team-restricted ids read as 404
+ * (never 403). Paused sites stay allowed: this is a user-triggered lookup, not
+ * background site work, and attribution only decides which history list the
+ * row appears in.
+ */
+async function resolveResearchSiteId(req: Parameters<RequestHandler>[0], accountId: string, siteId: string | undefined): Promise<string | null> {
+    if (siteId === undefined)
+        return null;
+    assertTeamSiteAccess(req, siteId);
+    await loadOwnedSite(accountId, siteId, { allowPaused: true });
+    return siteId;
+}
 export const metricsHandler: RequestHandler = asyncHandler(async (req, res) => {
     const body = metricsRequestSchema.parse(req.body);
     const accountId = requireAccountId(req);
+    const siteId = await resolveResearchSiteId(req, accountId, body.siteId);
     const dedupedPhrases = dedupeKeywordPhrases(body.keywords);
     const results = await getMetricsCached(body, {
         db: getKeywordResearchDb(),
@@ -29,6 +45,7 @@ export const metricsHandler: RequestHandler = asyncHandler(async (req, res) => {
     if (!body.probe) {
         await recordResearchHistory(getKeywordResearchDb(), {
             accountId,
+        siteId,
             kind: 'metrics',
             phrases: dedupedPhrases,
             locationCode: body.locationCode,
@@ -37,6 +54,7 @@ export const metricsHandler: RequestHandler = asyncHandler(async (req, res) => {
             // zod guarantees ≥1 phrase and the service returns one row per deduped
             // phrase, so `results` is never empty here.
             cached: results.every((r) => r.cached),
+        lookupId: body.lookupId ?? null,
         });
     }
     res.status(200).json({ keywords: results });
@@ -44,6 +62,7 @@ export const metricsHandler: RequestHandler = asyncHandler(async (req, res) => {
 export const relatedHandler: RequestHandler = asyncHandler(async (req, res) => {
     const body = relatedRequestSchema.parse(req.body);
     const accountId = requireAccountId(req);
+    const siteId = await resolveResearchSiteId(req, accountId, body.siteId);
     const result = await getRelatedCached(body, {
         db: getKeywordResearchDb(),
         provider: getKeywordProvider(),
@@ -51,6 +70,7 @@ export const relatedHandler: RequestHandler = asyncHandler(async (req, res) => {
     });
     await recordResearchHistory(getKeywordResearchDb(), {
         accountId,
+        siteId,
         kind: 'related',
         phrases: [result.keyword],
         locationCode: body.locationCode,
@@ -63,6 +83,7 @@ export const relatedHandler: RequestHandler = asyncHandler(async (req, res) => {
 export const intentHandler: RequestHandler = asyncHandler(async (req, res) => {
     const body = intentRequestSchema.parse(req.body);
     const accountId = requireAccountId(req);
+    const siteId = await resolveResearchSiteId(req, accountId, body.siteId);
     const dedupedPhrases = dedupeKeywordPhrases(body.keywords);
     const results = await classifyIntentCached(body, {
         db: getKeywordResearchDb(),
@@ -71,6 +92,7 @@ export const intentHandler: RequestHandler = asyncHandler(async (req, res) => {
     });
     await recordResearchHistory(getKeywordResearchDb(), {
         accountId,
+        siteId,
         kind: 'intent',
         phrases: dedupedPhrases,
         locationCode: body.locationCode,
@@ -78,12 +100,14 @@ export const intentHandler: RequestHandler = asyncHandler(async (req, res) => {
         resultCount: results.length,
         // Never empty — same guarantee as the metrics handler above.
         cached: results.every((r) => r.cached),
+        lookupId: body.lookupId ?? null,
     });
     res.status(200).json({ intents: results });
 });
 export const ideasHandler: RequestHandler = asyncHandler(async (req, res) => {
     const body = ideasRequestSchema.parse(req.body);
     const accountId = requireAccountId(req);
+    const siteId = await resolveResearchSiteId(req, accountId, body.siteId);
     const result = await getIdeasCached(body, {
         db: getKeywordResearchDb(),
         provider: getKeywordProvider(),
@@ -91,6 +115,7 @@ export const ideasHandler: RequestHandler = asyncHandler(async (req, res) => {
     });
     await recordResearchHistory(getKeywordResearchDb(), {
         accountId,
+        siteId,
         kind: 'ideas',
         phrases: [result.seed],
         locationCode: body.locationCode,
@@ -103,6 +128,7 @@ export const ideasHandler: RequestHandler = asyncHandler(async (req, res) => {
 export const longTailHandler: RequestHandler = asyncHandler(async (req, res) => {
     const body = longTailRequestSchema.parse(req.body);
     const accountId = requireAccountId(req);
+    const siteId = await resolveResearchSiteId(req, accountId, body.siteId);
     const result = await getLongTailSuggestionsCached(body, {
         db: getKeywordResearchDb(),
         provider: getKeywordProvider(),
@@ -110,6 +136,7 @@ export const longTailHandler: RequestHandler = asyncHandler(async (req, res) => 
     });
     await recordResearchHistory(getKeywordResearchDb(), {
         accountId,
+        siteId,
         kind: 'long_tail',
         phrases: [result.seed],
         locationCode: body.locationCode,
@@ -121,12 +148,34 @@ export const longTailHandler: RequestHandler = asyncHandler(async (req, res) => 
 });
 export const historyHandler: RequestHandler = asyncHandler(async (req, res) => {
     const accountId = requireAccountId(req);
-    const query = historyQuerySchema.parse(req.query);
+    const { siteId, ...query } = historyQuerySchema.parse(req.query);
+    // Site-scoped read (site Research tab): same 404 ownership check as a
+    // lookup; the account-wide list stays the default.
+    const scopedSiteId = await resolveResearchSiteId(req, accountId, siteId);
     const page = await listResearchHistory(getKeywordResearchDb(), {
         accountId,
         ...query,
+        ...(scopedSiteId !== null ? { siteId: scopedSiteId } : {}),
     });
     res.status(200).json(page);
+});
+/**
+ * Stored read of ONE history row: re-opens the results a past lookup already
+ * fetched from the shared cache. Deliberately never calls a provider or
+ * `recordResearchHistory`, so it leaves no vendor spend and no history trace.
+ * An unknown id and another account's id both read as 404.
+ */
+export const historyResultsHandler: RequestHandler = asyncHandler(async (req, res) => {
+    const accountId = requireAccountId(req);
+    const { id } = historyIdParamSchema.parse(req.params);
+    const db = getKeywordResearchDb();
+    const row = await findResearchHistoryRow(db, accountId, id);
+    if (!row) {
+        throw HttpError.notFound({ code: 'KEYWORD_RESEARCH_ERRORS_HISTORY_NOT_FOUND', messageKey: 'keywordResearch.errors.historyNotFound' });
+    }
+    if (row.siteId !== null)
+        assertTeamSiteAccess(req, row.siteId);
+    res.status(200).json(await readStoredResearchResult(db, row, new Date()));
 });
 // ---------------------------------------------------------------------------
 // Keyword gap / overview / trends / preview

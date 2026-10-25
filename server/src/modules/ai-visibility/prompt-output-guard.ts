@@ -1,6 +1,5 @@
 /**
- * Last gate before an AI-visibility suggestion is stored or shown (QA round
- * 2, P0-1). Whatever produced the row — the AI model or a deterministic
+ * Last gate before an AI-visibility suggestion is stored or shown. Whatever produced the row — the AI model or a deterministic
  * template — the phrase people will track must read as a real question:
  *
  *  - never a raw crawled page title ("best welcome - example rewards"): a prompt

@@ -49,7 +49,9 @@
     "assistant": "Ответ ассистента",
     "streaming": "Ассистент отвечает",
     "stopped": "Ответ остановлен",
-    "loading": "Загрузка беседы…"
+    "loading": "Загрузка беседы…",
+    "cutOff": "Ответ оборвался, не успев завершиться.",
+    "retryCutOff": "Повторить"
   },
   "tool": {
     "arguments": "Аргументы",
@@ -70,7 +72,33 @@
       "startAudit": "Запустить аудит",
       "auditStatus": "Состояние аудита",
       "listActions": "Следующие действия",
-      "setActionState": "Обновить действие"
+      "setActionState": "Обновить действие",
+      "getGscSearchSummary": "Получить сводку Search Console",
+      "listGscTopQueries": "Показать топ запросов",
+      "listGscTopPages": "Показать топ страниц поиска",
+      "getGa4Summary": "Получить сводку Analytics",
+      "listPages": "Показать страницы",
+      "getPageDetail": "Получить сведения о странице",
+      "getBacklinksSummary": "Получить сводку по обратным ссылкам",
+      "listBacklinks": "Показать обратные ссылки",
+      "listCompetitors": "Показать конкурентов",
+      "getAiVisibilitySummary": "Получить сводку AI Visibility",
+      "getLocalSeoSummary": "Получить сводку по локальному SEO",
+      "getReviewsSummary": "Получить сводку по отзывам",
+      "listClientReports": "Показать клиентские отчёты"
+    },
+    "errors": {
+      "forbiddenOutput": "Результат этого шага скрыт: в нём было содержимое, которое нельзя безопасно показать. Попробуйте спросить ещё раз.",
+      "invalidInput": "Этот шаг не выполнен: запрос был недопустим. Попробуйте переформулировать вопрос.",
+      "notFound": "Сайт для этого шага недоступен в этом разговоре.",
+      "internal": "При выполнении этого шага произошла ошибка на нашей стороне. Попробуйте ещё раз.",
+      "generic": "Этот шаг не удалось завершить. Попробуйте ещё раз."
+    },
+    "retry": "Спросить ещё раз",
+    "storedStatus": {
+      "ok": "Сохранённые данные",
+      "empty": "Ничего не сохранено",
+      "unavailable": "Недоступно"
     }
   },
   "results": {
@@ -86,7 +114,14 @@
     "topFindings": "Главные замечания",
     "noFindings": "Замечания не получены.",
     "domain": "Домен",
-    "url": "URL"
+    "url": "URL",
+    "change": "Изменение",
+    "truncated": "Показаны только первые строки.",
+    "scopeSource": "Источник",
+    "scopeRange": "Диапазон",
+    "scopePeriod": "Даты",
+    "scopeAsOf": "Данные на",
+    "scopeTimezone": "Часовой пояс"
   },
   "states": {
     "locked": {

@@ -1,6 +1,5 @@
 {
-  "eyebrow": "Agrupación desde observaciones almacenadas",
-  "title": "Agrupación de palabras clave por solapamiento de SERP",
+  "title": "Grupos por solapamiento de SERP",
   "subtitle": "Agrupa las palabras clave rastreadas que devuelven las mismas páginas en Google. Cada agrupación se calcula a partir de comprobaciones de posición que ya has pagado: no se lanza ninguna búsqueda nueva.",
   "site": {
     "ranksLink": "Abrir seguimiento de posiciones"
@@ -22,14 +21,11 @@
   },
   "newRun": {
     "title": "Preparar una ejecución de agrupación",
-    "description": "Previsualiza las palabras clave que califican y tu cuota antes de gastar una ejecución.",
+    "description": "Previsualiza las palabras clave que califican antes de iniciar la agrupación.",
     "storedOnly": "La agrupación solo lee resultados almacenados. No se envía ninguna búsqueda a ningún proveedor.",
-    "unitLabel": "Cuota",
-    "unitValue": "{{count}} ejecución de agrupación",
     "scopeLabel": "Palabras clave listas",
     "scopeValue_one": "{{count}} palabra clave rastreada califica",
     "method": "Dos palabras clave se agrupan cuando comparten al menos {{shared}} de sus {{window}} primeros resultados, de una comprobación de posición de los últimos {{days}} días.",
-    "remaining": "Quedan {{count}} ejecuciones antes de esta.",
     "labelingIncluded": "Las etiquetas de grupo opcionales con IA están incluidas en esta ejecución y nunca cambian la pertenencia a los grupos.",
     "preview": "Previsualizar ejecución",
     "previewing": "Comprobando resultados almacenados…",
@@ -55,7 +51,7 @@
     },
     "notEnoughKeywords": {
       "title": "No hay suficientes comprobaciones recientes",
-      "body": "Al menos dos palabras clave rastreadas necesitan una comprobación de los últimos siete días. No se gastó ninguna ejecución."
+      "body": "Menos de dos palabras clave seguidas tienen una comprobación de posiciones válida de los últimos siete días. No se ha gastado ninguna ejecución."
     },
     "cap": {
       "title": "Cuota mensual alcanzada",
@@ -80,6 +76,11 @@
     "running": {
       "title": "Agrupando palabras clave",
       "body": "El worker está comparando resultados almacenados y nombrando los grupos. Esta vista se actualiza automáticamente."
+    },
+    "keywordsCta": "Rastrear palabras clave",
+    "noTrackedKeywords": {
+      "title": "Primero rastrea palabras clave",
+      "body": "La agrupación usa las palabras clave de Google que rastreas para este sitio. Añade palabras clave en la pestaña Palabras clave, ejecuta una comprobación de posición y vuelve para previsualizar una ejecución."
     }
   },
   "status": {
@@ -89,19 +90,23 @@
     "failed": "Fallida"
   },
   "runs": {
-    "summary": "{{clusters}} grupos a partir de {{keywords}} palabras clave",
+    "summary": "Grupos: {{clusters}} · palabras clave de origen: {{keywords}}",
     "requestedAt": "Solicitada el {{date}}",
     "open": "Abrir ejecución"
   },
   "blocked": {
     "title_one": "{{count}} palabra clave no pudo participar",
-    "body": "Estas palabras clave rastreadas aún no tienen un resultado almacenado utilizable. Ejecuta una comprobación de posición y calificarán para la próxima ejecución.",
+    "body": "Estas palabras clave seguidas quedan fuera de esta ejecución. Haz una comprobación de posiciones y podrán entrar en la siguiente.",
     "more_one": "y {{count}} más",
     "observedAt": "última comprobación {{date}}",
     "reason": {
       "missing": "Nunca comprobada",
       "stale": "Comprobación demasiado antigua",
-      "empty": "Sin resultados almacenados"
+      "empty": "Sin resultados almacenados",
+      "check_too_old": "Comprobación demasiado antigua",
+      "no_serp_snapshot": "No se guardó la página de resultados completa",
+      "never_checked": "Nunca comprobada",
+      "failed_last_check": "Falló la última comprobación"
     },
     "more_zero": "y {{count}} más",
     "more_two": "y {{count}} más",
@@ -189,5 +194,9 @@
     "minimum_other": "La agrupación necesita al menos {{count}} palabras clave listas.",
     "title": "No hay suficientes palabras clave listas",
     "snapshotNote": "Algunas comprobaciones recientes solo guardaron la posición, no la página de resultados completa. La agrupación necesita una comprobación que guarde la página de resultados completa."
+  },
+  "crossLink": {
+    "body": "¿Quieres temas a partir de las palabras clave que investigaste, no solo de las que sigues?",
+    "cta": "Abrir temas de palabras clave con IA"
   }
 }

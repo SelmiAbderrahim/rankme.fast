@@ -85,6 +85,7 @@ export const ACCOUNT_SCOPED_MONGO_MODEL_NAMES = [
     'InternalLinkRun',
     'KeywordClusterRun',
     'LinkGapRun',
+    'LocalBusinessProfile',
     'LocalSeoReviewRow',
     'LocalSeoReviewSource',
     'LocalSeoReviewSyncRun',

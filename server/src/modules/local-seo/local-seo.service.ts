@@ -13,13 +13,15 @@ import { Types } from 'mongoose';
 import { and, eq } from 'drizzle-orm';
 import type { Db } from '../../db/client.js';
 import { keywords } from '../../db/schema/index.js';
-import type { BusinessListingRow, LocalListingsProvider, LocalPackResult, QaSummary, RankProvider, ReviewsSummary, } from '../../shared/providers/index.js';
+import type { BusinessListingRow, LocalBusinessIdentity, LocalListingsProvider, LocalPackResult, QaSummary, RankProvider, ReviewsSummary, } from '../../shared/providers/index.js';
 import { ProviderError, captureVendorCost } from '../../shared/providers/index.js';
 import { createVendorArchiver, createVendorCacheRepo } from '../../shared/vendor-cache/index.js';
 import type { Cooldown } from '../../shared/cooldown/index.js';
 import { HttpError } from '../../shared/utils/http-error.js';
 import { Site } from '../sites/sites.model.js';
 import { assertSiteNotPaused } from '../sites/sites.guard.js';
+import { FALLBACK_SITE_MARKET } from '../sites/site-market.js';
+import { LocalBusinessProfile, orNull } from './local-business.model.js';
 import { insertLocalPackRankSnapshot, persistLocalSeoSnapshot, readLatestListingSnapshot, readLatestLocalPackSnapshots, readLatestReviewsSnapshot, } from './local-seo.repository.js';
 export interface LocalSeoServiceDeps {
     db: Db;
@@ -28,7 +30,17 @@ export interface LocalSeoServiceDeps {
     cooldown?: Cooldown;
     now?: () => Date;
 }
+/** What a stored refresh describes: the chosen business, or (before setup existed) the domain. */
+export type LocalSeoProvenance = {
+    kind: 'business';
+    name: string;
+    ref: string;
+} | {
+    kind: 'domain';
+    domain: string;
+};
 export interface RefreshLocalListingsResult {
+    provenance: LocalSeoProvenance;
     fetchedAt: string;
     listings: Array<{
         source: string;
@@ -52,6 +64,8 @@ export interface LocalPackRankResult {
     checkedAt: string;
 }
 export interface LocalSeoSnapshotPayload {
+    /** Null when nothing has been refreshed yet. */
+    provenance: LocalSeoProvenance | null;
     listings: Array<{
         source: string;
         name: string;
@@ -84,6 +98,10 @@ export async function loadOwnedSite(input: {
     id: string;
     domain: string;
     paused: boolean;
+    market: {
+        locationCode: number;
+        languageCode: string;
+    };
 }> {
     if (!isValidObjectId(input.siteId))
         throw HttpError.notFound({ code: 'LOCAL_SEO_ERRORS_SITE_NOT_FOUND', messageKey: 'localSeo.errors.siteNotFound' });
@@ -98,6 +116,45 @@ export async function loadOwnedSite(input: {
         id: (site._id as Types.ObjectId).toString(),
         domain: site.domain,
         paused: site.paused,
+        market: {
+            locationCode: site.defaultMarket?.locationCode ?? FALLBACK_SITE_MARKET.locationCode,
+            languageCode: site.defaultMarket?.languageCode ?? FALLBACK_SITE_MARKET.languageCode,
+        },
+    };
+}
+export interface SelectedBusinessTarget {
+    business: LocalBusinessIdentity;
+    locationCode: number;
+    languageCode: string;
+}
+/** The vendor keyword that names one business, stored as snapshot provenance. */
+export function businessRefOf(business: LocalBusinessIdentity): string {
+    return business.placeId ? `place_id:${business.placeId}` : `cid:${business.cid}`;
+}
+/**
+ * The identity a refresh must describe. Refresh is refused until the owner has
+ * chosen a business — a domain-only fetch could describe somebody else's
+ * listing.
+ */
+export async function requireSelectedBusiness(input: {
+    accountId: string;
+    siteId: string;
+}): Promise<SelectedBusinessTarget> {
+    const profile = await LocalBusinessProfile.findOne({
+        accountId: input.accountId,
+        siteId: input.siteId,
+    }).lean();
+    const selected = profile?.selected;
+    if (!selected) {
+        throw HttpError.conflict({
+            code: 'LOCAL_SEO_ERRORS_SETUP_REQUIRED',
+            messageKey: 'localSeo.errors.setupRequired',
+        });
+    }
+    return {
+        business: { placeId: orNull(selected.placeId), cid: orNull(selected.cid), name: selected.name },
+        locationCode: selected.locationCode,
+        languageCode: selected.languageCode,
     };
 }
 function wrapProviderError(err: unknown): never {
@@ -143,6 +200,10 @@ export async function refreshLocalListings(input: {
     const nowFn = deps.now ?? (() => new Date());
     const site = await loadOwnedSite(input);
     assertSiteNotPaused(site);
+    // No vendor call before the owner has chosen a business.
+    const selection = await requireSelectedBusiness({ accountId: input.accountId, siteId: site.id });
+    const target = { domain: site.domain, ...selection };
+    const businessRef = businessRefOf(selection.business);
     // Per-site cooldown BEFORE any vendor call — a rapid double-click must not
     // double-spend.
     deps.cooldown?.assert(`local-seo:${site.id}`);
@@ -159,9 +220,9 @@ export async function refreshLocalListings(input: {
         // failure, so a partial result set is never persisted. One capture spans
         // all three calls — the archive row carries the combined actual spend.
         const captured = await captureVendorCost(() => Promise.all([
-            deps.provider.getBusinessListings(site.domain),
-            deps.provider.getReviews(site.domain),
-            deps.provider.getQuestionsAndAnswers(site.domain),
+            deps.provider.getBusinessListings(target),
+            deps.provider.getReviews(target),
+            deps.provider.getQuestionsAndAnswers(target),
         ]));
         [listings, reviews, qa] = captured.value;
         refreshCostMicros = captured.costMicros;
@@ -174,7 +235,12 @@ export async function refreshLocalListings(input: {
     await createVendorArchiver(createVendorCacheRepo(deps.db))({
         capability: 'local-listings',
         operation: 'refresh',
-        params: { domain: site.domain },
+        params: {
+            domain: site.domain,
+            business: businessRef,
+            locationCode: selection.locationCode,
+            languageCode: selection.languageCode,
+        },
         payload: { listings, reviews, qa },
         accountId: input.accountId,
         costMicros: refreshCostMicros,
@@ -187,8 +253,10 @@ export async function refreshLocalListings(input: {
         listings,
         reviews,
         qa,
+        business: { ref: businessRef, name: selection.business.name },
     });
     return {
+        provenance: { kind: 'business', name: selection.business.name, ref: businessRef },
         fetchedAt: now.toISOString(),
         listings: listings.map((l) => ({
             source: l.source,
@@ -261,6 +329,15 @@ export async function checkLocalPackRank(input: {
         checkedAt: capturedAt.toISOString(),
     };
 }
+function snapshotProvenance(reviewsRow: {
+    businessRef: string | null;
+    businessName: string | null;
+} | null, hasListings: boolean, domain: string): LocalSeoProvenance | null {
+    if (reviewsRow?.businessRef && reviewsRow.businessName) {
+        return { kind: 'business', name: reviewsRow.businessName, ref: reviewsRow.businessRef };
+    }
+    return reviewsRow || hasListings ? { kind: 'domain', domain } : null;
+}
 export async function readLatestSnapshot(input: {
     accountId: string;
     siteId: string;
@@ -268,17 +345,23 @@ export async function readLatestSnapshot(input: {
     db: Db;
 }): Promise<LocalSeoSnapshotPayload> {
     const site = await loadOwnedSite(input);
-    const [listingRows, reviewsRow, localPackRows] = await Promise.all([
+    const [latestListingRows, reviewsRow, localPackRows] = await Promise.all([
         readLatestListingSnapshot(deps.db, { siteId: site.id }),
         readLatestReviewsSnapshot(deps.db, { siteId: site.id }),
         readLatestLocalPackSnapshots(deps.db, { siteId: site.id }),
     ]);
+    // Listings and reviews are one refresh: show listings only from the same
+    // day as the latest reviews row, so an older refresh never mixes in.
+    const listingRows = reviewsRow
+        ? latestListingRows.filter((row) => row.snapshotDate === reviewsRow.snapshotDate)
+        : latestListingRows;
     const keywordIds = localPackRows.map((row) => row.keywordId);
     const keywordRows = keywordIds.length > 0
         ? await deps.db.select().from(keywords).where(and(eq(keywords.siteId, site.id)))
         : [];
     const phraseById = new Map(keywordRows.map((k) => [k.id, k.phrase]));
     return {
+        provenance: snapshotProvenance(reviewsRow, listingRows.length > 0, site.domain),
         listings: listingRows.map((row) => ({
             source: row.source,
             name: row.name,

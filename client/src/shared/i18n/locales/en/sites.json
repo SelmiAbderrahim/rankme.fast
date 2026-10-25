@@ -93,7 +93,7 @@
       "content": "Content",
       "internalLinks": "Internal links",
       "cannibalization": "Keyword cannibalization",
-      "audienceResearch": "Audience Research",
+      "audienceResearch": "Audience research",
       "schema": "Schema"
     },
     "groups": {
@@ -185,7 +185,7 @@
     "competitors": {
       "open": "Open competitors",
       "notLoadedTitle": "Competitor data is ready on demand",
-      "notLoadedDescription": "Open competitors to run a lookup. Overview will reuse that result without spending another lookup."
+      "notLoadedDescription": "Add the competitors you already know or preview a discovery refresh on the Competitors page. Nothing is fetched until you confirm a refresh."
     },
     "unlock": {
       "title": "More insight is available",

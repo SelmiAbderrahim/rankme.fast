@@ -31,7 +31,7 @@ export const LocalSeoBlock = ({ section, siteId }: LocalSeoBlockProps) => {
           {t('localSeoBlock.notConfiguredBody')}
         </p>
         <Link
-          to={`/sites/${siteId}?tab=local-seo`}
+          to={`/sites/${siteId}?tab=local-seo&view=setup`}
           className="text-primary mt-2 inline-block text-sm font-medium underline"
         >
           {t('localSeoBlock.notConfiguredCta')}

@@ -23,6 +23,7 @@
     },
     "topics": {
       "label": "المواضيع",
+      "add": "إضافة",
       "placeholder": "أضف موضوعاً واضغط Enter",
       "chipRemove": "إزالة {{topic}}",
       "count": "{{count}} / {{max}}",

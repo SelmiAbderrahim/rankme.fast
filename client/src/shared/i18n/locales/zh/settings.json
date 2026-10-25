@@ -86,28 +86,48 @@
     "saving": "正在保存权限…",
     "saved": "MCP 权限已保存。",
     "retry": "重试",
-    "locked": {
-      "title": "使用 Starter 或更高套餐连接 MCP",
-      "description": "升级后即可创建 API 密钥，并将 RankMeFast 连接到 MCP 客户端。",
-      "cta": "查看套餐"
-    },
     "tools": {
       "title": "允许的工具",
       "description": "关闭不应由 MCP 客户端和助手使用的工具。",
+      "readNote": "只读取已存储数据的工具不会发起抓取或查询。它们返回已保存的内容，并在缺少数据时说明。",
+      "groups": {
+        "sites": "网站与审计",
+        "rankings": "关键词与排名",
+        "content": "内容分析",
+        "actions": "后续行动",
+        "search": "Search Console 与分析",
+        "pages": "页面",
+        "links": "反向链接与竞争对手",
+        "visibility": "AI Visibility、本地 SEO 与评价",
+        "reports": "客户报告"
+      },
       "list_sites": { "name": "列出站点", "description": "查看此账户中的站点。" },
       "get_latest_audit_report": { "name": "获取最新审计报告", "description": "读取站点最近完成的审计。" },
       "list_keywords": { "name": "列出关键词", "description": "查看站点跟踪的关键词。" },
       "get_rank_history": { "name": "获取排名历史", "description": "读取跟踪关键词最近的排名位置。" },
       "list_content_analyses": { "name": "列出内容分析", "description": "查看站点的 Content Intelligence 分析。" },
       "get_content_analysis": { "name": "获取内容分析", "description": "读取一项 Content Intelligence 分析。" },
-      "start_audit": { "name": "启动审计", "description": "启动会消耗账户每月额度的新审计。" },
+      "start_audit": { "name": "启动审计", "description": "启动新审计。它通过已配置的服务商抓取站点，因此必须允许支出。" },
       "get_audit_status": { "name": "获取审计状态", "description": "检查审计正在排队、运行还是已完成。" },
       "list_actions": { "name": "列出后续行动", "description": "读取站点的优先修复清单，并查看每项的状态。" },
-      "set_action_state": { "name": "更新后续行动", "description": "将某项行动标记为已计划、已忽略、已完成或重新打开。" }
+      "set_action_state": { "name": "更新后续行动", "description": "将某项行动标记为已计划、已忽略、已完成或重新打开。" },
+      "get_gsc_search_summary": { "name": "获取 Search Console 摘要", "description": "读取已存储的最近 7、28 或 90 天的点击、展示、点击率和排名。" },
+      "list_gsc_top_queries": { "name": "列出热门搜索词", "description": "读取网站已存储的 Search Console 热门搜索词。" },
+      "list_gsc_top_pages": { "name": "列出热门搜索页面", "description": "读取网站已存储的 Search Console 热门页面。" },
+      "get_ga4_summary": { "name": "获取 Analytics 摘要", "description": "读取已存储的 Google Analytics 4 会话、用户和关键事件。" },
+      "list_pages": { "name": "列出页面", "description": "查看网站已存储的页面清单和抓取状态。" },
+      "get_page_detail": { "name": "获取页面详情", "description": "读取单个页面已存储的抓取证据和指标。" },
+      "get_backlinks_summary": { "name": "获取反向链接摘要", "description": "读取已存储的反向链接和引用域名数量。" },
+      "list_backlinks": { "name": "列出反向链接", "description": "查看已存储的反向链接，每个引用域名一条。" },
+      "list_competitors": { "name": "列出竞争对手", "description": "查看网站的竞争对手组合。" },
+      "get_ai_visibility_summary": { "name": "获取 AI Visibility 摘要", "description": "读取已存储的 AI 回答检查和声量份额。" },
+      "get_local_seo_summary": { "name": "获取本地 SEO 摘要", "description": "读取已存储的商家资料和本地包排名。" },
+      "get_reviews_summary": { "name": "获取评价摘要", "description": "读取已存储的评价来源、评分和主题。" },
+      "list_client_reports": { "name": "列出客户报告", "description": "查看报告计划、发送记录和门户状态。不含文件或链接。" }
     },
     "spend": {
       "title": "消耗额度的操作",
-      "label": "允许使用套餐额度的工具",
+      "label": "允许会消耗服务商预算的工具",
       "description": "关闭后，即使工具开关已开启，启动审计等消耗额度的工具也会被阻止。"
     },
     "sites": {
@@ -121,7 +141,7 @@
     },
     "quickStart": {
       "title": "快速开始",
-      "description": "创建 API 密钥，然后复制端点或可直接使用的客户端配置。",
+      "description": "创建 API 密钥并将其保存在环境变量 {{envVar}} 中。下方两种配置都会从该变量读取密钥。",
       "endpoint": "MCP 端点",
       "copyEndpoint": "复制 MCP 端点",
       "copy": "复制",

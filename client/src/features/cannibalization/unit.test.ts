@@ -73,6 +73,28 @@ describe('api wrappers', () => {
     );
   });
 
+  it.each([
+    ['ok', true],
+    ['no_property', false],
+    ['property_mismatch', false],
+    ['error', false],
+  ] as const)('prefers the shared readiness (%s) over the raw binding', async (status, expected) => {
+    mockedApiClient.mockResolvedValueOnce({
+      configuration: {
+        // A bound property that does not cover the site still reads as "not ready".
+        connection: { status: 'connected' },
+        gsc: { propertyUrl: 'sc-domain:other.example' },
+        readiness: {
+          gsc: { status, matching: false },
+          ga4: { status: 'ok', matching: false },
+        },
+      },
+    } as never);
+    await expect(fetchCannibalizationPrerequisites('site-1')).resolves.toEqual({
+      gscConnected: expected,
+    });
+  });
+
   it('posts the window on preview and generate', async () => {
     mockedApiClient.mockResolvedValue({} as never);
     await previewCannibalizationReport('site-1', 7);

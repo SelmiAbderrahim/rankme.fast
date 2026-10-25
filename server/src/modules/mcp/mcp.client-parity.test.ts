@@ -77,7 +77,7 @@ describe('MCP tool registry parity', () => {
       expect(entry?.description?.length, `${locale}.${name}.description`).toBeGreaterThan(3);
     }
     const groups = tools.groups as Record<string, string>;
-    expect(Object.keys(groups).length).toBeGreaterThanOrEqual(10);
+    expect(Object.keys(groups).length).toBeGreaterThanOrEqual(9);
     for (const label of Object.values(groups)) expect(label.length).toBeGreaterThan(1);
     expect(String(tools.readNote).length).toBeGreaterThan(20);
   });

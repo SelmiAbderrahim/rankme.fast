@@ -3,6 +3,8 @@
   "description": "Voyez avec quels sites vous êtes en concurrence et les mots-clés sur lesquels ils se positionnent.",
   "empty": "Aucun concurrent trouvé pour ce domaine pour l'instant. Suivez quelques mots-clés et nous analyserons les sites qui dominent ces résultats de recherche.",
   "emptyTitle": "Aucun concurrent pour l'instant",
+  "notFetchedTitle": "Concurrents pas encore analysés",
+  "notFetched": "Actualisez pour trouver les sites qui concurrencent le vôtre. Les données viennent de votre fournisseur de données de recherche, cela peut donc prendre un instant.",
   "loadFailed": "Impossible de charger les concurrents.",
   "intersectionFailed": "Impossible de charger les mots-clés d'écart.",
   "table": {
@@ -43,7 +45,7 @@
     "title": "Exemple : ce que proposent Pro et Agency"
   },
   "intelligence": {
-    "title": "Veille sur la concurrence",
+    "title": "Concurrents",
     "description": "Gérez les concurrents confirmés, comparez les paysages de mots clés et conservez les recommandations acceptées dans un seul espace de travail de site.",
     "common": {
       "cancel": "Annuler"
@@ -72,6 +74,8 @@
       "description": "{{active}} sur {{max}} emplacements concurrents actifs sont utilisés. La gestion de cette liste n'utilise pas d'allocation.",
       "manualLabel": "Ajouter une URL publique de concurrent",
       "manualPlaceholder": "https://concurrent.exemple/",
+      "manualInvalid": "Saisissez un site public, par exemple competitor.com ou https://competitor.com.",
+      "ownDomain": "C'est le domaine de votre propre site. Ajoutez un autre site comme concurrent.",
       "add": "Ajouter un concurrent",
       "adding": "Ajout d'un concurrent…",
       "confirmed": "Concurrent confirmé.",
@@ -115,9 +119,9 @@
       "confirmAction": "Confirmer l'actualisation"
     },
     "technology": {
-      "title": "Résumé du portefeuille actuel",
-      "description": "Ce résumé utilise uniquement les faits de portefeuille stockés. Il ne démarre pas la détection technologique ou une autre recherche payante.",
-      "summary": "{{manual}} concurrents ont été ajoutés manuellement et {{suggested}} provenaient de suggestions de découverte confirmées. Les détails technologiques restent indisponibles jusqu’à ce qu’une recherche prévisualisée séparément existe."
+      "title": "Concurrents actifs par source",
+      "description": "Basé uniquement sur les données stockées. Aucune détection technologique ni nouvelle requête de données n’est lancée ici.",
+      "summary": "Ajoutés manuellement : {{manual}}. Issus de suggestions de découverte confirmées : {{suggested}}. Les détails technologiques ne sont pas encore disponibles."
     },
     "landscape": {
       "title": "Construire un paysage de mots clés",

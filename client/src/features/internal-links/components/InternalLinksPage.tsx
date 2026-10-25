@@ -1,10 +1,11 @@
-import { LoaderCircle, Sparkles } from 'lucide-react';
+import { LoaderCircle } from 'lucide-react';
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Link } from 'react-router-dom';
-import { GscRequiredNotice, useGscConnected } from '@features/google';
+import { SiteGoogleNotice } from '@features/google';
 import { ReportExportControl } from '@features/report-export';
 import { isSupportedLocale } from '@shared/i18n';
+import { formatAbsoluteDate } from '@shared/lib/datetime';
 import { Alert, AlertDescription, AlertTitle } from '@shared/ui/alert';
 import { Button } from '@shared/ui/button';
 import { Label } from '@shared/ui/label';
@@ -60,7 +61,6 @@ export interface InternalLinksPageProps {
 export const InternalLinksPage = ({ siteId }: InternalLinksPageProps) => {
   const { t, i18n } = useTranslation('internalLinks');
   const url = useInternalLinkUrlState();
-  const gscConnected = useGscConnected(siteId);
   const [runs, setRuns] = useState<InternalLinkRunSummary[]>([]);
   const [runsLoading, setRunsLoading] = useState(false);
   const [runsGate, setRunsGate] = useState<InternalLinkUiState | null>(null);
@@ -213,24 +213,19 @@ export const InternalLinksPage = ({ siteId }: InternalLinksPageProps) => {
       className="flex w-full min-w-0 flex-col gap-6"
       data-testid="internal-links-page"
     >
-      <div className="space-y-2">
-        <div className="flex items-center gap-2 text-sm text-muted-foreground">
-          <Sparkles className="size-4" aria-hidden="true" />
-          <span>{t('eyebrow')}</span>
+      <div className="flex flex-wrap items-start justify-between gap-3">
+        <div className="space-y-2">
+          <h1 className="text-2xl font-semibold tracking-tight">{t('title')}</h1>
+          <p className="max-w-3xl text-sm text-muted-foreground">{t('subtitle')}</p>
         </div>
-        <h1 className="text-2xl font-semibold tracking-tight">{t('title')}</h1>
-        <p className="max-w-3xl text-sm text-muted-foreground">{t('subtitle')}</p>
-      </div>
-
-      <div className="flex flex-wrap items-end gap-4">
         <Button asChild variant="outline" size="sm">
           <Link to={inventoryHref}>{t('site.inventoryLink')}</Link>
         </Button>
       </div>
 
-      {gscConnected === 'disconnected' ? (
-        <GscRequiredNotice siteId={siteId} tool="internalLinks" />
-      ) : null}
+      {/* Shared Search Console status: suggestions still work from the inventory
+          alone, but shared-query evidence needs a usable property. */}
+      <SiteGoogleNotice product="gsc" />
 
       <Tabs
         value={url.view}
@@ -265,7 +260,7 @@ export const InternalLinksPage = ({ siteId }: InternalLinksPageProps) => {
           {runsLoading ? <Skeleton className="h-32 w-full" data-testid="internal-links-runs-loading" /> : null}
           {runsGate ? <StateNotice kind={runsGate} /> : null}
           {!runsLoading && !runsGate && runs.length === 0 ? (
-            <StateNotice kind="emptyRuns" />
+            <StateNotice kind="emptyRuns" onAction={() => url.setView('new')} />
           ) : null}
           {runs.length > 0 ? (
             <RunList runs={runs} activeRunId={url.runId} onOpen={url.setRunId} />
@@ -289,7 +284,9 @@ export const InternalLinksPage = ({ siteId }: InternalLinksPageProps) => {
                     {t('suggestions.title')}
                   </h2>
                   <p className="text-muted-foreground text-sm" data-testid="internal-links-inventory-date">
-                    {t('suggestions.inventorySnapshot', { date: detail.inventoryDate })}
+                    {t('suggestions.inventorySnapshot', {
+                      date: formatAbsoluteDate(detail.inventoryDate, i18n.language),
+                    })}
                   </p>
                 </div>
                 <ReportExportControl
@@ -361,8 +358,17 @@ export const InternalLinksPage = ({ siteId }: InternalLinksPageProps) => {
                 </div>
               ) : null}
 
-              {detail.suggestions.length === 0 || filteredSuggestions.length === 0 ? (
-                <StateNotice kind="emptySuggestions" />
+              {detail.suggestions.length === 0 ? (
+                <StateNotice kind="noSuggestions" onAction={() => url.setView('new')} />
+              ) : filteredSuggestions.length === 0 ? (
+                <StateNotice
+                  kind="emptySuggestions"
+                  onAction={() => {
+                    url.setTarget('all');
+                    url.setSection('all');
+                    url.setConfidence('all');
+                  }}
+                />
               ) : (
                 <SuggestionList suggestions={filteredSuggestions} />
               )}

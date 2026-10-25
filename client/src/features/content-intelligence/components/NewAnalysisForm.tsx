@@ -28,6 +28,7 @@ import { safeExternalHref } from '@shared/security';
 import type { StartAnalysisPayload } from '../api';
 import { clearFormDraft, clearSubmitError, updateFormDraft } from '../store/slice';
 import { loadAnalyses, runPreflight, submitAnalysis } from '../store/thunks';
+import { CONTENT_KEYWORD_MAX_LENGTH, isKeywordList } from '../types';
 import {
   selectAnalysisSiteId,
   selectFormDraft,
@@ -89,7 +90,8 @@ function localUrlError(value: string, siteOrigin: string | undefined): string | 
 function localKeywordError(value: string): string | null {
   const trimmed = value.trim();
   if (!trimmed) return 'form.keywordRequired';
-  if (trimmed.length > 200) return 'form.keywordTooLong';
+  if (trimmed.length > CONTENT_KEYWORD_MAX_LENGTH) return 'form.keywordTooLong';
+  if (isKeywordList(trimmed)) return 'form.keywordList';
   return null;
 }
 
@@ -139,6 +141,7 @@ export function NewAnalysisForm({
   const urlId = useId();
   const pageListId = useId();
   const keywordId = useId();
+  const keywordCounterId = useId();
   const keywordListId = useId();
   const localeId = useId();
   const consentId = useId();
@@ -148,6 +151,10 @@ export function NewAnalysisForm({
     [draft.ownedUrl, siteOrigin],
   );
   const keywordErrorKey = useMemo(() => localKeywordError(draft.keyword), [draft.keyword]);
+  const keywordLength = draft.keyword.trim().length;
+  // Length and list problems show while typing or pasting; "required" waits for blur.
+  const showKeywordError =
+    keywordErrorKey !== null && (touched.keyword || keywordErrorKey !== 'form.keywordRequired');
 
   const onChangeField = useCallback(
     (patch: Partial<typeof draft>) => {
@@ -249,15 +256,15 @@ export function NewAnalysisForm({
               ) : null}
             </Field>
 
-            <Field data-invalid={touched.keyword && Boolean(keywordErrorKey)}>
+            <Field data-invalid={showKeywordError}>
               <FieldLabel htmlFor={keywordId}>{t('contentIntelligence:form.keyword')}</FieldLabel>
               <Input
                 id={keywordId}
                 list={keywordListId}
                 required
-                maxLength={200}
                 value={draft.keyword}
-                aria-invalid={touched.keyword && Boolean(keywordErrorKey)}
+                aria-invalid={showKeywordError}
+                aria-describedby={keywordCounterId}
                 onBlur={() => setTouched((value) => ({ ...value, keyword: true }))}
                 onChange={(event) => onChangeField({ keyword: event.target.value })}
                 data-testid="content-form-keyword"
@@ -265,9 +272,27 @@ export function NewAnalysisForm({
               <datalist id={keywordListId}>
                 {suggestedKeywords.map((keyword) => <option key={keyword} value={keyword} />)}
               </datalist>
-              <FieldDescription>{t('contentIntelligence:form.keywordHint')}</FieldDescription>
-              {touched.keyword && keywordErrorKey ? (
-                <FieldError>{t(`contentIntelligence:${keywordErrorKey}`)}</FieldError>
+              <div className="flex flex-wrap items-start justify-between gap-2">
+                <FieldDescription>{t('contentIntelligence:form.keywordHint')}</FieldDescription>
+                <p
+                  id={keywordCounterId}
+                  className={
+                    keywordLength > CONTENT_KEYWORD_MAX_LENGTH
+                      ? 'text-destructive text-xs tabular-nums'
+                      : 'text-muted-foreground text-xs tabular-nums'
+                  }
+                  data-testid="content-form-keyword-counter"
+                >
+                  {t('contentIntelligence:form.keywordCounter', {
+                    length: keywordLength,
+                    max: CONTENT_KEYWORD_MAX_LENGTH,
+                  })}
+                </p>
+              </div>
+              {showKeywordError ? (
+                <FieldError data-testid="content-form-keyword-error">
+                  {t(`contentIntelligence:${keywordErrorKey}`, { max: CONTENT_KEYWORD_MAX_LENGTH })}
+                </FieldError>
               ) : null}
             </Field>
 

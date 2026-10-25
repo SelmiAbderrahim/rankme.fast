@@ -584,10 +584,47 @@ export interface QaSummary {
     questionCount: number;
     unansweredCount: number;
 }
+/**
+ * The business a Local SEO report describes. At least one of `placeId` / `cid`
+ * is set: they are the Google identifiers the Business Data API accepts as
+ * `place_id:` / `cid:` keywords.
+ */
+export interface LocalBusinessIdentity {
+    placeId: string | null;
+    cid: string | null;
+    name: string;
+}
+/** One business-search result the owner can choose from. */
+export interface LocalBusinessCandidate extends LocalBusinessIdentity {
+    address: string | null;
+    phone: string | null;
+    domain: string | null;
+    category: string | null;
+    latitude: number | null;
+    longitude: number | null;
+}
+/** Name, address, or a Google place ID / CID (`place_id:…`, `cid:…`, bare `ChIJ…`). */
+export interface LocalBusinessSearchInput {
+    query: string;
+    locationCode: number;
+    languageCode: string;
+}
+/**
+ * What a refresh describes: the selected business when there is one, the
+ * site's domain otherwise.
+ */
+export interface LocalListingTarget {
+    domain: string;
+    business: LocalBusinessIdentity | null;
+    locationCode: number;
+    languageCode: string;
+}
 export interface LocalListingsProvider {
-    getBusinessListings(domain: string): Promise<BusinessListingRow[]>;
-    getReviews(domain: string): Promise<ReviewsSummary>;
-    getQuestionsAndAnswers(domain: string): Promise<QaSummary>;
+    /** Bounded business lookup for the setup flow. */
+    searchBusinesses(input: LocalBusinessSearchInput): Promise<LocalBusinessCandidate[]>;
+    getBusinessListings(target: LocalListingTarget): Promise<BusinessListingRow[]>;
+    getReviews(target: LocalListingTarget): Promise<ReviewsSummary>;
+    getQuestionsAndAnswers(target: LocalListingTarget): Promise<QaSummary>;
 }
 // ---------------------------------------------------------------------------
 // Keyword research

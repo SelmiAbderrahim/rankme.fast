@@ -34,6 +34,7 @@ import { configureStore, type UnknownAction } from '@reduxjs/toolkit';
 import type { RootState } from '@app/store';
 import { ApiError } from '@shared/api/client';
 import { changeLanguage, i18n, initI18n } from '@shared/i18n';
+import { stubViewerTimeZone } from '@/test/timeZone';
 import * as api from './api';
 import {
   AiVisibilityKpis,
@@ -95,7 +96,7 @@ vi.mock('./api', () => ({
   fetchAiVisibilityTrend: vi.fn(),
 }));
 
-vi.mock('sonner', () => ({ toast: { error: vi.fn(), success: vi.fn() } }));
+vi.mock('sonner', () => ({ toast: { error: vi.fn(), success: vi.fn(), info: vi.fn() } }));
 
 // rootReducer.inject is called as a side effect inside the lazy route body.
 // Stub the whole module so route.lazy() can be called without the real store.
@@ -137,6 +138,7 @@ const emptyState = (): AiVisibilityState => ({
   overview: null,
   suggestions: [],
   suggestionsOutputLocale: null,
+  suggestionsStale: false,
   trend: [],
   loading: false,
   loaded: false,
@@ -152,6 +154,7 @@ const emptyState = (): AiVisibilityState => ({
   addingAll: false,
   removingId: null,
   suggestionsGeneratedAt: null,
+  suggestionsEvidence: null,
   suggestionsGenerating: false,
   suggestionsCooldownUntil: null,
 });
@@ -594,6 +597,26 @@ describe('reducer: loadStoredSuggestions', () => {
     expect(store.getState().aiVisibility.suggestionsError).toBe('');
   });
 
+  it('records a stale stored set from both read and generation responses', () => {
+    const store = makeStore({ suggestionsOutputLocale: 'en' });
+    const meta = { arg: { siteId: 's1', outputLocale: 'en' }, requestId: 'r', requestStatus: 'fulfilled' };
+    store.dispatch({
+      type: loadStoredSuggestions.fulfilled.type,
+      payload: { generatedAt: '2026-08-01T00:00:00.000Z', outputLocale: 'ar', suggestions: [], stale: true },
+      meta,
+    } as UnknownAction);
+    expect(store.getState().aiVisibility.suggestionsStale).toBe(true);
+    // Responses follow the site's market language, not the requested UI locale.
+    expect(store.getState().aiVisibility.suggestionsOutputLocale).toBe('ar');
+    store.dispatch({ type: generateSuggestions.pending.type, meta: { ...meta, requestStatus: 'pending' } } as UnknownAction);
+    store.dispatch({
+      type: generateSuggestions.fulfilled.type,
+      payload: { generatedAt: '2026-10-06T00:00:00.000Z', outputLocale: 'ar', suggestions: [makeSuggestion()], stale: false },
+      meta,
+    } as UnknownAction);
+    expect(store.getState().aiVisibility.suggestionsStale).toBe(false);
+  });
+
   it('fulfilled populates suggestions and generatedAt', () => {
     const store = makeStore({ suggestionsOutputLocale: 'en' });
     store.dispatch({
@@ -613,6 +636,33 @@ describe('reducer: loadStoredSuggestions', () => {
     expect(s.suggestionsLoading).toBe(false);
     expect(s.suggestions).toHaveLength(1);
     expect(s.suggestionsGeneratedAt).toBe('2026-02-01T00:00:00.000Z');
+    // A response from a server that predates the evidence field reads as unknown.
+    expect(s.suggestionsEvidence).toBeNull();
+  });
+
+  it('fulfilled keeps the evidence level and pending clears it', () => {
+    const store = makeStore({ suggestionsOutputLocale: 'en' });
+    const meta = {
+      arg: { siteId: 's1', outputLocale: 'en' },
+      requestId: 'r',
+      requestStatus: 'fulfilled',
+    };
+    store.dispatch({
+      type: loadStoredSuggestions.fulfilled.type,
+      payload: {
+        generatedAt: '2026-02-01T00:00:00.000Z',
+        outputLocale: 'en',
+        suggestions: [makeSuggestion()],
+        evidence: 'limited',
+      },
+      meta,
+    } as UnknownAction);
+    expect(store.getState().aiVisibility.suggestionsEvidence).toBe('limited');
+    store.dispatch({
+      type: loadStoredSuggestions.pending.type,
+      meta: { ...meta, requestStatus: 'pending' },
+    } as UnknownAction);
+    expect(store.getState().aiVisibility.suggestionsEvidence).toBeNull();
   });
 
   it('fulfilled with generatedAt null marks the never-generated state', () => {
@@ -764,6 +814,26 @@ describe('reducer: generateSuggestions', () => {
     expect(s.suggestionsGenerating).toBe(false);
     expect(s.suggestions).toHaveLength(1);
     expect(s.suggestionsGeneratedAt).toBe('2026-03-01T00:00:00.000Z');
+    expect(s.suggestionsEvidence).toBeNull();
+  });
+
+  it('fulfilled stores the evidence level of the new set', () => {
+    const store = makeStore({ suggestionsGenerating: true, suggestionsOutputLocale: 'en' });
+    store.dispatch({
+      type: generateSuggestions.fulfilled.type,
+      payload: {
+        generatedAt: '2026-03-01T00:00:00.000Z',
+        outputLocale: 'en',
+        suggestions: [makeSuggestion()],
+        evidence: 'none',
+      },
+      meta: {
+        arg: { siteId: 's1', outputLocale: 'en' },
+        requestId: 'r',
+        requestStatus: 'fulfilled',
+      },
+    } as UnknownAction);
+    expect(store.getState().aiVisibility.suggestionsEvidence).toBe('none');
   });
 
   it('rejected writes the suggestion-specific cooldown, never the shared one', () => {
@@ -1162,6 +1232,29 @@ describe('AiVisibilityPanel', () => {
     expect(screen.queryByTestId('ai-visibility-loading')).not.toBeInTheDocument();
   });
 
+  it('renders the weekly-pulse slot under the title', () => {
+    const pulse = <section data-testid="pulse-slot">pulse</section>;
+    const store = makeStore({ siteId: 's1', loaded: true, overview: makeOverview() });
+    withProviders(<AiVisibilityPanel siteId="s1" pulse={pulse} />, store);
+    const panel = screen.getByTestId('ai-visibility-panel');
+    const slot = screen.getByTestId('pulse-slot');
+    expect(panel).toContainElement(slot);
+    const title = screen.getByRole('heading', { level: 1 });
+    // The title precedes the pulse sub-section in document order.
+    expect(title.compareDocumentPosition(slot) & Node.DOCUMENT_POSITION_FOLLOWING).toBeTruthy();
+  });
+
+  it('AiVisibilityPage forwards the pulse slot to the panel', () => {
+    const store = makeStore({ siteId: 's1', loaded: true, overview: makeOverview() });
+    withProviders(
+      <AiVisibilityPage siteId="s1" pulse={<p data-testid="page-pulse">pulse</p>} />,
+      store,
+    );
+    expect(screen.getByTestId('ai-visibility-panel')).toContainElement(
+      screen.getByTestId('page-pulse'),
+    );
+  });
+
   it('renders error alert when error is set', () => {
     const store = makeStore({ siteId: 's1', loaded: false, overview: makeOverview(), error: 'Something went wrong' });
     withProviders(<AiVisibilityPanel siteId="s1" />, store);
@@ -1266,18 +1359,13 @@ describe('AiVisibilityPanel', () => {
     expect(screen.getByText('Not evaluated')).toBeInTheDocument();
   });
 
-  it('renders share-of-voice bar widths when shareOfVoicePct is set', () => {
-    const store = makeStore({ siteId: 's1', loaded: false, overview: makeOverview({ shareOfVoicePct: 60 }) });
-    withProviders(<AiVisibilityPanel siteId="s1" />, store);
-    expect(screen.getByTestId('ai-visibility-brand-bar').style.width).toBe('60%');
-    expect(screen.getByTestId('ai-visibility-competitor-bar').style.width).toBe('40%');
-  });
-
-  it('renders 0% bars and "No data" text when shareOfVoicePct is null', () => {
+  it('shows share of voice once — as the KPI tile, with no second share card', () => {
     const store = makeStore({ siteId: 's1', loaded: false, overview: makeOverview({ shareOfVoicePct: null }) });
     withProviders(<AiVisibilityPanel siteId="s1" />, store);
-    expect(screen.getByTestId('ai-visibility-brand-bar').style.width).toBe('0%');
-    expect(screen.getAllByText('No data').length).toBeGreaterThanOrEqual(1);
+    expect(screen.getByTestId('ai-visibility-kpi-share')).toHaveTextContent('No data');
+    expect(screen.queryByTestId('ai-visibility-share')).not.toBeInTheDocument();
+    expect(screen.getAllByText('Share of voice')).toHaveLength(1);
+    expect(screen.getAllByText('No data')).toHaveLength(1);
   });
 
   it('disables submit and shows capReached message when 10 prompts tracked', () => {
@@ -1305,6 +1393,67 @@ describe('AiVisibilityPanel', () => {
 
     await waitFor(() =>
       expect(mocked.addAiVisibilityPrompt).toHaveBeenCalledWith('s1', 'my query'),
+    );
+  });
+
+  it('never derives the placeholder from account data and keeps actions in the title row', async () => {
+    const store = makeStore({
+      siteId: 's1',
+      loaded: false,
+      overview: makeOverview(),
+      // A leaked phrase must never become the input hint ("best paystub generator").
+      suggestions: [makeSuggestion({ prompt: 'best paystub generator' })],
+    });
+    withProviders(<AiVisibilityPanel siteId="s1" />, store);
+    await waitFor(() =>
+      expect(screen.getByLabelText('Tracked prompt')).toHaveAttribute(
+        'placeholder',
+        'A question a customer might ask an AI assistant',
+      ),
+    );
+    const actions = screen.getByTestId('ai-visibility-header-actions');
+    expect(actions).toContainElement(screen.getByTestId('ai-visibility-refresh'));
+    expect(actions).not.toContainElement(screen.getByTestId('ai-visibility-last-checked'));
+  });
+
+  it('withholds a stale stored set and offers to regenerate it', () => {
+    const store = makeStore({
+      siteId: 's1',
+      loaded: false,
+      overview: makeOverview(),
+      suggestions: [],
+      suggestionsGeneratedAt: '2026-08-01T00:00:00.000Z',
+      suggestionsStale: true,
+    });
+    withProviders(<AiVisibilityPanel siteId="s1" />, store);
+    expect(screen.getByTestId('ai-visibility-suggestions-stale')).toHaveTextContent('These suggestions are out of date');
+    expect(screen.getByTestId('ai-visibility-generate-suggestions')).toHaveTextContent('Regenerate suggestions');
+    expect(screen.queryByTestId('ai-visibility-suggestions-empty')).toBeNull();
+  });
+
+  it('isolates each suggested prompt and marks its language', () => {
+    const store = makeStore({
+      siteId: 's1',
+      loaded: false,
+      overview: makeOverview(),
+      suggestions: [
+        makeSuggestion({ prompt: 'ما أفضل تطبيقات الكاش باك؟', language: 'ar' }),
+        makeSuggestion({ prompt: 'Which rewards app is best?', language: 'en' }),
+      ],
+    });
+    withProviders(<AiVisibilityPanel siteId="s1" />, store);
+    const arabic = screen.getByText('ما أفضل تطبيقات الكاش باك؟');
+    expect(arabic).toHaveAttribute('lang', 'ar');
+    expect(arabic.closest('bdi')).not.toBeNull();
+    expect(screen.getByText('Which rewards app is best?')).toHaveAttribute('lang', 'en');
+  });
+
+  it('falls back to a neutral placeholder before any suggestion exists', () => {
+    const store = makeStore({ siteId: 's1', loaded: false, overview: makeOverview() });
+    withProviders(<AiVisibilityPanel siteId="s1" />, store);
+    expect(screen.getByLabelText('Tracked prompt')).toHaveAttribute(
+      'placeholder',
+      'A question a customer might ask an AI assistant',
     );
   });
 
@@ -1422,14 +1571,30 @@ describe('AiVisibilityPanel', () => {
     // data-testid="ai-visibility-refresh" is forwarded to the <button> via RefreshButton
     const btn = screen.getByTestId('ai-visibility-refresh');
     expect(btn).not.toBeDisabled();
+    // "Check now" is the panel's main action: an outlined control, not a
+    // ghost button that reads as disabled.
+    expect(btn).toHaveAttribute('data-variant', 'outline');
     fireEvent.click(btn);
     await waitFor(() => expect(mocked.checkAiVisibility).toHaveBeenCalledWith('s1'));
   });
 
-  it('refresh button is disabled when promptCount === 0', () => {
+  it('refresh button is disabled when promptCount === 0 and says why', () => {
     const store = makeStore({ siteId: 's1', loaded: false, overview: makeOverview({ prompts: [] }) });
     withProviders(<AiVisibilityPanel siteId="s1" />, store);
     expect(screen.getByTestId('ai-visibility-refresh')).toBeDisabled();
+    expect(screen.getByTestId('ai-visibility-check-needs-prompts')).toHaveTextContent(
+      'Track at least one phrase below to run a check.',
+    );
+  });
+
+  it('hides the needs-prompts hint once a phrase is tracked', () => {
+    const store = makeStore({
+      siteId: 's1',
+      loaded: true,
+      overview: makeOverview({ prompts: [makePrompt()] }),
+    });
+    withProviders(<AiVisibilityPanel siteId="s1" />, store);
+    expect(screen.queryByTestId('ai-visibility-check-needs-prompts')).toBeNull();
   });
 
   // Suggestions section ----------------------------------------------------------
@@ -1462,6 +1627,50 @@ describe('AiVisibilityPanel', () => {
     withProviders(<AiVisibilityPanel siteId="s1" />, store);
     fireEvent.click(screen.getByTestId('ai-visibility-suggestions-empty-cta'));
     expect(screen.getByLabelText('Tracked prompt')).toHaveFocus();
+  });
+
+  it.each([
+    ['limited', 'These suggestions rest on limited evidence about your site.'],
+    ['none', 'We found no evidence yet about what your site offers'],
+  ] as const)('says so when the suggestions come from %s evidence', (evidence, copy) => {
+    const store = makeStore({
+      siteId: 's1',
+      loaded: false,
+      overview: makeOverview(),
+      suggestions: [makeSuggestion({ prompt: 'What does example.com do?', source: 'template', evidenceSource: null })],
+      suggestionsGeneratedAt: '2026-02-01T00:00:00.000Z',
+      suggestionsEvidence: evidence,
+    });
+    withProviders(<AiVisibilityPanel siteId="s1" />, store);
+    expect(screen.getByTestId('ai-visibility-suggestions-evidence')).toHaveTextContent(copy);
+    // The suggestion itself is a plain text node, never markup.
+    expect(screen.getByText('What does example.com do?')).toBeInTheDocument();
+  });
+
+  it.each([['rich'], [null]] as const)('shows no evidence note for %s evidence', (evidence) => {
+    const store = makeStore({
+      siteId: 's1',
+      loaded: false,
+      overview: makeOverview(),
+      suggestions: [makeSuggestion()],
+      suggestionsGeneratedAt: '2026-02-01T00:00:00.000Z',
+      suggestionsEvidence: evidence,
+    });
+    withProviders(<AiVisibilityPanel siteId="s1" />, store);
+    expect(screen.queryByTestId('ai-visibility-suggestions-evidence')).toBeNull();
+  });
+
+  it('renders markup-like suggestion text inertly', () => {
+    const store = makeStore({
+      siteId: 's1',
+      loaded: false,
+      overview: makeOverview(),
+      suggestions: [makeSuggestion({ prompt: '<img src=x onerror=alert(1)> best tools' })],
+      suggestionsGeneratedAt: '2026-02-01T00:00:00.000Z',
+    });
+    const { container } = withProviders(<AiVisibilityPanel siteId="s1" />, store);
+    expect(container.querySelector('img')).toBeNull();
+    expect(screen.getByText(/<img src=x onerror=alert\(1\)> best tools/)).toBeInTheDocument();
   });
 
   it('badges an AI-generated suggestion and shows no volume number', () => {
@@ -1861,6 +2070,17 @@ describe('AiVisibilityKpis', () => {
     ],
     shareOfVoicePct: 66,
     sentiment: { positive: 1, neutral: 2, negative: 3 },
+    checkedAt: '2026-07-01T00:00:00.000Z',
+  });
+
+  it('says not checked instead of "0 of N" before any check ran', () => {
+    renderWithI18n(
+      <AiVisibilityKpis
+        overview={makeOverview({ prompts: [makePrompt({ id: 'p1', prompt: 'q one' })] })}
+      />,
+    );
+    expect(screen.getByTestId('ai-visibility-kpi-mentioned')).toHaveTextContent('Not checked yet');
+    expect(screen.getByTestId('ai-visibility-kpi-mentioned')).not.toHaveTextContent('0 of 1');
   });
 
   it('renders share-of-voice pct, mentioned x of y, and the sentiment split', () => {
@@ -1908,6 +2128,36 @@ describe('AiVisibilityTrendChart', () => {
     expect(table).toHaveTextContent('50%');
     expect(table).toHaveTextContent('40%');
   });
+});
+
+describe('AiVisibilityTrendChart — localized calendar days', () => {
+  afterEach(() => {
+    vi.unstubAllGlobals();
+  });
+
+  it.each(['en', 'ar', 'de'] as const)(
+    'keeps 2026-07-01 on July 1 for %s even west of UTC',
+    async (locale) => {
+      const julyFirst = new Intl.DateTimeFormat(locale, {
+        dateStyle: 'medium',
+        timeZone: 'UTC',
+      }).format(Date.UTC(2026, 6, 1));
+      // Los Angeles: a bare `new Date('2026-07-01')` reads as June 30 there.
+      stubViewerTimeZone('America/Los_Angeles');
+      await changeLanguage(locale);
+      renderWithI18n(
+        <AiVisibilityTrendChart
+          points={[
+            makeTrendPoint({ day: '2026-07-01', mentionedRatePct: 50 }),
+            makeTrendPoint({ day: '2026-07-02', mentionedRatePct: 75 }),
+          ]}
+        />,
+      );
+      const firstRow = screen.getByTestId('ai-visibility-trend-table').querySelector('tbody tr')!;
+      expect(firstRow.querySelector('td')).toHaveTextContent(julyFirst);
+      await changeLanguage('en');
+    },
+  );
 });
 
 describe('modelLabel', () => {
@@ -1983,10 +2233,31 @@ describe('AiVisibilityPanel — new surfaces', () => {
     const store = makeStore({
       siteId: 's1',
       loaded: false,
-      overview: makeOverview({ notMentionedPrompts: ['ghost prompt'] }),
+      overview: makeOverview({
+        notMentionedPrompts: ['ghost prompt'],
+        checkedAt: '2026-07-01T00:00:00.000Z',
+      }),
     });
     withProviders(<AiVisibilityPanel siteId="s1" />, store);
     expect(screen.getByTestId('ai-visibility-not-mentioned')).toHaveTextContent('ghost prompt');
+  });
+
+  it('a never-checked prompt reads "Not checked yet" everywhere', () => {
+    const store = makeStore({
+      siteId: 's1',
+      loaded: false,
+      overview: makeOverview({
+        prompts: [makePrompt({ id: 'p1', prompt: 'podcast show notes generator' })],
+        // An older server could still list it as not mentioned: never shown before a check.
+        notMentionedPrompts: ['podcast show notes generator'],
+        notCheckedPrompts: ['podcast show notes generator'],
+      }),
+    });
+    withProviders(<AiVisibilityPanel siteId="s1" />, store);
+    expect(screen.queryByTestId('ai-visibility-not-mentioned')).not.toBeInTheDocument();
+    expect(screen.getByTestId('ai-visibility-prompt-status')).toHaveTextContent('Not checked yet');
+    expect(screen.getByTestId('ai-visibility-kpi-mentioned')).toHaveTextContent('Not checked yet');
+    expect(screen.queryByText('Not mentioned')).not.toBeInTheDocument();
   });
 
   it('hides the not-mentioned callout when empty', () => {
@@ -2082,6 +2353,31 @@ describe('AiVisibilityPanel — new surfaces', () => {
     expect(mocked.addAiVisibilityPrompt).toHaveBeenCalledWith('s1', 'fresh suggestion');
   });
 
+  it('hides tracked suggestions by normalised text and skips a 409 in Track all', async () => {
+    mocked.addAiVisibilityPrompt
+      .mockRejectedValueOnce(new ApiError('Conflict', 409, { error: { message: 'You already track this prompt.' } }))
+      .mockResolvedValueOnce({ prompt: makePrompt({ id: 'n2', prompt: 'second fresh' }) });
+    const store = makeStore({
+      siteId: 's1',
+      loaded: false,
+      overview: makeOverview({ prompts: [makePrompt({ id: 't1', prompt: 'Best podcast tools?' })] }),
+      suggestions: [
+        makeSuggestion({ prompt: 'best  podcast tools' }), // same prompt, other punctuation
+        makeSuggestion({ prompt: 'raced fresh' }),
+        makeSuggestion({ prompt: 'second fresh' }),
+      ],
+    });
+    withProviders(<AiVisibilityPanel siteId="s1" />, store);
+    expect(screen.queryByText('best  podcast tools')).not.toBeInTheDocument();
+    fireEvent.click(screen.getByTestId('ai-visibility-track-all'));
+    await waitFor(() => expect(mocked.addAiVisibilityPrompt).toHaveBeenCalledTimes(2));
+    expect(mocked.addAiVisibilityPrompt).toHaveBeenNthCalledWith(1, 's1', 'raced fresh');
+    expect(mocked.addAiVisibilityPrompt).toHaveBeenNthCalledWith(2, 's1', 'second fresh');
+    await waitFor(() =>
+      expect(store.getState().aiVisibility.overview?.prompts.map((row) => row.id)).toContain('n2'),
+    );
+  });
+
   it('"Track all" is a no-op when every free slot is used (guard branch)', () => {
     const ten = Array.from({ length: 10 }, (_, i) => makePrompt({ id: `t${i}`, prompt: `tracked ${i}` }));
     const store = makeStore({
@@ -2167,6 +2463,38 @@ describe('AiVisibilityPanel — prompt-suggestion generation', () => {
     expect(screen.getByTestId('ai-visibility-suggestions')).toHaveTextContent(
       'Output language: English',
     );
+  });
+
+  it('shows progress while generating and lets the user stop waiting', async () => {
+    const user = userEvent.setup();
+    mocked.generateAiVisibilitySuggestions.mockReturnValue(new Promise(() => {}));
+    const { toast } = await import('sonner');
+    const info = (toast as unknown as { info: MockedFunction<AnyFn> }).info;
+    info.mockClear();
+    withProviders(<AiVisibilityPanel siteId="s1" />, baseStore());
+
+    await user.click(screen.getByTestId('ai-visibility-generate-suggestions'));
+    const progress = await screen.findByTestId('ai-visibility-suggestions-progress');
+    expect(progress).toHaveAttribute('role', 'status');
+    expect(progress).toHaveTextContent('this can take up to a minute');
+
+    await user.click(screen.getByTestId('ai-visibility-suggestions-cancel'));
+    await waitFor(() =>
+      expect(screen.queryByTestId('ai-visibility-suggestions-progress')).toBeNull(),
+    );
+    expect(info).toHaveBeenCalledWith(expect.stringContaining('Stopped waiting'));
+    expect(screen.getByTestId('ai-visibility-generate-suggestions')).toBeEnabled();
+  });
+
+  it('stop-waiting is safe when no request from this view is in flight', async () => {
+    const user = userEvent.setup();
+    withProviders(
+      <AiVisibilityPanel siteId="s1" />,
+      baseStore({ suggestionsGenerating: true }),
+    );
+    await user.click(await screen.findByTestId('ai-visibility-suggestions-cancel'));
+    const { toast } = await import('sonner');
+    expect((toast as unknown as { info: MockedFunction<AnyFn> }).info).toHaveBeenCalled();
   });
 
   it('falls back to English when i18n exposes an unsupported resolved locale', () => {

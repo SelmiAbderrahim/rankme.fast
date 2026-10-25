@@ -409,6 +409,37 @@ describe('ReportExportControl', () => {
   });
 });
 
+describe('ReportExportControl disabled trigger', () => {
+  it('never opens its menu while disabled, and closes an open menu when it becomes disabled', async () => {
+    const user = userEvent.setup();
+    const view = renderWithStore(
+      <ReportExportControl kind="audit.run" target={{ scope: 'site', siteId: 'site-one' }} />,
+      state({ capabilities: [capability] }),
+    );
+    await user.click(screen.getByRole('button', { name: 'Export or share' }));
+    expect(await screen.findByRole('menu')).toBeInTheDocument();
+
+    view.rerender(
+      <Provider store={view.store}>
+        <I18nextProvider i18n={i18n}>
+          <MemoryRouter initialEntries={['/exports']}>
+            <ReportExportControl kind="audit.run" target={{ scope: 'site', siteId: 'site-one' }} disabled />
+          </MemoryRouter>
+        </I18nextProvider>
+      </Provider>,
+    );
+    await waitFor(() => expect(screen.queryByRole('menu')).toBeNull());
+    const trigger = screen.getByRole('button', { name: 'Export or share' });
+    expect(trigger).toBeDisabled();
+    expect(trigger).toHaveAttribute('data-disabled');
+    fireEvent.pointerDown(trigger, { button: 0, ctrlKey: false, pointerType: 'mouse' });
+    fireEvent.click(trigger);
+    fireEvent.keyDown(trigger, { key: 'Enter' });
+    expect(screen.queryByRole('menu')).toBeNull();
+    expect(screen.queryByRole('menuitem', { name: 'PDF' })).toBeNull();
+  });
+});
+
 describe('ReportShareDialog', () => {
   it('validates bounds, creates one immutable link, copies it, refreshes history, and revokes it', async () => {
     const onOpenChange = vi.fn();

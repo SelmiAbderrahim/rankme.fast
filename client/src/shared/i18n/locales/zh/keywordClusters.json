@@ -1,6 +1,5 @@
 {
-  "eyebrow": "基于已存储观测的分组",
-  "title": "按搜索结果重叠聚类关键词",
+  "title": "搜索结果重叠分组",
   "subtitle": "把在 Google 上返回相同页面的已跟踪关键词分到一组。每次分组都基于你已经付费的排名检查计算，不会发起任何新的搜索。",
   "site": {
     "ranksLink": "打开排名跟踪"
@@ -22,14 +21,11 @@
   },
   "newRun": {
     "title": "准备一次聚类运行",
-    "description": "在消耗一次运行前，先预览符合条件的关键词和你的额度。",
+    "description": "开始聚类运行前，先预览符合条件的关键词。",
     "storedOnly": "聚类只读取已存储的结果，不会向任何供应商发送搜索。",
-    "unitLabel": "额度",
-    "unitValue": "{{count}} 次聚类运行",
     "scopeLabel": "就绪的关键词",
     "scopeValue_one": "{{count}} 个已跟踪关键词符合条件",
     "method": "当两个关键词在各自前 {{window}} 条结果中至少共享 {{shared}} 条，且排名检查发生在最近 {{days}} 天内时，它们会被分到一组。",
-    "remaining": "本次运行前还剩 {{count}} 次。",
     "labelingIncluded": "本次运行包含可选的 AI 群组标签，且绝不会改变聚类成员关系。",
     "preview": "预览运行",
     "previewing": "正在检查已存储结果…",
@@ -55,7 +51,7 @@
     },
     "notEnoughKeywords": {
       "title": "近期排名检查不足",
-      "body": "至少需要两个已跟踪关键词在过去七天内有排名检查。未消耗任何运行次数。"
+      "body": "过去七天内有可用排名检查的跟踪关键词少于两个。未消耗任何运行次数。"
     },
     "cap": {
       "title": "已达每月运行额度",
@@ -80,6 +76,11 @@
     "running": {
       "title": "正在分组关键词",
       "body": "工作进程正在比较已存储结果并为分组命名。此视图会自动更新。"
+    },
+    "keywordsCta": "跟踪关键词",
+    "noTrackedKeywords": {
+      "title": "请先跟踪关键词",
+      "body": "聚类会对你为该网站跟踪的 Google 关键词进行分组。请先在“关键词”标签页添加关键词并运行一次排名检查，然后回来预览运行。"
     }
   },
   "status": {
@@ -89,19 +90,23 @@
     "failed": "已失败"
   },
   "runs": {
-    "summary": "由 {{keywords}} 个关键词得到 {{clusters}} 个分组",
+    "summary": "分组：{{clusters}} · 来源关键词：{{keywords}}",
     "requestedAt": "请求于 {{date}}",
     "open": "打开运行"
   },
   "blocked": {
     "title_one": "{{count}} 个关键词无法参与",
-    "body": "这些已跟踪关键词还没有可用的已存储结果。运行一次排名检查后，它们即可参与下次运行。",
+    "body": "这些跟踪的关键词未纳入本次运行。运行一次排名检查后，它们就能参与下一次运行。",
     "more_one": "另有 {{count}} 个",
     "observedAt": "最近检查 {{date}}",
     "reason": {
       "missing": "从未检查",
       "stale": "检查过于陈旧",
-      "empty": "无已存储结果"
+      "empty": "无已存储结果",
+      "check_too_old": "检查过旧",
+      "no_serp_snapshot": "未保存完整结果页",
+      "never_checked": "从未检查",
+      "failed_last_check": "上一次检查失败"
     },
     "more_zero": "另有 {{count}} 个",
     "more_two": "另有 {{count}} 个",
@@ -189,5 +194,9 @@
     "minimum_other": "聚类至少需要 {{count}} 个就绪的关键词。",
     "title": "就绪的关键词不足",
     "snapshotNote": "部分近期检查只保存了排名位置，没有保存完整结果页。聚类需要一次会保存完整结果页的排名检查。"
+  },
+  "crossLink": {
+    "body": "想基于你研究过的关键词（不只是跟踪的关键词）生成主题？",
+    "cta": "打开 AI 关键词主题"
   }
 }

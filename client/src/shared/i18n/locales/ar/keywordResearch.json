@@ -311,7 +311,13 @@
     "shown_two": "عرض {{loaded}} من {{count}} عمليتي بحث محفوظتين",
     "shown_few": "عرض {{loaded}} من {{count}} عمليات بحث محفوظة",
     "shown_many": "عرض {{loaded}} من {{count}} عملية بحث محفوظة",
-    "shown_other": "عرض {{loaded}} من {{count}} عملية بحث محفوظة"
+    "shown_other": "عرض {{loaded}} من {{count}} عملية بحث محفوظة",
+    "viewResults": "عرض النتائج",
+    "viewResultsFor": "عرض النتائج المحفوظة لـ {{query}}",
+    "viewResultsHint": "يعرض «عرض النتائج» ما حُفظ من ذلك البحث. ولا يستدعي مزوّد البيانات مرة أخرى.",
+    "searchAgainFor": "ابحث مجددًا عن {{query}}",
+    "searchAgainHint": "يعيد «ابحث مجددًا» تشغيل الاستعلام لدى مزوّد البيانات، تمامًا مثل بحث جديد.",
+    "emptySite": "لا توجد أبحاث لهذا الموقع بعد. ستظهر هنا عمليات البحث التي تنفّذها من هذه الصفحة."
   },
   "previewFailed": "تعذّر تحميل معاينة التكلفة.",
   "tabs": {
@@ -535,5 +541,17 @@
   "selectionCount_two": "تم تحديد {{count}} من {{max}}",
   "selectionCount_few": "تم تحديد {{count}} من {{max}}",
   "selectionCount_many": "تم تحديد {{count}} من {{max}}",
-  "selectionCount_other": "تم تحديد {{count}} من {{max}}"
+  "selectionCount_other": "تم تحديد {{count}} من {{max}}",
+  "recentDescriptionSite": "عمليات البحث عن الكلمات المفتاحية لهذا الموقع، الأحدث أولًا.",
+  "stored": {
+    "title": "النتائج المحفوظة",
+    "freeNote": "فُتحت من بيانات محفوظة. لم يُعَد البحث عن أي شيء.",
+    "close": "إغلاق النتائج المحفوظة",
+    "expired": "لم تعد النتائج المحفوظة لهذا البحث متاحة. ابحث مجددًا لجلبها من جديد.",
+    "unsupported": "هذا النوع من البحث ليس له عرض محفوظ هنا. افتح تبويبه الخاص لرؤيته.",
+    "storedOn": "حُفظت {{date}}",
+    "partial": "الكلمات المفتاحية التي لا تزال محفوظة: {{stored}} من {{requested}}",
+    "searchAgain": "ابحث مجددًا",
+    "loadFailed": "تعذّر تحميل النتائج المحفوظة."
+  }
 }

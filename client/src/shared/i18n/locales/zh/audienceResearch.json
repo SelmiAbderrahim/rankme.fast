@@ -23,6 +23,7 @@
     },
     "topics": {
       "label": "主题",
+      "add": "添加",
       "placeholder": "添加主题后按回车键",
       "chipRemove": "移除 {{topic}}",
       "count": "{{count}} / {{max}}",

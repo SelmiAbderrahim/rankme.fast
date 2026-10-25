@@ -4,7 +4,7 @@
   "loadFailed": "Impossible de charger la visibilité IA.",
   "form": {
     "label": "Requête suivie",
-    "placeholder": "meilleur outil d'audit SEO pour agences",
+    "placeholder": "Une question qu’un client pourrait poser à un assistant IA",
     "add": "Suivre la requête",
     "adding": "Ajout…",
     "cap": "{{count}}/{{cap}} requêtes suivies",
@@ -33,7 +33,6 @@
     "cooldown_one": "Attendez {{seconds}} s avant de revérifier.",
     "failed": "Impossible de vérifier la visibilité IA pour le moment. Vos dernières données restent affichées.",
     "success_one": "{{total}} requête vérifiée — les réponses IA vous mentionnent pour {{mentioned}} d'entre elles.",
-    "cost": "Consomme {{prompts}} de vos {{remaining}} vérifications restantes ce mois-ci.",
     "cooldown_zero": "Attendez {{seconds}} s avant de revérifier.",
     "cooldown_two": "Attendez {{seconds}} s avant de revérifier.",
     "cooldown_few": "Attendez {{seconds}} s avant de revérifier.",
@@ -43,7 +42,8 @@
     "success_two": "{{total}} requêtes vérifiées — les réponses IA vous mentionnent pour {{mentioned}} d'entre elles.",
     "success_few": "{{total}} requêtes vérifiées — les réponses IA vous mentionnent pour {{mentioned}} d'entre elles.",
     "success_many": "{{total}} requêtes vérifiées — les réponses IA vous mentionnent pour {{mentioned}} d'entre elles.",
-    "success_other": "{{total}} requêtes vérifiées — les réponses IA vous mentionnent pour {{mentioned}} d'entre elles."
+    "success_other": "{{total}} requêtes vérifiées — les réponses IA vous mentionnent pour {{mentioned}} d'entre elles.",
+    "needPrompts": "Suivez au moins une expression ci-dessous pour lancer une vérification."
   },
   "lastChecked": "Dernière vérification {{date}}",
   "neverChecked": "Pas encore vérifié",
@@ -99,10 +99,7 @@
     "needKeywords": "Suivez des mots-clés dans l'onglet Mots-clés ou lancez un audit pour débloquer les suggestions."
   },
   "share": {
-    "title": "Part de voix",
     "description": "À quelle fréquence les réponses IA vous citent par rapport à vos concurrents.",
-    "brand": "Vous",
-    "competitors": "Concurrents",
     "noData": "Aucune donnée"
   },
   "sentiment": {
@@ -123,7 +120,6 @@
     "aiGenerated": "Suggestion IA",
     "generate": "Générer des suggestions",
     "cooldown_one": "Attendez {{seconds}} s avant de générer à nouveau.",
-    "cost": "Utilise une de vos {{remaining}} générations restantes ce mois-ci.",
     "capReached": "Vous avez utilisé toutes vos générations de suggestions ce mois-ci.",
     "emptyGenerated": "Nous n'avons pas encore pu créer de questions à partir de vos données. Ajoutez des mots-clés suivis ou lancez un audit, puis générez à nouveau.",
     "generatedAt": "Généré le {{date}}",
@@ -139,7 +135,15 @@
     "generated_two": "{{count}} suggestions générées.",
     "generated_few": "{{count}} suggestions générées.",
     "generated_many": "{{count}} suggestions générées.",
-    "generated_other": "{{count}} suggestions générées."
+    "generated_other": "{{count}} suggestions générées.",
+    "cancel": "Ne plus attendre",
+    "cancelled": "Attente arrêtée. Si la génération se termine, ses suggestions s'afficheront la prochaine fois que vous ouvrirez cet onglet.",
+    "evidenceLimited": "Ces suggestions reposent sur peu d'éléments concernant votre site. Lancez un audit, suivez des mots-clés ou connectez la Search Console pour obtenir des questions fondées sur votre offre.",
+    "evidenceNone": "Nous n'avons encore aucun élément sur ce que propose votre site : ces questions ne mentionnent que votre domaine. Lancez un audit, suivez des mots-clés ou connectez la Search Console, puis générez à nouveau.",
+    "generatingHint": "Génération des suggestions… cela peut prendre jusqu'à une minute.",
+    "regenerate": "Régénérer les suggestions",
+    "staleBody": "Elles ont été créées avant que les suggestions n’utilisent que les données de ce site, nous les avons donc masquées. Générez un nouvel ensemble avec le bouton ci-dessus. Rien n’est décompté avant votre clic.",
+    "staleTitle": "Ces suggestions sont périmées"
   },
   "locked": {
     "body": "AI Visibility est disponible avec le forfait Agency.",

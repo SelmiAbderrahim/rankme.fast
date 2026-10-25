@@ -573,7 +573,8 @@ describe('OverviewPanel', () => {
     // One call to action, and no plan jargon, on the not-yet-loaded card.
     const card = screen.getByTestId('overview-competitors');
     expect(within(card).getAllByRole('link', { name: 'Open competitors' })).toHaveLength(1);
-    expect(within(card).getByText(/Open competitors to run a lookup\./)).toBeInTheDocument();
+    expect(within(card).getByText(/Add the competitors you already know or preview a discovery refresh/)).toBeInTheDocument();
+    expect(within(card).getByText(/Nothing is fetched until you confirm a refresh\./)).toBeInTheDocument();
     expect(card).not.toHaveTextContent(/Agency/);
   });
 

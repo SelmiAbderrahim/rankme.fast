@@ -53,6 +53,7 @@ import { createInMemoryCooldown } from '../../shared/cooldown/index.js';
 import { translate } from '../../shared/i18n/index.js';
 import { DICTIONARIES } from '../../shared/i18n/index.js';
 import { loadOwnedSite } from './local-seo.service.js';
+import { LocalBusinessProfile } from './local-business.model.js';
 
 const app = createApp();
 
@@ -60,13 +61,35 @@ async function seedUser(email: string): Promise<TestUser> {
   return signupVerifiedUser(app, { email });
 }
 
-async function seedSite(accountId: string, domain = 'example.com') {
+const SEEDED_PLACE_ID = 'ChIJFakeDentalDowntown01';
+
+/**
+ * A site whose owner has already chosen a business — refresh is refused
+ * without one. `business: false` leaves setup undone.
+ */
+async function seedSite(accountId: string, domain = 'example.com', opts: { business?: boolean } = {}) {
   const site = await Site.create({
     accountId: new mongoose.Types.ObjectId(accountId),
     url: `https://${domain}`,
     domain,
   });
-  return (site._id as mongoose.Types.ObjectId).toString();
+  const siteId = (site._id as mongoose.Types.ObjectId).toString();
+  if (opts.business !== false) {
+    await LocalBusinessProfile.create({
+      accountId,
+      siteId,
+      selected: {
+        placeId: SEEDED_PLACE_ID,
+        cid: null,
+        name: 'Example Dental Studio',
+        address: '100 Main St, Austin, TX 78701',
+        locationCode: 2840,
+        languageCode: 'en',
+        selectedAt: new Date('2026-07-01T00:00:00.000Z'),
+      },
+    });
+  }
+  return siteId;
 }
 
 async function seedKeyword(accountId: string, siteId: string, phrase = 'plumber austin') {
@@ -118,6 +141,7 @@ describe('GET /api/sites/:siteId/local-seo', () => {
       .set('Cookie', user.cookie);
     expect(res.status).toBe(200);
     expect(res.body).toEqual({
+      provenance: null,
       listings: [],
       fetchedAt: null,
       reviews: null,
@@ -213,6 +237,9 @@ describe('POST /api/sites/:siteId/local-seo/refresh', () => {
     const siteId = await seedSite(owner.id);
     let calls = 0;
     setLocalSeoProvider({
+      async searchBusinesses() {
+        return [];
+      },
       async getBusinessListings() {
         calls += 1;
         return [];
@@ -302,7 +329,7 @@ describe('POST /api/sites/:siteId/local-seo/refresh', () => {
       .set('Cookie', user.cookie);
     expect(second.status).toBe(429);
     expect(second.body.error.message).toBe(
-      translate('en', 'localSeo.errors.refreshCooldown', { seconds: 15 }),
+      translate('en', 'localSeo.errors.refreshCooldown', { count: 15, seconds: 15 }),
     );
     expect(second.body.error.details.retryAfterMs).toBe(15_000);
 
@@ -317,6 +344,9 @@ describe('POST /api/sites/:siteId/local-seo/refresh', () => {
     const user = await seedUser('rf-fail@x.co');
     const siteId = await seedSite(user.id);
     setLocalSeoProvider({
+      async searchBusinesses() {
+        return [];
+      },
       async getBusinessListings() {
         return FAKE_BUSINESS_LISTINGS;
       },
@@ -348,6 +378,9 @@ describe('POST /api/sites/:siteId/local-seo/refresh', () => {
     const user = await seedUser('rf-plain@x.co');
     const siteId = await seedSite(user.id);
     setLocalSeoProvider({
+      async searchBusinesses() {
+        return [];
+      },
       async getBusinessListings() {
         throw new Error('plain');
       },
@@ -368,6 +401,9 @@ describe('POST /api/sites/:siteId/local-seo/refresh', () => {
     const user = await seedUser('rf-badid@x.co');
     let calls = 0;
     setLocalSeoProvider({
+      async searchBusinesses() {
+        return [];
+      },
       async getBusinessListings() {
         calls += 1;
         return [];
@@ -555,17 +591,20 @@ describe('vendor archive rows (cost capture)', () => {
     const siteId = await seedSite(user.id);
     const fake = createFakeLocalListingsProvider();
     setLocalSeoProvider({
-      async getBusinessListings(domain) {
+      async searchBusinesses() {
+        return [];
+      },
+      async getBusinessListings(target) {
         recordVendorCostUsd(0.012);
-        return fake.getBusinessListings(domain);
+        return fake.getBusinessListings(target);
       },
-      async getReviews(domain) {
+      async getReviews(target) {
         recordVendorCostUsd(0.0054);
-        return fake.getReviews(domain);
+        return fake.getReviews(target);
       },
-      async getQuestionsAndAnswers(domain) {
+      async getQuestionsAndAnswers(target) {
         recordVendorCostUsd(0.0125);
-        return fake.getQuestionsAndAnswers(domain);
+        return fake.getQuestionsAndAnswers(target);
       },
     });
     await request(app)
@@ -584,6 +623,9 @@ describe('vendor archive rows (cost capture)', () => {
     const user = await seedUser('lp-arch-fail@x.co');
     const siteId = await seedSite(user.id);
     setLocalSeoProvider({
+      async searchBusinesses() {
+        return [];
+      },
       async getBusinessListings() {
         return FAKE_BUSINESS_LISTINGS;
       },
@@ -674,6 +716,9 @@ describe('unused local-listings provider methods are not called by local-pack ch
     const keywordId = await seedKeyword(user.id, siteId);
     let listingCalls = 0;
     const listingsProvider: LocalListingsProvider = {
+      async searchBusinesses() {
+        return [];
+      },
       async getBusinessListings() {
         listingCalls += 1;
         return [];

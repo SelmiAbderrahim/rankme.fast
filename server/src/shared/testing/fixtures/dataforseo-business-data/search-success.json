@@ -1,0 +1,71 @@
+{
+  "version": "0.1.20260711",
+  "status_code": 20000,
+  "status_message": "Ok.",
+  "time": "0.118 sec.",
+  "cost": 0.0156,
+  "tasks_count": 1,
+  "tasks_error": 0,
+  "tasks": [
+    {
+      "id": "TASK_ID",
+      "status_code": 20000,
+      "status_message": "Ok.",
+      "cost": 0.0156,
+      "result_count": 1,
+      "result": [
+        {
+          "total_count": 4,
+          "count": 4,
+          "items": [
+            {
+              "type": "business_listing",
+              "title": "Example Dental Studio",
+              "category": "Dentist",
+              "address": "100 Main St, Austin, TX 78701",
+              "phone": "+1 512-555-0100",
+              "domain": "example.com",
+              "url": "https://example.com/",
+              "place_id": "ChIJFakeDentalDowntown01",
+              "cid": "1000000000000000001",
+              "latitude": 30.2672,
+              "longitude": -97.7431
+            },
+            {
+              "type": "business_listing",
+              "title": "Example Dental Studio North",
+              "category": "Dentist",
+              "address": "9000 Research Blvd, Austin, TX 78758",
+              "phone": "+1 512-555-0200",
+              "domain": null,
+              "url": null,
+              "place_id": "ChIJFakeDentalNorth00002",
+              "cid": "1000000000000000002",
+              "latitude": 30.3751,
+              "longitude": -97.7194
+            },
+            {
+              "type": "business_listing",
+              "title": "Example Dental Studio",
+              "category": "Dentist",
+              "address": "100 Main St, Austin, TX 78701",
+              "phone": "+1 512-555-0100",
+              "domain": "example.com",
+              "place_id": "ChIJFakeDentalDowntown01",
+              "cid": "1000000000000000001",
+              "latitude": 30.2672,
+              "longitude": -97.7431
+            },
+            {
+              "type": "business_listing",
+              "title": "Unlisted Practice",
+              "address": "1 Nowhere Rd",
+              "place_id": null,
+              "cid": null
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

@@ -311,7 +311,13 @@
     "shown_two": "{{loaded}} von {{count}} gespeicherten Suchen angezeigt",
     "shown_few": "{{loaded}} von {{count}} gespeicherten Suchen angezeigt",
     "shown_many": "{{loaded}} von {{count}} gespeicherten Suchen angezeigt",
-    "shown_other": "{{loaded}} von {{count}} gespeicherten Suchen angezeigt"
+    "shown_other": "{{loaded}} von {{count}} gespeicherten Suchen angezeigt",
+    "viewResults": "Ergebnisse ansehen",
+    "viewResultsFor": "Gespeicherte Ergebnisse für {{query}} ansehen",
+    "viewResultsHint": "„Ergebnisse ansehen“ öffnet, was bei dieser Suche gespeichert wurde. Der Datenanbieter wird dabei nicht erneut abgefragt.",
+    "searchAgainFor": "Erneut nach {{query}} suchen",
+    "searchAgainHint": "„Erneut suchen“ führt die Abfrage beim Datenanbieter noch einmal aus, genau wie eine neue Suche.",
+    "emptySite": "Noch keine Recherchen für diese Website. Abfragen, die Sie hier starten, erscheinen in dieser Liste."
   },
   "previewFailed": "Die Kostenvorschau konnte nicht geladen werden.",
   "tabs": {
@@ -535,5 +541,17 @@
   "selectionCount_two": "{{count}} von {{max}} ausgewählt",
   "selectionCount_few": "{{count}} von {{max}} ausgewählt",
   "selectionCount_many": "{{count}} von {{max}} ausgewählt",
-  "selectionCount_other": "{{count}} von {{max}} ausgewählt"
+  "selectionCount_other": "{{count}} von {{max}} ausgewählt",
+  "recentDescriptionSite": "Keyword-Abfragen für diese Website, neueste zuerst.",
+  "stored": {
+    "title": "Gespeicherte Ergebnisse",
+    "freeNote": "Aus gespeicherten Daten geöffnet. Es wurde nichts erneut abgefragt.",
+    "close": "Gespeicherte Ergebnisse schließen",
+    "expired": "Die gespeicherten Ergebnisse dieser Suche sind nicht mehr verfügbar. Suchen Sie erneut, um sie neu abzurufen.",
+    "unsupported": "Für diese Art von Suche gibt es hier keine gespeicherte Ansicht. Öffnen Sie den zugehörigen Tab.",
+    "storedOn": "Gespeichert am {{date}}",
+    "partial": "Weiterhin gespeicherte Keywords: {{stored}} von {{requested}}",
+    "searchAgain": "Erneut suchen",
+    "loadFailed": "Die gespeicherten Ergebnisse konnten nicht geladen werden."
+  }
 }

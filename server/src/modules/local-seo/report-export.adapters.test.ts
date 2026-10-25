@@ -45,6 +45,7 @@ const branding: ReportBrandingSnapshot = {
 
 function snapshot(input: Record<string, unknown> = {}) {
   return {
+    provenance: null,
     listings: [
       { source: 'google', name: 'Example', address: 'One Way', phone: null, consistent: true },
     ],

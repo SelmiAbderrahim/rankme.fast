@@ -22,10 +22,11 @@
     "title": "Snapshot anfordern",
     "description": "Prüfen Sie vor dem Start eines kostenpflichtigen Snapshots die genaue Auswirkung auf Ihr Kontingent.",
     "marketLabel": "Markt",
-    "marketValue": "USA · Englisch",
+    "countryLabel": "Land",
+    "languageLabel": "Sprache",
     "domainLabel": "Domain",
     "domainPlaceholder": "example.com",
-    "domainHelp": "Geben Sie eine öffentliche Domain ohne http://, https://, Pfad oder Zugangsdaten ein.",
+    "domainHelp": "Geben Sie eine öffentliche Domain ein oder fügen Sie eine vollständige URL ein – übernommen wird nur der Hostname.",
     "preview": "Snapshot-Vorschau",
     "previewing": "Vorschau wird vorbereitet…",
     "confirm": "Snapshot bestätigen",
@@ -61,7 +62,8 @@
       "title": "Geschätzte Länderaufteilung",
       "description": "Die wichtigsten im Anbieterindex gespeicherten Länder.",
       "country": "Land",
-      "visits": "Geschätzte Besuche"
+      "visits": "Geschätzte Besuche",
+      "empty": "Für diesen Snapshot wurden keine Länderdaten gespeichert."
     },
     "history": {
       "title": "Geschätzter Traffic-Verlauf",
@@ -129,7 +131,7 @@
     "succeeded": "Snapshot abgeschlossen"
   },
   "errors": {
-    "invalidDomain": "Geben Sie eine gültige öffentliche Domain ohne Schema oder Pfad ein.",
+    "invalidDomain": "Geben Sie eine gültige öffentliche Domain ein, zum Beispiel example.com.",
     "requestFailed": "Der Traffic-Snapshot konnte nicht gestartet werden.",
     "previewFailed": "Die Verbrauchsvorschau konnte nicht vorbereitet werden.",
     "listFailed": "Gespeicherte Traffic-Snapshots konnten nicht geladen werden.",
@@ -146,6 +148,7 @@
     "button_one": "{{count}} Snapshot vergleichen",
     "remove": "{{domain}} aus dem Vergleich entfernen",
     "countriesTitle": "Ausgerichtete geschätzte Länderaufteilung",
+    "countriesEmpty": "Für diese Snapshots wurden keine Länderdaten gespeichert.",
     "historyTitle": "Überlagerter geschätzter Traffic-Verlauf",
     "historyDescription": "Die Serienfarben folgen der Snapshot-Reihenfolge und verwenden die gemeinsame Diagrammpalette.",
     "chartLabel": "Überlagerter geschätzter Traffic-Verlauf der ausgewählten Snapshots",

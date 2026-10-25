@@ -172,7 +172,9 @@ export function AnalysisList({ siteId, onOpen, onNew }: AnalysisListProps) {
                   <TableHead>{t('list.columns.requestedAt')}</TableHead>
                   <TableHead>{t('list.columns.completedAt')}</TableHead>
                   <TableHead>{t('list.columns.warnings')}</TableHead>
-                  <TableHead className="text-end">{t('list.columns.actions')}</TableHead>
+                  <TableHead className={ACTIONS_CELL_CLASS} data-testid="content-list-actions-head">
+                    {t('list.columns.actions')}
+                  </TableHead>
                 </TableRow>
               </TableHeader>
               <TableBody>
@@ -211,6 +213,13 @@ interface AnalysisRowProps {
   onOpen: (id: string) => void;
 }
 
+/**
+ * The table scrolls sideways at medium widths; the actions column stays pinned
+ * to the inline end (logical, so RTL pins it left) so Open / Cancel are always
+ * visible without scrolling.
+ */
+const ACTIONS_CELL_CLASS = 'sticky end-0 z-10 border-s border-border bg-card text-end';
+
 function AnalysisRow({ a, onOpen }: AnalysisRowProps) {
   const { t, i18n } = useTranslation('contentIntelligence');
   const requestedAt = a.requestedAt
@@ -233,10 +242,16 @@ function AnalysisRow({ a, onOpen }: AnalysisRowProps) {
       data-testid={`content-row-${a.analysisId}`}
       data-status={a.status}
     >
-      <TableCell className="max-w-[240px] truncate">
-        <span className="font-medium">{a.ownedUrl}</span>
+      <TableCell>
+        <span className="block min-w-48 max-w-64 truncate font-medium" title={a.ownedUrl}>
+          {a.ownedUrl}
+        </span>
       </TableCell>
-      <TableCell><Bdi>{a.keyword}</Bdi></TableCell>
+      <TableCell>
+        <span className="block min-w-40 max-w-64 whitespace-normal break-words" data-testid="content-row-keyword">
+          <Bdi>{a.keyword}</Bdi>
+        </span>
+      </TableCell>
       <TableCell>{a.locale}</TableCell>
       <TableCell>
         <StatusChip tone={analysisStatusTone(a.status)} aria-live="polite">
@@ -248,7 +263,7 @@ function AnalysisRow({ a, onOpen }: AnalysisRowProps) {
       <TableCell className="text-muted-foreground text-xs">{requestedAt}</TableCell>
       <TableCell className="text-muted-foreground text-xs">{completedAt}</TableCell>
       <TableCell>{a.warnings.length > 0 ? t('list.warningCount', { count: a.warnings.length }) : t('list.notAvailable')}</TableCell>
-      <TableCell className="text-end">
+      <TableCell className={ACTIONS_CELL_CLASS} data-testid="content-row-actions">
         <RowActions analysis={a} onOpen={onOpen} />
       </TableCell>
     </TableRow>

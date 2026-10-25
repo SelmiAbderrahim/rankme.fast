@@ -3,6 +3,8 @@
   "description": "See which sites you compete with and the keywords they rank for.",
   "empty": "No competitors found for this domain yet. Track a few keywords and we'll analyze the sites dominating those search results.",
   "emptyTitle": "No competitors yet",
+  "notFetchedTitle": "Competitors not checked yet",
+  "notFetched": "Refresh to find the sites competing with yours. The data comes from your search data provider, so it can take a moment.",
   "loadFailed": "Could not load competitors.",
   "intersectionFailed": "Could not load gap keywords.",
   "table": {
@@ -43,7 +45,7 @@
     "title": "Example: what you get on Pro and Agency"
   },
   "intelligence": {
-    "title": "Competitor Intelligence",
+    "title": "Competitors",
     "description": "Manage confirmed competitors, compare keyword landscapes, and keep accepted recommendations in one site workspace.",
     "common": {
       "cancel": "Cancel"
@@ -72,6 +74,8 @@
       "description": "{{active}} of {{max}} active competitor slots are in use. Managing this list does not use an allowance.",
       "manualLabel": "Add a public competitor URL",
       "manualPlaceholder": "https://competitor.example/",
+      "manualInvalid": "Enter a public website such as competitor.com or https://competitor.com.",
+      "ownDomain": "That is your own site's domain. Add a different website as a competitor.",
       "add": "Add competitor",
       "adding": "Adding competitor…",
       "confirmed": "Competitor confirmed.",
@@ -115,9 +119,9 @@
       "confirmAction": "Confirm refresh"
     },
     "technology": {
-      "title": "Current portfolio summary",
-      "description": "This summary uses stored portfolio facts only. It does not start technology detection or another paid lookup.",
-      "summary": "{{manual}} competitors were added manually and {{suggested}} came from confirmed discovery suggestions. Technology details stay unavailable until a separately previewed lookup exists."
+      "title": "Active competitors by source",
+      "description": "Based on stored data only. No technology detection or new data request runs here.",
+      "summary": "Added manually: {{manual}}. From confirmed discovery suggestions: {{suggested}}. Technology details are not available yet."
     },
     "landscape": {
       "title": "Build a keyword landscape",

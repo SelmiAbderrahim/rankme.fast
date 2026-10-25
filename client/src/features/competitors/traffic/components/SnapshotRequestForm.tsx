@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState, type FormEvent, type ReactNode } from 'react';
+import { useCallback, useEffect, useMemo, useRef, useState, type FormEvent, type ReactNode } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Alert, AlertDescription, AlertTitle } from '@shared/ui/alert';
 import { Badge } from '@shared/ui/badge';
@@ -15,6 +15,8 @@ import { Field, FieldDescription, FieldError, FieldGroup, FieldLabel } from '@sh
 import { Input } from '@shared/ui/input';
 import { Skeleton } from '@shared/ui/skeleton';
 import { useAppDispatch, useAppSelector } from '@shared/hooks/redux';
+import { useRevealOnReady } from '@shared/hooks/useRevealOnReady';
+import { MarketProvenance, formatCountryFromLocation, languageName, usePickerMarket, useSeededMarket } from '@shared/markets';
 import { clearPreview } from '../store/slice';
 import {
   selectTrafficPreviewError,
@@ -26,18 +28,21 @@ import {
   selectTrafficSnapshotPreview,
 } from '../store/selectors';
 import { previewSnapshot, requestSnapshot } from '../store/thunks';
-import { trafficSnapshotDomainSchema, type TrafficSpendPreview } from '../types';
+import { trafficSnapshotDomainSchema, type TrafficMarket, type TrafficSpendPreview } from '../types';
+import { TrafficMarketPicker } from './TrafficMarketPicker';
 
 interface SpendPreviewCardProps {
   preview: TrafficSpendPreview | null;
   loading: boolean;
   /** Domain the snapshot would be charged to; shown so the price is not anonymous. */
   domain?: string;
+  /** Country and language the estimate is drawn from. */
+  market?: TrafficMarket;
   /** Confirm/Cancel controls, rendered inside the card footer. */
   actions?: ReactNode;
 }
 
-export const SpendPreviewCard = ({ preview, loading, domain, actions }: SpendPreviewCardProps) => {
+export const SpendPreviewCard = ({ preview, loading, domain, market, actions }: SpendPreviewCardProps) => {
   const { t, i18n } = useTranslation('competitorsTraffic');
 
   if (loading && !preview) {
@@ -80,10 +85,16 @@ export const SpendPreviewCard = ({ preview, loading, domain, actions }: SpendPre
               <dd className="font-medium" dir="ltr">{domain}</dd>
             </div>
           ) : null}
-          <div className={rowClass}>
-            <dt className="text-muted-foreground">{t('request.marketLabel')}</dt>
-            <dd className="font-medium">{t('request.marketValue')}</dd>
-          </div>
+          {market ? (
+            <div className={rowClass}>
+              <dt className="text-muted-foreground">{t('request.marketLabel')}</dt>
+              <dd className="font-medium" data-testid="traffic-preview-market">
+                {formatCountryFromLocation(market.locationCode, i18n.language, t('common:market.unknownCountry'))}
+                {' · '}
+                {languageName(market.languageCode, i18n.language) ?? market.languageCode}
+              </dd>
+            </div>
+          ) : null}
           <div className={rowClass}>
             <dt className="text-muted-foreground">{t('preview.impact')}</dt>
             <dd className="font-medium" data-testid="traffic-preview-impact">
@@ -126,6 +137,18 @@ interface SnapshotRequestFormProps {
   disabledReason?: string;
 }
 
+/**
+ * What the user typed per site, kept outside the component. The panel swaps to
+ * a skeleton while the traffic slice re-keys, which remounts this form;
+ * component state alone would reset to the late site-domain default and
+ * silently overwrite the user's input.
+ */
+const typedDomains = new Map<string, string>();
+const draftKey = (siteId?: string): string => siteId ?? '';
+
+/** Test seam: forget every typed draft. */
+export const __resetTypedTrafficDomainsForTests = (): void => typedDomains.clear();
+
 export const SnapshotRequestForm = ({
   siteId,
   initialDomain,
@@ -141,16 +164,55 @@ export const SnapshotRequestForm = ({
   const requestStatus = useAppSelector(selectTrafficRequestStatus);
   const requestError = useAppSelector(selectTrafficRequestError);
   const requestErrorKind = useAppSelector(selectTrafficRequestErrorKind);
-  const [domain, setDomain] = useState(initialDomain ?? '');
+  const [domain, setDomainState] = useState(
+    () => typedDomains.get(draftKey(siteId)) ?? initialDomain ?? '',
+  );
   const [validatedDomain, setValidatedDomain] = useState('');
   const [validationError, setValidationError] = useState('');
   const [retryingKind, setRetryingKind] = useState<'preview' | 'request' | null>(null);
+  // Start in the site's market (else the last one used here), never in United
+  // States just because it is the API default.
+  const marketPicker = usePickerMarket('competitors.traffic');
+  const [seededMarket, chooseMarket, adjustMarket] = useSeededMarket(marketPicker.initial);
+  const market = useMemo<TrafficMarket>(
+    () => ({ locationCode: seededMarket.locationCode, languageCode: seededMarket.languageCode }),
+    [seededMarket.languageCode, seededMarket.locationCode],
+  );
+  const reveal = useRevealOnReady(preview);
+  const { remember: rememberMarket } = marketPicker;
+  const handleMarketChange = useCallback(
+    (next: TrafficMarket) => {
+      const choice = { ...seededMarket, ...next };
+      chooseMarket(choice);
+      rememberMarket(choice);
+      // Cache status and the snapshot itself are per market.
+      dispatch(clearPreview());
+    },
+    [chooseMarket, dispatch, rememberMarket, seededMarket],
+  );
+  // Snapping to a language the catalog offers is not the owner's choice.
+  const handleMarketAdjust = useCallback(
+    (next: TrafficMarket) => {
+      adjustMarket({ ...seededMarket, ...next });
+      dispatch(clearPreview());
+    },
+    [adjustMarket, dispatch, seededMarket],
+  );
   // The workspace's sites slice can resolve after mount; adopt the late
-  // default only while the user has not typed anything.
-  const domainTouched = useRef(false);
+  // default only while the user has not typed anything, in this mount or an
+  // earlier one.
+  const domainTouched = useRef(typedDomains.has(draftKey(siteId)));
   useEffect(() => {
-    if (!domainTouched.current) setDomain(initialDomain ?? '');
+    if (!domainTouched.current) setDomainState(initialDomain ?? '');
   }, [initialDomain]);
+  const setDomain = useCallback(
+    (value: string) => {
+      domainTouched.current = true;
+      typedDomains.set(draftKey(siteId), value);
+      setDomainState(value);
+    },
+    [siteId],
+  );
 
   const locked = disabled || previewErrorKind === 'locked' || requestErrorKind === 'locked';
   const lockedReason =
@@ -175,8 +237,12 @@ export const SnapshotRequestForm = ({
     event.preventDefault();
     const normalized = validateDomain();
     if (normalized) {
+      // Show the normalized hostname so a pasted URL visibly becomes the domain.
+      setDomain(normalized);
+      reveal.arm();
       void dispatch(previewSnapshot({
         domains: [normalized],
+        market,
         ...(siteId ? { siteId } : {}),
       }));
     }
@@ -185,8 +251,8 @@ export const SnapshotRequestForm = ({
   const requestInput = {
     targetDomain: validatedDomain,
     ...(siteId ? { siteId } : {}),
-    locationCode: 2840 as const,
-    languageCode: 'en' as const,
+    locationCode: market.locationCode,
+    languageCode: market.languageCode,
     historyMonths: 24 as const,
   };
 
@@ -203,6 +269,7 @@ export const SnapshotRequestForm = ({
     setRetryingKind('preview');
     void dispatch(previewSnapshot({
       domains: [validatedDomain],
+      market,
       ...(siteId ? { siteId } : {}),
     })).finally(() => setRetryingKind(null));
   };
@@ -221,9 +288,15 @@ export const SnapshotRequestForm = ({
         <form onSubmit={handlePreview}>
           <CardContent>
             <FieldGroup>
-              <div>
+              <div className="flex flex-col gap-2">
                 <p className="text-sm font-medium">{t('request.marketLabel')}</p>
-                <p className="text-sm text-muted-foreground">{t('request.marketValue')}</p>
+                <TrafficMarketPicker
+                  value={market}
+                  onChange={handleMarketChange}
+                  onAdjust={handleMarketAdjust}
+                  disabled={locked}
+                />
+                <MarketProvenance current={market} data-testid="traffic-market-provenance" />
               </div>
               <Field
                 data-invalid={Boolean(validationError)}
@@ -243,12 +316,12 @@ export const SnapshotRequestForm = ({
                   aria-describedby={
                     locked
                       ? 'traffic-domain-disabled'
-                      : validationError
-                        ? 'traffic-domain-error'
+                      : // Hint first, then the error.
+                        validationError
+                        ? 'traffic-domain-help traffic-domain-error'
                         : 'traffic-domain-help'
                   }
                   onChange={(event) => {
-                    domainTouched.current = true;
                     setDomain(event.target.value);
                     setValidationError('');
                     setValidatedDomain('');
@@ -304,43 +377,51 @@ export const SnapshotRequestForm = ({
         </Alert>
       ) : null}
 
-      <SpendPreviewCard
-        preview={preview}
-        loading={previewStatus === 'loading'}
-        domain={validatedDomain}
-        actions={
-          preview ? (
-            <>
-              <Button
-                type="button"
-                variant="default"
-                loading={requestStatus === 'loading'}
-                loadingLabel={t('request.confirming')}
-                disabled={previewFailed || locked}
-                onClick={handleConfirm}
-              >
-                {t('request.confirm')}
-              </Button>
-              <Button
-                type="button"
-                variant="outline"
-                disabled={requestStatus === 'loading'}
-                onClick={() => dispatch(clearPreview())}
-              >
-                {t('request.cancel')}
-              </Button>
-            </>
-          ) : null
-        }
-      />
+      <div
+        ref={reveal.ref}
+        tabIndex={-1}
+        data-testid="traffic-preview-region"
+        className="flex flex-col gap-4 rounded-xl outline-none focus-visible:ring-[3px] focus-visible:ring-ring/50"
+      >
+        <SpendPreviewCard
+          preview={preview}
+          loading={previewStatus === 'loading'}
+          domain={validatedDomain}
+          market={market}
+          actions={
+            preview ? (
+              <>
+                <Button
+                  type="button"
+                  variant="default"
+                  loading={requestStatus === 'loading'}
+                  loadingLabel={t('request.confirming')}
+                  disabled={previewFailed || locked}
+                  onClick={handleConfirm}
+                >
+                  {t('request.confirm')}
+                </Button>
+                <Button
+                  type="button"
+                  variant="outline"
+                  disabled={requestStatus === 'loading'}
+                  onClick={() => dispatch(clearPreview())}
+                >
+                  {t('request.cancel')}
+                </Button>
+              </>
+            ) : null
+          }
+        />
 
-      {!preview && previewFailed ? (
-        <div className="flex flex-wrap items-center gap-2">
-          <Button type="button" variant="default" disabled>
-            {t('request.confirm')}
-          </Button>
-        </div>
-      ) : null}
+        {!preview && previewFailed ? (
+          <div className="flex flex-wrap items-center gap-2">
+            <Button type="button" variant="default" disabled>
+              {t('request.confirm')}
+            </Button>
+          </div>
+        ) : null}
+      </div>
 
       {requestError && !locked ? (
         <Alert variant="destructive" role="alert">

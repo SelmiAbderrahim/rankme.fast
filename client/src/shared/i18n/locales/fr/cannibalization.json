@@ -71,7 +71,8 @@
   "states": {
     "empty": {
       "title": "Rien à afficher pour l’instant",
-      "body": "Générez un rapport pour voir les requêtes que vos pages se disputent."
+      "body": "Générez un rapport pour voir les requêtes que vos pages se disputent.",
+      "action": "Créer un rapport"
     },
     "awaitingSync": {
       "title": "En attente de la prochaine synchro",
@@ -97,6 +98,21 @@
     "failed": {
       "title": "Une erreur est survenue",
       "body": "Le chargement a échoué. Réessayez."
+    },
+    "noCandidates": {
+      "title": "Aucune page concurrente trouvée",
+      "body": "Sur cette période, aucune de vos pages n’a concurrencé une autre sur la même requête.",
+      "action": "Créer un nouveau rapport"
+    },
+    "filtered": {
+      "title": "Aucun cas à ce niveau de confiance",
+      "body": "Affichez tous les niveaux de confiance pour voir les cas de ce rapport.",
+      "action": "Tout afficher"
+    },
+    "needsGsc": "Les nouveaux rapports nécessitent une propriété Search Console utilisable. Corrigez l’état ci-dessus, puis revenez ici.",
+    "emptyNoGsc": {
+      "title": "Rien à afficher pour l’instant",
+      "body": "Les rapports sont créés à partir de vos données Search Console enregistrées. Connectez une propriété Search Console pour ce site, puis créez votre premier rapport."
     }
   },
   "counts": {

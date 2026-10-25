@@ -9,19 +9,23 @@ export type InternalLinkNoticeKind =
   | InternalLinkUiState
   | 'emptyRuns'
   | 'emptySuggestions'
+  | 'noSuggestions'
   | 'missing'
   | 'stale';
 
 interface StateNoticeProps {
   kind: InternalLinkNoticeKind;
   inventoryHref?: string;
+  /** The one next step an empty state offers. */
+  onAction?: () => void;
 }
 
-export const StateNotice = ({ kind, inventoryHref }: StateNoticeProps) => {
+export const StateNotice = ({ kind, inventoryHref, onAction }: StateNoticeProps) => {
   const { t } = useTranslation('internalLinks');
-  const isEmpty = kind === 'emptyRuns' || kind === 'emptySuggestions';
+  const isEmpty = kind === 'emptyRuns' || kind === 'emptySuggestions' || kind === 'noSuggestions';
+  const inventoryKind = kind === 'missing' || kind === 'stale';
   const Icon =
-    kind === 'missing' || kind === 'stale'
+    inventoryKind
       ? RefreshCw
       : isEmpty
         ? Inbox
@@ -40,9 +44,24 @@ export const StateNotice = ({ kind, inventoryHref }: StateNoticeProps) => {
       <AlertTitle>{t(`states.${kind}.title`)}</AlertTitle>
       <AlertDescription className="space-y-3">
         <p>{t(`states.${kind}.body`)}</p>
-        {(kind === 'missing' || kind === 'stale') && inventoryHref ? (
+        {inventoryKind ? <p>{t('states.inventoryDifference')}</p> : null}
+        {inventoryKind && inventoryHref ? (
           <Button asChild size="sm" variant="outline">
-            <Link to={inventoryHref}>{t('states.inventoryCta')}</Link>
+            {/* No inventory yet → "Run"; an out-of-date one → "Re-run". */}
+            <Link to={inventoryHref}>
+              {t(kind === 'missing' ? 'states.inventoryRunCta' : 'states.inventoryCta')}
+            </Link>
+          </Button>
+        ) : null}
+        {onAction ? (
+          <Button
+            type="button"
+            size="sm"
+            variant="outline"
+            onClick={onAction}
+            data-testid={`internal-links-state-${kind}-action`}
+          >
+            {t(`states.${kind}.action`)}
           </Button>
         ) : null}
       </AlertDescription>

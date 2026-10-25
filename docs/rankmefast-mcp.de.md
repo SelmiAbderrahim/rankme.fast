@@ -37,8 +37,6 @@ RankMeFast stellt einen Remote-Endpunkt für das [Model Context Protocol (MCP)](
 
 > Behandeln Sie den Schlüssel wie ein Passwort: Legen Sie ihn in eine Umgebungsvariable, eine Passwortabfrage oder eine Konfiguration auf Benutzerebene, und committen Sie ihn nie in ein Repository. Die Bereiche jedes Schlüssels lassen sich einschränken (siehe unten). Beachten Sie, dass `start_audit` Ihr monatliches Audit-Kontingent verbraucht.
 
-Der MCP-Zugriff ist in Starter, Pro und Agency enthalten. Agency-Schlüssel funktionieren außerdem mit der öffentlichen Read-only-REST-API.
-
 ## Berechtigungen und Schlüsselbereiche steuern
 
 Unter [Einstellungen → MCP](/profile?tab=mcp) verwalten Sie die Kontovorgaben, die MCP und der angemeldete KI-Assistent gemeinsam nutzen:
@@ -386,7 +384,7 @@ Speichern Sie dies als Konfiguration auf Benutzerebene und übertragen Sie den S
 
 ## Verfügbare RankMeFast-Tools
 
-| Tool | Funktion | Verbraucht Plankontingent? |
+| Tool | Funktion | Verbraucht Anbieter-Budget? |
 | --- | --- | --- |
 | `list_sites` | Listet die Websites auf, die Ihrem Konto gehören | Nein |
 | `get_latest_audit_report` | Gibt das letzte abgeschlossene Audit einer Website zurück | Nein |
@@ -394,12 +392,37 @@ Speichern Sie dies als Konfiguration auf Benutzerebene und übertragen Sie den S
 | `get_rank_history` | Gibt den Rankingverlauf eines Keywords für eine Website zurück | Nein |
 | `list_content_analyses` | Listet Content-Intelligence-Analysen auf | Nein |
 | `get_content_analysis` | Gibt eine Content-Intelligence-Analyse zurück | Nein |
-| `start_audit` | Startet ein Website-Audit innerhalb des Seitenlimits Ihres Plans | **Ja, ein Audit** |
+| `start_audit` | Startet ein Website-Audit | **Ja, ein Crawl** |
 | `get_audit_status` | Prüft einen Audit-Lauf | Nein |
 | `list_actions` | Listet die priorisierten nächsten Schritte einer Website | Nein |
 | `set_action_state` | Markiert eine Aufgabe als geplant, verworfen, erledigt oder offen | Nein |
+| `get_gsc_search_summary` | Gibt Search-Console-Klicks, -Impressionen, Klickrate und Position für 7, 28 oder 90 Tage zurück | Nein |
+| `list_gsc_top_queries` | Listet die gespeicherten Top-Suchanfragen aus der Search Console für eine Website und einen Zeitraum | Nein |
+| `list_gsc_top_pages` | Listet die gespeicherten Top-Seiten aus der Search Console für eine Website und einen Zeitraum | Nein |
+| `get_ga4_summary` | Gibt Sitzungen, Nutzer und Schlüsselereignisse aus Google Analytics 4 für 7, 28 oder 90 Tage zurück | Nein |
+| `list_pages` | Listet das gespeicherte Seiteninventar mit dem Crawl-Status jeder Seite | Nein |
+| `get_page_detail` | Gibt die gespeicherten Details einer Seite zurück | Nein |
+| `get_backlinks_summary` | Gibt die Gesamtzahl der Backlinks und die eindeutigen verweisenden Domains einer Website zurück | Nein |
+| `list_backlinks` | Listet gespeicherte Backlinks, einen pro verweisender Domain | Nein |
+| `list_competitors` | Listet das Wettbewerber-Portfolio einer Website, aktiv und archiviert | Nein |
+| `get_ai_visibility_summary` | Gibt KI-Sichtbarkeits-Prompts, letzte Prüfungen und Share of Voice zurück | Nein |
+| `get_local_seo_summary` | Gibt die Momentaufnahme des Local-SEO-Profils und die Ränge im lokalen Pack zurück | Nein |
+| `get_reviews_summary` | Gibt Bewertungsquellen, Bewertungsstatistiken und gespeicherte Themen zurück | Nein |
+| `list_client_reports` | Listet die Kundenberichte einer Website mit Zeitplänen und Zustellungen | Nein |
 
 Alles ist auf das Konto beschränkt, dem der Schlüssel gehört. Eine Website-, Analyse- oder Lauf-ID aus einem anderen Konto liefert daher „nicht gefunden“. Fehlt ein erwartetes Werkzeug, prüfen Sie zuerst die Berechtigungen und erst dann die Verbindung.
+
+## Gespeicherte Daten lesen
+
+Die nach den ersten zehn hinzugefügten Tools lesen nur Daten, die RankMeFast bereits gespeichert hat. Sie rufen weder Google noch einen anderen Anbieter auf, aktualisieren nichts und starten keinen Job.
+
+- **Der Umfang wird genannt.** Ergebnisse aus Search Console und Google Analytics enthalten `range` (7d, 28d oder 90d), Start- und Enddatum, das `asOf`-Datum und die Quelle. Eine Antwort wie „Klicks der letzten 28 Tage“ kann deshalb genau angeben, was sie abdeckt. Die Gesamtwerte der Website und die Tabellen für Suchanfragen, Seiten, Länder und Geräte können abweichen; das Ergebnis erklärt warum.
+- **Fehlende Daten werden ausdrücklich gemeldet.** Ist Google nicht verbunden, keine Property verknüpft oder noch keine Momentaufnahme vorhanden, enthält das Ergebnis `status: "unavailable"` oder `"empty"` mit einem klaren Grund. Es liefert nie Nullen anstelle fehlender Daten.
+- **Berechtigungen gelten bei jedem Aufruf.** Die Kontoschalter unter **Einstellungen → MCP**, die Bereiche des Schlüssels und die Listen erlaubter Websites werden bei jedem Aufruf geprüft. Eine Website, auf die Sie keinen Zugriff haben oder die zu einem anderen Konto gehört, wird als nicht gefunden zurückgegeben.
+- **Neue Tools sind standardmäßig erlaubt.** Sie folgen demselben Standard wie die anderen Lese-Tools, und vor ihrem Erscheinen gespeicherte Berechtigungseinstellungen funktionieren unverändert weiter.
+- **Ergebnisse sind begrenzt.** Listen liefern höchstens 100 Zeilen und ein Ergebnis bleibt klein; werden Zeilen gekürzt, steht im Ergebnis `truncated: true`.
+
+Der [KI-Assistent](./ai-assistant.de.md) nutzt dieselben Tools und dieselben Berechtigungen. In einer mit einer Website verknüpften Unterhaltung verwendet er diese Website direkt und muss Ihre Websites nicht zuerst auflisten.
 
 ## Fehlerbehebung
 
@@ -408,7 +431,6 @@ Alles ist auf das Konto beschränkt, dem der Schlüssel gehört. Eine Website-, 
 - **Eine Website wird nicht gefunden:** Prüfen Sie, ob Konto und Schlüsselbereiche sie erlauben. Gesperrte und fremde Websites verwenden absichtlich dieselbe Antwort.
 - **Ausgabewirksame Aktionen sind nicht erlaubt:** Erlauben Sie `start_audit` und ausgabewirksame Aktionen auf beiden Ebenen oder lassen Sie sie für einen reinen Lese-Client gesperrt.
 - **401 Unauthorized:** Verwenden Sie exakt den Header `Authorization: Bearer rmf_…`. Der Schlüssel könnte falsch eingegeben, widerrufen oder einem inaktiven Konto zugeordnet sein.
-- **402 Upgrade required:** MCP benötigt Starter, Pro oder Agency. Siehe [Pläne, Limits und Credits](./plans-limits-credits.de.md).
 - **405 Method not allowed im Browser:** Das ist zu erwarten, da der Endpunkt MCP-`POST`-Anfragen und keine gewöhnlichen Browser-`GET`-Anfragen akzeptiert.
 - **429 Too many requests:** Warten Sie das in den Antwort-Headern angegebene Rate-Limit-Zeitfenster ab und versuchen Sie es erneut.
 - **503 Unavailable:** MCP ist auf dieser RankMeFast-Installation deaktiviert oder vorübergehend nicht verfügbar. Wenden Sie sich an deren Betreiber.
@@ -418,13 +440,13 @@ Um einen Schlüssel zu ersetzen, erstellen Sie einen neuen, aktualisieren und pr
 
 ## Kompatibilität
 
-Dieses Release enthält die zehn oben aufgeführten Werkzeuge. Acht sind schreibgeschützt, `set_action_state` schreibt kostenfrei, und nur `start_audit` verbraucht ein Tarifkontingent. Für Markenradar, Bewertungsanalyse, Link-Intelligenz, Traffic-Analyse und Keyword-Trends gibt es keine MCP-Werkzeuge. Änderungen sind additiv: Vorhandene Werkzeugnamen und Argumentformen bleiben gleich, und mit neuen Funktionen können neue Werkzeuge hinzukommen.
+Dieses Release enthält die 23 oben aufgeführten Werkzeuge. 21 sind schreibgeschützt, `set_action_state` schreibt kostenfrei, und nur `start_audit` verbraucht Anbieter-Budget. Für Markenradar, Bewertungsanalyse, Link-Intelligenz, Traffic-Analyse und Keyword-Trends gibt es keine MCP-Werkzeuge. Änderungen sind additiv: Vorhandene Werkzeugnamen und Argumentformen bleiben gleich, und mit neuen Funktionen können neue Werkzeuge hinzukommen.
 
-<!-- mcp-tools: list_sites; get_latest_audit_report; list_keywords; get_rank_history; list_content_analyses; get_content_analysis; start_audit; get_audit_status; list_actions; set_action_state -->
+<!-- mcp-tools: list_sites; get_latest_audit_report; list_keywords; get_rank_history; list_content_analyses; get_content_analysis; start_audit; get_audit_status; list_actions; set_action_state; get_gsc_search_summary; list_gsc_top_queries; list_gsc_top_pages; get_ga4_summary; list_pages; get_page_detail; get_backlinks_summary; list_backlinks; list_competitors; get_ai_visibility_summary; get_local_seo_summary; get_reviews_summary; list_client_reports -->
 
 ## Verwandte Leitfäden
 
 - [KI-Assistent](./ai-assistant.de.md): dieselben freigegebenen Werkzeuge im RankMeFast-Chat verwenden.
-- [Öffentliche API](./public-api.de.md): die schreibgeschützte API nur für Agency.
+- [Öffentliche API](./public-api.de.md): die schreibgeschützte API.
 - [Content Intelligence](./content-intelligence.de.md): Erläuterungen zu den von MCP zurückgegebenen Analysedaten.
 - [Kontosicherheit](./settings-security.de.md): so schützen Sie Ihr Konto und Ihre Schlüssel.

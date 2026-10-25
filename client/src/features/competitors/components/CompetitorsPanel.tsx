@@ -198,6 +198,9 @@ export const CompetitorsPanel = ({ siteId }: Props) => {
     };
   }, [dispatch, siteId]);
 
+  // A stored read with nothing stored yet: nothing was ever fetched.
+  const neverFetched = list?.fetchedAt === null;
+
   // Refresh failures surface as a toast — the panel keeps its last data.
   useEffect(() => {
     if (refreshError) toast.error(refreshError);
@@ -537,12 +540,17 @@ export const CompetitorsPanel = ({ siteId }: Props) => {
           ) : loaded && !loading && !error ? (
             <Empty className="w-full max-w-md self-center" data-testid="competitors-empty">
               <EmptyHeader>
-                <EmptyTitle>{t('competitors:emptyTitle')}</EmptyTitle>
-                <EmptyDescription>{t('competitors:empty')}</EmptyDescription>
+                <EmptyTitle>
+                  {t(neverFetched ? 'competitors:notFetchedTitle' : 'competitors:emptyTitle')}
+                </EmptyTitle>
+                <EmptyDescription>
+                  {t(neverFetched ? 'competitors:notFetched' : 'competitors:empty')}
+                </EmptyDescription>
               </EmptyHeader>
               <EmptyContent>
                 <Button
                   variant="outline"
+                  loading={isRefreshing}
                   onClick={() => void dispatch(refreshCompetitors({ siteId }))}
                   data-testid="competitors-empty-refresh"
                 >

@@ -7,6 +7,8 @@ import {
   EmptyTitle,
 } from '@shared/ui/empty';
 import type { AiVisibilityTrendPoint } from '../types';
+import { ScreenReaderTable } from '@shared/components/ScreenReaderTable';
+import { formatAbsoluteDate } from '@shared/lib/datetime';
 
 interface Props {
   points: AiVisibilityTrendPoint[];
@@ -24,11 +26,6 @@ const PADDING = 24;
  */
 export const AiVisibilityTrendChart = ({ points }: Props) => {
   const { t, i18n } = useTranslation('aiVisibility');
-  const dateFormat = useMemo(
-    () => new Intl.DateTimeFormat(i18n.language, { dateStyle: 'medium' }),
-    [i18n.language],
-  );
-
   const plotted = useMemo(
     () =>
       points
@@ -99,7 +96,7 @@ export const AiVisibilityTrendChart = ({ points }: Props) => {
           />
         ))}
       </svg>
-      <table className="sr-only" data-testid="ai-visibility-trend-table">
+      <ScreenReaderTable data-testid="ai-visibility-trend-table">
         <caption>{t('trend.tableSummary', { count: points.length })}</caption>
         <thead>
           <tr>
@@ -112,14 +109,14 @@ export const AiVisibilityTrendChart = ({ points }: Props) => {
         <tbody>
           {points.map((p) => (
             <tr key={`row-${p.day}`}>
-              <td>{dateFormat.format(new Date(`${p.day}T00:00:00.000Z`))}</td>
+              <td>{formatAbsoluteDate(p.day, i18n.language)}</td>
               <td>{p.mentionedRatePct === null ? t('share.noData') : `${p.mentionedRatePct}%`}</td>
               <td>{p.shareOfVoicePct === null ? t('share.noData') : `${p.shareOfVoicePct}%`}</td>
               <td>{p.checks}</td>
             </tr>
           ))}
         </tbody>
-      </table>
+      </ScreenReaderTable>
     </div>
   );
 };

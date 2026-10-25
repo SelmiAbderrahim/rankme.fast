@@ -96,6 +96,11 @@ export function buildSearchAgainUrl(item: ResearchHistoryItem): string {
   return `/keyword-research?${params.toString()}`;
 }
 
+/** Deep link that opens a history entry's stored results. */
+export function buildViewResultsUrl(historyId: string): string {
+  return `/keyword-research?stored=${encodeURIComponent(historyId)}`;
+}
+
 // ---------------------------------------------------------------------------
 // Client zod mirrors of the gap/overview/trends/cluster
 // request bounds. Bounds are kept in exact sync with

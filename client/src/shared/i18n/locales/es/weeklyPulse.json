@@ -1,14 +1,15 @@
 {
   "card": {
     "title": "Pulso semanal",
-    "description": "Un resumen semanal determinista por sitio — citas nuevas/perdidas, caídas de ranking confirmadas, cambios de acciones y las próximas tres acciones. Consume una verificación de menciones de IA por sitio y semana.",
-    "unitDisclosure": "Una verificación de menciones de IA por sitio y por semana.",
+    "description": "Un resumen semanal de este sitio: citas de IA nuevas y perdidas, caídas de ranking confirmadas, cambios en tu lista de acciones y tus próximas tres acciones.",
+    "unitDisclosure": "Ejecuta una verificación de menciones de IA por semana para este sitio.",
     "nextRun": "Próxima ejecución: {{when}}",
     "lastRun": "Última ejecución: {{when}}",
     "lastStatus": "Último estado: {{status}}",
     "enableCta": "Activar el pulso semanal",
+    "enableHint": "Previsualiza primero la ejecución para activar el pulso semanal.",
     "disableCta": "Desactivar el pulso semanal",
-    "previewCta": "Previsualizar el gasto",
+    "previewCta": "Previsualizar la ejecución",
     "historyLink": "Ver resúmenes anteriores"
   },
   "status": {
@@ -23,7 +24,7 @@
   },
   "confirm": {
     "enableTitle": "¿Activar el pulso semanal?",
-    "enableBody": "La tarea programada consumirá una verificación de menciones de IA por semana para este sitio.",
+    "enableBody": "La tarea programada ejecutará una verificación de menciones de IA por semana para este sitio.",
     "enableAck": "Entiendo y quiero recibir el pulso semanal.",
     "disableTitle": "¿Desactivar el pulso semanal?",
     "disableBody": "Dejarás de recibir el resumen. El historial sigue disponible.",
@@ -65,10 +66,8 @@
     "openLabel": "Abrir pulso de {{isoWeek}}"
   },
   "preview": {
-    "title": "Previsualización del gasto",
-    "productUnits": "1 verificación de menciones de IA por semana",
-    "remaining": "Restante este mes: {{remaining}}",
-    "capBlocked": "Se ha agotado el límite de tu plan. La activación fallará — actualiza o compra créditos para desbloquear."
+    "title": "Previsualización de la ejecución",
+    "productUnits": "Una verificación de menciones de IA por semana."
   },
   "gsc": {
     "title": "Apariciones de IA generativa en Google",

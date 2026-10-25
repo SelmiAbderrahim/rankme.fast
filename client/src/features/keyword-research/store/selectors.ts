@@ -41,6 +41,12 @@ export const selectHistoryError = (state: RootState) =>
   selectSlice(state).historyError;
 export const selectHistoryCursor = (state: RootState) =>
   selectSlice(state).historyCursor;
+export const selectHistoryTotal = (state: RootState) =>
+  selectSlice(state).historyTotal;
+export const selectHistorySiteId = (state: RootState) =>
+  selectSlice(state).historySiteId;
+
+export const selectStored = (state: RootState) => selectSlice(state).stored;
 
 // --- Workspace sub-state -----------------------------------------------
 

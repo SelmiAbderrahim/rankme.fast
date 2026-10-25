@@ -4,7 +4,7 @@
   "loadFailed": "AI-Sichtbarkeit konnte nicht geladen werden.",
   "form": {
     "label": "Verfolgter Prompt",
-    "placeholder": "bestes SEO-Audit-Tool für Agenturen",
+    "placeholder": "Eine Frage, die ein Kunde einem KI-Assistenten stellen könnte",
     "add": "Prompt verfolgen",
     "adding": "Wird hinzugefügt…",
     "cap": "{{count}}/{{cap}} Prompts verfolgt",
@@ -33,7 +33,6 @@
     "cooldown_one": "Warten Sie {{seconds}} s, bevor Sie erneut prüfen.",
     "failed": "AI-Sichtbarkeit konnte gerade nicht geprüft werden. Ihre letzten Daten werden weiterhin angezeigt.",
     "success_one": "{{total}} Prompt geprüft — KI-Antworten erwähnen Sie bei {{mentioned}} davon.",
-    "cost": "Verbraucht {{prompts}} Ihrer {{remaining}} verbleibenden Prüfungen in diesem Monat.",
     "cooldown_zero": "Warten Sie {{seconds}} s, bevor Sie erneut prüfen.",
     "cooldown_two": "Warten Sie {{seconds}} s, bevor Sie erneut prüfen.",
     "cooldown_few": "Warten Sie {{seconds}} s, bevor Sie erneut prüfen.",
@@ -43,7 +42,8 @@
     "success_two": "{{total}} Prompts geprüft — KI-Antworten erwähnen Sie bei {{mentioned}} davon.",
     "success_few": "{{total}} Prompts geprüft — KI-Antworten erwähnen Sie bei {{mentioned}} davon.",
     "success_many": "{{total}} Prompts geprüft — KI-Antworten erwähnen Sie bei {{mentioned}} davon.",
-    "success_other": "{{total}} Prompts geprüft — KI-Antworten erwähnen Sie bei {{mentioned}} davon."
+    "success_other": "{{total}} Prompts geprüft — KI-Antworten erwähnen Sie bei {{mentioned}} davon.",
+    "needPrompts": "Verfolgen Sie unten mindestens eine Formulierung, um eine Prüfung zu starten."
   },
   "lastChecked": "Zuletzt geprüft {{date}}",
   "neverChecked": "Noch nicht geprüft",
@@ -99,10 +99,7 @@
     "needKeywords": "Verfolgen Sie Keywords im Keywords-Tab oder starten Sie ein Audit, um Vorschläge freizuschalten."
   },
   "share": {
-    "title": "Sichtbarkeitsanteil",
     "description": "Wie oft AI-Antworten Sie im Vergleich zu Wettbewerbern nennen.",
-    "brand": "Sie",
-    "competitors": "Wettbewerber",
     "noData": "Keine Daten"
   },
   "sentiment": {
@@ -123,7 +120,6 @@
     "aiGenerated": "AI-Vorschlag",
     "generate": "Vorschläge generieren",
     "cooldown_one": "Warten Sie {{seconds}} Sekunde, bevor Sie erneut generieren.",
-    "cost": "Verbraucht eine Ihrer {{remaining}} verbleibenden Generierungen in diesem Monat.",
     "capReached": "Sie haben alle Vorschlagsgenerierungen in diesem Monat verbraucht.",
     "emptyGenerated": "Aus Ihren Daten ließen sich noch keine Fragen bilden. Fügen Sie verfolgte Keywords hinzu oder starten Sie einen Audit und generieren Sie dann erneut.",
     "generatedAt": "Generiert am {{date}}",
@@ -139,7 +135,15 @@
     "generated_two": "{{count}} Vorschläge generiert.",
     "generated_few": "{{count}} Vorschläge generiert.",
     "generated_many": "{{count}} Vorschläge generiert.",
-    "generated_other": "{{count}} Vorschläge generiert."
+    "generated_other": "{{count}} Vorschläge generiert.",
+    "cancel": "Nicht mehr warten",
+    "cancelled": "Warten beendet. Wenn die Erstellung fertig wird, erscheinen die Vorschläge beim nächsten Öffnen dieses Tabs.",
+    "evidenceLimited": "Diese Vorschläge beruhen auf wenigen Informationen über Ihre Website. Starten Sie ein Audit, verfolgen Sie Keywords oder verbinden Sie die Search Console, um Fragen zu erhalten, die zu Ihrem Angebot passen.",
+    "evidenceNone": "Wir haben noch keine Hinweise darauf, was Ihre Website anbietet, daher nennen diese Fragen nur Ihre Domain. Starten Sie ein Audit, verfolgen Sie Keywords oder verbinden Sie die Search Console und generieren Sie dann erneut.",
+    "generatingHint": "Vorschläge werden erstellt… das kann bis zu einer Minute dauern.",
+    "regenerate": "Vorschläge neu erstellen",
+    "staleBody": "Sie wurden erstellt, bevor Vorschläge nur noch die Daten dieser Website nutzten, daher haben wir sie ausgeblendet. Erstellen Sie mit der Schaltfläche oben neue Vorschläge. Erst Ihr Klick wird angerechnet.",
+    "staleTitle": "Diese Vorschläge sind veraltet"
   },
   "locked": {
     "body": "AI-Sichtbarkeit ist im Agency-Tarif verfügbar.",

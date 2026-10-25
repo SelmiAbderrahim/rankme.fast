@@ -3,6 +3,8 @@
   "description": "Descubre con qué sitios compites y las palabras clave para las que se posicionan.",
   "empty": "Aún no se encontraron competidores para este dominio. Haz seguimiento de algunas palabras clave y analizaremos los sitios que dominan esos resultados de búsqueda.",
   "emptyTitle": "Aún no hay competidores",
+  "notFetchedTitle": "Competidores aún sin revisar",
+  "notFetched": "Actualiza para encontrar los sitios que compiten con el tuyo. Los datos vienen de tu proveedor de datos de búsqueda, así que puede tardar un momento.",
   "loadFailed": "No se pudieron cargar los competidores.",
   "intersectionFailed": "No se pudieron cargar las palabras clave de brecha.",
   "table": {
@@ -43,7 +45,7 @@
     "title": "Ejemplo: lo que ofrecen Pro y Agency"
   },
   "intelligence": {
-    "title": "Inteligencia de la competencia",
+    "title": "Competidores",
     "description": "Administre competidores confirmados, compare panoramas de palabras clave y mantenga recomendaciones aceptadas en un espacio de trabajo del sitio.",
     "common": {
       "cancel": "Cancelar"
@@ -72,6 +74,8 @@
       "description": "{{active}} de {{max}} espacios de competidor activos están en uso. La gestión de esta lista no utiliza ningún subsidio.",
       "manualLabel": "Agregar una URL pública de la competencia",
       "manualPlaceholder": "https://competidor.ejemplo/",
+      "manualInvalid": "Introduce un sitio público, como competitor.com o https://competitor.com.",
+      "ownDomain": "Ese es el dominio de tu propio sitio. Añade otro sitio web como competidor.",
       "add": "Agregar competidor",
       "adding": "Añadiendo competidor...",
       "confirmed": "Competidor confirmado.",
@@ -115,9 +119,9 @@
       "confirmAction": "Confirmar actualización"
     },
     "technology": {
-      "title": "Resumen de la cartera actual",
-      "description": "Este resumen utiliza únicamente datos de cartera almacenados. No inicia la detección de tecnología ni ninguna otra búsqueda paga.",
-      "summary": "{{manual}} competidores se agregaron manualmente y {{suggested}} provinieron de sugerencias de descubrimiento confirmadas. Los detalles tecnológicos no están disponibles hasta que exista una búsqueda previa por separado."
+      "title": "Competidores activos por origen",
+      "description": "Se basa solo en datos guardados. Aquí no se ejecuta ninguna detección de tecnología ni nueva solicitud de datos.",
+      "summary": "Añadidos manualmente: {{manual}}. De sugerencias de descubrimiento confirmadas: {{suggested}}. Los detalles de tecnología aún no están disponibles."
     },
     "landscape": {
       "title": "Construya un panorama de palabras clave",

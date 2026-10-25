@@ -1,6 +1,5 @@
 {
-  "eyebrow": "Regroupement sur observations enregistrées",
-  "title": "Regroupement de mots-clés par recoupement de SERP",
+  "title": "Groupes par recoupement de SERP",
   "subtitle": "Regroupez les mots-clés suivis qui renvoient les mêmes pages sur Google. Chaque regroupement est calculé à partir de relevés de position déjà payés — aucune nouvelle recherche n'est lancée.",
   "site": {
     "ranksLink": "Ouvrir le suivi de position"
@@ -22,14 +21,11 @@
   },
   "newRun": {
     "title": "Préparer un regroupement",
-    "description": "Prévisualisez les mots-clés éligibles et votre quota avant de consommer un regroupement.",
+    "description": "Prévisualisez les mots-clés éligibles avant de lancer le regroupement.",
     "storedOnly": "Le regroupement ne lit que des résultats enregistrés. Aucune recherche n'est envoyée à un fournisseur.",
-    "unitLabel": "Quota",
-    "unitValue": "{{count}} regroupement",
     "scopeLabel": "Mots-clés éligibles",
     "scopeValue_one": "{{count}} mot-clé suivi est éligible",
     "method": "Deux mots-clés sont regroupés lorsqu'ils partagent au moins {{shared}} de leurs {{window}} premiers résultats, issus d'un relevé des {{days}} derniers jours.",
-    "remaining": "Il reste {{count}} regroupements avant celui-ci.",
     "labelingIncluded": "Les libellés de groupe IA facultatifs sont inclus dans cette exécution et ne modifient jamais l’appartenance aux groupes.",
     "preview": "Prévisualiser",
     "previewing": "Vérification des résultats enregistrés…",
@@ -55,7 +51,7 @@
     },
     "notEnoughKeywords": {
       "title": "Relevés de position récents insuffisants",
-      "body": "Au moins deux mots-clés suivis doivent avoir un relevé des sept derniers jours. Aucun regroupement n'a été consommé."
+      "body": "Moins de deux mots-clés suivis ont une vérification de classement exploitable datant des sept derniers jours. Aucune exécution n'a été consommée."
     },
     "cap": {
       "title": "Quota mensuel atteint",
@@ -80,6 +76,11 @@
     "running": {
       "title": "Regroupement en cours",
       "body": "Le worker compare les résultats enregistrés et nomme les groupes. Cette vue se met à jour automatiquement."
+    },
+    "keywordsCta": "Suivre des mots-clés",
+    "noTrackedKeywords": {
+      "title": "Suivez d'abord des mots-clés",
+      "body": "Le regroupement porte sur les mots-clés Google que vous suivez pour ce site. Ajoutez des mots-clés dans l'onglet Mots-clés, lancez un relevé de position, puis revenez prévisualiser un regroupement."
     }
   },
   "status": {
@@ -89,19 +90,23 @@
     "failed": "Échoué"
   },
   "runs": {
-    "summary": "{{clusters}} groupes à partir de {{keywords}} mots-clés",
+    "summary": "Groupes : {{clusters}} · mots-clés sources : {{keywords}}",
     "requestedAt": "Demandé le {{date}}",
     "open": "Ouvrir"
   },
   "blocked": {
     "title_one": "{{count}} mot-clé n'a pas pu participer",
-    "body": "Ces mots-clés suivis n'ont pas encore de résultat enregistré exploitable. Lancez un relevé de position et ils seront éligibles au prochain regroupement.",
+    "body": "Ces mots-clés suivis sont exclus de cette exécution. Lancez une vérification de classement et ils seront pris en compte à la prochaine.",
     "more_one": "et {{count}} de plus",
     "observedAt": "dernier relevé {{date}}",
     "reason": {
       "missing": "Jamais relevé",
       "stale": "Relevé trop ancien",
-      "empty": "Aucun résultat enregistré"
+      "empty": "Aucun résultat enregistré",
+      "check_too_old": "Vérification trop ancienne",
+      "no_serp_snapshot": "Page de résultats complète non enregistrée",
+      "never_checked": "Jamais vérifié",
+      "failed_last_check": "Échec de la dernière vérification"
     },
     "more_zero": "et {{count}} de plus",
     "more_two": "et {{count}} de plus",
@@ -189,5 +194,9 @@
     "minimum_other": "Le regroupement nécessite au moins {{count}} mots-clés prêts.",
     "title": "Pas assez de mots-clés prêts",
     "snapshotNote": "Certaines vérifications récentes n'ont enregistré que la position, sans la page de résultats complète. Le regroupement nécessite une vérification qui enregistre la page de résultats complète."
+  },
+  "crossLink": {
+    "body": "Vous voulez des thèmes tirés des mots-clés que vous avez recherchés, pas seulement de ceux que vous suivez ?",
+    "cta": "Ouvrir les thèmes de mots-clés par IA"
   }
 }

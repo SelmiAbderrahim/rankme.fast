@@ -1,6 +1,6 @@
 import { createSlice } from '@reduxjs/toolkit';
 import type { LocalSeoState } from '../types';
-import { loadLocalSeo, refreshLocalSeo } from './thunks';
+import { loadLocalBusinessSetup, loadLocalSeo, refreshLocalSeo, searchLocalBusiness, selectLocalBusiness, } from './thunks';
 
 export const initialState: LocalSeoState = {
   siteId: null,
@@ -11,6 +11,14 @@ export const initialState: LocalSeoState = {
   isRefreshing: false,
   cooldownUntil: null,
   refreshError: '',
+  setup: null,
+  setupLoaded: false,
+  setupError: '',
+  searching: false,
+  searchError: '',
+  searched: false,
+  selecting: false,
+  selectError: '',
 };
 
 /**
@@ -62,6 +70,7 @@ const slice = createSlice({
         const merged = state.snapshot
           ? {
               ...state.snapshot,
+              provenance: action.payload.provenance,
               listings: action.payload.listings,
               fetchedAt: action.payload.fetchedAt,
               reviews: {
@@ -72,6 +81,7 @@ const slice = createSlice({
               reviewsFetchedAt: action.payload.fetchedAt,
             }
           : {
+              provenance: action.payload.provenance,
               listings: action.payload.listings,
               fetchedAt: action.payload.fetchedAt,
               reviews: {
@@ -83,6 +93,48 @@ const slice = createSlice({
               localPack: [],
             };
         state.snapshot = merged;
+      })
+      .addCase(loadLocalBusinessSetup.pending, (state, action) => {
+        if (state.siteId !== action.meta.arg.siteId)
+          Object.assign(state, rekeyForSite(state, action.meta.arg.siteId));
+        state.setupError = '';
+      })
+      .addCase(loadLocalBusinessSetup.fulfilled, (state, action) => {
+        if (action.meta.arg.siteId !== state.siteId) return;
+        state.setup = action.payload;
+        state.setupLoaded = true;
+      })
+      .addCase(loadLocalBusinessSetup.rejected, (state, action) => {
+        if (action.meta.arg.siteId !== state.siteId) return;
+        state.setupLoaded = true;
+        state.setupError = action.payload ?? '';
+      })
+      .addCase(searchLocalBusiness.pending, (state) => {
+        state.searching = true;
+        state.searchError = '';
+        state.selectError = '';
+      })
+      .addCase(searchLocalBusiness.fulfilled, (state, action) => {
+        state.searching = false;
+        state.searched = true;
+        state.setup = action.payload;
+      })
+      .addCase(searchLocalBusiness.rejected, (state, action) => {
+        state.searching = false;
+        state.searchError = action.payload ?? '';
+      })
+      .addCase(selectLocalBusiness.pending, (state) => {
+        state.selecting = true;
+        state.selectError = '';
+      })
+      .addCase(selectLocalBusiness.fulfilled, (state, action) => {
+        state.selecting = false;
+        state.searched = false;
+        state.setup = action.payload;
+      })
+      .addCase(selectLocalBusiness.rejected, (state, action) => {
+        state.selecting = false;
+        state.selectError = action.payload ?? '';
       })
       .addCase(refreshLocalSeo.rejected, (state, action) => {
         state.isRefreshing = false;

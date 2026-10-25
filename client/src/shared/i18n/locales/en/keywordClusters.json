@@ -1,6 +1,5 @@
 {
-  "eyebrow": "Stored-observation grouping",
-  "title": "Keyword clustering by SERP overlap",
+  "title": "SERP overlap groups",
   "subtitle": "Group tracked keywords that return the same pages on Google. Every grouping is computed from rank checks you have already paid for — no new search is run.",
   "site": {
     "ranksLink": "Open rank tracking"
@@ -22,14 +21,11 @@
   },
   "newRun": {
     "title": "Prepare a clustering run",
-    "description": "Preview the keywords that qualify and your allowance before you spend one run.",
+    "description": "Preview the keywords that qualify before you start a run.",
     "storedOnly": "Clustering reads stored results only. No search is sent to any provider.",
-    "unitLabel": "Allowance",
-    "unitValue": "{{count}} clustering run",
     "scopeLabel": "Keywords ready",
     "scopeValue_one": "{{count}} tracked keyword qualifies",
     "method": "Two keywords are grouped when they share at least {{shared}} of their top {{window}} results, from a rank check in the last {{days}} days.",
-    "remaining": "{{count}} runs remain before this run.",
     "labelingIncluded": "Optional AI group labels are included in this run and never change cluster membership.",
     "preview": "Preview run",
     "previewing": "Checking stored results…",
@@ -55,7 +51,7 @@
     },
     "notEnoughKeywords": {
       "title": "Not enough recent rank checks",
-      "body": "At least two tracked keywords need a rank check from the last seven days. No run was spent."
+      "body": "Fewer than two tracked keywords have a usable rank check from the last seven days. No run was spent."
     },
     "cap": {
       "title": "Monthly run allowance reached",
@@ -80,6 +76,11 @@
     "running": {
       "title": "Grouping keywords",
       "body": "The worker is comparing stored results and naming the groups. This view updates automatically."
+    },
+    "keywordsCta": "Track keywords",
+    "noTrackedKeywords": {
+      "title": "Track keywords first",
+      "body": "Clustering groups the Google keywords you track for this site. Add keywords on the Keywords tab, run a rank check, then come back to preview a run."
     }
   },
   "status": {
@@ -89,19 +90,23 @@
     "failed": "Failed"
   },
   "runs": {
-    "summary": "{{clusters}} groups from {{keywords}} keywords",
+    "summary": "Groups: {{clusters}} · source keywords: {{keywords}}",
     "requestedAt": "Requested {{date}}",
     "open": "Open run"
   },
   "blocked": {
     "title_one": "{{count}} keyword could not take part",
-    "body": "These tracked keywords have no usable stored result yet. Run a rank check and they will qualify for the next run.",
+    "body": "These tracked keywords are left out of this run. Run a rank check and they will qualify for the next run.",
     "more_one": "and {{count}} more",
     "observedAt": "last checked {{date}}",
     "reason": {
       "missing": "Never checked",
       "stale": "Check too old",
-      "empty": "No stored results"
+      "empty": "No stored results",
+      "check_too_old": "Check too old",
+      "no_serp_snapshot": "Full results page not saved",
+      "never_checked": "Never checked",
+      "failed_last_check": "Last check failed"
     },
     "more_zero": "and {{count}} more",
     "more_two": "and {{count}} more",
@@ -189,5 +194,9 @@
     "minimum_other": "Clustering needs at least {{count}} ready keywords.",
     "title": "Not enough keywords are ready",
     "snapshotNote": "Some recent checks saved only the position, not the full results page. Clustering needs a rank check that saves the full results page."
+  },
+  "crossLink": {
+    "body": "Want topics from keywords you've researched, not only the ones you track?",
+    "cta": "Open AI keyword topics"
   }
 }

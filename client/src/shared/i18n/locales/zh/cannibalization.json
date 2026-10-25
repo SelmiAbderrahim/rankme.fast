@@ -71,7 +71,8 @@
   "states": {
     "empty": {
       "title": "暂无内容",
-      "body": "生成一份报告，看看你的页面在争夺哪些搜索词。"
+      "body": "生成一份报告，看看你的页面在争夺哪些搜索词。",
+      "action": "创建报告"
     },
     "awaitingSync": {
       "title": "等待下次同步",
@@ -97,6 +98,21 @@
     "failed": {
       "title": "出了点问题",
       "body": "加载失败，请重试。"
+    },
+    "noCandidates": {
+      "title": "未发现相互竞争的页面",
+      "body": "在此时间范围内，您没有任何两个页面在争夺同一个搜索查询。",
+      "action": "创建新报告"
+    },
+    "filtered": {
+      "title": "没有此置信度的候选项",
+      "body": "显示所有置信度，即可查看此报告的候选项。",
+      "action": "全部显示"
+    },
+    "needsGsc": "新报告需要一个可用的 Search Console 资源。请先解决上方显示的状态，再回到这里。",
+    "emptyNoGsc": {
+      "title": "暂无内容",
+      "body": "报告基于已保存的 Search Console 数据生成。请先为此网站连接 Search Console 资源，然后创建第一份报告。"
     }
   },
   "counts": {

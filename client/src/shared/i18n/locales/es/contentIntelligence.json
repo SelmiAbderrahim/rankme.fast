@@ -85,7 +85,7 @@
     "consentRequired": "Se requiere consentimiento.",
     "reviewedSources": { "title": "Páginas de comparación revisadas", "description": "Estas páginas públicas proceden de tu coincidencia aprobada. Tú sigues decidiendo si iniciar el análisis." },
     "included": {
-      "title": "Qué incluye un crédito",
+      "title": "Qué incluye este análisis",
       "owned": "Una página propia",
       "competitors": "Hasta tres páginas orgánicas públicas de comparación",
       "scorecard": "Una tarjeta de puntuación",
@@ -104,7 +104,9 @@
     "invalidUrl": "Ingresa una URL válida.",
     "urlRequired": "Introduce o elige la URL de una página.",
     "keywordRequired": "Introduce o elige una palabra clave objetivo.",
-    "keywordTooLong": "Limita la palabra clave a 200 caracteres.",
+    "keywordTooLong": "Usa {{max}} caracteres o menos.",
+    "keywordList": "Introduce una sola búsqueda, no una lista. Inicia un análisis distinto para cada palabra clave.",
+    "keywordCounter": "{{length}}/{{max}} caracteres",
     "offOrigin": "La URL debe coincidir con el origen de tu sitio.",
     "urlUnsafe": "La URL no es accesible públicamente.",
     "urlNotOwned": "Esa URL no pertenece a un sitio que posees.",
@@ -117,6 +119,7 @@
       "step": "Paso {{current}} de {{total}}",
       "percentComplete": "{{percent}} % completado",
       "autoRefresh": "Esta página se actualiza automáticamente mientras se ejecuta el análisis.",
+      "stillRunning": "Sigue en curso. Puedes salir de esta página y volver más tarde: el resultado estará aquí.",
       "errorTitle": "Este análisis se detuvo antes de tiempo",
       "errorGeneric": "El análisis se detuvo antes de terminar."
     },
@@ -133,6 +136,57 @@
       "cancelled": "Este análisis se canceló.",
       "unexpected": "El análisis se detuvo debido a un error inesperado."
     },
+    "failureReason": {
+      "robots_blocked": "El robots.txt de tu sitio bloquea a nuestro lector en esta página.",
+      "access_denied": "Tu sitio rechazó el acceso a esta página, por ejemplo con una protección contra bots o una pantalla de inicio de sesión.",
+      "http_error": "Tu página respondió con el estado HTTP {{status}} en lugar de su contenido.",
+      "timeout": "Tu página tardó demasiado en cargar.",
+      "temporarily_unavailable": "No se pudo cargar la página esta vez.",
+      "empty_content": "No encontramos texto legible en la página. Puede estar vacía o cargar su contenido solo con JavaScript.",
+      "too_large": "La página es demasiado grande para leerla de una vez.",
+      "unsafe_url": "La dirección de la página, o una página a la que redirige, no es accesible públicamente.",
+      "unreadable": "La página llegó en un formato que no pudimos leer.",
+      "redirect_loop": "Las redirecciones de tu página dan vueltas sobre sí mismas.",
+      "redirect_limit": "Tu página redirige más de cinco veces, así que dejamos de seguirla.",
+      "unsafe_redirect": "Tu página redirige a una dirección que no es accesible públicamente.",
+      "non_html": "Esta dirección sirve {{type}}, no una página web."
+    },
+    "failureReasonUnknown": "No registramos la causa exacta. Las habituales son un bloqueo en robots.txt, protección contra bots o un muro de inicio de sesión, un error HTTP, una respuesta lenta o texto que solo aparece tras ejecutar JavaScript. Comprueba que la página se abre en una ventana privada y vuelve a intentarlo.",
+    "failureCode": {
+      "provider_unavailable": "Nuestro servicio de contenido no está disponible ahora mismo.",
+      "page_unreachable": "No pudimos leer tu página.",
+      "page_blocked": "Tu página bloquea nuestro lector, por ejemplo mediante robots.txt, protección contra bots o una página de inicio de sesión.",
+      "page_too_large": "Tu página es demasiado grande para leerla de una sola vez.",
+      "timeout": "Tu página o nuestro servicio de contenido tardó demasiado en responder.",
+      "internal": "Algo falló por nuestra parte."
+    },
+    "failureHint": {
+      "robots_blocked": "Permite que los rastreadores lean esta página en robots.txt y vuelve a intentarlo.",
+      "access_denied": "Permite las visitas automatizadas a esta página o hazla pública y vuelve a intentarlo.",
+      "http_error": "Comprueba que la URL es correcta y que la página se abre en una ventana privada del navegador, y vuelve a intentarlo.",
+      "timeout": "Suele ser algo temporal. Vuelve a intentarlo y comprueba que la página carga rápido.",
+      "temporarily_unavailable": "Suele ser algo temporal. Vuelve a intentarlo en unos minutos.",
+      "empty_content": "Asegúrate de que el texto principal está en el HTML de la página (renderizado en el servidor) y vuelve a intentarlo.",
+      "too_large": "Prueba con una página más corta o reparte el contenido muy largo en varias páginas.",
+      "unsafe_url": "Usa la dirección pública de la página y revisa sus redirecciones, y vuelve a intentarlo.",
+      "unreadable": "Vuelve a intentarlo. Si sigue fallando, comprueba que la página se abre con normalidad en un navegador.",
+      "redirect_loop": "Corrige la redirección para que termine en una sola página y vuelve a intentarlo.",
+      "redirect_limit": "Apunta la dirección directamente a la página final y vuelve a intentarlo.",
+      "unsafe_redirect": "Redirige a una dirección pública y vuelve a intentarlo.",
+      "non_html": "Usa la dirección de la propia página, no la de un archivo, y vuelve a intentarlo."
+    },
+    "failureEvidence": {
+      "redirectPath": "Ruta de redirección: {{path}}"
+    },
+    "failedNoOutput": "Este análisis se detuvo antes de producir nada, así que no hay oportunidades de contenido, brief ni borrador que mostrar.",
+    "retryDialog": {
+      "title": "¿Volver a intentar este análisis?",
+      "description": "Se iniciará un análisis nuevo de la misma página y palabra clave.",
+      "confirm": "Volver a intentarlo",
+      "back": "Cancelar",
+      "loading": "Cargando los detalles de este análisis…",
+      "loadFailed": "No se pudieron cargar los detalles de este análisis."
+    },
     "back": "Volver a los análisis",
     "meta": {
       "page": "Página",
@@ -140,6 +194,7 @@
       "locale": "Idioma",
       "requested": "Solicitado",
       "completed": "Completado",
+      "readAt": "Leída en {{url}} tras una redirección",
       "cost": "Coste del análisis: {{units}} crédito"
     },
     "explanation": "Esta es una comparación de preparación de contenido, no una puntuación de motor de búsqueda.",
@@ -218,7 +273,9 @@
     },
     "actions": {
       "cancel": "Cancelar análisis",
-      "regenerate": "Regenerar (consume un crédito)"
+      "regenerate": "Regenerar",
+      "retry": "Reintentar",
+      "editUrl": "Editar la URL"
     }
   },
   "confirm": {

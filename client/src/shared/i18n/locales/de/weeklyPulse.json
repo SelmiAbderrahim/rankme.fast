@@ -1,14 +1,15 @@
 {
   "card": {
     "title": "Wochenpuls",
-    "description": "Ein deterministischer Wochenbericht pro Site — neue/verlorene Zitate, bestätigte Ranking-Verluste, Aktionsänderungen und die nächsten drei Aktionen. Verbraucht eine AI-Mentions-Prüfung pro Site pro Woche.",
-    "unitDisclosure": "Eine AI-Mentions-Prüfung pro Site pro Woche.",
+    "description": "Ein Wochenbericht für diese Website: neue und verlorene KI-Zitate, bestätigte Ranking-Verluste, Änderungen an Ihrer Aktionsliste und Ihre nächsten drei Aktionen.",
+    "unitDisclosure": "Führt pro Woche eine KI-Erwähnungsprüfung für diese Website durch.",
     "nextRun": "Nächster Lauf: {{when}}",
     "lastRun": "Letzter Lauf: {{when}}",
     "lastStatus": "Letzter Status: {{status}}",
     "enableCta": "Wochenpuls aktivieren",
+    "enableHint": "Sehen Sie sich zuerst die Lauf-Vorschau an, um den Wochenpuls zu aktivieren.",
     "disableCta": "Wochenpuls deaktivieren",
-    "previewCta": "Ausgaben vorschauen",
+    "previewCta": "Lauf vorschauen",
     "historyLink": "Vergangene Berichte anzeigen"
   },
   "status": {
@@ -23,7 +24,7 @@
   },
   "confirm": {
     "enableTitle": "Wochenpuls aktivieren?",
-    "enableBody": "Der geplante Job verbraucht pro Woche eine AI-Mentions-Prüfung für diese Site.",
+    "enableBody": "Der geplante Job führt pro Woche eine KI-Erwähnungsprüfung für diese Website durch.",
     "enableAck": "Ich verstehe und möchte den Wochenpuls erhalten.",
     "disableTitle": "Wochenpuls deaktivieren?",
     "disableBody": "Sie erhalten den Bericht nicht mehr. Der Verlauf bleibt verfügbar.",
@@ -65,10 +66,8 @@
     "openLabel": "Puls für {{isoWeek}} öffnen"
   },
   "preview": {
-    "title": "Ausgaben-Vorschau",
-    "productUnits": "1 AI-Mentions-Prüfung pro Woche",
-    "remaining": "Verbleibend diesen Monat: {{remaining}}",
-    "capBlocked": "Ihr Tarif-Limit ist erschöpft. Die Aktivierung schlägt fehl — upgraden oder Credits kaufen."
+    "title": "Lauf-Vorschau",
+    "productUnits": "Eine KI-Erwähnungsprüfung pro Woche."
   },
   "gsc": {
     "title": "Google generatives KI-Erscheinen",

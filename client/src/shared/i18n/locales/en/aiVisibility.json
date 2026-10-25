@@ -4,7 +4,7 @@
   "loadFailed": "Could not load AI visibility.",
   "form": {
     "label": "Tracked prompt",
-    "placeholder": "best SEO audit tool for agencies",
+    "placeholder": "A question a customer might ask an AI assistant",
     "add": "Track prompt",
     "adding": "Adding...",
     "cap": "{{count}}/{{cap}} prompts tracked",
@@ -33,7 +33,6 @@
     "cooldown_one": "Wait {{seconds}}s before checking again.",
     "failed": "Could not check AI visibility right now. Your last data is still shown.",
     "success_one": "Checked {{total}} prompt — AI answers mention you for {{mentioned}}.",
-    "cost": "Uses {{prompts}} of your {{remaining}} checks left this month.",
     "cooldown_zero": "Wait {{seconds}}s before checking again.",
     "cooldown_two": "Wait {{seconds}}s before checking again.",
     "cooldown_few": "Wait {{seconds}}s before checking again.",
@@ -43,7 +42,8 @@
     "success_two": "Checked {{total}} prompts — AI answers mention you for {{mentioned}}.",
     "success_few": "Checked {{total}} prompts — AI answers mention you for {{mentioned}}.",
     "success_many": "Checked {{total}} prompts — AI answers mention you for {{mentioned}}.",
-    "success_other": "Checked {{total}} prompts — AI answers mention you for {{mentioned}}."
+    "success_other": "Checked {{total}} prompts — AI answers mention you for {{mentioned}}.",
+    "needPrompts": "Track at least one phrase below to run a check."
   },
   "lastChecked": "Last checked {{date}}",
   "neverChecked": "Not checked yet",
@@ -99,10 +99,7 @@
     "needKeywords": "Track keywords on the Keywords tab or run an audit to unlock suggestions."
   },
   "share": {
-    "title": "Share of voice",
     "description": "How often AI answers name you vs competitors.",
-    "brand": "You",
-    "competitors": "Competitors",
     "noData": "No data"
   },
   "sentiment": {
@@ -123,7 +120,6 @@
     "aiGenerated": "AI suggested",
     "generate": "Generate suggestions",
     "cooldown_one": "Wait {{seconds}}s before generating again.",
-    "cost": "Uses one of your {{remaining}} generations left this month.",
     "capReached": "You have used all your suggestion generations this month.",
     "emptyGenerated": "We could not build questions from your data yet. Add tracked keywords or run an audit, then generate again.",
     "generatedAt": "Generated {{date}}",
@@ -139,7 +135,15 @@
     "generated_two": "Generated {{count}} suggested prompts.",
     "generated_few": "Generated {{count}} suggested prompts.",
     "generated_many": "Generated {{count}} suggested prompts.",
-    "generated_other": "Generated {{count}} suggested prompts."
+    "generated_other": "Generated {{count}} suggested prompts.",
+    "cancel": "Stop waiting",
+    "cancelled": "Stopped waiting. If the generation finishes, its suggestions show up the next time you open this tab.",
+    "evidenceLimited": "These suggestions rest on limited evidence about your site. Run an audit, track keywords or connect Search Console to get questions based on what you offer.",
+    "evidenceNone": "We found no evidence yet about what your site offers, so these questions only mention your domain. Run an audit, track keywords or connect Search Console, then generate again.",
+    "generatingHint": "Generating suggestions… this can take up to a minute.",
+    "regenerate": "Regenerate suggestions",
+    "staleBody": "They were made before suggestions used only this site's own data, so we've hidden them. Generate a new set with the button above. Nothing is used until you click it.",
+    "staleTitle": "These suggestions are out of date"
   },
   "locked": {
     "body": "AI Visibility is available on the Agency plan.",

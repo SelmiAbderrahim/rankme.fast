@@ -808,7 +808,7 @@ describe('NewRunForm', () => {
     const input = screen.getByTestId('audience-research-topic-input');
 
     fireEvent.change(input, { target: { value: 'a' } });
-    fireEvent.click(screen.getByRole('button', { name: 'Topics' }));
+    fireEvent.click(screen.getByRole('button', { name: 'Add' }));
     expect(screen.getByTestId('audience-research-topic-validation')).toHaveTextContent(
       'Topics must be between 2 and 160 characters.',
     );

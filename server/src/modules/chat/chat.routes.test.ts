@@ -535,7 +535,31 @@ describe('POST /api/chat/conversations/:id/messages (SSE)', () => {
       DICTIONARIES.ar.chat.errors.generationFailed,
     );
     const assistant = await ChatMessage.findOne({ accountId: user.id, role: 'assistant' });
-    expect(assistant).toMatchObject({ status: 'error', responseLocale: 'ar' });
+    // Partial text before the drop is a cut-off reply.
+    expect(assistant).toMatchObject({ status: 'incomplete', responseLocale: 'ar' });
+  });
+
+  it('stores an error (not a cut-off) when the stream fails before any text', async () => {
+    const user = await seedUser('chat-error-first@x.co');
+    setChatAiProvider(createFakeAiChatProvider({ outcomes: ['error_before_first_token'] }));
+    const conversation = await createConversationFor(user);
+    await streamMessage(user, conversation.id, 'hello', 'en');
+    const assistant = await ChatMessage.findOne({ accountId: user.id, role: 'assistant' });
+    expect(assistant).toMatchObject({ status: 'error' });
+  });
+
+  it('marks a reply that hit the output limit as incomplete', async () => {
+    const user = await seedUser('chat-truncated@x.co');
+    setChatAiProvider(createFakeAiChatProvider({ outcomes: ['truncated'] }));
+    const conversation = await createConversationFor(user);
+    const result = await streamMessage(user, conversation.id, 'hello', 'en');
+    const done = result.frames.find((frame) => frame.event === 'done');
+    expect(done!.data).toMatchObject({ finishReason: 'length', status: 'incomplete' });
+    const detail = await request(app)
+      .get(`/api/chat/conversations/${conversation.id}`)
+      .set('Cookie', user.cookie)
+      .expect(200);
+    expect(detail.body.messages.at(-1)).toMatchObject({ role: 'assistant', status: 'incomplete' });
   });
 
   it('maps an unexpected provider failure to the generic stream error code', async () => {

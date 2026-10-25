@@ -18,6 +18,7 @@ import { GeogridPanel } from './components/GeogridPanel';
 import { GeogridCellTable } from './components/GeogridCellTable';
 import { GeogridScanHistory } from './components/GeogridScanHistory';
 import { GeogridOutcomeBanner } from './components/GeogridStatePanels';
+import { kmToMetres, metresToKm } from './components/GeogridForm';
 import { geogridReducer, setGeogridFormField, setGeogridSiteId } from './store/slice';
 import { toGeogridGate, geogridServerMessage } from './gate';
 import { bucketForCell, cellsByIndex, formatCoordinate } from './heatScale';
@@ -96,7 +97,11 @@ interface Handlers {
   preview?: () => unknown;
   create?: () => unknown;
   keywords?: () => unknown;
+  business?: () => unknown;
+  places?: () => unknown;
 }
+
+const NO_BUSINESS = { selected: null, candidates: [], query: null, candidatesExpireAt: null };
 
 const wireApi = (handlers: Handlers = {}) => {
   mockedApiClient.mockImplementation((path: string, init?: { method?: string }) => {
@@ -120,6 +125,13 @@ const wireApi = (handlers: Handlers = {}) => {
       return Promise.resolve(
         handlers.keywords?.() ?? { keywords: [{ id: KEYWORD_ID, phrase: 'dentist austin' }] },
       ) as never;
+    }
+    // The centre picker reads the stored business and can search places.
+    if (path.endsWith('/local-seo/business')) {
+      return Promise.resolve(handlers.business ? handlers.business() : NO_BUSINESS) as never;
+    }
+    if (path.endsWith('/local-seo/places/search')) {
+      return Promise.resolve(handlers.places?.()) as never;
     }
     throw new Error(`unexpected path ${path}`);
   });
@@ -335,6 +347,66 @@ describe('geogrid panel — states', () => {
   });
 });
 
+describe('geogrid panel — keyword and centre guidance', () => {
+  it('explains an empty keyword list and links to the keywords tab', async () => {
+    wireApi({ keywords: () => ({ keywords: [] }) });
+    renderPanel();
+    const hint = await screen.findByTestId('geogrid-keyword-empty');
+    expect(hint).toHaveTextContent('This site has no tracked keywords yet.');
+    expect(screen.getByTestId('geogrid-keyword')).toHaveAttribute(
+      'aria-describedby',
+      'geogrid-keyword-hint',
+    );
+    const user = userEvent.setup();
+    await user.click(screen.getByRole('link', { name: 'Track a keyword' }));
+    expect(search).toBe('?tab=keywords');
+  });
+
+  it('describes both the empty hint and the error when submitting with no keyword', async () => {
+    wireApi({ keywords: () => ({ keywords: [] }) });
+    renderPanel();
+    await screen.findByTestId('geogrid-keyword-empty');
+    await userEvent.setup().click(screen.getByTestId('geogrid-preview-submit'));
+    await screen.findByText('Choose a tracked keyword first.');
+    expect(screen.getByTestId('geogrid-keyword')).toHaveAttribute(
+      'aria-describedby',
+      'geogrid-keyword-hint geogrid-keyword-error',
+    );
+  });
+
+  it('does not show the empty hint when the keyword read failed', async () => {
+    wireApi({ keywords: () => Promise.reject(httpError(500)) });
+    renderPanel();
+    await screen.findByTestId('geogrid-form');
+    await waitFor(() => expect(mockedApiClient).toHaveBeenCalled());
+    expect(screen.queryByTestId('geogrid-keyword-empty')).not.toBeInTheDocument();
+  });
+
+  it('prefills the centre from the latest stored scan without calling the provider', async () => {
+    wireApi({
+      scans: () => ({
+        scans: [summary(), summary({ id: 'older', centerLat: 1, centerLng: 2 })],
+      }),
+    });
+    const { store } = renderPanel();
+    const user = userEvent.setup();
+    await user.click(await screen.findByTestId('geogrid-use-last-center'));
+    expect(screen.getByTestId('geogrid-lat')).toHaveValue(30.2672);
+    expect(screen.getByTestId('geogrid-lng')).toHaveValue(-97.7431);
+    expect(store.getState().geogrid.form.centerLat).toBe('30.2672');
+    expect(
+      mockedApiClient.mock.calls.some(([path]) => String(path).includes('/geogrid/preview')),
+    ).toBe(false);
+  });
+
+  it('offers no centre shortcut before the first scan', async () => {
+    wireApi({ scans: () => ({ scans: [] }) });
+    renderPanel();
+    await screen.findByTestId('geogrid-history-empty');
+    expect(screen.queryByTestId('geogrid-use-last-center')).not.toBeInTheDocument();
+  });
+});
+
 describe('geogrid panel — form bounds', () => {
   it('blocks submit and names each out-of-range field', async () => {
     wireApi();
@@ -344,9 +416,9 @@ describe('geogrid panel — form bounds', () => {
     await user.click(screen.getByTestId('geogrid-preview-submit'));
     expect(await screen.findByText('Choose a tracked keyword first.')).toBeInTheDocument();
     expect(
-      screen.getByText('Latitude must be between -85 and 85.'),
+      screen.getByText('Enter a latitude between -85 and 85.'),
     ).toBeInTheDocument();
-    expect(screen.getByText('Longitude must be between -180 and 180.')).toBeInTheDocument();
+    expect(screen.getByText('Enter a longitude between -180 and 180.')).toBeInTheDocument();
     // No preview request left the client.
     expect(
       mockedApiClient.mock.calls.some(([path]) => String(path).includes('/geogrid/preview')),
@@ -371,7 +443,10 @@ describe('geogrid panel — form bounds', () => {
     const radios = [...document.querySelectorAll('input[type="radio"]')];
     expect(radios.length).toBeGreaterThan(0);
     expect(radios.every((el) => el.getAttribute('name'))).toBe(true);
-    expect(screen.getByLabelText('Custom spacing (m)')).toBe(
+    // The custom field exists only behind the labelled Custom option.
+    expect(screen.queryByTestId('geogrid-spacing-custom')).not.toBeInTheDocument();
+    await userEvent.setup().click(screen.getByLabelText('Custom'));
+    expect(screen.getByLabelText('Custom spacing in km')).toBe(
       screen.getByTestId('geogrid-spacing-custom'),
     );
   });
@@ -385,14 +460,79 @@ describe('geogrid panel — form bounds', () => {
     await user.selectOptions(screen.getByTestId('geogrid-keyword'), KEYWORD_ID);
     await user.type(screen.getByTestId('geogrid-lat'), '30.2672');
     await user.type(screen.getByTestId('geogrid-lng'), '-97.7431');
-    await user.clear(screen.getByTestId('geogrid-spacing-custom'));
-    await user.type(screen.getByTestId('geogrid-spacing-custom'), '150');
+    // One control: the km field only exists behind the labelled Custom option.
+    expect(screen.queryByTestId('geogrid-spacing-custom')).not.toBeInTheDocument();
+    await user.click(screen.getByLabelText('Custom'));
+    const custom = screen.getByLabelText('Custom spacing in km');
+    expect(custom).toHaveValue(1);
+    await user.clear(custom);
+    await user.type(custom, '0.15');
     await user.click(screen.getByTestId('geogrid-preview-submit'));
     expect(
-      await screen.findByText(
-        'Spacing must be between 100 and 10000 metres, in steps of 100.',
-      ),
+      await screen.findByText('Choose a spacing between 0.1 and 10 km, in steps of 0.1 km.'),
     ).toBeInTheDocument();
+    expect(custom).toHaveAttribute('aria-describedby', 'geogrid-spacing-error');
+  });
+
+  it('stores a custom km spacing as metres and hides the field again on a preset', async () => {
+    wireApi();
+    const { store } = renderPanel();
+    const user = userEvent.setup();
+    await screen.findByTestId('geogrid-form');
+    await user.click(screen.getByLabelText('Custom'));
+    const custom = screen.getByTestId('geogrid-spacing-custom');
+    await user.clear(custom);
+    await user.type(custom, '2');
+    // A custom value that equals a preset stays in custom mode.
+    expect(store.getState().geogrid.form.spacingMeters).toBe(2000);
+    expect(screen.getByTestId('geogrid-spacing-custom')).toBeInTheDocument();
+    await user.clear(custom);
+    await user.type(custom, '1.5');
+    expect(store.getState().geogrid.form.spacingMeters).toBe(1500);
+    await user.click(screen.getByLabelText('5 km'));
+    expect(store.getState().geogrid.form.spacingMeters).toBe(5000);
+    expect(screen.queryByTestId('geogrid-spacing-custom')).not.toBeInTheDocument();
+  });
+
+  it('opens on the custom field when the stored spacing is not a preset', async () => {
+    wireApi();
+    search = '';
+    const store = configureStore({ reducer: { geogrid: geogridReducer } });
+    store.dispatch(setGeogridSiteId(SITE_ID));
+    store.dispatch(setGeogridFormField({ field: 'spacingMeters', value: 1500 }));
+    render(
+      <Provider store={store}>
+        <I18nextProvider i18n={i18n}>
+          <MemoryRouter initialEntries={[`/sites/${SITE_ID}?tab=geogrid`]}>
+            <GeogridPanel siteId={SITE_ID} />
+          </MemoryRouter>
+        </I18nextProvider>
+      </Provider>,
+    );
+    expect(await screen.findByTestId('geogrid-spacing-custom')).toHaveValue(1.5);
+    expect(screen.getByLabelText('Custom')).toBeChecked();
+  });
+
+  it('converts between the km field and wire metres', () => {
+    expect(metresToKm(500)).toBe('0.5');
+    expect(kmToMetres('2.5')).toBe(2500);
+    expect(kmToMetres(' 0.1 ')).toBe(100);
+    expect(kmToMetres('')).toBe(0);
+    expect(kmToMetres('abc')).toBe(0);
+  });
+
+  it('lets the zoom help text use the full form width while only the number field stays narrow', async () => {
+    wireApi();
+    renderPanel();
+    await screen.findByTestId('geogrid-form');
+    const input = screen.getByTestId('geogrid-zoom');
+    const help = document.getElementById('geogrid-zoom-hint')!;
+    expect(input.parentElement).toHaveClass('sm:max-w-40');
+    expect(help).toBeInTheDocument();
+    // The help paragraph is a sibling of the narrow wrapper, never inside it.
+    expect(input.parentElement).not.toContainElement(help);
+    expect(help.closest('.sm\\:max-w-40')).toBeNull();
+    expect(input).toHaveAttribute('aria-describedby', 'geogrid-zoom-hint');
   });
 
   it('rejects an out-of-range zoom', async () => {
@@ -404,10 +544,27 @@ describe('geogrid panel — form bounds', () => {
     await user.selectOptions(screen.getByTestId('geogrid-keyword'), KEYWORD_ID);
     await user.type(screen.getByTestId('geogrid-lat'), '30.2672');
     await user.type(screen.getByTestId('geogrid-lng'), '-97.7431');
+    // The zoom field explains what the number does.
+    expect(screen.getByTestId('geogrid-zoom')).toHaveAccessibleDescription(
+      /3 shows a wide region, 21 a few streets.*17 is street level/,
+    );
     await user.clear(screen.getByTestId('geogrid-zoom'));
     await user.type(screen.getByTestId('geogrid-zoom'), '22');
     await user.click(screen.getByTestId('geogrid-preview-submit'));
-    expect(await screen.findByText('Zoom must be between 3 and 21.')).toBeInTheDocument();
+    const error = await screen.findByText('Enter a zoom level between 3 and 21.');
+    // The hint comes first, then the error, both at the body size.
+    const hint = document.getElementById('geogrid-zoom-hint')!;
+    expect(hint.compareDocumentPosition(error) & Node.DOCUMENT_POSITION_FOLLOWING).toBeTruthy();
+    expect(hint).toHaveClass('text-sm');
+    expect(error).toHaveClass('text-sm');
+    expect(screen.getByTestId('geogrid-zoom')).toHaveAttribute(
+      'aria-describedby',
+      'geogrid-zoom-hint geogrid-zoom-error',
+    );
+    expect(screen.getByTestId('geogrid-preview-submit').parentElement).toHaveAttribute(
+      'data-slot',
+      'form-actions',
+    );
   });
 
   it('offers every grid size and carries the choice into the request', async () => {

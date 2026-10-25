@@ -1,5 +1,5 @@
 import { Bdi } from '@shared/components/Bdi';
-import { useCallback, useContext, useEffect, useMemo, useRef, useState } from 'react';
+import { useCallback, useContext, useEffect, useId, useMemo, useRef, useState } from 'react';
 import { UNSAFE_DataRouterContext, useBlocker } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { ReportExportControl } from '@features/report-export';
@@ -42,10 +42,15 @@ import type {
   AnalysisBriefSection,
   AnalysisBriefVersion,
   AnalysisDraftVersion,
+  ContentAnalysis,
+  ContentAnalysisJobStatus,
 } from '../types';
-import { saveBriefVersion, saveDraftVersion } from '../api';
+import { getAnalysisStatus, saveBriefVersion, saveDraftVersion } from '../api';
+import { useJobStatus } from '@shared/hooks/useJobStatus';
+import { analysisStatusReceived } from '../store/slice';
 import {
   isContentAnalysisCancellable,
+  isContentAnalysisFailureReason,
   isContentAnalysisTerminal,
 } from '../types';
 import {
@@ -62,9 +67,14 @@ import {
 } from '../store/selectors';
 import { RecommendationWorkflow } from './RecommendationWorkflow';
 import { AnalysisProgress } from './AnalysisProgress';
+import { RetryAnalysisDialog } from './RetryAnalysisDialog';
 import { analysisStatusTone } from './status';
 
-const POLL_INTERVAL_MS = 4000;
+/**
+ * Status-poll schedule: the shared `useJobStatus` backoff, capped at the old
+ * 4 s interval so a failure shows within one interval.
+ */
+const STATUS_POLL = { initialDelayMs: 2_000, maxDelayMs: 4_000 } as const;
 
 function DataRouterUnsavedGuard({ when }: { when: boolean }) {
   const { t } = useTranslation('contentIntelligence');
@@ -105,6 +115,11 @@ interface AnalysisDetailProps {
   onBack: () => void;
   /** Switch the workspace to a freshly regenerated run (updates `?analysis=`). */
   onRegenerated: (newAnalysisId: string) => void;
+  /**
+   * A failure the same request cannot fix (blocked, unreachable, too large):
+   * open the new-analysis form prefilled with this page and keyword.
+   */
+  onEditUrl?: (analysis: ContentAnalysis) => void;
 }
 
 export function AnalysisDetail({
@@ -112,6 +127,7 @@ export function AnalysisDetail({
   analysisId,
   onBack,
   onRegenerated,
+  onEditUrl,
 }: AnalysisDetailProps) {
   const { t, i18n } = useTranslation('contentIntelligence');
   const dispatch = useAppDispatch();
@@ -145,48 +161,44 @@ export function AnalysisDetail({
     return () => promise.abort();
   }, [analysisId, dispatch, siteId]);
 
-  // Bounded poll while non-terminal: schedule the next fetch only while the
-  // tab is visible, and re-fetch immediately when the tab returns to view —
-  // matching the app's other pollers (RunStatusCard) so a backgrounded tab
-  // stops hammering the `content_intelligence_poll` bucket.
+  // Server-driven progress: poll the slim status read through the shared job
+  // hook while the run is going. A step change moves the stored run on; a
+  // terminal status loads the full result at once.
+  const running = analysisStatus !== undefined && !isContentAnalysisTerminal(analysisStatus);
+  const fetchStatus = useCallback(
+    (id: string, signal: AbortSignal) => getAnalysisStatus(id, { signal }),
+    [],
+  );
+  const { job: polledJob, phase: pollPhase } = useJobStatus<ContentAnalysisJobStatus>({
+    jobId: running ? analysisId : null,
+    fetchJob: fetchStatus,
+    isTerminal: (job) => job.terminal,
+    ...STATUS_POLL,
+  });
   useEffect(() => {
-    if (!analysisStatus || isContentAnalysisTerminal(analysisStatus)) return undefined;
-    let disposed = false;
-    let timer: ReturnType<typeof setTimeout> | null = null;
-    let activeRequest: { abort: () => void } | null = null;
-    const poll = () => {
-      const request = dispatch(loadAnalysis({ siteId, analysisId }));
-      activeRequest = request;
-      void request.finally(() => {
-        activeRequest = null;
-        schedule();
-      });
-    };
-    const schedule = () => {
-      if (disposed || document.visibilityState === 'hidden') return;
-      timer = setTimeout(() => {
-        timer = null;
-        poll();
-      }, POLL_INTERVAL_MS);
-    };
-    const onVisibilityChange = () => {
-      if (
-        document.visibilityState === 'visible' &&
-        timer === null &&
-        activeRequest === null
-      ) {
-        poll();
-      }
-    };
-    schedule();
-    document.addEventListener('visibilitychange', onVisibilityChange);
-    return () => {
-      disposed = true;
-      if (timer !== null) clearTimeout(timer);
-      activeRequest?.abort();
-      document.removeEventListener('visibilitychange', onVisibilityChange);
-    };
-  }, [analysisStatus, analysisId, dispatch, siteId]);
+    if (!polledJob) return;
+    if (polledJob.terminal) {
+      void dispatch(loadAnalysis({ siteId, analysisId }));
+    } else {
+      dispatch(analysisStatusReceived({ siteId, job: polledJob }));
+    }
+  }, [analysisId, dispatch, polledJob, siteId]);
+
+  // When a run this view watched reaches its end, move focus to the result
+  // heading so keyboard and screen-reader users land on the outcome.
+  const watchedRunning = useRef(false);
+  // The title primitives take no ref, so the heading is found by id.
+  const resultHeadingId = useId();
+  useEffect(() => {
+    if (analysisStatus === undefined) return;
+    if (!isContentAnalysisTerminal(analysisStatus)) {
+      watchedRunning.current = true;
+      return;
+    }
+    if (!watchedRunning.current) return;
+    watchedRunning.current = false;
+    document.getElementById(resultHeadingId)?.focus();
+  }, [analysisStatus, resultHeadingId]);
 
   useEffect(() => () => {
     if (savedNoteTimer.current !== null) window.clearTimeout(savedNoteTimer.current);
@@ -370,6 +382,13 @@ export function AnalysisDetail({
   const brief = analysis.brief;
   const draft = analysis.draft;
   const isPartial = analysis.status === 'partial';
+  // A failed run that never produced a section gets one explanation (inside the
+  // failure alert) instead of empty Opportunities / Brief / Draft / Sources cards.
+  const isFailed = analysis.status === 'failed' && analysis.error !== null;
+  const showOpportunities = !isFailed || analysis.recommendations.length > 0;
+  const showBrief = !isFailed || (brief !== null && brief.sections.length > 0);
+  const showDraft = !isFailed || draft !== null;
+  const sectionsHidden = isFailed && !(showOpportunities && showBrief && showDraft);
   const scorecardV2 = analysis.scorecardV2;
   const overallConfidence = scorecardV2
     ? scorecardV2.sections.reduce(
@@ -385,6 +404,60 @@ export function AnalysisDetail({
       (citation, index, all) => all.findIndex((item) => item.url === citation.url) === index,
     )
     .slice(0, 3);
+  const showSources = !isFailed || comparisonSources.length > 0;
+
+  const failureReason = isContentAnalysisFailureReason(analysis.error?.reason)
+    ? analysis.error.reason
+    : null;
+  // The server decides the way out of a failed run: the same request again
+  // (`retry`) or a different URL (`edit_url`). Runs read before that fall back
+  // to the stored error flags.
+  const progress = analysis.progress;
+  const failureCode = analysis.status === 'failed' ? (progress?.failureReasonCode ?? null) : null;
+  const retryAction = analysis.status === 'failed'
+    ? progress
+      ? progress.retryAction
+      : analysis.error?.retryable === true || analysis.error?.category === 'owned_page_unusable'
+        ? 'legacy'
+        : null
+    : null;
+  // The heading keyboard focus lands on when a watched run ends.
+  const focusTarget = analysis.error ? 'failed' : isPartial ? 'partial' : 'result';
+  const headingProps = (target: typeof focusTarget) =>
+    focusTarget === target
+      ? { id: resultHeadingId, tabIndex: -1, role: 'heading', 'aria-level': 2 }
+      : {};
+
+  const renderRegenerate = (label: string, testId: string, size: 'sm' | 'default') => (
+    <AlertDialog>
+      <AlertDialogTrigger asChild>
+        <Button
+          variant="outline"
+          size={size}
+          disabled={hasUnsavedChanges || regenerating}
+          loading={regenerating}
+          loadingLabel={t('detail.progress.regenerating')}
+          data-testid={testId}
+        >
+          {label}
+        </Button>
+      </AlertDialogTrigger>
+      <AlertDialogContent>
+        <AlertDialogHeader>
+          <AlertDialogTitle>{t('confirm.regenerate.title')}</AlertDialogTitle>
+          <AlertDialogDescription>
+            {t('confirm.regenerate.description')}
+          </AlertDialogDescription>
+        </AlertDialogHeader>
+        <AlertDialogFooter>
+          <AlertDialogCancel>{t('confirm.regenerate.back')}</AlertDialogCancel>
+          <AlertDialogAction onClick={onRegenerate}>
+            {t('confirm.regenerate.confirm')}
+          </AlertDialogAction>
+        </AlertDialogFooter>
+      </AlertDialogContent>
+    </AlertDialog>
+  );
 
   return (
     <div className="flex flex-col gap-4" data-testid="content-detail">
@@ -413,17 +486,25 @@ export function AnalysisDetail({
             {t('detail.back')}
           </Button>
         )}
-        <ReportExportControl
-          kind="content.analysis"
-          target={{ scope: 'site_resource', siteId, resourceId: analysisId }}
-          selection={{}}
-        />
+        {/* A failed run has nothing to export or share. */}
+        {analysis.status !== 'failed' ? (
+          <ReportExportControl
+            kind="content.analysis"
+            target={{ scope: 'site_resource', siteId, resourceId: analysisId }}
+            selection={{}}
+          />
+        ) : null}
       </div>
 
       <Card>
         <CardHeader>
           <CardTitle><Bdi>{analysis.keyword}</Bdi></CardTitle>
           <CardDescription>{analysis.ownedUrl}</CardDescription>
+          {analysis.owned?.finalUrl ? (
+            <CardDescription className="break-all" data-testid="content-detail-final-url">
+              {t('detail.meta.readAt', { url: analysis.owned.finalUrl })}
+            </CardDescription>
+          ) : null}
         </CardHeader>
         <CardContent className="flex flex-col gap-2 text-sm">
           <div className="flex flex-wrap gap-4">
@@ -452,23 +533,84 @@ export function AnalysisDetail({
       </Card>
 
       {!isContentAnalysisTerminal(analysis.status) ? (
-        <AnalysisProgress analysis={analysis} />
+        <AnalysisProgress analysis={analysis} capped={pollPhase === 'capped'} />
       ) : null}
 
       {analysis.error ? (
         <Alert variant="destructive" data-testid="content-detail-failed">
-          <AlertTitle>{t('detail.progress.errorTitle')}</AlertTitle>
-          <AlertDescription>
-            {t(`detail.errorCategory.${analysis.error.category}`, {
-              defaultValue: t('detail.progress.errorGeneric'),
-            })}
+          <AlertTitle {...headingProps('failed')}>{t('detail.progress.errorTitle')}</AlertTitle>
+          <AlertDescription className="flex flex-col gap-2">
+            {failureCode ? (
+              <p data-testid="content-detail-failure-code" data-code={failureCode}>
+                {t(`detail.failureCode.${failureCode}`)}
+              </p>
+            ) : (
+              <p>
+                {t(`detail.errorCategory.${analysis.error.category}`, {
+                  defaultValue: t('detail.progress.errorGeneric'),
+                })}
+              </p>
+            )}
+            {failureReason ? (
+              <>
+                <p data-testid="content-detail-failure-reason">
+                  {t(`detail.failureReason.${failureReason}`, {
+                    status: analysis.error.httpStatus ?? '',
+                    type: analysis.error.contentType ?? '',
+                  })}
+                </p>
+                {analysis.error.redirectChain && analysis.error.redirectChain.length > 0 ? (
+                  <p className="text-muted-foreground break-all" data-testid="content-detail-redirect-path">
+                    {t('detail.failureEvidence.redirectPath', {
+                      path: analysis.error.redirectChain
+                        .map((hop) => `${hop.status} ${hop.url}`)
+                        .join(' → '),
+                    })}
+                  </p>
+                ) : null}
+                <p className="text-muted-foreground">{t(`detail.failureHint.${failureReason}`)}</p>
+              </>
+            ) : analysis.error.category === 'owned_page_unusable' ||
+              analysis.error.category === 'owned_fetch_failed' ? (
+              // Older runs recorded no specific reason: list the usual causes
+              // instead of a bare "could not be read".
+              <p className="text-muted-foreground" data-testid="content-detail-failure-unknown">
+                {t('detail.failureReasonUnknown')}
+              </p>
+            ) : null}
+            {sectionsHidden ? (
+              <p className="text-muted-foreground" data-testid="content-detail-failed-no-output">
+                {t('detail.failedNoOutput')}
+              </p>
+            ) : null}
+            {retryAction === 'retry' ? (
+              <div>
+                <RetryAnalysisDialog analysisId={analysisId} onRetried={onRegenerated} />
+              </div>
+            ) : retryAction === 'legacy' ? (
+              <div>
+                {renderRegenerate(t('detail.actions.retry'), 'content-detail-retry', 'sm')}
+              </div>
+            ) : retryAction === 'edit_url' && onEditUrl ? (
+              <div>
+                <Button
+                  type="button"
+                  variant="outline"
+                  size="sm"
+                  onClick={() => onEditUrl(analysis)}
+                  data-testid="content-detail-edit-url"
+                >
+                  {t('detail.actions.editUrl')}
+                </Button>
+              </div>
+            ) : null}
           </AlertDescription>
         </Alert>
       ) : null}
 
       {isPartial ? (
         <Alert data-testid="content-detail-partial">
-          <AlertTitle>{t('partial.title')}</AlertTitle>
+          <AlertTitle {...headingProps('partial')}>{t('partial.title')}</AlertTitle>
           <AlertDescription>
             <p>{t('partial.description')}</p>
             {warningLabels.length > 0 ? (
@@ -483,7 +625,7 @@ export function AnalysisDetail({
       {scorecardV2 || scorecard ? (
         <Card data-testid="content-detail-scorecard">
           <CardHeader>
-            <CardTitle>{t('detail.score.title')}</CardTitle>
+            <CardTitle {...headingProps('result')}>{t('detail.score.title')}</CardTitle>
             <CardDescription>{t('detail.explanation')}</CardDescription>
           </CardHeader>
           <CardContent className="flex flex-col gap-4">
@@ -575,11 +717,14 @@ export function AnalysisDetail({
         </Card>
       ) : null}
 
-      <RecommendationWorkflow
-        analysis={analysis}
-        onChanged={onRecommendationChanged}
-      />
+      {showOpportunities ? (
+        <RecommendationWorkflow
+          analysis={analysis}
+          onChanged={onRecommendationChanged}
+        />
+      ) : null}
 
+      {showBrief ? (
       <Card data-testid="content-detail-brief">
         <CardHeader>
           <CardTitle>{t('detail.brief.title')}</CardTitle>
@@ -679,7 +824,9 @@ export function AnalysisDetail({
           )}
         </CardContent>
       </Card>
+      ) : null}
 
+      {showDraft ? (
       <Card data-testid="content-detail-draft">
         <CardHeader>
           <CardTitle>{t('detail.draft.title')}</CardTitle>
@@ -779,7 +926,9 @@ export function AnalysisDetail({
           )}
         </CardContent>
       </Card>
+      ) : null}
 
+      {showSources ? (
       <Card data-testid="content-detail-sources">
         <CardHeader>
           <CardTitle>{t('detail.sources.title')}</CardTitle>
@@ -808,6 +957,7 @@ export function AnalysisDetail({
           </ul>
         </CardContent>
       </Card>
+      ) : null}
 
       <div className="flex flex-wrap gap-2">
         {isContentAnalysisCancellable(analysis.status) ? (
@@ -837,35 +987,9 @@ export function AnalysisDetail({
             </AlertDialogContent>
           </AlertDialog>
         ) : null}
-        {isContentAnalysisTerminal(analysis.status) && (analysis.status !== 'failed' || analysis.error?.retryable) ? (
-          <AlertDialog>
-            <AlertDialogTrigger asChild>
-              <Button
-                variant="outline"
-                disabled={hasUnsavedChanges || regenerating}
-                loading={regenerating}
-                loadingLabel={t('detail.progress.regenerating')}
-                data-testid="content-detail-regenerate"
-              >
-                {t('detail.actions.regenerate')}
-              </Button>
-            </AlertDialogTrigger>
-            <AlertDialogContent>
-              <AlertDialogHeader>
-                <AlertDialogTitle>{t('confirm.regenerate.title')}</AlertDialogTitle>
-                <AlertDialogDescription>
-                  {t('confirm.regenerate.description')}
-                </AlertDialogDescription>
-              </AlertDialogHeader>
-              <AlertDialogFooter>
-                <AlertDialogCancel>{t('confirm.regenerate.back')}</AlertDialogCancel>
-                <AlertDialogAction onClick={onRegenerate}>
-                  {t('confirm.regenerate.confirm')}
-                </AlertDialogAction>
-              </AlertDialogFooter>
-            </AlertDialogContent>
-          </AlertDialog>
-        ) : null}
+        {isContentAnalysisTerminal(analysis.status) && analysis.status !== 'failed'
+          ? renderRegenerate(t('detail.actions.regenerate'), 'content-detail-regenerate', 'default')
+          : null}
       </div>
     </div>
   );

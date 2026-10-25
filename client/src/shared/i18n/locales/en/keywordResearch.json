@@ -311,7 +311,13 @@
     "shown_two": "Showing {{loaded}} of {{count}} saved lookups",
     "shown_few": "Showing {{loaded}} of {{count}} saved lookups",
     "shown_many": "Showing {{loaded}} of {{count}} saved lookups",
-    "shown_other": "Showing {{loaded}} of {{count}} saved lookups"
+    "shown_other": "Showing {{loaded}} of {{count}} saved lookups",
+    "viewResults": "View results",
+    "viewResultsFor": "View stored results for {{query}}",
+    "viewResultsHint": "View results opens what was saved from that search. It does not call the data provider again.",
+    "searchAgainFor": "Search again for {{query}}",
+    "searchAgainHint": "Search again runs the lookup again with the data provider, the same as a new search.",
+    "emptySite": "No research for this site yet. Lookups you run here will appear in this list."
   },
   "previewFailed": "Could not load the spend preview.",
   "tabs": {
@@ -535,5 +541,17 @@
   "selectionCount_two": "{{count}} of {{max}} selected",
   "selectionCount_few": "{{count}} of {{max}} selected",
   "selectionCount_many": "{{count}} of {{max}} selected",
-  "selectionCount_other": "{{count}} of {{max}} selected"
+  "selectionCount_other": "{{count}} of {{max}} selected",
+  "recentDescriptionSite": "Keyword lookups run for this site, newest first.",
+  "stored": {
+    "title": "Stored results",
+    "freeNote": "Opened from saved data. Nothing was looked up again.",
+    "close": "Close stored results",
+    "expired": "The stored results for this search are no longer available. Search again to fetch them fresh.",
+    "unsupported": "This type of search has no stored view here. Open its own tab to see it.",
+    "storedOn": "Saved {{date}}",
+    "partial": "Keywords still stored: {{stored}} of {{requested}}",
+    "searchAgain": "Search again",
+    "loadFailed": "Could not load the stored results."
+  }
 }

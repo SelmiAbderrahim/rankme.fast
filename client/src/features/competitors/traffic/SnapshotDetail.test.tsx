@@ -142,6 +142,23 @@ describe('SnapshotDetail', () => {
     expect(screen.getByText('No history points were retained for this snapshot.')).toBeVisible();
   });
 
+  it('says no country data was kept instead of an empty table shell', () => {
+    renderDetail({
+      detail: {
+        ...maliciousTrafficDetail,
+        snapshot: {
+          ...maliciousTrafficDetail.snapshot!,
+          payload: { ...maliciousTrafficDetail.snapshot!.payload, topCountries: [], history: [] },
+        },
+      },
+    });
+    expect(screen.getByTestId('traffic-country-empty')).toHaveTextContent(
+      'No country data was kept for this snapshot.',
+    );
+    expect(screen.queryByTestId('traffic-country-table')).toBeNull();
+    expect(screen.getByText('No history points were retained for this snapshot.')).toBeVisible();
+  });
+
   it('falls back to the raw country code when Intl has no display label', () => {
     vi.spyOn(Intl.DisplayNames.prototype, 'of').mockReturnValue(undefined);
     renderDetail({ detail: maliciousTrafficDetail });

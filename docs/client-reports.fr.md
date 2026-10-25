@@ -23,7 +23,7 @@ Une section sans instantané stocké est marquée comme non encore observée. El
 
 ## Planifications
 
-Les rapports partent par e-mail, chaque semaine ou chaque mois. Le journal de livraison contient une entrée par destinataire : en attente, envoyé, échoué ou supprimé.
+Les rapports partent par e-mail, chaque semaine ou chaque mois. Le journal de livraison contient une entrée par destinataire : en attente, envoyé, échoué ou supprimé. Vous choisissez le fuseau horaire et l'heure dans ce fuseau, et la planification garde cette heure locale lors des changements d'heure.
 
 Préparer et envoyer un rapport n'appelle aucun fournisseur et ne consomme aucune unité décomptée. Le coût porte sur notre propre infrastructure, ce sont donc des limites structurelles qui l'encadrent.
 

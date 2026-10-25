@@ -5,6 +5,7 @@ import type {
   TrafficSnapshotListFilters,
   TrafficSnapshotListResponse,
   TrafficSnapshotRequestInput,
+  TrafficMarket,
   TrafficSnapshotRequestResult,
   TrafficSpendPreview,
 } from './types';
@@ -16,10 +17,13 @@ export const requestTrafficSnapshot = (
 ): Promise<TrafficSnapshotRequestResult> =>
   apiClient<TrafficSnapshotRequestResult>(ROOT, { method: 'POST', body: input });
 
-export const previewTrafficSnapshot = (domains: string[]): Promise<TrafficSpendPreview> =>
+export const previewTrafficSnapshot = (
+  domains: string[],
+  market?: TrafficMarket,
+): Promise<TrafficSpendPreview> =>
   apiClient<TrafficSpendPreview>(`${ROOT}/preview`, {
     method: 'POST',
-    body: { domains },
+    body: { domains, ...market },
   });
 
 export const fetchTrafficSnapshot = (

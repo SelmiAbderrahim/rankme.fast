@@ -1,4 +1,5 @@
 import { beforeEach, describe, expect, it, vi } from 'vitest';
+import { __resetTypedTrafficDomainsForTests } from './components/SnapshotRequestForm';
 import { act, render, screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { configureStore } from '@reduxjs/toolkit';
@@ -47,6 +48,15 @@ let authState: AuthSessionState = {
 vi.mock('@features/auth', async (importOriginal) => ({
   ...(await importOriginal<typeof import('@features/auth')>()),
   useAuthSession: () => authState,
+}));
+
+vi.mock('@shared/markets', async (importOriginal) => ({
+  ...(await importOriginal<typeof import('@shared/markets')>()),
+  useMarketCatalog: () => ({
+    markets: [{ countryCode: 'US', locationCode: 2840, languageCodes: ['en'] }],
+    loading: false,
+    error: false,
+  }),
 }));
 
 vi.mock('@shared/api/client', async (importOriginal) => ({
@@ -119,6 +129,7 @@ const renderPanel = (
 };
 
 beforeEach(async () => {
+  __resetTypedTrafficDomainsForTests();
   initI18n({ initialLocale: 'en' });
   await changeLanguage('en');
   mockedApiClient.mockReset();

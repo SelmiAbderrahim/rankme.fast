@@ -1,5 +1,5 @@
 {
-  "title": "Schema markup generator",
+  "title": "Schema markup",
   "description": "Build JSON-LD for a page from facts we already stored about it. Nothing is invented: a field we cannot back with a fact is left out, and we say why.",
   "new": {
     "title": "Generate markup",
@@ -41,13 +41,22 @@
     "crawledPages_two": "{{count}} crawled pages",
     "crawledPages_few": "{{count}} crawled pages",
     "crawledPages_many": "{{count}} crawled pages",
-    "crawledPages_other": "{{count}} crawled pages"
+    "crawledPages_other": "{{count}} crawled pages",
+    "filterLabel": "Find a page",
+    "filterPlaceholder": "Type part of the address or title",
+    "filterCount": "Showing {{shown}} of {{total}}",
+    "filterNoMatches": "No page matches that search.",
+    "groupRoot": "Top-level pages"
   },
   "type": {
     "legend": "Schema.org type",
     "required": "Required: {{n}}",
     "recommended": "Recommended: {{n}}",
-    "alreadyDeclared": "This page already declares this type."
+    "alreadyDeclared": "This page already declares this type.",
+    "note": {
+      "FAQPage": "Google shows FAQ answers in search results only for well-known government and health sites. The markup is still valid.",
+      "HowTo": "Google no longer shows HowTo steps in search results. The markup is still valid."
+    }
   },
   "preview": {
     "title": "What this costs",
@@ -69,14 +78,14 @@
     "failedTitle": "Nothing was generated",
     "failedProvider": "The model did not answer, so no markup was kept.",
     "failedRejected": "Every field the model offered failed our fact check, so we kept only what we could prove.",
-    "refunded": "Your allowance was put back.",
     "evidence": "Where each field came from",
     "evidenceDescription": "One line per field in the markup, naming the stored fact behind it.",
     "evidenceFrom": "from {{fact}}",
     "evidenceEmpty": "No field could be filled from a stored fact.",
     "omissions": "What we left out",
     "omissionsDescription": "Fields with no fact behind them, and the reason each one is missing.",
-    "omissionsEmpty": "Nothing was left out."
+    "omissionsEmpty": "Nothing was left out.",
+    "regenerated": "Rebuilt from an earlier generation with facts you provided. No generation was used."
   },
   "fact": {
     "pageUrl": "Page URL",
@@ -91,7 +100,11 @@
     "articleModifiedTime": "Article modification time",
     "siteOrigin": "Site origin",
     "siteDomain": "Site domain",
-    "siteName": "Site name"
+    "siteName": "Site name",
+    "ogSiteName": "Site name tag (og:site_name)",
+    "jsonLdName": "Name in the page's existing structured data",
+    "titleBrand": "Brand name in the page title",
+    "providedByYou": "Provided by you"
   },
   "reason": {
     "no_evidence": "we hold no fact for it",
@@ -155,6 +168,29 @@
     "failed": {
       "title": "Something went wrong",
       "body": "We could not finish this. Try again."
+    }
+  },
+  "userFacts": {
+    "title": "Add what we left out",
+    "description": "Fill in a fact only you know. We add it exactly as you write it and mark it \"Provided by you\".",
+    "submit": "Rebuild with my facts",
+    "free": "Free: we reuse the facts already found and use no generation.",
+    "required": "Fill in at least one field.",
+    "hint": {
+      "language": "A language code such as en or pt-BR.",
+      "date": "A date such as 2026-10-01.",
+      "url": "A public address that starts with https://."
+    },
+    "label": {
+      "name": "Name",
+      "headline": "Headline",
+      "description": "Description",
+      "inLanguage": "Language",
+      "datePublished": "Publication date",
+      "dateModified": "Last updated date",
+      "logo": "Logo address",
+      "image": "Image address",
+      "primaryImageOfPage": "Main image address"
     }
   }
 }

@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useMemo, useState } from 'react';
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { useSearchParams } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { Alert, AlertDescription, AlertTitle } from '@shared/ui/alert';
@@ -130,6 +130,19 @@ export function ContentIntelligencePanel({ siteId, siteOrigin }: ContentIntellig
     setParams(next, { replace: true });
   }, [params, setParams]);
 
+  // "Edit the URL" after a page problem: back to the list with the
+  // new-analysis form prefilled from the failed run.
+  const onEditUrl = useCallback(
+    (analysis: { ownedUrl: string; keyword: string }) => {
+      const next = new URLSearchParams(params);
+      next.delete(ANALYSIS_PARAM);
+      next.set('prefillUrl', analysis.ownedUrl);
+      next.set('prefillKeyword', analysis.keyword);
+      setParams(next);
+    },
+    [params, setParams],
+  );
+
   const onSubmitted = useCallback(
     (id: string) => {
       onOpen(id);
@@ -144,15 +157,30 @@ export function ContentIntelligencePanel({ siteId, siteOrigin }: ContentIntellig
     el?.focus();
   }, []);
 
+  // Opening a detail keeps the scroller's offset from the (long) list page, so
+  // the detail would open near its bottom. The desktop app frame scrolls the
+  // main column, not window — scrollIntoView resets whichever ancestor
+  // scrolls, so the detail's top (back button + heading) is in view.
+  const detailTopRef = useRef<HTMLDivElement | null>(null);
+  useEffect(() => {
+    if (!analysisId) return;
+    detailTopRef.current?.scrollIntoView({ block: 'start' });
+  }, [analysisId]);
+
   // Analysis detail view (via ?analysis=)
   if (analysisId) {
     return (
-      <div className="flex flex-col gap-4" data-testid="content-intelligence-panel">
+      <div
+        ref={detailTopRef}
+        className="flex scroll-mt-4 flex-col gap-4"
+        data-testid="content-intelligence-panel"
+      >
         <AnalysisDetail
           siteId={siteId}
           analysisId={analysisId}
           onBack={onBack}
           onRegenerated={onOpen}
+          onEditUrl={onEditUrl}
         />
       </div>
     );

@@ -91,6 +91,7 @@ const typesResponse = () => ({
   types: [
     {
       type: 'WebPage' as const,
+      richResults: null,
       required: [
         {
           name: 'name',
@@ -117,6 +118,7 @@ const sourcesResponse = () => ({
       richResultsVerdict: null,
     },
   ],
+  auditedPagesTotal: 1,
   inventoryPages: [],
 });
 
@@ -210,7 +212,6 @@ describe('HONEST-1/2 (client half) — the rendered result traces every property
     status: 'complete',
     conformanceStatus: 'gaps',
     failureReason: null,
-    refunded: false,
     generatedAt: '2026-08-01T09:00:00.000Z',
     payload: JSON.stringify(PAYLOAD),
     mediaType: 'application/ld+json',
@@ -408,7 +409,7 @@ describe('keyboard parity and Arabic layout', () => {
     expect(document.documentElement).toHaveAttribute('dir', 'rtl');
     expect(document.documentElement).toHaveAttribute('lang', 'ar');
     expect(
-      await screen.findByRole('heading', { name: 'مولّد ترميز schema' }),
+      await screen.findByRole('heading', { name: 'ترميز Schema' }),
     ).toBeInTheDocument();
     await waitFor(() =>
       expect(screen.getByTestId('schema-preview-button')).toHaveTextContent(

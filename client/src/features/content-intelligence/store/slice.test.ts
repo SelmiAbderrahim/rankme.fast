@@ -1,5 +1,6 @@
 import { describe, expect, it } from 'vitest';
 import {
+  analysisStatusReceived,
   clearFormDraft,
   clearInventorySubmitError,
   clearSubmitError,
@@ -111,6 +112,34 @@ describe('contentIntelligenceReducer', () => {
     expect(contentIntelligenceReducer(s, resetContentIntelligence())).toEqual(
       initialState,
     );
+  });
+
+  it('analysisStatusReceived moves the step on in the detail and the list copy of the right site only', () => {
+    const base = {
+      ...initialState,
+      siteId: 's1',
+      analyses: [makeAnalysis({ status: 'queued' })],
+      detail: { a1: makeAnalysis({ status: 'queued' }) },
+    };
+    const job = {
+      analysisId: 'a1',
+      status: 'scoring' as const,
+      terminal: false,
+      stepIndex: 5,
+      stepCount: 7,
+      stepKey: 'scoring' as const,
+      failureReasonCode: null,
+      retryAction: null,
+    };
+    const next = contentIntelligenceReducer(base, analysisStatusReceived({ siteId: 's1', job }));
+    expect(next.detail.a1).toMatchObject({ status: 'scoring', progress: { stepIndex: 5, stepKey: 'scoring' } });
+    expect(next.analyses[0]).toMatchObject({ status: 'scoring', progress: { stepIndex: 5 } });
+    expect(next.detail.a1?.progress).not.toHaveProperty('status');
+    // Another site, or a run neither copy holds, is left alone.
+    expect(contentIntelligenceReducer(base, analysisStatusReceived({ siteId: 's2', job }))).toEqual(base);
+    expect(
+      contentIntelligenceReducer(base, analysisStatusReceived({ siteId: 's1', job: { ...job, analysisId: 'zzz' } })),
+    ).toEqual(base);
   });
 
   it('setActiveAnalysisId updates active id', () => {

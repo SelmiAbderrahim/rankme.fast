@@ -145,7 +145,7 @@ describe('SnapshotList URL-backed filters', () => {
   it('normalizes invalid filters with replace while preserving unrelated params', async () => {
     renderList(
       {},
-      `/sites/site-1?tab=traffic&domain=https%3A%2F%2Fbad.example&from=2026-02-02&to=2026-01-01&cursor=${'x'.repeat(501)}&utm=sweep`,
+      `/sites/site-1?tab=traffic&domain=ftp%3A%2F%2Fbad.example&from=2026-02-02&to=2026-01-01&cursor=${'x'.repeat(501)}&utm=sweep`,
     );
     await waitFor(() =>
       expect(search).toBe('?tab=traffic&utm=sweep'),

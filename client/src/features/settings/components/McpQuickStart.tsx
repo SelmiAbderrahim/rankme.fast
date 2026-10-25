@@ -17,11 +17,18 @@ import {
 
 type CopyTarget = 'endpoint' | 'claude' | 'cursor';
 
+/**
+ * Every snippet reads the key from ONE environment variable. Each client
+ * spells env interpolation its own way: Claude Code expands `${VAR}`, Cursor
+ * expands `${env:VAR}`.
+ */
+export const MCP_API_KEY_ENV_VAR = 'RANKMEFAST_API_KEY';
+
 export function buildClaudeCodeConfig(endpoint: string): string {
   const server = JSON.stringify({
     type: 'http',
     url: endpoint,
-    headers: { Authorization: 'Bearer ${RANKMEFAST_API_KEY}' },
+    headers: { Authorization: `Bearer \${${MCP_API_KEY_ENV_VAR}}` },
   });
   return `claude mcp add-json --scope user rankmefast '${server}'`;
 }
@@ -33,7 +40,7 @@ export function buildCursorConfig(endpoint: string): string {
         rankmefast: {
           url: endpoint,
           headers: {
-            Authorization: 'Bearer rmf_REPLACE_WITH_YOUR_KEY',
+            Authorization: `Bearer \${env:${MCP_API_KEY_ENV_VAR}}`,
           },
         },
       },
@@ -70,7 +77,9 @@ export function McpQuickStart() {
         <CardTitle>
           <h2>{t('mcp.quickStart.title')}</h2>
         </CardTitle>
-        <CardDescription>{t('mcp.quickStart.description')}</CardDescription>
+        <CardDescription>
+          {t('mcp.quickStart.description', { envVar: MCP_API_KEY_ENV_VAR })}
+        </CardDescription>
       </CardHeader>
       <CardContent className="flex flex-col gap-6">
         {copyError ? (
@@ -121,7 +130,13 @@ export function McpQuickStart() {
                 {copied === snippet.target ? t('mcp.quickStart.copied') : t('mcp.quickStart.copy')}
               </Button>
             </div>
-            <pre className="overflow-x-auto rounded-md border bg-muted p-3 text-xs" tabIndex={0}>
+            {/* Scrolls sideways, so it needs focus and a name (role="region" keeps aria-label). */}
+            <pre
+              className="overflow-x-auto rounded-md border bg-muted p-3 text-xs"
+              role="region"
+              tabIndex={0}
+              aria-label={snippet.label}
+            >
               <code>{snippet.value}</code>
             </pre>
           </section>

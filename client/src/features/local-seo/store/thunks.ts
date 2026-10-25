@@ -1,11 +1,11 @@
 import { createAsyncThunk } from '@reduxjs/toolkit';
-import { fetchLocalSeo, refreshLocalSeo as refreshLocalSeoRequest } from '../api';
+import { fetchLocalBusinessSetup, fetchLocalSeo, refreshLocalSeo as refreshLocalSeoRequest, searchLocalBusinessRequest, selectLocalBusinessRequest, } from '../api';
 import {
   apiErrorRetryAfterMs,
   apiErrorStatus,
   localSeoErrorMessage,
 } from '../errorMessage';
-import type { LocalSeoRefreshResult, LocalSeoSnapshot } from '../types';
+import type { LocalBusinessSetup, LocalSeoRefreshResult, LocalSeoSnapshot } from '../types';
 
 export interface RejectPayload {
   error: string;
@@ -51,5 +51,42 @@ export const refreshLocalSeo = createAsyncThunk<
       error: localSeoErrorMessage(err, 'localSeo:refresh.failed'),
       cooldownUntil: null,
     });
+  }
+});
+
+/** Business setup. Rejections carry localized text. */
+export const loadLocalBusinessSetup = createAsyncThunk<
+  LocalBusinessSetup,
+  { siteId: string },
+  { rejectValue: string }
+>('localSeo/loadLocalBusinessSetup', async ({ siteId }, { rejectWithValue }) => {
+  try {
+    return await fetchLocalBusinessSetup(siteId);
+  } catch (err) {
+    return rejectWithValue(localSeoErrorMessage(err, 'localSeo:setup.loadFailed'));
+  }
+});
+
+export const searchLocalBusiness = createAsyncThunk<
+  LocalBusinessSetup,
+  { siteId: string; query: string },
+  { rejectValue: string }
+>('localSeo/searchLocalBusiness', async ({ siteId, query }, { rejectWithValue }) => {
+  try {
+    return await searchLocalBusinessRequest(siteId, query);
+  } catch (err) {
+    return rejectWithValue(localSeoErrorMessage(err, 'localSeo:setup.searchFailed'));
+  }
+});
+
+export const selectLocalBusiness = createAsyncThunk<
+  LocalBusinessSetup,
+  { siteId: string; candidateId: string },
+  { rejectValue: string }
+>('localSeo/selectLocalBusiness', async ({ siteId, candidateId }, { rejectWithValue }) => {
+  try {
+    return await selectLocalBusinessRequest(siteId, candidateId);
+  } catch (err) {
+    return rejectWithValue(localSeoErrorMessage(err, 'localSeo:setup.selectFailed'));
   }
 });

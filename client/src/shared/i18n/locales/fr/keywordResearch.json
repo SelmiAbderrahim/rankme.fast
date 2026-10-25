@@ -311,7 +311,13 @@
     "shown_two": "{{loaded}} sur {{count}} recherches enregistrées affichées",
     "shown_few": "{{loaded}} sur {{count}} recherches enregistrées affichées",
     "shown_many": "{{loaded}} sur {{count}} recherches enregistrées affichées",
-    "shown_other": "{{loaded}} sur {{count}} recherches enregistrées affichées"
+    "shown_other": "{{loaded}} sur {{count}} recherches enregistrées affichées",
+    "viewResults": "Voir les résultats",
+    "viewResultsFor": "Voir les résultats enregistrés pour {{query}}",
+    "viewResultsHint": "« Voir les résultats » ouvre ce qui a été enregistré lors de cette recherche. Le fournisseur de données n’est pas sollicité à nouveau.",
+    "searchAgainFor": "Relancer la recherche pour {{query}}",
+    "searchAgainHint": "« Relancer la recherche » refait la recherche auprès du fournisseur de données, comme une nouvelle recherche.",
+    "emptySite": "Aucune recherche pour ce site pour le moment. Les recherches lancées ici apparaîtront dans cette liste."
   },
   "previewFailed": "Impossible de charger l'aperçu du coût.",
   "tabs": {
@@ -535,5 +541,17 @@
   "selectionCount_two": "{{count}} sur {{max}} sélectionnés",
   "selectionCount_few": "{{count}} sur {{max}} sélectionnés",
   "selectionCount_many": "{{count}} sur {{max}} sélectionnés",
-  "selectionCount_other": "{{count}} sur {{max}} sélectionnés"
+  "selectionCount_other": "{{count}} sur {{max}} sélectionnés",
+  "recentDescriptionSite": "Recherches de mots-clés lancées pour ce site, des plus récentes aux plus anciennes.",
+  "stored": {
+    "title": "Résultats enregistrés",
+    "freeNote": "Ouvert à partir de données enregistrées. Rien n’a été recherché à nouveau.",
+    "close": "Fermer les résultats enregistrés",
+    "expired": "Les résultats enregistrés de cette recherche ne sont plus disponibles. Relancez la recherche pour les obtenir à nouveau.",
+    "unsupported": "Ce type de recherche n’a pas de vue enregistrée ici. Ouvrez son onglet pour la consulter.",
+    "storedOn": "Enregistré le {{date}}",
+    "partial": "Mots-clés encore enregistrés : {{stored}} sur {{requested}}",
+    "searchAgain": "Relancer la recherche",
+    "loadFailed": "Impossible de charger les résultats enregistrés."
+  }
 }

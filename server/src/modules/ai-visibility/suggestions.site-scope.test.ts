@@ -1,6 +1,5 @@
 /**
- * QA round 2, P0-1 — AI Visibility suggestions for one site came from another
- * site's data ("best paystub generator" on a Saudi rewards site, plus the raw
+ * AI Visibility suggestions for one site came from another site's data ("best paystub generator" on a Saudi rewards site, plus the raw
  * homepage title "best welcome - example rewards").
  *
  * Current-tree root cause: generation already reads only account+site scoped
@@ -12,7 +11,6 @@
 import { afterAll, beforeAll, beforeEach, describe, expect, it, vi } from 'vitest';
 import { randomUUID } from 'node:crypto';
 import mongoose from 'mongoose';
-import { env } from '../../config/env.js';
 import { clearCollections, startMemoryMongo, stopMemoryMongo } from '../../shared/testing/mongo.js';
 import {
   getTestDb,
@@ -39,17 +37,12 @@ import { keywordLanguage, resolveSuggestionLanguages } from './suggestion-langua
 const ENGLISH = ['rewards app', 'rewards offers', 'rewards coupons', 'best rewards', 'rewards card'];
 const ARABIC = ['مكافآت', 'تطبيق مكافآت', 'عروض مكافآت', 'كوبونات مكافآت', 'نقاط مكافآت'];
 
-let previousPaymentProvider: string;
-
 beforeAll(async () => {
   await startMemoryMongo();
   await startTestPostgres();
-  previousPaymentProvider = env.PAYMENT_PROVIDER;
-  (env as { PAYMENT_PROVIDER: string }).PAYMENT_PROVIDER = 'none';
 });
 
 afterAll(async () => {
-  (env as { PAYMENT_PROVIDER: string }).PAYMENT_PROVIDER = previousPaymentProvider;
   await stopTestPostgres();
   await stopMemoryMongo();
 });

@@ -167,13 +167,12 @@
     "form": {
       "ownDomainLabel": "Your domain",
       "competitorsLabel": "Competitor domains",
-      "competitorsHelp": "Enter {{min}} to {{max}} domains, one per line or separated by commas. Duplicates are removed.",
+      "competitorsHelp": "Enter {{min}} to {{max}} domains. Press Enter or type a comma after each one. Duplicates are removed.",
       "prefilled": "Filled in from your confirmed competitors. Edit the list as needed.",
       "errors": {
         "ownAmongCompetitors": "Your own domain cannot be a competitor.",
         "duplicate": "Duplicate competitors were removed.",
         "atLeastOne": "Enter at least one competitor domain.",
-        "tooMany": "Enter no more than three competitor domains.",
         "invalid": "Enter valid domain names."
       }
     },

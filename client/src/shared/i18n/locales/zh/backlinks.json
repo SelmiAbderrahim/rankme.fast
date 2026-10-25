@@ -167,13 +167,12 @@
     "form": {
       "ownDomainLabel": "您的域名",
       "competitorsLabel": "竞争对手域名",
-      "competitorsHelp": "输入 {{min}} 到 {{max}} 个域名，每行一个或用逗号分隔。重复项会被移除。",
+      "competitorsHelp": "输入 {{min}} 到 {{max}} 个域名，每输入一个后按回车键或输入逗号。重复项会被移除。",
       "prefilled": "已根据您确认的竞争对手填写。可按需修改列表。",
       "errors": {
         "ownAmongCompetitors": "不能将您自己的域名设为竞争对手。",
         "duplicate": "已移除重复的竞争对手。",
         "atLeastOne": "请至少输入一个竞争对手域名。",
-        "tooMany": "最多输入三个竞争对手域名。",
         "invalid": "请输入有效的域名。"
       }
     },

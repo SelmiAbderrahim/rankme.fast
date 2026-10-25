@@ -13,6 +13,7 @@ import { Button } from '@shared/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@shared/ui/card';
 import { Separator } from '@shared/ui/separator';
 import { CodeFixPromptButton } from '@shared/components/CodeFixPromptButton';
+import { formatAbsoluteDate } from '@shared/lib/datetime';
 import type { InternalLinkSuggestion } from '../types';
 
 interface SuggestionListProps {
@@ -116,7 +117,9 @@ export const SuggestionList = ({ suggestions }: SuggestionListProps) => {
                     </div>
                     <div>
                       <dt className="text-muted-foreground text-xs">{t('evidence.inventoryDate')}</dt>
-                      <dd className="break-all font-medium">{suggestion.inventoryDate}</dd>
+                      <dd className="font-medium">
+                        {formatAbsoluteDate(suggestion.inventoryDate, i18n.language)}
+                      </dd>
                     </div>
                   </dl>
                   <div className="grid gap-4 sm:grid-cols-2">

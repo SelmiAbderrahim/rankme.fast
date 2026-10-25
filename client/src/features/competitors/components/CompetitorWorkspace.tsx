@@ -1,6 +1,6 @@
 import { isolateText } from '@shared/lib/bidi';
 import { Bdi } from '@shared/components/Bdi';
-import { Suspense, lazy, useEffect, useId, useState } from 'react';
+import { Suspense, lazy, useEffect, useId, useState, type FormEvent } from 'react';
 import { Link, useSearchParams } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import {
@@ -16,6 +16,7 @@ import { toast } from 'sonner';
 import { ReportExportControl } from '@features/report-export';
 import { useAppDispatch, useAppSelector } from '@shared/hooks/redux';
 import { formatCountryFromLocation, languageName } from '@shared/markets';
+import { isSameRegistrableDomain } from '@shared/lib/registrableDomain';
 import { safeExternalHref } from '@shared/security';
 import {
   AlertDialog,
@@ -41,6 +42,7 @@ import { Skeleton } from '@shared/ui/skeleton';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@shared/ui/tabs';
 import { Table, TableBody, TableCaption, TableCell, TableHead, TableHeader, TableRow } from '@shared/ui/table';
 import {
+  clearIntelligenceActionError,
   clearLandscapePreview,
   toggleLandscapeProfile,
 } from '../store/slice';
@@ -102,6 +104,35 @@ function key(scope: string): string {
   return `${scope}-${Date.now()}-${Math.random().toString(36).slice(2)}`;
 }
 
+// A scheme is `name:` not followed by a port digit, so `example.com:8443`
+// still reads as a bare hostname while `mailto:` or `http://` do not.
+const URL_SCHEME_RE = /^[a-z][a-z\d+.-]*:(?!\d)/i;
+
+/**
+ * Accept a bare hostname the way Traffic Insights does: `example.com` or
+ * `example.com/pricing` becomes `https://example.com…`. Anything that already
+ * names a scheme is left alone, so `http://` and garbage still fail
+ * `isFullWebUrl` below.
+ */
+function normalizeManualCompetitorUrl(value: string): string {
+  const trimmed = value.trim();
+  if (!trimmed || URL_SCHEME_RE.test(trimmed)) return trimmed;
+  return `https://${trimmed.replace(/^\/+/, '')}`;
+}
+
+/**
+ * Mirrors the server contract for a manual competitor: a parseable absolute
+ * https URL on a dotted public hostname (the server rejects anything else).
+ */
+function isFullWebUrl(value: string): boolean {
+  try {
+    const url = new URL(value);
+    return url.protocol === 'https:' && url.hostname.includes('.');
+  } catch {
+    return false;
+  }
+}
+
 function date(value: string | null, locale: string): string {
   return value ? new Intl.DateTimeFormat(locale, { dateStyle: 'medium' }).format(new Date(value)) : '—';
 }
@@ -123,9 +154,11 @@ function ViewFallbackContent() {
 
 export interface CompetitorWorkspaceProps {
   siteId: string;
+  /** The workspace site's own domain, so the manual form can refuse it before submitting. */
+  siteDomain?: string | undefined;
 }
 
-export function CompetitorWorkspace({ siteId }: CompetitorWorkspaceProps) {
+export function CompetitorWorkspace({ siteId, siteDomain }: CompetitorWorkspaceProps) {
   const { t } = useTranslation('competitors');
   const dispatch = useAppDispatch();
   const intelligence = useAppSelector(selectCompetitorIntelligence);
@@ -172,7 +205,7 @@ export function CompetitorWorkspace({ siteId }: CompetitorWorkspaceProps) {
           ))}
         </TabsList>
         <TabsContent value="overview" className="mt-4">
-          <OverviewView siteId={siteId} />
+          <OverviewView siteId={siteId} siteDomain={siteDomain} />
         </TabsContent>
         <TabsContent value="keywords" className="mt-4">
           <KeywordsView siteId={siteId} />
@@ -200,14 +233,23 @@ export function CompetitorWorkspace({ siteId }: CompetitorWorkspaceProps) {
   );
 }
 
-function OverviewView({ siteId }: { siteId: string }) {
+function OverviewView({ siteId, siteDomain }: { siteId: string; siteDomain: string | undefined }) {
   const { t, i18n } = useTranslation('competitors');
   const dispatch = useAppDispatch();
   const state = useAppSelector(selectCompetitorIntelligence);
   const [manualUrl, setManualUrl] = useState('');
+  const [manualError, setManualError] = useState('');
   const manualId = useId();
+  const manualErrorId = `${manualId}-error`;
   const active = state.profiles.filter((profile) => profile.status === 'active');
   const archived = state.profiles.filter((profile) => profile.status === 'archived');
+  // A validation or mutation message describes the last attempt only, so any
+  // later portfolio change (restore, archive or leaving the view) clears it.
+  const clearMessages = () => {
+    setManualError('');
+    dispatch(clearIntelligenceActionError());
+  };
+  useEffect(() => () => void dispatch(clearIntelligenceActionError()), [dispatch]);
 
   const add = async (url: string, source: 'suggested' | 'manual') => {
     const result = await dispatch(
@@ -220,7 +262,26 @@ function OverviewView({ siteId }: { siteId: string }) {
           ? t('intelligence.portfolio.duplicate')
           : t('intelligence.portfolio.confirmed'),
       );
+    } else if (source === 'manual' && result.meta.urlError) {
+      setManualError(result.meta.urlError);
     }
+  };
+
+  const submitManual = (event: FormEvent<HTMLFormElement>) => {
+    event.preventDefault();
+    const url = normalizeManualCompetitorUrl(manualUrl);
+    if (!isFullWebUrl(url)) {
+      setManualError(t('intelligence.portfolio.manualInvalid'));
+      return;
+    }
+    if (siteDomain && isSameRegistrableDomain(url, siteDomain)) {
+      setManualError(t('intelligence.portfolio.ownDomain'));
+      return;
+    }
+    setManualError('');
+    // Show the https:// form that is actually submitted.
+    setManualUrl(url);
+    void add(url, 'manual');
   };
 
   return (
@@ -233,29 +294,44 @@ function OverviewView({ siteId }: { siteId: string }) {
           </CardDescription>
         </CardHeader>
         <CardContent className="flex flex-col gap-4">
-          <div className="flex flex-col gap-2">
+          <form
+            className="flex flex-col gap-2"
+            noValidate
+            onSubmit={submitManual}
+            data-testid="competitor-manual-form"
+          >
             <Label htmlFor={manualId}>{t('intelligence.portfolio.manualLabel')}</Label>
             <div className="flex flex-col gap-2 sm:flex-row">
               <Input
                 id={manualId}
                 type="url"
+                inputMode="url"
                 value={manualUrl}
-                onChange={(event) => setManualUrl(event.target.value)}
+                onChange={(event) => {
+                  setManualUrl(event.target.value);
+                  setManualError('');
+                }}
                 placeholder={t('intelligence.portfolio.manualPlaceholder')}
+                aria-invalid={manualError ? true : undefined}
+                aria-describedby={manualError ? manualErrorId : undefined}
               />
               <Button
-                type="button"
+                type="submit"
                 variant="outline"
                 disabled={!manualUrl.trim() || active.length >= COMPETITOR_LIMIT}
-                loading={state.mutationKey === manualUrl.trim()}
+                loading={state.mutationKey === normalizeManualCompetitorUrl(manualUrl)}
                 loadingLabel={t('intelligence.portfolio.adding')}
-                onClick={() => void add(manualUrl.trim(), 'manual')}
               >
                 <Plus data-icon="inline-start" />
                 {t('intelligence.portfolio.add')}
               </Button>
             </div>
-          </div>
+            {manualError ? (
+              <p id={manualErrorId} role="alert" className="text-destructive text-sm">
+                {manualError}
+              </p>
+            ) : null}
+          </form>
           {state.profilesError || state.mutationError ? (
             <Alert variant="destructive" role="alert">
               <AlertDescription>{state.profilesError || state.mutationError}</AlertDescription>
@@ -264,7 +340,7 @@ function OverviewView({ siteId }: { siteId: string }) {
           {state.profilesLoading && !state.profilesLoaded ? (
             <ViewFallback />
           ) : (
-            <PortfolioTable siteId={siteId} active={active} archived={archived} />
+            <PortfolioTable siteId={siteId} active={active} archived={archived} onChange={clearMessages} />
           )}
         </CardContent>
       </Card>
@@ -358,8 +434,8 @@ function OverviewView({ siteId }: { siteId: string }) {
         <CardContent>
           <p className="text-muted-foreground text-sm">
             {t('intelligence.technology.summary', {
-              manual: state.profiles.filter((profile) => profile.source === 'manual').length,
-              suggested: state.profiles.filter((profile) => profile.source === 'suggested').length,
+              manual: active.filter((profile) => profile.source === 'manual').length,
+              suggested: active.filter((profile) => profile.source === 'suggested').length,
             })}
           </p>
         </CardContent>
@@ -372,10 +448,12 @@ function PortfolioTable({
   siteId,
   active,
   archived,
+  onChange,
 }: {
   siteId: string;
   active: CompetitorProfile[];
   archived: CompetitorProfile[];
+  onChange: () => void;
 }) {
   const { t, i18n } = useTranslation('competitors');
   const dispatch = useAppDispatch();
@@ -425,7 +503,8 @@ function PortfolioTable({
                   variant="outline"
                   loading={state.mutationKey === profile.id}
                   loadingLabel={t(`intelligence.portfolio.${action}Pending`)}
-                  onClick={() =>
+                  onClick={() => {
+                    onChange();
                     void dispatch(
                       mutatePortfolioCompetitor({
                         siteId,
@@ -433,8 +512,8 @@ function PortfolioTable({
                         action,
                         idempotencyKey: key(action),
                       }),
-                    )
-                  }
+                    );
+                  }}
                 >
                   {action === 'archive' ? (
                     <Archive data-icon="inline-start" />

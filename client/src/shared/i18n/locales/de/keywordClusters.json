@@ -1,6 +1,5 @@
 {
-  "eyebrow": "Gruppierung aus gespeicherten Beobachtungen",
-  "title": "Keyword-Clustering nach SERP-Überschneidung",
+  "title": "SERP-Überschneidungsgruppen",
   "subtitle": "Gruppieren Sie verfolgte Keywords, die auf Google dieselben Seiten zurückgeben. Jede Gruppierung wird aus bereits bezahlten Positionsprüfungen berechnet — es wird keine neue Suche ausgeführt.",
   "site": {
     "ranksLink": "Positionsverfolgung öffnen"
@@ -22,14 +21,11 @@
   },
   "newRun": {
     "title": "Clustering-Lauf vorbereiten",
-    "description": "Sehen Sie die qualifizierten Keywords und Ihr Kontingent, bevor Sie einen Lauf verbrauchen.",
+    "description": "Sehen Sie die qualifizierten Keywords, bevor der Lauf startet.",
     "storedOnly": "Clustering liest ausschließlich gespeicherte Ergebnisse. Es wird keine Suche an einen Anbieter gesendet.",
-    "unitLabel": "Kontingent",
-    "unitValue": "{{count}} Clustering-Lauf",
     "scopeLabel": "Bereite Keywords",
     "scopeValue_one": "{{count}} verfolgtes Keyword qualifiziert sich",
     "method": "Zwei Keywords werden gruppiert, wenn sie mindestens {{shared}} ihrer Top-{{window}}-Ergebnisse teilen, aus einer Positionsprüfung der letzten {{days}} Tage.",
-    "remaining": "Vor diesem Lauf verbleiben {{count}} Läufe.",
     "labelingIncluded": "Optionale KI-Gruppenbezeichnungen sind in diesem Lauf enthalten und ändern niemals die Cluster-Zugehörigkeit.",
     "preview": "Lauf vorschauen",
     "previewing": "Gespeicherte Ergebnisse werden geprüft…",
@@ -55,7 +51,7 @@
     },
     "notEnoughKeywords": {
       "title": "Nicht genügend aktuelle Positionsprüfungen",
-      "body": "Mindestens zwei verfolgte Keywords brauchen eine Prüfung aus den letzten sieben Tagen. Es wurde kein Lauf verbraucht."
+      "body": "Weniger als zwei verfolgte Keywords haben eine verwertbare Ranking-Prüfung aus den letzten sieben Tagen. Es wurde kein Lauf verbraucht."
     },
     "cap": {
       "title": "Monatliches Kontingent erreicht",
@@ -80,6 +76,11 @@
     "running": {
       "title": "Keywords werden gruppiert",
       "body": "Der Worker vergleicht gespeicherte Ergebnisse und benennt die Gruppen. Diese Ansicht aktualisiert sich automatisch."
+    },
+    "keywordsCta": "Keywords verfolgen",
+    "noTrackedKeywords": {
+      "title": "Verfolgen Sie zuerst Keywords",
+      "body": "Das Clustering gruppiert die Google-Keywords, die Sie für diese Website verfolgen. Fügen Sie auf dem Tab „Keywords“ Keywords hinzu, führen Sie eine Positionsprüfung aus und sehen Sie sich dann einen Lauf an."
     }
   },
   "status": {
@@ -89,19 +90,23 @@
     "failed": "Fehlgeschlagen"
   },
   "runs": {
-    "summary": "{{clusters}} Gruppen aus {{keywords}} Keywords",
+    "summary": "Gruppen: {{clusters}} · Ausgangskeywords: {{keywords}}",
     "requestedAt": "Angefordert am {{date}}",
     "open": "Lauf öffnen"
   },
   "blocked": {
     "title_one": "{{count}} Keyword konnte nicht teilnehmen",
-    "body": "Diese verfolgten Keywords haben noch kein verwertbares gespeichertes Ergebnis. Führen Sie eine Positionsprüfung aus, dann qualifizieren sie sich für den nächsten Lauf.",
+    "body": "Diese verfolgten Keywords bleiben bei diesem Lauf außen vor. Führen Sie eine Ranking-Prüfung aus, dann sind sie beim nächsten Lauf dabei.",
     "more_one": "und {{count}} weitere",
     "observedAt": "zuletzt geprüft {{date}}",
     "reason": {
       "missing": "Nie geprüft",
       "stale": "Prüfung zu alt",
-      "empty": "Keine gespeicherten Ergebnisse"
+      "empty": "Keine gespeicherten Ergebnisse",
+      "check_too_old": "Prüfung zu alt",
+      "no_serp_snapshot": "Vollständige Ergebnisseite nicht gespeichert",
+      "never_checked": "Noch nie geprüft",
+      "failed_last_check": "Letzte Prüfung fehlgeschlagen"
     },
     "more_zero": "und {{count}} weitere",
     "more_two": "und {{count}} weitere",
@@ -189,5 +194,9 @@
     "minimum_other": "Für das Clustering braucht es mindestens {{count}} bereite Keywords.",
     "title": "Nicht genug Keywords bereit",
     "snapshotNote": "Einige aktuelle Prüfungen haben nur die Position gespeichert, nicht die vollständige Ergebnisseite. Für das Clustering braucht es eine Ranking-Prüfung, die die vollständige Ergebnisseite speichert."
+  },
+  "crossLink": {
+    "body": "Sie möchten Themen aus recherchierten Keywords, nicht nur aus den verfolgten?",
+    "cta": "KI-Keyword-Themen öffnen"
   }
 }

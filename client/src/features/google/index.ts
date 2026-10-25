@@ -69,10 +69,7 @@ export {
   rangeDays,
   useGoogleRange,
 } from './lib/range';
-export { useGscConnected } from './lib/useGscConnected';
-export type { GscConnectedState } from './lib/useGscConnected';
 export { GA4_SCOPE, GSC_SCOPE, hasGa4Scope, hasGscScope } from './lib/googleScopes';
-export { GscRequiredNotice } from './components/GscRequiredNotice';
 export { GoogleConnectionCard } from './components/GoogleConnectionCard';
 export { GoogleReadinessNotice, GoogleReadinessText } from './components/GoogleReadinessNotice';
 export type { GoogleReadinessStatus, SiteGoogleReadiness } from './types';

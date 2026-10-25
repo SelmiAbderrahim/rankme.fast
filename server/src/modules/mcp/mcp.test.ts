@@ -277,7 +277,7 @@ describe('MCP schemas and holders', () => {
     expect(startAuditInputSchema.parse({ siteId: SITE_ID, pageCap: '10' }).pageCap).toBe(10);
     expect(() => startAuditInputSchema.parse({ siteId: SITE_ID, pageCap: 0 })).toThrow();
     expect(_uuidLoose.parse('12345678-1234-1234-1234-123456789abc')).toHaveLength(36);
-    expect(Object.keys(MCP_INPUT_SCHEMAS)).toHaveLength(10);
+    expect(Object.keys(MCP_INPUT_SCHEMAS)).toHaveLength(MCP_TOOL_NAMES.length);
     expect(mcpRouter.stack).toHaveLength(3);
   });
 
@@ -1005,7 +1005,7 @@ describe('MCP HTTP controller', () => {
     );
     const server = mocks.serverInstances[0]!;
     const transport = mocks.transportInstances[0]!;
-    expect([...server.tools]).toHaveLength(10);
+    expect([...server.tools]).toHaveLength(MCP_TOOL_NAMES.length);
     expect(server.connect).toHaveBeenCalledWith(transport);
     expect(transport.handleRequest).toHaveBeenCalled();
     expect(transport.close).toHaveBeenCalled();
@@ -1127,7 +1127,7 @@ describe('MCP HTTP controller', () => {
       output.response,
     );
     const server = mocks.serverInstances[0]!;
-    expect([...server.tools]).toHaveLength(9);
+    expect([...server.tools]).toHaveLength(MCP_TOOL_NAMES.length - 1);
     expect(server.tools.has('start_audit')).toBe(false);
     expect(server.tools.has('list_sites')).toBe(true);
   });

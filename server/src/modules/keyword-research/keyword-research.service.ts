@@ -215,6 +215,16 @@ export async function getMetricsCached(input: {
     }
     return results.filter((r): r is KeywordMetricPayload => r !== null);
 }
+/**
+ * Vendors often echo the seed as its own first "related" row. The seed is
+ * already on screen, so it is dropped from related and ideas lists (compared
+ * with the same normalisation as the cache key).
+ */
+function withoutSeed<T extends {
+    keyword: string;
+}>(rows: readonly T[], seed: string): T[] {
+    return rows.filter((row) => normalizeCachePhrase(row.keyword) !== seed);
+}
 export async function getRelatedCached(input: {
     keyword: string;
     locationCode: number;
@@ -238,7 +248,7 @@ export async function getRelatedCached(input: {
     if (hit && hit.relatedKeywords) {
         return {
             keyword: phrase,
-            related: hit.relatedKeywords.map(cachedRelatedToPayload),
+            related: withoutSeed(hit.relatedKeywords, phrase).map(cachedRelatedToPayload),
             cached: true,
         };
     }
@@ -274,11 +284,11 @@ export async function getRelatedCached(input: {
     });
     return {
         keyword: phrase,
-        related: cachePayload.map(cachedRelatedToPayload),
+        related: withoutSeed(cachePayload, phrase).map(cachedRelatedToPayload),
         cached: false,
     };
 }
-function cachedRelatedToPayload(row: CachedRelatedKeyword): RelatedKeywordPayload {
+export function cachedRelatedToPayload(row: CachedRelatedKeyword): RelatedKeywordPayload {
     return {
         keyword: row.keyword,
         searchVolume: row.searchVolume,
@@ -409,7 +419,7 @@ export async function getIdeasCached(input: {
     if (hit) {
         return {
             seed: phrase,
-            ideas: hit.ideas.map(cachedRelatedToPayload),
+            ideas: withoutSeed(hit.ideas, phrase).map(cachedRelatedToPayload),
             cached: true,
         };
     }
@@ -445,7 +455,7 @@ export async function getIdeasCached(input: {
     });
     return {
         seed: phrase,
-        ideas: cachePayload.map(cachedRelatedToPayload),
+        ideas: withoutSeed(cachePayload, phrase).map(cachedRelatedToPayload),
         cached: false,
     };
 }

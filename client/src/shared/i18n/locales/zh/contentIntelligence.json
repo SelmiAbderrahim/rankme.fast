@@ -85,7 +85,7 @@
     "consentRequired": "需要同意。",
     "reviewedSources": { "title": "已审核的比较页面", "description": "这些公开排名页面来自您批准的匹配。是否开始分析仍由您确认。" },
     "included": {
-      "title": "一次积分包含",
+      "title": "此分析包含的内容",
       "owned": "一个自有页面",
       "competitors": "最多三个公开自然比较页面",
       "scorecard": "一张评分卡",
@@ -104,7 +104,9 @@
     "invalidUrl": "请输入有效 URL。",
     "urlRequired": "请输入或选择页面 URL。",
     "keywordRequired": "请输入或选择目标关键词。",
-    "keywordTooLong": "目标关键词不得超过 200 个字符。",
+    "keywordTooLong": "请使用不超过 {{max}} 个字符。",
+    "keywordList": "请输入一个搜索查询，而不是列表。请为每个关键词分别开始一次分析。",
+    "keywordCounter": "{{length}}/{{max}} 个字符",
     "offOrigin": "URL 必须匹配你的站点来源。",
     "urlUnsafe": "URL 不能公开访问。",
     "urlNotOwned": "该 URL 不属于你拥有的站点。",
@@ -117,6 +119,7 @@
       "step": "第 {{current}} 步，共 {{total}} 步",
       "percentComplete": "已完成 {{percent}}%",
       "autoRefresh": "分析运行期间，此页面会自动刷新。",
+      "stillRunning": "仍在运行。您可以离开此页面，稍后回来查看，结果会保留在这里。",
       "errorTitle": "此分析提前停止",
       "errorGeneric": "分析在完成前已停止。"
     },
@@ -133,6 +136,57 @@
       "cancelled": "此分析已取消。",
       "unexpected": "分析因意外错误而停止。"
     },
+    "failureReason": {
+      "robots_blocked": "您网站的 robots.txt 禁止我们的读取程序访问此页面。",
+      "access_denied": "您的网站拒绝访问此页面，例如由于机器人防护或登录页面。",
+      "http_error": "您的页面返回了 HTTP 状态码 {{status}}，而不是页面内容。",
+      "timeout": "您的页面加载时间过长。",
+      "temporarily_unavailable": "这次无法加载该页面。",
+      "empty_content": "页面上没有找到可读文本。页面可能为空，或只通过 JavaScript 加载内容。",
+      "too_large": "页面太大，无法一次读取。",
+      "unsafe_url": "页面地址或其重定向到的页面无法公开访问。",
+      "unreadable": "页面返回的格式我们无法读取。",
+      "redirect_loop": "你的页面的重定向在原地打转。",
+      "redirect_limit": "你的页面重定向超过五次，因此我们停止跟随。",
+      "unsafe_redirect": "你的页面重定向到了无法公开访问的地址。",
+      "non_html": "此地址提供的是 {{type}}，不是网页。"
+    },
+    "failureReasonUnknown": "我们没有记录具体原因。常见原因包括 robots.txt 屏蔽、机器人防护或登录墙、HTTP 错误、响应过慢,或文本需要运行 JavaScript 后才出现。请确认页面能在无痕浏览窗口中打开,然后重试。",
+    "failureCode": {
+      "provider_unavailable": "我们的内容服务暂时不可用。",
+      "page_unreachable": "我们无法读取您的页面。",
+      "page_blocked": "您的页面阻止了我们的读取程序，例如通过 robots.txt、机器人防护或登录页面。",
+      "page_too_large": "您的页面过大，无法一次读完。",
+      "timeout": "您的页面或我们的内容服务响应超时。",
+      "internal": "我们这边出了问题。"
+    },
+    "failureHint": {
+      "robots_blocked": "在 robots.txt 中允许爬虫读取此页面，然后重试。",
+      "access_denied": "允许自动访问此页面或将其设为公开，然后重试。",
+      "http_error": "检查网址是否正确，以及页面能否在浏览器无痕窗口中打开，然后重试。",
+      "timeout": "这通常是暂时的。请重试，并确认页面加载速度较快。",
+      "temporarily_unavailable": "这通常是暂时的。请几分钟后重试。",
+      "empty_content": "确保正文包含在页面 HTML 中(服务端渲染)，然后重试。",
+      "too_large": "尝试较短的页面，或将很长的内容拆分到多个页面。",
+      "unsafe_url": "使用页面的公开地址并检查其重定向，然后重试。",
+      "unreadable": "请重试。如果仍然失败，请检查页面能否在浏览器中正常打开。",
+      "redirect_loop": "修复重定向，让它最终停在同一个页面上，然后重试。",
+      "redirect_limit": "让地址直接指向最终页面，然后重试。",
+      "unsafe_redirect": "改为重定向到公开地址，然后重试。",
+      "non_html": "请使用页面本身的地址，而不是文件地址，然后重试。"
+    },
+    "failureEvidence": {
+      "redirectPath": "重定向路径：{{path}}"
+    },
+    "failedNoOutput": "此次分析在生成任何内容之前就已中止，因此没有可显示的内容机会、简报或草稿。",
+    "retryDialog": {
+      "title": "要重新尝试此分析吗？",
+      "description": "这将针对同一页面和关键词开始一次新的分析。",
+      "confirm": "重试",
+      "back": "取消",
+      "loading": "正在加载此分析的详情…",
+      "loadFailed": "无法加载此分析的详情。"
+    },
     "back": "返回分析",
     "meta": {
       "page": "页面",
@@ -140,6 +194,7 @@
       "locale": "语言",
       "requested": "请求时间",
       "completed": "完成时间",
+      "readAt": "经重定向后在 {{url}} 读取",
       "cost": "分析成本:{{units}} 积分"
     },
     "explanation": "这是内容就绪度对比,不是搜索引擎评分。",
@@ -218,7 +273,9 @@
     },
     "actions": {
       "cancel": "取消分析",
-      "regenerate": "重新生成(消耗一个积分)"
+      "regenerate": "重新生成",
+      "retry": "重试",
+      "editUrl": "修改网址"
     }
   },
   "confirm": {

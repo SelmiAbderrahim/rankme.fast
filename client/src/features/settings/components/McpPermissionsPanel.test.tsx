@@ -102,7 +102,7 @@ describe('McpPermissionsPanel', () => {
     renderPanel();
     await userEvent.click(screen.getByRole('switch', { name: 'List sites' }));
     await userEvent.click(
-      screen.getByRole('switch', { name: 'Allow tools that use plan allowance' }),
+      screen.getByRole('switch', { name: 'Allow tools that spend vendor budget' }),
     );
     await userEvent.click(screen.getByRole('checkbox', { name: 'Allow all sites' }));
     await userEvent.click(screen.getByRole('button', { name: 'Save permissions' }));

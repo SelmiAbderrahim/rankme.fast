@@ -5,7 +5,7 @@ import { beforeEach, describe, expect, it } from 'vitest';
 import type { Site } from '@features/sites';
 import { changeLanguage, initI18n } from '@shared/i18n';
 import { createPermissiveMcpSettings } from '../mcpScopes';
-import type { McpPermissionSettings } from '../types';
+import { MCP_TOOL_NAMES, type McpPermissionSettings } from '../types';
 import { McpScopeFields } from './McpScopeFields';
 
 const sites: Site[] = [
@@ -62,10 +62,10 @@ beforeEach(async () => {
 describe('McpScopeFields', () => {
   it('renders every account tool switch and updates tool and spend permissions', async () => {
     render(<Harness />);
-    expect(screen.getAllByRole('switch')).toHaveLength(11);
+    expect(screen.getAllByRole('switch')).toHaveLength(MCP_TOOL_NAMES.length + 1);
     const listSites = screen.getByRole('switch', { name: 'List sites' });
     const spend = screen.getByRole('switch', {
-      name: 'Allow tools that use plan allowance',
+      name: 'Allow tools that spend vendor budget',
     });
     expect(listSites).toBeChecked();
     await userEvent.click(listSites);

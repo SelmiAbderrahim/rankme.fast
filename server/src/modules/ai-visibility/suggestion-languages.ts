@@ -1,6 +1,5 @@
 /**
- * Which languages a site's AI-visibility suggestions are written in (QA round
- * 2, P0-1): the site's default-market language, plus at most one more
+ * Which languages a site's AI-visibility suggestions are written in: the site's default-market language, plus at most one more
  * language that the site's own tracked keywords show it serves (a Saudi site
  * tracking Arabic and English phrases gets both). Never the viewer's
  * interface language just because of who is looking — that is only the

@@ -67,7 +67,7 @@ describe('GscGenerativeAppearanceCard', () => {
     expect(screen.queryByText('Nothing to export yet')).toBeNull();
   });
 
-  it('renders a connect prompt, not an error, when Search Console has no data (issue #7)', async () => {
+  it('renders a connect prompt, not an error, when Search Console has no data', async () => {
     (api.getGenerativeAppearance as ReturnType<typeof vi.fn>).mockResolvedValue({
       appearance: {
         status: 'unavailable',

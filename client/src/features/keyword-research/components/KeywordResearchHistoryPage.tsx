@@ -8,6 +8,7 @@
  *   - keyword-research-history-empty      empty state
  *   - keyword-research-history-table      results table
  *   - keyword-research-history-row-<id>   one per history entry
+ *   - keyword-research-history-view-<id>          saved-results link per row
  *   - keyword-research-history-search-again-<id>  prefill deep link per row
  *   - keyword-research-history-load-more  cursor pagination button
  *   - keyword-research-history-back       back link to /keyword-research
@@ -26,11 +27,12 @@ import { loadHistory } from '../store/thunks';
 import {
   selectHistory,
   selectHistoryCursor,
+  selectHistoryTotal,
   selectHistoryError,
   selectHistoryLoaded,
   selectHistoryLoading,
 } from '../store/selectors';
-import { buildSearchAgainUrl } from '../validation';
+import { buildSearchAgainUrl, buildViewResultsUrl } from '../validation';
 import { ResearchHistoryTable } from './ResearchHistoryTable';
 
 // Re-exported so existing imports (tests + external consumers) keep resolving
@@ -47,6 +49,7 @@ export const KeywordResearchHistoryPage = () => {
   const loaded = useAppSelector(selectHistoryLoaded);
   const error = useAppSelector(selectHistoryError);
   const cursor = useAppSelector(selectHistoryCursor);
+  const total = useAppSelector(selectHistoryTotal);
 
   useEffect(() => {
     // History is an un-metered Postgres read, so refetch page 1 on every mount —
@@ -109,8 +112,19 @@ export const KeywordResearchHistoryPage = () => {
         <ResearchHistoryTable
           items={items}
           onSearchAgain={(item) => navigate(buildSearchAgainUrl(item))}
+          onViewResults={(item) => navigate(buildViewResultsUrl(item.id))}
           testIdPrefix="keyword-research-history"
         />
+      ) : null}
+
+      {total !== null && items.length > 0 ? (
+        <p
+          className="text-muted-foreground text-sm"
+          aria-live="polite"
+          data-testid="keyword-research-history-count"
+        >
+          {t('keywordResearch:history.shown', { loaded: items.length, count: total })}
+        </p>
       ) : null}
 
       {cursor ? (

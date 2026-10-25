@@ -7,7 +7,7 @@
 import express, { type RequestHandler } from 'express';
 import request from 'supertest';
 import type { Queue } from 'bullmq';
-import { afterAll, afterEach, beforeAll, beforeEach, describe, expect, it, vi } from 'vitest';
+import { afterAll, beforeAll, beforeEach, describe, expect, it, vi } from 'vitest';
 
 const mocks = vi.hoisted(() => ({
   getAccountMcpSpec: vi.fn(async (): Promise<unknown> => null),
@@ -19,8 +19,7 @@ vi.mock('../mcp-permissions/index.js', () => ({
 
 import { env } from '../../config/env.js';
 import type { Db } from '../../db/client.js';
-import { subscriptions } from '../../db/schema/subscriptions.js';
-import { usageCounters } from '../../db/schema/usage-counters.js';
+import { vendorCache, vendorResponses } from '../../db/schema/vendor-cache.js';
 import { resolveEffectivePermissions } from '../../shared/mcp-permissions/index.js';
 import { bearerLanguage } from '../../shared/middleware/bearer-language.js';
 import { errorHandler } from '../../shared/middleware/error-handler.js';
@@ -106,16 +105,6 @@ function dailyRows() {
       position: 5,
     };
   });
-}
-
-function expectedWindow(days: number) {
-  const from = windowStart(ASOF, days);
-  const rows = dailyRows().filter((row) => row.keys[0]! >= from && row.keys[0]! <= ASOF);
-  return {
-    clicks: rows.reduce((sum, row) => sum + row.clicks, 0),
-    impressions: rows.reduce((sum, row) => sum + row.impressions, 0),
-    from,
-  };
 }
 
 interface SeedOptions {
@@ -251,10 +240,8 @@ interface ToolBody {
   endDate?: string;
   asOf?: string;
   timezone?: string;
-  totalsSource?: string;
   scopeNote: string;
   scopeNoteKey?: string;
-  requiredTier?: string;
   rowsAvailable?: number;
   truncated?: boolean;
   totals?: { clicks: number };
@@ -280,8 +267,11 @@ function expectToolError(result: McpToolResult, code: string): void {
   expect(structured(result).error.code).toBe(code);
 }
 
+/** Row counts of the vendor cache + archive: a stored read must not write either. */
 async function counters() {
-  return testDb().select().from(usageCounters);
+  const cache = await testDb().select().from(vendorCache);
+  const archive = await testDb().select().from(vendorResponses);
+  return `${cache.length}:${archive.length}`;
 }
 
 beforeAll(async () => {
@@ -312,34 +302,28 @@ beforeEach(async () => {
   setGa4SyncQueue({ add: queueAdd } as unknown as Queue);
   (env as { MCP_ENABLED: boolean }).MCP_ENABLED = true;
 });
-afterEach(() => {
-  (env as { PAYMENT_PROVIDER: string }).PAYMENT_PROVIDER = 'none';
-});
-
 describe('get_gsc_search_summary', () => {
-  it('answers "clicks and impressions in the last 28 days" from stored daily rows with explicit scope', async () => {
+  it('answers "clicks and impressions in the last 28 days" from the stored snapshot with explicit scope', async () => {
     const siteId = await seedSite();
     await seedGsc(siteId);
     const result = await toolGetGscSearchSummary({ siteId, range: '28d' }, ctx());
     const body = structured(result);
-    const expected = expectedWindow(28);
     expect(result.isError).toBeUndefined();
     expect(body).toMatchObject({
       status: 'ok',
       source: 'search_console',
       range: '28d',
-      startDate: expected.from,
+      startDate: windowStart(ASOF, 28),
       endDate: ASOF,
       asOf: ASOF,
       timezone: 'America/Los_Angeles',
-      totalsSource: 'date',
       scopeNoteKey: 'dimensionTotalsMayDiffer',
-      totals: { clicks: expected.clicks, impressions: expected.impressions },
+      totals: { clicks: 597, impressions: 3003 },
     });
     expect(typeof body.scopeNote).toBe('string');
     expect(body.scopeNote.length).toBeGreaterThan(0);
     expect(body.startDate).toBe('2026-09-03');
-    expect(body.previousPeriod).toMatchObject({ clicks: expect.any(Number) });
+    expect(body.previousPeriod).toBeNull();
     expect(body.dimensionTotals.query.rows).toBe(3);
     expect(body.topQueries).toHaveLength(3);
     expect(body.topPages[0]).toHaveProperty('url');
@@ -349,22 +333,20 @@ describe('get_gsc_search_summary', () => {
     expect(result.content[0]?.text).toBeTruthy();
   });
 
-  it('defaults to 28d and sums a different window for 7d; 90d has no previous period', async () => {
+  it('defaults to 28d and labels the 7d and 90d windows; 90d has no previous period', async () => {
     const siteId = await seedSite();
     await seedGsc(siteId);
     const byDefault = structured(await toolGetGscSearchSummary({ siteId }, ctx()));
     expect(byDefault.range).toBe('28d');
-    expect(byDefault.totals?.clicks).toBe(expectedWindow(28).clicks);
+    expect(byDefault.totals?.clicks).toBe(597);
 
     const week = structured(await toolGetGscSearchSummary({ siteId, range: '7d' }, ctx()));
-    expect(week.totals).toMatchObject({
-      clicks: expectedWindow(7).clicks,
-      impressions: expectedWindow(7).impressions,
-    });
+    expect(week.range).toBe('7d');
     expect(week.startDate).toBe(windowStart(ASOF, 7));
+    expect(week.dailySeries).toHaveLength(7);
 
     const quarter = structured(await toolGetGscSearchSummary({ siteId, range: '90d' }, ctx()));
-    expect(quarter.totals?.clicks).toBe(expectedWindow(90).clicks);
+    expect(quarter.startDate).toBe(windowStart(ASOF, 90));
     expect(quarter.previousPeriod).toBeNull();
   });
 
@@ -373,10 +355,10 @@ describe('get_gsc_search_summary', () => {
     await seedGsc(siteId, 'gen-1');
     const body = structured(await toolGetGscSearchSummary({ siteId }, ctx()));
     expect(body.status).toBe('ok');
-    expect(body.totals?.clicks).toBe(expectedWindow(28).clicks);
+    expect(body.totals?.clicks).toBe(597);
   });
 
-  it('falls back to query-row totals (with a stored previous period) when no daily rows exist', async () => {
+  it('reads query-row totals with a stored previous period when no daily rows exist', async () => {
     const siteId = await seedSite({ generation: null });
     const db = testDb();
     const rows = [{ keys: ['only query'], clicks: 7, impressions: 70, ctr: 0.1, position: 3 }];
@@ -384,7 +366,6 @@ describe('get_gsc_search_summary', () => {
     await upsertSearchAnalytics(db, { ...base, snapshotDate: ASOF });
     const noPrevious = structured(await toolGetGscSearchSummary({ siteId }, ctx()));
     expect(noPrevious).toMatchObject({
-      totalsSource: 'query',
       totals: { clicks: 7, impressions: 70 },
       previousPeriod: null,
     });
@@ -605,29 +586,6 @@ describe('get_ga4_summary', () => {
       reason: 'googleNotConnected',
     });
   });
-
-  it('answers locked (not an error) below Pro and works at Pro', async () => {
-    (env as { PAYMENT_PROVIDER: string }).PAYMENT_PROVIDER = 'polar';
-    const siteId = await seedSite({ ga4: true });
-    await seedGa4(siteId);
-    await testDb()
-      .insert(subscriptions)
-      .values({ accountId: ACCOUNT, tier: 'starter', status: 'active' });
-
-    const locked = await toolGetGa4Summary({ siteId }, ctx());
-    expect(locked.isError).toBeUndefined();
-    expect(structured(locked)).toMatchObject({
-      status: 'locked',
-      reason: 'featureLocked',
-      requiredTier: 'pro',
-    });
-    expect(structured(locked).totals).toBeUndefined();
-
-    await testDb()
-      .update(subscriptions)
-      .set({ tier: 'pro' });
-    expect(structured(await toolGetGa4Summary({ siteId }, ctx())).status).toBe('ok');
-  });
 });
 
 describe('isolation and permissions', () => {
@@ -684,7 +642,7 @@ describe('isolation and permissions', () => {
 });
 
 describe('no spend, no provider, no queue', () => {
-  it('leaves usage counters untouched and never calls Google or enqueues', async () => {
+  it('writes nothing to the vendor cache and never calls Google or enqueues', async () => {
     const siteId = await seedSite({ ga4: true });
     await seedGsc(siteId);
     await seedGa4(siteId);
@@ -745,7 +703,7 @@ describe('through the MCP transport', () => {
       range: '28d',
       startDate: '2026-09-03',
       endDate: ASOF,
-      totals: { clicks: expectedWindow(28).clicks },
+      totals: { clicks: 597 },
     });
   });
 

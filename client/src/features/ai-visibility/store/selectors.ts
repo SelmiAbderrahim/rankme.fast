@@ -28,8 +28,12 @@ export const selectAiVisibilityAddingAll = (state: RootState) => selectSlice(sta
 export const selectAiVisibilityRemovingId = (state: RootState) => selectSlice(state).removingId;
 export const selectAiVisibilitySuggestionsGeneratedAt = (state: RootState) =>
   selectSlice(state).suggestionsGeneratedAt;
+export const selectAiVisibilitySuggestionsEvidence = (state: RootState) =>
+  selectSlice(state).suggestionsEvidence;
 export const selectAiVisibilitySuggestionsOutputLocale = (state: RootState) =>
   selectSlice(state).suggestionsOutputLocale;
+export const selectAiVisibilitySuggestionsStale = (state: RootState): boolean =>
+  selectSlice(state).suggestionsStale === true;
 export const selectAiVisibilitySuggestionsGenerating = (state: RootState) =>
   selectSlice(state).suggestionsGenerating;
 export const selectAiVisibilitySuggestionsCooldownUntil = (state: RootState) =>

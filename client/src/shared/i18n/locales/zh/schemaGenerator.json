@@ -1,5 +1,5 @@
 {
-  "title": "结构化标记生成器",
+  "title": "结构化标记",
   "description": "用我们已经保存的页面事实生成 JSON-LD。不编造任何内容：没有事实支撑的字段会被省略，并说明原因。",
   "new": {
     "title": "生成标记",
@@ -41,13 +41,22 @@
     "crawledPages_two": "{{count}} 个已抓取页面",
     "crawledPages_few": "{{count}} 个已抓取页面",
     "crawledPages_many": "{{count}} 个已抓取页面",
-    "crawledPages_other": "{{count}} 个已抓取页面"
+    "crawledPages_other": "{{count}} 个已抓取页面",
+    "filterLabel": "查找页面",
+    "filterPlaceholder": "输入网址或标题的一部分",
+    "filterCount": "显示 {{shown}} / {{total}}",
+    "filterNoMatches": "没有与该搜索匹配的页面。",
+    "groupRoot": "顶级页面"
   },
   "type": {
     "legend": "schema.org 类型",
     "required": "必填：{{n}}",
     "recommended": "建议：{{n}}",
-    "alreadyDeclared": "该页面已经声明了此类型。"
+    "alreadyDeclared": "该页面已经声明了此类型。",
+    "note": {
+      "FAQPage": "Google 只为知名的政府和健康类网站在搜索结果中显示常见问题解答。标记本身仍然有效。",
+      "HowTo": "Google 已不再在搜索结果中显示 HowTo 步骤。标记本身仍然有效。"
+    }
   },
   "preview": {
     "title": "本次扣费",
@@ -69,14 +78,14 @@
     "failedTitle": "未生成任何内容",
     "failedProvider": "模型没有响应，因此没有保留标记。",
     "failedRejected": "模型给出的每个字段都未通过事实核对，我们只保留了可证实的部分。",
-    "refunded": "额度已退回。",
     "evidence": "每个字段的来源",
     "evidenceDescription": "标记中每个字段一行，写明其背后的已保存事实。",
     "evidenceFrom": "来自 {{fact}}",
     "evidenceEmpty": "没有字段能用已保存的事实填充。",
     "omissions": "我们省略的内容",
     "omissionsDescription": "没有事实支撑的字段，以及每处缺失的原因。",
-    "omissionsEmpty": "没有省略任何内容。"
+    "omissionsEmpty": "没有省略任何内容。",
+    "regenerated": "已根据你提供的信息，从之前的一次生成重建。未消耗生成次数。"
   },
   "fact": {
     "pageUrl": "页面 URL",
@@ -91,7 +100,11 @@
     "articleModifiedTime": "文章修改时间",
     "siteOrigin": "网站源",
     "siteDomain": "网站域名",
-    "siteName": "网站名称"
+    "siteName": "网站名称",
+    "ogSiteName": "网站名称标签（og:site_name）",
+    "jsonLdName": "页面现有结构化数据中的名称",
+    "titleBrand": "页面标题中的品牌名",
+    "providedByYou": "由你提供"
   },
   "reason": {
     "no_evidence": "我们没有相关事实",
@@ -155,6 +168,29 @@
     "failed": {
       "title": "出了点问题",
       "body": "无法完成，请重试。"
+    }
+  },
+  "userFacts": {
+    "title": "补充我们未填写的内容",
+    "description": "填写只有你知道的信息。我们会原样加入，并标注为“由你提供”。",
+    "submit": "用我的信息重建",
+    "free": "免费：重用已找到的信息，不消耗生成次数。",
+    "required": "请至少填写一个字段。",
+    "hint": {
+      "language": "语言代码，例如 en 或 pt-BR。",
+      "date": "日期，例如 2026-10-01。",
+      "url": "以 https:// 开头的公开地址。"
+    },
+    "label": {
+      "name": "名称",
+      "headline": "标题",
+      "description": "描述",
+      "inLanguage": "语言",
+      "datePublished": "发布日期",
+      "dateModified": "最后更新日期",
+      "logo": "徽标地址",
+      "image": "图片地址",
+      "primaryImageOfPage": "主图地址"
     }
   }
 }
