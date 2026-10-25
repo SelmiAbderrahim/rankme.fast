@@ -26,7 +26,7 @@ import {
 import { setAuditsQueue } from './audits.queue-holder.js';
 import { AuditRun } from './audit-run.model.js';
 import { AuditLog } from '../audit/index.js';
-import { AUDIT_PAGE_CAP_MAX } from './audits.schema.js';
+import { AUDIT_PAGE_CAP_MAX, RESOURCE_SCAN_MAX_PAGES } from './audits.schema.js';
 
 const app = createApp();
 
@@ -93,14 +93,14 @@ describe('POST /api/sites/:siteId/audits', () => {
     const res = await request(app)
       .post(`/api/sites/${siteId}/audits`)
       .set('Cookie', user.cookie)
-      .send({ requestedPageCap: 5_000 });
+      .send({ requestedPageCap: 500 });
     expect(res.status).toBe(202);
     expect(res.body).toMatchObject({
-      run: { status: 'queued', pageCap: 5_000, siteId },
+      run: { status: 'queued', pageCap: 500, siteId },
       message: expect.any(String),
     });
     expect(jobs).toHaveLength(1);
-    expect(jobs[0]?.data.pageCap).toBe(5_000);
+    expect(jobs[0]?.data.pageCap).toBe(500);
     const audit = await AuditLog.findOne({
       actorUserId: user.id,
       action: 'audit.run',
@@ -149,7 +149,7 @@ describe('POST /api/sites/:siteId/audits', () => {
     expect(res.status).toBe(503);
   });
 
-  it('an omitted page cap takes the structural maximum', async () => {
+  it('an omitted page cap takes the resource scan limit, or the structural maximum without the scan', async () => {
     const { queue, jobs } = fakeQueue();
     setAuditsQueue(queue);
     const user = await signupVerifiedUser(app, { email: 'audit-max-cap@x.co' });
@@ -159,7 +159,14 @@ describe('POST /api/sites/:siteId/audits', () => {
       .set('Cookie', user.cookie)
       .send({});
     expect(res.status).toBe(202);
-    expect(jobs[0]?.data.pageCap).toBe(AUDIT_PAGE_CAP_MAX);
+    expect(jobs[0]?.data.pageCap).toBe(RESOURCE_SCAN_MAX_PAGES);
+    await AuditRun.updateMany({}, { status: 'succeeded', activeKey: null });
+    const unscanned = await request(app)
+      .post(`/api/sites/${siteId}/audits`)
+      .set('Cookie', user.cookie)
+      .send({ resourceScan: false });
+    expect(unscanned.status).toBe(202);
+    expect(jobs[1]?.data.pageCap).toBe(AUDIT_PAGE_CAP_MAX);
   });
 
   it('scans resources by default and lets the body opt a run out', async () => {

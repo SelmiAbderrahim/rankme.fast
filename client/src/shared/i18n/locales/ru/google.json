@@ -91,6 +91,8 @@
     "viewAllLabel": "Показать все — {{section}}",
     "sitemapsLink": "Посмотреть файлы Sitemap",
     "asOf": "Данные по {{date}}",
+    "totalsNote": "Итоги по сайту с {{start}} по {{end}}, суммированные по ежедневным данным Search Console.",
+    "scopeNote": "Search Console считает каждый список отдельно, поэтому строки списка могут давать чуть больше или чуть меньше, чем итог по сайту.",
     "previousPeriod": "Предыдущий период — клики: {{clicks}} · показы: {{impressions}}",
     "reportLink": "Смотреть все данные в отчёте",
     "emptyTitle": "Данных поиска пока нет",

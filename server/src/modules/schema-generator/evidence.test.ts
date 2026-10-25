@@ -18,8 +18,11 @@ import {
   EVIDENCE_SOURCES,
   SchemaEvidenceError,
   assembleEvidence,
+  JSON_LD_LIMITS,
+  deriveTitleBrand,
   extractPageFacts,
   isQuestionHeading,
+  jsonLdDeclaredName,
   type AssembledEvidence,
   type SafeFetch,
 } from './evidence.js';
@@ -696,6 +699,8 @@ describe('extractPageFacts ceilings and parsing', () => {
       language: null,
       articlePublishedTime: null,
       articleModifiedTime: null,
+      ogSiteName: null,
+      jsonLdName: null,
     });
   });
 
@@ -743,5 +748,107 @@ describe('extractPageFacts ceilings and parsing', () => {
     ['&#0;&#x110000;&unknown;', '&#0;&#x110000;&unknown;'],
   ])('decodes %s', (input, expected) => {
     expect(extractPageFacts(`<title>${input}</title>`).title).toBe(expected.trim() || null);
+  });
+});
+
+describe('name precedence evidence', () => {
+  const ld = (value: unknown) => `<script type="application/ld+json">${JSON.stringify(value)}</script>`;
+
+  it('derives the brand part of a title only when it is confident', () => {
+    // The QA sample: a generic greeting segment beside the brand.
+    expect(deriveTitleBrand('Welcome - Cashback', 'cashback.sa')).toBe('Cashback');
+    expect(deriveTitleBrand('Welcome - Cashback', 'unrelated.example')).toBe('Cashback');
+    expect(deriveTitleBrand('Welcome to Acme', 'acme.com')).toBe('Acme');
+    expect(deriveTitleBrand('Welcome to Acme', 'other.com')).toBe('Acme');
+    // Separators: pipes and bullets anywhere; dashes and colons only spaced.
+    expect(deriveTitleBrand('Pricing plans | Acme Corp', 'www.acme.com')).toBe('Acme Corp');
+    expect(deriveTitleBrand('Acme · Rank tracking for teams', 'acme.io')).toBe('Acme');
+    expect(deriveTitleBrand('Docs: Getting started — Acme', 'acme.dev')).toBe('Acme');
+    expect(deriveTitleBrand('Accueil | Société Générale', 'societegenerale.fr')).toBe('Société Générale');
+    expect(deriveTitleBrand('الرئيسية | كاش باك', 'cashback.sa')).toBe('كاش باك');
+    // A short segment is skipped; a segment inside the domain label matches.
+    expect(deriveTitleBrand('Go | Acme', 'acme.com')).toBe('Acme');
+    expect(deriveTitleBrand('Cash | Offers', 'cashback.sa')).toBe('Cash');
+    // No confident brand: hyphenated words are not separators, and a page
+    // title with no generic segment and no domain match falls through.
+    expect(deriveTitleBrand('Cash-back offers', 'example.com')).toBeNull();
+    expect(deriveTitleBrand('Pricing | Plans', 'example.com')).toBeNull();
+    expect(deriveTitleBrand('Home', 'example.com')).toBeNull();
+    expect(deriveTitleBrand('Welcome | Home', 'example.com')).toBeNull();
+    // Labels under three characters never match on their own.
+    expect(deriveTitleBrand('AB | Pricing', 'ab.com')).toBeNull();
+  });
+
+  it('reads the first Organization or WebSite name from bounded JSON-LD', () => {
+    expect(jsonLdDeclaredName(ld({ '@type': 'Organization', name: ' Cashback KSA ' }))).toBe('Cashback KSA');
+    expect(jsonLdDeclaredName(ld({ '@type': ['Thing', 'WebSite'], name: 'Site' }))).toBe('Site');
+    expect(jsonLdDeclaredName(ld({ '@graph': [{ '@type': 'WebPage', name: 'Page' }, { '@type': 'WebSite', name: 'Graph site' }] })))
+      .toBe('Graph site');
+    expect(jsonLdDeclaredName(ld([{ '@type': 'Article', name: 'x' }, { '@type': 'Organization', name: 'Listed' }]))).toBe('Listed');
+    // Malformed blocks are skipped; a later valid block still counts.
+    expect(jsonLdDeclaredName(`<script type='application/ld+json'>{oops</script>${ld({ '@type': 'Organization', name: 'Later' })}`))
+      .toBe('Later');
+    // Wrong types, blank or non-string names, and primitives are ignored.
+    expect(jsonLdDeclaredName(ld({ '@type': 'Organization', name: '  ' }))).toBeNull();
+    expect(jsonLdDeclaredName(ld({ '@type': 'Organization', name: 4 }))).toBeNull();
+    expect(jsonLdDeclaredName(ld({ '@type': 'Person', name: 'Ada' }))).toBeNull();
+    expect(jsonLdDeclaredName(ld('just a string'))).toBeNull();
+    expect(jsonLdDeclaredName(ld(null))).toBeNull();
+    expect(jsonLdDeclaredName('<script type="text/javascript">{"@type":"Organization","name":"No"}</script>')).toBeNull();
+    // Depth and block ceilings bound the walk.
+    let deep: unknown = { '@type': 'Organization', name: 'Too deep' };
+    for (let level = 0; level <= JSON_LD_LIMITS.depth; level += 1) deep = [deep];
+    expect(jsonLdDeclaredName(ld(deep))).toBeNull();
+    const filler = Array.from({ length: JSON_LD_LIMITS.blocks }, () => ld({ '@type': 'Thing' })).join('');
+    expect(jsonLdDeclaredName(filler + ld({ '@type': 'Organization', name: 'Ninth' }))).toBeNull();
+  });
+
+  it('extracts og:site_name and the JSON-LD name on the pasted-URL path, and a title brand on every path', async () => {
+    const site = await seedSite({ domain: 'cashback.sa', url: 'https://cashback.sa', displayName: '' });
+    const html = [
+      '<html><head><title>Welcome - Cashback</title>',
+      '<meta property="og:site_name" content="Cashback Saudi">',
+      ld({ '@type': 'Organization', name: 'Cashback Co.' }),
+      '</head><body></body></html>',
+    ].join('');
+    const evidence = await assembleEvidence({
+      source: 'url',
+      accountId: ACCOUNT_ID,
+      siteId: String(site._id),
+      pageUrl: 'https://cashback.sa/',
+      fetchUrl: async () => htmlResponse(html),
+    });
+    expect(valueOf(evidence, 'page.ogSiteName')).toBe('Cashback Saudi');
+    expect(valueOf(evidence, 'page.jsonLdName')).toBe('Cashback Co.');
+    expect(valueOf(evidence, 'page.titleBrand')).toBe('Cashback');
+    expect(valueOf(evidence, 'site.label')).toBeUndefined();
+
+    const run = await seedRun(String(site._id));
+    await seedAuditedPage(String(run._id), { url: 'https://cashback.sa/offers', title: 'Offers | Cashback' });
+    const audited = await assembleEvidence({
+      source: 'audited-page',
+      accountId: ACCOUNT_ID,
+      siteId: String(site._id),
+      pageUrl: 'https://cashback.sa/offers',
+      fetchUrl: throwingFetch,
+    });
+    expect(valueOf(audited, 'page.titleBrand')).toBe('Cashback');
+    expect(valueOf(audited, 'page.ogSiteName')).toBeUndefined();
+  });
+
+  it('adds no title brand without a title or without a confident brand', async () => {
+    const site = await seedSite();
+    const run = await seedRun(String(site._id));
+    await seedAuditedPage(String(run._id), { title: null });
+    const untitled = await assembleEvidence({
+      source: 'audited-page', accountId: ACCOUNT_ID, siteId: String(site._id), pageUrl: PAGE_URL, fetchUrl: throwingFetch,
+    });
+    expect(valueOf(untitled, 'page.titleBrand')).toBeUndefined();
+    await AuditedPage.deleteMany({});
+    await seedAuditedPage(String(run._id));
+    const plain = await assembleEvidence({
+      source: 'audited-page', accountId: ACCOUNT_ID, siteId: String(site._id), pageUrl: PAGE_URL, fetchUrl: throwingFetch,
+    });
+    expect(valueOf(plain, 'page.titleBrand')).toBeUndefined();
   });
 });

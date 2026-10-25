@@ -36,7 +36,12 @@
     "title": "Fuentes de reseñas",
     "description": "Dinos dónde aparece tu negocio. Una ficha por directorio.",
     "empty": "Todavía no hay fuentes. Añade una abajo.",
-    "configured": "Configurada",
+    "status": {
+      "saved": "Guardada, aún sin sincronizar",
+      "verified": "Verificada con una sincronización",
+      "failed": "La última sincronización falló",
+      "invalid": "Revisa este identificador"
+    },
     "save": "Guardar fuente",
     "remove": "Quitar",
     "hint": {
@@ -48,7 +53,23 @@
       "google": "ChIJ_example_place_id",
       "trustpilot": "example.com",
       "tripadvisor": "1234567"
-    }
+    },
+    "help": {
+      "google": "El identificador de lugar es el código que Google asigna a la ficha de tu negocio. Suele empezar por ChIJ. Busca tu negocio en la herramienta de Google y copia el identificador que aparece.",
+      "googleLink": "Abrir el buscador de identificadores de lugar de Google"
+    },
+    "invalid": {
+      "google": "Introduce un ID de lugar de Google válido. Suele empezar por ChIJ y tiene al menos 20 caracteres.",
+      "trustpilot": "Introduce el dominio del negocio que aparece en Trustpilot, como example.com, sin https://.",
+      "tripadvisor": "Introduce el ID numérico de la ubicación de Tripadvisor, como 23462501. Es el número que sigue a la d en la dirección de la página."
+    },
+    "removeConfirm": {
+      "title": "¿Quitar esta fuente?",
+      "description": "{{source}} dejará de incluirse en las nuevas sincronizaciones. Las reseñas que ya descargaste siguen en tu inventario.",
+      "cancel": "Conservar la fuente",
+      "confirm": "Quitar la fuente"
+    },
+    "removed": "Fuente {{source}} eliminada."
   },
   "sync": {
     "title": "Lanzar una sincronización",

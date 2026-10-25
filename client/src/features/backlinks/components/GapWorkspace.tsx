@@ -2,6 +2,7 @@ import { Bdi } from '@shared/components/Bdi';
 import { useEffect, useMemo, useRef, useState, type FormEvent } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
+import { fetchCompetitorProfiles } from '@features/competitors';
 import { ReportExportControl } from '@features/report-export';
 import { useAppDispatch, useAppSelector } from '@shared/hooks/redux';
 import { SAFE_EXTERNAL_REL, safeExternalHref } from '@shared/security';
@@ -93,6 +94,28 @@ export function GapWorkspace({ siteId, ownDomain: selectedDomain }: GapWorkspace
   const [validationError, setValidationError] = useState('');
   const [confirmedInput, setConfirmedInput] = useState<LinkGapFormValues | null>(null);
   const ownDomainEdited = useRef(false);
+  const competitorsEdited = useRef(false);
+  const [prefilled, setPrefilled] = useState(false);
+
+  // Start from the site's confirmed competitors. A stored-data read: it never
+  // overwrites what was typed, and a failure leaves the field empty.
+  useEffect(() => {
+    if (runId) return;
+    const controller = new AbortController();
+    fetchCompetitorProfiles(siteId, 'active', controller.signal).then(
+      ({ items }) => {
+        const domains = [...new Set(items.map((item) => item.registrableDomain))].slice(
+          0,
+          LINK_GAP_MAX_COMPETITORS,
+        );
+        if (competitorsEdited.current || domains.length === 0) return;
+        setCompetitorsText(domains.join('\n'));
+        setPrefilled(true);
+      },
+      () => undefined,
+    );
+    return () => controller.abort();
+  }, [runId, siteId]);
 
   useEffect(() => {
     if (!ownDomainEdited.current) setOwnDomain(selectedDomain);
@@ -171,6 +194,7 @@ export function GapWorkspace({ siteId, ownDomain: selectedDomain }: GapWorkspace
                 id="gap-competitors"
                 value={competitorsText}
                 onChange={(event) => {
+                  competitorsEdited.current = true;
                   setCompetitorsText(event.target.value);
                   clearStalePreview();
                 }}
@@ -184,6 +208,11 @@ export function GapWorkspace({ siteId, ownDomain: selectedDomain }: GapWorkspace
                   min: LINK_GAP_MIN_COMPETITORS,
                   max: LINK_GAP_MAX_COMPETITORS,
                 })}
+                {prefilled ? (
+                  <span className="block" data-testid="link-gap-prefilled">
+                    {t('gap.form.prefilled')}
+                  </span>
+                ) : null}
               </FieldDescription>
               <FieldError>{validationError}</FieldError>
             </Field>
@@ -205,7 +234,7 @@ export function GapWorkspace({ siteId, ownDomain: selectedDomain }: GapWorkspace
                 loading={gap.submitting}
                 data-testid="link-gap-confirm"
               >
-                {t('gap.preview.confirm', { n: 1 })}
+                {t('gap.preview.confirm')}
               </Button>
               <Button
                 type="button"

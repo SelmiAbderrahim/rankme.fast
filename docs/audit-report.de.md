@@ -79,7 +79,7 @@ Eine neuere Konvention, die KI-Assistenten auf Ihre bevorzugten Seiten hinweist.
 Die letzten drei Prüfungen müssen jedes Bild, jedes Skript und jedes Stylesheet Ihrer Seiten laden. Dadurch wird der Crawl langsamer und verbraucht mehr von Ihrem Crawl-Budget, deshalb hat jedes Audit dafür eine eigene Option.
 
 - **Bilder, Skripte und Styles prüfen** ist beim Start eines Audits standardmäßig angehakt. Entfernen Sie das Häkchen, um die Prüfung für diesen Lauf zu überspringen.
-- Ein Audit mit dieser Prüfung lädt die Dateien für höchstens 1.000 Seiten. Weitere Seiten werden trotzdem gecrawlt, aber ohne ihre Dateien.
+- Ein Audit mit dieser Prüfung crawlt höchstens 1.000 Seiten. Entfernen Sie das Häkchen, um mehr Seiten ohne die Prüfung zu crawlen.
 - Lässt sich das Ergebnis nicht auslesen, wird das Audit trotzdem fertig, und die drei Prüfungen stehen mit Grund unter „Nicht geprüft“.
 - Ein Audit ohne diese Prüfung führt die drei Prüfungen unter „Nicht geprüft“ auf. Starten Sie ein neues Audit mit gesetztem Häkchen, um sie einzubeziehen.
 

@@ -1,42 +1,172 @@
 {
-  "workspaceTab": "Seiten", "heading": "Seiten",
-  "description": "Prüfen Sie jede Seite anhand der besten gespeicherten Suchdaten für diese Website. Es wird nichts erfasst, bevor Sie es anfordern.",
-  "common": { "notAvailable": "Nicht verfügbar" },
-  "actions": { "refresh": "Aktualisieren", "refreshing": "Wird aktualisiert…", "collectFallback": "Fallback-Daten erfassen", "connectGoogle": "Google verbinden", "reconnectGoogle": "Google neu verbinden", "selectProperty": "Property auswählen", "retry": "Erneut versuchen", "retryRefresh": "Aktualisierung wiederholen", "resetFilters": "Filter zurücksetzen", "inspect": "Seite prüfen", "openPage": "Seite in neuem Tab öffnen", "reviewPlans": "Tarife ansehen" },
-  "range": { "label": "Zeitraum", "7d": "7 Tage", "28d": "28 Tage", "90d": "90 Tage" },
+  "workspaceTab": "Seiten",
+  "heading": "Seiten",
+  "description": "Jede Seite wird mit den Suchdaten angezeigt, die für diese Website bereits gespeichert sind. Neue Daten werden nur erfasst, wenn Sie das anfordern.",
+  "common": {
+    "notAvailable": "Nicht verfügbar"
+  },
+  "actions": {
+    "refresh": "Aktualisieren",
+    "refreshing": "Wird aktualisiert…",
+    "collectFallback": "Ranking-Daten abrufen",
+    "retry": "Erneut versuchen",
+    "retryRefresh": "Aktualisierung wiederholen",
+    "resetFilters": "Filter zurücksetzen",
+    "inspect": "Seite prüfen",
+    "openPage": "Seite in neuem Tab öffnen"
+  },
+  "range": {
+    "label": "Zeitraum",
+    "7d": "7 Tage",
+    "28d": "28 Tage",
+    "90d": "90 Tage"
+  },
   "sources": {
-    "gsc": { "label": "Google Search Console", "short": "GSC-beobachtet", "description": "Beobachtete Klicks, Impressionen, CTR und durchschnittliche Position im gewählten rollierenden Zeitraum." },
-    "dataforseo": { "label": "Fallback-Ranking-Snapshot", "short": "Ranking-Schätzung", "description": "Punktueller Snapshot rankender Keywords. Klicks, Impressionen und CTR sind aus dieser Quelle nicht verfügbar." },
-    "demo": { "label": "Demo-Ranking-Snapshot", "short": "Demo-Schätzung", "description": "Deterministische Beispieldaten, keine Live-Daten aus Search Console oder DataForSEO." },
-    "none": { "label": "Keine gespeicherte Quelle", "short": "Keine Quelle", "description": "Es wurden noch keine Search-Console-Seitendaten oder Fallback-Snapshots gespeichert." },
+    "gsc": {
+      "label": "Google Search Console",
+      "short": "GSC-beobachtet",
+      "description": "Beobachtete Klicks, Impressionen, CTR und durchschnittliche Position im gewählten rollierenden Zeitraum."
+    },
+    "dataforseo": {
+      "label": "Ranking-Momentaufnahme",
+      "short": "Ranking-Schätzung",
+      "description": "Punktueller Snapshot rankender Keywords. Klicks, Impressionen und CTR sind aus dieser Quelle nicht verfügbar."
+    },
+    "demo": {
+      "label": "Demo-Ranking-Snapshot",
+      "short": "Demo-Schätzung",
+      "description": "Beispiel-Rankingdaten für Demos. Es sind weder Google-Search-Console-Daten noch aktuelle Rankingdaten."
+    },
+    "none": {
+      "label": "Keine gespeicherte Quelle",
+      "short": "Keine Quelle",
+      "description": "Es wurden noch keine Seitendaten aus der Search Console und keine Ranking-Momentaufnahme gespeichert."
+    },
     "unmeasured": "Nicht gemessen"
   },
-  "status": { "ready": "Bereit", "syncing": "Synchronisiert", "empty": "Leer", "unavailable": "Nicht verfügbar", "stale": "Veraltet" },
+  "status": {
+    "ready": "Bereit",
+    "syncing": "Synchronisiert",
+    "empty": "Leer",
+    "unavailable": "Nicht verfügbar",
+    "stale": "Veraltet"
+  },
   "states": {
-    "initialLoading": "Seitendaten werden geladen", "backgroundLoading": "Diese Ansicht wird aktualisiert; die vorherigen Daten bleiben sichtbar.", "loadingAnnouncement": "Seiten werden geladen.", "refreshAnnouncement": "Seiten werden aktualisiert.",
-    "ready": { "title": "Seitendaten sind bereit", "gsc": "Die gespeicherten Search-Console-Seitendaten sind bereit.", "dataforseo": "Der gespeicherte Fallback-Snapshot ist bereit.", "demo": "Der gespeicherte Demo-Snapshot ist bereit.", "none": "Keine gespeicherte Quelle ist bereit." },
-    "syncing": { "title": "Search Console wird synchronisiert", "gsc": "Die erste Search-Console-Sammlung steht aus oder läuft. Fallback-Daten werden in der Zwischenzeit nicht angezeigt.", "dataforseo": "Fallback-Ranking-Daten werden vorbereitet.", "demo": "Demo-Ranking-Daten werden vorbereitet.", "none": "Eine gespeicherte Quelle wird vorbereitet." },
-    "empty": { "title": "Keine passenden Seiten", "gsc": "Search Console lieferte für diesen rollierenden Zeitraum keine Seitenzeilen.", "dataforseo": "Der Fallback-Snapshot fand in diesem Markt keine rankenden Seiten.", "demo": "Der Demo-Snapshot enthält für diesen Kontext keine Seiten.", "none": "Verbinden Sie Search Console oder erfassen Sie Fallback-Daten (das zählt zu Ihrer Nutzung)." },
-    "unavailable": { "title": "Seitendaten nicht verfügbar", "gsc": "Search-Console-Daten sind derzeit nicht verfügbar. Versuchen Sie es gleich noch einmal.", "dataforseo": "Der Ranking-Anbieter konnte keinen Snapshot speichern. Versuchen Sie es später erneut.", "demo": "Demo-Ranking-Daten konnten nicht geladen werden.", "none": "Noch keine nutzbaren gespeicherten Daten. Verbinden Sie Search Console oder erfassen Sie Fallback-Daten." },
-    "stale": { "title": "Letzte gute Daten werden angezeigt", "gsc": "Die Aktualität der Search-Console-Daten ist unsicher oder die letzte Aktualisierung schlug fehl. Die letzten erfolgreichen Zeilen bleiben sichtbar.", "dataforseo": "Dieser Snapshot ist älter als das Cache-Fenster oder die letzte Aktualisierung schlug fehl.", "demo": "Dieser Demo-Snapshot ist veraltet. Die letzten erfolgreichen Zeilen bleiben sichtbar.", "none": "Der letzte gespeicherte Stand ist veraltet." },
-    "transport": { "title": "Seiten konnten nicht geladen werden", "body": "Die Anfrage wurde nicht abgeschlossen. Prüfen Sie die Verbindung und versuchen Sie es erneut.", "retained": "Die Aktualisierung schlug fehl; die vorherigen Seitendaten bleiben sichtbar." },
-    "notFound": { "title": "Website oder Seitendaten nicht gefunden" },
-    "refreshFailed": { "title": "Aktualisierung fehlgeschlagen", "body": "Die letzten guten Daten bleiben sichtbar. Wiederholen Sie die Aktualisierung, sobald die Quelle verfügbar ist." },
-    "cap": { "title": "Fallback-Erfassungslimit erreicht", "body": "Diese Fallback-Aktualisierung benötigt eine Keyword-Abfrage. Vorhandene Daten bleiben verfügbar." }
+    "initialLoading": "Seitendaten werden geladen",
+    "backgroundLoading": "Diese Ansicht wird aktualisiert; die vorherigen Daten bleiben sichtbar.",
+    "loadingAnnouncement": "Seiten werden geladen.",
+    "refreshAnnouncement": "Seiten werden aktualisiert.",
+    "ready": {
+      "title": "Seitendaten sind bereit",
+      "gsc": "Die gespeicherten Search-Console-Seitendaten sind bereit.",
+      "dataforseo": "Die gespeicherte Ranking-Momentaufnahme ist bereit.",
+      "demo": "Der gespeicherte Demo-Snapshot ist bereit.",
+      "none": "Keine gespeicherte Quelle ist bereit."
+    },
+    "syncing": {
+      "title": "Search Console wird synchronisiert",
+      "gsc": "Die erste Erfassung der Search-Console-Seiten wartet noch oder läuft. Solange die Search Console verbunden ist, zeigt diese Seite nur deren Daten.",
+      "dataforseo": "Die Ranking-Momentaufnahme wird vorbereitet.",
+      "demo": "Demo-Ranking-Daten werden vorbereitet.",
+      "none": "Eine gespeicherte Quelle wird vorbereitet."
+    },
+    "empty": {
+      "title": "Keine passenden Seiten",
+      "gsc": "Search Console lieferte für diesen rollierenden Zeitraum keine Seitenzeilen.",
+      "dataforseo": "Die Ranking-Momentaufnahme hat für diesen Markt keine rankenden Seiten gefunden.",
+      "demo": "Der Demo-Snapshot enthält für diesen Kontext keine Seiten.",
+      "none": "Für diese Seiten sind noch keine Suchdaten gespeichert. Rufen Sie Ranking-Daten ab, um sie zu erfassen."
+    },
+    "unavailable": {
+      "title": "Seitendaten nicht verfügbar",
+      "gsc": "Die Search-Console-Daten können gerade nicht gelesen werden. Versuchen Sie es erneut; diese Seite wechselt in der Zwischenzeit nicht zu einer Ranking-Momentaufnahme.",
+      "dataforseo": "Der Ranking-Anbieter konnte keinen Snapshot speichern. Versuchen Sie es später erneut.",
+      "demo": "Demo-Ranking-Daten konnten nicht geladen werden.",
+      "none": "Es sind keine gespeicherten Seitendaten verfügbar. Verbinden Sie Google oder rufen Sie Ranking-Daten ab."
+    },
+    "stale": {
+      "title": "Letzte gute Daten werden angezeigt",
+      "gsc": "Die Aktualität der Search-Console-Daten ist unsicher oder die letzte Aktualisierung schlug fehl. Die letzten erfolgreichen Zeilen bleiben sichtbar.",
+      "dataforseo": "Diese Ranking-Momentaufnahme ist veraltet oder ihre letzte Aktualisierung ist fehlgeschlagen.",
+      "demo": "Dieser Demo-Snapshot ist veraltet. Die letzten erfolgreichen Zeilen bleiben sichtbar.",
+      "none": "Der letzte gespeicherte Stand ist veraltet."
+    },
+    "transport": {
+      "title": "Seiten konnten nicht geladen werden",
+      "body": "Die Anfrage wurde nicht abgeschlossen. Prüfen Sie die Verbindung und versuchen Sie es erneut.",
+      "retained": "Die Aktualisierung schlug fehl; die vorherigen Seitendaten bleiben sichtbar."
+    },
+    "notFound": {
+      "title": "Website oder Seitendaten nicht gefunden"
+    },
+    "refreshFailed": {
+      "title": "Aktualisierung fehlgeschlagen",
+      "body": "Die letzten guten Daten bleiben sichtbar. Wiederholen Sie die Aktualisierung, sobald die Quelle verfügbar ist."
+    }
   },
-  "fallbackReasons": { "gsc_not_connected": "Search Console ist für diesen Workspace nicht verbunden.", "gsc_needs_reconnect": "Die Google-Verbindung muss erneuert werden.", "gsc_revoked": "Der Google-Zugriff wurde widerrufen und muss neu verbunden werden.", "gsc_property_unmatched": "Die gewählte Search-Console-Property deckt diese Website nicht ab." },
   "disclosure": {
-    "observedAt": "Beobachtet am", "range": "Bedeutung des Zeitraums", "comparison": "Vergleich", "market": "Markt",
-    "rolling": "Rollierende {{days}} Tage mit dokumentierter Search-Console-Berichtsverzögerung", "pointInTime": "Punktueller Ranking-Snapshot; {{days}} Tage ändern Verlauf und Vergleich, nicht die aktuellen Hauptwerte",
-    "sincePreviousSync": "Seit der vorherigen Synchronisierung", "noPreviousSync": "Keine geeignete vorherige Synchronisierung", "marketValue": "Standort {{location}}, Sprache {{language}}", "notApplicable": "Nicht zutreffend",
-    "coverage": "Seiten mit Suchdaten: {{measured}} von {{inventory}}. Seiten ohne Daten: {{unmeasured}}.",
-    "reportingLag_zero": "Die Search-Console-Daten hinken etwa {{count}} Tage hinterher.", "reportingLag_one": "Die Search-Console-Daten hinken etwa {{count}} Tag hinterher.", "reportingLag_two": "Die Search-Console-Daten hinken etwa {{count}} Tage hinterher.", "reportingLag_few": "Die Search-Console-Daten hinken etwa {{count}} Tage hinterher.", "reportingLag_many": "Die Search-Console-Daten hinken etwa {{count}} Tage hinterher.", "reportingLag_other": "Die Search-Console-Daten hinken etwa {{count}} Tage hinterher.", "sampled": "Die Quelle meldet Stichprobendaten.", "notSampled": "Die Quelle meldet keine Stichprobe."
+    "observedAt": "Beobachtet am",
+    "range": "Zum Zeitraum",
+    "comparison": "Vergleich",
+    "market": "Markt",
+    "rolling": "Search-Console-Daten der letzten {{range}}.",
+    "pointInTime": "Dies ist eine einzelne Ranking-Momentaufnahme. Der Zeitraum ändert nur Verlauf und Vergleich, nicht die Summen.",
+    "sincePreviousSync": "Seit der vorherigen Synchronisierung",
+    "noPreviousSync": "Keine geeignete vorherige Synchronisierung",
+    "marketValue": "Standort {{location}}, Sprache {{language}}",
+    "notApplicable": "Nicht zutreffend",
+    "reportingLag_zero": "Google liefert Search-Console-Daten etwa {{count}} Tage verspätet, daher fehlen die letzten Tage.",
+    "reportingLag_one": "Google liefert Search-Console-Daten etwa {{count}} Tag verspätet, daher fehlt der letzte Tag.",
+    "reportingLag_two": "Google liefert Search-Console-Daten etwa {{count}} Tage verspätet, daher fehlen die letzten Tage.",
+    "reportingLag_few": "Google liefert Search-Console-Daten etwa {{count}} Tage verspätet, daher fehlen die letzten Tage.",
+    "reportingLag_many": "Google liefert Search-Console-Daten etwa {{count}} Tage verspätet, daher fehlen die letzten Tage.",
+    "reportingLag_other": "Google liefert Search-Console-Daten etwa {{count}} Tage verspätet, daher fehlen die letzten Tage.",
+    "sampled": "Die Quelle meldet Stichprobendaten.",
+    "notSampled": "Die Quelle meldet keine Stichprobe."
   },
-  "metrics": { "clicks": "Klicks", "impressions": "Impressionen", "ctr": "CTR", "averagePosition": "Durchschnittliche Position", "bestPosition": "Beste Position", "keywordCount": "Rankende Keywords", "searchVolume": "Suchvolumen", "difficulty": "Schwierigkeit", "estimatedTraffic": "Geschätzter Traffic", "associatedQueryCount": "Suchanfragen / Keywords", "qualifierObserved": "Im gewählten rollierenden Zeitraum beobachtet", "qualifierEstimated": "Aus dem aktuellen Ranking-Snapshot geschätzt", "qualifierUnavailable": "In Ranking-Snapshots nicht verfügbar" },
+  "metrics": {
+    "clicks": "Klicks",
+    "impressions": "Impressionen",
+    "ctr": "CTR",
+    "averagePosition": "Durchschnittliche Position",
+    "bestPosition": "Beste Position",
+    "keywordCount": "Rankende Keywords",
+    "searchVolume": "Suchvolumen",
+    "difficulty": "Schwierigkeit",
+    "estimatedTraffic": "Geschätzter Traffic",
+    "associatedQueryCount": "Suchanfragen / Keywords",
+    "qualifierObserved": "Im gewählten rollierenden Zeitraum beobachtet",
+    "qualifierEstimated": "Aus dem aktuellen Ranking-Snapshot geschätzt",
+    "qualifierUnavailable": "In Ranking-Snapshots nicht verfügbar"
+  },
   "filters": {
-    "title": "Seiten finden", "description": "Suche und Filter werden auf dem Server ausgewertet und erfassen keine neuen Anbieterdaten.", "searchLabel": "Seiten und Suchanfragen durchsuchen", "searchPlaceholder": "Titel, Pfad, URL, Suchanfrage oder Keyword",
-    "insight": "Chance", "allInsights": "Alle Chancen", "indexability": "Crawl-Indexierbarkeit", "allIndexability": "Alle Crawl-Zustände", "indexabilityOptions": { "indexable": "Crawl-indexierbar", "non_indexable": "Nicht crawl-indexierbar" },
-    "visibility": "Suchsichtbarkeit", "allVisibility": "Alle Sichtbarkeiten", "visibilityOptions": { "measured": "Gemessen", "unmeasured": "Nicht gemessen" }, "sort": "Sortieren nach", "direction": "Richtung", "ascending": "Aufsteigend", "descending": "Absteigend", "pageSize": "Seitengröße", "perPage": "{{count}} pro Seite", "active": "Aktive Filter: {{context}}", "activeSearch": "Suche: {{value}}", "noneActive": "Keine Suche oder Filter aktiv."
+    "title": "Seiten finden",
+    "description": "Suche und Filter werden auf dem Server ausgewertet und erfassen keine neuen Anbieterdaten.",
+    "searchLabel": "Seiten und Suchanfragen durchsuchen",
+    "searchPlaceholder": "Titel, Pfad, URL, Suchanfrage oder Keyword",
+    "insight": "Chance",
+    "allInsights": "Alle Chancen",
+    "indexability": "Crawl-Indexierbarkeit",
+    "allIndexability": "Alle Crawl-Zustände",
+    "indexabilityOptions": {
+      "indexable": "Crawl-indexierbar",
+      "non_indexable": "Nicht crawl-indexierbar"
+    },
+    "visibility": "Suchsichtbarkeit",
+    "allVisibility": "Alle Sichtbarkeiten",
+    "visibilityOptions": {
+      "measured": "Gemessen",
+      "unmeasured": "Nicht gemessen"
+    },
+    "sort": "Sortieren nach",
+    "direction": "Richtung",
+    "ascending": "Aufsteigend",
+    "descending": "Absteigend",
+    "pageSize": "Seitengröße",
+    "perPage": "{{count}} pro Seite",
+    "active": "Aktive Filter: {{context}}",
+    "activeSearch": "Suche: {{value}}",
+    "noneActive": "Keine Suche oder Filter aktiv."
   },
   "insights": {
     "striking_distance": {
@@ -53,7 +183,7 @@
     },
     "winning": {
       "label": "Im Aufwind",
-      "description": "Position oder beobachtete Klicks haben sich seit der letzten erfolgreichen Synchronisierung deutlich verbessert."
+      "description": "Die Seite hat Positionen gewonnen und steht auf Seite eins oder erhielt Klicks, oder ihre beobachteten Klicks sind seit der letzten erfolgreichen Synchronisierung deutlich gestiegen."
     },
     "non_indexable_visibility": {
       "label": "Sichtbar, aber nicht crawl-indexierbar",
@@ -69,8 +199,27 @@
       "description": "Search Console meldet für diese Seite zu wenige Impressionen und keine Klicks, daher gibt es noch keine Einstufung der Entwicklung."
     }
   },
-  "sorts": { "opportunity": "Chance", "url": "URL", "title": "Titel", "clicks": "Klicks", "impressions": "Impressionen", "ctr": "CTR", "average_position": "Durchschnittliche Position", "best_position": "Beste Position", "keyword_count": "Rankende Keywords", "search_volume": "Suchvolumen", "difficulty": "Schwierigkeit", "estimated_traffic": "Geschätzter Traffic", "position_change": "Positionsänderung", "click_change_pct": "Klickänderung" },
-  "indexability": { "indexable": "Crawl-indexierbar", "nonIndexable": "Nicht crawl-indexierbar", "unknown": "Crawl-Zustand unbekannt" },
+  "sorts": {
+    "opportunity": "Chance",
+    "url": "URL",
+    "title": "Titel",
+    "clicks": "Klicks",
+    "impressions": "Impressionen",
+    "ctr": "CTR",
+    "average_position": "Durchschnittliche Position",
+    "best_position": "Beste Position",
+    "keyword_count": "Rankende Keywords",
+    "search_volume": "Suchvolumen",
+    "difficulty": "Schwierigkeit",
+    "estimated_traffic": "Geschätzter Traffic",
+    "position_change": "Positionsänderung",
+    "click_change_pct": "Klickänderung"
+  },
+  "indexability": {
+    "indexable": "Crawl-indexierbar",
+    "nonIndexable": "Nicht crawl-indexierbar",
+    "unknown": "Crawl-Zustand unbekannt"
+  },
   "crawlState": {
     "label": {
       "indexable": "Crawl-indexierbar",
@@ -126,14 +275,30 @@
       "notForSource": "Von dieser Quelle nicht geliefert"
     }
   },
-  "deltas": { "position": "Positionsänderung", "clickChange": "Klickänderung", "clicks": "Klicks {{value}}" },
-  "empty": { "title": "Keine Seiten anzuzeigen", "filtered": "Keine Seite entspricht Suche und Filtern. Setzen Sie sie zurück, um den gesamten Bestand zu sehen.", "gsc": "Search Console lieferte für dieses Fenster keine Seiten. Die Aktualisierung bleibt bei Search Console und wechselt die Quelle nicht.", "fallback": "Der gespeicherte Snapshot enthält in diesem Markt keine rankenden Seiten. Beobachtete Werte bleiben nicht verfügbar.", "none": "Kein Seitensnapshot gespeichert. Verbinden Sie Google oder erfassen Sie ausdrücklich Fallback-Daten." },
-  "pagination": { "label": "Seitenergebnis-Navigation", "context_one": "{{shown}} von {{total}} passender Seite", "previous": "Zurück", "next": "Weiter", "cursorReset": "Der Ergebnissatz hat sich geändert; die Navigation wurde auf die erste Seite zurückgesetzt.",
+  "deltas": {
+    "position": "Positionsänderung",
+    "clickChange": "Klickänderung",
+    "clicks": "Klicks {{value}}"
+  },
+  "empty": {
+    "title": "Keine Seiten anzuzeigen",
+    "filtered": "Keine Seite entspricht Suche und Filtern. Setzen Sie sie zurück, um den gesamten Bestand zu sehen.",
+    "gsc": "Search Console lieferte für dieses Fenster keine Seiten. Die Aktualisierung bleibt bei Search Console und wechselt die Quelle nicht.",
+    "fallback": "Der gespeicherte Snapshot enthält in diesem Markt keine rankenden Seiten. Beobachtete Werte bleiben nicht verfügbar.",
+    "none": "Es wurden noch keine Seitendaten gespeichert. Verbinden Sie Google oder rufen Sie Ranking-Daten ab."
+  },
+  "pagination": {
+    "label": "Seitenergebnis-Navigation",
+    "context_one": "{{shown}} von {{total}} passender Seite",
+    "previous": "Zurück",
+    "next": "Weiter",
+    "cursorReset": "Der Ergebnissatz hat sich geändert; die Navigation wurde auf die erste Seite zurückgesetzt.",
     "context_zero": "{{shown}} von {{total}} passenden Seiten",
     "context_two": "{{shown}} von {{total}} passenden Seiten",
     "context_few": "{{shown}} von {{total}} passenden Seiten",
     "context_many": "{{shown}} von {{total}} passenden Seiten",
-    "context_other": "{{shown}} von {{total}} passenden Seiten" },
+    "context_other": "{{shown}} von {{total}} passenden Seiten"
+  },
   "detail": {
     "title": "Seitendetails",
     "description": "Kanonischer Seitenkontext wird geladen",
@@ -185,7 +350,10 @@
       }
     }
   },
-  "notifications": { "refreshed": "{{source}}-Daten wurden erfolgreich aktualisiert.", "empty": "Die {{source}}-Aktualisierung endete ohne Seitenzeilen." },
+  "notifications": {
+    "refreshed": "{{source}}-Daten wurden erfolgreich aktualisiert.",
+    "empty": "Die {{source}}-Aktualisierung endete ohne Seitenzeilen."
+  },
   "crawl": {
     "heading": "Crawl-Abdeckung",
     "pages_zero": "Ihr letztes Audit hat keine Seite gespeichert.",
@@ -209,7 +377,7 @@
     "runAgain": "Erneut ausführen"
   },
   "coverage": {
-    "pages_zero": "Kanonische Seiten mit Suchdaten: {{measured}} von {{count}}.",
+    "pages_zero": "Noch keine Seiten aufgeführt.",
     "pages_one": "Kanonische Seiten mit Suchdaten: {{measured}} von {{count}}.",
     "pages_two": "Kanonische Seiten mit Suchdaten: {{measured}} von {{count}}.",
     "pages_few": "Kanonische Seiten mit Suchdaten: {{measured}} von {{count}}.",
@@ -229,5 +397,8 @@
     "redirects_other": "{{count}} aufgeführte Adressen leiten auf eine dieser Seiten weiter und werden als diese Seite gezählt.",
     "inventoryLabel": "Kanonische Seiten",
     "inventoryHelp": "Kanonische Seiten sind die eindeutigen Seiten, die wir kennen: indexierbare Seiten aus Ihrem letzten Audit plus Seiten mit Suchdaten, jede nur einmal gezählt. Eine Adresse, die auf eine davon weiterleitet, wird aufgeführt, aber als diese Seite gezählt."
+  },
+  "noData": {
+    "title": "Noch keine Suchdaten"
   }
 }

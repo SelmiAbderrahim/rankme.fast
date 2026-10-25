@@ -70,6 +70,7 @@ function makeFinding(
     severity: 'warning',
     affectedUrls: bucket === 'passed' ? [] : [`https://example.com/page-${index}`],
     category: 'indexability',
+    applicability: 'applicable',
     copy: {
       titleKey: 'auditRules.robots-blocked.title',
       whyKey: 'auditRules.robots-blocked.why',
@@ -94,6 +95,9 @@ function makeReport(overrides: Partial<AuditReport> = {}): AuditReport {
       makeFinding(3, 'watch'),
       makeFinding(4, 'passed'),
     ],
+    notApplicable: [],
+    localBusiness: false,
+    comparison: null,
     diff: { entries: [], summary: { fixed: 0, regressed: 0, new: 0, unchanged: 0 } },
     pageSpeed: null,
     indexStatus: null,

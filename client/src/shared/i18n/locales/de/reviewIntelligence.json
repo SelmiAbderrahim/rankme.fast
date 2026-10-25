@@ -36,7 +36,12 @@
     "title": "Bewertungsquellen",
     "description": "Sagen Sie uns, wo Ihr Betrieb eingetragen ist. Ein Eintrag pro Verzeichnis.",
     "empty": "Noch keine Quellen. Fügen Sie unten eine hinzu.",
-    "configured": "Eingerichtet",
+    "status": {
+      "saved": "Gespeichert, noch nicht synchronisiert",
+      "verified": "Durch Synchronisierung bestätigt",
+      "failed": "Letzte Synchronisierung fehlgeschlagen",
+      "invalid": "ID prüfen"
+    },
     "save": "Quelle speichern",
     "remove": "Entfernen",
     "hint": {
@@ -48,7 +53,23 @@
       "google": "ChIJ_example_place_id",
       "trustpilot": "example.com",
       "tripadvisor": "1234567"
-    }
+    },
+    "help": {
+      "google": "Die Orts-ID ist Googles Code für Ihren Unternehmenseintrag. Sie beginnt meist mit ChIJ. Suchen Sie Ihr Unternehmen im Suchtool von Google und kopieren Sie die angezeigte ID.",
+      "googleLink": "Googles Orts-ID-Suche öffnen"
+    },
+    "invalid": {
+      "google": "Geben Sie eine gültige Google-Orts-ID ein. Sie beginnt meist mit ChIJ und hat mindestens 20 Zeichen.",
+      "trustpilot": "Geben Sie die Domain des Betriebs ein, wie sie bei Trustpilot steht, zum Beispiel example.com, ohne https://.",
+      "tripadvisor": "Geben Sie die numerische Tripadvisor-Standort-ID ein, zum Beispiel 23462501. Es ist die Zahl nach dem d in der Seitenadresse."
+    },
+    "removeConfirm": {
+      "title": "Diese Quelle entfernen?",
+      "description": "{{source}} wird in neue Synchronisierungen nicht mehr einbezogen. Bereits abgerufene Bewertungen bleiben in Ihrem Bestand.",
+      "cancel": "Quelle behalten",
+      "confirm": "Quelle entfernen"
+    },
+    "removed": "Quelle {{source}} entfernt."
   },
   "sync": {
     "title": "Abgleich starten",

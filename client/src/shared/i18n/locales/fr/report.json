@@ -15,8 +15,8 @@
   },
   "resourceScan": {
     "label": "Analyser les images, scripts et styles",
-    "help": "Charge chaque image, script et feuille de style pour repérer les fichiers cassés ou trop lourds. L’audit est plus long, et cette analyse ne s’applique qu’à une limite de {{pages}} pages ou moins.",
-    "notCovered": "Cette limite dépasse {{pages}} pages : l’audit ignorera cette analyse. Choisissez une limite plus basse pour l’inclure."
+    "help": "Charge chaque image, script et feuille de style pour repérer les fichiers cassés ou trop lourds. L’audit est plus long et limité à {{pages}} pages.",
+    "notCovered": "Cet audit explorera {{pages}} pages au maximum. Décochez l’analyse pour en explorer davantage."
   },
   "title": "Votre rapport d'audit",
   "subtitle": "Ce qu'il faut corriger, surveiller, et ce qui passe déjà.",
@@ -47,7 +47,8 @@
     "affectedPages_two": "{{count}} pages concernées",
     "affectedPages_few": "{{count}} pages concernées",
     "affectedPages_many": "{{count}} pages concernées",
-    "affectedPages_other": "{{count}} pages concernées"
+    "affectedPages_other": "{{count}} pages concernées",
+    "brokenLinksSummary": "Pages avec des liens cassés : {{pages}} · URL cassées : {{targets}}"
   },
   "severity": {
     "critical": "Critique",
@@ -136,7 +137,8 @@
       "problemChip": "À corriger",
       "unknownChip": "Non vérifiée"
     },
-    "measured": {"words_zero": "{{count}} mot",
+    "measured": {
+      "words_zero": "{{count}} mot",
       "words_one": "{{count}} mot",
       "words_two": "{{count}} mots",
       "words_few": "{{count}} mots",
@@ -147,7 +149,43 @@
       "characters_two": "{{count}} caractères",
       "characters_few": "{{count}} caractères",
       "characters_many": "{{count}} caractères",
-      "characters_other": "{{count}} caractères"}
+      "characters_other": "{{count}} caractères"
+    },
+    "downloadUrls": "Télécharger les URL (CSV)",
+    "previewNote": "{{shown}} sur {{total}} affichés.",
+    "loadFullList": "Afficher la liste complète",
+    "loadingFullList": "Chargement de la liste complète…",
+    "fullListFailed": "Impossible de charger la liste complète. Réessayez.",
+    "brokenLinks": {
+      "title": "Liens cassés et résultat de leur revérification",
+      "download": "Tout télécharger (CSV)",
+      "linkedFrom": "Lien depuis",
+      "pointsTo": "Pointe vers",
+      "redirectsTo": "Redirige vers",
+      "http": "HTTP {{status}}",
+      "noAnswer": "Aucune réponse",
+      "failure": {
+        "http_error": "Erreur HTTP",
+        "redirect_loop": "Boucle de redirection",
+        "redirect_limit": "Plus de cinq redirections",
+        "unsafe_redirect": "Redirige vers une adresse que nous ne suivons pas",
+        "robots_blocked": "Bloqué par robots.txt",
+        "timeout": "Pas de réponse à temps",
+        "non_html": "Pas une page web",
+        "unreachable": "Connexion impossible"
+      },
+      "outcome": {
+        "confirmed": "Toujours cassé",
+        "unverified": "Revérification impossible",
+        "reported": "Signalé par l’exploration",
+        "cleared": "Fonctionne à la revérification"
+      },
+      "showAll": "Tout afficher ({{count}})",
+      "showFewer": "Afficher moins",
+      "dismissedTitle": "Fonctionne à la revérification ({{count}})",
+      "dismissedHelp": "L’exploration a signalé ces liens comme cassés, mais ils s’ouvrent normalement quand on les redemande : ils ne sont donc pas comptés.",
+      "cut": "Lignes affichées depuis le début : {{shown}} sur {{total}}."
+    }
   },
   "retest": {
     "cta": "Relancer",
@@ -170,11 +208,11 @@
   "empty": {
     "fix-now": {
       "title": "Rien à corriger",
-      "description": "Excellent — aucun problème critique détecté dans cet audit."
+      "description": "Aucun problème critique ouvert dans cet audit."
     },
     "watch": {
       "title": "Rien à surveiller",
-      "description": "Aucun avertissement sur votre site actuellement."
+      "description": "Aucun avertissement ouvert dans cet audit."
     },
     "passed": {
       "title": "Rien de réussi pour l'instant",
@@ -242,7 +280,37 @@
     "basis_two": "Basé sur {{count}} constats ouverts",
     "basis_few": "Basé sur {{count}} constats ouverts",
     "basis_many": "Basé sur {{count}} constats ouverts",
-    "basis_other": "Basé sur {{count}} constats ouverts"
+    "basis_other": "Basé sur {{count}} constats ouverts",
+    "stage": {
+      "queued": "Préparation…",
+      "reading_findings": "Lecture de vos constats…",
+      "checking_priorities": "Vérification des priorités…",
+      "writing_summary": "Rédaction du résumé…"
+    },
+    "elapsed": "Temps écoulé : {{time}}",
+    "expectation": "Cela prend généralement 30 à 40 secondes. Vous pouvez quitter cette page : le résumé continue et sera là à votre retour.",
+    "ready": "Votre résumé IA est prêt.",
+    "failedAnnouncement": "Le résumé IA n’a pas pu être rédigé.",
+    "failure": {
+      "provider_unavailable": "Notre fournisseur d’IA est indisponible pour le moment, le résumé n’a donc pas été rédigé.",
+      "timeout": "Le fournisseur d’IA a mis trop de temps, le résumé n’a donc pas été rédigé.",
+      "internal": "Une erreur s’est produite de notre côté, le résumé n’a donc pas été rédigé."
+    },
+    "tryAgain": "Réessayer",
+    "staleMarker": "Obsolète",
+    "firstStep": "Première étape :",
+    "actIn": {
+      "report": "Ouvrir ce constat dans le rapport",
+      "pages": "Ouvrir Pages",
+      "google": "Ouvrir l’onglet Google",
+      "schema": "Ouvrir le générateur de schéma",
+      "local-seo": "Ouvrir le SEO local",
+      "ai-visibility": "Ouvrir la visibilité IA"
+    },
+    "staleTitle": "Ce résumé n'est plus à jour",
+    "staleBody": "Des constats qu'il couvre ont été ignorés, corrigés ou rouverts depuis sa rédaction. Régénérez-le pour qu'il corresponde à vos correctifs ouverts.",
+    "showPrevious": "Afficher l'ancien résumé",
+    "hidePrevious": "Masquer l'ancien résumé"
   },
   "pdf": {
     "download": "Télécharger le PDF",
@@ -345,21 +413,125 @@
     "packSize_other": "{{count}} résultats"
   },
   "exportUi": {
-    "trigger": "Exporter ou partager", "loading": "Chargement des options d’export…", "preparing": "Préparation du fichier…", "ready": "Export prêt. Une copie est aussi enregistrée dans Exports et partages.", "unavailable": "Export indisponible", "empty": "Rien à exporter pour l’instant", "formatsLabel": "Formats de fichier",
-    "clipboard": { "action": "Copier dans le presse-papiers", "success": "Copié dans le presse-papiers.", "error": "Impossible de copier dans le presse-papiers." },
-    "formats": { "view": "Vue web", "pdf": "PDF", "csv": "CSV", "json": "JSON", "md": "Markdown", "jsonld": "JSON-LD", "txt": "Texte" },
-    "kindAreas": { "audit": "Audit du site", "ranks": "Classements", "google": "Données Google", "client": "Rapport client", "keyword": "Mots-clés", "backlinks": "Backlinks", "competitors": "Concurrents", "actions": "Actions suivantes", "ai": "Visibilité IA", "audience": "Recherche d’audience", "brand": "Brand Radar", "content": "Contenu", "internal_links": "Liens internes", "weekly_pulse": "Bilan hebdomadaire", "local": "SEO local", "schema": "Balisage schema", "pages": "Pages", "app": "Optimisation des boutiques d’applications" },
-    "states": { "active": "Actif", "revoked": "Révoqué", "expired": "Expiré" },
-    "actions": { "retry": "Réessayer", "download": "Télécharger", "delete": "Supprimer", "revoke": "Révoquer", "cancel": "Annuler", "done": "Terminé" },
-    "errors": { "capabilities": "Impossible de charger les options d’export.", "create": "Impossible d’exporter le rapport. Réduisez le périmètre et réessayez.", "download": "Impossible de télécharger le fichier enregistré.", "list": "Impossible de charger les exports enregistrés.", "delete": "Impossible de supprimer l’export enregistré.", "share": "Impossible de créer le lien de partage.", "revoke": "Impossible de révoquer le lien de partage.", "copy": "Impossible de copier le lien." },
-    "share": { "action": "Créer un lien de partage", "title": "Partager un rapport immuable", "description": "Choisissez ce que les destinataires peuvent ouvrir. Le rapport ne changera plus après la création du lien.", "locale": "Langue du rapport", "expiry": "Expire après", "expiryHelp": "Choisissez entre un et 90 jours.", "permissions": "Formats autorisés", "create": "Créer le lien", "creating": "Création du lien…", "showOnce": "Copiez ce lien maintenant", "linkLabel": "Lien de partage", "copy": "Copier le lien", "copied": "Copié", "savedWithoutToken": "Par sécurité, RankMeFast ne conserve pas le lien lisible. Vous pouvez toujours le révoquer dans le centre d’export.", "existing": "Liens de cet instantané", "refresh": "Actualiser" },
-    "confirm": { "revokeTitle": "Révoquer ce lien ?", "revokeBody": "Toute personne qui l’utilise perdra immédiatement l’accès.", "deleteTitle": "Supprimer cet export enregistré ?", "deleteBody": "Le fichier ne fonctionnera plus et tous ses liens de partage seront révoqués." },
-    "center": { "title": "Exports et partages", "description": "Téléchargez les instantanés enregistrés et gérez les liens publics.", "tabsLabel": "Sections du centre d’export", "downloads": "Téléchargements", "shares": "Partages", "disabledTitle": "Les nouveaux exports sont suspendus", "disabledBody": "Les fichiers existants peuvent rester disponibles, mais aucun nouveau fichier ou lien ne peut être créé.", "emptyDownloadsTitle": "Aucun export enregistré", "emptyDownloadsBody": "Créez-en un depuis un rapport avec Exporter ou partager.", "emptySharesTitle": "Aucun lien de partage", "emptySharesBody": "Partagez un rapport compatible pour gérer son lien ici.", "deletedReport": "Rapport supprimé ou expiré", "noSite": "Tout le compte", "more": "Charger plus", "expiresValue": "Expire le {{date}}", "views_one": "{{count}} vue", "columns": { "report": "Rapport", "site": "Site", "format": "Format", "created": "Créé", "expires": "Expire", "actions": "Actions" },
+    "trigger": "Exporter ou partager",
+    "loading": "Chargement des options d’export…",
+    "preparing": "Préparation du fichier…",
+    "ready": "Export prêt. Une copie est aussi enregistrée dans Exports et partages.",
+    "unavailable": "Export indisponible",
+    "empty": "Rien à exporter pour l’instant",
+    "formatsLabel": "Formats de fichier",
+    "clipboard": {
+      "action": "Copier dans le presse-papiers",
+      "success": "Copié dans le presse-papiers.",
+      "error": "Impossible de copier dans le presse-papiers."
+    },
+    "formats": {
+      "view": "Vue web",
+      "pdf": "PDF",
+      "csv": "CSV",
+      "json": "JSON",
+      "md": "Markdown",
+      "jsonld": "JSON-LD",
+      "txt": "Texte"
+    },
+    "kindAreas": {
+      "audit": "Audit du site",
+      "ranks": "Classements",
+      "google": "Données Google",
+      "client": "Rapport client",
+      "keyword": "Mots-clés",
+      "backlinks": "Backlinks",
+      "competitors": "Concurrents",
+      "actions": "Actions suivantes",
+      "ai": "Visibilité IA",
+      "audience": "Recherche d’audience",
+      "brand": "Brand Radar",
+      "content": "Contenu",
+      "internal_links": "Liens internes",
+      "weekly_pulse": "Bilan hebdomadaire",
+      "local": "SEO local",
+      "schema": "Balisage schema",
+      "pages": "Pages",
+      "app": "Optimisation des boutiques d’applications"
+    },
+    "states": {
+      "active": "Actif",
+      "revoked": "Révoqué",
+      "expired": "Expiré"
+    },
+    "actions": {
+      "retry": "Réessayer",
+      "download": "Télécharger",
+      "delete": "Supprimer",
+      "revoke": "Révoquer",
+      "cancel": "Annuler",
+      "done": "Terminé"
+    },
+    "errors": {
+      "capabilities": "Impossible de charger les options d’export.",
+      "create": "Impossible d’exporter le rapport. Réduisez le périmètre et réessayez.",
+      "download": "Impossible de télécharger le fichier enregistré.",
+      "list": "Impossible de charger les exports enregistrés.",
+      "delete": "Impossible de supprimer l’export enregistré.",
+      "share": "Impossible de créer le lien de partage.",
+      "revoke": "Impossible de révoquer le lien de partage.",
+      "copy": "Impossible de copier le lien."
+    },
+    "share": {
+      "action": "Créer un lien de partage",
+      "title": "Partager un rapport immuable",
+      "description": "Choisissez ce que les destinataires peuvent ouvrir. Le rapport ne changera plus après la création du lien.",
+      "locale": "Langue du rapport",
+      "expiry": "Expire après",
+      "expiryHelp": "Choisissez entre un et 90 jours.",
+      "permissions": "Formats autorisés",
+      "create": "Créer le lien",
+      "creating": "Création du lien…",
+      "showOnce": "Copiez ce lien maintenant",
+      "linkLabel": "Lien de partage",
+      "copy": "Copier le lien",
+      "copied": "Copié",
+      "savedWithoutToken": "Par sécurité, RankMeFast ne conserve pas le lien lisible. Vous pouvez toujours le révoquer dans le centre d’export.",
+      "existing": "Liens de cet instantané",
+      "refresh": "Actualiser"
+    },
+    "confirm": {
+      "revokeTitle": "Révoquer ce lien ?",
+      "revokeBody": "Toute personne qui l’utilise perdra immédiatement l’accès.",
+      "deleteTitle": "Supprimer cet export enregistré ?",
+      "deleteBody": "Le fichier ne fonctionnera plus et tous ses liens de partage seront révoqués."
+    },
+    "center": {
+      "title": "Exports et partages",
+      "description": "Téléchargez les instantanés enregistrés et gérez les liens publics.",
+      "tabsLabel": "Sections du centre d’export",
+      "downloads": "Téléchargements",
+      "shares": "Partages",
+      "disabledTitle": "Les nouveaux exports sont suspendus",
+      "disabledBody": "Les fichiers existants peuvent rester disponibles, mais aucun nouveau fichier ou lien ne peut être créé.",
+      "emptyDownloadsTitle": "Aucun export enregistré",
+      "emptyDownloadsBody": "Créez-en un depuis un rapport avec Exporter ou partager.",
+      "emptySharesTitle": "Aucun lien de partage",
+      "emptySharesBody": "Partagez un rapport compatible pour gérer son lien ici.",
+      "deletedReport": "Rapport supprimé ou expiré",
+      "noSite": "Tout le compte",
+      "more": "Charger plus",
+      "expiresValue": "Expire le {{date}}",
+      "views_one": "{{count}} vue",
+      "columns": {
+        "report": "Rapport",
+        "site": "Site",
+        "format": "Format",
+        "created": "Créé",
+        "expires": "Expire",
+        "actions": "Actions"
+      },
       "views_zero": "{{count}} vue",
       "views_two": "{{count}} vues",
       "views_few": "{{count}} vues",
       "views_many": "{{count}} vues",
-      "views_other": "{{count}} vues" }
+      "views_other": "{{count}} vues"
+    }
   },
   "publicShare": {
     "report": "Rapport partagé",
@@ -387,6 +559,9 @@
       "gscReconnect": "Reconnectez Google Search Console pour effectuer cette vérification.",
       "pageSpeed": "Les données de vitesse issues de vrais visiteurs ne sont pas encore disponibles pour ce site.",
       "localSeo": "Ajoutez une fiche d'établissement ou une source d'avis pour effectuer cette vérification.",
+      "localUnavailable": "Les données de SEO local n'ont pas pu être chargées pendant cet audit. Cette vérification sera relancée au prochain audit.",
+      "localNoProfile": "Nous n'avons trouvé aucune fiche d'établissement, aucun avis ni aucune note pour ce site (par exemple une fiche Google Business Profile) : il n'y avait donc rien à vérifier en local.",
+      "localPackSetup": "Activez le suivi des résultats sur la carte pour l'un de vos mots-clés suivis afin d'effectuer cette vérification.",
       "aiVisibility": "Suivez des requêtes IA pour effectuer cette vérification.",
       "generic": "L'exploration n'a pas renvoyé assez de données pour effectuer cette vérification.",
       "probeUnreachable": "Nous n'avons pas pu joindre {{file}} sur votre site, cette vérification n'a donc pas pu être faite.",
@@ -404,13 +579,16 @@
     "confirm": "Lancer l'audit"
   },
   "findingStatus": "{{bucket}} · {{severity}}",
-  "progress": {"upTo_zero": "Exploration de {{cap}} page au maximum.",
+  "progress": {
+    "upTo_zero": "Exploration de {{cap}} page au maximum.",
     "upTo_one": "Exploration de {{cap}} page au maximum.",
     "upTo_two": "Exploration de {{cap}} pages au maximum.",
     "upTo_few": "Exploration de {{cap}} pages au maximum.",
     "upTo_many": "Exploration de {{cap}} pages au maximum.",
-    "upTo_other": "Exploration de {{cap}} pages au maximum."},
-  "dismissed": {"title_zero": "Écartés ({{count}})",
+    "upTo_other": "Exploration de {{cap}} pages au maximum."
+  },
+  "dismissed": {
+    "title_zero": "Écartés ({{count}})",
     "title_one": "Écartés ({{count}})",
     "title_two": "Écartés ({{count}})",
     "title_few": "Écartés ({{count}})",
@@ -427,11 +605,65 @@
     "resurfaced_two": "Écarté, mais {{count}} pages de plus sont désormais concernées.",
     "resurfaced_few": "Écarté, mais {{count}} pages de plus sont désormais concernées.",
     "resurfaced_many": "Écarté, mais {{count}} pages de plus sont désormais concernées.",
-    "resurfaced_other": "Écarté, mais {{count}} pages de plus sont désormais concernées."},
-  "stale": {"title_zero": "Dernier audit il y a {{count}} jour",
+    "resurfaced_other": "Écarté, mais {{count}} pages de plus sont désormais concernées.",
+    "description": "Ces constats ne sont pas comptés ci-dessus. Restaurez-en un pour le remettre dans la liste.",
+    "justNow": "Écarté",
+    "byOn": "Écarté par {{name}} le {{date}}",
+    "on": "Écarté le {{date}}",
+    "reason": "Raison : {{reason}}",
+    "notDetected": "Non détecté lors du dernier audit.",
+    "recheckResult": "Revérifié le {{date}} : sur {{checked}} URL, {{stillFailing}} échouent encore, {{cleared}} fonctionnent maintenant et {{unverified}} n’ont pas pu être vérifiées.",
+    "recheckByAudit": "Pour vérifier à nouveau ce constat, lancez un nouvel audit.",
+    "recheckCta": "Revérifier ces URL",
+    "restoreCta": "Restaurer",
+    "recheckTitle": "Revérifier ces URL ?",
+    "recheckUrls": "Nous allons redemander {{urls}} URL sur {{total}} et noter la réponse de chacune.",
+    "recheckNote": "Une nouvelle vérification ne demande que vos propres pages. Elle ne lance pas de nouvel audit.",
+    "recheckConfirm": "Revérifier maintenant",
+    "recheckRunning": "Revérification…",
+    "recheckFailed": "Impossible de revérifier ces URL. Réessayez."
+  },
+  "stale": {
+    "title_zero": "Dernier audit il y a {{count}} jour",
     "title_one": "Dernier audit il y a {{count}} jour",
     "title_two": "Dernier audit il y a {{count}} jours",
     "title_few": "Dernier audit il y a {{count}} jours",
     "title_many": "Dernier audit il y a {{count}} jours",
-    "title_other": "Dernier audit il y a {{count}} jours"}
+    "title_other": "Dernier audit il y a {{count}} jours",
+    "body": "Les résultats ne correspondent peut-être plus à votre site. Lancez un nouvel audit pour les actualiser.",
+    "cta": "Lancer un nouvel audit"
+  },
+  "comparison": {
+    "status": {
+      "new": "Nouveau",
+      "regressed": "En recul",
+      "improved": "Amélioré",
+      "unchanged": "Inchangé",
+      "resolved": "Résolu",
+      "not_comparable": "Non comparable"
+    },
+    "description": {
+      "new": "Nouveau : l’audit précédent n’a pas vérifié ce point, ou n’a pas pu le faire.",
+      "regressed": "En recul : moins bien que lors de l’audit précédent, qui l’avait vérifié.",
+      "improved": "Amélioré : toujours ouvert, mais mieux que lors de l’audit précédent.",
+      "unchanged": "Inchangé depuis l’audit précédent.",
+      "resolved": "Résolu : un problème de l’audit précédent qui passe désormais.",
+      "not_comparable": "Non comparable : les deux audits ont exploré des ensembles de pages différents, les chiffres ne peuvent donc pas être comparés."
+    },
+    "scopeNote": "L’audit précédent a exploré {{previous}} pages, celui-ci {{current}} : les nombres de pages ne sont donc pas directement comparables.",
+    "scopeNoteLimits": "L’audit précédent avait une limite de {{previous}} pages, celui-ci de {{current}} : les nombres de pages ne sont donc pas directement comparables."
+  },
+  "notApplicable": {
+    "title": "Sans objet pour ce site",
+    "description": "Ces vérifications de SEO local concernent les entreprises qui reçoivent des clients à une adresse ou dans une zone locale. Elles ne sont comptées nulle part dans ce rapport.",
+    "optIn": "C’est une entreprise locale",
+    "optInHint": "Les vérifications passent alors dans « Non évalué » jusqu’à la configuration du SEO local.",
+    "saving": "Enregistrement…",
+    "failed": "Impossible d’enregistrer. Réessayez."
+  },
+  "olderRun": {
+    "viewing": "Vous consultez l’audit du {{date}}.",
+    "viewingUndated": "Vous consultez un audit plus ancien.",
+    "backToLatest": "Revenir au dernier rapport"
+  }
 }

@@ -9,7 +9,7 @@ order: 13
 
 # Page performance
 
-Open a site and choose **Pages** to compare search performance with the latest crawl inventory. Opening the tab only reads data you already have. New data is collected only when you choose **Refresh** or **Collect fallback data**.
+Open a site and choose **Pages** to compare search performance with the latest crawl inventory. Opening the tab only reads data you already have. New data is collected only when you choose **Refresh** or **Get ranking data**.
 
 ## Which source appears
 

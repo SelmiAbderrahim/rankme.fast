@@ -8,8 +8,10 @@
  * `db/schema/competitors.ts` for why the daily-uniqueness constraint is
  * NOT a DB index).
  *
- * Cost control: both `listCompetitors` and `getIntersection` serve a
- * same-UTC-day cached row without a fresh DataForSEO Labs call.
+ * Cost control: a plain `listCompetitors` read serves the latest stored
+ * snapshot and never reaches the vendor (opening a page never spends). An
+ * explicit `fresh` list and `getIntersection` serve a same-UTC-day cached row
+ * without a fresh DataForSEO Labs call.
  *
  * Provider failures never persist; they surface as a localized `unavailable`
  * HttpError so the audit / rank / report flows stay green.
@@ -36,7 +38,8 @@ export interface CompetitorPayload {
 }
 export interface CompetitorsListPayload {
     competitors: CompetitorPayload[];
-    fetchedAt: string;
+    /** `null` only on a stored read when nothing has been fetched yet. */
+    fetchedAt: string | null;
     target: string;
     /**
      * Which vendor signal produced the rows: 'domain' = the target's own
@@ -331,15 +334,59 @@ async function fetchSerpFallback(input: {
         fetchedAt: fetched.fetchedAt,
     };
 }
+type CompetitorRow = typeof competitors.$inferSelect;
+function toListPayload(target: string, rows: CompetitorRow[]): CompetitorsListPayload {
+    return {
+        target,
+        fetchedAt: rows[0]?.fetchedAt.toISOString() ?? null,
+        source: rows[0]?.source ?? 'domain',
+        competitors: rows.map((r) => ({
+            domain: r.competitorDomain,
+            avgPosition: r.avgPosition === null ? null : Number(r.avgPosition),
+            intersections: r.intersections,
+            estimatedTraffic: r.estimatedTraffic,
+            fetchedAt: r.fetchedAt.toISOString(),
+        })),
+    };
+}
+/**
+ * Free read of the site's latest stored snapshot (any day). Opening the
+ * Competitors tab shows rows already held and never reaches the vendor; an
+ * empty list means nothing is stored yet, and the explicit refresh is the
+ * spend path.
+ */
+async function readLatestStoredSnapshot(db: Db, site: {
+    id: string;
+    domain: string;
+}): Promise<CompetitorsListPayload> {
+    const [latest] = await db
+        .select({ fetchedAt: competitors.fetchedAt })
+        .from(competitors)
+        .where(eq(competitors.siteId, site.id))
+        .orderBy(desc(competitors.fetchedAt))
+        .limit(1);
+    if (!latest)
+        return toListPayload(site.domain, []);
+    const rows = await db
+        .select()
+        .from(competitors)
+        .where(and(eq(competitors.siteId, site.id), gte(competitors.fetchedAt, startOfDayUtc(latest.fetchedAt)), lte(competitors.fetchedAt, endOfDayUtc(latest.fetchedAt))))
+        .orderBy(desc(competitors.intersections));
+    return toListPayload(site.domain, rows);
+}
 export async function listCompetitors(input: {
     accountId: string;
     siteId: string;
     locationCode?: number;
     languageCode?: string;
     limit?: number;
+    /** Explicit pull that may reach the vendor. Without it the read is stored data only. */
+    fresh?: boolean;
 }, deps: CompetitorsServiceDeps): Promise<CompetitorsListPayload> {
     const nowFn = deps.now ?? (() => new Date());
     const site = await loadOwnedSite(input.accountId, input.siteId);
+    if (!input.fresh)
+        return readLatestStoredSnapshot(deps.db, site);
     const now = nowFn();
     const location = input.locationCode ?? DEFAULT_LOCATION_CODE;
     const language = input.languageCode ?? DEFAULT_LANGUAGE_CODE;
@@ -351,20 +398,8 @@ export async function listCompetitors(input: {
         .from(competitors)
         .where(and(eq(competitors.siteId, site.id), gte(competitors.fetchedAt, startOfDayUtc(now)), lte(competitors.fetchedAt, endOfDayUtc(now))))
         .orderBy(desc(competitors.intersections));
-    if (cachedRows.length > 0) {
-        return {
-            target: site.domain,
-            fetchedAt: cachedRows[0]!.fetchedAt.toISOString(),
-            source: cachedRows[0]!.source,
-            competitors: cachedRows.map((r) => ({
-                domain: r.competitorDomain,
-                avgPosition: r.avgPosition === null ? null : Number(r.avgPosition),
-                intersections: r.intersections,
-                estimatedTraffic: r.estimatedTraffic,
-                fetchedAt: r.fetchedAt.toISOString(),
-            })),
-        };
-    }
+    if (cachedRows.length > 0)
+        return toListPayload(site.domain, cachedRows);
     // Cross-user layer: another account's Labs call for the same
     // (domain, location, language, limit) today serves this one from our DB.
     let entries: CompetitorEntry[];

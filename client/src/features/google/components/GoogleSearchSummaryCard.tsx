@@ -39,12 +39,15 @@ import { rangeDays, useGoogleRange } from '../lib/range';
 import {
   deviceLabelKey,
   formatDate,
+  formatDay,
   formatInt,
   formatPercent,
   formatPosition,
+  windowStartDay,
 } from '../lib/format';
 import { GscTimeseriesChart } from './GscTimeseriesChart';
 import { GscBreakdownList } from './GscBreakdownList';
+import { GscTotalsNote } from './GscTotalsNote';
 import { GoogleRangeSelect } from './GoogleRangeSelect';
 
 export interface GoogleSearchSummaryCardProps {
@@ -281,6 +284,17 @@ export const GoogleSearchSummaryCard = ({ siteId }: GoogleSearchSummaryCardProps
               </dd>
             </div>
           </dl>
+
+          <p
+            className="text-muted-foreground mt-2 text-xs"
+            data-testid="google-summary-totals-note"
+          >
+            {t('searchSummary.totalsNote', {
+              start: formatDay(locale, windowStartDay(summary.asOf, days)),
+              end: formatDay(locale, summary.asOf),
+            })}
+          </p>
+          <GscTotalsNote className="mt-1" testId="google-summary-scope-note" />
 
           {summary.previousPeriod ? (
             <p

@@ -22,6 +22,8 @@ import type {
   PageSpeedSection,
   RuleSeverity,
 } from '../types';
+import { affectedUrlTotal, brokenLinkTargetTotal } from '../findingLists';
+import { ComparisonBadge } from './ComparisonBadge';
 import { IssueDetail } from './IssueDetail';
 import { presentationRequestIdentity } from '@shared/i18n';
 
@@ -43,6 +45,8 @@ export interface IssueRowProps {
   aiVisibility?: AiVisibilitySection | null;
   localSeo?: LocalSeoSection | null;
   siteId?: string;
+  /** The run on screen, so the detail can load a previewed finding's full lists. */
+  runId?: string | undefined;
   /**
    * True when the page shows the site's latest report. Finding decisions are
    * site-level (per rule, not per run), so the controls only render on the
@@ -66,13 +70,20 @@ export const IssueRow = ({
   aiVisibility,
   localSeo,
   siteId,
+  runId,
   isLatestRun = false,
   initiallyExpanded = false,
 }: IssueRowProps) => {
   const { t } = useTranslation(['report', 'actions']);
   const dispatch = useAppDispatch();
   const [expanded, setExpanded] = useState(initiallyExpanded);
-  const affectedCount = finding.affectedUrls.length;
+  // The report carries a preview of each list; the counts are the totals.
+  const affectedCount = affectedUrlTotal(finding);
+  // Broken internal links: the affected URLs are the pages that LINK to the
+  // broken targets, so "48 pages affected" next to the Actions tab's target
+  // list reads as a contradiction. Name both numbers.
+  const brokenTargetCount =
+    finding.ruleId === 'broken-internal-links' ? brokenLinkTargetTotal(finding) : 0;
 
   // Map the ruleId onto its unified action row using the server-supplied
   // identity from the actions list response — the client never re-hashes
@@ -104,15 +115,20 @@ export const IssueRow = ({
           <ChevronRight className="size-4 shrink-0 rtl:rotate-180" aria-hidden="true" />
         )}
         <span className="min-w-0 flex-1">
-          <span className="block font-medium"><Bdi>{finding.copy.title}</Bdi></span>
+          {/* A passing check reads as what is right, not as the problem name. */}
+          <span className="block font-medium">
+            <Bdi>{finding.bucket === 'passed' ? finding.copy.passedLabel : finding.copy.title}</Bdi>
+          </span>
           <span className="text-muted-foreground block text-xs">
             {finding.bucket === 'passed'
               ? t('row.passedSummary')
-              : affectedCount === 1
-                ? t('row.affectedPagesOne')
-                : affectedCount > 1
-                  ? t('row.affectedPages', { count: affectedCount })
-                  : t('row.siteWide')}
+              : brokenTargetCount > 0
+                ? t('row.brokenLinksSummary', { pages: affectedCount, targets: brokenTargetCount })
+                : affectedCount === 1
+                  ? t('row.affectedPagesOne')
+                  : affectedCount > 1
+                    ? t('row.affectedPages', { count: affectedCount })
+                    : t('row.siteWide')}
           </span>
         </span>
         <span className="flex shrink-0 items-center gap-2">
@@ -126,14 +142,28 @@ export const IssueRow = ({
               {t('badges.regressed')}
             </StatusChip>
           ) : null}
-          <StatusChip
-            tone={severityTone[finding.severity]}
-            data-testid={`report-badge-severity-${finding.severity}`}
-          >
-            {t(`severity.${finding.severity}`)}
-          </StatusChip>
+          <ComparisonBadge status={finding.comparisonStatus} />
+          {finding.bucket === 'passed' ? (
+            <StatusChip tone="success" data-testid="report-badge-passed">
+              {t('tabs.passed')}
+            </StatusChip>
+          ) : (
+            <StatusChip
+              tone={severityTone[finding.severity]}
+              data-testid={`report-badge-severity-${finding.severity}`}
+            >
+              {t(`severity.${finding.severity}`)}
+            </StatusChip>
+          )}
         </span>
       </button>
+      {/* A later audit reports this dismissed finding on more pages: it is
+          counted again until the user decides anew. */}
+      {finding.decision?.resurfaced ? (
+        <p className="border-t px-4 py-2 text-sm" data-testid="report-finding-resurfaced">
+          {t('report:dismissed.resurfaced', { count: finding.decision.resurfaced.addedCount })}
+        </p>
+      ) : null}
       {actionRef && siteId ? (
         <div className="flex flex-wrap items-center gap-2 border-t px-4 py-2">
           {actionRef.state === 'dismissed' ? (
@@ -210,6 +240,7 @@ export const IssueRow = ({
               actionTitle={finding.copy.title}
               targetState={dialogTarget}
               expectedVersion={actionRef.version}
+              askReason
               onConflictReload={() =>
                 void dispatch(
                   loadActions({
@@ -235,6 +266,7 @@ export const IssueRow = ({
             aiVisibility={aiVisibility}
             localSeo={localSeo}
             siteId={siteId}
+            runId={runId}
             isLatestRun={isLatestRun}
           />
         </div>

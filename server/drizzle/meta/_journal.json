@@ -834,6 +834,13 @@
       "when": 1792883232524,
       "tag": "0118_shiny_starbolt",
       "breakpoints": true
+    },
+    {
+      "idx": 119,
+      "version": "7",
+      "when": 1792931735648,
+      "tag": "0119_rare_warstar",
+      "breakpoints": true
     }
   ]
 }

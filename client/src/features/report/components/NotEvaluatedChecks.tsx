@@ -29,6 +29,9 @@ export type NotEvaluatedSource =
   | 'gscReconnect'
   | 'pageSpeed'
   | 'localSeo'
+  | 'localUnavailable'
+  | 'localNoProfile'
+  | 'localPackSetup'
   | 'aiVisibility'
   | 'probeUnreachable'
   | 'probeBlocked'
@@ -82,7 +85,15 @@ export const notEvaluatedSource = (finding: LocalizedFinding): NotEvaluatedSourc
     return finding.meta?.reason === 'needs-reconnect' ? 'gscReconnect' : 'gsc';
   }
   if (isPageSpeedRuleId(ruleId)) return 'pageSpeed';
-  if (isLocalSeoRuleId(ruleId)) return 'localSeo';
+  if (isLocalSeoRuleId(ruleId)) {
+    const localReason = finding.meta?.reason;
+    if (localReason === 'not-configured') return 'localSeo';
+    if (localReason === 'unavailable') return 'localUnavailable';
+    if (localReason === 'no-local-pack-keyword-tracked') return 'localPackSetup';
+    // No business listing, reviews or rating was found (for example, no
+    // Google Business Profile): there was nothing local to check.
+    return 'localNoProfile';
+  }
   if (isAiVisibilityRuleId(ruleId)) return 'aiVisibility';
   const reason = finding.meta?.reason;
   if (typeof reason === 'string' && reason in CRAWL_REASON_SOURCES) {

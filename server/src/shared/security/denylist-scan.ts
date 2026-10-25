@@ -17,6 +17,15 @@ export interface DenylistScanOptions {
      * vendor payloads, or model prose.
      */
     allowedHtmlFieldNames?: readonly string[];
+    /**
+     * Field names that hold OUR OWN opaque identifiers — a server-minted SHA-256
+     * hex digest such as an Action id, which looks exactly like a leaked secret
+     * to the entropy check and is the argument the next tool call needs. Only a
+     * value that is exactly 64 hex characters, held directly under one of these
+     * names, skips the entropy check; every other check still applies and any
+     * other shape under the same name is still scanned.
+     */
+    opaqueIdentifierFieldNames?: readonly string[];
     maxDepth?: number;
     maxNodes?: number;
     maxStringLength?: number;
@@ -50,6 +59,7 @@ const AUTH_VALUE = /^(?:Bearer\s+|Basic\s+|rmf_)/i;
 const RAW_HTML = /<!doctype\b|<(?:script|iframe|[a-z][a-z\d-]*)(?:\s|>|\/)/i;
 const HEX_BLOB = /^[a-f\d]+$/i;
 const BASE64_BLOB = /^[A-Za-z\d+/_=-]+$/;
+const SHA256_HEX = /^[a-f\d]{64}$/i;
 const UUID = /^[a-f\d]{8}-[a-f\d]{4}-[1-8][a-f\d]{3}-[89ab][a-f\d]{3}-[a-f\d]{12}$/i;
 function keyName(value: string): string {
     return value
@@ -60,6 +70,11 @@ function keyName(value: string): string {
 function looksHighEntropy(value: string, threshold: number): boolean {
     if (value.length < threshold || UUID.test(value))
         return false;
+    // An absolute route (`/sites/<id>/report/<runId>`) is a path, not a blob: every
+    // segment is short. A secret has no such structure — one long unbroken run.
+    if (value.startsWith('/') && value.split('/').every((segment) => segment.length < threshold)) {
+        return false;
+    }
     const encoded = HEX_BLOB.test(value) || BASE64_BLOB.test(value);
     if (!encoded || !/[A-Za-z]/.test(value) || !/\d/.test(value))
         return false;
@@ -72,11 +87,13 @@ function looksHighEntropy(value: string, threshold: number): boolean {
     }, 0);
     return entropy >= 3.5;
 }
-function stringReason(value: string, entropyThreshold: number, htmlAllowed: boolean): string | null {
+function stringReason(value: string, entropyThreshold: number, htmlAllowed: boolean, opaqueId: boolean): string | null {
     if (AUTH_VALUE.test(value))
         return 'authorization-material';
     if (!htmlAllowed && RAW_HTML.test(value))
         return 'raw-html';
+    if (opaqueId && SHA256_HEX.test(value))
+        return null;
     if (looksHighEntropy(value, entropyThreshold))
         return 'high-entropy-secret';
     return null;
@@ -88,6 +105,7 @@ export function scanForForbidden(value: unknown, opts: DenylistScanOptions = {})
     const evidenceFields = new Set([...DEFAULT_EVIDENCE_FIELDS, ...(opts.evidenceFieldNames ?? [])].map(keyName));
     const allowedEvidenceFields = new Set((opts.allowedEvidenceFieldNames ?? []).map(keyName));
     const allowedHtmlFields = new Set((opts.allowedHtmlFieldNames ?? []).map(keyName));
+    const opaqueIdFields = new Set((opts.opaqueIdentifierFieldNames ?? []).map(keyName));
     const maxDepth = opts.maxDepth ?? 12;
     const maxNodes = opts.maxNodes ?? 10000;
     const maxStringLength = opts.maxStringLength ?? 100000;
@@ -97,7 +115,7 @@ export function scanForForbidden(value: unknown, opts: DenylistScanOptions = {})
     const add = (path: string, reason: string): void => {
         findings.push({ path, reason });
     };
-    const walk = (current: unknown, path: string, depth: number, htmlAllowed: boolean): void => {
+    const walk = (current: unknown, path: string, depth: number, htmlAllowed: boolean, opaqueId = false): void => {
         nodes += 1;
         if (nodes > maxNodes) {
             add(path, 'node-limit');
@@ -110,7 +128,7 @@ export function scanForForbidden(value: unknown, opts: DenylistScanOptions = {})
         if (typeof current === 'string') {
             if (current.length > maxStringLength)
                 add(path, 'string-limit');
-            const reason = stringReason(current.slice(0, maxStringLength), entropyThreshold, htmlAllowed);
+            const reason = stringReason(current.slice(0, maxStringLength), entropyThreshold, htmlAllowed, opaqueId);
             if (reason)
                 add(path, reason);
             return;
@@ -143,7 +161,7 @@ export function scanForForbidden(value: unknown, opts: DenylistScanOptions = {})
             if (vendorKeys.has(normalized) || vendorKeys.has(keyName(childPath))) {
                 add(childPath, 'vendor-payload-key');
             }
-            walk(child, childPath, depth + 1, htmlAllowed || allowedHtmlFields.has(normalized));
+            walk(child, childPath, depth + 1, htmlAllowed || allowedHtmlFields.has(normalized), opaqueIdFields.has(normalized));
             if (nodes > maxNodes)
                 break;
         }

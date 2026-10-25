@@ -24,20 +24,22 @@ import { JSON_LD_MEDIA_TYPE, serializeJsonLd } from '../../shared/security/json-
 import { UnsafeUrlError } from '../../shared/security/url-safety.js';
 import { HttpError } from '../../shared/utils/http-error.js';
 import type { SupportedLocale } from '../../shared/i18n/locales.js';
-import { AuditRun, AuditedPage, ReportSnapshot } from '../audits/index.js';
+import { AuditRun, ReportSnapshot, readInventoryPages } from '../audits/index.js';
 import { ContentInventoryPage } from '../content-intelligence/index.js';
 import { Site } from '../sites/index.js';
 import { computeConformance, type ConformanceReport } from './conformance.js';
 import { buildSchemaDocument, type EvidenceRow, type OmissionRow } from './document.js';
 import { EVIDENCE_LIMITS, SchemaEvidenceError, assembleEvidence, type EvidenceFact, type EvidenceSource, type SafeFetch, } from './evidence.js';
 import { SchemaGeneration, type SchemaGenerationFailureReason } from './schema-generation.model.js';
-import { SCHEMA_REGISTRY_VERSION, SCHEMA_TYPE_REGISTRY, SUPPORTED_SCHEMA_TYPES, factFamily, type SupportedSchemaType, } from './schema-types.registry.js';
+import { SCHEMA_REGISTRY_VERSION, SCHEMA_TYPE_REGISTRY, SUPPORTED_SCHEMA_TYPES, USER_FACT_FAMILY, factFamily, userSuppliableProperties, type OmissionReason, type SchemaRichResultsNote, type SupportedSchemaType, type UserFactProperty, } from './schema-types.registry.js';
 import { checkTraceability, requestableFactFamilies, requestableProperties, type RawAssignment, } from './traceability.js';
 const NOT_FOUND_KEY = 'schemaGenerator.errors.notFound';
 const UNAVAILABLE_KEY = 'schemaGenerator.errors.productUnavailable';
 const UNSAFE_URL_KEY = 'schemaGenerator.errors.unsafeUrl';
 const NOT_HTML_KEY = 'schemaGenerator.errors.notHtml';
 const GENERATION_FAILED_KEY = 'schemaGenerator.errors.generationFailed';
+const REGENERATE_UNAVAILABLE_KEY = 'schemaGenerator.errors.regenerateUnavailable';
+const USER_FACT_NOT_APPLICABLE_KEY = 'schemaGenerator.errors.userFactNotApplicable';
 /** Longest source list a picker ever needs; also the read bound (SEC-BOUND). */
 export const MAX_SOURCE_PAGES = 200;
 export { JSON_LD_MEDIA_TYPE };
@@ -56,6 +58,8 @@ export interface SchemaTypeProjectionDto {
     type: SupportedSchemaType;
     required: SchemaPropertyProjectionDto[];
     recommended: SchemaPropertyProjectionDto[];
+    /** `null` when Google still shows this type's rich result. */
+    richResults: SchemaRichResultsNote | null;
 }
 export interface SchemaTypesDto {
     registryVersion: string;
@@ -79,6 +83,12 @@ export interface SchemaSourcesDto {
     siteId: string;
     runId: string | null;
     auditedPages: AuditedSourcePageDto[];
+    /**
+     * Pages the latest audit stored. Larger than `auditedPages.length` when the
+     * picker list was capped at {@link MAX_SOURCE_PAGES}, so the UI can say the
+     * list is partial instead of "showing 200 of 200".
+     */
+    auditedPagesTotal: number;
     /** Inventory rows missing at least one type from the supported registry. */
     inventoryPages: InventorySourcePageDto[];
 }
@@ -93,6 +103,8 @@ export interface GenerationSummaryDto {
     conformanceStatus: 'conforms' | 'gaps' | null;
     failureReason: SchemaGenerationFailureReason | null;
     generatedAt: string;
+    /** The generation this one was rebuilt from, free of charge. */
+    regeneratedFrom: string | null;
 }
 export interface GenerationDetailDto extends GenerationSummaryDto {
     /** Serialized JSON-LD. Render as TEXT — never as markup (SEC-OUT). */
@@ -165,11 +177,12 @@ export function schemaTypesProjection(): SchemaTypesDto {
     return {
         registryVersion: SCHEMA_REGISTRY_VERSION,
         types: SUPPORTED_SCHEMA_TYPES.map((type) => {
-            const properties = SCHEMA_TYPE_REGISTRY[type].properties;
+            const { properties, richResults } = SCHEMA_TYPE_REGISTRY[type];
             return {
                 type,
                 required: properties.filter((p) => p.class === 'required').map(projectProperty),
                 recommended: properties.filter((p) => p.class === 'recommended').map(projectProperty),
+                richResults: richResults ?? null,
             };
         }),
     };
@@ -200,22 +213,23 @@ export async function listSources(input: {
         .select({ _id: 1 })
         .lean();
     let auditedPages: AuditedSourcePageDto[] = [];
+    let auditedPagesTotal = 0;
     let runId: string | null = null;
     if (run) {
         runId = String(run._id);
-        const [pages, snapshot] = await Promise.all([
-            AuditedPage.find({ runId })
-                .sort({ url: 1 })
-                .limit(MAX_SOURCE_PAGES)
-                .select({
-                url: 1,
-                title: 1,
-                hasStructuredData: 1,
-                structuredDataErrors: 1,
-            })
-                .lean(),
+        // The same page inventory as Pages: redirect sources, errors, files and
+        // duplicate addresses are crawled URLs, not pages.
+        const [inventory, snapshot] = await Promise.all([
+            readInventoryPages<{
+                url: string;
+                title?: string | null;
+                hasStructuredData: boolean;
+                structuredDataErrors: string[];
+            }>(runId, { title: 1, hasStructuredData: 1, structuredDataErrors: 1 }, MAX_SOURCE_PAGES),
             ReportSnapshot.findOne({ runId }).select({ indexStatus: 1 }).lean(),
         ]);
+        const pages = inventory.pages;
+        auditedPagesTotal = inventory.total;
         const verdicts = new Map<string, string>();
         const samples = (snapshot?.indexStatus?.samples ?? []) as unknown as RichResultsSample[];
         for (const sample of samples)
@@ -268,7 +282,7 @@ export async function listSources(input: {
             hasSchemaOrgArticle: facts?.hasSchemaOrgArticle === true,
         });
     }
-    return { siteId: input.siteId, runId, auditedPages, inventoryPages };
+    return { siteId: input.siteId, runId, auditedPages, auditedPagesTotal, inventoryPages };
 }
 // ---------------------------------------------------------------------------
 // Preview
@@ -381,6 +395,8 @@ interface StoredSummaryShape {
     } | null;
     failureReason: string | null;
     createdAt: Date;
+    /** Absent on documents stored before rebuilds existed. */
+    regeneratedFrom?: unknown;
 }
 function toSummary(doc: StoredSummaryShape): GenerationSummaryDto {
     return {
@@ -394,6 +410,7 @@ function toSummary(doc: StoredSummaryShape): GenerationSummaryDto {
         conformanceStatus: (doc.conformance?.status as 'conforms' | 'gaps' | undefined) ?? null,
         failureReason: doc.failureReason as SchemaGenerationFailureReason | null,
         generatedAt: doc.createdAt.toISOString(),
+        regeneratedFrom: doc.regeneratedFrom ? String(doc.regeneratedFrom) : null,
     };
 }
 interface StoredDetailShape extends StoredSummaryShape {
@@ -532,6 +549,99 @@ export async function createGeneration(input: CreateGenerationInput, deps: Schem
         conformance,
         failureReason: rejectedEverything ? 'ai_output_rejected' : null,
         provenance,
+    });
+    return toDetail(created.toObject() as unknown as StoredDetailShape);
+}
+// ---------------------------------------------------------------------------
+// Regeneration from user-supplied facts
+// ---------------------------------------------------------------------------
+export interface RegenerateGenerationInput {
+    accountId: string;
+    generationId: string;
+    facts: Partial<Record<UserFactProperty, string>>;
+}
+/**
+ * `POST /generations/:generationId/regenerate` — rebuild a stored generation
+ * with facts the user typed for properties it left out.
+ *
+ * The rebuild re-reads the facts the original generation already stored — every
+ * evidence row it emitted, its page URL and its refined omission reasons — and
+ * runs only the deterministic assembler and conformance check. There is no AI
+ * call, no page fetch and no vendor request. Each supplied value is emitted
+ * verbatim with the provenance "provided by you"; nothing is invented. The
+ * result is a NEW generation linked through `regeneratedFrom`, so the original
+ * stays as it was.
+ */
+export async function regenerateGeneration(input: RegenerateGenerationInput): Promise<GenerationDetailDto> {
+    const stored = await SchemaGeneration.findOne({
+        _id: input.generationId,
+        accountId: input.accountId,
+    }).lean();
+    if (!stored)
+        throw HttpError.notFound({ code: 'NOT_FOUND', messageKey: NOT_FOUND_KEY });
+    const siteId = String(stored.siteId);
+    await requireOwnedSite(input.accountId, siteId);
+    const paused = await Site.exists({ _id: siteId, accountId: input.accountId, paused: true });
+    if (paused)
+        throw HttpError.conflict({ code: 'SITES_ERRORS_PAUSED', messageKey: 'sites.errors.paused' });
+    requireEnabled();
+    if (stored.payload === null) {
+        throw HttpError.conflict({ code: 'REGENERATE_UNAVAILABLE', messageKey: REGENERATE_UNAVAILABLE_KEY });
+    }
+    const type = stored.schemaType as SupportedSchemaType;
+    const suppliable = new Set<string>(userSuppliableProperties(type));
+    const isUserRow = (row: { factId: string }) => row.factId.startsWith(`${USER_FACT_FAMILY}.`);
+    const userFacts = new Map<string, string>();
+    // Values supplied for an earlier rebuild carry forward; new ones win.
+    for (const row of stored.evidence) {
+        if (isUserRow(row))
+            userFacts.set(row.property, row.value);
+    }
+    // zod drops absent optional keys, so every entry carries a value.
+    for (const [property, value] of Object.entries(input.facts) as [string, string][]) {
+        if (!suppliable.has(property)) {
+            throw HttpError.badRequest({ code: 'USER_FACT_NOT_APPLICABLE', messageKey: USER_FACT_NOT_APPLICABLE_KEY });
+        }
+        userFacts.set(property, value);
+    }
+    // The stored evidence rows ARE the facts the original generation used. Rebuilt
+    // as facts, the deterministic fills resolve to the same values; the rows of
+    // AI-selected properties are replayed as the already-checked assignments.
+    const factsById = new Map<string, EvidenceFact>();
+    factsById.set('page.url', { id: 'page.url', kind: 'first_party', label: 'Page URL', value: stored.pageUrl, contextOnly: false });
+    const assignments: {
+        property: string;
+        factId: string;
+        value: string;
+    }[] = [];
+    for (const row of stored.evidence) {
+        if (isUserRow(row))
+            continue;
+        factsById.set(row.factId, { id: row.factId, kind: 'first_party', label: row.factLabel, value: row.value, contextOnly: false });
+        assignments.push({ property: row.property, factId: row.factId, value: row.value });
+    }
+    const overrides = new Map<string, OmissionReason>();
+    for (const row of stored.omissions) {
+        if (row.reasonCode === 'evidence_ambiguous')
+            overrides.set(row.property, row.reasonCode);
+    }
+    const built = buildSchemaDocument(type, assignments, [...factsById.values()], overrides, userFacts);
+    const omissionReasons = new Map(built.omissions.map((row) => [row.property, row.reasonCode]));
+    const created = await SchemaGeneration.create({
+        accountId: stored.accountId,
+        siteId: stored.siteId,
+        pageUrl: stored.pageUrl,
+        source: stored.source,
+        schemaType: type,
+        registryVersion: SCHEMA_REGISTRY_VERSION,
+        status: 'complete',
+        payload: serializeJsonLd(built.document),
+        evidence: built.evidence,
+        omissions: built.omissions,
+        conformance: computeConformance(type, built.emittedProperties, omissionReasons),
+        failureReason: null,
+        provenance: null,
+        regeneratedFrom: stored._id,
     });
     return toDetail(created.toObject() as unknown as StoredDetailShape);
 }

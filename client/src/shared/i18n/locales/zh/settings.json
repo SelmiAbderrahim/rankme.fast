@@ -12,7 +12,7 @@
       },
       "emailRankDrop": {
         "label": "排名下降",
-        "description": "已跟踪关键词排名下降时通知我。"
+        "description": "当跟踪的关键词排名下跌且第二次检查确认后，通过邮件通知我。"
       },
       "emailAlerts": {
         "label": "提醒规则",

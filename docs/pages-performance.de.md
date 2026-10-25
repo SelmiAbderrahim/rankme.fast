@@ -9,7 +9,7 @@ order: 13
 
 # Seitenleistung
 
-Öffnen Sie eine Website und wählen Sie **Seiten**, um Suchleistung und den Bestand des letzten Crawls zusammen zu betrachten. Beim Öffnen werden nur gespeicherte Daten gelesen. Neue Daten werden erst mit **Aktualisieren** oder **Fallback-Daten erfassen** gesammelt.
+Öffnen Sie eine Website und wählen Sie **Seiten**, um Suchleistung und den Bestand des letzten Crawls zusammen zu betrachten. Beim Öffnen werden nur gespeicherte Daten gelesen. Neue Daten werden erst mit **Aktualisieren** oder **Ranking-Daten abrufen** gesammelt.
 
 ## Datenquelle
 

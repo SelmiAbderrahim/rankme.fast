@@ -26,5 +26,6 @@ const siteMarketSchema = z.object({
 export const updateSiteSchema = z.object({
     displayName: z.string().trim().max(120).optional(),
     defaultMarket: siteMarketSchema.optional(),
-}).refine((body) => body.displayName !== undefined || body.defaultMarket !== undefined);
+    localBusiness: z.boolean().optional(),
+}).refine((body) => body.displayName !== undefined || body.defaultMarket !== undefined || body.localBusiness !== undefined);
 export type UpdateSiteBody = z.infer<typeof updateSiteSchema>;

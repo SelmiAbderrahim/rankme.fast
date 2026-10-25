@@ -36,19 +36,40 @@
     "title": "مصادر المراجعات",
     "description": "أخبرنا أين تُدرج نشاطك التجاري. بطاقة واحدة لكل دليل.",
     "empty": "لا توجد مصادر بعد. أضف واحدًا بالأسفل.",
-    "configured": "مُعد",
+    "status": {
+      "saved": "محفوظ، لم تتم مزامنته بعد",
+      "verified": "تم التحقق بالمزامنة",
+      "failed": "فشلت آخر مزامنة",
+      "invalid": "راجع هذا المعرّف"
+    },
     "save": "احفظ المصدر",
     "remove": "احذف",
     "hint": {
       "google": "معرّف المكان في Google",
       "trustpilot": "نطاق النشاط التجاري في Trustpilot",
-      "tripadvisor": "معرّف الموقع في Tripadvisor"
+      "tripadvisor": "معرّف المكان في Tripadvisor"
     },
     "placeholder": {
       "google": "ChIJ_example_place_id",
       "trustpilot": "example.com",
       "tripadvisor": "1234567"
-    }
+    },
+    "help": {
+      "google": "معرّف المكان هو الرمز الذي تستخدمه Google لقائمة نشاطك التجاري، ويبدأ عادةً بـ ChIJ. ابحث عن نشاطك التجاري في أداة Google للبحث عن المعرّف وانسخ المعرّف الذي تعرضه.",
+      "googleLink": "افتح أداة Google للبحث عن معرّف المكان"
+    },
+    "invalid": {
+      "google": "أدخل معرّف مكان Google صالحًا. يبدأ عادةً بـ ChIJ ولا يقل طوله عن 20 حرفًا.",
+      "trustpilot": "أدخل نطاق النشاط التجاري كما يظهر في Trustpilot، مثل example.com، دون https://.",
+      "tripadvisor": "أدخل معرّف موقع Tripadvisor الرقمي، مثل 23462501. وهو الرقم الذي يلي الحرف d في عنوان الصفحة."
+    },
+    "removeConfirm": {
+      "title": "هل تريد إزالة هذا المصدر؟",
+      "description": "لن يُدرج {{source}} في المزامنات الجديدة. تبقى التقييمات التي جلبتها سابقًا في مخزونك.",
+      "cancel": "إبقاء المصدر",
+      "confirm": "إزالة المصدر"
+    },
+    "removed": "تمت إزالة مصدر {{source}}."
   },
   "sync": {
     "title": "شغّل مزامنة",

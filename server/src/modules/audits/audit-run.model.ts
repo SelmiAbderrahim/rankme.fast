@@ -1,4 +1,6 @@
 import mongoose, { type HydratedDocument, type InferSchemaType } from 'mongoose';
+import { coverageProbeSchema } from './crawl-evidence.schemas.js';
+import { AUDIT_RUN_STOP_REASONS } from './crawl-stop-reason.js';
 /**
  * One site-audit execution. This document — not BullMQ job
  * state — is the source of truth the UI reads: `queued → running →
@@ -86,6 +88,19 @@ const auditRunSchema = new mongoose.Schema({
         type: String,
         default: null,
     },
+    // Pages stored for this run, written when it succeeds. `null` = the run
+    // predates the field or has not finished.
+    pagesCrawled: { type: Number, default: null },
+    // Pages the crawl vendor said it crawled. Larger than `pagesCrawled` means
+    // the stored list is incomplete; `null` = not reported.
+    vendorPagesCrawled: { type: Number, default: null },
+    // Why the crawler stopped: the vendor's reason, or one derived from the
+    // counts when the run finished. `null` = the run predates the field.
+    crawlStopReason: { type: String, enum: AUDIT_RUN_STOP_REASONS, default: null },
+    // Requests we made for URLs missing from the crawl (the site root, Search
+    // Console pages), so "absent from the crawl" has a recorded cause. Absent =
+    // the stage did not run.
+    coverageProbes: { type: [coverageProbeSchema], default: undefined },
     // Normalized AuditResult (shared/providers/types.ts) — vendor-neutral.
     result: {
         type: mongoose.Schema.Types.Mixed,

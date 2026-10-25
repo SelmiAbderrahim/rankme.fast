@@ -27,7 +27,7 @@ import { BEARER_DEFAULT_LOCALE } from '../../shared/middleware/bearer-language.j
 import { Site, tryRunWithSiteWorkLease } from '../sites/index.js';
 import { getAuditRun, getLatestSiteReport, startAuditForSite, } from '../audits/index.js';
 import { getKeywordHistoryBatch, listKeywords, summarizeSiteRankStates,
-    keywordCheckStatus, type KeywordRankStateResult } from '../ranks/index.js';
+    keywordCheckStatus, type KeywordRankState, type KeywordRankStateResult, type SiteRankStateSummary } from '../ranks/index.js';
 
 function keywordStateFields(rankState: KeywordRankStateResult) {
     const status = keywordCheckStatus(rankState);
@@ -66,16 +66,23 @@ export interface McpToolContext {
      */
     permissions: EffectiveMcpPermissions;
 }
-type McpResultKey = 'mcp.results.sitesEmpty' | 'mcp.results.sitePaused' | 'mcp.results.latestAuditReport' | 'mcp.results.keywordsEmpty' | 'mcp.results.rankHistory' | 'mcp.results.rankMovementSummary' | 'mcp.results.contentAnalyses' | 'mcp.results.contentAnalysesMore' | 'mcp.results.contentAnalysis' | 'mcp.results.auditStarted' | 'mcp.results.auditStatus' | 'mcp.results.actions' | 'mcp.results.actionState';
+type McpResultKey = 'mcp.results.sitesEmpty' | 'mcp.results.sitePaused' | 'mcp.results.latestAuditReport' | 'mcp.results.keywordsEmpty' | 'mcp.results.rankHistory' | 'mcp.results.rankStateSummary' | 'mcp.results.rankMovementSummary' | `mcp.results.rankState.${KeywordRankState}` | 'mcp.results.contentAnalyses' | 'mcp.results.contentAnalysesMore' | 'mcp.results.contentAnalysis' | 'mcp.results.auditStarted' | 'mcp.results.auditStatus' | 'mcp.results.actions' | 'mcp.results.actionState';
 function resultText(locale: SupportedLocale, key: McpResultKey, vars?: TranslationVars): string {
     return translate(locale, key, vars);
 }
-function movementSummaryText(locale: SupportedLocale, movement: { improved: number; declined: number;
-    unchanged: number; failed: number; unranked: number; noPair: number }): string {
-    return resultText(locale, 'mcp.results.rankMovementSummary', {
-        up: movement.improved, down: movement.declined, flat: movement.unchanged,
-        failed: movement.failed, unranked: movement.unranked, noPair: movement.noPair,
-    });
+/** One localized line with the count per state, in the classifier's order. */
+function rankStateSummaryText(locale: SupportedLocale, summary: SiteRankStateSummary): string {
+    const parts = (Object.entries(summary.counts) as Array<[KeywordRankState, number]>)
+        .filter(([, count]) => count > 0)
+        .map(([state, count]) => `${resultText(locale, `mcp.results.rankState.${state}`)}: ${count}`);
+    const { movement } = summary;
+    return [
+        resultText(locale, 'mcp.results.rankStateSummary', { count: summary.total, states: parts.join(', ') }),
+        resultText(locale, 'mcp.results.rankMovementSummary', {
+            up: movement.improved, down: movement.declined, flat: movement.unchanged,
+            failed: movement.failed, unranked: movement.unranked, noPair: movement.noPair,
+        }),
+    ].join('\n');
 }
 function resolveLocale(arg: unknown, fallback: SupportedLocale = BEARER_DEFAULT_LOCALE): SupportedLocale {
     if (typeof arg === 'string') {
@@ -113,6 +120,12 @@ const FIRST_PARTY_COPY_FIELDS = [
  */
 const MCP_SCAN_MAX_NODES = 100000;
 /**
+ * Fields that carry a server-minted SHA-256 id the caller passes straight back
+ * (`list_actions` item `id`, `set_action_state` `actionId`). A real digest is
+ * random hex, which the entropy check cannot tell from a leaked key.
+ */
+const OPAQUE_IDENTIFIER_FIELDS = ['id', 'actionId'] as const;
+/**
  * Map a thrown error onto the MCP tool-error result shape.
  *
  * Every branch returns a localized i18n key as `code` so a caller can act on
@@ -135,7 +148,7 @@ function toolErrorKey(err: unknown): string {
  * exactly how the denylist regression on `get_latest_audit_report` survived).
  * Every returned payload is denylist-scanned first.
  */
-async function runTool(name: string, rawInput: unknown, context: McpToolContext, execute: (locale: SupportedLocale) => Promise<McpToolResult>): Promise<McpToolResult> {
+export async function runTool(name: string, rawInput: unknown, context: McpToolContext, execute: (locale: SupportedLocale) => Promise<McpToolResult>): Promise<McpToolResult> {
     const rawLocale = rawInput && typeof rawInput === 'object' && !Array.isArray(rawInput)
         ? (rawInput as Record<string, unknown>).locale
         : undefined;
@@ -145,6 +158,7 @@ async function runTool(name: string, rawInput: unknown, context: McpToolContext,
         assertNoForbidden(result.structuredContent, {
             allowedEvidenceFieldNames: ['keywords'],
             allowedHtmlFieldNames: FIRST_PARTY_COPY_FIELDS,
+            opaqueIdentifierFieldNames: OPAQUE_IDENTIFIER_FIELDS,
             maxNodes: MCP_SCAN_MAX_NODES,
         });
         return result;
@@ -291,8 +305,8 @@ export async function toolListKeywords(rawInput: unknown, context: McpToolContex
                     type: 'text',
                     text: keywords.length === 0
                         ? resultText(locale, 'mcp.results.keywordsEmpty')
-                        : [movementSummaryText(locale, rankStates.movement),
-                            ...keywords.map((k) => `- ${k.phrase}`)].join('\n'),
+                        : [rankStateSummaryText(locale, rankStates),
+                            ...keywords.map((k) => `- ${k.phrase}: ${resultText(locale, `mcp.results.rankState.${k.state}`)}`)].join('\n'),
                 },
             ],
         };
@@ -334,7 +348,7 @@ export async function toolGetRankHistory(rawInput: unknown, context: McpToolCont
                 {
                     type: 'text',
                     text: [resultText(locale, 'mcp.results.rankHistory', { count: keywords.length }),
-                        movementSummaryText(locale, rankStates.movement)].join('\n'),
+                        rankStateSummaryText(locale, rankStates)].join('\n'),
                 },
             ],
         };

@@ -1,11 +1,12 @@
-export { PAGES_AUDIT_INVENTORY_MAX, readLatestAuditPageDetail, readLatestCompletedPageInventory, type AuditPageCrawlFacts, type AuditPageDetail, type AuditPageInventory, type AuditPageInventoryRow, type AuditPageIssue, } from './page-inventory.service.js';
+export { CRAWL_STATES, resolveCrawlState, type CrawlEvidence, type CrawlState, type CrawlStateInput, type CrawlStateResult, } from './crawl-state.js';
+export { INVENTORY_PAGE_FILTER, inventoryPageKey, PAGES_AUDIT_INVENTORY_MAX, readInventoryPages, readLatestAuditPageDetail, readLatestCompletedPageInventory, type AuditLastCrawl, type AuditPageCrawlFacts, type AuditPageDetail, type AuditPageInventory, type AuditPageInventoryRow, type AuditPageIssue, } from './page-inventory.service.js';
 export { deepCrawlEvidenceLines } from './deep-crawl-evidence.js';
 export { AuditRun, AUDIT_RUN_STATUSES, type AuditRunDocument, type AuditRunHydrated, type AuditRunStatus, } from './audit-run.model.js';
 export { AuditedPage, type AuditedPageDocument, type AuditedPageHydrated, } from './audited-page.model.js';
 export { completeAuditRun, failAuditRun, markAuditRunRunning, type TransitionResult, } from './audit-run.service.js';
 export { createAuditProcessor, onAuditJobExhausted, resolveAuditTarget, selectPageSpeedSampleUrls, urlPathDepth, type AuditJobOutcome, type AuditProcessorDeps, type ResolvedAuditTarget, } from './audit.processor.js';
 export { createStructuredDataProbe, htmlHasJsonLd, type StructuredDataProbe } from './structured-data-probe.js';
-export { createSiteProbe, type SiteProbe } from '../../shared/security/site-probe.js';
+export { createPageProber, createSiteProbe, type PageProber, type SiteProbe } from '../../shared/security/site-probe.js';
 export { createAuditCompletedHandler, createAuditFailedHandler, type AuditStatusEventDeps, } from './audit.events.js';
 export { auditsRouter, auditsSiteRouter } from './audits.routes.js';
 export { getAuditsQueue, setAuditsQueue } from './audits.queue-holder.js';
@@ -21,3 +22,10 @@ export { diffSnapshots, emptyDiff, getAuditReport, getLatestSiteReport, writeRep
 export { PDF_MAX_FINDINGS, PDF_MAX_URLS_PER_FINDING, CLIENT_REPORT_MAX_GSC_QUERIES, CLIENT_REPORT_MAX_LOGO_HEIGHT_PT, CLIENT_REPORT_MAX_LOGO_WIDTH_PT, CLIENT_REPORT_MAX_RANK_ROWS, parseAccentColor, renderAuditReportPdf, type RenderAuditReportPdfInput, type ReportPdfBranding, type ReportPdfGscQuery, type ReportPdfGscSummary, type ReportPdfRankRow, type ReportPdfRankSummary, } from './report-pdf.service.js';
 export { ALL_INDEXSTATUS_RULES, ALL_PAGESPEED_RULES, ALL_RULES, RULE_CATEGORIES, RULE_IDS, bucketFor, categoryOf, countByBucket, evaluateAllRules, isNotEvaluatedFinding, type AuditRule, type FindingCounts, type IndexStatusEvaluationInput, type IndexStatusRule, type IndexStatusSample, type IndexStatusStatus, type PageSpeedEvaluationInput, type PageSpeedRule, type PageSpeedSample, type PageSpeedStatus, type RuleBucket, type RuleCategory, type RuleFinding, type RuleId, type RuleSeverity, } from './rules/index.js';
 export { createAuditReportExportAdapter } from './report-export.adapter.js';
+export { AUDIT_RUN_STOP_REASONS, finalStopReason, readStopReason, type AuditRunStopReason, type AuditStopReasonSource, } from './crawl-stop-reason.js';
+export { DISMISSAL_REASONS, FINDING_RECHECK_OUTCOMES, FindingDismissal, type DismissalReason, type FindingDismissalDocument, type FindingRecheckOutcome, } from './finding-dismissal.model.js';
+export { LOCAL_SEO_RULE_IDS, findingApplicability, localSeoApplies, type FindingApplicability, } from './finding-applicability.js';
+export { FINDING_COMPARISON_STATUSES, compareFinding, compareFindings, crawlScopesDiffer, type FindingComparisonStatus, type ReportComparison, } from './finding-comparison.js';
+export { RECHECKABLE_RULE_IDS, applyDismissals, countOpenFixNow, isUncountedDecision, recordFindingDismissal, resurfacedBy, toFindingRecheckView, type DecidedFinding, type DismissalsApplied, type StoredFindingCount, type FindingDecisionView, type FindingRecheckView, } from './report-dismissals.js';
+export { FINDING_RECHECK_COOLDOWN_MS, FINDING_RECHECK_DEADLINE_MS, FINDING_RECHECK_MAX_URLS, previewFindingRecheck, runFindingRecheck, setFindingRecheckProber, type FindingRecheckInput, type FindingRecheckPreview, } from './finding-recheck.service.js';
+export { SUMMARY_ACT_AREAS, summaryActArea, type SummaryActArea } from './summary-act-area.js';

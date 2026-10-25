@@ -1,6 +1,6 @@
 ---
 title: 'Alerts'
-description: 'Which alerts fire today, how exactly-once delivery works, and why a rank-drop rule can be configured before it can deliver.'
+description: 'Which alerts fire, how exactly-once delivery works, and when a rank-drop rule delivers.'
 locale: en
 slug: alerts
 section: product
@@ -17,7 +17,7 @@ You set up alert rules per site. They can deliver by email, by Slack incoming we
 
 New and lost referring-domain alerts. They fire after two link reviews in a row have completed, and each alert carries the before-and-after evidence that triggered it.
 
-You can also configure and save rank-drop rules, but they deliver from confirmed rank-drop observations that the shipped rank pipeline does not yet produce. Backlink change alerts are the channel that fires today.
+Rank-drop rules fire only after a drop is confirmed: a scheduled rank check finds the drop, and a fresh second check of the same keyword in the same market still shows it. If the keyword recovers, or the second check can't run, the rule stays silent. See [Confirmed rank alerts](./confirmed-rank-alerts.en.md).
 
 ## One alert per change
 
@@ -27,9 +27,9 @@ Your first link review has nothing to compare against, so it never triggers an a
 
 When a transport fails, the delivery is logged as failed instead of being retried forever. The same change is never sent as a second alert.
 
-## Channels and rule limits
+## Channels
 
-Email works on every paid tier; Slack and the generic webhook need Pro or above. You can have up to 2 alert rules on Starter, 10 on Pro, and 50 on Agency.
+Email, Slack and the generic webhook are all available.
 
 For Slack you paste an incoming-webhook URL. There's no RankMeFast Slack app or bot.
 

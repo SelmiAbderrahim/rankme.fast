@@ -23,6 +23,7 @@
     "label": "Aktionen filtern",
     "reset": "Filter zurücksetzen",
     "all": "Alle",
+    "openAndPlanned": "Offen und geplant",
     "state": "Status",
     "source": "Quelle",
     "severity": "Schweregrad",
@@ -81,14 +82,12 @@
     "observedAt": "Beobachtet am {{date}}",
     "openSource": "Quellansicht öffnen",
     "affectedNone": "Websiteweit",
-    "affectedOne": "1 betroffene URL",
     "affectedCount_one": "{{count}} betroffene URL",
     "evidence": "Belege",
     "evidenceLabel": "{{source}} · {{date}}",
     "evidenceLink": "Belegquelle öffnen",
     "history": "Verlauf",
     "retest": "Erneut prüfen",
-    "affectedSample": "({{shown}} angezeigt)",
     "noteLabel": "Notiz",
     "affectedCount_zero": "{{count}} betroffene URLs",
     "affectedCount_two": "{{count}} betroffene URLs",
@@ -112,7 +111,10 @@
     "seeLinkTargets_two": "Alle {{count}} Seiten und die defekten Links, auf die sie verweisen, im Bericht ansehen",
     "seeLinkTargets_few": "Alle {{count}} Seiten und die defekten Links, auf die sie verweisen, im Bericht ansehen",
     "seeLinkTargets_many": "Alle {{count}} Seiten und die defekten Links, auf die sie verweisen, im Bericht ansehen",
-    "seeLinkTargets_other": "Alle {{count}} Seiten und die defekten Links, auf die sie verweisen, im Bericht ansehen"
+    "seeLinkTargets_other": "Alle {{count}} Seiten und die defekten Links, auf die sie verweisen, im Bericht ansehen",
+    "linkSourcesCount": "Seiten mit defekten Links: {{count}}",
+    "staleRetestHint": "Dieser Nachweis ist veraltet. Testen Sie erneut, um ihn neu zu prüfen.",
+    "linkSourcesCountSampled": "Seiten mit defekten Links: {{count}} ({{shown}} angezeigt)"
   },
   "transitions": {
     "planned": "Planen",
@@ -138,7 +140,14 @@
     "confirm": "Bestätigen",
     "saving": "Wird gespeichert…",
     "conflict": "Jemand anderes hat diese Aktion zuerst geändert. Laden Sie sie neu und versuchen Sie es erneut.",
-    "conflictReload": "Aktion neu laden"
+    "conflictReload": "Aktion neu laden",
+    "reasonLabel": "Warum verwerfen Sie diesen Befund?",
+    "reasons": {
+      "false_positive": "Fehlalarm",
+      "wont_fix": "Wird nicht behoben",
+      "fixed_elsewhere": "Anderswo behoben",
+      "other": "Anderer Grund"
+    }
   },
   "history": {
     "title": "Aktionsverlauf",
@@ -182,6 +191,8 @@
     "dismissedLabel": "Als Fehlalarm verworfen",
     "fixCta": "Als behoben markieren",
     "fixedLabel": "Als behoben markiert",
-    "reappearedLabel": "Trotz Markierung als behoben weiterhin gefunden"
+    "reappearedLabel": "Trotz Markierung als behoben weiterhin gefunden",
+    "notCounted": "Nicht mitgezählt – verworfen: {{dismissed}}, als behoben markiert: {{completed}}.",
+    "fixedGroupIn": "Als behoben markiert in {{tab}} ({{count}})"
   }
 }

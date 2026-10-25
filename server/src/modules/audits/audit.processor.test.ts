@@ -77,6 +77,28 @@ describe('createAuditProcessor', () => {
     expect(run?.vendorTaskId).toBe('task-1');
     // Only domainChecks lands on the run doc.
     expect(run?.result).toEqual({ domainChecks: FAKE_AUDIT_RESULT.domainChecks });
+    // The run records its stored page count and why the crawl ended.
+    expect(run?.pagesCrawled).toBe(FAKE_AUDIT_RESULT.pages.length);
+    expect(run?.crawlStopReason).toBe('finished_below_limit');
+  });
+
+  it('records the crawler\'s own stop reason, or page_limit when the crawl filled its limit', async () => {
+    const reported = await seed();
+    const reportedProcessor = createAuditProcessor({
+      provider: { ...createFakeAuditProvider({ vendorTaskId: 'task-stop' }),
+        getAuditResult: async () => ({ ...FAKE_AUDIT_RESULT, crawlStopReason: 'stopped' as const, vendorPagesCrawled: 9 }) },
+      logger,
+    });
+    await reportedProcessor(jobFor({ ...reported, pageCap: 100 }));
+    const reportedRun = await AuditRun.findById(reported.runId);
+    expect(reportedRun?.crawlStopReason).toBe('stopped');
+    expect(reportedRun?.vendorPagesCrawled).toBe(9);
+
+    const capped = await seed();
+    const cappedProcessor = createAuditProcessor({
+      provider: createFakeAuditProvider({ vendorTaskId: 'task-cap' }), logger });
+    await cappedProcessor(jobFor({ ...capped, pageCap: FAKE_AUDIT_RESULT.pages.length }));
+    expect((await AuditRun.findById(capped.runId))?.crawlStopReason).toBe('page_limit');
   });
 
   it('archives the normalized crawl result (per-account) when an archiver is wired', async () => {

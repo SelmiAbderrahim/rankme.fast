@@ -94,10 +94,18 @@ describe('serializeActionsQuery', () => {
   it('removes defaults from the URL instead of writing them literally', () => {
     const next = serializeActionsQuery(
       new URLSearchParams('tab=actions&state=planned'),
-      { state: 'all' },
+      { state: 'open' },
     );
     expect(next.get('state')).toBeNull();
     expect(next.get('tab')).toBe('actions');
+    // "All" is no longer the default, so it is written explicitly.
+    expect(
+      serializeActionsQuery(new URLSearchParams('tab=actions'), { state: 'all' }).get('state'),
+    ).toBe('all');
+    // Non-state filters still drop their `all` default.
+    expect(
+      serializeActionsQuery(new URLSearchParams('tab=actions&source=gsc'), { source: 'all' }).get('source'),
+    ).toBeNull();
   });
 
   it('clears the cursor whenever any filter changes', () => {
@@ -168,7 +176,7 @@ const Harness = () => {
       <button data-testid="set-cursor" onClick={() => setQuery({ cursor: '50' })}>
         set cursor
       </button>
-      <button data-testid="reset" onClick={() => setQuery({ state: 'all' })}>
+      <button data-testid="reset" onClick={() => setQuery({ state: 'open' })}>
         reset
       </button>
     </>
@@ -187,7 +195,8 @@ const renderAt = (path: string) =>
 describe('useActionsQuery', () => {
   it('reads the URL and defaults invalid values', () => {
     renderAt('/sites/s1?tab=actions&state=bogus&cursor=50');
-    expect(screen.getByTestId('q-state')).toHaveTextContent('all');
+    // Open work leads by default.
+    expect(screen.getByTestId('q-state')).toHaveTextContent('open');
     expect(screen.getByTestId('q-cursor')).toHaveTextContent('50');
   });
 
@@ -214,7 +223,7 @@ describe('useActionsQuery', () => {
     const user = userEvent.setup();
     await user.click(screen.getByTestId('reset'));
     await waitFor(() => expect(capturedSearch).toBe('?tab=actions'));
-    expect(screen.getByTestId('q-state')).toHaveTextContent('all');
+    expect(screen.getByTestId('q-state')).toHaveTextContent('open');
   });
 });
 

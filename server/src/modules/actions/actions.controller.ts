@@ -77,6 +77,7 @@ export const mutateActionStateHandler: RequestHandler = asyncHandler(async (req,
         newState: body.state,
         expectedVersion: body.expectedVersion,
         note: body.note ?? null,
+        reason: body.reason ?? null,
         clientKey: body.clientKey,
         db: resolveDb(),
     });

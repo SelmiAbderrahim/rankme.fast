@@ -9,7 +9,7 @@ order: 13
 
 # Performance des pages
 
-Ouvrez un site puis choisissez **Pages** pour rapprocher les performances de recherche du dernier inventaire exploré. L'ouverture lit les données stockées. Une nouvelle collecte démarre uniquement avec **Actualiser** ou **Collecter les données de secours**.
+Ouvrez un site puis choisissez **Pages** pour rapprocher les performances de recherche du dernier inventaire exploré. L'ouverture lit les données stockées. Une nouvelle collecte démarre uniquement avec **Actualiser** ou **Obtenir les données de classement**.
 
 ## Source utilisée
 

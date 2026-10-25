@@ -105,11 +105,100 @@ export interface AnalysisCitation {
   title: string | null;
 }
 
+/** Safe owned-page failure categories — mirrors the server's CONTENT_ANALYSIS_FAILURE_REASONS. */
+export const CONTENT_ANALYSIS_FAILURE_REASONS = [
+  'robots_blocked',
+  'access_denied',
+  'http_error',
+  'timeout',
+  'temporarily_unavailable',
+  'empty_content',
+  'too_large',
+  'unsafe_url',
+  'unreadable',
+  'redirect_loop',
+  'redirect_limit',
+  'unsafe_redirect',
+  'non_html',
+] as const;
+export type ContentAnalysisFailureReason = (typeof CONTENT_ANALYSIS_FAILURE_REASONS)[number];
+
+export function isContentAnalysisFailureReason(v: unknown): v is ContentAnalysisFailureReason {
+  return (
+    typeof v === 'string' &&
+    (CONTENT_ANALYSIS_FAILURE_REASONS as readonly string[]).includes(v)
+  );
+}
+
 export interface AnalysisError {
   category: string;
   messageKey: string;
   retryable: boolean;
   terminal: boolean;
+  /** Optional for rolling-deploy compatibility with servers that predate it. */
+  reason?: string | null;
+  /** The owned page's HTTP status, present with `reason: 'http_error'`. */
+  httpStatus?: number | null;
+  /** Where the page's redirects led and what it served, when our own request saw it. */
+  finalUrl?: string | null;
+  redirectChain?: Array<{ url: string; status: number }> | null;
+  contentType?: string | null;
+}
+
+/** Server `KEYWORD_MAX_LENGTH` — over-long keywords are rejected, never truncated. */
+export const CONTENT_KEYWORD_MAX_LENGTH = 200;
+
+const KEYWORD_LIST_SEPARATORS = /[,;\n\r\t\v\f\u0085\u2028\u2029\uFF0C\u3001\u060C\uFF1B]/u;
+
+/**
+ * True when a keyword holds more than one query. Mirrors the server rule: an
+ * analysis covers one keyword, so any comma, semicolon, line break or tab with
+ * a real query on both sides means a list. A trailing separator still leaves
+ * one query.
+ */
+export function isKeywordList(value: string): boolean {
+  return (
+    value
+      .split(KEYWORD_LIST_SEPARATORS)
+      .map((part) => part.trim())
+      .filter(Boolean).length >= 2
+  );
+}
+
+/** User-facing failure codes — mirrors the server's CONTENT_ANALYSIS_FAILURE_CODES. */
+export const CONTENT_ANALYSIS_FAILURE_CODES = [
+  'provider_unavailable',
+  'page_unreachable',
+  'page_blocked',
+  'page_too_large',
+  'timeout',
+  'internal',
+] as const;
+export type ContentAnalysisFailureCode = (typeof CONTENT_ANALYSIS_FAILURE_CODES)[number];
+
+/** Where a run is (or stopped) and its way out, read from the server. */
+export interface ContentAnalysisProgress {
+  terminal: boolean;
+  /** 1-based step over `stepCount` pipeline stages. */
+  stepIndex: number;
+  stepCount: number;
+  stepKey: ContentAnalysisStatus;
+  failureReasonCode: ContentAnalysisFailureCode | null;
+  retryAction: 'retry' | 'edit_url' | null;
+}
+
+/** `GET /api/content-analyses/:id/status`. */
+export interface ContentAnalysisJobStatus extends ContentAnalysisProgress {
+  analysisId: string;
+  status: ContentAnalysisStatus;
+}
+
+/** `GET /api/content-analyses/:id/retry` — what a Try again would run again. */
+export interface ContentAnalysisRetryPreview {
+  analysisId: string;
+  ownedUrl: string;
+  keyword: string;
+  failureReasonCode: ContentAnalysisFailureCode | null;
 }
 
 export interface AnalysisReservation {
@@ -229,6 +318,8 @@ export interface ContentAnalysis {
   keyword: string;
   locale: string;
   status: ContentAnalysisStatus;
+  /** Absent only on responses from before the status endpoint. */
+  progress?: ContentAnalysisProgress;
   stages: AnalysisStageEntry[];
   warnings: AnalysisWarning[];
   scorecard: AnalysisScorecard | null;
@@ -246,7 +337,13 @@ export interface ContentAnalysis {
       reasonText: string;
     }>;
   } | null;
-  owned: { url: string; contentHash: string } | null;
+  owned: {
+    url: string;
+    contentHash: string;
+    /** Present only when the page redirected before it was read. */
+    finalUrl?: string;
+    redirectChain?: Array<{ url: string; status: number }>;
+  } | null;
   recommendations: ContentRecommendation[];
   recommendationStates: ContentRecommendationState[];
   brief: AnalysisBrief | null;

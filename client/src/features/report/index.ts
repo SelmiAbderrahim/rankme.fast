@@ -8,6 +8,7 @@ export {
   selectReportError,
   selectReportRetesting,
   selectReportRetestError,
+  selectReportRunAt,
   selectReportRunId,
   selectReportRunStatus,
   selectReportSiteId,
@@ -15,6 +16,9 @@ export {
   selectReportPdfError,
 } from './store/selectors';
 export const loadReportPage = () => import('./components/ReportPage');
+export { StaleAuditCallout } from './components/StaleAuditCallout';
+export { worstCoreWebVitalsCategory } from './coreWebVitals';
+export { uncountedDecisions } from './findingDecisions';
 export { IssueRow } from './components/IssueRow';
 export { IssueDetail } from './components/IssueDetail';
 export {

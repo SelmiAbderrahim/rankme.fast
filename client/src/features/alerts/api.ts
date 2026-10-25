@@ -10,7 +10,7 @@ import type {
 } from './types';
 
 interface SitePage {
-  sites: Array<{ id: string; domain: string; displayName: string }>;
+  sites: Array<{ id: string; domain: string; displayName: string; paused?: boolean }>;
 }
 
 /** The site picker's own read — this feature never touches another slice. */
@@ -22,6 +22,7 @@ export const fetchAlertSites = (
       id: site.id,
       domain: site.domain,
       displayName: site.displayName,
+      paused: site.paused === true,
     })),
   );
 

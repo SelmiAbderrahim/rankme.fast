@@ -16,7 +16,7 @@
  */
 import { Router } from 'express';
 import { createBatchRateLimiter } from '../../shared/middleware/rate-limit.js';
-import { cancelAnalysisController, createAnalysisController, getAnalysisController, listAnalysesController, preflightAnalysisController, regenerateAnalysisController, saveBriefVersionController, saveDraftVersionController, acceptRecommendationController, applyRecommendationController, dismissRecommendationController, getRecommendationApplicationCheckController, listRecommendationHistoryController, undoRecommendationController, getRecommendationOutcomeController, } from './content-intelligence.controller.js';
+import { cancelAnalysisController, createAnalysisController, getAnalysisController, getAnalysisStatusController, listAnalysesController, previewAnalysisRetryController, retryAnalysisController, preflightAnalysisController, regenerateAnalysisController, saveBriefVersionController, saveDraftVersionController, acceptRecommendationController, applyRecommendationController, dismissRecommendationController, getRecommendationApplicationCheckController, listRecommendationHistoryController, undoRecommendationController, getRecommendationOutcomeController, } from './content-intelligence.controller.js';
 export function createContentIntelligenceSiteRouter(): Router {
     const router = Router();
     const createLimiter = createBatchRateLimiter('content_intelligence_create');
@@ -32,6 +32,9 @@ export function createContentIntelligenceAnalysisRouter(): Router {
     const pollLimiter = createBatchRateLimiter('content_intelligence_poll');
     const recommendationLimiter = createBatchRateLimiter('content_recommendation_state');
     router.get('/:analysisId', pollLimiter, getAnalysisController);
+    router.get('/:analysisId/status', pollLimiter, getAnalysisStatusController);
+    router.get('/:analysisId/retry', pollLimiter, previewAnalysisRetryController);
+    router.post('/:analysisId/retry', createLimiter, retryAnalysisController);
     router.post('/:analysisId/cancel', createLimiter, cancelAnalysisController);
     router.post('/:analysisId/regenerate', createLimiter, regenerateAnalysisController);
     router.post('/:analysisId/brief-versions', createLimiter, saveBriefVersionController);

@@ -1,6 +1,8 @@
 import { createSelector } from '@reduxjs/toolkit';
 import type { RootState } from '@app/store';
 import { initialState, type ActionsState } from './slice';
+import type { ActionState } from '../types';
+import { isResolvedActionState } from '../auditDecisions';
 import { presentationCacheKey } from '@shared/i18n/requestIdentity';
 import type { SupportedLocale } from '@shared/i18n/locales';
 
@@ -113,10 +115,38 @@ export function selectLastRetestRunId(state: ActionsRootState) {
   return slice(state).lastRetestRunId;
 }
 
-/** Overview widget: first 5 items in server order. */
-export const selectOverviewActions = createSelector(
-  [selectActions],
-  (items) => items.slice(0, 5),
+/**
+ * Overview widget: the first 5 still-actionable items (open or planned) in
+ * server order, severity first. The slice can hold rows another surface
+ * loaded (the Actions tab, the report mapping), so resolved rows are dropped
+ * here as well as in the Overview's own `state` filter.
+ */
+export const selectOverviewActions = createSelector([selectActions], (items) =>
+  items.filter((item) => !isResolvedActionState(item.state)).slice(0, 5),
+);
+
+/**
+ * Current decision per audit rule for one site: the dedicated resolved-
+ * decisions read, overlaid by any audit rows already in the list (those are
+ * updated in place when the user changes a state, so they win).
+ */
+export const selectAuditDecisionStates = createSelector(
+  [
+    (state: ActionsRootState) => slice(state).auditDecisions,
+    (state: ActionsRootState) => slice(state).siteId,
+    selectActions,
+    (_state: ActionsRootState, siteId: string) => siteId,
+  ],
+  (auditDecisions, listSiteId, items, siteId): Readonly<Record<string, ActionState>> => {
+    const states: Record<string, ActionState> =
+      auditDecisions.siteId === siteId ? { ...auditDecisions.byRuleId } : {};
+    if (listSiteId === siteId) {
+      for (const item of items) {
+        if (item.sourceType === 'audit_finding') states[item.sourceId] = item.state;
+      }
+    }
+    return states;
+  },
 );
 
 /**

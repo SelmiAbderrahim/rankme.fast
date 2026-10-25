@@ -60,6 +60,7 @@ beforeEach(() => {
   vi.mocked(getSite).mockReset().mockResolvedValue({
     id: siteId, url: 'https://example.test', domain: 'example.test', displayName: 'Schema Site',
     defaultMarket: null,
+    localBusiness: false,
     paused: false, pausedAt: null, createdAt: generatedAt, updatedAt: generatedAt,
   });
 });
@@ -97,6 +98,7 @@ describe('schema generation report export adapter', () => {
     vi.mocked(getSite).mockResolvedValue({
       id: siteId, url: 'https://example.test', domain: 'example.test', displayName: '',
       defaultMarket: null,
+      localBusiness: false,
       paused: false, pausedAt: null, createdAt: generatedAt, updatedAt: generatedAt,
     });
     const adapter = createSchemaGenerationReportExportAdapter();

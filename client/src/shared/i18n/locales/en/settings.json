@@ -12,7 +12,7 @@
       },
       "emailRankDrop": {
         "label": "Rank drops",
-        "description": "Notify me when a tracked keyword drops position."
+        "description": "Email me when a tracked keyword drops and a second check confirms it."
       },
       "emailAlerts": {
         "label": "Alert rules",

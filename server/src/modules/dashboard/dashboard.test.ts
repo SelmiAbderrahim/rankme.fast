@@ -10,7 +10,8 @@ import { setRanksDb } from '../ranks/ranks.queue-holder.js';
 import { Site } from '../sites/sites.model.js';
 import { getSiteHealth } from './dashboard.service.js';
 import { GoogleConnection } from '../google-connections/google-connection.model.js';
-import { AuditRun, ReportSnapshot } from '../audits/index.js';
+import { AuditRun, ReportSnapshot, FindingDismissal } from '../audits/index.js';
+import { appendActionEvent, hashActionId } from '../actions/index.js';
 
 const app = createApp();
 
@@ -74,6 +75,57 @@ describe('dashboard site summaries', () => {
     expect(response.status).toBe(200);
     expect(response.body.summaries[0].lastAudit).toMatchObject({ status: 'failed' });
     expect(response.body.summaries[0].openFixNow).toMatchObject({ count: 1 });
+  });
+});
+
+describe('dashboard open Fix-now count follows the owner\'s decisions', () => {
+  async function seedRun(ownerId: string, siteId: string, findings: Array<{ ruleId: string; bucket: string; urls?: number; meta?: Record<string, unknown> }>) {
+    const run = await AuditRun.create({ accountId: ownerId, siteId, pageCap: 100, status: 'succeeded', finishedAt: new Date() });
+    await ReportSnapshot.create({ accountId: ownerId, siteId, runId: run.id,
+      counts: { fixNow: 0, watch: 0, passed: 0 },
+      findings: findings.map((finding) => ({ ruleId: finding.ruleId, bucket: finding.bucket, severity: 'critical',
+        affectedUrls: Array.from({ length: finding.urls ?? 1 }, (_, i) => `https://x.example.com/${i}`),
+        ...(finding.meta ? { meta: finding.meta } : {}) })) });
+    return run.id as string;
+  }
+  async function decide(ownerId: string, siteId: string, ruleId: string, newState: 'dismissed' | 'completed' | 'open') {
+    await appendActionEvent(getTestDb(), { accountId: ownerId, siteId, sourceType: 'audit_finding', sourceIdRef: ruleId,
+      actionId: hashActionId({ accountId: ownerId, siteId, sourceType: 'audit_finding', sourceId: ruleId }),
+      priorState: null, newState, eventKind: newState === 'dismissed' ? 'dismiss' : newState === 'completed' ? 'complete' : 'reopen',
+      actorUserId: ownerId, note: null, idempotencyKey: `${ruleId}-${newState}` });
+  }
+
+  it('leaves out dismissed and fixed findings, checks not run, and keeps open ones', async () => {
+    const owner = await signupVerifiedUser(app, { email: 'dashboard-decisions@example.com' });
+    const site = await Site.create({ accountId: owner.id, url: 'https://x.example.com', domain: 'x.example.com' });
+    await seedRun(owner.id, String(site.id), [
+      { ruleId: 'broken-internal-links', bucket: 'fix-now' },
+      { ruleId: 'title-missing-or-weak', bucket: 'fix-now' },
+      { ruleId: 'robots-blocked', bucket: 'fix-now' },
+      { ruleId: 'not-indexed', bucket: 'fix-now', meta: { insufficientData: true } },
+      { ruleId: 'headings-weak', bucket: 'watch' },
+    ]);
+    const path = `/api/dashboard/site-summaries?ids=${site.id}`;
+    expect((await request(app).get(path).set('Cookie', owner.cookie)).body.summaries[0].openFixNow).toMatchObject({ count: 3 });
+    await decide(owner.id, String(site.id), 'broken-internal-links', 'dismissed');
+    await decide(owner.id, String(site.id), 'title-missing-or-weak', 'completed');
+    // Both decisions came after the audit finished, so neither is contradicted.
+    expect((await request(app).get(path).set('Cookie', owner.cookie)).body.summaries[0].openFixNow.count).toBe(1);
+    await decide(owner.id, String(site.id), 'broken-internal-links', 'open');
+    expect((await request(app).get(path).set('Cookie', owner.cookie)).body.summaries[0].openFixNow.count).toBe(2);
+  });
+
+  it('counts a dismissed finding again once its page count grew', async () => {
+    const owner = await signupVerifiedUser(app, { email: 'dashboard-resurface@example.com' });
+    const site = await Site.create({ accountId: owner.id, url: 'https://x.example.com', domain: 'x.example.com' });
+    const runId = await seedRun(owner.id, String(site.id), [{ ruleId: 'broken-internal-links', bucket: 'fix-now', urls: 5 }]);
+    await decide(owner.id, String(site.id), 'broken-internal-links', 'dismissed');
+    const path = `/api/dashboard/site-summaries?ids=${site.id}`;
+    await FindingDismissal.create({ accountId: owner.id, siteId: String(site.id), ruleId: 'broken-internal-links',
+      affectedCount: 5, runId, actorUserId: owner.id, dismissedAt: new Date() });
+    expect((await request(app).get(path).set('Cookie', owner.cookie)).body.summaries[0].openFixNow.count).toBe(0);
+    await FindingDismissal.updateOne({ ruleId: 'broken-internal-links' }, { $set: { affectedCount: 2 } });
+    expect((await request(app).get(path).set('Cookie', owner.cookie)).body.summaries[0].openFixNow.count).toBe(1);
   });
 });
 

@@ -14,7 +14,9 @@ import { AiAvailabilityError, AiInvalidInputError, } from './ai-generation.js';
 import type { AiChatProvider, AiChatStreamEvent, AiChatStreamInput, } from './ai-chat.js';
 import { assertAiChatResponseLocale } from './ai-chat.js';
 import type { SupportedLocale } from '../i18n/locales.js';
-export type FakeAiChatOutcome = 'ok' | 'error_before_first_token' | 'error_mid_stream' | 'abort';
+export type FakeAiChatOutcome = 'ok' | 'error_before_first_token' | 'error_mid_stream' | 'abort'
+/** Partial text, then a clean finish with reason `length` (output limit hit). */
+ | 'truncated';
 export interface FakeAiChatProviderOptions {
     /** Canned reply; split into ~5 deltas. */
     reply?: string;
@@ -28,7 +30,7 @@ export interface FakeAiChatProviderOptions {
     /** Fixed cost reported on finish. */
     costMicros?: bigint;
 }
-export const FAKE_CHAT_TOOL_DIRECTIVE = /\[tool:([a-z_]+)(?:\s+(\{.*\}))?\]/;
+export const FAKE_CHAT_TOOL_DIRECTIVE = /\[tool:([a-z0-9_]+)(?:\s+(\{.*\}))?\]/;
 export const FAKE_CHAT_REPLIES: Readonly<Record<SupportedLocale, string>> = {
     en: 'Here is what I found in your RankMeFast data. Rankings look stable this week and the latest audit has a short fix-now list worth clearing first.',
     ar: 'إليك ما وجدته في بيانات RankMeFast الخاصة بك. تبدو الترتيبات مستقرة هذا الأسبوع، ويحتوي أحدث تدقيق على قائمة قصيرة من الإصلاحات العاجلة التي يجدر البدء بها.',
@@ -78,6 +80,18 @@ export function createFakeAiChatProvider(options: FakeAiChatProviderOptions = {}
             throwIfAborted(input.signal);
             if (outcome === 'error_before_first_token') {
                 throw new AiAvailabilityError('provider_unavailable');
+            }
+            if (outcome === 'truncated') {
+                yield { type: 'text_delta', text: FAKE_CHAT_PARTIAL_REPLIES[input.responseLocale] };
+                yield {
+                    type: 'finish',
+                    provider: 'fake',
+                    model: 'fake-chat-1',
+                    finishReason: 'length',
+                    tokens: { input: usage.input, output: usage.output },
+                    actualOrEstimatedCostMicros: costMicros,
+                };
+                return;
             }
             if (outcome === 'error_mid_stream' || outcome === 'abort') {
                 yield {

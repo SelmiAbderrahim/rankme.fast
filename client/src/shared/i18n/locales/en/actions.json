@@ -23,6 +23,7 @@
     "label": "Filter actions",
     "reset": "Reset filters",
     "all": "All",
+    "openAndPlanned": "Open and planned",
     "state": "State",
     "source": "Source",
     "severity": "Severity",
@@ -81,14 +82,12 @@
     "observedAt": "Observed {{date}}",
     "openSource": "Open source view",
     "affectedNone": "Site-wide",
-    "affectedOne": "1 affected URL",
     "affectedCount_one": "{{count}} affected URL",
     "evidence": "Evidence",
     "evidenceLabel": "{{source}} · {{date}}",
     "evidenceLink": "Open evidence source",
     "history": "History",
     "retest": "Retest",
-    "affectedSample": "(showing {{shown}})",
     "noteLabel": "Note",
     "affectedCount_zero": "{{count}} affected URLs",
     "affectedCount_two": "{{count}} affected URLs",
@@ -112,7 +111,10 @@
     "seeLinkTargets_two": "See all {{count}} pages and the broken links they point to in the report",
     "seeLinkTargets_few": "See all {{count}} pages and the broken links they point to in the report",
     "seeLinkTargets_many": "See all {{count}} pages and the broken links they point to in the report",
-    "seeLinkTargets_other": "See all {{count}} pages and the broken links they point to in the report"
+    "seeLinkTargets_other": "See all {{count}} pages and the broken links they point to in the report",
+    "linkSourcesCount": "Pages with broken links: {{count}}",
+    "staleRetestHint": "This evidence is out of date. Retest to check it again.",
+    "linkSourcesCountSampled": "Pages with broken links: {{count}} (showing {{shown}})"
   },
   "transitions": {
     "planned": "Plan",
@@ -138,7 +140,14 @@
     "confirm": "Confirm",
     "saving": "Saving…",
     "conflict": "Someone else changed this action first. Reload it and try again.",
-    "conflictReload": "Reload action"
+    "conflictReload": "Reload action",
+    "reasonLabel": "Why are you dismissing this?",
+    "reasons": {
+      "false_positive": "False positive",
+      "wont_fix": "Won't fix",
+      "fixed_elsewhere": "Fixed elsewhere",
+      "other": "Other reason"
+    }
   },
   "history": {
     "title": "Action history",
@@ -182,6 +191,8 @@
     "dismissedLabel": "Dismissed as false positive",
     "fixCta": "Mark as fixed",
     "fixedLabel": "Marked fixed",
-    "reappearedLabel": "Still detected after being marked fixed"
+    "reappearedLabel": "Still detected after being marked fixed",
+    "notCounted": "Not in these counts: {{dismissed}} dismissed, {{completed}} marked fixed.",
+    "fixedGroupIn": "Marked fixed in {{tab}} ({{count}})"
   }
 }

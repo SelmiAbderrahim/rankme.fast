@@ -225,11 +225,14 @@ export interface PagesUrlController {
 export function usePagesUrlState(): PagesUrlController {
   const location = useLocation();
   const navigate = useNavigate();
-  const state = useMemo(() => parsePagesUrlState(location.search), [location.search]);
   const canonicalSearch = useMemo(
     () => canonicalizePagesSearch(location.search),
     [location.search],
   );
+  // Keyed on the canonical string, not the raw one: rewriting `?limit=25` to
+  // its canonical form changes the location but not the meaning, and must not
+  // hand the panel a new state object (which would refire its load effects).
+  const state = useMemo(() => parsePagesUrlState(canonicalSearch), [canonicalSearch]);
 
   useEffect(() => {
     const current = location.search.replace(/^\?/u, '');

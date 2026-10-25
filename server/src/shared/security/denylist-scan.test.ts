@@ -6,6 +6,63 @@ import {
   scanForForbidden,
 } from './denylist-scan.js';
 
+describe('scanForForbidden — opaque identifiers', () => {
+  // A real SHA-256 digest, as the Actions module mints them: random-looking hex.
+  const digest = '9f86d081884c7d659a2feaa0c55ad015a3bf4f1b2b0b822cd15d6c15b0f00a08';
+
+  it('rejects a digest anywhere by default — it is indistinguishable from a leaked key', () => {
+    expect(scanForForbidden({ items: [{ id: digest }] })).toContainEqual({
+      path: '$.items[0].id',
+      reason: 'high-entropy-secret',
+    });
+  });
+
+  it('accepts a 64-hex digest held directly under an allowed identifier field only', () => {
+    const opts = { opaqueIdentifierFieldNames: ['id', 'actionId'] };
+    expect(scanForForbidden({ items: [{ id: digest }], actionId: digest }, opts)).toEqual([]);
+    // Elsewhere it is still a finding...
+    expect(scanForForbidden({ note: digest }, opts)).toContainEqual({
+      path: '$.note',
+      reason: 'high-entropy-secret',
+    });
+    // ...and so is anything that is not exactly a SHA-256 digest, even under the same field.
+    expect(scanForForbidden({ id: `${digest}0` }, opts)).toContainEqual({ path: '$.id', reason: 'high-entropy-secret' });
+    expect(scanForForbidden({ id: '0123456789abcdef0123456789abcdef' }, opts)).toContainEqual({
+      path: '$.id',
+      reason: 'high-entropy-secret',
+    });
+    expect(scanForForbidden({ id: [digest] }, opts)).toContainEqual({ path: '$.id[0]', reason: 'high-entropy-secret' });
+  });
+
+  it('never waives authorization material or HTML under an identifier field', () => {
+    const opts = { opaqueIdentifierFieldNames: ['id'] };
+    expect(scanForForbidden({ id: 'Bearer abc' }, opts)).toContainEqual({ path: '$.id', reason: 'authorization-material' });
+    expect(scanForForbidden({ id: '<script>x</script>' }, opts)).toContainEqual({ path: '$.id', reason: 'raw-html' });
+  });
+});
+
+describe('scanForForbidden — first-party paths and URLs', () => {
+  it.each([
+    '/sites/6a7b503d6265126c686c9378/report/6a7b5c38a1b2c3d4e5f60718',
+    '/sites/6a7b503d6265126c686c9378?tab=google&runId=6a7b5c38a1b2c3d4e5f60718',
+    'https://rewards.example.sa/offers/عروض-السعودية/6a7b503d6265126c686c9378',
+  ])('does not mistake the route or URL %s for a key', (value) => {
+    expect(scanForForbidden({ sourceLink: value })).toEqual([]);
+  });
+
+  it('still rejects a long unbroken run inside a path', () => {
+    expect(
+      scanForForbidden({ sourceLink: '/sites/Zm9vYmFyMTIzNDU2Nzg5MGFiY2RlZkFCQ0RFRkdISUpLTE1OTw' }),
+    ).toContainEqual({ path: '$.sourceLink', reason: 'high-entropy-secret' });
+  });
+
+  it('still rejects an unbroken secret hiding in a path-shaped string', () => {
+    expect(
+      scanForForbidden({ value: 'Zm9vYmFyMTIzNDU2Nzg5MGFiY2RlZkFCQ0RFRkdISUpLTE1OTw==' }),
+    ).toContainEqual({ path: '$.value', reason: 'high-entropy-secret' });
+  });
+});
+
 describe('scanForForbidden', () => {
   it.each([
     ['apiKey', 'secret-key'],

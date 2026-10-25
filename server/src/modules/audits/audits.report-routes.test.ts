@@ -5,6 +5,7 @@
  * parameterized locale test proves the report endpoint really is
  * i18n-terminated: the response body carries localized copy, never keys.
  */
+import { AUDIT_FRESH_DAYS } from '../../shared/observations/freshness-policy.js';
 import { afterAll, afterEach, beforeAll, beforeEach, describe, expect, it, vi } from 'vitest';
 import request from 'supertest';
 import type mongoose from 'mongoose';
@@ -30,6 +31,7 @@ import {
 } from '../../shared/testing/auth.js';
 import { DICTIONARIES, LANGUAGE_HEADER, SUPPORTED_LOCALES, type SupportedLocale } from '../../shared/i18n/index.js';
 import { User } from '../users/users.model.js';
+import { setSummaryDb } from './summary.db-holder.js';
 import { setAuditsQueue } from './audits.queue-holder.js';
 import { AuditRun } from './audit-run.model.js';
 import { Site, setSitesDb } from '../sites/index.js';
@@ -84,6 +86,7 @@ beforeAll(async () => {
   await startMemoryMongo();
   await startTestPostgres();
   setSitesDb(getTestDb() as unknown as never);
+  setSummaryDb(getTestDb() as unknown as never);
   setClientReportsDb(getTestDb() as unknown as never);
   installTestAuth();
 });
@@ -91,6 +94,7 @@ beforeAll(async () => {
 afterAll(async () => {
   uninstallTestAuth();
   setSitesDb(null);
+  setSummaryDb(null);
   setClientReportsDb(null);
   (env as { CLIENT_REPORTS_ENABLED: boolean }).CLIENT_REPORTS_ENABLED =
     originalClientReportsFlag;
@@ -123,6 +127,10 @@ describe('GET /api/audits/:runId/report', () => {
       .set('Cookie', owner.cookie);
     expect(res.status).toBe(200);
     expect(res.body.runId).toBe(runId);
+    // The one freshness threshold the report and the Actions evidence share.
+    expect(res.body.auditFreshDays).toBe(AUDIT_FRESH_DAYS);
+    // What the run's crawl recorded about itself rides on the report.
+    expect(res.body.crawl).toMatchObject({ pageCap: 100, stopReason: null });
     expect(res.body.counts).toEqual({
       fixNow: expect.any(Number),
       watch: expect.any(Number),
@@ -205,6 +213,77 @@ function clientPdfRequest(cookie: string, siteId: string, body: unknown) {
       res.on('end', () => callback(null, Buffer.concat(chunks)));
     });
 }
+
+async function seedLargeRunFor(
+  user: TestUser,
+  pageCount: number,
+): Promise<{ runId: string; siteId: string }> {
+  const siteId = await addSite(user);
+  const site = await Site.findById(siteId);
+  const run = await AuditRun.create({
+    accountId: site!.accountId,
+    siteId: site!._id,
+    pageCap: pageCount,
+    status: 'succeeded',
+  });
+  await writeReportSnapshot({
+    runId: run.id as string,
+    siteId,
+    accountId: (site!.accountId as mongoose.Types.ObjectId).toHexString(),
+    result: makeAuditResult({
+      pages: Array.from({ length: pageCount }, (_, index) => ({
+        url: `https://example.com/products/item-${index}`,
+        canonical: `https://example.com/products/item-${index}`,
+        metaDescription: null,
+      })),
+    }),
+  });
+  return { runId: run.id as string, siteId };
+}
+
+describe('report payload size and full finding lists', () => {
+  it('sends a preview of each list with exact totals and no message keys', async () => {
+    const owner = await signupVerifiedUser(app, { email: 'preview-owner@x.co' });
+    const { runId } = await seedLargeRunFor(owner, 400);
+    const res = await request(app).get(`/api/audits/${runId}/report`).set('Cookie', owner.cookie);
+    expect(res.status).toBe(200);
+    const finding = (res.body.findings as Array<{
+      ruleId: string;
+      affectedUrls: string[];
+      affectedUrlCount: number;
+      copy: Record<string, unknown>;
+    }>).find((candidate) => candidate.ruleId === 'meta-description-missing');
+    expect(finding?.affectedUrls).toHaveLength(5);
+    expect(finding?.affectedUrlCount).toBe(400);
+    expect(finding?.copy).not.toHaveProperty('titleKey');
+    expect(Buffer.byteLength(res.text)).toBeLessThan(60 * 1024);
+  });
+
+  it('serves the full list of one finding on demand', async () => {
+    const owner = await signupVerifiedUser(app, { email: 'lazy-owner@x.co' });
+    const { runId } = await seedLargeRunFor(owner, 40);
+    const res = await request(app)
+      .get(`/api/audits/${runId}/findings/meta-description-missing/urls`)
+      .set('Cookie', owner.cookie);
+    expect(res.status).toBe(200);
+    expect(res.body.ruleId).toBe('meta-description-missing');
+    expect(res.body.affectedUrls).toHaveLength(40);
+    expect(res.body.brokenLinkTargets).toEqual([]);
+    expect(res.body.brokenLinkEvidence).toEqual([]);
+    expect(res.body.diff).toEqual([]);
+  });
+
+  it('answers 404 for a rule the run did not report, another account, an unknown run and 401 for nobody', async () => {
+    const owner = await signupVerifiedUser(app, { email: 'lazy-missing@x.co' });
+    const other = await signupVerifiedUser(app, { email: 'lazy-other@x.co' });
+    const { runId } = await seedRunFor(owner);
+    const path = (id: string, rule: string) => `/api/audits/${id}/findings/${rule}/urls`;
+    expect((await request(app).get(path(runId, 'no-such-rule')).set('Cookie', owner.cookie)).status).toBe(404);
+    expect((await request(app).get(path(runId, 'meta-description-missing')).set('Cookie', other.cookie)).status).toBe(404);
+    expect((await request(app).get(path('507f191e810c19729de860ea', 'meta-description-missing')).set('Cookie', owner.cookie)).status).toBe(404);
+    expect((await request(app).get(path(runId, 'meta-description-missing'))).status).toBe(401);
+  });
+});
 
 describe('GET /api/audits/:runId/report.pdf', () => {
   it('rejects unauthenticated requests', async () => {

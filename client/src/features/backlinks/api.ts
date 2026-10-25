@@ -39,15 +39,18 @@ export interface ListBacklinksArgs {
   siteId: string;
   cursor?: string;
   limit?: number;
+  /** Explicit provider pull. Without it (and without a cursor) the GET reads stored data. */
+  fresh?: boolean;
 }
 
 export const fetchBacklinksList = (
-  { siteId, cursor, limit }: ListBacklinksArgs,
+  { siteId, cursor, limit, fresh }: ListBacklinksArgs,
   init?: { signal?: AbortSignal },
 ): Promise<BacklinkList> => {
   const params = new URLSearchParams();
   if (cursor) params.set('cursor', cursor);
   if (typeof limit === 'number') params.set('limit', String(limit));
+  if (fresh) params.set('fresh', 'true');
   const qs = params.toString();
   const path = `/sites/${siteId}/backlinks${qs ? `?${qs}` : ''}`;
   return init ? apiClient<BacklinkList>(path, init) : apiClient<BacklinkList>(path);

@@ -75,6 +75,7 @@ import {
   selectReportLoading,
   selectReportRetestError,
   selectReportRetesting,
+  selectReportRunAt,
   selectReportRunId,
   selectReportRunPageCap,
   selectReportRunStatus,
@@ -86,8 +87,15 @@ import type {
 } from '../types';
 import { AiSummaryCard } from './AiSummaryCard';
 import { IssueRow } from './IssueRow';
+import { CrawlCoverageNote } from './CrawlCoverageNote';
+import { DismissedSection } from './DismissedSection';
+import { NotApplicableSection } from './NotApplicableSection';
 import { NotEvaluatedChecks } from './NotEvaluatedChecks';
+import { OlderRunBanner } from './OlderRunBanner';
+import { ScopeMismatchNote } from './ScopeMismatchNote';
 import { RetestConfirmDialog } from './RetestConfirmDialog';
+import { StaleAuditCallout } from './StaleAuditCallout';
+import { useWorkspaceSiteCapabilities } from '@shared/site/capabilities';
 import { ResourceScanOption } from './ResourceScanOption';
 import { RunHistory } from './RunHistory';
 import { DocsLink } from '@shared/docs/DocsLink';
@@ -99,7 +107,12 @@ import {
   actionsReducer,
   loadActions,
   nextActionsRequestSeq,
+  openFindingCount,
+  resolvedTotals,
+  selectAuditDecisionStates,
+  tallyResolvedAuditFindings,
 } from '@features/actions';
+import { triageChangedSinceLoad, uncountedDecisions } from '../findingDecisions';
 import { rootReducer } from '@app/store';
 
 // The report surface maps findings onto unified actions, so
@@ -199,7 +212,7 @@ export const ReportPage = ({
   siteId: siteIdProp,
   runId: runIdProp,
 }: ReportPageProps = {}) => {
-  const { t } = useTranslation('report');
+  const { t } = useTranslation(['report', 'actions']);
   const presentation = usePresentationRefreshSignal();
   const presentationLocale = presentation.locale;
   const requestIdentity = useMemo(
@@ -214,7 +227,7 @@ export const ReportPage = ({
   /* c8 ignore next -- route matcher guarantees params.siteId when the standalone route is used, and the prop path is exercised by the workspace embed test. */
   const siteId = siteIdProp ?? params.siteId ?? '';
   const runIdParam = runIdProp ?? params.runId;
-  const [searchParams] = useSearchParams();
+  const [searchParams, setSearchParams] = useSearchParams();
   const focusedRuleId = searchParams.get('finding');
 
   const [activeTab, setActiveTab] = useReportTab();
@@ -236,6 +249,35 @@ export const ReportPage = ({
   const runId = useAppSelector(selectReportRunId);
   const runStatus = useAppSelector(selectReportRunStatus);
   const runPageCap = useAppSelector(selectReportRunPageCap);
+  const reportRunAt = useAppSelector(selectReportRunAt);
+  const { canRun } = useWorkspaceSiteCapabilities();
+
+  // The Overview's stale-audit prompt links here with ?retest=1 so the person
+  // lands on the existing retest confirmation. The flag is consumed once
+  // loading settles; nothing is started by the link.
+  const retestRequested = searchParams.get('retest') === '1';
+  const retestHandled = useRef(false);
+  useEffect(() => {
+    if (!retestRequested) {
+      retestHandled.current = false;
+      return;
+    }
+    // Consumed once: the URL update lands after the next render, so a status
+    // change in between must not open the dialog a second time.
+    if (!loaded || retestHandled.current) return;
+    retestHandled.current = true;
+    if (canRun && !(retesting || runStatus === 'queued' || runStatus === 'running')) {
+      setRetestOpen(true);
+    }
+    setSearchParams(
+      (current) => {
+        const next = new URLSearchParams(current);
+        next.delete('retest');
+        return next;
+      },
+      { replace: true },
+    );
+  }, [canRun, loaded, retestRequested, retesting, runStatus, setSearchParams]);
   const currentSiteId = useAppSelector(selectReportSiteId);
 
   const lastLoadKey = useRef<string>('');
@@ -358,7 +400,16 @@ export const ReportPage = ({
   // view.
   // ponytail: `no :runId` == latest; refine against `runs[0]` if pinning the
   // latest run explicitly needs the controls too.
-  const isLatestRun = runIdParam === undefined;
+  // A pinned run that the server says is the newest one is the latest too.
+  const isLatestRun =
+    runIdParam === undefined ||
+    (report !== null && report.latestRunId != null && report.latestRunId === report.runId);
+  // A pinned run older than the newest audit: the banner says so.
+  const viewingOlderRun =
+    report !== null &&
+    runIdParam !== undefined &&
+    report.latestRunId != null &&
+    report.latestRunId !== report.runId;
 
   const counts = report?.counts ?? { fixNow: 0, watch: 0, passed: 0 };
   const diffEntries = useMemo(() => report?.diff.entries ?? [], [report]);
@@ -394,9 +445,25 @@ export const ReportPage = ({
     if (activeTab !== finding.bucket) setActiveTab(finding.bucket);
   }, [activeTab, focusedRuleId, report, setActiveTab]);
 
+  // Decisions are site-level, so every view of a run, latest or pinned, leaves
+  // the same dismissed and fixed findings out of its counts. The server
+  // applied them to the report; a decision taken on this page (the actions
+  // list) wins until the report is read again.
+  const auditDecisions = useAppSelector((state) => selectAuditDecisionStates(state, siteId));
+  const uncounted = useMemo(
+    () => uncountedDecisions(report?.findings ?? [], auditDecisions),
+    [auditDecisions, report],
+  );
+  const resolvedAudit = tallyResolvedAuditFindings(report?.findings ?? [], uncounted);
+  const resolvedCount = resolvedTotals(resolvedAudit);
+  // Dismissed findings sit in the one Dismissed section under the tabs; fixed
+  // ones in a group inside their tab. Both can be reopened from there.
+  const dismissedFindings = (report?.findings ?? []).filter(
+    (finding) => uncounted[finding.ruleId] === 'dismissed',
+  );
   const countForTab: Record<ReportTab, number> = {
-    'fix-now': counts.fixNow,
-    watch: counts.watch,
+    'fix-now': openFindingCount(counts.fixNow, resolvedAudit.fixNow),
+    watch: openFindingCount(counts.watch, resolvedAudit.watch),
     passed: counts.passed,
   };
 
@@ -461,50 +528,74 @@ export const ReportPage = ({
     />
   );
 
+  const renderFindingRows = (items: LocalizedFinding[]) => (
+    <div className="flex flex-col gap-3">
+      {items.map((finding) => {
+        const bucket = diffMap.get(finding.ruleId);
+        return (
+          <IssueRow
+            key={finding.ruleId}
+            finding={finding}
+            ruleDiffKind={bucket?.kind}
+            diffByUrl={bucket?.byUrl ?? EMPTY_DIFF_BY_URL}
+            pageSpeed={report?.pageSpeed ?? null}
+            gscSearch={report?.gscSearch ?? null}
+            gscSitemaps={report?.gscSitemaps ?? null}
+            aiVisibility={report?.aiVisibility ?? null}
+            localSeo={report?.localSeo ?? null}
+            siteId={siteId}
+            runId={report?.runId}
+            isLatestRun={isLatestRun}
+            initiallyExpanded={finding.ruleId === focusedRuleId}
+          />
+        );
+      })}
+    </div>
+  );
+
   const renderTabPanel = (tab: ReportTab) => {
-    const items = filterByCategory(findingsByTab[tab], category);
-    if (items.length === 0 && category !== REPORT_CATEGORY_ALL && findingsByTab[tab].length > 0) {
-      // A category with nothing on this tab is not the same as an empty tab.
-      return (
-        <Empty className="w-full" data-testid="report-empty-category">
-          <EmptyHeader>
-            <EmptyTitle>{t('categories.emptyTitle')}</EmptyTitle>
-            <EmptyDescription>{t('categories.emptyDescription')}</EmptyDescription>
-          </EmptyHeader>
-        </Empty>
-      );
-    }
-    if (items.length === 0) {
-      return (
-        <Empty className="w-full" data-testid={`report-empty-${tab}`}>
-          <EmptyHeader>
-            <EmptyTitle>{t(`empty.${tab}.title`)}</EmptyTitle>
-            <EmptyDescription>{t(`empty.${tab}.description`)}</EmptyDescription>
-          </EmptyHeader>
-        </Empty>
-      );
-    }
+    // A dismissed or fixed finding no longer belongs in the list its tab
+    // counts. Fixed findings move to their own group below, where they can
+    // still be reopened; dismissed ones go to the Dismissed section under the
+    // tabs. Passed checks carry no decision.
+    const all = filterByCategory(findingsByTab[tab], category);
+    const items = all.filter((finding) => uncounted[finding.ruleId] === undefined);
+    const resolved = all.filter((finding) => uncounted[finding.ruleId] === 'completed');
+    // A category with nothing on this tab is not the same as an empty tab.
+    const filteredOut =
+      category !== REPORT_CATEGORY_ALL &&
+      findingsByTab[tab].some((finding) => uncounted[finding.ruleId] === undefined);
     return (
-      <div className="flex flex-col gap-3">
-        {items.map((finding) => {
-          const bucket = diffMap.get(finding.ruleId);
-          return (
-            <IssueRow
-              key={finding.ruleId}
-              finding={finding}
-              ruleDiffKind={bucket?.kind}
-              diffByUrl={bucket?.byUrl ?? EMPTY_DIFF_BY_URL}
-              pageSpeed={report?.pageSpeed ?? null}
-              gscSearch={report?.gscSearch ?? null}
-              gscSitemaps={report?.gscSitemaps ?? null}
-              aiVisibility={report?.aiVisibility ?? null}
-              localSeo={report?.localSeo ?? null}
-              siteId={siteId}
-              isLatestRun={isLatestRun}
-              initiallyExpanded={finding.ruleId === focusedRuleId}
-            />
-          );
-        })}
+      <div className="flex flex-col gap-6">
+        {items.length === 0 && filteredOut ? (
+          <Empty className="w-full" data-testid="report-empty-category">
+            <EmptyHeader>
+              <EmptyTitle>{t('categories.emptyTitle')}</EmptyTitle>
+              <EmptyDescription>{t('categories.emptyDescription')}</EmptyDescription>
+            </EmptyHeader>
+          </Empty>
+        ) : items.length === 0 ? (
+          <Empty className="w-full" data-testid={`report-empty-${tab}`}>
+            <EmptyHeader>
+              <EmptyTitle>{t(`empty.${tab}.title`)}</EmptyTitle>
+              <EmptyDescription>{t(`empty.${tab}.description`)}</EmptyDescription>
+            </EmptyHeader>
+          </Empty>
+        ) : (
+          renderFindingRows(items)
+        )}
+        {resolved.length > 0 ? (
+          <section
+            aria-labelledby={`report-resolved-${tab}-title`}
+            className="flex flex-col gap-3"
+            data-testid={`report-resolved-${tab}`}
+          >
+            <h3 id={`report-resolved-${tab}-title`} className="text-sm font-semibold">
+              {t('actions:report.fixedGroupIn', { tab: t(`tabs.${tab}`), count: resolved.length })}
+            </h3>
+            {renderFindingRows(resolved)}
+          </section>
+        ) : null}
       </div>
     );
   };
@@ -645,6 +736,20 @@ export const ReportPage = ({
         onConfirm={() => void handleRetest()}
       />
 
+      {viewingOlderRun ? <OlderRunBanner siteId={siteId} runAt={reportRunAt} /> : null}
+
+      {/* Only the newest audit can be stale; a pinned older run keeps the age
+          it recorded. The header's "Run a new audit" is the action. */}
+      {report && isLatestRun ? (
+        <StaleAuditCallout
+          runAt={reportRunAt}
+          running={runInProgress}
+          freshDays={report.auditFreshDays}
+        />
+      ) : null}
+
+      {report?.comparison?.scopeMismatch ? <ScopeMismatchNote comparison={report.comparison} /> : null}
+
       {retestError && !retestOpen ? (
         <Alert
           variant="destructive"
@@ -684,6 +789,9 @@ export const ReportPage = ({
         <AiSummaryCard
           key={`${report.runId}:${presentationLocale}`}
           runId={report.runId}
+          siteId={siteId}
+          initialFreshness={report.aiSummaryFreshness ?? null}
+          triageChanged={triageChangedSinceLoad(report.findings, auditDecisions)}
           requestedLocale={presentationLocale}
           initial={
             report.aiSummaryAvailability
@@ -738,10 +846,22 @@ export const ReportPage = ({
               </TabsTrigger>
             ))}
           </TabsList>
+          {resolvedCount.dismissed + resolvedCount.completed > 0 ? (
+            <p className="text-muted-foreground mt-2 text-sm" data-testid="report-not-counted">
+              {t('actions:report.notCounted', {
+                dismissed: resolvedCount.dismissed,
+                completed: resolvedCount.completed,
+              })}
+            </p>
+          ) : null}
           <CategoryFilter
             value={category}
             onChange={setCategory}
-            countFor={(value) => filterByCategory(findingsByTab[activeTab], value).length}
+            countFor={(value) =>
+              filterByCategory(findingsByTab[activeTab], value).filter(
+                (finding) => uncounted[finding.ruleId] === undefined,
+              ).length
+            }
           />
           {REPORT_TABS.map((tab) => (
             <TabsContent key={tab} value={tab} className="mt-4">
@@ -760,7 +880,21 @@ export const ReportPage = ({
         </Empty>
       )}
 
+      {report && dismissedFindings.length > 0 ? (
+        <DismissedSection findings={dismissedFindings} siteId={siteId} runId={report.runId} />
+      ) : null}
+
+      {report?.crawl ? <CrawlCoverageNote crawl={report.crawl} siteId={siteId} /> : null}
       <NotEvaluatedChecks findings={notEvaluatedFindings} />
+      {report?.notApplicable ? (
+        <NotApplicableSection
+          findings={report.notApplicable}
+          siteId={siteId}
+          onChanged={() =>
+            void dispatch(loadReport({ siteId, runId: runIdParam, ...presentationRequestIdentity() }))
+          }
+        />
+      ) : null}
 
       <RunHistory siteId={siteId} />
     </div>

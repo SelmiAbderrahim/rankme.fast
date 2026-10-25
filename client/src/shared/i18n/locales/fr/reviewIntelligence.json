@@ -36,7 +36,12 @@
     "title": "Sources d'avis",
     "description": "Indiquez où votre établissement est référencé. Une fiche par annuaire.",
     "empty": "Aucune source pour l'instant. Ajoutez-en une ci-dessous.",
-    "configured": "Configurée",
+    "status": {
+      "saved": "Enregistrée, pas encore synchronisée",
+      "verified": "Vérifiée par synchronisation",
+      "failed": "Dernière synchronisation échouée",
+      "invalid": "Vérifiez cet identifiant"
+    },
     "save": "Enregistrer la source",
     "remove": "Supprimer",
     "hint": {
@@ -48,7 +53,23 @@
       "google": "ChIJ_example_place_id",
       "trustpilot": "example.com",
       "tripadvisor": "1234567"
-    }
+    },
+    "help": {
+      "google": "L'identifiant de lieu est le code que Google attribue à la fiche de votre établissement. Il commence généralement par ChIJ. Cherchez votre établissement dans l'outil de Google, puis copiez l'identifiant affiché.",
+      "googleLink": "Ouvrir l'outil de recherche d'identifiant de lieu de Google"
+    },
+    "invalid": {
+      "google": "Saisissez un identifiant de lieu Google valide. Il commence généralement par ChIJ et compte au moins 20 caractères.",
+      "trustpilot": "Saisissez le domaine de l’entreprise indiqué sur Trustpilot, par exemple example.com, sans https://.",
+      "tripadvisor": "Saisissez l’identifiant numérique de l’établissement Tripadvisor, par exemple 23462501. C’est le nombre après le d dans l’adresse de la page."
+    },
+    "removeConfirm": {
+      "title": "Supprimer cette source ?",
+      "description": "{{source}} ne sera plus incluse dans les nouvelles synchronisations. Les avis déjà récupérés restent dans votre inventaire.",
+      "cancel": "Garder la source",
+      "confirm": "Supprimer la source"
+    },
+    "removed": "Source {{source}} supprimée."
   },
   "sync": {
     "title": "Lancer une synchronisation",

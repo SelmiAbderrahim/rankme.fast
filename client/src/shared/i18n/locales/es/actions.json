@@ -23,6 +23,7 @@
     "label": "Filtrar acciones",
     "reset": "Restablecer filtros",
     "all": "Todas",
+    "openAndPlanned": "Abiertas y planificadas",
     "state": "Estado",
     "source": "Fuente",
     "severity": "Gravedad",
@@ -81,14 +82,12 @@
     "observedAt": "Observado el {{date}}",
     "openSource": "Abrir vista de origen",
     "affectedNone": "En todo el sitio",
-    "affectedOne": "1 URL afectada",
     "affectedCount_one": "{{count}} URL afectada",
     "evidence": "Evidencia",
     "evidenceLabel": "{{source}} · {{date}}",
     "evidenceLink": "Abrir fuente de la evidencia",
     "history": "Historial",
     "retest": "Reanalizar",
-    "affectedSample": "(se muestran {{shown}})",
     "noteLabel": "Nota",
     "affectedCount_zero": "{{count}} URL afectadas",
     "affectedCount_two": "{{count}} URL afectadas",
@@ -112,7 +111,10 @@
     "seeLinkTargets_two": "Ver las {{count}} páginas y los enlaces rotos a los que apuntan en el informe",
     "seeLinkTargets_few": "Ver las {{count}} páginas y los enlaces rotos a los que apuntan en el informe",
     "seeLinkTargets_many": "Ver las {{count}} páginas y los enlaces rotos a los que apuntan en el informe",
-    "seeLinkTargets_other": "Ver las {{count}} páginas y los enlaces rotos a los que apuntan en el informe"
+    "seeLinkTargets_other": "Ver las {{count}} páginas y los enlaces rotos a los que apuntan en el informe",
+    "linkSourcesCount": "Páginas con enlaces rotos: {{count}}",
+    "staleRetestHint": "Esta evidencia está desactualizada. Vuelve a probar para comprobarla de nuevo.",
+    "linkSourcesCountSampled": "Páginas con enlaces rotos: {{count}} (se muestran {{shown}})"
   },
   "transitions": {
     "planned": "Planificar",
@@ -138,7 +140,14 @@
     "confirm": "Confirmar",
     "saving": "Guardando…",
     "conflict": "Otra persona cambió esta acción primero. Recárgala e inténtalo de nuevo.",
-    "conflictReload": "Recargar acción"
+    "conflictReload": "Recargar acción",
+    "reasonLabel": "¿Por qué descartas este hallazgo?",
+    "reasons": {
+      "false_positive": "Falso positivo",
+      "wont_fix": "No se corregirá",
+      "fixed_elsewhere": "Corregido en otro sitio",
+      "other": "Otro motivo"
+    }
   },
   "history": {
     "title": "Historial de la acción",
@@ -182,6 +191,8 @@
     "dismissedLabel": "Descartado como falso positivo",
     "fixCta": "Marcar como corregido",
     "fixedLabel": "Marcado como corregido",
-    "reappearedLabel": "Se sigue detectando tras marcarlo como corregido"
+    "reappearedLabel": "Se sigue detectando tras marcarlo como corregido",
+    "notCounted": "Fuera de estos totales — descartados: {{dismissed}}, marcados como corregidos: {{completed}}.",
+    "fixedGroupIn": "Marcados como corregidos en {{tab}} ({{count}})"
   }
 }

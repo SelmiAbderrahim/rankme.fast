@@ -40,7 +40,13 @@ export interface VendorResponseAppendInput extends VendorCacheAddress {
     fetchedAt: Date;
 }
 export interface VendorCacheRepo {
-    read(address: VendorCacheAddress, now: Date): Promise<VendorCacheHit | null>;
+    /**
+     * `includeExpired` serves a stored row past its TTL — for zero-spend
+     * "show what we already have" reads that must never trigger a fetch.
+     */
+    read(address: VendorCacheAddress, now: Date, options?: {
+        includeExpired?: boolean;
+    }): Promise<VendorCacheHit | null>;
     upsert(input: VendorCacheUpsertInput): Promise<void>;
     appendResponse(input: VendorResponseAppendInput): Promise<void>;
     /**
@@ -54,7 +60,7 @@ export interface VendorCacheRepo {
 }
 export function createVendorCacheRepo(db: ApplicationDb): VendorCacheRepo {
     return {
-        async read(address, now) {
+        async read(address, now, options) {
             const rows = await db
                 .select({
                 params: vendorCache.params,
@@ -68,7 +74,7 @@ export function createVendorCacheRepo(db: ApplicationDb): VendorCacheRepo {
             const row = rows[0];
             if (!row)
                 return null;
-            if (row.expiresAt.getTime() <= now.getTime())
+            if (!options?.includeExpired && row.expiresAt.getTime() <= now.getTime())
                 return null;
             return {
                 params: row.params,

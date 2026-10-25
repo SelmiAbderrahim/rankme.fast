@@ -144,4 +144,6 @@ CREATE UNIQUE INDEX "rank_check_outcomes_keyword_period_uq" ON "rank_check_outco
 CREATE INDEX "rank_check_outcomes_site_period_idx" ON "rank_check_outcomes" USING btree ("site_id","period_key");--> statement-breakpoint
 CREATE INDEX "keywords_site_active_created_idx" ON "keywords" USING btree ("site_id","active","created_at","id");--> statement-breakpoint
 CREATE TRIGGER rank_check_jobs_site_deletion_guard BEFORE INSERT OR UPDATE ON rank_check_jobs FOR EACH ROW EXECUTE FUNCTION reject_deleted_site_write();--> statement-breakpoint
-CREATE TRIGGER rank_check_outcomes_site_deletion_guard BEFORE INSERT OR UPDATE ON rank_check_outcomes FOR EACH ROW EXECUTE FUNCTION reject_deleted_site_write();
+CREATE TRIGGER rank_check_outcomes_site_deletion_guard BEFORE INSERT OR UPDATE ON rank_check_outcomes FOR EACH ROW EXECUTE FUNCTION reject_deleted_site_write();--> statement-breakpoint
+CREATE TRIGGER rank_check_jobs_account_deletion_guard BEFORE INSERT OR UPDATE ON rank_check_jobs FOR EACH ROW EXECUTE FUNCTION reject_deleted_account_write('account_id');--> statement-breakpoint
+CREATE TRIGGER rank_check_outcomes_account_deletion_guard BEFORE INSERT OR UPDATE ON rank_check_outcomes FOR EACH ROW EXECUTE FUNCTION reject_deleted_account_write('account_id');

@@ -29,6 +29,7 @@ vi.mock('../api', () => ({
   fetchRunRequest: vi.fn(),
   startAuditRequest: vi.fn(),
   generateAiSummaryRequest: vi.fn(),
+  markLocalBusinessRequest: vi.fn(),
 }));
 
 vi.mock('@shared/lib/clipboard', () => ({
@@ -509,7 +510,8 @@ describe('ReportPage — tabs, counts & URL state', () => {
     expect(await screen.findByText('Page headings missing or overused')).toBeInTheDocument();
     await user.click(screen.getByTestId('report-tab-passed'));
     await waitFor(() => expect(currentSearch).toBe('?bucket=passed'));
-    expect(await screen.findByText('llms.txt file not published')).toBeInTheDocument();
+    // A passing check reads as what is right, not as the problem name.
+    expect(await screen.findByText('Your llms.txt file is published.')).toBeInTheDocument();
   });
 
   it('honours deep link ?bucket=watch and falls back on an invalid value', async () => {
@@ -740,7 +742,7 @@ describe('ReportPage — issue detail + copy', () => {
     expect(screen.getByTestId('report-issue-copy')).toHaveTextContent('Copy fix');
   });
 
-  it('passed tab row uses the passed label rather than "why it matters"', async () => {
+  it('passed tab row is titled by what is right and its detail explains why it matters', async () => {
     renderReport();
     await waitFor(() =>
       expect(mocked.fetchReportRequest).toHaveBeenCalledWith('run-1', expect.objectContaining({ signal: expect.any(AbortSignal) })),
@@ -748,8 +750,11 @@ describe('ReportPage — issue detail + copy', () => {
     const user = userEvent.setup();
     await user.click(screen.getByTestId('report-tab-passed'));
     const row = (await screen.findAllByTestId('report-issue-row'))[0]!;
+    expect(within(row).getByText('Your llms.txt file is published.')).toBeInTheDocument();
+    expect(within(row).getByTestId('report-badge-passed')).toHaveTextContent('Passed');
+    expect(within(row).queryByTestId('report-badge-severity-info')).toBeNull();
     await user.click(row.querySelector<HTMLButtonElement>('button[aria-expanded="false"]')!);
-    expect(screen.getByText('Your llms.txt file is published.')).toBeInTheDocument();
+    expect(within(row).getByText(findingsFixture[2]!.copy.why)).toBeInTheDocument();
     // No copy button on passed rows (no fix to copy).
     expect(screen.queryByTestId('report-issue-copy')).not.toBeInTheDocument();
   });
@@ -1059,6 +1064,9 @@ describe('ReportPage — retest & diff badges', () => {
     expect(screen.getByTestId('action-state-dialog-title')).toHaveTextContent(
       'Page titles missing or weak',
     );
+    // Dismissing asks why first; confirming stays off until a reason is chosen.
+    expect(screen.getByTestId('action-state-confirm')).toBeDisabled();
+    await user.click(screen.getByTestId('action-dismiss-reason-false_positive'));
     await user.click(screen.getByTestId('action-state-confirm'));
     await waitFor(() =>
       expect(actionsApiMocked.mutateActionState).toHaveBeenCalledWith(
@@ -1067,14 +1075,17 @@ describe('ReportPage — retest & diff badges', () => {
           actionId: 'action-title-missing-or-weak',
           state: 'dismissed',
           expectedVersion: 1,
+          reason: 'false_positive',
         }),
       ),
     );
-    // The finding stays visible, labeled dismissed, with a reopen control —
-    // the report counts/evidence are untouched (workflow state only).
-    expect(await screen.findByTestId('report-finding-dismissed')).toBeInTheDocument();
-    expect(screen.getByTestId('report-finding-reopen')).toBeInTheDocument();
-    expect(screen.getByText('Page titles missing or weak')).toBeInTheDocument();
+    // The finding leaves its tab and sits in the Dismissed section, which
+    // offers Restore.
+    const dismissedRow = await screen.findByTestId('report-dismissed-row');
+    expect(dismissedRow).toHaveAttribute('data-rule-id', 'title-missing-or-weak');
+    expect(within(dismissedRow).getByText('Page titles missing or weak')).toBeInTheDocument();
+    expect(within(dismissedRow).getByTestId('report-dismissed-restore')).toBeInTheDocument();
+    expect(screen.queryByTestId('report-finding-dismiss')).toBeNull();
   });
 
   it('reopens a dismissed finding through the same confirmation path', async () => {
@@ -1091,14 +1102,16 @@ describe('ReportPage — retest & diff badges', () => {
     } as never);
     renderReport();
     const user = userEvent.setup();
-    await user.click(await screen.findByTestId('report-finding-reopen'));
+    await user.click(await screen.findByTestId('report-dismissed-restore'));
     await user.click(await screen.findByTestId('action-state-confirm'));
     await waitFor(() =>
       expect(actionsApiMocked.mutateActionState).toHaveBeenCalledWith(
         expect.objectContaining({ state: 'open', expectedVersion: 4 }),
       ),
     );
+    // Restored: back in its tab with the dismiss control, out of the section.
     expect(await screen.findByTestId('report-finding-dismiss')).toBeInTheDocument();
+    expect(screen.queryByTestId('report-dismissed')).toBeNull();
   });
 
   it('marks a finding as fixed through the shared confirmation', async () => {
@@ -1192,6 +1205,7 @@ describe('ReportPage — retest & diff badges', () => {
     renderReport();
     const user = userEvent.setup();
     await user.click(await screen.findByTestId('report-finding-dismiss'));
+    await user.click(await screen.findByTestId('action-dismiss-reason-other'));
     await user.click(await screen.findByTestId('action-state-confirm'));
     expect(await screen.findByTestId('action-state-conflict')).toBeInTheDocument();
     const callsBefore = actionsApiMocked.listActions.mock.calls.length;
@@ -1275,7 +1289,7 @@ describe('ReportPage — retest & diff badges', () => {
     const user = userEvent.setup();
     await user.click(screen.getByTestId('report-tab-passed'));
     // The passed row (llms-txt-missing) exposes no dismiss/reopen control.
-    expect(screen.getByText('llms.txt file not published')).toBeInTheDocument();
+    expect(screen.getByText('Your llms.txt file is published.')).toBeInTheDocument();
     expect(screen.queryByTestId('report-finding-reopen')).not.toBeInTheDocument();
     // The watch tab's headings-weak row has no matching action → no control.
     await user.click(screen.getByTestId('report-tab-watch'));
@@ -1497,6 +1511,43 @@ describe('IssueRow / IssueDetail units', () => {
     expect(screen.getByTestId('report-issue-detail')).toBeInTheDocument();
   });
 
+  it('names both broken-link counts in the row summary', () => {
+    const finding: LocalizedFinding = {
+      ...findingsFixture[0]!,
+      ruleId: 'broken-internal-links',
+      affectedUrls: ['https://example.com/a', 'https://example.com/b'],
+      brokenLinkTargets: ['https://example.com/gone'],
+    };
+    render(
+      <Provider store={makeStore()}>
+        <I18nextProvider i18n={i18n}>
+          <MemoryRouter>
+            <IssueRow finding={finding} diffByUrl={new Map()} siteId="site-1" />
+          </MemoryRouter>
+        </I18nextProvider>
+      </Provider>,
+    );
+    expect(screen.getByText('Pages with broken links: 2 · Broken URLs: 1')).toBeInTheDocument();
+  });
+
+  it('falls back to the page count for a broken-links row without listed targets', () => {
+    const finding: LocalizedFinding = {
+      ...findingsFixture[0]!,
+      ruleId: 'broken-internal-links',
+      affectedUrls: ['https://example.com/a', 'https://example.com/b'],
+    };
+    render(
+      <Provider store={makeStore()}>
+        <I18nextProvider i18n={i18n}>
+          <MemoryRouter>
+            <IssueRow finding={finding} diffByUrl={new Map()} siteId="site-1" />
+          </MemoryRouter>
+        </I18nextProvider>
+      </Provider>,
+    );
+    expect(screen.getByText('2 pages affected')).toBeInTheDocument();
+  });
+
   it('separates broken targets from the pages linking to them', () => {
     const finding: LocalizedFinding = {
       ...findingsFixture[0]!,
@@ -1575,7 +1626,8 @@ describe('IssueRow / IssueDetail units', () => {
         <IssueDetail finding={findingsFixture[2]!} diffByUrl={new Map()} />
       </I18nextProvider>,
     );
-    expect(screen.getByText('Your llms.txt file is published.')).toBeInTheDocument();
+    // The passing statement is the row title; the detail explains why it matters.
+    expect(screen.getByText(findingsFixture[2]!.copy.why)).toBeInTheDocument();
     expect(screen.queryByText('How to fix it')).not.toBeInTheDocument();
   });
 
@@ -1822,12 +1874,17 @@ describe('slice — reducers & thunks state transitions', () => {
       runsRequestId: 'req',
     };
     const arg = { siteId: 's', presentationLocale: 'en' as const, presentationGeneration: 4 };
-    expect(
-      reportReducer(owned, loadRuns.fulfilled({ runs: [], nextCursor: null }, 'req', arg)).runsLoading,
-    ).toBe(true);
-    expect(
-      reportReducer(owned, loadRuns.rejected(new Error('boom'), 'req', arg)).runsLoading,
-    ).toBe(true);
+    // A read from an older identity stores nothing but releases the loading
+    // flags, so the block reads again under the current identity.
+    for (const settled of [
+      reportReducer(owned, loadRuns.fulfilled({ runs: [], nextCursor: null }, 'req', arg)),
+      reportReducer(owned, loadRuns.rejected(new Error('boom'), 'req', arg)),
+    ]) {
+      expect(settled.runsLoading).toBe(false);
+      expect(settled.runsRequestId).toBeNull();
+      expect(settled.runsLoaded).toBe(false);
+      expect(settled.runs).toEqual([]);
+    }
   });
 
   it('loadRuns settles only for the read that owns the loading state', async () => {
@@ -3156,10 +3213,10 @@ describe('ReportPage — resource scan option', () => {
     const option = await screen.findByTestId('report-resource-scan');
     expect(option).toBeChecked();
     expect(screen.getByLabelText('Scan images, scripts and styles')).toBe(option);
-    expect(screen.getByText(/only runs for page limits of 1,000 or fewer/)).toBeInTheDocument();
-    // The default limit is above what the scan covers, and the dialog says so.
+    expect(screen.getByText(/limits the audit to 1,000 pages/)).toBeInTheDocument();
+    // The default limit is above what a scanning audit crawls, and the dialog says so.
     expect(screen.getByTestId('report-resource-scan-note')).toHaveTextContent(
-      'This page limit is above 1,000, so the audit will skip this scan.',
+      'This audit will crawl at most 1,000 pages. Untick the scan to crawl more.',
     );
     await user.click(option);
     expect(screen.queryByTestId('report-resource-scan-note')).toBeNull();
@@ -3346,5 +3403,150 @@ describe('IssueDetail — deep crawl evidence', () => {
     renderDetail(crawlFinding({ ruleId: 'orphan-pages', meta: { pages: [{ url: 'https://example.com/a', problems: ['orphan'] }] } }));
     expect(screen.getByTestId('report-evidence-facts')).toHaveTextContent('');
     expect(screen.queryByTestId('report-evidence-cut')).toBeNull();
+  });
+});
+
+describe('ReportPage — stale audit prompt', () => {
+  it('tells the reader the newest audit is out of date without adding a second action', async () => {
+    mocked.fetchReportRequest.mockResolvedValue(makeReport({ auditFreshDays: 30 }));
+    renderReport();
+    const callout = await screen.findByTestId('stale-audit-callout');
+    expect(within(callout).getByTestId('stale-audit-title')).toHaveTextContent(/Last audited \d+ days ago/);
+    // The header's "Run a new audit" is the one action on this page.
+    expect(screen.queryByTestId('stale-audit-run')).toBeNull();
+  });
+
+  it('stays quiet for a pinned older run and for a report without a freshness window', async () => {
+    mocked.fetchReportRequest.mockResolvedValue(makeReport({ auditFreshDays: 30 }));
+    const pinned = renderReport({ path: '/sites/site-1/report/run-1' });
+    await screen.findByTestId('report-tab-fix-now');
+    expect(screen.queryByTestId('stale-audit-callout')).toBeNull();
+    expect(pinned).toBeDefined();
+  });
+
+  it('stays quiet when the report carries no freshness window', async () => {
+    renderReport();
+    await screen.findByTestId('report-tab-fix-now');
+    expect(screen.queryByTestId('stale-audit-callout')).toBeNull();
+  });
+
+  it('opens the retest confirmation from ?retest=1 and consumes the flag', async () => {
+    const searches: string[] = [];
+    renderReport({ path: '/sites/site-1/report?retest=1', onLocation: (search) => searches.push(search) });
+    expect(await screen.findByTestId('report-retest-dialog')).toBeInTheDocument();
+    await waitFor(() => expect(searches.at(-1)).toBe(''));
+    expect(mocked.startAuditRequest).not.toHaveBeenCalled();
+  });
+
+  it('does not open the dialog from ?retest=1 while an audit is already running', async () => {
+    mocked.fetchLatestRunRequest.mockResolvedValue({
+      runs: [
+        {
+          id: 'run-9',
+          siteId: 'site-1',
+          status: 'running',
+          pageCap: 100,
+          pagesCrawled: 0,
+          vendorTaskId: null,
+          startedAt: null,
+          finishedAt: null,
+          error: null,
+          createdAt: '2026-07-01T00:00:00.000Z',
+          updatedAt: '2026-07-01T00:00:00.000Z',
+        },
+      ],
+      nextCursor: null,
+    });
+    const searches: string[] = [];
+    renderReport({ path: '/sites/site-1/report?retest=1', onLocation: (search) => searches.push(search) });
+    await screen.findByTestId('report-run-in-progress');
+    await waitFor(() => expect(searches.at(-1)).toBe(''));
+    expect(screen.queryByTestId('report-retest-dialog')).toBeNull();
+  });
+});
+
+describe('ReportPage — finding decisions, comparison and applicability', () => {
+  beforeEach(() => {
+    // Earlier tests leave audit actions behind; a live decision would win over the report's.
+    actionsApiMocked.listActions.mockResolvedValue({ items: [], sourceStatus: {}, nextCursor: null });
+  });
+
+  const decision = (over: Partial<NonNullable<LocalizedFinding['decision']>> = {}): NonNullable<LocalizedFinding['decision']> => ({
+    state: 'dismissed',
+    regressed: false,
+    decidedAt: '2026-10-16T09:00:00.000Z',
+    decidedBy: 'Sam Owner',
+    reason: 'false_positive',
+    affectedCountAtDismissal: 2,
+    latest: { runId: 'run-1', detected: true, affectedCount: 2 },
+    resurfaced: null,
+    recheckable: false,
+    recheck: null,
+    ...over,
+  });
+  const withDecision = (over: NonNullable<LocalizedFinding['decision']> | undefined, extra: Partial<LocalizedFinding> = {}) =>
+    makeReport({
+      findings: [{ ...findingsFixture[0]!, ...(over ? { decision: over } : {}), ...extra }, ...findingsFixture.slice(1)],
+    });
+
+  it('leaves a dismissed finding out of the tab count and names it in a note', async () => {
+    mocked.fetchReportRequest.mockResolvedValue(withDecision(decision()));
+    renderReport();
+    expect(await screen.findByTestId('report-not-counted')).toHaveTextContent(
+      'Not in these counts: 1 dismissed, 0 marked fixed.',
+    );
+    expect(screen.getByTestId('report-tab-fix-now')).toHaveTextContent('(0)');
+  });
+
+  it('counts a dismissal the newest audit resurfaced as open again', async () => {
+    mocked.fetchReportRequest.mockResolvedValue(withDecision(decision({ resurfaced: { addedCount: 3 } })));
+    renderReport();
+    await screen.findByTestId('report-tabs');
+    expect(screen.getByTestId('report-tab-fix-now')).toHaveTextContent('(1)');
+    expect(screen.queryByTestId('report-not-counted')).not.toBeInTheDocument();
+  });
+
+  it('shows the older-run banner only on a pinned run that is not the newest', async () => {
+    mocked.fetchReportRequest.mockResolvedValue(makeReport({ latestRunId: 'run-9' }));
+    renderReport({ path: '/sites/site-1/report/run-1' });
+    expect(await screen.findByTestId('report-older-run')).toBeInTheDocument();
+  });
+
+  it('treats a pinned run that is the newest as the latest report', async () => {
+    mocked.fetchReportRequest.mockResolvedValue(makeReport({ latestRunId: 'run-1' }));
+    renderReport({ path: '/sites/site-1/report/run-1' });
+    await screen.findByTestId('report-tabs');
+    expect(screen.queryByTestId('report-older-run')).not.toBeInTheDocument();
+  });
+
+  it('shows the scope note and a comparison badge on the finding', async () => {
+    mocked.fetchReportRequest.mockResolvedValue(
+      makeReport({
+        comparison: {
+          previousRunId: 'run-0',
+          previous: { pageCap: 100, pagesCrawled: 100 },
+          current: { pageCap: 5000, pagesCrawled: 1280 },
+          scopeMismatch: true,
+        },
+        findings: [{ ...findingsFixture[0]!, comparisonStatus: 'regressed' }, ...findingsFixture.slice(1)],
+      }),
+    );
+    renderReport();
+    expect(await screen.findByTestId('report-scope-mismatch')).toBeInTheDocument();
+    expect(screen.getByTestId('report-comparison-regressed')).toBeInTheDocument();
+  });
+
+  it('lists checks that do not apply and reloads the report after the owner opts in', async () => {
+    mocked.markLocalBusinessRequest.mockResolvedValue({});
+    mocked.fetchReportRequest.mockResolvedValue(
+      makeReport({ notApplicable: [{ ...findingsFixture[3]!, ruleId: 'nap-inconsistency', applicability: 'not_applicable' }] }),
+    );
+    renderReport();
+    expect(await screen.findByTestId('report-not-applicable')).toBeInTheDocument();
+    const reads = mocked.fetchReportRequest.mock.calls.length;
+    await userEvent.setup().click(screen.getByText('Not applicable to this site'));
+    await userEvent.setup().click(await screen.findByTestId('report-not-applicable-opt-in'));
+    await waitFor(() => expect(mocked.markLocalBusinessRequest).toHaveBeenCalledWith('site-1'));
+    await waitFor(() => expect(mocked.fetchReportRequest.mock.calls.length).toBeGreaterThan(reads));
   });
 });

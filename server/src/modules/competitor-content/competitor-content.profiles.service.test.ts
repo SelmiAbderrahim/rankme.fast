@@ -285,3 +285,76 @@ describe('loadActiveCompetitorProfiles', () => {
     expect(active.map((p) => p.id)).toEqual([a.profile.id]);
   });
 });
+
+describe('rows that name the site itself', () => {
+  async function storedRow(siteId: string, registrableDomain: string, status: 'active' | 'archived') {
+    const [row] = await db()
+      .insert(competitorProfiles)
+      .values({ accountId: ACCOUNT, siteId, origin: `https://${registrableDomain}`, registrableDomain, source: 'manual', status })
+      .returning();
+    return row!;
+  }
+
+  it.each(['example.com', 'EXAMPLE.com', 'www.example.com', 'blog.example.com'])(
+    'refuses to restore an archived row stored as %s with the own-site error',
+    async (stored) => {
+      const siteId = await ownedSite();
+      const row = await storedRow(siteId, stored, 'archived');
+      await expect(restoreCompetitor(db(), { accountId: ACCOUNT, siteId, competitorId: row.id })).rejects.toMatchObject({
+        status: 400,
+        code: 'CONTENT_INTELLIGENCE_COMPETITOR_CONTENT_ERRORS_OWN_SITE',
+        messageKey: 'contentIntelligence.competitorContent.errors.ownSite',
+      });
+      const [after] = await db().select().from(competitorProfiles).where(eq(competitorProfiles.id, row.id));
+      expect(after!.status).toBe('archived');
+    },
+  );
+
+  it('hides them from every list, the portfolio ceiling and run selection', async () => {
+    const siteId = await ownedSite(ACCOUNT, 'https://www.example.com');
+    const self = await storedRow(siteId, 'example.com', 'active');
+    await storedRow(siteId, 'shop.example.com', 'archived');
+    const rival = await addCompetitor(db(), { accountId: ACCOUNT, siteId, url: 'https://example.org', source: 'manual' });
+    for (const status of ['active', 'archived', 'all'] as const) {
+      const listed = await listCompetitors(db(), { accountId: ACCOUNT, siteId, status });
+      expect(listed.map((p) => p.registrableDomain)).toEqual(status === 'archived' ? [] : ['example.org']);
+    }
+    const active = await loadActiveCompetitorProfiles(db(), {
+      accountId: ACCOUNT, siteId, competitorIds: [self.id, rival.profile.id],
+    });
+    expect(active.map((p) => p.id)).toEqual([rival.profile.id]);
+  });
+
+  it('does not count them against the portfolio ceiling', async () => {
+    const siteId = await ownedSite();
+    await storedRow(siteId, 'example.com', 'active');
+    await db().insert(competitorProfiles).values(
+      Array.from({ length: COMPETITOR_PORTFOLIO_MAX_COMPETITORS - 1 }, (_, index) => ({
+        accountId: ACCOUNT, siteId, origin: `https://fill-${index}.example`, registrableDomain: `fill-${index}.example`,
+        source: 'manual' as const, status: 'active' as const,
+      })),
+    );
+    const added = await addCompetitor(db(), { accountId: ACCOUNT, siteId, url: 'https://example.org', source: 'manual' });
+    expect(added.duplicate).toBe(false);
+  });
+
+  it('keeps loading active rows when the site is gone or the id is malformed', async () => {
+    const siteId = await ownedSite();
+    const rival = await addCompetitor(db(), { accountId: ACCOUNT, siteId, url: 'https://example.org', source: 'manual' });
+    await Site.deleteMany({});
+    const active = await loadActiveCompetitorProfiles(db(), { accountId: ACCOUNT, siteId, competitorIds: [rival.profile.id] });
+    expect(active.map((p) => p.id)).toEqual([rival.profile.id]);
+    expect(await loadActiveCompetitorProfiles(db(), { accountId: ACCOUNT, siteId: 'not-an-object-id', competitorIds: [rival.profile.id] })).toEqual([]);
+  });
+
+  it('never suggests the site itself', async () => {
+    const siteId = await ownedSite();
+    const row = (competitorDomain: string, intersections: number) => ({
+      siteId, accountId: ACCOUNT, competitorDomain, intersections, source: 'domain' as const,
+      fetchedAt: new Date('2026-07-18'), snapshotDay: '2026-07-18',
+    });
+    await db().insert(competitors).values([row('example.com', 99), row('www.example.com', 98), row('rival.com', 5)]);
+    const suggestions = await suggestCompetitors(db(), { accountId: ACCOUNT, siteId });
+    expect(suggestions.map((s) => s.registrableDomain)).toEqual(['rival.com']);
+  });
+});

@@ -9,7 +9,7 @@ order: 13
 
 # Rendimiento de páginas
 
-Abre un sitio y elige **Páginas** para comparar el rendimiento de búsqueda con el inventario del último rastreo. Al abrirse, la pestaña solo lee datos guardados. La recopilación empieza cuando eliges **Actualizar** o **Recopilar datos alternativos**.
+Abre un sitio y elige **Páginas** para comparar el rendimiento de búsqueda con el inventario del último rastreo. Al abrirse, la pestaña solo lee datos guardados. La recopilación empieza cuando eliges **Actualizar** o **Obtener datos de posicionamiento**.
 
 ## Fuente utilizada
 

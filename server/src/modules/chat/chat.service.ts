@@ -13,8 +13,9 @@ import type { AiChatHistoryMessage } from '../../shared/providers/index.js';
 import { resolveAiTaskProfile } from '../../shared/ai-profiles/index.js';
 import type { AiSystemInstruction } from '../../shared/providers/index.js';
 import { Site } from '../sites/index.js';
-import { CHAT_TITLE_MAX_CHARS, ChatConversation, ChatMessage, type ChatMessageDocument, } from './chat.models.js';
-import type { ChatConversationDto, ChatMessageDto, ChatMessagePartDto, } from './chat.schema.js';
+import { CHAT_TITLE_VERSION, ChatConversation, ChatMessage, type ChatMessageDocument, } from './chat.models.js';
+import { buildConversationTitle } from './chat.title.js';
+import type { ChatConversationDto, ChatMessageDto, ChatMessagePartDto, ChatMessageStatus, } from './chat.schema.js';
 /** Max retained conversations per account — creating past it prunes oldest. */
 export const CHAT_MAX_CONVERSATIONS = 100;
 /** Max messages in one conversation — the next send is a localized 409. */
@@ -109,6 +110,42 @@ export async function createConversation(input: CreateConversationInput): Promis
     });
     return toConversationDto(doc as unknown as ConversationDoc);
 }
+type ListedConversation = InstanceType<typeof ChatConversation> & {
+    createdAt: Date;
+};
+/**
+ * Conversations titled before the current builder (for example six identical
+ * "Summarize the most im…" starters) get a title from their stored first
+ * message, oldest first, unique on the account. No model call. Idempotent:
+ * each row is written once, guarded on its old version.
+ */
+async function retitleLegacyConversations(visible: ListedConversation[], all: ListedConversation[], domains: ReadonlyMap<string, string>): Promise<void> {
+    const legacy = visible
+        .filter((doc) => doc.messageCount > 0 && doc.titleVersion < CHAT_TITLE_VERSION)
+        .sort((a, b) => a.createdAt.getTime() - b.createdAt.getTime());
+    if (legacy.length === 0)
+        return;
+    const pending = new Set(legacy.map((doc) => String(doc._id)));
+    const taken = all.filter((doc) => !pending.has(String(doc._id))).map((doc) => doc.title);
+    for (const doc of legacy) {
+        const first = await ChatMessage.findOne({ conversationId: doc._id, role: 'user' })
+            .sort({ createdAt: 1 })
+            .lean();
+        const text = first?.parts.find((part) => part.type === 'text')?.text ?? '';
+        const title = buildConversationTitle({
+            text,
+            locale: doc.locale,
+            // Visible conversations only link live sites, so the domain is known.
+            siteDomain: doc.siteId ? domains.get(String(doc.siteId))! : null,
+            existingTitles: taken,
+        });
+        await ChatConversation.updateOne(
+        // Rows written before versioning have no field at all.
+        { _id: doc._id, titleVersion: { $ne: CHAT_TITLE_VERSION } }, { $set: { title, titleVersion: CHAT_TITLE_VERSION } }, { timestamps: false });
+        doc.title = title;
+        taken.push(title);
+    }
+}
 export async function listConversations(accountId: string, allowedSiteIds: readonly string[] | null = null): Promise<ChatConversationDto[]> {
     const docs = await ChatConversation.find({
         accountId,
@@ -117,14 +154,17 @@ export async function listConversations(accountId: string, allowedSiteIds: reado
         lastMessageAt: -1,
     });
     const linkedIds = docs.flatMap((doc) => (doc.siteId ? [doc.siteId] : []));
-    const liveIds = new Set((await Site.find({
+    const liveSites = await Site.find({
         _id: { $in: linkedIds },
         accountId,
         deletionStartedAt: null,
-    }).select({ _id: 1 })).map((site) => String(site._id)));
-    return docs
-        .filter((doc) => !doc.siteId || liveIds.has(String(doc.siteId)))
-        .map((doc) => toConversationDto(doc as unknown as ConversationDoc));
+    }).select({ _id: 1, domain: 1 });
+    const domains = new Map(liveSites.map((site) => [String(site._id), site.domain]));
+    const visible = docs.filter((doc) => !doc.siteId || domains.has(String(doc.siteId)));
+    // Uniqueness is account-wide, so a scoped (MCP) listing never retitles.
+    if (allowedSiteIds === null)
+        await retitleLegacyConversations(visible, docs, domains);
+    return visible.map((doc) => toConversationDto(doc as unknown as ConversationDoc));
 }
 async function loadOwnedConversation(accountId: string, conversationId: string) {
     const doc = await ChatConversation.findOne({
@@ -205,12 +245,6 @@ export async function appendUserMessage(accountId: string, conversationId: strin
         status: 'complete',
         parts: [{ type: 'text', text }],
     });
-    if (doc.messageCount === 0) {
-        doc.title = text.slice(0, CHAT_TITLE_MAX_CHARS);
-    }
-    doc.messageCount += 1;
-    doc.lastMessageAt = new Date();
-    await doc.save();
     let linkedSite: {
         id: string;
         domain: string;
@@ -223,6 +257,19 @@ export async function appendUserMessage(accountId: string, conversationId: strin
         }).select('domain');
         linkedSite = site ? { id: String(doc.siteId), domain: site.domain } : null;
     }
+    if (doc.messageCount === 0) {
+        const used = await ChatConversation.find({ accountId, _id: { $ne: doc._id } }, { title: 1 }).lean();
+        doc.title = buildConversationTitle({
+            text,
+            locale: doc.locale,
+            siteDomain: linkedSite?.domain ?? null,
+            existingTitles: used.map((row) => row.title),
+        });
+        doc.titleVersion = CHAT_TITLE_VERSION;
+    }
+    doc.messageCount += 1;
+    doc.lastMessageAt = new Date();
+    await doc.save();
     return {
         conversation: toConversationDto(doc as unknown as ConversationDoc),
         message: toMessageDto(message as unknown as ChatMessageDocument & {
@@ -235,7 +282,7 @@ export interface AppendAssistantMessageInput {
     accountId: string;
     conversationId: string;
     parts: ChatMessagePartDto[];
-    status: 'complete' | 'error' | 'aborted';
+    status: ChatMessageStatus;
     responseLocale: SupportedLocale;
     tokens?: {
         input: number | null;
@@ -300,12 +347,20 @@ export async function assembleHistory(accountId: string, conversationId: string)
 export function buildChatSystemInstruction(site: {
     id: string;
     domain: string;
-} | null, responseLocale: SupportedLocale): AiSystemInstruction {
+} | null, responseLocale: SupportedLocale, disabledTools: readonly string[] = []): AiSystemInstruction {
     const profile = resolveAiTaskProfile('chat_assistant');
     const base = translate(responseLocale, 'chat.systemInstruction.base');
-    const text = site
-        ? `${base} ${translate(responseLocale, 'chat.systemInstruction.linkedSite', { siteDomain: site.domain, siteId: site.id })}`
-        : base;
+    const linked = site
+        ? [translate(responseLocale, 'chat.systemInstruction.linkedSite', { siteDomain: site.domain, siteId: site.id })]
+        : [];
+    const dataTools = translate(responseLocale, 'chat.systemInstruction.dataTools');
+    // Keyword counts are quoted from the tool, never recomputed.
+    const rankStates = translate(responseLocale, 'chat.systemInstruction.rankStates');
+    const noInternalIds = translate(responseLocale, 'chat.systemInstruction.noInternalIds');
+    const disabled = disabledTools.length > 0
+        ? [translate(responseLocale, 'chat.systemInstruction.disabledTools', { tools: disabledTools.join(', ') })]
+        : [];
+    const text = [base, dataTools, rankStates, noInternalIds, ...disabled, ...linked].join(' ');
     return {
         id: profile.systemInstruction.templateId,
         version: profile.systemInstruction.version,

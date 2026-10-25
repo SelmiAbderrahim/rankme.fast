@@ -8,6 +8,7 @@ export {
   ACTION_SOURCE_STATUSES,
   ACTION_SOURCE_TYPES,
   ACTION_STATES,
+  DISMISSAL_REASONS,
   isActionConfidence,
   isActionEffort,
   isActionSeverity,
@@ -30,6 +31,7 @@ export {
   type ActionSourceStatusEnvelope,
   type ActionSourceType,
   type ActionState,
+  type DismissalReason,
   type ListActionsResponse,
   type MutateActionStateResponse,
   type RetestActionResponse,
@@ -47,6 +49,16 @@ export {
 } from './api';
 export { errorMessage as actionErrorMessage } from './errorMessage';
 export {
+  isResolvedActionState,
+  openFindingCount,
+  RESOLVED_ACTION_STATES,
+  resolvedTotals,
+  tallyResolvedAuditFindings,
+  type ResolvedActionState,
+  type ResolvedAuditTally,
+  type ResolvedBucketTally,
+} from './auditDecisions';
+export {
   actionsReducer,
   applyMutatedAction,
   clearActionErrors,
@@ -55,10 +67,13 @@ export {
   type ActionsListError,
   type ActionsListStatus,
   type ActionsState,
+  type AuditDecisionsState,
 } from './store/slice';
 export {
+  AUDIT_DECISIONS_LIMIT,
   loadActionHistory,
   loadActions,
+  loadAuditDecisions,
   submitActionState,
   submitRetestAction,
   type ActionsRejectPayload,

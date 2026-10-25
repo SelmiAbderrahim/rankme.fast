@@ -150,3 +150,45 @@ describe("audit summary locale selection boundaries", () => {
     ).toEqual(["en"]);
   });
 });
+
+describe("summary evidence basis", () => {
+  it("keeps recorded rule ids, drops non-string entries, and omits the field when never recorded", () => {
+    const withBasis = selectAuditSummaryLocale(
+      { aiSummaryVariantsByLocale: { en: summary({ basisRuleIds: ["a", 7, "b"] }) } },
+      "en",
+    );
+    expect(withBasis.aiSummary?.basisRuleIds).toEqual(["a", "b"]);
+    const empty = selectAuditSummaryLocale(
+      { aiSummaryVariantsByLocale: { en: summary({ basisRuleIds: [] }) } },
+      "en",
+    );
+    expect(empty.aiSummary?.basisRuleIds).toEqual([]);
+    for (const legacy of [summary(), summary({ basisRuleIds: "not-an-array" })]) {
+      const state = selectAuditSummaryLocale({ aiSummaryVariantsByLocale: { en: legacy } }, "en");
+      expect(state.aiSummary).not.toHaveProperty("basisRuleIds");
+    }
+  });
+});
+
+describe("structured summaries and input hashes", () => {
+  const read = (value: Record<string, unknown>) =>
+    selectAuditSummaryLocale({ aiSummary: summary(value) }, "en").aiSummary;
+  const good = { ruleId: "a", what: "W", why: "Y", firstStep: "F", whereToAct: "pages" };
+
+  it("keeps a valid structure and hash, and only well-formed items", () => {
+    expect(
+      read({
+        inputHash: "h",
+        structured: { status: "S", items: [good, { ...good, whereToAct: "nowhere" }, { ...good, why: 3 }, null, "x"] },
+      }),
+    ).toMatchObject({ inputHash: "h", structured: { status: "S", items: [good] } });
+  });
+
+  it("drops a malformed structure and a non-string hash", () => {
+    for (const structured of [null, "x", { status: 1, items: [] }, { status: "S", items: "no" }]) {
+      const out = read({ structured, inputHash: 7 });
+      expect(out).not.toHaveProperty("structured");
+      expect(out).not.toHaveProperty("inputHash");
+    }
+  });
+});

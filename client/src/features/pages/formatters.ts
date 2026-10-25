@@ -1,3 +1,4 @@
+import { isolateSignedNumber } from '@shared/lib/signedNumber';
 import type { PageMetrics, PagesRange } from './types';
 import { formatAbsoluteDate } from '@shared/lib/datetime';
 import { formatMetricValue } from '@shared/lib/metricValue';
@@ -81,9 +82,7 @@ export function formatSignedPagesValue(
   percent = false,
 ): string | null {
   if (value === null) return null;
-  const formatted = formatPagesNumber(locale, Math.abs(value), percent
+  return isolateSignedNumber(value, locale, percent
     ? { style: 'percent', maximumFractionDigits: 1 }
     : { minimumFractionDigits: 0, maximumFractionDigits: 1 });
-  if (value === 0) return formatted;
-  return `${value > 0 ? '+' : '−'}${formatted}`;
 }

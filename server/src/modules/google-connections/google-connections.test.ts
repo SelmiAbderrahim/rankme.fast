@@ -67,6 +67,7 @@ import {
   GoogleTokenDecryptionError,
   clearPlaintextRefreshToken,
   createCollectGscInsights,
+  GSC_COVERAGE_PAGE_LIMIT,
   createCollectIndexStatus,
   getConnection,
   getGscSyncQueue,
@@ -2377,6 +2378,8 @@ describe('createCollectGscInsights', () => {
       'https://example.com/',
       'https://example.com/pricing',
     ]);
+    // The same pages, most impressions first, for the audit's coverage check.
+    expect(out.pageUrls).toEqual(['https://example.com/', 'https://example.com/pricing']);
     // First run — no previous snapshot.
     expect(out.search.delta).toEqual({ clicks: null, impressions: null });
 
@@ -2570,6 +2573,38 @@ describe('createCollectGscInsights', () => {
     expect(out.sitemaps.status).toBe('no-sitemaps');
   });
 
+  it('hands the audit the most-seen pages, capped, skipping rows without a page', async () => {
+    const user = await seedConnectedUser();
+    const pageRows: GscSearchAnalyticsRow[] = [
+      ...Array.from({ length: GSC_COVERAGE_PAGE_LIMIT + 5 }, (_, index) => ({
+        keys: [`https://example.com/p${index}`],
+        clicks: 1,
+        impressions: 100 + index,
+        ctr: 0.01,
+        position: 5,
+      })),
+      { keys: [], clicks: 1, impressions: 10_000, ctr: 0.01, position: 5 },
+    ];
+    const provider = makeGscProvider({
+      querySearchAnalytics: async (_c, input) => ({
+        rows: input.dimensions[0] === 'page' ? pageRows : saRows(['q1', 10, 1000, 0.01, 5]),
+        sampled: false,
+        startDate: input.startDate,
+        endDate: input.endDate,
+        dimensions: input.dimensions,
+      }),
+      listSitemaps: async () => [],
+    });
+    const out = await createCollectGscInsights(provider, { logger, persist: makePersistence(), now: FIXED_NOW })({
+      accountId: user.id,
+      siteId: SITE_ID,
+      domain: 'example.com',
+    });
+    expect(out.pageUrls).toHaveLength(GSC_COVERAGE_PAGE_LIMIT);
+    expect(out.pageUrls[0]).toBe(`https://example.com/p${GSC_COVERAGE_PAGE_LIMIT + 4}`);
+    expect(out.pageUrls.every((url) => url.startsWith('https://example.com/p'))).toBe(true);
+  });
+
   it('not-connected when there is no connection row', async () => {
     const user = await seedUser();
     const collect = createCollectGscInsights(makeGscProvider(), {
@@ -2583,6 +2618,7 @@ describe('createCollectGscInsights', () => {
     });
     expect(out.search.status).toBe('not-connected');
     expect(out.sitemaps.status).toBe('not-connected');
+    expect(out.pageUrls).toEqual([]);
   });
 
   it('needs-reconnect when the stored connection is flagged', async () => {

@@ -80,6 +80,7 @@ export const SITE_SCOPED_MONGO_MODEL_NAMES = [
     'ContentInventoryPage',
     'ContentInventoryRun',
     'ContentMonitor',
+    'FindingDismissal',
     'InternalLinkRun',
     'LinkGapRun',
     'LocalSeoReviewRow',

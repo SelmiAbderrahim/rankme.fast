@@ -4,21 +4,26 @@ import { trafficSnapshotPayloadSchema, type TrafficSnapshotPayload, } from '../.
 const objectIdHexSchema = z
     .string()
     .regex(/^[0-9a-f]{24}$/i, 'trafficInsights.errors.notFound');
-/** Bare-domain input normalized through the shipped site-domain validator. */
+/**
+ * Domain input normalized through the shipped site-domain validator. A pasted
+ * http(s) URL is reduced to its hostname (path, query and port dropped); other
+ * schemes, credentials, IP literals and single-label hosts still fail.
+ */
 export const trafficSnapshotDomainSchema = z
     .string()
     .trim()
     .min(1)
     .max(269)
     .transform((raw, context) => {
-    if (/^[a-z][a-z\d+.-]*:\/\//i.test(raw)) {
+    const scheme = /^([a-z][a-z\d+.-]*):\/\//i.exec(raw);
+    if (scheme && !/^https?$/i.test(scheme[1]!)) {
         context.addIssue({
             code: z.ZodIssueCode.custom,
             message: 'trafficInsights.errors.invalidDomain',
         });
         return z.NEVER;
     }
-    const parsed = validateSiteUrl(`https://${raw}`);
+    const parsed = validateSiteUrl(scheme ? raw : `https://${raw}`);
     if (!parsed.ok || parsed.domain.length > 253) {
         context.addIssue({
             code: z.ZodIssueCode.custom,
@@ -28,18 +33,45 @@ export const trafficSnapshotDomainSchema = z
     }
     return parsed.domain.toLowerCase().replace(/^www\./, '');
 });
+/** Default market when a request names none (United States, English). */
+export const DEFAULT_TRAFFIC_LOCATION_CODE = 2840;
+export const DEFAULT_TRAFFIC_LANGUAGE_CODE = 'en';
+/**
+ * DataForSEO Labs location code, as offered by the provider market catalog.
+ * The provider stays authoritative for coverage, exactly like keyword research.
+ */
+const trafficLocationCodeSchema = z
+    .number({ error: 'trafficInsights.errors.invalidMarket' })
+    .int('trafficInsights.errors.invalidMarket')
+    .positive('trafficInsights.errors.invalidMarket');
+const trafficLanguageCodeSchema = z
+    .string({ error: 'trafficInsights.errors.invalidMarket' })
+    .trim()
+    .toLowerCase()
+    .regex(/^[a-z]{2}$/, 'trafficInsights.errors.invalidMarket');
 export const createTrafficSnapshotSchema = z
     .object({
     targetDomain: trafficSnapshotDomainSchema,
     siteId: objectIdHexSchema.optional(),
-    locationCode: z.literal(2840).default(2840),
-    languageCode: z.literal('en').default('en'),
+    locationCode: trafficLocationCodeSchema.default(DEFAULT_TRAFFIC_LOCATION_CODE),
+    languageCode: trafficLanguageCodeSchema.default(DEFAULT_TRAFFIC_LANGUAGE_CODE),
     historyMonths: z.literal(24).default(24),
 })
     .strict();
+/**
+ * Vendor-cache key for one domain in one market. The default market keeps the
+ * bare domain so rows written before markets were selectable stay addressable.
+ */
+export function trafficSnapshotCacheKey(targetDomain: string, locationCode: number, languageCode: string): string {
+    return locationCode === DEFAULT_TRAFFIC_LOCATION_CODE && languageCode === DEFAULT_TRAFFIC_LANGUAGE_CODE
+        ? targetDomain
+        : `${targetDomain}|${locationCode}|${languageCode}`;
+}
 export const trafficSnapshotPreviewSchema = z
     .object({
     domains: z.array(trafficSnapshotDomainSchema).min(1).max(5),
+    locationCode: trafficLocationCodeSchema.default(DEFAULT_TRAFFIC_LOCATION_CODE),
+    languageCode: trafficLanguageCodeSchema.default(DEFAULT_TRAFFIC_LANGUAGE_CODE),
 })
     .strict()
     .superRefine((input, context) => {

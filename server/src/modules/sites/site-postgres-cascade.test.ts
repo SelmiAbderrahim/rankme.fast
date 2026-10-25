@@ -9,6 +9,7 @@ import {
   audienceResearchEvents,
   brandRadarEvents,
   domainStates,
+  keywordResearchHistory,
   keywords,
   pagePerformanceKeywords,
   pagePerformanceSnapshots,
@@ -148,6 +149,26 @@ describe('site Postgres lifecycle barrier', () => {
       accountId: 'owner', siteId, keywordId: keyword!.id, periodKey: '2026-W43',
       status: 'checked', firstAttemptAt: now, lastAttemptAt: now, retryDeadline: now,
     })).rejects.toThrow();
+  });
+
+  it('purges only the deleted site\'s research history and guards later writes', async () => {
+    const db = getTestDb();
+    const siteId = 'site-with-research';
+    const base = { accountId: 'owner', kind: 'metrics' as const, phrases: ['example'], locationCode: 2840,
+      languageCode: 'en', resultCount: 1, cached: false };
+    await db.insert(keywordResearchHistory).values([
+      { ...base, siteId },
+      { ...base, siteId: 'other-site' },
+      { ...base, siteId: null },
+      { ...base, accountId: 'other-owner', siteId },
+    ]);
+    await installSiteDeletionBarrier(db as never, siteId, new Date('2026-10-25T00:00:00.000Z'));
+    await purgeSitePostgresData(db as never, 'owner', siteId);
+    const rows = await db.select().from(keywordResearchHistory);
+    expect(rows.map((row) => [row.accountId, row.siteId]).sort()).toEqual([
+      ['other-owner', siteId], ['owner', 'other-site'], ['owner', null],
+    ].sort());
+    await expect(db.insert(keywordResearchHistory).values({ ...base, siteId })).rejects.toThrow();
   });
 
   it('keeps billing columns out of rank work tables', async () => {

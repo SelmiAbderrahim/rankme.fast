@@ -3,6 +3,8 @@ import type {
   AnalysesPage,
   CancelResponse,
   ContentAnalysis,
+  ContentAnalysisJobStatus,
+  ContentAnalysisRetryPreview,
   AnalysisBriefSection,
   AnalysisBriefVersion,
   AnalysisDraftVersion,
@@ -129,6 +131,39 @@ export function regenerateAnalysis(
   return apiClient<StartAnalysisResponse>(
     `/content-analyses/${encodeURIComponent(analysisId)}/regenerate`,
     { method: 'POST', body: {}, ...(init.signal ? { signal: init.signal } : {}) },
+  );
+}
+
+/** Slim polling read for the progress screen. */
+export function getAnalysisStatus(
+  analysisId: string,
+  init: { signal?: AbortSignal } = {},
+): Promise<ContentAnalysisJobStatus> {
+  return apiClient<ContentAnalysisJobStatus>(
+    `/content-analyses/${encodeURIComponent(analysisId)}/status`,
+    { method: 'GET', ...(init.signal ? { signal: init.signal } : {}) },
+  );
+}
+
+/** What a Try again would run again, shown before the user confirms. */
+export function getAnalysisRetryPreview(
+  analysisId: string,
+  init: { signal?: AbortSignal } = {},
+): Promise<ContentAnalysisRetryPreview> {
+  return apiClient<ContentAnalysisRetryPreview>(
+    `/content-analyses/${encodeURIComponent(analysisId)}/retry`,
+    { method: 'GET', ...(init.signal ? { signal: init.signal } : {}) },
+  );
+}
+
+/** A fresh run of the same request after a retryable failure. */
+export function retryAnalysis(
+  analysisId: string,
+  consent: boolean,
+): Promise<StartAnalysisResponse> {
+  return apiClient<StartAnalysisResponse>(
+    `/content-analyses/${encodeURIComponent(analysisId)}/retry`,
+    { method: 'POST', body: { consent } },
   );
 }
 

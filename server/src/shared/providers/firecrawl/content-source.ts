@@ -142,11 +142,38 @@ function normalizeLinks(values: string[], sourceUrl: URL): ContentLink[] {
     }
     return links;
 }
+type JsonLdNode = Record<string, unknown>;
+/**
+ * Flatten JSON-LD blocks into typed nodes: a `@graph` document contributes
+ * each of its object nodes (Organization, WebSite, ...) instead of one untyped
+ * root, and a typed root that also carries a `@graph` keeps its own entry.
+ */
+function expandJsonLdNodes(blocks: JsonLdNode[]): JsonLdNode[] {
+    const nodes: JsonLdNode[] = [];
+    for (const block of blocks) {
+        const graph = block['@graph'];
+        if (Array.isArray(graph)) {
+            for (const node of graph) {
+                if (node !== null && typeof node === 'object' && !Array.isArray(node)) {
+                    nodes.push(node as JsonLdNode);
+                }
+            }
+            if (block['@type'] === undefined)
+                continue;
+        }
+        nodes.push(block);
+    }
+    return nodes;
+}
+function jsonLdType(raw: unknown): string {
+    const first = Array.isArray(raw) ? raw[0] : raw;
+    return typeof first === 'string' ? first.slice(0, 128) : 'Unknown';
+}
 function normalizeStructuredData(value: z.infer<typeof metadataSchema>['jsonLd']): StructuredDataFact[] {
     const blocks = value === undefined ? [] : Array.isArray(value) ? value : [value];
     const facts: StructuredDataFact[] = [];
-    for (const block of blocks.slice(0, 25)) {
-        const type = typeof block['@type'] === 'string' ? block['@type'].slice(0, 128) : 'Unknown';
+    for (const block of expandJsonLdNodes(blocks.slice(0, 25)).slice(0, 25)) {
+        const type = jsonLdType(block['@type']);
         for (const [property, raw] of Object.entries(block).slice(0, 25)) {
             if (property === '@type' ||
                 /(?:^|[_-])(?:prompt|instruction|system|completion)(?:$|[_-])/i.test(property) ||

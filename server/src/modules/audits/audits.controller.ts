@@ -1,14 +1,20 @@
 import type { RequestHandler } from 'express';
+import { Types } from 'mongoose';
 import { env } from '../../config/env.js';
+import { db as productionDb } from '../../db/client.js';
 import { HttpError } from '../../shared/utils/http-error.js';
 import { sendLocalizedMessage } from '../../shared/i18n/localized-response.js';
 import { asyncHandler } from '../../shared/utils/async-handler.js';
 import { requireAccountId } from '../../shared/utils/require-account-id.js';
 import { requireUserId } from '../../shared/utils/require-user-id.js';
 import { getAuditsQueue } from './audits.queue-holder.js';
-import { listAuditRunsQuerySchema, runIdParamsSchema, siteIdParamsSchema, startAuditBodySchema, } from './audits.schema.js';
+import { findingRuleParamsSchema, listAuditRunsQuerySchema, runIdParamsSchema, siteIdParamsSchema, startAuditBodySchema, } from './audits.schema.js';
 import { getAuditRun, listAuditRuns, startAuditForSite, } from './audits.service.js';
 import { getAuditReport } from './report.service.js';
+import { applyDismissals } from './report-dismissals.js';
+import { findingUrlsFromReport, toBrowserAuditReport } from './report-browser.js';
+import { previewFindingRecheck, runFindingRecheck } from './finding-recheck.service.js';
+import { getSummaryDb } from './summary.db-holder.js';
 import { renderAuditReportPdf } from './report-pdf.service.js';
 import { AuditRun } from './audit-run.model.js';
 import { Site } from '../sites/index.js';
@@ -17,8 +23,9 @@ import { Site } from '../sites/index.js';
 // import cycle — pulling it into the audits controller graph breaks
 // middleware init order. See modules/users/index.ts header comment.
 import { User, resolveStoredUserBranding } from '../users/users.model.js';
+import { AUDIT_FRESH_DAYS } from '../../shared/observations/freshness-policy.js';
 import { getSummaryProvider } from './summary.holder.js';
-import { getAuditSummaryState, startAuditSummary, } from './summary.service.js';
+import { getAuditSummaryProgress, getAuditSummaryState, startAuditSummary, } from './summary.service.js';
 import { extractIp, recordAudit } from '../audit/index.js';
 export const startAudit: RequestHandler = asyncHandler(async (req, res) => {
     const accountId = requireAccountId(req);
@@ -50,13 +57,71 @@ export const getRun: RequestHandler = asyncHandler(async (req, res) => {
     const result = await getAuditRun({ accountId, runId });
     res.status(200).json(result);
 });
+/* c8 ignore next -- production seam: tests inject a PGlite db via setSummaryDb(); the productionDb fallback fires only at boot. */
+const resolveDecisionsDb = () => getSummaryDb() ?? productionDb;
+/** The site a run belongs to, for a caller that owns the run; otherwise the standard 404. */
+async function ownedRunSiteId(accountId: string, runId: string): Promise<string> {
+    if (!Types.ObjectId.isValid(runId))
+        throw HttpError.notFound({ code: 'AUDITS_ERRORS_NOT_FOUND', messageKey: 'audits.errors.notFound' });
+    const run = await AuditRun.findOne({ _id: runId, accountId }, { siteId: 1 }).lean<{
+        siteId: unknown;
+    } | null>();
+    if (!run)
+        throw HttpError.notFound({ code: 'AUDITS_ERRORS_NOT_FOUND', messageKey: 'audits.errors.notFound' });
+    return String(run.siteId);
+}
 export const getReport: RequestHandler = asyncHandler(async (req, res) => {
     const accountId = requireAccountId(req);
     const { runId } = runIdParamsSchema.parse(req.params);
-    const report = await getAuditReport({ accountId, runId, locale: req.language });
+    const siteId = await ownedRunSiteId(accountId, runId);
+    // The latest view and the pinned-run view read this one endpoint, and both
+    // get the site's decisions applied the same way.
+    const report = await applyDismissals(await getAuditReport({ accountId, runId, locale: req.language }), { accountId, siteId, db: resolveDecisionsDb() });
     const aiSummaryEnabled = env.AI_SUMMARY_ENABLED && getSummaryProvider() !== null;
+    // A stored summary is flagged (never regenerated) when the owner has since
+    // dismissed, fixed or reopened a finding it was built from.
+    const aiSummaryFreshness = report.aiSummary
+        ? (await getAuditSummaryState({ accountId, runId, locale: req.language }, { db: resolveDecisionsDb() })).freshness ?? null
+        : null;
     res.setHeader('Content-Language', req.language);
-    res.status(200).json({ ...report, aiSummaryEnabled });
+    // `auditFreshDays` is the one staleness threshold the Actions evidence uses
+    // too, so Overview and Report prompt for a new audit exactly when an action
+    // card would call the evidence stale.
+    res.status(200).json({ ...toBrowserAuditReport(report), aiSummaryEnabled, aiSummaryFreshness, auditFreshDays: AUDIT_FRESH_DAYS });
+});
+/**
+ * GET /api/audits/:runId/findings/:ruleId/urls — the full affected-URL,
+ * broken-link and per-URL diff lists of one finding, loaded when the reader
+ * opens them. The report screen only carries a preview of each list. Stored
+ * data only; a run the caller does not own is a 404.
+ */
+export const getFindingUrls: RequestHandler = asyncHandler(async (req, res) => {
+    const accountId = requireAccountId(req);
+    const { runId, ruleId } = findingRuleParamsSchema.parse(req.params);
+    const report = await getAuditReport({ accountId, runId, locale: req.language });
+    const payload = findingUrlsFromReport(report, ruleId);
+    if (!payload) {
+        throw HttpError.notFound({ code: 'AUDITS_ERRORS_NOT_FOUND', messageKey: 'audits.errors.notFound' });
+    }
+    res.status(200).json(payload);
+});
+/**
+ * GET / POST /api/audits/:runId/findings/:ruleId/recheck — the targeted
+ * re-check of a dismissed finding. GET is the read-only preview (the URLs a
+ * re-check would request); POST requests them again with first-party
+ * requests and stores the result. No vendor call is made.
+ */
+async function recheckInput(req: Parameters<RequestHandler>[0]) {
+    const accountId = requireAccountId(req);
+    const { runId, ruleId } = findingRuleParamsSchema.parse(req.params);
+    const siteId = await ownedRunSiteId(accountId, runId);
+    return { accountId, siteId, runId, ruleId, locale: req.language, db: resolveDecisionsDb() };
+}
+export const getFindingRecheck: RequestHandler = asyncHandler(async (req, res) => {
+    res.status(200).json(await previewFindingRecheck(await recheckInput(req)));
+});
+export const postFindingRecheck: RequestHandler = asyncHandler(async (req, res) => {
+    res.status(200).json({ recheck: await runFindingRecheck(await recheckInput(req)) });
 });
 /**
  * GET /api/audits/:runId/report.pdf — white-label PDF export (workstream B).
@@ -112,9 +177,11 @@ export const getSummary: RequestHandler = asyncHandler(async (req, res) => {
     }
     const accountId = requireAccountId(req);
     const { runId } = runIdParamsSchema.parse(req.params);
-    const state = await getAuditSummaryState({ accountId, runId, locale: req.language });
+    const state = await getAuditSummaryState({ accountId, runId, locale: req.language }, { db: resolveDecisionsDb() });
+    // Stage, elapsed time and failure reason of the latest job.
+    const progress = await getAuditSummaryProgress({ accountId, runId, locale: req.language });
     res.setHeader('Content-Language', req.language);
-    res.status(200).json(state);
+    res.status(200).json({ ...state, progress });
 });
 /**
  * POST /api/audits/:runId/summary — enqueue AI-summary generation.
@@ -131,9 +198,11 @@ export const postSummary: RequestHandler = asyncHandler(async (req, res) => {
     const accountId = requireAccountId(req);
     const { runId } = runIdParamsSchema.parse(req.params);
     const state = await startAuditSummary({ accountId, runId, locale: req.language }, {
+        db: resolveDecisionsDb(),
         provider: getSummaryProvider(),
         queue: getAuditsQueue(),
     });
+    const progress = await getAuditSummaryProgress({ accountId, runId, locale: req.language });
     res.setHeader('Content-Language', req.language);
-    res.status(202).json(state);
+    res.status(202).json({ ...state, progress });
 });

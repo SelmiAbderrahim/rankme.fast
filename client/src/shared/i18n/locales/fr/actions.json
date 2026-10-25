@@ -23,6 +23,7 @@
     "label": "Filtrer les actions",
     "reset": "Réinitialiser les filtres",
     "all": "Toutes",
+    "openAndPlanned": "Ouvertes et planifiées",
     "state": "État",
     "source": "Source",
     "severity": "Gravité",
@@ -81,14 +82,12 @@
     "observedAt": "Observé le {{date}}",
     "openSource": "Ouvrir la vue source",
     "affectedNone": "À l'échelle du site",
-    "affectedOne": "1 URL concernée",
     "affectedCount_one": "{{count}} URL concernée",
     "evidence": "Preuves",
     "evidenceLabel": "{{source}} · {{date}}",
     "evidenceLink": "Ouvrir la source de la preuve",
     "history": "Historique",
     "retest": "Retester",
-    "affectedSample": "({{shown}} affichées)",
     "noteLabel": "Note",
     "affectedCount_zero": "{{count}} URL concernée",
     "affectedCount_two": "{{count}} URL concernées",
@@ -112,7 +111,10 @@
     "seeLinkTargets_two": "Voir les {{count}} pages et les liens cassés vers lesquels elles pointent dans le rapport",
     "seeLinkTargets_few": "Voir les {{count}} pages et les liens cassés vers lesquels elles pointent dans le rapport",
     "seeLinkTargets_many": "Voir les {{count}} pages et les liens cassés vers lesquels elles pointent dans le rapport",
-    "seeLinkTargets_other": "Voir les {{count}} pages et les liens cassés vers lesquels elles pointent dans le rapport"
+    "seeLinkTargets_other": "Voir les {{count}} pages et les liens cassés vers lesquels elles pointent dans le rapport",
+    "linkSourcesCount": "Pages avec des liens cassés : {{count}}",
+    "staleRetestHint": "Cette preuve n’est plus à jour. Relancez un test pour la vérifier à nouveau.",
+    "linkSourcesCountSampled": "Pages avec des liens cassés : {{count}} (affichage de {{shown}})"
   },
   "transitions": {
     "planned": "Planifier",
@@ -138,7 +140,14 @@
     "confirm": "Confirmer",
     "saving": "Enregistrement…",
     "conflict": "Quelqu'un d'autre a modifié cette action en premier. Rechargez-la et réessayez.",
-    "conflictReload": "Recharger l'action"
+    "conflictReload": "Recharger l'action",
+    "reasonLabel": "Pourquoi écartez-vous ce constat ?",
+    "reasons": {
+      "false_positive": "Faux positif",
+      "wont_fix": "Ne sera pas corrigé",
+      "fixed_elsewhere": "Corrigé ailleurs",
+      "other": "Autre raison"
+    }
   },
   "history": {
     "title": "Historique de l'action",
@@ -182,6 +191,8 @@
     "dismissedLabel": "Écarté comme faux positif",
     "fixCta": "Marquer comme corrigé",
     "fixedLabel": "Marqué comme corrigé",
-    "reappearedLabel": "Toujours détecté après avoir été marqué corrigé"
+    "reappearedLabel": "Toujours détecté après avoir été marqué corrigé",
+    "notCounted": "Exclus de ces totaux — écartés : {{dismissed}}, marqués comme corrigés : {{completed}}.",
+    "fixedGroupIn": "Marqués comme corrigés dans {{tab}} ({{count}})"
   }
 }

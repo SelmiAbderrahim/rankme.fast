@@ -57,6 +57,7 @@ beforeEach(() => {
   vi.mocked(getSite).mockReset().mockResolvedValue({
     id: siteId, url: 'https://example.test', domain: 'example.test', displayName: 'Grid Site',
     defaultMarket: null,
+    localBusiness: false,
     paused: false, pausedAt: null, createdAt, updatedAt: finishedAt,
   });
 });
@@ -98,6 +99,7 @@ describe('geogrid report export adapter', () => {
     vi.mocked(getSite).mockResolvedValue({
       id: siteId, url: 'https://example.test', domain: 'example.test', displayName: '',
       defaultMarket: null,
+      localBusiness: false,
       paused: false, pausedAt: null, createdAt, updatedAt: finishedAt,
     });
     const adapter = createGeogridReportExportAdapter(database);

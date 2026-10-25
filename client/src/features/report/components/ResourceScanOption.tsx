@@ -1,13 +1,14 @@
 /**
  * "Scan images, scripts and styles" option of the audit start dialog.
  *
- * On by default. The scan only runs for a crawl ceiling of
- * `RESOURCE_SCAN_MAX_PAGES` pages or fewer (the server enforces the same
- * limit), so the option says so when the chosen page limit is above it.
+ * On by default. A scanning audit crawls at most `RESOURCE_SCAN_MAX_PAGES`
+ * pages (the server enforces the same limit), so while the option is ticked
+ * the note says so when the chosen page limit is above it. Unticking the
+ * option lets the audit crawl up to the chosen page limit.
  *
  * data-testid contract:
  *   - report-resource-scan        the checkbox
- *   - report-resource-scan-note   shown when the page limit is above the scan limit
+ *   - report-resource-scan-note   shown while ticked and the page limit is above the scan limit
  */
 import { useId } from 'react';
 import { useTranslation } from 'react-i18next';

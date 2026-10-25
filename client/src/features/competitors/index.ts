@@ -31,7 +31,7 @@ export * from './store/selectors';
 export { CompetitorsPanel } from './components/CompetitorsPanel';
 export { CompetitorsPage } from './components/CompetitorsPage';
 export { CompetitorWorkspace } from './components/CompetitorWorkspace';
-export { fetchLandscapeDetail, reviewLandscapePageMatch } from './api';
+export { fetchCompetitorProfiles, fetchLandscapeDetail, reviewLandscapePageMatch } from './api';
 export {
   COMPETITOR_WORKSPACE_VIEWS,
   DEFAULT_COMPETITOR_WORKSPACE_VIEW,

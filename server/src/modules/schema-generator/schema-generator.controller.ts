@@ -12,8 +12,8 @@ import { requireAccountId } from '../../shared/utils/require-account-id.js';
 import { HttpError } from '../../shared/utils/http-error.js';
 import { allowedTeamSiteIds } from '../../shared/middleware/team-site-access.js';
 import { getSchemaGeneratorAiProviderOrder, getSchemaGeneratorAiRunner, getSchemaGeneratorFetch, } from './schema-generator.holder.js';
-import { createGeneration, getGeneration, listGenerations, listSources, previewGeneration, schemaTypesProjection, type SchemaGeneratorDeps, } from './schema-generator.service.js';
-import { createGenerationBodySchema, generationIdParamsSchema, listGenerationsQuerySchema, previewGenerationBodySchema, sourcesQuerySchema, } from './schema-generator.schemas.js';
+import { createGeneration, getGeneration, listGenerations, listSources, previewGeneration, regenerateGeneration, schemaTypesProjection, type SchemaGeneratorDeps, } from './schema-generator.service.js';
+import { createGenerationBodySchema, generationIdParamsSchema, listGenerationsQuerySchema, previewGenerationBodySchema, regenerateBodySchema, sourcesQuerySchema, } from './schema-generator.schemas.js';
 import { JSON_LD_MEDIA_TYPE } from '../../shared/security/json-ld.js';
 function serviceDeps(): SchemaGeneratorDeps {
     const fetchUrl = getSchemaGeneratorFetch();
@@ -61,6 +61,21 @@ export const createGenerationController = asyncHandler(async (req: Request, res:
         // never undefined on the request path.
         outputLocale: req.language,
     }, serviceDeps());
+    res.status(201).json(generation);
+});
+/**
+ * POST /api/schema-generator/generations/:generationId/regenerate — rebuilds a
+ * stored generation with user-supplied facts. No AI call and no fetch.
+ */
+export const regenerateGenerationController = asyncHandler(async (req: Request, res: Response) => {
+    const accountId = requireAccountId(req);
+    const params = generationIdParamsSchema.parse(req.params);
+    const body = regenerateBodySchema.parse(req.body);
+    const generation = await regenerateGeneration({
+        accountId: accountId,
+        generationId: params.generationId,
+        facts: body.facts,
+    });
     res.status(201).json(generation);
 });
 /** GET /api/schema-generator/generations — free stored list, newest first. */

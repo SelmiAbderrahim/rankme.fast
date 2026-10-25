@@ -52,16 +52,24 @@
     "description": "Pick what to watch and where to send it.",
     "site": "Site",
     "sitePlaceholder": "Choose a site",
-    "siteRequired": "Choose a site to create a rule.",
+    "siteRequired": "Choose a site to continue.",
     "type": "Alert type",
     "threshold": "Position threshold",
     "thresholdHint": "We alert when the confirmed position is this number or worse.",
     "channels": "Channels",
     "slackPlaceholder": "Slack incoming webhook address",
     "webhookPlaceholder": "Your https endpoint",
-    "paidChannelLocked": "Slack and webhook channels need the Pro plan or higher.",
     "noChannel": "Choose at least one channel.",
-    "submit": "Create rule"
+    "submit": "Create rule",
+    "sitePaused": "paused",
+    "rankDropHint": "Fires only after a scheduled rank check finds a drop and a second check of the same keyword confirms it.",
+    "rankDropBuiltIn": "The built-in rank-drop email is separate and has its own switch in",
+    "rankDropBuiltInLink": "Notifications",
+    "thresholdInvalid": "Enter a whole position from {{min}} to {{max}}.",
+    "slackRequired": "Enter your Slack webhook address.",
+    "webhookRequired": "Enter your webhook address.",
+    "sitePausedOption": "Resume this site to create alert rules",
+    "sitePausedBlocked": "This site is paused. Resume this site to create alert rules."
   },
   "secret": {
     "title": "Copy your signing key now",
@@ -106,7 +114,22 @@
     "domainCount_two": "{{count}} domains changed",
     "domainCount_few": "{{count}} domains changed",
     "domainCount_many": "{{count}} domains changed",
-    "domainCount_other": "{{count}} domains changed"
+    "domainCount_other": "{{count}} domains changed",
+    "rulePicker": "Rule",
+    "rulePickerPlaceholder": "Choose a rule",
+    "ruleOption": "{{type}} · {{site}}",
+    "empty": {
+      "title": "No alerts sent yet",
+      "noRules": "Sent alerts appear here. You don't have a rule yet, so nothing can be sent.",
+      "createRule": "Create a rule",
+      "rule": "This rule hasn't sent an alert yet.",
+      "pickRule": "Choose a rule to see the alerts it sent."
+    },
+    "filtered": {
+      "title": "No deliveries match these filters",
+      "body": "Clear the filters to see every delivery for this rule.",
+      "clear": "Clear filters"
+    }
   },
   "states": {
     "cap": {

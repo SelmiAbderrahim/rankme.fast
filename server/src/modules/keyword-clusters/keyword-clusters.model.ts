@@ -8,7 +8,7 @@
  */
 import mongoose, { type HydratedDocument, type InferSchemaType, } from 'mongoose';
 import { SUPPORTED_LOCALES } from '../../shared/i18n/locales.js';
-import { KEYWORD_CLUSTER_AI_STATUSES, KEYWORD_CLUSTER_BLOCK_REASONS, KEYWORD_CLUSTER_ERROR_CATEGORIES, KEYWORD_CLUSTER_MAX_CLUSTERS, KEYWORD_CLUSTER_MAX_KEYWORDS_PER_RUN, KEYWORD_CLUSTER_MAX_LABEL_CODE_POINTS, KEYWORD_CLUSTER_MAX_SHARED_URLS_STORED, KEYWORD_CLUSTER_RUN_STATUSES, codePointLength, } from './keyword-clusters.schemas.js';
+import { KEYWORD_CLUSTER_AI_STATUSES, KEYWORD_CLUSTER_STORED_BLOCK_REASONS, KEYWORD_CLUSTER_ERROR_CATEGORIES, KEYWORD_CLUSTER_MAX_CLUSTERS, KEYWORD_CLUSTER_MAX_KEYWORDS_PER_RUN, KEYWORD_CLUSTER_MAX_LABEL_CODE_POINTS, KEYWORD_CLUSTER_MAX_SHARED_URLS_STORED, KEYWORD_CLUSTER_RUN_STATUSES, codePointLength, } from './keyword-clusters.schemas.js';
 // `label` is nullable, and Mongoose runs a path validator for the null default
 // too — so the bound has to accept it rather than index into it.
 const labelBound = (value: string | null): boolean => value === null ||
@@ -38,7 +38,7 @@ const clusterSchema = new mongoose.Schema({
 const blockedSchema = new mongoose.Schema({
     keywordId: { type: String, required: true },
     phrase: { type: String, required: true },
-    reason: { type: String, enum: KEYWORD_CLUSTER_BLOCK_REASONS, required: true },
+    reason: { type: String, enum: KEYWORD_CLUSTER_STORED_BLOCK_REASONS, required: true },
     observedAt: { type: Date, default: null },
 }, { _id: false });
 const inputSchema = new mongoose.Schema({

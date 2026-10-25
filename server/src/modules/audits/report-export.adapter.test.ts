@@ -39,6 +39,7 @@ const site: PublicSite = {
   domain: 'example.test',
   displayName: 'Example Site',
   defaultMarket: null,
+  localBusiness: false,
   paused: false,
   pausedAt: null,
   createdAt: '2026-01-01T00:00:00.000Z',
@@ -55,6 +56,7 @@ function finding(
     severity: 'warning',
     affectedUrls: bucket === 'passed' ? [] : ['https://example.test/b'],
     category: 'indexability',
+    applicability: 'applicable',
     copy: {
       title: `${bucket} finding`,
       why: 'Why this matters.',
@@ -91,6 +93,9 @@ function report(input: Partial<AuditReport> = {}): AuditReport {
       finding('watch'),
       finding('passed', { severity: 'info' }),
     ],
+    notApplicable: [],
+    localBusiness: false,
+    comparison: null,
     diff: {
       entries: [
         { ruleId: RULE_IDS[0], url: '', kind: 'fixed' },

@@ -8,7 +8,7 @@ import { logger } from './config/logger.js';
 import { runMigrations } from './db/migrate.js';
 import { createAiProfileRunRecorder } from './db/ai-profile-run-events.js';
 import { closeDatastores } from './db/shutdown.js';
-import { createAuditCompletedHandler, createAuditFailedHandler, setAuditsQueue, setSummaryDb, setSummaryProvider, } from './modules/audits/index.js';
+import { createAuditCompletedHandler, createAuditFailedHandler, createPageProber, setAuditsQueue, setFindingRecheckProber, setSummaryDb, setSummaryProvider, } from './modules/audits/index.js';
 import { setRanksDb, setRanksQueue } from './modules/ranks/index.js';
 import { setAppSeoResearchProvider, setAppSeoTrackingQueue, } from './modules/app-seo/index.js';
 import { setPulseQueue } from './modules/weekly-pulse/pulse.queue-holder.js';
@@ -191,6 +191,10 @@ async function main(): Promise<void> {
     setLocalSeoProvider(registry.localListings);
     setLocalSeoRankProvider(registry.rank);
     setSummaryProvider(registry.summary);
+    // Targeted re-checks of dismissed findings use the same free, SSRF-guarded
+    // prober as the audit's evidence stage; a fake crawl has nothing real to
+    // re-check.
+    setFindingRecheckProber(env.PROVIDER_AUDIT === 'fake' ? null : createPageProber());
     setAiVisibilitySummaryProvider(registry.summary);
     // Public-page change monitoring — the api resolves the concrete
     // ContentMonitorProvider per request for the monitor CRUD + webhook surface.

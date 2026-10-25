@@ -163,6 +163,8 @@
       "accessibility": "Barrierefreiheit",
       "seo": "SEO",
       "coreWebVitals": "Core Web Vitals",
+      "coreWebVitalsSource": "Daten echter Besucher: das schlechteste Ergebnis der geprüften Seiten.",
+      "coreWebVitalsNoFieldData": "Google hat für die geprüften Seiten noch keine Daten echter Besucher.",
       "noAuditTitle": "Noch keine Geschwindigkeitsergebnisse",
       "noAuditBody": "Starten Sie Ihren ersten Audit, um mobile PageSpeed-Ergebnisse zu sehen.",
       "notMeasuredTitle": "Seitengeschwindigkeit nicht gemessen",

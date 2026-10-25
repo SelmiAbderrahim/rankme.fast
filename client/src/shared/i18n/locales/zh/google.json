@@ -91,6 +91,8 @@
     "viewAllLabel": "查看全部 — {{section}}",
     "sitemapsLink": "查看站点地图",
     "asOf": "数据截至 {{date}}",
+    "totalsNote": "{{start}} 至 {{end}} 的网站合计，按 Search Console 的每日数据相加。",
+    "scopeNote": "Search Console 对每个列表单独计数，因此列表各行相加的结果可能比网站合计略多或略少。",
     "previousPeriod": "上一周期 — 点击： {{clicks}} · 展示： {{impressions}}",
     "reportLink": "在报告中查看完整数据",
     "emptyTitle": "暂无搜索数据",

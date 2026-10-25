@@ -2,6 +2,13 @@ import { z } from 'zod';
 export const siteIdParamsSchema = z.object({
     siteId: z.string().min(1),
 });
+// Explicit fresh pull (spends vendor budget). Absent: free read of stored data.
+export const listQuerySchema = z.object({
+    fresh: z
+        .enum(['true', 'false'])
+        .optional()
+        .transform((value) => value === 'true'),
+});
 export const intersectionQuerySchema = z.object({
     competitor: z
         .string({ error: (issue) => issue.input === undefined ? undefined : 'competitors.errors.competitorRequired' })

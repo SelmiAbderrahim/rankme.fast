@@ -23,6 +23,7 @@
     "label": "Фильтр действий",
     "reset": "Сбросить фильтры",
     "all": "Все",
+    "openAndPlanned": "Открытые и запланированные",
     "state": "Статус",
     "source": "Источник",
     "severity": "Серьезность",
@@ -81,14 +82,12 @@
     "observedAt": "Зафиксировано {{date}}",
     "openSource": "Открыть источник",
     "affectedNone": "Весь сайт",
-    "affectedOne": "Затронут 1 URL",
     "affectedCount_one": "Затронуто URL: {{count}}",
     "evidence": "Доказательства",
     "evidenceLabel": "{{source}} · {{date}}",
     "evidenceLink": "Открыть источник доказательства",
     "history": "История",
     "retest": "Перепроверить",
-    "affectedSample": "(показано {{shown}})",
     "noteLabel": "Заметка",
     "affectedCount_zero": "Затронуто URL: {{count}}",
     "affectedCount_two": "Затронуто URL: {{count}}",
@@ -112,7 +111,10 @@
     "seeLinkTargets_two": "Все страницы ({{count}}) и битые ссылки на них — в отчёте",
     "seeLinkTargets_few": "Все страницы ({{count}}) и битые ссылки на них — в отчёте",
     "seeLinkTargets_many": "Все страницы ({{count}}) и битые ссылки на них — в отчёте",
-    "seeLinkTargets_other": "Все страницы ({{count}}) и битые ссылки на них — в отчёте"
+    "seeLinkTargets_other": "Все страницы ({{count}}) и битые ссылки на них — в отчёте",
+    "linkSourcesCount": "Страниц с битыми ссылками: {{count}}",
+    "staleRetestHint": "Эти данные устарели. Запустите повторную проверку, чтобы обновить их.",
+    "linkSourcesCountSampled": "Страниц с битыми ссылками: {{count}} (показано {{shown}})"
   },
   "transitions": {
     "planned": "Запланировать",
@@ -138,7 +140,14 @@
     "confirm": "Подтвердить",
     "saving": "Сохранение…",
     "conflict": "Кто-то изменил это действие раньше вас. Перезагрузите его и попробуйте снова.",
-    "conflictReload": "Перезагрузить действие"
+    "conflictReload": "Перезагрузить действие",
+    "reasonLabel": "Почему вы отклоняете эту проблему?",
+    "reasons": {
+      "false_positive": "Ложное срабатывание",
+      "wont_fix": "Не будем исправлять",
+      "fixed_elsewhere": "Исправлено в другом месте",
+      "other": "Другая причина"
+    }
   },
   "history": {
     "title": "История действия",
@@ -182,6 +191,8 @@
     "dismissedLabel": "Отклонено как ложное срабатывание",
     "fixCta": "Отметить как исправленное",
     "fixedLabel": "Отмечено как исправленное",
-    "reappearedLabel": "Всё ещё обнаруживается после отметки об исправлении"
+    "reappearedLabel": "Всё ещё обнаруживается после отметки об исправлении",
+    "notCounted": "Не учтено в этих числах — отклонено: {{dismissed}}, отмечено как исправленное: {{completed}}.",
+    "fixedGroupIn": "Отмечено исправленным в разделе «{{tab}}» ({{count}})"
   }
 }

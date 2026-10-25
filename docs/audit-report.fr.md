@@ -79,7 +79,7 @@ Une convention récente qui indique aux assistants IA les pages que vous préfé
 Les trois dernières vérifications ont besoin de charger chaque image, script et feuille de style de vos pages. L’exploration est alors plus lente et consomme davantage de votre budget d’exploration, c’est donc une option propre à chaque audit.
 
 - **Analyser les images, scripts et styles** est cochée par défaut quand vous lancez un audit. Décochez-la pour ignorer l’analyse pour cette exécution.
-- Un audit analysé charge ces fichiers pour 1 000 pages au plus. Les pages au-delà sont quand même explorées, mais sans leurs fichiers.
+- Un audit avec analyse explore 1 000 pages au plus. Décochez l’option pour explorer davantage de pages, sans l’analyse.
 - Si l’analyse ne peut pas être lue, l’audit se termine quand même et les trois vérifications apparaissent dans Non évalué, avec la raison.
 - Un audit lancé sans l’analyse classe ces vérifications dans Non évalué. Lancez un nouvel audit avec l’option cochée pour les inclure.
 

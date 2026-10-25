@@ -23,6 +23,7 @@
     "label": "筛选行动",
     "reset": "重置筛选",
     "all": "全部",
+    "openAndPlanned": "未处理和已计划",
     "state": "状态",
     "source": "来源",
     "severity": "严重程度",
@@ -81,14 +82,12 @@
     "observedAt": "观测于 {{date}}",
     "openSource": "打开来源视图",
     "affectedNone": "全站范围",
-    "affectedOne": "1 个受影响的网址",
     "affectedCount_one": "{{count}} 个受影响的网址",
     "evidence": "证据",
     "evidenceLabel": "{{source}} · {{date}}",
     "evidenceLink": "打开证据来源",
     "history": "历史记录",
     "retest": "重新检测",
-    "affectedSample": "(显示 {{shown}} 个)",
     "noteLabel": "备注",
     "affectedCount_zero": "{{count}} 个受影响的网址",
     "affectedCount_two": "{{count}} 个受影响的网址",
@@ -112,7 +111,10 @@
     "seeLinkTargets_two": "在报告中查看全部 {{count}} 个页面及其指向的失效链接",
     "seeLinkTargets_few": "在报告中查看全部 {{count}} 个页面及其指向的失效链接",
     "seeLinkTargets_many": "在报告中查看全部 {{count}} 个页面及其指向的失效链接",
-    "seeLinkTargets_other": "在报告中查看全部 {{count}} 个页面及其指向的失效链接"
+    "seeLinkTargets_other": "在报告中查看全部 {{count}} 个页面及其指向的失效链接",
+    "linkSourcesCount": "含失效链接的页面：{{count}}",
+    "staleRetestHint": "此证据已过时。请重新测试以再次检查。",
+    "linkSourcesCountSampled": "含失效链接的页面：{{count}}（显示 {{shown}} 个）"
   },
   "transitions": {
     "planned": "计划",
@@ -138,7 +140,14 @@
     "confirm": "确认",
     "saving": "保存中…",
     "conflict": "其他人先修改了此行动。请重新加载后再试。",
-    "conflictReload": "重新加载行动"
+    "conflictReload": "重新加载行动",
+    "reasonLabel": "为什么要忽略此问题？",
+    "reasons": {
+      "false_positive": "误报",
+      "wont_fix": "不予修复",
+      "fixed_elsewhere": "已在别处修复",
+      "other": "其他原因"
+    }
   },
   "history": {
     "title": "行动历史",
@@ -182,6 +191,8 @@
     "dismissedLabel": "已作为误报忽略",
     "fixCta": "标记为已修复",
     "fixedLabel": "已标记为已修复",
-    "reappearedLabel": "标记为已修复后仍被检测到"
+    "reappearedLabel": "标记为已修复后仍被检测到",
+    "notCounted": "未计入以上数字：已忽略 {{dismissed}} 项，已标记为已修复 {{completed}} 项。",
+    "fixedGroupIn": "{{tab}} 中已标记为已修复（{{count}}）"
   }
 }

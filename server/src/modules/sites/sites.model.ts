@@ -81,6 +81,10 @@ const siteSchema = new mongoose.Schema({
         trim: true,
     },
     defaultMarket: { type: defaultMarketSchema, default: null },
+    // The owner says this is a local business. Until then, or until Local SEO
+    // data exists, Local SEO checks are "not applicable" instead of "not
+    // evaluated". Legacy docs without the field read false.
+    localBusiness: { type: Boolean, default: false },
     // Google Search Console property URL matched to this site.
     // `sc-domain:example.com` for domain properties, `https://example.com/`
     // for URL-prefix properties. Absent = no property matched yet.

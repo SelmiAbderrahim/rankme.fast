@@ -348,6 +348,9 @@ const perRuleCases: Record<RuleId, { pass: () => void; fail: () => void }> = {
       expect(finding.meta).toEqual({
         totalBroken: 1,
         brokenLinkTargets: ['https://example.com/404'],
+        confirmedTargets: 0,
+        unverifiedTargets: 0,
+        reportedTargets: 1,
       });
     },
   },
@@ -1168,7 +1171,7 @@ describe('rule branch coverage', () => {
       }),
     );
     expect(finding.bucket).toBe('watch');
-    expect(finding.meta).toEqual({ insufficientData: true });
+    expect(finding.meta).toEqual({ insufficientData: true, reason: 'no-crawl-signal' });
   });
 
   it('thin-content ignores non-indexable pages', () => {
@@ -1349,6 +1352,19 @@ describe('rule branch coverage', () => {
     expect(finding.bucket).toBe('watch');
     expect(finding.severity).toBe('warning');
     expect(finding.affectedUrls).toEqual(['https://example.com/slowish']);
+    // The warning carries the real-visitor evidence it was decided on, exactly
+    // like the poor branch.
+    expect(finding.meta).toEqual({
+      samples: [
+        expect.objectContaining({
+          url: 'https://example.com/slowish',
+          category: 'needs-improvement',
+          lcpMs: 3200,
+          inp: 250,
+          cls: 0.15,
+        }),
+      ],
+    });
   });
 
   it('core-web-vitals: poor wins when mixed with needs-improvement', () => {
@@ -2215,17 +2231,69 @@ describe('local-seo rule branch coverage', () => {
     });
   });
 
-  it('nap-inconsistency: empty listings array → passed', () => {
+  // No directory listing means no business profile was found (an online-only
+  // site without a Google Business Profile, for example). Nothing was
+  // compared, so the rule neither fails nor claims a pass.
+  it('nap-inconsistency: empty listings array → not-evaluated (no-business-listings)', () => {
     const finding = findingFor(
       'nap-inconsistency',
       evaluateAllRules(makeAuditResult(), null, null, null, null, null, {
         status: 'ok',
         listings: [],
-        reviews: null,
+        reviews: { averageRating: 4.8, reviewCount: 30 },
         qa: null,
         localPack: null,
       }),
     );
-    expect(finding.bucket).toBe('passed');
+    expect(isNotEvaluatedFinding(finding)).toBe(true);
+    expect(finding.meta).toEqual({ insufficientData: true, reason: 'no-business-listings' });
+  });
+
+  it('low-review-count: zero reviews, no rating, no listing → not-evaluated (no-business-profile)', () => {
+    const finding = findingFor(
+      'low-review-count',
+      evaluateAllRules(makeAuditResult(), null, null, null, null, null, {
+        status: 'ok',
+        listings: [],
+        reviews: { averageRating: null, reviewCount: 0 },
+        qa: { unansweredCount: 0 },
+        localPack: null,
+      }),
+    );
+    expect(isNotEvaluatedFinding(finding)).toBe(true);
+    expect(finding.meta).toEqual({ insufficientData: true, reason: 'no-business-profile' });
+  });
+
+  it('low-review-count: zero reviews on a listed business is a real finding', () => {
+    for (const input of [
+      { listings: [{ source: 'google', consistent: true }], averageRating: null },
+      { listings: [], averageRating: 4.0 },
+    ]) {
+      const finding = findingFor(
+        'low-review-count',
+        evaluateAllRules(makeAuditResult(), null, null, null, null, null, {
+          status: 'ok',
+          listings: input.listings,
+          reviews: { averageRating: input.averageRating, reviewCount: 0 },
+          qa: null,
+          localPack: null,
+        }),
+      );
+      expect(finding.bucket).toBe('watch');
+      expect(finding.meta).toEqual({ reviewCount: 0 });
+    }
+  });
+
+  it('a site with no business profile raises no local finding at all', () => {
+    const findings = evaluateAllRules(makeAuditResult(), null, null, null, null, null, {
+      status: 'ok',
+      listings: [],
+      reviews: { averageRating: null, reviewCount: 0 },
+      qa: { unansweredCount: 0 },
+      localPack: null,
+    });
+    for (const ruleId of LOCAL_SEO_RULE_IDS) {
+      expect(isNotEvaluatedFinding(findingFor(ruleId, findings))).toBe(true);
+    }
   });
 });

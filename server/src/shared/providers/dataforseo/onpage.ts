@@ -15,7 +15,7 @@ import type { Logger } from 'pino';
 import { z } from 'zod';
 import { dataForSeoRequest } from '../http.js';
 import { VendorMalformedError, VendorUnavailableError, } from '../errors.js';
-import type { AuditPage, AuditPageTiming, AuditProvider, AuditResult, AuditResultOptions, AuditStatus, StartAuditInput, } from '../types.js';
+import type { AuditCrawlStopReason, AuditPage, AuditPageTiming, AuditProvider, AuditResult, AuditResultOptions, AuditStatus, PageFetchFailure, StartAuditInput, } from '../types.js';
 import { normalizeDeepPageFields } from './onpage-checks.js';
 import { readExtraSignals, type ExtraReadsConfig } from './onpage-extras.js';
 import { collectPaged } from './onpage-paging.js';
@@ -36,10 +36,25 @@ const taskPostResultSchema = z
     .nullable()
     .optional();
 const summaryCheckSchema = z.record(z.string(), z.unknown());
+/**
+ * `crawl_stop_reason` as documented for /on_page/summary: `limit_exceeded`
+ * (the `max_crawl_pages` limit was reached), `empty_queue` (every queued URL
+ * was crawled), `force_stopped` (halted via force stop), `unexpected_exception`
+ * (an internal crawler error).
+ */
+const CRAWL_STOP_REASONS: Readonly<Record<string, AuditCrawlStopReason>> = {
+    limit_exceeded: 'page_limit',
+    empty_queue: 'no_more_links',
+    force_stopped: 'stopped',
+    unexpected_exception: 'crawler_error',
+};
 const summaryResultSchema = z
     .array(z
     .object({
     crawl_progress: z.string().optional(),
+    // `null` while the crawl runs; documented values are mapped below and
+    // anything else is kept out of the normalized result.
+    crawl_stop_reason: z.string().nullable().optional(),
     crawl_status: z
         .object({
         pages_crawled: z.number().optional(),
@@ -84,6 +99,8 @@ const pageMetaSchema = z
     content: z
         .object({
         plain_text_word_count: z.number().nullable().optional(),
+        // UTF-8 byte size of the plain text; measures no-space languages.
+        plain_text_size: z.number().nullable().optional(),
     })
         .passthrough()
         .nullable()
@@ -117,6 +134,10 @@ const pageItemSchema = z
     .object({
     url: z.string(),
     status_code: z.number(),
+    /** Redirect target of a 3xx row; `null` on every other row. */
+    location: z.string().nullable().optional(),
+    /** Media type the server answered with (`text/html`). */
+    media_type: z.string().nullable().optional(),
     meta: pageMetaSchema.nullable().optional(),
     checks: pageChecksSchema.nullable().optional(),
     onpage_score: z.number().nullable().optional(),
@@ -141,6 +162,7 @@ const linksResultSchema = z
         link_from: z.string().optional(),
         link_to: z.string().optional(),
         direction: z.enum(['internal', 'external']),
+        type: z.string().optional(),
         is_broken: z.boolean().optional(),
     })
         .passthrough())
@@ -258,6 +280,10 @@ export function createDataForSeoOnPageAuditProvider(cfg: DataForSeoOnPageProvide
             const summary = summaryOutcome.result[0]!;
             const domainChecks = normalizeDomainChecks(summary.domain_info?.checks);
             const vendorPagesCrawled = summary.crawl_status?.pages_crawled;
+            const stopReason = summary.crawl_stop_reason;
+            const crawlStopReason = stopReason && Object.hasOwn(CRAWL_STOP_REASONS, stopReason)
+                ? CRAWL_STOP_REASONS[stopReason]
+                : undefined;
             const crawled = await collectPaged<z.infer<typeof pageItemSchema>>({
                 keyOf: (item) => item.url,
                 fetchPage: async (offset) => {
@@ -282,18 +308,34 @@ export function createDataForSeoOnPageAuditProvider(cfg: DataForSeoOnPageProvide
                 if (broken)
                     page.brokenLinks = broken;
                 const reason = nonIndexableByUrl.get(page.url);
-                if (reason !== undefined) {
+                // A locale page whose canonical names itself (up to protocol, `www.`,
+                // case or a trailing slash) is its own page, not a canonicalised
+                // duplicate of another locale.
+                if (reason !== undefined && !(/canonical/i.test(reason) && isSelfCanonical(page))) {
                     page.isIndexable = false;
                     page.nonIndexableReason = reason;
+                    // A robots.txt exclusion is a recorded cause in its own
+                    // right; it never overwrites a fetch failure the row carries.
+                    if (!page.fetchFailure && /robots/i.test(reason)) {
+                        page.fetchFailure = { kind: 'robots_blocked' };
+                    }
                 }
             }
             const resourceScan = options?.resourceScan === true;
             const extras = await readExtraSignals(cfg, vendorTaskId, pages, { pagesPerRequest, resourceScan });
             return { domainChecks, pages, ...(vendorPagesCrawled !== undefined ? { vendorPagesCrawled } : {}),
+                ...(crawlStopReason ? { crawlStopReason } : {}),
                 capabilities: { resourceScan }, ...extras };
         },
     };
 }
+const NON_VISITOR_LINK_TYPES: ReadonlySet<string> = new Set([
+    'alternate',
+    'canonical',
+    'link',
+    'meta',
+    'redirect',
+]);
 async function fetchBrokenLinks(cfg: DataForSeoOnPageProviderConfig, vendorTaskId: string, pagesPerRequest: number): Promise<Map<string, string[]>> {
     const byUrl = new Map<string, string[]>();
     let offset = 0;
@@ -325,6 +367,11 @@ async function fetchBrokenLinks(cfg: DataForSeoOnPageProviderConfig, vendorTaskI
         for (const item of items) {
             if (!item.is_broken || item.direction !== 'internal')
                 continue;
+            // Only links a visitor follows count. hreflang/alternate, canonical and
+            // other <link> or <meta> references, and the crawler's own redirect
+            // hops, are not "broken links on the page".
+            if (typeof item.type === 'string' && NON_VISITOR_LINK_TYPES.has(item.type))
+                continue;
             const from = item.link_from;
             const to = item.link_to;
             if (!from || !to)
@@ -340,6 +387,22 @@ async function fetchBrokenLinks(cfg: DataForSeoOnPageProviderConfig, vendorTaskI
             break;
     }
     return byUrl;
+}
+/** True when the page's canonical tag points at the page itself. */
+function isSelfCanonical(page: AuditPage): boolean {
+    if (!page.canonical)
+        return false;
+    const key = (raw: string): string | null => {
+        try {
+            const url = new URL(raw, page.url);
+            const path = url.pathname.length > 1 ? url.pathname.replace(/\/+$/, '') : '/';
+            return `${url.hostname.toLowerCase().replace(/^www\./, '')}${path}${url.search}`;
+        }
+        catch {
+            return null;
+        }
+    };
+    return key(page.url) === key(page.canonical);
 }
 async function fetchNonIndexable(cfg: DataForSeoOnPageProviderConfig, vendorTaskId: string, pagesPerRequest: number): Promise<Map<string, string>> {
     const byUrl = new Map<string, string>();
@@ -379,6 +442,41 @@ function normalizeDomainChecks(checks: Record<string, unknown> | undefined): Aud
         canonicalizationOk: bool('canonicalization'),
     };
 }
+const HTML_MEDIA_TYPES: ReadonlySet<string> = new Set(['text/html', 'application/xhtml+xml']);
+/** Resolves a redirect `location` against the row URL; `undefined` when it is not a URL. */
+function resolveLocation(location: string | null | undefined, base: string): string | undefined {
+    if (!location)
+        return undefined;
+    try {
+        return new URL(location, base).toString();
+    }
+    catch {
+        return undefined;
+    }
+}
+/**
+ * Fetch evidence the crawler row itself records: the redirect target of a 3xx
+ * row (`location`), the served media type, and an error status. Nothing is
+ * inferred; a row without these fields yields no evidence.
+ */
+function fetchEvidence(item: z.infer<typeof pageItemSchema>): Pick<AuditPage, 'finalUrl' | 'redirectChain' | 'contentType' | 'fetchFailure'> {
+    const status = item.status_code;
+    const media = item.media_type?.split(';')[0]?.trim().toLowerCase();
+    const contentType = media ? media : undefined;
+    const target = status >= 300 && status < 400 ? resolveLocation(item.location, item.url) : undefined;
+    let fetchFailure: PageFetchFailure | undefined;
+    if (status >= 400) {
+        fetchFailure = { kind: 'http_error', statusCode: status };
+    }
+    else if (status >= 200 && status < 300 && contentType && !HTML_MEDIA_TYPES.has(contentType)) {
+        fetchFailure = { kind: 'non_html', contentType };
+    }
+    return {
+        ...(target ? { finalUrl: target, redirectChain: [{ url: item.url, status }] } : {}),
+        ...(contentType ? { contentType } : {}),
+        ...(fetchFailure ? { fetchFailure } : {}),
+    };
+}
 function normalizePage(item: z.infer<typeof pageItemSchema>): AuditPage {
     const meta = item.meta ?? {};
     const checks = item.checks ?? {};
@@ -390,8 +488,15 @@ function normalizePage(item: z.infer<typeof pageItemSchema>): AuditPage {
         ? ['micromarkup errors reported by vendor']
         : [];
     const isIndexable = checks.is_broken !== true;
-    const wordCount = meta.content?.plain_text_word_count;
-    const hasFaqSignals = meta.htags ? hasQuestionHeadings(meta.htags) : undefined;
+    // Content signals only describe a page that served a body: a redirect or
+    // error row reports a zero word count that would read as "thin".
+    const servedBody = Math.floor(item.status_code / 100) === 2;
+    const wordCount = servedBody ? meta.content?.plain_text_word_count : undefined;
+    const textSize = servedBody ? meta.content?.plain_text_size : undefined;
+    // Only a page the vendor described (served body + meta) can answer the FAQ
+    // question; a served page with no headings has no FAQ headings either,
+    // while a missing meta block stays "not evaluated".
+    const hasFaqSignals = servedBody && item.meta ? (meta.htags ? hasQuestionHeadings(meta.htags) : false) : undefined;
     return {
         url: item.url,
         statusCode: item.status_code,
@@ -405,9 +510,11 @@ function normalizePage(item: z.infer<typeof pageItemSchema>): AuditPage {
         isIndexable,
         brokenLinks: [],
         onPageScore: item.onpage_score ?? 0,
-        ...(typeof wordCount === 'number' ? { wordCount } : {}),
+        ...(typeof wordCount === 'number' ? { wordCount: Math.round(wordCount) } : {}),
+        ...(typeof textSize === 'number' ? { textSize: Math.round(textSize) } : {}),
         ...(hasFaqSignals !== undefined ? { hasFaqSignals } : {}),
         ...(timing ? { timing } : {}),
+        ...fetchEvidence(item),
         ...normalizeDeepPageFields(item),
     };
 }

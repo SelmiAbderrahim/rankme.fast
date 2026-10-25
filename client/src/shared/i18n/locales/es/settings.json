@@ -12,7 +12,7 @@
       },
       "emailRankDrop": {
         "label": "Caída de posición",
-        "description": "Avísame cuando una palabra clave seguida baje de posición."
+        "description": "Avísame por correo cuando una palabra clave seguida caiga y una segunda comprobación lo confirme."
       },
       "emailAlerts": {
         "label": "Reglas de aviso",

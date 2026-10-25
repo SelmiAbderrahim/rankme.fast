@@ -23,6 +23,7 @@
     "label": "تصفية الإجراءات",
     "reset": "إعادة تعيين عوامل التصفية",
     "all": "الكل",
+    "openAndPlanned": "المفتوحة والمخطط لها",
     "state": "الحالة",
     "source": "المصدر",
     "severity": "الخطورة",
@@ -81,14 +82,12 @@
     "observedAt": "رُصد في {{date}}",
     "openSource": "فتح عرض المصدر",
     "affectedNone": "على مستوى الموقع",
-    "affectedOne": "عنوان URL واحد متأثر",
     "affectedCount_one": "{{count}} من عناوين URL متأثرة",
     "evidence": "الأدلة",
     "evidenceLabel": "{{source}} · {{date}}",
     "evidenceLink": "فتح مصدر الدليل",
     "history": "السجل",
     "retest": "إعادة الفحص",
-    "affectedSample": "(يُعرض {{shown}})",
     "noteLabel": "ملاحظة",
     "affectedCount_zero": "{{count}} من عناوين URL متأثرة",
     "affectedCount_two": "{{count}} من عناوين URL متأثرة",
@@ -112,7 +111,10 @@
     "seeLinkTargets_two": "اعرض كل الصفحات البالغ عددها {{count}} والروابط المعطلة التي تشير إليها في التقرير",
     "seeLinkTargets_few": "اعرض كل الصفحات البالغ عددها {{count}} والروابط المعطلة التي تشير إليها في التقرير",
     "seeLinkTargets_many": "اعرض كل الصفحات البالغ عددها {{count}} والروابط المعطلة التي تشير إليها في التقرير",
-    "seeLinkTargets_other": "اعرض كل الصفحات البالغ عددها {{count}} والروابط المعطلة التي تشير إليها في التقرير"
+    "seeLinkTargets_other": "اعرض كل الصفحات البالغ عددها {{count}} والروابط المعطلة التي تشير إليها في التقرير",
+    "linkSourcesCount": "صفحات تحتوي على روابط معطلة: {{count}}",
+    "staleRetestHint": "هذا الدليل قديم. أعد الاختبار للتحقق منه مجددًا.",
+    "linkSourcesCountSampled": "صفحات تحتوي على روابط معطلة: {{count}} (يُعرض {{shown}})"
   },
   "transitions": {
     "planned": "تخطيط",
@@ -138,7 +140,14 @@
     "confirm": "تأكيد",
     "saving": "جارٍ الحفظ…",
     "conflict": "قام شخص آخر بتغيير هذا الإجراء أولًا. أعد تحميله وحاول مجددًا.",
-    "conflictReload": "إعادة تحميل الإجراء"
+    "conflictReload": "إعادة تحميل الإجراء",
+    "reasonLabel": "لماذا تستبعد هذه النتيجة؟",
+    "reasons": {
+      "false_positive": "إنذار خاطئ",
+      "wont_fix": "لن أصلحها",
+      "fixed_elsewhere": "أُصلحت في مكان آخر",
+      "other": "سبب آخر"
+    }
   },
   "history": {
     "title": "سجل الإجراء",
@@ -182,6 +191,8 @@
     "dismissedLabel": "مستبعد كنتيجة خاطئة",
     "fixCta": "وضع علامة تم الإصلاح",
     "fixedLabel": "تم وضع علامة الإصلاح",
-    "reappearedLabel": "لا يزال يظهر بعد وضع علامة الإصلاح"
+    "reappearedLabel": "لا يزال يظهر بعد وضع علامة الإصلاح",
+    "notCounted": "غير محتسبة في هذه الأعداد — المستبعدة: {{dismissed}}، المعلَّمة كمُصلَحة: {{completed}}.",
+    "fixedGroupIn": "مُعلَّمة كمُصلَحة في {{tab}} ({{count}})"
   }
 }

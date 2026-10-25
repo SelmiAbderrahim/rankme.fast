@@ -13,12 +13,16 @@
 import type { SupportedLocale } from '../../shared/i18n/locales.js';
 import { isToolAllowed, resolveEffectivePermissions, type EffectiveMcpPermissions, } from '../../shared/mcp-permissions/index.js';
 import type { AiChatTool, AiJsonSchema } from '../../shared/providers/index.js';
-import { MCP_TOOL_NAMES, resolveMcpToolDefinition, type McpToolName, } from '../mcp/index.js';
+import { PAGES_INSIGHTS, PAGES_SORTS } from '../pages/index.js';
+import { MCP_TOOL_NAMES, READ_RANGES, resolveMcpToolDefinition, type McpToolName, } from '../mcp/index.js';
+import { translate } from '../../shared/i18n/index.js';
 import { getAccountMcpSpec } from '../mcp-permissions/index.js';
 import { ACTION_SOURCE_TYPES, ACTION_STATES, MAX_LIST_LIMIT, } from '../actions/index.js';
 const OBJECT_ID_PATTERN = '^[0-9a-f]{24}$';
 const objectIdProperty = { type: 'string', pattern: OBJECT_ID_PATTERN } as const;
 const limitProperty = { type: 'integer', minimum: 1, maximum: 100 } as const;
+const cursorProperty = { type: 'string', minLength: 1, maxLength: 1024 } as const;
+const rangeProperty = { enum: [...READ_RANGES] } as const;
 function toolObject(properties: Readonly<Record<string, unknown>>, required: readonly string[]): AiJsonSchema {
     return { type: 'object', properties, required, additionalProperties: false };
 }
@@ -64,11 +68,46 @@ export const CHAT_TOOL_JSON_SCHEMAS: Readonly<Record<McpToolName, AiJsonSchema>>
         note: { type: 'string', maxLength: 2000 },
         clientKey: { type: 'string', minLength: 1, maxLength: 200 },
     }, ['siteId', 'actionId', 'state', 'expectedVersion']),
+    get_gsc_search_summary: toolObject({ siteId: objectIdProperty, range: rangeProperty }, ['siteId']),
+    list_gsc_top_queries: toolObject({ siteId: objectIdProperty, range: rangeProperty, limit: limitProperty }, ['siteId']),
+    list_gsc_top_pages: toolObject({ siteId: objectIdProperty, range: rangeProperty, limit: limitProperty }, ['siteId']),
+    get_ga4_summary: toolObject({ siteId: objectIdProperty, range: rangeProperty }, ['siteId']),
+    list_pages: toolObject({
+        siteId: objectIdProperty,
+        range: rangeProperty,
+        q: { type: 'string', minLength: 1, maxLength: 200 },
+        insight: { enum: [...PAGES_INSIGHTS] },
+        indexability: { enum: ['indexable', 'non_indexable'] },
+        visibility: { enum: ['measured', 'unmeasured'] },
+        sort: { enum: [...PAGES_SORTS] },
+        direction: { enum: ['asc', 'desc'] },
+        limit: { enum: [25, 50, 100] },
+        cursor: cursorProperty,
+    }, ['siteId']),
+    get_page_detail: toolObject({
+        siteId: objectIdProperty,
+        pageId: { type: 'string', pattern: '^(?:page:)?[A-Za-z0-9_-]{43}$' },
+        range: rangeProperty,
+    }, ['siteId', 'pageId']),
+    get_backlinks_summary: toolObject({ siteId: objectIdProperty }, ['siteId']),
+    list_backlinks: toolObject({ siteId: objectIdProperty, limit: limitProperty }, ['siteId']),
+    list_competitors: toolObject({ siteId: objectIdProperty, status: { enum: ['active', 'archived', 'all'] } }, ['siteId']),
+    get_ai_visibility_summary: toolObject({ siteId: objectIdProperty }, ['siteId']),
+    get_local_seo_summary: toolObject({ siteId: objectIdProperty }, ['siteId']),
+    get_reviews_summary: toolObject({ siteId: objectIdProperty }, ['siteId']),
+    list_client_reports: toolObject({ siteId: objectIdProperty }, ['siteId']),
 };
 export interface ChatToolSet {
     tools: Record<string, AiChatTool>;
     permissions: EffectiveMcpPermissions;
+    /**
+     * Tools the account switched off. They stay out of `tools` (the model never
+     * sees them); their names go into the system instruction so the Assistant
+     * says "switched off in MCP permissions" instead of "no such tool".
+     */
+    disabledTools: McpToolName[];
 }
+const SITE_NOT_FOUND_CODE = 'sites.errors.notFound';
 /** Tools whose input names a site — the ones a linked site can default. */
 const SITE_SCOPED_TOOLS: ReadonlySet<McpToolName> = new Set(MCP_TOOL_NAMES.filter((name) => 'siteId' in (CHAT_TOOL_JSON_SCHEMAS[name].properties as Record<string, unknown>)));
 /**
@@ -96,12 +135,17 @@ export async function buildChatTools(accountId: string, locale: SupportedLocale,
     }
     const context = { accountId, locale, permissions };
     const tools: Record<string, AiChatTool> = {};
+    const disabledTools: McpToolName[] = [];
     for (const name of MCP_TOOL_NAMES) {
-        if (!isToolAllowed(permissions, name))
+        if (!isToolAllowed(permissions, name)) {
+            disabledTools.push(name);
             continue;
+        }
         const definition = resolveMcpToolDefinition(name, locale);
         tools[name] = {
-            description: definition.description,
+            description: defaultSiteId !== null && name === 'list_sites'
+                ? `${definition.description} ${translate(locale, 'chat.systemInstruction.listSitesNotNeeded')}`
+                : definition.description,
             jsonSchema: schemaFor(name, defaultSiteId),
             execute: async (args) => {
                 // `runTool` inside every registry executor already converts thrown
@@ -110,7 +154,7 @@ export async function buildChatTools(accountId: string, locale: SupportedLocale,
                 // The conversation's linked site is the default target; an
                 // explicit `siteId` from the model (another site the user asked
                 // about) still wins and goes through the same permission gates.
-                const boundArgs = typeof args === 'object' && args !== null && !Array.isArray(args)
+                const boundArgs: Record<string, unknown> = typeof args === 'object' && args !== null && !Array.isArray(args)
                     ? {
                         ...(args as Record<string, unknown>),
                         ...(defaultSiteId && SITE_SCOPED_TOOLS.has(name)
@@ -120,6 +164,25 @@ export async function buildChatTools(accountId: string, locale: SupportedLocale,
                     }
                     : { locale, invalidChatToolInput: args };
                 const result = await definition.execute(boundArgs, context);
+                if (result.isError === true &&
+                    defaultSiteId !== null &&
+                    boundArgs.siteId === defaultSiteId &&
+                    (result.structuredContent as {
+                        error?: {
+                            code?: unknown;
+                        };
+                    }).error?.code === SITE_NOT_FOUND_CODE) {
+                    // Deleted, restricted, or mid-deletion linked site: say so plainly so
+                    // the model tells the user instead of guessing or retrying.
+                    const code = 'mcp.errors.siteUnavailable';
+                    return {
+                        ok: false,
+                        structuredContent: {
+                            error: { tool: name, code, message: translate(locale, code) },
+                            locale,
+                        },
+                    };
+                }
                 return {
                     ok: result.isError !== true,
                     structuredContent: result.structuredContent,
@@ -127,5 +190,5 @@ export async function buildChatTools(accountId: string, locale: SupportedLocale,
             },
         };
     }
-    return { tools, permissions };
+    return { tools, permissions, disabledTools };
 }

@@ -58,6 +58,8 @@ export const ACCOUNT_ERASED_POSTGRES_TABLE_NAMES = [
     'local_reviews_snapshots',
     'page_performance_keywords',
     'page_performance_snapshots',
+    'rank_check_jobs',
+    'rank_check_outcomes',
     'rank_drop_confirmations',
     'rate_limit_hits',
     'scheduled_report_deliveries',

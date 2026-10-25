@@ -12,7 +12,7 @@
       },
       "emailRankDrop": {
         "label": "Chute de position",
-        "description": "M’avertir lorsqu’un mot-clé suivi perd des positions."
+        "description": "M'avertir par e-mail quand un mot-clé suivi recule et qu'un second contrôle le confirme."
       },
       "emailAlerts": {
         "label": "Règles d’alerte",

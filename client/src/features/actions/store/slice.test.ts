@@ -367,6 +367,17 @@ describe('actions slice — submitActionState lifecycle', () => {
     expect(fulfilled.pending.state.a1).toBe(false);
     expect(fulfilled.items[0]!.state).toBe('dismissed');
     expect(fulfilled.items[0]!.version).toBe(1);
+    // No note was given, so the card shows none; a resolved card stays in the list.
+    expect(fulfilled.items[0]!.latestNote).toBeNull();
+    const noted = actionsReducer(
+      pending,
+      submitActionState.fulfilled(
+        { actionId: 'a1', state: 'planned', version: 1, replayed: false },
+        'r',
+        { siteId: 's', actionId: 'a1', state: 'planned', expectedVersion: 0, clientKey: 'k', note: 'next sprint' },
+      ),
+    );
+    expect(noted.items[0]!.latestNote).toBe('next sprint');
     expect(fulfilled.history.a1).toBeUndefined();
     expect(fulfilled.history.other).toEqual([]);
     expect(fulfilled.history['action-history:a1::en']).toBeUndefined();

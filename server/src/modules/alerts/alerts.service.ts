@@ -146,8 +146,13 @@ export async function createRule(input: {
     accountId: string;
     body: CreateRuleBody;
 }, deps: AlertsServiceDeps): Promise<AlertRuleMutationDto> {
-    await loadOwnedSite(input.accountId, input.body.siteId);
+    const site = await loadOwnedSite(input.accountId, input.body.siteId);
     assertMutationAvailable();
+    // Detection skips paused sites, so a rule created on one could never fire.
+    // Refuse it with a localized code instead of saving a silent dead rule.
+    if (site.paused === true) {
+        throw HttpError.conflict({ code: 'ALERTS_ERRORS_SITE_PAUSED', messageKey: 'alerts.errors.sitePaused' });
+    }
     const now = (deps.now ?? (() => new Date()))();
     const ruleId = newRuleId();
     const slackUrl = input.body.slackWebhookUrl ?? null;

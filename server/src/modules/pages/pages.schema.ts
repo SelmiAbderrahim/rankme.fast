@@ -6,6 +6,7 @@ export const PAGES_INSIGHTS = [
     'declining',
     'winning',
     'non_indexable_visibility',
+    'low_data',
     'unmeasured',
 ] as const;
 export const PAGES_SORTS = [

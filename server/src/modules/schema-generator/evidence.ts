@@ -116,6 +116,10 @@ export interface ExtractedPage {
     readonly language: string | null;
     readonly articlePublishedTime: string | null;
     readonly articleModifiedTime: string | null;
+    /** `<meta property="og:site_name">` (name precedence #1). */
+    readonly ogSiteName: string | null;
+    /** First `name` of an `Organization` / `WebSite` node in the page's JSON-LD (#2). */
+    readonly jsonLdName: string | null;
 }
 export interface ExtractedFaqAnswer {
     readonly headingIndex: number;
@@ -186,6 +190,107 @@ function metaContent(html: string, attribute: 'name' | 'property', key: string):
     }
     return null;
 }
+/** JSON-LD blocks read per page and the nesting depth walked inside each. */
+export const JSON_LD_LIMITS = { blocks: 8, depth: 4 } as const;
+const NAMED_NODE_TYPES = new Set(['Organization', 'WebSite']);
+function namedNode(node: unknown, depth: number): string | null {
+    if (depth > JSON_LD_LIMITS.depth || node === null || typeof node !== 'object')
+        return null;
+    if (Array.isArray(node)) {
+        for (const child of node) {
+            const found = namedNode(child, depth + 1);
+            if (found)
+                return found;
+        }
+        return null;
+    }
+    const record = node as Record<string, unknown>;
+    const declared = record['@type'];
+    const types = Array.isArray(declared) ? declared : [declared];
+    if (types.some((type) => typeof type === 'string' && NAMED_NODE_TYPES.has(type)) &&
+        typeof record.name === 'string' &&
+        record.name.trim().length > 0) {
+        return record.name.trim();
+    }
+    return namedNode(record['@graph'], depth + 1);
+}
+/**
+ * The name an existing `Organization` / `WebSite` node already declares. The
+ * page's own markup is read as data only: a block that does not parse is
+ * skipped, and nothing from it reaches the payload except this one string.
+ */
+export function jsonLdDeclaredName(html: string): string | null {
+    const pattern = /<script\b[^>]*type\s*=\s*["']?application\/ld\+json["']?[^>]*>([\s\S]*?)<\/script\s*>/gi;
+    let blocks = 0;
+    for (const match of html.matchAll(pattern)) {
+        if (blocks >= JSON_LD_LIMITS.blocks)
+            break;
+        blocks += 1;
+        let parsed: unknown;
+        try {
+            parsed = JSON.parse(match[1]!);
+        }
+        catch {
+            continue;
+        }
+        const name = namedNode(parsed, 0);
+        if (name)
+            return name;
+    }
+    return null;
+}
+/** Title separators: pipes and bullets anywhere, dashes and colons only between spaces. */
+const TITLE_SEPARATOR = /\s*[|·•»›]\s*|\s+[-–—:~]\s+/u;
+/** Whole segments that name a page role, never a brand (lower-cased). */
+const GENERIC_TITLE_SEGMENTS = new Set([
+    'welcome', 'home', 'homepage', 'home page', 'index', 'main page', 'official site', 'official website',
+    'accueil', 'bienvenue', 'page d’accueil', "page d'accueil",
+    'startseite', 'willkommen', 'inicio', 'bienvenido', 'bienvenidos', 'página principal',
+    'главная', 'главная страница', 'добро пожаловать',
+    '首页', '主页', '欢迎',
+    'الرئيسية', 'الصفحة الرئيسية', 'مرحبا', 'مرحبًا', 'أهلا وسهلا',
+]);
+/** Greeting prefixes stripped from the start of a segment ("Welcome to Acme"). */
+const GENERIC_TITLE_PREFIXES = [
+    'welcome to ', 'bienvenue sur ', 'bienvenue chez ', 'willkommen bei ', 'bienvenido a ',
+    'bienvenidos a ', 'добро пожаловать на ', 'добро пожаловать в ', 'مرحبا بكم في ', '欢迎来到',
+];
+const comparable = (value: string): string => value.toLocaleLowerCase().replace(/[^\p{L}\p{N}]/gu, '');
+/**
+ * The brand part of a page `<title>` (name precedence #3), or `null` when the
+ * title does not name one with confidence. The result is always a verbatim
+ * piece of the title: separators and generic words ("Welcome", "Home") are
+ * stripped, then a remaining segment is chosen only when it matches the site's
+ * domain label, or when it is the single segment left after a generic one was
+ * removed ("Welcome - Cashback" → "Cashback"). Otherwise the caller falls back
+ * to the next source rather than guessing.
+ */
+export function deriveTitleBrand(title: string, domain: string): string | null {
+    const segments = title.split(TITLE_SEPARATOR).map((segment) => segment.trim()).filter((segment) => segment.length > 0);
+    let removedGeneric = false;
+    const candidates: string[] = [];
+    for (const segment of segments) {
+        const lower = segment.toLocaleLowerCase();
+        if (GENERIC_TITLE_SEGMENTS.has(lower)) {
+            removedGeneric = true;
+            continue;
+        }
+        const prefix = GENERIC_TITLE_PREFIXES.find((entry) => lower.startsWith(entry));
+        if (prefix)
+            removedGeneric = true;
+        const rest = prefix ? segment.slice(prefix.length).trim() : segment;
+        if (rest.length > 0)
+            candidates.push(rest);
+    }
+    const label = comparable(domain.replace(/^www\./i, '').split('.')[0]!);
+    const matching = candidates.find((candidate) => {
+        const value = comparable(candidate);
+        return label.length >= 3 && value.length >= 3 && (value.includes(label) || label.includes(value));
+    });
+    if (matching)
+        return matching;
+    return removedGeneric && candidates.length === 1 ? candidates[0]! : null;
+}
 export function extractPageFacts(rawHtml: string): ExtractedPage {
     const html = clamp(rawHtml, EVIDENCE_LIMITS.htmlChars);
     const titleMatch = /<title\b[^>]*>([\s\S]*?)<\/title\s*>/i.exec(html);
@@ -222,6 +327,8 @@ export function extractPageFacts(rawHtml: string): ExtractedPage {
         language: htmlTag ? attributeOf(htmlTag[0], 'lang') : null,
         articlePublishedTime: metaContent(html, 'property', 'article:published_time'),
         articleModifiedTime: metaContent(html, 'property', 'article:modified_time'),
+        ogSiteName: metaContent(html, 'property', 'og:site_name'),
+        jsonLdName: jsonLdDeclaredName(html),
     };
 }
 // ---------------------------------------------------------------------------
@@ -347,6 +454,15 @@ async function pushFetchedFacts(facts: EvidenceFact[], url: string, safeFetch: S
     pushText(facts, 'page.language', 'Page language', extracted.language, EVIDENCE_LIMITS.languageChars);
     pushText(facts, 'page.articlePublishedTime', 'Article published time', extracted.articlePublishedTime, EVIDENCE_LIMITS.metaDateChars);
     pushText(facts, 'page.articleModifiedTime', 'Article modified time', extracted.articleModifiedTime, EVIDENCE_LIMITS.metaDateChars);
+    pushText(facts, 'page.ogSiteName', 'Site name (og:site_name)', extracted.ogSiteName, EVIDENCE_LIMITS.titleChars);
+    pushText(facts, 'page.jsonLdName', 'Name in the page’s structured data', extracted.jsonLdName, EVIDENCE_LIMITS.titleChars);
+}
+/** Adds the brand part of the page title when the title names one. */
+function pushTitleBrand(facts: EvidenceFact[], domain: string): void {
+    const title = facts.find((entry) => entry.id === 'page.title');
+    if (!title)
+        return;
+    pushText(facts, 'page.titleBrand', 'Brand in the page title', deriveTitleBrand(title.value, domain), EVIDENCE_LIMITS.titleChars);
 }
 // ---------------------------------------------------------------------------
 // Stored lookups
@@ -388,6 +504,7 @@ export async function assembleEvidence(input: AssembleEvidenceInput): Promise<As
         const url = safeUrlString.parse(input.pageUrl);
         facts.push(fact('page.url', 'Page URL', url));
         await pushFetchedFacts(facts, url, input.fetchUrl ?? fetchPublicUrlSafe);
+        pushTitleBrand(facts, site.domain);
         return { source: input.source, siteId: input.siteId, pageUrl: url, facts };
     }
     facts.push(fact('page.url', 'Page URL', input.pageUrl));
@@ -408,5 +525,6 @@ export async function assembleEvidence(input: AssembleEvidenceInput): Promise<As
         throw new SchemaEvidenceError('page_not_found');
     if (inventoryRow)
         pushInventoryContext(facts, inventoryRow);
+    pushTitleBrand(facts, site.domain);
     return { source: input.source, siteId: input.siteId, pageUrl: input.pageUrl, facts };
 }

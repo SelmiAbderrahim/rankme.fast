@@ -33,7 +33,7 @@ describe('deep crawl evidence', () => {
       insecureResources: ['http://example.com/image.png'],
       evidenceTruncated: 5,
     });
-    render(<I18nextProvider i18n={i18n}><EvidenceFacts page={evidence.pages.get('https://example.com/a')} /><DeepCrawlEvidenceBlocks evidence={evidence} shownRows={1} /></I18nextProvider>);
+    render(<I18nextProvider i18n={i18n}><EvidenceFacts page={evidence.pages.get('https://example.com/a')} /><DeepCrawlEvidenceBlocks evidence={evidence} shownRows={1} showCut /></I18nextProvider>);
     expect(screen.getByText('Not compressed')).toBeInTheDocument();
     expect(screen.getByText('<script>bad</script>')).toBeInTheDocument();
     expect(document.querySelector('script')).toBeNull();

@@ -1,6 +1,6 @@
 ---
 title: 'Alertas'
-description: 'Qué alertas se disparan hoy, cómo funciona la entrega exactamente-una-vez y por qué una regla de caída de posición puede configurarse antes de poder entregar.'
+description: 'Qué alertas se disparan, cómo funciona la entrega exactamente-una-vez y cuándo entrega una regla de caída de posición.'
 locale: es
 slug: alerts
 section: product
@@ -17,7 +17,7 @@ Las reglas de alerta se configuran por sitio. Pueden enviarse por correo, por we
 
 Las alertas de dominios de referencia nuevos y perdidos. Se disparan cuando se completan dos revisiones de enlaces seguidas, y cada alerta incluye la evidencia de antes y después que la provocó.
 
-También puedes configurar y guardar reglas de caída de posición, pero entregan a partir de observaciones de caída confirmadas que el pipeline de posiciones publicado todavía no produce. Las alertas de cambios de enlaces son el canal que funciona hoy.
+Las reglas de caída de posición solo se disparan cuando la caída está confirmada: una comprobación programada detecta la caída y una segunda comprobación nueva de la misma palabra clave en el mismo mercado la sigue mostrando. Si la palabra clave se recupera o la segunda comprobación no puede hacerse, la regla no envía nada. Consulta [Alertas de posición confirmadas](./confirmed-rank-alerts.es.md).
 
 ## Una alerta por cambio
 
@@ -27,9 +27,9 @@ Tu primera revisión de enlaces no tiene con qué compararse, así que nunca gen
 
 Cuando falla un transporte, la entrega se registra como fallida en lugar de reintentarse sin fin. El mismo cambio nunca se envía como una segunda alerta.
 
-## Canales y límite de reglas
+## Canales
 
-El correo funciona en todos los planes de pago; Slack y el webhook genérico requieren Pro o superior. Puedes tener hasta 2 reglas de alerta en Starter, 10 en Pro y 50 en Agency.
+El correo, Slack y el webhook genérico están disponibles.
 
 Para Slack, pegas una URL de webhook entrante. No hay aplicación de Slack de RankMeFast ni bot.
 

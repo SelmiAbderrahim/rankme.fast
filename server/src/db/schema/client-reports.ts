@@ -2,6 +2,13 @@ import { sql } from 'drizzle-orm';
 import { boolean, check, index, integer, jsonb, pgTable, text, timestamp, uniqueIndex, uuid, } from 'drizzle-orm/pg-core';
 export const CLIENT_REPORT_FREQUENCIES = ['weekly', 'monthly'] as const;
 export type ClientReportFrequency = (typeof CLIENT_REPORT_FREQUENCIES)[number];
+/**
+ * Explicit "last day of every month" mode for monthly schedules. Stored in
+ * `monthday_utc` as a sentinel so no extra column is needed; every other
+ * monthly value stays a plain day number 1..28 (days 29-31 do not exist in
+ * every month, so they are rejected rather than silently skipped or clamped).
+ */
+export const CLIENT_REPORT_LAST_DAY_OF_MONTH = -1;
 export const CLIENT_REPORT_DELIVERY_STATUSES = [
     'pending',
     'sent',
@@ -62,7 +69,12 @@ export const scheduledReports = pgTable('scheduled_reports', {
     frequency: text('frequency', { enum: CLIENT_REPORT_FREQUENCIES }).notNull(),
     weekdayUtc: integer('weekday_utc'),
     monthdayUtc: integer('monthday_utc'),
-    hourUtc: integer('hour_utc').notNull(),
+    // IANA time zone the schedule is written in. The weekday, month day and
+    // `localHour` are wall-clock values in this zone, so a 09:00 report stays
+    // at 09:00 local across daylight-saving changes.
+    timezone: text('timezone').notNull().default('UTC'),
+    // Wall-clock hour 0..23 in `timezone`; never a pre-converted UTC hour.
+    localHour: integer('local_hour').notNull(),
     minuteUtc: integer('minute_utc').notNull(),
     locale: text('locale').notNull(),
     recipients: jsonb('recipients').$type<string[]>().notNull(),
@@ -76,8 +88,8 @@ export const scheduledReports = pgTable('scheduled_reports', {
     index('scheduled_reports_account_created_idx').on(table.accountId, table.createdAt.desc()),
     index('scheduled_reports_site_enabled_idx').on(table.siteId, table.enabled),
     check('scheduled_reports_frequency_check', sql `${table.frequency} in ('weekly','monthly')`),
-    check('scheduled_reports_cadence_fields_check', sql `(${table.frequency} = 'weekly' and ${table.weekdayUtc} between 0 and 6 and ${table.monthdayUtc} is null) or (${table.frequency} = 'monthly' and ${table.monthdayUtc} between 1 and 28 and ${table.weekdayUtc} is null)`),
-    check('scheduled_reports_hour_check', sql `${table.hourUtc} between 0 and 23`),
+    check('scheduled_reports_cadence_fields_check', sql `(${table.frequency} = 'weekly' and ${table.weekdayUtc} between 0 and 6 and ${table.monthdayUtc} is null) or (${table.frequency} = 'monthly' and (${table.monthdayUtc} between 1 and 28 or ${table.monthdayUtc} = -1) and ${table.weekdayUtc} is null)`),
+    check('scheduled_reports_hour_check', sql `${table.localHour} between 0 and 23`),
     check('scheduled_reports_minute_check', sql `${table.minuteUtc} between 0 and 59`),
     check('scheduled_reports_locale_check', sql `${table.locale} in ('en','ar','fr','de','es','ru','zh')`),
 ]);

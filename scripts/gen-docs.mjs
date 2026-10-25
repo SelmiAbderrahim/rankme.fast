@@ -1043,7 +1043,7 @@ const AUDIT_RESOURCE_SCAN_SECTION = {
 The last three checks need every image, script and stylesheet on your pages to be loaded. That makes the crawl slower and uses more of your crawl budget, so each audit has its own option for it.
 
 - **Scan images, scripts and styles** is ticked by default when you start an audit. Untick it to skip the scan for that run.
-- A scanned audit loads these files for at most 1,000 pages. Pages beyond that are still crawled, without their files.
+- A scanned audit crawls at most 1,000 pages. Untick the option to crawl more pages, without the scan.
 - If the scan can't be read, the audit still finishes and the three checks appear under Not evaluated with the reason.
 - An audit that ran without the scan lists these checks under Not evaluated. Start a new audit with the option ticked to include them.
 `,
@@ -1052,7 +1052,7 @@ The last three checks need every image, script and stylesheet on your pages to b
 تحتاج الفحوص الثلاثة الأخيرة إلى تحميل كل صورة وسكربت وملف أنماط في صفحاتك. هذا يبطّئ الزحف ويستهلك جزءًا أكبر من ميزانية الزحف لديك، لذلك لكل تدقيق خيار خاص به.
 
 - خيار **فحص الصور والسكربتات والأنماط** مفعّل افتراضيًا عند بدء التدقيق. ألغِ تفعيله لتخطّي الفحص في هذه المرة.
-- يحمّل التدقيق مع الفحص هذه الملفات لما لا يزيد على 1000 صفحة. تُزحف الصفحات الأخرى أيضًا، لكن دون ملفاتها.
+- يزحف التدقيق مع الفحص إلى 1000 صفحة على الأكثر. ألغِ تفعيل الخيار للزحف إلى صفحات أكثر دون الفحص.
 - إن تعذّرت قراءة نتيجة الفحص، يكتمل التدقيق رغم ذلك وتظهر الفحوص الثلاثة ضمن «لم يُقيَّم» مع السبب.
 - التدقيق الذي جرى دون الفحص يعرض هذه الفحوص ضمن «لم يُقيَّم». ابدأ تدقيقًا جديدًا مع تفعيل الخيار لتضمينها.
 `,
@@ -1061,7 +1061,7 @@ The last three checks need every image, script and stylesheet on your pages to b
 Les trois dernières vérifications ont besoin de charger chaque image, script et feuille de style de vos pages. L’exploration est alors plus lente et consomme davantage de votre budget d’exploration, c’est donc une option propre à chaque audit.
 
 - **Analyser les images, scripts et styles** est cochée par défaut quand vous lancez un audit. Décochez-la pour ignorer l’analyse pour cette exécution.
-- Un audit analysé charge ces fichiers pour 1 000 pages au plus. Les pages au-delà sont quand même explorées, mais sans leurs fichiers.
+- Un audit avec analyse explore 1 000 pages au plus. Décochez l’option pour explorer davantage de pages, sans l’analyse.
 - Si l’analyse ne peut pas être lue, l’audit se termine quand même et les trois vérifications apparaissent dans Non évalué, avec la raison.
 - Un audit lancé sans l’analyse classe ces vérifications dans Non évalué. Lancez un nouvel audit avec l’option cochée pour les inclure.
 `,
@@ -1070,7 +1070,7 @@ Les trois dernières vérifications ont besoin de charger chaque image, script e
 Die letzten drei Prüfungen müssen jedes Bild, jedes Skript und jedes Stylesheet Ihrer Seiten laden. Dadurch wird der Crawl langsamer und verbraucht mehr von Ihrem Crawl-Budget, deshalb hat jedes Audit dafür eine eigene Option.
 
 - **Bilder, Skripte und Styles prüfen** ist beim Start eines Audits standardmäßig angehakt. Entfernen Sie das Häkchen, um die Prüfung für diesen Lauf zu überspringen.
-- Ein Audit mit dieser Prüfung lädt die Dateien für höchstens 1.000 Seiten. Weitere Seiten werden trotzdem gecrawlt, aber ohne ihre Dateien.
+- Ein Audit mit dieser Prüfung crawlt höchstens 1.000 Seiten. Entfernen Sie das Häkchen, um mehr Seiten ohne die Prüfung zu crawlen.
 - Lässt sich das Ergebnis nicht auslesen, wird das Audit trotzdem fertig, und die drei Prüfungen stehen mit Grund unter „Nicht geprüft“.
 - Ein Audit ohne diese Prüfung führt die drei Prüfungen unter „Nicht geprüft“ auf. Starten Sie ein neues Audit mit gesetztem Häkchen, um sie einzubeziehen.
 `,
@@ -1079,7 +1079,7 @@ Die letzten drei Prüfungen müssen jedes Bild, jedes Skript und jedes Styleshee
 Las tres últimas comprobaciones necesitan cargar cada imagen, script y hoja de estilo de tus páginas. Eso hace el rastreo más lento y gasta más de tu presupuesto de rastreo, así que cada auditoría tiene su propia opción.
 
 - **Analizar imágenes, scripts y estilos** viene marcada por defecto al iniciar una auditoría. Desmárcala para omitir el análisis en esa ejecución.
-- Una auditoría con análisis carga estos archivos en 1.000 páginas como máximo. Las páginas que superen ese número se rastrean igualmente, pero sin sus archivos.
+- Una auditoría con análisis rastrea 1.000 páginas como máximo. Desmarca la opción para rastrear más páginas, sin el análisis.
 - Si el análisis no se puede leer, la auditoría termina igualmente y las tres comprobaciones aparecen en No evaluado con el motivo.
 - Una auditoría hecha sin el análisis muestra estas comprobaciones en No evaluado. Inicia una auditoría nueva con la opción marcada para incluirlas.
 `,
@@ -1088,7 +1088,7 @@ Las tres últimas comprobaciones necesitan cargar cada imagen, script y hoja de 
 Трём последним проверкам нужно загрузить каждое изображение, скрипт и таблицу стилей на ваших страницах. Из-за этого обход идёт медленнее и тратит больше вашего бюджета обхода, поэтому у каждого аудита есть отдельная опция.
 
 - Опция **Проверить изображения, скрипты и стили** при запуске аудита включена по умолчанию. Снимите отметку, чтобы пропустить проверку в этом запуске.
-- Аудит с проверкой загружает эти файлы не более чем для 1 000 страниц. Остальные страницы всё равно обходятся, но без их файлов.
+- Аудит с проверкой обходит не более 1 000 страниц. Снимите отметку с опции, чтобы обойти больше страниц без проверки.
 - Если результат проверки не удалось прочитать, аудит всё равно завершается, а три проверки попадают в «Не проверено» с причиной.
 - Если аудит прошёл без проверки, эти проверки указаны в «Не проверено». Запустите новый аудит с включённой опцией, чтобы добавить их.
 `,
@@ -1097,7 +1097,7 @@ Las tres últimas comprobaciones necesitan cargar cada imagen, script y hoja de 
 最后三项检查需要加载您页面上的每张图片、每个脚本和样式表。这会让抓取变慢，也会多消耗您的抓取预算，因此每次审计都有单独的选项。
 
 - 开始审计时，**扫描图片、脚本和样式** 默认处于勾选状态。取消勾选即可在本次审计中跳过扫描。
-- 开启扫描的审计最多为 1,000 个页面加载这些文件。超出的页面仍会被抓取，但不加载其文件。
+- 开启扫描的审计最多抓取 1,000 个页面。取消勾选该选项即可抓取更多页面，但不进行扫描。
 - 如果扫描结果无法读取，审计仍会完成，三项检查会连同原因列在“未评估”下。
 - 未开启扫描的审计会把这些检查列在“未评估”下。勾选该选项并重新运行审计即可包含它们。
 `,

@@ -2,6 +2,7 @@ import { useMemo } from 'react';
 import type { TFunction } from 'i18next';
 import type { TrendPoint } from '../types';
 import { formatPagesDate, formatPagesMetric } from '../formatters';
+import { ScreenReaderTable } from '@shared/components/ScreenReaderTable';
 
 interface PagesTrendChartProps {
   points: TrendPoint[];
@@ -78,7 +79,7 @@ export function PagesTrendChart({ points, locale, t }: PagesTrendChartProps) {
           />
         ))}
       </svg>
-      <table className="sr-only" data-testid="pages-trend-table">
+      <ScreenReaderTable data-testid="pages-trend-table">
         <caption>{t('detail.trendTableCaption')}</caption>
         <thead>
           <tr>
@@ -101,7 +102,7 @@ export function PagesTrendChart({ points, locale, t }: PagesTrendChartProps) {
             </tr>
           ))}
         </tbody>
-      </table>
+      </ScreenReaderTable>
     </div>
   );
 }

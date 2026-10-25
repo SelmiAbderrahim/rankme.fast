@@ -25,6 +25,7 @@ export const initialState: ReportState = {
   retestError: '',
   runStatus: null,
   runPageCap: null,
+  reportRunAt: null,
   runs: [],
   runsLoading: false,
   runsLoaded: false,
@@ -77,6 +78,7 @@ const reportSlice = createSlice({
         state.loading = true;
         state.error = '';
         state.report = null;
+        state.reportRunAt = null;
         state.loaded = false;
         if (state.siteId !== action.meta.arg.siteId) {
           state.siteId = action.meta.arg.siteId;
@@ -95,12 +97,23 @@ const reportSlice = createSlice({
           state.runId = null;
           state.runStatus = null;
           state.runPageCap = null;
+          state.reportRunAt = null;
           return;
         }
         state.runId = action.payload.runId;
         state.runStatus = action.payload.runStatus;
         state.runPageCap = action.payload.pageCap ?? null;
         state.report = action.payload.report ?? null;
+        state.reportRunAt = state.report ? (action.payload.runAt ?? null) : null;
+        // The cached history must never contradict the report on screen: a run
+        // started from another surface (an Actions retest, a scheduled
+        // re-audit, another tab) leaves an older, possibly empty list in the
+        // slice. Reload it when it does not list this run with its status.
+        if (state.runsSiteId === action.meta.arg.siteId) {
+          const { runId, runStatus } = action.payload;
+          const listed = state.runs.find((item) => item.id === runId);
+          if (listed?.status !== runStatus) state.runsLoaded = false;
+        }
       })
       .addCase(loadReport.rejected, (state, action) => {
         if (action.meta.aborted) return;
@@ -145,9 +158,13 @@ const reportSlice = createSlice({
       })
       .addCase(loadRuns.fulfilled, (state, action) => {
         if (action.meta.requestId !== state.runsRequestId) return;
-        if (!matchesIdentity(state, action.meta.arg)) return;
         state.runsRequestId = null;
         state.runsLoading = false;
+        // A read issued under an older presentation identity (a report load
+        // moved the generation on meanwhile) releases the loading flags so the
+        // block reloads under the current identity. It never stores its rows,
+        // and it must not leave the block on a skeleton forever.
+        if (!matchesIdentity(state, action.meta.arg)) return;
         state.runsLoaded = true;
         state.runs = action.payload.runs;
       })
@@ -164,9 +181,9 @@ const reportSlice = createSlice({
           state.runsSiteId = null;
           return;
         }
-        if (!matchesIdentity(state, action.meta.arg)) return;
         state.runsRequestId = null;
         state.runsLoading = false;
+        if (!matchesIdentity(state, action.meta.arg)) return;
         // A failed read is not an empty history: keep the error for the card
         // (which offers a retry, and retries on its next mount instead of
         // replaying the failure).
@@ -192,6 +209,7 @@ const reportSlice = createSlice({
           { presentationLocale: action.payload.locale },
         );
         state.report = null;
+        state.reportRunAt = null;
         state.loading = false;
         state.loaded = false;
         state.error = '';

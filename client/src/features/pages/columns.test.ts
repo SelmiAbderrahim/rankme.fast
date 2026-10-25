@@ -1,40 +1,105 @@
-import { beforeEach, describe, expect, it } from 'vitest';
-import { defaultPagesColumnVisibility, isPagesColumnAvailable, readPagesColumnOverrides, writePagesColumnOverrides, PAGES_COLUMNS_STORAGE_KEY } from './columns';
+import { afterEach, describe, expect, it, vi } from 'vitest';
+import {
+  PAGES_COLUMNS_STORAGE_KEY,
+  defaultPagesColumnVisibility,
+  isPagesColumnAvailable,
+  readPagesColumnOverrides,
+  writePagesColumnOverrides,
+} from './columns';
 import { pagesSourceCapabilities } from './store/selectors';
 import type { PagesEnvelope } from './types';
 
-const envelope = (source: PagesEnvelope['source'], measuredPages: number): PagesEnvelope => ({
-  source, status: 'ready', fallbackReason: null, observedAt: null, staleAt: null, range: '28d',
-  rangeSemantics: source === 'gsc' ? 'rolling_window' : 'point_in_time',
-  comparison: { label: 'since_previous_sync', previousObservedAt: '2026-08-01T00:00:00Z' }, market: null,
-  coverage: { reportingLagDays: null, sampled: null, sourceRowsFetched: null, sourceRowsAccepted: 0,
-    sourceRowsDropped: 0, dropped: { malformedUrl: 0, offsiteUrl: 0, duplicateUrl: 0, invalidMetric: 0 },
-    sourceLimit: null, sourceTruncated: false, auditRowsFetched: 0, auditRowsAccepted: 0,
-    auditRowsDropped: 0, auditTruncated: false, inventoryPages: 5, measuredPages, unmeasuredPages: 5 - measuredPages },
+const envelope = (patch: Partial<PagesEnvelope> = {}): PagesEnvelope => ({
+  source: 'dataforseo',
+  fallbackReason: null,
+  status: 'ready',
+  comparison: { label: 'since_previous_sync', previousObservedAt: '2026-08-01T00:00:00.000Z' },
+  coverage: { measuredPages: 3 },
+  ...patch,
+} as PagesEnvelope);
+
+const capabilities = (source: PagesEnvelope['source'], measuredPages = 3) =>
+  pagesSourceCapabilities({
+    ...envelope({ source }),
+    coverage: { measuredPages },
+  } as PagesEnvelope);
+
+afterEach(() => {
+  vi.restoreAllMocks();
+  window.localStorage.clear();
 });
 
-beforeEach(() => window.localStorage.clear());
-
-describe('Pages columns', () => {
-  it('defaults from source capability and full coverage, independent of visible rows', () => {
-    const gsc = envelope('gsc', 3);
-    const visibility = defaultPagesColumnVisibility(gsc, pagesSourceCapabilities(gsc));
-    expect(visibility.clicks).toBe(true);
-    expect(visibility.keywordCount).toBe(false);
-    expect(visibility.associatedQueryCount).toBe(true);
-    expect(isPagesColumnAvailable('estimatedTraffic', pagesSourceCapabilities(gsc))).toBe(false);
-    const empty = envelope('gsc', 0);
-    expect(defaultPagesColumnVisibility(empty, pagesSourceCapabilities(empty)).clicks).toBe(false);
+describe('Pages column defaults', () => {
+  it('derives defaults from the source and coverage, never from the rows on screen', () => {
+    const fallback = defaultPagesColumnVisibility(envelope(), capabilities('dataforseo'));
+    expect(fallback).toMatchObject({
+      source: true, crawl: true, insights: true,
+      clicks: false, impressions: false, ctr: false,
+      averagePosition: true, bestPosition: true, keywordCount: true,
+      searchVolume: true, difficulty: true, estimatedTraffic: true,
+      associatedQueryCount: true,
+      positionChange: true,
+    });
+    const observed = defaultPagesColumnVisibility(envelope({ source: 'gsc' }), capabilities('gsc'));
+    // A metric the source cannot own never shows by default.
+    expect(observed).toMatchObject({ clicks: true, ctr: true, bestPosition: false, estimatedTraffic: false });
   });
 
-  it('keeps only known boolean overrides and survives unavailable storage data', () => {
-    window.localStorage.setItem(PAGES_COLUMNS_STORAGE_KEY, '{bad');
-    expect(readPagesColumnOverrides()).toEqual({});
-    window.localStorage.setItem(PAGES_COLUMNS_STORAGE_KEY, JSON.stringify({ clicks: false, crawl: true, unknown: true, source: 'no' }));
-    expect(readPagesColumnOverrides()).toEqual({ clicks: false, crawl: true });
-    writePagesColumnOverrides({ clicks: false });
-    expect(readPagesColumnOverrides()).toEqual({ clicks: false });
+  it('hides metrics when nothing is measured and the change column without a previous sync', () => {
+    const none = defaultPagesColumnVisibility(
+      envelope({ comparison: { label: 'since_previous_sync', previousObservedAt: null } }),
+      capabilities('gsc', 0),
+    );
+    expect(none).toMatchObject({
+      source: true, crawl: true, insights: true,
+      clicks: false, averagePosition: false, associatedQueryCount: false, positionChange: false,
+    });
+  });
+
+  it('knows which columns a source can fill', () => {
+    expect(isPagesColumnAvailable('clicks', capabilities('gsc'))).toBe(true);
+    expect(isPagesColumnAvailable('bestPosition', capabilities('gsc'))).toBe(false);
+    expect(isPagesColumnAvailable('bestPosition', capabilities('demo'))).toBe(true);
+    // Structural columns are always available.
+    expect(isPagesColumnAvailable('source', capabilities('gsc'))).toBe(true);
+    expect(isPagesColumnAvailable('positionChange', capabilities('none'))).toBe(true);
+  });
+});
+
+describe('Pages column storage', () => {
+  it('round-trips known boolean overrides and ignores anything else', () => {
+    writePagesColumnOverrides({ clicks: false, bestPosition: true });
+    expect(readPagesColumnOverrides()).toEqual({ clicks: false, bestPosition: true });
+    window.localStorage.setItem(PAGES_COLUMNS_STORAGE_KEY, JSON.stringify({ clicks: 'yes', bogus: true, ctr: false }));
+    expect(readPagesColumnOverrides()).toEqual({ ctr: false });
     writePagesColumnOverrides({});
     expect(window.localStorage.getItem(PAGES_COLUMNS_STORAGE_KEY)).toBeNull();
+    expect(readPagesColumnOverrides()).toEqual({});
+  });
+
+  it.each(['not json', '[true]', 'null', '7'])('treats a corrupt stored value %s as no preference', (raw) => {
+    window.localStorage.setItem(PAGES_COLUMNS_STORAGE_KEY, raw);
+    expect(readPagesColumnOverrides()).toEqual({});
+  });
+
+  it('survives blocked or missing storage', () => {
+    vi.spyOn(Storage.prototype, 'setItem').mockImplementation(() => {
+      throw new Error('QuotaExceededError');
+    });
+    expect(() => writePagesColumnOverrides({ clicks: false })).not.toThrow();
+
+    const descriptor = Object.getOwnPropertyDescriptor(globalThis, 'localStorage')!;
+    try {
+      Object.defineProperty(globalThis, 'localStorage', {
+        configurable: true,
+        get: () => { throw new Error('SecurityError'); },
+      });
+      expect(readPagesColumnOverrides()).toEqual({});
+      expect(() => writePagesColumnOverrides({ clicks: true })).not.toThrow();
+      Object.defineProperty(globalThis, 'localStorage', { configurable: true, value: undefined });
+      expect(readPagesColumnOverrides()).toEqual({});
+    } finally {
+      Object.defineProperty(globalThis, 'localStorage', descriptor);
+    }
   });
 });

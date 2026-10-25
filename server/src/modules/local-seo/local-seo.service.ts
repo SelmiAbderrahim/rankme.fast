@@ -324,7 +324,7 @@ export async function buildLocalSeoEvaluationInput(db: Db, input: {
     ]);
     if (listingRows.length === 0 && !reviewsRow && localPackRows.length === 0) {
         return {
-            status: 'not-configured',
+            status: 'not-configured' as const,
             listings: [],
             reviews: null,
             qa: null,
@@ -338,7 +338,7 @@ export async function buildLocalSeoEvaluationInput(db: Db, input: {
     const phraseById = new Map(keywordRows.map((k) => [k.id, k.phrase]));
     const firstLocalPack = localPackRows[0];
     return {
-        status: 'ok',
+        status: 'ok' as const,
         listings: listingRows.map((row) => ({ source: row.source, consistent: row.consistent })),
         reviews: reviewsRow
             ? { averageRating: reviewsRow.averageRating, reviewCount: reviewsRow.reviewCount }

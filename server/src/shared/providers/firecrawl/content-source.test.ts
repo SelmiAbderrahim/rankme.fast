@@ -170,6 +170,34 @@ describe('Firecrawl content source normalization and security', () => {
         { '@type': 'Organization', name: 'Second' },
       ]),
     ).toHaveLength(2);
+    // `@graph` documents (the common Yoast/Rank Math shape) expose each node's
+    // type instead of collapsing to one untyped root; `@type` arrays use the
+    // first type; non-object graph entries are ignored.
+    expect(
+      firecrawlNormalization.normalizeStructuredData({
+        '@context': 'https://schema.org',
+        '@graph': [
+          { '@type': 'Organization', name: 'Acme' },
+          { '@type': ['WebSite', 'Thing'], name: 'Acme site' },
+          'not-a-node',
+          null,
+          ['nested-array'],
+        ],
+      }),
+    ).toEqual([
+      { type: 'Organization', property: 'name', value: 'Acme' },
+      { type: 'WebSite', property: 'name', value: 'Acme site' },
+    ]);
+    expect(
+      firecrawlNormalization.normalizeStructuredData({
+        '@type': 'WebPage',
+        name: 'Home',
+        '@graph': [{ '@type': 'BreadcrumbList', name: 'Crumbs' }],
+      }),
+    ).toEqual([
+      { type: 'BreadcrumbList', property: 'name', value: 'Crumbs' },
+      { type: 'WebPage', property: 'name', value: 'Home' },
+    ]);
   });
 
   it('rejects robots denial and a private redirect/source URL through shared authorities', async () => {

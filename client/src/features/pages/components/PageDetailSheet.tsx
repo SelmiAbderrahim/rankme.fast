@@ -30,7 +30,7 @@ import { formatPagesMetric } from '../formatters';
 import { pagesRowName } from '../formatters';
 import { crawlEvidenceLines, crawlStateLabel } from '../crawlState';
 import { PagesTrendChart } from './PagesTrendChart';
-import { EvidenceFacts } from '@features/report/components/DeepCrawlEvidence';
+import { formatBytes, formatDuration } from '@shared/lib/units';
 
 interface PageDetailSheetProps {
   siteId: string;
@@ -176,7 +176,7 @@ export function PageDetailSheet({
                 </CardContent>
               </Card>
 
-              {detail.audit !== undefined ? <PageAuditCard audit={detail.audit} siteId={siteId} url={page.url} /> : null}
+              {detail.audit !== undefined ? <PageAuditCard audit={detail.audit} siteId={siteId} locale={locale} /> : null}
 
               <Card>
                 <CardHeader>
@@ -207,18 +207,26 @@ export function PageDetailSheet({
                       ? t('detail.keywordsTitle')
                       : t('detail.queriesTitle')}
                   </CardTitle>
-                  <p className="text-sm text-muted-foreground">
-                    {t('detail.associatedCount', {
-                      count: detail.associated.total,
-                      shown: detail.associated.rows.length,
-                      total: detail.associated.total,
-                    })}
-                    {detail.associated.truncated ? ` ${t('detail.truncated')}` : ''}
-                  </p>
+                  {page.associatedQueryState === 'unavailable' ? null : (
+                    <p className="text-sm text-muted-foreground">
+                      {t('detail.associatedCount', {
+                        count: detail.associated.total,
+                        shown: detail.associated.rows.length,
+                        total: detail.associated.total,
+                      })}
+                      {detail.associated.truncated ? ` ${t('detail.truncated')}` : ''}
+                    </p>
+                  )}
                 </CardHeader>
                 <CardContent className="min-w-0">
                   {detail.associated.rows.length === 0 ? (
-                    <p className="text-sm text-muted-foreground">{t('detail.associatedEmpty')}</p>
+                    <p className="text-sm text-muted-foreground" data-testid="page-queries-empty">
+                      {page.associatedQueryState === 'anonymized'
+                        ? t('queries.anonymizedHelp')
+                        : page.associatedQueryState === 'unavailable'
+                          ? t('queries.unavailableHelp')
+                          : t('detail.associatedEmpty')}
+                    </p>
                   ) : (
                     <Table>
                       <caption className="sr-only">{t('detail.associatedCaption')}</caption>
@@ -297,27 +305,89 @@ export function PageDetailSheet({
   );
 }
 
-function PageAuditCard({ audit, siteId, url }: { audit: PageAuditDetail | null; siteId: string; url: string }) {
+const AUDIT_FACTS = ['clickDepth', 'inboundInternalLinks', 'pageSizeBytes', 'serverResponseMs'] as const;
+
+/**
+ * "From the latest audit": the crawl facts stored for
+ * this page and the open findings that list it, each linking to the report.
+ *
+ * data-testid contract:
+ *   - page-audit-card      the card
+ *   - page-audit-facts     the facts list
+ *   - page-audit-issue     one open finding
+ *   - page-audit-no-issues the "nothing open" line
+ */
+function PageAuditCard({
+  audit,
+  siteId,
+  locale,
+}: {
+  audit: PageAuditDetail | null;
+  siteId: string;
+  locale: string;
+}) {
   const { t } = useTranslation(['pages', 'report']);
-  return <Card data-testid="page-audit-card">
-    <CardHeader><CardTitle className="text-base">{t('detail.audit.title')}</CardTitle></CardHeader>
-    <CardContent className="flex min-w-0 flex-col gap-4">
-      {audit === null ? <p className="text-sm text-muted-foreground">{t('detail.audit.notCrawled')}</p> : <>
-        <div data-testid="page-audit-facts"><EvidenceFacts page={{ url, problems: [], ...audit.facts }} /></div>
-        <div className="flex min-w-0 flex-col gap-2">
-          <h3 className="text-sm font-semibold">{t('detail.audit.issuesTitle')}</h3>
-          {audit.issues.length === 0 ? <p className="text-sm text-muted-foreground" data-testid="page-audit-no-issues">
-            {t('detail.audit.noIssues')}
-          </p> : <ul className="flex flex-col gap-2">
-            {audit.issues.map((issue) => <li key={issue.ruleId} className="flex min-w-0 flex-wrap items-center gap-2" data-testid="page-audit-issue">
-              <Badge variant={issue.bucket === 'fix-now' ? 'destructive' : 'secondary'}>{t(`report:tabs.${issue.bucket}`)}</Badge>
-              <Link to={`/sites/${encodeURIComponent(siteId)}?tab=report&bucket=${issue.bucket}&finding=${encodeURIComponent(issue.ruleId)}`}
-                className="min-w-0 break-words text-sm underline underline-offset-4 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring">
-                <Bdi>{issue.title}</Bdi>
-              </Link>
-            </li>)}</ul>}
-        </div>
-      </>}
-    </CardContent>
-  </Card>;
+  const value = (fact: (typeof AUDIT_FACTS)[number], raw: number): string => {
+    if (fact === 'pageSizeBytes') return formatBytes(raw, locale);
+    if (fact === 'serverResponseMs') return formatDuration(raw, locale);
+    return new Intl.NumberFormat(locale).format(raw);
+  };
+  return (
+    <Card data-testid="page-audit-card">
+      <CardHeader>
+        <CardTitle className="text-base">{t('detail.audit.title')}</CardTitle>
+      </CardHeader>
+      <CardContent className="flex min-w-0 flex-col gap-4">
+        {audit === null ? (
+          <p className="text-sm text-muted-foreground">{t('detail.audit.notCrawled')}</p>
+        ) : (
+          <>
+            {AUDIT_FACTS.some((fact) => audit.facts[fact] !== undefined) ? (
+              <dl className="grid grid-cols-2 gap-3 sm:grid-cols-4" data-testid="page-audit-facts">
+                {AUDIT_FACTS.flatMap((fact) => {
+                  const raw = audit.facts[fact];
+                  return raw === undefined
+                    ? []
+                    : [
+                        <div key={fact} className="min-w-0">
+                          <dt className="text-xs text-muted-foreground">{t(`detail.audit.facts.${fact}`)}</dt>
+                          <dd className="break-words font-medium tabular-nums">{value(fact, raw)}</dd>
+                        </div>,
+                      ];
+                })}
+              </dl>
+            ) : null}
+            <div className="flex min-w-0 flex-col gap-2">
+              <h3 className="text-sm font-semibold">{t('detail.audit.issuesTitle')}</h3>
+              {audit.issues.length === 0 ? (
+                <p className="text-sm text-muted-foreground" data-testid="page-audit-no-issues">
+                  {t('detail.audit.noIssues')}
+                </p>
+              ) : (
+                <ul className="flex flex-col gap-2">
+                  {audit.issues.map((issue) => (
+                    <li
+                      key={issue.ruleId}
+                      className="flex min-w-0 flex-wrap items-center gap-2"
+                      data-testid="page-audit-issue"
+                    >
+                      <Badge variant={issue.bucket === 'fix-now' ? 'destructive' : 'secondary'}>
+                        {t(`report:tabs.${issue.bucket}`)}
+                      </Badge>
+                      <Link
+                        to={`/sites/${encodeURIComponent(siteId)}?tab=report&bucket=${issue.bucket}&finding=${encodeURIComponent(issue.ruleId)}`}
+                        className="min-w-0 break-words text-sm underline underline-offset-4 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+                      >
+                        <Bdi>{issue.title}</Bdi>
+                      </Link>
+                    </li>
+                  ))}
+                </ul>
+              )}
+            </div>
+          </>
+        )}
+      </CardContent>
+    </Card>
+  );
 }

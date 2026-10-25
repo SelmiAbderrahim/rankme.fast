@@ -1,5 +1,5 @@
 import { and, eq, inArray, sql } from 'drizzle-orm';
-import { actionEvents, aiCompetitorMentions, aiMentionSnapshots, aiProfileRunEvents, aiPromptSuggestionRuns, aiTrackedPrompts, aiUsageEvents, alertDeliveries, alertRules, appChartSnapshots, appKeywords, appListingSnapshots, appRankSnapshots, audienceResearchEvents, audienceResearchSignalDecisionEvents, backlinkDeepSnapshots, backlinkRowSnapshots, backlinkSnapshots, brandRadarEvents, competitorContentEvents, competitorIntersections, competitorProfiles, competitors, contentAnalysisEvents, contentInventoryEvents, contentMonitorEvents, contentRecommendationEvents, contentRecommendationOutcomes, domainStates, ga4Metrics, geogridScans, geogridSnapshots, gscSearchAnalytics, gscSearchAppearance, gscSitemaps, gscSyncRuns, keywordClusterDecisionEvents, keywords, landscapeOpportunityAcceptances, landscapePageMatchReviews, linkGapSnapshots, localListingSnapshots, localPackRankSnapshots, localReviewsSnapshots, pagePerformanceKeywords, pagePerformanceSnapshots, rankCheckJobs, rankCheckOutcomes, rankDropConfirmations, scheduledReportDeliveries, scheduledReports, serpObservations, siteDeletionTombstones, sitePulseSettings, sitePulseSubscriptions, teamMemberSiteGrants, trafficSnapshots, vendorCache, vendorResponses, weeklyPulseRuns, } from '../../db/schema/index.js';
+import { actionEvents, aiCompetitorMentions, aiMentionSnapshots, aiProfileRunEvents, aiPromptSuggestionRuns, aiTrackedPrompts, aiUsageEvents, alertDeliveries, alertRules, appChartSnapshots, appKeywords, appListingSnapshots, appRankSnapshots, audienceResearchEvents, audienceResearchSignalDecisionEvents, backlinkDeepSnapshots, backlinkRowSnapshots, backlinkSnapshots, brandRadarEvents, competitorContentEvents, competitorIntersections, competitorProfiles, competitors, contentAnalysisEvents, contentInventoryEvents, contentMonitorEvents, contentRecommendationEvents, contentRecommendationOutcomes, domainStates, ga4Metrics, geogridScans, geogridSnapshots, gscSearchAnalytics, gscSearchAppearance, gscSitemaps, gscSyncRuns, keywordClusterDecisionEvents, keywordResearchHistory, keywords, landscapeOpportunityAcceptances, landscapePageMatchReviews, linkGapSnapshots, localListingSnapshots, localPackRankSnapshots, localReviewsSnapshots, pagePerformanceKeywords, pagePerformanceSnapshots, rankCheckJobs, rankCheckOutcomes, rankDropConfirmations, scheduledReportDeliveries, scheduledReports, serpObservations, siteDeletionTombstones, sitePulseSettings, sitePulseSubscriptions, teamMemberSiteGrants, trafficSnapshots, vendorCache, vendorResponses, weeklyPulseRuns, } from '../../db/schema/index.js';
 import type { MongoSiteResourceInventory } from './site-mongo-cascade.js';
 import type { ApplicationDb } from '../../shared/types/application-db.js';
 /**
@@ -42,6 +42,7 @@ export const SITE_SCOPED_POSTGRES_TABLE_NAMES = [
     'gsc_sitemaps',
     'gsc_sync_runs',
     'keyword_cluster_decision_events',
+    'keyword_research_history',
     'landscape_opportunity_acceptances',
     'landscape_page_match_reviews',
     'link_gap_snapshots',
@@ -155,6 +156,9 @@ export async function purgeSitePostgresData(db: ApplicationDb, accountId: string
         await tx
             .delete(keywordClusterDecisionEvents)
             .where(eq(keywordClusterDecisionEvents.siteId, siteId));
+        await tx
+            .delete(keywordResearchHistory)
+            .where(and(eq(keywordResearchHistory.accountId, accountId), eq(keywordResearchHistory.siteId, siteId)));
         await tx
             .delete(landscapeOpportunityAcceptances)
             .where(eq(landscapeOpportunityAcceptances.siteId, siteId));

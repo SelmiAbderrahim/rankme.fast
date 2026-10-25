@@ -28,6 +28,8 @@ export interface AlertSite {
   id: string;
   domain: string;
   displayName: string;
+  /** Paused sites keep their rules, but no alert fires until they resume. */
+  paused?: boolean;
 }
 
 export interface AlertRule {

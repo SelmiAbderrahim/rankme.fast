@@ -77,6 +77,7 @@ beforeEach(() => {
   vi.mocked(getSite).mockReset().mockResolvedValue({
     id: siteId, url: 'https://example.test', domain: 'example.test', displayName: 'Monitor Site',
     defaultMarket: null,
+    localBusiness: false,
     paused: false, pausedAt: null, createdAt: updatedAt, updatedAt,
   });
 });
@@ -121,6 +122,7 @@ describe('content monitor report export adapter', () => {
     vi.mocked(getSite).mockResolvedValue({
       id: siteId, url: 'https://example.test', domain: 'example.test', displayName: '',
       defaultMarket: null,
+      localBusiness: false,
       paused: false, pausedAt: null, createdAt: updatedAt, updatedAt,
     });
     result = await adapter.compose(compose({

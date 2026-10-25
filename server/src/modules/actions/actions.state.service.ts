@@ -6,6 +6,8 @@ import { EVENT_KIND_FOR_TRANSITION, isAllowedTransition, } from './actions.order
 import type { ActionSourceType, ActionState, } from '../../db/schema/action-events.js';
 import { hashActionId, hashSourceIdRef, legacyAuditActionId, } from './actions.identity.js';
 import { getSourceReaders } from './actions.registry.js';
+import type { DismissalReason } from '../audits/finding-dismissal.model.js';
+import { recordFindingDismissal } from '../audits/report-dismissals.js';
 export interface MutateActionStateInput {
     accountId: string;
     siteId: string;
@@ -14,6 +16,8 @@ export interface MutateActionStateInput {
     newState: ActionState;
     expectedVersion: number;
     note: string | null;
+    /** Dismissal reason for an audit finding; null when not given. */
+    reason?: DismissalReason | null;
     clientKey: string;
     db: ApplicationDb;
 }
@@ -134,6 +138,17 @@ export async function mutateActionState(input: MutateActionStateInput): Promise<
         note: input.note,
         idempotencyKey,
     });
+    // A dismissed audit finding keeps why it was dismissed and how many pages
+    // it covered then, so the report can resurface it when that grows.
+    if (candidate.sourceType === 'audit_finding' && input.newState === 'dismissed' && !appended.replayed) {
+        await recordFindingDismissal({
+            accountId: input.accountId,
+            siteId: input.siteId,
+            ruleId: candidate.sourceId,
+            reason: input.reason ?? null,
+            actorUserId: input.actorUserId,
+        });
+    }
     return {
         actionId: candidate.actionId,
         state: appended.row.newState,

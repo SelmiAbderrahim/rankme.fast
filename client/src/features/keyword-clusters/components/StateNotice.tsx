@@ -8,6 +8,7 @@ import type { KeywordClusterUiState } from '../types';
 export type KeywordClusterNoticeKind =
   | KeywordClusterUiState
   | 'emptyRuns'
+  | 'noTrackedKeywords'
   | 'emptyClusters';
 
 interface StateNoticeProps {
@@ -17,7 +18,7 @@ interface StateNoticeProps {
 
 export const StateNotice = ({ kind, ranksHref }: StateNoticeProps) => {
   const { t } = useTranslation('keywordClusters');
-  const isEmpty = kind === 'emptyRuns' || kind === 'emptyClusters';
+  const isEmpty = kind === 'emptyRuns' || kind === 'emptyClusters' || kind === 'noTrackedKeywords';
   const Icon =
     kind === 'notEnoughKeywords'
       ? RefreshCw
@@ -41,6 +42,11 @@ export const StateNotice = ({ kind, ranksHref }: StateNoticeProps) => {
         {kind === 'notEnoughKeywords' && ranksHref ? (
           <Button asChild size="sm" variant="outline">
             <Link to={ranksHref}>{t('states.ranksCta')}</Link>
+          </Button>
+        ) : null}
+        {kind === 'noTrackedKeywords' && ranksHref ? (
+          <Button asChild size="sm" variant="outline">
+            <Link to={ranksHref}>{t('states.keywordsCta')}</Link>
           </Button>
         ) : null}
       </AlertDescription>

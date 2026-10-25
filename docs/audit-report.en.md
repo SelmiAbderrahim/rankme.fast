@@ -81,7 +81,7 @@ The comparison uses a frozen snapshot of your previous audit, so an older report
 The last three checks need every image, script and stylesheet on your pages to be loaded. That makes the crawl slower and uses more of your crawl budget, so each audit has its own option for it.
 
 - **Scan images, scripts and styles** is ticked by default when you start an audit. Untick it to skip the scan for that run.
-- A scanned audit loads these files for at most 1,000 pages. Pages beyond that are still crawled, without their files.
+- A scanned audit crawls at most 1,000 pages. Untick the option to crawl more pages, without the scan.
 - If the scan can't be read, the audit still finishes and the three checks appear under Not evaluated with the reason.
 - An audit that ran without the scan lists these checks under Not evaluated. Start a new audit with the option ticked to include them.
 

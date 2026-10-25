@@ -1,5 +1,6 @@
 import mongoose, { type HydratedDocument, type InferSchemaType } from 'mongoose';
 import { AUDIT_PAGE_CHECK_KEYS } from '../../shared/providers/index.js';
+import { brokenLinkEvidenceSchema, fetchFailureSchema, redirectHopSchema } from './crawl-evidence.schemas.js';
 /** One Boolean per normalized crawl check (`AuditPageChecks`); unreported checks stay absent. */
 const auditPageChecksSchema = new mongoose.Schema(Object.fromEntries(AUDIT_PAGE_CHECK_KEYS.map((key) => [key, { type: Boolean, default: undefined }])), { _id: false });
 /**
@@ -28,6 +29,13 @@ const auditedPageSchema = new mongoose.Schema({
     nonIndexableReason: { type: String, default: null },
     brokenLinks: { type: [String], default: [] },
     onPageScore: { type: Number, required: true },
+    // First-party fetch evidence. Absent on older runs and whenever the crawler
+    // recorded none: a missing field is "not recorded", never "fine".
+    finalUrl: { type: String, default: undefined },
+    redirectChain: { type: [redirectHopSchema], default: undefined },
+    contentType: { type: String, default: undefined },
+    fetchFailure: { type: fetchFailureSchema, default: undefined },
+    brokenLinkEvidence: { type: [brokenLinkEvidenceSchema], default: undefined },
     // Deep crawl facts. All absent on older runs and whenever the crawler did
     // not report them — never "zero" / "none".
     checks: { type: auditPageChecksSchema, default: undefined },

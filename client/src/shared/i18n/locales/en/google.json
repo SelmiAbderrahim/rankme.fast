@@ -91,6 +91,8 @@
     "viewAllLabel": "View all — {{section}}",
     "sitemapsLink": "View sitemaps",
     "asOf": "Data through {{date}}",
+    "totalsNote": "Site totals for {{start}} – {{end}}, summed from Search Console's daily data.",
+    "scopeNote": "Search Console counts each list on its own, so the rows in a list can add up to a little more or less than the site total.",
     "previousPeriod": "Previous period — clicks: {{clicks}} · impressions: {{impressions}}",
     "reportLink": "See the full data on your report",
     "emptyTitle": "No search data yet",

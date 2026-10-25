@@ -1,4 +1,5 @@
 import { Types } from 'mongoose';
+import { AUDIT_FRESH_DAYS, freshUntilFor } from '../../../shared/observations/freshness-policy.js';
 import { buildObservationMeta } from '../../../shared/observations/observations.js';
 // Deep model imports (reference: audience-research.adapter.ts) — the audits
 // barrel drags in routes/services/queue holders this read-only adapter must
@@ -45,6 +46,8 @@ interface SnapshotLean {
 //   - copy   = the shipped localized plain-language rule copy
 //     (`auditRules.<ruleId>.title|why|fix`) — reviewed in all 7 locales, so
 //     no parallel actions.* copy block is needed for this source.
+/** Days an audit's evidence reads as fresh before it is labelled stale. */
+export const AUDIT_EVIDENCE_FRESH_DAYS = AUDIT_FRESH_DAYS;
 export const auditActionAdapter: SourceReader = async (ctx) => {
     // Non-ObjectId ids cannot own audit runs; return empty instead of letting
     // a mongoose CastError mark the whole source unavailable.
@@ -70,7 +73,11 @@ export const auditActionAdapter: SourceReader = async (ctx) => {
         return { actions: [], status: 'stale' };
     }
     const runId = String(run._id);
-    const observedAt = (run.finishedAt ?? snapshot.createdAt).toISOString();
+    const observedAtDate = run.finishedAt ?? snapshot.createdAt;
+    const observedAt = observedAtDate.toISOString();
+    // Audit evidence is fresh for AUDIT_EVIDENCE_FRESH_DAYS, then stale so the
+    // card nudges a retest instead of presenting month-old data as current.
+    const freshUntil = freshUntilFor('audit', observedAtDate);
     const actions: CandidateAction[] = [];
     const seenRuleIds = new Set<string>();
     for (const finding of snapshot.findings ?? []) {
@@ -97,6 +104,7 @@ export const auditActionAdapter: SourceReader = async (ctx) => {
                 observation: buildObservationMeta({
                     sourceKind: 'provider_observation',
                     observedAt,
+                    freshUntil,
                 }),
             },
         ];

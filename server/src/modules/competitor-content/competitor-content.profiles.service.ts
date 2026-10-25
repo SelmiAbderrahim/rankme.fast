@@ -118,7 +118,7 @@ export async function suggestCompetitors(db: ApplicationDb, input: SuggestCompet
     const byDomain = new Map<string, CompetitorSuggestion>();
     for (const row of snapshotRows) {
         const registrable = registrableDomainKey(row.competitorDomain);
-        if (registrable.length === 0)
+        if (registrable.length === 0 || isOwnSiteDomain(registrable, site.domain))
             continue;
         const existing = byDomain.get(registrable);
         // `intersections` is NOT NULL DEFAULT 0 — always a number on a selected row.
@@ -153,9 +153,29 @@ function assertNotOwnSite(siteDomain: string, rawUrl: string): void {
     catch {
         return;
     }
-    if (isSameHost(host, siteDomain) || isSameHost(registrableDomainKey(host), siteDomain)) {
-        throw HttpError.badRequest({ code: 'CONTENT_INTELLIGENCE_COMPETITOR_CONTENT_ERRORS_OWN_SITE', messageKey: 'contentIntelligence.competitorContent.errors.ownSite' });
-    }
+    if (isOwnSiteDomain(host, siteDomain))
+        throw ownSiteError();
+}
+/**
+ * True when `host` is the site itself under any www alias, or a subdomain that
+ * collapses onto it through the registrable-domain key. The one rule behind
+ * add, restore, listing, the portfolio ceiling, run selection and discovery.
+ */
+export function isOwnSiteDomain(host: string, siteDomain: string): boolean {
+    return isSameHost(host, siteDomain) || isSameHost(registrableDomainKey(host), siteDomain);
+}
+function ownSiteError(): HttpError {
+    return HttpError.badRequest({ code: 'CONTENT_INTELLIGENCE_COMPETITOR_CONTENT_ERRORS_OWN_SITE', messageKey: 'contentIntelligence.competitorContent.errors.ownSite' });
+}
+/**
+ * Rows that name the site itself (stored before the own-site rule existed) are
+ * kept for history but never listed, counted against the portfolio ceiling,
+ * run, or restored.
+ */
+function excludeOwnSite<T extends {
+    registrableDomain: string;
+}>(rows: readonly T[], siteDomain: string): T[] {
+    return rows.filter((row) => !isOwnSiteDomain(row.registrableDomain, siteDomain));
 }
 export interface AddCompetitorInput {
     accountId: string;
@@ -203,10 +223,10 @@ export async function addCompetitor(db: ApplicationDb, input: AddCompetitorInput
     }
     // Portfolio ceiling — count ACTIVE profiles only.
     const activeRows = await db
-        .select({ id: competitorProfiles.id })
+        .select({ id: competitorProfiles.id, registrableDomain: competitorProfiles.registrableDomain })
         .from(competitorProfiles)
         .where(and(eq(competitorProfiles.siteId, siteId), eq(competitorProfiles.status, 'active')));
-    if (activeRows.length >= COMPETITOR_PORTFOLIO_MAX_COMPETITORS) {
+    if (excludeOwnSite(activeRows, site.domain).length >= COMPETITOR_PORTFOLIO_MAX_COMPETITORS) {
         throw HttpError.badRequest({ code: 'CONTENT_INTELLIGENCE_COMPETITOR_CONTENT_ERRORS_PORTFOLIO_FULL', messageKey: 'contentIntelligence.competitorContent.errors.portfolioFull' });
     }
     await deps.afterDuplicateCheck?.();
@@ -255,7 +275,7 @@ export async function listCompetitors(db: ApplicationDb, input: ListCompetitorsI
         .select()
         .from(competitorProfiles)
         .where(where);
-    return rows
+    return excludeOwnSite(rows, site.domain)
         .map(toPublicCompetitorProfile)
         .sort((a, b) => a.registrableDomain.localeCompare(b.registrableDomain));
 }
@@ -270,20 +290,22 @@ async function updateCompetitorStatus(db: ApplicationDb, input: MutateCompetitor
     if (status === 'active') {
         const [target, activeRows] = await Promise.all([
             db
-                .select({ status: competitorProfiles.status })
+                .select({ status: competitorProfiles.status, registrableDomain: competitorProfiles.registrableDomain })
                 .from(competitorProfiles)
                 .where(and(eq(competitorProfiles.id, input.competitorId), eq(competitorProfiles.accountId, input.accountId), eq(competitorProfiles.siteId, siteId)))
                 .limit(1),
             db
-                .select({ id: competitorProfiles.id })
+                .select({ id: competitorProfiles.id, registrableDomain: competitorProfiles.registrableDomain })
                 .from(competitorProfiles)
                 .where(and(eq(competitorProfiles.siteId, siteId), eq(competitorProfiles.status, 'active'))),
         ]);
         if (!target[0]) {
             throw HttpError.notFound({ code: 'CONTENT_INTELLIGENCE_COMPETITOR_CONTENT_ERRORS_COMPETITOR_NOT_FOUND', messageKey: 'contentIntelligence.competitorContent.errors.competitorNotFound' });
         }
+        if (isOwnSiteDomain(target[0].registrableDomain, site.domain))
+            throw ownSiteError();
         if (target[0].status !== 'active' &&
-            activeRows.length >= COMPETITOR_PORTFOLIO_MAX_COMPETITORS) {
+            excludeOwnSite(activeRows, site.domain).length >= COMPETITOR_PORTFOLIO_MAX_COMPETITORS) {
             throw HttpError.badRequest({ code: 'CONTENT_INTELLIGENCE_COMPETITOR_CONTENT_ERRORS_PORTFOLIO_FULL', messageKey: 'contentIntelligence.competitorContent.errors.portfolioFull' });
         }
     }
@@ -316,11 +338,16 @@ export async function loadActiveCompetitorProfiles(db: ApplicationDb, input: {
 }): Promise<CompetitorProfileRow[]> {
     if (input.competitorIds.length === 0)
         return [];
+    // Workers call this too, so a missing Site is not an error here: the own-site
+    // filter simply has nothing to compare against.
+    const site = Types.ObjectId.isValid(input.siteId)
+        ? await Site.findOne({ _id: input.siteId, accountId: input.accountId }).select('domain').lean()
+        : null;
     const rows = await db
         .select()
         .from(competitorProfiles)
         .where(and(eq(competitorProfiles.accountId, input.accountId), eq(competitorProfiles.siteId, input.siteId), eq(competitorProfiles.status, 'active')));
     const wanted = new Set(input.competitorIds);
-    return rows.filter((row) => wanted.has(row.id));
+    return (site ? excludeOwnSite(rows, site.domain) : rows).filter((row) => wanted.has(row.id));
 }
 import { COMPETITOR_PORTFOLIO_MAX_COMPETITORS } from '../../shared/safety/feature-limits.js';

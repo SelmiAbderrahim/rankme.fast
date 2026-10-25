@@ -11,23 +11,23 @@ export function clientReportSchedulerKey(scheduleId: string): string {
     return `client-report-${scheduleId}`;
 }
 const CLIENT_REPORT_SCHEDULER_PREFIX = 'client-report-';
-export function clientReportCron(schedule: Pick<ScheduledReportRow, 'frequency' | 'weekdayUtc' | 'monthdayUtc' | 'hourUtc' | 'minuteUtc'>): string {
+export function clientReportCron(schedule: Pick<ScheduledReportRow, 'frequency' | 'weekdayUtc' | 'monthdayUtc' | 'localHour' | 'minuteUtc'>): string {
     if (schedule.frequency === 'weekly') {
         if (schedule.weekdayUtc === null)
             throw new Error('weekly schedule needs weekdayUtc');
-        return `${schedule.minuteUtc} ${schedule.hourUtc} * * ${schedule.weekdayUtc}`;
+        return `${schedule.minuteUtc} ${schedule.localHour} * * ${schedule.weekdayUtc}`;
     }
     if (schedule.monthdayUtc === null)
         throw new Error('monthly schedule needs monthdayUtc');
-    return `${schedule.minuteUtc} ${schedule.hourUtc} ${schedule.monthdayUtc} * *`;
+    return `${schedule.minuteUtc} ${schedule.localHour} ${schedule.monthdayUtc} * *`;
 }
-export function nextClientReportRunAt(schedule: Pick<ScheduledReportRow, 'frequency' | 'weekdayUtc' | 'monthdayUtc' | 'hourUtc' | 'minuteUtc'>, from: Date): Date {
+export function nextClientReportRunAt(schedule: Pick<ScheduledReportRow, 'frequency' | 'weekdayUtc' | 'monthdayUtc' | 'localHour' | 'minuteUtc'>, from: Date): Date {
     if (Number.isNaN(from.getTime()))
         throw new Error('invalid schedule date');
     if (schedule.frequency === 'weekly') {
         if (schedule.weekdayUtc === null)
             throw new Error('weekly schedule needs weekdayUtc');
-        const candidate = new Date(Date.UTC(from.getUTCFullYear(), from.getUTCMonth(), from.getUTCDate(), schedule.hourUtc, schedule.minuteUtc));
+        const candidate = new Date(Date.UTC(from.getUTCFullYear(), from.getUTCMonth(), from.getUTCDate(), schedule.localHour, schedule.minuteUtc));
         let days = schedule.weekdayUtc - from.getUTCDay();
         if (days < 0 || (days === 0 && candidate.getTime() <= from.getTime()))
             days += 7;
@@ -38,14 +38,14 @@ export function nextClientReportRunAt(schedule: Pick<ScheduledReportRow, 'freque
         throw new Error('monthly schedule needs monthdayUtc');
     let year = from.getUTCFullYear();
     let month = from.getUTCMonth();
-    let candidate = new Date(Date.UTC(year, month, schedule.monthdayUtc, schedule.hourUtc, schedule.minuteUtc));
+    let candidate = new Date(Date.UTC(year, month, schedule.monthdayUtc, schedule.localHour, schedule.minuteUtc));
     if (candidate.getTime() <= from.getTime()) {
         month += 1;
         if (month > 11) {
             month = 0;
             year += 1;
         }
-        candidate = new Date(Date.UTC(year, month, schedule.monthdayUtc, schedule.hourUtc, schedule.minuteUtc));
+        candidate = new Date(Date.UTC(year, month, schedule.monthdayUtc, schedule.localHour, schedule.minuteUtc));
     }
     return candidate;
 }

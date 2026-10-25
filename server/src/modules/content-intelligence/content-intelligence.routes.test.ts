@@ -587,6 +587,42 @@ describe('content-intelligence service defensive paths', () => {
     expect(withoutRecommendationProjection.recommendationStates).toEqual([]);
   });
 
+  it('exposes the final address a redirected page was read at, with or without the recorded path', () => {
+    const date = new Date('2026-07-01T00:00:00.000Z');
+    const analysis = (owned: Record<string, unknown>) =>
+      toPublicAnalysis({
+        _id: new Types.ObjectId(), siteId: new Types.ObjectId(),
+        ownedUrl: 'https://example.com/', keyword: 'k', locale: 'en',
+        status: 'completed',
+        requestedAt: date,
+        owned: {
+          url: 'https://example.com/', title: 'Home', description: null,
+          canonical: null, language: 'en', wordCount: 100, headingCount: 2,
+          schemaTypes: [], hasSchemaOrgArticle: false, internalLinkCount: 1,
+          externalLinkCount: 1, contentHash: 'hash', excerpt: 'Evidence',
+          ...owned,
+        },
+      } as never);
+    expect(
+      analysis({
+        finalUrl: 'https://example.com/en',
+        redirectChain: [{ url: 'https://example.com/', status: 301 }],
+      }).owned,
+    ).toEqual({
+      url: 'https://example.com/',
+      contentHash: 'hash',
+      finalUrl: 'https://example.com/en',
+      redirectChain: [{ url: 'https://example.com/', status: 301 }],
+    });
+    expect(analysis({ finalUrl: 'https://example.com/en' }).owned).toEqual({
+      url: 'https://example.com/',
+      contentHash: 'hash',
+      finalUrl: 'https://example.com/en',
+      redirectChain: [],
+    });
+    expect(analysis({}).owned).toEqual({ url: 'https://example.com/', contentHash: 'hash' });
+  });
+
   it('returns service-level invalid-id and unsafe-url outcomes before spending', async () => {
     const badId = 'not-an-object-id';
     await expect(getAnalysis({ accountId: badId, analysisId: badId })).rejects.toMatchObject({ status: 404 });
@@ -886,6 +922,67 @@ describe('POST /api/sites/:siteId/content-analyses — ordering', () => {
     expect(await ContentAnalysis.countDocuments({ accountId: user.id })).toBe(1);
   });
 
+  it('rejects a pasted keyword list with a localized 400 instead of truncating', async () => {
+    const user = await signupVerifiedUser(app, {
+      email: 'kwlist@example.com',
+      password: 'CorrectHorseBattery9!',
+    });
+    const siteId = await addSite(user);
+    // Every separator shape is covered against the schema in
+    // content-intelligence.schema.test.ts; the route keeps one sample per
+    // path (the create bucket allows ten requests a minute).
+    for (const keyword of [
+      'a1, b2, c3, d4, e5, f6, g7',
+      'seo audit\nsite audit',
+    ]) {
+      for (const path of ['content-analyses', 'content-analyses/preflight']) {
+        const res = await request(app)
+          .post(`/api/sites/${siteId}/${path}`)
+          .set('Cookie', user.cookie)
+          .set('Accept-Language', 'fr')
+          .send({ ownedUrl: 'https://example.com/p', keyword, locale: 'en' });
+        expect(res.status).toBe(400);
+        expect(JSON.stringify(res.body)).toContain('Saisissez une seule requête');
+      }
+    }
+    expect(await ContentAnalysis.countDocuments({ siteId })).toBe(0);
+
+    // A trailing separator leaves one query and is accepted as that query.
+    const single = await request(app)
+      .post(`/api/sites/${siteId}/content-analyses`)
+      .set('Cookie', user.cookie)
+      .send({ ownedUrl: 'https://example.com/p', keyword: 'seo audit,', locale: 'en' });
+    expect(single.status).toBe(202);
+    expect((await ContentAnalysis.findOne({ siteId }).lean())?.keyword).toBe('seo audit,');
+  });
+
+  it('enforces the keyword length boundary exactly and never truncates', async () => {
+    const user = await signupVerifiedUser(app, {
+      email: 'kwlen@example.com',
+      password: 'CorrectHorseBattery9!',
+    });
+    const siteId = await addSite(user);
+    const atLimit = `${'word '.repeat(39)}wordsx`.slice(0, 200);
+    expect(atLimit).toHaveLength(200);
+    const over = `${atLimit}p`;
+    const path = `/api/sites/${siteId}/content-analyses`;
+
+    const tooLong = await request(app)
+      .post(`${path}/preflight`)
+      .set('Cookie', user.cookie)
+      .send({ ownedUrl: 'https://example.com/p', keyword: over, locale: 'en' });
+    expect(tooLong.status).toBe(400);
+    expect(JSON.stringify(tooLong.body)).toContain('200');
+    expect(await ContentAnalysis.countDocuments({ siteId })).toBe(0);
+
+    const ok = await request(app)
+      .post(path)
+      .set('Cookie', user.cookie)
+      .send({ ownedUrl: 'https://example.com/p', keyword: atLimit, locale: 'en' });
+    expect(ok.status).toBe(202);
+    expect((await ContentAnalysis.findOne({ siteId }).lean())?.keyword).toBe(atLimit);
+  });
+
   it('marks the run failed and records a failed event when enqueue throws', async () => {
     const user = await signupVerifiedUser(app, {
       email: 'enqueue-fail@example.com',
@@ -1117,6 +1214,50 @@ describe('GET / cancel / regenerate / list', () => {
       .get(`/api/content-analyses/${analysisId}?siteId=not-an-object-id`)
       .set('Cookie', user.cookie);
     expect(malformedSite.status).toBe(400);
+  });
+
+  it('GET exposes only the safe failure reason and page status, null for legacy failures', async () => {
+    const { user, siteId, analysisId } = await seedRun();
+    await ContentAnalysis.updateOne(
+      { _id: analysisId },
+      {
+        $set: {
+          status: 'failed',
+          error: {
+            category: 'owned_page_unusable',
+            messageKey: 'contentIntelligence.errors.ownedPageUnusable',
+            retryable: false,
+            terminal: true,
+            reason: 'http_error',
+            httpStatus: 403,
+          },
+        },
+      },
+    );
+    const res = await request(app)
+      .get(`/api/content-analyses/${analysisId}?siteId=${siteId}`)
+      .set('Cookie', user.cookie);
+    expect(res.status).toBe(200);
+    expect(res.body.error).toEqual({
+      category: 'owned_page_unusable',
+      messageKey: 'contentIntelligence.errors.ownedPageUnusable',
+      retryable: false,
+      terminal: true,
+      reason: 'http_error',
+      httpStatus: 403,
+      finalUrl: null,
+      redirectChain: [],
+      contentType: null,
+    });
+
+    await ContentAnalysis.collection.updateOne(
+      { _id: new Types.ObjectId(analysisId) },
+      { $unset: { 'error.reason': '', 'error.httpStatus': '' } },
+    );
+    const legacy = await request(app)
+      .get(`/api/content-analyses/${analysisId}?siteId=${siteId}`)
+      .set('Cookie', user.cookie);
+    expect(legacy.body.error).toMatchObject({ reason: null, httpStatus: null });
   });
 
   it('GET returns 404 for a non-existent id', async () => {

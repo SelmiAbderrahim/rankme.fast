@@ -91,6 +91,8 @@
     "viewAllLabel": "عرض الكل — {{section}}",
     "sitemapsLink": "عرض خرائط الموقع",
     "asOf": "البيانات حتى {{date}}",
+    "totalsNote": "إجماليات الموقع للفترة من {{start}} إلى {{end}}، مجمّعة من بيانات Search Console اليومية.",
+    "scopeNote": "يحسب Search Console كل قائمة على حدة، لذا قد يزيد مجموع صفوف القائمة قليلًا أو ينقص عن إجمالي الموقع.",
     "previousPeriod": "الفترة السابقة — النقرات: {{clicks}} · مرات الظهور: {{impressions}}",
     "reportLink": "شاهد البيانات الكاملة في تقريرك",
     "emptyTitle": "لا توجد بيانات بحث بعد",

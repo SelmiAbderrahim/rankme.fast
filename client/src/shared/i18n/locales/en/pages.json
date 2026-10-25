@@ -1,31 +1,56 @@
 {
   "workspaceTab": "Pages",
   "heading": "Pages",
-  "description": "Review each page using the best stored search data available for this site. Nothing is collected until you ask for it.",
-  "common": { "notAvailable": "Not available" },
+  "description": "Each page is shown with the search data already stored for this site. New data is only collected when you ask for it.",
+  "common": {
+    "notAvailable": "Not available"
+  },
   "actions": {
     "refresh": "Refresh",
     "refreshing": "Refreshing…",
-    "collectFallback": "Collect fallback data",
-    "connectGoogle": "Connect Google",
-    "reconnectGoogle": "Reconnect Google",
-    "selectProperty": "Select property",
+    "collectFallback": "Get ranking data",
     "retry": "Retry",
     "retryRefresh": "Try refresh again",
     "resetFilters": "Reset filters",
     "inspect": "Inspect page",
-    "openPage": "Open page in a new tab",
-    "reviewPlans": "Review plans"
+    "openPage": "Open page in a new tab"
   },
-  "range": { "label": "Date range", "7d": "7 days", "28d": "28 days", "90d": "90 days" },
+  "range": {
+    "label": "Date range",
+    "7d": "7 days",
+    "28d": "28 days",
+    "90d": "90 days"
+  },
   "sources": {
-    "gsc": { "label": "Google Search Console", "short": "GSC observed", "description": "Observed clicks, impressions, CTR, and average position from the selected rolling window." },
-    "dataforseo": { "label": "Fallback ranking snapshot", "short": "Ranking estimate", "description": "A point-in-time ranked-keyword snapshot. Clicks, impressions, and CTR are not available from this source." },
-    "demo": { "label": "Demo ranking snapshot", "short": "Demo estimate", "description": "Deterministic sample ranking data. It is not Google Search Console data or live DataForSEO data." },
-    "none": { "label": "No stored source", "short": "No source", "description": "No Search Console page data or fallback ranking snapshot has been stored yet." },
+    "gsc": {
+      "label": "Google Search Console",
+      "short": "GSC observed",
+      "description": "Observed clicks, impressions, CTR, and average position from the selected rolling window."
+    },
+    "dataforseo": {
+      "label": "Ranking snapshot",
+      "short": "Ranking estimate",
+      "description": "A point-in-time ranked-keyword snapshot. Clicks, impressions, and CTR are not available from this source."
+    },
+    "demo": {
+      "label": "Demo ranking snapshot",
+      "short": "Demo estimate",
+      "description": "Sample ranking data for demos. It is not Google Search Console data or live ranking data."
+    },
+    "none": {
+      "label": "No stored source",
+      "short": "No source",
+      "description": "No Search Console page data or ranking snapshot has been saved yet."
+    },
     "unmeasured": "Unmeasured"
   },
-  "status": { "ready": "Ready", "syncing": "Syncing", "empty": "Empty", "unavailable": "Unavailable", "stale": "Stale" },
+  "status": {
+    "ready": "Ready",
+    "syncing": "Syncing",
+    "empty": "Empty",
+    "unavailable": "Unavailable",
+    "stale": "Stale"
+  },
   "states": {
     "initialLoading": "Loading page data",
     "backgroundLoading": "Updating this view while keeping the previous data visible.",
@@ -34,35 +59,35 @@
     "ready": {
       "title": "Page data is ready",
       "gsc": "Stored Search Console page data is ready.",
-      "dataforseo": "The stored fallback ranking snapshot is ready.",
+      "dataforseo": "The saved ranking snapshot is ready.",
       "demo": "The stored demo ranking snapshot is ready.",
       "none": "No stored source is ready."
     },
     "syncing": {
       "title": "Search Console is syncing",
-      "gsc": "The first Search Console page collection is still pending or running. Fallback data is not shown in the meantime.",
-      "dataforseo": "Fallback ranking data is being prepared.",
+      "gsc": "The first Search Console page collection is still waiting or running. While Search Console is connected, this page shows only its data.",
+      "dataforseo": "The ranking snapshot is being prepared.",
       "demo": "Demo ranking data is being prepared.",
       "none": "A stored source is being prepared."
     },
     "empty": {
       "title": "No matching pages",
       "gsc": "Search Console returned no page rows for this selected rolling window.",
-      "dataforseo": "The fallback snapshot found no ranking pages for this market.",
+      "dataforseo": "The ranking snapshot found no ranking pages for this market.",
       "demo": "The demo snapshot contains no ranking pages for this context.",
-      "none": "Connect Search Console, or collect fallback data (this counts toward your usage)."
+      "none": "No search data is stored for these pages yet. Get ranking data to collect it."
     },
     "unavailable": {
       "title": "Page data is unavailable",
-      "gsc": "Search Console data is unavailable right now. Try again in a moment.",
+      "gsc": "Search Console data can't be read right now. Try again; this page won't switch to a ranking snapshot meanwhile.",
       "dataforseo": "The ranking provider could not produce a stored snapshot. Retry when the provider is available.",
       "demo": "Demo ranking data could not be loaded.",
-      "none": "No usable stored data yet. Connect Search Console or collect fallback data."
+      "none": "No saved page data is available. Connect Google, or get ranking data."
     },
     "stale": {
       "title": "Showing the last good data",
       "gsc": "Search Console freshness is uncertain or its latest refresh failed. The last successful rows remain visible.",
-      "dataforseo": "This ranking snapshot is older than the fallback cache freshness window or its latest refresh failed.",
+      "dataforseo": "This ranking snapshot is out of date, or its latest refresh failed.",
       "demo": "This demo snapshot is stale. The last successful rows remain visible.",
       "none": "The last stored state is stale."
     },
@@ -71,40 +96,31 @@
       "body": "The request did not complete. Check the connection and try again.",
       "retained": "The update failed, so the previous page data remains visible."
     },
-    "notFound": { "title": "Site or page data was not found" },
+    "notFound": {
+      "title": "Site or page data was not found"
+    },
     "refreshFailed": {
       "title": "Refresh failed",
       "body": "The last good data remains visible. Try the explicit refresh again when the source is available."
-    },
-    "cap": {
-      "title": "Fallback collection limit reached",
-      "body": "This fallback refresh needs one keyword lookup. Existing stored data remains available."
     }
-  },
-  "fallbackReasons": {
-    "gsc_not_connected": "Search Console is not connected for this workspace.",
-    "gsc_needs_reconnect": "The Google connection needs to be reconnected.",
-    "gsc_revoked": "Google access was revoked and must be reconnected.",
-    "gsc_property_unmatched": "The selected Search Console property does not cover this site."
   },
   "disclosure": {
     "observedAt": "Observed at",
-    "range": "Range meaning",
+    "range": "About the date range",
     "comparison": "Comparison",
     "market": "Market",
-    "rolling": "Rolling {{days}} days with the documented Search Console reporting lag",
-    "pointInTime": "Point-in-time ranking snapshot; {{days}} days changes history and comparison context, not the headline snapshot metrics",
+    "rolling": "Search Console data for the last {{range}}.",
+    "pointInTime": "This is one ranking snapshot. The date range changes only the history and comparison, not the totals.",
     "sincePreviousSync": "Since previous sync",
     "noPreviousSync": "No eligible previous sync",
     "marketValue": "Location {{location}}, language {{language}}",
     "notApplicable": "Not applicable",
-    "coverage": "Pages with search data: {{measured}} of {{inventory}}. Pages without: {{unmeasured}}.",
-    "reportingLag_zero": "Search Console data runs about {{count}} days behind.",
-    "reportingLag_one": "Search Console data runs about {{count}} day behind.",
-    "reportingLag_two": "Search Console data runs about {{count}} days behind.",
-    "reportingLag_few": "Search Console data runs about {{count}} days behind.",
-    "reportingLag_many": "Search Console data runs about {{count}} days behind.",
-    "reportingLag_other": "Search Console data runs about {{count}} days behind.",
+    "reportingLag_zero": "Google reports Search Console data about {{count}} days late, so the most recent days are missing.",
+    "reportingLag_one": "Google reports Search Console data about {{count}} day late, so the most recent day is missing.",
+    "reportingLag_two": "Google reports Search Console data about {{count}} days late, so the most recent days are missing.",
+    "reportingLag_few": "Google reports Search Console data about {{count}} days late, so the most recent days are missing.",
+    "reportingLag_many": "Google reports Search Console data about {{count}} days late, so the most recent days are missing.",
+    "reportingLag_other": "Google reports Search Console data about {{count}} days late, so the most recent days are missing.",
     "sampled": "The source reports sampled data.",
     "notSampled": "The source did not report sampling."
   },
@@ -132,10 +148,16 @@
     "allInsights": "All insights",
     "indexability": "Crawl indexability",
     "allIndexability": "All crawl states",
-    "indexabilityOptions": { "indexable": "Crawl-indexable", "non_indexable": "Not crawl-indexable" },
+    "indexabilityOptions": {
+      "indexable": "Crawl-indexable",
+      "non_indexable": "Not crawl-indexable"
+    },
     "visibility": "Search visibility",
     "allVisibility": "All visibility",
-    "visibilityOptions": { "measured": "Measured", "unmeasured": "Unmeasured" },
+    "visibilityOptions": {
+      "measured": "Measured",
+      "unmeasured": "Unmeasured"
+    },
     "sort": "Sort by",
     "direction": "Direction",
     "ascending": "Ascending",
@@ -161,7 +183,7 @@
     },
     "winning": {
       "label": "Winning",
-      "description": "Position or observed clicks improved materially since the previous successful sync."
+      "description": "The page gained positions and sits on page one or earned clicks, or its observed clicks grew materially since the previous successful sync."
     },
     "non_indexable_visibility": {
       "label": "Visible but not crawl-indexable",
@@ -193,7 +215,11 @@
     "position_change": "Position change",
     "click_change_pct": "Click change"
   },
-  "indexability": { "indexable": "Crawl-indexable", "nonIndexable": "Not crawl-indexable", "unknown": "Crawl state unknown" },
+  "indexability": {
+    "indexable": "Crawl-indexable",
+    "nonIndexable": "Not crawl-indexable",
+    "unknown": "Crawl state unknown"
+  },
   "crawlState": {
     "label": {
       "indexable": "Crawl-indexable",
@@ -259,7 +285,7 @@
     "filtered": "No page matches the current search and filters. Reset them to return to the full stored inventory.",
     "gsc": "Search Console returned no pages for this rolling window. Refresh stays with Search Console and does not switch sources.",
     "fallback": "The stored ranking snapshot contains no ranking pages for this market. Observed metrics remain unavailable.",
-    "none": "No page snapshot has been stored. Connect Google or explicitly collect fallback data."
+    "none": "No page data has been saved yet. Connect Google, or get ranking data."
   },
   "pagination": {
     "label": "Pages results pagination",
@@ -351,7 +377,7 @@
     "runAgain": "Run again"
   },
   "coverage": {
-    "pages_zero": "Canonical pages with search data: {{measured}} of {{count}}.",
+    "pages_zero": "No pages are listed yet.",
     "pages_one": "Canonical pages with search data: {{measured}} of {{count}}.",
     "pages_two": "Canonical pages with search data: {{measured}} of {{count}}.",
     "pages_few": "Canonical pages with search data: {{measured}} of {{count}}.",
@@ -371,5 +397,8 @@
     "redirects_other": "{{count}} listed addresses redirect to one of these pages and are counted as that page.",
     "inventoryLabel": "Canonical pages",
     "inventoryHelp": "Canonical pages are the unique pages we know about: indexable pages from your last audit plus pages with search data, each counted once. An address that redirects to one of them is listed but counted as that page."
+  },
+  "noData": {
+    "title": "No search data yet"
   }
 }

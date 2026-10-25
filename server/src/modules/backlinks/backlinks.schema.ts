@@ -10,5 +10,10 @@ export const backlinksListQuerySchema = z.object({
         .int()
         .positive()
         .optional(),
+    // Explicit fresh pull, sent after a refresh. Absent: a stored-data read.
+    fresh: z
+        .enum(['true', 'false'])
+        .optional()
+        .transform((value) => value === 'true'),
 });
 export type BacklinksListQuery = z.infer<typeof backlinksListQuerySchema>;

@@ -1,6 +1,6 @@
 ---
 title: 'Benachrichtigungen'
-description: 'Welche Benachrichtigungen heute auslösen, wie Exactly-once-Zustellung funktioniert und warum eine Ranking-Abfall-Regel konfigurierbar ist, bevor sie zustellen kann.'
+description: 'Welche Benachrichtigungen auslösen, wie Exactly-once-Zustellung funktioniert und wann eine Ranking-Abfall-Regel zustellt.'
 locale: de
 slug: alerts
 section: product
@@ -17,7 +17,7 @@ Sie legen Benachrichtigungsregeln je Site an. Zugestellt wird per E-Mail, per Sl
 
 Benachrichtigungen zu neuen und verlorenen verweisenden Domains. Sie lösen aus, nachdem zwei Linkprüfungen hintereinander abgeschlossen wurden, und jede Nachricht enthält den Vorher-Nachher-Beleg, der sie ausgelöst hat.
 
-Ranking-Abfall-Regeln lassen sich ebenfalls anlegen und speichern, stellen aber aus bestätigten Abfall-Beobachtungen zu, die die ausgelieferte Rankingpipeline noch nicht erzeugt. Backlink-Änderungen sind der Kanal, der heute auslöst.
+Ranking-Abfall-Regeln lösen erst aus, wenn ein Abfall bestätigt ist: Eine geplante Rankingprüfung findet den Abfall, und eine frische zweite Prüfung desselben Keywords im selben Markt zeigt ihn weiterhin. Erholt sich das Keyword oder kann die zweite Prüfung nicht laufen, bleibt die Regel still. Siehe [Bestätigte Ranking-Alerts](./confirmed-rank-alerts.de.md).
 
 ## Eine Nachricht je Änderung
 
@@ -27,9 +27,9 @@ Ihre erste Linkprüfung hat nichts zum Vergleichen und löst daher nie eine Nach
 
 Fällt ein Transport aus, wird die Zustellung als fehlgeschlagen protokolliert, statt endlos wiederholt zu werden. Dieselbe Änderung wird nie als zweite Nachricht verschickt.
 
-## Kanäle und Regelgrenzen
+## Kanäle
 
-E-Mail gibt es in jedem kostenpflichtigen Tarif; Slack und der generische Webhook setzen Pro oder höher voraus. Sie können bis zu 2 Regeln in Starter, 10 in Pro und 50 in Agency anlegen.
+E-Mail, Slack und der generische Webhook stehen alle zur Verfügung.
 
 Für Slack fügen Sie eine Incoming-Webhook-URL ein. Eine RankMeFast-Slack-App oder einen Bot gibt es nicht.
 

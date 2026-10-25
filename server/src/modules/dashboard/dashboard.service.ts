@@ -4,7 +4,7 @@ import type { Db } from '../../db/client.js';
 import { gscSearchAnalytics } from '../../db/schema/gsc.js';
 import { keywords } from '../../db/schema/keywords.js';
 import { freshnessStateFor } from '../../shared/observations/freshness-policy.js';
-import { AuditRun, ReportSnapshot } from '../audits/index.js';
+import { AuditRun, ReportSnapshot, countOpenFixNow, type StoredFindingCount } from '../audits/index.js';
 import { getConnection, readSitesGoogleReadiness } from '../google-connections/index.js';
 import { Site } from '../sites/index.js';
 import { readRankMovementForSite } from '../ranks/rank-movement.service.js';
@@ -59,17 +59,31 @@ export async function getSiteSummaries(input: SiteSummaryInput, db: Db, now = ne
     const previous = latest.get(id);
     if (!previous || String(ref._id) > String(previous._id)) latest.set(id, ref);
   }
-  const snapshots = succeeded.size === 0 ? [] : await ReportSnapshot.find({ accountId: input.accountId,
-    runId: { $in: [...succeeded.values()].map((run) => run._id) } },
-  { runId: 1, createdAt: 1, 'findings.ruleId': 1, 'findings.bucket': 1 })
-    .lean<Array<{ runId: Types.ObjectId; createdAt: Date;
-      findings: Array<{ ruleId: string; bucket: string }> }>>();
+  // Only what the open count needs is read: no URL lists, just their sizes.
+  const snapshots = succeeded.size === 0 ? [] : await ReportSnapshot.aggregate<{ runId: Types.ObjectId; createdAt: Date;
+    findings: StoredFindingCount[] }>([
+    { $match: { accountId: new Types.ObjectId(input.accountId),
+      runId: { $in: [...succeeded.values()].map((run) => run._id) } } },
+    { $project: { runId: 1, createdAt: 1, findings: { $map: { input: '$findings', as: 'finding', in: {
+      ruleId: '$$finding.ruleId', bucket: '$$finding.bucket',
+      affectedCount: { $size: { $ifNull: ['$$finding.affectedUrls', []] } },
+      notEvaluated: { $eq: ['$$finding.meta.insufficientData', true] } } } } } },
+  ]);
   const byRun = new Map(snapshots.map((snapshot) => [String(snapshot.runId), snapshot]));
   const counts = await db.select({ siteId: keywords.siteId, total: count() }).from(keywords)
     .where(and(eq(keywords.accountId, input.accountId), eq(keywords.active, true), inArray(keywords.siteId, ids)))
     .groupBy(keywords.siteId);
   const tracked = new Map(counts.map((row) => [row.siteId, row.total]));
 
+  const openCounts = new Map<string, number>();
+  await Promise.all(ids.map(async (id) => {
+    const success = succeeded.get(id);
+    const snapshot = success ? byRun.get(String(success._id)) : undefined;
+    if (success && snapshot) {
+      openCounts.set(id, await countOpenFixNow(db, { accountId: input.accountId, siteId: id,
+        runId: String(success._id), findings: snapshot.findings }));
+    }
+  }));
   return { summaries: ids.map((id) => {
     const last = latest.get(id);
     const lastAudit: LastAuditMetric = last?.finishedAt
@@ -82,9 +96,7 @@ export async function getSiteSummaries(input: SiteSummaryInput, db: Db, now = ne
     const openFixNow: OpenFixNowMetric = !success ? { state: 'unavailable', reason: 'no_audit' }
       : !snapshot || !asOf ? { state: 'unavailable', reason: 'report_missing' }
         : { state: freshnessStateFor('audit', asOf, now),
-          count: new Set(snapshot.findings.filter((finding) => finding.bucket === 'fix-now')
-            .map((finding) => finding.ruleId)).size,
-          asOf: asOf.toISOString() };
+          count: openCounts.get(id) as number, asOf: asOf.toISOString() };
     return { id, lastAudit, openFixNow, trackedKeywords: tracked.get(id) ?? 0 };
   }) };
 }

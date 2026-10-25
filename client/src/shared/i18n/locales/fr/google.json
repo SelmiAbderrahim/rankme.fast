@@ -91,6 +91,8 @@
     "viewAllLabel": "Tout afficher — {{section}}",
     "sitemapsLink": "Voir les sitemaps",
     "asOf": "Données jusqu'au {{date}}",
+    "totalsNote": "Totaux du site du {{start}} au {{end}}, additionnés à partir des données quotidiennes de Search Console.",
+    "scopeNote": "Search Console compte chaque liste séparément : les lignes d'une liste peuvent donc totaliser un peu plus ou un peu moins que le total du site.",
     "previousPeriod": "Période précédente — clics : {{clicks}} · impressions : {{impressions}}",
     "reportLink": "Voir toutes les données sur votre rapport",
     "emptyTitle": "Pas encore de données",

@@ -14,8 +14,11 @@ import { createHash } from 'node:crypto';
 import type { ContentDocument, ContentSourceProvider, } from '../../shared/providers/content-source.js';
 import type { KeywordProvider, RankProvider, SerpDevice, } from '../../shared/providers/types.js';
 import type { AiProfileRunner } from '../../shared/ai-profiles/runner.js';
-import { assertPublicUrlSafe } from '../../shared/security/url-safety.js';
-import { ProviderError, VendorAuthError } from '../../shared/providers/errors.js';
+import { assertPublicUrlSafe, UnsafeUrlError } from '../../shared/security/url-safety.js';
+import type { PageProbeResult, PageProber } from '../../shared/security/site-probe.js';
+import type { RedirectHop } from '../../shared/providers/types.js';
+import { ProviderError, VendorAuthError, VendorMalformedError, VendorTimeoutError, } from '../../shared/providers/errors.js';
+import type { ContentAnalysisFailureReason } from './content-analysis.model.js';
 import { ownedPageFactsSchema, keywordEvidenceSchema, serpEvidenceSchema, competitorEvidenceSchema, competitorFailureSchema, type CompetitorEvidence, type CompetitorFailure, type KeywordEvidence, type OwnedPageFacts, type SerpEvidence, } from './content-analysis.schemas.js';
 import { selectCompetitorCandidates } from './content-analysis.selectors.js';
 // ---------------------------------------------------------------------------
@@ -33,6 +36,13 @@ export interface StageContext {
     reviewedCompetitorUrls?: readonly string[];
 }
 export interface PipelineDeps {
+    /**
+     * First-party prober (SSRF-guarded, up to five redirects). When present the
+     * owned page is requested BEFORE the paid scrape: a redirect loop, an
+     * over-long chain, a non-HTML address, or a missing page fails early with
+     * its real cause, and a redirected page is scraped at its final address.
+     */
+    pageProber?: PageProber;
     contentSource: ContentSourceProvider;
     keyword: KeywordProvider;
     rank: RankProvider;
@@ -48,8 +58,21 @@ export type StageOutcome<T> = {
 } | {
     ok: false;
     code: string;
+    /** Bounded internal diagnostic (logs only) — never persisted or returned. */
     reason: string;
+    /** Safe, user-facing failure category (owned stage only). */
+    failureReason?: ContentAnalysisFailureReason;
+    /** The owned page's own HTTP status, only with `failureReason: 'http_error'`. */
+    httpStatus?: number;
+    /** What our own request to the owned page saw (owned stage only). */
+    fetchEvidence?: OwnedFetchEvidence;
 };
+/** Final address, redirect chain, and media type seen by our own request. */
+export interface OwnedFetchEvidence {
+    finalUrl?: string;
+    redirectChain?: RedirectHop[];
+    contentType?: string;
+}
 export function hashInputs(...parts: readonly string[]): string {
     return createHash('sha256').update(parts.join('|')).digest('hex');
 }
@@ -128,18 +151,142 @@ function usageMicros(usage: {
 // ---------------------------------------------------------------------------
 // Stage: collect_owned
 // ---------------------------------------------------------------------------
+/**
+ * Map a content-source rejection onto a safe, user-actionable category. The
+ * vendor message is only pattern-matched here (robots / access denial are
+ * reported as plain-error metadata by the adapters); it never leaves this
+ * function. Credential rejections have no page-level reason.
+ */
+export function classifyOwnedFetchError(err: unknown): ContentAnalysisFailureReason | undefined {
+    if (err instanceof VendorAuthError)
+        return undefined;
+    if (err instanceof UnsafeUrlError)
+        return 'unsafe_url';
+    if (err instanceof VendorTimeoutError)
+        return 'timeout';
+    if (err instanceof ProviderError && err.retryable)
+        return 'temporarily_unavailable';
+    const message = err instanceof Error ? err.message : '';
+    if (/robots/i.test(message))
+        return 'robots_blocked';
+    if (/forbidden|access denied/i.test(message))
+        return 'access_denied';
+    if (err instanceof VendorMalformedError && /byte ceiling/i.test(message))
+        return 'too_large';
+    return 'unreadable';
+}
+/** Probe failures that decide the outcome on their own, before any paid scrape. */
+function conclusiveProbeFailure(probe: PageProbeResult): {
+    reason: ContentAnalysisFailureReason;
+    httpStatus?: number;
+} | null {
+    const failure = probe.failure;
+    if (!failure)
+        return null;
+    switch (failure.kind) {
+        case 'redirect_loop':
+        case 'redirect_limit':
+        case 'unsafe_redirect':
+        case 'non_html':
+            return { reason: failure.kind };
+        case 'http_error':
+            // 404/410 after our HEAD→GET check: the page is gone. Other statuses
+            // (403, 429, 5xx) may be bot protection or a blip the scraper gets past.
+            return failure.statusCode === 404 || failure.statusCode === 410
+                ? { reason: 'http_error', httpStatus: failure.statusCode }
+                : null;
+        default:
+            return null;
+    }
+}
+function fetchEvidenceOf(probe: PageProbeResult): OwnedFetchEvidence {
+    return {
+        ...(probe.redirectChain.length > 0 && probe.finalUrl ? { finalUrl: probe.finalUrl } : {}),
+        ...(probe.redirectChain.length > 0 ? { redirectChain: probe.redirectChain } : {}),
+        ...(probe.contentType ? { contentType: probe.contentType } : {}),
+    };
+}
+/**
+ * When the scraper could not say why, our own request may know: a robots.txt
+ * exclusion or an HTTP status it saw. Anything the scraper classified more
+ * specifically wins.
+ */
+function refineWithProbe(failureReason: ContentAnalysisFailureReason | undefined, probe: PageProbeResult | undefined): {
+    failureReason?: ContentAnalysisFailureReason;
+    httpStatus?: number;
+} {
+    const vague = failureReason === undefined || failureReason === 'unreadable' || failureReason === 'empty_content';
+    const failure = probe?.failure;
+    if (vague && failure?.kind === 'robots_blocked')
+        return { failureReason: 'robots_blocked' };
+    if (vague && failure?.kind === 'http_error') {
+        return { failureReason: 'http_error', ...(failure.statusCode ? { httpStatus: failure.statusCode } : {}) };
+    }
+    if (vague && failure?.kind === 'timeout')
+        return { failureReason: 'timeout' };
+    return failureReason ? { failureReason } : {};
+}
 export async function runOwnedStage(ctx: StageContext, deps: PipelineDeps): Promise<StageOutcome<OwnedPageFacts>> {
+    let scrapeUrl = ctx.ownedUrl;
+    let probe: PageProbeResult | undefined;
+    let evidence: OwnedFetchEvidence | undefined;
+    if (deps.pageProber) {
+        probe = await deps.pageProber.probe(ctx.ownedUrl);
+        evidence = fetchEvidenceOf(probe);
+        const conclusive = conclusiveProbeFailure(probe);
+        if (conclusive) {
+            return {
+                ok: false,
+                code: 'owned_page_unusable',
+                reason: `owned page request: ${probe.failure!.kind}`,
+                failureReason: conclusive.reason,
+                ...(conclusive.httpStatus === undefined ? {} : { httpStatus: conclusive.httpStatus }),
+                fetchEvidence: evidence,
+            };
+        }
+        // A redirected page is read at its final address, not the entry address.
+        if (probe.finalUrl && probe.redirectChain.length > 0 && !probe.failure)
+            scrapeUrl = probe.finalUrl;
+    }
     try {
         const result = await deps.contentSource.scrapePage({
-            url: ctx.ownedUrl,
+            url: scrapeUrl,
             formats: ['markdown', 'metadata'],
             timeoutMs: SCRAPE_TIMEOUT_MS,
             maxCharacters: SCRAPE_MAX_CHARS,
         });
+        const status = result.document.statusCode;
+        if (status >= 400) {
+            // The page answered with an error status: scoring its error page would
+            // be meaningless. 429 / 5xx are usually transient → retryable fetch
+            // failure; other 4xx (404, 410, 401, 403 …) need the owner to act.
+            const transient = status === 429 || status >= 500;
+            return {
+                ok: false,
+                code: transient ? 'owned_fetch_failed' : 'owned_page_unusable',
+                reason: `owned page returned HTTP ${status}`,
+                failureReason: 'http_error',
+                httpStatus: status,
+                ...(evidence ? { fetchEvidence: evidence } : {}),
+            };
+        }
         const facts = factsFromDocument(result.document, ctx.ownedUrl);
-        const parsed = ownedPageFactsSchema.parse(facts);
+        const parsed = ownedPageFactsSchema.parse({
+            ...facts,
+            ...(evidence?.finalUrl && evidence.redirectChain
+                ? { finalUrl: evidence.finalUrl, redirectChain: evidence.redirectChain }
+                : {}),
+        });
         if (!isUsableOwned(parsed)) {
-            return { ok: false, code: 'owned_page_unusable', reason: 'no usable content' };
+            const refined = refineWithProbe('empty_content', probe);
+            return {
+                ok: false,
+                code: 'owned_page_unusable',
+                reason: 'no usable content',
+                ...(refined.failureReason ? { failureReason: refined.failureReason } : {}),
+                ...(refined.httpStatus === undefined ? {} : { httpStatus: refined.httpStatus }),
+                ...(evidence ? { fetchEvidence: evidence } : {}),
+            };
         }
         return { ok: true, artifact: parsed, costMicros: usageMicros(result.usage) };
     }
@@ -155,10 +302,14 @@ export async function runOwnedStage(ctx: StageContext, deps: PipelineDeps): Prom
             : err instanceof ProviderError && err.retryable
                 ? 'owned_fetch_failed'
                 : 'owned_page_unusable';
+        const refined = refineWithProbe(classifyOwnedFetchError(err), probe);
         return {
             ok: false,
             code,
             reason: err instanceof Error ? err.message.slice(0, 200) : 'scrape failed',
+            ...(refined.failureReason ? { failureReason: refined.failureReason } : {}),
+            ...(refined.httpStatus === undefined ? {} : { httpStatus: refined.httpStatus }),
+            ...(evidence ? { fetchEvidence: evidence } : {}),
         };
     }
 }

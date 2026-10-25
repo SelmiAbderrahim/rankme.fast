@@ -26,10 +26,11 @@ export interface LocalizedRuleCopy {
   why: string;
   fix: string;
   passedLabel: string;
-  titleKey: string;
-  whyKey: string;
-  fixKey: string;
-  passedLabelKey: string;
+  /** Message keys: on the full report (exports, public API); the report screen payload leaves them out. */
+  titleKey?: string;
+  whyKey?: string;
+  fixKey?: string;
+  passedLabelKey?: string;
   /** GSC-state-specific explanation — server-localized; present
    * on `not-indexed` / `index-partial` when the finding meta carried a
    * coverage/robots/fetch state. */
@@ -37,19 +38,125 @@ export interface LocalizedRuleCopy {
   reasonKey?: string;
 }
 
+/**
+ * How a finding compares with the previous audit. Mirrors
+ * `server/src/modules/audits/finding-comparison.ts`; `regressed` always means
+ * the previous run evaluated the check, `new` covers a check that was absent
+ * or not evaluated before.
+ */
+export type FindingComparisonStatus =
+  | 'new'
+  | 'regressed'
+  | 'improved'
+  | 'unchanged'
+  | 'resolved'
+  | 'not_comparable';
+
+/** Whether a check applies to the site at all. */
+export type FindingApplicability = 'applicable' | 'not_applicable';
+
+/** A measured page length behind a thin-content finding. */
+export interface FindingMeasurement {
+  url: string;
+  value: number;
+  unit: 'words' | 'characters';
+}
+
+/** The previous run a report compares with. */
+export interface ReportComparison {
+  previousRunId: string;
+  previous: { pageCap: number; pagesCrawled: number | null };
+  current: { pageCap: number; pagesCrawled: number | null };
+  scopeMismatch: boolean;
+}
+
+export type DismissalReason = 'false_positive' | 'wont_fix' | 'fixed_elsewhere' | 'other';
+export type FindingRecheckOutcome = 'still_failing' | 'cleared' | 'unverified';
+
+export interface FindingRecheck {
+  checkedAt: string;
+  totalUrls: number;
+  checked: number;
+  stillFailing: number;
+  cleared: number;
+  unverified: number;
+  results: Array<{ url: string; outcome: FindingRecheckOutcome; status: number | null }>;
+}
+
+/** GET …/findings/:ruleId/recheck: what a re-check would request. */
+export interface FindingRecheckPreview {
+  ruleId: string;
+  totalUrls: number;
+  urlCount: number;
+  lastRecheck: FindingRecheck | null;
+}
+
+/** A decision as the server applied it to the report (one `applyDismissals`). */
+export interface FindingDecision {
+  state: 'open' | 'planned' | 'dismissed' | 'completed';
+  regressed: boolean;
+  decidedAt: string;
+  decidedBy: string | null;
+  reason: DismissalReason | null;
+  affectedCountAtDismissal: number | null;
+  /** The newest audit's view of the rule; null when the site has no finished audit. */
+  latest: { runId: string; detected: boolean; affectedCount: number } | null;
+  /** Dismissed, but the newest audit counts more pages: counted as open again. */
+  resurfaced: { addedCount: number } | null;
+  recheckable: boolean;
+  recheck: FindingRecheck | null;
+}
+
+/** How a broken-link target fared when the audit requested it again. */
+export type BrokenLinkOutcome = 'confirmed' | 'unverified' | 'reported' | 'cleared';
+
+export type BrokenLinkFailureKind =
+  | 'http_error'
+  | 'redirect_loop'
+  | 'redirect_limit'
+  | 'unsafe_redirect'
+  | 'robots_blocked'
+  | 'timeout'
+  | 'non_html'
+  | 'unreachable';
+
+export interface BrokenLinkEvidenceRow {
+  source: string;
+  target: string;
+  outcome: BrokenLinkOutcome;
+  /** HTTP status of the re-request; `null` when there was no HTTP answer. */
+  status: number | null;
+  failure?: BrokenLinkFailureKind;
+  finalUrl?: string;
+}
+
 export interface LocalizedFinding {
   ruleId: string;
   bucket: RuleBucket;
   severity: RuleSeverity;
+  /** The report screen receives a preview; `affectedUrlCount` is the total. */
   affectedUrls: string[];
+  /** Total affected URLs when the server sent a preview; absent means `affectedUrls` is complete. */
+  affectedUrlCount?: number;
   codeFixPromptAvailable?: true;
   brokenLinkTargets?: string[];
+  /** Total broken-link targets when `brokenLinkTargets` is a preview. */
+  brokenLinkTargetCount?: number;
+  /** Every source → target pair behind a broken-links finding; confirmed first, dismissed last. */
+  brokenLinkEvidence?: BrokenLinkEvidenceRow[];
+  /** Total rows when `brokenLinkEvidence` was cut at the report bound. */
+  brokenLinkEvidenceTotal?: number;
   meta?: Record<string, unknown>;
   /** The check could not run (data source missing) — not an open problem. */
   notEvaluated?: true;
   /** Report category for the category filter; absent on older servers, `null` for an unknown id. */
   category?: ReportCategory | null;
   copy: LocalizedRuleCopy;
+  /** Absent on a first run, a check not evaluated now, or a passing check never measured before. */
+  comparisonStatus?: FindingComparisonStatus;
+  applicability?: FindingApplicability;
+  /** The site's decision on this Fix-now / Watch finding; absent = none. */
+  decision?: FindingDecision;
 }
 
 /** Mirrors the server's `RULE_CATEGORIES` (rules/categories.ts). */
@@ -82,6 +189,23 @@ export interface DiffEntry {
 export interface SnapshotDiff {
   entries: DiffEntry[];
   summary: Record<DiffKind, number>;
+}
+
+/**
+ * Full lists of one finding from GET /api/audits/:runId/findings/:ruleId/urls.
+ * The report carries a preview of each list; these load on demand.
+ */
+export interface FindingUrls {
+  ruleId: string;
+  affectedUrls: string[];
+  brokenLinkTargets: string[];
+  brokenLinkEvidence: BrokenLinkEvidenceRow[];
+  /** Measured length of every affected URL; absent on older responses. */
+  measurements?: FindingMeasurement[];
+  /** Per-URL change against the previous run; unchanged URLs are omitted. */
+  diff: Array<{ url: string; kind: DiffKind }>;
+  /** Full deep crawl evidence lists; absent on older responses. */
+  evidence?: Record<string, unknown[]>;
 }
 
 // ---------------------------------------------------------------------------
@@ -216,6 +340,35 @@ export interface AuditReportAiSummary {
   model: string;
   truncated: boolean;
   createdAt: string;
+  /** Rule ids of the open findings the summary was built from (its evidence). */
+  basisRuleIds?: string[];
+  /** Hash of the findings, dismissals and action states it was built from. */
+  inputHash?: string;
+  /** Status sentence + top items; absent on older, text-only summaries. */
+  structured?: AiSummaryStructured;
+}
+
+export type SummaryActArea = 'report' | 'pages' | 'google' | 'schema' | 'local-seo' | 'ai-visibility';
+
+export interface AiSummaryItem {
+  ruleId: string;
+  what: string;
+  why: string;
+  firstStep: string;
+  whereToAct: SummaryActArea;
+}
+
+export interface AiSummaryStructured {
+  status: string;
+  items: AiSummaryItem[];
+}
+
+/** Whether a stored summary still matches the findings that are open today. */
+export interface AuditSummaryFreshness {
+  stale: boolean;
+  reason: 'triage_changed' | null;
+  evidenceRuleIds: string[] | null;
+  changedRuleIds: string[];
 }
 
 export type AuditSummaryStatus =
@@ -225,11 +378,28 @@ export type AuditSummaryStatus =
   | 'succeeded'
   | 'failed';
 
+/** What a running summary job reports. */
+export type AuditSummaryStage = 'queued' | 'reading_findings' | 'checking_priorities' | 'writing_summary';
+export type AuditSummaryFailureCode = 'provider_unavailable' | 'timeout' | 'internal';
+
+export interface AuditSummaryProgress {
+  stage: AuditSummaryStage | null;
+  requestedAt: string;
+  startedAt: string | null;
+  finishedAt: string | null;
+  /** Server-measured time since the request, up to its end. */
+  elapsedMs: number;
+  failureCode: AuditSummaryFailureCode | null;
+}
+
 export interface AuditSummaryState {
   status: AuditSummaryStatus;
   aiSummary: AuditReportAiSummary | null;
   requestedLocale: SupportedLocale;
   availableLocales: SupportedLocale[];
+  freshness?: AuditSummaryFreshness | null;
+  /** Latest job of this locale; sent by the summary routes only. */
+  progress?: AuditSummaryProgress | null;
 }
 
 export interface AuditReportAiSummaryAvailability {
@@ -240,9 +410,23 @@ export interface AuditReportAiSummaryAvailability {
 
 export interface AuditReport {
   runId: string;
+  /** What the run's crawl recorded about itself; absent on older responses. */
+  crawl?: AuditCrawlSummary;
+  /** The site's newest finished audit; absent on older responses. */
+  latestRunId?: string | null;
+  /** `counts` without dismissed and fixed findings; absent on older responses. */
+  openCounts?: FindingCounts;
+  /** What `openCounts` leaves out. */
+  notCounted?: { dismissed: number; completed: number };
   counts: FindingCounts;
   findings: LocalizedFinding[];
+  /** Checks that do not apply to this site; absent on older responses. */
+  notApplicable?: LocalizedFinding[];
+  /** The owner marked the site as a local business. */
+  localBusiness?: boolean;
   diff: SnapshotDiff;
+  /** The run this report compares with; `null` on a first run. */
+  comparison?: ReportComparison | null;
   pageSpeed: PageSpeedSection | null;
   /** `null` on pre-feature snapshots — GscBlock renders the connect prompt. */
   gscSearch?: GscSearchSection | null;
@@ -266,6 +450,10 @@ export interface AuditReport {
    * entirely (byte-identical to the pre-feature UI).
    */
   aiSummaryEnabled?: boolean;
+  /** Set when the stored summary no longer matches the open findings. */
+  aiSummaryFreshness?: AuditSummaryFreshness | null;
+  /** Days after which an audit counts as out of date; the Actions evidence uses the same value. */
+  auditFreshDays?: number;
 }
 
 /** Rule ids driven by the PSI/CrUX pipeline. Report UI uses this to render
@@ -349,6 +537,8 @@ export interface ReportState {
   runStatus: PublicAuditRun['status'] | null;
   /** Crawl ceiling of the in-flight run, when known. */
   runPageCap: number | null;
+  /** When the run behind `report` finished; null without a report. */
+  reportRunAt: string | null;
   /** Recent audit runs for the report history block. */
   runs: PublicAuditRun[];
   runsLoading: boolean;

@@ -53,7 +53,7 @@ order: 0
 - [Bing、YouTube 与 Amazon 排名跟踪](./alt-engine-tracking.zh.md)：RankMeFast 如何跟踪非 Google 引擎、什么是精确目标标识，以及为什么 Amazon 位次是索引内位次。
 - [关键词自相蚕食](./cannibalization.zh.md)：RankMeFast 如何仅凭已存储的 Search Console 行，找出你有两个以上页面相互竞争的查询。
 - [有害链接与拒绝收录](./toxic-links.zh.md)：RankMeFast 如何用确定性评分规则对外链分档、AI 何时可以对某行作出注解，以及为什么拒绝收录文件绝不会代你提交。
-- [提醒](./alerts.zh.md)：目前哪些提醒会触发、恰好一次投递如何工作，以及为什么排名下跌规则可以先配置、之后才能投递。
+- [提醒](./alerts.zh.md)：哪些提醒会触发、恰好一次投递如何工作，以及排名下跌规则何时投递。
 - [内链建议](./internal-linking.zh.md)：RankMeFast 如何在你已保存的内容清单中找出孤立页与弱链接页，并给出引用其证据的锚文本草稿。
 - [内容简报](./content-briefs.zh.md)：简报如何基于已存的前十名搜索结果与至多十次页面抓取生成，以及为什么每个大纲节点都必须引用所提供的证据。
 - [本地网格排名跟踪](./geogrid.zh.md)：逐坐标的本地组合网格如何采集、失败单元格意味着什么，以及为什么坐标是手动输入而非在地图上点选。

@@ -1,7 +1,8 @@
 import { createHash, createHmac, timingSafeEqual } from 'node:crypto';
 import type { Db } from '../../db/client.js';
 import type { GscSearchAnalyticsSnapshotRow, PagePerformanceKeyword, PagePerformanceSnapshot } from '../../db/schema/index.js';
-import { readLatestAuditPageDetail, readLatestCompletedPageInventory, type AuditPageDetail, type AuditPageInventory } from '../audits/index.js';
+import { readLatestAuditPageDetail, readLatestCompletedPageInventory, resolveCrawlState, type AuditPageDetail, type AuditPageInventory, type AuditPageInventoryRow, } from '../audits/index.js';
+import type { CoverageProbe } from '../../shared/providers/index.js';
 import type { SupportedLocale } from '../../shared/i18n/index.js';
 import { resolveStoredPagesGscState, type StoredPagesGscState, } from '../google-connections/index.js';
 import { readLatestGscSyncRun, readLatestPagesGscSnapshot, readPagesGscHistory, readPagesGscSnapshotAtDate, readPreviousPagesGscSnapshot, type PagesGscSnapshot, } from '../gsc-snapshots/index.js';
@@ -10,9 +11,10 @@ import { loadOwnedSite } from '../sites/index.js';
 import { DEFAULT_PAGES_DIRECTIONS, PAGES_INSIGHTS, type PagesInsight, type PagesListQuery, type PagesRange, type PagesSort, } from './pages.schema.js';
 import { createPagesRepository, type PagesRepository, } from './pages.repository.js';
 import type { PagesFallbackRefreshService } from './fallback-refresh.service.js';
-import { resolvePagesFallbackMarket, type PagesFallbackMarket } from './market-resolver.js';
+import { resolvePagesFallbackMarket, type PagesFallbackMarket, type PagesSiteMarket, } from './market-resolver.js';
 import { canonicalizePageUrl } from './url-normalizer.js';
-import type { PageMetrics, PageQueryRow, PageRow, PagesCoverage, PagesDetailResponse, PagesEnvelope, PagesFallbackReason, PagesListResponse, PagesRefreshResponse, PagesSource, PagesStatus, TrendPoint, } from './pages.types.js';
+import { describePositionChange } from '../../shared/utils/position-change.js';
+import type { PageAssociatedQueryState, PageDeltas, PageMetrics, PageQueryRow, PageRow, PagesCoverage, PagesDetailResponse, PagesEnvelope, PagesFallbackReason, PagesListResponse, PagesRefreshResponse, PagesSource, PagesStatus, TrendPoint, } from './pages.types.js';
 const DAY_MS = 24 * 60 * 60 * 1000;
 const GSC_STALE_MS = 48 * 60 * 60 * 1000;
 const CURSOR_TTL_MS = DAY_MS;
@@ -28,8 +30,16 @@ interface SiteShape {
     id: string;
     url: string;
     domain: string;
+    /** The site's default market drives the fallback snapshot market. */
+    defaultMarket?: PagesSiteMarket | null;
 }
-interface MaterialPage extends PageRow {
+interface MaterialPage extends Omit<PageRow, 'associatedQueryState'> {
+    /**
+     * pageId of the listed page this URL is another address of (a redirect
+     * source, or the un-prefixed twin of a locale page). Such a row stays in
+     * the list, labelled, but is not a separate page in the inventory count.
+     */
+    aliasOf?: string;
     associated: PageQueryRow[];
     searchText: string;
     weight: number;
@@ -95,11 +105,20 @@ function nullMetrics(source: PagesSource = 'none'): PageMetrics {
         searchVolume: null,
         difficulty: null,
         estimatedTraffic: null,
-        associatedQueryCount: 0,
+        associatedQueryCount: null,
     };
 }
 function hash(value: string): string {
     return createHash('sha256').update(value, 'utf8').digest('hex');
+}
+/** Inclusive `[endDate - (days - 1), endDate]` window of a GSC snapshot. */
+function gscDataWindow(endDate: string, days: number): {
+    startDate: string;
+    endDate: string;
+} {
+    const end = new Date(`${endDate}T00:00:00.000Z`);
+    const start = new Date(end.getTime() - (days - 1) * 86_400_000);
+    return { startDate: start.toISOString().slice(0, 10), endDate };
 }
 function rangeDays(range: PagesRange): 7 | 28 | 90 {
     return Number.parseInt(range, 10) as 7 | 28 | 90;
@@ -128,21 +147,41 @@ function weightedAverage(rows: readonly {
         ? finite(known.reduce((sum, row) => sum + row.value, 0) / known.length)
         : null;
 }
-function deltas(current: PageMetrics, previous: PageMetrics | null): {
-    positionChange: number | null;
-    clickChangePct: number | null;
-} {
-    const positionChange = current.averagePosition !== null && previous?.averagePosition !== null && previous?.averagePosition !== undefined
-        ? previous.averagePosition - current.averagePosition
+/**
+ * `positionChange` stays `previous − current` (positive = closer to #1) for the
+ * sort and the insight rules; `position` is the explicit contract the UI
+ * renders, so no reader has to guess which way the signed number points.
+ */
+function deltas(current: PageMetrics, previous: PageMetrics | null, range: PagesRange): PageDeltas {
+    const previousPosition = previous?.averagePosition ?? null;
+    const positionChange = current.averagePosition !== null && previousPosition !== null
+        ? previousPosition - current.averagePosition
         : null;
     const clickChangePct = current.clicks !== null && previous?.clicks !== null && previous?.clicks !== undefined && previous.clicks !== 0
         ? (current.clicks - previous.clicks) / previous.clicks
         : null;
-    return { positionChange, clickChangePct };
+    return {
+        positionChange,
+        clickChangePct,
+        position: describePositionChange(current.averagePosition, previousPosition, { range, comparison: 'previous_sync' }),
+    };
 }
-export function classifyPageInsights(row: Pick<PageRow, 'performanceSource' | 'isIndexable' | 'metrics' | 'deltas'>, previousClicks: number | null): PagesInsight[] {
+/**
+ * Below this many observed Search Console impressions, with no click, a page
+ * has too little evidence for a movement label: a three-position swing at
+ * position 50 on three impressions is noise, not a win or a loss.
+ */
+export const PAGES_MIN_EVIDENCE_IMPRESSIONS = 20;
+/** A position-driven "winning" label needs a first-page result or a real click. */
+export const PAGES_WINNING_MAX_POSITION = 10;
+export function classifyPageInsights(row: Pick<PageRow, 'performanceSource' | 'isIndexable' | 'metrics'> & {
+    deltas: Pick<PageDeltas, 'positionChange' | 'clickChangePct'>;
+}, previousClicks: number | null): PagesInsight[] {
     const { metrics, deltas: change } = row;
     const insights: PagesInsight[] = [];
+    const lowData = row.performanceSource === 'gsc' &&
+        (metrics.clicks ?? 0) <= 0 &&
+        (metrics.impressions ?? 0) < PAGES_MIN_EVIDENCE_IMPRESSIONS;
     if (metrics.averagePosition !== null &&
         metrics.averagePosition > 3 &&
         metrics.averagePosition <= 20 &&
@@ -155,14 +194,19 @@ export function classifyPageInsights(row: Pick<PageRow, 'performanceSource' | 'i
         metrics.ctr !== null &&
         metrics.ctr < 0.02)
         insights.push('low_ctr');
-    if ((change.positionChange !== null && change.positionChange <= -3) ||
-        (row.performanceSource === 'gsc' && previousClicks !== null && previousClicks >= 10 && change.clickChangePct !== null && change.clickChangePct <= -0.2))
+    if (!lowData && ((change.positionChange !== null && change.positionChange <= -3) ||
+        (row.performanceSource === 'gsc' && previousClicks !== null && previousClicks >= 10 && change.clickChangePct !== null && change.clickChangePct <= -0.2)))
         insights.push('declining');
-    if ((change.positionChange !== null && change.positionChange >= 3) ||
-        (row.performanceSource === 'gsc' && previousClicks !== null && previousClicks >= 10 && change.clickChangePct !== null && change.clickChangePct >= 0.2))
+    if (!lowData && ((change.positionChange !== null &&
+        change.positionChange >= 3 &&
+        ((metrics.averagePosition !== null && metrics.averagePosition <= PAGES_WINNING_MAX_POSITION) ||
+            (metrics.clicks ?? 0) > 0)) ||
+        (row.performanceSource === 'gsc' && previousClicks !== null && previousClicks >= 10 && change.clickChangePct !== null && change.clickChangePct >= 0.2)))
         insights.push('winning');
     if (row.isIndexable === false && row.performanceSource !== null)
         insights.push('non_indexable_visibility');
+    if (lowData)
+        insights.push('low_data');
     if (row.performanceSource === null)
         insights.push('unmeasured');
     return PAGES_INSIGHTS.filter((insight) => insights.includes(insight));
@@ -200,7 +244,8 @@ function aggregateGsc(rows: readonly GscSearchAnalyticsSnapshotRow[]): PageMetri
         searchVolume: null,
         difficulty: null,
         estimatedTraffic: null,
-        associatedQueryCount: 0,
+        // Filled by the caller once it knows whether per-query rows were stored.
+        associatedQueryCount: null,
     };
 }
 function associatedFallback(rows: readonly PagePerformanceKeyword[]): PageQueryRow[] {
@@ -257,8 +302,10 @@ function emptyCoverage(source: PagesSource): PagesCoverage {
         auditRowsDropped: 0,
         auditTruncated: false,
         inventoryPages: 0,
+        redirectPages: 0,
         measuredPages: 0,
         unmeasuredPages: 0,
+        lastCrawl: null,
     };
 }
 function fallbackStatus(snapshot: PagePerformanceSnapshot, now: Date): PagesStatus {
@@ -273,7 +320,22 @@ function materialCacheState(material: SourceMaterial): 'hit' | 'miss' | 'not_app
         ? material.sourceSnapshot.cacheStatus
         : 'not_applicable';
 }
-function mergeAudit(pages: Map<string, MaterialPage>, audit: AuditPageInventory, siteUrl: string, coverage: PagesCoverage): void {
+/** What the last completed crawl knows about each URL, keyed by page hash. */
+interface CrawlContext {
+    hasCompletedCrawl: boolean;
+    rows: Map<string, {
+        row: AuditPageInventoryRow;
+        displayUrl: string;
+    }>;
+    probes: Map<string, CoverageProbe>;
+}
+function mergeAudit(pages: Map<string, MaterialPage>, audit: AuditPageInventory, siteUrl: string, coverage: PagesCoverage, range: PagesRange): CrawlContext {
+    const crawl: CrawlContext = {
+        hasCompletedCrawl: audit.runId !== null,
+        rows: new Map(),
+        probes: new Map(),
+    };
+    coverage.lastCrawl = audit.lastCrawl ?? null;
     const seen = new Set<string>();
     for (const row of audit.rows) {
         const canonical = canonicalizePageUrl(row.url, siteUrl);
@@ -286,6 +348,7 @@ function mergeAudit(pages: Map<string, MaterialPage>, audit: AuditPageInventory,
             continue;
         }
         seen.add(canonical.value.pageHash);
+        crawl.rows.set(canonical.value.pageHash, { row, displayUrl: canonical.value.displayUrl });
         coverage.auditRowsAccepted += 1;
         const existing = pages.get(canonical.value.pageHash);
         if (existing) {
@@ -306,8 +369,10 @@ function mergeAudit(pages: Map<string, MaterialPage>, audit: AuditPageInventory,
             isIndexable: true,
             nonIndexableReason: row.nonIndexableReason,
             onPageScore: row.onPageScore,
+            crawlState: 'no_crawl',
+            crawlEvidence: null,
             metrics: nullMetrics(),
-            deltas: { positionChange: null, clickChangePct: null },
+            deltas: { positionChange: null, clickChangePct: null, position: describePositionChange(null, null, { range, comparison: 'previous_sync' }) },
             insights: ['unmeasured'],
             associated: [],
             searchText: '',
@@ -315,10 +380,101 @@ function mergeAudit(pages: Map<string, MaterialPage>, audit: AuditPageInventory,
             previousClicks: null,
         });
     }
+    joinLocaleTwins(pages, audit, siteUrl);
+    for (const probe of audit.coverageProbes ?? []) {
+        const canonical = canonicalizePageUrl(probe.url, siteUrl);
+        if (canonical.ok)
+            crawl.probes.set(canonical.value.pageHash, probe);
+    }
+    return crawl;
 }
-function finishPages(pages: Map<string, MaterialPage>, coverage: PagesCoverage): MaterialPage[] {
+/** `/en`, `/en-us`, `/pt-BR`: a leading locale segment. */
+const LOCALE_SEGMENT = /^\/[a-z]{2}(?:-[a-z]{2,4})?(?=\/|$)/i;
+function pathOf(url: string): string {
+    return new URL(url).pathname;
+}
+/**
+ * Search engines often report the un-prefixed URL (`/pricing`) of a site
+ * that redirects to a locale (`/en/pricing`), while the crawl only records
+ * the locale page. When exactly one crawled indexable page is that URL with
+ * a locale segment in front, borrow its title and name it, so the measured
+ * row is not an anonymous untitled page. Ambiguous twins (several locales)
+ * are left alone.
+ */
+function joinLocaleTwins(pages: Map<string, MaterialPage>, audit: AuditPageInventory, siteUrl: string): void {
+    const byUnprefixedPath = new Map<string, Array<{
+        pageId: string;
+        displayUrl: string;
+        title: string | null;
+    }>>();
+    for (const row of audit.rows) {
+        if (!row.isIndexable)
+            continue;
+        const canonical = canonicalizePageUrl(row.url, siteUrl);
+        if (!canonical.ok)
+            continue;
+        const path = pathOf(canonical.value.canonicalUrl);
+        const locale = LOCALE_SEGMENT.exec(path);
+        if (!locale)
+            continue;
+        const unprefixed = path.slice(locale[0].length) || '/';
+        const twins = byUnprefixedPath.get(unprefixed) ?? [];
+        twins.push({ pageId: canonical.value.pageHash, displayUrl: canonical.value.displayUrl, title: row.title });
+        byUnprefixedPath.set(unprefixed, twins);
+    }
+    for (const page of pages.values()) {
+        if (page.performanceSource === null || page.isIndexable !== null)
+            continue;
+        const twins = byUnprefixedPath.get(pathOf(page.url));
+        if (twins?.length !== 1)
+            continue;
+        const twin = twins[0]!;
+        page.title = twin.title;
+        page.crawledAs = twin.displayUrl;
+        page.aliasOf = twin.pageId;
+    }
+}
+function finishPages(pages: Map<string, MaterialPage>, coverage: PagesCoverage, crawl: CrawlContext, siteUrl: string): MaterialPage[] {
     const result = [...pages.values()];
     for (const page of result) {
+        const crawled = crawl.rows.get(page.pageId);
+        const probe = crawled ? undefined : crawl.probes.get(page.pageId);
+        const resolved = resolveCrawlState({
+            hasCompletedCrawl: crawl.hasCompletedCrawl,
+            row: crawled?.row ?? null,
+            probe: probe ?? null,
+        });
+        page.crawlState = resolved.state;
+        page.crawlEvidence = resolved.evidence;
+        // A URL that redirects to a page the crawl DID return is that page: name
+        // it, and borrow its title when we have none (root `/` → `/en`).
+        if (probe?.finalUrl && !page.crawledAs) {
+            const target = canonicalizePageUrl(probe.finalUrl, siteUrl);
+            const destination = target.ok ? crawl.rows.get(target.value.pageHash) : undefined;
+            if (destination) {
+                page.crawledAs = destination.displayUrl;
+                page.redirectsTo = destination.displayUrl;
+                // `destination` is only found through a parsed target.
+                page.aliasOf = (target as {
+                    value: {
+                        pageHash: string;
+                    };
+                }).value.pageHash;
+                // A page with no crawledAs yet has no twin-borrowed title either.
+                page.title = destination.row.title;
+            }
+        }
+        // The crawl itself fetched this URL and was redirected to a page it also
+        // fetched: one page, two addresses.
+        const crawledTarget = crawled?.row.finalUrl ? canonicalizePageUrl(crawled.row.finalUrl, siteUrl) : null;
+        if (crawledTarget?.ok && crawledTarget.value.pageHash !== page.pageId) {
+            const destination = crawl.rows.get(crawledTarget.value.pageHash);
+            if (destination) {
+                page.redirectsTo = destination.displayUrl;
+                page.aliasOf = crawledTarget.value.pageHash;
+                page.title ??= destination.row.title;
+            }
+        }
         page.insights = classifyPageInsights(page, page.previousClicks);
         page.searchText = [
             page.url,
@@ -327,10 +483,38 @@ function finishPages(pages: Map<string, MaterialPage>, coverage: PagesCoverage):
             ...page.associated.map((row) => row.query),
         ].join('\u0000').normalize('NFKC').toLowerCase();
     }
-    coverage.inventoryPages = result.length;
-    coverage.measuredPages = result.filter((row) => row.performanceSource !== null).length;
-    coverage.unmeasuredPages = result.length - coverage.measuredPages;
+    // Inventory = unique canonical pages: a redirect source (or un-prefixed
+    // twin) of a listed page is the same page and is not counted twice. Its
+    // search data still counts toward the page it leads to.
+    const listed = new Set(result.map((page) => page.pageId));
+    const canonicalOf = (page: MaterialPage): string => page.aliasOf !== undefined && listed.has(page.aliasOf)
+        ? page.aliasOf
+        : page.pageId;
+    const canonical = new Set(result.map(canonicalOf));
+    const measured = new Set(result.filter((page) => page.performanceSource !== null).map(canonicalOf));
+    coverage.inventoryPages = canonical.size;
+    coverage.redirectPages = result.length - canonical.size;
+    coverage.measuredPages = measured.size;
+    coverage.unmeasuredPages = canonical.size - measured.size;
     return result;
+}
+/**
+ * Why a page's `associatedQueryCount` reads the way it does:
+ * - `unavailable`: nothing stored lets us count queries for this page (an
+ *   audit-only page, or Search Console page rows without a query snapshot);
+ *   the count is `null`, never a fake zero.
+ * - `anonymized`: Search Console reported impressions or clicks for the page
+ *   but no query text (Google withholds rare, privacy-sensitive queries), so
+ *   the count is a real 0 *visible* queries.
+ * - `observed`: the count is the number of stored query/keyword rows.
+ */
+export function associatedQueryState(row: Pick<PageRow, 'performanceSource' | 'metrics'>): PageAssociatedQueryState {
+    const { associatedQueryCount, impressions, clicks } = row.metrics;
+    if (row.performanceSource === null || associatedQueryCount === null)
+        return 'unavailable';
+    if (associatedQueryCount === 0 && ((impressions ?? 0) > 0 || (clicks ?? 0) > 0))
+        return 'anonymized';
+    return 'observed';
 }
 function publicPage(page: MaterialPage): PageRow {
     return {
@@ -342,9 +526,14 @@ function publicPage(page: MaterialPage): PageRow {
         isIndexable: page.isIndexable,
         nonIndexableReason: page.nonIndexableReason,
         onPageScore: page.onPageScore,
+        crawlState: page.crawlState,
+        crawlEvidence: page.crawlEvidence,
         metrics: page.metrics,
+        associatedQueryState: associatedQueryState(page),
         deltas: page.deltas,
         insights: page.insights,
+        ...(page.crawledAs ? { crawledAs: page.crawledAs } : {}),
+        ...(page.redirectsTo ? { redirectsTo: page.redirectsTo } : {}),
     };
 }
 function summaryFor(pages: readonly MaterialPage[], source: PagesSource): PageMetrics {
@@ -367,18 +556,38 @@ function summaryFor(pages: readonly MaterialPage[], source: PagesSource): PageMe
         searchVolume: source === 'gsc' ? null : sumKnown(measured.map((page) => page.metrics.searchVolume)),
         difficulty: source === 'gsc' ? null : weightedAverage(measured.filter((page) => page.metrics.difficulty !== null).map((page) => ({ value: page.metrics.difficulty!, weight: page.metrics.searchVolume ?? 0 }))),
         estimatedTraffic: source === 'gsc' ? null : sumKnown(measured.map((page) => page.metrics.estimatedTraffic)),
-        associatedQueryCount: measured.reduce((sum, page) => sum + page.metrics.associatedQueryCount, 0),
+        associatedQueryCount: sumKnown(measured.map((page) => page.metrics.associatedQueryCount)),
     };
 }
-function primary(row: PageRow, sort: PagesSort): string | number | null {
-    const severity = ['non_indexable_visibility', 'declining', 'striking_distance', 'low_ctr', 'winning', 'unmeasured'];
-    if (sort === 'opportunity') {
-        const ranks = row.insights.map((value) => severity.indexOf(value)).filter((value) => value >= 0);
-        // Opportunity defaults to descending. Give the most urgent flag the
-        // largest score so the documented severity order is preserved, while an
-        // explicit ascending direction still produces the exact reverse order.
-        return ranks.length ? severity.length - Math.min(...ranks) : 0;
-    }
+/**
+ * Opportunity tiers, most urgent first. Only actionable flags earn a tier;
+ * `low_data` and a measured page without flags share tier 0, and an
+ * unmeasured page has no opportunity score at all (null sorts last in both
+ * directions), so audit-only rows never outrank measured pages.
+ */
+const OPPORTUNITY_TIERS: Partial<Record<PagesInsight, number>> = {
+    non_indexable_visibility: 5,
+    declining: 4,
+    striking_distance: 3,
+    low_ctr: 2,
+    winning: 1,
+};
+/**
+ * Tier plus a bounded evidence fraction in [0, 1): within one tier the page
+ * with more observed impressions (or, for ranking estimates, search volume or
+ * estimated traffic) ranks first, and a zero-evidence page ranks last.
+ */
+export function opportunityScore(row: Pick<PageRow, 'performanceSource' | 'insights' | 'metrics'>): number | null {
+    if (row.performanceSource === null)
+        return null;
+    const tier = Math.max(0, ...row.insights.map((insight) => OPPORTUNITY_TIERS[insight] ?? 0));
+    const evidence = Math.max(row.metrics.impressions ?? row.metrics.searchVolume ?? row.metrics.estimatedTraffic ?? 0, 0);
+    // Capped below 1 so a huge value can never round up into the next tier.
+    return tier + Math.min(evidence / (evidence + 1), 1 - 1e-9);
+}
+function primary(row: Pick<PageRow, 'url' | 'title' | 'metrics' | 'deltas' | 'performanceSource' | 'insights'>, sort: PagesSort): string | number | null {
+    if (sort === 'opportunity')
+        return opportunityScore(row);
     if (sort === 'url')
         return row.url;
     if (sort === 'title')
@@ -459,7 +668,15 @@ export function createPagesService(deps: PagesServiceDeps): PagesService {
     const loadSite = deps.loadSite ?? (async (accountId, siteId) => {
         try {
             const site = await loadOwnedSite(accountId, siteId, { allowPaused: true });
-            return { id: String(site._id), url: site.url, domain: site.domain };
+            const market = site.defaultMarket;
+            return {
+                id: String(site._id),
+                url: site.url,
+                domain: site.domain,
+                defaultMarket: market
+                    ? { locationCode: market.locationCode, languageCode: market.languageCode }
+                    : null,
+            };
         }
         catch {
             throw new PagesError(404, 'PAGES_SITE_NOT_FOUND', 'pages.errors.siteNotFound');
@@ -469,7 +686,7 @@ export function createPagesService(deps: PagesServiceDeps): PagesService {
     const readAudit = deps.readAudit ?? ((accountId, siteId) => readLatestCompletedPageInventory(accountId, siteId));
     const readAuditPageDetail = deps.readAuditPageDetail ?? readLatestAuditPageDetail;
     async function fallbackMaterial(accountId: string, site: SiteShape, range: PagesRange, gscState: StoredPagesGscState): Promise<SourceMaterial> {
-        const market = await resolvePagesFallbackMarket(deps.db, accountId, site.id);
+        const market = await resolvePagesFallbackMarket(deps.db, accountId, site.id, site.defaultMarket);
         const source = deps.providerSelection === 'fake' ? 'demo' : 'dataforseo';
         const latest = await repository.readLatest({ accountId, siteId: site.id, source, ...market });
         const audit = await readAudit(accountId, site.id);
@@ -478,15 +695,19 @@ export function createPagesService(deps: PagesServiceDeps): PagesService {
         coverage.auditTruncated = audit.truncated;
         if (!latest) {
             const pages = new Map<string, MaterialPage>();
-            mergeAudit(pages, audit, site.url, coverage);
-            const finished = finishPages(pages, coverage);
-            const status: PagesStatus = gscState.fallbackReason === 'gsc_not_connected' ? 'empty' : 'unavailable';
+            const crawl = mergeAudit(pages, audit, site.url, coverage, range);
+            const finished = finishPages(pages, coverage, crawl, site.url);
+            // Search Console not being usable is a configuration state the shared
+            // Google readiness notice explains, not a source failure, so it never
+            // renders as "unavailable".
+            const status: PagesStatus = 'empty';
             return {
                 site,
                 envelope: {
                     source: 'none', status, fallbackReason: gscState.fallbackReason as PagesFallbackReason,
                     observedAt: null, staleAt: null, range, rangeSemantics: 'point_in_time',
                     comparison: { label: 'since_previous_sync', previousObservedAt: null },
+                    dataWindow: null,
                     market, coverage,
                 },
                 pages: finished,
@@ -521,12 +742,13 @@ export function createPagesService(deps: PagesServiceDeps): PagesService {
             pages.set(pageId, {
                 pageId, url: rows[0]!.canonicalUrl, displayUrl: rows[0]!.displayUrl, title: null,
                 performanceSource: source, isIndexable: null, nonIndexableReason: null, onPageScore: null,
-                metrics, deltas: deltas(metrics, previousMetrics), insights: [], associated,
+                crawlState: 'no_crawl', crawlEvidence: null,
+                metrics, deltas: deltas(metrics, previousMetrics, range), insights: [], associated,
                 searchText: '', weight: metrics.searchVolume ?? rows.length, previousClicks: null,
             });
         }
-        mergeAudit(pages, audit, site.url, coverage);
-        const finished = finishPages(pages, coverage);
+        const crawl = mergeAudit(pages, audit, site.url, coverage, range);
+        const finished = finishPages(pages, coverage, crawl, site.url);
         const status = fallbackStatus(latest, now());
         return {
             site,
@@ -536,6 +758,7 @@ export function createPagesService(deps: PagesServiceDeps): PagesService {
                 staleAt: new Date(latest.cacheFetchedAt.getTime() + SITE_RANKED_KEYWORD_CACHE_TTL_MS).toISOString(),
                 range, rangeSemantics: 'point_in_time',
                 comparison: { label: 'since_previous_sync', previousObservedAt: comparable?.observedAt.toISOString() ?? null },
+                dataWindow: null,
                 market, coverage,
             },
             pages: finished,
@@ -620,15 +843,19 @@ export function createPagesService(deps: PagesServiceDeps): PagesService {
             group.push(row);
             associatedGroups.set(canonical.value.pageHash, group);
         }
+        const hasStoredQueries = (querySnapshot?.rows.length ?? 0) > 0;
         for (const [pageId, group] of currentGroups) {
             const metrics = aggregateGsc(group.rows);
             const previousMetrics = previousGroups.has(pageId) ? aggregateGsc(previousGroups.get(pageId)!) : null;
             const associated = associatedGsc(associatedGroups.get(pageId) ?? []);
-            metrics.associatedQueryCount = associated.length;
+            // An empty query snapshot means no query text was stored for the whole
+            // site, so a page's count is unknown rather than zero.
+            metrics.associatedQueryCount = hasStoredQueries ? associated.length : null;
             pages.set(pageId, {
                 pageId, url: group.canonical.value.canonicalUrl, displayUrl: group.canonical.value.displayUrl,
                 title: null, performanceSource: 'gsc', isIndexable: null, nonIndexableReason: null, onPageScore: null,
-                metrics, deltas: deltas(metrics, previousMetrics), insights: [], associated,
+                crawlState: 'no_crawl', crawlEvidence: null,
+                metrics, deltas: deltas(metrics, previousMetrics, range), insights: [], associated,
                 searchText: '', weight: metrics.impressions!,
                 previousClicks: previousMetrics?.clicks ?? null,
             });
@@ -638,8 +865,8 @@ export function createPagesService(deps: PagesServiceDeps): PagesService {
         coverage.dropped.malformedUrl = malformed;
         coverage.dropped.offsiteUrl = offsite;
         coverage.sourceTruncated = (current?.rows.length ?? 0) >= 1000 || (querySnapshot?.rows.length ?? 0) >= 1000;
-        mergeAudit(pages, audit, site.url, coverage);
-        const finished = finishPages(pages, coverage);
+        const crawl = mergeAudit(pages, audit, site.url, coverage, range);
+        const finished = finishPages(pages, coverage, crawl, site.url);
         return {
             site,
             envelope: {
@@ -648,6 +875,7 @@ export function createPagesService(deps: PagesServiceDeps): PagesService {
                 staleAt: current ? new Date(current.fetchedAt.getTime() + GSC_STALE_MS).toISOString() : null,
                 range, rangeSemantics: 'rolling_window',
                 comparison: { label: 'since_previous_sync', previousObservedAt: previous?.fetchedAt.toISOString() ?? null },
+                dataWindow: current ? gscDataWindow(current.snapshotDate, windowDays) : null,
                 market: null, coverage,
             },
             pages: finished,
@@ -815,7 +1043,13 @@ export function createPagesService(deps: PagesServiceDeps): PagesService {
         }
         let result: Awaited<ReturnType<PagesFallbackRefreshService['refresh']>>;
         try {
-            result = await deps.fallbackRefresh.refresh({ accountId, siteId, domain: site.domain, siteUrl: site.url });
+            result = await deps.fallbackRefresh.refresh({
+                accountId,
+                siteId,
+                domain: site.domain,
+                siteUrl: site.url,
+                siteMarket: site.defaultMarket ?? null,
+            });
         }
         catch (error) {
             deps.telemetry?.('pages.refresh.failed', {

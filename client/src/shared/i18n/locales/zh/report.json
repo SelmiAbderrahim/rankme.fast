@@ -15,8 +15,8 @@
   },
   "resourceScan": {
     "label": "扫描图片、脚本和样式",
-    "help": "加载每张图片、每个脚本和样式表，以找出失效或过大的文件。耗时更长，且仅在页数上限不超过 {{pages}} 时运行。",
-    "notCovered": "此页数上限超过 {{pages}}，审计将跳过该扫描。请选择更低的上限以包含它。"
+    "help": "加载每张图片、每个脚本和样式表，以找出失效或过大的文件。耗时更长，并将审计限制在 {{pages}} 页以内。",
+    "notCovered": "本次审计最多抓取 {{pages}} 个页面。取消勾选扫描即可抓取更多页面。"
   },
   "title": "您的审计报告",
   "subtitle": "需要修复的、需要关注的以及已经通过的。",
@@ -47,7 +47,8 @@
     "affectedPages_two": "涉及 {{count}} 个页面",
     "affectedPages_few": "涉及 {{count}} 个页面",
     "affectedPages_many": "涉及 {{count}} 个页面",
-    "affectedPages_other": "涉及 {{count}} 个页面"
+    "affectedPages_other": "涉及 {{count}} 个页面",
+    "brokenLinksSummary": "含失效链接的页面：{{pages}} · 失效网址：{{targets}}"
   },
   "severity": {
     "critical": "严重",
@@ -136,7 +137,8 @@
       "problemChip": "需要修复",
       "unknownChip": "未检查"
     },
-    "measured": {"words_zero": "{{count}} 个词",
+    "measured": {
+      "words_zero": "{{count}} 个词",
       "words_one": "{{count}} 个词",
       "words_two": "{{count}} 个词",
       "words_few": "{{count}} 个词",
@@ -147,7 +149,43 @@
       "characters_two": "{{count}} 个字符",
       "characters_few": "{{count}} 个字符",
       "characters_many": "{{count}} 个字符",
-      "characters_other": "{{count}} 个字符"}
+      "characters_other": "{{count}} 个字符"
+    },
+    "downloadUrls": "下载 URL（CSV）",
+    "previewNote": "显示 {{total}} 项中的 {{shown}} 项。",
+    "loadFullList": "显示完整列表",
+    "loadingFullList": "正在加载完整列表…",
+    "fullListFailed": "无法加载完整列表。请重试。",
+    "brokenLinks": {
+      "title": "失效链接及重新检查的结果",
+      "download": "下载全部（CSV）",
+      "linkedFrom": "来自页面",
+      "pointsTo": "指向",
+      "redirectsTo": "重定向到",
+      "http": "HTTP 状态 {{status}}",
+      "noAnswer": "没有响应",
+      "failure": {
+        "http_error": "HTTP 错误",
+        "redirect_loop": "重定向循环",
+        "redirect_limit": "重定向超过五次",
+        "unsafe_redirect": "重定向到我们不会跟随的地址",
+        "robots_blocked": "被 robots.txt 屏蔽",
+        "timeout": "未及时响应",
+        "non_html": "不是网页",
+        "unreachable": "无法连接"
+      },
+      "outcome": {
+        "confirmed": "仍然失效",
+        "unverified": "无法重新检查",
+        "reported": "抓取时报告",
+        "cleared": "重新检查后可正常打开"
+      },
+      "showAll": "显示全部 {{count}} 条",
+      "showFewer": "收起",
+      "dismissedTitle": "重新检查后可正常打开（{{count}}）",
+      "dismissedHelp": "抓取时报告这些链接已失效，但再次请求时能正常打开，因此不计入。",
+      "cut": "显示 {{total}} 行中的前 {{shown}} 行。"
+    }
   },
   "retest": {
     "cta": "重新检测",
@@ -170,11 +208,11 @@
   "empty": {
     "fix-now": {
       "title": "暂无需要修复的内容",
-      "description": "非常好——本次审计未发现严重问题。"
+      "description": "本次审计中没有未处理的严重问题。"
     },
     "watch": {
       "title": "暂无需要关注的内容",
-      "description": "您的网站目前没有警告。"
+      "description": "本次审计中没有未处理的警告。"
     },
     "passed": {
       "title": "尚无通过的检查",
@@ -242,7 +280,37 @@
     "basis_two": "基于 {{count}} 个未解决的问题",
     "basis_few": "基于 {{count}} 个未解决的问题",
     "basis_many": "基于 {{count}} 个未解决的问题",
-    "basis_other": "基于 {{count}} 个未解决的问题"
+    "basis_other": "基于 {{count}} 个未解决的问题",
+    "stage": {
+      "queued": "正在准备…",
+      "reading_findings": "正在读取您的检查结果…",
+      "checking_priorities": "正在检查优先级…",
+      "writing_summary": "正在撰写摘要…"
+    },
+    "elapsed": "已用时间：{{time}}",
+    "expectation": "通常需要 30 到 40 秒。您可以离开此页面：摘要会继续生成，返回时即可看到。",
+    "ready": "您的 AI 摘要已就绪。",
+    "failedAnnouncement": "无法生成 AI 摘要。",
+    "failure": {
+      "provider_unavailable": "我们的 AI 服务商暂时不可用，因此未生成摘要。",
+      "timeout": "AI 服务商响应超时，因此未生成摘要。",
+      "internal": "我们这边出了问题，因此未生成摘要。"
+    },
+    "tryAgain": "重试",
+    "staleMarker": "已过时",
+    "firstStep": "第一步：",
+    "actIn": {
+      "report": "在报告中打开此问题",
+      "pages": "打开“页面”",
+      "google": "打开 Google 标签页",
+      "schema": "打开结构化数据生成器",
+      "local-seo": "打开本地 SEO",
+      "ai-visibility": "打开 AI 可见度"
+    },
+    "staleTitle": "此摘要已过期",
+    "staleBody": "此摘要涵盖的问题在生成后已被忽略、修复或重新打开。请重新生成，使其与您当前待修复的问题一致。",
+    "showPrevious": "显示之前的摘要",
+    "hidePrevious": "隐藏之前的摘要"
   },
   "pdf": {
     "download": "下载 PDF",
@@ -345,21 +413,125 @@
     "packSize_other": "共 {{count}} 条"
   },
   "exportUi": {
-    "trigger": "导出或分享", "loading": "正在加载导出选项…", "preparing": "正在准备文件…", "ready": "导出已完成。副本也已保存在“导出与分享”中。", "unavailable": "导出不可用", "empty": "暂无可导出的内容", "formatsLabel": "文件格式",
-    "clipboard": { "action": "复制到剪贴板", "success": "已复制到剪贴板。", "error": "无法复制到剪贴板。" },
-    "formats": { "view": "网页视图", "pdf": "PDF 文件", "csv": "CSV 文件", "json": "JSON", "md": "Markdown 文档", "jsonld": "JSON-LD", "txt": "文本" },
-    "kindAreas": { "audit": "网站审计", "ranks": "排名", "google": "Google 数据", "client": "客户报告", "keyword": "关键词", "backlinks": "外链", "competitors": "竞争对手", "actions": "下一步行动", "ai": "AI 可见度", "audience": "受众研究", "brand": "品牌雷达", "content": "内容", "internal_links": "内部链接", "weekly_pulse": "每周简报", "local": "本地 SEO", "schema": "Schema 标记", "pages": "页面", "app": "应用商店优化" },
-    "states": { "active": "有效", "revoked": "已撤销", "expired": "已过期" },
-    "actions": { "retry": "重试", "download": "下载", "delete": "删除", "revoke": "撤销", "cancel": "取消", "done": "完成" },
-    "errors": { "capabilities": "无法加载导出选项。", "create": "无法导出报告。请缩小范围后重试。", "download": "无法下载已保存的文件。", "list": "无法加载已保存的导出。", "delete": "无法删除已保存的导出。", "share": "无法创建分享链接。", "revoke": "无法撤销分享链接。", "copy": "无法复制链接。" },
-    "share": { "action": "创建分享链接", "title": "分享不可变报告", "description": "选择收件人可以打开的内容。链接创建后，报告将不再变化。", "locale": "报告语言", "expiry": "有效期", "expiryHelp": "请选择一至90天。", "permissions": "允许的格式", "create": "创建链接", "creating": "正在创建链接…", "showOnce": "立即复制此链接", "linkLabel": "分享链接", "copy": "复制链接", "copied": "已复制", "savedWithoutToken": "为确保安全，RankMeFast 不会保存可读链接。你仍可在导出中心撤销它。", "existing": "此快照的链接", "refresh": "刷新" },
-    "confirm": { "revokeTitle": "撤销此链接？", "revokeBody": "任何使用此链接的人都会立即失去访问权限。", "deleteTitle": "删除此导出？", "deleteBody": "文件将停止工作，所有关联的分享链接也会被撤销。" },
-    "center": { "title": "导出与分享", "description": "下载已保存的报告快照并管理公开链接。", "tabsLabel": "导出中心分区", "downloads": "下载", "shares": "分享", "disabledTitle": "新导出已暂停", "disabledBody": "现有文件可能仍可用，但目前无法创建新文件或链接。", "emptyDownloadsTitle": "尚无已保存的导出", "emptyDownloadsBody": "在任意报告中使用“导出或分享”创建。", "emptySharesTitle": "尚无分享链接", "emptySharesBody": "分享支持的报告后，可在此管理链接。", "deletedReport": "已删除或已过期的报告", "noSite": "整个账户", "more": "加载更多", "expiresValue": "{{date}}到期", "views_one": "{{count}}次查看", "columns": { "report": "报告", "site": "网站", "format": "格式", "created": "创建时间", "expires": "到期时间", "actions": "操作" },
+    "trigger": "导出或分享",
+    "loading": "正在加载导出选项…",
+    "preparing": "正在准备文件…",
+    "ready": "导出已完成。副本也已保存在“导出与分享”中。",
+    "unavailable": "导出不可用",
+    "empty": "暂无可导出的内容",
+    "formatsLabel": "文件格式",
+    "clipboard": {
+      "action": "复制到剪贴板",
+      "success": "已复制到剪贴板。",
+      "error": "无法复制到剪贴板。"
+    },
+    "formats": {
+      "view": "网页视图",
+      "pdf": "PDF 文件",
+      "csv": "CSV 文件",
+      "json": "JSON",
+      "md": "Markdown 文档",
+      "jsonld": "JSON-LD",
+      "txt": "文本"
+    },
+    "kindAreas": {
+      "audit": "网站审计",
+      "ranks": "排名",
+      "google": "Google 数据",
+      "client": "客户报告",
+      "keyword": "关键词",
+      "backlinks": "外链",
+      "competitors": "竞争对手",
+      "actions": "下一步行动",
+      "ai": "AI 可见度",
+      "audience": "受众研究",
+      "brand": "品牌雷达",
+      "content": "内容",
+      "internal_links": "内部链接",
+      "weekly_pulse": "每周简报",
+      "local": "本地 SEO",
+      "schema": "Schema 标记",
+      "pages": "页面",
+      "app": "应用商店优化"
+    },
+    "states": {
+      "active": "有效",
+      "revoked": "已撤销",
+      "expired": "已过期"
+    },
+    "actions": {
+      "retry": "重试",
+      "download": "下载",
+      "delete": "删除",
+      "revoke": "撤销",
+      "cancel": "取消",
+      "done": "完成"
+    },
+    "errors": {
+      "capabilities": "无法加载导出选项。",
+      "create": "无法导出报告。请缩小范围后重试。",
+      "download": "无法下载已保存的文件。",
+      "list": "无法加载已保存的导出。",
+      "delete": "无法删除已保存的导出。",
+      "share": "无法创建分享链接。",
+      "revoke": "无法撤销分享链接。",
+      "copy": "无法复制链接。"
+    },
+    "share": {
+      "action": "创建分享链接",
+      "title": "分享不可变报告",
+      "description": "选择收件人可以打开的内容。链接创建后，报告将不再变化。",
+      "locale": "报告语言",
+      "expiry": "有效期",
+      "expiryHelp": "请选择一至90天。",
+      "permissions": "允许的格式",
+      "create": "创建链接",
+      "creating": "正在创建链接…",
+      "showOnce": "立即复制此链接",
+      "linkLabel": "分享链接",
+      "copy": "复制链接",
+      "copied": "已复制",
+      "savedWithoutToken": "为确保安全，RankMeFast 不会保存可读链接。你仍可在导出中心撤销它。",
+      "existing": "此快照的链接",
+      "refresh": "刷新"
+    },
+    "confirm": {
+      "revokeTitle": "撤销此链接？",
+      "revokeBody": "任何使用此链接的人都会立即失去访问权限。",
+      "deleteTitle": "删除此导出？",
+      "deleteBody": "文件将停止工作，所有关联的分享链接也会被撤销。"
+    },
+    "center": {
+      "title": "导出与分享",
+      "description": "下载已保存的报告快照并管理公开链接。",
+      "tabsLabel": "导出中心分区",
+      "downloads": "下载",
+      "shares": "分享",
+      "disabledTitle": "新导出已暂停",
+      "disabledBody": "现有文件可能仍可用，但目前无法创建新文件或链接。",
+      "emptyDownloadsTitle": "尚无已保存的导出",
+      "emptyDownloadsBody": "在任意报告中使用“导出或分享”创建。",
+      "emptySharesTitle": "尚无分享链接",
+      "emptySharesBody": "分享支持的报告后，可在此管理链接。",
+      "deletedReport": "已删除或已过期的报告",
+      "noSite": "整个账户",
+      "more": "加载更多",
+      "expiresValue": "{{date}}到期",
+      "views_one": "{{count}}次查看",
+      "columns": {
+        "report": "报告",
+        "site": "网站",
+        "format": "格式",
+        "created": "创建时间",
+        "expires": "到期时间",
+        "actions": "操作"
+      },
       "views_zero": "{{count}}次查看",
       "views_two": "{{count}}次查看",
       "views_few": "{{count}}次查看",
       "views_many": "{{count}}次查看",
-      "views_other": "{{count}}次查看" }
+      "views_other": "{{count}}次查看"
+    }
   },
   "publicShare": {
     "report": "共享报告",
@@ -387,6 +559,9 @@
       "gscReconnect": "重新连接 Google Search Console 以进行此项检查。",
       "pageSpeed": "此网站暂无真实访客的速度数据。",
       "localSeo": "添加商家信息或评价来源以进行此项检查。",
+      "localUnavailable": "本次审计期间无法加载本地 SEO 数据。此项将在下次审计时重新检查。",
+      "localNoProfile": "我们没有找到该网站的任何商家信息、评价或评分（例如 Google 商家资料），因此没有可检查的本地内容。",
+      "localPackSetup": "为你跟踪的某个关键词开启地图结果跟踪后即可检查此项。",
       "aiVisibility": "跟踪 AI 提示词以进行此项检查。",
       "generic": "抓取未返回足够的数据来进行此项检查。",
       "probeUnreachable": "我们无法访问你网站上的 {{file}}，因此无法完成此项检查。",
@@ -404,13 +579,16 @@
     "confirm": "开始审计"
   },
   "findingStatus": "{{bucket}} · {{severity}}",
-  "progress": {"upTo_zero": "最多抓取 {{cap}} 个页面。",
+  "progress": {
+    "upTo_zero": "最多抓取 {{cap}} 个页面。",
     "upTo_one": "最多抓取 {{cap}} 个页面。",
     "upTo_two": "最多抓取 {{cap}} 个页面。",
     "upTo_few": "最多抓取 {{cap}} 个页面。",
     "upTo_many": "最多抓取 {{cap}} 个页面。",
-    "upTo_other": "最多抓取 {{cap}} 个页面。"},
-  "dismissed": {"title_zero": "已忽略（{{count}}）",
+    "upTo_other": "最多抓取 {{cap}} 个页面。"
+  },
+  "dismissed": {
+    "title_zero": "已忽略（{{count}}）",
     "title_one": "已忽略（{{count}}）",
     "title_two": "已忽略（{{count}}）",
     "title_few": "已忽略（{{count}}）",
@@ -427,11 +605,65 @@
     "resurfaced_two": "已忽略，但现在又有 {{count}} 个页面受到影响。",
     "resurfaced_few": "已忽略，但现在又有 {{count}} 个页面受到影响。",
     "resurfaced_many": "已忽略，但现在又有 {{count}} 个页面受到影响。",
-    "resurfaced_other": "已忽略，但现在又有 {{count}} 个页面受到影响。"},
-  "stale": {"title_zero": "上次审计是 {{count}} 天前",
+    "resurfaced_other": "已忽略，但现在又有 {{count}} 个页面受到影响。",
+    "description": "这些问题不计入上方的数量。恢复某一项即可让它回到列表中。",
+    "justNow": "已忽略",
+    "byOn": "{{name}} 于 {{date}} 忽略",
+    "on": "于 {{date}} 忽略",
+    "reason": "原因：{{reason}}",
+    "notDetected": "最新审计中未发现。",
+    "recheckResult": "于 {{date}} 重新检查：在 {{checked}} 个网址中，{{stillFailing}} 个仍然失败，{{cleared}} 个已恢复正常，{{unverified}} 个无法检查。",
+    "recheckByAudit": "如需再次检查此问题，请运行新的审计。",
+    "recheckCta": "重新检查这些网址",
+    "restoreCta": "恢复",
+    "recheckTitle": "要重新检查这些网址吗？",
+    "recheckUrls": "我们将再次请求 {{total}} 个网址中的 {{urls}} 个，并记录每个网址的响应。",
+    "recheckNote": "重新检查只会请求您自己的页面，不会启动新的审核。",
+    "recheckConfirm": "立即重新检查",
+    "recheckRunning": "正在重新检查…",
+    "recheckFailed": "无法重新检查这些网址，请重试。"
+  },
+  "stale": {
+    "title_zero": "上次审计是 {{count}} 天前",
     "title_one": "上次审计是 {{count}} 天前",
     "title_two": "上次审计是 {{count}} 天前",
     "title_few": "上次审计是 {{count}} 天前",
     "title_many": "上次审计是 {{count}} 天前",
-    "title_other": "上次审计是 {{count}} 天前"}
+    "title_other": "上次审计是 {{count}} 天前",
+    "body": "结果可能已与您的网站不符。请运行新的审计来刷新结果。",
+    "cta": "运行新的审计"
+  },
+  "comparison": {
+    "status": {
+      "new": "新出现",
+      "regressed": "变差",
+      "improved": "有改善",
+      "unchanged": "无变化",
+      "resolved": "已解决",
+      "not_comparable": "无法比较"
+    },
+    "description": {
+      "new": "新出现：上一次审计没有检查此项，或无法检查。",
+      "regressed": "变差：比上一次审计更差，而上一次审计确实检查过此项。",
+      "improved": "有改善：问题仍未解决，但比上一次审计好。",
+      "unchanged": "与上一次审计相比没有变化。",
+      "resolved": "已解决：上一次审计中的问题现在已通过检查。",
+      "not_comparable": "无法比较：两次审计抓取的页面范围不同，因此数量无法比较。"
+    },
+    "scopeNote": "上一次审计抓取了 {{previous}} 个页面，本次抓取了 {{current}} 个，因此页面数量不能直接比较。",
+    "scopeNoteLimits": "上一次审计的页面上限为 {{previous}}，本次为 {{current}}，因此页面数量不能直接比较。"
+  },
+  "notApplicable": {
+    "title": "不适用于此网站",
+    "description": "这些本地 SEO 检查适用于在某个地址或本地区域服务客户的商家。它们不计入本报告的任何统计。",
+    "optIn": "这是本地商家",
+    "optInHint": "之后这些检查会显示在“未评估”中，直到设置好本地 SEO。",
+    "saving": "正在保存…",
+    "failed": "无法保存，请重试。"
+  },
+  "olderRun": {
+    "viewing": "您正在查看 {{date}} 的审计。",
+    "viewingUndated": "您正在查看较早的审计。",
+    "backToLatest": "返回最新报告"
+  }
 }

@@ -54,7 +54,8 @@ const overrides: {
   score: undefined | ((...args: never[]) => unknown);
 } = { owned: undefined, competitors: undefined, brief: undefined, draft: undefined, score: undefined };
 
-vi.mock('../../shared/security/url-safety.js', () => ({
+vi.mock('../../shared/security/url-safety.js', async (importOriginal) => ({
+  ...(await importOriginal<Record<string, unknown>>()),
   assertPublicUrlSafe: vi.fn(async (url: string) => {
     if (url.includes('unsafe')) throw new Error('private address blocked');
     return url;
@@ -635,6 +636,8 @@ describe('processor — full pipeline', () => {
       messageKey: 'contentIntelligence.errors.ownedPageUnusable',
       retryable: false,
       terminal: true,
+      reason: 'empty_content',
+      httpStatus: null,
     });
     expect(after?.completedAt).not.toBeNull();
     expect(after?.stages[after.stages.length - 1]).toMatchObject({
@@ -688,6 +691,8 @@ describe('processor — full pipeline', () => {
       messageKey: 'contentIntelligence.errors.ownedFetchFailed',
       retryable: true,
       terminal: true,
+      reason: 'timeout',
+      httpStatus: null,
     });
     expect(after?.stages[after.stages.length - 1]).toMatchObject({
       name: 'failed',
@@ -715,6 +720,7 @@ describe('processor — full pipeline', () => {
       messageKey: 'contentIntelligence.errors.providerUnavailable',
       retryable: false,
       terminal: true,
+      reason: null,
     });
     expect(after?.stages[after.stages.length - 1]).toMatchObject({
       name: 'failed',
@@ -726,6 +732,87 @@ describe('processor — full pipeline', () => {
       expect.objectContaining({ code: 'provider_unavailable', reason: 'credentials rejected (HTTP 403)' }),
       expect.stringContaining('owned stage failed'),
     );
+  });
+
+  it('persists the owned page HTTP status as the safe failure reason — never the vendor text', async () => {
+    const doc = await ContentAnalysis.create(baseAnalysisInput());
+    const d = deps();
+    d.contentSource.scrapePage = vi.fn(async () => ({
+      document: makeDocument({ statusCode: 404 }),
+      usage: { credits: 1, estimatedCostMicros: 1_000n, estimated: true as const },
+    }));
+    await processorFrom(d)(fakeJob(payloadFor(doc)), 'tok');
+
+    const after = await ContentAnalysis.findById(doc._id);
+    expect(after?.status).toBe('failed');
+    expect(after?.error).toMatchObject({
+      category: 'owned_page_unusable',
+      retryable: false,
+      reason: 'http_error',
+      httpStatus: 404,
+    });
+    expect(JSON.stringify(after?.error)).not.toContain('owned page returned');
+  });
+
+  it('persists where the page redirected and what it served alongside the failure reason', async () => {
+    const doc = await ContentAnalysis.create(baseAnalysisInput());
+    const d = deps();
+    overrides.owned = async () => ({
+      ok: false,
+      code: 'owned_page_unusable',
+      reason: 'owned page request: redirect_limit',
+      failureReason: 'redirect_limit',
+      fetchEvidence: {
+        redirectChain: [
+          { url: 'https://example.com/a', status: 301 },
+          { url: 'https://example.com/b', status: 301 },
+        ],
+        contentType: 'text/html',
+      },
+    });
+    await processorFrom(d)(fakeJob(payloadFor(doc)), 'tok');
+
+    const after = await ContentAnalysis.findById(doc._id).lean();
+    expect(after?.status).toBe('failed');
+    expect(after?.error).toMatchObject({
+      reason: 'redirect_limit',
+      finalUrl: null,
+      contentType: 'text/html',
+      redirectChain: [
+        { url: 'https://example.com/a', status: 301 },
+        { url: 'https://example.com/b', status: 301 },
+      ],
+    });
+  });
+
+  it('hands the first-party page prober to the owned stage only when one is wired', async () => {
+    const seen: unknown[] = [];
+    overrides.owned = async (_ctx: unknown, pipeline: unknown) => {
+      seen.push((pipeline as { pageProber?: unknown }).pageProber);
+      return { ok: false, code: 'owned_page_unusable', reason: 'x' };
+    };
+    const prober = { probe: vi.fn() };
+    const first = await ContentAnalysis.create(baseAnalysisInput());
+    await processorFrom({ ...deps(), pageProber: prober } as never)(fakeJob(payloadFor(first)), 'tok');
+    const second = await ContentAnalysis.create(baseAnalysisInput());
+    await processorFrom(deps())(fakeJob(payloadFor(second)), 'tok');
+    expect(seen).toEqual([prober, undefined]);
+  });
+
+  it('stores no redirect evidence when the failing request recorded none', async () => {
+    const doc = await ContentAnalysis.create(baseAnalysisInput());
+    overrides.owned = async () => ({
+      ok: false,
+      code: 'owned_page_unusable',
+      reason: 'x',
+      failureReason: 'http_error',
+      httpStatus: 404,
+      fetchEvidence: { finalUrl: 'https://example.com/en' },
+    });
+    await processorFrom(deps())(fakeJob(payloadFor(doc)), 'tok');
+    const after = await ContentAnalysis.findById(doc._id).lean();
+    expect(after?.error).toMatchObject({ finalUrl: 'https://example.com/en', contentType: null });
+    expect(after?.error?.redirectChain).toBeUndefined();
   });
 
   it('degrades to partial on SERP failure while brief/draft run on synthesized keyword evidence', async () => {

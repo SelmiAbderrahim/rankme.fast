@@ -52,16 +52,24 @@
     "description": "Wähle, was überwacht wird und wohin es geht.",
     "site": "Website",
     "sitePlaceholder": "Website wählen",
-    "siteRequired": "Wähle eine Website, um eine Regel zu erstellen.",
+    "siteRequired": "Wählen Sie eine Website, um fortzufahren.",
     "type": "Warnungstyp",
     "threshold": "Positionsschwelle",
     "thresholdHint": "Wir warnen, sobald die bestätigte Position diesen Rang oder schlechter erreicht.",
     "channels": "Kanäle",
     "slackPlaceholder": "Adresse des eingehenden Slack-Webhooks",
     "webhookPlaceholder": "Ihre https-Adresse",
-    "paidChannelLocked": "Slack- und Webhook-Kanäle erfordern mindestens den Pro-Tarif.",
     "noChannel": "Wähle mindestens einen Kanal.",
-    "submit": "Regel anlegen"
+    "submit": "Regel anlegen",
+    "sitePaused": "pausiert",
+    "rankDropHint": "Löst erst aus, wenn eine geplante Rankingprüfung einen Abfall findet und eine zweite Prüfung desselben Keywords ihn bestätigt.",
+    "rankDropBuiltIn": "Die integrierte E-Mail zu Rankingverlusten ist davon getrennt und hat einen eigenen Schalter unter",
+    "rankDropBuiltInLink": "Benachrichtigungen",
+    "thresholdInvalid": "Geben Sie eine ganze Position zwischen {{min}} und {{max}} ein.",
+    "slackRequired": "Geben Sie die Adresse Ihres Slack-Webhooks ein.",
+    "webhookRequired": "Geben Sie die Adresse Ihres Webhooks ein.",
+    "sitePausedOption": "Setzen Sie diese Website fort, um Alarmregeln zu erstellen",
+    "sitePausedBlocked": "Diese Website ist pausiert. Setzen Sie diese Website fort, um Alarmregeln zu erstellen."
   },
   "secret": {
     "title": "Kopieren Sie jetzt Ihren Signaturschlüssel",
@@ -106,7 +114,22 @@
     "domainCount_two": "{{count}} Domains verändert",
     "domainCount_few": "{{count}} Domains verändert",
     "domainCount_many": "{{count}} Domains verändert",
-    "domainCount_other": "{{count}} Domains verändert"
+    "domainCount_other": "{{count}} Domains verändert",
+    "rulePicker": "Regel",
+    "rulePickerPlaceholder": "Regel auswählen",
+    "ruleOption": "{{type}} · {{site}}",
+    "empty": {
+      "title": "Noch keine Warnungen gesendet",
+      "noRules": "Gesendete Warnungen erscheinen hier. Sie haben noch keine Regel, deshalb kann nichts gesendet werden.",
+      "createRule": "Regel anlegen",
+      "rule": "Diese Regel hat noch keine Warnung gesendet.",
+      "pickRule": "Wählen Sie eine Regel, um ihre gesendeten Warnungen zu sehen."
+    },
+    "filtered": {
+      "title": "Keine Zustellungen passen zu diesen Filtern",
+      "body": "Entfernen Sie die Filter, um alle Zustellungen dieser Regel zu sehen.",
+      "clear": "Filter entfernen"
+    }
   },
   "states": {
     "cap": {

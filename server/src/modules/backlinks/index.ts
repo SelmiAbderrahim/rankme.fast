@@ -1,7 +1,7 @@
 export { backlinksRouter } from './backlinks.routes.js';
 export { createBacklinkDeepRouter } from './backlink-deep.routes.js';
 export { setBacklinksDb, setBacklinkProvider, getBacklinksDb, getBacklinkProvider, setBacklinksCooldown, getBacklinksCooldown, BACKLINKS_REFRESH_COOLDOWN_MS, setBacklinkDeepQueue, getBacklinkDeepQueue, } from './backlinks.holder.js';
-export { getBacklinkSummary, listBacklinksPaged, refreshBacklinkSummary, type BacklinkSummaryPayload, type BacklinkListPayload, type BacklinksServiceDeps, type RefreshBacklinksDeps, } from './backlinks.service.js';
+export { BACKLINK_LIST_SCOPE, getBacklinkSummary, listBacklinksPaged, readStoredBacklinkList, readStoredBacklinkSummary, refreshBacklinkSummary, type BacklinkSummaryPayload, type BacklinkListPayload, type BacklinkListRow, type BacklinksServiceDeps, type RefreshBacklinksDeps, } from './backlinks.service.js';
 export { backlinksListQuerySchema, siteIdParamsSchema, } from './backlinks.schema.js';
 export { DEFAULT_BACKLINKS_LIST_LIMIT } from './backlinks.controller.js';
 export { BACKLINK_BULK_RANK_MAX_DOMAINS, BACKLINK_HISTORY_MAX_MONTHS, BACKLINK_PULL_MAX_ROWS, BACKLINK_PULL_TYPES, LINK_GAP_LEG_STATUSES, LINK_GAP_MAX_COMPETITORS, LINK_INTELLIGENCE_DOMAIN_MAX_LENGTH, LINK_INTELLIGENCE_RUN_STATUSES, BacklinkPullRun, LinkGapRun, type BacklinkPullRunDocument, type BacklinkPullRunHydrated, type BacklinkPullType, type LinkGapLegStatus, type LinkGapRunDocument, type LinkGapRunHydrated, type LinkIntelligenceRunStatus, } from './backlink-runs.model.js';
@@ -21,3 +21,4 @@ export { ToxicityReviewRun, TOXICITY_REVIEW_STATUSES, type ToxicityReviewRunDocu
 export { classifyToxicity, TOXICITY_RUBRIC_VERSION, TOXICITY_SIGNALS, } from './toxicity-rubric.js';
 export { canonicalizeDisavowDomain, canonicalizeDisavowUrl, serializeDisavow, DisavowSerializationError, } from './disavow-serializer.js';
 export { createBacklinkReportExportAdapters } from './report-export.adapters.js';
+export { LINK_SUSPICION_REASONS, assessLinkSuspicion, type LinkSuspicion, type LinkSuspicionReason, } from './link-suspicion.js';

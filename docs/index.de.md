@@ -53,7 +53,7 @@ order: 0
 - [Bing-, YouTube- und Amazon-Tracking](./alt-engine-tracking.de.md): Wie RankMeFast Nicht-Google-Engines verfolgt, was ein exaktes Ziel-Token ist und warum eine Amazon-Position eine Indexposition ist.
 - [Keyword-Kannibalisierung](./cannibalization.de.md): Wie RankMeFast Suchanfragen findet, bei denen mehrere Ihrer Seiten konkurrieren, allein anhand bereits gespeicherten Search-Console-Zeilen.
 - [Toxische Links und Disavow](./toxic-links.de.md): Wie RankMeFast Backlinks mit einem deterministischen Regelwerk einstuft, wann die KI eine Zeile kommentieren darf und warum die Disavow-Datei nie für Sie eingereicht wird.
-- [Benachrichtigungen](./alerts.de.md): Welche Benachrichtigungen heute auslösen, wie Exactly-once-Zustellung funktioniert und warum eine Ranking-Abfall-Regel konfigurierbar ist, bevor sie zustellen kann.
+- [Benachrichtigungen](./alerts.de.md): Welche Benachrichtigungen auslösen, wie Exactly-once-Zustellung funktioniert und wann eine Ranking-Abfall-Regel zustellt.
 - [Vorschläge zur internen Verlinkung](./internal-linking.de.md): Wie RankMeFast verwaiste und schwach verlinkte Seiten in Ihrem gespeicherten Content-Inventar findet und Ankertexte entwirft, die ihre Belege zitieren.
 - [Content-Briefings](./content-briefs.de.md): Wie ein Briefing aus den gespeicherten Top-10-Ergebnissen und bis zu zehn Seitenabrufen entsteht und warum jeder Gliederungspunkt einen gelieferten Beleg zitieren muss.
 - [Lokales Raster-Tracking](./geogrid.de.md): Wie Local-Pack-Raster je Koordinate erhoben werden, was eine fehlgeschlagene Zelle bedeutet und warum Koordinaten eingetippt statt auf einer Karte gewählt werden.

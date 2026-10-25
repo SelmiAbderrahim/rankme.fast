@@ -62,6 +62,7 @@ import {
 import { selectCompetitorsList, selectCompetitorsSiteId } from '@features/competitors';
 import {
   DEFAULT_GOOGLE_RANGE,
+  GscTotalsNote,
   loadConnection,
   loadSearchSummary,
   selectGoogleConnection,
@@ -91,21 +92,31 @@ import {
   selectReportError,
   selectReportLoaded,
   selectReportLoading,
+  selectReportRunAt,
   selectReportRunStatus,
   selectReportSiteId,
+  StaleAuditCallout,
+  uncountedDecisions,
+  worstCoreWebVitalsCategory,
 } from '@features/report';
 import {
   ACTION_FRESHNESS_TONES,
   ACTION_STATE_TONES,
   actionsReducer,
   loadActions,
+  loadAuditDecisions,
   nextActionsRequestSeq,
+  openFindingCount,
+  resolvedTotals,
   safeInternalHref,
   selectActionsListStatus,
   selectActionsSiteId,
   selectAllSourcesUnavailable,
   selectAnyPartialSource,
+  selectAuditDecisionStates,
   selectOverviewActions,
+  tallyResolvedAuditFindings,
+  type ListActionsFilters,
 } from '@features/actions';
 import { rootReducer } from '@app/store';
 import {
@@ -116,6 +127,10 @@ import {
 rootReducer.inject({ reducerPath: 'report', reducer: reportReducer });
 rootReducer.inject({ reducerPath: 'backlinks', reducer: backlinksReducer });
 rootReducer.inject({ reducerPath: 'actions', reducer: actionsReducer });
+
+// Next actions lists only work still to do: dismissed and marked-fixed items
+// belong to the Actions tab history, not the Overview worklist.
+const OVERVIEW_ACTION_FILTERS: ListActionsFilters = { state: ['open', 'planned'] };
 
 interface Props {
   siteId: string;
@@ -149,6 +164,7 @@ export const OverviewPanel = ({ siteId }: Props) => {
   const reportError = useAppSelector(selectReportError);
   const reportSiteId = useAppSelector(selectReportSiteId);
   const reportRunStatus = useAppSelector(selectReportRunStatus);
+  const reportRunAt = useAppSelector(selectReportRunAt);
 
   const keywords = useAppSelector(selectKeywords);
   const ranksLoading = useAppSelector(selectRanksLoading);
@@ -176,6 +192,7 @@ export const OverviewPanel = ({ siteId }: Props) => {
   const searchSummaryLoading = useAppSelector(selectGoogleSummaryLoading);
 
   const overviewActions = useAppSelector(selectOverviewActions);
+  const auditDecisions = useAppSelector((state) => selectAuditDecisionStates(state, siteId));
   const actionsStatus = useAppSelector(selectActionsListStatus);
   const actionsSiteId = useAppSelector(selectActionsSiteId);
   const actionsAllUnavailable = useAppSelector(selectAllSourcesUnavailable);
@@ -218,6 +235,7 @@ export const OverviewPanel = ({ siteId }: Props) => {
     const promise = dispatch(
       loadActions({
         siteId,
+        filters: OVERVIEW_ACTION_FILTERS,
         limit: 5,
         requestSeq: nextActionsRequestSeq(),
         presentationLocale: presentation.locale,
@@ -235,6 +253,17 @@ export const OverviewPanel = ({ siteId }: Props) => {
     presentation.locale,
     presentation.refreshGeneration,
   ]);
+
+  // Resolved audit decisions (dismissed / marked fixed) so the Fix now and
+  // Watch counters only count open work. A stored-data read, refreshed on
+  // every visit because decisions are taken on other tabs.
+  useEffect(() => {
+    if (!hasReport) return;
+    const promise = dispatch(loadAuditDecisions({ siteId }));
+    return () => {
+      promise.abort();
+    };
+  }, [dispatch, siteId, hasReport]);
 
   useEffect(() => {
     if (!ranksLoaded || ranksSiteId !== siteId) {
@@ -285,6 +314,12 @@ export const OverviewPanel = ({ siteId }: Props) => {
       ? (report.pageSpeed.samples.find((sample) => sample.strategy === 'mobile') ??
         report.pageSpeed.samples[0])
       : undefined;
+  // Core Web Vitals come from real-visitor field data across EVERY sampled
+  // page, the same reading the `core-web-vitals-poor` finding uses, so the
+  // tile never says "no data" while that finding is open.
+  const siteCoreWebVitals = worstCoreWebVitalsCategory(
+    report?.pageSpeed?.status === 'ok' ? report.pageSpeed.samples : [],
+  );
   // Only a measured-then-failed run gets the "service unreachable" copy; no
   // audit yet (or one still running) is a neutral empty state.
   const pageSpeedEmptyCopy = (() => {
@@ -330,6 +365,14 @@ export const OverviewPanel = ({ siteId }: Props) => {
     asOf: null,
   } : null;
   const searchSnapshotPending = googleConnected && searchSummaryLoading && !searchData;
+  // The same decisions the Report tab leaves out of its counts: the ones the
+  // server applied to the report, with a decision taken on this page winning.
+  const resolvedAudit = tallyResolvedAuditFindings(
+    report?.findings ?? [],
+    uncountedDecisions(report?.findings ?? [], auditDecisions),
+  );
+  const resolvedCount = resolvedTotals(resolvedAudit);
+  const openFixNow = openFindingCount(report?.counts.fixNow, resolvedAudit.fixNow);
   const cachedCompetitors =
     competitorsSiteId === siteId ? competitorList?.competitors.slice(0, 3) : undefined;
 
@@ -378,6 +421,16 @@ export const OverviewPanel = ({ siteId }: Props) => {
 
   return (
     <div className="flex flex-col gap-8" data-testid="overview-panel">
+      {/* The audit is older than the freshness window: offer the existing
+          retest flow (the confirmation lives on the Report tab). */}
+      {report ? (
+        <StaleAuditCallout
+          runAt={reportRunAt}
+          running={reportRunStatus === 'queued' || reportRunStatus === 'running'}
+          freshDays={report.auditFreshDays}
+          to="?tab=report&retest=1"
+        />
+      ) : null}
       <Card data-testid="overview-next-actions">
         <CardHeader>
           <CardTitle>
@@ -431,15 +484,15 @@ export const OverviewPanel = ({ siteId }: Props) => {
                 <StatCard
                   variant="chip"
                   tone={
-                    report.counts.fixNow > 0
+                    (openFixNow ?? 0) > 0
                       ? 'destructive'
-                      : report.counts.fixNow === 0
+                      : openFixNow === 0
                         ? 'success'
                         : 'muted'
                   }
-                  icon={report.counts.fixNow > 0 ? ShieldAlert : ShieldCheck}
+                  icon={(openFixNow ?? 0) > 0 ? ShieldAlert : ShieldCheck}
                   label={t('report:tabs.fix-now')}
-                  value={count(report.counts.fixNow)}
+                  value={count(openFixNow)}
                   data-testid="overview-count-fix-now"
                 />
                 <StatCard
@@ -447,7 +500,7 @@ export const OverviewPanel = ({ siteId }: Props) => {
                   tone="warning"
                   icon={Clock3}
                   label={t('report:tabs.watch')}
-                  value={count(report.counts.watch)}
+                  value={count(openFindingCount(report.counts.watch, resolvedAudit.watch))}
                 />
                 <StatCard
                   variant="chip"
@@ -457,6 +510,14 @@ export const OverviewPanel = ({ siteId }: Props) => {
                   value={count(report.counts.passed)}
                 />
               </div>
+              {resolvedCount.dismissed + resolvedCount.completed > 0 ? (
+                <p className="text-sm text-muted-foreground" data-testid="overview-audit-not-counted">
+                  {t('actions:report.notCounted', {
+                    dismissed: count(resolvedCount.dismissed),
+                    completed: count(resolvedCount.completed),
+                  })}
+                </p>
+              ) : null}
               {actionsStatus === 'loading' || actionsStatus === 'idle' ? (
                 <div className="space-y-3" aria-busy="true" data-testid="overview-actions-loading">
                   <Skeleton className="h-16" />
@@ -475,6 +536,7 @@ export const OverviewPanel = ({ siteId }: Props) => {
                         void dispatch(
                           loadActions({
                             siteId,
+                            filters: OVERVIEW_ACTION_FILTERS,
                             limit: 5,
                             requestSeq: nextActionsRequestSeq(),
                             ...presentationRequestIdentity(),
@@ -651,6 +713,7 @@ export const OverviewPanel = ({ siteId }: Props) => {
                     />
                   </div>
                   {searchData.asOf ? <p className="text-muted-foreground text-xs">{t('sites:overview.search.asOf', { date: date(searchData.asOf) })}</p> : null}
+                  <GscTotalsNote testId="overview-scope-note" />
                   {searchData.topQuery ? (
                     <div className="rounded-xl border p-4">
                       <p className="text-xs text-muted-foreground">
@@ -727,25 +790,31 @@ export const OverviewPanel = ({ siteId }: Props) => {
                         {t('sites:overview.pageSpeed.coreWebVitals')}
                       </p>
                       <div className="mt-3">
-                        {pageSpeedSample.coreWebVitals ? (
+                        {siteCoreWebVitals ? (
                           <StatusChip
                             tone={
-                              pageSpeedSample.coreWebVitals.category === 'good'
+                              siteCoreWebVitals === 'good'
                                 ? 'success'
-                                : pageSpeedSample.coreWebVitals.category === 'needs-improvement'
+                                : siteCoreWebVitals === 'needs-improvement'
                                   ? 'warning'
                                   : 'destructive'
                             }
                             dot
                           >
-                            {t(
-                              `report:pageSpeed.categories.${pageSpeedSample.coreWebVitals.category}`,
-                            )}
+                            {t(`report:pageSpeed.categories.${siteCoreWebVitals}`)}
                           </StatusChip>
                         ) : (
                           <StatusChip tone="muted">{t('ranks:aiUnknown')}</StatusChip>
                         )}
                       </div>
+                      <p
+                        className="mt-2 text-xs text-muted-foreground"
+                        data-testid="overview-pagespeed-cwv-source"
+                      >
+                        {siteCoreWebVitals
+                          ? t('sites:overview.pageSpeed.coreWebVitalsSource')
+                          : t('sites:overview.pageSpeed.coreWebVitalsNoFieldData')}
+                      </p>
                     </div>
                   </div>
                 </div>

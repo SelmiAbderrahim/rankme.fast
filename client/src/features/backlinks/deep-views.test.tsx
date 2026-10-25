@@ -58,12 +58,13 @@ vi.mock('./api', () => ({
 }));
 
 vi.mock('@features/report-export', () => ({
-  ReportExportControl: ({ kind, target }: ReportExportControlProps) => (
+  ReportExportControl: ({ kind, target, disabled }: ReportExportControlProps) => (
     <button
       type="button"
       data-testid="report-export-control"
       data-kind={kind}
       data-scope={target.scope}
+      disabled={disabled}
     >
       Export report
     </button>
@@ -339,7 +340,7 @@ describe('deep tables, security, sorting, and validation', () => {
       reservedUnits: 1,
     });
     mocked.fetchBacklinkRun.mockResolvedValue(run('bulkRanks', 'queued', []));
-    await userEvent.click(await screen.findByRole('button', { name: /Confirm and spend 1 units/ }));
+    await userEvent.click(await screen.findByRole('button', { name: /Confirm and run the pull/ }));
     await waitFor(() =>
       expect(mocked.startDeepPull).toHaveBeenCalledWith({
         type: 'bulkRanks',
@@ -572,10 +573,10 @@ describe('secondary deep-view branches', () => {
 });
 
 describe('preview, cancel, confirm, and stored reads', () => {
-  it('uses one unit in the confirmation label without inventing a quota', () => {
+  it('labels the confirmation with the action, not a unit count', () => {
     renderView('anchors', { preview: preview() });
     expect(screen.getByTestId('link-intel-confirm-anchors')).toHaveTextContent(
-      'Confirm and spend 1 units',
+      'Confirm and run the pull',
     );
   });
 
@@ -596,7 +597,7 @@ describe('preview, cancel, confirm, and stored reads', () => {
     await user.click(screen.getByRole('button', { name: 'Cancel' }));
     expect(mocked.startDeepPull).not.toHaveBeenCalled();
     await user.click(screen.getByRole('button', { name: 'Preview spend' }));
-    await user.click(await screen.findByRole('button', { name: /Confirm and spend 1 units/ }));
+    await user.click(await screen.findByRole('button', { name: /Confirm and run the pull/ }));
     await waitFor(() =>
       expect(mocked.startDeepPull).toHaveBeenCalledWith({
         type: 'anchors',
@@ -746,6 +747,31 @@ describe('workspace composition', () => {
     await userEvent.click(screen.getByTestId('link-intel-tab-toxicity'));
     await waitFor(() => expect(mocked.fetchToxicityRuns).toHaveBeenCalled());
     await userEvent.click(screen.getByTestId('link-intel-tab-overview'));
+  });
+
+  it('keeps the export control in the header on every tab, disabled where nothing exports', async () => {
+    mocked.fetchBacklinkSummary.mockResolvedValue(null);
+    mocked.fetchBacklinksList.mockResolvedValue({ rows: [], nextCursor: null, cached: true });
+    mocked.fetchBacklinkRuns.mockResolvedValue({ runs: [], nextCursor: null });
+    render(
+      <Provider store={workspaceStore()}>
+        <I18nextProvider i18n={i18n}>
+          <MemoryRouter initialEntries={['/sites/site-1/backlinks?tab=overview']}>
+            <BacklinksWorkspace siteId="site-1" />
+          </MemoryRouter>
+        </I18nextProvider>
+      </Provider>,
+    );
+    const control = () => screen.getByTestId('report-export-control');
+    expect(control()).toBeEnabled();
+    expect(control()).toHaveAttribute('data-kind', 'backlinks.summary');
+    await userEvent.click(screen.getByTestId('link-intel-tab-rows'));
+    expect(control()).toBeEnabled();
+    expect(control()).toHaveAttribute('data-kind', 'backlinks.inventory');
+    await userEvent.click(screen.getByTestId('link-intel-tab-domains'));
+    expect(control()).toBeDisabled();
+    await userEvent.click(screen.getByTestId('link-intel-tab-anchors'));
+    expect(control()).toBeDisabled();
   });
 
   it('uses ?view= for embedded tabs while preserving the outer site tab', async () => {

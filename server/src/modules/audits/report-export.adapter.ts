@@ -111,7 +111,7 @@ function sourceDates(locale: ReportDocumentV1['locale'], finishedAt: string, rep
     }
     return dates;
 }
-function auditBlocks(locale: ReportDocumentV1['locale'], report: AuditReport, selection: AuditExportSelection): {
+function auditBlocks(locale: ReportDocumentV1['locale'], report: AuditReport, selection: AuditExportSelection, format?: string): {
     blocks: ReportBlockV1[];
     findingCount: number;
 } {
@@ -170,6 +170,32 @@ function auditBlocks(locale: ReportDocumentV1['locale'], report: AuditReport, se
                 sourceDateId: 'audit-derived',
             })),
         }));
+        // Every source → target pair behind a broken-links finding, with the
+        // result of re-requesting the target. Dismissed rows are kept: an
+        // export that hid them could not show why the finding shrank. A CSV
+        // carries exactly one canonical table (the change list above), so the
+        // evidence table is left to the PDF and JSON exports.
+        const brokenLinks = findings.find((finding) => finding.ruleId === 'broken-internal-links');
+        if (format !== 'csv' &&
+            brokenLinks?.brokenLinkEvidence &&
+            brokenLinks.brokenLinkEvidence.length > 0) {
+            blocks.push(reportTable({
+                id: 'audit-broken-link-evidence',
+                columns: [
+                    { key: 'source', label: reportCopy(locale, 'fields.sourcePage'), valueType: 'string' },
+                    { key: 'target', label: reportCopy(locale, 'fields.targetUrl'), valueType: 'string' },
+                    { key: 'outcome', label: reportCopy(locale, 'fields.outcome'), valueType: 'string' },
+                    { key: 'status', label: reportCopy(locale, 'fields.httpStatus'), valueType: 'number' },
+                    { key: 'failure', label: reportCopy(locale, 'fields.failure'), valueType: 'string' },
+                    { key: 'final-url', label: reportCopy(locale, 'fields.finalUrl'), valueType: 'string' },
+                ],
+                rows: brokenLinks.brokenLinkEvidence.map((row, index) => ({
+                    id: `broken-link-${index + 1}`,
+                    values: [row.source, row.target, row.outcome, row.status, row.failure ?? null, row.finalUrl ?? null],
+                    sourceDateId: 'audit-observation',
+                })),
+            }));
+        }
     }
     if (enabled.has('pagespeed')) {
         blocks.push({ type: 'heading', id: 'pagespeed-heading', level: 2, text: reportCopy(locale, 'sections.pageSpeed') });
@@ -403,7 +429,7 @@ export function createAuditReportExportAdapter(): ReportExportAdapter<AuditExpor
                         REPORT_MAX_AFFECTED_URLS_PER_FINDING))) {
                 throw new HttpError(422, { code: 'REPORT_EXPORTS_ERRORS_SCOPE_TOO_LARGE', messageKey: 'reportExports.errors.scopeTooLarge' }, { code: 'scope_too_large', narrowingFields: ['buckets', 'sections'] });
             }
-            const built = auditBlocks(context.locale, report, context.selection);
+            const built = auditBlocks(context.locale, report, context.selection, context.format);
             const document: ReportDocumentV1 = {
                 schema: REPORT_DOCUMENT_SCHEMA,
                 schemaVersion: REPORT_DOCUMENT_SCHEMA_VERSION,

@@ -226,6 +226,7 @@ describe('Google report-export helpers', () => {
       domain: 'example.test',
       displayName: '',
       defaultMarket: null,
+      localBusiness: false,
       paused: false,
       pausedAt: null,
       createdAt: capturedAt.toISOString(),

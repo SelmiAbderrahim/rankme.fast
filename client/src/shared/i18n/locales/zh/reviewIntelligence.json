@@ -36,7 +36,12 @@
     "title": "评价来源",
     "description": "告诉我们你的商户在哪里被收录。每个目录站点一条记录。",
     "empty": "还没有来源，请在下方添加。",
-    "configured": "已配置",
+    "status": {
+      "saved": "已保存，尚未同步",
+      "verified": "已通过同步验证",
+      "failed": "上次同步失败",
+      "invalid": "请检查此 ID"
+    },
     "save": "保存来源",
     "remove": "移除",
     "hint": {
@@ -48,7 +53,23 @@
       "google": "ChIJ_example_place_id",
       "trustpilot": "example.com",
       "tripadvisor": "1234567"
-    }
+    },
+    "help": {
+      "google": "地点 ID 是 Google 为您的商家信息分配的代码，通常以 ChIJ 开头。在 Google 的查找工具中搜索您的商家，然后复制显示的 ID。",
+      "googleLink": "打开 Google 地点 ID 查找工具"
+    },
+    "invalid": {
+      "google": "请输入有效的 Google 地点 ID。它通常以 ChIJ 开头，至少 20 个字符。",
+      "trustpilot": "请输入 Trustpilot 上显示的商家域名，例如 example.com，不含 https://。",
+      "tripadvisor": "请输入 Tripadvisor 的数字位置 ID，例如 23462501。它是页面地址中字母 d 后面的数字。"
+    },
+    "removeConfirm": {
+      "title": "移除此来源？",
+      "description": "{{source}} 将不再纳入新的同步。已获取的评价会保留在你的库存中。",
+      "cancel": "保留来源",
+      "confirm": "移除来源"
+    },
+    "removed": "已移除 {{source}} 来源。"
   },
   "sync": {
     "title": "运行同步",

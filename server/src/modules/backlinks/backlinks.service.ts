@@ -14,8 +14,10 @@
  *      cross-user layer but never trigger a vendor fetch — the
  *      manual refresh is the single summary-spend path, so opening the
  *      panel can never cost vendor money.
- *   3. Paged listing — the first page rides the cross-user read-through
- *      cache; cursor pages always reach the vendor and land an archive row.
+ *   3. Paged listing — a plain first-page GET is a stored-data read (rows we
+ *      already hold, even past their TTL) and never reaches the vendor; only
+ *      an explicit `fresh` pull rides the cross-user read-through cache, and
+ *      cursor pages always reach the vendor and land an archive row.
  *
  * Provider failures NEVER persist. They surface as a localized
  * `unavailable` HttpError so the audit / rank / report flows are unaffected.
@@ -24,6 +26,7 @@ import { Types } from 'mongoose';
 import { desc, eq } from 'drizzle-orm';
 import { z } from 'zod';
 import type { BacklinkListPage, BacklinkProvider, BacklinkRow, } from '../../shared/providers/index.js';
+import { assessLinkSuspicion, type LinkSuspicion } from './link-suspicion.js';
 import { ProviderError, captureVendorCost } from '../../shared/providers/index.js';
 import { HttpError } from '../../shared/utils/http-error.js';
 import { Site } from '../sites/sites.model.js';
@@ -47,10 +50,25 @@ export interface BacklinkSummaryPayload {
         brokenBacklinks: number | null;
     } | null;
 }
+/** A listed backlink with its review flag: `null` when nothing is worth a look. */
+export type BacklinkListRow = BacklinkRow & {
+    suspicion: LinkSuspicion | null;
+};
+/**
+ * What the list covers. The provider lists ONE link per referring domain, so
+ * `rows.length` is bounded by the referring domain count and is usually
+ * smaller than the summary's total `backlinks`.
+ */
+export const BACKLINK_LIST_SCOPE = 'one_per_referring_domain' as const;
 export interface BacklinkListPayload {
-    rows: BacklinkRow[];
+    rows: BacklinkListRow[];
     nextCursor: string | null;
     cached: boolean;
+    /**
+     * When the provider returned these rows (ISO 8601); null when nothing is
+     * stored yet. A page served from storage keeps its original fetch time.
+     */
+    fetchedAt: string | null;
 }
 export interface BacklinksServiceDeps {
     db: Db;
@@ -321,6 +339,11 @@ export async function refreshBacklinkSummary(input: {
     await repo.invalidateByParams({ capability: 'backlink', operation: 'list-first-page' }, { domain: site.domain });
     return payload;
 }
+/** Attach the explainable review flag to each row of one page. */
+function withSuspicion(rows: BacklinkRow[]): BacklinkListRow[] {
+    const assessed = assessLinkSuspicion(rows);
+    return rows.map((row, index) => ({ ...row, suspicion: assessed[index] ?? null }));
+}
 /** Serialize a BacklinkRow's Date fields as ISO for the jsonb cache. */
 function rowsToCachePayload(rows: BacklinkRow[]): CachedBacklinkRows {
     return rows.map((row) => ({
@@ -351,18 +374,56 @@ function cachedToRows(cached: CachedBacklinkRows): BacklinkRow[] {
         urlToSpamScore: row.urlToSpamScore ?? null,
     }));
 }
+/**
+ * Zero-spend read of the stored first page. Browsing the Backlinks tab shows
+ * rows we already hold (this account's earlier pull or another account's
+ * cross-user cache row, even past its TTL) and never reaches the vendor.
+ * `rows: []` means nothing is stored yet; a refresh or `fresh` pull fills it.
+ */
+async function readStoredFirstPage(site: {
+    domain: string;
+}, input: {
+    limit: number;
+}, deps: BacklinksServiceDeps, now: Date): Promise<BacklinkListPayload> {
+    const { repo } = vendorLayer(deps.db);
+    const hit = await repo.read({
+        capability: 'backlink',
+        operation: 'list-first-page',
+        cacheKey: computeVendorCacheKey({
+            capability: 'backlink',
+            operation: 'list-first-page',
+            params: { domain: site.domain, limit: input.limit },
+        }),
+    }, now, { includeExpired: true });
+    const parsed = hit ? listPayloadSchema.safeParse(hit.payload) : null;
+    if (!parsed?.success) {
+        return { rows: [], nextCursor: null, cached: false, fetchedAt: null };
+    }
+    return {
+        rows: withSuspicion(cachedToRows(parsed.data.rows)),
+        nextCursor: parsed.data.nextCursor,
+        cached: true,
+        fetchedAt: hit!.fetchedAt.toISOString(),
+    };
+}
 export async function listBacklinksPaged(input: {
     accountId: string;
     siteId: string;
     cursor?: string;
     limit: number;
+    fresh?: boolean;
 }, deps: BacklinksServiceDeps): Promise<BacklinkListPayload> {
     const nowFn = deps.now ?? (() => new Date());
     const ttlHours = deps.ttlHours ?? DEFAULT_BACKLINK_SUMMARY_TTL_HOURS;
     const site = await loadOwnedSite(input.accountId, input.siteId);
     const now = nowFn();
+    // A plain first-page GET shows stored data only. Spending needs an
+    // explicit `fresh` pull (sent after a refresh) or a "Load more" cursor.
+    if (!input.cursor && !input.fresh) {
+        return readStoredFirstPage(site, input, deps, now);
+    }
     const { repo, readThrough } = vendorLayer(deps.db);
-    // First page (no cursor): domain-keyed cross-user cache.
+    // Fresh first page: domain-keyed cross-user cache.
     if (!input.cursor) {
         let page: {
             value: z.infer<typeof listPayloadSchema>;
@@ -387,9 +448,10 @@ export async function listBacklinksPaged(input: {
             wrapProviderError(err);
         }
         return {
-            rows: cachedToRows(page.value.rows),
+            rows: withSuspicion(cachedToRows(page.value.rows)),
             nextCursor: page.value.nextCursor,
             cached: page.cached,
+            fetchedAt: now.toISOString(),
         };
     }
     // Cursor pages are unbounded fan-out — archived (save-everything), but
@@ -420,8 +482,76 @@ export async function listBacklinksPaged(input: {
         fetchedAt: now,
     });
     return {
-        rows,
+        rows: withSuspicion(rows),
         nextCursor,
         cached: false,
+        fetchedAt: now.toISOString(),
     };
+}
+/**
+ * Strictly read-only summary for AI/MCP read tools: the newest per-site
+ * snapshot (any age), else the cross-user cache row (even past its TTL).
+ * Unlike `getBacklinkSummary` it never inserts a snapshot, never computes a
+ * delta and never reaches the vendor.
+ */
+export async function readStoredBacklinkSummary(input: {
+    accountId: string;
+    siteId: string;
+}, deps: Pick<BacklinksServiceDeps, 'db'>): Promise<BacklinkSummaryPayload | null> {
+    const site = await loadOwnedSite(input.accountId, input.siteId);
+    const previous = await deps.db
+        .select()
+        .from(backlinkSnapshots)
+        .where(eq(backlinkSnapshots.siteId, site.id))
+        .orderBy(desc(backlinkSnapshots.fetchedAt))
+        .limit(1);
+    const prev = previous[0];
+    if (prev) {
+        return {
+            domainRating: prev.domainRating,
+            backlinks: prev.backlinks,
+            referringDomains: prev.referringDomains,
+            brokenBacklinks: prev.brokenBacklinks,
+            firstSeen: null,
+            fetchedAt: prev.fetchedAt.toISOString(),
+            cached: true,
+            delta: null,
+        };
+    }
+    const { repo } = vendorLayer(deps.db);
+    const hit = await repo.read({
+        capability: 'backlink',
+        operation: 'summary',
+        cacheKey: computeVendorCacheKey({
+            capability: 'backlink',
+            operation: 'summary',
+            params: { domain: site.domain },
+        }),
+    }, new Date(), { includeExpired: true });
+    const parsed = hit ? summaryPayloadSchema.safeParse(hit.payload) : null;
+    if (!hit || !parsed?.success)
+        return null;
+    return {
+        domainRating: parsed.data.domainRank,
+        backlinks: parsed.data.backlinks,
+        referringDomains: parsed.data.referringDomains,
+        brokenBacklinks: parsed.data.brokenBacklinks,
+        firstSeen: parsed.data.firstSeen,
+        fetchedAt: hit.fetchedAt.toISOString(),
+        cached: true,
+        delta: null,
+    };
+}
+/**
+ * Strictly read-only stored first page for AI/MCP read tools: ownership check
+ * plus the zero-spend `readStoredFirstPage`. There is no `fresh` and no cursor
+ * path here, so this can never reach a provider.
+ */
+export async function readStoredBacklinkList(input: {
+    accountId: string;
+    siteId: string;
+    limit?: number;
+}, deps: BacklinksServiceDeps | Pick<BacklinksServiceDeps, 'db'>): Promise<BacklinkListPayload> {
+    const site = await loadOwnedSite(input.accountId, input.siteId);
+    return readStoredFirstPage(site, { limit: input.limit ?? 100 }, deps as BacklinksServiceDeps, new Date());
 }

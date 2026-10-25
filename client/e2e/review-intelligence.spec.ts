@@ -41,9 +41,9 @@ const WCAG_TAGS = ['wcag2a', 'wcag2aa', 'wcag21a', 'wcag21aa'];
 
 /** Fake-provider scenario sentinel (see `shared/providers/fakes.ts`). */
 const SCENARIO_PREFIX = '__scenario-';
-const GOOGLE_TARGET = 'ChIJe2eReviewsAlpha';
+const GOOGLE_TARGET = 'ChIJe2eReviewsAlpha0123456789';
 const TRUSTPILOT_TARGET = 'reviews-alpha.example';
-const TRIPADVISOR_TARGET = 'g-99001';
+const TRIPADVISOR_TARGET = '9900100';
 
 type Tier = 'none' | 'starter' | 'pro' | 'agency';
 type ReviewSource = 'google' | 'trustpilot' | 'tripadvisor';
@@ -227,6 +227,27 @@ async function addSource(page: Page, source: ReviewSource, target: string): Prom
   await page.getByTestId(`reviews-source-save-${source}`).focus();
   await page.keyboard.press('Enter');
   expect((await saved).status()).toBe(201);
+  await expect(page.getByTestId(`reviews-source-configured-${source}`)).toBeVisible();
+}
+
+/**
+ * Configure a fake-provider SCENARIO source over the API. The browser form
+ * enforces real Google/Tripadvisor id formats and has no test seam; the
+ * server accepts the `__scenario-<name>` sentinel only while the reviews
+ * provider is the fake (see `review-sync.targets.ts`).
+ */
+async function addScenarioSource(
+  page: Page,
+  siteId: string,
+  source: ReviewSource,
+  scenario: string,
+): Promise<void> {
+  const response = await page.request.post('/api/local-seo/reviews/sources', {
+    data: { profileId: siteId, source, target: `${SCENARIO_PREFIX}${scenario}` },
+    headers: await csrfHeaders(page.request),
+  });
+  expect(response.status()).toBe(201);
+  await openReviews(page, siteId);
   await expect(page.getByTestId(`reviews-source-configured-${source}`)).toBeVisible();
 }
 
@@ -451,12 +472,14 @@ test('Review Intelligence: source setup, metering, dedupe, themes, export, cap, 
   });
 
   await test.step('hostile review content stays inert and exports formula-neutralized', async () => {
-    // Re-point Tripadvisor at the fake's hostile payload through the shipped
-    // source form: formula body, script-tag title, `@`-leading author.
+    // Re-point Tripadvisor at the fake's hostile payload through the API:
+    // formula body, script-tag title, `@`-leading author.
     await page.getByTestId('reviews-source-remove-tripadvisor').focus();
     await page.keyboard.press('Enter');
+    // Removal asks for confirmation first.
+    await page.getByTestId('reviews-source-remove-confirm').click();
     await expect(page.getByTestId('reviews-source-input-tripadvisor')).toBeVisible();
-    await addSource(page, 'tripadvisor', `${SCENARIO_PREFIX}hostile`);
+    await addScenarioSource(page, siteA, 'tripadvisor', 'hostile');
     await selectSources(page, ['tripadvisor']);
     await estimate(page);
     const hostileRunId = await confirmSync(page);
@@ -519,7 +542,7 @@ test('Review Intelligence: source setup, metering, dedupe, themes, export, cap, 
     await openReviews(page, siteC);
     // The sentinel target makes the fake provider throw a terminal
     // VendorTimeoutError for Google only.
-    await addSource(page, 'google', `${SCENARIO_PREFIX}timeout`);
+    await addScenarioSource(page, siteC, 'google', 'timeout');
     await addSource(page, 'trustpilot', TRUSTPILOT_TARGET);
     await addSource(page, 'tripadvisor', TRIPADVISOR_TARGET);
     await selectSources(page, ['google', 'trustpilot', 'tripadvisor']);

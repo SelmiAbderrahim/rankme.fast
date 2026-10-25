@@ -33,3 +33,7 @@ export const siteIdParamsSchema = z.object({
 export const runIdParamsSchema = z.object({
     runId: z.string().min(1),
 });
+/** One finding of one run: its full URL lists and its targeted re-check. */
+export const findingRuleParamsSchema = runIdParamsSchema.extend({
+    ruleId: z.string().min(1).max(120),
+});

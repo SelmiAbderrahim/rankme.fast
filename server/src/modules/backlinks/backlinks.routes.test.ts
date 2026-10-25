@@ -280,6 +280,60 @@ describe('GET /api/sites/:siteId/backlinks', () => {
     expect(res.body).not.toHaveProperty('rowBudget');
   });
 
+  it('flags the templated pattern as suspected, with reasons, and leaves a plain dated slug alone', async () => {
+    const spam = (host: string, serial: number) => ({
+      urlFrom: `https://${host}/list/2026-07-24-${serial}`,
+      urlTo: 'https://example.com/',
+      anchor: null,
+      dofollow: true,
+      isBroken: false,
+      firstSeen: new Date('2026-07-24T00:00:00.000Z'),
+      lastSeen: null,
+    });
+    setBacklinkProvider({
+      async getSummary() {
+        return { domainRank: 10, backlinks: 5, referringDomains: 3, brokenBacklinks: 0, firstSeen: null };
+      },
+      async listBacklinks() {
+        return {
+          rows: [
+            spam('pandorajewelry-officialsites.us', 247),
+            spam('pandorajewelry-outlet-store.top', 248),
+            spam('cheap-bags-sale.xyz', 249),
+            {
+              urlFrom: 'https://news.example.org/2026-07-24-launch',
+              urlTo: 'https://example.com/',
+              anchor: 'Example launches',
+              dofollow: true,
+              isBroken: false,
+              firstSeen: null,
+              lastSeen: null,
+            },
+          ],
+        };
+      },
+    });
+    const user = await seedUser('scope-spam@x.co');
+    const siteId = await seedSite(user.id, 'example.com');
+    const res = await request(app)
+      .get(`/api/sites/${siteId}/backlinks?limit=10&fresh=true`)
+      .set('Cookie', user.cookie);
+    expect(res.status).toBe(200);
+    const byHost = new Map(
+      (res.body.rows as Array<{ urlFrom: string; suspicion: unknown }>).map((row) => [
+        new URL(row.urlFrom).hostname,
+        row.suspicion,
+      ]),
+    );
+    expect(byHost.get('pandorajewelry-officialsites.us')).toEqual({
+      status: 'suspected',
+      verified: false,
+      reasons: ['dated_numbered_path', 'shared_path_template', 'lookalike_domain'],
+    });
+    // One dated slug on an ordinary news host is not enough to flag it.
+    expect(byHost.get('news.example.org')).toBeNull();
+  });
+
   it('honours the cursor query param and passes it to the provider', async () => {
     const user = await seedUser('proC@x.co');
     const siteId = await seedSite(user.id);
@@ -358,7 +412,7 @@ describe('GET /api/sites/:siteId/backlinks', () => {
     expect(sumRes.body.firstSeen).toBeNull();
     // First fetch — writes cache with null timestamps.
     const first = await request(app)
-      .get(`/api/sites/${siteId}/backlinks`)
+      .get(`/api/sites/${siteId}/backlinks?fresh=true`)
       .set('Cookie', user.cookie)
       .expect(200);
     expect(first.body.rows[0].firstSeen).toBeNull();
@@ -382,7 +436,7 @@ describe('GET /api/sites/:siteId/backlinks', () => {
       .expect(200);
     // Now call list — cache is written on the existing snapshot row.
     const first = await request(app)
-      .get(`/api/sites/${siteId}/backlinks`)
+      .get(`/api/sites/${siteId}/backlinks?fresh=true`)
       .set('Cookie', user.cookie)
       .expect(200);
     expect(first.body.cached).toBe(false);
@@ -414,7 +468,7 @@ describe('GET /api/sites/:siteId/backlinks', () => {
       .set('Cookie', user.cookie);
     expect(res.status).toBe(500);
     const res2 = await request(app)
-      .get(`/api/sites/${siteId}/backlinks`)
+      .get(`/api/sites/${siteId}/backlinks?fresh=true`)
       .set('Cookie', user.cookie);
     expect(res2.status).toBe(500);
   });
@@ -423,7 +477,7 @@ describe('GET /api/sites/:siteId/backlinks', () => {
     const user = await seedUser('proCache@x.co');
     const siteId = await seedSite(user.id);
     const first = await request(app)
-      .get(`/api/sites/${siteId}/backlinks`)
+      .get(`/api/sites/${siteId}/backlinks?fresh=true`)
       .set('Cookie', user.cookie)
       .expect(200);
     expect(first.body.cached).toBe(false);
@@ -453,9 +507,15 @@ describe('GET /api/sites/:siteId/backlinks', () => {
       },
     });
     const res = await request(app)
-      .get(`/api/sites/${siteId}/backlinks`)
+      .get(`/api/sites/${siteId}/backlinks?fresh=true`)
       .set('Cookie', user.cookie);
     expect(res.status).toBe(503);
+    // Opening the tab never reaches the vendor, so it stays an empty 200.
+    const stored = await request(app)
+      .get(`/api/sites/${siteId}/backlinks`)
+      .set('Cookie', user.cookie);
+    expect(stored.status).toBe(200);
+    expect(stored.body).toMatchObject({ rows: [], nextCursor: null, cached: false });
   });
 
   it('cross-account access returns 404', async () => {
@@ -572,7 +632,7 @@ describe('cross-user vendor cache (generic vendor layer)', () => {
     const siteB = await seedSite(userB.id, 'sharedlist.example');
 
     const first = await request(app)
-      .get(`/api/sites/${siteA}/backlinks?limit=5`)
+      .get(`/api/sites/${siteA}/backlinks?limit=5&fresh=true`)
       .set('Cookie', userA.cookie);
     expect(first.status).toBe(200);
     expect(first.body.cached).toBe(false);
@@ -587,6 +647,86 @@ describe('cross-user vendor cache (generic vendor layer)', () => {
     expect(second.body.rows).toHaveLength(5);
     expect(second.body.rows[0].urlFrom).toBe('https://ref-0.example/');
     expect(counting.calls()).toBe(1);
+  });
+
+  it('opening the tab is a stored-data read: it never reaches the vendor, even past the cache lifetime', async () => {
+    const counting = countingProvider();
+    setBacklinkProvider(counting.provider);
+    const user = await seedUser('xstored@x.co');
+    const siteId = await seedSite(user.id, 'stored.example');
+
+    // Nothing stored yet: an empty list, no vendor call.
+    const empty = await request(app)
+      .get(`/api/sites/${siteId}/backlinks?limit=5`)
+      .set('Cookie', user.cookie);
+    expect(empty.status).toBe(200);
+    expect(empty.body).toMatchObject({ rows: [], nextCursor: null, cached: false });
+    expect(counting.calls()).toBe(0);
+
+    // An explicit fresh pull stores the first page.
+    const fresh = await request(app)
+      .get(`/api/sites/${siteId}/backlinks?limit=5&fresh=true`)
+      .set('Cookie', user.cookie);
+    expect(fresh.status).toBe(200);
+    expect(fresh.body.rows).toHaveLength(5);
+    expect(counting.calls()).toBe(1);
+
+    // Age every stored row past its lifetime: the plain GET still serves it.
+    await getTestDb()
+      .update(vendorCache)
+      .set({ expiresAt: new Date(Date.now() - 60_000) })
+      .where(eq(vendorCache.operation, 'list-first-page'));
+    const stale = await request(app)
+      .get(`/api/sites/${siteId}/backlinks?limit=5&fresh=false`)
+      .set('Cookie', user.cookie);
+    expect(stale.status).toBe(200);
+    expect(stale.body.cached).toBe(true);
+    expect(stale.body.rows).toHaveLength(5);
+    expect(stale.body.nextCursor).toBe('page-2');
+    expect(counting.calls()).toBe(1);
+
+    // Only the explicit pull refreshes the stored rows.
+    const again = await request(app)
+      .get(`/api/sites/${siteId}/backlinks?limit=5&fresh=true`)
+      .set('Cookie', user.cookie);
+    expect(again.status).toBe(200);
+    expect(again.body.cached).toBe(false);
+    expect(counting.calls()).toBe(2);
+  });
+
+  it('a stored row that no longer matches the list shape reads as empty', async () => {
+    const counting = countingProvider();
+    setBacklinkProvider(counting.provider);
+    const user = await seedUser('xshape@x.co');
+    const siteId = await seedSite(user.id, 'shape.example');
+    await getTestDb().insert(vendorCache).values({
+      capability: 'backlink',
+      operation: 'list-first-page',
+      cacheKey: computeVendorCacheKey({
+        capability: 'backlink',
+        operation: 'list-first-page',
+        params: { domain: 'shape.example', limit: 5 },
+      }),
+      params: { domain: 'shape.example', limit: 5 },
+      payload: { unexpected: true },
+      fetchedAt: new Date(),
+      expiresAt: new Date(Date.now() + 60_000),
+    });
+    const res = await request(app)
+      .get(`/api/sites/${siteId}/backlinks?limit=5`)
+      .set('Cookie', user.cookie);
+    expect(res.status).toBe(200);
+    expect(res.body).toMatchObject({ rows: [], nextCursor: null, cached: false });
+    expect(counting.calls()).toBe(0);
+  });
+
+  it('rejects a fresh value that is not true or false', async () => {
+    const user = await seedUser('xbadfresh@x.co');
+    const siteId = await seedSite(user.id, 'badfresh.example');
+    const res = await request(app)
+      .get(`/api/sites/${siteId}/backlinks?fresh=maybe`)
+      .set('Cookie', user.cookie);
+    expect(res.status).toBe(400);
   });
 
   it('cursor pages are archived (save-everything) but never served from the cache', async () => {

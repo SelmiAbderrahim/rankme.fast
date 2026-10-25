@@ -109,6 +109,42 @@ export interface PageFetchFailure {
     statusCode?: number;
     contentType?: string;
 }
+/**
+ * Result of re-requesting one broken link target the crawler reported.
+ *   - `confirmed`  our own GET (up to five redirects) also failed
+ *   - `cleared`    our GET reached a 2xx page, so the crawler's verdict was wrong
+ *                  (a redirect or locale target that does resolve)
+ *   - `unverified` we could not tell: not re-requested (verification budget),
+ *                  timed out, unreachable, or the server refused our check
+ *                  (401/403/429, which is often bot protection)
+ * Only `cleared` targets leave `AuditPage.brokenLinks`.
+ */
+export const BROKEN_LINK_OUTCOMES = ['confirmed', 'cleared', 'unverified'] as const;
+export type BrokenLinkOutcome = (typeof BROKEN_LINK_OUTCOMES)[number];
+export interface BrokenLinkEvidence {
+    target: string;
+    outcome: BrokenLinkOutcome;
+    /** Terminal HTTP status of our request; `null` when there was no HTTP answer. */
+    status: number | null;
+    /** Set when there was no HTTP answer or the redirect chain failed. */
+    failure?: PageFetchFailureKind;
+    /** Where the target's redirect chain ended, when it redirected. */
+    finalUrl?: string;
+}
+/**
+ * A URL the crawl did not return that the product still cares about (the site
+ * root, URLs Search Console reports), requested by us with up to five
+ * redirects followed. This is how "absent from the crawl" gets a cause.
+ */
+export interface CoverageProbe {
+    url: string;
+    source: 'site-root' | 'search-console';
+    statusCode: number | null;
+    finalUrl: string | null;
+    redirectChain: RedirectHop[];
+    contentType: string | null;
+    failure: PageFetchFailure | null;
+}
 
 export interface AuditPage {
     url: string;
@@ -132,11 +168,39 @@ export interface AuditPage {
      */
     wordCount?: number;
     /**
+     * UTF-8 byte size of the main content's plain text, when the provider
+     * reports it. Languages written without spaces between words (Chinese,
+     * Japanese, Thai) cannot be measured with `wordCount`, which the vendor
+     * counts by spaces; the thin-content check reads this instead. Absent =
+     * not reported.
+     */
+    textSize?: number;
+    /**
+     * Language the page declares (`<html lang>`), when the provider reports
+     * it. Absent = not reported; the rule engine then reads the locale from
+     * the URL path and finally from the text itself.
+     */
+    htmlLang?: string;
+    /**
      * Page exposes FAQ / Q&A signals (schema.org FAQPage micromarkup or
      * question-style headings). Absent = not evaluated.
      */
     hasFaqSignals?: boolean;
     timing?: AuditPageTiming;
+    /**
+     * Where this page's redirect leads. Vendor rows with a 3xx status carry the
+     * immediate `location` (the crawler does not follow it); first-party probes
+     * carry the final address after up to five followed redirects. Absent = the
+     * page did not redirect or the evidence was not recorded (older runs).
+     */
+    finalUrl?: string;
+    redirectChain?: RedirectHop[];
+    /** Media type the server reported (`text/html`, `application/pdf`, ...). */
+    contentType?: string;
+    /** Recorded cause when the page was not a normal readable HTML page. */
+    fetchFailure?: PageFetchFailure;
+    /** Per-target evidence behind `brokenLinks`. Absent = not re-checked. */
+    brokenLinkEvidence?: BrokenLinkEvidence[];
     /** Crawler checks; true means the named problem was observed. */
     checks?: AuditPageChecks;
     clickDepth?: number;
@@ -217,11 +281,23 @@ export interface AuditHostRedirect {
     /** Hostname the crawl actually landed on (lowercase). */
     to: string;
 }
+/**
+ * Why the crawler stopped, in vendor-neutral terms: `page_limit` = it reached
+ * the page limit set for the audit; `no_more_links` = it ran out of links (and
+ * sitemap entries) to follow; `stopped` = the crawl was halted before it
+ * finished; `crawler_error` = the crawl service failed.
+ */
+export const AUDIT_CRAWL_STOP_REASONS = ['page_limit', 'no_more_links', 'stopped', 'crawler_error'] as const;
+export type AuditCrawlStopReason = (typeof AUDIT_CRAWL_STOP_REASONS)[number];
 export interface AuditResult {
     domainChecks: AuditDomainChecks;
     pages: AuditPage[];
     /** Vendor page count, which may exceed the returned page list. */
     vendorPagesCrawled?: number;
+    /** Requests we made for URLs missing from the crawl (see {@link CoverageProbe}). */
+    coverageProbes?: CoverageProbe[];
+    /** Why the crawl ended. Absent = the vendor did not say (or a legacy run). */
+    crawlStopReason?: AuditCrawlStopReason;
     /** Absent = the crawl stayed on the site's own host (or it was not checked). */
     hostRedirect?: AuditHostRedirect;
     duplicateGroups?: AuditDuplicateGroup[];

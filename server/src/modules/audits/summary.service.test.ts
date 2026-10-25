@@ -638,6 +638,8 @@ describe("worker-side provider generation", () => {
       model: "model-1",
       truncated: true,
       createdAt: generatedAt.toISOString(),
+      basisRuleIds: ["title-missing-or-weak", "headings-weak"],
+      inputHash: expect.stringMatching(/^[0-9a-f]{64}$/),
     });
     expect(summarize).toHaveBeenCalledWith(
       expect.objectContaining({

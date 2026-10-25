@@ -11,7 +11,7 @@
  * so two runs over identical facts serialize byte-identically.
  */
 import type { EvidenceFact } from './evidence.js';
-import { SCHEMA_TYPE_REGISTRY, factFamily, type OmissionReason, type SchemaPropertyClass, type SchemaPropertyDefinition, type SupportedSchemaType, } from './schema-types.registry.js';
+import { SCHEMA_TYPE_REGISTRY, USER_FACT_FAMILY, factFamily, type OmissionReason, type SchemaPropertyClass, type SchemaPropertyDefinition, type SupportedSchemaType, } from './schema-types.registry.js';
 export const SCHEMA_CONTEXT = 'https://schema.org';
 /** Assembly ceilings, frozen. */
 export const BREADCRUMB_MAX_ITEMS = 8;
@@ -250,6 +250,12 @@ function defaultOmissionReason(context: AssemblyContext, property: SchemaPropert
     }
     return 'no_evidence';
 }
+/** Provenance label stored with every user-supplied value. */
+export const USER_FACT_LABEL = 'Provided by you';
+/** `primaryImageOfPage` expects an ImageObject; every other user value is a plain string. */
+function userValue(property: string, value: string): unknown {
+    return property === 'primaryImageOfPage' ? { '@type': 'ImageObject', url: value } : value;
+}
 /**
  * Assemble the JSON-LD document for one generation.
  *
@@ -257,8 +263,13 @@ function defaultOmissionReason(context: AssemblyContext, property: SchemaPropert
  *                              deterministic fill is resolved from it by id
  * @param omissionReasonOverrides refined reasons from the AI post-check
  *                              (which supplies `evidence_ambiguous`)
+ * @param userFacts             values the user supplied for named properties;
+ *                              each is emitted verbatim with the provenance
+ *                              "provided by you" and takes precedence over
+ *                              evidence. Callers validate them against the
+ *                              registry first.
  */
-export function buildSchemaDocument(type: SupportedSchemaType, acceptedAssignments: readonly AcceptedAssignment[], deterministicFacts: readonly EvidenceFact[], omissionReasonOverrides: ReadonlyMap<string, OmissionReason> = new Map()): BuiltSchemaDocument {
+export function buildSchemaDocument(type: SupportedSchemaType, acceptedAssignments: readonly AcceptedAssignment[], deterministicFacts: readonly EvidenceFact[], omissionReasonOverrides: ReadonlyMap<string, OmissionReason> = new Map(), userFacts: ReadonlyMap<string, string> = new Map()): BuiltSchemaDocument {
     const factsById = new Map<string, EvidenceFact>();
     for (const fact of deterministicFacts) {
         // Context-only facts describe the page's CURRENT markup and may never fill
@@ -272,6 +283,18 @@ export function buildSchemaDocument(type: SupportedSchemaType, acceptedAssignmen
     const emittedProperties: string[] = [];
     const omissions: OmissionRow[] = [];
     for (const property of SCHEMA_TYPE_REGISTRY[type].properties) {
+        const supplied = userFacts.get(property.name);
+        if (supplied !== undefined) {
+            evidence.push({
+                property: property.name,
+                factId: `${USER_FACT_FAMILY}.${property.name}`,
+                factLabel: USER_FACT_LABEL,
+                value: supplied,
+            });
+            document[property.name] = userValue(property.name, supplied);
+            emittedProperties.push(property.name);
+            continue;
+        }
         const value = buildProperty(context, property);
         if (value === null) {
             omissions.push({

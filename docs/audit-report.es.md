@@ -79,7 +79,7 @@ Una convención reciente que indica a los asistentes de IA qué páginas prefier
 Las tres últimas comprobaciones necesitan cargar cada imagen, script y hoja de estilo de tus páginas. Eso hace el rastreo más lento y gasta más de tu presupuesto de rastreo, así que cada auditoría tiene su propia opción.
 
 - **Analizar imágenes, scripts y estilos** viene marcada por defecto al iniciar una auditoría. Desmárcala para omitir el análisis en esa ejecución.
-- Una auditoría con análisis carga estos archivos en 1.000 páginas como máximo. Las páginas que superen ese número se rastrean igualmente, pero sin sus archivos.
+- Una auditoría con análisis rastrea 1.000 páginas como máximo. Desmarca la opción para rastrear más páginas, sin el análisis.
 - Si el análisis no se puede leer, la auditoría termina igualmente y las tres comprobaciones aparecen en No evaluado con el motivo.
 - Una auditoría hecha sin el análisis muestra estas comprobaciones en No evaluado. Inicia una auditoría nueva con la opción marcada para incluirlas.
 

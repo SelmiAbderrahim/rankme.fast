@@ -53,7 +53,7 @@ order: 0
 - [Suivi Bing, YouTube et Amazon](./alt-engine-tracking.fr.md) : Comment RankMeFast suit les moteurs hors Google, ce qu'est un jeton cible exact, et pourquoi une position Amazon est une position d'index.
 - [Cannibalisation de mots-clés](./cannibalization.fr.md) : Comment RankMeFast repère les requêtes où plusieurs de vos pages se concurrencent, à partir des seules lignes Search Console déjà stockées.
 - [Liens toxiques et désaveu](./toxic-links.fr.md) : Comment RankMeFast classe les backlinks avec une grille déterministe, quand l'IA peut annoter une ligne, et pourquoi le fichier de désaveu n'est jamais soumis à votre place.
-- [Alertes](./alerts.fr.md) : Quelles alertes se déclenchent aujourd'hui, comment fonctionne la livraison exactement-une-fois, et pourquoi une règle de chute de position peut être configurée avant de pouvoir livrer.
+- [Alertes](./alerts.fr.md) : Quelles alertes se déclenchent, comment fonctionne la livraison exactement-une-fois, et quand une règle de chute de position livre.
 - [Suggestions de maillage interne](./internal-linking.fr.md) : Comment RankMeFast repère les pages orphelines et faiblement liées de votre inventaire de contenu stocké et rédige des ancres qui citent leurs preuves.
 - [Briefs de contenu](./content-briefs.fr.md) : Comment un brief est construit à partir du top 10 stocké et d'au plus dix extractions de pages, et pourquoi chaque nœud du plan doit citer une preuve fournie.
 - [Suivi local par grille](./geogrid.fr.md) : Comment les grilles de pack local par coordonnée sont collectées, ce que signifie une cellule en échec, et pourquoi les coordonnées se saisissent au lieu de se cliquer sur une carte.

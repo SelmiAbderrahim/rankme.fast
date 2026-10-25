@@ -2,6 +2,7 @@ import { act, fireEvent, render, screen } from '@testing-library/react';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import userEvent from '@testing-library/user-event';
 import { I18nextProvider } from 'react-i18next';
+import { MemoryRouter } from 'react-router-dom';
 import { ApiError } from '@shared/api/client';
 import { changeLanguage, i18n, initI18n } from '@shared/i18n';
 import * as api from '../api';
@@ -244,5 +245,121 @@ describe('AiSummaryCard', () => {
       resolvePoll?.(summaryState('succeeded', storedSummary));
       await Promise.resolve();
     });
+  });
+});
+
+describe('AiSummaryCard — structured summaries, freshness and progress', () => {
+  const structured: AuditReportAiSummary = {
+    ...storedSummary,
+    basisRuleIds: ['not-indexed', 'faq-content-missing'],
+    structured: {
+      status: 'One page to fix now.',
+      items: [
+        { ruleId: 'not-indexed', what: 'Three pages are not indexed.', why: 'They cannot appear in search.', firstStep: 'Inspect each URL.', whereToAct: 'google' },
+        { ruleId: 'title-missing-or-weak', what: 'Titles are weak.', why: 'Readers see them first.', firstStep: 'Rewrite them.', whereToAct: 'report' },
+      ],
+    },
+  };
+  const renderWithRouter = (props: Partial<React.ComponentProps<typeof AiSummaryCard>> = {}) =>
+    render(
+      <I18nextProvider i18n={i18n}>
+        <MemoryRouter>
+          <AiSummaryCard runId="run-1" siteId="site-1" initial={structured} requestedLocale="en" {...props} />
+        </MemoryRouter>
+      </I18nextProvider>,
+    );
+
+  it('renders the status, each item with where to act, and the evidence count', () => {
+    renderWithRouter();
+    expect(screen.getByTestId('report-ai-summary-status')).toHaveTextContent('One page to fix now.');
+    const items = screen.getAllByTestId('report-ai-summary-item');
+    expect(items).toHaveLength(2);
+    const links = screen.getAllByTestId('report-ai-summary-act');
+    expect(links[0]).toHaveAttribute('href', '/sites/site-1?tab=google');
+    expect(links[1]).toHaveAttribute('href', '/sites/site-1?tab=report&finding=title-missing-or-weak');
+    expect(screen.getByTestId('report-ai-summary-basis')).toBeInTheDocument();
+    expect(screen.queryByTestId('report-ai-summary-stale')).not.toBeInTheDocument();
+  });
+
+  it('renders a status-only structured summary without an item list', () => {
+    renderWithRouter({ initial: { ...structured, structured: { status: 'Nothing urgent.', items: [] } } });
+    expect(screen.getByTestId('report-ai-summary-status')).toHaveTextContent('Nothing urgent.');
+    expect(screen.queryByTestId('report-ai-summary-item')).not.toBeInTheDocument();
+  });
+
+  it('leaves out item links when no site is known', () => {
+    renderWithRouter({ siteId: undefined });
+    expect(screen.queryByTestId('report-ai-summary-act')).not.toBeInTheDocument();
+  });
+
+  it('hides a stale summary until asked, marks it, and offers to regenerate', async () => {
+    const user = userEvent.setup();
+    mocked.generateAiSummaryRequest.mockResolvedValue(summaryState('queued', structured));
+    renderWithRouter({
+      initialFreshness: { stale: true, reason: 'triage_changed', evidenceRuleIds: ['not-indexed'], changedRuleIds: ['not-indexed'] },
+    });
+    expect(screen.getByTestId('report-ai-summary-stale')).toBeInTheDocument();
+    expect(screen.queryByTestId('report-ai-summary-status')).not.toBeInTheDocument();
+    await user.click(screen.getByTestId('report-ai-summary-toggle-previous'));
+    expect(screen.getByTestId('report-ai-summary-stale-marker')).toBeInTheDocument();
+    expect(screen.getByTestId('report-ai-summary-status')).toBeInTheDocument();
+    expect(screen.queryByTestId('report-ai-summary-basis')).not.toBeInTheDocument();
+    await user.click(screen.getByTestId('report-ai-summary-toggle-previous'));
+    expect(screen.queryByTestId('report-ai-summary-status')).not.toBeInTheDocument();
+    await user.click(screen.getByTestId('report-ai-summary-stale-regenerate'));
+    expect(mocked.generateAiSummaryRequest).toHaveBeenCalledWith('run-1', 'en');
+  });
+
+  it('treats a decision taken on this page as stale, and renders text-only summaries muted when stale', async () => {
+    const user = userEvent.setup();
+    renderWithRouter({ initial: storedSummary, triageChanged: true });
+    expect(screen.getByTestId('report-ai-summary-stale')).toBeInTheDocument();
+    await user.click(screen.getByTestId('report-ai-summary-toggle-previous'));
+    expect(screen.getByTestId('report-ai-summary-text')).toHaveClass('text-muted-foreground');
+  });
+
+  it('shows the server stage and elapsed time while a job runs', async () => {
+    vi.useFakeTimers();
+    mocked.fetchAiSummaryStateRequest.mockResolvedValue({
+      ...summaryState('running', null),
+      progress: { stage: 'writing_summary', requestedAt: '2026-07-03T00:00:00.000Z', startedAt: null, finishedAt: null, elapsedMs: 65_000, failureCode: null },
+    });
+    renderWithRouter({ initial: null, initialStatus: 'queued' });
+    expect(screen.getByTestId('report-ai-summary-stage')).toHaveAttribute('data-stage', 'queued');
+    await act(async () => {
+      await vi.advanceTimersByTimeAsync(3_000);
+    });
+    expect(screen.getByTestId('report-ai-summary-stage')).toHaveAttribute('data-stage', 'writing_summary');
+    expect(screen.getByTestId('report-ai-summary-elapsed')).toHaveTextContent('1:');
+  });
+
+  it('explains a failure by its code and offers to try again', async () => {
+    const user = userEvent.setup();
+    mocked.generateAiSummaryRequest.mockResolvedValue({
+      ...summaryState('failed', null),
+      progress: { stage: null, requestedAt: '2026-07-03T00:00:00.000Z', startedAt: null, finishedAt: '2026-07-03T00:00:12.000Z', elapsedMs: 12_000, failureCode: 'timeout' },
+    });
+    renderWithRouter({ initial: null });
+    await user.click(screen.getByTestId('report-ai-summary-cta'));
+    expect(await screen.findByTestId('report-ai-summary-error')).toHaveTextContent('took too long');
+    mocked.generateAiSummaryRequest.mockResolvedValue(summaryState('succeeded', structured));
+    await user.click(screen.getByTestId('report-ai-summary-try-again'));
+    expect(await screen.findByTestId('report-ai-summary-status')).toBeInTheDocument();
+    expect(screen.getByTestId('report-ai-summary-announcer')).toHaveTextContent('Your AI summary is ready.');
+  });
+
+  it('announces a failed generation without a code and falls back to the generic message', async () => {
+    const user = userEvent.setup();
+    mocked.generateAiSummaryRequest.mockResolvedValue(summaryState('queued', null));
+    mocked.fetchAiSummaryStateRequest.mockResolvedValue(summaryState('failed', null));
+    vi.useFakeTimers({ shouldAdvanceTime: true });
+    renderWithRouter({ initial: null });
+    await user.click(screen.getByTestId('report-ai-summary-cta'));
+    await act(async () => {
+      await vi.advanceTimersByTimeAsync(3_000);
+    });
+    expect(screen.getByTestId('report-ai-summary-error')).toBeInTheDocument();
+    expect(screen.queryByTestId('report-ai-summary-try-again')).not.toBeInTheDocument();
+    expect(screen.getByTestId('report-ai-summary-announcer')).toHaveTextContent('could not be written');
   });
 });

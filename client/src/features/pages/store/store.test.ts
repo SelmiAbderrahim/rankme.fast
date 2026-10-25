@@ -1,4 +1,4 @@
-import { beforeEach, describe, expect, it, vi } from 'vitest';
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
 vi.mock('../api', () => ({
   fetchPagesList: vi.fn(),
@@ -6,6 +6,7 @@ vi.mock('../api', () => ({
   requestPagesRefresh: vi.fn(),
 }));
 
+import { configureStore } from '@reduxjs/toolkit';
 import { makeStore, rootReducer, type RootState } from '@app/store';
 import { PagesClientError } from '../error';
 import { fetchPagesDetail, fetchPagesList, requestPagesRefresh } from '../api';
@@ -37,7 +38,9 @@ import {
   abortPagesRequests,
   loadPagesDetail,
   loadPagesList,
+  pagesEntryNeedsLoad,
   refreshPages,
+  enterPagesSite,
 } from './thunks';
 
 const mockedList = vi.mocked(fetchPagesList);
@@ -115,7 +118,10 @@ const listResponse = (
     isIndexable: true,
     nonIndexableReason: null,
     onPageScore: null,
+    crawlState: 'indexable',
+    crawlEvidence: null,
     metrics: metrics(),
+    associatedQueryState: 'observed',
     deltas: { positionChange: null, clickChangePct: null },
     insights: ['striking_distance'],
   }],
@@ -305,6 +311,11 @@ describe('Pages keyed Redux state', () => {
     await store.dispatch(loadPagesDetail({ siteId: SITE_A, range: '28d', pageId: PAGE_A }));
     mockedList.mockRejectedValueOnce(new PagesClientError(requestError()));
     mockedDetail.mockRejectedValueOnce(new PagesClientError(requestError('not_found')));
+    // A good entry is served from the store; Refresh marks it out of date, and
+    // only then does asking for it again reach the network.
+    await store.dispatch(loadPagesList({ siteId: SITE_A, query: QUERY }));
+    expect(mockedList).toHaveBeenCalledTimes(1);
+    store.dispatch(refreshPages.pending('refresh', { siteId: SITE_A, query: QUERY, pageId: PAGE_A }));
     await store.dispatch(loadPagesList({ siteId: SITE_A, query: QUERY }));
     await store.dispatch(loadPagesDetail({ siteId: SITE_A, range: '28d', pageId: PAGE_A }));
     expect(selectPagesListEntry(store.getState(), SITE_A, QUERY)).toMatchObject({ data: list, error: { kind: 'unavailable' } });
@@ -431,6 +442,7 @@ describe('Pages loading and source-capability selectors', () => {
     loading: false,
     loaded: data !== null,
     invalidated: false,
+    loadedAt: data !== null ? Date.now() : null,
     error: null,
     requestId: null,
     ...overrides,
@@ -443,6 +455,7 @@ describe('Pages loading and source-capability selectors', () => {
     loading: false,
     loaded: data !== null,
     invalidated: false,
+    loadedAt: data !== null ? Date.now() : null,
     error: null,
     requestId: null,
     ...overrides,
@@ -486,6 +499,7 @@ describe('Pages loading and source-capability selectors', () => {
       metricAvailability: { clicks: true, bestPosition: false, associatedQueryCount: true },
     });
     expect(observed.supportedInsights).toContain('low_ctr');
+    expect(observed.supportedInsights).toContain('low_data');
     expect(observed.supportedSorts).toContain('click_change_pct');
 
     const estimated = pagesSourceCapabilities(envelope());
@@ -497,6 +511,7 @@ describe('Pages loading and source-capability selectors', () => {
       metricAvailability: { clicks: false, bestPosition: true },
     });
     expect(estimated.supportedInsights).not.toContain('low_ctr');
+    expect(estimated.supportedInsights).not.toContain('low_data');
     expect(estimated.supportedSorts).toContain('estimated_traffic');
 
     expect(pagesSourceCapabilities(envelope({
@@ -580,5 +595,203 @@ describe('Pages cancellation cleanup', () => {
       loading: true,
       error: null,
     });
+  });
+});
+
+describe('Pages request deduplication', () => {
+  const never = () => new Promise<PagesListResponse>(() => {});
+
+  it('shares one in-flight request per key and reaches the network again only when out of date', async () => {
+    let resolve: ((value: PagesListResponse) => void) | undefined;
+    mockedList.mockImplementationOnce(() => new Promise((res) => { resolve = res; }));
+    const store = makeStore();
+    const first = store.dispatch(loadPagesList({ siteId: SITE_A, query: QUERY }));
+    const again = store.dispatch(loadPagesList({ siteId: SITE_A, query: { ...QUERY } }));
+    expect(mockedList).toHaveBeenCalledTimes(1);
+    resolve?.(listResponse());
+    await Promise.all([first, again]);
+
+    // Loaded and fresh: served from the store.
+    await store.dispatch(loadPagesList({ siteId: SITE_A, query: QUERY }));
+    expect(mockedList).toHaveBeenCalledTimes(1);
+
+    // A different key is a different request.
+    mockedList.mockResolvedValueOnce(listResponse(PAGE_B));
+    await store.dispatch(loadPagesList({ siteId: SITE_A, query: { ...QUERY, q: 'other' } }));
+    expect(mockedList).toHaveBeenCalledTimes(2);
+
+    // Refresh marks it out of date, so it loads again.
+    mockedList.mockResolvedValueOnce(listResponse());
+    store.dispatch(refreshPages.pending('refresh', { siteId: SITE_A, query: QUERY, pageId: null }));
+    await store.dispatch(loadPagesList({ siteId: SITE_A, query: QUERY }));
+    expect(mockedList).toHaveBeenCalledTimes(3);
+    expect(selectPagesListEntry(store.getState(), SITE_A, QUERY).invalidated).toBe(false);
+  });
+
+  it('replaces a request that went out of date while it was still loading, and retries a failed key', async () => {
+    mockedList.mockImplementationOnce(never);
+    const store = makeStore();
+    void store.dispatch(loadPagesList({ siteId: SITE_A, query: QUERY }));
+    store.dispatch(refreshPages.pending('refresh', { siteId: SITE_A, query: QUERY, pageId: null }));
+    mockedList.mockRejectedValueOnce(new PagesClientError(requestError()));
+    await store.dispatch(loadPagesList({ siteId: SITE_A, query: QUERY }));
+    expect(mockedList).toHaveBeenCalledTimes(2);
+    expect(selectPagesListEntry(store.getState(), SITE_A, QUERY).error).toMatchObject({ kind: 'unavailable' });
+
+    mockedList.mockResolvedValueOnce(listResponse());
+    await store.dispatch(loadPagesList({ siteId: SITE_A, query: QUERY }));
+    expect(mockedList).toHaveBeenCalledTimes(3);
+    expect(selectPagesListEntry(store.getState(), SITE_A, QUERY).error).toBeNull();
+  });
+
+  it('deduplicates inspector loads the same way', async () => {
+    mockedDetail.mockResolvedValue(detailResponse());
+    const store = makeStore();
+    const input = { siteId: SITE_A, range: '28d' as const, pageId: PAGE_A };
+    await Promise.all([store.dispatch(loadPagesDetail(input)), store.dispatch(loadPagesDetail(input))]);
+    await store.dispatch(loadPagesDetail(input));
+    expect(mockedDetail).toHaveBeenCalledTimes(1);
+    store.dispatch(refreshPages.pending('refresh', { siteId: SITE_A, query: QUERY, pageId: PAGE_A }));
+    await store.dispatch(loadPagesDetail(input));
+    expect(mockedDetail).toHaveBeenCalledTimes(2);
+  });
+
+  it('treats a store that has not injected the Pages slice yet as empty', async () => {
+    mockedList.mockResolvedValueOnce(listResponse());
+    const bare = configureStore({ reducer: (state: Record<string, never> = {}) => state });
+    await bare.dispatch(loadPagesList({ siteId: SITE_A, query: QUERY }));
+    expect(mockedList).toHaveBeenCalledTimes(1);
+  });
+
+  it('decides from the entry alone', () => {
+    const entry = (patch: Partial<PagesCacheEntry<unknown>>): PagesCacheEntry<unknown> => ({
+      data: {}, loading: false, loaded: true, invalidated: false, loadedAt: 1_000, error: null, requestId: 'r', ...patch,
+    });
+    const NOW = 1_000 + 59_999;
+    expect(pagesEntryNeedsLoad(undefined, NOW)).toBe(true);
+    expect(pagesEntryNeedsLoad(entry({ loading: true }), NOW)).toBe(false);
+    expect(pagesEntryNeedsLoad(entry({ loading: true, invalidated: true }), NOW)).toBe(true);
+    expect(pagesEntryNeedsLoad(entry({}), NOW)).toBe(false);
+    expect(pagesEntryNeedsLoad(entry({}), NOW + 1)).toBe(true);
+    expect(pagesEntryNeedsLoad(entry({ loadedAt: null }), NOW)).toBe(true);
+    expect(pagesEntryNeedsLoad(entry({ invalidated: true }), NOW)).toBe(true);
+    expect(pagesEntryNeedsLoad(entry({ error: requestError() }), NOW)).toBe(true);
+    expect(pagesEntryNeedsLoad(entry({ loaded: false }), NOW)).toBe(true);
+    expect(pagesEntryNeedsLoad(entry({ data: null }), NOW)).toBe(true);
+  });
+
+  it('marks every cached list and inspector of the refreshed site out of date, and no other site', async () => {
+    mockedList.mockResolvedValue(listResponse());
+    mockedDetail.mockResolvedValue(detailResponse());
+    const store = makeStore();
+    const second = { ...QUERY, q: 'second' };
+    await store.dispatch(loadPagesList({ siteId: SITE_A, query: QUERY }));
+    await store.dispatch(loadPagesList({ siteId: SITE_A, query: second }));
+    await store.dispatch(loadPagesList({ siteId: SITE_B, query: QUERY }));
+    await store.dispatch(loadPagesDetail({ siteId: SITE_A, range: '28d', pageId: PAGE_A }));
+    await store.dispatch(loadPagesDetail({ siteId: SITE_B, range: '28d', pageId: PAGE_A }));
+
+    store.dispatch(refreshPages.pending('refresh', { siteId: SITE_A, query: QUERY, pageId: null }));
+    const state = store.getState();
+    expect(selectPagesListEntry(state, SITE_A, QUERY).invalidated).toBe(true);
+    expect(selectPagesListEntry(state, SITE_A, second).invalidated).toBe(true);
+    expect(selectPagesDetailEntry(state, SITE_A, '28d', PAGE_A).invalidated).toBe(true);
+    expect(selectPagesListEntry(state, SITE_B, QUERY).invalidated).toBe(false);
+    expect(selectPagesDetailEntry(state, SITE_B, '28d', PAGE_A).invalidated).toBe(false);
+  });
+});
+
+describe('Pages answers outlive the panel', () => {
+  afterEach(() => { vi.useRealTimers(); });
+
+  it('serves a navigation back inside the TTL from the store, and reloads once it ages out', async () => {
+    vi.useFakeTimers();
+    vi.setSystemTime(new Date('2026-10-05T10:00:00.000Z'));
+    mockedList.mockResolvedValue(listResponse());
+    const store = makeStore();
+    await store.dispatch(loadPagesList({ siteId: SITE_A, query: QUERY }));
+    expect(mockedList).toHaveBeenCalledTimes(1);
+
+    // Pages -> Overview -> Pages 30 s later: no request.
+    vi.setSystemTime(new Date('2026-10-05T10:00:30.000Z'));
+    await store.dispatch(loadPagesList({ siteId: SITE_A, query: QUERY }));
+    expect(mockedList).toHaveBeenCalledTimes(1);
+
+    // Past the TTL the entry is out of date and loads again.
+    vi.setSystemTime(new Date('2026-10-05T10:01:01.000Z'));
+    await store.dispatch(loadPagesList({ siteId: SITE_A, query: QUERY }));
+    expect(mockedList).toHaveBeenCalledTimes(2);
+  });
+
+  it('applies the same freshness window to inspector loads', async () => {
+    vi.useFakeTimers();
+    vi.setSystemTime(new Date('2026-10-05T10:00:00.000Z'));
+    mockedDetail.mockResolvedValue(detailResponse());
+    const store = makeStore();
+    const input = { siteId: SITE_A, range: '28d' as const, pageId: PAGE_A };
+    await store.dispatch(loadPagesDetail(input));
+    vi.setSystemTime(new Date('2026-10-05T10:00:59.000Z'));
+    await store.dispatch(loadPagesDetail(input));
+    expect(mockedDetail).toHaveBeenCalledTimes(1);
+    vi.setSystemTime(new Date('2026-10-05T10:01:00.000Z'));
+    await store.dispatch(loadPagesDetail(input));
+    expect(mockedDetail).toHaveBeenCalledTimes(2);
+  });
+
+  it('stamps loadedAt on arrival and keeps Refresh as the explicit invalidation', async () => {
+    vi.useFakeTimers();
+    vi.setSystemTime(new Date('2026-10-05T10:00:00.000Z'));
+    mockedList.mockResolvedValue(listResponse());
+    const store = makeStore();
+    expect(selectPagesListEntry(store.getState(), SITE_A, QUERY).loadedAt).toBeNull();
+    await store.dispatch(loadPagesList({ siteId: SITE_A, query: QUERY }));
+    expect(selectPagesListEntry(store.getState(), SITE_A, QUERY).loadedAt).toBe(
+      Date.parse('2026-10-05T10:00:00.000Z'),
+    );
+    store.dispatch(refreshPages.pending('refresh', { siteId: SITE_A, query: QUERY, pageId: null }));
+    await store.dispatch(loadPagesList({ siteId: SITE_A, query: QUERY }));
+    expect(mockedList).toHaveBeenCalledTimes(2);
+  });
+
+  it('keeps every site cached while the same site stays on screen, and drops the others on a site change', async () => {
+    mockedList.mockResolvedValue(listResponse());
+    mockedDetail.mockResolvedValue(detailResponse());
+    const store = makeStore();
+    store.dispatch(enterPagesSite(SITE_A));
+    await store.dispatch(loadPagesList({ siteId: SITE_A, query: QUERY }));
+    await store.dispatch(loadPagesDetail({ siteId: SITE_A, range: '28d', pageId: PAGE_A }));
+    store.dispatch(refreshPages.pending('refresh', { siteId: SITE_A, query: QUERY, pageId: null }));
+
+    // Re-entering the same site (Overview and back, StrictMode remount) keeps everything.
+    store.dispatch(enterPagesSite(SITE_A));
+    expect(Object.keys(selectPagesState(store.getState()).lists)).toHaveLength(1);
+    expect(Object.keys(selectPagesState(store.getState()).details)).toHaveLength(1);
+
+    // Another site leaves nothing of the first one behind, and keeps its own.
+    await store.dispatch(loadPagesList({ siteId: SITE_B, query: QUERY }));
+    await store.dispatch(loadPagesDetail({ siteId: SITE_B, range: '28d', pageId: PAGE_A }));
+    store.dispatch(refreshPages.pending('refresh-b', { siteId: SITE_B, query: QUERY, pageId: null }));
+    store.dispatch(enterPagesSite(SITE_B));
+    const state = selectPagesState(store.getState());
+    expect(Object.keys(state.lists)).toEqual([pagesListCacheKey(SITE_B, QUERY)]);
+    expect(Object.keys(state.details)).toEqual([pagesDetailCacheKey(SITE_B, '28d', PAGE_A)]);
+    expect(Object.keys(state.refreshes)).toEqual([SITE_B]);
+    expect(selectPagesListEntry(store.getState(), SITE_A, QUERY).data).toBeNull();
+  });
+
+  it('aborts the previous site request lanes when another site is entered', async () => {
+    const signals: AbortSignal[] = [];
+    mockedList.mockImplementation((_site, _query, signal) => new Promise<never>((_, reject) => {
+      signals.push(signal!);
+      signal?.addEventListener('abort', () => reject(new Error('abort')), { once: true });
+    }));
+    const store = makeStore();
+    store.dispatch(enterPagesSite(SITE_A));
+    const pending = store.dispatch(loadPagesList({ siteId: SITE_A, query: QUERY }));
+    store.dispatch(enterPagesSite(SITE_A));
+    expect(signals[0]?.aborted).toBe(false);
+    store.dispatch(enterPagesSite(SITE_B));
+    expect(signals[0]?.aborted).toBe(true);
+    await pending;
   });
 });

@@ -73,6 +73,7 @@ beforeEach(() => {
   vi.mocked(getSite).mockReset().mockResolvedValue({
     id: siteId, url: 'https://example.test', domain: 'example.test', displayName: 'Pulse Site',
     defaultMarket: null,
+    localBusiness: false,
     paused: false, pausedAt: null, createdAt: renderedAt, updatedAt: renderedAt,
   });
 });
@@ -114,6 +115,7 @@ describe('weekly pulse report export adapter', () => {
     vi.mocked(getSite).mockResolvedValue({
       id: siteId, url: 'https://example.test', domain: 'example.test', displayName: '',
       defaultMarket: null,
+      localBusiness: false,
       paused: false, pausedAt: null, createdAt: renderedAt, updatedAt: renderedAt,
     });
     const adapter = createWeeklyPulseReportExportAdapter(database);

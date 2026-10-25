@@ -774,6 +774,23 @@ describe('PATCH /api/sites/:id', () => {
     expect(reread?.displayName).toBe('My renamed blog');
   });
 
+  it('marks a site as a local business without touching its name', async () => {
+    const user = await seedUser();
+    const site = await insertSite(user.id, 'local.example.com');
+    const first = await request(app)
+      .patch(`/api/sites/${site._id.toString()}`)
+      .set('Cookie', user.cookie)
+      .send({ localBusiness: true });
+    expect(first.status).toBe(200);
+    expect(first.body.site.localBusiness).toBe(true);
+    const again = await request(app)
+      .patch(`/api/sites/${site._id.toString()}`)
+      .set('Cookie', user.cookie)
+      .send({ displayName: 'Local' });
+    expect(again.body.site).toMatchObject({ localBusiness: true, displayName: 'Local' });
+    expect((await Site.findById(site._id))?.localBusiness).toBe(true);
+  });
+
   it('accepts an empty displayName to clear the rename', async () => {
     const user = await seedUser();
     const site = await insertSite(user.id, 'clear.example.com');

@@ -1,6 +1,6 @@
 import { and, desc, eq, gte, inArray, sql } from 'drizzle-orm';
 import type { Db } from '../../db/client.js';
-import { aiCompetitorMentions, aiMentionSnapshots, aiPromptSuggestionRuns, aiTrackedPrompts, competitors, gscSearchAnalytics, keywords, parseAiPromptSuggestionSeeds, parseAiPromptSuggestionSet, rankings, type AiPromptSuggestionSeeds, type AiPromptSuggestionSet, type NewAiCompetitorMentionRow, type NewAiMentionSnapshotRow, } from '../../db/schema/index.js';
+import { aiCompetitorMentions, aiMentionSnapshots, aiPromptSuggestionRuns, aiTrackedPrompts, competitors, gscSearchAnalytics, keywords, parseAiPromptSuggestionSeeds, parseAiPromptSuggestionSet, rankings, type AiPromptSuggestionEvidenceLevel, type AiPromptSuggestionSeeds, type AiPromptSuggestionSet, type NewAiCompetitorMentionRow, type NewAiMentionSnapshotRow, } from '../../db/schema/index.js';
 import { Site } from '../sites/index.js';
 import type { SupportedLocale } from '../../shared/i18n/locales.js';
 export const MAX_TRACKED_AI_PROMPTS = 10;
@@ -29,6 +29,25 @@ export async function listTrackedPrompts(db: Db, input: {
         createdAt: row.createdAt.toISOString(),
     }));
 }
+/** The same prompt is already tracked for this site. */
+export class PromptAlreadyTrackedError extends Error {
+    constructor() {
+        super('ai visibility prompt already tracked');
+    }
+}
+/**
+ * Comparison key for "is this the same prompt": Unicode-normalised, case-
+ * insensitive, punctuation and symbols ignored, whitespace collapsed. "Best
+ * podcast tools?" and "best  podcast tools" are one prompt.
+ */
+export function trackedPromptKey(prompt: string): string {
+    return prompt
+        .normalize('NFKC')
+        .toLowerCase()
+        .replace(/[\p{P}\p{S}]+/gu, ' ')
+        .replace(/\s+/g, ' ')
+        .trim();
+}
 export async function addTrackedPrompt(db: Db, input: {
     accountId: string;
     siteId: string;
@@ -36,9 +55,9 @@ export async function addTrackedPrompt(db: Db, input: {
 }): Promise<TrackedPrompt> {
     const existing = await listTrackedPrompts(db, input);
     const normalized = input.prompt.trim();
-    const duplicate = existing.find((row) => row.prompt.toLowerCase() === normalized.toLowerCase());
-    if (duplicate)
-        return duplicate;
+    const key = trackedPromptKey(normalized);
+    if (existing.some((row) => trackedPromptKey(row.prompt) === key))
+        throw new PromptAlreadyTrackedError();
     if (existing.length >= MAX_TRACKED_AI_PROMPTS)
         throw new PromptCapReachedError();
     const rows = await db
@@ -53,12 +72,9 @@ export async function addTrackedPrompt(db: Db, input: {
     })
         .returning();
     const row = rows[0];
-    if (!row) {
-        const [after] = await listTrackedPrompts(db, input);
-        if (after)
-            return after;
-        throw new Error('tracked prompt insert failed');
-    }
+    // A concurrent add of the exact same text won the unique index.
+    if (!row)
+        throw new PromptAlreadyTrackedError();
     return { id: row.id, prompt: row.prompt, createdAt: row.createdAt.toISOString() };
 }
 export async function removeTrackedPrompt(db: Db, input: {
@@ -114,6 +130,21 @@ export async function listStoredCompetitorDomains(db: Db, input: {
         .orderBy(desc(competitors.fetchedAt))
         .limit(input.limit ?? 20);
     return Array.from(new Set(rows.map((row) => row.domain.toLowerCase())));
+}
+/**
+ * Every keyword phrase this site has ever tracked (active or removed), used
+ * only to verify that an older stored suggestion run was built from this
+ * site's own keywords. Account+site scoped like every other seed read.
+ */
+export async function listAllSiteKeywordPhrases(db: Db, input: {
+    accountId: string;
+    siteId: string;
+}): Promise<string[]> {
+    const rows = await db
+        .select({ phrase: keywords.phrase })
+        .from(keywords)
+        .where(and(eq(keywords.accountId, input.accountId), eq(keywords.siteId, input.siteId)));
+    return rows.map((row) => row.phrase);
 }
 export async function listKeywordPhrases(db: Db, input: {
     accountId: string;
@@ -196,12 +227,17 @@ export async function readLatestSuggestionRun(db: Db, input: {
     generatedAt: Date;
     prompts: AiPromptSuggestionSet;
     outputLocale: SupportedLocale;
+    /** Null for a run stored before the site profile existed. */
+    evidenceLevel: AiPromptSuggestionEvidenceLevel | null;
+    /** The stored seeds, for provenance checks and the output guard. */
+    seeds: AiPromptSuggestionSeeds;
 } | null> {
     const rows = await db
         .select({
         generatedAt: aiPromptSuggestionRuns.generatedAt,
         prompts: aiPromptSuggestionRuns.prompts,
         outputLocale: aiPromptSuggestionRuns.outputLocale,
+        seeds: aiPromptSuggestionRuns.seeds,
     })
         .from(aiPromptSuggestionRuns)
         .where(and(eq(aiPromptSuggestionRuns.accountId, input.accountId), eq(aiPromptSuggestionRuns.siteId, input.siteId), eq(aiPromptSuggestionRuns.outputLocale, input.outputLocale)))
@@ -214,6 +250,8 @@ export async function readLatestSuggestionRun(db: Db, input: {
         generatedAt: row.generatedAt,
         prompts: parseAiPromptSuggestionSet(row.prompts),
         outputLocale: row.outputLocale,
+        evidenceLevel: parseAiPromptSuggestionSeeds(row.seeds).evidenceLevel ?? null,
+        seeds: parseAiPromptSuggestionSeeds(row.seeds),
     };
 }
 /**

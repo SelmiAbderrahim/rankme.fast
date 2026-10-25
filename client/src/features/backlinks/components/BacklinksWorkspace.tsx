@@ -68,13 +68,15 @@ export function BacklinksWorkspace({ siteId, embedded = false }: BacklinksWorksp
           <p className="text-muted-foreground text-sm">{t('intelligence.description')}</p>
         </div>
         <div className="flex shrink-0 flex-col items-end gap-1">
-          {tab === 'overview' || tab === 'rows' ? (
-            <ReportExportControl
-              kind={tab === 'overview' ? 'backlinks.summary' : 'backlinks.inventory'}
-              target={{ scope: 'site', siteId }}
-              selection={{}}
-            />
-          ) : null}
+          {/* The export control stays on every sub-tab (disabled where there is
+              nothing to export), so the header keeps one height and the tab bar
+              never jumps under the pointer. */}
+          <ReportExportControl
+            kind={tab === 'rows' ? 'backlinks.inventory' : 'backlinks.summary'}
+            target={{ scope: 'site', siteId }}
+            selection={{}}
+            disabled={tab !== 'overview' && tab !== 'rows'}
+          />
           <DocsLink slug="link-intelligence" className="text-muted-foreground hover:text-foreground text-xs underline underline-offset-2" />
         </div>
       </div>

@@ -163,6 +163,8 @@
       "accessibility": "Accessibilité",
       "seo": "SEO",
       "coreWebVitals": "Signaux Web essentiels",
+      "coreWebVitalsSource": "Données de vrais visiteurs : le moins bon résultat parmi les pages échantillonnées.",
+      "coreWebVitalsNoFieldData": "Google n'a pas encore de données de vrais visiteurs pour les pages échantillonnées.",
       "noAuditTitle": "Pas encore de résultats de vitesse",
       "noAuditBody": "Lancez votre premier audit pour voir les résultats PageSpeed sur mobile.",
       "notMeasuredTitle": "Vitesse de page non mesurée",

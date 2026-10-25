@@ -20,9 +20,22 @@ import { allowedTeamSiteIds } from '../../shared/middleware/team-site-access.js'
 import { resolveAiTaskProfile } from '../../shared/ai-profiles/index.js';
 import { AiGenerationError } from '../../shared/providers/index.js';
 import { getChatAiProvider } from './chat.holder.js';
-import { createConversationSchema, sendMessageSchema, type ChatMessagePartDto, } from './chat.schema.js';
+import { createConversationSchema, sendMessageSchema, type ChatMessagePartDto, type ChatMessageStatus, } from './chat.schema.js';
 import { appendAssistantMessage, appendUserMessage, assembleHistory, assertConversationWritable, buildChatSystemInstruction, createConversation, deleteConversation, getConversation, listConversations, } from './chat.service.js';
 import { buildChatTools } from './chat.tools.js';
+/**
+ * A finished stream still counts as cut off when the model hit its output
+ * limit or stopped for an error, or when nothing answered the user after the
+ * last tool result (an empty final section).
+ */
+export function finishedStatus(finishReason: string, parts: readonly ChatMessagePartDto[]): ChatMessageStatus {
+    if (finishReason === 'length' || finishReason === 'error')
+        return 'incomplete';
+    const last = parts.at(-1);
+    if (last === undefined || last.type !== 'text' || last.text.trim().length === 0)
+        return 'incomplete';
+    return 'complete';
+}
 /** SSE heartbeat cadence — a comment frame that keeps proxies from idling. */
 export const CHAT_SSE_HEARTBEAT_MS = 15000;
 export function startChatHeartbeat(res: Response): ReturnType<typeof setInterval> {
@@ -87,7 +100,7 @@ export const sendMessageHandler: RequestHandler = asyncHandler(async (req, res) 
     const assistantMessageId = String(new Types.ObjectId());
     const appended = await appendUserMessage(accountId, conversationId, body.text, userMessageId);
     const history = await assembleHistory(accountId, conversationId);
-    const { tools } = await buildChatTools(accountId, responseLocale, allowedTeamSiteIds(req), appended.site?.id ?? null);
+    const { tools, disabledTools } = await buildChatTools(accountId, responseLocale, allowedTeamSiteIds(req), appended.site?.id ?? null);
     const profile = resolveAiTaskProfile('chat_assistant');
     // From here on the response is a stream — no status codes remain.
     res.setHeader('Content-Type', 'text/event-stream; charset=utf-8');
@@ -115,7 +128,7 @@ export const sendMessageHandler: RequestHandler = asyncHandler(async (req, res) 
         input: number | null;
         output: number | null;
     } | undefined;
-    const persistAssistant = async (status: 'complete' | 'error' | 'aborted'): Promise<void> => {
+    const persistAssistant = async (status: ChatMessageStatus): Promise<void> => {
         flushTextPart();
         try {
             await appendAssistantMessage({
@@ -140,7 +153,7 @@ export const sendMessageHandler: RequestHandler = asyncHandler(async (req, res) 
         for await (const event of provider.streamChat({
             messages: history,
             responseLocale,
-            systemInstruction: buildChatSystemInstruction(appended.site, responseLocale),
+            systemInstruction: buildChatSystemInstruction(appended.site, responseLocale, disabledTools),
             tools,
             maxOutputTokens: env.AI_CHAT_MAX_OUTPUT_TOKENS,
             temperature: profile.temperature,
@@ -186,9 +199,12 @@ export const sendMessageHandler: RequestHandler = asyncHandler(async (req, res) 
             }
             else {
                 tokens = { input: event.tokens.input, output: event.tokens.output };
-                await persistAssistant('complete');
+                flushTextPart();
+                const status = finishedStatus(event.finishReason, parts);
+                await persistAssistant(status);
                 writeSse(res, 'done', {
                     finishReason: event.finishReason,
+                    status,
                     tokens,
                 });
             }
@@ -198,11 +214,13 @@ export const sendMessageHandler: RequestHandler = asyncHandler(async (req, res) 
         const cancelled = abortController.signal.aborted ||
             (error instanceof AiGenerationError && error.code === 'request_cancelled');
         if (cancelled) {
-            // Client disconnect / Stop: keep the partial text, no refund.
+            // Client disconnect / Stop: keep the partial text.
             await persistAssistant('aborted');
         }
         else {
-            await persistAssistant('error');
+            // A stream that drops after some answer text was cut off, not empty.
+            flushTextPart();
+            await persistAssistant(parts.some((part) => part.type === 'text') ? 'incomplete' : 'error');
             const code = error instanceof AiGenerationError ? error.code : 'chat_stream_failed';
             writeSse(res, 'error', {
                 code,

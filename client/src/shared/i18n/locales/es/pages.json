@@ -1,42 +1,172 @@
 {
-  "workspaceTab": "Páginas", "heading": "Páginas",
-  "description": "Revisa cada página con los mejores datos de búsqueda almacenados para este sitio. No se recopila nada hasta que lo pidas.",
-  "common": { "notAvailable": "No disponible" },
-  "actions": { "refresh": "Actualizar", "refreshing": "Actualizando…", "collectFallback": "Recopilar datos alternativos", "connectGoogle": "Conectar Google", "reconnectGoogle": "Volver a conectar Google", "selectProperty": "Elegir propiedad", "retry": "Reintentar", "retryRefresh": "Reintentar la actualización", "resetFilters": "Restablecer filtros", "inspect": "Inspeccionar página", "openPage": "Abrir página en una pestaña nueva", "reviewPlans": "Ver planes" },
-  "range": { "label": "Intervalo", "7d": "7 días", "28d": "28 días", "90d": "90 días" },
+  "workspaceTab": "Páginas",
+  "heading": "Páginas",
+  "description": "Cada página se muestra con los datos de búsqueda ya guardados para este sitio. Solo se recopilan datos nuevos cuando lo pides.",
+  "common": {
+    "notAvailable": "No disponible"
+  },
+  "actions": {
+    "refresh": "Actualizar",
+    "refreshing": "Actualizando…",
+    "collectFallback": "Obtener datos de posicionamiento",
+    "retry": "Reintentar",
+    "retryRefresh": "Reintentar la actualización",
+    "resetFilters": "Restablecer filtros",
+    "inspect": "Inspeccionar página",
+    "openPage": "Abrir página en una pestaña nueva"
+  },
+  "range": {
+    "label": "Intervalo",
+    "7d": "7 días",
+    "28d": "28 días",
+    "90d": "90 días"
+  },
   "sources": {
-    "gsc": { "label": "Google Search Console", "short": "Observado en GSC", "description": "Clics, impresiones, CTR y posición media observados en la ventana móvil elegida." },
-    "dataforseo": { "label": "Instantánea de posicionamiento alternativa", "short": "Estimación de posicionamiento", "description": "Instantánea puntual de palabras clave posicionadas. Esta fuente no ofrece clics, impresiones ni CTR." },
-    "demo": { "label": "Instantánea de posicionamiento de demostración", "short": "Estimación de demostración", "description": "Datos de ejemplo deterministas, no datos en directo de Search Console ni DataForSEO." },
-    "none": { "label": "Sin fuente almacenada", "short": "Sin fuente", "description": "Aún no se han almacenado datos de páginas de Search Console ni una instantánea alternativa." },
+    "gsc": {
+      "label": "Google Search Console",
+      "short": "Observado en GSC",
+      "description": "Clics, impresiones, CTR y posición media observados en la ventana móvil elegida."
+    },
+    "dataforseo": {
+      "label": "Instantánea de posiciones",
+      "short": "Estimación de posicionamiento",
+      "description": "Instantánea puntual de palabras clave posicionadas. Esta fuente no ofrece clics, impresiones ni CTR."
+    },
+    "demo": {
+      "label": "Instantánea de posicionamiento de demostración",
+      "short": "Estimación de demostración",
+      "description": "Datos de posicionamiento de ejemplo para demostraciones. No son datos de Google Search Console ni datos de posicionamiento en vivo."
+    },
+    "none": {
+      "label": "Sin fuente almacenada",
+      "short": "Sin fuente",
+      "description": "Todavía no se han guardado datos de páginas de Search Console ni ninguna instantánea de posiciones."
+    },
     "unmeasured": "Sin medir"
   },
-  "status": { "ready": "Listo", "syncing": "Sincronizando", "empty": "Vacío", "unavailable": "No disponible", "stale": "Desactualizado" },
+  "status": {
+    "ready": "Listo",
+    "syncing": "Sincronizando",
+    "empty": "Vacío",
+    "unavailable": "No disponible",
+    "stale": "Desactualizado"
+  },
   "states": {
-    "initialLoading": "Cargando datos de páginas", "backgroundLoading": "Actualizando la vista y manteniendo visibles los datos anteriores.", "loadingAnnouncement": "Cargando páginas.", "refreshAnnouncement": "Actualizando páginas.",
-    "ready": { "title": "Los datos están listos", "gsc": "Los datos almacenados de páginas de Search Console están listos.", "dataforseo": "La instantánea alternativa está lista.", "demo": "La instantánea de demostración está lista.", "none": "No hay una fuente almacenada lista." },
-    "syncing": { "title": "Search Console se está sincronizando", "gsc": "La primera recopilación de páginas de Search Console está pendiente o en curso. Mientras tanto no se muestran datos alternativos.", "dataforseo": "Preparando los datos de posicionamiento alternativos.", "demo": "Preparando los datos de demostración.", "none": "Preparando una fuente almacenada." },
-    "empty": { "title": "No hay páginas coincidentes", "gsc": "Search Console no devolvió filas de páginas para esta ventana móvil.", "dataforseo": "La instantánea alternativa no encontró páginas posicionadas en este mercado.", "demo": "La instantánea de demostración no contiene páginas para este contexto.", "none": "Conecta Search Console o recopila datos alternativos (esto cuenta para tu uso)." },
-    "unavailable": { "title": "Datos de páginas no disponibles", "gsc": "Los datos de Search Console no están disponibles ahora. Inténtalo de nuevo en un momento.", "dataforseo": "El proveedor de posicionamiento no pudo guardar una instantánea. Reinténtalo cuando esté disponible.", "demo": "No se pudieron cargar los datos de demostración.", "none": "Aún no hay datos almacenados utilizables. Conecta Search Console o recopila datos alternativos." },
-    "stale": { "title": "Mostrando los últimos datos válidos", "gsc": "La actualidad de Search Console es incierta o falló la última actualización. Las últimas filas válidas siguen visibles.", "dataforseo": "Esta instantánea supera la ventana de frescura de la caché o falló su última actualización.", "demo": "Esta instantánea de demostración está desactualizada. Las últimas filas válidas siguen visibles.", "none": "El último estado almacenado está desactualizado." },
-    "transport": { "title": "No se pudieron cargar las páginas", "body": "La solicitud no terminó. Comprueba la conexión y vuelve a intentarlo.", "retained": "La actualización falló, por lo que los datos anteriores siguen visibles." },
-    "notFound": { "title": "No se encontraron el sitio o los datos de página" },
-    "refreshFailed": { "title": "Falló la actualización", "body": "Los últimos datos válidos siguen visibles. Reintenta la actualización cuando la fuente esté disponible." },
-    "cap": { "title": "Se alcanzó el límite de recopilación alternativa", "body": "Esta actualización necesita una consulta de palabra clave. Los datos ya almacenados siguen disponibles." }
+    "initialLoading": "Cargando datos de páginas",
+    "backgroundLoading": "Actualizando la vista y manteniendo visibles los datos anteriores.",
+    "loadingAnnouncement": "Cargando páginas.",
+    "refreshAnnouncement": "Actualizando páginas.",
+    "ready": {
+      "title": "Los datos están listos",
+      "gsc": "Los datos almacenados de páginas de Search Console están listos.",
+      "dataforseo": "La instantánea de posiciones guardada está lista.",
+      "demo": "La instantánea de demostración está lista.",
+      "none": "No hay una fuente almacenada lista."
+    },
+    "syncing": {
+      "title": "Search Console se está sincronizando",
+      "gsc": "La primera recopilación de páginas de Search Console sigue en espera o en curso. Mientras Search Console esté conectado, esta página solo muestra sus datos.",
+      "dataforseo": "Se está preparando la instantánea de posiciones.",
+      "demo": "Preparando los datos de demostración.",
+      "none": "Preparando una fuente almacenada."
+    },
+    "empty": {
+      "title": "No hay páginas coincidentes",
+      "gsc": "Search Console no devolvió filas de páginas para esta ventana móvil.",
+      "dataforseo": "La instantánea de posiciones no encontró páginas posicionadas para este mercado.",
+      "demo": "La instantánea de demostración no contiene páginas para este contexto.",
+      "none": "Todavía no hay datos de búsqueda guardados para estas páginas. Obtén datos de posiciones para recopilarlos."
+    },
+    "unavailable": {
+      "title": "Datos de páginas no disponibles",
+      "gsc": "Ahora mismo no se pueden leer los datos de Search Console. Inténtalo de nuevo; mientras tanto, esta página no cambia a una instantánea de posiciones.",
+      "dataforseo": "El proveedor de posicionamiento no pudo guardar una instantánea. Reinténtalo cuando esté disponible.",
+      "demo": "No se pudieron cargar los datos de demostración.",
+      "none": "No hay datos de páginas guardados. Conecta Google u obtén datos de posicionamiento."
+    },
+    "stale": {
+      "title": "Mostrando los últimos datos válidos",
+      "gsc": "La actualidad de Search Console es incierta o falló la última actualización. Las últimas filas válidas siguen visibles.",
+      "dataforseo": "Esta instantánea de posiciones está desactualizada o falló su última actualización.",
+      "demo": "Esta instantánea de demostración está desactualizada. Las últimas filas válidas siguen visibles.",
+      "none": "El último estado almacenado está desactualizado."
+    },
+    "transport": {
+      "title": "No se pudieron cargar las páginas",
+      "body": "La solicitud no terminó. Comprueba la conexión y vuelve a intentarlo.",
+      "retained": "La actualización falló, por lo que los datos anteriores siguen visibles."
+    },
+    "notFound": {
+      "title": "No se encontraron el sitio o los datos de página"
+    },
+    "refreshFailed": {
+      "title": "Falló la actualización",
+      "body": "Los últimos datos válidos siguen visibles. Reintenta la actualización cuando la fuente esté disponible."
+    }
   },
-  "fallbackReasons": { "gsc_not_connected": "Search Console no está conectado a este espacio de trabajo.", "gsc_needs_reconnect": "La conexión de Google debe renovarse.", "gsc_revoked": "El acceso de Google fue revocado y debe volver a conectarse.", "gsc_property_unmatched": "La propiedad de Search Console elegida no cubre este sitio." },
   "disclosure": {
-    "observedAt": "Observado el", "range": "Significado del intervalo", "comparison": "Comparación", "market": "Mercado",
-    "rolling": "Últimos {{days}} días, con el retraso documentado de Search Console", "pointInTime": "Instantánea puntual; {{days}} días cambia el historial y la comparación, no las métricas principales actuales",
-    "sincePreviousSync": "Desde la sincronización anterior", "noPreviousSync": "Sin sincronización anterior válida", "marketValue": "Ubicación {{location}}, idioma {{language}}", "notApplicable": "No aplicable",
-    "coverage": "Páginas con datos de búsqueda: {{measured}} de {{inventory}}. Páginas sin datos: {{unmeasured}}.",
-    "reportingLag_zero": "Los datos de Search Console van unos {{count}} días por detrás.", "reportingLag_one": "Los datos de Search Console van unos {{count}} día por detrás.", "reportingLag_two": "Los datos de Search Console van unos {{count}} días por detrás.", "reportingLag_few": "Los datos de Search Console van unos {{count}} días por detrás.", "reportingLag_many": "Los datos de Search Console van unos {{count}} días por detrás.", "reportingLag_other": "Los datos de Search Console van unos {{count}} días por detrás.", "sampled": "La fuente indica datos muestreados.", "notSampled": "La fuente no indica muestreo."
+    "observedAt": "Observado el",
+    "range": "Sobre el intervalo",
+    "comparison": "Comparación",
+    "market": "Mercado",
+    "rolling": "Datos de Search Console de los últimos {{range}}.",
+    "pointInTime": "Es una sola instantánea de posicionamiento. El intervalo solo cambia el historial y la comparación, no los totales.",
+    "sincePreviousSync": "Desde la sincronización anterior",
+    "noPreviousSync": "Sin sincronización anterior válida",
+    "marketValue": "Ubicación {{location}}, idioma {{language}}",
+    "notApplicable": "No aplicable",
+    "reportingLag_zero": "Google entrega los datos de Search Console con unos {{count}} días de retraso, así que faltan los últimos días.",
+    "reportingLag_one": "Google entrega los datos de Search Console con unos {{count}} día de retraso, así que falta el último día.",
+    "reportingLag_two": "Google entrega los datos de Search Console con unos {{count}} días de retraso, así que faltan los últimos días.",
+    "reportingLag_few": "Google entrega los datos de Search Console con unos {{count}} días de retraso, así que faltan los últimos días.",
+    "reportingLag_many": "Google entrega los datos de Search Console con unos {{count}} días de retraso, así que faltan los últimos días.",
+    "reportingLag_other": "Google entrega los datos de Search Console con unos {{count}} días de retraso, así que faltan los últimos días.",
+    "sampled": "La fuente indica datos muestreados.",
+    "notSampled": "La fuente no indica muestreo."
   },
-  "metrics": { "clicks": "Clics", "impressions": "Impresiones", "ctr": "CTR", "averagePosition": "Posición media", "bestPosition": "Mejor posición", "keywordCount": "Palabras clave posicionadas", "searchVolume": "Volumen de búsqueda", "difficulty": "Dificultad", "estimatedTraffic": "Tráfico estimado", "associatedQueryCount": "Consultas / palabras clave", "qualifierObserved": "Observado en la ventana móvil elegida", "qualifierEstimated": "Estimado desde la instantánea actual", "qualifierUnavailable": "No disponible en instantáneas de posicionamiento" },
+  "metrics": {
+    "clicks": "Clics",
+    "impressions": "Impresiones",
+    "ctr": "CTR",
+    "averagePosition": "Posición media",
+    "bestPosition": "Mejor posición",
+    "keywordCount": "Palabras clave posicionadas",
+    "searchVolume": "Volumen de búsqueda",
+    "difficulty": "Dificultad",
+    "estimatedTraffic": "Tráfico estimado",
+    "associatedQueryCount": "Consultas / palabras clave",
+    "qualifierObserved": "Observado en la ventana móvil elegida",
+    "qualifierEstimated": "Estimado desde la instantánea actual",
+    "qualifierUnavailable": "No disponible en instantáneas de posicionamiento"
+  },
   "filters": {
-    "title": "Encontrar páginas", "description": "La búsqueda y los filtros se procesan en el servidor y no recopilan datos nuevos del proveedor.", "searchLabel": "Buscar páginas y consultas", "searchPlaceholder": "Título, ruta, URL, consulta o palabra clave",
-    "insight": "Oportunidad", "allInsights": "Todas las oportunidades", "indexability": "Indexabilidad de rastreo", "allIndexability": "Todos los estados de rastreo", "indexabilityOptions": { "indexable": "Rastreable e indexable", "non_indexable": "No rastreable/indexable" },
-    "visibility": "Visibilidad en búsqueda", "allVisibility": "Toda la visibilidad", "visibilityOptions": { "measured": "Medida", "unmeasured": "Sin medir" }, "sort": "Ordenar por", "direction": "Dirección", "ascending": "Ascendente", "descending": "Descendente", "pageSize": "Tamaño de página", "perPage": "{{count}} por página", "active": "Filtros activos: {{context}}", "activeSearch": "Búsqueda: {{value}}", "noneActive": "No hay búsquedas ni filtros activos."
+    "title": "Encontrar páginas",
+    "description": "La búsqueda y los filtros se procesan en el servidor y no recopilan datos nuevos del proveedor.",
+    "searchLabel": "Buscar páginas y consultas",
+    "searchPlaceholder": "Título, ruta, URL, consulta o palabra clave",
+    "insight": "Oportunidad",
+    "allInsights": "Todas las oportunidades",
+    "indexability": "Indexabilidad de rastreo",
+    "allIndexability": "Todos los estados de rastreo",
+    "indexabilityOptions": {
+      "indexable": "Rastreable e indexable",
+      "non_indexable": "No rastreable/indexable"
+    },
+    "visibility": "Visibilidad en búsqueda",
+    "allVisibility": "Toda la visibilidad",
+    "visibilityOptions": {
+      "measured": "Medida",
+      "unmeasured": "Sin medir"
+    },
+    "sort": "Ordenar por",
+    "direction": "Dirección",
+    "ascending": "Ascendente",
+    "descending": "Descendente",
+    "pageSize": "Tamaño de página",
+    "perPage": "{{count}} por página",
+    "active": "Filtros activos: {{context}}",
+    "activeSearch": "Búsqueda: {{value}}",
+    "noneActive": "No hay búsquedas ni filtros activos."
   },
   "insights": {
     "striking_distance": {
@@ -53,7 +183,7 @@
     },
     "winning": {
       "label": "En crecimiento",
-      "description": "La posición o los clics observados mejoraron claramente desde la última sincronización correcta."
+      "description": "La página ganó posiciones y está en la primera página o recibió clics, o sus clics observados aumentaron claramente desde la última sincronización correcta."
     },
     "non_indexable_visibility": {
       "label": "Visible pero no rastreable",
@@ -69,8 +199,27 @@
       "description": "Search Console muestra muy pocas impresiones y ningún clic para esta página, así que todavía no recibe una etiqueta de evolución."
     }
   },
-  "sorts": { "opportunity": "Oportunidad", "url": "URL", "title": "Título", "clicks": "Clics", "impressions": "Impresiones", "ctr": "CTR", "average_position": "Posición media", "best_position": "Mejor posición", "keyword_count": "Palabras clave posicionadas", "search_volume": "Volumen de búsqueda", "difficulty": "Dificultad", "estimated_traffic": "Tráfico estimado", "position_change": "Cambio de posición", "click_change_pct": "Cambio de clics" },
-  "indexability": { "indexable": "Rastreable e indexable", "nonIndexable": "No rastreable/indexable", "unknown": "Estado de rastreo desconocido" },
+  "sorts": {
+    "opportunity": "Oportunidad",
+    "url": "URL",
+    "title": "Título",
+    "clicks": "Clics",
+    "impressions": "Impresiones",
+    "ctr": "CTR",
+    "average_position": "Posición media",
+    "best_position": "Mejor posición",
+    "keyword_count": "Palabras clave posicionadas",
+    "search_volume": "Volumen de búsqueda",
+    "difficulty": "Dificultad",
+    "estimated_traffic": "Tráfico estimado",
+    "position_change": "Cambio de posición",
+    "click_change_pct": "Cambio de clics"
+  },
+  "indexability": {
+    "indexable": "Rastreable e indexable",
+    "nonIndexable": "No rastreable/indexable",
+    "unknown": "Estado de rastreo desconocido"
+  },
   "crawlState": {
     "label": {
       "indexable": "Rastreable e indexable",
@@ -126,14 +275,30 @@
       "notForSource": "No lo ofrece esta fuente"
     }
   },
-  "deltas": { "position": "Cambio de posición", "clickChange": "Cambio de clics", "clicks": "Clics {{value}}" },
-  "empty": { "title": "No hay páginas que mostrar", "filtered": "Ninguna página coincide con la búsqueda y los filtros. Restablécelos para volver al inventario completo.", "gsc": "Search Console no devolvió páginas para esta ventana. La actualización sigue usando Search Console y no cambia la fuente.", "fallback": "La instantánea almacenada no contiene páginas posicionadas en este mercado. Las métricas observadas siguen sin estar disponibles.", "none": "No hay una instantánea almacenada. Conecta Google o recopila explícitamente datos alternativos." },
-  "pagination": { "label": "Paginación de resultados", "context_one": "Mostrando {{shown}} de {{total}} página coincidente", "previous": "Anterior", "next": "Siguiente", "cursorReset": "El conjunto de resultados cambió; la paginación volvió a la primera página.",
+  "deltas": {
+    "position": "Cambio de posición",
+    "clickChange": "Cambio de clics",
+    "clicks": "Clics {{value}}"
+  },
+  "empty": {
+    "title": "No hay páginas que mostrar",
+    "filtered": "Ninguna página coincide con la búsqueda y los filtros. Restablécelos para volver al inventario completo.",
+    "gsc": "Search Console no devolvió páginas para esta ventana. La actualización sigue usando Search Console y no cambia la fuente.",
+    "fallback": "La instantánea almacenada no contiene páginas posicionadas en este mercado. Las métricas observadas siguen sin estar disponibles.",
+    "none": "Todavía no se han guardado datos de páginas. Conecta Google u obtén datos de posicionamiento."
+  },
+  "pagination": {
+    "label": "Paginación de resultados",
+    "context_one": "Mostrando {{shown}} de {{total}} página coincidente",
+    "previous": "Anterior",
+    "next": "Siguiente",
+    "cursorReset": "El conjunto de resultados cambió; la paginación volvió a la primera página.",
     "context_zero": "Mostrando {{shown}} de {{total}} páginas coincidentes",
     "context_two": "Mostrando {{shown}} de {{total}} páginas coincidentes",
     "context_few": "Mostrando {{shown}} de {{total}} páginas coincidentes",
     "context_many": "Mostrando {{shown}} de {{total}} páginas coincidentes",
-    "context_other": "Mostrando {{shown}} de {{total}} páginas coincidentes" },
+    "context_other": "Mostrando {{shown}} de {{total}} páginas coincidentes"
+  },
   "detail": {
     "title": "Detalle de página",
     "description": "Cargando el contexto canónico",
@@ -185,7 +350,10 @@
       }
     }
   },
-  "notifications": { "refreshed": "Los datos de {{source}} se actualizaron correctamente.", "empty": "La actualización de {{source}} terminó sin páginas." },
+  "notifications": {
+    "refreshed": "Los datos de {{source}} se actualizaron correctamente.",
+    "empty": "La actualización de {{source}} terminó sin páginas."
+  },
   "crawl": {
     "heading": "Cobertura del rastreo",
     "pages_zero": "Tu última auditoría no guardó ninguna página.",
@@ -209,7 +377,7 @@
     "runAgain": "Volver a ejecutar"
   },
   "coverage": {
-    "pages_zero": "Páginas canónicas con datos de búsqueda: {{measured}} de {{count}}.",
+    "pages_zero": "Todavía no hay páginas en la lista.",
     "pages_one": "Páginas canónicas con datos de búsqueda: {{measured}} de {{count}}.",
     "pages_two": "Páginas canónicas con datos de búsqueda: {{measured}} de {{count}}.",
     "pages_few": "Páginas canónicas con datos de búsqueda: {{measured}} de {{count}}.",
@@ -229,5 +397,8 @@
     "redirects_other": "{{count}} direcciones de la lista redirigen a una de estas páginas y se cuentan como esa página.",
     "inventoryLabel": "Páginas canónicas",
     "inventoryHelp": "Las páginas canónicas son las páginas únicas que conocemos: las páginas indexables de tu última auditoría más las páginas con datos de búsqueda, cada una contada una sola vez. Una dirección que redirige a una de ellas aparece en la lista, pero se cuenta como esa página."
+  },
+  "noData": {
+    "title": "Aún no hay datos de búsqueda"
   }
 }

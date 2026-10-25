@@ -9,6 +9,7 @@ import {
 } from '@shared/ui/accordion';
 import { Badge } from '@shared/ui/badge';
 import { Button } from '@shared/ui/button';
+import { formatAbsoluteDate } from '@shared/lib/datetime';
 import type { KeywordClusterBlocked } from '../types';
 
 interface BlockedKeywordsProps {
@@ -22,7 +23,7 @@ interface BlockedKeywordsProps {
  * silently drops a tracked keyword from a run.
  */
 export const BlockedKeywords = ({ blocked, total, ranksHref }: BlockedKeywordsProps) => {
-  const { t } = useTranslation('keywordClusters');
+  const { t, i18n } = useTranslation('keywordClusters');
   if (blocked.length === 0) return null;
 
   return (
@@ -42,7 +43,9 @@ export const BlockedKeywords = ({ blocked, total, ranksHref }: BlockedKeywordsPr
                 <Badge variant="outline">{t(`blocked.reason.${row.reason}`)}</Badge>
                 {row.observedAt ? (
                   <span className="text-muted-foreground text-xs">
-                    {t('blocked.observedAt', { date: row.observedAt })}
+                    {t('blocked.observedAt', {
+                      date: formatAbsoluteDate(row.observedAt, i18n.language),
+                    })}
                   </span>
                 ) : null}
               </li>

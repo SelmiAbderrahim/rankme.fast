@@ -4,8 +4,12 @@ import { useAppDispatch, useAppSelector } from '@shared/hooks/redux';
 import { useAuthSession } from '@features/auth';
 import { PageHeader } from '@shared/components/PageHeader';
 import { APP_PAGE_ICONS } from '@shared/navigation/appPageIcons';
-import { NativeSelect } from '@shared/ui/native-select';
+import { isolateText } from '@shared/lib/bidi';
+import { Button } from '@shared/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@shared/ui/card';
+import { Empty, EmptyContent, EmptyDescription, EmptyHeader, EmptyTitle } from '@shared/ui/empty';
+import { Label } from '@shared/ui/label';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@shared/ui/select';
 import { Spinner } from '@shared/ui/spinner';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@shared/ui/tabs';
 import type { CreateRuleInput } from '../api';
@@ -40,6 +44,10 @@ import { RuleList } from './RuleList';
 import { SecretRevealPanel } from './SecretRevealPanel';
 import { StateNotice } from './StateNotice';
 
+/** Radix Select forbids an empty item value, so "All" rides a sentinel that
+ *  maps back to "no filter" in the URL. */
+const ALL_FILTER = 'all';
+
 /**
  * Alerts workspace. Two URL-backed tabs: the rule list plus its builder, and
  * one rule's delivery log. Every refusal the server can make has a visible
@@ -63,6 +71,15 @@ export const AlertsPage = () => {
   const deliveries = useAppSelector(selectAlertDeliveries);
   const logStatus = useAppSelector(selectAlertLogStatus);
   const logGate = useAppSelector(selectAlertLogGate);
+  // Rules tab filters narrow the rule list; only an unfiltered empty list
+  // means the account has no rules at all.
+  const noRules =
+    listStatus === 'succeeded' &&
+    rules.length === 0 &&
+    url.siteId === null &&
+    url.type === null &&
+    url.enabled === null;
+  const logFiltered = url.status !== null || url.channel !== null;
 
   useEffect(() => {
     void dispatch(loadAlertSites());
@@ -118,14 +135,13 @@ export const AlertsPage = () => {
     [url],
   );
 
-  // The server is the authority on both refusals; the builder only mirrors the
+  // The server is the authority on refusals; the builder only mirrors the
   // one it has already been told about so the right control disables.
   const capReached = saveGate?.kind === 'cap' || listGate?.kind === 'cap';
-  const paidChannelsLocked = saveGate?.kind === 'tierLocked';
   const flagDisabled = saveGate?.kind === 'disabled' || listGate?.kind === 'disabled';
 
   return (
-    <div className="flex flex-col gap-6 px-4 py-8" data-testid="alerts-page">
+    <div className="flex flex-col gap-6" data-testid="alerts-page">
       <PageHeader
         icon={APP_PAGE_ICONS.alerts}
         title={t('title')}
@@ -159,39 +175,51 @@ export const AlertsPage = () => {
                 <CardDescription>{t('list.capUsed', { count: capUsed })}</CardDescription>
               </CardHeader>
               <CardContent className="flex flex-col gap-4">
-                <div className="flex flex-wrap gap-2">
-                  <label className="flex flex-col gap-1 text-sm">
-                    <span>{t('filters.type')}</span>
-                    <NativeSelect
-                      value={url.type ?? ''}
-                      onChange={(event) =>
-                        url.setType((event.target.value || null) as AlertRuleType | null)
-                      }
-                    >
-                      <option value="">{t('filters.all')}</option>
-                      {ALERT_RULE_TYPES.map((type) => (
-                        <option key={type} value={type}>
-                          {t(`type.${type}`)}
-                        </option>
-                      ))}
-                    </NativeSelect>
-                  </label>
-                  <label className="flex flex-col gap-1 text-sm">
-                    <span>{t('filters.state')}</span>
-                    <NativeSelect
-                      value={url.enabled === null ? '' : String(url.enabled)}
-                      onChange={(event) =>
-                        url.setEnabled(
-                          event.target.value === '' ? null : event.target.value === 'true',
-                        )
-                      }
-                    >
-                      <option value="">{t('filters.all')}</option>
-                      <option value="true">{t('list.enabled')}</option>
-                      <option value="false">{t('list.disabled')}</option>
-                    </NativeSelect>
-                  </label>
-                </div>
+                {/* Filters need rules to filter: with none on the account they are
+                    hidden, and an active filter stays so it can be cleared. */}
+                {capUsed > 0 || url.type !== null || url.enabled !== null ? (
+                  <div className="flex flex-wrap gap-4">
+                    <div className="flex flex-col gap-2">
+                      <Label htmlFor="alerts-filter-type">{t('filters.type')}</Label>
+                      <Select
+                        value={url.type ?? ALL_FILTER}
+                        onValueChange={(next) =>
+                          url.setType(next === ALL_FILTER ? null : (next as AlertRuleType))
+                        }
+                      >
+                        <SelectTrigger id="alerts-filter-type" className="min-w-40">
+                          <SelectValue />
+                        </SelectTrigger>
+                        <SelectContent>
+                          <SelectItem value={ALL_FILTER}>{t('filters.all')}</SelectItem>
+                          {ALERT_RULE_TYPES.map((type) => (
+                            <SelectItem key={type} value={type}>
+                              {t(`type.${type}`)}
+                            </SelectItem>
+                          ))}
+                        </SelectContent>
+                      </Select>
+                    </div>
+                    <div className="flex flex-col gap-2">
+                      <Label htmlFor="alerts-filter-state">{t('filters.state')}</Label>
+                      <Select
+                        value={url.enabled === null ? ALL_FILTER : String(url.enabled)}
+                        onValueChange={(next) =>
+                          url.setEnabled(next === ALL_FILTER ? null : next === 'true')
+                        }
+                      >
+                        <SelectTrigger id="alerts-filter-state" className="min-w-40">
+                          <SelectValue />
+                        </SelectTrigger>
+                        <SelectContent>
+                          <SelectItem value={ALL_FILTER}>{t('filters.all')}</SelectItem>
+                          <SelectItem value="true">{t('list.enabled')}</SelectItem>
+                          <SelectItem value="false">{t('list.disabled')}</SelectItem>
+                        </SelectContent>
+                      </Select>
+                    </div>
+                  </div>
+                ) : null}
 
                 {listStatus === 'loading' ? <Spinner /> : null}
                 {listGate && listGate.kind !== 'disabled' ? (
@@ -228,7 +256,6 @@ export const AlertsPage = () => {
                     sites={sites}
                     siteId={url.siteId}
                     currentUserId={user?.id ?? null}
-                    paidChannelsLocked={paidChannelsLocked}
                     capReached={capReached}
                     submitting={saveStatus === 'loading'}
                     onSubmit={handleCreate}
@@ -246,16 +273,90 @@ export const AlertsPage = () => {
               <CardDescription>{t('log.description')}</CardDescription>
             </CardHeader>
             <CardContent className="flex flex-col gap-4">
-              {url.rule === null ? (
-                <StateNotice kind="empty" />
+              {/* The log has its own empty states: "No rules yet" belongs to the
+                  Rules tab; here the question is what has been sent. */}
+              {noRules ? (
+                <Empty data-testid="alerts-log-no-rules">
+                  <EmptyHeader>
+                    <EmptyTitle>{t('log.empty.title')}</EmptyTitle>
+                    <EmptyDescription>{t('log.empty.noRules')}</EmptyDescription>
+                  </EmptyHeader>
+                  <EmptyContent>
+                    <Button
+                      type="button"
+                      variant="outline"
+                      onClick={() => url.setMany({ tab: 'rules', rule: null })}
+                      data-testid="alerts-log-create-rule"
+                    >
+                      {t('log.empty.createRule')}
+                    </Button>
+                  </EmptyContent>
+                </Empty>
               ) : (
                 <>
-                  {logStatus === 'loading' ? <Spinner /> : null}
-                  {logGate ? <StateNotice kind={logGate.kind} message={logGate.message} /> : null}
-                  {logStatus === 'succeeded' && deliveries.length === 0 ? (
-                    <StateNotice kind="empty" />
+                  {rules.length > 0 ? (
+                    <div className="flex max-w-md flex-col gap-2">
+                      <Label htmlFor="alerts-log-rule">{t('log.rulePicker')}</Label>
+                      <Select
+                        value={url.rule ?? ''}
+                        onValueChange={(next) => url.setMany({ rule: next })}
+                      >
+                        <SelectTrigger id="alerts-log-rule" data-testid="alerts-log-rule">
+                          <SelectValue placeholder={t('log.rulePickerPlaceholder')} />
+                        </SelectTrigger>
+                        <SelectContent>
+                          {rules.map((rule) => (
+                            <SelectItem key={rule.id} value={rule.id}>
+                              {t('log.ruleOption', {
+                                type: t(`type.${rule.type}`),
+                                site: isolateText(
+                                  sites.find((site) => site.id === rule.siteId)?.domain ?? rule.siteId,
+                                ),
+                              })}
+                            </SelectItem>
+                          ))}
+                        </SelectContent>
+                      </Select>
+                    </div>
                   ) : null}
-                  {deliveries.length > 0 ? <DeliveryLog deliveries={deliveries} /> : null}
+                  {url.rule === null ? (
+                    <p className="text-sm text-muted-foreground" data-testid="alerts-log-pick-rule">
+                      {t('log.empty.pickRule')}
+                    </p>
+                  ) : (
+                    <>
+                      {logStatus === 'loading' ? <Spinner /> : null}
+                      {logGate ? <StateNotice kind={logGate.kind} message={logGate.message} /> : null}
+                      {logStatus === 'succeeded' && deliveries.length === 0 ? (
+                        logFiltered ? (
+                          <Empty data-testid="alerts-log-filtered-empty">
+                            <EmptyHeader>
+                              <EmptyTitle>{t('log.filtered.title')}</EmptyTitle>
+                              <EmptyDescription>{t('log.filtered.body')}</EmptyDescription>
+                            </EmptyHeader>
+                            <EmptyContent>
+                              <Button
+                                type="button"
+                                variant="outline"
+                                onClick={() => url.setMany({ status: null, channel: null })}
+                                data-testid="alerts-log-clear-filters"
+                              >
+                                {t('log.filtered.clear')}
+                              </Button>
+                            </EmptyContent>
+                          </Empty>
+                        ) : (
+                          <Empty data-testid="alerts-log-empty">
+                            <EmptyHeader>
+                              <EmptyTitle>{t('log.empty.title')}</EmptyTitle>
+                              <EmptyDescription>{t('log.empty.rule')}</EmptyDescription>
+                            </EmptyHeader>
+                          </Empty>
+                        )
+                      ) : null}
+                      {deliveries.length > 0 ? <DeliveryLog deliveries={deliveries} /> : null}
+                    </>
+                  )}
                 </>
               )}
             </CardContent>

@@ -7,7 +7,7 @@ import { ProviderError, VendorUnavailableError, type CompetitorProvider, type Do
 import { parseConsumedPayload, trafficSnapshotJobSchema, type TrafficSnapshotJob, } from '../../shared/queue/index.js';
 import { createReadThrough, createSingleFlight, createVendorCacheRepo, } from '../../shared/vendor-cache/index.js';
 import { TrafficSnapshotRun } from './traffic-snapshots.model.js';
-import { trafficProviderBundleSchema, type TrafficProviderBundle, type TrafficRetainedOps, } from './traffic-snapshots.schema.js';
+import { trafficProviderBundleSchema, trafficSnapshotCacheKey, type TrafficProviderBundle, type TrafficRetainedOps, } from './traffic-snapshots.schema.js';
 import { settleRun, TRAFFIC_SNAPSHOT_CACHE_TTL_MS, } from './traffic-snapshots.service.js';
 import { captureTrafficSnapshotOperationCost, recordCachedTrafficSnapshotCosts, type TrafficSnapshotCostDeps, } from './traffic-snapshots.cost.js';
 export interface TrafficSnapshotProcessorDeps {
@@ -239,7 +239,7 @@ export function createTrafficSnapshotProcessor(deps: TrafficSnapshotProcessorDep
             const fetched = await readThrough({
                 capability: 'competitor',
                 operation: 'traffic',
-                cacheKey: run.targetDomain,
+                cacheKey: trafficSnapshotCacheKey(run.targetDomain, run.inputs.locationCode, run.inputs.languageCode),
                 params: { targetDomain: run.targetDomain },
                 ttlMs: TRAFFIC_SNAPSHOT_CACHE_TTL_MS,
                 payloadSchema: trafficProviderBundleSchema,

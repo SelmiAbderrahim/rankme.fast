@@ -162,6 +162,14 @@ describe('GoogleSearchSummaryCard', () => {
     // Previous-period line + asOf date.
     expect(screen.getByTestId('google-summary-previous')).toHaveTextContent('1,000');
     expect(screen.getByText(/Data through/)).toBeInTheDocument();
+    // The site-totals note names the same inclusive window the Pages tab uses
+    // and says why list totals can differ.
+    expect(screen.getByTestId('google-summary-totals-note')).toHaveTextContent(
+      /^Site totals for Jun 7, 2026 – Jul 4, 2026, summed from Search Console's daily data/,
+    );
+    expect(screen.getByTestId('google-summary-scope-note')).toHaveTextContent(
+      /Search Console counts each list on its own/,
+    );
     // Full-report link — report lives in the unified workspace tab.
     expect(screen.getByTestId('google-summary-report-link')).toHaveAttribute(
       'href',

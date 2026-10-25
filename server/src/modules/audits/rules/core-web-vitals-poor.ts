@@ -2,6 +2,10 @@
  * Rule `core-web-vitals-poor` — Chrome UX Report field data (real visitor
  * p75 for LCP / INP / CLS) categorised against Google's thresholds. Poor →
  * fix-now (critical); needs-improvement → watch (warning); good → passed.
+ * Lab (Lighthouse) scores never feed this rule — they belong to
+ * `page-speed-lab-low` — so the worst category across every sampled page
+ * decides the outcome. The Overview "Site experience" tile applies the same
+ * worst-of-samples reading, so the two never disagree.
  *
  * "No field data" is an EXPECTED state for low-traffic sites, NOT an error:
  * the rule lands in watch with `{ insufficientData: true, reason: 'no-field-data' }`
@@ -36,6 +40,18 @@ export const coreWebVitalsPoorRule: PageSpeedRule = {
         }
         const poor = withField.filter((s) => s.coreWebVitals?.category === 'poor');
         const ni = withField.filter((s) => s.coreWebVitals?.category === 'needs-improvement');
+        // Both failing branches carry the field-data evidence they were decided
+        // on, so the report and the Overview tile show the same visitor numbers.
+        const evidence = {
+            samples: withField.map((s) => ({
+                url: s.url,
+                fieldDataLevel: s.fieldDataLevel,
+                category: s.coreWebVitals!.category,
+                lcpMs: s.coreWebVitals!.lcpMs,
+                inp: s.coreWebVitals!.inp,
+                cls: s.coreWebVitals!.cls,
+            })),
+        };
         if (poor.length > 0) {
             const severity = 'critical';
             return {
@@ -43,16 +59,7 @@ export const coreWebVitalsPoorRule: PageSpeedRule = {
                 bucket: bucketFor(severity, false),
                 severity,
                 affectedUrls: poor.map((s) => s.url),
-                meta: {
-                    samples: withField.map((s) => ({
-                        url: s.url,
-                        fieldDataLevel: s.fieldDataLevel,
-                        category: s.coreWebVitals!.category,
-                        lcpMs: s.coreWebVitals!.lcpMs,
-                        inp: s.coreWebVitals!.inp,
-                        cls: s.coreWebVitals!.cls,
-                    })),
-                },
+                meta: evidence,
             };
         }
         if (ni.length > 0) {
@@ -62,6 +69,7 @@ export const coreWebVitalsPoorRule: PageSpeedRule = {
                 bucket: bucketFor(severity, false),
                 severity,
                 affectedUrls: ni.map((s) => s.url),
+                meta: evidence,
             };
         }
         return {

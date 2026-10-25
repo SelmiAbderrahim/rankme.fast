@@ -111,12 +111,12 @@ function baseProjection(): DigestProjectionPayload {
       },
     ],
     deep_links: {
-      digest: 'https://client.example/dashboard/sites/site-1?tab=ai-visibility&pulse=run-1',
-      aiVisibility: 'https://client.example/dashboard/sites/site-1?tab=ai-visibility',
-      google: 'https://client.example/dashboard/sites/site-1?tab=google',
-      contentIntelligence: 'https://client.example/dashboard/sites/site-1?tab=content',
-      audienceResearch: 'https://client.example/dashboard/sites/site-1?tab=audience-research',
-      nextActions: 'https://client.example/dashboard/next-actions',
+      digest: 'https://client.example/sites/site-1?tab=ai-visibility&pulse=run-1',
+      aiVisibility: 'https://client.example/sites/site-1?tab=ai-visibility',
+      google: 'https://client.example/sites/site-1?tab=google',
+      contentIntelligence: 'https://client.example/sites/site-1?tab=content',
+      audienceResearch: 'https://client.example/sites/site-1?tab=audience-research',
+      nextActions: 'https://client.example/sites/site-1?tab=actions',
     },
   };
 }

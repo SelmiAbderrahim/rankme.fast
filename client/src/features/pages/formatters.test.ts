@@ -47,11 +47,27 @@ describe('Pages locale-aware formatters', () => {
     expect(pagesRowName({ title: 'A title', displayUrl: 'example.com/de/article' })).toBe('A title');
   });
 
+  it('treats position 0 as no data but keeps a real difficulty of 0', () => {
+    expect(formatPagesMetric('en', 'averagePosition', 0)).toBeNull();
+    expect(formatPagesMetric('en', 'bestPosition', 0)).toBeNull();
+    expect(formatPagesPosition('en', null)).toBeNull();
+    expect(formatPagesMetric('en', 'difficulty', 0)).toBe('0');
+  });
+
   it('formats signed deltas without turning zero or null into a gain', () => {
     expect(formatSignedPagesValue('en', null)).toBeNull();
-    expect(formatSignedPagesValue('en', 0)).toBe('0');
-    expect(formatSignedPagesValue('en', 2.4)).toBe('+2.4');
-    expect(formatSignedPagesValue('en', -2.4)).toBe('−2.4');
-    expect(formatSignedPagesValue('en', 0.25, true)).toBe('+25%');
+    expect(formatSignedPagesValue('en', 0)).toBe('\u20660\u2069');
+    expect(formatSignedPagesValue('en', 2.4)).toBe('\u2066+2.4\u2069');
+    expect(formatSignedPagesValue('en', -2.4)).toBe('\u2066\u22122.4\u2069');
+    expect(formatSignedPagesValue('en', 0.25, true)).toBe('\u2066+25%\u2069');
+  });
+});
+
+describe('pagesPathLabel', () => {
+  it('drops the repeated host and keeps the path and query', () => {
+    expect(pagesPathLabel('example.com/de/features?x=1')).toBe('/de/features?x=1');
+    expect(pagesPathLabel('example.com/')).toBe('/');
+    expect(pagesPathLabel('example.com')).toBe('example.com');
+    expect(pagesPathLabel('/already-a-path')).toBe('/already-a-path');
   });
 });

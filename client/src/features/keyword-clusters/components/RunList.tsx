@@ -1,6 +1,7 @@
 import { useTranslation } from 'react-i18next';
 import { Badge } from '@shared/ui/badge';
 import { Button } from '@shared/ui/button';
+import { formatAbsoluteDate } from '@shared/lib/datetime';
 import type { KeywordClusterRunSummary } from '../types';
 
 interface RunListProps {
@@ -10,7 +11,7 @@ interface RunListProps {
 }
 
 export const RunList = ({ runs, activeRunId, onOpen }: RunListProps) => {
-  const { t } = useTranslation('keywordClusters');
+  const { t, i18n } = useTranslation('keywordClusters');
   return (
     <ul className="space-y-2" data-testid="keyword-clusters-runs">
       {runs.map((run) => (
@@ -30,7 +31,9 @@ export const RunList = ({ runs, activeRunId, onOpen }: RunListProps) => {
               </span>
             </div>
             <p className="text-muted-foreground text-xs">
-              {t('runs.requestedAt', { date: run.requestedAt })}
+              {t('runs.requestedAt', {
+                date: formatAbsoluteDate(run.requestedAt, i18n.language, { withTime: true }),
+              })}
             </p>
           </div>
           <Button

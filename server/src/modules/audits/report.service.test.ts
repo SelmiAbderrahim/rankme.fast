@@ -431,6 +431,8 @@ describe('getAuditReport', () => {
         pages: [{ url: 'https://example.com/a', title: null }],
       }),
     });
+    // The baseline is the previous run that produced a report.
+    await AuditRun.updateOne({ _id: ids.runId }, { $set: { status: 'succeeded' } });
     // Second run for the same site: fixed.
     const site = await Site.findById(ids.siteId);
     const run2 = await AuditRun.create({
@@ -847,6 +849,9 @@ describe('getAuditReport', () => {
     expect(broken?.meta).toEqual({
       totalBroken: 1,
       brokenLinkTargets: ['https://example.com/404'],
+      confirmedTargets: 0,
+      unverifiedTargets: 0,
+      reportedTargets: 1,
     });
     expect(broken?.brokenLinkTargets).toEqual(['https://example.com/404']);
     expect(broken?.codeFixPromptAvailable).toBe(true);
@@ -920,7 +925,7 @@ describe('getAuditReport', () => {
 
     const notEvaluated = report.findings.filter((finding) => finding.notEvaluated);
     expect(notEvaluated.map((finding) => finding.ruleId)).toEqual(
-      expect.arrayContaining(['gsc-ctr-low', 'not-indexed', 'sitemap-errors', 'low-review-rating', 'core-web-vitals-poor']),
+      expect.arrayContaining(['gsc-ctr-low', 'not-indexed', 'sitemap-errors', 'core-web-vitals-poor']),
     );
     for (const finding of notEvaluated) {
       expect(finding.meta?.insufficientData).toBe(true);

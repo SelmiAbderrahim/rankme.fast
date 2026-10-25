@@ -355,3 +355,15 @@ describe('service defaults', () => {
   });
 });
 
+describe('user-fact bounds', () => {
+  it('keeps the user-fact ceilings in step with the crawled-fact ceilings', async () => {
+    const { USER_FACT_LIMITS } = await import('./schema-generator.schemas.js');
+    const { EVIDENCE_LIMITS } = await import('./evidence.js');
+    expect(USER_FACT_LIMITS).toEqual({
+      text: EVIDENCE_LIMITS.titleChars,
+      longText: EVIDENCE_LIMITS.metaDescriptionChars,
+      language: EVIDENCE_LIMITS.languageChars,
+      date: EVIDENCE_LIMITS.metaDateChars,
+    });
+  });
+});

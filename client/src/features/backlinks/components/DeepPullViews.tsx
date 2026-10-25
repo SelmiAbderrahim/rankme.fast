@@ -226,7 +226,7 @@ function DeepPullForm({
             loading={state.submitting}
             data-testid={`link-intel-confirm-${type}`}
           >
-            {t('intelligence.preview.confirm', { count: 1 })}
+            {t('intelligence.preview.confirm')}
           </Button>
           <Button
             type="button"

@@ -32,7 +32,7 @@ import {
 } from '../../shared/testing/postgres.js';
 import { KeywordClusterAiOutputContractError } from './keyword-clusters.ai-contract.js';
 import { SerpClusterRun } from './keyword-clusters.model.js';
-import { readKeywordClusterReadiness } from './keyword-clusters.readiness.js';
+import { evaluateClusterEligibility } from './keyword-clusters.readiness.js';
 import {
   createKeywordClustersProcessor,
   isKeywordClusterAiRejection,
@@ -144,7 +144,7 @@ async function seedKeyword(input: {
 }
 
 async function seedRun(keywordIds: readonly string[], overrides: object = {}) {
-  const { ready } = await readKeywordClusterReadiness(getTestDb() as never, {
+  const { eligible: ready } = await evaluateClusterEligibility(getTestDb() as never, {
     siteId,
     keywordIds,
     now: NOW,

@@ -35,13 +35,13 @@ const EXPECTED: Record<SupportedSchemaType, ExpectedProperty[]> = {
     { name: 'primaryImageOfPage', class: 'recommended', fill: 'deterministic', evidenceFactIds: [], neverFilled: true },
   ],
   WebSite: [
-    { name: 'name', class: 'required', fill: 'ai-selected', evidenceFactIds: ['site.label', 'site.domain'] },
+    { name: 'name', class: 'required', fill: 'deterministic', evidenceFactIds: ['page.ogSiteName', 'page.jsonLdName', 'page.titleBrand', 'site.label', 'site.domain'] },
     { name: 'url', class: 'required', fill: 'deterministic', evidenceFactIds: ['site.origin'] },
     { name: 'description', class: 'recommended', fill: 'ai-selected', evidenceFactIds: ['page.metaDescription'] },
     { name: 'inLanguage', class: 'recommended', fill: 'deterministic', evidenceFactIds: ['page.language'] },
   ],
   Organization: [
-    { name: 'name', class: 'required', fill: 'ai-selected', evidenceFactIds: ['site.label', 'site.domain'] },
+    { name: 'name', class: 'required', fill: 'deterministic', evidenceFactIds: ['page.ogSiteName', 'page.jsonLdName', 'page.titleBrand', 'site.label', 'site.domain'] },
     { name: 'url', class: 'required', fill: 'deterministic', evidenceFactIds: ['site.origin'] },
     { name: 'description', class: 'recommended', fill: 'ai-selected', evidenceFactIds: ['page.metaDescription'] },
     { name: 'logo', class: 'recommended', fill: 'deterministic', evidenceFactIds: [], neverFilled: true },
@@ -100,8 +100,9 @@ const EXPECTED: Record<SupportedSchemaType, ExpectedProperty[]> = {
 };
 
 describe('registry shape', () => {
-  it('is pinned at version 1 with the seven v1 types in declaration order', () => {
-    expect(SCHEMA_REGISTRY_VERSION).toBe('1');
+  it('is pinned at version 2 with the seven supported types in declaration order', () => {
+    // 2: site/organization names follow the brand precedence.
+    expect(SCHEMA_REGISTRY_VERSION).toBe('2');
     expect([...SUPPORTED_SCHEMA_TYPES]).toEqual([
       'WebPage',
       'WebSite',
@@ -112,6 +113,25 @@ describe('registry shape', () => {
       'HowTo',
     ]);
     expect(Object.keys(SCHEMA_TYPE_REGISTRY)).toEqual([...SUPPORTED_SCHEMA_TYPES]);
+  });
+
+  it('notes the two types Google limits or no longer shows, and lists them last', () => {
+    const notes = SUPPORTED_SCHEMA_TYPES.map((type) => [type, SCHEMA_TYPE_REGISTRY[type].richResults ?? null]);
+    expect(notes).toEqual([
+      ['WebPage', null],
+      ['WebSite', null],
+      ['Organization', null],
+      ['Article', null],
+      ['BreadcrumbList', null],
+      ['FAQPage', 'limited'],
+      ['HowTo', 'retired'],
+    ]);
+    // Any type with a note comes after every type without one.
+    const firstNoted = notes.findIndex(([, note]) => note !== null);
+    expect(notes.slice(firstNoted).every(([, note]) => note !== null)).toBe(true);
+    // The note is presentational: it did not bump the version.
+    expect(SCHEMA_REGISTRY_VERSION).toBe('2');
+    expect(SCHEMA_TYPE_REGISTRY.HowTo.properties.map((p) => p.name)).toContain('step');
   });
 
   it('freezes the omission reason vocabulary', () => {

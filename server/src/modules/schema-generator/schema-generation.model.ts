@@ -78,6 +78,12 @@ const schemaGenerationSchema = new mongoose.Schema({
         default: null,
     },
     provenance: { type: provenanceSchema, default: null },
+    /**
+     * The generation this one was rebuilt from with user-supplied facts. A
+     * rebuild makes no AI call and no vendor request, so it carries no AI
+     * provenance.
+     */
+    regeneratedFrom: { type: mongoose.Schema.Types.ObjectId, default: null },
 }, { timestamps: true });
 // The list route's only access path: newest first, owner-scoped.
 schemaGenerationSchema.index({ accountId: 1, createdAt: -1 });

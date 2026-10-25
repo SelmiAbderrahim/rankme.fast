@@ -1,6 +1,7 @@
 import { render, screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { describe, expect, it } from 'vitest';
+import { useEffect } from 'react';
 import { MemoryRouter, useLocation, useNavigate } from 'react-router-dom';
 import {
   DEFAULT_PAGES_URL_STATE,
@@ -208,5 +209,24 @@ describe('usePagesUrlState', () => {
     await waitFor(() => expect(screen.getByTestId('search')).toHaveTextContent('cursor=next+cursor'));
     await user.click(screen.getByRole('button', { name: 'forward' }));
     await waitFor(() => expect(screen.getByTestId('search')).toHaveTextContent(`pageId=${PAGE_ID}`));
+  });
+
+  it('hands out one state object when the URL is merely rewritten to its canonical form', async () => {
+    const seen = new Set<unknown>();
+    const Probe = () => {
+      const { state } = usePagesUrlState();
+      useEffect(() => { seen.add(state); }, [state]);
+      return <output data-testid="probe">{JSON.stringify(state)}</output>;
+    };
+    const Where = () => <output data-testid="where">{useLocation().search}</output>;
+    render(
+      <MemoryRouter initialEntries={['/sites/site?tab=pages&limit=25&range=28d&sort=opportunity']}>
+        <Probe />
+        <Where />
+      </MemoryRouter>,
+    );
+    await waitFor(() => expect(screen.getByTestId('where')).toHaveTextContent(/^\?tab=pages$/));
+    // The location changed (non-canonical -> canonical) but the meaning did not.
+    expect(seen.size).toBe(1);
   });
 });

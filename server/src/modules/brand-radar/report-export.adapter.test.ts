@@ -85,6 +85,7 @@ beforeEach(() => {
   vi.mocked(getSite).mockReset().mockResolvedValue({
     id: siteId, url: 'https://example.test', domain: 'example.test', displayName: 'Example Brand',
     defaultMarket: null,
+    localBusiness: false,
     paused: false, pausedAt: null, createdAt: observedAt, updatedAt,
   });
 });
@@ -141,6 +142,7 @@ describe('Brand Radar report export adapter', () => {
     vi.mocked(getSite).mockResolvedValue({
       id: siteId, url: 'https://example.test', domain: 'example.test', displayName: '',
       defaultMarket: null,
+      localBusiness: false,
       paused: false, pausedAt: null, createdAt: observedAt, updatedAt,
     });
     const adapter = createBrandRadarReportExportAdapter();

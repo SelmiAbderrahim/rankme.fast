@@ -12,6 +12,7 @@ import {
   type ActionSeverity,
   type ActionSourceType,
   type ActionState,
+  type DismissalReason,
   type ListActionsResponse,
   type MutateActionStateResponse,
   type RetestActionResponse,
@@ -126,6 +127,8 @@ export interface MutateActionStatePayload {
   expectedVersion: number;
   clientKey: string;
   note?: string;
+  /** Audit-finding dismissals only. */
+  reason?: DismissalReason;
 }
 
 export function mutateActionState(

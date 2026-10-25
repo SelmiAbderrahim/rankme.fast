@@ -7,7 +7,7 @@ import type {
   PagesRefreshState,
   PagesState,
 } from '../types';
-import { loadPagesDetail, loadPagesList, refreshPages } from './thunks';
+import { loadPagesDetail, loadPagesList, refreshPages, retainPagesSite } from './thunks';
 
 export const initialPagesState: PagesState = {
   lists: {},
@@ -20,6 +20,7 @@ const cacheEntry = <T>(): PagesCacheEntry<T> => ({
   loading: false,
   loaded: false,
   invalidated: false,
+  loadedAt: null,
   error: null,
   requestId: null,
 });
@@ -54,6 +55,20 @@ const pagesSlice = createSlice({
   },
   extraReducers: (builder) => {
     builder
+      // Another site is now on screen: forget every other site's answers.
+      .addCase(retainPagesSite, (state, action) => {
+        const listPrefix = `${action.payload}?`;
+        const detailPrefix = `${action.payload}/`;
+        for (const key of Object.keys(state.lists)) {
+          if (!key.startsWith(listPrefix)) delete state.lists[key];
+        }
+        for (const key of Object.keys(state.details)) {
+          if (!key.startsWith(detailPrefix)) delete state.details[key];
+        }
+        for (const siteId of Object.keys(state.refreshes)) {
+          if (siteId !== action.payload) delete state.refreshes[siteId];
+        }
+      })
       .addCase(loadPagesList.pending, (state, action) => {
         const key = pagesListCacheKey(action.meta.arg.siteId, action.meta.arg.query);
         const entry = listEntry(state, key);
@@ -68,6 +83,7 @@ const pagesSlice = createSlice({
         entry.loading = false;
         entry.loaded = true;
         entry.invalidated = false;
+        entry.loadedAt = Date.now();
         entry.error = null;
       })
       .addCase(loadPagesList.rejected, (state, action) => {
@@ -96,6 +112,7 @@ const pagesSlice = createSlice({
         entry.loading = false;
         entry.loaded = true;
         entry.invalidated = false;
+        entry.loadedAt = Date.now();
         entry.error = null;
       })
       .addCase(loadPagesDetail.rejected, (state, action) => {
@@ -115,6 +132,14 @@ const pagesSlice = createSlice({
         refresh.loading = true;
         refresh.error = null;
         refresh.requestId = action.meta.requestId;
+        // Refresh replaces what is stored for the whole site, so every cached
+        // list and inspector for it is out of date, not just the visible one.
+        for (const key of Object.keys(state.lists)) {
+          if (key.startsWith(`${action.meta.arg.siteId}?`)) state.lists[key]!.invalidated = true;
+        }
+        for (const key of Object.keys(state.details)) {
+          if (key.startsWith(`${action.meta.arg.siteId}/`)) state.details[key]!.invalidated = true;
+        }
         listEntry(
           state,
           pagesListCacheKey(action.meta.arg.siteId, action.meta.arg.query),

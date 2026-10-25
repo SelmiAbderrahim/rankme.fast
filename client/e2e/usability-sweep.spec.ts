@@ -341,7 +341,7 @@ test('keyboard-only paid flows, CSV exports, and superadmin panels', async ({
     await page.goto(`/sites/${siteId}?tab=reviews&utm=sweep`);
     const sourceInput = page.getByTestId('reviews-source-input-google');
     await tabTo(page, sourceInput);
-    await page.keyboard.type(`ChIJUsability${suffix}`);
+    await page.keyboard.type(`ChIJUsability0123456789${suffix}`);
     const saved = page.waitForResponse(
       (response) =>
         response.request().method() === 'POST' &&

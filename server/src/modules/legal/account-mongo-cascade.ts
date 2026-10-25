@@ -80,6 +80,7 @@ export const ACCOUNT_SCOPED_MONGO_MODEL_NAMES = [
     'ContentInventoryPage',
     'ContentInventoryRun',
     'ContentMonitor',
+    'FindingDismissal',
     'GoogleConnection',
     'InternalLinkRun',
     'KeywordClusterRun',

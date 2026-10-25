@@ -12,7 +12,7 @@
       },
       "emailRankDrop": {
         "label": "Ranking-Verlust",
-        "description": "Benachrichtigen, wenn ein verfolgtes Keyword Positionen verliert."
+        "description": "Per E-Mail benachrichtigen, wenn ein verfolgtes Keyword fällt und eine zweite Prüfung das bestätigt."
       },
       "emailAlerts": {
         "label": "Warnregeln",

@@ -34,10 +34,12 @@ export type ChatMessagePartDto = {
     structuredContent: Record<string, unknown>;
     errorCode?: string;
 };
+export type ChatMessageStatus = 'complete' | 'incomplete' | 'error' | 'aborted';
 export interface ChatMessageDto {
     id: string;
     role: 'user' | 'assistant';
-    status: 'complete' | 'error' | 'aborted';
+    /** `incomplete`: the reply was cut off (output limit, empty final answer or a dropped stream). */
+    status: ChatMessageStatus;
     responseLocale: SupportedLocale | null;
     parts: ChatMessagePartDto[];
     tokens: {

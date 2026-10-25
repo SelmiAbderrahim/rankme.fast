@@ -32,9 +32,12 @@ export const DEEP_CRAWL_NOT_EVALUATED_REASONS = [
 ] as const;
 export type DeepCrawlNotEvaluatedReason = (typeof DEEP_CRAWL_NOT_EVALUATED_REASONS)[number];
 
-/** A page that served a body and should be found in search. */
+/**
+ * A page that served a readable HTML body and should be found in search. A
+ * page with a recorded fetch failure (a PDF, a robots.txt exclusion) is not.
+ */
 export function servedIndexable(page: AuditPage): boolean {
-  return page.isIndexable && Math.floor(page.statusCode / 100) === 2;
+  return page.isIndexable && Math.floor(page.statusCode / 100) === 2 && !page.fetchFailure;
 }
 
 /** Why a crawl signal is missing, from what the result says about itself. */

@@ -1,3 +1,4 @@
+import type { PositionChangeValue } from '@shared/components/PositionDelta';
 import type { CrawlStopReason, CrawlStopReasonSource } from '@shared/components/CrawlStopReasonNote';
 
 export const PAGES_RANGES = ['7d', '28d', '90d'] as const;
@@ -147,8 +148,11 @@ export interface CrawlEvidence {
 }
 
 export interface PageDeltas {
+  /** `previous − current` average position; a sort key only. Render `position`. */
   positionChange: number | null;
   clickChangePct: number | null;
+  /** Explicit position change; absent on older responses. */
+  position?: PositionChangeValue;
 }
 
 export interface PageRow {
@@ -160,10 +164,11 @@ export interface PageRow {
   isIndexable: boolean | null;
   nonIndexableReason: string | null;
   onPageScore: number | null;
-  crawlState?: CrawlState;
-  crawlEvidence?: CrawlEvidence | null;
+  /** One crawl state for the list AND the inspector. `isIndexable` remains for filters. */
+  crawlState: CrawlState;
+  crawlEvidence: CrawlEvidence | null;
   metrics: PageMetrics;
-  associatedQueryState?: PageAssociatedQueryState;
+  associatedQueryState: PageAssociatedQueryState;
   deltas: PageDeltas;
   insights: PagesInsight[];
   crawledAs?: string;
@@ -285,6 +290,8 @@ export interface PagesCacheEntry<T> {
   loading: boolean;
   loaded: boolean;
   invalidated: boolean;
+  /** `Date.now()` when `data` arrived; served from the store until it ages past the Pages TTL. */
+  loadedAt: number | null;
   error: PagesRequestError | null;
   requestId: string | null;
 }

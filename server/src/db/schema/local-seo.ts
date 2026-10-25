@@ -41,6 +41,11 @@ export const localReviewsSnapshots = pgTable('local_reviews_snapshots', {
     reviewCount: integer('review_count').notNull(),
     unansweredQuestionCount: integer('unanswered_question_count').notNull(),
     fetchedAt: timestamp('fetched_at', { withTimezone: true }).notNull().defaultNow(),
+    // Which business the refresh described: the vendor keyword (`place_id:…`
+    // / `cid:…`) and its name. Null = a domain-only refresh from before
+    // business setup existed.
+    businessRef: text('business_ref'),
+    businessName: text('business_name'),
 }, (table) => [
     uniqueIndex('local_reviews_snapshots_site_date_idx').on(table.siteId, table.snapshotDate),
 ]);

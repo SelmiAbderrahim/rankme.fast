@@ -50,7 +50,12 @@ export function EvidenceFacts({ page, resource }: { page?: PageEvidenceRow; reso
   </span>;
 }
 
-export function DeepCrawlEvidenceBlocks({ evidence, shownRows }: { evidence: DeepCrawlEvidence; shownRows: number }) {
+export function DeepCrawlEvidenceBlocks({ evidence, shownRows, showCut }: {
+  evidence: DeepCrawlEvidence;
+  shownRows: number;
+  /** The server's cut note only makes sense once the full lists are on screen. */
+  showCut: boolean;
+}) {
   const { t } = useTranslation('report');
   return <>
     {evidence.chains.length > 0 ? <section className="mb-4" data-testid="report-evidence-chains">
@@ -70,6 +75,6 @@ export function DeepCrawlEvidenceBlocks({ evidence, shownRows }: { evidence: Dee
     </li>)}</ul></section> : null}
     {evidence.insecureResources.length > 0 ? <section className="mb-4" data-testid="report-evidence-insecure"><h4 className="text-sm font-semibold">{t('detail.evidence.insecureTitle')}</h4><ul className="mt-1 space-y-1">{evidence.insecureResources.map((url) => <li key={url}><ExternalUrl url={url} /></li>)}</ul></section> : null}
     {evidence.reachedThroughChain.length > 0 ? <section className="mb-4"><h4 className="text-sm font-semibold">{t('detail.evidence.reachedThroughChain')}</h4><ul className="mt-1 space-y-1">{evidence.reachedThroughChain.map((url) => <li key={url}><ExternalUrl url={url} /></li>)}</ul></section> : null}
-    {evidence.truncated !== null ? <p className="text-muted-foreground mb-4 text-xs" data-testid="report-evidence-cut">{t('detail.evidence.cut', { shown: shownRows, total: evidence.truncated })}</p> : null}
+    {showCut && evidence.truncated !== null ? <p className="text-muted-foreground mb-4 text-xs" data-testid="report-evidence-cut">{t('detail.evidence.cut', { shown: shownRows, total: evidence.truncated })}</p> : null}
   </>;
 }

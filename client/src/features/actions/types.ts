@@ -11,6 +11,10 @@ export const ACTION_STATES = [
 ] as const;
 export type ActionState = (typeof ACTION_STATES)[number];
 
+/** Why an audit finding is dismissed. */
+export const DISMISSAL_REASONS = ['false_positive', 'wont_fix', 'fixed_elsewhere', 'other'] as const;
+export type DismissalReason = (typeof DISMISSAL_REASONS)[number];
+
 export const ACTION_SOURCE_TYPES = [
   'audit_finding',
   'confirmed_rank_drop',

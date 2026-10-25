@@ -36,7 +36,12 @@
     "title": "Review sources",
     "description": "Tell us where your business is listed. One listing per directory.",
     "empty": "No sources yet. Add one below.",
-    "configured": "Set up",
+    "status": {
+      "saved": "Saved, not synced yet",
+      "verified": "Verified by sync",
+      "failed": "Last sync failed",
+      "invalid": "Check this ID"
+    },
     "save": "Save source",
     "remove": "Remove",
     "hint": {
@@ -48,7 +53,23 @@
       "google": "ChIJ_example_place_id",
       "trustpilot": "example.com",
       "tripadvisor": "1234567"
-    }
+    },
+    "help": {
+      "google": "A Place ID is Google's code for your business listing. It usually starts with ChIJ. Search for your business in Google's finder and copy the ID it shows.",
+      "googleLink": "Open Google's Place ID Finder"
+    },
+    "invalid": {
+      "google": "Enter a valid Google Place ID. It usually starts with ChIJ and is at least 20 characters long.",
+      "trustpilot": "Enter the business domain Trustpilot lists, like example.com, without https://.",
+      "tripadvisor": "Enter the numeric Tripadvisor location ID, like 23462501. It is the number after the d in the page address."
+    },
+    "removeConfirm": {
+      "title": "Remove this source?",
+      "description": "{{source}} will no longer be included in new syncs. Reviews you already pulled stay in your inventory.",
+      "cancel": "Keep source",
+      "confirm": "Remove source"
+    },
+    "removed": "{{source}} source removed."
   },
   "sync": {
     "title": "Run a sync",

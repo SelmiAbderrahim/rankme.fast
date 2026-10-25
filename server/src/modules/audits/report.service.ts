@@ -9,13 +9,16 @@
  *      renders — copy resolved into the caller's locale, never keys.
  */
 import { Types } from 'mongoose';
-import type { AuditHostRedirect, AuditResult } from '../../shared/providers/index.js';
+import type { AuditHostRedirect, AuditResult, BrokenLinkOutcome, PageFetchFailureKind, } from '../../shared/providers/index.js';
 import { isAuditCodeFixEligible } from '../../shared/code-fix-eligibility.js';
 import { hasTranslationKey, localizeSemanticCopy, type SupportedLocale, type TranslationKey, } from '../../shared/i18n/index.js';
 import { HttpError } from '../../shared/utils/http-error.js';
 import { Site } from '../sites/index.js';
 import { AuditRun } from './audit-run.model.js';
 import { AuditedPage } from './audited-page.model.js';
+import { findingApplicability, localSeoApplies, type FindingApplicability } from './finding-applicability.js';
+import { toLastCrawl, type AuditLastCrawl } from './page-inventory.service.js';
+import { compareFindings, crawlScopesDiffer, type FindingComparisonStatus, type ReportComparison, } from './finding-comparison.js';
 import { ReportSnapshot, type ReportSnapshotHydrated, } from './report-snapshot.model.js';
 import { selectAuditSummaryLocale, type AuditSummaryStatus, } from './summary.selection.js';
 import { categoryOf, countByBucket, evaluateAllRules, isNotEvaluatedFinding, type AiVisibilityEvaluationInput, type FindingCounts, type GscSearchEvaluationInput, type GscSearchStatus, type GscSitemapsEvaluationInput, type GscSitemapsStatus, type IndexStatusEvaluationInput, type IndexStatusSample, type IndexStatusStatus, type LocalSeoEvaluationInput, type PageSpeedEvaluationInput, type PageSpeedSample, type PageSpeedStatus, type RuleCategory, type RuleFinding, } from './rules/index.js';
@@ -233,14 +236,91 @@ export interface LocalizedRuleCopy {
     reason?: string;
     reasonKey?: string;
 }
+/** One broken-link row: where the link is, where it points, and what a re-request found. */
+export interface BrokenLinkEvidenceRow {
+    source: string;
+    target: string;
+    /** `reported` = the crawler said broken and the target was never re-requested (older runs). */
+    outcome: BrokenLinkOutcome | 'reported';
+    /** HTTP status of our re-request; `null` when there was no HTTP answer. */
+    status: number | null;
+    /** Why there was no HTTP answer, or `http_error` for a failing status. */
+    failure?: PageFetchFailureKind;
+    finalUrl?: string;
+}
+/** Rows kept in one report payload; the true total is reported next to them. */
+export const BROKEN_LINK_EVIDENCE_REPORT_MAX = 10_000;
+/**
+ * Rows in the "latest report" payload that the public API and MCP tools hand
+ * to automation: a preview with the true total beside it. The audit report
+ * screen and exports read the full bound.
+ */
+export const BROKEN_LINK_EVIDENCE_API_PREVIEW = 200;
 export interface LocalizedFinding extends RuleFinding {
     copy: LocalizedRuleCopy;
     /** The rule could not run (missing data source) — not an open problem. */
     notEvaluated?: true;
+    /**
+     * How this finding compares with the same check in the previous run.
+     * Absent on a first run, on a check not evaluated now, and on a passing
+     * check that was never measured before.
+     */
+    comparisonStatus?: FindingComparisonStatus;
+    /** Whether the check applies to this site. */
+    applicability: FindingApplicability;
     /** Report category for the category filter; `null` for a stored id this release no longer ships. */
     category: RuleCategory | null;
     codeFixPromptAvailable?: true;
     brokenLinkTargets?: string[];
+    /**
+     * Every source → target pair behind a broken-links finding, with the result
+     * of re-requesting the target. Confirmed first, dismissed (`cleared`) last.
+     * Bounded by {@link BROKEN_LINK_EVIDENCE_REPORT_MAX}.
+     */
+    brokenLinkEvidence?: BrokenLinkEvidenceRow[];
+    /** Total evidence rows when `brokenLinkEvidence` was cut at the bound. */
+    brokenLinkEvidenceTotal?: number;
+}
+const OUTCOME_RANK: Record<BrokenLinkEvidenceRow['outcome'], number> = {
+    confirmed: 0,
+    unverified: 1,
+    reported: 2,
+    cleared: 3,
+};
+/** Reads the source → target evidence of a run, confirmed first, bounded. */
+export async function readBrokenLinkEvidence(runId: unknown, limit = BROKEN_LINK_EVIDENCE_REPORT_MAX): Promise<{
+    rows: BrokenLinkEvidenceRow[];
+    total: number;
+}> {
+    const pages = await AuditedPage.find({
+        runId,
+        $or: [{ 'brokenLinks.0': { $exists: true } }, { 'brokenLinkEvidence.0': { $exists: true } }],
+    })
+        .select({ url: 1, brokenLinks: 1, brokenLinkEvidence: 1 })
+        .sort({ url: 1 })
+        .lean();
+    const rows: BrokenLinkEvidenceRow[] = [];
+    for (const page of pages) {
+        const proven = new Set<string>();
+        for (const proof of page.brokenLinkEvidence ?? []) {
+            proven.add(proof.target);
+            rows.push({
+                source: page.url,
+                target: proof.target,
+                outcome: proof.outcome,
+                status: proof.status ?? null,
+                ...(proof.failure ? { failure: proof.failure } : {}),
+                ...(proof.finalUrl ? { finalUrl: proof.finalUrl } : {}),
+            });
+        }
+        // Targets with no recorded re-check keep the crawler's verdict.
+        for (const target of page.brokenLinks ?? []) {
+            if (!proven.has(target))
+                rows.push({ source: page.url, target, outcome: 'reported', status: null });
+        }
+    }
+    rows.sort((a, b) => OUTCOME_RANK[a.outcome] - OUTCOME_RANK[b.outcome]);
+    return { rows: rows.slice(0, limit), total: rows.length };
 }
 export interface AuditReportPageSpeedSection {
     status: PageSpeedStatus;
@@ -341,9 +421,30 @@ export interface AuditReportAiSummaryAvailability {
 }
 export interface AuditReport {
     runId: string;
+    /**
+     * What this run's crawl recorded about itself: pages stored, pages the
+     * vendor crawled, the page limit, why it stopped and whether a sitemap was
+     * found. Stored evidence only; absent fields are `null`, never guessed.
+     */
+    crawl?: AuditLastCrawl;
     counts: FindingCounts;
     findings: LocalizedFinding[];
+    /**
+     * Checks that do not apply to this site: Local SEO checks on a site that
+     * is not a local business. They are not in `findings` and not in any
+     * count; the report lists them in a collapsed "Not applicable to this
+     * site" group.
+     */
+    notApplicable: LocalizedFinding[];
+    /** The owner marked the site as a local business. */
+    localBusiness: boolean;
     diff: SnapshotDiff;
+    /**
+     * The previous succeeded run the comparison statuses are measured
+     * against, and whether its crawl covered a materially different set of
+     * pages. `null` = first run of the site.
+     */
+    comparison: ReportComparison | null;
     /**
      * Page-speed section. `null` = the audit ran before PSI
      * sampling shipped or PSI is disabled. Client renders the compact
@@ -390,6 +491,8 @@ export interface GetAuditReportInput {
     runId: string;
     accountId: string;
     locale: SupportedLocale;
+    /** Cap on broken-link evidence rows in the payload; defaults to the full report bound. */
+    brokenLinkEvidenceLimit?: number;
 }
 /**
  * Map the GSC inspection states a rule attached to its finding meta onto a
@@ -492,9 +595,12 @@ export async function getAuditReport(input: GetAuditReportInput): Promise<AuditR
     const snapshot = await ReportSnapshot.findOne({ runId: run._id });
     if (!snapshot)
         throw HttpError.notFound({ code: 'AUDITS_ERRORS_NOT_FOUND', messageKey: 'audits.errors.notFound' });
+    // The baseline is the previous run that produced a report: a failed run
+    // in between has nothing to compare against.
     const previousRun = await AuditRun.findOne({
         siteId: run.siteId,
         accountId: run.accountId,
+        status: 'succeeded',
         _id: { $lt: run._id },
     }).sort({ _id: -1 });
     const previousSnapshot = previousRun
@@ -542,13 +648,38 @@ export async function getAuditReport(input: GetAuditReportInput): Promise<AuditR
         hostRedirect?: AuditHostRedirect | null;
     };
     const brokenFinding = snapshotObj.findings.find((finding) => finding.ruleId === 'broken-internal-links' && finding.bucket !== 'passed');
+    // Evidence is read for the finding in ANY bucket: a finding that passed
+    // because every reported target resolved still shows what was dismissed.
+    const hasBrokenLinksFinding = snapshotObj.findings.some((finding) => finding.ruleId === 'broken-internal-links');
+    const brokenLinkEvidence = hasBrokenLinksFinding
+        ? await readBrokenLinkEvidence(run._id, input.brokenLinkEvidenceLimit)
+        : { rows: [], total: 0 };
     const storedBrokenLinkTargets = brokenFinding?.meta?.brokenLinkTargets;
     const brokenLinkTargets = Array.isArray(storedBrokenLinkTargets)
         ? storedBrokenLinkTargets.filter((url): url is string => typeof url === 'string')
         : brokenFinding
             ? (await AuditedPage.distinct('brokenLinks', { runId: run._id })).filter((url): url is string => typeof url === 'string')
             : [];
-    const findings: LocalizedFinding[] = snapshotObj.findings.map((f) => ({
+    const localBusiness = (await Site.countDocuments({ _id: run.siteId, accountId: input.accountId, localBusiness: true })) > 0;
+    const localApplies = localSeoApplies({ localBusiness, localSeoStatus: snapshotObj.localSeo?.status ?? null });
+    let comparison: ReportComparison | null = null;
+    let comparisonStatuses = new Map<string, FindingComparisonStatus>();
+    if (previousSnapshot) {
+        // A snapshot is only ever read for a found previous run.
+        const baselineRun = previousRun!;
+        const previous = { pageCap: baselineRun.pageCap, pagesCrawled: baselineRun.pagesCrawled ?? null };
+        const current = { pageCap: run.pageCap, pagesCrawled: run.pagesCrawled ?? null };
+        comparison = {
+            previousRunId: String(baselineRun._id),
+            previous,
+            current,
+            scopeMismatch: crawlScopesDiffer(previous, current),
+        };
+        comparisonStatuses = compareFindings((previousSnapshot.toObject() as unknown as {
+            findings: StoredFinding[];
+        }).findings, snapshotObj.findings.map((f) => ({ ...f, ruleId: f.ruleId })), comparison.scopeMismatch);
+    }
+    const localized: LocalizedFinding[] = snapshotObj.findings.map((f) => ({
         ruleId: f.ruleId as RuleFinding['ruleId'],
         bucket: f.bucket as RuleFinding['bucket'],
         severity: f.severity as RuleFinding['severity'],
@@ -556,12 +687,22 @@ export async function getAuditReport(input: GetAuditReportInput): Promise<AuditR
         ...(f.meta ? { meta: f.meta } : {}),
         ...(isNotEvaluatedFinding(f) ? { notEvaluated: true as const } : {}),
         copy: localizeAuditRuleCopy(f.ruleId, input.locale, f.meta ?? undefined),
+        ...(comparisonStatuses.has(f.ruleId) ? { comparisonStatus: comparisonStatuses.get(f.ruleId) as FindingComparisonStatus } : {}),
+        applicability: findingApplicability(f, localApplies),
         category: categoryOf(f.ruleId),
         ...(isAuditCodeFixEligible(f)
             ? { codeFixPromptAvailable: true as const }
             : {}),
         ...(f.ruleId === 'broken-internal-links' && brokenLinkTargets.length > 0
             ? { brokenLinkTargets }
+            : {}),
+        ...(f.ruleId === 'broken-internal-links' && brokenLinkEvidence.rows.length > 0
+            ? {
+                brokenLinkEvidence: brokenLinkEvidence.rows,
+                ...(brokenLinkEvidence.total > brokenLinkEvidence.rows.length
+                    ? { brokenLinkEvidenceTotal: brokenLinkEvidence.total }
+                    : {}),
+            }
             : {}),
     }));
     const pageSpeed: AuditReportPageSpeedSection | null = snapshotObj.pageSpeed && snapshotObj.pageSpeed.status
@@ -643,14 +784,20 @@ export async function getAuditReport(input: GetAuditReportInput): Promise<AuditR
             localPack: snapshotObj.localSeo.localPack ? { ...snapshotObj.localSeo.localPack } : null,
         }
         : null;
+    const findings = localized.filter((finding) => finding.applicability === 'applicable');
     return {
         runId: run.id as string,
+        crawl: toLastCrawl(run),
         // Recomputed from the frozen findings (not the stored counts) so
         // snapshots written before the not-evaluated split stop counting
-        // unconnected checks as Watch items.
-        counts: countByBucket(snapshotObj.findings),
+        // unconnected checks as Watch items, and so checks that do not apply
+        // to the site are never counted.
+        counts: countByBucket(findings),
         findings,
+        notApplicable: localized.filter((finding) => finding.applicability === 'not_applicable'),
+        localBusiness,
         diff,
+        comparison,
         pageSpeed,
         indexStatus,
         gscSearch,
@@ -706,6 +853,7 @@ export async function getLatestSiteReport(input: GetLatestSiteReportInput): Prom
         runId,
         accountId: input.accountId,
         locale: input.locale,
+        brokenLinkEvidenceLimit: BROKEN_LINK_EVIDENCE_API_PREVIEW,
     });
     return { runId, report };
 }

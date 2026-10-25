@@ -48,6 +48,7 @@ export interface PublicSite {
     domain: string;
     displayName: string;
     defaultMarket: StoredSiteMarket | null;
+    localBusiness: boolean;
     paused: boolean;
     pausedAt: string | null;
     createdAt: string;
@@ -83,6 +84,7 @@ export function toPublicSite(site: SiteHydrated): PublicSite {
             source: site.defaultMarket.source,
             ...(site.defaultMarket.basis ? { basis: site.defaultMarket.basis } : {}),
         } : null,
+        localBusiness: site.localBusiness === true,
         // `=== true` / ternary coerce legacy docs that predate the pause fields.
         paused: site.paused === true,
         pausedAt: site.pausedAt ? site.pausedAt.toISOString() : null,
@@ -254,6 +256,7 @@ export async function getSiteMarket(accountId: string, siteId: string,
 export async function updateSite(accountId: string, siteId: string, input: {
     displayName?: string;
     defaultMarket?: SiteMarket;
+    localBusiness?: boolean;
 }): Promise<PublicSite> {
     if (!Types.ObjectId.isValid(siteId)) {
         throw HttpError.notFound({ code: 'SITES_ERRORS_NOT_FOUND', messageKey: 'sites.errors.notFound' });
@@ -272,6 +275,7 @@ export async function updateSite(accountId: string, siteId: string, input: {
         changes.defaultMarket = { ...input.defaultMarket, source: 'owner', basis: null };
     }
     if (input.displayName !== undefined) changes.displayName = input.displayName;
+    if (input.localBusiness !== undefined) changes.localBusiness = input.localBusiness;
     const site = await Site.findOneAndUpdate(filter, { $set: changes }, { new: true });
     if (!site) throw HttpError.notFound({ code: 'SITES_ERRORS_NOT_FOUND', messageKey: 'sites.errors.notFound' });
     return toPublicSite(site);

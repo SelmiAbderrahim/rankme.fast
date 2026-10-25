@@ -75,9 +75,10 @@ export { GA4_SCOPE, GSC_SCOPE, hasGa4Scope, hasGscScope } from './lib/googleScop
 export { GscRequiredNotice } from './components/GscRequiredNotice';
 export { GoogleConnectionCard } from './components/GoogleConnectionCard';
 export { GoogleReadinessNotice, GoogleReadinessText } from './components/GoogleReadinessNotice';
-export type { GoogleReadinessStatus } from './types';
+export type { GoogleReadinessStatus, SiteGoogleReadiness } from './types';
 export { SiteGoogleReadinessProvider, SiteGoogleNotice, useSiteGoogleReadiness } from './components/SiteGoogleReadiness';
 export { GoogleSearchSummaryCard } from './components/GoogleSearchSummaryCard';
+export { GscTotalsNote } from './components/GscTotalsNote';
 export { GoogleAnalyticsSummaryCard } from './components/GoogleAnalyticsSummaryCard';
 export { GoogleSearchDetailPanel } from './components/GoogleSearchDetailPanel';
 export { Ga4PropertySelect } from './components/Ga4PropertySelect';

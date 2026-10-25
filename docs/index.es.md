@@ -53,7 +53,7 @@ order: 0
 - [Seguimiento en Bing, YouTube y Amazon](./alt-engine-tracking.es.md): Cómo hace RankMeFast el seguimiento en motores que no son Google, qué es un token de destino exacto y por qué una posición de Amazon es una posición de índice.
 - [Canibalización de palabras clave](./cannibalization.es.md): Cómo encuentra RankMeFast las consultas en las que compiten dos o más de tus páginas, usando solo las filas de Search Console ya almacenadas.
 - [Enlaces tóxicos y desautorización](./toxic-links.es.md): Cómo clasifica RankMeFast los backlinks con una rúbrica determinista, cuándo la IA puede anotar una fila y por qué el archivo de desautorización nunca se envía por ti.
-- [Alertas](./alerts.es.md): Qué alertas se disparan hoy, cómo funciona la entrega exactamente-una-vez y por qué una regla de caída de posición puede configurarse antes de poder entregar.
+- [Alertas](./alerts.es.md): Qué alertas se disparan, cómo funciona la entrega exactamente-una-vez y cuándo entrega una regla de caída de posición.
 - [Sugerencias de enlazado interno](./internal-linking.es.md): Cómo encuentra RankMeFast páginas huérfanas y poco enlazadas en tu inventario de contenido guardado y redacta anclas que citan su evidencia.
 - [Briefs de contenido](./content-briefs.es.md): Cómo se construye un brief a partir del top diez guardado y hasta diez extracciones de páginas, y por qué cada nodo del esquema debe citar evidencia aportada.
 - [Seguimiento local por cuadrícula](./geogrid.es.md): Cómo se recogen las cuadrículas del paquete local por coordenada, qué significa una celda fallida y por qué las coordenadas se escriben en vez de elegirse en un mapa.

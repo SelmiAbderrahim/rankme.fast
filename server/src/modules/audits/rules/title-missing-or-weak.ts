@@ -4,10 +4,17 @@
  * (fix-now); too-long counts as warning (watch).
  */
 import type { AuditResult } from '../../../shared/providers/index.js';
+import { displayWidth } from '../../../shared/utils/text-length.js';
 import { bucketFor } from './bucket.js';
 import type { AuditRule, RuleFinding } from './rule.types.js';
 const RULE_ID = 'title-missing-or-weak' as const;
-/** Vendors converge on ~60 characters; anything longer is truncated in SERPs. */
+/**
+ * Vendors converge on ~60 characters; anything longer is truncated in SERPs.
+ * Both limits are in Latin-character widths (`displayWidth`): results cut by
+ * pixel width, and a Chinese, Japanese or Korean character is about two
+ * Latin letters wide, so a 30-character Chinese title is "long", and an
+ * 8-character one is not "too short".
+ */
 export const TITLE_TOO_LONG_CHARS = 60;
 export const TITLE_TOO_SHORT_CHARS = 10;
 interface Offender {
@@ -21,14 +28,15 @@ export const titleMissingOrWeakRule: AuditRule = {
         for (const page of result.pages) {
             if (!page.isIndexable)
                 continue;
-            const title = page.title;
-            if (title === null || title.trim().length === 0) {
+            const title = page.title?.trim() ?? '';
+            const width = displayWidth(title);
+            if (width === 0) {
                 offenders.push({ url: page.url, reason: 'missing' });
             }
-            else if (title.trim().length < TITLE_TOO_SHORT_CHARS) {
+            else if (width < TITLE_TOO_SHORT_CHARS) {
                 offenders.push({ url: page.url, reason: 'too-short' });
             }
-            else if (title.trim().length > TITLE_TOO_LONG_CHARS) {
+            else if (width > TITLE_TOO_LONG_CHARS) {
                 offenders.push({ url: page.url, reason: 'too-long' });
             }
         }
