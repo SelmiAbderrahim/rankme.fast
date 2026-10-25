@@ -34,6 +34,7 @@ import { teamActionRoutes, teamRoutes } from '@features/team/routes';
 import { RequirePasswordCurrent } from '@features/auth';
 import { clientPortalRoutes } from '@features/client-reports';
 import { authenticatedReportExportRoutes, publicReportRoutes } from '@features/report-export';
+import { legacyAppRedirectRoutes } from './legacyRedirects';
 import { publicRoutes } from './publicRoutes';
 
 // Guest / pre-auth screens render without the app sidebar; every other auth
@@ -135,6 +136,7 @@ export const appShellRoutes: RouteObject[] = [
     errorElement: <AppTitleBoundary><RouteErrorBoundary /></AppTitleBoundary>,
     children: [
       ...shellAuthRoutes,
+      ...legacyAppRedirectRoutes,
       ...accountRoutes,
       ...dashboardRoutes,
       ...assistantRoutes,

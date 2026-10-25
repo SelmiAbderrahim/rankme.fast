@@ -29,6 +29,10 @@ import { getSiteLifecycleQueues } from './site-lifecycle-queues.holder.js';
 import { recordAuditOnce } from '../audit/index.js';
 import { assertCurrentAccountWorkLease, currentAccountWorkLease, tryRunWithTargetAccountWorkLease, } from '../legal/account-lifecycle.js';
 import { denyReportExportsForSite } from '../report-exports/index.js';
+import { getMarketCatalog, getMarketCatalogDeps } from '../market-catalog/index.js';
+import { readSiteLanguageHead } from '../../shared/security/index.js';
+import { inferSiteMarket, isCatalogSiteMarket, offlineSiteMarketCatalog, parsePageLanguageEvidence, type CatalogMarket, type SiteMarket, type StoredSiteMarket } from './site-market.js';
+import { readGscMarketSignal, resolveSiteMarketFrom, type ResolvableSite, type ResolvedSiteMarket } from './site-market-resolver.js';
 export interface DeleteSiteOptions {
     ip?: string;
     actorUserId?: string;
@@ -43,6 +47,7 @@ export interface PublicSite {
     url: string;
     domain: string;
     displayName: string;
+    defaultMarket: StoredSiteMarket | null;
     paused: boolean;
     pausedAt: string | null;
     createdAt: string;
@@ -71,6 +76,13 @@ export function toPublicSite(site: SiteHydrated): PublicSite {
         url: site.url,
         domain: site.domain,
         displayName: site.displayName ?? '',
+        defaultMarket: site.defaultMarket ? {
+            locationCode: site.defaultMarket.locationCode,
+            languageCode: site.defaultMarket.languageCode,
+            device: site.defaultMarket.device,
+            source: site.defaultMarket.source,
+            ...(site.defaultMarket.basis ? { basis: site.defaultMarket.basis } : {}),
+        } : null,
         // `=== true` / ternary coerce legacy docs that predate the pause fields.
         paused: site.paused === true,
         pausedAt: site.pausedAt ? site.pausedAt.toISOString() : null,
@@ -95,10 +107,27 @@ async function assertNoDuplicateSite(accountId: string, domain: string): Promise
         vars: { domain: existing.domain },
     });
 }
+async function readSeoCatalog(): Promise<CatalogMarket[] | null> {
+    try {
+        return (await getMarketCatalog('seo', getMarketCatalogDeps())).markets;
+    }
+    catch {
+        return null;
+    }
+}
+
+export async function inferNewSiteMarket(url: string, domain: string, accountLocale: string | null): Promise<StoredSiteMarket> {
+    const catalog = (await readSeoCatalog()) ?? offlineSiteMarketCatalog();
+    const html = env.NODE_ENV === 'test' || env.ALLOW_FAKE_PROVIDERS ? null : await readSiteLanguageHead(url);
+    const evidence = html ? parsePageLanguageEvidence(html) : null;
+    const market = inferSiteMarket({ domain, catalog, evidence, accountLocale });
+    return { ...market, source: 'inferred' };
+}
+
 export async function createSite(accountId: string, input: {
     url: string;
     displayName?: string;
-}): Promise<PublicSite> {
+}, options: { accountLocale?: string | null } = {}): Promise<PublicSite> {
     const result = validateSiteUrl(input.url, {
         allowLocalhost: env.NODE_ENV === 'test',
     });
@@ -111,6 +140,7 @@ export async function createSite(accountId: string, input: {
     // 409 is returned fast without touching the Postgres lock table. Existing
     // alias pairs created before this guard are left untouched.
     await assertNoDuplicateSite(accountId, result.domain);
+    const defaultMarket = await inferNewSiteMarket(result.url, result.domain, options.accountLocale ?? null);
     // Site creation is serialized per account with the Postgres
     // transaction-scoped advisory lock (hashtext(accountId)) that the account
     // deletion barrier also takes. The lock is released when the tx
@@ -127,6 +157,7 @@ export async function createSite(accountId: string, input: {
                 url: result.url,
                 domain: result.domain,
                 displayName: input.displayName ?? '',
+                defaultMarket,
             });
             return toPublicSite(site);
         });
@@ -183,15 +214,66 @@ export async function getSite(accountId: string, siteId: string): Promise<Public
         throw HttpError.notFound({ code: 'SITES_ERRORS_NOT_FOUND', messageKey: 'sites.errors.notFound' });
     return toPublicSite(site);
 }
+
+export interface SiteMarketSubject extends ResolvableSite {
+    _id: { toString(): string };
+    accountId: { toString(): string };
+    gscPropertyUrl?: string | null;
+    gscBindingGenerationId?: string | null;
+}
+
+export async function resolveSiteMarket(site: SiteMarketSubject,
+    options: { offlineCatalog?: boolean } = {}): Promise<ResolvedSiteMarket> {
+    const catalog = options.offlineCatalog ? offlineSiteMarketCatalog()
+        : (await readSeoCatalog()) ?? offlineSiteMarketCatalog();
+    let gsc = null;
+    try {
+        gsc = await readGscMarketSignal(getSitesDb(), {
+            accountId: site.accountId.toString(),
+            siteId: site._id.toString(),
+            gscPropertyUrl: site.gscPropertyUrl ?? null,
+            gscBindingGenerationId: site.gscBindingGenerationId ?? null,
+        });
+    }
+    catch {
+        // A stored snapshot read is optional evidence; the site market remains readable.
+    }
+    return resolveSiteMarketFrom({ site, catalog, gsc });
+}
+
+export async function getSiteMarket(accountId: string, siteId: string,
+    options: { offlineCatalog?: boolean } = {}): Promise<ResolvedSiteMarket> {
+    if (!Types.ObjectId.isValid(siteId)) {
+        throw HttpError.notFound({ code: 'SITES_ERRORS_NOT_FOUND', messageKey: 'sites.errors.notFound' });
+    }
+    const site = await Site.findOne({ _id: siteId, accountId, deletionStartedAt: null })
+        .select('_id accountId domain defaultMarket gscPropertyUrl gscBindingGenerationId');
+    if (!site) throw HttpError.notFound({ code: 'SITES_ERRORS_NOT_FOUND', messageKey: 'sites.errors.notFound' });
+    return resolveSiteMarket(site, options);
+}
 export async function updateSite(accountId: string, siteId: string, input: {
-    displayName: string;
+    displayName?: string;
+    defaultMarket?: SiteMarket;
 }): Promise<PublicSite> {
     if (!Types.ObjectId.isValid(siteId)) {
         throw HttpError.notFound({ code: 'SITES_ERRORS_NOT_FOUND', messageKey: 'sites.errors.notFound' });
     }
-    const site = await Site.findOneAndUpdate({ _id: siteId, accountId, deletionStartedAt: null }, { $set: { displayName: input.displayName } }, { new: true });
-    if (!site)
+    const filter = { _id: siteId, accountId, deletionStartedAt: null };
+    const ownedSite = await Site.findOne(filter).select('_id');
+    if (!ownedSite)
         throw HttpError.notFound({ code: 'SITES_ERRORS_NOT_FOUND', messageKey: 'sites.errors.notFound' });
+    const changes: Record<string, unknown> = {};
+    if (input.defaultMarket) {
+        const catalog = await readSeoCatalog();
+        if (!catalog) throw new HttpError(503, { code: 'SITES_ERRORS_MARKETS_UNAVAILABLE', messageKey: 'sites.errors.marketsUnavailable' });
+        if (!isCatalogSiteMarket(input.defaultMarket, catalog)) {
+            throw HttpError.badRequest({ code: 'SITES_ERRORS_INVALID_MARKET', messageKey: 'sites.errors.invalidMarket' });
+        }
+        changes.defaultMarket = { ...input.defaultMarket, source: 'owner', basis: null };
+    }
+    if (input.displayName !== undefined) changes.displayName = input.displayName;
+    const site = await Site.findOneAndUpdate(filter, { $set: changes }, { new: true });
+    if (!site) throw HttpError.notFound({ code: 'SITES_ERRORS_NOT_FOUND', messageKey: 'sites.errors.notFound' });
     return toPublicSite(site);
 }
 /**

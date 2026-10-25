@@ -28,13 +28,13 @@ import { Bdi } from '@shared/components/Bdi';
 import { useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
 import { ReportExportControl } from '@features/report-export';
-import { useSearchParams } from 'react-router-dom';
+import { Link, useSearchParams } from 'react-router-dom';
 import { ArrowLeft, ExternalLink } from 'lucide-react';
 import { Alert, AlertDescription } from '@shared/ui/alert';
 import { Badge } from '@shared/ui/badge';
 import { Button } from '@shared/ui/button';
 import { StatusChip } from '@shared/ui/status-chip';
-import { Empty, EmptyDescription, EmptyHeader, EmptyTitle } from '@shared/ui/empty';
+import { Empty, EmptyContent, EmptyDescription, EmptyHeader, EmptyTitle } from '@shared/ui/empty';
 import {
   Sheet,
   SheetContent,
@@ -480,6 +480,7 @@ export const SerpFeaturesPanel = ({ siteId }: SerpFeaturesPanelProps) => {
           kind="ranks.serp_features"
           target={{ scope: 'site', siteId }}
           selection={{}}
+          empty={rows.length === 0}
         />
       </div>
       {capturePausedBanner}
@@ -489,6 +490,13 @@ export const SerpFeaturesPanel = ({ siteId }: SerpFeaturesPanelProps) => {
             <EmptyTitle>{t('serpFeatures.emptyTitle')}</EmptyTitle>
             <EmptyDescription>{t('serpFeatures.empty')}</EmptyDescription>
           </EmptyHeader>
+          <EmptyContent>
+            <Button asChild variant="outline">
+              <Link to={`/sites/${siteId}?tab=keywords`} data-testid="serp-features-empty-cta">
+                {t('serpFeatures.emptyCta')}
+              </Link>
+            </Button>
+          </EmptyContent>
         </Empty>
       ) : (
         <Table data-testid="serp-features-table">

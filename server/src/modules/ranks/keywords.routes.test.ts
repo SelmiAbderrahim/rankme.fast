@@ -49,6 +49,9 @@ import {
   createKeyword,
   requireReturnedKeyword,
 } from './keywords.service.js';
+import { finalizeRankJob, readRankJob, settleRankJobItem } from './rank-jobs.repo.js';
+import { rankCheckJobItems } from '../../db/schema/rank-check-jobs.js';
+import { moveKeywordsToSiteMarket, previewKeywordMarketMove } from './keyword-market-move.service.js';
 
 const app = createApp();
 
@@ -985,6 +988,246 @@ describe('POST /api/sites/:siteId/keywords', () => {
   });
 });
 
+describe('bulk keyword management', () => {
+  const market = { locationCode: 2840, languageCode: 'en', device: 'desktop' };
+
+  it('returns one result per phrase, handles repeats and existing rows, and reads stored phrases', async () => {
+    const user = await seedUser('bulk-mixed@x.co');
+    const siteId = await seedSite(user.id);
+    const first = await request(app).post(`/api/sites/${siteId}/keywords`)
+      .set('Cookie', user.cookie).send({ ...market, phrase: 'existing phrase' });
+    expect(first.status).toBe(201);
+
+    const response = await request(app).post(`/api/sites/${siteId}/keywords/bulk`)
+      .set('Cookie', user.cookie).send({ ...market,
+        phrases: ['  new  phrase ', 'new phrase', 'existing phrase', '   ', 'x'.repeat(301)] });
+    expect(response.status).toBe(200);
+    expect(response.body.counts).toEqual({ added: 1, duplicate: 2, invalid: 2 });
+    expect(response.body.results.map((item: { status: string; reason?: string }) =>
+      [item.status, item.reason])).toEqual([
+      ['added', undefined], ['duplicate', 'repeated'], ['duplicate', 'already_tracked'],
+      ['invalid', 'empty'], ['invalid', 'too_long'],
+    ]);
+    const phrases = await request(app).get(`/api/sites/${siteId}/keywords/phrases`)
+      .set('Cookie', user.cookie);
+    expect(phrases.status).toBe(200);
+    expect(phrases.body.keywords).toEqual(expect.arrayContaining([
+      expect.objectContaining({ phrase: 'new phrase', engine: 'google' }),
+      expect.objectContaining({ phrase: 'existing phrase', engine: 'google' }),
+    ]));
+  });
+
+  it('queues more than 30 new keywords by site scope without sending vendor requests', async () => {
+    const user = await seedUser('bulk-many@x.co');
+    const siteId = await seedSite(user.id);
+    const q = fakeQueue();
+    setRanksQueue(q as never);
+    const response = await request(app).post(`/api/sites/${siteId}/keywords/bulk`)
+      .set('Cookie', user.cookie).send({ ...market,
+        phrases: Array.from({ length: 35 }, (_, index) => `bulk keyword ${index + 1}`) });
+    expect(response.status).toBe(200);
+    expect(response.body.counts).toEqual({ added: 35, duplicate: 0, invalid: 0 });
+    const items = await getTestDb().select().from(rankCheckJobItems);
+    expect(items).toHaveLength(35);
+    expect(new Set(items.map((item) => item.jobId)).size).toBe(1);
+    expect(q.add).toHaveBeenCalledOnce();
+    expect(q.add).toHaveBeenCalledWith(expect.any(String),
+      expect.objectContaining({ keywordIds: [] }), expect.anything());
+  });
+
+  it('returns 404 for another account and rejects an oversized request before writing', async () => {
+    const owner = await seedUser('bulk-owner@x.co');
+    const stranger = await seedUser('bulk-stranger@x.co');
+    const siteId = await seedSite(owner.id);
+    const foreign = await request(app).post(`/api/sites/${siteId}/keywords/bulk`)
+      .set('Cookie', stranger.cookie).send({ ...market, phrases: ['foreign'] });
+    expect(foreign.status).toBe(404);
+    const foreignPhrases = await request(app).get(`/api/sites/${siteId}/keywords/phrases`)
+      .set('Cookie', stranger.cookie);
+    expect(foreignPhrases.status).toBe(404);
+    const oversized = await request(app).post(`/api/sites/${siteId}/keywords/bulk`)
+      .set('Cookie', owner.cookie).send({ ...market,
+        phrases: Array.from({ length: 101 }, (_, index) => `phrase ${index}`) });
+    expect(oversized.status).toBe(400);
+    expect(await getTestDb().select().from(keywordsTable)).toHaveLength(0);
+  });
+});
+
+describe('keyword offset pagination and search', () => {
+  it('returns page counts and treats percent and underscore as literal search text', async () => {
+    const user = await seedUser('keyword-pages@x.co');
+    const siteId = await seedSite(user.id);
+    await getTestDb().insert(keywordsTable).values(['alpha', 'beta', 'gamma', '100% done', 'under_score']
+      .map((phrase) => ({ accountId: user.id, siteId, phrase,
+        locationCode: 2840, languageCode: 'en', device: 'desktop' as const })));
+    const page = await request(app).get(`/api/sites/${siteId}/keywords?page=2&pageSize=2`)
+      .set('Cookie', user.cookie);
+    expect(page.status).toBe(200);
+    expect(page.body).toEqual(expect.objectContaining({ total: 5, siteTotal: 5,
+      page: 2, pageSize: 2 }));
+    expect(page.body.keywords).toHaveLength(2);
+    const percent = await request(app).get(`/api/sites/${siteId}/keywords?page=1&pageSize=25&search=100%25`)
+      .set('Cookie', user.cookie);
+    expect(percent.body.total).toBe(1);
+    expect(percent.body.keywords[0].phrase).toBe('100% done');
+    const underscore = await request(app).get(`/api/sites/${siteId}/keywords?page=1&pageSize=25&search=_`)
+      .set('Cookie', user.cookie);
+    expect(underscore.body.total).toBe(1);
+    expect(underscore.body.keywords[0].phrase).toBe('under_score');
+  });
+});
+
+describe('keyword market move', () => {
+  it('rolls back when a row is removed during confirmation', async () => {
+    const user = await seedUser('market-race-remove@x.co');
+    const siteId = await seedSite(user.id);
+    await Site.findByIdAndUpdate(siteId, { defaultMarket: {
+      locationCode: 2840, languageCode: 'en', device: 'desktop', source: 'owner',
+    } });
+    const [old] = await getTestDb().insert(keywordsTable).values({ accountId: user.id, siteId,
+      phrase: 'race remove', locationCode: 2682, languageCode: 'ar', device: 'desktop' }).returning();
+    const db = getTestDb();
+    const preview = await previewKeywordMarketMove(db as never, { accountId: user.id, siteId });
+    const realTransaction = db.transaction.bind(db);
+    vi.spyOn(db, 'transaction').mockImplementationOnce(async (callback) =>
+      realTransaction(async (tx) => {
+        vi.spyOn(tx, 'update').mockImplementationOnce(() => ({
+          set: () => ({ where: () => ({ returning: async () => [] }) }),
+        }) as never);
+        return callback(tx as never);
+      }));
+    await expect(moveKeywordsToSiteMarket(db as never,
+      { accountId: user.id, siteId, token: preview.token })).rejects.toMatchObject({ status: 409 });
+    const [unchanged] = await db.select().from(keywordsTable).where(eq(keywordsTable.id, old!.id));
+    expect(unchanged?.active).toBe(true);
+  });
+
+  it('rolls back when the target becomes occupied during confirmation', async () => {
+    const user = await seedUser('market-race-target@x.co');
+    const siteId = await seedSite(user.id);
+    await Site.findByIdAndUpdate(siteId, { defaultMarket: {
+      locationCode: 2840, languageCode: 'en', device: 'desktop', source: 'owner',
+    } });
+    const [old] = await getTestDb().insert(keywordsTable).values({ accountId: user.id, siteId,
+      phrase: 'race target', locationCode: 2682, languageCode: 'ar', device: 'desktop' }).returning();
+    const db = getTestDb();
+    const preview = await previewKeywordMarketMove(db as never, { accountId: user.id, siteId });
+    const realTransaction = db.transaction.bind(db);
+    vi.spyOn(db, 'transaction').mockImplementationOnce(async (callback) =>
+      realTransaction(async (tx) => {
+        vi.spyOn(tx, 'insert').mockImplementationOnce(() => ({ values: () => ({
+          onConflictDoUpdate: () => ({ returning: async () => [] }),
+        }) }) as never);
+        return callback(tx as never);
+      }));
+    await expect(moveKeywordsToSiteMarket(db as never,
+      { accountId: user.id, siteId, token: preview.token })).rejects.toMatchObject({ status: 409 });
+    const [unchanged] = await db.select().from(keywordsTable).where(eq(keywordsTable.id, old!.id));
+    expect(unchanged?.active).toBe(true);
+  });
+
+  it('resumes target-market history and leaves an already tracked phrase in place', async () => {
+    const user = await seedUser('market-resume@x.co');
+    const siteId = await seedSite(user.id);
+    await Site.findByIdAndUpdate(siteId, { defaultMarket: {
+      locationCode: 2840, languageCode: 'en', device: 'desktop', source: 'owner',
+    } });
+    const rows = await getTestDb().insert(keywordsTable).values([
+      { accountId: user.id, siteId, phrase: 'resume', locationCode: 2682,
+        languageCode: 'ar', device: 'desktop' as const },
+      { accountId: user.id, siteId, phrase: 'resume', locationCode: 2840,
+        languageCode: 'en', device: 'desktop' as const, active: false },
+      { accountId: user.id, siteId, phrase: 'kept', locationCode: 2682,
+        languageCode: 'ar', device: 'desktop' as const },
+      { accountId: user.id, siteId, phrase: 'kept', locationCode: 2840,
+        languageCode: 'en', device: 'desktop' as const },
+    ]).returning();
+    await getTestDb().insert(rankingsTable).values({ keywordId: rows[1]!.id,
+      position: 4, rankAbsolute: 4, source: 'fresh', checkedAt: new Date() });
+    const preview = await request(app).get(`/api/sites/${siteId}/keywords/market-move`)
+      .set('Cookie', user.cookie);
+    expect(preview.status).toBe(200);
+    expect(preview.body.preview).toEqual(expect.objectContaining({
+      tracked: 3, inTarget: 1, movable: 1, alreadyTracked: 1, resumesHistory: 1,
+    }));
+    const moved = await request(app).post(`/api/sites/${siteId}/keywords/market-move`)
+      .set('Cookie', user.cookie).send({ token: preview.body.preview.token });
+    expect(moved.status).toBe(200);
+    expect(moved.body.moved).toBe(1);
+    const after = await getTestDb().select().from(keywordsTable);
+    expect(after.find((row) => row.id === rows[0]!.id)?.active).toBe(false);
+    expect(after.find((row) => row.id === rows[1]!.id)?.active).toBe(true);
+    expect(after.find((row) => row.id === rows[2]!.id)?.active).toBe(true);
+    expect(after.find((row) => row.id === rows[3]!.id)?.active).toBe(true);
+  });
+
+  it('requires an inferred or chosen site market before previewing a move', async () => {
+    const user = await seedUser('market-unknown@x.co');
+    const siteId = await seedSite(user.id);
+    const preview = await request(app).get(`/api/sites/${siteId}/keywords/market-move`)
+      .set('Cookie', user.cookie);
+    expect(preview.status).toBe(409);
+    expect(preview.body.error.code).toBe('RANKS_ERRORS_MARKET_MOVE_NO_DEFAULT');
+  });
+
+  it('previews and confirms a market change without checking ranks or discarding history', async () => {
+    const user = await seedUser('market-move@x.co');
+    const siteId = await seedSite(user.id);
+    await Site.findByIdAndUpdate(siteId, { defaultMarket: {
+      locationCode: 2840, languageCode: 'en', device: 'desktop', source: 'owner',
+    } });
+    const [old] = await getTestDb().insert(keywordsTable).values({
+      accountId: user.id, siteId, phrase: 'market phrase', locationCode: 2682,
+      languageCode: 'ar', device: 'desktop',
+    }).returning();
+    await getTestDb().insert(rankingsTable).values({ keywordId: old!.id,
+      position: 3, rankAbsolute: 3, source: 'fresh', checkedAt: new Date() });
+    const q = fakeQueue();
+    setRanksQueue(q as never);
+    const preview = await request(app).get(`/api/sites/${siteId}/keywords/market-move`)
+      .set('Cookie', user.cookie);
+    expect(preview.status).toBe(200);
+    expect(preview.body.preview).toEqual(expect.objectContaining({ tracked: 1, movable: 1,
+      withHistory: 1, target: expect.objectContaining({ locationCode: 2840 }) }));
+    const moved = await request(app).post(`/api/sites/${siteId}/keywords/market-move`)
+      .set('Cookie', user.cookie).send({ token: preview.body.preview.token });
+    expect(moved.status).toBe(200);
+    expect(moved.body.moved).toBe(1);
+    const rows = await getTestDb().select().from(keywordsTable);
+    expect(rows).toEqual(expect.arrayContaining([
+      expect.objectContaining({ id: old!.id, active: false, locationCode: 2682 }),
+      expect.objectContaining({ active: true, locationCode: 2840, phrase: 'market phrase' }),
+    ]));
+    const history = await getTestDb().select().from(rankingsTable);
+    expect(history).toHaveLength(1);
+    expect(history[0]?.keywordId).toBe(old!.id);
+    expect(q.add).not.toHaveBeenCalled();
+  });
+
+  it('refuses a stale token and hides a foreign site', async () => {
+    const owner = await seedUser('market-owner@x.co');
+    const stranger = await seedUser('market-stranger@x.co');
+    const siteId = await seedSite(owner.id);
+    await Site.findByIdAndUpdate(siteId, { defaultMarket: {
+      locationCode: 2840, languageCode: 'en', device: 'desktop', source: 'owner',
+    } });
+    const foreign = await request(app).get(`/api/sites/${siteId}/keywords/market-move`)
+      .set('Cookie', stranger.cookie);
+    expect(foreign.status).toBe(404);
+    const preview = await request(app).get(`/api/sites/${siteId}/keywords/market-move`)
+      .set('Cookie', owner.cookie);
+    expect(preview.status).toBe(200);
+    await getTestDb().insert(keywordsTable).values({ accountId: owner.id, siteId,
+      phrase: 'newly added', locationCode: 2682, languageCode: 'ar', device: 'desktop' });
+    const stale = await request(app).post(`/api/sites/${siteId}/keywords/market-move`)
+      .set('Cookie', owner.cookie).send({ token: preview.body.preview.token });
+    expect(stale.status).toBe(409);
+    expect(await getTestDb().select().from(keywordsTable)).toEqual([
+      expect.objectContaining({ active: true, locationCode: 2682 }),
+    ]);
+  });
+});
+
 describe('GET /api/sites/:siteId/keywords', () => {
   it('lists with latest position + delta vs previous check', async () => {
     const user = await seedUser();
@@ -1013,6 +1256,13 @@ describe('GET /api/sites/:siteId/keywords', () => {
     expect(res.body.keywords[0].latestPosition).toBe(3);
     expect(res.body.keywords[0].previousPosition).toBe(5);
     expect(res.body.keywords[0].delta).toBe(2);
+    expect(res.body.keywords[0].rankState).toMatchObject({ state: 'improved',
+      comparison: 'improved', baseline: 'previous_check', position: 3,
+      baselinePosition: 5, change: 2 });
+    expect(res.body.keywords[0].movement).toEqual({ kind: 'improved', amount: 2 });
+    expect(res.body.keywords[0].positionChange).toMatchObject({ positionDelta: -2,
+      direction: 'improved' });
+    expect(res.body.keywords[0].lastOutcome).toBeNull();
     // AI Overview signal from the latest check flows through the list.
     expect(res.body.keywords[0].aiOverviewPresent).toBe(true);
     expect(res.body.keywords[0].aiCited).toBe(true);
@@ -1031,6 +1281,7 @@ describe('GET /api/sites/:siteId/keywords', () => {
     expect(res.body.keywords[0].latestPosition).toBeNull();
     expect(res.body.keywords[0].delta).toBeNull();
     expect(res.body.keywords[0].lastFailedCheckAt).toBeNull();
+    expect(res.body.keywords[0].rankState.state).toBe('never_checked');
   });
 
   it('surfaces lastFailedCheckAt for a keyword whose check errored (no ranking row)', async () => {
@@ -1054,6 +1305,7 @@ describe('GET /api/sites/:siteId/keywords', () => {
     expect(res.body.keywords[0].latestPosition).toBeNull();
     expect(res.body.keywords[0].lastCheckedAt).toBeNull();
     expect(res.body.keywords[0].lastFailedCheckAt).toBe(failedAt.toISOString());
+    expect(res.body.keywords[0].rankState.state).toBe('failed_last_check');
   });
 
   it('cross-account 404', async () => {
@@ -1554,9 +1806,74 @@ describe('POST /api/sites/:siteId/keywords (immediate first check)', () => {
 });
 
 describe('POST /api/sites/:siteId/keywords/check ("Check now")', () => {
+  it('returns a durable job that can be resumed without starting another check', async () => {
+    const user = await seedUser('rank-job-resume@x.co');
+    const siteId = await seedSite(user.id);
+    await getTestDb().insert(keywordsTable).values({ accountId: user.id, siteId,
+      phrase: 'durable keyword', locationCode: 2840, languageCode: 'en' });
+    const q = fakeQueue();
+    setRanksQueue(q as never);
+    const first = await request(app).post(`/api/sites/${siteId}/keywords/check`)
+      .set('Cookie', user.cookie).set('Idempotency-Key', 'request-resume').send();
+    expect(first.status).toBe(202);
+    expect(first.body.job).toMatchObject({ siteId, status: 'queued', totals: { total: 1 } });
+    const active = await request(app).get(`/api/sites/${siteId}/rank-jobs/active`).set('Cookie', user.cookie);
+    expect(active.status).toBe(200);
+    expect(active.body.job.id).toBe(first.body.job.id);
+    const foreign = await seedUser('rank-job-foreign@x.co');
+    const hidden = await request(app).get(`/api/sites/${siteId}/rank-jobs/${first.body.job.id}`)
+      .set('Cookie', foreign.cookie);
+    expect(hidden.status).toBe(404);
+    const replay = await request(app).post(`/api/sites/${siteId}/keywords/check`)
+      .set('Cookie', user.cookie).set('Idempotency-Key', 'request-resume').send();
+    expect(replay.status).toBe(202);
+    expect(replay.body.job.id).toBe(first.body.job.id);
+    expect(q.add).toHaveBeenCalledTimes(1);
+  });
+
+  it('retries only failed items and reuses the retry request', async () => {
+    const user = await seedUser('rank-job-retry@x.co');
+    const siteId = await seedSite(user.id);
+    const rows = await getTestDb().insert(keywordsTable).values(['failed phrase', 'successful phrase']
+      .map((phrase) => ({ accountId: user.id, siteId, phrase, locationCode: 2840,
+        languageCode: 'en' }))).returning();
+    const q = fakeQueue();
+    setRanksQueue(q as never);
+    const first = await request(app).post(`/api/sites/${siteId}/keywords/check`)
+      .set('Cookie', user.cookie).send();
+    expect(first.status).toBe(202);
+    const jobId = first.body.job.id as string;
+    expect(jobId).toMatch(/^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$/);
+    await settleRankJobItem(getTestDb() as never, { accountId: user.id, jobId,
+      keywordId: rows[0]!.id, state: 'failed', reason: 'vendor_timeout',
+      attempts: 1, now: new Date() });
+    await settleRankJobItem(getTestDb() as never, { accountId: user.id, jobId,
+      keywordId: rows[1]!.id, state: 'succeeded', reason: null,
+      now: new Date() });
+    await finalizeRankJob(getTestDb() as never, jobId, new Date());
+    expect(await readRankJob(getTestDb() as never, { accountId: user.id, siteId, jobId }))
+      .toMatchObject({ status: 'partial' });
+    const status = await request(app).get(`/api/sites/${siteId}/rank-jobs/${jobId}`)
+      .set('Cookie', user.cookie);
+    expect(status.status, JSON.stringify(status.body)).toBe(200);
+    expect(status.body.job).toMatchObject({ status: 'partial', totals: { failed: 1, succeeded: 1 } });
+    const retry = await request(app).post(`/api/sites/${siteId}/rank-jobs/${jobId}/retry-failed`)
+      .set('Cookie', user.cookie).send();
+    expect(retry.status).toBe(202);
+    expect(retry.body.job).toMatchObject({ scope: 'retry', retryOfJobId: jobId,
+      totals: { total: 1 } });
+    expect(retry.body.job.items[0].keywordId).toBe(rows[0]!.id);
+    const replay = await request(app).post(`/api/sites/${siteId}/rank-jobs/${jobId}/retry-failed`)
+      .set('Cookie', user.cookie).send();
+    expect(replay.body.job.id).toBe(retry.body.job.id);
+    expect(q.add).toHaveBeenCalledTimes(2);
+  });
+
   it('queues an on-demand re-check (202) and enqueues a manual job', async () => {
     const user = await seedUser();
     const siteId = await seedSite(user.id);
+    await getTestDb().insert(keywordsTable).values({ accountId: user.id, siteId,
+      phrase: 'tracked phrase', locationCode: 2840, languageCode: 'en' });
     const q = fakeQueue();
     setRanksQueue(q as never);
 
@@ -1587,10 +1904,13 @@ describe('POST /api/sites/:siteId/keywords/check ("Check now")', () => {
     expect(res.status).toBe(404);
   });
 
-  it('rejects a second check inside the cooldown with a localized 429', async () => {
+  it('reuses a covering active job without adding another queue entry', async () => {
     const user = await seedUser();
     const siteId = await seedSite(user.id);
-    setRanksQueue(fakeQueue() as never);
+    await getTestDb().insert(keywordsTable).values({ accountId: user.id, siteId,
+      phrase: 'coalesced phrase', locationCode: 2840, languageCode: 'en' });
+    const q = fakeQueue();
+    setRanksQueue(q as never);
 
     const first = await request(app)
       .post(`/api/sites/${siteId}/keywords/check`)
@@ -1602,8 +1922,10 @@ describe('POST /api/sites/:siteId/keywords/check ("Check now")', () => {
       .post(`/api/sites/${siteId}/keywords/check`)
       .set('Cookie', user.cookie)
       .send();
-    expect(second.status).toBe(429);
-    expect(second.body.error.message).toBe(DICTIONARIES.en.ranks.errors.checkCooldown);
+    expect(second.status).toBe(202);
+    expect(second.body.job.id).toBe(first.body.job.id);
+    expect(second.body.reused).toBe(true);
+    expect(q.add).toHaveBeenCalledTimes(1);
   });
 
   it('still succeeds (202) when no queue is configured — the cooldown is stamped', async () => {
@@ -1645,7 +1967,8 @@ describe('POST /api/keywords/:id/check (individual "Check now")', () => {
         manual: true,
       });
       expect(data).not.toHaveProperty('serpReservation');
-      expect(options?.jobId).toContain(keyword!.id);
+      expect(data).toHaveProperty('rankJobId');
+      expect(options?.jobId).toContain('manual-');
       return { id: 'single-keyword-rank-job' };
     });
     setRanksQueue({ ...fakeQueue(), add } as never);
@@ -1694,7 +2017,7 @@ describe('POST /api/keywords/:id/check (individual "Check now")', () => {
           keywordIds: [keyword!.id],
           altEnginesEnabledAtEnqueue: true,
         }),
-        expect.objectContaining({ jobId: expect.stringContaining(keyword!.id) }),
+        expect.objectContaining({ jobId: expect.stringContaining('manual-') }),
       );
     } finally {
       (env as { ALT_ENGINE_TRACKING_ENABLED: boolean }).ALT_ENGINE_TRACKING_ENABLED =

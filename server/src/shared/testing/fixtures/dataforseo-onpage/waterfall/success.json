@@ -1,0 +1,71 @@
+{
+  "version": "0.1.20261001",
+  "status_code": 20000,
+  "status_message": "Ok.",
+  "time": "0.0410 sec.",
+  "cost": 0,
+  "tasks_count": 1,
+  "tasks_error": 0,
+  "tasks": [
+    {
+      "id": "TASK_ID",
+      "status_code": 20000,
+      "status_message": "Ok.",
+      "time": "0.0302 sec.",
+      "cost": 0,
+      "result_count": 1,
+      "path": [
+        "v3",
+        "on_page",
+        "waterfall"
+      ],
+      "data": {
+        "api": "on_page",
+        "function": "waterfall",
+        "url": "https://example.com/blog/a?id=7"
+      },
+      "result": [
+        {
+          "crawl_progress": "finished",
+          "crawl_status": {
+            "max_crawl_pages": 100,
+            "pages_in_queue": 0,
+            "pages_crawled": 7
+          },
+          "items_count": 1,
+          "items": [
+            {
+              "page_url": "https://example.com/blog/a?id=7",
+              "time_to_interactive": 3900,
+              "dom_complete": 3900,
+              "connection_time": 40,
+              "time_to_secure_connection": 60,
+              "request_sent_time": 0,
+              "waiting_time": 2400,
+              "download_time": 300,
+              "duration_time": 2800,
+              "fetch_start": 0,
+              "fetch_end": 2800,
+              "resources": [
+                {
+                  "resource_type": "script",
+                  "url": "https://example.com/js/app.js",
+                  "initiator": "(index)",
+                  "duration_time": 600,
+                  "fetch_start": 2800,
+                  "fetch_end": 3400,
+                  "location": {
+                    "line": 12,
+                    "offset_left": 1,
+                    "offset_top": 840
+                  },
+                  "is_render_blocking": true
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

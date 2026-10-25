@@ -64,7 +64,7 @@
     "optionSuffix": "en pausa"
   },
   "errors": {
-    "urlRequired": "Introduce la URL de tu sitio.",
+    "urlRequired": "Introduce la URL de tu sitio, como https://example.com.",
     "urlTooLong": "Esa URL es demasiado larga (máximo 2048 caracteres).",
     "urlInvalid": "Introduce una URL válida, como https://example.com.",
     "urlScheme": "Solo se admiten URL http:// y https://.",
@@ -152,9 +152,10 @@
     },
     "search": {
       "title": "Rendimiento de búsqueda",
-      "description": "A partir de la captura de Search Console de la última auditoría.",
+      "description": "Tus datos más recientes de Google Search Console de los últimos 28 días.",
       "topQuery": "Consulta principal",
-      "openGoogle": "Abrir datos de Google"
+      "openGoogle": "Abrir datos de Google",
+      "asOf": "Datos hasta {{date}}"
     },
     "pageSpeed": {
       "title": "Experiencia del sitio",
@@ -240,5 +241,33 @@
     "empty": "Todavía no tienes sitios.",
     "addSite": "Añadir un sitio",
     "truncated": "Aquí solo aparecen tus primeros {{shown, number}} sitios."
-  }
+  },
+  "market": {
+    "menuItem": "Mercado predeterminado",
+    "title": "Mercado predeterminado",
+    "description": "El seguimiento de posiciones, la investigación de palabras clave y las demás herramientas empiezan con este país, idioma y dispositivo. Puedes elegir otro mercado en cada herramienta. Sitio:",
+    "inferredNote": "Lo elegimos a partir de la dirección y el idioma del sitio. Cámbialo si no es correcto.",
+    "country": "País",
+    "language": "Idioma",
+    "device": "Dispositivo",
+    "devices": {
+      "desktop": "Escritorio",
+      "mobile": "Móvil"
+    },
+    "save": "Guardar mercado",
+    "saving": "Guardando…",
+    "cancel": "Cancelar",
+    "saveFailed": "No se pudo guardar el mercado predeterminado. Vuelve a intentarlo."
+  },
+  "list": {
+    "columnLastAudit": "Última auditoría",
+    "columnHealth": "Salud",
+    "columnKeywords": "Palabras clave",
+    "noAudit": "Aún sin auditoría",
+    "auditStatus": {
+      "failed": "Auditoría fallida",
+      "unavailable": "Auditoría no disponible"
+    }
+  },
+  "openTabHint": "Elige un sitio para abrir su sección {{tab}}."
 }

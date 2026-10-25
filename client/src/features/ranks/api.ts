@@ -1,16 +1,24 @@
 import { apiClient } from '@shared/api/client';
 import type {
   AltEngineSpendPreview,
+  BulkKeywordBody,
+  BulkKeywordResponse,
   RankEngine,
   CadenceUpdateResponse,
   CheckNowResponse,
   CreateKeywordBody,
   CreateKeywordResponse,
   KeywordListPage,
+  KeywordMarketMovePreview,
+  KeywordMarketMoveResponse,
+  KeywordPageSize,
+  TrackedKeywordPhrasesResponse,
   KeywordSuggestionsBody,
   KeywordSuggestionsResponse,
   RankCadence,
   RankHistoryResponse,
+  RankJobResponse,
+  ActiveRankJobResponse,
   RemoveKeywordResponse,
   SerpFeatureDetail,
   SerpFeaturesResponse,
@@ -19,12 +27,15 @@ import type {
 export const fetchKeywordsRequest = (
   siteId: string,
   cursor?: string | null,
-  init?: { signal?: AbortSignal; engine?: RankEngine },
+  init?: { signal?: AbortSignal; engine?: RankEngine; page?: number; pageSize?: KeywordPageSize; search?: string },
 ): Promise<KeywordListPage> => {
   // Keep the shipped cursor encoding byte-identical (`%20`, not the `+`
   // emitted by URLSearchParams) while extending the query with an engine.
   const params: string[] = [];
   if (cursor) params.push(`cursor=${encodeURIComponent(cursor)}`);
+  if (init?.page !== undefined) params.push(`page=${init.page}`);
+  if (init?.pageSize !== undefined) params.push(`pageSize=${init.pageSize}`);
+  if (init?.search) params.push(`search=${encodeURIComponent(init.search)}`);
   if (init?.engine) params.push(`engine=${encodeURIComponent(init.engine)}`);
   const query = params.join('&');
   const path = `/sites/${siteId}/keywords${query ? `?${query}` : ''}`;
@@ -42,6 +53,22 @@ export const createKeywordRequest = (
     method: 'POST',
     body,
   });
+
+export const createKeywordsBulkRequest = (siteId: string, body: BulkKeywordBody): Promise<BulkKeywordResponse> =>
+  apiClient<BulkKeywordResponse>(`/sites/${siteId}/keywords/bulk`, { method: 'POST', body });
+
+export const fetchTrackedKeywordPhrasesRequest = (
+  siteId: string,
+  signal?: AbortSignal,
+): Promise<TrackedKeywordPhrasesResponse> =>
+  apiClient<TrackedKeywordPhrasesResponse>(`/sites/${siteId}/keywords/phrases`, signal ? { signal } : undefined);
+
+/** Stored-only preview. A token binds confirmation to exactly this list and target market. */
+export const fetchKeywordMarketMoveRequest = (siteId: string, signal?: AbortSignal): Promise<{ preview: KeywordMarketMovePreview }> =>
+  apiClient<{ preview: KeywordMarketMovePreview }>(`/sites/${siteId}/keywords/market-move`, signal ? { signal } : undefined);
+
+export const moveKeywordsToSiteMarketRequest = (siteId: string, token: string): Promise<KeywordMarketMoveResponse> =>
+  apiClient<KeywordMarketMoveResponse>(`/sites/${siteId}/keywords/market-move`, { method: 'POST', body: { token } });
 
 /**
  * Read-only slot + spend disclosure before a paid alt-engine add
@@ -69,13 +96,24 @@ export const fetchKeywordSuggestionsRequest = (
 export const checkNowRequest = (
   siteId: string,
   keywordId?: string,
+  idempotencyKey?: string,
 ): Promise<CheckNowResponse> =>
   apiClient<CheckNowResponse>(
     keywordId ? `/keywords/${keywordId}/check` : `/sites/${siteId}/keywords/check`,
     {
       method: 'POST',
+      ...(idempotencyKey ? { headers: { 'Idempotency-Key': idempotencyKey } } : {}),
     },
   );
+
+export const fetchActiveRankJobRequest = (siteId: string, signal?: AbortSignal): Promise<ActiveRankJobResponse> =>
+  apiClient<ActiveRankJobResponse>(`/sites/${siteId}/rank-jobs/active`, signal ? { signal } : undefined);
+
+export const fetchRankJobRequest = (siteId: string, jobId: string, signal?: AbortSignal): Promise<RankJobResponse> =>
+  apiClient<RankJobResponse>(`/sites/${siteId}/rank-jobs/${jobId}`, signal ? { signal } : undefined);
+
+export const retryFailedRankJobRequest = (siteId: string, jobId: string): Promise<CheckNowResponse> =>
+  apiClient<CheckNowResponse>(`/sites/${siteId}/rank-jobs/${jobId}/retry-failed`, { method: 'POST' });
 
 export const removeKeywordRequest = (id: string): Promise<RemoveKeywordResponse> =>
   apiClient<RemoveKeywordResponse>(`/keywords/${id}`, { method: 'DELETE' });

@@ -66,6 +66,27 @@ const MAX_TEXT_BYTES = 256 * 1024;
 /** Statuses that mean the site refused us (bot protection, auth, rate limit). */
 const BLOCKED_STATUSES: ReadonlySet<number> = new Set([401, 403, 429]);
 
+/** Bounded first-party HTML head for site-market inference. */
+export async function readSiteLanguageHead(
+    siteUrl: string,
+    options: FetchPublicUrlSafeOptions = {},
+): Promise<string | null> {
+    try {
+        const response = await fetchPublicUrlSafe(siteUrl, {
+            method: 'GET', headers: { accept: 'text/html' },
+        }, {
+            deadlineMs: 3_000,
+            maxResponseBytes: 256 * 1024,
+            ...options,
+        });
+        if (response.status !== 200) return null;
+        if (!(response.headers.get('content-type') ?? '').toLowerCase().includes('html')) return null;
+        return response.text();
+    } catch {
+        return null;
+    }
+}
+
 const defaultFetchUrl = (safety: SiteProbeOptions['safety']) => (url: string): Promise<ProbeResponse | null> =>
     fetchPublicUrlSafeWithFinalUrl(url, { method: 'GET', headers: { accept: 'text/plain,text/html;q=0.8,*/*;q=0.5' } }, {
         ...safety,

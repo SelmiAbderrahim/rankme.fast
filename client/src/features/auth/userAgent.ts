@@ -1,8 +1,8 @@
 /**
  * A small, dependency-free user-agent reader for the Active sessions list.
  * It only names the common browsers and operating systems; anything it does
- * not recognise yields `null` fields so the caller can fall back to the raw
- * string. Names are proper nouns and stay untranslated.
+ * not recognise yields `null` fields so the caller can show a neutral label.
+ * Names are proper nouns and stay untranslated.
  */
 export interface ParsedUserAgent {
   /** e.g. "Chrome 154" — major version only. */

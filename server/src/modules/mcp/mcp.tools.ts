@@ -26,9 +26,23 @@ import type { SupportedLocale } from '../../shared/i18n/locales.js';
 import { BEARER_DEFAULT_LOCALE } from '../../shared/middleware/bearer-language.js';
 import { Site, tryRunWithSiteWorkLease } from '../sites/index.js';
 import { getAuditRun, getLatestSiteReport, startAuditForSite, } from '../audits/index.js';
-import { getKeywordHistoryBatch, listKeywords, } from '../ranks/index.js';
+import { getKeywordHistoryBatch, listKeywords, summarizeSiteRankStates,
+    keywordCheckStatus, type KeywordRankStateResult } from '../ranks/index.js';
+
+function keywordStateFields(rankState: KeywordRankStateResult) {
+    const status = keywordCheckStatus(rankState);
+    const failed = status === 'failed';
+    return { state: rankState.state, status, checkedAt: rankState.checkedAt,
+        failedAt: rankState.failedAt, baseline: rankState.baseline,
+        position: failed ? null : rankState.position,
+        baselinePosition: failed ? null : rankState.baselinePosition,
+        change: failed ? null : rankState.change,
+        lastKnownPosition: failed ? rankState.position : null };
+}
 import { getAnalysis as ciGetAnalysis, listAnalyses as ciListAnalyses, } from '../content-intelligence/index.js';
 import { listActionsForSite, mutateActionState } from '../actions/index.js';
+import { isResolvedAuditDecision, loadAuditDecisions,
+    resolveAuditDecisionEvidence } from '../actions/audit-decisions.js';
 import { getMcpAuditsQueue, getMcpDb } from './mcp.holder.js';
 import { MCP_PAGE_LIMIT_DEFAULT, getAuditStatusInputSchema, getContentAnalysisInputSchema, getLatestAuditReportInputSchema, getRankHistoryInputSchema, listActionsInputSchema, listContentAnalysesInputSchema, listKeywordsInputSchema, listSitesInputSchema, setActionStateInputSchema, startAuditInputSchema, } from './mcp.schema.js';
 /** Shape returned to `McpServer.registerTool` — structuredContent + text. */
@@ -52,9 +66,16 @@ export interface McpToolContext {
      */
     permissions: EffectiveMcpPermissions;
 }
-type McpResultKey = 'mcp.results.sitesEmpty' | 'mcp.results.sitePaused' | 'mcp.results.latestAuditReport' | 'mcp.results.keywordsEmpty' | 'mcp.results.rankHistory' | 'mcp.results.contentAnalyses' | 'mcp.results.contentAnalysesMore' | 'mcp.results.contentAnalysis' | 'mcp.results.auditStarted' | 'mcp.results.auditStatus' | 'mcp.results.actions' | 'mcp.results.actionState';
+type McpResultKey = 'mcp.results.sitesEmpty' | 'mcp.results.sitePaused' | 'mcp.results.latestAuditReport' | 'mcp.results.keywordsEmpty' | 'mcp.results.rankHistory' | 'mcp.results.rankMovementSummary' | 'mcp.results.contentAnalyses' | 'mcp.results.contentAnalysesMore' | 'mcp.results.contentAnalysis' | 'mcp.results.auditStarted' | 'mcp.results.auditStatus' | 'mcp.results.actions' | 'mcp.results.actionState';
 function resultText(locale: SupportedLocale, key: McpResultKey, vars?: TranslationVars): string {
     return translate(locale, key, vars);
+}
+function movementSummaryText(locale: SupportedLocale, movement: { improved: number; declined: number;
+    unchanged: number; failed: number; unranked: number; noPair: number }): string {
+    return resultText(locale, 'mcp.results.rankMovementSummary', {
+        up: movement.improved, down: movement.declined, flat: movement.unchanged,
+        failed: movement.failed, unranked: movement.unranked, noPair: movement.noPair,
+    });
 }
 function resolveLocale(arg: unknown, fallback: SupportedLocale = BEARER_DEFAULT_LOCALE): SupportedLocale {
     if (typeof arg === 'string') {
@@ -189,14 +210,43 @@ export async function toolListSites(rawInput: unknown, context: McpToolContext):
 // ---------------------------------------------------------------------------
 // get_latest_audit_report
 // ---------------------------------------------------------------------------
+type LatestAuditReport = Awaited<ReturnType<typeof getLatestSiteReport>>['report'];
+async function withAuditDecisions(report: LatestAuditReport, input: {
+    accountId: string; siteId: string; runId: string;
+}): Promise<LatestAuditReport & { notCounted: { dismissed: number; completed: number } }> {
+    const originalFindings = report.findings ?? [];
+    if (originalFindings.length === 0) return { ...report,
+        notCounted: { dismissed: 0, completed: 0 } };
+    const evidence = await resolveAuditDecisionEvidence({ ...input, findings: originalFindings });
+    const decisions = await loadAuditDecisions(getMcpDb(), { ...input,
+        ruleIds: originalFindings.map((finding) => finding.ruleId), evidence });
+    const notCounted = { dismissed: 0, completed: 0 };
+    const counts = { ...report.counts };
+    const findings = originalFindings.map((finding) => {
+        const detail = decisions.get(finding.ruleId);
+        const decision = detail?.state ?? 'open';
+        if ((finding.bucket === 'fix-now' || finding.bucket === 'watch') &&
+            isResolvedAuditDecision(decision)) {
+            notCounted[decision] += 1;
+            if (finding.bucket === 'fix-now') counts.fixNow = Math.max(0, counts.fixNow - 1);
+            else counts.watch = Math.max(0, counts.watch - 1);
+        }
+        return { ...finding, decision, regressed: detail?.regressed === true };
+    });
+    return { ...report, counts, findings, notCounted };
+}
 export async function toolGetLatestAuditReport(rawInput: unknown, context: McpToolContext): Promise<McpToolResult> {
     return runTool('get_latest_audit_report', rawInput, context, async (locale) => {
         const input = getLatestAuditReportInputSchema.parse(rawInput ?? {});
         assertSiteAllowed(context.permissions, input.siteId);
-        const { runId, report } = await getLatestSiteReport({
+        const latest = await getLatestSiteReport({
             accountId: context.accountId,
             siteId: input.siteId,
             locale,
+        });
+        const { runId } = latest;
+        const report = await withAuditDecisions(latest.report, {
+            accountId: context.accountId, siteId: input.siteId, runId,
         });
         const structured = { runId, report, locale };
         return {
@@ -229,15 +279,20 @@ export async function toolListKeywords(rawInput: unknown, context: McpToolContex
         const keywords = page.keywords.map((k) => ({
             id: k.id,
             phrase: k.phrase,
+            ...keywordStateFields(k.rankState),
+            lastOutcome: k.lastOutcome,
         }));
+        const rankStates = await summarizeSiteRankStates(getMcpDb(), { accountId: context.accountId,
+            siteId: input.siteId });
         return {
-            structuredContent: { keywords, locale },
+            structuredContent: { keywords, rankStates, locale },
             content: [
                 {
                     type: 'text',
                     text: keywords.length === 0
                         ? resultText(locale, 'mcp.results.keywordsEmpty')
-                        : keywords.map((k) => `- ${k.phrase}`).join('\n'),
+                        : [movementSummaryText(locale, rankStates.movement),
+                            ...keywords.map((k) => `- ${k.phrase}`)].join('\n'),
                 },
             ],
         };
@@ -267,14 +322,19 @@ export async function toolGetRankHistory(rawInput: unknown, context: McpToolCont
         const keywords = page.keywords.map((k) => ({
             id: k.id,
             phrase: k.phrase,
+            ...keywordStateFields(k.rankState),
+            lastOutcome: k.lastOutcome,
             series: seriesById.get(k.id) ?? [],
         }));
+        const rankStates = await summarizeSiteRankStates(deps.db, { accountId: context.accountId,
+            siteId: input.siteId });
         return {
-            structuredContent: { keywords, locale },
+            structuredContent: { keywords, rankStates, locale },
             content: [
                 {
                     type: 'text',
-                    text: resultText(locale, 'mcp.results.rankHistory', { count: keywords.length }),
+                    text: [resultText(locale, 'mcp.results.rankHistory', { count: keywords.length }),
+                        movementSummaryText(locale, rankStates.movement)].join('\n'),
                 },
             ],
         };

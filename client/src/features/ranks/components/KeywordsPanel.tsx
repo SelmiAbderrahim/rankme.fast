@@ -12,25 +12,31 @@
  *   - keywords-error          global error alert
  *   - keywords-empty          empty state (no keywords yet)
  */
-import { useEffect, useMemo, useRef, useState } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
 import { Link, useSearchParams } from 'react-router-dom';
+import { Search } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 import { toast } from 'sonner';
 import { ReportExportControl } from '@features/report-export';
 import { NativeSelect } from '@shared/ui/native-select';
+import { Input } from '@shared/ui/input';
+import { Label } from '@shared/ui/label';
 import { Alert, AlertDescription } from '@shared/ui/alert';
 import { Button } from '@shared/ui/button';
 import { RefreshButton } from '@shared/components/RefreshButton';
 import { Empty, EmptyDescription, EmptyHeader, EmptyTitle } from '@shared/ui/empty';
 import { Skeleton } from '@shared/ui/skeleton';
+import { KeywordMarketMove } from './KeywordMarketMove';
 import { useAppDispatch, useAppSelector } from '@shared/hooks/redux';
+import { useJobStatus } from '@shared/hooks/useJobStatus';
+import { rankJobSettled } from '@shared/cache/invalidation';
 import {
   checkNow,
   loadKeywordHistory,
   loadKeywords,
   removeKeyword,
   updateCadence,
-  addKeyword,
+  addKeywordsBulk,
 } from '../store/thunks';
 import { selectKeyword } from '../store/slice';
 import {
@@ -46,6 +52,10 @@ import {
   selectHistoryKeywordId,
   selectHistoryLoading,
   selectKeywords,
+  selectKeywordLoadedQuery,
+  selectKeywordTotal,
+  selectKeywordSiteTotal,
+  selectRanksLoading,
   selectRanksError,
   selectRanksLoaded,
   selectRemoveError,
@@ -54,20 +64,28 @@ import {
   selectUpdatingCadence,
 } from '../store/selectors';
 import { KeywordsTable } from './KeywordsTable';
+import { KeywordsPagination } from './KeywordsPagination';
 import { AddKeywordForm } from './AddKeywordForm';
 import { CadenceToggle } from './CadenceToggle';
 import { RankTrendChart } from './RankTrendChart';
-import { RANK_ENGINES, type Keyword, type RankCadence, type RankEngine } from '../types';
+import { RANK_ENGINES, type Keyword, type KeywordListQuery, type RankCadence, type RankEngine } from '../types';
 import type { AddKeywordFormValues } from '../validation';
 import { rankCheckReachedTerminal } from '../check-status';
+import { fetchActiveRankJobRequest, fetchRankJobRequest, retryFailedRankJobRequest } from '../api';
+import { forgetTrackedRankJob, isRankJobFinished, newIdempotencyKey, rankJobOutcome, rankJobToastId, readTrackedRankJob, rememberTrackedRankJob } from '../rankJobs';
+import type { RankJob } from '../types';
+import { CheckNowDialog, type CheckNowTarget } from './CheckNowDialog';
+import { KEYWORD_SEARCH_MAX, keywordPageCount, readKeywordListQuery, sameKeywordListQuery, writeKeywordListQuery } from '../keywordListParams';
 
 interface Props {
   siteId: string;
 }
 
-/** Poll cadence + ceiling for the post-"Check now" list refresh. */
+/** Poll cadence + ceiling for automatic first checks after an add. */
 const CHECK_POLL_INTERVAL_MS = 3_000;
 const CHECK_POLL_MAX_MS = 60_000;
+const SEARCH_DEBOUNCE_MS = 300;
+const BULK_KEYWORDS_PER_REQUEST = 100;
 
 /** A keyword just added whose automatic first check is still outstanding. */
 interface InitialCheck {
@@ -81,26 +99,25 @@ export const KeywordsPanel = ({ siteId }: Props) => {
   const { t } = useTranslation('ranks');
   const dispatch = useAppDispatch();
 
-  const allKeywords = useAppSelector(selectKeywords);
+  const keywords = useAppSelector(selectKeywords);
   const [searchParams, setSearchParams] = useSearchParams();
-  // Engine filter lives in the URL so a filtered
-  // view is shareable and survives a refresh (url-tab-state rule). An unknown
-  // value falls back to `all` rather than rendering an empty table.
-  const rawEngine = searchParams.get('engine');
-  const engineFilter: RankEngine | 'all' =
-    rawEngine !== null && (RANK_ENGINES as readonly string[]).includes(rawEngine)
-      ? (rawEngine as RankEngine)
-      : 'all';
-  const requestedEngine = engineFilter === 'all' ? undefined : engineFilter;
-  const keywords =
-    engineFilter === 'all' ? allKeywords : allKeywords.filter((k) => k.engine === engineFilter);
-  const setEngineFilter = (next: RankEngine | 'all') => {
-    const params = new URLSearchParams(searchParams);
-    if (next === 'all') params.delete('engine');
-    else params.set('engine', next);
-    setSearchParams(params, { replace: true });
-  };
+  const listQuery = readKeywordListQuery(searchParams);
+  const { page, pageSize, engine: requestedEngine, search } = listQuery;
+  const engineFilter: RankEngine | 'all' = requestedEngine ?? 'all';
+  const updateListQuery = useCallback((patch: Partial<KeywordListQuery>, push = false) => {
+    const next = { page, pageSize, engine: requestedEngine, search,
+      ...(patch.page === undefined ? { page: 1 } : {}), ...patch };
+    setSearchParams(writeKeywordListQuery(searchParams, next), { replace: !push });
+  }, [page, pageSize, requestedEngine, search, searchParams, setSearchParams]);
+  const setEngineFilter = (next: RankEngine | 'all') => updateListQuery({ engine: next === 'all' ? null : next });
+  const total = useAppSelector(selectKeywordTotal);
+  const siteTotal = useAppSelector(selectKeywordSiteTotal);
+  const listLoading = useAppSelector(selectRanksLoading);
+  const loadedQuery = useAppSelector(selectKeywordLoadedQuery);
   const loaded = useAppSelector(selectRanksLoaded);
+  const reloadKeywords = useCallback(() => dispatch(loadKeywords({ siteId, page, pageSize, search,
+    ...(requestedEngine ? { engine: requestedEngine } : {}) })),
+  [dispatch, siteId, page, pageSize, search, requestedEngine]);
   const error = useAppSelector(selectRanksError);
   const adding = useAppSelector(selectAddingKeyword);
   const addError = useAppSelector(selectAddKeywordError);
@@ -109,6 +126,8 @@ export const KeywordsPanel = ({ siteId }: Props) => {
   const cadence = useAppSelector(selectCadence);
   const [checkingSince, setCheckingSince] = useState<number | null>(null);
   const [checkingTargetId, setCheckingTargetId] = useState<string | null>(null);
+  const [checkTarget, setCheckTarget] = useState<CheckNowTarget | null>(null);
+  const [trackedJob, setTrackedJob] = useState<{ id: string; initial: RankJob | null } | null>(null);
   // Keywords added this session whose automatic first check has not landed.
   const [initialChecks, setInitialChecks] = useState<Record<string, InitialCheck>>({});
   const updatingCadence = useAppSelector(selectUpdatingCadence);
@@ -121,36 +140,63 @@ export const KeywordsPanel = ({ siteId }: Props) => {
   const historyKeywordId = useAppSelector(selectHistoryKeywordId);
   const historyLoading = useAppSelector(selectHistoryLoading);
   const historyError = useAppSelector(selectHistoryError);
-  const checkingKeywords = useMemo(
-    () =>
-      checkingTargetId === null
-        ? keywords
-        : keywords.filter(({ id }) => id === checkingTargetId),
-    [checkingTargetId, keywords],
-  );
+  const jobStatus = useJobStatus<RankJob>({
+    jobId: trackedJob?.id ?? null,
+    initialJob: trackedJob?.initial ?? null,
+    fetchJob: async (jobId, signal) => (await fetchRankJobRequest(siteId, jobId, signal)).job,
+    isTerminal: isRankJobFinished,
+  });
+  const job = jobStatus.job;
+  const retryFailed = useCallback(async (jobId: string) => {
+    try {
+      const accepted = await retryFailedRankJobRequest(siteId, jobId);
+      if (!accepted.job) { toast.success(accepted.message); return; }
+      rememberTrackedRankJob(siteId, accepted.job.id);
+      toast.loading(accepted.message, { id: rankJobToastId(accepted.job.id) });
+      setTrackedJob({ id: accepted.job.id, initial: accepted.job });
+    } catch {
+      toast.error(t('checkFailed'));
+    }
+  }, [siteId, t]);
 
   const ranksSiteId = useAppSelector((s) => s.ranks.siteId);
   const historyKeywordIdRef = useRef(historyKeywordId);
   historyKeywordIdRef.current = historyKeywordId;
+  const viewKey = `${siteId}:${page}:${pageSize}:${requestedEngine ?? 'all'}:${search}`;
   const loadedViewKeyRef = useRef<string | null>(
-    ranksSiteId === siteId && requestedEngine === undefined ? `${siteId}:all` : null,
+    loaded && !listLoading && ranksSiteId === siteId && sameKeywordListQuery(loadedQuery, listQuery)
+      ? viewKey : null,
   );
 
   useEffect(() => {
-    const viewKey = `${siteId}:${requestedEngine ?? 'all'}`;
     if (loadedViewKeyRef.current === viewKey) return;
     loadedViewKeyRef.current = viewKey;
     const p = dispatch(
-      loadKeywords({
-        siteId,
-        direction: 'initial',
-        ...(requestedEngine ? { engine: requestedEngine } : {}),
-      }),
+      loadKeywords({ siteId, page, pageSize, search,
+        ...(requestedEngine ? { engine: requestedEngine } : {}) }),
     );
     return () => {
       p.abort();
     };
-  }, [dispatch, requestedEngine, siteId]);
+  }, [dispatch, viewKey, requestedEngine, page, pageSize, search, siteId]);
+
+  const [searchDraft, setSearchDraft] = useState(search);
+  useEffect(() => {
+    setSearchDraft((draft) => draft.trim() === search ? draft : search);
+  }, [search]);
+  useEffect(() => {
+    const next = searchDraft.trim().slice(0, KEYWORD_SEARCH_MAX);
+    if (next === search) return;
+    const timer = window.setTimeout(() => updateListQuery({ search: next }), SEARCH_DEBOUNCE_MS);
+    return () => window.clearTimeout(timer);
+  }, [searchDraft, search, updateListQuery]);
+
+  const pageCount = keywordPageCount(total, pageSize);
+  const changingView = !sameKeywordListQuery(loadedQuery, listQuery);
+  const answered = !listLoading && !changingView;
+  useEffect(() => {
+    if (answered && page > pageCount) updateListQuery({ page: pageCount });
+  }, [answered, page, pageCount, updateListQuery]);
 
   useEffect(() => {
     if (!selectedId) return;
@@ -161,49 +207,61 @@ export const KeywordsPanel = ({ siteId }: Props) => {
     };
   }, [dispatch, selectedId]);
 
-  // After a "Check now", the rank job runs asynchronously in the worker, so the
-  // 202 says nothing about the result. Poll the list until every keyword's
-  // snapshot has refreshed past the trigger stamp (or the deadline elapses),
-  // then stop — mirrors the report run-status poll (report/ReportPage).
+  const reportedJobId = useRef<string | null>(null);
   useEffect(() => {
-    if (checkingSince === null) return;
-    if (checkingKeywords.every((keyword) => rankCheckReachedTerminal(keyword, checkingSince))) {
-      return;
-    }
-    const deadline = checkingSince + CHECK_POLL_MAX_MS;
-    let inFlight: { abort: () => void } | null = null;
-    const timer = window.setInterval(() => {
-      if (Date.now() >= deadline) {
-        setCheckingSince(null);
-        setCheckingTargetId(null);
-        return;
-      }
-      inFlight = dispatch(
-        loadKeywords({
-          siteId,
-          direction: 'initial',
-          ...(requestedEngine ? { engine: requestedEngine } : {}),
-        }),
-      );
-    }, CHECK_POLL_INTERVAL_MS);
-    return () => {
-      window.clearInterval(timer);
-      inFlight?.abort();
-    };
-  }, [dispatch, requestedEngine, siteId, checkingKeywords, checkingSince]);
+    const controller = new AbortController();
+    setTrackedJob(null);
+    setCheckingSince(null);
+    setCheckingTargetId(null);
+    reportedJobId.current = null;
+    const remembered = readTrackedRankJob(siteId);
+    if (remembered) setTrackedJob({ id: remembered, initial: null });
+    else void fetchActiveRankJobRequest(siteId, controller.signal)
+      .then(({ job: active }) => {
+        if (controller.signal.aborted || !active) return;
+        setTrackedJob({ id: active.id, initial: active });
+        setCheckingSince(Date.parse(active.createdAt));
+        setCheckingTargetId(active.scope === 'keyword' && active.items.length === 1 ? active.items[0]!.keywordId : null);
+      })
+      .catch(() => { /* The next explicit check still works if this stored read fails. */ });
+    return () => controller.abort();
+  }, [siteId]);
 
-  // Stop as soon as every row carries a snapshot newer than the trigger.
-  // (An empty list `.every()` → true, which also stops — nothing to check.)
   useEffect(() => {
-    if (checkingSince === null) return;
-    const allRefreshed = checkingKeywords.every((keyword) =>
-      rankCheckReachedTerminal(keyword, checkingSince),
-    );
-    if (allRefreshed) {
+    if (jobStatus.phase !== 'polling' || job?.siteId !== siteId) return;
+    setCheckingSince(Date.parse(job.createdAt));
+    setCheckingTargetId(job.scope === 'keyword' && job.items.length === 1 ? job.items[0]!.keywordId : null);
+  }, [jobStatus.phase, job, siteId]);
+
+  useEffect(() => {
+    if (jobStatus.phase !== 'terminal' || !job || job.siteId !== siteId || reportedJobId.current === job.id) return;
+    reportedJobId.current = job.id;
+    forgetTrackedRankJob(siteId, job.id);
+    dispatch(rankJobSettled({ siteId, jobId: job.id }));
+    void reloadKeywords();
+    if (selectedId) void dispatch(loadKeywordHistory({ keywordId: selectedId }));
+    setCheckingSince(null);
+    setCheckingTargetId(null);
+    const outcome = rankJobOutcome(t, job);
+    toast[outcome.tone](outcome.title, { id: rankJobToastId(job.id),
+      ...(outcome.description ? { description: outcome.description } : {}),
+      ...(outcome.failed > 0 ? { action: { label: t('retryFailed'), onClick: () => void retryFailed(job.id) } } : {}),
+    });
+  }, [jobStatus.phase, job, siteId, dispatch, reloadKeywords, selectedId, t, retryFailed]);
+
+  useEffect(() => {
+    if (jobStatus.phase === 'capped' && job?.siteId === siteId) {
       setCheckingSince(null);
       setCheckingTargetId(null);
+      toast.info(t('jobStillRunning'), { id: rankJobToastId(job.id) });
     }
-  }, [checkingKeywords, checkingSince]);
+  }, [jobStatus.phase, job, siteId, t]);
+
+  useEffect(() => {
+    const id = trackedJob?.id;
+    if (!id) return;
+    return () => { if (reportedJobId.current !== id) toast.dismiss(rankJobToastId(id)); };
+  }, [trackedJob?.id]);
 
   // Adding a keyword makes the server enqueue its first check, which finishes
   // asynchronously in the worker. Keep the new rows in "Checking…" and poll the
@@ -229,58 +287,59 @@ export const KeywordsPanel = ({ siteId }: Props) => {
         );
         return;
       }
-      inFlight = dispatch(
-        loadKeywords({
-          siteId,
-          direction: 'initial',
-          ...(requestedEngine ? { engine: requestedEngine } : {}),
-        }),
-      );
+      inFlight = reloadKeywords();
     }, CHECK_POLL_INTERVAL_MS);
     return () => {
       window.clearInterval(timer);
       inFlight?.abort();
     };
-  }, [dispatch, requestedEngine, siteId, keywords, initialChecks]);
+  }, [keywords, initialChecks, reloadKeywords]);
 
   const handleAdd = async (values: AddKeywordFormValues[]) => {
     const added: string[] = [];
     const fresh: Record<string, InitialCheck> = {};
-    for (const value of values) {
-      const result = await dispatch(addKeyword({ siteId, ...value }));
-      if (!addKeyword.fulfilled.match(result)) break;
-      added.push(value.phrase);
-      const { id, updatedAt } = result.payload.keyword;
-      fresh[id] = { since: Date.parse(updatedAt), until: Date.now() + CHECK_POLL_MAX_MS };
+    let duplicates = 0;
+    let tooLong = 0;
+    let invalid = 0;
+    let processed = 0;
+    for (let offset = 0; offset < values.length; offset += BULK_KEYWORDS_PER_REQUEST) {
+      const batch = values.slice(offset, offset + BULK_KEYWORDS_PER_REQUEST);
+      const first = batch[0];
+      if (!first) break;
+      const result = await dispatch(addKeywordsBulk({ siteId, phrases: batch.map((value) => value.phrase),
+        locationCode: first.locationCode, languageCode: first.languageCode,
+        device: first.device, engine: first.engine, engineTarget: first.engineTarget }));
+      if (!addKeywordsBulk.fulfilled.match(result)) break;
+      processed += result.payload.results.length;
+      for (const item of result.payload.results) {
+        if (item.status === 'duplicate') { duplicates += 1; continue; }
+        if (item.status === 'invalid') {
+          if (item.reason === 'too_long') tooLong += 1;
+          else invalid += 1;
+          continue;
+        }
+        if (!item.keyword) continue;
+        added.push(item.phrase);
+        fresh[item.keyword.id] = { since: Date.parse(item.keyword.updatedAt),
+          until: Date.now() + CHECK_POLL_MAX_MS };
+      }
     }
     if (added.length > 0) {
       toast.success(
         t(added.length === 1 ? 'keywordsAddedOne' : 'keywordsAdded', { count: added.length }),
       );
-      await dispatch(
-        loadKeywords({
-          siteId,
-          direction: 'initial',
-          ...(requestedEngine ? { engine: requestedEngine } : {}),
-        }),
-      );
+      await reloadKeywords();
       // Registered after the reload so the new rows already exist in the list
       // when the poll effect first looks for them.
       setInitialChecks((current) => ({ ...current, ...fresh }));
     }
-    return added;
+    return { added, duplicates, tooLong, invalid, unsent: values.length - processed };
   };
 
   const handleRemove = async (k: Keyword) => {
     const result = await dispatch(removeKeyword(k.id));
     if (removeKeyword.fulfilled.match(result)) {
-      await dispatch(
-        loadKeywords({
-          siteId,
-          direction: 'initial',
-          ...(requestedEngine ? { engine: requestedEngine } : {}),
-        }),
-      );
+      await reloadKeywords();
     }
   };
 
@@ -288,18 +347,21 @@ export const KeywordsPanel = ({ siteId }: Props) => {
     void dispatch(updateCadence({ siteId, cadence: next, previous: cadence }));
   };
 
-  const handleCheckNow = async (keyword?: Keyword) => {
+  const handleCheckNow = async (target: CheckNowTarget) => {
     const result = await dispatch(
-      checkNow({ siteId, ...(keyword ? { keywordId: keyword.id } : {}) }),
+      checkNow({ siteId, ...(target.scope === 'keyword' ? { keywordId: target.keyword.id } : {}),
+        idempotencyKey: newIdempotencyKey() }),
     );
     if (checkNow.fulfilled.match(result)) {
-      toast.success(result.payload.message);
-      // Kick off the poll: rows flip to "Checking…" until their snapshot lands.
-      setCheckingTargetId(keyword?.id ?? null);
-      setCheckingSince(Date.parse(result.payload.checkStartedAt));
+      setCheckTarget(null);
+      if (result.payload.job) {
+        rememberTrackedRankJob(siteId, result.payload.job.id);
+        toast.loading(result.payload.message, { id: rankJobToastId(result.payload.job.id) });
+        setTrackedJob({ id: result.payload.job.id, initial: result.payload.job });
+        setCheckingTargetId(target.scope === 'keyword' ? target.keyword.id : null);
+        setCheckingSince(Date.parse(result.payload.checkStartedAt));
+      } else toast.success(result.payload.message);
     } else {
-      setCheckingTargetId(null);
-      setCheckingSince(null);
       /* c8 ignore start -- checkNow always rejects via rejectWithValue, so payload.error is set; the ?? only guards an unexpected thunk throw. */
       toast.error(result.payload?.error ?? t('checkFailed'));
       /* c8 ignore stop */
@@ -394,15 +456,7 @@ export const KeywordsPanel = ({ siteId }: Props) => {
         </Alert>
         <Button
           variant="outline"
-          onClick={() =>
-            void dispatch(
-              loadKeywords({
-                siteId,
-                direction: 'initial',
-                ...(requestedEngine ? { engine: requestedEngine } : {}),
-              }),
-            )
-          }
+          onClick={() => void reloadKeywords()}
         >
           {t('retry')}
         </Button>
@@ -411,6 +465,11 @@ export const KeywordsPanel = ({ siteId }: Props) => {
   }
   return (
     <div className="flex flex-col gap-6">
+      <h2 className="text-lg font-semibold" data-testid="keyword-list-heading">
+        {t(search || requestedEngine ? 'keywordList.headingFiltered' : 'keywordList.heading',
+          search || requestedEngine ? { matched: total, total: siteTotal } : { total: siteTotal })}
+      </h2>
+      <KeywordMarketMove siteId={siteId} keywordCount={siteTotal} onMoved={() => { void reloadKeywords(); }} />
       <div className="flex flex-wrap items-center justify-between gap-4">
         <CadenceToggle
           cadence={cadence}
@@ -423,9 +482,8 @@ export const KeywordsPanel = ({ siteId }: Props) => {
             target={{ scope: 'site', siteId }}
             selection={requestedEngine ? { engine: requestedEngine } : {}}
             label={t('exportRankings')}
-            clipboardText={
-              keywords.length > 0 ? `${keywords.map(({ phrase }) => phrase).join(',')},` : ''
-            }
+            clipboardText={page === 1 && total === keywords.length && total > 0
+              ? `${keywords.map(({ phrase }) => phrase).join(',')},` : undefined}
           />
           {selectedKeyword ? (
             <ReportExportControl
@@ -456,6 +514,13 @@ export const KeywordsPanel = ({ siteId }: Props) => {
               ))}
             </NativeSelect>
           </div>
+          <div className="relative sm:w-72">
+            <Label htmlFor="keyword-search" className="sr-only">{t('keywordList.searchLabel')}</Label>
+            <Search aria-hidden="true" className="text-muted-foreground pointer-events-none absolute start-3 top-1/2 size-4 -translate-y-1/2" />
+            <Input id="keyword-search" type="search" className="ps-9" value={searchDraft}
+              maxLength={KEYWORD_SEARCH_MAX} placeholder={t('keywordList.searchPlaceholder')}
+              onChange={(event) => setSearchDraft(event.target.value)} data-testid="keyword-search" />
+          </div>
           {cadenceError ? (
             <Alert
               variant="destructive"
@@ -466,9 +531,9 @@ export const KeywordsPanel = ({ siteId }: Props) => {
               <AlertDescription>{cadenceError}</AlertDescription>
             </Alert>
           ) : null}
-          {keywords.length > 0 ? (
+          {siteTotal > 0 ? (
             <RefreshButton
-              onRefresh={() => void handleCheckNow()}
+              onRefresh={() => setCheckTarget({ scope: 'site' })}
               isRefreshing={checkingNow}
               cooldownUntil={checkCooldownUntil}
               labelKey="ranks:checkNow"
@@ -483,27 +548,43 @@ export const KeywordsPanel = ({ siteId }: Props) => {
           <AlertDescription>{removeError}</AlertDescription>
         </Alert>
       ) : null}
-      {keywords.length === 0 ? (
+      {changingView ? (
+        <div className="flex flex-col gap-2" aria-busy="true" aria-live="polite" data-testid="keywords-page-loading">
+          <Skeleton className="h-10 w-full" /><Skeleton className="h-10 w-full" />
+        </div>
+      ) : keywords.length === 0 ? (
         <Empty className="w-full" data-testid="keywords-empty">
           <EmptyHeader>
-            <EmptyTitle>{t('emptyTitle')}</EmptyTitle>
-            <EmptyDescription>{t('emptyDescription')}</EmptyDescription>
+            <EmptyTitle>{t(search || requestedEngine ? 'keywordList.noMatchTitle' : 'emptyTitle')}</EmptyTitle>
+            <EmptyDescription>{t(search || requestedEngine ? 'keywordList.noMatchDescription' : 'emptyDescription')}</EmptyDescription>
           </EmptyHeader>
+          {search || requestedEngine ? <Button type="button" variant="outline"
+            onClick={() => { setSearchDraft(''); updateListQuery({ search: '', engine: null }); }}>
+            {t('keywordList.clearFilters')}
+          </Button> : <Button type="button" variant="outline" onClick={() => document.getElementById('keyword-phrase')?.focus()}>
+            {t('emptyCta')}
+          </Button>}
         </Empty>
       ) : (
         <KeywordsTable
           keywords={keywords}
+          jobItems={jobStatus.phase !== 'capped' && job?.siteId === siteId
+            ? new Map(job.items.map((item) => [item.keywordId, item]))
+            : undefined}
           removingId={removingId}
           selectedId={selectedId}
           onSelect={handleSelect}
           onRemove={handleRemove}
-          onCheck={(keyword) => void handleCheckNow(keyword)}
+          onCheck={(keyword) => setCheckTarget({ scope: 'keyword', keyword })}
           checkingSince={checkingSince}
           checkingKeywordId={checkingTargetId}
           requestingKeywordId={requestingKeywordId}
           initialChecks={initialChecks}
         />
       )}
+      {!changingView && total > 0 ? <KeywordsPagination page={page} pageSize={pageSize} total={total}
+        shown={keywords.length} onPageChange={(next) => updateListQuery({ page: next }, true)}
+        onPageSizeChange={(next) => updateListQuery({ pageSize: next })} /> : null}
       {renderTrend()}
       <AddKeywordForm
         siteId={siteId}
@@ -511,6 +592,8 @@ export const KeywordsPanel = ({ siteId }: Props) => {
         submitting={adding}
         addError={addError}
       />
+      {checkTarget ? <CheckNowDialog open target={checkTarget} confirming={checkingNow}
+        onConfirm={(target) => void handleCheckNow(target)} onCancel={() => setCheckTarget(null)} /> : null}
     </div>
   );
 };

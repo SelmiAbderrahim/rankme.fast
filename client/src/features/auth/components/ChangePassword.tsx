@@ -9,6 +9,7 @@ import { Input } from '@shared/ui/input';
 import { Label } from '@shared/ui/label';
 import { Alert, AlertDescription } from '@shared/ui/alert';
 import { Card, CardContent, CardHeader, CardTitle } from '@shared/ui/card';
+import { FieldFeedback } from '@shared/components/FieldFeedback';
 import { authClient } from '../authClient';
 import { messageForAuthError, type AuthClientError } from '../errorMessage';
 import { useClearOnPresentationRefresh } from '@shared/i18n';
@@ -73,6 +74,7 @@ export const ChangePassword = ({ onSuccess }: ChangePasswordProps = {}) => {
   } = useForm<ChangePasswordValues>({
     resolver: zodResolver(schema),
     defaultValues: { currentPassword: '', newPassword: '', confirmPassword: '' },
+    reValidateMode: 'onChange',
   });
 
   const onSubmit = handleSubmit(async (values) => {
@@ -125,12 +127,12 @@ export const ChangePassword = ({ onSuccess }: ChangePasswordProps = {}) => {
               id="change-current"
               type="password"
               autoComplete="current-password"
+              aria-required="true"
               aria-invalid={!!errors.currentPassword}
+              aria-describedby={errors.currentPassword ? 'change-current-error' : undefined}
               {...register('currentPassword')}
             />
-            {errors.currentPassword ? (
-              <p className="text-destructive text-sm">{errors.currentPassword.message}</p>
-            ) : null}
+            <FieldFeedback id="change-current" error={errors.currentPassword?.message} />
           </div>
 
           <div className="flex flex-col gap-2">
@@ -139,12 +141,13 @@ export const ChangePassword = ({ onSuccess }: ChangePasswordProps = {}) => {
               id="change-new"
               type="password"
               autoComplete="new-password"
+              aria-required="true"
               aria-invalid={!!errors.newPassword}
+              aria-describedby={errors.newPassword ? 'change-new-rules change-new-error' : 'change-new-rules'}
               {...register('newPassword')}
             />
-            {errors.newPassword ? (
-              <p className="text-destructive text-sm">{errors.newPassword.message}</p>
-            ) : null}
+            <p id="change-new-rules" className="text-muted-foreground text-sm">{t('change.rules')}</p>
+            <FieldFeedback id="change-new" error={errors.newPassword?.message} />
           </div>
 
           <div className="flex flex-col gap-2">
@@ -153,12 +156,12 @@ export const ChangePassword = ({ onSuccess }: ChangePasswordProps = {}) => {
               id="change-confirm"
               type="password"
               autoComplete="new-password"
+              aria-required="true"
               aria-invalid={!!errors.confirmPassword}
+              aria-describedby={errors.confirmPassword ? 'change-confirm-error' : undefined}
               {...register('confirmPassword')}
             />
-            {errors.confirmPassword ? (
-              <p className="text-destructive text-sm">{errors.confirmPassword.message}</p>
-            ) : null}
+            <FieldFeedback id="change-confirm" error={errors.confirmPassword?.message} />
           </div>
 
           <Button

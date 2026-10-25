@@ -64,7 +64,7 @@
     "optionSuffix": "已暂停"
   },
   "errors": {
-    "urlRequired": "请输入您的网站网址。",
+    "urlRequired": "请输入您的网站网址，例如 https://example.com。",
     "urlTooLong": "该网址过长（最多 2048 个字符）。",
     "urlInvalid": "请输入有效的网址，例如 https://example.com。",
     "urlScheme": "仅支持 http:// 和 https:// 网址。",
@@ -152,9 +152,10 @@
     },
     "search": {
       "title": "搜索表现",
-      "description": "来自最新审计中的 Search Console 快照。",
+      "description": "最近 28 天的最新 Google Search Console 数据。",
       "topQuery": "热门查询",
-      "openGoogle": "打开 Google 数据"
+      "openGoogle": "打开 Google 数据",
+      "asOf": "数据截至 {{date}}"
     },
     "pageSpeed": {
       "title": "站点体验",
@@ -240,5 +241,33 @@
     "empty": "您还没有站点。",
     "addSite": "添加站点",
     "truncated": "此处仅列出您的前 {{shown, number}} 个站点。"
-  }
+  },
+  "market": {
+    "menuItem": "默认市场",
+    "title": "默认市场",
+    "description": "排名跟踪、关键词研究和其他工具都会从这个国家/地区、语言和设备开始。您仍可在每个工具中选择其他市场。网站：",
+    "inferredNote": "我们根据网站地址和语言选择了这个市场。如有错误，请修改。",
+    "country": "国家/地区",
+    "language": "语言",
+    "device": "设备",
+    "devices": {
+      "desktop": "桌面设备",
+      "mobile": "移动设备"
+    },
+    "save": "保存市场",
+    "saving": "正在保存…",
+    "cancel": "取消",
+    "saveFailed": "无法保存默认市场，请重试。"
+  },
+  "list": {
+    "columnLastAudit": "最近审计",
+    "columnHealth": "健康状况",
+    "columnKeywords": "关键词",
+    "noAudit": "尚未审计",
+    "auditStatus": {
+      "failed": "审计失败",
+      "unavailable": "审计不可用"
+    }
+  },
+  "openTabHint": "选择一个站点以打开其“{{tab}}”部分。"
 }

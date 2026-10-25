@@ -39,14 +39,93 @@
     "visibility": "Suchsichtbarkeit", "allVisibility": "Alle Sichtbarkeiten", "visibilityOptions": { "measured": "Gemessen", "unmeasured": "Nicht gemessen" }, "sort": "Sortieren nach", "direction": "Richtung", "ascending": "Aufsteigend", "descending": "Absteigend", "pageSize": "Seitengröße", "perPage": "{{count}} pro Seite", "active": "Aktive Filter: {{context}}", "activeSearch": "Suche: {{value}}", "noneActive": "Keine Suche oder Filter aktiv."
   },
   "insights": {
-    "striking_distance": { "label": "In Reichweite", "description": "Diese Seite rankt nah genug für Verbesserungen und hat relevante Suchnachfrage." }, "low_ctr": { "label": "Niedrige CTR", "description": "Die beobachteten Impressionen sind hoch, die Klicks liegen jedoch unter dem Regelschwellenwert." },
-    "declining": { "label": "Rückläufig", "description": "Position oder beobachtete Klicks sind seit der letzten erfolgreichen Synchronisierung deutlich gesunken." }, "winning": { "label": "Im Aufwind", "description": "Position oder beobachtete Klicks haben sich seit der letzten erfolgreichen Synchronisierung deutlich verbessert." },
-    "non_indexable_visibility": { "label": "Sichtbar, aber nicht crawl-indexierbar", "description": "Die Seite hat Suchleistung, obwohl der letzte RankMeFast-Crawl sie als nicht indexierbar markiert. Dies ist keine Aussage zum Google-Indexstatus." },
-    "unmeasured": { "label": "Nicht gemessen", "description": "Der letzte Crawl fand diese indexierbare Seite, aber die aktuelle Leistungsquelle enthält keine Zeile dafür." }, "none": "Keine aktuelle Chance"
+    "striking_distance": {
+      "label": "In Reichweite",
+      "description": "Diese Seite rankt nah genug für Verbesserungen und hat relevante Suchnachfrage."
+    },
+    "low_ctr": {
+      "label": "Niedrige CTR",
+      "description": "Die beobachteten Impressionen sind hoch, die Klicks liegen jedoch unter dem Regelschwellenwert."
+    },
+    "declining": {
+      "label": "Rückläufig",
+      "description": "Position oder beobachtete Klicks sind seit der letzten erfolgreichen Synchronisierung deutlich gesunken."
+    },
+    "winning": {
+      "label": "Im Aufwind",
+      "description": "Position oder beobachtete Klicks haben sich seit der letzten erfolgreichen Synchronisierung deutlich verbessert."
+    },
+    "non_indexable_visibility": {
+      "label": "Sichtbar, aber nicht crawl-indexierbar",
+      "description": "Die Seite hat Suchleistung, obwohl der letzte RankMeFast-Crawl sie als nicht indexierbar markiert. Dies ist keine Aussage zum Google-Indexstatus."
+    },
+    "unmeasured": {
+      "label": "Nicht gemessen",
+      "description": "Der letzte Crawl fand diese indexierbare Seite, aber die aktuelle Leistungsquelle enthält keine Zeile dafür."
+    },
+    "none": "Keine aktuelle Chance",
+    "low_data": {
+      "label": "Zu wenige Daten",
+      "description": "Search Console meldet für diese Seite zu wenige Impressionen und keine Klicks, daher gibt es noch keine Einstufung der Entwicklung."
+    }
   },
   "sorts": { "opportunity": "Chance", "url": "URL", "title": "Titel", "clicks": "Klicks", "impressions": "Impressionen", "ctr": "CTR", "average_position": "Durchschnittliche Position", "best_position": "Beste Position", "keyword_count": "Rankende Keywords", "search_volume": "Suchvolumen", "difficulty": "Schwierigkeit", "estimated_traffic": "Geschätzter Traffic", "position_change": "Positionsänderung", "click_change_pct": "Klickänderung" },
   "indexability": { "indexable": "Crawl-indexierbar", "nonIndexable": "Nicht crawl-indexierbar", "unknown": "Crawl-Zustand unbekannt" },
-  "table": { "caption": "Seitenergebnisse für Leistung und Crawl-Indexierbarkeit", "page": "Seite", "source": "Leistungsquelle", "crawl": "Crawl-Indexierbarkeit", "insights": "Chancen", "actions": "Aktionen", "untitled": "Seite ohne Titel" },
+  "crawlState": {
+    "label": {
+      "indexable": "Crawl-indexierbar",
+      "non_indexable": "Nicht crawl-indexierbar",
+      "redirected": "Leitet weiter auf {{path}}",
+      "failed": "Konnte nicht gelesen werden",
+      "not_in_crawl": "Nicht im letzten Crawl",
+      "no_crawl": "Noch kein Crawl"
+    },
+    "crawledAs": "Gecrawlt als {{path}}",
+    "failure": {
+      "http_error": "Die Seite antwortete mit HTTP {{status}}.",
+      "redirect_loop": "Ihre Weiterleitungen führen im Kreis.",
+      "redirect_limit": "Sie leitet mehr als fünfmal weiter, deshalb folgen wir nicht weiter.",
+      "unsafe_redirect": "Sie leitet auf eine Adresse weiter, der wir nicht folgen.",
+      "robots_blocked": "Die robots.txt weist Crawler an, diese Seite zu überspringen.",
+      "timeout": "Die Seite hat nicht rechtzeitig geantwortet.",
+      "non_html": "Diese Adresse liefert {{type}}, keine Webseite.",
+      "unreachable": "Wir konnten keine Verbindung zu dieser Adresse herstellen."
+    },
+    "evidence": {
+      "finalUrl": "Endadresse: {{url}}",
+      "redirectPath": "Weiterleitungspfad: {{path}}",
+      "status": "HTTP-Status: {{status}}",
+      "fromCrawl": "Vom Audit-Crawl erfasst.",
+      "fromProbe": "Während des Audits direkt geprüft.",
+      "none": "Das Audit hat nicht festgehalten, warum diese Adresse fehlt.",
+      "noCrawl": "Starten Sie ein Audit, um zu sehen, wie diese Adresse gecrawlt wird.",
+      "botProtection": "Manche Websites antworten automatisierten Besuchen mit diesem Status. Prüfen Sie, ob die Seite in einem normalen Browserfenster öffnet."
+    }
+  },
+  "queries": {
+    "anonymized": "Suchanfragen von Google ausgeblendet",
+    "anonymizedHelp": "Google hat Impressionen für diese Seite gemeldet, die zugehörigen Suchbegriffe aber nicht weitergegeben. Seltene Suchanfragen werden zum Schutz der Privatsphäre ausgeblendet. Null bedeutet hier also keine sichtbaren Suchanfragen, nicht keine Suchen.",
+    "unavailableHelp": "Für diese Seite sind noch keine Suchanfragedaten gespeichert."
+  },
+  "summaryNote": {
+    "window": "Summen pro Seite vom {{start}} bis {{end}}, für die Seiten, die zu Ihren Filtern passen.",
+    "aggregation": "Search Console zählt eine Impression für jede Ihrer Seiten, die in einem Ergebnis erscheint, auch bei Suchanfragen, die es privat hält. Deshalb können diese Summen höher sein als die Website-Summen im Google-Tab. Die durchschnittliche Position ist nach den Impressionen jeder Seite gewichtet."
+  },
+  "table": {
+    "caption": "Seitenergebnisse für Leistung und Crawl-Indexierbarkeit",
+    "page": "Seite",
+    "source": "Leistungsquelle",
+    "crawl": "Crawl-Indexierbarkeit",
+    "insights": "Chancen",
+    "actions": "Aktionen",
+    "untitled": "Seite ohne Titel",
+    "columns": {
+      "button": "Spalten",
+      "menuLabel": "Sichtbare Spalten",
+      "reset": "Standardspalten wiederherstellen",
+      "notForSource": "Von dieser Quelle nicht geliefert"
+    }
+  },
   "deltas": { "position": "Positionsänderung", "clickChange": "Klickänderung", "clicks": "Klicks {{value}}" },
   "empty": { "title": "Keine Seiten anzuzeigen", "filtered": "Keine Seite entspricht Suche und Filtern. Setzen Sie sie zurück, um den gesamten Bestand zu sehen.", "gsc": "Search Console lieferte für dieses Fenster keine Seiten. Die Aktualisierung bleibt bei Search Console und wechselt die Quelle nicht.", "fallback": "Der gespeicherte Snapshot enthält in diesem Markt keine rankenden Seiten. Beobachtete Werte bleiben nicht verfügbar.", "none": "Kein Seitensnapshot gespeichert. Verbinden Sie Google oder erfassen Sie ausdrücklich Fallback-Daten." },
   "pagination": { "label": "Seitenergebnis-Navigation", "context_one": "{{shown}} von {{total}} passender Seite", "previous": "Zurück", "next": "Weiter", "cursorReset": "Der Ergebnissatz hat sich geändert; die Navigation wurde auf die erste Seite zurückgesetzt.",
@@ -98,7 +177,8 @@
     "fetchedHelp": "Jede Adresse, die der Crawler in Ihrem letzten Audit angefragt hat, einschließlich Weiterleitungen, doppelter Adressen derselben Seite und Dateien wie PDFs. Die Zahl ist meist größer als die der kanonischen Seiten.",
     "runAgain": "Erneut ausführen"
   },
-  "coverage": {"pages_zero": "Kanonische Seiten mit Suchdaten: {{measured}} von {{count}}.",
+  "coverage": {
+    "pages_zero": "Kanonische Seiten mit Suchdaten: {{measured}} von {{count}}.",
     "pages_one": "Kanonische Seiten mit Suchdaten: {{measured}} von {{count}}.",
     "pages_two": "Kanonische Seiten mit Suchdaten: {{measured}} von {{count}}.",
     "pages_few": "Kanonische Seiten mit Suchdaten: {{measured}} von {{count}}.",
@@ -115,5 +195,8 @@
     "redirects_two": "{{count}} aufgeführte Adressen leiten auf eine dieser Seiten weiter und werden als diese Seite gezählt.",
     "redirects_few": "{{count}} aufgeführte Adressen leiten auf eine dieser Seiten weiter und werden als diese Seite gezählt.",
     "redirects_many": "{{count}} aufgeführte Adressen leiten auf eine dieser Seiten weiter und werden als diese Seite gezählt.",
-    "redirects_other": "{{count}} aufgeführte Adressen leiten auf eine dieser Seiten weiter und werden als diese Seite gezählt."}
+    "redirects_other": "{{count}} aufgeführte Adressen leiten auf eine dieser Seiten weiter und werden als diese Seite gezählt.",
+    "inventoryLabel": "Kanonische Seiten",
+    "inventoryHelp": "Kanonische Seiten sind die eindeutigen Seiten, die wir kennen: indexierbare Seiten aus Ihrem letzten Audit plus Seiten mit Suchdaten, jede nur einmal gezählt. Eine Adresse, die auf eine davon weiterleitet, wird aufgeführt, aber als diese Seite gezählt."
+  }
 }

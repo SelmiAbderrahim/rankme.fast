@@ -5,6 +5,8 @@ import type { GoogleGscProvider } from '../../shared/providers/google/gsc.js';
 import { HttpError } from '../../shared/utils/http-error.js';
 import { Site, type SiteHydrated } from '../sites/index.js';
 import { getConnection, listGa4PropertiesFor, listPropertiesFor, resolveAccessToken, revokeAndDelete, } from './google-connections.service.js';
+import { deriveSiteGoogleReadiness, type SiteGoogleReadiness } from './google-readiness.js';
+import { storedGscPropertyCoversSite } from './pages-source-state.js';
 export const LEGACY_GOOGLE_BINDING_GENERATION = 'legacy';
 export interface GoogleCredentialPayload {
     status: 'connected' | 'needs_reconnect' | 'revoked';
@@ -14,6 +16,7 @@ export interface GoogleCredentialPayload {
     lastUsedAt: Date | null;
 }
 export interface SiteGoogleConfiguration {
+    readiness: SiteGoogleReadiness;
     connection: GoogleCredentialPayload | null;
     connectedSiteCount: number;
     gsc: {
@@ -41,6 +44,7 @@ export interface GoogleResourceUsage {
 }
 export interface GscPropertyOption extends GscProperty {
     inUseBy: GoogleResourceUsage[];
+    matchesSite: boolean;
 }
 export interface Ga4PropertyOption extends Ga4Property {
     webDataStreams: Ga4WebDataStream[];
@@ -93,6 +97,7 @@ export async function getSiteGoogleConfiguration(accountId: string, siteId: stri
         }),
     ]);
     return {
+        readiness: deriveSiteGoogleReadiness(site, connection),
         connection: connection ? credentialPayload(connection) : null,
         connectedSiteCount,
         gsc: {
@@ -122,13 +127,14 @@ function usagePayload(site: SiteHydrated): GoogleResourceUsage {
     };
 }
 export async function listSiteGscProperties(accountId: string, siteId: string, gscProvider: GoogleGscProvider, logger?: Logger): Promise<GscPropertyOption[]> {
-    await loadOwnedGoogleSite(accountId, siteId);
+    const site = await loadOwnedGoogleSite(accountId, siteId);
     const [properties, sites] = await Promise.all([
         listPropertiesFor(accountId, gscProvider, logger),
         Site.find({ accountId, deletionStartedAt: null }).select('_id domain displayName gscPropertyUrl'),
     ]);
     return properties.map((property) => ({
         ...property,
+        matchesSite: storedGscPropertyCoversSite(property.siteUrl, site.url),
         inUseBy: sites
             .filter((site) => site.gscPropertyUrl === property.siteUrl)
             .map((site) => usagePayload(site)),
@@ -153,6 +159,7 @@ export async function listSiteGa4Properties(accountId: string, siteId: string, g
 export interface SetSiteGoogleBindingsInput {
     gscPropertyUrl?: string | null;
     ga4PropertyId?: string | null;
+    confirmMismatch?: boolean;
 }
 export interface SetSiteGoogleBindingsDeps {
     gscProvider: GoogleGscProvider;
@@ -179,10 +186,19 @@ export async function setSiteGoogleBindings(accountId: string, siteId: string, i
     let ga4Match: Ga4Property | null = null;
     if (input.gscPropertyUrl !== undefined && input.gscPropertyUrl !== null) {
         const properties = await listPropertiesFor(accountId, deps.gscProvider, deps.logger);
-        if (!properties.some((property) => property.siteUrl === input.gscPropertyUrl)) {
+        const chosen = properties.find((property) => property.siteUrl === input.gscPropertyUrl);
+        if (!chosen) {
             throw HttpError.badRequest({
                 code: 'GOOGLE_ERRORS_INVALID_PROPERTY',
                 messageKey: 'google.errors.invalidProperty',
+            });
+        }
+        if (input.confirmMismatch !== true &&
+            chosen.siteUrl !== (site.gscPropertyUrl ?? null) &&
+            !storedGscPropertyCoversSite(chosen.siteUrl, site.url)) {
+            throw HttpError.conflict({
+                code: 'GOOGLE_ERRORS_PROPERTY_MISMATCH_CONFIRM',
+                messageKey: 'google.errors.propertyMismatchConfirm',
             });
         }
     }
@@ -219,6 +235,7 @@ export async function setSiteGoogleBindings(accountId: string, siteId: string, i
         site.ga4PropertyDisplayName = ga4Match?.displayName ?? null;
         site.ga4MatchedWebStreamUri = null;
         site.ga4BindingGenerationId = input.ga4PropertyId ? randomUUID() : null;
+        site.ga4LastSyncedAt = null;
         site.ga4BindingSource = input.ga4PropertyId ? 'manual' : null;
         site.googleAutoMatch.ga4Status = input.ga4PropertyId ? 'bound' : 'unbound';
     }
@@ -241,6 +258,7 @@ export async function unlinkSiteGoogleBindings(accountId: string, siteId: string
     site.ga4PropertyDisplayName = null;
     site.ga4MatchedWebStreamUri = null;
     site.ga4BindingGenerationId = null;
+    site.ga4LastSyncedAt = null;
     site.ga4BindingSource = null;
     site.googleAutoMatch = {
         requestId: null,

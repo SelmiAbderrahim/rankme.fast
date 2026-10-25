@@ -1,4 +1,5 @@
 {
+  "workspace": { "description": "Les réglages de tout ce que cet espace de travail envoie, comme l’image de marque des rapports clients." },
   "notifications": {
     "title": "Préférences de notifications",
     "description": "Choisissez les e-mails non liés à la sécurité que vous souhaitez recevoir. Les e-mails de sécurité (réinitialisation de mot de passe, vérification d’e-mail, confirmations de changement de mot de passe) ne peuvent pas être désactivés.",
@@ -142,6 +143,7 @@
     "description": "Apposez votre propre nom sur les rapports PDF téléchargés. Le nom de la société et la couleur d’accent apparaissent dans l’en-tête du PDF.",
     "companyName": "Nom de la société",
     "accentColor": "Couleur d’accent",
+    "accentPicker": "Choisir la couleur d’accent",
     "invalidColor": "Saisissez une couleur comme #b5321e, ou laissez le champ vide.",
     "save": "Enregistrer la marque",
     "saved": "Image de marque enregistrée.",

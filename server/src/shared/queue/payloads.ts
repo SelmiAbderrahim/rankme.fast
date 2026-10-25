@@ -61,6 +61,8 @@ export const rankJobSchema = z
     siteId: objectIdHex,
     /** Empty means every active site keyword; non-empty narrows to UUID rows. */
     keywordIds: z.array(z.string().guid()).max(30),
+    /** Durable explicit-check job; absent for scheduled and first checks. */
+    rankJobId: z.string().guid().optional(),
     /** Job-scheduler key that produced this job (`manual` for one-offs). */
     schedulerKey: z.string().min(1),
     /**
@@ -78,62 +80,13 @@ export const rankJobSchema = z
      * weekly stamp. Absent (undefined) on scheduled cron jobs.
      */
     manual: z.boolean().optional(),
-    /**
-     * Manual non-Google checks are reserved by the API before enqueue. The
-     * worker validates this bounded descriptor, consumes each matching claim
-     * once, and retains its legacy worker-side reservation for scheduled jobs.
-     */
-    altEngineReservation: z
-        .object({
-        batchKey: z.string().regex(/^manual-\d+(?:-r\d+)?$/).max(80),
-        keywordIds: z.array(z.string().guid()).min(1).max(30),
-    })
-        .strict()
-        .optional(),
-    /** Prepaid Google units for one API-triggered keyword check. */
-    serpReservation: z
-        .object({
-        batchKey: z.string().regex(/^manual-\d+(?:-r\d+)?$/).max(80),
-        keywordId: z.string().guid(),
-        units: z.number().int().min(1).max(2),
-    })
-        .strict()
-        .optional(),
+    /** Scheduled recheck for one bounded set in the same cadence period. */
+    retry: z.object({
+        periodKey: z.string().regex(/^\d{4}-(?:\d{2}-\d{2}|W\d{2})$/),
+        attempt: z.number().int().min(1).max(2),
+    }).strict().optional(),
 })
-    .strict()
-    .superRefine((payload, context) => {
-    if (payload.altEngineReservation !== undefined && payload.manual !== true) {
-        context.addIssue({
-            code: 'custom',
-            path: ['altEngineReservation'],
-            message: 'altEngineReservation is only valid on manual jobs',
-        });
-    }
-    if (payload.serpReservation !== undefined) {
-        if (payload.manual !== true) {
-            context.addIssue({
-                code: 'custom',
-                path: ['serpReservation'],
-                message: 'serpReservation is only valid on manual jobs',
-            });
-        }
-        if (payload.keywordIds.length !== 1 ||
-            payload.keywordIds[0] !== payload.serpReservation.keywordId) {
-            context.addIssue({
-                code: 'custom',
-                path: ['serpReservation', 'keywordId'],
-                message: 'serpReservation must match the single selected keyword',
-            });
-        }
-        if (payload.altEngineReservation !== undefined) {
-            context.addIssue({
-                code: 'custom',
-                path: ['serpReservation'],
-                message: 'Google and alternate-engine reservations are mutually exclusive',
-            });
-        }
-    }
-});
+    .strict();
 export type RankJob = z.infer<typeof rankJobSchema>;
 /**
  * Weekly ASO keyword observation. Identity only: the worker reloads the

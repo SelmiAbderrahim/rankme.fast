@@ -8,7 +8,7 @@ import { changeLanguage, i18n, initI18n } from '@shared/i18n';
 import type { CodeFixPromptInput } from '@shared/components/CodeFixPromptButton';
 import { backlinksReducer, type BacklinkSummary } from '@features/backlinks';
 import { competitorsReducer, type CompetitorsList } from '@features/competitors';
-import { googleReducer, type GoogleConnection } from '@features/google';
+import { googleReducer, SiteGoogleReadinessProvider, type GoogleConnection, type GoogleSearchSummary } from '@features/google';
 import { ranksReducer, type Keyword } from '@features/ranks';
 import {
   reportReducer,
@@ -41,6 +41,9 @@ const mocked = vi.hoisted(() => ({
   }),
   getConnection: vi.fn(async () => {
     throw new Error('no connection');
+  }),
+  fetchSearchSummary: vi.fn(async () => {
+    throw new Error('no stored snapshot');
   }),
   listActions: vi.fn(async (): Promise<ListActionsResponse> => {
     throw new Error('no actions');
@@ -75,6 +78,7 @@ vi.mock('@features/competitors/api', async (importOriginal) => ({
 vi.mock('@features/google/api', async (importOriginal) => ({
   ...(await importOriginal<typeof import('@features/google/api')>()),
   getConnection: mocked.getConnection,
+  fetchSearchSummary: mocked.fetchSearchSummary,
 }));
 vi.mock('@features/actions/api', async (importOriginal) => ({
   ...(await importOriginal<typeof import('@features/actions/api')>()),
@@ -322,6 +326,7 @@ interface Preload {
   googleConnectionSiteId?: string | null;
   googleLoaded?: boolean;
   googleLoading?: boolean;
+  searchSummary?: GoogleSearchSummary | null;
   actions?: ActionItem[];
   actionsStatus?: ActionsListStatus;
   actionsSiteId?: string | null;
@@ -399,6 +404,9 @@ const buildStore = (preloaded: Preload = {}) => {
         loaded: preloaded.googleLoaded ?? true,
         loading: preloaded.googleLoading ?? false,
         connection: connection ?? null,
+        summary: preloaded.searchSummary ?? null,
+        summarySiteId: preloaded.searchSummary ? 'site-1' : null,
+        summaryRange: preloaded.searchSummary ? ('28d' as const) : null,
       },
       actions: {
         ...actionsBase,
@@ -417,12 +425,14 @@ const buildStore = (preloaded: Preload = {}) => {
   });
 };
 
-const renderPanel = (store = buildStore(), siteId = 'site-1') =>
+const renderPanel = (store = buildStore(), siteId = 'site-1', googleReadiness?: Parameters<typeof SiteGoogleReadinessProvider>[0]['readiness']) =>
   render(
     <Provider store={store}>
       <I18nextProvider i18n={i18n}>
         <MemoryRouter initialEntries={[`/sites/${siteId}?tab=overview`]}>
-          <OverviewPanel siteId={siteId} />
+          {googleReadiness ? <SiteGoogleReadinessProvider siteId={siteId} domain="example.com" readiness={googleReadiness}>
+            <OverviewPanel siteId={siteId} />
+          </SiteGoogleReadinessProvider> : <OverviewPanel siteId={siteId} />}
         </MemoryRouter>
       </I18nextProvider>
     </Provider>,
@@ -786,8 +796,8 @@ describe('OverviewPanel', () => {
     ['no-data', connectedGoogle(), 'No search data yet'],
     ['not-connected', null, 'Connect Google Search Console'],
   ] as const)(
-    'renders the %s search state without loading another Google dataset',
-    (status, connection, expected) => {
+    'renders the %s search state after the stored snapshot read settles',
+    async (status, connection, expected) => {
       const base = richReport().gscSearch;
       renderPanel(
         buildStore({
@@ -797,11 +807,11 @@ describe('OverviewPanel', () => {
           connection,
         }),
       );
-      expect(within(screen.getByTestId('overview-search')).getByText(expected)).toBeInTheDocument();
+      expect(await within(screen.getByTestId('overview-search')).findByText(expected)).toBeInTheDocument();
     },
   );
 
-  it('uses connection state when an older report has no GSC section', () => {
+  it('uses connection state when an older report has no GSC section', async () => {
     const reconnecting = connectedGoogle();
     reconnecting.status = 'revoked';
     const first = renderPanel(
@@ -811,7 +821,40 @@ describe('OverviewPanel', () => {
     first.unmount();
 
     renderPanel(buildStore({ report: richReport({ gscSearch: null }) }));
-    expect(screen.getByText('No search data yet')).toBeInTheDocument();
+    expect(await screen.findByText('No search data yet')).toBeInTheDocument();
+  });
+
+  it('shows a newer stored Search Console snapshot over a failed audit read', () => {
+    const summary: GoogleSearchSummary = {
+      totalClicks: 120,
+      totalImpressions: 3000,
+      averageCtr: 0.04,
+      averagePosition: 3.2,
+      topQueries: [{ query: 'new query', clicks: 20, impressions: 400, ctr: 0.05, position: 2 }],
+      topPages: [],
+      asOf: '2026-07-12',
+      previousPeriod: null,
+    };
+    const old = richReport().gscSearch;
+    renderPanel(buildStore({
+      report: richReport({ gscSearch: old ? { ...old, status: 'unavailable' } : null }),
+      searchSummary: summary,
+    }));
+    const search = screen.getByTestId('overview-search');
+    expect(within(search).getByText('120')).toBeInTheDocument();
+    expect(within(search).getByText('new query')).toBeInTheDocument();
+    expect(within(search).queryByText('Search data not available for this run')).not.toBeInTheDocument();
+  });
+
+  it('uses the shared readiness explanation when a property does not cover the site', async () => {
+    const old = richReport().gscSearch;
+    renderPanel(buildStore({ report: richReport({ gscSearch: old ? { ...old, status: 'no-data' } : null }) }),
+      'site-1', {
+        gsc: { status: 'property_mismatch', matching: false },
+        ga4: { status: 'ok', matching: false },
+      });
+    expect(await screen.findByText("This property doesn't cover the site")).toBeInTheDocument();
+    expect(screen.getByRole('link', { name: 'Select a Search Console property' })).toHaveAttribute('href', '/sites/site-1?tab=google');
   });
 
   it('handles an ok GSC snapshot without a top query', () => {

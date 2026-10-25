@@ -174,6 +174,7 @@ beforeEach(() => {
     url: 'https://example.test',
     domain: 'example.test',
     displayName: 'Example App',
+    defaultMarket: null,
     paused: false,
     pausedAt: null,
     createdAt,
@@ -214,6 +215,7 @@ describe('App SEO keyword export adapter', () => {
   it('supports explicit ids, the domain label fallback, and an empty selection timestamp fallback', async () => {
     vi.mocked(getSite).mockResolvedValue({
       id: siteId, url: 'https://example.test', domain: 'example.test', displayName: '',
+      defaultMarket: null,
       paused: false, pausedAt: null, createdAt, updatedAt,
     });
     const [adapter] = createAppSeoReportExportAdapters(database);
@@ -261,6 +263,7 @@ describe('App SEO research export adapter', () => {
 
     vi.mocked(getSite).mockResolvedValueOnce({
       id: siteId, url: 'https://example.test', domain: 'example.test', displayName: '',
+      defaultMarket: null,
       paused: false, pausedAt: null, createdAt, updatedAt,
     });
 

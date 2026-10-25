@@ -4,9 +4,9 @@ import * as barrel from './index';
 import { ACCOUNT_TABS } from './types';
 
 describe('accountRoutes', () => {
-  it('registers a single /profile lazy route with an element', async () => {
+  it('registers a single /settings/profile lazy route with an element', async () => {
     const paths = accountRoutes.map((route) => route.path);
-    expect(paths).toEqual(['profile']);
+    expect(paths).toEqual(['settings/profile']);
     expect(accountRoutes[0]?.lazy).toBeTruthy();
     const routeModule = await accountRoutes[0]!.lazy!();
     expect(routeModule.element).toBeTruthy();

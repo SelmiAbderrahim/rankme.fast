@@ -1,5 +1,5 @@
 /**
- * White-label PDF branding endpoints (workstream B).
+ * PDF branding endpoints owned by the signed-in account.
  *
  * GET /api/users/branding  — any verified user (settings panel read).
  * PUT /api/users/branding  — any verified user.
@@ -74,6 +74,20 @@ describe('GET /api/users/branding', () => {
     expect(res.body).toEqual({
       branding: { companyName: '', accentColor: '', logoDataUrl: null },
     });
+  });
+
+  it('keeps each account branding separate on the workspace settings route', async () => {
+    const owner = await signupVerifiedUser(app, { email: 'branding-owner@x.co' });
+    const other = await signupVerifiedUser(app, { email: 'branding-other@x.co' });
+    const update = await request(app).put('/api/users/branding')
+      .set('Cookie', owner.cookie)
+      .send({ companyName: 'Owner brand', accentColor: '#123456' });
+    expect(update.status).toBe(200);
+    const otherRead = await request(app).get('/api/users/branding').set('Cookie', other.cookie);
+    expect(otherRead.status).toBe(200);
+    expect(otherRead.body.branding).toEqual({ companyName: '', accentColor: '', logoDataUrl: null });
+    const ownerRead = await request(app).get('/api/users/branding').set('Cookie', owner.cookie);
+    expect(ownerRead.body.branding.companyName).toBe('Owner brand');
   });
 
   it('returns the empty default when the Mongo mirror doc is missing', async () => {

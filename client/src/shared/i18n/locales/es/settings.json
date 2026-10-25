@@ -1,4 +1,5 @@
 {
+  "workspace": { "description": "Ajustes de todo lo que envía este espacio de trabajo, como la marca de los informes para clientes." },
   "notifications": {
     "title": "Preferencias de notificaciones",
     "description": "Elige qué correos electrónicos no relacionados con la seguridad quieres recibir. Los correos de seguridad (restablecimiento de contraseña, verificación de correo, confirmaciones de cambio de contraseña) no se pueden desactivar.",
@@ -142,6 +143,7 @@
     "description": "Pon tu propio nombre en los informes PDF descargados. El nombre de la empresa y el color de acento aparecen en la cabecera del PDF.",
     "companyName": "Nombre de la empresa",
     "accentColor": "Color de acento",
+    "accentPicker": "Elegir color de acento",
     "invalidColor": "Introduce un color como #b5321e o déjalo vacío.",
     "save": "Guardar marca",
     "saved": "Marca guardada.",

@@ -373,6 +373,27 @@ describe('web server — documentation delivery', () => {
       await close();
     }
   });
+
+  it('serves one page title and description when the public route supplies its own metadata', async () => {
+    const template = '<!doctype html><html><head><title>RankMeFast fallback</title><meta name="description" content="rankme.fast is a plain-language SEO and AI-answer-engine audit tool."><!--ssr-head--></head><body><!--ssr-outlet--></body></html>';
+    const { base, close } = await boot({
+      template,
+      renderFn: async () => ({
+        statusCode: 200,
+        appHtml: '<article>Documentation</article>',
+        headTags: '<title data-rh="true">Documentation · RankMeFast</title><meta data-rh="true" name="description" content="Read the documentation">',
+      }),
+    });
+    try {
+      const html = await (await fetch(`${base}/docs`)).text();
+      expect(html.match(/<title\b/g)).toHaveLength(1);
+      expect(html.match(/<meta\b[^>]*name="description"/g)).toHaveLength(1);
+      expect(html).toContain('<title>Documentation · RankMeFast</title>');
+      expect(html).toContain('content="Read the documentation"');
+    } finally {
+      await close();
+    }
+  });
 });
 
 describe('web server — locale-coherent shell and manifests', () => {

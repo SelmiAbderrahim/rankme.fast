@@ -129,7 +129,7 @@ export function McpQuickStart() {
 
         <div className="flex flex-wrap items-center gap-4">
           <Button asChild variant="outline">
-            <Link to="/profile?tab=api-keys">
+            <Link to="/settings/profile?tab=api-keys">
               <KeyRound data-icon="inline-start" />
               {t('mcp.quickStart.apiKeys')}
             </Link>

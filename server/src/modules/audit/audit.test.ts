@@ -76,6 +76,7 @@ describe('audit enum shape (D.1 rebrand)', () => {
         'report_export.expired',
         'report_export.purged',
         'keyword.add',
+        'keyword.market_move',
         'keyword.remove',
         'google.connect',
         'google.set_property',

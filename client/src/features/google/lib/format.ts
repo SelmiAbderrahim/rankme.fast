@@ -14,10 +14,20 @@ export const formatPercent = (locale: string, n: number): string =>
   }).format(n);
 
 export const formatPosition = (locale: string, n: number): string =>
-  new Intl.NumberFormat(locale, { maximumFractionDigits: 1 }).format(n);
+  n < 1 ? '—' : new Intl.NumberFormat(locale, { maximumFractionDigits: 1 }).format(n);
 
 export const formatDate = (locale: string, iso: string): string =>
   new Intl.DateTimeFormat(locale, { dateStyle: 'medium' }).format(new Date(iso));
+
+export const formatDay = (locale: string, isoDay: string): string =>
+  new Intl.DateTimeFormat(locale, { dateStyle: 'medium', timeZone: 'UTC' })
+    .format(new Date(`${isoDay}T00:00:00.000Z`));
+
+export const windowStartDay = (endDay: string, days: number): string => {
+  const start = new Date(`${endDay}T00:00:00.000Z`);
+  start.setUTCDate(start.getUTCDate() - (days - 1));
+  return start.toISOString().slice(0, 10);
+};
 
 const DEVICE_KEYS = ['desktop', 'mobile', 'tablet'];
 

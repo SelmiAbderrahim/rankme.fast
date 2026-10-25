@@ -64,7 +64,7 @@
     "optionSuffix": "en pause"
   },
   "errors": {
-    "urlRequired": "Saisissez l’URL de votre site.",
+    "urlRequired": "Saisissez l’URL de votre site, comme https://example.com.",
     "urlTooLong": "Cette URL est trop longue (2048 caractères max).",
     "urlInvalid": "Saisissez une URL valide, comme https://example.com.",
     "urlScheme": "Seules les URL http:// et https:// sont prises en charge.",
@@ -152,9 +152,10 @@
     },
     "search": {
       "title": "Performances de recherche",
-      "description": "D’après l’instantané Search Console du dernier audit.",
+      "description": "Vos dernières données Google Search Console sur les 28 derniers jours.",
       "topQuery": "Requête principale",
-      "openGoogle": "Ouvrir les données Google"
+      "openGoogle": "Ouvrir les données Google",
+      "asOf": "Données jusqu'au {{date}}"
     },
     "pageSpeed": {
       "title": "Expérience du site",
@@ -240,5 +241,33 @@
     "empty": "Vous n’avez encore aucun site.",
     "addSite": "Ajouter un site",
     "truncated": "Seuls vos {{shown, number}} premiers sites sont listés ici."
-  }
+  },
+  "market": {
+    "menuItem": "Marché par défaut",
+    "title": "Marché par défaut",
+    "description": "Le suivi des positions, la recherche de mots-clés et les autres outils démarrent avec ce pays, cette langue et cet appareil. Vous pouvez toujours choisir un autre marché dans chaque outil. Site :",
+    "inferredNote": "Nous l’avons déduit de l’adresse et de la langue du site. Modifiez-le s’il est incorrect.",
+    "country": "Pays",
+    "language": "Langue",
+    "device": "Appareil",
+    "devices": {
+      "desktop": "Ordinateur",
+      "mobile": "Mobile"
+    },
+    "save": "Enregistrer le marché",
+    "saving": "Enregistrement…",
+    "cancel": "Annuler",
+    "saveFailed": "Impossible d’enregistrer le marché par défaut. Réessayez."
+  },
+  "list": {
+    "columnLastAudit": "Dernier audit",
+    "columnHealth": "Santé",
+    "columnKeywords": "Mots-clés",
+    "noAudit": "Aucun audit pour l’instant",
+    "auditStatus": {
+      "failed": "Audit échoué",
+      "unavailable": "Audit indisponible"
+    }
+  },
+  "openTabHint": "Choisissez un site pour ouvrir sa section {{tab}}."
 }

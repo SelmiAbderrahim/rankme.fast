@@ -140,19 +140,23 @@
     "timeseriesTableCaption_other": "Rendimiento de búsqueda diario de los últimos {{days}} días"
   },
   "analytics": {
-    "title": "Google Analytics (últimos {{days}} días)",
+    "title": "Google Analytics",
     "sessions": "Sesiones",
     "activeUsers": "Usuarios activos",
     "engagedSessions": "Sesiones con interacción",
     "keyEvents": "Eventos clave",
     "engagementRateLabel": "Tasa de interacción",
     "engagementRateLine": "Tasa de interacción: {{rate}}",
+    "windowNote": "Totales del {{start}} al {{end}}.",
     "previousPeriod": "Periodo anterior — sesiones: {{sessions}} · usuarios activos: {{activeUsers}}",
     "emptyTitle": "Aún no hay datos de Analytics",
     "empty": "Aún no hay datos de Analytics. Los datos aparecen poco después de conectar tu propiedad — prueba a actualizar.",
     "error": "No pudimos cargar tu resumen de Analytics. Inténtalo de nuevo en un momento.",
     "refresh": "Actualizar datos de Analytics",
     "refreshError": "No pudimos actualizar tus datos de Analytics. Inténtalo de nuevo en un momento.",
+    "staleTitle": "Los datos de Analytics no están actualizados",
+    "noRecentSessions": "No hay sesiones registradas desde el {{date}}. Google Analytics se consultó hace poco y no indica tráfico más reciente.",
+    "dailyRange": "Totales diarios del {{start}} al {{end}}.",
     "timeseriesTitle": "Sesiones y usuarios activos a lo largo del tiempo",
     "timeseriesSubtitle_one": "Totales diarios del último día ({{days}}).",
     "timeseriesChartLabel_one": "{{metric}} diarios del último día ({{days}})",
@@ -269,10 +273,78 @@
       "internalLinks": "Las sugerencias de enlaces internos usan tus consultas de Search Console para elegir qué páginas importan. Conecta Search Console a este sitio para recibir sugerencias basadas en búsquedas reales."
     }
   },
-  "breakdown": {"other_zero": "Otros ({{hidden}} más)",
+  "breakdown": {
+    "shareHeader": "{{metric}} · porcentaje del total",
+    "shareHeaderRows": "{{metric}} · porcentaje de esta lista",
+    "other_zero": "Otros ({{hidden}} más)",
     "other_one": "Otros ({{hidden}} más)",
     "other_two": "Otros ({{hidden}} más)",
     "other_few": "Otros ({{hidden}} más)",
     "other_many": "Otros ({{hidden}} más)",
-    "other_other": "Otros ({{hidden}} más)"}
+    "other_other": "Otros ({{hidden}} más)",
+    "engagedRate": "{{rate}} con interacción",
+    "ctrRate": "CTR {{rate}}",
+    "byImpressions": "No hubo clics en este periodo, así que países y dispositivos muestran impresiones."
+  },
+  "readiness": {
+    "gsc": {
+      "not_connected": {
+        "title": "Search Console no está conectado",
+        "body": "Conecta tu cuenta de Google para traer a RankMeFast los clics e impresiones de búsqueda de <site>{{domain}}</site>.",
+        "cta": "Conectar Google"
+      },
+      "no_property": {
+        "title": "Elige una propiedad de Search Console",
+        "body": "Google está conectado, pero aún no hay ninguna propiedad de Search Console seleccionada para <site>{{domain}}</site>.",
+        "cta": "Seleccionar una propiedad de Search Console"
+      },
+      "property_mismatch": {
+        "title": "Esta propiedad no cubre el sitio",
+        "body": "La propiedad de Search Console elegida para <site>{{domain}}</site> no incluye la dirección del sitio. Elige una que sí la incluya.",
+        "cta": "Seleccionar una propiedad de Search Console"
+      },
+      "error": {
+        "title": "No se puede leer Search Console ahora",
+        "body": "Google rechazó la solicitud para <site>{{domain}}</site> o falta un permiso. Vuelve a intentarlo y reconecta Google si sigue ocurriendo.",
+        "cta": "Reintentar"
+      }
+    },
+    "ga4": {
+      "not_connected": {
+        "title": "Google Analytics no está conectado",
+        "body": "Conecta tu cuenta de Google para ver las visitas y la interacción de <site>{{domain}}</site>.",
+        "cta": "Conectar Google"
+      },
+      "no_property": {
+        "title": "Elige una propiedad de Google Analytics",
+        "body": "Google está conectado, pero aún no hay ninguna propiedad de Google Analytics seleccionada para <site>{{domain}}</site>.",
+        "cta": "Seleccionar una propiedad de Google Analytics"
+      },
+      "property_mismatch": {
+        "title": "Esta propiedad no corresponde al sitio",
+        "body": "La propiedad de Google Analytics elegida para <site>{{domain}}</site> mide otra dirección. Elige la de este sitio.",
+        "cta": "Seleccionar una propiedad de Google Analytics"
+      },
+      "error": {
+        "title": "No se puede leer Google Analytics ahora",
+        "body": "Google rechazó la solicitud para <site>{{domain}}</site> o falta el acceso a Analytics. Vuelve a intentarlo y reconecta Google si sigue ocurriendo.",
+        "cta": "Reintentar"
+      }
+    },
+    "matching": "Estamos buscando una propiedad que coincida."
+  },
+  "propertyPicker": {
+    "thisSite": "este sitio",
+    "noneFound": "No se encontró ninguna propiedad de Search Console para {{domain}}. Añádela en Search Console y luego actualiza esta lista.",
+    "openSearchConsole": "Abrir Search Console",
+    "newTab": "(se abre en una pestaña nueva)",
+    "refresh": "Actualizar",
+    "refreshing": "Actualizando…",
+    "linkDifferent": "Vincular otra propiedad",
+    "differentHint": "Estas propiedades pertenecen a otros sitios. Si vinculas una, sus datos de búsqueda aparecerán en {{domain}}.",
+    "otherLabel": "Propiedad de otro sitio",
+    "confirmTitle": "¿Vincular {{site}} con los datos de {{property}}?",
+    "confirmBody": "{{property}} es otro sitio. Sus datos de búsqueda aparecerán en {{site}} hasta que cambies la propiedad. Propiedad:",
+    "confirm": "Vincular de todos modos"
+  }
 }

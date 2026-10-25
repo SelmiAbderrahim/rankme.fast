@@ -12,7 +12,7 @@ import { sitesReducer } from '@features/sites';
 import { Header } from './Header';
 import { Footer } from './Footer';
 import { readAnalyticsChoice, writeAnalyticsChoice } from '@shared/analytics';
-import { appVersion } from '@shared/config/version';
+import { appDisplayVersion } from '@shared/config/version';
 import { releaseStage } from '@shared/config/release';
 import { Bug } from 'lucide-react';
 import { AppLayout } from './AppLayout';
@@ -68,7 +68,7 @@ describe('Header', () => {
     renderWithAuth(<Header />, true);
     expect(screen.getByRole('link', { name: 'Dashboard' })).toBeInTheDocument();
     expect(screen.queryByRole('link', { name: 'Guides' })).not.toBeInTheDocument();
-    expect(screen.getByRole('link', { name: 'Logout' })).toBeInTheDocument();
+    expect(screen.getByRole('link', { name: 'Sign out' })).toBeInTheDocument();
   });
 
   it('shows login/register for an anonymous visitor', () => {
@@ -95,9 +95,9 @@ describe('Header', () => {
     // Mobile auth-action Dashboard button (last Dashboard link is in the sheet).
     const dash = await screen.findAllByRole('link', { name: 'Dashboard' });
     await user.click(dash[dash.length - 1]!);
-    // Re-open and tap the Logout auth-action to fire its close handler.
+    // Re-open and tap the docs-header log-out action to fire its close handler.
     await user.click(screen.getByRole('button', { name: /menu/i }));
-    const logout = await screen.findAllByRole('link', { name: /log\s?out/i });
+    const logout = await screen.findAllByRole('link', { name: /log out/i });
     await user.click(logout[logout.length - 1]!);
   });
 
@@ -113,7 +113,7 @@ describe('Header', () => {
 describe('Footer', () => {
   it('renders the authenticated link set + copyright', () => {
     renderWithAuth(<Footer />, true);
-    expect(screen.getByText(`v${appVersion} · ${releaseStage()}`)).toBeInTheDocument();
+    expect(screen.getByText(`v${appDisplayVersion} · ${releaseStage()}`)).toBeInTheDocument();
     expect(screen.getByRole('link', { name: 'Dashboard' })).toBeInTheDocument();
     expect(screen.getByText(/All Rights Reserved/)).toBeInTheDocument();
   });

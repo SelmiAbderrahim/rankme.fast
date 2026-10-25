@@ -48,17 +48,19 @@ const flattenConfiguration = (
 export const getConnection = async (
   siteId: string,
 ): Promise<GetGoogleConnectionResponse> => {
-  const connection = await getConnectionConfiguration(siteId);
-  if (!connection || connection.status !== 'connected') return { connection };
+  const { configuration } = await apiClient<ConfigurationResponse>(siteGooglePath(siteId, '/configuration'));
+  const connection = flattenConfiguration(configuration);
+  const readiness = configuration.readiness;
+  if (!connection || connection.status !== 'connected') return { connection, readiness };
   try {
     const { properties } = await apiClient<{ properties: GetGoogleConnectionResponse['properties'] }>(
       siteGooglePath(siteId, '/search-properties'),
     );
-    return { connection, properties: properties ?? [] };
+    return { connection, readiness, properties: properties ?? [] };
   } catch {
     // Configuration remains usable when Google temporarily refuses the live
     // property-list request; the picker can be retried on the next load.
-    return { connection, properties: [] };
+    return { connection, readiness, properties: [] };
   }
 };
 
@@ -78,7 +80,7 @@ export const completeConnection = (
   apiClient<ConfigurationResponse>(siteGooglePath(siteId, '/connect/complete'), {
     method: 'POST',
     body,
-  }).then(({ configuration }) => ({ connection: flattenConfiguration(configuration)! }));
+  }).then(({ configuration }) => ({ connection: flattenConfiguration(configuration)!, readiness: configuration.readiness }));
 
 export const setConnectionProperty = (
   siteId: string,
@@ -87,7 +89,7 @@ export const setConnectionProperty = (
   apiClient<ConfigurationResponse>(siteGooglePath(siteId, '/bindings'), {
     method: 'PATCH',
     body,
-  }).then(({ configuration }) => ({ connection: flattenConfiguration(configuration)! }));
+  }).then(({ configuration }) => ({ connection: flattenConfiguration(configuration)!, readiness: configuration.readiness }));
 
 export const disconnectConnection = (
   siteId: string,
@@ -96,6 +98,7 @@ export const disconnectConnection = (
     method: 'DELETE',
   }).then(({ configuration }) => ({
     connection: flattenConfiguration(configuration),
+    readiness: configuration.readiness,
     message: 'site_unlinked',
   }));
 

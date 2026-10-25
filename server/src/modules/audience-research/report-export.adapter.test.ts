@@ -101,6 +101,7 @@ beforeEach(() => {
   mocked.decisions.mockReset().mockResolvedValue([decision()]);
   vi.mocked(getSite).mockReset().mockResolvedValue({
     id: siteId, url: 'https://example.test', domain: 'example.test', displayName: 'Audience Site',
+    defaultMarket: null,
     paused: false, pausedAt: null, createdAt: completedAt, updatedAt: completedAt,
   });
 });
@@ -158,6 +159,7 @@ describe('audience research report export adapter', () => {
     }));
     vi.mocked(getSite).mockResolvedValue({
       id: siteId, url: 'https://example.test', domain: 'example.test', displayName: '',
+      defaultMarket: null,
       paused: false, pausedAt: null, createdAt: completedAt, updatedAt: completedAt,
     });
     const adapter = createAudienceResearchReportExportAdapter(database);

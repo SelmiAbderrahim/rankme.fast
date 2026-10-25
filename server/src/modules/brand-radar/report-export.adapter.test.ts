@@ -84,6 +84,7 @@ beforeEach(() => {
   mocked.serialize.mockClear();
   vi.mocked(getSite).mockReset().mockResolvedValue({
     id: siteId, url: 'https://example.test', domain: 'example.test', displayName: 'Example Brand',
+    defaultMarket: null,
     paused: false, pausedAt: null, createdAt: observedAt, updatedAt,
   });
 });
@@ -139,6 +140,7 @@ describe('Brand Radar report export adapter', () => {
     mocked.mentions.mockResolvedValue([]);
     vi.mocked(getSite).mockResolvedValue({
       id: siteId, url: 'https://example.test', domain: 'example.test', displayName: '',
+      defaultMarket: null,
       paused: false, pausedAt: null, createdAt: observedAt, updatedAt,
     });
     const adapter = createBrandRadarReportExportAdapter();

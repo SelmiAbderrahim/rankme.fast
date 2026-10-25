@@ -274,6 +274,10 @@ describe('SerpFeaturesPanel — list states', () => {
     mocked.fetchSerpFeaturesRequest.mockResolvedValue(list([]));
     renderPanel();
     expect(await screen.findByTestId('serp-features-empty')).toHaveTextContent('Track a keyword');
+    expect(screen.getByTestId('serp-features-empty-cta')).toHaveAttribute(
+      'href', '/sites/site-1?tab=keywords',
+    );
+    expect(screen.getByTestId('serp-features-empty-cta')).toHaveTextContent('Track keywords');
   });
 
   it('keeps stored rows visible with a non-blocking banner when new capture is paused', async () => {

@@ -61,7 +61,7 @@ describe('BrandingPanel', () => {
   it('loads on mount and hydrates the form with stored values', async () => {
     renderPanel();
     expect(await screen.findByDisplayValue('Acme SEO')).toBeInTheDocument();
-    expect(screen.getByDisplayValue('#3366ff')).toBeInTheDocument();
+    expect(screen.getByLabelText('Accent color')).toHaveValue('#3366ff');
     expect(mocked.getBrandingRequest).toHaveBeenCalledTimes(1);
     // Valid color → the preview swatch carries the picked background.
     expect(screen.getByTestId('branding-swatch')).toHaveStyle({
@@ -69,18 +69,27 @@ describe('BrandingPanel', () => {
     });
   });
 
-  it('shows no swatch for an empty or invalid accent color', async () => {
+  it('lets the native color picker update the editable hex value', async () => {
+    renderPanel();
+    await screen.findByDisplayValue('Acme SEO');
+    const picker = screen.getByLabelText('Pick accent color');
+    expect(picker).toHaveAttribute('type', 'color');
+    fireEvent.change(picker, { target: { value: '#224466' } });
+    expect(screen.getByLabelText('Accent color')).toHaveValue('#224466');
+  });
+
+  it('keeps a usable default picker color while the editable hex is empty or invalid', async () => {
     mocked.getBrandingRequest.mockResolvedValue({
       branding: { companyName: 'Acme SEO', accentColor: '', logoDataUrl: null },
     });
     renderPanel();
     await screen.findByDisplayValue('Acme SEO');
-    expect(screen.queryByTestId('branding-swatch')).not.toBeInTheDocument();
+    expect(screen.getByTestId('branding-swatch')).toHaveValue('#b5321e');
     const input = screen.getByLabelText('Accent color');
     await userEvent.type(input, '#33');
-    expect(screen.queryByTestId('branding-swatch')).not.toBeInTheDocument();
+    expect(screen.getByTestId('branding-swatch')).toHaveValue('#b5321e');
     await userEvent.type(input, '66ff');
-    expect(screen.getByTestId('branding-swatch')).toBeInTheDocument();
+    expect(screen.getByTestId('branding-swatch')).toHaveValue('#3366ff');
   });
 
   it('shows a skeleton while loading', () => {

@@ -1,6 +1,7 @@
 import { configureStore } from '@reduxjs/toolkit';
 import { Provider } from 'react-redux';
 import { render, screen, waitFor } from '@testing-library/react';
+import userEvent from '@testing-library/user-event';
 import { I18nextProvider } from 'react-i18next';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 import { initI18n } from '@shared/i18n';
@@ -160,14 +161,19 @@ describe('GscGenerativeAppearanceCard', () => {
     await waitFor(() =>
       expect(screen.getByRole('alert')).toBeInTheDocument(),
     );
+    expect(screen.getByRole('button', { name: 'Try again' })).toBeInTheDocument();
   });
 
   it('renders network error alert on rejected fetch', async () => {
-    (api.getGenerativeAppearance as ReturnType<typeof vi.fn>).mockRejectedValue(
-      new Error('boom'),
-    );
+    const user = userEvent.setup();
+    (api.getGenerativeAppearance as ReturnType<typeof vi.fn>)
+      .mockRejectedValueOnce(new Error('boom'))
+      .mockResolvedValueOnce({ appearance: { status: 'unavailable', window: null, rows: [], observationMeta: null } });
     render(await withProviders(<GscGenerativeAppearanceCard siteId="s1" />));
     await waitFor(() => expect(screen.getByRole('alert')).toBeInTheDocument());
+    await user.click(screen.getByRole('button', { name: 'Try again' }));
+    await waitFor(() => expect(api.getGenerativeAppearance).toHaveBeenCalledTimes(2));
+    expect(await screen.findByTestId('gsc-no-data')).toBeInTheDocument();
   });
 
   it('renders the reconnect copy when the fetch fails with a reconnect 404', async () => {
@@ -181,6 +187,7 @@ describe('GscGenerativeAppearanceCard', () => {
         screen.getByText(/Reconnect Google Search Console to load this data/i),
       ).toBeInTheDocument(),
     );
+    expect(screen.queryByRole('button', { name: 'Try again' })).toBeNull();
   });
 
   it('renders generative rows without the window line when window is null', async () => {

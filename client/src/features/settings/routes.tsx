@@ -31,4 +31,15 @@ export const settingsRoutes: RouteObject[] = [
       };
     },
   },
+  {
+    path: 'settings/workspace',
+    lazy: async () => {
+      const [{ WorkspaceSettingsPage }, { brandingReducer }] = await Promise.all([
+        import('./components/WorkspaceSettingsPage'),
+        import('./store/brandingSlice'),
+      ]);
+      rootReducer.inject({ reducerPath: 'branding', reducer: brandingReducer });
+      return { element: <RequireVerified><WorkspaceSettingsPage /></RequireVerified> };
+    },
+  },
 ];

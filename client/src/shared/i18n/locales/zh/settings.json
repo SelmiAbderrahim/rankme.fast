@@ -1,4 +1,5 @@
 {
+  "workspace": { "description": "此工作区对外发送内容的设置，例如客户报告上的品牌。" },
   "notifications": {
     "title": "通知偏好",
     "description": "选择您希望接收的非安全类邮件。安全类邮件（密码重置、邮箱验证、密码变更确认）无法关闭。",
@@ -142,6 +143,7 @@
     "description": "在下载的报告 PDF 上使用您自己的名称。公司名称和强调色会显示在 PDF 页眉中。",
     "companyName": "公司名称",
     "accentColor": "强调色",
+    "accentPicker": "选择强调色",
     "invalidColor": "请输入类似 #b5321e 的颜色，或留空。",
     "save": "保存品牌设置",
     "saved": "品牌设置已保存。",

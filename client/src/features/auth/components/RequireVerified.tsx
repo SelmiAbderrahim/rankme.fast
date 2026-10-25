@@ -3,6 +3,7 @@ import { Navigate } from 'react-router-dom';
 import { useAuthSession } from '../useAuthSession';
 import { requiredPasswordChangeHref } from '../intent';
 import { SessionPending } from './SessionPending';
+import { SessionReconnect } from './SessionReconnect';
 
 interface RequireVerifiedProps {
   children: ReactNode;
@@ -18,12 +19,14 @@ interface RequireVerifiedProps {
 export const RequireVerified = ({ children }: RequireVerifiedProps) => {
   const {
     authenticated,
+    isUnavailable,
     emailVerified,
     isPending,
     mustChangePassword,
     provisionalAccount,
   } = useAuthSession();
 
+  if (!authenticated && isUnavailable) return <SessionReconnect />;
   if (isPending) {
     return <SessionPending />;
   }
@@ -39,5 +42,5 @@ export const RequireVerified = ({ children }: RequireVerifiedProps) => {
   if (!emailVerified) {
     return <Navigate to="/verify-email" replace />;
   }
-  return <>{children}</>;
+  return <>{isUnavailable ? <SessionReconnect /> : null}{children}</>;
 };

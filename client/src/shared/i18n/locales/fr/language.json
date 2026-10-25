@@ -1,5 +1,6 @@
 {
   "switcher": {
+    "switching": "Changement de langue…",
     "label": "Langue",
     "saveError": "Impossible d’enregistrer votre langue. La langue précédente a été rétablie."
   },

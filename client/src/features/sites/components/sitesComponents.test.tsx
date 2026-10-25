@@ -31,9 +31,12 @@ function getFiberOnOpenChange(el: Element): ((open: boolean) => void) | null {
 
 vi.mock('../api', () => ({
   fetchSitesRequest: vi.fn(),
+  fetchSiteSummariesRequest: vi.fn(),
+  fetchSiteMarketRequest: vi.fn(),
   createSiteRequest: vi.fn(),
   deleteSiteRequest: vi.fn(),
   updateSiteRequest: vi.fn(),
+  updateSiteMarketRequest: vi.fn(),
   pauseSiteRequest: vi.fn(),
   resumeSiteRequest: vi.fn(),
 }));
@@ -64,11 +67,11 @@ const makeStore = (preloaded?: Partial<SitesState>) =>
 
 type SitesStore = ReturnType<typeof makeStore>;
 
-const renderWith = (ui: React.ReactNode, store: SitesStore = makeStore()) => {
+const renderWith = (ui: React.ReactNode, store: SitesStore = makeStore(), route = '/') => {
   render(
     <Provider store={store}>
       <I18nextProvider i18n={i18n}>
-        <MemoryRouter>{ui}</MemoryRouter>
+        <MemoryRouter initialEntries={[route]}>{ui}</MemoryRouter>
       </I18nextProvider>
     </Provider>,
   );
@@ -80,6 +83,7 @@ beforeEach(async () => {
   await changeLanguage('en');
   vi.clearAllMocks();
   mocked.fetchSitesRequest.mockResolvedValue({ sites: [], nextCursor: null });
+  mocked.fetchSiteSummariesRequest.mockResolvedValue({ summaries: [] });
 });
 
 describe('AddSiteForm', () => {
@@ -113,7 +117,7 @@ describe('AddSiteForm', () => {
     const user = userEvent.setup();
     renderWith(<AddSiteForm />);
     await user.click(screen.getByRole('button', { name: 'Add site' }));
-    const error = await screen.findByText('Enter your site URL.');
+    const error = await screen.findByText('Enter your site URL, like https://example.com.');
     expect(error).toHaveAttribute('role', 'alert');
     expect(screen.getByLabelText('Site URL')).toHaveAttribute('aria-describedby', 'site-url-error');
     expect(mocked.createSiteRequest).not.toHaveBeenCalled();
@@ -182,6 +186,34 @@ describe('AddSiteForm', () => {
 });
 
 describe('SitesPage', () => {
+  it('shows stored site summaries without starting a check', async () => {
+    mocked.fetchSiteSummariesRequest.mockResolvedValueOnce({ summaries: [{ id: 'a',
+      lastAudit: { state: 'value', finishedAt: '2026-07-02T00:00:00.000Z', asOf: '2026-07-02T00:00:00.000Z', status: 'succeeded' },
+      openFixNow: { state: 'value', count: 2, asOf: '2026-07-02T00:00:00.000Z' }, trackedKeywords: 3 }] });
+    renderWith(<SitesPage />, makeStore({ loaded: true, items: [site('a')] }));
+    expect(await screen.findAllByText('2 open')).toHaveLength(2);
+    expect(mocked.fetchSiteSummariesRequest).toHaveBeenCalledWith(['a']);
+    expect(screen.getByRole('columnheader', { name: 'Keywords' })).toBeInTheDocument();
+  });
+
+  it('opens the requested tool after a dashboard site choice', () => {
+    renderWith(<SitesPage />, makeStore({ loaded: true, items: [site('a')] }), '/sites?open=keywords');
+    for (const link of screen.getAllByRole('link', { name: 'a.example.com' })) {
+      expect(link).toHaveAttribute('href', '/sites/a?tab=keywords');
+    }
+    expect(screen.getByTestId('sites-open-tab-hint')).toHaveTextContent('Choose a site to open its Keywords section.');
+  });
+  it('opens the header add-site dialog for an existing site and closes it after adding', async () => {
+    const user = userEvent.setup();
+    mocked.createSiteRequest.mockResolvedValue({ site: site('new'), message: 'Site added.' });
+    renderWith(<SitesPage />, makeStore({ loaded: true, items: [site('a')] }));
+    await user.click(screen.getByRole('button', { name: 'Add site' }));
+    const dialog = screen.getByRole('dialog', { name: 'Add your site' });
+    await user.type(within(dialog).getByLabelText('Site URL'), 'https://new.example.com');
+    await user.click(within(dialog).getByRole('button', { name: 'Add site' }));
+    await waitFor(() => expect(mocked.createSiteRequest).toHaveBeenCalledWith('https://new.example.com'));
+    await waitFor(() => expect(screen.queryByRole('dialog', { name: 'Add your site' })).not.toBeInTheDocument());
+  });
   it('shows the skeleton loading state before the list arrives', () => {
     renderWith(<SitesPage />, makeStore({ loading: true }));
     expect(screen.getByText('Loading your sites…')).toBeInTheDocument();

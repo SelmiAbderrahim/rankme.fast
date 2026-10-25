@@ -37,6 +37,11 @@
     "emailHint": "Para cambiar tu correo, abre Seguridad y usa Cambiar correo. La dirección solo cambia después de confirmar el enlace que te enviamos."
   },
   "privacy": {
+    "delete": {
+      "title": "Eliminar cuenta",
+      "description": "La eliminación de la cuenta está en la configuración de seguridad, junto a tus otros controles de inicio de sesión.",
+      "link": "Ir a la configuración de seguridad"
+    },
     "export": {
       "title": "Exporta tus datos",
       "description": "Descarga una copia de los datos de tu cuenta como archivo JSON.",

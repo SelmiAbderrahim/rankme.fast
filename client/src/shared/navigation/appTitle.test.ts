@@ -23,8 +23,9 @@ describe('resolveAppTitleTarget', () => {
     ['/sites', '', 'nav.sites'],
     ['/keyword-research/history', '', 'nav.keywordResearch'],
     ['/dashboard/alerts', '', 'alerts:title'],
-    ['/profile', '', 'shell.profile'],
+    ['/settings/profile', '', 'shell.profile'],
     ['/profile', '?tab=security', 'nav.security'],
+    ['/settings/workspace', '', 'nav.workspace'],
     ['/settings/team', '', 'nav.team'],
     ['/exports', '', 'nav.exports'],
   ])('names the account page %s%s from the shared nav config', (path, search, key) => {

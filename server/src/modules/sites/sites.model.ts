@@ -1,4 +1,5 @@
 import mongoose, { type HydratedDocument, type InferSchemaType } from 'mongoose';
+import { SITE_MARKET_BASES, SITE_MARKET_DEVICES, SITE_MARKET_SOURCES } from './site-market.js';
 const siteWorkLeaseSchema = new mongoose.Schema({
     leaseId: { type: String, required: true },
     expiresAt: { type: Date, required: true },
@@ -41,6 +42,13 @@ const googleAutoMatchSchema = new mongoose.Schema({
     completedAt: { type: Date, default: null },
     failureClass: { type: String, default: null },
 }, { _id: false });
+const defaultMarketSchema = new mongoose.Schema({
+    locationCode: { type: Number, required: true },
+    languageCode: { type: String, required: true },
+    device: { type: String, enum: SITE_MARKET_DEVICES, required: true },
+    source: { type: String, enum: SITE_MARKET_SOURCES, required: true },
+    basis: { type: String, enum: SITE_MARKET_BASES, default: null },
+}, { _id: false });
 const siteSchema = new mongoose.Schema({
     // Better Auth user id (ObjectId-compatible hex — see modules/auth/auth.ts
     // `generateId`). Every query MUST filter by this; cross-account reads are
@@ -72,6 +80,7 @@ const siteSchema = new mongoose.Schema({
         default: '',
         trim: true,
     },
+    defaultMarket: { type: defaultMarketSchema, default: null },
     // Google Search Console property URL matched to this site.
     // `sc-domain:example.com` for domain properties, `https://example.com/`
     // for URL-prefix properties. Absent = no property matched yet.
@@ -91,6 +100,7 @@ const siteSchema = new mongoose.Schema({
     ga4PropertyDisplayName: { type: String, default: null },
     ga4MatchedWebStreamUri: { type: String, default: null },
     ga4BindingGenerationId: { type: String, default: null },
+    ga4LastSyncedAt: { type: Date, default: null },
     ga4BindingSource: {
         type: String,
         enum: GOOGLE_BINDING_SOURCES,

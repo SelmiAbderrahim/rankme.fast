@@ -1,0 +1,133 @@
+{
+  "version": "0.1.20260917",
+  "status_code": 20000,
+  "status_message": "Ok.",
+  "time": "0 sec.",
+  "cost": 0,
+  "tasks_count": 1,
+  "tasks_error": 0,
+  "tasks": [
+    {
+      "id": "TASK_ID",
+      "status_code": 20000,
+      "status_message": "Ok.",
+      "time": "0 sec.",
+      "cost": 0,
+      "result_count": 1,
+      "path": [
+        "v3",
+        "on_page",
+        "resources"
+      ],
+      "data": {
+        "api": "on_page",
+        "function": "resources",
+        "limit": 5
+      },
+      "result": [
+        {
+          "crawl_progress": "finished",
+          "crawl_status": {
+            "max_crawl_pages": null,
+            "pages_in_queue": 31303,
+            "pages_crawled": 28239
+          },
+          "search_after_token": "SearchAfterToken3462638a-f57b-4d87-8e67-a86cd7ca8d2e",
+          "current_offset": 22492,
+          "total_items_count": 2825,
+          "items_count": 1,
+          "items": [
+            {
+              "resource_type": "broken",
+              "meta": null,
+              "status_code": 192,
+              "location": "Locationab780a07-2b22-4988-9deb-adc85993d264",
+              "url": "Urlf6acb698-66b6-4ec8-8e1c-26d52b1abfab",
+              "size": 58,
+              "encoded_size": 111,
+              "total_transfer_size": 53,
+              "fetch_time": "2026-09-05 07:18:50 +00:00",
+              "fetch_timing": {
+                "duration_time": 148,
+                "fetch_start": 128,
+                "fetch_end": 162
+              },
+              "cache_control": {
+                "cachable": true,
+                "ttl": 177
+              },
+              "checks": {
+                "no_content_encoding": false,
+                "high_loading_time": false,
+                "is_redirect": false,
+                "is_4xx_code": false,
+                "is_5xx_code": false,
+                "is_broken": false,
+                "is_www": false,
+                "is_https": true,
+                "is_http": false,
+                "is_orphan_page": false,
+                "is_link_relation_conflict": false,
+                "has_links_to_redirects": false,
+                "canonical_chain": false,
+                "canonical_to_redirect": false,
+                "canonical_to_broken": false
+              },
+              "resource_errors": {
+                "errors": [
+                  {
+                    "line": 117,
+                    "column": 246,
+                    "message": "Message101f8d77-f7f7-400d-b244-47716e1862e9",
+                    "status_code": 33
+                  },
+                  {
+                    "line": 131,
+                    "column": 35,
+                    "message": "Message4c6b58b0-4019-4cbf-9545-cebca6d43a32",
+                    "status_code": 126
+                  },
+                  {
+                    "line": 74,
+                    "column": 83,
+                    "message": "Message3b384875-0c86-4f92-9d5b-4c320e54acc3",
+                    "status_code": 201
+                  }
+                ],
+                "warnings": [
+                  {
+                    "line": 103,
+                    "column": 5,
+                    "message": "Messagedb5ccdee-dcc1-4887-be93-327e6afba782",
+                    "status_code": 197
+                  },
+                  {
+                    "line": 88,
+                    "column": 18,
+                    "message": "Messagee743ce64-aa70-466e-b9d1-56f4b8c3c369",
+                    "status_code": 107
+                  },
+                  {
+                    "line": 243,
+                    "column": 127,
+                    "message": "Messaged03ee338-e96b-4ce0-bbb8-7cd61b9d62b3",
+                    "status_code": 155
+                  }
+                ]
+              },
+              "content_encoding": "ContentEncoding0af89498-c5f4-400e-a2e7-b9f8196cbb87",
+              "media_type": "MediaType9db38eb2-0dea-440c-96a6-bdb6f45fc745",
+              "accept_type": "none",
+              "server": "Server2e777af2-f89a-4583-a89e-1be58f3ed708",
+              "last_modified": {
+                "header": "2028-08-14 10:07:50 +00:00",
+                "sitemap": "2024-11-19 22:28:01 +00:00",
+                "meta_tag": "2025-09-22 21:40:25 +00:00"
+              }
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

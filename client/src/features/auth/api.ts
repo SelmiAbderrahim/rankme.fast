@@ -34,3 +34,15 @@ export const cancelAccountDeletion = async (): Promise<{ cancelledAt: string }> 
     method: 'POST',
     csrf: true,
   });
+
+export interface TwoFactorRecommendationState {
+  dismissedAt: string | null;
+}
+
+export const fetchTwoFactorRecommendation = async (): Promise<TwoFactorRecommendationState> =>
+  apiClient<TwoFactorRecommendationState>('/users/preferences/two-factor-recommendation');
+
+export const dismissTwoFactorRecommendation = async (): Promise<TwoFactorRecommendationState> =>
+  apiClient<TwoFactorRecommendationState>('/users/preferences/two-factor-recommendation', {
+    method: 'PUT', csrf: true,
+  });

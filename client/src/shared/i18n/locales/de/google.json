@@ -140,19 +140,23 @@
     "timeseriesTableCaption_other": "Tägliche Suchleistung der letzten {{days}} Tage"
   },
   "analytics": {
-    "title": "Google Analytics (letzte {{days}} Tage)",
+    "title": "Google Analytics",
     "sessions": "Sitzungen",
     "activeUsers": "Aktive Nutzer",
     "engagedSessions": "Sitzungen mit Interaktion",
     "keyEvents": "Schlüsselereignisse",
     "engagementRateLabel": "Interaktionsrate",
     "engagementRateLine": "Interaktionsrate: {{rate}}",
+    "windowNote": "Summen vom {{start}} bis {{end}}.",
     "previousPeriod": "Vorheriger Zeitraum — Sitzungen: {{sessions}} · aktive Nutzer: {{activeUsers}}",
     "emptyTitle": "Noch keine Analytics-Daten",
     "empty": "Noch keine Analytics-Daten. Daten erscheinen kurz nach dem Verbinden Ihrer Property — versuchen Sie eine Aktualisierung.",
     "error": "Ihre Analytics-Zusammenfassung konnte nicht geladen werden. Versuchen Sie es gleich noch einmal.",
     "refresh": "Analytics-Daten aktualisieren",
     "refreshError": "Ihre Analytics-Daten konnten nicht aktualisiert werden. Versuchen Sie es gleich noch einmal.",
+    "staleTitle": "Analytics-Daten sind veraltet",
+    "noRecentSessions": "Seit {{date}} wurden keine Sitzungen erfasst. Google Analytics wurde kürzlich abgefragt und meldet keinen neueren Traffic.",
+    "dailyRange": "Tägliche Summen vom {{start}} bis {{end}}.",
     "timeseriesTitle": "Sitzungen und aktive Nutzer im Zeitverlauf",
     "timeseriesSubtitle_one": "Tägliche Summen des letzten Tages ({{days}}).",
     "timeseriesChartLabel_one": "Tägliche {{metric}} des letzten Tages ({{days}})",
@@ -269,10 +273,78 @@
       "internalLinks": "Vorschläge für interne Links nutzen Ihre Search-Console-Suchanfragen, um die wichtigen Seiten zu bestimmen. Verbinden Sie die Search Console mit dieser Website, um Vorschläge auf Basis echter Suchanfragen zu erhalten."
     }
   },
-  "breakdown": {"other_zero": "Sonstige ({{hidden}} weitere)",
+  "breakdown": {
+    "shareHeader": "{{metric}} · Anteil am Gesamtwert",
+    "shareHeaderRows": "{{metric}} · Anteil an dieser Liste",
+    "other_zero": "Sonstige ({{hidden}} weitere)",
     "other_one": "Sonstige ({{hidden}} weitere)",
     "other_two": "Sonstige ({{hidden}} weitere)",
     "other_few": "Sonstige ({{hidden}} weitere)",
     "other_many": "Sonstige ({{hidden}} weitere)",
-    "other_other": "Sonstige ({{hidden}} weitere)"}
+    "other_other": "Sonstige ({{hidden}} weitere)",
+    "engagedRate": "{{rate}} interagiert",
+    "ctrRate": "CTR {{rate}}",
+    "byImpressions": "In diesem Zeitraum gab es keine Klicks, daher zeigen Länder und Geräte Impressionen."
+  },
+  "readiness": {
+    "gsc": {
+      "not_connected": {
+        "title": "Search Console ist nicht verbunden",
+        "body": "Verbinden Sie Ihr Google-Konto, um Klicks und Impressionen für <site>{{domain}}</site> in RankMeFast zu sehen.",
+        "cta": "Google verbinden"
+      },
+      "no_property": {
+        "title": "Search-Console-Property auswählen",
+        "body": "Google ist verbunden, aber für <site>{{domain}}</site> ist noch keine Search-Console-Property ausgewählt.",
+        "cta": "Search-Console-Property auswählen"
+      },
+      "property_mismatch": {
+        "title": "Diese Property deckt die Website nicht ab",
+        "body": "Die für <site>{{domain}}</site> gewählte Search-Console-Property enthält die Adresse der Website nicht. Wählen Sie eine passende aus.",
+        "cta": "Search-Console-Property auswählen"
+      },
+      "error": {
+        "title": "Search Console kann gerade nicht gelesen werden",
+        "body": "Google hat die Anfrage für <site>{{domain}}</site> abgelehnt, oder eine Berechtigung fehlt. Versuchen Sie es erneut und verbinden Sie Google neu, falls es wieder passiert.",
+        "cta": "Erneut versuchen"
+      }
+    },
+    "ga4": {
+      "not_connected": {
+        "title": "Google Analytics ist nicht verbunden",
+        "body": "Verbinden Sie Ihr Google-Konto, um Besuche und Interaktionen für <site>{{domain}}</site> zu sehen.",
+        "cta": "Google verbinden"
+      },
+      "no_property": {
+        "title": "Google-Analytics-Property auswählen",
+        "body": "Google ist verbunden, aber für <site>{{domain}}</site> ist noch keine Google-Analytics-Property ausgewählt.",
+        "cta": "Google-Analytics-Property auswählen"
+      },
+      "property_mismatch": {
+        "title": "Diese Property passt nicht zur Website",
+        "body": "Die für <site>{{domain}}</site> gewählte Google-Analytics-Property erfasst eine andere Adresse. Wählen Sie die Property dieser Website.",
+        "cta": "Google-Analytics-Property auswählen"
+      },
+      "error": {
+        "title": "Google Analytics kann gerade nicht gelesen werden",
+        "body": "Google hat die Anfrage für <site>{{domain}}</site> abgelehnt, oder der Analytics-Zugriff fehlt. Versuchen Sie es erneut und verbinden Sie Google neu, falls es wieder passiert.",
+        "cta": "Erneut versuchen"
+      }
+    },
+    "matching": "Wir suchen gerade nach einer passenden Property."
+  },
+  "propertyPicker": {
+    "thisSite": "diese Website",
+    "noneFound": "Keine Search-Console-Property für {{domain}} gefunden. Fügen Sie sie in der Search Console hinzu und aktualisieren Sie dann diese Liste.",
+    "openSearchConsole": "Search Console öffnen",
+    "newTab": "(öffnet in einem neuen Tab)",
+    "refresh": "Aktualisieren",
+    "refreshing": "Wird aktualisiert…",
+    "linkDifferent": "Andere Property verknüpfen",
+    "differentHint": "Diese Properties gehören zu anderen Websites. Wenn Sie eine verknüpfen, erscheinen deren Suchdaten bei {{domain}}.",
+    "otherLabel": "Property einer anderen Website",
+    "confirmTitle": "{{site}} mit den Daten von {{property}} verknüpfen?",
+    "confirmBody": "{{property}} ist eine andere Website. Ihre Suchdaten erscheinen bei {{site}}, bis Sie die Property ändern. Property:",
+    "confirm": "Trotzdem verknüpfen"
+  }
 }

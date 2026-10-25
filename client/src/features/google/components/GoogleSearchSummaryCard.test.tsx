@@ -331,10 +331,10 @@ describe('GoogleSearchSummaryCard', () => {
     expect(await screen.findByText('1,234')).toBeInTheDocument();
     // Time-series chart (the only role=img on the card).
     expect(screen.getByRole('img')).toBeInTheDocument();
-    // Countries: lowercase ISO-3166 alpha-3 uppercased for display.
+    // Countries: ISO-3166 alpha-3 values get localized display names.
     const countries = screen.getByTestId('google-summary-countries');
-    expect(within(countries).getByText('USA')).toBeInTheDocument();
-    expect(within(countries).getByText('FRA')).toBeInTheDocument();
+    expect(within(countries).getByText('United States')).toBeInTheDocument();
+    expect(within(countries).getByText('France')).toBeInTheDocument();
     // Devices: localized known label + unknown code → "Other".
     const devices = screen.getByTestId('google-summary-devices');
     expect(within(devices).getByText('Desktop')).toBeInTheDocument();

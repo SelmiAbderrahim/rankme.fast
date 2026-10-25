@@ -68,6 +68,7 @@ const userSchema = new mongoose.Schema({
         enum: SUPPORTED_LOCALES,
         default: null,
     },
+    twoFactorRecommendationDismissedAt: { type: Date, default: null },
     // Deletion lifecycle (GDPR right-to-deletion). A non-null
     // `deletionScheduledAt` marks the account soft-deleted; the repo purge
     // runs after that timestamp. `deletionWarningSentAt` dedupes the final

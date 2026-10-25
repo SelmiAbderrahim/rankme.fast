@@ -9,6 +9,7 @@ import { buildLongTailResearchUrl, longTailResearchSeed } from './validation';
 
 vi.mock('./api', () => ({
   fetchKeywordSuggestionsRequest: vi.fn(),
+  fetchTrackedKeywordPhrasesRequest: vi.fn().mockResolvedValue({ keywords: [] }),
   previewAltEngineKeywordRequest: vi.fn().mockResolvedValue({}),
 }));
 

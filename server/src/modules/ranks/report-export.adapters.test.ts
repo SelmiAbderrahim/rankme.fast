@@ -44,6 +44,7 @@ const site: PublicSite = {
   url: 'https://example.test',
   domain: 'example.test',
   displayName: 'Example',
+  defaultMarket: null,
   paused: false,
   pausedAt: null,
   createdAt: '2026-01-01T00:00:00.000Z',

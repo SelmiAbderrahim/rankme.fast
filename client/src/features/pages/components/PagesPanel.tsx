@@ -9,6 +9,7 @@ import {
   ArrowUpDown,
   ChevronLeft,
   ChevronRight,
+  Columns3,
   ExternalLink,
   FileSearch,
   FilterX,
@@ -19,7 +20,9 @@ import {
 } from 'lucide-react';
 import { Alert, AlertDescription, AlertTitle } from '@shared/ui/alert';
 import { Badge } from '@shared/ui/badge';
+import { CrawlStopReasonNote } from '@shared/components/CrawlStopReasonNote';
 import { Button } from '@shared/ui/button';
+import { DropdownMenu, DropdownMenuCheckboxItem, DropdownMenuContent, DropdownMenuItem, DropdownMenuLabel, DropdownMenuSeparator, DropdownMenuTrigger } from '@shared/ui/dropdown-menu';
 import { Card, CardContent, CardHeader, CardTitle } from '@shared/ui/card';
 import { Empty, EmptyContent, EmptyDescription, EmptyHeader, EmptyMedia, EmptyTitle } from '@shared/ui/empty';
 import { Field, FieldGroup, FieldLabel } from '@shared/ui/field';
@@ -60,6 +63,7 @@ import type {
   PagesLimit,
   PagesListQuery,
   PagesLoadState,
+  PagesLastCrawl,
   PagesSort,
   PagesSourceCapabilities,
   PagesVisibility,
@@ -78,10 +82,15 @@ import {
   formatPagesDate,
   formatPagesMetric,
   formatPagesNumber,
+  formatPagesDay,
   formatSignedPagesValue,
+  pagesPathLabel,
+  pagesRowName,
   rangeDays,
   type PagesMetricKey,
 } from '../formatters';
+import { crawlStateLabel } from '../crawlState';
+import { PAGES_METRIC_COLUMNS, PAGES_TOGGLEABLE_COLUMNS, isPagesColumnAvailable, usePagesColumns, type PagesColumnId, type PagesColumnsController } from '../columns';
 import { PageDetailSheet } from './PageDetailSheet';
 import { ReportExportControl } from '@features/report-export';
 
@@ -104,17 +113,6 @@ const SUMMARY_METRICS_FALLBACK: PagesMetricKey[] = [
   'clicks',
   'impressions',
   'ctr',
-];
-const TABLE_METRICS: PagesMetricKey[] = [
-  'clicks',
-  'impressions',
-  'ctr',
-  'averagePosition',
-  'bestPosition',
-  'keywordCount',
-  'searchVolume',
-  'difficulty',
-  'estimatedTraffic',
 ];
 
 const selectValue = <T extends string>(value: string): T | null =>
@@ -199,6 +197,18 @@ function SourceStateNotice({ envelope, siteId, onRefresh, refreshing }: SourceSt
       </AlertDescription>
     </Alert>
   );
+}
+
+function LastCrawlNote({ crawl, siteId }: { crawl: PagesLastCrawl; siteId: string }) {
+  const { t } = useTranslation('pages');
+  return <div className="flex flex-col gap-1" data-testid="pages-last-crawl">
+    <p>
+      {crawl.pagesStored === null ? null : <>{t('crawl.pages', { count: crawl.pagesStored })}{' '}</>}
+      <CrawlStopReasonNote stopReason={crawl.stopReason} stopReasonSource={crawl.stopReasonSource}
+        pageCap={crawl.pageCap} siteId={siteId} testId="pages-crawl-stop-reason" />
+    </p>
+    {crawl.sitemapFound === false ? <p data-testid="pages-crawl-no-sitemap">{t('crawl.noSitemap')}</p> : null}
+  </div>;
 }
 
 interface PagesFiltersProps {
@@ -386,11 +396,11 @@ interface SortHeaderProps {
   onSort: (sort: PagesSort) => void;
 }
 
-function SortHeader({ sort, query, label, onSort }: SortHeaderProps) {
+function SortHeader({ sort, query, label, onSort, className }: SortHeaderProps & { className?: string }) {
   const active = query.sort === sort;
   const ariaSort = active ? (query.direction === 'asc' ? 'ascending' : 'descending') : 'none';
   return (
-    <TableHead aria-sort={ariaSort}>
+    <TableHead aria-sort={ariaSort} className={className}>
       <Button type="button" variant="ghost" size="sm" onClick={() => onSort(sort)}>
         {label}
         {active
@@ -401,6 +411,49 @@ function SortHeader({ sort, query, label, onSort }: SortHeaderProps) {
       </Button>
     </TableHead>
   );
+}
+
+function columnLabelKey(column: PagesColumnId): string {
+  if (column === 'source' || column === 'crawl' || column === 'insights') return `table.${column}`;
+  if (column === 'positionChange') return 'deltas.position';
+  return `metrics.${column}`;
+}
+
+function PagesColumnPicker({ columns, capabilities }: { columns: PagesColumnsController; capabilities: PagesSourceCapabilities }) {
+  const { t } = useTranslation('pages');
+  return <DropdownMenu>
+    <DropdownMenuTrigger asChild><Button type="button" variant="outline" size="sm">
+      <Columns3 aria-hidden="true" />{t('table.columns.button')}
+    </Button></DropdownMenuTrigger>
+    <DropdownMenuContent align="end" className="w-60">
+      <DropdownMenuLabel>{t('table.columns.menuLabel')}</DropdownMenuLabel>
+      <DropdownMenuSeparator />
+      {PAGES_TOGGLEABLE_COLUMNS.map((column) => {
+        const unavailable = !isPagesColumnAvailable(column, capabilities);
+        return <DropdownMenuCheckboxItem key={column} checked={!unavailable && columns.visibility[column]}
+          disabled={unavailable} onCheckedChange={(checked) => columns.setVisible(column, checked)}
+          onSelect={(event) => event.preventDefault()}>
+          {t(columnLabelKey(column))}
+          {unavailable ? <span className="ms-auto ps-2 text-xs text-muted-foreground">{t('table.columns.notForSource')}</span> : null}
+        </DropdownMenuCheckboxItem>;
+      })}
+      <DropdownMenuSeparator />
+      <DropdownMenuItem disabled={!columns.customized} onSelect={columns.reset}>{t('table.columns.reset')}</DropdownMenuItem>
+    </DropdownMenuContent>
+  </DropdownMenu>;
+}
+
+function QueryCountValue({ row, locale }: { row: PageRow; locale: string }) {
+  const { t } = useTranslation('pages');
+  if (row.associatedQueryState === 'anonymized') {
+    return <span data-testid="pages-queries-anonymized">
+      <span aria-hidden="true" className="text-muted-foreground">—</span>
+      <span className="block text-xs text-muted-foreground">{t('queries.anonymized')}</span>
+    </span>;
+  }
+  const count = formatPagesNumber(locale, row.metrics.associatedQueryCount);
+  return count === null ? <span className="text-muted-foreground">—<span className="sr-only">{t('common.notAvailable')}</span></span>
+    : <span dir="ltr">{count}</span>;
 }
 
 interface PageInsightsProps {
@@ -421,6 +474,7 @@ function PageInsights({ row }: PageInsightsProps) {
 
 interface PagesResultsProps {
   rows: PageRow[];
+  envelope: PagesEnvelope;
   query: PagesListQuery;
   capabilities: PagesSourceCapabilities;
   locale: string;
@@ -431,6 +485,7 @@ interface PagesResultsProps {
 
 function PagesResults({
   rows,
+  envelope,
   query,
   capabilities,
   locale,
@@ -440,19 +495,24 @@ function PagesResults({
 }: PagesResultsProps) {
   const { t } = useTranslation('pages');
   const notAvailable = t('common.notAvailable');
+  const columns = usePagesColumns(envelope, capabilities);
+  const shown = columns.visibility;
+  const metricColumns = PAGES_METRIC_COLUMNS.filter((metric) => shown[metric]);
 
   return (
-    <div className="min-w-0" aria-busy={backgroundLoading}>
+    <div className="flex min-w-0 flex-col gap-3" aria-busy={backgroundLoading}>
+      <div className="flex justify-end"><PagesColumnPicker columns={columns} capabilities={capabilities} /></div>
       <div className="hidden min-w-0 md:block" data-testid="pages-desktop-table">
-        <Table>
+        <Table className="min-w-max">
           <caption className="sr-only">{t('table.caption')}</caption>
           <TableHeader>
             <TableRow>
-              <SortHeader sort="url" query={query} label={t('table.page')} onSort={onSort} />
-              <TableHead>{t('table.source')}</TableHead>
-              <TableHead>{t('table.crawl')}</TableHead>
-              <TableHead>{t('table.insights')}</TableHead>
-              {TABLE_METRICS.map((metric) => {
+              <SortHeader sort="url" query={query} label={t('table.page')} onSort={onSort}
+                className="sticky start-0 z-10 border-e border-border bg-background" />
+              {shown.source ? <TableHead>{t('table.source')}</TableHead> : null}
+              {shown.crawl ? <TableHead>{t('table.crawl')}</TableHead> : null}
+              {shown.insights ? <TableHead>{t('table.insights')}</TableHead> : null}
+              {metricColumns.map((metric) => {
                 const sort = metricSort(metric);
                 return capabilities.supportedSorts.includes(sort) ? (
                   <SortHeader
@@ -464,22 +524,22 @@ function PagesResults({
                   />
                 ) : <TableHead key={metric}>{t(`metrics.${metric}`)}</TableHead>;
               })}
-              <TableHead>{t('metrics.associatedQueryCount')}</TableHead>
-              <SortHeader
+              {shown.associatedQueryCount ? <TableHead>{t('metrics.associatedQueryCount')}</TableHead> : null}
+              {shown.positionChange ? <SortHeader
                 sort="position_change"
                 query={query}
                 label={t('deltas.position')}
                 onSort={onSort}
-              />
+              /> : null}
               <TableHead>{t('table.actions')}</TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>
             {rows.map((row) => (
               <TableRow key={row.pageId} data-testid="pages-desktop-row">
-                <TableCell className="max-w-80 whitespace-normal">
+                <TableCell className="sticky start-0 z-10 max-w-80 border-e border-border bg-background whitespace-normal">
                   <div className="flex min-w-0 flex-col gap-1">
-                    <span className="break-words font-medium"><Bdi>{row.title || t('table.untitled')}</Bdi></span>
+                    <span className="break-words font-medium"><Bdi dominant>{pagesRowName(row)}</Bdi></span>
                     {/* eslint-disable-next-line react/jsx-no-target-blank -- SAFE_EXTERNAL_REL includes noopener and noreferrer. */}
                     <a
                       href={safeExternalHref(row.url)}
@@ -487,33 +547,27 @@ function PagesResults({
                       rel={SAFE_EXTERNAL_REL}
                       className="inline-flex w-fit max-w-full items-center gap-1 break-all text-xs text-muted-foreground underline underline-offset-4 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
                     >
-                      <Bdi>{row.displayUrl}</Bdi>
+                      <Bdi>{pagesPathLabel(row.displayUrl)}</Bdi>
                       <ExternalLink aria-hidden="true" className="shrink-0" />
                     </a>
                   </div>
                 </TableCell>
-                <TableCell>
+                {shown.source ? <TableCell>
                   <Badge variant={row.performanceSource ? 'secondary' : 'outline'}>
                     {row.performanceSource
                       ? t(`sources.${row.performanceSource}.short`)
                       : t('sources.unmeasured')}
                   </Badge>
-                </TableCell>
-                <TableCell>
-                  {row.isIndexable === null
-                    ? t('indexability.unknown')
-                    : row.isIndexable
-                      ? t('indexability.indexable')
-                      : t('indexability.nonIndexable')}
-                </TableCell>
-                <TableCell className="whitespace-normal"><PageInsights row={row} /></TableCell>
-                {TABLE_METRICS.map((metric) => (
+                </TableCell> : null}
+                {shown.crawl ? <TableCell>{crawlStateLabel(t, row)}</TableCell> : null}
+                {shown.insights ? <TableCell className="whitespace-normal"><PageInsights row={row} /></TableCell> : null}
+                {metricColumns.map((metric) => (
                   <TableCell key={metric}>
                     <MetricValue metric={metric} row={row} locale={locale} notAvailable={notAvailable} />
                   </TableCell>
                 ))}
-                <TableCell dir="ltr">{formatPagesNumber(locale, row.metrics.associatedQueryCount)}</TableCell>
-                <TableCell dir="ltr">
+                {shown.associatedQueryCount ? <TableCell><QueryCountValue row={row} locale={locale} /></TableCell> : null}
+                {shown.positionChange ? <TableCell dir="ltr">
                   {formatSignedPagesValue(locale, row.deltas.positionChange) ?? notAvailable}
                   {row.deltas.clickChangePct !== null ? (
                     <span className="block text-xs text-muted-foreground">
@@ -522,7 +576,7 @@ function PagesResults({
                       })}
                     </span>
                   ) : null}
-                </TableCell>
+                </TableCell> : null}
                 <TableCell>
                   <Button type="button" variant="outline" size="sm" onClick={(event) => onDetail(row.pageId, event.currentTarget)}>
                     {t('actions.inspect')}
@@ -538,7 +592,7 @@ function PagesResults({
         {rows.map((row) => (
           <Card key={row.pageId} className="min-w-0" data-testid="pages-mobile-card">
             <CardHeader className="min-w-0">
-              <CardTitle className="break-words text-base"><Bdi>{row.title || t('table.untitled')}</Bdi></CardTitle>
+              <CardTitle className="break-words text-base"><Bdi dominant>{pagesRowName(row)}</Bdi></CardTitle>
               {/* eslint-disable-next-line react/jsx-no-target-blank -- SAFE_EXTERNAL_REL includes noopener and noreferrer. */}
               <a
                 href={safeExternalHref(row.url)}
@@ -546,28 +600,22 @@ function PagesResults({
                 rel={SAFE_EXTERNAL_REL}
                 className="inline-flex min-h-11 max-w-full items-center gap-1 break-all py-2 text-xs text-muted-foreground underline underline-offset-4 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
               >
-                <span className="min-w-0 break-all"><Bdi>{row.displayUrl}</Bdi></span>
+                <span className="min-w-0 break-all"><Bdi>{pagesPathLabel(row.displayUrl)}</Bdi></span>
                 <ExternalLink aria-hidden="true" className="shrink-0" />
               </a>
             </CardHeader>
             <CardContent className="flex min-w-0 flex-col gap-4">
               <div className="flex flex-wrap gap-2">
-                <Badge variant={row.performanceSource ? 'secondary' : 'outline'}>
+                {shown.source ? <Badge variant={row.performanceSource ? 'secondary' : 'outline'}>
                   {row.performanceSource
                     ? t(`sources.${row.performanceSource}.short`)
                     : t('sources.unmeasured')}
-                </Badge>
-                <Badge variant="outline">
-                  {row.isIndexable === null
-                    ? t('indexability.unknown')
-                    : row.isIndexable
-                      ? t('indexability.indexable')
-                      : t('indexability.nonIndexable')}
-                </Badge>
+                </Badge> : null}
+                {shown.crawl ? <Badge variant="outline">{crawlStateLabel(t, row)}</Badge> : null}
               </div>
-              <PageInsights row={row} />
+              {shown.insights ? <PageInsights row={row} /> : null}
               <dl className="grid grid-cols-2 gap-3">
-                {TABLE_METRICS.map((metric) => (
+                {metricColumns.map((metric) => (
                   <div key={metric} className="min-w-0">
                     <dt className="text-xs text-muted-foreground">{t(`metrics.${metric}`)}</dt>
                     <dd className="break-words font-medium">
@@ -575,24 +623,24 @@ function PagesResults({
                     </dd>
                   </div>
                 ))}
-                <div>
+                {shown.associatedQueryCount ? <div>
                   <dt className="text-xs text-muted-foreground">{t('metrics.associatedQueryCount')}</dt>
                   <dd dir="ltr" className="font-medium">
-                    {formatPagesNumber(locale, row.metrics.associatedQueryCount)}
+                    <QueryCountValue row={row} locale={locale} />
                   </dd>
-                </div>
-                <div>
+                </div> : null}
+                {shown.positionChange ? <div>
                   <dt className="text-xs text-muted-foreground">{t('deltas.position')}</dt>
                   <dd dir="ltr" className="font-medium">
                     {formatSignedPagesValue(locale, row.deltas.positionChange) ?? notAvailable}
                   </dd>
-                </div>
-                <div>
+                </div> : null}
+                {shown.positionChange ? <div>
                   <dt className="text-xs text-muted-foreground">{t('deltas.clickChange')}</dt>
                   <dd dir="ltr" className="font-medium">
                     {formatSignedPagesValue(locale, row.deltas.clickChangePct, true) ?? notAvailable}
                   </dd>
-                </div>
+                </div> : null}
               </dl>
               <Button type="button" variant="outline" className="w-full" onClick={(event) => onDetail(row.pageId, event.currentTarget)}>
                 {t('actions.inspect')}
@@ -871,11 +919,14 @@ export function PagesPanel({ siteId }: PagesPanelProps) {
               </dl>
             </CardHeader>
             <CardContent className="flex flex-col gap-3 text-sm text-muted-foreground">
-              <p>{t('disclosure.coverage', {
-                inventory: data.envelope.coverage.inventoryPages,
+              <p data-testid="pages-coverage">{t('coverage.pages', {
+                count: data.envelope.coverage.inventoryPages,
                 measured: data.envelope.coverage.measuredPages,
-                unmeasured: data.envelope.coverage.unmeasuredPages,
               })}</p>
+              {(data.envelope.coverage.redirectPages ?? 0) > 0 ? <p data-testid="pages-coverage-redirects">
+                {t('coverage.redirects', { count: data.envelope.coverage.redirectPages })}
+              </p> : null}
+              {data.envelope.coverage.lastCrawl ? <LastCrawlNote crawl={data.envelope.coverage.lastCrawl} siteId={siteId} /> : null}
               {data.envelope.coverage.reportingLagDays ? (
                 <p>{t('disclosure.reportingLag', { count: data.envelope.coverage.reportingLagDays })}</p>
               ) : null}
@@ -938,6 +989,13 @@ export function PagesPanel({ siteId }: PagesPanelProps) {
               </Card>
             ))}
           </div>
+          {capabilities?.isObserved ? <div className="flex flex-col gap-1 text-xs text-muted-foreground" data-testid="pages-summary-note">
+            {data.envelope.dataWindow ? <p>{t('summaryNote.window', {
+              start: formatPagesDay(locale, data.envelope.dataWindow.startDate),
+              end: formatPagesDay(locale, data.envelope.dataWindow.endDate),
+            })}</p> : null}
+            <p>{t('summaryNote.aggregation')}</p>
+          </div> : null}
 
           <PagesFilters
             query={query}
@@ -990,6 +1048,7 @@ export function PagesPanel({ siteId }: PagesPanelProps) {
           ) : (
             <PagesResults
               rows={data.items}
+              envelope={data.envelope}
               query={query}
               capabilities={capabilities as PagesSourceCapabilities}
               locale={locale}

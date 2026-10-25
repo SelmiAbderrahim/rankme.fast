@@ -168,7 +168,8 @@
     "pivotWindow_many": "{{count}} resultados almacenados comparados",
     "pivotWindow_other": "{{count}} resultados almacenados comparados"
   },
-  "eligibility": {"needCheck_zero": "{{count}} de {{total}} palabras clave necesitan una nueva comprobación de posiciones.",
+  "eligibility": {
+    "needCheck_zero": "{{count}} de {{total}} palabras clave necesitan una nueva comprobación de posiciones.",
     "needCheck_one": "{{count}} de {{total}} palabras clave necesita una nueva comprobación de posiciones.",
     "needCheck_two": "{{count}} de {{total}} palabras clave necesitan una nueva comprobación de posiciones.",
     "needCheck_few": "{{count}} de {{total}} palabras clave necesitan una nueva comprobación de posiciones.",
@@ -185,5 +186,8 @@
     "minimum_two": "La agrupación necesita al menos {{count}} palabras clave listas.",
     "minimum_few": "La agrupación necesita al menos {{count}} palabras clave listas.",
     "minimum_many": "La agrupación necesita al menos {{count}} palabras clave listas.",
-    "minimum_other": "La agrupación necesita al menos {{count}} palabras clave listas."}
+    "minimum_other": "La agrupación necesita al menos {{count}} palabras clave listas.",
+    "title": "No hay suficientes palabras clave listas",
+    "snapshotNote": "Algunas comprobaciones recientes solo guardaron la posición, no la página de resultados completa. La agrupación necesita una comprobación que guarde la página de resultados completa."
+  }
 }

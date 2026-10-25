@@ -9,8 +9,12 @@ import {
   audienceResearchEvents,
   brandRadarEvents,
   domainStates,
+  keywords,
   pagePerformanceKeywords,
   pagePerformanceSnapshots,
+  rankCheckJobItems,
+  rankCheckJobs,
+  rankCheckOutcomes,
   siteDeletionTombstones,
   teamMembers,
   teamMemberSiteGrants,
@@ -113,6 +117,46 @@ describe('site Postgres lifecycle barrier', () => {
     expect(await db.select().from(siteDeletionTombstones)).toEqual([
       { siteId, deletionStartedAt: startedAt },
     ]);
+  });
+
+  it('purges rank jobs and outcomes and guards later site writes', async () => {
+    const db = getTestDb();
+    const siteId = 'site-with-rank-job';
+    const now = new Date('2026-10-25T00:00:00.000Z');
+    const [keyword] = await db.insert(keywords).values({
+      accountId: 'owner', siteId, phrase: 'example phrase', locationCode: 2840,
+      languageCode: 'en',
+    }).returning({ id: keywords.id });
+    const [job] = await db.insert(rankCheckJobs).values({
+      accountId: 'owner', siteId, scope: 'site', deadlineAt: now,
+    }).returning({ id: rankCheckJobs.id });
+    await db.insert(rankCheckJobItems).values({ jobId: job!.id, keywordId: keyword!.id, engine: 'google' });
+    await db.insert(rankCheckOutcomes).values({
+      accountId: 'owner', siteId, keywordId: keyword!.id, periodKey: '2026-W43', status: 'checked',
+      firstAttemptAt: now, lastAttemptAt: now, retryDeadline: now,
+    });
+    await installSiteDeletionBarrier(db as never, siteId, now);
+    await expect(db.update(rankCheckOutcomes).set({ attempts: 2 })
+      .where(sql`${rankCheckOutcomes.siteId} = ${siteId}`)).rejects.toThrow();
+    await purgeSitePostgresData(db as never, 'owner', siteId);
+    expect(await db.select().from(rankCheckJobs)).toEqual([]);
+    expect(await db.select().from(rankCheckJobItems)).toEqual([]);
+    expect(await db.select().from(rankCheckOutcomes)).toEqual([]);
+    await expect(db.insert(rankCheckJobs).values({ accountId: 'owner', siteId,
+      scope: 'site', deadlineAt: now })).rejects.toThrow();
+    await expect(db.insert(rankCheckOutcomes).values({
+      accountId: 'owner', siteId, keywordId: keyword!.id, periodKey: '2026-W43',
+      status: 'checked', firstAttemptAt: now, lastAttemptAt: now, retryDeadline: now,
+    })).rejects.toThrow();
+  });
+
+  it('keeps billing columns out of rank work tables', async () => {
+    const result = await getTestDb().execute(sql`
+      select table_name, column_name from information_schema.columns
+      where table_name in ('rank_check_job_items', 'rank_check_outcomes')
+        and column_name in ('units', 'charged_units')
+    `);
+    expect(result.rows).toEqual([]);
   });
 
   it('purges selected membership grants and blocks them from rematerializing', async () => {

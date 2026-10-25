@@ -1400,6 +1400,20 @@ describe('RTL (ar)', () => {
 });
 
 describe('IssueRow / IssueDetail units', () => {
+  it('shows deep crawl facts beside the affected URL and shared evidence below', () => {
+    const finding: LocalizedFinding = {
+      ...findingsFixture[0]!,
+      affectedUrls: ['https://example.com/a'],
+      meta: {
+        pages: [{ url: 'https://example.com/a', problems: ['largePage'], statusCode: 200, clickDepth: 4 }],
+        chains: [{ from: 'https://example.com/a', hops: [{ url: 'https://example.com/b', status: 301 }], isLoop: false }],
+      },
+    };
+    render(<I18nextProvider i18n={i18n}><IssueDetail finding={finding} diffByUrl={new Map()} /></I18nextProvider>);
+    expect(screen.getByTestId('report-evidence-facts')).toHaveTextContent('Clicks from home: 4');
+    expect(screen.getByTestId('report-evidence-chain')).toHaveTextContent('Status 301');
+  });
+
   it('offers a mapped code prompt only on the latest eligible report', async () => {
     clipboardMocked.writeToClipboard.mockResolvedValue(true);
     const finding = {

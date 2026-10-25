@@ -1,4 +1,5 @@
-import type { RankCheckResult } from './types.js';
+import type { ProviderError } from './errors.js';
+import type { RankCheckInput, RankCheckResult, SerpFeatureSnapshot } from './types.js';
 /** Maximum observed questions retained from a single SERP snapshot. */
 export const MAX_PAA_QUESTIONS = 10;
 /** Maximum organic results retained from a single SERP snapshot. */
@@ -18,6 +19,21 @@ export interface SerpAiOverview {
         url: string | null;
         title: string | null;
     }>;
+}
+/** Domain-independent SERP evidence returned by one completed task. */
+export interface SerpTaskResult {
+    items: SerpItem[];
+    costUsd: number | null;
+    aiOverview: SerpAiOverview;
+    features: SerpFeatureSnapshot;
+}
+/** One result for each posted input, in input order. */
+export type SerpTaskPostOutcome = { ok: true; vendorTaskId: string } | { ok: false; error: ProviderError };
+/** A single task_get read; pending tasks retain their original task id. */
+export type SerpTaskPoll = { state: 'pending' } | { state: 'ready'; result: SerpTaskResult } | { state: 'failed'; error: ProviderError };
+export interface SerpTaskQueue {
+    postSerpTasks(inputs: readonly RankCheckInput[]): Promise<SerpTaskPostOutcome[]>;
+    pollSerpTask(taskId: string): Promise<SerpTaskPoll>;
 }
 /** Strip scheme, `www.`, and trailing slashes for deterministic host matching. */
 export function normalizeSerpDomain(domain: string): string {

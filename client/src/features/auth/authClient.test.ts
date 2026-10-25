@@ -1,5 +1,5 @@
 import { afterEach, describe, expect, it, vi } from 'vitest';
-import { addAuthLocaleHeader, authClient, resolveAuthBaseURL } from './authClient';
+import { addAuthLocaleHeader, authClient, resolveAuthBaseURL, withInlineTwoFactor, redirectToTwoFactorChallenge } from './authClient';
 import { setPresentationLocale, SUPPORTED_LOCALES } from '@shared/i18n';
 
 afterEach(() => {
@@ -26,6 +26,15 @@ describe('resolveAuthBaseURL', () => {
 });
 
 describe('authClient', () => {
+  it('keeps an inline two-factor challenge on its reauthentication screen', async () => {
+    const location = { assign: vi.fn() };
+    await withInlineTwoFactor(async () => {
+      redirectToTwoFactorChallenge(location);
+      expect(location.assign).not.toHaveBeenCalled();
+    });
+    redirectToTwoFactorChallenge(location);
+    expect(location.assign).toHaveBeenCalledWith('/two-factor');
+  });
   it('adds every supported locale to session, credential, OAuth, password, and two-factor calls', () => {
     const paths = [
       '/get-session',

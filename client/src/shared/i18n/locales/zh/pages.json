@@ -39,14 +39,93 @@
     "visibility": "搜索可见性", "allVisibility": "所有可见性", "visibilityOptions": { "measured": "已测量", "unmeasured": "未测量" }, "sort": "排序方式", "direction": "方向", "ascending": "升序", "descending": "降序", "pageSize": "每页数量", "perPage": "每页 {{count}} 个", "active": "生效的筛选条件：{{context}}", "activeSearch": "搜索：{{value}}", "noneActive": "当前没有搜索或筛选条件。"
   },
   "insights": {
-    "striking_distance": { "label": "接近突破", "description": "此页面的排名有提升空间，并且具有可观的搜索需求。" }, "low_ctr": { "label": "点击率偏低", "description": "观测到的展示较高，但点击低于规则阈值。" },
-    "declining": { "label": "正在下降", "description": "自上次成功同步以来，排名或观测点击明显下降。" }, "winning": { "label": "正在增长", "description": "自上次成功同步以来，排名或观测点击明显改善。" },
-    "non_indexable_visibility": { "label": "可见但不可抓取索引", "description": "此页面有搜索表现，但最近一次 RankMeFast 抓取将其标记为不可索引。这并不表示 Google 索引状态。" },
-    "unmeasured": { "label": "未测量", "description": "最近一次抓取发现了此可索引页面，但当前表现来源没有对应数据行。" }, "none": "当前没有机会标记"
+    "striking_distance": {
+      "label": "接近突破",
+      "description": "此页面的排名有提升空间，并且具有可观的搜索需求。"
+    },
+    "low_ctr": {
+      "label": "点击率偏低",
+      "description": "观测到的展示较高，但点击低于规则阈值。"
+    },
+    "declining": {
+      "label": "正在下降",
+      "description": "自上次成功同步以来，排名或观测点击明显下降。"
+    },
+    "winning": {
+      "label": "正在增长",
+      "description": "自上次成功同步以来，排名或观测点击明显改善。"
+    },
+    "non_indexable_visibility": {
+      "label": "可见但不可抓取索引",
+      "description": "此页面有搜索表现，但最近一次 RankMeFast 抓取将其标记为不可索引。这并不表示 Google 索引状态。"
+    },
+    "unmeasured": {
+      "label": "未测量",
+      "description": "最近一次抓取发现了此可索引页面，但当前表现来源没有对应数据行。"
+    },
+    "none": "当前没有机会标记",
+    "low_data": {
+      "label": "数据不足",
+      "description": "Search Console 显示此页面的展示次数过少且没有点击，因此暂不标记变化趋势。"
+    }
   },
   "sorts": { "opportunity": "机会", "url": "URL", "title": "标题", "clicks": "点击", "impressions": "展示", "ctr": "点击率", "average_position": "平均排名", "best_position": "最佳排名", "keyword_count": "排名关键词", "search_volume": "搜索量", "difficulty": "难度", "estimated_traffic": "预估流量", "position_change": "排名变化", "click_change_pct": "点击变化" },
   "indexability": { "indexable": "可抓取并可索引", "nonIndexable": "不可抓取/索引", "unknown": "抓取状态未知" },
-  "table": { "caption": "页面表现和抓取可索引性结果", "page": "页面", "source": "表现来源", "crawl": "抓取可索引性", "insights": "机会", "actions": "操作", "untitled": "无标题页面" },
+  "crawlState": {
+    "label": {
+      "indexable": "可抓取并可索引",
+      "non_indexable": "不可抓取/索引",
+      "redirected": "重定向到 {{path}}",
+      "failed": "无法读取",
+      "not_in_crawl": "不在最近一次抓取中",
+      "no_crawl": "尚未抓取"
+    },
+    "crawledAs": "以 {{path}} 抓取",
+    "failure": {
+      "http_error": "页面返回了 HTTP {{status}}。",
+      "redirect_loop": "它的重定向在原地打转。",
+      "redirect_limit": "它重定向超过五次，因此我们停止跟随。",
+      "unsafe_redirect": "它重定向到了我们不会跟随的地址。",
+      "robots_blocked": "robots.txt 要求爬虫跳过此页面。",
+      "timeout": "页面没有及时响应。",
+      "non_html": "此地址提供的是 {{type}}，不是网页。",
+      "unreachable": "我们无法连接到此地址。"
+    },
+    "evidence": {
+      "finalUrl": "最终地址：{{url}}",
+      "redirectPath": "重定向路径：{{path}}",
+      "status": "HTTP 状态：{{status}}",
+      "fromCrawl": "由审计抓取记录。",
+      "fromProbe": "审计期间直接检查。",
+      "none": "审计没有记录此地址缺失的原因。",
+      "noCrawl": "运行审计即可查看此地址的抓取情况。",
+      "botProtection": "有些网站会用这个状态响应自动访问。请确认页面能在普通浏览器窗口中打开。"
+    }
+  },
+  "queries": {
+    "anonymized": "查询词已被 Google 隐藏",
+    "anonymizedHelp": "Google 报告了该页面的展示次数，但没有提供对应的搜索词。Google 会隐藏少见的查询词以保护搜索者隐私，因此这里的零表示没有可见的查询词，而不是没有人搜索。",
+    "unavailableHelp": "尚未保存该页面的搜索查询数据。"
+  },
+  "summaryNote": {
+    "window": "{{start}} 至 {{end}} 的按页面合计，仅含符合当前筛选条件的页面。",
+    "aggregation": "Search Console 会为结果中出现的每个页面各计一次展示，也包括它不公开的搜索，因此这些合计可能高于 Google 标签页中的网站合计。平均排名按各页面的展示次数加权。"
+  },
+  "table": {
+    "caption": "页面表现和抓取可索引性结果",
+    "page": "页面",
+    "source": "表现来源",
+    "crawl": "抓取可索引性",
+    "insights": "机会",
+    "actions": "操作",
+    "untitled": "无标题页面",
+    "columns": {
+      "button": "列",
+      "menuLabel": "显示的列",
+      "reset": "恢复默认列",
+      "notForSource": "此数据来源不提供"
+    }
+  },
   "deltas": { "position": "排名变化", "clickChange": "点击变化", "clicks": "点击 {{value}}" },
   "empty": { "title": "没有可显示的页面", "filtered": "没有页面符合当前搜索和筛选条件。重置条件可返回完整已存储清单。", "gsc": "Search Console 在此窗口没有返回页面。刷新仍使用 Search Console，不会切换来源。", "fallback": "已存储排名快照在此市场中没有排名页面。观测指标仍不可用。", "none": "尚未存储页面快照。请连接 Google 或明确采集备用数据。" },
   "pagination": { "label": "页面结果分页", "context_one": "显示 {{shown}} 个，共 {{total}} 个匹配页面", "previous": "上一页", "next": "下一页", "cursorReset": "结果集已变化，分页已返回第一页。",
@@ -98,7 +177,8 @@
     "fetchedHelp": "上次审计中抓取工具请求的每个地址，包括重定向、同一页面的重复地址以及 PDF 等文件。这个数字通常大于规范页面的数量。",
     "runAgain": "重新运行"
   },
-  "coverage": {"pages_zero": "有搜索数据的规范页面：{{measured}} / {{count}}。",
+  "coverage": {
+    "pages_zero": "有搜索数据的规范页面：{{measured}} / {{count}}。",
     "pages_one": "有搜索数据的规范页面：{{measured}} / {{count}}。",
     "pages_two": "有搜索数据的规范页面：{{measured}} / {{count}}。",
     "pages_few": "有搜索数据的规范页面：{{measured}} / {{count}}。",
@@ -115,5 +195,8 @@
     "redirects_two": "列表中有 {{count}} 个地址重定向到这些页面之一，并计为该页面。",
     "redirects_few": "列表中有 {{count}} 个地址重定向到这些页面之一，并计为该页面。",
     "redirects_many": "列表中有 {{count}} 个地址重定向到这些页面之一，并计为该页面。",
-    "redirects_other": "列表中有 {{count}} 个地址重定向到这些页面之一，并计为该页面。"}
+    "redirects_other": "列表中有 {{count}} 个地址重定向到这些页面之一，并计为该页面。",
+    "inventoryLabel": "规范页面",
+    "inventoryHelp": "规范页面是我们已知的唯一页面：上次审计中可被索引的页面，加上有搜索数据的页面，每个只计算一次。重定向到其中某个页面的地址会列出，但计为该页面。"
+  }
 }

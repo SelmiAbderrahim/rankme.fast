@@ -32,7 +32,7 @@ describe('buildBugReportHref', () => {
     expect(href).toContain('subject=');
     const body = decodedMailBody(href);
     expect(body).toContain(`version: ${appVersion}`);
-    expect(body).toContain('edition: cloud');
+    expect(body).toContain('edition: self-hosted');
     expect(body).toContain('stage: beta');
     expect(body).toContain('route: /sites/:siteId/audits/:auditId');
     expect(body).toMatch(/browser: (?:Edge|Firefox|Chrome|Safari|Other)/u);
@@ -54,7 +54,7 @@ describe('buildBugReportHref', () => {
     expect(url.hash).toBe('');
     expect(url.searchParams.get('template')).toBe('bug_report.yml');
     expect(url.searchParams.get('version')).toBe(appVersion);
-    expect(url.searchParams.get('edition')).toBe('cloud');
+    expect(url.searchParams.get('edition')).toBe('self-hosted');
     expect(url.searchParams.get('stage')).toBe('beta');
     expect(url.searchParams.get('route')).toBe('/files/*');
     expect(url.searchParams.get('browser')).toMatch(/^(Edge|Firefox|Chrome|Safari|Other)$/u);

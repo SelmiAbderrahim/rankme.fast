@@ -63,6 +63,7 @@ import { createPublicReportSharesRouter, createReportExportsRouter, } from './mo
 import { createPagesRouter } from './modules/pages/index.js';
 import { createAppSeoRouter } from './modules/app-seo/index.js';
 import { marketCatalogRouter } from './modules/market-catalog/index.js';
+import { dashboardRouter } from './modules/dashboard/index.js';
 export async function enqueueLegalAccountPurge(input: {
     userId: string;
     purgeAt: Date;
@@ -257,6 +258,7 @@ export function createApp(): Express {
     app.get('/api/keyword-research/trends/:runId', verified, leaseOwnedResource(resolveOwnedTrendsRunSiteId, 'runId'));
     app.use('/api/audit', verified, auditRouter);
     app.use('/api/users', verified, usersRouter);
+    app.use('/api/dashboard', verified, dashboardRouter);
     app.use('/api/sites', verified, sitesRouter);
     // App SEO registration and the later ASO sub-surfaces share one site-nested
     // mount. The broad `/api/sites/:siteId` lease above already covers this

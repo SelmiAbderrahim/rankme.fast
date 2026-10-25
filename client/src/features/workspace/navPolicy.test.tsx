@@ -19,6 +19,10 @@ beforeAll(() => {
 });
 
 describe('canOpenRoute', () => {
+  it('keeps workspace branding with its owner', () => {
+    expect(canOpenRoute('/settings/workspace', 'member', true)).toBe(false);
+    expect(canOpenRoute('/settings/workspace', 'owner', true)).toBe(true);
+  });
   it('allows everything in the user own workspace, whatever the role name', () => {
     for (const route of [...OWNER_ONLY_ROUTES, ...ADMIN_ONLY_ROUTES, '/sites']) {
       expect(canOpenRoute(route, 'member', false)).toBe(true);

@@ -168,7 +168,8 @@
     "pivotWindow_many": "{{count}} gespeicherte Ergebnisse verglichen",
     "pivotWindow_other": "{{count}} gespeicherte Ergebnisse verglichen"
   },
-  "eligibility": {"needCheck_zero": "{{count}} von {{total}} Keywords brauchen eine neue Ranking-Prüfung.",
+  "eligibility": {
+    "needCheck_zero": "{{count}} von {{total}} Keywords brauchen eine neue Ranking-Prüfung.",
     "needCheck_one": "{{count}} von {{total}} Keywords braucht eine neue Ranking-Prüfung.",
     "needCheck_two": "{{count}} von {{total}} Keywords brauchen eine neue Ranking-Prüfung.",
     "needCheck_few": "{{count}} von {{total}} Keywords brauchen eine neue Ranking-Prüfung.",
@@ -185,5 +186,8 @@
     "minimum_two": "Für das Clustering braucht es mindestens {{count}} bereite Keywords.",
     "minimum_few": "Für das Clustering braucht es mindestens {{count}} bereite Keywords.",
     "minimum_many": "Für das Clustering braucht es mindestens {{count}} bereite Keywords.",
-    "minimum_other": "Für das Clustering braucht es mindestens {{count}} bereite Keywords."}
+    "minimum_other": "Für das Clustering braucht es mindestens {{count}} bereite Keywords.",
+    "title": "Nicht genug Keywords bereit",
+    "snapshotNote": "Einige aktuelle Prüfungen haben nur die Position gespeichert, nicht die vollständige Ergebnisseite. Für das Clustering braucht es eine Ranking-Prüfung, die die vollständige Ergebnisseite speichert."
+  }
 }

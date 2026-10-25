@@ -99,4 +99,12 @@ describe('chunk boundaries', () => {
     expect(chunkOf(at('shared/i18n/locales/en/docs.json'))).not.toBe(common);
     expect(chunkOf(at('features/workspace/api.ts'))).toBe('workspace-team');
   });
+  it('loads each non-English locale in a bounded shared chunk', () => {
+    for (const locale of ['ar', 'fr', 'de', 'es', 'ru', 'zh']) {
+      const common = chunkOf(at(`shared/i18n/locales/${locale}/common.json`));
+      const sites = chunkOf(at(`shared/i18n/locales/${locale}/sites.json`));
+      expect(common).toBe(`locale-${locale}-app`);
+      expect(sites).toBe(common);
+    }
+  });
 });

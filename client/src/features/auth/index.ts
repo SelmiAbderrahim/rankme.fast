@@ -1,4 +1,6 @@
 export { authClient } from './authClient';
+export { useSignOut } from './useSignOut';
+export { TwoFactorRecommendation } from './components/TwoFactorRecommendation';
 export { retainAuthSession, SESSION_FOCUS_MIN_INTERVAL_MS } from './sessionKeepAlive';
 export { useAuthSession, type AuthSessionState } from './useAuthSession';
 export { authRoutes } from './routes';

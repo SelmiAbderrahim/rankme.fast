@@ -1,0 +1,96 @@
+{
+  "version": "0.1.20260917",
+  "status_code": 20000,
+  "status_message": "Ok.",
+  "time": "0 sec.",
+  "cost": 0,
+  "tasks_count": 1,
+  "tasks_error": 0,
+  "tasks": [
+    {
+      "id": "TASK_ID",
+      "status_code": 20000,
+      "status_message": "Ok.",
+      "time": "0 sec.",
+      "cost": 0,
+      "result_count": 1,
+      "path": [
+        "v3",
+        "on_page",
+        "redirect_chains"
+      ],
+      "data": {
+        "api": "on_page",
+        "function": "redirect_chains",
+        "limit": 5
+      },
+      "result": [
+        {
+          "crawl_progress": "in_progress",
+          "crawl_status": {
+            "max_crawl_pages": null,
+            "pages_in_queue": 838967683,
+            "pages_crawled": 1199890602
+          },
+          "total_items_count": 630023249,
+          "items_count": 1,
+          "items": [
+            {
+              "is_redirect_loop": false,
+              "chain": [
+                {
+                  "type": "redirect",
+                  "domain_from": "DomainFrome373be98-7365-4b6e-8569-294f008c08a8",
+                  "domain_to": "DomainTo9c9ef13e-e3be-46bb-8313-62aa25538560",
+                  "page_from": "PageFrom6f39af39-2858-4a50-82be-be54028c0e84",
+                  "page_to": "PageTo385881e8-3df1-489d-b828-55cd22b3ad0c",
+                  "link_from": "LinkFromd48e750c-ac85-40f3-8c8f-fd6c81b0d193",
+                  "link_to": "LinkTo6e235421-c718-47d6-9406-022700aa79ed",
+                  "dofollow": false,
+                  "page_from_scheme": "PageFromScheme1e0ebd93-699e-4a3c-b843-2c9181e03404",
+                  "page_to_scheme": "PageToScheme70e2e6f8-eaa8-4734-b064-55a8f0f711cd",
+                  "direction": "external",
+                  "is_broken": true,
+                  "is_link_relation_conflict": true,
+                  "page_to_status_code": 7076
+                },
+                {
+                  "type": "redirect",
+                  "domain_from": "DomainFrom7851245f-c9aa-44a2-91a4-32fd873ce8cf",
+                  "domain_to": "DomainTo167a32cf-ec15-470f-bbba-bb63222c99ca",
+                  "page_from": "PageFrom0402d42f-fd6e-4dcb-8a71-a4644ae1c18a",
+                  "page_to": "PageTo2995288e-c4b4-4377-be84-41abb6b5f600",
+                  "link_from": "LinkFrom11280d3e-31ce-4514-9376-d8600057d706",
+                  "link_to": "LinkTod3bc9755-ed7e-4769-980a-4b0c162d9659",
+                  "dofollow": false,
+                  "page_from_scheme": "PageFromScheme54ae8034-1b0e-4a94-ae71-9669663924a0",
+                  "page_to_scheme": "PageToScheme66b996f7-fb65-41e3-a4b5-6591d076aab8",
+                  "direction": "internal",
+                  "is_broken": true,
+                  "is_link_relation_conflict": true,
+                  "page_to_status_code": 5617
+                },
+                {
+                  "type": "redirect",
+                  "domain_from": "DomainFrom9aa9b639-4b46-46b4-abf7-e8e7020f1568",
+                  "domain_to": "DomainTof74c2a69-710b-49a4-bf67-f337d9dabd47",
+                  "page_from": "PageFrom96ab0747-c6a8-4483-94f2-93490962369c",
+                  "page_to": "PageTo44f0f59e-ef66-4c3e-99df-5edc375cae53",
+                  "link_from": "LinkFrom224ed67c-780b-46b0-9efa-cbb1bb506472",
+                  "link_to": "LinkTo3f09dd4a-1f00-45ca-9188-85e79eee1a77",
+                  "dofollow": false,
+                  "page_from_scheme": "PageFromScheme2d66bd47-89db-4714-80ed-06e01c5f9038",
+                  "page_to_scheme": "PageToSchemeb2b678ae-7381-4d6c-8ba9-df7ecf1fcf48",
+                  "direction": "external",
+                  "is_broken": true,
+                  "is_link_relation_conflict": true,
+                  "page_to_status_code": 23100
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

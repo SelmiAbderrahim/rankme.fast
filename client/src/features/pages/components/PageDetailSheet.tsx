@@ -26,6 +26,8 @@ import {
 import { SAFE_EXTERNAL_REL, safeExternalHref } from '@shared/security/output-encoding';
 import type { PagesCacheEntry, PagesDetailResponse, PagesLoadState } from '../types';
 import { formatPagesMetric } from '../formatters';
+import { pagesRowName } from '../formatters';
+import { crawlEvidenceLines, crawlStateLabel } from '../crawlState';
 import { PagesTrendChart } from './PagesTrendChart';
 
 interface PageDetailSheetProps {
@@ -76,7 +78,7 @@ export function PageDetailSheet({
       >
         <SheetHeader className="border-b border-border pe-14">
           <SheetTitle className="break-words text-start">
-            <Bdi>{page?.title || page?.displayUrl || t('detail.title')}</Bdi>
+            <Bdi dominant>{page ? pagesRowName(page) : t('detail.title')}</Bdi>
           </SheetTitle>
           <SheetDescription className="break-all text-start">
             <Bdi>{page?.url ?? t('detail.description')}</Bdi>
@@ -136,14 +138,11 @@ export function PageDetailSheet({
                         ? t(`sources.${page.performanceSource}.short`)
                         : t('sources.unmeasured')}
                     </Badge>
-                    <Badge variant="outline">
-                      {page.isIndexable === null
-                        ? t('indexability.unknown')
-                        : page.isIndexable
-                          ? t('indexability.indexable')
-                          : t('indexability.nonIndexable')}
-                    </Badge>
+                    <Badge variant="outline" data-testid="page-crawl-state">{crawlStateLabel(t, page)}</Badge>
                   </div>
+                  {crawlEvidenceLines(t, page).length > 0 ? <ul className="list-disc space-y-1 ps-5 text-sm text-muted-foreground" data-testid="page-crawl-evidence">
+                    {crawlEvidenceLines(t, page).map((line) => <li key={line} className="break-words"><Bdi>{line}</Bdi></li>)}
+                  </ul> : null}
                   {page.nonIndexableReason ? (
                     <p className="break-words text-sm text-muted-foreground">
                       {t('detail.crawlReason', { reason: page.nonIndexableReason })}

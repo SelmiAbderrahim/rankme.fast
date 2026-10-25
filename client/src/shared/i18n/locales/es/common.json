@@ -44,6 +44,7 @@
     "exports": "Exportaciones y enlaces",
     "security": "Seguridad",
     "team": "Equipo",
+    "workspace": "Espacio de trabajo",
     "admin": "Administración",
     "superadmin": "Plataforma",
     "startFree": "Empezar gratis",
@@ -75,28 +76,36 @@
       "sites": {
         "label": "Sitios",
         "description": "Añade y gestiona los sitios que rastreas.",
-        "usage": "{{used}} de {{cap}} sitios"
+        "usage": "{{used}} de {{cap}} sitios",
+        "cta": "Abrir sitios"
       },
       "ranks": {
         "label": "Posiciones",
         "description": "Sigue las posiciones SERP de tus palabras clave.",
         "usage": "{{used}} de {{cap}} palabras clave rastreadas",
-        "empty": "Añade un sitio para empezar a rastrear posiciones."
+        "empty": "Añade un sitio para empezar a rastrear posiciones.",
+        "cta": "Abrir seguimiento de posiciones",
+        "pickCta": "Elige un sitio para abrir el seguimiento de posiciones"
       },
       "keywordResearch": {
         "label": "Investigación de palabras clave",
         "description": "Encuentra volumen, dificultad y palabras relacionadas.",
-        "usage": "{{used}} de {{cap}} búsquedas este mes"
+        "usage": "{{used}} de {{cap}} búsquedas este mes",
+        "cta": "Investigar palabras clave"
       },
       "backlinks": {
         "label": "Backlinks",
         "description": "Explora el perfil de backlinks de tu primer sitio.",
-        "usage": "{{used}} de {{cap}} filas este mes"
+        "usage": "{{used}} de {{cap}} filas este mes",
+        "cta": "Ver backlinks",
+        "pickCta": "Elige un sitio para ver sus backlinks"
       },
       "competitors": {
         "label": "Competidores",
         "description": "Consulta quién compite con tu primer sitio.",
-        "usage": "Plan Agency"
+        "usage": "Plan Agency",
+        "cta": "Ver competidores",
+        "pickCta": "Elige un sitio para ver sus competidores"
       },
       "google": {
         "label": "Google Search Console",
@@ -111,13 +120,17 @@
       "profile": {
         "label": "Perfil",
         "description": "Consulta y actualiza los datos de tu cuenta.",
-        "usage": "Ajustes de la cuenta"
+        "usage": "Ajustes de la cuenta",
+        "cta": "Abrir perfil"
       },
       "admin": {
         "label": "Administración",
         "description": "Accede a los controles administrativos.",
         "usage": "Controles de administración"
-      }
+      },
+      "pickSiteCta": "Elige un sitio",
+      "pickSiteMenu": "Sitios activos",
+      "pickSiteAll": "Ver todos los sitios"
     },
     "usage": {},
     "loading": "Cargando panel…",
@@ -130,7 +143,11 @@
         "open_many": "{{n}} abiertos",
         "open_other": "{{n}} abiertos",
         "none": "Ninguno abierto",
-        "noneStale": "Ninguno abierto en la última auditoría"
+        "noneStale": "Ninguno abierto en la última auditoría",
+        "unavailable": {
+          "no_audit": "Aún no hay auditoría. Ejecuta una para ver este dato.",
+          "report_missing": "Informe no disponible. Ejecuta una auditoría nueva."
+        }
       },
       "showing_zero": "Mostrando {{shown}} de {{total}} sitios activos.",
       "showing_one": "Mostrando {{shown}} de {{total}} sitio activo.",
@@ -144,13 +161,26 @@
       "seeAll_few": "Ver los {{total}} sitios",
       "seeAll_many": "Ver los {{total}} sitios",
       "seeAll_other": "Ver los {{total}} sitios",
-      "paused": {"more_zero": "No se muestran {{n}} sitios en pausa más.",
+      "paused": {
+        "more_zero": "No se muestran {{n}} sitios en pausa más.",
         "more_one": "No se muestra {{n}} sitio en pausa más.",
         "more_two": "No se muestran {{n}} sitios en pausa más.",
         "more_few": "No se muestran {{n}} sitios en pausa más.",
         "more_many": "No se muestran {{n}} sitios en pausa más.",
-        "more_other": "No se muestran {{n}} sitios en pausa más."},
-      "search": {"clicks_zero": "{{n}} clics",
+        "more_other": "No se muestran {{n}} sitios en pausa más.",
+        "title": "Sitios en pausa ({{n}})",
+        "explain": "Los sitios en pausa no ejecutan comprobaciones ni auditorías programadas.",
+        "since": "En pausa {{when}}",
+        "resume": "Reanudar",
+        "resuming": "Reanudando…",
+        "resumeSite": "Reanudar {{name}}",
+        "resumed": "{{domain}} vuelve a estar activo. Las comprobaciones programadas se ejecutarán de nuevo.",
+        "resumeFailed": "No se pudo reanudar el sitio.",
+        "manage": "Gestionar todos los sitios",
+        "ownerOnly": "Pide al propietario del espacio de trabajo que reanude un sitio en pausa."
+      },
+      "search": {
+        "clicks_zero": "{{n}} clics",
         "clicks_one": "{{n}} clic",
         "clicks_two": "{{n}} clics",
         "clicks_few": "{{n}} clics",
@@ -161,8 +191,20 @@
         "impressions_two": "{{n}} impresiones",
         "impressions_few": "{{n}} impresiones",
         "impressions_many": "{{n}} impresiones",
-        "impressions_other": "{{n}} impresiones"},
-      "rank": {"notCompared": {"failed_zero": "{{count}} comprobaciones fallidas",
+        "impressions_other": "{{n}} impresiones",
+        "clicksDelta": "cambio en los clics respecto a los 28 días anteriores",
+        "impressionsDelta": "cambio en las impresiones respecto a los 28 días anteriores",
+        "through": "Hasta el {{date}}, frente a los 28 días anteriores",
+        "noPrevious": "Hasta el {{date}}. No hay un periodo anterior guardado con el que comparar.",
+        "unavailable": {
+          "not_connected": "Search Console no está conectado para este sitio.",
+          "reconnect_needed": "Vuelve a conectar Search Console para ver este dato.",
+          "no_data_yet": "Aún no hay datos de Search Console guardados."
+        }
+      },
+      "rank": {
+        "notCompared": {
+          "failed_zero": "{{count}} comprobaciones fallidas",
           "failed_one": "{{count}} comprobación fallida",
           "failed_two": "{{count}} comprobaciones fallidas",
           "failed_few": "{{count}} comprobaciones fallidas",
@@ -185,7 +227,63 @@
           "unranked_two": "{{count}} sin posición en ninguna de las dos comprobaciones",
           "unranked_few": "{{count}} sin posición en ninguna de las dos comprobaciones",
           "unranked_many": "{{count}} sin posición en ninguna de las dos comprobaciones",
-          "unranked_other": "{{count}} sin posición en ninguna de las dos comprobaciones"}}
+          "unranked_other": "{{count}} sin posición en ninguna de las dos comprobaciones",
+          "lead": "Sin comparar: {{parts}}."
+        },
+        "summary": "{{improved}} mejoran, {{declined}} empeoran, {{unchanged}} sin cambios",
+        "compared": "Palabras clave comparadas: {{compared}} de {{tracked}}.",
+        "lastCheck": "Última comprobación {{when}}.",
+        "unavailable": {
+          "no_keywords": "Aún no se sigue ninguna palabra clave.",
+          "no_checks": "Esperando la primera comprobación de posición.",
+          "single_check": "Hace falta una segunda comprobación para comparar."
+        }
+      },
+      "title": "Estado de los sitios",
+      "description": "Resultados guardados de tus sitios activos. Al abrir esta página solo se leen datos almacenados.",
+      "loading": "Cargando el estado de los sitios…",
+      "loadFailed": "No se pudo cargar el estado de los sitios.",
+      "stale": "Desactualizado",
+      "notAvailable": "No disponible:",
+      "asOf": "A fecha de {{date}}",
+      "allPaused": "Todos los sitios que puedes ver están en pausa, así que no hay nada que medir. Reanuda uno abajo para ver su estado.",
+      "empty": {
+        "body": "Añade un sitio para ver aquí el estado de su auditoría, su búsqueda y sus palabras clave.",
+        "cta": "Añadir un sitio"
+      },
+      "columns": {
+        "fixNow": "Corregir ya",
+        "lastAudit": "Última auditoría",
+        "search": "Búsqueda, últimos 28 días",
+        "keywords": "Evolución de palabras clave"
+      },
+      "open": {
+        "actions": "Abrir lista de correcciones",
+        "report": "Abrir informe",
+        "google": "Abrir Search Console",
+        "keywords": "Abrir palabras clave"
+      },
+      "lastAudit": {
+        "never": "Nunca auditado",
+        "status": {
+          "failed": "Falló",
+          "unavailable": "No disponible"
+        }
+      },
+      "staleSource": {
+        "audit": {
+          "label": "Auditoría del {{date}}",
+          "hint": "Esta auditoría tiene más de 30 días. Ejecuta una nueva para actualizar estos resultados."
+        },
+        "search": {
+          "label": "Datos de búsqueda al {{date}}",
+          "hint": "Los informes de Search Console llevan unos días de retraso, pero estos datos son más antiguos."
+        },
+        "rank": {
+          "label": "Comprobaciones de posición al {{date}}",
+          "hint": "Las comprobaciones de posición programadas no se han ejecutado a tiempo para este sitio."
+        }
+      }
     }
   },
   "shell": {
@@ -355,6 +453,9 @@
   },
   "feedback": {
     "reportBug": "Informar de un error",
+    "chooseChannel": "Elige dónde informar del error.",
+    "openIssues": "Abrir las opciones de incidencias de GitHub",
+    "emailSupport": "Enviar un correo a soporte",
     "reportProblem": "Informar de este problema",
     "mailSubject": "Informe de error ({{version}})"
   },

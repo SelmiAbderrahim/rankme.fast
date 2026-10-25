@@ -22,6 +22,8 @@ export interface StartAuditInput {
      * `shared/billing/vendor-costs.ts` budgets the basic-crawl rate only.
      */
     pageCap: number;
+    /** Load images, scripts and stylesheets for this crawl when enabled. */
+    resourceScan?: boolean;
 }
 export type AuditState = 'queued' | 'crawling' | 'finished' | 'failed';
 export interface AuditStatus {
@@ -135,7 +137,76 @@ export interface AuditPage {
      */
     hasFaqSignals?: boolean;
     timing?: AuditPageTiming;
+    /** Crawler checks; true means the named problem was observed. */
+    checks?: AuditPageChecks;
+    clickDepth?: number;
+    inboundInternalLinks?: number;
+    outboundInternalLinks?: number;
+    outboundExternalLinks?: number;
+    pageSizeBytes?: number;
+    transferSizeBytes?: number;
+    serverResponseMs?: number;
+    /** null means the response was observed without compression. */
+    contentEncoding?: string | null;
+    imageCount?: number;
+    renderBlockingScripts?: number;
+    renderBlockingStylesheets?: number;
+    socialTags?: { openGraph: boolean; twitterCard: boolean };
 }
+export interface AuditPageChecks {
+    clientError?: boolean;
+    serverError?: boolean;
+    redirects?: boolean;
+    reachedThroughRedirectChain?: boolean;
+    metaRefreshRedirect?: boolean;
+    linksToRedirects?: boolean;
+    canonicalChain?: boolean;
+    canonicalToRedirect?: boolean;
+    canonicalToBroken?: boolean;
+    canonicalLoop?: boolean;
+    linkRelationConflict?: boolean;
+    orphan?: boolean;
+    insecureLinks?: boolean;
+    duplicateTitle?: boolean;
+    duplicateDescription?: boolean;
+    duplicateContent?: boolean;
+    placeholderText?: boolean;
+    lowTextRatio?: boolean;
+    lowReadability?: boolean;
+    irrelevantTitle?: boolean;
+    irrelevantDescription?: boolean;
+    titleTooLong?: boolean;
+    titleTooShort?: boolean;
+    missingDoctype?: boolean;
+    missingCharset?: boolean;
+    deprecatedTags?: boolean;
+    frames?: boolean;
+    flash?: boolean;
+    missingFavicon?: boolean;
+    duplicateMetaTags?: boolean;
+    imagesMissingAlt?: boolean;
+    slowLoad?: boolean;
+    slowServerResponse?: boolean;
+    largePage?: boolean;
+    veryLargePage?: boolean;
+    uncompressed?: boolean;
+    renderBlocking?: boolean;
+    urlHasUnusualCharacters?: boolean;
+    urlHasParameters?: boolean;
+    urlTooLong?: boolean;
+}
+/** Stable list for persistence and missing-field validation. */
+export const AUDIT_PAGE_CHECK_KEYS: (keyof AuditPageChecks)[] = [
+    'clientError', 'serverError', 'redirects', 'reachedThroughRedirectChain',
+    'metaRefreshRedirect', 'linksToRedirects', 'canonicalChain', 'canonicalToRedirect',
+    'canonicalToBroken', 'canonicalLoop', 'linkRelationConflict', 'orphan', 'insecureLinks',
+    'duplicateTitle', 'duplicateDescription', 'duplicateContent', 'placeholderText',
+    'lowTextRatio', 'lowReadability', 'irrelevantTitle', 'irrelevantDescription',
+    'titleTooLong', 'titleTooShort', 'missingDoctype', 'missingCharset', 'deprecatedTags',
+    'frames', 'flash', 'missingFavicon', 'duplicateMetaTags', 'imagesMissingAlt',
+    'slowLoad', 'slowServerResponse', 'largePage', 'veryLargePage', 'uncompressed',
+    'renderBlocking', 'urlHasUnusualCharacters', 'urlHasParameters', 'urlTooLong',
+];
 /**
  * The audited site's start page answers on another host (www <-> apex, or a
  * different domain), so every crawled URL and finding belongs to `to`.
@@ -151,13 +222,51 @@ export interface AuditResult {
     pages: AuditPage[];
     /** Absent = the crawl stayed on the site's own host (or it was not checked). */
     hostRedirect?: AuditHostRedirect;
+    duplicateGroups?: AuditDuplicateGroup[];
+    redirectChains?: AuditRedirectChain[];
+    resources?: AuditResource[];
+    resourceTotal?: number;
+    /** Absent on results produced before these measurements shipped. */
+    capabilities?: { resourceScan: boolean };
+    unavailableSignals?: { signal: AuditExtraSignal; cause: 'vendor-error' | 'budget' }[];
+    unverified?: { duplicateContent?: number; slowPages?: number };
+}
+export const AUDIT_EXTRA_SIGNALS = ['duplicate-tags', 'redirect-chains', 'duplicate-content',
+    'waterfall', 'resources'] as const;
+export type AuditExtraSignal = (typeof AUDIT_EXTRA_SIGNALS)[number];
+export interface AuditDuplicateGroup {
+    kind: 'title' | 'description' | 'content';
+    urls: string[];
+    similarity?: number;
+}
+export interface AuditRedirectChain {
+    from: string;
+    hops: RedirectHop[];
+    isLoop: boolean;
+}
+export const AUDIT_RESOURCE_TYPES = ['image', 'script', 'stylesheet', 'other'] as const;
+export type AuditResourceType = (typeof AUDIT_RESOURCE_TYPES)[number];
+export interface AuditResource {
+    url: string;
+    type: AuditResourceType;
+    statusCode: number | null;
+    sizeBytes?: number;
+    cacheable?: boolean;
+    isBroken: boolean;
+    usedOn: string[];
+    usedOnCount?: number;
+}
+/** Maximum resource observations retained per audit. */
+export const MAX_AUDIT_RESOURCES = 500;
+export interface AuditResultOptions {
+    resourceScan?: boolean;
 }
 export interface AuditProvider {
     startAudit(input: StartAuditInput): Promise<{
         vendorTaskId: string;
     }>;
     getAuditStatus(vendorTaskId: string): Promise<AuditStatus>;
-    getAuditResult(vendorTaskId: string): Promise<AuditResult>;
+    getAuditResult(vendorTaskId: string, options?: AuditResultOptions): Promise<AuditResult>;
 }
 // ---------------------------------------------------------------------------
 // Rank tracking

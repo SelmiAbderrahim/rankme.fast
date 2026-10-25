@@ -12,6 +12,8 @@ export const selectDeletingSiteId = (state: RootState) => state.sites.deletingId
 export const selectDeleteSiteError = (state: RootState) => state.sites.deleteError;
 export const selectRenamingSiteId = (state: RootState) => state.sites.renamingId;
 export const selectRenameSiteError = (state: RootState) => state.sites.renameError;
+export const selectMarketSavingSiteId = (state: RootState) => state.sites.marketSavingId;
+export const selectSiteMarketError = (state: RootState) => state.sites.marketError;
 export const selectPausingSiteId = (state: RootState) => state.sites.pausingId;
 export const selectPauseSiteError = (state: RootState) => state.sites.pauseError;
 export const selectSitesMessage = (state: RootState) => state.sites.message;

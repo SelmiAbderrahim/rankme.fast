@@ -41,6 +41,7 @@ import {
 } from '@shared/ui/table';
 import { TableHeaderHelp } from '@shared/ui/table-header-help';
 import { useAppDispatch, useAppSelector } from '@shared/hooks/redux';
+import { countryLabelFromAlpha3 } from '@shared/markets';
 import { contentAnalysisHref } from '@shared/navigation/contentIntelligenceHref';
 import {
   selectGoogleDetailRange,
@@ -177,7 +178,7 @@ const AnalyticsSection = ({ view, siteId }: { view: AnalyticsView; siteId: strin
   };
 
   const rowLabel = (key: string): string => {
-    if (dimension === 'country') return key.toUpperCase();
+    if (dimension === 'country') return countryLabelFromAlpha3(key, locale);
     if (dimension === 'device') {
       return t(`searchSummary.devices.${deviceLabelKey(key)}`);
     }

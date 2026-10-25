@@ -6,10 +6,11 @@
  * partial (mixed data), reconnect_required (CTA), failed (error).
  * Never merged with provider mention metrics.
  */
-import { useEffect } from 'react';
+import { useCallback, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
 import { ReportExportControl } from '@features/report-export';
 import { useAppDispatch, useAppSelector } from '@shared/hooks/redux';
+import { Button } from '@shared/ui/button';
 import { fetchGenerativeAppearance } from '../store/thunks';
 import {
   selectPulseGscAppearance,
@@ -36,9 +37,11 @@ export function GscGenerativeAppearanceCard({ siteId }: GscGenerativeAppearanceC
   const loading = useAppSelector(selectPulseGscLoading);
   const error = useAppSelector(selectPulseGscError);
 
-  useEffect(() => {
+  const load = useCallback(() => {
     void dispatch(fetchGenerativeAppearance({ siteId }));
   }, [dispatch, siteId]);
+
+  useEffect(() => { load(); }, [load]);
 
   return (
     <section
@@ -66,20 +69,34 @@ export function GscGenerativeAppearanceCard({ siteId }: GscGenerativeAppearanceC
           {t('gsc.loading')}
         </p>
       ) : error ? (
-        <p role="alert" className="text-destructive mt-3 text-sm">
-          {error.reconnectRequired ? t('errors.reconnectRequired') : t('errors.unexpected')}
-        </p>
+        error.reconnectRequired ? <p role="alert" className="text-destructive mt-3 text-sm">
+          {t('errors.reconnectRequired')}
+        </p> : <GscRetryableError loading={loading} onRetry={load} />
       ) : appearance ? (
-        <GscAppearanceContent appearance={appearance} />
+        <GscAppearanceContent appearance={appearance} loading={loading} onRetry={load} />
       ) : null}
     </section>
   );
 }
 
+function GscRetryableError({ loading, onRetry }: { loading: boolean; onRetry: () => void }) {
+  const { t } = useTranslation(['weeklyPulse', 'common']);
+  return <div className="mt-3 flex flex-wrap items-center gap-3" data-testid="gsc-error">
+    <p role="alert" className="text-destructive text-sm">{t('errors.unexpected')}</p>
+    <Button type="button" variant="outline" size="sm" loading={loading} onClick={onRetry}>
+      {t('common:retry')}
+    </Button>
+  </div>;
+}
+
 function GscAppearanceContent({
   appearance,
+  loading,
+  onRetry,
 }: {
   appearance: Appearance;
+  loading: boolean;
+  onRetry: () => void;
 }) {
   const { t } = useTranslation('weeklyPulse');
   const status = appearance.status;
@@ -92,11 +109,7 @@ function GscAppearanceContent({
     );
   }
   if (status === 'failed') {
-    return (
-      <p role="alert" className="text-destructive mt-3 text-sm">
-        {t('errors.unexpected')}
-      </p>
-    );
+    return <GscRetryableError loading={loading} onRetry={onRetry} />;
   }
   if (status === 'partial') {
     return (

@@ -41,7 +41,7 @@ export function buildBugReportHref({
   const locale = i18n.resolvedLanguage ?? i18n.language;
   const fields = {
     version: appVersion,
-    edition: 'cloud',
+    edition: 'self-hosted',
     stage: releaseStage(),
     route: isSafeRoutePattern(routePattern) ? routePattern : '/',
     browser: browserFamily(),

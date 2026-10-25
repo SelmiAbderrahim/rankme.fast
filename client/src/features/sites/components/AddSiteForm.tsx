@@ -17,7 +17,7 @@ import { buildAddSiteSchema, type AddSiteFormValues } from '../validation';
 import { addSite, loadSites } from '../store/thunks';
 import { selectAddSiteError, selectAddingSite } from '../store/selectors';
 
-export const AddSiteForm = () => {
+export const AddSiteForm = ({ variant = 'inline', onAdded }: { variant?: 'inline' | 'dialog'; onAdded?: () => void }) => {
   const { t } = useTranslation('sites');
   const dispatch = useAppDispatch();
   const adding = useAppSelector(selectAddingSite);
@@ -48,9 +48,39 @@ export const AddSiteForm = () => {
     if (addSite.fulfilled.match(result)) {
       reset();
       await dispatch(loadSites({ direction: 'initial' }));
+      onAdded?.();
     }
   });
 
+  const form = (
+    <form className="flex flex-col gap-4" onSubmit={onSubmit} noValidate>
+      <div className="flex flex-col gap-2">
+        <Label htmlFor="site-url">{t('urlLabel')}</Label>
+        <Input
+          id="site-url"
+          type="url"
+          inputMode="url"
+          placeholder={t('urlPlaceholder')}
+          autoComplete="url"
+          aria-invalid={!!urlError}
+          aria-describedby={urlError ? 'site-url-error' : undefined}
+          {...register('url')}
+        />
+        {urlError ? (
+          <p id="site-url-error" role="alert" className="text-destructive text-sm">
+            {urlError}
+          </p>
+        ) : null}
+      </div>
+      <div>
+        <Button type="submit" disabled={adding}>
+          {adding ? t('adding') : t('addSubmit')}
+        </Button>
+      </div>
+    </form>
+  );
+
+  if (variant === 'dialog') return form;
   return (
     <Card className="w-full max-w-md">
       <CardHeader>
@@ -58,31 +88,7 @@ export const AddSiteForm = () => {
         <CardDescription>{t('addDescription')}</CardDescription>
       </CardHeader>
       <CardContent>
-        <form className="flex flex-col gap-4" onSubmit={onSubmit} noValidate>
-          <div className="flex flex-col gap-2">
-            <Label htmlFor="site-url">{t('urlLabel')}</Label>
-            <Input
-              id="site-url"
-              type="url"
-              inputMode="url"
-              placeholder={t('urlPlaceholder')}
-              autoComplete="url"
-              aria-invalid={!!urlError}
-              aria-describedby={urlError ? 'site-url-error' : undefined}
-              {...register('url')}
-            />
-            {urlError ? (
-              <p id="site-url-error" role="alert" className="text-destructive text-sm">
-                {urlError}
-              </p>
-            ) : null}
-          </div>
-          <div>
-            <Button type="submit" disabled={adding}>
-              {adding ? t('adding') : t('addSubmit')}
-            </Button>
-          </div>
-        </form>
+        {form}
       </CardContent>
     </Card>
   );

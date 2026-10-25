@@ -140,19 +140,23 @@
     "timeseriesTableCaption_other": "Daily search performance for the last {{days}} days"
   },
   "analytics": {
-    "title": "Google Analytics (last {{days}} days)",
+    "title": "Google Analytics",
     "sessions": "Sessions",
     "activeUsers": "Active users",
     "engagedSessions": "Engaged sessions",
     "keyEvents": "Key events",
     "engagementRateLabel": "Engagement rate",
     "engagementRateLine": "Engagement rate: {{rate}}",
+    "windowNote": "Totals for {{start}} – {{end}}.",
     "previousPeriod": "Previous period — sessions: {{sessions}} · active users: {{activeUsers}}",
     "emptyTitle": "No analytics data yet",
     "empty": "No analytics data yet. Data appears shortly after your property is connected — try a refresh.",
     "error": "We couldn't load your analytics summary. Try again in a moment.",
     "refresh": "Refresh analytics data",
     "refreshError": "We couldn't refresh your analytics data. Try again in a moment.",
+    "staleTitle": "Analytics data is out of date",
+    "noRecentSessions": "No sessions recorded since {{date}}. Google Analytics was checked recently and reported no newer traffic.",
+    "dailyRange": "Daily totals for {{start}} – {{end}}.",
     "timeseriesTitle": "Sessions and active users over time",
     "timeseriesSubtitle_one": "Daily totals for the last {{days}} day.",
     "timeseriesChartLabel_one": "Daily {{metric}} for the last {{days}} day",
@@ -269,10 +273,78 @@
       "internalLinks": "Internal link suggestions use your Search Console queries to choose which pages matter. Connect Search Console for this site to get suggestions based on real searches."
     }
   },
-  "breakdown": {"other_zero": "Other ({{hidden}} more)",
+  "breakdown": {
+    "shareHeader": "{{metric}} · share of total",
+    "shareHeaderRows": "{{metric}} · share of this list",
+    "other_zero": "Other ({{hidden}} more)",
     "other_one": "Other ({{hidden}} more)",
     "other_two": "Other ({{hidden}} more)",
     "other_few": "Other ({{hidden}} more)",
     "other_many": "Other ({{hidden}} more)",
-    "other_other": "Other ({{hidden}} more)"}
+    "other_other": "Other ({{hidden}} more)",
+    "engagedRate": "{{rate}} engaged",
+    "ctrRate": "CTR {{rate}}",
+    "byImpressions": "No clicks in this period, so countries and devices show impressions."
+  },
+  "readiness": {
+    "gsc": {
+      "not_connected": {
+        "title": "Search Console isn't connected",
+        "body": "Connect your Google account to bring search clicks and impressions for <site>{{domain}}</site> into RankMeFast.",
+        "cta": "Connect Google"
+      },
+      "no_property": {
+        "title": "Choose a Search Console property",
+        "body": "Google is connected, but no Search Console property is selected for <site>{{domain}}</site> yet.",
+        "cta": "Select a Search Console property"
+      },
+      "property_mismatch": {
+        "title": "This property doesn't cover the site",
+        "body": "The Search Console property chosen for <site>{{domain}}</site> doesn't include the site's address. Pick one that does.",
+        "cta": "Select a Search Console property"
+      },
+      "error": {
+        "title": "Search Console can't be read right now",
+        "body": "Google refused the request for <site>{{domain}}</site>, or a permission is missing. Try again, and reconnect Google if it keeps happening.",
+        "cta": "Retry"
+      }
+    },
+    "ga4": {
+      "not_connected": {
+        "title": "Google Analytics isn't connected",
+        "body": "Connect your Google account to see visits and engagement for <site>{{domain}}</site>.",
+        "cta": "Connect Google"
+      },
+      "no_property": {
+        "title": "Choose a Google Analytics property",
+        "body": "Google is connected, but no Google Analytics property is selected for <site>{{domain}}</site> yet.",
+        "cta": "Select a Google Analytics property"
+      },
+      "property_mismatch": {
+        "title": "This property doesn't match the site",
+        "body": "The Google Analytics property chosen for <site>{{domain}}</site> tracks a different address. Pick the one for this site.",
+        "cta": "Select a Google Analytics property"
+      },
+      "error": {
+        "title": "Google Analytics can't be read right now",
+        "body": "Google refused the request for <site>{{domain}}</site>, or Analytics access is missing. Try again, and reconnect Google if it keeps happening.",
+        "cta": "Retry"
+      }
+    },
+    "matching": "We're looking for a matching property now."
+  },
+  "propertyPicker": {
+    "thisSite": "this site",
+    "noneFound": "No Search Console property found for {{domain}}. Add it in Search Console, then refresh this list.",
+    "openSearchConsole": "Open Search Console",
+    "newTab": "(opens in a new tab)",
+    "refresh": "Refresh",
+    "refreshing": "Refreshing…",
+    "linkDifferent": "Link a different property",
+    "differentHint": "These properties belong to other sites. Linking one shows its search data on {{domain}}.",
+    "otherLabel": "Property from a different site",
+    "confirmTitle": "Link {{site}} to {{property}}'s data?",
+    "confirmBody": "{{property}} is a different site. Its search data will show on {{site}} until you change the property. Property:",
+    "confirm": "Link anyway"
+  }
 }

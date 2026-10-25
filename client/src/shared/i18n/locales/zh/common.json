@@ -44,6 +44,7 @@
     "exports": "导出与分享",
     "security": "安全",
     "team": "团队",
+    "workspace": "工作区",
     "admin": "管理",
     "superadmin": "平台",
     "startFree": "免费开始",
@@ -75,28 +76,36 @@
       "sites": {
         "label": "站点",
         "description": "添加并管理您追踪的站点。",
-        "usage": "{{used}} / {{cap}} 站点"
+        "usage": "{{used}} / {{cap}} 站点",
+        "cta": "打开站点"
       },
       "ranks": {
         "label": "排名",
         "description": "追踪关键词的 SERP 位置。",
         "usage": "已追踪 {{used}} / {{cap}} 关键词",
-        "empty": "添加站点以开始追踪排名。"
+        "empty": "添加站点以开始追踪排名。",
+        "cta": "打开排名跟踪",
+        "pickCta": "选择站点以打开排名跟踪"
       },
       "keywordResearch": {
         "label": "关键词研究",
         "description": "查看搜索量、难度和相关关键词。",
-        "usage": "本月 {{used}} / {{cap}} 次查询"
+        "usage": "本月 {{used}} / {{cap}} 次查询",
+        "cta": "研究关键词"
       },
       "backlinks": {
         "label": "外链",
         "description": "查看第一个站点的外链概况。",
-        "usage": "本月 {{used}} / {{cap}} 行"
+        "usage": "本月 {{used}} / {{cap}} 行",
+        "cta": "查看外链",
+        "pickCta": "选择站点以查看外链"
       },
       "competitors": {
         "label": "竞争对手",
         "description": "查看谁在与您的第一个站点竞争。",
-        "usage": "Agency 套餐"
+        "usage": "Agency 套餐",
+        "cta": "查看竞争对手",
+        "pickCta": "选择站点以查看竞争对手"
       },
       "google": {
         "label": "Google Search Console",
@@ -111,13 +120,17 @@
       "profile": {
         "label": "个人资料",
         "description": "查看并更新账户资料。",
-        "usage": "账户设置"
+        "usage": "账户设置",
+        "cta": "打开个人资料"
       },
       "admin": {
         "label": "管理",
         "description": "访问管理员控制。",
         "usage": "管理员控制"
-      }
+      },
+      "pickSiteCta": "选择站点",
+      "pickSiteMenu": "活跃站点",
+      "pickSiteAll": "查看所有站点"
     },
     "usage": {},
     "loading": "正在加载仪表板…",
@@ -130,7 +143,11 @@
         "open_many": "{{n}} 项待处理",
         "open_other": "{{n}} 项待处理",
         "none": "没有待处理项",
-        "noneStale": "上次审核时无待办"
+        "noneStale": "上次审核时无待办",
+        "unavailable": {
+          "no_audit": "还没有审计。运行一次审计即可看到此项。",
+          "report_missing": "报告不可用。请运行一次新的审计。"
+        }
       },
       "showing_zero": "显示 {{shown}} 个，共 {{total}} 个活跃网站。",
       "showing_one": "显示 {{shown}} 个，共 {{total}} 个活跃网站。",
@@ -144,13 +161,26 @@
       "seeAll_few": "查看全部 {{total}} 个网站",
       "seeAll_many": "查看全部 {{total}} 个网站",
       "seeAll_other": "查看全部 {{total}} 个网站",
-      "paused": {"more_zero": "还有 {{n}} 个已暂停的网站未显示。",
+      "paused": {
+        "more_zero": "还有 {{n}} 个已暂停的网站未显示。",
         "more_one": "还有 {{n}} 个已暂停的网站未显示。",
         "more_two": "还有 {{n}} 个已暂停的网站未显示。",
         "more_few": "还有 {{n}} 个已暂停的网站未显示。",
         "more_many": "还有 {{n}} 个已暂停的网站未显示。",
-        "more_other": "还有 {{n}} 个已暂停的网站未显示。"},
-      "search": {"clicks_zero": "{{n}} 次点击",
+        "more_other": "还有 {{n}} 个已暂停的网站未显示。",
+        "title": "已暂停的网站（{{n}}）",
+        "explain": "已暂停的站点不会运行定期检查或审计。",
+        "since": "{{when}}暂停",
+        "resume": "恢复",
+        "resuming": "正在恢复…",
+        "resumeSite": "恢复 {{name}}",
+        "resumed": "{{domain}} 已恢复运行，计划中的检查将重新执行。",
+        "resumeFailed": "无法恢复该网站。",
+        "manage": "管理所有网站",
+        "ownerOnly": "请让工作区所有者来恢复已暂停的网站。"
+      },
+      "search": {
+        "clicks_zero": "{{n}} 次点击",
         "clicks_one": "{{n}} 次点击",
         "clicks_two": "{{n}} 次点击",
         "clicks_few": "{{n}} 次点击",
@@ -161,8 +191,20 @@
         "impressions_two": "{{n}} 次展示",
         "impressions_few": "{{n}} 次展示",
         "impressions_many": "{{n}} 次展示",
-        "impressions_other": "{{n}} 次展示"},
-      "rank": {"notCompared": {"failed_zero": "{{count}} 次检查失败",
+        "impressions_other": "{{n}} 次展示",
+        "clicksDelta": "与前 28 天相比的点击变化",
+        "impressionsDelta": "与前 28 天相比的展示变化",
+        "through": "截至 {{date}}，对比之前的 28 天",
+        "noPrevious": "截至 {{date}}。没有保存更早的时间段可供对比。",
+        "unavailable": {
+          "not_connected": "此网站尚未连接 Search Console。",
+          "reconnect_needed": "请重新连接 Search Console 以查看此项。",
+          "no_data_yet": "尚未保存 Search Console 数据。"
+        }
+      },
+      "rank": {
+        "notCompared": {
+          "failed_zero": "{{count}} 次检查失败",
           "failed_one": "{{count}} 次检查失败",
           "failed_two": "{{count}} 次检查失败",
           "failed_few": "{{count}} 次检查失败",
@@ -185,7 +227,63 @@
           "unranked_two": "{{count}} 个两次检查均未上榜",
           "unranked_few": "{{count}} 个两次检查均未上榜",
           "unranked_many": "{{count}} 个两次检查均未上榜",
-          "unranked_other": "{{count}} 个两次检查均未上榜"}}
+          "unranked_other": "{{count}} 个两次检查均未上榜",
+          "lead": "未比较：{{parts}}。"
+        },
+        "summary": "{{improved}} 个上升，{{declined}} 个下降，{{unchanged}} 个持平",
+        "compared": "已对比 {{compared}} / {{tracked}} 个关键词。",
+        "lastCheck": "上次检查：{{when}}。",
+        "unavailable": {
+          "no_keywords": "尚未追踪任何关键词。",
+          "no_checks": "正在等待第一次排名检查。",
+          "single_check": "需要再检查一次才能对比。"
+        }
+      },
+      "title": "网站健康",
+      "description": "活跃站点的已保存结果。打开此页面只会读取已存储的数据。",
+      "loading": "正在加载网站健康…",
+      "loadFailed": "无法加载网站健康。",
+      "stale": "已过期",
+      "notAvailable": "不可用：",
+      "asOf": "截至 {{date}}",
+      "allPaused": "你能看到的所有网站都已暂停，所以没有可衡量的内容。请在下方恢复一个网站以查看其健康状况。",
+      "empty": {
+        "body": "添加一个网站，即可在此查看它的审计、搜索和关键词健康状况。",
+        "cta": "添加网站"
+      },
+      "columns": {
+        "fixNow": "立即修复",
+        "lastAudit": "上次审计",
+        "search": "搜索，最近 28 天",
+        "keywords": "关键词变化"
+      },
+      "open": {
+        "actions": "打开修复列表",
+        "report": "打开报告",
+        "google": "打开 Search Console",
+        "keywords": "打开关键词"
+      },
+      "lastAudit": {
+        "never": "从未审计",
+        "status": {
+          "failed": "失败",
+          "unavailable": "不可用"
+        }
+      },
+      "staleSource": {
+        "audit": {
+          "label": "审核日期 {{date}}",
+          "hint": "此审核已超过 30 天。请运行新的审核以更新这些结果。"
+        },
+        "search": {
+          "label": "搜索数据截至 {{date}}",
+          "hint": "Search Console 报告会延迟几天，但这些数据比这还旧。"
+        },
+        "rank": {
+          "label": "排名检查截至 {{date}}",
+          "hint": "此网站的计划排名检查未按时运行。"
+        }
+      }
     }
   },
   "shell": {
@@ -355,6 +453,9 @@
   },
   "feedback": {
     "reportBug": "报告错误",
+    "chooseChannel": "选择报告错误的方式。",
+    "openIssues": "打开 GitHub 问题提交选项",
+    "emailSupport": "发送邮件给支持团队",
     "reportProblem": "报告此问题",
     "mailSubject": "错误报告 ({{version}})"
   },

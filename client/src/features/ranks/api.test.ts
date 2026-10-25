@@ -10,9 +10,16 @@ vi.mock('@shared/api/client', async () => {
 
 import {
   checkNowRequest,
+  fetchActiveRankJobRequest,
+  fetchRankJobRequest,
+  retryFailedRankJobRequest,
   fetchSerpFeatureDetailRequest,
   fetchSerpFeaturesRequest,
   createKeywordRequest,
+  createKeywordsBulkRequest,
+  fetchTrackedKeywordPhrasesRequest,
+  fetchKeywordMarketMoveRequest,
+  moveKeywordsToSiteMarketRequest,
   fetchKeywordHistoryRequest,
   fetchKeywordSuggestionsRequest,
   fetchKeywordsRequest,
@@ -55,6 +62,31 @@ describe('ranks api', () => {
     });
   });
 
+  it('reads a filtered page and the stored phrase inventory', async () => {
+    const signal = new AbortController().signal;
+    await fetchKeywordsRequest('site-1', null, { page: 2, pageSize: 50, search: 'red shoes', engine: 'bing', signal });
+    expect(apiClient).toHaveBeenCalledWith('/sites/site-1/keywords?page=2&pageSize=50&search=red%20shoes&engine=bing', { signal });
+    await fetchTrackedKeywordPhrasesRequest('site-1', signal);
+    expect(apiClient).toHaveBeenCalledWith('/sites/site-1/keywords/phrases', { signal });
+  });
+
+  it('POSTs a bounded bulk keyword request', async () => {
+    const body = { phrases: ['red shoes', 'blue shoes'], locationCode: 2840,
+      languageCode: 'en', device: 'desktop' as const, engine: 'google' as const };
+    await createKeywordsBulkRequest('site-1', body);
+    expect(apiClient).toHaveBeenCalledWith('/sites/site-1/keywords/bulk', { method: 'POST', body });
+  });
+
+  it('previews and confirms a site-scoped keyword market move', async () => {
+    const signal = new AbortController().signal;
+    await fetchKeywordMarketMoveRequest('site-1', signal);
+    expect(apiClient).toHaveBeenCalledWith('/sites/site-1/keywords/market-move', { signal });
+    await moveKeywordsToSiteMarketRequest('site-1', 'preview-token');
+    expect(apiClient).toHaveBeenCalledWith('/sites/site-1/keywords/market-move', {
+      method: 'POST', body: { token: 'preview-token' },
+    });
+  });
+
   it('POSTs site keyword discovery market input', async () => {
     const body = { locationCode: 2840, languageCode: 'en' };
     await fetchKeywordSuggestionsRequest('site-1', body);
@@ -73,6 +105,20 @@ describe('ranks api', () => {
     expect(apiClient).toHaveBeenCalledWith('/keywords/kw-1/check', {
       method: 'POST',
     });
+    await checkNowRequest('site-1', undefined, 'request-1');
+    expect(apiClient).toHaveBeenCalledWith('/sites/site-1/keywords/check', {
+      method: 'POST', headers: { 'Idempotency-Key': 'request-1' },
+    });
+  });
+
+  it('reads active and selected rank jobs and retries failed items', async () => {
+    const signal = new AbortController().signal;
+    await fetchActiveRankJobRequest('site-1', signal);
+    expect(apiClient).toHaveBeenCalledWith('/sites/site-1/rank-jobs/active', { signal });
+    await fetchRankJobRequest('site-1', 'job-1', signal);
+    expect(apiClient).toHaveBeenCalledWith('/sites/site-1/rank-jobs/job-1', { signal });
+    await retryFailedRankJobRequest('site-1', 'job-1');
+    expect(apiClient).toHaveBeenCalledWith('/sites/site-1/rank-jobs/job-1/retry-failed', { method: 'POST' });
   });
 
   it('DELETEs a keyword', async () => {

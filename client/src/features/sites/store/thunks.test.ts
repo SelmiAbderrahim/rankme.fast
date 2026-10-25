@@ -4,14 +4,16 @@ import { ApiError } from '@shared/api/client';
 import { initI18n } from '@shared/i18n';
 import * as api from '../api';
 import { sitesReducer } from './slice';
-import { addSite, loadSites, pauseSite, removeSite, renameSite, resumeSite } from './thunks';
+import { addSite, loadSites, pauseSite, removeSite, renameSite, resumeSite, updateSiteMarket } from './thunks';
 import type { Site } from '../types';
 
 vi.mock('../api', () => ({
   fetchSitesRequest: vi.fn(),
+  fetchSiteMarketRequest: vi.fn(),
   createSiteRequest: vi.fn(),
   deleteSiteRequest: vi.fn(),
   updateSiteRequest: vi.fn(),
+  updateSiteMarketRequest: vi.fn(),
   pauseSiteRequest: vi.fn(),
   resumeSiteRequest: vi.fn(),
 }));
@@ -144,6 +146,22 @@ describe('renameSite', () => {
     const store = makeStore();
     await store.dispatch(renameSite({ id: 's-1', displayName: 'X' }));
     expect(store.getState().sites.renameError).toBe('Could not update the site.');
+  });
+});
+
+describe('updateSiteMarket', () => {
+  it('saves the chosen market and updates the site row', async () => {
+    const market = { locationCode: 2276, languageCode: 'de', device: 'mobile' as const };
+    const updated = { ...site, defaultMarket: { ...market, source: 'owner' as const } };
+    mocked.updateSiteMarketRequest.mockResolvedValue({ site: updated, message: 'Site updated.' });
+    const store = makeStore();
+    store.dispatch({ type: 'sites/load/fulfilled', payload: { sites: [site], nextCursor: null }, meta: { arg: { direction: 'initial' } } });
+
+    const result = await store.dispatch(updateSiteMarket({ id: site.id, market }));
+
+    expect(updateSiteMarket.fulfilled.match(result)).toBe(true);
+    expect(mocked.updateSiteMarketRequest).toHaveBeenCalledWith(site.id, market);
+    expect(store.getState().sites.items[0]?.defaultMarket).toEqual(updated.defaultMarket);
   });
 });
 

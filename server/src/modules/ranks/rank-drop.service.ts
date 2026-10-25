@@ -14,6 +14,7 @@ import { translate, } from '../../shared/i18n/index.js';
 import { deliverRankDropEmail, resolveRecipientLocale } from '../communication/index.js';
 import { requestAutoAuditRerun } from '../audits/index.js';
 import { findUserById } from '../users/index.js';
+import { classifyRankMovement } from './rank-movement.classify.js';
 /** Falling out of the top bucket is always a drop (`prev ≤ 10 && cur > 10`). */
 export const RANK_DROP_TOP_BUCKET = 10;
 /** Any fall of at least this many positions is a drop. */
@@ -27,13 +28,12 @@ export const RANK_DROP_MIN_DELTA = 5;
  *  - rise / small wobble → no drop
  */
 export function detectRankDrop(previous: number | null, current: number | null): boolean {
-    if (previous === null)
-        return false;
-    if (current === null)
-        return true;
+    const movement = classifyRankMovement({ position: previous }, { position: current });
+    if (movement.kind === 'dropped') return true;
+    if (movement.kind !== 'declined' || previous === null || current === null) return false;
     if (previous <= RANK_DROP_TOP_BUCKET && current > RANK_DROP_TOP_BUCKET)
         return true;
-    return current - previous >= RANK_DROP_MIN_DELTA;
+    return (movement.amount ?? 0) >= RANK_DROP_MIN_DELTA;
 }
 export interface RankDropEvent {
     accountId: string;

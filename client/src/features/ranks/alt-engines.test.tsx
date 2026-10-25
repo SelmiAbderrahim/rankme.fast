@@ -39,8 +39,13 @@ vi.mock('@shared/markets', async (importOriginal) => ({
 }));
 
 vi.mock('./api', () => ({
+  fetchKeywordMarketMoveRequest: vi.fn(async () => ({ preview: { target: { locationCode: 2840, languageCode: 'en', device: 'desktop' }, tracked: 0, inTarget: 0, movable: 0, alreadyTracked: 0, withHistory: 0, resumesHistory: 0, token: 'token' } })),
+  moveKeywordsToSiteMarketRequest: vi.fn(),
   fetchKeywordsRequest: vi.fn(),
   createKeywordRequest: vi.fn(),
+  createKeywordsBulkRequest: vi.fn(),
+  fetchTrackedKeywordPhrasesRequest: vi.fn(),
+  fetchActiveRankJobRequest: vi.fn(),
   removeKeywordRequest: vi.fn(),
   updateCadenceRequest: vi.fn(),
   fetchKeywordHistoryRequest: vi.fn(),
@@ -122,6 +127,8 @@ beforeEach(async () => {
     error: false,
   };
   mocked.previewAltEngineKeywordRequest.mockResolvedValue(previewFor());
+  mocked.fetchTrackedKeywordPhrasesRequest.mockResolvedValue({ keywords: [] });
+  mocked.fetchActiveRankJobRequest.mockResolvedValue({ job: null });
 });
 
 describe('AddKeywordForm — engine picker', () => {
@@ -580,7 +587,7 @@ describe('KeywordsPanel — URL-backed engine filter', () => {
     expect(mocked.fetchKeywordsRequest).toHaveBeenCalledWith(
       'site-1',
       undefined,
-      { engine: 'bing' },
+      { page: 1, pageSize: 25, engine: 'bing' },
     );
   });
 

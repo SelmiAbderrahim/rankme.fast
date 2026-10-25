@@ -17,6 +17,7 @@ export const AUDIT_ACTIONS = [
     'report_export.expired',
     'report_export.purged',
     'keyword.add',
+    'keyword.market_move',
     'keyword.remove',
     'google.connect',
     'google.set_property',

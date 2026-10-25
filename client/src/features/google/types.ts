@@ -1,4 +1,7 @@
 export type GoogleConnectionStatus = 'connected' | 'needs_reconnect' | 'revoked';
+export type GoogleReadinessStatus = 'not_connected' | 'no_property' | 'property_mismatch' | 'error' | 'ok';
+export interface GoogleProductReadiness { status: GoogleReadinessStatus; matching: boolean }
+export interface SiteGoogleReadiness { gsc: GoogleProductReadiness; ga4: GoogleProductReadiness }
 
 /** Date-range window shared by the summary cards and the drill-in panel (`?range=`). */
 export type GoogleRange = '7d' | '28d' | '90d';
@@ -35,6 +38,7 @@ export interface GoogleResourceUsage {
 }
 
 export interface SiteGoogleConfiguration {
+  readiness?: SiteGoogleReadiness;
   connection: Omit<GoogleConnection, 'propertyUrl' | 'ga4PropertyId' | 'ga4PropertyDisplayName'> | null;
   connectedSiteCount: number;
   gsc: {
@@ -60,26 +64,31 @@ export interface SiteGoogleConfiguration {
 export interface GscProperty {
   siteUrl: string;
   permissionLevel: string;
+  matchesSite?: boolean;
   inUseBy?: GoogleResourceUsage[];
 }
 
 export interface GetGoogleConnectionResponse {
   connection: GoogleConnection | null;
+  readiness?: SiteGoogleReadiness;
   /** Present only when connected and the properties fetch succeeded. */
   properties?: GscProperty[];
 }
 
 export interface CompleteGoogleConnectionResponse {
   connection: GoogleConnection;
+  readiness?: SiteGoogleReadiness;
 }
 
 export interface SetGooglePropertyBody {
   propertyUrl?: string | null;
   ga4PropertyId?: string | null;
+  confirmMismatch?: boolean;
 }
 
 export interface SetGooglePropertyResponse {
   connection: GoogleConnection;
+  readiness?: SiteGoogleReadiness;
 }
 
 export interface CompleteGoogleConnectionBody {
@@ -93,6 +102,7 @@ export interface CompleteGoogleConnectionBody {
 export interface DisconnectGoogleResponse {
   message: string;
   connection: GoogleConnection | null;
+  readiness?: SiteGoogleReadiness;
 }
 
 export interface RevokeGoogleResponse {
@@ -163,6 +173,12 @@ export interface GoogleSearchSummary {
   countries?: GscSummaryCountryRow[];
   /** Per-device breakdown. Optional (see `timeseries`). */
   devices?: GscSummaryDeviceRow[];
+  /** Full stored totals for each dimension, including rows outside the top list. */
+  dimensionTotals?: Partial<Record<'query' | 'page' | 'country' | 'device', {
+    rows: number;
+    clicks: number;
+    impressions: number;
+  }>>;
 }
 
 export interface GetSearchSummaryResponse {
@@ -285,6 +301,12 @@ export interface GoogleAnalyticsSummary {
   devices: GoogleAnalyticsDeviceRow[];
   /** ISO date the snapshot was taken. */
   asOf: string;
+  freshness?: {
+    expectedAsOf: string;
+    stale: boolean;
+    noRecentSessions?: boolean;
+    lastSyncedAt?: string | null;
+  };
   previousPeriod: GoogleAnalyticsPreviousPeriod | null;
 }
 
@@ -351,6 +373,7 @@ export interface GoogleAnalyticsState {
 
 export interface GoogleConnectionState {
   connection: GoogleConnection | null;
+  readiness: SiteGoogleReadiness | null;
   /** Site owning the loaded configuration; prevents cross-site reuse. */
   connectionSiteId: string | null;
   properties: GscProperty[];

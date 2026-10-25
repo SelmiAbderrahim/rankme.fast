@@ -15,6 +15,7 @@ import {
   ranksSurfaceHref,
 } from './components/KeywordClustersPage';
 import { NewRunPanel } from './components/NewRunPanel';
+import { EligibilityBanner } from './components/EligibilityBanner';
 import { RunList } from './components/RunList';
 import { StateNotice, type KeywordClusterNoticeKind } from './components/StateNotice';
 import { keywordClusterGate } from './gate';
@@ -518,10 +519,40 @@ describe('NewRunPanel', () => {
       />,
     );
     expect(
-      screen.getByTestId('keyword-clusters-state-notEnoughKeywords'),
+      screen.getByTestId('keyword-clusters-eligibility-banner'),
     ).toBeInTheDocument();
+    expect(screen.getByTestId('keyword-clusters-eligibility-counts')).toHaveTextContent(
+      '1 of 4 keywords needs a fresh rank check',
+    );
+    expect(screen.getAllByRole('link', { name: 'Run a rank check' })).toHaveLength(1);
     await user.click(screen.getByRole('button', { name: /could not take part/i }));
     expect(screen.getByText('never checked')).toBeInTheDocument();
+  });
+
+  it('uses full reason counts when the blocked keyword list is only a sample', () => {
+    renderWithI18n(<NewRunPanel {...props} preview={readyPreview({
+      ready: false, reason: 'notEnoughKeywords', blockedTotal: 25,
+      reasonCounts: { missing: 10, stale: 10, empty: 5 },
+    })} />);
+    expect(screen.getByTestId('keyword-clusters-eligibility-counts')).toHaveTextContent('25 of 28');
+    expect(screen.getByTestId('keyword-clusters-eligibility-reasons')).toHaveTextContent('Never checked: 10');
+    expect(screen.getByTestId('keyword-clusters-eligibility-reasons')).toHaveTextContent('Check too old: 10');
+    expect(screen.getByTestId('keyword-clusters-eligibility-reasons')).toHaveTextContent('No stored results: 5');
+    expect(screen.getByTestId('keyword-clusters-eligibility-snapshot-note')).toHaveTextContent('full results page');
+  });
+
+  it('does not infer reason counts from a capped blocked sample', () => {
+    renderWithI18n(<EligibilityBanner preview={readyPreview({
+      ready: false, reason: 'notEnoughKeywords', blockedTotal: 25,
+    })} />);
+    expect(screen.getByTestId('keyword-clusters-eligibility-counts')).toHaveTextContent('25 of 28');
+    expect(screen.queryByTestId('keyword-clusters-eligibility-reasons')).toBeNull();
+    expect(screen.queryByTestId('keyword-clusters-run-rank-check')).toBeNull();
+  });
+
+  it('does not show a blocked banner when the preview can run', () => {
+    const view = renderWithI18n(<EligibilityBanner preview={readyPreview()} />);
+    expect(view.container).toBeEmptyDOMElement();
   });
 
   it('discloses the scope and method before confirmation', () => {

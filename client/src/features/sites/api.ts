@@ -1,4 +1,6 @@
 import { apiClient } from '@shared/api/client';
+import type { SiteSummaryRow } from '@features/dashboard/types';
+import type { MarketChoice, ResolvedSiteMarket } from '@shared/markets';
 import type {
   CreateSiteResponse,
   GetSiteResponse,
@@ -22,6 +24,9 @@ export const fetchSitesRequest = (
     : apiClient<SiteListPage>(`/sites${query}`, { signal });
 };
 
+export const fetchSiteSummariesRequest = (ids: readonly string[]): Promise<{ summaries: SiteSummaryRow[] }> =>
+  apiClient<{ summaries: SiteSummaryRow[] }>(`/dashboard/site-summaries?ids=${encodeURIComponent(ids.join(','))}`);
+
 export const fetchSiteRequest = (id: string): Promise<GetSiteResponse> =>
   apiClient<GetSiteResponse>(`/sites/${encodeURIComponent(id)}`);
 
@@ -42,6 +47,15 @@ export const updateSiteRequest = (
     method: 'PATCH',
     body: { displayName },
   });
+
+export const updateSiteMarketRequest = (id: string, market: MarketChoice): Promise<UpdateSiteResponse> =>
+  apiClient<UpdateSiteResponse>(`/sites/${encodeURIComponent(id)}`, {
+    method: 'PATCH', body: { defaultMarket: market },
+  });
+
+export const fetchSiteMarketRequest = (id: string, signal?: AbortSignal): Promise<{
+  market: ResolvedSiteMarket & { countryCode: string | null };
+}> => apiClient(`/sites/${encodeURIComponent(id)}/market`, signal ? { signal } : {});
 
 export const pauseSiteRequest = (id: string): Promise<PauseSiteResponse> =>
   apiClient<PauseSiteResponse>(`/sites/${id}/pause`, { method: 'POST' });

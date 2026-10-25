@@ -93,67 +93,17 @@ describe('job payload schemas', () => {
     })).toThrow(ZodError);
   });
 
-  it('accepts only a bounded manual alt-engine reservation descriptor', () => {
-    const altEngineReservation = {
-      batchKey: 'manual-1234',
-      keywordIds: ['00000000-0000-4000-8000-000000000001'],
-    };
-    expect(
-      rankJobSchema.parse({ ...validRank, manual: true, altEngineReservation }),
-    ).toMatchObject({ manual: true, altEngineReservation });
-    expect(() =>
-      rankJobSchema.parse({ ...validRank, altEngineReservation }),
-    ).toThrow(ZodError);
-    expect(() =>
-      rankJobSchema.parse({
-        ...validRank,
-        manual: true,
-        altEngineReservation: { ...altEngineReservation, keywordIds: [] },
-      }),
-    ).toThrow(ZodError);
-    expect(() =>
-      rankJobSchema.parse({
-        ...validRank,
-        manual: true,
-        altEngineReservation: {
-          ...altEngineReservation,
-          keywordIds: ['not-a-uuid'],
-        },
-      }),
-    ).toThrow(ZodError);
-  });
-
-  it('accepts only a matching single-keyword SERP reservation', () => {
-    const keywordId = uuid(4);
-    const serpReservation = { batchKey: 'manual-1234', keywordId, units: 2 };
-    expect(
-      rankJobSchema.parse({
-        ...validRank,
-        keywordIds: [keywordId],
-        manual: true,
-        serpReservation,
-      }),
-    ).toMatchObject({ keywordIds: [keywordId], serpReservation });
-    expect(() =>
-      rankJobSchema.parse({ ...validRank, keywordIds: [keywordId], serpReservation }),
-    ).toThrow(ZodError);
-    expect(() =>
-      rankJobSchema.parse({
-        ...validRank,
-        keywordIds: [uuid(5)],
-        manual: true,
-        serpReservation,
-      }),
-    ).toThrow(ZodError);
-    expect(() =>
-      rankJobSchema.parse({
-        ...validRank,
-        keywordIds: [keywordId],
-        manual: true,
-        serpReservation,
-        altEngineReservation: { batchKey: 'manual-1234', keywordIds: [keywordId] },
-      }),
-    ).toThrow(/mutually exclusive/);
+  it('rejects obsolete reservation descriptors at the queue boundary', () => {
+    expect(() => rankJobSchema.parse({
+      ...validRank,
+      manual: true,
+      serpReservation: { batchKey: 'manual-1234', keywordId: uuid(4), units: 2 },
+    })).toThrow(ZodError);
+    expect(() => rankJobSchema.parse({
+      ...validRank,
+      manual: true,
+      altEngineReservation: { batchKey: 'manual-1234', keywordIds: [uuid(4)] },
+    })).toThrow(ZodError);
   });
 
   it('rejects non-hex ids', () => {

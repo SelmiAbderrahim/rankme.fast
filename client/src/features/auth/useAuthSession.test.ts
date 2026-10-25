@@ -16,6 +16,8 @@ describe('useAuthSession', () => {
     const { result } = renderHook(() => useAuthSession());
     expect(result.current).toEqual({
       authenticated: false,
+      isUnavailable: false,
+      isRefetching: false,
       isPending: true,
       emailVerified: false,
       mustChangePassword: false,
@@ -38,6 +40,8 @@ describe('useAuthSession', () => {
     const { result } = renderHook(() => useAuthSession());
     expect(result.current).toEqual({
       authenticated: true,
+      isUnavailable: false,
+      isRefetching: false,
       isPending: false,
       emailVerified: true,
       mustChangePassword: false,
@@ -52,5 +56,12 @@ describe('useAuthSession', () => {
     useSession.mockReturnValue({ data: { user }, isPending: false });
     const { result } = renderHook(() => useAuthSession());
     expect(result.current.emailVerified).toBe(false);
+  });
+
+  it('distinguishes a failed session read from a confirmed anonymous session', () => {
+    useSession.mockReturnValue({ data: null, isPending: false, error: { status: 503 } });
+    expect(renderHook(() => useAuthSession()).result.current.isUnavailable).toBe(true);
+    useSession.mockReturnValue({ data: null, isPending: false, error: { status: 401 } });
+    expect(renderHook(() => useAuthSession()).result.current.isUnavailable).toBe(false);
   });
 });

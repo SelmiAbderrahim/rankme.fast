@@ -19,6 +19,7 @@ import type { TeamRole } from '@features/team';
 export const OWNER_ONLY_ROUTES = [
   '/settings/api-keys',
   '/settings/mcp',
+  '/settings/workspace',
 ] as const;
 
 /** Team management is admin+; a plain member has no business on this page. */

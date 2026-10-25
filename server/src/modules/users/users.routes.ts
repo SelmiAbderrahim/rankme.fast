@@ -1,10 +1,12 @@
 import { Router } from 'express';
 import { requireAuth } from '../../shared/middleware/require-auth.js';
 import { requireWorkspaceOwner } from '../../shared/middleware/require-team-role.js';
-import { getBrandingHandler, getLanguagePreferenceHandler, getNotificationPreferences, patchLanguagePreferenceHandler, patchNotificationPreferences, putBrandingHandler, viewProfile, } from './users.controller.js';
+import { dismissTwoFactorRecommendationHandler, getBrandingHandler, getLanguagePreferenceHandler, getNotificationPreferences, getTwoFactorRecommendationHandler, patchLanguagePreferenceHandler, patchNotificationPreferences, putBrandingHandler, viewProfile, } from './users.controller.js';
 export const usersRouter: Router = Router();
 usersRouter.get('/preferences/language', requireAuth, getLanguagePreferenceHandler);
 usersRouter.patch('/preferences/language', requireAuth, patchLanguagePreferenceHandler);
+usersRouter.get('/preferences/two-factor-recommendation', requireAuth, getTwoFactorRecommendationHandler);
+usersRouter.put('/preferences/two-factor-recommendation', requireAuth, dismissTwoFactorRecommendationHandler);
 // Notification preferences. Mounted BEFORE `/:userId` so the
 // literal `notifications` segment is never consumed by the id route.
 usersRouter.get('/notifications', requireAuth, getNotificationPreferences);

@@ -33,6 +33,8 @@ export interface KeywordClusterPreview {
   readyCount: number;
   blocked: KeywordClusterBlocked[];
   blockedTotal: number;
+  /** Counts from all blocked keywords, including rows omitted from the sample below. */
+  reasonCounts?: Record<KeywordClusterBlockReason, number>;
   minSharedUrls: number;
   topUrlWindow: number;
   freshnessDays: number;

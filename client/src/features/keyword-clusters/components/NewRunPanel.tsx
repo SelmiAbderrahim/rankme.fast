@@ -12,6 +12,7 @@ import {
 import { Separator } from '@shared/ui/separator';
 import type { KeywordClusterPreview, KeywordClusterUiState } from '../types';
 import { BlockedKeywords } from './BlockedKeywords';
+import { EligibilityBanner } from './EligibilityBanner';
 import { StateNotice } from './StateNotice';
 
 interface NewRunPanelProps {
@@ -42,11 +43,10 @@ export const NewRunPanel = ({
   if (preview && !preview.ready) {
     return (
       <div className="space-y-4">
-        <StateNotice kind="notEnoughKeywords" ranksHref={ranksHref} />
+        <EligibilityBanner preview={preview} ranksHref={ranksHref} />
         <BlockedKeywords
           blocked={preview.blocked}
           total={preview.blockedTotal}
-          ranksHref={ranksHref}
         />
       </div>
     );

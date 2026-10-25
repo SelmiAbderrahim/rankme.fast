@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { Bell } from 'lucide-react';
+import { UserPlus } from 'lucide-react';
 import { loadWorkspaces } from '@features/workspace';
 import { useAppDispatch, useAppSelector } from '@shared/hooks/redux';
 import { Alert, AlertDescription } from '@shared/ui/alert';
@@ -27,6 +27,7 @@ import {
   SheetTrigger,
 } from '@shared/ui/sheet';
 import { Skeleton } from '@shared/ui/skeleton';
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@shared/ui/tooltip';
 import {
   INBOX_MAX_AGE_MS,
   acceptPendingInvitation,
@@ -51,7 +52,7 @@ export const InvitationInbox = () => {
   const [open, setOpen] = useState(false);
   const [pendingReject, setPendingReject] = useState<PendingInvitation | null>(null);
 
-  // The bell badge needs a count without the drawer open, but not a poll: one
+  // The invitation badge needs a count without the drawer open, but not a poll: one
   // load on mount plus a refresh when the tab regains focus, both skipped
   // while the loaded list is under INBOX_MAX_AGE_MS old. Opening the drawer
   // always refreshes (below).
@@ -85,24 +86,30 @@ export const InvitationInbox = () => {
         setOpen(next);
         if (next) void dispatch(loadPendingInvitations());
       }}>
-        <SheetTrigger asChild>
-          <Button
-            variant="ghost"
-            size="icon"
-            className="relative"
-            title={t('inbox.buttonLabel')}
-            aria-label={count > 0
-              ? t('inbox.buttonLabelWithCount', { count })
-              : t('inbox.buttonLabel')}
-          >
-            <Bell />
-            {count > 0 ? (
-              <Badge aria-hidden="true" className="absolute -end-2 -top-2 min-w-5 px-1">
-                {count > 99 ? '99+' : count}
-              </Badge>
-            ) : null}
-          </Button>
-        </SheetTrigger>
+        <TooltipProvider>
+          <Tooltip>
+            <TooltipTrigger asChild>
+              <SheetTrigger asChild>
+                <Button
+                  variant="ghost"
+                  size="icon"
+                  className="relative"
+                  aria-label={count > 0
+                    ? t('inbox.buttonLabelWithCount', { count })
+                    : t('inbox.buttonLabel')}
+                >
+                  <UserPlus aria-hidden="true" />
+                  {count > 0 ? (
+                    <Badge aria-hidden="true" className="absolute -end-2 -top-2 min-w-5 px-1">
+                      {count > 99 ? '99+' : count}
+                    </Badge>
+                  ) : null}
+                </Button>
+              </SheetTrigger>
+            </TooltipTrigger>
+            <TooltipContent side="bottom">{t('inbox.buttonLabel')}</TooltipContent>
+          </Tooltip>
+        </TooltipProvider>
         <SheetContent side={i18n.dir() === 'rtl' ? 'left' : 'right'} className="sm:max-w-md">
           <SheetHeader>
             <SheetTitle>{t('inbox.title')}</SheetTitle>

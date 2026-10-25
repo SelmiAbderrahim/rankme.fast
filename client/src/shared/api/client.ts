@@ -82,6 +82,7 @@ const ACTOR_SCOPED_PATH_PREFIXES = [
   '/team/reject/',
   '/security/',
   '/users/preferences/language',
+  '/users/preferences/two-factor-recommendation',
   '/report-shares/',
   '/client-portal/',
   '/_docs-data/',

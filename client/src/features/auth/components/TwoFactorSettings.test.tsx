@@ -81,6 +81,9 @@ describe('TwoFactorSettings', () => {
       'Enter your current password to continue.',
     );
     expect(enable).not.toHaveBeenCalled();
+    const input = screen.getByLabelText('Confirm your password');
+    expect(input).toHaveAttribute('aria-describedby', 'two-factor-enrol-password-error');
+    expect(screen.getByText('Enter your current password to continue.')).toHaveAttribute('id', 'two-factor-enrol-password-error');
   });
 
   it('renders the QR + secret + backup codes after a successful enrol call', async () => {

@@ -1,0 +1,41 @@
+{
+  "version": "0.1.20261001",
+  "status_code": 20000,
+  "status_message": "Ok.",
+  "time": "0.0410 sec.",
+  "cost": 0,
+  "tasks_count": 1,
+  "tasks_error": 0,
+  "tasks": [
+    {
+      "id": "TASK_ID",
+      "status_code": 20000,
+      "status_message": "Ok.",
+      "time": "0.0302 sec.",
+      "cost": 0,
+      "result_count": 1,
+      "path": [
+        "v3",
+        "on_page",
+        "duplicate_content"
+      ],
+      "data": {
+        "api": "on_page",
+        "function": "duplicate_content",
+        "url": "https://example.com/"
+      },
+      "result": [
+        {
+          "crawl_progress": "finished",
+          "crawl_status": {
+            "max_crawl_pages": 100,
+            "pages_in_queue": 0,
+            "pages_crawled": 7
+          },
+          "items_count": 0,
+          "items": []
+        }
+      ]
+    }
+  ]
+}

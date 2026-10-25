@@ -85,6 +85,7 @@ const hasPendingMatch = (connection: GoogleConnection | null): boolean =>
 
 const initialState: GoogleConnectionState = {
   connection: null,
+  readiness: null,
   connectionSiteId: null,
   properties: [],
   loading: false,
@@ -139,6 +140,7 @@ const googleSlice = createSlice({
       .addCase(loadConnection.pending, (state, action) => {
         if (state.connectionSiteId !== action.meta.arg) {
           state.connection = null;
+          state.readiness = null;
           state.properties = [];
           state.loaded = false;
           state.analytics.properties = [];
@@ -154,6 +156,7 @@ const googleSlice = createSlice({
         state.loading = false;
         state.loaded = true;
         state.connection = action.payload.connection;
+        state.readiness = action.payload.readiness ?? null;
         state.properties = action.payload.properties ?? [];
       })
       .addCase(loadConnection.rejected, (state, action) => {
@@ -166,6 +169,7 @@ const googleSlice = createSlice({
         if (state.connectionSiteId !== action.meta.arg) return;
         const wasPending = hasPendingMatch(state.connection);
         state.connection = action.payload.connection;
+        state.readiness = action.payload.readiness ?? state.readiness;
         // The lightweight poll deliberately skips live resource lists. Once
         // matching reaches a terminal state, trigger one ordinary load so the
         // Site picker immediately contains every accessible reusable resource.
@@ -183,6 +187,7 @@ const googleSlice = createSlice({
         if (state.connectionSiteId !== action.meta.arg.siteId) return;
         state.connecting = false;
         state.connection = action.payload.connection;
+        state.readiness = action.payload.readiness ?? state.readiness;
         // A (re)link may have just granted the GA4 scope — refetch both the
         // analytics summary and the accessible GA4 resource list.
         invalidateAnalyticsSummary(state.analytics);
@@ -204,6 +209,7 @@ const googleSlice = createSlice({
         if (state.connectionSiteId !== action.meta.arg.siteId) return;
         state.settingProperty = false;
         state.connection = action.payload.connection;
+        state.readiness = action.payload.readiness ?? state.readiness;
       })
       .addCase(setGoogleProperty.rejected, (state, action) => {
         state.settingProperty = false;
@@ -219,6 +225,7 @@ const googleSlice = createSlice({
         if (state.connectionSiteId !== action.meta.arg) return;
         state.disconnecting = false;
         state.connection = action.payload.connection;
+        state.readiness = action.payload.readiness ?? state.readiness;
         state.message = action.payload.message;
       })
       .addCase(disconnectGoogle.rejected, (state, action) => {
@@ -235,6 +242,7 @@ const googleSlice = createSlice({
         if (state.connectionSiteId !== action.meta.arg) return;
         state.revoking = false;
         state.connection = null;
+        state.readiness = null;
         state.properties = [];
         state.analytics = initialAnalytics();
       })

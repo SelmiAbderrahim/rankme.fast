@@ -1,6 +1,11 @@
 import type { RootState } from '@app/store';
 
 export const selectKeywords = (state: RootState) => state.ranks.items;
+export const selectKeywordPage = (state: RootState) => state.ranks.page;
+export const selectKeywordPageSize = (state: RootState) => state.ranks.pageSize;
+export const selectKeywordTotal = (state: RootState) => state.ranks.total;
+export const selectKeywordSiteTotal = (state: RootState) => state.ranks.siteTotal;
+export const selectKeywordLoadedQuery = (state: RootState) => state.ranks.loadedQuery;
 export const selectRanksSiteId = (state: RootState) => state.ranks.siteId;
 export const selectRanksLoading = (state: RootState) => state.ranks.loading;
 export const selectRanksLoaded = (state: RootState) => state.ranks.loaded;

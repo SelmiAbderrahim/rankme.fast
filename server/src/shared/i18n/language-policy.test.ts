@@ -47,6 +47,10 @@ const EXACT_EXCLUSIONS = {
       path: 'shared/api/client.ts',
       reason: 'This is the canonical fetch choke point that creates the shared context headers.',
     },
+    {
+      path: 'features/auth/sessionTransport.ts',
+      reason: 'This Better Auth session-only transport receives requests with the auth client context already attached.',
+    },
   ],
   clientApiEnvironment: [
     {
@@ -275,9 +279,16 @@ function clientEnglishResources(): ClientResourceIndex {
 function resolveClientTemplates(key: string, resources: ClientResourceIndex): string[] {
   if (key.includes(':')) {
     const exact = resources.qualified.get(key);
-    return exact === undefined ? [] : [exact];
+    if (exact !== undefined) return [exact];
+    const one = resources.qualified.get(`${key}_one`);
+    const other = resources.qualified.get(`${key}_other`);
+    return one !== undefined && other !== undefined ? [one, other] : [];
   }
-  return resources.unqualified.get(key) ?? [];
+  const exact = resources.unqualified.get(key);
+  if (exact) return exact;
+  const one = resources.unqualified.get(`${key}_one`);
+  const other = resources.unqualified.get(`${key}_other`);
+  return one && other ? [...one, ...other] : [];
 }
 
 function scanClientSource(
@@ -420,5 +431,7 @@ describe('repository language policy', () => {
     expect(scanClientSource('features/example/api.ts', "const h = 'x-lang';", resources)).not.toEqual([]);
     expect(scanClientSource('features/example/api.ts', "const u = import.meta.env.VITE_API_BASE_URL;", resources)).not.toEqual([]);
     expect(scanClientSource('features/example/View.tsx', "t('missing.key');", resources)).not.toEqual([]);
+    expect(scanClientSource('features/example/View.tsx', "t('keywordResearch:selectionCount', { count: 2, max: 5 });", resources)).toEqual([]);
+    expect(scanClientSource('features/example/View.tsx', "t('keywordResearch:selectionCount');", resources)).not.toEqual([]);
   });
 });

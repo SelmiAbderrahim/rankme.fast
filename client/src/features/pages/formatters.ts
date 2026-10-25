@@ -1,4 +1,6 @@
 import type { PageMetrics, PagesRange } from './types';
+import { formatAbsoluteDate } from '@shared/lib/datetime';
+import { formatMetricValue } from '@shared/lib/metricValue';
 
 export type PagesMetricKey = Exclude<keyof PageMetrics, 'associatedQueryCount'>;
 
@@ -29,10 +31,7 @@ export function formatPagesPercent(locale: string, value: number | null): string
 }
 
 export function formatPagesPosition(locale: string, value: number | null): string | null {
-  return formatPagesNumber(locale, value, {
-    minimumFractionDigits: 0,
-    maximumFractionDigits: 1,
-  });
+  return formatMetricValue('position', value, locale);
 }
 
 export function formatPagesDate(locale: string, value: string | null): string | null {
@@ -43,6 +42,19 @@ export function formatPagesDate(locale: string, value: string | null): string | 
     dateStyle: 'medium',
     timeStyle: 'short',
   }).format(date);
+}
+
+export function formatPagesDay(locale: string, day: string): string {
+  return formatAbsoluteDate(day, locale);
+}
+
+export function pagesPathLabel(displayUrl: string): string {
+  const slash = displayUrl.indexOf('/');
+  return slash > 0 ? displayUrl.slice(slash) : displayUrl;
+}
+
+export function pagesRowName(row: { title: string | null; displayUrl: string }): string {
+  return row.title || pagesPathLabel(row.displayUrl);
 }
 
 export function rangeDays(range: PagesRange): number {
@@ -57,7 +69,7 @@ export function formatPagesMetric(
   value: number | null,
 ): string | null {
   if (key === 'ctr') return formatPagesPercent(locale, value);
-  if (key === 'averagePosition' || key === 'bestPosition' || key === 'difficulty') {
+  if (key === 'averagePosition' || key === 'bestPosition') {
     return formatPagesPosition(locale, value);
   }
   return formatPagesNumber(locale, value, { maximumFractionDigits: 1 });

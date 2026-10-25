@@ -64,7 +64,7 @@
     "optionSuffix": "pausiert"
   },
   "errors": {
-    "urlRequired": "Geben Sie die URL Ihrer Website ein.",
+    "urlRequired": "Geben Sie die URL Ihrer Website ein, z. B. https://example.com.",
     "urlTooLong": "Diese URL ist zu lang (maximal 2048 Zeichen).",
     "urlInvalid": "Geben Sie eine gültige URL ein, z. B. https://example.com.",
     "urlScheme": "Nur http://- und https://-URLs werden unterstützt.",
@@ -152,9 +152,10 @@
     },
     "search": {
       "title": "Suchleistung",
-      "description": "Aus dem Search-Console-Snapshot des letzten Audits.",
+      "description": "Ihre neuesten Google-Search-Console-Daten der letzten 28 Tage.",
       "topQuery": "Top-Suchanfrage",
-      "openGoogle": "Google-Daten öffnen"
+      "openGoogle": "Google-Daten öffnen",
+      "asOf": "Daten bis {{date}}"
     },
     "pageSpeed": {
       "title": "Website-Erlebnis",
@@ -240,5 +241,33 @@
     "empty": "Sie haben noch keine Websites.",
     "addSite": "Website hinzufügen",
     "truncated": "Hier werden nur Ihre ersten {{shown, number}} Websites aufgeführt."
-  }
+  },
+  "market": {
+    "menuItem": "Standardmarkt",
+    "title": "Standardmarkt",
+    "description": "Ranking-Tracking, Keyword-Recherche und die anderen Tools starten mit diesem Land, dieser Sprache und diesem Gerät. In jedem Tool können Sie weiterhin einen anderen Markt wählen. Website:",
+    "inferredNote": "Wir haben ihn aus Adresse und Sprache der Website abgeleitet. Ändern Sie ihn, falls er nicht stimmt.",
+    "country": "Land",
+    "language": "Sprache",
+    "device": "Gerät",
+    "devices": {
+      "desktop": "Desktop",
+      "mobile": "Mobil"
+    },
+    "save": "Markt speichern",
+    "saving": "Wird gespeichert…",
+    "cancel": "Abbrechen",
+    "saveFailed": "Der Standardmarkt konnte nicht gespeichert werden. Versuchen Sie es erneut."
+  },
+  "list": {
+    "columnLastAudit": "Letztes Audit",
+    "columnHealth": "Zustand",
+    "columnKeywords": "Keywords",
+    "noAudit": "Noch kein Audit",
+    "auditStatus": {
+      "failed": "Audit fehlgeschlagen",
+      "unavailable": "Audit nicht verfügbar"
+    }
+  },
+  "openTabHint": "Wählen Sie eine Website, um den Bereich {{tab}} zu öffnen."
 }

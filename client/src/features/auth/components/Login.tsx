@@ -10,6 +10,7 @@ import { Label } from '@shared/ui/label';
 import { Alert, AlertDescription } from '@shared/ui/alert';
 import { Card, CardContent, CardHeader, CardTitle } from '@shared/ui/card';
 import { authClient } from '../authClient';
+import { sessionMutation } from '../sessionMutation';
 import { messageForAuthError } from '../errorMessage';
 import { authSuccessHref, requiredPasswordChangeHref, verifyEmailHref } from '../intent';
 import { AuthDivider, GoogleSignIn } from './SocialAuth';
@@ -46,10 +47,17 @@ export const Login = () => {
 
   const onSubmit = handleSubmit(async (values) => {
     setErrorMessage('');
-    const { data, error } = await authClient.signIn.email({
-      email: values.email,
-      password: values.password,
-    });
+    let result;
+    try {
+      result = await sessionMutation(() => authClient.signIn.email({
+        email: values.email,
+        password: values.password,
+      }));
+    } catch {
+      setErrorMessage(t('auth:sessionUnavailable'));
+      return;
+    }
+    const { data, error } = result;
     if (error) {
       setErrorMessage(messageForAuthError(error, t));
       return;

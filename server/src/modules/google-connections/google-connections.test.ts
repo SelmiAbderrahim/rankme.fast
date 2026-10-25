@@ -113,7 +113,7 @@ type GoogleTestUser = TestUser & { siteId: string };
 
 async function seedUser(email = 'owner@x.co'): Promise<GoogleTestUser> {
   const user = await signupVerifiedUser(app, { email });
-  const seedDomain = `${user.id}.google-test.invalid`;
+  const seedDomain = `${user.id}.example.com`;
   const site = await Site.create({
     accountId: user.id,
     url: `https://${seedDomain}`,
@@ -704,6 +704,10 @@ describe('GET /api/sites/:siteId/google/configuration', () => {
     expect(res.status).toBe(200);
     expect(res.body.configuration.connection).toBeNull();
     expect(res.body.configuration.gsc.propertyUrl).toBeNull();
+    expect(res.body.configuration.readiness).toEqual({
+      gsc: { status: 'not_connected', matching: false },
+      ga4: { status: 'not_connected', matching: false },
+    });
   });
 
   it('returns the shared credential and the current Site bindings', async () => {
@@ -720,6 +724,7 @@ describe('GET /api/sites/:siteId/google/configuration', () => {
     expect(res.status).toBe(200);
     expect(res.body.configuration.connection.status).toBe('connected');
     expect(res.body.configuration.gsc.propertyUrl).toBeNull();
+    expect(res.body.configuration.readiness.gsc).toEqual({ status: 'no_property', matching: false });
     const properties = await request(app)
       .get(googlePath(user, '/search-properties'))
       .set('Cookie', user.cookie);
@@ -729,6 +734,7 @@ describe('GET /api/sites/:siteId/google/configuration', () => {
         siteUrl: 'sc-domain:example.com',
         permissionLevel: 'siteOwner',
         inUseBy: [],
+        matchesSite: true,
       },
     ]);
   });
@@ -2942,10 +2948,16 @@ describe('GET /api/sites/:siteId/google/search-summary', () => {
         ],
       }),
     );
+    const withoutConfirmation = await request(app)
+      .patch(`/api/sites/${siteId}/google/bindings`)
+      .set('Cookie', user.cookie)
+      .send({ gscPropertyUrl: 'https://another.example/' });
+    expect(withoutConfirmation.status).toBe(409);
+    expect(withoutConfirmation.body.error.code).toBe('GOOGLE_ERRORS_PROPERTY_MISMATCH_CONFIRM');
     await request(app)
       .patch(`/api/sites/${siteId}/google/bindings`)
       .set('Cookie', user.cookie)
-      .send({ gscPropertyUrl: 'https://another.example/' })
+      .send({ gscPropertyUrl: 'https://another.example/', confirmMismatch: true })
       .expect(200);
 
     const reboundSite = await Site.findById(siteId);
@@ -3044,6 +3056,7 @@ describe('GET /api/sites/:siteId/google/search-summary', () => {
       averagePosition: number;
       topQueries: Array<{ query: string }>;
       topPages: Array<{ url: string }>;
+      dimensionTotals: Record<string, { rows: number; clicks: number; impressions: number }>;
       asOf: string;
       previousPeriod: unknown;
     };
@@ -3059,6 +3072,10 @@ describe('GET /api/sites/:siteId/google/search-summary', () => {
       'q5',
     ]);
     expect(summary.topPages.map((p) => p.url)).toEqual(['https://example.com/']);
+    expect(summary.dimensionTotals).toMatchObject({
+      query: { rows: 6, clicks: 53, impressions: 5300 },
+      page: { rows: 1, clicks: 25, impressions: 2500 },
+    });
     expect(summary.asOf).toBe('2026-07-04');
     expect(summary.previousPeriod).toBeNull();
   });
@@ -4746,9 +4763,12 @@ describe('GA4 analytics endpoints', () => {
     expect(summary.totalKeyEvents).toBe(2);
     expect(summary.engagementRate).toBeCloseTo(0.5, 10);
     expect(summary.asOf).toBe('2026-07-12');
-    expect(summary.timeseries.map((t: { date: string }) => t.date)).toEqual([
-      '2026-07-10',
-      '2026-07-11',
+    expect(summary.timeseries).toHaveLength(28);
+    expect(summary.timeseries[0]).toMatchObject({ date: '2026-06-15', sessions: 0 });
+    expect(summary.timeseries.slice(-3)).toMatchObject([
+      { date: '2026-07-10', sessions: 8 },
+      { date: '2026-07-11', sessions: 12 },
+      { date: '2026-07-12', sessions: 0 },
     ]);
     expect(summary.channels.map((c: { channel: string }) => c.channel)).toEqual([
       'Organic Search',
@@ -4901,6 +4921,34 @@ describe('GA4 analytics endpoints', () => {
       .send({});
     expect(res.status).toBe(404);
   });
+
+  it('refresh reports reconnect and provider failures instead of a stale success', async () => {
+    const user = await seedEnabled('ga4-refresh-errors@x.co');
+    const siteId = await seedSite(user.id);
+    await markNeedsReconnect(user.id);
+    const reconnect = await request(app)
+      .post(siteGooglePath(siteId, '/analytics-refresh'))
+      .set('Cookie', user.cookie)
+      .send({});
+    expect(reconnect.status).toBe(409);
+    expect(reconnect.body.error.code).toBe('GOOGLE_RECONNECT_TO_SEE_DATA');
+
+    await upsertConnection({
+      accountId: user.id,
+      googleAccountEmail: 'user@example.com',
+      refreshToken: 'r',
+      scopes: [SCOPE_GSC, SCOPE_GA4],
+    });
+    setGoogleGscProvider(makeGscProvider({
+      refresh: async () => { throw new VendorUnavailableError('down', { provider: 'google', operation: 'gsc-token-refresh' }); },
+    }));
+    const unavailable = await request(app)
+      .post(siteGooglePath(siteId, '/analytics-refresh'))
+      .set('Cookie', user.cookie)
+      .send({});
+    expect(unavailable.status).toBe(503);
+    expect(unavailable.body.error.code).toBe('GOOGLE_ANALYTICS_REFRESH_FAILED');
+  });
 });
 
 describe('runGa4Sync (unit statuses)', () => {
@@ -5049,7 +5097,9 @@ describe('runGa4Sync (unit statuses)', () => {
     const channel = captured.find((c) => c.dimensionSet === 'channel');
     expect(channel!.rows[0]).toEqual(emptyRow);
     const date = captured.find((c) => c.dimensionSet === 'date');
-    expect(date!.rows[0]).toEqual(emptyRow);
+    expect(date!.rows).toHaveLength(90);
+    expect(date!.rows[0]).toMatchObject({ ...emptyRow, key: expect.stringMatching(/^\d{4}-\d{2}-\d{2}$/) });
+    expect(date!.rows.every((row) => row.sessions === 0 && row.activeUsers === 0 && row.engagedSessions === 0 && row.keyEvents === 0)).toBe(true);
   });
 
   it('unavailable when a runReport fails; needs-reconnect marks the connection on 401', async () => {
@@ -5439,9 +5489,15 @@ describe('GA4 ladder edges', () => {
       .get(`/api/sites/${siteId}/google/analytics-summary`)
       .set('Cookie', user.cookie);
     expect(res.status).toBe(200);
-    expect(
-      (res.body.summary.timeseries as Array<{ date: string }>).map((r) => r.date),
-    ).toEqual(['2026-07-09', '2026-07-10', '2026-07-11']);
+    const days = res.body.summary.timeseries as Array<{ date: string; sessions: number }>;
+    expect(days).toHaveLength(28);
+    expect(days[0]).toMatchObject({ date: '2026-06-15', sessions: 0 });
+    expect(days.slice(-4)).toMatchObject([
+      { date: '2026-07-09', sessions: 70 },
+      { date: '2026-07-10', sessions: 5 },
+      { date: '2026-07-11', sessions: 50 },
+      { date: '2026-07-12', sessions: 0 },
+    ]);
   });
 
   it('POST /analytics-refresh passes the router logger into runGa4Sync (deps.logger branch)', async () => {

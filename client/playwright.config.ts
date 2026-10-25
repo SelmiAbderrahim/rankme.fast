@@ -558,6 +558,12 @@ export default defineConfig({
     // `finally` block always recreates the api with the flag back ON, so the
     // project that follows still sees a normal stack.
     {
+      name: 'rank-bulk-check',
+      testMatch: /(?:^|\/)rank-bulk-check\.spec\.ts$/,
+      workers: 1,
+      use: { ...devices['Desktop Chrome'], reducedMotion: 'reduce' },
+    },
+    {
       name: 'alt-engines',
       testMatch: /(?:^|\/)alt-engines\.spec\.ts$/,
       workers: 1,

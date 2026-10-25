@@ -1,4 +1,5 @@
 {
+  "workspace": { "description": "Einstellungen für alles, was dieser Arbeitsbereich versendet, etwa das Branding von Kundenberichten." },
   "notifications": {
     "title": "Benachrichtigungseinstellungen",
     "description": "Wählen Sie, welche nicht-sicherheitsrelevanten E-Mails Sie erhalten möchten. Sicherheits-E-Mails (Passwort-Reset, E-Mail-Verifizierung, Bestätigung einer Passwortänderung) können nicht deaktiviert werden.",
@@ -142,6 +143,7 @@
     "description": "Versehen Sie heruntergeladene Bericht-PDFs mit Ihrem eigenen Namen. Firmenname und Akzentfarbe erscheinen im PDF-Kopf.",
     "companyName": "Firmenname",
     "accentColor": "Akzentfarbe",
+    "accentPicker": "Akzentfarbe auswählen",
     "invalidColor": "Geben Sie eine Farbe wie #b5321e ein oder lassen Sie das Feld leer.",
     "save": "Branding speichern",
     "saved": "Branding gespeichert.",

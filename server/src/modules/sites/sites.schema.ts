@@ -1,5 +1,6 @@
 import { z } from 'zod';
 import { SITE_URL_MAX_LENGTH } from '../../shared/validation/site-url.js';
+import { SITE_MARKET_DEVICES } from './site-market.js';
 // Request-shape validation only. The strict URL semantics (scheme, IP
 // literals, TLD, userinfo, normalization) live in the shared validator —
 // the service maps its reject reasons to localized errors.
@@ -17,7 +18,13 @@ export const siteIdParamsSchema = z.object({
     id: z.string().min(1),
 });
 export type SiteIdParams = z.infer<typeof siteIdParamsSchema>;
-export const updateSiteSchema = z.object({
-    displayName: z.string().trim().max(120),
+const siteMarketSchema = z.object({
+    locationCode: z.number().int().positive(),
+    languageCode: z.string().regex(/^[a-z]{2,3}(?:-[a-z]{2})?$/i),
+    device: z.enum(SITE_MARKET_DEVICES),
 });
+export const updateSiteSchema = z.object({
+    displayName: z.string().trim().max(120).optional(),
+    defaultMarket: siteMarketSchema.optional(),
+}).refine((body) => body.displayName !== undefined || body.defaultMarket !== undefined);
 export type UpdateSiteBody = z.infer<typeof updateSiteSchema>;

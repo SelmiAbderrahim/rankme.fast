@@ -16,6 +16,7 @@ import {
 } from './index';
 import { RESOURCES } from './resources';
 import { LanguageSwitcher } from './LanguageSwitcher';
+import { LocaleContextProvider } from './LocaleContext';
 import { LANGUAGE_COOKIE } from './locales';
 import { classifyValue, collectQualityIssues } from './translation-quality';
 import { flatten, placeholderNames as placeholders } from './localeParity';
@@ -418,6 +419,27 @@ describe('i18n initialization + switching', () => {
     // not flush that async continuation, so we waitFor the i18n state to settle.
     await waitFor(() => expect(i18n.resolvedLanguage).toBe('de'));
     expect(onLocaleChange).toHaveBeenCalledWith('de');
+  });
+
+  it('shows the pending locale and a status until loading finishes, then restores the active locale on failure', async () => {
+    let settle: ((changed: boolean) => void) | undefined;
+    const changeLocale = vi.fn(() => new Promise<boolean>((resolve) => { settle = resolve; }));
+    render(
+      <I18nextProvider i18n={i18n}>
+        <LocaleContextProvider value={{ isSaving: false, changeLocale }}>
+          <LanguageSwitcher />
+        </LocaleContextProvider>
+      </I18nextProvider>,
+    );
+    const select = screen.getByLabelText('Language') as HTMLSelectElement;
+    fireEvent.change(select, { target: { value: 'de' } });
+    expect(select.value).toBe('de');
+    expect(select).toBeDisabled();
+    expect(screen.getByRole('status')).toHaveTextContent('Switching language');
+    await act(async () => { settle?.(false); });
+    expect(select.value).toBe('en');
+    expect(select).not.toBeDisabled();
+    expect(screen.queryByRole('status')).not.toBeInTheDocument();
   });
 
   it('ignores an unsupported value from the switcher', async () => {

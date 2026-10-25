@@ -129,6 +129,7 @@ function compose(selection: PagesSelection, format: 'pdf' | 'csv' | 'json' = 'js
 beforeEach(() => {
   vi.mocked(getSite).mockReset().mockResolvedValue({
     id: siteId, url: 'https://example.test', domain: 'example.test', displayName: 'Example Pages',
+    defaultMarket: null,
     paused: false, pausedAt: null, createdAt: observedAt, updatedAt: observedAt,
   });
   mocked.detail.mockReset().mockResolvedValue({ page: page(), associated: { kind: 'queries', rows: [], total: 0, truncated: false }, trend: [] });
@@ -215,6 +216,7 @@ describe('Pages report export adapter', () => {
       listResponse(query.range, { items: [], nextCursor: null, observedAt: null }));
     vi.mocked(getSite).mockResolvedValue({
       id: siteId, url: 'https://example.test', domain: 'example.test', displayName: '',
+      defaultMarket: null,
       paused: false, pausedAt: null, createdAt: observedAt, updatedAt: observedAt,
     });
     const result = await adapter.compose(compose({ range: '28d' }));

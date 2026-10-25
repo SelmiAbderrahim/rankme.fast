@@ -1,4 +1,5 @@
-import { useEffect } from 'react';
+import { useEffect, useMemo } from 'react';
+import { useLocation } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { PageHeader } from '@shared/components/PageHeader';
 import { Button } from '@shared/ui/button';
@@ -24,13 +25,21 @@ import {
   selectSitesLoading,
 } from '../store/selectors';
 import { AddSiteForm } from './AddSiteForm';
+import { AddSiteDialog } from './AddSiteDialog';
 import { SitesTable } from './SitesTable';
 import type { Site } from '../types';
+import { getSiteTabLabelKey, isSiteTab, type SiteTab } from '../tabState';
+import { useSiteSummaries } from '../useSiteSummaries';
 
 export const SitesPage = () => {
   const { t } = useTranslation('sites');
+  const location = useLocation();
+  const requestedTool = new URLSearchParams(location.search).get('open');
+  const openTab: SiteTab | undefined = isSiteTab(requestedTool) && requestedTool !== 'overview' ? requestedTool : undefined;
   const dispatch = useAppDispatch();
   const sites = useAppSelector(selectSites);
+  const siteIds = useMemo(() => sites.map((site) => site.id), [sites]);
+  const summaries = useSiteSummaries(siteIds);
   const loading = useAppSelector(selectSitesLoading);
   const loaded = useAppSelector(selectSitesLoaded);
   const error = useAppSelector(selectSitesError);
@@ -127,13 +136,17 @@ export const SitesPage = () => {
         icon={APP_PAGE_ICONS.sites}
         title={t('title')}
         description={t('listDescription')}
+        actions={<AddSiteDialog />}
       />
+      {openTab ? <Alert role="status" data-testid="sites-open-tab-hint"><AlertDescription>
+        {t('openTabHint', { tab: t(getSiteTabLabelKey(openTab)) })}
+      </AlertDescription></Alert> : null}
       {deleteError ? (
         <Alert variant="destructive" role="alert">
           <AlertDescription>{deleteError}</AlertDescription>
         </Alert>
       ) : null}
-      <SitesTable sites={sites} deletingId={deletingId} onDelete={handleDelete} />
+      <SitesTable sites={sites} deletingId={deletingId} onDelete={handleDelete} openTab={openTab} summaries={summaries} />
       <div className="flex items-center justify-end gap-2">
         <Button
           variant="outline"
@@ -152,7 +165,6 @@ export const SitesPage = () => {
           {t('next')}
         </Button>
       </div>
-      <AddSiteForm />
     </div>
   );
 };

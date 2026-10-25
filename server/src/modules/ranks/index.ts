@@ -1,4 +1,10 @@
 export { createRankProcessor, createPostgresRankTargetsResolver, type RankJobOutcome, type RankProcessorDeps, type RankTargetContext, type ResolveRankTargets, } from './rank.processor.js';
+export { classifyKeywordRankState, countKeywordRankStates, keywordCheckStatus,
+    type KeywordRankStateResult, type KeywordRankState } from './rank-state.js';
+export { classifyRankMovement, movementFromRankState, tallyRankMovement,
+    type RankMovement, type RankMovementTally } from './rank-movement.classify.js';
+export { readKeywordRankStates, summarizeSiteRankStates } from './rank-state.repo.js';
+export { readRankMovementForSite, type SiteRankMovement } from './rank-movement.service.js';
 export { reconcileRankSchedules, refreshRankScheduleAfterPromotion, } from './rank-schedule.reconciliation.js';
 export { createRankDropEffects, createRankDropHandler, detectRankDrop, RANK_DROP_MIN_DELTA, RANK_DROP_TOP_BUCKET, type RankDropEvent, type RankDropEffects, type RankDropHandler, type RankDropHandlerDeps, } from './rank-drop.service.js';
 export { createSerpCacheRepo, computeSerpCacheKey, cacheKeyToAdvisoryLockId, normalizePhrase, DEFAULT_SERP_CACHE_TTL_HOURS, type CachedSerp, type SerpCacheKeyInput, type SerpCacheRepo, } from './serp-cache.service.js';

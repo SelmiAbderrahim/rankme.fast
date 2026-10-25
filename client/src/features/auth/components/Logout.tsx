@@ -1,26 +1,14 @@
 import { useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
-import { useAppDispatch } from '@shared/hooks/redux';
-import { resetAccountState } from '@app/store';
-import { authClient } from '../authClient';
+import { useSignOut } from '../useSignOut';
 
 export const Logout = () => {
-  const navigate = useNavigate();
-  const dispatch = useAppDispatch();
   const { t } = useTranslation('auth');
+  const { signOut } = useSignOut();
 
   useEffect(() => {
-    // signOut resolves with `{ error }` rather than rejecting; either way the
-    // only sensible landing is the login screen. Keep the rejection branch
-    // explicit as a transport failure must not retain another principal's
-    // account-scoped cache in this browser tab.
-    const finishLogout = () => {
-      dispatch(resetAccountState());
-      navigate('/login');
-    };
-    void authClient.signOut().then(finishLogout, finishLogout);
-  }, [dispatch, navigate]);
+    void signOut();
+  }, [signOut]);
 
   return (
     <div

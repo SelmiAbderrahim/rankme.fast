@@ -37,13 +37,14 @@
     "billing": "Billing",
     "creditPacks": "Credit packs",
     "notifications": "Notifications",
-    "logout": "Logout",
+    "logout": "Sign out",
     "logOut": "Log out",
     "skipToContent": "Skip to content",
     "docs": "Docs",
     "exports": "Exports and shares",
     "security": "Security",
     "team": "Team",
+    "workspace": "Workspace",
     "admin": "Admin",
     "superadmin": "Platform",
     "startFree": "Start free",
@@ -75,28 +76,36 @@
       "sites": {
         "label": "Sites",
         "description": "Add and manage the sites you track.",
-        "usage": "{{used}} of {{cap}} sites"
+        "usage": "{{used}} of {{cap}} sites",
+        "cta": "Open sites"
       },
       "ranks": {
         "label": "Ranks",
         "description": "Track SERP positions for your keywords.",
         "usage": "{{used}} of {{cap}} keywords tracked",
-        "empty": "Add a site to start tracking ranks."
+        "empty": "Add a site to start tracking ranks.",
+        "cta": "Open rank tracking",
+        "pickCta": "Choose a site to open rank tracking"
       },
       "keywordResearch": {
         "label": "Keyword research",
         "description": "Find volume, difficulty, and related keywords.",
-        "usage": "{{used}} of {{cap}} lookups this month"
+        "usage": "{{used}} of {{cap}} lookups this month",
+        "cta": "Research keywords"
       },
       "backlinks": {
         "label": "Backlinks",
         "description": "Explore the backlink profile of your first site.",
-        "usage": "{{used}} of {{cap}} rows this month"
+        "usage": "{{used}} of {{cap}} rows this month",
+        "cta": "View backlinks",
+        "pickCta": "Choose a site to view backlinks"
       },
       "competitors": {
         "label": "Competitors",
         "description": "See who competes with your first site.",
-        "usage": "Agency plan"
+        "usage": "Agency plan",
+        "cta": "View competitors",
+        "pickCta": "Choose a site to view competitors"
       },
       "google": {
         "label": "Google Search Console",
@@ -111,13 +120,17 @@
       "profile": {
         "label": "Profile",
         "description": "View and update your account details.",
-        "usage": "Account settings"
+        "usage": "Account settings",
+        "cta": "Open profile"
       },
       "admin": {
         "label": "Admin",
         "description": "Access administrative controls.",
         "usage": "Admin controls"
-      }
+      },
+      "pickSiteCta": "Choose a site",
+      "pickSiteMenu": "Active sites",
+      "pickSiteAll": "See all sites"
     },
     "usage": {},
     "loading": "Loading dashboard…",
@@ -130,7 +143,11 @@
         "open_many": "{{n}} open",
         "open_other": "{{n}} open",
         "none": "None open",
-        "noneStale": "None open at last audit"
+        "noneStale": "None open at last audit",
+        "unavailable": {
+          "no_audit": "No audit yet. Run one to see this.",
+          "report_missing": "Report not available. Run a new audit."
+        }
       },
       "showing_zero": "Showing {{shown}} of {{total}} active sites.",
       "showing_one": "Showing {{shown}} of {{total}} active site.",
@@ -144,13 +161,26 @@
       "seeAll_few": "See all {{total}} sites",
       "seeAll_many": "See all {{total}} sites",
       "seeAll_other": "See all {{total}} sites",
-      "paused": {"more_zero": "{{n}} more paused sites are not shown.",
+      "paused": {
+        "more_zero": "{{n}} more paused sites are not shown.",
         "more_one": "{{n}} more paused site is not shown.",
         "more_two": "{{n}} more paused sites are not shown.",
         "more_few": "{{n}} more paused sites are not shown.",
         "more_many": "{{n}} more paused sites are not shown.",
-        "more_other": "{{n}} more paused sites are not shown."},
-      "search": {"clicks_zero": "{{n}} clicks",
+        "more_other": "{{n}} more paused sites are not shown.",
+        "title": "Paused sites ({{n}})",
+        "explain": "Paused sites do not run scheduled checks or audits.",
+        "since": "Paused {{when}}",
+        "resume": "Resume",
+        "resuming": "Resuming…",
+        "resumeSite": "Resume {{name}}",
+        "resumed": "{{domain}} is back on. Scheduled checks will run again.",
+        "resumeFailed": "Could not resume the site.",
+        "manage": "Manage all sites",
+        "ownerOnly": "Ask a workspace owner to resume a paused site."
+      },
+      "search": {
+        "clicks_zero": "{{n}} clicks",
         "clicks_one": "{{n}} click",
         "clicks_two": "{{n}} clicks",
         "clicks_few": "{{n}} clicks",
@@ -161,8 +191,20 @@
         "impressions_two": "{{n}} impressions",
         "impressions_few": "{{n}} impressions",
         "impressions_many": "{{n}} impressions",
-        "impressions_other": "{{n}} impressions"},
-      "rank": {"notCompared": {"failed_zero": "{{count}} checks failed",
+        "impressions_other": "{{n}} impressions",
+        "clicksDelta": "change in clicks compared with the previous 28 days",
+        "impressionsDelta": "change in impressions compared with the previous 28 days",
+        "through": "Through {{date}}, compared with the 28 days before",
+        "noPrevious": "Through {{date}}. No earlier period is stored to compare.",
+        "unavailable": {
+          "not_connected": "Search Console is not connected for this site.",
+          "reconnect_needed": "Reconnect Search Console to see this.",
+          "no_data_yet": "No Search Console data stored yet."
+        }
+      },
+      "rank": {
+        "notCompared": {
+          "failed_zero": "{{count}} checks failed",
           "failed_one": "{{count}} check failed",
           "failed_two": "{{count}} checks failed",
           "failed_few": "{{count}} checks failed",
@@ -185,7 +227,63 @@
           "unranked_two": "{{count}} not ranked in either check",
           "unranked_few": "{{count}} not ranked in either check",
           "unranked_many": "{{count}} not ranked in either check",
-          "unranked_other": "{{count}} not ranked in either check"}}
+          "unranked_other": "{{count}} not ranked in either check",
+          "lead": "Not compared: {{parts}}."
+        },
+        "summary": "{{improved}} improved, {{declined}} declined, {{unchanged}} unchanged",
+        "compared": "Keywords compared: {{compared}} of {{tracked}}.",
+        "lastCheck": "Last check {{when}}.",
+        "unavailable": {
+          "no_keywords": "No keywords tracked yet.",
+          "no_checks": "Waiting for the first rank check.",
+          "single_check": "Needs a second check to compare."
+        }
+      },
+      "title": "Site health",
+      "description": "Saved results for your active sites. Opening this page only reads stored data.",
+      "loading": "Loading site health…",
+      "loadFailed": "Could not load site health.",
+      "stale": "Out of date",
+      "notAvailable": "Not available:",
+      "asOf": "As of {{date}}",
+      "allPaused": "Every site you can see is paused, so there is nothing to measure. Resume one below to see its health.",
+      "empty": {
+        "body": "Add a site to see its audit, search, and keyword health here.",
+        "cta": "Add a site"
+      },
+      "columns": {
+        "fixNow": "Fix now",
+        "lastAudit": "Last audit",
+        "search": "Search, last 28 days",
+        "keywords": "Keyword movement"
+      },
+      "open": {
+        "actions": "Open fix list",
+        "report": "Open report",
+        "google": "Open Search Console",
+        "keywords": "Open keywords"
+      },
+      "lastAudit": {
+        "never": "Never audited",
+        "status": {
+          "failed": "Failed",
+          "unavailable": "Unavailable"
+        }
+      },
+      "staleSource": {
+        "audit": {
+          "label": "Audit from {{date}}",
+          "hint": "This audit is more than 30 days old. Run a new one to refresh these findings."
+        },
+        "search": {
+          "label": "Search data as of {{date}}",
+          "hint": "Search Console reports lag a few days, but this data is older than that."
+        },
+        "rank": {
+          "label": "Rank checks as of {{date}}",
+          "hint": "Scheduled rank checks have not run on time for this site."
+        }
+      }
     }
   },
   "shell": {
@@ -355,6 +453,9 @@
   },
   "feedback": {
     "reportBug": "Report a bug",
+    "chooseChannel": "Choose where to report the bug.",
+    "openIssues": "Open GitHub issue chooser",
+    "emailSupport": "Email support",
     "reportProblem": "Report this problem",
     "mailSubject": "Bug report ({{version}})"
   },

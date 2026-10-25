@@ -140,19 +140,23 @@
     "timeseriesTableCaption_other": "Ежедневная эффективность поиска за последние {{days}} дня"
   },
   "analytics": {
-    "title": "Google Analytics (последние {{days}} дней)",
+    "title": "Данные Google Analytics",
     "sessions": "Сеансы",
     "activeUsers": "Активные пользователи",
     "engagedSessions": "Сеансы со взаимодействием",
     "keyEvents": "Ключевые события",
     "engagementRateLabel": "Уровень вовлечённости",
     "engagementRateLine": "Уровень вовлечённости: {{rate}}",
+    "windowNote": "Итоги с {{start}} по {{end}}.",
     "previousPeriod": "Предыдущий период — сеансы: {{sessions}} · активные пользователи: {{activeUsers}}",
     "emptyTitle": "Данных аналитики пока нет",
     "empty": "Данных аналитики пока нет. Данные появятся вскоре после подключения ресурса — попробуйте обновить.",
     "error": "Не удалось загрузить сводку аналитики. Повторите попытку позже.",
     "refresh": "Обновить данные аналитики",
     "refreshError": "Не удалось обновить данные аналитики. Повторите попытку позже.",
+    "staleTitle": "Данные Analytics устарели",
+    "noRecentSessions": "С {{date}} сеансов не зафиксировано. Google Analytics недавно проверялся и не сообщил о более новом трафике.",
+    "dailyRange": "Ежедневные итоги с {{start}} по {{end}}.",
     "timeseriesTitle": "Сеансы и активные пользователи во времени",
     "timeseriesSubtitle_one": "Ежедневные итоги за последний {{days}} день.",
     "timeseriesChartLabel_one": "Ежедневные {{metric}} за последний {{days}} день",
@@ -269,10 +273,78 @@
       "internalLinks": "Подсказки по внутренним ссылкам используют ваши запросы из Search Console, чтобы выбрать важные страницы. Подключите Search Console к этому сайту, чтобы получать подсказки на основе реальных поисков."
     }
   },
-  "breakdown": {"other_zero": "Другие (ещё {{hidden}})",
+  "breakdown": {
+    "shareHeader": "{{metric}} · доля от общего",
+    "shareHeaderRows": "{{metric}} · доля в этом списке",
+    "other_zero": "Другие (ещё {{hidden}})",
     "other_one": "Другие (ещё {{hidden}})",
     "other_two": "Другие (ещё {{hidden}})",
     "other_few": "Другие (ещё {{hidden}})",
     "other_many": "Другие (ещё {{hidden}})",
-    "other_other": "Другие (ещё {{hidden}})"}
+    "other_other": "Другие (ещё {{hidden}})",
+    "engagedRate": "{{rate}} с вовлечением",
+    "ctrRate": "CTR {{rate}}",
+    "byImpressions": "За этот период кликов не было, поэтому страны и устройства показаны по показам."
+  },
+  "readiness": {
+    "gsc": {
+      "not_connected": {
+        "title": "Search Console не подключен",
+        "body": "Подключите аккаунт Google, чтобы видеть в RankMeFast клики и показы в поиске для <site>{{domain}}</site>.",
+        "cta": "Подключить Google"
+      },
+      "no_property": {
+        "title": "Выберите ресурс Search Console",
+        "body": "Google подключен, но для <site>{{domain}}</site> ещё не выбран ресурс Search Console.",
+        "cta": "Выбрать ресурс Search Console"
+      },
+      "property_mismatch": {
+        "title": "Этот ресурс не охватывает сайт",
+        "body": "Ресурс Search Console, выбранный для <site>{{domain}}</site>, не включает адрес сайта. Выберите подходящий.",
+        "cta": "Выбрать ресурс Search Console"
+      },
+      "error": {
+        "title": "Сейчас не удаётся прочитать Search Console",
+        "body": "Google отклонил запрос для <site>{{domain}}</site>, или не хватает разрешения. Повторите попытку, а если ошибка повторится, переподключите Google.",
+        "cta": "Повторить"
+      }
+    },
+    "ga4": {
+      "not_connected": {
+        "title": "Google Analytics не подключен",
+        "body": "Подключите аккаунт Google, чтобы видеть посещения и вовлечённость для <site>{{domain}}</site>.",
+        "cta": "Подключить Google"
+      },
+      "no_property": {
+        "title": "Выберите ресурс Google Analytics",
+        "body": "Google подключен, но для <site>{{domain}}</site> ещё не выбран ресурс Google Analytics.",
+        "cta": "Выбрать ресурс Google Analytics"
+      },
+      "property_mismatch": {
+        "title": "Этот ресурс не соответствует сайту",
+        "body": "Ресурс Google Analytics, выбранный для <site>{{domain}}</site>, отслеживает другой адрес. Выберите ресурс этого сайта.",
+        "cta": "Выбрать ресурс Google Analytics"
+      },
+      "error": {
+        "title": "Сейчас не удаётся прочитать Google Analytics",
+        "body": "Google отклонил запрос для <site>{{domain}}</site>, или нет доступа к Analytics. Повторите попытку, а если ошибка повторится, переподключите Google.",
+        "cta": "Повторить"
+      }
+    },
+    "matching": "Ищем подходящий ресурс."
+  },
+  "propertyPicker": {
+    "thisSite": "этого сайта",
+    "noneFound": "Ресурс Search Console для {{domain}} не найден. Добавьте его в Search Console, затем обновите этот список.",
+    "openSearchConsole": "Открыть Search Console",
+    "newTab": "(откроется в новой вкладке)",
+    "refresh": "Обновить",
+    "refreshing": "Обновление…",
+    "linkDifferent": "Привязать другой ресурс",
+    "differentHint": "Эти ресурсы относятся к другим сайтам. Если привязать один из них, его данные поиска появятся у {{domain}}.",
+    "otherLabel": "Ресурс другого сайта",
+    "confirmTitle": "Привязать {{site}} к данным {{property}}?",
+    "confirmBody": "{{property}} — другой сайт. Его данные поиска будут показываться у {{site}}, пока вы не смените ресурс. Ресурс:",
+    "confirm": "Всё равно привязать"
+  }
 }

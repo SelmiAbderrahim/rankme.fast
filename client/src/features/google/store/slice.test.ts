@@ -1020,6 +1020,7 @@ describe('google selectors', () => {
   it('each selector reads its slice field', () => {
     const google: GoogleConnectionState = {
       connection,
+      readiness: null,
       connectionSiteId: siteId,
       properties,
       loading: true,

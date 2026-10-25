@@ -2,42 +2,36 @@ import { beforeEach, describe, expect, it, vi } from 'vitest';
 import { render, screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { I18nextProvider } from 'react-i18next';
-import { MemoryRouter, useLocation } from 'react-router-dom';
+import { MemoryRouter, Route, Routes, useLocation } from 'react-router-dom';
 import { changeLanguage, i18n, initI18n } from '@shared/i18n';
 import { AccountPage } from './AccountPage';
 
-// Stub every tab body so this suite isolates the tab/URL logic.
 vi.mock('./ProfileInfoCard', () => ({ ProfileInfoCard: () => <div>PROFILE_BODY</div> }));
 vi.mock('./ExportData', () => ({ ExportData: () => <div>EXPORT_BODY</div> }));
-vi.mock('@features/auth', () => ({
-  SecuritySettings: ({ embedded }: { embedded?: boolean }) => (
-    <div data-embedded={String(embedded)}>SECURITY_BODY</div>
-  ),
-  DeleteAccount: () => <div>DELETE_BODY</div>,
-}));
+vi.mock('./DeleteAccountLink', () => ({ DeleteAccountLink: () => <div>DELETE_LINK</div> }));
 vi.mock('@features/settings', () => ({
-  NotificationPreferences: ({ embedded }: { embedded?: boolean }) => (
-    <div data-embedded={String(embedded)}>NOTIF_BODY</div>
-  ),
   ApiKeysPanel: () => <div>API_KEYS_BODY</div>,
-  BrandingPanel: () => <div>BRANDING_BODY</div>,
   McpPermissionsPanel: () => <div>MCP_BODY</div>,
 }));
 
 const LocationProbe = () => {
-  const { search } = useLocation();
-  return <span data-testid="search">{search}</span>;
+  const location = useLocation();
+  return <span data-testid="location">{location.pathname}{location.search}</span>;
 };
 
-const renderAt = (entry: string) =>
-  render(
-    <MemoryRouter initialEntries={[entry]}>
-      <I18nextProvider i18n={i18n}>
-        <AccountPage />
-        <LocationProbe />
-      </I18nextProvider>
-    </MemoryRouter>,
-  );
+const renderAt = (entry: string) => render(
+  <MemoryRouter initialEntries={[entry]}>
+    <I18nextProvider i18n={i18n}>
+      <Routes>
+        <Route path="/settings/profile" element={<AccountPage />} />
+        <Route path="/settings/security" element={<div>SECURITY_DESTINATION</div>} />
+        <Route path="/settings/notifications" element={<div>NOTIFICATIONS_DESTINATION</div>} />
+        <Route path="/settings/workspace" element={<div>WORKSPACE_DESTINATION</div>} />
+      </Routes>
+      <LocationProbe />
+    </I18nextProvider>
+  </MemoryRouter>,
+);
 
 beforeEach(async () => {
   initI18n({ initialLocale: 'en' });
@@ -46,61 +40,45 @@ beforeEach(async () => {
 });
 
 describe('AccountPage', () => {
-  it('defaults to the profile tab', () => {
-    renderAt('/profile');
+  it('defaults to the profile tab and uses the shared page gutter', () => {
+    renderAt('/settings/profile');
     expect(screen.getByText('PROFILE_BODY')).toBeInTheDocument();
     expect(screen.getByRole('heading', { name: 'Account' })).toBeInTheDocument();
-  });
-
-  it('uses the same page gutter as Dashboard and Sites, left-aligned rather than centred', () => {
-    renderAt('/profile');
     const page = screen.getByTestId('account-page');
     expect(page).toHaveClass('px-4', 'py-8');
     expect(page).not.toHaveClass('mx-auto');
   });
 
-  it('deep-links to a tab from ?tab=', () => {
-    renderAt('/profile?tab=security');
-    expect(screen.getByText('SECURITY_BODY')).toBeInTheDocument();
-  });
-
-  it('embeds the security and notifications screens so they render no second page header', () => {
-    renderAt('/profile?tab=security');
-    expect(screen.getByText('SECURITY_BODY')).toHaveAttribute('data-embedded', 'true');
-  });
-
-  it('embeds the notifications screen too', () => {
-    renderAt('/profile?tab=notifications');
-    expect(screen.getByText('NOTIF_BODY')).toHaveAttribute('data-embedded', 'true');
-  });
-
-  it('falls back to profile for an unknown tab value', () => {
-    renderAt('/profile?tab=bogus');
-    expect(screen.getByText('PROFILE_BODY')).toBeInTheDocument();
-  });
-
-  it('switches tab and writes ?tab= to the URL', async () => {
-    renderAt('/profile');
-    await userEvent.click(screen.getByRole('tab', { name: 'Notifications' }));
-    expect(await screen.findByText('NOTIF_BODY')).toBeInTheDocument();
-    await waitFor(() =>
-      expect(screen.getByTestId('search')).toHaveTextContent('tab=notifications'),
-    );
-  });
-
-  it('deep-links to the branding tab', () => {
-    renderAt('/profile?tab=branding');
-    expect(screen.getByText('BRANDING_BODY')).toBeInTheDocument();
-  });
-
-  it('deep-links to the MCP permissions tab', () => {
-    renderAt('/profile?tab=mcp');
+  it('retains direct MCP, API key, and privacy tab links', () => {
+    renderAt('/settings/profile?tab=mcp');
     expect(screen.getByText('MCP_BODY')).toBeInTheDocument();
   });
 
-  it('renders the privacy tab', () => {
-    renderAt('/profile?tab=privacy');
+  it('falls back to profile for an unknown tab', () => {
+    renderAt('/settings/profile?tab=bogus');
+    expect(screen.getByText('PROFILE_BODY')).toBeInTheDocument();
+  });
+
+  it('writes a tab selection to the URL', async () => {
+    renderAt('/settings/profile');
+    await userEvent.click(screen.getByRole('tab', { name: 'MCP permissions' }));
+    expect(await screen.findByText('MCP_BODY')).toBeInTheDocument();
+    await waitFor(() => expect(screen.getByTestId('location')).toHaveTextContent('tab=mcp'));
+  });
+
+  it.each([
+    ['security', 'SECURITY_DESTINATION', '/settings/security'],
+    ['notifications', 'NOTIFICATIONS_DESTINATION', '/settings/notifications'],
+    ['branding', 'WORKSPACE_DESTINATION', '/settings/workspace'],
+  ])('redirects the old %s tab to its one settings page', (tab, body, path) => {
+    renderAt(`/settings/profile?tab=${tab}`);
+    expect(screen.getByText(body)).toBeInTheDocument();
+    expect(screen.getByTestId('location')).toHaveTextContent(path);
+  });
+
+  it('shows the privacy tab with a link to the one deletion flow', () => {
+    renderAt('/settings/profile?tab=privacy');
     expect(screen.getByText('EXPORT_BODY')).toBeInTheDocument();
-    expect(screen.getByText('DELETE_BODY')).toBeInTheDocument();
+    expect(screen.getByText('DELETE_LINK')).toBeInTheDocument();
   });
 });

@@ -262,9 +262,11 @@ vi.mock('../api', () => ({
     nextCursor: null,
   })),
   fetchSiteRequest: vi.fn(),
+  fetchSiteMarketRequest: vi.fn(),
   createSiteRequest: vi.fn(),
   deleteSiteRequest: vi.fn(),
   updateSiteRequest: vi.fn(),
+  updateSiteMarketRequest: vi.fn(),
   pauseSiteRequest: vi.fn(),
   resumeSiteRequest: vi.fn(),
 }));
@@ -365,6 +367,9 @@ const openMobileDestinations = async () => {
 beforeEach(async () => {
   initI18n({ initialLocale: 'en' });
   await changeLanguage('en');
+  mockedApi.fetchSiteMarketRequest.mockResolvedValue({ market: {
+    locationCode: 2840, languageCode: 'en', device: 'desktop', source: 'assumed', countryCode: 'US',
+  } });
 });
 
 describe('SiteWorkspacePage — default tab, deep link, invalid tab, switching', () => {
@@ -736,11 +741,10 @@ describe('SiteWorkspacePage — falls back when the site is not yet loaded', () 
 
   it('falls back to the owned domain when the display name is empty', async () => {
     renderAt('/sites/site-1', { displayName: '' });
-    expect(await screen.findByRole('heading', { name: 'example.com' })).toBeInTheDocument();
-    // The domain is the title, so it is not printed a second time.
-    expect(within(screen.getByTestId('site-workspace')).getAllByText('example.com')).toHaveLength(
-      1,
-    );
+    const heading = await screen.findByRole('heading', { name: 'example.com' });
+    expect(heading).toBeInTheDocument();
+    // The domain is the title, so the page header has no duplicate subtitle.
+    expect(heading.parentElement?.querySelector('p')).toBeNull();
   });
 
   it('shows a heading skeleton (not the raw UUID) until the sites slice resolves', () => {

@@ -10,7 +10,7 @@
  *   - site-tab-panel-<tab>                 per-tab panel wrappers
  *   - overview-panel                       overview surface
  */
-import { Suspense, lazy, useEffect, type ReactNode } from 'react';
+import { Suspense, lazy, useCallback, useEffect, useState, type ReactNode } from 'react';
 import { Link, useParams } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { Pause, Play, SearchX } from 'lucide-react';
@@ -30,6 +30,8 @@ import { KeywordsPanel, SerpFeaturesPanel } from '@features/ranks';
 import {
   GoogleAnalyticsSummaryCard,
   GoogleConnectionCard,
+  SiteGoogleNotice,
+  SiteGoogleReadinessProvider,
   GoogleSearchDetailPanel,
   GoogleSearchSummaryCard,
 } from '@features/google';
@@ -44,6 +46,9 @@ import {
   selectSitesLoaded,
 } from '../store/selectors';
 import { useSiteLookup } from '../useSiteLookup';
+import { useResolvedSiteMarket } from '../useResolvedSiteMarket';
+import { SiteMarketProvider } from '@shared/markets';
+import { SiteMarketDialog } from './SiteMarketDialog';
 import { OverviewPanel } from './OverviewPanel';
 
 const LazyActionsPanel = lazy(async () => {
@@ -296,6 +301,9 @@ export const SiteWorkspacePage = () => {
   const listedSite = sites.find((s) => s.id === siteId);
   const lookup = useSiteLookup(siteId, !listedSite && (sitesLoaded || Boolean(sitesError)));
   const site = listedSite ?? lookup.site ?? undefined;
+  const siteMarket = useResolvedSiteMarket(site);
+  const [editingMarket, setEditingMarket] = useState(false);
+  const openMarketEditor = useCallback(() => setEditingMarket(true), []);
   useAppTitleDetail(site ? [t(getSiteTabLabelKey(activeTab)), siteLabel(site)] : null);
 
   if (!site) {
@@ -446,12 +454,14 @@ export const SiteWorkspacePage = () => {
           <GoogleSearchDetailPanel view={googleView} siteId={siteId} />
         ) : (
           <>
+            <SiteGoogleNotice product="gsc" showAction={false} />
+            <SiteGoogleNotice product="ga4" showAction={false} />
             <GoogleSearchSummaryCard siteId={siteId} />
             <Suspense fallback={<LazyPanelFallback />}>
               <LazyGscGenerativeAppearanceCard siteId={siteId} />
             </Suspense>
             <GoogleAnalyticsSummaryCard siteId={siteId} />
-            <GoogleConnectionCard siteId={siteId} />
+            <GoogleConnectionCard siteId={siteId} domain={site.domain} />
           </>
         )}
       </div>
@@ -526,8 +536,14 @@ export const SiteWorkspacePage = () => {
         aria-label={t(getSiteTabLabelKey(activeTab))}
         data-testid={`site-tab-panel-${activeTab}`}
       >
-        {panels[activeTab]}
+        <SiteGoogleReadinessProvider siteId={siteId} domain={site.domain} readiness={site.google}>
+          <SiteMarketProvider market={siteMarket} onEditMarket={openMarketEditor}>
+            {panels[activeTab]}
+          </SiteMarketProvider>
+        </SiteGoogleReadinessProvider>
       </section>
+      {editingMarket ? <SiteMarketDialog site={site} initialMarket={siteMarket}
+        onClose={() => setEditingMarket(false)} /> : null}
     </div>
   );
 };

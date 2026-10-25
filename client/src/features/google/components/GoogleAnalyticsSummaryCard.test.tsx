@@ -430,11 +430,12 @@ describe('GoogleAnalyticsSummaryCard — data states', () => {
     expect(table.querySelectorAll('tbody tr')).toHaveLength(2);
   });
 
-  it('renders the four breakdown lists with sessions · engagement rate', () => {
+  it('labels the four breakdowns by session share and engagement rate', () => {
     renderWith(makeStore({ connection: configured, analytics: loadedAnalytics() }));
     const channels = screen.getByTestId('google-analytics-channels');
     expect(within(channels).getByText('Organic Search')).toBeInTheDocument();
-    expect(within(channels).getByText('200 · 60%')).toBeInTheDocument();
+    expect(within(channels).getByText('200 · 50%')).toBeInTheDocument();
+    expect(within(channels).getByText('60% engaged')).toBeInTheDocument();
     const pages = screen.getByTestId('google-analytics-pages');
     expect(within(pages).getByText('https://example.com/pricing')).toBeInTheDocument();
     const countries = screen.getByTestId('google-analytics-countries');
@@ -444,7 +445,8 @@ describe('GoogleAnalyticsSummaryCard — data states', () => {
     expect(within(devices).getByText('Desktop')).toBeInTheDocument();
     expect(within(devices).getByText('Other')).toBeInTheDocument();
     // Per-row rate = engaged sessions / sessions (2 / 5 → 40%).
-    expect(within(devices).getByText('5 · 40%')).toBeInTheDocument();
+    expect(within(devices).getByText('5 · 1.3%')).toBeInTheDocument();
+    expect(within(devices).getByText('40% engaged')).toBeInTheDocument();
   });
 
   it('guards the per-row engagement rate against zero sessions', () => {
@@ -554,20 +556,42 @@ describe('GoogleAnalyticsSummaryCard — range', () => {
     await waitFor(() =>
       expect(mockedApi.fetchAnalyticsSummary).toHaveBeenCalledWith('site-1', '7d'),
     );
-    expect(await screen.findByText('Google Analytics (last 7 days)')).toBeInTheDocument();
+    expect(await screen.findByRole('heading', { name: 'Google Analytics' })).toBeInTheDocument();
+    expect(screen.getByTestId('google-analytics-range')).toHaveTextContent('Last 7 days');
   });
 
   it('picking a range refetches and writes ?range= while preserving ?tab=', async () => {
     const user = userEvent.setup();
     mockedApi.fetchAnalyticsSummary.mockResolvedValue({ summary });
     renderWith(makeStore({ connection: configured, analytics: loadedAnalytics() }));
-    expect(screen.getByText('Google Analytics (last 28 days)')).toBeInTheDocument();
+    expect(screen.getByRole('heading', { name: 'Google Analytics' })).toBeInTheDocument();
+    expect(screen.getByTestId('google-analytics-range')).toHaveTextContent('Last 28 days');
     await user.click(screen.getByTestId('google-analytics-range'));
     await user.click(await screen.findByRole('option', { name: 'Last 90 days' }));
     await waitFor(() => expect(capturedSearch).toBe('?tab=google&range=90d'));
     await waitFor(() =>
       expect(mockedApi.fetchAnalyticsSummary).toHaveBeenCalledWith('site-1', '90d'),
     );
-    expect(await screen.findByText('Google Analytics (last 90 days)')).toBeInTheDocument();
+    expect(screen.getByTestId('google-analytics-range')).toHaveTextContent('Last 90 days');
+  });
+});
+
+describe('GoogleAnalyticsSummaryCard — snapshot freshness', () => {
+  it('shows the actual window and a refresh warning for an old unsynced snapshot', () => {
+    const old = { ...summary, freshness: {
+      expectedAsOf: '2026-10-24', stale: true, noRecentSessions: false,
+    } };
+    renderWith(makeStore({ connection: configured, analytics: loadedAnalytics({ summary: old }) }));
+    expect(screen.getByTestId('google-analytics-stale')).toHaveTextContent('Analytics data is out of date');
+    expect(screen.getByTestId('google-analytics-window')).toHaveTextContent('Jun 13, 2026 – Jul 10, 2026');
+  });
+
+  it('explains an old window after a recent successful check without suggesting reconnect', () => {
+    const quiet = { ...summary, freshness: {
+      expectedAsOf: '2026-10-24', stale: false, noRecentSessions: true,
+    } };
+    renderWith(makeStore({ connection: configured, analytics: loadedAnalytics({ summary: quiet }) }));
+    expect(screen.getByTestId('google-analytics-no-recent-sessions')).toHaveTextContent('No sessions recorded since Jul 10, 2026');
+    expect(screen.queryByTestId('google-analytics-stale')).toBeNull();
   });
 });

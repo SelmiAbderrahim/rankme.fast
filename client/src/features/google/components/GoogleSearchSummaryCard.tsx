@@ -20,6 +20,7 @@ import { Button } from '@shared/ui/button';
 import { Empty, EmptyContent, EmptyDescription, EmptyTitle } from '@shared/ui/empty';
 import { Skeleton } from '@shared/ui/skeleton';
 import { useAppDispatch, useAppSelector } from '@shared/hooks/redux';
+import { countryLabelFromAlpha3 } from '@shared/markets';
 import {
   selectGoogleConnection,
   selectGoogleConnectionSiteId,
@@ -135,19 +136,29 @@ export const GoogleSearchSummaryCard = ({ siteId }: GoogleSearchSummaryCardProps
   // states only — never the loading skeleton or the initial hard error.
   const showControls = !showSkeleton && !showHardError;
 
-  const breakdownValueHeader = `${t('searchSummary.clicks')} · ${t('searchSummary.ctr')}`;
+  const byImpressions = (summary?.totalClicks ?? 0) === 0 && (summary?.totalImpressions ?? 0) > 0;
+  const breakdownValueHeader = t('breakdown.shareHeaderRows', {
+    metric: t(byImpressions ? 'searchSummary.impressions' : 'searchSummary.clicks'),
+  });
+  const formatCtr = byImpressions ? undefined : (rate: string) => t('breakdown.ctrRate', { rate });
   const countryRows = (summary?.countries ?? []).map((row) => ({
     id: row.country,
-    label: row.country.toUpperCase(),
-    value: row.clicks,
-    rate: row.ctr,
-  }));
+    label: countryLabelFromAlpha3(row.country, locale),
+    value: byImpressions ? row.impressions : row.clicks,
+    rate: byImpressions ? null : row.ctr,
+  })).sort((left, right) => right.value - left.value);
   const deviceRows = (summary?.devices ?? []).map((row) => ({
     id: row.device,
     label: t(`searchSummary.devices.${deviceLabelKey(row.device)}`),
-    value: row.clicks,
-    rate: row.ctr,
-  }));
+    value: byImpressions ? row.impressions : row.clicks,
+    rate: byImpressions ? null : row.ctr,
+  })).sort((left, right) => right.value - left.value);
+  const dimensionBreakdown = (rows: Array<{ value: number }>, totals: { rows: number; clicks: number; impressions: number } | undefined) => ({
+    total: totals ? (byImpressions ? totals.impressions : totals.clicks) : rows.reduce((sum, row) => sum + row.value, 0),
+    hiddenRows: totals ? Math.max(0, totals.rows - rows.length) : 0,
+  });
+  const countryBreakdown = dimensionBreakdown(countryRows, summary?.dimensionTotals?.country);
+  const deviceBreakdown = dimensionBreakdown(deviceRows, summary?.dimensionTotals?.device);
 
   return (
     <section
@@ -293,6 +304,11 @@ export const GoogleSearchSummaryCard = ({ siteId }: GoogleSearchSummaryCardProps
             </p>
           ) : null}
 
+          {byImpressions ? (
+            <p className="text-muted-foreground mt-4 text-xs" data-testid="google-summary-breakdown-by-impressions">
+              {t('breakdown.byImpressions')}
+            </p>
+          ) : null}
           <div className="mt-4 grid gap-4 sm:grid-cols-2">
             {summary.topQueries.length > 0 ? (
               <div>
@@ -362,7 +378,12 @@ export const GoogleSearchSummaryCard = ({ siteId }: GoogleSearchSummaryCardProps
                 valueHeader={breakdownValueHeader}
                 emptyLabel={t('searchSummary.countriesEmpty')}
                 rows={countryRows}
-                total={summary.totalClicks}
+                total={countryBreakdown.total}
+                formatRate={formatCtr}
+                other={countryBreakdown.hiddenRows > 0 ? {
+                  hiddenRows: countryBreakdown.hiddenRows,
+                  label: t('breakdown.other', { count: countryBreakdown.hiddenRows, hidden: countryBreakdown.hiddenRows }),
+                } : undefined}
               />
               <ViewAllLink
                 view="countries"
@@ -378,7 +399,12 @@ export const GoogleSearchSummaryCard = ({ siteId }: GoogleSearchSummaryCardProps
                 valueHeader={breakdownValueHeader}
                 emptyLabel={t('searchSummary.devicesEmpty')}
                 rows={deviceRows}
-                total={summary.totalClicks}
+                total={deviceBreakdown.total}
+                formatRate={formatCtr}
+                other={deviceBreakdown.hiddenRows > 0 ? {
+                  hiddenRows: deviceBreakdown.hiddenRows,
+                  label: t('breakdown.other', { count: deviceBreakdown.hiddenRows, hidden: deviceBreakdown.hiddenRows }),
+                } : undefined}
               />
               <ViewAllLink view="devices" section={t('searchSummary.devicesTitle')} />
             </div>

@@ -5,6 +5,7 @@ import { useTranslation } from 'react-i18next';
 import { MoreHorizontal } from 'lucide-react';
 import { StatusChip } from '@shared/ui/status-chip';
 import { Button } from '@shared/ui/button';
+import { Badge } from '@shared/ui/badge';
 import {
   AlertDialog,
   AlertDialogCancel,
@@ -98,9 +99,7 @@ export const TeamMembersTable = ({
             return (
               <TableRow key={member.id}>
                 <TableCell className="font-medium"><Bdi>{member.email}</Bdi></TableCell>
-                <TableCell className="text-muted-foreground">
-                  {t(`members.roles.${member.role}`)}
-                </TableCell>
+                <TableCell><Badge variant="outline">{t(`members.roles.${member.role}`)}</Badge></TableCell>
                 <TableCell>
                   {isPending && isExpired(member) ? (
                     <StatusChip tone="destructive">{t('members.status.expired')}</StatusChip>

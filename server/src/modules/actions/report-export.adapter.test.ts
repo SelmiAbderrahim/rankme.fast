@@ -87,6 +87,7 @@ beforeEach(() => {
     }));
   vi.mocked(getSite).mockReset().mockResolvedValue({
     id: siteId, url: 'https://example.test', domain: 'example.test', displayName: 'Action Site',
+    defaultMarket: null,
     paused: false, pausedAt: null, createdAt: observedAt, updatedAt: observedAt,
   });
 });
@@ -155,6 +156,7 @@ describe('actions report export adapter', () => {
     mocked.listActions.mockResolvedValue(page({ items: [], nextCursor: null }));
     vi.mocked(getSite).mockResolvedValue({
       id: siteId, url: 'https://example.test', domain: 'example.test', displayName: '',
+      defaultMarket: null,
       paused: false, pausedAt: null, createdAt: observedAt, updatedAt: observedAt,
     });
     const result = await adapter.compose(compose({}));

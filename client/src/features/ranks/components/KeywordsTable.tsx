@@ -2,9 +2,9 @@ import { isolateText } from '@shared/lib/bidi';
 import { Bdi } from '@shared/components/Bdi';
 import { useMemo, useState, type ReactNode } from 'react';
 import { useTranslation } from 'react-i18next';
-import { ArrowDown, ArrowUp, Minus, MoreHorizontal, RefreshCw } from 'lucide-react';
+import { ArrowDown, ArrowUp, Clock, Minus, MoreHorizontal, RefreshCw } from 'lucide-react';
 import { Badge } from '@shared/ui/badge';
-import { formatRelativeTime } from '@shared/lib/datetime';
+import { formatAbsoluteDate, formatRelativeTime } from '@shared/lib/datetime';
 import { Button } from '@shared/ui/button';
 import { Card, CardContent } from '@shared/ui/card';
 import { Spinner } from '@shared/ui/spinner';
@@ -27,9 +27,10 @@ import {
   AlertDialogTitle,
 } from '@shared/ui/alert-dialog';
 import { cn } from '@shared/lib/utils';
-import type { Keyword } from '../types';
-import { rankCheckReachedTerminal } from '../check-status';
+import type { Keyword, RankJobItem } from '../types';
+import { keywordCheckState, rankCheckReachedTerminal } from '../check-status';
 import { formatCountryFromLocation } from '@shared/markets';
+import { RankStateLabel } from './RankStateLabel';
 
 export interface KeywordsTableProps {
   keywords: Keyword[];
@@ -38,6 +39,8 @@ export interface KeywordsTableProps {
   onSelect: (keyword: Keyword) => void;
   onRemove: (keyword: Keyword) => void;
   onCheck?: (keyword: Keyword) => void;
+  /** Items from the most recent rank job for this site. */
+  jobItems?: ReadonlyMap<string, RankJobItem>;
   /**
    * Epoch ms of an in-flight "Check now" (null when idle). A row whose
    * `lastCheckedAt` has not advanced past this stamp renders an optimistic
@@ -70,6 +73,7 @@ export const KeywordsTable = ({
   onSelect,
   onRemove,
   onCheck,
+  jobItems,
   checkingSince = null,
   checkingKeywordId = null,
   requestingKeywordId = null,
@@ -78,10 +82,13 @@ export const KeywordsTable = ({
   const { t, i18n } = useTranslation('ranks');
   const [pendingRemove, setPendingRemove] = useState<Keyword | null>(null);
   const dateTime = useMemo(() => dateTimeFormatter(i18n.language), [i18n.language]);
+  const stateOf = (k: Keyword) => keywordCheckState(k, jobItems?.get(k.id));
 
   // A row is "checking" while a Check-now poll is in flight and this keyword's
   // snapshot has not yet been refreshed past the trigger stamp.
   const isChecking = (k: Keyword): boolean => {
+    const current = stateOf(k).kind;
+    if (current === 'queued' || current === 'checking') return true;
     const initial = initialChecks[k.id];
     if (initial !== undefined && !rankCheckReachedTerminal(k, initial.since)) return true;
     return (
@@ -128,7 +135,12 @@ export const KeywordsTable = ({
     );
   };
 
-  const renderChecking = (k: Keyword, slot: 'pos' | 'time') => (
+  const renderChecking = (k: Keyword, slot: 'pos' | 'time') => stateOf(k).kind === 'queued' ? (
+    <span className="text-muted-foreground inline-flex items-center gap-1.5" aria-live="polite" data-testid={`keyword-queued-${slot}-${k.id}`}>
+      <Clock className="size-3" aria-hidden="true" />
+      <span>{t('queued')}</span>
+    </span>
+  ) : (
     <span
       className="text-muted-foreground inline-flex items-center gap-1.5"
       aria-live="polite"
@@ -144,13 +156,14 @@ export const KeywordsTable = ({
    * failed, or failed before the cause was recorded — callers then show the
    * bare "check failed" label rather than inventing a reason.
    */
-  const failureReason = (k: Keyword): string | null =>
-    k.lastFailedReason === null ? null : t(`checkErroredReason.${k.lastFailedReason}`);
+  const failureReason = (reason: string | null): string | null =>
+    reason === null ? null : t(`checkErroredReason.${reason}`);
 
   const positionLabel = (k: Keyword): ReactNode => {
     if (k.latestPosition === null && k.lastCheckedAt === null) {
-      if (k.lastFailedCheckAt === null) return t('unavailable');
-      const reason = failureReason(k);
+      const state = stateOf(k);
+      if (state.kind !== 'failed') return t('unavailable');
+      const reason = failureReason(state.reason);
       // The reason rides the same node as the label so both the pointer
       // tooltip and the accessible name carry it; the visible text is
       // unchanged, so the cell still reads "Check failed" at a glance.
@@ -163,7 +176,11 @@ export const KeywordsTable = ({
         </span>
       );
     }
-    return k.latestPosition === null ? t('notInTop100') : String(k.latestPosition);
+    const position = k.latestPosition === null ? t('notInTop100') : String(k.latestPosition);
+    if (k.rankState?.state === 'failed_last_check' && k.lastCheckedAt !== null) {
+      return <span data-testid={`keyword-position-last-known-${k.id}`}>{t('lastKnown', { position, date: formatAbsoluteDate(k.lastCheckedAt, i18n.language) })}</span>;
+    }
+    return position;
   };
 
   const locationLabel = (code: number): string =>
@@ -203,6 +220,7 @@ export const KeywordsTable = ({
   );
 
   const renderDelta = (k: Keyword) => {
+    if (k.rankState) return <RankStateLabel keyword={k} />;
     // No comparison available yet (never checked, or only one snapshot) — show
     // a neutral dash, NOT "0". A literal 0 reads as a measured "no change" and
     // is misleading on keywords that have no data. Mirrors the Position column's
@@ -304,26 +322,18 @@ export const KeywordsTable = ({
     if (isChecking(k)) {
       return renderChecking(k, 'time');
     }
+    const checkState = stateOf(k);
+    if (checkState.kind === 'failed') {
+      const reason = failureReason(checkState.reason);
+      const failedAt = dateTime.format(new Date(checkState.at));
+      return <Badge variant="destructive" className="rounded-full"
+        title={reason === null ? failedAt : `${failedAt} — ${reason}`}
+        aria-label={reason === null ? t('checkErrored') : `${t('checkErrored')}: ${reason}`}
+        data-testid={`keyword-check-failed-${k.id}`}>
+        <time dateTime={checkState.at}>{formatRelativeTime(checkState.at, i18n.language)}</time>
+      </Badge>;
+    }
     if (!k.lastCheckedAt) {
-      // A recorded failed attempt (no snapshot) reads as "check failed" with
-      // its time — distinct from the never-checked "unavailable" state.
-      if (k.lastFailedCheckAt !== null) {
-        const reason = failureReason(k);
-        const failedAt = dateTime.format(new Date(k.lastFailedCheckAt));
-        return (
-          <Badge
-            variant="destructive"
-            className="rounded-full"
-            title={reason === null ? failedAt : `${failedAt} — ${reason}`}
-            aria-label={reason === null ? t('checkErrored') : `${t('checkErrored')}: ${reason}`}
-            data-testid={`keyword-check-failed-${k.id}`}
-          >
-            <time dateTime={k.lastFailedCheckAt}>
-              {formatRelativeTime(k.lastFailedCheckAt, i18n.language)}
-            </time>
-          </Badge>
-        );
-      }
       return (
         <Badge variant="outline" data-testid={`keyword-unavailable-${k.id}`}>
           {t('unavailable')}

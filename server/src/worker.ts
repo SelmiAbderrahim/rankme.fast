@@ -56,7 +56,7 @@ import { createProviderRegistry, getAiGenerationProvider, providerSelectionFromE
 import { DATAFORSEO_AUDIT_WORKER_CONCURRENCY_MAX } from "./shared/safety/pagespeed-defaults.js";
 import { RATE_LIMIT_PRUNE_INTERVAL_MS, RATE_LIMIT_PRUNE_JOB, RATE_LIMIT_PRUNE_QUEUE, RATE_LIMIT_PRUNE_SCHEDULER_KEY, createRateLimitPruneProcessor, } from './shared/middleware/rate-limit-metrics.js';
 import { createCachedPageSpeedProvider, createReadThrough, createSingleFlight, createVendorArchiver, createVendorCacheRepo, } from './shared/vendor-cache/index.js';
-import { ACCOUNT_PURGE_QUEUE, APP_SEO_LISTING_JOB_NAME, APP_SEO_TRACKING_QUEUE, APP_SEO_REVIEW_JOB_NAME, BACKLINK_DEEP_QUEUE, ALERT_DISPATCH_QUEUE, BRAND_RADAR_QUEUE, AUDIENCE_RESEARCH_QUEUE, AUDIT_SUMMARY_JOB_NAME, AUDITS_QUEUE, COMPETITOR_CONTENT_QUEUE, COMPETITOR_LANDSCAPES_QUEUE, CONTENT_ANALYSIS_QUEUE, CONTENT_INVENTORY_QUEUE, CONTENT_BRIEF_QUEUE, GEOGRID_QUEUE, INTERNAL_LINKS_QUEUE, KEYWORD_CLUSTERING_QUEUE, CONTENT_MONITOR_QUEUE, CLIENT_REPORTS_QUEUE, GA4_SYNC_QUEUE, GSC_SYNC_QUEUE, RANKS_QUEUE, REVIEW_SYNC_QUEUE, TRAFFIC_SNAPSHOTS_QUEUE, WEEKLY_PULSE_QUEUE, collectQueueSnapshot, createQueueConnection, createQueues, createWorkerShutdown, enqueueGscSyncJob, startHealthServer, wireDeadLetter, } from './shared/queue/index.js';
+import { ACCOUNT_PURGE_QUEUE, APP_SEO_LISTING_JOB_NAME, APP_SEO_TRACKING_QUEUE, APP_SEO_REVIEW_JOB_NAME, BACKLINK_DEEP_QUEUE, ALERT_DISPATCH_QUEUE, BRAND_RADAR_QUEUE, AUDIENCE_RESEARCH_QUEUE, AUDIT_SUMMARY_JOB_NAME, AUDITS_QUEUE, COMPETITOR_CONTENT_QUEUE, COMPETITOR_LANDSCAPES_QUEUE, CONTENT_ANALYSIS_QUEUE, CONTENT_INVENTORY_QUEUE, CONTENT_BRIEF_QUEUE, GEOGRID_QUEUE, INTERNAL_LINKS_QUEUE, KEYWORD_CLUSTERING_QUEUE, CONTENT_MONITOR_QUEUE, CLIENT_REPORTS_QUEUE, GA4_SYNC_QUEUE, GSC_SYNC_QUEUE, RANKS_QUEUE, REVIEW_SYNC_QUEUE, TRAFFIC_SNAPSHOTS_QUEUE, WEEKLY_PULSE_QUEUE, collectQueueSnapshot, createQueueConnection, createQueues, createWorkerShutdown, enqueueGa4SyncJob, enqueueGscSyncJob, startHealthServer, wireDeadLetter, } from './shared/queue/index.js';
 import { reconcileSingletonScheduler, startSchedulerReconciler, withSingletonSchedulerRefresh, } from './scheduler-reconciliation.js';
 function jobString(job: Job, field: string): string | null {
     const value = (job.data as Record<string, unknown> | null)?.[field];
@@ -312,6 +312,7 @@ async function main(): Promise<void> {
     const processRank = createRankProcessor({
         provider: providers.rank,
         db,
+        retryQueue: queues.ranks,
         cache: createSerpCacheRepo({ db, ttlHours: env.SERP_CACHE_TTL_HOURS }),
         resolveTargets: createPostgresRankTargetsResolver(db),
         cacheTtlMs: env.SERP_CACHE_TTL_HOURS * 60 * 60 * 1000,
@@ -701,6 +702,7 @@ async function main(): Promise<void> {
     const produceDailyGscSync = createGscDailySyncProducer({
         repository: createMongoGscDailySyncRepository(),
         enqueue: (payload, day) => enqueueGscSyncJob(queues.gscSync, payload, day),
+        enqueueGa4: (payload, day) => enqueueGa4SyncJob(queues.ga4Sync, payload, day),
         now: () => new Date(),
         logger,
     });

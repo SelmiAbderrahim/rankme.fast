@@ -61,11 +61,19 @@ import {
 } from '@features/backlinks';
 import { selectCompetitorsList, selectCompetitorsSiteId } from '@features/competitors';
 import {
+  DEFAULT_GOOGLE_RANGE,
   loadConnection,
+  loadSearchSummary,
   selectGoogleConnection,
   selectGoogleConnectionSiteId,
   selectGoogleLoaded,
   selectGoogleLoading,
+  selectGoogleSearchSummary,
+  selectGoogleSummaryLoading,
+  selectGoogleSummaryRange,
+  selectGoogleSummarySiteId,
+  SiteGoogleNotice,
+  useSiteGoogleReadiness,
 } from '@features/google';
 import {
   loadKeywords,
@@ -161,6 +169,11 @@ export const OverviewPanel = ({ siteId }: Props) => {
   const googleConnectionSiteId = useAppSelector(selectGoogleConnectionSiteId);
   const googleLoading = useAppSelector(selectGoogleLoading);
   const googleLoaded = useAppSelector(selectGoogleLoaded);
+  const siteGoogleReadiness = useSiteGoogleReadiness();
+  const searchSummary = useAppSelector(selectGoogleSearchSummary);
+  const searchSummarySiteId = useAppSelector(selectGoogleSummarySiteId);
+  const searchSummaryRange = useAppSelector(selectGoogleSummaryRange);
+  const searchSummaryLoading = useAppSelector(selectGoogleSummaryLoading);
 
   const overviewActions = useAppSelector(selectOverviewActions);
   const actionsStatus = useAppSelector(selectActionsListStatus);
@@ -243,6 +256,13 @@ export const OverviewPanel = ({ siteId }: Props) => {
 
   const siteGoogleConnection =
     googleConnectionSiteId === siteId ? googleConnection : null;
+  const googleConnected = siteGoogleConnection?.status === 'connected';
+  const searchSummaryRequestedFor = useRef<string | null>(null);
+  useEffect(() => {
+    if (!googleConnected || searchSummaryRequestedFor.current === siteId) return;
+    searchSummaryRequestedFor.current = siteId;
+    void dispatch(loadSearchSummary({ siteId, range: DEFAULT_GOOGLE_RANGE }));
+  }, [dispatch, googleConnected, siteId]);
 
   const count = (value: number | null | undefined): string =>
     typeof value === 'number' ? new Intl.NumberFormat(locale).format(value) : NA;
@@ -292,6 +312,24 @@ export const OverviewPanel = ({ siteId }: Props) => {
     };
   })();
   const gsc = report?.gscSearch;
+  const latestSearchSnapshot = searchSummarySiteId === siteId && searchSummaryRange === DEFAULT_GOOGLE_RANGE
+    ? searchSummary : null;
+  const searchData = latestSearchSnapshot ? {
+    totalClicks: latestSearchSnapshot.totalClicks,
+    totalImpressions: latestSearchSnapshot.totalImpressions,
+    averageCtr: latestSearchSnapshot.averageCtr,
+    averagePosition: latestSearchSnapshot.averagePosition,
+    topQuery: latestSearchSnapshot.topQueries[0]?.query ?? null,
+    asOf: latestSearchSnapshot.asOf,
+  } : gsc?.status === 'ok' ? {
+    totalClicks: gsc.totalClicks,
+    totalImpressions: gsc.totalImpressions,
+    averageCtr: gsc.averageCtr,
+    averagePosition: gsc.averagePosition,
+    topQuery: gsc.topQueries[0]?.query ?? null,
+    asOf: null,
+  } : null;
+  const searchSnapshotPending = googleConnected && searchSummaryLoading && !searchData;
   const cachedCompetitors =
     competitorsSiteId === siteId ? competitorList?.competitors.slice(0, 3) : undefined;
 
@@ -582,43 +620,44 @@ export const OverviewPanel = ({ siteId }: Props) => {
               <CardDescription>{t('sites:overview.search.description')}</CardDescription>
             </CardHeader>
             <CardContent>
-              {(reportLoading && !reportLoaded) || googleLoading ? (
+              {(reportLoading && !reportLoaded) || googleLoading || searchSnapshotPending ? (
                 <div className="grid grid-cols-2 gap-3" aria-busy="true">
                   {Array.from({ length: 4 }, (_, index) => (
                     <Skeleton key={index} className="h-24" />
                   ))}
                 </div>
-              ) : gsc?.status === 'ok' ? (
+              ) : searchData ? (
                 <div className="space-y-4">
                   <div className="grid grid-cols-2 gap-3">
                     <StatCard
                       variant="kpi"
                       label={t('report:gscBlock.totalClicks')}
-                      value={count(gsc.totalClicks)}
+                      value={count(searchData.totalClicks)}
                     />
                     <StatCard
                       variant="kpi"
                       label={t('report:gscBlock.totalImpressions')}
-                      value={count(gsc.totalImpressions)}
+                      value={count(searchData.totalImpressions)}
                     />
                     <StatCard
                       variant="kpi"
                       label={t('report:gscBlock.averageCtr')}
-                      value={percent(gsc.averageCtr)}
+                      value={percent(searchData.averageCtr)}
                     />
                     <StatCard
                       variant="kpi"
                       label={t('report:gscBlock.averagePosition')}
-                      value={decimal(gsc.averagePosition)}
+                      value={decimal(searchData.averagePosition)}
                     />
                   </div>
-                  {gsc.topQueries[0] ? (
+                  {searchData.asOf ? <p className="text-muted-foreground text-xs">{t('sites:overview.search.asOf', { date: date(searchData.asOf) })}</p> : null}
+                  {searchData.topQuery ? (
                     <div className="rounded-xl border p-4">
                       <p className="text-xs text-muted-foreground">
                         {t('sites:overview.search.topQuery')}
                       </p>
-                      <p className="mt-1 truncate font-medium" title={isolateText(gsc.topQueries[0].query)}>
-                        <Bdi>{gsc.topQueries[0].query}</Bdi>
+                      <p className="mt-1 truncate font-medium" title={isolateText(searchData.topQuery)}>
+                        <Bdi>{searchData.topQuery}</Bdi>
                       </p>
                     </div>
                   ) : null}
@@ -629,6 +668,9 @@ export const OverviewPanel = ({ siteId }: Props) => {
                     </Link>
                   </Button>
                 </div>
+              ) : siteGoogleReadiness?.readiness?.gsc.status !== undefined &&
+                siteGoogleReadiness.readiness.gsc.status !== 'ok' ? (
+                <SiteGoogleNotice product="gsc" />
               ) : (
                 <Empty className="border py-8">
                   <EmptyHeader>

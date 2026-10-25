@@ -60,13 +60,35 @@
     "perPage": "{{count}} par page", "active": "Filtres actifs : {{context}}", "activeSearch": "Recherche : {{value}}", "noneActive": "Aucune recherche ni aucun filtre actif."
   },
   "insights": {
-    "striking_distance": { "label": "À portée", "description": "Cette page est assez proche pour progresser et répond à une demande de recherche notable." },
-    "low_ctr": { "label": "CTR faible", "description": "Les impressions observées sont fortes, mais les clics restent sous le seuil de la règle." },
-    "declining": { "label": "En baisse", "description": "La position ou les clics observés ont nettement baissé depuis la précédente synchronisation réussie." },
-    "winning": { "label": "En progression", "description": "La position ou les clics observés se sont nettement améliorés depuis la précédente synchronisation réussie." },
-    "non_indexable_visibility": { "label": "Visible mais non explorable", "description": "La page a des performances de recherche, mais le dernier crawl RankMeFast la marque non indexable. Ce n’est pas une affirmation sur l’index Google." },
-    "unmeasured": { "label": "Non mesuré", "description": "Le dernier crawl a trouvé cette page indexable, mais la source de performance actuelle ne contient aucune ligne pour elle." },
-    "none": "Aucune opportunité actuelle"
+    "striking_distance": {
+      "label": "À portée",
+      "description": "Cette page est assez proche pour progresser et répond à une demande de recherche notable."
+    },
+    "low_ctr": {
+      "label": "CTR faible",
+      "description": "Les impressions observées sont fortes, mais les clics restent sous le seuil de la règle."
+    },
+    "declining": {
+      "label": "En baisse",
+      "description": "La position ou les clics observés ont nettement baissé depuis la précédente synchronisation réussie."
+    },
+    "winning": {
+      "label": "En progression",
+      "description": "La position ou les clics observés se sont nettement améliorés depuis la précédente synchronisation réussie."
+    },
+    "non_indexable_visibility": {
+      "label": "Visible mais non explorable",
+      "description": "La page a des performances de recherche, mais le dernier crawl RankMeFast la marque non indexable. Ce n’est pas une affirmation sur l’index Google."
+    },
+    "unmeasured": {
+      "label": "Non mesuré",
+      "description": "Le dernier crawl a trouvé cette page indexable, mais la source de performance actuelle ne contient aucune ligne pour elle."
+    },
+    "none": "Aucune opportunité actuelle",
+    "low_data": {
+      "label": "Données insuffisantes",
+      "description": "Search Console indique trop peu d’impressions et aucun clic pour cette page : elle n’a donc pas encore de libellé d’évolution."
+    }
   },
   "sorts": {
     "opportunity": "Opportunité", "url": "URL", "title": "Titre", "clicks": "Clics", "impressions": "Impressions", "ctr": "CTR",
@@ -74,7 +96,61 @@
     "difficulty": "Difficulté", "estimated_traffic": "Trafic estimé", "position_change": "Évolution de position", "click_change_pct": "Évolution des clics"
   },
   "indexability": { "indexable": "Explorable et indexable", "nonIndexable": "Non explorable/indexable", "unknown": "État d’exploration inconnu" },
-  "table": { "caption": "Résultats de performance et d’indexabilité des pages", "page": "Page", "source": "Source de performance", "crawl": "Indexabilité d’exploration", "insights": "Opportunités", "actions": "Actions", "untitled": "Page sans titre" },
+  "crawlState": {
+    "label": {
+      "indexable": "Explorable et indexable",
+      "non_indexable": "Non explorable/indexable",
+      "redirected": "Redirige vers {{path}}",
+      "failed": "Illisible",
+      "not_in_crawl": "Absente de la dernière exploration",
+      "no_crawl": "Aucune exploration pour l’instant"
+    },
+    "crawledAs": "Explorée sous {{path}}",
+    "failure": {
+      "http_error": "La page a répondu HTTP {{status}}.",
+      "redirect_loop": "Ses redirections tournent en boucle.",
+      "redirect_limit": "Elle redirige plus de cinq fois, nous avons donc arrêté de la suivre.",
+      "unsafe_redirect": "Elle redirige vers une adresse que nous ne suivons pas.",
+      "robots_blocked": "Le fichier robots.txt demande aux robots d’ignorer cette page.",
+      "timeout": "La page n’a pas répondu à temps.",
+      "non_html": "Cette adresse sert du {{type}}, pas une page web.",
+      "unreachable": "Nous n’avons pas pu nous connecter à cette adresse."
+    },
+    "evidence": {
+      "finalUrl": "Adresse finale : {{url}}",
+      "redirectPath": "Chemin de redirection : {{path}}",
+      "status": "Statut HTTP : {{status}}",
+      "fromCrawl": "Relevé par l’exploration de l’audit.",
+      "fromProbe": "Vérifiée directement pendant l’audit.",
+      "none": "L’audit n’a pas enregistré pourquoi cette adresse est absente.",
+      "noCrawl": "Lancez un audit pour voir comment cette adresse est explorée.",
+      "botProtection": "Certains sites répondent ainsi aux visites automatisées. Vérifiez que la page s’ouvre dans une fenêtre de navigateur normale."
+    }
+  },
+  "queries": {
+    "anonymized": "Requêtes masquées par Google",
+    "anonymizedHelp": "Google a signalé des impressions pour cette page, mais n'a pas partagé les termes de recherche correspondants. Google masque les requêtes rares pour protéger la vie privée des internautes : zéro signifie donc aucune requête visible, et non aucune recherche.",
+    "unavailableHelp": "Aucune donnée de requête n'est encore enregistrée pour cette page."
+  },
+  "summaryNote": {
+    "window": "Totaux par page du {{start}} au {{end}}, pour les pages qui correspondent à vos filtres.",
+    "aggregation": "Search Console compte une impression pour chacune de vos pages qui apparaît dans un résultat, y compris pour les recherches qu'il garde privées : ces totaux peuvent donc dépasser les totaux du site de l'onglet Google. La position moyenne est pondérée par les impressions de chaque page."
+  },
+  "table": {
+    "caption": "Résultats de performance et d’indexabilité des pages",
+    "page": "Page",
+    "source": "Source de performance",
+    "crawl": "Indexabilité d’exploration",
+    "insights": "Opportunités",
+    "actions": "Actions",
+    "untitled": "Page sans titre",
+    "columns": {
+      "button": "Colonnes",
+      "menuLabel": "Colonnes visibles",
+      "reset": "Rétablir les colonnes par défaut",
+      "notForSource": "Non fourni par cette source"
+    }
+  },
   "deltas": { "position": "Évolution de position", "clickChange": "Évolution des clics", "clicks": "Clics {{value}}" },
   "empty": {
     "title": "Aucune page à afficher", "filtered": "Aucune page ne correspond à la recherche et aux filtres. Réinitialisez-les pour retrouver tout l’inventaire.",
@@ -137,7 +213,8 @@
     "fetchedHelp": "Chaque adresse demandée par le robot lors de votre dernier audit, y compris les redirections, les adresses en double d’une même page et les fichiers comme les PDF. Ce nombre dépasse généralement celui des pages canoniques.",
     "runAgain": "Relancer"
   },
-  "coverage": {"pages_zero": "Pages canoniques avec données de recherche : {{measured}} sur {{count}}.",
+  "coverage": {
+    "pages_zero": "Pages canoniques avec données de recherche : {{measured}} sur {{count}}.",
     "pages_one": "Pages canoniques avec données de recherche : {{measured}} sur {{count}}.",
     "pages_two": "Pages canoniques avec données de recherche : {{measured}} sur {{count}}.",
     "pages_few": "Pages canoniques avec données de recherche : {{measured}} sur {{count}}.",
@@ -154,5 +231,8 @@
     "redirects_two": "{{count}} adresses listées redirigent vers l’une de ces pages et sont comptées comme cette page.",
     "redirects_few": "{{count}} adresses listées redirigent vers l’une de ces pages et sont comptées comme cette page.",
     "redirects_many": "{{count}} adresses listées redirigent vers l’une de ces pages et sont comptées comme cette page.",
-    "redirects_other": "{{count}} adresses listées redirigent vers l’une de ces pages et sont comptées comme cette page."}
+    "redirects_other": "{{count}} adresses listées redirigent vers l’une de ces pages et sont comptées comme cette page.",
+    "inventoryLabel": "Pages canoniques",
+    "inventoryHelp": "Les pages canoniques sont les pages uniques que nous connaissons : les pages indexables de votre dernier audit plus les pages avec des données de recherche, chacune comptée une seule fois. Une adresse qui redirige vers l’une d’elles est listée, mais comptée comme cette page."
+  }
 }

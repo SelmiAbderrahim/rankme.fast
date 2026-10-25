@@ -311,8 +311,8 @@ describe('TeamMembersTable', () => {
         />
       </I18nextProvider>,
     );
-    expect(screen.getByText('Owner')).toBeInTheDocument();
-    expect(screen.getByText('Member')).toBeInTheDocument();
+    expect(screen.getByText('Owner')).toHaveAttribute('data-slot', 'badge');
+    expect(screen.getByText('Member')).toHaveAttribute('data-slot', 'badge');
     expect(screen.queryByTestId('member-actions-owner')).toBeNull();
     expect(screen.getByTestId('member-actions-m-2')).toBeInTheDocument();
   });

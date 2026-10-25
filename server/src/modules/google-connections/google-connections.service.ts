@@ -1171,6 +1171,8 @@ export interface GoogleSearchSummary {
     totalImpressions: number;
     averageCtr: number;
     averagePosition: number;
+    /** Totals include every stored row, even when the UI shows only top rows. */
+    dimensionTotals: Record<'query' | 'page' | 'country' | 'device', { rows: number; clicks: number; impressions: number }>;
     topQueries: Array<{
         query: string;
         clicks: number;
@@ -1222,6 +1224,13 @@ interface SummaryRow {
     impressions: number;
     ctr: number;
     position: number;
+}
+function dimensionTotal(rows: readonly SummaryRow[]): { rows: number; clicks: number; impressions: number } {
+    return rows.reduce((total, row) => ({
+        rows: total.rows + 1,
+        clicks: total.clicks + row.clicks,
+        impressions: total.impressions + row.impressions,
+    }), { rows: 0, clicks: 0, impressions: 0 });
 }
 function summarizeRows(rows: readonly SummaryRow[]) {
     let totalClicks = 0;
@@ -1343,6 +1352,12 @@ export async function getSearchSummaryFor(accountId: string, siteId: string, dep
     const previous = await deps.readPreviousTotals(siteId, asOf, windowDays);
     return {
         ...summarizeRows(queryRows),
+        dimensionTotals: {
+            query: dimensionTotal(queryRows),
+            page: dimensionTotal(pageRows),
+            country: dimensionTotal(countryRows),
+            device: dimensionTotal(deviceRows),
+        },
         topQueries: topFive(queryRows).map(({ key, ...rest }) => ({
             query: key,
             ...rest,

@@ -36,6 +36,7 @@ export const siteGoogleParamsSchema = z.object({
 export const setSiteBindingsSchema = z
     .object({
     gscPropertyUrl: z.string().min(1).nullable().optional(),
+    confirmMismatch: z.boolean().optional(),
     ga4PropertyId: z
         .string()
         .regex(/^properties\/\d+$/, 'validation.issue.invalidString')

@@ -291,7 +291,7 @@ describe('GoogleConnectionCard — connected state', () => {
       }),
     );
     expect(
-      screen.getByText(/No verified properties found/),
+      screen.getByText(/No Search Console property found/),
     ).toBeInTheDocument();
     // No picker when the account has no verified properties.
     expect(screen.queryByRole('combobox')).not.toBeInTheDocument();
@@ -510,6 +510,7 @@ describe('GoogleConnectionCard — property picker', () => {
     await waitFor(() =>
       expect(mockedApi.setConnectionProperty).toHaveBeenCalledWith('site-1', {
         propertyUrl: 'sc-domain:example.com',
+        confirmMismatch: false,
       }),
     );
     await waitFor(() =>

@@ -10,6 +10,7 @@ import { Bdi } from '@shared/components/Bdi';
  */
 import { useMemo, useState } from 'react';
 import { Button } from '@shared/ui/button';
+import { niceScale } from '../lib/chartScale';
 
 /** One of the two chartable metrics offered by the toggle. */
 export interface MetricTimeseriesToggle<P> {
@@ -68,7 +69,7 @@ export const MetricTimeseriesChart = <P extends { date: string }>({
   );
 
   const coords = useMemo(() => {
-    const max = Math.max(1, ...points.map((p) => active.value(p)));
+    const max = niceScale(Math.max(0, ...points.map((p) => active.value(p)))).top;
     const span = Math.max(1, points.length - 1);
     return points.map((p, index) => {
       const x = PADDING + (index * (CHART_WIDTH - PADDING * 2)) / span;

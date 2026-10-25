@@ -36,10 +36,10 @@
  */
 import type { Logger } from 'pino';
 import { z } from 'zod';
-import { dataForSeoRequest, type DataForSeoConfig, type DataForSeoTaskOutcome, } from '../http.js';
+import { dataForSeoRequest, dataForSeoRequestPerTask, type DataForSeoConfig, type DataForSeoTaskOutcome, type DataForSeoTaskOutcomeOrError, } from '../http.js';
 import { type ProviderError, VendorAuthError, VendorMalformedError, VendorQuotaError, VendorTimeoutError, VendorUnavailableError, } from '../errors.js';
 import type { LocalPackCheckInput, LocalPackCoordinate, LocalPackResult, PublicPageDiscoveryInput, PublicPageDiscoveryResult, PublicPageDiscoveryRow, PublicPageSourceHint, RankCheckInput, RankCheckResult, RankProvider, SerpDevice, SerpFeatureObservation, SerpFeaturedSnippet, SerpFeatureSnapshot, SerpFeatureType, SerpPaaQuestion, } from '../types.js';
-import { extractItemHost, matchDomainInAiOverview, matchDomainInSerp, MAX_PAA_QUESTIONS, normalizeSerpDomain, type SerpAiOverview, type SerpItem, } from '../serp-normalization.js';
+import { extractItemHost, matchDomainInAiOverview, matchDomainInSerp, MAX_PAA_QUESTIONS, normalizeSerpDomain, type SerpAiOverview, type SerpItem, type SerpTaskPoll, type SerpTaskPostOutcome, type SerpTaskResult, } from '../serp-normalization.js';
 export { extractItemHost, matchDomainInAiOverview, matchDomainInSerp, MAX_PAA_QUESTIONS, MAX_STORED_TOP_RESULTS, normalizeSerpDomain, type SerpAiOverview, type SerpItem, } from '../serp-normalization.js';
 import { mapSerpFeature } from '../serp-features.js';
 import { ISO_TO_DATAFORSEO_LOCATION, buildObservationMeta, } from '../../observations/observations.js';
@@ -211,6 +211,8 @@ export const PUBLIC_PAGE_MAX_PER_QUERY = 10;
 export const PUBLIC_PAGE_MAX_QUERIES = 40;
 const DEFAULT_POLL_INTERVAL_MS = 2000;
 const DEFAULT_MAX_POLL_ATTEMPTS = 30;
+/** DataForSEO task_post accepts at most this many task objects in one request. */
+export const SERP_TASK_POST_MAX_TASKS = 100;
 // ---------------------------------------------------------------------------
 // Pure helpers — exported for direct unit coverage
 // ---------------------------------------------------------------------------
@@ -566,19 +568,11 @@ const ctx = { provider: 'dataforseo', operation: 'serp' };
 export interface PostedSerpTask {
     vendorTaskId: string;
 }
-export interface FetchedSerpResult {
-    items: SerpItem[];
-    costUsd: number | null;
-    /** AI Overview block from the same fetch — domain-independent, cacheable. */
-    aiOverview: SerpAiOverview;
-    /**
-     * Normalized SERP features from the SAME
-     * fetch. Domain-independent, therefore cacheable and shareable cross-user.
-     */
-    features: SerpFeatureSnapshot;
-}
+export type FetchedSerpResult = SerpTaskResult;
 export function createDataForSeoRankProvider(cfg: DataForSeoSerpProviderConfig): Omit<RankProvider, 'checkAltEngineRank'> & {
     postSerpTask(input: RankCheckInput): Promise<PostedSerpTask>;
+    postSerpTasks(inputs: readonly RankCheckInput[]): Promise<SerpTaskPostOutcome[]>;
+    pollSerpTask(taskId: string): Promise<SerpTaskPoll>;
     fetchSerpResult(taskId: string, opts?: {
         pollIntervalMs?: number;
         maxPollAttempts?: number;
@@ -595,38 +589,62 @@ export function createDataForSeoRankProvider(cfg: DataForSeoSerpProviderConfig):
     const maxPollAttempts = cfg.maxPollAttempts ?? DEFAULT_MAX_POLL_ATTEMPTS;
     /* c8 ignore next -- tests always inject `cfg.wait`; the setTimeout fallback keeps prod behaviour but is unreachable in unit tests. */
     const wait = cfg.wait ?? ((ms: number) => new Promise((resolve) => setTimeout(resolve, ms)));
-    async function postSerpTask(input: RankCheckInput): Promise<PostedSerpTask> {
-        // NOTE: `live` mode is $0.002 vs $0.0006 standard queue — reason enough
-        // to always use the task/task_get flow for scheduled checks. Serper.dev
-        // is the named real-time fallback behind the same interface.
-        const body = zTaskPostInput.parse({
+    function taskPostBody(input: RankCheckInput): z.infer<typeof zTaskPostInput> {
+        return zTaskPostInput.parse({
             keyword: input.keyword,
             location_code: input.locationCode,
             language_code: input.languageCode,
             device: input.device,
             depth,
         });
-        const outcomes = await dataForSeoRequest(cfg, '/serp/google/organic/task_post', [body], taskPostResultSchema, { operation: 'serp-task-post' });
-        const outcome = outcomes[0];
+    }
+    function toPostOutcome(outcome: DataForSeoTaskOutcomeOrError<unknown> | undefined): SerpTaskPostOutcome {
+        const postCtx = { ...ctx, operation: 'serp-task-post' };
         if (!outcome) {
-            throw new VendorMalformedError('serp/task_post returned no tasks', {
-                ...ctx,
-                operation: 'serp-task-post',
-            });
+            return { ok: false, error: new VendorMalformedError('serp/task_post returned no tasks', postCtx) };
         }
+        if (outcome.status === 'error') return { ok: false, error: outcome.error };
         if (outcome.status === 'in_queue') {
-            throw new VendorUnavailableError('serp/task_post reported in_queue', {
-                ...ctx,
-                operation: 'serp-task-post',
-            });
+            return { ok: false, error: new VendorUnavailableError('serp/task_post reported in_queue', postCtx) };
         }
         if (!outcome.taskId) {
-            throw new VendorMalformedError('serp/task_post missing task id', {
-                ...ctx,
-                operation: 'serp-task-post',
-            });
+            return { ok: false, error: new VendorMalformedError('serp/task_post missing task id', postCtx) };
         }
-        return { vendorTaskId: outcome.taskId };
+        return { ok: true, vendorTaskId: outcome.taskId };
+    }
+    async function postSerpTasks(inputs: readonly RankCheckInput[]): Promise<SerpTaskPostOutcome[]> {
+        const outcomes: SerpTaskPostOutcome[] = [];
+        for (let start = 0; start < inputs.length; start += SERP_TASK_POST_MAX_TASKS) {
+            const chunk = inputs.slice(start, start + SERP_TASK_POST_MAX_TASKS);
+            const tasks = await dataForSeoRequestPerTask(cfg, '/serp/google/organic/task_post',
+                chunk.map(taskPostBody), taskPostResultSchema, { operation: 'serp-task-post' });
+            chunk.forEach((_input, index) => outcomes.push(toPostOutcome(tasks[index])));
+        }
+        return outcomes;
+    }
+    async function postSerpTask(input: RankCheckInput): Promise<PostedSerpTask> {
+        const [outcome] = await postSerpTasks([input]);
+        if (!outcome?.ok) throw outcome?.error ?? new VendorMalformedError('serp/task_post returned no tasks', { ...ctx, operation: 'serp-task-post' });
+        return { vendorTaskId: outcome.vendorTaskId };
+    }
+    async function pollSerpTask(taskId: string): Promise<SerpTaskPoll> {
+        const outcomes = await dataForSeoRequestPerTask(cfg,
+            `/serp/google/organic/task_get/advanced/${encodeURIComponent(taskId)}`,
+            [], serpTaskGetPollingResultSchema, { operation: 'serp-task-get', method: 'GET' });
+        const outcome = outcomes[0];
+        if (!outcome || outcome.status === 'in_queue') return { state: 'pending' };
+        if (outcome.status === 'error') return { state: 'failed', error: outcome.error };
+        if (outcome.status !== 'ok') {
+            return { state: 'failed', error: new VendorMalformedError('serp/task_get returned unexpected task-level status',
+                { ...ctx, operation: 'serp-task-get' }) };
+        }
+        if (outcome.result == null) return { state: 'pending' };
+        return { state: 'ready', result: {
+            items: extractOrganicItems(outcome.result),
+            costUsd: outcome.costUsd,
+            aiOverview: extractAiOverview(outcome.result),
+            features: extractSerpFeatures(outcome.result),
+        } };
     }
     async function fetchSerpResult(taskId: string, overrides: {
         pollIntervalMs?: number;
@@ -635,30 +653,10 @@ export function createDataForSeoRankProvider(cfg: DataForSeoSerpProviderConfig):
         const interval = overrides.pollIntervalMs ?? pollIntervalMs;
         const maxAttempts = overrides.maxPollAttempts ?? maxPollAttempts;
         for (let attempt = 0; attempt < maxAttempts; attempt += 1) {
-            const outcomes = await dataForSeoRequest(cfg, `/serp/google/organic/task_get/advanced/${encodeURIComponent(taskId)}`, [], serpTaskGetPollingResultSchema, { operation: 'serp-task-get', method: 'GET' });
-            const outcome = outcomes[0];
-            if (!outcome || outcome.status === 'in_queue') {
-                if (attempt === maxAttempts - 1)
-                    break;
-                await wait(interval);
-                continue;
-            }
-            if (outcome.status !== 'ok') {
-                throw new VendorMalformedError('serp/task_get returned unexpected task-level status', { ...ctx, operation: 'serp-task-get' });
-            }
-            const result = outcome.result;
-            if (result == null) {
-                if (attempt === maxAttempts - 1)
-                    break;
-                await wait(interval);
-                continue;
-            }
-            return {
-                items: extractOrganicItems(result),
-                costUsd: outcome.costUsd,
-                aiOverview: extractAiOverview(result),
-                features: extractSerpFeatures(result),
-            };
+            const poll = await pollSerpTask(taskId);
+            if (poll.state === 'ready') return poll.result;
+            if (poll.state === 'failed') throw poll.error;
+            if (attempt < maxAttempts - 1) await wait(interval);
         }
         throw new VendorUnavailableError(`serp/task_get remained pending after ${maxAttempts} polls`, { ...ctx, operation: 'serp-task-get' });
     }
@@ -877,6 +875,8 @@ export function createDataForSeoRankProvider(cfg: DataForSeoSerpProviderConfig):
         checkLocalPackRank,
         searchPublicPages,
         postSerpTask,
+        postSerpTasks,
+        pollSerpTask,
         fetchSerpResult,
         liveSerp,
     };

@@ -11,6 +11,7 @@ import { Bdi } from '@shared/components/Bdi';
  */
 import { useTranslation } from 'react-i18next';
 import { formatInt, formatPercent } from '../lib/format';
+import { attachShares, formatShare } from '../lib/shares';
 
 export interface GscBreakdownRow {
   id: string;
@@ -18,7 +19,7 @@ export interface GscBreakdownRow {
   /** Primary count (clicks / sessions). */
   value: number;
   /** Secondary 0..1 rate rendered as a percentage (CTR / engagement rate). */
-  rate: number;
+  rate: number | null;
 }
 
 export interface GscBreakdownListProps {
@@ -28,9 +29,12 @@ export interface GscBreakdownListProps {
   keyHeader: string;
   /** sr-only header for the numeric column, e.g. "Clicks · CTR". */
   valueHeader: string;
+  /** Optional localized rate label, kept separate from the share. */
+  formatRate?: (rate: string) => string;
   rows: GscBreakdownRow[];
-  /** Denominator for the proportion bar (total clicks / total sessions). */
+  /** Sum of the full dimension, including any rows outside the displayed top list. */
   total: number;
+  other?: { label: string; hiddenRows: number };
   testId: string;
 }
 
@@ -40,12 +44,19 @@ export const GscBreakdownList = ({
   emptyLabel,
   keyHeader,
   valueHeader,
+  formatRate,
   rows,
   total,
+  other,
   testId,
 }: GscBreakdownListProps) => {
   const { i18n } = useTranslation('google');
   const locale = i18n.language;
+  const remainder = other ? total - rows.reduce((sum, row) => sum + row.value, 0) : 0;
+  const listed: GscBreakdownRow[] = other && remainder > 0
+    ? [...rows, { id: '__other', label: other.label, value: remainder, rate: null }]
+    : rows;
+  const shared = attachShares(listed, total);
 
   return (
     <div data-testid={testId}>
@@ -69,8 +80,8 @@ export const GscBreakdownList = ({
             </tr>
           </thead>
           <tbody>
-            {rows.map((row) => {
-              const pct = total === 0 ? 0 : (row.value / total) * 100;
+            {shared.map((row) => {
+              const pct = row.share ?? 0;
               return (
                 <tr key={row.id}>
                   <th
@@ -83,7 +94,8 @@ export const GscBreakdownList = ({
                     <span
                       role="progressbar"
                       aria-label={row.label}
-                      aria-valuenow={Math.round(pct)}
+                      aria-valuenow={row.share === null ? undefined : Math.round(pct)}
+                      aria-valuetext={formatShare(locale, row.share)}
                       aria-valuemin={0}
                       aria-valuemax={100}
                       className="bg-muted mt-1 block h-1.5 w-full overflow-hidden rounded-full"
@@ -98,7 +110,12 @@ export const GscBreakdownList = ({
                     className="text-muted-foreground py-1 ps-3 text-end align-top tabular-nums whitespace-nowrap"
                     dir="ltr"
                   >
-                    {`${formatInt(locale, row.value)} · ${formatPercent(locale, row.rate)}`}
+                    <span className="block">{`${formatInt(locale, row.value)} · ${formatShare(locale, row.share)}`}</span>
+                    {formatRate && row.rate !== null ? (
+                      <span className="block text-xs" data-testid={`${testId}-rate`}>
+                        {formatRate(formatPercent(locale, row.rate))}
+                      </span>
+                    ) : null}
                   </td>
                 </tr>
               );

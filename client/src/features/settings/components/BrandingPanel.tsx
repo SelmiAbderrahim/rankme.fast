@@ -21,10 +21,11 @@ import {
 } from '../store/brandingSelectors';
 
 const HEX_COLOR = /^#[0-9a-fA-F]{6}$/;
+const DEFAULT_ACCENT = '#b5321e';
 const LOGO_MAX_BYTES = 256 * 1024;
 
 /**
- * `/profile?tab=branding` — white-label PDF branding (workstream B).
+ * Workspace PDF branding settings.
  * Company name + accent color rendered into every downloaded report PDF.
  * Reads are open; the save is owner-only.
  */
@@ -59,6 +60,7 @@ export const BrandingPanel = () => {
   }, [branding]);
 
   const accentValid = accentColor === '' || HEX_COLOR.test(accentColor);
+  const pickerColor = HEX_COLOR.test(accentColor) ? accentColor : DEFAULT_ACCENT;
 
   const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
@@ -154,6 +156,12 @@ export const BrandingPanel = () => {
                 {t('settings:branding.accentColor')}
               </Label>
               <div className="flex items-center gap-2">
+                <input type="color" data-testid="branding-swatch"
+                  aria-label={t('settings:branding.accentPicker')}
+                  value={pickerColor}
+                  onChange={(event) => { setAccentColor(event.target.value); setColorError(false); }}
+                  className="border-input size-9 shrink-0 cursor-pointer rounded-md border p-1 max-md:size-11"
+                  style={{ backgroundColor: pickerColor }} />
                 <Input
                   id="branding-accent-color"
                   value={accentColor}
@@ -164,17 +172,6 @@ export const BrandingPanel = () => {
                   aria-invalid={colorError || undefined}
                   aria-describedby={colorError ? 'branding-accent-error' : undefined}
                 />
-                {/* Only a valid hex gets a preview; an empty or invalid value would
-                    otherwise render a blank box that looks like a broken control. */}
-                {HEX_COLOR.test(accentColor) ? (
-                  <span
-                    aria-hidden="true"
-                    data-testid="branding-swatch"
-                    className="border-border size-6 shrink-0 rounded-md border"
-                    // User-picked color — necessarily dynamic, not a theme token.
-                    style={{ backgroundColor: accentColor }}
-                  />
-                ) : null}
               </div>
               {colorError ? (
                 <p

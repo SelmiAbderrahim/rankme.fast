@@ -1,6 +1,7 @@
 import { shareInFlight, withInFlightInvalidation } from '@shared/lib/inFlight';
 import { CACHE_TTL_MS, shouldLoad } from '@shared/cache/freshness';
 import type { SitesState } from '../types';
+import type { MarketChoice } from '@shared/markets';
 import { createAsyncThunk } from '@reduxjs/toolkit';
 import {
   createSiteRequest,
@@ -9,6 +10,7 @@ import {
   pauseSiteRequest,
   resumeSiteRequest,
   updateSiteRequest,
+  updateSiteMarketRequest,
 } from '../api';
 import { siteErrorMessage } from '../errorMessage';
 import type { LoadSitesArgs, Site, SiteListPage } from '../types';
@@ -66,6 +68,18 @@ export const renameSite = createAsyncThunk<
     return await withInFlightInvalidation('sites:', () => updateSiteRequest(id, displayName));
   } catch (err) {
     return rejectWithValue(siteErrorMessage(err, 'sites:renameFailed'));
+  }
+});
+
+export const updateSiteMarket = createAsyncThunk<
+  { site: Site; message: string },
+  { id: string; market: MarketChoice },
+  { rejectValue: string }
+>('sites/updateMarket', async ({ id, market }, { rejectWithValue }) => {
+  try {
+    return await withInFlightInvalidation('sites:', () => updateSiteMarketRequest(id, market));
+  } catch (err) {
+    return rejectWithValue(siteErrorMessage(err, 'sites:market.saveFailed'));
   }
 });
 

@@ -5,11 +5,18 @@ import { SUPPORTED_LOCALES } from '@shared/i18n';
 import { authEntryHref } from './intent';
 import { authRoutes } from './routes';
 import { teamActionRoutes } from '@features/team/routes';
+import { isValidElement } from 'react';
+import { ResetPassword } from './components/ResetPassword';
 
 describe('authRoutes', () => {
   it('registers exactly one `reset-password` route (the duplicate bare registration was removed)', () => {
     const resetRoutes = authRoutes.filter((route) => route.path === 'reset-password');
     expect(resetRoutes).toHaveLength(1);
+  });
+
+  it('lets an already signed-in account use its single-use password setup token', () => {
+    const route = authRoutes.find((entry) => entry.path === 'reset-password');
+    expect(isValidElement(route?.element) && route.element.type).toBe(ResetPassword);
   });
 
   it('every registered auth path is unique', () => {

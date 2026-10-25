@@ -27,7 +27,7 @@ import {
   domainStates,
 } from '../../db/schema/keywords.js';
 import { localPackRankSnapshots as localPackRankSnapshotsTable } from '../../db/schema/local-seo.js';
-import { vendorCache, vendorResponses } from '../../db/schema/index.js';
+import { rankCheckOutcomes, vendorCache, vendorResponses } from '../../db/schema/index.js';
 import { and, eq } from 'drizzle-orm';
 import { clearCollections, startMemoryMongo, stopMemoryMongo } from '../../shared/testing/mongo.js';
 import {
@@ -49,6 +49,8 @@ import {
   type CachedSerp,
   type SerpCacheRepo,
 } from './serp-cache.service.js';
+import { insertRankCheckJob, readRankJob } from './rank-jobs.repo.js';
+import { rankPeriodKey } from '../../shared/queue/queues.js';
 import {
   createVendorArchiver,
   createVendorCacheRepo,
@@ -183,6 +185,164 @@ beforeEach(async () => {
 });
 
 describe('createRankProcessor', () => {
+  it('records a scheduled failure and queues a bounded retry in the same period', async () => {
+    const ids = await seedSite();
+    const [keyword] = await getTestDb().insert(keywordsTable).values({ accountId: ids.accountId,
+      siteId: ids.siteId, phrase: 'scheduled phrase', locationCode: 2840, languageCode: 'en' }).returning();
+    let at = new Date('2026-10-20T12:00:00.000Z');
+    const queue = { add: vi.fn(async (_name: string, _data: unknown, _options: unknown) =>
+      ({ id: 'scheduled-retry' })) };
+    let unavailable = true;
+    const provider = { ...makeSerpTaskProvider([]),
+      postSerpTasks: vi.fn(async () => unavailable
+        ? [{ ok: false as const, error: new VendorTimeoutError('task timed out',
+          { provider: 'fake', operation: 'serp-task-post' }) }]
+        : [{ ok: true as const, vendorTaskId: 'ready-task' }]),
+      pollSerpTask: vi.fn(async () => ({ state: 'ready' as const,
+        result: { items: [], costUsd: 0, aiOverview: { present: false, references: [] },
+          features: { features: [], featuredSnippet: null, paa: [] } } })) };
+    const process = createRankProcessor({ provider, db: getTestDb() as never, logger,
+      retryQueue: queue as never, resolveTargets: createPostgresRankTargetsResolver(getTestDb() as never),
+      clock: () => at, serpTaskPollIntervalMs: 0, sleep: async () => {} });
+    const result = await process(jobFor({ ...payloadFor(ids), schedulerKey: 'weekly' }));
+    expect(result.errors).toBe(1);
+    const [outcome] = await getTestDb().select().from(rankCheckOutcomes);
+    expect(outcome).toMatchObject({ keywordId: keyword!.id, status: 'failed',
+      reason: 'vendor_timeout', attempts: 1 });
+    expect(outcome?.nextRetryAt?.toISOString()).toBe('2026-10-20T12:30:00.000Z');
+    expect(queue.add).toHaveBeenCalledWith('rank', expect.objectContaining({
+      keywordIds: [keyword!.id], retry: { periodKey: rankPeriodKey('weekly', at), attempt: 1 },
+    }), expect.objectContaining({ delay: 30 * 60_000 }));
+    unavailable = false;
+    at = new Date('2026-10-20T12:30:00.000Z');
+    await process(jobFor(queue.add.mock.calls[0]![1]));
+    const [settled] = await getTestDb().select().from(rankCheckOutcomes);
+    expect(settled).toMatchObject({ status: 'checked', attempts: 2, nextRetryAt: null });
+    expect(await getTestDb().select().from(rankingsTable)).toHaveLength(1);
+    const [stored] = await getTestDb().select().from(keywordsTable)
+      .where(eq(keywordsTable.id, keyword!.id));
+    expect(stored?.lastFailedCheckAt).toBeNull();
+  });
+  it('posts explicit cache misses together and polls pending task IDs without reposting', async () => {
+    const ids = await seedSite();
+    const rows = await getTestDb().insert(keywordsTable).values(['first search', 'second search'].map((phrase) => ({
+      accountId: ids.accountId, siteId: ids.siteId, phrase, locationCode: 2840, languageCode: 'en',
+    }))).returning();
+    const rankJob = await insertRankCheckJob(getTestDb() as never, { ...ids, scope: 'site',
+      idempotencyKey: null, retryOfJobId: null, now: new Date('2026-10-25T12:00:00.000Z'),
+      targets: rows.map((row) => ({ keywordId: row.id, engine: 'google', trackLocalPack: false })) });
+    const postSerpTasks = vi.fn(async (inputs: readonly RankCheckInput[]) => inputs.map((_, i) => ({
+      ok: true as const, vendorTaskId: `task-${i}`,
+    })));
+    const polls = new Map<string, number>();
+    const pollSerpTask = vi.fn(async (taskId: string) => {
+      const count = (polls.get(taskId) ?? 0) + 1;
+      polls.set(taskId, count);
+      return count === 1 ? { state: 'pending' as const } : { state: 'ready' as const,
+        result: { items: [], costUsd: 0.01, aiOverview: { present: false, references: [] },
+          features: { features: [], featuredSnippet: null, paa: [] } } };
+    });
+    const provider = { ...makeSerpTaskProvider([]), postSerpTasks, pollSerpTask };
+    const run = createRankProcessor({ provider, db: getTestDb() as never, logger,
+      resolveTargets: createPostgresRankTargetsResolver(getTestDb() as never),
+      clock: () => new Date('2026-10-25T12:00:00.000Z'),
+      serpTaskPollIntervalMs: 0, sleep: async () => {} });
+    await run(jobFor({ ...payloadFor(ids), rankJobId: rankJob.id, manual: true }));
+    expect(provider.postSerpTasks).toHaveBeenCalledTimes(1);
+    expect(provider.postSerpTasks.mock.calls[0]?.[0]).toHaveLength(2);
+    expect(provider.pollSerpTask).toHaveBeenCalledTimes(4);
+    expect(await getTestDb().select().from(rankingsTable)).toHaveLength(2);
+    const settled = await readRankJob(getTestDb() as never,
+      { accountId: ids.accountId, siteId: ids.siteId, jobId: rankJob.id });
+    expect(settled).toMatchObject({ status: 'succeeded', totals: { succeeded: 2 } });
+    expect(settled?.items.map((item) => item.attempts)).toEqual([1, 1]);
+  });
+
+  it('reposts only a task that the provider explicitly failed, once', async () => {
+    const ids = await seedSite();
+    const [keyword] = await getTestDb().insert(keywordsTable).values({ accountId: ids.accountId,
+      siteId: ids.siteId, phrase: 'faulting search', locationCode: 2840, languageCode: 'en' }).returning();
+    const rankJob = await insertRankCheckJob(getTestDb() as never, { ...ids, scope: 'keyword',
+      idempotencyKey: null, retryOfJobId: null, now: new Date('2026-10-25T12:00:00.000Z'),
+      targets: [{ keywordId: keyword!.id, engine: 'google', trackLocalPack: false }] });
+    let posts = 0;
+    const postSerpTasks = vi.fn(async () => [{ ok: true as const, vendorTaskId: `task-${++posts}` }]);
+    const pollSerpTask = vi.fn(async (taskId: string) => taskId === 'task-1'
+      ? { state: 'failed' as const, error: new VendorMalformedError('task failed',
+        { provider: 'fake', operation: 'serp-task-get' }) }
+      : { state: 'ready' as const, result: { items: [], costUsd: 0,
+        aiOverview: { present: false, references: [] },
+        features: { features: [], featuredSnippet: null, paa: [] } } });
+    const provider = { ...makeSerpTaskProvider([]), postSerpTasks, pollSerpTask };
+    await createRankProcessor({ provider, db: getTestDb() as never, logger,
+      resolveTargets: createPostgresRankTargetsResolver(getTestDb() as never),
+      clock: () => new Date('2026-10-25T12:00:00.000Z'),
+      serpTaskPollIntervalMs: 0, sleep: async () => {} })(
+      jobFor({ ...payloadFor(ids), rankJobId: rankJob.id, keywordIds: [keyword!.id], manual: true }));
+    expect(postSerpTasks).toHaveBeenCalledTimes(2);
+    expect(pollSerpTask.mock.calls.map((call) => call[0])).toEqual(['task-1', 'task-2']);
+    const settled = await readRankJob(getTestDb() as never,
+      { accountId: ids.accountId, siteId: ids.siteId, jobId: rankJob.id });
+    expect(settled).toMatchObject({ status: 'succeeded', items: [{ attempts: 2 }] });
+  });
+
+  it('stops polling before the job deadline and records only attempted work as failed', async () => {
+    const ids = await seedSite();
+    const [keyword] = await getTestDb().insert(keywordsTable).values({ accountId: ids.accountId,
+      siteId: ids.siteId, phrase: 'slow search', locationCode: 2840, languageCode: 'en' }).returning();
+    const start = new Date('2026-10-25T12:00:00.000Z');
+    const rankJob = await insertRankCheckJob(getTestDb() as never, { ...ids, scope: 'keyword',
+      idempotencyKey: null, retryOfJobId: null, now: start,
+      targets: [{ keywordId: keyword!.id, engine: 'google', trackLocalPack: false }] });
+    const postSerpTasks = vi.fn(async () => [{ ok: true as const, vendorTaskId: 'slow-task' }]);
+    const pollSerpTask = vi.fn(async () => ({ state: 'pending' as const }));
+    let elapsed = 0;
+    const provider = { ...makeSerpTaskProvider([]), postSerpTasks, pollSerpTask };
+    const outcome = await createRankProcessor({ provider, db: getTestDb() as never, logger,
+      resolveTargets: createPostgresRankTargetsResolver(getTestDb() as never),
+      clock: () => new Date(start.getTime() + elapsed),
+      serpTaskPollIntervalMs: 0, sleep: async () => { elapsed += 5 * 60_000; } })(
+      jobFor({ ...payloadFor(ids), rankJobId: rankJob.id, keywordIds: [keyword!.id], manual: true }));
+    expect(postSerpTasks).toHaveBeenCalledTimes(1);
+    expect(pollSerpTask.mock.calls.length).toBeGreaterThan(0);
+    expect(outcome.errors).toBe(1);
+    const settled = await readRankJob(getTestDb() as never,
+      { accountId: ids.accountId, siteId: ids.siteId, jobId: rankJob.id });
+    expect(settled).toMatchObject({ status: 'failed', items: [{ attempts: 1, reason: 'vendor_timeout' }] });
+    const [stored] = await getTestDb().select().from(keywordsTable)
+      .where(eq(keywordsTable.id, keyword!.id));
+    expect(stored?.lastFailedReason).toBe('vendor_timeout');
+  });
+  it('leaves unsent chunks unattempted after an account-wide post failure', async () => {
+    const ids = await seedSite();
+    const rows = await getTestDb().insert(keywordsTable).values(Array.from({ length: 101 }, (_, index) => ({
+      accountId: ids.accountId, siteId: ids.siteId, phrase: `phrase ${index}`,
+      locationCode: 2840, languageCode: 'en',
+    }))).returning();
+    const rankJob = await insertRankCheckJob(getTestDb() as never, { ...ids, scope: 'site',
+      idempotencyKey: null, retryOfJobId: null, now: new Date('2026-10-25T12:00:00.000Z'),
+      targets: rows.map((row) => ({ keywordId: row.id, engine: 'google', trackLocalPack: false })) });
+    const postSerpTasks = vi.fn(async (_inputs: readonly RankCheckInput[]) => {
+      throw new VendorQuotaError('provider temporarily unavailable',
+        { provider: 'fake', operation: 'serp-task-post' });
+    });
+    const provider = { ...makeSerpTaskProvider([]), postSerpTasks,
+      pollSerpTask: vi.fn(async () => ({ state: 'pending' as const })) };
+    await expect(createRankProcessor({ provider, db: getTestDb() as never, logger,
+      resolveTargets: createPostgresRankTargetsResolver(getTestDb() as never),
+      clock: () => new Date('2026-10-25T12:00:00.000Z'),
+      serpTaskPollIntervalMs: 0, sleep: async () => {} })(
+      jobFor({ ...payloadFor(ids), rankJobId: rankJob.id, manual: true })))
+      .rejects.toBeInstanceOf(VendorQuotaError);
+    expect(postSerpTasks).toHaveBeenCalledTimes(1);
+    expect(postSerpTasks.mock.calls[0]?.[0]).toHaveLength(100);
+    const settled = await readRankJob(getTestDb() as never,
+      { accountId: ids.accountId, siteId: ids.siteId, jobId: rankJob.id });
+    expect(settled?.items.filter((item) => item.attempts === 1)).toHaveLength(100);
+    expect(settled?.items.filter((item) => item.attempts === 0)).toHaveLength(1);
+    expect(await getTestDb().select().from(keywordsTable).where(eq(keywordsTable.lastFailedReason, 'vendor_quota')))
+      .toHaveLength(1);
+  });
   it('malformed payload → UnrecoverableError (trust boundary)', async () => {
     const processor = createRankProcessor({
       provider: createFakeRankProvider(),

@@ -50,6 +50,10 @@ describe('google api wrappers', () => {
     apiClient
       .mockResolvedValueOnce({
         configuration: {
+          readiness: {
+            gsc: { status: 'ok', matching: false },
+            ga4: { status: 'no_property', matching: true },
+          },
           connection: {
             status: 'connected',
             googleAccountEmail: 'owner@example.com',
@@ -80,6 +84,10 @@ describe('google api wrappers', () => {
       } as never);
 
     await expect(getConnection('site-1')).resolves.toMatchObject({
+      readiness: {
+        gsc: { status: 'ok' },
+        ga4: { status: 'no_property', matching: true },
+      },
       connection: {
         propertyUrl: 'sc-domain:example.com',
         ga4PropertyId: 'properties/123',

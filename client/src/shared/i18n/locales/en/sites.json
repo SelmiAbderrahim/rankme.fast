@@ -64,7 +64,7 @@
     "optionSuffix": "paused"
   },
   "errors": {
-    "urlRequired": "Enter your site URL.",
+    "urlRequired": "Enter your site URL, like https://example.com.",
     "urlTooLong": "That URL is too long (2048 characters max).",
     "urlInvalid": "Enter a valid URL, like https://example.com.",
     "urlScheme": "Only http:// and https:// URLs are supported.",
@@ -152,9 +152,10 @@
     },
     "search": {
       "title": "Search performance",
-      "description": "From the Search Console snapshot in your latest audit.",
+      "description": "Your latest Google Search Console data for the last 28 days.",
       "topQuery": "Top query",
-      "openGoogle": "Open Google insights"
+      "openGoogle": "Open Google insights",
+      "asOf": "Data through {{date}}"
     },
     "pageSpeed": {
       "title": "Site experience",
@@ -240,5 +241,33 @@
     "empty": "You have no sites yet.",
     "addSite": "Add a site",
     "truncated": "Only your first {{shown, number}} sites are listed here."
-  }
+  },
+  "market": {
+    "menuItem": "Default market",
+    "title": "Default market",
+    "description": "Rank tracking, keyword research and the other tools start from this country, language and device. You can still choose another market in each tool. Site:",
+    "inferredNote": "We picked this from the site's address and language. Change it if it's wrong.",
+    "country": "Country",
+    "language": "Language",
+    "device": "Device",
+    "devices": {
+      "desktop": "Desktop",
+      "mobile": "Mobile"
+    },
+    "save": "Save market",
+    "saving": "Saving…",
+    "cancel": "Cancel",
+    "saveFailed": "Couldn't save the default market. Try again."
+  },
+  "list": {
+    "columnLastAudit": "Last audit",
+    "columnHealth": "Health",
+    "columnKeywords": "Keywords",
+    "noAudit": "No audit yet",
+    "auditStatus": {
+      "failed": "Audit failed",
+      "unavailable": "Audit unavailable"
+    }
+  },
+  "openTabHint": "Choose a site to open its {{tab}} section."
 }

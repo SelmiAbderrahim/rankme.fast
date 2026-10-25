@@ -8,10 +8,10 @@
 import { UnrecoverableError, type Job, type Queue } from 'bullmq';
 import type { Logger } from 'pino';
 import { z } from 'zod';
-import { GOOGLE_SITE_AUTO_MATCH_JOB_NAME, GSC_SYNC_JOB_NAME, parseConsumedPayload, type GscSyncJob, } from '../../shared/queue/index.js';
+import { GOOGLE_SITE_AUTO_MATCH_JOB_NAME, GSC_SYNC_JOB_NAME, parseConsumedPayload, type Ga4SyncJob, type GscSyncJob, } from '../../shared/queue/index.js';
 import { Site } from '../sites/index.js';
 import { GoogleConnection } from './google-connection.model.js';
-import { SCOPE_GSC } from './google-connections.schema.js';
+import { SCOPE_GA4, SCOPE_GSC } from './google-connections.schema.js';
 import { toIsoDate } from './google-connections.service.js';
 export const GSC_DAILY_SYNC_SWEEP_JOB = 'gsc-daily-sync-sweep';
 export const GSC_DAILY_SYNC_SCHEDULER_KEY = 'gsc-daily-sync-scheduler';
@@ -21,6 +21,7 @@ const gscDailySyncSweepJobSchema = z
     .strict();
 export interface GscConnectedAccount {
     accountId: string;
+    ga4: boolean;
 }
 export interface GscActiveSite {
     siteId: string;
@@ -29,16 +30,19 @@ export interface GscActiveSite {
 export interface GscDailySyncRepository {
     scanConnectedAccounts(): AsyncIterable<GscConnectedAccount>;
     findActiveSites(accountId: string): Promise<GscActiveSite[]>;
+    findActiveGa4Sites(accountId: string): Promise<string[]>;
 }
 export interface GscDailySyncProducerResult {
     day: string;
     connectionsScanned: number;
     sitesScanned: number;
     enqueued: number;
+    ga4Enqueued: number;
 }
 export interface GscDailySyncProducerDeps {
     repository: GscDailySyncRepository;
     enqueue(payload: GscSyncJob, day: string): Promise<unknown>;
+    enqueueGa4?(payload: Ga4SyncJob, day: string): Promise<unknown>;
     now(): Date;
     logger: Pick<Logger, 'info'>;
 }
@@ -64,6 +68,7 @@ export function createMongoGscDailySyncRepository(): GscDailySyncRepository {
                     $project: {
                         _id: 0,
                         accountId: { $toString: '$accountId' },
+                        ga4: { $in: [SCOPE_GA4, '$scopes'] },
                     },
                 },
             ]).cursor({ batchSize: 100 });
@@ -84,6 +89,15 @@ export function createMongoGscDailySyncRepository(): GscDailySyncRepository {
                 siteId: String(site._id),
                 domain: site.domain,
             }));
+        },
+        async findActiveGa4Sites(accountId) {
+            const sites = await Site.find({
+                accountId,
+                paused: { $ne: true },
+                deletionStartedAt: null,
+                ga4PropertyId: { $type: 'string', $ne: '' },
+            }).select({ _id: 1 }).lean();
+            return sites.map((site) => String(site._id));
         },
     };
 }
@@ -114,6 +128,7 @@ export function createGscDailySyncProducer(deps: GscDailySyncProducerDeps) {
         let connectionsScanned = 0;
         let sitesScanned = 0;
         let enqueued = 0;
+        let ga4Enqueued = 0;
         for await (const connection of deps.repository.scanConnectedAccounts()) {
             connectionsScanned += 1;
             const sites = await deps.repository.findActiveSites(connection.accountId);
@@ -126,8 +141,15 @@ export function createGscDailySyncProducer(deps: GscDailySyncProducerDeps) {
                 }, day);
                 enqueued += 1;
             }
+            if (deps.enqueueGa4 && connection.ga4) {
+                const ga4Sites = await deps.repository.findActiveGa4Sites(connection.accountId);
+                for (const siteId of ga4Sites) {
+                    await deps.enqueueGa4({ accountId: connection.accountId, siteId }, day);
+                    ga4Enqueued += 1;
+                }
+            }
         }
-        const result = { day, connectionsScanned, sitesScanned, enqueued };
+        const result = { day, connectionsScanned, sitesScanned, enqueued, ga4Enqueued };
         deps.logger.info(result, 'daily gsc sync producer completed');
         return result;
     };

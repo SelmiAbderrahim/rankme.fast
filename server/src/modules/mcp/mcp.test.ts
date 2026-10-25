@@ -9,6 +9,8 @@ const mocks = vi.hoisted(() => ({
   auditRunFindOne: vi.fn(),
   getAuditReport: vi.fn(),
   getLatestSiteReport: vi.fn(),
+  loadAuditDecisions: vi.fn(),
+  resolveAuditDecisionEvidence: vi.fn(),
   getAuditRun: vi.fn(),
   startAuditForSite: vi.fn(),
   toPublicAuditRun: vi.fn(),
@@ -16,6 +18,7 @@ const mocks = vi.hoisted(() => ({
   mutateActionState: vi.fn(),
   listKeywords: vi.fn(),
   getKeywordHistoryBatch: vi.fn(),
+  summarizeSiteRankStates: vi.fn(),
   listAnalyses: vi.fn(),
   getAnalysis: vi.fn(),
   getApiKeysDb: vi.fn(() => ({ kind: 'db' })),
@@ -32,6 +35,9 @@ const mocks = vi.hoisted(() => ({
     close: ReturnType<typeof vi.fn>;
   }>,
 }));
+const neverRankState = { state: 'never_checked', comparison: null,
+  baseline: 'previous_check', position: null, baselinePosition: null,
+  change: null, checkedAt: null, baselineCheckedAt: null, failedAt: null };
 
 vi.mock('../sites/index.js', () => ({
   Site: { find: mocks.siteFind, findOne: mocks.siteFindOne },
@@ -46,6 +52,11 @@ vi.mock('../audits/index.js', () => ({
   startAuditForSite: mocks.startAuditForSite,
   toPublicAuditRun: mocks.toPublicAuditRun,
   getAuditsQueue: mocks.getAuditsQueue,
+}));
+vi.mock('../actions/audit-decisions.js', () => ({
+  loadAuditDecisions: mocks.loadAuditDecisions,
+  resolveAuditDecisionEvidence: mocks.resolveAuditDecisionEvidence,
+  isResolvedAuditDecision: (state: string) => state === 'dismissed' || state === 'completed',
 }));
 
 // Partial mock: the schemas import the real ACTION_STATES / ACTION_SOURCE_TYPES
@@ -63,6 +74,9 @@ vi.mock('../actions/index.js', async () => {
 vi.mock('../ranks/index.js', () => ({
   listKeywords: mocks.listKeywords,
   getKeywordHistoryBatch: mocks.getKeywordHistoryBatch,
+  summarizeSiteRankStates: mocks.summarizeSiteRankStates,
+  keywordCheckStatus: (result: { state: string }) => result.state === 'never_checked'
+    ? 'never_checked' : result.state === 'failed_last_check' ? 'failed' : 'ok',
 }));
 
 vi.mock('../content-intelligence/index.js', () => ({
@@ -218,6 +232,8 @@ async function invokeHandler(
 
 beforeEach(() => {
   vi.clearAllMocks();
+  mocks.loadAuditDecisions.mockResolvedValue(new Map());
+  mocks.resolveAuditDecisionEvidence.mockResolvedValue(undefined);
   mocks.serverInstances.length = 0;
   mocks.transportInstances.length = 0;
   (env as { MCP_ENABLED: boolean }).MCP_ENABLED = true;
@@ -230,6 +246,9 @@ beforeEach(() => {
   );
   mocks.listKeywords.mockResolvedValue({ keywords: [] });
   mocks.getKeywordHistoryBatch.mockResolvedValue([]);
+  mocks.summarizeSiteRankStates.mockResolvedValue({ baseline: 'previous_check', total: 0,
+    counts: {}, movement: { compared: 0, improved: 0, declined: 0, unchanged: 0,
+      failed: 0, unranked: 0, noPair: 0 } });
   mocks.listAnalyses.mockResolvedValue({ items: [], nextCursor: null });
   mocks.getAnalysis.mockResolvedValue({ analysisId: ANALYSIS_ID, status: 'completed' });
   mocks.startAuditForSite.mockResolvedValue({ id: RUN_ID, status: 'queued' });
@@ -381,6 +400,32 @@ describe('MCP tool handlers', () => {
     expect(report.structuredContent).toMatchObject({ runId: RUN_ID });
   });
 
+  it('excludes dismissed and completed findings from assistant report counts', async () => {
+    mocks.getLatestSiteReport.mockResolvedValueOnce({ runId: RUN_ID,
+      report: { counts: { fixNow: 2, watch: 1, passed: 0 }, findings: [
+        { ruleId: 'a', bucket: 'fix-now' },
+        { ruleId: 'b', bucket: 'fix-now' },
+        { ruleId: 'c', bucket: 'watch' },
+      ] } });
+    mocks.loadAuditDecisions.mockResolvedValueOnce(new Map([
+      ['a', { state: 'dismissed', regressed: false }],
+      ['c', { state: 'completed', regressed: false }],
+    ]));
+    const response = await toolGetLatestAuditReport({ siteId: SITE_ID }, context);
+    expect(response.isError).toBeUndefined();
+    expect(response.structuredContent.report).toMatchObject({
+      counts: { fixNow: 1, watch: 0, passed: 0 },
+      notCounted: { dismissed: 1, completed: 1 },
+      findings: [
+        { ruleId: 'a', decision: 'dismissed' },
+        { ruleId: 'b', decision: 'open' },
+        { ruleId: 'c', decision: 'completed' },
+      ],
+    });
+    expect(mocks.loadAuditDecisions).toHaveBeenCalledWith(getMcpDb(),
+      expect.objectContaining({ ruleIds: ['a', 'b', 'c'], siteId: SITE_ID }));
+  });
+
   it('still rejects authorization material hiding inside first-party copy fields', async () => {
     // The HTML allowance must not become a secret allowance.
     mocks.getLatestSiteReport.mockResolvedValueOnce({
@@ -404,7 +449,8 @@ describe('MCP tool handlers', () => {
       expect.objectContaining({ limit: MCP_PAGE_LIMIT_DEFAULT }),
       expect.objectContaining({ ranksQueue: null }),
     );
-    mocks.listKeywords.mockResolvedValueOnce({ keywords: [{ id: 'k1', phrase: 'rank me' }] });
+    mocks.listKeywords.mockResolvedValueOnce({ keywords: [{ id: 'k1', phrase: 'rank me',
+      rankState: neverRankState, lastOutcome: null }] });
     const result = await toolListKeywords({ siteId: SITE_ID, limit: 2 }, context);
     expect(result.content[0]?.text).toContain('rank me');
     expect(mocks.listKeywords).toHaveBeenLastCalledWith(
@@ -416,8 +462,8 @@ describe('MCP tool handlers', () => {
   it('joins bounded rank histories and preserves optional dates', async () => {
     mocks.listKeywords.mockResolvedValueOnce({
       keywords: [
-        { id: 'k1', phrase: 'one' },
-        { id: 'k2', phrase: 'two' },
+        { id: 'k1', phrase: 'one', rankState: neverRankState, lastOutcome: null },
+        { id: 'k2', phrase: 'two', rankState: neverRankState, lastOutcome: null },
       ],
     });
     mocks.getKeywordHistoryBatch.mockResolvedValueOnce([{ keywordId: 'k1', series: [1] }]);
@@ -425,12 +471,13 @@ describe('MCP tool handlers', () => {
       { siteId: SITE_ID, from: '2026-01-01', to: '2026-01-31' },
       context,
     );
-    expect(result.structuredContent).toEqual({
+    expect(result.structuredContent).toMatchObject({
       keywords: [
-        { id: 'k1', phrase: 'one', series: [1] },
-        { id: 'k2', phrase: 'two', series: [] },
+        { id: 'k1', phrase: 'one', state: 'never_checked', status: 'never_checked', series: [1] },
+        { id: 'k2', phrase: 'two', state: 'never_checked', status: 'never_checked', series: [] },
       ],
       locale: 'en',
+      rankStates: { total: 0 },
     });
     expect(mocks.getKeywordHistoryBatch).toHaveBeenCalledWith(
       expect.objectContaining({ from: '2026-01-01', to: '2026-01-31' }),

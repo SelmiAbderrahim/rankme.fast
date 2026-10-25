@@ -28,6 +28,7 @@ export interface KeywordClusterPreviewDto {
     readyCount: number;
     blocked: KeywordClusterBlockedDto[];
     blockedTotal: number;
+    reasonCounts: { missing: number; stale: number; empty: number };
     minSharedUrls: number;
     topUrlWindow: number;
     freshnessDays: number;
@@ -203,6 +204,10 @@ export async function previewKeywordClusterRun(input: KeywordClusterRunRequest, 
         readyCount: ready.length,
         blocked: blocked.slice(0, KEYWORD_CLUSTER_MAX_BLOCKED_DISCLOSED),
         blockedTotal: blocked.length,
+        reasonCounts: blocked.reduce((counts, row) => {
+            counts[row.reason] += 1;
+            return counts;
+        }, { missing: 0, stale: 0, empty: 0 }),
         minSharedUrls: KEYWORD_CLUSTER_MIN_SHARED_URLS,
         topUrlWindow: KEYWORD_CLUSTER_TOP_URLS,
         freshnessDays: KEYWORD_CLUSTER_OBSERVATION_FRESHNESS_DAYS,

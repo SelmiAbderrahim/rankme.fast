@@ -424,6 +424,23 @@ describe('stored-run projections', () => {
 });
 
 describe('production default dependencies', () => {
+  it('counts every blocked reason when the detailed list is capped', async () => {
+    const blocked = Array.from({ length: 23 }, (_, index) => ({
+      keywordId: kwId(index + 1), phrase: `keyword ${index + 1}`,
+      reason: (index < 11 ? 'missing' : index < 18 ? 'stale' : 'empty') as 'missing' | 'stale' | 'empty',
+      observedAt: null,
+    }));
+    const preview = await previewKeywordClusterRun(
+      { accountId, siteId, locale: 'en' },
+      { db: getTestDb() as never, queue: fakeQueue(),
+        readReadinessFn: vi.fn(async () => ({ ready: [], blocked })) },
+    );
+    expect(preview.ready).toBe(false);
+    expect(preview.blocked).toHaveLength(20);
+    expect(preview.blockedTotal).toBe(23);
+    expect(preview.reasonCounts).toEqual({ missing: 11, stale: 7, empty: 5 });
+  });
+
   it('previews with the default clock and no injected readiness reader', async () => {
     await seedGroupablePair();
     const preview = await previewKeywordClusterRun(

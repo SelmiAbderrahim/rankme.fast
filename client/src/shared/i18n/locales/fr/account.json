@@ -37,6 +37,11 @@
     "emailHint": "Pour changer votre adresse e-mail, ouvrez Sécurité et utilisez Changer l'adresse e-mail. L'adresse ne change qu'après confirmation du lien que nous envoyons."
   },
   "privacy": {
+    "delete": {
+      "title": "Supprimer le compte",
+      "description": "La suppression du compte se trouve dans les paramètres de sécurité, avec vos autres réglages de connexion.",
+      "link": "Ouvrir les paramètres de sécurité"
+    },
     "export": {
       "title": "Exporter vos données",
       "description": "Téléchargez une copie de vos données de compte au format JSON.",

@@ -1,0 +1,35 @@
+import { beforeEach, expect, it, vi } from 'vitest';
+import { renderHook, waitFor } from '@testing-library/react';
+import { useResolvedSiteMarket } from './useResolvedSiteMarket';
+import { fetchSiteMarketRequest } from './api';
+import type { Site } from './types';
+
+vi.mock('./api', () => ({ fetchSiteMarketRequest: vi.fn() }));
+const fetchMarket = vi.mocked(fetchSiteMarketRequest);
+const site = (id: string): Site => ({
+  id, url: `https://${id}.example/`, domain: `${id}.example`, displayName: '',
+  defaultMarket: { locationCode: 2276, languageCode: 'de', device: 'mobile', source: 'inferred' },
+  paused: false, pausedAt: null, createdAt: '2026-01-01T00:00:00.000Z', updatedAt: '2026-01-01T00:00:00.000Z',
+});
+
+beforeEach(() => { vi.clearAllMocks(); });
+
+it('uses the server decision, then refreshes it when the site changes', async () => {
+  fetchMarket.mockResolvedValue({ market: {
+    locationCode: 2840, languageCode: 'en', device: 'desktop', source: 'search_console', countryCode: 'US',
+  } });
+  const { result, rerender } = renderHook(({ current }) => useResolvedSiteMarket(current), {
+    initialProps: { current: site('first') },
+  });
+  expect(result.current).toBeUndefined();
+  await waitFor(() => expect(result.current).toMatchObject({ source: 'search_console', locationCode: 2840 }));
+  rerender({ current: site('second') });
+  expect(result.current).toBeUndefined();
+  await waitFor(() => expect(fetchMarket).toHaveBeenCalledWith('second', expect.any(AbortSignal)));
+});
+
+it('uses the stored market if the resolved read fails', async () => {
+  fetchMarket.mockRejectedValue(new Error('offline'));
+  const { result } = renderHook(() => useResolvedSiteMarket(site('offline')));
+  await waitFor(() => expect(result.current).toEqual({ locationCode: 2276, languageCode: 'de', device: 'mobile' }));
+});

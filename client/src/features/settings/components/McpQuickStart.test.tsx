@@ -51,7 +51,7 @@ describe('MCP quick start', () => {
     expect(screen.getByText('Cursor')).toBeInTheDocument();
     expect(screen.getByRole('link', { name: 'Manage API keys' })).toHaveAttribute(
       'href',
-      '/profile?tab=api-keys',
+      '/settings/profile?tab=api-keys',
     );
     expect(screen.getByTestId('docs-link-rankmefast-mcp')).toHaveAttribute(
       'href',

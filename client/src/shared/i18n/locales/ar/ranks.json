@@ -65,19 +65,15 @@
   "addSubmit": "تتبّع الكلمات المفتاحية",
   "addSubmitting": "جارٍ الإضافة…",
   "capReachedTitle": "تم بلوغ حد الكلمات المفتاحية",
-
   "capReachedCta": "عرض الخطط",
-
   "suggestionsTitle": "اكتشف كلمات مفتاحية لهذا الموقع",
   "suggestionsDescription": "اعثر على كلمات تستحق التتبّع. نبدأ من Search Console، ثم الكلمات التي يظهر فيها الموقع حاليًا، ثم أفكار مرتبطة بالموقع.",
   "suggestionsCountLabel": "عرض أفضل",
   "suggestionsFind": "اعثر على أفضل الكلمات",
   "suggestionsLoading": "جارٍ البحث عن الكلمات…",
   "suggestionsLoadFailed": "تعذّر العثور على كلمات مفتاحية لهذا الموقع.",
-
   "suggestionsGscSource": "من Search Console — استعلامات حقيقية ظهر فيها الموقع، مرتبة حسب مرات الظهور.",
   "suggestionsBlendedSource": "من Search Console لديك، مدمجة مع كلمات يتصدّر بها الموقع وأفكار من صفحاته. كل صف يعرض مصدره.",
-
   "suggestionsPartialUnavailable": "نعرض ما وجدناه حتى الآن. الأفكار المستندة إلى الموقع غير متاحة مؤقتًا؛ يرجى المحاولة لاحقًا.",
   "suggestionsSource": "المصدر",
   "suggestionsSourceGsc": "Search Console",
@@ -215,7 +211,8 @@
       "rank": "الترتيب",
       "result": "النتيجة",
       "yours": "صفحتك"
-    }
+    },
+    "emptyCta": "تتبَّع الكلمات المفتاحية"
   },
   "engine": {
     "pickerLabel": "محرك البحث",
@@ -280,7 +277,8 @@
   "addSubmitCount_few": "إضافة {{count, number}} كلمات مفتاحية",
   "addSubmitCount_many": "إضافة {{count, number}} كلمة مفتاحية",
   "addSubmitCount_other": "إضافة {{count, number}} كلمة مفتاحية",
-  "addResult": {"added_zero": "لم تتم إضافة شيء",
+  "addResult": {
+    "added_zero": "لم تتم إضافة شيء",
     "added_one": "تمت إضافة {{count, number}}",
     "added_two": "تمت إضافة {{count, number}}",
     "added_few": "تمت إضافة {{count, number}}",
@@ -303,8 +301,16 @@
     "unsent_two": "لم تُرسل: {{count, number}}",
     "unsent_few": "لم تُرسل: {{count, number}}",
     "unsent_many": "لم تُرسل: {{count, number}}",
-    "unsent_other": "لم تُرسل: {{count, number}}"},
-  "jobOutcome": {"allChecked_zero": "فُحصت {{count}} كلمة مفتاحية.",
+    "unsent_other": "لم تُرسل: {{count, number}}",
+    "invalid_zero": "{{count, number}} إدخالات غير صالحة",
+    "invalid_one": "{{count, number}} إدخال غير صالح",
+    "invalid_two": "{{count, number}} إدخالان غير صالحين",
+    "invalid_few": "{{count, number}} إدخالات غير صالحة",
+    "invalid_many": "{{count, number}} إدخالًا غير صالح",
+    "invalid_other": "{{count, number}} إدخال غير صالح"
+  },
+  "jobOutcome": {
+    "allChecked_zero": "فُحصت {{count}} كلمة مفتاحية.",
     "allChecked_one": "فُحصت الكلمة المفتاحية ({{count}}).",
     "allChecked_two": "فُحصت الكلمتان المفتاحيتان ({{count}}).",
     "allChecked_few": "فُحصت الكلمات المفتاحية الـ{{count}} كلها.",
@@ -315,5 +321,93 @@
     "checked_two": "فُحصت {{checked}} من {{count}} كلمة مفتاحية.",
     "checked_few": "فُحصت {{checked}} من {{count}} كلمات مفتاحية.",
     "checked_many": "فُحصت {{checked}} من {{count}} كلمة مفتاحية.",
-    "checked_other": "فُحصت {{checked}} من {{count}} كلمة مفتاحية."}
+    "checked_other": "فُحصت {{checked}} من {{count}} كلمة مفتاحية.",
+    "cancelled": "أُلغيت عملية فحص الترتيب.",
+    "failed_zero": "لم يفشل أي فحص ({{count}}).",
+    "failed_one": "فشل فحص {{count}} كلمة مفتاحية.",
+    "failed_two": "فشل فحص كلمتين مفتاحيتين ({{count}}).",
+    "failed_few": "فشل فحص {{count}} كلمات مفتاحية.",
+    "failed_many": "فشل فحص {{count}} كلمة مفتاحية.",
+    "failed_other": "فشل فحص {{count}} كلمة مفتاحية.",
+    "notCheckedInTime_zero": "لم تتأخر أي كلمة مفتاحية عن الفحص ({{count}}).",
+    "notCheckedInTime_one": "لم تُفحص {{count}} كلمة مفتاحية في الوقت المحدد.",
+    "notCheckedInTime_two": "لم تُفحص كلمتان مفتاحيتان في الوقت المحدد ({{count}}).",
+    "notCheckedInTime_few": "لم تُفحص {{count}} كلمات مفتاحية في الوقت المحدد.",
+    "notCheckedInTime_many": "لم تُفحص {{count}} كلمة مفتاحية في الوقت المحدد.",
+    "notCheckedInTime_other": "لم تُفحص {{count}} كلمة مفتاحية في الوقت المحدد."
+  },
+  "checkConfirm": {
+    "siteTitle": "هل تريد فحص جميع الكلمات المفتاحية الآن؟",
+    "siteDescription": "سيبدأ فحص كل كلمة مفتاحية نشطة في هذا الموقع قبل موعد فحصها المجدول التالي.",
+    "keywordTitle": "هل تريد فحص هذه الكلمة المفتاحية الآن؟",
+    "keywordDescription": "سيبدأ فحص {{phrase}} قبل موعد فحصها المجدول التالي.",
+    "confirmSite": "فحص جميع الكلمات المفتاحية",
+    "confirmKeyword": "فحص الكلمة المفتاحية",
+    "starting": "جارٍ البدء…"
+  },
+  "rankState": {
+    "ranked": "أول فحص",
+    "improved": "تحسّنت",
+    "declined": "تراجعت",
+    "unchanged": "دون تغيير",
+    "new": "جديدة ضمن أول 100",
+    "lost": "خرجت من أول 100",
+    "not_in_top_100": "ليست ضمن أول 100",
+    "failed_last_check": "فشل آخر فحص",
+    "never_checked": "لم تُفحص بعد",
+    "legend": "التغيّر محسوب مقارنةً بالفحص السابق. «فشل آخر فحص» يعني أن الفحص لم يكتمل؛ و«ليست ضمن أول 100» يعني أن الفحص اكتمل ولم يكن الموقع ضمن أول 100 نتيجة."
+  },
+  "lastKnown": "آخر قيمة معروفة: {{position}}، {{date}}",
+  "jobStillRunning": "ما زال فحص الترتيب جاريًا. عُد لاحقًا للاطلاع على النتيجة.",
+  "retryFailed": "إعادة فحص الكلمات التي فشل فحصها",
+  "queued": "في الانتظار",
+  "marketMove": {
+    "title": "بعض الكلمات المفتاحية تُتتبَّع خارج سوق هذا الموقع",
+    "body": "السوق الافتراضي لهذا الموقع هو {{market}}. الكلمات المفتاحية المتتبَّعة في أسواق أخرى: {{n}}.",
+    "review": "مراجعة النقل",
+    "dialogTitle": "نقل الكلمات المفتاحية إلى سوق هذا الموقع",
+    "dialogDescription": "لن يتغير شيء حتى تؤكد.",
+    "target": "النقل إلى",
+    "movable": "الكلمات المفتاحية التي ستُنقل",
+    "alreadyTracked": "متتبَّعة هناك بالفعل (تبقى كما هي)",
+    "withHistory": "لها سجل في سوقها الحالي",
+    "resumesHistory": "تستأنف سجلًا محفوظًا مسبقًا للسوق الجديد",
+    "historyNote": "يبقى سجل الترتيب الذي جُمع حتى الآن مع السوق الذي قيس فيه. أما المراكز في السوق الجديد فتبدأ سجلها الخاص.",
+    "cancel": "إلغاء",
+    "confirm": "نقل الكلمات المفتاحية",
+    "moving": "جارٍ النقل…",
+    "failed": "تعذّر نقل الكلمات المفتاحية. حاول مرة أخرى.",
+    "dismiss": "إخفاء",
+    "nextCheckNote": "نقل الكلمات المفتاحية لا يشغّل فحصًا للترتيب الآن. سيستخدم الفحص المجدول التالي السوق الجديد.",
+    "stale": "تغيّرت قائمة الكلمات المفتاحية. راجع تفاصيل النقل المحدّثة قبل التأكيد.",
+    "success_one": "نُقلت {{count}} كلمة مفتاحية إلى سوق هذا الموقع.",
+    "success_other": "نُقلت {{count}} كلمات مفتاحية إلى سوق هذا الموقع.",
+    "success_zero": "لم تُنقل أي كلمة مفتاحية من أصل {{count}}.",
+    "success_two": "نُقلت {{count}} كلمتان مفتاحيتان إلى سوق هذا الموقع.",
+    "success_few": "نُقلت {{count}} كلمات مفتاحية إلى سوق هذا الموقع.",
+    "success_many": "نُقلت {{count}} كلمة مفتاحية إلى سوق هذا الموقع."
+  },
+  "keywordList": {
+    "heading": "الكلمات المفتاحية المتتبَّعة ({{total, number}})",
+    "headingFiltered": "الكلمات المفتاحية المتتبَّعة ({{matched, number}} من {{total, number}})",
+    "searchLabel": "ابحث في الكلمات المفتاحية المتتبَّعة",
+    "searchPlaceholder": "ابحث عن كلمة مفتاحية",
+    "noMatchTitle": "لا توجد كلمات مفتاحية تطابق البحث أو المحرك المختار",
+    "noMatchDescription": "جرّب كلمة أخرى، أو امسح البحث واختر كل المحركات لعرض كل الكلمات المفتاحية.",
+    "clearFilters": "مسح البحث والمحرك",
+    "pagination": {
+      "label": "صفحات الكلمات المفتاحية",
+      "range": "عرض {{from, number}}–{{to, number}} من {{total, number}}",
+      "pageOf": "الصفحة {{page, number}} من {{pages, number}}",
+      "goToPage": "الصفحة {{page, number}}",
+      "previous": "السابق",
+      "next": "التالي",
+      "rowsPerPage": "عدد الصفوف في الصفحة"
+    }
+  },
+  "addVerdictExisting": "متتبَّعة بالفعل",
+  "cadenceHelpWeekly": "أسبوعي: تُفحص ترتيبات Google مرة واحدة في الأسبوع صباح كل يوم اثنين (بتوقيت UTC). اختر «يومي» لفحصها كل يوم. يعمل زر «تحقق الآن» في الحالتين.",
+  "cadenceHelpDaily": "يومي: تُفحص ترتيبات Google كل صباح (بتوقيت UTC). اختر «أسبوعي» للعودة إلى فحص واحد أسبوعيًا يوم الاثنين. تُفحص كلمات Bing وYouTube وAmazon أسبوعيًا دائمًا.",
+  "cadenceDailyChecks": "الفحوصات اليومية",
+  "addNothingToAdd": "أدخل كلمة مفتاحية جديدة واحدة على الأقل لإضافتها."
 }

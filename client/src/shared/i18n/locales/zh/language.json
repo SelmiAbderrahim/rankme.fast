@@ -1,5 +1,6 @@
 {
   "switcher": {
+    "switching": "正在切换语言…",
     "label": "语言",
     "saveError": "无法保存语言设置，已恢复为之前的语言。"
   },

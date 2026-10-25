@@ -168,7 +168,8 @@
     "pivotWindow_many": "已比较 {{count}} 条存储结果",
     "pivotWindow_other": "已比较 {{count}} 条存储结果"
   },
-  "eligibility": {"needCheck_zero": "{{total}} 个关键词中有 {{count}} 个需要重新检查排名。",
+  "eligibility": {
+    "needCheck_zero": "{{total}} 个关键词中有 {{count}} 个需要重新检查排名。",
     "needCheck_one": "{{total}} 个关键词中有 {{count}} 个需要重新检查排名。",
     "needCheck_two": "{{total}} 个关键词中有 {{count}} 个需要重新检查排名。",
     "needCheck_few": "{{total}} 个关键词中有 {{count}} 个需要重新检查排名。",
@@ -185,5 +186,8 @@
     "minimum_two": "聚类至少需要 {{count}} 个就绪的关键词。",
     "minimum_few": "聚类至少需要 {{count}} 个就绪的关键词。",
     "minimum_many": "聚类至少需要 {{count}} 个就绪的关键词。",
-    "minimum_other": "聚类至少需要 {{count}} 个就绪的关键词。"}
+    "minimum_other": "聚类至少需要 {{count}} 个就绪的关键词。",
+    "title": "就绪的关键词不足",
+    "snapshotNote": "部分近期检查只保存了排名位置，没有保存完整结果页。聚类需要一次会保存完整结果页的排名检查。"
+  }
 }

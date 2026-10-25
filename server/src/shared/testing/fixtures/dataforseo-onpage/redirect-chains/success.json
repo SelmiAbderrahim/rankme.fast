@@ -1,0 +1,116 @@
+{
+  "version": "0.1.20261001",
+  "status_code": 20000,
+  "status_message": "Ok.",
+  "time": "0.0410 sec.",
+  "cost": 0,
+  "tasks_count": 1,
+  "tasks_error": 0,
+  "tasks": [
+    {
+      "id": "TASK_ID",
+      "status_code": 20000,
+      "status_message": "Ok.",
+      "time": "0.0302 sec.",
+      "cost": 0,
+      "result_count": 1,
+      "path": [
+        "v3",
+        "on_page",
+        "redirect_chains"
+      ],
+      "data": {
+        "api": "on_page",
+        "function": "redirect_chains"
+      },
+      "result": [
+        {
+          "crawl_progress": "finished",
+          "crawl_status": {
+            "max_crawl_pages": 100,
+            "pages_in_queue": 0,
+            "pages_crawled": 7
+          },
+          "total_items_count": 2,
+          "items_count": 2,
+          "items": [
+            {
+              "is_redirect_loop": false,
+              "chain": [
+                {
+                  "type": "redirect",
+                  "domain_from": "example.com",
+                  "domain_to": "example.com",
+                  "page_from": "/old",
+                  "page_to": "/older",
+                  "link_from": "https://example.com/old",
+                  "link_to": "https://example.com/older",
+                  "dofollow": true,
+                  "page_from_scheme": "https",
+                  "page_to_scheme": "https",
+                  "direction": "internal",
+                  "is_broken": false,
+                  "is_link_relation_conflict": false,
+                  "page_to_status_code": 301
+                },
+                {
+                  "type": "redirect",
+                  "domain_from": "example.com",
+                  "domain_to": "example.com",
+                  "page_from": "/older",
+                  "page_to": "/new",
+                  "link_from": "https://example.com/older",
+                  "link_to": "https://example.com/new",
+                  "dofollow": true,
+                  "page_from_scheme": "https",
+                  "page_to_scheme": "https",
+                  "direction": "internal",
+                  "is_broken": false,
+                  "is_link_relation_conflict": false,
+                  "page_to_status_code": 200
+                }
+              ]
+            },
+            {
+              "is_redirect_loop": true,
+              "chain": [
+                {
+                  "type": "redirect",
+                  "domain_from": "example.com",
+                  "domain_to": "example.com",
+                  "page_from": "/loop-a",
+                  "page_to": "/loop-b",
+                  "link_from": "https://example.com/loop-a",
+                  "link_to": "https://example.com/loop-b",
+                  "dofollow": true,
+                  "page_from_scheme": "https",
+                  "page_to_scheme": "https",
+                  "direction": "internal",
+                  "is_broken": false,
+                  "is_link_relation_conflict": false,
+                  "page_to_status_code": 302
+                },
+                {
+                  "type": "redirect",
+                  "domain_from": "example.com",
+                  "domain_to": "example.com",
+                  "page_from": "/loop-b",
+                  "page_to": "/loop-a",
+                  "link_from": "https://example.com/loop-b",
+                  "link_to": "https://example.com/loop-a",
+                  "dofollow": true,
+                  "page_from_scheme": "https",
+                  "page_to_scheme": "https",
+                  "direction": "internal",
+                  "is_broken": false,
+                  "is_link_relation_conflict": false,
+                  "page_to_status_code": 302
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

@@ -65,19 +65,15 @@
   "addSubmit": "Seguir palabras clave",
   "addSubmitting": "Añadiendo…",
   "capReachedTitle": "Límite de palabras clave alcanzado",
-
   "capReachedCta": "Ver planes",
-
   "suggestionsTitle": "Descubre palabras clave para este sitio",
   "suggestionsDescription": "Encuentra palabras clave que valga la pena seguir. Revisamos primero tu Search Console, luego las palabras para las que el sitio ya posiciona y después ideas relevantes.",
   "suggestionsCountLabel": "Mostrar las mejores",
   "suggestionsFind": "Buscar palabras clave",
   "suggestionsLoading": "Buscando palabras clave…",
   "suggestionsLoadFailed": "No se pudieron encontrar palabras clave para este sitio.",
-
   "suggestionsGscSource": "Desde tu Search Console — consultas reales en las que apareció el sitio, ordenadas por impresiones.",
   "suggestionsBlendedSource": "Desde tu Search Console, combinadas con palabras clave por las que el sitio ya posiciona e ideas de sus páginas. Cada fila muestra su fuente.",
-
   "suggestionsPartialUnavailable": "Mostramos lo que encontramos hasta ahora. Las ideas basadas en el sitio no están disponibles temporalmente; inténtalo de nuevo más tarde.",
   "suggestionsSource": "Fuente",
   "suggestionsSourceGsc": "Search Console",
@@ -215,7 +211,8 @@
       "rank": "Posición",
       "result": "Resultado",
       "yours": "Tu página"
-    }
+    },
+    "emptyCta": "Seguir palabras clave"
   },
   "engine": {
     "pickerLabel": "Motor de búsqueda",
@@ -280,7 +277,8 @@
   "addSubmitCount_few": "Añadir {{count, number}} palabras clave",
   "addSubmitCount_many": "Añadir {{count, number}} palabras clave",
   "addSubmitCount_other": "Añadir {{count, number}} palabras clave",
-  "addResult": {"added_zero": "No se añadió nada",
+  "addResult": {
+    "added_zero": "No se añadió nada",
     "added_one": "{{count, number}} añadida",
     "added_two": "{{count, number}} añadidas",
     "added_few": "{{count, number}} añadidas",
@@ -303,8 +301,16 @@
     "unsent_two": "{{count, number}} sin enviar",
     "unsent_few": "{{count, number}} sin enviar",
     "unsent_many": "{{count, number}} sin enviar",
-    "unsent_other": "{{count, number}} sin enviar"},
-  "jobOutcome": {"allChecked_zero": "Se comprobaron las {{count}} palabras clave.",
+    "unsent_other": "{{count, number}} sin enviar",
+    "invalid_zero": "{{count, number}} entradas no válidas",
+    "invalid_one": "{{count, number}} entrada no válida",
+    "invalid_two": "{{count, number}} entradas no válidas",
+    "invalid_few": "{{count, number}} entradas no válidas",
+    "invalid_many": "{{count, number}} entradas no válidas",
+    "invalid_other": "{{count, number}} entradas no válidas"
+  },
+  "jobOutcome": {
+    "allChecked_zero": "Se comprobaron las {{count}} palabras clave.",
     "allChecked_one": "{{count}} palabra clave comprobada.",
     "allChecked_two": "Se comprobaron las {{count}} palabras clave.",
     "allChecked_few": "Se comprobaron las {{count}} palabras clave.",
@@ -315,5 +321,93 @@
     "checked_two": "{{checked}} de {{count}} palabras clave comprobadas.",
     "checked_few": "{{checked}} de {{count}} palabras clave comprobadas.",
     "checked_many": "{{checked}} de {{count}} palabras clave comprobadas.",
-    "checked_other": "{{checked}} de {{count}} palabras clave comprobadas."}
+    "checked_other": "{{checked}} de {{count}} palabras clave comprobadas.",
+    "cancelled": "Se canceló la comprobación de posiciones.",
+    "failed_zero": "Falló la comprobación de {{count}} palabras clave.",
+    "failed_one": "Falló la comprobación de {{count}} palabra clave.",
+    "failed_two": "Falló la comprobación de {{count}} palabras clave.",
+    "failed_few": "Falló la comprobación de {{count}} palabras clave.",
+    "failed_many": "Falló la comprobación de {{count}} palabras clave.",
+    "failed_other": "Falló la comprobación de {{count}} palabras clave.",
+    "notCheckedInTime_zero": "{{count}} palabras clave no se comprobaron a tiempo.",
+    "notCheckedInTime_one": "{{count}} palabra clave no se comprobó a tiempo.",
+    "notCheckedInTime_two": "{{count}} palabras clave no se comprobaron a tiempo.",
+    "notCheckedInTime_few": "{{count}} palabras clave no se comprobaron a tiempo.",
+    "notCheckedInTime_many": "{{count}} palabras clave no se comprobaron a tiempo.",
+    "notCheckedInTime_other": "{{count}} palabras clave no se comprobaron a tiempo."
+  },
+  "checkConfirm": {
+    "siteTitle": "¿Comprobar todas las palabras clave ahora?",
+    "siteDescription": "Cada palabra clave activa de este sitio se comprobará antes de su siguiente comprobación programada.",
+    "keywordTitle": "¿Comprobar esta palabra clave ahora?",
+    "keywordDescription": "{{phrase}} se comprobará antes de su siguiente comprobación programada.",
+    "confirmSite": "Comprobar todas las palabras clave",
+    "confirmKeyword": "Comprobar palabra clave",
+    "starting": "Iniciando…"
+  },
+  "rankState": {
+    "ranked": "Primera comprobación",
+    "improved": "Mejoró",
+    "declined": "Empeoró",
+    "unchanged": "Sin cambios",
+    "new": "Nueva en el top 100",
+    "lost": "Salió del top 100",
+    "not_in_top_100": "Fuera del top 100",
+    "failed_last_check": "Falló la última comprobación",
+    "never_checked": "Nunca comprobada",
+    "legend": "Los cambios se comparan con la comprobación anterior. «Falló la última comprobación» significa que la comprobación no terminó; «Fuera del top 100» significa que terminó y el sitio no estaba entre los 100 primeros resultados."
+  },
+  "lastKnown": "Último dato conocido: {{position}}, {{date}}",
+  "jobStillRunning": "La comprobación de posiciones sigue en curso. Vuelva más tarde para ver el resultado.",
+  "retryFailed": "Reintentar las fallidas",
+  "queued": "En cola",
+  "marketMove": {
+    "title": "Algunas palabras clave se siguen fuera del mercado de este sitio",
+    "body": "El mercado predeterminado de este sitio es {{market}}. Palabras clave seguidas en otros mercados: {{n}}.",
+    "review": "Revisar el traslado",
+    "dialogTitle": "Trasladar las palabras clave al mercado de este sitio",
+    "dialogDescription": "No cambia nada hasta que confirmes.",
+    "target": "Trasladar a",
+    "movable": "Palabras clave que se trasladan",
+    "alreadyTracked": "Ya se siguen allí (se quedan como están)",
+    "withHistory": "Tienen historial en su mercado actual",
+    "resumesHistory": "Retoman un historial ya guardado para el nuevo mercado",
+    "historyNote": "El historial de posiciones recogido hasta ahora se queda con el mercado en el que se midió. Las posiciones en el nuevo mercado empiezan su propio historial.",
+    "cancel": "Cancelar",
+    "confirm": "Trasladar palabras clave",
+    "moving": "Trasladando…",
+    "failed": "No pudimos trasladar las palabras clave. Inténtalo de nuevo.",
+    "dismiss": "Ocultar",
+    "nextCheckNote": "Mover las palabras clave no inicia ahora ninguna comprobación de posiciones. La próxima comprobación programada usará el nuevo mercado.",
+    "stale": "La lista de palabras clave ha cambiado. Revisa el traslado actualizado antes de confirmar.",
+    "success_one": "Se movió {{count}} palabra clave al mercado de este sitio.",
+    "success_other": "Se movieron {{count}} palabras clave al mercado de este sitio.",
+    "success_zero": "Se movieron {{count}} palabras clave al mercado de este sitio.",
+    "success_two": "Se movieron {{count}} palabras clave al mercado de este sitio.",
+    "success_few": "Se movieron {{count}} palabras clave al mercado de este sitio.",
+    "success_many": "Se movieron {{count}} palabras clave al mercado de este sitio."
+  },
+  "keywordList": {
+    "heading": "Palabras clave seguidas ({{total, number}})",
+    "headingFiltered": "Palabras clave seguidas ({{matched, number}} de {{total, number}})",
+    "searchLabel": "Buscar en las palabras clave seguidas",
+    "searchPlaceholder": "Buscar palabras clave",
+    "noMatchTitle": "Ninguna palabra clave coincide con tu búsqueda o filtro",
+    "noMatchDescription": "Prueba con otra palabra, o borra la búsqueda y el filtro de motor para ver todas las palabras clave.",
+    "clearFilters": "Borrar búsqueda y filtro",
+    "pagination": {
+      "label": "Páginas de palabras clave",
+      "range": "Mostrando {{from, number}}–{{to, number}} de {{total, number}}",
+      "pageOf": "Página {{page, number}} de {{pages, number}}",
+      "goToPage": "Página {{page, number}}",
+      "previous": "Anterior",
+      "next": "Siguiente",
+      "rowsPerPage": "Filas por página"
+    }
+  },
+  "addVerdictExisting": "Ya se sigue",
+  "cadenceHelpWeekly": "Semanal: las posiciones en Google se revisan una vez por semana, los lunes por la mañana (UTC). Elige Diaria para revisarlas cada día. «Comprobar ahora» funciona en ambos casos.",
+  "cadenceHelpDaily": "Diaria: las posiciones en Google se revisan cada mañana (UTC). Elige Semanal para volver a una revisión por semana, los lunes. Las palabras clave de Bing, YouTube y Amazon se revisan siempre cada semana.",
+  "cadenceDailyChecks": "Comprobaciones diarias",
+  "addNothingToAdd": "Escribe al menos una palabra clave nueva para añadir."
 }

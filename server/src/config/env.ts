@@ -810,22 +810,18 @@ export const envSchema = z.object({
     // Cross-user keyword-metrics cache. 30 days: vendor volume data
     // updates monthly — shorter would burn cost for no fresher signal.
     KEYWORD_CACHE_TTL_DAYS: z.coerce.number().int().positive().default(30),
-    // SERP depth. The sold/storage/rank-observation contract is
-    // top 100; accepting a larger vendor request would exceed both that public
-    // boundary and the unit-cost model.
+    // SERP depth is capped at the top 100 results: the stored rank observation
+    // and UI use that boundary, and deeper vendor requests increase spend.
     SERP_DEPTH: z.coerce.number().int().positive().max(100).default(100),
-    // Depth for the synchronous live SERP path used by rank checks.
-    // Live bills $0.002/page, so this is capped at 30 (3 pages = $0.006) to stay
-    // within the serp_checks unit-cost bound. Default 20 (2 pages = $0.004).
+    // Depth for providers using synchronous live SERP requests. Capped at 30
+    // pages as an operator spend bound. Default 20.
     SERP_LIVE_DEPTH: z.coerce.number().int().positive().max(30).default(20),
-    // How long a rank check waits for DataForSEO's ASYNC task queue before it
-    // gives up. Rank checks run through `task_post` → `task_get`, and a task
-    // that is still `in_queue` is re-polled at this interval up to this many
-    // attempts; exhausting them raises a keyword-scoped `VendorUnavailableError`
-    // that costs a check without producing a position. Interval x attempts is
-    // therefore the real wait budget — 3s x 60 = 180s by default, which leaves
-    // headroom over the standard queue instead of racing it. Bounded so a
-    // misconfiguration cannot pin a worker slot on one keyword.
+    // Rank jobs post all cache misses in batches of at most 100 and poll
+    // pending task ids round-robin. The interval applies between rounds;
+    // interval x attempts is one vendor wait window (3s x 60 = 180s by
+    // default). A job deadline adds a window per 100-task batch, capped at
+    // 60 minutes. The single-task provider fallback still uses this attempt
+    // count as its own ceiling. Bounds prevent an indefinite worker wait.
     SERP_TASK_POLL_INTERVAL_MS: z.coerce.number().int().positive().max(30000).default(3000),
     SERP_TASK_MAX_POLL_ATTEMPTS: z.coerce.number().int().positive().max(200).default(60),
     AUDIT_POLL_INTERVAL_MS: z.coerce.number().int().positive().default(30000),

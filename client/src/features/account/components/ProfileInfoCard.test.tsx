@@ -11,12 +11,14 @@ import {
 import { authClient, useAuthSession } from '@features/auth';
 import type { AuthSessionState, AuthSessionUser } from '@features/auth';
 import { ProfileInfoCard } from './ProfileInfoCard';
+import { useAppSelector } from '@shared/hooks/redux';
 
 vi.mock('@features/auth', () => ({
   useAuthSession: vi.fn(),
   authClient: { updateUser: vi.fn() },
 }));
 vi.mock('sonner', () => ({ toast: { success: vi.fn(), error: vi.fn() } }));
+vi.mock('@shared/hooks/redux', () => ({ useAppSelector: vi.fn() }));
 
 const { toast } = await import('sonner');
 const toastSuccess = toast.success as unknown as Mock;
@@ -56,6 +58,7 @@ beforeEach(async () => {
   await changeLanguage('en');
   vi.clearAllMocks();
   updateUser.mockResolvedValue({ data: {}, error: null });
+  vi.mocked(useAppSelector).mockReturnValue('owner');
 });
 
 describe('ProfileInfoCard — identity', () => {
@@ -64,8 +67,8 @@ describe('ProfileInfoCard — identity', () => {
     renderCard();
     expect(screen.getByText('Ada Lovelace')).toBeInTheDocument();
     expect(screen.getByText('zoe@example.com')).toBeInTheDocument();
-    expect(screen.getByText('Workspace owner')).toBeInTheDocument();
-    // The platform role is not a team role; a plain Member is not surfaced.
+    expect(screen.getByText('Owner')).toBeInTheDocument();
+    // The platform role is not the team role.
     expect(screen.queryByText('Member')).not.toBeInTheDocument();
     expect(screen.getByText('Email verified')).toBeInTheDocument();
     expect(screen.getByText(/Member since/)).toBeInTheDocument();
@@ -73,14 +76,12 @@ describe('ProfileInfoCard — identity', () => {
     expect(screen.getByText('AL')).toBeInTheDocument();
   });
 
-  it.each([
-    ['Admin', 'Platform admin'],
-    ['SuperAdmin', 'Platform super admin'],
-  ])('also shows the %s platform role', (role, label) => {
-    mockSession(sessionUser({ role } as Partial<AuthSessionUser>));
+  it('shows the active team role without exposing a platform role', () => {
+    vi.mocked(useAppSelector).mockReturnValue('member');
+    mockSession(sessionUser({ role: 'Admin' } as Partial<AuthSessionUser>));
     renderCard();
-    expect(screen.getByText(label)).toBeInTheDocument();
-    expect(screen.getByText('Workspace owner')).toBeInTheDocument();
+    expect(screen.getByText('Member')).toBeInTheDocument();
+    expect(screen.queryByText('Platform admin')).not.toBeInTheDocument();
   });
 
   it('keeps the email read-only and points to the verified change-email flow', () => {

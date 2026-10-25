@@ -168,7 +168,8 @@
     "pivotWindow_many": "{{count}} stored results compared",
     "pivotWindow_other": "{{count}} stored results compared"
   },
-  "eligibility": {"needCheck_zero": "{{count}} of {{total}} keywords need a fresh rank check.",
+  "eligibility": {
+    "needCheck_zero": "{{count}} of {{total}} keywords need a fresh rank check.",
     "needCheck_one": "{{count}} of {{total}} keywords needs a fresh rank check.",
     "needCheck_two": "{{count}} of {{total}} keywords need a fresh rank check.",
     "needCheck_few": "{{count}} of {{total}} keywords need a fresh rank check.",
@@ -185,5 +186,8 @@
     "minimum_two": "Clustering needs at least {{count}} ready keywords.",
     "minimum_few": "Clustering needs at least {{count}} ready keywords.",
     "minimum_many": "Clustering needs at least {{count}} ready keywords.",
-    "minimum_other": "Clustering needs at least {{count}} ready keywords."}
+    "minimum_other": "Clustering needs at least {{count}} ready keywords.",
+    "title": "Not enough keywords are ready",
+    "snapshotNote": "Some recent checks saved only the position, not the full results page. Clustering needs a rank check that saves the full results page."
+  }
 }

@@ -8,6 +8,7 @@ import {
   type UnknownAction,
 } from '@reduxjs/toolkit';
 import { googleReducer } from '@features/google/store/slice';
+import { dashboardReducer } from '@features/dashboard/store/slice';
 import { ranksReducer } from '@features/ranks/store/slice';
 import { sitesReducer } from '@features/sites/store/slice';
 import { trafficSnapshotsReducer } from '@features/competitors/traffic/store/slice';
@@ -82,6 +83,7 @@ export interface LazyLoadedSlices {
 }
 
 export const rootReducer = combineSlices({
+  dashboard: dashboardReducer,
   google: googleReducer,
   ranks: ranksReducer,
   sites: sitesReducer,

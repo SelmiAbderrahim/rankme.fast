@@ -58,7 +58,8 @@ export const APP_NAV_GROUPS: readonly AppNavGroup[] = [
   {
     labelKey: 'shell.groupAccount',
     items: [
-      { to: '/profile', labelKey: 'shell.profile', icon: APP_PAGE_ICONS.profile },
+      { to: '/settings/profile', labelKey: 'shell.profile', icon: APP_PAGE_ICONS.profile, aliases: ['/profile'] },
+      { to: '/settings/workspace', labelKey: 'nav.workspace', icon: APP_PAGE_ICONS.workspace, aliases: ['/profile?tab=branding'] },
       { to: '/settings/team', labelKey: 'nav.team', icon: APP_PAGE_ICONS.team },
       {
         to: '/settings/notifications',

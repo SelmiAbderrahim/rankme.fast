@@ -11,6 +11,7 @@ import { i18n, initI18n } from '@shared/i18n';
 import { useAuthSession, type AuthSessionState } from '@features/auth';
 import { sitesReducer, type Site } from '@features/sites';
 import { workspaceInitialState, workspaceReducer, type WorkspaceState } from '@features/workspace';
+const { topbarSignOut } = vi.hoisted(() => ({ topbarSignOut: vi.fn() }));
 
 // Stub the vendored (coverage-excluded) sidebar primitive so these tests can
 // drive the mobile/collapse branches of the app-shell components directly.
@@ -36,6 +37,7 @@ vi.mock('@shared/ui/sidebar', () => ({
 vi.mock('@features/auth', async (importOriginal) => ({
   ...(await importOriginal<typeof import('@features/auth')>()),
   useAuthSession: vi.fn(),
+  useSignOut: () => ({ signOut: topbarSignOut, signingOut: false }),
 }));
 
 // The inbox has its own integration coverage. Keep the app-shell suite focused
@@ -184,10 +186,10 @@ describe('AppSidebar', () => {
     });
 
     it('keeps Profile active on its own and on non-mirrored tabs', () => {
-      renderAt('/profile');
+      renderAt('/settings/profile');
       expect(activeLinks()).toEqual(['Profile']);
       document.body.innerHTML = '';
-      renderAt('/profile?tab=branding');
+      renderAt('/settings/profile?tab=privacy');
       expect(activeLinks()).toEqual(['Profile']);
     });
 
@@ -558,7 +560,10 @@ describe('AppTopbar', () => {
     setSession({ name: 'Ada Lovelace', email: 'ada@example.com', image: 'x.png' });
     renderTopbar();
     await userEvent.click(screen.getByRole('button', { name: 'Account menu' }));
-    expect(await screen.findByRole('menuitem', { name: 'Sign out' })).toBeInTheDocument();
+    const action = await screen.findByRole('menuitem', { name: 'Sign out' });
+    expect(action).not.toHaveAttribute('href');
+    await userEvent.click(action);
+    expect(topbarSignOut).toHaveBeenCalledTimes(1);
   });
 
   it('offers a keyboard-reachable, safe new-tab bug-report link', async () => {
@@ -588,7 +593,7 @@ describe('AppTopbar', () => {
     setSession({ role: 'Member' });
     renderTopbar();
     await userEvent.type(searchBox(), 'Profile{Enter}');
-    expect(screen.getByTestId('loc')).toHaveTextContent('/profile');
+    expect(screen.getByTestId('loc')).toHaveTextContent('/settings/profile');
   });
 
   it('renders the team invitation inbox trigger in the topbar', () => {

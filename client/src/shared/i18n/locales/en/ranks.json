@@ -65,19 +65,15 @@
   "addSubmit": "Track keywords",
   "addSubmitting": "Adding…",
   "capReachedTitle": "Keyword limit reached",
-
   "capReachedCta": "See plans",
-
   "suggestionsTitle": "Discover keywords for this site",
   "suggestionsDescription": "Find keywords worth tracking. We check your Search Console first, then keywords this site already ranks for, then relevant site ideas.",
   "suggestionsCountLabel": "Show top",
   "suggestionsFind": "Find top keywords",
   "suggestionsLoading": "Finding keywords…",
   "suggestionsLoadFailed": "Could not find keywords for this site.",
-
   "suggestionsGscSource": "From your Search Console — real queries this site appeared for, ordered by impressions.",
   "suggestionsBlendedSource": "From your Search Console, blended with keywords this site ranks for and ideas from its pages. Each row shows its source.",
-
   "suggestionsPartialUnavailable": "Showing what we found so far. Site-based ideas are temporarily unavailable; please try again later.",
   "suggestionsSource": "Source",
   "suggestionsSourceGsc": "Search Console",
@@ -215,7 +211,8 @@
       "rank": "Rank",
       "result": "Result",
       "yours": "Your page"
-    }
+    },
+    "emptyCta": "Track keywords"
   },
   "engine": {
     "pickerLabel": "Search engine",
@@ -280,7 +277,8 @@
   "addSubmitCount_few": "Add {{count, number}} keywords",
   "addSubmitCount_many": "Add {{count, number}} keywords",
   "addSubmitCount_other": "Add {{count, number}} keywords",
-  "addResult": {"added_zero": "Nothing added",
+  "addResult": {
+    "added_zero": "Nothing added",
     "added_one": "Added {{count, number}}",
     "added_two": "Added {{count, number}}",
     "added_few": "Added {{count, number}}",
@@ -303,8 +301,16 @@
     "unsent_two": "{{count, number}} not sent",
     "unsent_few": "{{count, number}} not sent",
     "unsent_many": "{{count, number}} not sent",
-    "unsent_other": "{{count, number}} not sent"},
-  "jobOutcome": {"allChecked_zero": "All {{count}} keywords checked.",
+    "unsent_other": "{{count, number}} not sent",
+    "invalid_zero": "{{count, number}} invalid entries",
+    "invalid_one": "{{count, number}} invalid entry",
+    "invalid_two": "{{count, number}} invalid entries",
+    "invalid_few": "{{count, number}} invalid entries",
+    "invalid_many": "{{count, number}} invalid entries",
+    "invalid_other": "{{count, number}} invalid entries"
+  },
+  "jobOutcome": {
+    "allChecked_zero": "All {{count}} keywords checked.",
     "allChecked_one": "{{count}} keyword checked.",
     "allChecked_two": "All {{count}} keywords checked.",
     "allChecked_few": "All {{count}} keywords checked.",
@@ -315,5 +321,93 @@
     "checked_two": "{{checked}} of {{count}} keywords checked.",
     "checked_few": "{{checked}} of {{count}} keywords checked.",
     "checked_many": "{{checked}} of {{count}} keywords checked.",
-    "checked_other": "{{checked}} of {{count}} keywords checked."}
+    "checked_other": "{{checked}} of {{count}} keywords checked.",
+    "cancelled": "The rank check was canceled.",
+    "failed_zero": "{{count}} checks failed.",
+    "failed_one": "{{count}} check failed.",
+    "failed_two": "{{count}} checks failed.",
+    "failed_few": "{{count}} checks failed.",
+    "failed_many": "{{count}} checks failed.",
+    "failed_other": "{{count}} checks failed.",
+    "notCheckedInTime_zero": "{{count}} keywords were not checked in time.",
+    "notCheckedInTime_one": "{{count}} keyword was not checked in time.",
+    "notCheckedInTime_two": "{{count}} keywords were not checked in time.",
+    "notCheckedInTime_few": "{{count}} keywords were not checked in time.",
+    "notCheckedInTime_many": "{{count}} keywords were not checked in time.",
+    "notCheckedInTime_other": "{{count}} keywords were not checked in time."
+  },
+  "checkConfirm": {
+    "siteTitle": "Check all keywords now?",
+    "siteDescription": "Every active keyword on this site is checked now, ahead of its next scheduled check.",
+    "keywordTitle": "Check this keyword now?",
+    "keywordDescription": "{{phrase}} is checked now, ahead of its next scheduled check.",
+    "confirmSite": "Check all keywords",
+    "confirmKeyword": "Check keyword",
+    "starting": "Starting…"
+  },
+  "rankState": {
+    "ranked": "First check",
+    "improved": "Improved",
+    "declined": "Declined",
+    "unchanged": "Unchanged",
+    "new": "New in the top 100",
+    "lost": "Lost from the top 100",
+    "not_in_top_100": "Not in the top 100",
+    "failed_last_check": "Last check failed",
+    "never_checked": "Never checked",
+    "legend": "Change is compared with the previous check. \"Last check failed\" means the check did not finish; \"Not in the top 100\" means it finished and the site was not among the first 100 results."
+  },
+  "lastKnown": "Last known: {{position}}, {{date}}",
+  "jobStillRunning": "The rank check is still running. Return later to see the result.",
+  "retryFailed": "Retry failed",
+  "queued": "Queued",
+  "marketMove": {
+    "title": "Some keywords are tracked outside this site's market",
+    "body": "This site's default market is {{market}}. Keywords tracked elsewhere: {{n}}.",
+    "review": "Review the move",
+    "dialogTitle": "Move keywords to this site's market",
+    "dialogDescription": "Nothing changes until you confirm.",
+    "target": "Move to",
+    "movable": "Keywords that move",
+    "alreadyTracked": "Already tracked there (left as they are)",
+    "withHistory": "Have history in their current market",
+    "resumesHistory": "Pick up history already stored for the new market",
+    "historyNote": "Rank history collected so far stays with the market it was measured in. Positions in the new market start their own history.",
+    "cancel": "Cancel",
+    "confirm": "Move keywords",
+    "moving": "Moving…",
+    "failed": "We couldn't move the keywords. Try again.",
+    "dismiss": "Dismiss",
+    "nextCheckNote": "Moving keywords runs no rank check now. Their next scheduled check uses the new market.",
+    "stale": "The keyword list changed. Review the updated move before confirming.",
+    "success_one": "Moved {{count}} keyword to this site’s market.",
+    "success_other": "Moved {{count}} keywords to this site’s market.",
+    "success_zero": "Moved {{count}} keywords to this site’s market.",
+    "success_two": "Moved {{count}} keywords to this site’s market.",
+    "success_few": "Moved {{count}} keywords to this site’s market.",
+    "success_many": "Moved {{count}} keywords to this site’s market."
+  },
+  "keywordList": {
+    "heading": "Tracked keywords ({{total, number}})",
+    "headingFiltered": "Tracked keywords ({{matched, number}} of {{total, number}})",
+    "searchLabel": "Search tracked keywords",
+    "searchPlaceholder": "Search keywords",
+    "noMatchTitle": "No keywords match your search or filter",
+    "noMatchDescription": "Try another word, or clear the search and the engine filter to see every keyword.",
+    "clearFilters": "Clear search and filter",
+    "pagination": {
+      "label": "Keyword pages",
+      "range": "Showing {{from, number}}–{{to, number}} of {{total, number}}",
+      "pageOf": "Page {{page, number}} of {{pages, number}}",
+      "goToPage": "Page {{page, number}}",
+      "previous": "Previous",
+      "next": "Next",
+      "rowsPerPage": "Rows per page"
+    }
+  },
+  "addVerdictExisting": "Already tracked",
+  "cadenceHelpWeekly": "Weekly: Google rankings are checked once a week, on Monday mornings (UTC). Choose Daily to check them every day. Check now works either way.",
+  "cadenceHelpDaily": "Daily: Google rankings are checked every morning (UTC). Choose Weekly to go back to one check a week, on Mondays. Bing, YouTube, and Amazon keywords are always checked weekly.",
+  "cadenceDailyChecks": "Daily checks",
+  "addNothingToAdd": "Enter at least one new keyword to add."
 }

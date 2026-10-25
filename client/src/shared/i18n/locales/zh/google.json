@@ -140,19 +140,23 @@
     "timeseriesTableCaption_other": "过去 {{days}} 天的每日搜索表现"
   },
   "analytics": {
-    "title": "Google Analytics（过去 {{days}} 天）",
+    "title": "Google Analytics 数据",
     "sessions": "会话数",
     "activeUsers": "活跃用户",
     "engagedSessions": "互动会话数",
     "keyEvents": "关键事件",
     "engagementRateLabel": "互动率",
     "engagementRateLine": "互动率：{{rate}}",
+    "windowNote": "{{start}} 至 {{end}} 的合计。",
     "previousPeriod": "上一周期 — 会话：{{sessions}} · 活跃用户：{{activeUsers}}",
     "emptyTitle": "暂无分析数据",
     "empty": "暂无分析数据。连接媒体资源后不久数据就会出现——请尝试刷新。",
     "error": "无法加载您的分析摘要，请稍后重试。",
     "refresh": "刷新分析数据",
     "refreshError": "无法刷新您的分析数据，请稍后重试。",
+    "staleTitle": "Analytics 数据已过期",
+    "noRecentSessions": "自 {{date}} 起没有记录到会话。最近已检查 Google Analytics，未报告更新的流量。",
+    "dailyRange": "{{start}} 至 {{end}} 的每日总计。",
     "timeseriesTitle": "会话数和活跃用户随时间变化",
     "timeseriesSubtitle_one": "过去 {{days}} 天的每日总计。",
     "timeseriesChartLabel_one": "过去 {{days}} 天的每日{{metric}}",
@@ -269,10 +273,78 @@
       "internalLinks": "内部链接建议会根据您的 Search Console 搜索查询来判断哪些页面重要。请先为此网站连接 Search Console，以获得基于真实搜索的建议。"
     }
   },
-  "breakdown": {"other_zero": "其他（另有 {{hidden}} 项）",
+  "breakdown": {
+    "shareHeader": "{{metric}} · 占总数比例",
+    "shareHeaderRows": "{{metric}} · 占此列表比例",
+    "other_zero": "其他（另有 {{hidden}} 项）",
     "other_one": "其他（另有 {{hidden}} 项）",
     "other_two": "其他（另有 {{hidden}} 项）",
     "other_few": "其他（另有 {{hidden}} 项）",
     "other_many": "其他（另有 {{hidden}} 项）",
-    "other_other": "其他（另有 {{hidden}} 项）"}
+    "other_other": "其他（另有 {{hidden}} 项）",
+    "engagedRate": "{{rate}} 互动",
+    "ctrRate": "点击率 {{rate}}",
+    "byImpressions": "此期间没有点击，因此国家和设备按展示次数显示。"
+  },
+  "readiness": {
+    "gsc": {
+      "not_connected": {
+        "title": "Search Console 未连接",
+        "body": "连接您的 Google 账号，即可在 RankMeFast 中查看 <site>{{domain}}</site> 的搜索点击和展示次数。",
+        "cta": "连接 Google"
+      },
+      "no_property": {
+        "title": "请选择 Search Console 资源",
+        "body": "Google 已连接，但尚未为 <site>{{domain}}</site> 选择 Search Console 资源。",
+        "cta": "选择 Search Console 资源"
+      },
+      "property_mismatch": {
+        "title": "该资源未覆盖此网站",
+        "body": "为 <site>{{domain}}</site> 选择的 Search Console 资源不包含该网站的地址，请选择包含该地址的资源。",
+        "cta": "选择 Search Console 资源"
+      },
+      "error": {
+        "title": "暂时无法读取 Search Console",
+        "body": "Google 拒绝了 <site>{{domain}}</site> 的请求，或缺少某项权限。请重试；如果问题持续，请重新连接 Google。",
+        "cta": "重试"
+      }
+    },
+    "ga4": {
+      "not_connected": {
+        "title": "Google Analytics 未连接",
+        "body": "连接您的 Google 账号，即可查看 <site>{{domain}}</site> 的访问量和互动情况。",
+        "cta": "连接 Google"
+      },
+      "no_property": {
+        "title": "请选择 Google Analytics 媒体资源",
+        "body": "Google 已连接，但尚未为 <site>{{domain}}</site> 选择 Google Analytics 媒体资源。",
+        "cta": "选择 Google Analytics 媒体资源"
+      },
+      "property_mismatch": {
+        "title": "该媒体资源与此网站不匹配",
+        "body": "为 <site>{{domain}}</site> 选择的 Google Analytics 媒体资源统计的是另一个地址，请选择此网站对应的媒体资源。",
+        "cta": "选择 Google Analytics 媒体资源"
+      },
+      "error": {
+        "title": "暂时无法读取 Google Analytics",
+        "body": "Google 拒绝了 <site>{{domain}}</site> 的请求，或缺少 Analytics 访问权限。请重试；如果问题持续，请重新连接 Google。",
+        "cta": "重试"
+      }
+    },
+    "matching": "正在查找匹配的资源。"
+  },
+  "propertyPicker": {
+    "thisSite": "此网站",
+    "noneFound": "未找到 {{domain}} 的 Search Console 资源。请先在 Search Console 中添加，然后刷新此列表。",
+    "openSearchConsole": "打开 Search Console",
+    "newTab": "（在新标签页中打开）",
+    "refresh": "刷新",
+    "refreshing": "正在刷新…",
+    "linkDifferent": "关联其他资源",
+    "differentHint": "这些资源属于其他网站。关联其中一个后，它的搜索数据会显示在 {{domain}} 上。",
+    "otherLabel": "其他网站的资源",
+    "confirmTitle": "要将 {{site}} 关联到 {{property}} 的数据吗？",
+    "confirmBody": "{{property}} 是另一个网站。在您更换资源之前，它的搜索数据会显示在 {{site}} 上。资源：",
+    "confirm": "仍然关联"
+  }
 }

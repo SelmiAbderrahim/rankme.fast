@@ -27,6 +27,8 @@ import { AiVisibilityBlock } from './AiVisibilityBlock';
 import { LocalSeoBlock } from './LocalSeoBlock';
 import { PageSpeedBlock } from './PageSpeedBlock';
 import { AddressVariantsBlock, addressVariantsOf } from './AddressVariantsBlock';
+import { readDeepCrawlEvidence } from '../deepCrawlEvidence';
+import { DeepCrawlEvidenceBlocks, EvidenceFacts } from './DeepCrawlEvidence';
 
 export interface IssueDetailProps {
   finding: LocalizedFinding;
@@ -71,6 +73,7 @@ export const IssueDetail = ({
   // Probed site addresses replace the plain URL list: the table already
   // names each address and says what is wrong with it.
   const addressVariants = addressVariantsOf(finding.meta);
+  const deepEvidence = readDeepCrawlEvidence(finding.meta);
   const brokenLinkTargets =
     finding.ruleId === 'broken-internal-links'
       ? (finding.brokenLinkTargets ?? [])
@@ -185,6 +188,13 @@ export const IssueDetail = ({
 
       {addressVariants ? <AddressVariantsBlock variants={addressVariants} /> : null}
 
+      {!showPassedLabel ? (
+        <DeepCrawlEvidenceBlocks
+          evidence={deepEvidence}
+          shownRows={deepEvidence.pages.size + deepEvidence.resources.size}
+        />
+      ) : null}
+
       {finding.affectedUrls.length > 0 && !addressVariants ? (
         <div className="mb-4">
           <h4 className="text-sm font-semibold">
@@ -196,15 +206,8 @@ export const IssueDetail = ({
             {finding.affectedUrls.map((url) => {
               const kind = diffByUrl.get(url);
               return (
-                <li key={url} className="flex items-center gap-2">
-                  <a
-                    href={safeExternalHref(url)}
-                    target="_blank"
-                    rel="nofollow ugc noopener noreferrer"
-                    className="font-mono text-xs text-primary underline break-all"
-                  >
-                    <Bdi>{url}</Bdi>
-                  </a>
+                <li key={url} className="flex flex-wrap items-center gap-x-2 gap-y-1">
+                  <a href={safeExternalHref(url)} target="_blank" rel="nofollow ugc noopener noreferrer" className="font-mono text-xs text-primary underline break-all"><Bdi>{url}</Bdi></a>
                   {kind === 'fixed' ? (
                     <span className="text-xs font-medium text-success">
                       {t('badges.fixed')}
@@ -215,6 +218,7 @@ export const IssueDetail = ({
                       {t('badges.regressed')}
                     </span>
                   ) : null}
+                  <EvidenceFacts page={deepEvidence.pages.get(url)} resource={deepEvidence.resources.get(url)} />
                 </li>
               );
             })}

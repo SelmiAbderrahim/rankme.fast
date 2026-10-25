@@ -65,19 +65,15 @@
   "addSubmit": "Suivre les mots-clés",
   "addSubmitting": "Ajout…",
   "capReachedTitle": "Limite de mots-clés atteinte",
-
   "capReachedCta": "Voir les offres",
-
   "suggestionsTitle": "Découvrir des mots-clés pour ce site",
   "suggestionsDescription": "Trouvez des mots-clés à suivre. Nous consultons d’abord votre Search Console, puis les mots-clés sur lesquels le site est déjà classé, puis des idées pertinentes.",
   "suggestionsCountLabel": "Afficher les meilleurs",
   "suggestionsFind": "Trouver les meilleurs mots-clés",
   "suggestionsLoading": "Recherche de mots-clés…",
   "suggestionsLoadFailed": "Impossible de trouver des mots-clés pour ce site.",
-
   "suggestionsGscSource": "Depuis votre Search Console — requêtes réelles où le site est apparu, triées par impressions.",
   "suggestionsBlendedSource": "Depuis votre Search Console, complétées par les mots-clés sur lesquels le site se positionne et des idées tirées de ses pages. Chaque ligne indique sa source.",
-
   "suggestionsPartialUnavailable": "Voici ce que nous avons trouvé pour l'instant. Les idées basées sur le site sont temporairement indisponibles ; réessayez plus tard.",
   "suggestionsSource": "Source",
   "suggestionsSourceGsc": "Search Console",
@@ -215,7 +211,8 @@
       "rank": "Position",
       "result": "Résultat",
       "yours": "Votre page"
-    }
+    },
+    "emptyCta": "Suivre des mots-clés"
   },
   "engine": {
     "pickerLabel": "Moteur de recherche",
@@ -280,7 +277,8 @@
   "addSubmitCount_few": "Ajouter {{count, number}} mots-clés",
   "addSubmitCount_many": "Ajouter {{count, number}} mots-clés",
   "addSubmitCount_other": "Ajouter {{count, number}} mots-clés",
-  "addResult": {"added_zero": "Aucun ajout",
+  "addResult": {
+    "added_zero": "Aucun ajout",
     "added_one": "{{count, number}} ajouté",
     "added_two": "{{count, number}} ajoutés",
     "added_few": "{{count, number}} ajoutés",
@@ -303,8 +301,16 @@
     "unsent_two": "{{count, number}} non envoyés",
     "unsent_few": "{{count, number}} non envoyés",
     "unsent_many": "{{count, number}} non envoyés",
-    "unsent_other": "{{count, number}} non envoyés"},
-  "jobOutcome": {"allChecked_zero": "Les {{count}} mots-clés ont été vérifiés.",
+    "unsent_other": "{{count, number}} non envoyés",
+    "invalid_zero": "{{count, number}} entrées invalides",
+    "invalid_one": "{{count, number}} entrée invalide",
+    "invalid_two": "{{count, number}} entrées invalides",
+    "invalid_few": "{{count, number}} entrées invalides",
+    "invalid_many": "{{count, number}} entrées invalides",
+    "invalid_other": "{{count, number}} entrées invalides"
+  },
+  "jobOutcome": {
+    "allChecked_zero": "Les {{count}} mots-clés ont été vérifiés.",
     "allChecked_one": "{{count}} mot-clé vérifié.",
     "allChecked_two": "Les {{count}} mots-clés ont été vérifiés.",
     "allChecked_few": "Les {{count}} mots-clés ont été vérifiés.",
@@ -315,5 +321,93 @@
     "checked_two": "{{checked}} mots-clés sur {{count}} vérifiés.",
     "checked_few": "{{checked}} mots-clés sur {{count}} vérifiés.",
     "checked_many": "{{checked}} mots-clés sur {{count}} vérifiés.",
-    "checked_other": "{{checked}} mots-clés sur {{count}} vérifiés."}
+    "checked_other": "{{checked}} mots-clés sur {{count}} vérifiés.",
+    "cancelled": "La vérification des positions a été annulée.",
+    "failed_zero": "La vérification de {{count}} mots-clés a échoué.",
+    "failed_one": "La vérification de {{count}} mot-clé a échoué.",
+    "failed_two": "La vérification de {{count}} mots-clés a échoué.",
+    "failed_few": "La vérification de {{count}} mots-clés a échoué.",
+    "failed_many": "La vérification de {{count}} mots-clés a échoué.",
+    "failed_other": "La vérification de {{count}} mots-clés a échoué.",
+    "notCheckedInTime_zero": "{{count}} mots-clés n’ont pas été vérifiés à temps.",
+    "notCheckedInTime_one": "{{count}} mot-clé n’a pas été vérifié à temps.",
+    "notCheckedInTime_two": "{{count}} mots-clés n’ont pas été vérifiés à temps.",
+    "notCheckedInTime_few": "{{count}} mots-clés n’ont pas été vérifiés à temps.",
+    "notCheckedInTime_many": "{{count}} mots-clés n’ont pas été vérifiés à temps.",
+    "notCheckedInTime_other": "{{count}} mots-clés n’ont pas été vérifiés à temps."
+  },
+  "checkConfirm": {
+    "siteTitle": "Vérifier tous les mots-clés maintenant ?",
+    "siteDescription": "Chaque mot-clé actif de ce site sera vérifié avant sa prochaine vérification planifiée.",
+    "keywordTitle": "Vérifier ce mot-clé maintenant ?",
+    "keywordDescription": "{{phrase}} sera vérifié avant sa prochaine vérification planifiée.",
+    "confirmSite": "Vérifier tous les mots-clés",
+    "confirmKeyword": "Vérifier le mot-clé",
+    "starting": "Démarrage…"
+  },
+  "rankState": {
+    "ranked": "Première vérification",
+    "improved": "En progression",
+    "declined": "En recul",
+    "unchanged": "Inchangé",
+    "new": "Nouveau dans le top 100",
+    "lost": "Sorti du top 100",
+    "not_in_top_100": "Hors du top 100",
+    "failed_last_check": "Échec de la dernière vérification",
+    "never_checked": "Jamais vérifié",
+    "legend": "L'évolution est comparée à la vérification précédente. « Échec de la dernière vérification » signifie que la vérification n'a pas abouti ; « Hors du top 100 » signifie qu'elle a abouti et que le site ne figurait pas parmi les 100 premiers résultats."
+  },
+  "lastKnown": "Dernière valeur connue : {{position}}, {{date}}",
+  "jobStillRunning": "La vérification des positions est toujours en cours. Revenez plus tard pour voir le résultat.",
+  "retryFailed": "Réessayer les échecs",
+  "queued": "En attente",
+  "marketMove": {
+    "title": "Certains mots-clés sont suivis hors du marché de ce site",
+    "body": "Le marché par défaut de ce site est {{market}}. Mots-clés suivis ailleurs : {{n}}.",
+    "review": "Examiner le déplacement",
+    "dialogTitle": "Déplacer les mots-clés vers le marché de ce site",
+    "dialogDescription": "Rien ne change tant que vous n'avez pas confirmé.",
+    "target": "Déplacer vers",
+    "movable": "Mots-clés déplacés",
+    "alreadyTracked": "Déjà suivis sur ce marché (inchangés)",
+    "withHistory": "Ont un historique sur leur marché actuel",
+    "resumesHistory": "Reprennent un historique déjà enregistré pour le nouveau marché",
+    "historyNote": "L'historique de positions déjà collecté reste rattaché au marché où il a été mesuré. Les positions sur le nouveau marché démarrent leur propre historique.",
+    "cancel": "Annuler",
+    "confirm": "Déplacer les mots-clés",
+    "moving": "Déplacement…",
+    "failed": "Impossible de déplacer les mots-clés. Réessayez.",
+    "dismiss": "Masquer",
+    "nextCheckNote": "Le déplacement des mots clés ne lance aucune vérification de classement pour le moment. La prochaine vérification programmée utilisera le nouveau marché.",
+    "stale": "La liste des mots clés a changé. Vérifiez le déplacement mis à jour avant de confirmer.",
+    "success_one": "{{count}} mot clé déplacé vers le marché de ce site.",
+    "success_other": "{{count}} mots clés déplacés vers le marché de ce site.",
+    "success_zero": "{{count}} mots clés déplacés vers le marché de ce site.",
+    "success_two": "{{count}} mots clés déplacés vers le marché de ce site.",
+    "success_few": "{{count}} mots clés déplacés vers le marché de ce site.",
+    "success_many": "{{count}} mots clés déplacés vers le marché de ce site."
+  },
+  "keywordList": {
+    "heading": "Mots-clés suivis ({{total, number}})",
+    "headingFiltered": "Mots-clés suivis ({{matched, number}} sur {{total, number}})",
+    "searchLabel": "Rechercher dans les mots-clés suivis",
+    "searchPlaceholder": "Rechercher un mot-clé",
+    "noMatchTitle": "Aucun mot-clé ne correspond à votre recherche ou à votre filtre",
+    "noMatchDescription": "Essayez un autre mot, ou effacez la recherche et le filtre de moteur pour voir tous les mots-clés.",
+    "clearFilters": "Effacer la recherche et le filtre",
+    "pagination": {
+      "label": "Pages de mots-clés",
+      "range": "Affichage de {{from, number}} à {{to, number}} sur {{total, number}}",
+      "pageOf": "Page {{page, number}} sur {{pages, number}}",
+      "goToPage": "Page {{page, number}}",
+      "previous": "Précédent",
+      "next": "Suivant",
+      "rowsPerPage": "Lignes par page"
+    }
+  },
+  "addVerdictExisting": "Déjà suivi",
+  "cadenceHelpWeekly": "Hebdomadaire : les positions Google sont vérifiées une fois par semaine, le lundi matin (UTC). Choisissez Quotidien pour les vérifier chaque jour. « Vérifier maintenant » fonctionne dans les deux cas.",
+  "cadenceHelpDaily": "Quotidien : les positions Google sont vérifiées chaque matin (UTC). Choisissez Hebdomadaire pour revenir à une vérification par semaine, le lundi. Les mots-clés Bing, YouTube et Amazon sont toujours vérifiés chaque semaine.",
+  "cadenceDailyChecks": "Vérifications quotidiennes",
+  "addNothingToAdd": "Saisissez au moins un nouveau mot-clé à ajouter."
 }

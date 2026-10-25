@@ -168,7 +168,8 @@
     "pivotWindow_many": "{{count}} résultats enregistrés comparés",
     "pivotWindow_other": "{{count}} résultats enregistrés comparés"
   },
-  "eligibility": {"needCheck_zero": "{{count}} mot-clé sur {{total}} a besoin d’une nouvelle vérification de classement.",
+  "eligibility": {
+    "needCheck_zero": "{{count}} mot-clé sur {{total}} a besoin d’une nouvelle vérification de classement.",
     "needCheck_one": "{{count}} mot-clé sur {{total}} a besoin d’une nouvelle vérification de classement.",
     "needCheck_two": "{{count}} mots-clés sur {{total}} ont besoin d’une nouvelle vérification de classement.",
     "needCheck_few": "{{count}} mots-clés sur {{total}} ont besoin d’une nouvelle vérification de classement.",
@@ -185,5 +186,8 @@
     "minimum_two": "Le regroupement nécessite au moins {{count}} mots-clés prêts.",
     "minimum_few": "Le regroupement nécessite au moins {{count}} mots-clés prêts.",
     "minimum_many": "Le regroupement nécessite au moins {{count}} mots-clés prêts.",
-    "minimum_other": "Le regroupement nécessite au moins {{count}} mots-clés prêts."}
+    "minimum_other": "Le regroupement nécessite au moins {{count}} mots-clés prêts.",
+    "title": "Pas assez de mots-clés prêts",
+    "snapshotNote": "Certaines vérifications récentes n'ont enregistré que la position, sans la page de résultats complète. Le regroupement nécessite une vérification qui enregistre la page de résultats complète."
+  }
 }

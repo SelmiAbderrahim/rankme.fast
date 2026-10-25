@@ -147,13 +147,35 @@
     "noneActive": "No search or filters are active."
   },
   "insights": {
-    "striking_distance": { "label": "Striking distance", "description": "This page ranks close enough to improve and has meaningful search demand." },
-    "low_ctr": { "label": "Low CTR", "description": "Observed impressions are strong, but the page earns fewer clicks than the rule threshold." },
-    "declining": { "label": "Declining", "description": "Position or observed clicks fell materially since the previous successful sync." },
-    "winning": { "label": "Winning", "description": "Position or observed clicks improved materially since the previous successful sync." },
-    "non_indexable_visibility": { "label": "Visible but not crawl-indexable", "description": "The page has search performance while the latest RankMeFast crawl marks it non-indexable. This is not a Google index-status claim." },
-    "unmeasured": { "label": "Unmeasured", "description": "The latest crawl found this indexable page, but the current performance source has no row for it." },
-    "none": "No current opportunity flag"
+    "striking_distance": {
+      "label": "Striking distance",
+      "description": "This page ranks close enough to improve and has meaningful search demand."
+    },
+    "low_ctr": {
+      "label": "Low CTR",
+      "description": "Observed impressions are strong, but the page earns fewer clicks than the rule threshold."
+    },
+    "declining": {
+      "label": "Declining",
+      "description": "Position or observed clicks fell materially since the previous successful sync."
+    },
+    "winning": {
+      "label": "Winning",
+      "description": "Position or observed clicks improved materially since the previous successful sync."
+    },
+    "non_indexable_visibility": {
+      "label": "Visible but not crawl-indexable",
+      "description": "The page has search performance while the latest RankMeFast crawl marks it non-indexable. This is not a Google index-status claim."
+    },
+    "unmeasured": {
+      "label": "Unmeasured",
+      "description": "The latest crawl found this indexable page, but the current performance source has no row for it."
+    },
+    "none": "No current opportunity flag",
+    "low_data": {
+      "label": "Too little data",
+      "description": "Search Console shows too few impressions and no clicks for this page, so it gets no movement label yet."
+    }
   },
   "sorts": {
     "opportunity": "Opportunity",
@@ -172,6 +194,46 @@
     "click_change_pct": "Click change"
   },
   "indexability": { "indexable": "Crawl-indexable", "nonIndexable": "Not crawl-indexable", "unknown": "Crawl state unknown" },
+  "crawlState": {
+    "label": {
+      "indexable": "Crawl-indexable",
+      "non_indexable": "Not crawl-indexable",
+      "redirected": "Redirects to {{path}}",
+      "failed": "Could not be read",
+      "not_in_crawl": "Not in the last crawl",
+      "no_crawl": "No crawl yet"
+    },
+    "crawledAs": "Crawled as {{path}}",
+    "failure": {
+      "http_error": "The page answered HTTP {{status}}.",
+      "redirect_loop": "Its redirects loop back on themselves.",
+      "redirect_limit": "It redirects more than five times, so we stopped following.",
+      "unsafe_redirect": "It redirects to an address we do not follow.",
+      "robots_blocked": "robots.txt tells crawlers to skip this page.",
+      "timeout": "The page did not answer in time.",
+      "non_html": "This address serves {{type}}, not a web page.",
+      "unreachable": "We could not connect to this address."
+    },
+    "evidence": {
+      "finalUrl": "Final address: {{url}}",
+      "redirectPath": "Redirect path: {{path}}",
+      "status": "HTTP status: {{status}}",
+      "fromCrawl": "Recorded by the audit crawl.",
+      "fromProbe": "Checked directly while the audit ran.",
+      "none": "The audit did not record why this address is missing.",
+      "noCrawl": "Run an audit to see how this address crawls.",
+      "botProtection": "Some sites answer automated visits with this status. Check that the page opens in a normal browser window."
+    }
+  },
+  "queries": {
+    "anonymized": "Queries hidden by Google",
+    "anonymizedHelp": "Google reported impressions for this page but did not share the search terms behind them. It hides rare queries to protect searchers' privacy, so zero here means no visible queries, not no searches.",
+    "unavailableHelp": "No search query data is stored for this page yet."
+  },
+  "summaryNote": {
+    "window": "Per-page totals for {{start}} – {{end}}, for the pages that match your filters.",
+    "aggregation": "Search Console counts an impression for each of your pages that appears in a result, including searches it keeps private, so these totals can be higher than the site totals on the Google tab. Average position is weighted by each page's impressions."
+  },
   "table": {
     "caption": "Pages performance and crawl-indexability results",
     "page": "Page",
@@ -179,7 +241,13 @@
     "crawl": "Crawl indexability",
     "insights": "Insights",
     "actions": "Actions",
-    "untitled": "Untitled page"
+    "untitled": "Untitled page",
+    "columns": {
+      "button": "Columns",
+      "menuLabel": "Visible columns",
+      "reset": "Reset to defaults",
+      "notForSource": "Not provided by this source"
+    }
   },
   "deltas": {
     "position": "Position change",
@@ -270,7 +338,8 @@
     "fetchedHelp": "Every address the crawler requested in your last audit, including redirects, duplicate addresses of the same page and files such as PDFs. It is usually larger than the number of canonical pages.",
     "runAgain": "Run again"
   },
-  "coverage": {"pages_zero": "Canonical pages with search data: {{measured}} of {{count}}.",
+  "coverage": {
+    "pages_zero": "Canonical pages with search data: {{measured}} of {{count}}.",
     "pages_one": "Canonical pages with search data: {{measured}} of {{count}}.",
     "pages_two": "Canonical pages with search data: {{measured}} of {{count}}.",
     "pages_few": "Canonical pages with search data: {{measured}} of {{count}}.",
@@ -287,5 +356,8 @@
     "redirects_two": "{{count}} listed addresses redirect to one of these pages and are counted as that page.",
     "redirects_few": "{{count}} listed addresses redirect to one of these pages and are counted as that page.",
     "redirects_many": "{{count}} listed addresses redirect to one of these pages and are counted as that page.",
-    "redirects_other": "{{count}} listed addresses redirect to one of these pages and are counted as that page."}
+    "redirects_other": "{{count}} listed addresses redirect to one of these pages and are counted as that page.",
+    "inventoryLabel": "Canonical pages",
+    "inventoryHelp": "Canonical pages are the unique pages we know about: indexable pages from your last audit plus pages with search data, each counted once. An address that redirects to one of them is listed but counted as that page."
+  }
 }

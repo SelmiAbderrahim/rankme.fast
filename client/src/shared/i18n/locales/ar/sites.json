@@ -64,7 +64,7 @@
     "optionSuffix": "متوقف مؤقتًا"
   },
   "errors": {
-    "urlRequired": "أدخل عنوان URL لموقعك.",
+    "urlRequired": "أدخل عنوان URL لموقعك، مثل https://example.com.",
     "urlTooLong": "عنوان URL طويل جدًا (2048 حرفًا كحد أقصى).",
     "urlInvalid": "أدخل عنوان URL صالحًا، مثل https://example.com.",
     "urlScheme": "يتم دعم عناوين http:// و https:// فقط.",
@@ -152,9 +152,10 @@
     },
     "search": {
       "title": "أداء البحث",
-      "description": "من لقطة Search Console في أحدث تدقيق.",
+      "description": "أحدث بيانات Google Search Console لآخر 28 يومًا.",
       "topQuery": "أفضل عبارة بحث",
-      "openGoogle": "فتح بيانات Google"
+      "openGoogle": "فتح بيانات Google",
+      "asOf": "البيانات حتى {{date}}"
     },
     "pageSpeed": {
       "title": "تجربة الموقع",
@@ -240,5 +241,33 @@
     "empty": "لا توجد لديك مواقع بعد.",
     "addSite": "إضافة موقع",
     "truncated": "تعرض هذه القائمة أول {{shown, number}} من مواقعك فقط."
-  }
+  },
+  "market": {
+    "menuItem": "السوق الافتراضي",
+    "title": "السوق الافتراضي",
+    "description": "تبدأ متابعة الترتيب وبحث الكلمات المفتاحية وباقي الأدوات من هذه الدولة واللغة والجهاز. ويمكنك اختيار سوق آخر داخل كل أداة. الموقع:",
+    "inferredNote": "اخترنا هذا السوق بناءً على عنوان الموقع ولغته. غيّره إذا لم يكن صحيحًا.",
+    "country": "الدولة",
+    "language": "اللغة",
+    "device": "الجهاز",
+    "devices": {
+      "desktop": "كمبيوتر مكتبي",
+      "mobile": "جوال"
+    },
+    "save": "حفظ السوق",
+    "saving": "جارٍ الحفظ…",
+    "cancel": "إلغاء",
+    "saveFailed": "تعذّر حفظ السوق الافتراضي. حاول مرة أخرى."
+  },
+  "list": {
+    "columnLastAudit": "آخر تدقيق",
+    "columnHealth": "الصحة",
+    "columnKeywords": "الكلمات المفتاحية",
+    "noAudit": "لا يوجد تدقيق بعد",
+    "auditStatus": {
+      "failed": "فشل التدقيق",
+      "unavailable": "التدقيق غير متاح"
+    }
+  },
+  "openTabHint": "اختر موقعاً لفتح قسم {{tab}} الخاص به."
 }

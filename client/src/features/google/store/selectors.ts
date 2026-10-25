@@ -1,6 +1,7 @@
 import type { RootState } from '@app/store';
 
 export const selectGoogleConnection = (state: RootState) => state.google.connection;
+export const selectGoogleReadiness = (state: RootState) => state.google.readiness;
 export const selectGoogleConnectionSiteId = (state: RootState) =>
   state.google.connectionSiteId;
 export const selectGoogleLoading = (state: RootState) => state.google.loading;

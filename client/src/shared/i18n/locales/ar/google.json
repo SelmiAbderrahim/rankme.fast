@@ -140,19 +140,23 @@
     "timeseriesTableCaption_other": "أداء البحث اليومي لآخر {{days}} يومًا"
   },
   "analytics": {
-    "title": "Google Analytics (آخر {{days}} يومًا)",
+    "title": "بيانات Google Analytics",
     "sessions": "الجلسات",
     "activeUsers": "المستخدمون النشطون",
     "engagedSessions": "الجلسات التفاعلية",
     "keyEvents": "الأحداث الرئيسية",
     "engagementRateLabel": "معدل التفاعل",
     "engagementRateLine": "معدل التفاعل: {{rate}}",
+    "windowNote": "الإجماليات للفترة من {{start}} إلى {{end}}.",
     "previousPeriod": "الفترة السابقة — الجلسات: {{sessions}} · المستخدمون النشطون: {{activeUsers}}",
     "emptyTitle": "لا توجد بيانات تحليلات بعد",
     "empty": "لا توجد بيانات تحليلات بعد. تظهر البيانات بعد وقت قصير من ربط الموقع — جرّب التحديث.",
     "error": "تعذّر تحميل ملخص التحليلات. حاول مرة أخرى بعد قليل.",
     "refresh": "تحديث بيانات التحليلات",
     "refreshError": "تعذّر تحديث بيانات التحليلات. حاول مرة أخرى بعد قليل.",
+    "staleTitle": "بيانات التحليلات غير محدّثة",
+    "noRecentSessions": "لم تُسجَّل أي جلسات منذ {{date}}. تم التحقق من Google Analytics مؤخراً ولم يُبلغ عن زيارات أحدث.",
+    "dailyRange": "الإجماليات اليومية للفترة من {{start}} إلى {{end}}.",
     "timeseriesTitle": "الجلسات والمستخدمون النشطون عبر الزمن",
     "timeseriesSubtitle_one": "الإجماليات اليومية لآخر {{days}} يومًا.",
     "timeseriesChartLabel_one": "{{metric}} يوميًا لآخر {{days}} يومًا",
@@ -269,10 +273,78 @@
       "internalLinks": "تستخدم اقتراحات الروابط الداخلية استعلامات Search Console لاختيار الصفحات المهمة. اربط Search Console بهذا الموقع لتحصل على اقتراحات مبنية على عمليات بحث حقيقية."
     }
   },
-  "breakdown": {"other_zero": "أخرى ({{hidden}} إضافية)",
+  "breakdown": {
+    "shareHeader": "{{metric}} · النسبة من الإجمالي",
+    "shareHeaderRows": "{{metric}} · النسبة من هذه القائمة",
+    "other_zero": "أخرى ({{hidden}} إضافية)",
     "other_one": "أخرى ({{hidden}} إضافية)",
     "other_two": "أخرى (إضافيتان: {{hidden}})",
     "other_few": "أخرى ({{hidden}} إضافية)",
     "other_many": "أخرى ({{hidden}} إضافية)",
-    "other_other": "أخرى ({{hidden}} إضافية)"}
+    "other_other": "أخرى ({{hidden}} إضافية)",
+    "engagedRate": "{{rate}} تفاعل",
+    "ctrRate": "نسبة النقر {{rate}}",
+    "byImpressions": "لا توجد نقرات في هذه الفترة، لذا تعرض الدول والأجهزة مرات الظهور."
+  },
+  "readiness": {
+    "gsc": {
+      "not_connected": {
+        "title": "Search Console غير مرتبط",
+        "body": "اربط حسابك على Google لتظهر نقرات البحث ومرات الظهور الخاصة بـ <site>{{domain}}</site> في RankMeFast.",
+        "cta": "ربط Google"
+      },
+      "no_property": {
+        "title": "اختر موردًا في Search Console",
+        "body": "حساب Google مرتبط، لكن لم يُختر بعد أي مورد في Search Console لـ <site>{{domain}}</site>.",
+        "cta": "اختيار مورد Search Console"
+      },
+      "property_mismatch": {
+        "title": "هذا المورد لا يغطي الموقع",
+        "body": "مورد Search Console المختار لـ <site>{{domain}}</site> لا يشمل عنوان الموقع. اختر موردًا يشمله.",
+        "cta": "اختيار مورد Search Console"
+      },
+      "error": {
+        "title": "تعذّرت قراءة Search Console الآن",
+        "body": "رفضت Google الطلب الخاص بـ <site>{{domain}}</site> أو أن إحدى الأذونات ناقصة. حاول مرة أخرى، وأعد ربط Google إذا تكرر ذلك.",
+        "cta": "إعادة المحاولة"
+      }
+    },
+    "ga4": {
+      "not_connected": {
+        "title": "Google Analytics غير مرتبط",
+        "body": "اربط حسابك على Google لترى الزيارات والتفاعل الخاصة بـ <site>{{domain}}</site>.",
+        "cta": "ربط Google"
+      },
+      "no_property": {
+        "title": "اختر موردًا في Google Analytics",
+        "body": "حساب Google مرتبط، لكن لم يُختر بعد أي مورد في Google Analytics لـ <site>{{domain}}</site>.",
+        "cta": "اختيار مورد Google Analytics"
+      },
+      "property_mismatch": {
+        "title": "هذا المورد لا يطابق الموقع",
+        "body": "مورد Google Analytics المختار لـ <site>{{domain}}</site> يتتبّع عنوانًا مختلفًا. اختر المورد الخاص بهذا الموقع.",
+        "cta": "اختيار مورد Google Analytics"
+      },
+      "error": {
+        "title": "تعذّرت قراءة Google Analytics الآن",
+        "body": "رفضت Google الطلب الخاص بـ <site>{{domain}}</site> أو أن صلاحية الوصول إلى Analytics ناقصة. حاول مرة أخرى، وأعد ربط Google إذا تكرر ذلك.",
+        "cta": "إعادة المحاولة"
+      }
+    },
+    "matching": "نبحث الآن عن مورد مطابق."
+  },
+  "propertyPicker": {
+    "thisSite": "هذا الموقع",
+    "noneFound": "لم يُعثر على خاصية في Search Console للموقع {{domain}}. أضِفه في Search Console، ثم حدّث هذه القائمة.",
+    "openSearchConsole": "افتح Search Console",
+    "newTab": "(يُفتح في علامة تبويب جديدة)",
+    "refresh": "تحديث",
+    "refreshing": "جارٍ التحديث…",
+    "linkDifferent": "اربط خاصية أخرى",
+    "differentHint": "تخص هذه الخصائص مواقع أخرى. ربط إحداها يعرض بيانات البحث الخاصة بها على {{domain}}.",
+    "otherLabel": "خاصية من موقع آخر",
+    "confirmTitle": "هل تريد ربط {{site}} ببيانات {{property}}؟",
+    "confirmBody": "{{property}} موقع مختلف. ستظهر بيانات البحث الخاصة به على {{site}} حتى تغيّر الخاصية. الخاصية:",
+    "confirm": "اربط على أي حال"
+  }
 }

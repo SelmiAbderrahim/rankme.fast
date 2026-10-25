@@ -15,7 +15,7 @@ import { appBulkMetricsInputSchema, appChartInputSchema, appInfoInputSchema, app
 // alt-engine adapter — the same arrangement `rank.processor.ts` already uses
 // for provider-neutral SERP host normalization.
 import { buildAltEngineObservationMeta, matchHostInRows, matchTokenInRows, } from './dataforseo/alt-engines.js';
-import { normalizeSerpDomain } from './serp-normalization.js';
+import { normalizeSerpDomain, type SerpTaskQueue, type SerpTaskPostOutcome, type SerpTaskPoll, } from './serp-normalization.js';
 import type { PublicPageDiscoveryInput, PublicPageDiscoveryResult, PublicPageDiscoveryRow, PublicPageSourceHint, } from './types.js';
 import type { AiAnswerInput, AiAnswerRow, AiKeywordVolume, AiMentionCheckInput, AiMentionRow, AiVisibilityProvider, AuditProvider, AuditResult, AuditStatus, ContentAnalysisMentionQuery, ContentAnalysisMentionRow, ContentAnalysisMentionSummary, ContentAnalysisProvider, ReviewRow, ReviewsInput, ReviewsProvider, ReviewsResult, ReviewsSource, BacklinkAnchorRow, BacklinkBulkRankRow, BacklinkCompetitorRow, BacklinkHistoryPoint, BacklinkListPage, BacklinkProvider, BacklinkReferringDomainRow, BacklinkSpamScoreRow, BacklinkSummary, BusinessListingRow, CompetitorEntry, CompetitorProvider, DomainComparisonResult, DomainComparisonRow, DomainIntersectionRow, DomainRankOverviewRow, HistoricalRankOverviewResult, TrafficEstimationCountry, TrafficEstimationRow, TechStackEntry, Ga4Property, Ga4Provider, Ga4RunReportInput, Ga4RunReportResult, Ga4WebDataStream, GscProperty, GscSearchAnalyticsResult, GscSitemapEntry, GscUrlInspection, AltEngineRankInput, AltEngineRankResult, AltEngineRankRow, AltRankEngine, IntentResult, KeywordHistoricalVolume, KeywordMetrics, KeywordOverview, KeywordProvider, LocalListingsProvider, LocalPackCoordinate, LocalPackResult, PageSpeedProvider, PageSpeedResult, ProviderMarket, QaSummary, RankCheckResult, RankProvider, ReviewsSummary, SerpFeatureSnapshot, SiteKeywordCandidate, SiteKeywordProvider, TrendsExploreInput, TrendsExploreResult, TrendsMonthlyPoint, TrendsProvider, TrendsRelatedQuery, TrendsSeries, } from './types.js';
 import type { GoogleGscProvider } from './google/gsc.js';
@@ -112,7 +112,15 @@ export interface FakeRankProviderOptions extends FakeProviderOptions {
     localPackResult?: LocalPackResult;
     /** Pin an exact alt-engine outcome. */
     altEngineResult?: AltEngineRankResult;
+    /** Enable a deterministic standard-queue task seam for rank jobs. */
+    serpTasks?: FakeSerpTaskOptions;
 }
+export interface FakeSerpTaskOptions {
+    /** Number of pending polls before a posted keyword becomes ready. */
+    pendingPolls?: number | ((keyword: string) => number);
+}
+/** Stable fake keyword marker for a slow queued rank check in isolated tests. */
+export const FAKE_RANK_SLOW_MARKER = 'rankslow';
 export const FAKE_RANK_RESULT: RankCheckResult = {
     position: 3,
     foundUrl: 'https://example.com/pricing',
@@ -479,8 +487,44 @@ export function fakeSearchPublicPages(input: PublicPageDiscoveryInput, opts: Fak
     }
     return { rows };
 }
-export function createFakeRankProvider(opts: FakeRankProviderOptions & FakeDiscoveryOptions = {}): RankProvider {
+function createFakeSerpTaskQueue(options: FakeSerpTaskOptions, failure: ProviderError | undefined): SerpTaskQueue {
+    const tasks = new Map<string, { domain: string; keyword: string; pendingLeft: number }>();
+    let posted = 0;
     return {
+        async postSerpTasks(inputs) {
+            maybeFail(failure);
+            return inputs.map((input): SerpTaskPostOutcome => {
+                const vendorTaskId = `fake-serp-task-${++posted}`;
+                const configured = options.pendingPolls ??
+                    (input.keyword.toLowerCase().includes(FAKE_RANK_SLOW_MARKER) ? 2 : 0);
+                const pendingLeft = Math.max(0, typeof configured === 'function' ? configured(input.keyword) : configured);
+                tasks.set(vendorTaskId, { domain: input.domain, keyword: input.keyword, pendingLeft });
+                return { ok: true, vendorTaskId };
+            });
+        },
+        async pollSerpTask(taskId): Promise<SerpTaskPoll> {
+            maybeFail(failure);
+            const task = tasks.get(taskId);
+            if (!task) return { state: 'failed', error: new VendorMalformedError('fake rank task is unknown',
+                { provider: 'fake', operation: 'serp-task-get' }) };
+            if (task.pendingLeft > 0) {
+                task.pendingLeft -= 1;
+                return { state: 'pending' };
+            }
+            const urls = FAKE_RANK_RESULT.serpTopUrls!.map((url, index) =>
+                index === 2 ? `https://${normalizeSerpDomain(task.domain)}/pricing` : url);
+            return { state: 'ready', result: {
+                items: urls.map((url, index) => ({ domain: normalizeSerpDomain(new URL(url).hostname),
+                    url, rankGroup: index + 1, rankAbsolute: index + 1 })),
+                costUsd: 0, aiOverview: { present: false, references: [] },
+                features: fakeSerpFeaturesFor(task.keyword, task.domain),
+            } };
+        },
+    };
+}
+export function createFakeRankProvider(opts: FakeRankProviderOptions & FakeDiscoveryOptions = {}): RankProvider & Partial<SerpTaskQueue> {
+    return {
+        ...(opts.serpTasks ? createFakeSerpTaskQueue(opts.serpTasks, opts.failure) : {}),
         async checkRank(input) {
             maybeFail(opts.failure);
             if (opts.result)

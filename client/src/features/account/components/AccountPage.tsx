@@ -1,32 +1,25 @@
 import { useTranslation } from 'react-i18next';
-import { DeleteAccount, SecuritySettings } from '@features/auth';
-import {
-  ApiKeysPanel,
-  BrandingPanel,
-  McpPermissionsPanel,
-  NotificationPreferences,
-} from '@features/settings';
+import { Navigate, useLocation } from 'react-router-dom';
+import { ApiKeysPanel, McpPermissionsPanel } from '@features/settings';
 import { PageHeader } from '@shared/components/PageHeader';
 import { useTabParam } from '@shared/hooks/useTabParam';
 import { APP_PAGE_ICONS } from '@shared/navigation/appPageIcons';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@shared/ui/tabs';
-import { ACCOUNT_TABS } from '../types';
+import { ACCOUNT_TABS, LEGACY_ACCOUNT_TAB_REDIRECTS } from '../types';
 import { ProfileInfoCard } from './ProfileInfoCard';
-import { AnalyticsPreference } from './AnalyticsPreference';
 import { ExportData } from './ExportData';
+import { DeleteAccountLink } from './DeleteAccountLink';
 
 /**
- * `/profile` — the Account hub. One tabbed page (`?tab=`) composing the profile
- * editor with the existing security, notifications, connections, and data-rights
- * surfaces. The standalone `/settings/*` routes still work; this is the single
- * place to manage everything.
+ * Personal account settings. Security, notifications, and workspace branding
+ * each have one dedicated settings page; old tab links redirect there.
  */
-export const AccountPage = () => {
+const AccountTabs = () => {
   const { t } = useTranslation('account');
   const [tab, setTab] = useTabParam('profile', ACCOUNT_TABS);
 
   return (
-    <div className="flex w-full max-w-3xl flex-col gap-6 px-4 py-8"
+    <div className="flex w-full flex-col gap-6 px-4 py-8"
       data-testid="account-page">
       <PageHeader
         icon={APP_PAGE_ICONS.profile}
@@ -46,15 +39,6 @@ export const AccountPage = () => {
         <TabsContent value="profile">
           <ProfileInfoCard />
         </TabsContent>
-        <TabsContent value="security">
-          <SecuritySettings embedded />
-        </TabsContent>
-        <TabsContent value="notifications">
-          <NotificationPreferences embedded />
-        </TabsContent>
-        <TabsContent value="branding">
-          <BrandingPanel />
-        </TabsContent>
         <TabsContent value="mcp">
           <McpPermissionsPanel />
         </TabsContent>
@@ -63,12 +47,20 @@ export const AccountPage = () => {
         </TabsContent>
         <TabsContent value="privacy">
           <div className="flex flex-col gap-6">
-            <AnalyticsPreference />
             <ExportData />
-            <DeleteAccount />
+            <DeleteAccountLink />
           </div>
         </TabsContent>
       </Tabs>
     </div>
   );
+};
+
+export const AccountPage = () => {
+  const { search } = useLocation();
+  const legacyTab = new URLSearchParams(search).get('tab');
+  const destination = legacyTab !== null && Object.hasOwn(LEGACY_ACCOUNT_TAB_REDIRECTS, legacyTab)
+    ? LEGACY_ACCOUNT_TAB_REDIRECTS[legacyTab] : undefined;
+  if (destination) return <Navigate to={destination} replace />;
+  return <AccountTabs />;
 };

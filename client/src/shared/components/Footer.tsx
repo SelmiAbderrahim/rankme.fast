@@ -1,4 +1,4 @@
-import { appVersion } from '@shared/config/version';
+import { appBuildIdentifier, appDisplayVersion } from '@shared/config/version';
 import { releaseStage } from '@shared/config/release';
 import { Link } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
@@ -10,7 +10,6 @@ import { Separator } from '@shared/ui/separator';
 
 const AUTHED_LINKS = [
   { to: '/dashboard', labelKey: 'nav.dashboard' },
-  { to: '/logout', labelKey: 'nav.logout' },
 ];
 
 const ANON_LINKS = [
@@ -52,7 +51,7 @@ export const Footer = () => {
             ) : null}
           </ul>
         </nav>
-        <p className="text-muted-foreground" dir="ltr">{t('footer.version', { version: appVersion, stage: releaseStage() })}</p>
+        <p className="text-muted-foreground" dir="ltr" title={appBuildIdentifier} data-testid="footer-version">{t('footer.version', { version: appDisplayVersion, stage: releaseStage() })}</p>
         <Separator className="sm:hidden" />
         <p>{t('footer.copyright', { year, brand: BRAND_NAME })}</p>
       </div>

@@ -56,6 +56,7 @@ beforeEach(() => {
   mocked.scan.mockReset().mockResolvedValue(scan());
   vi.mocked(getSite).mockReset().mockResolvedValue({
     id: siteId, url: 'https://example.test', domain: 'example.test', displayName: 'Grid Site',
+    defaultMarket: null,
     paused: false, pausedAt: null, createdAt, updatedAt: finishedAt,
   });
 });
@@ -96,6 +97,7 @@ describe('geogrid report export adapter', () => {
     mocked.scan.mockResolvedValue(scan({ cells: [{ pointIndex: 2, lat: 40, lng: -73, state: 'failed' }] }));
     vi.mocked(getSite).mockResolvedValue({
       id: siteId, url: 'https://example.test', domain: 'example.test', displayName: '',
+      defaultMarket: null,
       paused: false, pausedAt: null, createdAt, updatedAt: finishedAt,
     });
     const adapter = createGeogridReportExportAdapter(database);

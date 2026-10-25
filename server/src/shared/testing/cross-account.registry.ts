@@ -61,6 +61,7 @@ export const CROSS_ACCOUNT_REGISTRY: Readonly<Record<string, CrossAccountCoverag
     'POST /api/keywords/:id/check': { kind: 'test', file: 'modules/ranks/keywords.routes.test.ts' },
     'GET /api/keywords/:id/history': { kind: 'test', file: 'modules/ranks/keywords.routes.test.ts' },
     'GET /api/keywords/:id/serp-features': { kind: 'test', file: 'modules/ranks/keywords.routes.test.ts' },
+    'GET /api/sites/:siteId/rank-jobs/:jobId': { kind: 'test', file: 'modules/ranks/keywords.routes.test.ts' },
     'GET /api/local-seo/reviews/runs/:id': { kind: 'test', file: 'modules/local-seo/review-sync.routes.test.ts' },
     'DELETE /api/local-seo/reviews/sources/:id': { kind: 'test', file: 'modules/local-seo/review-sync.routes.test.ts' },
     'GET /api/local-seo/reviews/stats/:id': { kind: 'test', file: 'modules/local-seo/review-sync.routes.test.ts' },
@@ -75,6 +76,7 @@ export const CROSS_ACCOUNT_REGISTRY: Readonly<Record<string, CrossAccountCoverag
     'GET /api/schema-generator/generations/:generationId/download': { kind: 'test', file: 'modules/schema-generator/schema-generator.routes.test.ts' },
     'DELETE /api/sites/:id': { kind: 'test', file: 'modules/sites/sites.test.ts' },
     'GET /api/sites/:id': { kind: 'test', file: 'modules/sites/sites.test.ts' },
+    'GET /api/sites/:id/market': { kind: 'test', file: 'modules/sites/sites.market.test.ts' },
     'PATCH /api/sites/:id': { kind: 'test', file: 'modules/sites/sites.test.ts' },
     'POST /api/sites/:id/pause': { kind: 'test', file: 'modules/sites/sites.test.ts' },
     'POST /api/sites/:id/resume': { kind: 'test', file: 'modules/sites/sites.test.ts' },
@@ -92,6 +94,8 @@ export const CROSS_ACCOUNT_REGISTRY: Readonly<Record<string, CrossAccountCoverag
 
 /** Account-level endpoints participate in the anonymous sweep and DTO scan. */
 export const ACCOUNT_ROUTES: ReadonlySet<string> = new Set([
+    'GET /api/dashboard/site-summaries',
+    'GET /api/dashboard/site-health',
     'GET /api/alerts/rules', 'POST /api/alerts/rules', 'GET /api/api-keys', 'POST /api/api-keys', 'GET /api/audit',
     'POST /api/backlinks/deep/anchors', 'POST /api/backlinks/deep/bulk-ranks', 'POST /api/backlinks/deep/history',
     'POST /api/backlinks/deep/preview', 'POST /api/backlinks/deep/referring-domains', 'POST /api/backlinks/gap',
@@ -110,7 +114,7 @@ export const ACCOUNT_ROUTES: ReadonlySet<string> = new Set([
     'GET /api/schema-generator/generations', 'POST /api/schema-generator/generations', 'POST /api/schema-generator/preview', 'GET /api/schema-generator/sources', 'GET /api/schema-generator/types',
     'GET /api/sites', 'POST /api/sites', 'GET /api/sites/traffic-snapshots', 'POST /api/sites/traffic-snapshots', 'GET /api/sites/traffic-snapshots/compare', 'POST /api/sites/traffic-snapshots/preview',
     'GET /api/team', 'POST /api/team/accept/:token', 'GET /api/team/invitations', 'POST /api/team/invite', 'GET /api/team/workspaces',
-    'GET /api/users/branding', 'PUT /api/users/branding', 'GET /api/users/notifications', 'PATCH /api/users/notifications', 'GET /api/users/preferences/language', 'PATCH /api/users/preferences/language',
+    'GET /api/users/branding', 'PUT /api/users/branding', 'GET /api/users/notifications', 'PATCH /api/users/notifications', 'GET /api/users/preferences/language', 'PATCH /api/users/preferences/language', 'GET /api/users/preferences/two-factor-recommendation', 'PUT /api/users/preferences/two-factor-recommendation',
 ]);
 
 export const PUBLIC_ROUTE_CONTRACTS: Readonly<Record<string, { reason: string; file: string }>> = {

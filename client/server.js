@@ -304,6 +304,15 @@ function renderHtml(template, {
   appFrame = false,
   sidebarCookie = '',
 }) {
+  // SSR pages supply their own metadata. Remove the CSR shell placeholders
+  // before inserting Helmet output so crawlers see one title and description.
+  if (/<title\b/i.test(headTags)) {
+    template = template.replace(/<title\b[^>]*>[^<]*<\/title>/i, '');
+    headTags = headTags.replace(/<title\b[^>]*>/i, '<title>');
+  }
+  if (/<meta\b(?=[^>]*\bname=["']description["'])[^>]*>/i.test(headTags)) {
+    template = template.replace(/<meta\b(?=[^>]*\bname=["']description["'])[^>]*>/i, '');
+  }
   const copy = WEB_COPY[locale] ?? WEB_COPY.en;
   const attributes = htmlAttrs || `lang="${locale}" dir="${RTL_LOCALES.has(locale) ? 'rtl' : 'ltr'}"`;
   const html = template

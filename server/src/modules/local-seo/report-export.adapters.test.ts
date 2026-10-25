@@ -130,6 +130,7 @@ function reviewFindResult(rows: unknown[]) {
 beforeEach(() => {
   vi.mocked(getSite).mockReset().mockResolvedValue({
     id: siteId, url: 'https://example.test', domain: 'example.test', displayName: 'Example Local',
+    defaultMarket: null,
     paused: false, pausedAt: null, createdAt: fetchedAt, updatedAt: fetchedAt,
   });
   vi.mocked(readLatestSnapshot).mockReset().mockResolvedValue(snapshot());
@@ -188,6 +189,7 @@ describe('local snapshot report export', () => {
     }));
     vi.mocked(getSite).mockResolvedValue({
       id: siteId, url: 'https://example.test', domain: 'example.test', displayName: '',
+      defaultMarket: null,
       paused: false, pausedAt: null, createdAt: fetchedAt, updatedAt: fetchedAt,
     });
     const empty = await adapter.compose(compose({ sections: [] }, { scope: 'site' }));
@@ -285,6 +287,7 @@ describe('local review inventory report export', () => {
     });
     vi.mocked(getSite).mockResolvedValue({
       id: siteId, url: 'https://example.test', domain: 'example.test', displayName: '',
+      defaultMarket: null,
       paused: false, pausedAt: null, createdAt: fetchedAt, updatedAt: fetchedAt,
     });
     const [, adapter] = createLocalSeoReportExportAdapters(database);

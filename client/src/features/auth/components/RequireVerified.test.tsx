@@ -40,6 +40,12 @@ const renderGuard = (guarded: React.ReactNode) =>
   );
 
 describe('RequireAuth', () => {
+  it('offers retry rather than redirecting when the session read fails', () => {
+    mockSession({ isUnavailable: true });
+    renderGuard(<RequireAuth><div>SECRET</div></RequireAuth>);
+    expect(screen.getByText(/could not check your session/i)).toBeInTheDocument();
+    expect(screen.queryByText('LOGIN PAGE')).not.toBeInTheDocument();
+  });
   it('shows the pending state while the session resolves', () => {
     mockSession({ isPending: true });
     renderGuard(
@@ -73,6 +79,12 @@ describe('RequireAuth', () => {
 });
 
 describe('RequireVerified', () => {
+  it('does not treat an unavailable session as an anonymous user', () => {
+    mockSession({ isUnavailable: true });
+    renderGuard(<RequireVerified><div>PRODUCT</div></RequireVerified>);
+    expect(screen.getByText(/could not check your session/i)).toBeInTheDocument();
+    expect(screen.queryByText('LOGIN PAGE')).not.toBeInTheDocument();
+  });
   it('shows the pending state while the session resolves', () => {
     mockSession({ isPending: true });
     renderGuard(
@@ -131,5 +143,12 @@ describe('RequireVerified', () => {
       </RequireVerified>,
     );
     expect(screen.getByText('PRODUCT')).toBeInTheDocument();
+  });
+
+  it('keeps confirmed content visible with a reconnect notice during a failed refresh', () => {
+    mockSession({ authenticated: true, emailVerified: true, isUnavailable: true });
+    renderGuard(<RequireVerified><div>PRODUCT</div></RequireVerified>);
+    expect(screen.getByText('PRODUCT')).toBeInTheDocument();
+    expect(screen.getByText(/could not check your session/i)).toBeInTheDocument();
   });
 });

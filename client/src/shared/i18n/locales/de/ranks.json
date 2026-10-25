@@ -65,19 +65,15 @@
   "addSubmit": "Keywords verfolgen",
   "addSubmitting": "Wird hinzugefügt…",
   "capReachedTitle": "Keyword-Limit erreicht",
-
   "capReachedCta": "Pläne ansehen",
-
   "suggestionsTitle": "Keywords für diese Website entdecken",
   "suggestionsDescription": "Finden Sie Keywords, die sich zu verfolgen lohnen. Wir prüfen zuerst Ihre Search Console, dann Keywords, für die die Website bereits rankt, dann passende Website-Ideen.",
   "suggestionsCountLabel": "Top anzeigen",
   "suggestionsFind": "Top-Keywords finden",
   "suggestionsLoading": "Keywords werden gesucht…",
   "suggestionsLoadFailed": "Für diese Website konnten keine Keywords geladen werden.",
-
   "suggestionsGscSource": "Aus Ihrer Search Console — echte Suchanfragen, bei denen die Website erschien, sortiert nach Impressionen.",
   "suggestionsBlendedSource": "Aus Ihrer Search Console, ergänzt um Keywords, für die die Website rankt, und Ideen aus ihren Seiten. Jede Zeile zeigt ihre Quelle.",
-
   "suggestionsPartialUnavailable": "Hier ist, was wir bisher gefunden haben. Website-basierte Ideen sind vorübergehend nicht verfügbar; bitte später erneut versuchen.",
   "suggestionsSource": "Quelle",
   "suggestionsSourceGsc": "Search Console",
@@ -215,7 +211,8 @@
       "rank": "Position",
       "result": "Ergebnis",
       "yours": "Ihre Seite"
-    }
+    },
+    "emptyCta": "Keywords verfolgen"
   },
   "engine": {
     "pickerLabel": "Suchmaschine",
@@ -280,7 +277,8 @@
   "addSubmitCount_few": "{{count, number}} Keywords hinzufügen",
   "addSubmitCount_many": "{{count, number}} Keywords hinzufügen",
   "addSubmitCount_other": "{{count, number}} Keywords hinzufügen",
-  "addResult": {"added_zero": "Nichts hinzugefügt",
+  "addResult": {
+    "added_zero": "Nichts hinzugefügt",
     "added_one": "{{count, number}} hinzugefügt",
     "added_two": "{{count, number}} hinzugefügt",
     "added_few": "{{count, number}} hinzugefügt",
@@ -303,8 +301,16 @@
     "unsent_two": "{{count, number}} nicht gesendet",
     "unsent_few": "{{count, number}} nicht gesendet",
     "unsent_many": "{{count, number}} nicht gesendet",
-    "unsent_other": "{{count, number}} nicht gesendet"},
-  "jobOutcome": {"allChecked_zero": "Alle {{count}} Keywords wurden geprüft.",
+    "unsent_other": "{{count, number}} nicht gesendet",
+    "invalid_zero": "{{count, number}} ungültige Einträge",
+    "invalid_one": "{{count, number}} ungültiger Eintrag",
+    "invalid_two": "{{count, number}} ungültige Einträge",
+    "invalid_few": "{{count, number}} ungültige Einträge",
+    "invalid_many": "{{count, number}} ungültige Einträge",
+    "invalid_other": "{{count, number}} ungültige Einträge"
+  },
+  "jobOutcome": {
+    "allChecked_zero": "Alle {{count}} Keywords wurden geprüft.",
     "allChecked_one": "{{count}} Keyword geprüft.",
     "allChecked_two": "Alle {{count}} Keywords wurden geprüft.",
     "allChecked_few": "Alle {{count}} Keywords wurden geprüft.",
@@ -315,5 +321,93 @@
     "checked_two": "{{checked}} von {{count}} Keywords geprüft.",
     "checked_few": "{{checked}} von {{count}} Keywords geprüft.",
     "checked_many": "{{checked}} von {{count}} Keywords geprüft.",
-    "checked_other": "{{checked}} von {{count}} Keywords geprüft."}
+    "checked_other": "{{checked}} von {{count}} Keywords geprüft.",
+    "cancelled": "Die Ranking-Prüfung wurde abgebrochen.",
+    "failed_zero": "{{count}} Keyword-Prüfungen sind fehlgeschlagen.",
+    "failed_one": "{{count}} Keyword-Prüfung ist fehlgeschlagen.",
+    "failed_two": "{{count}} Keyword-Prüfungen sind fehlgeschlagen.",
+    "failed_few": "{{count}} Keyword-Prüfungen sind fehlgeschlagen.",
+    "failed_many": "{{count}} Keyword-Prüfungen sind fehlgeschlagen.",
+    "failed_other": "{{count}} Keyword-Prüfungen sind fehlgeschlagen.",
+    "notCheckedInTime_zero": "{{count}} Keywords wurden nicht rechtzeitig geprüft.",
+    "notCheckedInTime_one": "{{count}} Keyword wurde nicht rechtzeitig geprüft.",
+    "notCheckedInTime_two": "{{count}} Keywords wurden nicht rechtzeitig geprüft.",
+    "notCheckedInTime_few": "{{count}} Keywords wurden nicht rechtzeitig geprüft.",
+    "notCheckedInTime_many": "{{count}} Keywords wurden nicht rechtzeitig geprüft.",
+    "notCheckedInTime_other": "{{count}} Keywords wurden nicht rechtzeitig geprüft."
+  },
+  "checkConfirm": {
+    "siteTitle": "Alle Keywords jetzt prüfen?",
+    "siteDescription": "Alle aktiven Keywords dieser Website werden vor der nächsten geplanten Prüfung geprüft.",
+    "keywordTitle": "Dieses Keyword jetzt prüfen?",
+    "keywordDescription": "{{phrase}} wird vor der nächsten geplanten Prüfung geprüft.",
+    "confirmSite": "Alle Keywords prüfen",
+    "confirmKeyword": "Keyword prüfen",
+    "starting": "Wird gestartet…"
+  },
+  "rankState": {
+    "ranked": "Erste Prüfung",
+    "improved": "Verbessert",
+    "declined": "Verschlechtert",
+    "unchanged": "Unverändert",
+    "new": "Neu in den Top 100",
+    "lost": "Aus den Top 100 gefallen",
+    "not_in_top_100": "Nicht in den Top 100",
+    "failed_last_check": "Letzte Prüfung fehlgeschlagen",
+    "never_checked": "Noch nie geprüft",
+    "legend": "Veränderungen beziehen sich auf die vorherige Prüfung. „Letzte Prüfung fehlgeschlagen“ heißt, dass die Prüfung nicht abgeschlossen wurde; „Nicht in den Top 100“ heißt, dass sie abgeschlossen wurde und die Website nicht unter den ersten 100 Ergebnissen war."
+  },
+  "lastKnown": "Zuletzt bekannt: {{position}}, {{date}}",
+  "jobStillRunning": "Die Ranking-Prüfung läuft noch. Kehren Sie später zurück, um das Ergebnis zu sehen.",
+  "retryFailed": "Fehlgeschlagene erneut prüfen",
+  "queued": "In der Warteschlange",
+  "marketMove": {
+    "title": "Einige Keywords werden außerhalb des Markts dieser Website verfolgt",
+    "body": "Der Standardmarkt dieser Website ist {{market}}. Anderswo verfolgte Keywords: {{n}}.",
+    "review": "Verschiebung prüfen",
+    "dialogTitle": "Keywords in den Markt dieser Website verschieben",
+    "dialogDescription": "Es ändert sich nichts, bis Sie bestätigen.",
+    "target": "Verschieben nach",
+    "movable": "Keywords, die verschoben werden",
+    "alreadyTracked": "Dort bereits verfolgt (bleiben unverändert)",
+    "withHistory": "Haben einen Verlauf im aktuellen Markt",
+    "resumesHistory": "Übernehmen einen bereits gespeicherten Verlauf im neuen Markt",
+    "historyNote": "Der bisher erfasste Ranking-Verlauf bleibt bei dem Markt, in dem er gemessen wurde. Die Positionen im neuen Markt beginnen einen eigenen Verlauf.",
+    "cancel": "Abbrechen",
+    "confirm": "Keywords verschieben",
+    "moving": "Wird verschoben…",
+    "failed": "Die Keywords konnten nicht verschoben werden. Versuchen Sie es erneut.",
+    "dismiss": "Ausblenden",
+    "nextCheckNote": "Beim Verschieben der Keywords wird jetzt keine Rankingprüfung gestartet. Die nächste geplante Prüfung verwendet den neuen Markt.",
+    "stale": "Die Keywordliste hat sich geändert. Prüfen Sie die aktualisierte Verschiebung, bevor Sie bestätigen.",
+    "success_one": "{{count}} Keyword wurde in den Markt dieser Website verschoben.",
+    "success_other": "{{count}} Keywords wurden in den Markt dieser Website verschoben.",
+    "success_zero": "{{count}} Keywords wurden in den Markt dieser Website verschoben.",
+    "success_two": "{{count}} Keywords wurden in den Markt dieser Website verschoben.",
+    "success_few": "{{count}} Keywords wurden in den Markt dieser Website verschoben.",
+    "success_many": "{{count}} Keywords wurden in den Markt dieser Website verschoben."
+  },
+  "keywordList": {
+    "heading": "Verfolgte Keywords ({{total, number}})",
+    "headingFiltered": "Verfolgte Keywords ({{matched, number}} von {{total, number}})",
+    "searchLabel": "Verfolgte Keywords durchsuchen",
+    "searchPlaceholder": "Keywords suchen",
+    "noMatchTitle": "Keine Keywords passen zu Ihrer Suche oder Ihrem Filter",
+    "noMatchDescription": "Versuchen Sie ein anderes Wort, oder löschen Sie die Suche und den Suchmaschinenfilter, um alle Keywords zu sehen.",
+    "clearFilters": "Suche und Filter löschen",
+    "pagination": {
+      "label": "Keyword-Seiten",
+      "range": "{{from, number}}–{{to, number}} von {{total, number}}",
+      "pageOf": "Seite {{page, number}} von {{pages, number}}",
+      "goToPage": "Seite {{page, number}}",
+      "previous": "Zurück",
+      "next": "Weiter",
+      "rowsPerPage": "Zeilen pro Seite"
+    }
+  },
+  "addVerdictExisting": "Wird bereits verfolgt",
+  "cadenceHelpWeekly": "Wöchentlich: Google-Rankings werden einmal pro Woche geprüft, montagmorgens (UTC). Wählen Sie Täglich, um jeden Tag zu prüfen. „Jetzt prüfen“ funktioniert in beiden Fällen.",
+  "cadenceHelpDaily": "Täglich: Google-Rankings werden jeden Morgen (UTC) geprüft. Wählen Sie Wöchentlich, um zu einer Prüfung pro Woche am Montag zurückzukehren. Bing-, YouTube- und Amazon-Keywords werden immer wöchentlich geprüft.",
+  "cadenceDailyChecks": "Tägliche Prüfungen",
+  "addNothingToAdd": "Geben Sie mindestens ein neues Keyword ein."
 }
