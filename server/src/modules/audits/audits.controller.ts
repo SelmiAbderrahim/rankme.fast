@@ -24,7 +24,7 @@ export const startAudit: RequestHandler = asyncHandler(async (req, res) => {
     const accountId = requireAccountId(req);
     const { siteId } = siteIdParamsSchema.parse(req.params);
     const body = startAuditBodySchema.parse(req.body);
-    const run = await startAuditForSite({ accountId, siteId, requestedPageCap: body.requestedPageCap }, {
+    const run = await startAuditForSite({ accountId, siteId, requestedPageCap: body.requestedPageCap, resourceScan: body.resourceScan }, {
         auditsQueue: getAuditsQueue(),
     });
     await recordAudit({
@@ -33,7 +33,7 @@ export const startAudit: RequestHandler = asyncHandler(async (req, res) => {
         targetType: 'site',
         targetId: siteId,
         ip: extractIp(req),
-        metadata: { runId: run.id, pageCap: run.pageCap },
+        metadata: { runId: run.id, pageCap: run.pageCap, resourceScan: run.resourceScan },
     });
     sendLocalizedMessage(req, res, 202, 'audits.started', { run });
 });

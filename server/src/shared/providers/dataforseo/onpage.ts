@@ -13,9 +13,12 @@
  */
 import type { Logger } from 'pino';
 import { z } from 'zod';
-import { dataForSeoRequest, type DataForSeoConfig } from '../http.js';
+import { dataForSeoRequest } from '../http.js';
 import { VendorMalformedError, VendorUnavailableError, } from '../errors.js';
-import type { AuditPage, AuditPageTiming, AuditProvider, AuditResult, AuditStatus, StartAuditInput, } from '../types.js';
+import type { AuditPage, AuditPageTiming, AuditProvider, AuditResult, AuditResultOptions, AuditStatus, StartAuditInput, } from '../types.js';
+import { normalizeDeepPageFields } from './onpage-checks.js';
+import { readExtraSignals, type ExtraReadsConfig } from './onpage-extras.js';
+import { collectPaged } from './onpage-paging.js';
 /**
  * Vendor accepts a bare host — no scheme, no `www.`, no trailing slash.
  * The caller passes a Site.domain (already lowercase, host-only) so the
@@ -164,7 +167,7 @@ const nonIndexableResultSchema = z
 // ---------------------------------------------------------------------------
 // Config
 // ---------------------------------------------------------------------------
-export interface DataForSeoOnPageProviderConfig extends DataForSeoConfig {
+export interface DataForSeoOnPageProviderConfig extends ExtraReadsConfig {
     /** Max pages to pull per pages endpoint call (vendor cap ≥ 1000). */
     pagesPerRequest?: number;
     logger?: Logger;
@@ -191,6 +194,7 @@ export function createDataForSeoOnPageAuditProvider(cfg: DataForSeoOnPageProvide
                 target,
                 max_crawl_pages: input.pageCap,
                 respect_sitemap: true,
+                ...(input.resourceScan === true ? { load_resources: true } : {}),
             };
             const outcomes = await dataForSeoRequest(cfg, '/on_page/task_post', [body], taskPostResultSchema, { operation: 'on-page-task-post' });
             const outcome = outcomes[0];
@@ -242,7 +246,7 @@ export function createDataForSeoOnPageAuditProvider(cfg: DataForSeoOnPageProvide
             }
             return { state: 'crawling', pagesCrawled };
         },
-        async getAuditResult(vendorTaskId: string): Promise<AuditResult> {
+        async getAuditResult(vendorTaskId: string, options?: AuditResultOptions): Promise<AuditResult> {
             const summaryOutcomes = await dataForSeoRequest(cfg, `/on_page/summary/${encodeURIComponent(vendorTaskId)}`, [], summaryResultSchema, { operation: 'on-page-summary', method: 'GET' });
             const summaryOutcome = summaryOutcomes[0];
             if (!summaryOutcome || summaryOutcome.status !== 'ok') {
@@ -253,34 +257,22 @@ export function createDataForSeoOnPageAuditProvider(cfg: DataForSeoOnPageProvide
             }
             const summary = summaryOutcome.result[0]!;
             const domainChecks = normalizeDomainChecks(summary.domain_info?.checks);
-            // Paginate /on_page/pages — vendor total exposed via `crawl_status.pages_crawled`
-            // or `page_metrics.checks`. Guard with a bound to avoid infinite loops.
-            /* c8 ignore next -- pages_crawled is present on every finished summary; the fallback exists so a defensive missing field doesn't cap pages at 0. */
-            const total = summary.crawl_status?.pages_crawled ?? Number.MAX_SAFE_INTEGER;
-            const pages: AuditPage[] = [];
-            let offset = 0;
-            const maxPagesLoops = 100;
-            for (let loop = 0; loop < maxPagesLoops; loop += 1) {
-                const outcomes = await dataForSeoRequest(cfg, '/on_page/pages', [{ id: vendorTaskId, limit: pagesPerRequest, offset }], pagesResultSchema, { operation: 'on-page-pages' });
-                const outcome = outcomes[0];
-                if (!outcome || outcome.status !== 'ok') {
-                    throw new VendorMalformedError('on_page/pages not ok', {
-                        ...ctx,
-                        operation: 'on-page-pages',
-                    });
-                }
-                /* c8 ignore next -- items is nullable in schema; every real response either has items or an empty array. */
-                /* c8 ignore next -- items is nullable in schema; every real response either has items or an empty array. */
-                const items = outcome.result[0]!.items ?? [];
-                if (items.length === 0)
-                    break;
-                for (const item of items) {
-                    pages.push(normalizePage(item));
-                }
-                offset += items.length;
-                if (items.length < pagesPerRequest || pages.length >= total)
-                    break;
-            }
+            const vendorPagesCrawled = summary.crawl_status?.pages_crawled;
+            const crawled = await collectPaged<z.infer<typeof pageItemSchema>>({
+                keyOf: (item) => item.url,
+                fetchPage: async (offset) => {
+                    const outcomes = await dataForSeoRequest(cfg, '/on_page/pages',
+                        [{ id: vendorTaskId, limit: pagesPerRequest, offset }], pagesResultSchema,
+                        { operation: 'on-page-pages' });
+                    const outcome = outcomes[0];
+                    if (!outcome || outcome.status !== 'ok') {
+                        throw new VendorMalformedError('on_page/pages not ok', { ...ctx, operation: 'on-page-pages' });
+                    }
+                    const result = outcome.result[0]!;
+                    return { items: result.items ?? [], total: result.total_items_count ?? vendorPagesCrawled };
+                },
+            });
+            const pages = crawled.items.map(normalizePage);
             // Overlay broken links per URL.
             const brokenByUrl = await fetchBrokenLinks(cfg, vendorTaskId, pagesPerRequest);
             // Overlay non-indexable reasons per URL.
@@ -295,7 +287,10 @@ export function createDataForSeoOnPageAuditProvider(cfg: DataForSeoOnPageProvide
                     page.nonIndexableReason = reason;
                 }
             }
-            return { domainChecks, pages };
+            const resourceScan = options?.resourceScan === true;
+            const extras = await readExtraSignals(cfg, vendorTaskId, pages, { pagesPerRequest, resourceScan });
+            return { domainChecks, pages, ...(vendorPagesCrawled !== undefined ? { vendorPagesCrawled } : {}),
+                capabilities: { resourceScan }, ...extras };
         },
     };
 }
@@ -413,6 +408,7 @@ function normalizePage(item: z.infer<typeof pageItemSchema>): AuditPage {
         ...(typeof wordCount === 'number' ? { wordCount } : {}),
         ...(hasFaqSignals !== undefined ? { hasFaqSignals } : {}),
         ...(timing ? { timing } : {}),
+        ...normalizeDeepPageFields(item),
     };
 }
 /** Question marks in the scripts the product ships (Latin, CJK full-width, Arabic). */

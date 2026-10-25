@@ -1,4 +1,23 @@
 {
+  "categories": {
+    "label": "类别",
+    "all": "所有类别",
+    "indexability": "索引",
+    "links-redirects": "链接和重定向",
+    "content": "内容",
+    "html": "HTML 代码",
+    "media": "图片和媒体",
+    "performance": "速度",
+    "security": "安全",
+    "social": "分享和展示",
+    "emptyTitle": "此类别中没有内容",
+    "emptyDescription": "此标签页中没有属于该类别的检查结果。请选择其他类别，或选择所有类别。"
+  },
+  "resourceScan": {
+    "label": "扫描图片、脚本和样式",
+    "help": "加载每张图片、每个脚本和样式表，以找出失效或过大的文件。耗时更长，且仅在页数上限不超过 {{pages}} 时运行。",
+    "notCovered": "此页数上限超过 {{pages}}，审计将跳过该扫描。请选择更低的上限以包含它。"
+  },
   "title": "您的审计报告",
   "subtitle": "需要修复的、需要关注的以及已经通过的。",
   "history": {
@@ -42,6 +61,7 @@
   "detail": {
     "evidence": {
       "status": "状态 {{status}}",
+      "noAnswer": "没有响应",
       "statusUnknown": "未报告状态",
       "clickDepth": "距首页点击次数：{{depth}}",
       "inboundLinks": "指向此页面的链接：{{links}}",
@@ -360,6 +380,9 @@
     "description": "由于缺少数据源,这些检查无法运行。它们不计为问题。",
     "badge": "未评估",
     "sources": {
+      "legacyRun": "本次审计运行时尚无此项检查。请运行一次新的审计以包含它。",
+      "scanOff": "本次审计未开启图片、脚本和样式扫描。请勾选该选项后重新运行审计，以包含此项检查。",
+      "crawlReadUnavailable": "本次审计期间无法读取这部分抓取数据。此项检查将在下次审计时再次运行。",
       "gsc": "连接 Google Search Console 以进行此项检查。",
       "gscReconnect": "重新连接 Google Search Console 以进行此项检查。",
       "pageSpeed": "此网站暂无真实访客的速度数据。",

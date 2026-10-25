@@ -18,7 +18,7 @@ import { AuditRun } from './audit-run.model.js';
 import { AuditedPage } from './audited-page.model.js';
 import { ReportSnapshot, type ReportSnapshotHydrated, } from './report-snapshot.model.js';
 import { selectAuditSummaryLocale, type AuditSummaryStatus, } from './summary.selection.js';
-import { countByBucket, evaluateAllRules, isNotEvaluatedFinding, type AiVisibilityEvaluationInput, type FindingCounts, type GscSearchEvaluationInput, type GscSearchStatus, type GscSitemapsEvaluationInput, type GscSitemapsStatus, type IndexStatusEvaluationInput, type IndexStatusSample, type IndexStatusStatus, type LocalSeoEvaluationInput, type PageSpeedEvaluationInput, type PageSpeedSample, type PageSpeedStatus, type RuleFinding, } from './rules/index.js';
+import { categoryOf, countByBucket, evaluateAllRules, isNotEvaluatedFinding, type AiVisibilityEvaluationInput, type FindingCounts, type GscSearchEvaluationInput, type GscSearchStatus, type GscSitemapsEvaluationInput, type GscSitemapsStatus, type IndexStatusEvaluationInput, type IndexStatusSample, type IndexStatusStatus, type LocalSeoEvaluationInput, type PageSpeedEvaluationInput, type PageSpeedSample, type PageSpeedStatus, type RuleCategory, type RuleFinding, } from './rules/index.js';
 // ---------------------------------------------------------------------------
 // Snapshot writing
 // ---------------------------------------------------------------------------
@@ -237,6 +237,8 @@ export interface LocalizedFinding extends RuleFinding {
     copy: LocalizedRuleCopy;
     /** The rule could not run (missing data source) — not an open problem. */
     notEvaluated?: true;
+    /** Report category for the category filter; `null` for a stored id this release no longer ships. */
+    category: RuleCategory | null;
     codeFixPromptAvailable?: true;
     brokenLinkTargets?: string[];
 }
@@ -425,6 +427,25 @@ export function resolveGscReasonKey(ruleId: string, meta: Record<string, unknown
     }
     return null;
 }
+/**
+ * Reason lines for deep crawl findings: what the evidence can and cannot say,
+ * shown under the `why` copy. `null` when the finding needs no qualifier.
+ */
+export function resolveDeepCrawlReasonKey(ruleId: string, meta: Record<string, unknown> | undefined): string | null {
+    if (!meta)
+        return null;
+    if (ruleId === 'http-error-pages' && meta.refusalsOnly === true) {
+        return 'auditRules.http-error-pages.reasons.refusalsOnly';
+    }
+    if ((ruleId === 'duplicate-content' || ruleId === 'slow-server-response') &&
+        typeof meta.unverifiedCount === 'number') {
+        return `auditRules.${ruleId}.reasons.partlyVerified`;
+    }
+    if (ruleId === 'redirect-chains' && typeof meta.chainsNotRead === 'string') {
+        return 'auditRules.redirect-chains.reasons.hopsMissing';
+    }
+    return null;
+}
 function checkedAuditCopyKey(value: string): TranslationKey {
     if (!hasTranslationKey(value)) {
         throw new RangeError(`Unknown audit copy key: ${value}`);
@@ -432,7 +453,7 @@ function checkedAuditCopyKey(value: string): TranslationKey {
     return value;
 }
 export function localizeAuditRuleCopy(ruleId: string, locale: SupportedLocale, meta?: Record<string, unknown>): LocalizedRuleCopy {
-    const reasonKey = resolveGscReasonKey(ruleId, meta);
+    const reasonKey = resolveGscReasonKey(ruleId, meta) ?? resolveDeepCrawlReasonKey(ruleId, meta);
     const titleKey = checkedAuditCopyKey(`auditRules.${ruleId}.title`);
     const whyKey = checkedAuditCopyKey(`auditRules.${ruleId}.why`);
     const fixKey = checkedAuditCopyKey(`auditRules.${ruleId}.fix`);
@@ -535,6 +556,7 @@ export async function getAuditReport(input: GetAuditReportInput): Promise<AuditR
         ...(f.meta ? { meta: f.meta } : {}),
         ...(isNotEvaluatedFinding(f) ? { notEvaluated: true as const } : {}),
         copy: localizeAuditRuleCopy(f.ruleId, input.locale, f.meta ?? undefined),
+        category: categoryOf(f.ruleId),
         ...(isAuditCodeFixEligible(f)
             ? { codeFixPromptAvailable: true as const }
             : {}),

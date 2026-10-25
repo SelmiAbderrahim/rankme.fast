@@ -70,10 +70,11 @@ export const fetchRunRequest = (
 export const startAuditRequest = (
   siteId: string,
   requestedPageCap?: number,
+  resourceScan = true,
 ): Promise<StartAuditResponse> =>
   apiClient<StartAuditResponse>(`/sites/${siteId}/audits`, {
     method: 'POST',
-    body: requestedPageCap === undefined ? {} : { requestedPageCap },
+    body: { ...(requestedPageCap === undefined ? {} : { requestedPageCap }), resourceScan },
   });
 
 /**

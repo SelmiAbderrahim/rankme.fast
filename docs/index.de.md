@@ -44,7 +44,7 @@ order: 0
 - [Keyword-Trends](./keyword-trends.de.md): Untersuchen Sie Suchinteresse, Dynamik und Saisonalität mit klar gekennzeichneten Schätzwerten.
 - [Bewertungsanalyse](./review-intelligence.de.md): Synchronisieren Sie öffentliche Bewertungen auf Abruf und verstehen Sie Trends, belegte Themen und Erstattungen.
 - [Markenradar](./brand-radar.de.md): Prüfen Sie eine Markenanfrage auf Abruf, untersuchen Sie gespeicherte Erwähnungen und verstehen Sie Add-on und Erstattung.
-- [Seitenleistung](./pages-performance.de.md): Wie der Seiten-Tab Quellen auswählt, Snapshots vergleicht und Aktualisierungen zählt.
+- [Seitenleistung](./pages-performance.de.md): Wie der Seiten-Tab gespeicherte Suchdaten, Crawl-Kontext und Seitenmetriken zeigt.
 
 ## Produktfunktionen
 
@@ -76,4 +76,4 @@ order: 0
 - [Öffentliche API](./public-api.de.md): Lesen Sie Ihre Sites, Berichte, Rankings und Keywords über eine einfache, schlüssel-authentifizierte API. Agency-Funktion.
 - [RankMeFast MCP](./rankmefast-mcp.de.md): Verbinden Sie RankMeFast mit Coding-Agenten, IDEs und MCP-fähigen CLIs.
 - [KI-Assistent](./ai-assistant.de.md): Fragen Sie Ihre SEO-Belege ab, verfolgen Sie Antworten live und führen Sie freigegebene RankMeFast-Werkzeuge aus.
-- [Looker Studio verbinden](./looker-studio.de.md): Kopiere den schreibgeschützten RankMeFast-Connector nach Apps Script und nutze gespeicherte SEO-Daten in Looker Studio. Agency-Funktion.
+- [Looker Studio verbinden](./looker-studio.de.md): Kopieren Sie den schreibgeschützten RankMeFast-Connector nach Apps Script und nutzen Sie gespeicherte SEO-Daten in Looker Studio. Agency-Funktion.

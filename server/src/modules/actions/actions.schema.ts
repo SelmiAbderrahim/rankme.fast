@@ -73,6 +73,7 @@ export const actionHistoryEntrySchema = z.object({
         .nullable(),
     actorIsYou: z.boolean(),
     note: z.string().nullable(),
+    reasonCode: z.enum(['audit_regression']).nullable(),
     createdAt: z.string(),
 }).strict();
 export const actionHistoryResponseSchema = z.object({

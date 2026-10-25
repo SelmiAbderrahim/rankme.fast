@@ -220,6 +220,8 @@ export interface AuditHostRedirect {
 export interface AuditResult {
     domainChecks: AuditDomainChecks;
     pages: AuditPage[];
+    /** Vendor page count, which may exceed the returned page list. */
+    vendorPagesCrawled?: number;
     /** Absent = the crawl stayed on the site's own host (or it was not checked). */
     hostRedirect?: AuditHostRedirect;
     duplicateGroups?: AuditDuplicateGroup[];

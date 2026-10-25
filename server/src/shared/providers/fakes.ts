@@ -17,7 +17,7 @@ import { appBulkMetricsInputSchema, appChartInputSchema, appInfoInputSchema, app
 import { buildAltEngineObservationMeta, matchHostInRows, matchTokenInRows, } from './dataforseo/alt-engines.js';
 import { normalizeSerpDomain, type SerpTaskQueue, type SerpTaskPostOutcome, type SerpTaskPoll, } from './serp-normalization.js';
 import type { PublicPageDiscoveryInput, PublicPageDiscoveryResult, PublicPageDiscoveryRow, PublicPageSourceHint, } from './types.js';
-import type { AiAnswerInput, AiAnswerRow, AiKeywordVolume, AiMentionCheckInput, AiMentionRow, AiVisibilityProvider, AuditProvider, AuditResult, AuditStatus, ContentAnalysisMentionQuery, ContentAnalysisMentionRow, ContentAnalysisMentionSummary, ContentAnalysisProvider, ReviewRow, ReviewsInput, ReviewsProvider, ReviewsResult, ReviewsSource, BacklinkAnchorRow, BacklinkBulkRankRow, BacklinkCompetitorRow, BacklinkHistoryPoint, BacklinkListPage, BacklinkProvider, BacklinkReferringDomainRow, BacklinkSpamScoreRow, BacklinkSummary, BusinessListingRow, CompetitorEntry, CompetitorProvider, DomainComparisonResult, DomainComparisonRow, DomainIntersectionRow, DomainRankOverviewRow, HistoricalRankOverviewResult, TrafficEstimationCountry, TrafficEstimationRow, TechStackEntry, Ga4Property, Ga4Provider, Ga4RunReportInput, Ga4RunReportResult, Ga4WebDataStream, GscProperty, GscSearchAnalyticsResult, GscSitemapEntry, GscUrlInspection, AltEngineRankInput, AltEngineRankResult, AltEngineRankRow, AltRankEngine, IntentResult, KeywordHistoricalVolume, KeywordMetrics, KeywordOverview, KeywordProvider, LocalListingsProvider, LocalPackCoordinate, LocalPackResult, PageSpeedProvider, PageSpeedResult, ProviderMarket, QaSummary, RankCheckResult, RankProvider, ReviewsSummary, SerpFeatureSnapshot, SiteKeywordCandidate, SiteKeywordProvider, TrendsExploreInput, TrendsExploreResult, TrendsMonthlyPoint, TrendsProvider, TrendsRelatedQuery, TrendsSeries, } from './types.js';
+import type { AiAnswerInput, AiAnswerRow, AiKeywordVolume, AiMentionCheckInput, AiMentionRow, AiVisibilityProvider, AuditProvider, AuditResource, AuditResult, AuditStatus, ContentAnalysisMentionQuery, ContentAnalysisMentionRow, ContentAnalysisMentionSummary, ContentAnalysisProvider, ReviewRow, ReviewsInput, ReviewsProvider, ReviewsResult, ReviewsSource, BacklinkAnchorRow, BacklinkBulkRankRow, BacklinkCompetitorRow, BacklinkHistoryPoint, BacklinkListPage, BacklinkProvider, BacklinkReferringDomainRow, BacklinkSpamScoreRow, BacklinkSummary, BusinessListingRow, CompetitorEntry, CompetitorProvider, DomainComparisonResult, DomainComparisonRow, DomainIntersectionRow, DomainRankOverviewRow, HistoricalRankOverviewResult, TrafficEstimationCountry, TrafficEstimationRow, TechStackEntry, Ga4Property, Ga4Provider, Ga4RunReportInput, Ga4RunReportResult, Ga4WebDataStream, GscProperty, GscSearchAnalyticsResult, GscSitemapEntry, GscUrlInspection, AltEngineRankInput, AltEngineRankResult, AltEngineRankRow, AltRankEngine, IntentResult, KeywordHistoricalVolume, KeywordMetrics, KeywordOverview, KeywordProvider, LocalListingsProvider, LocalPackCoordinate, LocalPackResult, PageSpeedProvider, PageSpeedResult, ProviderMarket, QaSummary, RankCheckResult, RankProvider, ReviewsSummary, SerpFeatureSnapshot, SiteKeywordCandidate, SiteKeywordProvider, TrendsExploreInput, TrendsExploreResult, TrendsMonthlyPoint, TrendsProvider, TrendsRelatedQuery, TrendsSeries, } from './types.js';
 import type { GoogleGscProvider } from './google/gsc.js';
 /** Fixed instant so fake output is bit-for-bit reproducible across runs. */
 export const FAKE_CLOCK = new Date('2026-01-01T00:00:00.000Z');
@@ -45,6 +45,14 @@ export interface FakeAuditProviderOptions extends FakeProviderOptions {
     status?: AuditStatus;
     result?: AuditResult;
 }
+/**
+ * Fake crawl. Besides the two original pages it carries one deterministic
+ * case for every deep crawl rule: an error page of each class, a redirect
+ * chain and a loop, duplicate titles and content, placeholder text, mixed
+ * content, a deep orphan page, slow and oversized pages and, when the
+ * resource scan is on, a broken image, an oversized image and an uncached
+ * script.
+ */
 export const FAKE_AUDIT_RESULT: AuditResult = {
     domainChecks: {
         robotsTxtFound: true,
@@ -67,6 +75,26 @@ export const FAKE_AUDIT_RESULT: AuditResult = {
             brokenLinks: [],
             onPageScore: 87.5,
             timing: { fetchMs: 120 },
+            checks: {
+                clientError: false,
+                serverError: false,
+                redirects: false,
+                imagesMissingAlt: true,
+                renderBlocking: true,
+                missingFavicon: false,
+            },
+            clickDepth: 0,
+            inboundInternalLinks: 4,
+            outboundInternalLinks: 6,
+            outboundExternalLinks: 1,
+            pageSizeBytes: 48_000,
+            transferSizeBytes: 12_000,
+            serverResponseMs: 180,
+            contentEncoding: 'gzip',
+            imageCount: 6,
+            renderBlockingScripts: 2,
+            renderBlockingStylesheets: 1,
+            socialTags: { openGraph: true, twitterCard: true },
         },
         {
             url: 'https://example.com/hidden',
@@ -83,12 +111,163 @@ export const FAKE_AUDIT_RESULT: AuditResult = {
             brokenLinks: ['https://example.com/404'],
             onPageScore: 41.2,
         },
+        {
+            url: 'https://example.com/guide/care?ref=nav',
+            statusCode: 200,
+            title: 'Widget care',
+            metaDescription: 'How to look after a widget.',
+            h1: ['Widget care'],
+            h2: ['Cleaning'],
+            canonical: 'https://example.com/guide/care?ref=nav',
+            hasStructuredData: true,
+            structuredDataErrors: [],
+            isIndexable: true,
+            brokenLinks: [],
+            onPageScore: 63,
+            checks: {
+                duplicateTitle: true,
+                duplicateContent: true,
+                placeholderText: true,
+                insecureLinks: true,
+                metaRefreshRedirect: true,
+                linksToRedirects: true,
+                canonicalToBroken: true,
+                orphan: true,
+                missingDoctype: true,
+                deprecatedTags: true,
+                frames: true,
+                missingFavicon: true,
+                slowServerResponse: true,
+                uncompressed: true,
+                largePage: true,
+                veryLargePage: true,
+                renderBlocking: false,
+                urlHasParameters: true,
+            },
+            clickDepth: 6,
+            inboundInternalLinks: 0,
+            outboundInternalLinks: 3,
+            outboundExternalLinks: 0,
+            pageSizeBytes: 3_400_000,
+            transferSizeBytes: 3_400_000,
+            serverResponseMs: 2_400,
+            contentEncoding: null,
+            imageCount: 2,
+            socialTags: { openGraph: false, twitterCard: false },
+        },
+        {
+            url: 'https://example.com/guide/care-2',
+            statusCode: 200,
+            title: 'Widget care',
+            metaDescription: 'Caring for widgets.',
+            h1: ['Caring for widgets'],
+            h2: [],
+            canonical: 'https://example.com/guide/care-2',
+            hasStructuredData: true,
+            structuredDataErrors: [],
+            isIndexable: true,
+            brokenLinks: [],
+            onPageScore: 71,
+            checks: { duplicateTitle: true, duplicateContent: true, canonicalChain: true },
+            clickDepth: 2,
+            inboundInternalLinks: 1,
+            pageSizeBytes: 1_200_000,
+            contentEncoding: 'br',
+            socialTags: { openGraph: true, twitterCard: false },
+        },
+        {
+            url: 'https://example.com/gone',
+            statusCode: 404,
+            title: null,
+            metaDescription: null,
+            h1: [],
+            h2: [],
+            canonical: null,
+            hasStructuredData: false,
+            structuredDataErrors: [],
+            isIndexable: false,
+            brokenLinks: [],
+            onPageScore: 0,
+            checks: { clientError: true },
+        },
+        {
+            url: 'https://example.com/down',
+            statusCode: 503,
+            title: null,
+            metaDescription: null,
+            h1: [],
+            h2: [],
+            canonical: null,
+            hasStructuredData: false,
+            structuredDataErrors: [],
+            isIndexable: false,
+            brokenLinks: [],
+            onPageScore: 0,
+            checks: { serverError: true },
+        },
     ],
+    duplicateGroups: [
+        { kind: 'title', urls: ['https://example.com/guide/care?ref=nav', 'https://example.com/guide/care-2'] },
+        {
+            kind: 'content',
+            urls: ['https://example.com/guide/care?ref=nav', 'https://example.com/guide/care-2'],
+            similarity: 8,
+        },
+    ],
+    redirectChains: [
+        {
+            from: 'https://example.com/old',
+            hops: [
+                { url: 'https://example.com/older', status: 301 },
+                { url: 'https://example.com/guide/care-2', status: 200 },
+            ],
+            isLoop: false,
+        },
+        {
+            from: 'https://example.com/loop-a',
+            hops: [
+                { url: 'https://example.com/loop-b', status: 302 },
+                { url: 'https://example.com/loop-a', status: 302 },
+            ],
+            isLoop: true,
+        },
+    ],
+    capabilities: { resourceScan: false },
 };
+/** Resources the fake crawl reports when the resource scan is on. */
+export const FAKE_AUDIT_RESOURCES: AuditResource[] = [
+    {
+        url: 'https://example.com/img/missing.png',
+        type: 'image',
+        statusCode: 404,
+        sizeBytes: 0,
+        isBroken: true,
+        usedOn: ['https://example.com/'],
+        usedOnCount: 1,
+    },
+    {
+        url: 'https://example.com/img/hero.jpg',
+        type: 'image',
+        statusCode: 200,
+        sizeBytes: 2_400_000,
+        cacheable: true,
+        isBroken: false,
+        usedOn: ['https://example.com/', 'https://example.com/guide/care-2'],
+        usedOnCount: 2,
+    },
+    {
+        url: 'https://example.com/js/app.js',
+        type: 'script',
+        statusCode: 200,
+        sizeBytes: 180_000,
+        cacheable: false,
+        isBroken: false,
+        usedOn: [],
+    },
+];
 export function createFakeAuditProvider(opts: FakeAuditProviderOptions = {}): AuditProvider {
     const vendorTaskId = opts.vendorTaskId ?? 'fake-audit-task-1';
-    const status = opts.status ?? { state: 'finished', pagesCrawled: 2 };
-    const result = opts.result ?? FAKE_AUDIT_RESULT;
+    const status = opts.status ?? { state: 'finished', pagesCrawled: FAKE_AUDIT_RESULT.pages.length };
     return {
         async startAudit() {
             maybeFail(opts.failure);
@@ -98,9 +277,14 @@ export function createFakeAuditProvider(opts: FakeAuditProviderOptions = {}): Au
             maybeFail(opts.failure);
             return status;
         },
-        async getAuditResult() {
+        async getAuditResult(_vendorTaskId, options) {
             maybeFail(opts.failure);
-            return result;
+            if (opts.result)
+                return opts.result;
+            // Same contract as the live adapter: resources only from a scanned task.
+            return options?.resourceScan === true
+                ? { ...FAKE_AUDIT_RESULT, resources: FAKE_AUDIT_RESOURCES, capabilities: { resourceScan: true } }
+                : FAKE_AUDIT_RESULT;
         },
     };
 }

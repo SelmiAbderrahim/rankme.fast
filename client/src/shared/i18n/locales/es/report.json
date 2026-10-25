@@ -1,4 +1,23 @@
 {
+  "categories": {
+    "label": "Categoría",
+    "all": "Todas las categorías",
+    "indexability": "Indexación",
+    "links-redirects": "Enlaces y redirecciones",
+    "content": "Contenido",
+    "html": "HTML",
+    "media": "Imágenes y multimedia",
+    "performance": "Velocidad",
+    "security": "Seguridad",
+    "social": "Redes sociales y fichas",
+    "emptyTitle": "Nada en esta categoría",
+    "emptyDescription": "Ningún resultado de esta pestaña pertenece a esta categoría. Elige otra categoría o todas."
+  },
+  "resourceScan": {
+    "label": "Analizar imágenes, scripts y estilos",
+    "help": "Carga cada imagen, script y hoja de estilo para encontrar archivos rotos o demasiado pesados. Tarda más y solo se ejecuta con un límite de {{pages}} páginas o menos.",
+    "notCovered": "Este límite supera {{pages}} páginas, así que la auditoría omitirá este análisis. Elija un límite menor para incluirlo."
+  },
   "title": "Tu informe de auditoría",
   "subtitle": "Qué corregir, qué vigilar y qué ya está bien.",
   "history": {
@@ -42,6 +61,7 @@
   "detail": {
     "evidence": {
       "status": "Estado {{status}}",
+      "noAnswer": "Sin respuesta",
       "statusUnknown": "Estado no indicado",
       "clickDepth": "Clics desde el inicio: {{depth}}",
       "inboundLinks": "Enlaces a esta página: {{links}}",
@@ -360,6 +380,9 @@
     "description": "Estas comprobaciones no se pudieron ejecutar porque falta una fuente de datos. No cuentan como problemas.",
     "badge": "Sin evaluar",
     "sources": {
+      "legacyRun": "Esta auditoría se ejecutó antes de que existiera esta comprobación. Ejecuta una auditoría nueva para incluirla.",
+      "scanOff": "Esta auditoría se hizo sin el análisis de imágenes, scripts y estilos. Ejecuta una auditoría nueva con esa opción marcada para incluir esta comprobación.",
+      "crawlReadUnavailable": "Esta parte del rastreo no se pudo leer durante esta auditoría. La comprobación se volverá a ejecutar en la próxima auditoría.",
       "gsc": "Conecta Google Search Console para comprobar esto.",
       "gscReconnect": "Vuelve a conectar Google Search Console para comprobar esto.",
       "pageSpeed": "Aún no hay datos de velocidad de visitantes reales para este sitio.",

@@ -96,11 +96,11 @@ export const loadReport = createAsyncThunk<
 
 export const startRetest = createAsyncThunk<
   StartAuditResponse,
-  { siteId: string; requestedPageCap?: number },
+  { siteId: string; requestedPageCap?: number; resourceScan?: boolean },
   { rejectValue: string }
->('report/retest', async ({ siteId, requestedPageCap }, { rejectWithValue }) => {
+>('report/retest', async ({ siteId, requestedPageCap, resourceScan }, { rejectWithValue }) => {
   try {
-    return await startAuditRequest(siteId, requestedPageCap);
+    return await startAuditRequest(siteId, requestedPageCap, resourceScan);
   } catch (err) {
     return rejectWithValue(reportErrorMessage(err, 'report:retestFailed'));
   }

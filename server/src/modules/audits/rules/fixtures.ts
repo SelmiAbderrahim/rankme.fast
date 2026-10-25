@@ -7,7 +7,7 @@
  * rule engine's contract and should not be reused as a "generic" AuditResult
  * factory elsewhere.
  */
-import type { AuditPage, AuditResult, GscUrlInspection, } from '../../../shared/providers/index.js';
+import { AUDIT_PAGE_CHECK_KEYS, type AuditPage, type AuditPageChecks, type AuditResult, type GscUrlInspection, } from '../../../shared/providers/index.js';
 import type { GscSearchEvaluationInput, GscSitemapsEvaluationInput, IndexStatusEvaluationInput, IndexStatusSample, PageSpeedEvaluationInput, PageSpeedSample, } from './rule.types.js';
 export function makeAuditPage(overrides: Partial<AuditPage> = {}): AuditPage {
     return {
@@ -25,12 +25,24 @@ export function makeAuditPage(overrides: Partial<AuditPage> = {}): AuditPage {
         onPageScore: 90,
         wordCount: 800,
         hasFaqSignals: true,
+        // Every deep crawl signal measured and clean.
+        checks: CLEAN_PAGE_CHECKS,
+        clickDepth: 1,
+        socialTags: { openGraph: true, twitterCard: true },
         ...overrides,
     };
+}
+/** Every normalized crawl check reported as "no problem". */
+export const CLEAN_PAGE_CHECKS: AuditPageChecks = Object.freeze(Object.fromEntries(AUDIT_PAGE_CHECK_KEYS.map((name) => [name, false])) as unknown as AuditPageChecks);
+/** A page with the given checks on top of the clean set. */
+export function checksWith(overrides: Partial<AuditPageChecks>): AuditPageChecks {
+    return { ...CLEAN_PAGE_CHECKS, ...overrides };
 }
 export interface MakeAuditResultInput {
     pages?: Partial<AuditPage>[];
     domainChecks?: Partial<AuditResult['domainChecks']>;
+    /** Deep crawl result fields; default = measured and clean, resource scan on. */
+    deep?: Partial<Pick<AuditResult, 'duplicateGroups' | 'redirectChains' | 'resources' | 'resourceTotal' | 'capabilities' | 'unavailableSignals' | 'unverified'>>;
 }
 /**
  * Build a green-across-the-board `AuditResult`. Callers pass only the deltas
@@ -50,7 +62,21 @@ export function makeAuditResult(input: MakeAuditResultInput = {}): AuditResult {
             ...input.domainChecks,
         },
         pages: pagesInput.map((p) => makeAuditPage(p)),
+        duplicateGroups: [],
+        redirectChains: [],
+        resources: [],
+        capabilities: { resourceScan: true },
+        ...input.deep,
     };
+}
+/** A result from before the deep crawl signals existed (no checks, no reads). */
+export function makeLegacyAuditResult(input: MakeAuditResultInput = {}): AuditResult {
+    const result = makeAuditResult(input);
+    const pages = result.pages.map((page) => {
+        const { checks: _checks, clickDepth: _depth, socialTags: _social, ...legacy } = page;
+        return legacy;
+    });
+    return { domainChecks: result.domainChecks, pages };
 }
 // ---------------------------------------------------------------------------
 // PageSpeed fixture builders.

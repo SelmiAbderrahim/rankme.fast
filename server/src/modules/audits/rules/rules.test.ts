@@ -22,7 +22,9 @@ import {
   type RuleFinding,
   type RuleId,
 } from './index.js';
+import type { AuditPage, AuditResource } from '../../../shared/providers/index.js';
 import {
+  checksWith,
   makeAuditPage,
   makeAuditResult,
   makeGscSearchInput,
@@ -41,7 +43,97 @@ function findingFor(ruleId: RuleId, findings: RuleFinding[]): RuleFinding {
   return found;
 }
 
+// -----------------------------------------------------------------------------
+// Deep crawl rules — pass on the clean default crawl, fail on one case.
+// -----------------------------------------------------------------------------
+
+function deepCase(
+  ruleId: RuleId,
+  failing: Parameters<typeof makeAuditResult>[0],
+  expected: { bucket: RuleFinding['bucket']; severity: RuleFinding['severity']; affectedUrls?: string[] },
+): { pass: () => void; fail: () => void } {
+  return {
+    pass: () => {
+      const finding = findingFor(ruleId, evaluateAllRules(makeAuditResult()));
+      expect(finding.bucket).toBe('passed');
+      expect(finding.meta).toBeUndefined();
+    },
+    fail: () => {
+      const finding = findingFor(ruleId, evaluateAllRules(makeAuditResult(failing)));
+      expect(finding).toMatchObject(expected);
+      expect(finding.affectedUrls.length).toBeGreaterThan(0);
+    },
+  };
+}
+
+const flaggedPage = (checks: Parameters<typeof checksWith>[0], extra: Partial<AuditPage> = {}) => ({
+  url: 'https://example.com/flagged',
+  checks: checksWith(checks),
+  ...extra,
+});
+
+const resource = (overrides: Partial<AuditResource>): AuditResource => ({
+  url: 'https://example.com/img/a.png',
+  type: 'image',
+  statusCode: 200,
+  sizeBytes: 10_000,
+  cacheable: true,
+  isBroken: false,
+  usedOn: ['https://example.com/'],
+  ...overrides,
+});
+
+const deepCrawlCases = {
+  'http-error-pages': deepCase(
+    'http-error-pages',
+    { pages: [{}, { url: 'https://example.com/gone', statusCode: 404, isIndexable: false }, { url: 'https://example.com/down', statusCode: 503, isIndexable: false }] },
+    { bucket: 'fix-now', severity: 'critical', affectedUrls: ['https://example.com/down', 'https://example.com/gone'] },
+  ),
+  'redirect-chains': deepCase(
+    'redirect-chains',
+    {
+      deep: {
+        redirectChains: [
+          { from: 'https://example.com/a', hops: [{ url: 'https://example.com/b', status: 301 }, { url: 'https://example.com/', status: 200 }], isLoop: false },
+        ],
+      },
+    },
+    { bucket: 'watch', severity: 'warning', affectedUrls: ['https://example.com/a'] },
+  ),
+  'links-to-redirects': deepCase('links-to-redirects', { pages: [{}, flaggedPage({ linksToRedirects: true })] }, { bucket: 'watch', severity: 'warning', affectedUrls: ['https://example.com/flagged'] }),
+  'meta-refresh-redirect': deepCase('meta-refresh-redirect', { pages: [flaggedPage({ metaRefreshRedirect: true }, { isIndexable: false })] }, { bucket: 'watch', severity: 'warning' }),
+  'canonical-chain-or-conflict': deepCase('canonical-chain-or-conflict', { pages: [flaggedPage({ canonicalToBroken: true })] }, { bucket: 'fix-now', severity: 'critical' }),
+  'orphan-pages': deepCase('orphan-pages', { pages: [flaggedPage({ orphan: true }, { inboundInternalLinks: 0 })] }, { bucket: 'watch', severity: 'warning' }),
+  'deep-pages': deepCase('deep-pages', { pages: [{}, { url: 'https://example.com/a/b/c/d', clickDepth: 5 }] }, { bucket: 'watch', severity: 'info', affectedUrls: ['https://example.com/a/b/c/d'] }),
+  'duplicate-titles': deepCase(
+    'duplicate-titles',
+    { pages: [{}, { url: 'https://example.com/b' }], deep: { duplicateGroups: [{ kind: 'title', urls: ['https://example.com/', 'https://example.com/b'] }] } },
+    { bucket: 'watch', severity: 'warning', affectedUrls: ['https://example.com/', 'https://example.com/b'] },
+  ),
+  'duplicate-content': deepCase(
+    'duplicate-content',
+    { pages: [flaggedPage({ duplicateContent: true }), { url: 'https://example.com/b' }], deep: { duplicateGroups: [{ kind: 'content', urls: ['https://example.com/flagged', 'https://example.com/b'], similarity: 8 }] } },
+    { bucket: 'watch', severity: 'warning' },
+  ),
+  'placeholder-text': deepCase('placeholder-text', { pages: [flaggedPage({ placeholderText: true })] }, { bucket: 'fix-now', severity: 'critical' }),
+  'mixed-content': deepCase('mixed-content', { pages: [flaggedPage({ insecureLinks: true })] }, { bucket: 'watch', severity: 'warning' }),
+  'images-missing-alt': deepCase('images-missing-alt', { pages: [flaggedPage({ imagesMissingAlt: true }, { imageCount: 4 })] }, { bucket: 'watch', severity: 'warning' }),
+  'slow-server-response': deepCase('slow-server-response', { pages: [flaggedPage({ slowServerResponse: true }, { serverResponseMs: 2_400 })] }, { bucket: 'watch', severity: 'warning' }),
+  'large-pages': deepCase('large-pages', { pages: [flaggedPage({ largePage: true }, { pageSizeBytes: 1_400_000 })] }, { bucket: 'watch', severity: 'info' }),
+  'uncompressed-pages': deepCase('uncompressed-pages', { pages: [flaggedPage({ uncompressed: true }, { contentEncoding: null })] }, { bucket: 'watch', severity: 'warning' }),
+  'render-blocking-resources': deepCase('render-blocking-resources', { pages: [flaggedPage({ renderBlocking: true }, { renderBlockingScripts: 2 })] }, { bucket: 'watch', severity: 'info' }),
+  'html-basics-missing': deepCase('html-basics-missing', { pages: [flaggedPage({ missingDoctype: true })] }, { bucket: 'watch', severity: 'warning' }),
+  'deprecated-html': deepCase('deprecated-html', { pages: [flaggedPage({ flash: true })] }, { bucket: 'watch', severity: 'info' }),
+  'url-structure': deepCase('url-structure', { pages: [flaggedPage({ urlHasParameters: true }, { url: 'https://example.com/p?id=1' })] }, { bucket: 'watch', severity: 'info' }),
+  'social-tags-missing': deepCase('social-tags-missing', { pages: [{ socialTags: { openGraph: false, twitterCard: false } }] }, { bucket: 'watch', severity: 'info' }),
+  'favicon-missing': deepCase('favicon-missing', { pages: [flaggedPage({ missingFavicon: true })] }, { bucket: 'watch', severity: 'info' }),
+  'broken-resources': deepCase('broken-resources', { deep: { resources: [resource({ statusCode: 404, isBroken: true })] } }, { bucket: 'fix-now', severity: 'warning' }),
+  'oversized-images': deepCase('oversized-images', { deep: { resources: [resource({ sizeBytes: 2_400_000 })] } }, { bucket: 'watch', severity: 'info' }),
+  'uncached-static-resources': deepCase('uncached-static-resources', { deep: { resources: [resource({ type: 'script', url: 'https://example.com/app.js', cacheable: false })] } }, { bucket: 'watch', severity: 'info' }),
+} satisfies Partial<Record<RuleId, { pass: () => void; fail: () => void }>>;
+
 const perRuleCases: Record<RuleId, { pass: () => void; fail: () => void }> = {
+  ...deepCrawlCases,
   'robots-blocked': {
     pass: () => {
       const result = makeAuditResult({

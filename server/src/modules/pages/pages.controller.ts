@@ -57,7 +57,7 @@ export function createPagesController(service: PagesService) {
         const accountId = requireAccountId(req);
         const { siteId, pageId } = pagesDetailParamsSchema.parse(req.params);
         const { range } = pagesDetailQuerySchema.parse(req.query);
-        res.status(200).json(await service.detail(accountId, siteId, pageId, range));
+        res.status(200).json(await service.detail(accountId, siteId, pageId, range, toSupportedLocale(req.language)));
     });
     const refresh = handler(async (req, res) => {
         const accountId = requireAccountId(req);

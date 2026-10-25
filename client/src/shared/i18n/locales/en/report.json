@@ -1,4 +1,23 @@
 {
+  "categories": {
+    "label": "Category",
+    "all": "All categories",
+    "indexability": "Indexing",
+    "links-redirects": "Links and redirects",
+    "content": "Content",
+    "html": "HTML",
+    "media": "Images and media",
+    "performance": "Speed",
+    "security": "Security",
+    "social": "Sharing and listings",
+    "emptyTitle": "Nothing in this category",
+    "emptyDescription": "No finding on this tab belongs to this category. Choose another category, or all categories."
+  },
+  "resourceScan": {
+    "label": "Scan images, scripts and styles",
+    "help": "Loads every image, script and stylesheet so broken or oversized files can be found. It takes longer, and it only runs for page limits of {{pages}} or fewer.",
+    "notCovered": "This page limit is above {{pages}}, so the audit will skip this scan. Choose a lower limit to include it."
+  },
   "title": "Your audit report",
   "subtitle": "What to fix, what to watch, and what already passed.",
   "history": {
@@ -42,6 +61,7 @@
   "detail": {
     "evidence": {
       "status": "Status {{status}}",
+      "noAnswer": "No answer",
       "statusUnknown": "Status not reported",
       "clickDepth": "Clicks from home: {{depth}}",
       "inboundLinks": "Links to this page: {{links}}",
@@ -366,6 +386,9 @@
     "description": "These checks could not run because a data source is missing. They are not counted as problems.",
     "badge": "Not evaluated",
     "sources": {
+      "legacyRun": "This audit ran before this check existed. Run a new audit to include it.",
+      "scanOff": "This audit ran without the image, script and style scan. Run a new audit with that option ticked to include this check.",
+      "crawlReadUnavailable": "This part of the crawl could not be read during this audit. This check runs again on the next audit.",
       "gsc": "Connect Google Search Console to check this.",
       "gscReconnect": "Reconnect Google Search Console to check this.",
       "pageSpeed": "Speed data from real visitors is not available for this site yet.",

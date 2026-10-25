@@ -162,6 +162,42 @@ describe('POST /api/sites/:siteId/audits', () => {
     expect(jobs[0]?.data.pageCap).toBe(AUDIT_PAGE_CAP_MAX);
   });
 
+  it('scans resources by default and lets the body opt a run out', async () => {
+    const { queue } = fakeQueue();
+    setAuditsQueue(queue);
+    const user = await signupVerifiedUser(app, { email: 'audit-scan@x.co' });
+    const siteId = await addSite(user);
+    const optedOut = await request(app)
+      .post(`/api/sites/${siteId}/audits`)
+      .set('Cookie', user.cookie)
+      .send({ requestedPageCap: 100, resourceScan: false });
+    expect(optedOut.status).toBe(202);
+    expect(optedOut.body.run.resourceScan).toBe(false);
+    await AuditRun.updateMany({}, { status: 'succeeded', activeKey: null });
+    const scanned = await request(app)
+      .post(`/api/sites/${siteId}/audits`)
+      .set('Cookie', user.cookie)
+      .send({ requestedPageCap: 100 });
+    expect(scanned.status).toBe(202);
+    expect(scanned.body.run.resourceScan).toBe(true);
+    const audit = await AuditLog.findOne({ actorUserId: user.id, action: 'audit.run' })
+      .sort({ _id: -1 })
+      .lean();
+    expect(audit?.metadata).toMatchObject({ resourceScan: true });
+  });
+
+  it('400 on a non-boolean resourceScan', async () => {
+    const { queue } = fakeQueue();
+    setAuditsQueue(queue);
+    const user = await signupVerifiedUser(app, { email: 'audit-scan-bad@x.co' });
+    const siteId = await addSite(user);
+    const res = await request(app)
+      .post(`/api/sites/${siteId}/audits`)
+      .set('Cookie', user.cookie)
+      .send({ resourceScan: 'yes' });
+    expect(res.status).toBe(400);
+  });
+
   it('400 on invalid body (negative pageCap)', async () => {
     const { queue } = fakeQueue();
     setAuditsQueue(queue);

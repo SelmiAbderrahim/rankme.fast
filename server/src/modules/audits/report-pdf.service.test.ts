@@ -69,6 +69,7 @@ function makeFinding(
     bucket,
     severity: 'warning',
     affectedUrls: bucket === 'passed' ? [] : [`https://example.com/page-${index}`],
+    category: 'indexability',
     copy: {
       titleKey: 'auditRules.robots-blocked.title',
       whyKey: 'auditRules.robots-blocked.why',

@@ -9,6 +9,7 @@ import {
   FAKE_AI_ANSWERS,
   FAKE_AI_KEYWORD_VOLUME,
   FAKE_AI_MENTIONS,
+  FAKE_AUDIT_RESOURCES,
   FAKE_AUDIT_RESULT,
   FAKE_BACKLINK_PAGE,
   FAKE_BACKLINK_SUMMARY,
@@ -102,9 +103,30 @@ describe('fake providers', () => {
     ).resolves.toEqual({ vendorTaskId: 'fake-audit-task-1' });
     await expect(fake.getAuditStatus('fake-audit-task-1')).resolves.toEqual({
       state: 'finished',
-      pagesCrawled: 2,
+      pagesCrawled: 6,
     });
     await expect(fake.getAuditResult('fake-audit-task-1')).resolves.toBe(FAKE_AUDIT_RESULT);
+  });
+
+  it('audit fake carries one deterministic case for every deep crawl signal', async () => {
+    const fake = createFakeAuditProvider();
+    const plain = await fake.getAuditResult('fake-audit-task-1');
+    expect(plain.capabilities).toEqual({ resourceScan: false });
+    expect(plain.resources).toBeUndefined();
+    expect(plain.pages.map((page) => page.statusCode)).toEqual([200, 200, 200, 200, 404, 503]);
+    expect(plain.redirectChains?.map((chain) => chain.isLoop)).toEqual([false, true]);
+    expect(plain.duplicateGroups?.map((group) => group.kind)).toEqual(['title', 'content']);
+    // Resources only answer for a task posted with the resource scan.
+    const scanned = await fake.getAuditResult('fake-audit-task-1', { resourceScan: true });
+    expect(scanned.capabilities).toEqual({ resourceScan: true });
+    expect(scanned.resources).toBe(FAKE_AUDIT_RESOURCES);
+    expect(scanned.pages).toBe(FAKE_AUDIT_RESULT.pages);
+  });
+
+  it('an explicit canned result wins over the resource scan option', async () => {
+    const result = { domainChecks: FAKE_AUDIT_RESULT.domainChecks, pages: [] };
+    const fake = createFakeAuditProvider({ result });
+    await expect(fake.getAuditResult('fake-audit-task-1', { resourceScan: true })).resolves.toBe(result);
   });
 
   it('audit fake honours canned-result overrides', async () => {

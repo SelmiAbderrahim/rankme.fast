@@ -142,11 +142,9 @@ interface MetricValueProps {
 }
 
 function MetricValue({ metric, row, locale, notAvailable }: MetricValueProps) {
-  return (
-    <span dir="ltr">
-      {formatPagesMetric(locale, metric, row.metrics[metric]) ?? notAvailable}
-    </span>
-  );
+  const value = formatPagesMetric(locale, metric, row.metrics[metric]);
+  return value === null ? <span className="text-muted-foreground">—<span className="sr-only">{notAvailable}</span></span>
+    : <span dir="ltr">{value}</span>;
 }
 
 interface SourceStateNoticeProps {
@@ -1091,6 +1089,7 @@ export function PagesPanel({ siteId }: PagesPanelProps) {
       ) : null}
 
       <PageDetailSheet
+        siteId={siteId}
         open={Boolean(urlState.pageId)}
         entry={detailEntry ?? {
           data: null,

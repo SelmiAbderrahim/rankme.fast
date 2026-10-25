@@ -64,6 +64,7 @@ function makeService(input: {
   providerSelection?: 'fake' | 'dataforseo';
   repository?: PagesServiceDeps['repository'];
   legacyBinding?: boolean;
+  auditDetail?: PagesServiceDeps['readAuditPageDetail'];
 } = {}) {
   return createPagesService({
     db: getTestDb() as never,
@@ -78,6 +79,7 @@ function makeService(input: {
         : { usable: false, propertyUrl: null, propertyUrlHash: null, bindingGenerationId: null, fallbackReason: 'gsc_not_connected' },
     ),
     readAudit: vi.fn().mockResolvedValue(input.audit ?? emptyAudit()),
+    readAuditPageDetail: input.auditDetail ?? vi.fn().mockResolvedValue(null),
     ...(input.repository ? { repository: input.repository } : {}),
     ...(input.syncGsc ? { syncGsc: input.syncGsc } : {}),
     ...(input.telemetry ? { telemetry: input.telemetry } : {}),
@@ -306,6 +308,25 @@ describe('Pages fallback list/detail/refresh', () => {
     await expect(service.detail(ACCOUNT, SITE, 'z'.repeat(43), '7d')).rejects.toMatchObject({ code: 'PAGES_PAGE_NOT_FOUND', status: 404 });
   });
 
+  it('adds what the latest audit recorded for exactly this page, in the caller locale', async () => {
+    const hash = page('https://example.com/a').pageHash;
+    await seedFallback(new Date('2026-08-02T00:00:00Z'), 10, [
+      { url: 'https://example.com/a', keyword: 'k', position: 1, searchVolume: 10, difficulty: 1, estimatedTraffic: 1 },
+    ]);
+    const audit = { runId: 'audit-1', facts: { clickDepth: 2 }, issues: [] };
+    const auditDetail = vi.fn().mockImplementation(async (_account: string, _site: string, isPage: (url: string) => boolean) => {
+      expect([isPage('https://example.com/a'), isPage('HTTPS://EXAMPLE.COM/a#top'), isPage('https://example.com/b'), isPage('not a url')])
+        .toEqual([true, true, false, false]);
+      return audit;
+    });
+    const detail = await makeService({ auditDetail }).detail(ACCOUNT, SITE, hash, '7d', 'de');
+    expect(detail.audit).toBe(audit);
+    expect(auditDetail).toHaveBeenCalledWith(ACCOUNT, SITE, expect.any(Function), 'de');
+    const defaulted = vi.fn().mockResolvedValue(null);
+    expect((await makeService({ auditDetail: defaulted }).detail(ACCOUNT, SITE, hash, '7d')).audit).toBeNull();
+    expect(defaulted).toHaveBeenCalledWith(ACCOUNT, SITE, expect.any(Function), 'en');
+  });
+
   it('sorts a measured value before an earlier null value', async () => {
     await seedFallback(new Date('2026-08-08T00:00:00Z'), 34, [
       { url: 'https://example.com/null-first', keyword: 'null', position: 1, searchVolume: 100, difficulty: null, estimatedTraffic: 100 },
@@ -373,6 +394,7 @@ describe('Pages fallback list/detail/refresh', () => {
       loadSite: vi.fn().mockResolvedValue(SITE_SHAPE),
       resolveGscState: vi.fn().mockResolvedValue({ usable: false, propertyUrl: null, propertyUrlHash: null, fallbackReason: 'gsc_property_unmatched' }),
       readAudit: vi.fn().mockResolvedValue(emptyAudit()),
+      readAuditPageDetail: vi.fn().mockResolvedValue(null),
     });
     expect((await noSource.list(ACCOUNT, SITE, listQuery())).envelope).toMatchObject({ source: 'none', status: 'unavailable', fallbackReason: 'gsc_property_unmatched' });
   });

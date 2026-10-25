@@ -1,4 +1,5 @@
 import { Bdi } from '@shared/components/Bdi';
+import { Link } from 'react-router-dom';
 import { ExternalLink, FileSearch, RotateCcw, X } from 'lucide-react';
 import type { RefObject } from 'react';
 import { useTranslation } from 'react-i18next';
@@ -24,13 +25,15 @@ import {
   TableRow,
 } from '@shared/ui/table';
 import { SAFE_EXTERNAL_REL, safeExternalHref } from '@shared/security/output-encoding';
-import type { PagesCacheEntry, PagesDetailResponse, PagesLoadState } from '../types';
+import type { PageAuditDetail, PagesCacheEntry, PagesDetailResponse, PagesLoadState } from '../types';
 import { formatPagesMetric } from '../formatters';
 import { pagesRowName } from '../formatters';
 import { crawlEvidenceLines, crawlStateLabel } from '../crawlState';
 import { PagesTrendChart } from './PagesTrendChart';
+import { EvidenceFacts } from '@features/report/components/DeepCrawlEvidence';
 
 interface PageDetailSheetProps {
+  siteId: string;
   entry: PagesCacheEntry<PagesDetailResponse>;
   loadState: PagesLoadState;
   open: boolean;
@@ -50,6 +53,7 @@ const DETAIL_METRICS = [
 ] as const;
 
 export function PageDetailSheet({
+  siteId,
   entry,
   loadState,
   open,
@@ -172,6 +176,8 @@ export function PageDetailSheet({
                 </CardContent>
               </Card>
 
+              {detail.audit !== undefined ? <PageAuditCard audit={detail.audit} siteId={siteId} url={page.url} /> : null}
+
               <Card>
                 <CardHeader>
                   <CardTitle className="text-base">{t('detail.opportunities')}</CardTitle>
@@ -289,4 +295,29 @@ export function PageDetailSheet({
       </SheetContent>
     </Sheet>
   );
+}
+
+function PageAuditCard({ audit, siteId, url }: { audit: PageAuditDetail | null; siteId: string; url: string }) {
+  const { t } = useTranslation(['pages', 'report']);
+  return <Card data-testid="page-audit-card">
+    <CardHeader><CardTitle className="text-base">{t('detail.audit.title')}</CardTitle></CardHeader>
+    <CardContent className="flex min-w-0 flex-col gap-4">
+      {audit === null ? <p className="text-sm text-muted-foreground">{t('detail.audit.notCrawled')}</p> : <>
+        <div data-testid="page-audit-facts"><EvidenceFacts page={{ url, problems: [], ...audit.facts }} /></div>
+        <div className="flex min-w-0 flex-col gap-2">
+          <h3 className="text-sm font-semibold">{t('detail.audit.issuesTitle')}</h3>
+          {audit.issues.length === 0 ? <p className="text-sm text-muted-foreground" data-testid="page-audit-no-issues">
+            {t('detail.audit.noIssues')}
+          </p> : <ul className="flex flex-col gap-2">
+            {audit.issues.map((issue) => <li key={issue.ruleId} className="flex min-w-0 flex-wrap items-center gap-2" data-testid="page-audit-issue">
+              <Badge variant={issue.bucket === 'fix-now' ? 'destructive' : 'secondary'}>{t(`report:tabs.${issue.bucket}`)}</Badge>
+              <Link to={`/sites/${encodeURIComponent(siteId)}?tab=report&bucket=${issue.bucket}&finding=${encodeURIComponent(issue.ruleId)}`}
+                className="min-w-0 break-words text-sm underline underline-offset-4 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring">
+                <Bdi>{issue.title}</Bdi>
+              </Link>
+            </li>)}</ul>}
+        </div>
+      </>}
+    </CardContent>
+  </Card>;
 }

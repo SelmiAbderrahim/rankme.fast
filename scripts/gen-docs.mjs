@@ -561,6 +561,30 @@ const RULE_PLAIN = {
     ['Not indexed by Google', 'Google looked at the page but didn’t add it to search results. If this rule can’t get data, reconnect Google Search Console.'],
     ['Rich results issues', 'Google recognised your structured data but found errors that keep the page from showing enhanced results.'],
     ['Indexed with warnings', 'The page is indexed, but Google flagged a canonical or duplicate-content problem.'],
+    ['Pages that answer with an error', 'Crawled addresses that returned an error (4xx or 5xx). Bring the page back or redirect the address. Addresses that refused our crawler (401, 403 or 429) may be bot protection, so check them in a browser first.'],
+    ['Redirect chains and loops', 'Addresses that take two or more redirects to reach a page, or never reach one. Point the first address straight at the final page.'],
+    ['Links that point to redirects', 'Internal links whose target redirects. Link to the final address instead.'],
+    ['Pages that redirect with a refresh tag', 'A `<meta http-equiv="refresh">` tag sends visitors on. Use a permanent (301) server redirect instead.'],
+    ['Canonical tags that point to the wrong place', 'A canonical that points to a broken page, a redirect, another canonical, or back and forth between two pages. Point it at a working page that names itself.'],
+    ['Pages no other page links to', 'Pages listed in your sitemap that no internal link reaches. Link to them from a related page or menu.'],
+    ['Pages buried deep in the site', 'Pages more than three clicks from the home page. Bring the important ones closer.'],
+    ['Pages that share a title', 'Two or more pages with the same `<title>`. Give each page its own.'],
+    ['Pages that look like copies of each other', 'Pages the crawler judged near-identical, with a similarity score out of ten. Merge them or make each one distinct.'],
+    ['Placeholder text on live pages', '"Lorem ipsum" filler text on a published page. Replace it with the real copy.'],
+    ['Secure pages linking to insecure addresses', 'HTTPS pages that link to `http://` addresses. Switch them to `https://`.'],
+    ['Images without alt text', 'Images with no `alt` attribute. Describe meaningful images and give decorative ones an empty `alt`.'],
+    ['Pages slow to start loading', 'The crawler waited more than 1.5 seconds for the first byte, or more than three seconds for the page. One lab load from our crawler, not every visitor\'s experience.'],
+    ['Very large pages', 'HTML over 1 MB. Over 3 MB the finding moves to Fix now.'],
+    ['Pages sent without compression', 'HTML sent without gzip or Brotli compression. Turn compression on at the server.'],
+    ['Scripts and styles that delay the first view', 'Files that block the first paint, with how many. Load scripts with `async` or `defer`.'],
+    ['Pages missing basic HTML declarations', 'No `<!DOCTYPE html>` line or no character-set declaration.'],
+    ['Outdated HTML on your pages', 'Removed tags, Flash or frames. Frames such as embedded videos can be fine, so check them rather than remove them.'],
+    ['Addresses that are hard to read', 'Addresses with unusual characters, query parameters, or more than 120 characters.'],
+    ['Pages without social sharing tags', 'No Open Graph tags, so a shared link may show the wrong title, text or image.'],
+    ['No favicon', 'No small site icon for browser tabs and search results.'],
+    ['Broken images, scripts or styles', 'Files a page needs that answer with an error. This check runs only on an audit started with the resource scan; otherwise the report lists it under Not evaluated.'],
+    ['Images that are larger than needed', 'Images over 500 KB. Runs with the full resource scan, like the check above.'],
+    ['Files browsers are told not to keep', 'Images, scripts and stylesheets sent with headers that stop browsers from caching them. Runs with the full resource scan.'],
   ],
   // For non-English locales we ship a shorter set of headline-only rule
   // labels (same order). The rule cards inside the app already show the
@@ -585,6 +609,30 @@ const RULE_PLAIN = {
     ['غير مفهرس', 'الصفحة موجودة لكن Google لم يُدرجها.'],
     ['مشاكل النتائج الغنية', 'تم رصد أخطاء في البيانات المهيكلة.'],
     ['مفهرسة مع تحذيرات', 'الصفحة مفهرسة لكن Google رصد إشارة تحذيرية.'],
+    ['صفحات تستجيب بخطأ', 'عناوين أعادت خطأ (4xx أو 5xx) أثناء الزحف. أعِد الصفحة أو وجّه عنوانها إلى صفحة عاملة، وافتح أولًا في المتصفح العناوين التي رفضت زاحفنا (401 أو 403 أو 429).'],
+    ['سلاسل وحلقات إعادة التوجيه', 'عناوين تمرّ بعمليتَي إعادة توجيه أو أكثر، أو لا تصل إلى أي صفحة. وجّه العنوان الأول مباشرةً إلى الصفحة النهائية.'],
+    ['روابط تشير إلى عمليات إعادة توجيه', 'روابط داخلية تعيد وجهتها التوجيه. اربط بالعنوان النهائي مباشرةً.'],
+    ['صفحات تعيد التوجيه بوسم تحديث', 'وسم `<meta http-equiv="refresh">` ينقل الزوار. استخدم إعادة توجيه دائمة (301) على الخادم بدلًا منه.'],
+    ['وسوم canonical تشير إلى المكان الخطأ', 'وسم canonical يشير إلى صفحة معطلة أو إعادة توجيه أو canonical آخر، أو يتردد بين صفحتين. وجّهه إلى صفحة عاملة تشير إلى نفسها.'],
+    ['صفحات لا ترتبط بها أي صفحة أخرى', 'صفحات في خريطة موقعك لا يصل إليها أي رابط داخلي. اربطها من صفحة ذات صلة أو من قائمة تنقّل.'],
+    ['صفحات مدفونة في عمق الموقع', 'صفحات تبعد أكثر من ثلاث نقرات عن الصفحة الرئيسية. قرّب المهمة منها.'],
+    ['صفحات تتشارك العنوان نفسه', 'صفحتان أو أكثر تحمل `<title>` نفسه. امنح كل صفحة عنوانها الخاص.'],
+    ['صفحات تبدو نسخًا من بعضها', 'صفحات شبه متطابقة مع درجة تشابه من عشرة. ادمجها أو اجعل كلًّا منها مختلفة.'],
+    ['نص مؤقت على صفحات منشورة', 'نص حشو «Lorem ipsum» على صفحة منشورة. استبدله بالمحتوى الحقيقي.'],
+    ['صفحات آمنة ترتبط بعناوين غير آمنة', 'صفحات HTTPS ترتبط بعناوين `http://`. حوّلها إلى `https://`.'],
+    ['صور بلا نص بديل', 'صور بلا سمة `alt`. صِف الصور ذات المعنى، واجعل `alt` فارغة للصور الزخرفية.'],
+    ['صفحات بطيئة في بدء التحميل', 'انتظر الزاحف أكثر من 1.5 ثانية لأول بايت أو أكثر من ثلاث ثوانٍ للصفحة. هذا تحميل مخبري واحد، لا تجربة كل زائر.'],
+    ['صفحات كبيرة جدًا', 'شيفرة HTML تتجاوز 1 MB. وفوق 3 MB تنتقل النتيجة إلى «إصلاح الآن».'],
+    ['صفحات تُرسَل دون ضغط', 'شيفرة HTML تُرسَل دون ضغط gzip أو Brotli. فعّل الضغط على الخادم.'],
+    ['سكربتات وأنماط تؤخّر العرض الأول', 'ملفات تحجب العرض الأول مع عددها. حمّل السكربتات باستخدام `async` أو `defer`.'],
+    ['صفحات تفتقد تعريفات HTML الأساسية', 'لا يوجد سطر `<!DOCTYPE html>` أو لا يوجد تعريف لترميز الأحرف.'],
+    ['شيفرة HTML قديمة في صفحاتك', 'وسوم مُزالة أو Flash أو إطارات. قد تكون الإطارات مثل الفيديو المضمَّن مقبولة، فتحقّق منها بدل حذفها.'],
+    ['عناوين يصعب قراءتها', 'عناوين فيها أحرف غير مألوفة أو معاملات استعلام أو أطول من 120 حرفًا.'],
+    ['صفحات بلا وسوم مشاركة اجتماعية', 'لا توجد وسوم Open Graph، فقد يعرض الرابط المُشارَك عنوانًا أو نصًا أو صورة خاطئة.'],
+    ['لا توجد أيقونة للموقع (favicon)', 'لا توجد أيقونة صغيرة للموقع في تبويبات المتصفح ونتائج البحث.'],
+    ['صور أو سكربتات أو أنماط معطلة', 'ملفات تحتاجها الصفحة تستجيب بخطأ. يعمل هذا الفحص فقط في تدقيق بدأ مع فحص الموارد، وإلا يظهر في التقرير ضمن «لم يُقيَّم».'],
+    ['صور أكبر من اللازم', 'صور تتجاوز 500 KB. يعمل مع الفحص الكامل للموارد مثل الفحص السابق.'],
+    ['ملفات يُطلب من المتصفحات عدم الاحتفاظ بها', 'صور وسكربتات وملفات أنماط تُرسَل بترويسات تمنع المتصفحات من تخزينها مؤقتًا. يعمل مع الفحص الكامل للموارد.'],
   ],
   fr: [
     ['Bloqué de Google', 'Une règle `robots.txt` empêche Google d’y accéder.'],
@@ -605,6 +653,30 @@ const RULE_PLAIN = {
     ['Non indexé', 'Google n’a pas ajouté la page à l’index.'],
     ['Problèmes de résultats enrichis', 'Erreurs dans les données structurées.'],
     ['Indexé avec avertissements', 'Signal de canonisation/doublon détecté.'],
+    ['Pages qui répondent par une erreur', 'Adresses explorées qui renvoient une erreur (4xx ou 5xx). Remettez la page en ligne ou redirigez l’adresse. Un refus (401, 403 ou 429) peut venir d’une protection anti-robots : vérifiez d’abord dans un navigateur.'],
+    ['Chaînes et boucles de redirection', 'Adresses qui passent par deux redirections ou plus, ou n’aboutissent jamais. Faites pointer la première directement vers la page finale.'],
+    ['Liens qui pointent vers des redirections', 'Liens internes dont la cible redirige. Pointez plutôt vers l’adresse finale.'],
+    ['Pages qui redirigent avec une balise refresh', 'Une balise `<meta http-equiv="refresh">` renvoie les visiteurs ailleurs. Utilisez plutôt une redirection serveur permanente (301).'],
+    ['Balises canonical qui pointent au mauvais endroit', 'Canonical vers une page cassée, une redirection, une autre canonical, ou en aller-retour entre deux pages. Pointez vers une page fonctionnelle qui se désigne elle-même.'],
+    ['Pages vers lesquelles aucune autre page ne renvoie', 'Pages de votre sitemap qu’aucun lien interne n’atteint. Liez-les depuis une page connexe ou un menu.'],
+    ['Pages enfouies dans l’arborescence', 'Pages à plus de trois clics de l’accueil. Rapprochez les plus importantes.'],
+    ['Pages qui partagent le même titre', 'Deux pages ou plus avec le même `<title>`. Donnez à chacune le sien.'],
+    ['Pages qui semblent copiées les unes sur les autres', 'Pages jugées quasi identiques, avec un score de similarité sur dix. Fusionnez-les ou différenciez-les.'],
+    ['Texte de remplissage sur des pages en ligne', 'Faux texte « Lorem ipsum » sur une page publiée. Remplacez-le par le vrai contenu.'],
+    ['Pages sécurisées qui renvoient vers des adresses non sécurisées', 'Pages HTTPS avec des liens vers des adresses `http://`. Passez-les en `https://`.'],
+    ['Images sans texte alternatif', 'Images sans attribut `alt`. Décrivez les images utiles et laissez un `alt` vide sur les images décoratives.'],
+    ['Pages lentes à démarrer', 'Plus de 1,5 seconde pour le premier octet, ou plus de trois secondes pour la page. Une seule mesure en laboratoire, pas l’expérience de chaque visiteur.'],
+    ['Pages très lourdes', 'HTML de plus de 1 Mo. Au-delà de 3 Mo, le constat passe dans À corriger.'],
+    ['Pages envoyées sans compression', 'HTML envoyé sans compression gzip ni Brotli. Activez-la sur le serveur.'],
+    ['Scripts et styles qui retardent le premier affichage', 'Fichiers qui bloquent le premier affichage, avec leur nombre. Chargez les scripts en `async` ou `defer`.'],
+    ['Pages sans les déclarations HTML de base', 'Pas de ligne `<!DOCTYPE html>` ou pas de déclaration de jeu de caractères.'],
+    ['HTML obsolète sur vos pages', 'Balises supprimées, Flash ou cadres. Un cadre comme une vidéo intégrée peut être légitime : vérifiez-le plutôt que de le supprimer.'],
+    ['Adresses difficiles à lire', 'Adresses avec des caractères inhabituels, des paramètres de requête ou plus de 120 caractères.'],
+    ['Pages sans balises de partage social', 'Pas de balises Open Graph : un lien partagé peut afficher le mauvais titre, texte ou image.'],
+    ['Pas de favicon', 'Aucune petite icône pour les onglets du navigateur et les résultats de recherche.'],
+    ['Images, scripts ou styles cassés', 'Fichiers nécessaires à la page qui renvoient une erreur. Vérification effectuée seulement pour un audit lancé avec l’analyse des ressources ; sinon, le rapport la classe dans Non évalué.'],
+    ['Images plus grandes que nécessaire', 'Images de plus de 500 Ko. Vérification liée à l’analyse complète des ressources, comme la précédente.'],
+    ['Fichiers exclus du cache des navigateurs', 'Images, scripts et feuilles de style envoyés avec des en-têtes qui empêchent leur mise en cache. Vérification liée à l’analyse complète des ressources.'],
   ],
   de: [
     ['Von Google blockiert', 'Eine `robots.txt`-Regel sperrt Google aus.'],
@@ -625,6 +697,30 @@ const RULE_PLAIN = {
     ['Nicht indexiert', 'Google hat die Seite nicht aufgenommen.'],
     ['Rich-Results-Fehler', 'Fehler in strukturierten Daten.'],
     ['Indexiert mit Warnung', 'Canonical-/Duplikat-Signal.'],
+    ['Seiten, die mit einem Fehler antworten', 'Gecrawlte Adressen mit Fehler (4xx oder 5xx). Stellen Sie die Seite wieder her oder leiten Sie die Adresse um. Abweisungen (401, 403 oder 429) können Bot-Schutz sein, prüfen Sie diese zuerst im Browser.'],
+    ['Weiterleitungsketten und -schleifen', 'Adressen mit zwei oder mehr Weiterleitungen oder ganz ohne Ziel. Leiten Sie die erste Adresse direkt auf die endgültige Seite.'],
+    ['Links, die auf Weiterleitungen zeigen', 'Interne Links, deren Ziel weiterleitet. Verlinken Sie direkt die endgültige Adresse.'],
+    ['Seiten, die per Refresh-Tag weiterleiten', 'Ein `<meta http-equiv="refresh">`-Tag leitet weiter. Nutzen Sie stattdessen eine permanente (301) Server-Weiterleitung.'],
+    ['Canonical-Tags, die an die falsche Stelle verweisen', 'Canonical auf eine defekte Seite, eine Weiterleitung, einen weiteren Canonical oder hin und her. Verweisen Sie auf eine funktionierende Seite, die sich selbst angibt.'],
+    ['Seiten, auf die keine andere Seite verlinkt', 'Seiten aus Ihrer Sitemap ohne internen Link. Verlinken Sie sie von einer passenden Seite oder einem Menü.'],
+    ['Seiten tief in der Website vergraben', 'Mehr als drei Klicks von der Startseite entfernt. Holen Sie wichtige Seiten näher heran.'],
+    ['Seiten mit demselben Titel', 'Zwei oder mehr Seiten mit gleichem `<title>`. Geben Sie jeder Seite einen eigenen.'],
+    ['Seiten, die wie Kopien voneinander wirken', 'Nahezu identische Seiten mit einem Ähnlichkeitswert von höchstens zehn. Führen Sie sie zusammen oder machen Sie jede eigenständig.'],
+    ['Platzhaltertext auf veröffentlichten Seiten', 'Fülltext wie „Lorem ipsum“ auf einer veröffentlichten Seite. Ersetzen Sie ihn durch den echten Text.'],
+    ['Sichere Seiten mit Verweisen auf unsichere Adressen', 'HTTPS-Seiten verlinken auf `http://`-Adressen. Stellen Sie diese auf `https://` um.'],
+    ['Bilder ohne Alt-Text', 'Bilder ohne `alt`-Attribut. Beschreiben Sie wichtige Bilder, dekorative erhalten ein leeres `alt`.'],
+    ['Seiten, die nur langsam zu laden beginnen', 'Mehr als 1,5 Sekunden bis zum ersten Byte oder mehr als drei Sekunden für die Seite. Ein einzelner Lab-Ladevorgang, nicht das Erlebnis jedes Besuchers.'],
+    ['Sehr große Seiten', 'HTML über 1 MB. Ab 3 MB rückt der Befund zu „Jetzt beheben“.'],
+    ['Seiten ohne Komprimierung ausgeliefert', 'HTML ohne gzip- oder Brotli-Komprimierung. Aktivieren Sie die Komprimierung am Server.'],
+    ['Skripte und Styles, die die erste Anzeige verzögern', 'Dateien, die die erste Darstellung blockieren, samt Anzahl. Laden Sie Skripte mit `async` oder `defer`.'],
+    ['Seiten ohne grundlegende HTML-Angaben', 'Keine `<!DOCTYPE html>`-Zeile oder keine Zeichensatz-Angabe.'],
+    ['Veraltetes HTML auf Ihren Seiten', 'Entfernte Tags, Flash oder Frames. Frames wie eingebettete Videos können in Ordnung sein, prüfen Sie sie also, statt sie zu entfernen.'],
+    ['Schwer lesbare Adressen', 'Adressen mit ungewöhnlichen Zeichen, Abfrageparametern oder mehr als 120 Zeichen.'],
+    ['Seiten ohne Tags zum Teilen in sozialen Netzwerken', 'Keine Open-Graph-Tags, daher zeigt ein geteilter Link womöglich den falschen Titel, Text oder ein falsches Bild.'],
+    ['Kein Favicon', 'Kein kleines Website-Symbol für Browser-Tabs und Suchergebnisse.'],
+    ['Defekte Bilder, Skripte oder Styles', 'Benötigte Dateien, die mit einem Fehler antworten. Läuft nur bei einem Audit, das mit dem Ressourcen-Scan gestartet wurde, sonst steht die Prüfung unter „Nicht geprüft“.'],
+    ['Bilder, die größer als nötig sind', 'Bilder über 500 KB. Läuft wie die Prüfung darüber mit dem vollständigen Ressourcen-Scan.'],
+    ['Dateien, die Browser nicht speichern sollen', 'Bilder, Skripte und Stylesheets mit Headern, die das Caching im Browser verhindern. Läuft mit dem vollständigen Ressourcen-Scan.'],
   ],
   es: [
     ['Bloqueado para Google', 'Una regla `robots.txt` impide el acceso.'],
@@ -645,6 +741,30 @@ const RULE_PLAIN = {
     ['No indexado', 'Google no incluyó la página.'],
     ['Problemas de resultados enriquecidos', 'Errores en datos estructurados.'],
     ['Indexado con avisos', 'Señal de canónico/duplicado.'],
+    ['Páginas que responden con un error', 'Direcciones rastreadas que devolvieron un error (4xx o 5xx). Recupera la página o redirige la dirección. Si rechazaron al rastreador (401, 403 o 429), puede ser una protección contra bots: ábrelas antes en un navegador.'],
+    ['Cadenas y bucles de redirecciones', 'Direcciones que pasan por dos o más redirecciones, o que nunca llegan a una página. Haz que la primera apunte directamente a la página final.'],
+    ['Enlaces que apuntan a redirecciones', 'Enlaces internos cuyo destino redirige. Enlaza directamente a la dirección final.'],
+    ['Páginas que redirigen con una etiqueta de actualización', 'Una etiqueta `<meta http-equiv="refresh">` reenvía al visitante. Usa en su lugar una redirección permanente (301) en el servidor.'],
+    ['Etiquetas canonical que apuntan al lugar equivocado', 'Un canonical que apunta a una página rota, a una redirección, a otro canonical o que va y viene entre dos páginas. Haz que apunte a una página activa que se declare a sí misma.'],
+    ['Páginas sin enlaces desde otras páginas', 'Páginas de tu sitemap a las que no llega ningún enlace interno. Enlázalas desde una página relacionada o desde un menú.'],
+    ['Páginas enterradas en lo más hondo del sitio', 'Páginas a más de tres clics de la página de inicio. Acerca las importantes.'],
+    ['Páginas que comparten título', 'Dos o más páginas con el mismo `<title>`. Da a cada una el suyo.'],
+    ['Páginas que parecen copias unas de otras', 'Páginas casi idénticas según el rastreador, con una puntuación de similitud sobre diez. Únelas o haz que cada una sea distinta.'],
+    ['Texto de relleno en páginas publicadas', 'Texto de relleno tipo «Lorem ipsum» en una página publicada. Sustitúyelo por el texto definitivo.'],
+    ['Páginas seguras que enlazan a direcciones no seguras', 'Páginas HTTPS que enlazan a direcciones `http://`. Cámbialas a `https://`.'],
+    ['Imágenes sin texto alternativo', 'Imágenes sin atributo `alt`. Describe las imágenes con contenido y deja un `alt` vacío en las decorativas.'],
+    ['Páginas que tardan en empezar a cargar', 'El rastreador esperó más de 1,5 segundos al primer byte, o más de tres segundos a la página. Es una sola carga de laboratorio, no la experiencia de cada visitante.'],
+    ['Páginas muy pesadas', 'HTML de más de 1 MB. Por encima de 3 MB, el resultado pasa a Corregir ya.'],
+    ['Páginas enviadas sin comprimir', 'HTML enviado sin compresión gzip ni Brotli. Activa la compresión en el servidor.'],
+    ['Scripts y estilos que retrasan la primera vista', 'Archivos que bloquean la primera visualización, con su número. Carga los scripts con `async` o `defer`.'],
+    ['Páginas sin las declaraciones HTML básicas', 'Falta la línea `<!DOCTYPE html>` o la declaración del juego de caracteres.'],
+    ['HTML obsoleto en tus páginas', 'Etiquetas retiradas, Flash o marcos. Algunos marcos, como los vídeos incrustados, pueden estar bien: revísalos antes de quitarlos.'],
+    ['Direcciones difíciles de leer', 'Direcciones con caracteres poco habituales, parámetros de consulta o más de 120 caracteres.'],
+    ['Páginas sin etiquetas para redes sociales', 'Sin etiquetas Open Graph, un enlace compartido puede mostrar un título, un texto o una imagen equivocados.'],
+    ['Sin favicon', 'Falta el pequeño icono del sitio para las pestañas del navegador y los resultados de búsqueda.'],
+    ['Imágenes, scripts o estilos rotos', 'Archivos que necesita una página y que responden con un error. Solo se comprueba en una auditoría iniciada con el análisis de recursos; si no, aparece en No evaluado.'],
+    ['Imágenes más grandes de lo necesario', 'Imágenes de más de 500 KB. Se comprueba con el análisis completo de recursos, como la anterior.'],
+    ['Archivos que los navegadores no pueden guardar en caché', 'Imágenes, scripts y hojas de estilo enviados con cabeceras que impiden que el navegador los guarde en caché. Se comprueba con el análisis completo de recursos.'],
   ],
   ru: [
     ['Закрыто от Google', 'Правило в `robots.txt` блокирует доступ.'],
@@ -665,6 +785,30 @@ const RULE_PLAIN = {
     ['Не проиндексировано', 'Google не добавил страницу в индекс.'],
     ['Проблемы rich-результатов', 'Ошибки в структурированных данных.'],
     ['Индексировано с предупреждениями', 'Сигнал canonical/дубликат.'],
+    ['Страницы, которые отвечают ошибкой', 'Адреса, вернувшие ошибку (4xx или 5xx). Восстановите страницу или перенаправьте адрес. Отказ нашему краулеру (401, 403 или 429) может быть защитой от ботов, поэтому сначала проверьте адрес в браузере.'],
+    ['Цепочки и циклы перенаправлений', 'Два и более перенаправления до страницы или цикл без конца. Направьте первый адрес сразу на конечную страницу.'],
+    ['Ссылки, ведущие на перенаправления', 'Внутренние ссылки на адрес с перенаправлением. Ссылайтесь сразу на конечный адрес.'],
+    ['Страницы, которые перенаправляют через тег обновления', 'Тег `<meta http-equiv="refresh">` уводит посетителей дальше. Замените его постоянным (301) перенаправлением на сервере.'],
+    ['Теги canonical указывают не туда', 'Canonical ведёт на неработающую страницу, перенаправление, другой canonical или по кругу. Укажите рабочую страницу, которая ссылается на себя.'],
+    ['Страницы, на которые не ссылается ни одна другая', 'Страницы из карты сайта без внутренних ссылок. Поставьте на них ссылку из меню или с близкой по теме страницы.'],
+    ['Страницы глубоко в структуре сайта', 'Больше трёх кликов от главной. Приблизьте важные страницы.'],
+    ['Страницы с одинаковым заголовком', 'У двух и более страниц один `<title>`. Дайте каждой свой.'],
+    ['Страницы, похожие на копии друг друга', 'Почти одинаковые страницы с оценкой сходства из десяти. Объедините их или сделайте разными.'],
+    ['Текст-заглушка на опубликованных страницах', 'Текст «Lorem ipsum» на опубликованной странице. Замените его настоящим.'],
+    ['Защищённые страницы ссылаются на незащищённые адреса', 'Страницы HTTPS со ссылками на адреса `http://`. Замените их на `https://`.'],
+    ['Изображения без alt-текста', 'Нет атрибута `alt`. Опишите содержательные изображения, а декоративным задайте пустой `alt`.'],
+    ['Страницы, которые долго начинают загружаться', 'Первый байт дольше 1,5 секунды или страница дольше трёх секунд. Это одна лабораторная загрузка, а не опыт каждого посетителя.'],
+    ['Очень большие страницы', 'HTML больше 1 MB. Больше 3 MB — уже «Исправить сейчас».'],
+    ['Страницы, которые отдаются без сжатия', 'HTML без сжатия gzip или Brotli. Включите сжатие на сервере.'],
+    ['Скрипты и стили, которые задерживают первый показ', 'Файлы, блокирующие первую отрисовку, и их число. Загружайте скрипты с `async` или `defer`.'],
+    ['На страницах нет базовых объявлений HTML', 'Нет строки `<!DOCTYPE html>` или объявления кодировки.'],
+    ['Устаревший HTML на ваших страницах', 'Удалённые теги, Flash или фреймы. Фреймы вроде встроенных видео бывают уместны, поэтому проверьте их, прежде чем удалять.'],
+    ['Трудночитаемые адреса', 'Необычные символы, параметры запроса или длина больше 120 символов.'],
+    ['Страницы без тегов для соцсетей', 'Нет тегов Open Graph, поэтому в превью ссылки могут оказаться не тот заголовок, текст или изображение.'],
+    ['Нет фавикона', 'Нет значка сайта для вкладок браузера и результатов поиска.'],
+    ['Неработающие изображения, скрипты или стили', 'Нужные странице файлы отвечают ошибкой. Проверка идёт, только если аудит запущен с проверкой ресурсов, иначе она в разделе «Не проверено».'],
+    ['Изображения больше, чем нужно', 'Изображения больше 500 KB. Входит в полную проверку ресурсов, как и предыдущая.'],
+    ['Файлы, которые браузерам запрещено сохранять', 'Изображения, скрипты и стили с заголовками, запрещающими кеширование. Входит в полную проверку ресурсов.'],
   ],
   zh: [
     ['被 Google 屏蔽', '`robots.txt` 阻止了访问。'],
@@ -685,6 +829,30 @@ const RULE_PLAIN = {
     ['未被 Google 索引', 'Google 未将页面纳入索引。'],
     ['富媒体结果有问题', '结构化数据存在错误。'],
     ['已索引但有警告', 'Canonical/重复内容信号。'],
+    ['返回错误的页面', '抓取到的地址返回了错误（4xx 或 5xx）。请恢复页面或重定向该地址。拒绝我们爬虫的地址（401、403 或 429）可能是防机器人保护，请先在浏览器中确认。'],
+    ['重定向链和重定向循环', '需要两次或更多次重定向才能到达页面，或永远无法到达的地址。让第一个地址直接指向最终页面。'],
+    ['指向重定向的链接', '目标会发生重定向的内部链接。请直接链接到最终地址。'],
+    ['使用刷新标签跳转的页面', '页面用 `<meta http-equiv="refresh">` 标签跳转访客。请改用服务器端永久（301）重定向。'],
+    ['指向错误位置的 canonical 标签', 'canonical 指向失效页面、重定向、另一个 canonical，或在两个页面间相互指向。请让它指向一个将自身设为 canonical 的可用页面。'],
+    ['没有任何页面链接到的页面', '站点地图中列出、但没有任何内部链接到达的页面。请从相关页面或菜单链接到它们。'],
+    ['藏得过深的页面', '距首页超过三次点击的页面。请让重要页面离首页更近。'],
+    ['标题相同的页面', '两个或更多页面使用相同的 `<title>`。请为每个页面设置独有标题。'],
+    ['内容彼此雷同的页面', '爬虫判定为几乎相同的页面，并给出满分十分的相似度。请合并它们，或让每个页面各具特色。'],
+    ['已上线页面中的占位文字', '已发布页面上有“Lorem ipsum”填充文字。请替换为真实内容。'],
+    ['链接到不安全地址的安全页面', 'HTTPS 页面链接到 `http://` 地址。请改为 `https://`。'],
+    ['缺少 alt 文本的图片', '没有 `alt` 属性的图片。请描述有意义的图片，装饰性图片使用空的 `alt`。'],
+    ['开始加载缓慢的页面', '爬虫等待首字节超过 1.5 秒，或等待页面超过三秒。这是我们爬虫的单次实验室加载，不代表每位访客的体验。'],
+    ['体积过大的页面', 'HTML 超过 1 MB。超过 3 MB 时该问题会移至“立即修复”。'],
+    ['未压缩传输的页面', 'HTML 传输时未使用 gzip 或 Brotli 压缩。请在服务器上开启压缩。'],
+    ['拖慢首屏显示的脚本和样式', '阻塞首次绘制的文件及其数量。请使用 `async` 或 `defer` 加载脚本。'],
+    ['缺少基本 HTML 声明的页面', '缺少 `<!DOCTYPE html>` 行或字符集声明。'],
+    ['页面上的过时 HTML', '已移除的标签、Flash 或框架。嵌入视频等框架可能没有问题，请先检查，不必直接删除。'],
+    ['难以阅读的地址', '包含特殊字符、查询参数或超过 120 个字符的地址。'],
+    ['缺少社交分享标签的页面', '没有 Open Graph 标签，分享链接时可能显示错误的标题、文字或图片。'],
+    ['没有网站图标（favicon）', '没有用于浏览器标签页和搜索结果的小型网站图标。'],
+    ['失效的图片、脚本或样式', '页面所需但返回错误的文件。仅在开启资源扫描的审计中运行此检查，否则报告会将其列在“未评估”下。'],
+    ['尺寸超出需要的图片', '超过 500 KB 的图片。与上一项检查一样，需要完整资源扫描。'],
+    ['浏览器被要求不缓存的文件', '发送时带有禁止浏览器缓存的标头的图片、脚本和样式表。需要完整资源扫描。'],
   ],
 };
 
@@ -868,6 +1036,73 @@ Una convención reciente que indica a los asistentes de IA qué páginas prefier
 `,
 };
 
+// How a single audit takes part in the resource scan (images, scripts and styles).
+const AUDIT_RESOURCE_SCAN_SECTION = {
+  en: `## Scanning images, scripts and styles
+
+The last three checks need every image, script and stylesheet on your pages to be loaded. That makes the crawl slower and uses more of your crawl budget, so each audit has its own option for it.
+
+- **Scan images, scripts and styles** is ticked by default when you start an audit. Untick it to skip the scan for that run.
+- A scanned audit loads these files for at most 1,000 pages. Pages beyond that are still crawled, without their files.
+- If the scan can't be read, the audit still finishes and the three checks appear under Not evaluated with the reason.
+- An audit that ran without the scan lists these checks under Not evaluated. Start a new audit with the option ticked to include them.
+`,
+  ar: `## فحص الصور والسكربتات والأنماط
+
+تحتاج الفحوص الثلاثة الأخيرة إلى تحميل كل صورة وسكربت وملف أنماط في صفحاتك. هذا يبطّئ الزحف ويستهلك جزءًا أكبر من ميزانية الزحف لديك، لذلك لكل تدقيق خيار خاص به.
+
+- خيار **فحص الصور والسكربتات والأنماط** مفعّل افتراضيًا عند بدء التدقيق. ألغِ تفعيله لتخطّي الفحص في هذه المرة.
+- يحمّل التدقيق مع الفحص هذه الملفات لما لا يزيد على 1000 صفحة. تُزحف الصفحات الأخرى أيضًا، لكن دون ملفاتها.
+- إن تعذّرت قراءة نتيجة الفحص، يكتمل التدقيق رغم ذلك وتظهر الفحوص الثلاثة ضمن «لم يُقيَّم» مع السبب.
+- التدقيق الذي جرى دون الفحص يعرض هذه الفحوص ضمن «لم يُقيَّم». ابدأ تدقيقًا جديدًا مع تفعيل الخيار لتضمينها.
+`,
+  fr: `## Analyser les images, scripts et styles
+
+Les trois dernières vérifications ont besoin de charger chaque image, script et feuille de style de vos pages. L’exploration est alors plus lente et consomme davantage de votre budget d’exploration, c’est donc une option propre à chaque audit.
+
+- **Analyser les images, scripts et styles** est cochée par défaut quand vous lancez un audit. Décochez-la pour ignorer l’analyse pour cette exécution.
+- Un audit analysé charge ces fichiers pour 1 000 pages au plus. Les pages au-delà sont quand même explorées, mais sans leurs fichiers.
+- Si l’analyse ne peut pas être lue, l’audit se termine quand même et les trois vérifications apparaissent dans Non évalué, avec la raison.
+- Un audit lancé sans l’analyse classe ces vérifications dans Non évalué. Lancez un nouvel audit avec l’option cochée pour les inclure.
+`,
+  de: `## Bilder, Skripte und Styles prüfen
+
+Die letzten drei Prüfungen müssen jedes Bild, jedes Skript und jedes Stylesheet Ihrer Seiten laden. Dadurch wird der Crawl langsamer und verbraucht mehr von Ihrem Crawl-Budget, deshalb hat jedes Audit dafür eine eigene Option.
+
+- **Bilder, Skripte und Styles prüfen** ist beim Start eines Audits standardmäßig angehakt. Entfernen Sie das Häkchen, um die Prüfung für diesen Lauf zu überspringen.
+- Ein Audit mit dieser Prüfung lädt die Dateien für höchstens 1.000 Seiten. Weitere Seiten werden trotzdem gecrawlt, aber ohne ihre Dateien.
+- Lässt sich das Ergebnis nicht auslesen, wird das Audit trotzdem fertig, und die drei Prüfungen stehen mit Grund unter „Nicht geprüft“.
+- Ein Audit ohne diese Prüfung führt die drei Prüfungen unter „Nicht geprüft“ auf. Starten Sie ein neues Audit mit gesetztem Häkchen, um sie einzubeziehen.
+`,
+  es: `## Analizar imágenes, scripts y estilos
+
+Las tres últimas comprobaciones necesitan cargar cada imagen, script y hoja de estilo de tus páginas. Eso hace el rastreo más lento y gasta más de tu presupuesto de rastreo, así que cada auditoría tiene su propia opción.
+
+- **Analizar imágenes, scripts y estilos** viene marcada por defecto al iniciar una auditoría. Desmárcala para omitir el análisis en esa ejecución.
+- Una auditoría con análisis carga estos archivos en 1.000 páginas como máximo. Las páginas que superen ese número se rastrean igualmente, pero sin sus archivos.
+- Si el análisis no se puede leer, la auditoría termina igualmente y las tres comprobaciones aparecen en No evaluado con el motivo.
+- Una auditoría hecha sin el análisis muestra estas comprobaciones en No evaluado. Inicia una auditoría nueva con la opción marcada para incluirlas.
+`,
+  ru: `## Проверка изображений, скриптов и стилей
+
+Трём последним проверкам нужно загрузить каждое изображение, скрипт и таблицу стилей на ваших страницах. Из-за этого обход идёт медленнее и тратит больше вашего бюджета обхода, поэтому у каждого аудита есть отдельная опция.
+
+- Опция **Проверить изображения, скрипты и стили** при запуске аудита включена по умолчанию. Снимите отметку, чтобы пропустить проверку в этом запуске.
+- Аудит с проверкой загружает эти файлы не более чем для 1 000 страниц. Остальные страницы всё равно обходятся, но без их файлов.
+- Если результат проверки не удалось прочитать, аудит всё равно завершается, а три проверки попадают в «Не проверено» с причиной.
+- Если аудит прошёл без проверки, эти проверки указаны в «Не проверено». Запустите новый аудит с включённой опцией, чтобы добавить их.
+`,
+  zh: `## 扫描图片、脚本和样式
+
+最后三项检查需要加载您页面上的每张图片、每个脚本和样式表。这会让抓取变慢，也会多消耗您的抓取预算，因此每次审计都有单独的选项。
+
+- 开始审计时，**扫描图片、脚本和样式** 默认处于勾选状态。取消勾选即可在本次审计中跳过扫描。
+- 开启扫描的审计最多为 1,000 个页面加载这些文件。超出的页面仍会被抓取，但不加载其文件。
+- 如果扫描结果无法读取，审计仍会完成，三项检查会连同原因列在“未评估”下。
+- 未开启扫描的审计会把这些检查列在“未评估”下。勾选该选项并重新运行审计即可包含它们。
+`,
+};
+
 P['audit-report'] = {};
 for (const loc of LOCALES) {
   P['audit-report'][loc] = () => {
@@ -875,7 +1110,7 @@ for (const loc of LOCALES) {
     const list = RULE_PLAIN[loc]
       .map(([label, plain]) => `- **${label}**${separator}${plain}`)
       .join('\n');
-    return auditReportHead[loc] + list + '\n';
+    return auditReportHead[loc] + list + '\n\n' + AUDIT_RESOURCE_SCAN_SECTION[loc];
   };
 }
 

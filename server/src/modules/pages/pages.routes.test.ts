@@ -39,7 +39,7 @@ describe('Pages routes and controller', () => {
     await request(appFor(mock)).get(`/api/sites/${SITE}/pages?range=7d&limit=50&sort=url&direction=asc&q=alpha`).expect(200, { kind: 'list' });
     expect(mock.list).toHaveBeenCalledWith('workspace', SITE, expect.objectContaining({ range: '7d', limit: 50, sort: 'url', direction: 'asc', q: 'alpha' }));
     await request(appFor(mock)).get(`/api/sites/${SITE}/pages/${PAGE}?range=90d`).expect(200, { kind: 'detail' });
-    expect(mock.detail).toHaveBeenCalledWith('workspace', SITE, PAGE, '90d');
+    expect(mock.detail).toHaveBeenCalledWith('workspace', SITE, PAGE, '90d', 'en');
     await request(appFor(mock)).post(`/api/sites/${SITE}/pages/refresh`).send({}).expect(200, { kind: 'refresh' });
     await request(appFor(mock)).post(`/api/sites/${SITE}/pages/refresh`).expect(200, { kind: 'refresh' });
     expect(mock.refresh).toHaveBeenCalledWith('workspace', SITE);

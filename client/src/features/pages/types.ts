@@ -230,6 +230,23 @@ export interface PagesDetailResponse {
     truncated: boolean;
   };
   trend: TrendPoint[];
+  audit?: PageAuditDetail | null;
+}
+
+export interface PageAuditDetail {
+  runId: string;
+  facts: {
+    clickDepth?: number;
+    inboundInternalLinks?: number;
+    pageSizeBytes?: number;
+    serverResponseMs?: number;
+  };
+  issues: Array<{
+    ruleId: string;
+    bucket: 'fix-now' | 'watch';
+    severity: 'critical' | 'warning' | 'info';
+    title: string;
+  }>;
 }
 
 export interface PagesRefreshResponse {

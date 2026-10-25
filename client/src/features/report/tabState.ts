@@ -1,5 +1,5 @@
 import { useTabParam } from '@shared/hooks/useTabParam';
-import type { RuleBucket } from './types';
+import { REPORT_CATEGORIES, type ReportCategory, type RuleBucket } from './types';
 
 export const REPORT_TABS = ['fix-now', 'watch', 'passed'] as const;
 export type ReportTab = (typeof REPORT_TABS)[number];
@@ -23,4 +23,24 @@ export function useReportTab(): [ReportTab, (tab: ReportTab) => void] {
 
 export function bucketForTab(tab: ReportTab): RuleBucket {
   return tab;
+}
+
+export const REPORT_CATEGORY_ALL = 'all' as const;
+export type ReportCategoryFilter = ReportCategory | typeof REPORT_CATEGORY_ALL;
+const CATEGORY_FILTERS: readonly ReportCategoryFilter[] = [REPORT_CATEGORY_ALL, ...REPORT_CATEGORIES];
+
+/**
+ * `?category=` filter of the report — same URL-state contract as the bucket
+ * tabs: default `all`, invalid values fall back.
+ */
+export function useReportCategory(): [ReportCategoryFilter, (category: ReportCategoryFilter) => void] {
+  return useTabParam<ReportCategoryFilter>(REPORT_CATEGORY_ALL, CATEGORY_FILTERS, 'category');
+}
+
+/** Findings of one category; `all` keeps every finding. */
+export function filterByCategory<T extends { category?: ReportCategory | null }>(
+  findings: readonly T[],
+  category: ReportCategoryFilter,
+): T[] {
+  return category === REPORT_CATEGORY_ALL ? [...findings] : findings.filter((finding) => finding.category === category);
 }

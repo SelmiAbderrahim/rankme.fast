@@ -466,7 +466,7 @@ export async function toolListActions(rawInput: unknown, context: McpToolContext
         const input = listActionsInputSchema.parse(rawInput ?? {});
         assertSiteAllowed(context.permissions, input.siteId);
         const filters = {
-            ...(input.state ? { state: input.state } : {}),
+            state: input.state ?? ['open', 'planned'],
             ...(input.source ? { source: input.source } : {}),
             ...(input.severity ? { severity: input.severity } : {}),
         };

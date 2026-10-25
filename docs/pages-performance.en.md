@@ -1,6 +1,6 @@
 ---
 title: 'Page performance'
-description: 'How the Pages tab chooses data, compares snapshots, and counts refreshes.'
+description: 'How the Pages tab shows stored search data, crawl context, and page metrics.'
 locale: en
 slug: pages-performance
 section: research
@@ -35,11 +35,13 @@ Fallback position, search volume, difficulty, ranking-keyword count, and estimat
 
 Crawl indexability describes what RankMeFast found while crawling. It does not prove whether Google indexed a URL. A provider-visible non-indexable page remains in the list so you can investigate the conflict.
 
-## Refresh cost and stale data
+## Stored data and refresh
 
-Search Console refresh reuses the connected Search Console sync and does not spend a keyword lookup. A fallback refresh costs one keyword lookup, including a cache hit, and the button makes that action explicit. Opening detail, searching, filtering, sorting, changing page size, and moving between result pages only read saved data and don't use any allowance.
+The Pages table keeps the page column visible while you scroll. Use **Columns** to show or hide other fields. Empty values appear as a dash; a zero means the source measured zero. Pages without a title are named by their path. If a measured URL matches a crawled page under a language prefix, **Crawled as** shows that path.
 
-If a refresh fails, the last successful snapshot stays visible and is marked stale. An old fallback snapshot can also become stale when it passes the ranked-keyword cache freshness window. Once the provider or connection is back, retry with the refresh button.
+For Search Console, the date note gives the exact days behind the page totals. Google may count an impression for each page shown in one search, including searches whose query text is private, so page totals can exceed the site totals on the Google tab. **Too little data** marks a page with few impressions and no clicks; it has no movement label yet. The crawl note reports how many URLs the last audit fetched and why it stopped, when that evidence was recorded.
+
+Opening details, searching, filtering, sorting and changing columns or result pages read stored data. **Refresh** requests new source data. If it fails, the last successful snapshot remains visible and is marked stale. Try again when the connection is available.
 
 ## Deletion and exports
 
@@ -50,8 +52,7 @@ Deleting a site, or completing an account-deletion request, removes its stored P
 - For **Syncing**, wait for the first Search Console collection and refresh the view later.
 - For **Reconnect**, restore the Google connection from the Google tab.
 - For **Property does not match**, select a Search Console property that covers the site's exact URL prefix or domain.
-- For **No stored source**, connect Search Console or run the fallback collection (it uses a keyword lookup).
-- For **Limit reached**, review keyword-lookup usage or your plan. Existing stored snapshots remain readable.
+- For **No stored source**, connect Search Console or choose **Get ranking data**.
 - For **Unavailable**, retry the same source. RankMeFast does not silently switch away from usable Search Console data.
 
 See also [Connecting Google Search Console](./google-search-console.en.md) and [Rank tracking](./rank-tracking.en.md).

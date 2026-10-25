@@ -604,7 +604,7 @@ describe('MCP tool handlers', () => {
       cursor: '20',
     });
 
-    // No filters / no paging — the optional keys are omitted, not sent as undefined.
+    // The assistant sees open and planned work unless it requests another state.
     mocks.listActionsForSite.mockResolvedValue({
       items: [],
       sourceStatus: {},
@@ -619,6 +619,7 @@ describe('MCP tool handlers', () => {
       siteId: SITE_ID,
       locale: context.locale,
       db: { kind: 'db' },
+      filters: { state: ['open', 'planned'] },
     });
   });
 

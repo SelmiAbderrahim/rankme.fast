@@ -310,7 +310,19 @@
     "associatedCount_two": "Showing {{shown}} of {{total}} associated rows.",
     "associatedCount_few": "Showing {{shown}} of {{total}} associated rows.",
     "associatedCount_many": "Showing {{shown}} of {{total}} associated rows.",
-    "associatedCount_other": "Showing {{shown}} of {{total}} associated rows."
+    "associatedCount_other": "Showing {{shown}} of {{total}} associated rows.",
+    "audit": {
+      "title": "From the latest audit",
+      "notCrawled": "The latest audit did not crawl this page.",
+      "issuesTitle": "Issues on this page",
+      "noIssues": "The latest audit found no open issues on this page.",
+      "facts": {
+        "clickDepth": "Clicks from home",
+        "inboundInternalLinks": "Internal links to it",
+        "pageSizeBytes": "Page size",
+        "serverResponseMs": "First byte"
+      }
+    }
   },
   "notifications": {
     "refreshed": "{{source}} data was refreshed successfully.",

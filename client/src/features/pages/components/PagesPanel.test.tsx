@@ -1,6 +1,6 @@
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 import { createRef } from 'react';
-import { act, render, screen, waitFor } from '@testing-library/react';
+import { act, render, screen, waitFor, within } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { Provider } from 'react-redux';
 import { configureStore } from '@reduxjs/toolkit';
@@ -227,6 +227,7 @@ const renderDetailSheet = (
   const result = render(
     <I18nextProvider i18n={i18n}>
       <PageDetailSheet
+        siteId="site-1"
         entry={entry}
         loadState={loadState}
         open
@@ -251,6 +252,7 @@ const requestError = (patch: Partial<PagesRequestError> = {}): PagesRequestError
 });
 
 beforeEach(async () => {
+  window.localStorage.clear();
   mockedList.mockReset();
   mockedDetail.mockReset();
   mockedRefresh.mockReset();
@@ -271,7 +273,7 @@ describe('PagesPanel source-aware list and detail', () => {
     expect(screen.getByTestId('pages-desktop-table')).toBeInTheDocument();
     expect(screen.getByTestId('pages-mobile-cards')).toBeInTheDocument();
     expect(screen.getAllByText('0').length).toBeGreaterThan(0);
-    const links = screen.getAllByRole('link', { name: /example\.com\/a/i });
+    const links = screen.getAllByRole('link', { name: /\/a\?x=1/i });
     expect(links[0]).toHaveAttribute('rel', 'nofollow ugc noopener noreferrer');
     expect(links[0]).toHaveAttribute('target', '_blank');
     expect(screen.getByRole('columnheader', { name: /Page/ })).toHaveAttribute('aria-sort', 'none');
@@ -318,7 +320,8 @@ describe('PagesPanel source-aware list and detail', () => {
     renderPanel();
     expect((await screen.findAllByText('Unmeasured')).length).toBeGreaterThan(0);
     expect(screen.getAllByText('Not available').length).toBeGreaterThan(0);
-    expect(screen.getAllByText('Untitled page').length).toBeGreaterThan(0);
+    expect(screen.queryByText('Untitled page')).toBeNull();
+    expect(screen.getAllByText('/a?x=1').length).toBeGreaterThan(0);
     expect(screen.getAllByText('Crawl state unknown').length).toBeGreaterThan(0);
     expect(screen.getAllByText('No current opportunity flag').length).toBeGreaterThan(0);
   });
@@ -366,9 +369,77 @@ describe('PagesPanel source-aware list and detail', () => {
     mockedList.mockResolvedValue(listResponse());
     renderPanel();
     await screen.findByText('Google Search Console');
-    expect(screen.getByText(/^Pages with search data: \d+ of \d+\. Pages without: \d+\.$/)).toBeVisible();
+    expect(screen.getByTestId('pages-coverage')).toHaveTextContent('Canonical pages with search data: 1 of 2.');
     expect(screen.getByText('Search Console data runs about 3 days behind.')).toBeVisible();
     expect(screen.queryByText(/source rows|inventory pages/)).toBeNull();
+  });
+
+  it('keeps the page column visible while a chosen metric is hidden', async () => {
+    const user = userEvent.setup();
+    mockedList.mockResolvedValue(listResponse());
+    renderPanel();
+    const table = await screen.findByTestId('pages-desktop-table');
+    expect(within(table).getByRole('columnheader', { name: /Page/ })).toBeInTheDocument();
+    await user.click(screen.getByRole('button', { name: 'Columns' }));
+    await user.click(screen.getByRole('menuitemcheckbox', { name: 'Clicks' }));
+    expect(within(table).queryByRole('columnheader', { name: 'Clicks' })).toBeNull();
+    expect(within(table).getByRole('columnheader', { name: /Page/ })).toBeInTheDocument();
+  });
+
+  it('explains the Search Console window and a crawled locale path', async () => {
+    const response = listResponse();
+    response.envelope.dataWindow = { startDate: '2026-07-10', endDate: '2026-08-06' };
+    response.items[0] = page({ title: null, crawlState: 'not_in_crawl', crawledAs: 'example.com/de/a' });
+    mockedList.mockResolvedValue(response);
+    renderPanel();
+    expect(await screen.findByTestId('pages-summary-note')).toHaveTextContent('Jul');
+    expect(screen.getByTestId('pages-summary-note')).toHaveTextContent('these totals can be higher than the site totals');
+    expect(screen.getAllByText('Crawled as /de/a').length).toBeGreaterThan(0);
+    expect(screen.queryByText('Untitled page')).toBeNull();
+  });
+
+  it('shows stored audit facts and links open page findings to the report', async () => {
+    mockedList.mockResolvedValue(listResponse());
+    const detail = detailResponse();
+    detail.audit = {
+      runId: 'audit-1', facts: { clickDepth: 3, inboundInternalLinks: 2, pageSizeBytes: 4096 },
+      issues: [
+        { ruleId: 'broken-link', bucket: 'fix-now', severity: 'warning', title: 'Repair this link' },
+        { ruleId: 'deep-pages', bucket: 'watch', severity: 'info', title: 'Link to this page sooner' },
+      ],
+    };
+    mockedDetail.mockResolvedValue(detail);
+    renderPanel();
+    await screen.findByTestId('pages-desktop-row');
+    await userEvent.click(screen.getAllByRole('button', { name: 'Inspect page' })[0]!);
+    expect(await screen.findByTestId('page-audit-card')).toHaveTextContent('From the latest audit');
+    expect(screen.getByTestId('page-audit-facts')).toBeInTheDocument();
+    expect(screen.getByRole('link', { name: 'Repair this link' })).toHaveAttribute('href',
+      '/sites/site-1?tab=report&bucket=fix-now&finding=broken-link');
+    expect(screen.getByRole('link', { name: 'Link to this page sooner' })).toHaveAttribute('href',
+      '/sites/site-1?tab=report&bucket=watch&finding=deep-pages');
+  });
+
+  it('says when the latest audit did not crawl the page, and when it found nothing open', async () => {
+    mockedList.mockResolvedValue(listResponse());
+    const notCrawled = detailResponse();
+    notCrawled.audit = null;
+    mockedDetail.mockResolvedValueOnce(notCrawled);
+    renderPanel();
+    await screen.findByTestId('pages-desktop-row');
+    await userEvent.click(screen.getAllByRole('button', { name: 'Inspect page' })[0]!);
+    expect(await screen.findByTestId('page-audit-card')).toHaveTextContent('The latest audit did not crawl this page.');
+  });
+
+  it('lists watch findings and an empty issue list from the latest audit', async () => {
+    mockedList.mockResolvedValue(listResponse());
+    const clean = detailResponse();
+    clean.audit = { runId: 'audit-1', facts: {}, issues: [] };
+    mockedDetail.mockResolvedValueOnce(clean);
+    renderPanel();
+    await screen.findByTestId('pages-desktop-row');
+    await userEvent.click(screen.getAllByRole('button', { name: 'Inspect page' })[0]!);
+    expect(await screen.findByTestId('page-audit-no-issues')).toHaveTextContent('found no open issues');
   });
 
   it('only promises collection on actions the page actually shows', async () => {

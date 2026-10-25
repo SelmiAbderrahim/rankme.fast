@@ -1,6 +1,6 @@
 ---
 title: 'Performance des pages'
-description: 'Comment l’onglet Pages choisit sa source, compare les instantanés et compte les actualisations.'
+description: 'Comment l’onglet Pages présente les données de recherche enregistrées, le crawl et les mesures.'
 locale: fr
 slug: pages-performance
 section: research
@@ -35,11 +35,13 @@ La position, le volume, la difficulté, le nombre de mots-clés classés et le t
 
 L'indexabilité de crawl décrit ce que RankMeFast a trouvé en explorant le site. Elle ne prouve pas que Google a indexé l'URL. Une page visible mais non indexable reste affichée pour permettre l'analyse du conflit.
 
-## Coût et données obsolètes
+## Données enregistrées et actualisation
 
-Une actualisation Search Console réutilise la synchronisation connectée sans dépenser de recherche de mot-clé. Une actualisation de secours coûte une recherche, y compris en cas de cache. L'ouverture d'un détail, la recherche, les filtres, le tri et la pagination restent gratuits.
+La colonne Page reste visible lors du défilement horizontal. Utilisez **Colonnes** pour afficher ou masquer les autres champs. Un tiret indique une valeur absente ; zéro signifie que la source a mesuré zéro. Une page sans titre porte le nom de son chemin. Si une URL mesurée correspond à une page explorée sous un préfixe de langue, **Explorée sous** affiche ce chemin.
 
-Après un échec, le dernier instantané réussi reste visible avec le statut obsolète. Un ancien instantané de secours devient aussi obsolète après la fenêtre de fraîcheur du cache.
+La note Search Console précise les jours couverts par les totaux des pages. Google peut compter une impression pour chaque page affichée lors d’une recherche, même lorsque le texte de la requête reste privé. Les totaux des pages peuvent donc dépasser ceux du site dans l’onglet Google. **Données insuffisantes** signale une page avec peu d’impressions et aucun clic ; elle ne reçoit pas encore de libellé de progression. La note d’exploration indique combien d’URL le dernier audit a récupérées et, si cela a été enregistré, pourquoi il s’est arrêté.
+
+L’ouverture des détails, la recherche, les filtres, le tri et le changement de colonnes ou de pages de résultats lisent les données enregistrées. **Actualiser** demande de nouvelles données à la source. En cas d’échec, le dernier instantané réussi reste visible et est marqué comme obsolète. Réessayez lorsque la connexion est disponible.
 
 ## Suppression et export
 
@@ -50,8 +52,7 @@ La suppression d'un site, ou l'achèvement d'une demande de suppression du compt
 - Pour **Synchronisation**, attendez la première collecte Search Console.
 - Pour **Reconnexion**, rétablissez Google depuis son onglet.
 - Si la propriété ne correspond pas, choisissez une propriété couvrant le préfixe d'URL ou le domaine.
-- Sans source stockée, connectez Search Console ou lancez la collecte de secours comptabilisée.
-- À la limite, consultez l'usage ou le forfait. Les instantanés existants restent lisibles.
+- Sans source enregistrée, connectez Search Console ou choisissez **Obtenir des données de classement**.
 - En cas d'indisponibilité, réessayez la même source. RankMeFast ne remplace pas silencieusement une source Search Console utilisable.
 
 Voir aussi [Connexion à Google Search Console](./google-search-console.fr.md) et [Suivi de positions](./rank-tracking.fr.md).

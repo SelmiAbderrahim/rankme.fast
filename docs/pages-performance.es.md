@@ -1,6 +1,6 @@
 ---
 title: 'Rendimiento de páginas'
-description: 'Cómo la pestaña Páginas elige la fuente, compara instantáneas y cuenta las actualizaciones.'
+description: 'Cómo la pestaña Páginas muestra datos de búsqueda guardados, contexto del rastreo y métricas.'
 locale: es
 slug: pages-performance
 section: research
@@ -35,11 +35,13 @@ La posición, volumen, dificultad, cantidad de palabras posicionadas y tráfico 
 
 La indexabilidad de rastreo describe lo que encontró RankMeFast al rastrear. No demuestra que Google haya indexado una URL. Una página visible y no indexable se conserva para que puedas investigar el conflicto.
 
-## Coste y datos obsoletos
+## Datos guardados y actualización
 
-Actualizar Search Console reutiliza su sincronización y no gasta una búsqueda de palabra clave. Actualizar la fuente alternativa cuesta una búsqueda, incluso si se acierta en caché. Abrir detalles, buscar, filtrar, ordenar y paginar solo leen datos guardados y no gastan cuota.
+La columna Página permanece visible al desplazar la tabla. Usa **Columnas** para mostrar u ocultar los demás campos. Un guion indica que falta un valor; el cero indica que la fuente midió cero. Las páginas sin título se identifican por su ruta. Si una URL medida coincide con una página rastreada bajo un prefijo de idioma, **Rastreada como** muestra esa ruta.
 
-Si falla una actualización, la última instantánea válida sigue visible con estado obsoleto. Una instantánea alternativa también pasa a obsoleta cuando supera la ventana de frescura de la caché.
+La nota de Search Console indica los días exactos que abarcan los totales por página. Google puede contar una impresión por cada página mostrada en una búsqueda, incluso cuando oculta el texto de la consulta. Por eso, los totales por página pueden superar los totales del sitio en la pestaña Google. **Datos insuficientes** señala páginas con pocas impresiones y ningún clic; todavía no reciben una etiqueta de cambio. La nota de rastreo indica cuántas URL obtuvo la última auditoría y, si consta, por qué terminó.
+
+Abrir detalles, buscar, filtrar, ordenar y cambiar columnas o páginas de resultados lee datos guardados. **Actualizar** solicita datos nuevos a la fuente. Si falla, la última instantánea válida permanece visible y se marca como obsoleta. Vuelve a intentarlo cuando la conexión esté disponible.
 
 ## Eliminación y exportación
 
@@ -50,8 +52,7 @@ Al eliminar un sitio o completar una solicitud de eliminación de cuenta se borr
 - Para **Sincronizando**, espera a la primera recopilación de Search Console.
 - Para **Reconectar**, restaura Google desde su pestaña.
 - Si la propiedad no coincide, elige una que cubra el prefijo de URL o el dominio.
-- Sin fuente guardada, conecta Search Console o inicia la recopilación alternativa contabilizada.
-- Al alcanzar el límite, revisa el uso o el plan. Las instantáneas existentes siguen disponibles.
+- Sin fuente guardada, conecta Search Console o elige **Obtener datos de posiciones**.
 - Si no está disponible, reintenta la misma fuente. RankMeFast no abandona en silencio una fuente de Search Console válida.
 
 Consulta también [Conectar Google Search Console](./google-search-console.es.md) y [Seguimiento de posiciones](./rank-tracking.es.md).

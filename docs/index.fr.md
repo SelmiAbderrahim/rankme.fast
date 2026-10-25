@@ -44,7 +44,7 @@ order: 0
 - [Tendances des mots-clés](./keyword-trends.fr.md) : Explorez la direction, l’élan et la saisonnalité de l’intérêt de recherche avec des estimations clairement signalées.
 - [Intelligence des avis](./review-intelligence.fr.md) : Synchronisez les avis publics à la demande, consultez tendances et thèmes cités, et sachez quand une unité est rendue.
 - [Radar de marque](./brand-radar.fr.md) : Analysez une requête de marque à la demande, examinez les mentions conservées et comprenez l’option et le remboursement.
-- [Performance des pages](./pages-performance.fr.md) : Comment l’onglet Pages choisit sa source, compare les instantanés et compte les actualisations.
+- [Performance des pages](./pages-performance.fr.md) : Comment l’onglet Pages présente les données de recherche enregistrées, le crawl et les mesures.
 
 ## Fonctionnalités du produit
 

@@ -45,6 +45,7 @@ function finding(input: {
     ruleId: `rule-${input.bucket}`,
     bucket: input.bucket,
     severity: input.severity,
+    ...(input.bucket === 'fix-now' ? { meta: { groups: [{ urls: ['https://example.test/a', 'https://example.test/z'], similarity: 9 }] } } : {}),
     affectedUrls: input.bucket === 'passed'
       ? []
       : ['https://example.test/z', 'https://example.test/a'],
@@ -314,7 +315,7 @@ describe('client report export composition', () => {
     expect(findings).toMatchObject({
       type: 'findings',
       items: [
-        expect.objectContaining({ bucket: 'fix_now', severity: 'critical', why: 'specific reason', fix: 'fix-now fix', affectedUrls: ['https://example.test/a', 'https://example.test/z'] }),
+        expect.objectContaining({ bucket: 'fix_now', severity: 'critical', why: 'specific reason', fix: 'fix-now fix', affectedUrls: ['https://example.test/a', 'https://example.test/z'], evidence: ['9/10: https://example.test/a · https://example.test/z'] }),
         expect.objectContaining({ bucket: 'watch', severity: 'high', why: 'watch why', fix: 'watch fix' }),
         expect.objectContaining({ bucket: 'passed', severity: 'info', pass: 'passed passed' }),
       ],

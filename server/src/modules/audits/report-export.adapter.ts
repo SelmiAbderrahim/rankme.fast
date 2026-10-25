@@ -4,6 +4,7 @@ import { HttpError } from '../../shared/utils/http-error.js';
 import type { ReportExportAdapter } from '../report-exports/index.js';
 import { getSite } from '../sites/index.js';
 import { getAuditRun, resolveOwnedAuditRunSiteId } from './audits.service.js';
+import { deepCrawlEvidenceLines } from './deep-crawl-evidence.js';
 import { getAuditReport, type AuditReport } from './report.service.js';
 const AUDIT_SECTIONS = [
     'findings',
@@ -152,7 +153,7 @@ function auditBlocks(locale: ReportDocumentV1['locale'], report: AuditReport, se
                     ? { pass: finding.copy.passedLabel }
                     : { fix: finding.copy.fix }),
                 affectedUrls: [...finding.affectedUrls].sort(),
-                evidence: [],
+                evidence: deepCrawlEvidenceLines(finding.meta),
                 sourceDateId: 'audit-observation',
             })),
         });

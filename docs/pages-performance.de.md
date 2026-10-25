@@ -1,6 +1,6 @@
 ---
 title: 'Seitenleistung'
-description: 'Wie der Seiten-Tab Quellen auswählt, Snapshots vergleicht und Aktualisierungen zählt.'
+description: 'Wie der Seiten-Tab gespeicherte Suchdaten, Crawl-Kontext und Seitenmetriken zeigt.'
 locale: de
 slug: pages-performance
 section: research
@@ -35,11 +35,13 @@ Fallback-Position, Suchvolumen, Schwierigkeit, Anzahl rankender Keywords und ges
 
 Crawl-Indexierbarkeit beschreibt das Ergebnis des RankMeFast-Crawls. Sie beweist nicht, ob Google eine URL indexiert hat. Sichtbare, aber nicht indexierbare Seiten bleiben zur Prüfung des Konflikts in der Liste.
 
-## Kosten und veraltete Daten
+## Gespeicherte Daten und Aktualisierung
 
-Eine Search-Console-Aktualisierung nutzt die bestehende Synchronisierung und kostet keine Keyword-Suche. Eine Fallback-Aktualisierung kostet eine Keyword-Suche, auch bei einem Cache-Treffer. Details, Suche, Filter, Sortierung und Seitennavigation lesen nur gespeicherte Daten und kosten nichts.
+Die Seitenspalte bleibt beim horizontalen Scrollen sichtbar. Über **Spalten** können Sie andere Felder ein- oder ausblenden. Ein Strich kennzeichnet fehlende Werte; Null bedeutet, dass die Quelle tatsächlich Null gemessen hat. Seiten ohne Titel werden mit ihrem Pfad benannt. Wenn eine gemessene URL einer gecrawlten Seite mit Sprachpräfix entspricht, zeigt **Gecrawlt als** deren Pfad.
 
-Scheitert eine Aktualisierung, bleibt der letzte erfolgreiche Snapshot sichtbar und wird als veraltet markiert. Ein Fallback-Snapshot wird auch nach Ablauf des Cache-Frischefensters veraltet.
+Der Search-Console-Hinweis nennt die genauen Tage der Seitensummen. Google kann für jede Seite in einem Suchergebnis eine Impression zählen, auch wenn die Suchanfrage verborgen bleibt. Deshalb können die Seitensummen höher sein als die Website-Summen im Google-Tab. **Zu wenige Daten** kennzeichnet Seiten mit wenigen Impressionen und ohne Klicks; sie erhalten noch keine Bewegungskennzeichnung. Der Crawl-Hinweis nennt die Zahl der beim letzten Audit abgerufenen URLs und, soweit erfasst, den Grund für das Ende des Crawls.
+
+Details öffnen, suchen, filtern, sortieren sowie Spalten und Ergebnisseiten wechseln liest gespeicherte Daten. Mit **Aktualisieren** fordern Sie neue Quelldaten an. Schlägt dies fehl, bleibt der letzte erfolgreiche Snapshot sichtbar und wird als veraltet markiert. Versuchen Sie es erneut, sobald die Verbindung verfügbar ist.
 
 ## Löschung und Export
 
@@ -50,8 +52,7 @@ Beim Löschen einer Website oder nach Abschluss einer Kontolöschung werden die 
 - Warten Sie bei **Synchronisierung** auf die erste Search-Console-Erfassung.
 - Stellen Sie bei **Erneut verbinden** die Google-Verbindung im Google-Tab wieder her.
 - Wählen Sie bei einer unpassenden Property eine Property für das richtige URL-Präfix oder die Domain.
-- Verbinden Sie ohne gespeicherte Quelle Search Console oder starten Sie die gezählte Fallback-Erfassung.
-- Prüfen Sie beim Limit die Nutzung oder den Tarif. Gespeicherte Snapshots bleiben lesbar.
+- Verbinden Sie ohne gespeicherte Quelle Search Console oder wählen Sie **Rankingdaten abrufen**.
 - Versuchen Sie bei Nichtverfügbarkeit dieselbe Quelle erneut. RankMeFast wechselt nicht heimlich von einer nutzbaren Search Console weg.
 
 Siehe auch [Google Search Console verbinden](./google-search-console.de.md) und [Ranking-Tracking](./rank-tracking.de.md).

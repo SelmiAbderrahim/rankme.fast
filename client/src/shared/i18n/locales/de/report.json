@@ -1,4 +1,23 @@
 {
+  "categories": {
+    "label": "Kategorie",
+    "all": "Alle Kategorien",
+    "indexability": "Indexierung",
+    "links-redirects": "Links und Weiterleitungen",
+    "content": "Inhalt",
+    "html": "HTML",
+    "media": "Bilder und Medien",
+    "performance": "Geschwindigkeit",
+    "security": "Sicherheit",
+    "social": "Teilen und Einträge",
+    "emptyTitle": "Nichts in dieser Kategorie",
+    "emptyDescription": "Kein Befund auf diesem Tab gehört zu dieser Kategorie. Wählen Sie eine andere Kategorie oder alle Kategorien."
+  },
+  "resourceScan": {
+    "label": "Bilder, Skripte und Styles prüfen",
+    "help": "Lädt jedes Bild, Skript und Stylesheet, um defekte oder zu große Dateien zu finden. Das dauert länger und läuft nur bei einem Seitenlimit von höchstens {{pages}}.",
+    "notCovered": "Dieses Seitenlimit liegt über {{pages}}, daher überspringt das Audit diese Prüfung. Wählen Sie ein niedrigeres Limit, um sie einzuschließen."
+  },
   "title": "Ihr Audit-Bericht",
   "subtitle": "Was zu beheben ist, was zu beobachten ist und was bereits besteht.",
   "history": {
@@ -42,6 +61,7 @@
   "detail": {
     "evidence": {
       "status": "Status {{status}}",
+      "noAnswer": "Keine Antwort",
       "statusUnknown": "Status nicht gemeldet",
       "clickDepth": "Klicks von der Startseite: {{depth}}",
       "inboundLinks": "Links auf diese Seite: {{links}}",
@@ -360,6 +380,9 @@
     "description": "Diese Prüfungen konnten nicht laufen, weil eine Datenquelle fehlt. Sie zählen nicht als Probleme.",
     "badge": "Nicht geprüft",
     "sources": {
+      "legacyRun": "Dieses Audit lief, bevor es diese Prüfung gab. Starten Sie ein neues Audit, um sie einzubeziehen.",
+      "scanOff": "Dieses Audit lief ohne die Prüfung von Bildern, Skripten und Styles. Starten Sie ein neues Audit mit gesetztem Häkchen, um diese Prüfung einzubeziehen.",
+      "crawlReadUnavailable": "Dieser Teil des Crawls konnte während dieses Audits nicht gelesen werden. Diese Prüfung läuft beim nächsten Audit erneut.",
       "gsc": "Verbinden Sie die Google Search Console, um dies zu prüfen.",
       "gscReconnect": "Verbinden Sie die Google Search Console erneut, um dies zu prüfen.",
       "pageSpeed": "Geschwindigkeitsdaten echter Besucher sind für diese Website noch nicht verfügbar.",

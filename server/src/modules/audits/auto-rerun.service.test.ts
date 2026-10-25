@@ -13,7 +13,7 @@ import {
 } from '../../shared/testing/mongo.js';
 import { AUDIT_JOB_NAME } from '../../shared/queue/queues.js';
 import { Site } from '../sites/index.js';
-import { AUDIT_PAGE_CAP_MAX } from './audits.schema.js';
+import { RESOURCE_SCAN_MAX_PAGES } from './audits.schema.js';
 import { AuditRun, AUTO_RERUN_TRIGGER, requestAutoAuditRerun } from './index.js';
 
 const logger = pino({ level: 'silent' });
@@ -50,7 +50,7 @@ async function seedSite(accountId: string, host = 'example.com') {
 }
 
 describe('requestAutoAuditRerun', () => {
-  it('happy path: creates a rank-drop run and enqueues with jobId dedupe at the structural page ceiling', async () => {
+  it('happy path: creates a rank-drop run and enqueues with jobId dedupe at the resource scan page limit', async () => {
     const accountId = new mongoose.Types.ObjectId().toHexString();
     const site = await seedSite(accountId);
     const { queue, jobs } = fakeQueue();
@@ -65,12 +65,14 @@ describe('requestAutoAuditRerun', () => {
     const run = await AuditRun.findById(runId);
     expect(run?.trigger).toBe(AUTO_RERUN_TRIGGER);
     expect(run?.status).toBe('queued');
-    expect(run?.pageCap).toBe(AUDIT_PAGE_CAP_MAX);
+    // Scanning is the default, so the rerun is limited to what a scan covers.
+    expect(run?.pageCap).toBe(RESOURCE_SCAN_MAX_PAGES);
+    expect(run?.resourceScan).toBe(true);
 
     expect(jobs).toHaveLength(1);
     expect(jobs[0]).toMatchObject({
       name: AUDIT_JOB_NAME,
-      data: { accountId, siteId: site.id as string, runId, pageCap: AUDIT_PAGE_CAP_MAX },
+      data: { accountId, siteId: site.id as string, runId, pageCap: RESOURCE_SCAN_MAX_PAGES },
       opts: { jobId: `audit-${runId}` },
     });
   });

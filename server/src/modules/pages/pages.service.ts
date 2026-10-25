@@ -1,7 +1,8 @@
 import { createHash, createHmac, timingSafeEqual } from 'node:crypto';
 import type { Db } from '../../db/client.js';
 import type { GscSearchAnalyticsSnapshotRow, PagePerformanceKeyword, PagePerformanceSnapshot } from '../../db/schema/index.js';
-import { readLatestCompletedPageInventory, type AuditPageInventory } from '../audits/index.js';
+import { readLatestAuditPageDetail, readLatestCompletedPageInventory, type AuditPageDetail, type AuditPageInventory } from '../audits/index.js';
+import type { SupportedLocale } from '../../shared/i18n/index.js';
 import { resolveStoredPagesGscState, type StoredPagesGscState, } from '../google-connections/index.js';
 import { readLatestGscSyncRun, readLatestPagesGscSnapshot, readPagesGscHistory, readPagesGscSnapshotAtDate, readPreviousPagesGscSnapshot, type PagesGscSnapshot, } from '../gsc-snapshots/index.js';
 import { SITE_RANKED_KEYWORD_CACHE_TTL_MS } from '../ranks/index.js';
@@ -64,6 +65,8 @@ export interface PagesServiceDeps {
     loadSite?: (accountId: string, siteId: string) => Promise<SiteShape>;
     resolveGscState?: (accountId: string, siteId: string, siteUrl: string) => Promise<StoredPagesGscState>;
     readAudit?: (accountId: string, siteId: string) => Promise<AuditPageInventory>;
+    /** One page's crawl facts and open audit findings; `isPage` matches stored addresses to the page. */
+    readAuditPageDetail?: (accountId: string, siteId: string, isPage: (url: string) => boolean, locale: SupportedLocale) => Promise<AuditPageDetail | null>;
     syncGsc?: (input: {
         accountId: string;
         siteId: string;
@@ -78,7 +81,7 @@ export interface PagesServiceDeps {
 }
 export interface PagesService {
     list(accountId: string, siteId: string, query: PagesListQuery): Promise<PagesListResponse>;
-    detail(accountId: string, siteId: string, pageId: string, range: PagesRange): Promise<PagesDetailResponse>;
+    detail(accountId: string, siteId: string, pageId: string, range: PagesRange, locale?: SupportedLocale): Promise<PagesDetailResponse>;
     refresh(accountId: string, siteId: string): Promise<PagesRefreshResponse>;
 }
 function nullMetrics(source: PagesSource = 'none'): PageMetrics {
@@ -464,6 +467,7 @@ export function createPagesService(deps: PagesServiceDeps): PagesService {
     });
     const resolveGsc = deps.resolveGscState ?? resolveStoredPagesGscState;
     const readAudit = deps.readAudit ?? ((accountId, siteId) => readLatestCompletedPageInventory(accountId, siteId));
+    const readAuditPageDetail = deps.readAuditPageDetail ?? readLatestAuditPageDetail;
     async function fallbackMaterial(accountId: string, site: SiteShape, range: PagesRange, gscState: StoredPagesGscState): Promise<SourceMaterial> {
         const market = await resolvePagesFallbackMarket(deps.db, accountId, site.id);
         const source = deps.providerSelection === 'fake' ? 'demo' : 'dataforseo';
@@ -706,7 +710,7 @@ export function createPagesService(deps: PagesServiceDeps): PagesService {
             },
         };
     }
-    async function detail(accountId: string, siteId: string, pageId: string, range: PagesRange): Promise<PagesDetailResponse> {
+    async function detail(accountId: string, siteId: string, pageId: string, range: PagesRange, locale: SupportedLocale = 'en'): Promise<PagesDetailResponse> {
         const started = now().getTime();
         const material = await materialize(accountId, siteId, range);
         const page = material.pages.find((row) => row.pageId === pageId);
@@ -746,6 +750,10 @@ export function createPagesService(deps: PagesServiceDeps): PagesService {
             page: publicPage(page),
             associated: { kind: page.performanceSource === 'gsc' ? 'queries' : page.performanceSource ? 'keywords' : 'none', rows: page.associated.slice(0, 100), total, truncated: total > 100 },
             trend: trend.slice(-90),
+            audit: await readAuditPageDetail(accountId, material.site.id, (candidate) => {
+                const canonical = canonicalizePageUrl(candidate, material.site.url);
+                return canonical.ok && canonical.value.pageHash === pageId;
+            }, locale),
         };
         deps.telemetry?.('pages.read.completed', {
             operation: 'detail',

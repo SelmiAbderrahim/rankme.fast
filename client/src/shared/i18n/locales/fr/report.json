@@ -1,4 +1,23 @@
 {
+  "categories": {
+    "label": "Catégorie",
+    "all": "Toutes les catégories",
+    "indexability": "Indexation",
+    "links-redirects": "Liens et redirections",
+    "content": "Contenu",
+    "html": "HTML",
+    "media": "Images et médias",
+    "performance": "Vitesse",
+    "security": "Sécurité",
+    "social": "Partage et aperçus",
+    "emptyTitle": "Rien dans cette catégorie",
+    "emptyDescription": "Aucun constat de cet onglet n’appartient à cette catégorie. Choisissez une autre catégorie, ou toutes les catégories."
+  },
+  "resourceScan": {
+    "label": "Analyser les images, scripts et styles",
+    "help": "Charge chaque image, script et feuille de style pour repérer les fichiers cassés ou trop lourds. L’audit est plus long, et cette analyse ne s’applique qu’à une limite de {{pages}} pages ou moins.",
+    "notCovered": "Cette limite dépasse {{pages}} pages : l’audit ignorera cette analyse. Choisissez une limite plus basse pour l’inclure."
+  },
   "title": "Votre rapport d'audit",
   "subtitle": "Ce qu'il faut corriger, surveiller, et ce qui passe déjà.",
   "history": {
@@ -42,6 +61,7 @@
   "detail": {
     "evidence": {
       "status": "Statut {{status}}",
+      "noAnswer": "Aucune réponse",
       "statusUnknown": "Statut non communiqué",
       "clickDepth": "Clics depuis l’accueil : {{depth}}",
       "inboundLinks": "Liens vers cette page : {{links}}",
@@ -360,6 +380,9 @@
     "description": "Ces vérifications n'ont pas pu s'exécuter car une source de données manque. Elles ne sont pas comptées comme des problèmes.",
     "badge": "Non évalué",
     "sources": {
+      "legacyRun": "Cet audit a été lancé avant l’ajout de cette vérification. Lancez un nouvel audit pour l’inclure.",
+      "scanOff": "Cet audit a été lancé sans l’analyse des images, scripts et styles. Lancez un nouvel audit avec cette option cochée pour inclure cette vérification.",
+      "crawlReadUnavailable": "Cette partie de l’exploration n’a pas pu être lue pendant cet audit. Cette vérification sera relancée au prochain audit.",
       "gsc": "Connectez Google Search Console pour effectuer cette vérification.",
       "gscReconnect": "Reconnectez Google Search Console pour effectuer cette vérification.",
       "pageSpeed": "Les données de vitesse issues de vrais visiteurs ne sont pas encore disponibles pour ce site.",

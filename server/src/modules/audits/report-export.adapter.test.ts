@@ -54,6 +54,7 @@ function finding(
     bucket,
     severity: 'warning',
     affectedUrls: bucket === 'passed' ? [] : ['https://example.test/b'],
+    category: 'indexability',
     copy: {
       title: `${bucket} finding`,
       why: 'Why this matters.',
@@ -76,6 +77,7 @@ function report(input: Partial<AuditReport> = {}): AuditReport {
       finding('fix-now', {
         severity: 'critical',
         affectedUrls: ['https://example.test/z', 'https://example.test/a'],
+        meta: { chains: [{ from: 'https://example.test/a', hops: [{ url: 'https://example.test/b', status: 301 }], isLoop: false }] },
         copy: {
           title: 'Critical finding', why: 'Generic why.', reason: 'Specific reason.',
           fix: 'Fix it.', passedLabel: 'Passed.',
@@ -182,6 +184,7 @@ function auditRun(input: {
       siteId,
       status: input.status ?? 'succeeded',
       pageCap: 100,
+      resourceScan: false,
       pagesCrawled: 10,
       startedAt: '2026-08-10T11:00:00.000Z',
       finishedAt: input.finishedAt === undefined ? finishedAt : input.finishedAt,
@@ -268,7 +271,7 @@ describe('audit report export composition helpers', () => {
     expect(findings).toMatchObject({
       type: 'findings',
       items: [
-        expect.objectContaining({ bucket: 'fix_now', severity: 'critical', why: 'Specific reason.', affectedUrls: ['https://example.test/a', 'https://example.test/z'] }),
+        expect.objectContaining({ bucket: 'fix_now', severity: 'critical', why: 'Specific reason.', affectedUrls: ['https://example.test/a', 'https://example.test/z'], evidence: ['https://example.test/a » https://example.test/b (301)'] }),
         expect.objectContaining({ bucket: 'watch', severity: 'high', fix: 'Fix the issue.' }),
         expect.objectContaining({ bucket: 'passed', severity: 'info', pass: 'This check passed.' }),
       ],

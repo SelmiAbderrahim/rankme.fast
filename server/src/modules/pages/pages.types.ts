@@ -1,3 +1,4 @@
+import type { AuditPageDetail } from '../audits/index.js';
 import type { PagesInsight, PagesRange } from './pages.schema.js';
 export type PagesSource = 'gsc' | 'dataforseo' | 'demo' | 'none';
 export type PagesStatus = 'ready' | 'syncing' | 'empty' | 'unavailable' | 'stale';
@@ -114,6 +115,12 @@ export interface PagesDetailResponse {
         truncated: boolean;
     };
     trend: TrendPoint[];
+    /**
+     * What the latest completed audit recorded for this page: crawl facts and
+     * the open findings that list it. `null` when there is no completed audit
+     * or the audit did not crawl this page.
+     */
+    audit: AuditPageDetail | null;
 }
 export interface PagesRefreshResponse {
     refresh: {

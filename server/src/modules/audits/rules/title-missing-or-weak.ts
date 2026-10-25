@@ -42,12 +42,22 @@ export const titleMissingOrWeakRule: AuditRule = {
         }
         const anyMissing = offenders.some((o) => o.reason === 'missing');
         const severity = anyMissing ? 'critical' : 'warning';
+        // The crawler's own length checks (65 / 30 characters), as evidence
+        // only — the bucket policy above is unchanged.
+        const indexable = result.pages.filter((page) => page.isIndexable);
+        const crawlerTooLong = indexable.filter((page) => page.checks?.titleTooLong === true).length;
+        const crawlerTooShort = indexable.filter((page) => page.checks?.titleTooShort === true).length;
         return {
             ruleId: RULE_ID,
             bucket: bucketFor(severity, false),
             severity,
             affectedUrls: offenders.map((o) => o.url),
-            meta: { offenders },
+            meta: {
+                offenders,
+                ...(crawlerTooLong + crawlerTooShort > 0
+                    ? { crawlerLengthChecks: { tooLong: crawlerTooLong, tooShort: crawlerTooShort } }
+                    : {}),
+            },
         };
     },
 };

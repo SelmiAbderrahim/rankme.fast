@@ -13,6 +13,7 @@ const mocks = vi.hoisted(() => ({
   startAuditForSite: vi.fn(),
   toPublicAuditRun: vi.fn(),
   listKeywords: vi.fn(),
+  summarizeSiteRankStates: vi.fn(),
   getKeywordHistoryBatch: vi.fn(),
   listAnalyses: vi.fn(),
   getAnalysis: vi.fn(),
@@ -35,6 +36,7 @@ vi.mock('../audits/index.js', () => ({
 }));
 vi.mock('../ranks/index.js', () => ({
   listKeywords: mocks.listKeywords,
+  summarizeSiteRankStates: mocks.summarizeSiteRankStates,
   getKeywordHistoryBatch: mocks.getKeywordHistoryBatch,
 }));
 vi.mock('../content-intelligence/index.js', () => ({
@@ -59,6 +61,11 @@ function queryResult<T>(value: T) {
   };
 }
 
+const RANK_STATES = {
+  baseline: 'previous_check', total: 0, counts: {},
+  movement: { compared: 0, improved: 0, declined: 0, unchanged: 0, failed: 0, unranked: 0, noPair: 0 },
+};
+
 beforeEach(() => {
   vi.clearAllMocks();
   mocks.getAccountMcpSpec.mockResolvedValue(null);
@@ -70,6 +77,7 @@ beforeEach(() => {
   );
   mocks.siteFind.mockReturnValue(queryResult([]));
   mocks.listKeywords.mockResolvedValue({ keywords: [] });
+  mocks.summarizeSiteRankStates.mockResolvedValue(RANK_STATES);
   mocks.startAuditForSite.mockResolvedValue({ id: 'run-1', status: 'queued' });
   mocks.getAuditRun.mockResolvedValue({
     run: { id: 'run-1', status: 'queued' },
@@ -271,7 +279,7 @@ describe('buildChatTools', () => {
     const { tools } = await buildChatTools('account-1', 'en');
     const outcome = await tools.list_keywords!.execute({ siteId: SITE_ID });
     expect(outcome.ok).toBe(true);
-    expect(outcome.structuredContent).toEqual({ keywords: [], locale: 'en' });
+    expect(outcome.structuredContent).toEqual({ keywords: [], rankStates: RANK_STATES, locale: 'en' });
   });
 });
 

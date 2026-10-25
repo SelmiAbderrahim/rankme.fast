@@ -135,9 +135,28 @@
     "context_many": "显示 {{shown}} 个，共 {{total}} 个匹配页面",
     "context_other": "显示 {{shown}} 个，共 {{total}} 个匹配页面" },
   "detail": {
-    "title": "页面详情", "description": "正在加载规范页面信息", "close": "关闭页面详情", "errorTitle": "无法加载页面详情", "notFound": "此页面已不在当前清单中，列表仍然可用。", "pageContext": "规范页面信息", "crawlReason": "最近抓取原因：{{reason}}",
-    "opportunities": "机会说明", "noOpportunities": "当前没有机会规则适用于此页面。", "queriesTitle": "观测查询", "keywordsTitle": "排名关键词", "associatedCount_one": "显示 {{shown}} 个，共 {{total}} 个关联行。", "truncated": "响应最多返回 100 行。", "associatedEmpty": "没有为此页面存储关联查询或关键词。", "associatedCaption": "此页面的关联查询或关键词", "queryOrKeyword": "查询或关键词",
-    "trendTitle": "平均排名历史", "trendDescription_one": "已存储 {{count}} 个数据点，最多返回 90 个。", "trendEmpty": "尚未存储可比较的平均排名历史。", "trendAria_one": "包含 {{count}} 个数据点的平均排名历史", "trendTableCaption": "可访问的页面历史数据", "date": "观测日期",
+    "title": "页面详情",
+    "description": "正在加载规范页面信息",
+    "close": "关闭页面详情",
+    "errorTitle": "无法加载页面详情",
+    "notFound": "此页面已不在当前清单中，列表仍然可用。",
+    "pageContext": "规范页面信息",
+    "crawlReason": "最近抓取原因：{{reason}}",
+    "opportunities": "机会说明",
+    "noOpportunities": "当前没有机会规则适用于此页面。",
+    "queriesTitle": "观测查询",
+    "keywordsTitle": "排名关键词",
+    "associatedCount_one": "显示 {{shown}} 个，共 {{total}} 个关联行。",
+    "truncated": "响应最多返回 100 行。",
+    "associatedEmpty": "没有为此页面存储关联查询或关键词。",
+    "associatedCaption": "此页面的关联查询或关键词",
+    "queryOrKeyword": "查询或关键词",
+    "trendTitle": "平均排名历史",
+    "trendDescription_one": "已存储 {{count}} 个数据点，最多返回 90 个。",
+    "trendEmpty": "尚未存储可比较的平均排名历史。",
+    "trendAria_one": "包含 {{count}} 个数据点的平均排名历史",
+    "trendTableCaption": "可访问的页面历史数据",
+    "date": "观测日期",
     "trendDescription_zero": "已存储 {{count}} 个数据点，最多返回 90 个。",
     "trendDescription_two": "已存储 {{count}} 个数据点，最多返回 90 个。",
     "trendDescription_few": "已存储 {{count}} 个数据点，最多返回 90 个。",
@@ -152,7 +171,19 @@
     "associatedCount_two": "显示 {{shown}} 个，共 {{total}} 个关联行。",
     "associatedCount_few": "显示 {{shown}} 个，共 {{total}} 个关联行。",
     "associatedCount_many": "显示 {{shown}} 个，共 {{total}} 个关联行。",
-    "associatedCount_other": "显示 {{shown}} 个，共 {{total}} 个关联行。"
+    "associatedCount_other": "显示 {{shown}} 个，共 {{total}} 个关联行。",
+    "audit": {
+      "title": "来自最近一次审计",
+      "notCrawled": "最近一次审计未抓取此页面。",
+      "issuesTitle": "此页面上的问题",
+      "noIssues": "最近一次审计未在此页面上发现待处理的问题。",
+      "facts": {
+        "clickDepth": "距首页点击次数",
+        "inboundInternalLinks": "指向它的内部链接",
+        "pageSizeBytes": "页面大小",
+        "serverResponseMs": "首字节时间"
+      }
+    }
   },
   "notifications": { "refreshed": "{{source}} 数据已成功刷新。", "empty": "{{source}} 刷新完成，但没有页面行。" },
   "crawl": {

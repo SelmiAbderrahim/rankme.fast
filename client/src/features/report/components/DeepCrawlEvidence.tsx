@@ -36,7 +36,7 @@ export function EvidenceFacts({ page, resource }: { page?: PageEvidenceRow; reso
   if (!page && !resource) return null;
   const facts = page ? pageFacts(page, t, i18n.language) : [
     t(`detail.evidence.resourceType.${resource!.type}`),
-    resource!.statusCode === null ? t('detail.brokenLinks.noAnswer') : t('detail.evidence.status', { status: resource!.statusCode }),
+    resource!.statusCode === null ? t('detail.evidence.noAnswer') : t('detail.evidence.status', { status: resource!.statusCode }),
     ...(resource!.sizeBytes !== undefined ? [formatBytes(resource!.sizeBytes, i18n.language)] : []),
   ];
   return <span className="flex w-full flex-col gap-1 ps-3 sm:ps-4" data-testid="report-evidence-facts">

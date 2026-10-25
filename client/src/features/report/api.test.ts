@@ -125,7 +125,7 @@ describe('report api', () => {
     const call = spy.mock.calls[1] as unknown as [string, RequestInit];
     expect(call[0]).toContain('/sites/s1/audits');
     expect(call[1]?.method).toBe('POST');
-    expect(call[1]?.body).toBe('{}');
+    expect(call[1]?.body).toBe(JSON.stringify({ resourceScan: true }));
     expect(captureHeaders(call).get('x-lang')).toBe('en');
   });
 
@@ -151,7 +151,32 @@ describe('report api', () => {
     vi.stubGlobal('fetch', spy);
     await startAuditRequest('s1', 1000);
     const call = spy.mock.calls[0] as [string, RequestInit];
-    expect(call[1]?.body).toBe(JSON.stringify({ requestedPageCap: 1000 }));
+    expect(call[1]?.body).toBe(JSON.stringify({ requestedPageCap: 1000, resourceScan: true }));
+  });
+
+  it('startAuditRequest lets a single run opt out of the resource scan', async () => {
+    const spy = vi.fn().mockResolvedValue(
+      jsonResponse({
+        run: {
+          id: 'r4',
+          siteId: 's1',
+          status: 'queued',
+          pageCap: 100,
+          pagesCrawled: 0,
+          vendorTaskId: null,
+          startedAt: null,
+          finishedAt: null,
+          error: null,
+          createdAt: '',
+          updatedAt: '',
+        },
+        message: 'Audit started.',
+      }),
+    );
+    vi.stubGlobal('fetch', spy);
+    await startAuditRequest('s1', undefined, false);
+    const call = spy.mock.calls[0] as [string, RequestInit];
+    expect(call[1]?.body).toBe(JSON.stringify({ resourceScan: false }));
   });
 
   it('generateAiSummaryRequest posts to /audits/:runId/summary with x-lang', async () => {

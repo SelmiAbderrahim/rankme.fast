@@ -1,12 +1,15 @@
 import { describe, expect, it } from 'vitest';
 import {
   formatPagesDate,
+  formatPagesDay,
   formatPagesMetric,
   formatPagesNumber,
   formatPagesPercent,
   formatPagesPosition,
   formatSignedPagesValue,
   rangeDays,
+  pagesPathLabel,
+  pagesRowName,
 } from './formatters';
 
 describe('Pages locale-aware formatters', () => {
@@ -33,6 +36,15 @@ describe('Pages locale-aware formatters', () => {
     expect(formatPagesMetric('en', 'difficulty', 12.25)).toBe('12.3');
     expect(formatPagesMetric('en', 'clicks', 1000)).toBe('1,000');
     expect(formatPagesMetric('en', 'clicks', null)).toBeNull();
+    expect(formatPagesMetric('en', 'averagePosition', 0)).toBeNull();
+    expect(formatPagesMetric('en', 'difficulty', 0)).toBe('0');
+  });
+
+  it('keeps Search Console days and untitled page labels stable', () => {
+    expect(formatPagesDay('en', '2026-08-10')).toMatch(/Aug 10/);
+    expect(pagesPathLabel('example.com/de/article')).toBe('/de/article');
+    expect(pagesRowName({ title: null, displayUrl: 'example.com/de/article' })).toBe('/de/article');
+    expect(pagesRowName({ title: 'A title', displayUrl: 'example.com/de/article' })).toBe('A title');
   });
 
   it('formats signed deltas without turning zero or null into a gain', () => {

@@ -135,9 +135,28 @@
     "context_many": "Mostrando {{shown}} de {{total}} páginas coincidentes",
     "context_other": "Mostrando {{shown}} de {{total}} páginas coincidentes" },
   "detail": {
-    "title": "Detalle de página", "description": "Cargando el contexto canónico", "close": "Cerrar detalle", "errorTitle": "No se pudo cargar el detalle", "notFound": "La página ya no está en el inventario actual. La lista sigue disponible.", "pageContext": "Contexto canónico", "crawlReason": "Motivo del último rastreo: {{reason}}",
-    "opportunities": "Explicaciones de oportunidades", "noOpportunities": "No se aplica ninguna regla de oportunidad actual.", "queriesTitle": "Consultas observadas", "keywordsTitle": "Palabras clave posicionadas", "associatedCount_one": "Mostrando {{shown}} de {{total}} fila relacionada.", "truncated": "La respuesta está limitada a 100 filas.", "associatedEmpty": "No hay consultas ni palabras clave relacionadas almacenadas.", "associatedCaption": "Consultas o palabras clave relacionadas", "queryOrKeyword": "Consulta o palabra clave",
-    "trendTitle": "Historial de posición media", "trendDescription_one": "{{count}} punto almacenado; se devuelven como máximo 90.", "trendEmpty": "Aún no hay historial comparable de posición media.", "trendAria_one": "Historial de posición media con {{count}} punto", "trendTableCaption": "Datos accesibles del historial", "date": "Fecha de observación",
+    "title": "Detalle de página",
+    "description": "Cargando el contexto canónico",
+    "close": "Cerrar detalle",
+    "errorTitle": "No se pudo cargar el detalle",
+    "notFound": "La página ya no está en el inventario actual. La lista sigue disponible.",
+    "pageContext": "Contexto canónico",
+    "crawlReason": "Motivo del último rastreo: {{reason}}",
+    "opportunities": "Explicaciones de oportunidades",
+    "noOpportunities": "No se aplica ninguna regla de oportunidad actual.",
+    "queriesTitle": "Consultas observadas",
+    "keywordsTitle": "Palabras clave posicionadas",
+    "associatedCount_one": "Mostrando {{shown}} de {{total}} fila relacionada.",
+    "truncated": "La respuesta está limitada a 100 filas.",
+    "associatedEmpty": "No hay consultas ni palabras clave relacionadas almacenadas.",
+    "associatedCaption": "Consultas o palabras clave relacionadas",
+    "queryOrKeyword": "Consulta o palabra clave",
+    "trendTitle": "Historial de posición media",
+    "trendDescription_one": "{{count}} punto almacenado; se devuelven como máximo 90.",
+    "trendEmpty": "Aún no hay historial comparable de posición media.",
+    "trendAria_one": "Historial de posición media con {{count}} punto",
+    "trendTableCaption": "Datos accesibles del historial",
+    "date": "Fecha de observación",
     "trendDescription_zero": "{{count}} puntos almacenados; se devuelven como máximo 90.",
     "trendDescription_two": "{{count}} puntos almacenados; se devuelven como máximo 90.",
     "trendDescription_few": "{{count}} puntos almacenados; se devuelven como máximo 90.",
@@ -152,7 +171,19 @@
     "associatedCount_two": "Mostrando {{shown}} de {{total}} filas relacionadas.",
     "associatedCount_few": "Mostrando {{shown}} de {{total}} filas relacionadas.",
     "associatedCount_many": "Mostrando {{shown}} de {{total}} filas relacionadas.",
-    "associatedCount_other": "Mostrando {{shown}} de {{total}} filas relacionadas."
+    "associatedCount_other": "Mostrando {{shown}} de {{total}} filas relacionadas.",
+    "audit": {
+      "title": "De la última auditoría",
+      "notCrawled": "La última auditoría no rastreó esta página.",
+      "issuesTitle": "Problemas en esta página",
+      "noIssues": "La última auditoría no encontró problemas abiertos en esta página.",
+      "facts": {
+        "clickDepth": "Clics desde el inicio",
+        "inboundInternalLinks": "Enlaces internos que recibe",
+        "pageSizeBytes": "Tamaño de la página",
+        "serverResponseMs": "Primer byte"
+      }
+    }
   },
   "notifications": { "refreshed": "Los datos de {{source}} se actualizaron correctamente.", "empty": "La actualización de {{source}} terminó sin páginas." },
   "crawl": {

@@ -37,6 +37,11 @@ const auditRunSchema = new mongoose.Schema({
         type: Number,
         required: true,
     },
+    // The crawl is (or will be) posted with the resource scan (images, scripts
+    // and stylesheets). Decided when the run is created and read back by the
+    // processor, so a retry that resumes the vendor task reads the result the
+    // way it was posted. Runs from before the field stay `false`.
+    resourceScan: { type: Boolean, default: false },
     // What started this run. `manual` = user clicked; `rank-drop` = the
     // auto-rerun service (ops provenance only — never exposed to the client).
     trigger: {

@@ -29,6 +29,7 @@ import { Site } from '../sites/index.js';
 import { AuditRun } from './audit-run.model.js';
 import { completeAuditRun, failAuditRun, markAuditRunRunning } from './audit-run.service.js';
 import { replaceAuditedPages } from './audits.service.js';
+import { pageCapForScan } from './audits.schema.js';
 import { writeReportSnapshot } from './report.service.js';
 import type { PageSpeedEvaluationInput, PageSpeedSample, } from './rules/index.js';
 import { detectHostRedirect, type SiteProbe, type SiteProbeResult } from '../../shared/security/site-probe.js';
@@ -266,6 +267,12 @@ export function createAuditProcessor(deps: AuditProcessorDeps) {
                 // the task and the mongo write can re-post once — unavoidable
                 // without vendor-side idempotency keys.
                 const priorRun = await AuditRun.findById(payload.runId);
+                // The resource scan is decided when the run is created and read
+                // back here, so a resumed task is read the way it was posted. The
+                // crawl ceiling is bounded again here so a hand-edited run never
+                // scans more pages than a scanning run is allowed to cover.
+                const resourceScan = priorRun?.resourceScan === true;
+                const pageCap = pageCapForScan(payload.pageCap, resourceScan);
                 let vendorTaskId: string;
                 if (priorRun?.status === 'running' && priorRun.vendorTaskId) {
                     vendorTaskId = priorRun.vendorTaskId;
@@ -274,7 +281,8 @@ export function createAuditProcessor(deps: AuditProcessorDeps) {
                 else {
                     const started = await deps.provider.startAudit({
                         domain: target.domain,
-                        pageCap: payload.pageCap,
+                        pageCap,
+                        ...(resourceScan ? { resourceScan } : {}),
                     });
                     vendorTaskId = started.vendorTaskId;
                     await markAuditRunRunning(payload.runId, vendorTaskId);
@@ -299,7 +307,7 @@ export function createAuditProcessor(deps: AuditProcessorDeps) {
                     // Poll budget exhausted — transient by definition; let BullMQ retry.
                     throw new Error(`audit ${vendorTaskId} still running after ${maxPolls} polls`);
                 }
-                const result: AuditResult = await deps.provider.getAuditResult(vendorTaskId);
+                const result: AuditResult = await deps.provider.getAuditResult(vendorTaskId, { resourceScan });
                 return { vendorTaskId, result };
             });
             const { vendorTaskId, result: vendorResult } = crawl;
@@ -319,6 +327,7 @@ export function createAuditProcessor(deps: AuditProcessorDeps) {
                         // crawled page, so the requested ceiling and the actual count
                         // are both kept for operator cost review.
                         pageCap: payload.pageCap,
+                        resourceScan: vendorResult.capabilities?.resourceScan === true,
                         pagesCrawled: vendorResult.pages.length,
                     },
                     payload: vendorResult,

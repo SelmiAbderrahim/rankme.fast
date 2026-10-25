@@ -1124,7 +1124,7 @@ describe('audit finding decisions', () => {
     registerStub('audit_finding', [candidate({ sourceType: 'audit_finding', sourceId: ruleId,
       evidence: [{ sourceRef: `${run.id}:${ruleId}`, observation: {
         sourceKind: 'provider_observation', observedAt: observedAt.toISOString(),
-        freshUntil: null, freshness: 'fresh', market: null, sampleCount: 0,
+        sourceLabel: null, freshUntil: null, freshness: 'fresh', market: null, sampleCount: 0,
         coverageNoteKey: null,
       } }], observedAt: observedAt.toISOString() })]);
     const actionId = hashActionId({ accountId, siteId, sourceType: 'audit_finding', sourceId: ruleId });

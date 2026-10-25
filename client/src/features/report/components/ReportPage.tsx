@@ -18,6 +18,8 @@
  *   - report-badge-severity-<sev>          severity badge on each row
  *   - report-loading                       skeleton state
  *   - report-empty-<tab>                   per-tab empty state
+ *   - report-category-filter               category select (report-category-trigger)
+ *   - report-empty-category                a category with nothing on the active tab
  *   - report-run-in-progress               run-in-progress banner
  *   - report-run-progress                  crawl ceiling line in the banner
  *   - report-run-pending                   results placeholder while the first run is in flight
@@ -56,10 +58,15 @@ import {
 import { useAppDispatch, useAppSelector } from '@shared/hooks/redux';
 import {
   DEFAULT_REPORT_TAB,
+  REPORT_CATEGORY_ALL,
   REPORT_TABS,
+  filterByCategory,
+  useReportCategory,
   useReportTab,
+  type ReportCategoryFilter,
   type ReportTab,
 } from '../tabState';
+import { REPORT_CATEGORIES } from '../types';
 import { loadReport, pollRun, startRetest } from '../store/thunks';
 import {
   selectReport,
@@ -81,6 +88,7 @@ import { AiSummaryCard } from './AiSummaryCard';
 import { IssueRow } from './IssueRow';
 import { NotEvaluatedChecks } from './NotEvaluatedChecks';
 import { RetestConfirmDialog } from './RetestConfirmDialog';
+import { ResourceScanOption } from './ResourceScanOption';
 import { RunHistory } from './RunHistory';
 import { DocsLink } from '@shared/docs/DocsLink';
 import {
@@ -111,6 +119,43 @@ const EMPTY_DIFF_BY_URL: Map<string, DiffKind> = new Map();
  */
 const PAGE_CAP_MAX = 'max';
 const PAGE_CAP_OPTIONS = ['10', '100', '500', '1000', PAGE_CAP_MAX] as const;
+
+/**
+ * Category filter — a labeled select so all nine choices stay usable at
+ * phone width and by keyboard. Counts are the findings of the active tab in
+ * each category.
+ */
+const CategoryFilter = ({
+  value,
+  onChange,
+  countFor,
+}: {
+  value: ReportCategoryFilter;
+  onChange: (value: ReportCategoryFilter) => void;
+  countFor: (value: ReportCategoryFilter) => number;
+}) => {
+  const { t } = useTranslation('report');
+  const selectId = useId();
+  const options: ReportCategoryFilter[] = [REPORT_CATEGORY_ALL, ...REPORT_CATEGORIES];
+  return (
+    <div className="mt-3 flex flex-wrap items-center gap-2" data-testid="report-category-filter">
+      <Label htmlFor={selectId}>{t('categories.label')}</Label>
+      <Select value={value} onValueChange={(next) => onChange(next as ReportCategoryFilter)}>
+        <SelectTrigger id={selectId} size="sm" className="w-full sm:w-64" data-testid="report-category-trigger">
+          <SelectValue />
+        </SelectTrigger>
+        <SelectContent position="popper" align="start">
+          {options.map((option) => (
+            <SelectItem key={option} value={option} data-testid={`report-category-${option}`}>
+              {t(`categories.${option}`)}{' '}
+              <span className="text-muted-foreground tabular-nums">({countFor(option)})</span>
+            </SelectItem>
+          ))}
+        </SelectContent>
+      </Select>
+    </div>
+  );
+};
 
 interface RuleDiff {
   kind: DiffKind | undefined;
@@ -173,9 +218,11 @@ export const ReportPage = ({
   const focusedRuleId = searchParams.get('finding');
 
   const [activeTab, setActiveTab] = useReportTab();
+  const [category, setCategory] = useReportCategory();
   // Local UI state (not navigation — the ?tab= rule does not apply).
   const [pageCap, setPageCap] = useState<string>(PAGE_CAP_MAX);
   const pageCapId = useId();
+  const [resourceScan, setResourceScan] = useState(true);
   // Retest confirmation dialog — opening it is a read-only
   // preview; only the in-dialog confirm dispatches the mutation.
   const [retestOpen, setRetestOpen] = useState(false);
@@ -360,6 +407,7 @@ export const ReportPage = ({
         ...(pageCap === PAGE_CAP_MAX
           ? {}
           : { requestedPageCap: Number(pageCap) }),
+        resourceScan,
       }),
     );
     if (startRetest.fulfilled.match(result)) {
@@ -404,9 +452,28 @@ export const ReportPage = ({
       </p>
     </div>
   );
+  const resourceScanOption = (
+    <ResourceScanOption
+      checked={resourceScan}
+      onCheckedChange={setResourceScan}
+      pageLimit={pageCap === PAGE_CAP_MAX ? null : Number(pageCap)}
+      disabled={runInProgress}
+    />
+  );
 
   const renderTabPanel = (tab: ReportTab) => {
-    const items = findingsByTab[tab];
+    const items = filterByCategory(findingsByTab[tab], category);
+    if (items.length === 0 && category !== REPORT_CATEGORY_ALL && findingsByTab[tab].length > 0) {
+      // A category with nothing on this tab is not the same as an empty tab.
+      return (
+        <Empty className="w-full" data-testid="report-empty-category">
+          <EmptyHeader>
+            <EmptyTitle>{t('categories.emptyTitle')}</EmptyTitle>
+            <EmptyDescription>{t('categories.emptyDescription')}</EmptyDescription>
+          </EmptyHeader>
+        </Empty>
+      );
+    }
     if (items.length === 0) {
       return (
         <Empty className="w-full" data-testid={`report-empty-${tab}`}>
@@ -527,6 +594,7 @@ export const ReportPage = ({
           open={retestOpen}
           onOpenChange={setRetestOpen}
           pageCapPicker={pageCapPicker}
+          resourceScanOption={resourceScanOption}
           confirming={retesting}
           error={retestError}
           onConfirm={() => void handleRetest()}
@@ -571,6 +639,7 @@ export const ReportPage = ({
         open={retestOpen}
         onOpenChange={setRetestOpen}
         pageCapPicker={pageCapPicker}
+        resourceScanOption={resourceScanOption}
         confirming={retesting}
         error={retestError}
         onConfirm={() => void handleRetest()}
@@ -669,6 +738,11 @@ export const ReportPage = ({
               </TabsTrigger>
             ))}
           </TabsList>
+          <CategoryFilter
+            value={category}
+            onChange={setCategory}
+            countFor={(value) => filterByCategory(findingsByTab[activeTab], value).length}
+          />
           {REPORT_TABS.map((tab) => (
             <TabsContent key={tab} value={tab} className="mt-4">
               {renderTabPanel(tab)}

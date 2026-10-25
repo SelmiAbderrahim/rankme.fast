@@ -44,7 +44,7 @@ order: 0
 - [Keyword Trends](./keyword-trends.en.md): See where search interest is heading, recent momentum and seasonal peaks, all labeled as estimates.
 - [Review Intelligence](./review-intelligence.en.md): Sync public reviews on demand, read trends and cited themes, and understand exactly when a unit is returned.
 - [Brand Radar](./brand-radar.en.md): Scan one brand query on demand, inspect retained mentions, and understand the add-on and refund boundary.
-- [Page performance](./pages-performance.en.md): How the Pages tab chooses data, compares snapshots, and counts refreshes.
+- [Page performance](./pages-performance.en.md): How the Pages tab shows stored search data, crawl context, and page metrics.
 
 ## Product features
 

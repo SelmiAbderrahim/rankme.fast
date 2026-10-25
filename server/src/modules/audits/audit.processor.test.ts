@@ -34,6 +34,7 @@ import {
   urlPathDepth,
 } from './index.js';
 import { applyHostRedirect, applySiteProbe } from './audit.processor.js';
+import { RESOURCE_SCAN_MAX_PAGES } from './audits.schema.js';
 
 const logger = pino({ level: 'silent' });
 
@@ -69,7 +70,7 @@ describe('createAuditProcessor', () => {
     const processor = createAuditProcessor({ provider, logger });
 
     const outcome = await processor(jobFor({ ...ids, pageCap: 100 }));
-    expect(outcome).toEqual({ runId: ids.runId, pagesCrawled: 2 });
+    expect(outcome).toEqual({ runId: ids.runId, pagesCrawled: FAKE_AUDIT_RESULT.pages.length });
 
     const run = await AuditRun.findById(ids.runId);
     expect(run?.status).toBe('succeeded');
@@ -128,7 +129,7 @@ describe('createAuditProcessor', () => {
       },
     });
     const outcome = await processor(jobFor({ ...ids, pageCap: 100 }));
-    expect(outcome).toEqual({ runId: ids.runId, pagesCrawled: 2 });
+    expect(outcome).toEqual({ runId: ids.runId, pagesCrawled: FAKE_AUDIT_RESULT.pages.length });
     // The billed task_post never fired — polling resumed the persisted task.
     expect(startAudit).not.toHaveBeenCalled();
     expect(getAuditStatus).toHaveBeenCalledWith('task-prior');
@@ -144,7 +145,7 @@ describe('createAuditProcessor', () => {
     const startAudit = vi.fn(inner.startAudit.bind(inner));
     const processor = createAuditProcessor({ provider: { ...inner, startAudit }, logger });
     const outcome = await processor(jobFor({ ...ids, pageCap: 100 }));
-    expect(outcome).toEqual({ runId: ids.runId, pagesCrawled: 2 });
+    expect(outcome).toEqual({ runId: ids.runId, pagesCrawled: FAKE_AUDIT_RESULT.pages.length });
     expect(startAudit).toHaveBeenCalledTimes(1);
   });
 
@@ -178,6 +179,91 @@ describe('createAuditProcessor', () => {
     expect(calls[0]!.costMicros).toBe(501_000n);
   });
 
+  describe('resource scan', () => {
+    async function runWith(resourceScan: boolean | undefined, pageCap = 100, prior?: Record<string, unknown>) {
+      const ids = await seed();
+      if (resourceScan !== undefined) await AuditRun.updateOne({ _id: ids.runId }, { $set: { resourceScan } });
+      if (prior) await AuditRun.updateOne({ _id: ids.runId }, { $set: prior });
+      const inner = createFakeAuditProvider({ vendorTaskId: 'task-scan' });
+      const startAudit = vi.fn(inner.startAudit.bind(inner));
+      const getAuditResult = vi.fn(inner.getAuditResult.bind(inner));
+      const calls: Array<Record<string, unknown>> = [];
+      const processor = createAuditProcessor({
+        provider: { ...inner, startAudit, getAuditResult },
+        logger,
+        archiveVendorResponse: async (input) => {
+          calls.push(input as unknown as Record<string, unknown>);
+        },
+      });
+      await processor(jobFor({ ...ids, pageCap }));
+      return { startAudit, getAuditResult, calls };
+    }
+
+    it('posts the scan and reads the result with it when the run asked for it', async () => {
+      const { startAudit, getAuditResult } = await runWith(true);
+      expect(startAudit).toHaveBeenCalledWith({ domain: 'example.com', pageCap: 100, resourceScan: true });
+      expect(getAuditResult).toHaveBeenCalledWith('task-scan', { resourceScan: true });
+    });
+
+    it('posts a plain crawl for a run that opted out or predates the field', async () => {
+      const off = await runWith(false);
+      expect(off.startAudit).toHaveBeenCalledWith({ domain: 'example.com', pageCap: 100 });
+      expect(off.getAuditResult).toHaveBeenCalledWith('task-scan', { resourceScan: false });
+      const unset = await runWith(undefined);
+      expect(unset.startAudit).toHaveBeenCalledWith({ domain: 'example.com', pageCap: 100 });
+    });
+
+    it('never scans past the scan page limit, even if the run asks for more pages', async () => {
+      const { startAudit, getAuditResult } = await runWith(true, RESOURCE_SCAN_MAX_PAGES + 1);
+      expect(startAudit).toHaveBeenCalledWith({ domain: 'example.com', pageCap: RESOURCE_SCAN_MAX_PAGES, resourceScan: true });
+      expect(getAuditResult).toHaveBeenCalledWith('task-scan', { resourceScan: true });
+    });
+
+    it('crawls every requested page when the run opted out of the scan', async () => {
+      const { startAudit } = await runWith(false, RESOURCE_SCAN_MAX_PAGES + 1);
+      expect(startAudit).toHaveBeenCalledWith({ domain: 'example.com', pageCap: RESOURCE_SCAN_MAX_PAGES + 1 });
+    });
+
+    it('a resumed task is read the way the run says it was posted', async () => {
+      const { startAudit, getAuditResult } = await runWith(true, 100, { status: 'running', vendorTaskId: 'task-prior' });
+      expect(startAudit).not.toHaveBeenCalled();
+      expect(getAuditResult).toHaveBeenCalledWith('task-prior', { resourceScan: true });
+    });
+
+    it('archives whether the crawl carried the scan, as the provider measured it', async () => {
+      const scanned = await runWith(true);
+      expect(scanned.calls[0]?.params).toMatchObject({ resourceScan: true });
+      const plain = await runWith(false);
+      expect(plain.calls[0]?.params).toMatchObject({ resourceScan: false });
+    });
+
+    it('sums the scan reads into the same recorded vendor cost as the crawl', async () => {
+      const ids = await seed();
+      await AuditRun.updateOne({ _id: ids.runId }, { $set: { resourceScan: true } });
+      const inner = createFakeAuditProvider({ vendorTaskId: 'task-scan-cost' });
+      const calls: Array<{ costMicros?: bigint | null }> = [];
+      await createAuditProcessor({
+        provider: {
+          ...inner,
+          async startAudit(input) {
+            recordVendorCostUsd(input.resourceScan ? 0.00045 * 2 : 0.00015 * 2);
+            return inner.startAudit(input);
+          },
+          async getAuditResult(id, options) {
+            // The resource reads run inside the result fetch.
+            recordVendorCostUsd(0.0001);
+            return inner.getAuditResult(id, options);
+          },
+        },
+        logger,
+        archiveVendorResponse: async (input) => {
+          calls.push(input);
+        },
+      })(jobFor({ ...ids, pageCap: 100 }));
+      expect(calls[0]!.costMicros).toBe(1_000n);
+    });
+  });
+
   it('archives nothing when the vendor crawl fails', async () => {
     const ids = await seed();
     const provider = createFakeAuditProvider({
@@ -208,7 +294,7 @@ describe('createAuditProcessor', () => {
     const processor = createAuditProcessor({ provider, logger, sleep, pollIntervalMs: 1 });
 
     const outcome = await processor(jobFor({ ...ids, pageCap: 100 }));
-    expect(outcome.pagesCrawled).toBe(2);
+    expect(outcome.pagesCrawled).toBe(FAKE_AUDIT_RESULT.pages.length);
     expect(sleep).toHaveBeenCalledWith(1);
   });
 
@@ -338,7 +424,7 @@ describe('createAuditProcessor', () => {
 
     const startedAt = Date.now();
     const outcome = await processor(jobFor({ ...ids, pageCap: 100 }));
-    expect(outcome.pagesCrawled).toBe(2);
+    expect(outcome.pagesCrawled).toBe(FAKE_AUDIT_RESULT.pages.length);
     expect(polls).toBe(2);
     expect(Date.now() - startedAt).toBeGreaterThanOrEqual(1_900);
   });
@@ -903,7 +989,7 @@ describe('audit processor — page persistence and PageSpeed sampling', () => {
       provider,
       logger,
       pageSpeedProvider,
-      pageSpeedSampleSize: 2,
+      pageSpeedSampleSize: 1,
     });
     await processor(jobFor({ ...ids, pageCap: 100 }));
     const snap = await ReportSnapshot.findOne({ runId: ids.runId });

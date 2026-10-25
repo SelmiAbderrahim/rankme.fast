@@ -4,6 +4,7 @@ import { env } from '../../config/env.js';
 import { REPORT_DOCUMENT_SCHEMA, REPORT_DOCUMENT_SCHEMA_VERSION, renderReportDocument, reportCatalogCopy, reportCopy, reportSourceDate, reportSourceNote, reportSourceVersion, reportTable, type ReportBlockV1, type ReportDocumentV1, } from '../../shared/report-exports/index.js';
 import { HttpError } from '../../shared/utils/http-error.js';
 import type { ReportExportAdapter } from '../report-exports/index.js';
+import { deepCrawlEvidenceLines } from '../audits/index.js';
 import { getSite } from '../sites/index.js';
 import { clientReportSectionsSchema } from './client-reports.schema.js';
 import { composeClientReport, inspectClientReportCompleteness, } from './report-composer.service.js';
@@ -106,7 +107,7 @@ export function createClientReportExportAdapter(db: Db): ReportExportAdapter<Cli
                             why: finding.copy.reason ?? finding.copy.why,
                             ...(finding.bucket === 'passed' ? { pass: finding.copy.passedLabel } : { fix: finding.copy.fix }),
                             affectedUrls: [...finding.affectedUrls].sort(),
-                            evidence: [],
+                            evidence: deepCrawlEvidenceLines(finding.meta),
                             sourceDateId: 'client-audit',
                         })) });
                     if (audit.report.aiSummary) {

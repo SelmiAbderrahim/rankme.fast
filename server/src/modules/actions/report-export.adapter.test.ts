@@ -146,6 +146,19 @@ describe('actions report export adapter', () => {
     });
   });
 
+  it('exports open and planned work by default while honoring an explicit resolved filter', async () => {
+    mocked.listActions.mockResolvedValue(page({ nextCursor: null, items: [
+      action({ id: 'open' }), action({ id: 'planned', state: 'planned' }),
+      action({ id: 'dismissed', state: 'dismissed' }),
+      action({ id: 'completed', state: 'completed' }),
+    ] }));
+    const adapter = createActionsReportExportAdapter(database);
+    const current = await adapter.compose(compose({}));
+    expect(current.document.completeness.selectedItems).toBe(2);
+    const resolved = await adapter.compose(compose({ state: ['dismissed', 'completed'] }));
+    expect(resolved.document.completeness.selectedItems).toBe(2);
+  });
+
   it('uses epoch/domain fallbacks and stops pagination at the export bound', async () => {
     const many = Array.from({ length: 1_001 }, (_, index) => action({ id: `action-${index}` }));
     mocked.listActions.mockResolvedValueOnce(page({ items: many, nextCursor: 'bounded-stop' }));

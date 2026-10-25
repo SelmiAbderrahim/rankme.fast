@@ -47,8 +47,23 @@ export interface LocalizedFinding {
   meta?: Record<string, unknown>;
   /** The check could not run (data source missing) — not an open problem. */
   notEvaluated?: true;
+  /** Report category for the category filter; absent on older servers, `null` for an unknown id. */
+  category?: ReportCategory | null;
   copy: LocalizedRuleCopy;
 }
+
+/** Mirrors the server's `RULE_CATEGORIES` (rules/categories.ts). */
+export const REPORT_CATEGORIES = [
+  'indexability',
+  'links-redirects',
+  'content',
+  'html',
+  'media',
+  'performance',
+  'security',
+  'social',
+] as const;
+export type ReportCategory = (typeof REPORT_CATEGORIES)[number];
 
 export interface FindingCounts {
   fixNow: number;
@@ -298,6 +313,8 @@ export interface PublicAuditRun {
   siteId: string;
   status: 'queued' | 'running' | 'succeeded' | 'failed';
   pageCap: number;
+  /** The crawl loads images, scripts and stylesheets. */
+  resourceScan?: boolean;
   pagesCrawled: number;
   vendorTaskId: string | null;
   startedAt: string | null;

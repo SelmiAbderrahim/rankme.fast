@@ -1,5 +1,5 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
-import { act, render, screen, waitFor, within } from '@testing-library/react';
+import { act, cleanup, render, screen, waitFor, within } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { Provider } from 'react-redux';
 import { I18nextProvider } from 'react-i18next';
@@ -374,7 +374,7 @@ describe('ReportPage — loading, empty & error', () => {
     expect(mocked.startAuditRequest).not.toHaveBeenCalled();
     await user.click(screen.getByTestId('report-retest-confirm'));
     await waitFor(() =>
-      expect(mocked.startAuditRequest).toHaveBeenCalledWith('site-1', undefined),
+      expect(mocked.startAuditRequest).toHaveBeenCalledWith('site-1', undefined, true),
     );
   });
 
@@ -792,7 +792,7 @@ describe('ReportPage — retest & diff badges', () => {
     await user.click(cta);
     await user.click(await screen.findByTestId('report-retest-confirm'));
     await waitFor(() =>
-      expect(mocked.startAuditRequest).toHaveBeenCalledWith('site-1', undefined),
+      expect(mocked.startAuditRequest).toHaveBeenCalledWith('site-1', undefined, true),
     );
     expect(mocked.startAuditRequest).toHaveBeenCalledTimes(1);
     expect(await screen.findByText('Auditing…')).toBeInTheDocument();
@@ -828,7 +828,7 @@ describe('ReportPage — retest & diff badges', () => {
     await user.click(await screen.findByRole('option', { name: '1000 pages' }));
     await user.click(screen.getByTestId('report-retest-confirm'));
     await waitFor(() =>
-      expect(mocked.startAuditRequest).toHaveBeenCalledWith('site-1', 1000),
+      expect(mocked.startAuditRequest).toHaveBeenCalledWith('site-1', 1000, true),
     );
   });
 
@@ -842,7 +842,7 @@ describe('ReportPage — retest & diff badges', () => {
     await user.click(await screen.findByRole('option', { name: '100 pages' }));
     await user.click(screen.getByTestId('report-retest-confirm'));
     await waitFor(() =>
-      expect(mocked.startAuditRequest).toHaveBeenCalledWith('site-1', 100),
+      expect(mocked.startAuditRequest).toHaveBeenCalledWith('site-1', 100, true),
     );
   });
 
@@ -3077,5 +3077,274 @@ describe('ReportPage — renders before the lazy slice materializes', () => {
       </Provider>,
     );
     expect(await screen.findByTestId('report-loading')).toBeInTheDocument();
+  });
+});
+
+// -----------------------------------------------------------------------------
+// Deep crawl findings: category filter, resource scan option, crawl reasons
+// -----------------------------------------------------------------------------
+
+const crawlFinding = (
+  overrides: Partial<LocalizedFinding> & Pick<LocalizedFinding, 'ruleId'>,
+): LocalizedFinding => ({
+  bucket: 'watch',
+  severity: 'warning',
+  affectedUrls: ['https://example.com/a'],
+  copy: {
+    titleKey: `auditRules.${overrides.ruleId}.title`,
+    whyKey: `auditRules.${overrides.ruleId}.why`,
+    fixKey: `auditRules.${overrides.ruleId}.fix`,
+    passedLabelKey: `auditRules.${overrides.ruleId}.passedLabel`,
+    title: `${overrides.ruleId} title`,
+    why: `${overrides.ruleId} why`,
+    fix: `${overrides.ruleId} fix`,
+    passedLabel: `${overrides.ruleId} passed`,
+  },
+  ...overrides,
+});
+
+describe('ReportPage — category filter', () => {
+  const categorized = [
+    crawlFinding({ ruleId: 'placeholder-text', bucket: 'fix-now', severity: 'critical', category: 'content' }),
+    crawlFinding({ ruleId: 'http-error-pages', bucket: 'fix-now', severity: 'critical', category: 'links-redirects' }),
+    crawlFinding({ ruleId: 'deep-pages', category: 'links-redirects' }),
+    crawlFinding({ ruleId: 'unlabelled-rule' }),
+  ];
+  const counts = { fixNow: 2, watch: 2, passed: 0 };
+
+  it('filters the active tab by ?category=, counts each category and keeps the choice in the URL', async () => {
+    mocked.fetchReportRequest.mockResolvedValue(makeReport({ findings: categorized, counts }));
+    let search = '';
+    renderReport({ onLocation: (s) => { search = s; } });
+    expect(await screen.findByText('placeholder-text title')).toBeInTheDocument();
+    expect(screen.getByText('http-error-pages title')).toBeInTheDocument();
+    const user = userEvent.setup();
+    await user.click(screen.getByRole('combobox', { name: 'Category' }));
+    expect(await screen.findByRole('option', { name: 'All categories (2)' })).toBeInTheDocument();
+    expect(screen.getByRole('option', { name: 'Links and redirects (1)' })).toBeInTheDocument();
+    expect(screen.getByRole('option', { name: 'Security (0)' })).toBeInTheDocument();
+    await user.click(screen.getByRole('option', { name: 'Content (1)' }));
+    await waitFor(() => expect(search).toContain('category=content'));
+    expect(screen.getByText('placeholder-text title')).toBeInTheDocument();
+    expect(screen.queryByText('http-error-pages title')).toBeNull();
+  });
+
+  it('says so when a category has nothing on the tab, and falls back to all for an unknown value', async () => {
+    mocked.fetchReportRequest.mockResolvedValue(makeReport({ findings: categorized, counts }));
+    renderReport({ path: '/sites/site-1/report?category=security' });
+    expect(await screen.findByTestId('report-empty-category')).toHaveTextContent('Nothing in this category');
+    cleanup();
+    let search = '';
+    renderReport({ path: '/sites/site-1/report?category=bogus', onLocation: (s) => { search = s; } });
+    expect(await screen.findByText('placeholder-text title')).toBeInTheDocument();
+    await waitFor(() => expect(search).toContain('category=all'));
+  });
+
+  it('an empty tab keeps its own empty state under any category', async () => {
+    mocked.fetchReportRequest.mockResolvedValue(makeReport({ findings: categorized, counts }));
+    renderReport({ path: '/sites/site-1/report?bucket=passed&category=content' });
+    expect(await screen.findByTestId('report-empty-passed')).toBeInTheDocument();
+    expect(screen.queryByTestId('report-empty-category')).toBeNull();
+  });
+});
+
+describe('ReportPage — resource scan option', () => {
+  it('starts the audit with the scan on, and lets one run turn it off', async () => {
+    const user = userEvent.setup();
+    renderReport();
+    await user.click(await screen.findByTestId('report-retest'));
+    const option = await screen.findByTestId('report-resource-scan');
+    expect(option).toBeChecked();
+    expect(screen.getByLabelText('Scan images, scripts and styles')).toBe(option);
+    expect(screen.getByText(/only runs for page limits of 1,000 or fewer/)).toBeInTheDocument();
+    // The default limit is above what the scan covers, and the dialog says so.
+    expect(screen.getByTestId('report-resource-scan-note')).toHaveTextContent(
+      'This page limit is above 1,000, so the audit will skip this scan.',
+    );
+    await user.click(option);
+    expect(screen.queryByTestId('report-resource-scan-note')).toBeNull();
+    expect(option).not.toBeChecked();
+    await user.click(screen.getByTestId('report-retest-confirm'));
+    await waitFor(() => expect(mocked.startAuditRequest).toHaveBeenCalledWith('site-1', undefined, false));
+  });
+
+  it('drops the note once the page limit is one the scan covers', async () => {
+    const user = userEvent.setup();
+    renderReport();
+    await user.click(await screen.findByTestId('report-retest'));
+    expect(await screen.findByTestId('report-resource-scan-note')).toBeInTheDocument();
+    await user.click(screen.getByLabelText('Pages to crawl'));
+    await user.click(await screen.findByRole('option', { name: '1000 pages' }));
+    expect(screen.queryByTestId('report-resource-scan-note')).toBeNull();
+    await user.click(screen.getByLabelText('Pages to crawl'));
+    await user.click(await screen.findByRole('option', { name: 'Maximum allowed' }));
+    expect(screen.getByTestId('report-resource-scan-note')).toBeInTheDocument();
+  });
+});
+
+describe('NotEvaluatedChecks — crawl reasons', () => {
+  it('words legacy runs, a run without the scan and failed reads', async () => {
+    mocked.fetchReportRequest.mockResolvedValue(
+      makeReport({
+        findings: [
+          crawlFinding({ ruleId: 'broken-resources', notEvaluated: true, affectedUrls: [], meta: { insufficientData: true, reason: 'scan-off' } }),
+          crawlFinding({ ruleId: 'orphan-pages', notEvaluated: true, affectedUrls: [], meta: { insufficientData: true, reason: 'legacy-run' } }),
+          crawlFinding({ ruleId: 'redirect-chains', notEvaluated: true, affectedUrls: [], meta: { insufficientData: true, reason: 'unavailable', cause: 'vendor-error' } }),
+        ],
+        counts: { fixNow: 0, watch: 0, passed: 0, notEvaluated: 3 },
+      }),
+    );
+    renderReport();
+    const note = await screen.findByTestId('report-scan-off');
+    expect(note).toHaveTextContent('This audit ran without the image, script and style scan.');
+    expect(note.className).not.toMatch(/highlight|animate/);
+    expect(screen.getByText('This audit ran before this check existed. Run a new audit to include it.')).toBeInTheDocument();
+    expect(screen.getByText('This part of the crawl could not be read during this audit. This check runs again on the next audit.')).toBeInTheDocument();
+  });
+});
+
+describe('IssueDetail — deep crawl evidence', () => {
+  const renderDetail = (finding: LocalizedFinding) =>
+    renderInRouter(<IssueDetail finding={finding} diffByUrl={new Map()} />);
+
+  it('shows per-page facts with units and named problems next to each URL', () => {
+    renderDetail(
+      crawlFinding({
+        ruleId: 'large-pages',
+        affectedUrls: ['https://example.com/a', 'https://example.com/b'],
+        meta: {
+          pages: [
+            {
+              url: 'https://example.com/a',
+              problems: ['largePage', 'veryLargePage'],
+              pageSizeBytes: 3_400_000,
+              transferSizeBytes: 900_000,
+              serverResponseMs: 2_400,
+              fetchMs: 180,
+              clickDepth: 6,
+              inboundInternalLinks: 0,
+              imageCount: 4,
+              renderBlockingScripts: 2,
+              renderBlockingStylesheets: 1,
+              contentEncoding: null,
+              openGraph: false,
+              twitterCard: false,
+              statusCode: 200,
+              canonical: 'https://example.com/canonical',
+            },
+            { url: 'https://example.com/b', problems: ['unknownProblem'], contentEncoding: 'br' },
+          ],
+        },
+      }),
+    );
+    const facts = screen.getAllByTestId('report-evidence-facts');
+    expect(facts).toHaveLength(2);
+    for (const text of [
+      'Over 1 MB',
+      'Over 3 MB',
+      'Status 200',
+      'Clicks from home: 6',
+      'Links to this page: 0',
+      'Page size: 3.4 MB',
+      'Sent: 900 kB',
+      'First byte: 2.4 sec',
+      'Load time: 180 ms',
+      'Images: 4',
+      'Blocking scripts: 2',
+      'Blocking stylesheets: 1',
+      'Not compressed',
+      'No Open Graph tags',
+      'No Twitter card tags',
+      'Canonical points to',
+    ]) {
+      expect(facts[0]).toHaveTextContent(text);
+    }
+    expect(within(facts[0]!).getByRole('link', { name: 'https://example.com/canonical' })).toHaveAttribute('rel', 'nofollow ugc noopener noreferrer');
+    // A problem the client has no wording for is not shown; the encoding is.
+    expect(facts[1]).toHaveTextContent('Compression: br');
+    expect(facts[1]).not.toHaveTextContent('unknownProblem');
+  });
+
+  it('shows resources with type, status, size and the pages that use them', () => {
+    renderDetail(
+      crawlFinding({
+        ruleId: 'broken-resources',
+        bucket: 'fix-now',
+        affectedUrls: ['https://example.com/img/a.png', 'https://example.com/b.js', 'https://example.com/odd', 'https://example.com/c.css'],
+        meta: {
+          resources: [
+            { url: 'https://example.com/img/a.png', type: 'image', statusCode: 404, sizeBytes: 512, usedOn: ['https://example.com/'], usedOnCount: 12 },
+            { url: 'https://example.com/b.js', type: 'script', statusCode: null, usedOn: [] },
+            { url: 'https://example.com/odd', type: 'font', statusCode: 200, usedOn: [], usedOnCount: 0 },
+            { url: 'https://example.com/c.css', type: 'stylesheet', statusCode: 200, usedOn: ['https://example.com/x'] },
+            { type: 'image' },
+          ],
+        },
+      }),
+    );
+    const facts = screen.getAllByTestId('report-evidence-facts');
+    expect(facts[0]).toHaveTextContent('Image');
+    expect(facts[0]).toHaveTextContent('Status 404');
+    expect(facts[0]).toHaveTextContent('512 byte');
+    expect(facts[0]).toHaveTextContent('Used on');
+    expect(facts[0]).toHaveTextContent('Pages using it: 12');
+    expect(facts[1]).toHaveTextContent('Script');
+    expect(facts[1]).toHaveTextContent('No answer');
+    expect(facts[2]).toHaveTextContent('Other file');
+    expect(facts[2]).not.toHaveTextContent('Pages using it');
+    expect(facts[3]).toHaveTextContent('Used on');
+    expect(facts[3]).not.toHaveTextContent('Pages using it');
+  });
+
+  it('shows redirect steps, loops, matching pages, insecure files and the evidence cut', () => {
+    renderDetail(
+      crawlFinding({
+        ruleId: 'redirect-chains',
+        affectedUrls: ['https://example.com/old'],
+        meta: {
+          chains: [
+            { from: 'https://example.com/old', hops: [{ url: 'https://example.com/older', status: 301 }, { url: 'https://example.com/new', status: 0 }], isLoop: false },
+            { from: 'https://example.com/loop', hops: [{ url: 'https://example.com/loop', status: 302 }, { url: 7, status: 'x' }], isLoop: true },
+            { from: 'broken' },
+          ],
+          groups: [
+            { urls: ['https://example.com/x', 'https://example.com/y'], similarity: 8 },
+            { urls: ['https://example.com/p', 'https://example.com/q'], title: 'Widget care' },
+            { urls: ['https://example.com/r', 'https://example.com/s'], title: null },
+            { urls: ['https://example.com/t', 'https://example.com/u'] },
+            { urls: [] },
+            null,
+          ],
+          insecureResources: ['http://cdn.example.com/a.js'],
+          reachedThroughChain: ['https://example.com/z'],
+          evidenceTruncated: 260,
+          pages: 'not-a-list',
+        },
+      }),
+    );
+    const chains = screen.getAllByTestId('report-evidence-chain');
+    expect(chains).toHaveLength(2);
+    expect(chains[0]).toHaveTextContent('Status 301');
+    expect(chains[0]).toHaveTextContent('Status not reported');
+    expect(chains[1]).toHaveTextContent('Loop');
+    const groups = screen.getAllByTestId('report-evidence-group');
+    expect(groups).toHaveLength(4);
+    expect(groups[0]).toHaveTextContent('Similarity: 8 out of 10');
+    expect(groups[1]).toHaveTextContent('Shared title: Widget care');
+    expect(groups[2]).toHaveTextContent('No title');
+    expect(screen.getByTestId('report-evidence-insecure')).toHaveTextContent('http://cdn.example.com/a.js');
+    expect(screen.getByText('Pages reached through a redirect chain')).toBeInTheDocument();
+    expect(screen.getByTestId('report-evidence-cut')).toHaveTextContent('Details shown for the first 0 of 260.');
+  });
+
+  it('malformed meta shows nothing, and a row with nothing to say renders an empty slot', () => {
+    const { unmount } = renderDetail(
+      crawlFinding({ ruleId: 'deep-pages', meta: { pages: [null, { url: 5 }], resources: [7], evidenceTruncated: 'x' } }),
+    );
+    expect(screen.queryByTestId('report-evidence-facts')).toBeNull();
+    unmount();
+    renderDetail(crawlFinding({ ruleId: 'orphan-pages', meta: { pages: [{ url: 'https://example.com/a', problems: ['orphan'] }] } }));
+    expect(screen.getByTestId('report-evidence-facts')).toHaveTextContent('');
+    expect(screen.queryByTestId('report-evidence-cut')).toBeNull();
   });
 });

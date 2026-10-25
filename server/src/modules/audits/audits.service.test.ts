@@ -24,8 +24,9 @@ import {
   resolveAuditPageCap,
   resolveOwnedAuditRunSiteId,
   startAuditForSite,
+  toPublicAuditRun,
 } from './index.js';
-import { AUDIT_PAGE_CAP_MAX } from './audits.schema.js';
+import { AUDIT_PAGE_CAP_MAX, pageCapForScan, RESOURCE_SCAN_MAX_PAGES, resolveResourceScan } from './audits.schema.js';
 
 beforeAll(async () => {
   await startMemoryMongo();
@@ -78,8 +79,83 @@ describe('resolveAuditPageCap', () => {
   });
 });
 
+describe('resolveResourceScan', () => {
+  it('is on unless the caller opts the run out', () => {
+    expect(resolveResourceScan()).toBe(true);
+    expect(resolveResourceScan(true)).toBe(true);
+    expect(resolveResourceScan(false)).toBe(false);
+  });
+
+  it('limits a scanning crawl to the scan page limit and leaves other crawls alone', () => {
+    expect(pageCapForScan(10, true)).toBe(10);
+    expect(pageCapForScan(AUDIT_PAGE_CAP_MAX, true)).toBe(RESOURCE_SCAN_MAX_PAGES);
+    expect(pageCapForScan(AUDIT_PAGE_CAP_MAX, false)).toBe(AUDIT_PAGE_CAP_MAX);
+  });
+});
+
+describe('startAuditForSite resource scan', () => {
+  it('stores the scan on the run and reports it in the public run', async () => {
+    const accountId = new mongoose.Types.ObjectId().toHexString();
+    const site = await seedSite(accountId, 'scan-on.example');
+    const { queue } = fakeQueue();
+    const run = await startAuditForSite(
+      { accountId, siteId: site.id as string, requestedPageCap: 200 },
+      { auditsQueue: queue },
+    );
+    expect(run.resourceScan).toBe(true);
+    expect((await AuditRun.findById(run.id))?.resourceScan).toBe(true);
+  });
+
+  it('lets one run opt out', async () => {
+    const accountId = new mongoose.Types.ObjectId().toHexString();
+    const site = await seedSite(accountId, 'scan-off.example');
+    const { queue } = fakeQueue();
+    const run = await startAuditForSite(
+      { accountId, siteId: site.id as string, requestedPageCap: 200, resourceScan: false },
+      { auditsQueue: queue },
+    );
+    expect(run.resourceScan).toBe(false);
+    expect((await AuditRun.findById(run.id))?.resourceScan).toBe(false);
+  });
+
+  it('limits a scanning crawl to the scan page limit', async () => {
+    const accountId = new mongoose.Types.ObjectId().toHexString();
+    const site = await seedSite(accountId, 'scan-large.example');
+    const { queue, jobs } = fakeQueue();
+    const run = await startAuditForSite(
+      { accountId, siteId: site.id as string, requestedPageCap: RESOURCE_SCAN_MAX_PAGES + 1 },
+      { auditsQueue: queue },
+    );
+    expect(run.pageCap).toBe(RESOURCE_SCAN_MAX_PAGES);
+    expect(run.resourceScan).toBe(true);
+    expect(jobs[0]?.data).toMatchObject({ pageCap: RESOURCE_SCAN_MAX_PAGES });
+  });
+
+  it('crawls a larger ceiling in full when the run opts out of the scan', async () => {
+    const accountId = new mongoose.Types.ObjectId().toHexString();
+    const site = await seedSite(accountId, 'scan-opt-out.example');
+    const { queue, jobs } = fakeQueue();
+    const run = await startAuditForSite(
+      { accountId, siteId: site.id as string, requestedPageCap: RESOURCE_SCAN_MAX_PAGES + 1, resourceScan: false },
+      { auditsQueue: queue },
+    );
+    expect(run.pageCap).toBe(RESOURCE_SCAN_MAX_PAGES + 1);
+    expect(run.resourceScan).toBe(false);
+    expect(jobs[0]?.data).toMatchObject({ pageCap: RESOURCE_SCAN_MAX_PAGES + 1 });
+  });
+
+  it('keeps runs from before the field reporting no scan', async () => {
+    const accountId = new mongoose.Types.ObjectId().toHexString();
+    const site = await seedSite(accountId, 'scan-legacy.example');
+    const run = await AuditRun.create({ accountId, siteId: site._id, pageCap: 50 });
+    await AuditRun.collection.updateOne({ _id: run._id }, { $unset: { resourceScan: '' } });
+    const stored = await AuditRun.findById(run._id);
+    expect(toPublicAuditRun(stored!).resourceScan).toBe(false);
+  });
+});
+
 describe('startAuditForSite', () => {
-  it('uses the structural page ceiling when no cap is requested', async () => {
+  it('uses the resource scan page limit when no cap is requested', async () => {
     const accountId = new mongoose.Types.ObjectId().toHexString();
     const site = await seedSite(accountId, 'self-host-audit.example');
     const { queue, jobs } = fakeQueue();
@@ -87,8 +163,19 @@ describe('startAuditForSite', () => {
       { accountId, siteId: site.id as string },
       { auditsQueue: queue },
     );
-    expect(run.pageCap).toBe(AUDIT_PAGE_CAP_MAX);
+    expect(run.pageCap).toBe(RESOURCE_SCAN_MAX_PAGES);
     expect(jobs).toHaveLength(1);
+  });
+
+  it('uses the structural page ceiling when the run opts out of the scan', async () => {
+    const accountId = new mongoose.Types.ObjectId().toHexString();
+    const site = await seedSite(accountId, 'self-host-no-scan.example');
+    const { queue } = fakeQueue();
+    const run = await startAuditForSite(
+      { accountId, siteId: site.id as string, resourceScan: false },
+      { auditsQueue: queue },
+    );
+    expect(run.pageCap).toBe(AUDIT_PAGE_CAP_MAX);
   });
 
   it('honours a requested page cap', async () => {
@@ -585,6 +672,55 @@ describe('replaceAuditedPages', () => {
     const pages = await AuditedPage.find({ runId: run._id });
     expect(pages).toHaveLength(1);
     expect(pages[0]?.url).toBe('https://example.com/');
+  });
+
+  it('keeps the deep crawl facts a page reports and leaves unreported ones absent', async () => {
+    const accountId = new mongoose.Types.ObjectId().toHexString();
+    const site = await seedSite(accountId);
+    const run = await AuditRun.create({ accountId, siteId: site._id, pageCap: 100 });
+    const base = {
+      statusCode: 200,
+      title: null,
+      metaDescription: null,
+      h1: [],
+      h2: [],
+      canonical: null,
+      hasStructuredData: false,
+      structuredDataErrors: [],
+      isIndexable: true,
+      brokenLinks: [],
+      onPageScore: 70,
+    };
+    await replaceAuditedPages(run.id as string, [
+      {
+        ...base,
+        url: 'https://example.com/deep',
+        checks: { orphan: true, titleTooLong: false },
+        clickDepth: 4,
+        inboundInternalLinks: 0,
+        pageSizeBytes: 4096,
+        serverResponseMs: 900,
+        contentEncoding: null,
+        imageCount: 3,
+        socialTags: { openGraph: true, twitterCard: false },
+      },
+      { ...base, url: 'https://example.com/plain' },
+    ]);
+    const deep = await AuditedPage.findOne({ runId: run._id, url: 'https://example.com/deep' }).lean();
+    expect(deep).toMatchObject({
+      checks: { orphan: true, titleTooLong: false },
+      clickDepth: 4,
+      inboundInternalLinks: 0,
+      pageSizeBytes: 4096,
+      serverResponseMs: 900,
+      imageCount: 3,
+      socialTags: { openGraph: true, twitterCard: false },
+    });
+    expect(deep?.checks).not.toHaveProperty('clientError');
+    const plain = await AuditedPage.findOne({ runId: run._id, url: 'https://example.com/plain' }).lean();
+    expect(plain).not.toHaveProperty('checks');
+    expect(plain).not.toHaveProperty('clickDepth');
+    expect(plain).not.toHaveProperty('socialTags');
   });
 
   it('empty page list only drops (no insert)', async () => {

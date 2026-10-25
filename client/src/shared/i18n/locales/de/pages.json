@@ -135,9 +135,28 @@
     "context_many": "{{shown}} von {{total}} passenden Seiten",
     "context_other": "{{shown}} von {{total}} passenden Seiten" },
   "detail": {
-    "title": "Seitendetails", "description": "Kanonischer Seitenkontext wird geladen", "close": "Seitendetails schließen", "errorTitle": "Seitendetails konnten nicht geladen werden", "notFound": "Diese Seite ist nicht mehr im aktuellen Bestand. Die Liste bleibt verfügbar.", "pageContext": "Kanonischer Seitenkontext", "crawlReason": "Grund des letzten Crawls: {{reason}}",
-    "opportunities": "Erklärungen der Chancen", "noOpportunities": "Derzeit gilt keine Chancenregel für diese Seite.", "queriesTitle": "Beobachtete Suchanfragen", "keywordsTitle": "Rankende Keywords", "associatedCount_one": "{{shown}} von {{total}} zugehöriger Zeile.", "truncated": "Die Antwort ist auf 100 Zeilen begrenzt.", "associatedEmpty": "Keine zugehörigen Suchanfragen oder Keywords gespeichert.", "associatedCaption": "Zugehörige Suchanfragen oder Keywords", "queryOrKeyword": "Suchanfrage oder Keyword",
-    "trendTitle": "Verlauf der durchschnittlichen Position", "trendDescription_one": "{{count}} gespeicherter Punkt, höchstens 90 werden zurückgegeben.", "trendEmpty": "Noch kein vergleichbarer Positionsverlauf gespeichert.", "trendAria_one": "Positionsverlauf mit {{count}} Punkt", "trendTableCaption": "Barrierefreie Verlaufsdaten", "date": "Beobachtungsdatum",
+    "title": "Seitendetails",
+    "description": "Kanonischer Seitenkontext wird geladen",
+    "close": "Seitendetails schließen",
+    "errorTitle": "Seitendetails konnten nicht geladen werden",
+    "notFound": "Diese Seite ist nicht mehr im aktuellen Bestand. Die Liste bleibt verfügbar.",
+    "pageContext": "Kanonischer Seitenkontext",
+    "crawlReason": "Grund des letzten Crawls: {{reason}}",
+    "opportunities": "Erklärungen der Chancen",
+    "noOpportunities": "Derzeit gilt keine Chancenregel für diese Seite.",
+    "queriesTitle": "Beobachtete Suchanfragen",
+    "keywordsTitle": "Rankende Keywords",
+    "associatedCount_one": "{{shown}} von {{total}} zugehöriger Zeile.",
+    "truncated": "Die Antwort ist auf 100 Zeilen begrenzt.",
+    "associatedEmpty": "Keine zugehörigen Suchanfragen oder Keywords gespeichert.",
+    "associatedCaption": "Zugehörige Suchanfragen oder Keywords",
+    "queryOrKeyword": "Suchanfrage oder Keyword",
+    "trendTitle": "Verlauf der durchschnittlichen Position",
+    "trendDescription_one": "{{count}} gespeicherter Punkt, höchstens 90 werden zurückgegeben.",
+    "trendEmpty": "Noch kein vergleichbarer Positionsverlauf gespeichert.",
+    "trendAria_one": "Positionsverlauf mit {{count}} Punkt",
+    "trendTableCaption": "Barrierefreie Verlaufsdaten",
+    "date": "Beobachtungsdatum",
     "trendDescription_zero": "{{count}} gespeicherte Punkte, höchstens 90 werden zurückgegeben.",
     "trendDescription_two": "{{count}} gespeicherte Punkte, höchstens 90 werden zurückgegeben.",
     "trendDescription_few": "{{count}} gespeicherte Punkte, höchstens 90 werden zurückgegeben.",
@@ -152,7 +171,19 @@
     "associatedCount_two": "{{shown}} von {{total}} zugehörigen Zeilen.",
     "associatedCount_few": "{{shown}} von {{total}} zugehörigen Zeilen.",
     "associatedCount_many": "{{shown}} von {{total}} zugehörigen Zeilen.",
-    "associatedCount_other": "{{shown}} von {{total}} zugehörigen Zeilen."
+    "associatedCount_other": "{{shown}} von {{total}} zugehörigen Zeilen.",
+    "audit": {
+      "title": "Aus dem letzten Audit",
+      "notCrawled": "Das letzte Audit hat diese Seite nicht gecrawlt.",
+      "issuesTitle": "Probleme auf dieser Seite",
+      "noIssues": "Das letzte Audit hat auf dieser Seite keine offenen Probleme gefunden.",
+      "facts": {
+        "clickDepth": "Klicks von der Startseite",
+        "inboundInternalLinks": "Interne Links auf diese Seite",
+        "pageSizeBytes": "Seitengröße",
+        "serverResponseMs": "Erstes Byte"
+      }
+    }
   },
   "notifications": { "refreshed": "{{source}}-Daten wurden erfolgreich aktualisiert.", "empty": "Die {{source}}-Aktualisierung endete ohne Seitenzeilen." },
   "crawl": {

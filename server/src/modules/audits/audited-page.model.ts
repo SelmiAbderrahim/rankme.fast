@@ -1,4 +1,7 @@
 import mongoose, { type HydratedDocument, type InferSchemaType } from 'mongoose';
+import { AUDIT_PAGE_CHECK_KEYS } from '../../shared/providers/index.js';
+/** One Boolean per normalized crawl check (`AuditPageChecks`); unreported checks stay absent. */
+const auditPageChecksSchema = new mongoose.Schema(Object.fromEntries(AUDIT_PAGE_CHECK_KEYS.map((key) => [key, { type: Boolean, default: undefined }])), { _id: false });
 /**
  * Per-page audit result. One document per URL crawled by an
  * AuditRun; index by `runId` so the report screen can page
@@ -25,6 +28,25 @@ const auditedPageSchema = new mongoose.Schema({
     nonIndexableReason: { type: String, default: null },
     brokenLinks: { type: [String], default: [] },
     onPageScore: { type: Number, required: true },
+    // Deep crawl facts. All absent on older runs and whenever the crawler did
+    // not report them — never "zero" / "none".
+    checks: { type: auditPageChecksSchema, default: undefined },
+    clickDepth: { type: Number, default: undefined },
+    inboundInternalLinks: { type: Number, default: undefined },
+    outboundInternalLinks: { type: Number, default: undefined },
+    outboundExternalLinks: { type: Number, default: undefined },
+    pageSizeBytes: { type: Number, default: undefined },
+    transferSizeBytes: { type: Number, default: undefined },
+    serverResponseMs: { type: Number, default: undefined },
+    // `null` = served uncompressed; absent = not reported.
+    contentEncoding: { type: String, default: undefined },
+    imageCount: { type: Number, default: undefined },
+    renderBlockingScripts: { type: Number, default: undefined },
+    renderBlockingStylesheets: { type: Number, default: undefined },
+    socialTags: {
+        type: new mongoose.Schema({ openGraph: { type: Boolean, required: true }, twitterCard: { type: Boolean, required: true } }, { _id: false }),
+        default: undefined,
+    },
     timing: {
         type: new mongoose.Schema({
             timeToInteractiveMs: { type: Number, default: null },

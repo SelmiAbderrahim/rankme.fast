@@ -44,7 +44,7 @@ order: 0
 - [Tendencias de palabras clave](./keyword-trends.es.md): Explora dirección, impulso y estacionalidad del interés de búsqueda con etiquetas de estimación claras.
 - [Inteligencia de reseñas](./review-intelligence.es.md): Sincroniza reseñas públicas bajo demanda y entiende tendencias, temas citados y la devolución de unidades.
 - [Radar de marca](./brand-radar.es.md): Analiza una consulta de marca bajo demanda, revisa menciones guardadas y entiende el complemento y los reembolsos.
-- [Rendimiento de páginas](./pages-performance.es.md): Cómo la pestaña Páginas elige la fuente, compara instantáneas y cuenta las actualizaciones.
+- [Rendimiento de páginas](./pages-performance.es.md): Cómo la pestaña Páginas muestra datos de búsqueda guardados, contexto del rastreo y métricas.
 
 ## Funciones del producto
 

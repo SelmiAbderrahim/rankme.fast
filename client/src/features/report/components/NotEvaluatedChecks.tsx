@@ -8,6 +8,7 @@ import { Bdi } from '@shared/components/Bdi';
  * data-testid contract:
  *   - report-not-evaluated          section root
  *   - report-not-evaluated-row      one per check (data-rule-id)
+ *   - report-scan-off               note of a resource check on a run without the scan
  */
 import { useTranslation } from 'react-i18next';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@shared/ui/card';
@@ -32,6 +33,9 @@ export type NotEvaluatedSource =
   | 'probeUnreachable'
   | 'probeBlocked'
   | 'probeHttpError'
+  | 'legacyRun'
+  | 'scanOff'
+  | 'crawlReadUnavailable'
   | 'generic';
 
 const PROBE_SOURCES = {
@@ -60,6 +64,13 @@ const probeFailureOf = (
   };
 };
 
+/** Crawl-signal reasons the server records on deep-crawl checks. */
+const CRAWL_REASON_SOURCES = {
+  'legacy-run': 'legacyRun',
+  'scan-off': 'scanOff',
+  unavailable: 'crawlReadUnavailable',
+} as const;
+
 /** Which missing data source kept this check from running. */
 export const notEvaluatedSource = (finding: LocalizedFinding): NotEvaluatedSource => {
   const { ruleId } = finding;
@@ -73,6 +84,10 @@ export const notEvaluatedSource = (finding: LocalizedFinding): NotEvaluatedSourc
   if (isPageSpeedRuleId(ruleId)) return 'pageSpeed';
   if (isLocalSeoRuleId(ruleId)) return 'localSeo';
   if (isAiVisibilityRuleId(ruleId)) return 'aiVisibility';
+  const reason = finding.meta?.reason;
+  if (typeof reason === 'string' && reason in CRAWL_REASON_SOURCES) {
+    return CRAWL_REASON_SOURCES[reason as keyof typeof CRAWL_REASON_SOURCES];
+  }
   return probeFailureOf(finding)?.source ?? 'generic';
 };
 
@@ -98,6 +113,7 @@ export const NotEvaluatedChecks = ({ findings }: NotEvaluatedChecksProps) => {
         <ul className="flex flex-col divide-y">
           {findings.map((finding) => {
             const probe = probeFailureOf(finding);
+            const source = notEvaluatedSource(finding);
             return (
               <li
                 key={finding.ruleId}
@@ -107,8 +123,11 @@ export const NotEvaluatedChecks = ({ findings }: NotEvaluatedChecksProps) => {
               >
                 <span className="min-w-0">
                   <span className="block text-sm font-medium"><Bdi>{finding.copy.title}</Bdi></span>
-                  <span className="text-muted-foreground block text-xs">
-                    {t(`notEvaluated.sources.${notEvaluatedSource(finding)}`, {
+                  <span
+                    className="text-muted-foreground block text-xs"
+                    {...(source === 'scanOff' ? { 'data-testid': 'report-scan-off' } : {})}
+                  >
+                    {t(`notEvaluated.sources.${source}`, {
                       file: probe?.file,
                       status: probe?.status,
                     })}

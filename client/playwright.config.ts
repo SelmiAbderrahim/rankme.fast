@@ -547,6 +547,13 @@ export default defineConfig({
       workers: 1,
       use: { ...devices['Desktop Chrome'], reducedMotion: 'reduce' },
     },
+    {
+      // Deep crawl findings: category filter, evidence, no-scan note, Pages issues.
+      name: 'deep-crawl-report',
+      testMatch: /(?:^|\/)deep-crawl-report\.spec\.ts$/,
+      workers: 1,
+      use: { ...devices['Desktop Chrome'], reducedMotion: 'reduce' },
+    },
     // Bing / YouTube / Amazon rank tracking.
     // Serial (one story per worker) because it signs up an isolated account,
     // drives the engine picker's pre-submit spend disclosure, adds Bing,
