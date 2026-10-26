@@ -52,13 +52,13 @@ export function HorizontalScrollRegion({ children, className }: HorizontalScroll
       className={cn('group/scroll relative min-w-0', className)}
       data-scrolled={edges.start}
       data-more-end={edges.end}
-      data-testid="pages-scroll-region"
+      data-testid="horizontal-scroll-region"
     >
       {children}
       {edges.end ? (
         <span
           aria-hidden="true"
-          data-testid="pages-scroll-shadow-end"
+          data-testid="horizontal-scroll-shadow-end"
           className="pointer-events-none absolute inset-y-0 end-0 w-3 ltr:shadow-[inset_-10px_0_8px_-8px_color-mix(in_oklab,var(--foreground)_30%,transparent)] rtl:shadow-[inset_10px_0_8px_-8px_color-mix(in_oklab,var(--foreground)_30%,transparent)]"
         />
       ) : null}

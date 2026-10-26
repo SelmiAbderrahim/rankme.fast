@@ -2,12 +2,13 @@ import * as React from "react"
 
 import { cn } from "@/shared/lib/utils"
 
-function Table({ className, ...props }: React.ComponentProps<"table">) {
+function Table({ className, containerProps, ...props }: React.ComponentProps<"table"> & { containerProps?: React.ComponentProps<"div"> }) {
   return (
     <div
       data-slot="table-container"
       tabIndex={0}
       className="relative w-full min-w-0 max-w-full overflow-x-auto overscroll-x-contain"
+      {...containerProps}
     >
       <table
         data-slot="table"

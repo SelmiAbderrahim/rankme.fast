@@ -2130,6 +2130,32 @@ describe('component units', () => {
     expect(screen.getByTestId('keyword-rank-state-k1')).toHaveTextContent(label);
   });
 
+  it('names the scroll region and reveals clipped columns with an edge shadow (issue #61)', () => {
+    render(<I18nextProvider i18n={i18n}><KeywordsTable keywords={[keyword('k1')]}
+      removingId={null} selectedId={null} onSelect={vi.fn()} onRemove={vi.fn()} />
+    </I18nextProvider>);
+    const region = screen.getByRole('region', { name: 'Tracked keywords' });
+    expect(region).toHaveAttribute('tabindex', '0');
+    for (const [key, value] of Object.entries({ scrollWidth: 893, clientWidth: 724, scrollLeft: 0 })) {
+      Object.defineProperty(region, key, { configurable: true, writable: true, value });
+    }
+    fireEvent.scroll(region);
+    expect(screen.getByTestId('horizontal-scroll-shadow-end')).toBeInTheDocument();
+    region.scrollLeft = 169;
+    fireEvent.scroll(region);
+    expect(screen.queryByTestId('horizontal-scroll-shadow-end')).not.toBeInTheDocument();
+    expect(screen.getByTestId('horizontal-scroll-region')).toHaveAttribute('data-scrolled', 'true');
+  });
+
+  it('keeps keyword headers and row names pinned with an opaque background (issue #61)', () => {
+    render(<I18nextProvider i18n={i18n}><KeywordsTable keywords={[keyword('k1')]}
+      removingId={null} selectedId="k1" onSelect={vi.fn()} onRemove={vi.fn()} />
+    </I18nextProvider>);
+    const table = screen.getByTestId('keywords-table');
+    expect(table.querySelector('th:first-child')).toHaveClass('sticky', 'start-0', 'bg-card');
+    expect(within(table).getByTestId('keyword-row-k1').querySelector('td:first-child')).toHaveClass('sticky', 'start-0', 'bg-card');
+  });
+
   it('KeywordsTable marks a failed latest check as last-known while preserving its measured position', () => {
     const measuredAt = '2026-07-02T00:00:00.000Z';
     render(<I18nextProvider i18n={i18n}>
