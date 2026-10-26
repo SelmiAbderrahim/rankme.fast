@@ -29,6 +29,7 @@ import {
   AuditedPage,
   ReportSnapshot,
   createAuditProcessor,
+  createSiteProbe,
   onAuditJobExhausted,
   selectPageSpeedSampleUrls,
   urlPathDepth,
@@ -741,6 +742,23 @@ describe('audit processor — page persistence and PageSpeed sampling', () => {
       { url: 'https://example.com/', status: 200, finalUrl: 'https://example.com/', ok: true },
       { url: 'https://www.example.com/', status: 200, finalUrl: 'https://example.com/', ok: true },
     ];
+
+    it('stores the same address evidence on www and apex reports (issue #58)', async () => {
+      const probeSite = createSiteProbe({ fetchUrl: async (url) => {
+        if (url === 'https://www.example.com/') return null;
+        const broken = url === 'http://www.example.com/';
+        return { status: broken ? 404 : 200, finalUrl: broken ? url : 'https://example.com/', contentType: 'text/html', text: async () => '' };
+      } });
+      for (const domain of ['www.example.com', 'example.com']) {
+        const ids = await seed();
+        await Site.updateOne({ _id: ids.siteId }, { domain, url: `https://${domain}` });
+        const processor = createAuditProcessor({ provider: createFakeAuditProvider(), probeSite, logger });
+        await processor(jobFor({ ...ids, pageCap: 100 }));
+        const finding = await findingOf(ids.runId, 'https-canonicalization');
+        expect(finding.meta?.addressVariants).toHaveLength(4);
+        expect(finding.affectedUrls).toEqual(['http://www.example.com/']);
+      }
+    });
 
     it('evaluates the sitemap and llms.txt checks from the probe instead of "not evaluated"', async () => {
       const ids = await seed();

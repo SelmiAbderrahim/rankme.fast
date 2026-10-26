@@ -38,7 +38,7 @@ export interface SiteProbeResult {
     llmsTxtFound?: boolean;
     /** Why a root file gave no verdict; independent of the start page. */
     failures?: SiteProbeFailures;
-    /** Absent when the site's own https address could not be read. */
+    /** Absent when neither the start page nor the crawl identifies a canonical HTTPS origin. */
     addressVariants?: AddressVariantResult[];
 }
 
@@ -236,12 +236,10 @@ export function createSiteProbe(opts: SiteProbeOptions = {}): SiteProbe {
         if (failures.robots || failures.llms)
             out.failures = failures;
 
-        // Address variants judge every other origin against the site's own
-        // https address, so they need a readable start page.
-        if (!homeUsable)
-            return out;
-        const canonical = new URL(home.finalUrl);
-        if (canonical.protocol !== 'https:')
+        // The crawl's canonical origin remains usable evidence even when
+        // the original address cannot complete TLS from this worker.
+        const canonical = canonicalUrl ? new URL(canonicalUrl) : homeUsable ? new URL(home.finalUrl) : null;
+        if (!canonical || canonical.protocol !== 'https:')
             return out;
         const variantUrls = [
             `http://${apex}/`,

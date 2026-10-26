@@ -42,6 +42,22 @@ describe('createSiteProbe', () => {
     expect(fetchUrl).not.toHaveBeenCalledWith('https://www.bottradesforyou.com/robots.txt');
   });
 
+  it('keeps four address variants when the crawl resolved the canonical host but www is down (issue #58)', async () => {
+    const fetchUrl = fakeNetwork({
+      [HOME]: { status: 200 },
+      'https://www.bottradesforyou.com/': 'down',
+      'http://bottradesforyou.com/': { status: 200, finalUrl: HOME },
+      'http://www.bottradesforyou.com/': { status: 404 },
+    });
+    const result = await createSiteProbe({ fetchUrl })({
+      domain: 'www.bottradesforyou.com', url: 'https://www.bottradesforyou.com', canonicalUrl: HOME,
+    });
+    expect(result.addressVariants).toHaveLength(4);
+    expect(result.addressVariants?.filter(v => v.ok === false).map(v => v.url)).toEqual(['http://www.bottradesforyou.com/']);
+    expect(result.addressVariants?.find(v => v.url === HOME)?.ok).toBe(true);
+    expect(result.startPageFinalUrl).toBeUndefined();
+  });
+
   it('reports the variant that serves its own page instead of redirecting (issue #17)', async () => {
     const fetchUrl = fakeNetwork({
       [HOME]: { status: 200, contentType: 'text/html' },
