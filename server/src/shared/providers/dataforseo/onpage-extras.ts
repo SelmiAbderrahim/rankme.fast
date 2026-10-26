@@ -365,8 +365,8 @@ function resourceType(item: ResourceItem): AuditResourceType {
 
 function normalizeResource(item: ResourceItem): AuditResource {
   const status = typeof item.status_code === 'number' && item.status_code > 0 ? item.status_code : null;
-  const isBroken =
-    item.resource_type === 'broken' || item.checks?.is_broken === true || status === null || status >= 400;
+  // HTTP evidence outranks vendor flags, which can remain true for healthy bundles.
+  const isBroken = status === null || status >= 400;
   const out: AuditResource = { url: item.url, type: resourceType(item), statusCode: status, isBroken, usedOn: [] };
   if (typeof item.size === 'number' && item.size >= 0) out.sizeBytes = Math.round(item.size);
   if (typeof item.cache_control?.cachable === 'boolean') out.cacheable = item.cache_control.cachable;

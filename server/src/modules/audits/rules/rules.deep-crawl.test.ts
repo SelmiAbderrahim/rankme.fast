@@ -314,6 +314,17 @@ describe('meta-description-missing and title-missing-or-weak gain crawler eviden
 });
 
 describe('paid resource scan rules', () => {
+  it('does not report successful assets as broken even in older stored results (issue #54)', () => {
+    const found = finding('broken-resources', {
+      deep: { resources: [
+        resource({ type: 'script', statusCode: 200, isBroken: true }),
+        resource({ url: 'https://example.com/app.css', type: 'stylesheet', statusCode: 200, isBroken: true }),
+      ] },
+    });
+    expect(found.bucket).toBe('passed');
+    expect(found.affectedUrls).toEqual([]);
+  });
+
   it('broken-resources keeps the evidence fields it has and the vendor total', () => {
     const found = finding('broken-resources', {
       deep: {

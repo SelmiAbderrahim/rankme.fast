@@ -17,7 +17,7 @@ export const brokenResourcesRule: AuditRule = {
   evaluate(result: AuditResult): RuleFinding {
     const scan = scannedResources(result);
     if ('missing' in scan) return notEvaluated(RULE_ID, 'warning', scan.missing);
-    const broken = scan.resources.filter((resource) => resource.isBroken);
+    const broken = scan.resources.filter((resource) => resource.statusCode === null || resource.statusCode >= 400);
     if (broken.length === 0) {
       return { ruleId: RULE_ID, bucket: bucketFor('warning', true), severity: 'warning', affectedUrls: [] };
     }
