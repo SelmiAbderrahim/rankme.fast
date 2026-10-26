@@ -13,14 +13,11 @@ import {
   accountIdForEmail,
   bindSiteToGsc,
   clearGoogleConnection,
-  keywordUsage,
   seedAuditInventory,
   seedFallbackSnapshots,
   seedGoogleConnection,
   seedGscSnapshots,
   seedGscSyncState,
-  setKeywordUsage,
-  setProTier,
   type SeedFallbackKeyword,
   type SeedGscPage,
 } from './helpers/pages';
@@ -73,7 +70,7 @@ async function setTheme(page: Page, theme: 'light' | 'dark'): Promise<void> {
   }, theme);
 }
 
-test('Pages uses stored sources honestly and preserves URL, metering, access, and responsive behavior', async ({
+test('Pages uses stored sources honestly and preserves URL, access, and responsive behavior', async ({
   page,
   context,
 }) => {
@@ -83,8 +80,6 @@ test('Pages uses stored sources honestly and preserves URL, metering, access, an
   await denyNonLoopback(context, { onDeny: denials.onDeny });
   await signUp(page, account);
   const accountId = accountIdForEmail(account.email);
-  setProTier(accountId);
-  setKeywordUsage(accountId, 0, 100);
 
   const ready = await createSite(page.request, 'https://ready.pages-gsc.test');
   const empty = await createSite(page.request, 'https://empty.pages-gsc.test');
@@ -140,38 +135,35 @@ test('Pages uses stored sources honestly and preserves URL, metering, access, an
   });
 
   await test.step('GSC wins over fallback and direct navigation survives reload', async () => {
-    const before = keywordUsage(accountId);
     await gotoWithStaticAssetNetworkRecovery(page, `/sites/${ready.id}?tab=pages&limit=50`);
     await expect(page.getByTestId('pages-panel')).toBeVisible();
-    await expect(page.getByText('Google Search Console').first()).toBeVisible();
-    await expect(page.getByText('Search Console reporting lag: 3 days.')).toBeVisible();
-    await expect(page.getByText('Since previous sync').first()).toBeVisible();
+    await expect(page.getByText('Google Search Console').filter({ visible: true }).first()).toBeVisible();
+    await expect(page.getByText('Google reports Search Console data about 3 days late, so the most recent days are missing.')).toBeVisible();
+    await expect(page.getByText('Since previous sync').filter({ visible: true }).first()).toBeVisible();
     await expect(page.getByTestId('pages-summary')).toContainText('0');
-    await expect(page.getByText('Low CTR').first()).toBeVisible();
-    await expect(page.getByText('Audit only page').first()).toBeVisible();
+    await expect(page.getByText('Low CTR').filter({ visible: true }).first()).toBeVisible();
+    await expect(page.getByText('Audit only page').filter({ visible: true }).first()).toBeVisible();
     await expect(page.getByText('Excluded audit page')).toHaveCount(0);
-    await expect(page.getByText(hostile, { exact: false }).first()).toBeVisible();
+    await expect(page.getByText(hostile, { exact: false }).filter({ visible: true }).first()).toBeVisible();
     expect(await page.evaluate(() => (window as unknown as { __pagesXss?: number }).__pagesXss)).toBeUndefined();
     await reloadWithStaticAssetNetworkRecovery(page);
     await expect(page).toHaveURL(new RegExp(`/sites/${ready.id}.*tab=pages`));
-    await expect(page.getByText('Google Search Console').first()).toBeVisible();
-    expect(keywordUsage(accountId)).toBe(before);
+    await expect(page.getByText('Google Search Console').filter({ visible: true }).first()).toBeVisible();
     expect(denials.urls).toEqual([]);
     await axe(page, 'GSC list');
   });
 
   await test.step('range, search, every filter family, sorting, reset, cursor, and history are URL backed', async () => {
-    const before = keywordUsage(accountId);
     await openSelect(page, 'Date range', '7 days');
     await expect(page).toHaveURL(/range=7d/);
     await openSelect(page, 'Date range', '28 days');
     await expect(page).not.toHaveURL(/range=/);
     await openSelect(page, 'Insight', 'Visible but not crawl-indexable');
-    await expect(page.getByText('Visible but not crawl-indexable').first()).toBeVisible();
+    await expect(page.getByText('Visible but not crawl-indexable').filter({ visible: true }).first()).toBeVisible();
     await page.getByRole('button', { name: 'Reset filters' }).click();
     await page.getByLabel('Search pages and queries').fill('Audit only page');
     await expect(page).toHaveURL(/q=Audit(?:%20|\+)only(?:%20|\+)page/);
-    await expect(page.getByText('Audit only page').first()).toBeVisible();
+    await expect(page.getByText('Audit only page').filter({ visible: true }).first()).toBeVisible();
     await openSelect(page, 'Insight', 'Unmeasured');
     await expect(page).toHaveURL(/insight=unmeasured/);
     await openSelect(page, 'Crawl indexability', 'Crawl-indexable');
@@ -193,7 +185,6 @@ test('Pages uses stored sources honestly and preserves URL, metering, access, an
     await expect(page).toHaveURL(/cursor=/);
     await gotoWithStaticAssetNetworkRecovery(page, `/sites/${ready.id}?tab=pages&cursor=malformed`);
     await expect(page).not.toHaveURL(/cursor=/);
-    expect(keywordUsage(accountId)).toBe(before);
   });
 
   await test.step('detail exposes observed queries, trend, safe strings, and restores keyboard focus', async () => {
@@ -204,7 +195,7 @@ test('Pages uses stored sources honestly and preserves URL, metering, access, an
     await expect(page.getByTestId('pages-detail-sheet')).toBeVisible();
     await expect(page).toHaveURL(/pageId=/);
     await expect(page.getByText('Observed queries')).toBeVisible();
-    await expect(page.getByText(hostile, { exact: false }).first()).toBeVisible();
+    await expect(page.getByText(hostile, { exact: false }).filter({ visible: true }).first()).toBeVisible();
     await expect(page.getByTestId('pages-trend-table')).toBeAttached();
     await axe(page, 'GSC detail');
     await page.keyboard.press('Escape');
@@ -223,7 +214,7 @@ test('Pages uses stored sources honestly and preserves URL, metering, access, an
     await expect(page.getByText('Demo ranking snapshot')).toHaveCount(0);
     seedGscSyncState({ accountId, siteId: empty.id, propertyUrl: PROPERTY, status: 'empty', snapshotDate: '2026-08-07' });
     await reloadWithStaticAssetNetworkRecovery(page);
-    await expect(page.getByText('No matching pages').first()).toBeVisible();
+    await expect(page.getByText('No pages to show').filter({ visible: true }).first()).toBeVisible();
     await axe(page, 'GSC empty');
     seedGscSyncState({ accountId, siteId: empty.id, propertyUrl: PROPERTY, status: 'failed' });
     await reloadWithStaticAssetNetworkRecovery(page);
@@ -231,16 +222,16 @@ test('Pages uses stored sources honestly and preserves URL, metering, access, an
     await axe(page, 'GSC unavailable');
   });
 
-  await test.step('fallback discloses estimates, null observed metrics, market, stale data, and metered cache hits', async () => {
+  await test.step('fallback discloses estimates, null observed metrics, market, stale data, and cache hits', async () => {
     clearGoogleConnection(accountId);
     await gotoWithStaticAssetNetworkRecovery(page, `/sites/${fallback.id}?tab=pages`);
-    await expect(page.getByText('Demo ranking snapshot').first()).toBeVisible();
+    await expect(page.getByText('Demo ranking snapshot').filter({ visible: true }).first()).toBeVisible();
     await expect(page.getByText('Showing the last good data')).toBeVisible();
     await expect(page.getByText('Location United States, language English')).toBeVisible();
     await expect(page.getByTestId('pages-summary')).toContainText('Not available');
-    await expect(page.getByText('Ranking keywords').first()).toBeVisible();
-    await expect(page.getByText('Search volume').first()).toBeVisible();
-    await expect(page.getByText('Estimated traffic').first()).toBeVisible();
+    await expect(page.getByText('Ranking keywords').filter({ visible: true }).first()).toBeVisible();
+    await expect(page.getByText('Search volume').filter({ visible: true }).first()).toBeVisible();
+    await expect(page.getByText('Estimated traffic').filter({ visible: true }).first()).toBeVisible();
     await page.getByRole('button', { name: 'Inspect page' }).first().click();
     await expect(
       page
@@ -251,31 +242,29 @@ test('Pages uses stored sources honestly and preserves URL, metering, access, an
     await page.keyboard.press('Escape');
     await axe(page, 'fallback list');
 
-    const before = keywordUsage(accountId);
-    for (const expectedUsed of [before + 1, before + 2]) {
+    for (const attempt of [1, 2]) {
       const responsePromise = page.waitForResponse((response) =>
         response.request().method() === 'POST' && response.url().endsWith(`/api/sites/${fallback.id}/pages/refresh`),
       );
       await page.getByRole('button', { name: 'Refresh' }).first().click();
       const response = await responsePromise;
       expect(response.status()).toBe(200);
-      const body = (await response.json()) as { refresh: { cache: string; meteredUnits: number } };
-      expect(body.refresh.meteredUnits).toBe(1);
-      if (expectedUsed === before + 2) expect(body.refresh.cache).toBe('hit');
-      await expect.poll(() => keywordUsage(accountId)).toBe(expectedUsed);
+      const body = (await response.json()) as { refresh: { cache: string } };
+      if (attempt === 2) expect(body.refresh.cache).toBe('hit');
     }
   });
 
-  await test.step('reconnect, unmatched-property, no-provider, failed refresh, localized cap, and retry states stay honest', async () => {
+  await test.step('reconnect, unmatched-property, no-provider, failed refresh, localized failure, and retry states stay honest', async () => {
     seedGoogleConnection({ accountId, propertyUrl: PROPERTY, status: 'needs_reconnect' });
     await gotoWithStaticAssetNetworkRecovery(page, `/sites/${fallback.id}?tab=pages`);
-    await expect(page.getByText('The Google connection needs to be reconnected.')).toBeVisible();
+    await expect(page.getByText("Search Console isn't connected")).toBeVisible();
     seedGoogleConnection({ accountId, propertyUrl: 'sc-domain:other.test' });
+    bindSiteToGsc({ accountId, siteId: fallback.id, propertyUrl: 'sc-domain:other.test' });
     await reloadWithStaticAssetNetworkRecovery(page);
-    await expect(page.getByText('The selected Search Console property does not cover this site.')).toBeVisible();
+    await expect(page.getByText("This property doesn't cover the site")).toBeVisible();
     clearGoogleConnection(accountId);
     await gotoWithStaticAssetNetworkRecovery(page, `/sites/${none.id}?tab=pages`);
-    await expect(page.getByText('No stored source').first()).toBeVisible();
+    await expect(page.getByText('No stored source').filter({ visible: true }).first()).toBeVisible();
     await axe(page, 'no-provider empty');
 
     await page.route(`**/api/sites/${fallback.id}/pages/refresh`, async (route) => {
@@ -289,24 +278,31 @@ test('Pages uses stored sources honestly and preserves URL, metering, access, an
     await gotoWithStaticAssetNetworkRecovery(page, `/sites/${fallback.id}?tab=pages`);
     await page.getByRole('button', { name: 'Refresh' }).first().click();
     await expect(page.getByRole('alert')).toContainText('Synthetic retry state.');
-    await expect(page.getByText('Fallback measured page').first()).toBeVisible();
+    await expect(page.getByText('Fallback measured page').filter({ visible: true }).first()).toBeVisible();
     await axe(page, 'failed refresh with retained data');
     await page.unroute(`**/api/sites/${fallback.id}/pages/refresh`);
 
-    setKeywordUsage(accountId, 100, 100);
+    await page.route(`**/api/sites/${none.id}/pages/refresh`, async (route) => {
+      await route.fulfill({
+        status: 503,
+        contentType: 'application/json',
+        headers: { 'content-language': 'ar', vary: 'x-lang, Accept-Language' },
+        body: JSON.stringify({ error: { code: 'PAGES_PROVIDER_UNAVAILABLE' } }),
+      });
+    });
     await page.locator('#language-switcher').selectOption('ar');
     await expect(page.locator('html')).toHaveAttribute('dir', 'rtl');
     await gotoWithStaticAssetNetworkRecovery(page, `/sites/${none.id}?tab=pages`);
     await page.getByRole('button', { name: /بيانات|احتياطية/ }).first().click();
     await expect(page.getByRole('alert')).toBeVisible();
-    await axe(page, 'Arabic localized cap');
+    await page.unroute(`**/api/sites/${none.id}/pages/refresh`);
+    await axe(page, 'Arabic localized failure');
   });
 
   await test.step('desktop, 320px mobile, dark theme, and Arabic cards preserve information without overflow', async () => {
-    setKeywordUsage(accountId, 0, 100);
     await page.locator('#language-switcher').selectOption('en');
     await gotoWithStaticAssetNetworkRecovery(page, `/sites/${fallback.id}?tab=pages`);
-    await page.setViewportSize({ width: 1440, height: 900 });
+    await page.setViewportSize({ width: 1680, height: 900 });
     await expect(page.getByTestId('pages-desktop-table')).toBeVisible();
     await expect(page.getByTestId('pages-mobile-cards')).toBeHidden();
     const desktopRows = await page.getByTestId('pages-desktop-row').count();
@@ -320,7 +316,7 @@ test('Pages uses stored sources honestly and preserves URL, metering, access, an
     await expect(page.getByTestId('pages-mobile-cards')).toBeVisible();
     await expect(page.getByTestId('pages-desktop-table')).toBeHidden();
     expect(await page.getByTestId('pages-mobile-card').count()).toBe(desktopRows);
-    await expect(page.getByTestId('pages-mobile-cards')).toContainText('غير متاح');
+    await expect(page.getByTestId('pages-mobile-cards')).toContainText('غير مقاسة');
     await expectNoOverflow(page);
     await axe(page, 'mobile Arabic dark');
     expect(denials.urls).toEqual([]);

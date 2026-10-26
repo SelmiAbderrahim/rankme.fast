@@ -50,6 +50,7 @@ const SUPPORTED_LOCALE_SET = new Set(SUPPORTED_LOCALES);
 const RTL_LOCALES = new Set(['ar']);
 const WEB_COPY = {
   en: {
+    loading: 'Loading RankMeFast…',
     title: 'RankMeFast — clear SEO and AI-answer audits',
     description: 'Audit your site, track rankings, and see which fixes matter most.',
     noscript: 'Turn on JavaScript to use the RankMeFast dashboard.',
@@ -60,6 +61,7 @@ const WEB_COPY = {
     seoUnavailable: 'SEO files are temporarily unavailable',
   },
   ar: {
+    loading: 'جارٍ تحميل RankMeFast…',
     title: 'RankMeFast — تدقيق واضح لتحسين محركات البحث وإجابات الذكاء الاصطناعي',
     description: 'دقّق موقعك وتابع ترتيبه واعرف الإصلاحات الأكثر أهمية.',
     noscript: 'فعّل JavaScript لاستخدام لوحة تحكم RankMeFast.',
@@ -70,6 +72,7 @@ const WEB_COPY = {
     seoUnavailable: 'ملفات تحسين محركات البحث غير متاحة مؤقتًا',
   },
   fr: {
+    loading: 'Chargement de RankMeFast…',
     title: 'RankMeFast — des audits SEO et IA clairs',
     description: 'Auditez votre site, suivez vos positions et repérez les corrections prioritaires.',
     noscript: 'Activez JavaScript pour utiliser le tableau de bord RankMeFast.',
@@ -80,6 +83,7 @@ const WEB_COPY = {
     seoUnavailable: 'Les fichiers SEO sont temporairement indisponibles',
   },
   de: {
+    loading: 'RankMeFast wird geladen…',
     title: 'RankMeFast — klare SEO- und KI-Audits',
     description: 'Prüfe deine Website, verfolge Rankings und erkenne die wichtigsten Verbesserungen.',
     noscript: 'Aktiviere JavaScript, um das RankMeFast-Dashboard zu verwenden.',
@@ -90,6 +94,7 @@ const WEB_COPY = {
     seoUnavailable: 'Die SEO-Dateien sind vorübergehend nicht verfügbar',
   },
   es: {
+    loading: 'Cargando RankMeFast…',
     title: 'RankMeFast — auditorías claras de SEO e IA',
     description: 'Audita tu sitio, sigue tus posiciones y descubre qué mejoras son prioritarias.',
     noscript: 'Activa JavaScript para usar el panel de RankMeFast.',
@@ -100,6 +105,7 @@ const WEB_COPY = {
     seoUnavailable: 'Los archivos SEO no están disponibles temporalmente',
   },
   ru: {
+    loading: 'Загрузка RankMeFast…',
     title: 'RankMeFast — понятные SEO- и AI-аудиты',
     description: 'Проверяйте сайт, отслеживайте позиции и находите самые важные исправления.',
     noscript: 'Включите JavaScript, чтобы пользоваться панелью RankMeFast.',
@@ -110,6 +116,7 @@ const WEB_COPY = {
     seoUnavailable: 'SEO-файлы временно недоступны',
   },
   zh: {
+    loading: '正在加载 RankMeFast…',
     title: 'RankMeFast — 清晰的 SEO 与 AI 审计',
     description: '审计网站、跟踪排名，并找出最值得优先修复的问题。',
     noscript: '请启用 JavaScript 以使用 RankMeFast 控制面板。',
@@ -259,6 +266,33 @@ function contentSecurityPolicy(nonce) {
   ].join('; ');
 }
 
+/** A static frame inside #root is replaced by React on its first render. */
+function bootShellHtml(copy, cookie) {
+  const cookies = cookie.split(';').map((part) => part.trim());
+  let saved = null;
+  for (const name of ['app_sidebar_state', 'sidebar_state']) {
+    const value = cookies.find((part) => part.startsWith(`${name}=`))?.slice(name.length + 1);
+    if (value === 'true' || value === 'false') {
+      saved = value === 'true';
+      break;
+    }
+  }
+  const width = saved === false ? '3.5rem' : '15rem';
+  const collapseBelow = saved === null ? '1279.98px' : '1023.98px';
+  return '<style>@media(max-width:767px){[data-app-boot-sidebar]{display:none}}' +
+    `@media(min-width:768px) and (max-width:${collapseBelow}){[data-app-boot-sidebar]{width:3.5rem!important}}</style>` +
+    '<div data-app-boot="" role="status" aria-busy="true" style="display:flex;min-height:100dvh;background:var(--background)">' +
+    `<div data-app-boot-sidebar="" style="width:${width};flex-shrink:0;background:var(--sidebar,var(--background));border-inline-end:1px solid var(--border)"></div>` +
+    '<div style="display:flex;flex:1;flex-direction:column;min-width:0">' +
+    '<div style="height:3.5rem;border-bottom:1px solid var(--border)"></div>' +
+    `<span style="position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0)">${copy.loading}</span>` +
+    '</div></div>';
+}
+
+// Preserve the open-ended CSR routing contract. Only known MinimalLayout
+// routes opt out of dashboard chrome while their React bundle is loading.
+const MINIMAL_APP_PATH = /^\/(?:login|register|forgot-password|reset-password|verify-email|two-factor|logout|team\/(?:invitations|change-password|(?:accept|reject)\/[^/]+))\/?$/i;
+
 /** Assemble the final HTML from the template + SSR fragments. */
 function renderHtml(template, {
   headTags = '',
@@ -267,7 +301,18 @@ function renderHtml(template, {
   ssr = false,
   nonce = '',
   locale = 'en',
+  appFrame = false,
+  sidebarCookie = '',
 }) {
+  // SSR pages supply their own metadata. Remove the CSR shell placeholders
+  // before inserting Helmet output so crawlers see one title and description.
+  if (/<title\b/i.test(headTags)) {
+    template = template.replace(/<title\b[^>]*>[^<]*<\/title>/i, '');
+    headTags = headTags.replace(/<title\b[^>]*>/i, '<title>');
+  }
+  if (/<meta\b(?=[^>]*\bname=["']description["'])[^>]*>/i.test(headTags)) {
+    template = template.replace(/<meta\b(?=[^>]*\bname=["']description["'])[^>]*>/i, '');
+  }
   const copy = WEB_COPY[locale] ?? WEB_COPY.en;
   const attributes = htmlAttrs || `lang="${locale}" dir="${RTL_LOCALES.has(locale) ? 'rtl' : 'ltr'}"`;
   const html = template
@@ -286,7 +331,7 @@ function renderHtml(template, {
       `<noscript>${copy.noscript}</noscript>`,
     )
     .replace('<!--ssr-head-->', headTags)
-    .replace('<!--ssr-outlet-->', appHtml)
+    .replace('<!--ssr-outlet-->', appFrame ? bootShellHtml(copy, sidebarCookie) : appHtml)
     .replace('<!--ssr-init-->', ssr ? '<script>window.__SSR__=true</script>' : '');
   // Nonce every bare inline <script> AFTER assembly so the CSP allows them:
   // the theme bootstrap, any bundler-injected inline script, the ssr-init flag,
@@ -682,7 +727,7 @@ async function createServer({
         return res
           .status(200)
           .set('Content-Type', 'text/html')
-          .send(renderHtml(tpl, { ssr: false, nonce, locale: presentationLocale }));
+          .send(renderHtml(tpl, { ssr: false, nonce, locale: presentationLocale, appFrame: !MINIMAL_APP_PATH.test(pathname), sidebarCookie: req.headers.cookie ?? '' }));
       }
 
       const renderFn = renderOverride ?? (production

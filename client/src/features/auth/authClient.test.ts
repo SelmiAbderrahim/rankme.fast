@@ -1,5 +1,5 @@
 import { afterEach, describe, expect, it, vi } from 'vitest';
-import { addAuthLocaleHeader, authClient, resolveAuthBaseURL } from './authClient';
+import { addAuthLocaleHeader, authClient, resolveAuthBaseURL, withInlineTwoFactor, redirectToTwoFactorChallenge } from './authClient';
 import { setPresentationLocale, SUPPORTED_LOCALES } from '@shared/i18n';
 
 afterEach(() => {
@@ -26,6 +26,15 @@ describe('resolveAuthBaseURL', () => {
 });
 
 describe('authClient', () => {
+  it('keeps an inline two-factor challenge on its reauthentication screen', async () => {
+    const location = { assign: vi.fn() };
+    await withInlineTwoFactor(async () => {
+      redirectToTwoFactorChallenge(location);
+      expect(location.assign).not.toHaveBeenCalled();
+    });
+    redirectToTwoFactorChallenge(location);
+    expect(location.assign).toHaveBeenCalledWith('/two-factor');
+  });
   it('adds every supported locale to session, credential, OAuth, password, and two-factor calls', () => {
     const paths = [
       '/get-session',
@@ -68,5 +77,19 @@ describe('authClient', () => {
     vi.stubEnv('VITE_API_BASE_URL', undefined);
     const fresh = await import('./authClient');
     expect(typeof fresh.authClient.useSession).toBe('function');
+  });
+
+  it('sends a two-factor sign-in to the challenge screen', async () => {
+    const fetchMock = vi.fn<typeof fetch>().mockResolvedValue(
+      Response.json({ twoFactorRedirect: true, twoFactorMethods: ['totp'] }),
+    );
+    vi.stubGlobal('fetch', fetchMock);
+    try {
+      // Inside an inline challenge the redirect callback runs but does not navigate.
+      await withInlineTwoFactor(() => authClient.signIn.email({ email: 'user@example.test', password: 'synthetic-password' }));
+      expect(fetchMock).toHaveBeenCalled();
+    } finally {
+      vi.unstubAllGlobals();
+    }
   });
 });

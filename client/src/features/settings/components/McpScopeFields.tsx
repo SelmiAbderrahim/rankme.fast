@@ -1,3 +1,4 @@
+import { Bdi } from '@shared/components/Bdi';
 import { useTranslation } from 'react-i18next';
 import type { Site } from '@features/sites';
 import { Checkbox } from '@shared/ui/checkbox';
@@ -13,7 +14,7 @@ import {
 } from '@shared/ui/field';
 import { Switch } from '@shared/ui/switch';
 import {
-  MCP_TOOL_NAMES,
+  MCP_TOOL_GROUPS,
   type McpPermissionSettings,
   type McpToolName,
 } from '../types';
@@ -93,40 +94,48 @@ export function McpScopeFields({
       <FieldSet disabled={disabled}>
         <FieldLegend>{t('mcp.tools.title')}</FieldLegend>
         <FieldDescription>{t('mcp.tools.description')}</FieldDescription>
-        <FieldGroup className="gap-4">
-          {MCP_TOOL_NAMES.map((name) => {
-            const id = `${idPrefix}-tool-${name}`;
-            return (
-              <Field
-                key={name}
-                orientation="horizontal"
-                data-disabled={disabled || undefined}
-              >
-                <FieldContent>
-                  <FieldLabel htmlFor={id}>{t(`mcp.tools.${name}.name`)}</FieldLabel>
-                  <FieldDescription>
-                    {t(`mcp.tools.${name}.description`)}
-                  </FieldDescription>
-                </FieldContent>
-                {control === 'switch' ? (
-                  <Switch
-                    id={id}
-                    checked={value.tools[name]}
-                    disabled={disabled}
-                    onCheckedChange={(checked) => setTool(name, checked)}
-                  />
-                ) : (
-                  <Checkbox
-                    id={id}
-                    checked={value.tools[name]}
-                    disabled={disabled}
-                    onCheckedChange={(checked) => setTool(name, checked === true)}
-                  />
-                )}
-              </Field>
-            );
-          })}
-        </FieldGroup>
+        <FieldDescription>{t('mcp.tools.readNote')}</FieldDescription>
+        <div className="flex flex-col gap-6">
+          {MCP_TOOL_GROUPS.map((group) => (
+            <FieldSet key={group.id} disabled={disabled}>
+              <FieldLegend variant="label">{t(`mcp.tools.groups.${group.id}`)}</FieldLegend>
+              <FieldGroup className="gap-4">
+                {group.tools.map((name) => {
+                  const id = `${idPrefix}-tool-${name}`;
+                  return (
+                    <Field
+                      key={name}
+                      orientation="horizontal"
+                      data-disabled={disabled || undefined}
+                    >
+                      <FieldContent>
+                        <FieldLabel htmlFor={id}>{t(`mcp.tools.${name}.name`)}</FieldLabel>
+                        <FieldDescription>
+                          {t(`mcp.tools.${name}.description`)}
+                        </FieldDescription>
+                      </FieldContent>
+                      {control === 'switch' ? (
+                        <Switch
+                          id={id}
+                          checked={value.tools[name]}
+                          disabled={disabled}
+                          onCheckedChange={(checked) => setTool(name, checked)}
+                        />
+                      ) : (
+                        <Checkbox
+                          id={id}
+                          checked={value.tools[name]}
+                          disabled={disabled}
+                          onCheckedChange={(checked) => setTool(name, checked === true)}
+                        />
+                      )}
+                    </Field>
+                  );
+                })}
+              </FieldGroup>
+            </FieldSet>
+          ))}
+        </div>
       </FieldSet>
 
       <FieldSet disabled={disabled}>
@@ -184,10 +193,10 @@ export function McpScopeFields({
                 >
                   <FieldContent>
                     <FieldLabel htmlFor={`${idPrefix}-site-${site.id}`}>
-                      {site.label}
+                      <Bdi>{site.label}</Bdi>
                     </FieldLabel>
                     <FieldDescription>
-                      {site.description}
+                      <Bdi>{site.description}</Bdi>
                       {site.missing ? ` · ${t('mcp.sites.removeHint')}` : ''}
                     </FieldDescription>
                   </FieldContent>

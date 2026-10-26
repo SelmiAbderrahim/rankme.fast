@@ -54,16 +54,6 @@ async function accountId(request: APIRequestContext): Promise<string> {
   return id as string;
 }
 
-function setTier(id: string, tier: 'none' | 'starter' | 'pro' | 'agency'): void {
-  runComposePsql(
-    `INSERT INTO subscriptions (account_id, tier, status)
-       VALUES (:'account_id', :'tier', 'active')
-       ON CONFLICT (account_id)
-         DO UPDATE SET tier = :'tier', status = 'active', updated_at = now();`,
-    { variables: { account_id: id, tier } },
-  );
-}
-
 async function createSite(
   request: APIRequestContext,
   url: string,
@@ -160,7 +150,7 @@ async function setTheme(page: Page, theme: 'light' | 'dark'): Promise<void> {
   }, theme);
 }
 
-test('alert rules: cap, channel gating, secrets, dispatch evidence, a11y', async ({
+test('alert rules: channels, secrets, dispatch evidence, a11y', async ({
   page,
 }) => {
   test.slow();
@@ -170,18 +160,9 @@ test('alert rules: cap, channel gating, secrets, dispatch evidence, a11y', async
   await signUp(page, account);
 
   const id = await accountId(page.request);
-  // ---------------------------------------------------------------- tier gate
-  setTier(id, 'starter');
   const site = await createSite(page.request, 'https://alerts.example.test', 'Alerts');
-  const slackOnStarter = await createRule(page.request, {
-    siteId: site.id,
-    type: 'rank_drop',
-    threshold: 10,
-    slackWebhookUrl: 'https://hooks.slack.com/services/T1/B1/zzz',
-  });
-  expect(slackOnStarter.status).toBe(402);
 
-  // Email on the same tier is allowed — the gate is per channel, not per rule.
+  // An email rule is accepted for the signed-in recipient.
   const emailOnStarter = await createRule(page.request, {
     siteId: site.id,
     type: 'rank_drop',
@@ -190,22 +171,21 @@ test('alert rules: cap, channel gating, secrets, dispatch evidence, a11y', async
   });
   expect(emailOnStarter.status).toBe(201);
 
-  // ------------------------------------------------------------- structural cap
-  const secondStarterRule = await createRule(page.request, {
+  const secondRule = await createRule(page.request, {
     siteId: site.id,
     type: 'new_backlink',
     emailRecipientIds: [id],
   });
-  expect(secondStarterRule.status).toBe(201);
-  const overCap = await createRule(page.request, {
+  expect(secondRule.status).toBe(201);
+  // There is no rule limit on a self-hosted server: a third rule is accepted.
+  const thirdRule = await createRule(page.request, {
     siteId: site.id,
     type: 'lost_backlink',
     emailRecipientIds: [id],
   });
-  expect(overCap.status).toBe(402);
+  expect(thirdRule.status).toBe(201);
 
   // ------------------------------------------------------------- SSRF at save
-  setTier(id, 'pro');
   const privateTarget = await createRule(page.request, {
     siteId: site.id,
     type: 'lost_backlink',
@@ -302,7 +282,6 @@ test.describe('Arabic (RTL)', () => {
     const account = freshAccount('alerts-ar');
     await signUp(page, account);
     const id = await accountId(page.request);
-    setTier(id, 'pro');
     await createSite(page.request, 'https://alerts-ar.example.test', 'Alerts AR');
 
     await page.goto('/dashboard/alerts');

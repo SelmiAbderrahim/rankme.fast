@@ -10,6 +10,8 @@ import {
   SITE_TAB_LABEL_KEYS,
   SITE_SUB_VIEWS,
   SITE_TABS,
+  SITE_BACKLINK_VIEWS,
+  getExplicitSubView,
   getSiteTabGroup,
   getSiteTabLabelKey,
   isAppSeoView,
@@ -304,5 +306,51 @@ describe('useSiteSubView — default, deep link, invalid, setter, clear', () => 
       expect(screen.getByTestId('view-value')).toHaveTextContent(view);
       unmount();
     }
+  });
+});
+
+describe('getExplicitSubView', () => {
+  it('names a nested view only when it differs from the tab default', () => {
+    expect(getExplicitSubView('competitors', '?view=traffic')).toEqual({
+      view: 'traffic',
+      labelKey: 'competitors:intelligence.views.traffic',
+    });
+    expect(getExplicitSubView('competitors', '?view=overview')).toBeNull();
+    expect(getExplicitSubView('content', new URLSearchParams('view=inventory'))).toEqual({
+      view: 'inventory',
+      labelKey: 'contentIntelligence:views.inventory',
+    });
+    expect(getExplicitSubView('content', '?view=analyses')).toBeNull();
+    expect(getExplicitSubView('backlinks', '?view=history')?.labelKey).toBe('backlinks:intelligence.tabs.history');
+    expect(getExplicitSubView('apps', '?view=reviews')?.labelKey).toBe('appSeo:views.reviews');
+    expect(getExplicitSubView('google', `?view=${SITE_SUB_VIEWS[0]}`)?.labelKey).toBe(
+      `google:searchDetail.views.${SITE_SUB_VIEWS[0]}`,
+    );
+  });
+
+  it('ignores a missing, unknown or foreign view and tabs without nested views', () => {
+    expect(getExplicitSubView('competitors', '')).toBeNull();
+    expect(getExplicitSubView('competitors', '?view=nope')).toBeNull();
+    expect(getExplicitSubView('competitors', '?view=history')).toBeNull();
+    expect(getExplicitSubView('overview', '?view=traffic')).toBeNull();
+  });
+
+  it('keeps the mirrored vocabularies in step with the features that own them', async () => {
+    const { CONTENT_SUB_VIEWS } = await import('@features/content-intelligence/types');
+    const { COMPETITOR_WORKSPACE_VIEWS, DEFAULT_COMPETITOR_WORKSPACE_VIEW } = await import(
+      '@features/competitors/workspaceState'
+    );
+    const { DEFAULT_CONTENT_SUB_VIEW } = await import('@features/content-intelligence/types');
+    const { BACKLINK_TABS, DEFAULT_BACKLINK_TAB } = await import('@features/backlinks/tabState');
+    const probe = (tab: SiteTab, views: readonly string[]) =>
+      views.filter((view) => getExplicitSubView(tab, `?view=${view}`) !== null);
+    expect(probe('content', CONTENT_SUB_VIEWS)).toEqual(CONTENT_SUB_VIEWS.filter((v) => v !== DEFAULT_CONTENT_SUB_VIEW));
+    expect(probe('competitors', COMPETITOR_WORKSPACE_VIEWS)).toEqual(
+      COMPETITOR_WORKSPACE_VIEWS.filter((v) => v !== DEFAULT_COMPETITOR_WORKSPACE_VIEW),
+    );
+    expect(probe('backlinks', BACKLINK_TABS)).toEqual(BACKLINK_TABS.filter((v) => v !== DEFAULT_BACKLINK_TAB));
+    expect([...SITE_BACKLINK_VIEWS]).toEqual([...BACKLINK_TABS]);
+    expect(probe('apps', APP_SEO_VIEWS)).toEqual(APP_SEO_VIEWS.filter((v) => v !== DEFAULT_APP_SEO_VIEW));
+    expect(probe('google', SITE_SUB_VIEWS)).toEqual([...SITE_SUB_VIEWS]);
   });
 });

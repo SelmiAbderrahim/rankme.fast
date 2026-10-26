@@ -15,7 +15,7 @@ Content Intelligence gehört nicht zu `/api/v1`: Analysen starten und Empfehlung
 
 ## Authentifizierung
 
-Erstellen Sie einen Schlüssel unter **Konto → API-Schlüssel** (`/profile?tab=api-keys`). Der vollständige Schlüssel wird **genau einmal** angezeigt. Kopieren Sie ihn sofort; danach ist nur noch sein Präfix sichtbar. Sie können bis zu zehn aktive Schlüssel halten und jeden jederzeit widerrufen. Ein widerrufener Schlüssel funktioniert sofort nicht mehr.
+Erstellen Sie einen Schlüssel unter **Konto → API-Schlüssel** (`/settings/profile?tab=api-keys`). Der vollständige Schlüssel wird **genau einmal** angezeigt. Kopieren Sie ihn sofort; danach ist nur noch sein Präfix sichtbar. Sie können bis zu zehn aktive Schlüssel halten und jeden jederzeit widerrufen. Ein widerrufener Schlüssel funktioniert sofort nicht mehr.
 
 Senden Sie den Schlüssel als Bearer-Token mit jeder Anfrage:
 

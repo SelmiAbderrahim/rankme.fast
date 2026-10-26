@@ -803,7 +803,7 @@ async function seedAccount(
     recordedAt: new Date('2026-01-02T00:00:00Z'),
   });
 
-  // Content inventory (prompt 08) — run + derived-facts page + TTL snapshot +
+  // Content inventory — run + derived-facts page + TTL snapshot +
   // an events archive row, all account-scoped for the purge sweep.
   const inventoryRun = await ContentInventoryRun.create({
     accountId: userId,

@@ -1,3 +1,4 @@
+import { Bdi } from '@shared/components/Bdi';
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { useSearchParams } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
@@ -15,6 +16,7 @@ import {
 import { Empty, EmptyContent, EmptyDescription, EmptyHeader, EmptyTitle } from '@shared/ui/empty';
 import { Field, FieldGroup, FieldLabel } from '@shared/ui/field';
 import { Input } from '@shared/ui/input';
+import { DatePicker } from '@shared/components/DatePicker';
 import { Skeleton } from '@shared/ui/skeleton';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@shared/ui/table';
 import { TableHeaderHelp } from '@shared/ui/table-header-help';
@@ -146,21 +148,21 @@ export const SnapshotList = ({ data, status, error = '', onOpen }: SnapshotListP
             />
           </Field>
           <Field>
-            <FieldLabel htmlFor="traffic-filter-from">{t('list.filters.from')}</FieldLabel>
-            <Input
+            <FieldLabel id="traffic-filter-from-label" htmlFor="traffic-filter-from">{t('list.filters.from')}</FieldLabel>
+            <DatePicker
               id="traffic-filter-from"
-              type="date"
+              labelId="traffic-filter-from-label"
               value={filters.from ?? ''}
-              onChange={(event) => setFilter('from', event.target.value)}
+              onChange={(next) => setFilter('from', next)}
             />
           </Field>
           <Field>
-            <FieldLabel htmlFor="traffic-filter-to">{t('list.filters.to')}</FieldLabel>
-            <Input
+            <FieldLabel id="traffic-filter-to-label" htmlFor="traffic-filter-to">{t('list.filters.to')}</FieldLabel>
+            <DatePicker
               id="traffic-filter-to"
-              type="date"
+              labelId="traffic-filter-to-label"
               value={filters.to ?? ''}
-              onChange={(event) => setFilter('to', event.target.value)}
+              onChange={(next) => setFilter('to', next)}
             />
           </Field>
         </FieldGroup>
@@ -229,7 +231,7 @@ export const SnapshotList = ({ data, status, error = '', onOpen }: SnapshotListP
                       onCheckedChange={(checked) => toggleSelected(snapshot.id, checked === true)}
                     />
                   </TableCell>
-                  <TableCell>{snapshot.targetDomain}</TableCell>
+                  <TableCell><Bdi>{snapshot.targetDomain}</Bdi></TableCell>
                   <TableCell>{date.format(new Date(snapshot.capturedAt))}</TableCell>
                   <TableCell className="text-end">
                     <span className="flex flex-col items-end gap-1">

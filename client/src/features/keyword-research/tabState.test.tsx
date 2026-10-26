@@ -69,7 +69,18 @@ describe('parseKeywordWorkspaceQuery', () => {
       q: '',
       run: null,
       decision: DEFAULT_CLUSTER_DECISION_FILTER,
+      stored: null,
     });
+  });
+
+  it('accepts a history row UUID for the stored view and drops anything else', () => {
+    const id = '3f2b8c1e-5d4a-4c6b-9e7f-1a2b3c4d5e6f';
+    expect(parseKeywordWorkspaceQuery(`stored=${id.toUpperCase()}`).stored).toBe(id);
+    expect(parseKeywordWorkspaceQuery('stored=not-an-id').stored).toBeNull();
+    expect(serializeKeywordWorkspaceQuery(new URLSearchParams('tab=research'), { stored: id }).toString())
+      .toBe(`tab=research&stored=${id}`);
+    expect(serializeKeywordWorkspaceQuery(new URLSearchParams(`stored=${id}`), { stored: null }).toString())
+      .toBe('');
   });
 
   it('accepts valid values (string and URLSearchParams input)', () => {

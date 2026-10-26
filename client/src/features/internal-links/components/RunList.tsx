@@ -2,6 +2,7 @@ import { useTranslation } from 'react-i18next';
 import { Badge } from '@shared/ui/badge';
 import { Button } from '@shared/ui/button';
 import { Card, CardContent } from '@shared/ui/card';
+import { formatAbsoluteDate } from '@shared/lib/datetime';
 import type { InternalLinkRunSummary } from '../types';
 
 interface RunListProps {
@@ -11,7 +12,7 @@ interface RunListProps {
 }
 
 export const RunList = ({ runs, activeRunId, onOpen }: RunListProps) => {
-  const { t } = useTranslation('internalLinks');
+  const { t, i18n } = useTranslation('internalLinks');
   return (
     <div className="grid gap-3" data-testid="internal-links-run-list">
       {runs.map((run) => (
@@ -22,10 +23,9 @@ export const RunList = ({ runs, activeRunId, onOpen }: RunListProps) => {
                 <Badge variant={run.status === 'failed' ? 'destructive' : 'secondary'}>
                   {t(`status.${run.status}`)}
                 </Badge>
-                {run.refunded ? <Badge variant="outline">{t('status.refunded')}</Badge> : null}
               </div>
               <p className="text-sm font-medium">
-                {t('runs.snapshot', { date: run.inventoryDate })}
+                {t('runs.snapshot', { date: formatAbsoluteDate(run.inventoryDate, i18n.language) })}
               </p>
               <p className="text-muted-foreground text-xs">
                 {t('runs.suggestionCount', { count: run.suggestionCount })}

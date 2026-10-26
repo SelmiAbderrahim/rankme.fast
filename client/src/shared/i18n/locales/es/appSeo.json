@@ -13,12 +13,11 @@
   },
   "locked": {
     "title": "El SEO de aplicaciones está disponible en Pro",
-    "description": "Cambia a Pro o superior para registrar perfiles de aplicaciones y abrir este espacio.",
-    "cta": "Ver planes"
+    "description": "Cambia a Pro o superior para registrar perfiles de aplicaciones y abrir este espacio."
   },
   "registration": {
     "title": "Registrar una aplicación",
-    "description": "Añade un paquete de Google Play, un ID de App Store o ambos. El registro solo valida el formato y no consume créditos del proveedor.",
+    "description": "Añade un paquete de Google Play, un ID de App Store o ambos. El registro solo valida el formato y no obtiene datos.",
     "playLabel": "ID de paquete de Google Play",
     "playPlaceholder": "com.example.app",
     "playHelp": "Usa el ID de paquete con DNS inverso que aparece en Google Play.",
@@ -27,7 +26,6 @@
     "appleHelp": "Introduce el ID numérico de 6 a 12 dígitos.",
     "pairedLabel": "Estas fichas corresponden a la misma aplicación",
     "pairedHelp": "Vincúlalas solo si representan el mismo producto.",
-    "usage": "{{used}} de {{limit}} perfiles",
     "submit": "Registrar aplicación",
     "registering": "Registrando…"
   },
@@ -46,7 +44,6 @@
   "states": {
     "limitTitle": "Límite de perfiles alcanzado",
     "limitDescription": "Elimina un perfil para liberar una plaza o elige un plan con más perfiles.",
-    "upgrade": "Ver planes",
     "errorTitle": "No pudimos actualizar los perfiles"
   },
   "validation": {

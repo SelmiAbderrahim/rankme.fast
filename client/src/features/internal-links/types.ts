@@ -46,7 +46,6 @@ export interface InternalLinkRunSummary {
   gscSnapshotDate: string | null;
   candidateRulesVersion: string;
   suggestionCount: number;
-  refunded: boolean;
   requestedAt: string;
   startedAt: string | null;
   completedAt: string | null;

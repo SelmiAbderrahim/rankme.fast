@@ -551,7 +551,7 @@ const RULE_PLAIN = {
     ['Canonical link missing or broken', 'A `<link rel="canonical">` tells Google which URL is the main version of a page. It causes problems when it is missing or points to another site.'],
     ['Structured data missing or broken', 'Machine-readable tags (JSON-LD) that help Google understand articles, products and FAQs.'],
     ['Broken internal links', 'Links from one of your pages to another that return an error. Fix or remove them.'],
-    ['Thin content', 'Pages with fewer than about 200 words look empty to Google. Expand the ones you want to rank.'],
+    ['Thin content', 'Pages with very little text of their own, judged against a threshold for the page\'s language: about 200 words for most languages, and the equivalent in characters for Chinese, Japanese, Korean and Thai. Each flagged page shows the length we measured.'],
     ['No FAQ signals found', 'We found no question-and-answer sections. FAQs help both visitors and AI assistants.'],
     ['llms.txt file missing (advisory)', 'A newer convention: a `/llms.txt` file that points AI crawlers to your best content. It is optional, so this rule is advisory only.'],
     ['HTTPS not enforced', 'Your site should redirect http to https and use the https version as the canonical URL.'],
@@ -559,8 +559,32 @@ const RULE_PLAIN = {
     ['Low lab performance estimate', 'Our Lighthouse test run scored low. Scores vary by about 10 points between runs, so use this as a hint.'],
     ['Not mobile-friendly', 'The page doesn’t display well on phones. Check tap-target sizes and the viewport meta tag.'],
     ['Not indexed by Google', 'Google looked at the page but didn’t add it to search results. If this rule can’t get data, reconnect Google Search Console.'],
-    ['Rich results issues', 'Google recognised your structured data but found errors that keep the page from showing enhanced results.'],
+    ['Rich results issues', 'Google recognized your structured data but found errors that keep the page from showing enhanced results.'],
     ['Indexed with warnings', 'The page is indexed, but Google flagged a canonical or duplicate-content problem.'],
+    ['Pages that answer with an error', 'Crawled addresses that returned an error (4xx or 5xx). Bring the page back or redirect the address. Addresses that refused our crawler (401, 403 or 429) may be bot protection, so check them in a browser first.'],
+    ['Redirect chains and loops', 'Addresses that take two or more redirects to reach a page, or never reach one. Point the first address straight at the final page.'],
+    ['Links that point to redirects', 'Internal links whose target redirects. Link to the final address instead.'],
+    ['Pages that redirect with a refresh tag', 'A `<meta http-equiv="refresh">` tag sends visitors on. Use a permanent (301) server redirect instead.'],
+    ['Canonical tags that point to the wrong place', 'A canonical that points to a broken page, a redirect, another canonical, or back and forth between two pages. Point it at a working page that names itself.'],
+    ['Pages no other page links to', 'Pages listed in your sitemap that no internal link reaches. Link to them from a related page or menu.'],
+    ['Pages buried deep in the site', 'Pages more than three clicks from the home page. Bring the important ones closer.'],
+    ['Pages that share a title', 'Two or more pages with the same `<title>`. Give each page its own.'],
+    ['Pages that look like copies of each other', 'Pages the crawler judged near-identical, with a similarity score out of ten. Merge them or make each one distinct.'],
+    ['Placeholder text on live pages', '"Lorem ipsum" filler text on a published page. Replace it with the real copy.'],
+    ['Secure pages linking to insecure addresses', 'HTTPS pages that link to `http://` addresses. Switch them to `https://`.'],
+    ['Images without alt text', 'Images with no `alt` attribute. Describe meaningful images and give decorative ones an empty `alt`.'],
+    ['Pages slow to start loading', 'The crawler waited more than 1.5 seconds for the first byte, or more than three seconds for the page. One lab load from our crawler, not every visitor\'s experience.'],
+    ['Very large pages', 'HTML over 1 MB. Over 3 MB the finding moves to Fix now.'],
+    ['Pages sent without compression', 'HTML sent without gzip or Brotli compression. Turn compression on at the server.'],
+    ['Scripts and styles that delay the first view', 'Files that block the first paint, with how many. Load scripts with `async` or `defer`.'],
+    ['Pages missing basic HTML declarations', 'No `<!DOCTYPE html>` line or no character-set declaration.'],
+    ['Outdated HTML on your pages', 'Removed tags, Flash or frames. Frames such as embedded videos can be fine, so check them rather than remove them.'],
+    ['Addresses that are hard to read', 'Addresses with unusual characters, query parameters, or more than 120 characters.'],
+    ['Pages without social sharing tags', 'No Open Graph tags, so a shared link may show the wrong title, text or image.'],
+    ['No favicon', 'No small site icon for browser tabs and search results.'],
+    ['Broken images, scripts or styles', 'Files a page needs that answer with an error. This check runs only on an audit started with the resource scan; otherwise the report lists it under Not evaluated.'],
+    ['Images that are larger than needed', 'Images over 500 KB. Runs with the full resource scan, like the check above.'],
+    ['Files browsers are told not to keep', 'Images, scripts and stylesheets sent with headers that stop browsers from caching them. Runs with the full resource scan.'],
   ],
   // For non-English locales we ship a shorter set of headline-only rule
   // labels (same order). The rule cards inside the app already show the
@@ -575,7 +599,7 @@ const RULE_PLAIN = {
     ['رابط canonical مفقود أو معطّل', 'أضف `<link rel="canonical">` صحيحًا.'],
     ['البيانات المهيكلة مفقودة', 'أضِف JSON-LD الملائم للنوع.'],
     ['روابط داخلية مكسورة', 'أصلح أو احذف الروابط التي تُرجع خطأ.'],
-    ['محتوى قليل', 'صفحات بأقل من 200 كلمة تقريبًا.'],
+    ['محتوى قليل', 'صفحات تحتوي على نص قليل جدًا خاص بها، ويُحكم عليها بحدّ يناسب لغة الصفحة: نحو 200 كلمة لمعظم اللغات، وما يعادلها بالأحرف للصينية واليابانية والكورية والتايلاندية. تعرض كل صفحة مُعلَّمة الطول الذي قسناه.'],
     ['لا توجد إشارات أسئلة/إجابات', 'أضِف قسم أسئلة شائعة عند الحاجة.'],
     ['ملف llms.txt مفقود (اختياري)', 'عُرف جديد يرشد روبوتات الذكاء الاصطناعي إلى أفضل محتواك.'],
     ['HTTPS غير مُلزَم', 'أعد التوجيه من http إلى https.'],
@@ -585,6 +609,30 @@ const RULE_PLAIN = {
     ['غير مفهرس', 'الصفحة موجودة لكن Google لم يُدرجها.'],
     ['مشاكل النتائج الغنية', 'تم رصد أخطاء في البيانات المهيكلة.'],
     ['مفهرسة مع تحذيرات', 'الصفحة مفهرسة لكن Google رصد إشارة تحذيرية.'],
+    ['صفحات تستجيب بخطأ', 'عناوين أعادت خطأ (4xx أو 5xx) أثناء الزحف. أعِد الصفحة أو وجّه عنوانها إلى صفحة عاملة، وافتح أولًا في المتصفح العناوين التي رفضت زاحفنا (401 أو 403 أو 429).'],
+    ['سلاسل وحلقات إعادة التوجيه', 'عناوين تمرّ بعمليتَي إعادة توجيه أو أكثر، أو لا تصل إلى أي صفحة. وجّه العنوان الأول مباشرةً إلى الصفحة النهائية.'],
+    ['روابط تشير إلى عمليات إعادة توجيه', 'روابط داخلية تعيد وجهتها التوجيه. اربط بالعنوان النهائي مباشرةً.'],
+    ['صفحات تعيد التوجيه بوسم تحديث', 'وسم `<meta http-equiv="refresh">` ينقل الزوار. استخدم إعادة توجيه دائمة (301) على الخادم بدلًا منه.'],
+    ['وسوم canonical تشير إلى المكان الخطأ', 'وسم canonical يشير إلى صفحة معطلة أو إعادة توجيه أو canonical آخر، أو يتردد بين صفحتين. وجّهه إلى صفحة عاملة تشير إلى نفسها.'],
+    ['صفحات لا ترتبط بها أي صفحة أخرى', 'صفحات في خريطة موقعك لا يصل إليها أي رابط داخلي. اربطها من صفحة ذات صلة أو من قائمة تنقّل.'],
+    ['صفحات مدفونة في عمق الموقع', 'صفحات تبعد أكثر من ثلاث نقرات عن الصفحة الرئيسية. قرّب المهمة منها.'],
+    ['صفحات تتشارك العنوان نفسه', 'صفحتان أو أكثر تحمل `<title>` نفسه. امنح كل صفحة عنوانها الخاص.'],
+    ['صفحات تبدو نسخًا من بعضها', 'صفحات شبه متطابقة مع درجة تشابه من عشرة. ادمجها أو اجعل كلًّا منها مختلفة.'],
+    ['نص مؤقت على صفحات منشورة', 'نص حشو «Lorem ipsum» على صفحة منشورة. استبدله بالمحتوى الحقيقي.'],
+    ['صفحات آمنة ترتبط بعناوين غير آمنة', 'صفحات HTTPS ترتبط بعناوين `http://`. حوّلها إلى `https://`.'],
+    ['صور بلا نص بديل', 'صور بلا سمة `alt`. صِف الصور ذات المعنى، واجعل `alt` فارغة للصور الزخرفية.'],
+    ['صفحات بطيئة في بدء التحميل', 'انتظر الزاحف أكثر من 1.5 ثانية لأول بايت أو أكثر من ثلاث ثوانٍ للصفحة. هذا تحميل مخبري واحد، لا تجربة كل زائر.'],
+    ['صفحات كبيرة جدًا', 'شيفرة HTML تتجاوز 1 MB. وفوق 3 MB تنتقل النتيجة إلى «إصلاح الآن».'],
+    ['صفحات تُرسَل دون ضغط', 'شيفرة HTML تُرسَل دون ضغط gzip أو Brotli. فعّل الضغط على الخادم.'],
+    ['سكربتات وأنماط تؤخّر العرض الأول', 'ملفات تحجب العرض الأول مع عددها. حمّل السكربتات باستخدام `async` أو `defer`.'],
+    ['صفحات تفتقد تعريفات HTML الأساسية', 'لا يوجد سطر `<!DOCTYPE html>` أو لا يوجد تعريف لترميز الأحرف.'],
+    ['شيفرة HTML قديمة في صفحاتك', 'وسوم مُزالة أو Flash أو إطارات. قد تكون الإطارات مثل الفيديو المضمَّن مقبولة، فتحقّق منها بدل حذفها.'],
+    ['عناوين يصعب قراءتها', 'عناوين فيها أحرف غير مألوفة أو معاملات استعلام أو أطول من 120 حرفًا.'],
+    ['صفحات بلا وسوم مشاركة اجتماعية', 'لا توجد وسوم Open Graph، فقد يعرض الرابط المُشارَك عنوانًا أو نصًا أو صورة خاطئة.'],
+    ['لا توجد أيقونة للموقع (favicon)', 'لا توجد أيقونة صغيرة للموقع في تبويبات المتصفح ونتائج البحث.'],
+    ['صور أو سكربتات أو أنماط معطلة', 'ملفات تحتاجها الصفحة تستجيب بخطأ. يعمل هذا الفحص فقط في تدقيق بدأ مع فحص الموارد، وإلا يظهر في التقرير ضمن «لم يُقيَّم».'],
+    ['صور أكبر من اللازم', 'صور تتجاوز 500 KB. يعمل مع الفحص الكامل للموارد مثل الفحص السابق.'],
+    ['ملفات يُطلب من المتصفحات عدم الاحتفاظ بها', 'صور وسكربتات وملفات أنماط تُرسَل بترويسات تمنع المتصفحات من تخزينها مؤقتًا. يعمل مع الفحص الكامل للموارد.'],
   ],
   fr: [
     ['Bloqué de Google', 'Une règle `robots.txt` empêche Google d’y accéder.'],
@@ -595,7 +643,7 @@ const RULE_PLAIN = {
     ['Canonical manquant ou cassé', 'Ajoutez un `<link rel="canonical">` valide.'],
     ['Données structurées manquantes', 'Ajoutez le JSON-LD adapté.'],
     ['Liens internes cassés', 'Corrigez ou supprimez les liens en erreur.'],
-    ['Contenu trop léger', 'Pages en-dessous d’environ 200 mots.'],
+    ['Contenu trop léger', 'Pages avec très peu de texte propre, jugées selon un seuil adapté à la langue de la page : environ 200 mots pour la plupart des langues, et l’équivalent en caractères pour le chinois, le japonais, le coréen et le thaï. Chaque page signalée indique la longueur mesurée.'],
     ['Aucun signal FAQ', 'Ajoutez une section FAQ quand pertinent.'],
     ['Fichier llms.txt absent (informatif)', 'Convention récente destinée aux robots d’IA.'],
     ['HTTPS non appliqué', 'Redirigez http vers https.'],
@@ -605,6 +653,30 @@ const RULE_PLAIN = {
     ['Non indexé', 'Google n’a pas ajouté la page à l’index.'],
     ['Problèmes de résultats enrichis', 'Erreurs dans les données structurées.'],
     ['Indexé avec avertissements', 'Signal de canonisation/doublon détecté.'],
+    ['Pages qui répondent par une erreur', 'Adresses explorées qui renvoient une erreur (4xx ou 5xx). Remettez la page en ligne ou redirigez l’adresse. Un refus (401, 403 ou 429) peut venir d’une protection anti-robots : vérifiez d’abord dans un navigateur.'],
+    ['Chaînes et boucles de redirection', 'Adresses qui passent par deux redirections ou plus, ou n’aboutissent jamais. Faites pointer la première directement vers la page finale.'],
+    ['Liens qui pointent vers des redirections', 'Liens internes dont la cible redirige. Pointez plutôt vers l’adresse finale.'],
+    ['Pages qui redirigent avec une balise refresh', 'Une balise `<meta http-equiv="refresh">` renvoie les visiteurs ailleurs. Utilisez plutôt une redirection serveur permanente (301).'],
+    ['Balises canonical qui pointent au mauvais endroit', 'Canonical vers une page cassée, une redirection, une autre canonical, ou en aller-retour entre deux pages. Pointez vers une page fonctionnelle qui se désigne elle-même.'],
+    ['Pages vers lesquelles aucune autre page ne renvoie', 'Pages de votre sitemap qu’aucun lien interne n’atteint. Liez-les depuis une page connexe ou un menu.'],
+    ['Pages enfouies dans l’arborescence', 'Pages à plus de trois clics de l’accueil. Rapprochez les plus importantes.'],
+    ['Pages qui partagent le même titre', 'Deux pages ou plus avec le même `<title>`. Donnez à chacune le sien.'],
+    ['Pages qui semblent copiées les unes sur les autres', 'Pages jugées quasi identiques, avec un score de similarité sur dix. Fusionnez-les ou différenciez-les.'],
+    ['Texte de remplissage sur des pages en ligne', 'Faux texte « Lorem ipsum » sur une page publiée. Remplacez-le par le vrai contenu.'],
+    ['Pages sécurisées qui renvoient vers des adresses non sécurisées', 'Pages HTTPS avec des liens vers des adresses `http://`. Passez-les en `https://`.'],
+    ['Images sans texte alternatif', 'Images sans attribut `alt`. Décrivez les images utiles et laissez un `alt` vide sur les images décoratives.'],
+    ['Pages lentes à démarrer', 'Plus de 1,5 seconde pour le premier octet, ou plus de trois secondes pour la page. Une seule mesure en laboratoire, pas l’expérience de chaque visiteur.'],
+    ['Pages très lourdes', 'HTML de plus de 1 Mo. Au-delà de 3 Mo, le constat passe dans À corriger.'],
+    ['Pages envoyées sans compression', 'HTML envoyé sans compression gzip ni Brotli. Activez-la sur le serveur.'],
+    ['Scripts et styles qui retardent le premier affichage', 'Fichiers qui bloquent le premier affichage, avec leur nombre. Chargez les scripts en `async` ou `defer`.'],
+    ['Pages sans les déclarations HTML de base', 'Pas de ligne `<!DOCTYPE html>` ou pas de déclaration de jeu de caractères.'],
+    ['HTML obsolète sur vos pages', 'Balises supprimées, Flash ou cadres. Un cadre comme une vidéo intégrée peut être légitime : vérifiez-le plutôt que de le supprimer.'],
+    ['Adresses difficiles à lire', 'Adresses avec des caractères inhabituels, des paramètres de requête ou plus de 120 caractères.'],
+    ['Pages sans balises de partage social', 'Pas de balises Open Graph : un lien partagé peut afficher le mauvais titre, texte ou image.'],
+    ['Pas de favicon', 'Aucune petite icône pour les onglets du navigateur et les résultats de recherche.'],
+    ['Images, scripts ou styles cassés', 'Fichiers nécessaires à la page qui renvoient une erreur. Vérification effectuée seulement pour un audit lancé avec l’analyse des ressources ; sinon, le rapport la classe dans Non évalué.'],
+    ['Images plus grandes que nécessaire', 'Images de plus de 500 Ko. Vérification liée à l’analyse complète des ressources, comme la précédente.'],
+    ['Fichiers exclus du cache des navigateurs', 'Images, scripts et feuilles de style envoyés avec des en-têtes qui empêchent leur mise en cache. Vérification liée à l’analyse complète des ressources.'],
   ],
   de: [
     ['Von Google blockiert', 'Eine `robots.txt`-Regel sperrt Google aus.'],
@@ -615,7 +687,7 @@ const RULE_PLAIN = {
     ['Canonical fehlt oder defekt', 'Setzen Sie einen gültigen `<link rel="canonical">`.'],
     ['Strukturierte Daten fehlen', 'Fügen Sie passendes JSON-LD hinzu.'],
     ['Defekte interne Links', 'Korrigieren oder entfernen Sie fehlerhafte Links.'],
-    ['Dünner Inhalt', 'Seiten unter etwa 200 Wörtern.'],
+    ['Dünner Inhalt', 'Seiten mit sehr wenig eigenem Text, bewertet nach einem Schwellenwert für die Sprache der Seite: etwa 200 Wörter für die meisten Sprachen und das Zeichen-Äquivalent für Chinesisch, Japanisch, Koreanisch und Thai. Jede markierte Seite zeigt die gemessene Länge.'],
     ['Keine FAQ-Signale', 'FAQ-Abschnitt hinzufügen, wo sinnvoll.'],
     ['llms.txt fehlt (Hinweis)', 'Neue Konvention für KI-Crawler.'],
     ['HTTPS nicht erzwungen', 'Leiten Sie http auf https um.'],
@@ -625,6 +697,30 @@ const RULE_PLAIN = {
     ['Nicht indexiert', 'Google hat die Seite nicht aufgenommen.'],
     ['Rich-Results-Fehler', 'Fehler in strukturierten Daten.'],
     ['Indexiert mit Warnung', 'Canonical-/Duplikat-Signal.'],
+    ['Seiten, die mit einem Fehler antworten', 'Gecrawlte Adressen mit Fehler (4xx oder 5xx). Stellen Sie die Seite wieder her oder leiten Sie die Adresse um. Abweisungen (401, 403 oder 429) können Bot-Schutz sein, prüfen Sie diese zuerst im Browser.'],
+    ['Weiterleitungsketten und -schleifen', 'Adressen mit zwei oder mehr Weiterleitungen oder ganz ohne Ziel. Leiten Sie die erste Adresse direkt auf die endgültige Seite.'],
+    ['Links, die auf Weiterleitungen zeigen', 'Interne Links, deren Ziel weiterleitet. Verlinken Sie direkt die endgültige Adresse.'],
+    ['Seiten, die per Refresh-Tag weiterleiten', 'Ein `<meta http-equiv="refresh">`-Tag leitet weiter. Nutzen Sie stattdessen eine permanente (301) Server-Weiterleitung.'],
+    ['Canonical-Tags, die an die falsche Stelle verweisen', 'Canonical auf eine defekte Seite, eine Weiterleitung, einen weiteren Canonical oder hin und her. Verweisen Sie auf eine funktionierende Seite, die sich selbst angibt.'],
+    ['Seiten, auf die keine andere Seite verlinkt', 'Seiten aus Ihrer Sitemap ohne internen Link. Verlinken Sie sie von einer passenden Seite oder einem Menü.'],
+    ['Seiten tief in der Website vergraben', 'Mehr als drei Klicks von der Startseite entfernt. Holen Sie wichtige Seiten näher heran.'],
+    ['Seiten mit demselben Titel', 'Zwei oder mehr Seiten mit gleichem `<title>`. Geben Sie jeder Seite einen eigenen.'],
+    ['Seiten, die wie Kopien voneinander wirken', 'Nahezu identische Seiten mit einem Ähnlichkeitswert von höchstens zehn. Führen Sie sie zusammen oder machen Sie jede eigenständig.'],
+    ['Platzhaltertext auf veröffentlichten Seiten', 'Fülltext wie „Lorem ipsum“ auf einer veröffentlichten Seite. Ersetzen Sie ihn durch den echten Text.'],
+    ['Sichere Seiten mit Verweisen auf unsichere Adressen', 'HTTPS-Seiten verlinken auf `http://`-Adressen. Stellen Sie diese auf `https://` um.'],
+    ['Bilder ohne Alt-Text', 'Bilder ohne `alt`-Attribut. Beschreiben Sie wichtige Bilder, dekorative erhalten ein leeres `alt`.'],
+    ['Seiten, die nur langsam zu laden beginnen', 'Mehr als 1,5 Sekunden bis zum ersten Byte oder mehr als drei Sekunden für die Seite. Ein einzelner Lab-Ladevorgang, nicht das Erlebnis jedes Besuchers.'],
+    ['Sehr große Seiten', 'HTML über 1 MB. Ab 3 MB rückt der Befund zu „Jetzt beheben“.'],
+    ['Seiten ohne Komprimierung ausgeliefert', 'HTML ohne gzip- oder Brotli-Komprimierung. Aktivieren Sie die Komprimierung am Server.'],
+    ['Skripte und Styles, die die erste Anzeige verzögern', 'Dateien, die die erste Darstellung blockieren, samt Anzahl. Laden Sie Skripte mit `async` oder `defer`.'],
+    ['Seiten ohne grundlegende HTML-Angaben', 'Keine `<!DOCTYPE html>`-Zeile oder keine Zeichensatz-Angabe.'],
+    ['Veraltetes HTML auf Ihren Seiten', 'Entfernte Tags, Flash oder Frames. Frames wie eingebettete Videos können in Ordnung sein, prüfen Sie sie also, statt sie zu entfernen.'],
+    ['Schwer lesbare Adressen', 'Adressen mit ungewöhnlichen Zeichen, Abfrageparametern oder mehr als 120 Zeichen.'],
+    ['Seiten ohne Tags zum Teilen in sozialen Netzwerken', 'Keine Open-Graph-Tags, daher zeigt ein geteilter Link womöglich den falschen Titel, Text oder ein falsches Bild.'],
+    ['Kein Favicon', 'Kein kleines Website-Symbol für Browser-Tabs und Suchergebnisse.'],
+    ['Defekte Bilder, Skripte oder Styles', 'Benötigte Dateien, die mit einem Fehler antworten. Läuft nur bei einem Audit, das mit dem Ressourcen-Scan gestartet wurde, sonst steht die Prüfung unter „Nicht geprüft“.'],
+    ['Bilder, die größer als nötig sind', 'Bilder über 500 KB. Läuft wie die Prüfung darüber mit dem vollständigen Ressourcen-Scan.'],
+    ['Dateien, die Browser nicht speichern sollen', 'Bilder, Skripte und Stylesheets mit Headern, die das Caching im Browser verhindern. Läuft mit dem vollständigen Ressourcen-Scan.'],
   ],
   es: [
     ['Bloqueado para Google', 'Una regla `robots.txt` impide el acceso.'],
@@ -635,7 +731,7 @@ const RULE_PLAIN = {
     ['Canonical ausente o roto', 'Coloca un `<link rel="canonical">` válido.'],
     ['Datos estructurados ausentes', 'Añade JSON-LD adecuado.'],
     ['Enlaces internos rotos', 'Corrige o elimina los enlaces con error.'],
-    ['Contenido escaso', 'Páginas por debajo de ~200 palabras.'],
+    ['Contenido escaso', 'Páginas con muy poco texto propio, juzgadas con un umbral según el idioma de la página: unas 200 palabras para la mayoría de los idiomas y el equivalente en caracteres para chino, japonés, coreano y tailandés. Cada página señalada muestra la longitud medida.'],
     ['Sin señales de FAQ', 'Añade sección de preguntas frecuentes.'],
     ['Falta llms.txt (informativo)', 'Convención reciente para los bots de IA.'],
     ['HTTPS no forzado', 'Redirige http a https.'],
@@ -645,6 +741,30 @@ const RULE_PLAIN = {
     ['No indexado', 'Google no incluyó la página.'],
     ['Problemas de resultados enriquecidos', 'Errores en datos estructurados.'],
     ['Indexado con avisos', 'Señal de canónico/duplicado.'],
+    ['Páginas que responden con un error', 'Direcciones rastreadas que devolvieron un error (4xx o 5xx). Recupera la página o redirige la dirección. Si rechazaron al rastreador (401, 403 o 429), puede ser una protección contra bots: ábrelas antes en un navegador.'],
+    ['Cadenas y bucles de redirecciones', 'Direcciones que pasan por dos o más redirecciones, o que nunca llegan a una página. Haz que la primera apunte directamente a la página final.'],
+    ['Enlaces que apuntan a redirecciones', 'Enlaces internos cuyo destino redirige. Enlaza directamente a la dirección final.'],
+    ['Páginas que redirigen con una etiqueta de actualización', 'Una etiqueta `<meta http-equiv="refresh">` reenvía al visitante. Usa en su lugar una redirección permanente (301) en el servidor.'],
+    ['Etiquetas canonical que apuntan al lugar equivocado', 'Un canonical que apunta a una página rota, a una redirección, a otro canonical o que va y viene entre dos páginas. Haz que apunte a una página activa que se declare a sí misma.'],
+    ['Páginas sin enlaces desde otras páginas', 'Páginas de tu sitemap a las que no llega ningún enlace interno. Enlázalas desde una página relacionada o desde un menú.'],
+    ['Páginas enterradas en lo más hondo del sitio', 'Páginas a más de tres clics de la página de inicio. Acerca las importantes.'],
+    ['Páginas que comparten título', 'Dos o más páginas con el mismo `<title>`. Da a cada una el suyo.'],
+    ['Páginas que parecen copias unas de otras', 'Páginas casi idénticas según el rastreador, con una puntuación de similitud sobre diez. Únelas o haz que cada una sea distinta.'],
+    ['Texto de relleno en páginas publicadas', 'Texto de relleno tipo «Lorem ipsum» en una página publicada. Sustitúyelo por el texto definitivo.'],
+    ['Páginas seguras que enlazan a direcciones no seguras', 'Páginas HTTPS que enlazan a direcciones `http://`. Cámbialas a `https://`.'],
+    ['Imágenes sin texto alternativo', 'Imágenes sin atributo `alt`. Describe las imágenes con contenido y deja un `alt` vacío en las decorativas.'],
+    ['Páginas que tardan en empezar a cargar', 'El rastreador esperó más de 1,5 segundos al primer byte, o más de tres segundos a la página. Es una sola carga de laboratorio, no la experiencia de cada visitante.'],
+    ['Páginas muy pesadas', 'HTML de más de 1 MB. Por encima de 3 MB, el resultado pasa a Corregir ya.'],
+    ['Páginas enviadas sin comprimir', 'HTML enviado sin compresión gzip ni Brotli. Activa la compresión en el servidor.'],
+    ['Scripts y estilos que retrasan la primera vista', 'Archivos que bloquean la primera visualización, con su número. Carga los scripts con `async` o `defer`.'],
+    ['Páginas sin las declaraciones HTML básicas', 'Falta la línea `<!DOCTYPE html>` o la declaración del juego de caracteres.'],
+    ['HTML obsoleto en tus páginas', 'Etiquetas retiradas, Flash o marcos. Algunos marcos, como los vídeos incrustados, pueden estar bien: revísalos antes de quitarlos.'],
+    ['Direcciones difíciles de leer', 'Direcciones con caracteres poco habituales, parámetros de consulta o más de 120 caracteres.'],
+    ['Páginas sin etiquetas para redes sociales', 'Sin etiquetas Open Graph, un enlace compartido puede mostrar un título, un texto o una imagen equivocados.'],
+    ['Sin favicon', 'Falta el pequeño icono del sitio para las pestañas del navegador y los resultados de búsqueda.'],
+    ['Imágenes, scripts o estilos rotos', 'Archivos que necesita una página y que responden con un error. Solo se comprueba en una auditoría iniciada con el análisis de recursos; si no, aparece en No evaluado.'],
+    ['Imágenes más grandes de lo necesario', 'Imágenes de más de 500 KB. Se comprueba con el análisis completo de recursos, como la anterior.'],
+    ['Archivos que los navegadores no pueden guardar en caché', 'Imágenes, scripts y hojas de estilo enviados con cabeceras que impiden que el navegador los guarde en caché. Se comprueba con el análisis completo de recursos.'],
   ],
   ru: [
     ['Закрыто от Google', 'Правило в `robots.txt` блокирует доступ.'],
@@ -655,7 +775,7 @@ const RULE_PLAIN = {
     ['Canonical отсутствует или сломан', 'Добавьте корректный `<link rel="canonical">`.'],
     ['Структурированные данные отсутствуют', 'Добавьте нужный JSON-LD.'],
     ['Битые внутренние ссылки', 'Исправьте или удалите.'],
-    ['Тонкий контент', 'Страницы короче ~200 слов.'],
+    ['Тонкий контент', 'Страницы, на которых очень мало собственного текста; оценка идёт по порогу для языка страницы: около 200 слов для большинства языков и эквивалент в символах для китайского, японского, корейского и тайского. Для каждой отмеченной страницы показана измеренная длина.'],
     ['Нет сигналов FAQ', 'Добавьте раздел вопросов и ответов.'],
     ['Файл llms.txt отсутствует (справочно)', 'Новое соглашение для ИИ-ботов.'],
     ['HTTPS не включён принудительно', 'Перенаправляйте http на https.'],
@@ -665,6 +785,30 @@ const RULE_PLAIN = {
     ['Не проиндексировано', 'Google не добавил страницу в индекс.'],
     ['Проблемы rich-результатов', 'Ошибки в структурированных данных.'],
     ['Индексировано с предупреждениями', 'Сигнал canonical/дубликат.'],
+    ['Страницы, которые отвечают ошибкой', 'Адреса, вернувшие ошибку (4xx или 5xx). Восстановите страницу или перенаправьте адрес. Отказ нашему краулеру (401, 403 или 429) может быть защитой от ботов, поэтому сначала проверьте адрес в браузере.'],
+    ['Цепочки и циклы перенаправлений', 'Два и более перенаправления до страницы или цикл без конца. Направьте первый адрес сразу на конечную страницу.'],
+    ['Ссылки, ведущие на перенаправления', 'Внутренние ссылки на адрес с перенаправлением. Ссылайтесь сразу на конечный адрес.'],
+    ['Страницы, которые перенаправляют через тег обновления', 'Тег `<meta http-equiv="refresh">` уводит посетителей дальше. Замените его постоянным (301) перенаправлением на сервере.'],
+    ['Теги canonical указывают не туда', 'Canonical ведёт на неработающую страницу, перенаправление, другой canonical или по кругу. Укажите рабочую страницу, которая ссылается на себя.'],
+    ['Страницы, на которые не ссылается ни одна другая', 'Страницы из карты сайта без внутренних ссылок. Поставьте на них ссылку из меню или с близкой по теме страницы.'],
+    ['Страницы глубоко в структуре сайта', 'Больше трёх кликов от главной. Приблизьте важные страницы.'],
+    ['Страницы с одинаковым заголовком', 'У двух и более страниц один `<title>`. Дайте каждой свой.'],
+    ['Страницы, похожие на копии друг друга', 'Почти одинаковые страницы с оценкой сходства из десяти. Объедините их или сделайте разными.'],
+    ['Текст-заглушка на опубликованных страницах', 'Текст «Lorem ipsum» на опубликованной странице. Замените его настоящим.'],
+    ['Защищённые страницы ссылаются на незащищённые адреса', 'Страницы HTTPS со ссылками на адреса `http://`. Замените их на `https://`.'],
+    ['Изображения без alt-текста', 'Нет атрибута `alt`. Опишите содержательные изображения, а декоративным задайте пустой `alt`.'],
+    ['Страницы, которые долго начинают загружаться', 'Первый байт дольше 1,5 секунды или страница дольше трёх секунд. Это одна лабораторная загрузка, а не опыт каждого посетителя.'],
+    ['Очень большие страницы', 'HTML больше 1 MB. Больше 3 MB — уже «Исправить сейчас».'],
+    ['Страницы, которые отдаются без сжатия', 'HTML без сжатия gzip или Brotli. Включите сжатие на сервере.'],
+    ['Скрипты и стили, которые задерживают первый показ', 'Файлы, блокирующие первую отрисовку, и их число. Загружайте скрипты с `async` или `defer`.'],
+    ['На страницах нет базовых объявлений HTML', 'Нет строки `<!DOCTYPE html>` или объявления кодировки.'],
+    ['Устаревший HTML на ваших страницах', 'Удалённые теги, Flash или фреймы. Фреймы вроде встроенных видео бывают уместны, поэтому проверьте их, прежде чем удалять.'],
+    ['Трудночитаемые адреса', 'Необычные символы, параметры запроса или длина больше 120 символов.'],
+    ['Страницы без тегов для соцсетей', 'Нет тегов Open Graph, поэтому в превью ссылки могут оказаться не тот заголовок, текст или изображение.'],
+    ['Нет фавикона', 'Нет значка сайта для вкладок браузера и результатов поиска.'],
+    ['Неработающие изображения, скрипты или стили', 'Нужные странице файлы отвечают ошибкой. Проверка идёт, только если аудит запущен с проверкой ресурсов, иначе она в разделе «Не проверено».'],
+    ['Изображения больше, чем нужно', 'Изображения больше 500 KB. Входит в полную проверку ресурсов, как и предыдущая.'],
+    ['Файлы, которые браузерам запрещено сохранять', 'Изображения, скрипты и стили с заголовками, запрещающими кеширование. Входит в полную проверку ресурсов.'],
   ],
   zh: [
     ['被 Google 屏蔽', '`robots.txt` 阻止了访问。'],
@@ -675,7 +819,7 @@ const RULE_PLAIN = {
     ['canonical 缺失或错误', '设置正确的 `<link rel="canonical">`。'],
     ['结构化数据缺失', '添加合适的 JSON-LD。'],
     ['内部链接失效', '修复或删除错误链接。'],
-    ['内容过少', '页面少于约 200 字。'],
+    ['内容过少', '自身文字很少的页面，按页面语言对应的阈值判断：大多数语言约 200 个词，中文、日文、韩文和泰文则取相当的字符数。每个被标记的页面都会显示我们测得的长度。'],
     ['未发现 FAQ 信号', '合适时添加常见问题区块。'],
     ['缺少 llms.txt（建议性）', '一种面向 AI 爬虫的较新约定。'],
     ['未强制 HTTPS', '将 http 重定向到 https。'],
@@ -685,6 +829,30 @@ const RULE_PLAIN = {
     ['未被 Google 索引', 'Google 未将页面纳入索引。'],
     ['富媒体结果有问题', '结构化数据存在错误。'],
     ['已索引但有警告', 'Canonical/重复内容信号。'],
+    ['返回错误的页面', '抓取到的地址返回了错误（4xx 或 5xx）。请恢复页面或重定向该地址。拒绝我们爬虫的地址（401、403 或 429）可能是防机器人保护，请先在浏览器中确认。'],
+    ['重定向链和重定向循环', '需要两次或更多次重定向才能到达页面，或永远无法到达的地址。让第一个地址直接指向最终页面。'],
+    ['指向重定向的链接', '目标会发生重定向的内部链接。请直接链接到最终地址。'],
+    ['使用刷新标签跳转的页面', '页面用 `<meta http-equiv="refresh">` 标签跳转访客。请改用服务器端永久（301）重定向。'],
+    ['指向错误位置的 canonical 标签', 'canonical 指向失效页面、重定向、另一个 canonical，或在两个页面间相互指向。请让它指向一个将自身设为 canonical 的可用页面。'],
+    ['没有任何页面链接到的页面', '站点地图中列出、但没有任何内部链接到达的页面。请从相关页面或菜单链接到它们。'],
+    ['藏得过深的页面', '距首页超过三次点击的页面。请让重要页面离首页更近。'],
+    ['标题相同的页面', '两个或更多页面使用相同的 `<title>`。请为每个页面设置独有标题。'],
+    ['内容彼此雷同的页面', '爬虫判定为几乎相同的页面，并给出满分十分的相似度。请合并它们，或让每个页面各具特色。'],
+    ['已上线页面中的占位文字', '已发布页面上有“Lorem ipsum”填充文字。请替换为真实内容。'],
+    ['链接到不安全地址的安全页面', 'HTTPS 页面链接到 `http://` 地址。请改为 `https://`。'],
+    ['缺少 alt 文本的图片', '没有 `alt` 属性的图片。请描述有意义的图片，装饰性图片使用空的 `alt`。'],
+    ['开始加载缓慢的页面', '爬虫等待首字节超过 1.5 秒，或等待页面超过三秒。这是我们爬虫的单次实验室加载，不代表每位访客的体验。'],
+    ['体积过大的页面', 'HTML 超过 1 MB。超过 3 MB 时该问题会移至“立即修复”。'],
+    ['未压缩传输的页面', 'HTML 传输时未使用 gzip 或 Brotli 压缩。请在服务器上开启压缩。'],
+    ['拖慢首屏显示的脚本和样式', '阻塞首次绘制的文件及其数量。请使用 `async` 或 `defer` 加载脚本。'],
+    ['缺少基本 HTML 声明的页面', '缺少 `<!DOCTYPE html>` 行或字符集声明。'],
+    ['页面上的过时 HTML', '已移除的标签、Flash 或框架。嵌入视频等框架可能没有问题，请先检查，不必直接删除。'],
+    ['难以阅读的地址', '包含特殊字符、查询参数或超过 120 个字符的地址。'],
+    ['缺少社交分享标签的页面', '没有 Open Graph 标签，分享链接时可能显示错误的标题、文字或图片。'],
+    ['没有网站图标（favicon）', '没有用于浏览器标签页和搜索结果的小型网站图标。'],
+    ['失效的图片、脚本或样式', '页面所需但返回错误的文件。仅在开启资源扫描的审计中运行此检查，否则报告会将其列在“未评估”下。'],
+    ['尺寸超出需要的图片', '超过 500 KB 的图片。与上一项检查一样，需要完整资源扫描。'],
+    ['浏览器被要求不缓存的文件', '发送时带有禁止浏览器缓存的标头的图片、脚本和样式表。需要完整资源扫描。'],
   ],
 };
 
@@ -868,6 +1036,132 @@ Una convención reciente que indica a los asistentes de IA qué páginas prefier
 `,
 };
 
+const AUDIT_TRIAGE_SECTION = {
+  en: `## Dismissed and fixed findings
+
+Dismiss a finding that doesn't apply, or mark it fixed, from its card in the report or from [Next actions](./next-actions.en.md). Dismissing asks for a reason: false positive, won't fix, fixed elsewhere, or another reason. Dismissed findings move to a **Dismissed** section under the tabs, and findings marked fixed to a **Marked fixed** group inside their tab. Neither is counted in the tab totals or on the Overview. Each dismissed entry shows who dismissed it, when and why, and whether the latest audit still detects it. **Restore** puts it back on the list.
+
+For a broken-link finding, **Re-check these URLs** asks your own pages again and records which still fail, which work now and which could not be checked. It does not start a new audit, and the audit report itself stays as it was.
+
+Affected URLs are links. A long list shows a sample first, and **Download URLs (CSV)** saves every one of them. Once the newest audit is more than 30 days old, a **Last audited N days ago** notice with **Run a new audit** appears, because the results may no longer match your site.
+`,
+  ar: `## النتائج المستبعدة والمُصلَحة
+
+استبعد نتيجة لا تنطبق عليك، أو ضع عليها علامة «تم الإصلاح»، من بطاقتها في التقرير أو من [الإجراءات التالية](./next-actions.ar.md). يطلب الاستبعاد سببًا: نتيجة خاطئة، أو لن أصلحها، أو أُصلحت في مكان آخر، أو سبب آخر. تنتقل النتائج المستبعدة إلى قسم **المستبعدة** أسفل التبويبات، وتنتقل النتائج المعلَّمة بالإصلاح إلى مجموعة **تم وضع علامة الإصلاح** داخل تبويبها. ولا تُحتسب أيٌّ منهما في مجاميع التبويبات ولا في النظرة العامة. يعرض كل عنصر مستبعد من استبعده ومتى ولماذا، وهل لا يزال آخر تدقيق يكتشفه. **استعادة** تعيده إلى القائمة.
+
+بالنسبة إلى نتيجة الروابط المعطلة، يطلب **أعد فحص هذه العناوين** صفحاتك مرة أخرى ويسجّل ما لا يزال يفشل وما يعمل الآن وما تعذّر فحصه. وهو لا يبدأ تدقيقًا جديدًا، ويبقى تقرير التدقيق نفسه كما كان.
+
+عناوين URL المتأثرة روابط. تعرض القائمة الطويلة عيّنة أولًا، ويحفظ **تنزيل عناوين URL ‏(CSV)** كل العناوين. وحين يتجاوز عمر أحدث تدقيق 30 يومًا يظهر إشعار **آخر تدقيق قبل N يوم** مع **تشغيل تدقيق جديد**، لأن النتائج قد لا تطابق موقعك بعد الآن.
+`,
+  fr: `## Constats écartés et corrigés
+
+Écartez un constat qui ne vous concerne pas, ou marquez-le comme corrigé, depuis sa carte dans le rapport ou depuis [Prochaines actions](./next-actions.fr.md). L’écartement demande un motif : faux positif, ne sera pas corrigé, corrigé ailleurs ou autre motif. Les constats écartés passent dans une section **Écartés** sous les onglets, et les constats marqués corrigés dans un groupe **Marqué comme corrigé** à l’intérieur de leur onglet. Aucun n’est compté dans les totaux des onglets ni dans la vue d’ensemble. Chaque entrée écartée indique qui l’a écartée, quand et pourquoi, et si le dernier audit la détecte encore. **Restaurer** la remet dans la liste.
+
+Pour un constat de liens cassés, **Revérifier ces URL** interroge à nouveau vos propres pages et note celles qui échouent encore, celles qui fonctionnent désormais et celles qui n’ont pas pu être vérifiées. Cela ne lance pas de nouvel audit, et le rapport d’audit reste tel quel.
+
+Les URL concernées sont des liens. Une longue liste montre d’abord un échantillon, et **Télécharger les URL (CSV)** les enregistre toutes. Quand l’audit le plus récent a plus de 30 jours, un message **Dernier audit il y a N jours** avec **Lancer un nouvel audit** apparaît, car les résultats peuvent ne plus correspondre à votre site.
+`,
+  de: `## Verworfene und behobene Befunde
+
+Verwerfen Sie einen Befund, der nicht zutrifft, oder markieren Sie ihn als behoben, über seine Karte im Bericht oder unter [Nächste Aktionen](./next-actions.de.md). Beim Verwerfen wird nach einem Grund gefragt: Fehlalarm, wird nicht behoben, anderswo behoben oder ein anderer Grund. Verworfene Befunde wandern in den Bereich **Verworfen** unter den Tabs, als behoben markierte Befunde in die Gruppe **Als behoben markiert** innerhalb ihres Tabs. Keine der beiden zählt in den Tab-Summen oder in der Übersicht. Jeder verworfene Eintrag zeigt, wer ihn verworfen hat, wann und warum und ob das neueste Audit ihn noch erkennt. **Wiederherstellen** bringt ihn zurück in die Liste.
+
+Bei einem Befund zu defekten Links fragt **Diese URLs erneut prüfen** Ihre eigenen Seiten noch einmal ab und hält fest, welche weiterhin fehlschlagen, welche jetzt funktionieren und welche nicht geprüft werden konnten. Es startet kein neues Audit, und der Audit-Bericht bleibt unverändert.
+
+Betroffene URLs sind Links. Eine lange Liste zeigt zuerst eine Stichprobe, und **URLs herunterladen (CSV)** speichert alle. Ist das neueste Audit älter als 30 Tage, erscheint der Hinweis **Letztes Audit vor N Tagen** mit **Neues Audit starten**, weil die Ergebnisse womöglich nicht mehr zu Ihrer Website passen.
+`,
+  es: `## Hallazgos descartados y corregidos
+
+Descarta un hallazgo que no te afecte, o márcalo como corregido, desde su tarjeta del informe o desde [Próximas acciones](./next-actions.es.md). Al descartar se pide un motivo: falso positivo, no se corregirá, corregido en otro sitio u otro motivo. Los hallazgos descartados pasan a una sección **Descartados** bajo las pestañas, y los marcados como corregidos a un grupo **Marcado como corregido** dentro de su pestaña. Ninguno cuenta en los totales de las pestañas ni en el resumen. Cada entrada descartada indica quién la descartó, cuándo y por qué, y si la última auditoría todavía la detecta. **Restaurar** la devuelve a la lista.
+
+En un hallazgo de enlaces rotos, **Volver a comprobar estas URL** consulta de nuevo tus propias páginas y registra cuáles siguen fallando, cuáles funcionan ya y cuáles no se pudieron comprobar. No inicia una auditoría nueva, y el informe de auditoría queda como estaba.
+
+Las URL afectadas son enlaces. Una lista larga muestra primero una muestra, y **Descargar URL (CSV)** las guarda todas. Cuando la auditoría más reciente supera los 30 días, aparece un aviso **Última auditoría hace N días** con **Ejecutar una auditoría nueva**, porque los resultados pueden ya no coincidir con tu sitio.
+`,
+  ru: `## Отклонённые и исправленные находки
+
+Отклоните находку, которая вас не касается, или отметьте её как исправленную — на её карточке в отчёте или в разделе [Следующие действия](./next-actions.ru.md). При отклонении нужно указать причину: ложное срабатывание, не будет исправлено, исправлено в другом месте или другая причина. Отклонённые находки переходят в раздел **Отклонённые** под вкладками, а отмеченные как исправленные — в группу **Отмечено как исправленное** внутри своей вкладки. Ни те, ни другие не входят в итоги вкладок и в обзор. У каждой отклонённой записи указано, кто её отклонил, когда и почему, и обнаруживает ли её последний аудит. **Восстановить** возвращает её в список.
+
+Для находки о неработающих ссылках **Перепроверить эти URL** повторно запрашивает ваши страницы и записывает, какие по-прежнему не работают, какие теперь работают и какие проверить не удалось. Новый аудит при этом не запускается, а сам отчёт аудита остаётся прежним.
+
+Затронутые URL — это ссылки. Длинный список сначала показывает выборку, а **Скачать URL (CSV)** сохраняет все адреса. Когда самому свежему аудиту больше 30 дней, появляется уведомление **Последний аудит был N дней назад** с кнопкой **Запустить новый аудит**: результаты могут уже не соответствовать вашему сайту.
+`,
+  zh: `## 已忽略和已修复的发现
+
+对不适用的发现，可以在报告中它的卡片上或在[下一步行动](./next-actions.zh.md)里将其忽略，或标记为已修复。忽略时需要说明原因：误报、不会修复、已在别处修复或其他原因。已忽略的发现会移到标签下方的**已忽略**区域，标记为已修复的发现会移到所在标签内的**已标记为已修复**分组。它们都不计入各标签的合计和概览。每条已忽略的记录会显示是谁、何时、为何忽略的，以及最新审计是否仍能检测到。**恢复**可将其放回列表。
+
+对于失效链接的发现，**重新检查这些网址**会再次请求你自己的页面，并记录哪些仍然失败、哪些现在可用、哪些无法检查。它不会启动新的审计，审计报告本身保持原样。
+
+受影响的网址都是链接。较长的列表先显示一部分样本，**下载 URL（CSV）**会保存全部网址。最新审计超过 30 天后，会出现**上次审计是 N 天前**的提示和**运行新的审计**按钮，因为结果可能已不再符合你的网站。
+`,
+};
+
+// How a single audit takes part in the resource scan (images, scripts and styles).
+const AUDIT_RESOURCE_SCAN_SECTION = {
+  en: `## Scanning images, scripts and styles
+
+The last three checks need every image, script and stylesheet on your pages to be loaded. That makes the crawl slower and uses more of your crawl budget, so each audit has its own option for it.
+
+- **Scan images, scripts and styles** is ticked by default when you start an audit. Untick it to skip the scan for that run.
+- A scanned audit crawls at most 1,000 pages. Untick the option to crawl more pages, without the scan.
+- If the scan can't be read, the audit still finishes and the three checks appear under Not evaluated with the reason.
+- An audit that ran without the scan lists these checks under Not evaluated. Start a new audit with the option ticked to include them.
+`,
+  ar: `## فحص الصور والسكربتات والأنماط
+
+تحتاج الفحوص الثلاثة الأخيرة إلى تحميل كل صورة وسكربت وملف أنماط في صفحاتك. هذا يبطّئ الزحف ويستهلك جزءًا أكبر من ميزانية الزحف لديك، لذلك لكل تدقيق خيار خاص به.
+
+- خيار **فحص الصور والسكربتات والأنماط** مفعّل افتراضيًا عند بدء التدقيق. ألغِ تفعيله لتخطّي الفحص في هذه المرة.
+- يزحف التدقيق مع الفحص إلى 1000 صفحة على الأكثر. ألغِ تفعيل الخيار للزحف إلى صفحات أكثر دون الفحص.
+- إن تعذّرت قراءة نتيجة الفحص، يكتمل التدقيق رغم ذلك وتظهر الفحوص الثلاثة ضمن «لم يُقيَّم» مع السبب.
+- التدقيق الذي جرى دون الفحص يعرض هذه الفحوص ضمن «لم يُقيَّم». ابدأ تدقيقًا جديدًا مع تفعيل الخيار لتضمينها.
+`,
+  fr: `## Analyser les images, scripts et styles
+
+Les trois dernières vérifications ont besoin de charger chaque image, script et feuille de style de vos pages. L’exploration est alors plus lente et consomme davantage de votre budget d’exploration, c’est donc une option propre à chaque audit.
+
+- **Analyser les images, scripts et styles** est cochée par défaut quand vous lancez un audit. Décochez-la pour ignorer l’analyse pour cette exécution.
+- Un audit avec analyse explore 1 000 pages au plus. Décochez l’option pour explorer davantage de pages, sans l’analyse.
+- Si l’analyse ne peut pas être lue, l’audit se termine quand même et les trois vérifications apparaissent dans Non évalué, avec la raison.
+- Un audit lancé sans l’analyse classe ces vérifications dans Non évalué. Lancez un nouvel audit avec l’option cochée pour les inclure.
+`,
+  de: `## Bilder, Skripte und Styles prüfen
+
+Die letzten drei Prüfungen müssen jedes Bild, jedes Skript und jedes Stylesheet Ihrer Seiten laden. Dadurch wird der Crawl langsamer und verbraucht mehr von Ihrem Crawl-Budget, deshalb hat jedes Audit dafür eine eigene Option.
+
+- **Bilder, Skripte und Styles prüfen** ist beim Start eines Audits standardmäßig angehakt. Entfernen Sie das Häkchen, um die Prüfung für diesen Lauf zu überspringen.
+- Ein Audit mit dieser Prüfung crawlt höchstens 1.000 Seiten. Entfernen Sie das Häkchen, um mehr Seiten ohne die Prüfung zu crawlen.
+- Lässt sich das Ergebnis nicht auslesen, wird das Audit trotzdem fertig, und die drei Prüfungen stehen mit Grund unter „Nicht geprüft“.
+- Ein Audit ohne diese Prüfung führt die drei Prüfungen unter „Nicht geprüft“ auf. Starten Sie ein neues Audit mit gesetztem Häkchen, um sie einzubeziehen.
+`,
+  es: `## Analizar imágenes, scripts y estilos
+
+Las tres últimas comprobaciones necesitan cargar cada imagen, script y hoja de estilo de tus páginas. Eso hace el rastreo más lento y gasta más de tu presupuesto de rastreo, así que cada auditoría tiene su propia opción.
+
+- **Analizar imágenes, scripts y estilos** viene marcada por defecto al iniciar una auditoría. Desmárcala para omitir el análisis en esa ejecución.
+- Una auditoría con análisis rastrea 1.000 páginas como máximo. Desmarca la opción para rastrear más páginas, sin el análisis.
+- Si el análisis no se puede leer, la auditoría termina igualmente y las tres comprobaciones aparecen en No evaluado con el motivo.
+- Una auditoría hecha sin el análisis muestra estas comprobaciones en No evaluado. Inicia una auditoría nueva con la opción marcada para incluirlas.
+`,
+  ru: `## Проверка изображений, скриптов и стилей
+
+Трём последним проверкам нужно загрузить каждое изображение, скрипт и таблицу стилей на ваших страницах. Из-за этого обход идёт медленнее и тратит больше вашего бюджета обхода, поэтому у каждого аудита есть отдельная опция.
+
+- Опция **Проверить изображения, скрипты и стили** при запуске аудита включена по умолчанию. Снимите отметку, чтобы пропустить проверку в этом запуске.
+- Аудит с проверкой обходит не более 1 000 страниц. Снимите отметку с опции, чтобы обойти больше страниц без проверки.
+- Если результат проверки не удалось прочитать, аудит всё равно завершается, а три проверки попадают в «Не проверено» с причиной.
+- Если аудит прошёл без проверки, эти проверки указаны в «Не проверено». Запустите новый аудит с включённой опцией, чтобы добавить их.
+`,
+  zh: `## 扫描图片、脚本和样式
+
+最后三项检查需要加载您页面上的每张图片、每个脚本和样式表。这会让抓取变慢，也会多消耗您的抓取预算，因此每次审计都有单独的选项。
+
+- 开始审计时，**扫描图片、脚本和样式** 默认处于勾选状态。取消勾选即可在本次审计中跳过扫描。
+- 开启扫描的审计最多抓取 1,000 个页面。取消勾选该选项即可抓取更多页面，但不进行扫描。
+- 如果扫描结果无法读取，审计仍会完成，三项检查会连同原因列在“未评估”下。
+- 未开启扫描的审计会把这些检查列在“未评估”下。勾选该选项并重新运行审计即可包含它们。
+`,
+};
+
 P['audit-report'] = {};
 for (const loc of LOCALES) {
   P['audit-report'][loc] = () => {
@@ -875,7 +1169,7 @@ for (const loc of LOCALES) {
     const list = RULE_PLAIN[loc]
       .map(([label, plain]) => `- **${label}**${separator}${plain}`)
       .join('\n');
-    return auditReportHead[loc] + list + '\n';
+    return auditReportHead[loc] + list + '\n\n' + AUDIT_TRIAGE_SECTION[loc] + '\n' + AUDIT_RESOURCE_SCAN_SECTION[loc];
   };
 }
 
@@ -895,6 +1189,12 @@ Open the site view, click **Add keyword** and type the phrase you want to track.
 
 ## Weekly vs daily
 Every plan includes **weekly** checks. **Daily** checks are a paid add-on, because checking Google's results every day costs a lot more to run.
+
+## Adding several at once
+Type or paste a list into **Add keyword**. A comma or a new line ends a keyword, so pasting \`seo audit, rank tracker\` adds two keywords. Up to 100 keywords go in per request. Keywords you already track are skipped, and RankMeFast tells you which ones.
+
+## Check now
+**Check now** runs a check right away instead of waiting for the next scheduled one. On a keyword row it checks that keyword; at the top of the list it checks every active keyword. A confirmation names what will be checked before anything runs. A check of the whole site runs in the background as one job: you can leave the page and come back, and the result says how many keywords were checked, how many failed and how many were not reached in time. A keyword that was never reached is not shown as a failed check.
 
 ## Trend chart
 Select a keyword to see its position over time. A rising line is bad (a higher number means a worse rank) and a falling line is good. Below the chart, an accessible data table lists the same numbers.
@@ -927,6 +1227,12 @@ The [Page performance guide](./pages-performance.en.md) covers the separate Page
 ## أسبوعي مقابل يومي
 كل الخطط تشمل فحصًا **أسبوعيًا**. الفحص **اليومي** إضافة مدفوعة.
 
+## إضافة عدة كلمات دفعة واحدة
+اكتب قائمة أو الصقها في **إضافة كلمة مفتاحية**. تُنهي الفاصلة أو السطر الجديد كلمة، فلصق \`seo audit, rank tracker\` يضيف كلمتين. يمكن إدخال حتى 100 كلمة في الطلب الواحد. تُتخطّى الكلمات التي تتابعها بالفعل، ويخبرك RankMeFast بها.
+
+## تحقق الآن
+يشغّل **تحقق الآن** فحصًا فورًا بدل انتظار الفحص المجدول التالي. في صف كلمة مفتاحية يفحص تلك الكلمة؛ وفي أعلى القائمة يفحص كل الكلمات النشطة. يذكر مربع التأكيد ما سيُفحص قبل أن يبدأ أي شيء. ويعمل فحص الموقع كاملًا في الخلفية كمهمة واحدة: يمكنك مغادرة الصفحة والعودة، وتذكر النتيجة عدد الكلمات التي فُحصت وعدد ما فشل وعدد ما لم يصله الفحص في الوقت المناسب. والكلمة التي لم يصلها الفحص أبدًا لا تظهر كفحص فاشل.
+
 ## مخطّط الاتّجاه
 عند اختيار كلمة يظهر منحنى ترتيبها، ومعه جدول بيانات تستطيع قارئات الشاشة قراءته.
 
@@ -952,6 +1258,12 @@ Depuis la vue du site, utilisez **Ajouter un mot-clé**. Nous vérifions votre p
 
 ## Hebdo ou quotidien
 Toutes les offres incluent un contrôle **hebdomadaire**. Le contrôle **quotidien** est une option payante.
+
+## Ajouter plusieurs mots-clés à la fois
+Saisissez ou collez une liste dans **Ajouter un mot-clé**. Une virgule ou un retour à la ligne termine un mot-clé : coller \`seo audit, rank tracker\` en ajoute deux. Jusqu’à 100 mots-clés peuvent être ajoutés par envoi. Les mots-clés déjà suivis sont ignorés, et RankMeFast vous indique lesquels.
+
+## Vérifier maintenant
+**Vérifier maintenant** lance un contrôle tout de suite au lieu d’attendre le prochain contrôle planifié. Sur une ligne de mot-clé, il contrôle ce mot-clé ; en haut de la liste, il contrôle tous les mots-clés actifs. Une confirmation indique ce qui sera contrôlé avant tout lancement. Le contrôle de tout le site s’exécute en arrière-plan comme une seule tâche : vous pouvez quitter la page et revenir, et le résultat indique combien de mots-clés ont été contrôlés, combien ont échoué et combien n’ont pas été atteints à temps. Un mot-clé jamais atteint n’est pas présenté comme un contrôle en échec.
 
 ## Graphique de tendance
 Sélectionnez un mot-clé pour afficher sa courbe, accompagnée d’un tableau de données accessible.
@@ -979,6 +1291,12 @@ Klicken Sie in der Website-Ansicht auf **Keyword hinzufügen**. Dabei wird Ihr L
 ## Wöchentlich oder täglich
 Jeder Plan enthält **wöchentliche** Prüfungen. **Tägliche** Prüfungen sind eine kostenpflichtige Zusatzoption.
 
+## Mehrere Keywords auf einmal hinzufügen
+Tippen oder fügen Sie eine Liste in **Keyword hinzufügen** ein. Ein Komma oder ein Zeilenumbruch beendet ein Keyword, daher fügt das Einfügen von \`seo audit, rank tracker\` zwei Keywords hinzu. Pro Anfrage sind bis zu 100 Keywords möglich. Keywords, die Sie bereits verfolgen, werden übersprungen, und RankMeFast nennt Ihnen, welche.
+
+## Jetzt prüfen
+**Jetzt prüfen** startet sofort eine Prüfung, statt auf die nächste geplante zu warten. In einer Keyword-Zeile prüft es dieses Keyword; oben in der Liste prüft es alle aktiven Keywords. Eine Bestätigung nennt vor dem Start, was geprüft wird. Die Prüfung der gesamten Website läuft als eine einzige Aufgabe im Hintergrund: Sie können die Seite verlassen und später zurückkehren, und das Ergebnis nennt, wie viele Keywords geprüft wurden, wie viele fehlgeschlagen sind und wie viele nicht rechtzeitig erreicht wurden. Ein Keyword, das nie erreicht wurde, erscheint nicht als fehlgeschlagene Prüfung.
+
 ## Trend-Diagramm
 Wählen Sie ein Keyword aus, um seinen Verlauf zu sehen. Darunter steht eine barrierefreie Tabelle mit denselben Werten.
 
@@ -1004,6 +1322,12 @@ En la vista del sitio pulsa **Añadir palabra clave**. Comprobamos tu tope (cons
 
 ## Semanal o diario
 Todos los planes incluyen comprobaciones **semanales**. Las **diarias** son un complemento de pago.
+
+## Añadir varias palabras clave a la vez
+Escribe o pega una lista en **Añadir palabra clave**. Una coma o un salto de línea cierra una palabra clave, así que pegar \`seo audit, rank tracker\` añade dos. Se admiten hasta 100 palabras clave por envío. Las que ya sigues se omiten, y RankMeFast te dice cuáles.
+
+## Comprobar ahora
+**Comprobar ahora** lanza una comprobación al instante en lugar de esperar a la siguiente programada. En la fila de una palabra clave comprueba esa palabra; arriba de la lista comprueba todas las activas. Una confirmación indica qué se va a comprobar antes de empezar. La comprobación de todo el sitio se ejecuta en segundo plano como una sola tarea: puedes salir de la página y volver, y el resultado indica cuántas palabras clave se comprobaron, cuántas fallaron y cuántas no se alcanzaron a tiempo. Una palabra clave a la que nunca se llegó no se muestra como comprobación fallida.
 
 ## Gráfico de tendencia
 Selecciona una palabra clave para ver su evolución, junto con una tabla de datos accesible.
@@ -1031,6 +1355,12 @@ La [guía de rendimiento de páginas](./pages-performance.es.md) describe la ins
 ## Еженедельно или ежедневно
 Все тарифы включают **еженедельные** проверки. **Ежедневные** доступны как платное дополнение.
 
+## Добавление нескольких ключей сразу
+Введите или вставьте список в поле **Добавить ключ**. Запятая или перевод строки завершает ключ, поэтому вставка \`seo audit, rank tracker\` добавляет два ключа. За один раз можно добавить до 100 ключей. Ключи, которые вы уже отслеживаете, пропускаются, и RankMeFast сообщает, какие именно.
+
+## Проверить сейчас
+**Проверить сейчас** запускает проверку немедленно, не дожидаясь следующей по расписанию. В строке ключа проверяется этот ключ; над списком — все активные ключи. Перед запуском подтверждение называет, что будет проверено. Проверка всего сайта идёт в фоне как одна задача: можно уйти со страницы и вернуться, а результат покажет, сколько ключей проверено, сколько завершились ошибкой и до скольких не дошли вовремя. Ключ, до которого не дошли, не показывается как неудачная проверка.
+
 ## График
 Выберите ключ, чтобы увидеть график позиций и доступную таблицу с теми же данными.
 
@@ -1056,6 +1386,12 @@ La [guía de rendimiento de páginas](./pages-performance.es.md) describe la ins
 
 ## 每周与每日
 所有方案都包含 **每周** 检查。**每日** 检查为付费附加项。
+
+## 一次添加多个关键词
+在**添加关键词**中输入或粘贴一个列表。逗号或换行会结束一个关键词，所以粘贴 \`seo audit, rank tracker\` 会添加两个关键词。每次请求最多添加 100 个关键词。已在跟踪的关键词会被跳过，RankMeFast 会告诉你是哪些。
+
+## 立即检查
+**立即检查**会马上运行一次检查，而不是等待下一次计划检查。在关键词所在行上，它检查该关键词；在列表顶部，它检查所有活跃关键词。运行前会有确认提示，说明将检查什么。整站检查作为一个任务在后台运行：你可以离开页面稍后再回来，结果会说明已检查多少关键词、多少失败、多少未能及时检查到。从未检查到的关键词不会显示为检查失败。
 
 ## 趋势图
 选中关键词即可查看排名曲线，下方附有无障碍数据表。
@@ -1212,7 +1548,7 @@ Search Console is Google's free tool that shows how Google sees your site. Once 
 - **Indexed with warnings**: has Google flagged a canonical or duplicate-content problem?
 
 ## Why connect
-Without a connection, these rules stay in **Watch** with "insufficient data". Once connected, they land in the right tab and list the pages you need to fix.
+Without a connection, these rules show under **Not evaluated** in the report. They are not counted as Watch issues and do not appear in Next actions. Once connected, they land in the right tab and list the pages you need to fix.
 
 ## What we can access
 - We ask Google for the **read-only** Search Console scope, \`webmasters.readonly\`. It's the smallest scope that lets us call the URL Inspection API.
@@ -1227,8 +1563,11 @@ Without a connection, these rules stay in **Watch** with "insufficient data". On
 ## Disconnecting or revoking
 Click **Disconnect** in the same panel and confirm. We delete the stored token right away. You can also revoke our access at any time from https://myaccount.google.com/permissions.
 
-## "Reconnect needed"
-If Google invalidates the token (for example after you change your account password), the card shows a red **Reconnect needed** banner. Until you reconnect, the three rules go back to "insufficient data".
+## When Google asks you to reconnect
+If Google invalidates the token (for example after you change your account password), the Google Search Console card on the site's **Google** tab shows a red alert, **Your Google connection needs to be reconnected**, with a **Reconnect** button. Cards that read Search Console or Google Analytics show **Search Console isn't connected** or **Google Analytics isn't connected**, with **Connect Google**. Until you reconnect, the three rules go back to "insufficient data".
+
+## Choosing the property
+The site's **Google** tab matches your site to a Search Console property automatically. If none matches, or several do, RankMeFast asks you to choose one. A property that belongs to a different site can be linked only after you confirm it, because its search data then appears on this site. Google Analytics works the same way. If the newest Google Analytics data is older than expected, a notice says so and **Refresh** syncs it again; RankMeFast also syncs it once a day.
 
 ## Search performance in Pages
 
@@ -1239,7 +1578,7 @@ The [Page performance guide](./pages-performance.en.md) explains how the Pages t
 Search Console أداة مجانيّة من Google تُظهر كيف يرى Google موقعك. بعد الربط تعتمد ثلاث قواعد على إجابة Google نفسها بدلًا من التقدير.
 
 ## لماذا نربط
-دون ربط، تبقى هذه القواعد في **راقب** بحالة "بيانات غير كافية".
+دون ربط، تظهر هذه القواعد ضمن **لم يُقيَّم** في التقرير. فلا تُحتسب كمشكلات في «راقب» ولا تظهر في الإجراءات التالية.
 
 ## ما الذي نصل إليه
 - نطلب صلاحيّة قراءة فقط: \`webmasters.readonly\`.
@@ -1253,8 +1592,11 @@ Search Console أداة مجانيّة من Google تُظهر كيف يرى Goog
 ## قطع الربط
 اضغط **قطع الربط** في اللوحة نفسها، فنحذف الرمز المخزّن فورًا. يمكنك أيضًا إلغاء الوصول من https://myaccount.google.com/permissions.
 
-## "يحتاج إعادة ربط"
-إذا أبطل Google الرمز يظهر شريط أحمر. أعد الربط لتعود القواعد الثلاث إلى العمل.
+## عندما يطلب Google إعادة الربط
+إذا أبطل Google الرمز (مثلًا بعد تغيير كلمة مرور حسابك)، تعرض بطاقة Google Search Console في تبويب **Google** للموقع تنبيهًا أحمر: **اتصالك بجوجل يحتاج إلى إعادة الربط** مع زر **إعادة الربط**. وتعرض البطاقات التي تقرأ Search Console أو Google Analytics الرسالة **Search Console غير مرتبط** أو **Google Analytics غير مرتبط** مع **ربط Google**. وإلى أن تعيد الربط تعود القواعد الثلاث إلى «بيانات غير كافية».
+
+## اختيار الموقع المرتبط
+يطابق تبويب **Google** في الموقع موقعك مع موقع Search Console تلقائيًا. إن لم يتطابق أي موقع أو تطابق عدة مواقع، يطلب منك RankMeFast الاختيار. ولا يمكن ربط موقع يخص موقعًا آخر إلا بعد تأكيدك، لأن بيانات البحث الخاصة به ستظهر في هذا الموقع. ويعمل Google Analytics بالطريقة نفسها. وإذا كانت أحدث بيانات Google Analytics أقدم مما هو متوقع، يظهر إشعار بذلك ويعيد **تحديث** المزامنة؛ كما يزامنها RankMeFast مرة يوميًا.
 
 ## أداء البحث في الصفحات
 
@@ -1279,8 +1621,11 @@ Search Console est l’outil gratuit de Google. Une fois connecté à RankMeFast
 ## Déconnecter
 Cliquez sur **Déconnecter** : le jeton est supprimé immédiatement. Vous pouvez aussi révoquer l’accès sur https://myaccount.google.com/permissions.
 
-## « Reconnexion requise »
-Si Google invalide le jeton, une bannière rouge apparaît. Les trois règles repassent en « données insuffisantes » jusqu’à la reconnexion.
+## Quand Google demande de se reconnecter
+Si Google invalide le jeton (par exemple après un changement de mot de passe de votre compte), la carte Google Search Console de l’onglet **Google** du site affiche une alerte rouge, **Votre connexion Google doit être renouvelée**, avec un bouton **Reconnecter**. Les cartes qui lisent Search Console ou Google Analytics affichent **Search Console n’est pas connecté** ou **Google Analytics n’est pas connecté**, avec **Connecter Google**. Tant que vous ne vous reconnectez pas, les trois règles repassent en « données insuffisantes ».
+
+## Choisir la propriété
+L’onglet **Google** du site associe automatiquement votre site à une propriété Search Console. Si aucune ne correspond, ou si plusieurs correspondent, RankMeFast vous demande d’en choisir une. Une propriété qui appartient à un autre site ne peut être liée qu’après votre confirmation, car ses données de recherche s’afficheraient alors sur ce site. Google Analytics fonctionne de la même façon. Si les données Google Analytics les plus récentes sont plus anciennes que prévu, un message l’indique et **Actualiser** relance la synchronisation ; RankMeFast la lance aussi une fois par jour.
 
 ## Performances dans Pages
 
@@ -1302,8 +1647,11 @@ Die Search Console ist das kostenlose Google-Tool, das zeigt, wie Google Ihre We
 ## Trennen
 Klicken Sie auf **Trennen**. Der Token wird sofort gelöscht. Sie können den Zugriff auch jederzeit über https://myaccount.google.com/permissions widerrufen.
 
-## „Erneut verbinden"
-Wird der Token ungültig, erscheint ein rotes Banner. Bis Sie neu verbinden, zeigen die drei Regeln wieder "unzureichende Daten".
+## Wenn Google zur erneuten Verbindung auffordert
+Macht Google den Token ungültig (zum Beispiel nach einer Änderung Ihres Kontopassworts), zeigt die Karte Google Search Console im Tab **Google** der Website eine rote Meldung, **Ihre Google-Verbindung muss erneuert werden**, mit der Schaltfläche **Neu verbinden**. Karten, die Search Console oder Google Analytics lesen, zeigen **Search Console ist nicht verbunden** oder **Google Analytics ist nicht verbunden** mit **Google verbinden**. Bis Sie neu verbinden, zeigen die drei Regeln wieder „unzureichende Daten“.
+
+## Property auswählen
+Der Tab **Google** der Website ordnet Ihre Website automatisch einer Search-Console-Property zu. Passt keine oder passen mehrere, bittet RankMeFast Sie um eine Auswahl. Eine Property, die zu einer anderen Website gehört, lässt sich nur nach Ihrer Bestätigung verknüpfen, weil deren Suchdaten dann auf dieser Website erscheinen. Google Analytics funktioniert genauso. Sind die neuesten Google-Analytics-Daten älter als erwartet, weist ein Hinweis darauf hin, und **Aktualisieren** startet die Synchronisierung erneut; RankMeFast synchronisiert außerdem einmal täglich.
 
 ## Suchleistung im Seiten-Tab
 
@@ -1325,8 +1673,11 @@ Search Console es la herramienta gratuita de Google que muestra cómo ve Google 
 ## Desconectar
 Pulsa **Desconectar** y eliminamos el token al momento. También puedes revocar el acceso en https://myaccount.google.com/permissions.
 
-## "Se requiere reconexión"
-Si Google invalida el token, aparece un aviso rojo. Hasta que vuelvas a conectar, las tres reglas vuelven a "datos insuficientes".
+## Cuando Google pide volver a conectar
+Si Google invalida el token (por ejemplo, tras cambiar la contraseña de tu cuenta), la tarjeta de Google Search Console de la pestaña **Google** del sitio muestra una alerta roja, **Tu conexión con Google necesita renovarse**, con un botón **Reconectar**. Las tarjetas que leen Search Console o Google Analytics muestran **Search Console no está conectado** o **Google Analytics no está conectado**, con **Conectar Google**. Hasta que vuelvas a conectar, las tres reglas vuelven a "datos insuficientes".
+
+## Elegir la propiedad
+La pestaña **Google** del sitio asocia automáticamente tu sitio a una propiedad de Search Console. Si ninguna coincide, o coinciden varias, RankMeFast te pide que elijas una. Una propiedad que pertenece a otro sitio solo se puede vincular tras tu confirmación, porque sus datos de búsqueda aparecerían entonces en este sitio. Google Analytics funciona igual. Si los datos más recientes de Google Analytics son más antiguos de lo esperado, un aviso lo indica y **Actualizar** vuelve a sincronizarlos; RankMeFast también los sincroniza una vez al día.
 
 ## Rendimiento en Páginas
 
@@ -1348,8 +1699,11 @@ Search Console — бесплатный инструмент Google, котор�
 ## Отключение
 Нажмите **Отключить**, и мы сразу удалим токен. Отозвать доступ можно и на https://myaccount.google.com/permissions.
 
-## «Нужно переподключение»
-Если Google отзывает токен, появляется красный баннер. Пока вы не подключитесь заново, правила снова показывают «недостаточно данных».
+## Когда Google просит подключиться заново
+Если Google отзывает токен (например, после смены пароля аккаунта), карточка Google Search Console на вкладке **Google** сайта показывает красное предупреждение **Соединение с Google нужно переустановить** с кнопкой **Переподключить**. Карточки, читающие Search Console или Google Analytics, показывают **Search Console не подключен** или **Google Analytics не подключен** с кнопкой **Подключить Google**. Пока вы не подключитесь заново, правила снова показывают «недостаточно данных».
+
+## Выбор ресурса
+Вкладка **Google** сайта автоматически сопоставляет ваш сайт с ресурсом Search Console. Если ничего не подошло или подошло несколько, RankMeFast предложит выбрать один. Ресурс другого сайта можно привязать только после вашего подтверждения, потому что его данные поиска тогда появятся на этом сайте. Google Analytics работает так же. Если самые свежие данные Google Analytics старше ожидаемого, появится уведомление, а **Обновить** запустит синхронизацию заново; RankMeFast также синхронизирует их раз в день.
 
 ## Поисковые показатели на вкладке Страницы
 
@@ -1371,8 +1725,11 @@ Search Console 是 Google 的免费工具，展示 Google 如何看待您的网�
 ## 断开或撤销
 点击 **断开**，我们会立即删除令牌。也可以随时在 https://myaccount.google.com/permissions 撤销授权。
 
-## “需要重新连接”
-如果 Google 使令牌失效，会出现红色横幅。在重新连接之前，这三条规则会显示“数据不足”。
+## 当 Google 要求重新连接时
+如果 Google 使令牌失效（例如您修改账号密码之后），站点 **Google** 标签中的 Google Search Console 卡片会显示红色提示 **您的 Google 连接需要重新授权**，并带有**重新连接**按钮。读取 Search Console 或 Google Analytics 的卡片会显示 **Search Console 未连接** 或 **Google Analytics 未连接**，并带有**连接 Google**。在重新连接之前，这三条规则会显示“数据不足”。
+
+## 选择资源
+站点的 **Google** 标签会自动把你的站点与某个 Search Console 资源匹配。如果没有匹配项或有多个匹配项，RankMeFast 会请你选择一个。属于其他站点的资源只有在你确认后才能关联，因为它的搜索数据随后会显示在这个站点上。Google Analytics 的处理方式相同。如果最新的 Google Analytics 数据比预期的更旧，会有提示，点击**刷新**可再次同步；RankMeFast 也会每天同步一次。
 
 ## 页面标签中的搜索表现
 
@@ -1802,7 +2159,7 @@ Search Console data, screenshots, billing details and your other sites are not s
 The audit gives the same result for the same input every time. The summary is a separate step that runs *after* the audit finishes and only reads the finished snapshot. Turning the summary off doesn't move any rule to a different tab.
 
 ## Regenerating
-Click **Regenerate** on the summary card to run it again. Each run uses one summary credit (see the AI summaries cap in [Plans, limits & credits](./plans-limits-credits.en.md)). Once you reach the cap, the card shows a limit notice instead, and those blocked attempts don't use credit.
+Click **Regenerate** on the summary card to run it again, which calls your configured AI provider. The card marks a summary **Out of date** when findings it covers were dismissed, fixed or reopened after it was written. Regenerate it so it matches your open fixes.
 
 ## Which model is used
 The summary uses the AI providers configured by whoever runs your RankMeFast installation, tried in order. Very long lists of findings are shortened before they're sent, and the card then shows a "shortened" note.
@@ -1824,7 +2181,7 @@ The summary uses the AI providers configured by whoever runs your RankMeFast ins
 يعطي الفحص النتيجة نفسها في كل مرة للمدخلات نفسها. أما الملخّص فخطوة منفصلة تأتي بعد انتهاء الفحص وتقرأ نتيجته فقط.
 
 ## إعادة الإنشاء
-اضغط **إعادة الإنشاء** لكتابة ملخّص جديد. يُحتسب ذلك من حصّة الملخّصات (انظر [الخطط والحدود والائتمانات](./plans-limits-credits.ar.md)).
+اضغط **إعادة الإنشاء** لكتابة ملخّص جديد، وهذا يستدعي مزوّد الذكاء الاصطناعي المضبوط لديك. تضع البطاقة علامة **قديم** على الملخّص إذا استُبعدت نتائج يغطيها أو أُصلحت أو أُعيد فتحها بعد كتابته. أعد إنشاءه ليطابق إصلاحاتك المفتوحة.
 `,
   fr: () => `# Résumé IA
 
@@ -1843,7 +2200,7 @@ Ni données Search Console, ni captures d’écran, ni informations de facturati
 Pour les mêmes données, l’audit donne toujours le même résultat. Le résumé est une étape à part, qui se contente de lire l’audit terminé.
 
 ## Régénérer
-Cliquez sur **Régénérer** pour relancer le résumé. Chaque relance consomme un crédit de résumé (voir [Plans, limites & crédits](./plans-limits-credits.fr.md)).
+Cliquez sur **Régénérer** pour relancer le résumé, ce qui appelle votre fournisseur d’IA configuré. La carte marque un résumé **Obsolète** lorsque des constats qu’il couvre ont été écartés, corrigés ou rouverts après sa rédaction. Régénérez-le pour qu’il corresponde à vos corrections ouvertes.
 `,
   de: () => `# KI-Zusammenfassung
 
@@ -1862,7 +2219,7 @@ Keine Search-Console-Daten, keine Screenshots, keine Abrechnungsdaten.
 Der Audit liefert bei gleichen Eingaben immer dasselbe Ergebnis. Die Zusammenfassung ist ein eigener Schritt, der den fertigen Audit nur liest.
 
 ## Neu erstellen
-Klicken Sie auf **Neu erstellen**. Das verbraucht einen Zusammenfassungs-Credit (siehe [Pläne, Limits & Credits](./plans-limits-credits.de.md)).
+Klicken Sie auf **Neu erstellen**. Das ruft Ihren konfigurierten KI-Anbieter auf. Die Karte kennzeichnet eine Zusammenfassung als **Veraltet**, wenn Befunde, die sie abdeckt, nach dem Schreiben verworfen, behoben oder wieder geöffnet wurden. Erstellen Sie sie neu, damit sie zu Ihren offenen Korrekturen passt.
 `,
   es: () => `# Resumen con IA
 
@@ -1881,7 +2238,7 @@ No enviamos datos de Search Console, capturas ni información de facturación.
 Con los mismos datos, la auditoría siempre da el mismo resultado. El resumen es un paso aparte que solo lee la auditoría terminada.
 
 ## Regenerar
-Pulsa **Regenerar** para volver a generarlo. Cada vez consume un crédito de resumen (consulta [Planes, límites y créditos](./plans-limits-credits.es.md)).
+Pulsa **Regenerar** para volver a generarlo, lo que llama a tu proveedor de IA configurado. La tarjeta marca un resumen como **Desactualizado** cuando hallazgos que cubre se descartaron, corrigieron o reabrieron después de escribirlo. Regéneralo para que coincida con tus correcciones abiertas.
 `,
   ru: () => `# ИИ-резюме
 
@@ -1900,7 +2257,7 @@ Pulsa **Regenerar** para volver a generarlo. Cada vez consume un crédito de res
 При одних и тех же данных аудит всегда даёт один и тот же результат. Резюме — отдельный шаг, который только читает готовый аудит.
 
 ## Пересоздание
-Нажмите **Пересоздать**, чтобы получить новое резюме. Это расходует один кредит резюме (см. [Планы, лимиты и кредиты](./plans-limits-credits.ru.md)).
+Нажмите **Пересоздать**, чтобы получить новое резюме; при этом вызывается настроенный у вас поставщик ИИ. Карточка помечает резюме как **Устарело**, если охваченные им находки были отклонены, исправлены или открыты заново после его написания. Пересоздайте его, чтобы оно соответствовало вашим открытым исправлениям.
 `,
   zh: () => `# AI 摘要
 
@@ -1919,7 +2276,7 @@ AI 摘要位于报告标签上方，会用您的语言写一小段说明。
 同样的输入，审计每次都给出同样的结果。摘要是审计完成后单独进行的一步，只读取审计结果。
 
 ## 重新生成
-点击 **重新生成** 可再写一版，消耗一个摘要额度（参见[方案、限额与额度](./plans-limits-credits.zh.md)）。
+点击 **重新生成** 可再写一版，这会调用你配置的 AI 服务商。如果摘要所涵盖的发现在写成之后被忽略、修复或重新打开，卡片会把该摘要标记为**已过时**。重新生成即可与你未处理的修复保持一致。
 `,
 };
 
@@ -1938,8 +2295,8 @@ Try again in a few minutes. If it keeps failing, adjust firewall/robots.txt to a
 ## Rank check unavailable
 A single keyword can come back unavailable if the SERP provider is rate-limited or Google served a captcha. It is temporary — the next scheduled run retries. Nothing to do.
 
-## "Reconnect needed" on Search Console
-Google invalidated our token. Open Settings → Google Search Console → **Reconnect**. This can happen if you changed your Google password or revoked the app.
+## Search Console asks you to reconnect
+Google invalidated our token. On the site's **Google** tab, the Google Search Console card shows **Your Google connection needs to be reconnected**; select **Reconnect**. This can happen if you changed your Google password or revoked the app. Cards that read Search Console or Google Analytics show **Search Console isn't connected** or **Google Analytics isn't connected** until Google is connected again, then recover on the next read.
 
 ## Cap reached
 See [Plans, limits & credits](./plans-limits-credits.en.md). Options are: upgrade tier, buy a small credit pack, or wait until the next billing period.
@@ -1966,8 +2323,8 @@ Hard-refresh the page (⌘/Ctrl + Shift + R). Clear the local cache if that does
 ## فحص ترتيب غير متاح
 غالبًا مؤقّت — يُعاد في التشغيل التالي.
 
-## "يحتاج إعادة ربط" على Search Console
-افتح الإعدادات وأعد الربط.
+## يطلب Search Console إعادة الربط
+أبطل Google الرمز لدينا. في تبويب **Google** للموقع تعرض بطاقة Google Search Console الرسالة **اتصالك بجوجل يحتاج إلى إعادة الربط**؛ اختر **إعادة الربط**. قد يحدث هذا إذا غيّرت كلمة مرور Google أو ألغيت صلاحية التطبيق. وتعرض البطاقات التي تقرأ Search Console أو Google Analytics الرسالة **Search Console غير مرتبط** أو **Google Analytics غير مرتبط** إلى أن يُربط Google من جديد، ثم تتعافى عند القراءة التالية.
 
 ## بلوغ الحدّ
 راجع [الخطط والحدود والائتمانات](./plans-limits-credits.ar.md).
@@ -1991,8 +2348,8 @@ Hard-refresh the page (⌘/Ctrl + Shift + R). Clear the local cache if that does
 ## Contrôle de position indisponible
 Généralement temporaire ; le prochain run réessaie.
 
-## « Reconnexion requise » Search Console
-Ouvrez Paramètres et reconnectez.
+## Search Console demande de se reconnecter
+Google a invalidé notre jeton. Dans l’onglet **Google** du site, la carte Google Search Console affiche **Votre connexion Google doit être renouvelée** ; sélectionnez **Reconnecter**. Cela peut arriver si vous avez changé votre mot de passe Google ou révoqué l’application. Les cartes qui lisent Search Console ou Google Analytics affichent **Search Console n’est pas connecté** ou **Google Analytics n’est pas connecté** tant que Google n’est pas reconnecté, puis se rétablissent à la lecture suivante.
 
 ## Plafond atteint
 Voir [Plans, limites & crédits](./plans-limits-credits.fr.md).
@@ -2016,8 +2373,8 @@ Rafraîchissement dur (⌘/Ctrl + Maj + R). Sinon, contactez le support.
 ## Rank-Check nicht verfügbar
 Meist vorübergehend; nächster Lauf wiederholt automatisch.
 
-## „Erneut verbinden" bei Search Console
-Einstellungen öffnen und neu verbinden.
+## Search Console fordert zum erneuten Verbinden auf
+Google hat unseren Token ungültig gemacht. Im Tab **Google** der Website zeigt die Karte Google Search Console **Ihre Google-Verbindung muss erneuert werden**; wählen Sie **Neu verbinden**. Das kann passieren, wenn Sie Ihr Google-Passwort geändert oder die App widerrufen haben. Karten, die Search Console oder Google Analytics lesen, zeigen **Search Console ist nicht verbunden** oder **Google Analytics ist nicht verbunden**, bis Google wieder verbunden ist, und erholen sich beim nächsten Lesen.
 
 ## Limit erreicht
 Siehe [Pläne, Limits & Credits](./plans-limits-credits.de.md).
@@ -2041,8 +2398,8 @@ Harter Refresh (⌘/Strg + Umschalt + R). Sonst Support kontaktieren.
 ## Comprobación de posición no disponible
 Suele ser temporal; el siguiente run reintenta.
 
-## "Reconexión requerida" en Search Console
-Abre Ajustes y reconecta.
+## Search Console pide volver a conectar
+Google invalidó nuestro token. En la pestaña **Google** del sitio, la tarjeta de Google Search Console muestra **Tu conexión con Google necesita renovarse**; selecciona **Reconectar**. Puede ocurrir si cambiaste tu contraseña de Google o revocaste la aplicación. Las tarjetas que leen Search Console o Google Analytics muestran **Search Console no está conectado** o **Google Analytics no está conectado** hasta que Google vuelva a conectarse, y se recuperan en la siguiente lectura.
 
 ## Tope alcanzado
 Véase [Planes, límites y créditos](./plans-limits-credits.es.md).
@@ -2066,8 +2423,8 @@ Refresco completo (⌘/Ctrl + Mayús + R). Si persiste, contacta soporte.
 ## Проверка позиции недоступна
 Обычно временно — следующий запуск повторит.
 
-## "Нужно переподключение" Search Console
-Настройки → **Переподключить**.
+## Search Console просит подключиться заново
+Google отозвал наш токен. На вкладке **Google** сайта карточка Google Search Console показывает **Соединение с Google нужно переустановить**; выберите **Переподключить**. Так бывает, если вы сменили пароль Google или отозвали доступ приложению. Карточки, читающие Search Console или Google Analytics, показывают **Search Console не подключен** или **Google Analytics не подключен**, пока Google не подключён снова, и восстанавливаются при следующем чтении.
 
 ## Достигнут лимит
 См. [Планы, лимиты и кредиты](./plans-limits-credits.ru.md).
@@ -2091,8 +2448,8 @@ Refresco completo (⌘/Ctrl + Mayús + R). Si persiste, contacta soporte.
 ## 排名检查不可用
 通常是暂时的；下一次调度会自动重试。
 
-## Search Console 提示 "需要重新连接"
-在设置中重新连接。
+## Search Console 提示需要重新连接
+Google 使我们的令牌失效了。在站点的 **Google** 标签中，Google Search Console 卡片会显示**您的 Google 连接需要重新授权**；请选择**重新连接**。如果您修改过 Google 密码或撤销了应用授权，就可能出现这种情况。读取 Search Console 或 Google Analytics 的卡片，在 Google 重新连接之前会显示 **Search Console 未连接** 或 **Google Analytics 未连接**，之后在下次读取时恢复。
 
 ## 达到上限
 参见 [方案、限额与额度](./plans-limits-credits.zh.md)。

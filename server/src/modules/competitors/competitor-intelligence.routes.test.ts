@@ -401,6 +401,8 @@ describe('canonical competitor-intelligence router', () => {
         { domain: 'DUPLICATE.EXAMPLE', avgPosition: null, intersections: 30, estimatedTraffic: null },
         { domain: 'duplicate.example', avgPosition: null, intersections: 2, estimatedTraffic: null },
         { domain: 'alpha.example', avgPosition: null, intersections: 30, estimatedTraffic: null },
+        { domain: 'www.own-site.example', avgPosition: null, intersections: 99, estimatedTraffic: null },
+        { domain: 'shop.own-site.example', avgPosition: null, intersections: 98, estimatedTraffic: null },
         ...Array.from({ length: DISCOVERY_MAX_SUGGESTIONS + 4 }, (_, index) => ({
           domain: `candidate-${index}.example`,
           avgPosition: null,
@@ -410,7 +412,10 @@ describe('canonical competitor-intelligence router', () => {
       ],
       capturedAt,
       new Set(['duplicate.example']),
+      'own-site.example',
     );
+    // The site itself never appears, whatever alias or subdomain names it.
+    expect(normalized.map((row) => row.registrableDomain)).not.toContain('own-site.example');
     expect(normalized).toHaveLength(DISCOVERY_MAX_SUGGESTIONS);
     expect(normalized[0]?.registrableDomain).toBe('alpha.example');
     expect(normalized.find((row) => row.registrableDomain === 'duplicate.example'))

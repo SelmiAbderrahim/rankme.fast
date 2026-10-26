@@ -8,6 +8,7 @@
  *   - geogrid-cell-row-<pointIndex>   one row per settled cell
  */
 import { useTranslation } from 'react-i18next';
+import { formatAbsoluteDate } from '@shared/lib/datetime';
 import {
   Table,
   TableBody,
@@ -25,7 +26,7 @@ interface Props {
 }
 
 export const GeogridCellTable = ({ cells }: Props) => {
-  const { t } = useTranslation('geogrid');
+  const { t, i18n } = useTranslation('geogrid');
   return (
     <div className="overflow-x-auto">
       <Table data-testid="geogrid-cell-table">
@@ -73,7 +74,7 @@ export const GeogridCellTable = ({ cells }: Props) => {
               <TableCell className="text-end">
                 {cell.state === 'failed' ? '—' : cell.totalPackSize}
               </TableCell>
-              <TableCell>{cell.state === 'failed' ? '—' : cell.capturedAt}</TableCell>
+              <TableCell>{cell.state === 'failed' ? '—' : formatAbsoluteDate(cell.capturedAt, i18n.language, { withTime: true })}</TableCell>
               <TableCell>{t(`states.${cell.state}`)}</TableCell>
             </TableRow>
           ))}

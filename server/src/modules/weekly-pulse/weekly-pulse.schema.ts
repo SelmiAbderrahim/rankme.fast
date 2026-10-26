@@ -11,7 +11,7 @@ export const siteIdParamsSchema = z.object({
 });
 export type SiteIdParams = z.infer<typeof siteIdParamsSchema>;
 export const pulseIdParamsSchema = siteIdParamsSchema.extend({
-    pulseId: z.string().uuid('invalid pulse id'),
+    pulseId: z.string().guid('invalid pulse id'),
 });
 export type PulseIdParams = z.infer<typeof pulseIdParamsSchema>;
 export const historyCursorQuerySchema = z.object({

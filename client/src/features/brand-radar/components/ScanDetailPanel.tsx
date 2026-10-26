@@ -1,3 +1,4 @@
+import { Bdi } from '@shared/components/Bdi';
 import { useCallback, useEffect, useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { ReportExportControl } from '@features/report-export';
@@ -160,11 +161,6 @@ export const ScanDetailPanel = ({
                 {t(`status.${detail.status}`)}
               </StatusChip>
               <StatusChip tone="muted">{t(`digest.${detail.digestState}`)}</StatusChip>
-              {detail.refund.state === 'refunded' ? (
-                <StatusChip tone="success" data-testid="brand-radar-detail-refund">
-                  {t('refund.refunded')}
-                </StatusChip>
-              ) : null}
               {showAggregates ? (
                 <ReportExportControl
                   kind="brand.radar_scan"
@@ -291,11 +287,7 @@ export const ScanDetailPanel = ({
                       {t(`detail.halt.${brandRadarHaltKey(detail.halt)}`)}
                     </span>
                   ) : null}
-                  <span className="block">
-                    {detail.refund.state === 'refunded'
-                      ? t('detail.banners.failed.refunded')
-                      : t('detail.banners.failed.description')}
-                  </span>
+                  <span className="block">{t('detail.banners.failed.description')}</span>
                 </AlertDescription>
               </Alert>
             ) : null}
@@ -316,7 +308,7 @@ export const ScanDetailPanel = ({
                       data-testid="brand-radar-top-domain-row"
                     >
                       {/* SEC-OUT: vendor domain string as a text node. */}
-                      <span>{entryRow.domain}</span>
+                      <span><Bdi>{entryRow.domain}</Bdi></span>
                       <span className="tabular-nums">{number.format(entryRow.count)}</span>
                     </li>
                   ))}

@@ -1,5 +1,5 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
-import { fireEvent, render, screen, waitFor } from '@testing-library/react';
+import { fireEvent, render, screen, waitFor, within } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { Provider } from 'react-redux';
 import { I18nextProvider } from 'react-i18next';
@@ -7,6 +7,7 @@ import { MemoryRouter, Route, Routes, useLocation } from 'react-router-dom';
 import { configureStore, type UnknownAction } from '@reduxjs/toolkit';
 import { changeLanguage, i18n, initI18n } from '@shared/i18n';
 import { ApiError } from '@shared/api/client';
+import { isolateText } from '@shared/lib/bidi';
 import { TooltipProvider } from '@shared/ui/tooltip';
 import * as api from './api';
 import { ranksReducer } from '@features/ranks';
@@ -37,6 +38,7 @@ const historyItem = (overrides: Partial<ResearchHistoryItem> = {}): ResearchHist
   languageCode: 'en',
   resultCount: 3,
   cached: false,
+  lookupId: null,
   createdAt: '2026-07-01T12:30:00.000Z',
   ...overrides,
 });
@@ -52,6 +54,11 @@ const withProviders = (ui: React.ReactNode, store = makeStore()) =>
     </Provider>,
   );
 
+const LocationProbe = () => {
+  const location = useLocation();
+  return <div data-testid="location-probe">{location.pathname + location.search}</div>;
+};
+
 beforeEach(() => {
   initI18n({ initialLocale: 'en' });
   return changeLanguage('en');
@@ -64,9 +71,9 @@ describe('label helpers', () => {
     expect(locationLabel(2840, t)).toBe('United States');
     expect(locationLabel(999, t)).toBe('common:market.unknownCountry');
   });
-  it('languageLabel resolves known codes and preserves unknown codes', () => {
+  it('languageLabel resolves known codes and localizes unknown codes', () => {
     expect(languageLabel('en', t)).toBe('English');
-    expect(languageLabel('xx', t)).toBe('xx');
+    expect(languageLabel('xx', t)).toBe('common:market.unknownLanguage');
     expect(languageLabel('', t)).toBe('common:market.unknownLanguage');
   });
 });
@@ -154,22 +161,24 @@ describe('KeywordResearchHistoryPage', () => {
     for (const id of ['h1', 'h2', 'h3', 'h4']) {
       expect(screen.getByTestId(`keyword-research-history-row-${id}`)).toBeInTheDocument();
     }
+    // The wide table (narrow containers get the same rows as cards).
+    const table = within(screen.getByRole('table'));
     // Kind badges (localized).
-    expect(screen.getByText('Metrics')).toBeInTheDocument();
-    expect(screen.getByText('Related')).toBeInTheDocument();
-    expect(screen.getByText('Intent')).toBeInTheDocument();
-    expect(screen.getByText('Ideas')).toBeInTheDocument();
+    expect(table.getByText('Metrics')).toBeInTheDocument();
+    expect(table.getByText('Related')).toBeInTheDocument();
+    expect(table.getByText('Intent')).toBeInTheDocument();
+    expect(table.getByText('Ideas')).toBeInTheDocument();
     // Joined multi-phrase query.
-    expect(screen.getByText('a, b')).toBeInTheDocument();
+    expect(table.getByText('a, b')).toBeInTheDocument();
     // Cached vs live source chips.
-    expect(screen.getByText('Cached')).toBeInTheDocument();
-    expect(screen.getAllByText('Live').length).toBeGreaterThan(0);
-    // Unknown country values use localized compatibility labels; unknown
-    // language codes remain visible for legacy history rows.
-    expect(screen.getByText('Unknown country')).toBeInTheDocument();
-    expect(screen.getByText('xx')).toBeInTheDocument();
+    expect(table.getByText('Cached')).toBeInTheDocument();
+    expect(table.getAllByText('Live').length).toBeGreaterThan(0);
+    // Legacy country and language codes use localized compatibility labels.
+    expect(table.getByText('Unknown country')).toBeInTheDocument();
+    expect(table.getByText('Unknown language')).toBeInTheDocument();
+    expect(table.queryByText('xx')).toBeNull();
     // Known location label resolves.
-    expect(screen.getAllByText('United States').length).toBeGreaterThan(0);
+    expect(table.getAllByText('United States').length).toBeGreaterThan(0);
     const resultsHelp = screen.getByRole('button', { name: 'About Results' });
     fireEvent.click(resultsHelp, { detail: 0 });
     expect(await screen.findByRole('tooltip')).toHaveTextContent(
@@ -194,6 +203,105 @@ describe('KeywordResearchHistoryPage', () => {
     expect(screen.queryByTestId('keyword-research-history-load-more')).not.toBeInTheDocument();
   });
 
+  it('lets long cells wrap so Date and Actions stay inside the card', async () => {
+    const phrases = ['best running shoes for flat feet', 'trail running shoes', 'marathon plan'];
+    mocked.fetchHistoryRequest.mockResolvedValueOnce({
+      items: [historyItem({ phrases })],
+      nextCursor: null,
+    });
+    withProviders(<KeywordResearchHistoryPage />);
+    await screen.findByTestId('keyword-research-history-table');
+    // The query list wraps (clamped to two lines) with the full text on hover,
+    // instead of a single nowrap line that widened the table past the card.
+    const query = screen.getByTestId('keyword-research-history-query-h1');
+    expect(query).toHaveTextContent(phrases.join(', '));
+    expect(query).toHaveClass('line-clamp-2', 'break-words', 'max-w-64');
+    expect(query.closest('td')).toHaveClass('whitespace-normal');
+    expect(query.closest('td')).toHaveAttribute('title', isolateText(phrases.join(', ')));
+    expect(screen.getByTestId('keyword-research-history-date-h1')).toHaveClass('whitespace-normal');
+    expect(screen.getByTestId('keyword-research-history-search-again-h1')).toHaveClass(
+      'whitespace-normal',
+    );
+  });
+
+  it('lists each lookup as a card in a narrow container instead of a wide table', async () => {
+    mocked.fetchHistoryRequest.mockResolvedValueOnce({
+      items: [historyItem({ phrases: ['uptime monitor', 'status page'] })],
+      nextCursor: null,
+    });
+    withProviders(<KeywordResearchHistoryPage />);
+    await screen.findByTestId('keyword-research-history-table');
+    expect(screen.getByRole('table').closest('[data-slot="table-container"]')?.parentElement).toHaveClass(
+      'hidden',
+      '@4xl:block',
+    );
+    const cards = screen.getByRole('list', { name: 'Research history' });
+    expect(cards).toHaveClass('@4xl:hidden');
+    const card = within(cards).getByTestId('keyword-research-history-card-h1');
+    expect(within(card).getByText('uptime monitor, status page')).toBeInTheDocument();
+    expect(within(card).getByText('Metrics')).toBeInTheDocument();
+    expect(within(card).getAllByRole('term').map((node) => node.textContent)).toEqual([
+      'Location',
+      'Language',
+      'Results',
+      'Date',
+    ]);
+    // The card's actions keep the hints and their own test ids.
+    expect(within(card).getByTestId('keyword-research-history-card-view-h1')).toHaveAttribute(
+      'aria-describedby',
+      'keyword-research-history-hint-view',
+    );
+    expect(
+      within(card).getByTestId('keyword-research-history-card-search-again-h1'),
+    ).toHaveAttribute('aria-describedby', 'keyword-research-history-search-again-hint');
+  });
+
+  it('folds the metrics and intent records of one Research press into one row', async () => {
+    mocked.fetchHistoryRequest.mockResolvedValueOnce({
+      items: [
+        historyItem({ id: 'i1', kind: 'intent', phrases: ['rank tracker'], lookupId: 'press-1' }),
+        historyItem({ id: 'm1', kind: 'metrics', phrases: ['rank tracker'], lookupId: 'press-1' }),
+      ],
+      nextCursor: null,
+    });
+    withProviders(<KeywordResearchHistoryPage />);
+    await screen.findByTestId('keyword-research-history-table');
+    const row = screen.getByTestId('keyword-research-history-row-m1');
+    expect(row).toHaveTextContent('Metrics');
+    expect(row).toHaveTextContent('Intent');
+    expect(screen.queryByTestId('keyword-research-history-row-i1')).toBeNull();
+  });
+
+  it('opens the saved results of a viewable row and hides the action for other kinds', async () => {
+    mocked.fetchHistoryRequest.mockResolvedValueOnce({
+      items: [historyItem({ id: 'g1', kind: 'gap', phrases: ['rival.example'] }), historyItem()],
+      nextCursor: null,
+    });
+    const user = userEvent.setup();
+    render(
+      <Provider store={makeStore()}>
+        <I18nextProvider i18n={i18n}>
+          <TooltipProvider>
+            <MemoryRouter>
+              <Routes>
+                <Route path="/" element={<KeywordResearchHistoryPage />} />
+                <Route path="/keyword-research" element={<LocationProbe />} />
+              </Routes>
+            </MemoryRouter>
+          </TooltipProvider>
+        </I18nextProvider>
+      </Provider>,
+    );
+    await screen.findByTestId('keyword-research-history-table');
+    expect(screen.queryByTestId('keyword-research-history-view-g1')).toBeNull();
+    expect(screen.getByTestId('keyword-research-history-hint-view')).toHaveTextContent(
+      'does not call the data provider again',
+    );
+    await user.click(screen.getByTestId('keyword-research-history-view-h1'));
+    const probe = await screen.findByTestId('location-probe');
+    expect(probe.textContent).toBe('/keyword-research?stored=h1');
+  });
+
   it('re-fetches on mount when history was already loaded (reflects searches since the last visit)', async () => {
     const store = makeStore();
     // A prior visit loaded an EMPTY history and set historyLoaded=true — this is
@@ -211,7 +319,7 @@ describe('KeywordResearchHistoryPage', () => {
     withProviders(<KeywordResearchHistoryPage />, store);
     await screen.findByTestId('keyword-research-history-row-fresh');
     expect(mocked.fetchHistoryRequest).toHaveBeenCalledTimes(2);
-    expect(screen.getByText('uptime monitor')).toBeInTheDocument();
+    expect(within(screen.getByRole('table')).getByText('uptime monitor')).toBeInTheDocument();
   });
 
   it('shows the empty state when the account has no history', async () => {
@@ -261,6 +369,30 @@ describe('KeywordResearchHistoryPage', () => {
     expect(screen.queryByTestId('keyword-research-history-load-more')).not.toBeInTheDocument();
   });
 
+  it('states how many saved lookups are loaded of the whole list, up to the last page', async () => {
+    mocked.fetchHistoryRequest.mockResolvedValueOnce({
+      items: [historyItem()],
+      nextCursor: 'h1',
+      total: 2,
+    });
+    const user = userEvent.setup();
+    withProviders(<KeywordResearchHistoryPage />);
+    await screen.findByTestId('keyword-research-history-table');
+    expect(screen.getByTestId('keyword-research-history-count')).toHaveTextContent(
+      'Showing 1 of 2 saved lookups',
+    );
+    mocked.fetchHistoryRequest.mockResolvedValueOnce({
+      items: [historyItem({ id: 'h2', phrases: ['older query'] })],
+      nextCursor: null,
+      total: 2,
+    });
+    await user.click(screen.getByTestId('keyword-research-history-load-more'));
+    await screen.findByTestId('keyword-research-history-row-h2');
+    expect(screen.getByTestId('keyword-research-history-count')).toHaveTextContent(
+      'Showing 2 of 2 saved lookups',
+    );
+  });
+
   it('search again navigates to a prefilled /keyword-research URL without any API call', async () => {
     mocked.fetchHistoryRequest.mockResolvedValueOnce({
       items: [
@@ -273,10 +405,6 @@ describe('KeywordResearchHistoryPage', () => {
       ],
       nextCursor: null,
     });
-    const LocationProbe = () => {
-      const location = useLocation();
-      return <div data-testid="location-probe">{location.pathname + location.search}</div>;
-    };
     const user = userEvent.setup();
     render(
       <Provider store={makeStore()}>
@@ -329,7 +457,9 @@ describe('KeywordResearchHistoryPage', () => {
       'clusters',
     ];
     mocked.fetchHistoryRequest.mockResolvedValueOnce({
-      items: kinds.map((kind, i) => historyItem({ id: `k${i}`, kind })),
+      // Distinct phrases per row: identical metrics + intent rows would (correctly)
+      // fold into one lookup row, which a different test covers.
+      items: kinds.map((kind, i) => historyItem({ id: `k${i}`, kind, phrases: [`phrase ${i}`] })),
       nextCursor: null,
     });
     withProviders(<KeywordResearchHistoryPage />);

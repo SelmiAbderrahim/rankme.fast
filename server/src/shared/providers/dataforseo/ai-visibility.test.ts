@@ -1,5 +1,5 @@
 /**
- * DataForSEO AI Optimization adapter tests (prompt 28).
+ * DataForSEO AI Optimization adapter tests.
  *
  * Layered like the other DataForSEO adapters:
  *   1. providerContractTests over each of the three operations — success /

@@ -21,6 +21,8 @@ Backlink-Zeilen werden monatlich gemessen. Pro enthält bis zu 10.000 Zeilen pro
 
 Starter zeigt einen Upgrade-Hinweis. Pausiert ein Betreiber neue Aufträge, bleiben gespeicherte Berichte lesbar. Nach einem Tarifwechsel können vorhandene Daten außerdem schreibgeschützt bleiben.
 
+Wenn Sie **Backlinks** oder **Wettbewerber** öffnen, werden die bereits gespeicherten Daten gelesen, auch wenn sie älter als die Cache-Dauer sind; der Datenanbieter wird nie aufgerufen. Neue Daten werden nur geholt, wenn Sie **Aktualisieren** wählen. **Mehr laden** in der Backlink-Liste fragt beim Anbieter die nächste Seite ab und weist vorher darauf hin. Eine Wettbewerberliste, die nie geprüft wurde, zeigt **Wettbewerber noch nicht geprüft**, bis Sie aktualisieren.
+
 ## Einheiten und Bestätigung
 
 Ein Landschaftsbericht verbraucht pro ausgewähltem Wettbewerber eine Einheit `keyword_lookups`. Drei Wettbewerber kosten also drei Einheiten. Vor der Bestätigung zeigt RankMeFast, wie viele Einheiten und Zeilen der Bericht verbraucht. Cache-Treffer zählen ebenfalls. Eine neue Wettbewerbersuche ist optional. Sie verbraucht eine weitere Einheit `keyword_lookups`, und zwar erst nach eigener Vorschau und Bestätigung.

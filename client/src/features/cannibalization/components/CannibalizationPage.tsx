@@ -1,8 +1,9 @@
 import { useEffect, useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
-import { GscRequiredNotice } from '@features/google';
+import { SiteGoogleNotice, useSiteGoogleReadiness } from '@features/google';
 import { ReportExportControl } from '@features/report-export';
 import { useAppDispatch, useAppSelector } from '@shared/hooks/redux';
+import { formatAbsoluteDate } from '@shared/lib/datetime';
 import { Label } from '@shared/ui/label';
 import {
   Select,
@@ -47,6 +48,7 @@ import {
   type CannibalizationConfidenceFilter,
   type CannibalizationView,
 } from '../urlState';
+import { PageHeading } from '@shared/components/PageHeader';
 
 export interface CannibalizationPageProps {
   /** Owning site — supplied by the workspace route, never picked in-panel. */
@@ -59,12 +61,13 @@ export interface CannibalizationPageProps {
  * is the Search Console link the report is computed from.
  */
 export const CannibalizationPage = ({ siteId }: CannibalizationPageProps) => {
-  const { t } = useTranslation('cannibalization');
+  const { t, i18n } = useTranslation('cannibalization');
   const dispatch = useAppDispatch();
   const url = useCannibalizationUrlState();
 
   const sitesStatus = useAppSelector(selectCannibalizationSitesStatus);
   const gscConnected = useAppSelector(selectCannibalizationGscConnected);
+  const workspaceGsc = useSiteGoogleReadiness()?.readiness?.gsc;
   const reports = useAppSelector(selectCannibalizationReports);
   const listStatus = useAppSelector(selectCannibalizationListStatus);
   const listGate = useAppSelector(selectCannibalizationListGate);
@@ -97,6 +100,10 @@ export const CannibalizationPage = ({ siteId }: CannibalizationPageProps) => {
       : all.filter((candidate) => candidate.confidence === url.confidence);
   }, [detail, url.confidence]);
 
+  const hasCandidates = (detail?.candidates.length ?? 0) > 0;
+  // A new report needs a usable Search Console property. Until then the shared
+  // banner (with its one action) is the page's empty state.
+  const gscUsable = (!workspaceGsc || workspaceGsc.status === 'ok') && gscConnected !== false;
   const activeCandidate =
     candidates.find((candidate) => candidate.id === url.query) ?? null;
 
@@ -115,7 +122,7 @@ export const CannibalizationPage = ({ siteId }: CannibalizationPageProps) => {
     <div className="flex w-full min-w-0 flex-col gap-6" data-testid="cannibalization-page">
       <div className="flex flex-wrap items-start justify-between gap-3">
         <div className="flex flex-col gap-2">
-          <h1 className="text-2xl font-semibold tracking-tight">{t('title')}</h1>
+          <PageHeading className="text-2xl font-semibold tracking-tight">{t('title')}</PageHeading>
           <p className="text-muted-foreground text-sm">{t('subtitle')}</p>
         </div>
         {detail ? (
@@ -123,32 +130,42 @@ export const CannibalizationPage = ({ siteId }: CannibalizationPageProps) => {
             kind="keyword.cannibalization"
             target={{ scope: 'site_resource', siteId, resourceId: detail.id }}
             selection={{ confidence: url.confidence }}
+            empty={!hasCandidates}
           />
         ) : null}
       </div>
 
-      <div className="flex flex-wrap items-end gap-4">
-        <div className="flex flex-col gap-1">
-          <Label htmlFor="cannibalization-confidence">{t('filters.confidence')}</Label>
-          <Select
-            value={url.confidence}
-            onValueChange={(value) =>
-              url.setConfidence(value as CannibalizationConfidenceFilter)
-            }
-          >
-            <SelectTrigger id="cannibalization-confidence" className="w-48">
-              <SelectValue />
-            </SelectTrigger>
-            <SelectContent>
-              {CANNIBALIZATION_CONFIDENCE_FILTERS.map((option) => (
-                <SelectItem key={option} value={option}>
-                  {t(`filters.confidenceValue.${option}`)}
-                </SelectItem>
-              ))}
-            </SelectContent>
-          </Select>
+      {/* The confidence filter needs candidates to filter: it appears once the
+          open report has some, and stays while a non-default filter is set so it
+          can be cleared. */}
+      {hasCandidates || url.confidence !== 'all' ? (
+        <div className="flex flex-wrap items-end gap-4">
+          <div className="flex flex-col gap-1">
+            <Label htmlFor="cannibalization-confidence">{t('filters.confidence')}</Label>
+            <Select
+              value={url.confidence}
+              onValueChange={(value) =>
+                url.setConfidence(value as CannibalizationConfidenceFilter)
+              }
+            >
+              <SelectTrigger id="cannibalization-confidence" className="w-48">
+                <SelectValue />
+              </SelectTrigger>
+              <SelectContent>
+                {CANNIBALIZATION_CONFIDENCE_FILTERS.map((option) => (
+                  <SelectItem key={option} value={option}>
+                    {t(`filters.confidenceValue.${option}`)}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+          </div>
         </div>
-      </div>
+      ) : null}
+
+      {/* The same Search Console status and action as every page, on every view:
+          stored reports stay readable, new ones need the property. */}
+      <SiteGoogleNotice product="gsc" />
 
       {sitesStatus === 'loading' ? (
         <Skeleton className="h-24 w-full" data-testid="cannibalization-loading" />
@@ -175,8 +192,10 @@ export const CannibalizationPage = ({ siteId }: CannibalizationPageProps) => {
         <TabsContent value="new" className="mt-4">
           {sitesStatus === 'loading' ? (
             <Skeleton className="h-32 w-full" data-testid="cannibalization-new-loading" />
-          ) : gscConnected === false ? (
-            <GscRequiredNotice siteId={siteId} tool="cannibalization" />
+          ) : !gscUsable ? (
+            <p className="text-muted-foreground text-sm" data-testid="cannibalization-needs-gsc">
+              {t('states.needsGsc')}
+            </p>
           ) : gscConnected === null ? (
             <StateNotice kind="failed" />
           ) : (
@@ -209,10 +228,12 @@ export const CannibalizationPage = ({ siteId }: CannibalizationPageProps) => {
             <StateNotice kind={listGate.kind} message={listGate.message} />
           ) : null}
           {listStatus === 'succeeded' && reports.length === 0 ? (
-            gscConnected === false ? (
-              <GscRequiredNotice siteId={siteId} tool="cannibalization" />
+            gscUsable ? (
+              <StateNotice kind="empty" onAction={() => url.setView('new')} />
             ) : (
-              <StateNotice kind="empty" />
+              // Nothing stored and nothing can be created yet: say so and why,
+              // instead of leaving the tab blank.
+              <StateNotice kind="emptyNoGsc" />
             )
           ) : null}
           {reports.length > 0 ? (
@@ -236,12 +257,17 @@ export const CannibalizationPage = ({ siteId }: CannibalizationPageProps) => {
               <p className="text-muted-foreground text-sm" data-testid="cannibalization-provenance">
                 {t('detail.provenance', {
                   days: detail.windowDays,
-                  date: detail.snapshotDate,
+                  date: formatAbsoluteDate(detail.snapshotDate, i18n.language),
                   queries: detail.queriesAnalyzed,
                 })}
               </p>
-              {candidates.length === 0 ? (
-                <StateNotice kind="empty" />
+              {!hasCandidates ? (
+                <StateNotice
+                  kind="noCandidates"
+                  {...(gscUsable ? { onAction: () => url.setView('new') } : {})}
+                />
+              ) : candidates.length === 0 ? (
+                <StateNotice kind="filtered" onAction={() => url.setConfidence('all')} />
               ) : (
                 <CandidateTable
                   candidates={candidates}

@@ -1,4 +1,4 @@
-import { beforeEach, describe, expect, it, vi } from 'vitest';
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import { fireEvent, render, screen, waitFor, within } from '@testing-library/react';
 import { Provider } from 'react-redux';
 import { I18nextProvider } from 'react-i18next';
@@ -8,7 +8,7 @@ import { changeLanguage, i18n, initI18n } from '@shared/i18n';
 import type { CodeFixPromptInput } from '@shared/components/CodeFixPromptButton';
 import { backlinksReducer, type BacklinkSummary } from '@features/backlinks';
 import { competitorsReducer, type CompetitorsList } from '@features/competitors';
-import { googleReducer, type GoogleConnection } from '@features/google';
+import { googleReducer, SiteGoogleReadinessProvider, type GoogleConnection, type GoogleSearchSummary } from '@features/google';
 import { ranksReducer, type Keyword } from '@features/ranks';
 import {
   reportReducer,
@@ -41,6 +41,9 @@ const mocked = vi.hoisted(() => ({
   }),
   getConnection: vi.fn(async () => {
     throw new Error('no connection');
+  }),
+  fetchSearchSummary: vi.fn(async () => {
+    throw new Error('no stored snapshot');
   }),
   listActions: vi.fn(async (): Promise<ListActionsResponse> => {
     throw new Error('no actions');
@@ -75,6 +78,7 @@ vi.mock('@features/competitors/api', async (importOriginal) => ({
 vi.mock('@features/google/api', async (importOriginal) => ({
   ...(await importOriginal<typeof import('@features/google/api')>()),
   getConnection: mocked.getConnection,
+  fetchSearchSummary: mocked.fetchSearchSummary,
 }));
 vi.mock('@features/actions/api', async (importOriginal) => ({
   ...(await importOriginal<typeof import('@features/actions/api')>()),
@@ -322,10 +326,12 @@ interface Preload {
   googleConnectionSiteId?: string | null;
   googleLoaded?: boolean;
   googleLoading?: boolean;
+  searchSummary?: GoogleSearchSummary | null;
   actions?: ActionItem[];
   actionsStatus?: ActionsListStatus;
   actionsSiteId?: string | null;
   actionsSourceStatus?: ActionSourceStatusEnvelope;
+  reportRunAt?: string | null;
 }
 
 const buildStore = (preloaded: Preload = {}) => {
@@ -368,6 +374,7 @@ const buildStore = (preloaded: Preload = {}) => {
         report: report ?? null,
         runId: report?.runId ?? null,
         runStatus: preloaded.reportRunStatus ?? (report ? 'succeeded' : null),
+        reportRunAt: preloaded.reportRunAt ?? null,
       },
       ranks: {
         ...ranksBase,
@@ -399,6 +406,9 @@ const buildStore = (preloaded: Preload = {}) => {
         loaded: preloaded.googleLoaded ?? true,
         loading: preloaded.googleLoading ?? false,
         connection: connection ?? null,
+        summary: preloaded.searchSummary ?? null,
+        summarySiteId: preloaded.searchSummary ? 'site-1' : null,
+        summaryRange: preloaded.searchSummary ? ('28d' as const) : null,
       },
       actions: {
         ...actionsBase,
@@ -417,12 +427,14 @@ const buildStore = (preloaded: Preload = {}) => {
   });
 };
 
-const renderPanel = (store = buildStore(), siteId = 'site-1') =>
+const renderPanel = (store = buildStore(), siteId = 'site-1', googleReadiness?: Parameters<typeof SiteGoogleReadinessProvider>[0]['readiness']) =>
   render(
     <Provider store={store}>
       <I18nextProvider i18n={i18n}>
         <MemoryRouter initialEntries={[`/sites/${siteId}?tab=overview`]}>
-          <OverviewPanel siteId={siteId} />
+          {googleReadiness ? <SiteGoogleReadinessProvider siteId={siteId} domain="example.com" readiness={googleReadiness}>
+            <OverviewPanel siteId={siteId} />
+          </SiteGoogleReadinessProvider> : <OverviewPanel siteId={siteId} />}
         </MemoryRouter>
       </I18nextProvider>
     </Provider>,
@@ -440,7 +452,7 @@ describe('OverviewPanel', () => {
       buildStore({
         actions: [
           actionItem('eligible', {
-            state: 'dismissed',
+            state: 'planned',
             sourceLink: 'javascript:alert(1)',
             affectedUrls: ['https://example.com/a'],
             codeFixPrompt: {
@@ -496,6 +508,9 @@ describe('OverviewPanel', () => {
     expect(within(search).getByText('0.8%')).toBeInTheDocument();
     expect(within(search).getByText('11.4')).toBeInTheDocument();
     expect(within(search).getByText('best example')).toBeInTheDocument();
+    expect(within(search).getByTestId('overview-scope-note')).toHaveTextContent(
+      /Search Console counts each list on its own/,
+    );
 
     const pageSpeed = screen.getByTestId('overview-pagespeed');
     expect(within(pageSpeed).getByText('92')).toBeInTheDocument();
@@ -558,7 +573,8 @@ describe('OverviewPanel', () => {
     // One call to action, and no plan jargon, on the not-yet-loaded card.
     const card = screen.getByTestId('overview-competitors');
     expect(within(card).getAllByRole('link', { name: 'Open competitors' })).toHaveLength(1);
-    expect(within(card).getByText(/Open competitors to run a lookup\./)).toBeInTheDocument();
+    expect(within(card).getByText(/Add the competitors you already know or preview a discovery refresh/)).toBeInTheDocument();
+    expect(within(card).getByText(/Nothing is fetched until you confirm a refresh\./)).toBeInTheDocument();
     expect(card).not.toHaveTextContent(/Agency/);
   });
 
@@ -689,10 +705,19 @@ describe('OverviewPanel', () => {
       nextCursor: null,
     });
     renderPanel(buildStore({ actionsSiteId: null, actionsStatus: 'idle', actions: [] }));
-    await waitFor(() => expect(mocked.listActions).toHaveBeenCalledTimes(1));
+    // One read for the open worklist, one for resolved audit decisions.
+    await waitFor(() => expect(mocked.listActions).toHaveBeenCalledTimes(2));
     expect(mocked.listActions).toHaveBeenCalledWith(
-      expect.objectContaining({ siteId: 'site-1', limit: 5 }),
+      expect.objectContaining({ siteId: 'site-1', limit: 5, filters: { state: ['open', 'planned'] } }),
       expect.objectContaining({ presentationLocale: expect.any(String) }),
+    );
+    expect(mocked.listActions).toHaveBeenCalledWith(
+      expect.objectContaining({
+        siteId: 'site-1',
+        limit: 50,
+        filters: { source: ['audit_finding'], state: ['dismissed', 'completed'] },
+      }),
+      expect.objectContaining({ signal: expect.any(AbortSignal) }),
     );
     expect(await screen.findByText('fetched problem')).toBeInTheDocument();
     // No-spend proof: no mutation, retest, history, or competitor call fired.
@@ -700,6 +725,95 @@ describe('OverviewPanel', () => {
     expect(mocked.retestAction).not.toHaveBeenCalled();
     expect(mocked.getActionHistory).not.toHaveBeenCalled();
     expect(mocked.fetchCompetitors).not.toHaveBeenCalled();
+  });
+
+  it('lists only open and planned actions, even from rows another tab cached', () => {
+    renderPanel(
+      buildStore({
+        actions: [
+          actionItem('dismissed-one', { state: 'dismissed' }),
+          actionItem('completed-one', { state: 'completed' }),
+          actionItem('open-one'),
+          actionItem('planned-one', { state: 'planned', severity: 'warning' }),
+        ],
+      }),
+    );
+    const items = screen.getAllByTestId('overview-action-item');
+    expect(items).toHaveLength(2);
+    expect(within(items[0]!).getByText('open-one problem')).toBeInTheDocument();
+    expect(within(items[1]!).getByText('planned-one problem')).toBeInTheDocument();
+    expect(screen.queryByText('dismissed-one problem')).not.toBeInTheDocument();
+    expect(screen.queryByText('completed-one problem')).not.toBeInTheDocument();
+  });
+
+  it('shows the all-clear state when every cached action is resolved', () => {
+    renderPanel(
+      buildStore({
+        actions: [
+          actionItem('dismissed-one', { state: 'dismissed' }),
+          actionItem('completed-one', { state: 'completed' }),
+        ],
+      }),
+    );
+    expect(screen.queryByTestId('overview-action-item')).not.toBeInTheDocument();
+    expect(screen.getByText(i18n.t('sites:overview.next.clearTitle'))).toBeInTheDocument();
+  });
+
+  it('leaves dismissed and marked-fixed audit findings out of the Fix now and Watch counters', async () => {
+    mocked.listActions.mockImplementation(async () => {
+      const call = mocked.listActions.mock.calls.at(-1) as unknown[] | undefined;
+      const request = call?.[0] as { filters?: { source?: readonly string[] } } | undefined;
+      if (request?.filters?.source?.includes('audit_finding')) {
+        return {
+          items: [
+            actionItem('dismissed-rule', { sourceId: 'site-wide', state: 'dismissed' }),
+            actionItem('fixed-rule', { sourceId: 'one-page', state: 'completed' }),
+          ],
+          sourceStatus: availableSources(),
+          nextCursor: null,
+        };
+      }
+      throw new Error('list stays cached');
+    });
+    try {
+      renderPanel();
+      const counts = screen.getByTestId('overview-audit-counts');
+      await waitFor(() => expect(within(counts).getByText('2')).toBeInTheDocument());
+      expect(within(counts).getByText('14')).toBeInTheDocument();
+      expect(within(counts).getByText('8')).toBeInTheDocument();
+      expect(screen.getByTestId('overview-audit-not-counted')).toHaveTextContent(
+        'Not in these counts: 1 dismissed, 1 marked fixed.',
+      );
+    } finally {
+      mocked.listActions.mockReset();
+      mocked.listActions.mockImplementation(async () => {
+        throw new Error('no actions');
+      });
+    }
+  });
+
+  it('counts like the Report tab: a decision the server applied to the report leaves the counters before any action list loads', () => {
+    const base = richReport();
+    const withDecision = (ruleId: string, state: 'dismissed' | 'completed') =>
+      base.findings.map((item) =>
+        item.ruleId === ruleId
+          ? { ...item, decision: { state, regressed: false, decidedAt: '2026-07-01T00:00:00.000Z', decidedBy: null, reason: null, affectedCountAtDismissal: null, latest: null, resurfaced: null, recheckable: false, recheck: null } }
+          : item,
+      );
+    renderPanel(buildStore({ report: { ...base, findings: withDecision('site-wide', 'dismissed') } }));
+    const counts = screen.getByTestId('overview-audit-counts');
+    expect(within(counts).getByText('2')).toBeInTheDocument();
+    expect(screen.getByTestId('overview-audit-not-counted')).toHaveTextContent(
+      'Not in these counts: 1 dismissed, 0 marked fixed.',
+    );
+  });
+
+  it('keeps the raw counters and no note while no finding is resolved', () => {
+    renderPanel();
+    const counts = screen.getByTestId('overview-audit-counts');
+    expect(within(counts).getByText('3')).toBeInTheDocument();
+    expect(within(counts).getByText('15')).toBeInTheDocument();
+    expect(screen.queryByTestId('overview-audit-not-counted')).not.toBeInTheDocument();
   });
 
   it('does not request actions before a successful report exists', () => {
@@ -714,7 +828,12 @@ describe('OverviewPanel', () => {
       nextCursor: null,
     });
     renderPanel(buildStore({ actionsStatus: 'idle', actions: [] }));
-    await waitFor(() => expect(mocked.listActions).toHaveBeenCalledTimes(1));
+    await waitFor(() =>
+      expect(mocked.listActions).toHaveBeenCalledWith(
+        expect.objectContaining({ siteId: 'site-1', limit: 5 }),
+        expect.anything(),
+      ),
+    );
   });
 
   it('shows the actions loading skeleton and an error state with a scoped retry', async () => {
@@ -786,8 +905,8 @@ describe('OverviewPanel', () => {
     ['no-data', connectedGoogle(), 'No search data yet'],
     ['not-connected', null, 'Connect Google Search Console'],
   ] as const)(
-    'renders the %s search state without loading another Google dataset',
-    (status, connection, expected) => {
+    'renders the %s search state after the stored snapshot read settles',
+    async (status, connection, expected) => {
       const base = richReport().gscSearch;
       renderPanel(
         buildStore({
@@ -797,11 +916,11 @@ describe('OverviewPanel', () => {
           connection,
         }),
       );
-      expect(within(screen.getByTestId('overview-search')).getByText(expected)).toBeInTheDocument();
+      expect(await within(screen.getByTestId('overview-search')).findByText(expected)).toBeInTheDocument();
     },
   );
 
-  it('uses connection state when an older report has no GSC section', () => {
+  it('uses connection state when an older report has no GSC section', async () => {
     const reconnecting = connectedGoogle();
     reconnecting.status = 'revoked';
     const first = renderPanel(
@@ -811,7 +930,51 @@ describe('OverviewPanel', () => {
     first.unmount();
 
     renderPanel(buildStore({ report: richReport({ gscSearch: null }) }));
-    expect(screen.getByText('No search data yet')).toBeInTheDocument();
+    expect(await screen.findByText('No search data yet')).toBeInTheDocument();
+  });
+
+  it('shows a newer stored Search Console snapshot over a failed audit read', () => {
+    const summary: GoogleSearchSummary = {
+      totalClicks: 120,
+      totalImpressions: 3000,
+      averageCtr: 0.04,
+      averagePosition: 3.2,
+      topQueries: [{ query: 'new query', clicks: 20, impressions: 400, ctr: 0.05, position: 2 }],
+      topPages: [],
+      asOf: '2026-07-12',
+      previousPeriod: null,
+    };
+    const old = richReport().gscSearch;
+    renderPanel(buildStore({
+      report: richReport({ gscSearch: old ? { ...old, status: 'unavailable' } : null }),
+      searchSummary: summary,
+    }));
+    const search = screen.getByTestId('overview-search');
+    expect(within(search).getByText('120')).toBeInTheDocument();
+    expect(within(search).getByText('new query')).toBeInTheDocument();
+    expect(within(search).queryByText('Search data not available for this run')).not.toBeInTheDocument();
+  });
+
+  it('shows a stored Search Console snapshot that has no top query', () => {
+    const summary: GoogleSearchSummary = {
+      totalClicks: 80, totalImpressions: 2000, averageCtr: 0.04, averagePosition: 3.2,
+      topQueries: [], topPages: [], asOf: '2026-07-12', previousPeriod: null,
+    };
+    renderPanel(buildStore({ report: richReport({ gscSearch: null }), searchSummary: summary }));
+    const search = screen.getByTestId('overview-search');
+    expect(within(search).getByText('80')).toBeInTheDocument();
+    expect(within(search).queryByText('Top query')).not.toBeInTheDocument();
+  });
+
+  it('uses the shared readiness explanation when a property does not cover the site', async () => {
+    const old = richReport().gscSearch;
+    renderPanel(buildStore({ report: richReport({ gscSearch: old ? { ...old, status: 'no-data' } : null }) }),
+      'site-1', {
+        gsc: { status: 'property_mismatch', matching: false },
+        ga4: { status: 'ok', matching: false },
+      });
+    expect(await screen.findByText("This property doesn't cover the site")).toBeInTheDocument();
+    expect(screen.getByRole('link', { name: 'Select a Search Console property' })).toHaveAttribute('href', '/sites/site-1?tab=google');
   });
 
   it('handles an ok GSC snapshot without a top query', () => {
@@ -864,6 +1027,86 @@ describe('OverviewPanel', () => {
     expect(
       within(screen.getByTestId('overview-pagespeed')).getByText('No data yet'),
     ).toBeInTheDocument();
+    expect(screen.getByTestId('overview-pagespeed-cwv-source')).toHaveTextContent(
+      'Google has no real-visitor data for the sampled pages yet.',
+    );
+  });
+
+  // The tile and the `core-web-vitals-poor` finding read the same field data:
+  // the worst real-visitor category across EVERY sampled page, not just the
+  // first sample, so it never says "No data yet" while the finding is open.
+  it('summarizes Core Web Vitals across every sampled page, like the finding', () => {
+    const samples = richReport().pageSpeed?.samples;
+    const desktop = samples?.[0];
+    const mobile = samples?.[1];
+    if (!desktop || !mobile?.coreWebVitals) throw new Error('fixture missing samples');
+    renderPanel(
+      buildStore({
+        report: richReport({
+          pageSpeed: {
+            status: 'ok',
+            samples: [
+              { ...mobile, coreWebVitals: undefined, fieldDataLevel: 'none' },
+              desktop,
+              {
+                ...mobile,
+                url: 'https://example.com/slow',
+                coreWebVitals: { ...mobile.coreWebVitals, category: 'needs-improvement' },
+              },
+            ],
+          },
+        }),
+      }),
+    );
+    const pageSpeed = screen.getByTestId('overview-pagespeed');
+    expect(within(pageSpeed).queryByText('No data yet')).not.toBeInTheDocument();
+    expect(within(pageSpeed).getByText('Needs improvement')).toBeInTheDocument();
+    expect(screen.getByTestId('overview-pagespeed-cwv-source')).toHaveTextContent(
+      'Real-visitor data: the worst result across the sampled pages.',
+    );
+  });
+
+  describe('stale audit prompt', () => {
+    const NOW = Date.parse('2026-10-05T12:00:00.000Z');
+    const daysAgo = (days: number) => new Date(NOW - days * 86_400_000 - 1_000).toISOString();
+    const withFreshness = () => ({ ...richReport(), auditFreshDays: 30 });
+
+    beforeEach(() => {
+      vi.useFakeTimers({ toFake: ['Date'] });
+      vi.setSystemTime(NOW);
+    });
+    afterEach(() => {
+      vi.useRealTimers();
+    });
+
+    it('shows how long ago the audit ran and links to the existing retest confirmation', () => {
+      renderPanel(buildStore({ report: withFreshness(), reportRunAt: daysAgo(45) }));
+      expect(screen.getByTestId('stale-audit-title')).toHaveTextContent('Last audited 45 days ago');
+      // The link only opens the Report tab's confirmation; nothing is started here.
+      expect(screen.getByTestId('stale-audit-run')).toHaveAttribute(
+        'href',
+        '/sites/site-1?tab=report&retest=1',
+      );
+    });
+
+    it('computes the age from the current date', () => {
+      vi.setSystemTime(NOW + 10 * 86_400_000);
+      renderPanel(buildStore({ report: withFreshness(), reportRunAt: daysAgo(45) }));
+      expect(screen.getByTestId('stale-audit-title')).toHaveTextContent('Last audited 55 days ago');
+    });
+
+    it('stays quiet for a fresh audit, a never-audited site and a running audit', () => {
+      const fresh = renderPanel(buildStore({ report: withFreshness(), reportRunAt: daysAgo(10) }));
+      expect(screen.queryByTestId('stale-audit-callout')).toBeNull();
+      fresh.unmount();
+      const never = renderPanel(buildStore({ report: null, reportRunStatus: null }));
+      expect(screen.queryByTestId('stale-audit-callout')).toBeNull();
+      never.unmount();
+      renderPanel(
+        buildStore({ report: withFreshness(), reportRunAt: daysAgo(45), reportRunStatus: 'running' }),
+      );
+      expect(screen.queryByTestId('stale-audit-callout')).toBeNull();
+    });
   });
 
   it('renders the PageSpeed unavailable state when no usable sample exists', () => {

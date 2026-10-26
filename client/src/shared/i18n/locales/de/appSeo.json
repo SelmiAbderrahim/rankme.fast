@@ -13,12 +13,11 @@
   },
   "locked": {
     "title": "App-SEO ist ab Pro verfügbar",
-    "description": "Wechsle zu Pro oder höher, um App-Profile zu registrieren und diesen Bereich zu öffnen.",
-    "cta": "Tarife ansehen"
+    "description": "Wechsle zu Pro oder höher, um App-Profile zu registrieren und diesen Bereich zu öffnen."
   },
   "registration": {
     "title": "App registrieren",
-    "description": "Füge ein Google-Play-Paket, eine App-Store-ID oder beides hinzu. Die Registrierung prüft nur das Format und verbraucht keine Anbieter-Credits.",
+    "description": "Fügen Sie ein Google-Play-Paket, eine App-Store-ID oder beides hinzu. Die Registrierung prüft nur das Format und ruft keine Daten ab.",
     "playLabel": "Google-Play-Paket-ID",
     "playPlaceholder": "com.example.app",
     "playHelp": "Verwende die in Google Play angezeigte Reverse-DNS-Paket-ID.",
@@ -27,7 +26,6 @@
     "appleHelp": "Gib die 6- bis 12-stellige numerische App-ID ein.",
     "pairedLabel": "Diese Einträge gehören zur selben App",
     "pairedHelp": "Verknüpfe die Einträge nur, wenn sie dasselbe Produkt darstellen.",
-    "usage": "{{used}} von {{limit}} Profilen",
     "submit": "App registrieren",
     "registering": "Wird registriert…"
   },
@@ -46,7 +44,6 @@
   "states": {
     "limitTitle": "Limit für App-Profile erreicht",
     "limitDescription": "Lösche ein Profil, um einen Platz freizugeben, oder wähle einen Tarif mit mehr Profilen.",
-    "upgrade": "Tarife ansehen",
     "errorTitle": "App-Profile konnten nicht aktualisiert werden"
   },
   "validation": {

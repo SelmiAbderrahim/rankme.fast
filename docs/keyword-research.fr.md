@@ -33,6 +33,14 @@ RankMeFast conserve les résultats du fournisseur pendant 30 jours, car ces chif
 
 RankMeFast affiche aussi des expressions associées et des variantes sous forme de question lorsqu'elles sont disponibles. Elles utilisent les mêmes mesures de volume et de difficulté.
 
+## Recherches récentes
+
+**Recherches récentes** liste chaque recherche une seule fois, même si une recherche avec métriques et intention de recherche enregistre deux requêtes. Sur un site, elle liste les requêtes lancées pour ce site, les plus récentes d’abord. **Voir les résultats** ouvre ce qui a été enregistré lors de cette recherche. C’est gratuit : aucun appel n’est fait au fournisseur de données. Si les données enregistrées ont expiré (après 30 jours), RankMeFast le dit et propose **Relancer la recherche**. **Relancer la recherche** exécute toujours une nouvelle requête auprès du fournisseur de données, comme une nouvelle recherche.
+
+## Ajouter plusieurs mots-clés
+
+Saisissez ou collez une liste. Une virgule ou un retour à la ligne termine un mot-clé : coller `seo audit, rank tracker` en ajoute deux. Les mots-clés déjà ajoutés sont ignorés, et RankMeFast vous indique lesquels. Les mêmes règles s’appliquent aux autres champs de recherche qui acceptent une liste de mots-clés.
+
 ## Partir du suivi de position
 
 Si vous saisissez un seul mot-clé Google de 80 caractères maximum dans le formulaire d'ajout, vous pouvez ouvrir la recherche de mots-clés avec l'expression, le pays et la langue déjà remplis. L'ouverture de la page ne lance aucune recherche et ne consomme aucune unité. Vous décidez quand lancer la recherche.

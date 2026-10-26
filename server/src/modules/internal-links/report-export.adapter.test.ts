@@ -68,6 +68,8 @@ beforeEach(() => {
   mocked.run.mockReset().mockResolvedValue(run());
   vi.mocked(getSite).mockReset().mockResolvedValue({
     id: siteId, url: 'https://example.test', domain: 'example.test', displayName: 'Link Site',
+    defaultMarket: null,
+    localBusiness: false,
     paused: false, pausedAt: null, createdAt: requestedAt, updatedAt: completedAt,
   });
 });
@@ -114,6 +116,8 @@ describe('internal-links report export adapter', () => {
     mocked.run.mockResolvedValue(run({ completedAt: null }));
     vi.mocked(getSite).mockResolvedValue({
       id: siteId, url: 'https://example.test', domain: 'example.test', displayName: '',
+      defaultMarket: null,
+      localBusiness: false,
       paused: false, pausedAt: null, createdAt: requestedAt, updatedAt: requestedAt,
     });
     const adapter = createInternalLinksReportExportAdapter();

@@ -8,6 +8,7 @@ import type {
 import {
   loadActionHistory,
   loadActions,
+  loadAuditDecisions,
   submitActionState,
   submitRetestAction,
 } from './thunks';
@@ -47,6 +48,17 @@ export interface ActionsListError {
   notFound: boolean;
 }
 
+/**
+ * Resolved audit decisions (`ruleId` → dismissed/completed) for one site.
+ * Kept apart from `items` because the list rows are whatever page the
+ * current surface asked for; the counters need every resolved rule.
+ */
+export interface AuditDecisionsState {
+  siteId: string | null;
+  status: 'idle' | 'loading' | 'ready' | 'error';
+  byRuleId: Record<string, ActionState>;
+}
+
 export interface ActionsState {
   presentationLocale: PresentationRequestIdentity['presentationLocale'];
   presentationGeneration: number;
@@ -64,6 +76,7 @@ export interface ActionsState {
   errors: ActionsErrorMap;
   conflictIds: Record<string, boolean | undefined>;
   lastRetestRunId: string | null;
+  auditDecisions: AuditDecisionsState;
 }
 
 export const initialState: ActionsState = {
@@ -92,6 +105,7 @@ export const initialState: ActionsState = {
   errors: { state: {}, retest: {}, history: {} },
   conflictIds: {},
   lastRetestRunId: null,
+  auditDecisions: { siteId: null, status: 'idle', byRuleId: {} },
 };
 
 const identityFor = (
@@ -119,7 +133,9 @@ const historyKey = (
 
 const rekeyForSite = (state: ActionsState, siteId: string): ActionsState => {
   if (state.siteId === siteId) return state;
-  return { ...initialState, siteId };
+  // Audit decisions carry their own site key; a list read for the same site
+  // must not wipe a decisions read that is already in flight or done.
+  return { ...initialState, siteId, auditDecisions: state.auditDecisions };
 };
 
 const slice = createSlice({
@@ -189,6 +205,28 @@ const slice = createSlice({
           notFound: Boolean(action.payload?.notFound),
         };
       })
+      .addCase(loadAuditDecisions.pending, (state, action) => {
+        const { siteId } = action.meta.arg;
+        state.auditDecisions = {
+          siteId,
+          status: 'loading',
+          byRuleId: state.auditDecisions.siteId === siteId ? state.auditDecisions.byRuleId : {},
+        };
+      })
+      .addCase(loadAuditDecisions.fulfilled, (state, action) => {
+        if (action.payload.siteId !== state.auditDecisions.siteId) return;
+        const byRuleId: Record<string, ActionState> = {};
+        for (const item of action.payload.items) {
+          if (item.sourceType === 'audit_finding') byRuleId[item.sourceId] = item.state;
+        }
+        state.auditDecisions.status = 'ready';
+        state.auditDecisions.byRuleId = byRuleId;
+      })
+      .addCase(loadAuditDecisions.rejected, (state, action) => {
+        if (action.meta.aborted) return;
+        if (action.meta.arg.siteId !== state.auditDecisions.siteId) return;
+        state.auditDecisions.status = 'error';
+      })
       .addCase(loadActionHistory.pending, (state, action) => {
         const key = historyKey(action.meta.arg.actionId, identityFor(action.meta.arg));
         state.pending.history[key] = true;
@@ -223,7 +261,10 @@ const slice = createSlice({
         if (item) {
           item.state = action.payload.state;
           item.version = action.payload.version;
+          item.latestNote = action.meta.arg.note || null;
         }
+        // A resolved card stays where it is until the next load: removing it
+        // while its dialog closes would drop keyboard focus.
         // Drop cached history so it refetches with the new event.
         delete state.history[action.payload.actionId];
         for (const key of Object.keys(state.history)) {

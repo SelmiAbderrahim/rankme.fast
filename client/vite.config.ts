@@ -40,6 +40,8 @@ function manualChunk(id: string): string | undefined {
       ? 'locale-en-marketing'
       : 'locale-en-app';
   }
+  const locale = normalized.match(/\/src\/shared\/i18n\/locales\/(ar|fr|de|es|ru|zh)\//u)?.[1];
+  if (locale) return `locale-${locale}-app`;
   if (
     /\/node_modules\/(?:react|react-dom|react-router|react-router-dom)\//u.test(normalized)
   ) {

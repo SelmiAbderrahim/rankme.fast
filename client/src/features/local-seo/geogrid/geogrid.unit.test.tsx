@@ -230,6 +230,9 @@ describe('geogrid panel edge paths', () => {
       if (path.includes(`/geogrid/scans/${SCAN_ID}`)) return Promise.resolve(detail()) as never;
       if (path.includes('/geogrid/scans')) return Promise.resolve({ scans: [] }) as never;
       if (path.includes('/keywords')) return Promise.resolve({ keywords: [] }) as never;
+      if (path.endsWith('/local-seo/business')) {
+        return Promise.resolve({ selected: null, candidates: [], query: null, candidatesExpireAt: null }) as never;
+      }
       throw new Error(`unexpected ${path}`);
     });
   };

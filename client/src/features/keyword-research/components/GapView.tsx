@@ -20,6 +20,7 @@ import { Button } from '@shared/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@shared/ui/card';
 import { Input } from '@shared/ui/input';
 import { Label } from '@shared/ui/label';
+import { CompetitorDomainsInput } from '@shared/components/CompetitorDomainsInput';
 import { NativeSelect } from '@shared/ui/native-select';
 import { Skeleton } from '@shared/ui/skeleton';
 import { useAppDispatch, useAppSelector } from '@shared/hooks/redux';
@@ -28,18 +29,13 @@ import { loadSites, selectSites, selectSitesLoaded, selectSitesLoading } from '@
 import { fetchKeywordPreview, runGap } from '../store/thunks';
 import { clearPreview } from '../store/slice';
 import { selectGap, selectPreview } from '../store/selectors';
-import {
-  DEFAULT_LANGUAGE_CODE,
-  DEFAULT_LOCATION_CODE,
-  GAP_COMPETITORS_MAX,
-  gapFormSchema,
-} from '../validation';
+import { gapFormSchema } from '../validation';
 import { useKeywordWorkspaceQuery } from '../tabState';
 import { GapResultsTable } from './GapResultsTable';
 import { KeywordSpendPreviewCard } from './KeywordSpendPreviewCard';
 import { MarketSelects } from './MarketSelects';
-import { PhraseChipsInput } from './PhraseChipsInput';
 import type { GapRequestBody } from '../api';
+import { useResearchMarket } from '../useResearchMarket';
 
 export const GapView = () => {
   const { t } = useTranslation();
@@ -54,8 +50,15 @@ export const GapView = () => {
 
   const [ownDomain, setOwnDomain] = useState('');
   const [competitors, setCompetitors] = useState<string[]>([]);
-  const [locationCode, setLocationCode] = useState(DEFAULT_LOCATION_CODE);
-  const [languageCode, setLanguageCode] = useState(DEFAULT_LANGUAGE_CODE);
+  // The site's (or last used) market, never a hardcoded default.
+  const {
+    locationCode,
+    languageCode,
+    setLocationCode,
+    setLanguageCode,
+    adjustLocationCode,
+    adjustLanguageCode,
+  } = useResearchMarket();
   const [formError, setFormError] = useState('');
   const [pendingBody, setPendingBody] = useState<GapRequestBody | null>(null);
   const ownDomainTouched = useRef(false);
@@ -127,6 +130,10 @@ export const GapView = () => {
 
   const previewOpen =
     preview.forOperation === 'gap' && (preview.loading || preview.data !== null);
+  // A server refusal that names the competitors field shows under that field
+  // instead of as a page-level alert.
+  const competitorsError =
+    (preview.forOperation === 'gap' ? preview.competitorsError : '') || gap.competitorsError || '';
 
   return (
     <div className="flex flex-col gap-5" data-testid="kw-gap-view">
@@ -158,7 +165,7 @@ export const GapView = () => {
                   data-testid="kw-gap-site"
                 >
                   {sites.map((site) => (
-                    <option key={site.id} value={site.id}>
+                    <option key={site.id} value={site.id} dir="auto">
                       {siteLabel(site)}
                     </option>
                   ))}
@@ -175,21 +182,22 @@ export const GapView = () => {
                 data-testid="kw-gap-own-domain"
               />
             </div>
-            <PhraseChipsInput
+            <CompetitorDomainsInput
               id="kw-gap-competitors"
               label={t('keywordResearch:gap.competitorsLabel')}
-              placeholder="competitor.com"
-              chips={competitors}
+              value={competitors}
               onChange={setCompetitors}
-              max={GAP_COMPETITORS_MAX}
-              maxLength={253}
+              ownDomain={ownDomain.trim()}
               testIdPrefix="kw-gap-competitor"
+              error={competitorsError}
             />
             <MarketSelects
               locationCode={locationCode}
               languageCode={languageCode}
               onLocationChange={setLocationCode}
               onLanguageChange={setLanguageCode}
+              onLocationAdjust={adjustLocationCode}
+              onLanguageAdjust={adjustLanguageCode}
               testIdPrefix="kw-gap"
             />
             {formError ? (
@@ -215,7 +223,7 @@ export const GapView = () => {
         </CardContent>
       </Card>
 
-      {preview.error && preview.forOperation === 'gap' ? (
+      {preview.error && preview.forOperation === 'gap' && !preview.competitorsError ? (
         <Alert variant="destructive" role="alert" data-testid="kw-gap-preview-error">
           <AlertDescription>{preview.error}</AlertDescription>
         </Alert>
@@ -247,7 +255,7 @@ export const GapView = () => {
         </div>
       ) : null}
 
-      {gap.error ? (
+      {gap.error && !gap.competitorsError ? (
         <Alert variant="destructive" role="alert" data-testid="kw-gap-error">
           <AlertDescription>{gap.error}</AlertDescription>
         </Alert>

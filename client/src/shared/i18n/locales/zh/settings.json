@@ -1,4 +1,5 @@
 {
+  "workspace": { "description": "此工作区对外发送内容的设置，例如客户报告上的品牌。" },
   "notifications": {
     "title": "通知偏好",
     "description": "选择您希望接收的非安全类邮件。安全类邮件（密码重置、邮箱验证、密码变更确认）无法关闭。",
@@ -11,7 +12,7 @@
       },
       "emailRankDrop": {
         "label": "排名下降",
-        "description": "已跟踪关键词排名下降时通知我。"
+        "description": "当跟踪的关键词排名下跌且第二次检查确认后，通过邮件通知我。"
       },
       "emailAlerts": {
         "label": "提醒规则",
@@ -52,8 +53,6 @@
     "revokeConfirmTitle": "吊销此 API 密钥？",
     "revokeConfirmDescription": "“{{name}}” 将立即失效。此操作无法撤销。",
     "empty": "还没有 API 密钥。",
-    "upgradeHint": "Starter 及以上套餐可创建 MCP API 密钥；公共 REST API 仅限 Agency。升级即可连接 MCP 客户端。",
-    "upgradeCta": "查看套餐",
     "scopes": {
       "column": "访问权限",
       "edit": "编辑权限",
@@ -85,28 +84,51 @@
     "saving": "正在保存权限…",
     "saved": "MCP 权限已保存。",
     "retry": "重试",
-    "locked": {
-      "title": "使用 Starter 或更高套餐连接 MCP",
-      "description": "升级后即可创建 API 密钥，并将 RankMeFast 连接到 MCP 客户端。",
-      "cta": "查看套餐"
-    },
     "tools": {
       "title": "允许的工具",
       "description": "关闭不应由 MCP 客户端和助手使用的工具。",
+      "readNote": "只读取已存储数据的工具不会发起抓取或查询。它们返回已保存的内容，并在缺少数据时说明。",
+      "groups": {
+        "sites": "网站与审计",
+        "rankings": "关键词与排名",
+        "content": "内容分析",
+        "actions": "后续行动",
+        "search": "Search Console 与分析",
+        "pages": "页面",
+        "links": "反向链接与竞争对手",
+        "research": "关键词研究",
+        "visibility": "AI Visibility、本地 SEO 与评价",
+        "reports": "客户报告"
+      },
       "list_sites": { "name": "列出站点", "description": "查看此账户中的站点。" },
       "get_latest_audit_report": { "name": "获取最新审计报告", "description": "读取站点最近完成的审计。" },
       "list_keywords": { "name": "列出关键词", "description": "查看站点跟踪的关键词。" },
       "get_rank_history": { "name": "获取排名历史", "description": "读取跟踪关键词最近的排名位置。" },
       "list_content_analyses": { "name": "列出内容分析", "description": "查看站点的 Content Intelligence 分析。" },
       "get_content_analysis": { "name": "获取内容分析", "description": "读取一项 Content Intelligence 分析。" },
-      "start_audit": { "name": "启动审计", "description": "启动会消耗账户每月额度的新审计。" },
+      "start_audit": { "name": "启动审计", "description": "启动新审计。它通过已配置的服务商抓取站点，因此必须允许支出。" },
       "get_audit_status": { "name": "获取审计状态", "description": "检查审计正在排队、运行还是已完成。" },
       "list_actions": { "name": "列出后续行动", "description": "读取站点的优先修复清单，并查看每项的状态。" },
-      "set_action_state": { "name": "更新后续行动", "description": "将某项行动标记为已计划、已忽略、已完成或重新打开。" }
+      "set_action_state": { "name": "更新后续行动", "description": "将某项行动标记为已计划、已忽略、已完成或重新打开。" },
+      "get_gsc_search_summary": { "name": "获取 Search Console 摘要", "description": "读取已存储的最近 7、28 或 90 天的点击、展示、点击率和排名。" },
+      "list_gsc_top_queries": { "name": "列出热门搜索词", "description": "读取网站已存储的 Search Console 热门搜索词。" },
+      "list_gsc_top_pages": { "name": "列出热门搜索页面", "description": "读取网站已存储的 Search Console 热门页面。" },
+      "get_ga4_summary": { "name": "获取 Analytics 摘要", "description": "读取已存储的 Google Analytics 4 会话、用户和关键事件。" },
+      "list_pages": { "name": "列出页面", "description": "查看网站已存储的页面清单和抓取状态。" },
+      "get_page_detail": { "name": "获取页面详情", "description": "读取单个页面已存储的抓取证据和指标。" },
+      "get_backlinks_summary": { "name": "获取反向链接摘要", "description": "读取已存储的反向链接和引用域名数量。" },
+      "list_backlinks": { "name": "列出反向链接", "description": "查看已存储的反向链接，每个引用域名一条。" },
+      "list_competitors": { "name": "列出竞争对手", "description": "查看网站的竞争对手组合。" },
+      "list_keyword_research_history": { "name": "列出关键词研究历史", "description": "查看运行过哪些关键词研究以及时间。" },
+      "get_keyword_research_result": { "name": "获取关键词研究结果", "description": "重新打开已存储的关键词研究结果，不调用数据提供方。" },
+      "get_ai_visibility_summary": { "name": "获取 AI Visibility 摘要", "description": "读取已存储的 AI 回答检查和声量份额。" },
+      "get_local_seo_summary": { "name": "获取本地 SEO 摘要", "description": "读取已存储的商家资料和本地包排名。" },
+      "get_reviews_summary": { "name": "获取评价摘要", "description": "读取已存储的评价来源、评分和主题。" },
+      "list_client_reports": { "name": "列出客户报告", "description": "查看报告计划、发送记录和门户状态。不含文件或链接。" }
     },
     "spend": {
       "title": "消耗额度的操作",
-      "label": "允许使用套餐额度的工具",
+      "label": "允许会消耗服务商预算的工具",
       "description": "关闭后，即使工具开关已开启，启动审计等消耗额度的工具也会被阻止。"
     },
     "sites": {
@@ -120,7 +142,7 @@
     },
     "quickStart": {
       "title": "快速开始",
-      "description": "创建 API 密钥，然后复制端点或可直接使用的客户端配置。",
+      "description": "创建 API 密钥并将其保存在环境变量 {{envVar}} 中。下方两种配置都会从该变量读取密钥。",
       "endpoint": "MCP 端点",
       "copyEndpoint": "复制 MCP 端点",
       "copy": "复制",
@@ -138,21 +160,30 @@
     }
   },
   "branding": {
+    "companyNameRequired": "请输入公司名称。",
+    "preview": {
+      "title": "PDF 页眉预览",
+      "caption": "每份 PDF 报告的顶部都会使用此名称、徽标和颜色。",
+      "reportTitle": "SEO 审核报告",
+      "sectionHeading": "立即修复"
+    },
     "title": "PDF 品牌设置",
     "description": "在下载的报告 PDF 上使用您自己的名称。公司名称和强调色会显示在 PDF 页眉中。",
     "companyName": "公司名称",
     "accentColor": "强调色",
+    "accentPicker": "选择强调色",
     "invalidColor": "请输入类似 #b5321e 的颜色，或留空。",
     "save": "保存品牌设置",
     "saved": "品牌设置已保存。",
-    "upgradeHint": "白标 PDF 报告适用于 Pro 和 Agency 方案。升级即可自定义您的报告。",
-    "upgradeCta": "查看方案",
     "logo": {
       "label": "公司标志",
-      "help": "仅支持 PNG，最大 256 KB。图像在存储前会调整尺寸并重新编码。",
-      "invalidType": "请选择 PNG 图像。",
-      "tooLarge": "请选择小于 256 KB 的 PNG 图像。",
-      "readFailed": "无法读取该图像，请选择另一个 PNG 文件。",
+      "help": "支持 PNG、JPEG 或 SVG，最大 256 KB。图像会调整尺寸并保存为 PNG。SVG 文件不能包含脚本或指向其他文件的链接。",
+      "invalidType": "请选择 PNG、JPEG 或 SVG 图像。",
+      "tooLarge": "请选择小于 256 KB 的图像。",
+      "readFailed": "无法读取该图像。请选择其他文件。",
+      "choose": "选择图像",
+      "noFile": "未选择文件",
+      "saved": "正在使用已保存的标志",
       "previewAlt": "公司标志预览",
       "remove": "移除标志"
     },

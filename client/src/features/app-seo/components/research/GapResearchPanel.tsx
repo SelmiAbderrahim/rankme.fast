@@ -1,3 +1,4 @@
+import { Bdi } from '@shared/components/Bdi';
 import { type FormEvent, useState } from 'react';
 import { Download, GitCompareArrows } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
@@ -214,7 +215,7 @@ export function GapResearchPanel({
                 <TableBody>
                   {result.rows.map((row) => (
                     <TableRow key={row.keyword}>
-                      <TableCell className="font-medium">{row.keyword}</TableCell>
+                      <TableCell className="font-medium"><Bdi>{row.keyword}</Bdi></TableCell>
                       {result.appIds.map((appId) => (
                         <TableCell key={appId}>
                           {row.ranksByAppId[appId]?.rank ?? t('common.notRanked')}

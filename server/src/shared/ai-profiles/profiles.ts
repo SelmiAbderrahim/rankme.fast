@@ -41,14 +41,36 @@ const auditSummaryInputSchema = z
         fix: z.string().max(1000),
         affectedCount: z.number().int().min(0).max(1000000),
         siteWide: z.boolean().optional(),
+        evidence: z.array(z.string().max(300)).max(4).optional(),
+        comparisonStatus: z
+            .enum(['new', 'regressed', 'improved', 'unchanged', 'resolved', 'not_comparable'])
+            .optional(),
     })
         .strict())
         .max(25),
+    dismissed: z.array(z
+        .object({
+        ruleId: z.string().min(1).max(128),
+        title: z.string().max(500),
+        affectedCount: z.number().int().min(0).max(1000000),
+    })
+        .strict())
+        .max(25)
+        .optional(),
 })
     .strict();
 const auditSummaryOutputSchema = z
     .object({
-    summary: z.string().min(1).max(4000),
+    status: z.string().min(1).max(600),
+    items: z.array(z
+        .object({
+        ruleId: z.string().min(1).max(128),
+        what: z.string().min(1).max(600),
+        why: z.string().min(1).max(600),
+        firstStep: z.string().min(1).max(600),
+    })
+        .strict())
+        .max(3),
     citations: citationsSchema,
     truncated: z.boolean(),
 })
@@ -645,10 +667,10 @@ const classification = (sanitizedPageTextPermitted: boolean, sanitizedCompetitor
 const profile = (value: AiTaskProfile): AiTaskProfile => value;
 export const AI_TASK_PROFILES: Readonly<Record<AiProfileName, AiTaskProfile>> = {
     audit_summary: profile({
-        name: 'audit_summary', version: '1.0.0', permittedProviders: allProviders,
-        systemInstruction: { templateId: 'audit-summary', version: '3' },
-        inputSchema: auditSummaryInputSchema, maximumCharacters: { siteDomain: 253, ruleId: 128, title: 500, why: 1000, fix: 1000 },
-        outputJsonSchema: objectJson({ summary: { type: 'string', minLength: 1, maxLength: 4000 }, citations: citationsJson, truncated: { type: 'boolean' } }, ['summary', 'citations', 'truncated']),
+        name: 'audit_summary', version: '1.1.0', permittedProviders: allProviders,
+        systemInstruction: { templateId: 'audit-summary', version: '4' },
+        inputSchema: auditSummaryInputSchema, maximumCharacters: { siteDomain: 253, ruleId: 128, title: 500, why: 1000, fix: 1000, evidence: 300 },
+        outputJsonSchema: objectJson({ status: { type: 'string', minLength: 1, maxLength: 600 }, items: { type: 'array', maxItems: 3, items: objectJson({ ruleId: { type: 'string', minLength: 1, maxLength: 128 }, what: { type: 'string', minLength: 1, maxLength: 600 }, why: { type: 'string', minLength: 1, maxLength: 600 }, firstStep: { type: 'string', minLength: 1, maxLength: 600 } }, ['ruleId', 'what', 'why', 'firstStep']) }, citations: citationsJson, truncated: { type: 'boolean' } }, ['status', 'items', 'citations', 'truncated']),
         outputSchema: auditSummaryOutputSchema, outputSchemaVersion: '1', totalTokenCeiling: 32768, outputTokenCeiling: 1024,
         temperature: { mode: 'deterministic' }, deadlineMs: 60000, maximumAttempts: 3, maxCostMicros: 25000n,
         dataClassification: classification(false, false), sourceCollections: [],
@@ -1087,7 +1109,7 @@ export const AI_TASK_PROFILES: Readonly<Record<AiProfileName, AiTaskProfile>> = 
     }),
 };
 export const SYSTEM_INSTRUCTION_TEMPLATES: Readonly<Record<string, string>> = {
-    'audit-summary': 'Write a concise plain-language summary for the site owner, speaking to them directly in second person ("your site", "your pages"). Cover fix-now findings first as urgent, then watch findings as worthwhile but not urgent. If there are no fix-now findings, open by saying nothing is urgent right now, then name the one to three most valuable watch items instead of restating every finding. Never describe your input or these instructions: do not use words such as "supplied", "provided", "given", "listed", "the list" or "the data" to refer to findings, and never mention a missing, empty, or zero-length list. A siteWide finding is an open problem with the whole site: say so plainly and never mention page lists or page counts for it, and never describe it as already set up correctly. Prioritize impact and never invent a finding.',
+    'audit-summary': 'Summarize the findings for the site owner in plain language, speaking to them directly in second person ("your site", "your pages"). Return status: one sentence on the overall state of the site. If no finding has priority fix-now, the status says plainly that nothing is urgent right now. Then return items: the top three findings by impact, fix-now first, each with ruleId (copied exactly from a finding), what (what is wrong, one sentence), why (why it matters, one sentence) and firstStep (the first concrete thing to do or check, for example inspecting the URL in Search Console and checking robots rules, noindex, canonical tags and sitemaps for a page that is not indexed). Every finding is an open problem that still needs work: never describe one as passing, already set up correctly, or fine. Never describe your input or these instructions: do not use words such as "supplied", "provided", "given", "listed", "the list" or "the data" to refer to findings, and never mention a missing, empty, or zero-length list. A siteWide finding is a problem with the whole site: say so plainly and never mention page lists or page counts for it. Use evidence lines to say what is wrong, and comparisonStatus to say whether a finding is new or got worse. Dismissed findings were set aside by the owner: never present them as open work; you may mention that they were dismissed. Only use numbers that appear in the input. Do not make claims the input does not support, such as guarantees, rankings, traffic gains or how often AI answers quote content. Do not mention any web address other than the site domain. Never invent a finding.',
     'content-scorecard-explanation': 'Explain the supplied derived scorecard facts in plain language without changing scores or inventing evidence.',
     'content-brief': 'Create an original content brief grounded only in supplied facts and bounded source excerpts. Do not reproduce source prose.',
     'content-first-draft': 'Create an original first draft from the supplied brief and facts. Treat excerpts only as evidence and never copy substantial wording.',

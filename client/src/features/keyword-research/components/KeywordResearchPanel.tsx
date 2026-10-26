@@ -1,3 +1,4 @@
+import { Bdi } from '@shared/components/Bdi';
 /**
  * Keyword-research panel.
  *
@@ -30,6 +31,7 @@ import {
   Lightbulb,
   MoreHorizontal,
   Plus,
+  RotateCcw,
   Search,
   Sparkles,
   X,
@@ -48,7 +50,7 @@ import { toast } from 'sonner';
 import { Alert, AlertDescription } from '@shared/ui/alert';
 import { StatusChip, type StatusTone } from '@shared/ui/status-chip';
 import { Button } from '@shared/ui/button';
-import { Card, CardContent, CardHeader, CardTitle } from '@shared/ui/card';
+import { Card, CardAction, CardContent, CardDescription, CardHeader, CardTitle } from '@shared/ui/card';
 import {
   Empty,
   EmptyContent,
@@ -81,13 +83,14 @@ import {
   fetchIdeas,
   fetchIntent,
   fetchLongTail,
-  loadHistory,
   loadMetrics,
   loadRelated,
+  openStoredResearch,
 } from '../store/thunks';
 import {
   setExpanded,
   clearMessages,
+  clearStored,
   beginAddToTracking,
   resolveAddToTracking,
   relatedCacheKey,
@@ -101,6 +104,7 @@ import {
   selectHistoryError,
   selectHistoryLoaded,
   selectHistoryLoading,
+  selectHistorySiteId,
   selectIdeas,
   selectIdeasError,
   selectIdeasLoading,
@@ -112,6 +116,7 @@ import {
   selectRelatedByKeyword,
   selectRelatedError,
   selectRelatedLoading,
+  selectStored,
 } from '../store/selectors';
 import {
   MAX_KEYWORDS,
@@ -119,10 +124,20 @@ import {
   difficultyBand,
   parsePrefillParams,
 } from '../validation';
+import { useKeywordWorkspaceQuery } from '../tabState';
+import { useResearchWorkspaceState } from '../researchWorkspaceState';
+import { useResearchMarket } from '../useResearchMarket';
 import { KeywordResearchHeader } from './KeywordResearchHeader';
 import { ResearchHistoryTable } from './ResearchHistoryTable';
 import { MarketSelects } from './MarketSelects';
-import type { KeywordMetric, RelatedKeyword, ResearchHistoryItem, SearchIntent } from '../types';
+import type {
+  KeywordMetric,
+  KeywordResearchState,
+  RelatedKeyword,
+  ResearchHistoryItem,
+  SearchIntent,
+  StoredResearchResult,
+} from '../types';
 
 /** Four distinct soft-tint status tones (SPEC-A1/A2), one per intent. `null`
  * intent renders no badge — absence is honest, not a fifth "unknown" chip. */
@@ -153,7 +168,7 @@ const KeywordCandidateList = ({ items, testId }: { items: RelatedKeyword[]; test
           key={r.keyword}
           className={cn('flex items-center justify-between rounded-md border px-3 py-2')}
         >
-          <span className="text-sm">{r.keyword}</span>
+          <span className="text-sm"><Bdi>{r.keyword}</Bdi></span>
           <span className="flex items-center gap-2">
             <span
               className="text-muted-foreground text-xs tabular-nums"
@@ -272,7 +287,8 @@ export const KeywordResearchPanel = ({ siteId, hideHeader = false }: Props) => {
   const ideasError = useAppSelector(selectIdeasError);
   const ideasSeed = useAppSelector(selectIdeasSeed);
   const longTail = useAppSelector(selectLongTail);
-  const history = useAppSelector(selectHistory);
+  const loadedHistory = useAppSelector(selectHistory);
+  const historySiteId = useAppSelector(selectHistorySiteId);
   const historyLoading = useAppSelector(selectHistoryLoading);
   const historyLoaded = useAppSelector(selectHistoryLoaded);
   const historyError = useAppSelector(selectHistoryError);
@@ -281,18 +297,39 @@ export const KeywordResearchPanel = ({ siteId, hideHeader = false }: Props) => {
   const trackedLoading = useAppSelector(selectRanksLoading);
   const trackedLoaded = useAppSelector(selectRanksLoaded);
   const trackedError = useAppSelector(selectRanksError);
+  const stored = useAppSelector(selectStored);
+  // A site Research tab lists only that site's lookups; the standalone page
+  // lists the whole account. Rows loaded for another scope never show here.
+  const history = historySiteId === (siteId ?? null) ? loadedHistory : [];
+  // Research is attributed to the site it runs from (history scope).
+  const siteScope = siteId ? { siteId } : {};
 
   // "Search again" deep link (?q=a,b,c&location=&lang=) prefills the form ONCE
   // via lazy initializers — it never auto-submits and never spends quota.
   const [searchParams] = useSearchParams();
-  const [chips, setChips] = useState<string[]>(() => parsePrefillParams(searchParams).chips);
+  const [localChips, setLocalChips] = useState<string[]>(() => parsePrefillParams(searchParams).chips);
+  // Inside the workspace the chips survive tab switches; the site-embedded
+  // panel keeps its own.
+  const workspaceState = useResearchWorkspaceState();
+  const chips = workspaceState?.chips ?? localChips;
+  const setChips = workspaceState?.setChips ?? setLocalChips;
+  const [workspaceQuery, setWorkspaceQuery] = useKeywordWorkspaceQuery();
   const [draft, setDraft] = useState('');
-  const [locationCode, setLocationCode] = useState<number>(
-    () => parsePrefillParams(searchParams).locationCode,
-  );
-  const [languageCode, setLanguageCode] = useState<string>(
-    () => parsePrefillParams(searchParams).languageCode,
-  );
+  // A "Search again" link's market wins; otherwise the site's default market
+  // (or the last one used here), never a hardcoded default.
+  const [linkMarket] = useState(() => {
+    if (!searchParams.has('location')) return null;
+    const prefill = parsePrefillParams(searchParams);
+    return { locationCode: prefill.locationCode, languageCode: prefill.languageCode };
+  });
+  const {
+    locationCode,
+    languageCode,
+    setLocationCode,
+    setLanguageCode,
+    adjustLocationCode,
+    adjustLanguageCode,
+  } = useResearchMarket(linkMarket);
   const matchingTrackedKeywords = useMemo(
     () =>
       siteId && trackedSiteId === siteId
@@ -362,35 +399,64 @@ export const KeywordResearchPanel = ({ siteId, hideHeader = false }: Props) => {
     });
   };
 
-  // Every lookup is saved to Recent research server-side; re-read the list
-  // once the lookups settle so it shows the new rows without a reload. One
-  // refresh per submit, and only when at least one lookup succeeded.
-  const refreshHistoryAfter = (
-    ...requests: Array<Promise<{ meta: { requestStatus: 'fulfilled' | 'rejected' } }>>
-  ) => {
-    void Promise.all(requests).then((results) => {
-      if (results.some((result) => result.meta.requestStatus === 'fulfilled')) {
-        void dispatch(loadHistory({}));
+  // --- Stored results ----------------------------------------------------
+  // `?stored=<historyId>` is the URL-backed "view saved results" state, so a
+  // refresh or the back button keeps (or leaves) it. The thunk reads the shared
+  // cache by the same keys the lookup wrote: no provider is called and no
+  // history row is written.
+  useEffect(() => {
+    if (workspaceQuery.stored) {
+      if (stored.historyId !== workspaceQuery.stored) {
+        void dispatch(openStoredResearch({ historyId: workspaceQuery.stored }));
       }
-    });
+    } else if (stored.historyId !== null) {
+      dispatch(clearStored());
+    }
+  }, [dispatch, workspaceQuery.stored, stored.historyId]);
+
+  // The saved table's row actions read the form's market, so mirror the opened
+  // lookup's phrases and market into the form once it arrives.
+  useEffect(() => {
+    const result = stored.result;
+    if (!result) return;
+    setChips(result.phrases);
+    setLocationCode(result.locationCode);
+    setLanguageCode(result.languageCode);
+  }, [setChips, setLanguageCode, setLocationCode, stored.result]);
+
+  const handleViewResults = (item: ResearchHistoryItem) => {
+    setWorkspaceQuery({ stored: item.id });
+  };
+
+  const closeStored = () => {
+    setWorkspaceQuery({ stored: null });
+  };
+
+  // Any new search leaves the saved view so fresh results are never hidden
+  // under it.
+  const leaveStored = () => {
+    if (workspaceQuery.stored) setWorkspaceQuery({ stored: null });
   };
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     /* v8 ignore next -- submit button is disabled when chips.length === 0; belt-and-braces guard. */
     if (chips.length === 0) return;
-    refreshHistoryAfter(
-      dispatch(loadMetrics({ keywords: chips, locationCode, languageCode })),
-      // Classify intent for the same set — badges merge onto the rows as they
-      // resolve. Rides the same `keyword_lookups` metering as /metrics.
-      dispatch(fetchIntent({ keywords: chips, locationCode, languageCode })),
-    );
+    leaveStored();
+    // One id for BOTH calls so the history list folds them into one row.
+    const lookupId = globalThis.crypto.randomUUID();
+    void dispatch(loadMetrics({ keywords: chips, locationCode, languageCode, lookupId, ...siteScope }));
+    // Classify intent for the same set; badges merge onto the rows as they resolve.
+    void dispatch(fetchIntent({ keywords: chips, locationCode, languageCode, lookupId, ...siteScope }));
   };
 
   // "Search again" on a Recent-research row re-runs the lookup IN PLACE (unlike
   // the standalone history page, which navigates). Prefills the form to match
-  // and rides the same metering as a manual submit — a user-initiated spend.
-  const handleSearchAgain = (item: ResearchHistoryItem) => {
+  // and calls the data provider like a manual submit.
+  const handleSearchAgain = (
+    item: Pick<ResearchHistoryItem, 'kind' | 'phrases' | 'locationCode' | 'languageCode'>,
+  ) => {
+    leaveStored();
     setChips(item.phrases);
     setLocationCode(item.locationCode);
     setLanguageCode(item.languageCode);
@@ -398,32 +464,34 @@ export const KeywordResearchPanel = ({ siteId, hideHeader = false }: Props) => {
       const seed = item.phrases[0];
       /* v8 ignore next -- persisted research history always contains at least one phrase. */
       if (seed) {
-        refreshHistoryAfter(
-          dispatch(
-            fetchLongTail({
-              seed,
-              locationCode: item.locationCode,
-              languageCode: item.languageCode,
-            }),
-          ),
+        void dispatch(
+          fetchLongTail({
+            seed,
+            locationCode: item.locationCode,
+            languageCode: item.languageCode,
+            ...siteScope,
+          }),
         );
       }
     } else {
-      refreshHistoryAfter(
-        dispatch(
-          loadMetrics({
-            keywords: item.phrases,
-            locationCode: item.locationCode,
-            languageCode: item.languageCode,
-          }),
-        ),
-        dispatch(
-          fetchIntent({
-            keywords: item.phrases,
-            locationCode: item.locationCode,
-            languageCode: item.languageCode,
-          }),
-        ),
+      const lookupId = globalThis.crypto.randomUUID();
+      void dispatch(
+        loadMetrics({
+          keywords: item.phrases,
+          locationCode: item.locationCode,
+          languageCode: item.languageCode,
+          lookupId,
+          ...siteScope,
+        }),
+      );
+      void dispatch(
+        fetchIntent({
+          keywords: item.phrases,
+          locationCode: item.locationCode,
+          languageCode: item.languageCode,
+          lookupId,
+          ...siteScope,
+        }),
       );
     }
   };
@@ -435,14 +503,14 @@ export const KeywordResearchPanel = ({ siteId, hideHeader = false }: Props) => {
   const handleGetIdeas = () => {
     /* v8 ignore next -- button is disabled when ideaSeed is empty; belt-and-braces guard. */
     if (ideaSeed.length === 0) return;
-    refreshHistoryAfter(dispatch(fetchIdeas({ seed: ideaSeed, locationCode, languageCode })));
+    leaveStored();
+    void dispatch(fetchIdeas({ seed: ideaSeed, locationCode, languageCode, ...siteScope }));
   };
 
   // The button is disabled without a valid seed, so no guard is needed here.
   const handleFindLongTail = () => {
-    refreshHistoryAfter(
-      dispatch(fetchLongTail({ seed: longTailSeed, locationCode, languageCode })),
-    );
+    leaveStored();
+    void dispatch(fetchLongTail({ seed: longTailSeed, locationCode, languageCode, ...siteScope }));
   };
 
   // Empty-state CTA: put the cursor back in the seed input for the next lookup.
@@ -458,7 +526,7 @@ export const KeywordResearchPanel = ({ siteId, hideHeader = false }: Props) => {
     }
     const cacheKey = relatedCacheKey(keyword, locationCode, languageCode);
     if (!relatedByKeyword[cacheKey]) {
-      void dispatch(loadRelated({ keyword, locationCode, languageCode }));
+      void dispatch(loadRelated({ keyword, locationCode, languageCode, ...siteScope }));
     } else {
       dispatch(setExpanded(keyword));
     }
@@ -474,7 +542,8 @@ export const KeywordResearchPanel = ({ siteId, hideHeader = false }: Props) => {
   };
 
   const handleIdeasFromRow = (keyword: string) => {
-    void dispatch(fetchIdeas({ seed: keyword, locationCode, languageCode }));
+    leaveStored();
+    void dispatch(fetchIdeas({ seed: keyword, locationCode, languageCode, ...siteScope }));
   };
 
   const handleAddToTracking = async (keyword: string) => {
@@ -574,7 +643,7 @@ export const KeywordResearchPanel = ({ siteId, hideHeader = false }: Props) => {
     } else if (remainingKeywordSlots === 0) {
       content = (
         <p className="text-muted-foreground text-sm" data-testid="keyword-research-tracked-limit">
-          {t('keywordResearch:tracked.limitReached', { max: MAX_KEYWORDS })}
+          {t('keywordResearch:tracked.limitReached', { count: MAX_KEYWORDS, max: MAX_KEYWORDS })}
         </p>
       );
     } else if (trackedSuggestions.length === 0) {
@@ -601,7 +670,7 @@ export const KeywordResearchPanel = ({ siteId, hideHeader = false }: Props) => {
               data-testid={`keyword-research-tracked-${keywordSlug(phrase)}`}
             >
               <Plus aria-hidden="true" />
-              {phrase}
+              <Bdi>{phrase}</Bdi>
             </Button>
           ))}
         </div>
@@ -704,6 +773,8 @@ export const KeywordResearchPanel = ({ siteId, hideHeader = false }: Props) => {
               languageCode={languageCode}
               onLocationChange={setLocationCode}
               onLanguageChange={setLanguageCode}
+              onLocationAdjust={adjustLocationCode}
+              onLanguageAdjust={adjustLanguageCode}
               testIdPrefix="keyword-research"
             />
             {renderTrackedKeywordSuggestions()}
@@ -796,6 +867,18 @@ export const KeywordResearchPanel = ({ siteId, hideHeader = false }: Props) => {
         </Empty>
       ) : null}
 
+      {stored.loading || stored.error || stored.result ? (
+        <StoredResultCard
+          stored={stored}
+          siteId={siteId ?? undefined}
+          addingToTracking={addingToTracking}
+          onAdd={handleAddToTracking}
+          onCopy={handleCopy}
+          onSearchAgain={handleSearchAgain}
+          onClose={closeStored}
+        />
+      ) : null}
+
       {metrics.length > 0 && !loading ? (
         <ResultsTable
           metrics={metrics}
@@ -886,14 +969,17 @@ export const KeywordResearchPanel = ({ siteId, hideHeader = false }: Props) => {
         </Card>
       ) : null}
 
-      {/* Recent research. On first
-          load (before any search) this is the primary content: the account's
-          recent lookups, newest-first, from a free un-metered history read.
-          "Search again" re-runs a lookup in place (user-initiated spend). */}
+      {/* Recent research. On first load (before any search) this is the primary
+          content: the account's recent lookups (on a site tab: that site's own),
+          newest-first, from a history read that never calls the data provider.
+          "View results" re-opens the saved results; "Search again" re-runs the
+          lookup in place. */}
       <div className="flex flex-col gap-3" data-testid="keyword-research-recent">
         <div>
           <h2 className="text-lg font-semibold">{t('keywordResearch:recentTitle')}</h2>
-          <p className="text-muted-foreground text-sm">{t('keywordResearch:recentDescription')}</p>
+          <p className="text-muted-foreground text-sm">
+            {t(siteId ? 'keywordResearch:recentDescriptionSite' : 'keywordResearch:recentDescription')}
+          </p>
         </div>
         {historyError ? (
           <Alert variant="destructive" role="alert" data-testid="keyword-research-recent-error">
@@ -913,13 +999,14 @@ export const KeywordResearchPanel = ({ siteId, hideHeader = false }: Props) => {
         ) : null}
         {showRecentEmpty ? (
           <p className="text-muted-foreground text-sm" data-testid="keyword-research-recent-empty">
-            {t('keywordResearch:history.empty')}
+            {t(siteId ? 'keywordResearch:history.emptySite' : 'keywordResearch:history.empty')}
           </p>
         ) : null}
         {history.length > 0 ? (
           <ResearchHistoryTable
             items={history}
             onSearchAgain={handleSearchAgain}
+            onViewResults={handleViewResults}
             testIdPrefix="keyword-research-recent"
           />
         ) : null}
@@ -928,18 +1015,152 @@ export const KeywordResearchPanel = ({ siteId, hideHeader = false }: Props) => {
   );
 };
 
-interface ResultsTableProps {
-  metrics: KeywordMetric[];
-  expanded: string | null;
-  relatedByKeyword: Record<string, import('../types').RelatedKeyword[]>;
-  locationCode: number;
-  languageCode: string;
-  relatedLoading: boolean;
-  relatedError: string;
-  onToggle: (keyword: string) => void;
+interface StoredResultCardProps {
+  stored: KeywordResearchState['stored'];
+  siteId?: string | undefined;
+  addingToTracking: string | null;
   onAdd: (keyword: string) => void;
   onCopy: (keyword: string) => void;
-  onIdeas: (keyword: string) => void;
+  onSearchAgain: (result: StoredResearchResult) => void;
+  onClose: () => void;
+}
+
+/**
+ * The saved-results view of one history row. Everything on screen was read
+ * from the shared cache, so opening it does not call the data provider. When
+ * the cache entry has expired it says so plainly and offers "Search again" as
+ * an explicit refresh.
+ */
+const StoredResultCard = ({
+  stored,
+  siteId,
+  addingToTracking,
+  onAdd,
+  onCopy,
+  onSearchAgain,
+  onClose,
+}: StoredResultCardProps) => {
+  const { t, i18n } = useTranslation();
+  const { loading, error, result } = stored;
+  const formatDate = (iso: string) =>
+    new Intl.DateTimeFormat(i18n.language, { dateStyle: 'medium', timeStyle: 'short' }).format(
+      new Date(iso),
+    );
+  const searchAgain = result ? (
+    <Button
+      type="button"
+      variant="outline"
+      onClick={() => onSearchAgain(result)}
+      data-testid="keyword-research-stored-search-again"
+    >
+      <RotateCcw className="me-1 h-4 w-4" aria-hidden="true" />
+      {t('keywordResearch:stored.searchAgain')}
+    </Button>
+  ) : null;
+
+  return (
+    <Card data-testid="keyword-research-stored">
+      <CardHeader>
+        <CardTitle className="text-base">{t('keywordResearch:stored.title')}</CardTitle>
+        <CardDescription>{t('keywordResearch:stored.freeNote')}</CardDescription>
+        <CardAction>
+          <Button
+            type="button"
+            variant="ghost"
+            size="icon"
+            aria-label={t('keywordResearch:stored.close')}
+            onClick={onClose}
+            data-testid="keyword-research-stored-close"
+          >
+            <X aria-hidden="true" />
+          </Button>
+        </CardAction>
+      </CardHeader>
+      <CardContent className="flex flex-col gap-4">
+        {loading ? (
+          <div aria-busy="true" aria-live="polite" data-testid="keyword-research-stored-loading">
+            <Skeleton className="h-8 w-full" />
+          </div>
+        ) : null}
+        {error ? (
+          <Alert variant="destructive" role="alert" data-testid="keyword-research-stored-error">
+            <AlertDescription>{error}</AlertDescription>
+          </Alert>
+        ) : null}
+        {result ? (
+          result.status === 'expired' || result.status === 'unsupported' ? (
+            <div className="flex flex-col items-start gap-3" data-testid="keyword-research-stored-unavailable">
+              <p className="text-sm">
+                {t(
+                  result.status === 'expired'
+                    ? 'keywordResearch:stored.expired'
+                    : 'keywordResearch:stored.unsupported',
+                )}
+              </p>
+              {result.status === 'expired' ? searchAgain : null}
+            </div>
+          ) : (
+            <>
+              <div className="flex flex-wrap items-center gap-2">
+                <StatusChip tone="info">{t(`keywordResearch:history.kind.${result.kind}`)}</StatusChip>
+                <span className="text-sm font-medium">
+                  <Bdi>{result.phrases.join(', ')}</Bdi>
+                </span>
+                <StatusChip tone="muted" data-testid="keyword-research-stored-date">
+                  {t('keywordResearch:stored.storedOn', {
+                    date: formatDate(result.fetchedAt as string),
+                  })}
+                </StatusChip>
+                {result.status === 'partial' ? (
+                  <StatusChip tone="warning" data-testid="keyword-research-stored-partial">
+                    {t('keywordResearch:stored.partial', {
+                      stored: result.storedCount,
+                      requested: result.requestedCount,
+                    })}
+                  </StatusChip>
+                ) : null}
+              </div>
+              {result.kind === 'metrics' || result.kind === 'intent' ? (
+                <ResultsTable
+                  metrics={result.keywords}
+                  locationCode={result.locationCode}
+                  languageCode={result.languageCode}
+                  onAdd={onAdd}
+                  onCopy={onCopy}
+                  canAdd={Boolean(siteId)}
+                  siteId={siteId}
+                  addingToTracking={addingToTracking}
+                />
+              ) : (
+                <KeywordCandidateList items={result.items} testId="keyword-research-stored-list" />
+              )}
+              {searchAgain}
+            </>
+          )
+        ) : null}
+      </CardContent>
+    </Card>
+  );
+};
+
+/**
+ * Controls for the per-row related-keywords expansion and the ideas action.
+ * The live results table passes them; the saved-results view omits them, which
+ * hides the expand chevron and the "ideas" action instead of showing buttons
+ * that would call the data provider inside a view that promises not to.
+ */
+interface ResultsTableProps {
+  metrics: KeywordMetric[];
+  expanded?: string | null;
+  relatedByKeyword?: Record<string, import('../types').RelatedKeyword[]>;
+  locationCode: number;
+  languageCode: string;
+  relatedLoading?: boolean;
+  relatedError?: string;
+  onToggle?: (keyword: string) => void;
+  onAdd: (keyword: string) => void;
+  onCopy: (keyword: string) => void;
+  onIdeas?: (keyword: string) => void;
   canAdd: boolean;
   addingToTracking: string | null;
   siteId?: string | undefined;
@@ -947,12 +1168,12 @@ interface ResultsTableProps {
 
 const ResultsTable = ({
   metrics,
-  expanded,
-  relatedByKeyword,
+  expanded = null,
+  relatedByKeyword = {},
   locationCode,
   languageCode,
-  relatedLoading,
-  relatedError,
+  relatedLoading = false,
+  relatedError = '',
   onToggle,
   onAdd,
   onCopy,
@@ -1034,10 +1255,10 @@ interface RowGroupProps {
   related: import('../types').RelatedKeyword[] | undefined;
   relatedLoading: boolean;
   relatedError: string;
-  onToggle: (keyword: string) => void;
+  onToggle?: ((keyword: string) => void) | undefined;
   onAdd: (keyword: string) => void;
   onCopy: (keyword: string) => void;
-  onIdeas: (keyword: string) => void;
+  onIdeas?: ((keyword: string) => void) | undefined;
   canAdd: boolean;
   adding: boolean;
   siteId?: string | undefined;
@@ -1068,17 +1289,19 @@ const RowGroup = ({
     <>
       <TableRow data-testid={`keyword-research-row-${slug}`}>
         <TableCell>
-          <button
-            type="button"
-            aria-label={t('keywordResearch:toggleRelated', { phrase: metric.keyword })}
-            aria-expanded={expanded}
-            onClick={() => onToggle(metric.keyword)}
-            className="inline-flex items-center justify-center"
-          >
-            {expanded ? <ChevronDown className="h-4 w-4" /> : <ChevronRight className="h-4 w-4 rtl:rotate-180" />}
-          </button>
+          {onToggle ? (
+            <button
+              type="button"
+              aria-label={t('keywordResearch:toggleRelated', { phrase: metric.keyword })}
+              aria-expanded={expanded}
+              onClick={() => onToggle(metric.keyword)}
+              className="inline-flex items-center justify-center"
+            >
+              {expanded ? <ChevronDown className="h-4 w-4" /> : <ChevronRight className="h-4 w-4 rtl:rotate-180" />}
+            </button>
+          ) : null}
         </TableCell>
-        <TableCell>{metric.keyword}</TableCell>
+        <TableCell><Bdi>{metric.keyword}</Bdi></TableCell>
         <TableCell className="text-end tabular-nums">
           {formatVolume(metric.searchVolume, t, i18n.language)}
         </TableCell>
@@ -1112,13 +1335,15 @@ const RowGroup = ({
                 <Copy aria-hidden="true" />
                 {t('keywordResearch:copyKeyword')}
               </DropdownMenuItem>
-              <DropdownMenuItem
-                onSelect={() => onIdeas(metric.keyword)}
-                data-testid={`keyword-research-ideas-${slug}`}
-              >
-                <Lightbulb aria-hidden="true" />
-                {t('keywordResearch:ideasFromRow')}
-              </DropdownMenuItem>
+              {onIdeas ? (
+                <DropdownMenuItem
+                  onSelect={() => onIdeas(metric.keyword)}
+                  data-testid={`keyword-research-ideas-${slug}`}
+                >
+                  <Lightbulb aria-hidden="true" />
+                  {t('keywordResearch:ideasFromRow')}
+                </DropdownMenuItem>
+              ) : null}
               {canAdd ? (
                 <DropdownMenuItem
                   disabled={adding}

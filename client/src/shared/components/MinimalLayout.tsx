@@ -2,6 +2,8 @@ import { Outlet } from 'react-router-dom';
 import { Footer } from './Footer';
 import { Header } from './Header';
 import { ReleaseStageBanner } from './ReleaseStageBanner';
+import { AppTitleBoundary } from './AppTitleBoundary';
+import { SkipLink } from './SkipLink';
 
 /**
  * Guest / pre-auth shell — login, register, password reset, email verification,
@@ -12,12 +14,15 @@ import { ReleaseStageBanner } from './ReleaseStageBanner';
  * no longer re-center, so there is exactly one alignment source.
  */
 export const MinimalLayout = () => (
+  <AppTitleBoundary>
   <div className="flex min-h-dvh flex-col">
+    <SkipLink targetId="main-content" />
     <ReleaseStageBanner />
     <Header />
-    <main className="mx-auto flex w-full max-w-md flex-1 flex-col justify-center px-4 py-12 sm:py-16">
+    <main id="main-content" tabIndex={-1} className="mx-auto flex w-full max-w-md flex-1 flex-col justify-center px-4 py-12 sm:py-16">
       <Outlet />
     </main>
     <Footer />
   </div>
+  </AppTitleBoundary>
 );

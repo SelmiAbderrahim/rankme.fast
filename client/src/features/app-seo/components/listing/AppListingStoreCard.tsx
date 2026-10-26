@@ -1,3 +1,4 @@
+import { Bdi } from '@shared/components/Bdi';
 import { ExternalLink } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 import { safeExternalHref } from '@shared/security';
@@ -37,7 +38,7 @@ export function AppListingStoreCard({
       <CardHeader>
         <CardDescription>{t(`stores.${store}`)}</CardDescription>
         <CardTitle className="break-words">
-          {listing?.title ?? t('notObserved.storeTitle')}
+          <Bdi>{listing?.title ?? t('notObserved.storeTitle')}</Bdi>
         </CardTitle>
       </CardHeader>
       <CardContent className="grid gap-6">
@@ -91,7 +92,7 @@ export function AppListingStoreCard({
               <div>
                 <p className="mb-1 text-sm font-medium">{t('store.description')}</p>
                 <p className="line-clamp-3 whitespace-pre-line text-sm text-muted-foreground">
-                  {listing.description}
+                  <Bdi>{listing.description}</Bdi>
                 </p>
               </div>
             ) : null}

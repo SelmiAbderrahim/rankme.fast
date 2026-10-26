@@ -21,7 +21,7 @@ Einige Ansichten werden noch fertiggestellt. Formulierungen und Layout können s
 
 ## Fehler melden
 
-Nutzen Sie **Fehler melden** im Beta-Banner oben auf der Seite. Der Link öffnet das [GitHub-Formular zum Melden eines Fehlers](https://github.com/SelmiAbderrahim/rankme.fast/issues/new/choose). Wenn Sie das Banner ausgeblendet haben oder kein GitHub-Konto besitzen, schreiben Sie an support@rankme.fast.
+Nutzen Sie **Fehler melden** im Beta-Banner oben auf der Seite. In einem Dialog wählen Sie, wo Sie melden: **GitHub-Auswahl für neue Meldungen öffnen**, wenn die GitHub-Adresse des Projekts für diese Installation eingerichtet ist, oder **Support per E-Mail kontaktieren** an support@rankme.fast. Es wird nichts automatisch gesendet, nennen Sie die folgenden Angaben also selbst. Die E-Mail-Adresse funktioniert auch, wenn Sie das Banner ausgeblendet haben oder kein GitHub-Konto besitzen.
 
 Eine hilfreiche Meldung enthält:
 

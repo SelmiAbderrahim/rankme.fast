@@ -52,7 +52,7 @@ const inertPattern = (max: number, pattern: RegExp) => z
     .refine((value) => !rawHtmlPattern.test(value), 'validation.issue.invalidString');
 const boundedId = z.string().min(1).max(128);
 const objectIdHex = z.string().regex(/^[0-9a-f]{24}$/);
-const profileUuid = z.string().uuid();
+const profileUuid = z.string().guid();
 const sha256Hex = z.string().regex(/^[0-9a-f]{64}$/);
 const nullableUrl = z
     .string()
@@ -300,7 +300,7 @@ export const landscapeCoverageSchema = z
     failedLegs: z.number().int().min(0).max(30),
     truncatedLegs: z.number().int().min(0).max(30),
     unclassifiedSharedRows: z.number().int().min(0).max(1000),
-    rowsByClass: z.record(landscapeClassSchema, z.number().int().min(0).max(LANDSCAPE_MAX_ROWS)),
+    rowsByClass: z.partialRecord(landscapeClassSchema, z.number().int().min(0).max(LANDSCAPE_MAX_ROWS)),
 })
     .strict();
 export const landscapeSourceDateSchema = z

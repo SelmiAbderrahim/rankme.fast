@@ -17,13 +17,15 @@ Kundenberichte machen aus gespeicherten Audit-, Ranking- und Search-Console-Mome
 
 Jeder Bericht vereint die neuesten Audit-Befunde mit Ranking- und Search-Console-Abschnitten, unter Firmenname, Akzentfarbe und Logo Ihres Kontos.
 
+Firmenname, Akzentfarbe und Logo legen Sie auf der Seite **Arbeitsbereich** unter Einstellungen fest (`/settings/workspace`); nur der Eigentümer des Arbeitsbereichs kann sie ändern. Laden Sie das Logo als PNG-, JPEG- oder SVG-Datei mit bis zu 256 KB hoch. Es wird als PNG gespeichert, und eine SVG-Datei mit Skripten oder Verweisen auf andere Dateien wird abgelehnt.
+
 Beim Versand wird nichts neu abgerufen; der Bericht entsteht aus gespeicherten Momentaufnahmen. Deshalb steht jede Zahl neben dem Datum ihrer Beobachtung.
 
 Ein Abschnitt ohne gespeicherte Momentaufnahme wird als noch nicht beobachtet markiert. Mit einer Schätzung wird er nie gefüllt.
 
 ## Zeitpläne
 
-Berichte gehen wöchentlich oder monatlich per E-Mail hinaus. Das Zustellprotokoll hat einen Eintrag je Empfänger: ausstehend, gesendet, fehlgeschlagen oder unterdrückt.
+Berichte gehen wöchentlich oder monatlich per E-Mail hinaus. Das Zustellprotokoll hat einen Eintrag je Empfänger: ausstehend, gesendet, fehlgeschlagen oder unterdrückt. Sie wählen die Zeitzone und die Uhrzeit in dieser Zone, und der Zeitplan behält diese Ortszeit bei, wenn die Uhren auf Sommer- oder Winterzeit umgestellt werden.
 
 Erstellen und Versenden ruft keinen Anbieter auf und verbraucht keine abgerechnete Einheit. Die Kosten entstehen in unserer eigenen Infrastruktur, deshalb begrenzen strukturelle Limits sie stattdessen.
 
@@ -35,10 +37,8 @@ Es gibt kein Login, keine Kommentare und keine Kundenplätze. Wer den Link hat, 
 
 Ein Widerruf wirkt ab der nächsten Anfrage. Wer die Seite nicht schon geladen hat, ist sofort ausgesperrt.
 
-## Tarif und Grenzen
+## Grenzen
 
-Kundenberichte gehören zum Agency-Tarif. Sie können bis zu 20 Zeitpläne und 25 Portallinks anlegen.
-
-Content-Briefings sind in v1-Berichten nicht enthalten. Einheiten und Tarifgrenzen finden Sie unter [Preise](./pricing.de.md).
+Content-Briefings sind in v1-Berichten nicht enthalten. Ein Bericht enthält nur, was bereits erfasst wurde: Ein Abschnitt erscheint, sobald die Schnappschüsse dahinter vorliegen.
 
 [Zurück zum Doku-Index](./index.de.md)

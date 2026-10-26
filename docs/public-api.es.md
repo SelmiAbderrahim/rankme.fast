@@ -15,7 +15,7 @@ Content Intelligence no forma parte de `/api/v1`: iniciar un análisis o cambiar
 
 ## Autenticación
 
-Crea una clave en **Cuenta → Claves de API** (`/profile?tab=api-keys`). La clave completa se muestra **exactamente una vez**: cópiala de inmediato; después solo será visible su prefijo. Puedes tener hasta diez claves activas y revocar cualquiera en cualquier momento. Una clave revocada deja de funcionar de inmediato.
+Crea una clave en **Cuenta → Claves de API** (`/settings/profile?tab=api-keys`). La clave completa se muestra **exactamente una vez**: cópiala de inmediato; después solo será visible su prefijo. Puedes tener hasta diez claves activas y revocar cualquiera en cualquier momento. Una clave revocada deja de funcionar de inmediato.
 
 Envía la clave como token bearer en cada solicitud:
 

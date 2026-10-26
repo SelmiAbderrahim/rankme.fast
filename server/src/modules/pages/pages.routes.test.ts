@@ -3,7 +3,8 @@ import request from 'supertest';
 import { describe, expect, it, vi } from 'vitest';
 import { createPagesRouter } from './pages.routes.js';
 import { PagesError, type PagesService } from './pages.service.js';
-import { translate } from '../../shared/i18n/index.js';
+import { SUPPORTED_LOCALES, translate } from '../../shared/i18n/index.js';
+import { language } from '../../shared/middleware/language.js';
 
 const SITE = '507f1f77bcf86cd799439012';
 const PAGE = 'a'.repeat(43);
@@ -20,6 +21,7 @@ function service(overrides: Partial<PagesService> = {}): PagesService {
 function appFor(mock: PagesService, rateLimit = false, translate = true) {
   const app = express();
   app.use(express.json());
+  app.use(language);
   app.use((req, _res, next) => {
     req.user = { id: 'actor', email: 'actor@example.com', emailVerified: true } as never;
     req.workspaceAccountId = 'workspace';
@@ -37,7 +39,7 @@ describe('Pages routes and controller', () => {
     await request(appFor(mock)).get(`/api/sites/${SITE}/pages?range=7d&limit=50&sort=url&direction=asc&q=alpha`).expect(200, { kind: 'list' });
     expect(mock.list).toHaveBeenCalledWith('workspace', SITE, expect.objectContaining({ range: '7d', limit: 50, sort: 'url', direction: 'asc', q: 'alpha' }));
     await request(appFor(mock)).get(`/api/sites/${SITE}/pages/${PAGE}?range=90d`).expect(200, { kind: 'detail' });
-    expect(mock.detail).toHaveBeenCalledWith('workspace', SITE, PAGE, '90d');
+    expect(mock.detail).toHaveBeenCalledWith('workspace', SITE, PAGE, '90d', 'en');
     await request(appFor(mock)).post(`/api/sites/${SITE}/pages/refresh`).send({}).expect(200, { kind: 'refresh' });
     await request(appFor(mock)).post(`/api/sites/${SITE}/pages/refresh`).expect(200, { kind: 'refresh' });
     expect(mock.refresh).toHaveBeenCalledWith('workspace', SITE);
@@ -78,16 +80,18 @@ describe('Pages routes and controller', () => {
     expect(response.headers['content-language']).toBe('en');
   });
 
-  it('falls back to the stable message key and omits absent error metadata', async () => {
+  it.each(SUPPORTED_LOCALES)('preserves the site-not-found alias and localized copy in %s', async (locale) => {
     const mock = service({ list: vi.fn().mockRejectedValue(new PagesError(404, 'PAGES_SITE_NOT_FOUND', 'pages.errors.siteNotFound')) });
-    const response = await request(appFor(mock, false, false)).get(`/api/sites/${SITE}/pages`).expect(404);
+    const response = await request(appFor(mock, false, false)).get(`/api/sites/${SITE}/pages`).set('x-lang', locale).expect(404);
     expect(response.body).toEqual({
       error: {
-        code: 'PAGES_SITE_NOT_FOUND',
+        code: 'SITE_NOT_FOUND',
+        legacyCode: 'PAGES_SITE_NOT_FOUND',
         messageKey: 'pages.errors.siteNotFound',
-        message: translate('en', 'pages.errors.siteNotFound'),
+        message: translate(locale, 'pages.errors.siteNotFound'),
       },
     });
+    expect(response.headers['content-language']).toBe(locale);
   });
 
   it('sends unknown errors onward', async () => {

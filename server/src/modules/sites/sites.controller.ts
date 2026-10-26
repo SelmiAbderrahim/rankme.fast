@@ -5,13 +5,13 @@ import { requireUserId } from '../../shared/utils/require-user-id.js';
 import { allowedTeamSiteIds } from '../../shared/middleware/team-site-access.js';
 import { sendLocalizedMessage } from '../../shared/i18n/localized-response.js';
 import { extractIp, recordAudit } from '../audit/index.js';
-import { scheduleGoogleSiteAutoMatch } from '../google-connections/index.js';
+import { scheduleGoogleSiteAutoMatch, withGoogleReadiness } from '../google-connections/index.js';
 import { createSiteSchema, listSitesQuerySchema, siteIdParamsSchema, updateSiteSchema, } from './sites.schema.js';
-import { createSite, deleteSite, getSite, listSites, pauseSite, resumeSite, updateSite, } from './sites.service.js';
+import { createSite, deleteSite, getSite, getSiteMarket, listSites, pauseSite, resumeSite, updateSite, } from './sites.service.js';
 export const create: RequestHandler = asyncHandler(async (req, res) => {
     const accountId = requireAccountId(req);
     const body = createSiteSchema.parse(req.body);
-    const site = await createSite(accountId, body);
+    const site = await createSite(accountId, body, { accountLocale: req.language });
     await recordAudit({
         actorUserId: requireUserId(req.user),
         action: 'site.create',
@@ -21,7 +21,8 @@ export const create: RequestHandler = asyncHandler(async (req, res) => {
         metadata: { domain: site.domain },
     });
     await scheduleGoogleSiteAutoMatch(accountId, site.id);
-    sendLocalizedMessage(req, res, 201, 'sites.created', { site });
+    const [withGoogle] = await withGoogleReadiness(accountId, [site]);
+    sendLocalizedMessage(req, res, 201, 'sites.created', { site: withGoogle });
 });
 export const list: RequestHandler = asyncHandler(async (req, res) => {
     const accountId = requireAccountId(req);
@@ -29,20 +30,27 @@ export const list: RequestHandler = asyncHandler(async (req, res) => {
     const page = await listSites(accountId, query, {
         allowedSiteIds: allowedTeamSiteIds(req),
     });
-    res.status(200).json(page);
+    res.status(200).json({ ...page, sites: await withGoogleReadiness(accountId, page.sites) });
 });
 export const getOne: RequestHandler = asyncHandler(async (req, res) => {
     const accountId = requireAccountId(req);
     const { id } = siteIdParamsSchema.parse(req.params);
     const site = await getSite(accountId, id);
-    res.status(200).json({ site });
+    const [withGoogle] = await withGoogleReadiness(accountId, [site]);
+    res.status(200).json({ site: withGoogle });
+});
+export const market: RequestHandler = asyncHandler(async (req, res) => {
+    const accountId = requireAccountId(req);
+    const { id } = siteIdParamsSchema.parse(req.params);
+    res.status(200).json({ market: await getSiteMarket(accountId, id) });
 });
 export const update: RequestHandler = asyncHandler(async (req, res) => {
     const accountId = requireAccountId(req);
     const { id } = siteIdParamsSchema.parse(req.params);
     const body = updateSiteSchema.parse(req.body);
     const site = await updateSite(accountId, id, body);
-    sendLocalizedMessage(req, res, 200, 'sites.updated', { site });
+    const [withGoogle] = await withGoogleReadiness(accountId, [site]);
+    sendLocalizedMessage(req, res, 200, 'sites.updated', { site: withGoogle });
 });
 export const pause: RequestHandler = asyncHandler(async (req, res) => {
     const accountId = requireAccountId(req);
@@ -56,7 +64,8 @@ export const pause: RequestHandler = asyncHandler(async (req, res) => {
         ip: extractIp(req),
         metadata: { domain: site.domain },
     });
-    sendLocalizedMessage(req, res, 200, 'sites.paused', { site });
+    const [withGoogle] = await withGoogleReadiness(accountId, [site]);
+    sendLocalizedMessage(req, res, 200, 'sites.paused', { site: withGoogle });
 });
 export const resume: RequestHandler = asyncHandler(async (req, res) => {
     const accountId = requireAccountId(req);
@@ -71,7 +80,8 @@ export const resume: RequestHandler = asyncHandler(async (req, res) => {
         metadata: { domain: site.domain },
     });
     await scheduleGoogleSiteAutoMatch(accountId, site.id);
-    sendLocalizedMessage(req, res, 200, 'sites.resumed', { site });
+    const [withGoogle] = await withGoogleReadiness(accountId, [site]);
+    sendLocalizedMessage(req, res, 200, 'sites.resumed', { site: withGoogle });
 });
 export const remove: RequestHandler = asyncHandler(async (req, res) => {
     const accountId = requireAccountId(req);

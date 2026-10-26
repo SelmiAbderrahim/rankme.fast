@@ -257,7 +257,14 @@ const slice = createSlice({
       .addCase(addPortfolioCompetitor.rejected, (state, action) => {
         if (state.intelligence.siteId !== action.meta.arg.siteId) return;
         state.intelligence.mutationKey = null;
-        state.intelligence.mutationError = action.payload ?? '';
+        // A field-level URL error on the manual form is shown on the input
+        // itself; any other rejection keeps the card-level alert, preferring
+        // the specific field message over the generic validation envelope.
+        const urlError = action.meta.urlError ?? null;
+        state.intelligence.mutationError =
+          action.meta.arg.source === 'manual' && urlError !== null
+            ? ''
+            : (urlError ?? action.payload ?? '');
       })
       .addCase(mutatePortfolioCompetitor.pending, (state, action) => {
         state.intelligence.mutationKey = action.meta.arg.competitorId;

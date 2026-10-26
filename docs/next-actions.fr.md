@@ -27,13 +27,15 @@ Les mêmes données donnent toujours le même ordre, et il n'y a pas de score ca
 
 Vous pouvez **Planifier**, **Ignorer**, **Terminer** ou **Rouvrir** un élément. Chaque décision s'ajoute à son historique ; rien n'est écrasé ni supprimé.
 
+La liste s’ouvre sur les éléments **Ouvertes et planifiées**. Choisissez **Toutes** dans le filtre **État** pour inclure les éléments écartés et terminés ; le choix reste dans l’adresse de la page (`state=all`), un lien le conserve donc. Une carte que vous traitez reste en place jusqu’au prochain chargement de la liste. Les URL concernées sur une carte sont des liens. Quand une carte n’en montre qu’un échantillon, **Voir les N URL dans le rapport** ouvre la liste complète.
+
 ## Ignorer un constat ne modifie pas l'audit
 
 Si vous ignorez un constat d'audit comme faux positif, il quitte la liste. Le rapport d'audit, lui, ne change pas : le constat y reste tel qu'il a été relevé.
 
 ## Marquer un constat comme corrigé
 
-Marquez un constat d'audit comme corrigé une fois la modification faite. Les décisions sont conservées par constat, donc un audit ultérieur ne les réinitialise pas. Si un audit ultérieur trouve encore le même problème, l'élément est signalé comme *toujours détecté après avoir été marqué corrigé* au lieu de rester discrètement fermé.
+Marquez un constat d’audit comme corrigé une fois la modification faite. Les décisions sont conservées par constat, un audit ultérieur ne les réinitialise donc pas. Si un audit terminé après ce marquage signale encore le même constat, RankMeFast le rouvre automatiquement et consigne le changement dans l’historique de l’élément. Un audit terminé avant le marquage ne le rouvre jamais.
 
 ## Retester
 

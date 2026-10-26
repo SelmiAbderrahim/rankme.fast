@@ -48,6 +48,7 @@
   "pauseFailed": "无法暂停该网站。",
   "resumeFailed": "无法恢复该网站。",
   "paused": {
+    "actionBlocked": "恢复此网站以运行检查、审核或计划任务。",
     "chip": "已暂停",
     "menuPause": "暂停网站",
     "menuResume": "恢复网站",
@@ -59,15 +60,17 @@
     "banner": "此网站已暂停——不会运行任何检查或审核。暂停于{{when}}。",
     "resumeCta": "恢复",
     "pausing": "正在暂停…",
-    "resuming": "正在恢复…"
+    "resuming": "正在恢复…",
+    "optionSuffix": "已暂停",
+    "help": "已暂停：审计、排名检查、每周报告、内容监控和提醒均已关闭。报告和历史记录仍可查看。恢复后即可重新开启。"
   },
   "errors": {
-    "urlRequired": "请输入您的网站网址。",
-    "urlTooLong": "该网址过长（最多 2048 个字符）。",
+    "urlRequired": "请输入您的网站网址，例如 https://example.com。",
+    "urlTooLong": "请输入不超过 2048 个字符的网址。",
     "urlInvalid": "请输入有效的网址，例如 https://example.com。",
-    "urlScheme": "仅支持 http:// 和 https:// 网址。",
+    "urlScheme": "请输入以 http:// 或 https:// 开头的网址。",
     "urlUserinfo": "请从网址中移除用户名和密码。",
-    "urlIpLiteral": "不支持 IP 地址——请使用域名。",
+    "urlIpLiteral": "请输入域名，而不是 IP 地址。",
     "urlNoTld": "请输入完整的域名，例如 https://example.com。"
   },
   "workspace": {
@@ -88,7 +91,7 @@
       "localSeo": "本地 SEO",
       "reviews": "评价",
       "geogrid": "地理网格",
-      "content": "内容",
+      "content": "内容分析",
       "internalLinks": "内部链接",
       "cannibalization": "关键词蚕食",
       "audienceResearch": "受众研究",
@@ -103,7 +106,32 @@
     },
     "navigationLabel": "工作区视图",
     "activeGroupLabel": "{{group}} · {{current}}",
-    "upgradeHint": "升级您的方案以解锁该标签页。"
+    "switchSite": "切换网站",
+    "loadingSite": "正在加载网站…",
+    "filterSites": "筛选网站…",
+    "filterPages": "筛选页面…",
+    "choosePage": "选择页面",
+    "choosePageDescription": "打开网站页面。",
+    "siblingPages": "此分组中的页面",
+    "noSites": "未找到网站",
+    "navLandmark": "网站",
+    "switchSiteNamed": "切换网站 · {{site}}",
+    "currentSite": "当前网站",
+    "recentSites": "最近",
+    "allSites": "所有网站",
+    "noSitesMatch": "没有与“{{query}}”匹配的网站",
+    "addSite": "添加网站",
+    "manageSites": "管理网站",
+    "collapseSiteMenu": "收起网站菜单",
+    "expandSiteMenu": "展开网站菜单",
+    "filterPagesShort": "筛选页面",
+    "clearFilter": "清除筛选",
+    "noPagesMatch": "没有与“{{query}}”匹配的页面",
+    "unknownTab": {
+      "title": "该版块不存在",
+      "body": "此工作区无法使用该版块，因此改为显示概览。"
+    },
+    "unknownSite": "未知站点"
   },
   "overview": {
     "next": {
@@ -124,9 +152,10 @@
     },
     "search": {
       "title": "搜索表现",
-      "description": "来自最新审计中的 Search Console 快照。",
+      "description": "最近 28 天的最新 Google Search Console 数据。",
       "topQuery": "热门查询",
-      "openGoogle": "打开 Google 数据"
+      "openGoogle": "打开 Google 数据",
+      "asOf": "数据截至 {{date}}"
     },
     "pageSpeed": {
       "title": "站点体验",
@@ -134,6 +163,8 @@
       "accessibility": "无障碍",
       "seo": "SEO",
       "coreWebVitals": "核心网页指标",
+      "coreWebVitalsSource": "真实访客数据：取所有抽样页面中最差的结果。",
+      "coreWebVitalsNoFieldData": "Google 目前还没有抽样页面的真实访客数据。",
       "noAuditTitle": "暂无页面速度结果",
       "noAuditBody": "运行首次审计以查看移动端 PageSpeed 结果。",
       "notMeasuredTitle": "未测量页面速度",
@@ -154,13 +185,12 @@
     "competitors": {
       "open": "打开竞争对手",
       "notLoadedTitle": "竞争对手数据可按需获取",
-      "notLoadedDescription": "打开竞争对手以执行一次查询。概览会复用该结果，不会再次消耗查询次数。"
+      "notLoadedDescription": "在“竞争对手”页面添加您已知的竞争对手，或预览一次发现刷新。确认刷新之前不会获取任何数据。"
     },
     "unlock": {
       "title": "还有更多洞察可用",
       "backlinksAndCompetitors": "升级以查看反向链接强度和竞争重叠。",
-      "competitors": "升级到 Agency 以查看竞争重叠和关键词差距。",
-      "openPlans": "比较套餐"
+      "competitors": "升级到 Agency 以查看竞争重叠和关键词差距。"
     },
     "statError": "无法加载",
     "meta": {
@@ -205,5 +235,40 @@
   "lookupFailed": {
     "title": "无法加载此网站",
     "description": "暂时无法检查此网站，请稍后重试。"
-  }
+  },
+  "picker": {
+    "loading": "正在加载您的站点…",
+    "loadFailed": "无法加载您的站点。",
+    "empty": "您还没有站点。",
+    "addSite": "添加站点",
+    "truncated": "此处仅列出您的前 {{shown, number}} 个站点。"
+  },
+  "market": {
+    "menuItem": "默认市场",
+    "title": "默认市场",
+    "description": "排名跟踪、关键词研究和其他工具都会从这个国家/地区、语言和设备开始。您仍可在每个工具中选择其他市场。网站：",
+    "inferredNote": "我们根据网站地址和语言选择了这个市场。如有错误，请修改。",
+    "country": "国家/地区",
+    "language": "语言",
+    "device": "设备",
+    "devices": {
+      "desktop": "桌面设备",
+      "mobile": "移动设备"
+    },
+    "save": "保存市场",
+    "saving": "正在保存…",
+    "cancel": "取消",
+    "saveFailed": "无法保存默认市场，请重试。"
+  },
+  "list": {
+    "columnLastAudit": "最近审计",
+    "columnHealth": "健康状况",
+    "columnKeywords": "关键词",
+    "noAudit": "尚未审计",
+    "auditStatus": {
+      "failed": "审计失败",
+      "unavailable": "审计不可用"
+    }
+  },
+  "openTabHint": "选择一个站点以打开其“{{tab}}”部分。"
 }

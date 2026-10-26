@@ -4,7 +4,12 @@
   "status": {
     "loading": "Chargement des actions…",
     "refreshing": "Actualisation des actions…",
-    "showing": "{{count}} actions affichées"
+    "showing_one": "{{count}} action affichée",
+    "showing_zero": "{{count}} action affichée",
+    "showing_two": "{{count}} actions affichées",
+    "showing_few": "{{count}} actions affichées",
+    "showing_many": "{{count}} actions affichées",
+    "showing_other": "{{count}} actions affichées"
   },
   "errors": {
     "loadFailed": "Impossible de charger vos actions. Veuillez réessayer.",
@@ -18,6 +23,7 @@
     "label": "Filtrer les actions",
     "reset": "Réinitialiser les filtres",
     "all": "Toutes",
+    "openAndPlanned": "Ouvertes et planifiées",
     "state": "État",
     "source": "Source",
     "severity": "Gravité",
@@ -43,7 +49,8 @@
     "ga4_decline": "Baisse Analytics",
     "content_recommendation": "Recommandation de contenu",
     "citation_gap": "Lacune de citation IA",
-    "audience_research": "Étude d'audience"
+    "audience_research": "Étude d'audience",
+    "competitor_opportunity": "Opportunité concurrentielle"
   },
   "severity": {
     "critical": "Critique",
@@ -69,22 +76,50 @@
   "freshness": {
     "fresh": "Récent",
     "stale": "Obsolète",
-    "unavailable": "Non vérifié"
+    "unavailable": "Non vérifié",
+    "partial": "Partiel",
+    "blocked": "Bloqué",
+    "failed": "Échec",
+    "unknown": "Fraîcheur inconnue"
   },
   "card": {
     "nextStep": "Prochaine étape",
     "observedAt": "Observé le {{date}}",
     "openSource": "Ouvrir la vue source",
     "affectedNone": "À l'échelle du site",
-    "affectedOne": "1 URL concernée",
-    "affectedCount": "{{count}} URL concernées",
+    "affectedCount_one": "{{count}} URL concernée",
     "evidence": "Preuves",
-    "evidenceLabel": "{{source}} · {{date}}",
+    "evidenceLabel": "{{source}} · {{date}} · {{detail}}",
     "evidenceLink": "Ouvrir la source de la preuve",
     "history": "Historique",
     "retest": "Retester",
-    "affectedSample": "({{shown}} affichées)",
-    "noteLabel": "Note"
+    "noteLabel": "Note",
+    "affectedCount_zero": "{{count}} URL concernée",
+    "affectedCount_two": "{{count}} URL concernées",
+    "affectedCount_few": "{{count}} URL concernées",
+    "affectedCount_many": "{{count}} URL concernées",
+    "affectedCount_other": "{{count}} URL concernées",
+    "affectedCountSampled_zero": "{{count}} URL concernée (affichage de {{shown}})",
+    "affectedCountSampled_one": "{{count}} URL concernée (affichage de {{shown}})",
+    "affectedCountSampled_two": "{{count}} URL concernées (affichage de {{shown}})",
+    "affectedCountSampled_few": "{{count}} URL concernées (affichage de {{shown}})",
+    "affectedCountSampled_many": "{{count}} URL concernées (affichage de {{shown}})",
+    "affectedCountSampled_other": "{{count}} URL concernées (affichage de {{shown}})",
+    "seeAllUrls_zero": "Voir {{count}} URL dans le rapport",
+    "seeAllUrls_one": "Voir {{count}} URL dans le rapport",
+    "seeAllUrls_two": "Voir les {{count}} URL dans le rapport",
+    "seeAllUrls_few": "Voir les {{count}} URL dans le rapport",
+    "seeAllUrls_many": "Voir les {{count}} URL dans le rapport",
+    "seeAllUrls_other": "Voir les {{count}} URL dans le rapport",
+    "seeLinkTargets_zero": "Voir {{count}} page et les liens cassés vers lesquels elle pointe dans le rapport",
+    "seeLinkTargets_one": "Voir {{count}} page et les liens cassés vers lesquels elle pointe dans le rapport",
+    "seeLinkTargets_two": "Voir les {{count}} pages et les liens cassés vers lesquels elles pointent dans le rapport",
+    "seeLinkTargets_few": "Voir les {{count}} pages et les liens cassés vers lesquels elles pointent dans le rapport",
+    "seeLinkTargets_many": "Voir les {{count}} pages et les liens cassés vers lesquels elles pointent dans le rapport",
+    "seeLinkTargets_other": "Voir les {{count}} pages et les liens cassés vers lesquels elles pointent dans le rapport",
+    "linkSourcesCount": "Pages avec des liens cassés : {{count}}",
+    "staleRetestHint": "Cette preuve n’est plus à jour. Relancez un test pour la vérifier à nouveau.",
+    "linkSourcesCountSampled": "Pages avec des liens cassés : {{count}} (affichage de {{shown}})"
   },
   "transitions": {
     "planned": "Planifier",
@@ -110,7 +145,14 @@
     "confirm": "Confirmer",
     "saving": "Enregistrement…",
     "conflict": "Quelqu'un d'autre a modifié cette action en premier. Rechargez-la et réessayez.",
-    "conflictReload": "Recharger l'action"
+    "conflictReload": "Recharger l'action",
+    "reasonLabel": "Pourquoi écartez-vous ce constat ?",
+    "reasons": {
+      "false_positive": "Faux positif",
+      "wont_fix": "Ne sera pas corrigé",
+      "fixed_elsewhere": "Corrigé ailleurs",
+      "other": "Autre raison"
+    }
   },
   "history": {
     "title": "Historique de l'action",
@@ -118,7 +160,9 @@
     "actor": "Membre de l'équipe",
     "from": "depuis {{state}}",
     "close": "Fermer",
-    "actorYou": "Vous"
+    "actorYou": "Vous",
+    "observed": "Constaté",
+    "actorSystem": "Contrôle automatique"
   },
   "retest": {
     "title": "Retester ce constat ?",
@@ -127,8 +171,6 @@
     "unitsValue": "1",
     "freshRun": "Un retest lance toujours une exploration à neuf — les résultats ne proviennent jamais d'un cache.",
     "selfHosted": "Les limites d’utilisation ne sont pas appliquées sur ce serveur.",
-    "remaining": "{{remaining}} audits restants sur {{cap}} pour cette période",
-    "allowanceUnknown": "Impossible de charger votre quota restant. Le serveur vérifiera votre limite avant l'exécution.",
     "confirm": "Lancer le retest",
     "starting": "Lancement…",
     "queued": "Retest en file d'attente. Suivez la progression dans l'onglet Rapport.",
@@ -154,6 +196,8 @@
     "dismissedLabel": "Écarté comme faux positif",
     "fixCta": "Marquer comme corrigé",
     "fixedLabel": "Marqué comme corrigé",
-    "reappearedLabel": "Toujours détecté après avoir été marqué corrigé"
+    "reappearedLabel": "Toujours détecté après avoir été marqué corrigé",
+    "notCounted": "Exclus de ces totaux — écartés : {{dismissed}}, marqués comme corrigés : {{completed}}.",
+    "fixedGroupIn": "Marqués comme corrigés dans {{tab}} ({{count}})"
   }
 }

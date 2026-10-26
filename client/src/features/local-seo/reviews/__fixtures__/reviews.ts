@@ -18,7 +18,7 @@ export const reviewSource = (overrides: Partial<ReviewSource> = {}): ReviewSourc
   id: 'src-google',
   profileId: 'site-1',
   source: 'google',
-  target: 'ChIJexample',
+  target: 'ChIJexample0123456789abc',
   createdAt: '2026-07-01T00:00:00.000Z',
   updatedAt: '2026-07-01T00:00:00.000Z',
   ...overrides,

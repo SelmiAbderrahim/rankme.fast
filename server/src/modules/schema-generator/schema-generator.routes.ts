@@ -10,7 +10,7 @@
  */
 import { Router } from 'express';
 import { createBatchRateLimiter } from '../../shared/middleware/rate-limit.js';
-import { createGenerationController, downloadGenerationController, getGenerationController, getSourcesController, getTypesController, listGenerationsController, previewGenerationController, } from './schema-generator.controller.js';
+import { createGenerationController, downloadGenerationController, getGenerationController, getSourcesController, getTypesController, listGenerationsController, previewGenerationController, regenerateGenerationController, } from './schema-generator.controller.js';
 export function createSchemaGeneratorRouter(): Router {
     const router = Router();
     const createLimiter = createBatchRateLimiter('schema_generator_create');
@@ -19,6 +19,9 @@ export function createSchemaGeneratorRouter(): Router {
     router.get('/sources', pollLimiter, getSourcesController);
     router.post('/preview', createLimiter, previewGenerationController);
     router.post('/generations', createLimiter, createGenerationController);
+    // Rebuild with user-supplied facts; it writes a generation, so it shares the
+    // create bucket rather than the read bucket.
+    router.post('/generations/:generationId/regenerate', createLimiter, regenerateGenerationController);
     router.get('/generations', pollLimiter, listGenerationsController);
     router.get('/generations/:generationId', pollLimiter, getGenerationController);
     router.get('/generations/:generationId/download', pollLimiter, downloadGenerationController);

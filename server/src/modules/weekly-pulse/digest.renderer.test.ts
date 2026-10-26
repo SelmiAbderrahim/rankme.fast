@@ -9,6 +9,7 @@
  * behaviour against PGlite.
  */
 import { afterAll, beforeAll, beforeEach, describe, expect, it, vi } from 'vitest';
+import { env } from '../../config/env.js';
 import {
   getTestDb,
   startTestPostgres,
@@ -473,13 +474,30 @@ describe('buildPayload — pure digest projection', () => {
     expect(out.gsc_appearance).toEqual({ status: 'unavailable', window: null, rows: [] });
   });
 
-  it('derives every deep link from CLIENT_URL (no hardcoded origin)', () => {
+  it('derives every deep link from the app origin (no hardcoded origin)', () => {
     const links = buildDeepLinks('run-1', 'site-1');
     expect(links.digest).toMatch(/\?tab=ai-visibility&pulse=run-1$/);
     for (const url of Object.values(links)) {
       // Every URL is either absolute or path — reject accidental fragment/js:.
       expect(url).not.toMatch(/^javascript:/i);
       expect(url).not.toMatch(/^data:/i);
+    }
+  });
+
+  it('links only to routes the app serves: /sites/:id, never the non-existent /dashboard/sites', () => {
+    const base = env.APP_URL.replace(/\/+$/, '');
+    const links = buildDeepLinks('run 1', 'site/1');
+    const site = `${base}/sites/site%2F1`;
+    expect(links).toEqual({
+      digest: `${site}?tab=ai-visibility&pulse=run%201`,
+      aiVisibility: `${site}?tab=ai-visibility`,
+      google: `${site}?tab=google`,
+      contentIntelligence: `${site}?tab=content`,
+      audienceResearch: `${site}?tab=audience-research`,
+      nextActions: `${site}?tab=actions`,
+    });
+    for (const url of Object.values(links)) {
+      expect(url).not.toContain('/dashboard/');
     }
   });
 

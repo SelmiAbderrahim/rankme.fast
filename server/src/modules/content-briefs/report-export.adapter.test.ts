@@ -68,6 +68,8 @@ beforeEach(() => {
   mocked.brief.mockReset().mockResolvedValue(brief());
   vi.mocked(getSite).mockReset().mockResolvedValue({
     id: siteId, url: 'https://example.test', domain: 'example.test', displayName: 'Brief Site',
+    defaultMarket: null,
+    localBusiness: false,
     paused: false, pausedAt: null, createdAt: requestedAt, updatedAt: terminalAt,
   });
 });
@@ -115,6 +117,8 @@ describe('content brief report export adapter', () => {
     }));
     vi.mocked(getSite).mockResolvedValue({
       id: siteId, url: 'https://example.test', domain: 'example.test', displayName: '',
+      defaultMarket: null,
+      localBusiness: false,
       paused: false, pausedAt: null, createdAt: requestedAt, updatedAt: requestedAt,
     });
     const result = await adapter.compose(compose({ sections: ['draft'] }));

@@ -15,19 +15,37 @@ import { HttpError } from '../../shared/utils/http-error.js';
 import { Site } from '../sites/index.js';
 import { assertSiteNotPaused } from '../sites/sites.guard.js';
 import { SerpClusterRun } from './keyword-clusters.model.js';
-import { readKeywordClusterReadiness, type KeywordClusterBlockedKeyword, } from './keyword-clusters.readiness.js';
-import { KEYWORD_CLUSTER_MAX_BLOCKED_DISCLOSED, KEYWORD_CLUSTER_MIN_READY_KEYWORDS, KEYWORD_CLUSTER_MIN_SHARED_URLS, KEYWORD_CLUSTER_OBSERVATION_FRESHNESS_DAYS, KEYWORD_CLUSTER_RULES_VERSION, KEYWORD_CLUSTER_TOP_URLS, keywordClusterSetSchema, type KeywordCluster, type KeywordClusterAiStatus, type KeywordClusterErrorCategory, type KeywordClusterRunStatus, } from './keyword-clusters.schemas.js';
+import { evaluateClusterEligibility, type KeywordClusterBlockingReason, type KeywordClusterIneligibleKeyword, } from './keyword-clusters.readiness.js';
+import { KEYWORD_CLUSTER_MAX_BLOCKED_DISCLOSED, KEYWORD_CLUSTER_MIN_READY_KEYWORDS, KEYWORD_CLUSTER_MIN_SHARED_URLS, KEYWORD_CLUSTER_OBSERVATION_FRESHNESS_DAYS, KEYWORD_CLUSTER_RULES_VERSION, KEYWORD_CLUSTER_TOP_URLS, KEYWORD_CLUSTER_BLOCK_REASONS, keywordClusterSetSchema, type KeywordCluster, type KeywordClusterBlockReason, type KeywordClusterStoredBlockReason, type KeywordClusterAiStatus, type KeywordClusterErrorCategory, type KeywordClusterRunStatus, } from './keyword-clusters.schemas.js';
 const NOT_FOUND_KEY = 'keywordClusters.errors.notFound';
 const UNAVAILABLE_KEY = 'keywordClusters.errors.productUnavailable';
 const NOT_ENOUGH_KEY = 'keywordClusters.errors.notEnoughKeywords';
 const QUEUE_FAILED_KEY = 'keywordClusters.errors.queueFailed';
-export type KeywordClusterBlockedDto = KeywordClusterBlockedKeyword;
+export interface KeywordClusterBlockedDto {
+    keywordId: string;
+    phrase: string;
+    reason: KeywordClusterStoredBlockReason;
+    observedAt: string | null;
+}
+/**
+ * The preview's eligibility summary. The banner renders from `canRun` /
+ * `blockingReasonCode` and these counts only.
+ */
+export interface KeywordClusterEligibilityDto {
+    canRun: boolean;
+    blockingReasonCode: KeywordClusterBlockingReason | null;
+    total: number;
+    eligibleCount: number;
+    ineligibleCount: number;
+    reasonCounts: Record<KeywordClusterBlockReason, number>;
+}
 export interface KeywordClusterPreviewDto {
     ready: boolean;
     reason: 'notEnoughKeywords' | null;
     readyCount: number;
     blocked: KeywordClusterBlockedDto[];
     blockedTotal: number;
+    eligibility: KeywordClusterEligibilityDto;
     minSharedUrls: number;
     topUrlWindow: number;
     freshnessDays: number;
@@ -175,7 +193,7 @@ export interface KeywordClustersServiceDeps {
     db: Db;
     queue: Queue | null;
     now?: () => Date;
-    readReadinessFn?: typeof readKeywordClusterReadiness;
+    evaluateEligibilityFn?: typeof evaluateClusterEligibility;
     enqueueFn?: (queue: Queue, payload: KeywordClusterJob) => Promise<unknown>;
 }
 export interface KeywordClusterRunRequest {
@@ -184,32 +202,49 @@ export interface KeywordClusterRunRequest {
     keywordIds?: readonly string[];
     locale: string;
 }
-async function loadReadiness(input: {
+async function loadEligibility(input: {
     siteId: string;
     keywordIds?: readonly string[];
 }, deps: KeywordClustersServiceDeps) {
     const now = (deps.now ?? (() => new Date()))();
-    return (deps.readReadinessFn ?? readKeywordClusterReadiness)(deps.db, {
+    return (deps.evaluateEligibilityFn ?? evaluateClusterEligibility)(deps.db, {
         siteId: input.siteId,
         keywordIds: input.keywordIds,
         now,
     });
 }
+function toBlockedDto(row: KeywordClusterIneligibleKeyword): KeywordClusterBlockedDto {
+    return { keywordId: row.keywordId, phrase: row.phrase, reason: row.reasonCode, observedAt: row.observedAt };
+}
+function countReasons(ineligible: readonly KeywordClusterIneligibleKeyword[]): Record<KeywordClusterBlockReason, number> {
+    const counts = Object.fromEntries(KEYWORD_CLUSTER_BLOCK_REASONS.map((reason) => [reason, 0])) as Record<KeywordClusterBlockReason, number>;
+    for (const row of ineligible)
+        counts[row.reasonCode] += 1;
+    return counts;
+}
 export async function previewKeywordClusterRun(input: KeywordClusterRunRequest, deps: KeywordClustersServiceDeps): Promise<KeywordClusterPreviewDto> {
     await requireOwnedSite(input.accountId, input.siteId);
     requireEnabled();
-    const { ready, blocked } = await loadReadiness(input, deps);
+    const { eligible, ineligible, canRun, blockingReasonCode } = await loadEligibility(input, deps);
     const base = {
-        readyCount: ready.length,
-        blocked: blocked.slice(0, KEYWORD_CLUSTER_MAX_BLOCKED_DISCLOSED),
-        blockedTotal: blocked.length,
+        readyCount: eligible.length,
+        blocked: ineligible.slice(0, KEYWORD_CLUSTER_MAX_BLOCKED_DISCLOSED).map(toBlockedDto),
+        blockedTotal: ineligible.length,
+        eligibility: {
+            canRun,
+            blockingReasonCode,
+            total: eligible.length + ineligible.length,
+            eligibleCount: eligible.length,
+            ineligibleCount: ineligible.length,
+            reasonCounts: countReasons(ineligible),
+        },
         minSharedUrls: KEYWORD_CLUSTER_MIN_SHARED_URLS,
         topUrlWindow: KEYWORD_CLUSTER_TOP_URLS,
         freshnessDays: KEYWORD_CLUSTER_OBSERVATION_FRESHNESS_DAYS,
         minKeywords: KEYWORD_CLUSTER_MIN_READY_KEYWORDS,
     };
-    if (ready.length < KEYWORD_CLUSTER_MIN_READY_KEYWORDS ||
-        blocked.length > 0) {
+    // Ineligible keywords are left out and named; only too few eligible ones block.
+    if (!canRun) {
         return {
             ...base,
             ready: false,
@@ -226,11 +261,10 @@ export async function startKeywordClusterRun(input: KeywordClusterRunRequest, de
     requireEnabled();
     if (!deps.queue)
         throw new HttpError(503, { code: 'UNAVAILABLE', messageKey: UNAVAILABLE_KEY });
-    const { ready, blocked } = await loadReadiness(input, deps);
+    const { eligible: ready, ineligible, canRun } = await loadEligibility(input, deps);
     // Refused BEFORE a run record exists: a site that cannot produce a cluster
     // never queues work.
-    if (ready.length < KEYWORD_CLUSTER_MIN_READY_KEYWORDS ||
-        blocked.length > 0) {
+    if (!canRun) {
         throw new HttpError(409, { code: 'NOT_ENOUGH', messageKey: NOT_ENOUGH_KEY });
     }
     const runId = new Types.ObjectId();
@@ -246,7 +280,7 @@ export async function startKeywordClusterRun(input: KeywordClusterRunRequest, de
         minSharedUrls: KEYWORD_CLUSTER_MIN_SHARED_URLS,
         topUrlWindow: KEYWORD_CLUSTER_TOP_URLS,
         keywordCount: ready.length,
-        blockedCount: 0,
+        blockedCount: ineligible.length,
         keywordIds: ready.map((keyword) => keyword.keywordId),
         inputs: ready.map((keyword) => ({
             keywordId: keyword.keywordId,
@@ -254,7 +288,13 @@ export async function startKeywordClusterRun(input: KeywordClusterRunRequest, de
             observedAt: new Date(keyword.observedAt),
             topUrls: keyword.topUrls.slice(0, KEYWORD_CLUSTER_TOP_URLS),
         })),
-        blocked: [],
+        // Left-out keywords are recorded with their reason (bounded like the preview).
+        blocked: ineligible.slice(0, KEYWORD_CLUSTER_MAX_BLOCKED_DISCLOSED).map((row) => ({
+            keywordId: row.keywordId,
+            phrase: row.phrase,
+            reason: row.reasonCode,
+            observedAt: row.observedAt === null ? null : new Date(row.observedAt),
+        })),
         clusters: [],
         requestedAt: now,
     });

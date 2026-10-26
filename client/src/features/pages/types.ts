@@ -1,3 +1,6 @@
+import type { PositionChangeValue } from '@shared/components/PositionDelta';
+import type { CrawlStopReason, CrawlStopReasonSource } from '@shared/components/CrawlStopReasonNote';
+
 export const PAGES_RANGES = ['7d', '28d', '90d'] as const;
 export type PagesRange = (typeof PAGES_RANGES)[number];
 
@@ -7,6 +10,7 @@ export const PAGES_INSIGHTS = [
   'declining',
   'winning',
   'non_indexable_visibility',
+  'low_data',
   'unmeasured',
 ] as const;
 export type PagesInsight = (typeof PAGES_INSIGHTS)[number];
@@ -79,7 +83,17 @@ export type PagesPerformanceSource = Exclude<PagesSource, 'none'> | null;
 export interface PagesMarket {
   locationCode: number;
   languageCode: string;
-  selection: 'tracked_keyword_mode' | 'default';
+  selection: 'site_default' | 'tracked_keyword_mode' | 'default';
+}
+
+export interface PagesLastCrawl {
+  finishedAt: string | null;
+  pageCap: number;
+  pagesStored: number | null;
+  vendorPagesCrawled: number | null;
+  stopReason: CrawlStopReason | null;
+  stopReasonSource?: CrawlStopReasonSource | null;
+  sitemapFound: boolean | null;
 }
 
 export interface PagesCoverage {
@@ -101,8 +115,10 @@ export interface PagesCoverage {
   auditRowsDropped: number;
   auditTruncated: boolean;
   inventoryPages: number;
+  redirectPages?: number;
   measuredPages: number;
   unmeasuredPages: number;
+  lastCrawl?: PagesLastCrawl | null;
 }
 
 export interface PageMetrics {
@@ -115,12 +131,28 @@ export interface PageMetrics {
   searchVolume: number | null;
   difficulty: number | null;
   estimatedTraffic: number | null;
-  associatedQueryCount: number;
+  associatedQueryCount: number | null;
+}
+
+export type PageAssociatedQueryState = 'observed' | 'anonymized' | 'unavailable';
+export type CrawlState = 'indexable' | 'non_indexable' | 'redirected' | 'failed' | 'not_in_crawl' | 'no_crawl';
+export type CrawlFailureKind = 'http_error' | 'redirect_loop' | 'redirect_limit' | 'unsafe_redirect' | 'robots_blocked' | 'timeout' | 'non_html' | 'unreachable';
+export interface CrawlEvidence {
+  source: 'crawl' | 'probe';
+  statusCode: number | null;
+  finalUrl: string | null;
+  redirectChain: Array<{ url: string; status: number }>;
+  contentType: string | null;
+  failure: { kind: CrawlFailureKind; statusCode?: number; contentType?: string } | null;
+  nonIndexableReason: string | null;
 }
 
 export interface PageDeltas {
+  /** `previous − current` average position; a sort key only. Render `position`. */
   positionChange: number | null;
   clickChangePct: number | null;
+  /** Explicit position change; absent on older responses. */
+  position?: PositionChangeValue;
 }
 
 export interface PageRow {
@@ -132,9 +164,15 @@ export interface PageRow {
   isIndexable: boolean | null;
   nonIndexableReason: string | null;
   onPageScore: number | null;
+  /** One crawl state for the list AND the inspector. `isIndexable` remains for filters. */
+  crawlState: CrawlState;
+  crawlEvidence: CrawlEvidence | null;
   metrics: PageMetrics;
+  associatedQueryState: PageAssociatedQueryState;
   deltas: PageDeltas;
   insights: PagesInsight[];
+  crawledAs?: string;
+  redirectsTo?: string;
 }
 
 export interface PagesEnvelope {
@@ -149,6 +187,7 @@ export interface PagesEnvelope {
     label: 'since_previous_sync';
     previousObservedAt: string | null;
   };
+  dataWindow?: { startDate: string; endDate: string } | null;
   market: PagesMarket | null;
   coverage: PagesCoverage;
 }
@@ -196,6 +235,23 @@ export interface PagesDetailResponse {
     truncated: boolean;
   };
   trend: TrendPoint[];
+  audit?: PageAuditDetail | null;
+}
+
+export interface PageAuditDetail {
+  runId: string;
+  facts: {
+    clickDepth?: number;
+    inboundInternalLinks?: number;
+    pageSizeBytes?: number;
+    serverResponseMs?: number;
+  };
+  issues: Array<{
+    ruleId: string;
+    bucket: 'fix-now' | 'watch';
+    severity: 'critical' | 'warning' | 'info';
+    title: string;
+  }>;
 }
 
 export interface PagesRefreshResponse {
@@ -234,6 +290,8 @@ export interface PagesCacheEntry<T> {
   loading: boolean;
   loaded: boolean;
   invalidated: boolean;
+  /** `Date.now()` when `data` arrived; served from the store until it ages past the Pages TTL. */
+  loadedAt: number | null;
   error: PagesRequestError | null;
   requestId: string | null;
 }

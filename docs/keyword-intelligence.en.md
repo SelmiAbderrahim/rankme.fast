@@ -13,7 +13,7 @@ Keyword Intelligence is where you run keyword gaps, overviews, trends and AI clu
 
 ## What each check costs
 
-- **Gap** compares your domain with competitors. It uses one `keyword_lookups` unit per competitor, after duplicates are removed.
+- **Gap** compares one of your sites, chosen from your site list, with competitors. It uses one `keyword_lookups` unit per competitor, after duplicates are removed.
 - **Overview** uses one `keyword_lookups` unit per keyword you look up.
 - **Trends** uses one `keyword_lookups` unit per keyword.
 

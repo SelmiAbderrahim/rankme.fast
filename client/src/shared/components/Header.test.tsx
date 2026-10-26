@@ -58,7 +58,7 @@ describe('Header desktop nav', () => {
       'Sites',
       'Keyword research',
       'Notifications',
-      'Logout',
+      'Sign out',
     ]) {
       expect(screen.getByRole('link', { name })).toBeInTheDocument();
     }
@@ -111,7 +111,7 @@ describe('Header mobile menu', () => {
       'Sites',
       'Keyword research',
       'Notifications',
-      'Logout',
+      'Sign out',
     ]) {
       expect(within(dialog).getByRole('link', { name })).toBeInTheDocument();
     }
@@ -172,7 +172,7 @@ describe('Header marketing variant', () => {
     expect(screen.queryByRole('link', { name: /GitHub/ })).not.toBeInTheDocument();
   });
 
-  it('shows the authed dashboard + log out CTAs and closes the sheet on click', async () => {
+  it('shows the authed dashboard and log-out actions and closes the sheet on click', async () => {
     const user = userEvent.setup();
     renderHeader(true, 'marketing');
     // Desktop CTA pair is present for an authenticated visitor.

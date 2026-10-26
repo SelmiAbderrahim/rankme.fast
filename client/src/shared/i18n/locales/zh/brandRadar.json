@@ -26,7 +26,7 @@
     "filter": {
       "label": "按状态筛选",
       "all": "全部状态",
-      "note": "筛选仅作用于本页已加载的扫描。"
+      "note": "筛选仅作用于下方显示的扫描。加载更多即可包含更早的扫描。"
     }
   },
   "status": {
@@ -63,21 +63,11 @@
       "description": "目前无法发起新的扫描。",
       "storedReads": "已经运行过的扫描仍可查看。"
     },
-    "notOnPlan": {
-      "title": "品牌雷达需要更高的套餐",
-      "description": "升级到 Pro 或 Agency 即可解锁品牌扫描。",
-      "link": "查看套餐"
-    },
     "addonRequired": {
       "title": "为套餐添加品牌雷达",
       "description": "请在账单中查看品牌雷达附加项当前是否可用。",
       "price": "每月 {{price}}，包含 {{units}} 次扫描。",
       "link": "查看品牌雷达选项"
-    },
-    "overCap": {
-      "title": "本月品牌扫描已用完",
-      "description": "请在账单中查看 {{slug}} 加量包当前是否可用。",
-      "link": "查看扫描额度选项"
     }
   },
   "form": {
@@ -116,7 +106,7 @@
     "back": "返回扫描列表",
     "loading": "正在加载这次扫描",
     "errorTitle": "无法加载这次扫描",
-    "mentionCount": "找到 {{count}} 条提及",
+    "mentionCount_one": "找到 {{count}} 条提及",
     "mentionCount_other": "找到 {{count}} 条提及",
     "market": "市场",
     "outputLocale": "输出语言",
@@ -186,9 +176,13 @@
       "pending": "摘要还在生成中。",
       "absent": "这次扫描没有生成摘要。",
       "withheld": "由于没有一句话能对应到具体提及，摘要被保留未发布。",
-      "citations": "{{count}} 个来源",
+      "citations_one": "{{count}} 个来源",
       "citations_other": "{{count}} 个来源",
-      "citationMissing": "该来源不在本页"
+      "citationMissing": "该来源不在本页",
+      "citations_zero": "{{count}} 个来源",
+      "citations_two": "{{count}} 个来源",
+      "citations_few": "{{count}} 个来源",
+      "citations_many": "{{count}} 个来源"
     },
     "mentions": {
       "title": "提及",
@@ -219,7 +213,11 @@
         "sentiment": "语气",
         "observedAt": "发现时间"
       }
-    }
+    },
+    "mentionCount_zero": "找到 {{count}} 条提及",
+    "mentionCount_two": "找到 {{count}} 条提及",
+    "mentionCount_few": "找到 {{count}} 条提及",
+    "mentionCount_many": "找到 {{count}} 条提及"
   },
   "errors": {
     "previewTitle": "无法计算本次扫描的费用",

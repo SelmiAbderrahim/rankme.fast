@@ -73,7 +73,7 @@ export const NewReportForm = ({
                     id={`cannibalization-window-${option}`}
                   />
                   <Label htmlFor={`cannibalization-window-${option}`}>
-                    {t('new.windowOption', { days: option })}
+                    {t('counts.windowDays', { count: option })}
                   </Label>
                 </div>
               ))}

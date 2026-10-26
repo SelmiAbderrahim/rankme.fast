@@ -1,3 +1,7 @@
+import { isolateText } from '@shared/lib/bidi';
+import { Bdi } from '@shared/components/Bdi';
+import { MetricValue } from '@shared/components/MetricValue';
+import { SignedNumber } from '@shared/components/SignedNumber';
 /**
  * GSC block — Search Analytics summary and/or sitemap health
  * rendered inside the `gsc-ctr-low` and `sitemap-errors` issue rows. Mirrors
@@ -28,13 +32,6 @@ export interface GscBlockProps {
 }
 
 const formatInt = (locale: string, n: number): string => new Intl.NumberFormat(locale).format(n);
-const formatPercent = (locale: string, n: number): string =>
-  new Intl.NumberFormat(locale, {
-    style: 'percent',
-    maximumFractionDigits: 1,
-  }).format(n);
-const formatPosition = (locale: string, n: number): string =>
-  new Intl.NumberFormat(locale, { maximumFractionDigits: 1 }).format(n);
 
 type DegradedStatus = 'not-connected' | 'needs-reconnect' | 'unavailable';
 
@@ -139,8 +136,8 @@ const TopTable = ({
       <tbody>
         {rows.map((row) => (
           <tr key={row.key} className="border-b last:border-b-0">
-            <td className="max-w-0 truncate py-1.5 pe-2" title={row.key}>
-              {row.key}
+            <td className="max-w-0 truncate py-1.5 pe-2" title={isolateText(row.key)}>
+              <Bdi>{row.key}</Bdi>
             </td>
             <td className="py-1.5 text-end tabular-nums" dir="ltr">
               {formatInt(locale, row.clicks)}
@@ -149,10 +146,10 @@ const TopTable = ({
               {formatInt(locale, row.impressions)}
             </td>
             <td className="py-1.5 text-end tabular-nums" dir="ltr">
-              {formatPercent(locale, row.ctr)}
+              <MetricValue kind="ratio" value={row.ctr} denominator={row.impressions} />
             </td>
             <td className="py-1.5 text-end tabular-nums" dir="ltr">
-              {formatPosition(locale, row.position)}
+              <MetricValue kind="position" value={row.position} denominator={row.impressions} />
             </td>
           </tr>
         ))}
@@ -211,11 +208,8 @@ const SearchSection = ({
                 variant={delta.value >= 0 ? 'outline' : 'destructive'}
                 data-testid={`report-gsc-delta-${delta.key}`}
               >
-                <span dir="ltr">
-                  {delta.value >= 0 ? '+' : ''}
-                  {formatInt(locale, delta.value)}
-                </span>
-                &nbsp;{delta.label}
+                <SignedNumber value={delta.value} />
+                &nbsp;<Bdi>{delta.label}</Bdi>
               </Badge>
             ))}
           </span>
@@ -238,13 +232,18 @@ const SearchSection = ({
           <div className="flex gap-2">
             <dt className="text-muted-foreground">{t('gscBlock.averageCtr')}</dt>
             <dd className="font-medium tabular-nums" dir="ltr">
-              {formatPercent(locale, section.averageCtr)}
+              {/* No impressions means no CTR or position. */}
+              <MetricValue kind="ratio" value={section.averageCtr} denominator={section.totalImpressions} />
             </dd>
           </div>
           <div className="flex gap-2">
             <dt className="text-muted-foreground">{t('gscBlock.averagePosition')}</dt>
             <dd className="font-medium tabular-nums" dir="ltr">
-              {formatPosition(locale, section.averagePosition)}
+              <MetricValue
+                kind="position"
+                value={section.averagePosition}
+                denominator={section.totalImpressions}
+              />
             </dd>
           </div>
         </dl>

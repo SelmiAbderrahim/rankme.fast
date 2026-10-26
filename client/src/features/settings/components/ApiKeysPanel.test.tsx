@@ -1,3 +1,4 @@
+import { isolateText } from '@shared/lib/bidi';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 import { render, screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
@@ -18,6 +19,7 @@ import {
 } from '../store/apiKeysThunks';
 import { ApiKeysPanel } from './ApiKeysPanel';
 import type { ApiKeySummary } from '../types';
+import { MCP_TOOL_NAMES, type McpToolName } from '../types';
 
 vi.mock('../api', () => ({
   getNotificationPreferencesRequest: vi.fn(),
@@ -212,16 +214,8 @@ describe('ApiKeysPanel', () => {
   it('creates a key with optional tool, spend, and site restrictions', async () => {
     const scoped = {
       tools: {
-        list_sites: true,
-        get_latest_audit_report: true,
-        list_keywords: true,
-        get_rank_history: true,
-        list_content_analyses: true,
-        get_content_analysis: true,
+        ...(Object.fromEntries(MCP_TOOL_NAMES.map((name) => [name, true])) as Record<McpToolName, boolean>),
         start_audit: false,
-        get_audit_status: true,
-        list_actions: true,
-        set_action_state: true,
       },
       allowedSiteIds: [site.id],
       allowSpend: false,
@@ -243,7 +237,7 @@ describe('ApiKeysPanel', () => {
     await userEvent.click(screen.getByRole('checkbox', { name: 'Restrict this key' }));
     await userEvent.click(screen.getByRole('checkbox', { name: 'Start audit' }));
     await userEvent.click(
-      screen.getByRole('switch', { name: 'Allow tools that use plan allowance' }),
+      screen.getByRole('switch', { name: 'Allow tools that spend vendor budget' }),
     );
     await userEvent.click(screen.getByRole('checkbox', { name: 'Allow all sites' }));
     await userEvent.click(screen.getByRole('button', { name: 'Create key' }));
@@ -369,7 +363,7 @@ describe('ApiKeysPanel', () => {
     await userEvent.click(screen.getByRole('button', { name: 'Revoke' }));
     // Confirm dialog carries the key name.
     expect(
-      await screen.findByText(/“CI pipeline” will stop working immediately/),
+      await screen.findByText(`“${isolateText('CI pipeline')}” will stop working immediately. This cannot be undone.`),
     ).toBeInTheDocument();
     await userEvent.click(screen.getByRole('button', { name: 'Revoke' }));
     expect(await screen.findByText('API key revoked.')).toBeInTheDocument();

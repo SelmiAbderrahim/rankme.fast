@@ -1,12 +1,14 @@
 import { z } from 'zod';
 export const MARKET_CATALOG_SURFACES = [
     'seo',
+    'serp',
     'brand-radar',
     'app-google-play',
     'app-store',
 ] as const;
 export const marketCatalogSurfaceSchema = z.enum(MARKET_CATALOG_SURFACES);
 export type MarketCatalogSurface = z.infer<typeof marketCatalogSurfaceSchema>;
+export const SERP_LANGUAGE_CODES = ['ar', 'de', 'en', 'es', 'fr', 'ru', 'zh'] as const;
 export const marketCatalogEntrySchema = z
     .object({
     countryCode: z.string().regex(/^[A-Z]{2}$/),

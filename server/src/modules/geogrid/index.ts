@@ -1,4 +1,5 @@
 export { createGeogridRouter } from './geogrid.routes.js';
+export { assertGeogridEnabled } from './geogrid.service.js';
 export { getGeogridDb, getGeogridQueue, setGeogridDb, setGeogridQueue, } from './geogrid.holder.js';
 export { centerPointIndex, deriveGridCells, round7, wrapLongitude, METERS_PER_LAT_DEGREE, type GeogridCell, type GeogridDefinition, } from './geogrid.geometry.js';
 export { GEOGRID_NOT_FOUND_KEY, GEOGRID_UNAVAILABLE_KEY, buildCellDtos, getGeogridScan, resolveTerminalStatus, type GeogridCellDto, type GeogridScanDetailDto, type GeogridScanSummaryDto, } from './geogrid.service.js';

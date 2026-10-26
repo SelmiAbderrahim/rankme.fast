@@ -31,7 +31,8 @@ export type NotificationPreferencesPatch = z.infer<typeof notificationPreference
 // empty string (no custom accent) or a strict `#rrggbb` hex.
 export const brandingSchema = z
     .object({
-    companyName: z.string().trim().max(80),
+    // A report header needs a name; the trim runs first, so spaces alone fail `min`.
+    companyName: z.string().trim().min(1).max(80),
     accentColor: z.union([z.literal(''), z.string().regex(/^#[0-9a-fA-F]{6}$/)]),
     // Omitted preserves the stored logo; null removes it. The
     // decoded-byte limit is enforced by branding-logo.service after strict

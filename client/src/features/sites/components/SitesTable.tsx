@@ -1,10 +1,11 @@
+import { isolateText } from '@shared/lib/bidi';
+import { Bdi } from '@shared/components/Bdi';
 import { useMemo, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { siteLabel } from '@shared/lib/siteLabel';
 import { useTranslation } from 'react-i18next';
-import { ArrowDown, ArrowUp, ArrowUpDown, MoreHorizontal, Pause, Play } from 'lucide-react';
+import { ArrowDown, ArrowUp, ArrowUpDown, Cable, FileText, Globe2, Link2, MoreHorizontal, PanelsTopLeft, Pause, Pencil, Play, Search, Trash2, UsersRound } from 'lucide-react';
 import { useAppDispatch, useAppSelector } from '@shared/hooks/redux';
-import { StatusChip } from '@shared/ui/status-chip';
 import { Avatar, AvatarFallback } from '@shared/ui/avatar';
 import { Button } from '@shared/ui/button';
 import { Input } from '@shared/ui/input';
@@ -44,6 +45,8 @@ import {
 } from '@shared/ui/dialog';
 import { Alert, AlertDescription } from '@shared/ui/alert';
 import { Card, CardContent } from '@shared/ui/card';
+import { RelativeTime } from '@shared/components/RelativeTime';
+import { PausedChip } from './PausedChip';
 import { pauseSite, renameSite, resumeSite } from '../store/thunks';
 import {
   selectPausingSiteId,
@@ -51,11 +54,19 @@ import {
   selectRenamingSiteId,
 } from '../store/selectors';
 import type { Site } from '../types';
+import type { SiteTab } from '../tabState';
+import type { SiteSummariesState } from '../useSiteSummaries';
+import { OpenIssuesChip } from '@shared/components/OpenIssuesChip';
+import { MetricValue } from '@shared/components/MetricValue';
+import { Skeleton } from '@shared/ui/skeleton';
+import { SiteMarketDialog } from './SiteMarketDialog';
 
 export interface SitesTableProps {
   sites: Site[];
   deletingId: string | null;
   onDelete: (site: Site) => void;
+  openTab?: SiteTab;
+  summaries?: SiteSummariesState;
 }
 
 const formatAdded = (iso: string, locale: string): string =>
@@ -80,7 +91,8 @@ const sortValue = (site: Site, key: SortKey): string =>
  * Data-table pattern per design-system.md: muted header row, right-aligned
  * date column, per-row `⋯` menu. Collapses to bordered cards below `md`.
  */
-export const SitesTable = ({ sites, deletingId, onDelete }: SitesTableProps) => {
+export const SitesTable = ({ sites, deletingId, onDelete, openTab, summaries }: SitesTableProps) => {
+  const siteHref = (site: Site) => `/sites/${site.id}${openTab ? `?tab=${openTab}` : ''}`;
   const { t, i18n } = useTranslation('sites');
   const dispatch = useAppDispatch();
   const renamingId = useAppSelector(selectRenamingSiteId);
@@ -89,6 +101,7 @@ export const SitesTable = ({ sites, deletingId, onDelete }: SitesTableProps) => 
   const [pendingDelete, setPendingDelete] = useState<Site | null>(null);
   const [pendingPause, setPendingPause] = useState<Site | null>(null);
   const [renaming, setRenaming] = useState<Site | null>(null);
+  const [marketSite, setMarketSite] = useState<Site | null>(null);
   const [renameValue, setRenameValue] = useState('');
   const [sort, setSort] = useState<SortState | null>(null);
 
@@ -132,7 +145,9 @@ export const SitesTable = ({ sites, deletingId, onDelete }: SitesTableProps) => 
     sort?.key === key ? (sort.dir === 'asc' ? 'ascending' : 'descending') : 'none';
 
   const openRename = (site: Site) => {
-    setRenameValue(site.displayName);
+    // A never-renamed site shows its domain as its name everywhere, so the
+    // field opens on that same name instead of an empty box.
+    setRenameValue(siteLabel(site));
     setRenaming(site);
   };
 
@@ -142,20 +157,36 @@ export const SitesTable = ({ sites, deletingId, onDelete }: SitesTableProps) => 
   };
 
   const submitRename = async (site: Site) => {
-    const result = await dispatch(
-      renameSite({ id: site.id, displayName: renameValue.trim() }),
-    );
+    // Saving the domain back unchanged keeps the site on its default name.
+    const typed = renameValue.trim();
+    const displayName = typed.toLowerCase() === site.domain.toLowerCase() ? '' : typed;
+    const result = await dispatch(renameSite({ id: site.id, displayName }));
     if (renameSite.fulfilled.match(result)) {
       closeRename();
     }
   };
 
-  const pausedChip = (site: Site) =>
-    site.paused ? (
-      <StatusChip tone="warning" data-testid={`site-paused-chip-${site.id}`}>
-        {t('paused.chip')}
-      </StatusChip>
-    ) : null;
+  const pausedChip = (site: Site) => (site.paused ? <PausedChip siteId={site.id} /> : null);
+
+  const summaryOf = (site: Site) => summaries?.byId.get(site.id);
+  const summaryPending = (site: Site) => Boolean(summaries?.loading) && !summaryOf(site);
+  const lastAudit = (site: Site) => {
+    if (summaryPending(site)) return <Skeleton className="h-4 w-20" />;
+    const audit = summaryOf(site)?.lastAudit;
+    if (!audit || audit.state === 'unavailable') return <span className="text-muted-foreground">{t('list.noAudit')}</span>;
+    return audit.status === 'succeeded'
+      ? <RelativeTime value={audit.finishedAt} />
+      : <span>{t(`list.auditStatus.${audit.status}`)}</span>;
+  };
+  const health = (site: Site) => {
+    if (summaryPending(site)) return <Skeleton className="h-4 w-16" />;
+    const value = summaryOf(site)?.openFixNow;
+    return value && value.state !== 'unavailable' ? <OpenIssuesChip metric={value} /> : <MetricValue kind="count" value={null} />;
+  };
+  const keywordCount = (site: Site) => {
+    if (summaryPending(site)) return <Skeleton className="h-4 w-8" />;
+    return <MetricValue kind="count" value={summaryOf(site)?.trackedKeywords ?? null} />;
+  };
 
   const rowMenu = (site: Site) => (
     <DropdownMenu>
@@ -171,25 +202,29 @@ export const SitesTable = ({ sites, deletingId, onDelete }: SitesTableProps) => 
       </DropdownMenuTrigger>
       <DropdownMenuContent align="end">
         <DropdownMenuItem asChild>
-          <Link to={`/sites/${site.id}`}>{t('open')}</Link>
+          <Link to={siteHref(site)}><PanelsTopLeft aria-hidden="true" />{t('open')}</Link>
         </DropdownMenuItem>
         <DropdownMenuItem asChild>
-          <Link to={`/sites/${site.id}?tab=report`}>{t('viewReport')}</Link>
+          <Link to={`/sites/${site.id}?tab=report`}><FileText aria-hidden="true" />{t('viewReport')}</Link>
         </DropdownMenuItem>
         <DropdownMenuItem asChild>
-          <Link to={`/sites/${site.id}?tab=keywords`}>{t('trackKeywords')}</Link>
+          <Link to={`/sites/${site.id}?tab=keywords`}><Search aria-hidden="true" />{t('trackKeywords')}</Link>
         </DropdownMenuItem>
         <DropdownMenuItem asChild>
-          <Link to={`/sites/${site.id}?tab=backlinks`}>{t('backlinks')}</Link>
+          <Link to={`/sites/${site.id}?tab=backlinks`}><Link2 aria-hidden="true" />{t('backlinks')}</Link>
         </DropdownMenuItem>
         <DropdownMenuItem asChild>
-          <Link to={`/sites/${site.id}?tab=competitors`}>{t('competitors')}</Link>
+          <Link to={`/sites/${site.id}?tab=competitors`}><UsersRound aria-hidden="true" />{t('competitors')}</Link>
         </DropdownMenuItem>
         <DropdownMenuItem asChild>
-          <Link to={`/sites/${site.id}?tab=google`}>{t('googleSettings')}</Link>
+          <Link to={`/sites/${site.id}?tab=google`}><Cable aria-hidden="true" />{t('googleSettings')}</Link>
         </DropdownMenuItem>
         <DropdownMenuItem onSelect={() => openRename(site)}>
+          <Pencil aria-hidden="true" />
           {t('editName')}
+        </DropdownMenuItem>
+        <DropdownMenuItem onSelect={() => setMarketSite(site)} data-testid={`site-market-menu-${site.id}`}>
+          <Globe2 aria-hidden="true" />{t('market.menuItem')}
         </DropdownMenuItem>
         {site.paused ? (
           <DropdownMenuItem onSelect={() => void dispatch(resumeSite(site.id))}>
@@ -204,6 +239,7 @@ export const SitesTable = ({ sites, deletingId, onDelete }: SitesTableProps) => 
         )}
         <DropdownMenuSeparator />
         <DropdownMenuItem variant="destructive" onSelect={() => setPendingDelete(site)}>
+          <Trash2 aria-hidden="true" />
           {t('delete')}
         </DropdownMenuItem>
       </DropdownMenuContent>
@@ -222,6 +258,9 @@ export const SitesTable = ({ sites, deletingId, onDelete }: SitesTableProps) => 
               <TableHead aria-sort={ariaSort('domain')}>
                 <SortHeader sortKey="domain" label={t('columnDomain')} />
               </TableHead>
+              <TableHead>{t('list.columnLastAudit')}</TableHead>
+              <TableHead>{t('list.columnHealth')}</TableHead>
+              <TableHead className="text-end">{t('list.columnKeywords')}</TableHead>
               <TableHead className="text-end" aria-sort={ariaSort('added')}>
                 <SortHeader sortKey="added" label={t('columnAdded')} />
               </TableHead>
@@ -240,13 +279,16 @@ export const SitesTable = ({ sites, deletingId, onDelete }: SitesTableProps) => 
                         {siteInitials(site)}
                       </AvatarFallback>
                     </Avatar>
-                    <Link to={`/sites/${site.id}`} className="hover:underline">
-                      {siteName(site)}
+                    <Link to={siteHref(site)} className="hover:underline">
+                      <Bdi>{siteName(site)}</Bdi>
                     </Link>
                     {pausedChip(site)}
                   </span>
                 </TableCell>
-                <TableCell className="text-muted-foreground">{site.domain}</TableCell>
+                <TableCell className="text-muted-foreground"><Bdi>{site.domain}</Bdi></TableCell>
+                <TableCell>{lastAudit(site)}</TableCell>
+                <TableCell>{health(site)}</TableCell>
+                <TableCell className="text-end">{keywordCount(site)}</TableCell>
                 <TableCell className="text-end">
                   {formatAdded(site.createdAt, i18n.language)}
                 </TableCell>
@@ -268,15 +310,20 @@ export const SitesTable = ({ sites, deletingId, onDelete }: SitesTableProps) => 
                   </AvatarFallback>
                 </Avatar>
                 <div className="min-w-0">
-                  <p className="truncate font-medium">
-                    <Link to={`/sites/${site.id}`} className="hover:underline">
-                      {siteName(site)}
+                  <div className="min-w-0 font-medium">
+                    <Link to={siteHref(site)} className="flex min-h-11 min-w-0 items-center hover:underline">
+                      <span className="truncate"><Bdi>{siteName(site)}</Bdi></span>
                     </Link>
-                  </p>
-                  <p className="text-muted-foreground truncate text-sm">{site.domain}</p>
+                  </div>
+                  <p className="text-muted-foreground truncate text-sm"><Bdi>{site.domain}</Bdi></p>
                   <p className="text-muted-foreground text-sm">
                     {t('columnAdded')}: {formatAdded(site.createdAt, i18n.language)}
                   </p>
+                  <dl className="mt-2 grid grid-cols-2 gap-2 text-xs">
+                    <div><dt className="text-muted-foreground">{t('list.columnLastAudit')}</dt><dd>{lastAudit(site)}</dd></div>
+                    <div><dt className="text-muted-foreground">{t('list.columnHealth')}</dt><dd>{health(site)}</dd></div>
+                    <div><dt className="text-muted-foreground">{t('list.columnKeywords')}</dt><dd>{keywordCount(site)}</dd></div>
+                  </dl>
                   <div className="mt-1 flex flex-wrap items-center gap-1.5">
                     {pausedChip(site)}
                   </div>
@@ -299,7 +346,7 @@ export const SitesTable = ({ sites, deletingId, onDelete }: SitesTableProps) => 
             <AlertDialogHeader>
               <AlertDialogTitle>{t('deleteTitle')}</AlertDialogTitle>
               <AlertDialogDescription>
-                {t('deleteDescription', { domain: pendingDelete.domain })}
+                {t('deleteDescription', { domain: isolateText(pendingDelete.domain) })}
               </AlertDialogDescription>
             </AlertDialogHeader>
             <AlertDialogFooter>
@@ -328,7 +375,7 @@ export const SitesTable = ({ sites, deletingId, onDelete }: SitesTableProps) => 
             <AlertDialogHeader>
               <AlertDialogTitle>{t('paused.confirmTitle')}</AlertDialogTitle>
               <AlertDialogDescription>
-                {t('paused.confirmBody', { domain: pendingPause.domain })}
+                {t('paused.confirmBody', { domain: isolateText(pendingPause.domain) })}
               </AlertDialogDescription>
             </AlertDialogHeader>
             <AlertDialogFooter>
@@ -357,7 +404,7 @@ export const SitesTable = ({ sites, deletingId, onDelete }: SitesTableProps) => 
             <DialogHeader>
               <DialogTitle>{t('renameTitle')}</DialogTitle>
               <DialogDescription>
-                {t('renameDescription', { domain: renaming.domain })}
+                {t('renameDescription', { domain: isolateText(renaming.domain) })}
               </DialogDescription>
             </DialogHeader>
             <form
@@ -397,6 +444,7 @@ export const SitesTable = ({ sites, deletingId, onDelete }: SitesTableProps) => 
           </DialogContent>
         </Dialog>
       ) : null}
+      {marketSite ? <SiteMarketDialog site={marketSite} onClose={() => setMarketSite(null)} /> : null}
     </>
   );
 };

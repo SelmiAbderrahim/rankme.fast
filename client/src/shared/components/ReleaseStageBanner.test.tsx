@@ -34,21 +34,14 @@ describe('ReleaseStageBanner', () => {
     renderBanner();
     const banner = screen.getByRole('region', { name: /release status/i });
     expect(banner).toBeVisible();
-    const reportBug = screen.getByRole('link', { name: /report a bug/i });
-    expect(reportBug).toHaveAttribute(
-      'href',
-      'https://github.com/rankmefast/rankmefast/issues/new/choose',
-    );
-    expect(reportBug).toHaveAttribute('target', '_blank');
-    expect(reportBug).toHaveAttribute('rel', expect.stringContaining('noopener'));
+    const reportBug = screen.getByRole('button', { name: /report a bug/i });
+    expect(reportBug).toBeVisible();
     const progress = screen.getByRole('link', { name: /follow progress/i });
     expect(progress).toHaveAttribute('target', '_blank');
     expect(progress).toHaveAttribute('rel', expect.stringContaining('noopener'));
 
     const user = userEvent.setup();
-    await user.tab();
-    await user.tab();
-    await user.tab();
+    screen.getByRole('button', { name: /hide.*beta/i }).focus();
     await user.keyboard('{Enter}');
     expect(screen.queryByRole('region', { name: /release status/i })).not.toBeInTheDocument();
     expect(localStorage.getItem(releaseBannerStorageKey())).toBe('1');
@@ -63,14 +56,41 @@ describe('ReleaseStageBanner', () => {
     expect(screen.queryByTestId('release-stage-banner')).not.toBeInTheDocument();
   });
 
-  it('keeps the email fallback in the current tab when no public repository is configured', () => {
+  it('keeps the email fallback in the current tab when no public repository is configured', async () => {
     vi.stubEnv('VITE_GITHUB_URL', undefined as unknown as string);
     renderBanner();
 
-    const reportBug = screen.getByRole('link', { name: /report a bug/i });
-    expect(reportBug).toHaveAttribute('href', 'mailto:support@rankme.fast');
-    expect(reportBug).not.toHaveAttribute('target');
-    expect(reportBug).not.toHaveAttribute('rel');
+    await userEvent.setup().click(screen.getByRole('button', { name: /report a bug/i }));
+    const destination = screen.getByRole('dialog').querySelector('a');
+    expect(destination).toHaveAttribute('href', 'mailto:support@rankme.fast');
+    expect(destination).not.toHaveAttribute('target');
+    expect(destination).not.toHaveAttribute('rel');
+  });
+
+  it('opens a report dialog before offering the configured issue chooser', async () => {
+    renderBanner();
+    expect(screen.queryByRole('dialog')).not.toBeInTheDocument();
+    await userEvent.setup().click(screen.getByRole('button', { name: /report a bug/i }));
+    const dialog = screen.getByRole('dialog', { name: /report a bug/i });
+    expect(dialog).toHaveTextContent('Choose where to report the bug');
+    expect(dialog.querySelector('a')).toHaveAttribute(
+      'href',
+      'https://github.com/rankmefast/rankmefast/issues/new/choose',
+    );
+  });
+
+  it('includes the declared route in the support email without exposing a page URL', async () => {
+    vi.stubEnv('VITE_GITHUB_URL', undefined as unknown as string);
+    render(
+      <I18nextProvider i18n={i18n}>
+        <ReleaseStageBanner routePattern="/sites/:siteId" />
+      </I18nextProvider>,
+    );
+    await userEvent.setup().click(screen.getByRole('button', { name: /report a bug/i }));
+    const href = screen.getByRole('dialog').querySelector('a')?.getAttribute('href');
+    expect(href).toContain('mailto:support@rankme.fast?');
+    expect(decodeURIComponent(href!)).toContain('route: /sites/:siteId');
+    expect(decodeURIComponent(href!)).toContain('edition: self-hosted');
   });
 
   it('dismisses safely without a main landmark and preserves an existing main tabindex', async () => {

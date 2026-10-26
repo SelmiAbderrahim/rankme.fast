@@ -34,7 +34,7 @@ test('the account-menu bug report contains only a declared route pattern and is 
   expect(href).toBeTruthy();
   const fields = reportFields(href!);
   expect(fields.get('route')).toBe('/dashboard');
-  expect(fields.get('edition')).toBe('cloud');
+  expect(fields.get('edition')).toBe('self-hosted');
   expect(fields.get('stage')).toMatch(/^(beta|ga)$/u);
   expect(href).not.toContain(account.email);
   expect(href).not.toMatch(/[a-f0-9]{24}|[a-f0-9]{8}(?:-[a-f0-9]{4}){3}-[a-f0-9]{12}/iu);

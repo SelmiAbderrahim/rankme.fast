@@ -2,6 +2,7 @@ import { createAsyncThunk } from '@reduxjs/toolkit';
 import { apiErrorRetryAfterMs, apiErrorStatus } from '@shared/api/errorMessage';
 import {
   checkNowRequest,
+  createKeywordsBulkRequest,
   createKeywordRequest,
   fetchKeywordHistoryRequest,
   fetchKeywordsRequest,
@@ -14,10 +15,13 @@ import { shareInFlight, withInFlightInvalidation } from '@shared/lib/inFlight';
 import { ranksErrorMessage } from '../errorMessage';
 import type {
   CadenceUpdateResponse,
+  BulkKeywordBody,
+  BulkKeywordResponse,
   CheckNowResponse,
   CreateKeywordBody,
   CreateKeywordResponse,
   KeywordListPage,
+  KeywordPageSize,
   RankEngine,
   RankCadence,
   RankHistoryResponse,
@@ -44,19 +48,25 @@ export interface LoadKeywordsArgs {
   direction?: LoadDirection;
   /** Server-side filter; omission means every engine. */
   engine?: RankEngine;
+  page?: number;
+  pageSize?: KeywordPageSize;
+  search?: string;
 }
 
 export const loadKeywords = createAsyncThunk<
   KeywordListPage,
   LoadKeywordsArgs,
   { rejectValue: string }
->('ranks/load', async ({ siteId, cursor, engine }, { rejectWithValue }) => {
+>('ranks/load', async ({ siteId, cursor, engine, page, pageSize, search }, { rejectWithValue }) => {
   try {
     // The Keywords panel, the Overview card and the keyword-research page all
     // load this list; identical concurrent reads share one request.
     return await shareInFlight(
-      `${KEYWORDS_IN_FLIGHT}${siteId}:${cursor ?? ''}:${engine ?? ''}`,
-      () => fetchKeywordsRequest(siteId, cursor, engine ? { engine } : {}),
+      `${KEYWORDS_IN_FLIGHT}${siteId}:${cursor ?? ''}:${engine ?? ''}:${page ?? ''}:${pageSize ?? ''}:${search ?? ''}`,
+      () => fetchKeywordsRequest(siteId, cursor, { ...(engine ? { engine } : {}),
+        ...(page !== undefined ? { page } : {}),
+        ...(pageSize !== undefined ? { pageSize } : {}),
+        ...(search ? { search } : {}) }),
     );
   } catch (err) {
     return rejectWithValue(ranksErrorMessage(err, 'ranks:loadFailed'));
@@ -75,6 +85,19 @@ export const addKeyword = createAsyncThunk<
   try {
     return await withInFlightInvalidation(KEYWORDS_IN_FLIGHT, () =>
       createKeywordRequest(siteId, body));
+  } catch (err) {
+    return rejectWithValue(ranksErrorMessage(err, 'ranks:addFailed'));
+  }
+});
+
+export interface AddKeywordsBulkArgs extends BulkKeywordBody { siteId: string }
+export type AddKeywordsResult = BulkKeywordResponse;
+export const addKeywordsBulk = createAsyncThunk<
+  AddKeywordsResult, AddKeywordsBulkArgs, { rejectValue: string }
+>('ranks/addBulk', async ({ siteId, ...body }, { rejectWithValue }) => {
+  try {
+    return await withInFlightInvalidation(KEYWORDS_IN_FLIGHT, () =>
+      createKeywordsBulkRequest(siteId, body));
   } catch (err) {
     return rejectWithValue(ranksErrorMessage(err, 'ranks:addFailed'));
   }
@@ -116,12 +139,12 @@ export const updateCadence = createAsyncThunk<
 
 export const checkNow = createAsyncThunk<
   CheckNowResponse,
-  { siteId: string; keywordId?: string },
+  { siteId: string; keywordId?: string; idempotencyKey?: string },
   { rejectValue: CheckNowRejected }
->('ranks/checkNow', async ({ siteId, keywordId }, { rejectWithValue }) => {
+>('ranks/checkNow', async ({ siteId, keywordId, idempotencyKey }, { rejectWithValue }) => {
   try {
     return await withInFlightInvalidation(KEYWORDS_IN_FLIGHT, () =>
-      keywordId ? checkNowRequest(siteId, keywordId) : checkNowRequest(siteId));
+      keywordId ? checkNowRequest(siteId, keywordId, idempotencyKey) : checkNowRequest(siteId, undefined, idempotencyKey));
   } catch (err) {
     // A 429 means the per-site cooldown is active — surface a countdown.
     const cooldownUntil =

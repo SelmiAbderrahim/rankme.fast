@@ -209,16 +209,6 @@ async function accountId(request: APIRequestContext): Promise<string> {
   return id as string;
 }
 
-function bumpToAgency(id: string): void {
-  runComposePsql(
-    `INSERT INTO subscriptions (account_id, tier, status)
-       VALUES (:'account_id', 'agency', 'active')
-       ON CONFLICT (account_id)
-       DO UPDATE SET tier = 'agency', status = 'active', updated_at = now();`,
-    { variables: { account_id: id } },
-  );
-}
-
 async function createSite(request: APIRequestContext): Promise<string> {
   const response = await request.post('/api/sites', {
     data: {
@@ -531,7 +521,6 @@ test('client reports: branded PDF, worker delivery, portal, caps, flag, RTL, and
     const credentials = freshAccount('client-reports');
     await signUp(page, credentials);
     const account = await accountId(page.request);
-    bumpToAgency(account);
     const siteId = await createSite(page.request);
     await runAuditToCompletion(page.request, siteId);
     seedDatedRankAndGsc(account, siteId);

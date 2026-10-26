@@ -107,11 +107,12 @@ describe('GET /api/sites/:siteId/ai-visibility', () => {
       shareOfVoicePct: null,
       sentiment: { positive: 0, neutral: 0, negative: 0 },
       notMentionedPrompts: [],
+      notCheckedPrompts: [],
       checkedAt: null,
     });
   });
 
-  it('lists tracked prompts and flags them as not-yet-mentioned', async () => {
+  it('lists a never-checked prompt as not checked, never as not mentioned', async () => {
     const user = await seedUser('av-tracked@x.co');
     const siteId = await seedSite(user.id);
     await trackPrompt(user.id, siteId, 'best crm for startups');
@@ -121,7 +122,9 @@ describe('GET /api/sites/:siteId/ai-visibility', () => {
     expect(res.status).toBe(200);
     expect(res.body.prompts).toHaveLength(1);
     expect(res.body.prompts[0].prompt).toBe('best crm for startups');
-    expect(res.body.notMentionedPrompts).toEqual(['best crm for startups']);
+    expect(res.body.notMentionedPrompts).toEqual([]);
+    expect(res.body.notCheckedPrompts).toEqual(['best crm for startups']);
+    expect(res.body.checkedAt).toBeNull();
   });
 
   it('cross-account access 404s', async () => {
@@ -175,19 +178,31 @@ describe('POST /api/sites/:siteId/ai-visibility/prompts', () => {
     expect(res.body.error.message).toBe(DICTIONARIES.en.errors.malformedJson);
   });
 
-  it('returns the existing prompt on a duplicate add', async () => {
+  it('refuses a duplicate add with a localized conflict, not a second row', async () => {
     const user = await seedUser('ap-dup@x.co');
     const siteId = await seedSite(user.id);
     const first = await request(app)
       .post(`/api/sites/${siteId}/ai-visibility/prompts`)
       .set('Cookie', user.cookie)
       .send({ prompt: 'best tool' });
-    const second = await request(app)
-      .post(`/api/sites/${siteId}/ai-visibility/prompts`)
+    expect(first.status).toBe(201);
+    for (const variant of ['BEST TOOL', 'Best tool?', '  best   tool. ']) {
+      const again = await request(app)
+        .post(`/api/sites/${siteId}/ai-visibility/prompts`)
+        .set('Cookie', user.cookie)
+        .set('x-lang', 'de')
+        .send({ prompt: variant });
+      expect(again.status).toBe(409);
+      expect(again.body.error).toMatchObject({
+        code: 'AI_VISIBILITY_ERRORS_PROMPT_ALREADY_TRACKED',
+        message: DICTIONARIES.de.aiVisibility.errors.promptAlreadyTracked,
+      });
+    }
+    const overview = await request(app)
+      .get(`/api/sites/${siteId}/ai-visibility`)
       .set('Cookie', user.cookie)
-      .send({ prompt: 'BEST TOOL' });
-    expect(second.status).toBe(201);
-    expect(second.body.prompt.id).toBe(first.body.prompt.id);
+      .expect(200);
+    expect(overview.body.prompts).toHaveLength(1);
   });
 
   it('rejects a blank prompt with 400', async () => {
@@ -343,7 +358,7 @@ describe('POST /api/sites/:siteId/ai-visibility/check', () => {
       .set('Cookie', user.cookie);
     expect(second.status).toBe(429);
     expect(second.body.error.message).toBe(
-      translate('en', 'aiVisibility.errors.refreshCooldown', { seconds: 15 }),
+      translate('en', 'aiVisibility.errors.refreshCooldown', { count: 15, seconds: 15 }),
     );
     expect(second.body.error.details.retryAfterMs).toBe(15_000);
 
@@ -442,7 +457,7 @@ describe('/api/sites/:siteId/ai-visibility/suggestions', () => {
     await seedKeyword(user.id, siteId);
     const res = await request(app).get(url(siteId)).set('Cookie', user.cookie);
     expect(res.status).toBe(200);
-    expect(res.body).toEqual({ generatedAt: null, outputLocale: 'en', suggestions: [] });
+    expect(res.body).toEqual({ generatedAt: null, outputLocale: 'en', suggestions: [], evidence: null, stale: false });
   });
 
   it('POST generates, persists, and the stored set survives a fresh GET', async () => {
@@ -465,7 +480,7 @@ describe('/api/sites/:siteId/ai-visibility/suggestions', () => {
   it('freezes the requested locale and a language-only GET never generates or falls back', async () => {
     const user = await seedUser('sg-locale@x.co');
     const siteId = await seedSite(user.id);
-    await seedKeyword(user.id, siteId, 'source-token');
+    await seedKeyword(user.id, siteId, 'jeton source');
     const seenLocales: string[] = [];
     setAiVisibilitySummaryProvider({
       ...createFakeSummaryProvider(),
@@ -482,14 +497,20 @@ describe('/api/sites/:siteId/ai-visibility/suggestions', () => {
     expect(generated.status).toBe(201);
     expect(generated.body.outputLocale).toBe('fr');
     expect(seenLocales).toEqual(['fr']);
-    expect(JSON.stringify(generated.body.suggestions)).toContain('source-token');
+    expect(JSON.stringify(generated.body.suggestions)).toContain('jeton source');
 
     const localeMiss = await request(app)
       .get(url(siteId))
       .set('Cookie', user.cookie)
       .set('x-lang', 'de');
     expect(localeMiss.status).toBe(200);
-    expect(localeMiss.body).toEqual({ generatedAt: null, outputLocale: 'de', suggestions: [] });
+    expect(localeMiss.body).toEqual({
+      generatedAt: null,
+      outputLocale: 'de',
+      suggestions: [],
+      evidence: null,
+      stale: false,
+    });
     expect(seenLocales).toEqual(['fr']);
 
     const original = await request(app)
@@ -499,10 +520,10 @@ describe('/api/sites/:siteId/ai-visibility/suggestions', () => {
     expect(original.body).toEqual(generated.body);
   });
 
-  it('POST 201s with an empty list when the generator and templates yield nothing', async () => {
+  it('POST 201s with only evidence-free brand questions, flagged as no evidence, when nothing grounds a topic', async () => {
     const user = await seedUser('sg-emptygen@x.co');
     const siteId = await seedSite(user.id);
-    // No keywords, no titles, no competitors, no GSC rows → no templates.
+    // No keywords, no titles, no competitors, no GSC rows → no category.
     setAiVisibilitySummaryProvider({
       ...createFakeSummaryProvider(),
       async generatePrompts() {
@@ -512,7 +533,20 @@ describe('/api/sites/:siteId/ai-visibility/suggestions', () => {
     const res = await request(app).post(url(siteId)).set('Cookie', user.cookie);
     expect(res.status).toBe(201);
     expect(res.body.generatedAt).toEqual(expect.any(String));
-    expect(res.body.suggestions).toEqual([]);
+    expect(res.body.evidence).toBe('none');
+    // Only the two truthful brand questions: nothing is claimed about what
+    // the site offers, and neither row cites evidence.
+    expect(
+      res.body.suggestions.map((row: { prompt: string; evidenceSource: unknown }) => [
+        row.prompt,
+        row.evidenceSource,
+      ]),
+    ).toEqual([
+      ['What does example.com do?', null],
+      ['Is example.com a good choice?', null],
+    ]);
+    const read = await request(app).get(url(siteId)).set('Cookie', user.cookie);
+    expect(read.body.evidence).toBe('none');
   });
 
   it('POST keeps the template fallback when the provider throws', async () => {

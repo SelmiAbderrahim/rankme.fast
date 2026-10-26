@@ -67,6 +67,7 @@ import {
   GoogleTokenDecryptionError,
   clearPlaintextRefreshToken,
   createCollectGscInsights,
+  GSC_COVERAGE_PAGE_LIMIT,
   createCollectIndexStatus,
   getConnection,
   getGscSyncQueue,
@@ -113,7 +114,7 @@ type GoogleTestUser = TestUser & { siteId: string };
 
 async function seedUser(email = 'owner@x.co'): Promise<GoogleTestUser> {
   const user = await signupVerifiedUser(app, { email });
-  const seedDomain = `${user.id}.google-test.invalid`;
+  const seedDomain = `${user.id}.example.com`;
   const site = await Site.create({
     accountId: user.id,
     url: `https://${seedDomain}`,
@@ -704,6 +705,10 @@ describe('GET /api/sites/:siteId/google/configuration', () => {
     expect(res.status).toBe(200);
     expect(res.body.configuration.connection).toBeNull();
     expect(res.body.configuration.gsc.propertyUrl).toBeNull();
+    expect(res.body.configuration.readiness).toEqual({
+      gsc: { status: 'not_connected', matching: false },
+      ga4: { status: 'not_connected', matching: false },
+    });
   });
 
   it('returns the shared credential and the current Site bindings', async () => {
@@ -720,6 +725,7 @@ describe('GET /api/sites/:siteId/google/configuration', () => {
     expect(res.status).toBe(200);
     expect(res.body.configuration.connection.status).toBe('connected');
     expect(res.body.configuration.gsc.propertyUrl).toBeNull();
+    expect(res.body.configuration.readiness.gsc).toEqual({ status: 'no_property', matching: false });
     const properties = await request(app)
       .get(googlePath(user, '/search-properties'))
       .set('Cookie', user.cookie);
@@ -729,6 +735,7 @@ describe('GET /api/sites/:siteId/google/configuration', () => {
         siteUrl: 'sc-domain:example.com',
         permissionLevel: 'siteOwner',
         inUseBy: [],
+        matchesSite: true,
       },
     ]);
   });
@@ -2175,7 +2182,7 @@ describe('clearPlaintextRefreshToken — error swallowing', () => {
 });
 
 // ---------------------------------------------------------------------------
-// createCollectGscInsights (prompt 24)
+// createCollectGscInsights
 // ---------------------------------------------------------------------------
 
 const FIXED_NOW = () => new Date('2026-07-07T12:00:00.000Z');
@@ -2186,7 +2193,7 @@ const EXPECTED_START = '2026-06-07';
 const EXPECTED_START_7 = '2026-06-28';
 const EXPECTED_START_90 = '2026-04-06';
 /** The (dimension, window) fetch plan: date once at 90d, aggregates ×3 windows.
- * `query,page` (prompt 04) is an aggregate set like the rest — its addition
+ * `query,page` is an aggregate set like the rest — its addition
  * must not disturb the order or the windows of the five historical sets. */
 const EXPECTED_PLAN: Array<[string, number]> = [
   ['date', 90],
@@ -2371,6 +2378,8 @@ describe('createCollectGscInsights', () => {
       'https://example.com/',
       'https://example.com/pricing',
     ]);
+    // The same pages, most impressions first, for the audit's coverage check.
+    expect(out.pageUrls).toEqual(['https://example.com/', 'https://example.com/pricing']);
     // First run — no previous snapshot.
     expect(out.search.delta).toEqual({ clicks: null, impressions: null });
 
@@ -2564,6 +2573,38 @@ describe('createCollectGscInsights', () => {
     expect(out.sitemaps.status).toBe('no-sitemaps');
   });
 
+  it('hands the audit the most-seen pages, capped, skipping rows without a page', async () => {
+    const user = await seedConnectedUser();
+    const pageRows: GscSearchAnalyticsRow[] = [
+      ...Array.from({ length: GSC_COVERAGE_PAGE_LIMIT + 5 }, (_, index) => ({
+        keys: [`https://example.com/p${index}`],
+        clicks: 1,
+        impressions: 100 + index,
+        ctr: 0.01,
+        position: 5,
+      })),
+      { keys: [], clicks: 1, impressions: 10_000, ctr: 0.01, position: 5 },
+    ];
+    const provider = makeGscProvider({
+      querySearchAnalytics: async (_c, input) => ({
+        rows: input.dimensions[0] === 'page' ? pageRows : saRows(['q1', 10, 1000, 0.01, 5]),
+        sampled: false,
+        startDate: input.startDate,
+        endDate: input.endDate,
+        dimensions: input.dimensions,
+      }),
+      listSitemaps: async () => [],
+    });
+    const out = await createCollectGscInsights(provider, { logger, persist: makePersistence(), now: FIXED_NOW })({
+      accountId: user.id,
+      siteId: SITE_ID,
+      domain: 'example.com',
+    });
+    expect(out.pageUrls).toHaveLength(GSC_COVERAGE_PAGE_LIMIT);
+    expect(out.pageUrls[0]).toBe(`https://example.com/p${GSC_COVERAGE_PAGE_LIMIT + 4}`);
+    expect(out.pageUrls.every((url) => url.startsWith('https://example.com/p'))).toBe(true);
+  });
+
   it('not-connected when there is no connection row', async () => {
     const user = await seedUser();
     const collect = createCollectGscInsights(makeGscProvider(), {
@@ -2577,6 +2618,7 @@ describe('createCollectGscInsights', () => {
     });
     expect(out.search.status).toBe('not-connected');
     expect(out.sitemaps.status).toBe('not-connected');
+    expect(out.pageUrls).toEqual([]);
   });
 
   it('needs-reconnect when the stored connection is flagged', async () => {
@@ -2821,7 +2863,7 @@ describe('createCollectGscInsights', () => {
 });
 
 // ---------------------------------------------------------------------------
-// GET /api/sites/:siteId/google/search-summary (prompt 24)
+// GET /api/sites/:siteId/google/search-summary
 // ---------------------------------------------------------------------------
 
 describe('GET /api/sites/:siteId/google/search-summary', () => {
@@ -2942,10 +2984,16 @@ describe('GET /api/sites/:siteId/google/search-summary', () => {
         ],
       }),
     );
+    const withoutConfirmation = await request(app)
+      .patch(`/api/sites/${siteId}/google/bindings`)
+      .set('Cookie', user.cookie)
+      .send({ gscPropertyUrl: 'https://another.example/' });
+    expect(withoutConfirmation.status).toBe(409);
+    expect(withoutConfirmation.body.error.code).toBe('GOOGLE_ERRORS_PROPERTY_MISMATCH_CONFIRM');
     await request(app)
       .patch(`/api/sites/${siteId}/google/bindings`)
       .set('Cookie', user.cookie)
-      .send({ gscPropertyUrl: 'https://another.example/' })
+      .send({ gscPropertyUrl: 'https://another.example/', confirmMismatch: true })
       .expect(200);
 
     const reboundSite = await Site.findById(siteId);
@@ -3044,6 +3092,7 @@ describe('GET /api/sites/:siteId/google/search-summary', () => {
       averagePosition: number;
       topQueries: Array<{ query: string }>;
       topPages: Array<{ url: string }>;
+      dimensionTotals: Record<string, { rows: number; clicks: number; impressions: number }>;
       asOf: string;
       previousPeriod: unknown;
     };
@@ -3059,6 +3108,10 @@ describe('GET /api/sites/:siteId/google/search-summary', () => {
       'q5',
     ]);
     expect(summary.topPages.map((p) => p.url)).toEqual(['https://example.com/']);
+    expect(summary.dimensionTotals).toMatchObject({
+      query: { rows: 6, clicks: 53, impressions: 5300 },
+      page: { rows: 1, clicks: 25, impressions: 2500 },
+    });
     expect(summary.asOf).toBe('2026-07-04');
     expect(summary.previousPeriod).toBeNull();
   });
@@ -3198,7 +3251,7 @@ describe('GET /api/sites/:siteId/google/search-summary', () => {
 });
 
 // ---------------------------------------------------------------------------
-// runGscSync (prompt 24) — on-demand / queue-driven five-dimension sync
+// runGscSync — on-demand / queue-driven five-dimension sync
 // ---------------------------------------------------------------------------
 
 describe('runGscSync', () => {
@@ -3230,7 +3283,7 @@ describe('runGscSync', () => {
       page: 3,
       country: 2,
       device: 3,
-      // Prompt 04 — the fake's default `query,page` fixture (5 rows).
+      // the fake's default `query,page` fixture (5 rows).
       'query,page': 5,
     });
     expect(result.sitemaps).toBe(2);
@@ -3259,7 +3312,7 @@ describe('runGscSync', () => {
   });
 
   // -------------------------------------------------------------------------
-  // Prompt 04 — the `query,page` producer + backward compatibility
+  // the `query,page` producer + backward compatibility
   // -------------------------------------------------------------------------
 
   it('persists capped, separator-joined query,page rows the inventory reader can read back', async () => {
@@ -3478,7 +3531,7 @@ describe('runGscSync', () => {
 });
 
 // ---------------------------------------------------------------------------
-// POST /api/sites/:siteId/google/search-refresh (prompt 24)
+// POST /api/sites/:siteId/google/search-refresh
 // ---------------------------------------------------------------------------
 
 describe('POST /api/sites/:siteId/google/search-refresh', () => {
@@ -3652,7 +3705,7 @@ describe('POST /api/sites/:siteId/google/search-refresh', () => {
 });
 
 // ---------------------------------------------------------------------------
-// Site-scoped connect/binding enqueue paths (prompt 24)
+// Site-scoped connect/binding enqueue paths
 // ---------------------------------------------------------------------------
 
 describe('Site-scoped GSC enqueue paths', () => {
@@ -4365,7 +4418,7 @@ describe('GET /api/sites/:siteId/google/sitemaps', () => {
 });
 
 // ---------------------------------------------------------------------------
-// GET /api/sites/:siteId/google/generative-appearance (prompt 12d)
+// GET /api/sites/:siteId/google/generative-appearance
 // ---------------------------------------------------------------------------
 
 describe('GET /api/sites/:siteId/google/generative-appearance', () => {
@@ -4746,9 +4799,12 @@ describe('GA4 analytics endpoints', () => {
     expect(summary.totalKeyEvents).toBe(2);
     expect(summary.engagementRate).toBeCloseTo(0.5, 10);
     expect(summary.asOf).toBe('2026-07-12');
-    expect(summary.timeseries.map((t: { date: string }) => t.date)).toEqual([
-      '2026-07-10',
-      '2026-07-11',
+    expect(summary.timeseries).toHaveLength(28);
+    expect(summary.timeseries[0]).toMatchObject({ date: '2026-06-15', sessions: 0 });
+    expect(summary.timeseries.slice(-3)).toMatchObject([
+      { date: '2026-07-10', sessions: 8 },
+      { date: '2026-07-11', sessions: 12 },
+      { date: '2026-07-12', sessions: 0 },
     ]);
     expect(summary.channels.map((c: { channel: string }) => c.channel)).toEqual([
       'Organic Search',
@@ -4901,6 +4957,34 @@ describe('GA4 analytics endpoints', () => {
       .send({});
     expect(res.status).toBe(404);
   });
+
+  it('refresh reports reconnect and provider failures instead of a stale success', async () => {
+    const user = await seedEnabled('ga4-refresh-errors@x.co');
+    const siteId = await seedSite(user.id);
+    await markNeedsReconnect(user.id);
+    const reconnect = await request(app)
+      .post(siteGooglePath(siteId, '/analytics-refresh'))
+      .set('Cookie', user.cookie)
+      .send({});
+    expect(reconnect.status).toBe(409);
+    expect(reconnect.body.error.code).toBe('GOOGLE_RECONNECT_TO_SEE_DATA');
+
+    await upsertConnection({
+      accountId: user.id,
+      googleAccountEmail: 'user@example.com',
+      refreshToken: 'r',
+      scopes: [SCOPE_GSC, SCOPE_GA4],
+    });
+    setGoogleGscProvider(makeGscProvider({
+      refresh: async () => { throw new VendorUnavailableError('down', { provider: 'google', operation: 'gsc-token-refresh' }); },
+    }));
+    const unavailable = await request(app)
+      .post(siteGooglePath(siteId, '/analytics-refresh'))
+      .set('Cookie', user.cookie)
+      .send({});
+    expect(unavailable.status).toBe(503);
+    expect(unavailable.body.error.code).toBe('GOOGLE_ANALYTICS_REFRESH_FAILED');
+  });
 });
 
 describe('runGa4Sync (unit statuses)', () => {
@@ -5049,7 +5133,9 @@ describe('runGa4Sync (unit statuses)', () => {
     const channel = captured.find((c) => c.dimensionSet === 'channel');
     expect(channel!.rows[0]).toEqual(emptyRow);
     const date = captured.find((c) => c.dimensionSet === 'date');
-    expect(date!.rows[0]).toEqual(emptyRow);
+    expect(date!.rows).toHaveLength(90);
+    expect(date!.rows[0]).toMatchObject({ ...emptyRow, key: expect.stringMatching(/^\d{4}-\d{2}-\d{2}$/) });
+    expect(date!.rows.every((row) => row.sessions === 0 && row.activeUsers === 0 && row.engagedSessions === 0 && row.keyEvents === 0)).toBe(true);
   });
 
   it('unavailable when a runReport fails; needs-reconnect marks the connection on 401', async () => {
@@ -5439,9 +5525,15 @@ describe('GA4 ladder edges', () => {
       .get(`/api/sites/${siteId}/google/analytics-summary`)
       .set('Cookie', user.cookie);
     expect(res.status).toBe(200);
-    expect(
-      (res.body.summary.timeseries as Array<{ date: string }>).map((r) => r.date),
-    ).toEqual(['2026-07-09', '2026-07-10', '2026-07-11']);
+    const days = res.body.summary.timeseries as Array<{ date: string; sessions: number }>;
+    expect(days).toHaveLength(28);
+    expect(days[0]).toMatchObject({ date: '2026-06-15', sessions: 0 });
+    expect(days.slice(-4)).toMatchObject([
+      { date: '2026-07-09', sessions: 70 },
+      { date: '2026-07-10', sessions: 5 },
+      { date: '2026-07-11', sessions: 50 },
+      { date: '2026-07-12', sessions: 0 },
+    ]);
   });
 
   it('POST /analytics-refresh passes the router logger into runGa4Sync (deps.logger branch)', async () => {

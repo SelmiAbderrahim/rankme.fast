@@ -1,0 +1,296 @@
+{
+  "version": "0.1.20260917",
+  "status_code": 20000,
+  "status_message": "Ok.",
+  "time": "0 sec.",
+  "cost": 0,
+  "tasks_count": 1,
+  "tasks_error": 0,
+  "tasks": [
+    {
+      "id": "TASK_ID",
+      "status_code": 20000,
+      "status_message": "Ok.",
+      "time": "0 sec.",
+      "cost": 0,
+      "result_count": 1,
+      "path": [
+        "v3",
+        "on_page",
+        "pages"
+      ],
+      "data": {
+        "api": "on_page",
+        "function": "pages",
+        "limit": 3
+      },
+      "result": [
+        {
+          "crawl_progress": "finished",
+          "crawl_status": {
+            "max_crawl_pages": null,
+            "pages_in_queue": 1392890895,
+            "pages_crawled": 2063034680
+          },
+          "search_after_token": "SearchAfterToken51d0b361-775c-41f8-a2ad-83fe9c857f1c",
+          "current_offset": 1644701718,
+          "total_items_count": 1113267432,
+          "items_count": 1,
+          "items": [
+            {
+              "resource_type": "html",
+              "status_code": 15745,
+              "location": "Locationafd8b563-981a-4206-bae8-331a76405703",
+              "url": "Url53eb8246-7091-48df-8b94-c294e2a814de",
+              "meta": {
+                "title": "Title312c2370-c060-43c3-b20a-27654f4de91b",
+                "charset": 12444,
+                "follow": false,
+                "generator": "Generatoreb833823-dc7d-4e12-97cf-d8c7c01a7348",
+                "htags": {
+                  "h1": [
+                    "8c98b0cc-b792-423e-a517-c0c4bc90c7f8",
+                    "2bd65519-5bc4-45ad-99a5-45a4378dbf86",
+                    "a6026e06-ebb4-4ce5-8429-17879db83eae"
+                  ],
+                  "h2": [
+                    "004a838e-3f93-4972-880f-5e5e82f8d0d4",
+                    "0411d550-899a-4ab2-ae1a-59e13a0263cb",
+                    "bfa67779-6c8e-438c-99ba-99ccf07a3925"
+                  ],
+                  "h3": [
+                    "f1f7a878-2778-4731-9733-fe7e65ac545e",
+                    "1caec700-821e-44b6-888f-887a51d1b905",
+                    "68f5bfdd-777d-47df-a42c-f140726b9ed3"
+                  ],
+                  "h4": [
+                    "70eae272-4ff9-4e89-bd57-b40366d0ba58",
+                    "711b5aa3-3907-4f89-b1d5-3a7a14155e98",
+                    "a904b36c-fe74-425b-ac2d-f09baa337cca"
+                  ],
+                  "h5": [
+                    "3de4c421-c1da-4350-a633-eacd62615923",
+                    "3b33b279-61d9-4691-b952-db60cef0be8e",
+                    "d2020a2d-2357-4187-bda3-ecc878c8c981"
+                  ],
+                  "h6": [
+                    "be0da5f1-31a1-4967-8b54-51ede977ae0e",
+                    "d5dea66a-0ee7-455e-ade4-3211e394b6e3",
+                    "8083a881-948e-49ef-ae8f-53a96cb2c56c"
+                  ]
+                },
+                "description": "MetaDescription115845fa-1fbe-4b3e-a5f1-8872a5cb5b6e",
+                "favicon": "Faviconf2060f9e-1551-42a3-aff7-0463062a6c3d",
+                "meta_keywords": "MetaKeywords18a7dfa0-01ac-4c6a-b40d-9a027e9354ff",
+                "canonical": "Canonical70fd0f25-75a4-4b51-b9ce-fd6c052ac3cd",
+                "internal_links_count": 23470,
+                "external_links_count": 22574,
+                "inbound_links_count": 17021,
+                "images_count": 15284,
+                "images_size": 20830,
+                "scripts_count": 21338,
+                "scripts_size": 30958,
+                "stylesheets_count": 379,
+                "stylesheets_size": 20230,
+                "title_length": 13113,
+                "description_length": 30082,
+                "render_blocking_scripts_count": 4083,
+                "render_blocking_stylesheets_count": 19167,
+                "cumulative_layout_shift": 0.7954004988708091,
+                "meta_title": "MetaTitle192481c4-4d84-4d6a-adee-aa0f19912283",
+                "content": {
+                  "plain_text_size": 5111,
+                  "plain_text_rate": 0.4781335626851475,
+                  "plain_text_word_count": 24885,
+                  "automated_readability_index": 0.29781591901135196,
+                  "coleman_liau_readability_index": 0.06877013916883812,
+                  "dale_chall_readability_index": 0.37939248393755254,
+                  "flesch_kincaid_readability_index": 0.9789211368693207,
+                  "smog_readability_index": 0.7871169384538392,
+                  "description_to_content_consistency": 0.6683318284150532,
+                  "title_to_content_consistency": 0.8339091093256534,
+                  "meta_keywords_to_content_consistency": 0.725651068601527
+                },
+                "deprecated_tags": [
+                  "a49046d2-197a-4224-934b-f789f84b8015",
+                  "7706d988-b472-4c04-b469-1f9610b74025",
+                  "af9b68a0-e2d1-43ed-87f2-3e49eba060f5"
+                ],
+                "duplicate_meta_tags": [
+                  "412b3b94-b4aa-4e84-9a10-5da5cc5bbdf5",
+                  "e5c12ad9-80c4-4af8-bf8b-90aabb1ab7f2",
+                  "0857160c-ffd8-4225-b19d-703e2f4673f1"
+                ],
+                "spell": {
+                  "hunspell_language_code": "Languageef2112f0-a4c3-494d-8233-28a7a192e8f8",
+                  "misspelled": [
+                    {
+                      "word": "Word92f99623-6c46-4db9-b79e-aa68c84a9a0b"
+                    },
+                    {
+                      "word": "Word49d1870d-2f62-4502-b1ec-bd2018e358eb"
+                    },
+                    {
+                      "word": "Word509fe311-089b-4022-ac45-201d5dae0ec6"
+                    }
+                  ]
+                },
+                "social_media_tags": {
+                  "keyb367cca0-dbe0-4778-8a54-8c3cce666520": "value409060c8-5f10-40e4-aa0e-69a8ea439d0b",
+                  "key0decd2c4-b0fd-4097-95cd-93608755eadc": "value163a221d-77e8-455f-9b5d-01fd0c9a0139",
+                  "key7c6237e2-9100-426b-b192-65879b763cb6": "value15362c1d-6ed4-4021-9d77-05506feace36"
+                }
+              },
+              "page_timing": {
+                "time_to_interactive": 14926,
+                "dom_complete": 31705,
+                "largest_contentful_paint": 0.4045060733959239,
+                "first_input_delay": 0.4728374523229585,
+                "connection_time": 19197,
+                "time_to_secure_connection": 7759,
+                "request_sent_time": 32530,
+                "waiting_time": 24342,
+                "download_time": 24023,
+                "duration_time": 28749,
+                "fetch_start": 14934,
+                "fetch_end": 4915
+              },
+              "onpage_score": 0.3,
+              "total_dom_size": 11889,
+              "custom_js_response": null,
+              "custom_js_client_exception": "CustomJsClientException8337bef9-5b32-4aae-8476-aac2d75802c6",
+              "resource_errors": {
+                "errors": [
+                  {
+                    "line": 7939,
+                    "column": 24707,
+                    "message": "Messagea1ddd287-5ef4-42c3-857b-191f15f49eb8",
+                    "status_code": 19093
+                  },
+                  {
+                    "line": 17297,
+                    "column": 26806,
+                    "message": "Messagefa4f84c8-b7e7-4fc2-aca7-1797a076c2af",
+                    "status_code": 19990
+                  },
+                  {
+                    "line": 29316,
+                    "column": 11580,
+                    "message": "Messaged73cf339-85f1-40aa-ac4d-191830cef36a",
+                    "status_code": 28005
+                  }
+                ],
+                "warnings": [
+                  {
+                    "line": 30334,
+                    "column": 25227,
+                    "message": "Message98e4942e-51f6-49bb-acf5-ed40efbdf65e",
+                    "status_code": 9393
+                  },
+                  {
+                    "line": 2524,
+                    "column": 9597,
+                    "message": "Message545db896-3163-41ab-a1fa-5f985513d4fb",
+                    "status_code": 25732
+                  },
+                  {
+                    "line": 9697,
+                    "column": 26276,
+                    "message": "Message7f5239f0-1dd2-420a-b561-35d616e798d9",
+                    "status_code": 22831
+                  }
+                ]
+              },
+              "broken_resources": false,
+              "broken_links": true,
+              "duplicate_title": false,
+              "duplicate_description": true,
+              "duplicate_content": false,
+              "click_depth": 2492,
+              "size": 19355,
+              "encoded_size": 22322,
+              "total_transfer_size": 22811,
+              "fetch_time": "2028-07-22 22:24:32 +00:00",
+              "cache_control": {
+                "cachable": true,
+                "ttl": 11525
+              },
+              "checks": {
+                "no_content_encoding": false,
+                "high_loading_time": false,
+                "is_redirect": false,
+                "is_4xx_code": false,
+                "is_5xx_code": false,
+                "is_broken": false,
+                "is_www": false,
+                "is_https": true,
+                "is_http": false,
+                "high_waiting_time": false,
+                "has_micromarkup": false,
+                "has_micromarkup_errors": false,
+                "no_doctype": false,
+                "has_html_doctype": true,
+                "canonical": true,
+                "no_encoding_meta_tag": false,
+                "no_h1_tag": false,
+                "https_to_http_links": false,
+                "size_greater_than_3mb": false,
+                "meta_charset_consistency": true,
+                "has_meta_refresh_redirect": false,
+                "has_render_blocking_resources": false,
+                "redirect_chain": false,
+                "low_content_rate": true,
+                "high_content_rate": false,
+                "low_character_count": false,
+                "high_character_count": false,
+                "small_page_size": false,
+                "large_page_size": false,
+                "low_readability_rate": false,
+                "irrelevant_description": false,
+                "irrelevant_title": false,
+                "irrelevant_meta_keywords": false,
+                "title_too_long": false,
+                "has_meta_title": false,
+                "title_too_short": false,
+                "deprecated_html_tags": false,
+                "duplicate_meta_tags": true,
+                "duplicate_title_tag": false,
+                "no_image_alt": false,
+                "no_image_title": true,
+                "no_description": false,
+                "no_title": false,
+                "no_favicon": false,
+                "seo_friendly_url": true,
+                "flash": false,
+                "frame": false,
+                "lorem_ipsum": false,
+                "seo_friendly_url_characters_check": true,
+                "seo_friendly_url_dynamic_check": true,
+                "seo_friendly_url_keywords_check": true,
+                "seo_friendly_url_relative_length_check": true,
+                "recursive_canonical": false,
+                "canonical_chain": false,
+                "canonical_to_redirect": false,
+                "canonical_to_broken": false,
+                "has_links_to_redirects": false,
+                "is_orphan_page": false,
+                "is_link_relation_conflict": false
+              },
+              "content_encoding": "ContentEncoding03184798-eb98-40f9-819a-73cb8ce0b7dd",
+              "media_type": "MediaType979d4712-d9eb-4950-a656-7b2be8bbd5d1",
+              "server": "Server627a33f2-243a-49ce-903c-6459debc73a6",
+              "is_resource": false,
+              "url_length": 32555,
+              "relative_url_length": 18795,
+              "last_modified": {
+                "header": "2026-02-28 11:25:51 +00:00",
+                "sitemap": "2025-03-11 13:38:55 +00:00",
+                "meta_tag": "2025-06-28 10:04:10 +00:00"
+              }
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

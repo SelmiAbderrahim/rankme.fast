@@ -1,19 +1,23 @@
 {
   "title": "SEO local",
   "description": "Fichas de negocio, reseñas y posición en el paquete de mapas para tu sitio.",
-  "empty": "Aún no hay datos de SEO local: pulsa actualizar para cargar fichas, reseñas y preguntas.",
+  "empty": "Aún no hay datos de SEO local. Pulsa «Actualizar SEO local» arriba para cargar fichas, reseñas y preguntas.",
   "emptyTitle": "Aún no hay datos locales",
-  "emptyCta": "Obtener datos locales",
   "refresh": {
     "button": "Actualizar SEO local",
-    "cooldown": "Actualizar en {{seconds}} s",
-    "failed": "No se pudo actualizar el SEO local. Inténtalo de nuevo en un momento."
+    "cooldown_one": "Actualizar en {{seconds}} s",
+    "failed": "No se pudo actualizar el SEO local. Inténtalo de nuevo en un momento.",
+    "cooldown_zero": "Actualizar en {{seconds}} s",
+    "cooldown_two": "Actualizar en {{seconds}} s",
+    "cooldown_few": "Actualizar en {{seconds}} s",
+    "cooldown_many": "Actualizar en {{seconds}} s",
+    "cooldown_other": "Actualizar en {{seconds}} s",
+    "needsSetup": "Elige tu negocio abajo antes de actualizar."
   },
   "loadFailed": "No se pudo cargar el SEO local.",
   "locked": {
     "title": "SEO local es una función Pro",
-    "body": "Actualiza a Pro para hacer un seguimiento de la coherencia de tu negocio en directorios y en el paquete de mapas local.",
-    "upgrade": "Ver planes"
+    "body": "Actualiza a Pro para hacer un seguimiento de la coherencia de tu negocio en directorios y en el paquete de mapas local."
   },
   "listings": {
     "title": "Fichas de negocio",
@@ -37,5 +41,39 @@
     "position": "Posición",
     "packSize": "Tamaño del paquete",
     "notRanked": "Fuera del paquete de mapas"
+  },
+  "setup": {
+    "resultsLegend_zero": "{{count}} resultados para «{{query}}». Elige el tuyo:",
+    "resultsLegend_one": "{{count}} resultado para «{{query}}». Elige el tuyo:",
+    "resultsLegend_two": "{{count}} resultados para «{{query}}». Elige el tuyo:",
+    "resultsLegend_few": "{{count}} resultados para «{{query}}». Elige el tuyo:",
+    "resultsLegend_many": "{{count}} resultados para «{{query}}». Elige el tuyo:",
+    "resultsLegend_other": "{{count}} resultados para «{{query}}». Elige el tuyo:",
+    "title": "Elige tu negocio",
+    "description": "Busca el negocio al que pertenece este sitio. El SEO local informa sobre el que elijas.",
+    "changeDescription": "Vuelve a buscar y elige otro negocio. El actual se mantiene hasta que guardes una nueva elección.",
+    "queryLabel": "Nombre, dirección o ID de lugar del negocio",
+    "queryPlaceholder": "Clínica Dental Ejemplo, Madrid",
+    "queryHint": "Cada búsqueda consulta una vez a tu proveedor de fichas locales. Guardar un resultado no envía ninguna solicitud.",
+    "queryInvalid": "Escribe entre {{min}} y {{max}} caracteres.",
+    "search": "Buscar",
+    "searching": "Buscando…",
+    "noAddress": "Sin dirección indicada",
+    "source": "Perfil de Empresa de Google",
+    "noResults": "No encontramos negocios para «{{query}}». Revisa cómo está escrito o prueba con la dirección o el ID de lugar de Google.",
+    "save": "Usar este negocio",
+    "saving": "Guardando…",
+    "saved": "El SEO local ahora informa sobre {{name}}.",
+    "loadFailed": "No se pudo cargar la configuración de tu negocio.",
+    "searchFailed": "La búsqueda falló. Inténtalo de nuevo en un momento.",
+    "selectFailed": "No se pudo guardar ese negocio. Inténtalo de nuevo."
+  },
+  "business": {
+    "label": "Negocio",
+    "change": "Cambiar de negocio"
+  },
+  "provenance": {
+    "business": "Datos de <bdi>{{name}}</bdi>.",
+    "domain": "Datos anteriores, buscados por el sitio web <bdi>{{domain}}</bdi>."
   }
 }

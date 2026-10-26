@@ -31,16 +31,17 @@
  * (so the existing `(keywordId, checkedAt)` replay filter caps them at one
  * check per keyword per week).
  */
-import { UnrecoverableError, type Job } from 'bullmq';
+import { UnrecoverableError, type Job, type Queue } from 'bullmq';
 import type { Logger } from 'pino';
 import { and, desc, eq, inArray, lt } from 'drizzle-orm';
 import type { Db } from '../../db/client.js';
 import { isAltRankEngine, keywords as keywordsTable, rankings as rankingsTable, domainStates, type RankCheckFailureReason, type RankEngineKind, type SerpTopResult, } from '../../db/schema/keywords.js';
 import { localPackRankSnapshots } from '../../db/schema/local-seo.js';
-import { captureVendorCost, matchHostInRows, matchTokenInRows, ProviderError, type AltEngineRankRow, type AltRankEngine, type RankCheckInput, type RankCheckResult, type RankProvider, type SerpDevice, type SerpFeatureSnapshot, matchDomainInAiOverview, matchDomainInSerp, normalizeSerpDomain, type SerpAiOverview as ProviderSerpAiOverview, type SerpItem, } from '../../shared/providers/index.js';
+import { captureVendorCost, matchHostInRows, matchTokenInRows, ProviderError, usdToMicros, type AltEngineRankRow, type AltRankEngine, type RankCheckInput, type RankCheckResult, type RankProvider, type SerpDevice, type SerpFeatureSnapshot, matchDomainInAiOverview, matchDomainInSerp, normalizeSerpDomain, type SerpAiOverview as ProviderSerpAiOverview, type SerpItem, type SerpTaskPostOutcome, type SerpTaskPoll, type SerpTaskResult, } from '../../shared/providers/index.js';
 import { VendorAuthError, VendorMalformedError, VendorQuotaError, VendorTimeoutError, VendorUnavailableError, } from '../../shared/providers/errors.js';
 import { parseConsumedPayload, rankJobSchema, type RankJob } from '../../shared/queue/payloads.js';
 import { rankPeriodKey } from '../../shared/queue/queues.js';
+import { enqueueRankJob } from '../../shared/queue/index.js';
 import { Site } from '../sites/index.js';
 import { computeSerpCacheKey, type SerpCacheRepo } from './serp-cache.service.js';
 import { recordObservation } from './serp-observations.repo.js';
@@ -49,6 +50,11 @@ import type { VendorArchiver } from '../../shared/vendor-cache/index.js';
 import { detectRankDrop, type RankDropHandler } from './rank-drop.service.js';
 import type { ConfirmationCandidate } from './rank-drop-confirmations.service.js';
 import type { ObservationMeta } from '../../shared/observations/types.js';
+import { claimRankJobItem, finalizeRankJob, loadOpenRankJobItems, rankJobDeadlineMs,
+    RANK_JOB_POST_CHUNK, RANK_JOB_SETTLE_MARGIN_MS, recordRankJobItemAttempts,
+    settleOpenRankJobItems, settleRankJobItem, startRankJob, touchRankJob } from './rank-jobs.repo.js';
+import { isRetryableReason, MAX_RANK_ATTEMPTS, planRetry, readSitePeriodOutcomes,
+    recordOutcome, retryDueAt } from './rank-outcomes.repo.js';
 export interface RankTargetContext {
     payload: RankJob;
     domain: string;
@@ -142,6 +148,8 @@ export interface RankProcessorDeps {
             /** SERP features from the SAME payload; absent = no signal. */
             features?: SerpFeatureSnapshot | null;
         }>;
+        postSerpTasks?: (inputs: readonly RankCheckInput[]) => Promise<SerpTaskPostOutcome[]>;
+        pollSerpTask?: (taskId: string) => Promise<SerpTaskPoll>;
     };
     db?: Db;
     cache?: SerpCacheRepo;
@@ -171,6 +179,9 @@ export interface RankProcessorDeps {
      * vendor-usage ledger.
      */
     archive?: VendorArchiver;
+    serpTaskPollIntervalMs?: number;
+    sleep?: (ms: number) => Promise<void>;
+    retryQueue?: Queue;
 }
 export interface RankJobOutcome {
     siteId: string;
@@ -202,10 +213,41 @@ export function createRankProcessor(deps: RankProcessorDeps) {
             // Site deleted after scheduling — permanent; retries cannot help.
             throw new UnrecoverableError('site not found for rank job');
         }
+        if (payload.retry && deps.db) {
+            const cadence = await loadCadence(deps.db, payload.siteId);
+            if (payload.retry.periodKey !== rankPeriodKey(cadence, clock())) {
+                await planRetry(deps.db, { keywordIds: payload.keywordIds,
+                    periodKey: payload.retry.periodKey, nextRetryAt: null, at: clock() });
+                return { siteId: payload.siteId, checked: 0, positions: [], fromCache: 0,
+                    fromFresh: 0, errors: 0, skipped: payload.keywordIds.length };
+            }
+        }
+        const rankJobId = payload.rankJobId;
+        const jobDb = rankJobId && deps.db ? deps.db : null;
+        const jobDeadlineAt = jobDb ? await startRankJob(jobDb, rankJobId!, clock()) : null;
+        if (jobDb && !jobDeadlineAt) throw new UnrecoverableError('rank job is already finished');
         if (site.paused === true) {
             // Paused site: a stale scheduler tick (or a job enqueued just before
             // the pause landed) must not spend. Soft-complete — the site exists,
             // and DLQ noise would help no one.
+            if (jobDb) {
+                await settleOpenRankJobItems(jobDb, { accountId: payload.accountId, jobId: rankJobId!,
+                    state: 'cancelled', reason: 'site_paused', now: clock() });
+                await finalizeRankJob(jobDb, rankJobId!, clock());
+            }
+            if (deps.db && payload.manual !== true) {
+                const cadence = await loadCadence(deps.db, payload.siteId);
+                const at = clock();
+                const period = rankPeriodKey(cadence, at);
+                const paused = await deps.db.select({ id: keywordsTable.id }).from(keywordsTable)
+                    .where(and(eq(keywordsTable.accountId, payload.accountId),
+                        eq(keywordsTable.siteId, payload.siteId), eq(keywordsTable.active, true),
+                        eq(keywordsTable.engine, 'google'),
+                        ...(payload.keywordIds.length ? [inArray(keywordsTable.id, payload.keywordIds)] : [])));
+                for (const row of paused) await recordOutcome(deps.db, { accountId: payload.accountId,
+                    siteId: payload.siteId, keywordId: row.id, periodKey: period,
+                    status: 'skipped', reason: 'site_paused', at, cadence, countAttempt: false });
+            }
             return {
                 siteId: payload.siteId,
                 checked: 0,
@@ -220,9 +262,21 @@ export function createRankProcessor(deps: RankProcessorDeps) {
         // New jobs carry the producer's flag snapshot. A false snapshot excludes
         // alternate-engine work even if the flag is re-enabled before consumption;
         // true (or a legacy missing field) lets accepted work finish after rollback.
-        const targets = payload.altEnginesEnabledAtEnqueue === false
+        let targets = payload.altEnginesEnabledAtEnqueue === false
             ? resolvedTargets.filter((target) => !isAltRankEngine(target.engine))
             : resolvedTargets;
+        if (payload.retry && deps.db) {
+            const rows = await readSitePeriodOutcomes(deps.db, { accountId: payload.accountId,
+                siteId: payload.siteId, periodKey: payload.retry.periodKey });
+            const eligible = new Set(rows.filter((row) => row.status === 'failed' &&
+                row.attempts === payload.retry!.attempt && row.nextRetryAt !== null &&
+                row.nextRetryAt <= clock() && row.retryDeadline > clock()).map((row) => row.keywordId));
+            targets = targets.filter((target) => eligible.has(target.keywordId));
+        }
+        if (jobDb) {
+            const open = await loadOpenRankJobItems(jobDb, rankJobId!);
+            targets = targets.filter((target) => open.has(target.keywordId));
+        }
         const now = clock();
         const cadence = deps.db ? await loadCadence(deps.db, payload.siteId) : 'weekly';
         const periodKey = rankPeriodKey(cadence, now);
@@ -231,6 +285,13 @@ export function createRankProcessor(deps: RankProcessorDeps) {
         // first run and the "Check now" button — stamp the exact trigger time so
         // they always write a fresh row, even inside an already-checked period.
         const checkedAt = payload.manual ? now : deriveCheckedAt(cadence, now);
+        const writeOutcome = async (target: ResolvedTarget, status: 'checked' | 'failed',
+            reason: RankCheckFailureReason | null, countAttempt = true) => {
+            if (!deps.db || payload.manual === true || isAltRankEngine(target.engine)) return;
+            await recordOutcome(deps.db, { accountId: payload.accountId, siteId: payload.siteId,
+                keywordId: target.keywordId, periodKey, status, reason,
+                at: clock(), cadence, countAttempt });
+        };
         // Non-Google keywords are WEEKLY, always:
         // they stamp the Monday-00:00-UTC period floor even on a daily-cadence
         // site and even for a manual "Check now". The shipped
@@ -261,6 +322,10 @@ export function createRankProcessor(deps: RankProcessorDeps) {
         for (const target of targets) {
             if (existingReplayed.has(target.keywordId)) {
                 skipped += 1;
+                await writeOutcome(target, 'checked', null, false);
+                if (jobDb) await settleRankJobItem(jobDb, { accountId: payload.accountId,
+                    jobId: rankJobId!, keywordId: target.keywordId, state: 'succeeded',
+                    reason: 'already_checked', now });
                 deps.logger.info({ siteId: payload.siteId, keywordId: target.keywordId }, 'rank check skipped — replay (row already exists for period)');
                 continue;
             }
@@ -270,8 +335,17 @@ export function createRankProcessor(deps: RankProcessorDeps) {
         let fromCache = 0;
         let fromFresh = 0;
         let errors = 0;
+        const batch = deps.provider.postSerpTasks && deps.provider.pollSerpTask
+            ? await prepareGoogleBatch(pending.filter((target) => !isAltRankEngine(target.engine)),
+                deps, checkedAt, cacheTtlMs, jobDb ? { jobId: rankJobId!, db: jobDb,
+                    deadlineAt: jobDeadlineAt! } : null)
+            : null;
         for (let i = 0; i < pending.length; i += 1) {
             const target = pending[i]!;
+            if (jobDb && !(await claimRankJobItem(jobDb, { jobId: rankJobId!, keywordId: target.keywordId, now: clock() }))) {
+                skipped += 1;
+                continue;
+            }
             const targetEngine = target.engine;
             if (isAltRankEngine(targetEngine)) {
                 const outcome = await runAltEngineTarget({
@@ -286,10 +360,16 @@ export function createRankProcessor(deps: RankProcessorDeps) {
                 });
                 if (outcome.kind === 'error') {
                     errors += 1;
+                    if (jobDb) await settleRankJobItem(jobDb, { accountId: payload.accountId,
+                        jobId: rankJobId!, keywordId: target.keywordId, state: 'failed',
+                        reason: outcome.reason, now: clock() });
                     if (outcome.rethrow)
                         throw outcome.rethrow;
                     continue;
                 }
+                if (jobDb) await settleRankJobItem(jobDb, { accountId: payload.accountId,
+                    jobId: rankJobId!, keywordId: target.keywordId, state: 'succeeded',
+                    reason: null, now: clock() });
                 positions.push(outcome.position);
                 if (outcome.source === 'cache')
                     fromCache += 1;
@@ -298,7 +378,12 @@ export function createRankProcessor(deps: RankProcessorDeps) {
                 continue;
             }
             try {
-                const outcome = await checkOne(target, payload.accountId, deps, checkedAt, cacheTtlMs);
+                if (batch && !batch.has(target.keywordId)) { skipped += 1; continue; }
+                const prepared = batch?.get(target.keywordId);
+                if (prepared instanceof ProviderError) throw prepared;
+                const outcome = prepared ?? await checkOne(target, payload.accountId, deps, checkedAt, cacheTtlMs,
+                    jobDb ? () => recordRankJobItemAttempts(jobDb, { jobId: rankJobId!,
+                        keywordIds: [target.keywordId], attempts: 1, now: clock() }) : undefined);
                 positions.push(outcome.result.position);
                 if (outcome.source === 'cache')
                     fromCache += 1;
@@ -409,6 +494,10 @@ export function createRankProcessor(deps: RankProcessorDeps) {
                         }
                     }
                 }
+                if (jobDb) await settleRankJobItem(jobDb, { accountId: payload.accountId,
+                    jobId: rankJobId!, keywordId: target.keywordId, state: 'succeeded',
+                    reason: null, now: clock() });
+                await writeOutcome(target, 'checked', null);
             }
             catch (err) {
                 if (err instanceof ProviderError) {
@@ -432,8 +521,12 @@ export function createRankProcessor(deps: RankProcessorDeps) {
                         // attempted, and marking them would report failures that never
                         // happened (and, on a batch-wide abort, would be re-stamped by
                         // every BullMQ retry).
-                        await markCheckFailed(deps.db, [target.keywordId], now, reason);
+                        await markCheckFailed(deps.db, [target.keywordId], jobDb ? clock() : now, reason);
                     }
+                    if (jobDb) await settleRankJobItem(jobDb, { accountId: payload.accountId,
+                        jobId: rankJobId!, keywordId: target.keywordId, state: 'failed',
+                        reason, now: clock() });
+                    await writeOutcome(target, 'failed', reason);
                     if (batchWide) {
                         // Credentials rejected or vendor quota exhausted — every remaining
                         // keyword would hit the same wall, and for quota each attempt still
@@ -448,6 +541,15 @@ export function createRankProcessor(deps: RankProcessorDeps) {
                 }
                 throw err;
             }
+        }
+        if (jobDb) {
+            await settleOpenRankJobItems(jobDb, { accountId: payload.accountId, jobId: rankJobId!,
+                state: 'expired', reason: 'not_attempted', now: clock(), attempted: false });
+            await finalizeRankJob(jobDb, rankJobId!, clock());
+        }
+        if (deps.db && payload.manual !== true) {
+            await scheduleRankOutcomeRetries(deps.db, deps.retryQueue ?? null, payload,
+                periodKey, clock());
         }
         deps.logger.info({
             siteId: payload.siteId,
@@ -469,6 +571,43 @@ export function createRankProcessor(deps: RankProcessorDeps) {
             skipped,
         };
     };
+}
+
+/** Queue only bounded, due work; a retry stays inside its original cadence period. */
+async function scheduleRankOutcomeRetries(db: Db, queue: Queue | null, payload: RankJob,
+    periodKey: string, now: Date): Promise<void> {
+    const rows = await readSitePeriodOutcomes(db, { accountId: payload.accountId,
+        siteId: payload.siteId, periodKey });
+    const groups = new Map<number, typeof rows>();
+    const settled: string[] = [];
+    for (const row of rows) {
+        if (row.status !== 'failed' || row.completedAt !== null) continue;
+        const slot = row.attempts;
+        const due = retryDueAt(row, slot);
+        if (!queue || !isRetryableReason(row.reason) || slot >= MAX_RANK_ATTEMPTS ||
+            !due || row.retryDeadline <= now) { settled.push(row.keywordId); continue; }
+        if (row.nextRetryAt !== null && row.nextRetryAt > now) continue;
+        const group = groups.get(slot) ?? [];
+        group.push(row);
+        groups.set(slot, group);
+    }
+    if (settled.length) await planRetry(db, { keywordIds: settled, periodKey,
+        nextRetryAt: null, at: now });
+    for (const [slot, group] of groups) {
+        for (let start = 0; start < group.length; start += 30) {
+            const chunk = group.slice(start, start + 30);
+            const due = new Date(Math.max(...chunk.map((row) => retryDueAt(row, slot)!.getTime())));
+            const ids = chunk.map((row) => row.keywordId);
+            await enqueueRankJob(queue!, { accountId: payload.accountId, siteId: payload.siteId,
+                keywordIds: ids, schedulerKey: payload.schedulerKey,
+                ...(payload.altEnginesEnabledAtEnqueue === undefined ? {} :
+                    { altEnginesEnabledAtEnqueue: payload.altEnginesEnabledAtEnqueue }),
+                retry: { periodKey, attempt: slot } },
+            `${periodKey}-retry-${slot}-${Math.floor(start / 30)}`,
+            { delay: Math.max(0, due.getTime() - now.getTime()) });
+            await planRetry(db, { keywordIds: ids, periodKey, nextRetryAt: due, at: now });
+        }
+    }
 }
 /**
  * Map a `ProviderError` to the stable reason key persisted on the keyword.
@@ -560,13 +699,15 @@ interface CheckOutcome {
     /** Top-organic set backing the observation; `[]` when the path had none. */
     topResults: SerpTopResult[];
 }
-async function checkOne(target: ResolvedTarget, accountId: string, deps: RankProcessorDeps, checkedAt: Date, cacheTtlMs: number): Promise<CheckOutcome> {
+async function checkOne(target: ResolvedTarget, accountId: string, deps: RankProcessorDeps, checkedAt: Date,
+    cacheTtlMs: number, onVendorAttempt?: () => Promise<void>): Promise<CheckOutcome> {
     // The vendor-neutral `checkRank` seam returns a result that is already
     // matched to this caller's domain. It cannot safely populate or join the
     // domain-independent SERP cache. Keep the fallback live and archive its
     // spend privately, but never let one domain poison another domain's read.
     if (!deps.provider.liveSerp &&
         !(deps.provider.postSerpTask && deps.provider.fetchSerpResult)) {
+        await onVendorAttempt?.();
         const { value: fetched, costMicros } = await captureVendorCost(() => callProviderForItems(target.input, deps));
         // The provider capability guard above makes checkRank the only possible
         // branch in callProviderForItems, where `direct` is always populated.
@@ -621,7 +762,7 @@ async function checkOne(target: ResolvedTarget, accountId: string, deps: RankPro
         }
     }
     // Miss: single-flight the vendor fetch. Fetch, write cache, derive position.
-    return singleFlightFetch(target, deps, cacheKey, now, cacheTtlMs);
+    return singleFlightFetch(target, deps, cacheKey, now, cacheTtlMs, onVendorAttempt);
 }
 interface SharedSerpFlightOutcome {
     topResults: SerpTopResult[];
@@ -642,7 +783,142 @@ function deriveGoogleCheckOutcome(target: ResolvedTarget, shared: SharedSerpFlig
         topResults: shared.topResults,
     };
 }
-async function singleFlightFetch(target: ResolvedTarget, deps: RankProcessorDeps, cacheKey: string, now: Date, cacheTtlMs: number): Promise<CheckOutcome> {
+interface BatchGroup {
+    cacheKey: string;
+    targets: ResolvedTarget[];
+    taskId: string | null;
+    attempts: number;
+}
+
+/** Post all misses before polling; a pending task keeps its original vendor ID. */
+async function prepareGoogleBatch(targets: ResolvedTarget[], deps: RankProcessorDeps,
+    checkedAt: Date, cacheTtlMs: number,
+    job: { db: Db; jobId: string; deadlineAt: Date } | null): Promise<Map<string, CheckOutcome | ProviderError>> {
+    const results = new Map<string, CheckOutcome | ProviderError>();
+    if (targets.length === 0 || !deps.provider.postSerpTasks || !deps.provider.pollSerpTask) return results;
+    const queue = deps.provider;
+    const grouped = new Map<string, BatchGroup>();
+    for (const target of targets) {
+        if (job && !(await claimRankJobItem(job.db, { jobId: job.jobId,
+            keywordId: target.keywordId, now: deps.clock?.() ?? new Date() }))) continue;
+        const cacheKey = computeSerpCacheKey({ phrase: target.input.keyword,
+            locationCode: target.input.locationCode, languageCode: target.input.languageCode,
+            device: target.input.device });
+        const group = grouped.get(cacheKey) ?? { cacheKey, targets: [], taskId: null, attempts: 0 };
+        group.targets.push(target);
+        grouped.set(cacheKey, group);
+    }
+    const misses: BatchGroup[] = [];
+    for (const group of grouped.values()) {
+        const cached = await deps.cache?.read(group.cacheKey, checkedAt);
+        if (cached) {
+            const shared: SharedSerpFlightOutcome = { topResults: cached.topResults,
+                aiOverview: cached.aiOverview, features: cached.features, fetchedAt: cached.fetchedAt,
+                origin: 'cache' };
+            for (const target of group.targets) results.set(target.keywordId,
+                deriveGoogleCheckOutcome(target, shared, 'cache'));
+        } else misses.push(group);
+    }
+    const pending: BatchGroup[] = [];
+    let accountWide: ProviderError | null = null;
+    const fail = (group: BatchGroup, error: ProviderError) => {
+        for (const target of group.targets) results.set(target.keywordId, error);
+    };
+    const post = async (groups: BatchGroup[]) => {
+        const retry: BatchGroup[] = [];
+        for (let start = 0; start < groups.length; start += RANK_JOB_POST_CHUNK) {
+            const chunk = groups.slice(start, start + RANK_JOB_POST_CHUNK);
+            if (accountWide) {
+                // No request was sent for this chunk. Its items stay open and
+                // settle as not attempted without changing keyword failure state.
+                continue;
+            }
+            for (const group of chunk) {
+                group.attempts += 1;
+                if (job) await recordRankJobItemAttempts(job.db, { jobId: job.jobId,
+                    keywordIds: group.targets.map((target) => target.keywordId),
+                    attempts: group.attempts, now: deps.clock?.() ?? new Date() });
+            }
+            let outcomes: SerpTaskPostOutcome[];
+            try {
+                ({ value: outcomes } = await captureVendorCost(() => queue.postSerpTasks!(
+                    chunk.map((group) => group.targets[0]!.input))));
+                if (outcomes.length !== chunk.length) throw new VendorMalformedError(
+                    'SERP task post returned the wrong number of outcomes',
+                    { provider: 'rank', operation: 'serp-task-post' });
+            } catch (error) {
+                if (!(error instanceof ProviderError)) throw error;
+                if (isBatchWideFailure(error)) accountWide = error;
+                for (const group of chunk) fail(group, error);
+                continue;
+            }
+            for (let index = 0; index < chunk.length; index += 1) {
+                const group = chunk[index]!;
+                const outcome = outcomes[index]!;
+                if (outcome.ok) {
+                    group.taskId = outcome.vendorTaskId;
+                    pending.push(group);
+                } else if (group.attempts < 2 && !isBatchWideFailure(outcome.error)) {
+                    retry.push(group);
+                } else {
+                    if (isBatchWideFailure(outcome.error)) accountWide = outcome.error;
+                    fail(group, outcome.error);
+                }
+            }
+        }
+        if (retry.length > 0) await post(retry);
+    };
+    await post(misses);
+    const pollInterval = deps.serpTaskPollIntervalMs ?? env.SERP_TASK_POLL_INTERVAL_MS;
+    const sleep = deps.sleep ?? ((ms: number) => new Promise<void>((resolve) => setTimeout(resolve, ms)));
+    const pollUntil = Math.min((deps.clock?.() ?? new Date()).getTime() +
+        rankJobDeadlineMs(misses.length) - RANK_JOB_SETTLE_MARGIN_MS,
+        job ? job.deadlineAt.getTime() - RANK_JOB_SETTLE_MARGIN_MS : Number.POSITIVE_INFINITY);
+    for (let round = 0; pending.length > 0 && round < env.SERP_TASK_MAX_POLL_ATTEMPTS &&
+        (deps.clock?.() ?? new Date()).getTime() < pollUntil; round += 1) {
+        const current = pending.splice(0);
+        for (const group of current) {
+            let poll: SerpTaskPoll;
+            try {
+                ({ value: poll } = await captureVendorCost(() => queue.pollSerpTask!(group.taskId!)));
+            } catch (error) {
+                if (!(error instanceof ProviderError)) throw error;
+                // A failed GET says nothing about the posted task. Keep its ID.
+                pending.push(group);
+                continue;
+            }
+            if (poll.state === 'pending') { pending.push(group); continue; }
+            if (poll.state === 'failed') {
+                if (group.attempts < 2 && !isBatchWideFailure(poll.error)) await post([group]);
+                else fail(group, poll.error);
+                continue;
+            }
+            const value: SerpTaskResult = poll.result;
+            const shared: SharedSerpFlightOutcome = { topResults: serpItemsToTopResults(value.items),
+                aiOverview: value.aiOverview, features: value.features,
+                fetchedAt: deps.clock?.() ?? new Date(), origin: 'fresh' };
+            if (deps.cache) await deps.cache.write({ cacheKey: group.cacheKey,
+                topResults: shared.topResults, aiOverview: shared.aiOverview,
+                features: shared.features, fetchedAt: shared.fetchedAt,
+                expiresAt: new Date(shared.fetchedAt.getTime() + cacheTtlMs),
+                costMicros: value.costUsd === null ? null : usdToMicros(value.costUsd), params: {
+                    phrase: group.targets[0]!.input.keyword,
+                    locationCode: group.targets[0]!.input.locationCode,
+                    languageCode: group.targets[0]!.input.languageCode,
+                    device: group.targets[0]!.input.device,
+                } });
+            for (const target of group.targets) results.set(target.keywordId,
+                deriveGoogleCheckOutcome(target, shared, 'fresh'));
+        }
+        if (job) await touchRankJob(job.db, job.jobId, deps.clock?.() ?? new Date());
+        if (pending.length > 0) await sleep(pollInterval);
+    }
+    for (const group of pending) fail(group, new VendorTimeoutError('SERP task did not finish before the polling deadline',
+        { provider: 'rank', operation: 'serp-task-get' }));
+    return results;
+}
+async function singleFlightFetch(target: ResolvedTarget, deps: RankProcessorDeps, cacheKey: string,
+    now: Date, cacheTtlMs: number, onVendorAttempt?: () => Promise<void>): Promise<CheckOutcome> {
     const doFetch = async (): Promise<SharedSerpFlightOutcome> => {
         // Re-read inside the lock. The shipped in-process single-flight shares
         // one Promise between concurrent callers, while this repository seam also
@@ -664,6 +940,7 @@ async function singleFlightFetch(target: ResolvedTarget, deps: RankProcessorDeps
         }
         // Capture spans both provider branches (two-step task API and the
         // checkRank fallback) — the DataForSEO choke point records into it.
+        await onVendorAttempt?.();
         const { value: fetched, costMicros } = await captureVendorCost(() => callProviderForItems(target.input, deps));
         const topResults = serpItemsToTopResults(fetched.items);
         if (deps.cache) {
@@ -854,6 +1131,9 @@ async function persistRanking(db: Db, input: {
         target: [rankingsTable.keywordId, rankingsTable.checkedAt],
     })
         .returning({ id: rankingsTable.id });
+    if (rows.length > 0) await db.update(keywordsTable)
+        .set({ lastFailedCheckAt: null, lastFailedReason: null })
+        .where(eq(keywordsTable.id, input.keywordId));
     return { inserted: rows.length > 0, rankingId: rows[0]?.id ?? null };
 }
 function extractAbsolute(result: RankCheckResult): number | null {
@@ -955,6 +1235,7 @@ interface AltTargetRunArgs {
 }
 type AltTargetOutcome = {
     kind: 'error';
+    reason: RankCheckFailureReason;
     rethrow?: ProviderError;
 } | {
     kind: 'ok';
@@ -1024,7 +1305,7 @@ async function runAltEngineTarget(args: AltTargetRunArgs): Promise<AltTargetOutc
                 // this one were never checked and must keep their true state.
                 await markCheckFailed(deps.db, [target.keywordId], now, reason);
             }
-            return batchWide ? { kind: 'error', rethrow: err } : { kind: 'error' };
+            return batchWide ? { kind: 'error', reason, rethrow: err } : { kind: 'error', reason };
         }
         throw err;
     }

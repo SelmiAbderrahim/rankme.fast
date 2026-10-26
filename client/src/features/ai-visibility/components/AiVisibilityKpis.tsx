@@ -8,8 +8,9 @@ interface Props {
 }
 
 /**
- * KPI strip above the share-of-voice card — surfaces the aggregate fields the
- * overview endpoint already returns (sentiment split, mention coverage).
+ * KPI strip under the page title — the only share-of-voice readout — surfaces
+ * the aggregate fields the overview endpoint already returns (sentiment split,
+ * mention coverage).
  */
 export const AiVisibilityKpis = ({ overview }: Props) => {
   const { t, i18n } = useTranslation('aiVisibility');
@@ -42,9 +43,14 @@ export const AiVisibilityKpis = ({ overview }: Props) => {
         variant="kpi"
         label={t('kpi.mentioned')}
         value={
-          <span dir="ltr">
-            {t('kpi.mentionedOf', { mentioned: mentionedCount, total: totalPrompts })}
-          </span>
+          // "0 of N" would be a measured outcome; nothing ran yet.
+          overview.checkedAt === null ? (
+            t('neverChecked')
+          ) : (
+            <span dir="ltr">
+              {t('kpi.mentionedOf', { mentioned: mentionedCount, total: totalPrompts })}
+            </span>
+          )
         }
         context={t('kpi.mentionedContext')}
         data-testid="ai-visibility-kpi-mentioned"

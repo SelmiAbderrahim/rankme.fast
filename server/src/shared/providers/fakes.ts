@@ -15,9 +15,9 @@ import { appBulkMetricsInputSchema, appChartInputSchema, appInfoInputSchema, app
 // alt-engine adapter — the same arrangement `rank.processor.ts` already uses
 // for provider-neutral SERP host normalization.
 import { buildAltEngineObservationMeta, matchHostInRows, matchTokenInRows, } from './dataforseo/alt-engines.js';
-import { normalizeSerpDomain } from './serp-normalization.js';
+import { normalizeSerpDomain, type SerpTaskQueue, type SerpTaskPostOutcome, type SerpTaskPoll, } from './serp-normalization.js';
 import type { PublicPageDiscoveryInput, PublicPageDiscoveryResult, PublicPageDiscoveryRow, PublicPageSourceHint, } from './types.js';
-import type { AiAnswerInput, AiAnswerRow, AiKeywordVolume, AiMentionCheckInput, AiMentionRow, AiVisibilityProvider, AuditProvider, AuditResult, AuditStatus, ContentAnalysisMentionQuery, ContentAnalysisMentionRow, ContentAnalysisMentionSummary, ContentAnalysisProvider, ReviewRow, ReviewsInput, ReviewsProvider, ReviewsResult, ReviewsSource, BacklinkAnchorRow, BacklinkBulkRankRow, BacklinkCompetitorRow, BacklinkHistoryPoint, BacklinkListPage, BacklinkProvider, BacklinkReferringDomainRow, BacklinkSpamScoreRow, BacklinkSummary, BusinessListingRow, CompetitorEntry, CompetitorProvider, DomainComparisonResult, DomainComparisonRow, DomainIntersectionRow, DomainRankOverviewRow, HistoricalRankOverviewResult, TrafficEstimationCountry, TrafficEstimationRow, TechStackEntry, Ga4Property, Ga4Provider, Ga4RunReportInput, Ga4RunReportResult, Ga4WebDataStream, GscProperty, GscSearchAnalyticsResult, GscSitemapEntry, GscUrlInspection, AltEngineRankInput, AltEngineRankResult, AltEngineRankRow, AltRankEngine, IntentResult, KeywordHistoricalVolume, KeywordMetrics, KeywordOverview, KeywordProvider, LocalListingsProvider, LocalPackCoordinate, LocalPackResult, PageSpeedProvider, PageSpeedResult, ProviderMarket, QaSummary, RankCheckResult, RankProvider, ReviewsSummary, SerpFeatureSnapshot, SiteKeywordCandidate, SiteKeywordProvider, TrendsExploreInput, TrendsExploreResult, TrendsMonthlyPoint, TrendsProvider, TrendsRelatedQuery, TrendsSeries, } from './types.js';
+import type { AiAnswerInput, AiAnswerRow, AiKeywordVolume, AiMentionCheckInput, AiMentionRow, AiVisibilityProvider, AuditProvider, AuditResource, AuditResult, AuditStatus, ContentAnalysisMentionQuery, ContentAnalysisMentionRow, ContentAnalysisMentionSummary, ContentAnalysisProvider, ReviewRow, ReviewsInput, ReviewsProvider, ReviewsResult, ReviewsSource, BacklinkAnchorRow, BacklinkBulkRankRow, BacklinkCompetitorRow, BacklinkHistoryPoint, BacklinkListPage, BacklinkProvider, BacklinkReferringDomainRow, BacklinkSpamScoreRow, BacklinkSummary, BusinessListingRow, LocalBusinessCandidate, LocalListingTarget, CompetitorEntry, CompetitorProvider, DomainComparisonResult, DomainComparisonRow, DomainIntersectionRow, DomainRankOverviewRow, HistoricalRankOverviewResult, TrafficEstimationCountry, TrafficEstimationRow, TechStackEntry, Ga4Property, Ga4Provider, Ga4RunReportInput, Ga4RunReportResult, Ga4WebDataStream, GscProperty, GscSearchAnalyticsResult, GscSitemapEntry, GscUrlInspection, AltEngineRankInput, AltEngineRankResult, AltEngineRankRow, AltRankEngine, IntentResult, KeywordHistoricalVolume, KeywordMetrics, KeywordOverview, KeywordProvider, LocalListingsProvider, LocalPackCoordinate, LocalPackResult, PageSpeedProvider, PageSpeedResult, ProviderMarket, QaSummary, RankCheckResult, RankProvider, ReviewsSummary, SerpFeatureSnapshot, SiteKeywordCandidate, SiteKeywordProvider, TrendsExploreInput, TrendsExploreResult, TrendsMonthlyPoint, TrendsProvider, TrendsRelatedQuery, TrendsSeries, } from './types.js';
 import type { GoogleGscProvider } from './google/gsc.js';
 /** Fixed instant so fake output is bit-for-bit reproducible across runs. */
 export const FAKE_CLOCK = new Date('2026-01-01T00:00:00.000Z');
@@ -45,6 +45,14 @@ export interface FakeAuditProviderOptions extends FakeProviderOptions {
     status?: AuditStatus;
     result?: AuditResult;
 }
+/**
+ * Fake crawl. Besides the two original pages it carries one deterministic
+ * case for every deep crawl rule: an error page of each class, a redirect
+ * chain and a loop, duplicate titles and content, placeholder text, mixed
+ * content, a deep orphan page, slow and oversized pages and, when the
+ * resource scan is on, a broken image, an oversized image and an uncached
+ * script.
+ */
 export const FAKE_AUDIT_RESULT: AuditResult = {
     domainChecks: {
         robotsTxtFound: true,
@@ -67,6 +75,26 @@ export const FAKE_AUDIT_RESULT: AuditResult = {
             brokenLinks: [],
             onPageScore: 87.5,
             timing: { fetchMs: 120 },
+            checks: {
+                clientError: false,
+                serverError: false,
+                redirects: false,
+                imagesMissingAlt: true,
+                renderBlocking: true,
+                missingFavicon: false,
+            },
+            clickDepth: 0,
+            inboundInternalLinks: 4,
+            outboundInternalLinks: 6,
+            outboundExternalLinks: 1,
+            pageSizeBytes: 48_000,
+            transferSizeBytes: 12_000,
+            serverResponseMs: 180,
+            contentEncoding: 'gzip',
+            imageCount: 6,
+            renderBlockingScripts: 2,
+            renderBlockingStylesheets: 1,
+            socialTags: { openGraph: true, twitterCard: true },
         },
         {
             url: 'https://example.com/hidden',
@@ -83,12 +111,163 @@ export const FAKE_AUDIT_RESULT: AuditResult = {
             brokenLinks: ['https://example.com/404'],
             onPageScore: 41.2,
         },
+        {
+            url: 'https://example.com/guide/care?ref=nav',
+            statusCode: 200,
+            title: 'Widget care',
+            metaDescription: 'How to look after a widget.',
+            h1: ['Widget care'],
+            h2: ['Cleaning'],
+            canonical: 'https://example.com/guide/care?ref=nav',
+            hasStructuredData: true,
+            structuredDataErrors: [],
+            isIndexable: true,
+            brokenLinks: [],
+            onPageScore: 63,
+            checks: {
+                duplicateTitle: true,
+                duplicateContent: true,
+                placeholderText: true,
+                insecureLinks: true,
+                metaRefreshRedirect: true,
+                linksToRedirects: true,
+                canonicalToBroken: true,
+                orphan: true,
+                missingDoctype: true,
+                deprecatedTags: true,
+                frames: true,
+                missingFavicon: true,
+                slowServerResponse: true,
+                uncompressed: true,
+                largePage: true,
+                veryLargePage: true,
+                renderBlocking: false,
+                urlHasParameters: true,
+            },
+            clickDepth: 6,
+            inboundInternalLinks: 0,
+            outboundInternalLinks: 3,
+            outboundExternalLinks: 0,
+            pageSizeBytes: 3_400_000,
+            transferSizeBytes: 3_400_000,
+            serverResponseMs: 2_400,
+            contentEncoding: null,
+            imageCount: 2,
+            socialTags: { openGraph: false, twitterCard: false },
+        },
+        {
+            url: 'https://example.com/guide/care-2',
+            statusCode: 200,
+            title: 'Widget care',
+            metaDescription: 'Caring for widgets.',
+            h1: ['Caring for widgets'],
+            h2: [],
+            canonical: 'https://example.com/guide/care-2',
+            hasStructuredData: true,
+            structuredDataErrors: [],
+            isIndexable: true,
+            brokenLinks: [],
+            onPageScore: 71,
+            checks: { duplicateTitle: true, duplicateContent: true, canonicalChain: true },
+            clickDepth: 2,
+            inboundInternalLinks: 1,
+            pageSizeBytes: 1_200_000,
+            contentEncoding: 'br',
+            socialTags: { openGraph: true, twitterCard: false },
+        },
+        {
+            url: 'https://example.com/gone',
+            statusCode: 404,
+            title: null,
+            metaDescription: null,
+            h1: [],
+            h2: [],
+            canonical: null,
+            hasStructuredData: false,
+            structuredDataErrors: [],
+            isIndexable: false,
+            brokenLinks: [],
+            onPageScore: 0,
+            checks: { clientError: true },
+        },
+        {
+            url: 'https://example.com/down',
+            statusCode: 503,
+            title: null,
+            metaDescription: null,
+            h1: [],
+            h2: [],
+            canonical: null,
+            hasStructuredData: false,
+            structuredDataErrors: [],
+            isIndexable: false,
+            brokenLinks: [],
+            onPageScore: 0,
+            checks: { serverError: true },
+        },
     ],
+    duplicateGroups: [
+        { kind: 'title', urls: ['https://example.com/guide/care?ref=nav', 'https://example.com/guide/care-2'] },
+        {
+            kind: 'content',
+            urls: ['https://example.com/guide/care?ref=nav', 'https://example.com/guide/care-2'],
+            similarity: 8,
+        },
+    ],
+    redirectChains: [
+        {
+            from: 'https://example.com/old',
+            hops: [
+                { url: 'https://example.com/older', status: 301 },
+                { url: 'https://example.com/guide/care-2', status: 200 },
+            ],
+            isLoop: false,
+        },
+        {
+            from: 'https://example.com/loop-a',
+            hops: [
+                { url: 'https://example.com/loop-b', status: 302 },
+                { url: 'https://example.com/loop-a', status: 302 },
+            ],
+            isLoop: true,
+        },
+    ],
+    capabilities: { resourceScan: false },
 };
+/** Resources the fake crawl reports when the resource scan is on. */
+export const FAKE_AUDIT_RESOURCES: AuditResource[] = [
+    {
+        url: 'https://example.com/img/missing.png',
+        type: 'image',
+        statusCode: 404,
+        sizeBytes: 0,
+        isBroken: true,
+        usedOn: ['https://example.com/'],
+        usedOnCount: 1,
+    },
+    {
+        url: 'https://example.com/img/hero.jpg',
+        type: 'image',
+        statusCode: 200,
+        sizeBytes: 2_400_000,
+        cacheable: true,
+        isBroken: false,
+        usedOn: ['https://example.com/', 'https://example.com/guide/care-2'],
+        usedOnCount: 2,
+    },
+    {
+        url: 'https://example.com/js/app.js',
+        type: 'script',
+        statusCode: 200,
+        sizeBytes: 180_000,
+        cacheable: false,
+        isBroken: false,
+        usedOn: [],
+    },
+];
 export function createFakeAuditProvider(opts: FakeAuditProviderOptions = {}): AuditProvider {
     const vendorTaskId = opts.vendorTaskId ?? 'fake-audit-task-1';
-    const status = opts.status ?? { state: 'finished', pagesCrawled: 2 };
-    const result = opts.result ?? FAKE_AUDIT_RESULT;
+    const status = opts.status ?? { state: 'finished', pagesCrawled: FAKE_AUDIT_RESULT.pages.length };
     return {
         async startAudit() {
             maybeFail(opts.failure);
@@ -98,9 +277,14 @@ export function createFakeAuditProvider(opts: FakeAuditProviderOptions = {}): Au
             maybeFail(opts.failure);
             return status;
         },
-        async getAuditResult() {
+        async getAuditResult(_vendorTaskId, options) {
             maybeFail(opts.failure);
-            return result;
+            if (opts.result)
+                return opts.result;
+            // Same contract as the live adapter: resources only from a scanned task.
+            return options?.resourceScan === true
+                ? { ...FAKE_AUDIT_RESULT, resources: FAKE_AUDIT_RESOURCES, capabilities: { resourceScan: true } }
+                : FAKE_AUDIT_RESULT;
         },
     };
 }
@@ -112,7 +296,15 @@ export interface FakeRankProviderOptions extends FakeProviderOptions {
     localPackResult?: LocalPackResult;
     /** Pin an exact alt-engine outcome. */
     altEngineResult?: AltEngineRankResult;
+    /** Enable a deterministic standard-queue task seam for rank jobs. */
+    serpTasks?: FakeSerpTaskOptions;
 }
+export interface FakeSerpTaskOptions {
+    /** Number of pending polls before a posted keyword becomes ready. */
+    pendingPolls?: number | ((keyword: string) => number);
+}
+/** Stable fake keyword marker for a slow queued rank check in isolated tests. */
+export const FAKE_RANK_SLOW_MARKER = 'rankslow';
 export const FAKE_RANK_RESULT: RankCheckResult = {
     position: 3,
     foundUrl: 'https://example.com/pricing',
@@ -479,8 +671,44 @@ export function fakeSearchPublicPages(input: PublicPageDiscoveryInput, opts: Fak
     }
     return { rows };
 }
-export function createFakeRankProvider(opts: FakeRankProviderOptions & FakeDiscoveryOptions = {}): RankProvider {
+function createFakeSerpTaskQueue(options: FakeSerpTaskOptions, failure: ProviderError | undefined): SerpTaskQueue {
+    const tasks = new Map<string, { domain: string; keyword: string; pendingLeft: number }>();
+    let posted = 0;
     return {
+        async postSerpTasks(inputs) {
+            maybeFail(failure);
+            return inputs.map((input): SerpTaskPostOutcome => {
+                const vendorTaskId = `fake-serp-task-${++posted}`;
+                const configured = options.pendingPolls ??
+                    (input.keyword.toLowerCase().includes(FAKE_RANK_SLOW_MARKER) ? 2 : 0);
+                const pendingLeft = Math.max(0, typeof configured === 'function' ? configured(input.keyword) : configured);
+                tasks.set(vendorTaskId, { domain: input.domain, keyword: input.keyword, pendingLeft });
+                return { ok: true, vendorTaskId };
+            });
+        },
+        async pollSerpTask(taskId): Promise<SerpTaskPoll> {
+            maybeFail(failure);
+            const task = tasks.get(taskId);
+            if (!task) return { state: 'failed', error: new VendorMalformedError('fake rank task is unknown',
+                { provider: 'fake', operation: 'serp-task-get' }) };
+            if (task.pendingLeft > 0) {
+                task.pendingLeft -= 1;
+                return { state: 'pending' };
+            }
+            const urls = FAKE_RANK_RESULT.serpTopUrls!.map((url, index) =>
+                index === 2 ? `https://${normalizeSerpDomain(task.domain)}/pricing` : url);
+            return { state: 'ready', result: {
+                items: urls.map((url, index) => ({ domain: normalizeSerpDomain(new URL(url).hostname),
+                    url, rankGroup: index + 1, rankAbsolute: index + 1 })),
+                costUsd: 0, aiOverview: { present: false, references: [] },
+                features: fakeSerpFeaturesFor(task.keyword, task.domain),
+            } };
+        },
+    };
+}
+export function createFakeRankProvider(opts: FakeRankProviderOptions & FakeDiscoveryOptions = {}): RankProvider & Partial<SerpTaskQueue> {
+    return {
+        ...(opts.serpTasks ? createFakeSerpTaskQueue(opts.serpTasks, opts.failure) : {}),
         async checkRank(input) {
             maybeFail(opts.failure);
             if (opts.result)
@@ -530,6 +758,8 @@ export function createFakeRankProvider(opts: FakeRankProviderOptions & FakeDisco
 // Local listings
 // ---------------------------------------------------------------------------
 export interface FakeLocalListingsProviderOptions extends FakeProviderOptions {
+    /** Setup search universe, matched by query words. */
+    businessCandidates?: LocalBusinessCandidate[];
     businessListings?: BusinessListingRow[];
     reviews?: ReviewsSummary;
     questionsAndAnswers?: QaSummary;
@@ -557,6 +787,67 @@ export const FAKE_BUSINESS_LISTINGS: BusinessListingRow[] = [
         consistent: false,
     },
 ];
+/**
+ * Two businesses with the same name in different places, so the setup flow
+ * has to show addresses and can never silently take the first match.
+ */
+export const FAKE_BUSINESS_CANDIDATES: LocalBusinessCandidate[] = [
+    {
+        placeId: 'ChIJFakeDentalDowntown01',
+        cid: '1000000000000000001',
+        name: 'Example Dental Studio',
+        address: '100 Main St, Austin, TX 78701',
+        phone: '+1 512-555-0100',
+        domain: 'example.com',
+        category: 'Dentist',
+        latitude: 30.2672,
+        longitude: -97.7431,
+    },
+    {
+        placeId: 'ChIJFakeDentalNorth00002',
+        cid: '1000000000000000002',
+        name: 'Example Dental Studio North',
+        address: '9000 Research Blvd, Austin, TX 78758',
+        phone: '+1 512-555-0200',
+        domain: null,
+        category: 'Dentist',
+        latitude: 30.3751,
+        longitude: -97.7194,
+    },
+];
+/**
+ * Words of three or more letters must all appear in the name, address or
+ * identifiers; an exact place ID or CID (with or without the vendor's
+ * `place_id:` / `cid:` prefix) matches that business alone.
+ */
+export function matchFakeBusinesses(universe: readonly LocalBusinessCandidate[], query: string): LocalBusinessCandidate[] {
+    const text = query.trim().toLowerCase();
+    const id = text.replace(/^(place_id|cid):/, '');
+    const exact = universe.filter((c) => c.placeId?.toLowerCase() === id || c.cid === id);
+    if (exact.length > 0)
+        return exact;
+    const words = text.split(/[^\p{L}\p{N}]+/u).filter((word) => word.length >= 3);
+    if (words.length === 0)
+        return [];
+    return universe.filter((c) => {
+        const haystack = [c.name, c.address ?? '', c.placeId ?? '', c.cid ?? ''].join(' ').toLowerCase();
+        return words.every((word) => haystack.includes(word));
+    });
+}
+function fakeCandidateFor(universe: readonly LocalBusinessCandidate[], target: LocalListingTarget): LocalBusinessCandidate | undefined {
+    const business = target.business;
+    if (!business)
+        return undefined;
+    return universe.find((c) => (business.placeId !== null && c.placeId === business.placeId) || (business.cid !== null && c.cid === business.cid));
+}
+/** Listings that describe the chosen fake business: two matching directories and one stale one. */
+export function fakeListingsFor(business: LocalBusinessCandidate): BusinessListingRow[] {
+    return [
+        { source: 'google', name: business.name, address: business.address, phone: business.phone, consistent: true },
+        { source: 'yelp', name: business.name, address: business.address, phone: business.phone, consistent: true },
+        { source: 'bing-places', name: business.name, address: business.address, phone: '+1 512-555-9999', consistent: false },
+    ];
+}
 export const FAKE_REVIEWS_SUMMARY: ReviewsSummary = {
     averageRating: 4.6,
     reviewCount: 128,
@@ -570,10 +861,16 @@ export function createFakeLocalListingsProvider(opts: FakeLocalListingsProviderO
     const businessListings = opts.businessListings ?? FAKE_BUSINESS_LISTINGS;
     const reviews = opts.reviews ?? FAKE_REVIEWS_SUMMARY;
     const questionsAndAnswers = opts.questionsAndAnswers ?? FAKE_QA_SUMMARY;
+    const businessCandidates = opts.businessCandidates ?? FAKE_BUSINESS_CANDIDATES;
     return {
-        async getBusinessListings() {
+        async searchBusinesses(input) {
             maybeFail(opts.failure);
-            return businessListings;
+            return matchFakeBusinesses(businessCandidates, input.query);
+        },
+        async getBusinessListings(target) {
+            maybeFail(opts.failure);
+            const chosen = opts.businessListings ? undefined : fakeCandidateFor(businessCandidates, target);
+            return chosen ? fakeListingsFor(chosen) : businessListings;
         },
         async getReviews() {
             maybeFail(opts.failure);

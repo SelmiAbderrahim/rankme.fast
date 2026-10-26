@@ -1,8 +1,10 @@
+import { Helmet } from 'react-helmet-async';
 import { useTranslation } from 'react-i18next';
 import { Link } from 'react-router-dom';
 import { Button } from '@shared/ui/button';
 import { appHref } from '@shared/navigation/appHref';
 import { Empty, EmptyContent, EmptyDescription, EmptyTitle } from '@shared/ui/empty';
+import { useAppTitleDetail } from '@shared/navigation/appTitleContext';
 
 /**
  * Shared 404 surface. Used as a client-side courtesy when a role-gated screen
@@ -11,8 +13,13 @@ import { Empty, EmptyContent, EmptyDescription, EmptyTitle } from '@shared/ui/em
  */
 export const NotFound = () => {
   const { t } = useTranslation('common');
+  useAppTitleDetail([t('notFound.title')]);
   return (
     <div className="mx-auto flex max-w-md flex-col items-center py-16">
+      {/* A 404 must never be indexed. */}
+      <Helmet>
+        <meta name="robots" content="noindex, follow" />
+      </Helmet>
       <Empty>
         <EmptyContent>
           <EmptyTitle>{t('notFound.title')}</EmptyTitle>

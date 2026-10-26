@@ -15,7 +15,7 @@ RankMeFast bewahrt App-Keyword- und Chartbeobachtungen zusammen mit Store-Recher
 
 ## Funktionsumfang
 
-Registriere ein Profil für Google Play, den App Store oder beide. Du kannst Keyword-Positionen und Kategorie-Charts verfolgen, Store-Keywords und Wettbewerber recherchieren, eine begrenzte Auswahl an Bewertungen analysieren und gespeicherte Beobachtungen verknüpfter Profile vergleichen.
+Registrieren Sie ein Profil für Google Play, den App Store oder beide. Sie können Keyword-Positionen und Kategorie-Charts verfolgen, Store-Keywords und Wettbewerber recherchieren, eine begrenzte Auswahl an Bewertungen analysieren und gespeicherte Beobachtungen verknüpfter Profile vergleichen.
 
 Jedes Ergebnis behält Store, Markt, Sprache und Beobachtungszeit. Liefert die Quelle keinen Wert, zeigt das Produkt **nicht beobachtet**, statt die Lücke zu füllen.
 
@@ -23,7 +23,7 @@ Jedes Ergebnis behält Store, Markt, Sprache und Beobachtungszeit. Liefert die Q
 
 Keyword- und Chart-Tracker laufen einmal pro Woche. Der gespeicherte Verlauf bleibt als Diagramm und gleichwertige Tabelle verfügbar, auch wenn keine Position beobachtet wurde.
 
-Keyword- und Wettbewerbsrecherche startest du bei Bedarf. Die Keyword-Lücken-Recherche akzeptiert derzeit nur die USA und Englisch; Anfragen für andere Märkte werden abgelehnt statt stillschweigend umgestellt.
+Keyword- und Wettbewerbsrecherche starten Sie bei Bedarf. Die Keyword-Lücken-Recherche akzeptiert derzeit nur die USA und Englisch; Anfragen für andere Märkte werden abgelehnt statt stillschweigend umgestellt.
 
 ## Kosten und Kontingente
 
@@ -37,6 +37,6 @@ Eine gespeicherte Keyword- oder Chartposition garantiert weder ein künftiges Ra
 
 Wöchentliches Tracking ist keine lückenlose Überwachung. Änderungen zwischen zwei Prüfungen werden nicht beobachtet, und Bewertungsanalysen laufen nur auf Anforderung.
 
-Schaltet ein Betreiber einen Teil von App SEO ab, kannst du dort nichts Neues starten. Gespeicherte Ergebnisse bleiben aber lesbar.
+Schaltet ein Betreiber einen Teil von App SEO ab, können Sie dort nichts Neues starten. Gespeicherte Ergebnisse bleiben aber lesbar.
 
 [Zurück zum Dokumentationsindex](./index.de.md)

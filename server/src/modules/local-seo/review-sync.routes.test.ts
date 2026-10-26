@@ -130,19 +130,69 @@ describe('review source setup', () => {
     expect(notADomain.status).toBe(400);
   });
 
-  it('accepts opaque provider-prefixed ids and rejects whitespace, controls, and over-bound ids', async () => {
+  it('accepts provider-prefixed ids and rejects whitespace, controls, and over-bound ids', async () => {
     const user = await seedUser('src-bad@x.co');
     const profileId = await seedProfile(user.id);
     expect(
-      (await configureSource(user, profileId, 'google', 'place_id:ChIJ!opaque')).status,
+      (await configureSource(user, profileId, 'google', `place_id:${GOOGLE_PLACE_ID}`)).status,
     ).toBe(201);
     expect((await configureSource(user, profileId, 'tripadvisor', 'has space')).status).toBe(400);
     expect((await configureSource(user, profileId, 'tripadvisor', 'bad\u0007id')).status).toBe(400);
     expect((await configureSource(user, profileId, 'tripadvisor', 'bad\u007fid')).status).toBe(400);
     expect((await configureSource(user, profileId, 'google', 'x'.repeat(201))).status).toBe(400);
-    expect(
-      (await configureSource(user, profileId, 'tripadvisor', 'location_id:60763')).status,
-    ).toBe(201);
+    const prefixed = await configureSource(user, profileId, 'tripadvisor', 'location_id:60763');
+    expect(prefixed.status).toBe(201);
+    // Legacy prefix and URL-style `d` forms are stored as the bare location id.
+    expect(prefixed.body.target).toBe('60763');
+  });
+
+  it('rejects ids that cannot identify a business instead of saving them', async () => {
+    const user = await seedUser('src-invalid@x.co');
+    const profileId = await seedProfile(user.id);
+    for (const [source, target] of [
+      ['google', 'abc'],
+      ['google', 'ChIJshort'],
+      ['google', 'Joes Coffee Downtown'],
+      ['google', 'https://maps.google.com/?cid=1'],
+      ['trustpilot', 'abc'],
+      ['trustpilot', 'nodots'],
+      ['tripadvisor', 'abc'],
+      ['tripadvisor', 'g-99001'],
+    ] as const) {
+      const rejected = await configureSource(user, profileId, source, target);
+      expect(rejected.status, `${source} ${target}`).toBe(400);
+      expect(JSON.stringify(rejected.body.error.details)).toContain(
+        'Enter a valid business ID for that review source.',
+      );
+    }
+    expect(await LocalSeoReviewSource.countDocuments({ profileId })).toBe(0);
+
+    const valid = [
+      ['google', 'ChIJgUbEo8cfqokR5lP9_Wh_DaM', 'ChIJgUbEo8cfqokR5lP9_Wh_DaM'],
+      ['google', 'cid:194604053573767737', 'cid:194604053573767737'],
+      ['trustpilot', 'Www.Example.com', 'example.com'],
+      ['tripadvisor', 'd23462501', '23462501'],
+    ] as const;
+    for (const [source, target, stored] of valid) {
+      const accepted = await configureSource(user, profileId, source, target);
+      expect(accepted.status, `${source} ${target}`).toBe(201);
+      expect(accepted.body.target).toBe(stored);
+    }
+  });
+
+  it('accepts the fake-provider scenario sentinel only while the reviews provider is the fake', async () => {
+    const user = await seedUser('src-scenario@x.co');
+    const profileId = await seedProfile(user.id);
+    const mutableEnv = env as { PROVIDER_REVIEWS: 'fake' | 'dataforseo' };
+    const original = mutableEnv.PROVIDER_REVIEWS;
+    try {
+      mutableEnv.PROVIDER_REVIEWS = 'fake';
+      expect((await configureSource(user, profileId, 'google', '__scenario-timeout')).status).toBe(201);
+      mutableEnv.PROVIDER_REVIEWS = 'dataforseo';
+      expect((await configureSource(user, profileId, 'tripadvisor', '__scenario-hostile')).status).toBe(400);
+    } finally {
+      mutableEnv.PROVIDER_REVIEWS = original;
+    }
   });
 
   it('returns 404 for a profile owned by another account and for a malformed id', async () => {
@@ -282,6 +332,26 @@ describe('POST /api/local-seo/reviews/sync', () => {
       .set('Cookie', user.cookie)
       .send({ profileId, sources: ['google'] });
     expect(res.status).toBe(400);
+    expect(res.body.error.details).toEqual({ source: 'google' });
+    expect(await LocalSeoReviewSyncRun.countDocuments()).toBe(0);
+    expect(queueAdd).not.toHaveBeenCalled();
+  });
+
+  it('refuses a legacy saved target that is not a valid id and never creates a run', async () => {
+    const user = await seedUser('sync-legacy-invalid@x.co');
+    const profileId = await seedProfile(user.id);
+    await LocalSeoReviewSource.create({
+      accountId: user.id,
+      profileId,
+      source: 'google',
+      target: 'abc',
+    });
+    const res = await request(app)
+      .post('/api/local-seo/reviews/sync')
+      .set('Cookie', user.cookie)
+      .send({ profileId, sources: ['google'] });
+    expect(res.status).toBe(400);
+    expect(res.body.error.message).toBe('Enter a valid business ID for that review source.');
     expect(res.body.error.details).toEqual({ source: 'google' });
     expect(await LocalSeoReviewSyncRun.countDocuments()).toBe(0);
     expect(queueAdd).not.toHaveBeenCalled();

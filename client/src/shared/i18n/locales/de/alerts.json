@@ -1,6 +1,6 @@
 {
   "title": "Warnungen",
-  "subtitle": "Erfahre sofort, wenn eine Position fällt oder sich dein Linkprofil ändert.",
+  "subtitle": "Erfahren Sie sofort, wenn eine Position fällt oder sich Ihr Linkprofil ändert.",
   "tabs": {
     "rules": "Regeln",
     "log": "Versandprotokoll"
@@ -21,41 +21,59 @@
     "all": "Alle"
   },
   "list": {
-    "title": "Deine Regeln",
-    "capUsed": "{{count}} Regeln in Verwendung.",
+    "title": "Ihre Regeln",
+    "capUsed_one": "{{count}} Regel in Verwendung.",
     "type": "Typ",
     "threshold": "Schwelle",
     "channels": "Kanäle",
     "state": "Status",
     "actions": "Aktionen",
-    "emailCount": "{{count}} E-Mail-Empfänger",
+    "emailCount_one": "{{count}} E-Mail-Empfänger",
     "secretTail": "Signaturschlüssel endet auf {{tail}}",
     "enabled": "An",
     "disabled": "Aus",
     "enable": "Einschalten",
     "disable": "Ausschalten",
     "viewLog": "Protokoll ansehen",
-    "delete": "Löschen"
+    "delete": "Löschen",
+    "capUsed_zero": "{{count}} Regeln in Verwendung.",
+    "capUsed_two": "{{count}} Regeln in Verwendung.",
+    "capUsed_few": "{{count}} Regeln in Verwendung.",
+    "capUsed_many": "{{count}} Regeln in Verwendung.",
+    "capUsed_other": "{{count}} Regeln in Verwendung.",
+    "emailCount_zero": "{{count}} E-Mail-Empfänger",
+    "emailCount_two": "{{count}} E-Mail-Empfänger",
+    "emailCount_few": "{{count}} E-Mail-Empfänger",
+    "emailCount_many": "{{count}} E-Mail-Empfänger",
+    "emailCount_other": "{{count}} E-Mail-Empfänger"
   },
   "builder": {
     "title": "Neue Regel",
     "description": "Wähle, was überwacht wird und wohin es geht.",
     "site": "Website",
     "sitePlaceholder": "Website wählen",
-    "siteRequired": "Wähle eine Website, um eine Regel zu erstellen.",
+    "siteRequired": "Wählen Sie eine Website, um fortzufahren.",
     "type": "Warnungstyp",
     "threshold": "Positionsschwelle",
     "thresholdHint": "Wir warnen, sobald die bestätigte Position diesen Rang oder schlechter erreicht.",
     "channels": "Kanäle",
     "slackPlaceholder": "Adresse des eingehenden Slack-Webhooks",
-    "webhookPlaceholder": "Deine https-Adresse",
-    "paidChannelLocked": "Slack- und Webhook-Kanäle erfordern mindestens den Pro-Tarif.",
+    "webhookPlaceholder": "Ihre https-Adresse",
     "noChannel": "Wähle mindestens einen Kanal.",
-    "submit": "Regel anlegen"
+    "submit": "Regel anlegen",
+    "sitePaused": "pausiert",
+    "rankDropHint": "Löst erst aus, wenn eine geplante Rankingprüfung einen Abfall findet und eine zweite Prüfung desselben Keywords ihn bestätigt.",
+    "rankDropBuiltIn": "Die integrierte E-Mail zu Rankingverlusten ist davon getrennt und hat einen eigenen Schalter unter",
+    "rankDropBuiltInLink": "Benachrichtigungen",
+    "thresholdInvalid": "Geben Sie eine ganze Position zwischen {{min}} und {{max}} ein.",
+    "slackRequired": "Geben Sie die Adresse Ihres Slack-Webhooks ein.",
+    "webhookRequired": "Geben Sie die Adresse Ihres Webhooks ein.",
+    "sitePausedOption": "Setzen Sie diese Website fort, um Alarmregeln zu erstellen",
+    "sitePausedBlocked": "Diese Website ist pausiert. Setzen Sie diese Website fort, um Alarmregeln zu erstellen."
   },
   "secret": {
-    "title": "Kopiere jetzt deinen Signaturschlüssel",
-    "body": "Wir zeigen diesen Schlüssel nur einmal. Bewahre ihn sicher auf — du kannst ihn ersetzen, aber nie wieder lesen.",
+    "title": "Kopieren Sie jetzt Ihren Signaturschlüssel",
+    "body": "Wir zeigen diesen Schlüssel nur einmal. Bewahren Sie ihn sicher auf — Sie können ihn ersetzen, aber nie wieder lesen.",
     "dismiss": "Kopiert"
   },
   "log": {
@@ -68,7 +86,7 @@
     "rankPair": "Position {{before}} am {{beforeAt}}, dann {{after}} am {{afterAt}}.",
     "linkPair": "{{beforeCount}} Domains am {{beforeAt}}, dann {{afterCount}} am {{afterAt}}.",
     "notRanked": "außerhalb der ersten 100 Treffer",
-    "domainCount": "{{count}} Domains verändert",
+    "domainCount_one": "{{count}} Domain verändert",
     "attempt": "Versuch {{attempt}}",
     "statusLabel": {
       "pending": "Wird gesendet",
@@ -91,17 +109,29 @@
       "unsafe_url": "Diese Adresse ist nicht mehr sicher erreichbar.",
       "channel_timeout": "Der Kanal hat zu lange geantwortet.",
       "retries_exhausted": "Wir haben nach drei Fehlversuchen gestoppt."
+    },
+    "domainCount_zero": "{{count}} Domains verändert",
+    "domainCount_two": "{{count}} Domains verändert",
+    "domainCount_few": "{{count}} Domains verändert",
+    "domainCount_many": "{{count}} Domains verändert",
+    "domainCount_other": "{{count}} Domains verändert",
+    "rulePicker": "Regel",
+    "rulePickerPlaceholder": "Regel auswählen",
+    "ruleOption": "{{type}} · {{site}}",
+    "empty": {
+      "title": "Noch keine Warnungen gesendet",
+      "noRules": "Gesendete Warnungen erscheinen hier. Sie haben noch keine Regel, deshalb kann nichts gesendet werden.",
+      "createRule": "Regel anlegen",
+      "rule": "Diese Regel hat noch keine Warnung gesendet.",
+      "pickRule": "Wählen Sie eine Regel, um ihre gesendeten Warnungen zu sehen."
+    },
+    "filtered": {
+      "title": "Keine Zustellungen passen zu diesen Filtern",
+      "body": "Entfernen Sie die Filter, um alle Zustellungen dieser Regel zu sehen.",
+      "clear": "Filter entfernen"
     }
   },
   "states": {
-    "cap": {
-      "title": "Regelgrenze erreicht",
-      "body": "Du hast alle Warnregeln deines Tarifs verbraucht."
-    },
-    "tierLocked": {
-      "title": "Kanal erfordert höheren Tarif",
-      "body": "Slack- und Webhook-Kanäle erfordern mindestens den Pro-Tarif."
-    },
     "disabled": {
       "title": "Warnungen pausiert",
       "body": "Warnungen sind vorübergehend nicht verfügbar. Regeln und Protokoll bleiben erhalten."

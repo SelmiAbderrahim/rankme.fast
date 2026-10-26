@@ -92,6 +92,11 @@ export function HistoryDrawer({
   // Display name or email as inert text. "You" for the signed-in user; the
   // generic label only when the server could not resolve a workspace member.
   const actorLabel = (entry: ActionHistoryEntry): string => {
+    // Entries the system writes (the first sighting of the evidence, an audit
+    // reopening a fixed finding) are not a team member's decision.
+    if (entry.eventKind === 'observed' || entry.reasonCode === 'audit_regression') {
+      return t('history.actorSystem');
+    }
     if (entry.actorIsYou) return t('history.actorYou');
     if (entry.actor) return entry.actor.name || entry.actor.email;
     return t('history.actor');
@@ -153,11 +158,18 @@ export function HistoryDrawer({
                   key={entry.ordinal}
                   className="border-border flex flex-col gap-1.5 rounded-md border p-3"
                   data-testid="action-history-entry"
+                  data-kind={entry.eventKind === 'observed' ? 'observed' : 'decision'}
                 >
                   <div className="flex flex-wrap items-center gap-2">
-                    <StatusChip tone={ACTION_STATE_TONES[entry.newState]} dot>
-                      {t(`state.${entry.newState}`)}
-                    </StatusChip>
+                    {entry.eventKind === 'observed' ? (
+                      <StatusChip tone="info" dot>
+                        {t('history.observed')}
+                      </StatusChip>
+                    ) : (
+                      <StatusChip tone={ACTION_STATE_TONES[entry.newState]} dot>
+                        {t(`state.${entry.newState}`)}
+                      </StatusChip>
+                    )}
                     {entry.priorState ? (
                       <span className="text-muted-foreground text-xs">
                         {t('history.from', {

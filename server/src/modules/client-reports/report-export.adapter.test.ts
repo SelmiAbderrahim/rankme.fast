@@ -45,6 +45,7 @@ function finding(input: {
     ruleId: `rule-${input.bucket}`,
     bucket: input.bucket,
     severity: input.severity,
+    ...(input.bucket === 'fix-now' ? { meta: { groups: [{ urls: ['https://example.test/a', 'https://example.test/z'], similarity: 9 }] } } : {}),
     affectedUrls: input.bucket === 'passed'
       ? []
       : ['https://example.test/z', 'https://example.test/a'],
@@ -182,6 +183,7 @@ beforeEach(() => {
     url: 'https://example.test',
     domain: 'example.test',
     displayName: 'Example Site',
+    localBusiness: false,
     paused: false,
     pausedAt: null,
     createdAt: '2026-01-01T00:00:00.000Z',
@@ -314,7 +316,7 @@ describe('client report export composition', () => {
     expect(findings).toMatchObject({
       type: 'findings',
       items: [
-        expect.objectContaining({ bucket: 'fix_now', severity: 'critical', why: 'specific reason', fix: 'fix-now fix', affectedUrls: ['https://example.test/a', 'https://example.test/z'] }),
+        expect.objectContaining({ bucket: 'fix_now', severity: 'critical', why: 'specific reason', fix: 'fix-now fix', affectedUrls: ['https://example.test/a', 'https://example.test/z'], evidence: ['9/10: https://example.test/a · https://example.test/z'] }),
         expect.objectContaining({ bucket: 'watch', severity: 'high', why: 'watch why', fix: 'watch fix' }),
         expect.objectContaining({ bucket: 'passed', severity: 'info', pass: 'passed passed' }),
       ],
@@ -325,6 +327,27 @@ describe('client report export composition', () => {
     expect(gscTotals).toMatchObject({
       type: 'kpi_group', items: expect.arrayContaining([expect.objectContaining({ id: 'ctr', unit: '%' })]),
     });
+  });
+
+  it('exports no CTR or position when the period had no impressions, never zero', async () => {
+    vi.mocked(composeClientReport).mockResolvedValueOnce(snapshot({
+      gsc: {
+        ...gscSection(),
+        totalClicks: 0, totalImpressions: 0, averageCtr: 0, averagePosition: 0,
+        topQueries: [{ query: 'idle', clicks: 0, impressions: 0, ctr: 0, position: 0, snapshotDate }],
+      },
+    }) as never);
+    const adapter = createClientReportExportAdapter(db);
+    const result = await adapter.compose(composeContext());
+    const totals = result.document.blocks.find((block) => block.id === 'client-gsc-totals') as
+      { items: { id: string; value: unknown }[] };
+    expect(totals.items.find((item) => item.id === 'ctr')!.value).toEqual({ type: 'null', value: null });
+    expect(totals.items.find((item) => item.id === 'position')!.value).toEqual({ type: 'null', value: null });
+    const queries = result.document.blocks.find((block) => block.id === 'client-gsc-queries') as
+      { rows: { cells: { value: unknown }[] }[] };
+    expect(queries.rows[0]!.cells.slice(3, 5).map((cell) => cell.value)).toEqual([
+      { type: 'null', value: null }, { type: 'null', value: null },
+    ]);
   });
 
   it('uses one derived state source for wholly unavailable selected sections', async () => {

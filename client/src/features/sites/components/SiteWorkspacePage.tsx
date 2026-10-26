@@ -10,16 +10,17 @@
  *   - site-tab-panel-<tab>                 per-tab panel wrappers
  *   - overview-panel                       overview surface
  */
-import { Suspense, lazy, useEffect, type ReactNode } from 'react';
+import { Suspense, lazy, useCallback, useEffect, useState, type ReactNode } from 'react';
 import { Link, useParams } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { Pause, Play, SearchX } from 'lucide-react';
-import { PageHeader } from '@shared/components/PageHeader';
+import { PageHeader, PageHeadingLevelProvider } from '@shared/components/PageHeader';
 import { Alert, AlertDescription, AlertTitle } from '@shared/ui/alert';
 import { Button } from '@shared/ui/button';
 import { formatRelativeTime } from '@shared/lib/datetime';
 import { siteLabel } from '@shared/lib/siteLabel';
 import { useAppDispatch, useAppSelector } from '@shared/hooks/redux';
+import { useAppTitleDetail } from '@shared/navigation/appTitleContext';
 import { APP_PAGE_ICONS } from '@shared/navigation/appPageIcons';
 import { rootReducer } from '@app/store';
 import { loadBacklinksPage, backlinksReducer } from '@features/backlinks';
@@ -29,23 +30,14 @@ import { KeywordsPanel, SerpFeaturesPanel } from '@features/ranks';
 import {
   GoogleAnalyticsSummaryCard,
   GoogleConnectionCard,
+  SiteGoogleNotice,
+  SiteGoogleReadinessProvider,
   GoogleSearchDetailPanel,
   GoogleSearchSummaryCard,
 } from '@features/google';
 import { Skeleton } from '@shared/ui/skeleton';
-import {
-  Empty,
-  EmptyDescription,
-  EmptyHeader,
-  EmptyMedia,
-  EmptyTitle,
-} from '@shared/ui/empty';
-import {
-  getSiteTabLabelKey,
-  useSiteSubView,
-  useSiteTab,
-  type SiteTab,
-} from '../tabState';
+import { Empty, EmptyDescription, EmptyHeader, EmptyMedia, EmptyTitle } from '@shared/ui/empty';
+import { getSiteTabLabelKey, useSiteSubView, useSiteTab, type SiteTab } from '../tabState';
 import { loadSites, resumeSite } from '../store/thunks';
 import {
   selectPausingSiteId,
@@ -54,8 +46,10 @@ import {
   selectSitesLoaded,
 } from '../store/selectors';
 import { useSiteLookup } from '../useSiteLookup';
+import { useResolvedSiteMarket } from '../useResolvedSiteMarket';
+import { SiteMarketProvider } from '@shared/markets';
+import { SiteMarketDialog } from './SiteMarketDialog';
 import { OverviewPanel } from './OverviewPanel';
-import { SiteWorkspaceNavigation } from './SiteWorkspaceNavigation';
 
 const LazyActionsPanel = lazy(async () => {
   const [{ ActionsPanel, actionsReducer }, { rootReducer }] = await Promise.all([
@@ -180,7 +174,7 @@ const LazyAudienceResearchPage = lazy(async () => {
   return { default: AudienceResearchPanel };
 });
 
-// Weekly Pulse card lives at the top of the AI Visibility tab,
+// Weekly Pulse card is a section under the AI Visibility title,
 // and the GSC generative appearance card sits at the top of the Google tab.
 // Both lazy-inject the shared `weeklyPulse` reducer via `combineSlices.inject`
 // (idempotent by reducerPath).
@@ -218,10 +212,19 @@ const LazyBrandRadarPanel = lazy(async () => {
 });
 
 const LazyAppsPanel = lazy(async () => {
-  const [{ AppsPanel, appSeoChartsReducer, appSeoCompareReducer, appSeoListingReducer, appSeoReducer, appSeoResearchReducer, appSeoReviewsReducer, appSeoTrackingReducer }, { rootReducer }] = await Promise.all([
-    import('@features/app-seo'),
-    import('@app/store'),
-  ]);
+  const [
+    {
+      AppsPanel,
+      appSeoChartsReducer,
+      appSeoCompareReducer,
+      appSeoListingReducer,
+      appSeoReducer,
+      appSeoResearchReducer,
+      appSeoReviewsReducer,
+      appSeoTrackingReducer,
+    },
+    { rootReducer },
+  ] = await Promise.all([import('@features/app-seo'), import('@app/store')]);
   rootReducer.inject({ reducerPath: 'appSeo', reducer: appSeoReducer });
   rootReducer.inject({ reducerPath: 'appSeoTracking', reducer: appSeoTrackingReducer });
   rootReducer.inject({ reducerPath: 'appSeoListing', reducer: appSeoListingReducer });
@@ -271,12 +274,7 @@ const LazyPanelFallback = () => (
 );
 
 export const SiteWorkspacePage = () => {
-  const { t, i18n } = useTranslation([
-    'sites',
-    'pages',
-    'clientReports',
-    'competitorsTraffic',
-  ]);
+  const { t, i18n } = useTranslation(['sites', 'pages', 'clientReports', 'competitorsTraffic']);
   const dispatch = useAppDispatch();
   const params = useParams<{ siteId: string }>();
   const siteId = params.siteId ?? '';
@@ -294,7 +292,7 @@ export const SiteWorkspacePage = () => {
   }, [dispatch, sitesLoaded]);
 
   // `useSiteTab` already coerces unknown `?tab=` values to the overview default.
-  const [activeTab, setActiveTab] = useSiteTab();
+  const [activeTab, , unknownTab] = useSiteTab();
   // Google-tab drill-in (`?view=`) — null means the overview card stack.
   const [googleView] = useSiteSubView();
 
@@ -303,6 +301,10 @@ export const SiteWorkspacePage = () => {
   const listedSite = sites.find((s) => s.id === siteId);
   const lookup = useSiteLookup(siteId, !listedSite && (sitesLoaded || Boolean(sitesError)));
   const site = listedSite ?? lookup.site ?? undefined;
+  const siteMarket = useResolvedSiteMarket(site);
+  const [editingMarket, setEditingMarket] = useState(false);
+  const openMarketEditor = useCallback(() => setEditingMarket(true), []);
+  useAppTitleDetail(site ? [t(getSiteTabLabelKey(activeTab)), siteLabel(site)] : null);
 
   if (!site) {
     if (lookup.status === 'notFound') {
@@ -341,8 +343,14 @@ export const SiteWorkspacePage = () => {
     // Still resolving: a heading-sized skeleton, so neither the raw site id
     // nor a workspace for a site that may not exist ever paints.
     return (
-      <div className="flex flex-col gap-6 px-4 py-8" data-testid="site-workspace-loading" aria-busy="true">
-        <span className="sr-only" role="status">{t('loading')}</span>
+      <div
+        className="flex flex-col gap-6 px-4 py-8"
+        data-testid="site-workspace-loading"
+        aria-busy="true"
+      >
+        <span className="sr-only" role="status">
+          {t('loading')}
+        </span>
         <Skeleton className="h-8 w-64" data-testid="workspace-heading-skeleton" />
         <Skeleton className="h-32 w-full" />
       </div>
@@ -397,18 +405,20 @@ export const SiteWorkspacePage = () => {
     ),
     competitors: (
       <Suspense fallback={<LazyPanelFallback />}>
-        <LazyCompetitorsPage siteId={siteId} />
+        <LazyCompetitorsPage siteId={siteId} siteDomain={site.domain} />
       </Suspense>
     ),
     'ai-visibility': (
-      <div className="flex flex-col gap-4">
-        <Suspense fallback={<LazyPanelFallback />}>
-          <LazyWeeklyPulseCard siteId={siteId} />
-        </Suspense>
-        <Suspense fallback={<LazyPanelFallback />}>
-          <LazyAiVisibilityPage siteId={siteId} />
-        </Suspense>
-      </div>
+      <Suspense fallback={<LazyPanelFallback />}>
+        <LazyAiVisibilityPage
+          siteId={siteId}
+          pulse={
+            <Suspense fallback={<LazyPanelFallback />}>
+              <LazyWeeklyPulseCard siteId={siteId} />
+            </Suspense>
+          }
+        />
+      </Suspense>
     ),
     'brand-radar': (
       <Suspense fallback={<LazyPanelFallback />}>
@@ -446,12 +456,14 @@ export const SiteWorkspacePage = () => {
           <GoogleSearchDetailPanel view={googleView} siteId={siteId} />
         ) : (
           <>
+            <SiteGoogleNotice product="gsc" showAction={false} />
+            <SiteGoogleNotice product="ga4" showAction={false} />
             <GoogleSearchSummaryCard siteId={siteId} />
             <Suspense fallback={<LazyPanelFallback />}>
               <LazyGscGenerativeAppearanceCard siteId={siteId} />
             </Suspense>
             <GoogleAnalyticsSummaryCard siteId={siteId} />
-            <GoogleConnectionCard siteId={siteId} />
+            <GoogleConnectionCard siteId={siteId} domain={site.domain} />
           </>
         )}
       </div>
@@ -515,17 +527,25 @@ export const SiteWorkspacePage = () => {
           </AlertDescription>
         </Alert>
       ) : null}
-      <SiteWorkspaceNavigation
-        activeTab={activeTab}
-        onTabChange={setActiveTab}
-      />
+      {unknownTab ? (
+        <Alert role="status" data-testid="site-unknown-tab-notice">
+          <AlertTitle>{t('workspace.unknownTab.title')}</AlertTitle>
+          <AlertDescription>{t('workspace.unknownTab.body')}</AlertDescription>
+        </Alert>
+      ) : null}
       <section
         className="min-w-0"
         aria-label={t(getSiteTabLabelKey(activeTab))}
         data-testid={`site-tab-panel-${activeTab}`}
       >
-        {panels[activeTab]}
+        <SiteGoogleReadinessProvider siteId={siteId} domain={site.domain} readiness={site.google}>
+          <SiteMarketProvider market={siteMarket} onEditMarket={openMarketEditor}>
+            <PageHeadingLevelProvider level={2}>{panels[activeTab]}</PageHeadingLevelProvider>
+          </SiteMarketProvider>
+        </SiteGoogleReadinessProvider>
       </section>
+      {editingMarket ? <SiteMarketDialog site={site} initialMarket={siteMarket}
+        onClose={() => setEditingMarket(false)} /> : null}
     </div>
   );
 };

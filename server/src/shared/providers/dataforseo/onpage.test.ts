@@ -265,6 +265,7 @@ describe('DataForSeoOnPageAuditProvider.getAuditResult', () => {
       robotsTxtFound: true,
       sitemapFound: true,
       httpsEnforced: true,
+      httpsRedirect: true,
       canonicalizationOk: true,
     });
     expect(result.pages).toHaveLength(2);
@@ -295,6 +296,19 @@ describe('DataForSeoOnPageAuditProvider.getAuditResult', () => {
       brokenLinks: ['https://example.com/404'],
       onPageScore: 41.2,
     });
+  });
+
+  it('reads the live redirect check names and preserves a negative verdict', async () => {
+    wireHappyPath();
+    const fixture = readFixture('summary', 'success') as { tasks: Array<{ result: Array<{ domain_info: { checks: Record<string, unknown> } }> }> };
+    const checks = fixture.tasks[0]!.result[0]!.domain_info.checks;
+    delete checks.http_to_https_redirect;
+    delete checks.canonicalization;
+    checks.test_https_redirect = false;
+    checks.test_www_redirect = true;
+    vendorMockServer.use(http.get('*/on_page/summary/*', () => HttpResponse.json(fixture)));
+    const result = await provider.getAuditResult('TASK_ID');
+    expect(result.domainChecks).toMatchObject({ httpsRedirect: false, canonicalizationOk: true });
   });
 
   it('maps word count and question-style headings so thin-content and FAQ checks run (issue #16)', async () => {
@@ -328,6 +342,16 @@ describe('DataForSeoOnPageAuditProvider.getAuditResult', () => {
                       content: { plain_text_word_count: 120 },
                     }),
                     page('https://example.com/bare', { content: { plain_text_word_count: null } }),
+                    {
+                      url: 'https://example.com/no-meta',
+                      status_code: 200,
+                      checks: { is_broken: false },
+                      onpage_score: 90,
+                    },
+                    {
+                      ...page('https://example.com/gone', { htags: { h2: ['Gone?'] } }),
+                      status_code: 404,
+                    },
                   ],
                 },
               ],
@@ -344,9 +368,12 @@ describe('DataForSeoOnPageAuditProvider.getAuditResult', () => {
     expect(byUrl.get('https://example.com/ar')).toMatchObject({ hasFaqSignals: true });
     expect(byUrl.get('https://example.com/zh')).toMatchObject({ hasFaqSignals: true });
     expect(byUrl.get('https://example.com/about')).toMatchObject({ wordCount: 120, hasFaqSignals: false });
-    // No heading outline and no word count: both stay absent (not evaluated).
+    // A served page with no heading outline has no FAQ headings and no word count to judge.
     expect(byUrl.get('https://example.com/bare')).not.toHaveProperty('wordCount');
-    expect(byUrl.get('https://example.com/bare')).not.toHaveProperty('hasFaqSignals');
+    expect(byUrl.get('https://example.com/bare')).toMatchObject({ hasFaqSignals: false });
+    // A row the vendor did not describe at all, or an error page, stays not evaluated.
+    expect(byUrl.get('https://example.com/no-meta')).not.toHaveProperty('hasFaqSignals');
+    expect(byUrl.get('https://example.com/gone')).not.toHaveProperty('hasFaqSignals');
   });
 
   it('handles empty pages, links, and non-indexable — zero pages, no overlay', async () => {

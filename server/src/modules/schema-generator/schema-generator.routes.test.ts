@@ -48,7 +48,7 @@ import {
   setSchemaGeneratorAiRunner,
   setSchemaGeneratorFetch,
 } from './schema-generator.holder.js';
-import { listGenerations } from './schema-generator.service.js';
+import { MAX_SOURCE_PAGES, listGenerations } from './schema-generator.service.js';
 import { SCHEMA_TYPE_REGISTRY, SUPPORTED_SCHEMA_TYPES } from './schema-types.registry.js';
 import type { SafeFetch } from './evidence.js';
 
@@ -172,6 +172,7 @@ describe('auth', () => {
     await request(app).get('/api/schema-generator/generations').expect(401);
     await request(app).get(`/api/schema-generator/generations/${id}`).expect(401);
     await request(app).get(`/api/schema-generator/generations/${id}/download`).expect(401);
+    await request(app).post(`/api/schema-generator/generations/${id}/regenerate`).send({}).expect(401);
   });
 });
 
@@ -182,7 +183,7 @@ describe('registry projection', () => {
       .get('/api/schema-generator/types')
       .set('Cookie', user.cookie)
       .expect(200);
-    expect(res.body.registryVersion).toBe('1');
+    expect(res.body.registryVersion).toBe('2');
     expect(res.body.types.map((entry: { type: string }) => entry.type)).toEqual([
       'WebPage',
       'WebSite',
@@ -192,6 +193,10 @@ describe('registry projection', () => {
       'FAQPage',
       'HowTo',
     ]);
+    // The picker shows Google's current rich-result status.
+    expect(
+      res.body.types.map((entry: { type: string; richResults: string | null }) => entry.richResults),
+    ).toEqual([null, null, null, null, null, 'limited', 'retired']);
     const article = res.body.types.find((entry: { type: string }) => entry.type === 'Article');
     expect(article.required.map((p: { name: string }) => p.name)).toEqual([
       'headline',
@@ -270,6 +275,7 @@ describe('sources', () => {
       .set('Cookie', user.cookie)
       .expect(200);
     expect(res.body.runId).toBe(runId);
+    expect(res.body.auditedPagesTotal).toBe(1);
     expect(res.body.auditedPages).toEqual([
       {
         url: PAGE_URL,
@@ -305,7 +311,33 @@ describe('sources', () => {
       .get(`/api/schema-generator/sources?siteId=${siteId}`)
       .set('Cookie', user.cookie)
       .expect(200);
-    expect(res.body).toMatchObject({ runId: null, auditedPages: [], inventoryPages: [] });
+    expect(res.body).toMatchObject({
+      runId: null,
+      auditedPages: [],
+      auditedPagesTotal: 0,
+      inventoryPages: [],
+    });
+  });
+
+  it('reports how many pages the audit stored when the picker list is capped', async () => {
+    const user = await seedUser();
+    const siteId = await seedSite(user);
+    const runId = await seedAuditedPage(user, siteId, { url: 'https://example.test/p-0' });
+    const extra = MAX_SOURCE_PAGES + 55;
+    await AuditedPage.insertMany(
+      Array.from({ length: extra - 1 }, (_, i) => ({
+        runId,
+        url: `https://example.test/p-${i + 1}`,
+        statusCode: 200,
+        onPageScore: 70,
+      })),
+    );
+    const res = await request(app)
+      .get(`/api/schema-generator/sources?siteId=${siteId}`)
+      .set('Cookie', user.cookie)
+      .expect(200);
+    expect(res.body.auditedPages).toHaveLength(MAX_SOURCE_PAGES);
+    expect(res.body.auditedPagesTotal).toBe(extra);
   });
 
   it('returns 404 for another account site', async () => {
@@ -339,7 +371,7 @@ describe('generation', () => {
 
     const res = await generate(user, auditedBody(siteId)).expect(201);
     expect(res.body.status).toBe('complete');
-    expect(res.body.registryVersion).toBe('1');
+    expect(res.body.registryVersion).toBe('2');
     expect(res.body.mediaType).toBe('application/ld+json');
 
     const payload = JSON.parse(
@@ -374,7 +406,7 @@ describe('generation', () => {
       expect(['no_evidence', 'evidence_ambiguous', 'not_applicable']).toContain(row.reasonCode);
       expect(['required', 'recommended']).toContain(row.class);
     }
-    expect(res.body.conformance).toMatchObject({ registryVersion: '1', status: 'conforms' });
+    expect(res.body.conformance).toMatchObject({ registryVersion: '2', status: 'conforms' });
   });
 
   it('reports the honest Article required gap for datePublished on the audited path', async () => {
@@ -1090,5 +1122,240 @@ describe('SEC-RATE', () => {
       .get(`/api/schema-generator/generations?siteId=${siteId}`)
       .set('Cookie', user.cookie)
       .expect(200);
+  });
+});
+
+describe('name precedence and user-supplied facts', () => {
+  const regenerate = (user: TestUser, generationId: string, facts: Record<string, unknown>) =>
+    request(app)
+      .post(`/api/schema-generator/generations/${generationId}/regenerate`)
+      .set('Cookie', user.cookie)
+      .send({ facts });
+  const parse = (payload: string) => JSON.parse(payload) as Record<string, unknown>;
+
+  it('names a WebSite from the brand in the title, not the domain, and says where it came from', async () => {
+    const user = await seedUser();
+    const siteId = await seedSite(user);
+    await Site.updateOne({ _id: siteId }, { $set: { displayName: '' } });
+    await seedAuditedPage(user, siteId, { title: 'Welcome - Guides' });
+
+    const res = await generate(user, auditedBody(siteId, 'WebSite')).expect(201);
+    expect(parse(res.body.payload).name).toBe('Guides');
+    expect(res.body.evidence).toContainEqual({
+      property: 'name',
+      factId: 'page.titleBrand',
+      factLabel: 'Brand in the page title',
+      value: 'Guides',
+    });
+    expect(res.body.registryVersion).toBe('2');
+  });
+
+  it('prefers og:site_name, then the page JSON-LD name, on a pasted URL', async () => {
+    const user = await seedUser();
+    const siteId = await seedSite(user);
+    const page = (head: string) => async () =>
+      new Response(`<html><head><title>Welcome - Guides</title>${head}</head><body></body></html>`, {
+        status: 200,
+        headers: { 'content-type': 'text/html' },
+      });
+    const body = { siteId, source: 'url', pageUrl: 'https://example.test/', schemaType: 'Organization' };
+    setSchemaGeneratorFetch(page(
+      '<meta property="og:site_name" content="Example Brand">' +
+        '<script type="application/ld+json">{"@type":"Organization","name":"Example Ltd"}</script>',
+    ));
+    const og = await generate(user, body).expect(201);
+    expect(parse(og.body.payload).name).toBe('Example Brand');
+    expect(og.body.evidence).toContainEqual(expect.objectContaining({ property: 'name', factId: 'page.ogSiteName' }));
+
+    setSchemaGeneratorFetch(page('<script type="application/ld+json">{"@type":"Organization","name":"Example Ltd"}</script>'));
+    const declared = await generate(user, body).expect(201);
+    expect(parse(declared.body.payload).name).toBe('Example Ltd');
+    expect(declared.body.evidence).toContainEqual(expect.objectContaining({ property: 'name', factId: 'page.jsonLdName' }));
+  });
+
+  it('rebuilds with user facts, marks them "provided by you" and re-runs conformance', async () => {
+    const user = await seedUser();
+    const siteId = await seedSite(user);
+    await seedAuditedPage(user, siteId);
+    const original = await generate(user, auditedBody(siteId)).expect(201);
+    const omitted = original.body.omissions.map((row: { property: string }) => row.property);
+    expect(omitted).toEqual(expect.arrayContaining(['inLanguage', 'primaryImageOfPage']));
+
+    const rebuilt = await regenerate(user, original.body.id, {
+      inLanguage: ' en-GB ',
+      primaryImageOfPage: 'https://example.test/hero.png',
+    }).expect(201);
+    expect(rebuilt.body).toMatchObject({
+      status: 'complete',
+      regeneratedFrom: original.body.id,
+      failureReason: null,
+      registryVersion: '2',
+      pageUrl: PAGE_URL,
+      schemaType: 'WebPage',
+    });
+    expect(rebuilt.body.id).not.toBe(original.body.id);
+    const payload = parse(rebuilt.body.payload);
+    const before = parse(original.body.payload);
+    expect(payload).toMatchObject({
+      name: before.name,
+      url: before.url,
+      isPartOf: before.isPartOf,
+      inLanguage: 'en-GB',
+      primaryImageOfPage: { '@type': 'ImageObject', url: 'https://example.test/hero.png' },
+    });
+    expect(rebuilt.body.evidence).toEqual(expect.arrayContaining([
+      { property: 'inLanguage', factId: 'user.inLanguage', factLabel: 'Provided by you', value: 'en-GB' },
+      { property: 'primaryImageOfPage', factId: 'user.primaryImageOfPage', factLabel: 'Provided by you', value: 'https://example.test/hero.png' },
+    ]));
+    expect(rebuilt.body.omissions.map((row: { property: string }) => row.property)).not.toContain('inLanguage');
+    expect(rebuilt.body.conformance).toMatchObject({ registryVersion: '2', status: 'conforms' });
+    expect(rebuilt.body.conformance.recommendedSuggestions).toEqual([]);
+
+    // The original stays as it was.
+    const stored = await SchemaGeneration.findById(original.body.id).lean();
+    expect(stored?.payload).toBe(original.body.payload);
+
+    // A rebuild of the rebuild keeps earlier user facts; a new value wins.
+    const again = await regenerate(user, rebuilt.body.id, { inLanguage: 'fr' }).expect(201);
+    expect(parse(again.body.payload)).toMatchObject({
+      inLanguage: 'fr',
+      primaryImageOfPage: { '@type': 'ImageObject', url: 'https://example.test/hero.png' },
+    });
+    expect(again.body.regeneratedFrom).toBe(rebuilt.body.id);
+
+    const list = await request(app)
+      .get(`/api/schema-generator/generations?siteId=${siteId}`)
+      .set('Cookie', user.cookie)
+      .expect(200);
+    expect(list.body.items.map((item: { regeneratedFrom: string | null }) => item.regeneratedFrom)).toEqual([
+      rebuilt.body.id,
+      original.body.id,
+      null,
+    ]);
+  });
+
+  it('lets a user describe the site on a non-home WebSite page and keeps the AI choices', async () => {
+    const user = await seedUser();
+    const siteId = await seedSite(user);
+    await seedAuditedPage(user, siteId);
+    const original = await generate(user, auditedBody(siteId, 'WebSite')).expect(201);
+    expect(original.body.omissions).toContainEqual({ property: 'description', reasonCode: 'not_applicable', class: 'recommended' });
+    const rebuilt = await regenerate(user, original.body.id, { description: 'Guides for growing sites.' }).expect(201);
+    expect(parse(rebuilt.body.payload)).toMatchObject({
+      name: parse(original.body.payload).name,
+      description: 'Guides for growing sites.',
+    });
+  });
+
+  it('replays stored AI choices and keeps an ambiguous-evidence reason', async () => {
+    const user = await seedUser();
+    const siteId = await seedSite(user);
+    const stored = await SchemaGeneration.create({
+      accountId: new mongoose.Types.ObjectId(user.id),
+      siteId: new mongoose.Types.ObjectId(siteId),
+      pageUrl: 'https://example.test/',
+      source: 'audited-page',
+      schemaType: 'WebSite',
+      registryVersion: '1',
+      status: 'complete',
+      payload: '{}',
+      evidence: [
+        { property: 'name', factId: 'site.domain', factLabel: 'Site domain', value: 'example.test' },
+        { property: 'url', factId: 'site.origin', factLabel: 'Site origin', value: 'https://example.test' },
+      ],
+      omissions: [
+        { property: 'description', reasonCode: 'evidence_ambiguous', class: 'recommended' },
+        { property: 'inLanguage', reasonCode: 'no_evidence', class: 'recommended' },
+      ],
+    });
+    const rebuilt = await regenerate(user, String(stored._id), { inLanguage: 'ar' }).expect(201);
+    expect(parse(rebuilt.body.payload)).toEqual({
+      '@context': 'https://schema.org',
+      '@type': 'WebSite',
+      name: 'example.test',
+      url: 'https://example.test',
+      inLanguage: 'ar',
+    });
+    expect(rebuilt.body.omissions).toEqual([
+      { property: 'description', reasonCode: 'evidence_ambiguous', class: 'recommended' },
+    ]);
+  });
+
+  it('validates every supplied fact and refuses properties the type does not have', async () => {
+    const user = await seedUser();
+    const siteId = await seedSite(user);
+    await seedAuditedPage(user, siteId);
+    const original = await generate(user, auditedBody(siteId)).expect(201);
+    for (const facts of [
+      {},
+      { inLanguage: 'not a tag' },
+      { primaryImageOfPage: 'http://example.test/hero.png' },
+      { description: ' ' },
+      { description: 'x'.repeat(501) },
+      { datePublished: '2026-13-45' },
+      { datePublished: 'yesterday' },
+      { sameAs: 'https://example.test' },
+    ]) {
+      await regenerate(user, original.body.id, facts).expect(400);
+    }
+    const wrongType = await regenerate(user, original.body.id, { headline: 'A headline' }).expect(400);
+    expect(wrongType.body.error.message).toBe(translate('en', 'schemaGenerator.errors.userFactNotApplicable'));
+    expect(await SchemaGeneration.countDocuments({})).toBe(1);
+  });
+
+  it('accepts ISO dates on an Article and fills the required datePublished gap', async () => {
+    const user = await seedUser();
+    const siteId = await seedSite(user);
+    await seedAuditedPage(user, siteId);
+    const original = await generate(user, auditedBody(siteId, 'Article')).expect(201);
+    expect(original.body.conformance.status).toBe('gaps');
+    const rebuilt = await regenerate(user, original.body.id, {
+      datePublished: '2026-10-01',
+      dateModified: '2026-10-02T09:30:00Z',
+      headline: 'Guide headline',
+      image: 'https://example.test/cover.png',
+    }).expect(201);
+    expect(parse(rebuilt.body.payload)).toMatchObject({
+      headline: 'Guide headline',
+      datePublished: '2026-10-01',
+      dateModified: '2026-10-02T09:30:00Z',
+      image: 'https://example.test/cover.png',
+    });
+    expect(rebuilt.body.conformance.status).toBe('conforms');
+  });
+
+  it('answers 404 to another account and for an unknown generation', async () => {
+    const owner = await seedUser();
+    const stranger = await seedUser();
+    const siteId = await seedSite(owner);
+    await seedAuditedPage(owner, siteId);
+    const original = await generate(owner, auditedBody(siteId)).expect(201);
+    await regenerate(stranger, original.body.id, { inLanguage: 'en' }).expect(404);
+    await regenerate(owner, new mongoose.Types.ObjectId().toString(), { inLanguage: 'en' }).expect(404);
+    await Site.updateOne({ _id: siteId }, { $set: { deletionStartedAt: new Date() } });
+    await regenerate(owner, original.body.id, { inLanguage: 'en' }).expect(404);
+    expect(await SchemaGeneration.countDocuments({})).toBe(1);
+  });
+
+  it('refuses a paused site, the kill switch, and a generation with no markup', async () => {
+    const user = await seedUser();
+    const siteId = await seedSite(user);
+    await seedAuditedPage(user, siteId);
+    const original = await generate(user, auditedBody(siteId)).expect(201);
+
+    (env as { SCHEMA_GENERATOR_ENABLED: boolean }).SCHEMA_GENERATOR_ENABLED = false;
+    await regenerate(user, original.body.id, { inLanguage: 'en' }).expect(403);
+    (env as { SCHEMA_GENERATOR_ENABLED: boolean }).SCHEMA_GENERATOR_ENABLED = true;
+
+    await Site.updateOne({ _id: siteId }, { $set: { paused: true, pausedAt: new Date() } });
+    await regenerate(user, original.body.id, { inLanguage: 'en' }).expect(409);
+    await Site.updateOne({ _id: siteId }, { $set: { paused: false, pausedAt: null } });
+
+    useAi(['unavailable']);
+    const failed = await generate(user, auditedBody(siteId)).expect(502);
+    expect(failed.status).toBe(502);
+    const empty = await SchemaGeneration.findOne({ payload: null }).lean();
+    const res = await regenerate(user, String(empty!._id), { inLanguage: 'en' }).expect(409);
+    expect(res.body.error.message).toBe(translate('en', 'schemaGenerator.errors.regenerateUnavailable'));
   });
 });

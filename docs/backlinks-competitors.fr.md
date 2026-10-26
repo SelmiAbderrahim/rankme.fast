@@ -21,6 +21,8 @@ Ouvrez un site puis choisissez **Concurrents**. Le portefeuille, les paysages de
 
 Les comptes Starter voient l'explication de la mise à niveau. Si un opérateur suspend les nouveaux traitements, les rapports enregistrés restent lisibles. Après un changement de formule, certaines données peuvent aussi rester accessibles en lecture seule.
 
+Ouvrir **Backlinks** ou **Concurrents** lit les données déjà enregistrées par RankMeFast, même si elles dépassent la durée du cache, et n’appelle jamais le fournisseur de données. Une nouvelle collecte n’a lieu que si vous choisissez **Actualiser**. **Charger plus** dans la liste des backlinks demande la page suivante au fournisseur et le signale avant utilisation. Une liste de concurrents jamais analysée affiche **Concurrents pas encore analysés** jusqu’à l’actualisation.
+
 ## Unités et confirmation
 
 Un rapport de paysage utilise une unité `keyword_lookups` par concurrent sélectionné. Trois concurrents consomment donc trois unités. Avant confirmation, RankMeFast indique combien d'unités et de lignes le rapport utilisera. Les résultats en cache comptent aussi. L'actualisation de la découverte est facultative. Elle utilise une unité `keyword_lookups` de plus, et seulement après sa propre prévisualisation et confirmation.

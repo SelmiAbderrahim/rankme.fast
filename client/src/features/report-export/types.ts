@@ -46,6 +46,12 @@ export interface ReportSourceDate {
   freshness?: string;
 }
 
+export interface ReportExportSite {
+  id: string;
+  domain: string;
+  name: string;
+}
+
 export interface ReportSnapshotSummary {
   id: string;
   kind: string;
@@ -65,6 +71,8 @@ export interface ReportSnapshotSummary {
   sourceDates: ReportSourceDate[];
   createdAt: string;
   expiresAt: string;
+  /** Account-scoped source site, present on list responses only. */
+  site?: ReportExportSite | null;
 }
 
 export interface ReportSnapshotPage {
@@ -173,10 +181,10 @@ export interface CreatedReportShare extends ReportShareSummary {
 }
 
 export interface ReportShareCenterItem extends ReportShareSummary {
-  snapshot: null | Pick<
+  snapshot: null | (Pick<
     ReportSnapshotSummary,
     'id' | 'kind' | 'locale' | 'title' | 'expiresAt'
-  >;
+  > & { site?: ReportExportSite | null });
 }
 
 export interface ReportShareCenterPage {

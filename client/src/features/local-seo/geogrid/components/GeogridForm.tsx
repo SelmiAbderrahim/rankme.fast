@@ -1,28 +1,38 @@
 /**
  * Grid definition form.
  *
- * Coordinates are TYPED, not picked from a map — the product ships no map-tile
- * vendor, and the helper copy says so rather than implying a missing picker.
+ * The centre comes from `GeogridCenterPicker`: the site's stored Local SEO
+ * business location, a place search through the existing Local SEO business
+ * lookup, or typed coordinates as the advanced option. The product ships no
+ * map-tile vendor, so nothing implies a map.
  *
  * data-testid contract:
  *   - geogrid-form                 form root
  *   - geogrid-keyword              keyword picker
- *   - geogrid-lat / geogrid-lng    coordinate inputs
- *   - geogrid-spacing              spacing radio group
+ *   - geogrid-keyword-empty        no tracked keyword yet (+ link to track one)
+ *   - geogrid-center…              centre picker (see GeogridCenterPicker)
+ *   - geogrid-lat / geogrid-lng    coordinate inputs (coordinate mode)
+ *   - geogrid-spacing              spacing radio group (presets + custom)
+ *   - geogrid-spacing-custom       custom spacing in km (custom option only)
  *   - geogrid-size                 grid-size radio group
  *   - geogrid-zoom                 zoom input
  *   - geogrid-preview-submit       preview button
  */
+import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
+import { Link } from 'react-router-dom';
 import { NativeSelect } from '@shared/ui/native-select';
 import { Button } from '@shared/ui/button';
 import { Input } from '@shared/ui/input';
 import { Label } from '@shared/ui/label';
+import { FieldFeedback, fieldDescribedBy } from '@shared/components/FieldFeedback';
+import { FormActions } from '@shared/components/FormActions';
 import { RadioGroup, RadioGroupItem } from '@shared/ui/radio-group';
 import type { GeogridKeywordOption } from '../api';
+import { GeogridCenterPicker, type GeogridCenter } from './GeogridCenterPicker';
 import type { GeogridFieldError } from '../validation';
 import {
-  GEOGRID_MAX_ABS_CENTER_LAT,
+  GEOGRID_DEFAULT_ZOOM,
   GEOGRID_MAX_SPACING_METERS,
   GEOGRID_MAX_ZOOM,
   GEOGRID_MIN_SPACING_METERS,
@@ -34,9 +44,38 @@ import {
   type GeogridSize,
 } from '../types';
 
+const CUSTOM_SPACING = 'custom';
+
+function isSpacingPreset(value: number): boolean {
+  return (GEOGRID_SPACING_PRESETS as readonly number[]).includes(value);
+}
+
+/** Metres → the km string shown in the custom field (`1500` → `"1.5"`). */
+export function metresToKm(value: number): string {
+  return String(value / 1000);
+}
+
+/**
+ * The custom field is typed in km (same unit as the presets); the wire stays
+ * integer metres. Blank or non-numeric input maps to 0 so the zod mirror
+ * reports the bound instead of silently keeping the previous value.
+ */
+export function kmToMetres(raw: string): number {
+  const value = Number(raw.trim());
+  return raw.trim() === '' || !Number.isFinite(value) ? 0 : Math.round(value * 1000);
+}
+
+export type { GeogridCenter };
+
 interface Props {
+  siteId: string;
   form: GeogridFormState;
   keywords: GeogridKeywordOption[];
+  /** `ready` with zero options shows the "track a keyword first" guidance. */
+  keywordsStatus: 'loading' | 'ready' | 'error';
+  /** Centre of the most recent scan, or null when there is none. */
+  lastCenter: GeogridCenter | null;
+  onCenterChange: (center: GeogridCenter) => void;
   errors: GeogridFieldError[];
   disabled: boolean;
   previewing: boolean;
@@ -49,8 +88,12 @@ interface Props {
 }
 
 export const GeogridForm = ({
+  siteId,
   form,
   keywords,
+  keywordsStatus,
+  lastCenter,
+  onCenterChange,
   errors,
   disabled,
   previewing,
@@ -63,6 +106,13 @@ export const GeogridForm = ({
 }: Props) => {
   const { t } = useTranslation('geogrid');
   const has = (field: GeogridFieldError) => errors.includes(field);
+  // "Custom" is a UI mode, not a value: picking it keeps the current spacing
+  // and reveals the km field. A non-preset value (e.g. an edited custom one)
+  // always shows as custom.
+  const [customSpacing, setCustomSpacing] = useState(() => !isSpacingPreset(form.spacingMeters));
+  const [customKm, setCustomKm] = useState(() => metresToKm(form.spacingMeters));
+  const showCustom = customSpacing || !isSpacingPreset(form.spacingMeters);
+  const noKeywords = keywordsStatus === 'ready' && keywords.length === 0;
 
   return (
     <form
@@ -85,71 +135,47 @@ export const GeogridForm = ({
           value={form.keywordId}
           disabled={disabled}
           aria-invalid={has('keywordId') || undefined}
-          aria-describedby={has('keywordId') ? 'geogrid-keyword-error' : undefined}
+          aria-describedby={fieldDescribedBy('geogrid-keyword', { hint: noKeywords, error: has('keywordId') })}
           onChange={(event) => onKeywordChange(event.target.value)}
         >
           <option value="">{t('form.keywordPlaceholder')}</option>
           {keywords.map((keyword) => (
-            <option key={keyword.id} value={keyword.id}>
+            <option key={keyword.id} value={keyword.id} dir="auto">
               {keyword.phrase}
             </option>
           ))}
         </NativeSelect>
-        {has('keywordId') ? (
-          <p id="geogrid-keyword-error" role="alert" className="text-destructive text-xs">
-            {t('form.errors.keyword')}
-          </p>
-        ) : null}
+        <FieldFeedback
+          id="geogrid-keyword"
+          hintTestId="geogrid-keyword-empty"
+          hint={
+            noKeywords ? (
+              <>
+                {t('form.keywordEmpty')}{' '}
+                <Link
+                  to={{ search: '?tab=keywords' }}
+                  className="text-foreground font-medium underline underline-offset-4"
+                  data-testid="geogrid-keyword-track-link"
+                >
+                  {t('form.keywordEmptyCta')}
+                </Link>
+              </>
+            ) : null
+          }
+          error={has('keywordId') ? t('form.errors.keyword') : null}
+        />
       </div>
 
-      <p className="text-muted-foreground text-xs">{t('form.coordinateHelp')}</p>
-
-      <div className="grid gap-4 sm:grid-cols-2">
-        <div className="flex flex-col gap-1.5">
-          <Label htmlFor="geogrid-lat">{t('form.latitude')}</Label>
-          <Input
-            id="geogrid-lat"
-            data-testid="geogrid-lat"
-            inputMode="decimal"
-            type="number"
-            step="0.0000001"
-            min={-GEOGRID_MAX_ABS_CENTER_LAT}
-            max={GEOGRID_MAX_ABS_CENTER_LAT}
-            value={form.centerLat}
-            disabled={disabled}
-            aria-invalid={has('centerLat') || undefined}
-            aria-describedby={has('centerLat') ? 'geogrid-lat-error' : undefined}
-            onChange={(event) => onCoordinateChange('centerLat', event.target.value)}
-          />
-          {has('centerLat') ? (
-            <p id="geogrid-lat-error" role="alert" className="text-destructive text-xs">
-              {t('form.errors.latitude', { max: GEOGRID_MAX_ABS_CENTER_LAT })}
-            </p>
-          ) : null}
-        </div>
-        <div className="flex flex-col gap-1.5">
-          <Label htmlFor="geogrid-lng">{t('form.longitude')}</Label>
-          <Input
-            id="geogrid-lng"
-            data-testid="geogrid-lng"
-            inputMode="decimal"
-            type="number"
-            step="0.0000001"
-            min={-180}
-            max={180}
-            value={form.centerLng}
-            disabled={disabled}
-            aria-invalid={has('centerLng') || undefined}
-            aria-describedby={has('centerLng') ? 'geogrid-lng-error' : undefined}
-            onChange={(event) => onCoordinateChange('centerLng', event.target.value)}
-          />
-          {has('centerLng') ? (
-            <p id="geogrid-lng-error" role="alert" className="text-destructive text-xs">
-              {t('form.errors.longitude')}
-            </p>
-          ) : null}
-        </div>
-      </div>
+      <GeogridCenterPicker
+        siteId={siteId}
+        centerLat={form.centerLat}
+        centerLng={form.centerLng}
+        lastCenter={lastCenter}
+        errors={errors}
+        disabled={disabled}
+        onCenterChange={onCenterChange}
+        onCoordinateChange={onCoordinateChange}
+      />
 
       <fieldset className="flex flex-col gap-2" disabled={disabled}>
         <legend className="text-sm font-medium">{t('form.spacing')}</legend>
@@ -158,8 +184,16 @@ export const GeogridForm = ({
           aria-label={t('form.spacing')}
           data-testid="geogrid-spacing"
           className="flex flex-wrap gap-2"
-          value={String(form.spacingMeters)}
-          onValueChange={(value) => onSpacingChange(Number(value))}
+          value={showCustom ? CUSTOM_SPACING : String(form.spacingMeters)}
+          onValueChange={(value) => {
+            if (value === CUSTOM_SPACING) {
+              setCustomSpacing(true);
+              setCustomKm(metresToKm(form.spacingMeters));
+              return;
+            }
+            setCustomSpacing(false);
+            onSpacingChange(Number(value));
+          }}
         >
           {GEOGRID_SPACING_PRESETS.map((preset) => (
             <Label
@@ -171,31 +205,47 @@ export const GeogridForm = ({
               {t('form.spacingOption', { km: preset / 1000 })}
             </Label>
           ))}
+          <Label
+            htmlFor="geogrid-spacing-custom-option"
+            className="border-border hover:bg-accent flex cursor-pointer items-center gap-2 rounded-md border px-3 py-2 text-sm"
+          >
+            <RadioGroupItem id="geogrid-spacing-custom-option" value={CUSTOM_SPACING} />
+            {t('form.spacingCustomOption')}
+          </Label>
         </RadioGroup>
-        {/* The radios are presets; this input is the value they all write to. */}
-        <Label htmlFor="geogrid-spacing-custom" className="text-muted-foreground text-xs">
-          {t('form.spacingCustom')}
-        </Label>
-        <Input
-          id="geogrid-spacing-custom"
-          data-testid="geogrid-spacing-custom"
-          type="number"
-          step={GEOGRID_SPACING_STEP_METERS}
-          min={GEOGRID_MIN_SPACING_METERS}
-          max={GEOGRID_MAX_SPACING_METERS}
-          value={form.spacingMeters}
-          aria-invalid={has('spacingMeters') || undefined}
-          onChange={(event) => onSpacingChange(Number(event.target.value))}
-        />
-        {has('spacingMeters') ? (
-          <p role="alert" className="text-destructive text-xs">
-            {t('form.errors.spacing', {
-              min: GEOGRID_MIN_SPACING_METERS,
-              max: GEOGRID_MAX_SPACING_METERS,
-              step: GEOGRID_SPACING_STEP_METERS,
-            })}
-          </p>
+        {showCustom ? (
+          <div className="flex flex-col gap-1.5 sm:max-w-40">
+            <Label htmlFor="geogrid-spacing-custom">{t('form.spacingCustom')}</Label>
+            <Input
+              id="geogrid-spacing-custom"
+              data-testid="geogrid-spacing-custom"
+              type="number"
+              inputMode="decimal"
+              step={GEOGRID_SPACING_STEP_METERS / 1000}
+              min={GEOGRID_MIN_SPACING_METERS / 1000}
+              max={GEOGRID_MAX_SPACING_METERS / 1000}
+              value={customKm}
+              aria-invalid={has('spacingMeters') || undefined}
+              aria-describedby={fieldDescribedBy('geogrid-spacing', { error: has('spacingMeters') })}
+              onChange={(event) => {
+                setCustomKm(event.target.value);
+                onSpacingChange(kmToMetres(event.target.value));
+              }}
+            />
+          </div>
         ) : null}
+        <FieldFeedback
+          id="geogrid-spacing"
+          error={
+            has('spacingMeters')
+              ? t('form.errors.spacing', {
+                  min: GEOGRID_MIN_SPACING_METERS / 1000,
+                  max: GEOGRID_MAX_SPACING_METERS / 1000,
+                  step: GEOGRID_SPACING_STEP_METERS / 1000,
+                })
+              : null
+          }
+        />
       </fieldset>
 
       <fieldset className="flex flex-col gap-2" disabled={disabled}>
@@ -221,28 +271,36 @@ export const GeogridForm = ({
         </RadioGroup>
       </fieldset>
 
-      <div className="flex flex-col gap-1.5 sm:max-w-40">
+      <div className="flex flex-col gap-1.5">
         <Label htmlFor="geogrid-zoom">{t('form.zoom')}</Label>
-        <Input
+        {/* Only the number field is narrow; its help text spans the form. */}
+        <div className="sm:max-w-40">
+          <Input
+            id="geogrid-zoom"
+            data-testid="geogrid-zoom"
+            type="number"
+            step={1}
+            min={GEOGRID_MIN_ZOOM}
+            max={GEOGRID_MAX_ZOOM}
+            value={form.zoom}
+            disabled={disabled}
+            aria-invalid={has('zoom') || undefined}
+            aria-describedby={fieldDescribedBy('geogrid-zoom', { hint: true, error: has('zoom') })}
+            onChange={(event) => onZoomChange(Number(event.target.value))}
+          />
+        </div>
+        <FieldFeedback
           id="geogrid-zoom"
-          data-testid="geogrid-zoom"
-          type="number"
-          step={1}
-          min={GEOGRID_MIN_ZOOM}
-          max={GEOGRID_MAX_ZOOM}
-          value={form.zoom}
-          disabled={disabled}
-          aria-invalid={has('zoom') || undefined}
-          onChange={(event) => onZoomChange(Number(event.target.value))}
+          hint={t('form.zoomHelp', {
+            min: GEOGRID_MIN_ZOOM,
+            max: GEOGRID_MAX_ZOOM,
+            default: GEOGRID_DEFAULT_ZOOM,
+          })}
+          error={has('zoom') ? t('form.errors.zoom', { min: GEOGRID_MIN_ZOOM, max: GEOGRID_MAX_ZOOM }) : null}
         />
-        {has('zoom') ? (
-          <p role="alert" className="text-destructive text-xs">
-            {t('form.errors.zoom', { min: GEOGRID_MIN_ZOOM, max: GEOGRID_MAX_ZOOM })}
-          </p>
-        ) : null}
       </div>
 
-      <div>
+      <FormActions>
         <Button
           type="submit"
           data-testid="geogrid-preview-submit"
@@ -252,7 +310,7 @@ export const GeogridForm = ({
         >
           {t('form.preview')}
         </Button>
-      </div>
+      </FormActions>
     </form>
   );
 };

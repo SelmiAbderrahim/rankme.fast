@@ -23,8 +23,11 @@ Search Console 是 Google 的免费工具，展示 Google 如何看待您的网�
 ## 断开或撤销
 点击 **断开**，我们会立即删除令牌。也可以随时在 https://myaccount.google.com/permissions 撤销授权。
 
-## “需要重新连接”
-如果 Google 使令牌失效，会出现红色横幅。在重新连接之前，这三条规则会显示“数据不足”。
+## 当 Google 要求重新连接时
+如果 Google 使令牌失效（例如您修改账号密码之后），站点 **Google** 标签中的 Google Search Console 卡片会显示红色提示 **您的 Google 连接需要重新授权**，并带有**重新连接**按钮。读取 Search Console 或 Google Analytics 的卡片会显示 **Search Console 未连接** 或 **Google Analytics 未连接**，并带有**连接 Google**。在重新连接之前，这三条规则会显示“数据不足”。
+
+## 选择资源
+站点的 **Google** 标签会自动把你的站点与某个 Search Console 资源匹配。如果没有匹配项或有多个匹配项，RankMeFast 会请你选择一个。属于其他站点的资源只有在你确认后才能关联，因为它的搜索数据随后会显示在这个站点上。Google Analytics 的处理方式相同。如果最新的 Google Analytics 数据比预期的更旧，会有提示，点击**刷新**可再次同步；RankMeFast 也会每天同步一次。
 
 ## 页面标签中的搜索表现
 

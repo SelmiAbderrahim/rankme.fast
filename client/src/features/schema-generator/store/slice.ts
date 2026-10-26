@@ -2,6 +2,7 @@ import { createSlice, type PayloadAction } from '@reduxjs/toolkit';
 import {
   initialSchemaGeneratorState,
   type EvidenceSource,
+  type GenerationDetail,
   type SchemaGeneratorState,
   type SupportedSchemaType,
 } from '../types';
@@ -12,7 +13,28 @@ import {
   loadSchemaSources,
   loadSchemaTypes,
   previewSchemaGenerationThunk,
+  regenerateSchemaGenerationThunk,
 } from './thunks';
+
+/** A fresh or rebuilt generation is the newest stored row of the list. */
+function prependGeneration(state: SchemaGeneratorState, detail: GenerationDetail): void {
+  state.generations = [
+    {
+      id: detail.id,
+      siteId: detail.siteId,
+      pageUrl: detail.pageUrl,
+      source: detail.source,
+      schemaType: detail.schemaType,
+      registryVersion: detail.registryVersion,
+      status: detail.status,
+      conformanceStatus: detail.conformanceStatus,
+      failureReason: detail.failureReason,
+      generatedAt: detail.generatedAt,
+      regeneratedFrom: detail.regeneratedFrom ?? null,
+    },
+    ...state.generations.filter((row) => row.id !== detail.id),
+  ];
+}
 
 const slice = createSlice({
   name: 'schemaGenerator',
@@ -125,30 +147,28 @@ const slice = createSlice({
         state.detail = action.payload;
         state.detailStatus = 'ready';
         state.detailGate = null;
-        // A fresh generation is the newest stored row — surface it in the
-        // stored list without a second round trip.
-        state.generations = [
-          {
-            id: action.payload.id,
-            siteId: action.payload.siteId,
-            pageUrl: action.payload.pageUrl,
-            source: action.payload.source,
-            schemaType: action.payload.schemaType,
-            registryVersion: action.payload.registryVersion,
-            status: action.payload.status,
-            conformanceStatus: action.payload.conformanceStatus,
-            failureReason: action.payload.failureReason,
-            refunded: action.payload.refunded,
-            generatedAt: action.payload.generatedAt,
-          },
-          ...state.generations.filter((row) => row.id !== action.payload.id),
-        ];
+        prependGeneration(state, action.payload);
         state.preview = null;
         state.previewStatus = 'idle';
       })
       .addCase(createSchemaGenerationThunk.rejected, (state, action) => {
         state.generateStatus = 'error';
         state.generateGate = action.payload ?? null;
+      })
+      .addCase(regenerateSchemaGenerationThunk.pending, (state) => {
+        state.regenerateStatus = 'loading';
+        state.regenerateGate = null;
+      })
+      .addCase(regenerateSchemaGenerationThunk.fulfilled, (state, action) => {
+        state.regenerateStatus = 'ready';
+        // The detail pane is already open on the original. Swapping `detail`
+        // before the URL names the rebuild would make the pane re-fetch the
+        // original, so the URL change loads the rebuild instead.
+        prependGeneration(state, action.payload);
+      })
+      .addCase(regenerateSchemaGenerationThunk.rejected, (state, action) => {
+        state.regenerateStatus = 'error';
+        state.regenerateGate = action.payload ?? null;
       });
   },
 });

@@ -1,3 +1,5 @@
+import { isolateText } from '@shared/lib/bidi';
+import { Bdi } from '@shared/components/Bdi';
 import { useCallback, useEffect, useMemo, useState, type FormEvent } from 'react';
 import { useTranslation } from 'react-i18next';
 import {
@@ -13,6 +15,15 @@ import {
 } from 'lucide-react';
 import { ApiError } from '@shared/api/client';
 import { ReportExportControl } from '@features/report-export';
+import { splitPhraseList } from '@shared/lib/phraseList';
+import {
+  LAST_DAY_OF_MONTH,
+  browserTimeZone,
+  nextScheduleOccurrence,
+  parseMonthdayInput,
+  scheduleTimeZones,
+  timeZoneCity,
+} from '../scheduleTime';
 import { SUPPORTED_LOCALES, type SupportedLocale } from '@shared/i18n';
 import { Alert, AlertDescription, AlertTitle } from '@shared/ui/alert';
 import {
@@ -63,6 +74,8 @@ import type {
   ScheduledReportInput,
 } from '../types';
 
+import { PageHeader } from '@shared/components/PageHeader';
+
 interface ClientReportsPanelProps {
   siteId: string;
 }
@@ -74,7 +87,8 @@ const DEFAULT_SCHEDULE: ScheduledReportInput = {
   frequency: 'weekly',
   weekdayUtc: 1,
   monthdayUtc: null,
-  hourUtc: 9,
+  timezone: 'UTC',
+  localHour: 9,
   locale: 'en',
   recipients: [],
   sections: DEFAULT_SECTIONS,
@@ -100,6 +114,18 @@ function weekdayName(day: number, locale: string): string {
   return new Intl.DateTimeFormat(locale, { weekday: 'long', timeZone: 'UTC' }).format(
     new Date(Date.UTC(2024, 0, 7 + day)),
   );
+}
+
+const EMAIL_PATTERN = /^[^\s@,]+@[^\s@,]+\.[^\s@,]+$/;
+const MAX_RECIPIENTS = 10;
+
+/** `09:00`-style label for an hour of the day, in the reader's locale. */
+function hourLabel(hour: number, locale: string): string {
+  return new Intl.DateTimeFormat(locale, {
+    hour: 'numeric',
+    minute: '2-digit',
+    timeZone: 'UTC',
+  }).format(new Date(Date.UTC(2024, 0, 1, hour)));
 }
 
 function statusTone(status: ScheduledReportDelivery['status']): StatusTone {
@@ -209,48 +235,116 @@ function ScheduleDialog({
   const [recipientText, setRecipientText] = useState('');
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState('');
+  // Field errors appear after the first save attempt, then track the form.
+  const [attempted, setAttempted] = useState(false);
+  // Day of month is typed text plus an explicit last-day switch, so the typed
+  // value is validated as typed and never coerced through Number().
+  const [monthdayText, setMonthdayText] = useState('1');
+  const [lastDay, setLastDay] = useState(false);
 
   useEffect(() => {
     if (!open) return;
+    setAttempted(false);
+    // A new schedule starts in the reader's own time zone.
+    let nextForm: ScheduledReportInput = { ...DEFAULT_SCHEDULE, timezone: browserTimeZone() };
+    let nextRecipientText = '';
+    let nextMonthdayText = '1';
+    let nextLastDay = false;
     if (schedule) {
-      setForm({
+      nextForm = {
         name: schedule.name,
         frequency: schedule.frequency,
         weekdayUtc: schedule.weekdayUtc,
         monthdayUtc: schedule.monthdayUtc,
-        hourUtc: schedule.hourUtc,
+        timezone: schedule.timezone,
+        localHour: schedule.localHour,
         locale: schedule.locale,
         recipients: schedule.recipients,
         sections: schedule.sections,
         enabled: schedule.enabled,
-      });
-      setRecipientText(schedule.recipients.join(', '));
-    } else {
-      setForm(DEFAULT_SCHEDULE);
-      setRecipientText('');
+      };
+      nextRecipientText = schedule.recipients.join(', ');
+      nextLastDay = schedule.monthdayUtc === LAST_DAY_OF_MONTH;
+      if (schedule.monthdayUtc !== null && !nextLastDay) {
+        nextMonthdayText = String(schedule.monthdayUtc);
+      }
     }
+    setForm(nextForm);
+    setRecipientText(nextRecipientText);
+    setMonthdayText(nextMonthdayText);
+    setLastDay(nextLastDay);
     setError('');
   }, [open, schedule]);
 
+  // The day that will be sent to the API: a validated 1..28, the explicit
+  // last-day sentinel, or null while the typed text is not acceptable.
+  const monthdayUtc = lastDay ? LAST_DAY_OF_MONTH : parseMonthdayInput(monthdayText);
+
+  const recipients = [
+    ...new Set(
+      // Commas, semicolons or one address per line (a pasted column).
+      splitPhraseList(recipientText).map((value) => value.toLowerCase()),
+    ),
+  ].sort();
+  const invalidRecipients = recipients.filter((address) => !EMAIL_PATTERN.test(address));
+  const fieldErrors = {
+    name: form.name.trim() === '' ? t('schedules.nameRequired') : null,
+    recipients:
+      recipients.length === 0
+        ? t('schedules.recipientsRequired')
+        : invalidRecipients.length > 0
+          ? t('schedules.recipientsInvalid', { addresses: invalidRecipients.join(', ') })
+          : recipients.length > MAX_RECIPIENTS
+            ? t('schedules.recipientsTooMany', { entered: recipients.length })
+            : null,
+    sections: hasSection(form.sections) ? null : t('composer.selectOne'),
+    monthday:
+      form.frequency === 'monthly' && monthdayUtc === null ? t('schedules.monthdayInvalid') : null,
+  };
+  const shown = (message: string | null) => (attempted ? message : null);
+  const nameError = shown(fieldErrors.name);
+  const recipientsError = shown(fieldErrors.recipients);
+  const sectionsError = shown(fieldErrors.sections);
+  const monthdayError = shown(fieldErrors.monthday);
+  // An invalid day yields no occurrence: never preview a rolled-over date.
+  const nextOccurrence = nextScheduleOccurrence(
+    { ...form, monthdayUtc },
+    new Date(),
+    schedule?.minuteUtc ?? 0,
+  );
+  // "Next send: Mon 09:00 Riyadh (06:00 UTC)". The UTC side names its weekday
+  // only when the UTC date differs from the local one.
+  const nextSend = (() => {
+    if (nextOccurrence === null) return null;
+    const timeParts = { hour: '2-digit', minute: '2-digit', hourCycle: 'h23' } as const;
+    const dayKey = (zone: string) =>
+      new Intl.DateTimeFormat('en-CA', { timeZone: zone, dateStyle: 'short' }).format(nextOccurrence);
+    const sameDay = dayKey(form.timezone) === dayKey('UTC');
+    return {
+      when: new Intl.DateTimeFormat(i18n.language, {
+        timeZone: form.timezone,
+        ...(form.frequency === 'weekly' ? { weekday: 'short' } : { month: 'short', day: 'numeric' }),
+        ...timeParts,
+      }).format(nextOccurrence),
+      zone: timeZoneCity(form.timezone),
+      utc: new Intl.DateTimeFormat(i18n.language, {
+        timeZone: 'UTC',
+        ...(sameDay ? {} : { weekday: 'short' }),
+        ...timeParts,
+      }).format(nextOccurrence),
+    };
+  })();
+  const timeZones = scheduleTimeZones([form.timezone, browserTimeZone()]);
+
   const submit = async (event: FormEvent) => {
     event.preventDefault();
-    const recipients = [
-      ...new Set(
-        recipientText
-          .split(',')
-          .map((value) => value.trim().toLowerCase())
-          .filter(Boolean),
-      ),
-    ].sort();
-    if (recipients.length === 0 || recipients.length > 10 || !hasSection(form.sections)) {
-      setError(t('schedules.saveFailed'));
-      return;
-    }
+    setAttempted(true);
+    if (Object.values(fieldErrors).some((message) => message !== null)) return;
     const body: ScheduledReportInput = {
       ...form,
       recipients,
       weekdayUtc: form.frequency === 'weekly' ? (form.weekdayUtc ?? 1) : null,
-      monthdayUtc: form.frequency === 'monthly' ? (form.monthdayUtc ?? 1) : null,
+      monthdayUtc: form.frequency === 'monthly' ? monthdayUtc : null,
     };
     setSaving(true);
     setError('');
@@ -275,7 +369,7 @@ function ScheduleDialog({
           </DialogTitle>
           <DialogDescription>{t('schedules.description')}</DialogDescription>
         </DialogHeader>
-        <form className="space-y-5" onSubmit={(event) => void submit(event)}>
+        <form className="space-y-5" noValidate onSubmit={(event) => void submit(event)}>
           <div className="space-y-2">
             <Label htmlFor="report-schedule-name">{t('schedules.name')}</Label>
             <Input
@@ -283,21 +377,45 @@ function ScheduleDialog({
               required
               maxLength={80}
               value={form.name}
+              aria-invalid={nameError !== null}
+              aria-describedby={nameError !== null ? 'report-schedule-name-error' : undefined}
               onChange={(event) => setForm({ ...form, name: event.target.value })}
             />
+            {nameError !== null ? (
+              <p id="report-schedule-name-error" role="alert" className="text-destructive text-sm">
+                {nameError}
+              </p>
+            ) : null}
           </div>
           <div className="space-y-2">
             <Label htmlFor="report-schedule-recipients">{t('schedules.recipients')}</Label>
             <Input
               id="report-schedule-recipients"
+              type="text"
+              inputMode="email"
+              autoComplete="off"
               required
               value={recipientText}
+              aria-invalid={recipientsError !== null}
               onChange={(event) => setRecipientText(event.target.value)}
-              aria-describedby="report-schedule-recipients-help"
+              aria-describedby={
+                recipientsError !== null
+                  ? 'report-schedule-recipients-help report-schedule-recipients-error'
+                  : 'report-schedule-recipients-help'
+              }
             />
             <p id="report-schedule-recipients-help" className="text-muted-foreground text-sm">
               {t('schedules.recipientsHelp')}
             </p>
+            {recipientsError !== null ? (
+              <p
+                id="report-schedule-recipients-error"
+                role="alert"
+                className="text-destructive text-sm"
+              >
+                {recipientsError}
+              </p>
+            ) : null}
           </div>
           <div className="grid gap-4 sm:grid-cols-2">
             <div className="space-y-2">
@@ -339,42 +457,125 @@ function ScheduleDialog({
                 <Label htmlFor="report-schedule-monthday">{t('schedules.monthday')}</Label>
                 <Input
                   id="report-schedule-monthday"
-                  type="number"
-                  min={1}
-                  max={28}
+                  type="text"
+                  inputMode="numeric"
+                  autoComplete="off"
+                  maxLength={3}
                   required
-                  value={form.monthdayUtc ?? 1}
-                  onChange={(event) =>
-                    setForm({ ...form, monthdayUtc: Number(event.target.value) })
+                  disabled={lastDay}
+                  value={lastDay ? '' : monthdayText}
+                  aria-invalid={monthdayError !== null}
+                  aria-describedby={
+                    monthdayError !== null
+                      ? 'report-schedule-monthday-help report-schedule-monthday-error'
+                      : 'report-schedule-monthday-help'
                   }
+                  onChange={(event) => setMonthdayText(event.target.value)}
                 />
+                <div className="flex items-center gap-2">
+                  <Checkbox
+                    id="report-schedule-monthday-last"
+                    checked={lastDay}
+                    onCheckedChange={(checked) => setLastDay(checked === true)}
+                  />
+                  <Label
+                    htmlFor="report-schedule-monthday-last"
+                    className="cursor-pointer font-normal"
+                  >
+                    {t('schedules.monthdayLast')}
+                  </Label>
+                </div>
+                <p id="report-schedule-monthday-help" className="text-muted-foreground text-sm">
+                  {t('schedules.monthdayHelp')}
+                </p>
+                {monthdayError !== null ? (
+                  <p
+                    id="report-schedule-monthday-error"
+                    role="alert"
+                    className="text-destructive text-sm"
+                  >
+                    {monthdayError}
+                  </p>
+                ) : null}
               </div>
             )}
           </div>
           <div className="grid gap-4 sm:grid-cols-2">
             <div className="space-y-2">
               <Label htmlFor="report-schedule-hour">{t('schedules.hour')}</Label>
-              <Input
-                id="report-schedule-hour"
-                type="number"
-                min={0}
-                max={23}
-                required
-                value={form.hourUtc}
-                onChange={(event) => setForm({ ...form, hourUtc: Number(event.target.value) })}
-              />
+              <Select
+                value={String(form.localHour)}
+                onValueChange={(value) => setForm({ ...form, localHour: Number(value) })}
+              >
+                <SelectTrigger
+                  id="report-schedule-hour"
+                  className="min-h-11 w-full"
+                  aria-describedby="report-schedule-local-time"
+                >
+                  <SelectValue />
+                </SelectTrigger>
+                <SelectContent>
+                  {Array.from({ length: 24 }, (_, hour) => (
+                    <SelectItem key={hour} value={String(hour)}>
+                      {hourLabel(hour, i18n.language)}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
             </div>
+            <div className="space-y-2">
+              <Label htmlFor="report-schedule-timezone">{t('schedules.timezone')}</Label>
+              <Select
+                value={form.timezone}
+                onValueChange={(timezone) => setForm({ ...form, timezone })}
+              >
+                <SelectTrigger
+                  id="report-schedule-timezone"
+                  className="min-h-11 w-full"
+                  aria-describedby="report-schedule-local-time"
+                >
+                  <SelectValue />
+                </SelectTrigger>
+                <SelectContent>
+                  {timeZones.map((zone) => (
+                    <SelectItem key={zone} value={zone}>
+                      <Bdi>{zone.replace(/_/g, ' ')}</Bdi>
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+            </div>
+          </div>
+          <div className="grid gap-4 sm:grid-cols-2">
             <LocaleSelect
               id="report-schedule-locale"
               value={form.locale}
               onChange={(locale) => setForm({ ...form, locale })}
             />
           </div>
+          <p
+            id="report-schedule-local-time"
+            className="text-muted-foreground text-sm"
+            data-testid="report-schedule-local-time"
+          >
+            {nextSend === null
+              ? t('schedules.localPreviewUnavailable')
+              : t('schedules.nextSend', {
+                  when: isolateText(nextSend.when),
+                  zone: isolateText(nextSend.zone),
+                  utc: isolateText(nextSend.utc),
+                })}
+          </p>
           <SectionPicker
             idPrefix="report-schedule-section"
             sections={form.sections}
             onChange={(sections) => setForm({ ...form, sections })}
           />
+          {sectionsError !== null ? (
+            <p role="alert" className="text-destructive text-sm">
+              {sectionsError}
+            </p>
+          ) : null}
           <div className="flex min-h-11 items-center justify-between gap-4 rounded-md border px-3">
             <Label htmlFor="report-schedule-enabled">{t('schedules.enabled')}</Label>
             <Switch
@@ -664,14 +865,12 @@ export function ClientReportsPanel({ siteId }: ClientReportsPanelProps) {
       aria-labelledby="client-reports-title"
       data-testid="client-reports-panel"
     >
-      <div>
-        <h2 id="client-reports-title" className="text-2xl font-semibold">
-          {t('clientReports:dashboard.title')}
-        </h2>
-        <p className="text-muted-foreground mt-1 text-sm">
-          {t('clientReports:dashboard.description')}
-        </p>
-      </div>
+      <PageHeader
+        headingLevel={2}
+        titleId="client-reports-title"
+        title={t('clientReports:dashboard.title')}
+        description={t('clientReports:dashboard.description')}
+      />
 
       {reportDisabled ? (
         <Alert data-testid="client-reports-disabled">
@@ -717,9 +916,23 @@ export function ClientReportsPanel({ siteId }: ClientReportsPanelProps) {
               selection={{ sections: composerSections }}
               locale={composerLocale}
               disabled={reportDisabled || !hasSection(composerSections)}
+              describedBy={
+                !reportDisabled && !hasSection(composerSections)
+                  ? 'report-composer-no-section'
+                  : undefined
+              }
               className="min-h-11"
             />
           </div>
+          {!reportDisabled && !hasSection(composerSections) ? (
+            <p
+              id="report-composer-no-section"
+              className="text-muted-foreground text-sm"
+              data-testid="report-composer-no-section"
+            >
+              {t('clientReports:composer.selectOne')}
+            </p>
+          ) : null}
         </CardContent>
       </Card>
 
@@ -758,7 +971,7 @@ export function ClientReportsPanel({ siteId }: ClientReportsPanelProps) {
                 >
                   <div className="min-w-0">
                     <div className="flex flex-wrap items-center gap-2">
-                      <p className="font-medium break-words">{schedule.name}</p>
+                      <p className="font-medium break-words"><Bdi>{schedule.name}</Bdi></p>
                       {!schedule.enabled ? (
                         <StatusChip>{t('clientReports:schedules.disabled')}</StatusChip>
                       ) : null}
@@ -805,7 +1018,7 @@ export function ClientReportsPanel({ siteId }: ClientReportsPanelProps) {
                           </AlertDialogTitle>
                           <AlertDialogDescription>
                             {t('clientReports:schedules.deleteDescription', {
-                              name: schedule.name,
+                              name: isolateText(schedule.name),
                             })}
                           </AlertDialogDescription>
                         </AlertDialogHeader>
@@ -859,7 +1072,7 @@ export function ClientReportsPanel({ siteId }: ClientReportsPanelProps) {
                       <TableCell className="break-all">{delivery.recipient}</TableCell>
                       <TableCell>
                         <StatusChip tone={statusTone(delivery.status)} dot>
-                          {delivery.label}
+                          <Bdi>{delivery.label}</Bdi>
                         </StatusChip>
                       </TableCell>
                       <TableCell>{formatDate(delivery.snapshotDate, i18n.language)}</TableCell>

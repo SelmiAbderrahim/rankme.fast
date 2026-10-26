@@ -1,0 +1,70 @@
+{
+  "version": "0.1.20261001",
+  "status_code": 20000,
+  "status_message": "Ok.",
+  "time": "0.0410 sec.",
+  "cost": 0,
+  "tasks_count": 1,
+  "tasks_error": 0,
+  "tasks": [
+    {
+      "id": "TASK_ID",
+      "status_code": 20000,
+      "status_message": "Ok.",
+      "time": "0.0302 sec.",
+      "cost": 0,
+      "result_count": 1,
+      "path": [
+        "v3",
+        "on_page",
+        "duplicate_tags"
+      ],
+      "data": {
+        "api": "on_page",
+        "function": "duplicate_tags",
+        "type": "duplicate_title"
+      },
+      "result": [
+        {
+          "crawl_progress": "finished",
+          "crawl_status": {
+            "max_crawl_pages": 100,
+            "pages_in_queue": 0,
+            "pages_crawled": 7
+          },
+          "total_pages_count": 2,
+          "pages_count": 2,
+          "items_count": 1,
+          "items": [
+            {
+              "accumulator": "Widget care",
+              "total_count": 2,
+              "pages": [
+                {
+                  "resource_type": "html",
+                  "status_code": 200,
+                  "location": null,
+                  "url": "https://example.com/blog/a?id=7",
+                  "meta": {
+                    "title": "Widget care",
+                    "description": "How to look after a widget."
+                  }
+                },
+                {
+                  "resource_type": "html",
+                  "status_code": 200,
+                  "location": null,
+                  "url": "https://example.com/blog/b",
+                  "meta": {
+                    "title": "Widget care",
+                    "description": "Caring for widgets."
+                  }
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

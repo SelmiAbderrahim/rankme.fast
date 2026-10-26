@@ -1,5 +1,5 @@
 /**
- * DataForSEO Labs Competitors adapter tests (prompt 15).
+ * DataForSEO Labs Competitors adapter tests.
  *
  * Two contracts + behaviour tests: normalization, limit clamping, gap
  * parameter mapping (intersections: false), null field guards, unknown-status
@@ -1914,7 +1914,7 @@ describe('DataForSeoCompetitorProvider — traffic normalization fallbacks', () 
 });
 
 // ---------------------------------------------------------------------------
-// Cost capture — pinned to Prompt 00 sheet math
+// Cost capture — pinned to the vendor cost sheet math
 // ---------------------------------------------------------------------------
 
 /**
@@ -1928,7 +1928,7 @@ const TRAFFIC_TASK_BASE_MICROS = 6_000n;
 const TRAFFIC_DOMAIN_MICROS = 400n;
 const HISTORICAL_POINT_MICROS = 200n;
 
-describe('DataForSeoCompetitorProvider — traffic-op cost capture (Prompt 00 sheet)', () => {
+describe('DataForSeoCompetitorProvider — traffic-op cost capture (vendor cost sheet)', () => {
   beforeAll(() => vendorMockServer.listen({ onUnhandledRequest: 'error' }));
   afterEach(() => vendorMockServer.resetHandlers());
   afterAll(() => vendorMockServer.close());

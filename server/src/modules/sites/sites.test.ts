@@ -59,6 +59,7 @@ import {
 import { setTeamDb } from '../team/team.holder.js';
 import { WORKSPACE_HEADER } from '../../shared/middleware/workspace-context.js';
 import { User } from '../users/users.model.js';
+import { GoogleConnection, SCOPE_GA4, SCOPE_GSC } from '../google-connections/index.js';
 import { claimSiteDeletionAttempt } from './site-lifecycle.js';
 
 const app = createApp();
@@ -490,6 +491,40 @@ describe('POST /api/sites', () => {
 });
 
 describe('GET /api/sites (cursor pagination)', () => {
+  it('returns one stored Google readiness status per product for each owned site', async () => {
+    const user = await seedUser('site-google-readiness@x.co');
+    await GoogleConnection.create({
+      accountId: user.id,
+      googleAccountEmail: 'owner@example.com',
+      encryptedRefreshToken: { ciphertext: 'x', iv: 'x', authTag: 'x', keyVersion: 1 },
+      scopes: [SCOPE_GSC, SCOPE_GA4],
+      status: 'connected',
+      connectedAt: new Date(),
+    });
+    const matching = await Site.create({
+      accountId: user.id,
+      url: 'https://shop.example.com/',
+      domain: 'shop.example.com',
+      displayName: '',
+      gscPropertyUrl: 'sc-domain:example.com',
+    });
+    const mismatch = await Site.create({
+      accountId: user.id,
+      url: 'https://different.example/',
+      domain: 'different.example',
+      displayName: '',
+      gscPropertyUrl: 'sc-domain:example.com',
+    });
+    const list = await request(app).get('/api/sites').set('Cookie', user.cookie);
+    expect(list.status).toBe(200);
+    const byId = new Map((list.body.sites as Array<{ id: string; google: unknown }>).map((site) => [site.id, site.google]));
+    expect(byId.get(String(matching._id))).toMatchObject({ gsc: { status: 'ok' }, ga4: { status: 'no_property' } });
+    expect(byId.get(String(mismatch._id))).toMatchObject({ gsc: { status: 'property_mismatch' } });
+    expect(JSON.stringify(list.body)).not.toMatch(/owner@example\.com|ciphertext|sc-domain:/u);
+    const one = await request(app).get(`/api/sites/${matching._id}`).set('Cookie', user.cookie);
+    expect(one.status).toBe(200);
+    expect(one.body.site.google).toEqual(byId.get(String(matching._id)));
+  });
   it('lists own sites newest-first with a working cursor', async () => {
     const user = await seedUser();
     await insertSite(user.id, 'a.example.com');
@@ -737,6 +772,23 @@ describe('PATCH /api/sites/:id', () => {
 
     const reread = await Site.findById(site._id);
     expect(reread?.displayName).toBe('My renamed blog');
+  });
+
+  it('marks a site as a local business without touching its name', async () => {
+    const user = await seedUser();
+    const site = await insertSite(user.id, 'local.example.com');
+    const first = await request(app)
+      .patch(`/api/sites/${site._id.toString()}`)
+      .set('Cookie', user.cookie)
+      .send({ localBusiness: true });
+    expect(first.status).toBe(200);
+    expect(first.body.site.localBusiness).toBe(true);
+    const again = await request(app)
+      .patch(`/api/sites/${site._id.toString()}`)
+      .set('Cookie', user.cookie)
+      .send({ displayName: 'Local' });
+    expect(again.body.site).toMatchObject({ localBusiness: true, displayName: 'Local' });
+    expect((await Site.findById(site._id))?.localBusiness).toBe(true);
   });
 
   it('accepts an empty displayName to clear the rename', async () => {

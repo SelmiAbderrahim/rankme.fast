@@ -1,14 +1,15 @@
 {
   "card": {
     "title": "Bilan hebdomadaire",
-    "description": "Un bilan hebdomadaire déterministe par site — citations nouvelles/perdues, baisses de classement confirmées, changements d’actions et trois prochaines actions. Consomme une vérification de mentions IA par site et par semaine.",
-    "unitDisclosure": "Une vérification de mentions IA par site et par semaine.",
+    "description": "Un bilan hebdomadaire pour ce site : citations IA nouvelles et perdues, baisses de classement confirmées, changements dans votre liste d’actions et vos trois prochaines actions.",
+    "unitDisclosure": "Lance une vérification de mentions IA par semaine pour ce site.",
     "nextRun": "Prochaine exécution : {{when}}",
     "lastRun": "Dernière exécution : {{when}}",
     "lastStatus": "Dernier statut : {{status}}",
     "enableCta": "Activer le bilan hebdomadaire",
+    "enableHint": "Prévisualisez d’abord l’exécution pour activer le bilan hebdomadaire.",
     "disableCta": "Désactiver le bilan hebdomadaire",
-    "previewCta": "Prévisualiser la dépense",
+    "previewCta": "Prévisualiser l’exécution",
     "historyLink": "Voir les bilans passés"
   },
   "status": {
@@ -23,7 +24,7 @@
   },
   "confirm": {
     "enableTitle": "Activer le bilan hebdomadaire ?",
-    "enableBody": "La tâche planifiée consommera une vérification de mentions IA par semaine pour ce site.",
+    "enableBody": "La tâche planifiée lancera une vérification de mentions IA par semaine pour ce site.",
     "enableAck": "Je comprends et souhaite recevoir le bilan hebdomadaire.",
     "disableTitle": "Désactiver le bilan hebdomadaire ?",
     "disableBody": "Vous cesserez de recevoir le bilan. L’historique reste disponible.",
@@ -65,10 +66,8 @@
     "openLabel": "Ouvrir le bilan de {{isoWeek}}"
   },
   "preview": {
-    "title": "Prévisualisation de la dépense",
-    "productUnits": "1 vérification de mentions IA par semaine",
-    "remaining": "Restant ce mois : {{remaining}}",
-    "capBlocked": "Le quota de votre plan est épuisé. L’activation échouera — mettez à niveau ou achetez des crédits."
+    "title": "Aperçu de l’exécution",
+    "productUnits": "Une vérification de mentions IA par semaine."
   },
   "gsc": {
     "title": "Apparition dans l’IA générative Google",
@@ -83,7 +82,7 @@
     "empty": "Google n’a signalé aucune apparition IA générative.",
     "reconnect": "Reconnectez Google Search Console pour voir cette section.",
     "window": "Fenêtre : {{start}} → {{end}}",
-    "row": "{{appearance}} — {{clicks}} clics, {{impressions}} impressions",
+    "row": "{{appearance}} — clics : {{clicks}} · impressions : {{impressions}}",
     "loading": "Chargement des données Google Search Console…",
     "unknown": "Apparition inconnue ({{raw}})",
     "noData": "Aucune donnée Search Console pour l'instant. Connectez Google Search Console pour voir cette section, ou revenez après la prochaine synchronisation quotidienne."
@@ -98,7 +97,6 @@
   },
   "errors": {
     "unexpected": "Une erreur est survenue — réessayez.",
-    "overCap": "Le quota de votre plan est épuisé. Mettez à niveau ou achetez des crédits pour recevoir les bilans hebdomadaires.",
     "acknowledgePreviewRequired": "Prévisualisez la dépense avant l’activation.",
     "reconnectRequired": "Reconnectez Google Search Console pour charger ces données.",
     "unauthorized": "Connectez-vous pour voir le bilan hebdomadaire."

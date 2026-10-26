@@ -22,36 +22,54 @@
   },
   "list": {
     "title": "你的规则",
-    "capUsed": "已使用 {{count}} 条规则。",
+    "capUsed_one": "已使用 {{count}} 条规则。",
     "type": "类型",
     "threshold": "阈值",
     "channels": "渠道",
     "state": "状态",
     "actions": "操作",
-    "emailCount": "{{count}} 位邮件接收人",
+    "emailCount_one": "{{count}} 位邮件接收人",
     "secretTail": "签名密钥以 {{tail}} 结尾",
     "enabled": "已启用",
     "disabled": "已停用",
     "enable": "启用",
     "disable": "停用",
     "viewLog": "查看记录",
-    "delete": "删除"
+    "delete": "删除",
+    "capUsed_zero": "已使用 {{count}} 条规则。",
+    "capUsed_two": "已使用 {{count}} 条规则。",
+    "capUsed_few": "已使用 {{count}} 条规则。",
+    "capUsed_many": "已使用 {{count}} 条规则。",
+    "capUsed_other": "已使用 {{count}} 条规则。",
+    "emailCount_zero": "{{count}} 位邮件接收人",
+    "emailCount_two": "{{count}} 位邮件接收人",
+    "emailCount_few": "{{count}} 位邮件接收人",
+    "emailCount_many": "{{count}} 位邮件接收人",
+    "emailCount_other": "{{count}} 位邮件接收人"
   },
   "builder": {
     "title": "新建规则",
     "description": "选择要监控的内容与发送去向。",
     "site": "站点",
     "sitePlaceholder": "选择站点",
-    "siteRequired": "请选择一个网站以创建规则。",
+    "siteRequired": "请选择一个站点以继续。",
     "type": "提醒类型",
     "threshold": "位次阈值",
     "thresholdHint": "当确认后的排名跌至该位次或更低时提醒你。",
     "channels": "渠道",
     "slackPlaceholder": "Slack 传入 Webhook 地址",
     "webhookPlaceholder": "你的 https 地址",
-    "paidChannelLocked": "Slack 与 Webhook 渠道需要 Pro 及以上套餐。",
     "noChannel": "请至少选择一个渠道。",
-    "submit": "创建规则"
+    "submit": "创建规则",
+    "sitePaused": "已暂停",
+    "rankDropHint": "仅在定时排名检查发现下跌、且对同一关键词的第二次检查确认下跌后才会触发。",
+    "rankDropBuiltIn": "内置的排名下降邮件是单独设置的，开关位于",
+    "rankDropBuiltInLink": "通知",
+    "thresholdInvalid": "请输入 {{min}} 到 {{max}} 之间的整数排名。",
+    "slackRequired": "请输入你的 Slack Webhook 地址。",
+    "webhookRequired": "请输入你的 Webhook 地址。",
+    "sitePausedOption": "恢复此网站后才能创建提醒规则",
+    "sitePausedBlocked": "此网站已暂停。恢复此网站后才能创建提醒规则。"
   },
   "secret": {
     "title": "请立即复制签名密钥",
@@ -68,7 +86,7 @@
     "rankPair": "{{beforeAt}} 为第 {{before}} 位，{{afterAt}} 为第 {{after}} 位。",
     "linkPair": "{{beforeAt}} 有 {{beforeCount}} 个域名，{{afterAt}} 有 {{afterCount}} 个。",
     "notRanked": "未进入前 100 名",
-    "domainCount": "{{count}} 个域名发生变化",
+    "domainCount_one": "{{count}} 个域名发生变化",
     "attempt": "第 {{attempt}} 次尝试",
     "statusLabel": {
       "pending": "发送中",
@@ -91,17 +109,29 @@
       "unsafe_url": "该地址已不再安全可达。",
       "channel_timeout": "渠道响应超时。",
       "retries_exhausted": "三次失败后已停止重试。"
+    },
+    "domainCount_zero": "{{count}} 个域名发生变化",
+    "domainCount_two": "{{count}} 个域名发生变化",
+    "domainCount_few": "{{count}} 个域名发生变化",
+    "domainCount_many": "{{count}} 个域名发生变化",
+    "domainCount_other": "{{count}} 个域名发生变化",
+    "rulePicker": "规则",
+    "rulePickerPlaceholder": "选择规则",
+    "ruleOption": "{{type}} · {{site}}",
+    "empty": {
+      "title": "还没有发送过提醒",
+      "noRules": "已发送的提醒会显示在这里。你还没有规则，所以不会发送任何提醒。",
+      "createRule": "创建规则",
+      "rule": "此规则还没有发送过提醒。",
+      "pickRule": "选择一条规则，查看它发送过的提醒。"
+    },
+    "filtered": {
+      "title": "没有符合这些筛选条件的发送记录",
+      "body": "清除筛选条件即可查看此规则的所有发送记录。",
+      "clear": "清除筛选"
     }
   },
   "states": {
-    "cap": {
-      "title": "已达规则上限",
-      "body": "你已用完当前套餐的全部提醒规则。"
-    },
-    "tierLocked": {
-      "title": "该渠道需要更高套餐",
-      "body": "Slack 与 Webhook 渠道需要 Pro 及以上套餐。"
-    },
     "disabled": {
       "title": "提醒已暂停",
       "body": "提醒功能暂时不可用。你的规则与记录仍然保留。"

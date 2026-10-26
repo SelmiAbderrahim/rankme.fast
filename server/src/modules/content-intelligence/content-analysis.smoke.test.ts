@@ -1,5 +1,5 @@
 /**
- * Content Intelligence — end-to-end processor smoke (prompt 05, Phase A).
+ * Content Intelligence — end-to-end processor smoke.
  *
  * Permanent, intentionally small integration smoke that runs the three
  * headline flows through the REAL stage handlers with minimal fakes:

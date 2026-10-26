@@ -1,3 +1,5 @@
+import { isolateText } from '@shared/lib/bidi';
+import { Bdi } from '@shared/components/Bdi';
 /**
  * Competitors panel.
  *
@@ -69,6 +71,7 @@ import {
   selectSelectedCompetitor,
 } from '../store/selectors';
 import { TrafficInsightsPanel } from '../traffic/components/TrafficInsightsPanel';
+import { PageHeading } from '@shared/components/PageHeader';
 
 interface Props {
   siteId: string;
@@ -158,7 +161,7 @@ const TechStackCell = ({ cell, domain }: TechStackCellProps) => {
           <Badge key={`${entry.category}-${entry.name}`} variant="secondary" className="gap-1">
             <Icon className="h-3 w-3" aria-hidden="true" />
             <span className="sr-only">{t(`competitors:techStack.${entry.category}`)}: </span>
-            {entry.name}
+            <Bdi>{entry.name}</Bdi>
           </Badge>
         );
       })}
@@ -196,6 +199,9 @@ export const CompetitorsPanel = ({ siteId }: Props) => {
     };
   }, [dispatch, siteId]);
 
+  // A stored read with nothing stored yet: nothing was ever fetched.
+  const neverFetched = list?.fetchedAt === null;
+
   // Refresh failures surface as a toast — the panel keeps its last data.
   useEffect(() => {
     if (refreshError) toast.error(refreshError);
@@ -205,7 +211,7 @@ export const CompetitorsPanel = ({ siteId }: Props) => {
     <div className="flex flex-col gap-6 px-4 py-8" data-testid="competitors-panel">
       <div className="flex flex-wrap items-start justify-between gap-2">
         <div>
-          <h1 className="text-2xl font-semibold">{t('competitors:title')}</h1>
+          <PageHeading className="text-2xl font-semibold">{t('competitors:title')}</PageHeading>
           <p className="text-muted-foreground text-sm">{t('competitors:description')}</p>
         </div>
         <div className="flex flex-col items-end gap-2">
@@ -337,7 +343,7 @@ export const CompetitorsPanel = ({ siteId }: Props) => {
                                     {c.domain.slice(0, 2).toUpperCase()}
                                   </AvatarFallback>
                                 </Avatar>
-                                {c.domain}
+                                <Bdi>{c.domain}</Bdi>
                               </span>
                             </TableCell>
                             <TableCell className="text-end tabular-nums">
@@ -408,7 +414,7 @@ export const CompetitorsPanel = ({ siteId }: Props) => {
                                 >
                                   <h3 className="font-semibold">
                                     {t('competitors:gap.title', {
-                                      competitor: c.domain,
+                                      competitor: isolateText(c.domain),
                                     })}
                                   </h3>
                                   {intersectionLoading ? (
@@ -456,7 +462,7 @@ export const CompetitorsPanel = ({ siteId }: Props) => {
                                             data-testid={`competitors-gap-row-${i}`}
                                           >
                                             <TableCell className="whitespace-normal">
-                                              {k.keyword}
+                                              <Bdi>{k.keyword}</Bdi>
                                             </TableCell>
                                             <TableCell className="text-end tabular-nums">
                                               {k.target2Position === null
@@ -535,12 +541,17 @@ export const CompetitorsPanel = ({ siteId }: Props) => {
           ) : loaded && !loading && !error ? (
             <Empty className="w-full max-w-md self-center" data-testid="competitors-empty">
               <EmptyHeader>
-                <EmptyTitle>{t('competitors:emptyTitle')}</EmptyTitle>
-                <EmptyDescription>{t('competitors:empty')}</EmptyDescription>
+                <EmptyTitle>
+                  {t(neverFetched ? 'competitors:notFetchedTitle' : 'competitors:emptyTitle')}
+                </EmptyTitle>
+                <EmptyDescription>
+                  {t(neverFetched ? 'competitors:notFetched' : 'competitors:empty')}
+                </EmptyDescription>
               </EmptyHeader>
               <EmptyContent>
                 <Button
                   variant="outline"
+                  loading={isRefreshing}
                   onClick={() => void dispatch(refreshCompetitors({ siteId }))}
                   data-testid="competitors-empty-refresh"
                 >

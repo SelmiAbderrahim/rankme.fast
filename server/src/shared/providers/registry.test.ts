@@ -6,6 +6,8 @@ import {
   type ProviderSelection,
 } from './index.js';
 import { createFakeAiGenerationProvider } from './ai-generation-fake.js';
+import { FAKE_RANK_SLOW_MARKER } from './fakes.js';
+import type { SerpTaskQueue } from './serp-normalization.js';
 
 const ALL_FAKE: ProviderSelection = {
   audit: 'fake',
@@ -27,6 +29,20 @@ const ALL_FAKE: ProviderSelection = {
 };
 
 describe('provider registry', () => {
+  it('supplies the worker with a fake queued rank provider and a slow task', async () => {
+    const registry = createProviderRegistry(ALL_FAKE);
+    const rank = registry.rank as typeof registry.rank & Partial<SerpTaskQueue>;
+    expect(typeof rank.postSerpTasks).toBe('function');
+    expect(typeof rank.pollSerpTask).toBe('function');
+    const [posted] = await rank.postSerpTasks!([{ keyword: `seo ${FAKE_RANK_SLOW_MARKER} tool`,
+      domain: 'example.com', locationCode: 2840, languageCode: 'en', device: 'desktop' }]);
+    expect(posted?.ok).toBe(true);
+    if (!posted?.ok) return;
+    await expect(rank.pollSerpTask!(posted.vendorTaskId)).resolves.toEqual({ state: 'pending' });
+    await expect(rank.pollSerpTask!(posted.vendorTaskId)).resolves.toEqual({ state: 'pending' });
+    await expect(rank.pollSerpTask!(posted.vendorTaskId)).resolves.toMatchObject({ state: 'ready' });
+  });
+
   it('builds every provider from an all-fake selection', async () => {
     const registry = createProviderRegistry(ALL_FAKE);
     await expect(registry.audit.startAudit({ domain: 'example.com', pageCap: 1 })).resolves.toEqual(
@@ -42,7 +58,7 @@ describe('provider registry', () => {
       }),
     ).resolves.toMatchObject({ position: 3 });
     await expect(registry.keyword.getMetrics(['k'], 2840, 'en')).resolves.toHaveLength(2);
-    await expect(registry.localListings.getBusinessListings('example.com')).resolves.toHaveLength(
+    await expect(registry.localListings.getBusinessListings({ domain: 'example.com', business: null, locationCode: 2840, languageCode: 'en' })).resolves.toHaveLength(
       3,
     );
     await expect(registry.backlink.getSummary('example.com')).resolves.toMatchObject({

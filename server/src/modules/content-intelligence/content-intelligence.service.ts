@@ -16,6 +16,7 @@
  * Duplicate idempotency keys return the existing analysis without starting a
  * second run. Enqueue failure marks the fresh run failed and surfaces a 503.
  */
+import { countWords } from '../../shared/utils/text-length.js';
 import type { Queue } from 'bullmq';
 import { Types } from 'mongoose';
 import { assertPublicUrlSafe, makeIdempotencyKey, stripQueryOperators, createPaginationCursorCodec, type PaginationCursorCodec, } from '../../shared/security/index.js';
@@ -27,6 +28,7 @@ import { enqueueContentAnalysisJob } from '../../shared/queue/index.js';
 import { ContentAnalysis, isContentAnalysisCancellable, type ContentAnalysisDocument, type ContentAnalysisStatus, } from './content-analysis.model.js';
 import { recordContentAnalysisEvent } from './content-analysis.events.js';
 import { assertContentAnalysisTransition } from './content-analysis.state.js';
+import { contentAnalysisProgress, toContentAnalysisJobStatus, type ContentAnalysisJobStatus, } from './content-analysis.job-status.js';
 import { env } from '../../config/env.js';
 import { createHash } from 'node:crypto';
 import { ownedPageFactsSchema, recommendationSchema, scorecardSchema, SCHEMA_VERSION, } from './content-analysis.schemas.js';
@@ -165,6 +167,8 @@ export function toPublicAnalysis(doc: ContentAnalysisDocument & {
         keyword: doc.keyword,
         locale: doc.locale,
         status: doc.status,
+        // Step, failure code and way out, shared with the status endpoint.
+        progress: contentAnalysisProgress(doc),
         stages: doc.stages ?? [],
         warnings: (doc.warnings ?? []).map((warning) => localizeContentAnalysisWarning(locale, warning)),
         scorecard: doc.scorecard ?? null,
@@ -174,6 +178,13 @@ export function toPublicAnalysis(doc: ContentAnalysisDocument & {
             ? {
                 url: parsedOwned.data.url,
                 contentHash: parsedOwned.data.contentHash,
+                // Present only when the page redirected before it was read.
+                ...(parsedOwned.data.finalUrl
+                    ? {
+                        finalUrl: parsedOwned.data.finalUrl,
+                        redirectChain: parsedOwned.data.redirectChain ?? [],
+                    }
+                    : {}),
             }
             : null,
         recommendations,
@@ -195,7 +206,23 @@ export function toPublicAnalysis(doc: ContentAnalysisDocument & {
             savedAt: (version.savedAt as Date).toISOString(),
         })),
         citations: doc.citations ?? [],
-        error: doc.error ?? null,
+        error: doc.error
+            ? {
+                category: doc.error.category,
+                messageKey: doc.error.messageKey,
+                retryable: doc.error.retryable,
+                terminal: doc.error.terminal,
+                // Safe failure detail only — legacy rows predate it and read as null.
+                reason: doc.error.reason ?? null,
+                httpStatus: doc.error.httpStatus ?? null,
+                finalUrl: doc.error.finalUrl ?? null,
+                redirectChain: (doc.error.redirectChain ?? []).map((hop) => ({
+                    url: hop.url,
+                    status: hop.status,
+                })),
+                contentType: doc.error.contentType ?? null,
+            }
+            : null,
         costMicros: Number(doc.costMicros ?? 0),
         aiCostMicros: Number(doc.aiCostMicros ?? 0),
         requestedAt: (doc.requestedAt as Date | null)?.toISOString?.() ?? null,
@@ -312,8 +339,7 @@ export async function saveDraftVersion(input: {
         .update(`${input.analysisId}:${scopedClientKey}`)
         .digest('hex')
         .slice(0, 16)}`;
-    const trimmed = input.markdown.trim();
-    const wordCount = trimmed.length === 0 ? 0 : trimmed.split(/\s+/u).length;
+    const wordCount = countWords(input.markdown);
     doc.draft.markdown = input.markdown;
     doc.draft.wordCount = wordCount;
     doc.draftVersions.push({
@@ -674,6 +700,68 @@ export async function getAnalysis(input: {
         throw HttpError.notFound({ code: 'CONTENT_INTELLIGENCE_ERRORS_NOT_FOUND', messageKey: 'contentIntelligence.errors.notFound' });
     await loadOwnedSite(input.accountId, String(doc.siteId));
     return toPublicAnalysis(doc.toObject() as never, input.locale ?? toSupportedLocale(doc.locale));
+}
+async function loadOwnedAnalysis(accountId: string, analysisId: string) {
+    if (!Types.ObjectId.isValid(analysisId)) {
+        throw HttpError.notFound({ code: 'CONTENT_INTELLIGENCE_ERRORS_NOT_FOUND', messageKey: 'contentIntelligence.errors.notFound' });
+    }
+    const doc = await ContentAnalysis.findOne({ _id: analysisId, accountId });
+    if (!doc)
+        throw HttpError.notFound({ code: 'CONTENT_INTELLIGENCE_ERRORS_NOT_FOUND', messageKey: 'contentIntelligence.errors.notFound' });
+    await loadOwnedSite(accountId, String(doc.siteId));
+    return doc;
+}
+/**
+ * GET /api/content-analyses/:analysisId/status — the slim polling read:
+ * status, step and failure code only.
+ */
+export async function getAnalysisStatus(input: {
+    accountId: string;
+    analysisId: string;
+}): Promise<ContentAnalysisJobStatus> {
+    const doc = await loadOwnedAnalysis(input.accountId, input.analysisId);
+    return toContentAnalysisJobStatus(doc.toObject() as never);
+}
+function assertRetryable(doc: ContentAnalysisDocument): void {
+    const progress = contentAnalysisProgress(doc);
+    if (doc.status !== 'failed' || progress.retryAction !== 'retry') {
+        throw HttpError.conflict({ code: 'CONTENT_INTELLIGENCE_ERRORS_NOT_RETRYABLE', messageKey: 'contentIntelligence.errors.notRetryable' });
+    }
+}
+/**
+ * GET /api/content-analyses/:analysisId/retry — what a Try again would run
+ * again, shown before the user confirms. Read-only.
+ */
+export async function previewAnalysisRetry(input: {
+    accountId: string;
+    analysisId: string;
+}) {
+    const doc = await loadOwnedAnalysis(input.accountId, input.analysisId);
+    assertRetryable(doc);
+    return {
+        analysisId: String(doc._id),
+        ownedUrl: doc.ownedUrl,
+        keyword: doc.keyword,
+        failureReasonCode: contentAnalysisProgress(doc).failureReasonCode,
+    };
+}
+/**
+ * POST /api/content-analyses/:analysisId/retry — a fresh run of the same
+ * request after a retryable failure. The caller has already confirmed the AI
+ * consent shown with the preview.
+ */
+export async function retryAnalysis(input: {
+    accountId: string;
+    ownerUserId: string;
+    analysisId: string;
+    consent: boolean;
+}, deps: CreateAnalysisDeps): Promise<StartedAnalysis> {
+    const doc = await loadOwnedAnalysis(input.accountId, input.analysisId);
+    assertRetryable(doc);
+    if (!input.consent) {
+        throw HttpError.badRequest({ code: 'CONTENT_INTELLIGENCE_ERRORS_CONSENT_REQUIRED', messageKey: 'contentIntelligence.errors.consentRequired' });
+    }
+    return regenerateAnalysis({ accountId: input.accountId, ownerUserId: input.ownerUserId, analysisId: input.analysisId }, deps);
 }
 /** Resolve an analysis URL id to its owned Site without exposing foreign ids. */
 export async function resolveOwnedAnalysisSiteId(accountId: string, analysisId: string): Promise<string | null> {

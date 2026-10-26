@@ -16,9 +16,8 @@ import { logger } from '../../config/logger.js';
 import { translate } from '../../shared/i18n/index.js';
 import { setBearerLanguage } from '../../shared/middleware/bearer-language.js';
 import { SERVER_VERSION } from '../../version.js';
-import { getAuditStatusInputSchema, getContentAnalysisInputSchema, getLatestAuditReportInputSchema, getRankHistoryInputSchema, listActionsInputSchema, listContentAnalysesInputSchema, listKeywordsInputSchema, listSitesInputSchema, setActionStateInputSchema, startAuditInputSchema, } from './mcp.schema.js';
 import { resolveContextLocale, type McpToolContext } from './mcp.tools.js';
-import { MCP_TOOL_NAMES, resolveMcpToolDefinition } from './mcp.registry.js';
+import { MCP_TOOL_NAMES, MCP_TOOL_REGISTRY, resolveMcpToolDefinition, type McpToolName, } from './mcp.registry.js';
 import { isToolAllowed, resolveEffectivePermissions, type EffectiveMcpPermissions, } from '../../shared/mcp-permissions/index.js';
 import { getAccountMcpSpec } from '../mcp-permissions/index.js';
 import { isMcpJsonRpcMessage, jsonRpcRequestId, LocalizedMcpTransport, respondMcpJsonRpcError, } from './mcp.transport.js';
@@ -166,17 +165,22 @@ export const mcpMethodNotAllowedHandler: RequestHandler = (req, res) => {
     res.setHeader('Allow', 'POST');
     respondMcpJsonRpcError(res, locale, 405, -32600, null);
 };
-// Re-export the schemas here so consumers only need one import path when they
-// want to introspect the tool boundary from tests.
-export const MCP_INPUT_SCHEMAS = {
-    list_sites: listSitesInputSchema,
-    get_latest_audit_report: getLatestAuditReportInputSchema,
-    list_keywords: listKeywordsInputSchema,
-    get_rank_history: getRankHistoryInputSchema,
-    list_content_analyses: listContentAnalysesInputSchema,
-    get_content_analysis: getContentAnalysisInputSchema,
-    start_audit: startAuditInputSchema,
-    get_audit_status: getAuditStatusInputSchema,
-    list_actions: listActionsInputSchema,
-    set_action_state: setActionStateInputSchema,
-} as const satisfies Record<string, z.ZodTypeAny>;
+// The registry is the single authority; this view exists so consumers (and
+// tests) can introspect the tool boundary from one import path. It resolves
+// lazily because the controller can be evaluated inside the registry's import
+// cycle (tool modules -> mcp-permissions -> mcp index), before the registry
+// body has run.
+const isToolName = (key: string | symbol): key is McpToolName => typeof key === 'string' && MCP_TOOL_NAMES.some((name) => name === key);
+export const MCP_INPUT_SCHEMAS = new Proxy({} as {
+    readonly [Name in McpToolName]: z.ZodTypeAny;
+}, {
+    get: (_target, key) => (isToolName(key) ? MCP_TOOL_REGISTRY[key].inputSchema : undefined),
+    ownKeys: () => [...MCP_TOOL_NAMES],
+    getOwnPropertyDescriptor: (_target, key) => isToolName(key)
+        ? {
+            enumerable: true,
+            configurable: true,
+            value: MCP_TOOL_REGISTRY[key].inputSchema,
+        }
+        : undefined,
+});

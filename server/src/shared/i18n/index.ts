@@ -47,9 +47,24 @@ function interpolate(template: string, vars?: TranslationVars): string {
         return value === undefined || value === null ? '' : String(value);
     });
 }
+function resolveCountKey(dict: DictionaryShape, key: string, locale: SupportedLocale, count: unknown): string | undefined {
+    if (typeof count === 'number' && Number.isFinite(count)) {
+        const category = count === 0 ? 'zero' : new Intl.PluralRules(locale).select(count);
+        const plural = resolveKey(dict, `${key}_${category}`);
+        if (plural !== undefined)
+            return plural;
+        // Explicit zero copy takes precedence over the locale's cardinal form.
+        if (count === 0) {
+            const cardinal = resolveKey(dict, `${key}_${new Intl.PluralRules(locale).select(count)}`);
+            if (cardinal !== undefined)
+                return cardinal;
+        }
+    }
+    return resolveKey(dict, key);
+}
 export function translate(locale: string, key: string, vars?: TranslationVars): string {
     const resolvedLocale: SupportedLocale = isSupportedLocale(locale) ? locale : DEFAULT_LOCALE;
-    const primary = resolveKey(DICTIONARIES[resolvedLocale], key);
+    const primary = resolveCountKey(DICTIONARIES[resolvedLocale], key, resolvedLocale, vars?.count);
     if (primary !== undefined)
         return interpolate(primary, vars);
     const fallback = resolveKey(DICTIONARIES[DEFAULT_LOCALE], key);

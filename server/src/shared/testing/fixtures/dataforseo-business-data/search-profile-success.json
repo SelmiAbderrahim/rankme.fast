@@ -1,0 +1,46 @@
+{
+  "version": "0.1.20260711",
+  "status_code": 20000,
+  "status_message": "Ok.",
+  "time": "0.118 sec.",
+  "cost": 0.0054,
+  "tasks_count": 1,
+  "tasks_error": 0,
+  "tasks": [
+    {
+      "id": "TASK_ID",
+      "status_code": 20000,
+      "status_message": "Ok.",
+      "cost": 0.0054,
+      "result_count": 1,
+      "result": [
+        {
+          "total_count": 1,
+          "count": 1,
+          "items": [
+            {
+              "type": "google_business_info",
+              "title": "Example Dental Studio",
+              "category": "Dentist",
+              "address": "100 Main St, Austin, TX 78701",
+              "phone": "+1 512-555-0100",
+              "domain": "example.com",
+              "url": "https://example.com/",
+              "place_id": "ChIJFakeDentalDowntown01",
+              "cid": "1000000000000000001",
+              "latitude": 30.2672,
+              "longitude": -97.7431,
+              "rating": {
+                "rating_type": "Max5",
+                "value": 4.7,
+                "votes_count": 1226,
+                "rating_max": 5
+              },
+              "reviews_count": 1226
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

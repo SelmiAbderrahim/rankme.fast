@@ -25,7 +25,7 @@ import { alertRules, scheduledReports } from './db/schema/index.js';
 import { createAiProfileRunRecorder } from './db/ai-profile-run-events.js';
 import { AI_USAGE_PRUNE_INTERVAL_MS, AI_USAGE_PRUNE_JOB, AI_USAGE_PRUNE_QUEUE, AI_USAGE_PRUNE_SCHEDULER_KEY, createAiUsagePruneProcessor, } from './db/ai-usage-events.js';
 import { closeDatastores } from './db/shutdown.js';
-import { AuditRun, createAuditProcessor, createAuditSummaryProcessor, createSiteProbe, createStructuredDataProbe, onAuditJobExhausted, onAuditSummaryJobExhausted, } from './modules/audits/index.js';
+import { AuditRun, createAuditProcessor, createAuditSummaryProcessor, createPageProber, createSiteProbe, createStructuredDataProbe, onAuditJobExhausted, onAuditSummaryJobExhausted, } from './modules/audits/index.js';
 import { REPORT_EXPORT_RETENTION_INTERVAL_MS, REPORT_EXPORT_RETENTION_JOB, REPORT_EXPORT_RETENTION_QUEUE, REPORT_EXPORT_RETENTION_SCHEDULER_KEY, createReportExportRetentionProcessor, } from './modules/report-exports/index.js';
 import { alertSweepIntervalMs, ALERT_SWEEP_JOB, ALERT_SWEEP_QUEUE, ALERT_SWEEP_SCHEDULER_KEY, createAlertDispatchDeps, createAlertDispatchProcessor, createAlertSweepProcessor, reconcileAlertDeliveries, } from './modules/alerts/index.js';
 import { GSC_DAILY_SYNC_CRON, GSC_DAILY_SYNC_SCHEDULER_KEY, GSC_DAILY_SYNC_SWEEP_JOB, createCollectGscInsights, createCollectIndexStatus, createGa4SyncProcessor, createGoogleSiteAutoMatchProcessor, createGscDailySyncProducer, createGscSyncQueueDispatcher, createGscSyncProcessor, createMongoGscDailySyncRepository, setGoogleGa4Provider, setGoogleGscProvider, } from './modules/google-connections/index.js';
@@ -51,12 +51,13 @@ import { createWeeklyPulseProcessor, createWeeklyPulseProductionPorts, reconcile
 import { createBacklinkDeepProcessor } from './modules/backlinks/index.js';
 import { createClientReportProcessor, reconcileClientReportDeliveries, reconcileClientReportSchedulers, } from './modules/client-reports/index.js';
 import { CompetitorLandscapeRun, TrafficSnapshotRun, createCompetitorLandscapeProcessor, createTrafficSnapshotProcessor, onCompetitorLandscapeJobExhausted, reconcileCompetitorLandscapeRuns, setCompetitorLandscapeDb, setCompetitorLandscapeQueue, } from './modules/competitors/index.js';
-import { LocalSeoReviewSyncRun, createReviewSyncProcessor, } from './modules/local-seo/index.js';
+import { buildAiVisibilityEvaluationInput } from './modules/ai-visibility/index.js';
+import { LocalSeoReviewSyncRun, buildLocalSeoEvaluationInput, createReviewSyncProcessor, } from './modules/local-seo/index.js';
 import { createProviderRegistry, getAiGenerationProvider, providerSelectionFromEnv, } from './shared/providers/index.js';
 import { DATAFORSEO_AUDIT_WORKER_CONCURRENCY_MAX } from "./shared/safety/pagespeed-defaults.js";
 import { RATE_LIMIT_PRUNE_INTERVAL_MS, RATE_LIMIT_PRUNE_JOB, RATE_LIMIT_PRUNE_QUEUE, RATE_LIMIT_PRUNE_SCHEDULER_KEY, createRateLimitPruneProcessor, } from './shared/middleware/rate-limit-metrics.js';
 import { createCachedPageSpeedProvider, createReadThrough, createSingleFlight, createVendorArchiver, createVendorCacheRepo, } from './shared/vendor-cache/index.js';
-import { ACCOUNT_PURGE_QUEUE, APP_SEO_LISTING_JOB_NAME, APP_SEO_TRACKING_QUEUE, APP_SEO_REVIEW_JOB_NAME, BACKLINK_DEEP_QUEUE, ALERT_DISPATCH_QUEUE, BRAND_RADAR_QUEUE, AUDIENCE_RESEARCH_QUEUE, AUDIT_SUMMARY_JOB_NAME, AUDITS_QUEUE, COMPETITOR_CONTENT_QUEUE, COMPETITOR_LANDSCAPES_QUEUE, CONTENT_ANALYSIS_QUEUE, CONTENT_INVENTORY_QUEUE, CONTENT_BRIEF_QUEUE, GEOGRID_QUEUE, INTERNAL_LINKS_QUEUE, KEYWORD_CLUSTERING_QUEUE, CONTENT_MONITOR_QUEUE, CLIENT_REPORTS_QUEUE, GA4_SYNC_QUEUE, GSC_SYNC_QUEUE, RANKS_QUEUE, REVIEW_SYNC_QUEUE, TRAFFIC_SNAPSHOTS_QUEUE, WEEKLY_PULSE_QUEUE, collectQueueSnapshot, createQueueConnection, createQueues, createWorkerShutdown, enqueueGscSyncJob, startHealthServer, wireDeadLetter, } from './shared/queue/index.js';
+import { ACCOUNT_PURGE_QUEUE, APP_SEO_LISTING_JOB_NAME, APP_SEO_TRACKING_QUEUE, APP_SEO_REVIEW_JOB_NAME, BACKLINK_DEEP_QUEUE, ALERT_DISPATCH_QUEUE, BRAND_RADAR_QUEUE, AUDIENCE_RESEARCH_QUEUE, AUDIT_SUMMARY_JOB_NAME, AUDITS_QUEUE, COMPETITOR_CONTENT_QUEUE, COMPETITOR_LANDSCAPES_QUEUE, CONTENT_ANALYSIS_QUEUE, CONTENT_INVENTORY_QUEUE, CONTENT_BRIEF_QUEUE, GEOGRID_QUEUE, INTERNAL_LINKS_QUEUE, KEYWORD_CLUSTERING_QUEUE, CONTENT_MONITOR_QUEUE, CLIENT_REPORTS_QUEUE, GA4_SYNC_QUEUE, GSC_SYNC_QUEUE, RANKS_QUEUE, REVIEW_SYNC_QUEUE, TRAFFIC_SNAPSHOTS_QUEUE, WEEKLY_PULSE_QUEUE, collectQueueSnapshot, createQueueConnection, createQueues, createWorkerShutdown, enqueueGa4SyncJob, enqueueGscSyncJob, startHealthServer, wireDeadLetter, } from './shared/queue/index.js';
 import { reconcileSingletonScheduler, startSchedulerReconciler, withSingletonSchedulerRefresh, } from './scheduler-reconciliation.js';
 function jobString(job: Job, field: string): string | null {
     const value = (job.data as Record<string, unknown> | null)?.[field];
@@ -291,11 +292,21 @@ async function main(): Promise<void> {
         ...(collectGscInsights ? { collectGscInsights } : {}),
         probeStructuredData: createStructuredDataProbe(),
         probeSite: createSiteProbe(),
+        // Free, SSRF-guarded reads that back broken-link verification and the
+        // crawl-coverage check. A fake crawl has nothing real to verify, so it
+        // makes no outbound requests. Internal links on older sites are still
+        // http://, so this prober may request plain HTTP; private and reserved
+        // addresses stay blocked.
+        ...(env.PROVIDER_AUDIT === 'fake' ? {} : { pageProber: createPageProber({ allowHttp: true }) }),
+        // Stored rollups the AI Visibility and Local SEO tabs already recorded.
+        collectAiVisibility: (input) => buildAiVisibilityEvaluationInput(db, input),
+        collectLocalSeo: (input) => buildLocalSeoEvaluationInput(db, input),
         archiveVendorResponse,
         logger,
     });
     const processAuditSummary = createAuditSummaryProcessor({
         provider: providers.summary,
+        db,
         archiveVendorResponse,
         logger,
     });
@@ -312,6 +323,7 @@ async function main(): Promise<void> {
     const processRank = createRankProcessor({
         provider: providers.rank,
         db,
+        retryQueue: queues.ranks,
         cache: createSerpCacheRepo({ db, ttlHours: env.SERP_CACHE_TTL_HOURS }),
         resolveTargets: createPostgresRankTargetsResolver(db),
         cacheTtlMs: env.SERP_CACHE_TTL_HOURS * 60 * 60 * 1000,
@@ -444,6 +456,9 @@ async function main(): Promise<void> {
         rank: providers.rank,
         ai: aiProfileRunner,
         aiProviderOrder: aiProfileProviderOrder,
+        // Our own SSRF-guarded request to the owned page runs before the paid
+        // scrape. A fake content source has nothing real to request.
+        ...(env.PROVIDER_CONTENT_SOURCE === 'fake' ? {} : { pageProber: createPageProber() }),
         logger,
     })), { connection, concurrency: env.WORKER_CONCURRENCY });
     const contentAnalysisReconQueue = new Queue(CONTENT_ANALYSIS_RECON_QUEUE, { connection });
@@ -701,6 +716,7 @@ async function main(): Promise<void> {
     const produceDailyGscSync = createGscDailySyncProducer({
         repository: createMongoGscDailySyncRepository(),
         enqueue: (payload, day) => enqueueGscSyncJob(queues.gscSync, payload, day),
+        enqueueGa4: (payload, day) => enqueueGa4SyncJob(queues.ga4Sync, payload, day),
         now: () => new Date(),
         logger,
     });

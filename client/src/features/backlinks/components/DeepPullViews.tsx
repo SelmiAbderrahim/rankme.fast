@@ -1,3 +1,5 @@
+import { Bdi } from '@shared/components/Bdi';
+import { MetricValue } from '@shared/components/MetricValue';
 import { useEffect, useMemo, useState, type FormEvent } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
@@ -225,7 +227,7 @@ function DeepPullForm({
             loading={state.submitting}
             data-testid={`link-intel-confirm-${type}`}
           >
-            {t('intelligence.preview.confirm', { count: 1 })}
+            {t('intelligence.preview.confirm')}
           </Button>
           <Button
             type="button"
@@ -340,7 +342,7 @@ function ReferringDomainsTable({ rows }: { rows: ReferringDomainRow[] }) {
       rows={ordered.map((row) => [
         row.domain,
         row.backlinks,
-        row.domainRank ?? '—',
+        <MetricValue key="rank" kind="count" value={row.domainRank} />,
         row.firstSeen
           ? new Intl.DateTimeFormat(i18n.language, { dateStyle: 'medium' }).format(
               new Date(row.firstSeen),
@@ -478,7 +480,10 @@ export function BulkRankView({
                 description: t('common:tableHelp.domainRank'),
               },
             ]}
-            rows={(rows as BulkRankRow[]).map((row) => [row.domain, row.rank ?? '—'])}
+            rows={(rows as BulkRankRow[]).map((row) => [
+              row.domain,
+              <MetricValue key="rank" kind="count" value={row.rank} />,
+            ])}
             testId="bulk-rank-table"
           />
         )}
@@ -531,11 +536,11 @@ function DataTable({
             const label = typeof header === 'string' ? header : header.label;
             return (
               <TableHead key={label}>
-                {typeof header === 'string' ? (
+                <Bdi>{typeof header === 'string' ? (
                   label
                 ) : (
                   <TableHeaderHelp label={label} description={header.description} />
-                )}
+                )}</Bdi>
               </TableHead>
             );
           })}

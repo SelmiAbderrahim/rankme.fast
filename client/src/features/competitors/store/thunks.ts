@@ -18,6 +18,7 @@ import {
   startLandscapeRun,
 } from '../api';
 import {
+  apiErrorFieldMessage,
   apiErrorRetryAfterMs,
   apiErrorStatus,
   competitorsErrorMessage,
@@ -153,7 +154,10 @@ export const loadCompetitorPortfolio = createAsyncThunk<
 export const addPortfolioCompetitor = createAsyncThunk<
   { profile: CompetitorProfile; duplicate: boolean },
   { siteId: string; url: string; source: 'suggested' | 'manual'; idempotencyKey: string },
-  { rejectValue: string }
+  // `urlError` carries the server's localized field-level message for the
+  // submitted URL so the manual form can attach it to its input instead of
+  // showing only the generic validation envelope.
+  { rejectValue: string; rejectedMeta: { urlError: string | null } }
 >('competitors/addPortfolioCompetitor', async (input, { rejectWithValue }) => {
   try {
     return await addCompetitorProfile(
@@ -162,7 +166,9 @@ export const addPortfolioCompetitor = createAsyncThunk<
       input.idempotencyKey,
     );
   } catch (error) {
-    return rejectWithValue(intelligenceError(error));
+    return rejectWithValue(intelligenceError(error), {
+      urlError: apiErrorFieldMessage(error, 'url'),
+    });
   }
 });
 

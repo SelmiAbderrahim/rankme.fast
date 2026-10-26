@@ -1,6 +1,6 @@
 // Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
 
-exports[`renderAuditReportPdf > renders the complete client report deterministically in ar 1`] = `"803216ae808622aa177750a21dca03166e279d96d1c31254d5b0226a7421149a"`;
+exports[`renderAuditReportPdf > renders the complete client report deterministically in ar 1`] = `"b83eb92f802087c1a0ebfd2e4e3c67868feafc62f47720afa9753aa0b682526f"`;
 
 exports[`renderAuditReportPdf > renders the complete client report deterministically in de 1`] = `"c92fa1c72a1da338e5f4bc808c25a8f7ad102f9bc9e4218c7feb01d921cb1271"`;
 
@@ -12,4 +12,4 @@ exports[`renderAuditReportPdf > renders the complete client report deterministic
 
 exports[`renderAuditReportPdf > renders the complete client report deterministically in ru 1`] = `"9260a9d614cf3ceb101f2a535d99fc73008e82b5edd80fec674502d6705396e8"`;
 
-exports[`renderAuditReportPdf > renders the complete client report deterministically in zh 1`] = `"e8d151b64d9e8a0599f1b143db5d30a711adfc5231d804fc134a9e15d1a43537"`;
+exports[`renderAuditReportPdf > renders the complete client report deterministically in zh 1`] = `"a6775e61b011649b0a2080efa356c1f90b1dc461e6a12859c8574804c6e07ef1"`;

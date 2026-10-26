@@ -121,6 +121,8 @@ beforeEach(() => {
   vi.mocked(getKeywordClusterRun).mockReset().mockResolvedValue(run());
   vi.mocked(getSite).mockReset().mockResolvedValue({
     id: siteId, url: 'https://example.test', domain: 'example.test', displayName: 'Cluster Site',
+    defaultMarket: null,
+    localBusiness: false,
     paused: false, pausedAt: null, createdAt: requestedAt, updatedAt: completedAt,
   });
 });
@@ -195,6 +197,8 @@ describe('keyword-cluster report export adapter', () => {
   it('composes and renders all supported formats with a domain fallback', async () => {
     vi.mocked(getSite).mockResolvedValue({
       id: siteId, url: 'https://example.test', domain: 'example.test', displayName: '',
+      defaultMarket: null,
+      localBusiness: false,
       paused: false, pausedAt: null, createdAt: requestedAt, updatedAt: completedAt,
     });
     const adapter = createKeywordClusterReportExportAdapter();

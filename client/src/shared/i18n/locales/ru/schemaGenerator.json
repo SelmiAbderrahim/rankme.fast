@@ -1,5 +1,5 @@
 {
-  "title": "Генератор разметки schema",
+  "title": "Разметка schema",
   "description": "Собирает JSON-LD для страницы из фактов, которые мы уже сохранили. Ничего не выдумываем: поле без подтверждающего факта опускается, и мы называем причину.",
   "new": {
     "title": "Создать разметку",
@@ -23,19 +23,44 @@
     "urlLabel": "Адрес страницы",
     "urlPlaceholder": "https://example.com/page",
     "urlHint": "Мы читаем страницу один раз по безопасному соединению. Работают только публичные адреса.",
-    "urlInvalid": "Введите полный адрес https без имени пользователя и пароля."
+    "urlInvalid": "Введите полный адрес https без имени пользователя и пароля.",
+    "listCapped_zero": "В списке $t(schemaGenerator:source.firstPages, {\"count\": {{shown}}}) из $t(schemaGenerator:source.crawledPages, {\"count\": {{total}}}). Вставьте адрес страницы, чтобы выбрать любую другую.",
+    "listCapped_one": "В списке $t(schemaGenerator:source.firstPages, {\"count\": {{shown}}}) из $t(schemaGenerator:source.crawledPages, {\"count\": {{total}}}). Вставьте адрес страницы, чтобы выбрать любую другую.",
+    "listCapped_two": "В списке $t(schemaGenerator:source.firstPages, {\"count\": {{shown}}}) из $t(schemaGenerator:source.crawledPages, {\"count\": {{total}}}). Вставьте адрес страницы, чтобы выбрать любую другую.",
+    "listCapped_few": "В списке $t(schemaGenerator:source.firstPages, {\"count\": {{shown}}}) из $t(schemaGenerator:source.crawledPages, {\"count\": {{total}}}). Вставьте адрес страницы, чтобы выбрать любую другую.",
+    "listCapped_many": "В списке $t(schemaGenerator:source.firstPages, {\"count\": {{shown}}}) из $t(schemaGenerator:source.crawledPages, {\"count\": {{total}}}). Вставьте адрес страницы, чтобы выбрать любую другую.",
+    "listCapped_other": "В списке $t(schemaGenerator:source.firstPages, {\"count\": {{shown}}}) из $t(schemaGenerator:source.crawledPages, {\"count\": {{total}}}). Вставьте адрес страницы, чтобы выбрать любую другую.",
+    "firstPages_zero": "первые {{count}}",
+    "firstPages_one": "первая",
+    "firstPages_two": "первые {{count}}",
+    "firstPages_few": "первые {{count}}",
+    "firstPages_many": "первые {{count}}",
+    "firstPages_other": "первые {{count}}",
+    "crawledPages_zero": "{{count}} просканированных страниц",
+    "crawledPages_one": "{{count}} просканированной страницы",
+    "crawledPages_two": "{{count}} просканированных страниц",
+    "crawledPages_few": "{{count}} просканированных страниц",
+    "crawledPages_many": "{{count}} просканированных страниц",
+    "crawledPages_other": "{{count}} просканированных страниц",
+    "filterLabel": "Найти страницу",
+    "filterPlaceholder": "Введите часть адреса или заголовка",
+    "filterCount": "Показано {{shown}} из {{total}}",
+    "filterNoMatches": "Нет страниц, подходящих под этот запрос.",
+    "groupRoot": "Страницы верхнего уровня"
   },
   "type": {
     "legend": "Тип schema.org",
     "required": "Обязательных: {{n}}",
     "recommended": "Рекомендуемых: {{n}}",
-    "alreadyDeclared": "Эта страница уже объявляет этот тип."
+    "alreadyDeclared": "Эта страница уже объявляет этот тип.",
+    "note": {
+      "FAQPage": "Google показывает ответы из FAQ в результатах поиска только для известных государственных и медицинских сайтов. Разметка остаётся корректной.",
+      "HowTo": "Google больше не показывает шаги HowTo в результатах поиска. Разметка остаётся корректной."
+    }
   },
   "preview": {
     "title": "Сколько это стоит",
     "show": "Показать стоимость",
-    "units": "{{count}} генерация из месячного лимита.",
-    "units_other": "{{count}} генераций из месячного лимита.",
     "confirm": "Создать разметку",
     "remaining": "Осталось по тарифу в этом месяце: {{remaining}}.",
     "pack": "Плюс {{units}} из пакетов кредитов.",
@@ -53,14 +78,14 @@
     "failedTitle": "Ничего не создано",
     "failedProvider": "Модель не ответила, поэтому разметка не сохранена.",
     "failedRejected": "Все предложенные моделью поля не прошли нашу проверку фактов; мы оставили только доказуемое.",
-    "refunded": "Единица возвращена в ваш лимит.",
     "evidence": "Откуда взято каждое поле",
     "evidenceDescription": "По строке на каждое поле разметки с указанием сохранённого факта.",
     "evidenceFrom": "из «{{fact}}»",
     "evidenceEmpty": "Ни одно поле не удалось заполнить сохранённым фактом.",
     "omissions": "Что мы опустили",
     "omissionsDescription": "Поля без факта за ними и причина каждого пропуска.",
-    "omissionsEmpty": "Ничего не опущено."
+    "omissionsEmpty": "Ничего не опущено.",
+    "regenerated": "Пересобрано из предыдущей генерации с вашими данными. Генерация не израсходована."
   },
   "fact": {
     "pageUrl": "URL страницы",
@@ -75,7 +100,11 @@
     "articleModifiedTime": "Время изменения статьи",
     "siteOrigin": "Источник сайта",
     "siteDomain": "Домен сайта",
-    "siteName": "Название сайта"
+    "siteName": "Название сайта",
+    "ogSiteName": "Тег названия сайта (og:site_name)",
+    "jsonLdName": "Название в существующих структурированных данных страницы",
+    "titleBrand": "Название бренда в заголовке страницы",
+    "providedByYou": "Указано вами"
   },
   "reason": {
     "no_evidence": "у нас нет факта для этого",
@@ -111,15 +140,6 @@
       "title": "Проверок пока нет",
       "body": "Запустите проверку этого сайта — и его страницы можно будет выбрать здесь."
     },
-    "cap": {
-      "title": "Месячный лимит исчерпан",
-      "body": "Вы использовали все генерации разметки по тарифу в этом месяце.",
-      "link": "Посмотреть тарифы"
-    },
-    "notOnPlan": {
-      "title": "Нет в вашем тарифе",
-      "body": "Генерация разметки доступна начиная с тарифа Starter."
-    },
     "killSwitch": {
       "title": "Временно недоступно",
       "body": "Новые генерации приостановлены. Уже созданная разметка остаётся доступной."
@@ -139,6 +159,29 @@
     "failed": {
       "title": "Что-то пошло не так",
       "body": "Не удалось завершить. Попробуйте снова."
+    }
+  },
+  "userFacts": {
+    "title": "Добавьте то, что мы пропустили",
+    "description": "Укажите сведения, которые знаете только вы. Мы добавим их как есть и пометим «Указано вами».",
+    "submit": "Пересобрать с моими данными",
+    "free": "Бесплатно: мы используем уже найденные сведения и не тратим генерацию.",
+    "required": "Заполните хотя бы одно поле.",
+    "hint": {
+      "language": "Код языка, например en или pt-BR.",
+      "date": "Дата, например 2026-10-01.",
+      "url": "Публичный адрес, начинающийся с https://."
+    },
+    "label": {
+      "name": "Название",
+      "headline": "Заголовок",
+      "description": "Описание",
+      "inLanguage": "Язык",
+      "datePublished": "Дата публикации",
+      "dateModified": "Дата обновления",
+      "logo": "Адрес логотипа",
+      "image": "Адрес изображения",
+      "primaryImageOfPage": "Адрес главного изображения"
     }
   }
 }

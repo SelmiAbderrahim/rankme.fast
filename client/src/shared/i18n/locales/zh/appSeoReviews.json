@@ -1,14 +1,28 @@
 {
-  "common": { "notAvailable": "不可用" },
-  "stats": { "total": "评论", "average": "平均评分" },
-  "mix": { "positive": "正面", "neutral": "中性", "negative": "负面" },
+  "common": {
+    "notAvailable": "不可用"
+  },
+  "stats": {
+    "total": "评论",
+    "average": "平均评分"
+  },
+  "mix": {
+    "positive": "正面",
+    "neutral": "中性",
+    "negative": "负面"
+  },
   "histogram": {
     "title": "星级分布",
     "chartLabel": "各星级的评论数量",
     "tableCaption": "每个星级的评论数量",
-    "star": "{{star}} 星",
+    "star_one": "{{star}} 星",
     "rating": "评分",
-    "count": "评论"
+    "count": "评论",
+    "star_zero": "{{star}} 星",
+    "star_two": "{{star}} 星",
+    "star_few": "{{star}} 星",
+    "star_many": "{{star}} 星",
+    "star_other": "{{star}} 星"
   },
   "trend": {
     "title": "评论量",
@@ -28,12 +42,21 @@
     "failedTitle": "评论拉取失败",
     "failedDescription": "本次运行没有保留评论证据。准备好后可以开始新的运行。"
   },
-  "sentiment": { "positive": "正面", "neutral": "中性", "negative": "负面", "mixed": "混合" },
-  "clusters": { "title": "评论主题", "aiInterpretation": "AI 解读", "anonymous": "匿名评论者", "rating": "{{rating}} / 5" },
+  "sentiment": {
+    "positive": "正面",
+    "neutral": "中性",
+    "negative": "负面",
+    "mixed": "混合"
+  },
+  "clusters": {
+    "title": "评论主题",
+    "aiInterpretation": "AI 解读",
+    "anonymous": "匿名评论者",
+    "rating": "{{rating}} / 5"
+  },
   "dialog": {
     "title": "确认评论分析",
     "description": "这次显式运行会拉取有上限的评论样本，并对主题进行一次分析。",
-    "units": "本次运行用量：{{units}} 个单位",
     "bound": "最多 300 条评论",
     "unavailable": "当前没有足够容量运行此任务。",
     "confirming": "正在启动分析…",
@@ -44,9 +67,19 @@
     "noProfileDescription": "评论运行需要包含 Google Play 软件包或 App Store ID 的应用资料。",
     "noRuns": "此应用和商店还没有评论运行记录。"
   },
-  "disabled": { "title": "无法开始新的评论运行", "description": "已保存的评论运行仍可查看。" },
-  "upsell": { "title": "启用 App SEO 附加服务", "description": "你的套餐支持 App SEO，但评论分析需要启用 App SEO 附加服务。", "cta": "查看账单" },
-  "errors": { "title": "无法加载评论数据", "requestFailed": "评论请求失败，请重试。" },
+  "disabled": {
+    "title": "无法开始新的评论运行",
+    "description": "已保存的评论运行仍可查看。"
+  },
+  "upsell": {
+    "title": "启用 App SEO 附加服务",
+    "description": "你的套餐支持 App SEO，但评论分析需要启用 App SEO 附加服务。",
+    "cta": "查看账单"
+  },
+  "errors": {
+    "title": "无法加载评论数据",
+    "requestFailed": "评论请求失败，请重试。"
+  },
   "run": {
     "title": "分析应用评论",
     "description": "为一个应用和商店拉取新的有限样本。系统不会自动安排运行。",
@@ -54,8 +87,14 @@
     "previewing": "正在检查容量…",
     "button": "预览运行"
   },
-  "scope": { "profile": "应用资料", "store": "商店" },
-  "stores": { "google_play": "Google Play 商店", "app_store": "App Store 商店" },
+  "scope": {
+    "profile": "应用资料",
+    "store": "商店"
+  },
+  "stores": {
+    "google_play": "Google Play 商店",
+    "app_store": "App Store 商店"
+  },
   "list": {
     "title": "评论运行",
     "description": "即使无法开始新运行，已保存的证据仍然可以查看。",
@@ -66,6 +105,15 @@
     "actions": "操作",
     "view": "查看"
   },
-  "status": { "queued": "已排队", "pulling": "正在拉取评论", "clustering": "正在查找主题", "completed": "已完成", "failed": "失败" },
-  "detail": { "title": "运行详情", "description": "本次已保存运行的确定性统计和有评论证据支持的主题。" }
+  "status": {
+    "queued": "已排队",
+    "pulling": "正在拉取评论",
+    "clustering": "正在查找主题",
+    "completed": "已完成",
+    "failed": "失败"
+  },
+  "detail": {
+    "title": "运行详情",
+    "description": "此已保存运行中根据评论计算的统计数据，以及有引用评论支撑的主题。"
+  }
 }

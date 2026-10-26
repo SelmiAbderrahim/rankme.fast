@@ -1,11 +1,16 @@
-import { act, cleanup, render, screen, waitFor, within } from '@testing-library/react';
+import { act, render, screen, waitFor, within } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { I18nextProvider } from 'react-i18next';
 import { MemoryRouter, useLocation } from 'react-router-dom';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import { ApiError, apiClient } from '@shared/api/client';
+import { Provider } from 'react-redux';
+import { configureStore } from '@reduxjs/toolkit';
+import { googleReducer, SiteGoogleReadinessProvider } from '@features/google';
 import type { ReportExportControlProps } from '@features/report-export';
 import { changeLanguage, i18n, initI18n } from '@shared/i18n';
+import { formatAbsoluteDate } from '@shared/lib/datetime';
+import { visibleText } from '@/test/textContent';
 import {
   InternalLinksPage,
   internalLinkLocale,
@@ -90,7 +95,6 @@ const summary = (
   gscSnapshotDate: '2026-07-31',
   candidateRulesVersion: '2026-08-02.1',
   suggestionCount: 2,
-  refunded: false,
   requestedAt: DATE,
   startedAt: DATE,
   completedAt: DATE,
@@ -275,7 +279,13 @@ describe('InternalLinksPage — saved runs and URL-backed filters', () => {
       `/sites/${SITE}?tab=internal-links&run=${RUN}&target=orphan&confidence=low`,
     );
     expect(await screen.findByTestId('internal-links-fallback')).toBeInTheDocument();
-    expect(screen.getByTestId('internal-links-state-emptySuggestions')).toBeInTheDocument();
+    const notice = screen.getByTestId('internal-links-state-emptySuggestions');
+    expect(notice).toHaveTextContent('No suggestions match these filters');
+    // The filtered empty state clears every filter at once.
+    await userEvent.click(screen.getByTestId('internal-links-state-emptySuggestions-action'));
+    await waitFor(() => expect(search).not.toMatch(/target=|section=|confidence=/));
+    expect(search).toContain(`run=${RUN}`);
+    expect(screen.queryByTestId('internal-links-state-emptySuggestions')).not.toBeInTheDocument();
   });
 
   it('wires the completed run and URL-backed filters into the report export registry', async () => {
@@ -296,43 +306,13 @@ describe('InternalLinksPage — saved runs and URL-backed filters', () => {
     routeApi({ list: () => ({ items: [] }) });
     const empty = renderPage();
     expect(await screen.findByTestId('internal-links-state-emptyRuns')).toBeInTheDocument();
+    // The empty list leads to the New run tab.
+    await userEvent.click(screen.getByRole('button', { name: 'Start a run' }));
+    await waitFor(() => expect(search).toContain('view=new'));
     empty.unmount();
     routeApi({ list: () => { throw new Error('offline'); } });
     renderPage();
     expect(await screen.findByTestId('internal-links-state-failed')).toBeInTheDocument();
-  });
-});
-
-describe('InternalLinksPage — Search Console requirement', () => {
-  it('tells the user Search Console is needed and links to the Google tab when it is not connected', async () => {
-    routeApi({
-      google: () => ({ configuration: { connection: null, gsc: { propertyUrl: null } } }),
-      list: () => ({ items: [] }),
-    });
-    renderPage();
-    const notice = await screen.findByTestId('gsc-required-notice');
-    expect(notice).toHaveTextContent('Internal link suggestions use your Search Console queries');
-    expect(screen.getByRole('link', { name: 'Connect Google Search Console' })).toHaveAttribute(
-      'href',
-      `/sites/${SITE}?tab=google`,
-    );
-    expect(await screen.findByTestId('internal-links-state-emptyRuns')).toBeInTheDocument();
-  });
-
-  it('shows no notice when Search Console is connected or the lookup fails', async () => {
-    routeApi();
-    renderPage();
-    await screen.findByTestId('internal-links-run-list');
-    expect(screen.queryByTestId('gsc-required-notice')).toBeNull();
-    cleanup();
-    routeApi({
-      google: () => {
-        throw new Error('boom');
-      },
-    });
-    renderPage();
-    await screen.findByTestId('internal-links-run-list');
-    expect(screen.queryByTestId('gsc-required-notice')).toBeNull();
   });
 });
 
@@ -341,11 +321,17 @@ describe('InternalLinksPage — preview and lifecycle states', () => {
     routeApi({ start: () => detail({ status: 'completed' }) });
     const user = userEvent.setup();
     renderPage(`/sites/${SITE}?tab=internal-links&view=new`);
+    const scroll = vi.spyOn(Element.prototype, 'scrollIntoView');
     await user.click(await screen.findByTestId('internal-links-preview-button'));
-    expect(await screen.findByTestId('internal-links-preview')).toHaveTextContent(
-      "Usage limits aren't applied on this server.",
+    const shown = await screen.findByTestId('internal-links-preview');
+    expect(shown).toHaveTextContent("Usage limits aren't applied on this server.");
+    expect(screen.getByTestId('internal-links-preview-date')).toHaveTextContent(
+      formatAbsoluteDate(DATE, 'en'),
     );
-    expect(screen.getByTestId('internal-links-preview-date')).toHaveTextContent(DATE);
+    // The preview and its confirm/cancel pair scroll into view with focus.
+    await waitFor(() => expect(shown).toHaveFocus());
+    expect(scroll).toHaveBeenCalledWith({ block: 'nearest' });
+    scroll.mockRestore();
     await user.click(screen.getByTestId('internal-links-cancel'));
     expect(screen.queryByTestId('internal-links-preview')).toBeNull();
     expect(
@@ -374,9 +360,15 @@ describe('InternalLinksPage — preview and lifecycle states', () => {
     renderPage(`/sites/${SITE}?tab=internal-links&view=new`);
     await user.click(await screen.findByTestId('internal-links-preview-button'));
     const notice = await screen.findByTestId(`internal-links-state-${reason}`);
-    expect(within(notice).getByRole('link')).toHaveAttribute(
+    // Never-run inventory says "Run"; only an out-of-date one says "Re-run".
+    expect(within(notice).getByRole('link', {
+      name: reason === 'missing' ? 'Run content inventory' : 'Re-run content inventory',
+    })).toHaveAttribute(
       'href',
       inventorySurfaceHref(SITE),
+    );
+    expect(notice).toHaveTextContent(
+      'The Pages tab lists pages found by your site audit; suggestions need a content inventory',
     );
   });
 
@@ -457,7 +449,10 @@ describe('InternalLinksPage — preview and lifecycle states', () => {
   it('renders a completed run with no retained candidates as an honest empty state', async () => {
     routeApi({ run: () => detail({ suggestions: [], suggestionCount: 0 }) });
     renderPage(`/sites/${SITE}?tab=internal-links&run=${RUN}`);
-    expect(await screen.findByTestId('internal-links-state-emptySuggestions')).toBeInTheDocument();
+    const notice = await screen.findByTestId('internal-links-state-noSuggestions');
+    expect(notice).toHaveTextContent('No suggestions in this run');
+    await userEvent.click(screen.getByTestId('internal-links-state-noSuggestions-action'));
+    await waitFor(() => expect(search).toContain('view=new'));
   });
 });
 
@@ -543,7 +538,9 @@ describe('internal-link presentation primitives', () => {
     expect(
       screen.getByText("Usage limits aren't applied on this server."),
     ).toBeInTheDocument();
-    expect(screen.getByTestId('internal-links-preview-date')).toHaveTextContent(DATE);
+    expect(screen.getByTestId('internal-links-preview-date')).toHaveTextContent(
+      formatAbsoluteDate(DATE, 'en'),
+    );
     expect(screen.getByTestId('internal-links-cancel')).toBeDisabled();
   });
 
@@ -563,7 +560,7 @@ describe('internal-link presentation primitives', () => {
     expect(screen.getByTestId('internal-links-state-missing')).toBeInTheDocument();
   });
 
-  it('renders active, failed, refunded runs and forwards the open action', async () => {
+  it('renders active and failed runs and forwards the open action', async () => {
     const onOpen = vi.fn();
     const user = userEvent.setup();
     const other = 'd'.repeat(24);
@@ -571,20 +568,19 @@ describe('internal-link presentation primitives', () => {
       <RunList
         runs={[
           summary(),
-          summary({ id: other, status: 'failed', refunded: true }),
+          summary({ id: other, status: 'failed' }),
         ]}
         activeRunId={RUN}
         onOpen={onOpen}
       />,
     );
-    expect(screen.getByText('Run returned')).toBeInTheDocument();
     await user.click(screen.getByTestId(`internal-links-open-${other}`));
     expect(onOpen).toHaveBeenCalledWith(other);
   });
 
   it('renders every notice kind and its optional actions', () => {
     const kinds: InternalLinkNoticeKind[] = [
-      'emptyRuns', 'emptySuggestions', 'missing', 'stale',
+      'emptyRuns', 'emptySuggestions', 'noSuggestions', 'missing', 'stale',
       'disabled', 'rateLimited', 'notFound', 'failed',
     ];
     for (const kind of kinds) {
@@ -641,18 +637,20 @@ describe('internal-link accessibility and RTL', () => {
     expect(source.default).not.toMatch(/(?:^|["' \t]|:)(?:left|right)-\d/u);
   });
 
-  it('renders translated Arabic in an RTL workspace without an LTR island', async () => {
+  it('renders an RTL workspace and isolates source and target addresses', async () => {
     routeApi();
     await changeLanguage('ar');
     document.documentElement.setAttribute('lang', 'ar');
     document.documentElement.setAttribute('dir', 'rtl');
     renderPage(`/sites/${SITE}?tab=internal-links&run=${RUN}`);
     const page = await screen.findByTestId('internal-links-page');
-    expect(screen.getByRole('heading', { name: 'اقتراحات الروابط الداخلية' })).toBeVisible();
+    expect(screen.getByRole('heading', { name: 'الروابط الداخلية' })).toBeVisible();
     expect(page.ownerDocument.documentElement).toHaveAttribute('dir', 'rtl');
     for (const node of page.querySelectorAll('[dir]')) {
-      expect(node).toHaveAttribute('dir', 'rtl');
+      if (node.tagName === 'BDI') expect(node).toHaveAttribute('dir', 'auto');
+      else expect(node).toHaveAttribute('dir', 'rtl');
     }
+    expect(page.querySelectorAll('bdi[dir=auto]').length).toBeGreaterThan(0);
   });
 
   it('adds no page gutter of its own and renders "Open content inventory" as an outline button link', async () => {
@@ -717,5 +715,107 @@ describe('internal-link accessibility and RTL', () => {
     expect(button.className).toContain('disabled:cursor-not-allowed');
     resolvePreview?.(readyPreview());
     await screen.findByTestId('internal-links-preview');
+  });
+});
+
+describe('InternalLinksPage — shared Google readiness', () => {
+  const renderInWorkspace = (status: 'ok' | 'no_property' | 'not_connected' | 'property_mismatch' | 'error') =>
+    renderWithI18n(
+      <Provider store={configureStore({ reducer: { google: googleReducer } })}>
+        <SiteGoogleReadinessProvider
+          siteId={SITE}
+          domain="example.test"
+          readiness={{
+            gsc: { status, matching: false },
+            ga4: { status: 'ok', matching: false },
+          }}
+        >
+          <InternalLinksPage siteId={SITE} />
+        </SiteGoogleReadinessProvider>
+      </Provider>,
+    );
+
+  it('says why shared-query evidence is missing, with the same status and CTA as every page', async () => {
+    routeApi();
+    renderInWorkspace('no_property');
+    const notice = await screen.findByTestId('google-readiness-gsc');
+    expect(notice).toHaveAttribute('data-status', 'no_property');
+    expect(notice).toHaveTextContent('Choose a Search Console property');
+    expect(within(notice).getByRole('link', { name: 'Select a Search Console property' })).toHaveAttribute(
+      'href',
+      `/sites/${SITE}?tab=google`,
+    );
+  });
+
+  it.each(['not_connected', 'no_property', 'property_mismatch', 'error'] as const)(
+    'with %s the banner shows above both tabs and runs still work from the inventory',
+    async (status) => {
+      routeApi({ list: () => ({ items: [] }) });
+      renderInWorkspace(status);
+      const notice = await screen.findByTestId('google-readiness-gsc');
+      expect(notice).toHaveAttribute('data-status', status);
+      expect(within(notice).getAllByRole('link')).toHaveLength(1);
+      // Suggestions do not need Search Console, so the empty list still offers a run.
+      await userEvent.click(await screen.findByTestId('internal-links-state-emptyRuns-action'));
+      expect(await screen.findByTestId('google-readiness-gsc')).toBeInTheDocument();
+    },
+  );
+
+  it('shows no notice once Search Console is usable', async () => {
+    routeApi();
+    renderInWorkspace('ok');
+    expect(await screen.findByTestId('internal-links-page')).toBeInTheDocument();
+    expect(screen.queryByTestId('google-readiness-gsc')).not.toBeInTheDocument();
+  });
+});
+
+describe('localized inventory dates', () => {
+  it.each(['en', 'ar', 'de'] as const)(
+    'formats every inventory date for %s instead of the raw ISO string',
+    async (locale) => {
+      await changeLanguage(locale);
+      const date = formatAbsoluteDate(DATE, locale);
+      routeApi();
+      const user = userEvent.setup();
+      renderPage(`/sites/${SITE}?tab=internal-links&run=${RUN}`);
+      const snapshot = await screen.findByTestId('internal-links-inventory-date');
+      expect(visibleText(snapshot)).toBe(
+        i18n.t('suggestions.inventorySnapshot', { ns: 'internalLinks', lng: locale, date }),
+      );
+      const runRow = await screen.findByTestId(`internal-links-run-${RUN}`);
+      expect(visibleText(runRow)).toContain(
+        i18n.t('runs.snapshot', { ns: 'internalLinks', lng: locale, date }),
+      );
+      const card = screen.getAllByTestId(/^internal-links-suggestion-link-/)[0]!;
+      await user.click(
+        within(card).getByRole('button', {
+          name: i18n.t('evidence.title', { ns: 'internalLinks', lng: locale }),
+        }),
+      );
+      expect(visibleText(card)).toContain(date);
+      for (const node of [snapshot, runRow, card]) expect(node.textContent).not.toContain(DATE);
+      await changeLanguage('en');
+    },
+  );
+
+  it.each(['en', 'ar', 'de'] as const)('formats the preview inventory date for %s', async (locale) => {
+    await changeLanguage(locale);
+    const props = {
+      previewing: false,
+      starting: false,
+      gate: null,
+      onPreview: vi.fn(),
+      onCancel: vi.fn(),
+      onConfirm: vi.fn(),
+    };
+    const { unmount } = renderWithI18n(<NewRunPanel {...props} preview={readyPreview()} />);
+    expect(screen.getByTestId('internal-links-preview-date')).toHaveTextContent(
+      formatAbsoluteDate(DATE, locale),
+    );
+    unmount();
+    // A ready preview without a recorded inventory day says so instead of guessing.
+    renderWithI18n(<NewRunPanel {...props} preview={readyPreview({ inventoryDate: null })} />);
+    expect(screen.getByTestId('internal-links-preview-date')).toHaveTextContent('—');
+    await changeLanguage('en');
   });
 });

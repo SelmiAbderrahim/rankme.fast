@@ -49,9 +49,13 @@
     "loadMore": "Load more",
     "warnings": "One or more warnings",
     "notAvailable": "Not available",
-    "warningCount": "{{count}} warning",
+    "warningCount_one": "{{count}} warning",
     "warningCount_other": "{{count}} warnings",
-    "progress": "{{value}}% complete"
+    "progress": "{{value}}% complete",
+    "warningCount_zero": "{{count}} warnings",
+    "warningCount_two": "{{count}} warnings",
+    "warningCount_few": "{{count}} warnings",
+    "warningCount_many": "{{count}} warnings"
   },
   "status": {
     "queued": "Queued",
@@ -77,14 +81,14 @@
     "locale": "Output locale",
     "detectedLocale": "Detected from your account language: {{locale}}.",
     "localeOverrideHint": "You can override it for this output.",
-    "consent": "I understand bounded, sanitized page content may be sent to configured AI providers to generate the brief and first draft.",
+    "consent": "I understand that text from this page will be sent to our AI providers to write the brief and first draft.",
     "consentRequired": "Consent is required.",
     "reviewedSources": {
       "title": "Reviewed comparison pages",
       "description": "These public ranking pages came from your approved landscape match. You still choose whether to start this analysis."
     },
     "included": {
-      "title": "What one credit includes",
+      "title": "What this analysis includes",
       "owned": "One owned page",
       "competitors": "Up to three public organic comparison pages",
       "scorecard": "One scorecard",
@@ -94,20 +98,17 @@
     },
     "previewLoading": "Checking your current allowance…",
     "previewError": "The current allowance could not be checked.",
-    "baseRemaining": "Base allowance remaining: {{count}}",
-    "packRemaining": "Credit-pack balance: {{count}}",
-    "balance": "Remaining base allowance: {{used}} of {{cap}} this month.",
-    "packBalance": "Pack balance: {{balance}} extra analyses.",
     "submit": "Start analysis",
     "submitting": "Starting…",
     "invalidUrl": "Enter a valid URL.",
     "urlRequired": "Enter or choose a page URL.",
     "keywordRequired": "Enter or choose a target keyword.",
-    "keywordTooLong": "Keep the target keyword under 200 characters.",
+    "keywordTooLong": "Use {{max}} characters or fewer.",
+    "keywordList": "Enter one search query, not a list. Start a separate analysis for each keyword.",
+    "keywordCounter": "{{length}}/{{max}} characters",
     "offOrigin": "URL must match your site's origin.",
     "urlUnsafe": "URL is not publicly reachable.",
-    "urlNotOwned": "That URL does not belong to a site you own.",
-    "capacityExhausted": "Monthly allowance and pack balance are both exhausted."
+    "urlNotOwned": "That URL does not belong to a site you own."
   },
   "detail": {
     "progress": {
@@ -116,6 +117,7 @@
       "step": "Step {{current}} of {{total}}",
       "percentComplete": "{{percent}}% complete",
       "autoRefresh": "This page updates automatically while the analysis runs.",
+      "stillRunning": "Still running. You can leave this page and come back later; the result will be here.",
       "errorTitle": "This analysis stopped early",
       "errorGeneric": "The analysis stopped before it finished."
     },
@@ -132,6 +134,57 @@
       "cancelled": "This analysis was cancelled.",
       "unexpected": "The analysis stopped because of an unexpected error."
     },
+    "failureReason": {
+      "robots_blocked": "Your site's robots.txt blocks our reader from this page.",
+      "access_denied": "Your site refused access to this page, for example through bot protection or a login wall.",
+      "http_error": "Your page answered with HTTP status {{status}} instead of its content.",
+      "timeout": "Your page took too long to load.",
+      "temporarily_unavailable": "The page could not be loaded this time.",
+      "empty_content": "We found no readable text on the page. It may be empty or load its content only with JavaScript.",
+      "too_large": "The page is too large to read in one pass.",
+      "unsafe_url": "The page address, or a page it redirects to, is not publicly reachable.",
+      "unreadable": "The page came back in a form we could not read.",
+      "redirect_loop": "Your page's redirects loop back on themselves.",
+      "redirect_limit": "Your page redirects more than five times, so we stopped following.",
+      "unsafe_redirect": "Your page redirects to an address that is not publicly reachable.",
+      "non_html": "This address serves {{type}}, not a web page."
+    },
+    "failureReasonUnknown": "We did not record the exact cause. The usual ones are a robots.txt block, bot protection or a login wall, an HTTP error, a slow response, or text that only appears after JavaScript runs. Check that the page opens in a private browser window, then try again.",
+    "failureCode": {
+      "provider_unavailable": "Our content service is unavailable right now.",
+      "page_unreachable": "We could not read your page.",
+      "page_blocked": "Your page blocks our reader, for example through robots.txt, bot protection or a login wall.",
+      "page_too_large": "Your page is too large to read in one pass.",
+      "timeout": "Your page or our content service took too long to respond.",
+      "internal": "Something went wrong on our side."
+    },
+    "failureHint": {
+      "robots_blocked": "Allow crawlers to read this page in robots.txt, then try again.",
+      "access_denied": "Allow automated visits to this page or make it public, then try again.",
+      "http_error": "Check that the URL is correct and that the page opens in a private browser window, then try again.",
+      "timeout": "This is often temporary. Try again, and check that the page loads quickly.",
+      "temporarily_unavailable": "This is usually temporary. Try again in a few minutes.",
+      "empty_content": "Make sure the main text is in the page HTML (server-rendered), then try again.",
+      "too_large": "Try a shorter page, or split very long content across several pages.",
+      "unsafe_url": "Use the page's public address and check its redirects, then try again.",
+      "unreadable": "Try again. If it keeps failing, check that the page opens normally in a browser.",
+      "redirect_loop": "Fix the redirect so it ends on one page, then try again.",
+      "redirect_limit": "Point the address straight at the final page, then try again.",
+      "unsafe_redirect": "Redirect to a public address instead, then try again.",
+      "non_html": "Use the address of the page itself, not a file, then try again."
+    },
+    "failureEvidence": {
+      "redirectPath": "Redirect path: {{path}}"
+    },
+    "failedNoOutput": "This run stopped before it produced anything, so there are no content opportunities, brief or draft to show.",
+    "retryDialog": {
+      "title": "Try this analysis again?",
+      "description": "This starts a new analysis of the same page and keyword.",
+      "confirm": "Try again",
+      "back": "Cancel",
+      "loading": "Loading the details of this analysis…",
+      "loadFailed": "The details of this analysis could not be loaded."
+    },
     "back": "Back to analyses",
     "meta": {
       "page": "Page",
@@ -139,6 +192,7 @@
       "locale": "Locale",
       "requested": "Requested",
       "completed": "Completed",
+      "readAt": "Read at {{url}} after a redirect",
       "cost": "Analysis cost: {{units}} credit"
     },
     "explanation": "This is a content-readiness comparison, not a search-engine score.",
@@ -191,9 +245,14 @@
       "saveFailed": "This brief version could not be saved. Try again.",
       "versionHistory": "Brief version history",
       "noVersions": "No saved brief versions yet.",
-      "versionMeta": "{{date}} · {{count}} sections",
+      "versionMeta_one": "{{date}} · {{count}} section",
       "unsavedGuard": "You have unsaved brief changes.",
-      "savedHint": "This is an editable suggestion. Nothing is published."
+      "savedHint": "This is an editable suggestion. Nothing is published.",
+      "versionMeta_zero": "{{date}} · {{count}} sections",
+      "versionMeta_two": "{{date}} · {{count}} sections",
+      "versionMeta_few": "{{date}} · {{count}} sections",
+      "versionMeta_many": "{{date}} · {{count}} sections",
+      "versionMeta_other": "{{date}} · {{count}} sections"
     },
     "draft": {
       "title": "First draft",
@@ -204,15 +263,25 @@
       "saveFailed": "This version could not be saved. Try again.",
       "versionHistory": "Version history",
       "noVersions": "No saved versions yet.",
-      "versionMeta": "{{date}} · {{count}} words",
+      "versionMeta_one": "{{date}} · {{count}} word",
       "copy": "Copy to clipboard",
       "copying": "Copying…",
       "copied": "Copied to clipboard.",
       "copyFailed": "The draft could not be copied.",
       "copyRetry": "Try copying again",
       "export": "Export as Markdown",
-      "wordCount": "{{count}} words",
-      "unsavedGuard": "You have unsaved changes."
+      "wordCount_one": "{{count}} word",
+      "unsavedGuard": "You have unsaved changes.",
+      "versionMeta_zero": "{{date}} · {{count}} words",
+      "versionMeta_two": "{{date}} · {{count}} words",
+      "versionMeta_few": "{{date}} · {{count}} words",
+      "versionMeta_many": "{{date}} · {{count}} words",
+      "versionMeta_other": "{{date}} · {{count}} words",
+      "wordCount_zero": "{{count}} words",
+      "wordCount_two": "{{count}} words",
+      "wordCount_few": "{{count}} words",
+      "wordCount_many": "{{count}} words",
+      "wordCount_other": "{{count}} words"
     },
     "sources": {
       "title": "Sources",
@@ -222,7 +291,9 @@
     },
     "actions": {
       "cancel": "Cancel analysis",
-      "regenerate": "Regenerate (uses one credit)"
+      "regenerate": "Regenerate",
+      "retry": "Try again",
+      "editUrl": "Edit the URL"
     }
   },
   "confirm": {
@@ -245,18 +316,6 @@
       "back": "Keep editing"
     }
   },
-  "paywall": {
-    "title": "Content Intelligence",
-    "description": "Upgrade to Starter or higher to run content analyses.",
-    "action": "See plans",
-    "exhausted": {
-      "title": "Allowance exhausted",
-      "description": "Your monthly base allowance and pack balance are used up. Buy a credit pack or upgrade your plan.",
-      "buyPack": "Buy an analyses pack",
-      "seePlans": "See plans"
-    },
-    "packHint": "Your next unit will come from a credit pack."
-  },
   "partial": {
     "title": "Partial result",
     "description": "This run completed with limited data. The scorecard is available; some sections may be missing."
@@ -269,9 +328,6 @@
     "stuffingSuspected": "The page repeats the keyword unusually often.",
     "briefFailed": "The brief is unavailable, but the scorecard is preserved.",
     "draftFailed": "The first draft is unavailable, but the scorecard and brief are preserved."
-  },
-  "refund": {
-    "refunded": "This analysis credit was returned."
   },
   "errors": {
     "loadEntitlementsFailed": "Could not check Content Intelligence access.",
@@ -286,17 +342,36 @@
   },
   "opportunities": {
     "title": "Content opportunities",
-    "description": "Track each recommendation from suggestion through confirmed application. State changes do not call a vendor.",
+    "description": "Track each recommendation from suggestion through confirmed application. Changing a status never fetches new data.",
     "empty": "No recommendations match these filters.",
-    "filters": { "state": "State", "severity": "Severity" },
-    "states": { "all": "All states", "suggested": "Suggested", "accepted": "Accepted", "dismissed": "Dismissed", "applied": "Applied" },
-    "severities": { "all": "All severities", "high": "High", "medium": "Medium", "low": "Low" },
+    "filters": {
+      "state": "State",
+      "severity": "Severity"
+    },
+    "states": {
+      "all": "All states",
+      "suggested": "Suggested",
+      "accepted": "Accepted",
+      "dismissed": "Dismissed",
+      "applied": "Applied"
+    },
+    "severities": {
+      "all": "All severities",
+      "high": "High",
+      "medium": "Medium",
+      "low": "Low"
+    },
     "recommendationLabel": "{{direction}} · {{section}}",
     "rationale": "Rationale",
     "rationaleUnavailable": "No rationale is available for this recommendation.",
     "rationaleText": "Use the linked evidence to {{direction}} the {{section}} section.",
     "ownedEvidence": "Owned-page evidence",
-    "directions": { "add": "add to", "strengthen": "strengthen", "clarify": "clarify", "remove": "remove from" },
+    "directions": {
+      "add": "add to",
+      "strengthen": "strengthen",
+      "clarify": "clarify",
+      "remove": "remove from"
+    },
     "confidence": "Recommendation confidence: {{value}}",
     "evidence_zero": "{{count}} linked evidence sources",
     "evidence_one": "{{count}} linked evidence source",
@@ -304,13 +379,22 @@
     "evidence_few": "{{count}} linked evidence sources",
     "evidence_many": "{{count}} linked evidence sources",
     "evidence_other": "{{count}} linked evidence sources",
-    "actions": { "accept": "Accept", "dismiss": "Dismiss", "apply": "Mark applied", "undo": "Undo application", "details": "History and outcomes" },
+    "actions": {
+      "accept": "Accept",
+      "dismiss": "Dismiss",
+      "apply": "Mark applied",
+      "undo": "Undo application",
+      "details": "History and outcomes"
+    },
     "noteLabel": "Note",
     "noteHint": "Optional except when no content change is detected. Up to 4,000 characters.",
     "cancel": "Cancel",
     "updating": "Updating…",
     "success": "Recommendation updated.",
-    "errors": { "generic": "The recommendation could not be updated.", "conflict": "This recommendation changed elsewhere. Reloaded data may be newer; review it and try again." },
+    "errors": {
+      "generic": "The recommendation could not be updated.",
+      "conflict": "This recommendation changed elsewhere. Reloaded data may be newer; review it and try again."
+    },
     "applicationCheck": {
       "loading": "Checking the latest authorized page hash…",
       "sameTitle": "No content change detected",
@@ -318,23 +402,48 @@
       "changedTitle": "Content change detected",
       "changedDescription": "The latest authorized page hash differs from the analysis anchor.",
       "unavailableTitle": "A recent page hash is unavailable",
-      "unavailableDescription": "Run a new authorized analysis before confirming application. This check does not make a vendor call.",
+      "unavailableDescription": "Run a new authorized analysis before confirming application. This check doesn't fetch any new data.",
       "noteRequired": "Add an explanatory note to confirm without a detected content change.",
       "error": "The page hash check could not be completed. Try again before confirming."
     },
     "confirm": {
-      "accept": { "title": "Accept this recommendation?", "description": "Acceptance records you as the actor and keeps the full history.", "confirm": "Accept" },
-      "dismiss": { "title": "Dismiss this recommendation?", "description": "You can accept it later. This event remains in history.", "confirm": "Dismiss" },
-      "apply": { "title": "Confirm this was applied?", "description": "Only confirm after you changed the owned page. RankMeFast records the content hash and observes the following 28 days.", "confirm": "Confirm application" },
-      "undo": { "title": "Undo the application state?", "description": "This creates a new undo event and does not remove the original application evidence.", "confirm": "Undo application" }
+      "accept": {
+        "title": "Accept this recommendation?",
+        "description": "Acceptance records you as the actor and keeps the full history.",
+        "confirm": "Accept"
+      },
+      "dismiss": {
+        "title": "Dismiss this recommendation?",
+        "description": "You can accept it later. This event remains in history.",
+        "confirm": "Dismiss"
+      },
+      "apply": {
+        "title": "Confirm this was applied?",
+        "description": "Only confirm after you changed the owned page. RankMeFast records the content hash and observes the following 28 days.",
+        "confirm": "Confirm application"
+      },
+      "undo": {
+        "title": "Undo the application state?",
+        "description": "This creates a new undo event and does not remove the original application evidence.",
+        "confirm": "Undo application"
+      }
     },
     "history": {
       "title": "Recommendation history",
       "empty": "No state changes yet.",
       "meta": "Actor {{actor}} · {{time}}",
-      "events": { "accepted": "Accepted", "dismissed": "Dismissed", "applied": "Confirmed applied", "undo_applied": "Application undone" }
+      "events": {
+        "accepted": "Accepted",
+        "dismissed": "Dismissed",
+        "applied": "Confirmed applied",
+        "undo_applied": "Application undone"
+      }
     },
-    "hash": { "same": "The confirmed hash matches the analysis hash.", "changed": "The confirmed hash differs from the analysis hash.", "unavailable": "No content hash is attached to this event." },
+    "hash": {
+      "same": "The confirmed hash matches the analysis hash.",
+      "changed": "The confirmed hash differs from the analysis hash.",
+      "unavailable": "No content hash is attached to this event."
+    },
     "outcomes": {
       "unavailable": "Outcome data is unavailable",
       "syncAction": "Connect or sync Search Console and rank tracking to populate this view. Missing data is never shown as zero.",
@@ -353,15 +462,33 @@
       "observedDate": "Observed date",
       "phase": "Window",
       "laterEditColumn": "Later edit",
-      "phases": { "baseline": "Previous", "following": "Following" },
-      "boolean": { "yes": "Yes", "no": "No" },
-      "series": {
-        "gsc": { "title": "Search Console observations", "chartLabel": "Available Search Console click observations across the outcome window" },
-        "rank": { "title": "Tracked rank observations", "chartLabel": "Available tracked rank observations across the outcome window" }
+      "phases": {
+        "baseline": "Previous",
+        "following": "Following"
       },
-      "coverage": "Data coverage — Search Console: {{gsc}} days; rank tracking: {{rank}} days.",
+      "boolean": {
+        "yes": "Yes",
+        "no": "No"
+      },
+      "series": {
+        "gsc": {
+          "title": "Search Console observations",
+          "chartLabel": "Available Search Console click observations across the outcome window"
+        },
+        "rank": {
+          "title": "Tracked rank observations",
+          "chartLabel": "Available tracked rank observations across the outcome window"
+        }
+      },
+      "coverage": "Data coverage in days — Search Console: {{gsc}}; rank tracking: {{rank}}.",
       "disclaimer": "External factors affect search performance. This view shows correlated movement, not attribution.",
-      "metrics": { "clicks": "Clicks", "impressions": "Impressions", "ctr": "CTR", "averagePosition": "Average position", "rankPosition": "Tracked rank" }
+      "metrics": {
+        "clicks": "Clicks",
+        "impressions": "Impressions",
+        "ctr": "CTR",
+        "averagePosition": "Average position",
+        "rankPosition": "Tracked rank"
+      }
     }
   },
   "inventory": {
@@ -402,15 +529,9 @@
       "title": "Start an inventory run",
       "description": "Crawl your owned pages and get clusters, duplicates, thin and orphan pages, cannibalization, and topic gaps.",
       "pageLimit": "Pages to crawl",
-      "pageLimitHint": "Between one and {{max}} pages. Four pages make one reserved block.",
-      "blocksTitle": "What this reserves",
-      "blocks_zero": "{{count}} blocks reserved. Page limit: {{pages}} (four pages per block).",
-      "blocks_one": "{{count}} block reserved. Page limit: {{pages}} (four pages per block).",
-      "blocks_two": "{{count}} blocks reserved. Page limit: {{pages}} (four pages per block).",
-      "blocks_few": "{{count}} blocks reserved. Page limit: {{pages}} (four pages per block).",
-      "blocks_many": "{{count}} blocks reserved. Page limit: {{pages}} (four pages per block).",
-      "blocks_other": "{{count}} blocks reserved. Page limit: {{pages}} (four pages per block).",
-      "blocksInvalid": "Enter a valid page count to see how many blocks it reserves.",
+      "pageLimitHint": "Between one and {{max}} pages.",
+      "blocksTitle": "Pages in this run",
+      "blocksInvalid": "Enter a valid page count to see the crawl limit.",
       "allowedPaths": "Only these paths (optional)",
       "excludedPaths": "Skip these paths (optional)",
       "sitemapSeeds": "Sitemap URLs (optional)",
@@ -425,7 +546,14 @@
         "invalidPath": "Each path must start with a slash (for example /blog).",
         "tooManySeeds": "Use at most five sitemap URLs.",
         "invalidSeed": "One of the sitemap URLs is too long."
-      }
+      },
+      "pageCount_zero": "{{count}} pages",
+      "pageCount_one": "{{count}} page",
+      "pageCount_two": "{{count}} pages",
+      "pageCount_few": "{{count}} pages",
+      "pageCount_many": "{{count}} pages",
+      "pageCount_other": "{{count}} pages",
+      "blocks": "Up to $t(contentIntelligence:inventory.start.pageCount, {\"count\": {{pages}}})."
     },
     "runs": {
       "title": "Inventory runs",
@@ -575,7 +703,11 @@
       "failed": "Failed",
       "cancelled": "Cancelled"
     },
-    "confidence": { "high": "High", "medium": "Medium", "low": "Low" },
+    "confidence": {
+      "high": "High",
+      "medium": "Medium",
+      "low": "Low"
+    },
     "warnings": {
       "partialPortfolio": "Some competitors could not be read; results cover the ones we could reach.",
       "stoppedEarly": "The run stopped early to stay within budget.",
@@ -629,8 +761,14 @@
         "title": "No competitors yet",
         "description": "Confirm a suggestion or add a competitor by URL to build your portfolio."
       },
-      "source": { "suggested": "Suggested", "manual": "Manual" },
-      "profileStatus": { "active": "Active", "archived": "Archived" },
+      "source": {
+        "suggested": "Suggested",
+        "manual": "Manual"
+      },
+      "profileStatus": {
+        "active": "Active",
+        "archived": "Archived"
+      },
       "archive": "Archive",
       "restore": "Restore",
       "updating": "Updating…",
@@ -656,14 +794,8 @@
       "keywordHint": "Narrows the comparison to the intent you want to win.",
       "pageLimit": "Competitor pages to read",
       "pageLimitHint": "Between one and {{max}} pages across the chosen competitors.",
-      "disclosureTitle": "What this run costs",
-      "disclosure_zero": "This run reserves one unit and reads up to {{pages}} pages across {{count}} competitors.",
-      "disclosure_one": "This run reserves one unit and reads up to {{pages}} pages across {{count}} competitor.",
-      "disclosure_two": "This run reserves one unit and reads up to {{pages}} pages across {{count}} competitors.",
-      "disclosure_few": "This run reserves one unit and reads up to {{pages}} pages across {{count}} competitors.",
-      "disclosure_many": "This run reserves one unit and reads up to {{pages}} pages across {{count}} competitors.",
-      "disclosure_other": "This run reserves one unit and reads up to {{pages}} pages across {{count}} competitors.",
-      "disclosureInvalid": "Enter a valid page count to see what this run reserves.",
+      "disclosureTitle": "Pages and competitors in this run",
+      "disclosureInvalid": "Enter a valid page count to see the run limits.",
       "inFlight": "A run is already in progress. Wait for it to finish before starting another.",
       "submit": "Start comparison",
       "submitting": "Starting…",
@@ -689,7 +821,20 @@
         "invalidUrl": "Enter a valid page URL that starts with http or https.",
         "invalidCompetitorUrl": "Enter an explicit ranking-page URL for every selected competitor.",
         "pageLimitRange": "Enter a page count within the allowed range."
-      }
+      },
+      "pageCount_zero": "{{count}} pages",
+      "pageCount_one": "{{count}} page",
+      "pageCount_two": "{{count}} pages",
+      "pageCount_few": "{{count}} pages",
+      "pageCount_many": "{{count}} pages",
+      "pageCount_other": "{{count}} pages",
+      "competitorCount_zero": "{{count}} competitors",
+      "competitorCount_one": "{{count}} competitor",
+      "competitorCount_two": "{{count}} competitors",
+      "competitorCount_few": "{{count}} competitors",
+      "competitorCount_many": "{{count}} competitors",
+      "competitorCount_other": "{{count}} competitors",
+      "disclosure": "This run reads up to $t(contentIntelligence:competitorContent.run.pageCount, {\"count\": {{pages}}}) across $t(contentIntelligence:competitorContent.run.competitorCount, {\"count\": {{count}}})."
     },
     "runs": {
       "title": "Comparison runs",
@@ -714,7 +859,6 @@
       "competitorsProcessed": "Competitors read",
       "competitorsFailed": "Competitors failed",
       "pagesScraped": "Pages read",
-      "refundNote": "The reserved unit was returned to your allowance.",
       "warningsTitle": "Warnings",
       "errorTitle": "This run stopped early",
       "errorGeneric": "The run stopped before it finished.",
@@ -733,7 +877,9 @@
       "evidence_few": "{{count}} linked evidence sources",
       "evidence_many": "{{count}} linked evidence sources",
       "evidence_other": "{{count}} linked evidence sources",
-      "explanation": { "title": "Summary" }
+      "explanation": {
+        "title": "Summary"
+      }
     },
     "comparison": {
       "title": "Comparison overview",
@@ -786,7 +932,10 @@
       "description": "Derived facts for your page and each competitor page we read.",
       "empty": "No page details",
       "emptyHint": "This run stored no per-page facts.",
-      "role": { "owned": "Your page", "competitor": "Competitor" },
+      "role": {
+        "owned": "Your page",
+        "competitor": "Competitor"
+      },
       "visit": "Visit page",
       "words": "Words",
       "headings": "Headings",
@@ -814,8 +963,14 @@
       "checks": "Weekly checks this month",
       "targetKind": "What do you want to monitor?",
       "targetKinds": {
-        "owned": { "label": "One of my pages", "hint": "A page on this site that you already own." },
-        "competitor": { "label": "A competitor page", "hint": "A page on a competitor you have confirmed." }
+        "owned": {
+          "label": "One of my pages",
+          "hint": "A page on this site that you already own."
+        },
+        "competitor": {
+          "label": "A competitor page",
+          "hint": "A page on a competitor you have confirmed."
+        }
       },
       "ownedUrl": "Page address",
       "ownedUrlHint": "The full address of the page on your own site.",
@@ -841,8 +996,13 @@
       "submit": "Start monitoring",
       "submitting": "Starting…"
     },
-    "cadence": { "weekly": "weekly" },
-    "targetKinds": { "owned": "Owned page", "competitor": "Competitor page" },
+    "cadence": {
+      "weekly": "weekly"
+    },
+    "targetKinds": {
+      "owned": "Owned page",
+      "competitor": "Competitor page"
+    },
     "status": {
       "active": "Active",
       "paused": "Paused",
@@ -936,29 +1096,27 @@
     },
     "preview": {
       "title": "Spend preview",
-      "unit": "This brief uses {{count}} content-brief unit.",
       "serp": {
         "stored": "Stored SERP observation from {{date}}; no new SERP fetch expected.",
         "fetched": "No fresh stored SERP; one metered SERP fetch is included in the unit."
       },
-      "scrapes": "Up to {{count}} public result pages will be scraped individually.",
+      "scrapes_one": "Up to {{count}} public result page will be scraped individually.",
       "consume": "Expected allowance use: {{base}} base, {{pack}} pack.",
-      "remaining": "Available now: {{base}} base, {{pack}} pack."
+      "scrapes_zero": "Up to {{count}} public result pages will be scraped individually.",
+      "scrapes_two": "Up to {{count}} public result pages will be scraped individually.",
+      "scrapes_few": "Up to {{count}} public result pages will be scraped individually.",
+      "scrapes_many": "Up to {{count}} public result pages will be scraped individually.",
+      "scrapes_other": "Up to {{count}} public result pages will be scraped individually."
     },
     "status": {
       "queued": "Queued",
       "running": "Running",
       "completed": "Complete",
-      "completed_empty": "Complete — no corpus",
+      "completed_empty": "Complete: no competing pages found",
       "completed_partial": "Partial",
       "failed": "Failed"
     },
     "states": {
-      "cap": {
-        "title": "Brief allowance used",
-        "description": "Your base allowance and content-brief pack balance cannot cover this brief.",
-        "action": "View content-brief packs"
-      },
       "disabled": {
         "title": "Content briefs are unavailable",
         "description": "This feature is currently disabled. Stored data remains unchanged."
@@ -968,18 +1126,18 @@
         "description": "The run stopped. Any safely retained evidence remains visible."
       }
     },
-    "locked": {
-      "title": "Content briefs require Pro or Agency",
-      "description": "Agency includes a monthly allowance. Pro can use content-brief pack credits.",
-      "action": "Compare plans"
-    },
     "list": {
       "title": "Stored briefs",
       "description": "Reopen any saved brief without spending another unit.",
       "filter": "Status filter",
       "all": "All statuses",
       "loading": "Loading briefs…",
-      "meta": "Requested {{date}} · {{count}} retained pages"
+      "meta_one": "Requested {{date}} · {{count}} retained page",
+      "meta_zero": "Requested {{date}} · {{count}} retained pages",
+      "meta_two": "Requested {{date}} · {{count}} retained pages",
+      "meta_few": "Requested {{date}} · {{count}} retained pages",
+      "meta_many": "Requested {{date}} · {{count}} retained pages",
+      "meta_other": "Requested {{date}} · {{count}} retained pages"
     },
     "empty": {
       "title": "No briefs yet",
@@ -1018,7 +1176,7 @@
       }
     },
     "corpus": {
-      "title": "Top-10 corpus statistics",
+      "title": "Top 10 results at a glance",
       "scrapeDates": "Top-10 average from pages scraped on {{dates}}.",
       "noDates": "no retained dates",
       "range": "Word-count range",
@@ -1031,8 +1189,13 @@
     "sources": {
       "title": "Stored source pages",
       "description": "Titles and headings are untrusted third-party text and are rendered literally.",
-      "meta": "Scraped {{date}} · {{count}} words",
-      "empty": "No source document was retained."
+      "meta_one": "Scraped {{date}} · {{count}} word",
+      "empty": "No source document was retained.",
+      "meta_zero": "Scraped {{date}} · {{count}} words",
+      "meta_two": "Scraped {{date}} · {{count}} words",
+      "meta_few": "Scraped {{date}} · {{count}} words",
+      "meta_many": "Scraped {{date}} · {{count}} words",
+      "meta_other": "Scraped {{date}} · {{count}} words"
     },
     "outline": {
       "title": "Cited outline",
@@ -1046,7 +1209,9 @@
       "title": "Cluster secondary terms",
       "empty": "No stored cluster contains this keyword."
     },
-    "paa": { "title": "Stored People Also Ask rows" },
+    "paa": {
+      "title": "Stored People Also Ask rows"
+    },
     "abstentions": {
       "title": "Evidence limits",
       "noSerpResults": "The stored or fetched SERP contained no usable result URLs.",
@@ -1056,11 +1221,11 @@
       "malformedEvidence": "Ungrounded or malformed AI output was discarded.",
       "unknown": "A section was omitted because its evidence was insufficient."
     },
-    "guidance": "Directional guidance from the stored corpus; search outcomes may differ.",
+    "guidance": "Guidance based on the saved top results; your search results may differ.",
     "cost": "Run cost: {{used}} of {{ceiling}} micro-dollars ceiling.",
     "editor": {
       "title": "Draft editor: {{keyword}}",
-      "description": "Compare a bounded draft with the stored corpus. Re-scoring uses no new brief unit and calls AI only when the original run has enough cost residue.",
+      "description": "Compare your draft, within the length limit, with the saved top results. Scoring it again doesn't use another brief, and uses AI only if the original run has budget left.",
       "draft": "Draft",
       "characters": "{{count}} of 50,000 characters",
       "score": "Score this version",
@@ -1068,16 +1233,16 @@
       "history": "Score history",
       "empty": "No draft versions have been scored yet.",
       "version": "Version {{version}}",
-      "deterministicScore": "Deterministic guidance: {{score}}/100",
+      "deterministicScore": "Rule-based score: {{score}}/100",
       "words": "Words",
       "headings": "Headings",
       "entities": "Matched entities",
       "aiScore": "AI guidance: {{score}}/100",
-      "deterministicOnly": "Deterministic guidance only",
+      "deterministicOnly": "Rule-based score only",
       "disclosure": {
         "scored": "The bounded AI score was grounded in stored evidence.",
         "cost_ceiling": "The original run had insufficient cost residue for another AI call.",
-        "provider_error": "The AI provider was unavailable; deterministic comparison remains available.",
+        "provider_error": "The AI service was unavailable; the rule-based comparison still works.",
         "malformed_output": "The AI response was not grounded and was discarded."
       }
     },

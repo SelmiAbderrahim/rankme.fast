@@ -37,6 +37,11 @@
     "emailHint": "Um Ihre E-Mail-Adresse zu ändern, öffnen Sie Sicherheit und nutzen Sie E-Mail ändern. Die Adresse ändert sich erst, nachdem Sie den gesendeten Link bestätigt haben."
   },
   "privacy": {
+    "delete": {
+      "title": "Konto löschen",
+      "description": "Die Kontolöschung finden Sie in den Sicherheitseinstellungen, zusammen mit Ihren anderen Anmeldeoptionen.",
+      "link": "Zu den Sicherheitseinstellungen"
+    },
     "export": {
       "title": "Daten exportieren",
       "description": "Laden Sie eine Kopie Ihrer Kontodaten als JSON-Datei herunter.",

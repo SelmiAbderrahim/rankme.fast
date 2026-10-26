@@ -16,6 +16,7 @@
  *   - geogrid-legend                  bucket legend
  */
 import { useTranslation } from 'react-i18next';
+import { formatAbsoluteDate } from '@shared/lib/datetime';
 import { TriangleAlert } from 'lucide-react';
 import { cn } from '@shared/lib/utils';
 import { GEOGRID_BUCKET_CLASS, bucketForCell, cellsByIndex } from '../heatScale';
@@ -36,7 +37,7 @@ export const GeogridHeatGrid = ({
   selectedIndex,
   onSelect,
 }: Props) => {
-  const { t } = useTranslation('geogrid');
+  const { t, i18n } = useTranslation('geogrid');
   const slots = cellsByIndex(cells, totalCells);
 
   const cellLabel = (cell: GeogridCell | undefined, pointIndex: number): string => {
@@ -53,7 +54,7 @@ export const GeogridHeatGrid = ({
         index: pointIndex + 1,
         lat: String(cell.lat),
         lng: String(cell.lng),
-        capturedAt: cell.capturedAt,
+        capturedAt: formatAbsoluteDate(cell.capturedAt, i18n.language, { withTime: true }),
       });
     }
     return t('grid.cellObserved', {
@@ -62,7 +63,7 @@ export const GeogridHeatGrid = ({
       packSize: cell.totalPackSize,
       lat: String(cell.lat),
       lng: String(cell.lng),
-      capturedAt: cell.capturedAt,
+      capturedAt: formatAbsoluteDate(cell.capturedAt, i18n.language, { withTime: true }),
     });
   };
 

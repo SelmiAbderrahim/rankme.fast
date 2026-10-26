@@ -1,3 +1,4 @@
+import { isolateText } from '@shared/lib/bidi';
 import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import {
@@ -84,7 +85,7 @@ export function AppKeywordHistoryChart({
       </svg>
       <Table>
         <TableCaption className="sr-only">
-          {t('history.tableCaption', { phrase: keyword.phrase })}
+          {t('history.tableCaption', { phrase: isolateText(keyword.phrase) })}
         </TableCaption>
         <TableHeader>
           <TableRow>

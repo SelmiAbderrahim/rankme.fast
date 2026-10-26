@@ -155,7 +155,7 @@ export const updateRuleBodySchema = z
     .strict()
     .refine((body) => Object.keys(body).length > 0, { message: 'alerts.errors.emptyUpdate' });
 export type UpdateRuleBody = z.infer<typeof updateRuleBodySchema>;
-export const ruleIdParamsSchema = z.object({ ruleId: z.string().uuid() }).strict();
+export const ruleIdParamsSchema = z.object({ ruleId: z.string().guid() }).strict();
 export const listRulesQuerySchema = z
     .object({
     siteId: objectIdLike.optional(),

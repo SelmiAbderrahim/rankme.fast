@@ -1,19 +1,23 @@
 {
   "title": "SEO local",
   "description": "Fiches d'entreprise, avis et classement dans le pack de cartes pour votre site.",
-  "empty": "Aucune donnée SEO locale — cliquez sur actualiser pour charger les fiches, avis et questions.",
+  "empty": "Aucune donnée SEO locale pour l'instant. Cliquez sur « Actualiser le SEO local » en haut pour charger les fiches, avis et questions.",
   "emptyTitle": "Aucune donnée locale pour l'instant",
-  "emptyCta": "Récupérer les données locales",
   "refresh": {
     "button": "Actualiser le SEO local",
-    "cooldown": "Actualisation dans {{seconds}} s",
-    "failed": "Impossible d'actualiser le SEO local. Réessayez dans un instant."
+    "cooldown_one": "Actualisation dans {{seconds}} s",
+    "failed": "Impossible d'actualiser le SEO local. Réessayez dans un instant.",
+    "cooldown_zero": "Actualisation dans {{seconds}} s",
+    "cooldown_two": "Actualisation dans {{seconds}} s",
+    "cooldown_few": "Actualisation dans {{seconds}} s",
+    "cooldown_many": "Actualisation dans {{seconds}} s",
+    "cooldown_other": "Actualisation dans {{seconds}} s",
+    "needsSetup": "Choisissez votre établissement ci-dessous avant d’actualiser."
   },
   "loadFailed": "Impossible de charger le SEO local.",
   "locked": {
     "title": "Le SEO local est une fonctionnalité Pro",
-    "body": "Passez à Pro pour suivre la cohérence de votre entreprise dans les annuaires et le pack de cartes local.",
-    "upgrade": "Voir les forfaits"
+    "body": "Passez à Pro pour suivre la cohérence de votre entreprise dans les annuaires et le pack de cartes local."
   },
   "listings": {
     "title": "Fiches d'entreprise",
@@ -37,5 +41,39 @@
     "position": "Position",
     "packSize": "Taille du pack",
     "notRanked": "Absent du pack de cartes"
+  },
+  "setup": {
+    "resultsLegend_zero": "{{count}} résultat pour « {{query}} ». Choisissez le vôtre :",
+    "resultsLegend_one": "{{count}} résultat pour « {{query}} ». Choisissez le vôtre :",
+    "resultsLegend_two": "{{count}} résultats pour « {{query}} ». Choisissez le vôtre :",
+    "resultsLegend_few": "{{count}} résultats pour « {{query}} ». Choisissez le vôtre :",
+    "resultsLegend_many": "{{count}} résultats pour « {{query}} ». Choisissez le vôtre :",
+    "resultsLegend_other": "{{count}} résultats pour « {{query}} ». Choisissez le vôtre :",
+    "title": "Choisissez votre établissement",
+    "description": "Recherchez l’établissement auquel ce site appartient. Le SEO local porte sur celui que vous choisissez.",
+    "changeDescription": "Relancez une recherche et choisissez un autre établissement. L’actuel reste en place tant que vous n’en enregistrez pas un nouveau.",
+    "queryLabel": "Nom, adresse ou identifiant de lieu de l’établissement",
+    "queryPlaceholder": "Cabinet dentaire Exemple, Lyon",
+    "queryHint": "Chaque recherche interroge une fois votre fournisseur de fiches locales. Enregistrer un résultat n'envoie aucune requête.",
+    "queryInvalid": "Saisissez entre {{min}} et {{max}} caractères.",
+    "search": "Rechercher",
+    "searching": "Recherche…",
+    "noAddress": "Aucune adresse indiquée",
+    "source": "Fiche d’établissement Google",
+    "noResults": "Aucun établissement trouvé pour « {{query}} ». Vérifiez l’orthographe, ou essayez l’adresse ou l’identifiant de lieu Google.",
+    "save": "Utiliser cet établissement",
+    "saving": "Enregistrement…",
+    "saved": "Le SEO local porte désormais sur {{name}}.",
+    "loadFailed": "Impossible de charger la configuration de votre établissement.",
+    "searchFailed": "La recherche a échoué. Réessayez dans un instant.",
+    "selectFailed": "Impossible d’enregistrer cet établissement. Réessayez."
+  },
+  "business": {
+    "label": "Établissement",
+    "change": "Changer d’établissement"
+  },
+  "provenance": {
+    "business": "Données de <bdi>{{name}}</bdi>.",
+    "domain": "Données plus anciennes, recherchées à partir du site <bdi>{{domain}}</bdi>."
   }
 }

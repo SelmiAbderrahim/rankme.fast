@@ -76,7 +76,7 @@ You can also choose **Reject**. The confirmation page does not change anything u
 
 ## Switch between workspaces
 
-Once you belong to more than one workspace, a **workspace picker** appears in the top bar. It lists your own workspace first, then every workspace you have joined, each labelled with your role there.
+Once you belong to more than one workspace, a **workspace picker** appears in the top bar. It lists your own workspace first, then every workspace you have joined, each labeled with your role there.
 
 Choosing one reloads the page and puts you inside that workspace. From then on, every site, audit, report, and rank check belongs to that workspace and uses its plan. Your choice is remembered the next time you sign in.
 

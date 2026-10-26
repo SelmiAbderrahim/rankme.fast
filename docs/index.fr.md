@@ -44,7 +44,7 @@ order: 0
 - [Tendances des mots-clés](./keyword-trends.fr.md) : Explorez la direction, l’élan et la saisonnalité de l’intérêt de recherche avec des estimations clairement signalées.
 - [Intelligence des avis](./review-intelligence.fr.md) : Synchronisez les avis publics à la demande, consultez tendances et thèmes cités, et sachez quand une unité est rendue.
 - [Radar de marque](./brand-radar.fr.md) : Analysez une requête de marque à la demande, examinez les mentions conservées et comprenez l’option et le remboursement.
-- [Performance des pages](./pages-performance.fr.md) : Comment l’onglet Pages choisit sa source, compare les instantanés et compte les actualisations.
+- [Performance des pages](./pages-performance.fr.md) : Comment l’onglet Pages présente les données de recherche enregistrées, le crawl et les mesures.
 
 ## Fonctionnalités du produit
 
@@ -52,11 +52,11 @@ order: 0
 - [Regroupement de mots-clés](./keyword-clustering.fr.md) : Comment RankMeFast regroupe les mots-clés suivis selon les URL de résultats partagées, et pourquoi c'est de l'arithmétique et non un score de similarité.
 - [Suivi Bing, YouTube et Amazon](./alt-engine-tracking.fr.md) : Comment RankMeFast suit les moteurs hors Google, ce qu'est un jeton cible exact, et pourquoi une position Amazon est une position d'index.
 - [Cannibalisation de mots-clés](./cannibalization.fr.md) : Comment RankMeFast repère les requêtes où plusieurs de vos pages se concurrencent, à partir des seules lignes Search Console déjà stockées.
-- [Liens toxiques et désaveu](./toxic-links.fr.md) : Comment RankMeFast classe les backlinks avec une grille déterministe, quand l'IA peut annoter une ligne, et pourquoi le fichier de désaveu n'est jamais soumis à votre place.
-- [Alertes](./alerts.fr.md) : Quelles alertes se déclenchent aujourd'hui, comment fonctionne la livraison exactement-une-fois, et pourquoi une règle de chute de position peut être configurée avant de pouvoir livrer.
+- [Liens toxiques et désaveu](./toxic-links.fr.md) : Comment RankMeFast classe les backlinks par niveau de risque avec des règles fixes, quand l'IA peut annoter une ligne, et pourquoi le fichier de désaveu n'est jamais soumis à votre place.
+- [Alertes](./alerts.fr.md) : Quelles alertes se déclenchent, comment fonctionne la livraison exactement-une-fois, et quand une règle de chute de position livre.
 - [Suggestions de maillage interne](./internal-linking.fr.md) : Comment RankMeFast repère les pages orphelines et faiblement liées de votre inventaire de contenu stocké et rédige des ancres qui citent leurs preuves.
 - [Briefs de contenu](./content-briefs.fr.md) : Comment un brief est construit à partir du top 10 stocké et d'au plus dix extractions de pages, et pourquoi chaque nœud du plan doit citer une preuve fournie.
-- [Suivi local par grille](./geogrid.fr.md) : Comment les grilles de pack local par coordonnée sont collectées, ce que signifie une cellule en échec, et pourquoi les coordonnées se saisissent au lieu de se cliquer sur une carte.
+- [Suivi local par grille](./geogrid.fr.md) : Comment les grilles de pack local par coordonnée sont collectées, comment choisir le centre de la grille, et ce que signifie une cellule en échec.
 - [Générateur de balisage Schema](./schema-markup.fr.md) : Comment RankMeFast construit du JSON-LD à partir de faits de page stockés, ce que signifie la conformité ici, et pourquoi une propriété manquante est omise plutôt qu'inventée.
 - [Rapports clients et portail](./client-reports.fr.md) : Comment les rapports PDF en marque blanche sont composés à partir d'instantanés stockés, comment les planifications livrent, et ce qu'est — ou n'est pas — un lien de portail révocable.
 - [Télécharger et partager des rapports](./report-exports.fr.md) : Choisissez le bon format, conservez vos filtres et gérez les liens privés.

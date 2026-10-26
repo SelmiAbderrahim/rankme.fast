@@ -62,7 +62,3 @@ export const linkGapFormSchema = z
   });
 
 export type LinkGapFormValues = z.infer<typeof linkGapFormSchema>;
-
-export function splitGapCompetitors(value: string): string[] {
-  return value.split(/[\n,]+/).map((domain) => domain.trim()).filter(Boolean);
-}

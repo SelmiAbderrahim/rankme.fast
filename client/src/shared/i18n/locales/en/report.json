@@ -1,4 +1,23 @@
 {
+  "categories": {
+    "label": "Category",
+    "all": "All categories",
+    "indexability": "Indexing",
+    "links-redirects": "Links and redirects",
+    "content": "Content",
+    "html": "HTML",
+    "media": "Images and media",
+    "performance": "Speed",
+    "security": "Security",
+    "social": "Sharing and listings",
+    "emptyTitle": "Nothing in this category",
+    "emptyDescription": "No finding on this tab belongs to this category. Choose another category, or all categories."
+  },
+  "resourceScan": {
+    "label": "Scan images, scripts and styles",
+    "help": "Loads every image, script and stylesheet so broken or oversized files can be found. It takes longer and limits the audit to {{pages}} pages.",
+    "notCovered": "This audit will crawl at most {{pages}} pages. Untick the scan to crawl more."
+  },
   "title": "Your audit report",
   "subtitle": "What to fix, what to watch, and what already passed.",
   "history": {
@@ -20,10 +39,16 @@
     "passed": "Passed"
   },
   "row": {
-    "affectedPages": "{{count}} pages affected",
+    "affectedPages_one": "{{count}} page affected",
     "affectedPagesOne": "1 page affected",
     "siteWide": "Site-wide check",
-    "passedSummary": "This check is passing."
+    "passedSummary": "This check is passing.",
+    "affectedPages_zero": "{{count}} pages affected",
+    "affectedPages_two": "{{count}} pages affected",
+    "affectedPages_few": "{{count}} pages affected",
+    "affectedPages_many": "{{count}} pages affected",
+    "affectedPages_other": "{{count}} pages affected",
+    "brokenLinksSummary": "Pages with broken links: {{pages}} · Broken URLs: {{targets}}"
   },
   "severity": {
     "critical": "Critical",
@@ -35,6 +60,61 @@
     "regressed": "Regressed"
   },
   "detail": {
+    "evidence": {
+      "status": "Status {{status}}",
+      "noAnswer": "No answer",
+      "statusUnknown": "Status not reported",
+      "clickDepth": "Clicks from home: {{depth}}",
+      "inboundLinks": "Links to this page: {{links}}",
+      "pageSize": "Page size: {{size}}",
+      "transferSize": "Sent: {{size}}",
+      "serverResponse": "First byte: {{time}}",
+      "fetchTime": "Load time: {{time}}",
+      "images": "Images: {{images}}",
+      "blockingScripts": "Blocking scripts: {{scripts}}",
+      "blockingStylesheets": "Blocking stylesheets: {{styles}}",
+      "compression": "Compression: {{encoding}}",
+      "noCompression": "Not compressed",
+      "openGraphMissing": "No Open Graph tags",
+      "twitterCardMissing": "No Twitter card tags",
+      "canonicalLabel": "Canonical points to",
+      "usedOn": "Used on",
+      "usedOnTotal": "Pages using it: {{total}}",
+      "resourceType": {
+        "image": "Image",
+        "script": "Script",
+        "stylesheet": "Stylesheet",
+        "other": "Other file"
+      },
+      "chainsTitle": "Redirect steps",
+      "loop": "Loop",
+      "groupsTitle": "Pages that match each other",
+      "sharedTitle": "Shared title:",
+      "noTitle": "No title",
+      "similarity": "Similarity: {{score}} out of 10",
+      "insecureTitle": "Insecure files these pages load",
+      "reachedThroughChain": "Pages reached through a redirect chain",
+      "cut": "Details shown for the first {{shown}} of {{total}}.",
+      "problems": {
+        "canonicalToBroken": "Canonical points to a broken page",
+        "canonicalToRedirect": "Canonical points to a redirect",
+        "canonicalChain": "Canonical points to a page with another canonical",
+        "canonicalLoop": "Canonicals point back and forth",
+        "linkRelationConflict": "Gets both followed and nofollow links",
+        "largePage": "Over 1 MB",
+        "veryLargePage": "Over 3 MB",
+        "slowServerResponse": "Slow first byte",
+        "slowLoad": "Slow to load",
+        "missingDoctype": "No doctype",
+        "missingCharset": "No character set",
+        "deprecatedTags": "Outdated tags",
+        "flash": "Uses Flash",
+        "frames": "Uses frames",
+        "urlHasUnusualCharacters": "Unusual characters",
+        "urlHasParameters": "Query parameters",
+        "urlTooLong": "Longer than 120 characters"
+      }
+    },
     "whyTitle": "Why it matters",
     "affectedUrlsTitle": "Affected URLs",
     "brokenLinkTargetsTitle": "Targets the audit could not fetch",
@@ -56,6 +136,55 @@
       "okChip": "OK",
       "problemChip": "Needs fixing",
       "unknownChip": "Not checked"
+    },
+    "measured": {
+      "words_zero": "{{count}} words",
+      "words_one": "{{count}} word",
+      "words_two": "{{count}} words",
+      "words_few": "{{count}} words",
+      "words_many": "{{count}} words",
+      "words_other": "{{count}} words",
+      "characters_zero": "{{count}} characters",
+      "characters_one": "{{count}} character",
+      "characters_two": "{{count}} characters",
+      "characters_few": "{{count}} characters",
+      "characters_many": "{{count}} characters",
+      "characters_other": "{{count}} characters"
+    },
+    "downloadUrls": "Download URLs (CSV)",
+    "previewNote": "Showing {{shown}} of {{total}}.",
+    "loadFullList": "Show the full list",
+    "loadingFullList": "Loading the full list…",
+    "fullListFailed": "Could not load the full list. Try again.",
+    "brokenLinks": {
+      "title": "Broken links and what we found when we re-checked them",
+      "download": "Download all (CSV)",
+      "linkedFrom": "Linked from",
+      "pointsTo": "Points to",
+      "redirectsTo": "Redirects to",
+      "http": "HTTP {{status}}",
+      "noAnswer": "No answer",
+      "failure": {
+        "http_error": "HTTP error",
+        "redirect_loop": "Redirect loop",
+        "redirect_limit": "More than five redirects",
+        "unsafe_redirect": "Redirects to an address we do not follow",
+        "robots_blocked": "Blocked by robots.txt",
+        "timeout": "No answer in time",
+        "non_html": "Not a web page",
+        "unreachable": "Could not connect"
+      },
+      "outcome": {
+        "confirmed": "Still broken",
+        "unverified": "Could not re-check",
+        "reported": "Reported by the crawl",
+        "cleared": "Works when re-checked"
+      },
+      "showAll": "Show all {{count}}",
+      "showFewer": "Show fewer",
+      "dismissedTitle": "Works when re-checked ({{count}})",
+      "dismissedHelp": "The crawl reported these links as broken, but they open normally when requested again, so they are not counted.",
+      "cut": "Rows shown: first {{shown}} of {{total}}."
     }
   },
   "retest": {
@@ -69,16 +198,21 @@
     "label": "Pages to crawl",
     "max": "Maximum allowed",
     "help": "Sets how many pages the crawler visits. “Maximum allowed” covers as many pages as this server permits; fewer pages finish sooner.",
-    "pages": "{{pages}} pages"
+    "pages_one": "{{pages}} page",
+    "pages_zero": "{{pages}} pages",
+    "pages_two": "{{pages}} pages",
+    "pages_few": "{{pages}} pages",
+    "pages_many": "{{pages}} pages",
+    "pages_other": "{{pages}} pages"
   },
   "empty": {
     "fix-now": {
       "title": "Nothing to fix right now",
-      "description": "Great work — no critical issues found in this audit."
+      "description": "No open critical issues in this audit."
     },
     "watch": {
       "title": "Nothing to watch",
-      "description": "There are no warnings on your site right now."
+      "description": "No open warnings in this audit."
     },
     "passed": {
       "title": "Nothing passing yet",
@@ -110,7 +244,7 @@
     "noFieldDataTitle": "Not enough visitor data yet",
     "noFieldDataBody": "Chrome only reports real-visitor speed once a site has enough traffic. As traffic grows, this section will fill in automatically.",
     "originFallback": "Origin-level data (not just this page)",
-    "sampleLabel": "{{count}} pages sampled",
+    "sampleLabel_one": "{{count}} page sampled",
     "sampleLabelOne": "1 page sampled",
     "metrics": {
       "lcp": "LCP",
@@ -122,7 +256,12 @@
       "good": "Good",
       "needs-improvement": "Needs improvement",
       "poor": "Poor"
-    }
+    },
+    "sampleLabel_zero": "{{count}} pages sampled",
+    "sampleLabel_two": "{{count}} pages sampled",
+    "sampleLabel_few": "{{count}} pages sampled",
+    "sampleLabel_many": "{{count}} pages sampled",
+    "sampleLabel_other": "{{count}} pages sampled"
   },
   "aiSummary": {
     "cardTitle": "AI summary of your fixes",
@@ -135,13 +274,48 @@
     "errors": {
       "unavailable": "AI summary is temporarily unavailable — your checklist is unaffected.",
       "capReached": "You've reached your monthly AI summary limit. Upgrade or add credits to keep generating."
-    }
+    },
+    "basis_zero": "Based on {{count}} open findings",
+    "basis_one": "Based on {{count}} open finding",
+    "basis_two": "Based on {{count}} open findings",
+    "basis_few": "Based on {{count}} open findings",
+    "basis_many": "Based on {{count}} open findings",
+    "basis_other": "Based on {{count}} open findings",
+    "stage": {
+      "queued": "Getting ready…",
+      "reading_findings": "Reading your findings…",
+      "checking_priorities": "Checking priorities…",
+      "writing_summary": "Writing the summary…"
+    },
+    "elapsed": "Elapsed: {{time}}",
+    "expectation": "Usually takes 30 to 40 seconds. You can leave this page: the summary keeps going and will be here when you come back.",
+    "ready": "Your AI summary is ready.",
+    "failedAnnouncement": "The AI summary could not be written.",
+    "failure": {
+      "provider_unavailable": "Our AI provider is unavailable right now, so the summary was not written.",
+      "timeout": "The AI provider took too long, so the summary was not written.",
+      "internal": "Something went wrong on our side, so the summary was not written."
+    },
+    "tryAgain": "Try again",
+    "staleMarker": "Out of date",
+    "firstStep": "First step:",
+    "actIn": {
+      "report": "Open this finding in the report",
+      "pages": "Open Pages",
+      "google": "Open the Google tab",
+      "schema": "Open the schema generator",
+      "local-seo": "Open Local SEO",
+      "ai-visibility": "Open AI visibility"
+    },
+    "staleTitle": "This summary is out of date",
+    "staleBody": "Findings it covers were dismissed, fixed or reopened after it was written. Regenerate it so it matches your open fixes.",
+    "showPrevious": "Show the previous summary",
+    "hidePrevious": "Hide the previous summary"
   },
   "pdf": {
     "download": "Download PDF",
     "downloading": "Preparing PDF…",
-    "error": "Could not prepare the PDF. Please try again.",
-    "upgradeHint": "PDF reports are available on the Pro and Agency plans."
+    "error": "Could not prepare the PDF. Please try again."
   },
   "gscBlock": {
     "sectionTitle": "Google search performance (last 28 days)",
@@ -173,11 +347,26 @@
     "noSitemapsTitle": "No sitemap submitted to Google",
     "noSitemapsBody": "Submit your sitemap in Google Search Console so Google can find every page you want indexed.",
     "sitemapHealthy": "Healthy",
-    "sitemapErrors": "{{count}} errors",
-    "sitemapWarnings": "{{count}} warnings",
-    "sitemapProcessed": "{{count}} URLs submitted",
+    "sitemapErrors_one": "{{count}} error",
+    "sitemapWarnings_one": "{{count}} warning",
+    "sitemapProcessed_one": "{{count}} URL submitted",
     "sitemapLastDownloaded": "Last read by Google: {{date}}",
-    "sitemapNeverDownloaded": "Not read by Google yet"
+    "sitemapNeverDownloaded": "Not read by Google yet",
+    "sitemapErrors_zero": "{{count}} errors",
+    "sitemapErrors_two": "{{count}} errors",
+    "sitemapErrors_few": "{{count}} errors",
+    "sitemapErrors_many": "{{count}} errors",
+    "sitemapErrors_other": "{{count}} errors",
+    "sitemapWarnings_zero": "{{count}} warnings",
+    "sitemapWarnings_two": "{{count}} warnings",
+    "sitemapWarnings_few": "{{count}} warnings",
+    "sitemapWarnings_many": "{{count}} warnings",
+    "sitemapWarnings_other": "{{count}} warnings",
+    "sitemapProcessed_zero": "{{count}} URLs submitted",
+    "sitemapProcessed_two": "{{count}} URLs submitted",
+    "sitemapProcessed_few": "{{count}} URLs submitted",
+    "sitemapProcessed_many": "{{count}} URLs submitted",
+    "sitemapProcessed_other": "{{count}} URLs submitted"
   },
   "aiVisibilityBlock": {
     "title": "AI Visibility",
@@ -214,8 +403,13 @@
     "unansweredQuestions": "Unanswered questions",
     "localPack": "Local map pack",
     "notRanked": "Not in map pack",
-    "packSize": "{{count}} results",
-    "noData": "No data"
+    "packSize_one": "{{count}} result",
+    "noData": "No data",
+    "packSize_zero": "{{count}} results",
+    "packSize_two": "{{count}} results",
+    "packSize_few": "{{count}} results",
+    "packSize_many": "{{count}} results",
+    "packSize_other": "{{count}} results"
   },
   "exportUi": {
     "trigger": "Export or share",
@@ -225,15 +419,118 @@
     "unavailable": "Export unavailable",
     "empty": "Nothing to export yet",
     "formatsLabel": "File formats",
-    "clipboard": { "action": "Copy to clipboard", "success": "Copied to clipboard.", "error": "Could not copy to clipboard." },
-    "formats": { "view": "Web view", "pdf": "PDF", "csv": "CSV", "json": "JSON", "md": "Markdown", "jsonld": "JSON-LD", "txt": "Text" },
-    "kindAreas": { "audit": "Site audit", "ranks": "Rankings", "google": "Google data", "client": "Client report", "keyword": "Keywords", "backlinks": "Backlinks", "competitors": "Competitors", "actions": "Next actions", "ai": "AI visibility", "audience": "Audience research", "brand": "Brand Radar", "content": "Content", "internal_links": "Internal links", "weekly_pulse": "Weekly pulse", "local": "Local SEO", "schema": "Schema markup", "pages": "Pages", "app": "App store optimization" },
-    "states": { "active": "Active", "revoked": "Revoked", "expired": "Expired" },
-    "actions": { "retry": "Try again", "download": "Download", "delete": "Delete", "revoke": "Revoke", "cancel": "Cancel", "done": "Done" },
-    "errors": { "capabilities": "Export options could not be loaded.", "create": "The report could not be exported. Narrow the scope and try again.", "download": "The saved file could not be downloaded.", "list": "Saved exports could not be loaded.", "delete": "The saved export could not be deleted.", "share": "The share link could not be created.", "revoke": "The share link could not be revoked.", "copy": "The link could not be copied." },
-    "share": { "action": "Create share link", "title": "Share an immutable report", "description": "Choose what recipients can open. The report will not change after this link is created.", "locale": "Report language", "expiry": "Expires after", "expiryHelp": "Choose from one to 90 days.", "permissions": "Allowed formats", "create": "Create link", "creating": "Creating link…", "showOnce": "Copy this link now", "linkLabel": "Share link", "copy": "Copy link", "copied": "Copied", "savedWithoutToken": "For security, RankMeFast does not save the readable link. You can still revoke it from the export center.", "existing": "Links for this snapshot", "refresh": "Refresh" },
-    "confirm": { "revokeTitle": "Revoke this link?", "revokeBody": "Anyone using it will lose access immediately.", "deleteTitle": "Delete this saved export?", "deleteBody": "The file will stop working and every attached share link will be revoked." },
-    "center": { "title": "Exports and shares", "description": "Download saved report snapshots and manage public links.", "tabsLabel": "Export center sections", "downloads": "Downloads", "shares": "Shares", "disabledTitle": "New exports are paused", "disabledBody": "Existing files may remain available, but new files and links cannot be created right now.", "emptyDownloadsTitle": "No saved exports yet", "emptyDownloadsBody": "Create one from any report using Export or share.", "emptySharesTitle": "No share links yet", "emptySharesBody": "Share an eligible report to manage its link here.", "deletedReport": "Deleted or expired report", "noSite": "Whole account", "more": "Load more", "expiresValue": "Expires {{date}}", "views": "{{count}} views", "columns": { "report": "Report", "site": "Site", "format": "Format", "created": "Created", "expires": "Expires", "actions": "Actions" } }
+    "clipboard": {
+      "action": "Copy to clipboard",
+      "success": "Copied to clipboard.",
+      "error": "Could not copy to clipboard."
+    },
+    "formats": {
+      "view": "Web view",
+      "pdf": "PDF",
+      "csv": "CSV",
+      "json": "JSON",
+      "md": "Markdown",
+      "jsonld": "JSON-LD",
+      "txt": "Text"
+    },
+    "kindAreas": {
+      "audit": "Site audit",
+      "ranks": "Rankings",
+      "google": "Google data",
+      "client": "Client report",
+      "keyword": "Keywords",
+      "backlinks": "Backlinks",
+      "competitors": "Competitors",
+      "actions": "Next actions",
+      "ai": "AI visibility",
+      "audience": "Audience research",
+      "brand": "Brand Radar",
+      "content": "Content",
+      "internal_links": "Internal links",
+      "weekly_pulse": "Weekly pulse",
+      "local": "Local SEO",
+      "schema": "Schema markup",
+      "pages": "Pages",
+      "app": "App store optimization"
+    },
+    "states": {
+      "active": "Active",
+      "revoked": "Revoked",
+      "expired": "Expired"
+    },
+    "actions": {
+      "retry": "Try again",
+      "download": "Download",
+      "delete": "Delete",
+      "revoke": "Revoke",
+      "cancel": "Cancel",
+      "done": "Done"
+    },
+    "errors": {
+      "capabilities": "Export options could not be loaded.",
+      "create": "The report could not be exported. Narrow the scope and try again.",
+      "download": "The saved file could not be downloaded.",
+      "list": "Saved exports could not be loaded.",
+      "delete": "The saved export could not be deleted.",
+      "share": "The share link could not be created.",
+      "revoke": "The share link could not be revoked.",
+      "copy": "The link could not be copied."
+    },
+    "share": {
+      "action": "Create share link",
+      "title": "Share an immutable report",
+      "description": "Choose what recipients can open. The report will not change after this link is created.",
+      "locale": "Report language",
+      "expiry": "Expires after",
+      "expiryHelp": "Choose from one to 90 days.",
+      "permissions": "Allowed formats",
+      "create": "Create link",
+      "creating": "Creating link…",
+      "showOnce": "Copy this link now",
+      "linkLabel": "Share link",
+      "copy": "Copy link",
+      "copied": "Copied",
+      "savedWithoutToken": "For security, RankMeFast does not save the readable link. You can still revoke it from the export center.",
+      "existing": "Links for this snapshot",
+      "refresh": "Refresh"
+    },
+    "confirm": {
+      "revokeTitle": "Revoke this link?",
+      "revokeBody": "Anyone using it will lose access immediately.",
+      "deleteTitle": "Delete this saved export?",
+      "deleteBody": "The file will stop working and every attached share link will be revoked."
+    },
+    "center": {
+      "title": "Exports and shares",
+      "description": "Download saved report snapshots and manage public links.",
+      "tabsLabel": "Export center sections",
+      "downloads": "Downloads",
+      "shares": "Shares",
+      "disabledTitle": "New exports are paused",
+      "disabledBody": "Existing files may remain available, but new files and links cannot be created right now.",
+      "emptyDownloadsTitle": "No saved exports yet",
+      "emptyDownloadsBody": "Create one from any report using Export or share.",
+      "emptySharesTitle": "No share links yet",
+      "emptySharesBody": "Share an eligible report to manage its link here.",
+      "deletedReport": "Deleted or expired report",
+      "noSite": "Whole account",
+      "more": "Load more",
+      "expiresValue": "Expires {{date}}",
+      "views_one": "{{count}} view",
+      "columns": {
+        "report": "Report",
+        "site": "Site",
+        "format": "Format",
+        "created": "Created",
+        "expires": "Expires",
+        "actions": "Actions"
+      },
+      "views_zero": "{{count}} views",
+      "views_two": "{{count}} views",
+      "views_few": "{{count}} views",
+      "views_many": "{{count}} views",
+      "views_other": "{{count}} views"
+    }
   },
   "publicShare": {
     "report": "Shared report",
@@ -254,10 +551,16 @@
     "description": "These checks could not run because a data source is missing. They are not counted as problems.",
     "badge": "Not evaluated",
     "sources": {
+      "legacyRun": "This audit ran before this check existed. Run a new audit to include it.",
+      "scanOff": "This audit ran without the image, script and style scan. Run a new audit with that option ticked to include this check.",
+      "crawlReadUnavailable": "This part of the crawl could not be read during this audit. This check runs again on the next audit.",
       "gsc": "Connect Google Search Console to check this.",
       "gscReconnect": "Reconnect Google Search Console to check this.",
       "pageSpeed": "Speed data from real visitors is not available for this site yet.",
       "localSeo": "Add a business listing or review source to check this.",
+      "localUnavailable": "Local SEO data could not be loaded during this audit. This check runs again on the next audit.",
+      "localNoProfile": "We found no business listing, reviews, or rating for this site (for example, a Google Business Profile), so there was nothing local to check.",
+      "localPackSetup": "Turn on map-results tracking for one of your tracked keywords to check this.",
       "aiVisibility": "Track AI prompts to check this.",
       "generic": "The crawl did not return enough data to check this.",
       "probeUnreachable": "We could not reach {{file}} on your site, so this could not be checked.",
@@ -273,5 +576,93 @@
     "title": "Run your first audit",
     "description": "We crawl your site once and show what to fix, what to watch, and what already passes.",
     "confirm": "Start audit"
+  },
+  "findingStatus": "{{bucket}} · {{severity}}",
+  "progress": {
+    "upTo_zero": "Crawling up to {{cap}} pages.",
+    "upTo_one": "Crawling up to {{cap}} page.",
+    "upTo_two": "Crawling up to {{cap}} pages.",
+    "upTo_few": "Crawling up to {{cap}} pages.",
+    "upTo_many": "Crawling up to {{cap}} pages.",
+    "upTo_other": "Crawling up to {{cap}} pages."
+  },
+  "dismissed": {
+    "title_zero": "Dismissed ({{count}})",
+    "title_one": "Dismissed ({{count}})",
+    "title_two": "Dismissed ({{count}})",
+    "title_few": "Dismissed ({{count}})",
+    "title_many": "Dismissed ({{count}})",
+    "title_other": "Dismissed ({{count}})",
+    "stillDetected_zero": "Still detected in the latest audit: {{count}} pages affected.",
+    "stillDetected_one": "Still detected in the latest audit: {{count}} page affected.",
+    "stillDetected_two": "Still detected in the latest audit: {{count}} pages affected.",
+    "stillDetected_few": "Still detected in the latest audit: {{count}} pages affected.",
+    "stillDetected_many": "Still detected in the latest audit: {{count}} pages affected.",
+    "stillDetected_other": "Still detected in the latest audit: {{count}} pages affected.",
+    "resurfaced_zero": "Dismissed, but {{count}} more pages are now affected.",
+    "resurfaced_one": "Dismissed, but {{count}} more page is now affected.",
+    "resurfaced_two": "Dismissed, but {{count}} more pages are now affected.",
+    "resurfaced_few": "Dismissed, but {{count}} more pages are now affected.",
+    "resurfaced_many": "Dismissed, but {{count}} more pages are now affected.",
+    "resurfaced_other": "Dismissed, but {{count}} more pages are now affected.",
+    "description": "These findings are not in the counts above. Restore one to put it back on the list.",
+    "justNow": "Dismissed",
+    "byOn": "Dismissed by {{name}} on {{date}}",
+    "on": "Dismissed on {{date}}",
+    "reason": "Reason: {{reason}}",
+    "notDetected": "Not detected in the latest audit.",
+    "recheckResult": "Re-checked {{date}}: of {{checked}} URLs, {{stillFailing}} still fail, {{cleared}} now work and {{unverified}} could not be checked.",
+    "recheckByAudit": "To check this finding again, run a new audit.",
+    "recheckCta": "Re-check these URLs",
+    "restoreCta": "Restore",
+    "recheckTitle": "Re-check these URLs?",
+    "recheckUrls": "We will request {{urls}} of {{total}} URLs again and record what each one answers.",
+    "recheckNote": "A re-check only requests your own pages. It does not start a new audit.",
+    "recheckConfirm": "Re-check now",
+    "recheckRunning": "Re-checking…",
+    "recheckFailed": "We couldn't re-check these URLs. Try again."
+  },
+  "stale": {
+    "title_zero": "Last audited {{count}} days ago",
+    "title_one": "Last audited {{count}} day ago",
+    "title_two": "Last audited {{count}} days ago",
+    "title_few": "Last audited {{count}} days ago",
+    "title_many": "Last audited {{count}} days ago",
+    "title_other": "Last audited {{count}} days ago",
+    "body": "Results may no longer match your site. Run a new audit to refresh them.",
+    "cta": "Run a new audit"
+  },
+  "comparison": {
+    "status": {
+      "new": "New",
+      "regressed": "Regressed",
+      "improved": "Improved",
+      "unchanged": "Unchanged",
+      "resolved": "Resolved",
+      "not_comparable": "Not comparable"
+    },
+    "description": {
+      "new": "New: the previous audit did not check this, or could not.",
+      "regressed": "Regressed: worse than in the previous audit, which did check it.",
+      "improved": "Improved: still open, but better than in the previous audit.",
+      "unchanged": "Unchanged since the previous audit.",
+      "resolved": "Resolved: a problem in the previous audit that passes now.",
+      "not_comparable": "Not comparable: the two audits crawled different sets of pages, so the counts cannot be compared."
+    },
+    "scopeNote": "The previous audit crawled {{previous}} pages; this one crawled {{current}}, so page counts are not directly comparable.",
+    "scopeNoteLimits": "The previous audit had a page limit of {{previous}}; this one had {{current}}, so page counts are not directly comparable."
+  },
+  "notApplicable": {
+    "title": "Not applicable to this site",
+    "description": "These Local SEO checks are for businesses that serve customers at an address or in a local area. They are not counted anywhere in this report.",
+    "optIn": "This is a local business",
+    "optInHint": "The checks then move to Not evaluated until Local SEO is set up.",
+    "saving": "Saving…",
+    "failed": "We couldn't save that. Try again."
+  },
+  "olderRun": {
+    "viewing": "You are viewing the audit from {{date}}.",
+    "viewingUndated": "You are viewing an older audit.",
+    "backToLatest": "Back to the latest report"
   }
 }

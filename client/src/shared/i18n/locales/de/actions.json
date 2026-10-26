@@ -4,7 +4,12 @@
   "status": {
     "loading": "Aktionen werden geladen…",
     "refreshing": "Aktionen werden aktualisiert…",
-    "showing": "{{count}} Aktionen angezeigt"
+    "showing_one": "{{count}} Aktion angezeigt",
+    "showing_zero": "{{count}} Aktionen angezeigt",
+    "showing_two": "{{count}} Aktionen angezeigt",
+    "showing_few": "{{count}} Aktionen angezeigt",
+    "showing_many": "{{count}} Aktionen angezeigt",
+    "showing_other": "{{count}} Aktionen angezeigt"
   },
   "errors": {
     "loadFailed": "Ihre Aktionen konnten nicht geladen werden. Bitte versuchen Sie es erneut.",
@@ -18,6 +23,7 @@
     "label": "Aktionen filtern",
     "reset": "Filter zurücksetzen",
     "all": "Alle",
+    "openAndPlanned": "Offen und geplant",
     "state": "Status",
     "source": "Quelle",
     "severity": "Schweregrad",
@@ -43,7 +49,8 @@
     "ga4_decline": "Analytics-Rückgang",
     "content_recommendation": "Content-Empfehlung",
     "citation_gap": "KI-Zitationslücke",
-    "audience_research": "Zielgruppenforschung"
+    "audience_research": "Zielgruppenforschung",
+    "competitor_opportunity": "Wettbewerbschance"
   },
   "severity": {
     "critical": "Kritisch",
@@ -69,22 +76,50 @@
   "freshness": {
     "fresh": "Aktuell",
     "stale": "Veraltet",
-    "unavailable": "Nicht überprüft"
+    "unavailable": "Nicht überprüft",
+    "partial": "Unvollständig",
+    "blocked": "Blockiert",
+    "failed": "Fehlgeschlagen",
+    "unknown": "Aktualität unbekannt"
   },
   "card": {
     "nextStep": "Nächster Schritt",
     "observedAt": "Beobachtet am {{date}}",
     "openSource": "Quellansicht öffnen",
     "affectedNone": "Websiteweit",
-    "affectedOne": "1 betroffene URL",
-    "affectedCount": "{{count}} betroffene URLs",
+    "affectedCount_one": "{{count}} betroffene URL",
     "evidence": "Belege",
-    "evidenceLabel": "{{source}} · {{date}}",
+    "evidenceLabel": "{{source}} · {{date}} · {{detail}}",
     "evidenceLink": "Belegquelle öffnen",
     "history": "Verlauf",
     "retest": "Erneut prüfen",
-    "affectedSample": "({{shown}} angezeigt)",
-    "noteLabel": "Notiz"
+    "noteLabel": "Notiz",
+    "affectedCount_zero": "{{count}} betroffene URLs",
+    "affectedCount_two": "{{count}} betroffene URLs",
+    "affectedCount_few": "{{count}} betroffene URLs",
+    "affectedCount_many": "{{count}} betroffene URLs",
+    "affectedCount_other": "{{count}} betroffene URLs",
+    "affectedCountSampled_zero": "{{count}} betroffene URLs ({{shown}} angezeigt)",
+    "affectedCountSampled_one": "{{count}} betroffene URL ({{shown}} angezeigt)",
+    "affectedCountSampled_two": "{{count}} betroffene URLs ({{shown}} angezeigt)",
+    "affectedCountSampled_few": "{{count}} betroffene URLs ({{shown}} angezeigt)",
+    "affectedCountSampled_many": "{{count}} betroffene URLs ({{shown}} angezeigt)",
+    "affectedCountSampled_other": "{{count}} betroffene URLs ({{shown}} angezeigt)",
+    "seeAllUrls_zero": "Alle {{count}} URLs im Bericht ansehen",
+    "seeAllUrls_one": "{{count}} URL im Bericht ansehen",
+    "seeAllUrls_two": "Alle {{count}} URLs im Bericht ansehen",
+    "seeAllUrls_few": "Alle {{count}} URLs im Bericht ansehen",
+    "seeAllUrls_many": "Alle {{count}} URLs im Bericht ansehen",
+    "seeAllUrls_other": "Alle {{count}} URLs im Bericht ansehen",
+    "seeLinkTargets_zero": "Alle {{count}} Seiten und die defekten Links, auf die sie verweisen, im Bericht ansehen",
+    "seeLinkTargets_one": "{{count}} Seite und die defekten Links, auf die sie verweist, im Bericht ansehen",
+    "seeLinkTargets_two": "Alle {{count}} Seiten und die defekten Links, auf die sie verweisen, im Bericht ansehen",
+    "seeLinkTargets_few": "Alle {{count}} Seiten und die defekten Links, auf die sie verweisen, im Bericht ansehen",
+    "seeLinkTargets_many": "Alle {{count}} Seiten und die defekten Links, auf die sie verweisen, im Bericht ansehen",
+    "seeLinkTargets_other": "Alle {{count}} Seiten und die defekten Links, auf die sie verweisen, im Bericht ansehen",
+    "linkSourcesCount": "Seiten mit defekten Links: {{count}}",
+    "staleRetestHint": "Dieser Nachweis ist veraltet. Testen Sie erneut, um ihn neu zu prüfen.",
+    "linkSourcesCountSampled": "Seiten mit defekten Links: {{count}} ({{shown}} angezeigt)"
   },
   "transitions": {
     "planned": "Planen",
@@ -110,7 +145,14 @@
     "confirm": "Bestätigen",
     "saving": "Wird gespeichert…",
     "conflict": "Jemand anderes hat diese Aktion zuerst geändert. Laden Sie sie neu und versuchen Sie es erneut.",
-    "conflictReload": "Aktion neu laden"
+    "conflictReload": "Aktion neu laden",
+    "reasonLabel": "Warum verwerfen Sie diesen Befund?",
+    "reasons": {
+      "false_positive": "Fehlalarm",
+      "wont_fix": "Wird nicht behoben",
+      "fixed_elsewhere": "Anderswo behoben",
+      "other": "Anderer Grund"
+    }
   },
   "history": {
     "title": "Aktionsverlauf",
@@ -118,7 +160,9 @@
     "actor": "Teammitglied",
     "from": "von {{state}}",
     "close": "Schließen",
-    "actorYou": "Sie"
+    "actorYou": "Sie",
+    "observed": "Festgestellt",
+    "actorSystem": "Automatische Prüfung"
   },
   "retest": {
     "title": "Diesen Befund erneut prüfen?",
@@ -127,8 +171,6 @@
     "unitsValue": "1",
     "freshRun": "Eine erneute Prüfung crawlt immer neu — Ergebnisse kommen nie aus einem Cache.",
     "selfHosted": "Auf diesem Server werden keine Nutzungslimits angewendet.",
-    "remaining": "{{remaining}} von {{cap}} Audit-Läufen in diesem Zeitraum übrig",
-    "allowanceUnknown": "Ihr verbleibendes Kontingent konnte nicht geladen werden. Der Server prüft Ihr Limit vor dem Start trotzdem.",
     "confirm": "Erneute Prüfung starten",
     "starting": "Wird gestartet…",
     "queued": "Erneute Prüfung eingereiht. Verfolgen Sie den Fortschritt im Bericht-Tab.",
@@ -154,6 +196,8 @@
     "dismissedLabel": "Als Fehlalarm verworfen",
     "fixCta": "Als behoben markieren",
     "fixedLabel": "Als behoben markiert",
-    "reappearedLabel": "Trotz Markierung als behoben weiterhin gefunden"
+    "reappearedLabel": "Trotz Markierung als behoben weiterhin gefunden",
+    "notCounted": "Nicht mitgezählt – verworfen: {{dismissed}}, als behoben markiert: {{completed}}.",
+    "fixedGroupIn": "Als behoben markiert in {{tab}} ({{count}})"
   }
 }

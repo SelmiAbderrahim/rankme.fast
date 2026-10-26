@@ -54,7 +54,7 @@ the localized unavailable response before any auth work.
 
 ## Output safety
 
-Every tool result is passed through `assertNoForbidden` (Prompt 00 recursive
+Every tool result is passed through `assertNoForbidden` (recursive
 denylist scanner) before it's returned to the client — no secret names,
 authorization material, raw HTML, prompt/completion text, or vendor payload
 keys reach the wire. Reads only surface fields the product UI already shows

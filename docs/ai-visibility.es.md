@@ -15,6 +15,8 @@ Muchos compradores ya le preguntan a un asistente de IA en lugar de revisar una 
 
 Una consulta es una pregunta que un comprador podría hacerle a un asistente de IA, por ejemplo «mejor herramienta de gestión de proyectos para un equipo pequeño». Tú añades las consultas que importan para tu negocio. Puedes seguir hasta **10 consultas por sitio**. Elige las más cercanas a una decisión de compra; ahí es donde ser mencionado vale más.
 
+Añadir un prompt que ya sigues se rechaza con un mensaje; los prompts se comparan ignorando mayúsculas, espacios y signos de puntuación. Las sugerencias se escriben en el idioma del mercado de tu sitio y se construyen con tus propias páginas, palabras clave y datos de Search Console, y se omite una sugerencia que ya sigues. Cuando las pruebas son escasas, un aviso lo indica; **Volver a generar sugerencias** crea un conjunto nuevo, y un conjunto antiguo anterior a esta regla permanece oculto hasta que lo hagas. Un prompt que nunca se ha comprobado muestra **Aún sin comprobar** en lugar de un resultado, y nunca se cuenta como no mencionado.
+
 ## Ejecutar una comprobación
 
 Una comprobación ejecuta cada consulta seguida y lee la respuesta que devuelve el asistente. Para cada consulta registra:

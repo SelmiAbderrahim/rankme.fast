@@ -15,6 +15,8 @@ Viele Käufer fragen heute einen KI-Assistenten, statt eine Seite mit Suchergebn
 
 Eine Anfrage ist eine Frage, die ein Käufer einem KI-Assistenten stellen könnte, zum Beispiel „bestes Projektmanagement-Tool für ein kleines Team". Sie fügen die Anfragen hinzu, die für Ihr Geschäft wichtig sind. Sie können bis zu **10 Anfragen pro Website** verfolgen. Wählen Sie die, die einer Kaufentscheidung am nächsten sind; dort ist eine Erwähnung am wertvollsten.
 
+Das Hinzufügen eines bereits verfolgten Prompts wird mit einer Meldung abgelehnt; Prompts werden ohne Beachtung von Groß-/Kleinschreibung, Leerzeichen und Satzzeichen verglichen. Vorschläge werden in der Marktsprache Ihrer Website verfasst und aus Ihren eigenen Seiten, Keywords und Search-Console-Daten aufgebaut; ein bereits verfolgter Vorschlag entfällt. Ist die Beleglage dünn, weist ein Hinweis darauf hin; **Vorschläge neu erstellen** erstellt einen neuen Satz, und ein alter Satz aus der Zeit vor dieser Regel bleibt ausgeblendet, bis Sie das tun. Ein Prompt, der noch nie geprüft wurde, zeigt **Noch nicht geprüft** statt eines Ergebnisses und wird nie als nicht erwähnt gezählt.
+
 ## Eine Prüfung ausführen
 
 Eine Prüfung führt jede verfolgte Anfrage aus und liest die Antwort, die der Assistent zurückgibt. Für jede Anfrage erfasst sie:

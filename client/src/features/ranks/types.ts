@@ -1,4 +1,5 @@
 import type { ObservationMeta } from '@shared/observations/types';
+import type { PositionChangeValue, RankMovementValue } from '@shared/components/PositionDelta';
 
 export type SerpDevice = 'desktop' | 'mobile';
 export type RankCadence = 'weekly' | 'daily';
@@ -29,6 +30,32 @@ export const RANK_CHECK_FAILURE_REASONS = [
 ] as const;
 export type RankCheckFailureReason = (typeof RANK_CHECK_FAILURE_REASONS)[number];
 
+export interface KeywordLatestOutcome {
+  status: 'checked' | 'failed' | 'skipped';
+  reason: RankCheckFailureReason | 'cap_reached' | 'site_paused' | null;
+  at: string;
+  periodKey: string;
+  attempts: number;
+  nextRetryAt: string | null;
+}
+
+export const KEYWORD_RANK_STATES = [
+  'ranked', 'improved', 'declined', 'unchanged', 'new', 'lost',
+  'not_in_top_100', 'failed_last_check', 'never_checked',
+] as const;
+export type KeywordRankState = (typeof KEYWORD_RANK_STATES)[number];
+export interface KeywordRankStateValue {
+  state: KeywordRankState;
+  comparison: Exclude<KeywordRankState, 'failed_last_check' | 'never_checked'> | null;
+  baseline: 'previous_check' | 'best_ever';
+  position: number | null;
+  baselinePosition: number | null;
+  change: number | null;
+  checkedAt: string | null;
+  baselineCheckedAt: string | null;
+  failedAt: string | null;
+}
+
 export const isAltRankEngine = (engine: RankEngine): boolean => engine !== 'google';
 
 export interface Keyword {
@@ -44,6 +71,10 @@ export interface Keyword {
   latestPosition: number | null;
   previousPosition: number | null;
   delta: number | null;
+  movement?: RankMovementValue;
+  positionChange?: PositionChangeValue;
+  rankState?: KeywordRankStateValue;
+  lastOutcome?: KeywordLatestOutcome | null;
   lastCheckedAt: string | null;
   /** Google AI Overview signal from the latest check. null = unknown. */
   aiOverviewPresent: boolean | null;
@@ -73,6 +104,57 @@ export interface KeywordListPage {
   keywords: Keyword[];
   nextCursor: string | null;
   cadence: RankCadence;
+  total?: number;
+  siteTotal?: number;
+  page?: number | null;
+  pageSize?: number;
+}
+
+export const KEYWORD_PAGE_SIZES = [25, 50, 100] as const;
+export type KeywordPageSize = (typeof KEYWORD_PAGE_SIZES)[number];
+export interface KeywordListQuery {
+  page: number;
+  pageSize: KeywordPageSize;
+  engine: RankEngine | null;
+  search: string;
+}
+
+export interface TrackedKeywordPhrase {
+  phrase: string;
+  engine: RankEngine;
+  locationCode: number;
+  languageCode: string;
+  device: SerpDevice;
+}
+export interface TrackedKeywordPhrasesResponse { keywords: TrackedKeywordPhrase[] }
+export type BulkKeywordResultStatus = 'added' | 'duplicate' | 'invalid';
+export interface BulkKeywordResult {
+  phrase: string;
+  status: BulkKeywordResultStatus;
+  reason?: 'repeated' | 'already_tracked' | 'empty' | 'too_long';
+  keyword?: Keyword;
+  message?: string;
+}
+export interface BulkKeywordResponse {
+  message: string;
+  counts: { added: number; duplicate: number; invalid: number };
+  results: BulkKeywordResult[];
+}
+export type BulkKeywordBody = Omit<CreateKeywordBody, 'phrase'> & { phrases: string[] };
+
+export interface KeywordMarketMovePreview {
+  target: { locationCode: number; languageCode: string; device: SerpDevice };
+  tracked: number;
+  inTarget: number;
+  movable: number;
+  alreadyTracked: number;
+  withHistory: number;
+  resumesHistory: number;
+  token: string;
+}
+export interface KeywordMarketMoveResponse {
+  moved: number;
+  preview: KeywordMarketMovePreview;
 }
 
 export interface CreateKeywordBody {
@@ -140,7 +222,44 @@ export interface CheckNowResponse {
   message: string;
   /** Server clock captured before enqueue; polling compares snapshots to this. */
   checkStartedAt: string;
+  job?: RankJob | null;
+  reused?: boolean;
 }
+
+export type RankJobItemState = 'queued' | 'running' | 'succeeded' | 'failed' | 'cancelled' | 'expired';
+export type RankJobStatus = 'queued' | 'running' | 'succeeded' | 'partial' | 'failed' | 'cancelled';
+export interface RankJobItem {
+  keywordId: string;
+  engine: string;
+  state: RankJobItemState;
+  reason: string | null;
+  attempts: number;
+  finishedAt: string | null;
+}
+export interface RankJobTotals {
+  total: number;
+  queued: number;
+  running: number;
+  succeeded: number;
+  failed: number;
+  expired: number;
+  cancelled: number;
+}
+export interface RankJob {
+  id: string;
+  siteId: string;
+  scope: 'site' | 'keyword' | 'retry';
+  status: RankJobStatus;
+  retryOfJobId: string | null;
+  createdAt: string;
+  startedAt: string | null;
+  finishedAt: string | null;
+  deadlineAt: string;
+  totals: RankJobTotals;
+  items: RankJobItem[];
+}
+export interface RankJobResponse { job: RankJob }
+export interface ActiveRankJobResponse { job: RankJob | null }
 
 export interface RankHistoryPoint {
   checkedAt: string;
@@ -156,9 +275,19 @@ export interface RankHistoryPoint {
   observationMeta: ObservationMeta | null;
 }
 
+/** A scheduled check that produced no observation. */
+export interface RankHistoryMissedCheck {
+  periodKey: string;
+  status: 'failed' | 'skipped';
+  reason: string | null;
+  attemptedAt: string;
+}
+
 export interface RankHistoryResponse {
   keywordId: string;
   series: RankHistoryPoint[];
+  /** Absent on responses from before missed checks were reported. */
+  missedChecks?: RankHistoryMissedCheck[];
 }
 
 // ---------------------------------------------------------------------------
@@ -244,6 +373,12 @@ export interface SerpFeatureDetail {
 export interface RanksState {
   siteId: string | null;
   items: Keyword[];
+  page: number;
+  pageSize: KeywordPageSize;
+  total: number;
+  siteTotal: number;
+  listRequestId: string | null;
+  loadedQuery: KeywordListQuery;
   nextCursor: string | null;
   currentCursor: string | null;
   cursorStack: (string | null)[];
@@ -266,6 +401,7 @@ export interface RanksState {
   message: string;
   selectedKeywordId: string | null;
   history: RankHistoryPoint[];
+  historyMissedChecks: RankHistoryMissedCheck[];
   historyKeywordId: string | null;
   historyLoading: boolean;
   historyError: string;

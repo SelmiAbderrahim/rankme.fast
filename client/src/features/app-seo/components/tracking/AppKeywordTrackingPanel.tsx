@@ -1,3 +1,5 @@
+import { isolateText } from '@shared/lib/bidi';
+import { Bdi } from '@shared/components/Bdi';
 import { type FormEvent, useCallback, useEffect, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useSearchParams } from 'react-router-dom';
@@ -430,7 +432,7 @@ export function AppKeywordTrackingPanel({ siteId }: { siteId: string }) {
                             />
                           </TableCell>
                           <TableCell className="font-medium">
-                            {row.keyword}
+                            <Bdi>{row.keyword}</Bdi>
                             {tracked ? (
                               <Badge variant="secondary" className="ms-2">
                                 {t('discover.tracked')}
@@ -470,7 +472,7 @@ export function AppKeywordTrackingPanel({ siteId }: { siteId: string }) {
                 <SelectContent>
                   {profiles.map((item) => (
                     <SelectItem key={item.id} value={item.id}>
-                      {profileLabel(item)}
+                      <Bdi>{profileLabel(item)}</Bdi>
                     </SelectItem>
                   ))}
                 </SelectContent>
@@ -498,7 +500,7 @@ export function AppKeywordTrackingPanel({ siteId }: { siteId: string }) {
                 <SelectContent>
                   {storeOptions.map((item) => (
                     <SelectItem key={item.value} value={item.value}>
-                      {item.label}
+                      <Bdi>{item.label}</Bdi>
                     </SelectItem>
                   ))}
                 </SelectContent>
@@ -591,7 +593,7 @@ export function AppKeywordTrackingPanel({ siteId }: { siteId: string }) {
               <TableBody>
                 {tracking.items.map((item) => (
                   <TableRow key={item.id}>
-                    <TableCell className="font-medium">{item.phrase}</TableCell>
+                    <TableCell className="font-medium"><Bdi>{item.phrase}</Bdi></TableCell>
                     <TableCell>
                       {item.store === 'google_play' ? t('stores.googlePlay') : t('stores.appStore')}
                     </TableCell>
@@ -673,7 +675,7 @@ export function AppKeywordTrackingPanel({ siteId }: { siteId: string }) {
       {selectedKeyword ? (
         <Card>
           <CardHeader>
-            <CardTitle>{t('history.title', { phrase: selectedKeyword.phrase })}</CardTitle>
+            <CardTitle>{t('history.title', { phrase: isolateText(selectedKeyword.phrase) })}</CardTitle>
             <CardDescription>{t('history.description')}</CardDescription>
           </CardHeader>
           <CardContent>
@@ -722,7 +724,7 @@ export function AppKeywordTrackingPanel({ siteId }: { siteId: string }) {
           <DialogHeader>
             <DialogTitle>{t('recheck.title')}</DialogTitle>
             <DialogDescription>
-              {t('recheck.description', { phrase: selectedKeyword?.phrase ?? '' })}
+              {t('recheck.description', { phrase: isolateText(selectedKeyword?.phrase ?? '') })}
             </DialogDescription>
           </DialogHeader>
           <DialogFooter>

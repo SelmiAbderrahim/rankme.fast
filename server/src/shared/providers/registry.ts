@@ -141,23 +141,21 @@ export interface ProviderRegistryOptions {
         baseUrl: string;
     };
     /**
-     * SERP depth for rank checks (env `SERP_DEPTH`). Organic SERPs bill per 10
-     * results, so this is a COST knob: the `serp_checks` unit cost in
-     * `shared/billing/vendor-costs.ts` budgets depth 100 ($0.006/check) — a
-     * larger depth breaks the margin model (the derivation test catches it).
+     * SERP depth for rank checks (env `SERP_DEPTH`). Organic SERP requests
+     * cost more at greater depth, so this is capped at the top 100 results
+     * used by stored rank observations and the UI.
      */
     serpDepth?: number;
     /**
-     * Depth for the synchronous live SERP path (env `SERP_LIVE_DEPTH`). Capped
-     * small upstream (≤30) so a live check's $0.002/page price stays within the
-     * `serp_checks` $0.006 unit-cost bound.
+     * Depth for a synchronous live SERP request (env `SERP_LIVE_DEPTH`).
+     * Capped at 30 pages as an operator spend bound.
      */
     serpLiveDepth?: number;
     /**
-     * Wait budget for DataForSEO's async SERP task queue (env
-     * `SERP_TASK_POLL_INTERVAL_MS` / `SERP_TASK_MAX_POLL_ATTEMPTS`). Rank checks
-     * take the `task_post` → `task_get` path, so this — not `serpLiveDepth` —
-     * governs how long a check waits before failing as unavailable.
+     * DataForSEO async SERP poll interval and round ceiling (env
+     * `SERP_TASK_POLL_INTERVAL_MS` / `SERP_TASK_MAX_POLL_ATTEMPTS`). Rank jobs
+     * post cache misses in batches and poll pending ids round-robin. The
+     * single-task provider fallback uses the same values per task.
      */
     serpTaskPollIntervalMs?: number;
     serpTaskMaxPollAttempts?: number;
@@ -264,7 +262,7 @@ export function createProviderRegistry(selection: ProviderSelection, opts: Provi
             const cfg = requireDataForSeo(opts, 'audit');
             return createDataForSeoOnPageAuditProvider({ ...cfg, logger: opts.logger });
         }),
-        rank: selectImpl('rank', parsed.rank, createFakeRankProvider, () => {
+        rank: selectImpl('rank', parsed.rank, () => createFakeRankProvider({ serpTasks: {} }), () => {
             const cfg = requireDataForSeo(opts, 'rank');
             return {
                 ...createDataForSeoRankProvider({

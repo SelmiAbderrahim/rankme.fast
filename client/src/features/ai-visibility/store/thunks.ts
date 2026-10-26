@@ -145,14 +145,16 @@ export const addAllSuggestions = createAsyncThunk<
   { rejectValue: string }
 >('aiVisibility/addAllSuggestions', async ({ siteId, prompts }, { rejectWithValue }) => {
   // Serial on purpose: the server enforces the per-site prompt cap per
-  // request, so a parallel burst could race past it. Stop at the first
-  // failure and keep whatever landed.
+  // request, so a parallel burst could race past it. A prompt the site
+  // already tracks (409) is skipped; any other failure stops the loop and
+  // keeps whatever landed.
   const added: AiTrackedPrompt[] = [];
   for (const prompt of prompts) {
     try {
       const result = await addAiVisibilityPrompt(siteId, prompt);
       added.push(result.prompt);
     } catch (err) {
+      if (apiErrorStatus(err) === 409) continue;
       if (added.length === 0 && apiErrorStatus(err) !== 402) {
         return rejectWithValue(aiVisibilityErrorMessage(err, 'aiVisibility:add.failed'));
       }

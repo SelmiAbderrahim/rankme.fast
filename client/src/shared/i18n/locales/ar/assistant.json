@@ -49,7 +49,9 @@
     "assistant": "رد المساعد",
     "streaming": "المساعد يكتب الرد",
     "stopped": "تم إيقاف الرد",
-    "loading": "جارٍ تحميل المحادثة…"
+    "loading": "جارٍ تحميل المحادثة…",
+    "cutOff": "انقطع الرد قبل أن يكتمل.",
+    "retryCutOff": "إعادة المحاولة"
   },
   "tool": {
     "arguments": "المعطيات",
@@ -70,7 +72,35 @@
       "startAudit": "بدء تدقيق",
       "auditStatus": "حالة التدقيق",
       "listActions": "الإجراءات التالية",
-      "setActionState": "تحديث إجراء"
+      "setActionState": "تحديث إجراء",
+      "getGscSearchSummary": "جلب ملخص Search Console",
+      "listGscTopQueries": "عرض أهم عمليات البحث",
+      "listGscTopPages": "عرض أهم صفحات البحث",
+      "getGa4Summary": "جلب ملخص Analytics",
+      "listPages": "عرض الصفحات",
+      "getPageDetail": "جلب تفاصيل الصفحة",
+      "getBacklinksSummary": "جلب ملخص الروابط الخلفية",
+      "listBacklinks": "عرض الروابط الخلفية",
+      "listCompetitors": "عرض المنافسين",
+      "listKeywordResearchHistory": "عرض سجل أبحاث الكلمات المفتاحية",
+      "getKeywordResearchResult": "جلب نتيجة بحث كلمات مفتاحية",
+      "getAiVisibilitySummary": "جلب ملخص ظهور الذكاء الاصطناعي",
+      "getLocalSeoSummary": "جلب ملخص السيو المحلي",
+      "getReviewsSummary": "جلب ملخص المراجعات",
+      "listClientReports": "عرض تقارير العملاء"
+    },
+    "errors": {
+      "forbiddenOutput": "تم حجب نتيجة هذه الخطوة لأنها تحتوي على محتوى لا يمكن عرضه بأمان. حاول السؤال مرة أخرى.",
+      "invalidInput": "تعذّر تنفيذ هذه الخطوة لأن الطلب غير صالح. حاول إعادة صياغة سؤالك.",
+      "notFound": "الموقع المرتبط بهذه الخطوة غير متاح في هذه المحادثة.",
+      "internal": "حدث خطأ من جانبنا أثناء تنفيذ هذه الخطوة. حاول مرة أخرى.",
+      "generic": "تعذّر إكمال هذه الخطوة. حاول مرة أخرى."
+    },
+    "retry": "اسأل مرة أخرى",
+    "storedStatus": {
+      "ok": "بيانات مخزنة",
+      "empty": "لا شيء مخزن",
+      "unavailable": "غير متاح"
     }
   },
   "results": {
@@ -86,7 +116,14 @@
     "topFindings": "أهم النتائج",
     "noFindings": "لم تُرجع أي نتائج.",
     "domain": "النطاق",
-    "url": "الرابط"
+    "url": "الرابط",
+    "change": "التغيّر",
+    "truncated": "تظهر الصفوف الأولى فقط.",
+    "scopeSource": "المصدر",
+    "scopeRange": "النطاق",
+    "scopePeriod": "التواريخ",
+    "scopeAsOf": "حتى",
+    "scopeTimezone": "المنطقة الزمنية"
   },
   "states": {
     "locked": {

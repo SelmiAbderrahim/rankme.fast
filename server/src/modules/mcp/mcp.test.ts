@@ -9,6 +9,8 @@ const mocks = vi.hoisted(() => ({
   auditRunFindOne: vi.fn(),
   getAuditReport: vi.fn(),
   getLatestSiteReport: vi.fn(),
+  loadAuditDecisions: vi.fn(),
+  resolveAuditDecisionEvidence: vi.fn(),
   getAuditRun: vi.fn(),
   startAuditForSite: vi.fn(),
   toPublicAuditRun: vi.fn(),
@@ -16,6 +18,7 @@ const mocks = vi.hoisted(() => ({
   mutateActionState: vi.fn(),
   listKeywords: vi.fn(),
   getKeywordHistoryBatch: vi.fn(),
+  summarizeSiteRankStates: vi.fn(),
   listAnalyses: vi.fn(),
   getAnalysis: vi.fn(),
   getApiKeysDb: vi.fn(() => ({ kind: 'db' })),
@@ -32,6 +35,9 @@ const mocks = vi.hoisted(() => ({
     close: ReturnType<typeof vi.fn>;
   }>,
 }));
+const neverRankState = { state: 'never_checked', comparison: null,
+  baseline: 'previous_check', position: null, baselinePosition: null,
+  change: null, checkedAt: null, baselineCheckedAt: null, failedAt: null };
 
 vi.mock('../sites/index.js', () => ({
   Site: { find: mocks.siteFind, findOne: mocks.siteFindOne },
@@ -46,6 +52,11 @@ vi.mock('../audits/index.js', () => ({
   startAuditForSite: mocks.startAuditForSite,
   toPublicAuditRun: mocks.toPublicAuditRun,
   getAuditsQueue: mocks.getAuditsQueue,
+}));
+vi.mock('../actions/audit-decisions.js', () => ({
+  loadAuditDecisions: mocks.loadAuditDecisions,
+  resolveAuditDecisionEvidence: mocks.resolveAuditDecisionEvidence,
+  isResolvedAuditDecision: (state: string) => state === 'dismissed' || state === 'completed',
 }));
 
 // Partial mock: the schemas import the real ACTION_STATES / ACTION_SOURCE_TYPES
@@ -63,6 +74,9 @@ vi.mock('../actions/index.js', async () => {
 vi.mock('../ranks/index.js', () => ({
   listKeywords: mocks.listKeywords,
   getKeywordHistoryBatch: mocks.getKeywordHistoryBatch,
+  summarizeSiteRankStates: mocks.summarizeSiteRankStates,
+  keywordCheckStatus: (result: { state: string }) => result.state === 'never_checked'
+    ? 'never_checked' : result.state === 'failed_last_check' ? 'failed' : 'ok',
 }));
 
 vi.mock('../content-intelligence/index.js', () => ({
@@ -218,6 +232,8 @@ async function invokeHandler(
 
 beforeEach(() => {
   vi.clearAllMocks();
+  mocks.loadAuditDecisions.mockResolvedValue(new Map());
+  mocks.resolveAuditDecisionEvidence.mockResolvedValue(undefined);
   mocks.serverInstances.length = 0;
   mocks.transportInstances.length = 0;
   (env as { MCP_ENABLED: boolean }).MCP_ENABLED = true;
@@ -230,6 +246,9 @@ beforeEach(() => {
   );
   mocks.listKeywords.mockResolvedValue({ keywords: [] });
   mocks.getKeywordHistoryBatch.mockResolvedValue([]);
+  mocks.summarizeSiteRankStates.mockResolvedValue({ baseline: 'previous_check', total: 0,
+    counts: {}, movement: { compared: 0, improved: 0, declined: 0, unchanged: 0,
+      failed: 0, unranked: 0, noPair: 0 } });
   mocks.listAnalyses.mockResolvedValue({ items: [], nextCursor: null });
   mocks.getAnalysis.mockResolvedValue({ analysisId: ANALYSIS_ID, status: 'completed' });
   mocks.startAuditForSite.mockResolvedValue({ id: RUN_ID, status: 'queued' });
@@ -258,7 +277,7 @@ describe('MCP schemas and holders', () => {
     expect(startAuditInputSchema.parse({ siteId: SITE_ID, pageCap: '10' }).pageCap).toBe(10);
     expect(() => startAuditInputSchema.parse({ siteId: SITE_ID, pageCap: 0 })).toThrow();
     expect(_uuidLoose.parse('12345678-1234-1234-1234-123456789abc')).toHaveLength(36);
-    expect(Object.keys(MCP_INPUT_SCHEMAS)).toHaveLength(10);
+    expect(Object.keys(MCP_INPUT_SCHEMAS)).toHaveLength(MCP_TOOL_NAMES.length);
     expect(mcpRouter.stack).toHaveLength(3);
   });
 
@@ -381,6 +400,32 @@ describe('MCP tool handlers', () => {
     expect(report.structuredContent).toMatchObject({ runId: RUN_ID });
   });
 
+  it('excludes dismissed and completed findings from assistant report counts', async () => {
+    mocks.getLatestSiteReport.mockResolvedValueOnce({ runId: RUN_ID,
+      report: { counts: { fixNow: 2, watch: 1, passed: 0 }, findings: [
+        { ruleId: 'a', bucket: 'fix-now' },
+        { ruleId: 'b', bucket: 'fix-now' },
+        { ruleId: 'c', bucket: 'watch' },
+      ] } });
+    mocks.loadAuditDecisions.mockResolvedValueOnce(new Map([
+      ['a', { state: 'dismissed', regressed: false }],
+      ['c', { state: 'completed', regressed: false }],
+    ]));
+    const response = await toolGetLatestAuditReport({ siteId: SITE_ID }, context);
+    expect(response.isError).toBeUndefined();
+    expect(response.structuredContent.report).toMatchObject({
+      counts: { fixNow: 1, watch: 0, passed: 0 },
+      notCounted: { dismissed: 1, completed: 1 },
+      findings: [
+        { ruleId: 'a', decision: 'dismissed' },
+        { ruleId: 'b', decision: 'open' },
+        { ruleId: 'c', decision: 'completed' },
+      ],
+    });
+    expect(mocks.loadAuditDecisions).toHaveBeenCalledWith(getMcpDb(),
+      expect.objectContaining({ ruleIds: ['a', 'b', 'c'], siteId: SITE_ID }));
+  });
+
   it('still rejects authorization material hiding inside first-party copy fields', async () => {
     // The HTML allowance must not become a secret allowance.
     mocks.getLatestSiteReport.mockResolvedValueOnce({
@@ -404,20 +449,44 @@ describe('MCP tool handlers', () => {
       expect.objectContaining({ limit: MCP_PAGE_LIMIT_DEFAULT }),
       expect.objectContaining({ ranksQueue: null }),
     );
-    mocks.listKeywords.mockResolvedValueOnce({ keywords: [{ id: 'k1', phrase: 'rank me' }] });
+    mocks.listKeywords.mockResolvedValueOnce({ keywords: [{ id: 'k1', phrase: 'rank me',
+      rankState: neverRankState, lastOutcome: null }] });
+    mocks.summarizeSiteRankStates.mockResolvedValueOnce({ baseline: 'previous_check', total: 3,
+      counts: { improved: 2, never_checked: 1, declined: 0 }, movement: { compared: 2, improved: 2,
+        declined: 0, unchanged: 0, failed: 0, unranked: 0, noPair: 1 } });
     const result = await toolListKeywords({ siteId: SITE_ID, limit: 2 }, context);
-    expect(result.content[0]?.text).toContain('rank me');
+    expect(result.content[0]?.text).toContain('rank me: Never checked');
+    expect(result.content[0]?.text).toContain('Improved: 2, Never checked: 1');
+    expect(result.content[0]?.text).not.toContain('Declined: 0');
     expect(mocks.listKeywords).toHaveBeenLastCalledWith(
       expect.objectContaining({ limit: 2 }),
       expect.any(Object),
     );
   });
 
+  it('keeps a failed check out of the position fields and reports the last known position', async () => {
+    mocks.listKeywords.mockResolvedValueOnce({ keywords: [{ id: 'k9', phrase: 'flaky',
+      rankState: { state: 'failed_last_check', comparison: null, baseline: 'previous_check', position: 7,
+        baselinePosition: 5, change: -2, checkedAt: '2026-10-01T00:00:00.000Z',
+        baselineCheckedAt: null, failedAt: '2026-10-02T00:00:00.000Z' }, lastOutcome: null }] });
+    const result = await toolListKeywords({ siteId: SITE_ID }, context);
+    expect(result.structuredContent.keywords).toEqual([expect.objectContaining({
+      status: 'failed', position: null, baselinePosition: null, change: null, lastKnownPosition: 7 })]);
+  });
+
+  it('reads tools called without any arguments as invalid input, never as a crash', async () => {
+    for (const tool of [toolListKeywords, toolListContentAnalyses, toolListActions]) {
+      const result = await tool(undefined, context);
+      expect(result.isError).toBe(true);
+      expect(result.structuredContent).toMatchObject({ error: { code: 'mcp.errors.invalidInput' } });
+    }
+  });
+
   it('joins bounded rank histories and preserves optional dates', async () => {
     mocks.listKeywords.mockResolvedValueOnce({
       keywords: [
-        { id: 'k1', phrase: 'one' },
-        { id: 'k2', phrase: 'two' },
+        { id: 'k1', phrase: 'one', rankState: neverRankState, lastOutcome: null },
+        { id: 'k2', phrase: 'two', rankState: neverRankState, lastOutcome: null },
       ],
     });
     mocks.getKeywordHistoryBatch.mockResolvedValueOnce([{ keywordId: 'k1', series: [1] }]);
@@ -425,12 +494,13 @@ describe('MCP tool handlers', () => {
       { siteId: SITE_ID, from: '2026-01-01', to: '2026-01-31' },
       context,
     );
-    expect(result.structuredContent).toEqual({
+    expect(result.structuredContent).toMatchObject({
       keywords: [
-        { id: 'k1', phrase: 'one', series: [1] },
-        { id: 'k2', phrase: 'two', series: [] },
+        { id: 'k1', phrase: 'one', state: 'never_checked', status: 'never_checked', series: [1] },
+        { id: 'k2', phrase: 'two', state: 'never_checked', status: 'never_checked', series: [] },
       ],
       locale: 'en',
+      rankStates: { total: 0 },
     });
     expect(mocks.getKeywordHistoryBatch).toHaveBeenCalledWith(
       expect.objectContaining({ from: '2026-01-01', to: '2026-01-31' }),
@@ -557,7 +627,7 @@ describe('MCP tool handlers', () => {
       cursor: '20',
     });
 
-    // No filters / no paging — the optional keys are omitted, not sent as undefined.
+    // The assistant sees open and planned work unless it requests another state.
     mocks.listActionsForSite.mockResolvedValue({
       items: [],
       sourceStatus: {},
@@ -572,6 +642,7 @@ describe('MCP tool handlers', () => {
       siteId: SITE_ID,
       locale: context.locale,
       db: { kind: 'db' },
+      filters: { state: ['open', 'planned'] },
     });
   });
 
@@ -957,7 +1028,7 @@ describe('MCP HTTP controller', () => {
     );
     const server = mocks.serverInstances[0]!;
     const transport = mocks.transportInstances[0]!;
-    expect([...server.tools]).toHaveLength(10);
+    expect([...server.tools]).toHaveLength(MCP_TOOL_NAMES.length);
     expect(server.connect).toHaveBeenCalledWith(transport);
     expect(transport.handleRequest).toHaveBeenCalled();
     expect(transport.close).toHaveBeenCalled();
@@ -1079,7 +1150,7 @@ describe('MCP HTTP controller', () => {
       output.response,
     );
     const server = mocks.serverInstances[0]!;
-    expect([...server.tools]).toHaveLength(9);
+    expect([...server.tools]).toHaveLength(MCP_TOOL_NAMES.length - 1);
     expect(server.tools.has('start_audit')).toBe(false);
     expect(server.tools.has('list_sites')).toBe(true);
   });

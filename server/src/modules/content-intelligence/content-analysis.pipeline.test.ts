@@ -13,10 +13,14 @@ import type { ContentDocument } from '../../shared/providers/content-source.js';
 import {
   ProviderError,
   VendorAuthError,
+  VendorMalformedError,
   VendorQuotaError,
   VendorTimeoutError,
+  VendorUnavailableError,
 } from '../../shared/providers/errors.js';
+import { UnsafeUrlError } from '../../shared/security/url-safety.js';
 import {
+  classifyOwnedFetchError,
   hashInputs,
   runBriefStage,
   runCompetitorsStage,
@@ -27,7 +31,8 @@ import {
   type StageContext,
 } from './content-analysis.pipeline.js';
 
-vi.mock('../../shared/security/url-safety.js', () => ({
+vi.mock('../../shared/security/url-safety.js', async (importOriginal) => ({
+  ...(await importOriginal<Record<string, unknown>>()),
   assertPublicUrlSafe: vi.fn(async (url: string) => {
     if (url.includes('unsafe')) throw new Error('private address blocked');
     return url;
@@ -314,8 +319,66 @@ describe('runOwnedStage', () => {
         ok: false,
         code: 'owned_page_unusable',
         reason: 'no usable content',
+        failureReason: 'empty_content',
       });
     }
+  });
+
+  it('fails on an owned-page error status instead of scoring the error page', async () => {
+    const cases: Array<[number, string]> = [
+      [404, 'owned_page_unusable'],
+      [403, 'owned_page_unusable'],
+      [429, 'owned_fetch_failed'],
+      [503, 'owned_fetch_failed'],
+    ];
+    for (const [statusCode, code] of cases) {
+      const deps = makeDeps({
+        contentSource: {
+          scrapePage: vi.fn(async () => scrapeResult(makeDocument({ statusCode }))),
+          crawlSite: vi.fn(),
+        },
+      });
+      expect(await runOwnedStage(makeCtx(), deps)).toEqual({
+        ok: false,
+        code,
+        reason: `owned page returned HTTP ${statusCode}`,
+        failureReason: 'http_error',
+        httpStatus: statusCode,
+      });
+    }
+  });
+
+  it('classifies scrape rejections into safe failure reasons', () => {
+    const errCtx = { provider: 'firecrawl', operation: 'scrape' };
+    expect(classifyOwnedFetchError(new VendorAuthError('rejected', errCtx))).toBeUndefined();
+    expect(classifyOwnedFetchError(new UnsafeUrlError('address is not publicly routable'))).toBe(
+      'unsafe_url',
+    );
+    expect(classifyOwnedFetchError(new VendorTimeoutError('slow', errCtx))).toBe('timeout');
+    expect(classifyOwnedFetchError(new VendorUnavailableError('5xx', errCtx))).toBe(
+      'temporarily_unavailable',
+    );
+    expect(
+      classifyOwnedFetchError(new VendorQuotaError('quota', { ...errCtx, retryAfterSeconds: 1 })),
+    ).toBe('temporarily_unavailable');
+    expect(
+      classifyOwnedFetchError(new ProviderError('blocked by robots.txt', false, errCtx)),
+    ).toBe('robots_blocked');
+    expect(classifyOwnedFetchError(new ProviderError('Access Denied', false, errCtx))).toBe(
+      'access_denied',
+    );
+    expect(classifyOwnedFetchError(new ProviderError('403 Forbidden', false, errCtx))).toBe(
+      'access_denied',
+    );
+    expect(
+      classifyOwnedFetchError(
+        new VendorMalformedError('response exceeded 5000000 byte ceiling', errCtx),
+      ),
+    ).toBe('too_large');
+    expect(classifyOwnedFetchError(new VendorMalformedError('not JSON', errCtx))).toBe(
+      'unreadable',
+    );
+    expect(classifyOwnedFetchError('nope')).toBe('unreadable');
   });
 
   it('maps scrape rejections to owned_page_unusable with a bounded reason', async () => {
@@ -380,6 +443,7 @@ describe('runOwnedStage', () => {
     expect(await runOwnedStage(makeCtx(), blocked)).toMatchObject({
       ok: false,
       code: 'owned_page_unusable',
+      failureReason: 'robots_blocked',
     });
 
     // A credential rejection (401/403) is an operator misconfiguration —
@@ -392,11 +456,13 @@ describe('runOwnedStage', () => {
         crawlSite: vi.fn(),
       },
     });
-    expect(await runOwnedStage(makeCtx(), rejected)).toMatchObject({
+    const rejectedOutcome = await runOwnedStage(makeCtx(), rejected);
+    expect(rejectedOutcome).toMatchObject({
       ok: false,
       code: 'provider_unavailable',
       reason: 'credentials rejected (HTTP 403)',
     });
+    expect(rejectedOutcome).not.toHaveProperty('failureReason');
   });
 
   it('normalizes vendor usage micros: negative and non-finite values cost zero', async () => {

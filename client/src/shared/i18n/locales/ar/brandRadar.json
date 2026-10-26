@@ -26,7 +26,7 @@
     "filter": {
       "label": "تصفية حسب الحالة",
       "all": "كل الحالات",
-      "note": "التصفية تنطبق فقط على عمليات الفحص المحمّلة في هذه الصفحة."
+      "note": "تنطبق التصفية على عمليات الفحص المعروضة أدناه. حمّل المزيد لتضمين عمليات الفحص الأقدم."
     }
   },
   "status": {
@@ -63,21 +63,11 @@
       "description": "عمليات الفحص الجديدة معطّلة حاليًا.",
       "storedReads": "تبقى عمليات الفحص السابقة قابلة للقراءة."
     },
-    "notOnPlan": {
-      "title": "رادار العلامة يحتاج خطة أعلى",
-      "description": "انتقل إلى خطة Pro أو Agency لفتح فحوص العلامة.",
-      "link": "عرض الخطط"
-    },
     "addonRequired": {
       "title": "أضف رادار العلامة إلى خطتك",
       "description": "تحقق من قسم الفوترة لمعرفة التوفر الحالي لإضافة رادار العلامة.",
       "price": "{{price}} شهريًا، ويشمل {{units}} عملية فحص.",
       "link": "عرض خيارات رادار العلامة"
-    },
-    "overCap": {
-      "title": "استهلكت كل فحوص العلامة",
-      "description": "تحقق من قسم الفوترة لمعرفة التوفر الحالي لحزمة {{slug}}.",
-      "link": "عرض خيارات رصيد الفحص"
     }
   },
   "form": {
@@ -116,7 +106,7 @@
     "back": "العودة إلى عمليات الفحص",
     "loading": "جارٍ تحميل هذا الفحص",
     "errorTitle": "تعذّر تحميل هذا الفحص",
-    "mentionCount": "عُثر على إشارة واحدة ({{count}})",
+    "mentionCount_one": "عُثر على {{count}} إشارة",
     "mentionCount_other": "عُثر على {{count}} إشارة",
     "market": "السوق",
     "outputLocale": "لغة المخرجات",
@@ -186,9 +176,13 @@
       "pending": "ما زالت كتابة الملخص جارية.",
       "absent": "لم يُنتَج ملخص لهذا الفحص.",
       "withheld": "حُجب الملخص لأنه لم يمكن ربط أي جملة بإشارة.",
-      "citations": "مصدر واحد ({{count}})",
-      "citations_other": "{{count}} مصادر",
-      "citationMissing": "المصدر غير موجود في هذه الصفحة"
+      "citations_one": "{{count}} مصدر",
+      "citations_other": "{{count}} مصدر",
+      "citationMissing": "المصدر غير موجود في هذه الصفحة",
+      "citations_zero": "{{count}} مصادر",
+      "citations_two": "{{count}} من المصادر",
+      "citations_few": "{{count}} مصادر",
+      "citations_many": "{{count}} مصدر"
     },
     "mentions": {
       "title": "الإشارات",
@@ -219,7 +213,11 @@
         "sentiment": "النبرة",
         "observedAt": "شوهدت"
       }
-    }
+    },
+    "mentionCount_zero": "عُثر على {{count}} إشارات",
+    "mentionCount_two": "عُثر على {{count}} من الإشارات",
+    "mentionCount_few": "عُثر على {{count}} إشارات",
+    "mentionCount_many": "عُثر على {{count}} إشارة"
   },
   "errors": {
     "previewTitle": "تعذّر حساب تكلفة هذا الفحص",

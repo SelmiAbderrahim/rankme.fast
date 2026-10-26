@@ -4,7 +4,12 @@
   "status": {
     "loading": "正在加载行动…",
     "refreshing": "正在刷新行动…",
-    "showing": "正在显示 {{count}} 个行动"
+    "showing_one": "正在显示 {{count}} 个行动",
+    "showing_zero": "正在显示 {{count}} 个行动",
+    "showing_two": "正在显示 {{count}} 个行动",
+    "showing_few": "正在显示 {{count}} 个行动",
+    "showing_many": "正在显示 {{count}} 个行动",
+    "showing_other": "正在显示 {{count}} 个行动"
   },
   "errors": {
     "loadFailed": "无法加载行动，请重试。",
@@ -18,6 +23,7 @@
     "label": "筛选行动",
     "reset": "重置筛选",
     "all": "全部",
+    "openAndPlanned": "未处理和已计划",
     "state": "状态",
     "source": "来源",
     "severity": "严重程度",
@@ -43,7 +49,8 @@
     "ga4_decline": "Analytics 下滑",
     "content_recommendation": "内容建议",
     "citation_gap": "AI 引用缺口",
-    "audience_research": "受众研究"
+    "audience_research": "受众研究",
+    "competitor_opportunity": "竞争对手机会"
   },
   "severity": {
     "critical": "严重",
@@ -69,22 +76,50 @@
   "freshness": {
     "fresh": "最新",
     "stale": "已过时",
-    "unavailable": "未验证"
+    "unavailable": "未验证",
+    "partial": "部分数据",
+    "blocked": "已被阻止",
+    "failed": "失败",
+    "unknown": "时效未知"
   },
   "card": {
     "nextStep": "下一步",
     "observedAt": "观测于 {{date}}",
     "openSource": "打开来源视图",
     "affectedNone": "全站范围",
-    "affectedOne": "1 个受影响的网址",
-    "affectedCount": "{{count}} 个受影响的网址",
+    "affectedCount_one": "{{count}} 个受影响的网址",
     "evidence": "证据",
-    "evidenceLabel": "{{source}} · {{date}}",
+    "evidenceLabel": "{{source}} · {{date}} · {{detail}}",
     "evidenceLink": "打开证据来源",
     "history": "历史记录",
     "retest": "重新检测",
-    "affectedSample": "(显示 {{shown}} 个)",
-    "noteLabel": "备注"
+    "noteLabel": "备注",
+    "affectedCount_zero": "{{count}} 个受影响的网址",
+    "affectedCount_two": "{{count}} 个受影响的网址",
+    "affectedCount_few": "{{count}} 个受影响的网址",
+    "affectedCount_many": "{{count}} 个受影响的网址",
+    "affectedCount_other": "{{count}} 个受影响的网址",
+    "affectedCountSampled_zero": "{{count}} 个受影响的网址（显示 {{shown}} 个）",
+    "affectedCountSampled_one": "{{count}} 个受影响的网址（显示 {{shown}} 个）",
+    "affectedCountSampled_two": "{{count}} 个受影响的网址（显示 {{shown}} 个）",
+    "affectedCountSampled_few": "{{count}} 个受影响的网址（显示 {{shown}} 个）",
+    "affectedCountSampled_many": "{{count}} 个受影响的网址（显示 {{shown}} 个）",
+    "affectedCountSampled_other": "{{count}} 个受影响的网址（显示 {{shown}} 个）",
+    "seeAllUrls_zero": "在报告中查看全部 {{count}} 个 URL",
+    "seeAllUrls_one": "在报告中查看全部 {{count}} 个 URL",
+    "seeAllUrls_two": "在报告中查看全部 {{count}} 个 URL",
+    "seeAllUrls_few": "在报告中查看全部 {{count}} 个 URL",
+    "seeAllUrls_many": "在报告中查看全部 {{count}} 个 URL",
+    "seeAllUrls_other": "在报告中查看全部 {{count}} 个 URL",
+    "seeLinkTargets_zero": "在报告中查看全部 {{count}} 个页面及其指向的失效链接",
+    "seeLinkTargets_one": "在报告中查看全部 {{count}} 个页面及其指向的失效链接",
+    "seeLinkTargets_two": "在报告中查看全部 {{count}} 个页面及其指向的失效链接",
+    "seeLinkTargets_few": "在报告中查看全部 {{count}} 个页面及其指向的失效链接",
+    "seeLinkTargets_many": "在报告中查看全部 {{count}} 个页面及其指向的失效链接",
+    "seeLinkTargets_other": "在报告中查看全部 {{count}} 个页面及其指向的失效链接",
+    "linkSourcesCount": "含失效链接的页面：{{count}}",
+    "staleRetestHint": "此证据已过时。请重新测试以再次检查。",
+    "linkSourcesCountSampled": "含失效链接的页面：{{count}}（显示 {{shown}} 个）"
   },
   "transitions": {
     "planned": "计划",
@@ -110,7 +145,14 @@
     "confirm": "确认",
     "saving": "保存中…",
     "conflict": "其他人先修改了此行动。请重新加载后再试。",
-    "conflictReload": "重新加载行动"
+    "conflictReload": "重新加载行动",
+    "reasonLabel": "为什么要忽略此问题？",
+    "reasons": {
+      "false_positive": "误报",
+      "wont_fix": "不予修复",
+      "fixed_elsewhere": "已在别处修复",
+      "other": "其他原因"
+    }
   },
   "history": {
     "title": "行动历史",
@@ -118,7 +160,9 @@
     "actor": "团队成员",
     "from": "自「{{state}}」",
     "close": "关闭",
-    "actorYou": "您"
+    "actorYou": "您",
+    "observed": "已发现",
+    "actorSystem": "自动检查"
   },
   "retest": {
     "title": "要重新检测此发现吗？",
@@ -127,8 +171,6 @@
     "unitsValue": "1",
     "freshRun": "重新检测始终重新抓取——结果绝不来自缓存。",
     "selfHosted": "此服务器不应用用量限制。",
-    "remaining": "本周期剩余 {{remaining}} / {{cap}} 次审计",
-    "allowanceUnknown": "无法加载剩余额度。服务器在运行前仍会检查你的限额。",
     "confirm": "开始重新检测",
     "starting": "正在启动…",
     "queued": "重新检测已加入队列。请在报告标签页跟踪进度。",
@@ -154,6 +196,8 @@
     "dismissedLabel": "已作为误报忽略",
     "fixCta": "标记为已修复",
     "fixedLabel": "已标记为已修复",
-    "reappearedLabel": "标记为已修复后仍被检测到"
+    "reappearedLabel": "标记为已修复后仍被检测到",
+    "notCounted": "未计入以上数字：已忽略 {{dismissed}} 项，已标记为已修复 {{completed}} 项。",
+    "fixedGroupIn": "{{tab}} 中已标记为已修复（{{count}}）"
   }
 }

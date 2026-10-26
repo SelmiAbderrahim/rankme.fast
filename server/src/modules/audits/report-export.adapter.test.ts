@@ -38,6 +38,8 @@ const site: PublicSite = {
   url: 'https://example.test',
   domain: 'example.test',
   displayName: 'Example Site',
+  defaultMarket: null,
+  localBusiness: false,
   paused: false,
   pausedAt: null,
   createdAt: '2026-01-01T00:00:00.000Z',
@@ -53,6 +55,8 @@ function finding(
     bucket,
     severity: 'warning',
     affectedUrls: bucket === 'passed' ? [] : ['https://example.test/b'],
+    category: 'indexability',
+    applicability: 'applicable',
     copy: {
       title: `${bucket} finding`,
       why: 'Why this matters.',
@@ -75,6 +79,7 @@ function report(input: Partial<AuditReport> = {}): AuditReport {
       finding('fix-now', {
         severity: 'critical',
         affectedUrls: ['https://example.test/z', 'https://example.test/a'],
+        meta: { chains: [{ from: 'https://example.test/a', hops: [{ url: 'https://example.test/b', status: 301 }], isLoop: false }] },
         copy: {
           title: 'Critical finding', why: 'Generic why.', reason: 'Specific reason.',
           fix: 'Fix it.', passedLabel: 'Passed.',
@@ -88,6 +93,9 @@ function report(input: Partial<AuditReport> = {}): AuditReport {
       finding('watch'),
       finding('passed', { severity: 'info' }),
     ],
+    notApplicable: [],
+    localBusiness: false,
+    comparison: null,
     diff: {
       entries: [
         { ruleId: RULE_IDS[0], url: '', kind: 'fixed' },
@@ -181,8 +189,8 @@ function auditRun(input: {
       siteId,
       status: input.status ?? 'succeeded',
       pageCap: 100,
+      resourceScan: false,
       pagesCrawled: 10,
-      vendorTaskId: 'task-1',
       startedAt: '2026-08-10T11:00:00.000Z',
       finishedAt: input.finishedAt === undefined ? finishedAt : input.finishedAt,
       error: null,
@@ -268,7 +276,7 @@ describe('audit report export composition helpers', () => {
     expect(findings).toMatchObject({
       type: 'findings',
       items: [
-        expect.objectContaining({ bucket: 'fix_now', severity: 'critical', why: 'Specific reason.', affectedUrls: ['https://example.test/a', 'https://example.test/z'] }),
+        expect.objectContaining({ bucket: 'fix_now', severity: 'critical', why: 'Specific reason.', affectedUrls: ['https://example.test/a', 'https://example.test/z'], evidence: ['https://example.test/a » https://example.test/b (301)'] }),
         expect.objectContaining({ bucket: 'watch', severity: 'high', fix: 'Fix the issue.' }),
         expect.objectContaining({ bucket: 'passed', severity: 'info', pass: 'This check passed.' }),
       ],
@@ -285,6 +293,28 @@ describe('audit report export composition helpers', () => {
     });
     expect(internals.sourceDates('en', finishedAt, report())).toHaveLength(6);
     expect(internals.sourceDates('en', finishedAt, report({ aiSummary: null }))).toHaveLength(5);
+  });
+
+  it('exports no CTR or position when the period had no impressions, never zero', () => {
+    const quiet = report({
+      gscSearch: {
+        status: 'ok', totalClicks: 0, totalImpressions: 0, averageCtr: 0, averagePosition: 0,
+        topQueries: [{ query: 'idle', clicks: 0, impressions: 0, ctr: 0, position: 0 }],
+        topPages: [{ url: 'https://example.test/idle', clicks: 0, impressions: 0, ctr: 0, position: 0 }],
+        delta: { clicks: null, impressions: null },
+      },
+    });
+    const built = internals.auditBlocks('en', quiet, composeContext().selection);
+    const totals = built.blocks.find((block) => block.id === 'gsc-totals') as { items: { id: string; value: unknown }[] };
+    expect(totals.items.find((item) => item.id === 'ctr')!.value).toEqual({ type: 'null', value: null });
+    expect(totals.items.find((item) => item.id === 'position')!.value).toEqual({ type: 'null', value: null });
+    expect(totals.items.find((item) => item.id === 'clicks')!.value).toEqual({ type: 'number', value: 0 });
+    for (const id of ['gsc-queries', 'gsc-pages']) {
+      const table = built.blocks.find((block) => block.id === id) as { rows: { cells: { value: unknown }[] }[] };
+      expect(table.rows[0]!.cells.slice(3).map((cell) => cell.value)).toEqual([
+        { type: 'null', value: null }, { type: 'null', value: null },
+      ]);
+    }
   });
 
   it('renders unavailable and omitted optional sections without inventing evidence', () => {

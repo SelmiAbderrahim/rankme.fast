@@ -1,4 +1,5 @@
 {
+  "workspace": { "description": "Settings for everything this workspace sends out, such as the branding on client reports." },
   "notifications": {
     "title": "Notification preferences",
     "description": "Choose which non-security emails you want to receive. Security emails (password reset, email verification, password change confirmations) cannot be turned off.",
@@ -11,7 +12,7 @@
       },
       "emailRankDrop": {
         "label": "Rank drops",
-        "description": "Notify me when a tracked keyword drops position."
+        "description": "Email me when a tracked keyword drops and a second check confirms it."
       },
       "emailAlerts": {
         "label": "Alert rules",
@@ -52,8 +53,6 @@
     "revokeConfirmTitle": "Revoke this API key?",
     "revokeConfirmDescription": "“{{name}}” will stop working immediately. This cannot be undone.",
     "empty": "No API keys yet.",
-    "upgradeHint": "MCP access is available on Starter and above. Upgrade to connect an MCP client.",
-    "upgradeCta": "View plans",
     "scopes": {
       "column": "Access",
       "edit": "Edit access",
@@ -85,28 +84,51 @@
     "saving": "Saving permissions…",
     "saved": "MCP permissions saved.",
     "retry": "Try again",
-    "locked": {
-      "title": "Connect MCP on Starter or above",
-      "description": "Upgrade to create API keys and connect RankMeFast to an MCP client.",
-      "cta": "View plans"
-    },
     "tools": {
       "title": "Allowed tools",
       "description": "Turn off any tool that MCP clients and the Assistant should not be able to use.",
+      "readNote": "Tools that only read stored data never start crawls or lookups. They return what is already saved and say when something is missing.",
+      "groups": {
+        "sites": "Sites and audits",
+        "rankings": "Keywords and rankings",
+        "content": "Content analyses",
+        "actions": "Next actions",
+        "search": "Search Console and analytics",
+        "pages": "Pages",
+        "links": "Backlinks and competitors",
+        "research": "Keyword research",
+        "visibility": "AI visibility, local SEO, and reviews",
+        "reports": "Client reports"
+      },
       "list_sites": { "name": "List sites", "description": "See the sites in this account." },
       "get_latest_audit_report": { "name": "Get latest audit report", "description": "Read the newest completed audit for a site." },
       "list_keywords": { "name": "List keywords", "description": "See tracked keywords for a site." },
       "get_rank_history": { "name": "Get rank history", "description": "Read recent ranking positions for tracked keywords." },
       "list_content_analyses": { "name": "List content analyses", "description": "See Content Intelligence analyses for a site." },
       "get_content_analysis": { "name": "Get content analysis", "description": "Read one Content Intelligence analysis." },
-      "start_audit": { "name": "Start audit", "description": "Start a new audit that uses the account's monthly allowance." },
+      "start_audit": { "name": "Start audit", "description": "Start a new audit. It crawls the site through the configured vendor, so spending must be allowed." },
       "get_audit_status": { "name": "Get audit status", "description": "Check whether an audit is queued, running, or complete." },
       "list_actions": { "name": "List next actions", "description": "Read the prioritized fix list for a site, with the state of each item." },
-      "set_action_state": { "name": "Update a next action", "description": "Mark an action planned, dismissed, completed, or open again." }
+      "set_action_state": { "name": "Update a next action", "description": "Mark an action planned, dismissed, completed, or open again." },
+      "get_gsc_search_summary": { "name": "Get Search Console summary", "description": "Read stored clicks, impressions, click-through rate, and position for the last 7, 28, or 90 days." },
+      "list_gsc_top_queries": { "name": "List top searches", "description": "Read the stored top Search Console searches for a site." },
+      "list_gsc_top_pages": { "name": "List top search pages", "description": "Read the stored top pages in Search Console for a site." },
+      "get_ga4_summary": { "name": "Get Analytics summary", "description": "Read stored Google Analytics 4 sessions, users, and key events." },
+      "list_pages": { "name": "List pages", "description": "See the stored pages inventory and crawl state for a site." },
+      "get_page_detail": { "name": "Get page details", "description": "Read the stored crawl evidence and metrics for one page." },
+      "get_backlinks_summary": { "name": "Get backlinks summary", "description": "Read stored backlink and referring-domain counts." },
+      "list_backlinks": { "name": "List backlinks", "description": "See stored backlinks, one per referring domain." },
+      "list_competitors": { "name": "List competitors", "description": "See the competitor portfolio for a site." },
+      "list_keyword_research_history": { "name": "List keyword research history", "description": "See what keyword research was run and when." },
+      "get_keyword_research_result": { "name": "Get keyword research result", "description": "Re-open a stored keyword research result without calling the data provider." },
+      "get_ai_visibility_summary": { "name": "Get AI visibility summary", "description": "Read stored AI answer checks and share of voice." },
+      "get_local_seo_summary": { "name": "Get local SEO summary", "description": "Read the stored business profile and local-pack ranks." },
+      "get_reviews_summary": { "name": "Get reviews summary", "description": "Read stored review sources, ratings, and themes." },
+      "list_client_reports": { "name": "List client reports", "description": "See report schedules, deliveries, and portal status. No files or links." }
     },
     "spend": {
       "title": "Spending actions",
-      "label": "Allow tools that use plan allowance",
+      "label": "Allow tools that spend vendor budget",
       "description": "When off, spending tools such as Start audit are blocked even if their tool toggle is on."
     },
     "sites": {
@@ -120,7 +142,7 @@
     },
     "quickStart": {
       "title": "Quick start",
-      "description": "Create an API key, then copy the endpoint or a ready-to-use client configuration.",
+      "description": "Create an API key and store it in the {{envVar}} environment variable. Both configurations below read the key from that variable.",
       "endpoint": "MCP endpoint",
       "copyEndpoint": "Copy MCP endpoint",
       "copy": "Copy",
@@ -138,21 +160,30 @@
     }
   },
   "branding": {
+    "companyNameRequired": "Enter your company name.",
+    "preview": {
+      "title": "PDF header preview",
+      "caption": "The top of every report PDF uses this name, logo and color.",
+      "reportTitle": "SEO audit report",
+      "sectionHeading": "Fix now"
+    },
     "title": "PDF branding",
     "description": "Put your own name on downloaded report PDFs. The company name and accent color appear in the PDF header.",
     "companyName": "Company name",
     "accentColor": "Accent color",
+    "accentPicker": "Pick accent color",
     "invalidColor": "Enter a color like #b5321e, or leave it empty.",
     "save": "Save branding",
     "saved": "Branding saved.",
-    "upgradeHint": "White-label PDF reports are available on the Pro and Agency plans. Upgrade to customize your reports.",
-    "upgradeCta": "View plans",
     "logo": {
       "label": "Company logo",
-      "help": "PNG only, up to 256 KB. Images are resized and re-encoded before storage.",
-      "invalidType": "Choose a PNG image.",
-      "tooLarge": "Choose a PNG smaller than 256 KB.",
-      "readFailed": "We couldn't read that image. Choose another PNG.",
+      "help": "PNG, JPEG or SVG, up to 256 KB. Images are resized and saved as PNG. SVG files can't include scripts or links to other files.",
+      "invalidType": "Choose a PNG, JPEG or SVG image.",
+      "tooLarge": "Choose an image smaller than 256 KB.",
+      "readFailed": "We couldn't read that image. Choose another file.",
+      "choose": "Choose image",
+      "noFile": "No file chosen",
+      "saved": "Saved logo in use",
       "previewAlt": "Company logo preview",
       "remove": "Remove logo"
     },

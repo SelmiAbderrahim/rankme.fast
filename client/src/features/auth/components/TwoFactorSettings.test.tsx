@@ -81,6 +81,9 @@ describe('TwoFactorSettings', () => {
       'Enter your current password to continue.',
     );
     expect(enable).not.toHaveBeenCalled();
+    const input = screen.getByLabelText('Confirm your password');
+    expect(input).toHaveAttribute('aria-describedby', 'two-factor-enrol-password-error');
+    expect(screen.getByText('Enter your current password to continue.')).toHaveAttribute('id', 'two-factor-enrol-password-error');
   });
 
   it('renders the QR + secret + backup codes after a successful enrol call', async () => {
@@ -438,5 +441,19 @@ describe('TwoFactorSettings', () => {
     await i18n.changeLanguage('fr');
     renderWithLocale('fr');
     expect(await screen.findByRole('button', { name: 'Activer' })).toBeInTheDocument();
+  });
+});
+
+describe('TwoFactorSettings without a password', () => {
+  it('points an account without a password to the password setup', () => {
+    initI18n({ initialLocale: 'en' });
+    render(
+      <I18nextProvider i18n={i18n}>
+        <MemoryRouter>
+          <TwoFactorSettings hasPassword={false} />
+        </MemoryRouter>
+      </I18nextProvider>,
+    );
+    expect(screen.getByRole('link', { name: i18n.t('setupPassword.title', { ns: 'auth' }) })).toHaveAttribute('href', '#password-setup');
   });
 });

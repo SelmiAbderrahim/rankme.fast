@@ -1,19 +1,23 @@
 {
   "title": "本地 SEO",
   "description": "您网站的商家信息、评论和地图组合排名。",
-  "empty": "尚无本地 SEO 数据 —— 点击刷新以加载商家信息、评论和问答。",
+  "empty": "尚无本地 SEO 数据。点击顶部的“刷新本地 SEO”即可加载商家信息、评论和问答。",
   "emptyTitle": "暂无本地数据",
-  "emptyCta": "获取本地数据",
   "refresh": {
     "button": "刷新本地 SEO",
-    "cooldown": "{{seconds}} 秒后可刷新",
-    "failed": "无法刷新本地 SEO,请稍后再试。"
+    "cooldown_one": "{{seconds}} 秒后可刷新",
+    "failed": "无法刷新本地 SEO,请稍后再试。",
+    "cooldown_zero": "{{seconds}} 秒后可刷新",
+    "cooldown_two": "{{seconds}} 秒后可刷新",
+    "cooldown_few": "{{seconds}} 秒后可刷新",
+    "cooldown_many": "{{seconds}} 秒后可刷新",
+    "cooldown_other": "{{seconds}} 秒后可刷新",
+    "needsSetup": "请先在下方选择您的商家，再进行刷新。"
   },
   "loadFailed": "无法加载本地 SEO。",
   "locked": {
     "title": "本地 SEO 是 Pro 功能",
-    "body": "升级到 Pro,即可跟踪您的商家在各目录和本地地图组合中的一致性。",
-    "upgrade": "查看套餐"
+    "body": "升级到 Pro,即可跟踪您的商家在各目录和本地地图组合中的一致性。"
   },
   "listings": {
     "title": "商家信息",
@@ -37,5 +41,39 @@
     "position": "排名",
     "packSize": "组合数量",
     "notRanked": "未进入地图组合"
+  },
+  "setup": {
+    "resultsLegend_zero": "找到 {{count}} 个与“{{query}}”匹配的结果。请选择您的商家：",
+    "resultsLegend_one": "找到 {{count}} 个与“{{query}}”匹配的结果。请选择您的商家：",
+    "resultsLegend_two": "找到 {{count}} 个与“{{query}}”匹配的结果。请选择您的商家：",
+    "resultsLegend_few": "找到 {{count}} 个与“{{query}}”匹配的结果。请选择您的商家：",
+    "resultsLegend_many": "找到 {{count}} 个与“{{query}}”匹配的结果。请选择您的商家：",
+    "resultsLegend_other": "找到 {{count}} 个与“{{query}}”匹配的结果。请选择您的商家：",
+    "title": "选择您的商家",
+    "description": "搜索此网站所属的商家。本地 SEO 将针对您选择的商家生成报告。",
+    "changeDescription": "重新搜索并选择其他商家。在您保存新的选择之前，当前商家保持不变。",
+    "queryLabel": "商家名称、地址或地点 ID",
+    "queryPlaceholder": "示例牙科诊所，上海",
+    "queryHint": "每次搜索会调用一次您的本地商家信息提供商。保存结果不会发送任何请求。",
+    "queryInvalid": "请输入 {{min}} 到 {{max}} 个字符。",
+    "search": "搜索",
+    "searching": "正在搜索…",
+    "noAddress": "未提供地址",
+    "source": "Google 商家资料",
+    "noResults": "没有找到与“{{query}}”匹配的商家。请检查拼写，或尝试使用街道地址或 Google 地点 ID。",
+    "save": "使用此商家",
+    "saving": "正在保存…",
+    "saved": "本地 SEO 现在针对 {{name}} 生成报告。",
+    "loadFailed": "无法加载您的商家设置。",
+    "searchFailed": "搜索失败，请稍后重试。",
+    "selectFailed": "无法保存该商家，请重试。"
+  },
+  "business": {
+    "label": "商家",
+    "change": "更换商家"
+  },
+  "provenance": {
+    "business": "当前显示 <bdi>{{name}}</bdi> 的数据。",
+    "domain": "较早的数据，按网站 <bdi>{{domain}}</bdi> 查询。"
   }
 }

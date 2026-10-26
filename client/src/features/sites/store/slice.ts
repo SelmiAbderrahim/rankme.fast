@@ -1,6 +1,7 @@
+import { isSiteMutation } from '@shared/cache/invalidation';
 import { createSlice } from '@reduxjs/toolkit';
 import type { SitesState } from '../types';
-import { addSite, loadSites, pauseSite, removeSite, renameSite, resumeSite } from './thunks';
+import { addSite, loadSites, pauseSite, removeSite, renameSite, resumeSite, updateSiteMarket } from './thunks';
 
 const initialState: SitesState = {
   items: [],
@@ -9,6 +10,7 @@ const initialState: SitesState = {
   cursorStack: [],
   loading: false,
   loaded: false,
+  loadedAt: null,
   error: '',
   adding: false,
   addError: '',
@@ -16,6 +18,8 @@ const initialState: SitesState = {
   deleteError: '',
   renamingId: null,
   renameError: '',
+  marketSavingId: null,
+  marketError: '',
   pausingId: null,
   pauseError: '',
   message: '',
@@ -30,9 +34,11 @@ const sitesSlice = createSlice({
       state.addError = '';
       state.deleteError = '';
       state.renameError = '';
+      state.marketError = '';
       state.pauseError = '';
       state.message = '';
     },
+    clearSiteMarketError: (state) => { state.marketError = ''; },
   },
   extraReducers: (builder) => {
     builder
@@ -55,6 +61,7 @@ const sitesSlice = createSlice({
         state.nextCursor = action.payload.nextCursor;
         state.loading = false;
         state.loaded = true;
+        state.loadedAt = Date.now();
       })
       .addCase(loadSites.rejected, (state, action) => {
         state.loading = false;
@@ -103,6 +110,19 @@ const sitesSlice = createSlice({
         state.renamingId = null;
         state.renameError = action.payload ?? '';
       })
+      .addCase(updateSiteMarket.pending, (state, action) => {
+        state.marketSavingId = action.meta.arg.id;
+        state.marketError = '';
+      })
+      .addCase(updateSiteMarket.fulfilled, (state, action) => {
+        state.marketSavingId = null;
+        const index = state.items.findIndex((site) => site.id === action.payload.site.id);
+        if (index >= 0) state.items[index] = action.payload.site;
+      })
+      .addCase(updateSiteMarket.rejected, (state, action) => {
+        state.marketSavingId = null;
+        state.marketError = action.payload ?? '';
+      })
       .addCase(pauseSite.pending, (state, action) => {
         state.pausingId = action.meta.arg;
         state.pauseError = '';
@@ -136,9 +156,13 @@ const sitesSlice = createSlice({
       .addCase(resumeSite.rejected, (state, action) => {
         state.pausingId = null;
         state.pauseError = action.payload ?? '';
+      })
+      .addMatcher(isSiteMutation, (state) => {
+        state.loadedAt = null;
+        state.loading = false;
       });
   },
 });
 
-export const { clearSiteMessages } = sitesSlice.actions;
+export const { clearSiteMessages, clearSiteMarketError } = sitesSlice.actions;
 export const sitesReducer = sitesSlice.reducer;

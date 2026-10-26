@@ -1,7 +1,7 @@
 # Dependencies
 node_modules/
 .npm/
-
+prompts
 # Build output
 client/dist/
 server/dist/

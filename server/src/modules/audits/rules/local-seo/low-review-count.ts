@@ -23,6 +23,14 @@ export const lowReviewCountRule: LocalSeoRule = {
         if (input.reviews === null) {
             return insufficient('no-reviews-data');
         }
+        // Zero reviews AND no directory listing means no business profile was
+        // found at all (an online-only site, for example), which is different
+        // from a business that has few reviews.
+        if (input.reviews.reviewCount === 0 &&
+            input.reviews.averageRating === null &&
+            input.listings.length === 0) {
+            return insufficient('no-business-profile');
+        }
         if (input.reviews.reviewCount < LOW_REVIEW_COUNT_THRESHOLD) {
             return {
                 ruleId: RULE_ID,

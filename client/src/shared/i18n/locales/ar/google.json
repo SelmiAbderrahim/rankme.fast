@@ -38,8 +38,13 @@
   "revoke": {
     "cta": "إلغاء وصول Google في جميع المواقع",
     "confirmTitle": "إلغاء اتصال Google المشترك؟",
-    "confirmBody": "يؤدي هذا إلى إلغاء وصول Google وإلغاء ربط جميع المواقع المتصلة وعددها {{count}}. لا يمكن حصر الإجراء في الموقع الحالي.",
-    "confirm": "الإلغاء في كل المواقع"
+    "confirmBody_one": "يؤدي هذا إلى إلغاء وصول Google وإلغاء ربط جميع المواقع المتصلة وعددها {{count}}. لا يمكن حصر الإجراء في الموقع الحالي.",
+    "confirm": "الإلغاء في كل المواقع",
+    "confirmBody_zero": "يؤدي هذا إلى إلغاء وصول Google وإلغاء ربط جميع المواقع المتصلة وعددها {{count}}. لا يمكن حصر الإجراء في الموقع الحالي.",
+    "confirmBody_two": "يؤدي هذا إلى إلغاء وصول Google وإلغاء ربط جميع المواقع المتصلة وعددها {{count}}. لا يمكن حصر الإجراء في الموقع الحالي.",
+    "confirmBody_few": "يؤدي هذا إلى إلغاء وصول Google وإلغاء ربط جميع المواقع المتصلة وعددها {{count}}. لا يمكن حصر الإجراء في الموقع الحالي.",
+    "confirmBody_many": "يؤدي هذا إلى إلغاء وصول Google وإلغاء ربط جميع المواقع المتصلة وعددها {{count}}. لا يمكن حصر الإجراء في الموقع الحالي.",
+    "confirmBody_other": "يؤدي هذا إلى إلغاء وصول Google وإلغاء ربط جميع المواقع المتصلة وعددها {{count}}. لا يمكن حصر الإجراء في الموقع الحالي."
   },
   "autoMatch": {
     "queued": "جارٍ فحص موارد Google لهذا الموقع…",
@@ -86,7 +91,9 @@
     "viewAllLabel": "عرض الكل — {{section}}",
     "sitemapsLink": "عرض خرائط الموقع",
     "asOf": "البيانات حتى {{date}}",
-    "previousPeriod": "الفترة السابقة: {{clicks}} نقرة · {{impressions}} ظهور",
+    "totalsNote": "إجماليات الموقع للفترة من {{start}} إلى {{end}}، مجمّعة من بيانات Search Console اليومية.",
+    "scopeNote": "يحسب Search Console كل قائمة على حدة، لذا قد يزيد مجموع صفوف القائمة قليلًا أو ينقص عن إجمالي الموقع.",
+    "previousPeriod": "الفترة السابقة — النقرات: {{clicks}} · مرات الظهور: {{impressions}}",
     "reportLink": "شاهد البيانات الكاملة في تقريرك",
     "emptyTitle": "لا توجد بيانات بحث بعد",
     "emptyCta": "إدارة الاتصال",
@@ -98,10 +105,13 @@
     "refreshError": "تعذّر تحديث بيانات البحث. حاول مرة أخرى بعد قليل.",
     "refreshedJustNow": "تم التحديث للتو",
     "timeseriesTitle": "النقرات ومرات الظهور عبر الزمن",
-    "timeseriesSubtitle": "الإجماليات اليومية لآخر {{days}} يومًا.",
+    "timeseriesSubtitle_one": "الإجماليات اليومية لآخر {{days}} يومًا.",
     "timeseriesEmpty": "لا توجد بيانات يومية بعد.",
-    "timeseriesChartLabel": "{{metric}} يوميًا لآخر {{days}} يومًا",
-    "timeseriesTableCaption": "أداء البحث اليومي لآخر {{days}} يومًا",
+    "timeseriesNoActivity": "لا يوجد نشاط في هذه الفترة.",
+    "timeseriesNoClicks": "لا نقرات في هذه الفترة.",
+    "timeseriesNoImpressions": "لا مرات ظهور في هذه الفترة.",
+    "timeseriesChartLabel_one": "{{metric}} يوميًا لآخر {{days}} يومًا",
+    "timeseriesTableCaption_one": "أداء البحث اليومي لآخر {{days}} يومًا",
     "tableDate": "التاريخ",
     "metricLabel": "اختر مقياسًا للرسم البياني",
     "countriesTitle": "أهم البلدان",
@@ -117,26 +127,45 @@
       "mobile": "الهاتف المحمول",
       "tablet": "الجهاز اللوحي",
       "unknown": "أخرى"
-    }
+    },
+    "timeseriesSubtitle_zero": "الإجماليات اليومية لآخر {{days}} أيام.",
+    "timeseriesSubtitle_two": "الإجماليات اليومية لآخر {{days}} من الأيام.",
+    "timeseriesSubtitle_few": "الإجماليات اليومية لآخر {{days}} أيام.",
+    "timeseriesSubtitle_many": "الإجماليات اليومية لآخر {{days}} يومًا.",
+    "timeseriesSubtitle_other": "الإجماليات اليومية لآخر {{days}} يومًا.",
+    "timeseriesChartLabel_zero": "{{metric}} يوميًا لآخر {{days}} أيام",
+    "timeseriesChartLabel_two": "{{metric}} يوميًا لآخر {{days}} من الأيام",
+    "timeseriesChartLabel_few": "{{metric}} يوميًا لآخر {{days}} أيام",
+    "timeseriesChartLabel_many": "{{metric}} يوميًا لآخر {{days}} يومًا",
+    "timeseriesChartLabel_other": "{{metric}} يوميًا لآخر {{days}} يومًا",
+    "timeseriesTableCaption_zero": "أداء البحث اليومي لآخر {{days}} أيام",
+    "timeseriesTableCaption_two": "أداء البحث اليومي لآخر {{days}} من الأيام",
+    "timeseriesTableCaption_few": "أداء البحث اليومي لآخر {{days}} أيام",
+    "timeseriesTableCaption_many": "أداء البحث اليومي لآخر {{days}} يومًا",
+    "timeseriesTableCaption_other": "أداء البحث اليومي لآخر {{days}} يومًا"
   },
   "analytics": {
-    "title": "Google Analytics (آخر {{days}} يومًا)",
+    "title": "بيانات Google Analytics",
     "sessions": "الجلسات",
     "activeUsers": "المستخدمون النشطون",
     "engagedSessions": "الجلسات التفاعلية",
     "keyEvents": "الأحداث الرئيسية",
     "engagementRateLabel": "معدل التفاعل",
     "engagementRateLine": "معدل التفاعل: {{rate}}",
-    "previousPeriod": "الفترة السابقة: {{sessions}} جلسة · {{activeUsers}} مستخدمًا نشطًا",
+    "windowNote": "الإجماليات للفترة من {{start}} إلى {{end}}.",
+    "previousPeriod": "الفترة السابقة — الجلسات: {{sessions}} · المستخدمون النشطون: {{activeUsers}}",
     "emptyTitle": "لا توجد بيانات تحليلات بعد",
     "empty": "لا توجد بيانات تحليلات بعد. تظهر البيانات بعد وقت قصير من ربط الموقع — جرّب التحديث.",
     "error": "تعذّر تحميل ملخص التحليلات. حاول مرة أخرى بعد قليل.",
     "refresh": "تحديث بيانات التحليلات",
     "refreshError": "تعذّر تحديث بيانات التحليلات. حاول مرة أخرى بعد قليل.",
+    "staleTitle": "بيانات التحليلات غير محدّثة",
+    "noRecentSessions": "لم تُسجَّل أي جلسات منذ {{date}}. تم التحقق من Google Analytics مؤخراً ولم يُبلغ عن زيارات أحدث.",
+    "dailyRange": "الإجماليات اليومية للفترة من {{start}} إلى {{end}}.",
     "timeseriesTitle": "الجلسات والمستخدمون النشطون عبر الزمن",
-    "timeseriesSubtitle": "الإجماليات اليومية لآخر {{days}} يومًا.",
-    "timeseriesChartLabel": "{{metric}} يوميًا لآخر {{days}} يومًا",
-    "timeseriesTableCaption": "أداء التحليلات اليومي لآخر {{days}} يومًا",
+    "timeseriesSubtitle_one": "الإجماليات اليومية لآخر {{days}} يومًا.",
+    "timeseriesChartLabel_one": "{{metric}} يوميًا لآخر {{days}} يومًا",
+    "timeseriesTableCaption_one": "أداء التحليلات اليومي لآخر {{days}} يومًا",
     "channelsTitle": "القنوات",
     "channelsEmpty": "لا توجد بيانات قنوات بعد.",
     "channelsTableCaption": "الجلسات حسب القناة",
@@ -153,10 +182,6 @@
     "devicesEmpty": "لا توجد بيانات أجهزة بعد.",
     "devicesTableCaption": "الجلسات حسب الجهاز",
     "deviceHeader": "الجهاز",
-    "locked": {
-      "body": "إحصاءات Google Analytics متاحة في خطة Pro وما فوق. قم بالترقية لعرض الجلسات والتفاعل والأحداث الرئيسية إلى جانب بيانات البحث.",
-      "upgrade": "ترقية الخطة"
-    },
     "enableTitle": "Google Analytics غير مفعّل",
     "enableBody": "امنح صلاحية قراءة فقط لـ Google Analytics لعرض الجلسات والتفاعل والأحداث الرئيسية لهذا الموقع.",
     "enableCta": "تفعيل Google Analytics",
@@ -167,7 +192,28 @@
     "propertiesError": "تعذّر تحميل مواقع Analytics. حاول مرة أخرى بعد قليل.",
     "setPropertyError": "تعذّر حفظ موقع Analytics هذا. حاول مرة أخرى بعد قليل.",
     "settingsTitle": "إحصاءات Google",
-    "settingsSubtitle": "اختر موقع GA4 الذي يقرأ منه RankMeFast."
+    "settingsSubtitle": "اختر موقع GA4 الذي يقرأ منه RankMeFast.",
+    "timeseriesSubtitle_zero": "الإجماليات اليومية لآخر {{days}} أيام.",
+    "timeseriesSubtitle_two": "الإجماليات اليومية لآخر {{days}} من الأيام.",
+    "timeseriesSubtitle_few": "الإجماليات اليومية لآخر {{days}} أيام.",
+    "timeseriesSubtitle_many": "الإجماليات اليومية لآخر {{days}} يومًا.",
+    "timeseriesSubtitle_other": "الإجماليات اليومية لآخر {{days}} يومًا.",
+    "timeseriesChartLabel_zero": "{{metric}} يوميًا لآخر {{days}} أيام",
+    "timeseriesChartLabel_two": "{{metric}} يوميًا لآخر {{days}} من الأيام",
+    "timeseriesChartLabel_few": "{{metric}} يوميًا لآخر {{days}} أيام",
+    "timeseriesChartLabel_many": "{{metric}} يوميًا لآخر {{days}} يومًا",
+    "timeseriesChartLabel_other": "{{metric}} يوميًا لآخر {{days}} يومًا",
+    "timeseriesTableCaption_zero": "أداء التحليلات اليومي لآخر {{days}} أيام",
+    "timeseriesTableCaption_two": "أداء التحليلات اليومي لآخر {{days}} من الأيام",
+    "timeseriesTableCaption_few": "أداء التحليلات اليومي لآخر {{days}} أيام",
+    "timeseriesTableCaption_many": "أداء التحليلات اليومي لآخر {{days}} يومًا",
+    "timeseriesTableCaption_other": "أداء التحليلات اليومي لآخر {{days}} يومًا",
+    "staleBody_zero": "أحدث بيانات Google Analytics هنا تعود إلى {{date}}، مع أن البيانات حتى {{expected}} يُفترض أن تكون متاحة بالفعل، لذلك لا تغطي هذه الأرقام آخر {{days}} أيام. حدّث البيانات لإعادة المزامنة. وإذا لم يتغير التاريخ، فأعد ربط Google.",
+    "staleBody_one": "أحدث بيانات Google Analytics هنا تعود إلى {{date}}، مع أن البيانات حتى {{expected}} يُفترض أن تكون متاحة بالفعل، لذلك لا تغطي هذه الأرقام آخر {{days}} يومًا. حدّث البيانات لإعادة المزامنة. وإذا لم يتغير التاريخ، فأعد ربط Google.",
+    "staleBody_two": "أحدث بيانات Google Analytics هنا تعود إلى {{date}}، مع أن البيانات حتى {{expected}} يُفترض أن تكون متاحة بالفعل، لذلك لا تغطي هذه الأرقام آخر {{days}} من الأيام. حدّث البيانات لإعادة المزامنة. وإذا لم يتغير التاريخ، فأعد ربط Google.",
+    "staleBody_few": "أحدث بيانات Google Analytics هنا تعود إلى {{date}}، مع أن البيانات حتى {{expected}} يُفترض أن تكون متاحة بالفعل، لذلك لا تغطي هذه الأرقام آخر {{days}} أيام. حدّث البيانات لإعادة المزامنة. وإذا لم يتغير التاريخ، فأعد ربط Google.",
+    "staleBody_many": "أحدث بيانات Google Analytics هنا تعود إلى {{date}}، مع أن البيانات حتى {{expected}} يُفترض أن تكون متاحة بالفعل، لذلك لا تغطي هذه الأرقام آخر {{days}} يومًا. حدّث البيانات لإعادة المزامنة. وإذا لم يتغير التاريخ، فأعد ربط Google.",
+    "staleBody_other": "أحدث بيانات Google Analytics هنا تعود إلى {{date}}، مع أن البيانات حتى {{expected}} يُفترض أن تكون متاحة بالفعل، لذلك لا تغطي هذه الأرقام آخر {{days}} يومًا. حدّث البيانات لإعادة المزامنة. وإذا لم يتغير التاريخ، فأعد ربط Google."
   },
   "searchDetail": {
     "back": "نظرة عامة",
@@ -205,17 +251,93 @@
       },
       "status": {
         "ok": "سليمة",
-        "errors": "{{n}} أخطاء",
-        "warnings": "{{n}} تحذيرات"
+        "errors_one": "{{n}} خطأ",
+        "warnings_one": "{{n}} تحذير",
+        "errors_zero": "{{n}} أخطاء",
+        "errors_two": "{{n}} من الأخطاء",
+        "errors_few": "{{n}} أخطاء",
+        "errors_many": "{{n}} خطأ",
+        "errors_other": "{{n}} خطأ",
+        "warnings_zero": "{{n}} تحذيرات",
+        "warnings_two": "{{n}} من التحذيرات",
+        "warnings_few": "{{n}} تحذيرات",
+        "warnings_many": "{{n}} تحذير",
+        "warnings_other": "{{n}} تحذير"
       }
     }
   },
-  "required": {
-    "title": "اربط Google Search Console",
-    "cta": "اربط Google Search Console",
-    "body": {
-      "cannibalization": "تُبنى تقارير تداخل الكلمات المفتاحية من بيانات Search Console الخاصة بك. اربط Search Console بهذا الموقع لإنشاء تقرير. تبقى التقارير المحفوظة سابقًا متاحة للقراءة.",
-      "internalLinks": "تستخدم اقتراحات الروابط الداخلية استعلامات Search Console لاختيار الصفحات المهمة. اربط Search Console بهذا الموقع لتحصل على اقتراحات مبنية على عمليات بحث حقيقية."
-    }
+  "breakdown": {
+    "shareHeader": "{{metric}} · النسبة من الإجمالي",
+    "shareHeaderRows": "{{metric}} · النسبة من هذه القائمة",
+    "other_zero": "أخرى ({{hidden}} إضافية)",
+    "other_one": "أخرى ({{hidden}} إضافية)",
+    "other_two": "أخرى (إضافيتان: {{hidden}})",
+    "other_few": "أخرى ({{hidden}} إضافية)",
+    "other_many": "أخرى ({{hidden}} إضافية)",
+    "other_other": "أخرى ({{hidden}} إضافية)",
+    "engagedRate": "{{rate}} تفاعل",
+    "ctrRate": "نسبة النقر {{rate}}",
+    "byImpressions": "لا توجد نقرات في هذه الفترة، لذا تعرض الدول والأجهزة مرات الظهور."
+  },
+  "readiness": {
+    "gsc": {
+      "not_connected": {
+        "title": "Search Console غير مرتبط",
+        "body": "اربط حسابك على Google لتظهر نقرات البحث ومرات الظهور الخاصة بـ <site>{{domain}}</site> في RankMeFast.",
+        "cta": "ربط Google"
+      },
+      "no_property": {
+        "title": "اختر موردًا في Search Console",
+        "body": "حساب Google مرتبط، لكن لم يُختر بعد أي مورد في Search Console لـ <site>{{domain}}</site>.",
+        "cta": "اختيار مورد Search Console"
+      },
+      "property_mismatch": {
+        "title": "هذا المورد لا يغطي الموقع",
+        "body": "مورد Search Console المختار لـ <site>{{domain}}</site> لا يشمل عنوان الموقع. اختر موردًا يشمله.",
+        "cta": "اختيار مورد Search Console"
+      },
+      "error": {
+        "title": "تعذّرت قراءة Search Console الآن",
+        "body": "رفضت Google الطلب الخاص بـ <site>{{domain}}</site> أو أن إحدى الأذونات ناقصة. حاول مرة أخرى، وأعد ربط Google إذا تكرر ذلك.",
+        "cta": "إعادة المحاولة"
+      }
+    },
+    "ga4": {
+      "not_connected": {
+        "title": "Google Analytics غير مرتبط",
+        "body": "اربط حسابك على Google لترى الزيارات والتفاعل الخاصة بـ <site>{{domain}}</site>.",
+        "cta": "ربط Google"
+      },
+      "no_property": {
+        "title": "اختر موردًا في Google Analytics",
+        "body": "حساب Google مرتبط، لكن لم يُختر بعد أي مورد في Google Analytics لـ <site>{{domain}}</site>.",
+        "cta": "اختيار مورد Google Analytics"
+      },
+      "property_mismatch": {
+        "title": "هذا المورد لا يطابق الموقع",
+        "body": "مورد Google Analytics المختار لـ <site>{{domain}}</site> يتتبّع عنوانًا مختلفًا. اختر المورد الخاص بهذا الموقع.",
+        "cta": "اختيار مورد Google Analytics"
+      },
+      "error": {
+        "title": "تعذّرت قراءة Google Analytics الآن",
+        "body": "رفضت Google الطلب الخاص بـ <site>{{domain}}</site> أو أن صلاحية الوصول إلى Analytics ناقصة. حاول مرة أخرى، وأعد ربط Google إذا تكرر ذلك.",
+        "cta": "إعادة المحاولة"
+      }
+    },
+    "matching": "نبحث الآن عن مورد مطابق."
+  },
+  "propertyPicker": {
+    "thisSite": "هذا الموقع",
+    "noneFound": "لم يُعثر على خاصية في Search Console للموقع {{domain}}. أضِفه في Search Console، ثم حدّث هذه القائمة.",
+    "openSearchConsole": "افتح Search Console",
+    "newTab": "(يُفتح في علامة تبويب جديدة)",
+    "refresh": "تحديث",
+    "refreshing": "جارٍ التحديث…",
+    "linkDifferent": "اربط خاصية أخرى",
+    "differentHint": "تخص هذه الخصائص مواقع أخرى. ربط إحداها يعرض بيانات البحث الخاصة بها على {{domain}}.",
+    "otherLabel": "خاصية من موقع آخر",
+    "confirmTitle": "هل تريد ربط {{site}} ببيانات {{property}}؟",
+    "confirmBody": "{{property}} موقع مختلف. ستظهر بيانات البحث الخاصة به على {{site}} حتى تغيّر الخاصية. الخاصية:",
+    "confirm": "اربط على أي حال"
   }
 }

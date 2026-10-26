@@ -1,3 +1,4 @@
+import { invalidatedBootstrapReads } from '@shared/cache/invalidation';
 import { createSlice, type PayloadAction } from '@reduxjs/toolkit';
 import { readStoredWorkspaceId, writeStoredWorkspaceId } from '../storage';
 import type { WorkspaceState } from '../types';
@@ -11,6 +12,7 @@ export const workspaceInitialState: WorkspaceState = {
   activeWorkspaceId: readStoredWorkspaceId(),
   status: 'idle',
   loadError: '',
+  loadedAt: null,
 };
 
 const workspaceSlice = createSlice({
@@ -25,6 +27,8 @@ const workspaceSlice = createSlice({
       // id identically.
       const resolved = next === null || !known || known.isOwn ? null : next;
       state.activeWorkspaceId = resolved;
+      state.loadedAt = null;
+      if (state.status === 'loading') state.status = 'idle';
       writeStoredWorkspaceId(resolved);
     },
   },
@@ -36,6 +40,7 @@ const workspaceSlice = createSlice({
       })
       .addCase(loadWorkspaces.fulfilled, (state, action) => {
         state.status = 'loaded';
+        state.loadedAt = Date.now();
         state.workspaces = action.payload;
         // Re-validate the rehydrated id against what the server just said. A
         // revoked membership would otherwise 404 every request with no way out
@@ -52,6 +57,10 @@ const workspaceSlice = createSlice({
       .addCase(loadWorkspaces.rejected, (state, action) => {
         state.status = 'failed';
         state.loadError = action.payload ?? '';
+      })
+      .addMatcher((action) => invalidatedBootstrapReads(action).includes('workspace/load/pending'), (state) => {
+        state.loadedAt = null;
+        if (state.status === 'loading') state.status = 'idle';
       });
   },
 });

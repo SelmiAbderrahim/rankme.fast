@@ -1,6 +1,9 @@
 import type { RootState } from '@app/store';
 
 export const selectKeywords = (state: RootState) => state.ranks.items;
+export const selectKeywordTotal = (state: RootState) => state.ranks.total;
+export const selectKeywordSiteTotal = (state: RootState) => state.ranks.siteTotal;
+export const selectKeywordLoadedQuery = (state: RootState) => state.ranks.loadedQuery;
 export const selectRanksSiteId = (state: RootState) => state.ranks.siteId;
 export const selectRanksLoading = (state: RootState) => state.ranks.loading;
 export const selectRanksLoaded = (state: RootState) => state.ranks.loaded;
@@ -21,6 +24,7 @@ export const selectCheckingKeywordId = (state: RootState) => state.ranks.checkin
 export const selectCheckCooldownUntil = (state: RootState) => state.ranks.checkCooldownUntil;
 export const selectSelectedKeywordId = (state: RootState) => state.ranks.selectedKeywordId;
 export const selectHistory = (state: RootState) => state.ranks.history;
+export const selectHistoryMissedChecks = (state: RootState) => state.ranks.historyMissedChecks;
 export const selectHistoryKeywordId = (state: RootState) => state.ranks.historyKeywordId;
 export const selectHistoryLoading = (state: RootState) => state.ranks.historyLoading;
 export const selectHistoryError = (state: RootState) => state.ranks.historyError;

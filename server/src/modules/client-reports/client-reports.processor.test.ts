@@ -107,7 +107,8 @@ async function seedSchedule(withAudit = true) {
     frequency: 'weekly',
     weekdayUtc: 4,
     monthdayUtc: null,
-    hourUtc: 10,
+    timezone: 'UTC',
+    localHour: 10,
     minuteUtc: 15,
     locale: 'en',
     recipients: [

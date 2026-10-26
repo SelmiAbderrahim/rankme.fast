@@ -48,6 +48,7 @@
   "pauseFailed": "Impossible de mettre le site en pause.",
   "resumeFailed": "Impossible de réactiver le site.",
   "paused": {
+    "actionBlocked": "Réactivez ce site pour lancer des vérifications, des audits ou des tâches planifiées.",
     "chip": "En pause",
     "menuPause": "Mettre en pause",
     "menuResume": "Réactiver le site",
@@ -59,15 +60,17 @@
     "banner": "Ce site est en pause — aucune vérification ni aucun audit ne s'exécute. Mis en pause {{when}}.",
     "resumeCta": "Réactiver",
     "pausing": "Mise en pause…",
-    "resuming": "Réactivation…"
+    "resuming": "Réactivation…",
+    "optionSuffix": "en pause",
+    "help": "En pause : audits, vérifications de position, rapports hebdomadaires, surveillance de contenu et alertes sont désactivés. Les rapports et l'historique restent consultables. Reprendre les réactive."
   },
   "errors": {
-    "urlRequired": "Saisissez l’URL de votre site.",
-    "urlTooLong": "Cette URL est trop longue (2048 caractères max).",
+    "urlRequired": "Saisissez l’URL de votre site, comme https://example.com.",
+    "urlTooLong": "Saisissez une URL de 2 048 caractères maximum.",
     "urlInvalid": "Saisissez une URL valide, comme https://example.com.",
-    "urlScheme": "Seules les URL http:// et https:// sont prises en charge.",
+    "urlScheme": "Saisissez une URL qui commence par http:// ou https://.",
     "urlUserinfo": "Retirez le nom d’utilisateur et le mot de passe de l’URL.",
-    "urlIpLiteral": "Les adresses IP ne sont pas prises en charge — utilisez un nom de domaine.",
+    "urlIpLiteral": "Saisissez un nom de domaine, pas une adresse IP.",
     "urlNoTld": "Saisissez un nom de domaine complet, comme https://example.com."
   },
   "workspace": {
@@ -88,7 +91,7 @@
       "localSeo": "SEO local",
       "reviews": "Avis",
       "geogrid": "Géogrille",
-      "content": "Contenu",
+      "content": "Analyses de contenu",
       "internalLinks": "Liens internes",
       "cannibalization": "Cannibalisation des mots-clés",
       "audienceResearch": "Recherche d’audience",
@@ -103,7 +106,32 @@
     },
     "navigationLabel": "Vue de l’espace de travail",
     "activeGroupLabel": "{{group}} · {{current}}",
-    "upgradeHint": "Passez à une offre supérieure pour débloquer cet onglet."
+    "switchSite": "Changer de site",
+    "loadingSite": "Chargement du site…",
+    "filterSites": "Filtrer les sites…",
+    "filterPages": "Filtrer les pages…",
+    "choosePage": "Choisir une page",
+    "choosePageDescription": "Ouvrez une page du site.",
+    "siblingPages": "Pages de cette section",
+    "noSites": "Aucun site trouvé",
+    "navLandmark": "Site",
+    "switchSiteNamed": "Changer de site · {{site}}",
+    "currentSite": "Site actuel",
+    "recentSites": "Récents",
+    "allSites": "Tous les sites",
+    "noSitesMatch": "Aucun site ne correspond à « {{query}} »",
+    "addSite": "Ajouter un site",
+    "manageSites": "Gérer les sites",
+    "collapseSiteMenu": "Réduire le menu du site",
+    "expandSiteMenu": "Développer le menu du site",
+    "filterPagesShort": "Filtrer les pages",
+    "clearFilter": "Effacer le filtre",
+    "noPagesMatch": "Aucune page ne correspond à « {{query}} »",
+    "unknownTab": {
+      "title": "Cette section n’existe pas",
+      "body": "Cette section n’est pas disponible dans cet espace de travail. La vue d’ensemble s’affiche à la place."
+    },
+    "unknownSite": "Site inconnu"
   },
   "overview": {
     "next": {
@@ -124,9 +152,10 @@
     },
     "search": {
       "title": "Performances de recherche",
-      "description": "D’après l’instantané Search Console du dernier audit.",
+      "description": "Vos dernières données Google Search Console sur les 28 derniers jours.",
       "topQuery": "Requête principale",
-      "openGoogle": "Ouvrir les données Google"
+      "openGoogle": "Ouvrir les données Google",
+      "asOf": "Données jusqu'au {{date}}"
     },
     "pageSpeed": {
       "title": "Expérience du site",
@@ -134,6 +163,8 @@
       "accessibility": "Accessibilité",
       "seo": "SEO",
       "coreWebVitals": "Signaux Web essentiels",
+      "coreWebVitalsSource": "Données de vrais visiteurs : le moins bon résultat parmi les pages échantillonnées.",
+      "coreWebVitalsNoFieldData": "Google n'a pas encore de données de vrais visiteurs pour les pages échantillonnées.",
       "noAuditTitle": "Pas encore de résultats de vitesse",
       "noAuditBody": "Lancez votre premier audit pour voir les résultats PageSpeed sur mobile.",
       "notMeasuredTitle": "Vitesse de page non mesurée",
@@ -154,13 +185,12 @@
     "competitors": {
       "open": "Ouvrir les concurrents",
       "notLoadedTitle": "Données concurrentielles disponibles à la demande",
-      "notLoadedDescription": "Ouvrez les concurrents pour lancer une recherche. L’aperçu réutilisera le résultat sans consommer une autre recherche."
+      "notLoadedDescription": "Ajoutez les concurrents que vous connaissez déjà ou prévisualisez une actualisation de la découverte sur la page Concurrents. Rien n’est récupéré tant que vous ne confirmez pas l’actualisation."
     },
     "unlock": {
       "title": "Des données supplémentaires sont disponibles",
       "backlinksAndCompetitors": "Passez à une offre supérieure pour analyser la force des backlinks et le chevauchement concurrentiel.",
-      "competitors": "Passez à Agency pour le chevauchement concurrentiel et les mots-clés manquants.",
-      "openPlans": "Comparer les offres"
+      "competitors": "Passez à Agency pour le chevauchement concurrentiel et les mots-clés manquants."
     },
     "statError": "Échec du chargement",
     "meta": {
@@ -205,5 +235,40 @@
   "lookupFailed": {
     "title": "Impossible de charger ce site",
     "description": "Nous n'avons pas pu vérifier ce site pour le moment. Réessayez dans un instant."
-  }
+  },
+  "picker": {
+    "loading": "Chargement de vos sites…",
+    "loadFailed": "Impossible de charger vos sites.",
+    "empty": "Vous n’avez encore aucun site.",
+    "addSite": "Ajouter un site",
+    "truncated": "Seuls vos {{shown, number}} premiers sites sont listés ici."
+  },
+  "market": {
+    "menuItem": "Marché par défaut",
+    "title": "Marché par défaut",
+    "description": "Le suivi des positions, la recherche de mots-clés et les autres outils démarrent avec ce pays, cette langue et cet appareil. Vous pouvez toujours choisir un autre marché dans chaque outil. Site :",
+    "inferredNote": "Nous l’avons déduit de l’adresse et de la langue du site. Modifiez-le s’il est incorrect.",
+    "country": "Pays",
+    "language": "Langue",
+    "device": "Appareil",
+    "devices": {
+      "desktop": "Ordinateur",
+      "mobile": "Mobile"
+    },
+    "save": "Enregistrer le marché",
+    "saving": "Enregistrement…",
+    "cancel": "Annuler",
+    "saveFailed": "Impossible d’enregistrer le marché par défaut. Réessayez."
+  },
+  "list": {
+    "columnLastAudit": "Dernier audit",
+    "columnHealth": "Santé",
+    "columnKeywords": "Mots-clés",
+    "noAudit": "Aucun audit pour l’instant",
+    "auditStatus": {
+      "failed": "Audit échoué",
+      "unavailable": "Audit indisponible"
+    }
+  },
+  "openTabHint": "Choisissez un site pour ouvrir sa section {{tab}}."
 }

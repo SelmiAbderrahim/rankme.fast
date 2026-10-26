@@ -6,6 +6,7 @@ import { MemoryRouter, Route, Routes, useLocation } from 'react-router-dom';
 import { render, screen, waitFor, within } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { toast } from 'sonner';
+import { ApiError } from '@shared/api/client';
 import { changeLanguage, i18n, initI18n } from '@shared/i18n';
 import * as api from './api';
 import { CompetitorWorkspace } from './components/CompetitorWorkspace';
@@ -234,13 +235,13 @@ function Location() {
   return <output data-testid="location">{`${location.pathname}${location.search}`}</output>;
 }
 
-function renderWorkspace(path: string) {
+function renderWorkspace(path: string, siteDomain?: string) {
   const store = configureStore({ reducer: { competitors: competitorsReducer } });
   const result = render(
     <Provider store={store}>
       <I18nextProvider i18n={i18n}>
         <MemoryRouter initialEntries={[path]}>
-          <CompetitorWorkspace siteId="site-1" />
+          <CompetitorWorkspace siteId="site-1" siteDomain={siteDomain} />
           <Location />
         </MemoryRouter>
       </I18nextProvider>
@@ -476,9 +477,9 @@ describe('unified competitor workspace', () => {
     for (const choice of choices) await userEvent.click(choice);
     expect(toast.error).toHaveBeenCalled();
     await userEvent.click(screen.getByRole('button', { name: /preview report spend/i }));
-    await screen.findByText(/server-authoritative spend preview/i);
+    await screen.findByText(/usage preview/i);
     await userEvent.click(screen.getByRole('button', { name: /^cancel$/i }));
-    expect(screen.queryByText(/server-authoritative spend preview/i)).not.toBeInTheDocument();
+    expect(screen.queryByText(/usage preview/i)).not.toBeInTheDocument();
     unmount();
 
     mocked.startLandscapeRun.mockResolvedValueOnce({
@@ -780,7 +781,8 @@ describe('unified competitor workspace', () => {
     };
     mocked.fetchLandscapeDetail.mockResolvedValue(partial);
     renderWorkspace(`/sites/site-1?tab=competitors&view=reports&report=${run.id}&class=missing&domain=one&q=term`);
-    expect(await screen.findByText(/1 of 1 competitors produced usable data/i)).toBeInTheDocument();
+    expect(await screen.findByText('Competitors with usable data: 1 of 1. Failed source steps: 0. Missing values were not inferred.')).toBeInTheDocument();
+    expect(screen.getByRole('option', { name: 'one.example' })).toHaveAttribute('dir', 'auto');
     await userEvent.selectOptions(screen.getByLabelText(/keyword class/i), '');
     await userEvent.selectOptions(document.querySelector('#landscape-domain')!, '');
     await userEvent.clear(screen.getByLabelText(/search keywords/i));
@@ -1111,5 +1113,151 @@ describe('competitor intelligence store failure and race handling', () => {
     pending.abort();
     await pending;
     expect(store.getState().competitors.intelligence.discoveryError).toBe('');
+  });
+});
+
+describe('manual competitor form', () => {
+  const formPath = '/sites/site-1?tab=competitors&view=overview';
+  const typeManual = async (value: string) => {
+    const input = await screen.findByLabelText(/add a public competitor url/i);
+    await userEvent.clear(input);
+    await userEvent.type(input, value);
+    await userEvent.click(screen.getByRole('button', { name: /add competitor/i }));
+    return input;
+  };
+
+  it('explains why adding a competitor is unavailable before entry and at the portfolio limit', async () => {
+    const workspace = renderWorkspace(formPath);
+    const add = await screen.findByRole('button', { name: /add competitor/i });
+    expect(add).toBeDisabled();
+    expect(screen.getByText(i18n.t('competitors:intelligence.portfolio.addDisabledEmpty'))).toHaveAttribute(
+      'id', add.getAttribute('aria-describedby'),
+    );
+    workspace.unmount();
+
+    mocked.fetchCompetitorProfiles.mockResolvedValue({ items: Array.from({ length: 10 }, (_, index) => profile(`full-${index}`)) });
+    renderWorkspace(formPath);
+    const fullAdd = await screen.findByRole('button', { name: /add competitor/i });
+    expect(fullAdd).toBeDisabled();
+    expect(screen.getByText(i18n.t('competitors:intelligence.portfolio.addDisabledFull', { max: 10 }))).toHaveAttribute(
+      'id', fullAdd.getAttribute('aria-describedby'),
+    );
+  });
+
+  it('explains an invalid address beside the field without calling the server, and clears it on edit', async () => {
+    renderWorkspace(formPath);
+    const input = await typeManual('not a url');
+    const message = await screen.findByText(i18n.t('competitors:intelligence.portfolio.manualInvalid'));
+    expect(message).toHaveAttribute('role', 'alert');
+    expect(input).toHaveAttribute('aria-invalid', 'true');
+    expect(input.getAttribute('aria-describedby')).toBe(message.id);
+    expect(mocked.addCompetitorProfile).not.toHaveBeenCalled();
+    await userEvent.type(input, 'x');
+    expect(screen.queryByText(i18n.t('competitors:intelligence.portfolio.manualInvalid'))).not.toBeInTheDocument();
+    expect(input).not.toHaveAttribute('aria-invalid');
+  });
+
+  it('refuses a non-https address and a single-label host', async () => {
+    renderWorkspace(formPath);
+    await typeManual('http://rival.example');
+    expect(await screen.findByText(i18n.t('competitors:intelligence.portfolio.manualInvalid'))).toBeInTheDocument();
+    await typeManual('localhost');
+    expect(mocked.addCompetitorProfile).not.toHaveBeenCalled();
+  });
+
+  it('turns a bare hostname into an https address and shows what was submitted', async () => {
+    renderWorkspace(formPath);
+    const input = await typeManual('rival.example/pricing');
+    await waitFor(() => expect(mocked.addCompetitorProfile).toHaveBeenCalledWith(
+      'site-1', { url: 'https://rival.example/pricing', source: 'manual' }, expect.any(String),
+    ));
+    await waitFor(() => expect(input).toHaveValue(''));
+  });
+
+  it('keeps a hostname with a port as a hostname', async () => {
+    renderWorkspace(formPath);
+    await typeManual('rival.example:8443');
+    await waitFor(() => expect(mocked.addCompetitorProfile).toHaveBeenCalledWith(
+      'site-1', { url: 'https://rival.example:8443', source: 'manual' }, expect.any(String),
+    ));
+  });
+
+  it('refuses the site itself, including a subdomain, before asking the server', async () => {
+    renderWorkspace(formPath, 'example.com');
+    await typeManual('https://www.example.com/pricing');
+    expect(await screen.findByText(i18n.t('competitors:intelligence.portfolio.ownDomain'))).toBeInTheDocument();
+    await typeManual('blog.example.com');
+    expect(mocked.addCompetitorProfile).not.toHaveBeenCalled();
+    await typeManual('example.org');
+    await waitFor(() => expect(mocked.addCompetitorProfile).toHaveBeenCalledTimes(1));
+  });
+
+  it('shows the server field message on the input instead of the generic alert', async () => {
+    mocked.addCompetitorProfile.mockRejectedValueOnce(new ApiError('x', 400, {
+      error: { message: 'Validation failed.', details: { fieldErrors: { url: ['Enter a public https address.'] } } },
+    }));
+    renderWorkspace(formPath);
+    const input = await typeManual('https://rival.example');
+    expect(await screen.findByText('Enter a public https address.')).toHaveAttribute('role', 'alert');
+    expect(input).toHaveAttribute('aria-invalid', 'true');
+    expect(screen.queryByText('Validation failed.')).not.toBeInTheDocument();
+  });
+
+  it('keeps a failure that names no field in the card alert', async () => {
+    mocked.addCompetitorProfile.mockRejectedValueOnce(new ApiError('x', 500, {
+      error: { message: 'The portfolio could not be updated.', messageKey: 'errors.internal' },
+    }));
+    renderWorkspace(formPath);
+    const input = await typeManual('https://rival.example');
+    expect(await screen.findByText('The portfolio could not be updated.')).toBeInTheDocument();
+    expect(input).not.toHaveAttribute('aria-invalid');
+  });
+
+  it('prefers the field message for a suggestion that the server rejects', async () => {
+    mocked.addCompetitorProfile.mockRejectedValueOnce(new ApiError('x', 400, {
+      error: { message: 'Validation failed.', details: { fieldErrors: { url: ['That address is not allowed.'] } } },
+    }));
+    renderWorkspace(formPath);
+    await userEvent.click((await screen.findAllByRole('button', { name: /confirm competitor/i }))[0]!);
+    await userEvent.click(await screen.findByRole('button', { name: /^confirm competitor$/i }));
+    expect(await screen.findByText('That address is not allowed.')).toBeInTheDocument();
+  });
+
+  it('clears a stale own-site message when a competitor is restored or archived', async () => {
+    renderWorkspace(formPath, 'example.com');
+    const ownDomain = i18n.t('competitors:intelligence.portfolio.ownDomain');
+    await typeManual('https://example.com');
+    expect(await screen.findByText(ownDomain)).toBeInTheDocument();
+    mocked.changeCompetitorProfileStatus.mockResolvedValueOnce({ profile: profile('old', 'active') });
+    await userEvent.click(screen.getAllByRole('button', { name: /^restore$/i })[0]!);
+    expect(screen.queryByText(ownDomain)).not.toBeInTheDocument();
+    await screen.findAllByRole('button', { name: /^archive$/i });
+
+    await typeManual('https://example.com');
+    expect(await screen.findByText(ownDomain)).toBeInTheDocument();
+    await userEvent.click(screen.getAllByRole('button', { name: /^archive$/i })[0]!);
+    expect(screen.queryByText(ownDomain)).not.toBeInTheDocument();
+  });
+
+  it('clears a server refusal to restore once the user moves on, and when leaving the view', async () => {
+    mocked.changeCompetitorProfileStatus.mockRejectedValueOnce(new ApiError('x', 400, {
+      error: { code: 'CONTENT_INTELLIGENCE_COMPETITOR_CONTENT_ERRORS_OWN_SITE', message: 'That is your own site.', messageKey: 'x' },
+    }));
+    const view = renderWorkspace(formPath);
+    await userEvent.click((await screen.findAllByRole('button', { name: /^restore$/i }))[0]!);
+    expect(await screen.findByText('That is your own site.')).toBeInTheDocument();
+    await userEvent.click(screen.getAllByRole('button', { name: /^archive$/i })[0]!);
+    expect(screen.queryByText('That is your own site.')).not.toBeInTheDocument();
+    view.unmount();
+    expect(view.store.getState().competitors.intelligence.mutationError).toBe('');
+  });
+
+  it('summarises active competitors by source and ignores the archive', async () => {
+    mocked.fetchCompetitorProfiles.mockResolvedValue({
+      items: [{ ...profile('old', 'archived'), source: 'manual' }],
+    });
+    renderWorkspace(formPath);
+    expect(await screen.findByText('Active competitors by source')).toBeInTheDocument();
+    expect(screen.getByText(/Added manually: 0\. From confirmed discovery suggestions: 0\./)).toBeInTheDocument();
   });
 });

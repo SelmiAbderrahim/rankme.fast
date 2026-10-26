@@ -1,5 +1,5 @@
 /**
- * Prompt 10d — pipeline invariants (spec §7).
+ * pipeline invariants (spec §7).
  *
  * Coverage focus (100% is the enforced gate; each branch has a matching test):
  *   - Discovery: happy path, empty rows, provider quota → unavailable ledger,

@@ -22,6 +22,12 @@ Klicken Sie in der Website-Ansicht auf **Keyword hinzufügen**. Dabei wird Ihr L
 ## Wöchentlich oder täglich
 Jeder Plan enthält **wöchentliche** Prüfungen. **Tägliche** Prüfungen sind eine kostenpflichtige Zusatzoption.
 
+## Mehrere Keywords auf einmal hinzufügen
+Tippen oder fügen Sie eine Liste in **Keyword hinzufügen** ein. Ein Komma oder ein Zeilenumbruch beendet ein Keyword, daher fügt das Einfügen von `seo audit, rank tracker` zwei Keywords hinzu. Pro Anfrage sind bis zu 100 Keywords möglich. Keywords, die Sie bereits verfolgen, werden übersprungen, und RankMeFast nennt Ihnen, welche.
+
+## Jetzt prüfen
+**Jetzt prüfen** startet sofort eine Prüfung, statt auf die nächste geplante zu warten. In einer Keyword-Zeile prüft es dieses Keyword; oben in der Liste prüft es alle aktiven Keywords. Eine Bestätigung nennt vor dem Start, was geprüft wird. Die Prüfung der gesamten Website läuft als eine einzige Aufgabe im Hintergrund: Sie können die Seite verlassen und später zurückkehren, und das Ergebnis nennt, wie viele Keywords geprüft wurden, wie viele fehlgeschlagen sind und wie viele nicht rechtzeitig erreicht wurden. Ein Keyword, das nie erreicht wurde, erscheint nicht als fehlgeschlagene Prüfung.
+
 ## Trend-Diagramm
 Wählen Sie ein Keyword aus, um seinen Verlauf zu sehen. Darunter steht eine barrierefreie Tabelle mit denselben Werten.
 

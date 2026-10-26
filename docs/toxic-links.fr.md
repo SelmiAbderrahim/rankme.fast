@@ -1,6 +1,6 @@
 ---
 title: 'Liens toxiques et désaveu'
-description: 'Comment RankMeFast classe les backlinks avec une grille déterministe, quand l''IA peut annoter une ligne, et pourquoi le fichier de désaveu n''est jamais soumis à votre place.'
+description: 'Comment RankMeFast classe les backlinks par niveau de risque avec des règles fixes, quand l''IA peut annoter une ligne, et pourquoi le fichier de désaveu n''est jamais soumis à votre place.'
 locale: fr
 slug: toxic-links
 section: product
@@ -9,15 +9,15 @@ order: 5
 
 # Liens toxiques et désaveu
 
-Une revue de toxicité évalue, selon une grille fixe, les lignes de backlinks que vous avez déjà récupérées. Vous pouvez ensuite construire un fichier de désaveu au format Google. RankMeFast ne le soumet jamais à votre place.
+Une revue de toxicité note les lignes de backlinks déjà récupérées selon des règles fixes, puis vous permet de créer un fichier de désaveu au format Google. RankMeFast ne soumet jamais ce fichier.
 
 <!-- docs-truth: metric=toxicity_reviews; unit=one-review-up-to-1000-stored-rows; cache-hits=count; refund=provider-failure-zero-retained; cadence=on-demand; estimates=rubric-observation -->
 
-## Comment les lignes sont classées
+## Comment chaque ligne reçoit un niveau de risque
 
-La grille `toxicity-rubric-v1` lit le score de spam du fournisseur sur chaque ligne de backlink stockée et la place dans une bande propre, à surveiller ou toxique. Les signaux de lien brisé et de nofollow peuvent faire changer la bande.
+Les règles (version `toxicity-rubric-v1`) lisent le score de spam de chaque ligne de backlink enregistrée et la placent au niveau sain, à surveiller ou toxique. Les signaux de lien cassé et de nofollow ajustent ce niveau.
 
-Les mêmes lignes avec les mêmes scores de spam tombent toujours dans les mêmes bandes, et chaque bande est affichée à côté des éléments qui la justifient.
+Les règles donnent toujours le même résultat : les mêmes lignes enregistrées et les mêmes scores de spam produisent toujours les mêmes niveaux de risque, et chaque niveau est affiché avec les éléments qui l'expliquent.
 
 ## Ce que coûte une revue
 
@@ -33,11 +33,13 @@ Vous pouvez demander une justification IA sur une ligne signalée. Elle cite cet
 
 RankMeFast exporte le fichier pour votre propre relecture et votre soumission à Google. Il n'est pas relié à l'outil de désaveu de la Search Console et ne peut rien téléverser en votre nom.
 
-## Ce que signifie une bande
+## Limites honnêtes
 
-Une bande est l'avis de la grille sur un lien. Elle ne prédit ni pénalité Google, ni action manuelle, ni changement de position.
+Un niveau de risque décrit ce que les règles ont trouvé dans un lien. Ce n'est jamais une prédiction de pénalité Google, d'action manuelle ou de changement de classement.
 
-L'IA peut commenter une ligne que la grille a déjà signalée, mais elle ne peut pas ajouter un domaine que la grille n'a pas signalé. Chaque domaine de l'export remonte à une ligne stockée.
+L'IA peut annoter une ligne déjà signalée par les règles, mais elle ne peut jamais ajouter un domaine que les règles n'ont pas signalé. Chaque domaine de l'export renvoie à une ligne enregistrée.
+
+Avant d'agir, comparez ce guide aux preuves stockées et à l'état affiché dans RankMeFast.
 
 Pour les unités et les limites de forfait, voir [Tarifs](./pricing.fr.md).
 

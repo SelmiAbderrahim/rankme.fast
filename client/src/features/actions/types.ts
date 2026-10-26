@@ -11,6 +11,10 @@ export const ACTION_STATES = [
 ] as const;
 export type ActionState = (typeof ACTION_STATES)[number];
 
+/** Why an audit finding is dismissed. */
+export const DISMISSAL_REASONS = ['false_positive', 'wont_fix', 'fixed_elsewhere', 'other'] as const;
+export type DismissalReason = (typeof DISMISSAL_REASONS)[number];
+
 export const ACTION_SOURCE_TYPES = [
   'audit_finding',
   'confirmed_rank_drop',
@@ -52,6 +56,10 @@ export type ActionSourceStatus = (typeof ACTION_SOURCE_STATUSES)[number];
 export const ACTION_OBSERVATION_FRESHNESSES = [
   'fresh',
   'stale',
+  'partial',
+  'blocked',
+  'failed',
+  'unknown',
   'unavailable',
 ] as const;
 export type ActionObservationFreshness =
@@ -148,6 +156,8 @@ export interface ActionHistoryEntry {
   /** True when the signed-in user made this change. */
   actorIsYou?: boolean;
   note: string | null;
+  /** Set when the system, not a team member, wrote the entry. */
+  reasonCode?: 'audit_regression' | null;
   createdAt: string;
 }
 

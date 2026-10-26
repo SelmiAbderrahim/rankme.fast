@@ -34,6 +34,7 @@ export interface RetestConfirmDialogProps {
   onOpenChange: (open: boolean) => void;
   /** The shipped page-cap Select, rendered inside the confirmation. */
   pageCapPicker: ReactNode;
+  resourceScanOption: ReactNode;
   confirming: boolean;
   error: string;
   onConfirm: () => void;
@@ -44,6 +45,7 @@ export const RetestConfirmDialog = ({
   open,
   onOpenChange,
   pageCapPicker,
+  resourceScanOption,
   confirming,
   error,
   onConfirm,
@@ -65,6 +67,7 @@ export const RetestConfirmDialog = ({
         </DialogHeader>
         <RetestPreviewCard firstRun={variant === 'first'} />
         {pageCapPicker}
+        {resourceScanOption}
         {error ? (
           <Alert
             variant="destructive"

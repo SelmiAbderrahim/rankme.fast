@@ -1,5 +1,5 @@
 /**
- * Prompt 10d — reconciliation sweep invariants.
+ * reconciliation sweep invariants.
  *
  * Guarantees exercised:
  *   - a `queued` row whose BullMQ job has vanished is marked failed with

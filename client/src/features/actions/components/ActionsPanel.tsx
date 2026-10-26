@@ -65,6 +65,7 @@ import {
   type ActionsQueryState,
 } from '../tabState';
 import { ActionCard } from './ActionCard';
+import { PageHeader } from '@shared/components/PageHeader';
 import { translateApiMessageKey } from '@shared/api/errorMessage';
 import {
   presentationRequestIdentity,
@@ -89,7 +90,13 @@ const FILTER_OPTIONS: Record<
 /** Map the URL grammar onto the API's array-shaped filters. */
 export function filtersFromQuery(query: ActionsQueryState): ListActionsFilters {
   return {
-    ...(query.state !== 'all' ? { state: [query.state] } : {}),
+    // The default view is the work still to do, so planned items stay in it
+    // with their badge, as on the site Overview.
+    ...(query.state === 'open'
+      ? { state: ['open', 'planned'] }
+      : query.state !== 'all'
+        ? { state: [query.state] }
+        : {}),
     ...(query.source !== 'all' ? { source: [query.source] } : {}),
     ...(query.severity !== 'all' ? { severity: [query.severity] } : {}),
     ...(query.confidence !== 'all' ? { confidence: [query.confidence] } : {}),
@@ -100,6 +107,7 @@ export function filtersFromQuery(query: ActionsQueryState): ListActionsFilters {
 /** i18n leaf for a filter option — `all` shares one key across filters. */
 function optionKey(key: string, value: string): string {
   if (value === 'all') return 'filters.all';
+  if (key === 'state' && value === 'open') return 'filters.openAndPlanned';
   if (key === 'confidence') return `confidence.${value}`;
   if (key === 'effort') return `effort.${value}`;
   return `${key}.${value}`;
@@ -169,7 +177,7 @@ export const ActionsPanel = ({ siteId }: ActionsPanelProps) => {
 
   const resetFilters = () =>
     setQuery({
-      state: 'all',
+      state: DEFAULT_ACTIONS_QUERY.state,
       source: 'all',
       severity: 'all',
       confidence: 'all',
@@ -193,19 +201,19 @@ export const ActionsPanel = ({ siteId }: ActionsPanelProps) => {
       data-testid="actions-panel"
       aria-labelledby="actions-panel-title"
     >
-      <div className="flex flex-wrap items-start justify-between gap-3">
-        <div>
-          <h2 id="actions-panel-title" className="text-lg font-semibold">
-            {t('title')}
-          </h2>
-          <p className="text-muted-foreground text-sm">{t('description')}</p>
-        </div>
-        <ReportExportControl
-          kind="actions.plan"
-          target={{ scope: 'site', siteId }}
-          selection={filtersFromQuery(query)}
-        />
-      </div>
+      <PageHeader
+        headingLevel={2}
+        titleId="actions-panel-title"
+        title={t('title')}
+        description={t('description')}
+        actions={
+          <ReportExportControl
+            kind="actions.plan"
+            target={{ scope: 'site', siteId }}
+            selection={filtersFromQuery(query)}
+          />
+        }
+      />
 
       <div
         role="group"
@@ -361,28 +369,31 @@ export const ActionsPanel = ({ siteId }: ActionsPanelProps) => {
               </li>
             ))}
           </ol>
-          <div className="flex items-center justify-end gap-2">
-            <Button
-              type="button"
-              variant="outline"
-              size="sm"
-              disabled={query.cursor === null}
-              onClick={() => setQuery({ cursor: null })}
-              data-testid="actions-prev"
-            >
-              {t('pagination.previous')}
-            </Button>
-            <Button
-              type="button"
-              variant="outline"
-              size="sm"
-              disabled={nextCursor === null}
-              onClick={() => setQuery({ cursor: nextCursor })}
-              data-testid="actions-next"
-            >
-              {t('pagination.next')}
-            </Button>
-          </div>
+          {/* One page needs no pager. */}
+          {query.cursor !== null || nextCursor !== null ? (
+            <div className="flex items-center justify-end gap-2">
+              <Button
+                type="button"
+                variant="outline"
+                size="sm"
+                disabled={query.cursor === null}
+                onClick={() => setQuery({ cursor: null })}
+                data-testid="actions-prev"
+              >
+                {t('pagination.previous')}
+              </Button>
+              <Button
+                type="button"
+                variant="outline"
+                size="sm"
+                disabled={nextCursor === null}
+                onClick={() => setQuery({ cursor: nextCursor })}
+                data-testid="actions-next"
+              >
+                {t('pagination.next')}
+              </Button>
+            </div>
+          ) : null}
         </>
       )}
     </section>

@@ -1,14 +1,15 @@
 {
   "card": {
     "title": "Weekly pulse",
-    "description": "One deterministic weekly digest per site — new/lost citations, confirmed rank drops, action changes, and the next three actions. Consumes one AI mentions check per site per week.",
-    "unitDisclosure": "One AI mentions check per site per week.",
+    "description": "A weekly summary for this site: new and lost AI citations, confirmed ranking drops, changes to your action list, and your next three actions.",
+    "unitDisclosure": "Runs one AI mentions check a week for this site.",
     "nextRun": "Next run: {{when}}",
     "lastRun": "Last run: {{when}}",
     "lastStatus": "Last status: {{status}}",
     "enableCta": "Turn on weekly pulse",
+    "enableHint": "Preview a run first to turn on weekly pulse.",
     "disableCta": "Turn off weekly pulse",
-    "previewCta": "Preview the spend",
+    "previewCta": "Preview a run",
     "historyLink": "View past digests"
   },
   "status": {
@@ -23,7 +24,7 @@
   },
   "confirm": {
     "enableTitle": "Turn on the weekly pulse?",
-    "enableBody": "The scheduled job will consume one AI mentions check per week for this site.",
+    "enableBody": "The scheduled job will run one AI mentions check a week for this site.",
     "enableAck": "I understand and want to receive the weekly pulse.",
     "disableTitle": "Turn off the weekly pulse?",
     "disableBody": "You will stop receiving the digest. History remains available.",
@@ -65,10 +66,8 @@
     "openLabel": "Open pulse for {{isoWeek}}"
   },
   "preview": {
-    "title": "Spend preview",
-    "productUnits": "1 AI mentions check per week",
-    "remaining": "Remaining this month: {{remaining}}",
-    "capBlocked": "Your plan cap is exhausted. Turning on will fail at run time — upgrade or buy credits to unblock."
+    "title": "Run preview",
+    "productUnits": "One AI mentions check a week."
   },
   "gsc": {
     "title": "Google generative AI appearance",
@@ -83,7 +82,7 @@
     "empty": "No generative AI appearance was reported by Google.",
     "reconnect": "Reconnect Google Search Console to see this section.",
     "window": "Window: {{start}} → {{end}}",
-    "row": "{{appearance}} — {{clicks}} clicks, {{impressions}} impressions",
+    "row": "{{appearance}} — clicks: {{clicks}} · impressions: {{impressions}}",
     "loading": "Loading Google Search Console data…",
     "unknown": "Unrecognized appearance ({{raw}})",
     "noData": "No Search Console data yet. Connect Google Search Console to see this section, or check back after the next daily sync."
@@ -98,7 +97,6 @@
   },
   "errors": {
     "unexpected": "Something went wrong — try again.",
-    "overCap": "Your plan cap is exhausted. Upgrade or buy credits to receive weekly pulses.",
     "acknowledgePreviewRequired": "Preview the spend before enabling.",
     "reconnectRequired": "Reconnect Google Search Console to load this data.",
     "unauthorized": "Please sign in to view the weekly pulse."

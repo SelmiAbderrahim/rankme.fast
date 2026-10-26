@@ -69,7 +69,7 @@ export const ReviewStatsCards = ({ stats, status, error }: ReviewStatsCardsProps
         <Card>
         <CardHeader>
           <CardTitle>{t('stats.distribution.title')}</CardTitle>
-          <CardDescription>{t('stats.total', { total: number.format(total) })}</CardDescription>
+          <CardDescription>{t('stats.total', { count: total, total: number.format(total) })}</CardDescription>
         </CardHeader>
         <CardContent className="flex flex-col gap-2">
           {total === 0 ? (
@@ -88,7 +88,7 @@ export const ReviewStatsCards = ({ stats, status, error }: ReviewStatsCardsProps
                     data-testid={`reviews-histogram-${star}`}
                   >
                     <span className="w-16 shrink-0 text-start">
-                      {t('stats.distribution.stars', { stars: star })}
+                      {t('stats.distribution.stars', { count: star, stars: star })}
                     </span>
                     <span className="bg-muted h-2 flex-1 rounded-full">
                       <span

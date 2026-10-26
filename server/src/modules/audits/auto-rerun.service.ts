@@ -10,7 +10,7 @@ import type { Logger } from 'pino';
 import { enqueueAuditJob } from '../../shared/queue/index.js';
 import { Site } from '../sites/index.js';
 import { AuditRun } from './audit-run.model.js';
-import { AUDIT_PAGE_CAP_MAX } from './audits.schema.js';
+import { AUDIT_PAGE_CAP_MAX, pageCapForScan, resolveResourceScan } from './audits.schema.js';
 export const AUTO_RERUN_TRIGGER = 'rank-drop' as const;
 /** At most one auto re-run per site per day — a manual or auto run inside
  * the window (that didn't fail) already gives the user a fresh report. */
@@ -65,12 +65,14 @@ export async function requestAutoAuditRerun(input: {
     });
     if (recent)
         return skip('recent-run');
-    const pageCap = AUDIT_PAGE_CAP_MAX;
+    const resourceScan = resolveResourceScan();
+    const pageCap = pageCapForScan(AUDIT_PAGE_CAP_MAX, resourceScan);
     const run = await AuditRun.create({
         accountId: input.accountId,
         siteId: site._id,
         status: 'queued',
         pageCap,
+        resourceScan,
         trigger: AUTO_RERUN_TRIGGER,
     });
     await enqueueAuditJob(deps.auditsQueue, {

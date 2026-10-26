@@ -31,6 +31,8 @@ Ein Snapshot aus dem Cache zählt als Einheit, ebenso ein erfolgreiches, aber le
 
 Ein Snapshot sammelt mehrere zusammengehörige Beobachtungen. Scheitern alle und RankMeFast speichert kein Ergebnis, wird die Einheit genau einmal zurückgegeben. Sobald eine brauchbare Beobachtung gespeichert ist, bleibt der teilweise oder vollständige Snapshot verbraucht. Ein Wiederholungsversuch kann nicht doppelt erstatten.
 
+Wählen Sie den **Markt** (Land und Sprache) für die Schätzung; er beginnt beim eigenen Markt der Website. Fügen Sie eine vollständige Adresse ein, behält RankMeFast nur die Domain. Eine von Ihnen eingetippte Domain bleibt im Feld stehen, während die Seite fertig lädt.
+
 ## Wann aktualisieren
 
 Traffic Insights läuft **auf Abruf** und überwacht Wettbewerber nicht ständig. Starten Sie für eine aktuellere Schätzung einen neuen Snapshot. Werden neue Snapshots pausiert, bleiben gespeicherte Listen, Details und Vergleiche verfügbar.

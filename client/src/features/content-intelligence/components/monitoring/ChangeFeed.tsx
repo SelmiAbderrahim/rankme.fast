@@ -1,3 +1,4 @@
+import { Bdi } from '@shared/components/Bdi';
 import { useTranslation } from 'react-i18next';
 import { ExternalLink } from 'lucide-react';
 import { ReportExportControl } from '@features/report-export';
@@ -50,7 +51,7 @@ export function ChangeFeed({ monitor, feed, nextCursor, loading, onLoadMore }: C
           data-testid="monitor-feed-source-link"
         >
           <ExternalLink aria-hidden="true" className="size-4" />
-          {monitor.targetUrl}
+          <Bdi>{monitor.targetUrl}</Bdi>
         </a>
 
         {feed.length === 0 ? (

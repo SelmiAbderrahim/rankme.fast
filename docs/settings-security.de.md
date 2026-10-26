@@ -65,6 +65,10 @@ Wenn Ihr Konto die **Admin**-Rolle hat, ist die Zwei-Faktor-Authentifizierung Pf
 
 Verwenden Sie einen Backup-Code auf dem Bestätigungsbildschirm. Dort finden Sie einen Link **Backup-Code verwenden**. Wenn Ihnen die Codes ausgehen, kann ein Admin den zweiten Faktor über das Admin-Panel zurücksetzen.
 
+## Aktive Sitzungen
+
+Die Liste **Aktive Sitzungen** zeigt jedes Gerät, das bei Ihrem Konto angemeldet ist: Browser und System, ein Symbol für Computer, Smartphone oder Tablet und die IP-Adresse, sofern sie erfasst wurde. Möglicherweise müssen Sie Ihre Identität bestätigen, bevor die Liste erscheint. Dieses Gerät zeigt „Jetzt aktiv“. Andere Geräte zeigen den Tag der letzten Nutzung, weil der Anmeldeeintrag etwa einmal am Tag aktualisiert wird. Ein Standort wird nicht angezeigt, da dafür ein IP-Auskunftsdienst nötig wäre. Widerrufen Sie jedes Gerät, das Sie nicht erkennen, oder nutzen Sie **Alle anderen Geräte abmelden**. Vor dem Widerruf nennt eine Bestätigung das Gerät; es muss sich danach neu anmelden.
+
 ## Ihre Datenrechte
 
 Sie können einen Export oder eine Löschung Ihrer Kontodaten anfordern. Der aktuelle Export ist auf die Datensätze in der erzeugten Datei beschränkt und enthält weder Seiten-Snapshots noch Zeitreihen aus GSC oder Ranking-Tracking. Die Löschung geht weiter: Nach der Karenzzeit entfernt sie gespeicherte Kontodaten auch dann, wenn diese nicht im Export enthalten sind. Während der Karenzzeit können Sie den Antrag zurückziehen. Der Leitfaden [Seitenleistung](./pages-performance.de.md) beschreibt die Aufbewahrung der Seitendaten.

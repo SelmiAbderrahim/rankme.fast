@@ -1,3 +1,4 @@
+import { Bdi } from '@shared/components/Bdi';
 import { useTranslation } from 'react-i18next';
 import { Checkbox } from '@shared/ui/checkbox';
 import {
@@ -107,8 +108,8 @@ export const TeamSiteAccessFields = ({
                   onCheckedChange={(checked) => setSite(site.id, checked === true)}
                 />
                 <FieldContent>
-                  <FieldLabel htmlFor={id}>{site.label}</FieldLabel>
-                  <FieldDescription>{site.url}</FieldDescription>
+                  <FieldLabel htmlFor={id}><Bdi>{site.label}</Bdi></FieldLabel>
+                  <FieldDescription><Bdi>{site.url}</Bdi></FieldDescription>
                 </FieldContent>
               </Field>
             );

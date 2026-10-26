@@ -13,9 +13,11 @@ export interface ScheduledReportDto {
     siteId: string;
     name: string;
     frequency: ScheduledReportRow['frequency'];
+    /** Weekday / month day / hour are wall-clock values in `timezone`. */
     weekdayUtc: number | null;
     monthdayUtc: number | null;
-    hourUtc: number;
+    timezone: string;
+    localHour: number;
     minuteUtc: number;
     locale: string;
     recipients: string[];
@@ -45,7 +47,8 @@ export function toScheduledReportDto(row: ScheduledReportRow): ScheduledReportDt
         frequency: row.frequency,
         weekdayUtc: row.weekdayUtc,
         monthdayUtc: row.monthdayUtc,
-        hourUtc: row.hourUtc,
+        timezone: row.timezone,
+        localHour: row.localHour,
         minuteUtc: row.minuteUtc,
         locale: row.locale,
         recipients: row.recipients,
@@ -131,7 +134,8 @@ function scheduleValues(id: string, accountId: string, siteId: string, body: Cli
         name: body.name,
         frequency: body.frequency,
         ...cadence,
-        hourUtc: body.hourUtc,
+        timezone: body.timezone,
+        localHour: body.localHour,
         minuteUtc: clientReportScheduleMinute(id),
         locale: body.locale,
         recipients: body.recipients,

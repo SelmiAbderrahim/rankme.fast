@@ -13,13 +13,6 @@ import { Alert, AlertDescription, AlertTitle } from '@shared/ui/alert';
 import { Label } from '@shared/ui/label';
 import { Skeleton } from '@shared/ui/skeleton';
 import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from '@shared/ui/select';
-import {
   AlertDialog,
   AlertDialogAction,
   AlertDialogCancel,
@@ -42,6 +35,7 @@ import {
 } from '../store/thunks';
 import { setConnectError } from '../store/slice';
 import { DocsLink } from '@shared/docs/DocsLink';
+import { GscPropertyPicker } from './GscPropertyPicker';
 import { GSC_SCOPE, hasGa4Scope, hasGscScope } from '../lib/googleScopes';
 import {
   GOOGLE_ERROR_QUERY_KEY,
@@ -88,9 +82,10 @@ const formatDate = (iso: string, locale: string): string => {
 
 export interface GoogleConnectionCardProps {
   siteId: string;
+  domain?: string;
 }
 
-export const GoogleConnectionCard = ({ siteId }: GoogleConnectionCardProps) => {
+export const GoogleConnectionCard = ({ siteId, domain = '' }: GoogleConnectionCardProps) => {
   const { t, i18n } = useTranslation('google');
   const dispatch = useAppDispatch();
   const connection = useAppSelector(selectGoogleConnection);
@@ -356,34 +351,20 @@ export const GoogleConnectionCard = ({ siteId }: GoogleConnectionCardProps) => {
               {t(`autoMatch.${gscMatchStatus}`)}
             </p>
           ) : null}
-          {properties.length > 0 ? (
-            <Select
-              value={connection.propertyUrl ?? undefined}
-              disabled={settingProperty}
-              onValueChange={(value) => {
-                if (value !== connection.propertyUrl) {
-                  void dispatch(setGoogleProperty({ siteId, propertyUrl: value }));
-                }
+          {properties.length > 0 || !connection.propertyUrl ? (
+            <GscPropertyPicker
+              domain={domain}
+              propertyUrl={connection.propertyUrl ?? null}
+              properties={properties}
+              settingProperty={settingProperty}
+              refreshing={loading}
+              onSelect={(propertyUrl, confirmMismatch) => {
+                void dispatch(setGoogleProperty({ siteId, propertyUrl, confirmMismatch }));
               }}
-            >
-              <SelectTrigger id="gsc-property" className="w-full sm:w-96" aria-busy={settingProperty}>
-                <SelectValue placeholder={t('connected.propertyPlaceholder')} />
-              </SelectTrigger>
-              <SelectContent>
-                {properties.map((property) => (
-                  <SelectItem key={property.siteUrl} value={property.siteUrl}>
-                    {property.siteUrl}
-                    {property.inUseBy?.length
-                      ? ` — ${property.inUseBy.map((used) => used.displayName || used.domain).join(', ')}`
-                      : ''}
-                  </SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
+              onRefresh={() => { void dispatch(loadConnection(siteId)); }}
+            />
           ) : (
-            <p className="text-foreground font-medium">
-              {connection.propertyUrl ?? t('connected.propertyMissing')}
-            </p>
+            <p className="text-foreground font-medium">{connection.propertyUrl}</p>
           )}
           {setPropertyError ? (
             <p role="alert" className="text-destructive text-sm">

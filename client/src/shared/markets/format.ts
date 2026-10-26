@@ -1,4 +1,5 @@
 import type { MarketCatalogEntry } from './types';
+import { toCompetitorDomain } from '@shared/lib/competitorDomains';
 
 /** DataForSEO country locations use `2000 + ISO 3166-1 numeric code`. */
 const ISO_COUNTRY_CODES = `
@@ -52,7 +53,7 @@ export function countryName(countryCode: string, locale: string): string | null 
   // them as unknown before asking Intl.
   if (!countryCode.trim()) return null;
   try {
-    return new Intl.DisplayNames([locale], { type: 'region' }).of(countryCode) ?? null;
+    return new Intl.DisplayNames([locale], { type: 'region', fallback: 'none' }).of(countryCode) ?? null;
   } catch {
     return null;
   }
@@ -65,7 +66,7 @@ const LANGUAGE_TAG = /^[a-z]{2,3}(?:-[a-z0-9]{2,8})*$/iu;
 export function languageName(languageCode: string, locale: string): string | null {
   if (!LANGUAGE_TAG.test(languageCode)) return null;
   try {
-    return new Intl.DisplayNames([locale], { type: 'language' }).of(languageCode) ?? null;
+    return new Intl.DisplayNames([locale], { type: 'language', fallback: 'none' }).of(languageCode) ?? null;
   } catch {
     return null;
   }
@@ -79,4 +80,16 @@ export function formatCountryFromLocation(
 ): string {
   const countryCode = countryCodeForLocation(locationCode, markets);
   return countryCode ? countryName(countryCode, locale) ?? unknownCountry : unknownCountry;
+}
+
+/** These country suffixes commonly identify generic products, not audiences. */
+const GENERIC_CCTLDS = new Set(['ac', 'ai', 'am', 'cc', 'co', 'fm', 'gd', 'gg', 'im', 'io', 'la', 'ly', 'me', 'nu', 'sh', 'tk', 'to', 'tv', 'vc', 'ws']);
+
+export function countryFromDomain(domain: string): string | null {
+  const host = toCompetitorDomain(domain);
+  if (host === null) return null;
+  const tld = host.split('.').pop()!;
+  if (!/^[a-z]{2}$/.test(tld) || GENERIC_CCTLDS.has(tld)) return null;
+  const country = tld === 'uk' ? 'GB' : tld.toUpperCase();
+  return locationCodeForCountry(country) === null ? null : country;
 }

@@ -15,7 +15,7 @@ Search Console is Google's free tool that shows how Google sees your site. Once 
 - **Indexed with warnings**: has Google flagged a canonical or duplicate-content problem?
 
 ## Why connect
-Without a connection, these rules stay in **Watch** with "insufficient data". Once connected, they land in the right tab and list the pages you need to fix.
+Without a connection, these rules show under **Not evaluated** in the report. They are not counted as Watch issues and do not appear in Next actions. Once connected, they land in the right tab and list the pages you need to fix.
 
 ## What we can access
 - We ask Google for the **read-only** Search Console scope, `webmasters.readonly`. It's the smallest scope that lets us call the URL Inspection API.
@@ -30,8 +30,11 @@ Without a connection, these rules stay in **Watch** with "insufficient data". On
 ## Disconnecting or revoking
 Click **Disconnect** in the same panel and confirm. We delete the stored token right away. You can also revoke our access at any time from https://myaccount.google.com/permissions.
 
-## "Reconnect needed"
-If Google invalidates the token (for example after you change your account password), the card shows a red **Reconnect needed** banner. Until you reconnect, the three rules go back to "insufficient data".
+## When Google asks you to reconnect
+If Google invalidates the token (for example after you change your account password), the Google Search Console card on the site's **Google** tab shows a red alert, **Your Google connection needs to be reconnected**, with a **Reconnect** button. Cards that read Search Console or Google Analytics show **Search Console isn't connected** or **Google Analytics isn't connected**, with **Connect Google**. Until you reconnect, the three rules go back to "insufficient data".
+
+## Choosing the property
+The site's **Google** tab matches your site to a Search Console property automatically. If none matches, or several do, RankMeFast asks you to choose one. A property that belongs to a different site can be linked only after you confirm it, because its search data then appears on this site. Google Analytics works the same way. If the newest Google Analytics data is older than expected, a notice says so and **Refresh** syncs it again; RankMeFast also syncs it once a day.
 
 ## Search performance in Pages
 

@@ -197,11 +197,24 @@ export function WeeklyPulseCard({ siteId }: WeeklyPulseCardProps) {
             onClick={() => setDialogOpen('enable')}
             data-testid="weekly-pulse-enable-cta"
             disabled={!preview}
+            aria-describedby={preview ? undefined : `weekly-pulse-enable-hint-${siteId}`}
           >
             {t('card.enableCta')}
           </Button>
         )}
       </div>
+
+      {/* Turning on requires a run preview first; say so instead of leaving a
+          silently disabled button. */}
+      {!subscriptionEnabled && !preview ? (
+        <p
+          id={`weekly-pulse-enable-hint-${siteId}`}
+          className="text-muted-foreground mt-2 text-xs"
+          data-testid="weekly-pulse-enable-hint"
+        >
+          {t('card.enableHint')}
+        </p>
+      ) : null}
 
       {saveError ? (
         <p role="alert" className="text-destructive mt-3 text-sm">

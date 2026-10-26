@@ -31,6 +31,8 @@ Un instantané servi depuis le cache compte comme une unité, tout comme un rés
 
 L’instantané rassemble plusieurs observations. Si elles échouent toutes et que RankMeFast ne conserve aucun résultat, l’unité est rendue une seule fois. Dès qu’une observation utile est conservée, l’instantané partiel ou complet reste facturé. Une nouvelle tentative ne peut pas rembourser deux fois la même unité.
 
+Choisissez le **Marché** (pays et langue) de l’estimation ; il part du marché du site lui-même. Collez une adresse complète et RankMeFast ne garde que le domaine. Un domaine que vous avez saisi reste dans le champ pendant que la page finit de se charger.
+
 ## Quand actualiser
 
 Traffic Insights fonctionne **à la demande** et ne surveille pas les concurrents en continu. Lancez un nouvel instantané pour obtenir une estimation plus récente. Si les créations sont suspendues, vos listes, détails et comparaisons stockés restent lisibles.

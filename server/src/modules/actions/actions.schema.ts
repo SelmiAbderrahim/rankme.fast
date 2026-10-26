@@ -1,5 +1,6 @@
 import { z } from 'zod';
 import { ACTION_SOURCE_TYPES, ACTION_STATES, } from '../../db/schema/action-events.js';
+import { DISMISSAL_REASONS } from '../audits/finding-dismissal.model.js';
 export const listActionsQuerySchema = z.object({
     state: z
         .union([
@@ -49,6 +50,8 @@ export const mutateActionStateSchema = z.object({
     state: z.enum(ACTION_STATES),
     expectedVersion: z.number().int().min(0),
     note: z.string().max(2000).optional(),
+    /** Why an audit finding is dismissed; ignored otherwise. */
+    reason: z.enum(DISMISSAL_REASONS).optional(),
     clientKey: z.string().min(1).max(200),
 });
 export type MutateActionStateBody = z.infer<typeof mutateActionStateSchema>;
@@ -73,6 +76,7 @@ export const actionHistoryEntrySchema = z.object({
         .nullable(),
     actorIsYou: z.boolean(),
     note: z.string().nullable(),
+    reasonCode: z.enum(['audit_regression']).nullable(),
     createdAt: z.string(),
 }).strict();
 export const actionHistoryResponseSchema = z.object({

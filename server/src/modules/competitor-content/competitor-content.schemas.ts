@@ -56,7 +56,7 @@ export const listCompetitorsQuerySchema = z
 // Run start.
 // ---------------------------------------------------------------------------
 const objectIdHex = z.string().regex(/^[0-9a-f]{24}$/);
-const profileUuid = z.string().uuid();
+const profileUuid = z.string().guid();
 export const reviewedPageMatchReferenceSchema = z
     .object({
     landscapeReportId: objectIdHex,

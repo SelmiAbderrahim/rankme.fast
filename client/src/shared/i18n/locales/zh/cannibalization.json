@@ -24,8 +24,6 @@
   },
   "preview": {
     "title": "本次用量",
-    "units": "从月度额度中扣除 {{count}} 份报告。",
-    "units_other": "从月度额度中扣除 {{count}} 份报告。",
     "remaining": "本月套餐剩余：{{remaining}}。",
     "pack": "另有额度包 {{units}} 份。",
     "noFit": "剩余额度不足。请先购买额度或更换套餐。"
@@ -39,7 +37,7 @@
     "open": "打开"
   },
   "detail": {
-    "provenance": "基于已存储的 {{days}} 天 Search Console 数据，最近同步于 {{date}}。共读取 {{queries}} 个搜索词。"
+    "provenance": "基于已存储的 $t(cannibalization:counts.windowDays, {\"count\": {{days}}}) Search Console 数据，最近同步于 {{date}}。$t(cannibalization:counts.queriesRead, {\"count\": {{queries}}})"
   },
   "candidates": {
     "query": "搜索词",
@@ -56,7 +54,7 @@
     "inspect": "查看"
   },
   "drilldown": {
-    "provenance": "{{days}} 天的已存储数据，最近同步于 {{date}}。",
+    "provenance": "$t(cannibalization:counts.windowDays, {\"count\": {{days}}})的已存储数据，最近同步于 {{date}}。",
     "recommendation": "建议保留 {{url}} 作为主页面。",
     "reason": {
       "most_clicks": "它在该搜索词上已获得最多点击。",
@@ -73,16 +71,12 @@
   "states": {
     "empty": {
       "title": "暂无内容",
-      "body": "生成一份报告，看看你的页面在争夺哪些搜索词。"
+      "body": "生成一份报告，看看你的页面在争夺哪些搜索词。",
+      "action": "创建报告"
     },
     "awaitingSync": {
       "title": "等待下次同步",
       "body": "该时间段尚未存储 Search Console 的搜索词与页面数据，将在下次同步时到达。"
-    },
-    "cap": {
-      "title": "月度额度已用完",
-      "body": "本月套餐内的关键词相互竞争报告已全部用完。",
-      "link": "查看套餐"
     },
     "disabled": {
       "title": "暂时不可用",
@@ -99,6 +93,35 @@
     "failed": {
       "title": "出了点问题",
       "body": "加载失败，请重试。"
+    },
+    "noCandidates": {
+      "title": "未发现相互竞争的页面",
+      "body": "在此时间范围内，您没有任何两个页面在争夺同一个搜索查询。",
+      "action": "创建新报告"
+    },
+    "filtered": {
+      "title": "没有此置信度的候选项",
+      "body": "显示所有置信度，即可查看此报告的候选项。",
+      "action": "全部显示"
+    },
+    "needsGsc": "新报告需要一个可用的 Search Console 资源。请先解决上方显示的状态，再回到这里。",
+    "emptyNoGsc": {
+      "title": "暂无内容",
+      "body": "报告基于已保存的 Search Console 数据生成。请先为此网站连接 Search Console 资源，然后创建第一份报告。"
     }
+  },
+  "counts": {
+    "windowDays_zero": "{{count}} 天",
+    "windowDays_one": "{{count}} 天",
+    "windowDays_two": "{{count}} 天",
+    "windowDays_few": "{{count}} 天",
+    "windowDays_many": "{{count}} 天",
+    "windowDays_other": "{{count}} 天",
+    "queriesRead_zero": "共读取 {{count}} 个搜索词。",
+    "queriesRead_one": "共读取 {{count}} 个搜索词。",
+    "queriesRead_two": "共读取 {{count}} 个搜索词。",
+    "queriesRead_few": "共读取 {{count}} 个搜索词。",
+    "queriesRead_many": "共读取 {{count}} 个搜索词。",
+    "queriesRead_other": "共读取 {{count}} 个搜索词。"
   }
 }

@@ -3,13 +3,29 @@ import { formatAppTitle, resolveAppTitleTarget } from './appTitle';
 
 describe('resolveAppTitleTarget', () => {
   it.each([
+    ['/login', 'auth:login.title'],
+    ['/register', 'auth:register.title'],
+    ['/forgot-password', 'auth:reset.title'],
+    ['/reset-password', 'auth:reset.newPasswordTitle'],
+    ['/verify-email', 'auth:verify.title'],
+    ['/two-factor', 'auth:twoFactor.challenge.title'],
+    ['/logout', 'nav.logout'],
+    ['/team/accept/token', 'team:decision.accept.title'],
+    ['/team/reject/token', 'team:decision.reject.title'],
+    ['/team/change-password', 'auth:change.title'],
+    ['/team/invitations', 'team:inbox.title'],
+  ])('names the auth or invitation route %s', (path, pageKey) => {
+    expect(resolveAppTitleTarget(path, '')).toEqual({ pageKey, siteId: null });
+  });
+  it.each([
     ['/dashboard', '', 'nav.dashboard'],
     ['/assistant', '', 'nav.assistant'],
     ['/sites', '', 'nav.sites'],
     ['/keyword-research/history', '', 'nav.keywordResearch'],
     ['/dashboard/alerts', '', 'alerts:title'],
-    ['/profile', '', 'shell.profile'],
+    ['/settings/profile', '', 'shell.profile'],
     ['/profile', '?tab=security', 'nav.security'],
+    ['/settings/workspace', '', 'nav.workspace'],
     ['/settings/team', '', 'nav.team'],
     ['/exports', '', 'nav.exports'],
   ])('names the account page %s%s from the shared nav config', (path, search, key) => {
@@ -31,6 +47,10 @@ describe('resolveAppTitleTarget', () => {
     expect(resolveAppTitleTarget('/sites/s1', '').pageKey).toBe('sites:workspace.tabs.overview');
   });
 
+  it.each(['KEYWORDS', 'ranks', 'Rank_Tracking'])('uses the canonical shared tab resolution for %s', (tab) => {
+    expect(resolveAppTitleTarget('/sites/s1', `?tab=${tab}`).pageKey).toBe('sites:workspace.tabs.keywords');
+  });
+
   it('names site sub-routes after the tab they belong to', () => {
     expect(resolveAppTitleTarget('/sites/s1/report/r9', '').pageKey).toBe(
       'sites:workspace.tabs.report',
@@ -48,6 +68,15 @@ describe('resolveAppTitleTarget', () => {
       pageKey: null,
       siteId: 's1',
     });
+  });
+
+  it.each(['constructor', '__proto__', 'toString'])('keeps inherited object names out of route metadata: %s', (segment) => {
+    expect(resolveAppTitleTarget(`/sites/s1/${segment}`, '')).toEqual({ pageKey: null, siteId: 's1' });
+  });
+
+  it('matches route literals case-insensitively while preserving site identity', () => {
+    expect(resolveAppTitleTarget('/LOGIN', '').pageKey).toBe('auth:login.title');
+    expect(resolveAppTitleTarget('/SITES/SiteID/REPORT', '')).toEqual({ pageKey: 'sites:workspace.tabs.report', siteId: 'SiteID' });
   });
 });
 

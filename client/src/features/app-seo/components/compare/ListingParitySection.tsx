@@ -1,3 +1,4 @@
+import { Bdi } from '@shared/components/Bdi';
 import { useTranslation } from 'react-i18next';
 import { Badge } from '@shared/ui/badge';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@shared/ui/card';
@@ -60,7 +61,7 @@ export function ListingParitySection({
               {comparison.listingParity.findings.map((finding) => (
                 <li key={finding.id} className="flex flex-wrap items-start justify-between gap-3 rounded-xl border border-border p-4">
                   <div>
-                    <p className="font-medium">{finding.title}</p>
+                    <p className="font-medium"><Bdi>{finding.title}</Bdi></p>
                     <p className="mt-1 text-xs text-muted-foreground">{t('common.userPaired')}</p>
                   </div>
                   <Badge className={badgeClass(finding.status)}>

@@ -1,8 +1,11 @@
+import { isolateText } from '@shared/lib/bidi';
+import { Bdi } from '@shared/components/Bdi';
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { MoreHorizontal } from 'lucide-react';
 import { StatusChip } from '@shared/ui/status-chip';
 import { Button } from '@shared/ui/button';
+import { Badge } from '@shared/ui/badge';
 import {
   AlertDialog,
   AlertDialogCancel,
@@ -95,10 +98,8 @@ export const TeamMembersTable = ({
             const siteAccess = member.siteAccess ?? { mode: 'all' as const, siteIds: [] };
             return (
               <TableRow key={member.id}>
-                <TableCell className="font-medium">{member.email}</TableCell>
-                <TableCell className="text-muted-foreground">
-                  {t(`members.roles.${member.role}`)}
-                </TableCell>
+                <TableCell className="font-medium"><Bdi>{member.email}</Bdi></TableCell>
+                <TableCell><Badge variant="outline">{t(`members.roles.${member.role}`)}</Badge></TableCell>
                 <TableCell>
                   {isPending && isExpired(member) ? (
                     <StatusChip tone="destructive">{t('members.status.expired')}</StatusChip>
@@ -181,7 +182,7 @@ export const TeamMembersTable = ({
             <AlertDialogHeader>
               <AlertDialogTitle>{t(`${confirmScope}.title`)}</AlertDialogTitle>
               <AlertDialogDescription>
-                {t(`${confirmScope}.body`, { email: pendingRemove.email })}
+                {t(`${confirmScope}.body`, { email: isolateText(pendingRemove.email) })}
               </AlertDialogDescription>
             </AlertDialogHeader>
             <AlertDialogFooter>

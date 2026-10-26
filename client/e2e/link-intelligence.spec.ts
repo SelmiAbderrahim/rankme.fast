@@ -13,7 +13,7 @@ import AxeBuilder from '@axe-core/playwright';
 import { expect, test, type APIRequestContext, type Page } from '@playwright/test';
 
 import { freshAccount, logIn, signUp } from './helpers/account';
-import { runComposePsql, runComposePsqlOutput } from './helpers/compose';
+import { runComposePsqlOutput } from './helpers/compose';
 import { csrfHeaders } from './helpers/csrf';
 import { collectDenials, denyNonLoopback } from './helpers/denyNonLoopback';
 import {
@@ -63,16 +63,6 @@ async function accountId(request: APIRequestContext): Promise<string> {
   return id as string;
 }
 
-function bumpToPro(id: string): void {
-  runComposePsql(
-    `INSERT INTO subscriptions (account_id, tier, status)
-       VALUES (:'account_id', 'pro', 'active')
-       ON CONFLICT (account_id)
-         DO UPDATE SET tier = 'pro', status = 'active', updated_at = now();`,
-    { variables: { account_id: id } },
-  );
-}
-
 function readLinkIntelUsage(id: string): number {
   const output = runComposePsqlOutput(
     `SELECT COALESCE((
@@ -84,16 +74,6 @@ function readLinkIntelUsage(id: string): number {
     { variables: { account_id: id } },
   );
   return Number(output);
-}
-
-function exhaustLinkIntelUsage(id: string): void {
-  runComposePsql(
-    `INSERT INTO usage_counters (account_id, period, metric, used, "limit")
-       VALUES (:'account_id', to_char(now(), 'YYYY-MM'), 'link_intel_checks', 25, 25)
-       ON CONFLICT (account_id, period, metric)
-         DO UPDATE SET used = 25, "limit" = 25, updated_at = now();`,
-    { variables: { account_id: id } },
-  );
 }
 
 async function createSite(
@@ -207,7 +187,6 @@ test('Pro Link Intelligence: URL tabs, metering/refunds, stored reads, cap, time
   await test.step('create, verify, upgrade, then perform a Pro sign-in', async () => {
     await signUp(page, account);
     id = await accountId(page.request);
-    bumpToPro(id);
     await gotoWithStaticAssetNetworkRecovery(page, '/logout');
     await page.waitForURL('/login');
     await logIn(page, account);
@@ -380,7 +359,6 @@ test('Pro Link Intelligence: URL tabs, metering/refunds, stored reads, cap, time
   });
 
   await test.step('fake cap override renders the cap-reached path without a paid POST', async () => {
-    exhaustLinkIntelUsage(id);
     await gotoWithStaticAssetNetworkRecovery(
       page,
       `/sites/${primarySiteId}/backlinks?lng=en&tab=history`,

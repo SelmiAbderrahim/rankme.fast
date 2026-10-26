@@ -1,5 +1,5 @@
 import { Router } from 'express';
-import { altEnginePreviewHandler, checkKeywordNowHandler, checkNowHandler, createKeywordHandler, deactivateKeywordHandler, keywordHistoryHandler, keywordSuggestionsHandler, listKeywordsHandler, updateCadenceHandler, } from './keywords.controller.js';
+import { activeRankJobHandler, altEnginePreviewHandler, checkKeywordNowHandler, checkNowHandler, createKeywordHandler, createKeywordsBulkHandler, deactivateKeywordHandler, keywordHistoryHandler, keywordMarketMoveHandler, keywordMarketMovePreviewHandler, keywordSuggestionsHandler, listKeywordsHandler, rankJobHandler, retryFailedRankJobHandler, trackedKeywordPhrasesHandler, updateCadenceHandler, } from './keywords.controller.js';
 import { listSerpFeaturesHandler, serpFeatureDetailHandler, } from './serp-features.controller.js';
 /**
  * Two routers mirror the audits module: `/api/sites/:siteId/*` for the
@@ -8,13 +8,20 @@ import { listSerpFeaturesHandler, serpFeatureDetailHandler, } from './serp-featu
  */
 export const ranksSiteRouter: Router = Router();
 ranksSiteRouter.post('/:siteId/keyword-suggestions', keywordSuggestionsHandler);
-// Read-only preview BEFORE the paid submit.
+// Read-only preview before creating a tracked keyword.
 // Declared before `/:siteId/keywords` would otherwise shadow it is not an
 // issue (different path), but keeping it adjacent documents the pairing.
 ranksSiteRouter.post('/:siteId/keywords/preview', altEnginePreviewHandler);
 ranksSiteRouter.post('/:siteId/keywords', createKeywordHandler);
+ranksSiteRouter.post('/:siteId/keywords/bulk', createKeywordsBulkHandler);
 ranksSiteRouter.post('/:siteId/keywords/check', checkNowHandler);
 ranksSiteRouter.get('/:siteId/keywords', listKeywordsHandler);
+ranksSiteRouter.get('/:siteId/keywords/phrases', trackedKeywordPhrasesHandler);
+ranksSiteRouter.get('/:siteId/keywords/market-move', keywordMarketMovePreviewHandler);
+ranksSiteRouter.post('/:siteId/keywords/market-move', keywordMarketMoveHandler);
+ranksSiteRouter.get('/:siteId/rank-jobs/active', activeRankJobHandler);
+ranksSiteRouter.get('/:siteId/rank-jobs/:jobId', rankJobHandler);
+ranksSiteRouter.post('/:siteId/rank-jobs/:jobId/retry-failed', retryFailedRankJobHandler);
 ranksSiteRouter.patch('/:siteId/rank-cadence', updateCadenceHandler);
 // Stored SERP-feature observations. Read-only and
 // zero vendor spend. The kill switch gates new persistence, never stored reads.

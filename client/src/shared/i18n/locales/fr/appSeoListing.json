@@ -25,10 +25,15 @@
   "disabled": { "title": "Les nouveaux contrôles sont indisponibles", "description": "Les rapports et l’historique enregistrés restent consultables." },
   "upsell": { "title": "Activez l’extension App SEO", "description": "Votre forfait prend en charge App SEO, mais les nouveaux contrôles nécessitent l’extension.", "cta": "Voir la facturation" },
   "errors": { "title": "Impossible de charger les données de la fiche", "requestFailed": "La demande de contrôle a échoué. Veuillez réessayer." },
-  "queued": { "title": "Contrôle en cours", "description": "Le rapport s’actualisera lorsque les observations seront enregistrées." },
-  "run": { "title": "Contrôlez la santé de la fiche", "description": "Observez les fiches actuelles et créez une liste de corrections déterministe.", "profile": "Profil d’app", "previewing": "Vérification de la capacité…", "button": "Prévisualiser", "bound": "Une unité couvre toutes les boutiques enregistrées dans ce profil." },
+  "queued": { "title": "Contrôle en cours", "description": "Le rapport s’actualisera lorsque les données seront enregistrées." },
+  "run": { "title": "Contrôlez la santé de la fiche", "description": "Vérifiez les fiches actuelles du store et obtenez une liste de corrections fondée sur des règles fixes.", "profile": "Profil d’app", "previewing": "Vérification de la capacité…", "button": "Prévisualiser", "bound": "Une unité couvre toutes les boutiques enregistrées dans ce profil." },
   "report": { "title": "Dernier rapport de fiche", "description": "Lancez un contrôle pour enregistrer le premier rapport.", "capturedAt": "Observé le {{date}}", "keywordsCta": "Gérer les expressions suivies", "empty": "Aucun rapport n’a encore été enregistré pour ce profil." },
-  "store": { "rating": "Note", "reviews": "Avis", "category": "Catégorie principale", "updated": "Dernière mise à jour", "screenshots": "Liens de captures observés", "installs": "Installations publiées", "description": "Description de la boutique", "openListing": "Ouvrir la fiche", "screenshotLink": "Lien de capture {{number}}", "moreScreenshots": "{{count}} autres liens de captures" },
+  "store": { "rating": "Note", "reviews": "Avis", "category": "Catégorie principale", "updated": "Dernière mise à jour", "screenshots": "Liens de captures observés", "installs": "Installations publiées", "description": "Description de la boutique", "openListing": "Ouvrir la fiche", "screenshotLink": "Lien de capture {{number}}", "moreScreenshots_one": "{{count}} autre lien de capture",
+    "moreScreenshots_zero": "{{count}} autre lien de capture",
+    "moreScreenshots_two": "{{count}} autres liens de captures",
+    "moreScreenshots_few": "{{count}} autres liens de captures",
+    "moreScreenshots_many": "{{count}} autres liens de captures",
+    "moreScreenshots_other": "{{count}} autres liens de captures" },
   "parity": { "title": "Cohérence entre boutiques associées", "description": "Compare uniquement les boutiques que vous avez explicitement associées.", "provenance": "Associées par l’utilisateur" },
   "history": { "title": "Historique des fiches", "description": "Les contrôles enregistrés restent consultables quand les nouveaux sont indisponibles.", "empty": "Aucun historique pour le moment.", "partial": "Observation partielle", "counts": { "fixNow": "À corriger : {{count}}", "watch": "À surveiller : {{count}}", "advisory": "Conseils : {{count}}" } }
 }

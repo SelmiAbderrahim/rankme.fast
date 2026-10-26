@@ -4,6 +4,9 @@ import { initI18n } from '@shared/i18n';
 import { ApiError } from '@shared/api/client';
 import {
   apiErrorCode,
+  apiErrorCodeIs,
+  apiErrorFieldMessage,
+  isAbortError,
   apiErrorInfo,
   apiErrorLanguage,
   apiErrorMessage,
@@ -222,7 +225,7 @@ describe('code, key, and language helpers', () => {
       'http',
       'de',
     );
-    expect(apiErrorCode(err)).toBe('CONFLICT');
+    expect(apiErrorCode(err)).toBe('RESOURCE_CONFLICT');
     expect(apiErrorMessageKey(err)).toBe('sites.errors.duplicate');
     expect(apiErrorLanguage(err)).toBe('de');
     expect(apiErrorInfo(err)?.message).toBe('Site exists.');
@@ -275,3 +278,39 @@ describe('apiErrorRetryAfterMs', () => {
     expect(apiErrorRetryAfterMs(new ApiError('x', 429, { error: { details: 'nope' } }))).toBeNull();
   });
 });
+
+describe('safe field validation copy', () => {
+  it('returns the first localized field message and rejects internal values', () => {
+    const error = new ApiError('internal', 400, { error: { details: { fieldErrors: {
+      name: [null, '', 'errors.notFound', 'INTERNAL_ERROR', 'CONFLICT', 'Invalid {{field}}', '  Please enter a name.  '],
+      empty: [], invalid: 'no',
+    } } } });
+    expect(apiErrorFieldMessage(error, 'name')).toBe('Please enter a name.');
+    for (const field of ['missing', 'empty', 'invalid', 'toString']) expect(apiErrorFieldMessage(error, field)).toBeNull();
+    expect(apiErrorFieldMessage(null, 'name')).toBeNull();
+    expect(apiErrorFieldMessage(new ApiError('x', 400, { error: { details: [] } }), 'name')).toBeNull();
+  });
+  it('canonicalizes server aliases and compares their stable code', () => {
+    const error = new ApiError('x', 404, { error: { code: 'SITES_ERRORS_NOT_FOUND' } });
+    expect(apiErrorCode(error)).toBe('SITE_NOT_FOUND');
+    expect(apiErrorCodeIs(error, 'SITES_NOT_FOUND')).toBe(true);
+    expect(apiErrorCodeIs(null, 'SITE_NOT_FOUND')).toBe(false);
+    expect(isAbortError(new DOMException('cancelled', 'AbortError'))).toBe(true);
+    expect(isAbortError(new Error('AbortError'))).toBe(false);
+    expect(isAbortError(new DOMException('timeout', 'TimeoutError'))).toBe(false);
+  });
+});
+
+ it('uses localized canonical code copy only when server copy is absent', () => {
+   for (const code of ['SITE_NOT_FOUND', 'AUDIT_RUN_NOT_FOUND', 'USER_NOT_FOUND']) {
+     expect(apiErrorMessage(new ApiError('internal', 404, { error: { code, message: code } }), 'sites:loadFailed')).toBe(i18n.t('errors:notFound'));
+   }
+   expect(apiErrorMessage(new ApiError('internal', 404, { error: { code: 'toString' } }), 'sites:loadFailed')).toBe(i18n.t('sites:loadFailed'));
+ });
+ it('recognizes cross-realm abort DOMExceptions without accepting plain objects', () => {
+   const frame = document.createElement('iframe'); document.body.appendChild(frame);
+   const realm = frame.contentWindow as unknown as { DOMException: typeof DOMException };
+   expect(isAbortError(new realm.DOMException('cancelled', 'AbortError'))).toBe(true);
+   expect(isAbortError({ name: 'AbortError' })).toBe(false);
+   frame.remove();
+ });

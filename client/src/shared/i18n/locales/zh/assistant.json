@@ -49,7 +49,9 @@
     "assistant": "助手回复",
     "streaming": "助手正在回复",
     "stopped": "已停止回复",
-    "loading": "正在加载对话…"
+    "loading": "正在加载对话…",
+    "cutOff": "回复在完成前被截断了。",
+    "retryCutOff": "重试"
   },
   "tool": {
     "arguments": "参数",
@@ -70,7 +72,35 @@
       "startAudit": "开始审计",
       "auditStatus": "审计状态",
       "listActions": "后续行动",
-      "setActionState": "更新行动"
+      "setActionState": "更新行动",
+      "getGscSearchSummary": "获取 Search Console 摘要",
+      "listGscTopQueries": "列出热门搜索词",
+      "listGscTopPages": "列出热门搜索页面",
+      "getGa4Summary": "获取 Analytics 摘要",
+      "listPages": "列出页面",
+      "getPageDetail": "获取页面详情",
+      "getBacklinksSummary": "获取反向链接摘要",
+      "listBacklinks": "列出反向链接",
+      "listCompetitors": "列出竞争对手",
+      "listKeywordResearchHistory": "列出关键词研究历史",
+      "getKeywordResearchResult": "获取关键词研究结果",
+      "getAiVisibilitySummary": "获取 AI Visibility 摘要",
+      "getLocalSeoSummary": "获取本地 SEO 摘要",
+      "getReviewsSummary": "获取评价摘要",
+      "listClientReports": "列出客户报告"
+    },
+    "errors": {
+      "forbiddenOutput": "此步骤的结果已被拦截，因为其中包含无法安全显示的内容。请重新提问。",
+      "invalidInput": "此步骤无法运行，因为请求无效。请尝试换一种问法。",
+      "notFound": "此步骤对应的网站在本次对话中不可用。",
+      "internal": "运行此步骤时我们这边出了问题。请重试。",
+      "generic": "此步骤未能完成。请重试。"
+    },
+    "retry": "重新提问",
+    "storedStatus": {
+      "ok": "已存储数据",
+      "empty": "尚未存储",
+      "unavailable": "不可用"
     }
   },
   "results": {
@@ -86,7 +116,14 @@
     "topFindings": "主要发现",
     "noFindings": "未返回任何发现。",
     "domain": "域名",
-    "url": "网址"
+    "url": "网址",
+    "change": "变化",
+    "truncated": "仅显示前几行。",
+    "scopeSource": "来源",
+    "scopeRange": "范围",
+    "scopePeriod": "日期",
+    "scopeAsOf": "截至",
+    "scopeTimezone": "时区"
   },
   "states": {
     "locked": {

@@ -1,4 +1,5 @@
-import { useEffect, useState } from 'react';
+import { Bdi } from '@shared/components/Bdi';
+import { useDeferredValue, useEffect, useMemo, useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useTranslation } from 'react-i18next';
@@ -6,6 +7,7 @@ import { Link } from 'react-router-dom';
 import { safeExternalHref } from '@shared/security';
 import { NativeSelect } from '@shared/ui/native-select';
 import { Alert, AlertDescription } from '@shared/ui/alert';
+import { DisabledAction } from '@shared/components/DisabledAction';
 import { Button } from '@shared/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@shared/ui/card';
 import { Checkbox } from '@shared/ui/checkbox';
@@ -14,19 +16,23 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@
 import { TableHeaderHelp } from '@shared/ui/table-header-help';
 import { Textarea } from '@shared/ui/textarea';
 import { cn } from '@shared/lib/utils';
+import { MetricValue } from '@shared/components/MetricValue';
+import { PhraseListPreview } from '@shared/components/PhraseListPreview';
+import { formatPhraseList, normalizePhraseKey, removePhraseAt, reviewPhraseList } from '@shared/lib/phraseList';
 import {
   CountryCombobox,
   countryCodeForLocation,
   languageName,
   useMarketCatalog,
 } from '@shared/markets';
-import { fetchKeywordSuggestionsRequest, previewAltEngineKeywordRequest } from '../api';
+import { fetchKeywordSuggestionsRequest, fetchTrackedKeywordPhrasesRequest, previewAltEngineKeywordRequest } from '../api';
 import { ranksErrorMessage } from '../errorMessage';
 import {
   isAltRankEngine,
   RANK_ENGINES,
   type AltEngineSpendPreview,
   type KeywordSuggestionsResponse,
+  type TrackedKeywordPhrase,
 } from '../types';
 import {
   buildAddKeywordSchema,
@@ -34,6 +40,8 @@ import {
   DEVICE_OPTIONS,
   languagesForLocation,
   LOCATION_OPTIONS,
+  KEYWORD_PASTE_MAX,
+  KEYWORD_PHRASE_MAX,
   normalizeKeywordPhrase,
   parseKeywordLines,
   longTailResearchSeed,
@@ -42,9 +50,17 @@ import {
 
 export interface AddKeywordFormProps {
   siteId: string;
-  onSubmit: (values: AddKeywordFormValues[]) => Promise<string[]>;
+  onSubmit: (values: AddKeywordFormValues[]) => Promise<string[] | AddKeywordsSubmissionOutcome>;
   submitting: boolean;
   addError: string;
+}
+
+export interface AddKeywordsSubmissionOutcome {
+  added: string[];
+  duplicates: number;
+  tooLong: number;
+  invalid: number;
+  unsent: number;
 }
 
 /**
@@ -66,6 +82,10 @@ export const AddKeywordForm = ({
   const [preview, setPreview] = useState<AltEngineSpendPreview | null>(null);
   const [previewLoading, setPreviewLoading] = useState(false);
   const [previewError, setPreviewError] = useState('');
+  const [trackedPhrases, setTrackedPhrases] = useState<TrackedKeywordPhrase[]>([]);
+  const [summary, setSummary] = useState<AddKeywordsSubmissionOutcome | null>(null);
+  const [submitNotice, setSubmitNotice] = useState(false);
+  const [trackedVersion, setTrackedVersion] = useState(0);
   const catalog = useMarketCatalog('seo');
 
   const {
@@ -89,8 +109,11 @@ export const AddKeywordForm = ({
 
   const locationCode = watch('locationCode');
   const languageCode = watch('languageCode');
+  const device = watch('device');
   const engine = watch('engine');
   const phrase = watch('phrase');
+  const deferredPhrase = useDeferredValue(phrase);
+  useEffect(() => setSubmitNotice(false), [phrase]);
   const needsTarget = engine === 'youtube' || engine === 'amazon';
   const researchSeed = longTailResearchSeed(phrase, engine);
   const researchUrl = researchSeed
@@ -100,6 +123,23 @@ export const AddKeywordForm = ({
   const selectedMarket = catalog.markets.find((market) => market.locationCode === locationCode);
   const availableLanguages: readonly string[] = selectedMarket?.languageCodes
     ?? languagesForLocation(locationCode);
+
+  useEffect(() => setTrackedPhrases([]), [siteId]);
+  useEffect(() => {
+    const controller = new AbortController();
+    void fetchTrackedKeywordPhrasesRequest(siteId, controller.signal)
+      .then((result) => { if (!controller.signal.aborted) setTrackedPhrases(result.keywords); })
+      .catch(() => { /* The server still rejects duplicates if this preview read is unavailable. */ });
+    return () => controller.abort();
+  }, [siteId, trackedVersion]);
+  const existingKeys = useMemo(() => new Set(trackedPhrases
+    .filter((row) => row.engine === engine && row.locationCode === locationCode &&
+      row.languageCode === languageCode && row.device === device)
+    .map((row) => normalizePhraseKey(row.phrase))),
+  [trackedPhrases, engine, locationCode, languageCode, device]);
+  const reviewOptions = useMemo(() => ({ maxLength: KEYWORD_PHRASE_MAX,
+    maxItems: KEYWORD_PASTE_MAX, existingKeys }), [existingKeys]);
+  const review = useMemo(() => reviewPhraseList(deferredPhrase, reviewOptions), [deferredPhrase, reviewOptions]);
 
   useEffect(() => {
     if (catalog.loading || catalog.error || selectedMarket) return;
@@ -207,12 +247,22 @@ export const AddKeywordForm = ({
   }, [suggestions, suggestionCount]);
 
   const submit = handleSubmit(async (values) => {
-    const phrases = parseKeywordLines(values.phrase);
-    const added = await onSubmit(phrases.map((phrase) => ({ ...values, phrase })));
+    const current = reviewPhraseList(values.phrase, reviewOptions);
+    if (current.ready.length === 0) { setSubmitNotice(true); return; }
+    setSubmitNotice(false);
+    const result = await onSubmit(current.ready.map((phrase) => ({ ...values, phrase })));
+    const outcome: AddKeywordsSubmissionOutcome = Array.isArray(result)
+      ? { added: result, duplicates: 0, tooLong: 0, invalid: 0, unsent: 0 }
+      : result;
+    setSummary({ ...outcome, duplicates: outcome.duplicates + current.counts.repeated + current.counts.existing,
+      tooLong: outcome.tooLong + current.counts.tooLong });
+    const added = outcome.added;
+    setTrackedVersion((version) => version + 1);
     if (added.length === 0) return;
     const addedKeys = new Set(added.map(normalizeKeywordPhrase));
-    const remaining = phrases.filter((phrase) => !addedKeys.has(normalizeKeywordPhrase(phrase)));
-    setValue('phrase', remaining.join('\n'), {
+    const remaining = current.items.filter((item) => !addedKeys.has(item.key))
+      .map((item) => item.phrase);
+    setValue('phrase', formatPhraseList(remaining), {
       shouldDirty: remaining.length > 0,
       shouldValidate: remaining.length > 0,
     });
@@ -259,7 +309,7 @@ export const AddKeywordForm = ({
       seen.add(key);
       return true;
     });
-    setValue('phrase', [...current, ...additions].join('\n'), {
+    setValue('phrase', formatPhraseList([...current, ...additions]), {
       shouldDirty: true,
       shouldValidate: true,
     });
@@ -487,7 +537,7 @@ export const AddKeywordForm = ({
                                 />
                               </TableCell>
                               <TableCell className="max-w-64 whitespace-normal font-medium">
-                                {candidate.rankingUrl ? (
+                                <Bdi>{candidate.rankingUrl ? (
                                   <a
                                     className="underline-offset-4 hover:underline focus-visible:underline"
                                     href={safeExternalHref(candidate.rankingUrl)}
@@ -498,24 +548,25 @@ export const AddKeywordForm = ({
                                   </a>
                                 ) : (
                                   candidate.keyword
-                                )}
+                                )}</Bdi>
                               </TableCell>
                               <TableCell>
-                                {candidate.searchVolume?.toLocaleString(i18n.language) ?? '—'}
+                                <MetricValue kind="count" value={candidate.searchVolume} />
                               </TableCell>
                               {showsRankingColumns ? (
                                 <TableCell>
-                                  {candidate.currentPosition?.toLocaleString(i18n.language, {
-                                    maximumFractionDigits: 1,
-                                  }) ?? '—'}
+                                  {/* Position 0 means no data. */}
+                                  <MetricValue kind="position" value={candidate.currentPosition} />
                                 </TableCell>
                               ) : null}
                               {showsDifficulty ? (
-                                <TableCell>{candidate.difficulty ?? '—'}</TableCell>
+                                <TableCell>
+                                  <MetricValue kind="count" value={candidate.difficulty} />
+                                </TableCell>
                               ) : null}
                               {showsRankingColumns ? (
                                 <TableCell>
-                                  {candidate.estimatedTraffic?.toLocaleString(i18n.language) ?? '—'}
+                                  <MetricValue kind="count" value={candidate.estimatedTraffic} />
                                 </TableCell>
                               ) : null}
                               {isBlended ? (
@@ -664,6 +715,23 @@ export const AddKeywordForm = ({
                 {errors.phrase.message}
               </p>
             ) : null}
+            <PhraseListPreview review={review}
+              countLabel={t('addPreviewCount', { count: review.items.length })}
+              maxItems={KEYWORD_PASTE_MAX}
+              testIdPrefix="keyword-add" countId="keyword-add-preview-count"
+              verdictLabels={{ existing: t('addVerdictExisting') }}
+              onRemove={(_item, index) => setValue('phrase', removePhraseAt(getValues('phrase'), index),
+                { shouldDirty: true, shouldValidate: true })} />
+            {submitNotice ? <p className="text-warning text-sm" role="status" data-testid="keyword-add-nothing">
+              {t('addNothingToAdd')}
+            </p> : null}
+            {summary ? <p className="text-muted-foreground text-sm" role="status" data-testid="keyword-add-summary">
+              {t('addResult.added', { count: summary.added.length })}
+              {summary.duplicates > 0 ? ` · ${t('addResult.duplicates', { count: summary.duplicates })}` : null}
+              {summary.tooLong > 0 ? ` · ${t('addResult.tooLong', { count: summary.tooLong })}` : null}
+              {summary.invalid > 0 ? ` · ${t('addResult.invalid', { count: summary.invalid })}` : null}
+              {summary.unsent > 0 ? ` · ${t('addResult.unsent', { count: summary.unsent })}` : null}
+            </p> : null}
             {engine === 'google' ? (
               <div
                 className="bg-muted/30 flex flex-wrap items-center justify-between gap-3 rounded-md border p-3"
@@ -682,14 +750,15 @@ export const AddKeywordForm = ({
                     </Link>
                   </Button>
                 ) : (
-                  <Button
+                  <DisabledAction
                     type="button"
                     variant="outline"
                     disabled
+                    reason={t('longTailResearch.disabledReason')}
                     data-testid="keyword-long-tail-research-disabled"
                   >
                     {t('longTailResearch.cta')}
-                  </Button>
+                  </DisabledAction>
                 )}
               </div>
             ) : null}

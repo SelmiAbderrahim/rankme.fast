@@ -1,3 +1,5 @@
+import { isolateText } from '@shared/lib/bidi';
+import { Bdi } from '@shared/components/Bdi';
 import { useId, useState } from 'react';
 import { ChevronDown, Globe, MessageSquarePlus, Trash2 } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
@@ -152,7 +154,7 @@ export function ConversationSidebar({
                   >
                     <span className="min-w-0 flex-1">
                       <span className={cn('block truncate font-medium', active && 'font-semibold')}>
-                        {title}
+                        <Bdi>{title}</Bdi>
                       </span>
                       {contextLabel ? (
                         <span
@@ -197,7 +199,7 @@ export function ConversationSidebar({
             <AlertDialogTitle>{t('assistant:sidebar.deleteTitle')}</AlertDialogTitle>
             <AlertDialogDescription>
               {t('assistant:sidebar.deleteDescription', {
-                title: deleteTarget?.title || t('assistant:sidebar.untitled'),
+                title: isolateText(deleteTarget?.title || t('assistant:sidebar.untitled')),
               })}
             </AlertDialogDescription>
           </AlertDialogHeader>

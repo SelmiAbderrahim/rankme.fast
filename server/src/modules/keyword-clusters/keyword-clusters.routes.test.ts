@@ -258,10 +258,21 @@ describe('keyword-cluster preflight', () => {
         row.reason,
       ]),
     ).toEqual([
-      ['zzz empty serp', 'empty'],
-      ['zzz never checked', 'missing'],
-      ['zzz stale', 'stale'],
+      ['zzz empty serp', 'no_serp_snapshot'],
+      ['zzz never checked', 'never_checked'],
+      ['zzz stale', 'check_too_old'],
     ]);
+    // Two eligible keywords are enough; the three ineligible ones are named,
+    // counted per reason, and do not block.
+    expect(res.body.ready).toBe(true);
+    expect(res.body.eligibility).toEqual({
+      canRun: true,
+      blockingReasonCode: null,
+      total: 5,
+      eligibleCount: 2,
+      ineligibleCount: 3,
+      reasonCounts: { check_too_old: 1, no_serp_snapshot: 1, never_checked: 1, failed_last_check: 0 },
+    });
   });
 
   it('refuses below two ready keywords BEFORE creating a run', async () => {
@@ -276,6 +287,14 @@ describe('keyword-cluster preflight', () => {
       ready: false,
       reason: 'notEnoughKeywords',
       spend: null,
+      eligibility: {
+        canRun: false,
+        blockingReasonCode: 'not_enough_eligible',
+        total: 2,
+        eligibleCount: 1,
+        ineligibleCount: 1,
+        reasonCounts: { check_too_old: 1, no_serp_snapshot: 0, never_checked: 0, failed_last_check: 0 },
+      },
     });
 
     await start(user, siteId).expect(409);

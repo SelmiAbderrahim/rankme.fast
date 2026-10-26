@@ -1,6 +1,5 @@
 {
-  "eyebrow": "基于已存内容清单的建议",
-  "title": "内部链接建议",
+  "title": "内部链接",
   "subtitle": "根据最新内容清单和已保存的 Search Console 证据，审查来源页与目标页之间的链接机会。系统不会自动修改网站。",
   "site": {
     "inventoryLink": "打开内容清单"
@@ -11,12 +10,9 @@
   },
   "newRun": {
     "title": "准备建议运行",
-    "description": "消耗一次运行前，先核对准确的清单快照和剩余额度。",
+    "description": "开始运行前，先核对准确的清单快照。",
     "guidanceOnly": "这些建议仅供参考。RankMeFast 不会修改内容管理系统或页面代码。",
-    "unitLabel": "额度",
-    "unitValue": "{{count}} 次内部链接运行",
     "inventoryLabel": "清单快照",
-    "remaining": "本次运行前还剩 {{count}} 次。",
     "preview": "预览运行",
     "previewing": "正在检查清单…",
     "confirm": "开始生成建议",
@@ -25,14 +21,15 @@
   },
   "states": {
     "inventoryCta": "重新运行内容清单",
-    "planCta": "查看方案",
     "emptyRuns": {
       "title": "暂无已保存的运行",
-      "body": "预览一次新运行即可查看它将读取的已存清单快照。"
+      "body": "预览一次新运行即可查看它将读取的已存清单快照。",
+      "action": "开始运行"
     },
     "emptySuggestions": {
-      "title": "没有匹配的建议",
-      "body": "本次运行未找到合格的页面组合，或者地址栏中的筛选条件隐藏了结果。"
+      "title": "没有符合这些筛选条件的建议",
+      "body": "清除筛选条件即可查看此次运行的所有建议。",
+      "action": "清除筛选条件"
     },
     "missing": {
       "title": "需要内容清单",
@@ -41,10 +38,6 @@
     "stale": {
       "title": "内容清单已过期",
       "body": "请重新运行内容清单，以便使用近期保存的快照。本次没有消耗额度。"
-    },
-    "cap": {
-      "title": "已用完每月额度",
-      "body": "请求并未启动。请等待下一个额度周期，或查看可用方案。"
     },
     "disabled": {
       "title": "暂时无法创建建议",
@@ -65,19 +58,30 @@
     "running": {
       "title": "正在生成建议",
       "body": "系统正在排列已保存的候选项并起草锚文本。此页面会自动更新。"
+    },
+    "inventoryRunCta": "运行内容清单",
+    "inventoryDifference": "“页面”标签页列出的是站点审计发现的页面；建议需要内容清单，它会读取每个页面的正文。",
+    "noSuggestions": {
+      "title": "此次运行没有建议",
+      "body": "此次运行未找到值得互相链接的页面对。请更新内容清单，然后开始新的运行。",
+      "action": "开始新的运行"
     }
   },
   "status": {
     "queued": "等待处理",
     "processing": "处理中",
     "completed": "已完成",
-    "failed": "失败",
-    "refunded": "已返还运行次数"
+    "failed": "失败"
   },
   "runs": {
     "snapshot": "内容清单：{{date}}",
-    "suggestionCount": "{{count}} 条建议",
-    "open": "打开运行"
+    "suggestionCount_one": "{{count}} 条建议",
+    "open": "打开运行",
+    "suggestionCount_zero": "{{count}} 条建议",
+    "suggestionCount_two": "{{count}} 条建议",
+    "suggestionCount_few": "{{count}} 条建议",
+    "suggestionCount_many": "{{count}} 条建议",
+    "suggestionCount_other": "{{count}} 条建议"
   },
   "flags": {
     "orphan": "孤立页面",
@@ -98,7 +102,7 @@
     "codeFixProblem": "缺少一个相关的内部链接。",
     "codeFixWhy": "目标页面获得的内部链接较少，并且与来源页面具有相关的搜索或标题语境。",
     "codeFixRecommendation": "在来源页面最相关的段落中添加该链接；如果建议的锚文本读起来自然，就使用它。",
-    "fallback": "智能排序不可用或结果未通过校验，因此这里显示可复现且附带证据的候选项。"
+    "fallback": "AI 排序不可用或被拒绝，因此这些建议来自固定规则和您网站的数据。"
   },
   "evidence": {
     "title": "建议这组页面的原因",

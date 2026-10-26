@@ -151,12 +151,6 @@ export const ScanListTable = ({
                   />
                 </TableHead>
                 <TableHead className="text-end">{t('list.columns.mentions')}</TableHead>
-                <TableHead>
-                  <TableHeaderHelp
-                    label={t('list.columns.refund')}
-                    description={t('common:tableHelp.refund')}
-                  />
-                </TableHead>
                 <TableHead>{t('list.columns.created')}</TableHead>
                 <TableHead>
                   <span className="sr-only">{t('list.columns.actions')}</span>
@@ -190,14 +184,6 @@ export const ScanListTable = ({
                   </TableCell>
                   <TableCell className="text-end tabular-nums">
                     {row.retainedRowCount === null ? '—' : number.format(row.retainedRowCount)}
-                  </TableCell>
-                  <TableCell>
-                    {/* `none` renders nothing — never "not refunded". */}
-                    {row.refundState === 'refunded' ? (
-                      <StatusChip tone="success" data-testid="brand-radar-refund-chip">
-                        {t('refund.refunded')}
-                      </StatusChip>
-                    ) : null}
                   </TableCell>
                   <TableCell>
                     {row.createdAt === null

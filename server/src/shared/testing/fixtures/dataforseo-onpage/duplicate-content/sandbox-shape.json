@@ -1,0 +1,816 @@
+{
+  "version": "0.1.20260917",
+  "status_code": 20000,
+  "status_message": "Ok.",
+  "time": "0 sec.",
+  "cost": 0,
+  "tasks_count": 1,
+  "tasks_error": 0,
+  "tasks": [
+    {
+      "id": "TASK_ID",
+      "status_code": 20000,
+      "status_message": "Ok.",
+      "time": "0 sec.",
+      "cost": 0,
+      "result_count": 1,
+      "path": [
+        "v3",
+        "on_page",
+        "duplicate_content"
+      ],
+      "data": {
+        "api": "on_page",
+        "function": "duplicate_content",
+        "url": "https://example.com/"
+      },
+      "result": [
+        {
+          "crawl_progress": "in_progress",
+          "crawl_status": {
+            "max_crawl_pages": null,
+            "pages_in_queue": 5103,
+            "pages_crawled": 10105
+          },
+          "items_count": 1,
+          "items": [
+            {
+              "url": "Url451fe41f-d0b4-4f1b-a7d5-dc65ee9401de",
+              "total_count": 16490,
+              "pages": [
+                {
+                  "similarity": 12074,
+                  "page": [
+                    {
+                      "resource_type": "html",
+                      "status_code": 21327,
+                      "location": "Location3c9b0397-1852-4052-b483-1ce361908983",
+                      "url": "Url97d2c539-60c7-42f7-a409-d84c6f714e93",
+                      "meta": {
+                        "title": "Title4b4cb71d-d5f5-4962-94a2-c474b634491c",
+                        "charset": 12337,
+                        "follow": false,
+                        "generator": "Generatorb9395213-177a-4b3f-8394-eb89d934cfd4",
+                        "htags": {
+                          "h1": [
+                            "c8983c01-d6bc-4d8c-a805-785d527684ed",
+                            "c97f09cd-7261-47b1-b120-120d21fd376c",
+                            "61c2a1a3-f44a-4d25-b3eb-57e773b98b8a"
+                          ],
+                          "h2": [
+                            "a2bb2755-b51b-4a0c-afa4-b4557f6fe25e",
+                            "8963e141-ce3e-4256-974c-a92eb84f7c25",
+                            "cc9437b9-8451-4b6d-87fe-4be4d27474cb"
+                          ],
+                          "h3": [
+                            "0a951711-df20-4946-bd10-8de35a9ff092",
+                            "d64bb978-c390-43b8-a14b-f36291b29c3e",
+                            "6fa9ec36-02c6-443b-bde7-b58d3624bd28"
+                          ],
+                          "h4": [
+                            "e2c0d408-5666-4007-90ab-d662fe1e5a60",
+                            "b2d93c2c-485f-45e1-89c5-b133de1ea6eb",
+                            "6d8362c0-8b09-4421-8da9-b46f84bbddc6"
+                          ],
+                          "h5": [
+                            "6150e987-6863-49f1-a211-597bf4f99948",
+                            "eda4bba0-2ed3-406b-8cf5-28a1ee57b331",
+                            "5c0824aa-30d1-492a-81f7-9aa6708dcba1"
+                          ],
+                          "h6": [
+                            "22d75a62-d8c4-470a-bf6a-7172703c3e32",
+                            "e466a979-7606-4960-9a0d-ccf2ac8be36d",
+                            "72c8ee17-0eb7-40c8-9f1f-ae2de369a0a5"
+                          ]
+                        },
+                        "description": "MetaDescription019cbffa-28a4-40dc-8fc4-62c33913b5a8",
+                        "favicon": "Faviconb67d7e73-9afa-4392-a9c2-83dfafec261e",
+                        "meta_keywords": "MetaKeywords62638471-adcd-430a-8842-d5762350ddfb",
+                        "canonical": "Canonicald7d3d9b0-f250-4cea-b12a-87805da511ff",
+                        "internal_links_count": 23953,
+                        "external_links_count": 17293,
+                        "inbound_links_count": 6409,
+                        "images_count": 30000,
+                        "images_size": 27877,
+                        "scripts_count": 21752,
+                        "scripts_size": 20447,
+                        "stylesheets_count": 23270,
+                        "stylesheets_size": 31941,
+                        "title_length": 23987,
+                        "description_length": 15616,
+                        "render_blocking_scripts_count": 32440,
+                        "render_blocking_stylesheets_count": 23669,
+                        "cumulative_layout_shift": 0.8728132647817537,
+                        "meta_title": "MetaTitle1dc9d4cc-9770-447c-a775-f6b522c77c49",
+                        "content": {
+                          "plain_text_size": 29768,
+                          "plain_text_rate": 0.6722101758634322,
+                          "plain_text_word_count": 5089,
+                          "automated_readability_index": 0.4813626862998539,
+                          "coleman_liau_readability_index": 0.5924987892988473,
+                          "dale_chall_readability_index": 0.5904477116755015,
+                          "flesch_kincaid_readability_index": 0.2663588500297882,
+                          "smog_readability_index": 0.6975599494983565,
+                          "description_to_content_consistency": 0.6065858868928733,
+                          "title_to_content_consistency": 0.5848516625582147,
+                          "meta_keywords_to_content_consistency": 0.513473857596463
+                        },
+                        "deprecated_tags": [
+                          "45c1ddea-82ba-4059-9368-40978d98222d",
+                          "a80909dc-2edc-492b-93f7-f05b927a8584",
+                          "0e5d2c68-f5a4-4269-b53e-72e0b6ed5952"
+                        ],
+                        "duplicate_meta_tags": [
+                          "b3488c2d-ba6d-44d3-9c95-277f1b8cc3ff",
+                          "555e6b7b-1f32-4163-896e-d826a52bcd64",
+                          "b29e7b03-d735-4b0a-9549-ae81aeec2896"
+                        ],
+                        "spell": {
+                          "hunspell_language_code": "Language48c5fbdc-c1c7-433d-92c8-c06d5e0f891b",
+                          "misspelled": [
+                            {
+                              "word": "Worde7ff3d42-0c22-4100-89cd-01ed7f19948b"
+                            },
+                            {
+                              "word": "Word929ac110-fb7f-4eb6-9fc5-a5e5afbc7e63"
+                            },
+                            {
+                              "word": "Wordd75a39df-4046-4e75-b6af-5efc31f194c0"
+                            }
+                          ]
+                        },
+                        "social_media_tags": {
+                          "key2bca88b7-6f5d-42bf-b87f-5e55c1eccb74": "valueb742bc95-1caf-425d-ae6a-c028a33dc510",
+                          "key78ad406e-22f3-48a1-8f00-bfb145c5632e": "value8f98b531-b731-4e4f-85d6-488e1fa17dc5",
+                          "keyf55f0fa3-fc35-47d3-9f60-d108d606bc43": "value4a0484bd-aba3-460b-b564-465ae69b0683"
+                        }
+                      },
+                      "page_timing": {
+                        "time_to_interactive": 17453,
+                        "dom_complete": 8727,
+                        "largest_contentful_paint": 0.8288104612239908,
+                        "first_input_delay": 0.908825134843428,
+                        "connection_time": 32260,
+                        "time_to_secure_connection": 29700,
+                        "request_sent_time": 12616,
+                        "waiting_time": 30619,
+                        "download_time": 5848,
+                        "duration_time": 6967,
+                        "fetch_start": 10741,
+                        "fetch_end": 28828
+                      },
+                      "onpage_score": 0.82,
+                      "total_dom_size": 1942,
+                      "custom_js_response": null,
+                      "custom_js_client_exception": "CustomJsClientException541bc085-4e6d-4dcf-9463-6b0d21b0880e",
+                      "resource_errors": {
+                        "errors": [
+                          {
+                            "line": 4651,
+                            "column": 24473,
+                            "message": "Message90e4fd4c-0218-45f3-9653-f704c96feb00",
+                            "status_code": 4210
+                          },
+                          {
+                            "line": 16565,
+                            "column": 9948,
+                            "message": "Message3abce338-007f-4c05-b803-96201a75a51a",
+                            "status_code": 18446
+                          },
+                          {
+                            "line": 32007,
+                            "column": 8469,
+                            "message": "Message44b9fd45-82f1-4390-9dcb-834293e4eeaa",
+                            "status_code": 31625
+                          }
+                        ],
+                        "warnings": [
+                          {
+                            "line": 6285,
+                            "column": 27223,
+                            "message": "Message3f90b14f-04f8-4a83-a272-8fd84ef2fed1",
+                            "status_code": 31818
+                          },
+                          {
+                            "line": 5369,
+                            "column": 13857,
+                            "message": "Message29414e8a-2569-4dc9-a9bf-b10baa958448",
+                            "status_code": 10355
+                          },
+                          {
+                            "line": 32725,
+                            "column": 10533,
+                            "message": "Messageb3eed7e6-7380-44fe-8460-e3f2a77e776f",
+                            "status_code": 27954
+                          }
+                        ]
+                      },
+                      "broken_resources": false,
+                      "broken_links": true,
+                      "duplicate_title": false,
+                      "duplicate_description": true,
+                      "duplicate_content": false,
+                      "click_depth": 13231,
+                      "size": 23050,
+                      "encoded_size": 20482,
+                      "total_transfer_size": 30603,
+                      "fetch_time": "2028-06-05 02:59:01 +00:00",
+                      "cache_control": {
+                        "cachable": true,
+                        "ttl": 1754
+                      },
+                      "checks": {
+                        "no_content_encoding": false,
+                        "high_loading_time": false,
+                        "is_redirect": false,
+                        "is_4xx_code": false,
+                        "is_5xx_code": false,
+                        "is_broken": false,
+                        "is_www": false,
+                        "is_https": true,
+                        "is_http": false,
+                        "high_waiting_time": false,
+                        "has_micromarkup": false,
+                        "has_micromarkup_errors": false,
+                        "no_doctype": false,
+                        "has_html_doctype": true,
+                        "canonical": true,
+                        "no_encoding_meta_tag": false,
+                        "no_h1_tag": false,
+                        "https_to_http_links": false,
+                        "size_greater_than_3mb": false,
+                        "meta_charset_consistency": true,
+                        "has_meta_refresh_redirect": false,
+                        "has_render_blocking_resources": false,
+                        "redirect_chain": false,
+                        "low_content_rate": true,
+                        "high_content_rate": false,
+                        "low_character_count": false,
+                        "high_character_count": false,
+                        "small_page_size": false,
+                        "large_page_size": false,
+                        "low_readability_rate": false,
+                        "irrelevant_description": false,
+                        "irrelevant_title": false,
+                        "irrelevant_meta_keywords": false,
+                        "title_too_long": false,
+                        "has_meta_title": false,
+                        "title_too_short": false,
+                        "deprecated_html_tags": false,
+                        "duplicate_meta_tags": true,
+                        "duplicate_title_tag": false,
+                        "no_image_alt": false,
+                        "no_image_title": true,
+                        "no_description": false,
+                        "no_title": false,
+                        "no_favicon": false,
+                        "seo_friendly_url": true,
+                        "flash": false,
+                        "frame": false,
+                        "lorem_ipsum": false,
+                        "seo_friendly_url_characters_check": true,
+                        "seo_friendly_url_dynamic_check": true,
+                        "seo_friendly_url_keywords_check": true,
+                        "seo_friendly_url_relative_length_check": true,
+                        "recursive_canonical": false,
+                        "canonical_chain": false,
+                        "canonical_to_redirect": false,
+                        "canonical_to_broken": false,
+                        "has_links_to_redirects": false,
+                        "is_orphan_page": false,
+                        "is_link_relation_conflict": false
+                      },
+                      "content_encoding": "ContentEncoding9026f5a0-4fc0-4b85-8888-01dde28805d0",
+                      "media_type": "MediaType1808c097-e819-4b4c-85ca-e35841be95bb",
+                      "server": "Server45932a55-e49a-41a9-94d9-7696b9adc30e",
+                      "is_resource": false,
+                      "url_length": 8487,
+                      "relative_url_length": 19658,
+                      "last_modified": {
+                        "header": "2028-06-02 13:24:28 +00:00",
+                        "sitemap": "2027-05-08 07:41:27 +00:00",
+                        "meta_tag": "2028-06-29 13:55:21 +00:00"
+                      }
+                    }
+                  ]
+                },
+                {
+                  "similarity": 10475,
+                  "page": [
+                    {
+                      "resource_type": "html",
+                      "status_code": 17823,
+                      "location": "Locationf5dc8542-c94e-42ea-bfd9-e08c483984af",
+                      "url": "Url6533aeff-8b87-47cb-89cc-a113f9a48952",
+                      "meta": {
+                        "title": "Titled5afa114-166b-4176-bca5-87c8e0c5f9a9",
+                        "charset": 22969,
+                        "follow": false,
+                        "generator": "Generatored2cc1a3-63d8-42cd-8116-81d25a9f1b11",
+                        "htags": {
+                          "h1": [
+                            "c8983c01-d6bc-4d8c-a805-785d527684ed",
+                            "c97f09cd-7261-47b1-b120-120d21fd376c",
+                            "61c2a1a3-f44a-4d25-b3eb-57e773b98b8a"
+                          ],
+                          "h2": [
+                            "a2bb2755-b51b-4a0c-afa4-b4557f6fe25e",
+                            "8963e141-ce3e-4256-974c-a92eb84f7c25",
+                            "cc9437b9-8451-4b6d-87fe-4be4d27474cb"
+                          ],
+                          "h3": [
+                            "0a951711-df20-4946-bd10-8de35a9ff092",
+                            "d64bb978-c390-43b8-a14b-f36291b29c3e",
+                            "6fa9ec36-02c6-443b-bde7-b58d3624bd28"
+                          ],
+                          "h4": [
+                            "e2c0d408-5666-4007-90ab-d662fe1e5a60",
+                            "b2d93c2c-485f-45e1-89c5-b133de1ea6eb",
+                            "6d8362c0-8b09-4421-8da9-b46f84bbddc6"
+                          ],
+                          "h5": [
+                            "6150e987-6863-49f1-a211-597bf4f99948",
+                            "eda4bba0-2ed3-406b-8cf5-28a1ee57b331",
+                            "5c0824aa-30d1-492a-81f7-9aa6708dcba1"
+                          ],
+                          "h6": [
+                            "22d75a62-d8c4-470a-bf6a-7172703c3e32",
+                            "e466a979-7606-4960-9a0d-ccf2ac8be36d",
+                            "72c8ee17-0eb7-40c8-9f1f-ae2de369a0a5"
+                          ]
+                        },
+                        "description": "MetaDescriptiona8c1aa0e-1223-4eab-8ae2-4236bcac3925",
+                        "favicon": "Favicon6caacaa5-7389-4f9b-b579-ceaab5aacff1",
+                        "meta_keywords": "MetaKeywords38da6872-d568-4037-b040-3b7f571244d5",
+                        "canonical": "Canonical56b91034-ddcb-4337-a75a-dabfaa9cef36",
+                        "internal_links_count": 675,
+                        "external_links_count": 23500,
+                        "inbound_links_count": 13327,
+                        "images_count": 5459,
+                        "images_size": 7311,
+                        "scripts_count": 846,
+                        "scripts_size": 24395,
+                        "stylesheets_count": 16426,
+                        "stylesheets_size": 26388,
+                        "title_length": 19989,
+                        "description_length": 4037,
+                        "render_blocking_scripts_count": 26528,
+                        "render_blocking_stylesheets_count": 19867,
+                        "cumulative_layout_shift": 0.4501060213163809,
+                        "meta_title": "MetaTitledec4fb87-81b3-4f44-a0d7-187e9292816e",
+                        "content": {
+                          "plain_text_size": 26462,
+                          "plain_text_rate": 0.7768029490591076,
+                          "plain_text_word_count": 20490,
+                          "automated_readability_index": 0.061456084012373347,
+                          "coleman_liau_readability_index": 0.804371938756004,
+                          "dale_chall_readability_index": 0.8970328468523406,
+                          "flesch_kincaid_readability_index": 0.4055049490796051,
+                          "smog_readability_index": 0.3452473316882898,
+                          "description_to_content_consistency": 0.517557079968155,
+                          "title_to_content_consistency": 0.8988537635467199,
+                          "meta_keywords_to_content_consistency": 0.6797530479873963
+                        },
+                        "deprecated_tags": [
+                          "86366065-9f95-4c5d-a4d7-d604252e36c9",
+                          "29cb9e79-1c67-4a88-828b-ca5e7b9be354",
+                          "5ed705a8-be79-4540-b4f6-e523f14fb0ee"
+                        ],
+                        "duplicate_meta_tags": [
+                          "aa346daa-d8b9-4dab-803a-1b79a05e8ffd",
+                          "53688507-4c4b-43d0-a96a-8e26657f3e0a",
+                          "71a4a839-67b3-463a-b43f-a71a1e4c973c"
+                        ],
+                        "spell": {
+                          "hunspell_language_code": "Language4a52b7f9-4aef-422e-a584-e18d2f8e5682",
+                          "misspelled": [
+                            {
+                              "word": "Word5f676fe3-2a09-4f38-9e57-ed1d93c2ab0e"
+                            },
+                            {
+                              "word": "Word825a4012-bab6-4d52-bb3a-e85669d3a72f"
+                            },
+                            {
+                              "word": "Worda4ee454d-fb0d-4d10-acc8-ecb274bc6e4f"
+                            }
+                          ]
+                        },
+                        "social_media_tags": {
+                          "key2be2cc15-48b8-48af-9483-3036e3ccab95": "valuee9bbe17a-b400-4426-85cf-d415f6457b72",
+                          "key0d40e8b0-1708-42a3-ae64-5e4ca0a45e2b": "value2f672fbf-e623-4a76-838f-ab0001574a2a",
+                          "key0aa64ed9-c9f6-4c05-93d0-19af63d10783": "valueb78f90cf-54d8-4ac6-95f6-53171133b7e6"
+                        }
+                      },
+                      "page_timing": {
+                        "time_to_interactive": 23066,
+                        "dom_complete": 8158,
+                        "largest_contentful_paint": 0.08743638644997143,
+                        "first_input_delay": 0.8829212376008924,
+                        "connection_time": 5202,
+                        "time_to_secure_connection": 12547,
+                        "request_sent_time": 12362,
+                        "waiting_time": 17362,
+                        "download_time": 17993,
+                        "duration_time": 27489,
+                        "fetch_start": 12215,
+                        "fetch_end": 23070
+                      },
+                      "onpage_score": 0.65,
+                      "total_dom_size": 9154,
+                      "custom_js_response": null,
+                      "custom_js_client_exception": "CustomJsClientException1f8442e6-b00d-4bb8-89ad-e0df7df4f95c",
+                      "resource_errors": {
+                        "errors": [
+                          {
+                            "line": 1259,
+                            "column": 2652,
+                            "message": "Message5c36ab3c-6005-428f-846d-c87cf5dfe855",
+                            "status_code": 1887
+                          },
+                          {
+                            "line": 13779,
+                            "column": 11139,
+                            "message": "Message1db1d862-9188-4ad6-a957-57ef0c089db2",
+                            "status_code": 27957
+                          },
+                          {
+                            "line": 27348,
+                            "column": 12223,
+                            "message": "Message64932f93-0e1f-4db9-ab4e-fd6491897a34",
+                            "status_code": 22285
+                          }
+                        ],
+                        "warnings": [
+                          {
+                            "line": 22786,
+                            "column": 4446,
+                            "message": "Messageb81f2ccf-b5e0-48b3-8f9a-1c850b9d45b5",
+                            "status_code": 18650
+                          },
+                          {
+                            "line": 19652,
+                            "column": 28780,
+                            "message": "Messageb0e8af18-9153-4166-b22d-e8da61414949",
+                            "status_code": 27184
+                          },
+                          {
+                            "line": 3670,
+                            "column": 30592,
+                            "message": "Messagea3ed31d8-7e7b-43f2-aaa4-e202cf07ed98",
+                            "status_code": 13199
+                          }
+                        ]
+                      },
+                      "broken_resources": false,
+                      "broken_links": true,
+                      "duplicate_title": false,
+                      "duplicate_description": true,
+                      "duplicate_content": false,
+                      "click_depth": 19594,
+                      "size": 12911,
+                      "encoded_size": 5389,
+                      "total_transfer_size": 14117,
+                      "fetch_time": "2024-12-21 15:41:52 +00:00",
+                      "cache_control": {
+                        "cachable": true,
+                        "ttl": 18701
+                      },
+                      "checks": {
+                        "no_content_encoding": false,
+                        "high_loading_time": false,
+                        "is_redirect": false,
+                        "is_4xx_code": false,
+                        "is_5xx_code": false,
+                        "is_broken": false,
+                        "is_www": false,
+                        "is_https": true,
+                        "is_http": false,
+                        "high_waiting_time": false,
+                        "has_micromarkup": false,
+                        "has_micromarkup_errors": false,
+                        "no_doctype": false,
+                        "has_html_doctype": true,
+                        "canonical": true,
+                        "no_encoding_meta_tag": false,
+                        "no_h1_tag": false,
+                        "https_to_http_links": false,
+                        "size_greater_than_3mb": false,
+                        "meta_charset_consistency": true,
+                        "has_meta_refresh_redirect": false,
+                        "has_render_blocking_resources": false,
+                        "redirect_chain": false,
+                        "low_content_rate": true,
+                        "high_content_rate": false,
+                        "low_character_count": false,
+                        "high_character_count": false,
+                        "small_page_size": false,
+                        "large_page_size": false,
+                        "low_readability_rate": false,
+                        "irrelevant_description": false,
+                        "irrelevant_title": false,
+                        "irrelevant_meta_keywords": false,
+                        "title_too_long": false,
+                        "has_meta_title": false,
+                        "title_too_short": false,
+                        "deprecated_html_tags": false,
+                        "duplicate_meta_tags": true,
+                        "duplicate_title_tag": false,
+                        "no_image_alt": false,
+                        "no_image_title": true,
+                        "no_description": false,
+                        "no_title": false,
+                        "no_favicon": false,
+                        "seo_friendly_url": true,
+                        "flash": false,
+                        "frame": false,
+                        "lorem_ipsum": false,
+                        "seo_friendly_url_characters_check": true,
+                        "seo_friendly_url_dynamic_check": true,
+                        "seo_friendly_url_keywords_check": true,
+                        "seo_friendly_url_relative_length_check": true,
+                        "recursive_canonical": false,
+                        "canonical_chain": false,
+                        "canonical_to_redirect": false,
+                        "canonical_to_broken": false,
+                        "has_links_to_redirects": false,
+                        "is_orphan_page": false,
+                        "is_link_relation_conflict": false
+                      },
+                      "content_encoding": "ContentEncodingaa5665e6-e752-4d73-9e79-e0adb27c86a1",
+                      "media_type": "MediaType9557d603-6618-4eac-8de4-4cff33dc2bc2",
+                      "server": "Server87a77b82-b350-4350-9775-f22f17329aae",
+                      "is_resource": false,
+                      "url_length": 11006,
+                      "relative_url_length": 4600,
+                      "last_modified": {
+                        "header": "2026-04-08 19:46:12 +00:00",
+                        "sitemap": "2025-09-25 17:05:55 +00:00",
+                        "meta_tag": "2028-06-13 23:08:13 +00:00"
+                      }
+                    }
+                  ]
+                },
+                {
+                  "similarity": 18840,
+                  "page": [
+                    {
+                      "resource_type": "html",
+                      "status_code": 12956,
+                      "location": "Location374d6b82-2f4e-4cbe-af5e-317275714d05",
+                      "url": "Url639c3b4b-1763-4ae7-a247-b3d22407d0ae",
+                      "meta": {
+                        "title": "Title1a38502f-63e0-4510-ba2e-e76dc3e2ca4a",
+                        "charset": 14011,
+                        "follow": false,
+                        "generator": "Generatora7dc389c-edda-405c-85ec-ffe9f11e8ee2",
+                        "htags": {
+                          "h1": [
+                            "c8983c01-d6bc-4d8c-a805-785d527684ed",
+                            "c97f09cd-7261-47b1-b120-120d21fd376c",
+                            "61c2a1a3-f44a-4d25-b3eb-57e773b98b8a"
+                          ],
+                          "h2": [
+                            "a2bb2755-b51b-4a0c-afa4-b4557f6fe25e",
+                            "8963e141-ce3e-4256-974c-a92eb84f7c25",
+                            "cc9437b9-8451-4b6d-87fe-4be4d27474cb"
+                          ],
+                          "h3": [
+                            "0a951711-df20-4946-bd10-8de35a9ff092",
+                            "d64bb978-c390-43b8-a14b-f36291b29c3e",
+                            "6fa9ec36-02c6-443b-bde7-b58d3624bd28"
+                          ],
+                          "h4": [
+                            "e2c0d408-5666-4007-90ab-d662fe1e5a60",
+                            "b2d93c2c-485f-45e1-89c5-b133de1ea6eb",
+                            "6d8362c0-8b09-4421-8da9-b46f84bbddc6"
+                          ],
+                          "h5": [
+                            "6150e987-6863-49f1-a211-597bf4f99948",
+                            "eda4bba0-2ed3-406b-8cf5-28a1ee57b331",
+                            "5c0824aa-30d1-492a-81f7-9aa6708dcba1"
+                          ],
+                          "h6": [
+                            "22d75a62-d8c4-470a-bf6a-7172703c3e32",
+                            "e466a979-7606-4960-9a0d-ccf2ac8be36d",
+                            "72c8ee17-0eb7-40c8-9f1f-ae2de369a0a5"
+                          ]
+                        },
+                        "description": "MetaDescription50788f75-d002-4ca6-8b63-da4af92913e2",
+                        "favicon": "Favicon7a30d1a8-4a27-4c14-a6d1-cd3bc37ff820",
+                        "meta_keywords": "MetaKeywords3308f571-84eb-4bb1-83c9-5b2ba092b7f9",
+                        "canonical": "Canonical54dd292c-63cf-4f82-bda0-e388da694bf8",
+                        "internal_links_count": 2299,
+                        "external_links_count": 20117,
+                        "inbound_links_count": 23894,
+                        "images_count": 17555,
+                        "images_size": 21643,
+                        "scripts_count": 23603,
+                        "scripts_size": 8298,
+                        "stylesheets_count": 12158,
+                        "stylesheets_size": 7059,
+                        "title_length": 23507,
+                        "description_length": 9179,
+                        "render_blocking_scripts_count": 3869,
+                        "render_blocking_stylesheets_count": 29937,
+                        "cumulative_layout_shift": 0.45298781067687044,
+                        "meta_title": "MetaTitle41e91af2-4f43-4c23-a4c1-b266a4f26f43",
+                        "content": {
+                          "plain_text_size": 28957,
+                          "plain_text_rate": 0.8806479254303531,
+                          "plain_text_word_count": 25132,
+                          "automated_readability_index": 0.3462453536479748,
+                          "coleman_liau_readability_index": 0.7209205000499348,
+                          "dale_chall_readability_index": 0.4046341296431374,
+                          "flesch_kincaid_readability_index": 0.4174742375991054,
+                          "smog_readability_index": 0.8169202470878992,
+                          "description_to_content_consistency": 0.5705636207125157,
+                          "title_to_content_consistency": 0.2662712740024533,
+                          "meta_keywords_to_content_consistency": 0.9424619139996261
+                        },
+                        "deprecated_tags": [
+                          "555b52bd-e6aa-4aa2-bdfc-5ea08f592982",
+                          "2e546a09-b987-484b-96a5-3c044a57b88a",
+                          "9dade83f-45e9-40fb-94d9-9061fda80808"
+                        ],
+                        "duplicate_meta_tags": [
+                          "f4ebeabf-5a42-49bc-a0dc-c6a7a67b1be0",
+                          "e58ca243-12b7-4954-8358-d46e4ee15ee8",
+                          "24b1aca5-033a-4463-af72-6b67309e46d0"
+                        ],
+                        "spell": {
+                          "hunspell_language_code": "Languagecc77564d-8318-4aa5-8e87-82cd78da4295",
+                          "misspelled": [
+                            {
+                              "word": "Word0053e682-ec0a-43a8-94f8-a77b15e786d6"
+                            },
+                            {
+                              "word": "Word53c55a22-235a-4c11-b7c8-55f00949668a"
+                            },
+                            {
+                              "word": "Word126b3ab8-c8c4-4bc2-b655-70f1b68f1836"
+                            }
+                          ]
+                        },
+                        "social_media_tags": {
+                          "key916550e4-f5ae-4c72-930d-c36721ffe621": "valueca895d8e-1acb-4ad1-ab6a-97b9071a49a8",
+                          "key8c13cb1a-493d-4965-92d1-ffb0c23d8ae6": "value1a4bc2e9-fa7e-4509-8b8c-a8ec0ba9e43c",
+                          "keye8770370-5191-4c38-ad1d-1b116ab63ce1": "value51e5d299-d3ac-4e4d-8334-490665ca1606"
+                        }
+                      },
+                      "page_timing": {
+                        "time_to_interactive": 2872,
+                        "dom_complete": 22923,
+                        "largest_contentful_paint": 0.7519180782876146,
+                        "first_input_delay": 0.576909115172295,
+                        "connection_time": 13996,
+                        "time_to_secure_connection": 9926,
+                        "request_sent_time": 13528,
+                        "waiting_time": 11816,
+                        "download_time": 28529,
+                        "duration_time": 5495,
+                        "fetch_start": 10467,
+                        "fetch_end": 21528
+                      },
+                      "onpage_score": 0.94,
+                      "total_dom_size": 4948,
+                      "custom_js_response": null,
+                      "custom_js_client_exception": "CustomJsClientException70c1f3a6-08e7-4844-9796-3811e2f0ad5a",
+                      "resource_errors": {
+                        "errors": [
+                          {
+                            "line": 4541,
+                            "column": 25258,
+                            "message": "Message7908421d-8395-4294-8707-79fcec087600",
+                            "status_code": 10912
+                          },
+                          {
+                            "line": 625,
+                            "column": 17058,
+                            "message": "Message8f5ed601-a8c7-475b-9322-e962d6ca451e",
+                            "status_code": 7455
+                          },
+                          {
+                            "line": 2439,
+                            "column": 22277,
+                            "message": "Message5c31a408-bd16-40e1-bf56-3fc736c0c868",
+                            "status_code": 25196
+                          }
+                        ],
+                        "warnings": [
+                          {
+                            "line": 32607,
+                            "column": 20968,
+                            "message": "Message07a9b4d3-bed2-408a-a383-09d69e99e2f8",
+                            "status_code": 12361
+                          },
+                          {
+                            "line": 17120,
+                            "column": 12390,
+                            "message": "Messageeb30c094-128d-4712-a4a5-d6b16d05dea7",
+                            "status_code": 2899
+                          },
+                          {
+                            "line": 16825,
+                            "column": 1889,
+                            "message": "Message9803deab-f87a-46e2-8b60-a33e71b40ea3",
+                            "status_code": 11037
+                          }
+                        ]
+                      },
+                      "broken_resources": false,
+                      "broken_links": true,
+                      "duplicate_title": false,
+                      "duplicate_description": true,
+                      "duplicate_content": false,
+                      "click_depth": 17816,
+                      "size": 23627,
+                      "encoded_size": 15558,
+                      "total_transfer_size": 3047,
+                      "fetch_time": "2026-11-24 16:31:23 +00:00",
+                      "cache_control": {
+                        "cachable": true,
+                        "ttl": 2906
+                      },
+                      "checks": {
+                        "no_content_encoding": false,
+                        "high_loading_time": false,
+                        "is_redirect": false,
+                        "is_4xx_code": false,
+                        "is_5xx_code": false,
+                        "is_broken": false,
+                        "is_www": false,
+                        "is_https": true,
+                        "is_http": false,
+                        "high_waiting_time": false,
+                        "has_micromarkup": false,
+                        "has_micromarkup_errors": false,
+                        "no_doctype": false,
+                        "has_html_doctype": true,
+                        "canonical": true,
+                        "no_encoding_meta_tag": false,
+                        "no_h1_tag": false,
+                        "https_to_http_links": false,
+                        "size_greater_than_3mb": false,
+                        "meta_charset_consistency": true,
+                        "has_meta_refresh_redirect": false,
+                        "has_render_blocking_resources": false,
+                        "redirect_chain": false,
+                        "low_content_rate": true,
+                        "high_content_rate": false,
+                        "low_character_count": false,
+                        "high_character_count": false,
+                        "small_page_size": false,
+                        "large_page_size": false,
+                        "low_readability_rate": false,
+                        "irrelevant_description": false,
+                        "irrelevant_title": false,
+                        "irrelevant_meta_keywords": false,
+                        "title_too_long": false,
+                        "has_meta_title": false,
+                        "title_too_short": false,
+                        "deprecated_html_tags": false,
+                        "duplicate_meta_tags": true,
+                        "duplicate_title_tag": false,
+                        "no_image_alt": false,
+                        "no_image_title": true,
+                        "no_description": false,
+                        "no_title": false,
+                        "no_favicon": false,
+                        "seo_friendly_url": true,
+                        "flash": false,
+                        "frame": false,
+                        "lorem_ipsum": false,
+                        "seo_friendly_url_characters_check": true,
+                        "seo_friendly_url_dynamic_check": true,
+                        "seo_friendly_url_keywords_check": true,
+                        "seo_friendly_url_relative_length_check": true,
+                        "recursive_canonical": false,
+                        "canonical_chain": false,
+                        "canonical_to_redirect": false,
+                        "canonical_to_broken": false,
+                        "has_links_to_redirects": false,
+                        "is_orphan_page": false,
+                        "is_link_relation_conflict": false
+                      },
+                      "content_encoding": "ContentEncoding5d4ce86e-bf55-4ef2-bc1f-fe83d7cdf089",
+                      "media_type": "MediaTypef3c6900e-8b27-444f-8686-378016787c04",
+                      "server": "Server7e3b69e1-d8c1-4df9-a1b7-0335c2d85515",
+                      "is_resource": false,
+                      "url_length": 17246,
+                      "relative_url_length": 28946,
+                      "last_modified": {
+                        "header": "2027-01-02 09:05:18 +00:00",
+                        "sitemap": "2025-11-25 09:04:46 +00:00",
+                        "meta_tag": "2026-02-17 11:22:48 +00:00"
+                      }
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

@@ -22,36 +22,54 @@
   },
   "list": {
     "title": "Tus reglas",
-    "capUsed": "{{count}} reglas en uso.",
+    "capUsed_one": "{{count}} regla en uso.",
     "type": "Tipo",
     "threshold": "Umbral",
     "channels": "Canales",
     "state": "Estado",
     "actions": "Acciones",
-    "emailCount": "{{count}} destinatarios de correo",
+    "emailCount_one": "{{count}} destinatario de correo",
     "secretTail": "la clave de firma acaba en {{tail}}",
     "enabled": "Activa",
     "disabled": "Inactiva",
     "enable": "Activar",
     "disable": "Desactivar",
     "viewLog": "Ver registro",
-    "delete": "Eliminar"
+    "delete": "Eliminar",
+    "capUsed_zero": "{{count}} reglas en uso.",
+    "capUsed_two": "{{count}} reglas en uso.",
+    "capUsed_few": "{{count}} reglas en uso.",
+    "capUsed_many": "{{count}} reglas en uso.",
+    "capUsed_other": "{{count}} reglas en uso.",
+    "emailCount_zero": "{{count}} destinatarios de correo",
+    "emailCount_two": "{{count}} destinatarios de correo",
+    "emailCount_few": "{{count}} destinatarios de correo",
+    "emailCount_many": "{{count}} destinatarios de correo",
+    "emailCount_other": "{{count}} destinatarios de correo"
   },
   "builder": {
     "title": "Nueva regla",
     "description": "Elige qué vigilar y adónde enviarlo.",
     "site": "Sitio",
     "sitePlaceholder": "Elige un sitio",
-    "siteRequired": "Elige un sitio para crear una regla.",
+    "siteRequired": "Elige un sitio para continuar.",
     "type": "Tipo de aviso",
     "threshold": "Umbral de posición",
     "thresholdHint": "Avisamos cuando la posición confirmada llega a este puesto o peor.",
     "channels": "Canales",
     "slackPlaceholder": "Dirección del webhook entrante de Slack",
     "webhookPlaceholder": "Tu dirección https",
-    "paidChannelLocked": "Los canales de Slack y webhook requieren el plan Pro o superior.",
     "noChannel": "Elige al menos un canal.",
-    "submit": "Crear regla"
+    "submit": "Crear regla",
+    "sitePaused": "en pausa",
+    "rankDropHint": "Solo se dispara cuando una comprobación programada detecta una caída y una segunda comprobación de la misma palabra clave la confirma.",
+    "rankDropBuiltIn": "El correo integrado de caídas de posición es aparte y tiene su propio interruptor en",
+    "rankDropBuiltInLink": "Notificaciones",
+    "thresholdInvalid": "Introduce una posición entera entre {{min}} y {{max}}.",
+    "slackRequired": "Introduce la dirección de tu webhook de Slack.",
+    "webhookRequired": "Introduce la dirección de tu webhook.",
+    "sitePausedOption": "Reanuda este sitio para crear reglas de alerta",
+    "sitePausedBlocked": "Este sitio está en pausa. Reanuda este sitio para crear reglas de alerta."
   },
   "secret": {
     "title": "Copia ahora tu clave de firma",
@@ -68,7 +86,7 @@
     "rankPair": "Posición {{before}} el {{beforeAt}} y luego {{after}} el {{afterAt}}.",
     "linkPair": "{{beforeCount}} dominios el {{beforeAt}} y luego {{afterCount}} el {{afterAt}}.",
     "notRanked": "fuera de los 100 primeros resultados",
-    "domainCount": "{{count}} dominios cambiaron",
+    "domainCount_one": "{{count}} dominio cambió",
     "attempt": "Intento {{attempt}}",
     "statusLabel": {
       "pending": "Enviando",
@@ -91,17 +109,29 @@
       "unsafe_url": "Ya no es seguro acceder a esa dirección.",
       "channel_timeout": "El canal tardó demasiado en responder.",
       "retries_exhausted": "Paramos tras tres intentos fallidos."
+    },
+    "domainCount_zero": "{{count}} dominios cambiaron",
+    "domainCount_two": "{{count}} dominios cambiaron",
+    "domainCount_few": "{{count}} dominios cambiaron",
+    "domainCount_many": "{{count}} dominios cambiaron",
+    "domainCount_other": "{{count}} dominios cambiaron",
+    "rulePicker": "Regla",
+    "rulePickerPlaceholder": "Elige una regla",
+    "ruleOption": "{{type}} · {{site}}",
+    "empty": {
+      "title": "Aún no se ha enviado ningún aviso",
+      "noRules": "Los avisos enviados aparecen aquí. Aún no tienes ninguna regla, así que no se puede enviar nada.",
+      "createRule": "Crear una regla",
+      "rule": "Esta regla aún no ha enviado ningún aviso.",
+      "pickRule": "Elige una regla para ver los avisos que envió."
+    },
+    "filtered": {
+      "title": "Ningún envío coincide con estos filtros",
+      "body": "Quita los filtros para ver todos los envíos de esta regla.",
+      "clear": "Quitar filtros"
     }
   },
   "states": {
-    "cap": {
-      "title": "Límite de reglas alcanzado",
-      "body": "Has usado todas las reglas de aviso de tu plan."
-    },
-    "tierLocked": {
-      "title": "El canal necesita un plan superior",
-      "body": "Los canales de Slack y webhook requieren el plan Pro o superior."
-    },
     "disabled": {
       "title": "Avisos en pausa",
       "body": "Los avisos no están disponibles por ahora. Tus reglas y tu registro siguen aquí."

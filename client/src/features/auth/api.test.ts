@@ -1,7 +1,7 @@
 import { describe, expect, it, vi, afterEach, beforeEach } from 'vitest';
 import { __resetCsrfTokenCacheForTests } from '@shared/api/client';
 import { __resetPresentationLocaleForTests } from '@shared/i18n/presentationLocale';
-import { cancelAccountDeletion, deleteAccount } from './api';
+import { cancelAccountDeletion, deleteAccount, dismissTwoFactorRecommendation, fetchTwoFactorRecommendation } from './api';
 
 vi.mock('sonner', () => ({ toast: { error: vi.fn() } }));
 
@@ -36,6 +36,19 @@ afterEach(() => {
 });
 
 describe('auth api', () => {
+  it('reads the caller-scoped two-factor preference and sends a guarded dismissal', async () => {
+    const spy = vi.spyOn(globalThis, 'fetch')
+      .mockResolvedValueOnce(fakeResponse({ dismissedAt: null }))
+      .mockResolvedValueOnce(fakeResponse({ csrfToken: 'tok' }))
+      .mockResolvedValueOnce(fakeResponse({ dismissedAt: '2026-10-24T00:00:00Z' }));
+    expect(await fetchTwoFactorRecommendation()).toEqual({ dismissedAt: null });
+    expect(await dismissTwoFactorRecommendation()).toEqual({ dismissedAt: '2026-10-24T00:00:00Z' });
+    expect(requestPath(spy.mock.calls[0]![0])).toBe('/api/users/preferences/two-factor-recommendation');
+    expect(requestPath(spy.mock.calls[2]![0])).toBe('/api/users/preferences/two-factor-recommendation');
+    expect(spy.mock.calls[2]![1]?.method).toBe('PUT');
+    expect((spy.mock.calls[2]![1]?.headers as Headers).get('x-csrf-token')).toBe('tok');
+    expect((spy.mock.calls[2]![1]?.headers as Headers).has('x-workspace-id')).toBe(false);
+  });
   it('deleteAccount posts to the legal endpoint with a CSRF token and returns the schedule', async () => {
     const spy = vi
       .spyOn(globalThis, 'fetch')

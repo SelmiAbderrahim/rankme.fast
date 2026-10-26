@@ -1,6 +1,6 @@
 ---
 title: 'Lokales Raster-Tracking'
-description: 'Wie Local-Pack-Raster je Koordinate erhoben werden, was eine fehlgeschlagene Zelle bedeutet und warum Koordinaten eingetippt statt auf einer Karte gewählt werden.'
+description: 'Wie Local-Pack-Raster je Koordinate erhoben werden, wie Sie die Mitte des Rasters wählen und was eine fehlgeschlagene Zelle bedeutet.'
 locale: de
 slug: geogrid
 section: product
@@ -33,13 +33,13 @@ Jede Zelle hat ihre eigene Erfassungszeit. Ein Raster ist eine Reihe zeitnah erh
 
 Ein Scan mit mindestens einer verwertbaren Zelle verbraucht seine Einheit. Erstattet wird nur, wenn alle Zellen fehlschlagen, denn auch ein Teilraster enthält verwertbare Beobachtungen.
 
-Der Agency-Tarif enthält 6 Scans pro Monat. Pro erhält Raster über das Guthabenpaket `geogrid-scans-10`, Starter hat kein Rasterkontingent.
+## Die Mitte wählen
 
-Einheiten und Tarifgrenzen finden Sie unter [Preise](./pricing.de.md).
+Die Auswahl **Rastermitte** beginnt bei **Mein Unternehmen**, dem Standort, der mit dem Unternehmen der Website unter [Lokales SEO](./local-seo.de.md) gespeichert ist. Das ist kostenlos, und ohne gespeichertes Unternehmen führt die Auswahl zur Einrichtung von Lokalem SEO. **Ort suchen** sucht nach einem Unternehmensnamen oder einer Straßenadresse. Jede Suche fragt Ihren Anbieter für lokale Einträge einmal ab, und die Wahl eines Treffers füllt nur die Mitte aus: Ihr Unternehmen in Lokalem SEO bleibt unverändert. **Koordinaten eingeben** ist die erweiterte Option, die Mitte des letzten Scans ist einen Klick entfernt (**Mitte des letzten Scans verwenden**). Beim Abstand wählen Sie feste Werte oder einen eigenen Abstand in Kilometern.
 
 ## Grenzen
 
-Koordinaten tippen Sie von Hand ein. RankMeFast nutzt keinen Kartenkachel-Anbieter, daher gibt es keine interaktive Karte zum Anklicken.
+Es gibt keine interaktive Karte zum Anklicken, weil RankMeFast keinen Anbieter für Kartenkacheln nutzt.
 
 Ein Raster zeigt, was der Anbieter zu diesem Zeitpunkt von diesen Koordinaten aus gesehen hat. Es ist keine Prognose und sagt nicht, was eine bestimmte suchende Person sehen wird.
 

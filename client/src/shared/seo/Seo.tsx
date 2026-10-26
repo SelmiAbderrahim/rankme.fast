@@ -64,7 +64,7 @@ export const Seo = ({
   return (
     <Helmet
       htmlAttributes={{ lang: locale, dir: isRtl(locale) ? 'rtl' : 'ltr' }}
-      titleTemplate={`%s · ${SITE_NAME}`}
+      titleTemplate={basePath === '/' ? '%s' : `%s · ${SITE_NAME}`}
       defaultTitle={SITE_NAME}
     >
       <title>{title}</title>

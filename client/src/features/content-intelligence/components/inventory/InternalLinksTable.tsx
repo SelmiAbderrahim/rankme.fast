@@ -1,3 +1,4 @@
+import { Bdi } from '@shared/components/Bdi';
 import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@shared/ui/card';
@@ -88,7 +89,7 @@ export function InternalLinksTable({ pages }: InternalLinksTableProps) {
               <TableBody>
                 {rows.map((row) => (
                   <TableRow key={row.url} data-testid="inventory-link-row">
-                    <TableCell className="max-w-[280px] truncate font-medium">{row.url}</TableCell>
+                    <TableCell className="max-w-[280px] truncate font-medium"><Bdi>{row.url}</Bdi></TableCell>
                     <TableCell className="text-end tabular-nums">{row.inbound}</TableCell>
                     <TableCell className="text-end tabular-nums">{row.outbound}</TableCell>
                     <TableCell>

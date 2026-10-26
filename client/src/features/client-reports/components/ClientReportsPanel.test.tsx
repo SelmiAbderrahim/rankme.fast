@@ -1,3 +1,4 @@
+import { isolateText } from '@shared/lib/bidi';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import { fireEvent, render, screen, waitFor, within } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
@@ -25,8 +26,10 @@ vi.mock('../api', () => ({
 }));
 
 vi.mock('@features/report-export', () => ({
-  ReportExportControl: ({ disabled }: { disabled?: boolean }) => (
-    <button type="button" disabled={disabled}>Export or share</button>
+  ReportExportControl: ({ disabled, describedBy }: { disabled?: boolean; describedBy?: string }) => (
+    <button type="button" disabled={disabled} aria-describedby={describedBy}>
+      Export or share
+    </button>
   ),
 }));
 
@@ -39,7 +42,8 @@ const schedule = (overrides: Partial<ScheduledReport> = {}): ScheduledReport => 
   frequency: 'weekly',
   weekdayUtc: 1,
   monthdayUtc: null,
-  hourUtc: 9,
+  timezone: 'UTC',
+  localHour: 9,
   minuteUtc: 17,
   locale: 'en',
   recipients: ['client@example.com'],
@@ -193,9 +197,18 @@ describe('ClientReportsPanel', () => {
       await userEvent.click(screen.getAllByLabelText(label)[0]!);
     }
     expect(screen.getByRole('button', { name: 'Export or share' })).toBeDisabled();
+    // The reason is visible and tied to the control.
+    expect(screen.getByTestId('report-composer-no-section')).toHaveTextContent(
+      'Select at least one report section.',
+    );
+    expect(screen.getByRole('button', { name: 'Export or share' })).toHaveAttribute(
+      'aria-describedby',
+      'report-composer-no-section',
+    );
 
     await userEvent.click(screen.getAllByLabelText('SEO audit')[0]!);
     expect(screen.getByRole('button', { name: 'Export or share' })).toBeEnabled();
+    expect(screen.queryByTestId('report-composer-no-section')).toBeNull();
   });
 
   it('creates a weekly schedule, validates input, and reports server failures', async () => {
@@ -215,7 +228,9 @@ describe('ClientReportsPanel', () => {
       },
     });
     await userEvent.click(within(dialog).getByRole('button', { name: 'Save schedule' }));
-    expect(await within(dialog).findByText("We couldn't save that schedule.")).toBeInTheDocument();
+    expect(
+      await within(dialog).findByText('Add up to ten recipients. You entered 11.'),
+    ).toHaveAttribute('role', 'alert');
     expect(mocked.createScheduledReport).not.toHaveBeenCalled();
 
     fireEvent.change(within(dialog).getByLabelText('Recipient emails'), {
@@ -245,6 +260,83 @@ describe('ClientReportsPanel', () => {
     });
     await userEvent.click(within(failedDialog).getByRole('button', { name: 'Save schedule' }));
     expect(await within(failedDialog).findByText("We couldn't save that schedule.")).toBeInTheDocument();
+  });
+
+  it('validates the schedule inline and shows the delivery time on the reader clock', async () => {
+    renderPanel();
+    await screen.findByTestId('client-reports-panel');
+    await userEvent.click(screen.getByRole('button', { name: 'Create schedule' }));
+    const dialog = await screen.findByRole('dialog');
+    // Quiet until the first save attempt.
+    expect(within(dialog).queryByRole('alert')).toBeNull();
+    for (const label of ['SEO audit', 'Rank summary', 'Search Console summary']) {
+      const box = within(dialog).getByLabelText(label);
+      if (box.getAttribute('data-state') === 'checked') await userEvent.click(box);
+    }
+    await userEvent.click(within(dialog).getByRole('button', { name: 'Save schedule' }));
+    expect(within(dialog).getByText('Give this schedule a name.')).toHaveAttribute('role', 'alert');
+    expect(within(dialog).getByLabelText('Schedule name')).toHaveAttribute('aria-invalid', 'true');
+    expect(within(dialog).getByText('Add at least one recipient email.')).toBeInTheDocument();
+    expect(within(dialog).getByText('Select at least one report section.')).toBeInTheDocument();
+
+    fireEvent.change(within(dialog).getByLabelText('Recipient emails'), {
+      target: { value: 'ok@example.com, not-an-email, also@bad' },
+    });
+    expect(
+      within(dialog).getByText('Check these addresses: also@bad, not-an-email'),
+    ).toBeInTheDocument();
+    expect(within(dialog).getByLabelText('Recipient emails')).toHaveAttribute(
+      'aria-describedby',
+      'report-schedule-recipients-help report-schedule-recipients-error',
+    );
+    expect(mocked.createScheduledReport).not.toHaveBeenCalled();
+
+    // The schedule starts in the reader's zone and the confirmation line names
+    // the local send time and its UTC equivalent.
+    const zone = Intl.DateTimeFormat().resolvedOptions().timeZone;
+    expect(within(dialog).getByRole('combobox', { name: 'Time zone' })).toHaveTextContent(zone);
+    expect(within(dialog).getByTestId('report-schedule-local-time')).toHaveTextContent(
+      /^Next send: .+ UTC\)$/,
+    );
+    await userEvent.click(within(dialog).getByRole('combobox', { name: 'Frequency' }));
+    await userEvent.click(await screen.findByRole('option', { name: 'Monthly' }));
+    expect(within(dialog).getByTestId('report-schedule-local-time')).toHaveTextContent('Next send:');
+  });
+
+  it('confirms the next send in the chosen zone and in UTC', async () => {
+    vi.useFakeTimers({ now: new Date('2026-10-18T12:00:00.000Z'), toFake: ['Date'] });
+    try {
+      const user = userEvent.setup();
+      renderPanel();
+      await screen.findByTestId('client-reports-panel');
+      await user.click(screen.getByRole('button', { name: 'Create schedule' }));
+      const dialog = await screen.findByRole('dialog');
+      await user.click(within(dialog).getByRole('combobox', { name: 'Time zone' }));
+      await user.click(await screen.findByRole('option', { name: 'Asia/Riyadh' }));
+      const line = within(dialog).getByTestId('report-schedule-local-time');
+      expect(line).toHaveTextContent(
+        `Next send: ${isolateText('Mon 09:00')} ${isolateText('Riyadh')} (${isolateText('06:00')} UTC)`,
+      );
+      // A local time on another UTC day names the UTC weekday too.
+      await user.click(within(dialog).getByRole('combobox', { name: 'Hour' }));
+      await user.click(await screen.findByRole('option', { name: /^1:00\sAM$/ }));
+      expect(line).toHaveTextContent(
+        `Next send: ${isolateText('Mon 01:00')} ${isolateText('Riyadh')} (${isolateText('Sun 22:00')} UTC)`,
+      );
+      fireEvent.change(within(dialog).getByLabelText('Schedule name'), { target: { value: 'Riyadh' } });
+      fireEvent.change(within(dialog).getByLabelText('Recipient emails'), {
+        target: { value: 'client@example.com' },
+      });
+      await user.click(within(dialog).getByRole('button', { name: 'Save schedule' }));
+      await waitFor(() => expect(mocked.createScheduledReport).toHaveBeenLastCalledWith(
+        '65f000000000000000000001',
+        expect.objectContaining({ timezone: 'Asia/Riyadh', localHour: 1, weekdayUtc: 1 }),
+      ));
+      const body = mocked.createScheduledReport.mock.calls.at(-1)![1];
+      expect(body).not.toHaveProperty('hourUtc');
+    } finally {
+      vi.useRealTimers();
+    }
   });
 
   it('updates every cadence, locale, section, and enabled schedule control', async () => {
@@ -281,16 +373,15 @@ describe('ClientReportsPanel', () => {
     fireEvent.change(within(dialog).getByLabelText('Recipient emails'), {
       target: { value: 'two@example.com' },
     });
-    await user.click(within(dialog).getByRole('combobox', { name: 'Weekday (UTC)' }));
+    await user.click(within(dialog).getByRole('combobox', { name: 'Weekday' }));
     await user.click(await screen.findByRole('option', { name: 'Wednesday' }));
     await user.click(within(dialog).getByRole('combobox', { name: 'Frequency' }));
     await user.click(await screen.findByRole('option', { name: 'Monthly' }));
-    fireEvent.change(within(dialog).getByLabelText('Day of month (UTC)'), {
+    fireEvent.change(within(dialog).getByLabelText('Day of month'), {
       target: { value: '18' },
     });
-    fireEvent.change(within(dialog).getByLabelText('Hour (UTC)'), {
-      target: { value: '16' },
-    });
+    await user.click(within(dialog).getByRole('combobox', { name: 'Hour' }));
+    await user.click(await screen.findByRole('option', { name: /^4:00\sPM$/ }));
     await user.click(within(dialog).getByRole('combobox', { name: 'Report language' }));
     await user.click(await screen.findByRole('option', { name: 'العربية' }));
     await user.click(within(dialog).getByLabelText('Rank summary'));
@@ -303,7 +394,8 @@ describe('ClientReportsPanel', () => {
         frequency: 'monthly',
         weekdayUtc: null,
         monthdayUtc: 18,
-        hourUtc: 16,
+        timezone: Intl.DateTimeFormat().resolvedOptions().timeZone,
+        localHour: 16,
         locale: 'ar',
         sections: { audit: true, ranks: false, gsc: true },
         enabled: false,
@@ -324,10 +416,10 @@ describe('ClientReportsPanel', () => {
     await screen.findByText('Monday report');
     await userEvent.click(screen.getByRole('button', { name: 'Edit' }));
     const dialog = await screen.findByRole('dialog');
-    expect(within(dialog).getByLabelText('Day of month (UTC)')).toHaveValue(12);
+    expect(within(dialog).getByLabelText('Day of month')).toHaveValue('12');
     await userEvent.click(within(dialog).getByRole('combobox', { name: 'Frequency' }));
     await userEvent.click(await screen.findByRole('option', { name: 'Weekly' }));
-    expect(within(dialog).getByRole('combobox', { name: 'Weekday (UTC)' })).toHaveTextContent(
+    expect(within(dialog).getByRole('combobox', { name: 'Weekday' })).toHaveTextContent(
       'Monday',
     );
     await userEvent.click(within(dialog).getByRole('button', { name: 'Save schedule' }));
@@ -339,7 +431,7 @@ describe('ClientReportsPanel', () => {
 
     await userEvent.click(screen.getByRole('button', { name: 'Delete' }));
     const alert = await screen.findByRole('alertdialog');
-    expect(alert).toHaveTextContent('Deleting Monday report');
+    expect(alert).toHaveTextContent(`Deleting ${isolateText('Monday report')}`);
     await userEvent.click(within(alert).getByRole('button', { name: 'Delete' }));
     await waitFor(() => expect(mocked.deleteScheduledReport).toHaveBeenCalled());
 
@@ -428,5 +520,114 @@ describe('ClientReportsPanel', () => {
     expect(await screen.findByText('failed@example.com')).toBeInTheDocument();
     await userEvent.click(screen.getByRole('button', { name: 'Load more' }));
     expect(await screen.findByText("We couldn't load client reports.")).toBeInTheDocument();
+  });
+});
+
+describe('schedule dialog: day of month', () => {
+  const openMonthlyDialog = async () => {
+    const user = userEvent.setup();
+    renderPanel();
+    await screen.findByTestId('client-reports-panel');
+    await user.click(screen.getByRole('button', { name: 'Create schedule' }));
+    const dialog = await screen.findByRole('dialog');
+    fireEvent.change(within(dialog).getByLabelText('Schedule name'), {
+      target: { value: 'Monthly' },
+    });
+    fireEvent.change(within(dialog).getByLabelText('Recipient emails'), {
+      target: { value: 'one@example.com' },
+    });
+    await user.click(within(dialog).getByRole('combobox', { name: 'Frequency' }));
+    await user.click(await screen.findByRole('option', { name: 'Monthly' }));
+    return { user, dialog };
+  };
+
+  it.each(['45', '0', '29', '-1', '1.5', 'abc', ''])(
+    'rejects "%s" inline, keeps it out of the preview, and never calls the API',
+    async (value) => {
+      const { user, dialog } = await openMonthlyDialog();
+      fireEvent.change(within(dialog).getByLabelText('Day of month'), {
+        target: { value },
+      });
+      expect(within(dialog).getByTestId('report-schedule-local-time')).toHaveTextContent(
+        'Enter a valid day of the month to see when this report runs.',
+      );
+      expect(within(dialog).getByTestId('report-schedule-local-time')).not.toHaveTextContent(
+        'Next send',
+      );
+      await user.click(within(dialog).getByRole('button', { name: 'Save schedule' }));
+      const error = await within(dialog).findByText(
+        'Enter a whole number from 1 to 28, or choose the last day of the month.',
+      );
+      expect(error).toHaveAttribute('role', 'alert');
+      expect(within(dialog).getByLabelText('Day of month')).toHaveAttribute(
+        'aria-invalid',
+        'true',
+      );
+      expect(mocked.createScheduledReport).not.toHaveBeenCalled();
+    },
+  );
+
+  it.each([
+    ['1', 1],
+    ['28', 28],
+    [' 7 ', 7],
+  ])('accepts "%s" and shows a preview', async (value, expected) => {
+    const { user, dialog } = await openMonthlyDialog();
+    fireEvent.change(within(dialog).getByLabelText('Day of month'), {
+      target: { value },
+    });
+    expect(within(dialog).getByTestId('report-schedule-local-time')).toHaveTextContent(
+      'Next send',
+    );
+    await user.click(within(dialog).getByRole('button', { name: 'Save schedule' }));
+    await waitFor(() =>
+      expect(mocked.createScheduledReport).toHaveBeenCalledWith(
+        '65f000000000000000000001',
+        expect.objectContaining({ frequency: 'monthly', monthdayUtc: expected }),
+      ),
+    );
+  });
+
+  it('clears the inline error once the day is fixed', async () => {
+    const { user, dialog } = await openMonthlyDialog();
+    const input = within(dialog).getByLabelText('Day of month');
+    fireEvent.change(input, { target: { value: '45' } });
+    await user.click(within(dialog).getByRole('button', { name: 'Save schedule' }));
+    await within(dialog).findByText(/Enter a whole number from 1 to 28/);
+    fireEvent.change(input, { target: { value: '15' } });
+    expect(within(dialog).queryByText(/Enter a whole number from 1 to 28/)).not.toBeInTheDocument();
+  });
+
+  it('saves the explicit last-day mode and disables the day field', async () => {
+    const { user, dialog } = await openMonthlyDialog();
+    fireEvent.change(within(dialog).getByLabelText('Day of month'), {
+      target: { value: '45' },
+    });
+    await user.click(within(dialog).getByLabelText('Use the last day of every month'));
+    expect(within(dialog).getByLabelText('Day of month')).toBeDisabled();
+    expect(within(dialog).getByTestId('report-schedule-local-time')).toHaveTextContent(
+      'Next send',
+    );
+    await user.click(within(dialog).getByRole('button', { name: 'Save schedule' }));
+    await waitFor(() =>
+      expect(mocked.createScheduledReport).toHaveBeenCalledWith(
+        '65f000000000000000000001',
+        expect.objectContaining({ frequency: 'monthly', monthdayUtc: -1 }),
+      ),
+    );
+  });
+
+  it('reopens a stored last-day schedule in last-day mode', async () => {
+    mocked.getClientReportsOverview.mockResolvedValue(
+      overview({
+        schedules: [schedule({ frequency: 'monthly', weekdayUtc: null, monthdayUtc: -1 })],
+      }),
+    );
+    renderPanel();
+    await screen.findByText('Monday report');
+    await userEvent.click(screen.getByRole('button', { name: 'Edit' }));
+    const dialog = await screen.findByRole('dialog');
+    expect(within(dialog).getByLabelText('Use the last day of every month')).toBeChecked();
+    expect(within(dialog).getByLabelText('Day of month')).toBeDisabled();
   });
 });

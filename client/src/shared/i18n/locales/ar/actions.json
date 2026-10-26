@@ -4,7 +4,12 @@
   "status": {
     "loading": "جارٍ تحميل الإجراءات…",
     "refreshing": "جارٍ تحديث الإجراءات…",
-    "showing": "عرض {{count}} من الإجراءات"
+    "showing_one": "عرض {{count}} من الإجراءات",
+    "showing_zero": "عرض {{count}} من الإجراءات",
+    "showing_two": "عرض {{count}} من الإجراءات",
+    "showing_few": "عرض {{count}} من الإجراءات",
+    "showing_many": "عرض {{count}} من الإجراءات",
+    "showing_other": "عرض {{count}} من الإجراءات"
   },
   "errors": {
     "loadFailed": "تعذّر تحميل الإجراءات. يرجى المحاولة مرة أخرى.",
@@ -18,6 +23,7 @@
     "label": "تصفية الإجراءات",
     "reset": "إعادة تعيين عوامل التصفية",
     "all": "الكل",
+    "openAndPlanned": "المفتوحة والمخطط لها",
     "state": "الحالة",
     "source": "المصدر",
     "severity": "الخطورة",
@@ -43,7 +49,8 @@
     "ga4_decline": "تراجع في التحليلات",
     "content_recommendation": "توصية محتوى",
     "citation_gap": "فجوة استشهاد الذكاء الاصطناعي",
-    "audience_research": "أبحاث الجمهور"
+    "audience_research": "أبحاث الجمهور",
+    "competitor_opportunity": "فرصة من تحليل المنافسين"
   },
   "severity": {
     "critical": "حرج",
@@ -69,22 +76,50 @@
   "freshness": {
     "fresh": "حديث",
     "stale": "قديم",
-    "unavailable": "غير مُتحقق منه"
+    "unavailable": "غير مُتحقق منه",
+    "partial": "جزئي",
+    "blocked": "محظور",
+    "failed": "فشل",
+    "unknown": "الحداثة غير معروفة"
   },
   "card": {
     "nextStep": "الخطوة التالية",
     "observedAt": "رُصد في {{date}}",
     "openSource": "فتح عرض المصدر",
     "affectedNone": "على مستوى الموقع",
-    "affectedOne": "عنوان URL واحد متأثر",
-    "affectedCount": "{{count}} من عناوين URL متأثرة",
+    "affectedCount_one": "{{count}} من عناوين URL متأثرة",
     "evidence": "الأدلة",
-    "evidenceLabel": "{{source}} · {{date}}",
+    "evidenceLabel": "{{source}} · {{date}} · {{detail}}",
     "evidenceLink": "فتح مصدر الدليل",
     "history": "السجل",
     "retest": "إعادة الفحص",
-    "affectedSample": "(يُعرض {{shown}})",
-    "noteLabel": "ملاحظة"
+    "noteLabel": "ملاحظة",
+    "affectedCount_zero": "{{count}} من عناوين URL متأثرة",
+    "affectedCount_two": "{{count}} من عناوين URL متأثرة",
+    "affectedCount_few": "{{count}} من عناوين URL متأثرة",
+    "affectedCount_many": "{{count}} من عناوين URL متأثرة",
+    "affectedCount_other": "{{count}} من عناوين URL متأثرة",
+    "affectedCountSampled_zero": "{{count}} من عناوين URL متأثرة (يُعرض {{shown}})",
+    "affectedCountSampled_one": "{{count}} من عناوين URL متأثرة (يُعرض {{shown}})",
+    "affectedCountSampled_two": "{{count}} من عناوين URL متأثرة (يُعرض {{shown}})",
+    "affectedCountSampled_few": "{{count}} من عناوين URL متأثرة (يُعرض {{shown}})",
+    "affectedCountSampled_many": "{{count}} من عناوين URL متأثرة (يُعرض {{shown}})",
+    "affectedCountSampled_other": "{{count}} من عناوين URL متأثرة (يُعرض {{shown}})",
+    "seeAllUrls_zero": "اعرض كل عناوين URL البالغ عددها {{count}} في التقرير",
+    "seeAllUrls_one": "اعرض كل عناوين URL البالغ عددها {{count}} في التقرير",
+    "seeAllUrls_two": "اعرض كل عناوين URL البالغ عددها {{count}} في التقرير",
+    "seeAllUrls_few": "اعرض كل عناوين URL البالغ عددها {{count}} في التقرير",
+    "seeAllUrls_many": "اعرض كل عناوين URL البالغ عددها {{count}} في التقرير",
+    "seeAllUrls_other": "اعرض كل عناوين URL البالغ عددها {{count}} في التقرير",
+    "seeLinkTargets_zero": "اعرض كل الصفحات البالغ عددها {{count}} والروابط المعطلة التي تشير إليها في التقرير",
+    "seeLinkTargets_one": "اعرض كل الصفحات البالغ عددها {{count}} والروابط المعطلة التي تشير إليها في التقرير",
+    "seeLinkTargets_two": "اعرض كل الصفحات البالغ عددها {{count}} والروابط المعطلة التي تشير إليها في التقرير",
+    "seeLinkTargets_few": "اعرض كل الصفحات البالغ عددها {{count}} والروابط المعطلة التي تشير إليها في التقرير",
+    "seeLinkTargets_many": "اعرض كل الصفحات البالغ عددها {{count}} والروابط المعطلة التي تشير إليها في التقرير",
+    "seeLinkTargets_other": "اعرض كل الصفحات البالغ عددها {{count}} والروابط المعطلة التي تشير إليها في التقرير",
+    "linkSourcesCount": "صفحات تحتوي على روابط معطلة: {{count}}",
+    "staleRetestHint": "هذا الدليل قديم. أعد الاختبار للتحقق منه مجددًا.",
+    "linkSourcesCountSampled": "صفحات تحتوي على روابط معطلة: {{count}} (يُعرض {{shown}})"
   },
   "transitions": {
     "planned": "تخطيط",
@@ -110,7 +145,14 @@
     "confirm": "تأكيد",
     "saving": "جارٍ الحفظ…",
     "conflict": "قام شخص آخر بتغيير هذا الإجراء أولًا. أعد تحميله وحاول مجددًا.",
-    "conflictReload": "إعادة تحميل الإجراء"
+    "conflictReload": "إعادة تحميل الإجراء",
+    "reasonLabel": "لماذا تستبعد هذه النتيجة؟",
+    "reasons": {
+      "false_positive": "إنذار خاطئ",
+      "wont_fix": "لن أصلحها",
+      "fixed_elsewhere": "أُصلحت في مكان آخر",
+      "other": "سبب آخر"
+    }
   },
   "history": {
     "title": "سجل الإجراء",
@@ -118,7 +160,9 @@
     "actor": "عضو الفريق",
     "from": "من {{state}}",
     "close": "إغلاق",
-    "actorYou": "أنت"
+    "actorYou": "أنت",
+    "observed": "تم رصده",
+    "actorSystem": "فحص تلقائي"
   },
   "retest": {
     "title": "هل تريد إعادة فحص هذه النتيجة؟",
@@ -127,8 +171,6 @@
     "unitsValue": "1",
     "freshRun": "تعمل إعادة الفحص دائمًا بزحف جديد — لا تُقدَّم النتائج من ذاكرة تخزين مؤقتة أبدًا.",
     "selfHosted": "لا تُطبَّق حدود الاستخدام على هذا الخادم.",
-    "remaining": "المتبقي {{remaining}} من {{cap}} من عمليات الفحص لهذه الفترة",
-    "allowanceUnknown": "تعذّر تحميل رصيدك المتبقي. سيتحقق الخادم من حدّك قبل التشغيل على أي حال.",
     "confirm": "بدء إعادة الفحص",
     "starting": "جارٍ البدء…",
     "queued": "أُدرجت إعادة الفحص في قائمة الانتظار. تابع التقدم في تبويب التقرير.",
@@ -154,6 +196,8 @@
     "dismissedLabel": "مستبعد كنتيجة خاطئة",
     "fixCta": "وضع علامة تم الإصلاح",
     "fixedLabel": "تم وضع علامة الإصلاح",
-    "reappearedLabel": "لا يزال يظهر بعد وضع علامة الإصلاح"
+    "reappearedLabel": "لا يزال يظهر بعد وضع علامة الإصلاح",
+    "notCounted": "غير محتسبة في هذه الأعداد — المستبعدة: {{dismissed}}، المعلَّمة كمُصلَحة: {{completed}}.",
+    "fixedGroupIn": "مُعلَّمة كمُصلَحة في {{tab}} ({{count}})"
   }
 }

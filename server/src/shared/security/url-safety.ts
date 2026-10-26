@@ -3,6 +3,7 @@ import { request as httpRequest, type IncomingHttpHeaders } from 'node:http';
 import { request as httpsRequest } from 'node:https';
 import { BlockList, isIP, type LookupFunction } from 'node:net';
 import { ProviderError } from '../providers/errors.js';
+import type { RedirectHop } from '../providers/types.js';
 export interface ResolvedAddress {
     address: string;
     family: 4 | 6;
@@ -31,16 +32,24 @@ export interface PublicUrlFetchResult {
     response: Response;
     /** The normalized terminal URL. Never derived from an untrusted response header. */
     finalUrl: URL;
+    redirects: RedirectHop[];
 }
 export type PublicUrlTransport = (url: URL, pinned: ResolvedAddress, init: RequestInit, signal: AbortSignal, maxResponseBytes: number) => Promise<Response>;
+export type UnsafeUrlKind = 'timeout' | 'redirect_limit' | 'redirect_loop' | 'unsafe_redirect' | 'response_too_large';
 export class UnsafeUrlError extends ProviderError {
-    constructor(message: string, cause?: unknown) {
+    kind: UnsafeUrlKind | undefined;
+    redirectChain: RedirectHop[] = [];
+    constructor(message: string, cause?: unknown, kind?: UnsafeUrlKind) {
         super(message, false, {
             provider: 'security',
             operation: 'url-safety',
             ...(cause === undefined ? {} : { cause }),
         });
+        this.kind = kind;
     }
+}
+function deadlineError(cause?: unknown): UnsafeUrlError {
+    return new UnsafeUrlError('request deadline exceeded', cause, 'timeout');
 }
 const DEFAULT_MAX_REDIRECTS = 3;
 const DEFAULT_DEADLINE_MS = 10000;
@@ -182,9 +191,9 @@ function withAbort<T>(promise: Promise<T>, signal?: AbortSignal): Promise<T> {
     if (!signal)
         return promise;
     if (signal.aborted)
-        return Promise.reject(new UnsafeUrlError('request deadline exceeded'));
+        return Promise.reject(deadlineError());
     return new Promise<T>((resolve, reject) => {
-        const abort = (): void => reject(new UnsafeUrlError('request deadline exceeded'));
+        const abort = (): void => reject(deadlineError());
         signal.addEventListener('abort', abort, { once: true });
         promise.then(resolve, reject).finally(() => signal.removeEventListener('abort', abort));
     });
@@ -283,23 +292,29 @@ export const pinnedHttpTransport: PublicUrlTransport = async (url, pinned, init,
             incoming.on('data', (chunk: Buffer) => {
                 size += chunk.length;
                 if (size > maxResponseBytes) {
-                    incoming.destroy(new UnsafeUrlError('response exceeded the byte ceiling'));
+                    incoming.destroy(new UnsafeUrlError('response exceeded the byte ceiling', undefined, 'response_too_large'));
                     return;
                 }
                 chunks.push(chunk);
             });
             incoming.on('end', () => {
-                resolve(new Response(Buffer.concat(chunks), {
-                    status: incoming.statusCode!,
-                    headers: responseHeaders(incoming.headers),
-                }));
+                try {
+                    const noBody = init.method?.toUpperCase() === 'HEAD' || incoming.statusCode === 204 || incoming.statusCode === 205 || incoming.statusCode === 304;
+                    resolve(new Response(noBody ? null : Buffer.concat(chunks), {
+                        status: incoming.statusCode!,
+                        headers: responseHeaders(incoming.headers),
+                    }));
+                }
+                catch (cause) {
+                    reject(new UnsafeUrlError('invalid HTTP response', cause));
+                }
             });
             incoming.on('error', reject);
         });
         request.on('error', (cause) => {
             reject(cause instanceof UnsafeUrlError
                 ? cause
-                : new UnsafeUrlError(signal.aborted ? 'request deadline exceeded' : 'request failed', cause));
+                : signal.aborted ? deadlineError(cause) : new UnsafeUrlError('request failed', cause));
         });
         if (typeof init.body === 'string')
             request.write(init.body);
@@ -307,7 +322,7 @@ export const pinnedHttpTransport: PublicUrlTransport = async (url, pinned, init,
     });
 };
 function redirectMethod(status: number, init: RequestInit): RequestInit {
-    if (status === 303 || ((status === 301 || status === 302) && init.method?.toUpperCase() === 'POST')) {
+    if ((status === 303 && init.method?.toUpperCase() !== 'HEAD') || ((status === 301 || status === 302) && init.method?.toUpperCase() === 'POST')) {
         return { ...init, method: 'GET', body: undefined };
     }
     return init;
@@ -347,32 +362,61 @@ export async function fetchPublicUrlSafeWithFinalUrl(rawUrl: string | URL, reque
         signal: undefined,
     };
     const transport = opts.transport ?? pinnedHttpTransport;
+    const redirects: RedirectHop[] = [];
+    const visited = new Set<string>();
+    const visitKey = (url: URL): string => {
+        const key = new URL(url);
+        key.hash = '';
+        return key.href;
+    };
     try {
         for (let hop = 0;; hop += 1) {
             if (controller.signal.aborted || clock.now() - startedAt >= deadlineMs) {
-                throw new UnsafeUrlError('request deadline exceeded');
+                throw deadlineError();
             }
-            const resolved = await resolvePublicUrl(current, opts, controller.signal);
+            let resolved: Awaited<ReturnType<typeof resolvePublicUrl>>;
+            try {
+                resolved = await resolvePublicUrl(current, opts, controller.signal);
+            }
+            catch (error) {
+                if (hop > 0 && error instanceof UnsafeUrlError && error.kind === undefined)
+                    error.kind = 'unsafe_redirect';
+                throw error;
+            }
+            visited.add(visitKey(resolved.url));
             let response: Response;
             try {
                 response = await transport(resolved.url, resolved.addresses[0]!, init, controller.signal, maxResponseBytes);
             }
             catch (cause) {
                 if (controller.signal.aborted)
-                    throw new UnsafeUrlError('request deadline exceeded', cause);
+                    throw deadlineError(cause);
                 throw cause;
             }
             if (response.status < 300 || response.status >= 400) {
-                return { response, finalUrl: resolved.url };
+                return { response, finalUrl: resolved.url, redirects };
             }
             const location = response.headers.get('location');
             if (!location)
-                return { response, finalUrl: resolved.url };
+                return { response, finalUrl: resolved.url, redirects };
+            redirects.push({ url: resolved.url.href, status: response.status });
             if (hop >= maxRedirects)
-                throw new UnsafeUrlError('redirect ceiling exceeded');
-            current = new URL(location, resolved.url);
+                throw new UnsafeUrlError('redirect ceiling exceeded', undefined, 'redirect_limit');
+            try {
+                current = new URL(location, resolved.url);
+            }
+            catch (cause) {
+                throw new UnsafeUrlError('invalid redirect location', cause, 'unsafe_redirect');
+            }
+            if (visited.has(visitKey(current)))
+                throw new UnsafeUrlError('redirect loop detected', undefined, 'redirect_loop');
             init = redirectMethod(response.status, init);
         }
+    }
+    catch (error) {
+        if (error instanceof UnsafeUrlError)
+            error.redirectChain = [...redirects];
+        throw error;
     }
     finally {
         clock.clearTimeout(timer);

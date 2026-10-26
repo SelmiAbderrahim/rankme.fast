@@ -1,32 +1,30 @@
 import type { ComponentProps } from 'react';
 import { useTranslation } from 'react-i18next';
+import { SignedNumber, type SignedNumberProps } from '@shared/components/SignedNumber';
+import { isolateSignedNumber } from '@shared/lib/signedNumber';
 import { cn } from '@shared/lib/utils';
 
 /**
  * DeltaPill (SPEC-09) — a `rounded-full` pill for a signed change beside a KPI.
  * Colored by GOODNESS, not by sign: pass `goodDirection="down"` for metrics
- * where a decrease is good (e.g. rank position). Values are locale-formatted by
- * the caller-supplied `format`; the sign glyph is rendered separately so it is
- * RTL-safe. null → neutral em-dash.
+ * where a decrease is good (e.g. rank position). The shared numeric formatter
+ * keeps the locale's sign and number in one isolate. null → neutral em-dash.
  */
 type DeltaPillProps = Omit<ComponentProps<'span'>, 'children'> & {
   value: number | null;
   /** Which sign is "good". Default up (higher is better). */
   goodDirection?: 'up' | 'down';
-  /** Locale formatter for the magnitude. Defaults to `toLocaleString`. */
-  format?: (n: number) => string;
+  options?: SignedNumberProps['options'];
 };
 
 export function DeltaPill({
   value,
   goodDirection = 'up',
-  format,
+  options,
   className,
   ...props
 }: DeltaPillProps) {
   const { i18n } = useTranslation();
-  const formatValue = format ?? ((number: number) =>
-    new Intl.NumberFormat(i18n.language).format(number));
   const isZero = value === 0 || value === null;
   const good = value !== null && value !== 0 && value > 0 === (goodDirection === 'up');
 
@@ -35,14 +33,6 @@ export function DeltaPill({
     : good
       ? 'bg-success/10 text-success'
       : 'bg-destructive/10 text-destructive';
-
-  // The magnitude is locale-formatted; negatives carry the locale's own minus
-  // (RTL-safe), positives get an explicit `+`. null → neutral em-dash.
-  let text: string;
-  if (value === null) text = '—';
-  else if (value === 0) text = formatValue(0);
-  else if (value > 0) text = `+${formatValue(value)}`;
-  else text = formatValue(value);
 
   return (
     <span
@@ -54,8 +44,9 @@ export function DeltaPill({
         className,
       )}
       {...props}
+      aria-label={props['aria-label'] === undefined ? undefined : `${props['aria-label']}: ${value === null ? '—' : isolateSignedNumber(value, i18n.language, options)}`}
     >
-      {text}
+      {value === null ? '—' : <SignedNumber value={value} options={options} />}
     </span>
   );
 }

@@ -28,9 +28,40 @@ export interface SummaryFindingInput {
      * open problem — a zero `affectedCount` never means "nothing affected".
      */
     siteWide?: boolean;
+    /** Plain-text site-wide evidence lines (bounded, link-free). */
+    evidence?: string[];
+    /**
+     * How the finding compares with the previous audit: the same vocabulary
+     * the report badges use. Omitted on a first audit.
+     */
+    comparisonStatus?: 'new' | 'regressed' | 'improved' | 'unchanged' | 'resolved' | 'not_comparable';
+}
+/** A finding the user dismissed: never presented as open work. */
+export interface SummaryDismissedInput {
+    ruleId: string;
+    title: string;
+    affectedCount: number;
+}
+/** One of the summary's top items. */
+export interface SummaryItemOutput {
+    /** Must be one of the supplied finding rule ids. */
+    ruleId: string;
+    /** What is wrong, in one sentence. */
+    what: string;
+    /** Why it matters, in one sentence. */
+    why: string;
+    /** The first concrete step to take. */
+    firstStep: string;
+}
+/** Structured audit summary: one status sentence plus up to three items. */
+export interface SummaryStructuredOutput {
+    status: string;
+    items: SummaryItemOutput[];
 }
 export interface SummarizeInput {
     findings: SummaryFindingInput[];
+    /** Findings the user dismissed (audit summaries only). */
+    dismissed?: SummaryDismissedInput[];
     locale: SupportedLocale;
     siteDomain: string;
     /** Safe ownership metadata for content-free AI usage events. */
@@ -43,6 +74,8 @@ export interface SummarizeResult {
     truncated: boolean;
     /** Model id used to produce the summary (e.g. `claude-haiku-4-5`). */
     model: string;
+    /** Status sentence + top items, when the provider returns them. */
+    structured?: SummaryStructuredOutput;
 }
 export interface GeneratePromptsInput {
     siteDomain: string;

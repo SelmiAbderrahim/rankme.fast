@@ -6,7 +6,7 @@ export const appKeywordSiteQuerySchema = z.object({
 });
 export const appKeywordParamsSchema = z.object({
     siteId: opaqueResourceIdSchema,
-    keywordId: z.string().uuid(),
+    keywordId: z.string().guid(),
 });
 export const mintAppKeywordBodySchema = z
     .object({

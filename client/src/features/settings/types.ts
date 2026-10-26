@@ -69,6 +69,10 @@ export interface ApiKeyScopesResponse {
 // MCP account defaults + per-key restrictions (?tab=mcp / ?tab=api-keys)
 // ---------------------------------------------------------------------------
 
+/**
+ * Mirror of the server registry's `MCP_TOOL_NAMES` (same order). The server
+ * test `mcp.client-parity.test.ts` fails the build when the two drift.
+ */
 export const MCP_TOOL_NAMES = [
   'list_sites',
   'get_latest_audit_report',
@@ -80,9 +84,47 @@ export const MCP_TOOL_NAMES = [
   'get_audit_status',
   'list_actions',
   'set_action_state',
+  'get_gsc_search_summary',
+  'list_gsc_top_queries',
+  'list_gsc_top_pages',
+  'get_ga4_summary',
+  'list_pages',
+  'get_page_detail',
+  'get_backlinks_summary',
+  'list_backlinks',
+  'list_competitors',
+  'list_keyword_research_history',
+  'get_keyword_research_result',
+  'get_ai_visibility_summary',
+  'get_local_seo_summary',
+  'get_reviews_summary',
+  'list_client_reports',
 ] as const;
 
 export type McpToolName = (typeof MCP_TOOL_NAMES)[number];
+
+/**
+ * How the permissions form groups the tools. Every tool appears in exactly one
+ * group (test-enforced); group labels live under `mcp.tools.groups.<id>`.
+ */
+export const MCP_TOOL_GROUPS = [
+  { id: 'sites', tools: ['list_sites', 'get_latest_audit_report', 'start_audit', 'get_audit_status'] },
+  { id: 'rankings', tools: ['list_keywords', 'get_rank_history'] },
+  { id: 'content', tools: ['list_content_analyses', 'get_content_analysis'] },
+  { id: 'actions', tools: ['list_actions', 'set_action_state'] },
+  {
+    id: 'search',
+    tools: ['get_gsc_search_summary', 'list_gsc_top_queries', 'list_gsc_top_pages', 'get_ga4_summary'],
+  },
+  { id: 'pages', tools: ['list_pages', 'get_page_detail'] },
+  { id: 'links', tools: ['get_backlinks_summary', 'list_backlinks', 'list_competitors'] },
+  { id: 'research', tools: ['list_keyword_research_history', 'get_keyword_research_result'] },
+  {
+    id: 'visibility',
+    tools: ['get_ai_visibility_summary', 'get_local_seo_summary', 'get_reviews_summary'],
+  },
+  { id: 'reports', tools: ['list_client_reports'] },
+] as const satisfies ReadonlyArray<{ id: string; tools: readonly McpToolName[] }>;
 
 /** Missing fields are permissive; key scopes only restrict account defaults. */
 export interface McpPermissionSpec {

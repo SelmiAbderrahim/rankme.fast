@@ -613,7 +613,14 @@ function searchWindow(fetchedAt: Date, windowDays: number = GSC_SEARCH_WINDOW_DA
 export interface GscInsights {
     search: GscSearchEvaluationInput;
     sitemaps: GscSitemapsEvaluationInput;
+    /**
+     * Pages Search Console reports for the property, most impressions first
+     * (bounded). Lets the audit ask whether its crawl returned them.
+     */
+    pageUrls: string[];
 }
+/** Search Console pages handed to the audit's crawl-coverage check. */
+export const GSC_COVERAGE_PAGE_LIMIT = 25;
 /**
  * Postgres persistence seam for the collector — wired from `worker.ts` to the
  * `gsc-snapshots` module so this module never imports another module's
@@ -947,6 +954,7 @@ export function createCollectGscInsights(gscProvider: GoogleGscProvider, opts: C
             return {
                 search: emptySearch(session.kind),
                 sitemaps: { status: session.kind, sitemaps: [] },
+                pageUrls: [],
             };
         }
         const { accessToken, siteUrl, bindingGenerationId } = session;
@@ -956,6 +964,7 @@ export function createCollectGscInsights(gscProvider: GoogleGscProvider, opts: C
         // device) across the range windows. Fetch + archive + persist is shared
         // with `runGscSync`. ----------------------------------------------------
         let search: GscSearchEvaluationInput;
+        let pageUrls: string[] = [];
         let reconnectSeen = false;
         const outcome = await collectSearchAnalyticsDimensions({
             gscProvider,
@@ -980,6 +989,11 @@ export function createCollectGscInsights(gscProvider: GoogleGscProvider, opts: C
             const queryRows = outcome.results.get('query') ?? [];
             /* c8 ignore next -- outcome.results holds all five dimension sets; the ?? [] fallback is unreachable. */
             const pageRows = outcome.results.get('page') ?? [];
+            pageUrls = pageRows
+                .flatMap((row) => (row.keys[0] ? [{ url: row.keys[0], impressions: row.impressions }] : []))
+                .sort((a, b) => b.impressions - a.impressions)
+                .slice(0, GSC_COVERAGE_PAGE_LIMIT)
+                .map((row) => row.url);
             const aggregates = weightedAggregates(queryRows);
             const delta = persist
                 ? await persist
@@ -1046,7 +1060,7 @@ export function createCollectGscInsights(gscProvider: GoogleGscProvider, opts: C
                 })),
             };
         }
-        return { search, sitemaps };
+        return { search, sitemaps, pageUrls };
     };
 }
 // ---------------------------------------------------------------------------
@@ -1171,6 +1185,8 @@ export interface GoogleSearchSummary {
     totalImpressions: number;
     averageCtr: number;
     averagePosition: number;
+    /** Totals include every stored row, even when the UI shows only top rows. */
+    dimensionTotals: Record<'query' | 'page' | 'country' | 'device', { rows: number; clicks: number; impressions: number }>;
     topQueries: Array<{
         query: string;
         clicks: number;
@@ -1222,6 +1238,13 @@ interface SummaryRow {
     impressions: number;
     ctr: number;
     position: number;
+}
+function dimensionTotal(rows: readonly SummaryRow[]): { rows: number; clicks: number; impressions: number } {
+    return rows.reduce((total, row) => ({
+        rows: total.rows + 1,
+        clicks: total.clicks + row.clicks,
+        impressions: total.impressions + row.impressions,
+    }), { rows: 0, clicks: 0, impressions: 0 });
 }
 function summarizeRows(rows: readonly SummaryRow[]) {
     let totalClicks = 0;
@@ -1343,6 +1366,12 @@ export async function getSearchSummaryFor(accountId: string, siteId: string, dep
     const previous = await deps.readPreviousTotals(siteId, asOf, windowDays);
     return {
         ...summarizeRows(queryRows),
+        dimensionTotals: {
+            query: dimensionTotal(queryRows),
+            page: dimensionTotal(pageRows),
+            country: dimensionTotal(countryRows),
+            device: dimensionTotal(deviceRows),
+        },
         topQueries: topFive(queryRows).map(({ key, ...rest }) => ({
             query: key,
             ...rest,

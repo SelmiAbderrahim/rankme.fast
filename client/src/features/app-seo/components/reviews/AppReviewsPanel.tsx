@@ -1,3 +1,4 @@
+import { Bdi } from '@shared/components/Bdi';
 import { useCallback, useEffect, useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useSearchParams } from 'react-router-dom';
@@ -214,7 +215,7 @@ export function AppReviewsPanel({ siteId }: { siteId: string }) {
               <SelectContent>
                 {profiles.map((item) => (
                   <SelectItem key={item.id} value={item.id}>
-                    {profileLabel(item)}
+                    <Bdi>{profileLabel(item)}</Bdi>
                   </SelectItem>
                 ))}
               </SelectContent>

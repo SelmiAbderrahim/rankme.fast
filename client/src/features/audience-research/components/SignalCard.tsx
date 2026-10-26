@@ -1,6 +1,7 @@
 import { useCallback } from 'react';
 import { Link } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
+import { formatAbsoluteDate } from '@shared/lib/datetime';
 import { Card, CardContent, CardHeader, CardTitle } from '@shared/ui/card';
 import { Badge } from '@shared/ui/badge';
 import { Button } from '@shared/ui/button';
@@ -50,7 +51,7 @@ export function SignalCard({
   onDismiss,
   onOpenDeepLink,
 }: SignalCardProps) {
-  const { t } = useTranslation('audienceResearch');
+  const { t, i18n } = useTranslation('audienceResearch');
   const terminal = useAppSelector(selectSignalTerminalDecision(signal.signalId));
   const pending = useAppSelector(selectSignalDecisionPending(signal.signalId));
   const error = useAppSelector(selectSignalDecisionError(signal.signalId));
@@ -120,7 +121,7 @@ export function SignalCard({
             sourceTypeCount: signal.sourceTypeCount,
             recent: signal.mostRecentSourceObservedAt
               ? t('signals.rationale.recent', {
-                  date: signal.mostRecentSourceObservedAt.slice(0, 10),
+                  date: formatAbsoluteDate(signal.mostRecentSourceObservedAt, i18n.language),
                 })
               : t('signals.rationale.recentUnknown'),
           })}

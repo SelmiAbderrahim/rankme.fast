@@ -11,6 +11,12 @@ order: 5
 
 Si vos clients vous trouvent en cherchant un lieu (« plombier près de chez moi », « café en centre-ville »), l’essentiel de ce trafic vient des résultats cartographiques et des fiches d’établissement, pas des liens bleus classiques. Le référencement local suit les trois éléments qui décident si vous apparaissez à cet endroit. Il est disponible sur **Pro** et **Agency**.
 
+## Choisissez d’abord votre établissement
+
+Le SEO local rend compte d’un seul établissement : celui que vous choisissez pour le site. Ouvrez l’onglet **SEO local** du site et cherchez par nom, adresse postale ou identifiant de lieu Google. Chaque résultat affiche le nom et l’adresse, ce qui permet de distinguer deux agences du même nom. Choisissez la vôtre, puis **Utiliser cet établissement**. Tant que ce n’est pas fait, l’actualisation reste désactivée. Chaque recherche interroge une fois votre fournisseur de fiches locales, et l’enregistrement de l’établissement choisi est gratuit.
+
+Pour en changer plus tard, choisissez **Changer d’établissement** et cherchez à nouveau. Votre établissement actuel reste en place jusqu’à l’enregistrement d’un nouveau. Les données actualisées avant le choix d’un établissement sont signalées comme des données plus anciennes, recherchées via votre site web.
+
 ## Exactitude de la fiche
 
 Les moteurs de recherche font confiance à un établissement dont les informations concordent partout où elles apparaissent. RankMeFast vérifie que **le nom, l’adresse et le numéro de téléphone** de votre établissement sont identiques sur toutes les fiches que nous pouvons voir. Une incohérence, comme une ancienne adresse, un second numéro ou un nom raccourci, peut vous faire reculer dans les résultats locaux sans que vous le remarquiez. Nous signalons chaque écart pour que vous le corrigiez là où il est publié.

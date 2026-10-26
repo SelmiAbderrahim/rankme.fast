@@ -1,3 +1,4 @@
+import { Bdi } from '@shared/components/Bdi';
 import { useTranslation } from 'react-i18next';
 import { ArrowRight } from 'lucide-react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@shared/ui/card';
@@ -56,7 +57,7 @@ export function CannibalizationList({
                 data-testid={`inventory-cannibalization-${candidate.id}`}
               >
                 <div className="flex flex-wrap items-center gap-2">
-                  <span className="font-medium">{candidate.query}</span>
+                  <span className="font-medium"><Bdi>{candidate.query}</Bdi></span>
                   <StatusChip tone={CONFIDENCE_TONE[candidate.confidence]}>
                     {t('inventory.findings.confidence', {
                       value: t(`inventory.confidence.${candidate.confidence}`),
@@ -74,7 +75,7 @@ export function CannibalizationList({
                 </div>
                 <ul className="text-muted-foreground list-disc space-y-1 ps-5 text-sm">
                   {candidate.urls.map((url) => (
-                    <li key={`${candidate.id}-${url}`}>{url}</li>
+                    <li key={`${candidate.id}-${url}`}><Bdi>{url}</Bdi></li>
                   ))}
                 </ul>
                 <p className="text-muted-foreground text-xs">

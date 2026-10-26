@@ -2,7 +2,7 @@ import type { RequestHandler } from 'express';
 import { asyncHandler } from '../../shared/utils/async-handler.js';
 import { HttpError } from '../../shared/utils/http-error.js';
 import { brandingSchema, languagePreferencePatchSchema, notificationPreferencesPatchSchema, userIdParamsSchema, } from './users.schema.js';
-import { getUserBranding, getLanguagePreference, getUserProfile, resolveNotificationPreferences, updateNotificationPreferences, updateLanguagePreference, updateUserBranding, } from './users.service.js';
+import { dismissTwoFactorRecommendation, getTwoFactorRecommendationDismissedAt, getUserBranding, getLanguagePreference, getUserProfile, resolveNotificationPreferences, updateNotificationPreferences, updateLanguagePreference, updateUserBranding, } from './users.service.js';
 export const getLanguagePreferenceHandler: RequestHandler = asyncHandler(async (req, res) => {
     const language = await getLanguagePreference(req.user!.id);
     res.status(200).json({ language });
@@ -11,6 +11,14 @@ export const patchLanguagePreferenceHandler: RequestHandler = asyncHandler(async
     const input = languagePreferencePatchSchema.parse(req.body);
     const language = await updateLanguagePreference(req.user!.id, input.language, input.ifUnset === true);
     res.status(200).json({ language });
+});
+export const getTwoFactorRecommendationHandler: RequestHandler = asyncHandler(async (req, res) => {
+    const dismissedAt = await getTwoFactorRecommendationDismissedAt(req.user!.id);
+    res.status(200).json({ dismissedAt: dismissedAt?.toISOString() ?? null });
+});
+export const dismissTwoFactorRecommendationHandler: RequestHandler = asyncHandler(async (req, res) => {
+    const dismissedAt = await dismissTwoFactorRecommendation(req.user!.id);
+    res.status(200).json({ dismissedAt: dismissedAt.toISOString() });
 });
 /**
  * GET /api/users/branding — the account's white-label PDF branding

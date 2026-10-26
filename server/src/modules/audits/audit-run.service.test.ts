@@ -68,6 +68,43 @@ describe('AuditRun lifecycle', () => {
     // AuditedPage + ReportSnapshot.
     expect(updated?.result).toEqual({ domainChecks: FAKE_AUDIT_RESULT.domainChecks });
     expect(updated?.error).toBeNull();
+    // The stored page count rides along; the stop reason stays unset unless given.
+    expect(updated?.pagesCrawled).toBe(FAKE_AUDIT_RESULT.pages.length);
+    expect(updated?.crawlStopReason).toBeNull();
+  });
+
+  it('stores the crawl facts it is given', async () => {
+    const run = await seedRun();
+    await markAuditRunRunning(run.id);
+    await completeAuditRun(run.id, { ...FAKE_AUDIT_RESULT, vendorPagesCrawled: 12, crawlStopReason: 'page_limit' });
+    const updated = await AuditRun.findById(run.id);
+    expect(updated?.pagesCrawled).toBe(FAKE_AUDIT_RESULT.pages.length);
+    expect(updated?.vendorPagesCrawled).toBe(12);
+    expect(updated?.crawlStopReason).toBe('page_limit');
+  });
+
+  it('stores the requests made for URLs the crawl missed, and nothing when none were made', async () => {
+    const probe = {
+      url: 'https://example.com/',
+      source: 'site-root' as const,
+      statusCode: 301,
+      finalUrl: 'https://example.com/en/',
+      redirectChain: [{ url: 'https://example.com/', status: 301 }],
+      contentType: 'text/html',
+      failure: null,
+    };
+    const withProbes = await seedRun();
+    await markAuditRunRunning(withProbes.id);
+    await completeAuditRun(withProbes.id, { domainChecks: FAKE_AUDIT_RESULT.domainChecks, coverageProbes: [probe] });
+    const stored = await AuditRun.findById(withProbes.id).lean();
+    expect(stored?.coverageProbes).toEqual([probe]);
+    // No pages were passed, so no stored count is invented either.
+    expect(stored?.pagesCrawled).toBeNull();
+
+    const without = await seedRun();
+    await markAuditRunRunning(without.id);
+    await completeAuditRun(without.id, FAKE_AUDIT_RESULT);
+    expect((await AuditRun.findById(without.id).lean())?.coverageProbes).toBeUndefined();
   });
 
   it('failAuditRun marks failed with the operator message', async () => {

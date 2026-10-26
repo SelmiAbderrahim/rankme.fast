@@ -12,7 +12,8 @@ vi.mock('../authClient', () => ({
   authClient: {
     changeEmail: vi.fn(),
     changePassword: vi.fn(),
-    useSession: vi.fn(() => ({ data: null, isPending: false })),
+    useSession: vi.fn(() => ({ data: { user: { id: 'u1', email: 'owner@example.com' }, session: { id: 's1' } }, isPending: false })),
+    listAccounts: vi.fn(async () => ({ data: [{ providerId: 'credential' }], error: null })),
     // ActiveSessions (a SecuritySettings child) calls these on mount. A
     // never-resolving list keeps it in its (static) loading state so the host
     // render has no post-render state update to wrap in act().
@@ -228,13 +229,14 @@ describe('ChangeEmail', () => {
 });
 
 describe('SecuritySettings hosts both cards', () => {
-  it('renders the header, ChangePassword card, and ChangeEmail card', () => {
+  it('renders the header, ChangePassword card, and ChangeEmail card', async () => {
     renderWithLocale(<SecuritySettings />);
     expect(screen.getByRole('heading', { level: 1, name: 'Security' })).toBeInTheDocument();
     expect(screen.getByText('Change password')).toBeInTheDocument();
     expect(screen.getByText('Change email')).toBeInTheDocument();
+    // The password card appears once the linked-account lookup settles.
     expect(
-      screen.getByRole('button', { name: 'Update password' }),
+      await screen.findByRole('button', { name: 'Update password' }),
     ).toBeInTheDocument();
     expect(
       screen.getByRole('button', { name: 'Send verification link' }),

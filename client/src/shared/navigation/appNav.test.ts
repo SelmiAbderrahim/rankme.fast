@@ -38,6 +38,8 @@ describe('APP_NAV_GROUPS', () => {
     const items = APP_NAV_GROUPS.flatMap((group) => group.items);
     expect(new Set(items.map((item) => item.to)).size).toBe(items.length);
     const byTo = Object.fromEntries(items.map((item) => [item.to, item]));
+    expect(byTo['/settings/profile']?.aliases).toContain('/profile');
+    expect(byTo['/settings/workspace']?.aliases).toContain('/profile?tab=branding');
     expect(byTo['/settings/security']?.aliases).toContain('/profile?tab=security');
     expect(byTo['/settings/notifications']?.aliases).toContain('/profile?tab=notifications');
   });

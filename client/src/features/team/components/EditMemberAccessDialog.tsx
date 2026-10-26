@@ -1,3 +1,4 @@
+import { isolateText } from '@shared/lib/bidi';
 import { useEffect, useState, type FormEvent } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Button } from '@shared/ui/button';
@@ -74,7 +75,7 @@ export const EditMemberAccessDialog = ({
       <DialogContent className="max-h-[85vh] overflow-y-auto sm:max-w-lg">
         <DialogHeader>
           <DialogTitle>{t('members.edit.title')}</DialogTitle>
-          <DialogDescription>{t('members.edit.description', { email: member.email })}</DialogDescription>
+          <DialogDescription>{t('members.edit.description', { email: isolateText(member.email) })}</DialogDescription>
         </DialogHeader>
         <form onSubmit={(event) => void submit(event)} className="flex flex-col gap-6">
           <FieldGroup>

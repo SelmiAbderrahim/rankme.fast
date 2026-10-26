@@ -2,6 +2,7 @@ import { createSlice, type PayloadAction } from '@reduxjs/toolkit';
 import type { RanksState } from '../types';
 import {
   addKeyword,
+  addKeywordsBulk,
   checkNow,
   loadKeywordHistory,
   loadKeywords,
@@ -14,6 +15,12 @@ import {
 const initialState: RanksState = {
   siteId: null,
   items: [],
+  page: 1,
+  pageSize: 25,
+  total: 0,
+  siteTotal: 0,
+  listRequestId: null,
+  loadedQuery: { page: 1, pageSize: 25, engine: null, search: '' },
   nextCursor: null,
   currentCursor: null,
   cursorStack: [],
@@ -33,6 +40,7 @@ const initialState: RanksState = {
   message: '',
   selectedKeywordId: null,
   history: [],
+  historyMissedChecks: [],
   historyKeywordId: null,
   historyLoading: false,
   historyError: '',
@@ -72,18 +80,22 @@ const ranksSlice = createSlice({
     builder
       .addCase(loadKeywords.pending, (state, action) => {
         state.loading = true;
+        state.listRequestId = action.meta.requestId;
         state.error = '';
         if (state.siteId !== action.meta.arg.siteId) {
           state.siteId = action.meta.arg.siteId;
           state.items = [];
+          state.total = 0;
+          state.siteTotal = 0;
           state.loaded = false;
           state.selectedKeywordId = null;
           state.history = [];
+          state.historyMissedChecks = [];
           state.historyKeywordId = null;
         }
       })
       .addCase(loadKeywords.fulfilled, (state, action) => {
-        if (action.meta.arg.siteId !== state.siteId) return;
+        if (action.meta.arg.siteId !== state.siteId || action.meta.requestId !== state.listRequestId) return;
         const direction = action.meta.arg.direction ?? 'initial';
         const cursor = action.meta.arg.cursor ?? null;
         if (direction === 'next') {
@@ -96,8 +108,17 @@ const ranksSlice = createSlice({
         state.currentCursor = cursor;
         state.items = action.payload.keywords;
         state.nextCursor = action.payload.nextCursor;
+        state.page = action.payload.page ?? action.meta.arg.page ?? 1;
+        state.pageSize = action.payload.pageSize === 50 || action.payload.pageSize === 100
+          ? action.payload.pageSize : (action.meta.arg.pageSize ?? 25);
+        state.total = action.payload.total ?? action.payload.keywords.length;
+        state.siteTotal = action.payload.siteTotal ?? state.total;
+        state.loadedQuery = { page: action.meta.arg.page ?? 1,
+          pageSize: action.meta.arg.pageSize ?? 25,
+          engine: action.meta.arg.engine ?? null, search: action.meta.arg.search ?? '' };
         state.cadence = action.payload.cadence;
         state.loading = false;
+        state.listRequestId = null;
         state.loaded = true;
         if (
           state.selectedKeywordId &&
@@ -107,9 +128,10 @@ const ranksSlice = createSlice({
         }
       })
       .addCase(loadKeywords.rejected, (state, action) => {
-        if (action.meta.aborted) return;
-        if (action.meta.arg.siteId !== state.siteId) return;
+        if (action.meta.arg.siteId !== state.siteId || action.meta.requestId !== state.listRequestId) return;
         state.loading = false;
+        state.listRequestId = null;
+        if (action.meta.aborted) return;
         state.loaded = true;
         state.error = action.payload ?? '';
       })
@@ -123,6 +145,19 @@ const ranksSlice = createSlice({
         state.message = action.payload.message;
       })
       .addCase(addKeyword.rejected, (state, action) => {
+        state.adding = false;
+        state.addError = action.payload ?? '';
+      })
+      .addCase(addKeywordsBulk.pending, (state) => {
+        state.adding = true;
+        state.addError = '';
+        state.message = '';
+      })
+      .addCase(addKeywordsBulk.fulfilled, (state, action) => {
+        state.adding = false;
+        state.message = action.payload.message;
+      })
+      .addCase(addKeywordsBulk.rejected, (state, action) => {
         state.adding = false;
         state.addError = action.payload ?? '';
       })
@@ -179,6 +214,7 @@ const ranksSlice = createSlice({
         if (action.meta.arg.keywordId !== state.historyKeywordId) return;
         state.historyLoading = false;
         state.history = action.payload.series;
+        state.historyMissedChecks = action.payload.missedChecks ?? [];
       })
       .addCase(loadKeywordHistory.rejected, (state, action) => {
         if (action.meta.aborted) return;

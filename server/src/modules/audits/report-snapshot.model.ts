@@ -1,4 +1,5 @@
 import mongoose, { type HydratedDocument, type InferSchemaType } from 'mongoose';
+import { SUMMARY_ACT_AREAS } from './summary-act-area.js';
 import { SUPPORTED_LOCALES } from '../../shared/i18n/locales.js';
 /**
  * Frozen report output at the moment an audit finished.
@@ -242,6 +243,17 @@ const localSeoSchema = new mongoose.Schema({
         default: null,
     },
 }, { _id: false });
+const aiSummaryItemSchema = new mongoose.Schema({
+    ruleId: { type: String, required: true },
+    what: { type: String, required: true },
+    why: { type: String, required: true },
+    firstStep: { type: String, required: true },
+    whereToAct: { type: String, enum: SUMMARY_ACT_AREAS, required: true },
+}, { _id: false });
+const aiSummaryStructuredSchema = new mongoose.Schema({
+    status: { type: String, required: true },
+    items: { type: [aiSummaryItemSchema], default: [] },
+}, { _id: false });
 /**
  * Legacy optional AI summary. New code never writes this field;
  * it remains readable only when its stored locale exactly matches the
@@ -253,6 +265,15 @@ const aiSummarySchema = new mongoose.Schema({
     model: { type: String, required: true },
     truncated: { type: Boolean, required: true, default: false },
     createdAt: { type: Date, required: true },
+    // Rule ids of the open findings the text was built from. `default:
+    // undefined` keeps older summaries distinguishable from an empty basis
+    // ("nothing actionable").
+    basisRuleIds: { type: [String], default: undefined },
+    // Hash of everything the summary was built from: findings, dismissals and
+    // action states. Absent on older summaries.
+    inputHash: { type: String, default: undefined },
+    // Status sentence + top items. Absent on older and text-only summaries.
+    structured: { type: aiSummaryStructuredSchema, default: undefined },
 }, { _id: false });
 /** Durable API/worker hand-off state for asynchronous summary generation. */
 export const AI_SUMMARY_JOB_STATUSES = [
@@ -262,6 +283,24 @@ export const AI_SUMMARY_JOB_STATUSES = [
     'failed',
 ] as const;
 export type AiSummaryJobStatus = (typeof AI_SUMMARY_JOB_STATUSES)[number];
+/**
+ * What a running summary job is doing right now. The worker writes it as it
+ * goes, so the card shows real progress, not a timer.
+ */
+export const AI_SUMMARY_JOB_STAGES = [
+    'queued',
+    'reading_findings',
+    'checking_priorities',
+    'writing_summary',
+] as const;
+export type AiSummaryJobStage = (typeof AI_SUMMARY_JOB_STAGES)[number];
+/** Why a summary job failed, in words the card can explain. */
+export const AI_SUMMARY_FAILURE_CODES = [
+    'provider_unavailable',
+    'timeout',
+    'internal',
+] as const;
+export type AiSummaryFailureCode = (typeof AI_SUMMARY_FAILURE_CODES)[number];
 const aiSummaryJobSchema = new mongoose.Schema({
     generationId: { type: String, required: true },
     locale: { type: String, enum: SUPPORTED_LOCALES, required: true },
@@ -269,6 +308,9 @@ const aiSummaryJobSchema = new mongoose.Schema({
     requestedAt: { type: Date, required: true },
     startedAt: { type: Date, default: null },
     finishedAt: { type: Date, default: null },
+    // Absent on jobs written before progress was recorded.
+    stage: { type: String, enum: AI_SUMMARY_JOB_STAGES, default: undefined },
+    failureCode: { type: String, enum: AI_SUMMARY_FAILURE_CODES, default: undefined },
 }, { _id: false });
 export type StoredAiSummary = InferSchemaType<typeof aiSummarySchema>;
 export type AiSummaryJob = InferSchemaType<typeof aiSummaryJobSchema>;

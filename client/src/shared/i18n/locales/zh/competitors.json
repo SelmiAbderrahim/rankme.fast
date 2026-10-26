@@ -3,6 +3,8 @@
   "description": "查看您与哪些网站竞争，以及他们排名的关键词。",
   "empty": "尚未找到此域名的竞争对手。跟踪几个关键词，我们将分析在这些搜索结果中占据主导地位的网站。",
   "emptyTitle": "尚无竞争对手",
+  "notFetchedTitle": "尚未检查竞争对手",
+  "notFetched": "刷新以找到与你的网站竞争的网站。数据来自你的搜索数据提供商，因此可能需要一点时间。",
   "loadFailed": "无法加载竞争对手。",
   "intersectionFailed": "无法加载差距关键词。",
   "table": {
@@ -26,27 +28,26 @@
   },
   "refresh": {
     "button": "刷新",
-    "cooldown": "请等待 {{seconds}} 秒后再刷新。",
-    "failed": "暂时无法刷新。仍显示您最近的数据。"
+    "cooldown_one": "请等待 {{seconds}} 秒后再刷新。",
+    "failed": "暂时无法刷新。仍显示您最近的数据。",
+    "cooldown_zero": "请等待 {{seconds}} 秒后再刷新。",
+    "cooldown_two": "请等待 {{seconds}} 秒后再刷新。",
+    "cooldown_few": "请等待 {{seconds}} 秒后再刷新。",
+    "cooldown_many": "请等待 {{seconds}} 秒后再刷新。",
+    "cooldown_other": "请等待 {{seconds}} 秒后再刷新。"
   },
   "locked": {
     "title": "升级以解锁竞争对手分析",
-    "body": "竞品组合和关键词版图从 Pro 开始提供。Agency 还可生成更大规模的报告，并比较排名页面内容。",
-    "upgrade": "查看计划"
+    "body": "竞品组合和关键词版图从 Pro 开始提供。Agency 还可生成更大规模的报告，并比较排名页面内容。"
   },
   "example": {
     "title": "示例：Pro 与 Agency 提供的功能"
   },
   "intelligence": {
-    "title": "竞争对手情报",
+    "title": "竞争对手",
     "description": "管理已确认的竞争对手、比较关键词情况，并在一个网站工作区中保留已接受的建议。",
     "common": {
       "cancel": "取消"
-    },
-    "tiers": {
-      "starter": "入门版",
-      "pro": "专业版",
-      "agency": "代理商版"
     },
     "views": {
       "label": "竞品分析视图",
@@ -57,17 +58,16 @@
       "traffic": "流量",
       "reports": "报告"
     },
-    "locked": {
-      "title": "竞品分析从 Pro 开始提供",
-      "description": "升级到 Pro 后，你可以确认竞品、生成关键词版图，并把建议接受到后续操作中。",
-      "action": "比较计划"
-    },
     "portfolio": {
       "title": "已确认的竞争对手组合",
       "description": "{{active}} 的 {{max}} 活跃竞争对手位置正在使用中。管理此列表不使用津贴。",
       "manualLabel": "添加公开竞争对手 URL",
       "manualPlaceholder": "https://competitor.example/",
+      "manualInvalid": "请输入公开网站，例如 competitor.com 或 https://competitor.com。",
+      "ownDomain": "这是您自己站点的域名。请添加其他网站作为竞争对手。",
       "add": "添加竞争对手",
+      "addDisabledEmpty": "请先输入竞争对手的网站地址。",
+      "addDisabledFull": "您的组合中已有 {{max}} 个活跃竞争对手。请先归档一个，再添加新的。",
       "adding": "添加竞争对手...",
       "confirmed": "竞争对手确认。",
       "duplicate": "该竞争对手已经在产品组合中。",
@@ -78,7 +78,7 @@
       "emptyTitle": "没有确认的竞争对手",
       "empty": "确认发现建议或添加公开竞争对手 URL。",
       "domain": "域名",
-      "source": "出处",
+      "source": "来源",
       "status": "状态",
       "added": "已添加",
       "action": "行动",
@@ -110,32 +110,58 @@
       "confirmAction": "确认刷新"
     },
     "technology": {
-      "title": "当前投资组合摘要",
-      "description": "此摘要仅使用存储的投资组合事实。它不会启动技术检测或其他付费查找。",
-      "summary": "{{manual}} 竞争对手是手动添加的，{{suggested}} 来自已确认的发现建议。在存在单独预览的查找之前，技术详细信息将保持不可用。"
+      "title": "按来源统计的活跃竞争对手",
+      "description": "仅基于已保存的数据，这里不会运行技术检测或发起新的数据请求。",
+      "summary": "手动添加：{{manual}}。来自已确认的发现建议：{{suggested}}。技术详情暂不可用。"
     },
     "landscape": {
       "title": "建立关键词景观",
-      "description": "选择最多 {{count}} 个已确认的竞争对手。服务器在运行开始之前检查等级、市场、配额和确切单位。",
-      "selection": "已选择 {{selected}} 名 {{count}} 名参赛者",
-      "limit": "您最多可以为此报告选择 {{count}} 个竞争对手。",
+      "description_one": "选择最多 {{count}} 个已确认的竞争对手。",
+      "selection_one": "已选择 {{selected}} 名 {{count}} 名参赛者",
+      "limit_one": "您最多可以为此报告选择 {{count}} 个竞争对手。",
       "emptyTitle": "首先确认竞争对手",
       "empty": "返回概述并添加至少一名活跃竞争对手。",
       "previewAction": "预览报告支出",
       "previewing": "正在准备报告预览...",
-      "previewTitle": "服务器权威支出预览",
+      "previewTitle": "用量预览",
       "previewDescription": "此报告使用 {{units}} 关键字查找单元，最多可保留 {{rows}} 行。在开始之前剩余 {{remaining}} 单位。",
-      "cacheCounts": "缓存命中数计入使用量",
       "reviewAction": "审核并确认",
       "confirmTitle": "开始这份景观报告吗？",
       "confirmDescription": "比较 {{count}} 竞争对手的 {{units}} 关键字查找单位。",
       "confirmAction": "确认报告",
       "duplicate": "匹配的报告请求已存在。现有运行已开放。",
-      "editMarket": "编辑跟踪关键字市场"
+      "editMarket": "编辑跟踪关键字市场",
+      "rowCount_zero": "{{count}} 行",
+      "rowCount_one": "{{count}} 行",
+      "rowCount_two": "{{count}} 行",
+      "rowCount_few": "{{count}} 行",
+      "rowCount_many": "{{count}} 行",
+      "rowCount_other": "{{count}} 行",
+      "selection_zero": "已选择 {{selected}} 名 {{count}} 名参赛者",
+      "selection_two": "已选择 {{selected}} 名 {{count}} 名参赛者",
+      "selection_few": "已选择 {{selected}} 名 {{count}} 名参赛者",
+      "selection_many": "已选择 {{selected}} 名 {{count}} 名参赛者",
+      "selection_other": "已选择 {{selected}} 名 {{count}} 名参赛者",
+      "limit_zero": "您最多可以为此报告选择 {{count}} 个竞争对手。",
+      "limit_two": "您最多可以为此报告选择 {{count}} 个竞争对手。",
+      "limit_few": "您最多可以为此报告选择 {{count}} 个竞争对手。",
+      "limit_many": "您最多可以为此报告选择 {{count}} 个竞争对手。",
+      "limit_other": "您最多可以为此报告选择 {{count}} 个竞争对手。",
+      "competitorCount_zero": "{{count}} 个竞争对手",
+      "competitorCount_one": "{{count}} 个竞争对手",
+      "competitorCount_two": "{{count}} 个竞争对手",
+      "competitorCount_few": "{{count}} 个竞争对手",
+      "competitorCount_many": "{{count}} 个竞争对手",
+      "competitorCount_other": "{{count}} 个竞争对手",
+      "description_zero": "选择最多 {{count}} 个已确认的竞争对手。",
+      "description_two": "选择最多 {{count}} 个已确认的竞争对手。",
+      "description_few": "选择最多 {{count}} 个已确认的竞争对手。",
+      "description_many": "选择最多 {{count}} 个已确认的竞争对手。",
+      "description_other": "选择最多 {{count}} 个已确认的竞争对手。"
     },
     "reports": {
       "title": "存储的景观报告",
-      "description": "重新打开不可变的报告，而无需开始另一个供应商查找。",
+      "description": "重新打开已保存的报告，无需再次查询。",
       "emptyTitle": "没有景观报告",
       "empty": "从关键字横向视图创建报告。",
       "date": "已创建",
@@ -148,14 +174,14 @@
     },
     "detail": {
       "title": "景观报告",
-      "summary": "{{domain}} 与 {{count}} 竞争对手于 {{date}} 进行比较。",
-      "progress": "{{done}}（共 {{total}} 源步骤已完成）",
+      "summary_one": "{{domain}} 与 {{count}} 竞争对手于 {{date}} 进行比较。",
+      "progress": "已完成的源步骤：{{done}}，共 {{total}}",
       "polling": "该报告仍在运行。该存储的状态将自动刷新。",
-      "partial": "{{requested}} 竞争对手的 {{usable}} 生成了可用数据。 {{failed}} 源步骤失败；未推断出缺失值。",
+      "partial": "有可用数据的竞争对手：{{usable}} / {{requested}}。失败的来源步骤：{{failed}}。未推断缺失值。",
       "back": "返回报告历史",
       "cancel": "取消报告",
       "rollupTitle": "组合关键词汇总",
-      "rollupDescription": "{{usable}} 竞争对手中的 {{rows}} 关键字行。",
+      "rollupDescription": "$t(competitors:intelligence.detail.competitorCount, {\"count\": {{usable}}})中的$t(competitors:intelligence.detail.rowCount, {\"count\": {{rows}}})。",
       "filtersTitle": "报告过滤器",
       "classFilter": "关键词类",
       "domainFilter": "竞争对手",
@@ -200,7 +226,24 @@
       "acceptTitle": "接受这个建议吗？",
       "acceptDescription": "接受创造了持久的下一步行动。再次发送相同的决定不会创建重复的决定。",
       "acceptConfirm": "接受推荐",
-      "openAction": "在下一步操作中打开"
+      "openAction": "在下一步操作中打开",
+      "rowCount_zero": "{{count}} 关键字行",
+      "rowCount_one": "{{count}} 关键字行",
+      "rowCount_two": "{{count}} 关键字行",
+      "rowCount_few": "{{count}} 关键字行",
+      "rowCount_many": "{{count}} 关键字行",
+      "rowCount_other": "{{count}} 关键字行",
+      "competitorCount_zero": "{{count}} 个竞争对手",
+      "competitorCount_one": "{{count}} 个竞争对手",
+      "competitorCount_two": "{{count}} 个竞争对手",
+      "competitorCount_few": "{{count}} 个竞争对手",
+      "competitorCount_many": "{{count}} 个竞争对手",
+      "competitorCount_other": "{{count}} 个竞争对手",
+      "summary_zero": "{{domain}} 与 {{count}} 竞争对手于 {{date}} 进行比较。",
+      "summary_two": "{{domain}} 与 {{count}} 竞争对手于 {{date}} 进行比较。",
+      "summary_few": "{{domain}} 与 {{count}} 竞争对手于 {{date}} 进行比较。",
+      "summary_many": "{{domain}} 与 {{count}} 竞争对手于 {{date}} 进行比较。",
+      "summary_other": "{{domain}} 与 {{count}} 竞争对手于 {{date}} 进行比较。"
     },
     "classes": {
       "missing": "失踪",
@@ -221,7 +264,6 @@
     "states": {
       "loading": "报告进行中",
       "partial": "部分数据",
-      "cap": "该请求超出了剩余津贴。在确认之前升级或添加符合条件的积分包。",
       "disabled": "暂时禁止新的竞争对手请求。存储的报告仍然可用。",
       "unsafeLink": "隐藏不安全来源链接",
       "rateLimit": "请求太多。等待并重试。",
@@ -240,7 +282,7 @@
     },
     "market": {
       "tracked_keyword_mode": "来自跟踪关键字的市场",
-      "default": "默认市场回落"
+      "default": "网站的默认市场"
     },
     "confidence": {
       "high": "高",

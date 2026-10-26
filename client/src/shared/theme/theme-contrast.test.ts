@@ -144,3 +144,29 @@ describe('focus ring is not an error colour', () => {
     expect(token(block, 'sidebar-ring')).toBe(token(block, 'ring'));
   });
 });
+
+describe('shared font and overlay assets', () => {
+  it('uses an ochre warning and theme-specific scrims without changing ink focus rings', () => {
+    expect(token(themeBlock(':root'), 'warning')).toBe('#854d0e');
+    expect(token(themeBlock(':root'), 'ring')).toBe('#3d3833');
+    expect(token(themeBlock('.dark'), 'ring')).toBe('#c9c4bd');
+    expect(themeBlock(':root')).toContain('--overlay: rgb(28 26 24 / 0.62)');
+    expect(themeBlock('.dark')).toContain('--overlay: rgb(0 0 0 / 0.72)');
+    expect(css).toContain('--color-overlay: var(--overlay)');
+  });
+
+  it('loads licensed Arabic glyphs from the same origin in every UI locale', () => {
+    expect(css).toMatch(/'Inter',\s*'Noto Sans Arabic'/);
+    const face = css.match(/@font-face\s*\{[^}]*font-family: 'Noto Sans Arabic'[^}]*\}/)?.[0];
+    expect(face).toContain('font-display: swap');
+    expect(face).toContain('font-weight: 100 900');
+    expect(face).toContain("url('/fonts/noto-sans-arabic-arabic-wght-normal.woff2')");
+    const fonts = resolve(__dirname, '../../../public/fonts');
+    expect(readFileSync(resolve(fonts, 'noto-sans-arabic-arabic-wght-normal.woff2')).subarray(0, 4).toString()).toBe('wOF2');
+    expect(readFileSync(resolve(fonts, 'noto-sans-arabic-LICENSE.txt'), 'utf8')).toContain('SIL OPEN FONT LICENSE');
+  });
+
+  it('contains desktop app overscroll while keeping public documents scrollable', () => {
+    expect(css).toMatch(/@media\s*\(min-width:\s*48rem\)\s*\{\s*html:has\(\[data-app-frame\]\),\s*html:has\(\[data-app-frame\]\) body\s*\{\s*overscroll-behavior-y:\s*none/);
+  });
+});

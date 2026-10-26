@@ -68,6 +68,8 @@ function compose(selection: Record<string, unknown>, format: 'pdf' | 'csv' | 'js
 beforeEach(() => {
   vi.mocked(getSite).mockReset().mockResolvedValue({
     id: siteId, url: 'https://example.test', domain: 'example.test', displayName: 'AI Example',
+    defaultMarket: null,
+    localBusiness: false,
     paused: false, pausedAt: null, createdAt: checkedAt.toISOString(), updatedAt: checkedAt.toISOString(),
   });
   mocked.prompts.mockReset().mockResolvedValue([
@@ -144,6 +146,8 @@ describe('AI visibility report export adapter', () => {
     mocked.competitors.mockResolvedValue([]);
     vi.mocked(getSite).mockResolvedValue({
       id: siteId, url: 'https://example.test', domain: 'example.test', displayName: '',
+      defaultMarket: null,
+      localBusiness: false,
       paused: false, pausedAt: null, createdAt: checkedAt.toISOString(), updatedAt: checkedAt.toISOString(),
     });
     const adapter = createAiVisibilityReportExportAdapter(database);

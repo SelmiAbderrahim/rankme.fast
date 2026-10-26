@@ -1,8 +1,8 @@
 /**
  * Toxic-Link Review and Disavow Generator.
  *
- * The journey keeps every production boundary active. It upgrades isolated
- * Better Auth accounts through compose Postgres, primes the shipped backlink
+ * The journey keeps every production boundary active. It creates isolated
+ * Better Auth accounts, primes the shipped backlink
  * vendor archive through the authenticated list endpoint, and selects fake
  * provider failures only with the DNS-valid `scenario-timeout.test` input.
  * No live provider or Google endpoint is reachable from this spec.
@@ -17,8 +17,6 @@ import {
   assertComposeRuntimeParity,
   captureInheritedComposeEnvironment,
   recreateComposeServices,
-  runComposePsql,
-  runComposePsqlOutput,
 } from './helpers/compose';
 import { csrfHeaders } from './helpers/csrf';
 import { collectDenials, denyNonLoopback } from './helpers/denyNonLoopback';
@@ -26,10 +24,6 @@ import { collectDenials, denyNonLoopback } from './helpers/denyNonLoopback';
 test.describe.configure({ mode: 'serial' });
 
 const WCAG_TAGS = ['wcag2a', 'wcag2aa', 'wcag21a', 'wcag21aa'];
-
-interface SessionResponse {
-  user?: { id?: string };
-}
 
 interface SiteResponse {
   site: { id: string; domain: string };
@@ -42,8 +36,8 @@ interface StartedRun {
 interface ToxicityRun {
   runId: string;
   status: 'queued' | 'running' | 'succeeded' | 'failed';
-  refunded: boolean;
   retainedCount: number;
+  failureKind: 'provider_failed' | 'ceiling_halted' | null;
   rubricVersion: 'toxicity-rubric-v1';
   sourceKind: 'provider_observation';
   rows: Array<{
@@ -76,38 +70,6 @@ async function awaitServicesHealthy(page: Page): Promise<void> {
     .toBe(200);
 }
 
-async function accountId(request: APIRequestContext): Promise<string> {
-  const response = await request.get('/api/auth/get-session');
-  expect(response.status()).toBe(200);
-  const id = ((await response.json()) as SessionResponse).user?.id;
-  expect(id).toBeTruthy();
-  return id as string;
-}
-
-function bumpToPro(id: string): void {
-  runComposePsql(
-    `INSERT INTO subscriptions (account_id, tier, status)
-       VALUES (:'account_id', 'pro', 'active')
-       ON CONFLICT (account_id)
-         DO UPDATE SET tier = 'pro', status = 'active', updated_at = now();`,
-    { variables: { account_id: id } },
-  );
-}
-
-function readToxicityUsage(id: string): number {
-  return Number(
-    runComposePsqlOutput(
-      `SELECT COALESCE((
-         SELECT used FROM usage_counters
-          WHERE account_id = :'account_id'
-            AND period = to_char(now() AT TIME ZONE 'UTC', 'YYYY-MM')
-            AND metric = 'toxicity_reviews'
-       ), 0);`,
-      { variables: { account_id: id } },
-    ),
-  );
-}
-
 async function createSite(
   request: APIRequestContext,
   url: string,
@@ -117,19 +79,19 @@ async function createSite(
     data: { url, label },
     headers: await csrfHeaders(request),
   });
-  expect(response.status()).toBe(201);
-  return ((await response.json()) as SiteResponse).site;
+  const body = (await response.json()) as SiteResponse & { code?: string };
+  expect(response.status(), body.code ?? 'site creation').toBe(201);
+  return body.site;
 }
 
 async function primeBacklinkArchive(request: APIRequestContext, siteId: string): Promise<void> {
-  const response = await request.get(`/api/sites/${siteId}/backlinks?limit=100`);
+  const response = await request.get(`/api/sites/${siteId}/backlinks?limit=100&fresh=true`);
   expect(response.status()).toBe(200);
 }
 
 async function waitForTerminal(
   request: APIRequestContext,
   runId: string,
-  requireRefund = false,
 ): Promise<ToxicityRun> {
   let latest: ToxicityRun | null = null;
   await expect
@@ -139,7 +101,7 @@ async function waitForTerminal(
         expect(response.status()).toBe(200);
         latest = (await response.json()) as ToxicityRun;
         const terminal = latest.status === 'succeeded' || latest.status === 'failed';
-        return terminal && (!requireRefund || latest.refunded);
+        return terminal;
       },
       { timeout: 45_000, intervals: [100, 250, 500, 1_000] },
     )
@@ -150,10 +112,9 @@ async function waitForTerminal(
 async function startReview(page: Page, assertEnglishDisclosure = true): Promise<string> {
   await page.getByTestId('toxicity-preview-button').click();
   if (assertEnglishDisclosure) {
-    await expect(page.getByTestId('toxicity-preview')).toContainText('1 link-review unit');
+    await expect(page.getByTestId('toxicity-preview')).toContainText('Review saved backlinks');
     await expect(page.getByTestId('toxicity-preview')).toContainText('1,000 rows');
   }
-  await expect(page.getByTestId('toxicity-preview')).toContainText('toxicity-reviews-10');
   const responsePromise = page.waitForResponse(
     (response) =>
       response.request().method() === 'POST' && response.url().endsWith('/api/backlinks/toxicity'),
@@ -186,7 +147,7 @@ async function scanBothThemes(page: Page, label: string): Promise<void> {
   await setTheme(page, 'light');
 }
 
-test('toxic links: metering, rubric, rationale, download-only builder, refund, cap, flag, RTL, and axe', async ({
+test('toxic links: rubric, rationale, download-only builder, flag, RTL, and axe', async ({
   page,
   context,
 }, testInfo) => {
@@ -202,18 +163,15 @@ test('toxic links: metering, rubric, rationale, download-only builder, refund, c
   const denials = collectDenials();
   await denyNonLoopback(context, { onDeny: denials.onDeny });
   const primary = freshAccount('toxic-links-primary');
-  const failure = freshAccount('toxic-links-refund');
-  let primaryAccountId = '';
+  const failure = freshAccount('toxic-links-failure');
   let primarySiteId = '';
   let primaryRunId = '';
 
   await awaitServicesHealthy(page);
 
   try {
-    await test.step('preview-cancel is free and keyboard navigation opens the URL-backed tab', async () => {
+    await test.step('preview-cancel leaves the run unopened and keyboard navigation opens the URL-backed tab', async () => {
       await signUp(page, primary);
-      primaryAccountId = await accountId(page.request);
-      bumpToPro(primaryAccountId);
       await page.goto('/logout');
       await page.waitForURL('/login');
       await logIn(page, primary);
@@ -227,14 +185,11 @@ test('toxic links: metering, rubric, rationale, download-only builder, refund, c
       await page.keyboard.press('Enter');
       await expect(page).toHaveURL(new RegExp(`backlinks\\?tab=toxicity`));
 
-      const before = readToxicityUsage(primaryAccountId);
       await page.getByTestId('toxicity-preview-button').click();
-      await expect(page.getByTestId('toxicity-preview')).toContainText('1 link-review unit');
+      await expect(page.getByTestId('toxicity-preview')).toContainText('Review saved backlinks');
       await expect(page.getByTestId('toxicity-preview')).toContainText('1,000 rows');
-      await expect(page.getByTestId('toxicity-preview')).toContainText('toxicity-reviews-10');
       await page.getByTestId('toxicity-cancel').click();
       await expect(page.getByTestId('toxicity-preview')).toHaveCount(0);
-      expect(readToxicityUsage(primaryAccountId)).toBe(before);
     });
 
     await test.step('one review retains clean/watch/toxic bands and a bounded rationale', async () => {
@@ -242,7 +197,6 @@ test('toxic links: metering, rubric, rationale, download-only builder, refund, c
       const run = await waitForTerminal(page.request, primaryRunId);
       expect(run).toMatchObject({
         status: 'succeeded',
-        refunded: false,
         retainedCount: 3,
         rubricVersion: 'toxicity-rubric-v1',
         sourceKind: 'provider_observation',
@@ -264,7 +218,6 @@ test('toxic links: metering, rubric, rationale, download-only builder, refund, c
       const annotated = run.rows.filter((row) => row.rationale.status === 'annotated');
       expect(annotated).toHaveLength(1);
       expect(annotated[0]?.rationale.text).toContain('stored rubric observations');
-      expect(readToxicityUsage(primaryAccountId)).toBe(1);
 
       await expect(page).toHaveURL(
         new RegExp(`/sites/${primarySiteId}/backlinks\\?tab=toxicity&toxRun=${primaryRunId}`),
@@ -312,26 +265,16 @@ test('toxic links: metering, rubric, rationale, download-only builder, refund, c
       expect(denials.urls).toEqual([]);
     });
 
-    await test.step('stored reopen is free and the N+1 preview discloses the cap', async () => {
-      const before = readToxicityUsage(primaryAccountId);
+    await test.step('a stored review reopens after a reload', async () => {
       await page.reload();
       await expect(page.getByTestId('toxicity-results')).toBeVisible();
-      expect(readToxicityUsage(primaryAccountId)).toBe(before);
+    });
+
+    await test.step('the new-review form stays usable after a stored review', async () => {
 
       await page.getByRole('button', { name: 'Back to new review' }).click();
       await page.getByTestId('toxicity-preview-button').click();
-      // The composed gate blanks every outbound credential, so no pack is
-      // purchasable even though its product id is configured. The cap must
-      // then say so plainly instead of naming a pack slug it cannot sell; the
-      // purchasable variant is covered by the client unit suite.
-      await expect(page.getByTestId('toxicity-cap')).toContainText(
-        'Link-review allowance reached',
-      );
-      await expect(page.getByTestId('toxicity-cap')).toContainText(
-        'This credit pack is not configured for purchase right now.',
-      );
-      await expect(page.getByTestId('toxicity-confirm')).toBeDisabled();
-      expect(readToxicityUsage(primaryAccountId)).toBe(before);
+      await expect(page.getByTestId('toxicity-confirm')).toBeEnabled();
     });
 
     await test.step('Arabic RTL preserves the stored review and passes axe in both themes', async () => {
@@ -347,37 +290,36 @@ test('toxic links: metering, rubric, rationale, download-only builder, refund, c
       await scanBothThemes(page, 'toxicity-arabic-rtl');
     });
 
-    await test.step('a provider failure with zero retained rows refunds exactly once', async () => {
+    await test.step('a provider failure with zero retained rows shows a retryable reason', async () => {
       await page.goto('/logout');
       await page.waitForURL('/login');
       await signUp(page, failure);
-      const failureAccountId = await accountId(page.request);
-      bumpToPro(failureAccountId);
       await page.goto('/logout');
       await page.waitForURL('/login');
       await logIn(page, failure);
       const timeoutSite = await createSite(
         page.request,
         'https://scenario-timeout.test',
-        'Provider Refund',
+        'Provider Failure',
       );
+      await page.locator('#language-switcher').selectOption('en');
+      await expect(page.locator('html')).toHaveAttribute('lang', 'en');
       await primeBacklinkArchive(page.request, timeoutSite.id);
       await page.goto(`/sites/${timeoutSite.id}/backlinks?lng=en&tab=toxicity`);
       const runId = await startReview(page, false);
-      const run = await waitForTerminal(page.request, runId, true);
+      const run = await waitForTerminal(page.request, runId);
       expect(run).toMatchObject({
         status: 'failed',
-        refunded: true,
+        failureKind: 'provider_failed',
         retainedCount: 0,
         rubricVersion: 'toxicity-rubric-v1',
         sourceKind: 'provider_observation',
       });
-      await page.goto(`/sites/${timeoutSite.id}/backlinks?tab=toxicity&toxRun=${runId}`);
+      await page.goto(`/sites/${timeoutSite.id}/backlinks?lng=en&tab=toxicity&toxRun=${runId}`);
       await expect(page.getByTestId('toxicity-failed')).toContainText(
-        /unit was refunded|تمت إعادة الوحدة المحجوزة/u,
+        'before any results were saved',
       );
-      expect(readToxicityUsage(failureAccountId)).toBe(0);
-      await scanBothThemes(page, 'toxicity-provider-refund');
+      await scanBothThemes(page, 'toxicity-provider-failure');
 
       recreateToxicityServices('false');
       await awaitServicesHealthy(page);

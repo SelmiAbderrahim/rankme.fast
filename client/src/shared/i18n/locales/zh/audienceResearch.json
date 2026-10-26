@@ -9,7 +9,12 @@
       "label": "市场",
       "country": "国家/地区",
       "language": "语言",
-      "device": "设备"
+      "device": "设备",
+      "devices": {
+        "desktop": "桌面端",
+        "mobile": "移动端",
+        "all": "所有设备"
+      }
     },
     "competitors": {
       "label": "竞争对手",
@@ -23,6 +28,7 @@
     },
     "topics": {
       "label": "主题",
+      "add": "添加",
       "placeholder": "添加主题后按回车键",
       "chipRemove": "移除 {{topic}}",
       "count": "{{count}} / {{max}}",
@@ -30,33 +36,23 @@
       "validationEmpty": "请先输入主题再添加。",
       "validationMax": "最多可添加 {{max}} 个主题。"
     },
-    "reviewButton": "预览",
-    "submitting": "处理中…"
-  },
-  "preview": {
-    "unitLabel": "1 次受众研究运行",
-    "remainingLabel": "本月剩余 {{remaining}}／{{cap}}",
-    "operationCeilings": "本次运行将执行的操作",
-    "cached": "缓存",
-    "fresh": "最新",
-    "supported": "该市场受到完整支持。",
-    "unsupported": "该市场支持有限——结果可能较为有限。",
-    "maxPages": "最多抓取 {{max}} 个公开页面",
-    "totalBudget": "总预算：{{micros}} 微美元",
-    "aiBudget": "AI 预算：{{micros}} 微美元",
-    "coverageOk": "服务商覆盖完整",
-    "coverageDegraded": "服务商覆盖受限——结果可能不完整。",
-    "coverageBlocked": "该账户已被阻止使用零数据保留抓取。"
+    "submitting": "处理中…",
+    "startRequirement": "请至少添加一个主题或选择一个竞争对手后再启动运行。两者都没有时，运行没有可搜索的内容。"
   },
   "confirm": {
     "title": "要开始本次受众研究运行吗？",
-    "body": "本次运行最多将抓取 {{maxPages}} 个公开页面，并从公开网络生成信号。它只运行一次——不会持续监测。",
+    "body_one": "本次运行最多将抓取 {{maxPages}} 个公开页面，并从公开网络生成信号。它只运行一次——不会持续监测。",
     "confirmButton": "开始运行",
     "cancelButton": "取消",
     "marketLine": "市场",
     "competitorsLine": "竞争对手",
     "topicsLine": "主题",
-    "unitLine": "消耗单位"
+    "unitLine": "消耗单位",
+    "body_zero": "本次运行最多将抓取 {{maxPages}} 个公开页面，并从公开网络生成信号。它只运行一次——不会持续监测。",
+    "body_two": "本次运行最多将抓取 {{maxPages}} 个公开页面，并从公开网络生成信号。它只运行一次——不会持续监测。",
+    "body_few": "本次运行最多将抓取 {{maxPages}} 个公开页面，并从公开网络生成信号。它只运行一次——不会持续监测。",
+    "body_many": "本次运行最多将抓取 {{maxPages}} 个公开页面，并从公开网络生成信号。它只运行一次——不会持续监测。",
+    "body_other": "本次运行最多将抓取 {{maxPages}} 个公开页面，并从公开网络生成信号。它只运行一次——不会持续监测。"
   },
   "progress": {
     "stage": {
@@ -70,8 +66,18 @@
       "failed": "失败"
     },
     "counts": {
-      "sources": "已找到 {{count}} 个来源",
-      "signals": "已找到 {{count}} 个信号"
+      "sources_one": "已找到 {{count}} 个来源",
+      "signals_one": "已找到 {{count}} 个信号",
+      "sources_zero": "已找到 {{count}} 个来源",
+      "sources_two": "已找到 {{count}} 个来源",
+      "sources_few": "已找到 {{count}} 个来源",
+      "sources_many": "已找到 {{count}} 个来源",
+      "sources_other": "已找到 {{count}} 个来源",
+      "signals_zero": "已找到 {{count}} 个信号",
+      "signals_two": "已找到 {{count}} 个信号",
+      "signals_few": "已找到 {{count}} 个信号",
+      "signals_many": "已找到 {{count}} 个信号",
+      "signals_other": "已找到 {{count}} 个信号"
     },
     "partial": {
       "title": "本次运行以部分覆盖结束",
@@ -96,8 +102,7 @@
       "state": "状态",
       "sources": "来源",
       "signals": "信号",
-      "coverage": "覆盖情况",
-      "unit": "单位"
+      "coverage": "覆盖情况"
     },
     "empty": {
       "title": "暂无运行记录",
@@ -111,30 +116,12 @@
     "coverageNote": "覆盖不完整——打开该运行查看详情",
     "coverageFull": "覆盖完整"
   },
-  "locked": {
-    "title": "您的套餐不包含受众研究",
-    "body": "升级到 Starter、Pro 或 Agency 套餐即可运行客户之声研究，将公开反馈转化为内容、产品和 SEO 机会。",
-    "cta": "查看套餐"
-  },
-  "usage": {
-    "metrics": {
-      "audience_research_runs": {
-        "label": "受众研究运行",
-        "description": "一个单位对应一次完整的客户之声研究运行，无论其内部搜索或抓取次数多少。"
-      }
-    }
-  },
-  "billing": {
-    "overCap": {
-      "audience_research_runs": "您本月已用完套餐中的所有受众研究运行次数。升级以运行更多客户之声研究。"
-    }
-  },
   "signals": {
     "empty": {
       "title": "本次运行已完成但未产生任何信号。",
       "filtered": "没有符合当前筛选条件的信号。"
     },
-    "citationCount": "{{count}} 个引用来源",
+    "citationCount_one": "{{count}} 个引用来源",
     "confidence": {
       "high": "高置信度",
       "medium": "中置信度",
@@ -158,7 +145,7 @@
       "aiInterpretationHint": "建议路线是 AI 解读,并非市场份额信号。"
     },
     "rationale": {
-      "summary": "{{independentDomainCount}} 个独立域,涵盖 {{sourceTypeCount}} 种来源类型;{{recent}}。",
+      "summary": "独立域：{{independentDomainCount}}；来源类型：{{sourceTypeCount}}；{{recent}}。",
       "recent": "最新来源 {{date}}",
       "recentUnknown": "日期不详"
     },
@@ -226,7 +213,12 @@
         "duplicate": "重复",
         "other": "其他"
       }
-    }
+    },
+    "citationCount_zero": "{{count}} 个引用来源",
+    "citationCount_two": "{{count}} 个引用来源",
+    "citationCount_few": "{{count}} 个引用来源",
+    "citationCount_many": "{{count}} 个引用来源",
+    "citationCount_other": "{{count}} 个引用来源"
   },
   "errors": {
     "overCap": "您本月已用完套餐中的所有受众研究运行次数。升级以运行更多。",

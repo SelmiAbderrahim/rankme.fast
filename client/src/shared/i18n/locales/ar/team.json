@@ -1,7 +1,6 @@
 {
   "title": "الفريق",
   "description": "قم بدعوة زملائك وإدارة المقاعد في خطتك.",
-  "seatUsage": "{{used}} من {{limit}} مقاعد مستخدمة",
   "invite": {
     "heading": "دعوة زميل",
     "emailLabel": "البريد الإلكتروني",
@@ -9,8 +8,6 @@
     "emailInvalid": "أدخل عنوان بريد إلكتروني صالحًا",
     "submit": "إرسال الدعوة",
     "submitting": "جارٍ الإرسال…",
-    "atCap": "لقد استخدمت كل مقاعدك. قم بالترقية لدعوة المزيد.",
-    "upgradeCta": "ترقية الخطة",
     "description": "اختر الدور والمواقع المحددة التي يمكن لهذا الزميل استخدامها.",
     "roleLabel": "الدور",
     "adminRoleLimit": "يمكن للمشرفين دعوة الأعضاء فقط."
@@ -74,7 +71,13 @@
       "saving": "جارٍ الحفظ…",
       "cancel": "إلغاء"
     },
-    "joinedOn": "انضم في {{date}}"
+    "joinedOn": "انضم في {{date}}",
+    "total_zero": "لا يوجد أعضاء",
+    "total_one": "{{count}} عضو",
+    "total_two": "{{count}} من الأعضاء",
+    "total_few": "{{count}} أعضاء",
+    "total_many": "{{count}} عضوًا",
+    "total_other": "{{count}} عضو"
   },
   "accept": {
     "title": "قبول الدعوة",
@@ -125,7 +128,13 @@
     "siteCount_two": "موقعان",
     "siteCount_few": "{{count}} مواقع",
     "siteCount_many": "{{count}} موقعًا",
-    "siteCount_other": "{{count}} موقع"
+    "siteCount_other": "{{count}} موقع",
+    "outsideYourAccess_zero": "{{count}} مواقع أخرى خارج صلاحياتك",
+    "outsideYourAccess_one": "{{count}} موقع آخر خارج صلاحياتك",
+    "outsideYourAccess_two": "{{count}} موقعان آخران خارج صلاحياتك",
+    "outsideYourAccess_few": "{{count}} مواقع أخرى خارج صلاحياتك",
+    "outsideYourAccess_many": "{{count}} موقعًا آخر خارج صلاحياتك",
+    "outsideYourAccess_other": "{{count}} موقع آخر خارج صلاحياتك"
   },
   "decision": {
     "loading": "جارٍ التحقق من الدعوة…",
@@ -159,7 +168,7 @@
   },
   "inbox": {
     "buttonLabel": "دعوات الفريق",
-    "buttonLabelWithCount": "دعوات الفريق، {{count}} معلقة",
+    "buttonLabelWithCount_one": "دعوات الفريق قيد الانتظار: {{count}}",
     "title": "دعوات الفريق",
     "description": "راجع الدعوات التي تنتظر قرارك.",
     "emptyTitle": "لا توجد دعوات معلقة",
@@ -173,6 +182,19 @@
     "rejectTitle": "رفض هذه الدعوة؟",
     "rejectBody": "لن تنضم إلى {{team}}.",
     "cancel": "إلغاء",
-    "loadFailed": "تعذر تحميل دعوات فريقك."
+    "loadFailed": "تعذر تحميل دعوات فريقك.",
+    "buttonLabelWithCount_zero": "دعوات الفريق قيد الانتظار: {{count}}",
+    "buttonLabelWithCount_two": "دعوات الفريق قيد الانتظار: {{count}}",
+    "buttonLabelWithCount_few": "دعوات الفريق قيد الانتظار: {{count}}",
+    "buttonLabelWithCount_many": "دعوات الفريق قيد الانتظار: {{count}}",
+    "buttonLabelWithCount_other": "دعوات الفريق قيد الانتظار: {{count}}"
+  },
+  "received": {
+    "pending_zero": "عدد الدعوات من فرق أخرى بانتظارك: {{count}}.",
+    "pending_one": "عدد الدعوات من فرق أخرى بانتظارك: {{count}}.",
+    "pending_two": "عدد الدعوات من فرق أخرى بانتظارك: {{count}}.",
+    "pending_few": "عدد الدعوات من فرق أخرى بانتظارك: {{count}}.",
+    "pending_many": "عدد الدعوات من فرق أخرى بانتظارك: {{count}}.",
+    "pending_other": "عدد الدعوات من فرق أخرى بانتظارك: {{count}}."
   }
 }

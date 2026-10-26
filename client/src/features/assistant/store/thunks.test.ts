@@ -180,6 +180,25 @@ describe('assistant JSON thunks', () => {
 });
 
 describe('assistant streaming thunk', () => {
+  it.each([
+    ['server status', { finishReason: 'stop', status: 'incomplete' }],
+    ['length finish from an older server', { finishReason: 'length' }],
+  ])('marks a cut-off reply incomplete without a stream error — %s', async (_label, done) => {
+    vi.spyOn(globalThis, 'fetch').mockResolvedValue(
+      streamResponse([
+        frame('meta', { conversationId: 'c1', userMessageId: 'u1', assistantMessageId: 'a1', responseLocale: 'en' }),
+        frame('delta', { text: '✅ No issue —' }),
+        frame('done', { ...done, tokens: { input: 10, output: 2048 } }),
+      ]),
+    );
+    const store = makeStore();
+    await store.dispatch(loadAssistantConversations.fulfilled([conversation], 'seed'));
+    await store.dispatch(sendAssistantMessage({ conversationId: 'c1', text: 'Which keywords lost rank?' }));
+    const state = store.getState().assistant;
+    expect(state.stream).toMatchObject({ status: 'succeeded', error: null });
+    expect(state.messagesByConversation.c1?.at(-1)).toMatchObject({ id: 'a1', status: 'incomplete' });
+  });
+
   it('sends the cookie+CSRF request and reduces progressive text and tool events', async () => {
     const chunks = successfulFrames();
     const fetchSpy = vi
@@ -357,6 +376,50 @@ describe('assistant streaming thunk', () => {
       responseLocale: 'ar',
       parts: [{ type: 'text', text: 'رد عربي جديد' }],
     });
+  });
+
+  it('adopts the server-generated conversation title announced in the meta frame', async () => {
+    vi.spyOn(globalThis, 'fetch').mockResolvedValue(
+      streamResponse([
+        frame('meta', {
+          conversationId: 'c1',
+          userMessageId: 'u1',
+          assistantMessageId: 'a1',
+          responseLocale: 'en',
+          conversationTitle: 'Summarize the most important issues \u00b7 a.example.com',
+        }),
+        frame('done', { finishReason: 'stop', tokens: { input: 1, output: 1 } }),
+      ]),
+    );
+    const store = makeStore();
+    await store.dispatch(loadAssistantConversations.fulfilled([conversation], 'seed'));
+    const action = await store.dispatch(
+      sendAssistantMessage({ conversationId: 'c1', text: 'Summarize the most important issues' }),
+    );
+    expect(action.meta.requestStatus).toBe('fulfilled');
+    expect(store.getState().assistant.conversations[0]?.title).toBe(
+      'Summarize the most important issues \u00b7 a.example.com',
+    );
+  });
+
+  it('rejects a non-string conversation title in the meta frame', async () => {
+    vi.spyOn(globalThis, 'fetch').mockResolvedValue(
+      streamResponse([
+        frame('meta', {
+          conversationId: 'c1',
+          userMessageId: 'u1',
+          assistantMessageId: 'a1',
+          responseLocale: 'en',
+          conversationTitle: 7,
+        }),
+      ]),
+    );
+    const store = makeStore();
+    await store.dispatch(loadAssistantConversations.fulfilled([conversation], 'seed'));
+    const action = await store.dispatch(
+      sendAssistantMessage({ conversationId: 'c1', text: 'hi' }),
+    );
+    expect(action.meta.requestStatus).toBe('rejected');
   });
 
   it('rejects missing, unsupported, or mismatched stream locale metadata', async () => {

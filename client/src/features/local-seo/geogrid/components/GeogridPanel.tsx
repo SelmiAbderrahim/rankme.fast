@@ -30,6 +30,7 @@ import {
 import { Skeleton } from '@shared/ui/skeleton';
 import { fetchGeogridKeywordOptions, type GeogridKeywordOption } from '../api';
 import { useGeogridUrlState } from '../urlState';
+import { formatAbsoluteDate } from '@shared/lib/datetime';
 import { validateGeogridForm, type GeogridFieldError } from '../validation';
 import {
   clearGeogridPreview,
@@ -71,7 +72,7 @@ interface Props {
 }
 
 export const GeogridPanel = ({ siteId }: Props) => {
-  const { t } = useTranslation('geogrid');
+  const { t, i18n } = useTranslation('geogrid');
   const dispatch = useAppDispatch();
   const form = useAppSelector(selectGeogridForm);
   const scans = useAppSelector(selectGeogridScans);
@@ -89,6 +90,7 @@ export const GeogridPanel = ({ siteId }: Props) => {
 
   const [urlState, setUrlState] = useGeogridUrlState();
   const [keywords, setKeywords] = useState<GeogridKeywordOption[]>([]);
+  const [keywordsStatus, setKeywordsStatus] = useState<'loading' | 'ready' | 'error'>('loading');
   const [errors, setErrors] = useState<GeogridFieldError[]>([]);
   useEffect(() => {
     dispatch(setGeogridSiteId(siteId));
@@ -97,12 +99,17 @@ export const GeogridPanel = ({ siteId }: Props) => {
   useEffect(() => {
     void dispatch(loadGeogridScans({ siteId }));
     let cancelled = false;
+    setKeywordsStatus('loading');
     void fetchGeogridKeywordOptions(siteId)
       .then((options) => {
-        if (!cancelled) setKeywords(options);
+        if (cancelled) return;
+        setKeywords(options);
+        setKeywordsStatus('ready');
       })
       .catch(() => {
-        if (!cancelled) setKeywords([]);
+        if (cancelled) return;
+        setKeywords([]);
+        setKeywordsStatus('error');
       });
     return () => {
       cancelled = true;
@@ -175,6 +182,15 @@ export const GeogridPanel = ({ siteId }: Props) => {
     urlState.cellIndex === null
       ? null
       : (detail?.cells.find((cell) => cell.pointIndex === urlState.cellIndex) ?? null);
+  const selectedCapturedAt =
+    selectedCell && selectedCell.state !== 'failed'
+      ? formatAbsoluteDate(selectedCell.capturedAt, i18n.language, { withTime: true })
+      : '';
+
+  // Scans come back newest first; the latest centre is offered in coordinate
+  // mode next to the stored business location.
+  const latestScan = scansStatus === 'ready' ? scans[0] : undefined;
+  const lastCenter = latestScan ? { lat: latestScan.centerLat, lng: latestScan.centerLng } : null;
 
   return (
     <div data-testid="geogrid-panel" className="flex flex-col gap-4">
@@ -188,8 +204,15 @@ export const GeogridPanel = ({ siteId }: Props) => {
         <CardContent className="flex flex-col gap-4">
           <p className="text-muted-foreground text-sm">{t('description')}</p>
           <GeogridForm
+            siteId={siteId}
             form={form}
             keywords={keywords}
+            keywordsStatus={keywordsStatus}
+            lastCenter={lastCenter}
+            onCenterChange={(center) => {
+              dispatch(setGeogridFormField({ field: 'centerLat', value: String(center.lat) }));
+              dispatch(setGeogridFormField({ field: 'centerLng', value: String(center.lng) }));
+            }}
             errors={errors}
             disabled={submitting}
             previewing={previewStatus === 'loading'}
@@ -309,7 +332,7 @@ export const GeogridPanel = ({ siteId }: Props) => {
                           index: selectedCell.pointIndex + 1,
                           lat: String(selectedCell.lat),
                           lng: String(selectedCell.lng),
-                          capturedAt: selectedCell.capturedAt,
+                          capturedAt: selectedCapturedAt,
                         })
                       : t('detail.observed', {
                           index: selectedCell.pointIndex + 1,
@@ -317,7 +340,7 @@ export const GeogridPanel = ({ siteId }: Props) => {
                           packSize: selectedCell.totalPackSize,
                           lat: String(selectedCell.lat),
                           lng: String(selectedCell.lng),
-                          capturedAt: selectedCell.capturedAt,
+                          capturedAt: selectedCapturedAt,
                         })}
                 </p>
               ) : null}

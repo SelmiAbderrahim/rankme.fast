@@ -5,10 +5,14 @@ import {
   downloadReportPdfRequest,
   fetchAiSummaryStateRequest,
   fetchAuditRunsRequest,
+  fetchFindingRecheckPreviewRequest,
+  fetchFindingUrlsRequest,
   fetchLatestRunRequest,
   fetchReportRequest,
   fetchRunRequest,
   generateAiSummaryRequest,
+  markLocalBusinessRequest,
+  runFindingRecheckRequest,
   startAuditRequest,
 } from './api';
 
@@ -125,7 +129,7 @@ describe('report api', () => {
     const call = spy.mock.calls[1] as unknown as [string, RequestInit];
     expect(call[0]).toContain('/sites/s1/audits');
     expect(call[1]?.method).toBe('POST');
-    expect(call[1]?.body).toBe('{}');
+    expect(call[1]?.body).toBe(JSON.stringify({ resourceScan: true }));
     expect(captureHeaders(call).get('x-lang')).toBe('en');
   });
 
@@ -151,7 +155,56 @@ describe('report api', () => {
     vi.stubGlobal('fetch', spy);
     await startAuditRequest('s1', 1000);
     const call = spy.mock.calls[0] as [string, RequestInit];
-    expect(call[1]?.body).toBe(JSON.stringify({ requestedPageCap: 1000 }));
+    expect(call[1]?.body).toBe(JSON.stringify({ requestedPageCap: 1000, resourceScan: true }));
+  });
+
+  it('startAuditRequest lets a single run opt out of the resource scan', async () => {
+    const spy = vi.fn().mockResolvedValue(
+      jsonResponse({
+        run: {
+          id: 'r4',
+          siteId: 's1',
+          status: 'queued',
+          pageCap: 100,
+          pagesCrawled: 0,
+          vendorTaskId: null,
+          startedAt: null,
+          finishedAt: null,
+          error: null,
+          createdAt: '',
+          updatedAt: '',
+        },
+        message: 'Audit started.',
+      }),
+    );
+    vi.stubGlobal('fetch', spy);
+    await startAuditRequest('s1', undefined, false);
+    const call = spy.mock.calls[0] as [string, RequestInit];
+    expect(call[1]?.body).toBe(JSON.stringify({ resourceScan: false }));
+  });
+
+  it('markLocalBusinessRequest patches the site with the local-business flag', async () => {
+    const spy = vi.fn().mockResolvedValue(jsonResponse({ site: { id: 's1' } }));
+    vi.stubGlobal('fetch', spy);
+    await markLocalBusinessRequest('s 1');
+    const call = spy.mock.calls[0] as [string, RequestInit];
+    expect(call[0]).toContain('/sites/s%201');
+    expect(call[1]?.method).toBe('PATCH');
+    expect(JSON.parse(String(call[1]?.body))).toEqual({ localBusiness: true });
+  });
+
+  it('finding requests address one rule of one run: full lists, re-check preview and re-check', async () => {
+    const spy = vi.fn().mockImplementation(async () => jsonResponse({ ruleId: 'a/b' }));
+    vi.stubGlobal('fetch', spy);
+    await fetchFindingUrlsRequest('r 1', 'a/b');
+    await fetchFindingRecheckPreviewRequest('r 1', 'a/b');
+    await runFindingRecheckRequest('r 1', 'a/b');
+    const calls = spy.mock.calls as Array<[string, RequestInit]>;
+    expect(calls[0]![0]).toContain('/audits/r%201/findings/a%2Fb/urls');
+    expect(calls[1]![0]).toContain('/audits/r%201/findings/a%2Fb/recheck');
+    expect(calls[1]![1]?.method ?? 'GET').toBe('GET');
+    expect(calls[2]![0]).toContain('/audits/r%201/findings/a%2Fb/recheck');
+    expect(calls[2]![1]?.method).toBe('POST');
   });
 
   it('generateAiSummaryRequest posts to /audits/:runId/summary with x-lang', async () => {

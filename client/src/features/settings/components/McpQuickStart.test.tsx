@@ -34,7 +34,7 @@ describe('MCP quick start', () => {
       mcpServers: {
         rankmefast: {
           url: endpoint,
-          headers: { Authorization: 'Bearer rmf_REPLACE_WITH_YOUR_KEY' },
+          headers: { Authorization: 'Bearer ${env:RANKMEFAST_API_KEY}' },
         },
       },
     });
@@ -51,7 +51,7 @@ describe('MCP quick start', () => {
     expect(screen.getByText('Cursor')).toBeInTheDocument();
     expect(screen.getByRole('link', { name: 'Manage API keys' })).toHaveAttribute(
       'href',
-      '/profile?tab=api-keys',
+      '/settings/profile?tab=api-keys',
     );
     expect(screen.getByTestId('docs-link-rankmefast-mcp')).toHaveAttribute(
       'href',

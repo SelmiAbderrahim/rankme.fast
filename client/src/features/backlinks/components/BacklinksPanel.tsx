@@ -17,7 +17,7 @@
  *   - backlinks-retry                   initial-load error retry button
  *   - backlinks-empty-refresh           empty-state refresh CTA
  */
-import { useEffect, useRef } from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { toast } from 'sonner';
 import { ExternalLink, Link2, RefreshCw } from 'lucide-react';
@@ -26,6 +26,9 @@ import { Alert, AlertDescription } from '@shared/ui/alert';
 import { Badge } from '@shared/ui/badge';
 import { Button } from '@shared/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@shared/ui/card';
+import { Checkbox } from '@shared/ui/checkbox';
+import { StatusChip } from '@shared/ui/status-chip';
+import { saveBlobAs } from '@features/report-export';
 import { Empty, EmptyContent, EmptyDescription, EmptyHeader, EmptyTitle } from '@shared/ui/empty';
 import { Skeleton } from '@shared/ui/skeleton';
 import { StatCard } from '@shared/ui/stat-card';
@@ -34,6 +37,7 @@ import { TableHeaderHelp } from '@shared/ui/table-header-help';
 import { useAppDispatch, useAppSelector } from '@shared/hooks/redux';
 import { SAFE_EXTERNAL_REL, safeExternalHref } from '@shared/security';
 import { loadList, loadSummary, refreshSummary } from '../store/thunks';
+import { referringHostOf, serializeSuspectedDisavow } from '../disavow';
 import {
   selectBacklinksSiteId,
   selectCooldownUntil,
@@ -46,6 +50,7 @@ import {
   selectRefreshError,
   selectSummary,
 } from '../store/selectors';
+import { PageHeading } from '@shared/components/PageHeader';
 
 interface Props {
   siteId: string;
@@ -75,6 +80,29 @@ export const BacklinksPanel = ({ siteId, view = 'all', managedExternally = false
   // would re-run the effect and abort its own in-flight dispatch.
   const sliceSiteIdRef = useRef(sliceSiteId);
   sliceSiteIdRef.current = sliceSiteId;
+  const [selectedHosts, setSelectedHosts] = useState<ReadonlySet<string>>(new Set());
+  const flaggedRows = useMemo(() => (list?.rows ?? []).filter((row) => row.suspicion), [list]);
+  const flaggedHosts = useMemo(
+    () => [...new Set(flaggedRows.map((row) => referringHostOf(row)))],
+    [flaggedRows],
+  );
+  // Only hosts that are still flagged on the current page can be exported.
+  const exportHosts = flaggedHosts.filter((host) => selectedHosts.has(host));
+  const toggleHost = (host: string, checked: boolean) =>
+    setSelectedHosts((current) => {
+      const next = new Set(current);
+      if (checked) next.add(host);
+      else next.delete(host);
+      return next;
+    });
+  const downloadDisavow = () => {
+    saveBlobAs(
+      new Blob([serializeSuspectedDisavow(exportHosts, new Date())], {
+        type: 'text/plain;charset=utf-8',
+      }),
+      'disavow.txt',
+    );
+  };
 
   useEffect(() => {
     if (managedExternally) return;
@@ -96,9 +124,10 @@ export const BacklinksPanel = ({ siteId, view = 'all', managedExternally = false
 
   const handleRefresh = () => {
     void dispatch(refreshSummary({ siteId })).then((action) => {
-      // The refresh invalidated the cached list first page server-side.
+      // The refresh invalidated the stored first page server-side; this is the
+      // one explicit provider pull of rows (a plain list GET reads stored data).
       if (refreshSummary.fulfilled.match(action)) {
-        void dispatch(loadList({ siteId }));
+        void dispatch(loadList({ siteId, fresh: true }));
       }
     });
   };
@@ -108,7 +137,7 @@ export const BacklinksPanel = ({ siteId, view = 'all', managedExternally = false
       {view === 'all' ? (
         <div className="flex flex-wrap items-start justify-between gap-2">
           <div>
-            <h1 className="text-2xl font-semibold">{t('backlinks:title')}</h1>
+            <PageHeading className="text-2xl font-semibold">{t('backlinks:title')}</PageHeading>
             <p className="text-muted-foreground text-sm">{t('backlinks:description')}</p>
           </div>
           <RefreshButton
@@ -221,6 +250,51 @@ export const BacklinksPanel = ({ siteId, view = 'all', managedExternally = false
             <CardTitle className="text-base">{t('backlinks:table.title')}</CardTitle>
           </CardHeader>
           <CardContent className="p-0">
+            {flaggedRows.length > 0 ? (
+              <div
+                className="flex flex-wrap items-center gap-3 border-b p-4"
+                data-testid="backlinks-suspicion-toolbar"
+              >
+                <p className="text-sm font-medium">
+                  {t('backlinks:suspicion.summary', { flagged: flaggedHosts.length })}
+                </p>
+                <p className="text-muted-foreground text-xs" data-testid="backlinks-suspicion-selected">
+                  {t('backlinks:suspicion.selected', { selected: exportHosts.length })}
+                </p>
+                <Button
+                  type="button"
+                  variant="outline"
+                  size="sm"
+                  onClick={() => setSelectedHosts(new Set(flaggedHosts))}
+                  data-testid="backlinks-suspicion-select-all"
+                >
+                  {t('backlinks:suspicion.selectAll')}
+                </Button>
+                <Button
+                  type="button"
+                  variant="ghost"
+                  size="sm"
+                  onClick={() => setSelectedHosts(new Set())}
+                  disabled={exportHosts.length === 0}
+                  data-testid="backlinks-suspicion-clear"
+                >
+                  {t('backlinks:suspicion.clear')}
+                </Button>
+                <Button
+                  type="button"
+                  variant="outline"
+                  size="sm"
+                  onClick={downloadDisavow}
+                  disabled={exportHosts.length === 0}
+                  data-testid="backlinks-disavow-download"
+                >
+                  {t('backlinks:suspicion.download', { selected: exportHosts.length })}
+                </Button>
+                <p className="text-muted-foreground basis-full text-xs">
+                  {t('backlinks:suspicion.help')}
+                </p>
+              </div>
+            ) : null}
             <Table>
               <caption className="sr-only">{t('backlinks:table.title')}</caption>
               <TableHeader>
@@ -234,6 +308,7 @@ export const BacklinksPanel = ({ siteId, view = 'all', managedExternally = false
                     />
                   </TableHead>
                   <TableHead>{t('backlinks:table.firstSeen')}</TableHead>
+                  <TableHead>{t('backlinks:table.review')}</TableHead>
                 </TableRow>
               </TableHeader>
               <TableBody>
@@ -267,12 +342,38 @@ export const BacklinksPanel = ({ siteId, view = 'all', managedExternally = false
                           }).format(new Date(row.firstSeen))
                         : '—'}
                     </TableCell>
+                    <TableCell>
+                      {row.suspicion ? (
+                        <div className="flex flex-col gap-1" data-testid={`backlinks-suspicion-${i}`}>
+                          <label className="flex items-center gap-2">
+                            <Checkbox
+                              checked={selectedHosts.has(referringHostOf(row))}
+                              onCheckedChange={(checked) =>
+                                toggleHost(referringHostOf(row), checked === true)
+                              }
+                              aria-label={t('backlinks:table.selectRow', {
+                                domain: referringHostOf(row),
+                              })}
+                            />
+                            <StatusChip tone="warning">{t('backlinks:suspicion.badge')}</StatusChip>
+                          </label>
+                          <ul className="text-muted-foreground list-disc ps-5 text-xs">
+                            {row.suspicion.reasons.map((reason) => (
+                              <li key={reason}>{t(`backlinks:suspicion.reasons.${reason}`)}</li>
+                            ))}
+                          </ul>
+                          <span className="text-muted-foreground text-xs">
+                            {t('backlinks:suspicion.notVerified')}
+                          </span>
+                        </div>
+                      ) : null}
+                    </TableCell>
                   </TableRow>
                 ))}
               </TableBody>
             </Table>
             {cursor ? (
-              <div className="p-4">
+              <div className="flex flex-wrap items-center gap-3 p-4">
                 <Button
                   type="button"
                   variant="outline"
@@ -283,6 +384,9 @@ export const BacklinksPanel = ({ siteId, view = 'all', managedExternally = false
                 >
                   {t('backlinks:table.loadMore')}
                 </Button>
+                <p className="text-muted-foreground text-xs" data-testid="backlinks-load-more-hint">
+                  {t('backlinks:table.loadMoreHint')}
+                </p>
               </div>
             ) : null}
           </CardContent>

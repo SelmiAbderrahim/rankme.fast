@@ -4,95 +4,14 @@ import {
   useGoogleSearchView,
   type GoogleSearchView,
 } from '@features/google';
+import { useCallback, useEffect, useRef, useState } from 'react';
+import { useLocation, useNavigate } from 'react-router-dom';
 import { useTabParam } from '@shared/hooks/useTabParam';
 
-export const SITE_TABS = [
-  'overview',
-  'pages',
-  'actions',
-  'report',
-  'client-reports',
-  'keywords',
-  'serp-features',
-  'keyword-clusters',
-  'research',
-  'traffic',
-  'backlinks',
-  'competitors',
-  'ai-visibility',
-  'brand-radar',
-  'apps',
-  'local-seo',
-  'reviews',
-  'geogrid',
-  'google',
-  'content',
-  'internal-links',
-  'cannibalization',
-  'audience-research',
-  'schema',
-] as const;
-export type SiteTab = (typeof SITE_TABS)[number];
+import { SITE_TABS, SITE_TAB_LABEL_KEYS, SITE_TAB_GROUPS, type SiteTab } from './siteNavigation';
+export { SITE_TABS, SITE_TAB_LABEL_KEYS, SITE_TAB_GROUPS } from './siteNavigation';
+export type { SiteTab } from './siteNavigation';
 export const DEFAULT_SITE_TAB: SiteTab = 'overview';
-
-export const SITE_TAB_LABEL_KEYS: Readonly<Record<SiteTab, string>> = {
-  overview: 'sites:workspace.tabs.overview',
-  pages: 'pages:workspaceTab',
-  actions: 'sites:workspace.tabs.actions',
-  report: 'sites:workspace.tabs.report',
-  'client-reports': 'clientReports:dashboard.title',
-  keywords: 'sites:workspace.tabs.keywords',
-  'serp-features': 'sites:workspace.tabs.serpFeatures',
-  'keyword-clusters': 'sites:workspace.tabs.keywordClusters',
-  research: 'sites:workspace.tabs.research',
-  traffic: 'competitorsTraffic:title',
-  backlinks: 'sites:workspace.tabs.backlinks',
-  competitors: 'sites:workspace.tabs.competitors',
-  'ai-visibility': 'sites:workspace.tabs.aiVisibility',
-  'brand-radar': 'sites:workspace.tabs.brandRadar',
-  apps: 'sites:workspace.tabs.apps',
-  'local-seo': 'sites:workspace.tabs.localSeo',
-  reviews: 'sites:workspace.tabs.reviews',
-  geogrid: 'sites:workspace.tabs.geogrid',
-  google: 'sites:workspace.tabs.google',
-  content: 'sites:workspace.tabs.content',
-  'internal-links': 'sites:workspace.tabs.internalLinks',
-  cannibalization: 'sites:workspace.tabs.cannibalization',
-  'audience-research': 'sites:workspace.tabs.audienceResearch',
-  schema: 'sites:workspace.tabs.schema',
-};
-
-export const SITE_TAB_GROUPS = [
-  {
-    id: 'audit-reports',
-    labelKey: 'sites:workspace.groups.auditReports',
-    tabs: ['actions', 'pages', 'report', 'client-reports'],
-  },
-  {
-    id: 'search',
-    labelKey: 'sites:workspace.groups.search',
-    tabs: ['keywords', 'serp-features', 'keyword-clusters', 'research', 'google'],
-  },
-  {
-    id: 'visibility',
-    labelKey: 'sites:workspace.groups.visibility',
-    tabs: ['traffic', 'backlinks', 'competitors', 'ai-visibility', 'brand-radar'],
-  },
-  {
-    id: 'content',
-    labelKey: 'sites:workspace.groups.content',
-    tabs: ['content', 'internal-links', 'cannibalization', 'audience-research', 'schema'],
-  },
-  {
-    id: 'local-apps',
-    labelKey: 'sites:workspace.groups.localApps',
-    tabs: ['local-seo', 'reviews', 'geogrid', 'apps'],
-  },
-] as const satisfies ReadonlyArray<{
-  id: string;
-  labelKey: string;
-  tabs: readonly SiteTab[];
-}>;
 
 export type SiteTabGroup = (typeof SITE_TAB_GROUPS)[number];
 export type SiteTabGroupId = SiteTabGroup['id'];
@@ -110,11 +29,125 @@ export function isSiteTab(value: unknown): value is SiteTab {
 }
 
 /**
- * `?tab=` state per `.claude/rules/url-tab-state.md` — default overview,
- * `replace: true` on switch, invalid values fall back to the default.
+ * Plausible legacy or long-form `?tab=` slugs (docs, emails, bookmarks from the
+ * old top-level routes) mapped to the canonical workspace tab. Lookups are
+ * case-insensitive and tolerate `_` or spaces in place of `-`.
  */
-export function useSiteTab(): [SiteTab, (tab: SiteTab) => void] {
-  return useTabParam<SiteTab>(DEFAULT_SITE_TAB, SITE_TABS);
+export const SITE_TAB_ALIASES: Readonly<Record<string, SiteTab>> = {
+  home: 'overview',
+  dashboard: 'overview',
+  'next-actions': 'actions',
+  'fix-now': 'actions',
+  audit: 'report',
+  audits: 'report',
+  'audit-report': 'report',
+  'site-audit': 'report',
+  'white-label': 'client-reports',
+  'white-label-reports': 'client-reports',
+  'client-report': 'client-reports',
+  ranks: 'keywords',
+  rankings: 'keywords',
+  'rank-tracking': 'keywords',
+  'tracked-keywords': 'keywords',
+  serp: 'serp-features',
+  'serp-feature': 'serp-features',
+  clusters: 'keyword-clusters',
+  'keyword-clustering': 'keyword-clusters',
+  'keyword-research': 'research',
+  'traffic-insights': 'traffic',
+  'link-intelligence': 'backlinks',
+  links: 'backlinks',
+  competitor: 'competitors',
+  'ai-mentions': 'ai-visibility',
+  'ai-overviews': 'ai-visibility',
+  'brand-mentions': 'brand-radar',
+  'app-seo': 'apps',
+  aso: 'apps',
+  local: 'local-seo',
+  'review-intelligence': 'reviews',
+  'geo-grid': 'geogrid',
+  gsc: 'google',
+  'search-console': 'google',
+  'google-search-console': 'google',
+  'content-intelligence': 'content',
+  'internal-linking': 'internal-links',
+  'keyword-cannibalization': 'cannibalization',
+  audience: 'audience-research',
+  'schema-generator': 'schema',
+  'schema-markup': 'schema',
+};
+
+export type SiteTabResolution =
+  | { kind: 'absent' | 'valid'; tab: SiteTab }
+  | { kind: 'alias' | 'unknown'; tab: SiteTab; requested: string };
+
+/** Resolve a raw `?tab=` value to a workspace tab (pure; see `useSiteTab`). */
+export function resolveSiteTab(value: string | null): SiteTabResolution {
+  if (value === null || value.trim() === '') return { kind: 'absent', tab: DEFAULT_SITE_TAB };
+  if (isSiteTab(value)) return { kind: 'valid', tab: value };
+  const normalized = value
+    .trim()
+    .toLowerCase()
+    .replace(/[\s_]+/g, '-');
+  if (isSiteTab(normalized)) return { kind: 'alias', tab: normalized, requested: value };
+  const alias = Object.hasOwn(SITE_TAB_ALIASES, normalized)
+    ? SITE_TAB_ALIASES[normalized]
+    : undefined;
+  if (alias) return { kind: 'alias', tab: alias, requested: value };
+  return { kind: 'unknown', tab: DEFAULT_SITE_TAB, requested: value };
+}
+
+/**
+ * `?tab=` state per `.claude/rules/url-tab-state.md` — default overview,
+ * `replace: true` on switch. Legacy/long slugs resolve to their canonical tab
+ * and the URL is rewritten in place; a truly unknown value falls back to the
+ * default and is returned as the third tuple member so the workspace can say
+ * so instead of silently showing Overview. The unknown
+ * value is cleared as soon as the user picks a tab.
+ */
+export function useSiteTab(): [SiteTab, (tab: SiteTab) => void, string | null] {
+  const location = useLocation();
+  const navigate = useNavigate();
+  const [unknownTab, setUnknownTab] = useState<string | null>(null);
+  const rewritingUnknown = useRef(false);
+  const resolution = resolveSiteTab(new URLSearchParams(location.search).get('tab'));
+
+  const writeTab = useCallback(
+    (next: SiteTab) => {
+      const params = new URLSearchParams(location.search);
+      params.set('tab', next);
+      navigate(
+        { pathname: location.pathname, search: params.toString(), hash: location.hash },
+        { replace: true, state: location.state },
+      );
+    },
+    [location.hash, location.pathname, location.search, location.state, navigate],
+  );
+
+  const needsRewrite = resolution.kind === 'alias' || resolution.kind === 'unknown';
+  const requested = needsRewrite ? resolution.requested : null;
+  useEffect(() => {
+    if (needsRewrite) {
+      rewritingUnknown.current = resolution.kind === 'unknown';
+      setUnknownTab(resolution.kind === 'unknown' ? requested : null);
+      writeTab(resolution.tab);
+      return;
+    }
+    // Any other way of landing on a real section (a link, back/forward)
+    // retires the "that section doesn't exist" notice.
+    if (rewritingUnknown.current) rewritingUnknown.current = false;
+    else setUnknownTab(null);
+  }, [location.key, needsRewrite, requested, resolution.kind, resolution.tab, writeTab]);
+
+  const setTab = useCallback(
+    (next: SiteTab) => {
+      setUnknownTab(null);
+      writeTab(next);
+    },
+    [writeTab],
+  );
+
+  return [resolution.tab, setTab, unknownTab];
 }
 
 /**
@@ -148,4 +181,75 @@ export function isAppSeoView(value: unknown): value is AppSeoView {
 /** URL-backed drill-in state for the App SEO workspace panel. */
 export function useAppSeoView(): [AppSeoView, (view: AppSeoView) => void] {
   return useTabParam<AppSeoView>(DEFAULT_APP_SEO_VIEW, APP_SEO_VIEWS, 'view');
+}
+
+/** Backlinks' embedded views, mirrored here so the tab trail needs no import of the feature. */
+export const SITE_BACKLINK_VIEWS = [
+  'overview',
+  'rows',
+  'domains',
+  'anchors',
+  'history',
+  'gap',
+  'toxicity',
+] as const;
+
+export interface SiteNestedView {
+  /** The active nested view. */
+  view: string;
+  /** i18n key (`namespace:path`) of the view's label. */
+  labelKey: string;
+}
+
+/**
+ * Nested `?view=` vocabularies of the site tabs that have them, mirrored from
+ * each feature (a parity test pins the lists) so the breadcrumb and the
+ * workspace navigation can name the view without importing every panel.
+ */
+const SITE_TAB_SUB_VIEWS = {
+  content: {
+    views: ['analyses', 'inventory', 'competitors', 'monitoring', 'briefs'],
+    defaultView: 'analyses',
+    labelKey: (view: string) => `contentIntelligence:views.${view}`,
+  },
+  competitors: {
+    views: ['overview', 'keywords', 'content', 'monitoring', 'traffic', 'reports'],
+    defaultView: 'overview',
+    labelKey: (view: string) => `competitors:intelligence.views.${view}`,
+  },
+  google: {
+    views: GOOGLE_SEARCH_VIEWS as readonly string[],
+    defaultView: null,
+    labelKey: (view: string) => `google:searchDetail.views.${view}`,
+  },
+  backlinks: {
+    views: SITE_BACKLINK_VIEWS as readonly string[],
+    defaultView: 'overview',
+    labelKey: (view: string) => `backlinks:intelligence.tabs.${view}`,
+  },
+  apps: {
+    views: APP_SEO_VIEWS as readonly string[],
+    defaultView: DEFAULT_APP_SEO_VIEW,
+    labelKey: (view: string) => `appSeo:views.${view}`,
+  },
+} as const;
+
+/**
+ * The nested `?view=` a site tab is showing when it is not the tab's own
+ * default, with the label key that names it. The breadcrumb names only these,
+ * so a tab's default reads at the same depth as every other tab
+ * ("Competitors", not "Competitors · Overview") and an explicit view always
+ * adds one level. An unknown value is the default view, as each panel falls
+ * back, so the label never names a view the panel is not showing.
+ */
+export function getExplicitSubView(
+  tab: SiteTab,
+  search: string | URLSearchParams,
+): SiteNestedView | null {
+  if (!Object.hasOwn(SITE_TAB_SUB_VIEWS, tab)) return null;
+  const config = SITE_TAB_SUB_VIEWS[tab as keyof typeof SITE_TAB_SUB_VIEWS];
+  const params = typeof search === 'string' ? new URLSearchParams(search) : search;
+  const view = params.get('view');
+  if (view === null || !(config.views as readonly string[]).includes(view) || view === config.defaultView) return null;
+  return { view, labelKey: config.labelKey(view) };
 }

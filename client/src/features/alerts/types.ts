@@ -28,6 +28,8 @@ export interface AlertSite {
   id: string;
   domain: string;
   displayName: string;
+  /** Paused sites keep their rules, but no alert fires until they resume. */
+  paused?: boolean;
 }
 
 export interface AlertRule {
@@ -98,14 +100,8 @@ export interface AlertRulesPage {
   cap: { used: number };
 }
 
-/**
- * Every refusal this surface can render. `cap` and `tierLocked` both arrive as
- * 402 and are told apart by the server's message key, so the panel can disable
- * exactly the right control instead of showing a generic upgrade wall.
- */
+/** Every refusal this surface can render. */
 export type AlertGateKind =
-  | 'cap'
-  | 'tierLocked'
   | 'disabled'
   | 'notFound'
   | 'rateLimited'

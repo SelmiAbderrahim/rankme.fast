@@ -1,3 +1,4 @@
+import { Bdi } from '@shared/components/Bdi';
 import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from '@shared/ui/accordion';
@@ -73,12 +74,12 @@ const ThemeSection = ({
               data-testid={`reviews-theme-${kind}-${index}`}
             >
               <div className="flex flex-wrap items-center gap-2">
-                <span className="font-medium">{theme.label}</span>
+                <span className="font-medium"><Bdi>{theme.label}</Bdi></span>
                 <StatusChip tone="warning">
                   {t('provenance.ai_interpretation')}
                 </StatusChip>
                 <StatusChip tone={kind === 'complaint' ? 'warning' : 'success'}>
-                  {t('themes.citationCount', { citations: theme.citations.length })}
+                  {t('themes.citationCount', { count: theme.citations.length, citations: theme.citations.length })}
                 </StatusChip>
               </div>
               <p className="text-muted-foreground text-sm">{theme.summary}</p>

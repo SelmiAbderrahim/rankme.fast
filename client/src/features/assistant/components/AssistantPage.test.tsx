@@ -382,12 +382,12 @@ describe('AssistantPage', () => {
     await userEvent.type(screen.getByRole('textbox'), 'Give me a 20-step plan');
     await userEvent.click(screen.getByRole('button', { name: 'Send message' }));
     await waitFor(() => {
-      expect(screen.getByText('Give me a 20-step plan', { selector: 'p' })).toBeInTheDocument();
+      expect(screen.getByText('Give me a 20-step plan', { selector: 'p > bdi' })).toBeInTheDocument();
     });
     await userEvent.click(await screen.findByRole('button', { name: 'Stop' }));
 
     expect(await screen.findByText('Response stopped')).toBeInTheDocument();
-    expect(screen.getByText('Give me a 20-step plan', { selector: 'p' })).toBeInTheDocument();
+    expect(screen.getByText('Give me a 20-step plan', { selector: 'p > bdi' })).toBeInTheDocument();
     // The message was accepted, so the composer is cleared as for any send.
     expect(screen.getByRole('textbox')).toHaveValue('');
   });
@@ -417,7 +417,7 @@ describe('AssistantPage', () => {
     expect(await screen.findByRole('button', { name: 'Stop' })).toBeInTheDocument();
     expect(screen.getByRole('textbox')).toHaveValue('');
     expect(screen.getByText('0 / 8000 characters')).toBeInTheDocument();
-    expect(screen.getByText('Clear me right away', { selector: 'p' })).toBeInTheDocument();
+    expect(screen.getByText('Clear me right away', { selector: 'p > bdi' })).toBeInTheDocument();
     expect(requestSignal?.aborted).toBe(false);
   });
 
@@ -442,7 +442,7 @@ describe('AssistantPage', () => {
     expect(await screen.findByRole('alert')).toBeInTheDocument();
     expect(screen.getByRole('textbox')).toHaveValue('Please try again later');
     // The unconfirmed bubble was withdrawn, so the text is not shown twice.
-    expect(screen.queryByText('Please try again later', { selector: 'p' })).not.toBeInTheDocument();
+    expect(screen.queryByText('Please try again later', { selector: 'p > bdi' })).not.toBeInTheDocument();
   });
 
   it('does not restore the draft once the server saved the message and the reply then failed', async () => {
@@ -484,7 +484,7 @@ describe('AssistantPage', () => {
     expect(await screen.findByRole('alert')).toHaveTextContent(
       'The assistant could not finish this reply. Try again.',
     );
-    expect(screen.getByText('Saved before failing', { selector: 'p' })).toBeInTheDocument();
+    expect(screen.getByText('Saved before failing', { selector: 'p > bdi' })).toBeInTheDocument();
     expect(screen.getByRole('textbox')).toHaveValue('');
   });
 
@@ -521,6 +521,48 @@ describe('AssistantPage', () => {
     await screen.findByRole('alert');
     // ...and left what the user was typing alone.
     expect(screen.getByRole('textbox')).toHaveValue('Something new');
+  });
+
+  it('re-asks the last question when a cut-off reply is retried, and does nothing without one', async () => {
+    const fetchSpy = vi.spyOn(globalThis, 'fetch').mockResolvedValue(
+      new Response(JSON.stringify({ error: { message: 'Boom', code: 'INTERNAL' } }), {
+        status: 500,
+        headers: { 'Content-Type': 'application/json' },
+      }),
+    );
+    const user = (text: string): ChatMessage => ({
+      ...message('u1', text),
+      role: 'user',
+    });
+    const cutOff: ChatMessage = { ...message('a1', 'Partial'), status: 'incomplete' };
+    renderPage(
+      assistantState({
+        conversations: [conversation()],
+        activeConversationId: 'c1',
+        messagesByConversation: { c1: [user('Summarize my audit'), cutOff] },
+        detailStatus: { c1: 'succeeded' },
+      }),
+    );
+    await userEvent.click(screen.getByRole('button', { name: 'Retry' }));
+    await waitFor(() => expect(fetchSpy).toHaveBeenCalled());
+    expect(JSON.parse(String(fetchSpy.mock.calls[0]![1]!.body))).toEqual({
+      text: 'Summarize my audit',
+    });
+  });
+
+  it('offers no retry for a cut-off reply when no question can be found to re-ask', async () => {
+    const fetchSpy = vi.spyOn(globalThis, 'fetch');
+    const cutOff: ChatMessage = { ...message('a1', 'Partial'), status: 'incomplete' };
+    renderPage(
+      assistantState({
+        conversations: [conversation()],
+        activeConversationId: 'c1',
+        messagesByConversation: { c1: [cutOff] },
+        detailStatus: { c1: 'succeeded' },
+      }),
+    );
+    await userEvent.click(screen.getByRole('button', { name: 'Retry' }));
+    expect(fetchSpy).not.toHaveBeenCalled();
   });
 
   it('retries a failed conversation detail', async () => {

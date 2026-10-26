@@ -409,6 +409,37 @@ describe('ReportExportControl', () => {
   });
 });
 
+describe('ReportExportControl disabled trigger', () => {
+  it('never opens its menu while disabled, and closes an open menu when it becomes disabled', async () => {
+    const user = userEvent.setup();
+    const view = renderWithStore(
+      <ReportExportControl kind="audit.run" target={{ scope: 'site', siteId: 'site-one' }} />,
+      state({ capabilities: [capability] }),
+    );
+    await user.click(screen.getByRole('button', { name: 'Export or share' }));
+    expect(await screen.findByRole('menu')).toBeInTheDocument();
+
+    view.rerender(
+      <Provider store={view.store}>
+        <I18nextProvider i18n={i18n}>
+          <MemoryRouter initialEntries={['/exports']}>
+            <ReportExportControl kind="audit.run" target={{ scope: 'site', siteId: 'site-one' }} disabled />
+          </MemoryRouter>
+        </I18nextProvider>
+      </Provider>,
+    );
+    await waitFor(() => expect(screen.queryByRole('menu')).toBeNull());
+    const trigger = screen.getByRole('button', { name: 'Export or share' });
+    expect(trigger).toBeDisabled();
+    expect(trigger).toHaveAttribute('data-disabled');
+    fireEvent.pointerDown(trigger, { button: 0, ctrlKey: false, pointerType: 'mouse' });
+    fireEvent.click(trigger);
+    fireEvent.keyDown(trigger, { key: 'Enter' });
+    expect(screen.queryByRole('menu')).toBeNull();
+    expect(screen.queryByRole('menuitem', { name: 'PDF' })).toBeNull();
+  });
+});
+
 describe('ReportShareDialog', () => {
   it('validates bounds, creates one immutable link, copies it, refreshes history, and revokes it', async () => {
     const onOpenChange = vi.fn();
@@ -557,8 +588,27 @@ describe('ReportShareDialog', () => {
 });
 
 describe('ExportCenterPage', () => {
+  it("keeps each row's Download and Delete actions on one aligned line", async () => {
+    mockedListSnapshots.mockResolvedValue({ items: [snapshot()], nextCursor: null });
+    mockedListAllShares.mockResolvedValue({ items: [], nextCursor: null });
+    renderWithStore(<ExportCenterPage />, state({ snapshots: [snapshot()] }));
+
+    const groups = await screen.findAllByTestId('snapshot-actions');
+    const tableGroup = groups.find((group) => group.dataset.layout === 'table')!;
+    const cardGroup = groups.find((group) => group.dataset.layout === 'card')!;
+    for (const group of [tableGroup, cardGroup]) {
+      expect(within(group).getByRole('button', { name: 'Download' })).toBeInTheDocument();
+      expect(within(group).getByRole('button', { name: 'Delete' })).toBeInTheDocument();
+      expect(group).toHaveClass('flex', 'items-center', 'gap-2');
+    }
+    expect(tableGroup).toHaveClass('flex-nowrap', 'justify-end');
+    expect(tableGroup).not.toHaveClass('flex-col');
+    expect(tableGroup.closest('td')).toHaveClass('w-px', 'text-end');
+    expect(cardGroup).toHaveClass('flex-wrap');
+  });
+
   it('keeps the active tab in the URL and supports paged downloads, deletion, and share revocation', async () => {
-    const active = centerShare();
+    const active = centerShare({ snapshot: { ...centerShare().snapshot!, site: { id: 'site-far', domain: 'far.test', name: 'Far site' } } });
     const revoked = centerShare({
       id: 'share-revoked',
       revokedAt: '2026-08-03T00:00:00.000Z',
@@ -591,6 +641,9 @@ describe('ExportCenterPage', () => {
     expect(screen.getByText('Revoked')).toBeVisible();
     expect(screen.getByText('Expired')).toBeVisible();
     expect(screen.getByText('Deleted or expired report')).toBeVisible();
+    expect(screen.getAllByText('Audit report').length).toBeGreaterThan(0);
+    expect(screen.getAllByText('Far site').length).toBeGreaterThan(0);
+    expect(screen.getAllByText('far.test').length).toBeGreaterThan(0);
 
     const revokeTrigger = screen.getByRole('button', { name: 'Revoke' });
     await user.click(revokeTrigger);
@@ -630,9 +683,10 @@ describe('ExportCenterPage', () => {
       <ExportCenterPage />,
       state({
         snapshots: [
-          snapshot({ id: 's-a', kind: 'client.composite', title: 'Client SEO report', siteId: 'site-1' }),
+          snapshot({ id: 's-a', kind: 'client.composite', title: 'Client SEO report', siteId: 'site-1', site: { id: 'site-1', domain: 'acme.test', name: 'Acme' } }),
           snapshot({ id: 's-b', kind: 'keyword.research_result', title: 'Keyword set', siteId: null }),
-          snapshot({ id: 's-c', kind: 'unknown.kind', title: 'Mystery', siteId: 'site-gone' }),
+          snapshot({ id: 's-c', kind: 'unknown.kind', title: 'Mystery', siteId: 'site-gone', site: null }),
+          snapshot({ id: 's-d', kind: 'audit.run', title: 'Old audit title', siteId: 'site-domain', site: { id: 'site-domain', domain: 'same.test', name: 'same.test' } }),
         ],
       }),
     );
@@ -641,12 +695,18 @@ describe('ExportCenterPage', () => {
     expect(screen.queryByText('keyword.research_result')).toBeNull();
     expect(screen.getAllByText('Client report').length).toBeGreaterThan(0);
     expect(screen.getAllByText('Keywords').length).toBeGreaterThan(0);
+    expect(screen.getAllByText('Acme').length).toBeGreaterThan(0);
     expect(screen.getAllByText('acme.test').length).toBeGreaterThan(0);
     expect(screen.getAllByText('Whole account').length).toBeGreaterThan(0);
     expect(screen.getAllByText('—').length).toBeGreaterThan(0);
+    expect(screen.getAllByText('Mystery').length).toBeGreaterThan(0);
+    expect(screen.queryByText(/exportUi\.kindAreas\.unknown/)).toBeNull();
+    expect(screen.getAllByText('same.test').length).toBeGreaterThan(0);
+    expect(screen.getAllByText('Audit report').length).toBeGreaterThan(0);
+    expect(screen.queryByText('Old audit title')).toBeNull();
   });
 
-  it('loads the site list itself when it has not been loaded yet', async () => {
+  it('shows site labels from export responses without loading the paginated site list', async () => {
     mockedListAllShares.mockResolvedValue({ items: [], nextCursor: null });
     mockedListSnapshots.mockResolvedValue({ items: [], nextCursor: null });
     const fetchMock = vi.spyOn(globalThis, 'fetch').mockResolvedValue(
@@ -656,11 +716,12 @@ describe('ExportCenterPage', () => {
       }),
     );
     try {
-      renderWithStore(<ExportCenterPage />, state(), '/exports', false);
+      renderWithStore(<ExportCenterPage />, state({ snapshots: [snapshot({ siteId: 'site-far', site: { id: 'site-far', domain: 'far.test', name: 'Far site' } })] }), '/exports', false);
+      expect(screen.getAllByText('Far site').length).toBeGreaterThan(0);
       await waitFor(() =>
         expect(
           fetchMock.mock.calls.some(([url]) => String(url).includes('/sites')),
-        ).toBe(true),
+        ).toBe(false),
       );
     } finally {
       fetchMock.mockRestore();

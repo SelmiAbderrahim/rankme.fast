@@ -39,7 +39,7 @@ export const disavowBuildBodySchema = z
     entries: z
         .array(z
         .object({
-        rowId: z.string().uuid(),
+        rowId: z.string().guid(),
         kind: z.enum(['domain', 'url']),
     })
         .strict())

@@ -535,6 +535,25 @@ describe('resolvePhrasesToStoredRows', () => {
     );
     expect(resolved.get('seo tools')?.searchVolume).toBe(900);
   });
+
+  it('resolves a stored seed expansion that has no cache row of its own, for that account only', async () => {
+    const user = await seedUser('resolver-expansion@x.co');
+    const other = await seedUser('resolver-expansion-other@x.co');
+    await request(app)
+      .post('/api/keyword-research/ideas')
+      .set('Cookie', user.cookie)
+      .send({ seed: 'alpha seed', locationCode: 2840, languageCode: 'en' })
+      .expect(200);
+    const input = { locationCode: 2840, languageCode: 'en', phrases: ['website audit checklist', 'never stored'] };
+
+    const own = await resolvePhrasesToStoredRows(getTestDb() as never, { accountId: user.id, ...input }, new Date());
+    expect(own.resolved.get('website audit checklist')).toMatchObject({ source: 'vendor_cache', searchVolume: 2900, intent: null });
+    expect(own.unresolved).toEqual(['never stored']);
+
+    const foreign = await resolvePhrasesToStoredRows(getTestDb() as never, { accountId: other.id, ...input }, new Date());
+    expect(foreign.resolved.size).toBe(0);
+    expect(foreign.unresolved).toEqual(['never stored', 'website audit checklist']);
+  });
 });
 
 // ---------------------------------------------------------------------------

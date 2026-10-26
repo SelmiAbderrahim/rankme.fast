@@ -13,7 +13,7 @@ RankMeFast ofrece un endpoint remoto de [Model Context Protocol (MCP)](https://m
 
 ## Configúralo en cinco minutos
 
-1. Abre [Ajustes → Claves de API](/profile?tab=api-keys), selecciona **Crear clave** y copia la clave cuando aparezca. RankMeFast solo muestra la clave completa una vez.
+1. Abre [Ajustes → Claves de API](/settings/profile?tab=api-keys), selecciona **Crear clave** y copia la clave cuando aparezca. RankMeFast solo muestra la clave completa una vez.
 2. Usa el endpoint MCP de RankMeFast:
 
    ```text
@@ -37,11 +37,9 @@ RankMeFast ofrece un endpoint remoto de [Model Context Protocol (MCP)](https://m
 
 > Trata la clave como una contraseña: guárdala en una variable de entorno, una solicitud de contraseña o una configuración de usuario, y nunca la subas a un repositorio. Puedes limitar los ámbitos de cada clave (más abajo). Ten en cuenta que `start_audit` consume tu cuota mensual de auditorías.
 
-El acceso MCP está incluido en Starter, Pro y Agency. Las claves de Agency también funcionan con la API REST pública de solo lectura.
-
 ## Controlar permisos y ámbitos de clave
 
-Abre [Ajustes → MCP](/profile?tab=mcp) para administrar los valores predeterminados de la cuenta que comparten MCP y el Asistente de IA con sesión iniciada:
+Abre [Ajustes → MCP](/settings/profile?tab=mcp) para administrar los valores predeterminados de la cuenta que comparten MCP y el Asistente de IA con sesión iniciada:
 
 1. Activa o desactiva cada herramienta de RankMeFast.
 2. Deja **Sitios permitidos** en todos los sitios o selecciona los que pueden usar las herramientas.
@@ -50,7 +48,7 @@ Abre [Ajustes → MCP](/profile?tab=mcp) para administrar los valores predetermi
 
 Los valores de la cuenta son totalmente permisivos hasta que los cambias, por lo que las claves existentes siguen funcionando. El Asistente los usa directamente mediante tu sesión iniciada.
 
-Puedes añadir ámbitos más estrictos al crear una clave en [Ajustes → Claves de API](/profile?tab=api-keys) y editarlos más adelante. Los ámbitos solo pueden restringir el acceso. El acceso efectivo de MCP siempre es la intersección:
+Puedes añadir ámbitos más estrictos al crear una clave en [Ajustes → Claves de API](/settings/profile?tab=api-keys) y editarlos más adelante. Los ámbitos solo pueden restringir el acceso. El acceso efectivo de MCP siempre es la intersección:
 
 - Una herramienta solo está disponible si la cuenta y la clave la permiten.
 - Si la cuenta y la clave seleccionan sitios, solo están disponibles los incluidos en ambas listas.
@@ -386,7 +384,7 @@ Guarda esto como configuración de usuario y no confirmes la clave en el reposit
 
 ## Herramientas de RankMeFast disponibles
 
-| Herramienta | Qué hace | ¿Consume cuota del plan? |
+| Herramienta | Qué hace | ¿Gasta presupuesto del proveedor? |
 | --- | --- | --- |
 | `list_sites` | Lista los sitios que pertenecen a tu cuenta | No |
 | `get_latest_audit_report` | Devuelve la última auditoría completada de un sitio | No |
@@ -394,12 +392,40 @@ Guarda esto como configuración de usuario y no confirmes la clave en el reposit
 | `get_rank_history` | Devuelve el historial de posiciones de una palabra clave de un sitio | No |
 | `list_content_analyses` | Lista los análisis de Content Intelligence | No |
 | `get_content_analysis` | Devuelve un análisis de Content Intelligence | No |
-| `start_audit` | Inicia una auditoría del sitio dentro del límite de páginas de tu plan | **Sí: una auditoría** |
+| `start_audit` | Inicia una auditoría del sitio | **Sí: un rastreo** |
 | `get_audit_status` | Comprueba una ejecución de auditoría | No |
 | `list_actions` | Lista las próximas acciones priorizadas de un sitio | No |
 | `set_action_state` | Marca una acción como planificada, descartada, completada o abierta | No |
+| `get_gsc_search_summary` | Devuelve clics, impresiones, CTR y posición de Search Console de 7, 28 o 90 días | No |
+| `list_gsc_top_queries` | Lista las principales búsquedas almacenadas de Search Console para un sitio y un rango | No |
+| `list_gsc_top_pages` | Lista las principales páginas almacenadas de Search Console para un sitio y un rango | No |
+| `get_ga4_summary` | Devuelve sesiones, usuarios y eventos clave de Google Analytics 4 de 7, 28 o 90 días | No |
+| `list_pages` | Lista el inventario de páginas almacenado con el estado de rastreo de cada página | No |
+| `get_page_detail` | Devuelve el detalle almacenado de una página | No |
+| `get_backlinks_summary` | Devuelve el total de backlinks y los dominios de referencia distintos de un sitio | No |
+| `list_backlinks` | Lista los backlinks almacenados, uno por dominio de referencia | No |
+| `list_competitors` | Lista la cartera de competidores de un sitio, activos y archivados | No |
+| `list_keyword_research_history` | Lista tu historial de investigación de palabras clave | No |
+| `get_keyword_research_result` | Devuelve el resultado almacenado de una entrada de investigación de palabras clave | No |
+| `get_ai_visibility_summary` | Devuelve los prompts de AI Visibility, las últimas comprobaciones y la cuota de voz | No |
+| `get_local_seo_summary` | Devuelve la instantánea del perfil de SEO local y las posiciones del paquete local | No |
+| `get_reviews_summary` | Devuelve las fuentes de reseñas, las estadísticas de valoración y los temas almacenados | No |
+| `list_client_reports` | Lista los informes de clientes de un sitio, sus programaciones y entregas | No |
 
 Todo se limita a la cuenta propietaria de la clave, así que un ID de sitio, análisis o ejecución de otra cuenta devuelve no encontrado. Si falta una herramienta que esperabas, revisa los permisos antes de investigar la conexión.
+
+## Lectura de datos almacenados
+
+Las herramientas añadidas después de las diez primeras solo leen datos que RankMeFast ya tiene almacenados. No llaman a Google ni a ningún otro proveedor, no actualizan nada y no inician ninguna tarea.
+
+- **El alcance se indica.** Los resultados de Search Console y Google Analytics incluyen el `range` (7d, 28d o 90d), las fechas de inicio y fin, la fecha `asOf` y la fuente, así que una respuesta como «clics de los últimos 28 días» puede citar exactamente lo que cubre. El total del sitio y las tablas de búsquedas, páginas, países y dispositivos pueden diferir, y el resultado explica por qué.
+- **Los datos que faltan se indican.** Si Google no está conectado, no hay una propiedad vinculada o todavía no existe una instantánea, el resultado trae `status: "unavailable"` o `"empty"` con un motivo claro. Nunca devuelve ceros en lugar de datos que faltan.
+- **Los permisos se aplican en cada llamada.** Los interruptores de la cuenta en **Ajustes → MCP**, los alcances de la propia clave y las listas de sitios permitidos se comprueban en cada llamada. Un sitio al que no puedes acceder, o que pertenece a otra cuenta, se devuelve como no encontrado.
+- **Las herramientas nuevas empiezan permitidas.** Siguen el mismo valor predeterminado que las demás herramientas de lectura, y los permisos guardados antes de que existieran siguen funcionando igual.
+- **Los resultados tienen tope.** Las listas devuelven 100 filas como máximo y un resultado se mantiene pequeño; cuando se recortan filas, el resultado indica `truncated: true`.
+- **La investigación de palabras clave lee la caché almacenada.** `get_keyword_research_result` reabre una consulta desde la caché compartida de palabras clave e indica `storedStatus` como `available`, `partial`, `expired` o `unsupported`. Nunca actualiza datos. El historial de un sitio al que no tienes acceso se devuelve como no encontrado.
+
+El [asistente de IA](./ai-assistant.es.md) usa las mismas herramientas y los mismos permisos. En una conversación vinculada a un sitio, usa ese sitio directamente y no necesita listar antes tus sitios.
 
 ## Solución de problemas
 
@@ -408,23 +434,22 @@ Todo se limita a la cuenta propietaria de la clave, así que un ID de sitio, an�
 - **Un sitio aparece como no encontrado:** confirma que la cuenta y los ámbitos de clave lo permiten. Los sitios bloqueados y ajenos usan la misma respuesta a propósito.
 - **No se permiten acciones con gasto:** permite `start_audit` y las acciones con gasto en ambos niveles, o déjalas desactivadas para un cliente de solo lectura.
 - **401 Unauthorized:** usa exactamente la cabecera `Authorization: Bearer rmf_…`. La clave puede estar mal escrita, revocada o vinculada a una cuenta inactiva.
-- **402 Upgrade required:** MCP necesita Starter, Pro o Agency. Consulta [Planes, límites y créditos](./plans-limits-credits.es.md).
 - **405 Method not allowed en el navegador:** es lo esperado, porque el endpoint acepta solicitudes `POST` de MCP, no solicitudes `GET` normales del navegador.
 - **429 Too many requests:** espera a que termine el intervalo del límite de frecuencia indicado en las cabeceras de respuesta y vuelve a intentarlo.
 - **503 Unavailable:** MCP está desactivado o temporalmente no disponible en esa instalación de RankMeFast; consulta a su operador.
 - **Funciona en local, pero no a través de un proxy:** asegúrate de que el proxy reenvía las cabeceras `Authorization`, `Content-Type` y `Accept` a `/api/mcp`.
 
-Para sustituir una clave, crea una nueva, actualiza y comprueba todos los clientes y, después, revoca la antigua desde [Ajustes → Claves de API](/profile?tab=api-keys). La revocación es inmediata.
+Para sustituir una clave, crea una nueva, actualiza y comprueba todos los clientes y, después, revoca la antigua desde [Ajustes → Claves de API](/settings/profile?tab=api-keys). La revocación es inmediata.
 
 ## Compatibilidad
 
-Esta versión incluye las diez herramientas de la tabla. Ocho son de solo lectura, `set_action_state` escribe sin coste y `start_audit` es la única que consume cuota del plan. Radar de marca, Inteligencia de reseñas, Inteligencia de enlaces, Información de tráfico y Tendencias de palabras clave no tienen herramientas MCP. Los cambios son acumulativos: los nombres de herramientas y la forma de sus argumentos se mantienen, y pueden aparecer herramientas nuevas a medida que se publican funciones.
+Esta versión incluye las 25 herramientas de la tabla. 23 son de solo lectura, `set_action_state` escribe sin coste y `start_audit` es la única que gasta presupuesto del proveedor. Radar de marca, Inteligencia de reseñas, Inteligencia de enlaces, Información de tráfico y Tendencias de palabras clave no tienen herramientas MCP. Los cambios son acumulativos: los nombres de herramientas y la forma de sus argumentos se mantienen, y pueden aparecer herramientas nuevas a medida que se publican funciones.
 
-<!-- mcp-tools: list_sites; get_latest_audit_report; list_keywords; get_rank_history; list_content_analyses; get_content_analysis; start_audit; get_audit_status; list_actions; set_action_state -->
+<!-- mcp-tools: list_sites; get_latest_audit_report; list_keywords; get_rank_history; list_content_analyses; get_content_analysis; start_audit; get_audit_status; list_actions; set_action_state; get_gsc_search_summary; list_gsc_top_queries; list_gsc_top_pages; get_ga4_summary; list_pages; get_page_detail; get_backlinks_summary; list_backlinks; list_competitors; list_keyword_research_history; get_keyword_research_result; get_ai_visibility_summary; get_local_seo_summary; get_reviews_summary; list_client_reports -->
 
 ## Guías relacionadas
 
 - [Asistente de IA](./ai-assistant.es.md): usa las mismas herramientas autorizadas en el chat de RankMeFast.
-- [API pública](./public-api.es.md): la API de solo lectura exclusiva del plan Agency.
+- [API pública](./public-api.es.md): la API de solo lectura.
 - [Content Intelligence](./content-intelligence.es.md): entiende los datos de análisis que devuelve MCP.
 - [Seguridad de la cuenta](./settings-security.es.md): protege tu cuenta y tus claves.

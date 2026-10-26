@@ -1,7 +1,6 @@
 {
   "title": "Equipo",
   "description": "Invita a compañeros y gestiona los puestos de tu plan.",
-  "seatUsage": "{{used}} de {{limit}} puestos usados",
   "invite": {
     "heading": "Invitar a un compañero",
     "emailLabel": "Correo",
@@ -9,8 +8,6 @@
     "emailInvalid": "Introduce un correo electrónico válido",
     "submit": "Enviar invitación",
     "submitting": "Enviando…",
-    "atCap": "Has ocupado todos tus puestos. Mejora tu plan para invitar a más personas.",
-    "upgradeCta": "Mejorar plan",
     "description": "Elige un rol y exactamente qué sitios puede usar esta persona.",
     "roleLabel": "Rol",
     "adminRoleLimit": "Los administradores solo pueden invitar a miembros."
@@ -74,7 +71,13 @@
       "saving": "Guardando…",
       "cancel": "Cancelar"
     },
-    "joinedOn": "Se unió el {{date}}"
+    "joinedOn": "Se unió el {{date}}",
+    "total_zero": "Ningún miembro",
+    "total_one": "{{count}} miembro",
+    "total_two": "{{count}} miembros",
+    "total_few": "{{count}} miembros",
+    "total_many": "{{count}} miembros",
+    "total_other": "{{count}} miembros"
   },
   "accept": {
     "title": "Aceptar invitación",
@@ -125,7 +128,13 @@
     "siteCount_two": "{{count}} sitios",
     "siteCount_few": "{{count}} sitios",
     "siteCount_many": "{{count}} sitios",
-    "siteCount_other": "{{count}} sitios"
+    "siteCount_other": "{{count}} sitios",
+    "outsideYourAccess_zero": "{{count}} sitios más fuera de tu acceso",
+    "outsideYourAccess_one": "{{count}} sitio más fuera de tu acceso",
+    "outsideYourAccess_two": "{{count}} sitios más fuera de tu acceso",
+    "outsideYourAccess_few": "{{count}} sitios más fuera de tu acceso",
+    "outsideYourAccess_many": "{{count}} sitios más fuera de tu acceso",
+    "outsideYourAccess_other": "{{count}} sitios más fuera de tu acceso"
   },
   "decision": {
     "loading": "Comprobando la invitación…",
@@ -159,7 +168,7 @@
   },
   "inbox": {
     "buttonLabel": "Invitaciones de equipo",
-    "buttonLabelWithCount": "Invitaciones de equipo, {{count}} pendientes",
+    "buttonLabelWithCount_one": "Invitaciones de equipo, {{count}} pendiente",
     "title": "Invitaciones de equipo",
     "description": "Revisa las invitaciones que esperan tu decisión.",
     "emptyTitle": "No hay invitaciones pendientes",
@@ -173,6 +182,19 @@
     "rejectTitle": "¿Rechazar esta invitación?",
     "rejectBody": "No te unirás a {{team}}.",
     "cancel": "Cancelar",
-    "loadFailed": "No se pudieron cargar tus invitaciones de equipo."
+    "loadFailed": "No se pudieron cargar tus invitaciones de equipo.",
+    "buttonLabelWithCount_zero": "Invitaciones de equipo, {{count}} pendientes",
+    "buttonLabelWithCount_two": "Invitaciones de equipo, {{count}} pendientes",
+    "buttonLabelWithCount_few": "Invitaciones de equipo, {{count}} pendientes",
+    "buttonLabelWithCount_many": "Invitaciones de equipo, {{count}} pendientes",
+    "buttonLabelWithCount_other": "Invitaciones de equipo, {{count}} pendientes"
+  },
+  "received": {
+    "pending_zero": "{{count}} invitaciones de otros equipos te están esperando.",
+    "pending_one": "{{count}} invitación de otro equipo te está esperando.",
+    "pending_two": "{{count}} invitaciones de otros equipos te están esperando.",
+    "pending_few": "{{count}} invitaciones de otros equipos te están esperando.",
+    "pending_many": "{{count}} invitaciones de otros equipos te están esperando.",
+    "pending_other": "{{count}} invitaciones de otros equipos te están esperando."
   }
 }

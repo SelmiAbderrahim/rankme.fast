@@ -164,8 +164,10 @@ beforeEach(async () => {
 });
 
 describe('filtersFromQuery', () => {
-  it('maps non-default filters to single-element arrays and drops defaults', () => {
-    expect(filtersFromQuery(DEFAULT_ACTIONS_QUERY)).toEqual({});
+  it('maps filters to arrays: open reads as open and planned, all drops the filter', () => {
+    // The default view is the work still to do: open and planned.
+    expect(filtersFromQuery(DEFAULT_ACTIONS_QUERY)).toEqual({ state: ['open', 'planned'] });
+    expect(filtersFromQuery({ ...DEFAULT_ACTIONS_QUERY, state: 'all' })).toEqual({});
     expect(
       filtersFromQuery({
         state: 'planned',
@@ -186,7 +188,7 @@ describe('filtersFromQuery', () => {
 });
 
 describe('ActionsPanel — load, order, filters, pagination', () => {
-  it('loads unfiltered actions and renders them in server order', async () => {
+  it('loads the open and planned actions and renders them in server order', async () => {
     mocked.listActions.mockResolvedValueOnce(
       okResponse([item('z-second-by-alpha'), item('a-first-by-alpha')]),
     );
@@ -197,7 +199,7 @@ describe('ActionsPanel — load, order, filters, pagination', () => {
     expect(cards[0]).toHaveTextContent('z-second-by-alpha problem');
     expect(cards[1]).toHaveTextContent('a-first-by-alpha problem');
     expect(mocked.listActions).toHaveBeenCalledWith(
-      expect.objectContaining({ siteId: 's1', filters: {} }),
+      expect.objectContaining({ siteId: 's1', filters: { state: ['open', 'planned'] } }),
       expect.objectContaining({ presentationLocale: expect.any(String) }),
     );
     expect(screen.getByRole('status')).toHaveTextContent('Showing 2 actions');
@@ -328,10 +330,11 @@ describe('ActionsPanel — load, order, filters, pagination', () => {
     await waitFor(() => expect(capturedSearch).toBe('?tab=actions'));
   });
 
-  it('disables Next when the server reports no further page', async () => {
+  it('shows no pager at all when the whole list fits on one page', async () => {
     renderPanel();
     await screen.findAllByTestId('action-card');
-    expect(screen.getByTestId('actions-next')).toBeDisabled();
+    expect(screen.queryByTestId('actions-next')).not.toBeInTheDocument();
+    expect(screen.queryByTestId('actions-prev')).not.toBeInTheDocument();
   });
 
   it('keeps the current list visible while refreshing', async () => {
@@ -344,7 +347,7 @@ describe('ActionsPanel — load, order, filters, pagination', () => {
     mocked.listActions.mockImplementation(() => new Promise(() => undefined));
     const user = userEvent.setup();
     await user.click(screen.getByTestId('actions-filter-state'));
-    await user.click(await screen.findByRole('option', { name: 'Open' }));
+    await user.click(await screen.findByRole('option', { name: 'Planned' }));
     await waitFor(() =>
       expect(screen.getByRole('status')).toHaveTextContent('Refreshing actions…'),
     );
@@ -394,6 +397,22 @@ describe('ActionsPanel — source status and empty states', () => {
     renderPanel();
     expect(await screen.findByTestId('actions-empty-unavailable')).toBeInTheDocument();
     expect(screen.queryByTestId('actions-empty-clear')).not.toBeInTheDocument();
+  });
+
+  it('labels the default state filter "Open and planned" and keeps "All" in the URL', async () => {
+    renderPanel();
+    await screen.findAllByTestId('action-card');
+    const user = userEvent.setup();
+    expect(screen.getByTestId('actions-filter-state')).toHaveTextContent('Open and planned');
+    await user.click(screen.getByTestId('actions-filter-state'));
+    await user.click(await screen.findByRole('option', { name: 'All' }));
+    await waitFor(() => expect(capturedSearch).toBe('?tab=actions&state=all'));
+    await waitFor(() =>
+      expect(mocked.listActions).toHaveBeenLastCalledWith(
+        expect.objectContaining({ filters: {} }),
+        expect.anything(),
+      ),
+    );
   });
 
   it('says no actions match when filters are active and the result is empty', async () => {
@@ -472,6 +491,11 @@ describe('ActionsPanel — error states', () => {
 });
 
 describe('ActionCard — content, safe links, collapse', () => {
+  it('gives the affected URLs toggle a full-height phone tap target', async () => {
+    renderPanel();
+    const card = (await screen.findAllByTestId('action-card'))[0]!;
+    expect(within(card).getByTestId('action-urls-toggle')).toHaveClass('max-md:min-h-11');
+  });
   it('maps eligible action context into a code prompt across workflow states', async () => {
     mocked.listActions.mockResolvedValueOnce(
       okResponse([
@@ -529,6 +553,17 @@ describe('ActionCard — content, safe links, collapse', () => {
       'High confidence',
     );
     expect(within(card).getByTestId('action-effort')).toHaveTextContent('Low effort');
+  });
+
+  it('names the pages that link to broken targets instead of calling them affected URLs', async () => {
+    mocked.listActions.mockResolvedValueOnce(
+      okResponse([item('links', { sourceId: 'broken-internal-links' })]),
+    );
+    renderPanel();
+    const card = await screen.findByTestId('action-card');
+    expect(within(card).getByTestId('action-urls-toggle')).toHaveTextContent(
+      'Pages with broken links: 2',
+    );
   });
 
   it('collapses affected URLs behind an accessible expansion', async () => {
@@ -627,6 +662,7 @@ describe('ActionCard — content, safe links, collapse', () => {
     const safeLink = within(cards[0]!).getByTestId('action-evidence-link');
     expect(safeLink).toHaveAttribute('href', 'https://vendor.example/safe');
     expect(safeLink).toHaveAttribute('rel', 'nofollow ugc noopener noreferrer');
+    expect(within(cards[0]!).getByTestId('action-evidence-label')).toHaveTextContent('vendor.example/safe');
     expect(
       within(cards[1]!).queryByTestId('action-evidence-link'),
     ).not.toBeInTheDocument();
@@ -636,6 +672,33 @@ describe('ActionCard — content, safe links, collapse', () => {
     expect(
       within(cards[2]!).queryByTestId('action-evidence-link'),
     ).not.toBeInTheDocument();
+  });
+
+  it('labels root and email evidence without exposing an internal reference', async () => {
+    mocked.listActions.mockResolvedValueOnce(okResponse([
+      item('root-evidence', {
+        evidence: [{ sourceRef: 'opaque-root', url: 'https://vendor.example/', observation: { freshness: 'fresh', observedAt: '2026-07-10T00:00:00.000Z' } }],
+      }),
+      item('email-evidence', {
+        evidence: [{ sourceRef: 'opaque-email', url: 'mailto:team@example.com', observation: { freshness: 'fresh', observedAt: '2026-07-10T00:00:00.000Z' } }],
+      }),
+    ]));
+    renderPanel();
+    const cards = await screen.findAllByTestId('action-card');
+    expect(within(cards[0]!).getByTestId('action-evidence-label')).toHaveTextContent('vendor.example');
+    expect(within(cards[0]!).getByTestId('action-evidence-label')).not.toHaveTextContent('opaque-root');
+    expect(within(cards[1]!).getByTestId('action-evidence-label')).toHaveTextContent('email-evidence problem');
+    expect(within(cards[1]!).getByTestId('action-evidence-link')).toHaveAttribute('href', 'mailto:team@example.com');
+    expect(within(cards[1]!).getByTestId('action-evidence-label')).not.toHaveTextContent('opaque-email');
+  });
+
+  it('labels an unknown observation freshness instead of showing a translation key', async () => {
+    mocked.listActions.mockResolvedValueOnce(okResponse([item('opportunity', {
+      evidence: [{ sourceRef: 'opaque', observation: { freshness: 'unknown', observedAt: '2026-09-28T08:00:00.000Z' } }],
+    })]));
+    renderPanel();
+    const card = (await screen.findAllByTestId('action-card'))[0]!;
+    expect(within(card).getByTestId('action-freshness-chip')).toHaveTextContent('Freshness unknown');
   });
 
   it('labels evidence by source and date, never by its internal key (issue #19)', async () => {
@@ -716,6 +779,69 @@ describe('ActionCard — content, safe links, collapse', () => {
     );
     expect(within(cards[2]!).queryByTestId('action-retest-open')).toBeNull();
     expect(within(cards[2]!).queryByTestId('action-retest-reason')).toBeNull();
+  });
+
+  it('links affected URLs, keeps unsafe schemes as plain text and points a sampled list to the full list', async () => {
+    const sample = [
+      ...Array.from({ length: 19 }, (_, i) => `https://example.com/p-${i}`),
+      'javascript:alert(1)',
+    ];
+    mocked.listActions.mockResolvedValueOnce(
+      okResponse([
+        item('sampled', { affectedUrls: sample, affectedUrlCount: 48 }),
+        item('complete', { affectedUrls: sample.slice(0, 2), affectedUrlCount: 2 }),
+        item('links', { sourceId: 'broken-internal-links', affectedUrlCount: 9 }),
+      ]),
+    );
+    renderPanel();
+    const cards = await screen.findAllByTestId('action-card');
+    const user = userEvent.setup();
+    for (const card of cards) await user.click(within(card).getByTestId('action-urls-toggle'));
+    const sampledLinks = within(cards[0]!).getAllByTestId('action-url-link');
+    expect(sampledLinks).toHaveLength(19);
+    expect(sampledLinks[0]).toHaveAttribute('href', 'https://example.com/p-0');
+    expect(sampledLinks[0]).toHaveAttribute('target', '_blank');
+    expect(sampledLinks[0]!.getAttribute('rel')).toContain('noopener');
+    expect(within(cards[0]!).getByText('javascript:alert(1)').closest('a')).toBeNull();
+    const seeAll = within(cards[0]!).getByTestId('action-urls-see-all');
+    expect(seeAll).toHaveTextContent('See all 48 URLs in the report');
+    expect(seeAll).toHaveAttribute('href', '/sites/s1?tab=report');
+    // A complete list needs no pointer to the report.
+    expect(within(cards[1]!).queryByTestId('action-urls-see-all')).toBeNull();
+    // Broken-link actions always point to the report, where the targets live.
+    expect(within(cards[2]!).getByTestId('action-urls-see-all')).toHaveTextContent(
+      'See all 9 pages and the broken links they point to in the report',
+    );
+  });
+
+  it('leaves out the pointer to the report when the card has no safe source link', async () => {
+    mocked.listActions.mockResolvedValueOnce(
+      okResponse([item('nolink', { sourceLink: 'javascript:alert(1)', affectedUrlCount: 48 })]),
+    );
+    renderPanel();
+    const card = await screen.findByTestId('action-card');
+    await userEvent.setup().click(within(card).getByTestId('action-urls-toggle'));
+    expect(within(card).queryByTestId('action-urls-see-all')).toBeNull();
+  });
+
+  it('nudges a retest when the evidence is stale', async () => {
+    const stale = (id: string, retest: ActionItem['retest']) =>
+      item(id, {
+        retest,
+        evidence: [
+          { sourceRef: `audit:${id}`, observation: { freshness: 'stale', observedAt: '2026-05-01T00:00:00.000Z' } },
+        ],
+      });
+    mocked.listActions.mockResolvedValueOnce(
+      okResponse([stale('old', { available: true }), stale('unavailable', { available: false }), item('fresh')]),
+    );
+    renderPanel();
+    const cards = await screen.findAllByTestId('action-card');
+    expect(within(cards[0]!).getByTestId('action-stale-retest-hint')).toHaveTextContent(
+      'This evidence is out of date. Retest to check it again.',
+    );
+    expect(within(cards[1]!).queryByTestId('action-stale-retest-hint')).toBeNull();
+    expect(within(cards[2]!).queryByTestId('action-stale-retest-hint')).toBeNull();
   });
 
   it('omits the freshness chip and evidence block when the payload has no evidence', async () => {

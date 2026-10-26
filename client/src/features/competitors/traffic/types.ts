@@ -10,13 +10,15 @@ export const trafficSnapshotDomainSchema = z
   .min(1, 'errors.invalidDomain')
   .max(TRAFFIC_SNAPSHOT_DOMAIN_MAX_LENGTH, 'errors.invalidDomain')
   .transform((raw, context) => {
-    if (/^[a-z][a-z\d+.-]*:\/\//i.test(raw)) {
+    // Pasted URLs are normalized to their hostname; only web schemes qualify.
+    const scheme = /^([a-z][a-z\d+.-]*):\/\//i.exec(raw);
+    if (scheme && !/^https?$/i.test(scheme[1]!)) {
       context.addIssue({ code: z.ZodIssueCode.custom, message: 'errors.invalidDomain' });
       return z.NEVER;
     }
     let parsed: URL;
     try {
-      parsed = new URL(`https://${raw}`);
+      parsed = new URL(scheme ? raw : `https://${raw}`);
     } catch {
       context.addIssue({ code: z.ZodIssueCode.custom, message: 'errors.invalidDomain' });
       return z.NEVER;
@@ -121,16 +123,29 @@ export interface TrafficSnapshotReadInput {
   siteId?: string;
 }
 
+/** Provider market (DataForSEO Labs location + language) a snapshot is estimated for. */
+export interface TrafficMarket {
+  locationCode: number;
+  languageCode: string;
+}
+
+/** The server default when a request names no market. */
+export const DEFAULT_TRAFFIC_MARKET: TrafficMarket = Object.freeze({
+  locationCode: 2840,
+  languageCode: 'en',
+});
+
 export interface TrafficSnapshotPreviewInput {
   domains: string[];
   siteId?: string;
+  market?: TrafficMarket;
 }
 
 export interface TrafficSnapshotRequestInput {
   targetDomain: string;
   siteId?: string;
-  locationCode?: 2840;
-  languageCode?: 'en';
+  locationCode?: number;
+  languageCode?: string;
   historyMonths?: 24;
 }
 

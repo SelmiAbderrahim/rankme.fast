@@ -1,0 +1,234 @@
+{
+  "version": "0.1.20261001",
+  "status_code": 20000,
+  "status_message": "Ok.",
+  "time": "0.0410 sec.",
+  "cost": 0,
+  "tasks_count": 1,
+  "tasks_error": 0,
+  "tasks": [
+    {
+      "id": "TASK_ID",
+      "status_code": 20000,
+      "status_message": "Ok.",
+      "time": "0.0302 sec.",
+      "cost": 0,
+      "result_count": 1,
+      "path": [
+        "v3",
+        "on_page",
+        "resources"
+      ],
+      "data": {
+        "api": "on_page",
+        "function": "resources"
+      },
+      "result": [
+        {
+          "crawl_progress": "finished",
+          "crawl_status": {
+            "max_crawl_pages": 100,
+            "pages_in_queue": 0,
+            "pages_crawled": 7
+          },
+          "search_after_token": null,
+          "current_offset": 0,
+          "total_items_count": 4,
+          "items_count": 4,
+          "items": [
+            {
+              "resource_type": "broken",
+              "meta": {
+                "alternative_text": "",
+                "title": null,
+                "original_width": 1600,
+                "original_height": 1200,
+                "width": 800,
+                "height": 600
+              },
+              "status_code": 404,
+              "location": null,
+              "url": "https://example.com/img/missing.png",
+              "size": 0,
+              "encoded_size": 0,
+              "total_transfer_size": 0,
+              "fetch_time": "2026-10-22 09:14:02 +00:00",
+              "fetch_timing": {
+                "duration_time": 90,
+                "fetch_start": 10,
+                "fetch_end": 100
+              },
+              "cache_control": {
+                "cachable": true,
+                "ttl": 86400000
+              },
+              "checks": {
+                "no_content_encoding": false,
+                "high_loading_time": false,
+                "is_redirect": false,
+                "is_4xx_code": true,
+                "is_5xx_code": false,
+                "is_broken": true,
+                "is_www": false,
+                "is_https": true,
+                "is_http": false
+              },
+              "resource_errors": {
+                "errors": null,
+                "warnings": null
+              },
+              "content_encoding": null,
+              "media_type": null,
+              "accept_type": "image",
+              "server": "nginx",
+              "last_modified": {
+                "header": null,
+                "sitemap": null,
+                "meta_tag": null
+              }
+            },
+            {
+              "resource_type": "script",
+              "meta": null,
+              "status_code": 200,
+              "location": null,
+              "url": "https://example.com/js/app.js",
+              "size": 180000,
+              "encoded_size": 180000,
+              "total_transfer_size": 180000,
+              "fetch_time": "2026-10-22 09:14:02 +00:00",
+              "fetch_timing": {
+                "duration_time": 90,
+                "fetch_start": 10,
+                "fetch_end": 100
+              },
+              "cache_control": {
+                "cachable": false,
+                "ttl": 0
+              },
+              "checks": {
+                "no_content_encoding": false,
+                "high_loading_time": false,
+                "is_redirect": false,
+                "is_4xx_code": false,
+                "is_5xx_code": false,
+                "is_broken": false,
+                "is_www": false,
+                "is_https": true,
+                "is_http": false
+              },
+              "resource_errors": {
+                "errors": null,
+                "warnings": null
+              },
+              "content_encoding": null,
+              "media_type": null,
+              "accept_type": "script",
+              "server": "nginx",
+              "last_modified": {
+                "header": null,
+                "sitemap": null,
+                "meta_tag": null
+              }
+            },
+            {
+              "resource_type": "image",
+              "meta": {
+                "alternative_text": "",
+                "title": null,
+                "original_width": 1600,
+                "original_height": 1200,
+                "width": 800,
+                "height": 600
+              },
+              "status_code": 200,
+              "location": null,
+              "url": "https://example.com/img/hero.jpg",
+              "size": 2400000,
+              "encoded_size": 2400000,
+              "total_transfer_size": 2400000,
+              "fetch_time": "2026-10-22 09:14:02 +00:00",
+              "fetch_timing": {
+                "duration_time": 90,
+                "fetch_start": 10,
+                "fetch_end": 100
+              },
+              "cache_control": {
+                "cachable": true,
+                "ttl": 86400000
+              },
+              "checks": {
+                "no_content_encoding": false,
+                "high_loading_time": false,
+                "is_redirect": false,
+                "is_4xx_code": false,
+                "is_5xx_code": false,
+                "is_broken": false,
+                "is_www": false,
+                "is_https": true,
+                "is_http": false
+              },
+              "resource_errors": {
+                "errors": null,
+                "warnings": null
+              },
+              "content_encoding": null,
+              "media_type": null,
+              "accept_type": "image",
+              "server": "nginx",
+              "last_modified": {
+                "header": null,
+                "sitemap": null,
+                "meta_tag": null
+              }
+            },
+            {
+              "resource_type": "stylesheet",
+              "meta": null,
+              "status_code": 200,
+              "location": null,
+              "url": "https://example.com/css/site.css",
+              "size": 32000,
+              "encoded_size": 32000,
+              "total_transfer_size": 32000,
+              "fetch_time": "2026-10-22 09:14:02 +00:00",
+              "fetch_timing": {
+                "duration_time": 90,
+                "fetch_start": 10,
+                "fetch_end": 100
+              },
+              "cache_control": {
+                "cachable": true,
+                "ttl": 86400000
+              },
+              "checks": {
+                "no_content_encoding": false,
+                "high_loading_time": false,
+                "is_redirect": false,
+                "is_4xx_code": false,
+                "is_5xx_code": false,
+                "is_broken": false,
+                "is_www": false,
+                "is_https": true,
+                "is_http": false
+              },
+              "resource_errors": {
+                "errors": null,
+                "warnings": null
+              },
+              "content_encoding": null,
+              "media_type": null,
+              "accept_type": "stylesheet",
+              "server": "nginx",
+              "last_modified": {
+                "header": null,
+                "sitemap": null,
+                "meta_tag": null
+              }
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

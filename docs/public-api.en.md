@@ -15,7 +15,7 @@ Content Intelligence isn't part of `/api/v1`: starting an analysis or changing a
 
 ## Authentication
 
-Create a key under **Account → API keys** (`/profile?tab=api-keys`). The full key is shown **exactly once**, so copy it right away. Afterwards, only its prefix is visible. You can hold up to ten active keys and revoke any of them at any time. A revoked key stops working immediately.
+Create a key under **Account → API keys** (`/settings/profile?tab=api-keys`). The full key is shown **exactly once**, so copy it right away. Afterwards, only its prefix is visible. You can hold up to ten active keys and revoke any of them at any time. A revoked key stops working immediately.
 
 Send the key as a bearer token on every request:
 

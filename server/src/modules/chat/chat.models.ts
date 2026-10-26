@@ -9,6 +9,12 @@
 import mongoose, { type InferSchemaType } from 'mongoose';
 import { SUPPORTED_LOCALES } from '../../shared/i18n/locales.js';
 export const CHAT_TITLE_MAX_CHARS = 120;
+/**
+ * Version of the deterministic title builder a conversation's title came
+ * from. Older conversations (0 / missing) are retitled from their stored
+ * first message the next time the list is read.
+ */
+export const CHAT_TITLE_VERSION = 1;
 const chatConversationSchema = new mongoose.Schema({
     // Better Auth user id (ObjectId-compatible hex) — string, matching the
     // other account-scoped Mongo docs.
@@ -17,6 +23,7 @@ const chatConversationSchema = new mongoose.Schema({
     siteId: { type: mongoose.Schema.Types.ObjectId, ref: 'Site', default: null },
     // Derived from the first user message (≤120 chars); empty until then.
     title: { type: String, default: '', maxlength: CHAT_TITLE_MAX_CHARS },
+    titleVersion: { type: Number, default: 0 },
     locale: { type: String, required: true },
     lastMessageAt: { type: Date, required: true },
     messageCount: { type: Number, required: true, default: 0 },
@@ -56,7 +63,7 @@ const chatMessageSchema = new mongoose.Schema({
     role: { type: String, enum: ['user', 'assistant'] as const, required: true },
     status: {
         type: String,
-        enum: ['complete', 'error', 'aborted'] as const,
+        enum: ['complete', 'incomplete', 'error', 'aborted'] as const,
         required: true,
         default: 'complete',
     },

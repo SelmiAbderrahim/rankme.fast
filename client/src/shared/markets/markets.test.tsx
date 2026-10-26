@@ -7,7 +7,7 @@ import { beforeEach, describe, expect, it, vi } from 'vitest';
 import common from '@shared/i18n/locales/en/common.json';
 
 const mockedApiClient = vi.hoisted(() => vi.fn());
-vi.mock('@shared/api/client', () => ({ apiClient: mockedApiClient }));
+vi.mock('@shared/api/client', async () => ({ ...await vi.importActual<typeof import('@shared/api/client')>('@shared/api/client'), apiClient: mockedApiClient }));
 
 import { fetchMarketCatalog } from './api';
 import { CountryCombobox } from './CountryCombobox';
@@ -47,6 +47,12 @@ describe('market catalog API and hook', () => {
     mockedApiClient.mockResolvedValue(catalog());
     await expect(fetchMarketCatalog('seo')).resolves.toEqual(catalog());
     expect(mockedApiClient).toHaveBeenCalledWith('/market-catalogs/seo', {});
+  });
+
+  it('accepts the rank-specific catalogue without changing other surface contracts', async () => {
+    mockedApiClient.mockResolvedValue(catalog('serp'));
+    await expect(fetchMarketCatalog('serp')).resolves.toEqual(catalog('serp'));
+    expect(mockedApiClient).toHaveBeenCalledWith('/market-catalogs/serp', {});
   });
 
   it('forwards cancellation and rejects malformed payloads', async () => {

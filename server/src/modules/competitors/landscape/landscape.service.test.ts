@@ -178,6 +178,17 @@ describe('landscape preview and start', () => {
     ).rejects.toMatchObject({ status: 404 });
   });
 
+  it('never compares the site with a stored row that names the site itself', async () => {
+    const siteId = await seedSite();
+    const [own] = await db()
+      .insert(competitorProfiles)
+      .values({ accountId: ACCOUNT, siteId, origin: 'https://www.example.com', registrableDomain: 'www.example.com', source: 'manual', status: 'active' })
+      .returning({ id: competitorProfiles.id });
+    await expect(
+      previewLandscape({ competitorProfileIds: [own!.id] }, { accountId: ACCOUNT, siteId }, { db: db() }),
+    ).rejects.toMatchObject({ status: 404 });
+  });
+
   it('permits only one concurrent active fingerprint', async () => {
     const siteId = await seedSite();
     const profiles = await seedProfiles(siteId, 1);

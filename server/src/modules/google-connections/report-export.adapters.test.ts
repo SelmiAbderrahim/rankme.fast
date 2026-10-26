@@ -225,6 +225,8 @@ describe('Google report-export helpers', () => {
       url: 'https://example.test',
       domain: 'example.test',
       displayName: '',
+      defaultMarket: null,
+      localBusiness: false,
       paused: false,
       pausedAt: null,
       createdAt: capturedAt.toISOString(),
@@ -324,6 +326,36 @@ describe('GSC search report adapter', () => {
     expect(queryOnly.document.blocks.filter((block) => block.type === 'table')).toHaveLength(1);
     expect(queryOnly.document.blocks.some((block) => block.type === 'kpi_group')).toBe(false);
     expect(queryOnly.document.blocks.some((block) => block.type === 'time_series')).toBe(false);
+  });
+});
+
+describe('GSC exports for a period without impressions', () => {
+  it('writes no CTR or position (null), never zero, in totals, tables and the time series', async () => {
+    const db = getTestDb();
+    await db.update(gscSearchAnalytics).set({ impressions: 0, clicks: 0, ctr: 0, position: 0 });
+    await db.update(gscSearchAppearance).set({ impressions: 0, clicks: 0, ctr: 0, position: 0 });
+    const search = adapter('google.gsc_search');
+    const result = await search.compose(compose(search, {}));
+    const totals = result.document.blocks.find((block) => block.type === 'kpi_group');
+    if (!totals || totals.type !== 'kpi_group') throw new Error('GSC totals unavailable');
+    expect(totals.items.find((entry) => entry.id === 'ctr')!.value).toEqual({ type: 'null', value: null });
+    expect(totals.items.find((entry) => entry.id === 'position')!.value).toEqual({ type: 'null', value: null });
+    const tables = result.document.blocks.filter((block) => block.type === 'table');
+    expect(tables.length).toBeGreaterThan(0);
+    for (const table of tables) {
+      if (table.type !== 'table') continue;
+      for (const row of table.rows) expect(row.cells.slice(-2).map((cell) => cell.value)).toEqual([{ type: 'null', value: null }, { type: 'null', value: null }]);
+    }
+    const series = result.document.blocks.find((block) => block.type === 'time_series');
+    if (!series || series.type !== 'time_series') throw new Error('GSC time series unavailable');
+    for (const id of ['ctr', 'position']) {
+      expect(series.series.find((entry) => entry.id === id)!.points.every((point) => point.value === null)).toBe(true);
+    }
+    const generative = adapter('google.gsc_generative_appearance');
+    const appearance = await generative.compose(compose(generative, {}));
+    const appearanceTable = appearance.document.blocks.find((block) => block.type === 'table');
+    if (!appearanceTable || appearanceTable.type !== 'table') throw new Error('Appearance table unavailable');
+    for (const row of appearanceTable.rows) expect(row.cells.slice(-2).map((cell) => cell.value)).toEqual([{ type: 'null', value: null }, { type: 'null', value: null }]);
   });
 });
 

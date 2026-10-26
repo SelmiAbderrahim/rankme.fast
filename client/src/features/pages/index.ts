@@ -26,6 +26,7 @@ export {
 export { pagesReducer, resetPagesState } from './store/slice';
 export {
   abortPagesRequests,
+  enterPagesSite,
   loadPagesDetail,
   loadPagesList,
   refreshPages,

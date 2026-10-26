@@ -1,6 +1,5 @@
 {
-  "eyebrow": "Stored-observation grouping",
-  "title": "Keyword clustering by SERP overlap",
+  "title": "SERP overlap groups",
   "subtitle": "Group tracked keywords that return the same pages on Google. Every grouping is computed from rank checks you have already paid for — no new search is run.",
   "site": {
     "ranksLink": "Open rank tracking"
@@ -11,30 +10,36 @@
   },
   "scope": {
     "title": "Keywords in this run",
-    "description": "{{count}} keywords selected. Every selected keyword must have a usable recent Google result.",
+    "description_one": "{{count}} keyword selected. Every selected keyword must have a usable recent Google result.",
     "empty": "This site has no active Google keywords yet.",
-    "minimum": "Select at least two keywords before previewing the run."
+    "minimum": "Select at least two keywords before previewing the run.",
+    "description_zero": "{{count}} keywords selected. Every selected keyword must have a usable recent Google result.",
+    "description_two": "{{count}} keywords selected. Every selected keyword must have a usable recent Google result.",
+    "description_few": "{{count}} keywords selected. Every selected keyword must have a usable recent Google result.",
+    "description_many": "{{count}} keywords selected. Every selected keyword must have a usable recent Google result.",
+    "description_other": "{{count}} keywords selected. Every selected keyword must have a usable recent Google result."
   },
   "newRun": {
     "title": "Prepare a clustering run",
-    "description": "Preview the keywords that qualify and your allowance before you spend one run.",
+    "description": "Preview the keywords that qualify before you start a run.",
     "storedOnly": "Clustering reads stored results only. No search is sent to any provider.",
-    "unitLabel": "Allowance",
-    "unitValue": "{{count}} clustering run",
     "scopeLabel": "Keywords ready",
-    "scopeValue": "{{count}} tracked keywords qualify",
+    "scopeValue_one": "{{count}} tracked keyword qualifies",
     "method": "Two keywords are grouped when they share at least {{shared}} of their top {{window}} results, from a rank check in the last {{days}} days.",
-    "remaining": "{{count}} runs remain before this run.",
     "labelingIncluded": "Optional AI group labels are included in this run and never change cluster membership.",
     "preview": "Preview run",
     "previewing": "Checking stored results…",
     "confirm": "Start clustering run",
     "starting": "Starting…",
-    "cancel": "Cancel"
+    "cancel": "Cancel",
+    "scopeValue_zero": "{{count}} tracked keywords qualify",
+    "scopeValue_two": "{{count}} tracked keywords qualify",
+    "scopeValue_few": "{{count}} tracked keywords qualify",
+    "scopeValue_many": "{{count}} tracked keywords qualify",
+    "scopeValue_other": "{{count}} tracked keywords qualify"
   },
   "states": {
     "ranksCta": "Run a rank check",
-    "planCta": "See plans",
     "emptyRuns": {
       "title": "No saved runs yet",
       "body": "Preview a new run to see which tracked keywords qualify."
@@ -45,11 +50,7 @@
     },
     "notEnoughKeywords": {
       "title": "Not enough recent rank checks",
-      "body": "At least two tracked keywords need a rank check from the last seven days. No run was spent."
-    },
-    "cap": {
-      "title": "Monthly run allowance reached",
-      "body": "This request was not started. Wait for the next allowance period or review available plans."
+      "body": "Fewer than two tracked keywords have a usable rank check from the last seven days. No run was spent."
     },
     "disabled": {
       "title": "Clustering runs are unavailable",
@@ -70,6 +71,11 @@
     "running": {
       "title": "Grouping keywords",
       "body": "The worker is comparing stored results and naming the groups. This view updates automatically."
+    },
+    "keywordsCta": "Track keywords",
+    "noTrackedKeywords": {
+      "title": "Track keywords first",
+      "body": "Clustering groups the Google keywords you track for this site. Add keywords on the Keywords tab, run a rank check, then come back to preview a run."
     }
   },
   "status": {
@@ -79,20 +85,34 @@
     "failed": "Failed"
   },
   "runs": {
-    "summary": "{{clusters}} groups from {{keywords}} keywords",
+    "summary": "Groups: {{clusters}} · source keywords: {{keywords}}",
     "requestedAt": "Requested {{date}}",
     "open": "Open run"
   },
   "blocked": {
-    "title": "{{count}} keywords could not take part",
-    "body": "These tracked keywords have no usable stored result yet. Run a rank check and they will qualify for the next run.",
-    "more": "and {{count}} more",
+    "title_one": "{{count}} keyword could not take part",
+    "body": "These tracked keywords are left out of this run. Run a rank check and they will qualify for the next run.",
+    "more_one": "and {{count}} more",
     "observedAt": "last checked {{date}}",
     "reason": {
       "missing": "Never checked",
       "stale": "Check too old",
-      "empty": "No stored results"
-    }
+      "empty": "No stored results",
+      "check_too_old": "Check too old",
+      "no_serp_snapshot": "Full results page not saved",
+      "never_checked": "Never checked",
+      "failed_last_check": "Last check failed"
+    },
+    "more_zero": "and {{count}} more",
+    "more_two": "and {{count}} more",
+    "more_few": "and {{count}} more",
+    "more_many": "and {{count}} more",
+    "more_other": "and {{count}} more",
+    "title_zero": "{{count}} keywords could not take part",
+    "title_two": "{{count}} keywords could not take part",
+    "title_few": "{{count}} keywords could not take part",
+    "title_many": "{{count}} keywords could not take part",
+    "title_other": "{{count}} keywords could not take part"
   },
   "results": {
     "title": "Groups",
@@ -110,15 +130,15 @@
   "cluster": {
     "unlabeled": "Unnamed group",
     "aiSuggestion": "AI suggestion",
-    "grouped": "{{count}} keywords",
+    "grouped_one": "{{count}} keyword",
     "singleton": "Not grouped",
-    "commonCore": "{{count}} results shared by every keyword",
+    "commonCore_one": "{{count}} result shared by every keyword",
     "noCommonCore": "No single result is shared by every keyword in this group",
     "showEvidence": "Show overlap",
     "hideEvidence": "Hide overlap",
     "pivot": "Reference",
-    "pivotWindow": "{{count}} stored results compared",
-    "sharedWithPivot": "{{count}} shared with the reference keyword",
+    "pivotWindow_one": "{{count}} stored result compared",
+    "sharedWithPivot_one": "{{count}} shared with the reference keyword",
     "evidenceTitle": "Which results overlap",
     "evidenceBody": "Each keyword below is grouped because it shares these stored result URLs with the reference keyword.",
     "singletonEvidence": "This keyword shared too few results with any other tracked keyword to be grouped.",
@@ -126,6 +146,52 @@
       "keyword": "Keyword",
       "observedAt": "Result observed",
       "sharedUrls": "Overlap"
-    }
+    },
+    "sharedWithPivot_zero": "{{count}} shared with the reference keyword",
+    "sharedWithPivot_two": "{{count}} shared with the reference keyword",
+    "sharedWithPivot_few": "{{count}} shared with the reference keyword",
+    "sharedWithPivot_many": "{{count}} shared with the reference keyword",
+    "sharedWithPivot_other": "{{count}} shared with the reference keyword",
+    "grouped_zero": "{{count}} keywords",
+    "grouped_two": "{{count}} keywords",
+    "grouped_few": "{{count}} keywords",
+    "grouped_many": "{{count}} keywords",
+    "grouped_other": "{{count}} keywords",
+    "commonCore_zero": "{{count}} results shared by every keyword",
+    "commonCore_two": "{{count}} results shared by every keyword",
+    "commonCore_few": "{{count}} results shared by every keyword",
+    "commonCore_many": "{{count}} results shared by every keyword",
+    "commonCore_other": "{{count}} results shared by every keyword",
+    "pivotWindow_zero": "{{count}} stored results compared",
+    "pivotWindow_two": "{{count}} stored results compared",
+    "pivotWindow_few": "{{count}} stored results compared",
+    "pivotWindow_many": "{{count}} stored results compared",
+    "pivotWindow_other": "{{count}} stored results compared"
+  },
+  "eligibility": {
+    "needCheck_zero": "{{count}} of {{total}} keywords need a fresh rank check.",
+    "needCheck_one": "{{count}} of {{total}} keywords needs a fresh rank check.",
+    "needCheck_two": "{{count}} of {{total}} keywords need a fresh rank check.",
+    "needCheck_few": "{{count}} of {{total}} keywords need a fresh rank check.",
+    "needCheck_many": "{{count}} of {{total}} keywords need a fresh rank check.",
+    "needCheck_other": "{{count}} of {{total}} keywords need a fresh rank check.",
+    "ready_zero": "{{count}} are ready.",
+    "ready_one": "{{count}} is ready.",
+    "ready_two": "{{count}} are ready.",
+    "ready_few": "{{count}} are ready.",
+    "ready_many": "{{count}} are ready.",
+    "ready_other": "{{count}} are ready.",
+    "minimum_zero": "Clustering needs at least {{count}} ready keywords.",
+    "minimum_one": "Clustering needs at least {{count}} ready keyword.",
+    "minimum_two": "Clustering needs at least {{count}} ready keywords.",
+    "minimum_few": "Clustering needs at least {{count}} ready keywords.",
+    "minimum_many": "Clustering needs at least {{count}} ready keywords.",
+    "minimum_other": "Clustering needs at least {{count}} ready keywords.",
+    "title": "Not enough keywords are ready",
+    "snapshotNote": "Some recent checks saved only the position, not the full results page. Clustering needs a rank check that saves the full results page."
+  },
+  "crossLink": {
+    "body": "Want topics from keywords you've researched, not only the ones you track?",
+    "cta": "Open AI keyword topics"
   }
 }

@@ -16,7 +16,7 @@ import {
 } from '../../../shared/testing/mongo.js';
 import { AuditRun } from '../../audits/audit-run.model.js';
 import { ReportSnapshot } from '../../audits/report-snapshot.model.js';
-import { auditActionAdapter } from './audit.adapter.js';
+import { AUDIT_EVIDENCE_FRESH_DAYS, auditActionAdapter } from './audit.adapter.js';
 
 const HOSTILE_META = 'hostile-vendor-meta-SECRET-excerpt';
 
@@ -172,7 +172,9 @@ describe('auditActionAdapter', () => {
         observation: expect.objectContaining({
           sourceKind: 'provider_observation',
           observedAt: '2026-07-01T12:00:00.000Z',
-          freshness: 'fresh',
+          // Far older than the freshness window, so never labelled fresh.
+          freshness: 'stale',
+          freshUntil: '2026-07-31T12:00:00.000Z',
         }),
       },
     ]);
@@ -326,6 +328,26 @@ describe('auditActionAdapter', () => {
     expect(result.actions).toHaveLength(1);
     expect(Date.parse(result.actions[0]!.observedAt)).not.toBeNaN();
     expect(result.actions[0]!.lastVerifiedAt).toBe(result.actions[0]!.observedAt);
+  });
+
+  it('labels audit evidence fresh inside the window and stale past it', async () => {
+    const day = 86_400_000;
+    const freshnessFor = async (ageDays: number) => {
+      const { accountId, siteId } = ids();
+      await seedRun({
+        accountId,
+        siteId,
+        finishedAt: new Date(Date.now() - ageDays * day),
+        findings: [{ ruleId: 'r1', bucket: 'fix-now', severity: 'critical' }],
+      });
+      const result = await auditActionAdapter({ accountId, siteId, db: unusedDb });
+      return result.actions[0]!.evidence[0]!.observation.freshness;
+    };
+    expect(AUDIT_EVIDENCE_FRESH_DAYS).toBe(30);
+    expect(await freshnessFor(1)).toBe('fresh');
+    expect(await freshnessFor(AUDIT_EVIDENCE_FRESH_DAYS - 1)).toBe('fresh');
+    expect(await freshnessFor(AUDIT_EVIDENCE_FRESH_DAYS + 1)).toBe('stale');
+    expect(await freshnessFor(40)).toBe('stale');
   });
 
   it('dedupes duplicate ruleIds and tolerates raw snapshots without findings', async () => {

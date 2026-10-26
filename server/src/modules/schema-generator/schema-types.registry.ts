@@ -1,5 +1,5 @@
 /**
- * Supported schema.org type registry — frozen version `1`.
+ * Supported schema.org type registry — frozen version `2`.
  *
  *
  * This module is DATA, not code paths. Every consumer (the conformance layer,
@@ -11,14 +11,35 @@
  * `factFamily()`, which declares the indexed template; the bracket notation
  * is presentational.
  */
-/** Registry revision persisted on every generation so an old verdict is never restated. */
-export const SCHEMA_REGISTRY_VERSION = '1';
+/**
+ * Registry revision persisted on every generation so an old verdict is never
+ * restated. `2`: `WebSite.name` / `Organization.name` are deterministic, filled
+ * from {@link BRAND_NAME_FACT_FAMILIES} in order.
+ */
+export const SCHEMA_REGISTRY_VERSION = '2';
+/**
+ * Name precedence for a site or organization: the page's `og:site_name`, then a
+ * name already declared by an `Organization` / `WebSite` node in the page's
+ * JSON-LD, then the brand part of the `<title>`, then the name the user gave
+ * the site, then the bare domain. The first fact present wins and its id is the
+ * provenance shown to the user.
+ */
+export const BRAND_NAME_FACT_FAMILIES = [
+    'page.ogSiteName',
+    'page.jsonLdName',
+    'page.titleBrand',
+    'site.label',
+    'site.domain',
+] as const;
 /** Maximum top-level schema.org properties in any supported registry type. */
 export const MAX_SCHEMA_PROPERTIES = 20;
 /**
  * The seven v1 types. `Product` / `Review` / `Recipe` / `Event` / `JobPosting`
  * are deliberately absent: their required properties have no stored evidence
  * source, so shipping them would force fabrication.
+ *
+ * This is also the picker order. Types that carry a `richResults` note (FAQPage,
+ * HowTo) come after every type without one; an invariant test pins it.
  */
 export const SUPPORTED_SCHEMA_TYPES = [
     'WebPage',
@@ -45,10 +66,18 @@ export interface SchemaPropertyDefinition {
     /** Marks a property with no stored evidence source anywhere in the product. */
     readonly neverFilled?: true;
 }
+/**
+ * What Google Search does with a type's rich result today. `limited` = shown
+ * only for some sites; `retired` = no longer shown. Valid markup is still
+ * emitted either way. Presentational only: it never changes a property set or a
+ * conformance verdict, so the registry version is unchanged.
+ */
+export type SchemaRichResultsNote = 'limited' | 'retired';
 export interface SchemaTypeDefinition {
     readonly type: SupportedSchemaType;
     /** Declaration order IS the emitted property order. */
     readonly properties: readonly SchemaPropertyDefinition[];
+    readonly richResults?: SchemaRichResultsNote;
 }
 /**
  * Property names whose required evidence does not exist in this product. A
@@ -93,7 +122,7 @@ const WEB_PAGE: SchemaTypeDefinition = {
 const WEB_SITE: SchemaTypeDefinition = {
     type: 'WebSite',
     properties: [
-        { name: 'name', class: 'required', fill: 'ai-selected', evidenceFactIds: ['site.label', 'site.domain'] },
+        { name: 'name', class: 'required', fill: 'deterministic', evidenceFactIds: BRAND_NAME_FACT_FAMILIES },
         { name: 'url', class: 'required', fill: 'deterministic', evidenceFactIds: ['site.origin'] },
         {
             name: 'description',
@@ -107,7 +136,7 @@ const WEB_SITE: SchemaTypeDefinition = {
 const ORGANIZATION: SchemaTypeDefinition = {
     type: 'Organization',
     properties: [
-        { name: 'name', class: 'required', fill: 'ai-selected', evidenceFactIds: ['site.label', 'site.domain'] },
+        { name: 'name', class: 'required', fill: 'deterministic', evidenceFactIds: BRAND_NAME_FACT_FAMILIES },
         { name: 'url', class: 'required', fill: 'deterministic', evidenceFactIds: ['site.origin'] },
         {
             name: 'description',
@@ -170,6 +199,9 @@ const BREADCRUMB_LIST: SchemaTypeDefinition = {
 };
 const FAQ_PAGE: SchemaTypeDefinition = {
     type: 'FAQPage',
+    // Google shows FAQ rich results only for well-known, authoritative
+    // government and health sites (Search Central, August 2023).
+    richResults: 'limited',
     properties: [
         {
             name: 'mainEntity',
@@ -181,6 +213,8 @@ const FAQ_PAGE: SchemaTypeDefinition = {
 };
 const HOW_TO: SchemaTypeDefinition = {
     type: 'HowTo',
+    // Google no longer shows HowTo rich results (Search Central, announced August 2023).
+    richResults: 'retired',
     properties: [
         { name: 'name', class: 'required', fill: 'ai-selected', evidenceFactIds: ['page.h1', 'page.title'] },
         { name: 'step', class: 'required', fill: 'ai-selected', evidenceFactIds: ['page.h2'] },
@@ -226,4 +260,32 @@ export function recommendedProperties(type: SupportedSchemaType): readonly Schem
 }
 export function isSupportedSchemaType(value: string): value is SupportedSchemaType {
     return (SUPPORTED_SCHEMA_TYPES as readonly string[]).includes(value);
+}
+/**
+ * Facts the user may supply for an omitted property. The value is the user's
+ * own statement, emitted verbatim with the provenance "provided by you"; the
+ * generator never invents it. `text` is bounded prose, `language` a BCP 47 tag,
+ * `date` an ISO 8601 date or date-time, `url` a public https address. Every
+ * other property stays evidence-only.
+ */
+export const USER_FACT_KINDS = {
+    name: 'text',
+    headline: 'text',
+    description: 'longText',
+    inLanguage: 'language',
+    datePublished: 'date',
+    dateModified: 'date',
+    logo: 'url',
+    image: 'url',
+    primaryImageOfPage: 'url',
+} as const;
+export type UserFactProperty = keyof typeof USER_FACT_KINDS;
+export const USER_FACT_PROPERTIES = Object.keys(USER_FACT_KINDS) as UserFactProperty[];
+/** Fact family of a user-supplied value; the property name follows the dot. */
+export const USER_FACT_FAMILY = 'user';
+/** The user-suppliable properties of one type, in registry order. */
+export function userSuppliableProperties(type: SupportedSchemaType): UserFactProperty[] {
+    return SCHEMA_TYPE_REGISTRY[type].properties
+        .map((property) => property.name)
+        .filter((name): name is UserFactProperty => name in USER_FACT_KINDS);
 }

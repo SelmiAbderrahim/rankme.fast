@@ -2,18 +2,17 @@
   "title": "Geogrid-Tracking lokaler Platzierungen",
   "description": "Sehen Sie, wo Ihr Eintrag im Local Pack über ein Koordinatenraster steht. Ein Scan deckt das ganze Raster ab und kostet einen Geogrid-Scan.",
   "locked": {
-    "body": "Geogrid-Scans gibt es in den Tarifen Pro und Agency.",
-    "cta": "Tarife ansehen"
+    "body": "Geogrid-Scans gibt es in den Tarifen Pro und Agency."
   },
   "form": {
     "keyword": "Verfolgtes Keyword",
     "keywordPlaceholder": "Keyword wählen",
-    "coordinateHelp": "Geben Sie den Mittelpunkt als Zahlen ein. Es gibt keine Kartenauswahl — wir kaufen keine Kartenkacheln.",
+    "coordinateHelp": "Geben Sie den Mittelpunkt als Breiten- und Längengrad in Dezimalgrad ein. So finden Sie ihn: Klicken Sie in Google Maps mit der rechten Maustaste auf Ihr Unternehmen und dann auf die Zahlen oben im Menü, um sie zu kopieren.",
     "latitude": "Breitengrad des Mittelpunkts",
     "longitude": "Längengrad des Mittelpunkts",
     "spacing": "Abstand zwischen den Punkten",
     "spacingOption": "{{km}} km",
-    "spacingCustom": "Eigener Abstand (m)",
+    "spacingCustom": "Eigener Abstand in km",
     "size": "Rastergröße",
     "sizeOption": "{{size}} mal {{size}} ({{cells}} Punkte)",
     "zoom": "Kartenzoom",
@@ -21,11 +20,16 @@
     "previewing": "Wird geschätzt…",
     "errors": {
       "keyword": "Wählen Sie zuerst ein verfolgtes Keyword.",
-      "latitude": "Der Breitengrad muss zwischen -{{max}} und {{max}} liegen.",
-      "longitude": "Der Längengrad muss zwischen -180 und 180 liegen.",
-      "spacing": "Der Abstand muss zwischen {{min}} und {{max}} Metern liegen, in Schritten von {{step}}.",
-      "zoom": "Der Zoom muss zwischen {{min}} und {{max}} liegen."
-    }
+      "latitude": "Geben Sie einen Breitengrad zwischen -{{max}} und {{max}} ein.",
+      "longitude": "Geben Sie einen Längengrad zwischen -180 und 180 ein.",
+      "spacing": "Wählen Sie einen Abstand zwischen {{min}} und {{max}} km, in Schritten von {{step}} km.",
+      "zoom": "Geben Sie eine Zoomstufe zwischen {{min}} und {{max}} ein."
+    },
+    "zoomHelp": "Wie weit Google Maps an jedem Punkt hineinzoomt: {{min}} zeigt eine große Region, {{max}} wenige Straßen. Höhere Werte entsprechen einer Suche aus der Nähe; {{default}} ist Straßenebene.",
+    "useLastCenter": "Mittelpunkt des letzten Scans verwenden",
+    "keywordEmpty": "Für diese Website werden noch keine Keywords verfolgt. Ein Geogrid-Scan prüft genau ein verfolgtes Keyword.",
+    "keywordEmptyCta": "Keyword verfolgen",
+    "spacingCustomOption": "Eigener Wert"
   },
   "preview": {
     "title": "Was dieser Scan kostet",
@@ -96,9 +100,7 @@
     "failedRefunded": "Kein Punkt hat geantwortet, deshalb haben wir den Scan Ihrem Kontingent gutgeschrieben."
   },
   "gates": {
-    "cap": "Ihre Geogrid-Scans sind aufgebraucht",
     "killSwitch": "Geogrid-Scans sind pausiert",
-    "notOnPlan": "Nicht in Ihrem Tarif",
     "notFound": "Nicht gefunden",
     "rateLimited": "Zu viele Anfragen",
     "invalid": "Prüfen Sie die Rastereinstellungen",
@@ -109,5 +111,39 @@
     "loadFailed": "Wir konnten Ihre Geogrid-Scans nicht laden.",
     "previewFailed": "Wir konnten diesen Scan nicht schätzen.",
     "submitFailed": "Wir konnten diesen Scan nicht starten."
+  },
+  "center": {
+    "place": {
+      "label": "Name oder Adresse des Orts",
+      "placeholder": "Hauptstraße 1, Berlin",
+      "hint": "Jede Suche ruft Ihren Anbieter für lokale Einträge einmal auf. Ein Ergebnis auszuwählen sendet keine Anfrage und ändert nichts unter „Lokale SEO“.",
+      "search": "Suchen",
+      "searching": "Suche läuft…",
+      "invalid": "Geben Sie zwischen {{min}} und {{max}} Zeichen ein.",
+      "searchFailed": "Die Suche ist fehlgeschlagen. Versuchen Sie es gleich noch einmal.",
+      "noResults": "Für „{{query}}“ wurden keine Orte mit Kartenstandort gefunden. Versuchen Sie eine vollständigere Adresse oder geben Sie Koordinaten ein.",
+      "resultsLegend_zero": "{{count}} Orte für „{{query}}“. Wählen Sie den Mittelpunkt:",
+      "resultsLegend_one": "{{count}} Ort für „{{query}}“. Wählen Sie den Mittelpunkt:",
+      "resultsLegend_two": "{{count}} Orte für „{{query}}“. Wählen Sie den Mittelpunkt:",
+      "resultsLegend_few": "{{count}} Orte für „{{query}}“. Wählen Sie den Mittelpunkt:",
+      "resultsLegend_many": "{{count}} Orte für „{{query}}“. Wählen Sie den Mittelpunkt:",
+      "resultsLegend_other": "{{count}} Orte für „{{query}}“. Wählen Sie den Mittelpunkt:"
+    },
+    "legend": "Mittelpunkt des Rasters",
+    "mode": {
+      "business": "Mein Unternehmen",
+      "place": "Ort suchen",
+      "coordinates": "Koordinaten eingeben"
+    },
+    "business": {
+      "loading": "Ihr Unternehmen wird geladen…",
+      "loadFailed": "Ihr Unternehmen konnte nicht geladen werden. Suchen Sie einen Ort oder geben Sie Koordinaten ein.",
+      "none": "Für diese Website ist noch kein Unternehmen eingerichtet. Wählen Sie es unter „Lokale SEO“ aus, dann startet das Raster an seinem Standort.",
+      "setUp": "Unternehmen einrichten",
+      "noLocation": "Der Eintrag dieses Unternehmens enthält keinen Kartenstandort. Suchen Sie einen Ort oder geben Sie Koordinaten ein."
+    },
+    "noAddress": "Keine Adresse angegeben",
+    "current": "Das Raster wird zentriert auf",
+    "required": "Wählen Sie einen Mittelpunkt für das Raster."
   }
 }

@@ -8,7 +8,7 @@ import { describe, expect, it, vi } from 'vitest';
 const fetchPublicUrlSafe = vi.hoisted(() => vi.fn());
 vi.mock('../../shared/security/url-safety.js', () => ({ fetchPublicUrlSafe }));
 
-import { createStructuredDataProbe, htmlHasJsonLd } from './structured-data-probe.js';
+import { createStructuredDataProbe, htmlHasJsonLd, htmlHasFaqJsonLd } from './structured-data-probe.js';
 
 const GRAPH_PAGE = `<!doctype html><html><head>
 <script type="application/ld+json">{"@context":"https://schema.org","@graph":[
@@ -18,6 +18,12 @@ const GRAPH_PAGE = `<!doctype html><html><head>
 </head><body></body></html>`;
 
 describe('htmlHasJsonLd', () => {
+  it('recognizes FAQPage and QAPage JSON-LD separately from generic schema', () => {
+    expect(htmlHasFaqJsonLd('<script type="application/ld+json">{"@graph":[{"@type":"Article"},{"@type":["WebPage","https://schema.org/FAQPage"]}]}</script>')).toBe(true);
+    expect(htmlHasFaqJsonLd('<script type="application/ld+json">{"@type":"QAPage"}</script>')).toBe(true);
+    expect(htmlHasFaqJsonLd(GRAPH_PAGE)).toBe(false);
+    expect(htmlHasFaqJsonLd('<script type="text/plain">{"@type":"FAQPage"}</script>')).toBe(false);
+  });
   it('recognises @graph-style documents', () => {
     expect(htmlHasJsonLd(GRAPH_PAGE)).toBe(true);
   });
@@ -56,6 +62,12 @@ describe('htmlHasJsonLd', () => {
 });
 
 describe('createStructuredDataProbe', () => {
+  it('returns FAQ signals from the same fetched HTML', async () => {
+    const probe = createStructuredDataProbe({ fetchHtml: async () => '<script type="application/ld+json">{"@type":"FAQPage"}</script>' });
+    const found = await probe(['https://e.test/faq']);
+    expect(found.has('https://e.test/faq')).toBe(true);
+    expect(found.faqUrls?.has('https://e.test/faq')).toBe(true);
+  });
   it('returns the URLs whose HTML carries JSON-LD, tolerating failed fetches', async () => {
     const fetchHtml = vi.fn(async (url: string) => {
       if (url.endsWith('/boom')) throw new Error('network');

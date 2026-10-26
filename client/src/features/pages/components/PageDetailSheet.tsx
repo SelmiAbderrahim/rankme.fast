@@ -1,3 +1,5 @@
+import { Bdi } from '@shared/components/Bdi';
+import { Link } from 'react-router-dom';
 import { ExternalLink, FileSearch, RotateCcw, X } from 'lucide-react';
 import type { RefObject } from 'react';
 import { useTranslation } from 'react-i18next';
@@ -23,11 +25,15 @@ import {
   TableRow,
 } from '@shared/ui/table';
 import { SAFE_EXTERNAL_REL, safeExternalHref } from '@shared/security/output-encoding';
-import type { PagesCacheEntry, PagesDetailResponse, PagesLoadState } from '../types';
+import type { PageAuditDetail, PagesCacheEntry, PagesDetailResponse, PagesLoadState } from '../types';
 import { formatPagesMetric } from '../formatters';
+import { pagesRowName } from '../formatters';
+import { crawlEvidenceLines, crawlStateLabel } from '../crawlState';
 import { PagesTrendChart } from './PagesTrendChart';
+import { formatBytes, formatDuration } from '@shared/lib/units';
 
 interface PageDetailSheetProps {
+  siteId: string;
   entry: PagesCacheEntry<PagesDetailResponse>;
   loadState: PagesLoadState;
   open: boolean;
@@ -47,6 +53,7 @@ const DETAIL_METRICS = [
 ] as const;
 
 export function PageDetailSheet({
+  siteId,
   entry,
   loadState,
   open,
@@ -75,10 +82,10 @@ export function PageDetailSheet({
       >
         <SheetHeader className="border-b border-border pe-14">
           <SheetTitle className="break-words text-start">
-            {page?.title || page?.displayUrl || t('detail.title')}
+            <Bdi dominant>{page ? pagesRowName(page) : t('detail.title')}</Bdi>
           </SheetTitle>
           <SheetDescription className="break-all text-start">
-            {page?.url ?? t('detail.description')}
+            <Bdi>{page?.url ?? t('detail.description')}</Bdi>
           </SheetDescription>
           <SheetClose asChild>
             <Button
@@ -135,14 +142,11 @@ export function PageDetailSheet({
                         ? t(`sources.${page.performanceSource}.short`)
                         : t('sources.unmeasured')}
                     </Badge>
-                    <Badge variant="outline">
-                      {page.isIndexable === null
-                        ? t('indexability.unknown')
-                        : page.isIndexable
-                          ? t('indexability.indexable')
-                          : t('indexability.nonIndexable')}
-                    </Badge>
+                    <Badge variant="outline" data-testid="page-crawl-state">{crawlStateLabel(t, page)}</Badge>
                   </div>
+                  {crawlEvidenceLines(t, page).length > 0 ? <ul className="list-disc space-y-1 ps-5 text-sm text-muted-foreground" data-testid="page-crawl-evidence">
+                    {crawlEvidenceLines(t, page).map((line) => <li key={line} className="break-words"><Bdi>{line}</Bdi></li>)}
+                  </ul> : null}
                   {page.nonIndexableReason ? (
                     <p className="break-words text-sm text-muted-foreground">
                       {t('detail.crawlReason', { reason: page.nonIndexableReason })}
@@ -171,6 +175,8 @@ export function PageDetailSheet({
                   </dl>
                 </CardContent>
               </Card>
+
+              {detail.audit !== undefined ? <PageAuditCard audit={detail.audit} siteId={siteId} locale={locale} /> : null}
 
               <Card>
                 <CardHeader>
@@ -201,17 +207,26 @@ export function PageDetailSheet({
                       ? t('detail.keywordsTitle')
                       : t('detail.queriesTitle')}
                   </CardTitle>
-                  <p className="text-sm text-muted-foreground">
-                    {t('detail.associatedCount', {
-                      shown: detail.associated.rows.length,
-                      total: detail.associated.total,
-                    })}
-                    {detail.associated.truncated ? ` ${t('detail.truncated')}` : ''}
-                  </p>
+                  {page.associatedQueryState === 'unavailable' ? null : (
+                    <p className="text-sm text-muted-foreground">
+                      {t('detail.associatedCount', {
+                        count: detail.associated.total,
+                        shown: detail.associated.rows.length,
+                        total: detail.associated.total,
+                      })}
+                      {detail.associated.truncated ? ` ${t('detail.truncated')}` : ''}
+                    </p>
+                  )}
                 </CardHeader>
                 <CardContent className="min-w-0">
                   {detail.associated.rows.length === 0 ? (
-                    <p className="text-sm text-muted-foreground">{t('detail.associatedEmpty')}</p>
+                    <p className="text-sm text-muted-foreground" data-testid="page-queries-empty">
+                      {page.associatedQueryState === 'anonymized'
+                        ? t('queries.anonymizedHelp')
+                        : page.associatedQueryState === 'unavailable'
+                          ? t('queries.unavailableHelp')
+                          : t('detail.associatedEmpty')}
+                    </p>
                   ) : (
                     <Table>
                       <caption className="sr-only">{t('detail.associatedCaption')}</caption>
@@ -231,7 +246,7 @@ export function PageDetailSheet({
                         {detail.associated.rows.map((row, index) => (
                           <TableRow key={`${row.query}-${index}`}>
                             <TableCell className="max-w-64 whitespace-normal break-words">
-                              {row.query}
+                              <Bdi>{row.query}</Bdi>
                             </TableCell>
                             <TableCell dir="ltr">
                               {formatPagesMetric(locale, 'averagePosition', row.position)
@@ -287,5 +302,92 @@ export function PageDetailSheet({
         </div>
       </SheetContent>
     </Sheet>
+  );
+}
+
+const AUDIT_FACTS = ['clickDepth', 'inboundInternalLinks', 'pageSizeBytes', 'serverResponseMs'] as const;
+
+/**
+ * "From the latest audit": the crawl facts stored for
+ * this page and the open findings that list it, each linking to the report.
+ *
+ * data-testid contract:
+ *   - page-audit-card      the card
+ *   - page-audit-facts     the facts list
+ *   - page-audit-issue     one open finding
+ *   - page-audit-no-issues the "nothing open" line
+ */
+function PageAuditCard({
+  audit,
+  siteId,
+  locale,
+}: {
+  audit: PageAuditDetail | null;
+  siteId: string;
+  locale: string;
+}) {
+  const { t } = useTranslation(['pages', 'report']);
+  const value = (fact: (typeof AUDIT_FACTS)[number], raw: number): string => {
+    if (fact === 'pageSizeBytes') return formatBytes(raw, locale);
+    if (fact === 'serverResponseMs') return formatDuration(raw, locale);
+    return new Intl.NumberFormat(locale).format(raw);
+  };
+  return (
+    <Card data-testid="page-audit-card">
+      <CardHeader>
+        <CardTitle className="text-base">{t('detail.audit.title')}</CardTitle>
+      </CardHeader>
+      <CardContent className="flex min-w-0 flex-col gap-4">
+        {audit === null ? (
+          <p className="text-sm text-muted-foreground">{t('detail.audit.notCrawled')}</p>
+        ) : (
+          <>
+            {AUDIT_FACTS.some((fact) => audit.facts[fact] !== undefined) ? (
+              <dl className="grid grid-cols-2 gap-3 sm:grid-cols-4" data-testid="page-audit-facts">
+                {AUDIT_FACTS.flatMap((fact) => {
+                  const raw = audit.facts[fact];
+                  return raw === undefined
+                    ? []
+                    : [
+                        <div key={fact} className="min-w-0">
+                          <dt className="text-xs text-muted-foreground">{t(`detail.audit.facts.${fact}`)}</dt>
+                          <dd className="break-words font-medium tabular-nums">{value(fact, raw)}</dd>
+                        </div>,
+                      ];
+                })}
+              </dl>
+            ) : null}
+            <div className="flex min-w-0 flex-col gap-2">
+              <h3 className="text-sm font-semibold">{t('detail.audit.issuesTitle')}</h3>
+              {audit.issues.length === 0 ? (
+                <p className="text-sm text-muted-foreground" data-testid="page-audit-no-issues">
+                  {t('detail.audit.noIssues')}
+                </p>
+              ) : (
+                <ul className="flex flex-col gap-2">
+                  {audit.issues.map((issue) => (
+                    <li
+                      key={issue.ruleId}
+                      className="flex min-w-0 flex-wrap items-center gap-2"
+                      data-testid="page-audit-issue"
+                    >
+                      <Badge variant={issue.bucket === 'fix-now' ? 'destructive' : 'secondary'}>
+                        {t(`report:tabs.${issue.bucket}`)}
+                      </Badge>
+                      <Link
+                        to={`/sites/${encodeURIComponent(siteId)}?tab=report&bucket=${issue.bucket}&finding=${encodeURIComponent(issue.ruleId)}`}
+                        className="min-w-0 break-words text-sm underline underline-offset-4 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+                      >
+                        <Bdi>{issue.title}</Bdi>
+                      </Link>
+                    </li>
+                  ))}
+                </ul>
+              )}
+            </div>
+          </>
+        )}
+      </CardContent>
+    </Card>
   );
 }

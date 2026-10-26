@@ -1,3 +1,4 @@
+import { Bdi } from '@shared/components/Bdi';
 /**
  * One flat bordered card per unified action.
  *
@@ -64,6 +65,9 @@ export function ActionCard({ item, siteId, onReload }: ActionCardProps) {
   // only part of it is shown.
   const shownCount = item.affectedUrls.length;
   const affectedCount = Math.max(item.affectedUrlCount ?? shownCount, shownCount);
+  // The broken-internal-links rule lists the pages that LINK to broken
+  // targets, not the broken targets themselves; say so, matching the report row.
+  const linkSources = item.sourceType === 'audit_finding' && item.sourceId === 'broken-internal-links';
   const transitions = ACTION_ALLOWED_TRANSITIONS[item.state];
   const codeFixPrompt: CodeFixPromptInput | null = item.codeFixPrompt
     ? {
@@ -156,7 +160,7 @@ export function ActionCard({ item, siteId, onReload }: ActionCardProps) {
         <div>
           <button
             type="button"
-            className="text-muted-foreground hover:text-foreground focus-visible:ring-ring inline-flex cursor-pointer items-center gap-1 text-xs focus-visible:ring-2 focus-visible:outline-none"
+            className="text-muted-foreground hover:text-foreground focus-visible:ring-ring inline-flex cursor-pointer items-center gap-1 text-xs focus-visible:ring-2 focus-visible:outline-none max-md:min-h-11"
             aria-expanded={urlsExpanded}
             aria-controls={urlsRegionId}
             onClick={() => setUrlsExpanded((value) => !value)}
@@ -167,15 +171,13 @@ export function ActionCard({ item, siteId, onReload }: ActionCardProps) {
             ) : (
               <ChevronRight aria-hidden="true" className="size-3 rtl:rotate-180" />
             )}
-            {affectedCount === 1
-              ? t('card.affectedOne')
-              : t('card.affectedCount', { count: affectedCount })}
-            {affectedCount > shownCount ? (
-              <span data-testid="action-urls-sample">
-                {' '}
-                {t('card.affectedSample', { shown: shownCount })}
-              </span>
-            ) : null}
+            {linkSources
+              ? affectedCount > shownCount
+                ? t('card.linkSourcesCountSampled', { count: affectedCount, shown: shownCount })
+                : t('card.linkSourcesCount', { count: affectedCount })
+              : affectedCount > shownCount
+                ? t('card.affectedCountSampled', { count: affectedCount, shown: shownCount })
+                : t('card.affectedCount', { count: affectedCount })}
           </button>
           {urlsExpanded ? (
             <ul
@@ -183,12 +185,42 @@ export function ActionCard({ item, siteId, onReload }: ActionCardProps) {
               className="text-muted-foreground mt-1 flex flex-col gap-0.5 ps-4 text-xs"
               data-testid="action-urls-list"
             >
-              {item.affectedUrls.map((url) => (
-                <li key={url} className="break-all">
-                  {url}
-                </li>
-              ))}
+              {item.affectedUrls.map((url) => {
+                const href = safeExternalHref(url);
+                return (
+                  <li key={url} className="break-all">
+                    <Bdi>
+                      {href !== UNSAFE_HREF_PLACEHOLDER ? (
+                        <a
+                          href={href}
+                          target="_blank"
+                          rel="nofollow ugc noopener noreferrer"
+                          className="text-primary underline underline-offset-2"
+                          data-testid="action-url-link"
+                        >
+                          {url}
+                        </a>
+                      ) : (
+                        url
+                      )}
+                    </Bdi>
+                  </li>
+                );
+              })}
             </ul>
+          ) : null}
+          {/* The card carries a bounded sample; the full list (and the broken
+              link targets) live on the source view. */}
+          {urlsExpanded && internalHref && (affectedCount > shownCount || linkSources) ? (
+            <Link
+              to={internalHref}
+              className="text-primary mt-1 inline-block ps-4 text-xs underline underline-offset-2"
+              data-testid="action-urls-see-all"
+            >
+              {linkSources
+                ? t('card.seeLinkTargets', { count: affectedCount })
+                : t('card.seeAllUrls', { count: affectedCount })}
+            </Link>
           ) : null}
         </div>
       ) : (
@@ -206,15 +238,23 @@ export function ActionCard({ item, siteId, onReload }: ActionCardProps) {
             {item.evidence.map((entry) => {
               const external = entry.url ? safeExternalHref(entry.url) : null;
               const linkable = external !== null && external !== UNSAFE_HREF_PLACEHOLDER;
+              const detail = linkable
+                ? (() => {
+                    const url = new URL(external);
+                    if (!url.host) return item.problem;
+                    return url.pathname === '/' ? url.host : `${url.host}${url.pathname}`;
+                  })()
+                : item.problem;
               return (
                 <li key={entry.sourceRef} className="flex flex-wrap items-center gap-2">
                   {/* `sourceRef` is an internal key (e.g. `<auditId>:<ruleId>`)
                       and never user copy: label the evidence by its source
-                      and observation date instead (issue #19). */}
+                      and observation date, with a readable URL when safe. */}
                   <span data-testid="action-evidence-label">
                     {t('card.evidenceLabel', {
                       source: t(`source.${item.sourceType}`),
                       date: formatDate(entry.observation.observedAt),
+                      detail,
                     })}
                   </span>
                   <StatusChip
@@ -297,6 +337,11 @@ export function ActionCard({ item, siteId, onReload }: ActionCardProps) {
           ) : null}
         </div>
       </div>
+      {item.retest.available && freshness === 'stale' ? (
+        <p className="text-muted-foreground text-xs" data-testid="action-stale-retest-hint">
+          {t('card.staleRetestHint')}
+        </p>
+      ) : null}
       {!item.retest.available && item.retest.reason ? (
         <p className="text-muted-foreground text-xs" data-testid="action-retest-reason">
           {item.retest.reason}

@@ -153,16 +153,6 @@ async function accountId(page: Page): Promise<string> {
   return body.user.id;
 }
 
-function setTier(id: string, tier: Tier): void {
-  runComposePsql(
-    `INSERT INTO subscriptions (account_id, tier, status)
-     VALUES (:'accountId', :'tier', 'active')
-     ON CONFLICT (account_id)
-     DO UPDATE SET tier = :'tier', status = 'active';`,
-    { variables: { accountId: id, tier } },
-  );
-}
-
 async function logout(page: Page): Promise<void> {
   await page.goto('/logout');
   await page.waitForURL('/login');
@@ -179,7 +169,6 @@ async function signUpAtTier(
   await logout(page);
   // Let all post-registration writes settle before the tier fixture becomes
   // authoritative, then establish a fresh authenticated billing session.
-  setTier(id, tier);
   await logIn(page, account);
   return { account, id };
 }
@@ -213,18 +202,6 @@ function seedKeyword(id: string, siteId: string, phrase: string): void {
      VALUES (:'accountId', :'siteId', :'phrase', 2840, 'en', 'desktop', 'google', true)
      ON CONFLICT DO NOTHING;`,
     { variables: { accountId: id, siteId, phrase } },
-  );
-}
-
-function setAgencyUsage(id: string, used: number): void {
-  runComposePsql(
-    `INSERT INTO usage_counters
-       (account_id, period, metric, used, "limit")
-     VALUES (:'accountId', to_char(now() AT TIME ZONE 'UTC', 'YYYY-MM'),
-             'content_briefs', :'used'::bigint, 8)
-     ON CONFLICT (account_id, period, metric)
-     DO UPDATE SET used = :'used'::bigint, "limit" = 8;`,
-    { variables: { accountId: id, used: String(used) } },
   );
 }
 
@@ -292,7 +269,6 @@ test('content briefs: metering, evidence, editor, halt, flag, RTL, and axe', asy
     for (const phrase of [FULL_KEYWORD, HALT_KEYWORD]) {
       seedKeyword(agency.id, agencySiteId, phrase);
     }
-    setAgencyUsage(agency.id, 0);
 
     let fullBriefId = '';
 

@@ -265,6 +265,12 @@ describe('LiveTrendsView — form validation', () => {
     expect(parsed.success).toBe(true);
   });
 
+  it('keeps the market-specific error key for an unsupported market', () => {
+    const parsed = liveTrendsFormSchema.safeParse({ keywords: ['seo'], geo: 'anywhere' });
+    if (parsed.success) throw new Error('expected invalid market');
+    expect(parsed.error.issues).toMatchObject([{ path: ['geo'], message: 'keywordResearch:trends.errors.geoInvalid' }]);
+  });
+
   it('normalizes supported markets and rejects inputs outside provider clamps', () => {
     expect(
       liveTrendsFormSchema.parse({
@@ -325,6 +331,62 @@ describe('LiveTrendsView — preview → confirm/cancel', () => {
 // ---------------------------------------------------------------------------
 // 3. Confirming a preview submits the exploration
 // ---------------------------------------------------------------------------
+
+describe('LiveTrendsView — starting market', () => {
+  it("a shared link's geo and language win over the remembered market", async () => {
+    window.localStorage.clear();
+    setState({
+      liveTrends: {
+        ...initialState.liveTrends,
+        list: { loading: false, data: emptyList(), error: '', errorKind: null },
+      },
+    });
+    renderInRouter(
+      <LiveTrendsView />,
+      '/keyword-research/live-trends?keywords=solar&geo=gb&language=en',
+    );
+    fireEvent.submit(screen.getByTestId('live-trends-form'));
+    await waitFor(() =>
+      expect(api.previewLiveTrendsRequest).toHaveBeenCalledWith(
+        expect.objectContaining({ keywords: ['solar'], geo: 'gb', language: 'en' }),
+      ),
+    );
+  });
+
+  it('a link with a geo but no language falls back to English', async () => {
+    window.localStorage.clear();
+    setState({
+      liveTrends: {
+        ...initialState.liveTrends,
+        list: { loading: false, data: emptyList(), error: '', errorKind: null },
+      },
+    });
+    renderInRouter(<LiveTrendsView />, '/keyword-research/live-trends?keywords=solar&geo=de');
+    fireEvent.submit(screen.getByTestId('live-trends-form'));
+    await waitFor(() =>
+      expect(api.previewLiveTrendsRequest).toHaveBeenCalledWith(
+        expect.objectContaining({ keywords: ['solar'], geo: 'de', language: 'en' }),
+      ),
+    );
+  });
+
+  it('a link without a geo starts in the interface language market', async () => {
+    window.localStorage.clear();
+    setState({
+      liveTrends: {
+        ...initialState.liveTrends,
+        list: { loading: false, data: emptyList(), error: '', errorKind: null },
+      },
+    });
+    renderInRouter(<LiveTrendsView />, '/keyword-research/live-trends?keywords=solar');
+    fireEvent.submit(screen.getByTestId('live-trends-form'));
+    await waitFor(() =>
+      expect(api.previewLiveTrendsRequest).toHaveBeenCalledWith(
+        expect.objectContaining({ keywords: ['solar'], geo: 'us', language: 'en' }),
+      ),
+    );
+  });
+});
 
 describe('LiveTrendsView — confirm submits', () => {
   it('confirming a preview fires exploreLiveTrendsRequest once', async () => {

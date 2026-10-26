@@ -30,7 +30,6 @@ export const KeywordLiveTrendsPage = () => {
       <PageHeader
         icon={APP_PAGE_ICONS.keywordLiveTrends}
         title={t('keywordResearch:liveTrends.title')}
-        description={t('keywordResearch:liveTrends.description')}
         actions={<DocsLink slug="keyword-trends" />}
       />
       <LiveTrendsView />

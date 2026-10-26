@@ -44,7 +44,7 @@ export const internalLinkRunParamsSchema = z
 export const internalLinkStartBodySchema = z
     .object({ locale: z.enum(SUPPORTED_LOCALES).default('en') })
     .strict()
-    .default({});
+    .prefault({});
 export const internalLinkListQuerySchema = z
     .object({ limit: z.coerce.number().int().min(1).max(50).default(20) })
     .strict();

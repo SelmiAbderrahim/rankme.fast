@@ -35,14 +35,14 @@ export function ConfirmRunDialog({
   onConfirm,
 }: ConfirmRunDialogProps) {
   const { t, i18n } = useTranslation('audienceResearch');
-  const marketLine = `${countryName(input.siteMarket.country, i18n.language) ?? t('common:market.unknownCountry')} · ${languageName(input.siteMarket.language, i18n.language) ?? t('common:market.unknownLanguage')} · ${input.siteMarket.device}`;
+  const marketLine = `${countryName(input.siteMarket.country, i18n.language) ?? t('common:market.unknownCountry')} · ${languageName(input.siteMarket.language, i18n.language) ?? t('common:market.unknownLanguage')} · ${t(`form.market.devices.${input.siteMarket.device}`)}`;
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent data-testid="audience-research-confirm-dialog">
         <DialogHeader>
           <DialogTitle>{t('confirm.title')}</DialogTitle>
-          <DialogDescription>{t('confirm.body', { maxPages })}</DialogDescription>
+          <DialogDescription>{t('confirm.body', { count: maxPages, maxPages })}</DialogDescription>
         </DialogHeader>
         <dl className="flex flex-col gap-2 text-sm">
           <div>

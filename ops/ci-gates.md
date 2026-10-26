@@ -11,6 +11,18 @@ The static test policy runs once over `server/src`, `client/src`, and
 expiry date is not an exception. Playwright also enforces `forbidOnly` in CI and
 runs every configured project with exactly zero retries.
 
+Translation and text-direction guards run inside the client coverage run and
+again as the named CI step "Translation, bidi and plural guards", so a failure
+names the guard. They fail on: a key missing from any locale, a placeholder that
+differs between locales, a missing plural form, German informal address,
+user text rendered or interpolated without the shared bidi isolation, and a
+counted string that bypasses the plural helpers. Fix the copy or the component,
+never the guard's word lists or thresholds.
+
+Playwright is not a CI job in this repository. Run it locally from an isolated
+Compose project (own `COMPOSE_PROJECT_NAME`, own ports, fresh volumes) before a
+release, as listed below; a run never touches the main stack's databases.
+
 ## Local release proof
 
 Run the canonical gate from the repository root. The root compatibility files
@@ -43,7 +55,7 @@ running and healthy.
 
 ## Deterministic provider policy
 
-The E2E job explicitly selects `fake` for every provider family, including AI,
+The browser run explicitly selects `fake` for every provider family, including AI,
 content source, GA4, GSC, PageSpeed, and DataForSEO-backed capabilities. It does
 not receive live vendor credentials. Recorded provider contract fixtures are
 redacted and fixture-linted; browser failure artifacts contain only synthetic
@@ -51,7 +63,7 @@ test accounts and deterministic fake results.
 
 Traces, screenshots, videos, Compose logs, and the HTML report are retained only
 when a run fails. A retry is never attempted, so a pass cannot hide an initial
-failure. Routine teardown preserves developer and CI volumes.
+failure. Routine teardown preserves developer volumes.
 
 ## Failure triage
 

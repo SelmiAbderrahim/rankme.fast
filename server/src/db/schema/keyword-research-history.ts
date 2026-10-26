@@ -24,6 +24,10 @@ export type KeywordResearchKind = (typeof KEYWORD_RESEARCH_KINDS)[number];
 export const keywordResearchHistory = pgTable('keyword_research_history', {
     id: uuid('id').primaryKey().defaultRandom(),
     accountId: text('account_id').notNull(),
+    // Mongo site ObjectId (24-hex) when the lookup ran from a site's Research
+    // tab; null for account-level research (and every row written before site
+    // scoping existed). Lets the site tab list only that site's lookups.
+    siteId: text('site_id'),
     kind: text('kind', { enum: KEYWORD_RESEARCH_KINDS }).notNull(),
     // Deduped phrase list for metrics/intent; single-element [seed] for
     // related/ideas/long_tail — one column keeps the client display uniform.
@@ -33,11 +37,18 @@ export const keywordResearchHistory = pgTable('keyword_research_history', {
     resultCount: integer('result_count').notNull(),
     // true = the request was served without any vendor call.
     cached: boolean('cached').notNull(),
+    // Client-minted id shared by the metrics + intent calls of ONE Research
+    // press (the panel fires both), so the history list can fold the pair
+    // into one row. Null on rows written before the column existed and on
+    // callers that never send it.
+    lookupId: uuid('lookup_id'),
     createdAt: timestamp('created_at', { withTimezone: true }).notNull().defaultNow(),
 }, (table) => [
     // Serves the (account_id, created_at desc, id desc) keyset scan via
     // backward index scan.
     index('krh_account_created_idx').on(table.accountId, table.createdAt, table.id),
+    // Site-scoped keyset scan for the site Research tab.
+    index('krh_account_site_created_idx').on(table.accountId, table.siteId, table.createdAt, table.id),
     check('krh_kind_check', sql `${table.kind} in ('metrics', 'related', 'intent', 'ideas', 'long_tail', 'gap', 'overview', 'trends', 'clusters')`),
 ]);
 export type KeywordResearchHistoryRow = typeof keywordResearchHistory.$inferSelect;

@@ -1,3 +1,4 @@
+import { hostnameOf } from '@shared/lib/registrableDomain';
 import type { DisavowSelection, ToxicityRow } from './types';
 
 const HOST_LABEL = /^(?!-)[a-z0-9-]{1,63}(?<!-)$/u;
@@ -14,7 +15,7 @@ function containsUnsafeText(value: string): boolean {
   });
 }
 
-function safeDomain(value: string): string | null {
+export function safeDisavowDomain(value: string): string | null {
   const domain = value.toLowerCase().replace(/\.$/u, '');
   if (
     value !== value.trim() ||
@@ -63,7 +64,7 @@ export function serializeDisavowPreview(
   for (const entry of entries) {
     const row = byId.get(entry.rowId);
     if (!row) continue;
-    const value = entry.kind === 'domain' ? safeDomain(row.domain) : safeUrl(row.url);
+    const value = entry.kind === 'domain' ? safeDisavowDomain(row.domain) : safeUrl(row.url);
     if (value) directives.add(entry.kind === 'domain' ? `domain:${value}` : value);
   }
   const domains = [...directives].filter((line) => line.startsWith('domain:')).sort();
@@ -75,6 +76,38 @@ export function serializeDisavowPreview(
       `# generated: ${generatedOn.toISOString().slice(0, 10)}`,
       ...domains,
       ...urls,
+    ].join('\n') + '\n'
+  );
+}
+
+export const SUSPICION_HEURISTIC_VERSION = 'link-suspicion-v1';
+
+/** Referring host of a row, without a leading `www.`. */
+export function referringHostOf(row: { domainFrom?: string; urlFrom: string }): string {
+  const host = row.domainFrom && row.domainFrom.length > 0 ? row.domainFrom : hostnameOf(row.urlFrom);
+  return host.replace(/^www\./u, '');
+}
+
+/**
+ * Google disavow text for links the person reviewed and selected. Whole
+ * domains only (`domain:` lines), de-duplicated and sorted; anything that is
+ * not a plain hostname is dropped, so a hostile value can never inject a line
+ * or a spreadsheet formula. The comments say the flags are suspicions, not
+ * facts.
+ */
+export function serializeSuspectedDisavow(hosts: readonly string[], generatedOn: Date): string {
+  const directives = new Set<string>();
+  for (const host of hosts) {
+    const domain = safeDisavowDomain(host);
+    if (domain) directives.add(`domain:${domain}`);
+  }
+  return (
+    [
+      '# RankMeFast suspected-spam review export',
+      '# Suspected, not verified: check every domain before you submit this file to Google.',
+      `# heuristic: ${SUSPICION_HEURISTIC_VERSION}`,
+      `# generated: ${generatedOn.toISOString().slice(0, 10)}`,
+      ...[...directives].sort(),
     ].join('\n') + '\n'
   );
 }

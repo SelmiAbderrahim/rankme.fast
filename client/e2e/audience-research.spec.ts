@@ -20,7 +20,6 @@
 import { expect, test, type APIRequestContext } from '@playwright/test';
 
 import { freshAccount, signUp } from './helpers/account';
-import { runComposePsql } from './helpers/compose';
 import { csrfHeaders } from './helpers/csrf';
 import { collectDenials, denyNonLoopback } from './helpers/denyNonLoopback';
 import {
@@ -56,22 +55,6 @@ interface SiteRecord {
 
 interface CreateSiteResponse {
   site: SiteRecord;
-}
-
-/**
- * Seed the E2E account into the `pro` tier so `audience_research_runs` has
- * a non-zero cap; the fake-injection seed still runs against the immutable
- * document regardless of tier, but the read-side preview needs a positive
- * `baseCap` to render as anything other than the locked-plan state.
- */
-function bumpToPro(accountId: string): void {
-  runComposePsql(
-    `INSERT INTO subscriptions (account_id, tier, status)
-       VALUES (:'account_id', 'pro', 'active')
-       ON CONFLICT (account_id)
-         DO UPDATE SET tier = 'pro', status = 'active', updated_at = now();`,
-    { variables: { account_id: accountId } },
-  );
 }
 
 async function readAccountId(request: APIRequestContext): Promise<string> {
@@ -209,7 +192,6 @@ test('Journey — audience research: form, preview, terminal evidence, filter, a
   await test.step('step 1 — sign up, add site, open ?tab=audience-research', async () => {
     await signUp(page, account);
     accountId = await readAccountId(page.request);
-    bumpToPro(accountId);
 
     const site = await createSite(page.request, 'https://audience-research.example.com');
     siteId = site.id;
@@ -466,7 +448,6 @@ test('Journey (ar) — audience research workspace renders `dir=rtl`, translated
   try {
     await signUp(page, account);
     accountId = await readAccountId(page.request);
-    bumpToPro(accountId);
     const site = await createSite(page.request, 'https://audience-research-ar.example.com');
     siteId = site.id;
 
@@ -655,7 +636,6 @@ test.describe('capacity, filters, decisions, refund, integrations', () => {
     try {
       await signUp(page, account);
       accountId = await readAccountId(page.request);
-      bumpToPro(accountId);
       const site = await createSite(page.request, 'https://audience-research-16e.example.com');
       siteId = site.id;
 

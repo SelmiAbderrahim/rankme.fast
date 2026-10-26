@@ -1,6 +1,9 @@
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 import { render, screen, waitFor } from '@testing-library/react';
 import { I18nextProvider } from 'react-i18next';
+import { Provider } from 'react-redux';
+import { configureStore } from '@reduxjs/toolkit';
+import { HelmetProvider } from 'react-helmet-async';
 import { createMemoryRouter, Outlet, RouterProvider } from 'react-router-dom';
 import { i18n, initI18n } from '@shared/i18n';
 import { rootReducer } from './store';
@@ -31,12 +34,14 @@ vi.mock('@features/settings/components/NotificationPreferences', () => ({
   NotificationPreferences: () => <h1>Settings lazy screen</h1>,
 }));
 
-const renderRouter = (router: ReturnType<typeof createMemoryRouter>) =>
-  render(
-    <I18nextProvider i18n={i18n}>
+const renderRouter = (router: ReturnType<typeof createMemoryRouter>) => {
+  const store = configureStore({ reducer: rootReducer });
+  return render(
+    <Provider store={store}><HelmetProvider><I18nextProvider i18n={i18n}>
       <RouterProvider router={router} fallbackElement={<LazyRouteFallback />} />
-    </I18nextProvider>,
+    </I18nextProvider></HelmetProvider></Provider>,
   );
+};
 
 beforeEach(async () => {
   initI18n({ initialLocale: 'en' });

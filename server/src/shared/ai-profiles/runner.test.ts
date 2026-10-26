@@ -148,25 +148,25 @@ describe('AI task profile runner', () => {
     const provider: AiGenerationProvider = {
       async generateStructured<T extends object>(input: GenerateStructuredInput<T>) {
         captured = input as GenerateStructuredInput<object>;
-        return result({ summary: 'Fix the title first.', citations: [], truncated: false }) as AiGenerationResult<T>;
+        return result({ status: 'Fix the title first.', items: [], citations: [], truncated: false }) as AiGenerationResult<T>;
       },
     };
     const recordRun = vi.fn().mockResolvedValue(undefined);
     const output = await createAiProfileRunner({ provider, recordRun }).run<{
-      summary: string; citations: string[]; truncated: boolean;
+      status: string; items: unknown[]; citations: string[]; truncated: boolean;
     }>(auditRequest());
     expect(output).toMatchObject({
       trust: 'untrusted', status: 'complete',
-      object: { summary: 'Fix the title first.', citations: [], truncated: false },
+      object: { status: 'Fix the title first.', items: [], citations: [], truncated: false },
       classification: { generatedFields: 'untrusted', renderAs: 'text_only' },
-      provenance: { task: 'audit_summary', profileVersion: '1.0.0' },
+      provenance: { task: 'audit_summary', profileVersion: '1.1.0' },
     });
     expect(captured).toMatchObject({
       maxOutputTokens: 1024, maxTotalTokens: 32768, maxAttempts: 3,
       timeoutMs: 60000, permittedProviders: expect.arrayContaining(['openai', 'anthropic']),
       profileMetadata: {
         name: 'audit_summary', outputSchemaVersion: '1',
-        promptTemplateId: 'audit-summary', promptTemplateVersion: '3',
+        promptTemplateId: 'audit-summary', promptTemplateVersion: '4',
       },
     });
     expect(captured?.sanitizedInput).toMatch(/^<untrusted_customer_data>/u);
@@ -299,7 +299,7 @@ describe('AI task profile runner', () => {
   );
 
   it('records fallback provenance from safe attempt metadata', async () => {
-    const generated = result({ summary: 'Safe.', citations: [], truncated: false }, 'openai');
+    const generated = result({ status: 'Safe.', items: [], citations: [], truncated: false }, 'openai');
     generated.attempts = [
       { ...generated.attempts[0]!, ordinal: 1, provider: 'google', status: 'timeout', errorCategory: 'timeout', errorCode: 'provider_timeout' },
       { ...generated.attempts[0]!, ordinal: 2, provider: 'openai' },
@@ -319,7 +319,7 @@ describe('AI task profile runner', () => {
     const provider: AiGenerationProvider = {
       async generateStructured<T extends object>() {
         generateStructured();
-        return result({ summary: 'Safe.', citations: [], truncated: false }) as AiGenerationResult<T>;
+        return result({ status: 'Safe.', items: [], citations: [], truncated: false }) as AiGenerationResult<T>;
       },
     };
     const onRecordError = vi.fn();

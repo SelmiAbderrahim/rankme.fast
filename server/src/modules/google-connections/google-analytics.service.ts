@@ -30,6 +30,7 @@ export type Ga4Window = (typeof GA4_WINDOWS)[number];
 export const GA4_DATE_WINDOW: Ga4Window = 90;
 /** GA4 export lag default — standard properties finalize within ~24-48h. */
 export const GA4_DEFAULT_LAG_DAYS = 1;
+export const GA4_STALE_TOLERANCE_DAYS = 2;
 const DAY_MS = 86400000;
 /** Product-side dimension → GA4 Data API dimension name. */
 export const GA4_API_DIMENSIONS = {
@@ -65,6 +66,32 @@ function ga4Window(fetchedAt: Date, windowDays: number, lagDays: number): {
     const endDate = toIsoDate(new Date(fetchedAt.getTime() - lagDays * DAY_MS));
     const startDate = toIsoDate(new Date(fetchedAt.getTime() - (lagDays + windowDays - 1) * DAY_MS));
     return { startDate, endDate };
+}
+
+interface Ga4DailyMetrics {
+    sessions: number;
+    activeUsers: number;
+    engagedSessions: number;
+    keyEvents: number;
+}
+
+/** Include quiet days so a stored daily series advances with the calendar. */
+export function zeroFillDailySeries<T extends Ga4DailyMetrics>(rows: ReadonlyArray<T & { key: string }>, startDate: string, endDate: string): Array<Ga4DailyMetrics & { key: string }> {
+    const byDay = new Map(rows.map((row) => [row.key, row]));
+    const filled: Array<Ga4DailyMetrics & { key: string }> = [];
+    const end = Date.parse(`${endDate}T00:00:00.000Z`);
+    for (let at = Date.parse(`${startDate}T00:00:00.000Z`); at <= end; at += DAY_MS) {
+        const key = toIsoDate(new Date(at));
+        const row = byDay.get(key);
+        filled.push({
+            key,
+            sessions: row?.sessions ?? 0,
+            activeUsers: row?.activeUsers ?? 0,
+            engagedSessions: row?.engagedSessions ?? 0,
+            keyEvents: row?.keyEvents ?? 0,
+        });
+    }
+    return filled;
 }
 // ---------------------------------------------------------------------------
 // Sync
@@ -113,6 +140,7 @@ export interface Ga4SyncResult {
     status: 'ok' | 'no-data' | 'not-connected' | 'not-enabled' | 'needs-reconnect' | 'unavailable';
     /** Snapshot date written, or null when nothing was persisted. */
     snapshotDate: string | null;
+    syncedAt: Date | null;
     counts: Record<Ga4ProductDimension, number>;
 }
 const ZERO_GA4_COUNTS: Record<Ga4ProductDimension, number> = {
@@ -142,7 +170,7 @@ export function runGa4Sync(accountId: string, siteId: string, deps: Ga4SyncDeps)
     return promise;
 }
 function degraded(status: Ga4SyncResult['status']): Ga4SyncResult {
-    return { status, snapshotDate: null, counts: { ...ZERO_GA4_COUNTS } };
+    return { status, snapshotDate: null, syncedAt: null, counts: { ...ZERO_GA4_COUNTS } };
 }
 async function runGa4SyncInner(accountId: string, siteId: string, deps: Ga4SyncDeps): Promise<Ga4SyncResult> {
     const { ga4Provider, gscProvider, persist, archive, logger } = deps;
@@ -246,13 +274,14 @@ async function runGa4SyncInner(accountId: string, siteId: string, deps: Ga4SyncD
             startDate,
             endDate,
         }, dateResult);
-        const dateRows = dateResult.rows.map((row) => ({
+        const reportedDays = dateResult.rows.map((row) => ({
             key: normalizeGa4DateKey(row.dimensionValues[0] ?? ''),
             sessions: row.metricValues[0] ?? 0,
             activeUsers: row.metricValues[1] ?? 0,
             engagedSessions: row.metricValues[2] ?? 0,
             keyEvents: row.metricValues[3] ?? 0,
         }));
+        const dateRows = zeroFillDailySeries(reportedDays, startDate, endDate);
         await persist.upsertGa4Metrics({
             siteId,
             accountId,
@@ -262,7 +291,8 @@ async function runGa4SyncInner(accountId: string, siteId: string, deps: Ga4SyncD
             windowDays: GA4_DATE_WINDOW,
             rows: dateRows,
         });
-        counts.date = dateRows.length;
+        counts.date = reportedDays.length;
+        await Site.updateOne({ _id: siteId, accountId, deletionStartedAt: null }, { $set: { ga4LastSyncedAt: fetchedAt } });
     }
     catch (err) {
         if (err instanceof GscReconnectRequiredError) {
@@ -276,6 +306,7 @@ async function runGa4SyncInner(accountId: string, siteId: string, deps: Ga4SyncD
     return {
         status: counts.channel === 0 ? 'no-data' : 'ok',
         snapshotDate: endDate,
+        syncedAt: fetchedAt,
         counts,
     };
 }
@@ -333,6 +364,28 @@ export interface Ga4SummaryReadDeps {
         engagedSessions: number;
         keyEvents: number;
     } | null>;
+    now?: () => Date;
+    lagDays?: number;
+    lastSyncedAt?: Date | null;
+}
+export interface Ga4SummaryFreshness {
+    expectedAsOf: string;
+    stale: boolean;
+    noRecentSessions: boolean;
+    lastSyncedAt: string | null;
+}
+
+export function ga4SummaryFreshness(asOf: string, now: Date, lagDays: number, lastSyncedAt: Date | null = null): Ga4SummaryFreshness {
+    const expectedAsOf = toIsoDate(new Date(now.getTime() - lagDays * DAY_MS));
+    const staleBefore = toIsoDate(new Date(now.getTime() - (lagDays + GA4_STALE_TOLERANCE_DAYS) * DAY_MS));
+    const behind = asOf < staleBefore;
+    const recentlySynced = lastSyncedAt !== null && now.getTime() - lastSyncedAt.getTime() <= GA4_STALE_TOLERANCE_DAYS * DAY_MS;
+    return {
+        expectedAsOf,
+        stale: behind && !recentlySynced,
+        noRecentSessions: behind && recentlySynced,
+        lastSyncedAt: lastSyncedAt?.toISOString() ?? null,
+    };
 }
 export interface GoogleAnalyticsSummary {
     totalSessions: number;
@@ -377,6 +430,7 @@ export interface GoogleAnalyticsSummary {
         keyEvents: number;
     }>;
     asOf: string;
+    freshness: Ga4SummaryFreshness;
     previousPeriod: {
         totalSessions: number;
         totalActiveUsers: number;
@@ -422,6 +476,13 @@ function windowStartFor(endDate: string, days: number): string {
     const end = new Date(`${endDate}T00:00:00.000Z`);
     return toIsoDate(new Date(end.getTime() - (days - 1) * DAY_MS));
 }
+async function latestGa4AsOf(siteId: string, dimensionSet: string, windowDays: number, deps: Pick<Ga4SummaryReadDeps, 'readLatest'>): Promise<{ asOf: string; dateAsOf: string | null }> {
+    const aggregateAsOf = await deps.readLatest(siteId, dimensionSet, windowDays);
+    const dateAsOf = await deps.readLatest(siteId, 'date', GA4_DATE_WINDOW);
+    const asOf = aggregateAsOf === null || (dateAsOf !== null && dateAsOf > aggregateAsOf) ? dateAsOf : aggregateAsOf;
+    if (asOf === null) throw HttpError.notFound({ code: 'GOOGLE_NO_DATA_YET', messageKey: 'google.noDataYet' });
+    return { asOf, dateAsOf };
+}
 /**
  * Read the latest persisted GA4 snapshot for a site — a pure Postgres read;
  * NEVER a vendor call. 404 paths: see `assertGa4EnabledFor`, plus no snapshot
@@ -430,27 +491,24 @@ function windowStartFor(endDate: string, days: number): string {
 export async function getAnalyticsSummaryFor(accountId: string, siteId: string, range: AnalyticsRange, deps: Ga4SummaryReadDeps): Promise<GoogleAnalyticsSummary> {
     await assertGa4EnabledFor(accountId, siteId);
     const windowDays = rangeToWindowDays(range);
-    const asOf = await deps.readLatest(siteId, 'channel', windowDays);
-    if (asOf === null)
-        throw HttpError.notFound({ code: 'GOOGLE_NO_DATA_YET', messageKey: 'google.noDataYet' });
+    const { asOf, dateAsOf } = await latestGa4AsOf(siteId, 'channel', windowDays, deps);
     const at = { since: asOf, until: asOf };
     const channelRows = await deps.readRows(siteId, 'channel', windowDays, at);
     const pageRows = await deps.readRows(siteId, 'page', windowDays, at);
     const countryRows = await deps.readRows(siteId, 'country', windowDays, at);
     const deviceRows = await deps.readRows(siteId, 'device', windowDays, at);
     // Daily series lives at the widest window only — slice the tail.
-    const dateAsOf = await deps.readLatest(siteId, 'date', GA4_DATE_WINDOW);
     let timeseries: GoogleAnalyticsSummary['timeseries'] = [];
-    if (dateAsOf !== null) {
+    if (dateAsOf === asOf) {
         const dateRows = await deps.readRows(siteId, 'date', GA4_DATE_WINDOW, {
             since: dateAsOf,
             until: dateAsOf,
         });
-        const from = windowStartFor(dateAsOf, windowDays);
-        timeseries = dateRows
-            .filter((row) => row.dimensionKey >= from)
-            .sort((a, b) => (a.dimensionKey < b.dimensionKey ? -1 : 1))
-            .map((row) => ({ date: row.dimensionKey, ...metricShape(row) }));
+        timeseries = zeroFillDailySeries(
+            dateRows.map((row) => ({ key: row.dimensionKey, ...metricShape(row) })),
+            windowStartFor(asOf, windowDays),
+            asOf,
+        ).map(({ key, ...metrics }) => ({ date: key, ...metrics }));
     }
     let totalSessions = 0;
     let totalActiveUsers = 0;
@@ -487,6 +545,7 @@ export async function getAnalyticsSummaryFor(accountId: string, siteId: string, 
             ...metricShape(row),
         })),
         asOf,
+        freshness: ga4SummaryFreshness(asOf, (deps.now ?? (() => new Date()))(), deps.lagDays ?? GA4_DEFAULT_LAG_DAYS, deps.lastSyncedAt ?? null),
         previousPeriod: previous
             ? {
                 totalSessions: previous.sessions,
@@ -511,9 +570,7 @@ export interface GoogleAnalyticsDetail {
 export async function getAnalyticsDetailFor(accountId: string, siteId: string, dimension: 'channel' | 'page' | 'country' | 'device', range: AnalyticsRange, deps: Ga4SummaryReadDeps): Promise<GoogleAnalyticsDetail> {
     await assertGa4EnabledFor(accountId, siteId);
     const windowDays = rangeToWindowDays(range);
-    const asOf = await deps.readLatest(siteId, dimension, windowDays);
-    if (asOf === null)
-        throw HttpError.notFound({ code: 'GOOGLE_NO_DATA_YET', messageKey: 'google.noDataYet' });
+    const { asOf } = await latestGa4AsOf(siteId, dimension, windowDays, deps);
     const rows = await deps.readRows(siteId, dimension, windowDays, {
         since: asOf,
         until: asOf,

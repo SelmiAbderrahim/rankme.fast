@@ -18,3 +18,14 @@ describe('appVersion', () => {
     expect(appVersion).toBe('dev');
   });
 });
+
+describe('footer version presentation', () => {
+  it('shows the release number and only exposes a real build id in a tooltip', async () => {
+    const { displayVersion, buildIdentifier } = await import('./version');
+    expect(displayVersion('2.0.0+dev')).toBe('2.0.0');
+    expect(displayVersion('2.0.0+abc1234')).toBe('2.0.0');
+    expect(buildIdentifier('2.0.0+dev')).toBeUndefined();
+    expect(buildIdentifier('2.0.0+abc1234')).toBe('2.0.0+abc1234');
+    expect(buildIdentifier('2.0.0+not-a-sha')).toBeUndefined();
+  });
+});

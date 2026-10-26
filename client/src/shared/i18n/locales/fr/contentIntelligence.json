@@ -49,9 +49,13 @@
     "loadMore": "Charger plus",
     "warnings": "Un ou plusieurs avertissements",
     "notAvailable": "Indisponible",
-    "warningCount": "{{count}} avertissement",
+    "warningCount_one": "{{count}} avertissement",
     "warningCount_other": "{{count}} avertissements",
-    "progress": "{{value}} % terminé"
+    "progress": "{{value}} % terminé",
+    "warningCount_zero": "{{count}} avertissement",
+    "warningCount_two": "{{count}} avertissements",
+    "warningCount_few": "{{count}} avertissements",
+    "warningCount_many": "{{count}} avertissements"
   },
   "status": {
     "queued": "En file",
@@ -77,11 +81,14 @@
     "locale": "Langue de sortie",
     "detectedLocale": "Détectée depuis votre compte : {{locale}}.",
     "localeOverrideHint": "Vous pouvez la modifier pour ce résultat.",
-    "consent": "Je comprends que du contenu limité et assaini de la page peut être envoyé aux fournisseurs d'IA configurés pour générer le brief et le brouillon.",
+    "consent": "Je comprends que du texte de cette page sera envoyé à nos fournisseurs d’IA pour rédiger le brief et le premier brouillon.",
     "consentRequired": "Le consentement est requis.",
-    "reviewedSources": { "title": "Pages de comparaison vérifiées", "description": "Ces pages publiques proviennent de votre correspondance approuvée. Vous décidez toujours de lancer l’analyse." },
+    "reviewedSources": {
+      "title": "Pages de comparaison vérifiées",
+      "description": "Ces pages publiques proviennent de votre correspondance approuvée. Vous décidez toujours de lancer l’analyse."
+    },
     "included": {
-      "title": "Ce qu'un crédit inclut",
+      "title": "Ce que comprend cette analyse",
       "owned": "Une page que vous possédez",
       "competitors": "Jusqu'à trois pages organiques publiques de comparaison",
       "scorecard": "Une fiche de score",
@@ -91,20 +98,17 @@
     },
     "previewLoading": "Vérification de votre quota actuel…",
     "previewError": "Impossible de vérifier le quota actuel.",
-    "baseRemaining": "Quota de base restant : {{count}}",
-    "packRemaining": "Solde du pack : {{count}}",
-    "balance": "Quota mensuel restant : {{used}} sur {{cap}}.",
-    "packBalance": "Solde du pack : {{balance}} analyses supplémentaires.",
     "submit": "Démarrer l'analyse",
     "submitting": "Démarrage…",
     "invalidUrl": "Saisissez une URL valide.",
     "urlRequired": "Saisissez ou choisissez une URL de page.",
     "keywordRequired": "Saisissez ou choisissez un mot-clé cible.",
-    "keywordTooLong": "Limitez le mot-clé cible à 200 caractères.",
+    "keywordTooLong": "Utilisez {{max}} caractères ou moins.",
+    "keywordList": "Saisissez une seule requête, pas une liste. Lancez une analyse distincte pour chaque mot-clé.",
+    "keywordCounter": "{{length}}/{{max}} caractères",
     "offOrigin": "L'URL doit correspondre à l'origine de votre site.",
     "urlUnsafe": "L'URL n'est pas publiquement accessible.",
-    "urlNotOwned": "Cette URL n'appartient pas à un site que vous possédez.",
-    "capacityExhausted": "Quota mensuel et solde de pack tous deux épuisés."
+    "urlNotOwned": "Cette URL n'appartient pas à un site que vous possédez."
   },
   "detail": {
     "progress": {
@@ -113,6 +117,7 @@
       "step": "Étape {{current}} sur {{total}}",
       "percentComplete": "{{percent}} % terminé",
       "autoRefresh": "Cette page se met à jour automatiquement pendant l’analyse.",
+      "stillRunning": "Toujours en cours. Vous pouvez quitter cette page et revenir plus tard : le résultat sera ici.",
       "errorTitle": "Cette analyse s’est arrêtée prématurément",
       "errorGeneric": "L’analyse s’est arrêtée avant la fin."
     },
@@ -129,6 +134,57 @@
       "cancelled": "Cette analyse a été annulée.",
       "unexpected": "L’analyse s’est arrêtée en raison d’une erreur inattendue."
     },
+    "failureReason": {
+      "robots_blocked": "Le fichier robots.txt de votre site bloque notre lecteur sur cette page.",
+      "access_denied": "Votre site a refusé l’accès à cette page, par exemple via une protection anti-robots ou une page de connexion.",
+      "http_error": "Votre page a répondu avec le statut HTTP {{status}} au lieu de son contenu.",
+      "timeout": "Votre page a mis trop de temps à se charger.",
+      "temporarily_unavailable": "La page n’a pas pu être chargée cette fois-ci.",
+      "empty_content": "Aucun texte lisible n’a été trouvé sur la page. Elle est peut-être vide ou ne charge son contenu qu’en JavaScript.",
+      "too_large": "La page est trop volumineuse pour être lue en une seule fois.",
+      "unsafe_url": "L’adresse de la page, ou une page vers laquelle elle redirige, n’est pas accessible publiquement.",
+      "unreadable": "La page nous est parvenue dans un format illisible.",
+      "redirect_loop": "Les redirections de votre page tournent en boucle.",
+      "redirect_limit": "Votre page redirige plus de cinq fois, nous avons donc arrêté de la suivre.",
+      "unsafe_redirect": "Votre page redirige vers une adresse qui n’est pas accessible publiquement.",
+      "non_html": "Cette adresse sert du {{type}}, pas une page web."
+    },
+    "failureReasonUnknown": "Nous n'avons pas enregistré la cause exacte. Les causes habituelles sont un blocage robots.txt, une protection anti-robots ou une page de connexion, une erreur HTTP, une réponse lente, ou un texte qui n'apparaît qu'après l'exécution de JavaScript. Vérifiez que la page s'ouvre dans une fenêtre de navigation privée, puis réessayez.",
+    "failureCode": {
+      "provider_unavailable": "Notre service de contenu est indisponible pour le moment.",
+      "page_unreachable": "Nous n’avons pas pu lire votre page.",
+      "page_blocked": "Votre page bloque notre lecteur, par exemple via robots.txt, une protection anti-robots ou une page de connexion.",
+      "page_too_large": "Votre page est trop volumineuse pour être lue en une seule fois.",
+      "timeout": "Votre page ou notre service de contenu a mis trop de temps à répondre.",
+      "internal": "Une erreur s’est produite de notre côté."
+    },
+    "failureHint": {
+      "robots_blocked": "Autorisez les robots à lire cette page dans robots.txt, puis réessayez.",
+      "access_denied": "Autorisez les visites automatisées sur cette page ou rendez-la publique, puis réessayez.",
+      "http_error": "Vérifiez que l’URL est correcte et que la page s’ouvre en navigation privée, puis réessayez.",
+      "timeout": "C’est souvent temporaire. Réessayez et vérifiez que la page se charge rapidement.",
+      "temporarily_unavailable": "C’est généralement temporaire. Réessayez dans quelques minutes.",
+      "empty_content": "Assurez-vous que le texte principal figure dans le HTML de la page (rendu côté serveur), puis réessayez.",
+      "too_large": "Essayez une page plus courte ou répartissez un contenu très long sur plusieurs pages.",
+      "unsafe_url": "Utilisez l’adresse publique de la page et vérifiez ses redirections, puis réessayez.",
+      "unreadable": "Réessayez. Si l’échec persiste, vérifiez que la page s’ouvre normalement dans un navigateur.",
+      "redirect_loop": "Corrigez la redirection pour qu’elle se termine sur une seule page, puis réessayez.",
+      "redirect_limit": "Faites pointer l’adresse directement vers la page finale, puis réessayez.",
+      "unsafe_redirect": "Redirigez plutôt vers une adresse publique, puis réessayez.",
+      "non_html": "Utilisez l’adresse de la page elle-même, pas celle d’un fichier, puis réessayez."
+    },
+    "failureEvidence": {
+      "redirectPath": "Chemin de redirection : {{path}}"
+    },
+    "failedNoOutput": "Cette analyse s'est arrêtée avant de produire quoi que ce soit : il n'y a donc ni opportunités de contenu, ni brief, ni brouillon à afficher.",
+    "retryDialog": {
+      "title": "Relancer cette analyse ?",
+      "description": "Une nouvelle analyse de la même page et du même mot-clé va démarrer.",
+      "confirm": "Réessayer",
+      "back": "Annuler",
+      "loading": "Chargement des détails de cette analyse…",
+      "loadFailed": "Impossible de charger les détails de cette analyse."
+    },
     "back": "Retour aux analyses",
     "meta": {
       "page": "Page",
@@ -136,20 +192,37 @@
       "locale": "Langue",
       "requested": "Demandé",
       "completed": "Terminé",
+      "readAt": "Lue à l’adresse {{url}} après une redirection",
       "cost": "Coût de l'analyse : {{units}} crédit"
     },
     "explanation": "Ceci est une comparaison de préparation de contenu, pas un score de moteur de recherche.",
     "score": {
-      "title": "Score de préparation du contenu", "overall": "Score global", "confidence": "Fiabilité des preuves", "breakdown": "Détail par section", "section": "Section", "weight": "Poids", "reason": "Pourquoi ce score", "reasonUnavailable": "Aucune explication n’est disponible pour cette section.", "reasonStrong": "Les preuves disponibles soutiennent cette section.", "reasonNeedsWork": "Les preuves disponibles montrent que cette section peut être améliorée.", "reasonLimited": "Des preuves limitées réduisent la fiabilité de cette section.", "sectionProgress": "Score {{section}} : {{score}} sur 100"
+      "title": "Score de préparation du contenu",
+      "overall": "Score global",
+      "confidence": "Fiabilité des preuves",
+      "breakdown": "Détail par section",
+      "section": "Section",
+      "weight": "Poids",
+      "reason": "Pourquoi ce score",
+      "reasonUnavailable": "Aucune explication n’est disponible pour cette section.",
+      "reasonStrong": "Les preuves disponibles soutiennent cette section.",
+      "reasonNeedsWork": "Les preuves disponibles montrent que cette section peut être améliorée.",
+      "reasonLimited": "Des preuves limitées réduisent la fiabilité de cette section.",
+      "sectionProgress": "Score {{section}} : {{score}} sur 100"
     },
     "sections": {
-      "readability": "Lisibilité", "intent": "Adéquation à l’intention de recherche",
+      "readability": "Lisibilité",
+      "intent": "Adéquation à l’intention de recherche",
       "coverage": "Couverture",
-      "structure": "Structure", "links": "Utilité des liens", "schema": "Données structurées et clarté des réponses", "technical": "Signaux techniques du contenu"
+      "structure": "Structure",
+      "links": "Utilité des liens",
+      "schema": "Données structurées et clarté des réponses",
+      "technical": "Signaux techniques du contenu"
     },
     "warnings": {
       "title": "Avertissements",
-      "empty": "Aucun avertissement.", "unknown": "Une partie de l’analyse n’était pas disponible."
+      "empty": "Aucun avertissement.",
+      "unknown": "Une partie de l’analyse n’était pas disponible."
     },
     "recommendations": {
       "title": "Recommandations",
@@ -172,9 +245,14 @@
       "saveFailed": "Impossible d’enregistrer cette version du brief. Réessayez.",
       "versionHistory": "Historique des versions du brief",
       "noVersions": "Aucune version du brief enregistrée.",
-      "versionMeta": "{{date}} · {{count}} sections",
+      "versionMeta_one": "{{date}} · {{count}} section",
       "unsavedGuard": "Le brief contient des modifications non enregistrées.",
-      "savedHint": "Cette suggestion est modifiable. Rien n’est publié."
+      "savedHint": "Cette suggestion est modifiable. Rien n’est publié.",
+      "versionMeta_zero": "{{date}} · {{count}} section",
+      "versionMeta_two": "{{date}} · {{count}} sections",
+      "versionMeta_few": "{{date}} · {{count}} sections",
+      "versionMeta_many": "{{date}} · {{count}} sections",
+      "versionMeta_other": "{{date}} · {{count}} sections"
     },
     "draft": {
       "title": "Premier brouillon",
@@ -185,23 +263,37 @@
       "saveFailed": "Impossible d’enregistrer cette version. Réessayez.",
       "versionHistory": "Historique des versions",
       "noVersions": "Aucune version enregistrée.",
-      "versionMeta": "{{date}} · {{count}} mots",
+      "versionMeta_one": "{{date}} · {{count}} mot",
       "copy": "Copier dans le presse-papiers",
       "copying": "Copie…",
       "copied": "Copié dans le presse-papiers.",
       "copyFailed": "Impossible de copier le brouillon.",
       "copyRetry": "Réessayer la copie",
       "export": "Exporter en Markdown",
-      "wordCount": "{{count}} mots",
-      "unsavedGuard": "Vous avez des modifications non enregistrées."
+      "wordCount_one": "{{count}} mot",
+      "unsavedGuard": "Vous avez des modifications non enregistrées.",
+      "versionMeta_zero": "{{date}} · {{count}} mot",
+      "versionMeta_two": "{{date}} · {{count}} mots",
+      "versionMeta_few": "{{date}} · {{count}} mots",
+      "versionMeta_many": "{{date}} · {{count}} mots",
+      "versionMeta_other": "{{date}} · {{count}} mots",
+      "wordCount_zero": "{{count}} mot",
+      "wordCount_two": "{{count}} mots",
+      "wordCount_few": "{{count}} mots",
+      "wordCount_many": "{{count}} mots",
+      "wordCount_other": "{{count}} mots"
     },
     "sources": {
       "title": "Sources",
-      "empty": "Aucune référence.", "owned": "Page propriétaire", "comparison": "Page de comparaison {{count}}"
+      "empty": "Aucune référence.",
+      "owned": "Page propriétaire",
+      "comparison": "Page de comparaison {{count}}"
     },
     "actions": {
       "cancel": "Annuler l'analyse",
-      "regenerate": "Régénérer (utilise un crédit)"
+      "regenerate": "Régénérer",
+      "retry": "Réessayer",
+      "editUrl": "Modifier l’URL"
     }
   },
   "confirm": {
@@ -218,30 +310,24 @@
       "back": "Annuler"
     },
     "discard": {
-      "title": "Ignorer les modifications non enregistrées ?", "description": "Vos dernières modifications n’ont pas été enregistrées comme version.", "confirm": "Ignorer et quitter", "back": "Continuer la modification"
+      "title": "Ignorer les modifications non enregistrées ?",
+      "description": "Vos dernières modifications n’ont pas été enregistrées comme version.",
+      "confirm": "Ignorer et quitter",
+      "back": "Continuer la modification"
     }
-  },
-  "paywall": {
-    "title": "Content Intelligence",
-    "description": "Passez à Starter ou supérieur pour lancer des analyses de contenu.",
-    "action": "Voir les plans",
-    "exhausted": {
-      "title": "Quota épuisé",
-      "description": "Votre quota mensuel et votre solde de pack sont épuisés. Achetez un pack ou changez de plan.",
-      "buyPack": "Acheter un pack d'analyses",
-      "seePlans": "Voir les plans"
-    },
-    "packHint": "Votre prochaine unité proviendra d'un pack de crédits."
   },
   "partial": {
     "title": "Résultat partiel",
     "description": "Cette exécution s'est terminée avec des données limitées. La fiche est disponible ; certaines sections peuvent manquer."
   },
   "warnings": {
-    "keywordUnavailable": "Les données du mot-clé étaient indisponibles ; les comparaisons propres à ce mot-clé sont donc absentes.", "serpUnavailable": "Les résultats de recherche étaient indisponibles ; le score repose donc sur votre page seule.", "competitorsPartial": "Certaines pages de comparaison étaient indisponibles ; le score utilise celles qui ont pu être lues.", "aiBudgetExhausted": "Le budget de rédaction s’est terminé avant que toutes les sections générées soient prêtes.", "stuffingSuspected": "La page répète le mot-clé de façon inhabituelle.", "briefFailed": "Le brief est indisponible, mais la fiche de score est conservée.", "draftFailed": "Le premier brouillon est indisponible, mais la fiche et le brief sont conservés."
-  },
-  "refund": {
-    "refunded": "Le crédit d'analyse a été restitué."
+    "keywordUnavailable": "Les données du mot-clé étaient indisponibles ; les comparaisons propres à ce mot-clé sont donc absentes.",
+    "serpUnavailable": "Les résultats de recherche étaient indisponibles ; le score repose donc sur votre page seule.",
+    "competitorsPartial": "Certaines pages de comparaison étaient indisponibles ; le score utilise celles qui ont pu être lues.",
+    "aiBudgetExhausted": "Le budget de rédaction s’est terminé avant que toutes les sections générées soient prêtes.",
+    "stuffingSuspected": "La page répète le mot-clé de façon inhabituelle.",
+    "briefFailed": "Le brief est indisponible, mais la fiche de score est conservée.",
+    "draftFailed": "Le premier brouillon est indisponible, mais la fiche et le brief sont conservés."
   },
   "errors": {
     "loadEntitlementsFailed": "Impossible de vérifier l’accès à l’intelligence de contenu.",
@@ -255,15 +341,155 @@
     "retry": "Réessayer"
   },
   "opportunities": {
-    "title": "Opportunités de contenu", "description": "Suivez chaque recommandation jusqu’à son application confirmée. Les changements d’état n’appellent aucun fournisseur.", "empty": "Aucune recommandation ne correspond aux filtres.",
-    "filters": { "state": "État", "severity": "Priorité" }, "states": { "all": "Tous les états", "suggested": "Suggérée", "accepted": "Acceptée", "dismissed": "Écartée", "applied": "Appliquée" }, "severities": { "all": "Toutes les priorités", "high": "Élevée", "medium": "Moyenne", "low": "Faible" },
-    "recommendationLabel": "{{direction}} · {{section}}", "rationale": "Justification", "rationaleUnavailable": "Aucune justification n’est disponible pour cette recommandation.", "rationaleText": "Utilisez les preuves liées pour {{direction}} la section {{section}}.", "ownedEvidence": "Preuve issue de votre page", "directions": { "add": "enrichir", "strengthen": "renforcer", "clarify": "clarifier", "remove": "alléger" }, "confidence": "Confiance de la recommandation : {{value}}", "evidence_zero": "{{count}} sources de preuve liées", "evidence_one": "{{count}} source de preuve liée", "evidence_two": "{{count}} sources de preuve liées", "evidence_few": "{{count}} sources de preuve liées", "evidence_many": "{{count}} sources de preuve liées", "evidence_other": "{{count}} sources de preuve liées",
-    "actions": { "accept": "Accepter", "dismiss": "Écarter", "apply": "Marquer appliquée", "undo": "Annuler l’application", "details": "Historique et résultats" }, "noteLabel": "Note", "noteHint": "Facultative sauf si aucun changement n’est détecté. Jusqu’à 4 000 caractères.", "cancel": "Annuler", "updating": "Mise à jour…", "success": "Recommandation mise à jour.", "errors": { "generic": "Impossible de mettre à jour la recommandation.", "conflict": "Cette recommandation a changé ailleurs. Rechargez les données et réessayez." },
-    "applicationCheck": { "loading": "Vérification de l’empreinte autorisée la plus récente…", "sameTitle": "Aucun changement de contenu détecté", "sameDescription": "L’empreinte autorisée la plus récente correspond à l’analyse. Vous pouvez confirmer avec une note explicative.", "changedTitle": "Changement de contenu détecté", "changedDescription": "L’empreinte autorisée la plus récente diffère de l’ancre de l’analyse.", "unavailableTitle": "Aucune empreinte récente disponible", "unavailableDescription": "Lancez une nouvelle analyse autorisée avant de confirmer. Cette vérification n’appelle aucun fournisseur.", "noteRequired": "Ajoutez une note explicative pour confirmer sans changement détecté.", "error": "La vérification de l’empreinte a échoué. Réessayez avant de confirmer." },
-    "confirm": { "accept": { "title": "Accepter cette recommandation ?", "description": "L’acceptation enregistre l’acteur et conserve l’historique.", "confirm": "Accepter" }, "dismiss": { "title": "Écarter cette recommandation ?", "description": "Vous pourrez l’accepter plus tard. L’événement reste dans l’historique.", "confirm": "Écarter" }, "apply": { "title": "Confirmer l’application ?", "description": "Confirmez seulement après modification de la page propriétaire. L’empreinte et les 28 jours suivants sont enregistrés.", "confirm": "Confirmer" }, "undo": { "title": "Annuler l’état appliqué ?", "description": "Un nouvel événement est créé sans supprimer la preuve originale.", "confirm": "Annuler l’application" } },
-    "history": { "title": "Historique de la recommandation", "empty": "Aucun changement pour l’instant.", "meta": "Acteur {{actor}} · {{time}}", "events": { "accepted": "Acceptée", "dismissed": "Écartée", "applied": "Application confirmée", "undo_applied": "Application annulée" } },
-    "hash": { "same": "L’empreinte confirmée correspond à celle de l’analyse.", "changed": "L’empreinte confirmée diffère de celle de l’analyse.", "unavailable": "Aucune empreinte n’est jointe à cet événement." },
-    "outcomes": { "hashAnchor": "Ancre de l’empreinte du contenu appliqué", "sourceUnavailable": "Une ou plusieurs sources sont indisponibles. Les observations disponibles restent visibles ; synchronisez la source manquante pour améliorer la couverture.", "relativeDelta": "Variation relative", "observedDate": "Date observée", "phase": "Fenêtre", "laterEditColumn": "Modification ultérieure", "phases": { "baseline": "Précédente", "following": "Suivante" }, "boolean": { "yes": "Oui", "no": "Non" }, "series": { "gsc": { "title": "Observations Search Console", "chartLabel": "Observations de clics Search Console disponibles dans la fenêtre" }, "rank": { "title": "Observations du rang suivi", "chartLabel": "Observations du rang suivi disponibles dans la fenêtre" } }, "syncButton": "Ouvrir les réglages des données de recherche", "unavailable": "Données de résultat indisponibles", "syncAction": "Connectez ou synchronisez Search Console et le suivi de rang. Les données absentes ne sont jamais affichées comme zéro.", "observedAfter": "Observé après l’application du {{date}}", "windowIncomplete": "La fenêtre suivante de 28 jours est encore incomplète.", "laterEdit": "Une modification ultérieure se trouve dans la fenêtre ; interprétez le mouvement avec prudence.", "chartLabel": "Observations de rang disponibles dans la fenêtre", "metric": "Mesure", "baseline": "28 jours précédents", "following": "28 jours suivants", "delta": "Variation absolue", "coverage": "Couverture — Search Console : {{gsc}} jours ; rang : {{rank}} jours.", "disclaimer": "Des facteurs externes influencent les performances de recherche. Cette vue montre un mouvement corrélé, pas une attribution.", "metrics": { "clicks": "Clics", "impressions": "Impressions", "ctr": "CTR", "averagePosition": "Position moyenne", "rankPosition": "Rang suivi" } }
+    "title": "Opportunités de contenu",
+    "description": "Suivez chaque recommandation jusqu'à son application confirmée. Changer un état ne récupère jamais de nouvelles données.",
+    "empty": "Aucune recommandation ne correspond aux filtres.",
+    "filters": {
+      "state": "État",
+      "severity": "Priorité"
+    },
+    "states": {
+      "all": "Tous les états",
+      "suggested": "Suggérée",
+      "accepted": "Acceptée",
+      "dismissed": "Écartée",
+      "applied": "Appliquée"
+    },
+    "severities": {
+      "all": "Toutes les priorités",
+      "high": "Élevée",
+      "medium": "Moyenne",
+      "low": "Faible"
+    },
+    "recommendationLabel": "{{direction}} · {{section}}",
+    "rationale": "Justification",
+    "rationaleUnavailable": "Aucune justification n’est disponible pour cette recommandation.",
+    "rationaleText": "Utilisez les preuves liées pour {{direction}} la section {{section}}.",
+    "ownedEvidence": "Preuve issue de votre page",
+    "directions": {
+      "add": "enrichir",
+      "strengthen": "renforcer",
+      "clarify": "clarifier",
+      "remove": "alléger"
+    },
+    "confidence": "Confiance de la recommandation : {{value}}",
+    "evidence_zero": "{{count}} sources de preuve liées",
+    "evidence_one": "{{count}} source de preuve liée",
+    "evidence_two": "{{count}} sources de preuve liées",
+    "evidence_few": "{{count}} sources de preuve liées",
+    "evidence_many": "{{count}} sources de preuve liées",
+    "evidence_other": "{{count}} sources de preuve liées",
+    "actions": {
+      "accept": "Accepter",
+      "dismiss": "Écarter",
+      "apply": "Marquer appliquée",
+      "undo": "Annuler l’application",
+      "details": "Historique et résultats"
+    },
+    "noteLabel": "Note",
+    "noteHint": "Facultative sauf si aucun changement n’est détecté. Jusqu’à 4 000 caractères.",
+    "cancel": "Annuler",
+    "updating": "Mise à jour…",
+    "success": "Recommandation mise à jour.",
+    "errors": {
+      "generic": "Impossible de mettre à jour la recommandation.",
+      "conflict": "Cette recommandation a changé ailleurs. Rechargez les données et réessayez."
+    },
+    "applicationCheck": {
+      "loading": "Vérification de l’empreinte autorisée la plus récente…",
+      "sameTitle": "Aucun changement de contenu détecté",
+      "sameDescription": "L’empreinte autorisée la plus récente correspond à l’analyse. Vous pouvez confirmer avec une note explicative.",
+      "changedTitle": "Changement de contenu détecté",
+      "changedDescription": "L’empreinte autorisée la plus récente diffère de l’ancre de l’analyse.",
+      "unavailableTitle": "Aucune empreinte récente disponible",
+      "unavailableDescription": "Lancez une nouvelle analyse autorisée avant de confirmer. Cette vérification ne récupère aucune nouvelle donnée.",
+      "noteRequired": "Ajoutez une note explicative pour confirmer sans changement détecté.",
+      "error": "La vérification de l’empreinte a échoué. Réessayez avant de confirmer."
+    },
+    "confirm": {
+      "accept": {
+        "title": "Accepter cette recommandation ?",
+        "description": "L’acceptation enregistre l’acteur et conserve l’historique.",
+        "confirm": "Accepter"
+      },
+      "dismiss": {
+        "title": "Écarter cette recommandation ?",
+        "description": "Vous pourrez l’accepter plus tard. L’événement reste dans l’historique.",
+        "confirm": "Écarter"
+      },
+      "apply": {
+        "title": "Confirmer l’application ?",
+        "description": "Confirmez seulement après modification de la page propriétaire. L’empreinte et les 28 jours suivants sont enregistrés.",
+        "confirm": "Confirmer"
+      },
+      "undo": {
+        "title": "Annuler l’état appliqué ?",
+        "description": "Un nouvel événement est créé sans supprimer la preuve originale.",
+        "confirm": "Annuler l’application"
+      }
+    },
+    "history": {
+      "title": "Historique de la recommandation",
+      "empty": "Aucun changement pour l’instant.",
+      "meta": "Acteur {{actor}} · {{time}}",
+      "events": {
+        "accepted": "Acceptée",
+        "dismissed": "Écartée",
+        "applied": "Application confirmée",
+        "undo_applied": "Application annulée"
+      }
+    },
+    "hash": {
+      "same": "L’empreinte confirmée correspond à celle de l’analyse.",
+      "changed": "L’empreinte confirmée diffère de celle de l’analyse.",
+      "unavailable": "Aucune empreinte n’est jointe à cet événement."
+    },
+    "outcomes": {
+      "hashAnchor": "Ancre de l’empreinte du contenu appliqué",
+      "sourceUnavailable": "Une ou plusieurs sources sont indisponibles. Les observations disponibles restent visibles ; synchronisez la source manquante pour améliorer la couverture.",
+      "relativeDelta": "Variation relative",
+      "observedDate": "Date observée",
+      "phase": "Fenêtre",
+      "laterEditColumn": "Modification ultérieure",
+      "phases": {
+        "baseline": "Précédente",
+        "following": "Suivante"
+      },
+      "boolean": {
+        "yes": "Oui",
+        "no": "Non"
+      },
+      "series": {
+        "gsc": {
+          "title": "Observations Search Console",
+          "chartLabel": "Observations de clics Search Console disponibles dans la fenêtre"
+        },
+        "rank": {
+          "title": "Observations du rang suivi",
+          "chartLabel": "Observations du rang suivi disponibles dans la fenêtre"
+        }
+      },
+      "syncButton": "Ouvrir les réglages des données de recherche",
+      "unavailable": "Données de résultat indisponibles",
+      "syncAction": "Connectez ou synchronisez Search Console et le suivi de rang. Les données absentes ne sont jamais affichées comme zéro.",
+      "observedAfter": "Observé après l’application du {{date}}",
+      "windowIncomplete": "La fenêtre suivante de 28 jours est encore incomplète.",
+      "laterEdit": "Une modification ultérieure se trouve dans la fenêtre ; interprétez le mouvement avec prudence.",
+      "chartLabel": "Observations de rang disponibles dans la fenêtre",
+      "metric": "Mesure",
+      "baseline": "28 jours précédents",
+      "following": "28 jours suivants",
+      "delta": "Variation absolue",
+      "coverage": "Couverture en jours — Search Console : {{gsc}} ; rang : {{rank}}.",
+      "disclaimer": "Des facteurs externes influencent les performances de recherche. Cette vue montre un mouvement corrélé, pas une attribution.",
+      "metrics": {
+        "clicks": "Clics",
+        "impressions": "Impressions",
+        "ctr": "CTR",
+        "averagePosition": "Position moyenne",
+        "rankPosition": "Rang suivi"
+      }
+    }
   },
   "inventory": {
     "paywall": {
@@ -303,15 +529,9 @@
       "title": "Lancer un inventaire",
       "description": "Explorez vos pages et obtenez des groupes, doublons, pages légères et orphelines, cannibalisation et lacunes thématiques.",
       "pageLimit": "Pages à explorer",
-      "pageLimitHint": "Entre une et {{max}} pages. Quatre pages forment un bloc réservé.",
-      "blocksTitle": "Ce que cela réserve",
-      "blocks_zero": "{{count}} blocs réservés. Limite de pages : {{pages}} (quatre pages par bloc).",
-      "blocks_one": "{{count}} bloc réservé. Limite de pages : {{pages}} (quatre pages par bloc).",
-      "blocks_two": "{{count}} blocs réservés. Limite de pages : {{pages}} (quatre pages par bloc).",
-      "blocks_few": "{{count}} blocs réservés. Limite de pages : {{pages}} (quatre pages par bloc).",
-      "blocks_many": "{{count}} blocs réservés. Limite de pages : {{pages}} (quatre pages par bloc).",
-      "blocks_other": "{{count}} blocs réservés. Limite de pages : {{pages}} (quatre pages par bloc).",
-      "blocksInvalid": "Saisissez un nombre de pages valide pour voir le nombre de blocs réservés.",
+      "pageLimitHint": "Entre une et {{max}} pages.",
+      "blocksTitle": "Pages de cette analyse",
+      "blocksInvalid": "Saisissez un nombre de pages valide pour voir la limite d’exploration.",
       "allowedPaths": "Uniquement ces chemins (facultatif)",
       "excludedPaths": "Ignorer ces chemins (facultatif)",
       "sitemapSeeds": "URL de sitemap (facultatif)",
@@ -326,7 +546,14 @@
         "invalidPath": "Chaque chemin doit commencer par une barre oblique (par exemple /blog).",
         "tooManySeeds": "Utilisez au maximum cinq URL de sitemap.",
         "invalidSeed": "L’une des URL de sitemap est trop longue."
-      }
+      },
+      "pageCount_zero": "{{count}} page",
+      "pageCount_one": "{{count}} page",
+      "pageCount_two": "{{count}} pages",
+      "pageCount_few": "{{count}} pages",
+      "pageCount_many": "{{count}} pages",
+      "pageCount_other": "{{count}} pages",
+      "blocks": "Jusqu’à $t(contentIntelligence:inventory.start.pageCount, {\"count\": {{pages}}})."
     },
     "runs": {
       "title": "Exécutions d’inventaire",
@@ -476,7 +703,11 @@
       "failed": "Échec",
       "cancelled": "Annulé"
     },
-    "confidence": { "high": "Élevée", "medium": "Moyenne", "low": "Faible" },
+    "confidence": {
+      "high": "Élevée",
+      "medium": "Moyenne",
+      "low": "Faible"
+    },
     "warnings": {
       "partialPortfolio": "Certains concurrents n’ont pas pu être lus ; les résultats couvrent ceux que nous avons pu atteindre.",
       "stoppedEarly": "L’analyse s’est arrêtée plus tôt pour rester dans le budget.",
@@ -530,8 +761,14 @@
         "title": "Aucun concurrent",
         "description": "Confirmez une suggestion ou ajoutez un concurrent par URL pour constituer votre portefeuille."
       },
-      "source": { "suggested": "Suggéré", "manual": "Manuel" },
-      "profileStatus": { "active": "Actif", "archived": "Archivé" },
+      "source": {
+        "suggested": "Suggéré",
+        "manual": "Manuel"
+      },
+      "profileStatus": {
+        "active": "Actif",
+        "archived": "Archivé"
+      },
       "archive": "Archiver",
       "restore": "Restaurer",
       "updating": "Mise à jour…",
@@ -557,25 +794,47 @@
       "keywordHint": "Restreint la comparaison à l’intention que vous visez.",
       "pageLimit": "Pages concurrentes à lire",
       "pageLimitHint": "Entre une et {{max}} pages parmi les concurrents choisis.",
-      "disclosureTitle": "Coût de cette analyse",
-      "disclosure_zero": "Cette analyse réserve une unité et lit jusqu’à {{pages}} pages parmi {{count}} concurrents.",
-      "disclosure_one": "Cette analyse réserve une unité et lit jusqu’à {{pages}} pages parmi {{count}} concurrent.",
-      "disclosure_two": "Cette analyse réserve une unité et lit jusqu’à {{pages}} pages parmi {{count}} concurrents.",
-      "disclosure_few": "Cette analyse réserve une unité et lit jusqu’à {{pages}} pages parmi {{count}} concurrents.",
-      "disclosure_many": "Cette analyse réserve une unité et lit jusqu’à {{pages}} pages parmi {{count}} concurrents.",
-      "disclosure_other": "Cette analyse réserve une unité et lit jusqu’à {{pages}} pages parmi {{count}} concurrents.",
-      "disclosureInvalid": "Saisissez un nombre de pages valide pour voir ce que réserve cette analyse.",
+      "disclosureTitle": "Pages et concurrents de cette analyse",
+      "disclosureInvalid": "Saisissez un nombre de pages valide pour voir les limites de l’analyse.",
       "inFlight": "Une analyse est déjà en cours. Attendez sa fin avant d’en démarrer une autre.",
       "submit": "Démarrer la comparaison",
       "submitting": "Démarrage…",
-      "reviewed": { "title": "Vérifier les pages classées", "description": "Confirmez les pages réelles à comparer. Aucun traitement ne démarre avant votre accord.", "loading": "Chargement de la correspondance vérifiée…", "notFound": "Cette correspondance n’est plus disponible.", "loadFailed": "Impossible de charger la correspondance vérifiée.", "evidence": "Mots-clés liés", "openSuggested": "Ouvrir la page suggérée", "competitorUrl": "Page classée du concurrent", "disclosure": "La comparaison réserve une unité et lit une page concurrente vérifiée avec la page propriétaire associée.", "reviewAction": "Vérifier le coût et confirmer", "confirmTitle": "Lancer cette comparaison ?", "confirmDescription": "Nous enregistrerons ces pages du même domaine, réserverons une unité et mettrons la comparaison en file.", "cancel": "Continuer la vérification", "confirm": "Confirmer et lancer" },
+      "reviewed": {
+        "title": "Vérifier les pages classées",
+        "description": "Confirmez les pages réelles à comparer. Aucun traitement ne démarre avant votre accord.",
+        "loading": "Chargement de la correspondance vérifiée…",
+        "notFound": "Cette correspondance n’est plus disponible.",
+        "loadFailed": "Impossible de charger la correspondance vérifiée.",
+        "evidence": "Mots-clés liés",
+        "openSuggested": "Ouvrir la page suggérée",
+        "competitorUrl": "Page classée du concurrent",
+        "disclosure": "La comparaison réserve une unité et lit une page concurrente vérifiée avec la page propriétaire associée.",
+        "reviewAction": "Vérifier le coût et confirmer",
+        "confirmTitle": "Lancer cette comparaison ?",
+        "confirmDescription": "Nous enregistrerons ces pages du même domaine, réserverons une unité et mettrons la comparaison en file.",
+        "cancel": "Continuer la vérification",
+        "confirm": "Confirmer et lancer"
+      },
       "errors": {
         "noSelection": "Choisissez au moins un concurrent à comparer.",
         "tooMany": "Ne choisissez pas plus que le nombre autorisé de concurrents.",
         "invalidUrl": "Saisissez une URL de page valide commençant par http ou https.",
         "invalidCompetitorUrl": "Saisissez une URL classée explicite pour chaque concurrent sélectionné.",
         "pageLimitRange": "Saisissez un nombre de pages dans la plage autorisée."
-      }
+      },
+      "pageCount_zero": "{{count}} page",
+      "pageCount_one": "{{count}} page",
+      "pageCount_two": "{{count}} pages",
+      "pageCount_few": "{{count}} pages",
+      "pageCount_many": "{{count}} pages",
+      "pageCount_other": "{{count}} pages",
+      "competitorCount_zero": "{{count}} concurrent",
+      "competitorCount_one": "{{count}} concurrent",
+      "competitorCount_two": "{{count}} concurrents",
+      "competitorCount_few": "{{count}} concurrents",
+      "competitorCount_many": "{{count}} concurrents",
+      "competitorCount_other": "{{count}} concurrents",
+      "disclosure": "Cette analyse lit jusqu’à $t(contentIntelligence:competitorContent.run.pageCount, {\"count\": {{pages}}}) parmi $t(contentIntelligence:competitorContent.run.competitorCount, {\"count\": {{count}}})."
     },
     "runs": {
       "title": "Analyses comparatives",
@@ -600,7 +859,6 @@
       "competitorsProcessed": "Concurrents lus",
       "competitorsFailed": "Concurrents en échec",
       "pagesScraped": "Pages lues",
-      "refundNote": "L’unité réservée a été rendue à votre quota.",
       "warningsTitle": "Avertissements",
       "errorTitle": "Cette analyse s’est arrêtée tôt",
       "errorGeneric": "L’analyse s’est arrêtée avant la fin.",
@@ -619,7 +877,9 @@
       "evidence_few": "{{count}} sources de preuve liées",
       "evidence_many": "{{count}} sources de preuve liées",
       "evidence_other": "{{count}} sources de preuve liées",
-      "explanation": { "title": "Résumé" }
+      "explanation": {
+        "title": "Résumé"
+      }
     },
     "comparison": {
       "title": "Vue d’ensemble de la comparaison",
@@ -672,7 +932,10 @@
       "description": "Faits dérivés pour votre page et chaque page concurrente lue.",
       "empty": "Aucun détail de page",
       "emptyHint": "Cette analyse n’a stocké aucun fait par page.",
-      "role": { "owned": "Votre page", "competitor": "Concurrent" },
+      "role": {
+        "owned": "Votre page",
+        "competitor": "Concurrent"
+      },
       "visit": "Visiter la page",
       "words": "Mots",
       "headings": "Titres",
@@ -700,7 +963,10 @@
       "checks": "Vérifications hebdomadaires ce mois-ci",
       "targetKind": "Que voulez-vous surveiller ?",
       "targetKinds": {
-        "owned": { "label": "Une de mes pages", "hint": "Une page de ce site qui vous appartient déjà." },
+        "owned": {
+          "label": "Une de mes pages",
+          "hint": "Une page de ce site qui vous appartient déjà."
+        },
         "competitor": {
           "label": "Une page de concurrent",
           "hint": "Une page d'un concurrent que vous avez confirmé."
@@ -730,8 +996,13 @@
       "submit": "Démarrer la surveillance",
       "submitting": "Démarrage…"
     },
-    "cadence": { "weekly": "chaque semaine" },
-    "targetKinds": { "owned": "Page à vous", "competitor": "Page de concurrent" },
+    "cadence": {
+      "weekly": "chaque semaine"
+    },
+    "targetKinds": {
+      "owned": "Page à vous",
+      "competitor": "Page de concurrent"
+    },
     "status": {
       "active": "Actif",
       "paused": "En pause",
@@ -825,29 +1096,27 @@
     },
     "preview": {
       "title": "Aperçu de la dépense",
-      "unit": "Ce brief utilise {{count}} unité de brief de contenu.",
       "serp": {
         "stored": "Observation SERP enregistrée le {{date}} ; aucune nouvelle collecte n'est prévue.",
         "fetched": "Aucune SERP récente enregistrée ; une collecte facturée est incluse dans l'unité."
       },
-      "scrapes": "Jusqu'à {{count}} pages de résultats publiques seront lues séparément.",
+      "scrapes_one": "Jusqu'à {{count}} page de résultats publique sera lue séparément.",
       "consume": "Utilisation prévue : {{base}} unité de base, {{pack}} de pack.",
-      "remaining": "Disponible : {{base}} unité de base, {{pack}} de pack."
+      "scrapes_zero": "Jusqu'à {{count}} page de résultats publique sera lue séparément.",
+      "scrapes_two": "Jusqu'à {{count}} pages de résultats publiques seront lues séparément.",
+      "scrapes_few": "Jusqu'à {{count}} pages de résultats publiques seront lues séparément.",
+      "scrapes_many": "Jusqu'à {{count}} pages de résultats publiques seront lues séparément.",
+      "scrapes_other": "Jusqu'à {{count}} pages de résultats publiques seront lues séparément."
     },
     "status": {
       "queued": "En attente",
       "running": "En cours",
       "completed": "Terminé",
-      "completed_empty": "Terminé — corpus vide",
+      "completed_empty": "Terminé : aucune page concurrente trouvée",
       "completed_partial": "Partiel",
       "failed": "Échec"
     },
     "states": {
-      "cap": {
-        "title": "Quota de briefs épuisé",
-        "description": "Le quota de base et le solde du pack ne couvrent pas ce brief.",
-        "action": "Voir les packs de briefs"
-      },
       "disabled": {
         "title": "Les briefs sont indisponibles",
         "description": "Cette fonction est désactivée pour le moment. Les données enregistrées restent intactes."
@@ -857,18 +1126,18 @@
         "description": "Le traitement s'est arrêté. Les preuves conservées restent visibles."
       }
     },
-    "locked": {
-      "title": "Les briefs exigent Pro ou Agency",
-      "description": "Agency inclut un quota mensuel. Pro peut utiliser les crédits d'un pack de briefs.",
-      "action": "Comparer les offres"
-    },
     "list": {
       "title": "Briefs enregistrés",
       "description": "Rouvrez un brief sauvegardé sans dépenser une nouvelle unité.",
       "filter": "Filtre d'état",
       "all": "Tous les états",
       "loading": "Chargement des briefs…",
-      "meta": "Demandé le {{date}} · {{count}} pages conservées"
+      "meta_one": "Demandé le {{date}} · {{count}} page conservée",
+      "meta_zero": "Demandé le {{date}} · {{count}} page conservée",
+      "meta_two": "Demandé le {{date}} · {{count}} pages conservées",
+      "meta_few": "Demandé le {{date}} · {{count}} pages conservées",
+      "meta_many": "Demandé le {{date}} · {{count}} pages conservées",
+      "meta_other": "Demandé le {{date}} · {{count}} pages conservées"
     },
     "empty": {
       "title": "Aucun brief",
@@ -907,7 +1176,7 @@
       }
     },
     "corpus": {
-      "title": "Statistiques du corpus des dix premiers résultats",
+      "title": "Les 10 premiers résultats en bref",
       "scrapeDates": "Moyenne des dix premiers résultats, calculée sur les pages lues le {{dates}}.",
       "noDates": "aucune date conservée",
       "range": "Plage de mots",
@@ -920,8 +1189,13 @@
     "sources": {
       "title": "Pages sources enregistrées",
       "description": "Les titres et intertitres sont du texte tiers non fiable, affiché littéralement.",
-      "meta": "Lue le {{date}} · {{count}} mots",
-      "empty": "Aucun document source n'a été conservé."
+      "meta_one": "Lue le {{date}} · {{count}} mot",
+      "empty": "Aucun document source n'a été conservé.",
+      "meta_zero": "Lue le {{date}} · {{count}} mot",
+      "meta_two": "Lue le {{date}} · {{count}} mots",
+      "meta_few": "Lue le {{date}} · {{count}} mots",
+      "meta_many": "Lue le {{date}} · {{count}} mots",
+      "meta_other": "Lue le {{date}} · {{count}} mots"
     },
     "outline": {
       "title": "Plan cité",
@@ -935,7 +1209,9 @@
       "title": "Termes secondaires du groupe",
       "empty": "Aucun groupe enregistré ne contient ce mot-clé."
     },
-    "paa": { "title": "Questions associées enregistrées" },
+    "paa": {
+      "title": "Questions associées enregistrées"
+    },
     "abstentions": {
       "title": "Limites des preuves",
       "noSerpResults": "La SERP enregistrée ou collectée ne contenait aucune URL exploitable.",
@@ -945,11 +1221,11 @@
       "malformedEvidence": "La sortie IA non étayée ou incorrecte a été écartée.",
       "unknown": "Une section a été omise faute de preuves suffisantes."
     },
-    "guidance": "Indications directionnelles issues du corpus enregistré ; les résultats de recherche peuvent varier.",
+    "guidance": "Conseils fondés sur les meilleurs résultats enregistrés ; vos résultats de recherche peuvent différer.",
     "cost": "Coût du traitement : {{used}} sur un plafond de {{ceiling}} microdollars.",
     "editor": {
       "title": "Éditeur de brouillon : {{keyword}}",
-      "description": "Comparez un brouillon borné au corpus enregistré. Une nouvelle évaluation ne consomme pas d'unité et n'appelle l'IA que si le plafond initial laisse assez de marge.",
+      "description": "Comparez votre brouillon, dans la limite de longueur, aux meilleurs résultats enregistrés. Un nouveau score ne consomme pas d’autre brief et n’utilise l’IA que s’il reste du budget sur l’analyse d’origine.",
       "draft": "Brouillon",
       "characters": "{{count}} caractères sur 50 000",
       "score": "Évaluer cette version",
@@ -957,16 +1233,16 @@
       "history": "Historique des évaluations",
       "empty": "Aucune version du brouillon n'a encore été évaluée.",
       "version": "Version {{version}}",
-      "deterministicScore": "Indication déterministe : {{score}}/100",
+      "deterministicScore": "Score fondé sur des règles : {{score}}/100",
       "words": "Mots",
       "headings": "Titres",
       "entities": "Entités correspondantes",
       "aiScore": "Indication de l'IA : {{score}}/100",
-      "deterministicOnly": "Indication déterministe uniquement",
+      "deterministicOnly": "Score fondé sur des règles uniquement",
       "disclosure": {
         "scored": "L'évaluation IA bornée s'appuie sur les preuves enregistrées.",
         "cost_ceiling": "La marge du traitement initial ne permettait pas un nouvel appel à l'IA.",
-        "provider_error": "Le fournisseur d'IA était indisponible ; la comparaison déterministe reste accessible.",
+        "provider_error": "Le service d’IA était indisponible ; la comparaison fondée sur des règles fonctionne toujours.",
         "malformed_output": "La réponse IA n'était pas étayée et a été écartée."
       }
     },

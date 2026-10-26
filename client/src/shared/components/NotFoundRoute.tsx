@@ -2,6 +2,9 @@ import { RequirePasswordCurrent, SessionPending, useAuthSession } from '@feature
 import { AppLayout } from './AppLayout';
 import { NotFound } from './NotFound';
 import { PublicLayout } from './PublicLayout';
+import { useTranslation } from 'react-i18next';
+import { useMarketingRoute } from '@shared/i18n/localePath';
+import { Seo } from '@shared/seo/Seo';
 
 /**
  * The 404 for a path no route claims. A signed-in user stays inside the
@@ -13,6 +16,8 @@ import { PublicLayout } from './PublicLayout';
  */
 export const NotFoundRoute = () => {
   const { authenticated, isPending } = useAuthSession();
+  const { t } = useTranslation('common');
+  const { locale, basePath } = useMarketingRoute();
 
   if (authenticated) {
     return (
@@ -29,6 +34,7 @@ export const NotFoundRoute = () => {
 
   return (
     <PublicLayout>
+      <Seo title={t('notFound.title')} description={t('notFound.description')} basePath={basePath} locale={locale} noindex />
       <NotFound />
     </PublicLayout>
   );

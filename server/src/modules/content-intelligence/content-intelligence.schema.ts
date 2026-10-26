@@ -12,6 +12,33 @@
  */
 import { z } from 'zod';
 import { keywordString, localeEnum, safeUrlString, boundedPageLimit, noteString, } from '../../shared/security/index.js';
+/**
+ * Separators that turn a query into a list: comma (ASCII, fullwidth, ideographic,
+ * Arabic), semicolon (ASCII, fullwidth), and line breaks / tabs. An analysis
+ * covers exactly one keyword; two non-empty parts on either side of any
+ * separator are two keywords. A trailing separator leaves one part and is
+ * still one keyword.
+ */
+const KEYWORD_LIST_SEPARATORS = /[,;\n\r\t\v\f\u0085\u2028\u2029\uFF0C\u3001\u060C\uFF1B]/u;
+/** True when a keyword value holds more than one comma/semicolon/line-separated query. */
+export function isKeywordList(value: string): boolean {
+    return (value
+        .split(KEYWORD_LIST_SEPARATORS)
+        .map((part) => part.trim())
+        .filter(Boolean).length >= 2);
+}
+/**
+ * One target query. The list check runs on the RAW value, before
+ * `keywordString` strips control characters, because stripping would silently
+ * glue "seo audit\nsite audit" into "seo auditsite audit". Over-long input is
+ * rejected by `keywordString`, never truncated.
+ */
+const singleQueryKeyword = z
+    .string()
+    .refine((value) => !isKeywordList(value), {
+    message: 'contentIntelligence.errors.keywordList',
+})
+    .pipe(keywordString);
 /** Better Auth id shape (ObjectId-compatible 24-char hex). */
 const objectIdHex = z
     .string()
@@ -72,7 +99,7 @@ export const applyRecommendationBodySchema = recommendationMutationBase
 export const createAnalysisBodySchema = z
     .object({
     ownedUrl: safeUrlString,
-    keyword: keywordString,
+    keyword: singleQueryKeyword,
     locale: localeEnum,
     clientKey: clientIdempotencyKey.optional(),
     reviewedPageMatches: z
@@ -90,13 +117,19 @@ export const createAnalysisBodySchema = z
 export const preflightAnalysisBodySchema = z
     .object({
     ownedUrl: safeUrlString,
-    keyword: keywordString,
+    keyword: singleQueryKeyword,
     locale: localeEnum,
 })
     .strict();
 /** Regenerate — no body; the source analysis id supplies keyword/url/locale. */
 export const regenerateAnalysisBodySchema = z
     .object({})
+    .strict();
+/** A Try again carries the AI consent the user confirmed. */
+export const retryAnalysisBodySchema = z
+    .object({
+    consent: z.boolean().default(false),
+})
     .strict();
 export const saveDraftVersionBodySchema = z
     .object({
@@ -123,7 +156,7 @@ export const saveBriefVersionBodySchema = z
             code: z.ZodIssueCode.too_big,
             maximum: 100000,
             inclusive: true,
-            type: 'string',
+            origin: 'string',
             path: ['sections'],
             message: 'validation.custom.briefTooLong',
         });

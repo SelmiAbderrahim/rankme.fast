@@ -49,7 +49,9 @@
     "assistant": "Respuesta del asistente",
     "streaming": "El asistente está respondiendo",
     "stopped": "Respuesta detenida",
-    "loading": "Cargando conversación…"
+    "loading": "Cargando conversación…",
+    "cutOff": "La respuesta se cortó antes de terminar.",
+    "retryCutOff": "Reintentar"
   },
   "tool": {
     "arguments": "Argumentos",
@@ -70,7 +72,35 @@
       "startAudit": "Iniciar auditoría",
       "auditStatus": "Estado de la auditoría",
       "listActions": "Próximas acciones",
-      "setActionState": "Actualizar una acción"
+      "setActionState": "Actualizar una acción",
+      "getGscSearchSummary": "Obtener resumen de Search Console",
+      "listGscTopQueries": "Listar las búsquedas principales",
+      "listGscTopPages": "Listar las páginas principales de búsqueda",
+      "getGa4Summary": "Obtener resumen de Analytics",
+      "listPages": "Listar páginas",
+      "getPageDetail": "Obtener detalle de una página",
+      "getBacklinksSummary": "Obtener resumen de backlinks",
+      "listBacklinks": "Listar backlinks",
+      "listCompetitors": "Listar competidores",
+      "listKeywordResearchHistory": "Listar historial de investigación de palabras clave",
+      "getKeywordResearchResult": "Obtener resultado de investigación de palabras clave",
+      "getAiVisibilitySummary": "Obtener resumen de Visibilidad en IA",
+      "getLocalSeoSummary": "Obtener resumen de SEO local",
+      "getReviewsSummary": "Obtener resumen de reseñas",
+      "listClientReports": "Listar informes de clientes"
+    },
+    "errors": {
+      "forbiddenOutput": "El resultado de este paso se ha retenido porque contenía contenido que no se puede mostrar de forma segura. Vuelve a preguntar.",
+      "invalidInput": "Este paso no se pudo ejecutar porque la solicitud no era válida. Prueba a reformular tu pregunta.",
+      "notFound": "El sitio de este paso no está disponible en esta conversación.",
+      "internal": "Algo salió mal por nuestra parte al ejecutar este paso. Inténtalo de nuevo.",
+      "generic": "No se pudo completar este paso. Inténtalo de nuevo."
+    },
+    "retry": "Preguntar de nuevo",
+    "storedStatus": {
+      "ok": "Datos almacenados",
+      "empty": "Nada almacenado",
+      "unavailable": "No disponible"
     }
   },
   "results": {
@@ -86,7 +116,14 @@
     "topFindings": "Hallazgos principales",
     "noFindings": "No se devolvieron hallazgos.",
     "domain": "Dominio",
-    "url": "URL"
+    "url": "URL",
+    "change": "Cambio",
+    "truncated": "Solo se muestran las primeras filas.",
+    "scopeSource": "Fuente",
+    "scopeRange": "Rango",
+    "scopePeriod": "Fechas",
+    "scopeAsOf": "Actualizado al",
+    "scopeTimezone": "Zona horaria"
   },
   "states": {
     "locked": {

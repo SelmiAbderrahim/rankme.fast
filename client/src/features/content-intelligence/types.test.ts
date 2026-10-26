@@ -1,6 +1,9 @@
 import { describe, expect, it } from 'vitest';
 import {
+  CONTENT_ANALYSIS_FAILURE_CODES,
+  CONTENT_ANALYSIS_FAILURE_REASONS,
   CONTENT_ANALYSIS_STATUSES,
+  CONTENT_KEYWORD_MAX_LENGTH,
   CONTENT_INVENTORY_STATUSES,
   CONTENT_SUB_VIEWS,
   DEFAULT_CONTENT_SUB_VIEW,
@@ -8,6 +11,8 @@ import {
   INVENTORY_PAGES_PER_BLOCK,
   inventoryBlocksForPages,
   isContentAnalysisCancellable,
+  isContentAnalysisFailureReason,
+  isKeywordList,
   isContentAnalysisStatus,
   isContentAnalysisTerminal,
   isContentInventoryCancellable,
@@ -82,5 +87,31 @@ describe('content-intelligence types', () => {
     expect(isContentSubView('analyses')).toBe(true);
     expect(isContentSubView('bogus')).toBe(false);
     expect(isContentSubView(42)).toBe(false);
+  });
+
+  it('recognizes failure reasons and keeps the failure codes in step with the server', () => {
+    for (const reason of CONTENT_ANALYSIS_FAILURE_REASONS) {
+      expect(isContentAnalysisFailureReason(reason)).toBe(true);
+    }
+    expect(isContentAnalysisFailureReason('future_reason')).toBe(false);
+    expect(isContentAnalysisFailureReason(null)).toBe(false);
+    expect(CONTENT_ANALYSIS_FAILURE_CODES).toEqual([
+      'provider_unavailable',
+      'page_unreachable',
+      'page_blocked',
+      'page_too_large',
+      'timeout',
+      'internal',
+    ]);
+    expect(CONTENT_KEYWORD_MAX_LENGTH).toBe(200);
+  });
+
+  it('flags a keyword list, but not one query with a trailing separator', () => {
+    for (const list of ['a, b', 'a; b', 'a\nb', 'a\tb', '播客，免费', 'مدقق، سيو']) {
+      expect(isKeywordList(list)).toBe(true);
+    }
+    for (const single of ['seo audit', 'seo audit,', ' ; seo audit ;', '  seo audit  ']) {
+      expect(isKeywordList(single)).toBe(false);
+    }
   });
 });

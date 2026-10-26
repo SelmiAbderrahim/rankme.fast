@@ -8,6 +8,7 @@ import { Register } from './Register';
 import { ForgotPassword } from './ForgotPassword';
 import { ResetPassword } from './ResetPassword';
 import { Logout } from './Logout';
+import { useSignOut } from '../useSignOut';
 import { GoogleSignIn, AuthDivider } from './SocialAuth';
 import { authClient } from '../authClient';
 import { i18n, initI18n, requestPresentationRefresh } from '@shared/i18n';
@@ -23,6 +24,9 @@ vi.mock('../authClient', () => ({
     sendVerificationEmail: vi.fn(),
     useSession: vi.fn(() => ({ data: null, isPending: false })),
   },
+}));
+vi.mock('../sessionMutation', () => ({
+  sessionMutation: (mutation: () => Promise<unknown>) => mutation(),
 }));
 
 const signInEmail = authClient.signIn.email as unknown as Mock;
@@ -103,6 +107,15 @@ describe('Login', () => {
     const alert = await screen.findByRole('alert');
     expect(alert).toHaveTextContent('Invalid email or password.');
     expect(screen.getByTestId('location')).toHaveTextContent('/');
+  });
+
+  it('asks the user to reconnect when the sign-in request cannot finish', async () => {
+    signInEmail.mockRejectedValue(new Error('offline'));
+    renderAt(<Login />);
+    fireEvent.change(screen.getByLabelText('Email'), { target: { value: 'a@b.co' } });
+    fireEvent.change(screen.getByLabelText('Password'), { target: { value: 'hunter2!' } });
+    fireEvent.click(screen.getByRole('button', { name: 'Log in' }));
+    expect(await screen.findByRole('alert')).toHaveTextContent(i18n.t('sessionUnavailable', { ns: 'auth' }));
   });
 
   it('navigates to the dashboard after a verified sign-in', async () => {
@@ -377,6 +390,23 @@ describe('Logout', () => {
 
     await waitFor(() => expect(screen.getByTestId('location')).toHaveTextContent('/login'));
     expect(testStore.getState().sites.error).toBe('');
+  });
+});
+
+describe('useSignOut', () => {
+  it('runs one Better Auth mutation while a sign-out is pending', async () => {
+    let finish: (() => void) | undefined;
+    signOut.mockImplementation(() => new Promise((resolve) => { finish = () => resolve(ok()); }));
+    const Action = () => {
+      const { signOut: run, signingOut } = useSignOut();
+      return <button type="button" onClick={() => { void run(); void run(); }}>{signingOut ? 'Signing out' : 'Sign out'}</button>;
+    };
+    renderAt(<Action />);
+    fireEvent.click(screen.getByRole('button', { name: 'Sign out' }));
+    expect(signOut).toHaveBeenCalledTimes(1);
+    expect(screen.getByRole('button', { name: 'Signing out' })).toBeInTheDocument();
+    await act(async () => { finish?.(); });
+    expect(screen.getByTestId('location')).toHaveTextContent('/login');
   });
 });
 

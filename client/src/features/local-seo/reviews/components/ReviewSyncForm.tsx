@@ -155,10 +155,10 @@ export const ReviewSyncForm = ({
             </div>
             <div className="flex flex-wrap gap-2">
               <StatusChip tone="muted" data-testid="reviews-preview-sources">
-                {t('preview.perSource', { sources: selected.length })}
+                {t('preview.perSource', { count: selected.length, sources: selected.length })}
               </StatusChip>
               <StatusChip tone="muted" data-testid="reviews-preview-depth">
-                {t('preview.depth', { depth: parsedDepth })}
+                {t('preview.depth', { count: parsedDepth, depth: parsedDepth })}
               </StatusChip>
             </div>
           </div>

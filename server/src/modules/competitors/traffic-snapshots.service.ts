@@ -10,7 +10,7 @@ import { createVendorCacheRepo, probeReadThrough, } from '../../shared/vendor-ca
 import { HttpError } from '../../shared/utils/http-error.js';
 import { Site } from '../sites/index.js';
 import { assertSiteNotPaused } from '../sites/sites.guard.js';
-import { trafficProviderBundleSchema, type CreateTrafficSnapshotInput, type TrafficRetainedOps, type TrafficSnapshotListQuery, } from './traffic-snapshots.schema.js';
+import { trafficProviderBundleSchema, trafficSnapshotCacheKey, type CreateTrafficSnapshotInput, type TrafficRetainedOps, type TrafficSnapshotListQuery, } from './traffic-snapshots.schema.js';
 import { TrafficSnapshotRun, type TrafficSnapshotRunHydrated, } from './traffic-snapshots.model.js';
 export const TRAFFIC_SNAPSHOT_CACHE_TTL_MS = 24 * 60 * 60 * 1000;
 export const TRAFFIC_SNAPSHOT_UNAVAILABLE_KEY = 'trafficInsights.errors.productUnavailable';
@@ -62,7 +62,7 @@ export async function enqueueSnapshot(accountId: string, input: CreateTrafficSna
     const cacheProbe = await probeReadThrough(createVendorCacheRepo(deps.db), {
         capability: 'competitor',
         operation: 'traffic',
-        cacheKey: input.targetDomain,
+        cacheKey: trafficSnapshotCacheKey(input.targetDomain, input.locationCode, input.languageCode),
         params: { targetDomain: input.targetDomain },
         payloadSchema: trafficProviderBundleSchema,
         now,
@@ -212,7 +212,7 @@ export function decodeTrafficSnapshotCursor(cursor: string): SnapshotCursor {
 const trafficSnapshotCursorSchema = z
     .object({
     capturedAt: z.string().datetime({ offset: true }),
-    id: z.string().uuid(),
+    id: z.string().guid(),
 })
     .strict();
 export async function listSnapshots(accountId: string, query: TrafficSnapshotListQuery, db: Db, allowedSiteIds: readonly string[] | null = null) {

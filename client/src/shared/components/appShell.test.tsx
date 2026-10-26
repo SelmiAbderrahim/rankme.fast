@@ -8,9 +8,11 @@ import { MemoryRouter, Route, Routes, useLocation } from 'react-router-dom';
 import { TooltipProvider } from '@shared/ui/tooltip';
 import { ThemeProvider } from '@shared/theme/ThemeProvider';
 import { i18n, initI18n } from '@shared/i18n';
+import { isolateText } from '@shared/lib/bidi';
 import { useAuthSession, type AuthSessionState } from '@features/auth';
 import { sitesReducer, type Site } from '@features/sites';
 import { workspaceInitialState, workspaceReducer, type WorkspaceState } from '@features/workspace';
+const { topbarSignOut } = vi.hoisted(() => ({ topbarSignOut: vi.fn() }));
 
 // Stub the vendored (coverage-excluded) sidebar primitive so these tests can
 // drive the mobile/collapse branches of the app-shell components directly.
@@ -36,6 +38,7 @@ vi.mock('@shared/ui/sidebar', () => ({
 vi.mock('@features/auth', async (importOriginal) => ({
   ...(await importOriginal<typeof import('@features/auth')>()),
   useAuthSession: vi.fn(),
+  useSignOut: () => ({ signOut: topbarSignOut, signingOut: false }),
 }));
 
 // The inbox has its own integration coverage. Keep the app-shell suite focused
@@ -68,7 +71,7 @@ const makeStore = (workspace: Partial<WorkspaceState> = {}, sites: Site[] = []) 
     reducer: { workspace: workspaceReducer, sites: sitesReducer },
     preloadedState: {
       workspace: { ...workspaceInitialState, ...workspace },
-      sites: { ...sitesReducer(undefined, { type: '@@init' }), items: sites },
+      sites: { ...sitesReducer(undefined, { type: '@@init' }), items: sites, loaded: true },
     },
   });
 
@@ -184,10 +187,10 @@ describe('AppSidebar', () => {
     });
 
     it('keeps Profile active on its own and on non-mirrored tabs', () => {
-      renderAt('/profile');
+      renderAt('/settings/profile');
       expect(activeLinks()).toEqual(['Profile']);
       document.body.innerHTML = '';
-      renderAt('/profile?tab=branding');
+      renderAt('/settings/profile?tab=privacy');
       expect(activeLinks()).toEqual(['Profile']);
     });
 
@@ -237,6 +240,19 @@ describe('AppSidebar', () => {
     await userEvent.selectOptions(select, 'fr');
     await waitFor(() => expect(i18n.language).toBe('fr'));
     expect(sidebar.setOpenMobile).toHaveBeenCalledWith(false);
+  });
+  it('puts a visible language label before navigation in the phone drawer', () => {
+    sidebar.isMobile = true;
+    render(<Wrap><AppSidebar /></Wrap>);
+    const label = screen.getByText('Language');
+    expect(label).not.toHaveClass('sr-only');
+    expect(label.compareDocumentPosition(screen.getByRole('navigation')) & Node.DOCUMENT_POSITION_FOLLOWING).toBeTruthy();
+  });
+  it('exposes the full long translated navigation label on hover', async () => {
+    await i18n.changeLanguage('ru');
+    render(<Wrap><AppSidebar /></Wrap>);
+    const label = i18n.t('common:nav.keywordResearch');
+    expect(screen.getByRole('link', { name: label })).toHaveAttribute('title', isolateText(label));
   });
 
   it('does not render a second language switcher in the desktop sidebar', () => {
@@ -366,6 +382,7 @@ describe('AppTopbar', () => {
   });
 
   it('supports arrow-key navigation with aria-activedescendant and wraps', async () => {
+    const open = vi.spyOn(window, 'open').mockReturnValue(null);
     setSession({ role: 'Member' });
     renderTopbar();
     await userEvent.click(searchBox());
@@ -376,7 +393,9 @@ describe('AppTopbar', () => {
     await userEvent.keyboard('{ArrowUp}{ArrowUp}');
     expect(options().at(-1)).toHaveAttribute('aria-selected', 'true');
     await userEvent.keyboard('{Enter}');
-    expect(screen.getByTestId('loc')).toHaveTextContent('/settings/security');
+    expect(open).toHaveBeenCalledWith('/docs', '_blank', 'noopener,noreferrer');
+    expect(screen.getByTestId('loc')).toHaveTextContent('/dashboard');
+    open.mockRestore();
   });
 
   it('reopens on ArrowDown, and Escape closes and clears', async () => {
@@ -555,7 +574,10 @@ describe('AppTopbar', () => {
     setSession({ name: 'Ada Lovelace', email: 'ada@example.com', image: 'x.png' });
     renderTopbar();
     await userEvent.click(screen.getByRole('button', { name: 'Account menu' }));
-    expect(await screen.findByRole('menuitem', { name: 'Sign out' })).toBeInTheDocument();
+    const action = await screen.findByRole('menuitem', { name: 'Sign out' });
+    expect(action).not.toHaveAttribute('href');
+    await userEvent.click(action);
+    expect(topbarSignOut).toHaveBeenCalledTimes(1);
   });
 
   it('offers a keyboard-reachable, safe new-tab bug-report link', async () => {
@@ -585,7 +607,7 @@ describe('AppTopbar', () => {
     setSession({ role: 'Member' });
     renderTopbar();
     await userEvent.type(searchBox(), 'Profile{Enter}');
-    expect(screen.getByTestId('loc')).toHaveTextContent('/profile');
+    expect(screen.getByTestId('loc')).toHaveTextContent('/settings/profile');
   });
 
   it('renders the team invitation inbox trigger in the topbar', () => {
@@ -616,6 +638,23 @@ describe('MinimalLayout', () => {
     );
     expect(screen.getByText('AUTH CARD')).toBeInTheDocument();
     expect(screen.getByText(/All Rights Reserved/)).toBeInTheDocument();
+  });
+
+  it('puts the skip link before the release banner so it is the first tab stop', () => {
+    setSession(null);
+    render(
+      <Wrap entries={['/login']}>
+        <Routes>
+          <Route element={<MinimalLayout />}>
+            <Route path="/login" element={<div>AUTH CARD</div>} />
+          </Route>
+        </Routes>
+      </Wrap>,
+    );
+    const skip = screen.getByRole('link', { name: 'Skip to content' });
+    expect(skip).toHaveAttribute('href', '#main-content');
+    const links = screen.getAllByRole('link');
+    expect(links[0]).toBe(skip);
   });
 });
 

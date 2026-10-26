@@ -21,7 +21,7 @@ The optional **Publisher country** field is searchable. It filters by the countr
 
 One confirmed scan of one brand query uses one `brand_mention_scans` unit. The optional language and publisher-country filters and the cited digest are included. A scan cannot bundle competitor queries into the same unit.
 
-Previewing or cancelling spends nothing. The preview always shows a fresh fetch, because mention rows belong to your account and are never cached for other accounts. Current base allowances, the optional Brand Radar add-on, and pack prices are on [Pricing](./pricing.en.md).
+Previewing or canceling spends nothing. The preview always shows a fresh fetch, because mention rows belong to your account and are never cached for other accounts. Current base allowances, the optional Brand Radar add-on, and pack prices are on [Pricing](./pricing.en.md).
 
 ## Understand refunds and partial results
 

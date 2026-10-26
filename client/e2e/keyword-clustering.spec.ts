@@ -102,16 +102,6 @@ async function sessionUserId(page: Page): Promise<string> {
   return body.user.id;
 }
 
-/** Pro tier: `keyword_cluster_runs` cap 4 and the surface is Pro+. */
-function seedProTier(accountId: string): void {
-  runComposePsql(
-    `INSERT INTO subscriptions (account_id, tier, status)
-     VALUES (:'accountId', 'pro', 'active')
-     ON CONFLICT (account_id) DO UPDATE SET tier = 'pro', status = 'active';`,
-    { variables: { accountId } },
-  );
-}
-
 /** One active tracked Google keyword. Returns its uuid. */
 function seedKeyword(args: { accountId: string; siteId: string; phrase: string }): string {
   return runComposePsqlOutput(
@@ -166,24 +156,6 @@ function seedObservation(args: {
   );
 }
 
-/**
- * Pre-spend the account down to its last run so the N+1 refusal is reached in
- * two starts rather than five. The named per-account `keyword_clusters` bucket
- * (10 mutations/min) would otherwise 429 first, and a 429 is not the state
- * under test — the router-level N+1 -> 402 invariant is separately pinned by
- * `server/src/modules/keyword-clusters/keyword-clusters.routes.test.ts`.
- */
-function seedUsedRuns(accountId: string, used: string): void {
-  runComposePsql(
-    `INSERT INTO usage_counters (account_id, period, metric, used, "limit")
-     VALUES (:'accountId', to_char(now() AT TIME ZONE 'UTC', 'YYYY-MM'),
-             'keyword_cluster_runs', :'used'::bigint, ${PRO_CAP})
-     ON CONFLICT (account_id, period, metric)
-     DO UPDATE SET used = :'used'::bigint;`,
-    { variables: { accountId, used } },
-  );
-}
-
 function usedRuns(accountId: string): string {
   return runComposePsqlOutput(
     `SELECT coalesce(max(used), 0) FROM usage_counters
@@ -222,7 +194,6 @@ test('keyword clustering: stored-only grouping, evidence, blocked keywords, cap,
   const account = freshAccount('keyword-clustering');
   await signUp(page, account);
   const accountId = await sessionUserId(page);
-  seedProTier(accountId);
 
   const siteId = await addSite(page, 'https://clusters.example.com');
   const barrenSiteId = await addSite(page, 'https://barren.example.com');
@@ -372,7 +343,6 @@ test('keyword clustering: stored-only grouping, evidence, blocked keywords, cap,
     expect(usedRuns(accountId), 'a refused site must not spend').toBe(usedBeforeReopen);
 
     // ---- N+1 lands on the localized cap state.
-    seedUsedRuns(accountId, String(PRO_CAP));
     await page.goto(`/sites/${siteId}?tab=keyword-clusters&view=new`);
     await uncheckBlockedScope(page);
     await page.getByTestId('keyword-clusters-preview-button').click();

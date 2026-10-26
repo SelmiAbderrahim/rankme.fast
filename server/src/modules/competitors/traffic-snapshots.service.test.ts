@@ -2,7 +2,7 @@ import { UnrecoverableError, type Queue } from 'bullmq';
 import { afterAll, afterEach, beforeAll, beforeEach, describe, expect, it, vi } from 'vitest';
 import mongoose from 'mongoose';
 import { env } from '../../config/env.js';
-import { trafficSnapshots } from '../../db/schema/index.js';
+import { trafficSnapshots, vendorCache } from '../../db/schema/index.js';
 import {
   createFakeCompetitorProvider,
   VendorUnavailableError,
@@ -43,6 +43,7 @@ import type {
 } from './traffic-snapshots.schema.js';
 import {
   createTrafficSnapshotSchema,
+  trafficSnapshotCacheKey,
   trafficSnapshotDomainSchema,
   trafficSnapshotListQuerySchema,
 } from './traffic-snapshots.schema.js';
@@ -125,14 +126,44 @@ describe('Traffic snapshot service', () => {
       rankOverview: false,
       history: false,
     });
-    expect(trafficSnapshotDomainSchema.safeParse('https://example.com').success).toBe(false);
-    expect(trafficSnapshotDomainSchema.safeParse('localhost').success).toBe(false);
+    // Pasted web URLs normalize to their hostname; everything else unsafe still fails.
+    expect(trafficSnapshotDomainSchema.parse('https://example.com')).toBe('example.com');
+    expect(trafficSnapshotDomainSchema.parse('https://www.Example.com/path?q=1#top')).toBe('example.com');
+    expect(trafficSnapshotDomainSchema.parse('HTTP://example.com:8080/a')).toBe('example.com');
+    expect(trafficSnapshotDomainSchema.parse('example.com/path')).toBe('example.com');
+    for (const unsafe of [
+      'ftp://example.com',
+      'javascript://example.com',
+      'https://user:pass@example.com/',
+      'https://127.0.0.1/admin',
+      'https://[::1]/',
+      'https://localhost/',
+      'https://',
+      'localhost',
+    ]) {
+      expect(trafficSnapshotDomainSchema.safeParse(unsafe).success).toBe(false);
+    }
     expect(trafficSnapshotDomainSchema.parse('WWW.Example.com')).toBe('example.com');
     expect(createTrafficSnapshotSchema.parse({ targetDomain: 'example.com' })).toMatchObject({
       locationCode: 2840,
       languageCode: 'en',
       historyMonths: 24,
     });
+    expect(
+      createTrafficSnapshotSchema.parse({ targetDomain: 'https://example.de/start', locationCode: 2276, languageCode: 'DE' }),
+    ).toMatchObject({ targetDomain: 'example.de', locationCode: 2276, languageCode: 'de' });
+    for (const market of [
+      { locationCode: 0 },
+      { locationCode: 2276.5 },
+      { locationCode: '2276' },
+      { languageCode: 'deu' },
+      { languageCode: 7 },
+    ]) {
+      expect(createTrafficSnapshotSchema.safeParse({ targetDomain: 'example.com', ...market }).success).toBe(false);
+    }
+    expect(trafficSnapshotCacheKey('example.com', 2840, 'en')).toBe('example.com');
+    expect(trafficSnapshotCacheKey('example.com', 2840, 'es')).toBe('example.com|2840|es');
+    expect(trafficSnapshotCacheKey('example.com', 2276, 'de')).toBe('example.com|2276|de');
     expect(trafficSnapshotListQuerySchema.safeParse({ from: '2026-07-23', to: '2026-07-22' }).success).toBe(false);
     expect(trafficSnapshotListQuerySchema.safeParse({ from: '2026-07-22' }).success).toBe(true);
     expect(trafficSnapshotListQuerySchema.safeParse({ to: '2026-07-22' }).success).toBe(true);
@@ -620,5 +651,34 @@ describe('Traffic snapshot processor edge states', () => {
       } as never),
     ).rejects.toBeInstanceOf(UnrecoverableError);
     expect(await TrafficSnapshotRun.findById(run._id)).toMatchObject({ status: 'failed' });
+  });
+
+  it('runs a selected market end to end under its own cache key', async () => {
+    const add = vi.fn().mockResolvedValue({});
+    const input = createTrafficSnapshotSchema.parse({
+      targetDomain: 'https://example.com/de/',
+      locationCode: 2276,
+      languageCode: 'de',
+    });
+    const started = await enqueueSnapshot(ACCOUNT, input, {
+      db: getTestDb() as never,
+      queue: queueWith(add as never),
+    });
+    expect(started).toMatchObject({ targetDomain: 'example.com', status: 'queued' });
+    const run = await TrafficSnapshotRun.findById(started.runId);
+    expect(run?.inputs).toMatchObject({ locationCode: 2276, languageCode: 'de' });
+
+    const fake = createFakeCompetitorProvider();
+    const provider: CompetitorProvider = {
+      ...fake,
+      getTrafficEstimation: vi.fn(fake.getTrafficEstimation!),
+      getDomainRankOverview: vi.fn(fake.getDomainRankOverview!),
+    };
+    await createTrafficSnapshotProcessor({ db: getTestDb() as never, provider })(job(ACCOUNT, started.runId));
+    expect(provider.getTrafficEstimation).toHaveBeenCalledWith(['example.com'], { locationCode: 2276, languageCode: 'de' });
+    expect(provider.getDomainRankOverview).toHaveBeenCalledWith('example.com', { locationCode: 2276, languageCode: 'de' });
+    const cached = await getTestDb().select().from(vendorCache);
+    expect(cached.map((row) => row.cacheKey)).toEqual(['example.com|2276|de']);
+    expect(await TrafficSnapshotRun.findById(started.runId)).toMatchObject({ status: 'succeeded' });
   });
 });

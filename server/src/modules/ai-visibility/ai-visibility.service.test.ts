@@ -53,9 +53,12 @@ import { CooldownError, createInMemoryCooldown } from '../../shared/cooldown/ind
 import { SUPPORTED_LOCALES } from '../../shared/i18n/locales.js';
 import {
   MAX_TRACKED_AI_PROMPTS,
+  PromptAlreadyTrackedError,
   PromptCapReachedError,
   addTrackedPrompt,
   listStoredCompetitorDomains,
+  listTrackedPrompts,
+  trackedPromptKey,
   listKeywordPhrases,
   readAiOverviewRollup,
   readRecentCompetitorMentions,
@@ -77,11 +80,13 @@ import {
   getAiVisibilityOverview,
   getAiVisibilityTrend,
   heuristicSentiment,
+  listAuditPageEvidence,
   listAuditTitleSeeds,
   loadOwnedSite,
   generatePromptSuggestions,
   readStoredSuggestions,
   removePromptForSite,
+  siteDescriptionSeed,
   SUGGESTION_TARGET,
 } from './ai-visibility.service.js';
 
@@ -303,6 +308,7 @@ describe('loadOwnedSite', () => {
     await expect(loadOwnedSite({ siteId, accountId: account })).resolves.toEqual({
       id: siteId,
       domain: 'owned.example',
+      marketLanguage: null,
     });
   });
 });
@@ -321,14 +327,22 @@ describe('addTrackedPrompt', () => {
     expect(row.id).toBeDefined();
   });
 
-  it('returns the existing row for a case-insensitive duplicate', async () => {
-    const db = testDb();
-    const account = newAccountId();
-    const siteId = 'site-a';
-    const first = await addTrackedPrompt(db, { accountId: account, siteId, prompt: 'best tool' });
-    const second = await addTrackedPrompt(db, { accountId: account, siteId, prompt: '  BEST Tool  ' });
-    expect(second.id).toBe(first.id);
-    expect(second.prompt).toBe('best tool');
+  it.each(['  BEST Tool  ', 'best tool?', 'Best, tool!', 'best\u00a0  tool', 'ＢＥＳＴ tool'])(
+    'refuses %j as a duplicate of "best tool" and stores one row',
+    async (variant) => {
+      const db = testDb();
+      const account = newAccountId();
+      const siteId = 'site-a';
+      await addTrackedPrompt(db, { accountId: account, siteId, prompt: 'best tool' });
+      await expect(
+        addTrackedPrompt(db, { accountId: account, siteId, prompt: variant }),
+      ).rejects.toBeInstanceOf(PromptAlreadyTrackedError);
+      expect(await listTrackedPrompts(db, { accountId: account, siteId })).toHaveLength(1);
+    },
+  );
+
+  it('keys prompts by normalised text', () => {
+    expect(trackedPromptKey('  Best: podcast — tools?? ')).toBe('best podcast tools');
   });
 
   it('throws PromptCapReachedError past the per-site cap', async () => {
@@ -343,7 +357,7 @@ describe('addTrackedPrompt', () => {
     ).rejects.toBeInstanceOf(PromptCapReachedError);
   });
 
-  it('returns the account\'s own latest row when a same-site conflict swallows the insert', async () => {
+  it('reports a conflict (never another row) when the unique index swallows the insert', async () => {
     const db = testDb();
     const owner = newAccountId();
     const other = newAccountId();
@@ -351,23 +365,10 @@ describe('addTrackedPrompt', () => {
     // Another account already holds (siteId, 'foo') — the unique index is on
     // (siteId, prompt), not account, so the owner's insert conflicts.
     await db.insert(aiTrackedPrompts).values({ accountId: other, siteId, prompt: 'foo' });
-    const owned = await addTrackedPrompt(db, { accountId: owner, siteId, prompt: 'bar' });
-    const result = await addTrackedPrompt(db, { accountId: owner, siteId, prompt: 'foo' });
-    // onConflictDoNothing returns nothing; the fallback re-reads the owner's
-    // rows and returns the most recent one.
-    expect(result.id).toBe(owned.id);
-    expect(result.prompt).toBe('bar');
-  });
-
-  it('throws when the conflict swallows the insert and the account owns nothing', async () => {
-    const db = testDb();
-    const owner = newAccountId();
-    const other = newAccountId();
-    const siteId = 'shared-site';
-    await db.insert(aiTrackedPrompts).values({ accountId: other, siteId, prompt: 'foo' });
+    await addTrackedPrompt(db, { accountId: owner, siteId, prompt: 'bar' });
     await expect(
       addTrackedPrompt(db, { accountId: owner, siteId, prompt: 'foo' }),
-    ).rejects.toThrow(/tracked prompt insert failed/);
+    ).rejects.toBeInstanceOf(PromptAlreadyTrackedError);
   });
 });
 
@@ -811,6 +812,8 @@ describe('readStoredSuggestions', () => {
       generatedAt: null,
       outputLocale: OUTPUT_LOCALE,
       suggestions: [],
+      evidence: null,
+      stale: false,
     });
   });
 
@@ -830,7 +833,7 @@ describe('readStoredSuggestions', () => {
     const db = testDb();
     const account = newAccountId();
     const siteId = await seedSite(account, 'example.com');
-    const seeds = { keywords: ['a'], titles: [], competitors: [], gscQueries: [] };
+    const seeds = { keywords: ['a'], titles: [], competitors: [], gscQueries: [], provenance: 'site' as const };
     const row = (prompt: string) => ({
       prompt,
       source: 'ai' as const,
@@ -880,6 +883,8 @@ describe('readStoredSuggestions', () => {
     );
     expect(result.generatedAt).toBe('2026-02-01T00:00:00.000Z');
     expect(result.suggestions.map((s) => s.prompt)).toEqual(['newer']);
+    // A run stored before the site profile existed reports "unknown", not a level.
+    expect(result.evidence).toBeNull();
     await expect(
       readStoredSuggestions({ accountId: account, siteId, outputLocale: 'fr' }, { db }),
     ).resolves.toMatchObject({
@@ -889,7 +894,68 @@ describe('readStoredSuggestions', () => {
     });
     await expect(
       readStoredSuggestions({ accountId: account, siteId, outputLocale: 'de' }, { db }),
-    ).resolves.toEqual({ generatedAt: null, outputLocale: 'de', suggestions: [] });
+    ).resolves.toEqual({ generatedAt: null, outputLocale: 'de', suggestions: [], evidence: null, stale: false });
+  });
+
+  it('hides stored template rows seeded in another language, for free', async () => {
+    const db = testDb();
+    const account = newAccountId();
+    const siteId = await seedSite(account, 'example.com');
+    const base = {
+      funnelStage: 'consideration' as const,
+      promptType: 'categoryDiscovery' as const,
+      intent: 'commercial' as const,
+      branded: false,
+    };
+    await insertSuggestionRun(db, {
+      id: randomUUID(),
+      accountId: account,
+      siteId,
+      outputLocale: OUTPUT_LOCALE,
+      prompts: [
+        { ...base, prompt: 'What is the best finalisez un épisode sans abonnement?', source: 'template', evidenceSource: 'title', evidenceRef: 'finalisez un épisode sans abonnement' },
+        { ...base, prompt: 'What is the best episode pass?', source: 'template', evidenceSource: 'title', evidenceRef: 'episode pass' },
+        { ...base, prompt: 'What is a good alternative to rival.example?', source: 'template', evidenceSource: 'competitor', evidenceRef: 'rival.example' },
+        { ...base, prompt: 'An AI row stays as generated', source: 'ai', evidenceSource: 'keyword', evidenceRef: 'hilfe und antworten' },
+        { ...base, prompt: 'A template row without a seed', source: 'template', evidenceSource: 'keyword', evidenceRef: null },
+      ],
+      // The AI row cites one of the run's own seeds, as the AI contract requires.
+      seeds: { keywords: ['hilfe und antworten'], titles: [], competitors: [], gscQueries: [], provenance: 'site' },
+      generator: 'template',
+      model: null,
+      generatedAt: new Date('2026-09-29T07:26:00.000Z'),
+    });
+    const result = await readStoredSuggestions({ accountId: account, siteId, outputLocale: OUTPUT_LOCALE }, { db });
+    expect(result.suggestions.map((row) => row.prompt)).toEqual([
+      'What is the best episode pass?',
+      'What is a good alternative to rival.example?',
+      'An AI row stays as generated',
+      'A template row without a seed',
+    ]);
+  });
+});
+
+describe('readStoredSuggestions evidence level', () => {
+  it.each(['rich', 'limited', 'none'] as const)('returns the stored %s evidence level', async (level) => {
+    const db = testDb();
+    const account = newAccountId();
+    const siteId = await seedSite(account, 'example.com');
+    await insertSuggestionRun(db, {
+      id: randomUUID(),
+      accountId: account,
+      siteId,
+      outputLocale: OUTPUT_LOCALE,
+      prompts: [],
+      seeds: { keywords: [], titles: [], competitors: [], gscQueries: [], evidenceLevel: level },
+      generator: 'template',
+      model: null,
+      generatedAt: new Date('2026-09-29T07:26:00.000Z'),
+    });
+    const result = await readStoredSuggestions(
+      { accountId: account, siteId, outputLocale: OUTPUT_LOCALE },
+      { db },
+    );
+    expect(result.evidence).toBe(level);
   });
 });
 
@@ -1041,16 +1107,27 @@ describe('generatePromptSuggestions', () => {
     });
   });
 
-  it('passes all seven output locales to the provider and preserves source evidence', async () => {
+  it('passes all seven output locales to the provider and builds category prompts in each language', async () => {
     const db = testDb();
     const seen: Array<{ locale: string; keywords: string[] }> = [];
+    // One two-word topic per output language, in its own script: seeds in
+    // another language are never cast into a template.
+    const topicFor: Record<string, string> = {
+      en: 'podcast show notes',
+      fr: 'notes de podcast',
+      de: 'podcast zusammenfassung',
+      es: 'resumen de podcast',
+      ru: 'заметки подкаста',
+      ar: 'ملاحظات البودكاست',
+      zh: '播客节目笔记',
+    };
     for (const outputLocale of SUPPORTED_LOCALES) {
       const accountId = newAccountId();
       const siteId = await seedSite(accountId, `${outputLocale}.example`);
       await db.insert(keywords).values({
         accountId,
         siteId,
-        phrase: `SOURCE_${outputLocale}`,
+        phrase: topicFor[outputLocale]!,
         locationCode: 2840,
         languageCode: 'en',
       });
@@ -1066,15 +1143,13 @@ describe('generatePromptSuggestions', () => {
         },
       );
       expect(result.outputLocale).toBe(outputLocale);
-      expect(result.suggestions.some((row) => row.prompt.includes(`SOURCE_${outputLocale}`))).toBe(
-        true,
-      );
-      expect(result.suggestions.every((row) => row.evidenceRef === `SOURCE_${outputLocale}`)).toBe(
-        true,
-      );
+      const categoryRows = result.suggestions.filter((row) => row.evidenceRef === topicFor[outputLocale]);
+      expect(categoryRows.length).toBe(2);
+      expect(categoryRows.every((row) => row.prompt.includes(topicFor[outputLocale]!))).toBe(true);
+      expect(categoryRows.every((row) => row.evidenceSource === 'keyword')).toBe(true);
     }
     expect(seen).toEqual(
-      SUPPORTED_LOCALES.map((locale) => ({ locale, keywords: [`SOURCE_${locale}`] })),
+      SUPPORTED_LOCALES.map((locale) => ({ locale, keywords: [topicFor[locale]!] })),
     );
   });
 
@@ -1165,7 +1240,7 @@ describe('generatePromptSuggestions', () => {
     // Template rows carry static taxonomy + the seed they derive from, so the
     // panel can group them exactly like AI rows.
     expect(result.suggestions[0]).toMatchObject({
-      prompt: 'best seo audit',
+      prompt: 'What are the best tools for seo audit?',
       promptType: 'categoryDiscovery',
       funnelStage: 'consideration',
       intent: 'commercial',
@@ -1173,6 +1248,8 @@ describe('generatePromptSuggestions', () => {
       evidenceSource: 'keyword',
       evidenceRef: 'seo audit',
     });
+    // One category is thin evidence: said so, and persisted for the free read.
+    expect(result.evidence).toBe('limited');
   });
 
   it('never seeds one site from another site of the same account (leak regression)', async () => {
@@ -1205,13 +1282,17 @@ describe('generatePromptSuggestions', () => {
     expect(result.suggestions.length).toBeGreaterThan(0);
     expect(result.suggestions.some((row) => row.prompt.includes('pay stub'))).toBe(false);
     expect(result.suggestions.some((row) => row.prompt.includes('paystub'))).toBe(false);
-    expect(result.suggestions.every((row) => row.evidenceRef === 'seo audit')).toBe(true);
+    expect(
+      result.suggestions.every((row) => row.evidenceRef === null || row.evidenceRef === 'seo audit'),
+    ).toBe(true);
   });
 
   it('caps the retained set at SUGGESTION_TARGET', async () => {
     const db = testDb();
     const account = newAccountId();
     const siteId = await seedSite(account, 'example.com');
+    // Every AI row cites this tracked keyword, so the evidence guard keeps it.
+    await db.insert(keywords).values({ accountId: account, siteId, phrase: 'seo audit', locationCode: 2840, languageCode: 'en' });
     const result = await generatePromptSuggestions(
       { accountId: account, siteId, outputLocale: OUTPUT_LOCALE },
       {
@@ -1268,9 +1349,9 @@ describe('generatePromptSuggestions', () => {
     const db = testDb();
     const account = newAccountId();
     const siteId = await seedSite(account, 'example.com');
-    // Enough keywords that `buildPromptCandidates` overshoots SUGGESTION_TARGET,
-    // so the template backfill loop hits its own `break`.
-    for (const phrase of ['seo audit', 'rank tracker', 'site speed', 'backlink check']) {
+    // Enough keywords that the templates overshoot SUGGESTION_TARGET, so the
+    // merged set is trimmed back to it.
+    for (const phrase of ['seo audit', 'site speed', 'backlink check', 'page speed', 'domain authority']) {
       await db.insert(keywords).values({
         accountId: account,
         siteId,
@@ -1355,7 +1436,7 @@ describe('generatePromptSuggestions', () => {
     expect(order).toEqual(['preflight', 'generate']);
   });
 
-  it('502s with nothing retained when the provider throws and there are no templates', async () => {
+  it('502s when the provider throws and nothing evidence-backed can be retained', async () => {
     const db = testDb();
     const account = newAccountId();
     const siteId = await seedSite(account, 'example.com');
@@ -1379,6 +1460,8 @@ describe('generatePromptSuggestions', () => {
       generatedAt: null,
       outputLocale: OUTPUT_LOCALE,
       suggestions: [],
+      evidence: null,
+      stale: false,
     });
   });
 
@@ -1478,162 +1561,259 @@ describe('generatePromptSuggestions', () => {
     );
     expect(result.generatedAt).toBe(frozen.toISOString());
   });
-});
 
-describe('buildPromptCandidates', () => {
-  it('authors deterministic templates in every supported locale without changing source tokens', () => {
-    const localizedFirstPrompts = SUPPORTED_LOCALES.map((outputLocale) => {
-      const out = buildPromptCandidates({
-        domain: 'source.example',
-        outputLocale,
-        keywords: ['SOURCE_KEYWORD'],
-        gscQueries: [],
-        titleSeeds: [],
-        competitorDomains: ['evidence.example'],
+  describe('evidence-grounded suggestions', () => {
+    async function seedPodcastAudit(account: string, siteId: string): Promise<void> {
+      const run = await AuditRun.create({
+        accountId: new mongoose.Types.ObjectId(account),
+        siteId: new mongoose.Types.ObjectId(siteId),
+        pageCap: 5,
+        status: 'succeeded',
+        finishedAt: new Date('2026-01-10T00:00:00.000Z'),
       });
-      expect(
-        out.every(
-          (row) =>
-            row.evidenceRef === 'evidence.example' || row.evidenceRef === 'SOURCE_KEYWORD',
-        ),
-      ).toBe(true);
-      expect(out.some((row) => row.prompt.includes('source.example'))).toBe(true);
-      expect(out.some((row) => row.prompt.includes('evidence.example'))).toBe(true);
-      expect(out.some((row) => row.prompt.includes('SOURCE_KEYWORD'))).toBe(true);
-      return out[0]!.prompt;
-    });
-    expect(new Set(localizedFirstPrompts).size).toBe(SUPPORTED_LOCALES.length);
-  });
+      const pages: Array<[string, string, string, string[]]> = [
+        [
+          'https://episodebrief.com/',
+          'EpisodeBrief — Turn podcast episodes into show notes',
+          'Generate podcast show notes, transcripts and episode titles from any podcast episode.',
+          ['Podcast show notes in minutes'],
+        ],
+        ['https://episodebrief.com/pricing', 'Episode pricing | EpisodeBrief', 'Pay per episode.', ['Episode pricing']],
+        [
+          'https://episodebrief.com/transcripts',
+          'Podcast transcripts that are ready to publish',
+          'Accurate podcast transcripts with speaker labels.',
+          [],
+        ],
+      ];
+      for (const [index, [url, title, metaDescription, h1]] of pages.entries()) {
+        await AuditedPage.create({
+          runId: run._id,
+          url,
+          statusCode: 200,
+          title,
+          metaDescription,
+          h1,
+          onPageScore: 100 - index,
+        });
+      }
+    }
 
-  it('leads with taxonomy-tagged competitor match-ups, then rotates templates across seeds', () => {
-    const out = buildPromptCandidates({
-      domain: 'example.com',
-      outputLocale: OUTPUT_LOCALE,
-      keywords: ['seo audit', 'rank tracker'],
-      gscQueries: [],
-      titleSeeds: [],
-      competitorDomains: ['rival.example'],
-    });
-    expect(out.slice(0, 2)).toEqual([
-      {
-        prompt: 'example.com vs rival.example',
-        promptType: 'comparison',
-        funnelStage: 'decision',
-        intent: 'commercial',
-        branded: true,
-        evidenceSource: 'competitor',
-        evidenceRef: 'rival.example',
-      },
-      {
-        prompt: 'rival.example alternative',
-        promptType: 'alternatives',
-        funnelStage: 'consideration',
-        intent: 'commercial',
+    async function seedPodcastSite(db: Db): Promise<{ account: string; siteId: string }> {
+      const account = newAccountId();
+      const siteId = await seedSite(account, 'episodebrief.com');
+      await seedPodcastAudit(account, siteId);
+      await db.insert(keywords).values({
+        accountId: account,
+        siteId,
+        phrase: 'episode pricing',
+        locationCode: 2840,
+        languageCode: 'en',
+      });
+      await db.insert(competitors).values({
+        accountId: account,
+        siteId,
+        competitorDomain: 'castmagic.io',
+        fetchedAt: new Date('2026-01-02T00:00:00.000Z'),
+        snapshotDay: '2026-01-02',
+      });
+      return { account, siteId };
+    }
+
+    it('feeds the home-page description to the generator and never suggests a tracked prompt', async () => {
+      const db = testDb();
+      const { account, siteId } = await seedPodcastSite(db);
+      const description =
+        'Generate podcast show notes, transcripts and episode titles from any podcast episode.';
+      await addTrackedPrompt(db, { accountId: account, siteId, prompt: 'How do I write podcast show notes fast?' });
+      const seen: GeneratePromptsInput[] = [];
+      const row = (promptText: string) => ({
+        promptText,
+        funnelStage: 'consideration' as const,
+        promptType: 'problemFirst' as const,
+        intent: 'commercial' as const,
         branded: false,
-        evidenceSource: 'competitor',
-        evidenceRef: 'rival.example',
-      },
-    ]);
-    const prompts = out.map((row) => row.prompt);
-    expect(prompts).toContain('best seo audit');
-    expect(prompts).toContain('which rank tracker should I use');
-  });
+        evidenceSource: 'title' as const,
+        evidenceRef: description,
+      });
+      const summaryProvider: SummaryProvider = {
+        ...createFakeSummaryProvider(),
+        async generatePrompts(input) {
+          seen.push(input);
+          return {
+            prompts: [
+              row('how do I write podcast show notes fast'),
+              row('What can turn one podcast episode into show notes and a transcript?'),
+            ],
+            model: 'fake-model',
+          };
+        },
+      };
+      const result = await generatePromptSuggestions(
+        { accountId: account, siteId, outputLocale: 'en' },
+        { db, provider: createFakeAiVisibilityProvider(), summaryProvider },
+      );
+      expect(seen[0]?.seeds.titles[0]).toBe(description);
+      const prompts = result.suggestions.map((suggestion) => suggestion.prompt.toLowerCase());
+      expect(prompts).not.toContain('how do i write podcast show notes fast');
+      expect(prompts).toContain('what can turn one podcast episode into show notes and a transcript?');
 
-  it('tags each candidate with its seed origin and rotates template taxonomy', () => {
-    const out = buildPromptCandidates({
-      domain: 'example.com',
-      outputLocale: OUTPUT_LOCALE,
-      keywords: ['seo audit'],
-      gscQueries: ['fix crawl errors'],
-      titleSeeds: ['site speed guide'],
-      competitorDomains: [],
+      // A prompt tracked after the run is hidden on the free stored read too.
+      await addTrackedPrompt(db, {
+        accountId: account,
+        siteId,
+        prompt: 'What can turn one podcast episode into show notes and a transcript',
+      });
+      const stored = await readStoredSuggestions({ accountId: account, siteId, outputLocale: 'en' }, { db });
+      expect(stored.suggestions.map((suggestion) => suggestion.prompt.toLowerCase())).not.toContain(
+        'what can turn one podcast episode into show notes and a transcript?',
+      );
     });
-    // Round 0 walks seeds in keyword → gsc → title order.
-    expect(out.slice(0, 3)).toEqual([
-      {
-        prompt: 'best seo audit',
-        promptType: 'categoryDiscovery',
-        funnelStage: 'consideration',
-        intent: 'commercial',
-        branded: false,
-        evidenceSource: 'keyword',
-        evidenceRef: 'seo audit',
-      },
-      {
-        prompt: 'which fix crawl errors should I use',
-        promptType: 'categoryDiscovery',
-        funnelStage: 'consideration',
-        intent: 'commercial',
-        branded: false,
-        evidenceSource: 'gsc',
-        evidenceRef: 'fix crawl errors',
-      },
-      {
-        prompt: 'how to choose site speed guide',
-        promptType: 'categoryDiscovery',
-        funnelStage: 'awareness',
-        intent: 'informational',
-        branded: false,
-        evidenceSource: 'title',
-        evidenceRef: 'site speed guide',
-      },
-    ]);
-  });
 
-  it('dedupes seeds across groups and filters out-of-range seeds', () => {
-    const out = buildPromptCandidates({
-      domain: 'example.com',
-      outputLocale: OUTPUT_LOCALE,
-      keywords: ['seo audit', 'ab', 'z'.repeat(121)],
-      gscQueries: ['SEO AUDIT '],
-      titleSeeds: [],
-      competitorDomains: [],
+    it('builds category and grounded comparison prompts from crawled copy, never from the page-label query', async () => {
+      const db = testDb();
+      const { account, siteId } = await seedPodcastSite(db);
+      const result = await generatePromptSuggestions(
+        { accountId: account, siteId, outputLocale: 'en' },
+        { db, provider: createFakeAiVisibilityProvider(), summaryProvider: null },
+      );
+      const prompts = result.suggestions.map((row) => row.prompt);
+      expect(prompts).toEqual([
+        'What are the best tools for podcast show notes?',
+        'episodebrief.com vs castmagic.io',
+        // The crawled title "Turn podcast episodes into show notes" is a task.
+        'How do I turn podcast episodes into show notes?',
+        'What should I look for when choosing a tool for podcast show notes?',
+        'What is a good alternative to castmagic.io?',
+        'Which is better for podcast show notes: episodebrief.com or castmagic.io?',
+        'What should I look for when choosing a tool for podcast transcripts?',
+        'Is a paid tool worth it for podcast transcripts?',
+      ]);
+      expect(prompts.some((prompt) => prompt.toLowerCase().includes('pricing'))).toBe(false);
+      expect(result.evidence).toBe('rich');
+      // Stored with its evidence level, so the free read reports the same.
+      await expect(
+        readStoredSuggestions({ accountId: account, siteId, outputLocale: 'en' }, { db }),
+      ).resolves.toEqual(result);
     });
-    expect(out.map((row) => row.prompt)).toEqual([
-      'best seo audit',
-      'which seo audit should I use',
-      'how to choose seo audit',
-      'is seo audit worth it',
-    ]);
-    // The duplicate GSC spelling never overrode the keyword origin.
-    expect(out.every((row) => row.evidenceSource === 'keyword')).toBe(true);
-  });
 
-  it('caps output at 20 candidates', () => {
-    const out = buildPromptCandidates({
-      domain: 'example.com',
-      outputLocale: OUTPUT_LOCALE,
-      keywords: Array.from({ length: 30 }, (_, i) => `keyword number ${i}`),
-      gscQueries: [],
-      titleSeeds: [],
-      competitorDomains: [],
+    it('withholds page-label and brand queries from the AI generator and adds the derived categories as title seeds', async () => {
+      const db = testDb();
+      const { account, siteId } = await seedPodcastSite(db);
+      await db.insert(keywords).values({
+        accountId: account,
+        siteId,
+        phrase: 'podcast show notes',
+        locationCode: 2840,
+        languageCode: 'en',
+      });
+      await db.insert(gscSearchAnalytics).values(
+        ['episodebrief login', 'how do i write podcast show notes'].map((query, index) => ({
+          accountId: account,
+          siteId,
+          bindingGenerationId: 'legacy',
+          snapshotDate: '2026-02-01',
+          dimensionSet: 'query' as const,
+          windowDays: 28,
+          dimensionKey: query,
+          clicks: 10 - index,
+          impressions: 100,
+          ctr: 0.1,
+          position: 4.2,
+        })),
+      );
+      const seenRef: { current: GeneratePromptsInput | null } = { current: null };
+      await generatePromptSuggestions(
+        { accountId: account, siteId, outputLocale: 'en' },
+        {
+          db,
+          provider: createFakeAiVisibilityProvider(),
+          summaryProvider: stubSummary(async (input) => {
+            seenRef.current = input;
+            return { prompts: [], model: 'seed-probe' };
+          }),
+        },
+      );
+      const seeds = seenRef.current!.seeds;
+      expect(seeds.keywords).toEqual(['podcast show notes']);
+      expect(seeds.gscQueries).toEqual(['how do i write podcast show notes']);
+      expect(seeds.titles).toEqual(
+        expect.arrayContaining(['podcast show notes', 'podcast transcripts']),
+      );
+      expect(seeds.competitors).toEqual(['castmagic.io']);
     });
-    expect(out).toHaveLength(20);
-  });
 
-  it('drops prompts outside the 4..280 length window and duplicate competitor prompts', () => {
-    const longDomain = `${'a'.repeat(140)}.com`;
-    const longCompetitor = `${'b'.repeat(140)}.com`;
-    const out = buildPromptCandidates({
-      domain: '',
-      outputLocale: OUTPUT_LOCALE,
-      keywords: [],
-      gscQueries: [],
-      titleSeeds: [],
-      competitorDomains: ['', ''],
+    it('collapses a near-identical AI phrasing and lets templates backfill the gap', async () => {
+      const db = testDb();
+      const { account, siteId } = await seedPodcastSite(db);
+      const result = await generatePromptSuggestions(
+        { accountId: account, siteId, outputLocale: 'en' },
+        {
+          db,
+          provider: createFakeAiVisibilityProvider(),
+          summaryProvider: stubSummary(async () => ({
+            prompts: [
+              summaryRow('What is the best episode pricing?', 'podcast show notes'),
+              summaryRow('Which episode pricing should I use?', 'podcast show notes'),
+              summaryRow('What are the best tools for podcast show notes?', 'podcast show notes'),
+            ],
+            model: 'dup-probe',
+          })),
+        },
+      );
+      const prompts = result.suggestions.map((row) => row.prompt);
+      expect(prompts.filter((prompt) => prompt.includes('episode pricing'))).toEqual([
+        'What is the best episode pricing?',
+      ]);
+      // The AI wording of the template question wins; the template twin is gone.
+      expect(prompts.filter((prompt) => prompt === 'What are the best tools for podcast show notes?')).toHaveLength(1);
+      expect(result.suggestions.filter((row) => row.source === 'ai')).toHaveLength(2);
+      expect(result.suggestions.some((row) => row.source === 'template')).toBe(true);
+      expect(result.suggestions.length).toBeLessThanOrEqual(SUGGESTION_TARGET);
     });
-    // '' vs '' → 'vs' (too short, dropped both times); '' alternative → kept once.
-    expect(out.map((row) => row.prompt)).toEqual(['alternative']);
-    const outLong = buildPromptCandidates({
-      domain: longDomain,
-      outputLocale: OUTPUT_LOCALE,
-      keywords: [],
-      gscQueries: [],
-      titleSeeds: [],
-      competitorDomains: [longCompetitor],
+
+    it('degrades to the evidence-grounded templates, keeps the unit and logs when the provider fails', async () => {
+      const db = testDb();
+      const { account, siteId } = await seedPodcastSite(db);
+      const warnSpy = vi.spyOn(logger, 'warn');
+      const result = await generatePromptSuggestions(
+        { accountId: account, siteId, outputLocale: 'en' },
+        {
+          db,
+          provider: createFakeAiVisibilityProvider(),
+          summaryProvider: stubSummary(async () => {
+            throw new VendorUnavailableError('down', { provider: 'x', operation: 'y' });
+          }),
+        },
+      );
+      expect(result.suggestions[0]!.prompt).toBe('What are the best tools for podcast show notes?');
+      expect(result.suggestions.every((row) => row.source === 'template')).toBe(true);
+      expect(result.evidence).toBe('rich');
+      expect(warnSpy).toHaveBeenCalledWith(
+        expect.objectContaining({ accountId: account, siteId }),
+        expect.stringContaining('prompt suggestion provider failed'),
+      );
+      warnSpy.mockRestore();
     });
-    // 140+140-char vs-prompt exceeds 280 and is dropped; the alternative fits.
-    expect(outLong.map((row) => row.prompt)).toEqual([`${longCompetitor} alternative`]);
+
+    it('reports no evidence and returns only brand questions when a healthy model has nothing to say', async () => {
+      const db = testDb();
+      const account = newAccountId();
+      const siteId = await seedSite(account, 'example.com');
+      const result = await generatePromptSuggestions(
+        { accountId: account, siteId, outputLocale: 'en' },
+        {
+          db,
+          provider: createFakeAiVisibilityProvider(),
+          summaryProvider: stubSummary(async () => ({ prompts: [], model: 'empty' })),
+        },
+      );
+      expect(result.evidence).toBe('none');
+      expect(result.suggestions.map((row) => [row.prompt, row.evidenceSource, row.source])).toEqual([
+        ['What does example.com do?', null, 'template'],
+        ['Is example.com a good choice?', null, 'template'],
+      ]);
+    });
   });
 });
 
@@ -1713,6 +1893,71 @@ describe('listAuditTitleSeeds', () => {
     ]);
   });
 
+  it('keeps topic phrases and rejects fragments, page labels and the brand', async () => {
+    const account = newAccountId();
+    const siteId = await seedSite(account, 'episodebrief.com');
+    const run = await AuditRun.create({
+      accountId: new mongoose.Types.ObjectId(account),
+      siteId: new mongoose.Types.ObjectId(siteId),
+      pageCap: 5,
+      status: 'succeeded',
+      finishedAt: new Date('2026-01-10T00:00:00.000Z'),
+    });
+    const titles: Array<[string, string[]]> = [
+      ['EpisodeBrief — Turn podcast episodes into show notes', ['From episode to publish-ready, one pass at a time']],
+      ['Help and answers | EpisodeBrief', ['Answers, grouped by where you are']],
+      ['How EpisodeBrief works', ['Sample output']],
+      ['Episode pricing', ['Podcast show notes templates']],
+    ];
+    for (const [index, [title, h1]] of titles.entries()) {
+      await AuditedPage.create({
+        runId: run._id,
+        url: `https://episodebrief.com/p${index}`,
+        statusCode: 200,
+        title,
+        h1,
+        onPageScore: 100 - index,
+      });
+    }
+    await expect(
+      listAuditTitleSeeds({ accountId: account, siteId, domain: 'www.episodebrief.com' }),
+    ).resolves.toEqual(['turn podcast episodes into show notes', 'podcast show notes templates']);
+  });
+
+  it('skips pages under another language path when an output locale is given', async () => {
+    const account = newAccountId();
+    const siteId = await seedSite(account, 'episodebrief.com');
+    const run = await AuditRun.create({
+      accountId: new mongoose.Types.ObjectId(account),
+      siteId: new mongoose.Types.ObjectId(siteId),
+      pageCap: 5,
+      status: 'succeeded',
+      finishedAt: new Date('2026-01-10T00:00:00.000Z'),
+    });
+    const pages: Array<[string, string]> = [
+      ['https://episodebrief.com/fr/tarifs', 'Traitement ponctuel podcast'],
+      ['https://episodebrief.com/de-at/preise', 'Einmalige Podcast-Verarbeitung'],
+      ['https://episodebrief.com/en/features', 'Podcast show notes templates'],
+      ['https://episodebrief.com/guides', 'Episode summary guide'],
+    ];
+    for (const [index, [url, title]] of pages.entries()) {
+      await AuditedPage.create({
+        runId: run._id,
+        url,
+        statusCode: 200,
+        title,
+        h1: [],
+        onPageScore: 100 - index,
+      });
+    }
+    await expect(
+      listAuditTitleSeeds({ accountId: account, siteId, outputLocale: 'en' }),
+    ).resolves.toEqual(['podcast show notes templates', 'episode summary guide']);
+    await expect(
+      listAuditTitleSeeds({ accountId: account, siteId, outputLocale: 'fr' }),
+    ).resolves.toEqual(['traitement ponctuel podcast', 'episode summary guide']);
+  });
+
   it('honors the seed limit', async () => {
     const account = newAccountId();
     const siteId = await seedSite(account);
@@ -1734,6 +1979,87 @@ describe('listAuditTitleSeeds', () => {
     await expect(
       listAuditTitleSeeds({ accountId: account, siteId, seedLimit: 2 }),
     ).resolves.toEqual(['first long page title', 'second long heading']);
+  });
+});
+
+describe('listAuditPageEvidence', () => {
+  it('returns [] when the site has no succeeded audit run', async () => {
+    const account = newAccountId();
+    const siteId = await seedSite(account);
+    await expect(listAuditPageEvidence({ accountId: account, siteId })).resolves.toEqual([]);
+  });
+
+  it('reads the newest run, prefers the final URL and skips unusable pages', async () => {
+    const account = newAccountId();
+    const siteId = await seedSite(account);
+    const accountOid = new mongoose.Types.ObjectId(account);
+    const siteOid = new mongoose.Types.ObjectId(siteId);
+    const oldRun = await AuditRun.create({
+      accountId: accountOid,
+      siteId: siteOid,
+      pageCap: 5,
+      status: 'succeeded',
+      finishedAt: new Date('2026-01-01T00:00:00.000Z'),
+    });
+    await AuditedPage.create({
+      runId: oldRun._id,
+      url: 'https://example.com/stale',
+      statusCode: 200,
+      title: 'Stale page',
+      onPageScore: 99,
+    });
+    const run = await AuditRun.create({
+      accountId: accountOid,
+      siteId: siteOid,
+      pageCap: 5,
+      status: 'succeeded',
+      finishedAt: new Date('2026-01-10T00:00:00.000Z'),
+    });
+    const base = { runId: run._id, onPageScore: 50 };
+    await AuditedPage.create({
+      ...base,
+      url: 'http://example.com/',
+      finalUrl: 'https://example.com/en/',
+      statusCode: 200,
+      title: 'Corrected title',
+      metaDescription: 'Corrected description',
+      h1: ['Heading'],
+      onPageScore: 90,
+    });
+    await AuditedPage.create({ ...base, url: 'https://example.com/bare', statusCode: 200 });
+    await AuditedPage.create({ ...base, url: 'https://example.com/gone', statusCode: 404, title: 'Gone' });
+    await AuditedPage.create({ ...base, url: 'https://example.com/moved', statusCode: 301, title: 'Moved' });
+    await AuditedPage.create({
+      ...base,
+      url: 'https://example.com/hidden',
+      statusCode: 200,
+      title: 'Hidden',
+      isIndexable: false,
+    });
+    await AuditedPage.create({
+      ...base,
+      url: 'https://example.com/blocked',
+      statusCode: 200,
+      title: 'Blocked',
+      fetchFailure: { kind: 'robots_blocked' },
+    });
+    const pages = await listAuditPageEvidence({ accountId: account, siteId });
+    expect(pages).toEqual([
+      {
+        url: 'https://example.com/en/',
+        title: 'Corrected title',
+        metaDescription: 'Corrected description',
+        h1: ['Heading'],
+      },
+      { url: 'https://example.com/bare', title: null, metaDescription: null, h1: [] },
+    ]);
+    await expect(
+      listAuditPageEvidence({ accountId: account, siteId, pageLimit: 1 }),
+    ).resolves.toHaveLength(1);
+    // Another account never reads this site's audit.
+    await expect(
+      listAuditPageEvidence({ accountId: newAccountId(), siteId }),
+    ).resolves.toEqual([]);
   });
 });
 
@@ -1921,19 +2247,28 @@ describe('addPromptForSite', () => {
     expect((err as HttpError).details).toEqual({ limit: MAX_TRACKED_AI_PROMPTS });
   });
 
-  it('rethrows a non-cap repository error', async () => {
+  it('maps a duplicate to a localized 409 and rethrows any other repository error', async () => {
     const db = testDb();
     const owner = newAccountId();
-    const other = newAccountId();
     const siteId = await seedSite(owner);
-    // A foreign account already owns (siteId, 'foo'); the owner owns nothing,
-    // so the conflicting insert cannot be recovered → a plain Error surfaces.
-    await db.insert(aiTrackedPrompts).values({ accountId: other, siteId, prompt: 'foo' });
+    await addPromptForSite({ accountId: owner, siteId, prompt: 'Best podcast tools?' }, { db });
+    const conflict = await catchError(
+      addPromptForSite({ accountId: owner, siteId, prompt: 'best podcast tools' }, { db }),
+    );
+    expect((conflict as HttpError).status).toBe(409);
+    expect((conflict as Error).message).toBe('aiVisibility.errors.promptAlreadyTracked');
+
+    const broken = {
+      ...db,
+      select: () => {
+        throw new Error('database unavailable');
+      },
+    } as unknown as typeof db;
     const err = await catchError(
-      addPromptForSite({ accountId: owner, siteId, prompt: 'foo' }, { db }),
+      addPromptForSite({ accountId: owner, siteId, prompt: 'anything' }, { db: broken }),
     );
     expect(err).not.toBeInstanceOf(HttpError);
-    expect((err as Error).message).toMatch(/tracked prompt insert failed/);
+    expect((err as Error).message).toBe('database unavailable');
   });
 });
 
@@ -2000,9 +2335,12 @@ describe('buildAiVisibilityEvaluationInput', () => {
     await addTrackedPrompt(db, { accountId: account, siteId, prompt: 'tracked two' });
     await db.insert(aiMentionSnapshots).values([
       { accountId: account, siteId, prompt: 'tracked one', model: 'chatgpt', mentioned: true, sentiment: 'positive', checkedAt: FAKE_CLOCK },
-      { accountId: account, siteId, prompt: 'other', model: 'claude', mentioned: false, sentiment: 'negative', checkedAt: FAKE_CLOCK },
+      // 'tracked two' was checked and not mentioned; 'tracked three' was never
+      // checked, so it is not reported as not mentioned.
+      { accountId: account, siteId, prompt: 'tracked two', model: 'claude', mentioned: false, sentiment: 'negative', checkedAt: FAKE_CLOCK },
       { accountId: account, siteId, prompt: 'tracked one', model: 'perplexity', mentioned: true, sentiment: 'neutral', checkedAt: FAKE_CLOCK },
     ]);
+    await addTrackedPrompt(db, { accountId: account, siteId, prompt: 'tracked three' });
     await db.insert(aiCompetitorMentions).values([
       { accountId: account, siteId, prompt: 'tracked one', model: 'chatgpt', competitorDomain: 'rival.example', mentioned: true, cited: false, checkedAt: FAKE_CLOCK },
       { accountId: account, siteId, prompt: 'tracked one', model: 'claude', competitorDomain: 'rival.example', mentioned: false, cited: false, checkedAt: FAKE_CLOCK },
@@ -2089,5 +2427,20 @@ describe('clearAiVisibilityRowsForTests', () => {
     expect(
       await db.select().from(aiCompetitorMentions).where(eq(aiCompetitorMentions.siteId, siteId)),
     ).toHaveLength(0);
+  });
+});
+
+describe('siteDescriptionSeed ', () => {
+  const page = (url: string, metaDescription: string | null) => ({ url, title: null, metaDescription, h1: [] });
+  it('takes the home or language-home meta description, trimmed and bounded', () => {
+    expect(siteDescriptionSeed([page('https://a.example/pricing', 'Prices'), page('https://a.example/', '  Home copy  ')])).toBe('Home copy');
+    expect(siteDescriptionSeed([page('https://a.example/ar/', 'وصف')])).toBe('وصف');
+    expect(siteDescriptionSeed([page('https://a.example/', 'x'.repeat(600))])).toHaveLength(500);
+  });
+
+  it('returns null without a usable home description', () => {
+    expect(siteDescriptionSeed([page('https://a.example/', '   '), page('https://a.example/blog', 'Blog')])).toBeNull();
+    expect(siteDescriptionSeed([page('not a url', 'Broken')])).toBeNull();
+    expect(siteDescriptionSeed([])).toBeNull();
   });
 });

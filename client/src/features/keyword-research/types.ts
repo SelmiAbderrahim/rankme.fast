@@ -92,12 +92,79 @@ export interface ResearchHistoryItem {
   languageCode: string;
   resultCount: number;
   cached: boolean;
+  /**
+   * Shared by the metrics + intent records of one Research press; null on
+   * records written before the column existed or by callers that never sent
+   * one. See `historyGroups.ts` for how the list folds them.
+   */
+  lookupId: string | null;
   createdAt: string;
 }
 
 export interface HistoryResponse {
   items: ResearchHistoryItem[];
   nextCursor: string | null;
+  /** Every saved lookup in the requested scope, whatever the page. */
+  total?: number;
+}
+
+// ---------------------------------------------------------------------------
+// Stored reads: mirrors of
+// `server/src/modules/keyword-research/keyword-research.stored.ts`.
+// ---------------------------------------------------------------------------
+
+/**
+ * available   everything the lookup asked for is still stored
+ * partial     some of the requested phrases are stored
+ * expired     nothing is stored any more (cache TTL passed / evicted)
+ * unsupported the kind has no stored view (gap, overview, trends, clusters)
+ */
+export type StoredResearchStatus = 'available' | 'partial' | 'expired' | 'unsupported';
+
+export interface StoredKeywordRow {
+  keyword: string;
+  searchVolume: number | null;
+  difficulty: number | null;
+  cpc: string | null;
+  monthlySearches: KeywordMonthlySearch[];
+  intent: SearchIntent | null;
+  confidence: number | null;
+  cached: true;
+  fetchedAt: string;
+  expiresAt: string;
+}
+
+export interface StoredResearchResult {
+  id: string;
+  kind: ResearchHistoryKind;
+  lookupId: string | null;
+  phrases: string[];
+  locationCode: number;
+  languageCode: string;
+  status: StoredResearchStatus;
+  requestedCount: number;
+  storedCount: number;
+  seed: string | null;
+  keywords: StoredKeywordRow[];
+  items: RelatedKeyword[];
+  fetchedAt: string | null;
+  expiresAt: string | null;
+}
+
+export type StoredCandidateSource = 'seed' | 'related' | 'idea' | 'long_tail';
+
+export interface StoredKeywordCandidate {
+  phrase: string;
+  source: StoredCandidateSource;
+  searchVolume: number | null;
+  observedAt: string;
+}
+
+export interface StoredKeywordsResponse {
+  candidates: StoredKeywordCandidate[];
+  /** Matches for the query BEFORE the limit cut. */
+  total: number;
+  truncated: boolean;
 }
 
 // ---------------------------------------------------------------------------
@@ -429,6 +496,23 @@ export interface KeywordResearchState {
   historyLoaded: boolean;
   historyError: string;
   historyCursor: string | null;
+  /** Size of the whole saved-lookup list (null until the server reports it). */
+  historyTotal: number | null;
+  /** requestId of the newest first-page history load; older first-page
+   * responses that resolve later are dropped so they never overwrite it. */
+  historyRequestId: string | null;
+  /** Scope of the loaded history list: a site id (site Research tab) or
+   * null (account-wide). A first-page load for another scope clears the
+   * list so one scope's rows never show under another. */
+  historySiteId: string | null;
+  /** Re-open of one history row's stored results (no provider call). */
+  stored: {
+    loading: boolean;
+    error: string;
+    /** History row id being shown / loaded; null when none. */
+    historyId: string | null;
+    result: StoredResearchResult | null;
+  };
   /** Namespaced sub-state for the workspace views. */
   preview: {
     loading: boolean;
@@ -436,11 +520,15 @@ export interface KeywordResearchState {
     error: string;
     /** Which paid form the preview belongs to (one preview slot at a time). */
     forOperation: KeywordPreviewOperation | null;
+    /** Server refusal attributed to the competitors field (gap form). */
+    competitorsError?: string;
   };
   gap: {
     loading: boolean;
     data: GapResponse | null;
     error: string;
+    /** Server refusal attributed to the competitors field. */
+    competitorsError?: string;
   };
   overview: {
     loading: boolean;
@@ -467,6 +555,14 @@ export interface KeywordResearchState {
     detailError: string;
     /** Keyed by `runId:clusterId`. */
     decisions: Record<string, ClusterDecisionState>;
+    /** Stored phrases the picker offers (free read, never calls a provider). */
+    candidates: {
+      loading: boolean;
+      error: string;
+      data: StoredKeywordsResponse | null;
+      /** requestId of the newest load; older responses that resolve later are dropped. */
+      requestId: string | null;
+    };
   };
   /** Live Keyword Trends sub-state. */
   liveTrends: LiveTrendsSubState;

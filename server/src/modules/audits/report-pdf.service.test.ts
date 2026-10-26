@@ -69,6 +69,8 @@ function makeFinding(
     bucket,
     severity: 'warning',
     affectedUrls: bucket === 'passed' ? [] : [`https://example.com/page-${index}`],
+    category: 'indexability',
+    applicability: 'applicable',
     copy: {
       titleKey: 'auditRules.robots-blocked.title',
       whyKey: 'auditRules.robots-blocked.why',
@@ -93,6 +95,9 @@ function makeReport(overrides: Partial<AuditReport> = {}): AuditReport {
       makeFinding(3, 'watch'),
       makeFinding(4, 'passed'),
     ],
+    notApplicable: [],
+    localBusiness: false,
+    comparison: null,
     diff: { entries: [], summary: { fixed: 0, regressed: 0, new: 0, unchanged: 0 } },
     pageSpeed: null,
     indexStatus: null,
@@ -274,6 +279,25 @@ describe('renderAuditReportPdf', () => {
       }),
     );
     await expect(PDFDocument.load(bytes)).resolves.toBeDefined();
+  });
+
+  it('draws a dash for a query without impressions and a spaced percent sign where the language uses one', async () => {
+    const gscSummary = {
+      snapshotDate: '2026-07-05',
+      windowDays: 28 as const,
+      totalClicks: 10,
+      totalImpressions: 100,
+      averageCtr: 0.1,
+      averagePosition: 4.2,
+      topQueries: [
+        { query: 'idle', clicks: 0, impressions: 0, ctr: 0, position: 0, snapshotDate: '2026-07-05' },
+        { query: 'busy', clicks: 10, impressions: 100, ctr: 0.1, position: 4.2, snapshotDate: '2026-07-05' },
+      ],
+    };
+    for (const locale of ['en', 'fr'] as const) {
+      const bytes = await renderAuditReportPdf(makeInput({ report: null, locale, gscSummary }));
+      await expect(PDFDocument.load(bytes)).resolves.toBeDefined();
+    }
   });
 
   it('clips findings at PDF_MAX_FINDINGS across buckets and spills onto extra pages', async () => {
@@ -484,8 +508,8 @@ describe('pdf fonts', () => {
       bold: 'NotoSansArabic-Regular.ttf',
     });
     expect(fontFilesFor('zh')).toEqual({
-      regular: 'NotoSansSC-Regular.otf',
-      bold: 'NotoSansSC-Regular.otf',
+      regular: 'NotoSansSC-Regular.ttf',
+      bold: 'NotoSansSC-Regular.ttf',
     });
     expect(fontFilesFor('en')).toEqual({
       regular: 'NotoSans-Regular.ttf',

@@ -1,3 +1,7 @@
+import { useCallback, useEffect, useRef, useState } from 'react';
+import { useScrollFades } from '@shared/hooks/useScrollFades';
+import { Bdi } from '@shared/components/Bdi';
+import { isolateText } from '@shared/lib/bidi';
 import { useTranslation } from 'react-i18next';
 import { ExternalLink } from 'lucide-react';
 import { Link, useLocation } from 'react-router-dom';
@@ -10,7 +14,6 @@ import { APP_NAV_GROUPS, resolveActiveNavKey } from '@shared/navigation/appNav';
 import {
   Sidebar,
   SidebarContent,
-  SidebarFooter,
   SidebarGroup,
   SidebarGroupContent,
   SidebarGroupLabel,
@@ -27,6 +30,14 @@ import {
 } from '@features/workspace';
 import { ReleaseStageBadge } from './ReleaseStageBadge';
 
+/** Reveal a row without scrolling the page or changing its keyboard starting point. */
+export function scrollRowIntoNav(nav: HTMLElement, row: HTMLElement): void {
+  const area = nav.getBoundingClientRect();
+  const box = row.getBoundingClientRect();
+  if (box.top < area.top) nav.scrollTop -= area.top - box.top;
+  else if (box.bottom > area.bottom) nav.scrollTop += box.bottom - area.bottom;
+}
+
 /**
  * App shell sidebar (SPEC-02) — logo block, grouped localized nav and a
  * brand-primary active row.
@@ -34,11 +45,23 @@ import { ReleaseStageBadge } from './ReleaseStageBadge';
 export const AppSidebar = () => {
   const { t, i18n } = useTranslation(['common', 'alerts']);
   const { pathname, search } = useLocation();
-  const { setOpenMobile, isMobile } = useSidebar();
+  const { setOpenMobile, isMobile, openMobile, state } = useSidebar();
   const side = i18n.dir() === 'rtl' ? 'right' : 'left';
   const workspaceRole = useAppSelector(selectActiveWorkspaceRole);
   const isForeignWorkspace = useAppSelector(selectIsForeignWorkspace);
   const locale = isSupportedLocale(i18n.language) ? i18n.language : DEFAULT_LOCALE;
+  const fadesRef = useScrollFades<HTMLElement>();
+  // The phone nav mounts in a portal after the sidebar itself has rendered.
+  const [nav, setNav] = useState<HTMLElement | null>(null);
+  const navRef = useCallback((node: HTMLElement | null) => {
+    fadesRef(node);
+    setNav(node);
+  }, [fadesRef]);
+  const activeRowRef = useRef<HTMLAnchorElement>(null);
+  useEffect(() => {
+    const row = activeRowRef.current;
+    if (row && nav) scrollRowIntoNav(nav, row);
+  }, [nav, pathname, search, isMobile, openMobile, state]);
 
   const closeOnMobile = () => {
     if (isMobile) setOpenMobile(false);
@@ -72,7 +95,7 @@ export const AppSidebar = () => {
   }));
 
   return (
-    <Sidebar side={side} variant="inset" collapsible="icon">
+    <Sidebar side={side} variant="inset" collapsible="icon" mobileTitle={t('nav.primary')}>
       <SidebarHeader className="flex-row items-center gap-2">
         <Link
           to="/dashboard"
@@ -85,68 +108,72 @@ export const AppSidebar = () => {
         <ReleaseStageBadge className="group-data-[collapsible=icon]:hidden" />
       </SidebarHeader>
 
-      <SidebarContent>
-        {renderedGroups.map((group) => (
-          <SidebarGroup key={group.labelKey}>
-            <SidebarGroupLabel>{t(group.labelKey)}</SidebarGroupLabel>
-            <SidebarGroupContent>
-              <SidebarMenu>
-                {group.rows.map((row) => {
-                  const Icon = row.icon;
-                  return (
-                    <SidebarMenuItem key={row.key}>
-                      <SidebarMenuButton
-                        asChild
-                        isActive={row.active}
-                        tooltip={row.label}
-                        className="data-[active=true]:bg-primary data-[active=true]:text-primary-foreground data-[active=true]:hover:bg-primary/90 data-[active=true]:hover:text-primary-foreground"
-                      >
-                        {row.newTab ? (
-                          // Leaves the SPA (docs are server-rendered, and live on
-                          // the public host in a split deployment): a new tab keeps
-                          // the app and its session where the user left them.
-                          <a
-                            href={row.href}
-                            target="_blank"
-                            rel="noopener noreferrer"
-                            onClick={closeOnMobile}
-                          >
-                            <Icon />
-                            <span>{row.label}</span>
-                            <ExternalLink aria-hidden="true" className="ms-auto size-3.5 opacity-60" />
-                            <span className="sr-only">{t('shell.opensInNewTab')}</span>
-                          </a>
-                        ) : (
-                          <Link
-                            to={row.href}
-                            aria-current={row.active ? 'page' : undefined}
-                            onClick={closeOnMobile}
-                          >
-                            <Icon />
-                            <span>{row.label}</span>
-                          </Link>
-                        )}
-                      </SidebarMenuButton>
-                    </SidebarMenuItem>
-                  );
-                })}
-              </SidebarMenu>
-            </SidebarGroupContent>
-          </SidebarGroup>
-        ))}
+      <SidebarContent className="min-h-0 flex-1 gap-0 overflow-hidden">
+        {isMobile ? (
+          <div className="shrink-0 border-b border-border px-4 pt-2 pb-3">
+            <LanguageSwitcher
+              id="language-switcher-drawer"
+              showLabel
+              className="flex items-center justify-between gap-3 [&_select]:min-w-40"
+              onLocaleChange={closeOnMobile}
+            />
+          </div>
+        ) : null}
+        <nav ref={navRef} aria-label={t('nav.primary')} data-app-nav="" className="nav-scroll min-h-0 flex-1 scroll-pb-2 group-data-[collapsible=icon]:nav-scroll-rail">
+          {renderedGroups.map((group) => (
+            <SidebarGroup key={group.labelKey}>
+              <SidebarGroupLabel>{t(group.labelKey)}</SidebarGroupLabel>
+              <SidebarGroupContent>
+                <SidebarMenu>
+                  {group.rows.map((row) => {
+                    const Icon = row.icon;
+                    return (
+                      <SidebarMenuItem key={row.key}>
+                        <SidebarMenuButton
+                          asChild
+                          isActive={row.active}
+                          tooltip={row.label}
+                          className="data-[active=true]:bg-primary data-[active=true]:text-primary-foreground data-[active=true]:hover:bg-primary/90 data-[active=true]:hover:text-primary-foreground"
+                        >
+                          {row.newTab ? (
+                            // Leaves the SPA (docs are server-rendered, and live on
+                            // the public host in a split deployment): a new tab keeps
+                            // the app and its session where the user left them.
+                            <a
+                              href={row.href}
+                              target="_blank"
+                              rel="noopener noreferrer"
+                              title={isolateText(row.label)}
+                              onClick={closeOnMobile}
+                            >
+                              <Icon />
+                              <span><Bdi>{row.label}</Bdi></span>
+                              <ExternalLink aria-hidden="true" className="ms-auto size-3.5 opacity-60" />
+                              <span className="sr-only">{t('shell.opensInNewTab')}</span>
+                            </a>
+                          ) : (
+                            <Link
+                              to={row.href}
+                              ref={row.active ? activeRowRef : undefined}
+                              aria-current={row.active ? 'page' : undefined}
+                              title={isolateText(row.label)}
+                              onClick={closeOnMobile}
+                            >
+                              <Icon />
+                              <span><Bdi>{row.label}</Bdi></span>
+                            </Link>
+                          )}
+                        </SidebarMenuButton>
+                      </SidebarMenuItem>
+                    );
+                  })}
+                </SidebarMenu>
+              </SidebarGroupContent>
+            </SidebarGroup>
+          ))}
+        </nav>
       </SidebarContent>
 
-      {isMobile ? (
-        // The top-bar switcher only fits from `md` up; below that the drawer is
-        // the one place a language can be chosen. Same shared component.
-        <SidebarFooter>
-          <LanguageSwitcher
-            id="language-switcher-drawer"
-            className="[&_select]:w-full"
-            onLocaleChange={closeOnMobile}
-          />
-        </SidebarFooter>
-      ) : null}
     </Sidebar>
   );
 };

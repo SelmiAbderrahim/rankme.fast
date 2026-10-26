@@ -1,3 +1,4 @@
+import { Bdi } from '@shared/components/Bdi';
 import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { safeExternalHref } from '@shared/security';
@@ -218,7 +219,7 @@ export const MentionTable = ({
                 <TableCell>
                   {row.url === null ? (
                     // The server refused the stored scheme — no anchor at all.
-                    <span data-testid="brand-radar-mention-plain-domain">{row.domain}</span>
+                    <span data-testid="brand-radar-mention-plain-domain"><Bdi>{row.domain}</Bdi></span>
                   ) : (
                     <a
                       href={safeExternalHref(row.url)}
@@ -227,7 +228,7 @@ export const MentionTable = ({
                       className="underline underline-offset-2"
                       data-testid="brand-radar-mention-link"
                     >
-                      {row.domain}
+                      <Bdi>{row.domain}</Bdi>
                     </a>
                   )}
                 </TableCell>

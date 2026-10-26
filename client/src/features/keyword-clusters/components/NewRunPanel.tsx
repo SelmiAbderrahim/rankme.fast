@@ -12,6 +12,7 @@ import {
 import { Separator } from '@shared/ui/separator';
 import type { KeywordClusterPreview, KeywordClusterUiState } from '../types';
 import { BlockedKeywords } from './BlockedKeywords';
+import { EligibilityBanner } from './EligibilityBanner';
 import { StateNotice } from './StateNotice';
 
 interface NewRunPanelProps {
@@ -40,14 +41,20 @@ export const NewRunPanel = ({
   const { t } = useTranslation('keywordClusters');
   if (gate) return <StateNotice kind={gate} ranksHref={ranksHref} />;
   if (preview && !preview.ready) {
+    const eligibility = preview.eligibility;
+    if (eligibility?.blockingReasonCode === 'no_tracked_keywords') {
+      return <StateNotice kind="noTrackedKeywords" ranksHref={ranksHref} />;
+    }
+    // One "Run a rank check" action per screen: the banner owns it, the list
+    // below only names the keywords and their reasons.
     return (
       <div className="space-y-4">
-        <StateNotice kind="notEnoughKeywords" ranksHref={ranksHref} />
-        <BlockedKeywords
-          blocked={preview.blocked}
-          total={preview.blockedTotal}
-          ranksHref={ranksHref}
-        />
+        {eligibility ? (
+          <EligibilityBanner eligibility={eligibility} minKeywords={preview.minKeywords} ranksHref={ranksHref} />
+        ) : (
+          <StateNotice kind="notEnoughKeywords" ranksHref={ranksHref} />
+        )}
+        <BlockedKeywords blocked={preview.blocked} total={preview.blockedTotal} />
       </div>
     );
   }

@@ -49,7 +49,9 @@
     "assistant": "Réponse de l’assistant",
     "streaming": "L’assistant répond",
     "stopped": "Réponse arrêtée",
-    "loading": "Chargement de la conversation…"
+    "loading": "Chargement de la conversation…",
+    "cutOff": "La réponse a été coupée avant la fin.",
+    "retryCutOff": "Réessayer"
   },
   "tool": {
     "arguments": "Paramètres",
@@ -70,7 +72,35 @@
       "startAudit": "Lancer un audit",
       "auditStatus": "État de l’audit",
       "listActions": "Actions à venir",
-      "setActionState": "Mettre à jour une action"
+      "setActionState": "Mettre à jour une action",
+      "getGscSearchSummary": "Obtenir le résumé Search Console",
+      "listGscTopQueries": "Lister les principales recherches",
+      "listGscTopPages": "Lister les pages les plus recherchées",
+      "getGa4Summary": "Obtenir le résumé Analytics",
+      "listPages": "Lister les pages",
+      "getPageDetail": "Obtenir le détail d’une page",
+      "getBacklinksSummary": "Obtenir le résumé des backlinks",
+      "listBacklinks": "Lister les backlinks",
+      "listCompetitors": "Lister les concurrents",
+      "listKeywordResearchHistory": "Lister l’historique de recherche de mots-clés",
+      "getKeywordResearchResult": "Obtenir un résultat de recherche de mots-clés",
+      "getAiVisibilitySummary": "Obtenir le résumé de Visibilité IA",
+      "getLocalSeoSummary": "Obtenir le résumé SEO local",
+      "getReviewsSummary": "Obtenir le résumé des avis",
+      "listClientReports": "Lister les rapports clients"
+    },
+    "errors": {
+      "forbiddenOutput": "Le résultat de cette étape a été retenu, car il contenait un contenu qui ne peut pas être affiché en toute sécurité. Essayez de redemander.",
+      "invalidInput": "Cette étape n’a pas pu s’exécuter, car la demande n’était pas valide. Essayez de reformuler votre question.",
+      "notFound": "Le site lié à cette étape n’est pas disponible dans cette conversation.",
+      "internal": "Une erreur est survenue de notre côté pendant cette étape. Réessayez.",
+      "generic": "Cette étape n’a pas pu être terminée. Réessayez."
+    },
+    "retry": "Redemander",
+    "storedStatus": {
+      "ok": "Données stockées",
+      "empty": "Rien de stocké",
+      "unavailable": "Indisponible"
     }
   },
   "results": {
@@ -86,7 +116,14 @@
     "topFindings": "Principaux constats",
     "noFindings": "Aucun constat n’a été renvoyé.",
     "domain": "Domaine",
-    "url": "URL"
+    "url": "URL",
+    "change": "Évolution",
+    "truncated": "Seules les premières lignes sont affichées.",
+    "scopeSource": "Source",
+    "scopeRange": "Plage",
+    "scopePeriod": "Dates",
+    "scopeAsOf": "À jour au",
+    "scopeTimezone": "Fuseau horaire"
   },
   "states": {
     "locked": {

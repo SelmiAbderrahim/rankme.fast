@@ -19,11 +19,14 @@ import {
   loadLiveTrendsRun,
   loadMetrics,
   loadRelated,
+  loadStoredKeywords,
+  openStoredResearch,
   previewLiveTrends,
   runClusters,
   runGap,
   runOverview,
   runTrends,
+  type OpenStoredRejectPayload,
 } from './thunks';
 
 /** Decision sub-state key — one slot per (run, cluster) pair. */
@@ -60,6 +63,20 @@ export function relatedCacheKey(
   return `${keyword}::${locationCode}::${languageCode}`;
 }
 
+/** A first-page history load superseded by a newer first-page load (e.g. the
+ * metrics and intent refreshes racing after one lookup). Its DATA is dropped
+ * so an older page never overwrites a newer one. */
+function isStaleHistoryLoad(
+  state: KeywordResearchState,
+  meta: { requestId: string; arg: { cursor?: string } },
+): boolean {
+  return (
+    !meta.arg.cursor &&
+    state.historyRequestId !== null &&
+    state.historyRequestId !== meta.requestId
+  );
+}
+
 export const initialState: KeywordResearchState = {
   metrics: [],
   loading: false,
@@ -92,6 +109,10 @@ export const initialState: KeywordResearchState = {
   historyLoaded: false,
   historyError: '',
   historyCursor: null,
+  historyTotal: null,
+  historyRequestId: null,
+  historySiteId: null,
+  stored: { loading: false, error: '', historyId: null, result: null },
   preview: { loading: false, data: null, error: '', forOperation: null },
   gap: { loading: false, data: null, error: '' },
   overview: { loading: false, rows: [], loaded: false, error: '' },
@@ -108,6 +129,7 @@ export const initialState: KeywordResearchState = {
     detailLoading: false,
     detailError: '',
     decisions: {},
+    candidates: { loading: false, error: '', data: null, requestId: null },
   },
   liveTrends: {
     preview: { loading: false, data: null, error: '', errorKind: null },
@@ -139,6 +161,10 @@ const slice = createSlice({
     resolveAddToTracking: (state, action: PayloadAction<{ error?: string }>) => {
       state.addingToTrackingKeyword = null;
       state.addToTrackingError = action.payload.error ?? '';
+    },
+    /** Leave the stored-results view (new search, close button, back button). */
+    clearStored: (state) => {
+      state.stored = { loading: false, error: '', historyId: null, result: null };
     },
     /** Cancelling a spend preview discards it without any request. */
     clearPreview: (state) => {
@@ -265,11 +291,22 @@ const slice = createSlice({
         /* v8 ignore next -- fetchLongTail always rejects with a populated payload. */
         state.longTail.error = action.payload?.error ?? '';
       })
-      .addCase(loadHistory.pending, (state) => {
+      .addCase(loadHistory.pending, (state, action) => {
         state.historyLoading = true;
         state.historyError = '';
+        if (!action.meta.arg.cursor) {
+          state.historyRequestId = action.meta.requestId;
+          const scope = action.meta.arg.siteId ?? null;
+          if (scope !== state.historySiteId) {
+            state.history = [];
+            state.historyCursor = null;
+            state.historyTotal = null;
+            state.historySiteId = scope;
+          }
+        }
       })
       .addCase(loadHistory.fulfilled, (state, action) => {
+        if (isStaleHistoryLoad(state, action.meta)) return;
         state.historyLoading = false;
         state.historyLoaded = true;
         // Cursor pages append; a cursor-less load replaces (fresh first page).
@@ -277,17 +314,41 @@ const slice = createSlice({
           ? [...state.history, ...action.payload.items]
           : action.payload.items;
         state.historyCursor = action.payload.nextCursor;
+        state.historyTotal = action.payload.total ?? null;
       })
       .addCase(loadHistory.rejected, (state, action) => {
-        state.historyLoading = false;
+        // A failure is still surfaced, but a superseded load never ends the
+        // newer load's loading state.
+        if (!isStaleHistoryLoad(state, action.meta)) state.historyLoading = false;
         state.historyLoaded = true;
         /* v8 ignore next -- loadHistory always populates payload via rejectWithValue; the null-payload fallback is defence. */
         state.historyError = action.payload?.error ?? '';
+      })
+      .addCase(openStoredResearch.pending, (state, action) => {
+        state.stored = {
+          loading: true,
+          error: '',
+          historyId: action.meta.arg.historyId,
+          result: null,
+        };
+      })
+      .addCase(openStoredResearch.fulfilled, (state, action) => {
+        // A newer open (or a close) superseded this response.
+        if (state.stored.historyId !== action.meta.arg.historyId) return;
+        state.stored.loading = false;
+        state.stored.result = action.payload;
+      })
+      .addCase(openStoredResearch.rejected, (state, action) => {
+        if (state.stored.historyId !== action.meta.arg.historyId) return;
+        state.stored.loading = false;
+        // The thunk only ever rejects through rejectWithValue.
+        state.stored.error = (action.payload as OpenStoredRejectPayload).error;
       })
       // --- Spend preview ---------------------------------------------------
       .addCase(fetchKeywordPreview.pending, (state, action) => {
         state.preview.loading = true;
         state.preview.error = '';
+        state.preview.competitorsError = '';
         state.preview.forOperation = action.meta.arg.operation;
       })
       .addCase(fetchKeywordPreview.fulfilled, (state, action) => {
@@ -299,11 +360,13 @@ const slice = createSlice({
         state.preview.data = null;
         /* v8 ignore next -- fetchKeywordPreview always populates payload via rejectWithValue; the null-payload fallback is defence. */
         state.preview.error = action.payload?.error ?? '';
+        state.preview.competitorsError = action.payload?.competitorsError ?? '';
       })
       // --- gap ------------------------------------------------------------
       .addCase(runGap.pending, (state) => {
         state.gap.loading = true;
         state.gap.error = '';
+        state.gap.competitorsError = '';
       })
       .addCase(runGap.fulfilled, (state, action) => {
         state.gap.loading = false;
@@ -314,6 +377,7 @@ const slice = createSlice({
         state.gap.loading = false;
         /* v8 ignore next -- runGap always populates payload via rejectWithValue; the null-payload fallback is defence. */
         state.gap.error = action.payload?.error ?? '';
+        state.gap.competitorsError = action.payload?.competitorsError ?? '';
       })
       // --- overview -------------------------------------------------------
       .addCase(runOverview.pending, (state) => {
@@ -368,6 +432,23 @@ const slice = createSlice({
         state.clusters.running = false;
         /* v8 ignore next -- runClusters always populates payload via rejectWithValue; the null-payload fallback is defence. */
         state.clusters.runError = action.payload?.error ?? '';
+      })
+      // --- stored candidates (cluster picker) ------------------------------
+      .addCase(loadStoredKeywords.pending, (state, action) => {
+        state.clusters.candidates.loading = true;
+        state.clusters.candidates.error = '';
+        state.clusters.candidates.requestId = action.meta.requestId;
+      })
+      .addCase(loadStoredKeywords.fulfilled, (state, action) => {
+        // Older responses (a slower, earlier search) never overwrite a newer one.
+        if (state.clusters.candidates.requestId !== action.meta.requestId) return;
+        state.clusters.candidates.loading = false;
+        state.clusters.candidates.data = action.payload;
+      })
+      .addCase(loadStoredKeywords.rejected, (state, action) => {
+        if (state.clusters.candidates.requestId !== action.meta.requestId) return;
+        state.clusters.candidates.loading = false;
+        state.clusters.candidates.error = action.payload ?? '';
       })
       // --- clusters list --------------------------------------------------
       .addCase(loadClusterRuns.pending, (state) => {
@@ -545,6 +626,7 @@ export const {
   clearMessages,
   beginAddToTracking,
   resolveAddToTracking,
+  clearStored,
   clearPreview,
   clearLiveTrendsPreview,
   resetLiveTrends,

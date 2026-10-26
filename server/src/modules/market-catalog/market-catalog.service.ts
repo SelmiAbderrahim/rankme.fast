@@ -3,11 +3,11 @@ import { createReadThrough, createSingleFlight, createVendorCacheRepo, } from '.
 import type { ProviderMarket } from '../../shared/providers/index.js';
 import { VendorUnavailableError } from '../../shared/providers/errors.js';
 import type { VendorCapability } from '../../db/schema/index.js';
-import { marketCatalogPayloadSchema, type MarketCatalogSurface, } from './market-catalog.schemas.js';
+import { SERP_LANGUAGE_CODES, marketCatalogPayloadSchema, type MarketCatalogSurface, } from './market-catalog.schemas.js';
 import type { MarketCatalogDeps } from './market-catalog.holder.js';
 export const MARKET_CATALOG_TTL_MS = 24 * 60 * 60 * 1000;
 const catalogFlights = createSingleFlight();
-function catalogAddress(surface: MarketCatalogSurface): {
+function catalogAddress(surface: Exclude<MarketCatalogSurface, 'serp'>): {
     capability: VendorCapability;
     operation: string;
 } {
@@ -38,7 +38,7 @@ function normalizeMarkets(markets: ProviderMarket[]): ProviderMarket[] {
     return [...normalized.values()].sort((a, b) => a.countryCode.localeCompare(b.countryCode) ||
         (a.locationCode ?? 0) - (b.locationCode ?? 0));
 }
-async function fetchMarkets(surface: MarketCatalogSurface, deps: MarketCatalogDeps): Promise<ProviderMarket[]> {
+async function fetchMarkets(surface: Exclude<MarketCatalogSurface, 'serp'>, deps: MarketCatalogDeps): Promise<ProviderMarket[]> {
     if (surface === 'seo') {
         return normalizeMarkets(await requireCatalogMethod(deps.keywordProvider.listMarkets, 'keyword-market-catalog')());
     }
@@ -55,7 +55,24 @@ async function fetchMarkets(surface: MarketCatalogSurface, deps: MarketCatalogDe
     }
     return normalizeMarkets(await listMarkets(store));
 }
-export async function getMarketCatalog(surface: MarketCatalogSurface, deps: MarketCatalogDeps) {
+export interface MarketCatalogResult {
+    surface: MarketCatalogSurface;
+    markets: ProviderMarket[];
+    fetchedAt: string;
+    cached: boolean;
+}
+export async function getMarketCatalog(surface: MarketCatalogSurface, deps: MarketCatalogDeps): Promise<MarketCatalogResult> {
+    if (surface === 'serp') {
+        const seo = await getMarketCatalog('seo', deps);
+        return {
+            ...seo,
+            surface,
+            markets: seo.markets.map((market) => ({
+                ...market,
+                languageCodes: [...new Set([...market.languageCodes, ...SERP_LANGUAGE_CODES])].sort(),
+            })),
+        };
+    }
     const address = catalogAddress(surface);
     const readThrough = createReadThrough({
         repo: createVendorCacheRepo(deps.db),

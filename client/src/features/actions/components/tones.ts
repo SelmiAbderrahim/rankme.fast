@@ -29,5 +29,9 @@ export const ACTION_FRESHNESS_TONES: Record<
 > = {
   fresh: 'success',
   stale: 'warning',
+  partial: 'warning',
+  blocked: 'destructive',
+  failed: 'destructive',
+  unknown: 'muted',
   unavailable: 'muted',
 };

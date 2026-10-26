@@ -1,4 +1,6 @@
 import mongoose, { type HydratedDocument, type InferSchemaType } from 'mongoose';
+import { coverageProbeSchema } from './crawl-evidence.schemas.js';
+import { AUDIT_RUN_STOP_REASONS } from './crawl-stop-reason.js';
 /**
  * One site-audit execution. This document — not BullMQ job
  * state — is the source of truth the UI reads: `queued → running →
@@ -37,6 +39,11 @@ const auditRunSchema = new mongoose.Schema({
         type: Number,
         required: true,
     },
+    // The crawl is (or will be) posted with the resource scan (images, scripts
+    // and stylesheets). Decided when the run is created and read back by the
+    // processor, so a retry that resumes the vendor task reads the result the
+    // way it was posted. Runs from before the field stay `false`.
+    resourceScan: { type: Boolean, default: false },
     // What started this run. `manual` = user clicked; `rank-drop` = the
     // auto-rerun service (ops provenance only — never exposed to the client).
     trigger: {
@@ -81,6 +88,19 @@ const auditRunSchema = new mongoose.Schema({
         type: String,
         default: null,
     },
+    // Pages stored for this run, written when it succeeds. `null` = the run
+    // predates the field or has not finished.
+    pagesCrawled: { type: Number, default: null },
+    // Pages the crawl vendor said it crawled. Larger than `pagesCrawled` means
+    // the stored list is incomplete; `null` = not reported.
+    vendorPagesCrawled: { type: Number, default: null },
+    // Why the crawler stopped: the vendor's reason, or one derived from the
+    // counts when the run finished. `null` = the run predates the field.
+    crawlStopReason: { type: String, enum: AUDIT_RUN_STOP_REASONS, default: null },
+    // Requests we made for URLs missing from the crawl (the site root, Search
+    // Console pages), so "absent from the crawl" has a recorded cause. Absent =
+    // the stage did not run.
+    coverageProbes: { type: [coverageProbeSchema], default: undefined },
     // Normalized AuditResult (shared/providers/types.ts) — vendor-neutral.
     result: {
         type: mongoose.Schema.Types.Mixed,

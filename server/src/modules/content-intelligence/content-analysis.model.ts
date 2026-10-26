@@ -57,6 +57,29 @@ export const CONTENT_ANALYSIS_ERROR_CATEGORIES = [
     'unexpected',
 ] as const;
 export type ContentAnalysisErrorCategory = (typeof CONTENT_ANALYSIS_ERROR_CATEGORIES)[number];
+/**
+ * Safe, user-actionable detail for an owned-page failure. Derived from the
+ * content-source outcome (error class / page HTTP status / empty body) — the
+ * raw vendor message is NEVER persisted or returned, only this category and,
+ * for `http_error`, the owned page's own HTTP status code.
+ */
+export const CONTENT_ANALYSIS_FAILURE_REASONS = [
+    'robots_blocked',
+    'access_denied',
+    'http_error',
+    'timeout',
+    'temporarily_unavailable',
+    'empty_content',
+    'too_large',
+    'unsafe_url',
+    'unreadable',
+    // Found by our own first-party request to the page.
+    'redirect_loop',
+    'redirect_limit',
+    'unsafe_redirect',
+    'non_html',
+] as const;
+export type ContentAnalysisFailureReason = (typeof CONTENT_ANALYSIS_FAILURE_REASONS)[number];
 export const CONTENT_RECOMMENDATION_STATES = [
     'suggested',
     'accepted',
@@ -151,6 +174,22 @@ const errorInfoSchema = new mongoose.Schema({
     messageKey: { type: String, required: true },
     retryable: { type: Boolean, default: false, required: true },
     terminal: { type: Boolean, default: true, required: true },
+    reason: {
+        type: String,
+        enum: CONTENT_ANALYSIS_FAILURE_REASONS,
+        default: null,
+    },
+    httpStatus: { type: Number, min: 100, max: 599, default: null },
+    // Where the page's redirects led, and what it served. Absent on analyses
+    // that predate it or when our own request did not run.
+    finalUrl: { type: String, default: null },
+    redirectChain: {
+        type: [
+            new mongoose.Schema({ url: { type: String, required: true }, status: { type: Number, required: true } }, { _id: false }),
+        ],
+        default: undefined,
+    },
+    contentType: { type: String, default: null },
 }, { _id: false });
 const recommendationStateSchema = new mongoose.Schema({
     recommendationId: { type: String, required: true },

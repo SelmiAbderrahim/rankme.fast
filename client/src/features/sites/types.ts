@@ -1,8 +1,22 @@
+import type { SiteGoogleReadiness } from '@features/google/types';
+
+export interface SiteDefaultMarket {
+  locationCode: number;
+  languageCode: string;
+  device: 'desktop' | 'mobile';
+  source: 'inferred' | 'owner';
+  basis?: 'cctld' | 'page' | 'locale' | 'fallback' | null;
+}
+
 export interface Site {
   id: string;
   url: string;
   domain: string;
   displayName: string;
+  /** Stored per-product connection and property status. */
+  google?: SiteGoogleReadiness;
+  /** Absent in a legacy API response; null until a stored choice exists. */
+  defaultMarket?: SiteDefaultMarket | null;
   /** True while the site is paused — no audits, checks, or background work. */
   paused: boolean;
   /** ISO 8601 timestamp of the pause, null when not paused. */
@@ -44,6 +58,8 @@ export interface PauseSiteResponse {
 export type LoadDirection = 'initial' | 'next' | 'prev';
 
 export interface LoadSitesArgs {
+  force?: boolean;
+  maxAgeMs?: number;
   cursor?: string | null;
   direction?: LoadDirection;
 }
@@ -59,6 +75,8 @@ export interface SitesState {
   cursorStack: (string | null)[];
   loading: boolean;
   loaded: boolean;
+  /** Missing older preloaded state is treated as stale. */
+  loadedAt?: number | null;
   error: string;
   adding: boolean;
   addError: string;
@@ -66,6 +84,8 @@ export interface SitesState {
   deleteError: string;
   renamingId: string | null;
   renameError: string;
+  marketSavingId: string | null;
+  marketError: string;
   /** Site id with a pause OR resume in flight (one per row at a time). */
   pausingId: string | null;
   pauseError: string;

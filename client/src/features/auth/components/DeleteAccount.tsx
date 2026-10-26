@@ -1,3 +1,4 @@
+import { isolateText } from '@shared/lib/bidi';
 import { useCallback, useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Button } from '@shared/ui/button';
@@ -154,7 +155,7 @@ export const DeleteAccount = () => {
                 <div className="flex flex-col gap-2">
                   <Label htmlFor="delete-confirm">{t('security.deletion.confirmLabel')}</Label>
                   <p className="text-muted-foreground text-sm">
-                    {t('security.deletion.confirmPrompt', { email })}
+                    {t('security.deletion.confirmPrompt', { email: isolateText(email) })}
                   </p>
                   <Input
                     id="delete-confirm"

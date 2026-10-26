@@ -74,6 +74,21 @@ describe('public compatibility documentation', () => {
       'get_audit_status',
       'list_actions',
       'set_action_state',
+      'get_gsc_search_summary',
+      'list_gsc_top_queries',
+      'list_gsc_top_pages',
+      'get_ga4_summary',
+      'list_pages',
+      'get_page_detail',
+      'get_backlinks_summary',
+      'list_backlinks',
+      'list_competitors',
+      'list_keyword_research_history',
+      'get_keyword_research_result',
+      'get_ai_visibility_summary',
+      'get_local_seo_summary',
+      'get_reviews_summary',
+      'list_client_reports',
     ]);
 
     for (const locale of SUPPORTED_LOCALES) {

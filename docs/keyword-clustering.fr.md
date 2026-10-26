@@ -9,7 +9,7 @@ order: 2
 
 # Regroupement de mots-clés
 
-Le regroupement rassemble vos mots-clés suivis selon le nombre d'URL de résultats qu'ils ont en commun. Il s'appuie uniquement sur les observations SERP déjà stockées par RankMeFast et ne lance jamais de vérification de position pour combler un manque.
+Le regroupement rassemble vos mots-clés suivis selon le nombre d'URL de résultats qu'ils ont en commun. Il s'appuie uniquement sur les observations SERP déjà stockées par RankMeFast et ne lance jamais de vérification de position pour combler un manque. Dans l’application, il s’agit des **Groupes par recoupement de SERP**, dans l’onglet **Groupes de mots-clés** d’un site. Ce n’est pas l’onglet **Groupes** de la recherche de mots-clés, qui regroupe les mots-clés que vous avez recherchés en une seule passe d’IA.
 
 <!-- docs-truth: metric=keyword_cluster_runs; unit=one-run-up-to-200-keywords; cache-hits=count; refund=none-blocked-keywords-are-reported; cadence=on-demand; estimates=shared-url-arithmetic -->
 

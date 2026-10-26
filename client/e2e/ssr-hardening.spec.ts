@@ -45,6 +45,10 @@ test('hydration locale matches SSR output for public routes', async ({ page }) =
 
   // Every non-docs path is the CSR shell (HTTP 200, nothing to hydrate); the
   // client router paints the shared NotFound without hydration noise.
+  // Earlier docs visits stored a locale; reset it so the shared NotFound
+  // renders in the default language.
+  await page.context().clearCookies({ name: 'lang' });
+  await page.evaluate(() => localStorage.clear());
   const missing = await page.goto('/pricing');
   expect(missing?.status()).toBe(200);
   await expect(page.locator('[data-slot="empty-title"]')).toHaveText('Page not found');

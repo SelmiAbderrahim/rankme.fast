@@ -1,5 +1,5 @@
 /**
- * Cannibalization router integration tests (prompt 04).
+ * Cannibalization router integration tests.
  *
  * Covers stored-rows-only computation (the GSC provider is never constructed), the
  * awaiting-sync state, `windowDays` surfacing, the kill switch, cross-account

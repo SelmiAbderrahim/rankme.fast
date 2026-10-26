@@ -5,9 +5,8 @@
  * signup + verify via the account helper, real `/api/*` responses, fake
  * vendor providers — behind the egress deny-list so
  * any non-loopback request fails closed. Every read on the actions surface
- * is reconciled against `GET /api/billing/usage` to prove reads never
- * reserve units; the single previewed retest is the ONLY spend after the
- * initial audit.
+ * is reconciled against the site's audit run list to prove reads never start
+ * an audit; the single previewed retest is the ONLY run after the initial one.
  *
  * Deterministic fixture states (partial-source, unsafe-link) are exercised
  * through browser route interception — the same documented seam the
@@ -16,7 +15,6 @@
 import AxeBuilder from '@axe-core/playwright';
 import { expect, test, type Page } from '@playwright/test';
 import { freshAccount, logIn, signUp, type TestAccount } from './helpers/account';
-import { runComposePsql } from './helpers/compose';
 import { collectDenials, denyNonLoopback } from './helpers/denyNonLoopback';
 import {
   gotoWithStaticAssetNetworkRecovery,
@@ -25,16 +23,6 @@ import {
 } from './helpers/navigation';
 
 test.describe.configure({ mode: 'serial' });
-
-interface UsageMetric {
-  used: number;
-  cap: number | null;
-}
-
-interface UsageResponse {
-  audits?: UsageMetric;
-  [key: string]: unknown;
-}
 
 interface ActionsListBody {
   items: Array<{
@@ -54,26 +42,6 @@ const account: TestAccount = freshAccount('actions-journey');
 let accountId = '';
 let siteId = '';
 
-function bumpToPro(id: string): void {
-  runComposePsql(
-    `INSERT INTO subscriptions (account_id, tier, status)
-       VALUES (:'account_id', 'pro', 'active')
-       ON CONFLICT (account_id)
-         DO UPDATE SET tier = 'pro', status = 'active', updated_at = now();`,
-    { variables: { account_id: id } },
-  );
-}
-
-function exhaustAuditAllowance(id: string): void {
-  runComposePsql(
-    `INSERT INTO usage_counters (account_id, period, metric, used, "limit")
-       VALUES (:'account_id', to_char(now(), 'YYYY-MM'), 'audits', 1000000, 1000000)
-       ON CONFLICT (account_id, period, metric)
-         DO UPDATE SET used = 1000000, "limit" = 1000000, updated_at = now();`,
-    { variables: { account_id: id } },
-  );
-}
-
 async function readAccountId(page: Page): Promise<string> {
   const response = await page.request.get('/api/auth/get-session');
   expect(response.status()).toBe(200);
@@ -82,10 +50,12 @@ async function readAccountId(page: Page): Promise<string> {
   return body.user!.id!;
 }
 
-async function readUsage(page: Page): Promise<UsageResponse> {
-  const response = await page.request.get('/api/billing/usage');
+/** Number of audit runs the site has, from the owner-scoped run list. */
+async function countAuditRuns(page: Page): Promise<number> {
+  const response = await page.request.get(`/api/sites/${siteId}/audits?limit=50`);
   expect(response.status()).toBe(200);
-  return (await response.json()) as UsageResponse;
+  const body = (await response.json()) as { runs?: unknown[]; items?: unknown[] };
+  return (body.runs ?? body.items ?? []).length;
 }
 
 async function csrfPost(
@@ -141,7 +111,7 @@ async function readActions(page: Page): Promise<ActionsListBody> {
 
 const workspacePath = (): string => `/sites/${siteId}`;
 
-test('journey steps 1-7 — paid user, filters, evidence, transitions, deep link, finding controls, retest, overview', async ({
+test('journey steps 1-7 — filters, evidence, transitions, deep link, finding controls, retest, overview', async ({
   page,
   context,
 }) => {
@@ -154,10 +124,9 @@ test('journey steps 1-7 — paid user, filters, evidence, transitions, deep link
   const denials = collectDenials();
   await denyNonLoopback(context, { onDeny: denials.onDeny });
 
-  await test.step('1. sign in as a verified paid user', async () => {
+  await test.step('1. sign in as a verified user', async () => {
     await signUp(page, account);
     accountId = await readAccountId(page);
-    bumpToPro(accountId);
     siteId = await createSite(page, 'https://actions-journey.example');
     await runAuditToCompletion(page);
   });
@@ -168,10 +137,9 @@ test('journey steps 1-7 — paid user, filters, evidence, transitions, deep link
       `${workspacePath()}?tab=actions&source=audit_finding&severity=critical&state=bogus`,
     );
     await expect(page.getByTestId('actions-panel')).toBeVisible();
-    await expect(page.getByTestId('site-nav-group-audit-reports')).toHaveAttribute(
-      'data-active',
-      'true',
-    );
+    await expect(
+      page.locator('[data-site-nav-link][href*="tab=actions"][aria-current="page"]'),
+    ).toBeVisible();
     await expect(page.getByTestId('action-card').first()).toBeVisible({
       timeout: 20_000,
     });
@@ -179,7 +147,7 @@ test('journey steps 1-7 — paid user, filters, evidence, transitions, deep link
     // Change one filter through the UI: URL updates with replace semantics
     // and the unrelated params survive.
     await page.getByTestId('actions-filter-state').click();
-    await page.getByRole('option', { name: 'Open' }).click();
+    await page.getByRole('option', { name: 'Open', exact: true }).click();
     await expect(page).toHaveURL(/[?&]state=open\b/);
     await expect(page).toHaveURL(/[?&]source=audit_finding\b/);
     await expect(page).toHaveURL(/[?&]tab=actions\b/);
@@ -208,7 +176,7 @@ test('journey steps 1-7 — paid user, filters, evidence, transitions, deep link
   });
 
   await test.step('3. evidence + history + plan/dismiss/reopen persist across reload (reads spend nothing)', async () => {
-    const usageBefore = await readUsage(page);
+    const runsBefore = await countAuditRuns(page);
 
     const card = page.getByTestId('action-card').first();
     const actionId = await card.getAttribute('data-action-id');
@@ -255,9 +223,8 @@ test('journey steps 1-7 — paid user, filters, evidence, transitions, deep link
     ).toHaveCount(0);
     await page.keyboard.press('Escape');
 
-    // Reads + state changes never touched the audit meter.
-    const usageAfter = await readUsage(page);
-    expect(usageAfter.audits?.used).toBe(usageBefore.audits?.used);
+    // Reads + state changes never started an audit.
+    expect(await countAuditRuns(page)).toBe(runsBefore);
   });
 
   await test.step('4. follow a source deep link onto the shipped report surface', async () => {
@@ -302,10 +269,10 @@ test('journey steps 1-7 — paid user, filters, evidence, transitions, deep link
     await expect(page.getByTestId('report-finding-fix').first()).toBeVisible();
   });
 
-  await test.step('6. previewed retest — cancel spends nothing, one confirm spends exactly one audit', async () => {
+  await test.step('6. previewed retest — cancel starts nothing, one confirm starts exactly one audit', async () => {
     await gotoWithStaticAssetNetworkRecovery(page, `${workspacePath()}?tab=actions`);
     await expect(page.getByTestId('action-card').first()).toBeVisible();
-    const usageBefore = await readUsage(page);
+    const runsBefore = await countAuditRuns(page);
 
     const retestable = page
       .locator('[data-testid="action-card"]', {
@@ -320,8 +287,7 @@ test('journey steps 1-7 — paid user, filters, evidence, transitions, deep link
     // Cancel first — no reservation, no enqueue.
     await page.getByRole('button', { name: 'Cancel' }).click();
     await expect(page.getByTestId('action-retest-dialog')).not.toBeVisible();
-    const usageAfterCancel = await readUsage(page);
-    expect(usageAfterCancel.audits?.used).toBe(usageBefore.audits?.used);
+    expect(await countAuditRuns(page)).toBe(runsBefore);
 
     // Confirm — exactly one audit unit is reserved and the run reaches a
     // terminal state through the existing report progress surface.
@@ -330,10 +296,7 @@ test('journey steps 1-7 — paid user, filters, evidence, transitions, deep link
     await expect(page.getByTestId('action-retest-queued')).toBeVisible({
       timeout: 20_000,
     });
-    const usageAfterConfirm = await readUsage(page);
-    expect(usageAfterConfirm.audits?.used).toBe(
-      (usageBefore.audits?.used ?? 0) + 1,
-    );
+    expect(await countAuditRuns(page)).toBe(runsBefore + 1);
     await page.getByTestId('action-retest-progress-link').click();
     await expect(page).toHaveURL(/[?&]tab=report\b/);
     // Queued/running surfaces, then the diff-capable report returns.
@@ -371,7 +334,9 @@ test('Arabic RTL — the actions workspace renders right-to-left with localized 
   await expect(page.getByTestId('actions-panel')).toBeVisible();
   await page.locator('#language-switcher').selectOption('ar');
   await expect(page.locator('html')).toHaveAttribute('dir', 'rtl');
-  await expect(page.getByTestId('site-nav-group-audit-reports')).toHaveText(/الإجراءات/);
+  await expect(
+    page.locator('[data-site-nav-link][href*="tab=actions"][aria-current="page"]'),
+  ).toHaveText(/الإجراءات/);
   await expect(page.getByTestId('action-card').first()).toBeVisible({
     timeout: 20_000,
   });
@@ -616,31 +581,4 @@ test('deterministic fixtures — partial-source warning, unavailable ≠ all-cle
     await expect(page.getByTestId('actions-empty-clear')).toHaveCount(0);
     await page.unroute('**/api/sites/*/actions*');
   });
-});
-
-test('cap-exhausted retest — the localized 402 surfaces and no unit is spent', async ({
-  page,
-  context,
-}) => {
-  await denyNonLoopback(context);
-  await logIn(page, account);
-  exhaustAuditAllowance(accountId);
-
-  await gotoWithStaticAssetNetworkRecovery(page, `${workspacePath()}?tab=actions`);
-  await expect(page.getByTestId('action-card').first()).toBeVisible({
-    timeout: 20_000,
-  });
-  const retestable = page
-    .locator('[data-testid="action-card"]', {
-      has: page.getByTestId('action-retest-open'),
-    })
-    .first();
-  await retestable.getByTestId('action-retest-open').click();
-  await expect(page.getByTestId('action-retest-dialog')).toBeVisible();
-  await page.getByTestId('action-retest-confirm').click();
-  // The server rejects with its localized cap message — rendered verbatim.
-  await expect(page.getByTestId('action-retest-error')).toBeVisible({
-    timeout: 20_000,
-  });
-  await expect(page.getByTestId('action-retest-queued')).toHaveCount(0);
 });

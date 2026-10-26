@@ -82,6 +82,21 @@ describe('market catalog service', () => {
     expect(Number.isNaN(Date.parse(result.fetchedAt))).toBe(false);
   });
 
+  it('derives SERP languages from the cached SEO countries without a second provider read', async () => {
+    const deps = makeDeps();
+    const listMarkets = vi.fn().mockResolvedValue([
+      { countryCode: 'DE', locationCode: 2276, languageCodes: ['de'] },
+    ]);
+    deps.keywordProvider.listMarkets = listMarkets;
+
+    const result = await getMarketCatalog('serp', deps);
+
+    expect(result.surface).toBe('serp');
+    expect(result.markets[0]?.languageCodes).toEqual(['ar', 'de', 'en', 'es', 'fr', 'ru', 'zh']);
+    expect(listMarkets).toHaveBeenCalledOnce();
+    expect(await getTestDb().select().from(vendorResponses)).toHaveLength(1);
+  });
+
   it('routes Brand Radar and both app stores to the matching provider operation', async () => {
     const deps = makeDeps();
     const content = vi.spyOn(deps.contentAnalysisProvider, 'listMarkets');

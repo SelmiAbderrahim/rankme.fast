@@ -9,8 +9,12 @@ import {
   FAKE_AI_ANSWERS,
   FAKE_AI_KEYWORD_VOLUME,
   FAKE_AI_MENTIONS,
+  FAKE_AUDIT_RESOURCES,
   FAKE_AUDIT_RESULT,
   FAKE_BACKLINK_PAGE,
+  FAKE_BUSINESS_CANDIDATES,
+  fakeListingsFor,
+  matchFakeBusinesses,
   FAKE_BACKLINK_SUMMARY,
   FAKE_CLOCK,
   FAKE_COMPETITORS,
@@ -94,6 +98,8 @@ const _typeCheck = {
 };
 void _typeCheck;
 
+const LOCAL_TARGET = { domain: 'example.com', business: null, locationCode: 2840, languageCode: 'en' };
+
 describe('fake providers', () => {
   it('audit fake returns deterministic canned data', async () => {
     const fake = createFakeAuditProvider();
@@ -102,9 +108,30 @@ describe('fake providers', () => {
     ).resolves.toEqual({ vendorTaskId: 'fake-audit-task-1' });
     await expect(fake.getAuditStatus('fake-audit-task-1')).resolves.toEqual({
       state: 'finished',
-      pagesCrawled: 2,
+      pagesCrawled: 6,
     });
     await expect(fake.getAuditResult('fake-audit-task-1')).resolves.toBe(FAKE_AUDIT_RESULT);
+  });
+
+  it('audit fake carries one deterministic case for every deep crawl signal', async () => {
+    const fake = createFakeAuditProvider();
+    const plain = await fake.getAuditResult('fake-audit-task-1');
+    expect(plain.capabilities).toEqual({ resourceScan: false });
+    expect(plain.resources).toBeUndefined();
+    expect(plain.pages.map((page) => page.statusCode)).toEqual([200, 200, 200, 200, 404, 503]);
+    expect(plain.redirectChains?.map((chain) => chain.isLoop)).toEqual([false, true]);
+    expect(plain.duplicateGroups?.map((group) => group.kind)).toEqual(['title', 'content']);
+    // Resources only answer for a task posted with the resource scan.
+    const scanned = await fake.getAuditResult('fake-audit-task-1', { resourceScan: true });
+    expect(scanned.capabilities).toEqual({ resourceScan: true });
+    expect(scanned.resources).toBe(FAKE_AUDIT_RESOURCES);
+    expect(scanned.pages).toBe(FAKE_AUDIT_RESULT.pages);
+  });
+
+  it('an explicit canned result wins over the resource scan option', async () => {
+    const result = { domainChecks: FAKE_AUDIT_RESULT.domainChecks, pages: [] };
+    const fake = createFakeAuditProvider({ result });
+    await expect(fake.getAuditResult('fake-audit-task-1', { resourceScan: true })).resolves.toBe(result);
   });
 
   it('audit fake honours canned-result overrides', async () => {
@@ -252,11 +279,39 @@ describe('fake providers', () => {
     await expect(custom.getHistoricalVolume(['x'], 2840, 'en')).resolves.toEqual([]);
   });
 
+  it('local listings fake search matches words, exact identifiers, and nothing else', async () => {
+    const fake = createFakeLocalListingsProvider();
+    const search = (query: string) => fake.searchBusinesses({ query, locationCode: 2840, languageCode: 'en' });
+    await expect(search('example dental')).resolves.toEqual(FAKE_BUSINESS_CANDIDATES);
+    await expect(search('Research Blvd')).resolves.toEqual([FAKE_BUSINESS_CANDIDATES[1]]);
+    await expect(search('place_id:ChIJFakeDentalDowntown01')).resolves.toEqual([FAKE_BUSINESS_CANDIDATES[0]]);
+    await expect(search('cid:1000000000000000002')).resolves.toEqual([FAKE_BUSINESS_CANDIDATES[1]]);
+    await expect(search('no')).resolves.toEqual([]);
+    await expect(search('zzzz unmatched')).resolves.toEqual([]);
+
+    // Listings follow the chosen business (place ID or CID); unknown or no business keeps the fixture.
+    const north = FAKE_BUSINESS_CANDIDATES[1]!;
+    const target = (business: { placeId: string | null; cid: string | null; name: string } | null) => ({
+      domain: 'example.com', business, locationCode: 2840, languageCode: 'en',
+    });
+    await expect(fake.getBusinessListings(target({ placeId: north.placeId, cid: null, name: north.name }))).resolves.toEqual(fakeListingsFor(north));
+    await expect(fake.getBusinessListings(target({ placeId: null, cid: north.cid, name: north.name }))).resolves.toEqual(fakeListingsFor(north));
+    await expect(fake.getBusinessListings(target({ placeId: 'ChIJunknown', cid: null, name: 'X' }))).resolves.toBe(FAKE_BUSINESS_LISTINGS);
+    await expect(fake.getBusinessListings(target(null))).resolves.toBe(FAKE_BUSINESS_LISTINGS);
+
+    const pinned = createFakeLocalListingsProvider({ businessListings: [] });
+    await expect(pinned.getBusinessListings(target({ placeId: north.placeId, cid: null, name: north.name }))).resolves.toEqual([]);
+    const custom = createFakeLocalListingsProvider({ businessCandidates: [] });
+    await expect(custom.searchBusinesses({ query: 'example', locationCode: 2840, languageCode: 'en' })).resolves.toEqual([]);
+    // A candidate without identifiers or address is matched by its name alone.
+    expect(matchFakeBusinesses([{ ...FAKE_BUSINESS_CANDIDATES[0]!, placeId: null, cid: null, address: null }], 'example dental')).toHaveLength(1);
+  });
+
   it('local listings fake returns listings, reviews, and Q&A summaries with overrides', async () => {
     const fake = createFakeLocalListingsProvider();
-    await expect(fake.getBusinessListings('example.com')).resolves.toBe(FAKE_BUSINESS_LISTINGS);
-    await expect(fake.getReviews('example.com')).resolves.toBe(FAKE_REVIEWS_SUMMARY);
-    await expect(fake.getQuestionsAndAnswers('example.com')).resolves.toBe(FAKE_QA_SUMMARY);
+    await expect(fake.getBusinessListings(LOCAL_TARGET)).resolves.toBe(FAKE_BUSINESS_LISTINGS);
+    await expect(fake.getReviews(LOCAL_TARGET)).resolves.toBe(FAKE_REVIEWS_SUMMARY);
+    await expect(fake.getQuestionsAndAnswers(LOCAL_TARGET)).resolves.toBe(FAKE_QA_SUMMARY);
 
     const businessListings = [FAKE_BUSINESS_LISTINGS[0]!];
     const reviews = { averageRating: null, reviewCount: 0, recentReviewCount: null };
@@ -266,9 +321,9 @@ describe('fake providers', () => {
       reviews,
       questionsAndAnswers,
     });
-    await expect(custom.getBusinessListings('example.com')).resolves.toBe(businessListings);
-    await expect(custom.getReviews('example.com')).resolves.toBe(reviews);
-    await expect(custom.getQuestionsAndAnswers('example.com')).resolves.toBe(
+    await expect(custom.getBusinessListings(LOCAL_TARGET)).resolves.toBe(businessListings);
+    await expect(custom.getReviews(LOCAL_TARGET)).resolves.toBe(reviews);
+    await expect(custom.getQuestionsAndAnswers(LOCAL_TARGET)).resolves.toBe(
       questionsAndAnswers,
     );
   });
@@ -835,10 +890,11 @@ describe('fake providers', () => {
       keyword.getKeywordIdeasForSite(['seo audit tool'], 2840, 'en', 5),
     ).rejects.toBe(unavailable);
     const localListings = createFakeLocalListingsProvider({ failure: unavailable });
-    await expect(localListings.getBusinessListings('example.com')).rejects.toBe(unavailable);
-    await expect(localListings.getReviews('example.com')).rejects.toBe(unavailable);
+    await expect(localListings.searchBusinesses({ query: 'example', locationCode: 2840, languageCode: 'en' })).rejects.toBe(unavailable);
+    await expect(localListings.getBusinessListings(LOCAL_TARGET)).rejects.toBe(unavailable);
+    await expect(localListings.getReviews(LOCAL_TARGET)).rejects.toBe(unavailable);
     await expect(
-      localListings.getQuestionsAndAnswers('example.com'),
+      localListings.getQuestionsAndAnswers(LOCAL_TARGET),
     ).rejects.toBe(unavailable);
     const backlink = createFakeBacklinkProvider({ failure: unavailable });
     await expect(backlink.getSummary('example.com')).rejects.toBe(unavailable);

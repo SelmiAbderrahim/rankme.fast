@@ -9,7 +9,7 @@ order: 2
 
 # Agrupación de palabras clave
 
-La agrupación reúne tus palabras clave con seguimiento según cuántas URL de resultados comparten. Solo trabaja con observaciones SERP que RankMeFast ya tiene guardadas y nunca lanza una comprobación de posición para rellenar un hueco.
+La agrupación reúne tus palabras clave con seguimiento según cuántas URL de resultados comparten. Solo trabaja con observaciones SERP que RankMeFast ya tiene guardadas y nunca lanza una comprobación de posición para rellenar un hueco. En la aplicación son los **Grupos por solapamiento de SERP**, en la pestaña **Grupos de palabras clave** de un sitio. No es lo mismo que la pestaña **Grupos** de la investigación de palabras clave, que agrupa las palabras clave que has investigado con una sola pasada de IA.
 
 <!-- docs-truth: metric=keyword_cluster_runs; unit=one-run-up-to-200-keywords; cache-hits=count; refund=none-blocked-keywords-are-reported; cadence=on-demand; estimates=shared-url-arithmetic -->
 

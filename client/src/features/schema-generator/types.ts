@@ -45,10 +45,14 @@ export interface SchemaPropertyProjection {
   neverFilled: boolean;
 }
 
+/** Google shows the rich result for some sites only, or no longer. */
+export type SchemaRichResultsNote = 'limited' | 'retired';
+
 export interface SchemaTypeProjection {
   type: SupportedSchemaType;
   required: SchemaPropertyProjection[];
   recommended: SchemaPropertyProjection[];
+  richResults: SchemaRichResultsNote | null;
 }
 
 export interface SchemaTypesResponse {
@@ -74,6 +78,8 @@ export interface SchemaSources {
   siteId: string;
   runId: string | null;
   auditedPages: AuditedSourcePage[];
+  /** Pages the audit stored; larger than the list when the picker list is capped. */
+  auditedPagesTotal: number;
   inventoryPages: InventorySourcePage[];
 }
 
@@ -114,9 +120,28 @@ export interface GenerationSummary {
   status: 'complete' | 'failed';
   conformanceStatus: 'conforms' | 'gaps' | null;
   failureReason: SchemaGenerationFailureReason | null;
-  refunded: boolean;
   generatedAt: string;
+  /** The generation this one was rebuilt from with facts the user supplied. */
+  regeneratedFrom?: string | null;
 }
+
+/**
+ * Facts the user may supply for an omitted property. Mirrors the server's
+ * `USER_FACT_KINDS`; the server validates every value.
+ */
+export const USER_FACT_INPUTS = {
+  name: 'text',
+  headline: 'text',
+  description: 'longText',
+  inLanguage: 'language',
+  datePublished: 'date',
+  dateModified: 'date',
+  logo: 'url',
+  image: 'url',
+  primaryImageOfPage: 'url',
+} as const;
+export type UserFactProperty = keyof typeof USER_FACT_INPUTS;
+export type UserFacts = Partial<Record<UserFactProperty, string>>;
 
 export interface GenerationDetail extends GenerationSummary {
   /** Serialized JSON-LD. Rendered as a TEXT node only — never as markup. */
@@ -175,6 +200,8 @@ export interface SchemaGeneratorState {
   previewGate: SchemaGate | null;
   generateStatus: RequestStatus;
   generateGate: SchemaGate | null;
+  regenerateStatus: RequestStatus;
+  regenerateGate: SchemaGate | null;
   form: SchemaGeneratorFormState;
 }
 
@@ -199,5 +226,7 @@ export const initialSchemaGeneratorState: SchemaGeneratorState = {
   previewGate: null,
   generateStatus: 'idle',
   generateGate: null,
+  regenerateStatus: 'idle',
+  regenerateGate: null,
   form: { source: 'audited-page', pageUrl: '', schemaType: DEFAULT_SCHEMA_TYPE },
 };

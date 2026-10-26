@@ -37,12 +37,23 @@ export const metaDescriptionMissingRule: AuditRule = {
                 affectedUrls: [],
             };
         }
+        // The crawler's own duplicate-description groups, as evidence only
+        // (the bucket policy above is unchanged).
+        const indexable = new Set(result.pages.filter((page) => page.isIndexable).map((page) => page.url));
+        const crawlerGroups = (result.duplicateGroups ?? [])
+            .filter((group) => group.kind === 'description')
+            .map((group) => group.urls.filter((url) => indexable.has(url)))
+            .filter((urls) => urls.length >= 2);
         return {
             ruleId: RULE_ID,
             bucket: bucketFor('warning', false),
             severity: 'warning',
             affectedUrls: affected,
-            meta: { missing, duplicateGroups },
+            meta: {
+                missing,
+                duplicateGroups,
+                ...(crawlerGroups.length > 0 ? { crawlerDuplicateGroups: crawlerGroups } : {}),
+            },
         };
     },
 };

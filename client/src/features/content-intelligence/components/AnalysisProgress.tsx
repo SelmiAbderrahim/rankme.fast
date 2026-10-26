@@ -12,26 +12,28 @@ import {
 const STAGE_ORDER = CONTENT_ANALYSIS_STATUSES.filter(
   (s) => !isContentAnalysisTerminal(s),
 );
-const TOTAL_STAGES = STAGE_ORDER.length;
 
 interface AnalysisProgressProps {
   analysis: ContentAnalysis;
+  /**
+   * The status poll reached its time limit while the run is still going: the
+   * page stops updating, so it says so instead of promising automatic updates.
+   */
+  capped?: boolean;
 }
 
 /**
- * Live progress for a non-terminal analysis: a spinner, an honest completed-
- * stage progress bar (real closed stages ÷ 7 — never a fabricated percent or
- * ETA), the current stage label, and a "step N of 7" counter. Driven by the
- * detail view's bounded poll. Mirrors `audience-research/RunStatusCard` and
- * `inventory/InventoryProgress`.
+ * Live progress for a non-terminal analysis: a spinner, an honest step bar
+ * (finished steps ÷ 7 — never a fabricated percent or ETA), the current step
+ * label and a "step N of 7" counter. Step and stage come from the server's
+ * job status; responses from before it fall back to the run status.
  */
-export function AnalysisProgress({ analysis }: AnalysisProgressProps) {
+export function AnalysisProgress({ analysis, capped = false }: AnalysisProgressProps) {
   const { t } = useTranslation('contentIntelligence');
-  const completed = analysis.stages.filter((s) => s.completedAt !== null).length;
-  // Only non-terminal statuses reach this component, and every one of them is
-  // in STAGE_ORDER, so indexOf is always ≥ 0.
-  const currentStep = STAGE_ORDER.indexOf(analysis.status) + 1;
-  const percent = Math.round((completed / TOTAL_STAGES) * 100);
+  const total = analysis.progress?.stepCount ?? STAGE_ORDER.length;
+  const currentStep = analysis.progress?.stepIndex ?? STAGE_ORDER.indexOf(analysis.status) + 1;
+  const stepKey = analysis.progress?.stepKey ?? analysis.status;
+  const percent = Math.round(((currentStep - 1) / total) * 100);
 
   return (
     <Card data-testid="content-detail-progress" data-status={analysis.status}>
@@ -54,16 +56,16 @@ export function AnalysisProgress({ analysis }: AnalysisProgressProps) {
           className="flex flex-wrap items-center justify-between gap-2"
           aria-live="polite"
         >
-          <span className="font-medium">{t(`status.${analysis.status}`)}</span>
+          <span className="font-medium">{t(`status.${stepKey}`)}</span>
           <span
             className="text-muted-foreground text-xs"
             data-testid="content-detail-progress-step"
           >
-            {t('detail.progress.step', { current: currentStep, total: TOTAL_STAGES })}
+            {t('detail.progress.step', { current: currentStep, total })}
           </span>
         </div>
-        <p className="text-muted-foreground text-xs">
-          {t('detail.progress.autoRefresh')}
+        <p className="text-muted-foreground text-xs" data-testid="content-detail-progress-note">
+          {capped ? t('detail.progress.stillRunning') : t('detail.progress.autoRefresh')}
         </p>
       </CardContent>
     </Card>

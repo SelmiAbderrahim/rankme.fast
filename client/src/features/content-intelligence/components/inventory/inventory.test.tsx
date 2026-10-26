@@ -311,11 +311,13 @@ describe('InventoryProgress', () => {
 });
 
 describe('InventoryStartForm', () => {
-  it('shows the live block calc, validates non-empty inputs, and submits', async () => {
+  it('shows the live page bound, validates non-empty inputs, and submits', async () => {
     const onStarted = vi.fn();
     renderInRouter(<InventoryStartForm siteId="s1" onStarted={onStarted} />);
-    // Default page limit 20 → 5 blocks.
-    expect(screen.getByTestId('inventory-form-blocks')).toHaveTextContent('5 blocks reserved');
+    expect(screen.getByTestId('inventory-form-blocks')).toHaveTextContent('Up to 20 pages.');
+    fireEvent.change(screen.getByTestId('inventory-form-pagelimit'), { target: { value: '1' } });
+    expect(screen.getByTestId('inventory-form-blocks')).toHaveTextContent('Up to 1 page.');
+    fireEvent.change(screen.getByTestId('inventory-form-pagelimit'), { target: { value: '20' } });
     // Valid path + seed exercise the loop false-branches (length ok, regex ok).
     fireEvent.change(screen.getByTestId('inventory-form-allowed'), { target: { value: '/blog\n' } });
     fireEvent.change(screen.getByTestId('inventory-form-seeds'), {
@@ -324,7 +326,7 @@ describe('InventoryStartForm', () => {
     fireEvent.submit(screen.getByTestId('inventory-form-submit').closest('form')!);
     await waitFor(() => expect(onStarted).toHaveBeenCalledWith('newrun'));
     expect(api.startInventory).toHaveBeenCalledWith(
-      expect.objectContaining({ allowedPaths: ['/blog'], sitemapSeeds: ['https://example.com/sitemap.xml'] }),
+      expect.objectContaining({ pageLimit: 20, allowedPaths: ['/blog'], sitemapSeeds: ['https://example.com/sitemap.xml'] }),
       expect.anything(),
     );
   });

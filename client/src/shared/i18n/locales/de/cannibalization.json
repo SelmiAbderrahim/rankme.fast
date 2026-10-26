@@ -24,8 +24,6 @@
   },
   "preview": {
     "title": "Was das kostet",
-    "units": "{{count}} Bericht aus Ihrem Monatskontingent.",
-    "units_other": "{{count}} Berichte aus Ihrem Monatskontingent.",
     "remaining": "In diesem Monat noch im Tarif: {{remaining}}.",
     "pack": "Plus {{units}} aus Guthabenpaketen.",
     "noFit": "Das passt nicht mehr ins Restkontingent. Fügen Sie Guthaben hinzu oder wechseln Sie den Tarif."
@@ -39,7 +37,7 @@
     "open": "Öffnen"
   },
   "detail": {
-    "provenance": "Aus Ihren gespeicherten Search-Console-Daten über {{days}} Tage, zuletzt synchronisiert am {{date}}. {{queries}} Suchanfragen gelesen."
+    "provenance": "Aus Ihren gespeicherten Search-Console-Daten über $t(cannibalization:counts.windowDays, {\"count\": {{days}}}), zuletzt synchronisiert am {{date}}. $t(cannibalization:counts.queriesRead, {\"count\": {{queries}}})"
   },
   "candidates": {
     "query": "Suchanfrage",
@@ -56,7 +54,7 @@
     "inspect": "Ansehen"
   },
   "drilldown": {
-    "provenance": "Gespeicherte Zeilen über {{days}} Tage, zuletzt synchronisiert am {{date}}.",
+    "provenance": "Gespeicherte Zeilen über $t(cannibalization:counts.windowDays, {\"count\": {{days}}}), zuletzt synchronisiert am {{date}}.",
     "recommendation": "Behalten Sie {{url}} als Hauptseite.",
     "reason": {
       "most_clicks": "Sie erhält für diese Suchanfrage bereits die meisten Klicks.",
@@ -73,16 +71,12 @@
   "states": {
     "empty": {
       "title": "Noch nichts zu zeigen",
-      "body": "Erstellen Sie einen Bericht, um zu sehen, um welche Suchanfragen Ihre Seiten konkurrieren."
+      "body": "Erstellen Sie einen Bericht, um zu sehen, um welche Suchanfragen Ihre Seiten konkurrieren.",
+      "action": "Bericht erstellen"
     },
     "awaitingSync": {
       "title": "Warten auf die nächste Synchronisierung",
       "body": "Für diesen Zeitraum sind noch keine Suchanfrage-und-Seite-Zeilen aus der Search Console gespeichert. Sie kommen mit der nächsten Synchronisierung."
-    },
-    "cap": {
-      "title": "Monatskontingent aufgebraucht",
-      "body": "Sie haben diesen Monat alle Kannibalisierungsberichte Ihres Tarifs verbraucht.",
-      "link": "Tarife ansehen"
     },
     "disabled": {
       "title": "Vorübergehend nicht verfügbar",
@@ -99,6 +93,35 @@
     "failed": {
       "title": "Etwas ist schiefgelaufen",
       "body": "Das konnte nicht geladen werden. Versuchen Sie es erneut."
+    },
+    "noCandidates": {
+      "title": "Keine konkurrierenden Seiten gefunden",
+      "body": "In diesem Zeitraum haben keine zwei Ihrer Seiten um dieselbe Suchanfrage konkurriert.",
+      "action": "Neuen Bericht erstellen"
+    },
+    "filtered": {
+      "title": "Keine Fälle mit dieser Konfidenz",
+      "body": "Zeigen Sie alle Konfidenzstufen an, um die Fälle dieses Berichts zu sehen.",
+      "action": "Alle anzeigen"
+    },
+    "needsGsc": "Neue Berichte brauchen eine nutzbare Search-Console-Property. Beheben Sie zuerst den Status oben und kehren Sie dann hierher zurück.",
+    "emptyNoGsc": {
+      "title": "Noch nichts zu zeigen",
+      "body": "Berichte entstehen aus Ihren gespeicherten Search-Console-Daten. Verbinden Sie eine Search-Console-Property für diese Website und erstellen Sie dann Ihren ersten Bericht."
     }
+  },
+  "counts": {
+    "windowDays_zero": "{{count}} Tage",
+    "windowDays_one": "{{count}} Tag",
+    "windowDays_two": "{{count}} Tage",
+    "windowDays_few": "{{count}} Tage",
+    "windowDays_many": "{{count}} Tage",
+    "windowDays_other": "{{count}} Tage",
+    "queriesRead_zero": "{{count}} Suchanfragen gelesen.",
+    "queriesRead_one": "{{count}} Suchanfrage gelesen.",
+    "queriesRead_two": "{{count}} Suchanfragen gelesen.",
+    "queriesRead_few": "{{count}} Suchanfragen gelesen.",
+    "queriesRead_many": "{{count}} Suchanfragen gelesen.",
+    "queriesRead_other": "{{count}} Suchanfragen gelesen."
   }
 }

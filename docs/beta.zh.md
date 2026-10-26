@@ -21,7 +21,7 @@ RankMeFast 目前处于公开测试阶段。你可以把它用于实际工作，
 
 ## 报告问题
 
-使用页面顶部测试版横幅中的 **报告问题**。它会打开 [GitHub 的问题反馈表单](https://github.com/SelmiAbderrahim/rankme.fast/issues/new/choose)。如果你已关闭横幅或没有 GitHub 账号，请发邮件到 support@rankme.fast。
+请使用页面顶部测试版横幅中的**报告错误**。弹出的对话框让你选择报告渠道：如果此部署已配置项目的 GitHub 地址，可选**打开 GitHub 问题提交选项**；也可选**发送邮件给支持团队**，发送到 support@rankme.fast。系统不会自动发送任何内容，请自行附上下文所列信息。即使你隐藏了横幅或没有 GitHub 账号，邮箱地址也同样可用。
 
 一份有用的报告包括：
 

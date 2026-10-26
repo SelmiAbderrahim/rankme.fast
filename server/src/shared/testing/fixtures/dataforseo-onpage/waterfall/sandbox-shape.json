@@ -1,0 +1,99 @@
+{
+  "version": "0.1.20260917",
+  "status_code": 20000,
+  "status_message": "Ok.",
+  "time": "0 sec.",
+  "cost": 0,
+  "tasks_count": 1,
+  "tasks_error": 0,
+  "tasks": [
+    {
+      "id": "TASK_ID",
+      "status_code": 20000,
+      "status_message": "Ok.",
+      "time": "0 sec.",
+      "cost": 0,
+      "result_count": 1,
+      "path": [
+        "v3",
+        "on_page",
+        "waterfall"
+      ],
+      "data": {
+        "api": "on_page",
+        "function": "waterfall",
+        "url": "https://example.com/"
+      },
+      "result": [
+        {
+          "crawl_progress": "finished",
+          "crawl_status": {
+            "max_crawl_pages": null,
+            "pages_in_queue": 14602,
+            "pages_crawled": 14640
+          },
+          "items_count": 1,
+          "items": [
+            {
+              "page_url": "PageUrl28939cc5-4102-4a64-9340-f74808474cdb",
+              "time_to_interactive": 18846,
+              "dom_complete": 20930,
+              "connection_time": 3941,
+              "time_to_secure_connection": 12270,
+              "request_sent_time": 29420,
+              "waiting_time": 32573,
+              "download_time": 16612,
+              "duration_time": 22725,
+              "fetch_start": 15650,
+              "fetch_end": 16907,
+              "resources": [
+                {
+                  "resource_type": "ResourceType061ca06e-bf54-45c7-a5ef-1590c50a7e0b",
+                  "url": "Urlba575c3d-7c77-423a-adb3-5b1242dd794f",
+                  "initiator": "Initiator1e80d0aa-12f2-4a7d-8174-cc3e8a22bb4a",
+                  "duration_time": 23486,
+                  "fetch_start": 21966,
+                  "fetch_end": 31328,
+                  "location": {
+                    "line": 27549,
+                    "offset_left": 23736,
+                    "offset_top": 24640
+                  },
+                  "is_render_blocking": false
+                },
+                {
+                  "resource_type": "ResourceType2a782c05-02ec-407e-9a1c-5fb3144898f3",
+                  "url": "Urlb5aa37e0-bcd0-4c5e-8115-b7cdbcce9549",
+                  "initiator": "Initiator26a12612-4a22-48af-b842-9c408c06a137",
+                  "duration_time": 4277,
+                  "fetch_start": 1408,
+                  "fetch_end": 10713,
+                  "location": {
+                    "line": 10090,
+                    "offset_left": 22041,
+                    "offset_top": 31000
+                  },
+                  "is_render_blocking": true
+                },
+                {
+                  "resource_type": "ResourceType43fe4792-ffef-4e88-91b0-a69e8f2e4b94",
+                  "url": "Url3093a52c-7bef-4761-9f28-b8d2ab5f7031",
+                  "initiator": "Initiatore4a4d515-2483-4f1c-ad8d-f8bd2fded1e6",
+                  "duration_time": 2428,
+                  "fetch_start": 31991,
+                  "fetch_end": 11614,
+                  "location": {
+                    "line": 29868,
+                    "offset_left": 1777,
+                    "offset_top": 25073
+                  },
+                  "is_render_blocking": false
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

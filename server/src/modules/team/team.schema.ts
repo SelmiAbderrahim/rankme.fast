@@ -37,7 +37,7 @@ export const acceptInviteParamsSchema = z.object({
 });
 export type AcceptInviteParams = z.infer<typeof acceptInviteParamsSchema>;
 export const memberIdParamsSchema = z.object({
-    id: z.string().uuid(),
+    id: z.string().guid(),
 });
 export const invitationTokenParamsSchema = z.object({
     token: z.string().min(16).max(200),

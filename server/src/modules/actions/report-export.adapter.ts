@@ -43,7 +43,8 @@ export function createActionsReportExportAdapter(db: Db) {
             assertSiteTarget(context.target);
             const site = await getSite(context.accountId, context.target.siteId);
             const selected = all.items.filter((item) => (!context.selection.source || context.selection.source.includes(item.sourceType)) &&
-                (!context.selection.state || context.selection.state.includes(item.state)) &&
+                (context.selection.state ? context.selection.state.includes(item.state)
+                    : item.state === 'open' || item.state === 'planned') &&
                 (!context.selection.severity || context.selection.severity.includes(item.severity)) &&
                 (!context.selection.confidence || context.selection.confidence.includes(item.confidence)) &&
                 (!context.selection.effort || context.selection.effort.includes(item.effort)));

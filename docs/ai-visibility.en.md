@@ -15,6 +15,8 @@ Many buyers now ask an AI assistant instead of scanning a page of search results
 
 A prompt is a question a buyer might ask an AI assistant, for example "best project management tool for a small team". You add the prompts that matter to your business. You can track up to **10 prompts per site**. Pick the ones closest to a buying decision; that is where being mentioned is worth the most.
 
+Adding a prompt you already track is refused with a message; prompts are compared after case, spacing and punctuation are ignored. Suggestions are written in your site's market language and built from your own pages, keywords and Search Console data, and a suggestion you already track is left out. When the evidence is thin, a notice says so; **Regenerate suggestions** builds a new set, and an old set made before this rule is hidden until you do. A prompt that has never been checked shows **Not checked yet** instead of a result, and it is never counted as not mentioned.
+
 ## Running a check
 
 A check runs each tracked prompt and reads the answer the assistant gives back. For every prompt it records:

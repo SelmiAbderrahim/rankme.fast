@@ -21,7 +21,8 @@ const renderList = (props: Partial<Parameters<typeof GscBreakdownList>[0]> = {})
         title="Top countries"
         caption="Clicks by country"
         keyHeader="Country"
-        valueHeader="Clicks · CTR"
+        valueHeader="Clicks · share of this list"
+        formatRate={(rate) => `CTR ${rate}`}
         emptyLabel="No country data yet."
         rows={rows}
         total={100}
@@ -40,14 +41,15 @@ describe('GscBreakdownList', () => {
     renderList();
     expect(screen.getByText('USA')).toBeInTheDocument();
     expect(screen.getByText('FRA')).toBeInTheDocument();
-    expect(screen.getByText('70 · 10%')).toBeInTheDocument();
-    expect(screen.getByText('20 · 5%')).toBeInTheDocument();
+    expect(screen.getByText('70 · 70%')).toBeInTheDocument();
+    expect(screen.getByText('20 · 20%')).toBeInTheDocument();
+    expect(screen.getByText('CTR 10%')).toBeInTheDocument();
   });
 
   it('renders the sr-only value-column header passed by the caller', () => {
     renderList();
     expect(
-      screen.getByRole('columnheader', { name: 'Clicks · CTR' }),
+      screen.getByRole('columnheader', { name: 'Clicks · share of this list' }),
     ).toBeInTheDocument();
   });
 
@@ -63,10 +65,11 @@ describe('GscBreakdownList', () => {
     expect(bars[1]).toHaveAttribute('aria-valuenow', '20');
   });
 
-  it('guards against divide-by-zero — a zero total renders 0% bars', () => {
+  it('marks the share unavailable when the denominator is zero', () => {
     renderList({ total: 0 });
     const bars = screen.getAllByRole('progressbar');
-    expect(bars[0]).toHaveAttribute('aria-valuenow', '0');
+    expect(bars[0]).not.toHaveAttribute('aria-valuenow');
+    expect(bars[0]).toHaveAttribute('aria-valuetext', '—');
     expect((bars[0]?.firstElementChild as HTMLElement | null)?.style.width).toBe('0%');
   });
 
@@ -77,5 +80,12 @@ describe('GscBreakdownList', () => {
     );
     expect(screen.queryByRole('table')).not.toBeInTheDocument();
     expect(screen.queryByRole('progressbar')).not.toBeInTheDocument();
+  });
+
+  it('shows an explicit remainder when top rows hide part of the dimension', () => {
+    renderList({ other: { label: 'Other (3 more)', hiddenRows: 3 } });
+    expect(screen.getByRole('progressbar', { name: 'Other (3 more)' })).toBeInTheDocument();
+    expect(screen.getByText('10 · 10%')).toBeInTheDocument();
+    expect(screen.getAllByRole('progressbar')).toHaveLength(3);
   });
 });

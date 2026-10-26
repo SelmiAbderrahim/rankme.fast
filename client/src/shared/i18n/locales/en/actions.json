@@ -4,7 +4,12 @@
   "status": {
     "loading": "Loading actions…",
     "refreshing": "Refreshing actions…",
-    "showing": "Showing {{count}} actions"
+    "showing_one": "Showing {{count}} action",
+    "showing_zero": "Showing {{count}} actions",
+    "showing_two": "Showing {{count}} actions",
+    "showing_few": "Showing {{count}} actions",
+    "showing_many": "Showing {{count}} actions",
+    "showing_other": "Showing {{count}} actions"
   },
   "errors": {
     "loadFailed": "We couldn't load your actions. Please try again.",
@@ -18,6 +23,7 @@
     "label": "Filter actions",
     "reset": "Reset filters",
     "all": "All",
+    "openAndPlanned": "Open and planned",
     "state": "State",
     "source": "Source",
     "severity": "Severity",
@@ -43,7 +49,8 @@
     "ga4_decline": "Analytics decline",
     "content_recommendation": "Content recommendation",
     "citation_gap": "AI citation gap",
-    "audience_research": "Audience research"
+    "audience_research": "Audience research",
+    "competitor_opportunity": "Competitor opportunity"
   },
   "severity": {
     "critical": "Critical",
@@ -69,22 +76,50 @@
   "freshness": {
     "fresh": "Fresh",
     "stale": "Stale",
-    "unavailable": "Not verified"
+    "unavailable": "Not verified",
+    "partial": "Partial",
+    "blocked": "Blocked",
+    "failed": "Failed",
+    "unknown": "Freshness unknown"
   },
   "card": {
     "nextStep": "Next step",
     "observedAt": "Observed {{date}}",
     "openSource": "Open source view",
     "affectedNone": "Site-wide",
-    "affectedOne": "1 affected URL",
-    "affectedCount": "{{count}} affected URLs",
+    "affectedCount_one": "{{count}} affected URL",
     "evidence": "Evidence",
-    "evidenceLabel": "{{source}} · {{date}}",
+    "evidenceLabel": "{{source}} · {{date}} · {{detail}}",
     "evidenceLink": "Open evidence source",
     "history": "History",
     "retest": "Retest",
-    "affectedSample": "(showing {{shown}})",
-    "noteLabel": "Note"
+    "noteLabel": "Note",
+    "affectedCount_zero": "{{count}} affected URLs",
+    "affectedCount_two": "{{count}} affected URLs",
+    "affectedCount_few": "{{count}} affected URLs",
+    "affectedCount_many": "{{count}} affected URLs",
+    "affectedCount_other": "{{count}} affected URLs",
+    "affectedCountSampled_zero": "{{count}} affected URLs (showing {{shown}})",
+    "affectedCountSampled_one": "{{count}} affected URL (showing {{shown}})",
+    "affectedCountSampled_two": "{{count}} affected URLs (showing {{shown}})",
+    "affectedCountSampled_few": "{{count}} affected URLs (showing {{shown}})",
+    "affectedCountSampled_many": "{{count}} affected URLs (showing {{shown}})",
+    "affectedCountSampled_other": "{{count}} affected URLs (showing {{shown}})",
+    "seeAllUrls_zero": "See all {{count}} URLs in the report",
+    "seeAllUrls_one": "See {{count}} URL in the report",
+    "seeAllUrls_two": "See all {{count}} URLs in the report",
+    "seeAllUrls_few": "See all {{count}} URLs in the report",
+    "seeAllUrls_many": "See all {{count}} URLs in the report",
+    "seeAllUrls_other": "See all {{count}} URLs in the report",
+    "seeLinkTargets_zero": "See all {{count}} pages and the broken links they point to in the report",
+    "seeLinkTargets_one": "See {{count}} page and the broken links it points to in the report",
+    "seeLinkTargets_two": "See all {{count}} pages and the broken links they point to in the report",
+    "seeLinkTargets_few": "See all {{count}} pages and the broken links they point to in the report",
+    "seeLinkTargets_many": "See all {{count}} pages and the broken links they point to in the report",
+    "seeLinkTargets_other": "See all {{count}} pages and the broken links they point to in the report",
+    "linkSourcesCount": "Pages with broken links: {{count}}",
+    "staleRetestHint": "This evidence is out of date. Retest to check it again.",
+    "linkSourcesCountSampled": "Pages with broken links: {{count}} (showing {{shown}})"
   },
   "transitions": {
     "planned": "Plan",
@@ -110,7 +145,14 @@
     "confirm": "Confirm",
     "saving": "Saving…",
     "conflict": "Someone else changed this action first. Reload it and try again.",
-    "conflictReload": "Reload action"
+    "conflictReload": "Reload action",
+    "reasonLabel": "Why are you dismissing this?",
+    "reasons": {
+      "false_positive": "False positive",
+      "wont_fix": "Won't fix",
+      "fixed_elsewhere": "Fixed elsewhere",
+      "other": "Other reason"
+    }
   },
   "history": {
     "title": "Action history",
@@ -118,7 +160,9 @@
     "actor": "Team member",
     "from": "from {{state}}",
     "close": "Close",
-    "actorYou": "You"
+    "actorYou": "You",
+    "observed": "Observed",
+    "actorSystem": "Automatic check"
   },
   "retest": {
     "title": "Retest this finding?",
@@ -127,8 +171,6 @@
     "unitsValue": "1",
     "freshRun": "Retests always run a fresh crawl — results are never served from a cache.",
     "selfHosted": "Usage limits aren't applied on this server.",
-    "remaining": "{{remaining}} of {{cap}} audit runs left this period",
-    "allowanceUnknown": "We couldn't load your remaining allowance. The server still checks your limit before running.",
     "confirm": "Start retest",
     "starting": "Starting…",
     "queued": "Retest queued. Track progress on the report tab.",
@@ -154,6 +196,8 @@
     "dismissedLabel": "Dismissed as false positive",
     "fixCta": "Mark as fixed",
     "fixedLabel": "Marked fixed",
-    "reappearedLabel": "Still detected after being marked fixed"
+    "reappearedLabel": "Still detected after being marked fixed",
+    "notCounted": "Not in these counts: {{dismissed}} dismissed, {{completed}} marked fixed.",
+    "fixedGroupIn": "Marked fixed in {{tab}} ({{count}})"
   }
 }

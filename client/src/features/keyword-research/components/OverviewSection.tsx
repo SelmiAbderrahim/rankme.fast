@@ -1,3 +1,5 @@
+import { isolateText } from '@shared/lib/bidi';
+import { Bdi } from '@shared/components/Bdi';
 /**
  * SERP overview section — a URL-addressable section of the
  * research tab (`?tab=research`, no fifth tab value by locked decision).
@@ -21,8 +23,6 @@ import { fetchKeywordPreview, runOverview } from '../store/thunks';
 import { clearPreview } from '../store/slice';
 import { selectOverview, selectPreview } from '../store/selectors';
 import {
-  DEFAULT_LANGUAGE_CODE,
-  DEFAULT_LOCATION_CODE,
   OVERVIEW_PHRASE_MAX,
   difficultyBand,
   overviewFormSchema,
@@ -34,6 +34,7 @@ import { PhraseChipsInput } from './PhraseChipsInput';
 import { ProvenanceBadge } from './ProvenanceBadge';
 import { SerpFeatureChips } from './SerpFeatureChips';
 import type { OverviewRequestBody } from '../api';
+import { useResearchMarket } from '../useResearchMarket';
 import type { KeywordOverviewRow } from '../types';
 
 const OverviewRow = ({ row }: { row: KeywordOverviewRow }) => {
@@ -46,8 +47,8 @@ const OverviewRow = ({ row }: { row: KeywordOverviewRow }) => {
 
   return (
     <TableRow data-testid={`kw-overview-row-${slug}`}>
-      <TableCell className="max-w-56 truncate" title={row.keyword}>
-        {row.keyword}
+      <TableCell className="max-w-56 truncate" title={isolateText(row.keyword)}>
+        <Bdi>{row.keyword}</Bdi>
       </TableCell>
       <TableCell className="text-end tabular-nums">{format(row.searchVolume)}</TableCell>
       <TableCell>
@@ -86,8 +87,15 @@ export const OverviewSection = () => {
   const overview = useAppSelector(selectOverview);
 
   const [chips, setChips] = useState<string[]>([]);
-  const [locationCode, setLocationCode] = useState(DEFAULT_LOCATION_CODE);
-  const [languageCode, setLanguageCode] = useState(DEFAULT_LANGUAGE_CODE);
+  // The site's (or last used) market, never a hardcoded default.
+  const {
+    locationCode,
+    languageCode,
+    setLocationCode,
+    setLanguageCode,
+    adjustLocationCode,
+    adjustLanguageCode,
+  } = useResearchMarket();
   const [formError, setFormError] = useState('');
   const [pendingBody, setPendingBody] = useState<OverviewRequestBody | null>(null);
 
@@ -144,6 +152,8 @@ export const OverviewSection = () => {
               languageCode={languageCode}
               onLocationChange={setLocationCode}
               onLanguageChange={setLanguageCode}
+              onLocationAdjust={adjustLocationCode}
+              onLanguageAdjust={adjustLanguageCode}
               testIdPrefix="kw-overview"
             />
             {formError ? (

@@ -431,7 +431,7 @@ describe('Review Intelligence states', () => {
     await user.click(await screen.findByTestId('reviews-sync-source-google'));
     await user.click(screen.getByTestId('reviews-sync-estimate'));
     expect(await screen.findByTestId('reviews-preview-sources')).toHaveTextContent(
-      'Covers 1 sources',
+      'Covers 1 source',
     );
     await user.click(screen.getByTestId('reviews-sync-cancel'));
     await waitFor(() => expect(screen.queryByTestId('reviews-preview')).not.toBeInTheDocument());
@@ -485,6 +485,7 @@ describe('Review Intelligence states', () => {
     await user.click(screen.getByTestId('reviews-source-save-trustpilot'));
     expect(await screen.findByTestId('reviews-source-configured-trustpilot')).toBeVisible();
     await user.click(screen.getByTestId('reviews-source-remove-google'));
+    await user.click(await screen.findByTestId('reviews-source-remove-confirm'));
     await waitFor(() =>
       expect(screen.queryByTestId('reviews-source-configured-google')).not.toBeInTheDocument(),
     );
@@ -506,7 +507,11 @@ describe('Review Intelligence states', () => {
       throw new Error(`unexpected ${path}`);
     });
     renderPanel(<ReviewsPanel siteId="site-1" />);
-    await user.type(await screen.findByTestId('reviews-source-input-google'), 'ChIJbad');
+    await user.type(await screen.findByTestId('reviews-source-input-google'), 'ChIJbadbadbadbadbadbadbad');
+    // Save sits in the same row as the input; the help text follows the row.
+    const row = screen.getByTestId('reviews-source-save-google').parentElement!;
+    expect(row).toContainElement(screen.getByTestId('reviews-source-input-google'));
+    expect(row).not.toContainElement(screen.getByTestId('reviews-source-help-google'));
     await user.click(screen.getByTestId('reviews-source-save-google'));
     expect(await screen.findByTestId('reviews-sources-mutation-error')).toHaveTextContent(
       'That target is not valid.',

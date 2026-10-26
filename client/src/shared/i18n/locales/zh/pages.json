@@ -1,59 +1,404 @@
 {
-  "workspaceTab": "页面", "heading": "页面",
-  "description": "使用此网站当前可用的最佳已存储搜索数据检查每个页面。只有在你主动请求时才会采集数据。",
-  "common": { "notAvailable": "不可用" },
-  "actions": { "refresh": "刷新", "refreshing": "正在刷新…", "collectFallback": "采集备用数据", "connectGoogle": "连接 Google", "reconnectGoogle": "重新连接 Google", "selectProperty": "选择资源", "retry": "重试", "retryRefresh": "再次尝试刷新", "resetFilters": "重置筛选条件", "inspect": "查看页面", "openPage": "在新标签页中打开", "reviewPlans": "查看套餐" },
-  "range": { "label": "日期范围", "7d": "7 天", "28d": "28 天", "90d": "90 天" },
+  "workspaceTab": "页面",
+  "heading": "页面",
+  "description": "每个页面都显示该网站已存储的搜索数据。只有在您提出请求时才会采集新数据。",
+  "common": {
+    "notAvailable": "不可用"
+  },
+  "actions": {
+    "refresh": "刷新",
+    "refreshing": "正在刷新…",
+    "collectFallback": "获取排名数据",
+    "retry": "重试",
+    "retryRefresh": "再次尝试刷新",
+    "resetFilters": "重置筛选条件",
+    "inspect": "查看页面",
+    "openPage": "在新标签页中打开"
+  },
+  "range": {
+    "label": "日期范围",
+    "7d": "7 天",
+    "28d": "28 天",
+    "90d": "90 天"
+  },
   "sources": {
-    "gsc": { "label": "Google Search Console", "short": "GSC 观测数据", "description": "所选滚动窗口内观测到的点击、展示、点击率和平均排名。" },
-    "dataforseo": { "label": "备用排名快照", "short": "排名估算", "description": "排名关键词的时间点快照。此来源不提供点击、展示或点击率。" },
-    "demo": { "label": "演示排名快照", "short": "演示估算", "description": "确定性的示例排名数据，不是 Search Console 或 DataForSEO 实时数据。" },
-    "none": { "label": "没有已存储来源", "short": "无来源", "description": "尚未存储 Search Console 页面数据或备用排名快照。" },
+    "gsc": {
+      "label": "Google Search Console",
+      "short": "GSC 观测数据",
+      "description": "所选滚动窗口内观测到的点击、展示、点击率和平均排名。"
+    },
+    "dataforseo": {
+      "label": "排名快照",
+      "short": "排名估算",
+      "description": "排名关键词的时间点快照。此来源不提供点击、展示或点击率。"
+    },
+    "demo": {
+      "label": "演示排名快照",
+      "short": "演示估算",
+      "description": "用于演示的示例排名数据，不是 Google Search Console 数据，也不是实时排名数据。"
+    },
+    "none": {
+      "label": "没有已存储来源",
+      "short": "无来源",
+      "description": "尚未保存任何 Search Console 页面数据或排名快照。"
+    },
     "unmeasured": "未测量"
   },
-  "status": { "ready": "就绪", "syncing": "同步中", "empty": "空", "unavailable": "不可用", "stale": "已过期" },
+  "status": {
+    "ready": "就绪",
+    "syncing": "同步中",
+    "empty": "空",
+    "unavailable": "不可用",
+    "stale": "已过期"
+  },
   "states": {
-    "initialLoading": "正在加载页面数据", "backgroundLoading": "正在更新此视图，同时保留之前的数据。", "loadingAnnouncement": "正在加载页面。", "refreshAnnouncement": "正在刷新页面。",
-    "ready": { "title": "页面数据已就绪", "gsc": "已存储的 Search Console 页面数据已就绪。", "dataforseo": "已存储的备用排名快照已就绪。", "demo": "已存储的演示快照已就绪。", "none": "没有已就绪的已存储来源。" },
-    "syncing": { "title": "Search Console 正在同步", "gsc": "首次 Search Console 页面采集仍在等待或进行中。在此期间不会显示备用数据。", "dataforseo": "正在准备备用排名数据。", "demo": "正在准备演示排名数据。", "none": "正在准备已存储来源。" },
-    "empty": { "title": "没有匹配的页面", "gsc": "Search Console 在此滚动窗口内没有返回页面行。", "dataforseo": "备用快照在此市场中没有找到有排名的页面。", "demo": "演示快照在当前环境中没有页面。", "none": "请连接 Search Console，或采集备用数据（这会计入你的用量）。" },
-    "unavailable": { "title": "页面数据不可用", "gsc": "Search Console 数据目前不可用。请稍后重试。", "dataforseo": "排名提供商无法生成已存储快照。请在服务恢复后重试。", "demo": "无法加载演示排名数据。", "none": "目前没有可用的已存储数据。请连接 Search Console 或采集备用数据。" },
-    "stale": { "title": "正在显示最近一次有效数据", "gsc": "Search Console 数据新鲜度不确定，或最近刷新失败。最近一次成功的数据仍然可见。", "dataforseo": "此快照已超过备用缓存的新鲜度窗口，或最近刷新失败。", "demo": "此演示快照已过期，最近一次成功的数据仍然可见。", "none": "最近存储的状态已过期。" },
-    "transport": { "title": "无法加载页面", "body": "请求未完成。请检查网络连接后重试。", "retained": "更新失败，因此之前的页面数据仍然可见。" },
-    "notFound": { "title": "未找到网站或页面数据" },
-    "refreshFailed": { "title": "刷新失败", "body": "最近一次有效数据仍然可见。请在来源可用时再次刷新。" },
-    "cap": { "title": "已达到备用采集上限", "body": "此次备用刷新需要一次关键词查询。已有数据仍然可用。" }
+    "initialLoading": "正在加载页面数据",
+    "backgroundLoading": "正在更新此视图，同时保留之前的数据。",
+    "loadingAnnouncement": "正在加载页面。",
+    "refreshAnnouncement": "正在刷新页面。",
+    "ready": {
+      "title": "页面数据已就绪",
+      "gsc": "已存储的 Search Console 页面数据已就绪。",
+      "dataforseo": "已保存的排名快照已就绪。",
+      "demo": "已存储的演示快照已就绪。",
+      "none": "没有已就绪的已存储来源。"
+    },
+    "syncing": {
+      "title": "Search Console 正在同步",
+      "gsc": "首次 Search Console 页面收集仍在等待或进行中。连接 Search Console 期间，此页面只显示其数据。",
+      "dataforseo": "正在准备排名快照。",
+      "demo": "正在准备演示排名数据。",
+      "none": "正在准备已存储来源。"
+    },
+    "empty": {
+      "title": "没有匹配的页面",
+      "gsc": "Search Console 在此滚动窗口内没有返回页面行。",
+      "dataforseo": "排名快照未在此市场找到有排名的页面。",
+      "demo": "演示快照在当前环境中没有页面。",
+      "none": "这些页面尚未保存搜索数据。获取排名数据即可收集。"
+    },
+    "unavailable": {
+      "title": "页面数据不可用",
+      "gsc": "目前无法读取 Search Console 数据。请重试；在此期间，此页面不会改用排名快照。",
+      "dataforseo": "排名提供商无法生成已存储快照。请在服务恢复后重试。",
+      "demo": "无法加载演示排名数据。",
+      "none": "没有可用的已保存页面数据。请连接 Google，或获取排名数据。"
+    },
+    "stale": {
+      "title": "正在显示最近一次有效数据",
+      "gsc": "Search Console 数据新鲜度不确定，或最近刷新失败。最近一次成功的数据仍然可见。",
+      "dataforseo": "此排名快照已过时，或最近一次刷新失败。",
+      "demo": "此演示快照已过期，最近一次成功的数据仍然可见。",
+      "none": "最近存储的状态已过期。"
+    },
+    "transport": {
+      "title": "无法加载页面",
+      "body": "请求未完成。请检查网络连接后重试。",
+      "retained": "更新失败，因此之前的页面数据仍然可见。"
+    },
+    "notFound": {
+      "title": "未找到网站或页面数据"
+    },
+    "refreshFailed": {
+      "title": "刷新失败",
+      "body": "最近一次有效数据仍然可见。请在来源可用时再次刷新。"
+    }
   },
-  "fallbackReasons": { "gsc_not_connected": "此工作区尚未连接 Search Console。", "gsc_needs_reconnect": "Google 连接需要重新授权。", "gsc_revoked": "Google 访问权限已撤销，需要重新连接。", "gsc_property_unmatched": "所选 Search Console 资源不涵盖此网站。" },
   "disclosure": {
-    "observedAt": "观测时间", "range": "范围含义", "comparison": "比较", "market": "市场",
-    "rolling": "最近 {{days}} 天的滚动数据，包含已说明的 Search Console 报告延迟", "pointInTime": "时间点排名快照；{{days}} 天仅改变历史和比较环境，不改变当前快照的主要指标",
-    "sincePreviousSync": "自上次同步以来", "noPreviousSync": "没有符合条件的上次同步", "marketValue": "地区 {{location}}，语言 {{language}}", "notApplicable": "不适用",
-    "coverage": "有搜索数据的页面：{{measured}} / {{inventory}}。没有数据的页面：{{unmeasured}}。",
-    "reportingLag_zero": "Search Console 数据大约延迟 {{count}} 天。", "reportingLag_one": "Search Console 数据大约延迟 {{count}} 天。", "reportingLag_two": "Search Console 数据大约延迟 {{count}} 天。", "reportingLag_few": "Search Console 数据大约延迟 {{count}} 天。", "reportingLag_many": "Search Console 数据大约延迟 {{count}} 天。", "reportingLag_other": "Search Console 数据大约延迟 {{count}} 天。", "sampled": "来源报告数据经过抽样。", "notSampled": "来源未报告抽样。"
+    "observedAt": "观测时间",
+    "range": "关于日期范围",
+    "comparison": "比较",
+    "market": "市场",
+    "rolling": "最近 {{range}} 的 Search Console 数据。",
+    "pointInTime": "这是一份排名快照。日期范围只影响历史和对比，不影响总计。",
+    "sincePreviousSync": "自上次同步以来",
+    "noPreviousSync": "没有符合条件的上次同步",
+    "marketValue": "地区 {{location}}，语言 {{language}}",
+    "notApplicable": "不适用",
+    "reportingLag_zero": "Google 提供 Search Console 数据约有 {{count}} 天延迟，因此不包含最近几天。",
+    "reportingLag_one": "Google 提供 Search Console 数据约有 {{count}} 天延迟，因此不包含最近几天。",
+    "reportingLag_two": "Google 提供 Search Console 数据约有 {{count}} 天延迟，因此不包含最近几天。",
+    "reportingLag_few": "Google 提供 Search Console 数据约有 {{count}} 天延迟，因此不包含最近几天。",
+    "reportingLag_many": "Google 提供 Search Console 数据约有 {{count}} 天延迟，因此不包含最近几天。",
+    "reportingLag_other": "Google 提供 Search Console 数据约有 {{count}} 天延迟，因此不包含最近几天。",
+    "sampled": "来源报告数据经过抽样。",
+    "notSampled": "来源未报告抽样。"
   },
-  "metrics": { "clicks": "点击", "impressions": "展示", "ctr": "点击率", "averagePosition": "平均排名", "bestPosition": "最佳排名", "keywordCount": "排名关键词", "searchVolume": "搜索量", "difficulty": "难度", "estimatedTraffic": "预估流量", "associatedQueryCount": "查询 / 关键词", "qualifierObserved": "在所选滚动窗口内观测", "qualifierEstimated": "根据当前排名快照估算", "qualifierUnavailable": "排名快照不提供此指标" },
+  "metrics": {
+    "clicks": "点击",
+    "impressions": "展示",
+    "ctr": "点击率",
+    "averagePosition": "平均排名",
+    "bestPosition": "最佳排名",
+    "keywordCount": "排名关键词",
+    "searchVolume": "搜索量",
+    "difficulty": "难度",
+    "estimatedTraffic": "预估流量",
+    "associatedQueryCount": "查询 / 关键词",
+    "qualifierObserved": "在所选滚动窗口内观测",
+    "qualifierEstimated": "根据当前排名快照估算",
+    "qualifierUnavailable": "排名快照不提供此指标"
+  },
   "filters": {
-    "title": "查找页面", "description": "搜索和筛选由服务器处理，不会采集新的提供商数据。", "searchLabel": "搜索页面和查询", "searchPlaceholder": "标题、路径、URL、查询或关键词",
-    "insight": "机会", "allInsights": "所有机会", "indexability": "抓取可索引性", "allIndexability": "所有抓取状态", "indexabilityOptions": { "indexable": "可抓取并可索引", "non_indexable": "不可抓取/索引" },
-    "visibility": "搜索可见性", "allVisibility": "所有可见性", "visibilityOptions": { "measured": "已测量", "unmeasured": "未测量" }, "sort": "排序方式", "direction": "方向", "ascending": "升序", "descending": "降序", "pageSize": "每页数量", "perPage": "每页 {{count}} 个", "active": "生效的筛选条件：{{context}}", "activeSearch": "搜索：{{value}}", "noneActive": "当前没有搜索或筛选条件。"
+    "title": "查找页面",
+    "description": "搜索和筛选不会获取任何新数据。",
+    "searchLabel": "搜索页面和查询",
+    "searchPlaceholder": "标题、路径、URL、查询或关键词",
+    "insight": "机会",
+    "allInsights": "所有机会",
+    "indexability": "抓取可索引性",
+    "allIndexability": "所有抓取状态",
+    "indexabilityOptions": {
+      "indexable": "可抓取并可索引",
+      "non_indexable": "不可抓取/索引"
+    },
+    "visibility": "搜索可见性",
+    "allVisibility": "所有可见性",
+    "visibilityOptions": {
+      "measured": "已测量",
+      "unmeasured": "未测量"
+    },
+    "sort": "排序方式",
+    "direction": "方向",
+    "ascending": "升序",
+    "descending": "降序",
+    "pageSize": "每页数量",
+    "perPage": "每页 {{count}} 个",
+    "active": "生效的筛选条件：{{context}}",
+    "activeSearch": "搜索：{{value}}",
+    "noneActive": "当前没有搜索或筛选条件。"
   },
   "insights": {
-    "striking_distance": { "label": "接近突破", "description": "此页面的排名有提升空间，并且具有可观的搜索需求。" }, "low_ctr": { "label": "点击率偏低", "description": "观测到的展示较高，但点击低于规则阈值。" },
-    "declining": { "label": "正在下降", "description": "自上次成功同步以来，排名或观测点击明显下降。" }, "winning": { "label": "正在增长", "description": "自上次成功同步以来，排名或观测点击明显改善。" },
-    "non_indexable_visibility": { "label": "可见但不可抓取索引", "description": "此页面有搜索表现，但最近一次 RankMeFast 抓取将其标记为不可索引。这并不表示 Google 索引状态。" },
-    "unmeasured": { "label": "未测量", "description": "最近一次抓取发现了此可索引页面，但当前表现来源没有对应数据行。" }, "none": "当前没有机会标记"
+    "striking_distance": {
+      "label": "接近突破",
+      "description": "此页面的排名有提升空间，并且具有可观的搜索需求。"
+    },
+    "low_ctr": {
+      "label": "点击率偏低",
+      "description": "观测到的展示较高，但点击低于规则阈值。"
+    },
+    "declining": {
+      "label": "正在下降",
+      "description": "自上次成功同步以来，排名或观测点击明显下降。"
+    },
+    "winning": {
+      "label": "正在增长",
+      "description": "页面排名上升且位于第一页或获得了点击，或自上次成功同步以来观测点击明显增加。"
+    },
+    "non_indexable_visibility": {
+      "label": "可见但不可抓取索引",
+      "description": "此页面有搜索表现，但最近一次 RankMeFast 抓取将其标记为不可索引。这并不表示 Google 索引状态。"
+    },
+    "unmeasured": {
+      "label": "未测量",
+      "description": "最近一次抓取发现了此可索引页面，但当前表现来源没有对应数据行。"
+    },
+    "none": "当前没有机会标记",
+    "low_data": {
+      "label": "数据不足",
+      "description": "Search Console 显示此页面的展示次数过少且没有点击，因此暂不标记变化趋势。"
+    }
   },
-  "sorts": { "opportunity": "机会", "url": "URL", "title": "标题", "clicks": "点击", "impressions": "展示", "ctr": "点击率", "average_position": "平均排名", "best_position": "最佳排名", "keyword_count": "排名关键词", "search_volume": "搜索量", "difficulty": "难度", "estimated_traffic": "预估流量", "position_change": "排名变化", "click_change_pct": "点击变化" },
-  "indexability": { "indexable": "可抓取并可索引", "nonIndexable": "不可抓取/索引", "unknown": "抓取状态未知" },
-  "table": { "caption": "页面表现和抓取可索引性结果", "page": "页面", "source": "表现来源", "crawl": "抓取可索引性", "insights": "机会", "actions": "操作", "untitled": "无标题页面" },
-  "deltas": { "position": "排名变化", "clickChange": "点击变化", "clicks": "点击 {{value}}" },
-  "empty": { "title": "没有可显示的页面", "filtered": "没有页面符合当前搜索和筛选条件。重置条件可返回完整已存储清单。", "gsc": "Search Console 在此窗口没有返回页面。刷新仍使用 Search Console，不会切换来源。", "fallback": "已存储排名快照在此市场中没有排名页面。观测指标仍不可用。", "none": "尚未存储页面快照。请连接 Google 或明确采集备用数据。" },
-  "pagination": { "label": "页面结果分页", "context": "显示 {{shown}} 个，共 {{total}} 个匹配页面", "previous": "上一页", "next": "下一页", "cursorReset": "结果集已变化，分页已返回第一页。" },
+  "sorts": {
+    "opportunity": "机会",
+    "url": "URL",
+    "title": "标题",
+    "clicks": "点击",
+    "impressions": "展示",
+    "ctr": "点击率",
+    "average_position": "平均排名",
+    "best_position": "最佳排名",
+    "keyword_count": "排名关键词",
+    "search_volume": "搜索量",
+    "difficulty": "难度",
+    "estimated_traffic": "预估流量",
+    "position_change": "排名变化",
+    "click_change_pct": "点击变化"
+  },
+  "indexability": {
+    "indexable": "可抓取并可索引",
+    "nonIndexable": "不可抓取/索引",
+    "unknown": "抓取状态未知"
+  },
+  "crawlState": {
+    "label": {
+      "indexable": "可抓取并可索引",
+      "non_indexable": "不可抓取/索引",
+      "redirected": "重定向到 {{path}}",
+      "failed": "无法读取",
+      "not_in_crawl": "不在最近一次抓取中",
+      "no_crawl": "尚未抓取"
+    },
+    "crawledAs": "以 {{path}} 抓取",
+    "failure": {
+      "http_error": "页面返回了 HTTP {{status}}。",
+      "redirect_loop": "它的重定向在原地打转。",
+      "redirect_limit": "它重定向超过五次，因此我们停止跟随。",
+      "unsafe_redirect": "它重定向到了我们不会跟随的地址。",
+      "robots_blocked": "robots.txt 要求爬虫跳过此页面。",
+      "timeout": "页面没有及时响应。",
+      "non_html": "此地址提供的是 {{type}}，不是网页。",
+      "unreachable": "我们无法连接到此地址。"
+    },
+    "evidence": {
+      "finalUrl": "最终地址：{{url}}",
+      "redirectPath": "重定向路径：{{path}}",
+      "status": "HTTP 状态：{{status}}",
+      "fromCrawl": "由审计抓取记录。",
+      "fromProbe": "审计期间直接检查。",
+      "none": "审计没有记录此地址缺失的原因。",
+      "noCrawl": "运行审计即可查看此地址的抓取情况。",
+      "botProtection": "有些网站会用这个状态响应自动访问。请确认页面能在普通浏览器窗口中打开。"
+    }
+  },
+  "queries": {
+    "anonymized": "查询词已被 Google 隐藏",
+    "anonymizedHelp": "Google 报告了该页面的展示次数，但没有提供对应的搜索词。Google 会隐藏少见的查询词以保护搜索者隐私，因此这里的零表示没有可见的查询词，而不是没有人搜索。",
+    "unavailableHelp": "尚未保存该页面的搜索查询数据。"
+  },
+  "summaryNote": {
+    "window": "{{start}} 至 {{end}} 的按页面合计，仅含符合当前筛选条件的页面。",
+    "aggregation": "Search Console 会为结果中出现的每个页面各计一次展示，也包括它不公开的搜索，因此这些合计可能高于 Google 标签页中的网站合计。平均排名按各页面的展示次数加权。"
+  },
+  "table": {
+    "caption": "页面表现和抓取可索引性结果",
+    "page": "页面",
+    "source": "表现来源",
+    "crawl": "抓取可索引性",
+    "insights": "机会",
+    "actions": "操作",
+    "untitled": "无标题页面",
+    "columns": {
+      "button": "列",
+      "menuLabel": "显示的列",
+      "reset": "恢复默认列",
+      "notForSource": "此数据来源不提供"
+    }
+  },
+  "deltas": {
+    "position": "排名变化",
+    "clickChange": "点击变化",
+    "clicks": "点击 {{value}}"
+  },
+  "empty": {
+    "title": "没有可显示的页面",
+    "filtered": "没有页面符合当前搜索和筛选条件。重置条件可返回完整已存储清单。",
+    "gsc": "Search Console 在此窗口没有返回页面。刷新仍使用 Search Console，不会切换来源。",
+    "fallback": "已存储排名快照在此市场中没有排名页面。观测指标仍不可用。",
+    "none": "尚未保存页面数据。请连接 Google，或获取排名数据。"
+  },
+  "pagination": {
+    "label": "页面结果分页",
+    "context_one": "显示 {{shown}} 个，共 {{total}} 个匹配页面",
+    "previous": "上一页",
+    "next": "下一页",
+    "cursorReset": "结果集已变化，分页已返回第一页。",
+    "context_zero": "显示 {{shown}} 个，共 {{total}} 个匹配页面",
+    "context_two": "显示 {{shown}} 个，共 {{total}} 个匹配页面",
+    "context_few": "显示 {{shown}} 个，共 {{total}} 个匹配页面",
+    "context_many": "显示 {{shown}} 个，共 {{total}} 个匹配页面",
+    "context_other": "显示 {{shown}} 个，共 {{total}} 个匹配页面"
+  },
   "detail": {
-    "title": "页面详情", "description": "正在加载规范页面信息", "close": "关闭页面详情", "errorTitle": "无法加载页面详情", "notFound": "此页面已不在当前清单中，列表仍然可用。", "pageContext": "规范页面信息", "crawlReason": "最近抓取原因：{{reason}}",
-    "opportunities": "机会说明", "noOpportunities": "当前没有机会规则适用于此页面。", "queriesTitle": "观测查询", "keywordsTitle": "排名关键词", "associatedCount": "显示 {{shown}} 个，共 {{total}} 个关联行。", "truncated": "响应最多返回 100 行。", "associatedEmpty": "没有为此页面存储关联查询或关键词。", "associatedCaption": "此页面的关联查询或关键词", "queryOrKeyword": "查询或关键词",
-    "trendTitle": "平均排名历史", "trendDescription": "已存储 {{count}} 个数据点，最多返回 90 个。", "trendEmpty": "尚未存储可比较的平均排名历史。", "trendAria": "包含 {{count}} 个数据点的平均排名历史", "trendTableCaption": "可访问的页面历史数据", "date": "观测日期"
+    "title": "页面详情",
+    "description": "正在加载规范页面信息",
+    "close": "关闭页面详情",
+    "errorTitle": "无法加载页面详情",
+    "notFound": "此页面已不在当前清单中，列表仍然可用。",
+    "pageContext": "规范页面信息",
+    "crawlReason": "最近抓取原因：{{reason}}",
+    "opportunities": "机会说明",
+    "noOpportunities": "当前没有机会规则适用于此页面。",
+    "queriesTitle": "观测查询",
+    "keywordsTitle": "排名关键词",
+    "associatedCount_one": "显示 {{shown}} 个，共 {{total}} 个关联行。",
+    "truncated": "响应最多返回 100 行。",
+    "associatedEmpty": "没有为此页面存储关联查询或关键词。",
+    "associatedCaption": "此页面的关联查询或关键词",
+    "queryOrKeyword": "查询或关键词",
+    "trendTitle": "平均排名历史",
+    "trendDescription_one": "已存储 {{count}} 个数据点，最多返回 90 个。",
+    "trendEmpty": "尚未存储可比较的平均排名历史。",
+    "trendAria_one": "包含 {{count}} 个数据点的平均排名历史",
+    "trendTableCaption": "可访问的页面历史数据",
+    "date": "观测日期",
+    "trendDescription_zero": "已存储 {{count}} 个数据点，最多返回 90 个。",
+    "trendDescription_two": "已存储 {{count}} 个数据点，最多返回 90 个。",
+    "trendDescription_few": "已存储 {{count}} 个数据点，最多返回 90 个。",
+    "trendDescription_many": "已存储 {{count}} 个数据点，最多返回 90 个。",
+    "trendDescription_other": "已存储 {{count}} 个数据点，最多返回 90 个。",
+    "trendAria_zero": "包含 {{count}} 个数据点的平均排名历史",
+    "trendAria_two": "包含 {{count}} 个数据点的平均排名历史",
+    "trendAria_few": "包含 {{count}} 个数据点的平均排名历史",
+    "trendAria_many": "包含 {{count}} 个数据点的平均排名历史",
+    "trendAria_other": "包含 {{count}} 个数据点的平均排名历史",
+    "associatedCount_zero": "显示 {{shown}} 个，共 {{total}} 个关联行。",
+    "associatedCount_two": "显示 {{shown}} 个，共 {{total}} 个关联行。",
+    "associatedCount_few": "显示 {{shown}} 个，共 {{total}} 个关联行。",
+    "associatedCount_many": "显示 {{shown}} 个，共 {{total}} 个关联行。",
+    "associatedCount_other": "显示 {{shown}} 个，共 {{total}} 个关联行。",
+    "audit": {
+      "title": "来自最近一次审计",
+      "notCrawled": "最近一次审计未抓取此页面。",
+      "issuesTitle": "此页面上的问题",
+      "noIssues": "最近一次审计未在此页面上发现待处理的问题。",
+      "facts": {
+        "clickDepth": "距首页点击次数",
+        "inboundInternalLinks": "指向它的内部链接",
+        "pageSizeBytes": "页面大小",
+        "serverResponseMs": "首字节时间"
+      }
+    }
   },
-  "notifications": { "refreshed": "{{source}} 数据已成功刷新。", "empty": "{{source}} 刷新完成，但没有页面行。" }
+  "notifications": {
+    "refreshed": "{{source}} 数据已成功刷新。",
+    "empty": "{{source}} 刷新完成，但没有页面行。"
+  },
+  "crawl": {
+    "heading": "抓取覆盖范围",
+    "pages_zero": "上次审计没有保存任何页面。",
+    "pages_one": "上次审计获取了 {{count}} 个 URL，包括重定向、重复地址和非页面文件。",
+    "pages_two": "上次审计获取了 {{count}} 个 URL，包括重定向、重复地址和非页面文件。",
+    "pages_few": "上次审计获取了 {{count}} 个 URL，包括重定向、重复地址和非页面文件。",
+    "pages_many": "上次审计获取了 {{count}} 个 URL，包括重定向、重复地址和非页面文件。",
+    "pages_other": "上次审计获取了 {{count}} 个 URL，包括重定向、重复地址和非页面文件。",
+    "reason": {
+      "page_limit": "抓取在该次审计设定的页面上限处停止。",
+      "no_more_links": "抓取停止，因为没有找到更多可跟踪的链接。我们的抓取工具读取您的服务器返回的 HTML，因此只有在运行 JavaScript 后才出现的链接不会被跟踪。",
+      "stopped": "抓取在完成前被停止。",
+      "crawler_error": "抓取服务出错，抓取提前停止。",
+      "unrecorded": "这次较早的运行没有记录原因。",
+      "page_limit_derived": "抓取在当时适用的页面上限处停止（{{cap}}）。",
+      "finished_below_limit": "抓取在达到页面上限之前自行结束。"
+    },
+    "noSitemap": "没有找到列出更多页面的站点地图。",
+    "fetchedLabel": "已获取的 URL",
+    "fetchedHelp": "上次审计中抓取工具请求的每个地址，包括重定向、同一页面的重复地址以及 PDF 等文件。这个数字通常大于规范页面的数量。",
+    "runAgain": "重新运行"
+  },
+  "coverage": {
+    "pages_zero": "目前还没有列出的页面。",
+    "pages_one": "有搜索数据的规范页面：{{measured}} / {{count}}。",
+    "pages_two": "有搜索数据的规范页面：{{measured}} / {{count}}。",
+    "pages_few": "有搜索数据的规范页面：{{measured}} / {{count}}。",
+    "pages_many": "有搜索数据的规范页面：{{measured}} / {{count}}。",
+    "pages_other": "有搜索数据的规范页面：{{measured}} / {{count}}。",
+    "skipped_zero": "数据来源中有 {{count}} 行因无法使用而被跳过。",
+    "skipped_one": "数据来源中有 {{count}} 行因无法使用而被跳过。",
+    "skipped_two": "数据来源中有 {{count}} 行因无法使用而被跳过。",
+    "skipped_few": "数据来源中有 {{count}} 行因无法使用而被跳过。",
+    "skipped_many": "数据来源中有 {{count}} 行因无法使用而被跳过。",
+    "skipped_other": "数据来源中有 {{count}} 行因无法使用而被跳过。",
+    "redirects_zero": "列表中有 {{count}} 个地址重定向到这些页面之一，并计为该页面。",
+    "redirects_one": "列表中有 {{count}} 个地址重定向到这些页面之一，并计为该页面。",
+    "redirects_two": "列表中有 {{count}} 个地址重定向到这些页面之一，并计为该页面。",
+    "redirects_few": "列表中有 {{count}} 个地址重定向到这些页面之一，并计为该页面。",
+    "redirects_many": "列表中有 {{count}} 个地址重定向到这些页面之一，并计为该页面。",
+    "redirects_other": "列表中有 {{count}} 个地址重定向到这些页面之一，并计为该页面。",
+    "inventoryLabel": "规范页面",
+    "inventoryHelp": "规范页面是我们已知的唯一页面：上次审计中可被索引的页面，加上有搜索数据的页面，每个只计算一次。重定向到其中某个页面的地址会列出，但计为该页面。"
+  },
+  "noData": {
+    "title": "暂无搜索数据"
+  }
 }

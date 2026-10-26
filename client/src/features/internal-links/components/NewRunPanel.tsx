@@ -4,6 +4,8 @@ import { Alert, AlertDescription } from '@shared/ui/alert';
 import { Button } from '@shared/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@shared/ui/card';
 import { Separator } from '@shared/ui/separator';
+import { useRevealOnReady } from '@shared/hooks/useRevealOnReady';
+import { formatAbsoluteDate } from '@shared/lib/datetime';
 import type { InternalLinkPreview, InternalLinkUiState } from '../types';
 import { StateNotice } from './StateNotice';
 
@@ -28,7 +30,8 @@ export const NewRunPanel = ({
   onCancel,
   onConfirm,
 }: NewRunPanelProps) => {
-  const { t } = useTranslation('internalLinks');
+  const { t, i18n } = useTranslation('internalLinks');
+  const reveal = useRevealOnReady(preview);
   if (gate) return <StateNotice kind={gate} />;
   if (preview && !preview.ready) {
     return <StateNotice kind={preview.reason ?? 'missing'} inventoryHref={inventoryHref} />;
@@ -42,7 +45,12 @@ export const NewRunPanel = ({
       </CardHeader>
       <CardContent className="space-y-4">
         {preview?.ready ? (
-          <div className="space-y-4" data-testid="internal-links-preview">
+          <div
+            ref={reveal.ref}
+            tabIndex={-1}
+            className="space-y-4 rounded-md outline-none focus-visible:ring-[3px] focus-visible:ring-ring/50"
+            data-testid="internal-links-preview"
+          >
             <Alert>
               <Sparkles aria-hidden="true" />
               <AlertDescription>{t('newRun.guidanceOnly')}</AlertDescription>
@@ -58,7 +66,9 @@ export const NewRunPanel = ({
                     {t('newRun.inventoryLabel')}
                   </dt>
                   <dd className="text-sm font-medium" data-testid="internal-links-preview-date">
-                    {preview.inventoryDate}
+                    {preview.inventoryDate
+                      ? formatAbsoluteDate(preview.inventoryDate, i18n.language)
+                      : '—'}
                   </dd>
                 </div>
               </div>
@@ -89,7 +99,10 @@ export const NewRunPanel = ({
         ) : (
           <Button
             type="button"
-            onClick={onPreview}
+            onClick={() => {
+              reveal.arm();
+              onPreview();
+            }}
             loading={previewing}
             loadingLabel={t('newRun.previewing')}
             data-testid="internal-links-preview-button"

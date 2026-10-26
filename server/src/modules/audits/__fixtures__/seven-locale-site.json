@@ -1,0 +1,324 @@
+{
+  "description": "Seven-locale site with equal content depth per locale. The vendor counts words by spaces, so every /zh/ page reports a tiny wordCount while its plain-text size (UTF-8 bytes) matches its siblings. /shows is thin in every locale.",
+  "expectedThin": [
+    "https://episodebrief.example/en/shows",
+    "https://episodebrief.example/de/shows",
+    "https://episodebrief.example/fr/shows",
+    "https://episodebrief.example/es/shows",
+    "https://episodebrief.example/ru/shows",
+    "https://episodebrief.example/ar/shows",
+    "https://episodebrief.example/zh/shows"
+  ],
+  "pages": [
+    {
+      "url": "https://episodebrief.example/en/about",
+      "wordCount": 620,
+      "textSize": 3720,
+      "title": "About EpisodeBrief — about"
+    },
+    {
+      "url": "https://episodebrief.example/en/episode-pass",
+      "wordCount": 620,
+      "textSize": 3720,
+      "title": "About EpisodeBrief — episode-pass"
+    },
+    {
+      "url": "https://episodebrief.example/en/features",
+      "wordCount": 620,
+      "textSize": 3720,
+      "title": "About EpisodeBrief — features"
+    },
+    {
+      "url": "https://episodebrief.example/en/help",
+      "wordCount": 620,
+      "textSize": 3720,
+      "title": "About EpisodeBrief — help"
+    },
+    {
+      "url": "https://episodebrief.example/en/how-it-works",
+      "wordCount": 620,
+      "textSize": 3720,
+      "title": "About EpisodeBrief — how-it-works"
+    },
+    {
+      "url": "https://episodebrief.example/en/sample",
+      "wordCount": 620,
+      "textSize": 3720,
+      "title": "About EpisodeBrief — sample"
+    },
+    {
+      "url": "https://episodebrief.example/en/shows",
+      "wordCount": 80,
+      "textSize": 480,
+      "title": "About EpisodeBrief — shows"
+    },
+    {
+      "url": "https://episodebrief.example/de/about",
+      "wordCount": 560,
+      "textSize": 3360,
+      "title": "Über EpisodeBrief — about"
+    },
+    {
+      "url": "https://episodebrief.example/de/episode-pass",
+      "wordCount": 560,
+      "textSize": 3360,
+      "title": "Über EpisodeBrief — episode-pass"
+    },
+    {
+      "url": "https://episodebrief.example/de/features",
+      "wordCount": 560,
+      "textSize": 3360,
+      "title": "Über EpisodeBrief — features"
+    },
+    {
+      "url": "https://episodebrief.example/de/help",
+      "wordCount": 560,
+      "textSize": 3360,
+      "title": "Über EpisodeBrief — help"
+    },
+    {
+      "url": "https://episodebrief.example/de/how-it-works",
+      "wordCount": 560,
+      "textSize": 3360,
+      "title": "Über EpisodeBrief — how-it-works"
+    },
+    {
+      "url": "https://episodebrief.example/de/sample",
+      "wordCount": 560,
+      "textSize": 3360,
+      "title": "Über EpisodeBrief — sample"
+    },
+    {
+      "url": "https://episodebrief.example/de/shows",
+      "wordCount": 72,
+      "textSize": 432,
+      "title": "Über EpisodeBrief — shows"
+    },
+    {
+      "url": "https://episodebrief.example/fr/about",
+      "wordCount": 650,
+      "textSize": 3900,
+      "title": "À propos d’EpisodeBrief — about"
+    },
+    {
+      "url": "https://episodebrief.example/fr/episode-pass",
+      "wordCount": 650,
+      "textSize": 3900,
+      "title": "À propos d’EpisodeBrief — episode-pass"
+    },
+    {
+      "url": "https://episodebrief.example/fr/features",
+      "wordCount": 650,
+      "textSize": 3900,
+      "title": "À propos d’EpisodeBrief — features"
+    },
+    {
+      "url": "https://episodebrief.example/fr/help",
+      "wordCount": 650,
+      "textSize": 3900,
+      "title": "À propos d’EpisodeBrief — help"
+    },
+    {
+      "url": "https://episodebrief.example/fr/how-it-works",
+      "wordCount": 650,
+      "textSize": 3900,
+      "title": "À propos d’EpisodeBrief — how-it-works"
+    },
+    {
+      "url": "https://episodebrief.example/fr/sample",
+      "wordCount": 650,
+      "textSize": 3900,
+      "title": "À propos d’EpisodeBrief — sample"
+    },
+    {
+      "url": "https://episodebrief.example/fr/shows",
+      "wordCount": 85,
+      "textSize": 510,
+      "title": "À propos d’EpisodeBrief — shows"
+    },
+    {
+      "url": "https://episodebrief.example/es/about",
+      "wordCount": 640,
+      "textSize": 3840,
+      "title": "Acerca de EpisodeBrief — about"
+    },
+    {
+      "url": "https://episodebrief.example/es/episode-pass",
+      "wordCount": 640,
+      "textSize": 3840,
+      "title": "Acerca de EpisodeBrief — episode-pass"
+    },
+    {
+      "url": "https://episodebrief.example/es/features",
+      "wordCount": 640,
+      "textSize": 3840,
+      "title": "Acerca de EpisodeBrief — features"
+    },
+    {
+      "url": "https://episodebrief.example/es/help",
+      "wordCount": 640,
+      "textSize": 3840,
+      "title": "Acerca de EpisodeBrief — help"
+    },
+    {
+      "url": "https://episodebrief.example/es/how-it-works",
+      "wordCount": 640,
+      "textSize": 3840,
+      "title": "Acerca de EpisodeBrief — how-it-works"
+    },
+    {
+      "url": "https://episodebrief.example/es/sample",
+      "wordCount": 640,
+      "textSize": 3840,
+      "title": "Acerca de EpisodeBrief — sample"
+    },
+    {
+      "url": "https://episodebrief.example/es/shows",
+      "wordCount": 84,
+      "textSize": 504,
+      "title": "Acerca de EpisodeBrief — shows"
+    },
+    {
+      "url": "https://episodebrief.example/ru/about",
+      "wordCount": 540,
+      "textSize": 3240,
+      "title": "О сервисе EpisodeBrief — about"
+    },
+    {
+      "url": "https://episodebrief.example/ru/episode-pass",
+      "wordCount": 540,
+      "textSize": 3240,
+      "title": "О сервисе EpisodeBrief — episode-pass"
+    },
+    {
+      "url": "https://episodebrief.example/ru/features",
+      "wordCount": 540,
+      "textSize": 3240,
+      "title": "О сервисе EpisodeBrief — features"
+    },
+    {
+      "url": "https://episodebrief.example/ru/help",
+      "wordCount": 540,
+      "textSize": 3240,
+      "title": "О сервисе EpisodeBrief — help"
+    },
+    {
+      "url": "https://episodebrief.example/ru/how-it-works",
+      "wordCount": 540,
+      "textSize": 3240,
+      "title": "О сервисе EpisodeBrief — how-it-works"
+    },
+    {
+      "url": "https://episodebrief.example/ru/sample",
+      "wordCount": 540,
+      "textSize": 3240,
+      "title": "О сервисе EpisodeBrief — sample"
+    },
+    {
+      "url": "https://episodebrief.example/ru/shows",
+      "wordCount": 70,
+      "textSize": 420,
+      "title": "О сервисе EpisodeBrief — shows"
+    },
+    {
+      "url": "https://episodebrief.example/ar/about",
+      "wordCount": 560,
+      "textSize": 3360,
+      "title": "حول EpisodeBrief — about"
+    },
+    {
+      "url": "https://episodebrief.example/ar/episode-pass",
+      "wordCount": 560,
+      "textSize": 3360,
+      "title": "حول EpisodeBrief — episode-pass"
+    },
+    {
+      "url": "https://episodebrief.example/ar/features",
+      "wordCount": 560,
+      "textSize": 3360,
+      "title": "حول EpisodeBrief — features"
+    },
+    {
+      "url": "https://episodebrief.example/ar/help",
+      "wordCount": 560,
+      "textSize": 3360,
+      "title": "حول EpisodeBrief — help"
+    },
+    {
+      "url": "https://episodebrief.example/ar/how-it-works",
+      "wordCount": 560,
+      "textSize": 3360,
+      "title": "حول EpisodeBrief — how-it-works"
+    },
+    {
+      "url": "https://episodebrief.example/ar/sample",
+      "wordCount": 560,
+      "textSize": 3360,
+      "title": "حول EpisodeBrief — sample"
+    },
+    {
+      "url": "https://episodebrief.example/ar/shows",
+      "wordCount": 74,
+      "textSize": 444,
+      "title": "حول EpisodeBrief — shows"
+    },
+    {
+      "url": "https://episodebrief.example/zh/about",
+      "wordCount": 31,
+      "textSize": 2790,
+      "title": "关于 EpisodeBrief — about"
+    },
+    {
+      "url": "https://episodebrief.example/zh/episode-pass",
+      "wordCount": 31,
+      "textSize": 2790,
+      "title": "关于 EpisodeBrief — episode-pass"
+    },
+    {
+      "url": "https://episodebrief.example/zh/features",
+      "wordCount": 31,
+      "textSize": 2790,
+      "title": "关于 EpisodeBrief — features"
+    },
+    {
+      "url": "https://episodebrief.example/zh/help",
+      "wordCount": 31,
+      "textSize": 2790,
+      "title": "关于 EpisodeBrief — help"
+    },
+    {
+      "url": "https://episodebrief.example/zh/how-it-works",
+      "wordCount": 31,
+      "textSize": 2790,
+      "title": "关于 EpisodeBrief — how-it-works"
+    },
+    {
+      "url": "https://episodebrief.example/zh/sample",
+      "wordCount": 31,
+      "textSize": 2790,
+      "title": "关于 EpisodeBrief — sample"
+    },
+    {
+      "url": "https://episodebrief.example/zh/shows",
+      "wordCount": 6,
+      "textSize": 420,
+      "title": "关于 EpisodeBrief — shows"
+    }
+  ],
+  "extraZh": [
+    {
+      "url": "https://episodebrief.example/zh/coming-soon",
+      "title": "即将推出",
+      "wordCount": 2,
+      "textSize": 180,
+      "expectThin": true
+    },
+    {
+      "url": "https://episodebrief.example/zh/guide",
+      "title": "完整指南",
+      "wordCount": 40,
+      "textSize": 7200,
+      "expectThin": false
+    }
+  ]
+}

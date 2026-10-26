@@ -35,6 +35,14 @@ describe('VendorCacheRepo.read', () => {
     await expect(repo.read(address, later)).resolves.toBeNull();
   });
 
+  it('serves an expired row only when the caller asks for stored data', async () => {
+    const repo = createVendorCacheRepo(getTestDb() as never);
+    await repo.upsert({ ...address, params: { d: 1 }, payload: { v: 1 }, fetchedAt: now, expiresAt: later });
+    const hit = await repo.read(address, later, { includeExpired: true });
+    expect(hit?.payload).toEqual({ v: 1 });
+    await expect(repo.read(address, later, { includeExpired: false })).resolves.toBeNull();
+  });
+
   it('returns the row while fresh, with params + payload roundtripped', async () => {
     const repo = createVendorCacheRepo(getTestDb() as never);
     const payload = { rows: [{ url: 'https://a.example/', n: 3 }], nested: { deep: true } };

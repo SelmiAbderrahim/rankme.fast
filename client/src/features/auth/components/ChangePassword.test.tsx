@@ -13,7 +13,8 @@ const sessionRefetch = vi.hoisted(() => vi.fn());
 vi.mock('../authClient', () => ({
   authClient: {
     changePassword: vi.fn(),
-    useSession: vi.fn(() => ({ data: null, isPending: false, refetch: sessionRefetch })),
+    useSession: vi.fn(() => ({ data: { user: { id: 'owner', email: 'owner@example.test' }, session: { token: 'current' } }, isPending: false, refetch: sessionRefetch })),
+    listAccounts: vi.fn(async () => ({ data: [{ providerId: 'credential' }], error: null })),
     // ActiveSessions (a SecuritySettings child) calls these on mount. A
     // never-resolving list keeps it in its (static) loading state so the host
     // render has no post-render state update to wrap in act().
@@ -70,6 +71,16 @@ describe('ChangePassword', () => {
     expect(screen.getByText('Please enter a new password')).toBeInTheDocument();
     expect(screen.getByText('Please confirm the new password')).toBeInTheDocument();
     expect(changePassword).not.toHaveBeenCalled();
+    const current = screen.getByLabelText('Current password');
+    expect(current).toHaveAttribute('aria-describedby', 'change-current-error');
+    expect(screen.getByText('Please enter your current password')).toHaveAttribute('id', 'change-current-error');
+  });
+
+  it('shows the password rule before submission and associates it with the input', () => {
+    renderWithLocale(<ChangePassword />);
+    const next = screen.getByLabelText('New password');
+    expect(next).toHaveAttribute('aria-describedby', 'change-new-rules');
+    expect(screen.getByText(/at least 8 characters/i)).toHaveAttribute('id', 'change-new-rules');
   });
 
   it('rejects a too-short new password inline', async () => {
@@ -219,20 +230,20 @@ describe('ChangePassword', () => {
 });
 
 describe('SecuritySettings page', () => {
-  it('renders the security header and every security card', () => {
+  it('renders the security header and every security card', async () => {
     renderWithLocale(<SecuritySettings />);
     expect(screen.getByRole('heading', { level: 1, name: 'Security' })).toBeInTheDocument();
     expect(screen.getByText('Change password')).toBeInTheDocument();
-    expect(screen.getByRole('button', { name: 'Update password' })).toBeInTheDocument();
+    expect(await screen.findByRole('button', { name: 'Update password' })).toBeInTheDocument();
     // The two features surfaced onto this page.
     expect(screen.getByText('Active sessions')).toBeInTheDocument();
     expect(screen.getByText('Delete account')).toBeInTheDocument();
   });
 
-  it('drops its own page header when embedded in a host that has one', () => {
+  it('drops its own page header when embedded in a host that has one', async () => {
     renderWithLocale(<SecuritySettings embedded />);
     expect(screen.queryByRole('heading', { level: 1 })).not.toBeInTheDocument();
-    expect(screen.getByRole('button', { name: 'Update password' })).toBeInTheDocument();
+    expect(await screen.findByRole('button', { name: 'Update password' })).toBeInTheDocument();
     expect(screen.getByText('Active sessions')).toBeInTheDocument();
   });
 

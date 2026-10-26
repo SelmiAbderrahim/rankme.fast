@@ -8,11 +8,22 @@ import type { AiSdkCall } from '../ai-sdk/executor.js';
 import { createAiSdkGenerationProvider } from '../ai-sdk/runtime.js';
 import { VendorAuthError, VendorMalformedError, VendorQuotaError, VendorTimeoutError, VendorUnavailableError, } from '../errors.js';
 import { buildFakeGeneratedPrompts, FAKE_SUMMARY_RESULT } from './fakes.js';
-import type { GeneratedPrompt, GeneratePromptsInput, GeneratePromptsResult, SummaryProvider, SummarizeInput, SummarizeResult, } from './types.js';
+import type { GeneratedPrompt, GeneratePromptsInput, GeneratePromptsResult, SummaryItemOutput, SummaryProvider, SummarizeInput, SummarizeResult, SummaryStructuredOutput, } from './types.js';
 interface ProfileSummaryOutput {
-    summary: string;
+    status: string;
+    items: SummaryItemOutput[];
     citations: string[];
     truncated: boolean;
+}
+/**
+ * Plain-text form of a structured summary, kept for readers that show text
+ * only (PDF, exports, assistant): the status, then one line per item.
+ */
+export function composeSummaryText(structured: SummaryStructuredOutput): string {
+    return [
+        structured.status,
+        ...structured.items.map((item) => `${item.what} ${item.why} ${item.firstStep}`),
+    ].join('\n\n');
 }
 /** Backwards-compatible legacy default; operators can override it through env. */
 export const DEFAULT_SUMMARY_MODEL = 'claude-haiku-4-5';
@@ -42,7 +53,11 @@ function summarizeProfileInput(input: SummarizeInput, providerOrder: readonly Ai
         profile: sentiment ? 'ai_visibility_sentiment' as const : 'audit_summary' as const,
         input: sentiment
             ? { domain: input.siteDomain, answer: input.findings[0]!.why }
-            : { siteDomain: input.siteDomain, findings: input.findings },
+            : {
+                siteDomain: input.siteDomain,
+                findings: input.findings,
+                ...(input.dismissed ? { dismissed: input.dismissed } : {}),
+            },
         locale: input.locale,
         correlationId: correlationId(sentiment ? 'ai-visibility-sentiment' : 'audit-summary', input.correlationId),
         usage: usage(input),
@@ -108,8 +123,10 @@ export function createProfileSummaryProvider(options: ProfileSummaryProviderOpti
                     ...summarizeProfileInput(input, options.providerOrder),
                     profile: 'audit_summary',
                 });
+                const structured = { status: generated.object.status, items: generated.object.items };
                 return {
-                    summary: generated.object.summary,
+                    summary: composeSummaryText(structured),
+                    structured,
                     truncated: generated.object.truncated || generated.provenance.finishReason === 'length',
                     model: options.fakeCompatibility
                         ? FAKE_SUMMARY_RESULT.model
@@ -144,7 +161,8 @@ export function createFakeProfileSummaryProvider(recordRun?: RecordAiProfileRun)
     const provider = createFakeAiGenerationProvider({
         objects: {
             audit_summary: {
-                summary: FAKE_SUMMARY_RESULT.summary,
+                status: FAKE_SUMMARY_RESULT.summary,
+                items: [],
                 citations: [],
                 truncated: FAKE_SUMMARY_RESULT.truncated,
             },

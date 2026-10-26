@@ -1,4 +1,5 @@
 {
+  "workspace": { "description": "Einstellungen für alles, was dieser Arbeitsbereich versendet, etwa das Branding von Kundenberichten." },
   "notifications": {
     "title": "Benachrichtigungseinstellungen",
     "description": "Wählen Sie, welche nicht-sicherheitsrelevanten E-Mails Sie erhalten möchten. Sicherheits-E-Mails (Passwort-Reset, E-Mail-Verifizierung, Bestätigung einer Passwortänderung) können nicht deaktiviert werden.",
@@ -11,7 +12,7 @@
       },
       "emailRankDrop": {
         "label": "Ranking-Verlust",
-        "description": "Benachrichtigen, wenn ein verfolgtes Keyword Positionen verliert."
+        "description": "Per E-Mail benachrichtigen, wenn ein verfolgtes Keyword fällt und eine zweite Prüfung das bestätigt."
       },
       "emailAlerts": {
         "label": "Warnregeln",
@@ -52,8 +53,6 @@
     "revokeConfirmTitle": "Diesen API-Schlüssel widerrufen?",
     "revokeConfirmDescription": "„{{name}}“ funktioniert sofort nicht mehr. Dies kann nicht rückgängig gemacht werden.",
     "empty": "Noch keine API-Schlüssel.",
-    "upgradeHint": "API-Schlüssel für MCP sind ab dem Starter-Plan verfügbar; die öffentliche REST-API erfordert Agency. Upgraden Sie, um einen MCP-Client zu verbinden.",
-    "upgradeCta": "Pläne ansehen",
     "scopes": {
       "column": "Zugriff",
       "edit": "Zugriff bearbeiten",
@@ -85,28 +84,51 @@
     "saving": "Berechtigungen werden gespeichert…",
     "saved": "MCP-Berechtigungen gespeichert.",
     "retry": "Erneut versuchen",
-    "locked": {
-      "title": "MCP mit Starter oder höher verbinden",
-      "description": "Führen Sie ein Upgrade durch, um API-Schlüssel zu erstellen und RankMeFast mit einem MCP-Client zu verbinden.",
-      "cta": "Pläne ansehen"
-    },
     "tools": {
       "title": "Erlaubte Tools",
       "description": "Deaktivieren Sie Tools, die MCP-Clients und der Assistant nicht verwenden dürfen.",
+      "readNote": "Tools, die nur gespeicherte Daten lesen, starten nie einen Crawl oder eine Abfrage. Sie liefern, was bereits gespeichert ist, und sagen, wenn etwas fehlt.",
+      "groups": {
+        "sites": "Websites und Audits",
+        "rankings": "Keywords und Rankings",
+        "content": "Inhaltsanalysen",
+        "actions": "Nächste Schritte",
+        "search": "Search Console und Analytics",
+        "pages": "Seiten",
+        "links": "Backlinks und Wettbewerber",
+        "research": "Keyword-Recherche",
+        "visibility": "KI-Sichtbarkeit, lokales SEO und Bewertungen",
+        "reports": "Kundenberichte"
+      },
       "list_sites": { "name": "Websites auflisten", "description": "Die Websites dieses Kontos anzeigen." },
       "get_latest_audit_report": { "name": "Neuesten Auditbericht abrufen", "description": "Das neueste abgeschlossene Audit einer Website lesen." },
       "list_keywords": { "name": "Keywords auflisten", "description": "Verfolgte Keywords einer Website anzeigen." },
       "get_rank_history": { "name": "Rankingverlauf abrufen", "description": "Aktuelle Positionen verfolgter Keywords lesen." },
       "list_content_analyses": { "name": "Inhaltsanalysen auflisten", "description": "Content-Intelligence-Analysen einer Website anzeigen." },
       "get_content_analysis": { "name": "Inhaltsanalyse abrufen", "description": "Eine Content-Intelligence-Analyse lesen." },
-      "start_audit": { "name": "Audit starten", "description": "Ein neues Audit starten, das das monatliche Kontingent nutzt." },
+      "start_audit": { "name": "Audit starten", "description": "Ein neues Audit starten. Es crawlt die Website über den konfigurierten Anbieter, daher müssen Ausgaben erlaubt sein." },
       "get_audit_status": { "name": "Auditstatus abrufen", "description": "Prüfen, ob ein Audit wartet, läuft oder abgeschlossen ist." },
       "list_actions": { "name": "Nächste Schritte auflisten", "description": "Die priorisierte Fix-Liste einer Website mit dem Status jedes Eintrags lesen." },
-      "set_action_state": { "name": "Nächsten Schritt aktualisieren", "description": "Eine Aufgabe als geplant, verworfen, erledigt oder wieder offen markieren." }
+      "set_action_state": { "name": "Nächsten Schritt aktualisieren", "description": "Eine Aufgabe als geplant, verworfen, erledigt oder wieder offen markieren." },
+      "get_gsc_search_summary": { "name": "Search-Console-Zusammenfassung abrufen", "description": "Gespeicherte Klicks, Impressionen, Klickrate und Position der letzten 7, 28 oder 90 Tage lesen." },
+      "list_gsc_top_queries": { "name": "Top-Suchanfragen auflisten", "description": "Gespeicherte Top-Suchanfragen der Search Console für eine Website lesen." },
+      "list_gsc_top_pages": { "name": "Top-Seiten der Suche auflisten", "description": "Gespeicherte Top-Seiten der Search Console für eine Website lesen." },
+      "get_ga4_summary": { "name": "Analytics-Zusammenfassung abrufen", "description": "Gespeicherte Sitzungen, Nutzer und Schlüsselereignisse aus Google Analytics 4 lesen." },
+      "list_pages": { "name": "Seiten auflisten", "description": "Das gespeicherte Seiteninventar und den Crawl-Status einer Website ansehen." },
+      "get_page_detail": { "name": "Seitendetails abrufen", "description": "Gespeicherte Crawl-Belege und Kennzahlen einer Seite lesen." },
+      "get_backlinks_summary": { "name": "Backlink-Zusammenfassung abrufen", "description": "Gespeicherte Anzahlen von Backlinks und verweisenden Domains lesen." },
+      "list_backlinks": { "name": "Backlinks auflisten", "description": "Gespeicherte Backlinks ansehen, einer pro verweisender Domain." },
+      "list_competitors": { "name": "Wettbewerber auflisten", "description": "Das Wettbewerber-Portfolio einer Website ansehen." },
+      "list_keyword_research_history": { "name": "Keyword-Recherche-Verlauf auflisten", "description": "Ansehen, welche Keyword-Recherchen wann durchgeführt wurden." },
+      "get_keyword_research_result": { "name": "Keyword-Recherche-Ergebnis abrufen", "description": "Ein gespeichertes Recherche-Ergebnis erneut öffnen, ohne den Datenanbieter aufzurufen." },
+      "get_ai_visibility_summary": { "name": "KI-Sichtbarkeitszusammenfassung abrufen", "description": "Gespeicherte Prüfungen von KI-Antworten und den Share of Voice lesen." },
+      "get_local_seo_summary": { "name": "Local-SEO-Zusammenfassung abrufen", "description": "Das gespeicherte Unternehmensprofil und die Ränge im lokalen Pack lesen." },
+      "get_reviews_summary": { "name": "Bewertungszusammenfassung abrufen", "description": "Gespeicherte Bewertungsquellen, Bewertungen und Themen lesen." },
+      "list_client_reports": { "name": "Kundenberichte auflisten", "description": "Berichtspläne, Zustellungen und Portalstatus ansehen. Ohne Dateien oder Links." }
     },
     "spend": {
       "title": "Kontingent verbrauchende Aktionen",
-      "label": "Tools erlauben, die Plankontingent nutzen",
+      "label": "Tools erlauben, die Anbieter-Budget verbrauchen",
       "description": "Wenn deaktiviert, bleiben Tools wie Audit starten blockiert, auch wenn ihr Tool-Schalter aktiv ist."
     },
     "sites": {
@@ -120,7 +142,7 @@
     },
     "quickStart": {
       "title": "Schnellstart",
-      "description": "Erstellen Sie einen API-Schlüssel und kopieren Sie dann den Endpunkt oder eine einsatzbereite Client-Konfiguration.",
+      "description": "Erstellen Sie einen API-Schlüssel und speichern Sie ihn in der Umgebungsvariablen {{envVar}}. Beide Konfigurationen unten lesen den Schlüssel aus dieser Variablen.",
       "endpoint": "MCP-Endpunkt",
       "copyEndpoint": "MCP-Endpunkt kopieren",
       "copy": "Kopieren",
@@ -138,21 +160,30 @@
     }
   },
   "branding": {
+    "companyNameRequired": "Geben Sie den Namen Ihres Unternehmens ein.",
+    "preview": {
+      "title": "Vorschau der PDF-Kopfzeile",
+      "caption": "Die Kopfzeile jedes PDF-Berichts verwendet diesen Namen, dieses Logo und diese Farbe.",
+      "reportTitle": "SEO-Audit-Bericht",
+      "sectionHeading": "Jetzt beheben"
+    },
     "title": "PDF-Branding",
     "description": "Versehen Sie heruntergeladene Bericht-PDFs mit Ihrem eigenen Namen. Firmenname und Akzentfarbe erscheinen im PDF-Kopf.",
     "companyName": "Firmenname",
     "accentColor": "Akzentfarbe",
+    "accentPicker": "Akzentfarbe auswählen",
     "invalidColor": "Geben Sie eine Farbe wie #b5321e ein oder lassen Sie das Feld leer.",
     "save": "Branding speichern",
     "saved": "Branding gespeichert.",
-    "upgradeHint": "White-Label-PDF-Berichte sind in den Plänen Pro und Agency verfügbar. Upgraden Sie, um Ihre Berichte anzupassen.",
-    "upgradeCta": "Pläne ansehen",
     "logo": {
       "label": "Firmenlogo",
-      "help": "Nur PNG, maximal 256 KB. Bilder werden vor dem Speichern verkleinert und neu codiert.",
-      "invalidType": "Wählen Sie ein PNG-Bild aus.",
-      "tooLarge": "Wählen Sie ein PNG-Bild unter 256 KB aus.",
-      "readFailed": "Dieses Bild konnte nicht gelesen werden. Wählen Sie eine andere PNG-Datei.",
+      "help": "PNG, JPEG oder SVG, maximal 256 KB. Bilder werden verkleinert und als PNG gespeichert. SVG-Dateien dürfen keine Skripte oder Verweise auf andere Dateien enthalten.",
+      "invalidType": "Wählen Sie ein Bild im Format PNG, JPEG oder SVG.",
+      "tooLarge": "Wählen Sie ein Bild unter 256 KB.",
+      "readFailed": "Dieses Bild konnte nicht gelesen werden. Wählen Sie eine andere Datei.",
+      "choose": "Bild auswählen",
+      "noFile": "Keine Datei ausgewählt",
+      "saved": "Gespeichertes Logo wird verwendet",
       "previewAlt": "Vorschau des Firmenlogos",
       "remove": "Logo entfernen"
     },

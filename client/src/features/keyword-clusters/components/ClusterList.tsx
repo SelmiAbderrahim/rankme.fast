@@ -1,9 +1,11 @@
+import { Bdi } from '@shared/components/Bdi';
 import { Sparkles } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 import { Badge } from '@shared/ui/badge';
 import { Button } from '@shared/ui/button';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@shared/ui/table';
 import { TableHeaderHelp } from '@shared/ui/table-header-help';
+import { formatAbsoluteDate } from '@shared/lib/datetime';
 import type { KeywordCluster } from '../types';
 
 interface ClusterListProps {
@@ -18,7 +20,7 @@ interface ClusterListProps {
  * destination this product endorses.
  */
 export const ClusterList = ({ clusters, openClusterId, onToggle }: ClusterListProps) => {
-  const { t } = useTranslation('keywordClusters');
+  const { t, i18n } = useTranslation('keywordClusters');
 
   return (
     <ul className="space-y-4" data-testid="keyword-clusters-list">
@@ -34,7 +36,7 @@ export const ClusterList = ({ clusters, openClusterId, onToggle }: ClusterListPr
               <div className="space-y-1">
                 <div className="flex flex-wrap items-center gap-2">
                   <h3 className="text-base font-semibold">
-                    {cluster.label ?? t('cluster.unlabeled')}
+                    <Bdi>{cluster.label ?? t('cluster.unlabeled')}</Bdi>
                   </h3>
                   {cluster.labelSource === 'ai' ? (
                     <Badge
@@ -90,14 +92,16 @@ export const ClusterList = ({ clusters, openClusterId, onToggle }: ClusterListPr
                     data-testid={`keyword-cluster-member-${member.keywordId}`}
                   >
                     <TableHead scope="row" className="whitespace-normal font-medium">
-                      {member.phrase}
+                      <Bdi>{member.phrase}</Bdi>
                       {member.isPivot ? (
                         <Badge variant="outline" className="ms-2">
                           {t('cluster.pivot')}
                         </Badge>
                       ) : null}
                     </TableHead>
-                    <TableCell className="whitespace-normal">{member.observedAt}</TableCell>
+                    <TableCell className="whitespace-normal">
+                      {formatAbsoluteDate(member.observedAt, i18n.language)}
+                    </TableCell>
                     <TableCell className="whitespace-normal">
                       {member.isPivot
                         ? t('cluster.pivotWindow', { count: member.sharedUrlCount })
@@ -127,7 +131,7 @@ export const ClusterList = ({ clusters, openClusterId, onToggle }: ClusterListPr
                   .filter((member) => !member.isPivot)
                   .map((member) => (
                     <div key={member.keywordId} className="space-y-1">
-                      <p className="text-sm font-medium">{member.phrase}</p>
+                      <p className="text-sm font-medium"><Bdi>{member.phrase}</Bdi></p>
                       <ul className="text-muted-foreground space-y-0.5 text-xs">
                         {member.sharedUrls.map((sharedUrl) => (
                           <li key={sharedUrl} className="break-all">

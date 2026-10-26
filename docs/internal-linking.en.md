@@ -23,7 +23,7 @@ Each suggestion shows that evidence, so you can check the reasoning before addin
 
 ## Anchor text
 
-The AI runtime drafts anchor text and ranks it over the rule-based candidate list. Every AI anchor is labelled as an AI interpretation, and the suggestion underneath holds up without it.
+The AI runtime drafts anchor text and ranks it over the rule-based candidate list. Every AI anchor is labeled as an AI interpretation, and the suggestion underneath holds up without it.
 
 If the AI step fails, you still get the rule-based suggestions with fallback anchors. A run never comes back empty because of the model.
 

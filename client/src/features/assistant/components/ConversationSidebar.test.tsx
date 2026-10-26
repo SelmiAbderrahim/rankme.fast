@@ -133,7 +133,9 @@ describe('ConversationSidebar', () => {
     expect(scroller).toHaveClass('min-w-0', 'overflow-y-auto');
     expect(screen.getByRole('navigation')).toHaveClass('min-w-0');
 
-    const titleEl = screen.getByText(title);
+    const titleText = screen.getByText(title);
+    expect(titleText).toHaveAttribute('dir', 'auto');
+    const titleEl = titleText.parentElement!;
     expect(titleEl).toHaveClass('block', 'truncate');
     expect(titleEl.parentElement).toHaveClass('min-w-0', 'flex-1');
     const selectBtn = titleEl.closest('button')!;
@@ -238,12 +240,12 @@ describe('ConversationSidebar', () => {
         onDelete={vi.fn()}
       />,
     );
-    const active = screen.getByText('Active one');
+    const active = screen.getByText('Active one').parentElement!;
     const row = active.closest('[data-active]')!;
     expect(row).toHaveAttribute('data-active', 'true');
     expect(row).toHaveClass('data-[active=true]:border-primary', 'data-[active=true]:bg-accent', 'border-s-4');
     expect(active).toHaveClass('font-semibold');
-    expect(screen.getByText('Other one')).not.toHaveClass('font-semibold');
+    expect(screen.getByText('Other one').parentElement).not.toHaveClass('font-semibold');
     expect(screen.getByText('Other one').closest('[data-active]')).toHaveAttribute('data-active', 'false');
   });
 });

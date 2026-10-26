@@ -15,6 +15,8 @@ import {
   fetchMetricsRequest,
   fetchOverviewRequest,
   fetchRelatedRequest,
+  fetchStoredKeywordsRequest,
+  fetchStoredResultRequest,
   fetchTrendsRequest,
   postClusterDecisionRequest,
   previewLiveTrendsRequest,
@@ -27,9 +29,11 @@ import {
   type LiveTrendsListRequestArgs,
   type OverviewRequestBody,
   type PreviewRequestBody,
+  type StoredKeywordsRequestArgs,
   type TrendsRequestBody,
 } from '../api';
 import { apiErrorStatus, keywordResearchErrorMessage } from '../errorMessage';
+import { apiErrorFieldMessage } from '@shared/api/errorMessage';
 import type {
   ClusterDecisionResponse,
   ClusterRun,
@@ -46,6 +50,8 @@ import type {
   OverviewResponse,
   RelatedKeyword,
   RelatedResponse,
+  StoredKeywordsResponse,
+  StoredResearchResult,
   TrendsExplorationDto,
   TrendsListResponse,
   TrendsResponse,
@@ -57,6 +63,9 @@ export interface LoadMetricsArgs {
   keywords: string[];
   locationCode: number;
   languageCode: string;
+  siteId?: string;
+  /** Shared with the paired intent call so history can fold the two records. */
+  lookupId?: string;
 }
 
 export interface MetricsRejectPayload {
@@ -67,9 +76,11 @@ export const loadMetrics = createAsyncThunk<
   MetricsResponse,
   LoadMetricsArgs,
   { rejectValue: MetricsRejectPayload }
->('keywordResearch/loadMetrics', async (args, { rejectWithValue }) => {
+>('keywordResearch/loadMetrics', async (args, { rejectWithValue, dispatch, getState }) => {
   try {
-    return await fetchMetricsRequest(args);
+    const result = await fetchMetricsRequest(args);
+    refreshHistoryAfterResearch(dispatch, getState);
+    return result;
   } catch (err) {
     return rejectWithValue({
       error: keywordResearchErrorMessage(err, 'keywordResearch:loadFailed'),
@@ -81,15 +92,18 @@ export interface LoadRelatedArgs {
   keyword: string;
   locationCode: number;
   languageCode: string;
+  siteId?: string;
 }
 
 export const loadRelated = createAsyncThunk<
   RelatedResponse,
   LoadRelatedArgs,
   { rejectValue: string }
->('keywordResearch/loadRelated', async (args, { rejectWithValue }) => {
+>('keywordResearch/loadRelated', async (args, { rejectWithValue, dispatch, getState }) => {
   try {
-    return await fetchRelatedRequest(args);
+    const result = await fetchRelatedRequest(args);
+    refreshHistoryAfterResearch(dispatch, getState);
+    return result;
   } catch (err) {
     return rejectWithValue(
       keywordResearchErrorMessage(err, 'keywordResearch:relatedFailed'),
@@ -101,15 +115,20 @@ export interface LoadIntentArgs {
   keywords: string[];
   locationCode: number;
   languageCode: string;
+  siteId?: string;
+  /** Same value as the paired metrics call. */
+  lookupId?: string;
 }
 
 export const fetchIntent = createAsyncThunk<
   IntentResponse,
   LoadIntentArgs,
   { rejectValue: string }
->('keywordResearch/fetchIntent', async (args, { rejectWithValue }) => {
+>('keywordResearch/fetchIntent', async (args, { rejectWithValue, dispatch, getState }) => {
   try {
-    return await fetchIntentRequest(args);
+    const result = await fetchIntentRequest(args);
+    refreshHistoryAfterResearch(dispatch, getState);
+    return result;
   } catch (err) {
     return rejectWithValue(
       keywordResearchErrorMessage(err, 'keywordResearch:intentFailed'),
@@ -121,6 +140,7 @@ export interface LoadIdeasArgs {
   seed: string;
   locationCode: number;
   languageCode: string;
+  siteId?: string;
 }
 
 export interface IdeasRejectPayload {
@@ -131,9 +151,11 @@ export const fetchIdeas = createAsyncThunk<
   IdeasResponse,
   LoadIdeasArgs,
   { rejectValue: IdeasRejectPayload }
->('keywordResearch/fetchIdeas', async (args, { rejectWithValue }) => {
+>('keywordResearch/fetchIdeas', async (args, { rejectWithValue, dispatch, getState }) => {
   try {
-    return await fetchIdeasRequest(args);
+    const result = await fetchIdeasRequest(args);
+    refreshHistoryAfterResearch(dispatch, getState);
+    return result;
   } catch (err) {
     return rejectWithValue({
       error: keywordResearchErrorMessage(err, 'keywordResearch:ideasError'),
@@ -145,9 +167,11 @@ export const fetchLongTail = createAsyncThunk<
   LongTailResponse,
   LoadIdeasArgs,
   { rejectValue: IdeasRejectPayload }
->('keywordResearch/fetchLongTail', async (args, { rejectWithValue }) => {
+>('keywordResearch/fetchLongTail', async (args, { rejectWithValue, dispatch, getState }) => {
   try {
-    return await fetchLongTailRequest(args);
+    const result = await fetchLongTailRequest(args);
+    refreshHistoryAfterResearch(dispatch, getState);
+    return result;
   } catch (err) {
     return rejectWithValue({
       error: keywordResearchErrorMessage(err, 'keywordResearch:longTail.error'),
@@ -157,6 +181,8 @@ export const fetchLongTail = createAsyncThunk<
 
 export interface LoadHistoryArgs {
   cursor?: string;
+  /** Site Research tab scope; omitted = the account-wide list. */
+  siteId?: string;
 }
 
 export interface HistoryRejectPayload {
@@ -177,6 +203,73 @@ export const loadHistory = createAsyncThunk<
   }
 });
 
+export interface OpenStoredArgs {
+  historyId: string;
+}
+
+export interface OpenStoredRejectPayload {
+  error: string;
+}
+
+/**
+ * Re-open a history row from the shared cache. Deliberately does NOT refresh
+ * history afterwards: a stored read writes no history record, so there is
+ * nothing new to list.
+ */
+export const openStoredResearch = createAsyncThunk<
+  StoredResearchResult,
+  OpenStoredArgs,
+  { rejectValue: OpenStoredRejectPayload }
+>('keywordResearch/openStoredResearch', async ({ historyId }, { rejectWithValue }) => {
+  try {
+    return await fetchStoredResultRequest(historyId);
+  } catch (err) {
+    return rejectWithValue({
+      error: keywordResearchErrorMessage(err, 'keywordResearch:stored.loadFailed'),
+    });
+  }
+});
+
+/** Cluster-picker candidates: stored phrases for one market. Never calls a provider. */
+export const loadStoredKeywords = createAsyncThunk<
+  StoredKeywordsResponse,
+  StoredKeywordsRequestArgs,
+  { rejectValue: string }
+>('keywordResearch/loadStoredKeywords', async (args, { rejectWithValue }) => {
+  try {
+    return await fetchStoredKeywordsRequest(args);
+  } catch (err) {
+    return rejectWithValue(
+      keywordResearchErrorMessage(err, 'keywordResearch:clusters.candidatesFailed'),
+    );
+  }
+});
+
+/**
+ * Every successful research call lands a row in the server's research
+ * history, so a history list already on screen ("Recent research", the
+ * workspace export control) is stale the moment a lookup resolves. Refetch
+ * the first page, but only when some view has loaded history; otherwise the
+ * next mount loads it fresh anyway. Concurrent refreshes (metrics + intent
+ * fire together) are ordered by the slice: only the newest first-page load is
+ * applied.
+ */
+function refreshHistoryAfterResearch(
+  dispatch: (action: ReturnType<typeof loadHistory>) => unknown,
+  getState: () => unknown,
+): void {
+  const slice = (
+    getState() as {
+      keywordResearch?: { historyLoaded?: boolean; historySiteId?: string | null };
+    }
+  ).keywordResearch;
+  if (!slice?.historyLoaded) return;
+  // Refresh the list that is on screen: a site Research tab stays scoped to
+  // its site, the standalone page stays account-wide.
+  const siteId = slice.historySiteId;
+  void dispatch(loadHistory(siteId ? { siteId } : {}));
+}
+
 // ---------------------------------------------------------------------------
 // Workspace thunks. Every vendor-backed thunk rejects with a shared payload:
 // the localized message plus the HTTP status (409 drives the decision banner).
@@ -185,12 +278,15 @@ export const loadHistory = createAsyncThunk<
 export interface PaidRejectPayload {
   error: string;
   status: number | null;
+  /** Display-safe server message attributed to the competitors field, if any. */
+  competitorsError?: string | null;
 }
 
 function toPaidReject(err: unknown, fallbackKey: string): PaidRejectPayload {
   return {
     error: keywordResearchErrorMessage(err, fallbackKey),
     status: apiErrorStatus(err),
+    competitorsError: apiErrorFieldMessage(err, 'competitors'),
   };
 }
 
@@ -210,9 +306,11 @@ export const runGap = createAsyncThunk<
   GapResponse,
   GapRequestBody,
   { rejectValue: PaidRejectPayload }
->('keywordResearch/runGap', async (args, { rejectWithValue }) => {
+>('keywordResearch/runGap', async (args, { rejectWithValue, dispatch, getState }) => {
   try {
-    return await fetchGapRequest(args);
+    const result = await fetchGapRequest(args);
+    refreshHistoryAfterResearch(dispatch, getState);
+    return result;
   } catch (err) {
     return rejectWithValue(toPaidReject(err, 'keywordResearch:gap.loadFailed'));
   }
@@ -222,9 +320,11 @@ export const runOverview = createAsyncThunk<
   OverviewResponse,
   OverviewRequestBody,
   { rejectValue: PaidRejectPayload }
->('keywordResearch/runOverview', async (args, { rejectWithValue }) => {
+>('keywordResearch/runOverview', async (args, { rejectWithValue, dispatch, getState }) => {
   try {
-    return await fetchOverviewRequest(args);
+    const result = await fetchOverviewRequest(args);
+    refreshHistoryAfterResearch(dispatch, getState);
+    return result;
   } catch (err) {
     return rejectWithValue(
       toPaidReject(err, 'keywordResearch:overview.loadFailed'),
@@ -236,9 +336,11 @@ export const runTrends = createAsyncThunk<
   TrendsResponse,
   TrendsRequestBody,
   { rejectValue: PaidRejectPayload }
->('keywordResearch/runTrends', async (args, { rejectWithValue }) => {
+>('keywordResearch/runTrends', async (args, { rejectWithValue, dispatch, getState }) => {
   try {
-    return await fetchTrendsRequest(args);
+    const result = await fetchTrendsRequest(args);
+    refreshHistoryAfterResearch(dispatch, getState);
+    return result;
   } catch (err) {
     return rejectWithValue(
       toPaidReject(err, 'keywordResearch:trends.loadFailed'),
@@ -250,9 +352,11 @@ export const runClusters = createAsyncThunk<
   ClusterRun,
   ClusterRunRequestBody,
   { rejectValue: PaidRejectPayload }
->('keywordResearch/runClusters', async (args, { rejectWithValue }) => {
+>('keywordResearch/runClusters', async (args, { rejectWithValue, dispatch, getState }) => {
   try {
-    return await runClustersRequest(args);
+    const result = await runClustersRequest(args);
+    refreshHistoryAfterResearch(dispatch, getState);
+    return result;
   } catch (err) {
     return rejectWithValue(
       toPaidReject(err, 'keywordResearch:clusters.runFailed'),

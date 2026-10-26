@@ -1,3 +1,5 @@
+import { isolateText } from '@shared/lib/bidi';
+import { Bdi } from '@shared/components/Bdi';
 /**
  * GoogleSearchSummaryCard — the Search Analytics summary on the
  * `?tab=google` surface, shown ONLY when the connection is `connected`.
@@ -11,6 +13,7 @@
  */
 import { useEffect, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
+import { TAP_TARGET_LINK } from '@shared/ui/tap-target';
 import { Link } from 'react-router-dom';
 import { ArrowRight, RefreshCw } from 'lucide-react';
 import { ReportExportControl } from '@features/report-export';
@@ -18,6 +21,7 @@ import { Button } from '@shared/ui/button';
 import { Empty, EmptyContent, EmptyDescription, EmptyTitle } from '@shared/ui/empty';
 import { Skeleton } from '@shared/ui/skeleton';
 import { useAppDispatch, useAppSelector } from '@shared/hooks/redux';
+import { countryLabelFromAlpha3 } from '@shared/markets';
 import {
   selectGoogleConnection,
   selectGoogleConnectionSiteId,
@@ -36,12 +40,14 @@ import { rangeDays, useGoogleRange } from '../lib/range';
 import {
   deviceLabelKey,
   formatDate,
+  formatDay,
   formatInt,
-  formatPercent,
-  formatPosition,
+  windowStartDay,
 } from '../lib/format';
+import { MetricValue } from '@shared/components/MetricValue';
 import { GscTimeseriesChart } from './GscTimeseriesChart';
 import { GscBreakdownList } from './GscBreakdownList';
+import { GscTotalsNote } from './GscTotalsNote';
 import { GoogleRangeSelect } from './GoogleRangeSelect';
 
 export interface GoogleSearchSummaryCardProps {
@@ -133,28 +139,38 @@ export const GoogleSearchSummaryCard = ({ siteId }: GoogleSearchSummaryCardProps
   // states only — never the loading skeleton or the initial hard error.
   const showControls = !showSkeleton && !showHardError;
 
-  const breakdownValueHeader = `${t('searchSummary.clicks')} · ${t('searchSummary.ctr')}`;
+  const byImpressions = (summary?.totalClicks ?? 0) === 0 && (summary?.totalImpressions ?? 0) > 0;
+  const breakdownValueHeader = t('breakdown.shareHeaderRows', {
+    metric: t(byImpressions ? 'searchSummary.impressions' : 'searchSummary.clicks'),
+  });
+  const formatCtr = byImpressions ? undefined : (rate: string) => t('breakdown.ctrRate', { rate });
   const countryRows = (summary?.countries ?? []).map((row) => ({
     id: row.country,
-    label: row.country.toUpperCase(),
-    value: row.clicks,
-    rate: row.ctr,
-  }));
+    label: countryLabelFromAlpha3(row.country, locale),
+    value: byImpressions ? row.impressions : row.clicks,
+    rate: byImpressions ? null : row.ctr,
+  })).sort((left, right) => right.value - left.value);
   const deviceRows = (summary?.devices ?? []).map((row) => ({
     id: row.device,
     label: t(`searchSummary.devices.${deviceLabelKey(row.device)}`),
-    value: row.clicks,
-    rate: row.ctr,
-  }));
+    value: byImpressions ? row.impressions : row.clicks,
+    rate: byImpressions ? null : row.ctr,
+  })).sort((left, right) => right.value - left.value);
+  const dimensionBreakdown = (rows: Array<{ value: number }>, totals: { rows: number; clicks: number; impressions: number } | undefined) => ({
+    total: totals ? (byImpressions ? totals.impressions : totals.clicks) : rows.reduce((sum, row) => sum + row.value, 0),
+    hiddenRows: totals ? Math.max(0, totals.rows - rows.length) : 0,
+  });
+  const countryBreakdown = dimensionBreakdown(countryRows, summary?.dimensionTotals?.country);
+  const deviceBreakdown = dimensionBreakdown(deviceRows, summary?.dimensionTotals?.device);
 
   return (
     <section
       className="rounded-xl border bg-card p-4 shadow-sm"
       data-testid="google-search-summary-card"
-      aria-label={t('searchSummary.title', { days })}
+      aria-label={t('searchSummary.title', { count: days, days })}
     >
       <div className="flex flex-wrap items-center justify-between gap-2">
-        <h3 className="text-sm font-semibold">{t('searchSummary.title', { days })}</h3>
+        <h3 className="text-sm font-semibold">{t('searchSummary.title', { count: days, days })}</h3>
         <div className="flex items-center gap-2">
           {summary ? (
             <ReportExportControl
@@ -256,7 +272,7 @@ export const GoogleSearchSummaryCard = ({ siteId }: GoogleSearchSummaryCardProps
                 {t('searchSummary.ctr')}
               </dt>
               <dd className="mt-1 text-lg font-semibold tabular-nums" dir="ltr">
-                {formatPercent(locale, summary.averageCtr)}
+                <MetricValue kind="ratio" value={summary.averageCtr} denominator={summary.totalImpressions} />
               </dd>
             </div>
             <div className="rounded-lg border p-3">
@@ -264,10 +280,25 @@ export const GoogleSearchSummaryCard = ({ siteId }: GoogleSearchSummaryCardProps
                 {t('searchSummary.position')}
               </dt>
               <dd className="mt-1 text-lg font-semibold tabular-nums" dir="ltr">
-                {formatPosition(locale, summary.averagePosition)}
+                <MetricValue
+                  kind="position"
+                  value={summary.averagePosition}
+                  denominator={summary.totalImpressions}
+                />
               </dd>
             </div>
           </dl>
+
+          <p
+            className="text-muted-foreground mt-2 text-xs"
+            data-testid="google-summary-totals-note"
+          >
+            {t('searchSummary.totalsNote', {
+              start: formatDay(locale, windowStartDay(summary.asOf, days)),
+              end: formatDay(locale, summary.asOf),
+            })}
+          </p>
+          <GscTotalsNote className="mt-1" testId="google-summary-scope-note" />
 
           {summary.previousPeriod ? (
             <p
@@ -291,6 +322,11 @@ export const GoogleSearchSummaryCard = ({ siteId }: GoogleSearchSummaryCardProps
             </p>
           ) : null}
 
+          {byImpressions ? (
+            <p className="text-muted-foreground mt-4 text-xs" data-testid="google-summary-breakdown-by-impressions">
+              {t('breakdown.byImpressions')}
+            </p>
+          ) : null}
           <div className="mt-4 grid gap-4 sm:grid-cols-2">
             {summary.topQueries.length > 0 ? (
               <div>
@@ -303,11 +339,12 @@ export const GoogleSearchSummaryCard = ({ siteId }: GoogleSearchSummaryCardProps
                       key={query.query}
                       className="flex items-center justify-between gap-2 text-sm"
                     >
-                      <span className="min-w-0 flex-1 truncate" title={query.query}>
-                        {query.query}
+                      <span className="min-w-0 flex-1 truncate" title={isolateText(query.query)}>
+                        <Bdi>{query.query}</Bdi>
                       </span>
                       <span className="text-muted-foreground shrink-0 tabular-nums" dir="ltr">
-                        {formatInt(locale, query.clicks)} · {formatPercent(locale, query.ctr)}
+                        {formatInt(locale, query.clicks)} ·{' '}
+                        <MetricValue kind="ratio" value={query.ctr} denominator={query.impressions} />
                       </span>
                     </li>
                   ))}
@@ -326,11 +363,12 @@ export const GoogleSearchSummaryCard = ({ siteId }: GoogleSearchSummaryCardProps
                       key={page.url}
                       className="flex items-center justify-between gap-2 text-sm"
                     >
-                      <span className="min-w-0 flex-1 truncate" title={page.url} dir="ltr">
+                      <span className="min-w-0 flex-1 truncate" title={isolateText(page.url)} dir="ltr">
                         {page.url}
                       </span>
                       <span className="text-muted-foreground shrink-0 tabular-nums" dir="ltr">
-                        {formatInt(locale, page.clicks)} · {formatPercent(locale, page.ctr)}
+                        {formatInt(locale, page.clicks)} ·{' '}
+                        <MetricValue kind="ratio" value={page.ctr} denominator={page.impressions} />
                       </span>
                     </li>
                   ))}
@@ -345,7 +383,7 @@ export const GoogleSearchSummaryCard = ({ siteId }: GoogleSearchSummaryCardProps
               {t('searchSummary.timeseriesTitle')}
             </p>
             <p className="text-muted-foreground text-xs">
-              {t('searchSummary.timeseriesSubtitle', { days })}
+              {t('searchSummary.timeseriesSubtitle', { count: days, days })}
             </p>
             <GscTimeseriesChart points={summary.timeseries ?? []} days={days} />
           </div>
@@ -360,7 +398,12 @@ export const GoogleSearchSummaryCard = ({ siteId }: GoogleSearchSummaryCardProps
                 valueHeader={breakdownValueHeader}
                 emptyLabel={t('searchSummary.countriesEmpty')}
                 rows={countryRows}
-                total={summary.totalClicks}
+                total={countryBreakdown.total}
+                formatRate={formatCtr}
+                other={countryBreakdown.hiddenRows > 0 ? {
+                  hiddenRows: countryBreakdown.hiddenRows,
+                  label: t('breakdown.other', { count: countryBreakdown.hiddenRows, hidden: countryBreakdown.hiddenRows }),
+                } : undefined}
               />
               <ViewAllLink
                 view="countries"
@@ -376,7 +419,12 @@ export const GoogleSearchSummaryCard = ({ siteId }: GoogleSearchSummaryCardProps
                 valueHeader={breakdownValueHeader}
                 emptyLabel={t('searchSummary.devicesEmpty')}
                 rows={deviceRows}
-                total={summary.totalClicks}
+                total={deviceBreakdown.total}
+                formatRate={formatCtr}
+                other={deviceBreakdown.hiddenRows > 0 ? {
+                  hiddenRows: deviceBreakdown.hiddenRows,
+                  label: t('breakdown.other', { count: deviceBreakdown.hiddenRows, hidden: deviceBreakdown.hiddenRows }),
+                } : undefined}
               />
               <ViewAllLink view="devices" section={t('searchSummary.devicesTitle')} />
             </div>
@@ -385,7 +433,7 @@ export const GoogleSearchSummaryCard = ({ siteId }: GoogleSearchSummaryCardProps
           <div className="mt-3 flex flex-wrap items-center gap-x-4 gap-y-1">
             <Link
               to={`/sites/${siteId}?tab=report`}
-              className="text-primary inline-block text-sm font-medium underline"
+              className={`text-primary inline-block text-sm font-medium underline ${TAP_TARGET_LINK}`}
               data-testid="google-summary-report-link"
             >
               {t('searchSummary.reportLink')}

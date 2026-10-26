@@ -9,16 +9,6 @@
   },
   "states": {
     "signedOut": "Connectez-vous pour lire vos avis.",
-    "notOnPlan": {
-      "title": "Les avis font partie de l'offre Pro",
-      "description": "Passez à Pro ou Agency pour récupérer les avis de Google, Trustpilot et Tripadvisor.",
-      "link": "Voir les offres"
-    },
-    "capReached": {
-      "title": "Vous avez utilisé toutes les synchronisations de votre offre",
-      "description": "Consultez la facturation pour connaître la disponibilité actuelle du pack de synchronisations. Tout ce que vous avez déjà récupéré reste lisible.",
-      "link": "Voir les options de packs"
-    },
     "disabled": {
       "title": "Les nouvelles synchronisations sont en pause",
       "description": "Nous avons mis en pause les nouvelles synchronisations d'avis. Les avis déjà récupérés restent lisibles."
@@ -36,7 +26,12 @@
     "title": "Sources d'avis",
     "description": "Indiquez où votre établissement est référencé. Une fiche par annuaire.",
     "empty": "Aucune source pour l'instant. Ajoutez-en une ci-dessous.",
-    "configured": "Configurée",
+    "status": {
+      "saved": "Enregistrée, pas encore synchronisée",
+      "verified": "Vérifiée par synchronisation",
+      "failed": "Dernière synchronisation échouée",
+      "invalid": "Vérifiez cet identifiant"
+    },
     "save": "Enregistrer la source",
     "remove": "Supprimer",
     "hint": {
@@ -48,7 +43,23 @@
       "google": "ChIJ_example_place_id",
       "trustpilot": "example.com",
       "tripadvisor": "1234567"
-    }
+    },
+    "help": {
+      "google": "L'identifiant de lieu est le code que Google attribue à la fiche de votre établissement. Il commence généralement par ChIJ. Cherchez votre établissement dans l'outil de Google, puis copiez l'identifiant affiché.",
+      "googleLink": "Ouvrir l'outil de recherche d'identifiant de lieu de Google"
+    },
+    "invalid": {
+      "google": "Saisissez un identifiant de lieu Google valide. Il commence généralement par ChIJ et compte au moins 20 caractères.",
+      "trustpilot": "Saisissez le domaine de l’entreprise indiqué sur Trustpilot, par exemple example.com, sans https://.",
+      "tripadvisor": "Saisissez l’identifiant numérique de l’établissement Tripadvisor, par exemple 23462501. C’est le nombre après le d dans l’adresse de la page."
+    },
+    "removeConfirm": {
+      "title": "Supprimer cette source ?",
+      "description": "{{source}} ne sera plus incluse dans les nouvelles synchronisations. Les avis déjà récupérés restent dans votre inventaire.",
+      "cancel": "Garder la source",
+      "confirm": "Supprimer la source"
+    },
+    "removed": "Source {{source}} supprimée."
   },
   "sync": {
     "title": "Lancer une synchronisation",
@@ -65,12 +76,22 @@
     "title": "Coût de cette synchronisation",
     "description": "Il s'agit d'une estimation. Rien n'est dépensé avant votre confirmation.",
     "units": "Consomme {{units}} synchronisation",
-    "perSource": "Couvre {{sources}} sources",
-    "depth": "Récupère jusqu’à {{depth}} avis par source",
+    "perSource_one": "Couvre {{sources}} source",
+    "depth_one": "Récupère jusqu’à {{depth}} avis par source",
     "available": "Tient dans votre quota",
     "unavailable": "Dépasse votre quota",
     "baseRemaining": "Synchronisations restantes : {{remaining}}",
-    "packRemaining": "Synchronisations restantes dans le pack : {{remaining}}"
+    "packRemaining": "Synchronisations restantes dans le pack : {{remaining}}",
+    "depth_zero": "Récupère jusqu’à {{depth}} avis par source",
+    "depth_two": "Récupère jusqu’à {{depth}} avis par source",
+    "depth_few": "Récupère jusqu’à {{depth}} avis par source",
+    "depth_many": "Récupère jusqu’à {{depth}} avis par source",
+    "depth_other": "Récupère jusqu’à {{depth}} avis par source",
+    "perSource_zero": "Couvre {{sources}} source",
+    "perSource_two": "Couvre {{sources}} sources",
+    "perSource_few": "Couvre {{sources}} sources",
+    "perSource_many": "Couvre {{sources}} sources",
+    "perSource_other": "Couvre {{sources}} sources"
   },
   "runs": {
     "title": "Historique des synchronisations",
@@ -78,7 +99,6 @@
     "empty": "Aucune synchronisation pour l'instant.",
     "createdAt": "Démarrée",
     "view": "Ouvrir",
-    "refunded": "Unité recréditée",
     "columns": {
       "status": "Résultat",
       "outcomes": "Par source",
@@ -122,10 +142,10 @@
     "filterAll": "Toutes",
     "searchPlaceholder": "Rechercher dans les avis",
     "apply": "Appliquer",
-    "stars": "{{stars}} étoiles",
+    "stars_one": "{{stars}} étoile",
     "unrated": "Sans note",
     "anonymous": "Sans nom",
-    "page": "Page {{page}} sur {{total}} avis",
+    "page_one": "Page {{page}} sur {{total}} avis",
     "previous": "Précédent",
     "next": "Suivant",
     "export": "Télécharger le CSV",
@@ -138,16 +158,31 @@
       "source": "Source",
       "text": "Avis",
       "author": "Auteur"
-    }
+    },
+    "stars_zero": "{{stars}} étoile",
+    "stars_two": "{{stars}} étoiles",
+    "stars_few": "{{stars}} étoiles",
+    "stars_many": "{{stars}} étoiles",
+    "stars_other": "{{stars}} étoiles",
+    "page_zero": "Page {{page}} sur {{total}} avis",
+    "page_two": "Page {{page}} sur {{total}} avis",
+    "page_few": "Page {{page}} sur {{total}} avis",
+    "page_many": "Page {{page}} sur {{total}} avis",
+    "page_other": "Page {{page}} sur {{total}} avis"
   },
   "stats": {
     "title": "Santé des avis",
     "empty": "Rien à représenter pour l'instant.",
-    "total": "{{total}} avis enregistrés",
+    "total_one": "{{total}} avis enregistré",
     "distribution": {
       "title": "Répartition des étoiles",
-      "stars": "{{stars}} étoiles",
-      "unrated": "Sans note"
+      "stars_one": "{{stars}} étoile",
+      "unrated": "Sans note",
+      "stars_zero": "{{stars}} étoile",
+      "stars_two": "{{stars}} étoiles",
+      "stars_few": "{{stars}} étoiles",
+      "stars_many": "{{stars}} étoiles",
+      "stars_other": "{{stars}} étoiles"
     },
     "velocity": {
       "title": "Avis par mois",
@@ -156,7 +191,12 @@
     },
     "sourceMix": {
       "title": "D'où ils viennent"
-    }
+    },
+    "total_zero": "{{total}} avis enregistré",
+    "total_two": "{{total}} avis enregistrés",
+    "total_few": "{{total}} avis enregistrés",
+    "total_many": "{{total}} avis enregistrés",
+    "total_other": "{{total}} avis enregistrés"
   },
   "trend": {
     "title": "Note moyenne dans le temps",
@@ -174,7 +214,7 @@
     "complaints": "Reproches fréquents",
     "praise": "Compliments fréquents",
     "citations": "Voir les avis correspondants",
-    "citationCount": "{{citations}} avis",
+    "citationCount_one": "{{citations}} avis",
     "citationSource": "{{source}} · {{rating}} · {{date}}",
     "sectionEmpty": "Rien ici pour cette synchronisation.",
     "pending": "L'analyse des thèmes n'est pas terminée.",
@@ -186,7 +226,12 @@
       "title": "Impossible de construire les thèmes",
       "description": "L'étape de synthèse a échoué. Vos avis sont bien arrivés et restent lisibles ci-dessous.",
       "link": "Aller aux avis"
-    }
+    },
+    "citationCount_zero": "{{citations}} avis",
+    "citationCount_two": "{{citations}} avis",
+    "citationCount_few": "{{citations}} avis",
+    "citationCount_many": "{{citations}} avis",
+    "citationCount_other": "{{citations}} avis"
   },
   "provenance": {
     "first_party": "Données propriétaires",
@@ -194,7 +239,12 @@
     "estimate": "Estimation",
     "ai_interpretation": "Interprétation par l’IA",
     "observedAt": "Observé le {{date}}",
-    "sampleCount": "{{count}} avis échantillonnés"
+    "sampleCount_one": "{{count}} avis échantillonné",
+    "sampleCount_zero": "{{count}} avis échantillonné",
+    "sampleCount_two": "{{count}} avis échantillonnés",
+    "sampleCount_few": "{{count}} avis échantillonnés",
+    "sampleCount_many": "{{count}} avis échantillonnés",
+    "sampleCount_other": "{{count}} avis échantillonnés"
   },
   "errors": {
     "sourcesFailed": "Impossible de charger vos sources d'avis.",

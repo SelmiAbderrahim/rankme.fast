@@ -9,16 +9,21 @@ order: 4
 
 # Notification preferences
 
-You control which non-security emails RankMeFast sends you. Open **Settings → Notifications** (`/settings/notifications`) and toggle any of the four switches.
+You choose which non-security emails RankMeFast sends you. Open **Settings → Notifications** (`/settings/notifications`) and flip the switches you want.
 
-Audit, rank, and billing switches default to **on**; **Product updates** defaults to **off** and is sent only after you turn it on. Changing a switch takes effect immediately: the next matching email is skipped (or sent, for a switch you turned on).
+The audit, rank, and alert switches default to **on**; **Product updates** defaults to **off** and is sent only after you turn it on. Changing a switch takes effect immediately: the next matching email is skipped (or sent, for a switch you turned on).
 
 ## What each toggle controls
 
 - **Audit complete**: sent when an audit run finishes for one of your sites.
-- **Rank drops**: sent when a tracked keyword loses positions in your latest rank check.
+- **Rank drops**: sent when a tracked keyword dropped and a second check confirmed it.
+- **Alert rules**: sent when one of your own [alert rules](./alerts.en.md) fires. This switch covers the email channel only. Slack and webhook deliveries keep working.
 - **Billing**: payment receipts, failed-payment reminders, and dunning notices. Turning this off stops all billing email; you can still see receipts and past invoices in **Billing → Invoices**.
 - **Product updates**: occasional welcome messages, product news, and tips.
+
+## Rank drops and alert rules are separate
+
+The **Rank drops** email is built in. RankMeFast sends it when a tracked keyword drops and a second check confirms the drop, and you don't set any threshold. Alert rules are rules you build yourself in **Alerts → Rules** (`/dashboard/alerts?tab=rules`). You pick the threshold and where the alert goes, including Slack or a signed webhook. Neither one replaces the other. Turning off **Rank drops** leaves your alert rules running, and deleting every rule leaves the built-in email on.
 
 ## Weekly Pulse is a separate opt-in
 

@@ -1,3 +1,5 @@
+import { CACHE_TTL_MS, shouldLoad, type CacheLoadOptions } from '@shared/cache/freshness';
+import type { WorkspaceState } from '../types';
 import { createAsyncThunk } from '@reduxjs/toolkit';
 import { fetchWorkspacesRequest, type Workspace } from '@features/team';
 import { ApiError } from '@shared/api/client';
@@ -8,7 +10,7 @@ import { ApiError } from '@shared/api/client';
  */
 export const loadWorkspaces = createAsyncThunk<
   Workspace[],
-  void,
+  CacheLoadOptions | void,
   { rejectValue: string }
 >('workspace/load', async (_arg, { rejectWithValue }) => {
   try {
@@ -21,4 +23,9 @@ export const loadWorkspaces = createAsyncThunk<
         : '';
     return rejectWithValue(message);
   }
+}, {
+  condition: (options, { getState }) => {
+    const workspace = (getState() as { workspace: WorkspaceState }).workspace;
+    return shouldLoad({ loadedAt: workspace.loadedAt ?? null, loading: workspace.status === 'loading' }, options, CACHE_TTL_MS.workspaces);
+  },
 });

@@ -42,3 +42,7 @@ export const selectSchemaGenerateStatus = (state: RootState) =>
 export const selectSchemaGenerateGate = (state: RootState) =>
   selectSlice(state).generateGate;
 export const selectSchemaForm = (state: RootState) => selectSlice(state).form;
+export const selectSchemaRegenerateStatus = (state: RootState) =>
+  selectSlice(state).regenerateStatus;
+export const selectSchemaRegenerateGate = (state: RootState) =>
+  selectSlice(state).regenerateGate;

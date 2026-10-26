@@ -39,6 +39,7 @@ import { setAuditsQueue } from "./audits.queue-holder.js";
 import { ReportSnapshot } from "./report-snapshot.model.js";
 import { writeReportSnapshot } from "./report.service.js";
 import { makeAuditResult } from "./rules/fixtures.js";
+import { setSummaryDb } from "./summary.db-holder.js";
 import { setSummaryProvider } from "./summary.holder.js";
 
 const app = createApp();
@@ -96,7 +97,10 @@ async function seedRunFor(
     runId: run.id as string,
     siteId,
     accountId: (site!.accountId as mongoose.Types.ObjectId).toHexString(),
-    result: makeAuditResult(),
+    // One missing title → one Fix-now finding, so the summary has actionable
+    // input and takes the queued path (an audit with nothing actionable is
+    // answered deterministically without a model call).
+    result: makeAuditResult({ pages: [{ title: null }] }),
   });
   if (withSummary) {
     await ReportSnapshot.updateOne(
@@ -125,12 +129,14 @@ beforeAll(async () => {
   await startMemoryMongo();
   await startTestPostgres();
   setSitesDb(getTestDb() as unknown as never);
+  setSummaryDb(getTestDb() as unknown as never);
   installTestAuth();
 });
 
 afterAll(async () => {
   uninstallTestAuth();
   setSitesDb(null);
+  setSummaryDb(null);
   await stopTestPostgres();
   await stopMemoryMongo();
 });
@@ -251,6 +257,7 @@ describe("summary endpoint gates and ownership", () => {
       aiSummary: null,
       requestedLocale: 'en',
       availableLocales: [],
+      progress: null,
     });
   });
 
@@ -294,6 +301,7 @@ describe("POST enqueue and GET polling contract", () => {
       aiSummary: null,
       requestedLocale: 'fr',
       availableLocales: [],
+      progress: expect.objectContaining({ stage: 'queued', failureCode: null, finishedAt: null }),
     });
     expect(tracked.summarize).not.toHaveBeenCalled();
     expect(queued.add).toHaveBeenCalledWith(
@@ -311,6 +319,7 @@ describe("POST enqueue and GET polling contract", () => {
       aiSummary: null,
       requestedLocale: 'en',
       availableLocales: [],
+      progress: null,
     });
     const report = await request(app)
       .get(`/api/audits/${runId}/report`)
@@ -403,6 +412,7 @@ describe("POST enqueue and GET polling contract", () => {
       aiSummary: null,
       requestedLocale: 'en',
       availableLocales: [],
+      progress: expect.objectContaining({ stage: null, failureCode: 'internal' }),
     });
   });
 });

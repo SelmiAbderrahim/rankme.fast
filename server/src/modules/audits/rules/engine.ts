@@ -8,6 +8,30 @@
 import type { AuditResult } from '../../../shared/providers/index.js';
 import { isNotEvaluatedFinding } from '../../../shared/audit-findings.js';
 export { isNotEvaluatedFinding };
+import { httpErrorPagesRule } from './http-error-pages.js';
+import { redirectChainsRule } from './redirect-chains.js';
+import { linksToRedirectsRule } from './links-to-redirects.js';
+import { metaRefreshRedirectRule } from './meta-refresh-redirect.js';
+import { canonicalChainOrConflictRule } from './canonical-chain-or-conflict.js';
+import { orphanPagesRule } from './orphan-pages.js';
+import { deepPagesRule } from './deep-pages.js';
+import { duplicateTitlesRule } from './duplicate-titles.js';
+import { duplicateContentRule } from './duplicate-content.js';
+import { placeholderTextRule } from './placeholder-text.js';
+import { mixedContentRule } from './mixed-content.js';
+import { imagesMissingAltRule } from './images-missing-alt.js';
+import { slowServerResponseRule } from './slow-server-response.js';
+import { largePagesRule } from './large-pages.js';
+import { uncompressedPagesRule } from './uncompressed-pages.js';
+import { renderBlockingResourcesRule } from './render-blocking-resources.js';
+import { htmlBasicsMissingRule } from './html-basics-missing.js';
+import { deprecatedHtmlRule } from './deprecated-html.js';
+import { urlStructureRule } from './url-structure.js';
+import { socialTagsMissingRule } from './social-tags-missing.js';
+import { faviconMissingRule } from './favicon-missing.js';
+import { brokenResourcesRule } from './broken-resources.js';
+import { oversizedImagesRule } from './oversized-images.js';
+import { uncachedStaticResourcesRule } from './uncached-static-resources.js';
 import { accessibilityLowRule } from './accessibility-low.js';
 import { aiVisibilityLowRule } from './ai-visibility-low.js';
 import { brokenInternalLinksRule } from './broken-internal-links.js';
@@ -50,6 +74,35 @@ export const ALL_RULES: readonly AuditRule[] = [
     thinContentRule,
     faqContentMissingRule,
     llmsTxtMissingRule,
+    // Status, redirects and canonicals.
+    httpErrorPagesRule,
+    redirectChainsRule,
+    linksToRedirectsRule,
+    metaRefreshRedirectRule,
+    canonicalChainOrConflictRule,
+    // Structure and content.
+    orphanPagesRule,
+    deepPagesRule,
+    duplicateTitlesRule,
+    duplicateContentRule,
+    placeholderTextRule,
+    // Security, media and performance.
+    mixedContentRule,
+    imagesMissingAltRule,
+    slowServerResponseRule,
+    largePagesRule,
+    uncompressedPagesRule,
+    renderBlockingResourcesRule,
+    // HTML, addresses and sharing.
+    htmlBasicsMissingRule,
+    deprecatedHtmlRule,
+    urlStructureRule,
+    socialTagsMissingRule,
+    faviconMissingRule,
+    // Resource scan.
+    brokenResourcesRule,
+    oversizedImagesRule,
+    uncachedStaticResourcesRule,
 ];
 /**
  * Page-speed rules are a separate list because they consume a

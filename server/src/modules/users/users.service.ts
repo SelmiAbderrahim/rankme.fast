@@ -49,6 +49,29 @@ export async function updateLanguagePreference(userId: string, language: Support
         throw HttpError.notFound({ code: 'ERRORS_USER_NOT_FOUND', messageKey: 'errors.userNotFound' });
     return resolveLanguagePreferenceOr(current.language, language);
 }
+
+/** The current user's saved dismissal of the optional security reminder. */
+export async function getTwoFactorRecommendationDismissedAt(userId: string): Promise<Date | null> {
+    const user = await User.findById(userId).select('twoFactorRecommendationDismissedAt').lean();
+    if (!user)
+        throw HttpError.notFound({ code: 'ERRORS_USER_NOT_FOUND', messageKey: 'errors.userNotFound' });
+    return user.twoFactorRecommendationDismissedAt ?? null;
+}
+
+/** Dismissal is idempotent: a later request retains the first timestamp. */
+export async function dismissTwoFactorRecommendation(userId: string): Promise<Date> {
+    const winner = await User.findOneAndUpdate(
+        { _id: userId, twoFactorRecommendationDismissedAt: null },
+        { $set: { twoFactorRecommendationDismissedAt: new Date() } },
+        { new: true },
+    ).select('twoFactorRecommendationDismissedAt').lean();
+    if (winner?.twoFactorRecommendationDismissedAt)
+        return winner.twoFactorRecommendationDismissedAt;
+    const current = await getTwoFactorRecommendationDismissedAt(userId);
+    if (!current)
+        throw HttpError.notFound({ code: 'ERRORS_USER_NOT_FOUND', messageKey: 'errors.userNotFound' });
+    return current;
+}
 /**
  * Booleans that gate every non-security mailer.
  * Security email (password reset, verification, password-changed) NEVER reads

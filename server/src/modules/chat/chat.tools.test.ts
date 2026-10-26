@@ -13,6 +13,7 @@ const mocks = vi.hoisted(() => ({
   startAuditForSite: vi.fn(),
   toPublicAuditRun: vi.fn(),
   listKeywords: vi.fn(),
+  summarizeSiteRankStates: vi.fn(),
   getKeywordHistoryBatch: vi.fn(),
   listAnalyses: vi.fn(),
   getAnalysis: vi.fn(),
@@ -35,6 +36,7 @@ vi.mock('../audits/index.js', () => ({
 }));
 vi.mock('../ranks/index.js', () => ({
   listKeywords: mocks.listKeywords,
+  summarizeSiteRankStates: mocks.summarizeSiteRankStates,
   getKeywordHistoryBatch: mocks.getKeywordHistoryBatch,
 }));
 vi.mock('../content-intelligence/index.js', () => ({
@@ -46,6 +48,7 @@ vi.mock('../mcp-permissions/index.js', () => ({
   getAccountMcpSpec: mocks.getAccountMcpSpec,
 }));
 
+import { HttpError } from '../../shared/utils/http-error.js';
 import { MCP_INPUT_SCHEMAS, MCP_TOOL_NAMES } from '../mcp/index.js';
 import { CHAT_TOOL_JSON_SCHEMAS, buildChatTools } from './chat.tools.js';
 
@@ -59,6 +62,11 @@ function queryResult<T>(value: T) {
   };
 }
 
+const RANK_STATES = {
+  baseline: 'previous_check', total: 0, counts: {},
+  movement: { compared: 0, improved: 0, declined: 0, unchanged: 0, failed: 0, unranked: 0, noPair: 0 },
+};
+
 beforeEach(() => {
   vi.clearAllMocks();
   mocks.getAccountMcpSpec.mockResolvedValue(null);
@@ -70,6 +78,7 @@ beforeEach(() => {
   );
   mocks.siteFind.mockReturnValue(queryResult([]));
   mocks.listKeywords.mockResolvedValue({ keywords: [] });
+  mocks.summarizeSiteRankStates.mockResolvedValue(RANK_STATES);
   mocks.startAuditForSite.mockResolvedValue({ id: 'run-1', status: 'queued' });
   mocks.getAuditRun.mockResolvedValue({
     run: { id: 'run-1', status: 'queued' },
@@ -143,6 +152,28 @@ describe('buildChatTools', () => {
       );
     });
 
+    it('tells the model list_sites is not needed, and says plainly when the linked site is gone', async () => {
+      const linked = await buildChatTools('account-1', 'en', null, SITE_ID);
+      expect(linked.tools.list_sites!.description).toContain('already has a linked site id');
+      const unlinked = await buildChatTools('account-1', 'en');
+      expect(unlinked.tools.list_sites!.description).not.toContain('already has a linked site id');
+
+      mocks.listKeywords.mockRejectedValue(
+        HttpError.notFound({ code: 'SITES_ERRORS_NOT_FOUND', messageKey: 'sites.errors.notFound' }),
+      );
+      const gone = await linked.tools.list_keywords!.execute({});
+      expect(gone).toMatchObject({
+        ok: false,
+        structuredContent: { error: { tool: 'list_keywords', code: 'mcp.errors.siteUnavailable' } },
+      });
+      // A site the model asked about explicitly keeps the ordinary not-found error.
+      const other = await linked.tools.list_keywords!.execute({ siteId: OTHER_SITE_ID });
+      expect(other).toMatchObject({
+        ok: false,
+        structuredContent: { error: { code: 'sites.errors.notFound' } },
+      });
+    });
+
     it('does not inject a siteId for non-site tools or malformed input', async () => {
       const { tools } = await buildChatTools('account-1', 'en', null, SITE_ID);
       const outcome = await tools.get_audit_status!.execute({ runId: SITE_ID });
@@ -165,6 +196,9 @@ describe('buildChatTools', () => {
     expect(tools.start_audit).toBeUndefined();
     expect(tools.get_rank_history).toBeUndefined();
     expect(tools.list_sites).toBeDefined();
+    // The names go into the system instruction so the model says they are switched off.
+    const { disabledTools } = await buildChatTools('account-1', 'en');
+    expect([...disabledTools].sort()).toEqual(['get_rank_history', 'start_audit']);
   });
 
   it('filters the site intersection: blocked site ≡ non-owned site tool error', async () => {
@@ -271,7 +305,7 @@ describe('buildChatTools', () => {
     const { tools } = await buildChatTools('account-1', 'en');
     const outcome = await tools.list_keywords!.execute({ siteId: SITE_ID });
     expect(outcome.ok).toBe(true);
-    expect(outcome.structuredContent).toEqual({ keywords: [], locale: 'en' });
+    expect(outcome.structuredContent).toEqual({ keywords: [], rankStates: RANK_STATES, locale: 'en' });
   });
 });
 

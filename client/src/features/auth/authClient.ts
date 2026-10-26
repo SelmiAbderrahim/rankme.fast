@@ -1,6 +1,7 @@
 import { createAuthClient } from 'better-auth/react';
 import { inferAdditionalFields, twoFactorClient } from 'better-auth/client/plugins';
 import { apiContextHeaders, resolveAbsoluteApiUrl } from '@shared/api/client';
+import { sessionTransport } from './sessionTransport';
 
 /**
  * Better Auth browser client. Session state lives in an httpOnly cookie set
@@ -19,9 +20,24 @@ export const addAuthLocaleHeader = <T extends { headers: Headers }>(context: T):
   return context;
 };
 
+let inlineTwoFactorDepth = 0;
+
+export const withInlineTwoFactor = async <T,>(run: () => Promise<T>): Promise<T> => {
+  inlineTwoFactorDepth += 1;
+  try {
+    return await run();
+  } finally {
+    inlineTwoFactorDepth -= 1;
+  }
+};
+
+export const redirectToTwoFactorChallenge = (location: Pick<Location, 'assign'> = window.location): void => {
+  if (inlineTwoFactorDepth === 0) location.assign('/two-factor');
+};
+
 export const authClient = createAuthClient({
   baseURL: resolveAbsoluteApiUrl('/auth'),
-  fetchOptions: { onRequest: addAuthLocaleHeader },
+  fetchOptions: { onRequest: addAuthLocaleHeader, customFetchImpl: sessionTransport },
   // Better Auth refetches the session on every tab focus (rate-limited to 5s)
   // and again whenever the last `useSession` consumer unmounts and a new one
   // mounts. `retainAuthSession` replaces both with one keep-alive subscription
@@ -41,6 +57,6 @@ export const authClient = createAuthClient({
         provisionalAccount: { type: 'boolean', input: false },
       },
     }),
-    twoFactorClient({ twoFactorPage: '/two-factor' }),
+    twoFactorClient({ onTwoFactorRedirect: () => redirectToTwoFactorChallenge() }),
   ],
 });

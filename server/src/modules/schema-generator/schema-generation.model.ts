@@ -10,7 +10,7 @@
  * a later crawl must never silently rewrite markup the user already copied.
  */
 import mongoose, { type HydratedDocument, type InferSchemaType } from 'mongoose';
-import { EVIDENCE_SOURCES } from './evidence.js';
+import { EVIDENCE_SOURCES } from './evidence-sources.js';
 import { OMISSION_REASONS, SUPPORTED_SCHEMA_TYPES } from './schema-types.registry.js';
 export const SCHEMA_GENERATION_STATUSES = ['complete', 'failed'] as const;
 export type SchemaGenerationStatus = (typeof SCHEMA_GENERATION_STATUSES)[number];
@@ -78,6 +78,12 @@ const schemaGenerationSchema = new mongoose.Schema({
         default: null,
     },
     provenance: { type: provenanceSchema, default: null },
+    /**
+     * The generation this one was rebuilt from with user-supplied facts. A
+     * rebuild makes no AI call and no vendor request, so it carries no AI
+     * provenance.
+     */
+    regeneratedFrom: { type: mongoose.Schema.Types.ObjectId, default: null },
 }, { timestamps: true });
 // The list route's only access path: newest first, owner-scoped.
 schemaGenerationSchema.index({ accountId: 1, createdAt: -1 });

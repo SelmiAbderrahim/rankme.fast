@@ -5,7 +5,7 @@ import { beforeEach, describe, expect, it } from 'vitest';
 import type { Site } from '@features/sites';
 import { changeLanguage, initI18n } from '@shared/i18n';
 import { createPermissiveMcpSettings } from '../mcpScopes';
-import type { McpPermissionSettings } from '../types';
+import { MCP_TOOL_GROUPS, MCP_TOOL_NAMES, type McpPermissionSettings } from '../types';
 import { McpScopeFields } from './McpScopeFields';
 
 const sites: Site[] = [
@@ -62,16 +62,25 @@ beforeEach(async () => {
 describe('McpScopeFields', () => {
   it('renders every account tool switch and updates tool and spend permissions', async () => {
     render(<Harness />);
-    expect(screen.getAllByRole('switch')).toHaveLength(11);
+    expect(screen.getAllByRole('switch')).toHaveLength(MCP_TOOL_NAMES.length + 1);
     const listSites = screen.getByRole('switch', { name: 'List sites' });
     const spend = screen.getByRole('switch', {
-      name: 'Allow tools that use plan allowance',
+      name: 'Allow tools that spend vendor budget',
     });
     expect(listSites).toBeChecked();
     await userEvent.click(listSites);
     await userEvent.click(spend);
     expect(listSites).not.toBeChecked();
     expect(spend).not.toBeChecked();
+  });
+
+  it('lists every tool in exactly one labelled group', () => {
+    const grouped = MCP_TOOL_GROUPS.flatMap((group) => [...group.tools]);
+    expect([...grouped].sort()).toEqual([...MCP_TOOL_NAMES].sort());
+    render(<Harness />);
+    expect(screen.getByText('Search Console and analytics')).toBeInTheDocument();
+    expect(screen.getByText('Backlinks and competitors')).toBeInTheDocument();
+    expect(screen.getByText(/never start crawls or lookups/)).toBeInTheDocument();
   });
 
   it('switches from all sites to a non-empty selection and edits that selection', async () => {

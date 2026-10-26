@@ -100,6 +100,35 @@ export const loadActions = createAsyncThunk<
   }
 });
 
+/**
+ * The ceiling the server accepts for one list page. Audit rules number well
+ * below it, so one page carries every resolved audit decision for a site.
+ */
+export const AUDIT_DECISIONS_LIMIT = 50;
+
+/**
+ * Resolved (dismissed / marked-fixed) audit findings for a site: a
+ * stored-data read that never spends. Counters built from the frozen report
+ * subtract these so work the owner already handled stops reading as open.
+ */
+export const loadAuditDecisions = createAsyncThunk<
+  { items: ListActionsResponse['items']; siteId: string },
+  { siteId: string } & Partial<PresentationRequestIdentity>,
+  { rejectValue: ActionsRejectPayload }
+>('actions/loadAuditDecisions', async (arg, { rejectWithValue, signal }) => {
+  const identity = requestIdentityFor(arg);
+  try {
+    const response = await listActionsApi({
+      siteId: arg.siteId,
+      filters: { source: ['audit_finding'], state: ['dismissed', 'completed'] },
+      limit: AUDIT_DECISIONS_LIMIT,
+    }, { signal, ...identity });
+    return { items: response.items, siteId: arg.siteId };
+  } catch (err) {
+    return rejectWithValue(normalizeError(err));
+  }
+});
+
 export const loadActionHistory = createAsyncThunk<
   { response: ActionHistoryResponse; actionId: string },
   { siteId: string; actionId: string } & Partial<PresentationRequestIdentity>,

@@ -13,6 +13,7 @@ const catalog = vi.hoisted(() => ({
     ],
     loading: false,
     error: false,
+    retry: vi.fn(),
   },
 }));
 
@@ -51,6 +52,7 @@ beforeEach(() => {
     ],
     loading: false,
     error: false,
+    retry: vi.fn(),
   };
 });
 
@@ -83,7 +85,7 @@ describe('MarketSelects', () => {
   });
 
   it('does not invent a location or language from an empty catalog', () => {
-    catalog.current = { markets: [], loading: false, error: false };
+    catalog.current = { markets: [], loading: false, error: false, retry: vi.fn() };
     const view = renderSelects({ locationCode: 9999, languageCode: 'en' });
     expect(view.props.onLocationChange).not.toHaveBeenCalled();
     expect(view.props.onLanguageChange).not.toHaveBeenCalled();
@@ -95,6 +97,7 @@ describe('MarketSelects', () => {
       markets: [{ countryCode: 'US', locationCode: 2840, languageCodes: [] }],
       loading: false,
       error: false,
+      retry: vi.fn(),
     };
     const view = renderSelects({ locationCode: 2840, languageCode: 'zz' });
     expect(view.props.onLanguageChange).not.toHaveBeenCalled();
@@ -119,6 +122,60 @@ describe('MarketSelects', () => {
     const errored = renderSelects({ locationCode: 9999, languageCode: 'zz' });
     expect(screen.getByRole('alert')).toHaveTextContent('Countries could not be loaded. Try again.');
     expect(errored.props.onLocationChange).not.toHaveBeenCalled();
+  });
+
+  it('reports automatic corrections to the adjust handlers, not the change handlers', () => {
+    const onLocationAdjust = vi.fn();
+    const onLanguageAdjust = vi.fn();
+    const view = renderSelects({ locationCode: 9999, languageCode: 'zz', onLocationAdjust, onLanguageAdjust });
+    expect(onLocationAdjust).toHaveBeenCalledWith(2840);
+    expect(onLanguageAdjust).toHaveBeenCalledWith('en');
+    expect(view.props.onLocationChange).not.toHaveBeenCalled();
+    expect(view.props.onLanguageChange).not.toHaveBeenCalled();
+  });
+
+  it('offers only the countries a view supports and corrects a starting market outside them', async () => {
+    catalog.current = {
+      ...catalog.current,
+      markets: [
+        { countryCode: 'SA', locationCode: 2682, languageCodes: ['ar', 'en'] },
+        ...catalog.current.markets,
+      ],
+    };
+    const onLocationAdjust = vi.fn();
+    const user = userEvent.setup();
+    renderSelects({ locationCode: 2682, languageCode: 'ar', countryCodes: ['US', 'FR'], onLocationAdjust });
+    expect(onLocationAdjust).toHaveBeenCalledWith(2840);
+    await user.click(screen.getByTestId('market-location'));
+    expect(screen.queryByRole('option', { name: /Saudi Arabia/ })).toBeNull();
+    expect(screen.getByRole('option', { name: /France/ })).toBeInTheDocument();
+  });
+
+  it('prefers the interface-language market and language before catalog order', async () => {
+    await i18n.changeLanguage('fr');
+    catalog.current = {
+      ...catalog.current,
+      markets: [
+        { countryCode: 'US', locationCode: 2840, languageCodes: ['en'] },
+        { countryCode: 'FR', locationCode: 2250, languageCodes: ['en', 'fr'] },
+      ],
+    };
+    const onLocationAdjust = vi.fn();
+    const onLanguageAdjust = vi.fn();
+    renderSelects({ locationCode: 9999, languageCode: 'zz', onLocationAdjust, onLanguageAdjust });
+    expect(onLocationAdjust).toHaveBeenCalledWith(2250);
+    // The language is corrected against a market that is not selected yet, so the shared fallback list applies.
+    expect(onLanguageAdjust).toHaveBeenCalled();
+    await i18n.changeLanguage('en');
+  });
+
+  it('lets the owner retry a failed country list', async () => {
+    const retry = vi.fn();
+    catalog.current = { ...catalog.current, error: true, retry };
+    const user = userEvent.setup();
+    renderSelects({ locationCode: 2840 });
+    await user.click(screen.getByRole('button', { name: 'Try again' }));
+    expect(retry).toHaveBeenCalledTimes(1);
   });
 
   it('ignores a combobox selection that has no provider location code', async () => {

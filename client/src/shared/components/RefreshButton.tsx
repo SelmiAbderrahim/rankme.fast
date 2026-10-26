@@ -1,7 +1,7 @@
 /**
  * Shared manual-refresh trigger for vendor-backed panels.
  *
- * One pattern for every panel: a ghost icon button that spins while the
+ * One pattern for every panel: a ghost (or outline) icon button that spins while the
  * refresh is in flight and shows a live countdown while the server-imposed
  * cooldown is active. Panel-local state only — a refresh is an action, not
  * navigation, so it never touches the URL (`?tab=` stays the only tab state).
@@ -22,6 +22,13 @@ export interface RefreshButtonProps {
   /** i18n key for the countdown text; receives `{{seconds}}`. */
   cooldownKey: string;
   disabled?: boolean;
+  /**
+   * `ghost` (default) for a secondary refresh beside data; `outline` when the
+   * refresh IS the panel's main action and must not read as disabled.
+   */
+  variant?: 'ghost' | 'outline';
+  /** Id of the element that says why the button is disabled. */
+  describedBy?: string;
   'data-testid'?: string;
 }
 
@@ -37,6 +44,8 @@ export const RefreshButton = ({
   labelKey,
   cooldownKey,
   disabled = false,
+  variant = 'ghost',
+  describedBy,
   'data-testid': testId,
 }: RefreshButtonProps) => {
   const { t } = useTranslation();
@@ -56,17 +65,18 @@ export const RefreshButton = ({
 
   const coolingDown = remaining > 0;
   const label = coolingDown
-    ? t(cooldownKey, { seconds: remaining })
+    ? t(cooldownKey, { count: remaining, seconds: remaining })
     : t(labelKey);
 
   return (
     <Button
       type="button"
-      variant="ghost"
+      variant={variant}
       size="sm"
       onClick={onRefresh}
       disabled={disabled || isRefreshing || coolingDown}
       aria-label={label}
+      aria-describedby={describedBy}
       data-testid={testId}
     >
       <RefreshCw

@@ -6,9 +6,10 @@
  * chart label / caption honest for the 7d/90d ranges (defaults to 28).
  */
 import { useTranslation } from 'react-i18next';
-import { formatInt, formatPercent, formatPosition } from '../lib/format';
+import { formatInt } from '../lib/format';
 import { MetricTimeseriesChart } from './MetricTimeseriesChart';
 import type { GscSummaryTimeseriesPoint } from '../types';
+import { MetricValue } from '@shared/components/MetricValue';
 
 export interface GscTimeseriesChartProps {
   points: GscSummaryTimeseriesPoint[];
@@ -49,21 +50,27 @@ export const GscTimeseriesChart = ({ points, days = 28 }: GscTimeseriesChartProp
         {
           id: 'ctr',
           header: t('searchSummary.ctr'),
-          format: (locale, p) => formatPercent(locale, p.ctr),
+          // No impressions means no CTR or position, not 0.
+          format: (_locale, p) => <MetricValue kind="ratio" value={p.ctr} denominator={p.impressions} />,
         },
         {
           id: 'position',
           header: t('searchSummary.position'),
-          format: (locale, p) => formatPosition(locale, p.position),
+          format: (_locale, p) => (
+            <MetricValue kind="position" value={p.position} denominator={p.impressions} />
+          ),
         },
       ]}
       chartLabel={(metric) =>
-        t('searchSummary.timeseriesChartLabel', { metric, days })
+        t('searchSummary.timeseriesChartLabel', { count: days, metric, days })
       }
       metricGroupLabel={t('searchSummary.metricLabel')}
-      tableCaption={t('searchSummary.timeseriesTableCaption', { days })}
+      tableCaption={t('searchSummary.timeseriesTableCaption', { count: days, days })}
       dateHeader={t('searchSummary.tableDate')}
       emptyLabel={t('searchSummary.timeseriesEmpty')}
+      noActivityLabel={(metricId) =>
+        t(metricId === 'impressions' ? 'searchSummary.timeseriesNoImpressions' : 'searchSummary.timeseriesNoClicks')
+      }
       testIdPrefix="gsc-timeseries"
     />
   );

@@ -16,7 +16,10 @@ import { ApiError, apiClient } from '@shared/api/client';
 import { changeLanguage, i18n, initI18n } from '@shared/i18n';
 import type { AuthSessionState } from '@features/auth';
 import { ReviewRunList } from './components/ReviewRunList';
-import { ReviewSourcesPanel } from './components/ReviewSourcesPanel';
+import {
+  GOOGLE_PLACE_ID_FINDER_URL,
+  ReviewSourcesPanel,
+} from './components/ReviewSourcesPanel';
 import { ReviewThemeCards } from './components/ReviewThemeCards';
 import { ReviewTrendChart } from './components/ReviewTrendChart';
 import { ReviewsPanel } from './components/ReviewsPanel';
@@ -178,6 +181,26 @@ describe('run list edges', () => {
 });
 
 describe('source setup edges', () => {
+  it('explains the Google Place ID and links to Google\'s official finder in a new tab', () => {
+    renderNode(<ReviewSourcesPanel profileId="site-1" />);
+    const input = screen.getByTestId('reviews-source-input-google');
+    // The shared field feedback names the hint after the control.
+    expect(input).toHaveAttribute('aria-describedby', `${input.id}-hint`);
+    expect(screen.getByTestId('reviews-source-help-google')).toHaveAttribute('id', `${input.id}-hint`);
+    expect(screen.getByTestId('reviews-source-help-google')).toHaveTextContent(
+      "A Place ID is Google's code for your business listing.",
+    );
+    const link = screen.getByRole('link', { name: /Open Google's Place ID Finder/ });
+    expect(link).toHaveAttribute('href', GOOGLE_PLACE_ID_FINDER_URL);
+    expect(link).toHaveAttribute('target', '_blank');
+    expect(link).toHaveAttribute('rel', 'noopener noreferrer');
+    expect(link).toHaveTextContent('Opens in a new tab');
+    // Only the Google row needs a finder; the other directories stay plain.
+    expect(screen.getByTestId('reviews-source-input-trustpilot')).not.toHaveAttribute(
+      'aria-describedby',
+    );
+  });
+
   it('ignores a whitespace-only target instead of calling the API', () => {
     renderNode(<ReviewSourcesPanel profileId="site-1" />);
     const input = screen.getByTestId('reviews-source-input-google');
@@ -327,7 +350,7 @@ describe('panel refusal sources', () => {
       throw new Error(`unexpected ${path}`);
     });
     renderNode(<ReviewsPanel siteId="site-1" />);
-    await user.type(await screen.findByTestId('reviews-source-input-google'), 'ChIJabc');
+    await user.type(await screen.findByTestId('reviews-source-input-google'), 'ChIJabcdefghijklmnopqrstuv');
     await user.click(screen.getByTestId('reviews-source-save-google'));
     expect(await screen.findByTestId('reviews-kill-switch')).toHaveTextContent(
       'Review setup is paused.',

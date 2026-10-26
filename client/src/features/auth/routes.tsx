@@ -40,16 +40,12 @@ export const authRoutes: RouteObject[] = [
   },
   {
     path: 'reset-password',
-    element: (
-      <RedirectIfAuthed>
-        <ResetPassword />
-      </RedirectIfAuthed>
-    ),
+    element: <ResetPassword />,
   },
   { path: 'logout', element: <Logout /> },
   // Better Auth lands here with `?token=` (or `?error=`) after the server
-  // pre-checks the emailed link — handled by the RedirectIfAuthed-wrapped
-  // `reset-password` route above.
+  // pre-checks the emailed link. The token is also valid for a signed-in
+  // social account setting its first password.
   { path: 'verify-email', element: <VerifyEmail /> },
   // Second-factor challenge screen. Better Auth's client redirects here on a
   // successful primary auth when the account has a verified second factor;

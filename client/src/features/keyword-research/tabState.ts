@@ -11,6 +11,8 @@
  *   - gap view:      `pair` (competitor domain), `gapFilter` (all|missing|behind),
  *                    `q` (bounded text filter)
  *   - clusters view: `run` (64-hex run id), `decision` (all|pending|accepted|dismissed)
+ *   - research view: `stored` (history row UUID), the stored-results view of a
+ *                    past lookup; refresh and back/forward keep it
  */
 import { useCallback, useEffect, useMemo } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
@@ -222,6 +224,8 @@ export function isClusterDecisionFilter(
 /** Server run ids are 64 lowercase hex chars (`runIdParamSchema` mirror). */
 const RUN_ID_RE = /^[a-f0-9]{64}$/;
 /** Pair selection carries a normalized competitor domain. */
+/** History row ids are UUIDs (`historyIdParamSchema` mirror). */
+const HISTORY_ID_RE = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/;
 const PAIR_RE = /^[a-z0-9]([a-z0-9.-]{1,251})[a-z0-9]$/;
 /** Bounded text filter — mirrors the 80-char phrase ceiling. */
 const MAX_Q_LENGTH = 80;
@@ -232,6 +236,7 @@ export interface KeywordWorkspaceQueryState {
   q: string;
   run: string | null;
   decision: ClusterDecisionFilter;
+  stored: string | null;
 }
 
 /**
@@ -249,6 +254,7 @@ export function parseKeywordWorkspaceQuery(
   const qRaw = params.get('q') ?? '';
   const runRaw = params.get('run') ?? '';
   const decision = params.get('decision');
+  const storedRaw = (params.get('stored') ?? '').toLowerCase();
   return {
     pair: PAIR_RE.test(pairRaw) ? pairRaw : null,
     gapFilter: isGapRowFilter(gapFilter) ? gapFilter : DEFAULT_GAP_ROW_FILTER,
@@ -257,6 +263,7 @@ export function parseKeywordWorkspaceQuery(
     decision: isClusterDecisionFilter(decision)
       ? decision
       : DEFAULT_CLUSTER_DECISION_FILTER,
+    stored: HISTORY_ID_RE.test(storedRaw) ? storedRaw : null,
   };
 }
 
@@ -266,6 +273,7 @@ const DEFAULTS: Record<keyof KeywordWorkspaceQueryState, string | null> = {
   q: '',
   run: null,
   decision: DEFAULT_CLUSTER_DECISION_FILTER,
+  stored: null,
 };
 
 /**

@@ -7,8 +7,8 @@ import { toSupportedLocale } from '../../shared/i18n/index.js';
 import { env } from '../../config/env.js';
 import { db as productionDb } from '../../db/client.js';
 import { getContentAnalysisQueue, getContentIntelligenceDb, } from './content-intelligence.holders.js';
-import { cancelAnalysis, getAnalysis, listAnalyses, preflightAnalysis, regenerateAnalysis, saveBriefVersion, saveDraftVersion, startAnalysis, } from './content-intelligence.service.js';
-import { analysisIdParamsSchema, createAnalysisBodySchema, getAnalysisQuerySchema, listAnalysesQuerySchema, preflightAnalysisBodySchema, regenerateAnalysisBodySchema, saveBriefVersionBodySchema, saveDraftVersionBodySchema, applyRecommendationBodySchema, recommendationMutationBodySchema, recommendationParamsSchema, siteIdParamsSchema, } from './content-intelligence.schema.js';
+import { cancelAnalysis, getAnalysis, getAnalysisStatus, listAnalyses, preflightAnalysis, previewAnalysisRetry, regenerateAnalysis, retryAnalysis, saveBriefVersion, saveDraftVersion, startAnalysis, } from './content-intelligence.service.js';
+import { analysisIdParamsSchema, createAnalysisBodySchema, getAnalysisQuerySchema, listAnalysesQuerySchema, preflightAnalysisBodySchema, regenerateAnalysisBodySchema, retryAnalysisBodySchema, saveBriefVersionBodySchema, saveDraftVersionBodySchema, applyRecommendationBodySchema, recommendationMutationBodySchema, recommendationParamsSchema, siteIdParamsSchema, } from './content-intelligence.schema.js';
 import { getRecommendationApplicationCheck, listRecommendationHistory, mutateRecommendation, type RecommendationAction, } from './content-recommendation.service.js';
 import { getRecommendationOutcome } from './content-recommendation-outcomes.service.js';
 export function resolveContentIntelligenceDb() {
@@ -134,6 +134,44 @@ export const regenerateAnalysisController = asyncHandler(async (req: Request, re
         accountId: accountId,
         ownerUserId: user.id,
         analysisId: params.analysisId,
+    }, {
+        db: resolveContentIntelligenceDb(),
+        contentAnalysisQueue: getContentAnalysisQueue(),
+    });
+    sendLocalizedMessage(req, res, 202, 'contentIntelligence.messages.started', {
+        analysisId: result.analysisId,
+        status: result.status,
+        duplicate: result.duplicate,
+    });
+});
+/**
+ * GET /api/content-analyses/:analysisId/status — slim job status for the
+ * progress screen. A read, so it stays open when the product flag is off.
+ */
+export const getAnalysisStatusController = asyncHandler(async (req: Request, res: Response) => {
+    const accountId = requireAccountId(req);
+    const params = analysisIdParamsSchema.parse(req.params);
+    res.status(200).json(await getAnalysisStatus({ accountId, analysisId: params.analysisId }));
+});
+/** GET /api/content-analyses/:analysisId/retry — what a Try again would run, before the user confirms. */
+export const previewAnalysisRetryController = asyncHandler(async (req: Request, res: Response) => {
+    const accountId = requireAccountId(req);
+    requireContentIntelligenceEnabled();
+    const params = analysisIdParamsSchema.parse(req.params);
+    res.status(200).json(await previewAnalysisRetry({ accountId, analysisId: params.analysisId }));
+});
+/** POST /api/content-analyses/:analysisId/retry — a fresh run after a retryable failure. */
+export const retryAnalysisController = asyncHandler(async (req: Request, res: Response) => {
+    const accountId = requireAccountId(req);
+    requireContentIntelligenceEnabled();
+    const user = requireUser(req);
+    const params = analysisIdParamsSchema.parse(req.params);
+    const body = retryAnalysisBodySchema.parse(req.body);
+    const result = await retryAnalysis({
+        accountId,
+        ownerUserId: user.id,
+        analysisId: params.analysisId,
+        consent: body.consent,
     }, {
         db: resolveContentIntelligenceDb(),
         contentAnalysisQueue: getContentAnalysisQueue(),

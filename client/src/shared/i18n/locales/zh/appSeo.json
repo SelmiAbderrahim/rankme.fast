@@ -13,12 +13,11 @@
   },
   "locked": {
     "title": "应用商店优化适用于 Pro 套餐",
-    "description": "升级到 Pro 或更高套餐，即可注册应用资料并打开此工作区。",
-    "cta": "查看套餐"
+    "description": "升级到 Pro 或更高套餐，即可注册应用资料并打开此工作区。"
   },
   "registration": {
     "title": "注册应用",
-    "description": "添加 Google Play 软件包 ID、App Store ID，或同时添加两者。注册只检查格式，不消耗供应商额度。",
+    "description": "添加 Google Play 软件包 ID、App Store ID，或同时添加两者。注册只检查格式，不会获取任何数据。",
     "playLabel": "Google Play 软件包 ID",
     "playPlaceholder": "例如：com.example.app",
     "playHelp": "请输入 Google Play 中显示的反向域名格式软件包 ID。",
@@ -27,7 +26,6 @@
     "appleHelp": "请输入 6 至 12 位数字应用 ID。",
     "pairedLabel": "将两个商店页面视为同一应用",
     "pairedHelp": "仅当两个页面代表同一产品时才进行配对。",
-    "usage": "已用 {{used}} 个，共 {{limit}} 个资料",
     "submit": "注册应用",
     "registering": "正在注册…"
   },
@@ -46,7 +44,6 @@
   "states": {
     "limitTitle": "已达到应用资料上限",
     "limitDescription": "删除一个资料以释放名额，或选择允许更多应用资料的套餐。",
-    "upgrade": "查看套餐",
     "errorTitle": "无法更新应用资料"
   },
   "validation": {

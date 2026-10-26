@@ -21,6 +21,8 @@ Abre un sitio y elige **Competidores**. La cartera, los panoramas de palabras cl
 
 Las cuentas Starter ven la explicación para mejorar el plan. Si un operador pausa los trabajos nuevos, los informes guardados siguen disponibles. Un cambio de plan también puede dejar los datos existentes en modo de solo lectura.
 
+Abrir **Backlinks** o **Competidores** lee los datos que RankMeFast ya guardó, aunque sean más antiguos que el periodo de caché, y nunca llama al proveedor de datos. Solo se obtienen datos nuevos cuando eliges **Actualizar**. **Cargar más** en la lista de backlinks pide la página siguiente al proveedor y lo avisa antes de usarlo. Una lista de competidores que nunca se ha revisado muestra **Competidores aún sin revisar** hasta que actualices.
+
 ## Unidades y confirmación
 
 Un informe de panorama consume una unidad `keyword_lookups` por competidor seleccionado. Comparar tres competidores consume tres unidades. Antes de confirmar, RankMeFast muestra cuántas unidades y filas usará el informe. Los resultados en caché también cuentan. La actualización del descubrimiento es opcional. Usa una unidad `keyword_lookups` más, y solo después de su propia vista previa y confirmación.

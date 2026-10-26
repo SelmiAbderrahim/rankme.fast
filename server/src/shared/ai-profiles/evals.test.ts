@@ -19,12 +19,12 @@ import { INITIAL_AI_PROFILE_NAMES, type InitialAiProfileName } from './types.js'
 
 const fixtureSchema = z.object({
   profile: z.enum(INITIAL_AI_PROFILE_NAMES),
-  valid: z.object({ input: z.record(z.unknown()), locale: z.string(), output: z.record(z.unknown()) }),
+  valid: z.object({ input: z.record(z.string(), z.unknown()), locale: z.string(), output: z.record(z.string(), z.unknown()) }),
   injection: z.string(),
   inventedCitation: z.string(),
   excessiveInput: z.object({ path: z.string(), characters: z.number().int().positive() }),
   wrongLocale: z.string(),
-  malformed: z.record(z.unknown()),
+  malformed: z.record(z.string(), z.unknown()),
   vendorFailover: z.tuple([z.string(), z.literal('success')]),
   budgetRefusal: z.literal(true),
   safetyRefusal: z.literal(true),

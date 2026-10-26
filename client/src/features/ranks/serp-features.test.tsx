@@ -1,3 +1,4 @@
+import { isolateText } from '@shared/lib/bidi';
 /**
  * SERP features panel.
  *
@@ -134,6 +135,19 @@ beforeEach(async () => {
 });
 
 describe('SerpFeaturesPanel — list states', () => {
+  it('keeps the export at the end of the title row', async () => {
+    mocked.fetchSerpFeaturesRequest.mockResolvedValue(list([]));
+    renderPanel();
+    await screen.findByTestId('serp-features-empty');
+    const header = screen.getByTestId('serp-features-header');
+    expect(
+      within(header).getByRole('heading', { level: 2, name: 'SERP features' }),
+    ).toHaveClass('text-2xl');
+    expect(within(header).getByRole('heading').parentElement).toHaveClass('min-w-0', 'flex-1');
+    const actions = screen.getByTestId('serp-features-header-actions');
+    expect(actions).toHaveClass('ms-auto', 'items-end', 'max-w-xs', 'shrink-0');
+  });
+
   it('renders the skeleton while the first read is in flight', async () => {
     let resolve!: (value: SerpFeaturesResponse) => void;
     mocked.fetchSerpFeaturesRequest.mockReturnValue(
@@ -273,6 +287,10 @@ describe('SerpFeaturesPanel — list states', () => {
     mocked.fetchSerpFeaturesRequest.mockResolvedValue(list([]));
     renderPanel();
     expect(await screen.findByTestId('serp-features-empty')).toHaveTextContent('Track a keyword');
+    expect(screen.getByTestId('serp-features-empty-cta')).toHaveAttribute(
+      'href', '/sites/site-1?tab=keywords',
+    );
+    expect(screen.getByTestId('serp-features-empty-cta')).toHaveTextContent('Track keywords');
   });
 
   it('keeps stored rows visible with a non-blocking banner when new capture is paused', async () => {
@@ -340,7 +358,7 @@ describe('SerpFeaturesPanel — per-keyword drill-in', () => {
       within(historyChart).getByTestId('serp-features-history-marker-people_also_ask-1'),
     ).toHaveClass('bg-chart-3');
     expect(within(historyTable).getAllByRole('row')).toHaveLength(3);
-    expect(within(historyTable).getByText('Yes (1 answers)')).toBeInTheDocument();
+    expect(within(historyTable).getByText('Yes (1 answer)')).toBeInTheDocument();
     expect(within(historyTable).getByText('No')).toBeInTheDocument();
 
     await user.click(screen.getByRole('button', { name: /Back to all keywords/ }));
@@ -379,7 +397,7 @@ describe('SerpFeaturesPanel — per-keyword drill-in', () => {
     );
     renderPanel('/sites/site-1?tab=serp-features&keyword=kw-1');
     expect(await screen.findByTestId('serp-feature-snippet-source')).toHaveTextContent(
-      'Featured snippet held by rival-one.example',
+      `Featured snippet held by ${isolateText('rival-one.example')}`,
     );
     expect(screen.queryByTestId('serp-feature-owned-snippet')).not.toBeInTheDocument();
   });

@@ -47,6 +47,7 @@ export const listHandler: RequestHandler = asyncHandler(async (req, res) => {
         accountId,
         siteId,
         ...(query.cursor ? { cursor: query.cursor } : {}),
+        ...(query.fresh ? { fresh: true } : {}),
         limit: query.limit ?? DEFAULT_BACKLINKS_LIST_LIMIT,
     }, {
         db: getBacklinksDb(),

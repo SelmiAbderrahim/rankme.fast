@@ -4,7 +4,9 @@ import { HttpError } from '../../shared/utils/http-error.js';
 import type { ReportExportAdapter } from '../report-exports/index.js';
 import { getSite } from '../sites/index.js';
 import { getAuditRun, resolveOwnedAuditRunSiteId } from './audits.service.js';
+import { deepCrawlEvidenceLines } from './deep-crawl-evidence.js';
 import { getAuditReport, type AuditReport } from './report.service.js';
+import { metricOrNull, percentOrNull } from '../../shared/utils/metric-value.js';
 const AUDIT_SECTIONS = [
     'findings',
     'pagespeed',
@@ -110,7 +112,7 @@ function sourceDates(locale: ReportDocumentV1['locale'], finishedAt: string, rep
     }
     return dates;
 }
-function auditBlocks(locale: ReportDocumentV1['locale'], report: AuditReport, selection: AuditExportSelection): {
+function auditBlocks(locale: ReportDocumentV1['locale'], report: AuditReport, selection: AuditExportSelection, format?: string): {
     blocks: ReportBlockV1[];
     findingCount: number;
 } {
@@ -152,7 +154,7 @@ function auditBlocks(locale: ReportDocumentV1['locale'], report: AuditReport, se
                     ? { pass: finding.copy.passedLabel }
                     : { fix: finding.copy.fix }),
                 affectedUrls: [...finding.affectedUrls].sort(),
-                evidence: [],
+                evidence: deepCrawlEvidenceLines(finding.meta),
                 sourceDateId: 'audit-observation',
             })),
         });
@@ -169,6 +171,32 @@ function auditBlocks(locale: ReportDocumentV1['locale'], report: AuditReport, se
                 sourceDateId: 'audit-derived',
             })),
         }));
+        // Every source → target pair behind a broken-links finding, with the
+        // result of re-requesting the target. Dismissed rows are kept: an
+        // export that hid them could not show why the finding shrank. A CSV
+        // carries exactly one canonical table (the change list above), so the
+        // evidence table is left to the PDF and JSON exports.
+        const brokenLinks = findings.find((finding) => finding.ruleId === 'broken-internal-links');
+        if (format !== 'csv' &&
+            brokenLinks?.brokenLinkEvidence &&
+            brokenLinks.brokenLinkEvidence.length > 0) {
+            blocks.push(reportTable({
+                id: 'audit-broken-link-evidence',
+                columns: [
+                    { key: 'source', label: reportCopy(locale, 'fields.sourcePage'), valueType: 'string' },
+                    { key: 'target', label: reportCopy(locale, 'fields.targetUrl'), valueType: 'string' },
+                    { key: 'outcome', label: reportCopy(locale, 'fields.outcome'), valueType: 'string' },
+                    { key: 'status', label: reportCopy(locale, 'fields.httpStatus'), valueType: 'number' },
+                    { key: 'failure', label: reportCopy(locale, 'fields.failure'), valueType: 'string' },
+                    { key: 'final-url', label: reportCopy(locale, 'fields.finalUrl'), valueType: 'string' },
+                ],
+                rows: brokenLinks.brokenLinkEvidence.map((row, index) => ({
+                    id: `broken-link-${index + 1}`,
+                    values: [row.source, row.target, row.outcome, row.status, row.failure ?? null, row.finalUrl ?? null],
+                    sourceDateId: 'audit-observation',
+                })),
+            }));
+        }
     }
     if (enabled.has('pagespeed')) {
         blocks.push({ type: 'heading', id: 'pagespeed-heading', level: 2, text: reportCopy(locale, 'sections.pageSpeed') });
@@ -219,9 +247,10 @@ function auditBlocks(locale: ReportDocumentV1['locale'], report: AuditReport, se
                 type: 'kpi_group', id: 'gsc-totals', items: [
                     ['clicks', 'fields.clicks', report.gscSearch.totalClicks],
                     ['impressions', 'fields.impressions', report.gscSearch.totalImpressions],
-                    ['ctr', 'fields.ctr', report.gscSearch.averageCtr * 100],
-                    ['position', 'fields.position', report.gscSearch.averagePosition],
-                ].map(([id, key, value]) => ({ id: String(id), label: reportCopy(locale, String(key)), value: { type: 'number' as const, value: Number(value) }, ...(id === 'ctr' ? { unit: '%' } : {}), sourceDateId: 'audit-gsc' })),
+                    // No impressions means no CTR or position (null), never 0.
+                    ['ctr', 'fields.ctr', percentOrNull(report.gscSearch.averageCtr, report.gscSearch.totalImpressions)],
+                    ['position', 'fields.position', metricOrNull('position', report.gscSearch.averagePosition, report.gscSearch.totalImpressions)],
+                ].map(([id, key, value]) => ({ id: String(id), label: reportCopy(locale, String(key)), value: value === null ? { type: 'null' as const, value: null } : { type: 'number' as const, value: Number(value) }, ...(id === 'ctr' ? { unit: '%' } : {}), sourceDateId: 'audit-gsc' })),
             });
             const analyticsColumns = [
                 { key: 'item', label: reportCopy(locale, 'fields.item'), valueType: 'string' as const },
@@ -230,8 +259,8 @@ function auditBlocks(locale: ReportDocumentV1['locale'], report: AuditReport, se
                 { key: 'ctr', label: reportCopy(locale, 'fields.ctr'), valueType: 'number' as const, unit: '%' },
                 { key: 'position', label: reportCopy(locale, 'fields.position'), valueType: 'number' as const },
             ];
-            blocks.push(reportTable({ id: 'gsc-queries', columns: analyticsColumns, rows: report.gscSearch.topQueries.map((row, index) => ({ id: `query-${index + 1}`, values: [row.query, row.clicks, row.impressions, row.ctr * 100, row.position], sourceDateId: 'audit-gsc' })) }));
-            blocks.push(reportTable({ id: 'gsc-pages', columns: analyticsColumns, rows: report.gscSearch.topPages.map((row, index) => ({ id: `page-${index + 1}`, values: [row.url, row.clicks, row.impressions, row.ctr * 100, row.position], sourceDateId: 'audit-gsc' })) }));
+            blocks.push(reportTable({ id: 'gsc-queries', columns: analyticsColumns, rows: report.gscSearch.topQueries.map((row, index) => ({ id: `query-${index + 1}`, values: [row.query, row.clicks, row.impressions, percentOrNull(row.ctr, row.impressions), metricOrNull('position', row.position, row.impressions)], sourceDateId: 'audit-gsc' })) }));
+            blocks.push(reportTable({ id: 'gsc-pages', columns: analyticsColumns, rows: report.gscSearch.topPages.map((row, index) => ({ id: `page-${index + 1}`, values: [row.url, row.clicks, row.impressions, percentOrNull(row.ctr, row.impressions), metricOrNull('position', row.position, row.impressions)], sourceDateId: 'audit-gsc' })) }));
         }
         if (report.indexStatus?.status === 'ok') {
             blocks.push(reportTable({
@@ -402,7 +431,7 @@ export function createAuditReportExportAdapter(): ReportExportAdapter<AuditExpor
                         REPORT_MAX_AFFECTED_URLS_PER_FINDING))) {
                 throw new HttpError(422, { code: 'REPORT_EXPORTS_ERRORS_SCOPE_TOO_LARGE', messageKey: 'reportExports.errors.scopeTooLarge' }, { code: 'scope_too_large', narrowingFields: ['buckets', 'sections'] });
             }
-            const built = auditBlocks(context.locale, report, context.selection);
+            const built = auditBlocks(context.locale, report, context.selection, context.format);
             const document: ReportDocumentV1 = {
                 schema: REPORT_DOCUMENT_SCHEMA,
                 schemaVersion: REPORT_DOCUMENT_SCHEMA_VERSION,

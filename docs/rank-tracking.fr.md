@@ -22,6 +22,12 @@ Depuis la vue du site, utilisez **Ajouter un mot-clé**. Nous vérifions votre p
 ## Hebdo ou quotidien
 Toutes les offres incluent un contrôle **hebdomadaire**. Le contrôle **quotidien** est une option payante.
 
+## Ajouter plusieurs mots-clés à la fois
+Saisissez ou collez une liste dans **Ajouter un mot-clé**. Une virgule ou un retour à la ligne termine un mot-clé : coller `seo audit, rank tracker` en ajoute deux. Jusqu’à 100 mots-clés peuvent être ajoutés par envoi. Les mots-clés déjà suivis sont ignorés, et RankMeFast vous indique lesquels.
+
+## Vérifier maintenant
+**Vérifier maintenant** lance un contrôle tout de suite au lieu d’attendre le prochain contrôle planifié. Sur une ligne de mot-clé, il contrôle ce mot-clé ; en haut de la liste, il contrôle tous les mots-clés actifs. Une confirmation indique ce qui sera contrôlé avant tout lancement. Le contrôle de tout le site s’exécute en arrière-plan comme une seule tâche : vous pouvez quitter la page et revenir, et le résultat indique combien de mots-clés ont été contrôlés, combien ont échoué et combien n’ont pas été atteints à temps. Un mot-clé jamais atteint n’est pas présenté comme un contrôle en échec.
+
 ## Graphique de tendance
 Sélectionnez un mot-clé pour afficher sa courbe, accompagnée d’un tableau de données accessible.
 

@@ -25,6 +25,7 @@ import { Alert, AlertDescription } from '@shared/ui/alert';
 import { Button } from '@shared/ui/button';
 import { Label } from '@shared/ui/label';
 import { Textarea } from '@shared/ui/textarea';
+import { RadioGroup, RadioGroupItem } from '@shared/ui/radio-group';
 import { useAppDispatch, useAppSelector } from '@shared/hooks/redux';
 import {
   selectActionConflict,
@@ -33,7 +34,7 @@ import {
 } from '../store/selectors';
 import { submitActionState } from '../store/thunks';
 import { clearActionErrors } from '../store/slice';
-import type { ActionState } from '../types';
+import { DISMISSAL_REASONS, type ActionState, type DismissalReason } from '../types';
 
 export const ACTION_NOTE_MAX_LENGTH = 500;
 
@@ -60,6 +61,11 @@ export interface StateChangeDialogProps {
    * the only moment a manual `.focus()` sticks in a real browser.
    */
   onCloseAutoFocus?: (event: Event) => void;
+  /**
+   * Ask why before dismissing: audit findings record a reason with the
+   * dismissal. Only applies when `targetState` is `dismissed`.
+   */
+  askReason?: boolean;
 }
 
 export function newActionClientKey(): string {
@@ -76,11 +82,14 @@ export function StateChangeDialog({
   expectedVersion,
   onConflictReload,
   onCloseAutoFocus,
+  askReason = false,
 }: StateChangeDialogProps) {
   const { t } = useTranslation('actions');
   const dispatch = useAppDispatch();
   const [note, setNote] = useState('');
   const [clientKey, setClientKey] = useState(() => newActionClientKey());
+  const [reason, setReason] = useState<DismissalReason | null>(null);
+  const needsReason = askReason && targetState === 'dismissed';
 
   const pending = useAppSelector(selectActionPending('state', actionId));
   const error = useAppSelector(selectActionError('state', actionId));
@@ -91,6 +100,7 @@ export function StateChangeDialog({
   useEffect(() => {
     if (open) {
       setNote('');
+      setReason(null);
       setClientKey(newActionClientKey());
       dispatch(clearActionErrors(actionId));
     }
@@ -108,6 +118,7 @@ export function StateChangeDialog({
         expectedVersion,
         clientKey,
         ...(trimmed.length > 0 ? { note: trimmed } : {}),
+        ...(needsReason && reason ? { reason } : {}),
       }),
     );
     if (submitActionState.fulfilled.match(result)) {
@@ -130,6 +141,29 @@ export function StateChangeDialog({
         <p className="text-sm font-medium" data-testid="action-state-dialog-title">
           {actionTitle}
         </p>
+        {needsReason ? (
+          <fieldset className="flex flex-col gap-2" data-testid="action-dismiss-reason">
+            <legend className="mb-1 text-sm font-medium">{t('stateDialog.reasonLabel')}</legend>
+            <RadioGroup
+              value={reason ?? ''}
+              onValueChange={(value) => setReason(value as DismissalReason)}
+              aria-required="true"
+            >
+              {DISMISSAL_REASONS.map((value) => (
+                <div key={value} className="flex items-center gap-2">
+                  <RadioGroupItem
+                    value={value}
+                    id={`action-reason-${actionId}-${value}`}
+                    data-testid={`action-dismiss-reason-${value}`}
+                  />
+                  <Label htmlFor={`action-reason-${actionId}-${value}`} className="font-normal">
+                    {t(`stateDialog.reasons.${value}`)}
+                  </Label>
+                </div>
+              ))}
+            </RadioGroup>
+          </fieldset>
+        ) : null}
         <div className="flex flex-col gap-1.5">
           <Label htmlFor={`action-note-${actionId}`}>
             {t('stateDialog.noteLabel')}
@@ -185,6 +219,7 @@ export function StateChangeDialog({
             onClick={() => void confirm()}
             loading={pending}
             loadingLabel={t('stateDialog.saving')}
+            disabled={needsReason && reason === null}
             data-testid="action-state-confirm"
           >
             {t('stateDialog.confirm')}

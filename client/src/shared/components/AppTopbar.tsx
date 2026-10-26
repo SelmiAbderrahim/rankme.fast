@@ -1,8 +1,9 @@
+import { Bdi } from '@shared/components/Bdi';
 import { useEffect } from 'react';
-import { Bug, PanelLeft } from 'lucide-react';
+import { Bug, LogOut, PanelLeft } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 import { Link } from 'react-router-dom';
-import { useAuthSession } from '@features/auth';
+import { useAuthSession, useSignOut } from '@features/auth';
 import { InvitationInbox } from '@features/team';
 import { WorkspaceSwitcher, loadWorkspaces } from '@features/workspace';
 import { LanguageSwitcher } from '@shared/i18n/LanguageSwitcher';
@@ -21,6 +22,7 @@ import { useSidebar } from '@shared/ui/sidebar';
 import { useAppDispatch } from '@shared/hooks/redux';
 import { buildBugReportHref } from '@shared/feedback/bugReport';
 import { useRoutePattern } from '@shared/feedback/useRoutePattern';
+import { APP_PAGE_ICONS } from '@shared/navigation/appPageIcons';
 import { AppSearch } from './AppSearch';
 import { ThemeToggle } from './ThemeToggle';
 
@@ -45,6 +47,7 @@ export const AppTopbar = () => {
   const dispatch = useAppDispatch();
   const { toggleSidebar } = useSidebar();
   const { user } = useAuthSession();
+  const { signOut, signingOut } = useSignOut();
 
   // The switcher hides itself when there is nothing to switch to, so this is
   // one cheap request per shell mount for every user.
@@ -53,12 +56,13 @@ export const AppTopbar = () => {
   }, [dispatch]);
 
   return (
-    <header className="flex h-14 min-w-0 items-center gap-2 border-b px-3">
+    <header className="sticky top-0 z-40 bg-background flex h-14 min-w-0 items-center gap-2 border-b px-3">
       <Button
         variant="ghost"
         size="icon"
         onClick={toggleSidebar}
         aria-label={t('shell.collapse')}
+        data-testid="app-sidebar-toggle"
       >
         <PanelLeft className="rtl:scale-x-[-1]" />
       </Button>
@@ -88,14 +92,14 @@ export const AppTopbar = () => {
           </DropdownMenuTrigger>
           <DropdownMenuContent align="end" className="w-52">
             <DropdownMenuLabel className="truncate">
-              {user?.name || user?.email || t('shell.account')}
+              <Bdi>{user?.name || user?.email || t('shell.account')}</Bdi>
             </DropdownMenuLabel>
             <DropdownMenuSeparator />
             <DropdownMenuItem asChild>
-              <Link to="/profile">{t('shell.profile')}</Link>
+              <Link to="/settings/profile"><APP_PAGE_ICONS.profile aria-hidden="true" />{t('shell.profile')}</Link>
             </DropdownMenuItem>
             <DropdownMenuItem asChild>
-              <Link to="/settings/notifications">{t('shell.notifications')}</Link>
+              <Link to="/settings/notifications"><APP_PAGE_ICONS.notifications aria-hidden="true" />{t('shell.notifications')}</Link>
             </DropdownMenuItem>
             <DropdownMenuSeparator />
             <DropdownMenuItem asChild>
@@ -103,8 +107,8 @@ export const AppTopbar = () => {
                 <Bug aria-hidden="true" />{t('feedback.reportBug')}
               </a>
             </DropdownMenuItem>
-            <DropdownMenuItem asChild>
-              <Link to="/logout">{t('shell.signOut')}</Link>
+            <DropdownMenuItem disabled={signingOut} onSelect={() => void signOut()}>
+              <LogOut aria-hidden="true" className="rtl:scale-x-[-1]" />{t('shell.signOut')}
             </DropdownMenuItem>
           </DropdownMenuContent>
         </DropdownMenu>

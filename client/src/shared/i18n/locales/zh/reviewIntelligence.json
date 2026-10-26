@@ -9,16 +9,6 @@
   },
   "states": {
     "signedOut": "登录后即可查看你的评价。",
-    "notOnPlan": {
-      "title": "评价功能属于 Pro 套餐",
-      "description": "升级到 Pro 或 Agency，即可从 Google、Trustpilot 和 Tripadvisor 拉取评价。",
-      "link": "查看套餐"
-    },
-    "capReached": {
-      "title": "本套餐的同步次数已用完",
-      "description": "请在账单中查看评价同步包当前是否可用。已经拉取的评价仍然可以查看。",
-      "link": "查看加量包选项"
-    },
     "disabled": {
       "title": "新的同步已暂停",
       "description": "我们暂时停止了新的评价同步。已经拉取的评价仍然可以查看。"
@@ -36,7 +26,12 @@
     "title": "评价来源",
     "description": "告诉我们你的商户在哪里被收录。每个目录站点一条记录。",
     "empty": "还没有来源，请在下方添加。",
-    "configured": "已配置",
+    "status": {
+      "saved": "已保存，尚未同步",
+      "verified": "已通过同步验证",
+      "failed": "上次同步失败",
+      "invalid": "请检查此 ID"
+    },
     "save": "保存来源",
     "remove": "移除",
     "hint": {
@@ -48,7 +43,23 @@
       "google": "ChIJ_example_place_id",
       "trustpilot": "example.com",
       "tripadvisor": "1234567"
-    }
+    },
+    "help": {
+      "google": "地点 ID 是 Google 为您的商家信息分配的代码，通常以 ChIJ 开头。在 Google 的查找工具中搜索您的商家，然后复制显示的 ID。",
+      "googleLink": "打开 Google 地点 ID 查找工具"
+    },
+    "invalid": {
+      "google": "请输入有效的 Google 地点 ID。它通常以 ChIJ 开头，至少 20 个字符。",
+      "trustpilot": "请输入 Trustpilot 上显示的商家域名，例如 example.com，不含 https://。",
+      "tripadvisor": "请输入 Tripadvisor 的数字位置 ID，例如 23462501。它是页面地址中字母 d 后面的数字。"
+    },
+    "removeConfirm": {
+      "title": "移除此来源？",
+      "description": "{{source}} 将不再纳入新的同步。已获取的评价会保留在你的库存中。",
+      "cancel": "保留来源",
+      "confirm": "移除来源"
+    },
+    "removed": "已移除 {{source}} 来源。"
   },
   "sync": {
     "title": "运行同步",
@@ -65,12 +76,22 @@
     "title": "本次同步的费用",
     "description": "这只是预估。确认之前不会产生任何扣费。",
     "units": "消耗 {{units}} 次同步",
-    "perSource": "覆盖 {{sources}} 个来源",
-    "depth": "每个来源最多拉取 {{depth}} 条评价",
+    "perSource_one": "覆盖 {{sources}} 个来源",
+    "depth_one": "每个来源最多拉取 {{depth}} 条评价",
     "available": "在额度范围内",
     "unavailable": "超出额度",
     "baseRemaining": "套餐剩余同步次数：{{remaining}}",
-    "packRemaining": "加量包剩余同步次数：{{remaining}}"
+    "packRemaining": "加量包剩余同步次数：{{remaining}}",
+    "depth_zero": "每个来源最多拉取 {{depth}} 条评价",
+    "depth_two": "每个来源最多拉取 {{depth}} 条评价",
+    "depth_few": "每个来源最多拉取 {{depth}} 条评价",
+    "depth_many": "每个来源最多拉取 {{depth}} 条评价",
+    "depth_other": "每个来源最多拉取 {{depth}} 条评价",
+    "perSource_zero": "覆盖 {{sources}} 个来源",
+    "perSource_two": "覆盖 {{sources}} 个来源",
+    "perSource_few": "覆盖 {{sources}} 个来源",
+    "perSource_many": "覆盖 {{sources}} 个来源",
+    "perSource_other": "覆盖 {{sources}} 个来源"
   },
   "runs": {
     "title": "同步记录",
@@ -78,7 +99,6 @@
     "empty": "还没有同步记录。",
     "createdAt": "开始时间",
     "view": "打开",
-    "refunded": "额度已退回",
     "columns": {
       "status": "结果",
       "outcomes": "各来源",
@@ -122,10 +142,10 @@
     "filterAll": "全部",
     "searchPlaceholder": "在评价中搜索",
     "apply": "应用",
-    "stars": "{{stars}} 星",
+    "stars_one": "{{stars}} 星",
     "unrated": "无评分",
     "anonymous": "无姓名",
-    "page": "第 {{page}} 页，共 {{total}} 条评价",
+    "page_one": "第 {{page}} 页，共 {{total}} 条评价",
     "previous": "上一页",
     "next": "下一页",
     "export": "下载 CSV",
@@ -138,16 +158,31 @@
       "source": "来源",
       "text": "评价",
       "author": "作者"
-    }
+    },
+    "stars_zero": "{{stars}} 星",
+    "stars_two": "{{stars}} 星",
+    "stars_few": "{{stars}} 星",
+    "stars_many": "{{stars}} 星",
+    "stars_other": "{{stars}} 星",
+    "page_zero": "第 {{page}} 页，共 {{total}} 条评价",
+    "page_two": "第 {{page}} 页，共 {{total}} 条评价",
+    "page_few": "第 {{page}} 页，共 {{total}} 条评价",
+    "page_many": "第 {{page}} 页，共 {{total}} 条评价",
+    "page_other": "第 {{page}} 页，共 {{total}} 条评价"
   },
   "stats": {
     "title": "评价健康度",
     "empty": "暂时没有可绘制的数据。",
-    "total": "已保存 {{total}} 条评价",
+    "total_one": "已保存 {{total}} 条评价",
     "distribution": {
       "title": "星级分布",
-      "stars": "{{stars}} 星",
-      "unrated": "无评分"
+      "stars_one": "{{stars}} 星",
+      "unrated": "无评分",
+      "stars_zero": "{{stars}} 星",
+      "stars_two": "{{stars}} 星",
+      "stars_few": "{{stars}} 星",
+      "stars_many": "{{stars}} 星",
+      "stars_other": "{{stars}} 星"
     },
     "velocity": {
       "title": "每月评价数",
@@ -156,7 +191,12 @@
     },
     "sourceMix": {
       "title": "来源构成"
-    }
+    },
+    "total_zero": "已保存 {{total}} 条评价",
+    "total_two": "已保存 {{total}} 条评价",
+    "total_few": "已保存 {{total}} 条评价",
+    "total_many": "已保存 {{total}} 条评价",
+    "total_other": "已保存 {{total}} 条评价"
   },
   "trend": {
     "title": "平均评分走势",
@@ -174,7 +214,7 @@
     "complaints": "常见抱怨",
     "praise": "常见好评",
     "citations": "查看支撑该主题的评价",
-    "citationCount": "{{citations}} 条评价",
+    "citationCount_one": "{{citations}} 条评价",
     "citationSource": "{{source}} · {{rating}} · {{date}}",
     "sectionEmpty": "本次同步在这里没有内容。",
     "pending": "主题分析尚未完成。",
@@ -186,7 +226,12 @@
       "title": "无法生成主题",
       "description": "归纳步骤失败了。你的评价已安全保存，下方仍可正常查看。",
       "link": "前往评价列表"
-    }
+    },
+    "citationCount_zero": "{{citations}} 条评价",
+    "citationCount_two": "{{citations}} 条评价",
+    "citationCount_few": "{{citations}} 条评价",
+    "citationCount_many": "{{citations}} 条评价",
+    "citationCount_other": "{{citations}} 条评价"
   },
   "provenance": {
     "first_party": "第一方数据",
@@ -194,7 +239,12 @@
     "estimate": "估算",
     "ai_interpretation": "AI 解读",
     "observedAt": "观测于 {{date}}",
-    "sampleCount": "样本包含 {{count}} 条评价"
+    "sampleCount_one": "样本包含 {{count}} 条评价",
+    "sampleCount_zero": "样本包含 {{count}} 条评价",
+    "sampleCount_two": "样本包含 {{count}} 条评价",
+    "sampleCount_few": "样本包含 {{count}} 条评价",
+    "sampleCount_many": "样本包含 {{count}} 条评价",
+    "sampleCount_other": "样本包含 {{count}} 条评价"
   },
   "errors": {
     "sourcesFailed": "无法加载你的评价来源。",

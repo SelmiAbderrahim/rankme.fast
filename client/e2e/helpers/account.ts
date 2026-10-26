@@ -15,20 +15,6 @@ export interface TestAccount {
   password: string;
 }
 
-/** Grant a bounded paid tier to a freshly registered E2E account. */
-export function grantE2eTier(
-  email: string,
-  tier: 'starter' | 'pro' | 'agency' = 'starter',
-): void {
-  runComposePsql(
-    `INSERT INTO subscriptions (account_id, tier, status)
-       SELECT id, :'tier', 'active' FROM "user" WHERE email = :'email'
-       ON CONFLICT (account_id)
-         DO UPDATE SET tier = EXCLUDED.tier, status = 'active', updated_at = now();`,
-    { variables: { email, tier } },
-  );
-}
-
 // The registration flow leaves an account unverified, and the client
 // `RequireVerified` guard bounces unverified users to /verify-email. There is
 // no in-product way to verify without the emailed link, so E2E marks the fresh

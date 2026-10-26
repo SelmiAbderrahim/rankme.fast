@@ -9,16 +9,6 @@
   },
   "states": {
     "signedOut": "Inicia sesión para leer tus reseñas.",
-    "notOnPlan": {
-      "title": "Las reseñas están en el plan Pro",
-      "description": "Cambia a Pro o Agency para traer reseñas de Google, Trustpilot y Tripadvisor.",
-      "link": "Ver los planes"
-    },
-    "capReached": {
-      "title": "Has usado todas las sincronizaciones de tu plan",
-      "description": "Consulta Facturación para comprobar la disponibilidad actual del paquete de sincronizaciones. Todo lo que ya trajiste sigue disponible.",
-      "link": "Ver opciones de paquetes"
-    },
     "disabled": {
       "title": "Las sincronizaciones nuevas están en pausa",
       "description": "Hemos pausado las sincronizaciones nuevas de reseñas. Las reseñas que ya trajiste siguen disponibles."
@@ -36,7 +26,12 @@
     "title": "Fuentes de reseñas",
     "description": "Dinos dónde aparece tu negocio. Una ficha por directorio.",
     "empty": "Todavía no hay fuentes. Añade una abajo.",
-    "configured": "Configurada",
+    "status": {
+      "saved": "Guardada, aún sin sincronizar",
+      "verified": "Verificada con una sincronización",
+      "failed": "La última sincronización falló",
+      "invalid": "Revisa este identificador"
+    },
     "save": "Guardar fuente",
     "remove": "Quitar",
     "hint": {
@@ -48,7 +43,23 @@
       "google": "ChIJ_example_place_id",
       "trustpilot": "example.com",
       "tripadvisor": "1234567"
-    }
+    },
+    "help": {
+      "google": "El identificador de lugar es el código que Google asigna a la ficha de tu negocio. Suele empezar por ChIJ. Busca tu negocio en la herramienta de Google y copia el identificador que aparece.",
+      "googleLink": "Abrir el buscador de identificadores de lugar de Google"
+    },
+    "invalid": {
+      "google": "Introduce un ID de lugar de Google válido. Suele empezar por ChIJ y tiene al menos 20 caracteres.",
+      "trustpilot": "Introduce el dominio del negocio que aparece en Trustpilot, como example.com, sin https://.",
+      "tripadvisor": "Introduce el ID numérico de la ubicación de Tripadvisor, como 23462501. Es el número que sigue a la d en la dirección de la página."
+    },
+    "removeConfirm": {
+      "title": "¿Quitar esta fuente?",
+      "description": "{{source}} dejará de incluirse en las nuevas sincronizaciones. Las reseñas que ya descargaste siguen en tu inventario.",
+      "cancel": "Conservar la fuente",
+      "confirm": "Quitar la fuente"
+    },
+    "removed": "Fuente {{source}} eliminada."
   },
   "sync": {
     "title": "Lanzar una sincronización",
@@ -65,12 +76,22 @@
     "title": "Lo que cuesta esta sincronización",
     "description": "Es una estimación. No se gasta nada hasta que confirmes.",
     "units": "Consume {{units}} sincronización",
-    "perSource": "Cubre {{sources}} fuentes",
-    "depth": "Trae hasta {{depth}} reseñas por fuente",
+    "perSource_one": "Cubre {{sources}} fuente",
+    "depth_one": "Trae hasta {{depth}} reseña por fuente",
     "available": "Entra en tu cupo",
     "unavailable": "Supera tu cupo",
     "baseRemaining": "Sincronizaciones del plan: quedan {{remaining}}",
-    "packRemaining": "Sincronizaciones del paquete: quedan {{remaining}}"
+    "packRemaining": "Sincronizaciones del paquete: quedan {{remaining}}",
+    "depth_zero": "Trae hasta {{depth}} reseñas por fuente",
+    "depth_two": "Trae hasta {{depth}} reseñas por fuente",
+    "depth_few": "Trae hasta {{depth}} reseñas por fuente",
+    "depth_many": "Trae hasta {{depth}} reseñas por fuente",
+    "depth_other": "Trae hasta {{depth}} reseñas por fuente",
+    "perSource_zero": "Cubre {{sources}} fuentes",
+    "perSource_two": "Cubre {{sources}} fuentes",
+    "perSource_few": "Cubre {{sources}} fuentes",
+    "perSource_many": "Cubre {{sources}} fuentes",
+    "perSource_other": "Cubre {{sources}} fuentes"
   },
   "runs": {
     "title": "Historial de sincronizaciones",
@@ -78,7 +99,6 @@
     "empty": "Todavía no hay sincronizaciones.",
     "createdAt": "Iniciada",
     "view": "Abrir",
-    "refunded": "Unidad devuelta",
     "columns": {
       "status": "Resultado",
       "outcomes": "Por fuente",
@@ -122,10 +142,10 @@
     "filterAll": "Todas",
     "searchPlaceholder": "Buscar en las reseñas",
     "apply": "Aplicar",
-    "stars": "{{stars}} estrellas",
+    "stars_one": "{{stars}} estrella",
     "unrated": "Sin valoración",
     "anonymous": "Sin nombre",
-    "page": "Página {{page}} de {{total}} reseñas",
+    "page_one": "Página {{page}} de {{total}} reseña",
     "previous": "Anterior",
     "next": "Siguiente",
     "export": "Descargar CSV",
@@ -138,16 +158,31 @@
       "source": "Fuente",
       "text": "Reseña",
       "author": "Autor"
-    }
+    },
+    "stars_zero": "{{stars}} estrellas",
+    "stars_two": "{{stars}} estrellas",
+    "stars_few": "{{stars}} estrellas",
+    "stars_many": "{{stars}} estrellas",
+    "stars_other": "{{stars}} estrellas",
+    "page_zero": "Página {{page}} de {{total}} reseñas",
+    "page_two": "Página {{page}} de {{total}} reseñas",
+    "page_few": "Página {{page}} de {{total}} reseñas",
+    "page_many": "Página {{page}} de {{total}} reseñas",
+    "page_other": "Página {{page}} de {{total}} reseñas"
   },
   "stats": {
     "title": "Salud de las reseñas",
     "empty": "Todavía no hay nada que representar.",
-    "total": "{{total}} reseñas guardadas",
+    "total_one": "{{total}} reseña guardada",
     "distribution": {
       "title": "Reparto de estrellas",
-      "stars": "{{stars}} estrellas",
-      "unrated": "Sin valoración"
+      "stars_one": "{{stars}} estrella",
+      "unrated": "Sin valoración",
+      "stars_zero": "{{stars}} estrellas",
+      "stars_two": "{{stars}} estrellas",
+      "stars_few": "{{stars}} estrellas",
+      "stars_many": "{{stars}} estrellas",
+      "stars_other": "{{stars}} estrellas"
     },
     "velocity": {
       "title": "Reseñas por mes",
@@ -156,7 +191,12 @@
     },
     "sourceMix": {
       "title": "De dónde vienen"
-    }
+    },
+    "total_zero": "{{total}} reseñas guardadas",
+    "total_two": "{{total}} reseñas guardadas",
+    "total_few": "{{total}} reseñas guardadas",
+    "total_many": "{{total}} reseñas guardadas",
+    "total_other": "{{total}} reseñas guardadas"
   },
   "trend": {
     "title": "Valoración media en el tiempo",
@@ -174,7 +214,7 @@
     "complaints": "Quejas frecuentes",
     "praise": "Elogios frecuentes",
     "citations": "Ver las reseñas que lo respaldan",
-    "citationCount": "{{citations}} reseñas",
+    "citationCount_one": "{{citations}} reseña",
     "citationSource": "{{source}} · {{rating}} · {{date}}",
     "sectionEmpty": "Aquí no hay nada para esta sincronización.",
     "pending": "El paso de temas todavía no ha terminado.",
@@ -186,7 +226,12 @@
       "title": "No se pudieron construir los temas",
       "description": "El paso de resumen falló. Tus reseñas llegaron bien y siguen disponibles abajo.",
       "link": "Ir a las reseñas"
-    }
+    },
+    "citationCount_zero": "{{citations}} reseñas",
+    "citationCount_two": "{{citations}} reseñas",
+    "citationCount_few": "{{citations}} reseñas",
+    "citationCount_many": "{{citations}} reseñas",
+    "citationCount_other": "{{citations}} reseñas"
   },
   "provenance": {
     "first_party": "Datos propios",
@@ -194,7 +239,12 @@
     "estimate": "Estimación",
     "ai_interpretation": "Interpretación de IA",
     "observedAt": "Observado el {{date}}",
-    "sampleCount": "{{count}} reseñas en la muestra"
+    "sampleCount_one": "{{count}} reseña en la muestra",
+    "sampleCount_zero": "{{count}} reseñas en la muestra",
+    "sampleCount_two": "{{count}} reseñas en la muestra",
+    "sampleCount_few": "{{count}} reseñas en la muestra",
+    "sampleCount_many": "{{count}} reseñas en la muestra",
+    "sampleCount_other": "{{count}} reseñas en la muestra"
   },
   "errors": {
     "sourcesFailed": "No pudimos cargar tus fuentes de reseñas.",

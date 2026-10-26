@@ -202,7 +202,9 @@ export function createGoogleConnectionsController(deps: GoogleConnectionsControl
                 : null;
         },
     });
-    const buildGa4ReadDeps = (db: Db, bindingGenerationId: string): Ga4SummaryReadDeps => ({
+    const buildGa4ReadDeps = (db: Db, bindingGenerationId: string, lastSyncedAt?: Date | null): Ga4SummaryReadDeps => ({
+        lagDays: env.GA4_LAG_DAYS,
+        lastSyncedAt: lastSyncedAt ?? null,
         readLatest: (site, dimensionSet, windowDays) => readLatestGa4SnapshotDate(db, site, dimensionSet, windowDays, bindingGenerationId),
         readRows: (site, dimensionSet, windowDays, range) => readGa4Metrics(db, site, dimensionSet, windowDays, range, bindingGenerationId),
         readPreviousTotals: async (site, dimensionSet, windowDays, beforeDate) => {
@@ -319,7 +321,7 @@ export function createGoogleConnectionsController(deps: GoogleConnectionsControl
         res.status(200).json({ appearance: read });
     });
     /**
-     * GET /api/sites/:siteId/google/analytics-summary?range=… (Pro+). Pure Postgres
+     * GET /api/sites/:siteId/google/analytics-summary?range=…. Pure Postgres
      * read of the latest GA4 snapshot — never a vendor call. 404 ladder adds
      * `google.analyticsNotEnabled` when the scope/property is missing.
      */
@@ -329,10 +331,10 @@ export function createGoogleConnectionsController(deps: GoogleConnectionsControl
         const { range } = analyticsSummaryQuerySchema.parse(req.query);
         const db = getGoogleConnectionsDb();
         const site = await loadOwnedGoogleSite(accountId, siteId);
-        const summary = await getAnalyticsSummaryFor(accountId, siteId, range, buildGa4ReadDeps(db, site.ga4BindingGenerationId ?? 'legacy'));
+        const summary = await getAnalyticsSummaryFor(accountId, siteId, range, buildGa4ReadDeps(db, site.ga4BindingGenerationId ?? 'legacy', site.ga4LastSyncedAt));
         res.status(200).json({ summary });
     });
-    /** GET /api/sites/:siteId/google/analytics-detail?dimension=…&range=… (Pro+). */
+    /** GET /api/sites/:siteId/google/analytics-detail?dimension=…&range=…. */
     const analyticsDetail: RequestHandler = asyncHandler(async (req, res) => {
         const accountId = requireAccountId(req);
         const { siteId } = siteGoogleParamsSchema.parse(req.params);
@@ -343,8 +345,8 @@ export function createGoogleConnectionsController(deps: GoogleConnectionsControl
         res.status(200).json({ detail });
     });
     /**
-     * POST /api/sites/:siteId/google/analytics-refresh (Pro+). Re-syncs the Site's GA4
-     * snapshots on demand (free Google quota, coalesced per site) and returns
+     * POST /api/sites/:siteId/google/analytics-refresh. Re-syncs the Site's GA4
+     * snapshots on demand, coalesced per site, and returns
      * the same `{ summary }` shape as the GET, including its 404s.
      */
     const analyticsRefresh: RequestHandler = asyncHandler(async (req, res) => {
@@ -354,15 +356,23 @@ export function createGoogleConnectionsController(deps: GoogleConnectionsControl
         const site = await loadOwnedGoogleSite(accountId, siteId);
         assertSiteNotPaused(site);
         const db = getGoogleConnectionsDb();
-        await runGa4Sync(accountId, siteId, {
+        const sync = await runGa4Sync(accountId, siteId, {
             ga4Provider: requireGa4Provider(),
             gscProvider: deps.gscProvider,
             persist: {
                 upsertGa4Metrics: (input) => upsertGa4Metrics(db, input),
             },
+            lagDays: env.GA4_LAG_DAYS,
             ...(deps.logger ? { logger: deps.logger } : {}),
         });
-        const summary = await getAnalyticsSummaryFor(accountId, siteId, range, buildGa4ReadDeps(db, site.ga4BindingGenerationId ?? 'legacy'));
+        if (sync.status === 'needs-reconnect') {
+            throw HttpError.conflict({ code: 'GOOGLE_RECONNECT_TO_SEE_DATA', messageKey: 'google.reconnectToSeeData' });
+        }
+        if (sync.status === 'unavailable') {
+            throw new HttpError(503, { code: 'GOOGLE_ANALYTICS_REFRESH_FAILED', messageKey: 'google.analyticsRefreshFailed' });
+        }
+        const summary = await getAnalyticsSummaryFor(accountId, siteId, range,
+            buildGa4ReadDeps(db, site.ga4BindingGenerationId ?? 'legacy', sync.syncedAt));
         res.status(200).json({ summary });
     });
     return {

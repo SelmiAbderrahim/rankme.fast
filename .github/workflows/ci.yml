@@ -109,6 +109,10 @@ jobs:
           test -f src/shared/i18n/dictionaries/es.ts
           test -f src/shared/i18n/dictionaries/ru.ts
           test -f src/shared/i18n/dictionaries/zh.ts
+          # Error-code, plural and language-policy guards.
+          test -f src/shared/i18n/error-codes.test.ts
+          test -f src/shared/i18n/pluralization.test.ts
+          test -f src/shared/i18n/language-policy.test.ts
 
       - name: npm audit (fail on high/critical)
         if: ${{ !cancelled() }}
@@ -148,6 +152,23 @@ jobs:
         if: ${{ !cancelled() }}
         working-directory: client
         run: npx vitest run --coverage
+
+      # The translation, plural and text-direction guards also run on their own
+      # (they are part of the coverage run above), so a failure names the
+      # guard in the job log: locale parity and placeholders, German formal
+      # address, counted strings through the plural helpers, user text through
+      # the shared bidi isolation, and right-to-left layout.
+      - name: Translation, plural and bidi guards
+        if: ${{ !cancelled() }}
+        working-directory: client
+        run: >-
+          npx vitest run
+          src/shared/i18n/i18n.test.tsx
+          src/shared/i18n/localeParity.test.ts
+          src/shared/i18n/german-formal.test.ts
+          src/shared/i18n/plural-usage.test.tsx
+          src/shared/i18n/rtl-sweep-global.test.tsx
+          src/shared/lib/bidi-usage.test.ts
 
       # Same locale-directory backstop on the client.
       - name: i18n parity locales present

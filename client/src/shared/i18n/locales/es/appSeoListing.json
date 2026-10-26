@@ -25,10 +25,15 @@
   "disabled": { "title": "Las nuevas comprobaciones no están disponibles", "description": "Los informes y el historial guardados siguen disponibles." },
   "upsell": { "title": "Activa el complemento App SEO", "description": "Tu plan incluye App SEO, pero las nuevas comprobaciones requieren el complemento.", "cta": "Ver facturación" },
   "errors": { "title": "No se pudieron cargar los datos de la ficha", "requestFailed": "La solicitud de comprobación falló. Inténtalo de nuevo." },
-  "queued": { "title": "Comprobación en curso", "description": "El informe se actualizará cuando las observaciones estén guardadas." },
-  "run": { "title": "Comprueba la salud de la ficha", "description": "Observa las fichas actuales y crea una lista de correcciones determinista.", "profile": "Perfil de app", "previewing": "Comprobando capacidad…", "button": "Previsualizar ejecución", "bound": "Una unidad cubre todas las tiendas registradas en este perfil." },
+  "queued": { "title": "Comprobación en curso", "description": "El informe se actualizará cuando los datos estén guardados." },
+  "run": { "title": "Comprueba la salud de la ficha", "description": "Revisa las fichas actuales de la tienda y obtén una lista de correcciones basada en reglas fijas.", "profile": "Perfil de app", "previewing": "Comprobando capacidad…", "button": "Previsualizar ejecución", "bound": "Una unidad cubre todas las tiendas registradas en este perfil." },
   "report": { "title": "Último informe de la ficha", "description": "Ejecuta una comprobación para guardar el primer informe.", "capturedAt": "Observado el {{date}}", "keywordsCta": "Gestionar frases seguidas", "empty": "Todavía no hay un informe guardado para este perfil." },
-  "store": { "rating": "Valoración", "reviews": "Reseñas", "category": "Categoría principal", "updated": "Última actualización", "screenshots": "Enlaces de capturas observados", "installs": "Instalaciones publicadas", "description": "Descripción de la tienda", "openListing": "Abrir ficha", "screenshotLink": "Enlace de captura {{number}}", "moreScreenshots": "{{count}} enlaces de capturas más" },
+  "store": { "rating": "Valoración", "reviews": "Reseñas", "category": "Categoría principal", "updated": "Última actualización", "screenshots": "Enlaces de capturas observados", "installs": "Instalaciones publicadas", "description": "Descripción de la tienda", "openListing": "Abrir ficha", "screenshotLink": "Enlace de captura {{number}}", "moreScreenshots_one": "{{count}} enlace de captura más",
+    "moreScreenshots_zero": "{{count}} enlaces de capturas más",
+    "moreScreenshots_two": "{{count}} enlaces de capturas más",
+    "moreScreenshots_few": "{{count}} enlaces de capturas más",
+    "moreScreenshots_many": "{{count}} enlaces de capturas más",
+    "moreScreenshots_other": "{{count}} enlaces de capturas más" },
   "parity": { "title": "Coherencia entre tiendas vinculadas", "description": "Compara solo las tiendas que vinculaste expresamente para esta app.", "provenance": "Vinculadas por el usuario" },
   "history": { "title": "Historial de fichas", "description": "Las ejecuciones guardadas siguen disponibles si no se pueden iniciar otras.", "empty": "Aún no hay historial.", "partial": "Observación parcial", "counts": { "fixNow": "Corregir ahora: {{count}}", "watch": "Vigilar: {{count}}", "advisory": "Consejos: {{count}}" } }
 }

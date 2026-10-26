@@ -68,7 +68,30 @@ export function htmlHasJsonLd(html: string): boolean {
     return false;
 }
 
-export type StructuredDataProbe = (urls: readonly string[]) => Promise<ReadonlySet<string>>;
+function hasFaqType(node: unknown, depth = 0): boolean {
+    if (depth > 8 || node === null || typeof node !== 'object') return false;
+    if (Array.isArray(node)) return node.some((item) => hasFaqType(item, depth + 1));
+    const record = node as Record<string, unknown>;
+    const types = Array.isArray(record['@type']) ? record['@type'] : [record['@type']];
+    if (types.some((type) => typeof type === 'string' &&
+        ['faqpage', 'qapage'].includes(type.replace(/^https?:\/\/schema\.org\//i, '').toLowerCase()))) return true;
+    return hasFaqType(record['@graph'], depth + 1);
+}
+
+/** Whether a parseable JSON-LD block declares FAQPage or QAPage. */
+export function htmlHasFaqJsonLd(html: string): boolean {
+    for (const match of html.matchAll(JSON_LD_SCRIPT)) {
+        if (!JSON_LD_TYPE_ATTR.test(match[1]!)) continue;
+        try {
+            const body = match[2]!.trim().replace(/^<!--/, '').replace(/-->$/, '').trim();
+            if (hasFaqType(JSON.parse(body))) return true;
+        } catch { /* Unparseable markup is not evidence. */ }
+    }
+    return false;
+}
+
+export type StructuredDataProbeResult = ReadonlySet<string> & { faqUrls?: ReadonlySet<string> };
+export type StructuredDataProbe = (urls: readonly string[]) => Promise<StructuredDataProbeResult>;
 
 export interface StructuredDataProbeOptions {
     /** Returns the page HTML, or null when it could not be read. */
@@ -107,6 +130,7 @@ export function createStructuredDataProbe(opts: StructuredDataProbeOptions = {})
     return async (urls) => {
         const queue = [...new Set(urls)].slice(0, maxPages);
         const found = new Set<string>();
+        const faqUrls = new Set<string>();
         const controller = new AbortController();
         const stopAt = now() + stageBudgetMs;
         let next = 0;
@@ -115,8 +139,10 @@ export function createStructuredDataProbe(opts: StructuredDataProbeOptions = {})
                 const url = queue[next++]!;
                 try {
                     const html = await fetchHtml(url, controller.signal);
-                    if (html !== null && htmlHasJsonLd(html))
+                    if (html !== null && htmlHasJsonLd(html)) {
                         found.add(url);
+                        if (htmlHasFaqJsonLd(html)) faqUrls.add(url);
+                    }
                 }
                 catch {
                     // Unreachable page keeps the vendor verdict.
@@ -125,6 +151,6 @@ export function createStructuredDataProbe(opts: StructuredDataProbeOptions = {})
         };
         await Promise.all(Array.from({ length: Math.min(concurrency, queue.length) }, worker));
         controller.abort();
-        return found;
+        return Object.assign(found, { faqUrls });
     };
 }

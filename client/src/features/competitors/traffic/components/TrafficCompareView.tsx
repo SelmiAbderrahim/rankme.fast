@@ -1,3 +1,5 @@
+import { Bdi } from '@shared/components/Bdi';
+import { MetricValue } from '@shared/components/MetricValue';
 import { useEffect, useMemo, useState } from 'react';
 import { useSearchParams } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
@@ -34,7 +36,7 @@ const CompareStat = ({
   observation: ObservationMeta;
   value: number | null;
 }) => {
-  const { t, i18n } = useTranslation('competitorsTraffic');
+  const { t } = useTranslation('competitorsTraffic');
   return (
     <div>
       <dt className="text-sm text-muted-foreground">
@@ -42,9 +44,7 @@ const CompareStat = ({
       </dt>
       <dd className="flex flex-col gap-1">
         <span className="text-2xl font-semibold tabular-nums">
-          {value === null
-            ? t('common.notAvailable')
-            : new Intl.NumberFormat(i18n.language).format(value)}
+          <MetricValue kind="count" value={value} />
         </span>
         <CoverageNote observation={observation} />
       </dd>
@@ -187,7 +187,7 @@ export const TrafficCompareView = ({ ids, siteId, onCollapse }: TrafficCompareVi
                 <CardHeader>
                   <div className="flex items-start justify-between gap-2">
                     <div className="min-w-0 text-start">
-                      <CardTitle className="break-all text-base">{snapshot.targetDomain}</CardTitle>
+                      <CardTitle className="break-all text-base"><Bdi>{snapshot.targetDomain}</Bdi></CardTitle>
                       <CardDescription>
                         {date.format(new Date(snapshot.capturedAt))}
                       </CardDescription>
@@ -231,50 +231,58 @@ export const TrafficCompareView = ({ ids, siteId, onCollapse }: TrafficCompareVi
               <CardTitle>{t('compare.countriesTitle')}</CardTitle>
               <CardDescription>{t('estimate.coverage')}</CardDescription>
             </CardHeader>
-            <CardContent>
-              <Table>
-                <caption className="sr-only">{t('compare.countriesTitle')}</caption>
-                <TableHeader>
-                  <TableRow>
-                    <TableHead className="text-start">{t('detail.countries.country')}</TableHead>
-                    {data.snapshots.map((snapshot) => (
-                      <TableHead key={snapshot.id} className="text-end">
-                        <TableHeaderHelp
-                          label={`${snapshot.targetDomain} · ${t('estimate.label')}`}
-                          description={t('common:tableHelp.estimatedTraffic')}
-                        />
-                      </TableHead>
-                    ))}
-                  </TableRow>
-                </TableHeader>
-                <TableBody>
-                  {data.axes.countryCodes.map((countryCode) => (
-                    <TableRow key={countryCode}>
-                      <TableCell className="text-start">
-                        {countryName(countryCode, i18n.language) ?? t('common:market.unknownCountry')}
-                      </TableCell>
-                      {data.snapshots.map((snapshot) => {
-                        const country = snapshot.payload.topCountries.find(
-                          (candidate) => candidate.countryCode === countryCode,
-                        );
-                        return (
-                          <TableCell key={snapshot.id} className="text-end tabular-nums">
-                            {country ? (
-                              <span className="flex flex-col items-end gap-1">
-                                <span>{number.format(country.visits.value)}</span>
-                                <CoverageNote observation={country.visits.observation} />
-                              </span>
-                            ) : (
-                              '—'
-                            )}
-                          </TableCell>
-                        );
-                      })}
+            {data.axes.countryCodes.length === 0 ? (
+              <CardContent>
+                <p className="text-sm text-muted-foreground" data-testid="traffic-compare-country-empty">
+                  {t('compare.countriesEmpty')}
+                </p>
+              </CardContent>
+            ) : (
+              <CardContent>
+                <Table>
+                  <caption className="sr-only">{t('compare.countriesTitle')}</caption>
+                  <TableHeader>
+                    <TableRow>
+                      <TableHead className="text-start">{t('detail.countries.country')}</TableHead>
+                      {data.snapshots.map((snapshot) => (
+                        <TableHead key={snapshot.id} className="text-end">
+                          <TableHeaderHelp
+                            label={`${snapshot.targetDomain} · ${t('estimate.label')}`}
+                            description={t('common:tableHelp.estimatedTraffic')}
+                          />
+                        </TableHead>
+                      ))}
                     </TableRow>
-                  ))}
-                </TableBody>
-              </Table>
-            </CardContent>
+                  </TableHeader>
+                  <TableBody>
+                    {data.axes.countryCodes.map((countryCode) => (
+                      <TableRow key={countryCode}>
+                        <TableCell className="text-start">
+                          {countryName(countryCode, i18n.language) ?? t('common:market.unknownCountry')}
+                        </TableCell>
+                        {data.snapshots.map((snapshot) => {
+                          const country = snapshot.payload.topCountries.find(
+                            (candidate) => candidate.countryCode === countryCode,
+                          );
+                          return (
+                            <TableCell key={snapshot.id} className="text-end tabular-nums">
+                              {country ? (
+                                <span className="flex flex-col items-end gap-1">
+                                  <span>{number.format(country.visits.value)}</span>
+                                  <CoverageNote observation={country.visits.observation} />
+                                </span>
+                              ) : (
+                                '—'
+                              )}
+                            </TableCell>
+                          );
+                        })}
+                      </TableRow>
+                    ))}
+                  </TableBody>
+                </Table>
+              </CardContent>
+            )}
           </Card>
 
           <Card>

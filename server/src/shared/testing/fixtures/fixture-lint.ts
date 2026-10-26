@@ -1,5 +1,5 @@
 /**
- * Fixture secret lint (prompt 05).
+ * Fixture secret lint.
  *
  * Fixtures are recorded vendor responses — they MUST pass through
  * `src/scripts/redact-fixture.ts` before landing here. This lint is the

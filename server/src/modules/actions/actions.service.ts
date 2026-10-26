@@ -11,6 +11,8 @@ import type { ActionItem, CandidateAction, SourceStatusEnvelope, } from './actio
 import type { ActionSourceType, ActionState } from '../../db/schema/action-events.js';
 import { localizeSemanticCopy, type SupportedLocale, } from '../../shared/i18n/index.js';
 import type { ActionEventRow } from '../../db/schema/action-events.js';
+import { loadAuditDecisions, resolveAuditDecisionEvidence } from './audit-decisions.js';
+import { isAuditRegressionEvent, reasonCodeForActor } from './actions.regression.js';
 interface ListActionsInput {
     accountId: string;
     siteId: string;
@@ -82,6 +84,17 @@ export async function listActionsForSite(input: ListActionsInput): Promise<ListA
         };
     });
     const idsForOverlay = identities.flatMap(({ id, legacyId }) => legacyId ? [id, legacyId] : [id]);
+    const auditCandidates = allCandidates.filter((candidate) => candidate.sourceType === 'audit_finding');
+    if (auditCandidates.length > 0) {
+        const runRef = auditCandidates[0]?.evidence[0]?.sourceRef ?? '';
+        const runId = /^[0-9a-f]{24}:/i.test(runRef) ? runRef.slice(0, 24) : '';
+        const evidence = runId ? await resolveAuditDecisionEvidence({ accountId: input.accountId,
+            siteId: input.siteId, runId, findings: auditCandidates.map((candidate) => ({
+                ruleId: candidate.sourceId, bucket: 'fix-now',
+            })) }) : undefined;
+        await loadAuditDecisions(input.db, { accountId: input.accountId, siteId: input.siteId,
+            runId, ruleIds: auditCandidates.map((candidate) => candidate.sourceId), evidence });
+    }
     const overlays = idsForOverlay.length > 0
         ? await findLatestEventsForActions(input.db, input.accountId, idsForOverlay)
         : new Map<string, ActionEventRow>();
@@ -104,9 +117,9 @@ export async function listActionsForSite(input: ListActionsInput): Promise<ListA
         // The source still emits this candidate from an observation taken after
         // the user marked it done — surfaced so the UI can flag the claim instead
         // of quietly showing "completed".
-        const reappearedAfterFix = state === 'completed' &&
-            overlay !== undefined &&
-            Date.parse(candidate.observedAt) > overlay.createdAt.getTime();
+        const reappearedAfterFix = (candidate.sourceType === 'audit_finding' &&
+            isAuditRegressionEvent(overlay)) || (state === 'completed' && overlay !== undefined &&
+            Date.parse(candidate.observedAt) > overlay.createdAt.getTime());
         const urls = candidate.affectedUrls.slice(0, ACTION_MAX_AFFECTED_URLS);
         const problemCopy = localizeSemanticCopy(input.locale, candidate.copyKeys.problem, candidate.copyVars);
         const whyCopy = localizeSemanticCopy(input.locale, candidate.copyKeys.whyItMatters, candidate.copyVars);
@@ -149,7 +162,8 @@ export async function listActionsForSite(input: ListActionsInput): Promise<ListA
             // The note travels with the decision that produced the CURRENT
             // state; a source-authoritative state that has since moved on does
             // not inherit an older decision's note.
-            latestNote: overlay && overlay.newState === state ? overlay.note : null,
+            latestNote: overlay && overlay.newState === state && !isAuditRegressionEvent(overlay)
+                ? overlay.note : null,
             reappearedAfterFix,
             observedAt: candidate.observedAt,
             lastVerifiedAt: candidate.lastVerifiedAt,
@@ -234,6 +248,7 @@ export interface ActionHistoryEntry {
     /** True when the actor is the requesting user. */
     actorIsYou: boolean;
     note: string | null;
+    reasonCode: 'audit_regression' | null;
     createdAt: string;
 }
 export async function getActionHistory(input: ListActionHistoryInput): Promise<{
@@ -265,7 +280,8 @@ export async function getActionHistory(input: ListActionHistoryInput): Promise<{
             actorUserId: row.actorUserId,
             actor: actors.get(row.actorUserId) ?? null,
             actorIsYou: input.viewerUserId !== undefined && row.actorUserId === input.viewerUserId,
-            note: row.note,
+            note: reasonCodeForActor(row.actorUserId) ? null : row.note,
+            reasonCode: reasonCodeForActor(row.actorUserId),
             createdAt: row.createdAt.toISOString(),
         })),
     };

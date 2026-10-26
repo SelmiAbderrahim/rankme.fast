@@ -24,6 +24,6 @@ Ni données Search Console, ni captures d’écran, ni informations de facturati
 Pour les mêmes données, l’audit donne toujours le même résultat. Le résumé est une étape à part, qui se contente de lire l’audit terminé.
 
 ## Régénérer
-Cliquez sur **Régénérer** pour relancer le résumé. Chaque relance consomme un crédit de résumé (voir [Plans, limites & crédits](./plans-limits-credits.fr.md)).
+Cliquez sur **Régénérer** pour relancer le résumé, ce qui appelle votre fournisseur d’IA configuré. La carte marque un résumé **Obsolète** lorsque des constats qu’il couvre ont été écartés, corrigés ou rouverts après sa rédaction. Régénérez-le pour qu’il corresponde à vos corrections ouvertes.
 
 [Retour à l’index de la documentation](./index.fr.md)

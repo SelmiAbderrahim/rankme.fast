@@ -86,6 +86,10 @@ export const ReviewInventoryTable = ({
   const rows = data?.reviews ?? [];
   const filtered = hasActiveReviewFilter(filters);
   const sort = filters.sort ?? 'newest';
+  // Filters, search, sort and CSV only make sense once there is something to
+  // narrow or download. An active filter keeps them so "no matches" can be
+  // cleared; a later page keeps them so paging back stays possible.
+  const showControls = rows.length > 0 || filtered || filters.page > 1;
 
   const exportAll = async () => {
     setExporting(true);
@@ -110,133 +114,137 @@ export const ReviewInventoryTable = ({
         <ReviewObservationMeta observation={data?.observation ?? null} />
       </CardHeader>
       <CardContent className="flex flex-col gap-4">
-        <FieldGroup className="flex-row flex-wrap items-end gap-3">
-          <Field className="w-auto gap-1">
-            <FieldLabel htmlFor="reviews-filter-source">{t('inventory.filterSource')}</FieldLabel>
-            <Select
-              value={filters.src ?? 'all'}
-              onValueChange={(value) => {
-                patch({ src: isReviewSourceName(value) ? value : null });
-              }}
-            >
-              <SelectTrigger id="reviews-filter-source" data-testid="reviews-filter-source">
-                <SelectValue />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectGroup>
-                  <SelectItem value="all">{t('inventory.filterAll')}</SelectItem>
-                  {REVIEW_SOURCES.map((source) => (
-                    <SelectItem key={source} value={source}>
-                      {t(`sourceNames.${source}`)}
-                    </SelectItem>
-                  ))}
-                </SelectGroup>
-              </SelectContent>
-            </Select>
-          </Field>
-          <Field className="w-auto gap-1">
-            <FieldLabel htmlFor="reviews-filter-rating">{t('inventory.filterRating')}</FieldLabel>
-            <Select
-              value={filters.rating === undefined ? 'all' : String(filters.rating)}
-              onValueChange={(selected) => {
-                const value = Number(selected);
-                patch({
-                  rating: Number.isInteger(value) && value >= 1 && value <= 5 ? value : null,
-                });
-              }}
-            >
-              <SelectTrigger id="reviews-filter-rating" data-testid="reviews-filter-rating">
-                <SelectValue />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectGroup>
-                  <SelectItem value="all">{t('inventory.filterAll')}</SelectItem>
-                  {[5, 4, 3, 2, 1].map((star) => (
-                    <SelectItem key={star} value={String(star)}>
-                      {t('inventory.stars', { stars: star })}
-                    </SelectItem>
-                  ))}
-                </SelectGroup>
-              </SelectContent>
-            </Select>
-          </Field>
-          <Field className="w-auto gap-1">
-            <FieldLabel htmlFor="reviews-sort">{t('inventory.sortLabel')}</FieldLabel>
-            <Select
-              value={sort}
-              onValueChange={(value) => {
-                // Radix can only emit one of the three SelectItem values
-                // declared immediately below; hand-edited URLs still pass
-                // through `isReviewInventorySort` in `readReviewFilters`.
-                patch({ sort: value as ReviewInventoryFilters['sort'] });
-              }}
-            >
-              <SelectTrigger id="reviews-sort" data-testid="reviews-sort">
-                <SelectValue />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectGroup>
-                  {REVIEW_INVENTORY_SORTS.map((value) => (
-                    <SelectItem key={value} value={value}>
-                      {t(`inventory.sort.${value}`)}
-                    </SelectItem>
-                  ))}
-                </SelectGroup>
-              </SelectContent>
-            </Select>
-          </Field>
-          <form
-            className="flex items-end gap-2"
-            onSubmit={(event) => {
-              event.preventDefault();
-              patch({ q: draftQuery });
-            }}
-          >
-            <Field className="gap-1">
-              <FieldLabel htmlFor="reviews-filter-query">{t('inventory.filterQuery')}</FieldLabel>
-              <Input
-                id="reviews-filter-query"
-                value={draftQuery}
-                maxLength={120}
-                placeholder={t('inventory.searchPlaceholder')}
-                onChange={(event) => setDraftQuery(event.target.value)}
-                data-testid="reviews-filter-query"
-              />
+        {showControls ? (
+          <>
+          <FieldGroup className="flex-row flex-wrap items-end gap-3">
+            <Field className="w-auto gap-1">
+              <FieldLabel htmlFor="reviews-filter-source">{t('inventory.filterSource')}</FieldLabel>
+              <Select
+                value={filters.src ?? 'all'}
+                onValueChange={(value) => {
+                  patch({ src: isReviewSourceName(value) ? value : null });
+                }}
+              >
+                <SelectTrigger id="reviews-filter-source" data-testid="reviews-filter-source">
+                  <SelectValue />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectGroup>
+                    <SelectItem value="all">{t('inventory.filterAll')}</SelectItem>
+                    {REVIEW_SOURCES.map((source) => (
+                      <SelectItem key={source} value={source}>
+                        {t(`sourceNames.${source}`)}
+                      </SelectItem>
+                    ))}
+                  </SelectGroup>
+                </SelectContent>
+              </Select>
             </Field>
-            <Button type="submit" variant="outline" data-testid="reviews-filter-apply">
-              {t('inventory.apply')}
-            </Button>
-          </form>
-          {filtered ? (
+            <Field className="w-auto gap-1">
+              <FieldLabel htmlFor="reviews-filter-rating">{t('inventory.filterRating')}</FieldLabel>
+              <Select
+                value={filters.rating === undefined ? 'all' : String(filters.rating)}
+                onValueChange={(selected) => {
+                  const value = Number(selected);
+                  patch({
+                    rating: Number.isInteger(value) && value >= 1 && value <= 5 ? value : null,
+                  });
+                }}
+              >
+                <SelectTrigger id="reviews-filter-rating" data-testid="reviews-filter-rating">
+                  <SelectValue />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectGroup>
+                    <SelectItem value="all">{t('inventory.filterAll')}</SelectItem>
+                    {[5, 4, 3, 2, 1].map((star) => (
+                      <SelectItem key={star} value={String(star)}>
+                        {t('inventory.stars', { count: star, stars: star })}
+                      </SelectItem>
+                    ))}
+                  </SelectGroup>
+                </SelectContent>
+              </Select>
+            </Field>
+            <Field className="w-auto gap-1">
+              <FieldLabel htmlFor="reviews-sort">{t('inventory.sortLabel')}</FieldLabel>
+              <Select
+                value={sort}
+                onValueChange={(value) => {
+                  // Radix can only emit one of the three SelectItem values
+                  // declared immediately below; hand-edited URLs still pass
+                  // through `isReviewInventorySort` in `readReviewFilters`.
+                  patch({ sort: value as ReviewInventoryFilters['sort'] });
+                }}
+              >
+                <SelectTrigger id="reviews-sort" data-testid="reviews-sort">
+                  <SelectValue />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectGroup>
+                    {REVIEW_INVENTORY_SORTS.map((value) => (
+                      <SelectItem key={value} value={value}>
+                        {t(`inventory.sort.${value}`)}
+                      </SelectItem>
+                    ))}
+                  </SelectGroup>
+                </SelectContent>
+              </Select>
+            </Field>
+            <form
+              className="flex items-end gap-2"
+              onSubmit={(event) => {
+                event.preventDefault();
+                patch({ q: draftQuery });
+              }}
+            >
+              <Field className="gap-1">
+                <FieldLabel htmlFor="reviews-filter-query">{t('inventory.filterQuery')}</FieldLabel>
+                <Input
+                  id="reviews-filter-query"
+                  value={draftQuery}
+                  maxLength={120}
+                  placeholder={t('inventory.searchPlaceholder')}
+                  onChange={(event) => setDraftQuery(event.target.value)}
+                  data-testid="reviews-filter-query"
+                />
+              </Field>
+              <Button type="submit" variant="outline" data-testid="reviews-filter-apply">
+                {t('inventory.apply')}
+              </Button>
+            </form>
+            {filtered ? (
+              <Button
+                type="button"
+                variant="ghost"
+                data-testid="reviews-filter-clear"
+                onClick={() => patch({ src: null, rating: null, q: null })}
+              >
+                {t('inventory.clearFilters')}
+              </Button>
+            ) : null}
             <Button
               type="button"
-              variant="ghost"
-              data-testid="reviews-filter-clear"
-              onClick={() => patch({ src: null, rating: null, q: null })}
+              variant="outline"
+              disabled={!data || data.total === 0 || exporting}
+              data-testid="reviews-export"
+              onClick={() => void exportAll()}
             >
-              {t('inventory.clearFilters')}
+              {exporting ? (
+                <Spinner data-icon="inline-start" />
+              ) : (
+                <Download aria-hidden="true" data-icon="inline-start" />
+              )}
+              {exporting ? t('inventory.exportLoading') : t('inventory.export')}
             </Button>
+          </FieldGroup>
+          <p className="text-muted-foreground text-xs">{t('inventory.exportFree')}</p>
+          {exportError ? (
+            <Alert role="alert" data-testid="reviews-export-error">
+              <AlertDescription>{exportError}</AlertDescription>
+            </Alert>
           ) : null}
-          <Button
-            type="button"
-            variant="outline"
-            disabled={!data || data.total === 0 || exporting}
-            data-testid="reviews-export"
-            onClick={() => void exportAll()}
-          >
-            {exporting ? (
-              <Spinner data-icon="inline-start" />
-            ) : (
-              <Download aria-hidden="true" data-icon="inline-start" />
-            )}
-            {exporting ? t('inventory.exportLoading') : t('inventory.export')}
-          </Button>
-        </FieldGroup>
-        <p className="text-muted-foreground text-xs">{t('inventory.exportFree')}</p>
-        {exportError ? (
-          <Alert role="alert" data-testid="reviews-export-error">
-            <AlertDescription>{exportError}</AlertDescription>
-          </Alert>
+          </>
         ) : null}
 
         {error ? (
@@ -314,7 +322,7 @@ export const ReviewInventoryTable = ({
             </Table>
             <div className="flex items-center justify-between gap-2">
               <span className="text-muted-foreground text-sm" data-testid="reviews-inventory-page">
-                {t('inventory.page', { page: filters.page, total: data.total })}
+                {t('inventory.page', { count: data.total, page: filters.page, total: data.total })}
               </span>
               <div className="flex gap-2">
                 <Button

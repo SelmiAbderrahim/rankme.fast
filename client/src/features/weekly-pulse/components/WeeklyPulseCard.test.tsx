@@ -66,6 +66,15 @@ describe('WeeklyPulseCard', () => {
     await waitFor(() =>
       expect(screen.getByTestId('weekly-pulse-enable-cta')).toBeDisabled(),
     );
+    // The disabled toggle explains its prerequisite inline and is wired to it.
+    const hint = screen.getByTestId('weekly-pulse-enable-hint');
+    expect(hint).toHaveTextContent('Preview a run first to turn on weekly pulse.');
+    expect(screen.getByTestId('weekly-pulse-enable-cta')).toHaveAttribute(
+      'aria-describedby',
+      hint.id,
+    );
+    // The description does not repeat the unit disclosure, and says it plainly.
+    expect(screen.queryByText(/deterministic/i)).not.toBeInTheDocument();
   });
 
   it('after previewing, enable button becomes clickable and opens the ack dialog', async () => {
@@ -99,6 +108,8 @@ describe('WeeklyPulseCard', () => {
     render(ui);
     await user.click(await screen.findByTestId('weekly-pulse-preview-cta'));
     await waitFor(() => expect(screen.getByTestId('weekly-pulse-preview')).toBeInTheDocument());
+    expect(screen.queryByTestId('weekly-pulse-enable-hint')).not.toBeInTheDocument();
+    expect(screen.getByTestId('weekly-pulse-enable-cta')).not.toHaveAttribute('aria-describedby');
     await user.click(screen.getByTestId('weekly-pulse-enable-cta'));
     const ack = screen.getByTestId('weekly-pulse-ack-checkbox');
     await user.click(ack);

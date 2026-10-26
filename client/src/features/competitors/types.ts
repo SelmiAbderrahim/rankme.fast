@@ -38,7 +38,8 @@ export interface Competitor {
 
 export interface CompetitorsList {
   competitors: Competitor[];
-  fetchedAt: string;
+  /** `null` when nothing has been fetched yet (a stored read before the first refresh). */
+  fetchedAt: string | null;
   target: string;
   source: CompetitorsSource;
 }

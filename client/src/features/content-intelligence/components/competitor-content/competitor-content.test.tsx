@@ -474,7 +474,7 @@ describe('ComparisonOverview', () => {
     );
     expect(screen.getByTestId('competitor-partial-domains')).toHaveTextContent('blocked.com');
     expect(screen.getByTestId('competitor-delta-rival.com')).toHaveTextContent('+200');
-    expect(screen.getByTestId('competitor-delta-other.com')).toHaveTextContent('-50');
+    expect(screen.getByTestId('competitor-delta-other.com')).toHaveTextContent('−50');
   });
 
   it('filters by domain + dimension through the URL and clears on no-match', async () => {
@@ -957,7 +957,7 @@ describe('RunSetupForm', () => {
     fireEvent.change(screen.getByTestId('competitor-url-p1'), { target: { value: 'https://rival.com/ranking-page' } });
     fireEvent.change(screen.getByTestId('competitor-run-owned-url'), { target: { value: 'https://example.com/p' } });
     fireEvent.change(screen.getByTestId('competitor-run-keyword'), { target: { value: ' best tool ' } });
-    expect(screen.getByTestId('competitor-run-disclosure')).toHaveTextContent('1 competitor');
+    expect(screen.getByTestId('competitor-run-disclosure')).toHaveTextContent('This run reads up to 15 pages across 1 competitor.');
     fireEvent.submit(screen.getByTestId('competitor-run-submit').closest('form')!);
     await waitFor(() => expect(onStarted).toHaveBeenCalledWith('newrun'));
     expect(api.startCompetitorRun).toHaveBeenCalledWith(

@@ -162,6 +162,14 @@ describe('GoogleSearchSummaryCard', () => {
     // Previous-period line + asOf date.
     expect(screen.getByTestId('google-summary-previous')).toHaveTextContent('1,000');
     expect(screen.getByText(/Data through/)).toBeInTheDocument();
+    // The site-totals note names the same inclusive window the Pages tab uses
+    // and says why list totals can differ.
+    expect(screen.getByTestId('google-summary-totals-note')).toHaveTextContent(
+      /^Site totals for Jun 7, 2026 – Jul 4, 2026, summed from Search Console's daily data/,
+    );
+    expect(screen.getByTestId('google-summary-scope-note')).toHaveTextContent(
+      /Search Console counts each list on its own/,
+    );
     // Full-report link — report lives in the unified workspace tab.
     expect(screen.getByTestId('google-summary-report-link')).toHaveAttribute(
       'href',
@@ -329,12 +337,12 @@ describe('GoogleSearchSummaryCard', () => {
     mockedApi.fetchSearchSummary.mockResolvedValue({ summary });
     renderWith(makeStore({ connection: connected }));
     expect(await screen.findByText('1,234')).toBeInTheDocument();
-    // Time-series chart (the only role=img on the card).
-    expect(screen.getByRole('img')).toBeInTheDocument();
-    // Countries: lowercase ISO-3166 alpha-3 uppercased for display.
+    // Time-series chart.
+    expect(screen.getByTestId('gsc-timeseries-svg')).toBeInTheDocument();
+    // Countries: ISO-3166 alpha-3 values get localized display names.
     const countries = screen.getByTestId('google-summary-countries');
-    expect(within(countries).getByText('USA')).toBeInTheDocument();
-    expect(within(countries).getByText('FRA')).toBeInTheDocument();
+    expect(within(countries).getByText('United States')).toBeInTheDocument();
+    expect(within(countries).getByText('France')).toBeInTheDocument();
     // Devices: localized known label + unknown code → "Other".
     const devices = screen.getByTestId('google-summary-devices');
     expect(within(devices).getByText('Desktop')).toBeInTheDocument();
@@ -466,5 +474,50 @@ describe('GoogleSearchSummaryCard', () => {
     expect(
       await screen.findByText('Search performance (last 90 days)'),
     ).toBeInTheDocument();
+  });
+
+  it('ranks the country and device breakdowns by impressions when the period has no clicks', async () => {
+    mockedApi.fetchSearchSummary.mockResolvedValue({
+      summary: {
+        ...summary,
+        totalClicks: 0,
+        countries: [
+          { country: 'usa', clicks: 0, impressions: 100, ctr: 0, position: 3 },
+          { country: 'fra', clicks: 0, impressions: 900, ctr: 0, position: 4 },
+        ],
+        devices: [
+          { device: 'DESKTOP', clicks: 0, impressions: 50, ctr: 0, position: 3 },
+          { device: 'MOBILE', clicks: 0, impressions: 450, ctr: 0, position: 3 },
+        ],
+        dimensionTotals: {
+          country: { rows: 5, clicks: 0, impressions: 1500 },
+          device: { rows: 6, clicks: 0, impressions: 900 },
+        },
+      },
+    });
+    renderWith(makeStore({ connection: connected }));
+    expect(await screen.findByTestId('google-search-summary-card')).toBeInTheDocument();
+    const labels = await screen.findAllByText(/^(France|United States)$/);
+    expect(labels.map((node) => node.textContent)).toEqual(['France', 'United States']);
+  });
+
+  it('ranks the breakdowns by clicks and sums rows when no stored dimension totals exist', async () => {
+    mockedApi.fetchSearchSummary.mockResolvedValue({
+      summary: {
+        ...summary,
+        countries: [
+          { country: 'usa', clicks: 20, impressions: 700, ctr: 0.1, position: 3 },
+          { country: 'fra', clicks: 70, impressions: 400, ctr: 0.05, position: 4 },
+        ],
+        devices: [
+          { device: 'DESKTOP', clicks: 15, impressions: 650, ctr: 0.1, position: 3 },
+          { device: 'MOBILE', clicks: 65, impressions: 150, ctr: 0.1, position: 3 },
+        ],
+        dimensionTotals: { country: { rows: 9, clicks: 200, impressions: 3000 } },
+      },
+    });
+    renderWith(makeStore({ connection: connected }));
+    const labels = await screen.findAllByText(/^(France|United States)$/);
+    expect(labels.map((node) => node.textContent)).toEqual(['France', 'United States']);
   });
 });

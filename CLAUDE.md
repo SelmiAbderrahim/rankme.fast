@@ -84,7 +84,7 @@ rankme.fast/
 │       ├── config/               # env.ts (zod), db.ts, logger.ts
 │       ├── db/                   # Drizzle client, migrations, schema/*, counters
 │       ├── modules/
-│       │   ├── actions/          # unified Next Actions — cross-source finding registry + append-only decision events
+│       │   ├── actions/          # unified Next Actions — cross-source finding registry + append-only decision events; audit finding triage (dismiss / marked fixed, recheck) feeds counters, AI summary, assistant and MCP
 │       │   ├── admin/            # admin panel — user list, MRR, webhook replay, providers (Admin-role, 404 for non-admins)
 │       │   ├── alerts/           # alert rules + channels (email / Slack / signed webhook) — AAD-bound channel secrets, exactly-once dispatch
 │       │   ├── ai-visibility/    # tracked-prompt AI Overview + LLM-mention checks, share-of-voice rollup
@@ -92,7 +92,7 @@ rankme.fast/
 │       │   ├── app-seo/          # site-scoped mobile app profiles + App Store Optimization workspace surfaces
 │       │   ├── audience-research/ # audience research pipeline — public-page discovery + AI clustering
 │       │   ├── audit/            # append-only audit log (owner-scoped read)
-│       │   ├── audits/           # audit pipeline — vendor crawl + rule engine
+│       │   ├── audits/           # audit pipeline — vendor crawl + rule engine (deep-crawl signals, resource scan on by default for runs of up to 1,000 pages, crawl evidence, finding triage, report browser)
 │       │   ├── auth/             # Better Auth instance + verified-email gate
 │       │   ├── backlinks/        # backlinks provider surface
 │       │   ├── brand-radar/      # Brand Radar mention scans — scan CRUD
@@ -105,6 +105,7 @@ rankme.fast/
 │       │   ├── content-intelligence/ # AI content recommendations from mixed evidence sources
 │       │   ├── competitor-content/ # Competitor content comparison — bounded scrapes + deterministic deltas
 │       │   ├── content-monitoring/ # Public-page change monitoring — Firecrawl webhooks + weekly checks + change detection
+│       │   ├── dashboard/        # stored dashboard reads — `/site-health` and `/site-summaries` (latest audit, rank movement, Google state; no vendor calls)
 │       │   ├── geogrid/          # local-pack geogrid rank scans
 │       │   ├── ga4-snapshots/    # GA4 daily metrics snapshot repository (Postgres)
 │       │   ├── google-connections/ # GSC OAuth link/unlink + inspection
@@ -112,14 +113,15 @@ rankme.fast/
 │       │   ├── health/           # /api/health, /api/metrics
 │       │   ├── internal-links/   # internal linking suggestions — stored inventory + GSC evidence, one bounded AI anchor pass
 │       │   ├── keyword-clusters/ # SERP-overlap keyword clustering — deterministic readiness, bounded AI labels, and persisted cluster runs
-│       │   ├── keyword-research/ # keyword provider + cache
+│       │   ├── keyword-research/ # keyword provider + cache + site-scoped research history with stored results
 │       │   ├── legal/            # data-rights (export / delete + grace period)
-│       │   ├── local-seo/        # NAP/reviews/Q&A snapshots + local-pack rank tracking
+│       │   ├── local-seo/        # chosen local business profile, NAP/reviews/Q&A snapshots + local-pack rank tracking
 │       │   ├── market-catalog/   # authenticated provider-market catalogs used by client pickers
 │       │   ├── mcp/              # RankMeFast MCP endpoint — MCP_ENABLED kill switch, api-key auth, `mcp` rate bucket, tool list generated from zod
 │       │   ├── mcp-permissions/  # account-level MCP permission defaults — per-tool toggles, allowed-sites, allow-spend (intersected with per-key scopes)
+│       │   ├── pages/            # page performance inventory — one crawled-page inventory joined with Search Console data, crawl state and audit evidence
 │       │   ├── public-api/       # read-only /api/v1 (bearer API-key auth, rate-limited)
-│       │   ├── ranks/            # SERP tracking, ranks history, cache policy, Bing/YouTube/Amazon engines
+│       │   ├── ranks/            # SERP tracking, ranks history, cache policy, Bing/YouTube/Amazon engines, durable rank-check jobs (bulk keyword add, batched SERP tasks), one rank-state model
 │       │   ├── report-exports/   # canonical report export adapters, immutable snapshots, and bounded downloads
 │       │   ├── schema-generator/ # schema.org markup generator — versioned seven-type registry, evidence assembly, deterministic conformance
 │       │   ├── seo/              # /robots.txt, /sitemap*.xml
@@ -283,8 +285,8 @@ npm --prefix client run build        # tsc --noEmit && vite build
 | `GSC_INSPECT_SAMPLE` | no | Google Search Console URL Inspection sample ceiling; `0` disables |
 | `GA4_LAG_DAYS` | no | GA4 export lag — analytics report windows end at `today - GA4_LAG_DAYS`; default 1. GA4 reads (`PROVIDER_GA4=google`) reuse the Better Auth Google OAuth client via an incremental `analytics.readonly` grant; free Google quota |
 | `SERP_CACHE_TTL_HOURS` / `SERP_DEPTH` | no | rank-check SERP cache TTL and requested depth; defaults 24 / 100 |
-| `SERP_LIVE_DEPTH` | no | depth for the synchronous live SERP path (DataForSEO `/serp/google/organic/live/advanced`). Rank checks do NOT use it — `callProviderForItems` prefers the async `task_post`/`task_get` pair, which this adapter exposes — so it bounds only providers lacking that pair; capped ≤30 so live's per-page price stays within the `serp_checks` budget; default 20 |
-| `SERP_TASK_POLL_INTERVAL_MS` / `SERP_TASK_MAX_POLL_ATTEMPTS` | no | wait budget for DataForSEO's async SERP task queue — the path rank checks actually take. An `in_queue` task is re-polled at the interval up to the attempt ceiling; exhausting it fails that one keyword as temporarily unavailable (the `serp_checks` unit is still spent). Interval × attempts is the real budget; defaults 3_000 / 60 = 180s |
+| `SERP_LIVE_DEPTH` | no | depth for providers that use a synchronous live SERP request. Rank jobs use async `task_post`/`task_get` where available. Capped at 30 pages as an operator spend bound; default 20 |
+| `SERP_TASK_POLL_INTERVAL_MS` / `SERP_TASK_MAX_POLL_ATTEMPTS` | no | DataForSEO async SERP polling. A rank job posts every cache miss, up to 100 tasks per `task_post` request, then polls pending task ids round-robin without reposting slow tasks. The interval applies between rounds; interval × attempts is one vendor wait window (defaults 3_000 × 60 = 180 seconds). The job deadline is min(60 minutes, 15 minutes + ceil(checked keywords / 100) × window); the worker settles open items two minutes before it. Only attempted items can record a failed check; untouched items remain not checked. The single-task provider fallback retains a per-task attempt ceiling |
 | `KEYWORD_CACHE_TTL_DAYS` | no | keyword provider cache TTL; default 30 |
 | `AUDIT_POLL_INTERVAL_MS` / `AUDIT_RUN_TIMEOUT_MS` | no | audit-pipeline vendor polling / wall-clock cap |
 | `WORKER_CONCURRENCY` / `WORKER_PORT` | no | worker jobs-per-queue-worker (default 5) + internal `/healthz` (default 8081). With DataForSEO PageSpeed, the audit worker is capped at 10 jobs so its three calls/job stay within 30 simultaneous calls; replicas sharing credentials must keep aggregate audit concurrency at 10. |

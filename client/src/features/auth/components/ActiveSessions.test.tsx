@@ -10,21 +10,21 @@ vi.mock('../authClient', () => ({
   authClient: {
     useSession: vi.fn(() => ({ data: null, isPending: false })),
     listSessions: vi.fn(),
-    revokeSession: vi.fn(),
+    $fetch: vi.fn(),
     revokeOtherSessions: vi.fn(),
   },
 }));
 
 const useSession = authClient.useSession as unknown as Mock;
 const listSessions = authClient.listSessions as unknown as Mock;
-const revokeSession = authClient.revokeSession as unknown as Mock;
+const revokeSession = authClient.$fetch as unknown as Mock;
 const revokeOtherSessions = authClient.revokeOtherSessions as unknown as Mock;
 
 const ok = (data: unknown) => ({ data, error: null });
-const fail = (error: { status?: number } = { status: 400 }) => ({ data: null, error });
+const fail = (error: { status?: number; code?: string } = { status: 400 }) => ({ data: null, error });
 
-const sess = (token: string, userAgent: string | null = 'Chrome on macOS', ipAddress: string | null = '1.2.3.4') => ({
-  token,
+const sess = (id: string, userAgent: string | null = 'Chrome on macOS', ipAddress: string | null = '1.2.3.4') => ({
+  id,
   userAgent,
   ipAddress,
 });
@@ -47,18 +47,18 @@ beforeEach(() => {
   document.documentElement.classList.remove('dark');
   initI18n({ initialLocale: 'en' });
   void i18n.changeLanguage('en');
-  useSession.mockReturnValue({ data: { session: { token: 'cur' }, user: { id: 'u1' } }, isPending: false });
+  useSession.mockReturnValue({ data: { session: { id: 'cur' }, user: { id: 'u1', email: 'owner@example.test' } }, isPending: false });
 });
 
 const CHROME_MAC =
   'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/154.0.0.0 Safari/537.36';
 
 describe('ActiveSessions device labels', () => {
-  it('shows "Browser on OS" instead of the raw user-agent, keeping the raw text as a tooltip', async () => {
+  it('shows "Browser on OS" without exposing the raw user-agent', async () => {
     listSessions.mockResolvedValue(ok([sess('cur', CHROME_MAC)]));
     renderWithLocale();
     const label = await screen.findByText('Chrome 154 on macOS');
-    expect(label).toHaveAttribute('title', CHROME_MAC);
+    expect(label).not.toHaveAttribute('title');
     expect(screen.queryByText(/Mozilla\/5\.0/)).not.toBeInTheDocument();
     expect(screen.getByText('This device')).toBeInTheDocument();
   });
@@ -72,34 +72,34 @@ describe('ActiveSessions device labels', () => {
     expect(screen.getByText('Firefox 131')).toBeInTheDocument();
   });
 
-  it('falls back to the raw agent, truncated when long', async () => {
+  it('keeps an unrecognised agent out of the visible device label', async () => {
     const long = `custom-client/1.0 ${'x'.repeat(200)}`;
     listSessions.mockResolvedValue(ok([sess('a', 'curl/8.4.0'), sess('b', long)]));
     renderWithLocale();
-    expect(await screen.findByText('curl/8.4.0')).toBeInTheDocument();
-    expect(screen.getByText(`${long.slice(0, 80)}…`)).toBeInTheDocument();
+    expect(await screen.findAllByText('Unknown device')).toHaveLength(2);
+    expect(screen.queryByText(long)).not.toBeInTheDocument();
   });
 
   it('shows the last-active time when the session carries one, and omits it otherwise', async () => {
     listSessions.mockResolvedValue(
       ok([
-        { ...sess('cur', CHROME_MAC), updatedAt: '2026-10-05T10:30:00.000Z' },
-        sess('other', 'curl/8.4.0'),
+        sess('cur', CHROME_MAC),
+        { ...sess('other', 'curl/8.4.0'), updatedAt: '2026-10-05T10:30:00.000Z' },
       ]),
     );
     renderWithLocale();
     await screen.findByText('Chrome 154 on macOS');
-    const expected = new Intl.DateTimeFormat('en', {
-      dateStyle: 'medium',
-      timeStyle: 'short',
-    }).format(new Date('2026-10-05T10:30:00.000Z'));
-    expect(screen.getByText(`Last active ${expected}`)).toBeInTheDocument();
+    const [lastActive] = screen.getAllByTestId('session-last-active').filter((node) => /Last active/.test(node.textContent ?? ''));
+    expect(lastActive).toBeDefined();
+    // Other devices read by calendar day; the exact date is on the element.
+    expect(lastActive!.querySelector('time')).toHaveAttribute('datetime', '2026-10-05T10:30:00.000Z');
     expect(screen.getAllByText(/Last active/)).toHaveLength(1);
+    expect(screen.getByText('Active now')).toBeInTheDocument();
   });
 
   it('uses createdAt when updatedAt is absent', async () => {
     listSessions.mockResolvedValue(
-      ok([{ ...sess('cur', CHROME_MAC), createdAt: '2026-10-01T08:00:00.000Z' }]),
+      ok([{ ...sess('other', CHROME_MAC), createdAt: '2026-10-01T08:00:00.000Z' }]),
     );
     renderWithLocale();
     expect(await screen.findByText(/Last active/)).toBeInTheDocument();
@@ -120,7 +120,7 @@ describe('ActiveSessions', () => {
     // Current row cannot be revoked; only the other device gets a button.
     expect(screen.getAllByRole('button', { name: 'Revoke' })).toHaveLength(1);
     // Null user-agent falls back to the unknown-device label.
-    expect(screen.getByText('Unknown device')).toBeInTheDocument();
+    expect(screen.getAllByText('Unknown device')).toHaveLength(2);
     // "Sign out all other devices" appears because at least one other exists.
     expect(screen.getByRole('button', { name: 'Sign out all other devices' })).toBeInTheDocument();
   });
@@ -150,7 +150,11 @@ describe('ActiveSessions', () => {
     revokeSession.mockResolvedValue(ok(null));
     renderWithLocale();
     fireEvent.click(await screen.findByRole('button', { name: 'Revoke' }));
-    await waitFor(() => expect(revokeSession).toHaveBeenCalledWith({ token: 'other' }));
+    expect(revokeSession).not.toHaveBeenCalled();
+    fireEvent.click(screen.getByRole('button', { name: 'Revoke session' }));
+    await waitFor(() => expect(revokeSession).toHaveBeenCalledWith('/revoke-session', {
+      method: 'POST', body: { sessionId: 'other' },
+    }));
     await waitFor(() =>
       expect(screen.queryByRole('button', { name: 'Revoke' })).not.toBeInTheDocument(),
     );
@@ -161,9 +165,26 @@ describe('ActiveSessions', () => {
     revokeSession.mockResolvedValue(fail());
     renderWithLocale();
     fireEvent.click(await screen.findByRole('button', { name: 'Revoke' }));
+    fireEvent.click(screen.getByRole('button', { name: 'Revoke session' }));
     expect(await screen.findByRole('alert')).toHaveTextContent(
       'Could not revoke that session. Try again.',
     );
+  });
+
+  it('keeps the revocation pending until confirmed and lets the user cancel', async () => {
+    listSessions.mockResolvedValue(ok([sess('cur'), sess('other')]));
+    renderWithLocale();
+    fireEvent.click(await screen.findByRole('button', { name: 'Revoke' }));
+    expect(screen.getByText('Revoke this session?')).toBeInTheDocument();
+    fireEvent.click(screen.getByRole('button', { name: 'Cancel' }));
+    expect(revokeSession).not.toHaveBeenCalled();
+  });
+
+  it('asks for a fresh identity when Better Auth says the session is stale', async () => {
+    listSessions.mockResolvedValue(fail({ status: 403, code: 'SESSION_NOT_FRESH' }));
+    renderWithLocale();
+    expect(await screen.findByText("Confirm it's you")).toBeInTheDocument();
+    expect(screen.queryByRole('button', { name: 'Try again' })).not.toBeInTheDocument();
   });
 
   it('signs out all other devices and refetches', async () => {
@@ -188,7 +209,7 @@ describe('ActiveSessions', () => {
   });
 
   it('shows a load error with a retry that succeeds on the second attempt', async () => {
-    listSessions.mockResolvedValueOnce(fail()).mockResolvedValueOnce(ok([sess('cur')]));
+    listSessions.mockResolvedValueOnce(fail({ status: 503 })).mockResolvedValueOnce(ok([sess('cur')]));
     renderWithLocale();
     expect(await screen.findByText('Could not load your sessions.')).toBeInTheDocument();
     fireEvent.click(screen.getByRole('button', { name: 'Try again' }));
@@ -201,11 +222,11 @@ describe('ActiveSessions', () => {
     expect(await screen.findByText('Could not load your sessions.')).toBeInTheDocument();
   });
 
-  it('falls back to an empty current token when there is no session', async () => {
+  it('falls back to an empty current id when there is no session', async () => {
     useSession.mockReturnValue({ data: null, isPending: false });
     listSessions.mockResolvedValue(ok([sess('a'), sess('b')]));
     renderWithLocale();
-    // No current token → every row is "other" → two revoke buttons.
+    // No current id → every row is "other" → two revoke buttons.
     expect(await screen.findAllByRole('button', { name: 'Revoke' })).toHaveLength(2);
   });
 
@@ -214,5 +235,61 @@ describe('ActiveSessions', () => {
     listSessions.mockResolvedValue(ok([sess('cur')]));
     renderWithLocale('ar');
     expect(await screen.findByText('هذا الجهاز')).toBeInTheDocument();
+  });
+
+  it('shows a load error and a retry when reading the sessions throws', async () => {
+    listSessions.mockRejectedValueOnce(new Error('offline')).mockResolvedValueOnce(ok([sess('cur')]));
+    renderWithLocale();
+    expect(await screen.findByText('Could not load your sessions.')).toBeInTheDocument();
+    fireEvent.click(screen.getByRole('button', { name: 'Try again' }));
+    expect(await screen.findByText('This device')).toBeInTheDocument();
+  });
+
+  it('offers no retry for a load error the server will repeat', async () => {
+    listSessions.mockResolvedValue(fail({ status: 403 }));
+    renderWithLocale();
+    expect(await screen.findByText('Could not load your sessions.')).toBeInTheDocument();
+    expect(screen.queryByRole('button', { name: 'Try again' })).not.toBeInTheDocument();
+  });
+
+  it('surfaces an error alert when a revoke request throws', async () => {
+    listSessions.mockResolvedValue(ok([sess('cur'), sess('other', null, null)]));
+    revokeSession.mockRejectedValue(new Error('offline'));
+    renderWithLocale();
+    fireEvent.click(await screen.findByRole('button', { name: 'Revoke' }));
+    fireEvent.click(screen.getByRole('button', { name: 'Revoke session' }));
+    expect(await screen.findByRole('alert')).toHaveTextContent('Could not revoke that session. Try again.');
+  });
+
+  it('surfaces an error alert when signing out other devices throws', async () => {
+    listSessions.mockResolvedValue(ok([sess('cur'), sess('other')]));
+    revokeOtherSessions.mockRejectedValue(new Error('offline'));
+    renderWithLocale();
+    fireEvent.click(await screen.findByRole('button', { name: 'Sign out all other devices' }));
+    expect(await screen.findByRole('alert')).toHaveTextContent('Could not revoke that session. Try again.');
+  });
+
+  it('omits the last-active line when the stored time is missing or invalid', async () => {
+    listSessions.mockResolvedValue(ok([
+      { ...sess('a', 'curl/8.4.0'), createdAt: 'not a date' },
+      { ...sess('b', 'curl/8.4.0'), updatedAt: null, createdAt: null },
+    ]));
+    renderWithLocale();
+    expect(await screen.findAllByText('Unknown device')).toHaveLength(2);
+    expect(screen.queryByTestId('session-last-active')).not.toBeInTheDocument();
+  });
+
+  it('keeps the confirmation open while a revoke is in flight', async () => {
+    listSessions.mockResolvedValue(ok([sess('cur'), sess('other')]));
+    let finish: (value: unknown) => void = () => undefined;
+    revokeSession.mockImplementation(() => new Promise((resolve) => { finish = resolve; }));
+    renderWithLocale();
+    fireEvent.click(await screen.findByRole('button', { name: 'Revoke' }));
+    fireEvent.click(screen.getByRole('button', { name: 'Revoke session' }));
+    await waitFor(() => expect(revokeSession).toHaveBeenCalled());
+    fireEvent.keyDown(screen.getByRole('alertdialog'), { key: 'Escape' });
+    expect(screen.getByRole('alertdialog')).toBeInTheDocument();
+    finish(fail());
+    expect(await screen.findByText('Could not revoke that session. Try again.')).toBeInTheDocument();
   });
 });

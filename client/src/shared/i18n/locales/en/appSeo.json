@@ -13,12 +13,11 @@
   },
   "locked": {
     "title": "App SEO is available on Pro",
-    "description": "Upgrade to Pro or higher to register app profiles and open this workspace.",
-    "cta": "View plans"
+    "description": "Upgrade to Pro or higher to register app profiles and open this workspace."
   },
   "registration": {
     "title": "Register an app",
-    "description": "Add a Google Play package, an App Store ID, or both. Registration checks format only and does not use vendor credits.",
+    "description": "Add a Google Play package, an App Store ID, or both. Registration only checks the format and doesn't fetch any data.",
     "playLabel": "Google Play package ID",
     "playPlaceholder": "com.example.app",
     "playHelp": "Use the reverse-DNS package ID shown in Google Play.",
@@ -27,7 +26,6 @@
     "appleHelp": "Enter the 6–12 digit numeric app ID.",
     "pairedLabel": "Treat these as the same app",
     "pairedHelp": "Pair the two listings only when they represent the same product.",
-    "usage": "{{used}} of {{limit}} profiles",
     "submit": "Register app",
     "registering": "Registering…"
   },
@@ -46,7 +44,6 @@
   "states": {
     "limitTitle": "App profile limit reached",
     "limitDescription": "Delete a profile to free a slot, or choose a plan with more app profiles.",
-    "upgrade": "View plans",
     "errorTitle": "We couldn't update app profiles"
   },
   "validation": {

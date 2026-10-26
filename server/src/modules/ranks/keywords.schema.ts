@@ -1,5 +1,9 @@
 import { z } from 'zod';
 import { SERP_DEVICES, RANK_CADENCES, RANK_ENGINES } from '../../db/schema/keywords.js';
+export const KEYWORD_PHRASE_MAX = 300;
+export const BULK_KEYWORDS_MAX = 100;
+export const KEYWORD_LIST_PAGE_SIZE_DEFAULT = 25;
+export const KEYWORD_LIST_PAGE_SIZE_MAX = 100;
 /**
  * The token an alt engine matches on.
  *
@@ -28,7 +32,7 @@ const createKeywordFields = z.object({
         .string()
         .trim()
         .min(1, 'ranks.errors.phraseRequired')
-        .max(300, 'ranks.errors.phraseTooLong'),
+        .max(KEYWORD_PHRASE_MAX, 'ranks.errors.phraseTooLong'),
     locationCode: z.coerce
         .number()
         .int('ranks.errors.locationInvalid')
@@ -56,37 +60,38 @@ const createKeywordFields = z.object({
  * domain, so a token would be dead configuration). The same invariant is
  * mirrored by the `keywords_engine_target_check` database constraint.
  */
-export const createKeywordSchema = createKeywordFields.superRefine((value, ctx) => {
+function refineEngineTarget(value: { engine: (typeof RANK_ENGINES)[number]; engineTarget?: string },
+    ctx: z.RefinementCtx): void {
     if (value.engine === 'youtube' || value.engine === 'amazon') {
         if (value.engineTarget === undefined) {
-            ctx.addIssue({
-                code: z.ZodIssueCode.custom,
-                path: ['engineTarget'],
-                message: 'ranks.errors.engineTargetRequired',
-            });
+            ctx.addIssue({ code: z.ZodIssueCode.custom, path: ['engineTarget'],
+                message: 'ranks.errors.engineTargetRequired' });
             return;
         }
         const pattern = value.engine === 'youtube' ? YOUTUBE_HANDLE_RE : AMAZON_ASIN_RE;
-        if (!pattern.test(value.engineTarget)) {
-            ctx.addIssue({
-                code: z.ZodIssueCode.custom,
-                path: ['engineTarget'],
-                message: value.engine === 'youtube'
-                    ? 'ranks.errors.youtubeHandleInvalid'
-                    : 'ranks.errors.amazonAsinInvalid',
-            });
-        }
+        if (!pattern.test(value.engineTarget)) ctx.addIssue({ code: z.ZodIssueCode.custom,
+            path: ['engineTarget'], message: value.engine === 'youtube'
+                ? 'ranks.errors.youtubeHandleInvalid' : 'ranks.errors.amazonAsinInvalid' });
         return;
     }
-    if (value.engineTarget !== undefined) {
-        ctx.addIssue({
-            code: z.ZodIssueCode.custom,
-            path: ['engineTarget'],
-            message: 'ranks.errors.engineTargetNotAllowed',
-        });
-    }
-});
+    if (value.engineTarget !== undefined) ctx.addIssue({ code: z.ZodIssueCode.custom,
+        path: ['engineTarget'], message: 'ranks.errors.engineTargetNotAllowed' });
+}
+const optionalMarketFields = {
+    locationCode: createKeywordFields.shape.locationCode.optional(),
+    languageCode: createKeywordFields.shape.languageCode.optional(),
+    device: z.enum(SERP_DEVICES).optional(),
+};
+export const createKeywordSchema = createKeywordFields.extend({
+    ...optionalMarketFields,
+}).superRefine(refineEngineTarget);
 export type CreateKeywordBody = z.infer<typeof createKeywordSchema>;
+export const createKeywordsBulkSchema = createKeywordFields.omit({ phrase: true }).extend({
+    ...optionalMarketFields,
+    phrases: z.array(z.string().max(KEYWORD_PHRASE_MAX * 4, 'ranks.errors.phraseTooLong'))
+        .min(1, 'ranks.errors.phraseRequired').max(BULK_KEYWORDS_MAX, 'ranks.errors.bulkTooMany'),
+}).superRefine(refineEngineTarget);
+export type CreateKeywordsBulkBody = z.infer<typeof createKeywordsBulkSchema>;
 export const keywordSuggestionsSchema = createKeywordFields.pick({
     locationCode: true,
     languageCode: true,
@@ -99,12 +104,24 @@ export const altEnginePreviewSchema = z.object({
 export type AltEnginePreviewBody = z.infer<typeof altEnginePreviewSchema>;
 export const listKeywordsQuerySchema = z.object({
     cursor: z.string().min(1).optional(),
-    limit: z.coerce.number().int().min(1).max(100).default(20),
+    limit: z.coerce.number().int().min(1).max(KEYWORD_LIST_PAGE_SIZE_MAX).default(20),
+    page: z.coerce.number().int().min(1).optional(),
+    pageSize: z.coerce.number().int().min(1).max(KEYWORD_LIST_PAGE_SIZE_MAX)
+        .default(KEYWORD_LIST_PAGE_SIZE_DEFAULT),
     engine: z.enum(RANK_ENGINES).optional(),
+    search: z.string().trim().max(KEYWORD_PHRASE_MAX).optional()
+        .transform((value) => value || undefined),
+}).superRefine((value, ctx) => {
+    if (value.cursor !== undefined && value.page !== undefined) ctx.addIssue({
+        code: z.ZodIssueCode.custom, path: ['page'], message: 'ranks.errors.unknownCursor',
+    });
 });
 export type ListKeywordsQuery = z.infer<typeof listKeywordsQuerySchema>;
 export const siteIdParamsSchema = z.object({
     siteId: z.string().min(1),
+});
+export const keywordMarketMoveSchema = z.object({
+    token: z.string().regex(/^[0-9a-f]{64}$/, 'validation.issue.invalidString'),
 });
 export const keywordIdParamsSchema = z.object({
     id: z.string().min(1),

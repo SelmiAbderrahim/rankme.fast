@@ -1,4 +1,5 @@
 import { z } from 'zod';
+import { CLIENT_REPORT_LAST_DAY_OF_MONTH } from '../../db/schema/index.js';
 import { SUPPORTED_LOCALES } from '../../shared/i18n/index.js';
 export const clientReportSectionsSchema = z
     .object({
@@ -30,14 +31,43 @@ export const clientReportRecipientsSchema = z
     .min(1)
     .max(10)
     .transform((recipients) => [...new Set(recipients)].sort());
+/**
+ * An IANA zone the runtime knows ("Asia/Riyadh", "UTC"). Fixed offsets and
+ * abbreviations are refused so DST rules always come from the zone database.
+ */
+export function isValidScheduleTimeZone(value: string): boolean {
+    if (!/^[A-Za-z_]+(?:\/[A-Za-z0-9_+-]+)*$/u.test(value))
+        return false;
+    try {
+        new Intl.DateTimeFormat('en-US', { timeZone: value });
+        return true;
+    }
+    catch {
+        return false;
+    }
+}
+const scheduleTimeZoneSchema = z
+    .string()
+    .trim()
+    .min(1)
+    .max(64)
+    .refine(isValidScheduleTimeZone, { message: 'validation.custom.scheduleTimeZoneInvalid' });
 const scheduleBaseSchema = z.object({
     name: z.string().trim().min(1).max(80),
-    hourUtc: z.number().int().min(0).max(23),
+    /** Wall-clock zone for `localHour`, `weekdayUtc` and `monthdayUtc`. */
+    timezone: scheduleTimeZoneSchema.default('UTC'),
+    /** Hour 0..23 in `timezone`. */
+    localHour: z.number().int().min(0).max(23),
     locale: z.enum(SUPPORTED_LOCALES),
     recipients: clientReportRecipientsSchema,
     sections: clientReportSectionsSchema,
     enabled: z.boolean().default(true),
 });
+/**
+ * Schedule body. `weekdayUtc` / `monthdayUtc` keep their wire names but, like
+ * `localHour`, are wall-clock values in `timezone` (they equal UTC values for
+ * a UTC schedule).
+ */
 export const clientReportScheduleBodySchema = z.discriminatedUnion('frequency', [
     scheduleBaseSchema.extend({
         frequency: z.literal('weekly'),
@@ -47,14 +77,19 @@ export const clientReportScheduleBodySchema = z.discriminatedUnion('frequency', 
     scheduleBaseSchema.extend({
         frequency: z.literal('monthly'),
         weekdayUtc: z.null().optional(),
-        monthdayUtc: z.number().int().min(1).max(28),
+        // 1..28 exist in every month. The last day is its own explicit mode,
+        // never an out-of-range day number that a date library would roll over.
+        monthdayUtc: z.union([
+            z.number().int().min(1).max(28),
+            z.literal(CLIENT_REPORT_LAST_DAY_OF_MONTH),
+        ]),
     }).strict(),
 ]);
 export const clientReportScheduleParamsSchema = clientReportSiteParamsSchema.extend({
-    scheduleId: z.string().uuid(),
+    scheduleId: z.string().guid(),
 });
 export const clientReportDeliveryQuerySchema = z.object({
-    cursor: z.string().uuid().optional(),
+    cursor: z.string().guid().optional(),
     limit: z.coerce.number().int().min(1).max(50).default(20),
 });
 export const clientPortalCreateBodySchema = z

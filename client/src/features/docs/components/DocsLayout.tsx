@@ -1,3 +1,4 @@
+import { Bdi } from '@shared/components/Bdi';
 import { useState } from 'react';
 import { Form, Link, NavLink, Outlet, useLoaderData, useLocation } from 'react-router-dom';
 import { Menu, Search } from 'lucide-react';
@@ -38,7 +39,7 @@ function DocsNavigation({ catalog, onNavigate }: { catalog: DocsCatalog; onNavig
                       : 'border-transparent text-muted-foreground hover:border-border hover:text-foreground',
                   )}
                 >
-                  {doc.title}
+                  <Bdi>{doc.title}</Bdi>
                 </NavLink>
               </li>
             ))}
@@ -98,7 +99,7 @@ export const DocsLayout = () => {
                 </div>
               </SheetContent>
             </Sheet>
-            <span className="truncate text-sm font-medium">{pageTitle}</span>
+            <span className="truncate text-sm font-medium"><Bdi>{pageTitle}</Bdi></span>
           </div>
           <Outlet context={catalog} />
         </div>

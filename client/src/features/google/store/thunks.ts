@@ -74,7 +74,7 @@ export const connectGoogle = createAsyncThunk<
 
 export const setGoogleProperty = createAsyncThunk<
   SetGooglePropertyResponse,
-  { siteId: string; propertyUrl: string | null },
+  { siteId: string; propertyUrl: string | null; confirmMismatch?: boolean },
   { rejectValue: string }
 >('google/setProperty', async ({ siteId, ...body }, { rejectWithValue }) => {
   try {

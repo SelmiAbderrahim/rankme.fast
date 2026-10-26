@@ -13,7 +13,7 @@
     "unit_zero": "This uses no lookup units.", "unit_one": "This uses {{count}} lookup unit.", "unit_two": "This uses {{count}} lookup units.", "unit_few": "This uses {{count}} lookup units.", "unit_many": "This uses {{count}} lookup units.", "unit_other": "This uses {{count}} lookup units.",
     "remaining_zero": "No units remain before this lookup.", "remaining_one": "{{count}} unit remains before this lookup.", "remaining_two": "{{count}} units remain before this lookup.", "remaining_few": "{{count}} units remain before this lookup.", "remaining_many": "{{count}} units remain before this lookup.", "remaining_other": "{{count}} units remain before this lookup.",
     "selfHost": "This self-hosted deployment does not enforce a sold-plan allowance.", "confirm": "Run lookup", "running": "Running lookup…",
-    "cache": { "cached": "A cached result is available; the lookup still counts.", "fresh_required": "Fresh vendor data is required.", "mixed": "The run combines cached and fresh data.", "unknown": "Cache status will be resolved when the lookup runs." }
+    "cache": { "cached": "A cached result is available; the lookup still counts.", "fresh_required": "Fresh data is required.", "mixed": "The run combines cached and fresh data.", "unknown": "Cache status will be resolved when the lookup runs." }
   },
   "keywords": {
     "title": "Keywords for this app", "description": "See up to one hundred observed store-search keywords and positions.",
@@ -37,6 +37,6 @@
   "columns": { "rank": "Rank", "keyword": "Keyword", "updated": "Updated", "app": "App", "averagePosition": "Average position", "sharedKeywords": "Shared keywords", "rankedKeywords": "Ranked keywords", "firstPositions": "First positions" },
   "empty": { "noProfileTitle": "Register an app first", "noProfileDescription": "Add a Google Play package ID or App Store ID before running research." },
   "disabled": { "title": "New research is paused", "description": "Stored results remain available, but new lookups are turned off." },
-  "upsell": { "title": "Add App SEO research", "description": "Your Pro plan needs the App SEO add-on or a research credit pack for these live lookups.", "cta": "View App SEO options" },
+
   "errors": { "title": "Research could not be completed", "requestFailed": "The research request failed. Try again.", "downloadFailed": "The CSV could not be downloaded in this browser." }
 }

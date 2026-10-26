@@ -1,4 +1,5 @@
 import type { ContentDocument, StructuredDataFact } from '../../shared/providers/content-source.js';
+import { countWords as countTextWords } from '../../shared/utils/text-length.js';
 export interface StoredBriefDocument {
     id: string;
     sourceUrl: string;
@@ -46,7 +47,6 @@ export interface DraftComparison {
     deterministicScore: number;
 }
 const ENTITY_PROPERTIES = new Set(['@type', 'type', 'name', 'headline', 'about', 'mentions']);
-const WORD_RE = /[\p{L}\p{N}]+/gu;
 const CONTROL_CHARACTERS_RE = new RegExp(String.raw `[\u0000-\u0008\u000B\u000C\u000E-\u001F\u007F]`, 'gu');
 export function boundedPlainText(value: string | null | undefined, max: number): string {
     return (value ?? '')
@@ -56,7 +56,7 @@ export function boundedPlainText(value: string | null | undefined, max: number):
         .slice(0, max);
 }
 export function countWords(value: string): number {
-    return value.match(WORD_RE)?.length ?? 0;
+    return countTextWords(value);
 }
 function factLabels(fact: StructuredDataFact): string[] {
     const labels = [boundedPlainText(fact.type, 120)];

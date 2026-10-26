@@ -1,3 +1,5 @@
+import { Bdi } from '@shared/components/Bdi';
+import { MetricValue } from '@shared/components/MetricValue';
 import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { chartXAxisPosition } from '@shared/charts/x-axis';
@@ -81,7 +83,7 @@ export const TrafficCompareChart = ({ snapshots }: TrafficCompareChartProps) => 
         {series.map(({ snapshot, color }) => (
           <span key={snapshot.id} className="inline-flex items-center gap-2 text-sm">
             <span className="size-3 rounded-full" style={{ backgroundColor: color }} />
-            {snapshot.targetDomain}
+            <Bdi>{snapshot.targetDomain}</Bdi>
           </span>
         ))}
       </div>
@@ -150,7 +152,7 @@ export const TrafficCompareChart = ({ snapshots }: TrafficCompareChartProps) => 
                   );
                   return (
                     <TableCell key={snapshot.id} className="text-end tabular-nums">
-                      {point ? number.format(point.traffic.value) : '—'}
+                      {point ? number.format(point.traffic.value) : <MetricValue kind="count" value={null} />}
                     </TableCell>
                   );
                 })}

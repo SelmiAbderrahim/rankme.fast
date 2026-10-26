@@ -39,6 +39,32 @@ export const RULE_IDS = [
     'low-review-count',
     'low-review-rating',
     'local-pack-not-ranking',
+    // Deep crawl signals: crawler checks, extra reads, and the resource scan
+    // for the last three.
+    'http-error-pages',
+    'redirect-chains',
+    'links-to-redirects',
+    'meta-refresh-redirect',
+    'canonical-chain-or-conflict',
+    'orphan-pages',
+    'deep-pages',
+    'duplicate-titles',
+    'duplicate-content',
+    'placeholder-text',
+    'mixed-content',
+    'images-missing-alt',
+    'slow-server-response',
+    'large-pages',
+    'uncompressed-pages',
+    'render-blocking-resources',
+    'html-basics-missing',
+    'deprecated-html',
+    'url-structure',
+    'social-tags-missing',
+    'favicon-missing',
+    'broken-resources',
+    'oversized-images',
+    'uncached-static-resources',
 ] as const;
 export type RuleId = (typeof RULE_IDS)[number];
 // ---------------------------------------------------------------------------

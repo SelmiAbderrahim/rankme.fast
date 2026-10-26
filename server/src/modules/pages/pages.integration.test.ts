@@ -124,6 +124,23 @@ describe('authenticated Pages API isolation and provider reuse', () => {
     expect(memberRefresh.body.refresh).toMatchObject({ source: 'demo' });
   });
 
+  it("reads and refreshes in the site's default market instead of United States", async () => {
+    const owner = await signupVerifiedUser(app, { email: 'pages-market-owner@example.com' });
+    const site = await Site.create({
+      accountId: new mongoose.Types.ObjectId(owner.id), url: 'https://rewards.example.sa/', domain: 'rewards.example.sa',
+      defaultMarket: { locationCode: 2682, languageCode: 'ar', device: 'desktop', source: 'inferred' },
+    });
+    const siteId = String(site._id);
+    const read = await request(app).get(`/api/sites/${siteId}/pages`).set('Cookie', owner.cookie).expect(200);
+    expect(read.body.envelope.market).toEqual({ locationCode: 2682, languageCode: 'ar', selection: 'site_default' });
+    await request(app).post(`/api/sites/${siteId}/pages/refresh`).set('Cookie', owner.cookie).send({}).expect(200);
+    const after = await request(app).get(`/api/sites/${siteId}/pages`).set('Cookie', owner.cookie).expect(200);
+    expect(after.body.envelope).toMatchObject({
+      source: 'demo',
+      market: { locationCode: 2682, languageCode: 'ar', selection: 'site_default' },
+    });
+  });
+
   it('hides Pages reads and refresh for a selected member without the site grant', async () => {
     const owner = await signupVerifiedUser(app, { email: 'pages-scope-owner@example.com' });
     const member = await signupVerifiedUser(app, { email: 'pages-scope-member@example.com' });
@@ -204,6 +221,33 @@ describe('authenticated Pages API isolation and provider reuse', () => {
     expect(read.body.envelope).toMatchObject({ source: 'gsc', status: 'ready' });
     const pageId = read.body.items[0]?.pageId as string | undefined;
     if (pageId) await request(app).get(`/api/sites/${siteId}/pages/${pageId}`).set('Cookie', owner.cookie).expect(200);
+  });
+
+  it('states every page position change explicitly and hides it from other accounts', async () => {
+    const owner = await signupVerifiedUser(app, { email: 'pages-position-owner@example.com' });
+    const outsider = await signupVerifiedUser(app, { email: 'pages-position-outsider@example.com' });
+    const siteId = await siteFor(owner.id);
+    await upsertConnection({ accountId: owner.id, googleAccountEmail: owner.email, refreshToken: 'fake-refresh', scopes: [SCOPE_GSC] });
+    await Site.updateOne({ _id: siteId, accountId: owner.id }, { $set: { gscPropertyUrl: 'sc-domain:example.com', gscBindingGenerationId: BINDING_GENERATION_ID, gscBindingSource: 'legacy' } });
+    const recent = new Date();
+    const row = (snapshotDate: string, dimensionKey: string, position: number, fetchedAt: Date) => ({
+      accountId: owner.id, siteId, bindingGenerationId: BINDING_GENERATION_ID, snapshotDate, dimensionSet: 'page', windowDays: 28,
+      dimensionKey, clicks: 5, impressions: 500, ctr: 0.01, position, fetchedAt,
+    });
+    await getTestDb().insert(gscSearchAnalytics).values([
+      row('2026-08-01', 'https://example.com/better', 64.2, new Date(recent.getTime() - 86_400_000)),
+      row('2026-08-01', 'https://example.com/worse', 3, new Date(recent.getTime() - 86_400_000)),
+      row('2026-08-02', 'https://example.com/better', 60.1444, recent),
+      row('2026-08-02', 'https://example.com/worse', 14, recent),
+      row('2026-08-02', 'https://example.com/fresh', 9, recent),
+    ]);
+    const read = await request(app).get(`/api/sites/${siteId}/pages?range=28d`).set('Cookie', owner.cookie).expect(200);
+    const window = { range: '28d', comparison: 'previous_sync' };
+    const byUrl = Object.fromEntries((read.body.items as Array<{ url: string; deltas: { position: unknown } }>).map((item) => [item.url, item.deltas.position]));
+    expect(byUrl['https://example.com/better']).toEqual({ currentPosition: 60.1444, previousPosition: 64.2, positionDelta: 60.1444 - 64.2, direction: 'improved', window });
+    expect(byUrl['https://example.com/worse']).toEqual({ currentPosition: 14, previousPosition: 3, positionDelta: 11, direction: 'declined', window });
+    expect(byUrl['https://example.com/fresh']).toEqual({ currentPosition: 9, previousPosition: null, positionDelta: null, direction: null, window });
+    await request(app).get(`/api/sites/${siteId}/pages?range=28d`).set('Cookie', outsider.cookie).expect(404);
   });
 
   it('persists empty and failed terminal GSC refresh health without falling through to fallback', async () => {

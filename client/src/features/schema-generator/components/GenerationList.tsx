@@ -9,6 +9,7 @@ import {
   TableRow,
 } from '@shared/ui/table';
 import { StatusChip } from '@shared/ui/status-chip';
+import { formatAbsoluteDate } from '@shared/lib/datetime';
 import type { GenerationSummary } from '../types';
 
 interface GenerationListProps {
@@ -18,7 +19,7 @@ interface GenerationListProps {
 
 /** Stored generations. Re-opening one is free — it reads what you already paid for. */
 export const GenerationList = ({ generations, onOpen }: GenerationListProps) => {
-  const { t } = useTranslation('schemaGenerator');
+  const { t, i18n } = useTranslation('schemaGenerator');
   return (
     <div className="flex flex-col gap-2" data-testid="schema-generation-list">
       <p className="text-muted-foreground text-sm">{t('list.free')}</p>
@@ -48,8 +49,8 @@ export const GenerationList = ({ generations, onOpen }: GenerationListProps) => 
                     <StatusChip tone="warning">{t('list.statusGaps')}</StatusChip>
                   )}
                 </TableCell>
-                <TableCell className="text-muted-foreground text-xs" dir="ltr">
-                  {row.generatedAt.slice(0, 10)}
+                <TableCell className="text-muted-foreground text-xs">
+                  {formatAbsoluteDate(row.generatedAt, i18n.language)}
                 </TableCell>
                 <TableCell className="text-end">
                   <Button

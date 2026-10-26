@@ -38,8 +38,13 @@
   "revoke": {
     "cta": "Revocar el acceso de Google en todos los sitios",
     "confirmTitle": "¿Revocar la conexión compartida de Google?",
-    "confirmBody": "Esto revoca el acceso de Google y desvincula los {{count}} sitios conectados. No se puede limitar al sitio actual.",
-    "confirm": "Revocar en todos"
+    "confirmBody_one": "Esto revoca el acceso de Google y desvincula el {{count}} sitio conectado. No se puede limitar al sitio actual.",
+    "confirm": "Revocar en todos",
+    "confirmBody_zero": "Esto revoca el acceso de Google y desvincula los {{count}} sitios conectados. No se puede limitar al sitio actual.",
+    "confirmBody_two": "Esto revoca el acceso de Google y desvincula los {{count}} sitios conectados. No se puede limitar al sitio actual.",
+    "confirmBody_few": "Esto revoca el acceso de Google y desvincula los {{count}} sitios conectados. No se puede limitar al sitio actual.",
+    "confirmBody_many": "Esto revoca el acceso de Google y desvincula los {{count}} sitios conectados. No se puede limitar al sitio actual.",
+    "confirmBody_other": "Esto revoca el acceso de Google y desvincula los {{count}} sitios conectados. No se puede limitar al sitio actual."
   },
   "autoMatch": {
     "queued": "Comprobando las propiedades de Google de este sitio…",
@@ -86,7 +91,9 @@
     "viewAllLabel": "Ver todo — {{section}}",
     "sitemapsLink": "Ver sitemaps",
     "asOf": "Datos hasta {{date}}",
-    "previousPeriod": "Periodo anterior: {{clicks}} clics · {{impressions}} impresiones",
+    "totalsNote": "Totales del sitio del {{start}} al {{end}}, sumados a partir de los datos diarios de Search Console.",
+    "scopeNote": "Search Console cuenta cada lista por separado, así que las filas de una lista pueden sumar un poco más o un poco menos que el total del sitio.",
+    "previousPeriod": "Periodo anterior — clics: {{clicks}} · impresiones: {{impressions}}",
     "reportLink": "Ver todos los datos en tu informe",
     "emptyTitle": "Aún no hay datos",
     "emptyCta": "Gestionar conexión",
@@ -98,10 +105,13 @@
     "refreshError": "No pudimos actualizar tus datos de búsqueda. Inténtalo de nuevo en un momento.",
     "refreshedJustNow": "Actualizado hace un momento",
     "timeseriesTitle": "Clics e impresiones a lo largo del tiempo",
-    "timeseriesSubtitle": "Totales diarios de los últimos {{days}} días.",
+    "timeseriesSubtitle_one": "Totales diarios del último día ({{days}}).",
     "timeseriesEmpty": "Aún no hay datos diarios.",
-    "timeseriesChartLabel": "{{metric}} diarios de los últimos {{days}} días",
-    "timeseriesTableCaption": "Rendimiento de búsqueda diario de los últimos {{days}} días",
+    "timeseriesNoActivity": "Sin actividad en este período.",
+    "timeseriesNoClicks": "Sin clics en este período.",
+    "timeseriesNoImpressions": "Sin impresiones en este período.",
+    "timeseriesChartLabel_one": "{{metric}} diarios del último día ({{days}})",
+    "timeseriesTableCaption_one": "Rendimiento de búsqueda diario del último día ({{days}})",
     "tableDate": "Fecha",
     "metricLabel": "Elige una métrica para el gráfico",
     "countriesTitle": "Países principales",
@@ -117,26 +127,45 @@
       "mobile": "Móvil",
       "tablet": "Tableta",
       "unknown": "Otro"
-    }
+    },
+    "timeseriesSubtitle_zero": "Totales diarios de los últimos {{days}} días.",
+    "timeseriesSubtitle_two": "Totales diarios de los últimos {{days}} días.",
+    "timeseriesSubtitle_few": "Totales diarios de los últimos {{days}} días.",
+    "timeseriesSubtitle_many": "Totales diarios de los últimos {{days}} días.",
+    "timeseriesSubtitle_other": "Totales diarios de los últimos {{days}} días.",
+    "timeseriesChartLabel_zero": "{{metric}} diarios de los últimos {{days}} días",
+    "timeseriesChartLabel_two": "{{metric}} diarios de los últimos {{days}} días",
+    "timeseriesChartLabel_few": "{{metric}} diarios de los últimos {{days}} días",
+    "timeseriesChartLabel_many": "{{metric}} diarios de los últimos {{days}} días",
+    "timeseriesChartLabel_other": "{{metric}} diarios de los últimos {{days}} días",
+    "timeseriesTableCaption_zero": "Rendimiento de búsqueda diario de los últimos {{days}} días",
+    "timeseriesTableCaption_two": "Rendimiento de búsqueda diario de los últimos {{days}} días",
+    "timeseriesTableCaption_few": "Rendimiento de búsqueda diario de los últimos {{days}} días",
+    "timeseriesTableCaption_many": "Rendimiento de búsqueda diario de los últimos {{days}} días",
+    "timeseriesTableCaption_other": "Rendimiento de búsqueda diario de los últimos {{days}} días"
   },
   "analytics": {
-    "title": "Google Analytics (últimos {{days}} días)",
+    "title": "Google Analytics",
     "sessions": "Sesiones",
     "activeUsers": "Usuarios activos",
     "engagedSessions": "Sesiones con interacción",
     "keyEvents": "Eventos clave",
     "engagementRateLabel": "Tasa de interacción",
     "engagementRateLine": "Tasa de interacción: {{rate}}",
-    "previousPeriod": "Periodo anterior: {{sessions}} sesiones · {{activeUsers}} usuarios activos",
+    "windowNote": "Totales del {{start}} al {{end}}.",
+    "previousPeriod": "Periodo anterior — sesiones: {{sessions}} · usuarios activos: {{activeUsers}}",
     "emptyTitle": "Aún no hay datos de Analytics",
     "empty": "Aún no hay datos de Analytics. Los datos aparecen poco después de conectar tu propiedad — prueba a actualizar.",
     "error": "No pudimos cargar tu resumen de Analytics. Inténtalo de nuevo en un momento.",
     "refresh": "Actualizar datos de Analytics",
     "refreshError": "No pudimos actualizar tus datos de Analytics. Inténtalo de nuevo en un momento.",
+    "staleTitle": "Los datos de Analytics no están actualizados",
+    "noRecentSessions": "No hay sesiones registradas desde el {{date}}. Google Analytics se consultó hace poco y no indica tráfico más reciente.",
+    "dailyRange": "Totales diarios del {{start}} al {{end}}.",
     "timeseriesTitle": "Sesiones y usuarios activos a lo largo del tiempo",
-    "timeseriesSubtitle": "Totales diarios de los últimos {{days}} días.",
-    "timeseriesChartLabel": "{{metric}} diarios de los últimos {{days}} días",
-    "timeseriesTableCaption": "Rendimiento diario de Analytics de los últimos {{days}} días",
+    "timeseriesSubtitle_one": "Totales diarios del último día ({{days}}).",
+    "timeseriesChartLabel_one": "{{metric}} diarios del último día ({{days}})",
+    "timeseriesTableCaption_one": "Rendimiento diario de Analytics del último día ({{days}})",
     "channelsTitle": "Canales",
     "channelsEmpty": "Aún no hay datos por canal.",
     "channelsTableCaption": "Sesiones por canal",
@@ -153,10 +182,6 @@
     "devicesEmpty": "Aún no hay datos por dispositivo.",
     "devicesTableCaption": "Sesiones por dispositivo",
     "deviceHeader": "Dispositivo",
-    "locked": {
-      "body": "Las estadísticas de Google Analytics se incluyen en el plan Pro y superiores. Mejora tu plan para ver sesiones, interacción y eventos clave junto a tus datos de búsqueda.",
-      "upgrade": "Mejorar plan"
-    },
     "enableTitle": "Google Analytics no está habilitado",
     "enableBody": "Concede acceso de solo lectura a Google Analytics para ver sesiones, interacción y eventos clave de este sitio.",
     "enableCta": "Habilitar Google Analytics",
@@ -167,7 +192,28 @@
     "propertiesError": "No pudimos cargar tus propiedades de Analytics. Inténtalo de nuevo en un momento.",
     "setPropertyError": "No pudimos guardar esa propiedad de Analytics. Inténtalo de nuevo en un momento.",
     "settingsTitle": "Google Analytics",
-    "settingsSubtitle": "Elige qué propiedad GA4 usa RankMeFast."
+    "settingsSubtitle": "Elige qué propiedad GA4 usa RankMeFast.",
+    "timeseriesSubtitle_zero": "Totales diarios de los últimos {{days}} días.",
+    "timeseriesSubtitle_two": "Totales diarios de los últimos {{days}} días.",
+    "timeseriesSubtitle_few": "Totales diarios de los últimos {{days}} días.",
+    "timeseriesSubtitle_many": "Totales diarios de los últimos {{days}} días.",
+    "timeseriesSubtitle_other": "Totales diarios de los últimos {{days}} días.",
+    "timeseriesChartLabel_zero": "{{metric}} diarios de los últimos {{days}} días",
+    "timeseriesChartLabel_two": "{{metric}} diarios de los últimos {{days}} días",
+    "timeseriesChartLabel_few": "{{metric}} diarios de los últimos {{days}} días",
+    "timeseriesChartLabel_many": "{{metric}} diarios de los últimos {{days}} días",
+    "timeseriesChartLabel_other": "{{metric}} diarios de los últimos {{days}} días",
+    "timeseriesTableCaption_zero": "Rendimiento diario de Analytics de los últimos {{days}} días",
+    "timeseriesTableCaption_two": "Rendimiento diario de Analytics de los últimos {{days}} días",
+    "timeseriesTableCaption_few": "Rendimiento diario de Analytics de los últimos {{days}} días",
+    "timeseriesTableCaption_many": "Rendimiento diario de Analytics de los últimos {{days}} días",
+    "timeseriesTableCaption_other": "Rendimiento diario de Analytics de los últimos {{days}} días",
+    "staleBody_zero": "Los datos más recientes de Google Analytics que ves aquí son del {{date}}, aunque ya deberían estar disponibles los datos hasta el {{expected}}, así que estas cifras no cubren los últimos {{days}} días. Actualiza para volver a sincronizar. Si la fecha no cambia, vuelve a conectar Google.",
+    "staleBody_one": "Los datos más recientes de Google Analytics que ves aquí son del {{date}}, aunque ya deberían estar disponibles los datos hasta el {{expected}}, así que estas cifras no cubren el último día ({{days}}). Actualiza para volver a sincronizar. Si la fecha no cambia, vuelve a conectar Google.",
+    "staleBody_two": "Los datos más recientes de Google Analytics que ves aquí son del {{date}}, aunque ya deberían estar disponibles los datos hasta el {{expected}}, así que estas cifras no cubren los últimos {{days}} días. Actualiza para volver a sincronizar. Si la fecha no cambia, vuelve a conectar Google.",
+    "staleBody_few": "Los datos más recientes de Google Analytics que ves aquí son del {{date}}, aunque ya deberían estar disponibles los datos hasta el {{expected}}, así que estas cifras no cubren los últimos {{days}} días. Actualiza para volver a sincronizar. Si la fecha no cambia, vuelve a conectar Google.",
+    "staleBody_many": "Los datos más recientes de Google Analytics que ves aquí son del {{date}}, aunque ya deberían estar disponibles los datos hasta el {{expected}}, así que estas cifras no cubren los últimos {{days}} días. Actualiza para volver a sincronizar. Si la fecha no cambia, vuelve a conectar Google.",
+    "staleBody_other": "Los datos más recientes de Google Analytics que ves aquí son del {{date}}, aunque ya deberían estar disponibles los datos hasta el {{expected}}, así que estas cifras no cubren los últimos {{days}} días. Actualiza para volver a sincronizar. Si la fecha no cambia, vuelve a conectar Google."
   },
   "searchDetail": {
     "back": "Vista general",
@@ -205,17 +251,93 @@
       },
       "status": {
         "ok": "OK",
-        "errors": "{{n}} errores",
-        "warnings": "{{n}} advertencias"
+        "errors_one": "{{n}} error",
+        "warnings_one": "{{n}} advertencia",
+        "errors_zero": "{{n}} errores",
+        "errors_two": "{{n}} errores",
+        "errors_few": "{{n}} errores",
+        "errors_many": "{{n}} errores",
+        "errors_other": "{{n}} errores",
+        "warnings_zero": "{{n}} advertencias",
+        "warnings_two": "{{n}} advertencias",
+        "warnings_few": "{{n}} advertencias",
+        "warnings_many": "{{n}} advertencias",
+        "warnings_other": "{{n}} advertencias"
       }
     }
   },
-  "required": {
-    "title": "Conecta Google Search Console",
-    "cta": "Conectar Google Search Console",
-    "body": {
-      "cannibalization": "Los informes de canibalización de palabras clave se crean con tus datos de Search Console. Conecta Search Console a este sitio para generar uno. Los informes que ya guardaste siguen disponibles.",
-      "internalLinks": "Las sugerencias de enlaces internos usan tus consultas de Search Console para elegir qué páginas importan. Conecta Search Console a este sitio para recibir sugerencias basadas en búsquedas reales."
-    }
+  "breakdown": {
+    "shareHeader": "{{metric}} · porcentaje del total",
+    "shareHeaderRows": "{{metric}} · porcentaje de esta lista",
+    "other_zero": "Otros ({{hidden}} más)",
+    "other_one": "Otros ({{hidden}} más)",
+    "other_two": "Otros ({{hidden}} más)",
+    "other_few": "Otros ({{hidden}} más)",
+    "other_many": "Otros ({{hidden}} más)",
+    "other_other": "Otros ({{hidden}} más)",
+    "engagedRate": "{{rate}} con interacción",
+    "ctrRate": "CTR {{rate}}",
+    "byImpressions": "No hubo clics en este periodo, así que países y dispositivos muestran impresiones."
+  },
+  "readiness": {
+    "gsc": {
+      "not_connected": {
+        "title": "Search Console no está conectado",
+        "body": "Conecta tu cuenta de Google para traer a RankMeFast los clics e impresiones de búsqueda de <site>{{domain}}</site>.",
+        "cta": "Conectar Google"
+      },
+      "no_property": {
+        "title": "Elige una propiedad de Search Console",
+        "body": "Google está conectado, pero aún no hay ninguna propiedad de Search Console seleccionada para <site>{{domain}}</site>.",
+        "cta": "Seleccionar una propiedad de Search Console"
+      },
+      "property_mismatch": {
+        "title": "Esta propiedad no cubre el sitio",
+        "body": "La propiedad de Search Console elegida para <site>{{domain}}</site> no incluye la dirección del sitio. Elige una que sí la incluya.",
+        "cta": "Seleccionar una propiedad de Search Console"
+      },
+      "error": {
+        "title": "No se puede leer Search Console ahora",
+        "body": "Google rechazó la solicitud para <site>{{domain}}</site> o falta un permiso. Vuelve a intentarlo y reconecta Google si sigue ocurriendo.",
+        "cta": "Reintentar"
+      }
+    },
+    "ga4": {
+      "not_connected": {
+        "title": "Google Analytics no está conectado",
+        "body": "Conecta tu cuenta de Google para ver las visitas y la interacción de <site>{{domain}}</site>.",
+        "cta": "Conectar Google"
+      },
+      "no_property": {
+        "title": "Elige una propiedad de Google Analytics",
+        "body": "Google está conectado, pero aún no hay ninguna propiedad de Google Analytics seleccionada para <site>{{domain}}</site>.",
+        "cta": "Seleccionar una propiedad de Google Analytics"
+      },
+      "property_mismatch": {
+        "title": "Esta propiedad no corresponde al sitio",
+        "body": "La propiedad de Google Analytics elegida para <site>{{domain}}</site> mide otra dirección. Elige la de este sitio.",
+        "cta": "Seleccionar una propiedad de Google Analytics"
+      },
+      "error": {
+        "title": "No se puede leer Google Analytics ahora",
+        "body": "Google rechazó la solicitud para <site>{{domain}}</site> o falta el acceso a Analytics. Vuelve a intentarlo y reconecta Google si sigue ocurriendo.",
+        "cta": "Reintentar"
+      }
+    },
+    "matching": "Estamos buscando una propiedad que coincida."
+  },
+  "propertyPicker": {
+    "thisSite": "este sitio",
+    "noneFound": "No se encontró ninguna propiedad de Search Console para {{domain}}. Añádela en Search Console y luego actualiza esta lista.",
+    "openSearchConsole": "Abrir Search Console",
+    "newTab": "(se abre en una pestaña nueva)",
+    "refresh": "Actualizar",
+    "refreshing": "Actualizando…",
+    "linkDifferent": "Vincular otra propiedad",
+    "differentHint": "Estas propiedades pertenecen a otros sitios. Si vinculas una, sus datos de búsqueda aparecerán en {{domain}}.",
+    "otherLabel": "Propiedad de otro sitio",
+    "confirmTitle": "¿Vincular {{site}} con los datos de {{property}}?",
+    "confirmBody": "{{property}} es otro sitio. Sus datos de búsqueda aparecerán en {{site}} hasta que cambies la propiedad. Propiedad:",
+    "confirm": "Vincular de todos modos"
   }
 }

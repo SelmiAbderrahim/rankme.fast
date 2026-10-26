@@ -74,7 +74,7 @@ describe('LocalSeoBlock', () => {
     const link = screen.getByRole('link', {
       name: i18n.t('report:localSeoBlock.notConfiguredCta'),
     });
-    expect(link).toHaveAttribute('href', '/sites/s-1?tab=local-seo');
+    expect(link).toHaveAttribute('href', '/sites/s-1?tab=local-seo&view=setup');
     expect(screen.queryByTestId('report-local-seo-block')).not.toBeInTheDocument();
   });
 

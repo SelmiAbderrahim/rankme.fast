@@ -18,11 +18,16 @@ import { AuditRun } from '../audits/audit-run.model.js';
 import { AuditedPage } from '../audits/audited-page.model.js';
 import { aiCompetitorMentions, aiMentionSnapshots } from '../../db/schema/index.js';
 import type { AiPromptSuggestionRow, NewAiCompetitorMentionRow, NewAiMentionSnapshotRow, } from '../../db/schema/index.js';
-import { MAX_TRACKED_AI_PROMPTS, PromptCapReachedError, addTrackedPrompt, insertSuggestionRun, listGscQuerySeeds, listKeywordPhrases, listStoredCompetitorDomains, listTrackedPrompts, readLatestSuggestionRun, readAiOverviewRollup, readCompetitorDailyBuckets, readMentionDailyBuckets, readRecentCompetitorMentions, readRecentMentions, removeTrackedPrompt, type TrackedPrompt, } from './ai-visibility.repository.js';
+import { INVENTORY_PAGE_FILTER } from '../audits/page-inventory.service.js';
+import { MAX_TRACKED_AI_PROMPTS, PromptAlreadyTrackedError, PromptCapReachedError, trackedPromptKey, addTrackedPrompt, insertSuggestionRun, listAllSiteKeywordPhrases, listGscQuerySeeds, listKeywordPhrases, listStoredCompetitorDomains, listTrackedPrompts, readLatestSuggestionRun, readAiOverviewRollup, readCompetitorDailyBuckets, readMentionDailyBuckets, readRecentCompetitorMentions, readRecentMentions, removeTrackedPrompt, type TrackedPrompt, } from './ai-visibility.repository.js';
+import { brandLabelOf, extractTitleTopic, pathLanguageOf, seedFitsLocale, } from './prompt-seed-quality.js';
+import { buildPromptCandidates } from './prompt-candidates.js';
+import { comparisonKey, guardSuggestionRows } from './prompt-output-guard.js';
+import { resolveSuggestionLanguages } from './suggestion-languages.js';
+import { buildSiteProfile, isNavigationalSeed, type EvidenceLevel, type EvidencePage, } from './site-profile.js';
+export { MAX_PROMPT_CANDIDATES, TEMPLATES_PER_TOPIC, buildPromptCandidates } from './prompt-candidates.js';
+export type { TemplateCandidate } from './prompt-candidates.js';
 export type AiSentiment = 'positive' | 'neutral' | 'negative';
-/** Location/language every suggestion-related vendor call is priced against. */
-export const SUGGESTION_LOCATION_CODE = 2840;
-export const SUGGESTION_LANGUAGE_CODE = 'en';
 export interface AiVisibilityDeps {
     db: Db;
     provider: AiVisibilityProvider;
@@ -46,7 +51,10 @@ export interface AiVisibilityOverview {
         neutral: number;
         negative: number;
     };
+    /** Checked in the window and never mentioned (never-checked prompts are excluded). */
     notMentionedPrompts: string[];
+    /** Tracked prompts with no completed check in the window. */
+    notCheckedPrompts: string[];
     checkedAt: string | null;
 }
 export interface SuggestedPrompt {
@@ -64,6 +72,8 @@ export interface SuggestedPrompt {
     branded: boolean | null;
     evidenceSource: AiPromptSuggestionRow['evidenceSource'];
     evidenceRef: string | null;
+    /** Language the prompt is written in; absent on rows stored before mixed-language runs. */
+    language?: SupportedLocale;
 }
 export interface StoredSuggestions {
     /**
@@ -75,6 +85,18 @@ export interface StoredSuggestions {
     generatedAt: string | null;
     outputLocale: SupportedLocale;
     suggestions: SuggestedPrompt[];
+    /**
+     * How much stored evidence (crawled copy, keywords, search queries) the set
+     * was built from. `limited` and `none` mean the panel must say so; `null`
+     * means "unknown" (a run stored before the profile existed, or no run yet).
+     */
+    evidence: EvidenceLevel | null;
+    /**
+     * The newest stored run could not be shown because it was not built from
+     * this site's own evidence (a run from before site scoping). Its prompts
+     * are withheld; the panel offers "Regenerate suggestions".
+     */
+    stale: boolean;
 }
 function isValidObjectId(id: string): boolean {
     return Types.ObjectId.isValid(id);
@@ -85,6 +107,7 @@ export async function loadOwnedSite(input: {
 }): Promise<{
     id: string;
     domain: string;
+    marketLanguage: string | null;
 }> {
     if (!isValidObjectId(input.siteId))
         throw HttpError.notFound({ code: 'AI_VISIBILITY_ERRORS_SITE_NOT_FOUND', messageKey: 'aiVisibility.errors.siteNotFound' });
@@ -95,7 +118,11 @@ export async function loadOwnedSite(input: {
     });
     if (!site)
         throw HttpError.notFound({ code: 'AI_VISIBILITY_ERRORS_SITE_NOT_FOUND', messageKey: 'aiVisibility.errors.siteNotFound' });
-    return { id: (site._id as Types.ObjectId).toString(), domain: site.domain };
+    return {
+        id: (site._id as Types.ObjectId).toString(),
+        domain: site.domain,
+        marketLanguage: site.defaultMarket?.languageCode ?? null,
+    };
 }
 function wrapProviderError(err: unknown): never {
     if (err instanceof ProviderError) {
@@ -184,6 +211,7 @@ function summarizeRows(prompts: TrackedPrompt[], mentionRows: Awaited<ReturnType
             sentiment[row.sentiment] += 1;
     }
     const mentionedPrompts = new Set(mentionRows.filter((row) => row.mentioned).map((row) => row.prompt));
+    const checkedPrompts = new Set(mentionRows.map((row) => row.prompt));
     const competitorMentionedCount = competitorRows.filter((row) => row.mentioned).length;
     const shareOfVoicePct = computeShareOfVoicePct({
         brandMentionedCount: mentionRows.filter((row) => row.mentioned).length,
@@ -202,10 +230,13 @@ function summarizeRows(prompts: TrackedPrompt[], mentionRows: Awaited<ReturnType
         })),
         shareOfVoicePct,
         sentiment,
+        // A prompt with no completed check has no measured outcome, so it is
+        // "not checked", never "not mentioned".
         notMentionedPrompts: prompts
             .map((row) => row.prompt)
-            .filter((prompt) => !mentionedPrompts.has(prompt))
+            .filter((prompt) => checkedPrompts.has(prompt) && !mentionedPrompts.has(prompt))
             .slice(0, 3),
+        notCheckedPrompts: prompts.map((row) => row.prompt).filter((prompt) => !checkedPrompts.has(prompt)),
         checkedAt,
     };
 }
@@ -245,6 +276,9 @@ export async function addPromptForSite(input: {
             throw new HttpError(409, { code: 'AI_VISIBILITY_ERRORS_PROMPT_CAP_REACHED', messageKey: 'aiVisibility.errors.promptCapReached' }, {
                 limit: MAX_TRACKED_AI_PROMPTS,
             });
+        }
+        if (err instanceof PromptAlreadyTrackedError) {
+            throw HttpError.conflict({ code: 'AI_VISIBILITY_ERRORS_PROMPT_ALREADY_TRACKED', messageKey: 'aiVisibility.errors.promptAlreadyTracked' });
         }
         throw err;
     }
@@ -383,324 +417,253 @@ export async function checkMentions(input: {
 }
 /** Suggestions returned per fetch; free paths never exceed it, paid ranking trims to it. */
 export const SUGGESTION_TARGET = 8;
-const MAX_PROMPT_CANDIDATES = 20;
-const MIN_SEED_LENGTH = 3;
-const MAX_SEED_LENGTH = 120;
-/** Taxonomy a template candidate carries — same enums as the AI rows. */
-type TemplateTaxonomy = Pick<SuggestedPrompt, 'funnelStage' | 'promptType' | 'intent' | 'branded'>;
-/** A template-built candidate: prompt text plus the taxonomy + evidence trail. */
-export interface TemplateCandidate extends TemplateTaxonomy {
-    prompt: string;
-    evidenceSource: AiPromptSuggestionRow['evidenceSource'];
-    evidenceRef: string;
-}
-const PROMPT_TEMPLATE_TAXONOMY: ReadonlyArray<TemplateTaxonomy> = [
-    {
-        promptType: 'categoryDiscovery',
-        funnelStage: 'consideration',
-        intent: 'commercial',
-        branded: false,
-    },
-    {
-        promptType: 'categoryDiscovery',
-        funnelStage: 'consideration',
-        intent: 'commercial',
-        branded: false,
-    },
-    {
-        promptType: 'categoryDiscovery',
-        funnelStage: 'awareness',
-        intent: 'informational',
-        branded: false,
-    },
-    {
-        promptType: 'objection',
-        funnelStage: 'decision',
-        intent: 'commercial',
-        branded: false,
-    },
-];
-interface PromptTemplateCatalog {
-    casts: readonly [
-        (seed: string) => string,
-        (seed: string) => string,
-        (seed: string) => string,
-        (seed: string) => string
-    ];
-    comparison: (siteDomain: string, competitorDomain: string) => string;
-    alternative: (competitorDomain: string) => string;
-}
-/** Authored product prose. Interpolated source tokens remain byte-for-byte intact. */
-const PROMPT_TEMPLATE_CATALOGS: Record<SupportedLocale, PromptTemplateCatalog> = {
-    en: {
-        casts: [
-            (seed) => `best ${seed}`,
-            (seed) => `which ${seed} should I use`,
-            (seed) => `how to choose ${seed}`,
-            (seed) => `is ${seed} worth it`,
-        ],
-        comparison: (site, competitor) => `${site} vs ${competitor}`,
-        alternative: (competitor) => `${competitor} alternative`,
-    },
-    ar: {
-        casts: [
-            (seed) => `أفضل ${seed}`,
-            (seed) => `أي ${seed} ينبغي أن أستخدم؟`,
-            (seed) => `كيف أختار ${seed}؟`,
-            (seed) => `هل يستحق ${seed} ذلك؟`,
-        ],
-        comparison: (site, competitor) => `${site} مقابل ${competitor}`,
-        alternative: (competitor) => `بديل لـ ${competitor}`,
-    },
-    fr: {
-        casts: [
-            (seed) => `meilleur ${seed}`,
-            (seed) => `quel ${seed} choisir ?`,
-            (seed) => `comment choisir ${seed} ?`,
-            (seed) => `${seed} vaut-il le coup ?`,
-        ],
-        comparison: (site, competitor) => `${site} ou ${competitor}`,
-        alternative: (competitor) => `alternative à ${competitor}`,
-    },
-    de: {
-        casts: [
-            (seed) => `beste ${seed}`,
-            (seed) => `welches ${seed} sollte ich verwenden?`,
-            (seed) => `wie wähle ich ${seed} aus?`,
-            (seed) => `lohnt sich ${seed}?`,
-        ],
-        comparison: (site, competitor) => `${site} vs. ${competitor}`,
-        alternative: (competitor) => `Alternative zu ${competitor}`,
-    },
-    es: {
-        casts: [
-            (seed) => `mejor ${seed}`,
-            (seed) => `qué ${seed} debería usar`,
-            (seed) => `cómo elegir ${seed}`,
-            (seed) => `merece la pena ${seed}`,
-        ],
-        comparison: (site, competitor) => `${site} frente a ${competitor}`,
-        alternative: (competitor) => `alternativa a ${competitor}`,
-    },
-    ru: {
-        casts: [
-            (seed) => `лучший ${seed}`,
-            (seed) => `какой ${seed} выбрать`,
-            (seed) => `как выбрать ${seed}`,
-            (seed) => `стоит ли использовать ${seed}`,
-        ],
-        comparison: (site, competitor) => `${site} или ${competitor}`,
-        alternative: (competitor) => `альтернатива ${competitor}`,
-    },
-    zh: {
-        casts: [
-            (seed) => `最佳${seed}`,
-            (seed) => `应该使用哪个${seed}`,
-            (seed) => `如何选择${seed}`,
-            (seed) => `${seed}值得使用吗`,
-        ],
-        comparison: (site, competitor) => `${site}与${competitor}对比`,
-        alternative: (competitor) => `${competitor}的替代方案`,
-    },
-};
-const promptTemplatesFor = (locale: SupportedLocale): ReadonlyArray<{
-    cast: (seed: string) => string;
-    taxonomy: TemplateTaxonomy;
-}> => PROMPT_TEMPLATE_CATALOGS[locale].casts.map((cast, index) => ({
-    cast,
-    taxonomy: PROMPT_TEMPLATE_TAXONOMY[index]!,
-}));
-/**
- * Pure candidate builder — zero vendor spend. Every seed is site-scoped by the
- * caller's reads: tracked keywords, real GSC queries, then audit titles/H1s,
- * in that signal order. Competitor match-ups lead (highest buyer intent), then
- * each seed is cast through a rotating question template so the 20-candidate
- * cap covers many seeds instead of one seed's four variants. Each candidate
- * carries the template's taxonomy and the seed it derives from, so template
- * fallback rows group in the panel the same way AI rows do.
- */
-export function buildPromptCandidates(input: {
-    domain: string;
-    outputLocale: SupportedLocale;
-    keywords: string[];
-    gscQueries: string[];
-    titleSeeds: string[];
-    competitorDomains: string[];
-}): TemplateCandidate[] {
-    const catalog = PROMPT_TEMPLATE_CATALOGS[input.outputLocale];
-    const promptTemplates = promptTemplatesFor(input.outputLocale);
-    const seeds: Array<{
-        seed: string;
-        evidenceSource: AiPromptSuggestionRow['evidenceSource'];
-    }> = [];
-    const seenSeeds = new Set<string>();
-    const collect = (raw: string, evidenceSource: AiPromptSuggestionRow['evidenceSource']): void => {
-        const seed = raw.trim();
-        const identity = seed.toLocaleLowerCase('en-US');
-        if (seed.length < MIN_SEED_LENGTH ||
-            seed.length > MAX_SEED_LENGTH ||
-            seenSeeds.has(identity)) {
-            return;
-        }
-        seenSeeds.add(identity);
-        seeds.push({ seed, evidenceSource });
-    };
-    for (const raw of input.keywords)
-        collect(raw, 'keyword');
-    for (const raw of input.gscQueries)
-        collect(raw, 'gsc');
-    for (const raw of input.titleSeeds)
-        collect(raw, 'title');
-    const out: TemplateCandidate[] = [];
-    const seen = new Set<string>();
-    const push = (candidate: TemplateCandidate): void => {
-        if (out.length >= MAX_PROMPT_CANDIDATES)
-            return;
-        const trimmed = candidate.prompt.trim();
-        const key = trimmed.toLowerCase();
-        if (trimmed.length < 4 || trimmed.length > 280 || seen.has(key))
-            return;
-        seen.add(key);
-        out.push({ ...candidate, prompt: trimmed });
-    };
-    for (const domain of input.competitorDomains) {
-        push({
-            prompt: catalog.comparison(input.domain, domain),
-            promptType: 'comparison',
-            funnelStage: 'decision',
-            intent: 'commercial',
-            // Contains the site's own domain, so it IS a branded prompt.
-            branded: true,
-            evidenceSource: 'competitor',
-            evidenceRef: domain,
-        });
-        push({
-            prompt: catalog.alternative(domain),
-            promptType: 'alternatives',
-            funnelStage: 'consideration',
-            intent: 'commercial',
-            // Names only the competitor — unbranded discovery from our side.
-            branded: false,
-            evidenceSource: 'competitor',
-            evidenceRef: domain,
-        });
-    }
-    for (let round = 0; round < promptTemplates.length; round += 1) {
-        seeds.forEach((entry, index) => {
-            const template = promptTemplates[(round + index) % promptTemplates.length]!;
-            push({
-                prompt: template.cast(entry.seed),
-                ...template.taxonomy,
-                evidenceSource: entry.evidenceSource,
-                evidenceRef: entry.seed,
-            });
-        });
-    }
-    return out;
-}
-const TITLE_SEPARATORS = /[|–—•·:]/;
+/** At most this many of the eight go to a site's second language. */
+export const SECONDARY_LANGUAGE_SHARE = 3;
+
 /**
  * Topic seeds from the site's latest succeeded audit: page titles and H1s,
- * first segment before separators, length-filtered. Free — the crawl already
- * paid for this data.
+ * reduced to short topic phrases by `extractTitleTopic` (sentence fragments,
+ * generic page labels and the site's own brand are rejected). Free — the crawl
+ * already paid for this data. The same cleaned seeds ground the AI generator.
  */
 export async function listAuditTitleSeeds(input: {
-    accountId: string;
-    siteId: string;
-    pageLimit?: number;
-    seedLimit?: number;
+  accountId: string;
+  siteId: string;
+  /** Site domain; its brand label is never a topic ("how episodebrief works"). */
+  domain?: string;
+  /**
+   * Output language. Pages under another language's path prefix (`/fr/…`
+   * when generating English) are skipped so their titles never seed a
+   * question in the wrong language.
+   */
+  outputLocale?: SupportedLocale;
+  pageLimit?: number;
+  seedLimit?: number;
 }): Promise<string[]> {
-    const run = await AuditRun.findOne({
-        siteId: input.siteId,
-        accountId: input.accountId,
-        status: 'succeeded',
-        kind: 'site',
-    }).sort({ finishedAt: -1 });
-    if (!run)
-        return [];
-    const pages = await AuditedPage.find({ runId: run._id })
-        .sort({ onPageScore: -1 })
-        .limit(input.pageLimit ?? 20)
-        .select('title h1');
-    const seen = new Set<string>();
-    const seeds: string[] = [];
-    const seedLimit = input.seedLimit ?? 15;
-    for (const page of pages) {
-        for (const raw of [page.title ?? '', ...page.h1]) {
-            // split() always yields at least one element.
-            const seed = raw.split(TITLE_SEPARATORS)[0]!.trim().toLowerCase();
-            if (seed.length < 8 || seed.length > 80 || seen.has(seed))
-                continue;
-            seen.add(seed);
-            seeds.push(seed);
-            if (seeds.length >= seedLimit)
-                return seeds;
-        }
+  const run = await AuditRun.findOne({
+    siteId: input.siteId,
+    accountId: input.accountId,
+    status: 'succeeded',
+    kind: 'site',
+  }).sort({ finishedAt: -1 });
+  if (!run) return [];
+  const pages = await AuditedPage.find({ runId: run._id })
+    .sort({ onPageScore: -1 })
+    .limit(input.pageLimit ?? 20)
+    .select('url title h1');
+  const seen = new Set<string>();
+  const seeds: string[] = [];
+  const seedLimit = input.seedLimit ?? 15;
+  const brand = input.domain ? brandLabelOf(input.domain) : null;
+  for (const page of pages) {
+    const pageLanguage = pathLanguageOf(page.url);
+    if (input.outputLocale && pageLanguage && pageLanguage !== input.outputLocale) continue;
+    for (const raw of [page.title ?? '', ...page.h1]) {
+      const seed = extractTitleTopic(raw, brand);
+      if (!seed || seen.has(seed)) continue;
+      seen.add(seed);
+      seeds.push(seed);
+      if (seeds.length >= seedLimit) return seeds;
     }
-    return seeds;
+  }
+  return seeds;
 }
+
+/**
+ * Crawled page copy for the site profile: title, H1s and meta description of
+ * the latest succeeded audit. Only pages that answered 2xx, are indexable and
+ * had no fetch failure contribute, and the final (post-redirect) URL is used
+ * so language-prefixed paths are judged where the content actually lives.
+ * Free — the crawl already paid for this data.
+ */
+export async function listAuditPageEvidence(input: {
+  accountId: string;
+  siteId: string;
+  pageLimit?: number;
+}): Promise<EvidencePage[]> {
+  const run = await AuditRun.findOne({
+    siteId: input.siteId,
+    accountId: input.accountId,
+    status: 'succeeded',
+    kind: 'site',
+  }).sort({ finishedAt: -1 });
+  if (!run) return [];
+  const pages = await AuditedPage.find({ runId: run._id, ...INVENTORY_PAGE_FILTER })
+    .sort({ onPageScore: -1 })
+    .limit(input.pageLimit ?? 40)
+    .select('url finalUrl title metaDescription h1');
+  return pages.map((page) => ({
+    url: page.finalUrl ?? page.url,
+    title: page.title,
+    metaDescription: page.metaDescription,
+    h1: page.h1,
+  }));
+}
+
 /** AI rows first: trim, drop blanks/dupes, cap at the target. */
 function collectGeneratedPrompts(prompts: GeneratedPrompt[]): SuggestedPrompt[] {
-    const candidates: SuggestedPrompt[] = [];
-    const seen = new Set<string>();
-    for (const row of prompts) {
-        if (candidates.length >= SUGGESTION_TARGET)
-            break;
-        const prompt = row.promptText.trim().slice(0, 280);
-        const key = prompt.toLowerCase();
-        if (!prompt || seen.has(key))
-            continue;
-        seen.add(key);
-        candidates.push({
-            prompt,
-            source: 'ai',
-            funnelStage: row.funnelStage,
-            promptType: row.promptType,
-            intent: row.intent,
-            branded: row.branded,
-            evidenceSource: row.evidenceSource,
-            evidenceRef: row.evidenceRef.trim().slice(0, 280),
-        });
-    }
-    return candidates;
+  const candidates: SuggestedPrompt[] = [];
+  const seen = new Set<string>();
+  for (const row of prompts) {
+    if (candidates.length >= SUGGESTION_TARGET) break;
+    const prompt = row.promptText.trim().slice(0, 280);
+    const key = prompt.toLowerCase();
+    if (!prompt || seen.has(key)) continue;
+    seen.add(key);
+    candidates.push({
+      prompt,
+      source: 'ai',
+      funnelStage: row.funnelStage,
+      promptType: row.promptType,
+      intent: row.intent,
+      branded: row.branded,
+      evidenceSource: row.evidenceSource,
+      evidenceRef: row.evidenceRef.trim().slice(0, 280),
+    });
+  }
+  return candidates;
 }
+
 /**
- * Free, unmetered read of the newest stored suggestion set.
+ * Free read of the newest stored suggestion set.
  *
- * Reading never spends: a reload, a tab switch, or a second browser must not
- * cost the user a generation they already paid for. `generatedAt: null` means
+ * Reading never calls a vendor: a reload, a tab switch, or a second browser
+ * must not cost a generation already made. `generatedAt: null` means
  * the account has never generated for this site, which is what lets the panel
  * distinguish an untouched tab from a run that legitimately produced nothing.
  */
-export async function readStoredSuggestions(input: {
-    accountId: string;
-    siteId: string;
-    outputLocale: SupportedLocale;
-}, deps: Pick<AiVisibilityDeps, 'db'>): Promise<StoredSuggestions> {
-    const site = await loadOwnedSite(input);
-    const run = await readLatestSuggestionRun(deps.db, {
-        accountId: input.accountId,
-        siteId: site.id,
-        outputLocale: input.outputLocale,
-    });
-    if (!run) {
-        return { generatedAt: null, outputLocale: input.outputLocale, suggestions: [] };
-    }
-    return {
-        generatedAt: run.generatedAt.toISOString(),
-        outputLocale: run.outputLocale,
-        suggestions: run.prompts.map((row) => ({
-            prompt: row.prompt,
-            source: row.source,
-            funnelStage: row.funnelStage,
-            promptType: row.promptType,
-            intent: row.intent,
-            branded: row.branded,
-            evidenceSource: row.evidenceSource,
-            evidenceRef: row.evidenceRef,
-        })),
-    };
+export async function readStoredSuggestions(
+  input: { accountId: string; siteId: string; outputLocale: SupportedLocale },
+  deps: Pick<AiVisibilityDeps, 'db'>,
+): Promise<StoredSuggestions> {
+  const site = await loadOwnedSite(input);
+  const keywords = await listKeywordPhrases(deps.db, { accountId: input.accountId, siteId: site.id });
+  // Suggestions follow the site's market language, not the viewer's UI.
+  const { primary } = resolveSuggestionLanguages({
+    marketLanguage: site.marketLanguage,
+    uiLocale: input.outputLocale,
+    keywords,
+  });
+  const run = await readLatestSuggestionRun(deps.db, {
+    accountId: input.accountId,
+    siteId: site.id,
+    outputLocale: primary,
+  });
+  if (!run) {
+    return { generatedAt: null, outputLocale: primary, suggestions: [], evidence: null, stale: false };
+  }
+  const base = {
+    generatedAt: run.generatedAt.toISOString(),
+    outputLocale: run.outputLocale,
+    evidence: run.evidenceLevel,
+  };
+  // A run stored before every seed read was site-scoped may carry another
+  // site's research phrases. Unless its seed keywords are all this site's
+  // own, it is withheld and the owner is offered a fresh generation.
+  if (
+    run.seeds.provenance !== 'site' &&
+    !(await seedKeywordsBelongToSite(deps.db, {
+      accountId: input.accountId,
+      siteId: site.id,
+      seedKeywords: run.seeds.keywords,
+    }))
+  ) {
+    return { ...base, suggestions: [], stale: true };
+  }
+  const rows: SuggestedPrompt[] = run.prompts
+    // A template row stored before the seed-language fix can carry a
+    // seed in another language ("What is the best finalisez un épisode…?").
+    // It is hidden on read, free of charge, instead of waiting for the user
+    // to pay for a new generation.
+    .filter(
+      (row) =>
+        row.source !== 'template' ||
+        row.evidenceSource === 'competitor' ||
+        row.evidenceRef === null ||
+        seedFitsLocale(row.evidenceRef, row.language ?? run.outputLocale),
+    )
+    .map((row) => ({
+      prompt: row.prompt,
+      source: row.source,
+      funnelStage: row.funnelStage,
+      promptType: row.promptType,
+      intent: row.intent,
+      branded: row.branded,
+      evidenceSource: row.evidenceSource,
+      evidenceRef: row.evidenceRef,
+      ...(row.language ? { language: row.language } : {}),
+    }));
+  const seeds = [...run.seeds.keywords, ...run.seeds.titles, ...run.seeds.gscQueries, ...run.seeds.competitors];
+  const tracked = await trackedPromptKeys(deps.db, { accountId: input.accountId, siteId: site.id });
+  return {
+    ...base,
+    suggestions: guardByLanguage(rows, { pageTitles: [], seeds, domain: site.domain }, run.outputLocale)
+      .filter((row) => !tracked.has(trackedPromptKey(row.prompt))),
+    stale: false,
+  };
 }
+
+/** keys of the prompts this site already tracks. */
+async function trackedPromptKeys(
+  db: Db,
+  input: { accountId: string; siteId: string },
+): Promise<Set<string>> {
+  return new Set((await listTrackedPrompts(db, input)).map((row) => trackedPromptKey(row.prompt)));
+}
+
+/**
+ * the site's own description of what it offers: the meta
+ * description of its home page in the latest audit (a stored, free read).
+ * Language homes such as `/ar/` count as home pages. It joins the title seeds
+ * so generated questions match the product, not only its keywords.
+ */
+export function siteDescriptionSeed(pages: readonly EvidencePage[]): string | null {
+  const isHome = (url: string): boolean => {
+    try {
+      return /^\/(?:[a-z]{2}(?:-[a-z]{2})?\/?)?$/i.test(new URL(url).pathname);
+    } catch {
+      return false;
+    }
+  };
+  const home = pages.find((page) => isHome(page.url) && page.metaDescription?.trim());
+  return home?.metaDescription?.trim().slice(0, 500) ?? null;
+}
+
+/** True when every seed keyword of a stored run is one this site has tracked. */
+async function seedKeywordsBelongToSite(
+  db: Db,
+  input: { accountId: string; siteId: string; seedKeywords: readonly string[] },
+): Promise<boolean> {
+  if (input.seedKeywords.length === 0) return true;
+  const own = new Set(
+    (await listAllSiteKeywordPhrases(db, { accountId: input.accountId, siteId: input.siteId })).map(comparisonKey),
+  );
+  return input.seedKeywords.every((phrase) => own.has(comparisonKey(phrase)));
+}
+
+/**
+ * Apply the output guard per language (near-duplicate tokens are
+ * language-specific) while keeping the rows' original order.
+ */
+function guardByLanguage(
+  rows: readonly SuggestedPrompt[],
+  context: { pageTitles: readonly string[]; seeds: readonly string[]; domain: string },
+  fallbackLocale: SupportedLocale,
+): SuggestedPrompt[] {
+  const indexed = rows.map((row, order) => ({ ...row, order }));
+  const languageOf = (row: SuggestedPrompt): SupportedLocale => row.language ?? fallbackLocale;
+  const locales = [...new Set(indexed.map(languageOf))];
+  return locales
+    .flatMap((locale) =>
+      guardSuggestionRows(
+        indexed.filter((row) => languageOf(row) === locale),
+        { ...context, locale },
+      ),
+    )
+    .sort((a, b) => a.order - b.order)
+    .map(({ order: _order, ...row }) => row);
+}
+
 /**
  * Prompt-suggestion generation — one click of "Generate suggestions".
  *
@@ -714,121 +677,220 @@ export async function readStoredSuggestions(input: {
  * against a 15_000 envelope, and the number it returned was Google
  * / People-Also-Ask data mislabelled as AI demand.
  *
- * The run fails (502) iff the provider threw AND nothing was retained. A run
- * that fell back to templates succeeds, because the user received usable
- * output.
+ * The run fails (502) iff the provider threw AND nothing evidence-backed was
+ * retained. A run that fell back to templates succeeds, because the user
+ * received usable output.
  */
-export async function generatePromptSuggestions(input: {
-    accountId: string;
-    siteId: string;
-    outputLocale: SupportedLocale;
-}, deps: AiVisibilityDeps): Promise<StoredSuggestions> {
-    const nowFn = deps.now ?? (() => new Date());
-    const site = await loadOwnedSite(input);
-    const paused = await Site.exists({ _id: site.id, accountId: input.accountId, paused: true });
-    if (paused)
-        throw HttpError.conflict({ code: 'SITES_ERRORS_PAUSED', messageKey: 'sites.errors.paused' });
-    deps.cooldown?.assert(`ai-visibility:suggest:${site.id}`);
-    // Free seed assembly — four reads, zero vendor spend. Every read filters on
-    // BOTH accountId and siteId: an account-global source (the old
-    // keyword-research history read) once leaked another site's phrases into
-    // this site's suggestions, so site scoping here is load-bearing.
-    const [keywords, competitorDomains, titleSeeds, gscQueries] = await Promise.all([
-        listKeywordPhrases(deps.db, { accountId: input.accountId, siteId: site.id }),
-        listStoredCompetitorDomains(deps.db, {
-            accountId: input.accountId,
-            siteId: site.id,
-            limit: 5,
-        }),
-        listAuditTitleSeeds({ accountId: input.accountId, siteId: site.id }),
-        listGscQuerySeeds(deps.db, { accountId: input.accountId, siteId: site.id, limit: 15 }),
-    ]);
-    const seeds = {
-        keywords: keywords.slice(0, 15).map((keyword) => keyword.slice(0, KEYWORD_MAX_LENGTH)),
-        titles: titleSeeds.slice(0, 15),
-        competitors: competitorDomains.slice(0, 15),
-        gscQueries,
-    };
-    const generationInput = {
-        siteDomain: site.domain,
-        locale: input.outputLocale,
-        count: SUGGESTION_TARGET,
-        seeds,
-        usage: { accountId: input.accountId, siteId: site.id },
-    };
-    // Non-spending profile validation BEFORE the AI call: a defect in our
-    // assembled input is not a provider failure and must surface as such.
-    if (deps.summaryProvider) {
-        deps.summaryProvider.preflightGeneratePrompts?.(generationInput);
+export async function generatePromptSuggestions(
+  input: { accountId: string; siteId: string; outputLocale: SupportedLocale },
+  deps: AiVisibilityDeps,
+): Promise<StoredSuggestions> {
+  const nowFn = deps.now ?? (() => new Date());
+  const site = await loadOwnedSite(input);
+  const paused = await Site.exists({ _id: site.id, accountId: input.accountId, paused: true });
+  if (paused) throw HttpError.conflict({ code: 'SITES_ERRORS_PAUSED', messageKey: 'sites.errors.paused' });
+  deps.cooldown?.assert(`ai-visibility:suggest:${site.id}`);
+
+  // Free seed assembly — five reads, zero vendor spend. Every read filters on
+  // BOTH accountId and siteId: an account-global source (the old
+  // keyword-research history read) once leaked another site's phrases into
+  // this site's suggestions, so site scoping here is load-bearing.
+  const keywords = await listKeywordPhrases(deps.db, { accountId: input.accountId, siteId: site.id });
+  // Write in the site's market language, plus at most one
+  // more language its own tracked keywords show it serves. One AI call in the
+  // primary language (unchanged count and cost); the second language comes
+  // from the zero-cost templates.
+  const languages = resolveSuggestionLanguages({
+    marketLanguage: site.marketLanguage,
+    uiLocale: input.outputLocale,
+    keywords,
+  });
+  const outputLocale = languages.primary;
+  const [competitorDomains, titleSeeds, gscQueries, pages] = await Promise.all([
+    listStoredCompetitorDomains(deps.db, {
+      accountId: input.accountId,
+      siteId: site.id,
+      limit: 5,
+    }),
+    listAuditTitleSeeds({
+      accountId: input.accountId,
+      siteId: site.id,
+      domain: site.domain,
+      outputLocale,
+    }),
+    listGscQuerySeeds(deps.db, { accountId: input.accountId, siteId: site.id, limit: 15 }),
+    listAuditPageEvidence({ accountId: input.accountId, siteId: site.id }),
+  ]);
+
+  // What the site offers, read from its own crawled copy and queries. Drives
+  // the deterministic fallback AND grounds the AI generator: the category
+  // phrases join the title seeds (they derive from crawled titles, H1s, meta
+  // descriptions and keywords), and page/brand queries ("episode pricing")
+  // are withheld so the model is not handed a page label as a topic.
+  const profile = buildSiteProfile({
+    domain: site.domain,
+    outputLocale,
+    pages,
+    keywords,
+    gscQueries,
+  });
+  const askable = (seed: string): boolean =>
+    !isNavigationalSeed(seed, outputLocale, site.domain);
+  const description = siteDescriptionSeed(pages);
+  const seeds = {
+    keywords: keywords.filter(askable).slice(0, 15).map((keyword) => keyword.slice(0, KEYWORD_MAX_LENGTH)),
+    // The site's own product description leads the title seeds.
+    titles: Array.from(
+      new Set([
+        ...(description ? [description] : []),
+        ...titleSeeds,
+        ...profile.categories.map((category) => category.phrase),
+      ]),
+    ).slice(0, 15),
+    competitors: competitorDomains.slice(0, 15),
+    gscQueries: gscQueries.filter(askable),
+  };
+
+  const generationInput = {
+    siteDomain: site.domain,
+    locale: outputLocale,
+    count: SUGGESTION_TARGET,
+    seeds,
+    usage: { accountId: input.accountId, siteId: site.id },
+  };
+
+  // Non-spending profile validation BEFORE the AI call: a defect in our
+  // assembled input is not a provider failure and must surface as such.
+  if (deps.summaryProvider) {
+    deps.summaryProvider.preflightGeneratePrompts?.(generationInput);
+  }
+
+  deps.cooldown?.touch(`ai-visibility:suggest:${site.id}`);
+
+  const runId = randomUUID();
+  const templatesFor = (
+    locale: SupportedLocale,
+    localeTitleSeeds: string[],
+    localeProfile: typeof profile,
+  ): SuggestedPrompt[] =>
+    buildPromptCandidates({
+      domain: site.domain,
+      outputLocale: locale,
+      keywords,
+      gscQueries,
+      titleSeeds: localeTitleSeeds,
+      competitorDomains,
+      pages,
+      profile: localeProfile,
+    }).map((candidate) => ({ ...candidate, source: 'template' as const, language: locale }));
+  const templates = templatesFor(outputLocale, titleSeeds, profile);
+
+  let generated: GeneratePromptsResult | null = null;
+  let providerFailed = false;
+  if (deps.summaryProvider) {
+    try {
+      generated = await deps.summaryProvider.generatePrompts(generationInput);
+    } catch (err) {
+      // Never silent: an all-template response downstream means this fired (or
+      // the runner's invariants zeroed the set) — ops needs the reason.
+      logger.warn(
+        { err, accountId: input.accountId, siteId: site.id },
+        'ai-visibility prompt suggestion provider failed; falling back to templates',
+      );
+      providerFailed = true;
     }
-    deps.cooldown?.touch(`ai-visibility:suggest:${site.id}`);
-    const runId = randomUUID();
-    const templates: SuggestedPrompt[] = buildPromptCandidates({
-        domain: site.domain,
-        outputLocale: input.outputLocale,
-        keywords,
-        gscQueries,
-        titleSeeds,
-        competitorDomains,
-    }).map((candidate) => ({
-        ...candidate,
-        source: 'template' as const,
-    }));
-    let generated: GeneratePromptsResult | null = null;
-    let providerFailed = false;
-    if (deps.summaryProvider) {
-        try {
-            generated = await deps.summaryProvider.generatePrompts(generationInput);
-        }
-        catch (err) {
-            // Never silent: an all-template response downstream means this fired (or
-            // the runner's invariants zeroed the set) — ops needs the reason.
-            logger.warn({ err, accountId: input.accountId, siteId: site.id }, 'ai-visibility prompt suggestion provider failed; falling back to templates');
-            providerFailed = true;
-        }
-    }
-    const retained: SuggestedPrompt[] = generated ? collectGeneratedPrompts(generated.prompts) : [];
-    // Templates backfill whatever the model did not produce, so a site with no
-    // GSC connection and a thin seed set still gets something usable.
-    for (const row of templates) {
-        if (retained.length >= SUGGESTION_TARGET)
-            break;
-        if (retained.some((kept) => kept.prompt.toLowerCase() === row.prompt.toLowerCase()))
-            continue;
-        retained.push(row);
-    }
-    if (providerFailed && retained.length === 0) {
-        // Nothing was retained and the spend never produced anything.
-        throw new HttpError(502, { code: 'AI_VISIBILITY_ERRORS_SUGGESTION_FAILED', messageKey: 'aiVisibility.errors.suggestionFailed' });
-    }
-    const usedAi = retained.some((row) => row.source === 'ai');
-    const generatedAt = nowFn();
-    await insertSuggestionRun(deps.db, {
-        id: runId,
-        accountId: input.accountId,
-        siteId: site.id,
-        outputLocale: input.outputLocale,
-        prompts: retained.map((row) => ({
-            prompt: row.prompt,
-            source: row.source,
-            funnelStage: row.funnelStage,
-            promptType: row.promptType,
-            intent: row.intent,
-            branded: row.branded,
-            evidenceSource: row.evidenceSource,
-            evidenceRef: row.evidenceRef,
-        })),
-        seeds,
-        generator: usedAi ? 'ai' : 'template',
-        model: usedAi && generated ? generated.model : null,
-        generatedAt,
+  }
+
+  // Raw crawled titles: a phrase that merely repeats one is never a prompt.
+  const pageTitles = pages.flatMap((page) => [page.title ?? '', ...page.h1]);
+  const guardContext = {
+    pageTitles,
+    seeds: [...seeds.keywords, ...seeds.titles, ...seeds.gscQueries, ...seeds.competitors],
+    domain: site.domain,
+  };
+  // AI rows lead; templates backfill whatever the model did not produce, so a
+  // thin seed set still gets something usable. Near-identical phrasings are
+  // collapsed across both sources, first one wins.
+  const primaryRows = guardByLanguage(
+    [
+      ...(generated
+        ? collectGeneratedPrompts(generated.prompts).map((row) => ({ ...row, language: outputLocale }))
+        : []),
+      ...templates,
+    ],
+    guardContext,
+    outputLocale,
+  );
+  let secondaryRows: SuggestedPrompt[] = [];
+  if (languages.secondary) {
+    const secondary = languages.secondary;
+    const secondaryTitles = await listAuditTitleSeeds({
+      accountId: input.accountId,
+      siteId: site.id,
+      domain: site.domain,
+      outputLocale: secondary,
     });
-    return {
-        generatedAt: generatedAt.toISOString(),
-        outputLocale: input.outputLocale,
-        suggestions: retained,
-    };
+    const secondaryProfile = buildSiteProfile({
+      domain: site.domain,
+      outputLocale: secondary,
+      pages,
+      keywords,
+      gscQueries,
+    });
+    secondaryRows = guardByLanguage(
+      templatesFor(secondary, secondaryTitles, secondaryProfile),
+      { ...guardContext, seeds: [...guardContext.seeds, ...secondaryTitles] },
+      secondary,
+    ).slice(0, SECONDARY_LANGUAGE_SHARE);
+  }
+  // a prompt the site already tracks is never suggested again.
+  const tracked = await trackedPromptKeys(deps.db, { accountId: input.accountId, siteId: site.id });
+  const untracked = (row: SuggestedPrompt): boolean => !tracked.has(trackedPromptKey(row.prompt));
+  secondaryRows = secondaryRows.filter(untracked);
+  const retained: SuggestedPrompt[] = [
+    ...primaryRows.filter(untracked).slice(0, SUGGESTION_TARGET - secondaryRows.length),
+    ...secondaryRows,
+  ];
+
+  if (providerFailed && retained.every((row) => row.evidenceSource === null)) {
+    // Nothing evidence-backed was retained and the call produced nothing useful.
+    throw new HttpError(502, { code: 'AI_VISIBILITY_ERRORS_SUGGESTION_FAILED', messageKey: 'aiVisibility.errors.suggestionFailed' });
+  }
+
+  const usedAi = retained.some((row) => row.source === 'ai');
+  const generatedAt = nowFn();
+  await insertSuggestionRun(deps.db, {
+    id: runId,
+    accountId: input.accountId,
+    siteId: site.id,
+    outputLocale,
+    prompts: retained.map((row) => ({
+      prompt: row.prompt,
+      source: row.source,
+      funnelStage: row.funnelStage,
+      promptType: row.promptType,
+      intent: row.intent,
+      branded: row.branded,
+      evidenceSource: row.evidenceSource,
+      evidenceRef: row.evidenceRef,
+      // Every retained row (template or AI) carries the language it was built in.
+      language: row.language,
+    })),
+    seeds: { ...seeds, evidenceLevel: profile.evidenceLevel, provenance: 'site' },
+    generator: usedAi ? 'ai' : 'template',
+    model: usedAi && generated ? generated.model : null,
+    generatedAt,
+  });
+
+  return {
+    generatedAt: generatedAt.toISOString(),
+    outputLocale,
+    suggestions: retained,
+    evidence: profile.evidenceLevel,
+    stale: false,
+  };
 }
+
 export interface AiVisibilityTrendPoint {
     day: string;
     /** Share of that day's snapshot rows with `mentioned=true`; null on competitor-only days. */
@@ -921,7 +983,9 @@ export async function buildAiVisibilityEvaluationInput(db: Db, input: {
         },
         notMentionedPrompts: prompts
             .map((row) => row.prompt)
-            .filter((prompt) => !mentions.some((row) => row.prompt === prompt && row.mentioned))
+            // Only checked prompts can be "not mentioned".
+            .filter((prompt) => mentions.some((row) => row.prompt === prompt) &&
+            !mentions.some((row) => row.prompt === prompt && row.mentioned))
             .slice(0, 3),
     };
 }

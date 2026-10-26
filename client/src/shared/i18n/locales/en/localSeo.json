@@ -1,19 +1,23 @@
 {
   "title": "Local SEO",
   "description": "Business listings, reviews, and map-pack rank for your site.",
-  "empty": "No Local SEO data yet — hit refresh to fetch listings, reviews, and Q&A.",
+  "empty": "No Local SEO data yet. Click Refresh Local SEO at the top to fetch listings, reviews, and Q&A.",
   "emptyTitle": "No local data yet",
-  "emptyCta": "Fetch local data",
   "refresh": {
     "button": "Refresh Local SEO",
-    "cooldown": "Refresh in {{seconds}}s",
-    "failed": "Could not refresh Local SEO. Try again in a moment."
+    "cooldown_one": "Refresh in {{seconds}}s",
+    "failed": "Could not refresh Local SEO. Try again in a moment.",
+    "cooldown_zero": "Refresh in {{seconds}}s",
+    "cooldown_two": "Refresh in {{seconds}}s",
+    "cooldown_few": "Refresh in {{seconds}}s",
+    "cooldown_many": "Refresh in {{seconds}}s",
+    "cooldown_other": "Refresh in {{seconds}}s",
+    "needsSetup": "Choose your business below before refreshing."
   },
   "loadFailed": "Could not load Local SEO.",
   "locked": {
     "title": "Local SEO is a Pro feature",
-    "body": "Upgrade to Pro to track how consistently your business appears across directories and the local map pack.",
-    "upgrade": "See plans"
+    "body": "Upgrade to Pro to track how consistently your business appears across directories and the local map pack."
   },
   "listings": {
     "title": "Business listings",
@@ -37,5 +41,39 @@
     "position": "Position",
     "packSize": "Pack size",
     "notRanked": "Not in map pack"
+  },
+  "setup": {
+    "resultsLegend_zero": "{{count}} results for “{{query}}”. Pick yours:",
+    "resultsLegend_one": "{{count}} result for “{{query}}”. Pick yours:",
+    "resultsLegend_two": "{{count}} results for “{{query}}”. Pick yours:",
+    "resultsLegend_few": "{{count}} results for “{{query}}”. Pick yours:",
+    "resultsLegend_many": "{{count}} results for “{{query}}”. Pick yours:",
+    "resultsLegend_other": "{{count}} results for “{{query}}”. Pick yours:",
+    "title": "Choose your business",
+    "description": "Search for the business this site belongs to. Local SEO reports on the one you pick.",
+    "changeDescription": "Search again and pick a different business. Your current one stays until you save a new choice.",
+    "queryLabel": "Business name, address or place ID",
+    "queryPlaceholder": "Example Dental Studio, Austin",
+    "queryHint": "Each search asks your local listings provider once. Saving a result makes no request.",
+    "queryInvalid": "Enter between {{min}} and {{max}} characters.",
+    "search": "Search",
+    "searching": "Searching…",
+    "noAddress": "No address listed",
+    "source": "Google Business Profile",
+    "noResults": "No businesses found for “{{query}}”. Check the spelling, or try the street address or the Google place ID.",
+    "save": "Use this business",
+    "saving": "Saving…",
+    "saved": "Local SEO now reports on {{name}}.",
+    "loadFailed": "Could not load your business setup.",
+    "searchFailed": "Search failed. Try again in a moment.",
+    "selectFailed": "Could not save that business. Try again."
+  },
+  "business": {
+    "label": "Business",
+    "change": "Change business"
+  },
+  "provenance": {
+    "business": "Showing data for <bdi>{{name}}</bdi>.",
+    "domain": "Older data, looked up by website <bdi>{{domain}}</bdi>."
   }
 }

@@ -37,6 +37,11 @@
     "emailHint": "To change your email, open Security and use Change email. The address only changes after you confirm the link we send."
   },
   "privacy": {
+    "delete": {
+      "title": "Delete account",
+      "description": "Account deletion is in Security settings, next to your other sign-in controls.",
+      "link": "Go to Security settings"
+    },
     "export": {
       "title": "Export your data",
       "description": "Download a copy of your account data as a JSON file.",

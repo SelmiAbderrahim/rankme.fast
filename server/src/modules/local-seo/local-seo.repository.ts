@@ -13,6 +13,11 @@ export interface PersistLocalSeoSnapshotInput {
     listings: BusinessListingRow[];
     reviews: ReviewsSummary;
     qa: QaSummary;
+    /** The business the refresh described: its vendor keyword and name. */
+    business: {
+        ref: string;
+        name: string;
+    };
 }
 /**
  * Persist the combined refresh result inside ONE transaction — the
@@ -25,6 +30,11 @@ export interface PersistLocalSeoSnapshotInput {
 export async function persistLocalSeoSnapshot(db: Db, input: PersistLocalSeoSnapshotInput): Promise<void> {
     const snapshotDate = snapshotDayOf(input.now);
     await db.transaction(async (tx) => {
+        // A same-day refresh replaces that day's listings outright, so rows from
+        // an earlier refresh (or another business) never mix into this one.
+        await tx
+            .delete(localListingSnapshots)
+            .where(and(eq(localListingSnapshots.siteId, input.siteId), eq(localListingSnapshots.snapshotDate, snapshotDate)));
         if (input.listings.length > 0) {
             await tx
                 .insert(localListingSnapshots)
@@ -64,6 +74,8 @@ export async function persistLocalSeoSnapshot(db: Db, input: PersistLocalSeoSnap
             reviewCount: input.reviews.reviewCount,
             unansweredQuestionCount: input.qa.unansweredCount,
             fetchedAt: input.now,
+            businessRef: input.business.ref,
+            businessName: input.business.name,
         })
             .onConflictDoUpdate({
             target: [localReviewsSnapshots.siteId, localReviewsSnapshots.snapshotDate],
@@ -72,6 +84,8 @@ export async function persistLocalSeoSnapshot(db: Db, input: PersistLocalSeoSnap
                 reviewCount: input.reviews.reviewCount,
                 unansweredQuestionCount: input.qa.unansweredCount,
                 fetchedAt: input.now,
+                businessRef: input.business.ref,
+                businessName: input.business.name,
             },
         });
     });

@@ -3,6 +3,7 @@
  * import from HERE — never from an individual rule file.
  */
 export { ALL_AIVISIBILITY_RULES, ALL_GSC_SEARCH_RULES, ALL_GSC_SITEMAPS_RULES, ALL_INDEXSTATUS_RULES, ALL_LOCALSEO_RULES, ALL_PAGESPEED_RULES, ALL_RULES, countByBucket, evaluateAllRules, isNotEvaluatedFinding, type FindingCounts, } from './engine.js';
+export { RULE_CATEGORIES, RULE_CATEGORY, categoryOf, type RuleCategory, } from './categories.js';
 export { bucketFor } from './bucket.js';
 export { CTR_LOW_MIN_IMPRESSIONS, CTR_LOW_THRESHOLD, } from './gsc-ctr-low.js';
 export { LOW_REVIEW_COUNT_THRESHOLD, LOW_REVIEW_RATING_THRESHOLD, localPackNotRankingRule, lowReviewCountRule, lowReviewRatingRule, napInconsistencyRule, } from './local-seo/index.js';

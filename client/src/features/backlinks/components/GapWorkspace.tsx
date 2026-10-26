@@ -1,7 +1,10 @@
+import { Bdi } from '@shared/components/Bdi';
 import { useEffect, useMemo, useRef, useState, type FormEvent } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
+import { fetchCompetitorProfiles } from '@features/competitors';
 import { ReportExportControl } from '@features/report-export';
+import { CompetitorDomainsInput } from '@shared/components/CompetitorDomainsInput';
 import { useAppDispatch, useAppSelector } from '@shared/hooks/redux';
 import { SAFE_EXTERNAL_REL, safeExternalHref } from '@shared/security';
 import { Alert, AlertDescription, AlertTitle } from '@shared/ui/alert';
@@ -15,13 +18,13 @@ import {
   CardTitle,
 } from '@shared/ui/card';
 import { Empty, EmptyDescription, EmptyHeader, EmptyTitle } from '@shared/ui/empty';
-import { Field, FieldDescription, FieldError, FieldGroup, FieldLabel } from '@shared/ui/field';
+import { Field, FieldDescription, FieldGroup, FieldLabel } from '@shared/ui/field';
+import { MetricValue } from '@shared/components/MetricValue';
 import { Input } from '@shared/ui/input';
 import { Skeleton } from '@shared/ui/skeleton';
 import { StatusChip, type StatusTone } from '@shared/ui/status-chip';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@shared/ui/table';
 import { TableHeaderHelp } from '@shared/ui/table-header-help';
-import { Textarea } from '@shared/ui/textarea';
 import { cancelGapPreview } from '../store/slice';
 import { selectGap } from '../store/selectors';
 import { loadGapRun, previewGap, submitGap } from '../store/thunks';
@@ -36,7 +39,6 @@ import {
   LINK_GAP_MAX_COMPETITORS,
   LINK_GAP_MIN_COMPETITORS,
   linkGapFormSchema,
-  splitGapCompetitors,
   type LinkGapFormValues,
 } from '../validation';
 import { SpendPreviewPanel } from './SpendPreviewPanel';
@@ -49,7 +51,6 @@ interface GapWorkspaceProps {
 function gapValidationMessage(issue: string, t: (key: string) => string): string {
   if (issue === 'ownAmongCompetitors') return t('gap.form.errors.ownAmongCompetitors');
   if (issue === 'atLeastOne') return t('gap.form.errors.atLeastOne');
-  if (issue === 'tooMany') return t('gap.form.errors.tooMany');
   return t('gap.form.errors.invalid');
 }
 
@@ -88,10 +89,32 @@ export function GapWorkspace({ siteId, ownDomain: selectedDomain }: GapWorkspace
   const gap = useAppSelector(selectGap);
   const runId = new URLSearchParams(location.search).get('runId');
   const [ownDomain, setOwnDomain] = useState(selectedDomain);
-  const [competitorsText, setCompetitorsText] = useState('');
+  const [competitors, setCompetitors] = useState<string[]>([]);
   const [validationError, setValidationError] = useState('');
   const [confirmedInput, setConfirmedInput] = useState<LinkGapFormValues | null>(null);
   const ownDomainEdited = useRef(false);
+  const competitorsEdited = useRef(false);
+  const [prefilled, setPrefilled] = useState(false);
+
+  // Start from the site's confirmed competitors. A stored-data read: it never
+  // overwrites what was typed, and a failure leaves the field empty.
+  useEffect(() => {
+    if (runId) return;
+    const controller = new AbortController();
+    fetchCompetitorProfiles(siteId, 'active', controller.signal).then(
+      ({ items }) => {
+        const domains = [...new Set(items.map((item) => item.registrableDomain))].slice(
+          0,
+          LINK_GAP_MAX_COMPETITORS,
+        );
+        if (competitorsEdited.current || domains.length === 0) return;
+        setCompetitors(domains);
+        setPrefilled(true);
+      },
+      () => undefined,
+    );
+    return () => controller.abort();
+  }, [runId, siteId]);
 
   useEffect(() => {
     if (!ownDomainEdited.current) setOwnDomain(selectedDomain);
@@ -112,7 +135,7 @@ export function GapWorkspace({ siteId, ownDomain: selectedDomain }: GapWorkspace
     event.preventDefault();
     const parsed = linkGapFormSchema.safeParse({
       ownDomain,
-      competitors: splitGapCompetitors(competitorsText),
+      competitors,
     });
     if (!parsed.success) {
       setValidationError(gapValidationMessage(parsed.error.issues[0]!.message, t));
@@ -165,26 +188,32 @@ export function GapWorkspace({ siteId, ownDomain: selectedDomain }: GapWorkspace
               />
             </Field>
             <Field data-invalid={Boolean(validationError)}>
-              <FieldLabel htmlFor="gap-competitors">{t('gap.form.competitorsLabel')}</FieldLabel>
-              <Textarea
+              <CompetitorDomainsInput
                 id="gap-competitors"
-                value={competitorsText}
-                onChange={(event) => {
-                  setCompetitorsText(event.target.value);
+                label={t('gap.form.competitorsLabel')}
+                value={competitors}
+                onChange={(domains) => {
+                  competitorsEdited.current = true;
+                  setCompetitors(domains);
                   clearStalePreview();
                 }}
-                aria-invalid={Boolean(validationError)}
-                aria-describedby="gap-competitors-help"
-                rows={4}
-                data-testid="link-gap-competitors"
+                ownDomain={ownDomain}
+                error={validationError}
+                testIdPrefix="link-gap-competitors"
+                help={
+                  <FieldDescription id="gap-competitors-help">
+                    {t('gap.form.competitorsHelp', {
+                      min: LINK_GAP_MIN_COMPETITORS,
+                      max: LINK_GAP_MAX_COMPETITORS,
+                    })}
+                    {prefilled ? (
+                      <span className="block" data-testid="link-gap-prefilled">
+                        {t('gap.form.prefilled')}
+                      </span>
+                    ) : null}
+                  </FieldDescription>
+                }
               />
-              <FieldDescription id="gap-competitors-help">
-                {t('gap.form.competitorsHelp', {
-                  min: LINK_GAP_MIN_COMPETITORS,
-                  max: LINK_GAP_MAX_COMPETITORS,
-                })}
-              </FieldDescription>
-              <FieldError>{validationError}</FieldError>
             </Field>
           </FieldGroup>
 
@@ -204,7 +233,7 @@ export function GapWorkspace({ siteId, ownDomain: selectedDomain }: GapWorkspace
                 loading={gap.submitting}
                 data-testid="link-gap-confirm"
               >
-                {t('gap.preview.confirm', { n: 1 })}
+                {t('gap.preview.confirm')}
               </Button>
               <Button
                 type="button"
@@ -342,7 +371,7 @@ export function GapCompetitorCard({ leg }: { leg: LinkGapLeg }) {
   return (
     <Card data-testid={`gap-competitor-${leg.competitor}`}>
       <CardHeader>
-        <CardTitle>{leg.competitor}</CardTitle>
+        <CardTitle><Bdi>{leg.competitor}</Bdi></CardTitle>
         <CardDescription>{t('gap.result.competitorDescription')}</CardDescription>
       </CardHeader>
       <CardContent className="flex flex-col gap-5">
@@ -374,7 +403,7 @@ export function GapCompetitorCard({ leg }: { leg: LinkGapLeg }) {
               {rows.map((row) => (
                 <TableRow key={row.domain}>
                   <TableCell>
-                    {row.url ? (
+                    <Bdi>{row.url ? (
                       // eslint-disable-next-line react/jsx-no-target-blank -- SAFE_EXTERNAL_REL includes noopener and noreferrer.
                       <a
                         href={safeExternalHref(row.url)}
@@ -386,9 +415,11 @@ export function GapCompetitorCard({ leg }: { leg: LinkGapLeg }) {
                       </a>
                     ) : (
                       row.domain
-                    )}
+                    )}</Bdi>
                   </TableCell>
-                  <TableCell>{row.rank ?? '—'}</TableCell>
+                  <TableCell>
+                    <MetricValue kind="count" value={row.rank} />
+                  </TableCell>
                   <TableCell>{formatGapFirstSeen(row.firstSeen, i18n.language)}</TableCell>
                 </TableRow>
               ))}
@@ -424,12 +455,12 @@ export function GapOverlapStats({
     <dl className="grid gap-3 sm:grid-cols-3" data-testid="gap-overlap-stats">
       <div>
         <dt className="text-muted-foreground text-xs">{t('gap.overlap.totalUnique')}</dt>
-        <dd className="font-semibold">{overlap ? integer.format(overlap.totalUnique) : '—'}</dd>
+        <dd className="font-semibold">{overlap ? integer.format(overlap.totalUnique) : <MetricValue kind="count" value={null} />}</dd>
       </div>
       <div>
         <dt className="text-muted-foreground text-xs">{t('gap.overlap.exclusiveToCompetitor')}</dt>
         <dd className="font-semibold">
-          {overlap ? integer.format(overlap.exclusiveToCompetitor) : '—'}
+          {overlap ? integer.format(overlap.exclusiveToCompetitor) : <MetricValue kind="count" value={null} />}
         </dd>
       </div>
       <div>
@@ -437,7 +468,7 @@ export function GapOverlapStats({
         <dd className="font-semibold">
           {overlap
             ? t('gap.overlap.exclusivePct', { pct: percentage.format(overlap.exclusivePct) })
-            : '—'}
+            : <MetricValue kind="ratio" value={null} />}
         </dd>
       </div>
     </dl>

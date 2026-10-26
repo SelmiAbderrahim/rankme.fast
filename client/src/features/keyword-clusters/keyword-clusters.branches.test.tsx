@@ -539,7 +539,7 @@ describe('keyword-clusters tab navigation', () => {
 
     await user.click(firstKeyword);
     expect(firstKeyword).not.toBeChecked();
-    expect(within(scope).getByText(/keywords selected/u)).toHaveTextContent(/^1 /u);
+    expect(within(scope).getByText('1 keyword selected. Every selected keyword must have a usable recent Google result.')).toBeInTheDocument();
 
     await user.click(firstKeyword);
     expect(firstKeyword).toBeChecked();

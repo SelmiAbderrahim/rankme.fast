@@ -1,11 +1,45 @@
 import { SUPPORTED_LOCALES, isSupportedLocale, type SupportedLocale, } from '../../shared/i18n/locales.js';
-import { AI_SUMMARY_JOB_STATUSES, type AiSummaryJobStatus, type ReportSnapshotHydrated, } from './report-snapshot.model.js';
+import { AI_SUMMARY_FAILURE_CODES, AI_SUMMARY_JOB_STAGES, AI_SUMMARY_JOB_STATUSES, type AiSummaryFailureCode, type AiSummaryJobStage, type AiSummaryJobStatus, type ReportSnapshotHydrated, } from './report-snapshot.model.js';
+import { SUMMARY_ACT_AREAS, type SummaryActArea } from './summary-act-area.js';
 export interface PersistedAiSummary {
     text: string;
     locale: SupportedLocale;
     model: string;
     truncated: boolean;
     createdAt: string;
+    /**
+     * Rule ids of the open findings this summary was built from, i.e. its
+     * evidence references. Absent on summaries written before they were recorded.
+     */
+    basisRuleIds?: string[];
+    /**
+     * Hash of the findings, dismissals and action states the summary was built
+     * from. A different current hash marks it stale.
+     */
+    inputHash?: string;
+    /** Status sentence + top items; absent on text-only summaries. */
+    structured?: PersistedSummaryStructured;
+}
+export interface PersistedSummaryItem {
+    ruleId: string;
+    what: string;
+    why: string;
+    firstStep: string;
+    /** Workspace surface where the user acts on it, chosen by rule. */
+    whereToAct: SummaryActArea;
+}
+export interface PersistedSummaryStructured {
+    status: string;
+    items: PersistedSummaryItem[];
+}
+/** Whether a stored summary still matches the findings that are open today. */
+export interface AuditSummaryFreshness {
+    stale: boolean;
+    reason: 'triage_changed' | null;
+    /** The summary's evidence references; null for summaries written before they were recorded. */
+    evidenceRuleIds: string[] | null;
+    /** Rules whose open/closed status differs from when the summary was written. */
+    changedRuleIds: string[];
 }
 export type AuditSummaryStatus = 'idle' | AiSummaryJobStatus;
 export interface AuditSummaryState {
@@ -13,6 +47,8 @@ export interface AuditSummaryState {
     aiSummary: PersistedAiSummary | null;
     requestedLocale: SupportedLocale;
     availableLocales: SupportedLocale[];
+    /** Set by readers that can reach the decisions store; absent otherwise. */
+    freshness?: AuditSummaryFreshness | null;
 }
 interface PlainSummaryJob {
     generationId?: unknown;
@@ -21,6 +57,20 @@ interface PlainSummaryJob {
     requestedAt?: unknown;
     startedAt?: unknown;
     finishedAt?: unknown;
+    stage?: unknown;
+    failureCode?: unknown;
+}
+/**
+ * Progress of the latest summary job in one locale: the stage the worker
+ * reported, how long it has been going (server clock), and for a failure why.
+ */
+export interface AuditSummaryProgress {
+    stage: AiSummaryJobStage | null;
+    requestedAt: string;
+    startedAt: string | null;
+    finishedAt: string | null;
+    elapsedMs: number;
+    failureCode: AiSummaryFailureCode | null;
 }
 export interface PlainAuditSummarySnapshot {
     aiSummaryVariantsByLocale?: Partial<Record<SupportedLocale, unknown>> | null;
@@ -46,12 +96,39 @@ function serializeExactSummary(value: unknown, locale: SupportedLocale): Persist
         !createdAt) {
         return null;
     }
+    const basis = Array.isArray(summary.basisRuleIds)
+        ? summary.basisRuleIds.filter((id): id is string => typeof id === 'string')
+        : null;
+    const structured = serializeStructured(summary.structured);
     return {
         text: summary.text,
         locale,
         model: summary.model,
         truncated: summary.truncated,
         createdAt: createdAt.toISOString(),
+        ...(basis ? { basisRuleIds: basis } : {}),
+        ...(typeof summary.inputHash === 'string' ? { inputHash: summary.inputHash } : {}),
+        ...(structured ? { structured } : {}),
+    };
+}
+function serializeStructured(value: unknown): PersistedSummaryStructured | null {
+    if (!value || typeof value !== 'object')
+        return null;
+    const { status, items } = value as {
+        status?: unknown;
+        items?: unknown;
+    };
+    if (typeof status !== 'string' || !Array.isArray(items))
+        return null;
+    const valid = items.filter((item): item is PersistedSummaryItem => typeof item === 'object' &&
+        item !== null &&
+        ['ruleId', 'what', 'why', 'firstStep'].every((key) => typeof (item as Record<string, unknown>)[key] === 'string') &&
+        (SUMMARY_ACT_AREAS as readonly unknown[]).includes((item as {
+            whereToAct?: unknown;
+        }).whereToAct));
+    return {
+        status,
+        items: valid.map(({ ruleId, what, why, firstStep, whereToAct }) => ({ ruleId, what, why, firstStep, whereToAct })),
     };
 }
 function exactJobStatus(value: PlainSummaryJob | null | undefined, locale: SupportedLocale): AiSummaryJobStatus | null {
@@ -101,5 +178,38 @@ export function selectAuditSummaryLocale(snapshot: ReportSnapshotHydrated | Plai
         aiSummary,
         requestedLocale,
         availableLocales: [...available].sort((left, right) => left.localeCompare(right)),
+    };
+}
+/**
+ * The exact-locale job's progress, or null when this locale never had a
+ * job. A failed job without a recorded code reads as `internal`.
+ */
+export function selectAuditSummaryProgress(snapshot: ReportSnapshotHydrated | PlainAuditSummarySnapshot, locale: SupportedLocale, now: Date): AuditSummaryProgress | null {
+    const stored = plainAuditSummarySnapshot(snapshot);
+    const variantJob = stored.aiSummaryJobsByLocale?.[locale];
+    const job = exactJobStatus(variantJob, locale) ? variantJob : stored.aiSummaryJob;
+    const status = exactJobStatus(job, locale);
+    const requestedAt = validDate(job?.requestedAt);
+    if (!job || !status || !requestedAt)
+        return null;
+    const startedAt = validDate(job.startedAt);
+    const finishedAt = validDate(job.finishedAt);
+    const reported = (AI_SUMMARY_JOB_STAGES as readonly unknown[]).includes(job.stage)
+        ? (job.stage as AiSummaryJobStage)
+        : null;
+    const stage = status === 'queued' ? 'queued' : status === 'running' ? (reported ?? 'reading_findings') : null;
+    const failureCode = status === 'failed'
+        ? (AI_SUMMARY_FAILURE_CODES as readonly unknown[]).includes(job.failureCode)
+            ? (job.failureCode as AiSummaryFailureCode)
+            : 'internal'
+        : null;
+    const end = finishedAt ?? now;
+    return {
+        stage,
+        requestedAt: requestedAt.toISOString(),
+        startedAt: startedAt?.toISOString() ?? null,
+        finishedAt: finishedAt?.toISOString() ?? null,
+        elapsedMs: Math.max(0, end.getTime() - requestedAt.getTime()),
+        failureCode,
     };
 }

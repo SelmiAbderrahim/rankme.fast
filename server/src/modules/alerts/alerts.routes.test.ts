@@ -163,6 +163,33 @@ describe('POST /api/alerts/rules', () => {
     expect(res.body.webhookSecret).toBeUndefined();
   });
 
+  it('refuses a rule on a paused site with a localized code and stores nothing', async () => {
+    const user = await seedUser();
+    const siteId = await seedSite(user);
+    await Site.updateOne({ _id: siteId }, { $set: { paused: true, pausedAt: new Date() } });
+
+    const res = await createRule(user, { siteId, emailRecipientIds: [user.id] });
+
+    expect(res.status).toBe(409);
+    expect(res.body.error).toMatchObject({
+      code: 'ALERTS_ERRORS_SITE_PAUSED',
+      message: translate('en', 'alerts.errors.sitePaused'),
+    });
+    expect(await getTestDb().select().from(alertRules)).toHaveLength(0);
+  });
+
+  it("answers 404 (not the paused code) for another account's paused site", async () => {
+    const owner = await seedUser();
+    const stranger = await seedUser();
+    const siteId = await seedSite(owner);
+    await Site.updateOne({ _id: siteId }, { $set: { paused: true } });
+
+    const res = await createRule(stranger, { siteId, emailRecipientIds: [stranger.id] });
+
+    expect(res.status).toBe(404);
+    expect(res.body.error.code).toBe('SITE_NOT_FOUND');
+  });
+
   it('resolves the legacy self recipient alias to the authenticated user id', async () => {
     const user = await seedUser();
     const siteId = await seedSite(user);

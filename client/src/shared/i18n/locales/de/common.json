@@ -6,9 +6,7 @@
   "yes": "Ja",
   "no": "Nein",
   "capacity": {
-    "selfHost": "Auf diesem Server werden keine Nutzungslimits angewendet.",
-    "selfHostPlan": "Selbst gehostet",
-    "selfHostSlots": "{{used}} belegt; auf diesem Server werden keine Nutzungslimits angewendet."
+    "selfHost": "Auf diesem Server werden keine Nutzungslimits angewendet."
   },
   "logPanel": {
     "title": "Sicherungsausgabe",
@@ -34,8 +32,6 @@
     "sites": "Websites",
     "keywordResearch": "Keyword-Recherche",
     "google": "Google",
-    "billing": "Abrechnung",
-    "creditPacks": "Guthabenpakete",
     "notifications": "Benachrichtigungen",
     "logout": "Abmelden",
     "logOut": "Abmelden",
@@ -44,10 +40,12 @@
     "exports": "Exporte und Freigaben",
     "security": "Sicherheit",
     "team": "Team",
+    "workspace": "Arbeitsbereich",
     "admin": "Admin",
     "superadmin": "Plattform",
     "startFree": "Kostenlos starten",
-    "openApp": "App öffnen"
+    "openApp": "App öffnen",
+    "breadcrumb": "Brotkrümelnavigation"
   },
   "footer": {
     "copyright": "© {{year}}, {{brand}}. Alle Rechte vorbehalten.",
@@ -74,28 +72,36 @@
       "sites": {
         "label": "Websites",
         "description": "Fügen Sie Ihre verfolgten Websites hinzu und verwalten Sie sie.",
-        "usage": "{{used}} von {{cap}} Websites"
+        "usage": "{{used}} von {{cap}} Websites",
+        "cta": "Websites öffnen"
       },
       "ranks": {
         "label": "Rankings",
         "description": "Verfolgen Sie SERP-Positionen Ihrer Keywords.",
         "usage": "{{used}} von {{cap}} verfolgten Keywords",
-        "empty": "Fügen Sie eine Website hinzu, um Rankings zu verfolgen."
+        "empty": "Fügen Sie eine Website hinzu, um Rankings zu verfolgen.",
+        "cta": "Ranking-Tracking öffnen",
+        "pickCta": "Website wählen, um das Ranking-Tracking zu öffnen"
       },
       "keywordResearch": {
         "label": "Keyword-Recherche",
         "description": "Finden Sie Volumen, Schwierigkeit und verwandte Keywords.",
-        "usage": "{{used}} von {{cap}} Abfragen diesen Monat"
+        "usage": "{{used}} von {{cap}} Abfragen diesen Monat",
+        "cta": "Keywords recherchieren"
       },
       "backlinks": {
         "label": "Backlinks",
         "description": "Analysieren Sie das Backlink-Profil Ihrer ersten Website.",
-        "usage": "{{used}} von {{cap}} Zeilen diesen Monat"
+        "usage": "{{used}} von {{cap}} Zeilen diesen Monat",
+        "cta": "Backlinks ansehen",
+        "pickCta": "Website wählen, um Backlinks zu sehen"
       },
       "competitors": {
         "label": "Wettbewerber",
         "description": "Sehen Sie, wer mit Ihrer ersten Website konkurriert.",
-        "usage": "Agency-Tarif"
+        "usage": "Agency-Tarif",
+        "cta": "Wettbewerber ansehen",
+        "pickCta": "Website wählen, um Wettbewerber zu sehen"
       },
       "google": {
         "label": "Google Search Console",
@@ -110,16 +116,171 @@
       "profile": {
         "label": "Profil",
         "description": "Kontodaten anzeigen und aktualisieren.",
-        "usage": "Kontoeinstellungen"
+        "usage": "Kontoeinstellungen",
+        "cta": "Profil öffnen"
       },
       "admin": {
         "label": "Admin",
         "description": "Zugriff auf Admin-Steuerungen.",
         "usage": "Admin-Steuerung"
-      }
+      },
+      "pickSiteCta": "Website wählen",
+      "pickSiteMenu": "Aktive Websites",
+      "pickSiteAll": "Alle Websites anzeigen"
     },
     "usage": {},
-    "loading": "Dashboard wird geladen…"
+    "loading": "Dashboard wird geladen…",
+    "health": {
+      "fixNow": {
+        "open_zero": "{{n}} offen",
+        "open_one": "{{n}} offen",
+        "open_two": "{{n}} offen",
+        "open_few": "{{n}} offen",
+        "open_many": "{{n}} offen",
+        "open_other": "{{n}} offen",
+        "none": "Keine offen",
+        "noneStale": "Keine offen beim letzten Audit",
+        "unavailable": {
+          "no_audit": "Noch kein Audit. Starten Sie eines, um das zu sehen.",
+          "report_missing": "Bericht nicht verfügbar. Starten Sie ein neues Audit."
+        }
+      },
+      "showing_zero": "{{shown}} von {{total}} aktiven Websites angezeigt.",
+      "showing_one": "{{shown}} von {{total}} aktiver Website angezeigt.",
+      "showing_two": "{{shown}} von {{total}} aktiven Websites angezeigt.",
+      "showing_few": "{{shown}} von {{total}} aktiven Websites angezeigt.",
+      "showing_many": "{{shown}} von {{total}} aktiven Websites angezeigt.",
+      "showing_other": "{{shown}} von {{total}} aktiven Websites angezeigt.",
+      "seeAll_zero": "Alle {{total}} Websites anzeigen",
+      "seeAll_one": "{{total}} Website anzeigen",
+      "seeAll_two": "Alle {{total}} Websites anzeigen",
+      "seeAll_few": "Alle {{total}} Websites anzeigen",
+      "seeAll_many": "Alle {{total}} Websites anzeigen",
+      "seeAll_other": "Alle {{total}} Websites anzeigen",
+      "paused": {
+        "more_zero": "{{n}} weitere pausierte Websites werden nicht angezeigt.",
+        "more_one": "{{n}} weitere pausierte Website wird nicht angezeigt.",
+        "more_two": "{{n}} weitere pausierte Websites werden nicht angezeigt.",
+        "more_few": "{{n}} weitere pausierte Websites werden nicht angezeigt.",
+        "more_many": "{{n}} weitere pausierte Websites werden nicht angezeigt.",
+        "more_other": "{{n}} weitere pausierte Websites werden nicht angezeigt.",
+        "title": "Pausierte Websites ({{n}})",
+        "explain": "Pausierte Websites führen keine geplanten Prüfungen oder Audits aus.",
+        "since": "Pausiert {{when}}",
+        "resume": "Fortsetzen",
+        "resuming": "Wird fortgesetzt…",
+        "resumeSite": "{{name}} fortsetzen",
+        "resumed": "{{domain}} läuft wieder. Geplante Prüfungen werden wieder ausgeführt.",
+        "resumeFailed": "Die Website konnte nicht fortgesetzt werden.",
+        "manage": "Alle Websites verwalten",
+        "ownerOnly": "Bitten Sie einen Workspace-Inhaber, eine pausierte Website fortzusetzen."
+      },
+      "search": {
+        "clicks_zero": "{{n}} Klicks",
+        "clicks_one": "{{n}} Klick",
+        "clicks_two": "{{n}} Klicks",
+        "clicks_few": "{{n}} Klicks",
+        "clicks_many": "{{n}} Klicks",
+        "clicks_other": "{{n}} Klicks",
+        "impressions_zero": "{{n}} Impressionen",
+        "impressions_one": "{{n}} Impression",
+        "impressions_two": "{{n}} Impressionen",
+        "impressions_few": "{{n}} Impressionen",
+        "impressions_many": "{{n}} Impressionen",
+        "impressions_other": "{{n}} Impressionen",
+        "clicksDelta": "Änderung der Klicks gegenüber den vorherigen 28 Tagen",
+        "impressionsDelta": "Änderung der Impressionen gegenüber den vorherigen 28 Tagen",
+        "through": "Bis {{date}}, verglichen mit den 28 Tagen davor",
+        "noPrevious": "Bis {{date}}. Es ist kein früherer Zeitraum zum Vergleichen gespeichert.",
+        "unavailable": {
+          "not_connected": "Search Console ist für diese Website nicht verbunden.",
+          "reconnect_needed": "Verbinden Sie Search Console erneut, um das zu sehen.",
+          "no_data_yet": "Noch keine Search-Console-Daten gespeichert."
+        }
+      },
+      "rank": {
+        "notCompared": {
+          "failed_zero": "{{count}} Prüfungen fehlgeschlagen",
+          "failed_one": "{{count}} Prüfung fehlgeschlagen",
+          "failed_two": "{{count}} Prüfungen fehlgeschlagen",
+          "failed_few": "{{count}} Prüfungen fehlgeschlagen",
+          "failed_many": "{{count}} Prüfungen fehlgeschlagen",
+          "failed_other": "{{count}} Prüfungen fehlgeschlagen",
+          "skipped_zero": "{{count}} übersprungen",
+          "skipped_one": "{{count}} übersprungen",
+          "skipped_two": "{{count}} übersprungen",
+          "skipped_few": "{{count}} übersprungen",
+          "skipped_many": "{{count}} übersprungen",
+          "skipped_other": "{{count}} übersprungen",
+          "noPair_zero": "{{count}} warten auf eine zweite Prüfung",
+          "noPair_one": "{{count}} wartet auf eine zweite Prüfung",
+          "noPair_two": "{{count}} warten auf eine zweite Prüfung",
+          "noPair_few": "{{count}} warten auf eine zweite Prüfung",
+          "noPair_many": "{{count}} warten auf eine zweite Prüfung",
+          "noPair_other": "{{count}} warten auf eine zweite Prüfung",
+          "unranked_zero": "{{count}} in keiner der beiden Prüfungen platziert",
+          "unranked_one": "{{count}} in keiner der beiden Prüfungen platziert",
+          "unranked_two": "{{count}} in keiner der beiden Prüfungen platziert",
+          "unranked_few": "{{count}} in keiner der beiden Prüfungen platziert",
+          "unranked_many": "{{count}} in keiner der beiden Prüfungen platziert",
+          "unranked_other": "{{count}} in keiner der beiden Prüfungen platziert",
+          "lead": "Nicht verglichen: {{parts}}."
+        },
+        "summary": "{{improved}} verbessert, {{declined}} verschlechtert, {{unchanged}} unverändert",
+        "compared": "Verglichene Keywords: {{compared}} von {{tracked}}.",
+        "lastCheck": "Letzte Prüfung {{when}}.",
+        "unavailable": {
+          "no_keywords": "Noch keine Keywords verfolgt.",
+          "no_checks": "Wartet auf die erste Positionsprüfung.",
+          "single_check": "Für den Vergleich ist eine zweite Prüfung nötig."
+        }
+      },
+      "title": "Website-Zustand",
+      "description": "Gespeicherte Ergebnisse für Ihre aktiven Websites. Diese Seite liest nur gespeicherte Daten.",
+      "loading": "Website-Zustand wird geladen…",
+      "loadFailed": "Der Website-Zustand konnte nicht geladen werden.",
+      "stale": "Veraltet",
+      "notAvailable": "Nicht verfügbar:",
+      "asOf": "Stand: {{date}}",
+      "allPaused": "Alle Websites, die Sie sehen können, sind pausiert, daher gibt es nichts zu messen. Setzen Sie unten eine fort, um ihren Zustand zu sehen.",
+      "empty": {
+        "body": "Fügen Sie eine Website hinzu, um hier ihren Audit-, Such- und Keyword-Zustand zu sehen.",
+        "cta": "Website hinzufügen"
+      },
+      "columns": {
+        "fixNow": "Jetzt beheben",
+        "lastAudit": "Letztes Audit",
+        "search": "Suche, letzte 28 Tage",
+        "keywords": "Keyword-Entwicklung"
+      },
+      "open": {
+        "actions": "Liste öffnen",
+        "report": "Bericht öffnen",
+        "google": "Search Console öffnen",
+        "keywords": "Keywords öffnen"
+      },
+      "lastAudit": {
+        "never": "Noch nie geprüft",
+        "status": {
+          "failed": "Fehlgeschlagen",
+          "unavailable": "Nicht verfügbar"
+        }
+      },
+      "staleSource": {
+        "audit": {
+          "label": "Audit vom {{date}}",
+          "hint": "Dieses Audit ist älter als 30 Tage. Starten Sie ein neues, um die Ergebnisse zu aktualisieren."
+        },
+        "search": {
+          "label": "Suchdaten vom {{date}}",
+          "hint": "Search-Console-Berichte hinken einige Tage hinterher, diese Daten sind aber älter."
+        },
+        "rank": {
+          "label": "Ranking-Prüfungen vom {{date}}",
+          "hint": "Die geplanten Ranking-Prüfungen für diese Website sind nicht rechtzeitig gelaufen."
+        }
+      }
+    }
   },
   "shell": {
     "groupOverview": "Übersicht",
@@ -127,7 +288,7 @@
     "groupAccount": "Konto",
     "groupAdmin": "Admin",
     "search": "Suchen",
-    "searchPlaceholder": "Seiten und Websites durchsuchen",
+    "searchPlaceholder": "Seiten, Websites und Dokumentation durchsuchen…",
     "searchNoResults": "Keine Ergebnisse für „{{query}}“",
     "searchGroupPages": "Seiten",
     "searchGroupSites": "Websites",
@@ -138,18 +299,16 @@
     "signOut": "Abmelden",
     "collapse": "Seitenleiste einklappen",
     "expand": "Seitenleiste ausklappen",
-    "upgradeTitle": "Mehr Audits freischalten",
-    "upgradeBody": "Upgraden Sie für höhere Limits und ausführlichere Berichte.",
-    "upgradeCta": "Upgrade",
     "groupSuperAdmin": "Plattform",
-    "opensInNewTab": "Öffnet in einem neuen Tab"
+    "opensInNewTab": "Öffnet in einem neuen Tab",
+    "searchSitesLoading": "Ihre Websites werden geladen…",
+    "searchGroupTools": "Website-Tools",
+    "searchGroupDocs": "Dokumentation",
+    "searchDocsFor": "Dokumentation nach „{{query}}“ durchsuchen",
+    "navigating": "Seite wird geladen…"
   },
   "locked": "Gesperrt",
   "retry": "Erneut versuchen",
-  "tierBadge": {
-    "pro": "Pro",
-    "agency": "Agency"
-  },
   "tableHelp": {
     "about": "Informationen zu {{column}}",
     "kind": "Der Forschungsvorgang dieser Zeile: Kennzahlen, verwandte Keywords, Absicht, Ideen, Lücke, Übersicht, Trends oder Cluster.",
@@ -181,10 +340,10 @@
     "domainRank": "Der vergleichende Domainstärke-Wert des Anbieters; höhere Werte weisen auf ein stärkeres Linkprofil hin.",
     "referringDomains": "Die Anzahl unterschiedlicher Domains, die auf das Ziel verlinken.",
     "dofollow": "Ob der gespeicherte Link übliche Rankingsignale weitergeben kann, statt ein Nofollow-Attribut zu tragen.",
-    "toxicityScore": "Ein deterministischer Prüfwert von 0 bis 100 für gespeicherte Linkbeobachtungen; höher bedeutet mehr passende Warnsignale.",
-    "rubricBand": "Der Bereich der festgeschriebenen Bewertungsregel: sauber, beobachten oder toxisch. Er sagt keine Suchmaschinenaktion voraus.",
-    "contributingSignals": "Die gespeicherten Beobachtungen, die den deterministischen Bewertungswert verursacht haben.",
-    "rationale": "Eine optionale KI-Erklärung der gespeicherten Signale; sie ändert niemals den deterministischen Bereich.",
+    "toxicityScore": "Eine Bewertung von 0 bis 100 nach festen Regeln für jeden gespeicherten Backlink; je höher, desto mehr Warnzeichen treffen zu.",
+    "rubricBand": "Die Risikostufe, in die die Bewertung fällt: unauffällig, beobachten oder toxisch. Sie sagt nicht voraus, was eine Suchmaschine tun wird.",
+    "contributingSignals": "Die gespeicherten Signale, die diese Bewertung erhöht haben.",
+    "rationale": "Eine optionale KI-Erklärung der gespeicherten Signale; sie ändert nie die Risikostufe.",
     "disavowScope": "Ob der Export die gesamte verweisende Domain oder nur die genaue Link-URL enthält.",
     "geogridPoint": "Der nummerierte Kartenmesspunkt, den diese Zeile darstellt.",
     "localPackPosition": "Der Rang des Unternehmens im beobachteten lokalen Ergebnispaket; 1 ist der höchste.",
@@ -224,7 +383,28 @@
     "noResults": "Keine Länder entsprechen der Suche.",
     "loadError": "Die Länder konnten nicht geladen werden. Versuchen Sie es erneut.",
     "unknownCountry": "Unbekanntes Land",
-    "unknownLanguage": "Unbekannte Sprache"
+    "unknownLanguage": "Unbekannte Sprache",
+    "provenance": {
+      "owner": "Voreinstellung aus dem gespeicherten Markt dieser Website ({{country}} · {{language}}).",
+      "search_console": "Voreinstellung aus den Search-Console-Zugriffen Ihrer Website ({{country}}).",
+      "cctld": "Voreinstellung aus dem Land Ihrer Website ({{country}}).",
+      "site_language": "Voreinstellung aus der Sprache der Seiten Ihrer Website ({{language}}).",
+      "assumed": "Wir konnten den Markt Ihrer Website nicht erkennen. Prüfen Sie ihn, bevor Sie Keywords hinzufügen.",
+      "hint": "Sie können ihn hier ändern.",
+      "edit": "Standardmarkt der Website ändern"
+    },
+    "script": {
+      "arabic": "arabischer",
+      "cyrillic": "kyrillischer",
+      "han": "chinesischer",
+      "kana": "japanischer",
+      "hangul": "koreanischer"
+    },
+    "mismatch": {
+      "body": "Dieses Keyword sieht nach {{script}} Schrift aus, aber die Sprache ist {{language}}. Zu {{suggested}} wechseln?",
+      "unavailable": "Dieses Keyword sieht nach {{script}} Schrift aus, aber die Sprache ist {{language}}, und dieses Land bietet {{suggested}} nicht an. Prüfen Sie Land und Sprache.",
+      "switch": "Zu {{suggested}} wechseln"
+    }
   },
   "codeFixPrompt": {
     "button": "Code-Fix-Prompt kopieren",
@@ -258,10 +438,14 @@
       "dismiss": "Beta-Hinweis ausblenden"
     },
     "badge": "Beta-Version",
-    "badgeName": "{{brand}}, öffentliche Beta"
+    "badgeName": "{{brand}}, öffentliche Beta",
+    "stage": { "beta": "Beta", "ga": "stabil" }
   },
   "feedback": {
     "reportBug": "Fehler melden",
+    "chooseChannel": "Wählen Sie aus, wo Sie den Fehler melden möchten.",
+    "openIssues": "GitHub-Auswahl für neue Meldungen öffnen",
+    "emailSupport": "Support per E-Mail kontaktieren",
     "reportProblem": "Dieses Problem melden",
     "mailSubject": "Fehlerbericht ({{version}})"
   },
@@ -279,5 +463,97 @@
     "message": "Wir möchten Google Analytics nutzen, um Seitenaufrufe zu zählen. Es erhält nie Website-IDs, Tab-Auswahlen oder Seitentitel. Ohne Ihre Zustimmung wird nichts geladen, und Sie können Ihre Entscheidung jederzeit ändern.",
     "accept": "Analyse zulassen",
     "decline": "Nein, danke"
+  },
+  "datePicker": {
+    "placeholder": "Datum wählen",
+    "dialogLabel": "Datumsauswahl",
+    "previousMonth": "Vorheriger Monat",
+    "nextMonth": "Nächster Monat",
+    "today": "Heute",
+    "clear": "Zurücksetzen"
+  },
+  "toast": {
+    "close": "Benachrichtigung schließen"
+  },
+  "metric": {
+    "noData": "Keine Daten"
+  },
+  "positionDelta": {
+    "improved_zero": "Um {{value}} Plätze verbessert",
+    "improved_one": "Um {{value}} Platz verbessert",
+    "improved_two": "Um {{value}} Plätze verbessert",
+    "improved_few": "Um {{value}} Plätze verbessert",
+    "improved_many": "Um {{value}} Plätze verbessert",
+    "improved_other": "Um {{value}} Plätze verbessert",
+    "declined_zero": "Um {{value}} Plätze verschlechtert",
+    "declined_one": "Um {{value}} Platz verschlechtert",
+    "declined_two": "Um {{value}} Plätze verschlechtert",
+    "declined_few": "Um {{value}} Plätze verschlechtert",
+    "declined_many": "Um {{value}} Plätze verschlechtert",
+    "declined_other": "Um {{value}} Plätze verschlechtert",
+    "unchanged": "Position unverändert",
+    "noPrevious": "Keine früheren Daten",
+    "short": {
+      "improved": "besser",
+      "declined": "schlechter",
+      "unchanged": "Unverändert"
+    },
+    "window": {
+      "previousSync_zero": "Durchschnittliche Position der letzten {{days}} Tage im Vergleich zum selben Zeitraum bei der vorherigen Datensynchronisierung. Niedriger ist besser. Search-Console-Durchschnitte sind nach Impressionen gewichtet.",
+      "previousSync_one": "Durchschnittliche Position der letzten {{days}} Tag im Vergleich zum selben Zeitraum bei der vorherigen Datensynchronisierung. Niedriger ist besser. Search-Console-Durchschnitte sind nach Impressionen gewichtet.",
+      "previousSync_two": "Durchschnittliche Position der letzten {{days}} Tage im Vergleich zum selben Zeitraum bei der vorherigen Datensynchronisierung. Niedriger ist besser. Search-Console-Durchschnitte sind nach Impressionen gewichtet.",
+      "previousSync_few": "Durchschnittliche Position der letzten {{days}} Tage im Vergleich zum selben Zeitraum bei der vorherigen Datensynchronisierung. Niedriger ist besser. Search-Console-Durchschnitte sind nach Impressionen gewichtet.",
+      "previousSync_many": "Durchschnittliche Position der letzten {{days}} Tage im Vergleich zum selben Zeitraum bei der vorherigen Datensynchronisierung. Niedriger ist besser. Search-Console-Durchschnitte sind nach Impressionen gewichtet.",
+      "previousSync_other": "Durchschnittliche Position der letzten {{days}} Tage im Vergleich zum selben Zeitraum bei der vorherigen Datensynchronisierung. Niedriger ist besser. Search-Console-Durchschnitte sind nach Impressionen gewichtet.",
+      "previousCheck": "Position bei der letzten Prüfung im Vergleich zur Prüfung davor. Niedriger ist besser."
+    }
+  },
+  "rankChange": {
+    "entered": "Neu",
+    "enteredLabel": "In die Platzierungen eingestiegen",
+    "dropped": "Verloren",
+    "droppedLabel": "Aus den Platzierungen gefallen",
+    "unranked": "In keiner der beiden Prüfungen platziert"
+  },
+  "phraseList": {
+    "listLabel": "Erkannte Einträge",
+    "verdict": {
+      "ready": "Bereit",
+      "repeated": "Doppelt",
+      "existing": "Bereits vorhanden",
+      "tooLong": "Zu lang"
+    },
+    "remove": "{{phrase}} entfernen",
+    "more_zero": "und {{count, number}} weitere",
+    "more_one": "und {{count, number}} weitere",
+    "more_two": "und {{count, number}} weitere",
+    "more_few": "und {{count, number}} weitere",
+    "more_many": "und {{count, number}} weitere",
+    "more_other": "und {{count, number}} weitere",
+    "ignoredColumns": "Das sieht nach einer Tabelle aus, daher wird nur die erste Spalte verwendet.",
+    "skippedHeader": "Die Kopfzeile „{{header}}“ wurde übersprungen.",
+    "overPasteLimit_zero": "Es werden höchstens {{max, number}} Einträge auf einmal gelesen. {{count, number}} weitere Einträge wurden ausgelassen; fügen Sie sie in einem weiteren Durchgang hinzu.",
+    "overPasteLimit_one": "Es werden höchstens {{max, number}} Einträge auf einmal gelesen. {{count, number}} weiterer Eintrag wurde ausgelassen; fügen Sie ihn in einem weiteren Durchgang hinzu.",
+    "overPasteLimit_two": "Es werden höchstens {{max, number}} Einträge auf einmal gelesen. {{count, number}} weitere Einträge wurden ausgelassen; fügen Sie sie in einem weiteren Durchgang hinzu.",
+    "overPasteLimit_few": "Es werden höchstens {{max, number}} Einträge auf einmal gelesen. {{count, number}} weitere Einträge wurden ausgelassen; fügen Sie sie in einem weiteren Durchgang hinzu.",
+    "overPasteLimit_many": "Es werden höchstens {{max, number}} Einträge auf einmal gelesen. {{count, number}} weitere Einträge wurden ausgelassen; fügen Sie sie in einem weiteren Durchgang hinzu.",
+    "overPasteLimit_other": "Es werden höchstens {{max, number}} Einträge auf einmal gelesen. {{count, number}} weitere Einträge wurden ausgelassen; fügen Sie sie in einem weiteren Durchgang hinzu.",
+    "copy": "Als Liste kopieren",
+    "copied": "Kopiert, ein Eintrag pro Zeile.",
+    "copyFailed": "Kopieren nicht möglich. Markieren Sie den Text und kopieren Sie ihn selbst."
+  },
+  "competitorDomains": {
+    "count": "Domains: {{used}} von {{max}}",
+    "alreadyAdded": "Bereits hinzugefügt: {{domains}}",
+    "invalid": "Kein gültiger Domainname: {{domains}}. Nutzen Sie z. B. competitor.com.",
+    "own": "Das ist Ihre eigene Website und kann daher kein Wettbewerber sein: {{domains}}",
+    "limit": "Sie können bis zu {{max}} Wettbewerber-Domains gleichzeitig vergleichen. Entfernen Sie eine, um eine andere hinzuzufügen.",
+    "remove": "{{domain}} entfernen",
+    "placeholder": "z. B. competitor.com"
+  },
+  "breadcrumbs": {
+    "label": "Brotkrumennavigation",
+    "unknownSite": "Unbekannte Website",
+    "loadingSite": "Website wird geladen …"
   }
 }

@@ -1,4 +1,5 @@
 import { apiClient } from '@shared/api/client';
+import type { SiteGoogleReadiness } from '@features/google';
 import type {
   CannibalizationReportDetail,
   CannibalizationReportSummary,
@@ -13,6 +14,8 @@ interface GoogleConnectionPage {
       scopes?: string[];
     } | null;
     gsc: { propertyUrl: string | null };
+    /** Shared Google readiness; absent from older servers. */
+    readiness?: SiteGoogleReadiness;
   };
 }
 
@@ -28,6 +31,10 @@ export async function fetchCannibalizationPrerequisites(siteId: string): Promise
   const google = await apiClient<GoogleConnectionPage>(
     `/sites/${encodeURIComponent(siteId)}/google/configuration`,
   );
+  // The shared readiness also checks that the property covers the site, so a
+  // report is never offered for a property that reads another address.
+  const readiness = google.configuration.readiness;
+  if (readiness) return { gscConnected: readiness.gsc.status === 'ok' };
   const connection = google.configuration.connection;
   const hasGscScope =
     connection?.scopes === undefined || connection.scopes.includes(GSC_SCOPE);

@@ -7,10 +7,11 @@
  */
 import type { Queue } from 'bullmq';
 import { Types } from 'mongoose';
-import { and, asc, count, desc, eq, gte, inArray, lte, sql } from 'drizzle-orm';
+import { and, asc, count, desc, eq, gte, inArray, lte, sql, type SQL } from 'drizzle-orm';
 import { z } from 'zod';
 import type { Db } from '../../db/client.js';
 import { domainStates, isAltRankEngine, keywords, rankings, type Keyword, type RankCadenceKind, type RankCheckFailureReason, type RankEngineKind, } from '../../db/schema/keywords.js';
+import { rankCheckOutcomes } from '../../db/schema/rank-check-outcomes.js';
 import { env } from '../../config/env.js';
 import { logger } from '../../config/logger.js';
 import { HttpError } from '../../shared/utils/http-error.js';
@@ -25,6 +26,13 @@ import { normalizePhrase } from './serp-cache.service.js';
 import type { ObservationMeta } from '../../shared/observations/types.js';
 import type { SpendPreview } from '../../shared/safety/operation-preview.js';
 import { extractSiteKeywordEvidence, groundSiteKeywordCandidates, } from './site-keyword-grounding.js';
+import { cleanPhrase, phraseKey } from '../../shared/utils/phrase-list.js';
+import { ilikeContains } from '../../shared/utils/like-pattern.js';
+import { describePositionChange, type PositionChange } from '../../shared/utils/position-change.js';
+import { classifyKeywordRankState, type KeywordRankStateResult } from './rank-state.js';
+import { movementFromRankState, type RankMovement } from './rank-movement.classify.js';
+import { readLatestOutcomes, type KeywordLatestOutcome } from './rank-outcomes.repo.js';
+const RANK_POSITION_WINDOW = { range: null, comparison: 'previous_check' } as const;
 const UUID_RE = /^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$/;
 /**
  * On-demand rank-check cooldown. Reused as both a coalescer (rapid keyword
@@ -87,6 +95,10 @@ export interface KeywordListItem {
     latestPosition: number | null;
     previousPosition: number | null;
     delta: number | null;
+    movement: RankMovement;
+    rankState: KeywordRankStateResult;
+    positionChange: PositionChange;
+    lastOutcome: KeywordLatestOutcome | null;
     lastCheckedAt: string | null;
     /** Google AI Overview signal from the latest check (null = unknown). */
     aiOverviewPresent: boolean | null;
@@ -120,6 +132,10 @@ export interface KeywordListItem {
 export interface KeywordListPage {
     keywords: KeywordListItem[];
     nextCursor: string | null;
+    total: number;
+    siteTotal: number;
+    page: number | null;
+    pageSize: number;
     /** Current cadence for the site (weekly by default). */
     cadence: RankCadenceKind;
 }
@@ -212,7 +228,7 @@ export function requireReturnedKeyword(rows: readonly Keyword[]): Keyword {
 // ---------------------------------------------------------------------------
 // Ownership helpers
 // ---------------------------------------------------------------------------
-async function assertSiteOwnership(accountId: string, siteId: string): Promise<void> {
+export async function assertSiteOwnership(accountId: string, siteId: string): Promise<void> {
     if (!Types.ObjectId.isValid(siteId)) {
         throw HttpError.notFound({ code: 'SITES_ERRORS_NOT_FOUND', messageKey: 'sites.errors.notFound' });
     }
@@ -230,7 +246,7 @@ async function assertSiteOwnership(accountId: string, siteId: string): Promise<v
  * spend functions call this right after it. Site load is a targeted `exists`
  * because ownership was already proven.
  */
-async function assertSiteNotPausedById(accountId: string, siteId: string): Promise<void> {
+export async function assertSiteNotPausedById(accountId: string, siteId: string): Promise<void> {
     const paused = await Site.exists({ _id: siteId, accountId, paused: true });
     if (paused)
         throw HttpError.conflict({ code: 'SITES_ERRORS_PAUSED', messageKey: 'sites.errors.paused' });
@@ -380,6 +396,119 @@ export async function createKeyword(input: CreateKeywordInput, deps: KeywordsSer
         throw err;
         /* c8 ignore stop */
     }
+}
+export type BulkKeywordStatus = 'added' | 'duplicate' | 'invalid';
+export type BulkKeywordReason = 'repeated' | 'already_tracked' | 'empty' | 'too_long';
+export interface BulkKeywordResult {
+    phrase: string;
+    status: BulkKeywordStatus;
+    reason?: BulkKeywordReason;
+    messageKey?: 'ranks.errors.phraseRequired' | 'ranks.errors.phraseTooLong' |
+        'ranks.errors.keywordRepeated' | 'ranks.errors.keywordDuplicate';
+    keyword?: KeywordListItem;
+}
+export interface CreateKeywordsBulkInput extends Omit<CreateKeywordInput, 'phrase'> {
+    phrases: readonly string[];
+    maxLength: number;
+}
+
+/** Insert a bounded phrase batch in input order and schedule one first check for its new rows. */
+export async function createKeywordsBulk(input: CreateKeywordsBulkInput,
+    deps: KeywordsServiceDeps): Promise<BulkKeywordResult[]> {
+    await assertSiteOwnership(input.accountId, input.siteId);
+    await assertSiteNotPausedById(input.accountId, input.siteId);
+    if (isAltRankEngine(input.engine) && !env.ALT_ENGINE_TRACKING_ENABLED) {
+        throw HttpError.notFound({ code: 'RANKS_ERRORS_ALT_ENGINES_UNAVAILABLE',
+            messageKey: 'ranks.errors.altEnginesUnavailable' });
+    }
+    const results: BulkKeywordResult[] = [];
+    const candidates: Array<{ index: number; phrase: string; key: string }> = [];
+    const seen = new Set<string>();
+    for (const raw of input.phrases) {
+        const phrase = cleanPhrase(raw);
+        const key = phraseKey(phrase);
+        if (!phrase) results.push({ phrase: raw, status: 'invalid', reason: 'empty',
+            messageKey: 'ranks.errors.phraseRequired' });
+        else if (phrase.length > input.maxLength) results.push({ phrase, status: 'invalid',
+            reason: 'too_long', messageKey: 'ranks.errors.phraseTooLong' });
+        else if (seen.has(key)) results.push({ phrase, status: 'duplicate', reason: 'repeated',
+            messageKey: 'ranks.errors.keywordRepeated' });
+        else {
+            seen.add(key);
+            candidates.push({ index: results.length, phrase, key });
+            results.push({ phrase, status: 'added' });
+        }
+    }
+    if (candidates.length === 0) return results;
+    const added = await deps.db.transaction(async (tx) => {
+        const db = tx as unknown as Db;
+        await tx.execute(sql`select pg_advisory_xact_lock(hashtext(${'rank-bulk'}), hashtext(${input.siteId}))`);
+        const stored = await db.select({ phrase: keywords.phrase }).from(keywords).where(and(
+            eq(keywords.accountId, input.accountId), eq(keywords.siteId, input.siteId),
+            eq(keywords.engine, input.engine), eq(keywords.locationCode, input.locationCode),
+            eq(keywords.languageCode, input.languageCode.toLowerCase()),
+            eq(keywords.device, input.device), eq(keywords.active, true)));
+        const tracked = new Set(stored.map((row) => phraseKey(row.phrase)));
+        const rows: Keyword[] = [];
+        for (const candidate of candidates) {
+            if (tracked.has(candidate.key)) {
+                results[candidate.index] = { phrase: candidate.phrase, status: 'duplicate',
+                    reason: 'already_tracked', messageKey: 'ranks.errors.keywordDuplicate' };
+                continue;
+            }
+            const inserted = await db.insert(keywords).values({ accountId: input.accountId,
+                siteId: input.siteId, phrase: candidate.phrase,
+                locationCode: input.locationCode, languageCode: input.languageCode.toLowerCase(),
+                device: input.device, trackLocalPack: input.trackLocalPack ?? false,
+                engine: input.engine, engineTarget: input.engineTarget })
+                .onConflictDoUpdate({ target: [keywords.siteId, keywords.engine, keywords.phrase,
+                    keywords.locationCode, keywords.languageCode, keywords.device],
+                set: { active: true, updatedAt: new Date(), trackLocalPack: input.trackLocalPack ?? false,
+                    engineTarget: input.engineTarget }, setWhere: sql`${keywords.active} = false` }).returning();
+            if (inserted.length === 0) {
+                results[candidate.index] = { phrase: candidate.phrase, status: 'duplicate',
+                    reason: 'already_tracked', messageKey: 'ranks.errors.keywordDuplicate' };
+                continue;
+            }
+            const row = requireReturnedKeyword(inserted);
+            rows.push(row);
+            tracked.add(candidate.key);
+            results[candidate.index] = { phrase: candidate.phrase, status: 'added',
+                keyword: toKeywordListItem(row, null, null, null) };
+        }
+        return rows;
+    });
+    if (added.length > 0) {
+        await ensureDomainState(deps.db, input.siteId);
+        if (deps.ranksQueue) {
+            const cadence = await getSiteCadence(deps.db, input.siteId);
+            await upsertRankSchedule(deps.ranksQueue, { accountId: input.accountId,
+                siteId: input.siteId, cadence, altEnginesEnabled: env.ALT_ENGINE_TRACKING_ENABLED });
+        }
+        try {
+            const { enqueueRankCheckJob } = await import('./rank-jobs.service.js');
+            await enqueueRankCheckJob({ accountId: input.accountId, siteId: input.siteId,
+                scope: 'site', idempotencyKey: null, retryOfJobId: null,
+                keywordIds: added.map((row) => row.id), skipCooldown: true }, deps);
+        }
+        catch (error) {
+            logger.warn({ err: error, siteId: input.siteId, count: added.length },
+                'first rank check for new keywords was not queued');
+        }
+    }
+    return results;
+}
+
+export interface TrackedKeywordPhrase { phrase: string; engine: RankEngineKind;
+    locationCode: number; languageCode: string; device: SerpDevice }
+export async function listTrackedKeywordPhrases(accountId: string, siteId: string,
+    deps: Pick<KeywordsServiceDeps, 'db'>): Promise<TrackedKeywordPhrase[]> {
+    await assertSiteOwnership(accountId, siteId);
+    return deps.db.select({ phrase: keywords.phrase, engine: keywords.engine,
+        locationCode: keywords.locationCode, languageCode: keywords.languageCode,
+        device: keywords.device }).from(keywords).where(and(eq(keywords.accountId, accountId),
+        eq(keywords.siteId, siteId), eq(keywords.active, true)))
+        .orderBy(asc(keywords.createdAt), asc(keywords.id));
 }
 export interface PreviewAltEngineKeywordInput {
     accountId: string;
@@ -823,6 +952,9 @@ export interface ListKeywordsInput {
     siteId: string;
     cursor?: string;
     limit: number;
+    page?: number;
+    pageSize?: number;
+    search?: string;
     /** Server-side filter so later pages cannot hide a requested engine. */
     engine?: RankEngineKind;
 }
@@ -830,13 +962,15 @@ export async function listKeywords(input: ListKeywordsInput, deps: KeywordsServi
     await assertSiteOwnership(input.accountId, input.siteId);
     // Deactivated (soft-deleted) rows never surface: without this filter a
     // removed keyword reloads into the table and can be "removed" forever.
-    const filters = [
+    const siteFilters = [
         eq(keywords.siteId, input.siteId),
         eq(keywords.accountId, input.accountId),
         eq(keywords.active, true),
     ];
-    if (input.engine !== undefined)
-        filters.push(eq(keywords.engine, input.engine));
+    const matchFilters: SQL[] = [];
+    if (input.engine !== undefined) matchFilters.push(eq(keywords.engine, input.engine));
+    if (input.search !== undefined) matchFilters.push(ilikeContains(keywords.phrase, input.search));
+    const filters = [...siteFilters, ...matchFilters];
     if (input.cursor !== undefined) {
         if (!UUID_RE.test(input.cursor)) {
             throw HttpError.badRequest({ code: 'RANKS_ERRORS_UNKNOWN_CURSOR', messageKey: 'ranks.errors.unknownCursor' });
@@ -849,6 +983,8 @@ export async function listKeywords(input: ListKeywordsInput, deps: KeywordsServi
         ];
         if (input.engine !== undefined)
             cursorFilters.push(eq(keywords.engine, input.engine));
+        if (input.search !== undefined)
+            cursorFilters.push(ilikeContains(keywords.phrase, input.search));
         const cursorRow = await deps.db
             .select({ createdAt: keywords.createdAt })
             .from(keywords)
@@ -861,16 +997,23 @@ export async function listKeywords(input: ListKeywordsInput, deps: KeywordsServi
         // `(created_at desc, id desc)`, so pagination never skips.
         filters.push(sql `(${keywords.createdAt}, ${keywords.id}) < (select created_at, id from ${keywords} where id = ${input.cursor} and account_id = ${input.accountId} and site_id = ${input.siteId})`);
     }
-    const rows = await deps.db
+    const offsetMode = input.page !== undefined;
+    const pageSize = offsetMode ? (input.pageSize ?? input.limit) : input.limit;
+    const listed = deps.db
         .select()
         .from(keywords)
         .where(and(...filters))
-        .orderBy(desc(keywords.createdAt), desc(keywords.id))
-        .limit(input.limit + 1);
-    const pageRows = rows.slice(0, input.limit);
-    const hasMore = rows.length > input.limit;
+        .orderBy(desc(keywords.createdAt), desc(keywords.id));
+    const rows = offsetMode ? await listed.limit(pageSize).offset((input.page! - 1) * pageSize)
+        : await listed.limit(pageSize + 1);
+    const pageRows = rows.slice(0, pageSize);
+    const hasMore = !offsetMode && rows.length > pageSize;
     /* c8 ignore next -- `?? null` arm satisfies noUncheckedIndexedAccess; `pageRows.at(-1)` is defined whenever hasMore. */
     const nextCursor = hasMore ? (pageRows.at(-1)?.id ?? null) : null;
+    const matchCondition = and(...matchFilters);
+    const [totals] = await deps.db.select({ siteTotal: count(), total: matchCondition
+        ? sql<number>`count(*) filter (where ${matchCondition})`.mapWith(Number) : count() })
+        .from(keywords).where(and(...siteFilters));
     // Replace the per-keyword `.limit(2)` loop with a
     // single window-function query over all page ids. `row_number()` partitions
     // by keyword and orders by `checked_at desc`; we keep rn<=2, then bucket in
@@ -923,6 +1066,8 @@ export async function listKeywords(input: ListKeywordsInput, deps: KeywordsServi
             bucket.sort((a, b) => b.checkedAt.getTime() - a.checkedAt.getTime());
         }
     }
+    const outcomes = await readLatestOutcomes(deps.db, { accountId: input.accountId,
+        siteId: input.siteId, keywordIds: ids });
     const items: KeywordListItem[] = [];
     for (const kw of pageRows) {
         const bucket = latestByKeyword.get(kw.id) ?? [];
@@ -933,17 +1078,27 @@ export async function listKeywords(input: ListKeywordsInput, deps: KeywordsServi
         const delta = latestPosition !== null && previousPosition !== null
             ? previousPosition - latestPosition
             : null;
-        items.push(toKeywordListItem(kw, latestPosition, previousPosition, latest?.checkedAt ?? null, delta, {
+        const rankState = classifyKeywordRankState(kw, bucket);
+        const item = toKeywordListItem(kw, latestPosition, previousPosition,
+            latest?.checkedAt ?? null, delta, {
             aiOverviewPresent: latest?.aiOverviewPresent ?? null,
             aiCited: latest?.aiCited ?? null,
             aiCitedUrl: latest?.aiCitedUrl ?? null,
             observationMeta: latest?.observationMeta ?? null,
-        }));
+        }, rankState);
+        item.lastOutcome = outcomes.get(kw.id) ?? null;
+        items.push(item);
     }
     const cadence = await getSiteCadence(deps.db, input.siteId);
     return {
         keywords: items,
         nextCursor,
+        // An aggregate without GROUP BY always returns one count row, even
+        // when the site has no keywords.
+        total: Number(totals!.total),
+        siteTotal: Number(totals!.siteTotal),
+        page: input.page ?? null,
+        pageSize,
         cadence,
     };
 }
@@ -1018,6 +1173,16 @@ export interface RankHistoryPoint {
     /** Provider provenance for this stored observation. */
     observationMeta: ObservationMeta | null;
 }
+/**
+ * A scheduled check that produced no observation. Stored evidence only: it
+ * comes from the attempt record, never from an interpolated rank.
+ */
+export interface RankHistoryMissedCheck {
+    periodKey: string;
+    status: 'failed' | 'skipped';
+    reason: string | null;
+    attemptedAt: string;
+}
 export interface RankHistoryQueryInput {
     accountId: string;
     keywordId: string;
@@ -1028,7 +1193,7 @@ export interface RankHistoryQueryInput {
 export const HISTORY_MAX_POINTS = 730;
 /** Default range when no `from` is supplied (24 months). */
 export const HISTORY_DEFAULT_WINDOW_MS = 730 * 24 * 60 * 60 * 1000;
-function defaultHistoryFrom(now: Date, explicitFrom: string | undefined): Date | undefined {
+function defaultHistoryFrom(now: Date, explicitFrom: string | undefined): Date {
     if (explicitFrom !== undefined)
         return new Date(explicitFrom);
     // No explicit from means "last 24 months" (a bounded
@@ -1038,6 +1203,7 @@ function defaultHistoryFrom(now: Date, explicitFrom: string | undefined): Date |
 export async function getKeywordHistory(input: RankHistoryQueryInput, deps: KeywordsServiceDeps): Promise<{
     keywordId: string;
     series: RankHistoryPoint[];
+    missedChecks: RankHistoryMissedCheck[];
 }> {
     const keyword = await assertKeywordOwnership(deps.db, input.accountId, input.keywordId);
     const filters = [eq(rankings.keywordId, keyword.id)];
@@ -1064,8 +1230,33 @@ export async function getKeywordHistory(input: RankHistoryQueryInput, deps: Keyw
         .where(and(...filters))
         .orderBy(asc(rankings.checkedAt))
         .limit(HISTORY_MAX_POINTS);
+    const missedFilters = [
+        eq(rankCheckOutcomes.accountId, input.accountId),
+        eq(rankCheckOutcomes.keywordId, keyword.id),
+        inArray(rankCheckOutcomes.status, ['failed', 'skipped']),
+        gte(rankCheckOutcomes.lastAttemptAt, from),
+    ];
+    if (input.to)
+        missedFilters.push(lte(rankCheckOutcomes.lastAttemptAt, new Date(input.to)));
+    const missed = await deps.db
+        .select({
+        periodKey: rankCheckOutcomes.periodKey,
+        status: rankCheckOutcomes.status,
+        reason: rankCheckOutcomes.reason,
+        attemptedAt: rankCheckOutcomes.lastAttemptAt,
+    })
+        .from(rankCheckOutcomes)
+        .where(and(...missedFilters))
+        .orderBy(asc(rankCheckOutcomes.lastAttemptAt))
+        .limit(HISTORY_MAX_POINTS);
     return {
         keywordId: keyword.id,
+        missedChecks: missed.map((m) => ({
+            periodKey: m.periodKey,
+            status: m.status as 'failed' | 'skipped',
+            reason: m.reason,
+            attemptedAt: m.attemptedAt.toISOString(),
+        })),
         series: rows.map((r) => ({
             checkedAt: r.checkedAt.toISOString(),
             position: r.position,
@@ -1186,7 +1377,7 @@ function toKeywordListItem(row: Keyword, latestPosition: number | null, previous
     aiCited: null,
     aiCitedUrl: null,
     observationMeta: null,
-}): KeywordListItem {
+}, rankState: KeywordRankStateResult = classifyKeywordRankState(row, [])): KeywordListItem {
     return {
         id: row.id,
         siteId: row.siteId,
@@ -1200,6 +1391,10 @@ function toKeywordListItem(row: Keyword, latestPosition: number | null, previous
         latestPosition,
         previousPosition,
         delta,
+        movement: movementFromRankState(rankState),
+        rankState,
+        positionChange: describePositionChange(latestPosition, previousPosition, RANK_POSITION_WINDOW),
+        lastOutcome: null,
         lastCheckedAt: lastCheckedAt ? lastCheckedAt.toISOString() : null,
         trackLocalPack: row.trackLocalPack,
         lastFailedCheckAt: row.lastFailedCheckAt ? row.lastFailedCheckAt.toISOString() : null,

@@ -63,8 +63,16 @@ export const ACTIONS_FILTER_KEYS = [
 ] as const;
 export type ActionsFilterKey = (typeof ACTIONS_FILTER_KEYS)[number];
 
+/**
+ * The list opens on work still to do: `state` defaults to `open`, which the
+ * list reads as open and planned items so dismissed or completed work never
+ * leads. Choosing "All" is written to the URL as `state=all`; the default is
+ * left out.
+ */
+export const DEFAULT_ACTIONS_STATE: ActionsStateFilter = 'open';
+
 export const DEFAULT_ACTIONS_QUERY: ActionsQueryState = {
-  state: 'all',
+  state: DEFAULT_ACTIONS_STATE,
   source: 'all',
   severity: 'all',
   confidence: 'all',
@@ -102,7 +110,7 @@ export function parseActionsQuery(
   return {
     state: inList(state, ACTIONS_STATE_FILTERS)
       ? (state as ActionsStateFilter)
-      : 'all',
+      : DEFAULT_ACTIONS_STATE,
     source: inList(source, ACTIONS_SOURCE_FILTERS)
       ? (source as ActionsSourceFilter)
       : 'all',
@@ -122,7 +130,7 @@ export function parseActionsQuery(
 /**
  * Apply a partial patch onto the CURRENT `URLSearchParams`
  * (read-modify-write) so unrelated params — `?tab=actions` above all —
- * survive untouched. Defaults (`all` / absent cursor) are removed from the
+ * survive untouched. Defaults (`open` state, `all` elsewhere, absent cursor) are removed from the
  * URL rather than written literally, keeping URLs short and canonical.
  *
  * Locked rule: touching ANY filter key clears `cursor`, unless the patch
@@ -137,7 +145,8 @@ export function serializeActionsQuery(
   for (const key of ACTIONS_FILTER_KEYS) {
     if (!(key in patch)) continue;
     const value = patch[key];
-    if (value === undefined || value === null || value === 'all') {
+    const isDefault = key === 'state' ? value === DEFAULT_ACTIONS_STATE : value === 'all';
+    if (value === undefined || value === null || isDefault) {
       next.delete(key);
     } else {
       next.set(key, value);

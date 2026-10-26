@@ -4,7 +4,7 @@
   "searchTitle": "Investiga un conjunto de palabras clave",
   "inputLabel": "Palabras clave a investigar",
   "inputPlaceholder": "Escribe una palabra clave y pulsa Intro",
-  "selectionCount": "{{count}} de {{max}} seleccionadas",
+  "selectionCount_one": "{{count}} de {{max}} seleccionada",
   "removeKeyword": "Eliminar {{phrase}}",
   "tracked": {
     "title": "Palabras clave seguidas",
@@ -18,7 +18,12 @@
     "emptyCta": "Ir a palabras clave seguidas",
     "noMatch": "Ninguna palabra clave seguida coincide con la ubicación y el idioma seleccionados.",
     "allSelected": "Todas las palabras clave coincidentes están seleccionadas.",
-    "limitReached": "Has seleccionado el máximo de {{max}} palabras clave."
+    "limitReached_one": "Has seleccionado el máximo de {{max}} palabra clave.",
+    "limitReached_zero": "Has seleccionado el máximo de {{max}} palabras clave.",
+    "limitReached_two": "Has seleccionado el máximo de {{max}} palabras clave.",
+    "limitReached_few": "Has seleccionado el máximo de {{max}} palabras clave.",
+    "limitReached_many": "Has seleccionado el máximo de {{max}} palabras clave.",
+    "limitReached_other": "Has seleccionado el máximo de {{max}} palabras clave."
   },
   "locationLabel": "Ubicación",
   "languageLabel": "Idioma",
@@ -40,9 +45,6 @@
   "columnCpc": "CPC",
   "columnTrend": "Tendencia 12 meses",
   "columnActions": "Acciones",
-  "lockedTitle": "Mejora tu plan para desbloquear la investigación de palabras clave",
-  "lockedBody": "El volumen, la dificultad y las palabras clave relacionadas forman parte del plan Pro.",
-  "upgrade": "Ver planes",
   "exampleTitle": "Ejemplo: lo que obtienes con Pro",
   "columnIntent": "Intención",
   "getIdeas": "Obtener ideas a partir de esta palabra",
@@ -103,8 +105,8 @@
     "clusterIdInvalid": "Ese identificador de clúster no es válido.",
     "decisionConflict": "Ese clúster ya tiene una decisión distinta. Recarga e inténtalo de nuevo.",
     "decisionKindInvalid": "La decisión debe ser aceptada o descartada.",
-    "idempotencyKeyRequired": "Se requiere una clave de idempotencia del cliente.",
-    "idempotencyKeyTooLong": "Esa clave de idempotencia es demasiado larga (máx. 200 caracteres).",
+    "idempotencyKeyRequired": "No se pudo comprobar que esta solicitud no esté duplicada. Actualiza la página e inténtalo de nuevo.",
+    "idempotencyKeyTooLong": "No se pudo comprobar que esta solicitud no esté duplicada. Actualiza la página e inténtalo de nuevo.",
     "noteTooLong": "Esa nota es demasiado larga (máx. 500 caracteres).",
     "siteRequired": "Elige el sitio al que se aplicará esta recomendación.",
     "siteNotAllowed": "No se puede indicar un sitio al descartar un clúster.",
@@ -131,7 +133,7 @@
     "columnSearchVolume": "Volumen",
     "emptyPair": "No hay palabras clave en común con este competidor.",
     "emptyResults": "No se encontró brecha para los competidores seleccionados.",
-    "resultCount": "{{count}} palabras encontradas",
+    "resultCount_one": "{{count}} palabra encontrada",
     "cachedBadge": "En caché",
     "freshBadge": "En vivo",
     "pairPickerLabel": "Elige un competidor",
@@ -157,7 +159,12 @@
     },
     "idle": "Ejecuta un análisis de brecha para ver en qué palabras clave posicionan tus competidores.",
     "loadFailed": "No se pudo ejecutar el análisis de brecha de palabras clave.",
-    "siteWorkspaceLink": "Abrir esta configuración en el espacio de competidores del sitio"
+    "siteWorkspaceLink": "Abrir esta configuración en el espacio de competidores del sitio",
+    "resultCount_zero": "{{count}} palabras encontradas",
+    "resultCount_two": "{{count}} palabras encontradas",
+    "resultCount_few": "{{count}} palabras encontradas",
+    "resultCount_many": "{{count}} palabras encontradas",
+    "resultCount_other": "{{count}} palabras encontradas"
   },
   "overview": {
     "title": "Panorama SERP",
@@ -295,7 +302,19 @@
     "loadMore": "Cargar más",
     "loading": "Cargando…",
     "loadFailed": "No se pudo cargar el historial de investigación.",
-    "back": "Volver a la investigación de palabras clave"
+    "back": "Volver a la investigación de palabras clave",
+    "shown_zero": "Sin búsquedas guardadas",
+    "shown_one": "Mostrando {{loaded}} de {{count}} búsqueda guardada",
+    "shown_two": "Mostrando {{loaded}} de {{count}} búsquedas guardadas",
+    "shown_few": "Mostrando {{loaded}} de {{count}} búsquedas guardadas",
+    "shown_many": "Mostrando {{loaded}} de {{count}} búsquedas guardadas",
+    "shown_other": "Mostrando {{loaded}} de {{count}} búsquedas guardadas",
+    "viewResults": "Ver resultados",
+    "viewResultsFor": "Ver los resultados guardados de {{query}}",
+    "viewResultsHint": "«Ver resultados» abre lo que se guardó en esa búsqueda. No vuelve a consultar al proveedor de datos.",
+    "searchAgainFor": "Buscar de nuevo {{query}}",
+    "searchAgainHint": "«Buscar de nuevo» vuelve a ejecutar la consulta con el proveedor de datos, igual que una búsqueda nueva.",
+    "emptySite": "Aún no hay investigaciones para este sitio. Las consultas que ejecutes aquí aparecerán en esta lista."
   },
   "previewFailed": "No se pudo cargar la vista previa del coste.",
   "tabs": {
@@ -312,27 +331,19 @@
     "observedAt": "Observado el {{time}}",
     "freshUntil": "Válido hasta el {{time}}"
   },
-  "cap": {
-    "title": "Límite mensual alcanzado",
-    "packBody": "El paquete de palabras clave configurado añade {{count}} búsquedas por {{price}} después de tu asignación incluida.",
-    "packCta": "Comprar el paquete de palabras clave",
-    "aiBody": "Las unidades de resumen de IA forman parte del límite de tu plan. Mejora tu plan para ejecutar más agrupaciones este mes.",
-    "aiCta": "Ver planes y facturación"
-  },
   "clusters": {
     "title": "Grupos de palabras clave con IA",
-    "description": "Agrupa entre 10 y 200 de tus frases almacenadas en temas con una sola pasada de IA. La IA solo lee filas que ya obtuviste — nunca llama al proveedor de búsqueda.",
-    "noCandidates": "Aún no hay frases almacenadas. Ejecuta primero una investigación de palabras clave — la agrupación lee tus filas almacenadas.",
-    "selectionCount": "{{count}} seleccionadas (se requieren {{min}}–{{max}})",
+    "description": "Agrupa entre 10 y 200 de tus frases almacenadas en temas con una sola pasada de IA. La IA solo lee filas que ya obtuviste y nunca ejecuta una búsqueda nueva.",
+    "noCandidates": "Aún no hay frases guardadas para este mercado. Cambia el mercado de arriba o ejecuta primero una investigación de palabras clave — la agrupación lee tus filas almacenadas.",
+    "selectionCount_one": "{{count}} seleccionadas (se requieren {{min}}–{{max}})",
     "source": {
-      "metrics": "investigación",
-      "ideas": "idea",
-      "history": "historial"
+      "seed": "buscada",
+      "related": "relacionada",
+      "idea": "idea",
+      "long_tail": "cola larga"
     },
     "disclosureUnit": "Cada pasada de agrupación consume una unidad de resumen de IA.",
     "disclosureRerunFree": "Repetir exactamente la misma selección es gratis — devuelve la pasada almacenada.",
-    "remainingAllowance": "Quedan {{remaining}} de {{cap}} resúmenes de IA este mes",
-    "allowanceUnknown": "No se pudo cargar tu límite restante. El servidor lo comprobará antes de ejecutar de todos modos.",
     "boundsError": "Selecciona entre {{min}} y {{max}} frases.",
     "run": "Ejecutar agrupación",
     "running": "Agrupando…",
@@ -341,7 +352,7 @@
     "listFailed": "No se pudieron cargar las pasadas de agrupación almacenadas.",
     "detailFailed": "No se pudo cargar esa pasada de agrupación.",
     "decisionFailed": "No se pudo guardar la decisión.",
-    "resultTitle": "{{count}} grupos",
+    "resultTitle_one": "{{count}} grupo",
     "cachedRun": "Pasada almacenada — lectura gratuita",
     "freshRun": "Pasada nueva",
     "aiProfileLine": "Perfil de IA {{name}} v{{version}}",
@@ -357,7 +368,7 @@
     "noFilterMatch": "Ningún grupo coincide con el filtro de decisión actual.",
     "runsTitle": "Pasadas de agrupación almacenadas",
     "runsEmpty": "Aún no hay pasadas de agrupación almacenadas.",
-    "runRowTitle": "{{count}} grupos",
+    "runRowTitle_one": "{{count}} grupo",
     "runRowMembers": "frases",
     "openRun": "Abrir",
     "route": {
@@ -369,11 +380,11 @@
       "medium": "Confianza media",
       "high": "Confianza alta"
     },
-    "confidenceNote": "La confianza se calcula de forma determinista a partir del número de miembros y la homogeneidad de intención — la IA sugiere la agrupación; la etiqueta no es una puntuación de IA.",
+    "confidenceNote": "La confianza sale de reglas fijas: cuántas palabras clave tiene un grupo y cuánto se parece su intención. La IA propone los grupos, pero la etiqueta de confianza no es una puntuación de IA.",
     "summedVolume": "Volumen de búsqueda mensual combinado: {{volume}}",
-    "membersToggle": "Mostrar {{count}} palabras clave miembro",
+    "membersToggle_one": "Mostrar {{count}} palabra clave miembro",
     "memberSource": {
-      "vendor_cache": "fila de proveedor almacenada",
+      "vendor_cache": "datos de palabras clave guardados",
       "history": "historial de investigación"
     },
     "accept": "Aceptar",
@@ -395,7 +406,46 @@
     "dismissBody": "Descartar es definitivo para este grupo — el registro de decisiones es de solo escritura y no puede revertirse después.",
     "dismissConfirm": "Descartar grupo",
     "dismissSuccess": "Grupo descartado.",
-    "dismissReplayHint": "Este grupo ya está descartado."
+    "dismissReplayHint": "Este grupo ya está descartado.",
+    "selectionCount_zero": "{{count}} seleccionadas (se requieren {{min}}–{{max}})",
+    "selectionCount_two": "{{count}} seleccionadas (se requieren {{min}}–{{max}})",
+    "selectionCount_few": "{{count}} seleccionadas (se requieren {{min}}–{{max}})",
+    "selectionCount_many": "{{count}} seleccionadas (se requieren {{min}}–{{max}})",
+    "selectionCount_other": "{{count}} seleccionadas (se requieren {{min}}–{{max}})",
+    "resultTitle_zero": "{{count}} grupos",
+    "resultTitle_two": "{{count}} grupos",
+    "resultTitle_few": "{{count}} grupos",
+    "resultTitle_many": "{{count}} grupos",
+    "resultTitle_other": "{{count}} grupos",
+    "runRowTitle_zero": "{{count}} grupos",
+    "runRowTitle_two": "{{count}} grupos",
+    "runRowTitle_few": "{{count}} grupos",
+    "runRowTitle_many": "{{count}} grupos",
+    "runRowTitle_other": "{{count}} grupos",
+    "membersToggle_zero": "Mostrar {{count}} palabras clave miembro",
+    "membersToggle_two": "Mostrar {{count}} palabras clave miembro",
+    "membersToggle_few": "Mostrar {{count}} palabras clave miembro",
+    "membersToggle_many": "Mostrar {{count}} palabras clave miembro",
+    "membersToggle_other": "Mostrar {{count}} palabras clave miembro",
+    "truncatedNote_zero": "Palabras clave guardadas que se muestran: {{count, number}} de {{total, number}}. Busque para acotar la lista.",
+    "truncatedNote_one": "Palabras clave guardadas que se muestran: {{count, number}} de {{total, number}}. Busque para acotar la lista.",
+    "truncatedNote_two": "Palabras clave guardadas que se muestran: {{count, number}} de {{total, number}}. Busque para acotar la lista.",
+    "truncatedNote_few": "Palabras clave guardadas que se muestran: {{count, number}} de {{total, number}}. Busque para acotar la lista.",
+    "truncatedNote_many": "Palabras clave guardadas que se muestran: {{count, number}} de {{total, number}}. Busque para acotar la lista.",
+    "truncatedNote_other": "Palabras clave guardadas que se muestran: {{count, number}} de {{total, number}}. Busque para acotar la lista.",
+    "belowMinimum": "Palabras clave guardadas para este mercado: {{count}}. Los temas de palabras clave con IA necesitan al menos {{min}}, así que ejecuta una investigación de palabras clave para guardar más.",
+    "candidatesFailed": "No se pudieron cargar tus palabras clave guardadas.",
+    "clearSelection": "Borrar la selección",
+    "findMore": "Buscar más palabras clave",
+    "limitReached": "Puedes seleccionar hasta {{max}} frases. Quita algunas para añadir otras.",
+    "noMatches": "Ninguna palabra clave guardada coincide con esa búsqueda.",
+    "searchLabel": "Buscar en las palabras clave guardadas",
+    "searchPlaceholder": "Filtrar por palabra o frase",
+    "selectAll": "Seleccionar todas las mostradas ({{count}})",
+    "crossLink": {
+      "body": "¿Quieres grupos basados en resultados de Google compartidos por las palabras clave que sigues en un sitio?",
+      "cta": "Ver grupos por solapamiento de SERP en tus sitios"
+    }
   },
   "liveTrends": {
     "title": "Interés de búsqueda en directo",
@@ -414,27 +464,19 @@
     },
     "preview": {
       "title": "Estimación de coste",
-      "units": "Se usará {{count}} unidad.",
-      "units_other": "Se usarán {{count}} unidades.",
       "cached": "En caché",
       "fresh_required": "Consulta nueva",
       "mixed": "Mixto",
-      "unknown": "Desconocido",
-      "baseRemaining": "Cuota base restante",
-      "packRemaining": "Unidades del paquete restantes",
-      "packTitle": "¿Necesita más?",
-      "packLink": "Ver paquetes de crédito"
+      "unknown": "Desconocido"
     },
     "states": {
       "unavailableTitle": "Las tendencias en directo están temporalmente no disponibles",
-    "unavailableBody": "Esta herramienta está en pausa. Las exploraciones existentes siguen legibles.",
-    "capBody": "Ha alcanzado su cuota mensual de tendencias en directo.",
-    "capPackName": "Pack de tendencias de palabras clave",
-    "failedTitle": "La exploración no pudo completarse",
-    "providerFailedTitle": "El proveedor de tendencias no respondió",
-    "emptyTitle": "No se devolvieron series de interés de búsqueda",
-    "emptyBody": "El proveedor completó la exploración, pero no devolvió series para este mercado. La unidad se consumió igualmente.",
-    "sparseTitle": "El historial es escaso para este mercado",
+      "unavailableBody": "Esta herramienta está en pausa. Las exploraciones existentes siguen legibles.",
+      "failedTitle": "La exploración no pudo completarse",
+      "providerFailedTitle": "El proveedor de tendencias no respondió",
+      "emptyTitle": "No se devolvieron series de interés de búsqueda",
+      "emptyBody": "El proveedor completó la exploración, pero no devolvió series para este mercado. La unidad se consumió igualmente.",
+      "sparseTitle": "El historial es escaso para este mercado",
       "sparseBody": "Se necesitan al menos 24 meses de historial para estacionalidad y 56 semanas para año a año."
     },
     "readouts": {
@@ -485,10 +527,23 @@
     },
     "explore": {
       "failed": "Falló la exploración de tendencias en directo."
-    },
-    "workspaceLocked": {
-      "body": "El interés de búsqueda en directo está disponible desde Starter, aunque el resto de este espacio de trabajo requiere Pro.",
-      "cta": "Abrir el interés de búsqueda en directo"
     }
+  },
+  "selectionCount_zero": "{{count}} de {{max}} seleccionadas",
+  "selectionCount_two": "{{count}} de {{max}} seleccionadas",
+  "selectionCount_few": "{{count}} de {{max}} seleccionadas",
+  "selectionCount_many": "{{count}} de {{max}} seleccionadas",
+  "selectionCount_other": "{{count}} de {{max}} seleccionadas",
+  "recentDescriptionSite": "Búsquedas de palabras clave de este sitio, de la más reciente a la más antigua.",
+  "stored": {
+    "title": "Resultados guardados",
+    "freeNote": "Abierto desde datos guardados. No se volvió a consultar nada.",
+    "close": "Cerrar los resultados guardados",
+    "expired": "Los resultados guardados de esta búsqueda ya no están disponibles. Busca de nuevo para obtenerlos otra vez.",
+    "unsupported": "Este tipo de búsqueda no tiene una vista guardada aquí. Abre su propia pestaña para verla.",
+    "storedOn": "Guardado el {{date}}",
+    "partial": "Palabras clave aún guardadas: {{stored}} de {{requested}}",
+    "searchAgain": "Buscar de nuevo",
+    "loadFailed": "No se pudieron cargar los resultados guardados."
   }
 }

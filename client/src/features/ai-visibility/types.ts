@@ -22,7 +22,10 @@ export interface AiVisibilityOverview {
   snapshots: AiVisibilitySnapshot[];
   shareOfVoicePct: number | null;
   sentiment: { positive: number; neutral: number; negative: number };
+  /** Checked in the window and never mentioned. */
   notMentionedPrompts: string[];
+  /** Tracked prompts with no completed check yet; absent on older servers. */
+  notCheckedPrompts?: string[];
   checkedAt: string | null;
 }
 
@@ -48,13 +51,29 @@ export interface AiVisibilitySuggestion {
   branded?: boolean | null;
   evidenceSource?: 'gsc' | 'keyword' | 'title' | 'competitor' | 'llmSynthesis' | null;
   evidenceRef?: string | null;
+  /** Language the prompt is written in (a site can have two); absent on older rows. */
+  language?: SupportedLocale;
 }
+
+/** How much stored evidence about the site a suggestion run was built from. */
+export type AiVisibilitySuggestionsEvidence = 'rich' | 'limited' | 'none';
 
 export interface AiVisibilityStoredSuggestions {
   /** null = never generated; non-null with an empty list = generated, empty. */
   generatedAt: string | null;
   outputLocale: SupportedLocale;
   suggestions: AiVisibilitySuggestion[];
+  /**
+   * `limited` / `none` = built from thin evidence (the panel says so); null or
+   * absent = unknown (a run stored before the server tracked it, or no run).
+   */
+  evidence?: AiVisibilitySuggestionsEvidence | null;
+  /**
+   * The newest stored set was built before suggestions used only this site's
+   * data, so the server withheld it; the panel offers to regenerate. Optional
+   * so older responses parse.
+   */
+  stale?: boolean;
 }
 
 export interface AiVisibilityTrendPoint {
@@ -81,8 +100,12 @@ export interface AiVisibilityState {
    * Drives the never-generated vs generated-empty split in the panel.
    */
   suggestionsGeneratedAt: string | null;
+  /** Evidence level of the loaded set; null = unknown or never generated. */
+  suggestionsEvidence: AiVisibilitySuggestionsEvidence | null;
   /** Frozen locale of the loaded/generated artifact, never the market language. */
   suggestionsOutputLocale: SupportedLocale | null;
+  /** The stored set was withheld as stale (see `AiVisibilityStoredSuggestions.stale`). */
+  suggestionsStale: boolean;
   suggestionsGenerating: boolean;
   /**
    * Suggestion-specific cooldown. Deliberately NOT the shared `cooldownUntil`

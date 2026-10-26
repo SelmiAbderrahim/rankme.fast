@@ -22,36 +22,54 @@
   },
   "list": {
     "title": "Vos règles",
-    "capUsed": "{{count}} règles utilisées.",
+    "capUsed_one": "{{count}} règle utilisée.",
     "type": "Type",
     "threshold": "Seuil",
     "channels": "Canaux",
     "state": "État",
     "actions": "Actions",
-    "emailCount": "{{count}} destinataires e-mail",
+    "emailCount_one": "{{count}} destinataire e-mail",
     "secretTail": "clé de signature finissant par {{tail}}",
     "enabled": "Activée",
     "disabled": "Désactivée",
     "enable": "Activer",
     "disable": "Désactiver",
     "viewLog": "Voir le journal",
-    "delete": "Supprimer"
+    "delete": "Supprimer",
+    "capUsed_zero": "{{count}} règle utilisée.",
+    "capUsed_two": "{{count}} règles utilisées.",
+    "capUsed_few": "{{count}} règles utilisées.",
+    "capUsed_many": "{{count}} règles utilisées.",
+    "capUsed_other": "{{count}} règles utilisées.",
+    "emailCount_zero": "{{count}} destinataire e-mail",
+    "emailCount_two": "{{count}} destinataires e-mail",
+    "emailCount_few": "{{count}} destinataires e-mail",
+    "emailCount_many": "{{count}} destinataires e-mail",
+    "emailCount_other": "{{count}} destinataires e-mail"
   },
   "builder": {
     "title": "Nouvelle règle",
     "description": "Choisissez quoi surveiller et où l’envoyer.",
     "site": "Site",
     "sitePlaceholder": "Choisissez un site",
-    "siteRequired": "Choisissez un site pour créer une règle.",
+    "siteRequired": "Choisissez un site pour continuer.",
     "type": "Type d’alerte",
     "threshold": "Seuil de position",
     "thresholdHint": "Nous alertons quand la position confirmée atteint ce rang ou pire.",
     "channels": "Canaux",
     "slackPlaceholder": "Adresse du webhook entrant Slack",
     "webhookPlaceholder": "Votre adresse https",
-    "paidChannelLocked": "Les canaux Slack et webhook exigent le forfait Pro ou supérieur.",
     "noChannel": "Choisissez au moins un canal.",
-    "submit": "Créer la règle"
+    "submit": "Créer la règle",
+    "sitePaused": "en pause",
+    "rankDropHint": "Se déclenche seulement quand un contrôle planifié repère une chute et qu'un second contrôle du même mot-clé la confirme.",
+    "rankDropBuiltIn": "L’e-mail intégré de baisse de position est distinct et a son propre interrupteur dans",
+    "rankDropBuiltInLink": "Notifications",
+    "thresholdInvalid": "Saisissez une position entière entre {{min}} et {{max}}.",
+    "slackRequired": "Saisissez l’adresse de votre webhook Slack.",
+    "webhookRequired": "Saisissez l’adresse de votre webhook.",
+    "sitePausedOption": "Réactivez ce site pour créer des règles d'alerte",
+    "sitePausedBlocked": "Ce site est en pause. Réactivez ce site pour créer des règles d'alerte."
   },
   "secret": {
     "title": "Copiez votre clé de signature maintenant",
@@ -68,7 +86,7 @@
     "rankPair": "Position {{before}} le {{beforeAt}}, puis {{after}} le {{afterAt}}.",
     "linkPair": "{{beforeCount}} domaines le {{beforeAt}}, puis {{afterCount}} le {{afterAt}}.",
     "notRanked": "au-delà des 100 premiers résultats",
-    "domainCount": "{{count}} domaines modifiés",
+    "domainCount_one": "{{count}} domaine modifié",
     "attempt": "Tentative {{attempt}}",
     "statusLabel": {
       "pending": "Envoi en cours",
@@ -91,17 +109,29 @@
       "unsafe_url": "Cette adresse n’est plus sûre à joindre.",
       "channel_timeout": "Le canal a mis trop de temps à répondre.",
       "retries_exhausted": "Nous avons arrêté après trois échecs."
+    },
+    "domainCount_zero": "{{count}} domaine modifié",
+    "domainCount_two": "{{count}} domaines modifiés",
+    "domainCount_few": "{{count}} domaines modifiés",
+    "domainCount_many": "{{count}} domaines modifiés",
+    "domainCount_other": "{{count}} domaines modifiés",
+    "rulePicker": "Règle",
+    "rulePickerPlaceholder": "Choisissez une règle",
+    "ruleOption": "{{type}} · {{site}}",
+    "empty": {
+      "title": "Aucune alerte envoyée pour l’instant",
+      "noRules": "Les alertes envoyées apparaissent ici. Vous n’avez pas encore de règle, donc rien ne peut être envoyé.",
+      "createRule": "Créer une règle",
+      "rule": "Cette règle n’a encore envoyé aucune alerte.",
+      "pickRule": "Choisissez une règle pour voir les alertes qu’elle a envoyées."
+    },
+    "filtered": {
+      "title": "Aucun envoi ne correspond à ces filtres",
+      "body": "Effacez les filtres pour voir tous les envois de cette règle.",
+      "clear": "Effacer les filtres"
     }
   },
   "states": {
-    "cap": {
-      "title": "Limite de règles atteinte",
-      "body": "Vous avez utilisé toutes les règles d’alerte de votre forfait."
-    },
-    "tierLocked": {
-      "title": "Ce canal exige un forfait supérieur",
-      "body": "Les canaux Slack et webhook exigent le forfait Pro ou supérieur."
-    },
     "disabled": {
       "title": "Alertes en pause",
       "body": "Les alertes sont momentanément indisponibles. Vos règles et votre journal restent accessibles."

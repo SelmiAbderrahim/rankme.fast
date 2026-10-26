@@ -1,3 +1,4 @@
+import { Bdi } from '@shared/components/Bdi';
 import { useTranslation } from 'react-i18next';
 import { ExternalLink } from 'lucide-react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@shared/ui/card';
@@ -101,7 +102,7 @@ export function PageDrilldown({ pages }: PageDrilldownProps) {
                   <div className="flex flex-wrap gap-1" data-testid={`competitor-page-topics-${p.url}`}>
                     {p.facts.primaryTopics.map((topic) => (
                       <Badge key={`${p.url}-${topic}`} variant="secondary" className="font-normal">
-                        {topic}
+                        <Bdi>{topic}</Bdi>
                       </Badge>
                     ))}
                   </div>

@@ -27,13 +27,15 @@ Dieselben Daten ergeben immer dieselbe Reihenfolge, und es gibt keinen versteckt
 
 Sie können einen Eintrag **Planen**, **Verwerfen**, **Abschließen** oder **Wiedereröffnen**. Jede Entscheidung wird an seinen Verlauf angehängt; nichts wird überschrieben oder gelöscht.
 
+Die Liste öffnet sich mit den Einträgen **Offen und geplant**. Wählen Sie im Filter **Status** die Option **Alle**, um verworfene und erledigte Einträge einzubeziehen; die Auswahl bleibt in der Seitenadresse (`state=all`), ein Link behält sie also bei. Eine Karte, die Sie erledigen, bleibt an ihrem Platz, bis die Liste neu geladen wird. Die betroffenen URLs auf einer Karte sind Links. Zeigt eine Karte nur eine Stichprobe, öffnet **Alle N URLs im Bericht ansehen** die vollständige Liste.
+
 ## Verwerfen ändert den Audit nicht
 
 Wenn Sie einen Audit-Befund als Fehlalarm verwerfen, verschwindet er aus der Liste. Der Audit-Bericht selbst bleibt unverändert, und der Befund steht dort weiterhin so, wie er gefunden wurde.
 
 ## Einen Befund als behoben markieren
 
-Markieren Sie einen Audit-Befund als behoben, sobald Sie die Änderung vorgenommen haben. Entscheidungen werden pro Befund gespeichert, ein späteres Audit setzt sie also nicht zurück. Findet ein späteres Audit dasselbe Problem noch, wird der Eintrag als *trotz Markierung als behoben weiterhin gefunden* gekennzeichnet, statt stillschweigend geschlossen zu bleiben.
+Markieren Sie einen Audit-Befund als behoben, sobald Sie die Änderung vorgenommen haben. Entscheidungen werden je Befund gespeichert, ein späteres Audit setzt sie also nicht zurück. Meldet ein Audit, das nach Ihrer Markierung abgeschlossen wurde, denselben Befund weiterhin, öffnet RankMeFast ihn automatisch erneut und hält die Änderung im Verlauf des Eintrags fest. Ein Audit, das vor Ihrer Markierung abgeschlossen wurde, öffnet ihn nie erneut.
 
 ## Erneut testen
 

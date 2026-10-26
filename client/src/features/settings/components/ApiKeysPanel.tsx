@@ -1,3 +1,5 @@
+import { isolateText } from '@shared/lib/bidi';
+import { Bdi } from '@shared/components/Bdi';
 import { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { z } from 'zod';
@@ -270,7 +272,7 @@ export const ApiKeysPanel = () => {
               <TableBody>
                 {keys.map((key) => (
                   <TableRow key={key.id} data-testid={`api-key-row-${key.id}`}>
-                    <TableCell className="font-medium">{key.name}</TableCell>
+                    <TableCell className="font-medium"><Bdi>{key.name}</Bdi></TableCell>
                     <TableCell>
                       <code className="text-muted-foreground text-xs">{key.prefix}…</code>
                     </TableCell>
@@ -419,7 +421,7 @@ export const ApiKeysPanel = () => {
                 className="bg-muted flex-1 overflow-x-auto rounded-md border border-border px-3 py-2 text-xs"
                 data-testid="api-key-full"
               >
-                {createdKey.key}
+                <Bdi>{createdKey.key}</Bdi>
               </code>
               <Button
                 type="button"
@@ -454,7 +456,7 @@ export const ApiKeysPanel = () => {
               <DialogTitle>{t('settings:apiKeys.scopes.editTitle')}</DialogTitle>
               <DialogDescription>
                 {t('settings:apiKeys.scopes.editDescription', {
-                  name: scopeTarget.name,
+                  name: isolateText(scopeTarget.name),
                 })}
               </DialogDescription>
             </DialogHeader>
@@ -532,7 +534,7 @@ export const ApiKeysPanel = () => {
               <AlertDialogTitle>{t('settings:apiKeys.revokeConfirmTitle')}</AlertDialogTitle>
               <AlertDialogDescription>
                 {t('settings:apiKeys.revokeConfirmDescription', {
-                  name: revokeTarget.name,
+                  name: isolateText(revokeTarget.name),
                 })}
               </AlertDialogDescription>
             </AlertDialogHeader>

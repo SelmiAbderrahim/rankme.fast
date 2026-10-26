@@ -12,6 +12,7 @@ import type {
   SchemaSpendPreview,
   SchemaTypesResponse,
   SupportedSchemaType,
+  UserFacts,
 } from './types';
 
 export const fetchSchemaTypes = (
@@ -77,6 +78,19 @@ export const fetchSchemaGeneration = (
   apiClient<GenerationDetail>(
     `/schema-generator/generations/${encodeURIComponent(generationId)}`,
     init.signal ? { signal: init.signal } : {},
+  );
+
+/**
+ * Rebuild a stored generation with facts the user supplied for omitted
+ * properties. No AI call and no new page read.
+ */
+export const regenerateSchemaGeneration = (
+  generationId: string,
+  facts: UserFacts,
+): Promise<GenerationDetail> =>
+  apiClient<GenerationDetail>(
+    `/schema-generator/generations/${encodeURIComponent(generationId)}/regenerate`,
+    { method: 'POST', body: { facts } },
   );
 
 /**

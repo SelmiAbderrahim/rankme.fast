@@ -184,16 +184,19 @@ export const ReviewsPanel = ({ siteId }: ReviewsPanelProps) => {
           <p className="text-muted-foreground text-sm">{t('description')}</p>
         </div>
         <div className="flex shrink-0 flex-col items-end gap-2">
-          <ReportExportControl
-            kind="local.reviews"
-            target={{ scope: 'site_resource', siteId, resourceId: siteId }}
-            selection={{
-              ...(activeRunId ? { runId: activeRunId } : {}),
-              ...(filters.src ? { source: [filters.src] } : {}),
-              ...(filters.rating ? { rating: [filters.rating] } : {}),
-              ...(filters.q ? { query: filters.q } : {}),
-            }}
-          />
+          {/* Nothing to export until the selection holds a review. */}
+          {inventory && inventory.total > 0 ? (
+            <ReportExportControl
+              kind="local.reviews"
+              target={{ scope: 'site_resource', siteId, resourceId: siteId }}
+              selection={{
+                ...(activeRunId ? { runId: activeRunId } : {}),
+                ...(filters.src ? { source: [filters.src] } : {}),
+                ...(filters.rating ? { rating: [filters.rating] } : {}),
+                ...(filters.q ? { query: filters.q } : {}),
+              }}
+            />
+          ) : null}
           <DocsLink slug="review-intelligence" className="text-muted-foreground hover:text-foreground text-xs underline underline-offset-2" />
         </div>
       </div>

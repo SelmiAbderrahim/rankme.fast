@@ -43,8 +43,6 @@ export const BRAND_RADAR_DIGEST_STATES = [
 ] as const;
 export type BrandRadarDigestState = (typeof BRAND_RADAR_DIGEST_STATES)[number];
 
-export type BrandRadarRefundState = 'refunded' | 'none';
-
 /**
  * Halt disclosure — WHICH stage halted a `completed_partial` / `failed` scan
  * and WHY. Mirrors the server's bounded taxonomy; `null` on clean terminals
@@ -84,7 +82,6 @@ export interface BrandRadarScanSummary {
   queryHash: string;
   priorScanId: string | null;
   retainedRowCount: number;
-  refund: { state: BrandRadarRefundState; unit: number };
   createdAt: string;
   updatedAt: string;
   terminalAt: string | null;
@@ -186,7 +183,7 @@ export const brandRadarScanFormSchema = z.object({
   locationCode: z.coerce
     // `Number('abc')` is NaN, and the base type check fires before `.int()`,
     // so the NaN arm needs its own key or zod's default English leaks out.
-    .number({ invalid_type_error: 'errors.invalidLocation' })
+    .number({ error: 'errors.invalidLocation' })
     .int('errors.invalidLocation')
     .positive('errors.invalidLocation')
     .optional(),
@@ -233,7 +230,6 @@ export interface BrandRadarRow {
   digestState: BrandRadarDigestState;
   /** `null` while the row is optimistic — the server has not counted yet. */
   retainedRowCount: number | null;
-  refundState: BrandRadarRefundState;
   /** `null` while the row is optimistic — we do not invent a created-at. */
   createdAt: string | null;
 }

@@ -1,5 +1,5 @@
 /**
- * Prompt 15 — competitors route + failure-isolation tests.
+ * competitors route + failure-isolation tests.
  */
 import {
   afterAll,
@@ -104,11 +104,63 @@ describe('GET /api/sites/:siteId/competitors', () => {
     expect(res.status).toBe(401);
   });
 
+  it('a plain read serves stored data only: empty before any pull, never the vendor', async () => {
+    const user = await seedUser('stored-read@x.co');
+    const siteId = await seedSite(user.id);
+    let vendorCalls = 0;
+    const base = createFakeCompetitorProvider();
+    setCompetitorProvider({
+      ...base,
+      getCompetitors: async (...args) => {
+        vendorCalls += 1;
+        return base.getCompetitors(...args);
+      },
+    });
+    const empty = await request(app).get(`/api/sites/${siteId}/competitors`).set('Cookie', user.cookie);
+    expect(empty.status).toBe(200);
+    expect(empty.body).toMatchObject({ competitors: [], fetchedAt: null, source: 'domain' });
+    expect(vendorCalls).toBe(0);
+
+    const pulled = await request(app).get(`/api/sites/${siteId}/competitors?fresh=true`).set('Cookie', user.cookie);
+    expect(pulled.status).toBe(200);
+    expect(vendorCalls).toBe(1);
+
+    const stored = await request(app).get(`/api/sites/${siteId}/competitors`).set('Cookie', user.cookie);
+    expect(stored.body.competitors).toEqual(pulled.body.competitors);
+    expect(stored.body.fetchedAt).toBe(pulled.body.fetchedAt);
+    expect(vendorCalls).toBe(1);
+  });
+
+  it('a plain read shows the latest stored snapshot even when it is from an earlier day', async () => {
+    const user = await seedUser('stored-old@x.co');
+    const siteId = await seedSite(user.id);
+    const day = (iso: string) => ({ fetchedAt: new Date(iso), snapshotDay: iso.slice(0, 10) });
+    await getTestDb().insert(competitorsTable).values([
+      { siteId, accountId: user.id, competitorDomain: 'older.example', intersections: 9, source: 'domain', ...day('2026-06-01T08:00:00.000Z') },
+      { siteId, accountId: user.id, competitorDomain: 'newer.example', intersections: 4, source: 'tracked_keywords', ...day('2026-06-03T08:00:00.000Z') },
+      { siteId, accountId: user.id, competitorDomain: 'newest.example', intersections: 7, source: 'tracked_keywords', ...day('2026-06-03T09:00:00.000Z') },
+    ]);
+    const res = await request(app).get(`/api/sites/${siteId}/competitors`).set('Cookie', user.cookie);
+    expect(res.status).toBe(200);
+    expect(res.body.source).toBe('tracked_keywords');
+    expect(res.body.competitors.map((row: { domain: string }) => row.domain)).toEqual(['newest.example', 'newer.example']);
+  });
+
+  it('rejects an unknown fresh value and keeps a foreign site a 404 on both paths', async () => {
+    const owner = await seedUser('stored-owner@x.co');
+    const stranger = await seedUser('stored-stranger@x.co');
+    const siteId = await seedSite(owner.id);
+    await request(app).get(`/api/sites/${siteId}/competitors?fresh=maybe`).set('Cookie', owner.cookie).expect(400);
+    await request(app).get(`/api/sites/${siteId}/competitors`).set('Cookie', stranger.cookie).expect(404);
+    await request(app).get(`/api/sites/${siteId}/competitors?fresh=true`).set('Cookie', stranger.cookie).expect(404);
+    await request(app).get(`/api/sites/${siteId}/competitors?fresh=false`).set('Cookie', owner.cookie).expect(200);
+  });
+
   it('opens competitors to every verified account', async () => {
     const user = await signupVerifiedUser(app, { email: 'community-c@x.co' });
     const siteId = await seedSite(user.id);
     const res = await request(app)
-      .get(`/api/sites/${siteId}/competitors`)
+      .get(`/api/sites/${siteId}/competitors?fresh=true`)
       .set('Cookie', user.cookie);
     expect(res.status).toBe(200);
   });
@@ -117,7 +169,7 @@ describe('GET /api/sites/:siteId/competitors', () => {
     const user = await seedUser('agency@x.co');
     const siteId = await seedSite(user.id);
     const res = await request(app)
-      .get(`/api/sites/${siteId}/competitors`)
+      .get(`/api/sites/${siteId}/competitors?fresh=true`)
       .set('Cookie', user.cookie);
     expect(res.status).toBe(200);
     expect(res.body.competitors.length).toBeGreaterThan(0);
@@ -132,7 +184,7 @@ describe('GET /api/sites/:siteId/competitors', () => {
     const user = await seedUser('agency2@x.co');
     const siteId = await seedSite(user.id);
     await request(app)
-      .get(`/api/sites/${siteId}/competitors`)
+      .get(`/api/sites/${siteId}/competitors?fresh=true`)
       .set('Cookie', user.cookie)
       .expect(200);
     const before = await getTestDb()
@@ -140,7 +192,7 @@ describe('GET /api/sites/:siteId/competitors', () => {
       .from(competitorsTable)
       .where(eq(competitorsTable.siteId, siteId));
     await request(app)
-      .get(`/api/sites/${siteId}/competitors`)
+      .get(`/api/sites/${siteId}/competitors?fresh=true`)
       .set('Cookie', user.cookie)
       .expect(200);
     const after = await getTestDb()
@@ -184,11 +236,11 @@ describe('GET /api/sites/:siteId/competitors', () => {
       },
     });
     await request(app)
-      .get(`/api/sites/${siteId}/competitors`)
+      .get(`/api/sites/${siteId}/competitors?fresh=true`)
       .set('Cookie', user.cookie)
       .expect(200);
     const second = await request(app)
-      .get(`/api/sites/${siteId}/competitors`)
+      .get(`/api/sites/${siteId}/competitors?fresh=true`)
       .set('Cookie', user.cookie)
       .expect(200);
     expect(calls).toBe(1); // second served from the daily cache
@@ -229,7 +281,7 @@ describe('GET /api/sites/:siteId/competitors', () => {
     };
     setCompetitorProvider(failing);
     const res = await request(app)
-      .get(`/api/sites/${siteId}/competitors`)
+      .get(`/api/sites/${siteId}/competitors?fresh=true`)
       .set('Cookie', user.cookie);
     expect(res.status).toBe(503);
     expect(res.body.error.message).toBe(
@@ -247,7 +299,7 @@ describe('GET /api/sites/:siteId/competitors', () => {
     const b = await seedUser('bC@x.co');
     const siteId = await seedSite(a.id);
     const res = await request(app)
-      .get(`/api/sites/${siteId}/competitors`)
+      .get(`/api/sites/${siteId}/competitors?fresh=true`)
       .set('Cookie', b.cookie);
     expect(res.status).toBe(404);
   });
@@ -270,7 +322,7 @@ describe('GET /api/sites/:siteId/competitors', () => {
       },
     });
     const res = await request(app)
-      .get(`/api/sites/${siteId}/competitors`)
+      .get(`/api/sites/${siteId}/competitors?fresh=true`)
       .set('Cookie', user.cookie);
     expect(res.status).toBe(500);
   });
@@ -310,8 +362,8 @@ describe('GET /api/sites/:siteId/competitors — concurrent same-day fetches', (
     setCompetitorProvider(fake);
     const db = getTestDb() as unknown as never;
     await Promise.allSettled([
-      listCompetitors({ accountId: user.id, siteId }, { db, provider: fake }),
-      listCompetitors({ accountId: user.id, siteId }, { db, provider: fake }),
+      listCompetitors({ accountId: user.id, siteId, fresh: true }, { db, provider: fake }),
+      listCompetitors({ accountId: user.id, siteId, fresh: true }, { db, provider: fake }),
     ]);
     const rows = await getTestDb()
       .select()
@@ -341,7 +393,7 @@ describe('GET /api/sites/:siteId/competitors — concurrent same-day fetches', (
       },
     });
     const res = await request(app)
-      .get(`/api/sites/${siteId}/competitors`)
+      .get(`/api/sites/${siteId}/competitors?fresh=true`)
       .set('Cookie', user.cookie);
     expect(res.status).toBe(200);
     expect(res.body.competitors).toEqual([]);
@@ -560,14 +612,14 @@ describe('cross-user vendor cache (generic vendor layer)', () => {
     const siteB = await seedSite(userB.id, 'sharedcomp.example');
 
     const first = await request(app)
-      .get(`/api/sites/${siteA}/competitors`)
+      .get(`/api/sites/${siteA}/competitors?fresh=true`)
       .set('Cookie', userA.cookie);
     expect(first.status).toBe(200);
     expect(first.body.competitors).toHaveLength(3);
     expect(counting.calls()).toBe(1);
 
     const second = await request(app)
-      .get(`/api/sites/${siteB}/competitors`)
+      .get(`/api/sites/${siteB}/competitors?fresh=true`)
       .set('Cookie', userB.cookie);
     expect(second.status).toBe(200);
     expect(second.body.competitors).toHaveLength(3);
@@ -638,14 +690,14 @@ describe('cross-user vendor cache (generic vendor layer)', () => {
 
     // A fetches at 23:59:59 UTC.
     await listCompetitors(
-      { accountId: userA.id, siteId: siteA },
+      { accountId: userA.id, siteId: siteA, fresh: true },
       { db, provider: counting.provider, now: () => new Date('2026-07-05T23:59:59.000Z') },
     );
     expect(counting.calls()).toBe(1);
 
     // B asks one minute past midnight — the shared row is expired.
     await listCompetitors(
-      { accountId: userB.id, siteId: siteB },
+      { accountId: userB.id, siteId: siteB, fresh: true },
       { db, provider: counting.provider, now: () => new Date('2026-07-06T00:01:00.000Z') },
     );
     expect(counting.calls()).toBe(2);
@@ -669,7 +721,7 @@ describe('cross-user vendor cache (generic vendor layer)', () => {
     const user = await seedUser('xcompfail@x.co');
     const siteId = await seedSite(user.id, 'compfail.example');
     await request(app)
-      .get(`/api/sites/${siteId}/competitors`)
+      .get(`/api/sites/${siteId}/competitors?fresh=true`)
       .set('Cookie', user.cookie)
       .expect(503);
     await expect(getTestDb().select().from(vendorResponses)).resolves.toHaveLength(0);
@@ -1053,7 +1105,7 @@ describe('tracked-keyword fallback (serp_competitors)', () => {
     setCompetitorProvider(fb.provider);
 
     const res = await request(app)
-      .get(`/api/sites/${siteId}/competitors`)
+      .get(`/api/sites/${siteId}/competitors?fresh=true`)
       .set('Cookie', user.cookie);
     expect(res.status).toBe(200);
     expect(res.body.source).toBe('tracked_keywords');
@@ -1090,7 +1142,7 @@ describe('tracked-keyword fallback (serp_competitors)', () => {
     setCompetitorProvider(fb.provider);
 
     const res = await request(app)
-      .get(`/api/sites/${siteId}/competitors`)
+      .get(`/api/sites/${siteId}/competitors?fresh=true`)
       .set('Cookie', user.cookie);
     expect(res.status).toBe(200);
     expect(res.body.source).toBe('domain');
@@ -1112,7 +1164,7 @@ describe('tracked-keyword fallback (serp_competitors)', () => {
     setCompetitorProvider(fb.provider);
 
     const res = await request(app)
-      .get(`/api/sites/${siteId}/competitors`)
+      .get(`/api/sites/${siteId}/competitors?fresh=true`)
       .set('Cookie', user.cookie);
     expect(res.status).toBe(200);
     expect(res.body.source).toBe('domain');
@@ -1134,7 +1186,7 @@ describe('tracked-keyword fallback (serp_competitors)', () => {
     setCompetitorProvider(fb.provider);
 
     const res = await request(app)
-      .get(`/api/sites/${siteId}/competitors`)
+      .get(`/api/sites/${siteId}/competitors?fresh=true`)
       .set('Cookie', user.cookie);
     expect(res.status).toBe(200);
     expect(res.body.source).toBe('tracked_keywords');
@@ -1157,11 +1209,11 @@ describe('tracked-keyword fallback (serp_competitors)', () => {
     setCompetitorProvider(fb.provider);
 
     await request(app)
-      .get(`/api/sites/${siteId}/competitors`)
+      .get(`/api/sites/${siteId}/competitors?fresh=true`)
       .set('Cookie', user.cookie)
       .expect(200);
     const second = await request(app)
-      .get(`/api/sites/${siteId}/competitors`)
+      .get(`/api/sites/${siteId}/competitors?fresh=true`)
       .set('Cookie', user.cookie)
       .expect(200);
     expect(second.body.source).toBe('tracked_keywords');
@@ -1248,7 +1300,7 @@ describe('tracked-keyword fallback (serp_competitors)', () => {
     setCompetitorProvider(fb.provider);
 
     const res = await request(app)
-      .get(`/api/sites/${siteId}/competitors`)
+      .get(`/api/sites/${siteId}/competitors?fresh=true`)
       .set('Cookie', user.cookie);
     expect(res.status).toBe(200);
     expect(res.body.source).toBe('domain');
@@ -1298,11 +1350,11 @@ describe('tracked-keyword fallback (serp_competitors)', () => {
     setCompetitorProvider(fb.provider);
 
     await request(app)
-      .get(`/api/sites/${siteA}/competitors`)
+      .get(`/api/sites/${siteA}/competitors?fresh=true`)
       .set('Cookie', userA.cookie)
       .expect(200);
     await request(app)
-      .get(`/api/sites/${siteB}/competitors`)
+      .get(`/api/sites/${siteB}/competitors?fresh=true`)
       .set('Cookie', userB.cookie)
       .expect(200);
     // B's primary is served from the shared domain-keyed 'list' cache, but the
@@ -1323,10 +1375,10 @@ describe('tracked-keyword fallback (serp_competitors)', () => {
 describe('competitors service ownership guard', () => {
   const GUARD_ACCOUNT = '6a6fa7c28d75c2fd32d84a63';
   it('refuses a well-formed site id this account does not own', async () => {
-    await expect(listCompetitors({ accountId: GUARD_ACCOUNT, siteId: '6a6fa7c28d75c2fd32d84a99' }, { db: getTestDb() } as unknown as Parameters<typeof listCompetitors>[1])).rejects.toMatchObject({ status: 404 });
+    await expect(listCompetitors({ accountId: GUARD_ACCOUNT, siteId: '6a6fa7c28d75c2fd32d84a99' , fresh: true }, { db: getTestDb() } as unknown as Parameters<typeof listCompetitors>[1])).rejects.toMatchObject({ status: 404 });
   });
 
   it('refuses a malformed site id', async () => {
-    await expect(listCompetitors({ accountId: GUARD_ACCOUNT, siteId: 'not-an-id' }, { db: getTestDb() } as unknown as Parameters<typeof listCompetitors>[1])).rejects.toMatchObject({ status: 404 });
+    await expect(listCompetitors({ accountId: GUARD_ACCOUNT, siteId: 'not-an-id' , fresh: true }, { db: getTestDb() } as unknown as Parameters<typeof listCompetitors>[1])).rejects.toMatchObject({ status: 404 });
   });
 });

@@ -133,6 +133,21 @@ export interface CachedIdeasRow {
     fetchedAt: Date;
     expiresAt: Date;
 }
+/** Seed-expansion operations stored as `{ phrase, <list> }` payloads. */
+export const EXPANSION_OPERATIONS = ['related', 'ideas', 'long_tail'] as const;
+export type ExpansionOperation = (typeof EXPANSION_OPERATIONS)[number];
+/** One cached seed expansion (related / ideas / long-tail), operation-tagged. */
+export interface CachedExpansionRow {
+    operation: ExpansionOperation;
+    phrase: string;
+    items: CachedRelatedKeyword[];
+    fetchedAt: Date;
+    expiresAt: Date;
+}
+/** Map key for `readExpansionsMany`: `<operation>:<cacheKey>`. */
+export function expansionMapKey(operation: ExpansionOperation, cacheKey: string): string {
+    return `${operation}:${cacheKey}`;
+}
 export interface CachedLongTailRow {
     phrase: string;
     suggestions: CachedRelatedKeyword[];
@@ -269,6 +284,13 @@ export interface KeywordCacheRepo {
         expiresAt: Date;
     }): Promise<void>;
     readLongTail(cacheKey: string, now: Date): Promise<CachedLongTailRow | null>;
+    /**
+     * Batched read-only probe over the related / ideas / long-tail operations:
+     * ONE `IN` select with expiry filtered in the query. Keyed by
+     * `expansionMapKey`. Used by the stored-result read, which never reaches a
+     * provider.
+     */
+    readExpansionsMany(cacheKeys: readonly string[], now: Date): Promise<Map<string, CachedExpansionRow>>;
     writeLongTail(input: {
         cacheKey: string;
         phrase: string;
@@ -626,6 +648,43 @@ export function createKeywordCacheRepo(db: Db): KeywordCacheRepo {
                 fetchedAt: hit.fetchedAt,
                 expiresAt: hit.expiresAt,
             };
+        },
+        async readExpansionsMany(cacheKeys, now) {
+            const out = new Map<string, CachedExpansionRow>();
+            if (cacheKeys.length === 0)
+                return out;
+            const rows = await db
+                .select({
+                operation: vendorCache.operation,
+                cacheKey: vendorCache.cacheKey,
+                payload: vendorCache.payload,
+                fetchedAt: vendorCache.fetchedAt,
+                expiresAt: vendorCache.expiresAt,
+            })
+                .from(vendorCache)
+                .where(and(eq(vendorCache.capability, 'keyword'), inArray(vendorCache.operation, [...EXPANSION_OPERATIONS]), inArray(vendorCache.cacheKey, [...cacheKeys]), gt(vendorCache.expiresAt, now)));
+            for (const row of rows) {
+                // Stale-shape entries read as a miss (same policy as every other read).
+                if (row.operation === 'related') {
+                    const parsed = relatedPayloadSchema.safeParse(row.payload);
+                    if (!parsed.success)
+                        continue;
+                    out.set(expansionMapKey('related', row.cacheKey), { operation: 'related', phrase: parsed.data.phrase, items: parsed.data.related, fetchedAt: row.fetchedAt, expiresAt: row.expiresAt });
+                }
+                else if (row.operation === 'ideas') {
+                    const parsed = ideasPayloadSchema.safeParse(row.payload);
+                    if (!parsed.success)
+                        continue;
+                    out.set(expansionMapKey('ideas', row.cacheKey), { operation: 'ideas', phrase: parsed.data.phrase, items: parsed.data.ideas, fetchedAt: row.fetchedAt, expiresAt: row.expiresAt });
+                }
+                else {
+                    const parsed = longTailPayloadSchema.safeParse(row.payload);
+                    if (!parsed.success)
+                        continue;
+                    out.set(expansionMapKey('long_tail', row.cacheKey), { operation: 'long_tail', phrase: parsed.data.phrase, items: parsed.data.suggestions, fetchedAt: row.fetchedAt, expiresAt: row.expiresAt });
+                }
+            }
+            return out;
         },
         async writeLongTail(input) {
             const params = {

@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest';
-import { altEngineWeeklyStampMs, rankCheckReachedTerminal } from './check-status';
-import type { Keyword } from './types';
+import { altEngineWeeklyStampMs, keywordCheckState, rankCheckReachedTerminal } from './check-status';
+import type { Keyword, RankJobItem } from './types';
 
 const keyword = (overrides: Partial<Keyword> = {}): Keyword => ({
   id: 'keyword-1',
@@ -69,5 +69,37 @@ describe('rank check terminal status', () => {
         wednesday,
       ),
     ).toBe(false);
+  });
+});
+
+describe('keyword check state', () => {
+  const jobItem = (overrides: Partial<RankJobItem>): RankJobItem => ({
+    keywordId: 'keyword-1', engine: 'google', state: 'queued', reason: null,
+    attempts: 0, finishedAt: null, ...overrides,
+  });
+
+  it('keeps a never-attempted expired item out of failed-check state', () => {
+    expect(keywordCheckState(keyword(), jobItem({ state: 'expired', finishedAt: '2026-07-16T00:00:00.000Z' })))
+      .toEqual({ kind: 'never' });
+    expect(keywordCheckState(keyword({ lastCheckedAt: '2026-07-15T00:00:00.000Z' }),
+      jobItem({ state: 'expired', finishedAt: '2026-07-16T00:00:00.000Z' })))
+      .toEqual({ kind: 'checked', at: '2026-07-15T00:00:00.000Z' });
+    expect(keywordCheckState(keyword(), jobItem({ state: 'failed', finishedAt: '2026-07-16T00:00:00.000Z' })))
+      .toEqual({ kind: 'never' });
+  });
+
+  it('shows queued and running work, then an attempted timeout newer than the snapshot', () => {
+    expect(keywordCheckState(keyword(), jobItem({}))).toEqual({ kind: 'queued' });
+    expect(keywordCheckState(keyword(), jobItem({ state: 'running', attempts: 1 })))
+      .toEqual({ kind: 'checking' });
+    expect(keywordCheckState(keyword({ lastCheckedAt: '2026-07-15T00:00:00.000Z' }),
+      jobItem({ state: 'expired', attempts: 1, finishedAt: '2026-07-16T00:00:00.000Z' })))
+      .toEqual({ kind: 'failed', at: '2026-07-16T00:00:00.000Z', reason: 'vendor_timeout' });
+  });
+
+  it('uses only safe vendor failure reasons from a job item', () => {
+    expect(keywordCheckState(keyword(), jobItem({ state: 'failed', attempts: 1,
+      finishedAt: '2026-07-16T00:00:00.000Z', reason: 'raw upstream detail' })))
+      .toEqual({ kind: 'failed', at: '2026-07-16T00:00:00.000Z', reason: null });
   });
 });

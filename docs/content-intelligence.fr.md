@@ -114,6 +114,10 @@ Vous pouvez aussi ouvrir une analyse ciblée depuis une opportunité du rapport.
 L’URL de votre site, le mot-clé et la page concurrente vérifiée sont préremplis,
 mais vous devez encore confirmer avant le lancement.
 
+## Quand une analyse échoue
+
+Une analyse en échec dit en mots simples ce qui s’est passé : blocage par robots.txt, protection anti-robots ou page de connexion, erreur HTTP, page lente, boucle de redirection ou plus de cinq redirections, ou adresse qui sert un fichier au lieu d’une page web. Une page redirigée est lue à son adresse finale. Une page qui répond par une erreur 4xx fait échouer l’analyse, alors qu’un problème serveur temporaire (HTTP 429 ou 5xx) mérite un nouvel essai. Chaque motif s’accompagne d’une étape pour le corriger. **Réessayer** demande confirmation, puis lance une nouvelle analyse de la même page et du même mot-clé. Pour une adresse erronée, **Modifier l’URL** renvoie au formulaire déjà rempli. Une analyse porte sur une seule requête de recherche : une liste de mots-clés collée est refusée avec un message, lancez une analyse distincte par mot-clé.
+
 ## Gérer l'allocation et le pack de 20 analyses
 
 Le quota mensuel dépend de votre offre, voir

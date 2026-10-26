@@ -339,6 +339,59 @@ describe('HistoryDrawer', () => {
     expect(entries[3]).toHaveTextContent('Team member');
   });
 
+  it('leads with an Observed entry and labels system entries as automatic, not as a team member', async () => {
+    mocked.getActionHistory.mockResolvedValueOnce({
+      entries: [
+        {
+          ordinal: 0,
+          priorState: null,
+          newState: 'open',
+          eventKind: 'observed',
+          actorUserId: 'system:observed',
+          reasonCode: null,
+          note: null,
+          createdAt: '2026-08-20T09:30:00.000Z',
+        },
+        {
+          ordinal: 1,
+          priorState: 'open',
+          newState: 'completed',
+          eventKind: 'complete',
+          actorUserId: 'user-1',
+          reasonCode: null,
+          note: null,
+          createdAt: '2026-08-22T10:00:00.000Z',
+        },
+        {
+          ordinal: 2,
+          priorState: 'completed',
+          newState: 'open',
+          eventKind: 'reopen',
+          actorUserId: 'system:audit-regression',
+          reasonCode: 'audit_regression',
+          note: 'run=run-2',
+          createdAt: '2026-08-25T10:00:00.000Z',
+        },
+      ],
+    } as never);
+    renderWith(<HistoryDrawer {...props} open onOpenChange={vi.fn()} />);
+    const entries = await screen.findAllByTestId('action-history-entry');
+    expect(entries).toHaveLength(3);
+    expect(entries.map((entry) => entry.getAttribute('data-kind'))).toEqual([
+      'observed',
+      'decision',
+      'decision',
+    ]);
+    expect(entries[0]).toHaveTextContent('Observed');
+    expect(entries[0]).toHaveTextContent('Automatic check');
+    expect(entries[0]).not.toHaveTextContent('from');
+    expect(entries[0]).not.toHaveTextContent('Team member');
+    expect(entries[1]).toHaveTextContent('Completed');
+    expect(entries[1]).toHaveTextContent('Team member');
+    expect(entries[2]).toHaveTextContent('Automatic check');
+    expect(entries[2]).not.toHaveTextContent('Team member');
+  });
+
   it('shows the empty state when no changes are recorded', async () => {
     mocked.getActionHistory.mockResolvedValueOnce({ entries: [] } as never);
     renderWith(<HistoryDrawer {...props} open onOpenChange={vi.fn()} />);

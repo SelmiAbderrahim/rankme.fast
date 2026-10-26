@@ -11,7 +11,7 @@ function mapCooldown(req: Parameters<RequestHandler>[0], err: CooldownError): ne
     throw HttpError.tooMany({
         code: 'AI_VISIBILITY_REFRESH_COOLDOWN',
         messageKey: 'aiVisibility.errors.refreshCooldown',
-        vars: { seconds: Math.ceil(err.retryAfterMs / 1000) },
+        vars: { count: Math.ceil(err.retryAfterMs / 1000), seconds: Math.ceil(err.retryAfterMs / 1000) },
     }, { retryAfterMs: err.retryAfterMs });
 }
 export const listPromptsHandler: RequestHandler = asyncHandler(async (req, res) => {

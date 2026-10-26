@@ -1,3 +1,4 @@
+import { Info } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 import { Label } from '@shared/ui/label';
 import { RadioGroup, RadioGroupItem } from '@shared/ui/radio-group';
@@ -41,25 +42,40 @@ export const TypePicker = ({
               value={entry.type}
               id={`schema-type-option-${entry.type}`}
               className="mt-1"
+              aria-describedby={entry.richResults ? `schema-type-note-${entry.type}` : undefined}
             />
-            <Label
-              htmlFor={`schema-type-option-${entry.type}`}
-              className="flex flex-col items-start gap-0.5 font-normal"
-            >
-              <span className="font-medium">{entry.type}</span>
-              <span className="text-muted-foreground text-xs">
-                {t('type.required', { n: entry.required.length })} ·{' '}
-                {t('type.recommended', { n: entry.recommended.length })}
-              </span>
-              {alreadyDeclared.includes(entry.type) ? (
-                <span
-                  className="text-muted-foreground text-xs"
-                  data-testid={`schema-type-declared-${entry.type}`}
-                >
-                  {t('type.alreadyDeclared')}
+            <div className="flex flex-col items-start gap-0.5">
+              <Label
+                htmlFor={`schema-type-option-${entry.type}`}
+                className="flex flex-col items-start gap-0.5 font-normal"
+              >
+                <span className="font-medium">{entry.type}</span>
+                <span className="text-muted-foreground text-xs">
+                  {t('type.required', { n: entry.required.length })} ·{' '}
+                  {t('type.recommended', { n: entry.recommended.length })}
                 </span>
+                {alreadyDeclared.includes(entry.type) ? (
+                  <span
+                    className="text-muted-foreground text-xs"
+                    data-testid={`schema-type-declared-${entry.type}`}
+                  >
+                    {t('type.alreadyDeclared')}
+                  </span>
+                ) : null}
+              </Label>
+              {/* Still offered, but say what Google does with it now. */}
+              {entry.richResults ? (
+                <p
+                  id={`schema-type-note-${entry.type}`}
+                  className="text-muted-foreground flex items-start gap-1 text-xs"
+                  data-testid={`schema-type-note-${entry.type}`}
+                  data-rich-results={entry.richResults}
+                >
+                  <Info aria-hidden="true" className="mt-px size-3.5 shrink-0" />
+                  <span>{t(`type.note.${entry.type}`)}</span>
+                </p>
               ) : null}
-            </Label>
+            </div>
           </div>
         ))}
       </RadioGroup>

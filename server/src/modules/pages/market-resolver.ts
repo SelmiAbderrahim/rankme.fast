@@ -9,14 +9,26 @@ export const DEFAULT_PAGES_MARKET = Object.freeze({
 export interface PagesFallbackMarket {
     locationCode: number;
     languageCode: string;
-    selection: 'tracked_keyword_mode' | 'default';
+    selection: 'site_default' | 'tracked_keyword_mode' | 'default';
+}
+/** The site's stored default market; only location and language matter here. */
+export interface PagesSiteMarket {
+    locationCode: number;
+    languageCode: string;
 }
 /**
- * Selects the mode of active Google tracked-keyword markets, with stable
+ * The site's own default market wins. Without one, selects the mode of active Google tracked-keyword markets, with stable
  * numeric-location then language tie-breakers. Both tenant keys are mandatory
  * inputs and predicates; alt-engine and inactive rows cannot influence it.
  */
-export async function resolvePagesFallbackMarket(db: Db, accountId: string, siteId: string): Promise<PagesFallbackMarket> {
+export async function resolvePagesFallbackMarket(db: Db, accountId: string, siteId: string, siteMarket?: PagesSiteMarket | null): Promise<PagesFallbackMarket> {
+    if (siteMarket) {
+        return {
+            locationCode: siteMarket.locationCode,
+            languageCode: siteMarket.languageCode.toLowerCase(),
+            selection: 'site_default',
+        };
+    }
     const rows = await db
         .select({
         locationCode: keywords.locationCode,

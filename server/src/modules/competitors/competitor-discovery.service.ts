@@ -3,7 +3,7 @@ import { env } from '../../config/env.js';
 import { keywords } from '../../db/schema/index.js';
 import { ProviderError, VendorMalformedError, VendorQuotaError, VendorTimeoutError, type CompetitorEntry, type CompetitorProvider, } from '../../shared/providers/index.js';
 import { HttpError } from '../../shared/utils/http-error.js';
-import { listCompetitors, registrableDomainKey, } from '../competitor-content/index.js';
+import { isOwnSiteDomain, listCompetitors, registrableDomainKey, } from '../competitor-content/index.js';
 import { CompetitorDiscoveryAttempt, type CompetitorDiscoveryAttemptDocument, } from './competitor-discovery.model.js';
 import { loadOwnedLandscapeSite, resolveLandscapeMarket, } from './landscape/landscape.service.js';
 import type { LandscapeMarket } from './landscape/landscape.schemas.js';
@@ -197,13 +197,16 @@ export async function getLatestCompetitorDiscovery(input: {
     // row proves that the latest query also has a result.
     return serializeAttempt(good, latest!, locale);
 }
-function normalizeSuggestions(entries: readonly CompetitorEntry[], capturedAt: Date, confirmed: ReadonlySet<string>) {
+function normalizeSuggestions(entries: readonly CompetitorEntry[], capturedAt: Date, confirmed: ReadonlySet<string>, siteDomain: string) {
     const byDomain = new Map<string, CompetitorEntry>();
     for (const entry of entries) {
         const domain = registrableDomainKey(entry.domain);
         if (!/^[a-z0-9](?:[a-z0-9.-]*[a-z0-9])?$/.test(domain) || !domain.includes('.')) {
             continue;
         }
+        // A site is never its own competitor (same rule as add and restore).
+        if (isOwnSiteDomain(domain, siteDomain))
+            continue;
         const current = byDomain.get(domain);
         if (!current || entry.intersections > current.intersections)
             byDomain.set(domain, entry);
@@ -341,7 +344,7 @@ export async function refreshCompetitorDiscovery(input: {
             }
         }
     }
-    const suggestions = normalizeSuggestions(collected, attemptedAt, confirmed);
+    const suggestions = normalizeSuggestions(collected, attemptedAt, confirmed, site.domain);
     const truncated = collected.length > suggestions.length;
     if (truncated) {
         // A non-empty collected set always records the successful source first.

@@ -9,7 +9,7 @@ order: 2
 
 # Keyword clustering
 
-Clustering groups your tracked keywords by how many result URLs they share. It works only from SERP observations RankMeFast has already stored and never runs a rank check to fill a gap.
+Clustering groups your tracked keywords by how many result URLs they share. It works only from SERP observations RankMeFast has already stored and never runs a rank check to fill a gap. In the app this is **SERP overlap groups**, in a site's **Keyword clusters** tab. It is not the same as the **Clusters** tab of Keyword research, which groups keywords you have researched with one AI pass.
 
 <!-- docs-truth: metric=keyword_cluster_runs; unit=one-run-up-to-200-keywords; cache-hits=count; refund=none-blocked-keywords-are-reported; cadence=on-demand; estimates=shared-url-arithmetic -->
 
@@ -29,7 +29,7 @@ Keywords that can't take part are listed with a reason (missing, stale, or empty
 
 ## Labels
 
-The AI runtime may suggest a name for each cluster, shown with an AI marker. If labelling fails you get unnamed clusters. The grouping itself doesn't change, because it never depends on the model.
+The AI runtime may suggest a name for each cluster, shown with an AI marker. If labeling fails you get unnamed clusters. The grouping itself doesn't change, because it never depends on the model.
 
 Three shared URLs is a cut-off, not a similarity score, and a cluster says nothing about search intent. RankMeFast never makes up a keyword, URL, or observation to round out a group.
 

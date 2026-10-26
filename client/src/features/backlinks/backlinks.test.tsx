@@ -423,6 +423,22 @@ describe('api helpers', async () => {
     expect((spy.mock.calls[0]?.[0] as string).includes('cursor=c&limit=10')).toBe(true);
   });
 
+  it('fetchBacklinksList asks for a provider pull only when fresh is set', async () => {
+    const respond = () =>
+      new Response(JSON.stringify({ rows: [], nextCursor: null, cached: false }), {
+        status: 200,
+        headers: { 'content-type': 'application/json' },
+      });
+    const spy = vi
+      .spyOn(globalThis, 'fetch')
+      .mockResolvedValueOnce(respond())
+      .mockResolvedValueOnce(respond());
+    await realApi.fetchBacklinksList({ siteId: 's', fresh: true });
+    await realApi.fetchBacklinksList({ siteId: 's', fresh: false });
+    expect(spy.mock.calls[0]?.[0] as string).toContain('?fresh=true');
+    expect(spy.mock.calls[1]?.[0] as string).not.toContain('fresh');
+  });
+
   it('fetchBacklinksList omits query string when no args', async () => {
     const spy = vi.spyOn(globalThis, 'fetch').mockResolvedValueOnce(
       new Response(JSON.stringify({ rows: [], nextCursor: null, cached: false }), {
@@ -518,6 +534,9 @@ describe('BacklinksPanel', () => {
       .mockResolvedValueOnce({ ...list(), nextCursor: null });
     withProviders(<BacklinksPanel siteId="site-1" />);
     const btn = await screen.findByTestId('backlinks-load-more');
+    expect(screen.getByTestId('backlinks-load-more-hint')).toHaveTextContent(
+      'Loading more rows asks the data provider for the next page.',
+    );
     await userEvent.click(btn);
     await waitFor(() => {
       expect(mocked.fetchBacklinksList).toHaveBeenCalledWith(
@@ -628,7 +647,7 @@ describe('BacklinksPanel', () => {
     withProviders(<BacklinksPanel siteId="site-1" />);
     await waitFor(() => {
       expect(screen.getByTestId('backlinks-delta-links')).toHaveTextContent('+100');
-      expect(screen.getByTestId('backlinks-delta-refdomains')).toHaveTextContent('-5');
+      expect(screen.getByTestId('backlinks-delta-refdomains')).toHaveTextContent('−5');
       expect(screen.getByTestId('backlinks-delta-dr')).toHaveTextContent('—');
     });
   });
@@ -796,6 +815,9 @@ describe('BacklinksPanel refresh button', () => {
     await waitFor(() =>
       expect(mocked.fetchBacklinksList).toHaveBeenCalledTimes(2),
     );
+    // Opening the tab reads stored rows; only the post-refresh pull is explicit.
+    expect(mocked.fetchBacklinksList.mock.calls[0]?.[0]).toEqual({ siteId: 'site-1' });
+    expect(mocked.fetchBacklinksList.mock.calls[1]?.[0]).toEqual({ siteId: 'site-1', fresh: true });
     expect(button).toBeEnabled();
   });
 

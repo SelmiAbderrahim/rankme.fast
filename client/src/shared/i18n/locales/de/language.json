@@ -1,5 +1,6 @@
 {
   "switcher": {
+    "switching": "Sprache wird gewechselt…",
     "label": "Sprache",
     "saveError": "Ihre Sprache konnte nicht gespeichert werden. Die vorherige Sprache wurde wiederhergestellt."
   },

@@ -24,8 +24,6 @@
   },
   "preview": {
     "title": "What this costs",
-    "units": "{{count}} report from your monthly allowance.",
-    "units_other": "{{count}} reports from your monthly allowance.",
     "remaining": "Left on your plan this month: {{remaining}}.",
     "pack": "Plus {{units}} from credit packs.",
     "noFit": "This does not fit in what is left. Add credits or change plan first."
@@ -39,7 +37,7 @@
     "open": "Open"
   },
   "detail": {
-    "provenance": "From your stored Search Console data over {{days}} days, last synced {{date}}. {{queries}} queries read."
+    "provenance": "From your stored Search Console data over $t(cannibalization:counts.windowDays, {\"count\": {{days}}}), last synced {{date}}. $t(cannibalization:counts.queriesRead, {\"count\": {{queries}}})"
   },
   "candidates": {
     "query": "Query",
@@ -56,7 +54,7 @@
     "inspect": "Inspect"
   },
   "drilldown": {
-    "provenance": "Stored rows over {{days}} days, last synced {{date}}.",
+    "provenance": "Stored rows over $t(cannibalization:counts.windowDays, {\"count\": {{days}}}), last synced {{date}}.",
     "recommendation": "Keep {{url}} as the main page.",
     "reason": {
       "most_clicks": "It already earns the most clicks for this query.",
@@ -73,16 +71,12 @@
   "states": {
     "empty": {
       "title": "Nothing to show yet",
-      "body": "Generate a report to see which queries your pages compete over."
+      "body": "Generate a report to see which queries your pages compete over.",
+      "action": "Create a report"
     },
     "awaitingSync": {
       "title": "Waiting for the next sync",
       "body": "We have not stored Search Console query and page rows for this window yet. They arrive with the next sync."
-    },
-    "cap": {
-      "title": "Monthly allowance used",
-      "body": "You have used every cannibalization report on your plan this month.",
-      "link": "See plans"
     },
     "disabled": {
       "title": "Temporarily unavailable",
@@ -99,6 +93,35 @@
     "failed": {
       "title": "Something went wrong",
       "body": "We could not load this. Try again."
+    },
+    "noCandidates": {
+      "title": "No competing pages found",
+      "body": "In this window, no two of your pages competed for the same search query.",
+      "action": "Create a new report"
+    },
+    "filtered": {
+      "title": "No candidates at this confidence",
+      "body": "Show every confidence level to see this report's candidates.",
+      "action": "Show all"
+    },
+    "needsGsc": "New reports need a usable Search Console property. Fix the status above, then come back here.",
+    "emptyNoGsc": {
+      "title": "Nothing to show yet",
+      "body": "Reports are built from your stored Search Console data. Connect a Search Console property for this site, then create your first report."
     }
+  },
+  "counts": {
+    "windowDays_zero": "{{count}} days",
+    "windowDays_one": "{{count}} day",
+    "windowDays_two": "{{count}} days",
+    "windowDays_few": "{{count}} days",
+    "windowDays_many": "{{count}} days",
+    "windowDays_other": "{{count}} days",
+    "queriesRead_zero": "{{count}} queries read.",
+    "queriesRead_one": "{{count}} query read.",
+    "queriesRead_two": "{{count}} queries read.",
+    "queriesRead_few": "{{count}} queries read.",
+    "queriesRead_many": "{{count}} queries read.",
+    "queriesRead_other": "{{count}} queries read."
   }
 }

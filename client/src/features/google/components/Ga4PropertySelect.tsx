@@ -1,3 +1,4 @@
+import { Bdi } from '@shared/components/Bdi';
 /**
  * Ga4PropertySelect — the ONE GA4 property picker, shared by the analytics
  * summary card (inline, when the scope is granted but no property is chosen)
@@ -111,7 +112,7 @@ export const Ga4PropertySelect = ({ siteId, id = 'ga4-property' }: Ga4PropertySe
         <SelectContent>
           {properties.map((property) => (
             <SelectItem key={property.propertyId} value={property.propertyId}>
-              {property.displayName}
+              <Bdi>{property.displayName}</Bdi>
               {property.inUseBy?.length
                 ? ` — ${property.inUseBy.map((site) => site.displayName || site.domain).join(', ')}`
                 : ''}

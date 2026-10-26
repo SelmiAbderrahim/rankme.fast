@@ -17,7 +17,7 @@
 import type { Logger } from 'pino';
 import type { z } from 'zod';
 import { recordVendorCostUsd } from './cost-capture.js';
-import { zodDataForSeoEnvelope } from './dataforseo-envelope.js';
+import { zodDataForSeoEnvelope, type DataForSeoTask } from './dataforseo-envelope.js';
 import { ProviderError, VendorAuthError, VendorMalformedError, VendorQuotaError, VendorTimeoutError, VendorUnavailableError, } from './errors.js';
 export interface VendorHttpClientConfig {
     /** Registry key carried on every error + log line, e.g. `dataforseo`. */
@@ -364,18 +364,25 @@ function getDataForSeoClient(cfg: DataForSeoConfig): VendorHttpClient {
     dataForSeoClientCache.set(key, created);
     return created;
 }
-/**
- * Typed DataForSEO call: POSTs the task array, validates the two-level
- * envelope, branches on both status levels, and parses each task's `result`
- * with the caller's schema. Basic auth from DATAFORSEO_LOGIN/PASSWORD —
- * passed in via config, never read from env here.
- */
-export async function dataForSeoRequest<T>(cfg: DataForSeoConfig, path: string, tasks: unknown[], resultSchema: z.ZodType<T>, opts?: {
+export interface DataForSeoRequestOptions {
     operation?: string;
     timeoutMs?: number;
     method?: 'GET' | 'POST';
     maxResponseBytes?: number;
-}): Promise<DataForSeoTaskOutcome<T>[]> {
+    /** Documented task-specific unavailable statuses handled by the caller's result schema. */
+    acceptTaskStatusCodes?: readonly number[];
+}
+/** A rejected task is returned individually so successful siblings can still settle. */
+export type DataForSeoTaskOutcomeOrError<T> = DataForSeoTaskOutcome<T> | {
+    status: 'error';
+    taskId: string | null;
+    error: ProviderError;
+};
+/** Request-level faults always reject the entire call, independently of task handling. */
+async function requestDataForSeoTasks(cfg: DataForSeoConfig, path: string, tasks: unknown[], opts: DataForSeoRequestOptions | undefined): Promise<{
+    ctx: { provider: string; operation: string };
+    tasks: DataForSeoTask[];
+}> {
     const operation = opts?.operation ?? path;
     const method = opts?.method ?? 'POST';
     const ctx = { provider: 'dataforseo', operation };
@@ -394,18 +401,46 @@ export async function dataForSeoRequest<T>(cfg: DataForSeoConfig, path: string, 
     // recorded into the ambient capture scope (if any) so archive writers
     // can persist actual spend per provider-method invocation.
     recordVendorCostUsd(envelope.cost ?? null);
-    return (envelope.tasks ?? []).map((task): DataForSeoTaskOutcome<T> => {
-        const taskId = task.id ?? null;
-        const status = classifyDataForSeoStatus(task.status_code, task.status_message, ctx);
-        if (status === 'in_queue')
-            return { status, taskId };
-        const costUsd = task.cost ?? null;
-        if (status === 'created')
-            return { status, taskId, costUsd };
-        const parsed = resultSchema.safeParse(task.result);
-        if (!parsed.success) {
-            throw new VendorMalformedError(`task result failed schema validation: ${parsed.error.message}`, { ...ctx, cause: parsed.error });
+    return { ctx, tasks: envelope.tasks ?? [] };
+}
+function toTaskOutcome<T>(task: DataForSeoTask, resultSchema: z.ZodType<T>, opts: DataForSeoRequestOptions | undefined, ctx: {
+    provider: string;
+    operation: string;
+}): DataForSeoTaskOutcome<T> {
+    const taskId = task.id ?? null;
+    const status = opts?.acceptTaskStatusCodes?.includes(task.status_code)
+        ? 'ok'
+        : classifyDataForSeoStatus(task.status_code, task.status_message, ctx);
+    if (status === 'in_queue')
+        return { status, taskId };
+    const costUsd = task.cost ?? null;
+    if (status === 'created')
+        return { status, taskId, costUsd };
+    const parsed = resultSchema.safeParse(task.result);
+    if (!parsed.success) {
+        throw new VendorMalformedError(`task result failed schema validation: ${parsed.error.message}`, { ...ctx, cause: parsed.error });
+    }
+    return { status, taskId, costUsd, result: parsed.data };
+}
+/**
+ * Typed DataForSEO call with all-or-nothing task parsing. Credentials come
+ * from the supplied config and are never read from the environment here.
+ */
+export async function dataForSeoRequest<T>(cfg: DataForSeoConfig, path: string, tasks: unknown[], resultSchema: z.ZodType<T>, opts?: DataForSeoRequestOptions): Promise<DataForSeoTaskOutcome<T>[]> {
+    const response = await requestDataForSeoTasks(cfg, path, tasks, opts);
+    return response.tasks.map(task => toTaskOutcome(task, resultSchema, opts, response.ctx));
+}
+/** Task-level provider faults become individual outcomes; request failures still throw. */
+export async function dataForSeoRequestPerTask<T>(cfg: DataForSeoConfig, path: string, tasks: unknown[], resultSchema: z.ZodType<T>, opts?: DataForSeoRequestOptions): Promise<DataForSeoTaskOutcomeOrError<T>[]> {
+    const response = await requestDataForSeoTasks(cfg, path, tasks, opts);
+    return response.tasks.map((task): DataForSeoTaskOutcomeOrError<T> => {
+        try {
+            return toTaskOutcome(task, resultSchema, opts, response.ctx);
         }
-        return { status, taskId, costUsd, result: parsed.data };
+        catch (error) {
+            if (!(error instanceof ProviderError))
+                throw error;
+            return { status: 'error', taskId: task.id ?? null, error };
+        }
     });
 }

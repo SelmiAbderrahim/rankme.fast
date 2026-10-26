@@ -6,9 +6,7 @@
   "yes": "Yes",
   "no": "No",
   "capacity": {
-    "selfHost": "Usage limits aren't applied on this server.",
-    "selfHostPlan": "Self-hosted",
-    "selfHostSlots": "{{used}} in use; usage limits aren't applied on this server."
+    "selfHost": "Usage limits aren't applied on this server."
   },
   "logPanel": {
     "title": "Backup output",
@@ -34,20 +32,20 @@
     "sites": "Sites",
     "keywordResearch": "Keyword research",
     "google": "Google",
-    "billing": "Billing",
-    "creditPacks": "Credit packs",
     "notifications": "Notifications",
-    "logout": "Logout",
+    "logout": "Sign out",
     "logOut": "Log out",
     "skipToContent": "Skip to content",
     "docs": "Docs",
     "exports": "Exports and shares",
     "security": "Security",
     "team": "Team",
+    "workspace": "Workspace",
     "admin": "Admin",
     "superadmin": "Platform",
     "startFree": "Start free",
-    "openApp": "Open app"
+    "openApp": "Open app",
+    "breadcrumb": "Breadcrumb"
   },
   "footer": {
     "copyright": "© {{year}}, {{brand}}. All Rights Reserved.",
@@ -74,28 +72,36 @@
       "sites": {
         "label": "Sites",
         "description": "Add and manage the sites you track.",
-        "usage": "{{used}} of {{cap}} sites"
+        "usage": "{{used}} of {{cap}} sites",
+        "cta": "Open sites"
       },
       "ranks": {
         "label": "Ranks",
         "description": "Track SERP positions for your keywords.",
         "usage": "{{used}} of {{cap}} keywords tracked",
-        "empty": "Add a site to start tracking ranks."
+        "empty": "Add a site to start tracking ranks.",
+        "cta": "Open rank tracking",
+        "pickCta": "Choose a site to open rank tracking"
       },
       "keywordResearch": {
         "label": "Keyword research",
         "description": "Find volume, difficulty, and related keywords.",
-        "usage": "{{used}} of {{cap}} lookups this month"
+        "usage": "{{used}} of {{cap}} lookups this month",
+        "cta": "Research keywords"
       },
       "backlinks": {
         "label": "Backlinks",
         "description": "Explore the backlink profile of your first site.",
-        "usage": "{{used}} of {{cap}} rows this month"
+        "usage": "{{used}} of {{cap}} rows this month",
+        "cta": "View backlinks",
+        "pickCta": "Choose a site to view backlinks"
       },
       "competitors": {
         "label": "Competitors",
         "description": "See who competes with your first site.",
-        "usage": "Agency plan"
+        "usage": "Agency plan",
+        "cta": "View competitors",
+        "pickCta": "Choose a site to view competitors"
       },
       "google": {
         "label": "Google Search Console",
@@ -110,16 +116,171 @@
       "profile": {
         "label": "Profile",
         "description": "View and update your account details.",
-        "usage": "Account settings"
+        "usage": "Account settings",
+        "cta": "Open profile"
       },
       "admin": {
         "label": "Admin",
         "description": "Access administrative controls.",
         "usage": "Admin controls"
-      }
+      },
+      "pickSiteCta": "Choose a site",
+      "pickSiteMenu": "Active sites",
+      "pickSiteAll": "See all sites"
     },
     "usage": {},
-    "loading": "Loading dashboard…"
+    "loading": "Loading dashboard…",
+    "health": {
+      "fixNow": {
+        "open_zero": "{{n}} open",
+        "open_one": "{{n}} open",
+        "open_two": "{{n}} open",
+        "open_few": "{{n}} open",
+        "open_many": "{{n}} open",
+        "open_other": "{{n}} open",
+        "none": "None open",
+        "noneStale": "None open at last audit",
+        "unavailable": {
+          "no_audit": "No audit yet. Run one to see this.",
+          "report_missing": "Report not available. Run a new audit."
+        }
+      },
+      "showing_zero": "Showing {{shown}} of {{total}} active sites.",
+      "showing_one": "Showing {{shown}} of {{total}} active site.",
+      "showing_two": "Showing {{shown}} of {{total}} active sites.",
+      "showing_few": "Showing {{shown}} of {{total}} active sites.",
+      "showing_many": "Showing {{shown}} of {{total}} active sites.",
+      "showing_other": "Showing {{shown}} of {{total}} active sites.",
+      "seeAll_zero": "See all {{total}} sites",
+      "seeAll_one": "See {{total}} site",
+      "seeAll_two": "See all {{total}} sites",
+      "seeAll_few": "See all {{total}} sites",
+      "seeAll_many": "See all {{total}} sites",
+      "seeAll_other": "See all {{total}} sites",
+      "paused": {
+        "more_zero": "{{n}} more paused sites are not shown.",
+        "more_one": "{{n}} more paused site is not shown.",
+        "more_two": "{{n}} more paused sites are not shown.",
+        "more_few": "{{n}} more paused sites are not shown.",
+        "more_many": "{{n}} more paused sites are not shown.",
+        "more_other": "{{n}} more paused sites are not shown.",
+        "title": "Paused sites ({{n}})",
+        "explain": "Paused sites do not run scheduled checks or audits.",
+        "since": "Paused {{when}}",
+        "resume": "Resume",
+        "resuming": "Resuming…",
+        "resumeSite": "Resume {{name}}",
+        "resumed": "{{domain}} is back on. Scheduled checks will run again.",
+        "resumeFailed": "Could not resume the site.",
+        "manage": "Manage all sites",
+        "ownerOnly": "Ask a workspace owner to resume a paused site."
+      },
+      "search": {
+        "clicks_zero": "{{n}} clicks",
+        "clicks_one": "{{n}} click",
+        "clicks_two": "{{n}} clicks",
+        "clicks_few": "{{n}} clicks",
+        "clicks_many": "{{n}} clicks",
+        "clicks_other": "{{n}} clicks",
+        "impressions_zero": "{{n}} impressions",
+        "impressions_one": "{{n}} impression",
+        "impressions_two": "{{n}} impressions",
+        "impressions_few": "{{n}} impressions",
+        "impressions_many": "{{n}} impressions",
+        "impressions_other": "{{n}} impressions",
+        "clicksDelta": "change in clicks compared with the previous 28 days",
+        "impressionsDelta": "change in impressions compared with the previous 28 days",
+        "through": "Through {{date}}, compared with the 28 days before",
+        "noPrevious": "Through {{date}}. No earlier period is stored to compare.",
+        "unavailable": {
+          "not_connected": "Search Console is not connected for this site.",
+          "reconnect_needed": "Reconnect Search Console to see this.",
+          "no_data_yet": "No Search Console data stored yet."
+        }
+      },
+      "rank": {
+        "notCompared": {
+          "failed_zero": "{{count}} checks failed",
+          "failed_one": "{{count}} check failed",
+          "failed_two": "{{count}} checks failed",
+          "failed_few": "{{count}} checks failed",
+          "failed_many": "{{count}} checks failed",
+          "failed_other": "{{count}} checks failed",
+          "skipped_zero": "{{count}} skipped",
+          "skipped_one": "{{count}} skipped",
+          "skipped_two": "{{count}} skipped",
+          "skipped_few": "{{count}} skipped",
+          "skipped_many": "{{count}} skipped",
+          "skipped_other": "{{count}} skipped",
+          "noPair_zero": "{{count}} waiting for a second check",
+          "noPair_one": "{{count}} waiting for a second check",
+          "noPair_two": "{{count}} waiting for a second check",
+          "noPair_few": "{{count}} waiting for a second check",
+          "noPair_many": "{{count}} waiting for a second check",
+          "noPair_other": "{{count}} waiting for a second check",
+          "unranked_zero": "{{count}} not ranked in either check",
+          "unranked_one": "{{count}} not ranked in either check",
+          "unranked_two": "{{count}} not ranked in either check",
+          "unranked_few": "{{count}} not ranked in either check",
+          "unranked_many": "{{count}} not ranked in either check",
+          "unranked_other": "{{count}} not ranked in either check",
+          "lead": "Not compared: {{parts}}."
+        },
+        "summary": "{{improved}} improved, {{declined}} declined, {{unchanged}} unchanged",
+        "compared": "Keywords compared: {{compared}} of {{tracked}}.",
+        "lastCheck": "Last check {{when}}.",
+        "unavailable": {
+          "no_keywords": "No keywords tracked yet.",
+          "no_checks": "Waiting for the first rank check.",
+          "single_check": "Needs a second check to compare."
+        }
+      },
+      "title": "Site health",
+      "description": "Saved results for your active sites. Opening this page only reads stored data.",
+      "loading": "Loading site health…",
+      "loadFailed": "Could not load site health.",
+      "stale": "Out of date",
+      "notAvailable": "Not available:",
+      "asOf": "As of {{date}}",
+      "allPaused": "Every site you can see is paused, so there is nothing to measure. Resume one below to see its health.",
+      "empty": {
+        "body": "Add a site to see its audit, search, and keyword health here.",
+        "cta": "Add a site"
+      },
+      "columns": {
+        "fixNow": "Fix now",
+        "lastAudit": "Last audit",
+        "search": "Search, last 28 days",
+        "keywords": "Keyword movement"
+      },
+      "open": {
+        "actions": "Open fix list",
+        "report": "Open report",
+        "google": "Open Search Console",
+        "keywords": "Open keywords"
+      },
+      "lastAudit": {
+        "never": "Never audited",
+        "status": {
+          "failed": "Failed",
+          "unavailable": "Unavailable"
+        }
+      },
+      "staleSource": {
+        "audit": {
+          "label": "Audit from {{date}}",
+          "hint": "This audit is more than 30 days old. Run a new one to refresh these findings."
+        },
+        "search": {
+          "label": "Search data as of {{date}}",
+          "hint": "Search Console reports lag a few days, but this data is older than that."
+        },
+        "rank": {
+          "label": "Rank checks as of {{date}}",
+          "hint": "Scheduled rank checks have not run on time for this site."
+        }
+      }
+    }
   },
   "shell": {
     "groupOverview": "Overview",
@@ -127,7 +288,7 @@
     "groupAccount": "Account",
     "groupAdmin": "Admin",
     "search": "Search",
-    "searchPlaceholder": "Search pages and sites",
+    "searchPlaceholder": "Search pages, sites, and docs…",
     "searchNoResults": "No results for “{{query}}”",
     "searchGroupPages": "Pages",
     "searchGroupSites": "Sites",
@@ -138,18 +299,16 @@
     "signOut": "Sign out",
     "collapse": "Collapse sidebar",
     "expand": "Expand sidebar",
-    "upgradeTitle": "Unlock more audits",
-    "upgradeBody": "Upgrade for higher caps and deeper reports.",
-    "upgradeCta": "Upgrade",
     "groupSuperAdmin": "Platform",
-    "opensInNewTab": "Opens in a new tab"
+    "opensInNewTab": "Opens in a new tab",
+    "searchSitesLoading": "Loading your sites…",
+    "searchGroupTools": "Site tools",
+    "searchGroupDocs": "Docs",
+    "searchDocsFor": "Search the docs for “{{query}}”",
+    "navigating": "Loading page…"
   },
   "locked": "Locked",
   "retry": "Try again",
-  "tierBadge": {
-    "pro": "Pro",
-    "agency": "Agency"
-  },
   "tableHelp": {
     "about": "About {{column}}",
     "kind": "The research operation used for this row: metrics, related keywords, intent, ideas, gap, overview, trends, or clusters.",
@@ -181,10 +340,10 @@
     "domainRank": "The provider's comparative domain-strength score; higher values indicate a stronger backlink profile.",
     "referringDomains": "The number of distinct domains linking to the target.",
     "dofollow": "Whether the stored link can pass standard ranking signals rather than carrying a nofollow attribute.",
-    "toxicityScore": "A deterministic 0–100 review score for stored backlink observations; higher means more warning signals matched.",
-    "rubricBand": "The score range assigned by the pinned rubric: clean, watch, or toxic. It does not predict a search-engine action.",
-    "contributingSignals": "The stored observations that caused the deterministic rubric score.",
-    "rationale": "An optional AI explanation of the stored signals; it never changes the deterministic band.",
+    "toxicityScore": "A 0–100 score from fixed rules for each saved backlink; higher means more warning signs matched.",
+    "rubricBand": "The risk level the score falls in: clean, watch, or toxic. It doesn't predict what a search engine will do.",
+    "contributingSignals": "The saved signals that raised this score.",
+    "rationale": "An optional AI explanation of the saved signals; it never changes the risk level.",
     "disavowScope": "Whether the export includes the whole referring domain or only the exact backlink URL.",
     "geogridPoint": "The numbered map sample location represented by this row.",
     "localPackPosition": "The business's rank within the observed local result pack; 1 is highest.",
@@ -224,7 +383,28 @@
     "noResults": "No countries match your search.",
     "loadError": "Countries could not be loaded. Try again.",
     "unknownCountry": "Unknown country",
-    "unknownLanguage": "Unknown language"
+    "unknownLanguage": "Unknown language",
+    "provenance": {
+      "owner": "Defaulted from this site's saved market ({{country}} · {{language}}).",
+      "search_console": "Defaulted from your Search Console traffic ({{country}}).",
+      "cctld": "Defaulted from your site's country ({{country}}).",
+      "site_language": "Defaulted from your site's page language ({{language}}).",
+      "assumed": "We could not detect your site's market. Check this before adding keywords.",
+      "hint": "You can change it here.",
+      "edit": "Change site default"
+    },
+    "script": {
+      "arabic": "Arabic",
+      "cyrillic": "Cyrillic",
+      "han": "Chinese",
+      "kana": "Japanese",
+      "hangul": "Korean"
+    },
+    "mismatch": {
+      "body": "This keyword looks like {{script}} text, but the language is {{language}}. Switch to {{suggested}}?",
+      "unavailable": "This keyword looks like {{script}} text, but the language is {{language}} and this country does not offer {{suggested}}. Check the country and language.",
+      "switch": "Switch to {{suggested}}"
+    }
   },
   "codeFixPrompt": {
     "button": "Copy code prompt",
@@ -258,10 +438,14 @@
       "dismiss": "Hide the beta notice"
     },
     "badge": "Beta",
-    "badgeName": "{{brand}}, public beta"
+    "badgeName": "{{brand}}, public beta",
+    "stage": { "beta": "beta", "ga": "stable" }
   },
   "feedback": {
     "reportBug": "Report a bug",
+    "chooseChannel": "Choose where to report the bug.",
+    "openIssues": "Open GitHub issue chooser",
+    "emailSupport": "Email support",
     "reportProblem": "Report this problem",
     "mailSubject": "Bug report ({{version}})"
   },
@@ -279,5 +463,97 @@
     "message": "We would like to use Google Analytics to count page visits. It never receives site IDs, tab choices, or page titles. Nothing loads unless you accept, and you can change your mind at any time.",
     "accept": "Accept analytics",
     "decline": "No thanks"
+  },
+  "datePicker": {
+    "placeholder": "Pick a date",
+    "dialogLabel": "Choose a date",
+    "previousMonth": "Previous month",
+    "nextMonth": "Next month",
+    "today": "Today",
+    "clear": "Clear"
+  },
+  "toast": {
+    "close": "Close notification"
+  },
+  "metric": {
+    "noData": "No data"
+  },
+  "positionDelta": {
+    "improved_zero": "Improved by {{value}} positions",
+    "improved_one": "Improved by {{value}} position",
+    "improved_two": "Improved by {{value}} positions",
+    "improved_few": "Improved by {{value}} positions",
+    "improved_many": "Improved by {{value}} positions",
+    "improved_other": "Improved by {{value}} positions",
+    "declined_zero": "Declined by {{value}} positions",
+    "declined_one": "Declined by {{value}} position",
+    "declined_two": "Declined by {{value}} positions",
+    "declined_few": "Declined by {{value}} positions",
+    "declined_many": "Declined by {{value}} positions",
+    "declined_other": "Declined by {{value}} positions",
+    "unchanged": "No change in position",
+    "noPrevious": "No previous data",
+    "short": {
+      "improved": "better",
+      "declined": "worse",
+      "unchanged": "No change"
+    },
+    "window": {
+      "previousSync_zero": "Average position over the last {{days}} days compared with the same window at the previous data sync. Lower is better. Search Console averages are weighted by impressions.",
+      "previousSync_one": "Average position over the last {{days}} day compared with the same window at the previous data sync. Lower is better. Search Console averages are weighted by impressions.",
+      "previousSync_two": "Average position over the last {{days}} days compared with the same window at the previous data sync. Lower is better. Search Console averages are weighted by impressions.",
+      "previousSync_few": "Average position over the last {{days}} days compared with the same window at the previous data sync. Lower is better. Search Console averages are weighted by impressions.",
+      "previousSync_many": "Average position over the last {{days}} days compared with the same window at the previous data sync. Lower is better. Search Console averages are weighted by impressions.",
+      "previousSync_other": "Average position over the last {{days}} days compared with the same window at the previous data sync. Lower is better. Search Console averages are weighted by impressions.",
+      "previousCheck": "Position at the latest check compared with the check before. Lower is better."
+    }
+  },
+  "rankChange": {
+    "entered": "New",
+    "enteredLabel": "Entered the rankings",
+    "dropped": "Lost",
+    "droppedLabel": "Dropped out of the rankings",
+    "unranked": "Not ranked in either check"
+  },
+  "phraseList": {
+    "listLabel": "Detected items",
+    "verdict": {
+      "ready": "Ready",
+      "repeated": "Repeated",
+      "existing": "Already added",
+      "tooLong": "Too long"
+    },
+    "remove": "Remove {{phrase}}",
+    "more_zero": "and {{count, number}} more",
+    "more_one": "and {{count, number}} more",
+    "more_two": "and {{count, number}} more",
+    "more_few": "and {{count, number}} more",
+    "more_many": "and {{count, number}} more",
+    "more_other": "and {{count, number}} more",
+    "ignoredColumns": "This looks like a spreadsheet, so only the first column is used.",
+    "skippedHeader": "The header row “{{header}}” was skipped.",
+    "overPasteLimit_zero": "Only the first {{max, number}} items are read at once. {{count, number}} more were left out; add them in another batch.",
+    "overPasteLimit_one": "Only the first {{max, number}} items are read at once. {{count, number}} more was left out; add it in another batch.",
+    "overPasteLimit_two": "Only the first {{max, number}} items are read at once. {{count, number}} more were left out; add them in another batch.",
+    "overPasteLimit_few": "Only the first {{max, number}} items are read at once. {{count, number}} more were left out; add them in another batch.",
+    "overPasteLimit_many": "Only the first {{max, number}} items are read at once. {{count, number}} more were left out; add them in another batch.",
+    "overPasteLimit_other": "Only the first {{max, number}} items are read at once. {{count, number}} more were left out; add them in another batch.",
+    "copy": "Copy as a list",
+    "copied": "Copied, one item per line.",
+    "copyFailed": "Could not copy. Select the text and copy it yourself."
+  },
+  "competitorDomains": {
+    "count": "Domains: {{used}} of {{max}}",
+    "alreadyAdded": "Already added: {{domains}}",
+    "invalid": "Not a domain name: {{domains}}. Use something like competitor.com.",
+    "own": "That is your own site, so it can't be a competitor: {{domains}}",
+    "limit": "You can compare up to {{max}} competitor domains at a time. Remove one to add another.",
+    "remove": "Remove {{domain}}",
+    "placeholder": "e.g. competitor.com"
+  },
+  "breadcrumbs": {
+    "label": "Breadcrumb",
+    "unknownSite": "Unknown site",
+    "loadingSite": "Loading site…"
   }
 }

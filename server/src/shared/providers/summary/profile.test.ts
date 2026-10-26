@@ -59,7 +59,10 @@ describe('SummaryProvider profile compatibility adapter', () => {
       siteDomain: 'example.test', locale: 'en', count: 2,
       seeds: { keywords: ['seo audit'], titles: ['monitoring'], competitors: [], gscQueries: [] },
     })).not.toThrow();
-    await expect(provider.summarize(summaryInput)).resolves.toEqual(FAKE_SUMMARY_RESULT);
+    await expect(provider.summarize(summaryInput)).resolves.toEqual({
+      ...FAKE_SUMMARY_RESULT,
+      structured: { status: FAKE_SUMMARY_RESULT.summary, items: [] },
+    });
     await expect(provider.generatePrompts({
       siteDomain: 'example.test', locale: 'en', count: 2,
       seeds: { keywords: ['seo audit'], titles: ['monitoring'], competitors: [], gscQueries: [] },
@@ -199,7 +202,11 @@ describe('SummaryProvider profile compatibility adapter', () => {
 
   it('uses one Anthropic AI SDK adapter and preserves model/length normalization', async () => {
     const call = vi.fn<AiSdkCall>().mockResolvedValue({
-      object: { summary: 'Structured summary.', citations: [], truncated: false },
+      object: {
+        status: 'Structured summary.',
+        items: [{ ruleId: 'title', what: 'The title is weak.', why: 'Readers need it.', firstStep: 'Rewrite it.' }],
+        citations: [], truncated: false,
+      },
       finishReason: 'length', tokens, warnings: [],
     });
     const ai = createAnthropicProfileGenerationProvider({
@@ -211,8 +218,16 @@ describe('SummaryProvider profile compatibility adapter', () => {
       runner: createAiProfileRunner({ provider: ai }),
       providerOrder: ['anthropic'],
     });
-    await expect(provider.summarize(summaryInput)).resolves.toEqual({
-      summary: 'Structured summary.', truncated: true, model: 'configured-model',
+    await expect(provider.summarize({
+      ...summaryInput,
+      dismissed: [{ ruleId: 'thin-content', title: 'Thin', affectedCount: 2 }],
+    })).resolves.toEqual({
+      summary: 'Structured summary.\n\nThe title is weak. Readers need it. Rewrite it.',
+      structured: {
+        status: 'Structured summary.',
+        items: [{ ruleId: 'title', what: 'The title is weak.', why: 'Readers need it.', firstStep: 'Rewrite it.' }],
+      },
+      truncated: true, model: 'configured-model',
     });
     expect(call).toHaveBeenCalledTimes(1);
     expect(call.mock.calls[0]?.[0].adapter.provider).toBe('anthropic');

@@ -15,6 +15,11 @@ export const aiVisibilityLowRule: AiVisibilityRule = {
         if (input === null || input.status !== 'ok') {
             return insufficient(input?.status ?? 'unavailable');
         }
+        // Prompts are tracked but nothing has been checked yet: there is no
+        // evidence either way, so this is not a pass.
+        if (input.aiOverviewTotalChecked + input.llmTotalChecked === 0) {
+            return insufficient('no-checks-yet');
+        }
         const noPresence = input.aiOverviewTotalChecked > 0 &&
             input.llmTotalChecked > 0 &&
             input.aiOverviewCitedCount + input.llmMentionedCount === 0;

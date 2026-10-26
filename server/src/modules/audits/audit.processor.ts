@@ -29,9 +29,14 @@ import { Site } from '../sites/index.js';
 import { AuditRun } from './audit-run.model.js';
 import { completeAuditRun, failAuditRun, markAuditRunRunning } from './audit-run.service.js';
 import { replaceAuditedPages } from './audits.service.js';
-import { writeReportSnapshot } from './report.service.js';
-import type { PageSpeedEvaluationInput, PageSpeedSample, } from './rules/index.js';
-import { detectHostRedirect, type SiteProbe, type SiteProbeResult } from './site-probe.js';
+import { pageCapForScan } from './audits.schema.js';
+import { clampToPageCap, probeCoverage, selectCoverageCandidates, verifyBrokenLinks } from './crawl-evidence.js';
+import { finalStopReason } from './crawl-stop-reason.js';
+import { writeReportSnapshot, type WriteReportSnapshotInput } from './report.service.js';
+import type { LocalSeoEvaluationInput, PageSpeedEvaluationInput, PageSpeedSample, } from './rules/index.js';
+import { detectHostRedirect, type PageProber, type SiteProbe, type SiteProbeResult } from '../../shared/security/site-probe.js';
+/** Wall-clock the audit keeps free for persistence after the evidence stages. */
+export const EVIDENCE_STAGE_RESERVE_MS = 60_000;
 export interface AuditProcessorDeps {
     provider: AuditProvider;
     logger: Logger;
@@ -86,6 +91,11 @@ export interface AuditProcessorDeps {
     }) => Promise<{
         search: GscSearchEvaluationInput;
         sitemaps: GscSitemapsEvaluationInput;
+        /**
+         * Pages Search Console reports for the site (most impressions first).
+         * Used only to ask "did the crawl return these?" in the coverage probe.
+         */
+        pageUrls?: readonly string[];
     }>;
     /**
      * JSON-LD re-check for pages the vendor reported without structured data
@@ -93,7 +103,7 @@ export interface AuditProcessorDeps {
      * initial HTML carries valid JSON-LD. Optional; a failure keeps the
      * vendor verdict and never fails the run.
      */
-    probeStructuredData?: (urls: readonly string[]) => Promise<ReadonlySet<string>>;
+    probeStructuredData?: (urls: readonly string[]) => Promise<ReadonlySet<string> & { faqUrls?: ReadonlySet<string> }>;
     /**
      * Site-level probe (robots.txt sitemap directive, `/llms.txt`, and the
      * http/https × apex/www address variants). Fills the site-wide signals the
@@ -101,6 +111,31 @@ export interface AuditProcessorDeps {
      * never fails the run.
      */
     probeSite?: SiteProbe;
+    /**
+     * Stored AI Visibility rollup for the site (zero vendor spend: it reads the
+     * tracked prompts and mention snapshots the AI Visibility tab already
+     * recorded). Without it the `ai-visibility-low` check cannot be evaluated.
+     * A failure degrades to `status: 'unavailable'`; the audit still finishes.
+     */
+    collectAiVisibility?: (input: {
+        accountId: string;
+        siteId: string;
+    }) => Promise<NonNullable<WriteReportSnapshotInput['aiVisibility']>>;
+    /**
+     * Stored Local SEO rollup (NAP, reviews, local pack): also a zero-spend
+     * read of what the Local SEO tab recorded. Same degradation contract.
+     */
+    collectLocalSeo?: (input: {
+        accountId: string;
+        siteId: string;
+    }) => Promise<LocalSeoEvaluationInput>;
+    /**
+     * First-party page prober (SSRF-guarded, up to five redirects per request).
+     * Backs the post-crawl evidence stages: broken-link verification and
+     * coverage probes for URLs the crawl did not return. Optional so unit
+     * tests never touch the network; a failure never fails the run.
+     */
+    pageProber?: PageProber;
     /**
      * Vendor-response archiver (generic vendor layer). When present, the
      * normalized crawl result is appended to the `vendor_responses` table
@@ -266,6 +301,12 @@ export function createAuditProcessor(deps: AuditProcessorDeps) {
                 // the task and the mongo write can re-post once — unavoidable
                 // without vendor-side idempotency keys.
                 const priorRun = await AuditRun.findById(payload.runId);
+                // The resource scan is decided when the run is created and read
+                // back here, so a resumed task is read the way it was posted. The
+                // crawl ceiling is bounded again here so a hand-edited run never
+                // scans more pages than a scanning run is allowed to cover.
+                const resourceScan = priorRun?.resourceScan === true;
+                const pageCap = pageCapForScan(payload.pageCap, resourceScan);
                 let vendorTaskId: string;
                 if (priorRun?.status === 'running' && priorRun.vendorTaskId) {
                     vendorTaskId = priorRun.vendorTaskId;
@@ -274,7 +315,8 @@ export function createAuditProcessor(deps: AuditProcessorDeps) {
                 else {
                     const started = await deps.provider.startAudit({
                         domain: target.domain,
-                        pageCap: payload.pageCap,
+                        pageCap,
+                        ...(resourceScan ? { resourceScan } : {}),
                     });
                     vendorTaskId = started.vendorTaskId;
                     await markAuditRunRunning(payload.runId, vendorTaskId);
@@ -299,10 +341,10 @@ export function createAuditProcessor(deps: AuditProcessorDeps) {
                     // Poll budget exhausted — transient by definition; let BullMQ retry.
                     throw new Error(`audit ${vendorTaskId} still running after ${maxPolls} polls`);
                 }
-                const result: AuditResult = await deps.provider.getAuditResult(vendorTaskId);
-                return { vendorTaskId, result };
+                const result: AuditResult = await deps.provider.getAuditResult(vendorTaskId, { resourceScan });
+                return { vendorTaskId, result, crawlPageCap: pageCap };
             });
-            const { vendorTaskId, result: vendorResult } = crawl;
+            const { vendorTaskId, result: vendorResult, crawlPageCap } = crawl;
             // Save-everything: the normalized crawl result is archived append-only
             // the moment the vendor hands it over (per-account — audit data is
             // never served cross-user). An archive failure is OUR database failing
@@ -319,6 +361,7 @@ export function createAuditProcessor(deps: AuditProcessorDeps) {
                         // crawled page, so the requested ceiling and the actual count
                         // are both kept for operator cost review.
                         pageCap: payload.pageCap,
+                        resourceScan: vendorResult.capabilities?.resourceScan === true,
                         pagesCrawled: vendorResult.pages.length,
                     },
                     payload: vendorResult,
@@ -327,7 +370,17 @@ export function createAuditProcessor(deps: AuditProcessorDeps) {
                     fetchedAt: new Date(now()),
                 });
             }
-            const result = applyHostRedirect(await applySiteProbe(await applyStructuredDataProbe(vendorResult, deps), target, deps), target);
+            // The audit's page limit also bounds what is STORED: the vendor's
+            // ceiling is a request, not a guarantee.
+            const clamped = clampToPageCap(vendorResult.pages, crawlPageCap);
+            if (clamped.dropped > 0) {
+                deps.logger.warn({ runId: payload.runId, pageCap: crawlPageCap, dropped: clamped.dropped }, 'vendor returned more pages than the audit allows — extra pages dropped');
+            }
+            if (vendorResult.vendorPagesCrawled !== undefined &&
+                clamped.pages.length < Math.min(vendorResult.vendorPagesCrawled, crawlPageCap)) {
+                deps.logger.warn({ runId: payload.runId, storedPages: clamped.pages.length, vendorPagesCrawled: vendorResult.vendorPagesCrawled }, 'stored crawl is smaller than the vendor reports — the page list is incomplete');
+            }
+            let result = applyHostRedirect(await applySiteProbe(await applyStructuredDataProbe({ ...vendorResult, pages: clamped.pages }, deps), target, deps), target);
             // Page-speed sampling — Lighthouse + optional CrUX on a
             // sampled subset.
             // Provider failure is degradation, NOT audit failure (release-gate
@@ -375,6 +428,7 @@ export function createAuditProcessor(deps: AuditProcessorDeps) {
             // the run still finishes.
             let gscSearch: GscSearchEvaluationInput | undefined;
             let gscSitemaps: GscSitemapsEvaluationInput | undefined;
+            let gscPageUrls: readonly string[] = [];
             if (deps.collectGscInsights) {
                 try {
                     const insights = await deps.collectGscInsights({
@@ -384,6 +438,7 @@ export function createAuditProcessor(deps: AuditProcessorDeps) {
                     });
                     gscSearch = insights.search;
                     gscSitemaps = insights.sitemaps;
+                    gscPageUrls = insights.pageUrls ?? [];
                 }
                 catch (err) {
                     deps.logger.warn({
@@ -403,6 +458,63 @@ export function createAuditProcessor(deps: AuditProcessorDeps) {
                     gscSitemaps = { status: 'unavailable', sitemaps: [] };
                 }
             }
+            // Stored AI Visibility + Local SEO rollups. Plain reads of data other
+            // tabs already recorded: no vendor spend, never fatal.
+            let aiVisibility: WriteReportSnapshotInput['aiVisibility'];
+            if (deps.collectAiVisibility) {
+                try {
+                    aiVisibility = await deps.collectAiVisibility({ accountId: payload.accountId, siteId: payload.siteId });
+                }
+                catch (err) {
+                    deps.logger.warn({ siteId: payload.siteId, err: (err as Error).message }, 'ai visibility rollup failed — degrading to unavailable');
+                    aiVisibility = {
+                        status: 'unavailable',
+                        aiOverviewCitedCount: 0,
+                        aiOverviewTotalChecked: 0,
+                        llmMentionedCount: 0,
+                        llmTotalChecked: 0,
+                        shareOfVoicePct: null,
+                        negativeSentimentCount: 0,
+                        competitorsPresent: false,
+                    };
+                }
+            }
+            let localSeo: LocalSeoEvaluationInput | undefined;
+            if (deps.collectLocalSeo) {
+                try {
+                    localSeo = await deps.collectLocalSeo({ accountId: payload.accountId, siteId: payload.siteId });
+                }
+                catch (err) {
+                    deps.logger.warn({ siteId: payload.siteId, err: (err as Error).message }, 'local seo rollup failed — degrading to unavailable');
+                    localSeo = { status: 'unavailable', listings: [], reviews: null, qa: null, localPack: null };
+                }
+            }
+            // First-party evidence stages. Free, bounded, and never fatal: a
+            // failure leaves the crawler's own verdicts in place.
+            if (deps.pageProber) {
+                const evidence = {
+                    prober: deps.pageProber,
+                    outOfBudget: () => now() >= deadline - EVIDENCE_STAGE_RESERVE_MS,
+                };
+                try {
+                    const verification = await verifyBrokenLinks(result.pages, evidence);
+                    deps.logger.info({ runId: payload.runId, ...verification }, 'broken link targets verified');
+                }
+                catch (err) {
+                    deps.logger.warn({ runId: payload.runId, err: (err as Error).message }, 'broken link verification failed — crawler verdicts kept');
+                }
+                try {
+                    const coverageProbes = await probeCoverage(selectCoverageCandidates({
+                        rootUrl: target.url,
+                        searchConsoleUrls: gscPageUrls,
+                        crawledUrls: result.pages.map((page) => page.url),
+                    }), evidence);
+                    result = { ...result, coverageProbes };
+                }
+                catch (err) {
+                    deps.logger.warn({ runId: payload.runId, err: (err as Error).message }, 'crawl coverage probes failed — no coverage evidence recorded');
+                }
+            }
             // Idempotent persistence (release gate): drop prior pages → run the
             // rules → write the snapshot → flip the run status. A retried job
             // never leaves partial data, and the report is ALWAYS available the
@@ -417,8 +529,18 @@ export function createAuditProcessor(deps: AuditProcessorDeps) {
                 ...(indexStatus ? { indexStatus } : {}),
                 ...(gscSearch ? { gscSearch } : {}),
                 ...(gscSitemaps ? { gscSitemaps } : {}),
+                ...(aiVisibility ? { aiVisibility } : {}),
+                ...(localSeo ? { localSeo } : {}),
             });
-            await completeAuditRun(payload.runId, result);
+            // Every finished run records why its crawl stopped.
+            await completeAuditRun(payload.runId, {
+                ...result,
+                crawlStopReason: finalStopReason({
+                    reported: result.crawlStopReason,
+                    pageCap: crawlPageCap,
+                    pagesCrawled: result.vendorPagesCrawled ?? result.pages.length,
+                }),
+            });
             deps.logger.info({ runId: payload.runId, siteId: payload.siteId, pages: result.pages.length }, 'audit run succeeded');
             return { runId: payload.runId, pagesCrawled: result.pages.length };
         }
@@ -449,7 +571,7 @@ export async function applyStructuredDataProbe(result: AuditResult, deps: Pick<A
         .map((page) => page.url);
     if (candidates.length === 0)
         return result;
-    let withJsonLd: ReadonlySet<string>;
+    let withJsonLd: ReadonlySet<string> & { faqUrls?: ReadonlySet<string> };
     try {
         withJsonLd = await deps.probeStructuredData(candidates);
     }
@@ -457,11 +579,14 @@ export async function applyStructuredDataProbe(result: AuditResult, deps: Pick<A
         deps.logger.warn({ err: (err as Error).message }, 'structured-data probe failed — keeping vendor verdict');
         return result;
     }
-    if (withJsonLd.size === 0)
+    if (withJsonLd.size === 0 && !withJsonLd.faqUrls?.size)
         return result;
     return {
         ...result,
-        pages: result.pages.map((page) => withJsonLd.has(page.url) ? { ...page, hasStructuredData: true } : page),
+        pages: result.pages.map((page) =>
+            withJsonLd.has(page.url) || withJsonLd.faqUrls?.has(page.url)
+                ? { ...page, ...(withJsonLd.has(page.url) ? { hasStructuredData: true } : {}), ...(withJsonLd.faqUrls?.has(page.url) ? { hasFaqSignals: true } : {}) }
+                : page),
     };
 }
 /**

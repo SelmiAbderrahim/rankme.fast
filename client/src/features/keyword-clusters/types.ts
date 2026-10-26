@@ -12,8 +12,28 @@ export type KeywordClusterAiStatus =
   | 'provider_failed'
   | 'skipped';
 
-/** Why a tracked keyword could not take part. Never silently dropped. */
-export type KeywordClusterBlockReason = 'missing' | 'stale' | 'empty';
+/**
+ * Why a keyword is left out of a run (mirrors the server
+ * `evaluateClusterEligibility`). `missing` / `stale` / `empty` are the earlier
+ * reasons still readable on stored runs. Never silently dropped.
+ */
+export const KEYWORD_CLUSTER_ELIGIBILITY_REASONS = [
+  'check_too_old',
+  'no_serp_snapshot',
+  'never_checked',
+  'failed_last_check',
+] as const;
+export type KeywordClusterEligibilityReason = (typeof KEYWORD_CLUSTER_ELIGIBILITY_REASONS)[number];
+export type KeywordClusterBlockReason = KeywordClusterEligibilityReason | 'missing' | 'stale' | 'empty';
+
+export interface KeywordClusterEligibility {
+  canRun: boolean;
+  blockingReasonCode: 'no_tracked_keywords' | 'not_enough_eligible' | null;
+  total: number;
+  eligibleCount: number;
+  ineligibleCount: number;
+  reasonCounts: Record<KeywordClusterEligibilityReason, number>;
+}
 
 export interface KeywordClusterSelectableKeyword {
   id: string;
@@ -33,6 +53,7 @@ export interface KeywordClusterPreview {
   readyCount: number;
   blocked: KeywordClusterBlocked[];
   blockedTotal: number;
+  eligibility?: KeywordClusterEligibility;
   minSharedUrls: number;
   topUrlWindow: number;
   freshnessDays: number;

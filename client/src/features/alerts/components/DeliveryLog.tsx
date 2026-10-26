@@ -1,3 +1,5 @@
+import { Bdi } from '@shared/components/Bdi';
+import { formatAbsoluteDate } from '@shared/lib/datetime';
 import { useTranslation } from 'react-i18next';
 import { StatusChip, type StatusTone } from '@shared/ui/status-chip';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@shared/ui/table';
@@ -12,7 +14,7 @@ const STATUS_TONE: Record<AlertDeliveryStatus, StatusTone> = {
 };
 
 /** Date only — the stored observation pair carries no finer precision. */
-const day = (iso: string) => iso.slice(0, 10);
+const day = (iso: string, locale: string) => formatAbsoluteDate(iso.slice(0, 10), locale);
 
 interface DeliveryLogProps {
   deliveries: AlertDelivery[];
@@ -26,22 +28,22 @@ interface DeliveryLogProps {
  * Keywords and domains are untrusted text and render as text nodes only.
  */
 export const DeliveryLog = ({ deliveries }: DeliveryLogProps) => {
-  const { t } = useTranslation('alerts');
+  const { t, i18n } = useTranslation('alerts');
 
   const observationPair = (evidence: AlertEvidence): string => {
     if (evidence.kind === 'rank_drop') {
       return t('log.rankPair', {
         before: evidence.before.position ?? t('log.notRanked'),
-        beforeAt: day(evidence.before.at),
+        beforeAt: day(evidence.before.at, i18n.language),
         after: evidence.after.position ?? t('log.notRanked'),
-        afterAt: day(evidence.after.at),
+        afterAt: day(evidence.after.at, i18n.language),
       });
     }
     return t('log.linkPair', {
       beforeCount: evidence.before.rowCount,
-      beforeAt: day(evidence.before.at),
+      beforeAt: day(evidence.before.at, i18n.language),
       afterCount: evidence.after.rowCount,
-      afterAt: day(evidence.after.at),
+      afterAt: day(evidence.after.at, i18n.language),
     });
   };
 
@@ -72,7 +74,7 @@ export const DeliveryLog = ({ deliveries }: DeliveryLogProps) => {
             <TableCell>
               <div className="flex flex-col gap-1 text-sm">
                 {delivery.evidence.kind === 'rank_drop' ? (
-                  <span>{delivery.evidence.keyword}</span>
+                  <span><Bdi>{delivery.evidence.keyword}</Bdi></span>
                 ) : (
                   <span>{t('log.domainCount', { count: delivery.evidence.changedTotal })}</span>
                 )}
@@ -81,7 +83,7 @@ export const DeliveryLog = ({ deliveries }: DeliveryLogProps) => {
                 delivery.evidence.changedDomains.length > 0 ? (
                   <ul className="text-muted-foreground">
                     {delivery.evidence.changedDomains.map((domain) => (
-                      <li key={domain}>{domain}</li>
+                      <li key={domain}><Bdi>{domain}</Bdi></li>
                     ))}
                   </ul>
                 ) : null}

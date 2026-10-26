@@ -18,3 +18,21 @@ export async function writeToClipboard(text: string): Promise<boolean> {
     return false;
   }
 }
+
+/** Start the write during the user gesture while its text is still loading. */
+export async function writeLazyTextToClipboard(load: () => Promise<string>): Promise<boolean> {
+  if (typeof window === 'undefined') return false;
+  const clipboard = window.navigator?.clipboard;
+  if (!clipboard) return false;
+  try {
+    if (typeof window.ClipboardItem === 'function' && typeof clipboard.write === 'function') {
+      const blob = load().then((text) => new Blob([text], { type: 'text/plain' }));
+      await clipboard.write([new window.ClipboardItem({ 'text/plain': blob })]);
+    } else {
+      await clipboard.writeText(await load());
+    }
+    return true;
+  } catch {
+    return false;
+  }
+}

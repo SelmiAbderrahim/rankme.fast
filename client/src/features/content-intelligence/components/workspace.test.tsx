@@ -2,12 +2,13 @@ import { act, fireEvent, render, screen, waitFor, within } from '@testing-librar
 import userEvent from '@testing-library/user-event';
 import i18next from 'i18next';
 import { I18nextProvider } from 'react-i18next';
-import { createMemoryRouter, MemoryRouter, RouterProvider } from 'react-router-dom';
+import { createMemoryRouter, MemoryRouter, RouterProvider, useLocation } from 'react-router-dom';
+import { ApiError } from '@shared/api/client';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import commonEn from '@shared/i18n/locales/en/common.json';
 import en from '@shared/i18n/locales/en/contentIntelligence.json';
 import type { ContentAnalysis } from '../types';
-import { initialState, updateFormDraft } from '../store/slice';
+import { analysisStatusReceived, initialState, updateFormDraft } from '../store/slice';
 
 const hooks = vi.hoisted(() => ({
   state: {} as Record<string, unknown>,
@@ -21,6 +22,9 @@ const api = vi.hoisted(() => ({
   startAnalysis: vi.fn(),
   cancelAnalysis: vi.fn(),
   regenerateAnalysis: vi.fn(),
+  getAnalysisStatus: vi.fn(),
+  getAnalysisRetryPreview: vi.fn(),
+  retryAnalysis: vi.fn(),
   saveDraftVersion: vi.fn(),
   saveBriefVersion: vi.fn(),
 }));
@@ -96,6 +100,7 @@ const i18n = i18next.createInstance();
 await i18n.init({
   lng: 'en',
   resources: { en: { common: commonEn, contentIntelligence: en } },
+  interpolation: { escapeValue: false },
 });
 
 function analysis(overrides: Partial<ContentAnalysis> = {}): ContentAnalysis {
@@ -126,6 +131,38 @@ function analysis(overrides: Partial<ContentAnalysis> = {}): ContentAnalysis {
     completedAt: null,
     cancelledAt: null,
     ...overrides,
+  };
+}
+
+const RUNNING_PROGRESS = {
+  terminal: false,
+  stepIndex: 2,
+  stepCount: 7,
+  stepKey: 'collecting_owned' as const,
+  failureReasonCode: null,
+  retryAction: null,
+};
+
+const FAILED_ERROR = {
+  category: 'provider_unavailable' as const,
+  messageKey: 'contentIntelligence.errors.providerUnavailable',
+  retryable: false,
+  terminal: true,
+};
+
+const FAILED_PROGRESS = {
+  ...RUNNING_PROGRESS,
+  terminal: true,
+  failureReasonCode: 'provider_unavailable' as const,
+  retryAction: 'retry' as const,
+};
+
+function retryPreview() {
+  return {
+    analysisId: 'a1',
+    ownedUrl: 'https://example.com/guide',
+    keyword: 'content audit',
+    failureReasonCode: 'provider_unavailable',
   };
 }
 
@@ -161,6 +198,7 @@ beforeEach(() => {
   api.preflightAnalysis.mockResolvedValue({ ok: true, reason: null });
   api.startAnalysis.mockResolvedValue({ analysisId: 'started', status: 'queued', duplicate: false, message: 'ok' });
   api.cancelAnalysis.mockResolvedValue({ ok: true });
+  api.getAnalysisStatus.mockResolvedValue({ analysisId: 'a1', status: 'scoring', ...RUNNING_PROGRESS });
   api.regenerateAnalysis.mockResolvedValue({ analysisId: 'regenerated', status: 'queued', duplicate: false, message: 'ok' });
   api.saveDraftVersion.mockResolvedValue({
     version: {
@@ -474,7 +512,7 @@ describe('NewAnalysisForm', () => {
     ['ftp://example.com/page', 'keyword', 'Enter a valid URL.'],
     ['not a URL', 'keyword', 'Enter a valid URL.'],
     ['https://other.example/page', 'keyword', "URL must match your site's origin."],
-    ['https://example.com/page', 'x'.repeat(201), 'Keep the target keyword under 200 characters.'],
+    ['https://example.com/page', 'x'.repeat(201), 'Use 200 characters or fewer.'],
   ])('validates manual page and keyword input %s', async (ownedUrl, keyword, message) => {
     setState({ formDraft: { ownedUrl, keyword, locale: 'xx', consent: true } });
     renderInRouter(<NewAnalysisForm siteId="s1" siteOrigin="https://example.com" />);
@@ -483,6 +521,93 @@ describe('NewAnalysisForm', () => {
     fireEvent.submit(screen.getByTestId('content-form-submit').closest('form')!);
     expect(await screen.findByText(message)).toBeInTheDocument();
     expect(api.preflightAnalysis).not.toHaveBeenCalled();
+  });
+
+  it('flags a pasted keyword list at once, counts characters, and never truncates', () => {
+    const pasted =
+      'Podcast transcript generator free, Transcript podcast spotify, Best transcript podcast app';
+    setState({
+      formDraft: { ownedUrl: 'https://example.com/page', keyword: pasted, locale: 'en', consent: true },
+    });
+    const view = renderInRouter(<NewAnalysisForm siteId="s1" siteOrigin="https://example.com" />);
+    const input = screen.getByTestId('content-form-keyword');
+    expect(input).not.toHaveAttribute('maxLength');
+    expect(input).toHaveValue(pasted);
+    expect(input).toHaveAttribute('aria-invalid', 'true');
+    expect(screen.getByText('Enter one search query, not a list. Start a separate analysis for each keyword.')).toBeInTheDocument();
+    const counter = screen.getByTestId('content-form-keyword-counter');
+    expect(counter).toHaveTextContent(`${pasted.length}/200 characters`);
+    expect(counter).toHaveClass('text-muted-foreground');
+    expect(input).toHaveAttribute('aria-describedby', counter.id);
+    view.unmount();
+
+    setState({
+      formDraft: { ownedUrl: 'https://example.com/page', keyword: 'y'.repeat(230), locale: 'en', consent: true },
+    });
+    const long = renderInRouter(<NewAnalysisForm siteId="s1" siteOrigin="https://example.com" />);
+    expect(screen.getByTestId('content-form-keyword')).toHaveValue('y'.repeat(230));
+    expect(screen.getByTestId('content-form-keyword-counter')).toHaveClass('text-destructive');
+    expect(screen.getByText('Use 200 characters or fewer.')).toBeInTheDocument();
+    long.unmount();
+
+    // "Required" still waits for blur.
+    setState({
+      formDraft: { ownedUrl: 'https://example.com/page', keyword: '', locale: 'en', consent: true },
+    });
+    const empty = renderInRouter(<NewAnalysisForm siteId="s1" siteOrigin="https://example.com" />);
+    expect(screen.queryByText('Enter or choose a target keyword.')).toBeNull();
+    fireEvent.blur(screen.getByTestId('content-form-keyword'));
+    expect(screen.getByText('Enter or choose a target keyword.')).toBeInTheDocument();
+    empty.unmount();
+  });
+
+  it.each([
+    ['seven comma-separated keywords', 'a1, b2, c3, d4, e5, f6, g7'],
+    ['one comma between two queries', 'seo audit, site audit'],
+    ['semicolons', 'seo audit; site audit'],
+    ['a tab', 'seo audit\tsite audit'],
+    ['fullwidth commas', '播客转录，免费工具'],
+  ])('rejects %s inline, keeps what was typed, and does not submit', async (_label, keyword) => {
+    setState({
+      formDraft: { ownedUrl: 'https://example.com/page', keyword, locale: 'en', consent: true },
+    });
+    renderInRouter(<NewAnalysisForm siteId="s1" siteOrigin="https://example.com" />);
+    const input = screen.getByTestId('content-form-keyword');
+    expect(input).toHaveValue(keyword);
+    expect(input).toHaveAttribute('aria-invalid', 'true');
+    expect(screen.getByTestId('content-form-keyword-error')).toHaveTextContent(
+      'Enter one search query, not a list. Start a separate analysis for each keyword.',
+    );
+    fireEvent.submit(screen.getByTestId('content-form-submit').closest('form')!);
+    expect(api.preflightAnalysis).not.toHaveBeenCalled();
+    expect(api.startAnalysis).not.toHaveBeenCalled();
+  });
+
+  it('accepts a keyword of exactly 200 characters and rejects 201 without truncating either', async () => {
+    const atLimit = `${'word '.repeat(39)}wordsx`.slice(0, 200);
+    expect(atLimit).toHaveLength(200);
+    setState({
+      formDraft: { ownedUrl: 'https://example.com/page', keyword: atLimit, locale: 'en', consent: true },
+    });
+    const ok = renderInRouter(<NewAnalysisForm siteId="s1" siteOrigin="https://example.com" />);
+    expect(screen.getByTestId('content-form-keyword')).toHaveValue(atLimit);
+    expect(screen.getByTestId('content-form-keyword')).toHaveAttribute('aria-invalid', 'false');
+    expect(screen.queryByTestId('content-form-keyword-error')).toBeNull();
+    expect(screen.getByTestId('content-form-keyword-counter')).toHaveTextContent('200/200 characters');
+    expect(screen.getByTestId('content-form-keyword-counter')).not.toHaveClass('text-destructive');
+    ok.unmount();
+
+    const over = `${atLimit}p`;
+    setState({
+      formDraft: { ownedUrl: 'https://example.com/page', keyword: over, locale: 'en', consent: true },
+    });
+    renderInRouter(<NewAnalysisForm siteId="s1" siteOrigin="https://example.com" />);
+    expect(screen.getByTestId('content-form-keyword')).toHaveValue(over);
+    expect(screen.getByTestId('content-form-keyword-error')).toHaveTextContent('Use 200 characters or fewer.');
+    expect(screen.getByTestId('content-form-keyword-counter')).toHaveTextContent('201/200 characters');
+    fireEvent.submit(screen.getByTestId('content-form-submit').closest('form')!);
+    expect(api.preflightAnalysis).not.toHaveBeenCalled();
+    expect(api.startAnalysis).not.toHaveBeenCalled();
   });
 
   it('refuses an unconsented submit before preflight and offers known pages and keywords', async () => {
@@ -840,85 +965,455 @@ describe('AnalysisDetail', () => {
     }) } });
     renderInRouter(<AnalysisDetail siteId="s1" analysisId="a1" onBack={vi.fn()} onRegenerated={vi.fn()} />);
     expect(screen.getByTestId('content-detail-failed')).toHaveTextContent('The analysis stopped before it finished.');
-    expect(screen.getByTestId('content-detail-regenerate')).toBeInTheDocument();
+    expect(screen.queryByTestId('content-detail-failure-reason')).toBeNull();
+    // The retry lives in the failure alert; no second regenerate button below.
+    expect(
+      within(screen.getByTestId('content-detail-failed')).getByTestId('content-detail-retry'),
+    ).toHaveTextContent('Try again');
+    expect(screen.queryByTestId('content-detail-regenerate')).toBeNull();
   });
 
-  it('aborts an active detail poll when the selected analysis unmounts', async () => {
+  it('explains an owned-page failure without a recorded reason and offers nothing to export', () => {
+    for (const category of ['owned_page_unusable', 'owned_fetch_failed'] as const) {
+      setState({ detail: { a1: analysis({
+        status: 'failed',
+        error: { category, messageKey: 'x', retryable: false, terminal: true },
+        recommendations: [],
+      }) } });
+      const view = renderInRouter(
+        <AnalysisDetail siteId="s1" analysisId="a1" onBack={vi.fn()} onRegenerated={vi.fn()} />,
+      );
+      expect(screen.getByTestId('content-detail-failure-unknown')).toHaveTextContent(
+        'The usual ones are a robots.txt block',
+      );
+      expect(screen.queryByTestId('content-detail-failure-reason')).toBeNull();
+      expect(screen.queryByTestId('report-export-control')).toBeNull();
+      view.unmount();
+    }
+  });
+
+  it('explains an owned-page failure with a safe reason, a hint, and a retry for a legacy row', async () => {
+    const onRegenerated = vi.fn();
+    setState({ detail: { a1: analysis({
+      status: 'failed',
+      error: {
+        category: 'owned_page_unusable',
+        messageKey: 'x',
+        retryable: false,
+        terminal: true,
+        reason: 'http_error',
+        httpStatus: 403,
+      },
+      recommendations: [],
+    }) } });
+    renderInRouter(<AnalysisDetail siteId="s1" analysisId="a1" onBack={vi.fn()} onRegenerated={onRegenerated} />);
+    const failed = screen.getByTestId('content-detail-failed');
+    expect(failed).toHaveTextContent('Your page could not be read.');
+    expect(screen.getByTestId('content-detail-failure-reason')).toHaveTextContent(
+      'Your page answered with HTTP status 403 instead of its content.',
+    );
+    expect(failed).toHaveTextContent('Check that the URL is correct');
+    fireEvent.click(within(failed).getByTestId('content-detail-retry'));
+    fireEvent.click(screen.getByRole('button', { name: 'Regenerate' }));
+    await waitFor(() => expect(onRegenerated).toHaveBeenCalledWith('regenerated'));
+  });
+
+  it('replaces the empty opportunities, brief, draft and sources cards of a failed run with one explanation', () => {
+    const failedError = {
+      category: 'owned_page_unusable',
+      messageKey: 'x',
+      retryable: false,
+      terminal: true,
+      reason: 'http_error',
+      httpStatus: 404,
+    };
+    setState({ detail: { a1: analysis({ status: 'failed', error: failedError, recommendations: [] }) } });
+    const empty = renderInRouter(<AnalysisDetail siteId="s1" analysisId="a1" onBack={vi.fn()} onRegenerated={vi.fn()} />);
+    for (const id of ['content-detail-brief', 'content-detail-draft', 'content-detail-sources', 'recommendation-empty', 'content-detail-regenerate']) {
+      expect(screen.queryByTestId(id)).toBeNull();
+    }
+    // The (mocked) opportunities workflow is not rendered for a run with no opportunities.
+    expect(screen.queryByRole('button', { name: 'refresh recommendations' })).toBeNull();
+    expect(screen.getByTestId('content-detail-failure-reason')).toHaveTextContent('HTTP status 404');
+    expect(screen.getAllByTestId('content-detail-failed-no-output')).toHaveLength(1);
+    expect(screen.getByTestId('content-detail-failed-no-output')).toHaveTextContent(
+      'This run stopped before it produced anything, so there are no content opportunities, brief or draft to show.',
+    );
+    empty.unmount();
+
+    // A failed run that did save a brief keeps the sections that have content.
+    const brief = { versionId: 'v1', sections: [{ heading: 'Plan', body: 'Guidance' }], citations: [] };
+    const recommendation = {
+      id: 'r1', section: 'coverage', ruleId: 'x', direction: 'add' as const, confidence: 0.9,
+      messageKey: 'k', message: 'Add a section', evidenceSourceIds: [],
+    };
+    setState({ detail: { a1: analysis({
+      status: 'failed',
+      error: failedError,
+      brief,
+      recommendations: [recommendation],
+      citations: [{ sourceId: 'c', url: 'https://example.com/rival', title: 'Rival' }],
+    }) } });
+    const partial = renderInRouter(<AnalysisDetail siteId="s1" analysisId="a1" onBack={vi.fn()} onRegenerated={vi.fn()} />);
+    expect(screen.getByTestId('content-detail-brief')).toBeInTheDocument();
+    expect(screen.getByTestId('content-detail-sources')).toBeInTheDocument();
+    expect(screen.getByRole('button', { name: 'refresh recommendations' })).toBeInTheDocument();
+    expect(screen.queryByTestId('content-detail-draft')).toBeNull();
+    expect(screen.getByTestId('content-detail-failed-no-output')).toBeInTheDocument();
+    partial.unmount();
+
+    // Every section present: nothing is hidden, so no "nothing produced" line.
+    setState({ detail: { a1: analysis({
+      status: 'failed',
+      error: failedError,
+      brief,
+      draft: { versionId: 'v1', markdown: 'draft', wordCount: 1, citations: [] },
+      recommendations: [recommendation],
+    }) } });
+    const full = renderInRouter(<AnalysisDetail siteId="s1" analysisId="a1" onBack={vi.fn()} onRegenerated={vi.fn()} />);
+    expect(screen.getByTestId('content-detail-draft')).toBeInTheDocument();
+    expect(screen.queryByTestId('content-detail-failed-no-output')).toBeNull();
+    full.unmount();
+
+    // A legacy failed row with no recorded error keeps the old layout and invents no reason.
+    setState({ detail: { a1: analysis({ status: 'failed', error: null, recommendations: [] }) } });
+    renderInRouter(<AnalysisDetail siteId="s1" analysisId="a1" onBack={vi.fn()} onRegenerated={vi.fn()} />);
+    expect(screen.getByTestId('content-detail-brief')).toBeInTheDocument();
+    expect(screen.queryByTestId('content-detail-failed')).toBeNull();
+    expect(screen.queryByTestId('content-detail-failed-no-output')).toBeNull();
+  });
+
+  it('keeps every section of a completed run even when some are empty', () => {
+    setState({ detail: { a1: analysis({ status: 'completed' }) } });
+    renderInRouter(<AnalysisDetail siteId="s1" analysisId="a1" onBack={vi.fn()} onRegenerated={vi.fn()} />);
+    for (const id of ['content-detail-brief', 'content-detail-draft', 'content-detail-sources']) {
+      expect(screen.getByTestId(id)).toBeInTheDocument();
+    }
+    expect(screen.queryByTestId('content-detail-failed-no-output')).toBeNull();
+  });
+
+  it('shows the redirect path and the media type our own request recorded', () => {
+    setState({ detail: { a1: analysis({
+      status: 'failed',
+      error: {
+        category: 'owned_page_unusable',
+        messageKey: 'x',
+        retryable: false,
+        terminal: true,
+        reason: 'redirect_limit',
+        httpStatus: null,
+        finalUrl: null,
+        contentType: null,
+        redirectChain: [
+          { url: 'https://example.com/a', status: 301 },
+          { url: 'https://example.com/b', status: 302 },
+        ],
+      },
+      recommendations: [],
+    }) } });
+    const first = renderInRouter(<AnalysisDetail siteId="s1" analysisId="a1" onBack={vi.fn()} onRegenerated={vi.fn()} />);
+    expect(screen.getByTestId('content-detail-redirect-path')).toHaveTextContent(
+      'Redirect path: 301 https://example.com/a → 302 https://example.com/b',
+    );
+    expect(screen.getByTestId('content-detail-failed')).toHaveTextContent('Point the address straight at the final page');
+    first.unmount();
+
+    setState({ detail: { a1: analysis({
+      status: 'failed',
+      error: {
+        category: 'owned_page_unusable',
+        messageKey: 'x',
+        retryable: false,
+        terminal: true,
+        reason: 'non_html',
+        contentType: 'application/pdf',
+        redirectChain: [],
+      },
+      recommendations: [],
+    }) } });
+    renderInRouter(<AnalysisDetail siteId="s1" analysisId="a1" onBack={vi.fn()} onRegenerated={vi.fn()} />);
+    expect(screen.getByTestId('content-detail-failure-reason')).toHaveTextContent(
+      'This address serves application/pdf, not a web page.',
+    );
+    expect(screen.queryByTestId('content-detail-redirect-path')).toBeNull();
+  });
+
+  it('says which final address a redirected page was read at', () => {
+    setState({ detail: { a1: analysis({
+      status: 'completed',
+      owned: {
+        url: 'https://example.com/',
+        contentHash: 'h',
+        finalUrl: 'https://example.com/en',
+        redirectChain: [{ url: 'https://example.com/', status: 301 }],
+      },
+    }) } });
+    renderInRouter(<AnalysisDetail siteId="s1" analysisId="a1" onBack={vi.fn()} onRegenerated={vi.fn()} />);
+    expect(screen.getByTestId('content-detail-final-url')).toHaveTextContent(
+      'Read at https://example.com/en after a redirect',
+    );
+  });
+
+  it('renders every failure reason and ignores unknown ones; no retry for non-retryable service faults', () => {
+    const reasons = [
+      ['robots_blocked', 'robots.txt blocks our reader'],
+      ['access_denied', 'refused access'],
+      ['timeout', 'took too long to load'],
+      ['temporarily_unavailable', 'could not be loaded this time'],
+      ['empty_content', 'only with JavaScript'],
+      ['too_large', 'too large to read'],
+      ['unsafe_url', 'not publicly reachable'],
+      ['unreadable', 'form we could not read'],
+      ['redirect_loop', 'redirects loop back on themselves'],
+      ['redirect_limit', 'redirects more than five times'],
+      ['unsafe_redirect', 'redirects to an address that is not publicly reachable'],
+      ['non_html', 'serves , not a web page'],
+    ] as const;
+    for (const [reason, text] of reasons) {
+      setState({ detail: { a1: analysis({
+        status: 'failed',
+        error: { category: 'owned_fetch_failed', messageKey: 'x', retryable: true, terminal: true, reason, httpStatus: null },
+      }) } });
+      const view = renderInRouter(<AnalysisDetail siteId="s1" analysisId="a1" onBack={vi.fn()} onRegenerated={vi.fn()} />);
+      expect(screen.getByTestId('content-detail-failure-reason')).toHaveTextContent(text);
+      view.unmount();
+    }
+    setState({ detail: { a1: analysis({
+      status: 'failed',
+      error: { category: 'provider_unavailable', messageKey: 'x', retryable: false, terminal: true, reason: 'future_reason' },
+    }) } });
+    renderInRouter(<AnalysisDetail siteId="s1" analysisId="a1" onBack={vi.fn()} onRegenerated={vi.fn()} />);
+    expect(screen.queryByTestId('content-detail-failure-reason')).toBeNull();
+    expect(screen.queryByTestId('content-detail-retry')).toBeNull();
+    expect(screen.queryByTestId('content-detail-regenerate')).toBeNull();
+  });
+
+  it('aborts an active status poll when the selected analysis unmounts', async () => {
     vi.useFakeTimers();
     setState({ detail: { a1: analysis({ status: 'scoring' }) } });
-    api.getAnalysis
-      .mockResolvedValueOnce(analysis({ status: 'scoring' }))
-      .mockImplementationOnce((_analysisId, _siteId, init) => new Promise((_resolve, reject) => {
-        init?.signal?.addEventListener('abort', () => reject(new DOMException('aborted', 'AbortError')));
-      }));
+    api.getAnalysisStatus.mockImplementationOnce((_analysisId, init) => new Promise((_resolve, reject) => {
+      init?.signal?.addEventListener('abort', () => reject(new DOMException('aborted', 'AbortError')));
+    }));
     const view = renderInRouter(
       <AnalysisDetail siteId="s1" analysisId="a1" onBack={vi.fn()} onRegenerated={vi.fn()} />,
     );
-    await vi.advanceTimersByTimeAsync(4000);
-    const signal = api.getAnalysis.mock.calls[1]?.[2]?.signal;
+    await vi.advanceTimersByTimeAsync(2000);
+    const signal = api.getAnalysisStatus.mock.calls[0]?.[1]?.signal;
     expect(signal?.aborted).toBe(false);
     view.unmount();
     expect(signal?.aborted).toBe(true);
     await vi.runAllTimersAsync();
   });
 
-  it('polls and cancels non-terminal analyses, showing live stage progress', async () => {
+  it('renders progress from server state, moves the step on, and cancels', async () => {
     vi.useFakeTimers();
     setState({
       detail: {
         a1: analysis({
           status: 'scoring',
-          stages: [
-            { name: 'queued', startedAt: '2026-07-01T00:00:00Z', completedAt: '2026-07-01T00:00:01Z', error: null },
-            { name: 'collecting_owned', startedAt: '2026-07-01T00:00:01Z', completedAt: '2026-07-01T00:00:02Z', error: null },
-            { name: 'scoring', startedAt: '2026-07-01T00:00:02Z', completedAt: null, error: null },
-          ],
+          progress: { ...RUNNING_PROGRESS, stepIndex: 5, stepKey: 'scoring' },
         }),
       },
     });
     const view = renderInRouter(<AnalysisDetail siteId="s1" analysisId="a1" onBack={vi.fn()} onRegenerated={vi.fn()} />);
-    // Live progress card: spinner, honest completed-stage bar (2/7 ≈ 29%),
+    // Live progress card: spinner, honest finished-step bar (4/7 ≈ 57%),
     // current stage label, and "Step 5 of 7".
     expect(screen.getByTestId('content-detail-progress')).toBeInTheDocument();
     expect(screen.getByTestId('content-detail-progress-spinner')).toBeInTheDocument();
-    expect(screen.getByRole('progressbar')).toHaveAttribute('aria-valuenow', '29');
+    expect(screen.getByRole('progressbar')).toHaveAttribute('aria-valuenow', '57');
     expect(screen.getByTestId('content-detail-progress-step')).toHaveTextContent('Step 5 of 7');
+    expect(screen.getByTestId('content-detail-progress-note')).toHaveTextContent('updates automatically');
     expect(screen.getByText('Brief is not available for this run.')).toBeInTheDocument();
     expect(screen.getByRole('link', { name: 'Owned page' })).toHaveAttribute(
       'href',
       'https://example.com/guide',
     );
-    await vi.advanceTimersByTimeAsync(4000);
-    expect(api.getAnalysis).toHaveBeenCalled();
+    const next = { analysisId: 'a1', status: 'generating_brief' as const, ...RUNNING_PROGRESS, stepIndex: 6, stepKey: 'generating_brief' as const };
+    api.getAnalysisStatus.mockResolvedValueOnce(next);
+    await vi.advanceTimersByTimeAsync(2000);
+    expect(api.getAnalysisStatus).toHaveBeenCalledWith('a1', expect.objectContaining({ signal: expect.any(AbortSignal) }));
+    expect(hooks.dispatch).toHaveBeenCalledWith(analysisStatusReceived({ siteId: 's1', job: next }));
     fireEvent.click(screen.getByTestId('content-detail-cancel'));
     fireEvent.click(screen.getByRole('button', { name: 'Cancel analysis' }));
     expect(api.cancelAnalysis).toHaveBeenCalled();
     view.unmount();
   });
 
-  it('pauses polling while the tab is hidden and resumes when it returns', async () => {
-    vi.useFakeTimers();
-    const setVisibility = (value: 'hidden' | 'visible') =>
-      Object.defineProperty(document, 'visibilityState', {
-        configurable: true,
-        get: () => value,
-      });
-    setVisibility('hidden');
+  it('falls back to the run status for progress when the server sent none', () => {
     setState({ detail: { a1: analysis({ status: 'scoring' }) } });
-    const view = renderInRouter(
-      <AnalysisDetail siteId="s1" analysisId="a1" onBack={vi.fn()} onRegenerated={vi.fn()} />,
-    );
-    // Mounted hidden: no poll is scheduled even after the interval elapses.
+    renderInRouter(<AnalysisDetail siteId="s1" analysisId="a1" onBack={vi.fn()} onRegenerated={vi.fn()} />);
+    expect(screen.getByTestId('content-detail-progress-step')).toHaveTextContent('Step 5 of 7');
+  });
+
+  it('loads the full result as soon as the status read is terminal', async () => {
+    vi.useFakeTimers();
+    installThunkDispatch();
+    setState({ detail: { a1: analysis({ status: 'collecting_owned' }) } });
+    const view = renderInRouter(<AnalysisDetail siteId="s1" analysisId="a1" onBack={vi.fn()} onRegenerated={vi.fn()} />);
+    await vi.advanceTimersByTimeAsync(0);
     api.getAnalysis.mockClear();
-    await vi.advanceTimersByTimeAsync(8000);
-    fireEvent(document, new Event('visibilitychange'));
-    expect(api.getAnalysis).not.toHaveBeenCalled();
-    // Returning to the foreground re-fetches immediately.
-    setVisibility('visible');
-    fireEvent(document, new Event('visibilitychange'));
-    expect(api.getAnalysis).toHaveBeenCalled();
+    api.getAnalysisStatus.mockResolvedValueOnce({
+      analysisId: 'a1',
+      status: 'failed',
+      ...RUNNING_PROGRESS,
+      terminal: true,
+      failureReasonCode: 'provider_unavailable',
+      retryAction: 'retry',
+    });
+    await vi.advanceTimersByTimeAsync(2000);
+    expect(api.getAnalysis).toHaveBeenCalledTimes(1);
+    await vi.advanceTimersByTimeAsync(20_000);
+    expect(api.getAnalysisStatus).toHaveBeenCalledTimes(1);
     view.unmount();
-    setVisibility('visible');
+  });
+
+  it('says the run is still going once the status poll reaches its time limit', async () => {
+    vi.useFakeTimers();
+    setState({ detail: { a1: analysis({ status: 'scoring' }) } });
+    api.getAnalysisStatus.mockResolvedValue({ analysisId: 'a1', status: 'scoring', ...RUNNING_PROGRESS, stepIndex: 5, stepKey: 'scoring' });
+    const view = renderInRouter(<AnalysisDetail siteId="s1" analysisId="a1" onBack={vi.fn()} onRegenerated={vi.fn()} />);
+    await vi.advanceTimersByTimeAsync(10 * 60_000 + 5_000);
+    expect(screen.getByTestId('content-detail-progress-note')).toHaveTextContent(
+      'Still running. You can leave this page and come back later; the result will be here.',
+    );
+    view.unmount();
+  });
+
+  it('moves focus to the outcome heading when a watched run ends', () => {
+    setState({ detail: { a1: analysis({ status: 'collecting_owned' }) } });
+    const onBack = vi.fn();
+    const onRegenerated = vi.fn();
+    const view = renderInRouter(
+      <AnalysisDetail siteId="s1" analysisId="a1" onBack={onBack} onRegenerated={onRegenerated} />,
+    );
+    setState({ detail: { a1: analysis({ status: 'failed', error: FAILED_ERROR, progress: FAILED_PROGRESS }) } });
+    view.rerender(
+      <I18nextProvider i18n={i18n}>
+        <MemoryRouter initialEntries={['/sites/s1?tab=content']}>
+          <AnalysisDetail siteId="s1" analysisId="a1" onBack={onBack} onRegenerated={onRegenerated} />
+        </MemoryRouter>
+      </I18nextProvider>,
+    );
+    const heading = screen.getByRole('heading', { name: 'This analysis stopped early' });
+    expect(heading).toHaveFocus();
+    expect(screen.queryByTestId('content-detail-progress')).toBeNull();
+    view.unmount();
+  });
+
+  it('explains each failure code and the way out', () => {
+    const copy = {
+      provider_unavailable: 'Our content service is unavailable right now.',
+      page_unreachable: 'We could not read your page.',
+      page_blocked: 'Your page blocks our reader',
+      page_too_large: 'too large to read in one pass',
+      timeout: 'took too long to respond',
+      internal: 'Something went wrong on our side.',
+    } as const;
+    for (const [code, text] of Object.entries(copy)) {
+      setState({ detail: { a1: analysis({
+        status: 'failed',
+        error: FAILED_ERROR,
+        progress: { ...FAILED_PROGRESS, failureReasonCode: code as keyof typeof copy },
+      }) } });
+      const view = renderInRouter(<AnalysisDetail siteId="s1" analysisId="a1" onBack={vi.fn()} onRegenerated={vi.fn()} />);
+      expect(screen.getByTestId('content-detail-failure-code')).toHaveTextContent(text);
+      view.unmount();
+    }
+    setState({ detail: { a1: analysis({
+      status: 'failed',
+      error: FAILED_ERROR,
+      progress: { ...FAILED_PROGRESS, retryAction: null },
+    }) } });
+    renderInRouter(<AnalysisDetail siteId="s1" analysisId="a1" onBack={vi.fn()} onRegenerated={vi.fn()} />);
+    expect(screen.queryByTestId('content-detail-retry')).toBeNull();
+    expect(screen.queryByTestId('content-detail-edit-url')).toBeNull();
+  });
+
+  it('offers Edit the URL for a page problem', () => {
+    const failed = analysis({
+      status: 'failed',
+      error: { ...FAILED_ERROR, category: 'owned_page_unusable', reason: 'robots_blocked' },
+      progress: { ...FAILED_PROGRESS, failureReasonCode: 'page_blocked', retryAction: 'edit_url' },
+    });
+    setState({ detail: { a1: failed } });
+    const onEditUrl = vi.fn();
+    const view = renderInRouter(
+      <AnalysisDetail siteId="s1" analysisId="a1" onBack={vi.fn()} onRegenerated={vi.fn()} onEditUrl={onEditUrl} />,
+    );
+    expect(screen.queryByTestId('content-detail-retry')).toBeNull();
+    fireEvent.click(screen.getByTestId('content-detail-edit-url'));
+    expect(onEditUrl).toHaveBeenCalledWith(failed);
+    view.unmount();
+    renderInRouter(<AnalysisDetail siteId="s1" analysisId="a1" onBack={vi.fn()} onRegenerated={vi.fn()} />);
+    expect(screen.queryByTestId('content-detail-edit-url')).toBeNull();
+  });
+
+  it('tries again with consent prefilled but still confirmed', async () => {
+    setState({ detail: { a1: analysis({ status: 'failed', error: FAILED_ERROR, progress: FAILED_PROGRESS }) } });
+    api.getAnalysisRetryPreview.mockResolvedValue(retryPreview());
+    api.retryAnalysis.mockResolvedValue({ analysisId: 'retried', status: 'queued', duplicate: false, message: 'ok' });
+    const onRegenerated = vi.fn();
+    renderInRouter(<AnalysisDetail siteId="s1" analysisId="a1" onBack={vi.fn()} onRegenerated={onRegenerated} />);
+    await userEvent.click(screen.getByTestId('content-detail-retry'));
+    const dialog = await screen.findByTestId('content-retry-dialog');
+    expect(await within(dialog).findByTestId('content-retry-request')).toHaveTextContent('https://example.com/guide');
+    expect(within(dialog).getByTestId('content-retry-request')).toHaveTextContent('content audit');
+    expect(within(dialog).getByTestId('content-retry-consent')).toHaveAttribute('aria-checked', 'true');
+    expect(api.retryAnalysis).not.toHaveBeenCalled();
+    // Unticking blocks the confirm and says why.
+    await userEvent.click(within(dialog).getByTestId('content-retry-consent'));
+    expect(within(dialog).getByTestId('content-retry-confirm')).toBeDisabled();
+    expect(within(dialog).getByText('Consent is required.')).toBeInTheDocument();
+    await userEvent.click(within(dialog).getByTestId('content-retry-consent'));
+    await userEvent.click(within(dialog).getByTestId('content-retry-confirm'));
+    await waitFor(() => expect(onRegenerated).toHaveBeenCalledWith('retried'));
+    expect(api.retryAnalysis).toHaveBeenCalledWith('a1', true);
+    await waitFor(() => expect(screen.queryByTestId('content-retry-dialog')).toBeNull());
+  });
+
+  it('handles preview failures, start errors and closing while the preview loads', async () => {
+    setState({ detail: { a1: analysis({ status: 'failed', error: FAILED_ERROR, progress: FAILED_PROGRESS }) } });
+    api.getAnalysisRetryPreview
+      .mockRejectedValueOnce(new ApiError('down', 503, {}))
+      .mockResolvedValueOnce(retryPreview())
+      .mockImplementationOnce((_id, init) => new Promise((_resolve, reject) => {
+        init?.signal?.addEventListener('abort', () => reject(new DOMException('aborted', 'AbortError')));
+      }));
+    api.retryAnalysis.mockRejectedValue(new ApiError('conflict', 409, { error: { message: 'This analysis cannot be retried as it is.' } }));
+    const onRegenerated = vi.fn();
+    renderInRouter(<AnalysisDetail siteId="s1" analysisId="a1" onBack={vi.fn()} onRegenerated={onRegenerated} />);
+    await userEvent.click(screen.getByTestId('content-detail-retry'));
+    let dialog = await screen.findByTestId('content-retry-dialog');
+    expect(await within(dialog).findByRole('alert')).toHaveTextContent('The details of this analysis could not be loaded.');
+    expect(within(dialog).getByTestId('content-retry-confirm')).toBeDisabled();
+    await userEvent.click(within(dialog).getByRole('button', { name: 'Retry' }));
+    expect(await within(dialog).findByTestId('content-retry-request')).toBeInTheDocument();
+    await userEvent.click(within(dialog).getByTestId('content-retry-confirm'));
+    expect(await within(dialog).findByTestId('content-retry-error')).toHaveTextContent('cannot be retried');
+    expect(onRegenerated).not.toHaveBeenCalled();
+    await userEvent.click(within(dialog).getByRole('button', { name: 'Cancel' }));
+    await waitFor(() => expect(screen.queryByTestId('content-retry-dialog')).toBeNull());
+
+    // Closing while the preview is still loading aborts that read.
+    await userEvent.click(screen.getByTestId('content-detail-retry'));
+    dialog = await screen.findByTestId('content-retry-dialog');
+    expect(within(dialog).getByRole('status')).toHaveTextContent('Loading');
+    const signal = api.getAnalysisRetryPreview.mock.calls[2]?.[1]?.signal as AbortSignal;
+    await userEvent.keyboard('{Escape}');
+    await waitFor(() => expect(signal.aborted).toBe(true));
+
+    // A preview that lands after the dialog closed is dropped.
+    let resolveLate: ((value: unknown) => void) | undefined;
+    api.getAnalysisRetryPreview.mockImplementationOnce(() => new Promise((resolve) => { resolveLate = resolve; }));
+    await userEvent.click(screen.getByTestId('content-detail-retry'));
+    await screen.findByTestId('content-retry-dialog');
+    await userEvent.keyboard('{Escape}');
+    await waitFor(() => expect(screen.queryByTestId('content-retry-dialog')).toBeNull());
+    await act(async () => {
+      resolveLate?.(retryPreview());
+      await Promise.resolve();
+    });
+    expect(screen.queryByTestId('content-retry-request')).toBeNull();
   });
 
   it('switches the workspace to the freshly regenerated run', async () => {
@@ -1124,5 +1619,32 @@ describe('ContentIntelligencePanel and page', () => {
     await waitFor(() =>
       expect(hooks.dispatch).toHaveBeenCalledWith(updateFormDraft({ keyword: 'best pricing' })),
     );
+  });
+
+  it('returns to the list with the new-analysis form prefilled from the failed run', async () => {
+    const id = '0123456789abcdef01234567';
+    setState({
+      detail: {
+        [id]: analysis({
+          analysisId: id,
+          status: 'failed',
+          error: { ...FAILED_ERROR, category: 'owned_page_unusable', reason: 'robots_blocked' },
+          progress: { ...FAILED_PROGRESS, failureReasonCode: 'page_blocked', retryAction: 'edit_url' },
+        }),
+      },
+    });
+    const SearchProbe = () => <span data-testid="location-search">{useLocation().search}</span>;
+    renderInRouter(
+      <>
+        <ContentIntelligencePanel siteId="s1" siteOrigin="https://example.com" />
+        <SearchProbe />
+      </>,
+      `/sites/s1?tab=content&analysis=${id}`,
+    );
+    await userEvent.click(screen.getByTestId('content-detail-edit-url'));
+    await waitFor(() => expect(screen.getByTestId('location-search')).not.toHaveTextContent('analysis='));
+    const search = new URLSearchParams(screen.getByTestId('location-search').textContent ?? '');
+    expect(search.get('prefillUrl')).toBe('https://example.com/guide');
+    expect(search.get('prefillKeyword')).toBe('content audit');
   });
 });

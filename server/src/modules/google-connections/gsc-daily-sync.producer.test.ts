@@ -8,6 +8,7 @@ import {
   stopMemoryMongo,
 } from '../../shared/testing/mongo.js';
 import {
+  enqueueGa4SyncJob,
   enqueueGscSyncJob,
   GOOGLE_SITE_AUTO_MATCH_JOB_NAME,
 } from '../../shared/queue/index.js';
@@ -17,7 +18,7 @@ import {
 } from '../../shared/testing/redis.js';
 import { Site } from '../sites/index.js';
 import { GoogleConnection } from './google-connection.model.js';
-import { SCOPE_GSC } from './google-connections.schema.js';
+import { SCOPE_GA4, SCOPE_GSC } from './google-connections.schema.js';
 import {
   GSC_DAILY_SYNC_CRON,
   GSC_DAILY_SYNC_SCHEDULER_KEY,
@@ -161,6 +162,32 @@ describe('configureGscDailySyncScheduler', () => {
 });
 
 describe('createGscDailySyncProducer', () => {
+  it('queues GA4 only for active bound sites with the analytics scope', async () => {
+    await createConnection({ accountId: ACCOUNT_A, scopes: [SCOPE_GSC, SCOPE_GA4] });
+    await createConnection({ accountId: ACCOUNT_B, scopes: [SCOPE_GSC] });
+    const [active] = await Site.create([
+      { accountId: ACCOUNT_A, url: 'https://one.example', domain: 'one.example', ga4PropertyId: 'properties/1' },
+      { accountId: ACCOUNT_A, url: 'https://paused.example', domain: 'paused.example', ga4PropertyId: 'properties/2', paused: true },
+      { accountId: ACCOUNT_B, url: 'https://other.example', domain: 'other.example', ga4PropertyId: 'properties/3' },
+    ]);
+    const { queue, adds } = fakeQueue();
+    const process = createGscDailySyncProducer({
+      repository: createMongoGscDailySyncRepository(),
+      enqueue: (payload, day) => enqueueGscSyncJob(queue, payload, day),
+      enqueueGa4: (payload, day) => enqueueGa4SyncJob(queue, payload, day),
+      now: () => FIXED_NOW,
+      logger: fakeLogger(),
+    });
+
+    const result = await process(job({ source: 'daily-scheduler' }));
+
+    expect(result).toMatchObject({ ga4Enqueued: 1, enqueued: 0 });
+    expect(adds).toHaveLength(1);
+    expect(adds[0]?.data).toEqual({ accountId: ACCOUNT_A, siteId: String(active!._id) });
+    await process(job({ source: 'daily-scheduler' }));
+    expect((adds[1]!.opts as { jobId: string }).jobId).toBe((adds[0]!.opts as { jobId: string }).jobId);
+  });
+
   it('fans out only active, owned, Site-bound properties through deterministic daily jobs', async () => {
     await createConnection({ accountId: ACCOUNT_A });
     await createConnection({
@@ -235,6 +262,7 @@ describe('createGscDailySyncProducer', () => {
       connectionsScanned: 2,
       sitesScanned: 1,
       enqueued: 1,
+      ga4Enqueued: 0,
     });
     expect(adds).toEqual([
       {
@@ -273,6 +301,7 @@ describe('createGscDailySyncProducer', () => {
       connectionsScanned: 0,
       sitesScanned: 0,
       enqueued: 0,
+      ga4Enqueued: 0,
     });
     expect(adds).toEqual([]);
     expect(logger.info).toHaveBeenCalledOnce();
@@ -285,6 +314,7 @@ describe('createGscDailySyncProducer', () => {
       repository: {
         scanConnectedAccounts,
         findActiveSites: vi.fn(),
+        findActiveGa4Sites: vi.fn(),
       },
       enqueue,
       now: () => FIXED_NOW,
@@ -300,7 +330,7 @@ describe('createGscDailySyncProducer', () => {
 
   it('propagates enqueue failures so BullMQ retries the idempotent sweep', async () => {
     async function* connections() {
-      yield { accountId: ACCOUNT_A };
+      yield { accountId: ACCOUNT_A, ga4: false };
     }
     const enqueueError = new Error('redis unavailable');
     const logger = fakeLogger();
@@ -310,6 +340,7 @@ describe('createGscDailySyncProducer', () => {
         findActiveSites: async () => [
           { siteId: '000000000000000000000099', domain: 'example.com' },
         ],
+        findActiveGa4Sites: async () => [],
       },
       enqueue: vi.fn().mockRejectedValue(enqueueError),
       now: () => FIXED_NOW,
@@ -324,7 +355,7 @@ describe('createGscDailySyncProducer', () => {
 
   it('stops future ticks without abandoning a sweep accepted before flag-off', async () => {
     async function* connections() {
-      yield { accountId: ACCOUNT_A };
+      yield { accountId: ACCOUNT_A, ga4: false };
     }
     const { queue, adds, removes } = fakeQueue();
     await configureGscDailySyncScheduler(queue, false);
@@ -334,6 +365,7 @@ describe('createGscDailySyncProducer', () => {
         findActiveSites: async () => [
           { siteId: '000000000000000000000098', domain: 'example.com' },
         ],
+        findActiveGa4Sites: async () => [],
       },
       enqueue: (payload, day) => enqueueGscSyncJob(queue, payload, day),
       now: () => FIXED_NOW,

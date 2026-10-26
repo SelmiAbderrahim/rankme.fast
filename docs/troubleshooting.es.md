@@ -17,8 +17,8 @@ order: 3
 ## Comprobación de posición no disponible
 Suele ser temporal; la siguiente ejecución reintenta.
 
-## "Reconexión requerida" en Search Console
-Abre Ajustes y reconecta.
+## Search Console pide volver a conectar
+Google invalidó nuestro token. En la pestaña **Google** del sitio, la tarjeta de Google Search Console muestra **Tu conexión con Google necesita renovarse**; selecciona **Reconectar**. Puede ocurrir si cambiaste tu contraseña de Google o revocaste la aplicación.
 
 ## Tope alcanzado
 Véase [Planes, límites y créditos](./plans-limits-credits.es.md).
@@ -35,8 +35,8 @@ La comprobación no puede ejecutarse para ese motor o mercado. La parte no admit
 ## No disponible (no es cero)
 No llegó ningún dato para la ventana. `unavailable ≠ 0`: trátalo como desconocido, no como una caída a cero. Lo verás en la cuota de voz y en las tarjetas de IA generativa de Search Console.
 
-## "Reconexión requerida" en tarjetas de analítica o IA generativa
-La misma causa que la reconexión de Search Console de arriba: Google revocó el token. Reconecta desde el workspace de Google del sitio; las tarjetas se actualizan la próxima vez que se cargan.
+## «Search Console no está conectado» en tarjetas de analítica o IA generativa
+Las tarjetas que leen Search Console o Google Analytics muestran **Search Console no está conectado** o **Google Analytics no está conectado** hasta que Google vuelva a conectarse, y se recuperan en la siguiente lectura.
 
 ## Falta correo de verificación
 Revisa spam; el enlace expira en 24 h.

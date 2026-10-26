@@ -474,13 +474,18 @@ export function buildDeepLinks(runId: string, siteId: string): DigestDeepLinks {
     const base = env.APP_URL.replace(/\/+$/, '');
     const encodedSite = encodeURIComponent(siteId);
     const encodedRun = encodeURIComponent(runId);
+    // The authenticated app serves the workspace at `/sites/:siteId`; there is
+    // no `/dashboard/sites/*` route, so links built on it land on a "Page not
+    // found" screen. The pulse card sits at the top of the AI Visibility tab,
+    // and the Actions list is the site's `?tab=actions`.
+    const site = `${base}/sites/${encodedSite}`;
     return {
-        digest: `${base}/dashboard/sites/${encodedSite}?tab=ai-visibility&pulse=${encodedRun}`,
-        aiVisibility: `${base}/dashboard/sites/${encodedSite}?tab=ai-visibility`,
-        google: `${base}/dashboard/sites/${encodedSite}?tab=google`,
-        contentIntelligence: `${base}/dashboard/sites/${encodedSite}?tab=content`,
-        audienceResearch: `${base}/dashboard/sites/${encodedSite}?tab=audience-research`,
-        nextActions: `${base}/dashboard/next-actions`,
+        digest: `${site}?tab=ai-visibility&pulse=${encodedRun}`,
+        aiVisibility: `${site}?tab=ai-visibility`,
+        google: `${site}?tab=google`,
+        contentIntelligence: `${site}?tab=content`,
+        audienceResearch: `${site}?tab=audience-research`,
+        nextActions: `${site}?tab=actions`,
     };
 }
 async function loadRun(db: ApplicationDb, runId: string): Promise<WeeklyPulseRunRow | null> {

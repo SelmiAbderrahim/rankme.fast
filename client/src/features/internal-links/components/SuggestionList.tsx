@@ -1,3 +1,4 @@
+import { Bdi } from '@shared/components/Bdi';
 import { ArrowRight, Check, Clipboard, FileText, Network } from 'lucide-react';
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
@@ -12,6 +13,7 @@ import { Button } from '@shared/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@shared/ui/card';
 import { Separator } from '@shared/ui/separator';
 import { CodeFixPromptButton } from '@shared/components/CodeFixPromptButton';
+import { formatAbsoluteDate } from '@shared/lib/datetime';
 import type { InternalLinkSuggestion } from '../types';
 
 interface SuggestionListProps {
@@ -50,14 +52,14 @@ export const SuggestionList = ({ suggestions }: SuggestionListProps) => {
                 className="border-border bg-muted/40 min-w-0 break-all border p-3 font-mono text-sm"
                 data-testid={`internal-links-source-${suggestion.id}`}
               >
-                {suggestion.sourceUrl}
+                <Bdi>{suggestion.sourceUrl}</Bdi>
               </span>
               <ArrowRight className="mx-auto size-4 rtl:rotate-180" aria-hidden="true" />
               <span
                 className="border-border bg-muted/40 min-w-0 break-all border p-3 font-mono text-sm"
                 data-testid={`internal-links-target-${suggestion.id}`}
               >
-                {suggestion.targetUrl}
+                <Bdi>{suggestion.targetUrl}</Bdi>
               </span>
             </CardTitle>
           </CardHeader>
@@ -115,7 +117,9 @@ export const SuggestionList = ({ suggestions }: SuggestionListProps) => {
                     </div>
                     <div>
                       <dt className="text-muted-foreground text-xs">{t('evidence.inventoryDate')}</dt>
-                      <dd className="break-all font-medium">{suggestion.inventoryDate}</dd>
+                      <dd className="font-medium">
+                        {formatAbsoluteDate(suggestion.inventoryDate, i18n.language)}
+                      </dd>
                     </div>
                   </dl>
                   <div className="grid gap-4 sm:grid-cols-2">

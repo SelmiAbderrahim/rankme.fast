@@ -1,4 +1,5 @@
 import { beforeEach, describe, expect, it, vi } from 'vitest';
+import { __resetTypedTrafficDomainsForTests } from './components/SnapshotRequestForm';
 import { render, screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { configureStore } from '@reduxjs/toolkit';
@@ -12,6 +13,15 @@ import { SnapshotList } from './components/SnapshotList';
 import { SnapshotRequestForm } from './components/SnapshotRequestForm';
 import { trafficSnapshotsReducer } from './store/slice';
 import type { TrafficSnapshotRequestResult, TrafficSpendPreview } from './types';
+
+vi.mock('@shared/markets', async (importOriginal) => ({
+  ...(await importOriginal<typeof import('@shared/markets')>()),
+  useMarketCatalog: () => ({
+    markets: [{ countryCode: 'US', locationCode: 2840, languageCodes: ['en'] }],
+    loading: false,
+    error: false,
+  }),
+}));
 
 vi.mock('@shared/api/client', async (importOriginal) => ({
   ...(await importOriginal<typeof import('@shared/api/client')>()),
@@ -43,6 +53,7 @@ const renderState = (node: React.ReactNode) => {
 };
 
 beforeEach(async () => {
+  __resetTypedTrafficDomainsForTests();
   initI18n({ initialLocale: 'en' });
   await changeLanguage('en');
   mockedApiClient.mockReset();

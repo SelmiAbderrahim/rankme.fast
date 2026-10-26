@@ -15,7 +15,9 @@ Client reports turn stored audit, rank, and Search Console snapshots into a bran
 
 ## What's in a report
 
-Each report brings together the latest audit findings with rank and Search Console sections, under your account's company name, accent colour, and logo.
+Each report brings together the latest audit findings with rank and Search Console sections, under your account's company name, accent color, and logo.
+
+You set the company name, accent color and logo on the **Workspace** page under Settings (`/settings/workspace`), and only the workspace owner can change them. Upload the logo as a PNG, JPEG or SVG file of up to 256 KB. It is stored as a PNG, and an SVG that contains scripts or links to other files is refused.
 
 Nothing is fetched when a report goes out; it's built from stored snapshots. That's why every figure is printed next to the date it was observed.
 
@@ -23,7 +25,7 @@ A section with no stored snapshot is marked as not yet observed. It's never fill
 
 ## Schedules
 
-Reports go out by email, weekly or monthly. The delivery log has an entry per recipient: pending, sent, failed, or suppressed.
+Reports go out by email, weekly or monthly. The delivery log has an entry per recipient: pending, sent, failed, or suppressed. You pick the time zone and the hour in that zone, and the schedule keeps that local time when clocks change for daylight saving.
 
 Building and sending a report doesn't call any vendor or use a metered unit. The cost is our own infrastructure, so structural limits cap it instead.
 
@@ -35,10 +37,8 @@ There's no login, no commenting, and no client seats. Anyone with the link sees 
 
 Revoking takes effect on the next request, so anyone who hasn't already loaded the page is locked out straight away.
 
-## Plan and limits
+## Limits
 
-Client reports are an Agency feature. You can have up to 20 schedules and 25 portal links.
-
-Content briefs aren't included in v1 reports. See [Pricing](./pricing.en.md) for units and plan limits.
+Content briefs aren't included in v1 reports. A report only contains what was already collected: a section appears once the snapshots behind it exist.
 
 [Back to the docs index](./index.en.md)

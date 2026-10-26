@@ -1,5 +1,5 @@
 import { and, eq, inArray, sql } from 'drizzle-orm';
-import { actionEvents, aiCompetitorMentions, aiMentionSnapshots, aiProfileRunEvents, aiPromptSuggestionRuns, aiTrackedPrompts, aiUsageEvents, alertDeliveries, alertRules, appChartSnapshots, appKeywords, appListingSnapshots, appRankSnapshots, audienceResearchEvents, audienceResearchSignalDecisionEvents, backlinkDeepSnapshots, backlinkRowSnapshots, backlinkSnapshots, brandRadarEvents, competitorContentEvents, competitorIntersections, competitorProfiles, competitors, contentAnalysisEvents, contentInventoryEvents, contentMonitorEvents, contentRecommendationEvents, contentRecommendationOutcomes, domainStates, ga4Metrics, geogridScans, geogridSnapshots, gscSearchAnalytics, gscSearchAppearance, gscSitemaps, gscSyncRuns, keywordClusterDecisionEvents, keywords, landscapeOpportunityAcceptances, landscapePageMatchReviews, linkGapSnapshots, localListingSnapshots, localPackRankSnapshots, localReviewsSnapshots, pagePerformanceKeywords, pagePerformanceSnapshots, rankDropConfirmations, scheduledReportDeliveries, scheduledReports, serpObservations, siteDeletionTombstones, sitePulseSettings, sitePulseSubscriptions, teamMemberSiteGrants, trafficSnapshots, vendorCache, vendorResponses, weeklyPulseRuns, } from '../../db/schema/index.js';
+import { actionEvents, aiCompetitorMentions, aiMentionSnapshots, aiProfileRunEvents, aiPromptSuggestionRuns, aiTrackedPrompts, aiUsageEvents, alertDeliveries, alertRules, appChartSnapshots, appKeywords, appListingSnapshots, appRankSnapshots, audienceResearchEvents, audienceResearchSignalDecisionEvents, backlinkDeepSnapshots, backlinkRowSnapshots, backlinkSnapshots, brandRadarEvents, competitorContentEvents, competitorIntersections, competitorProfiles, competitors, contentAnalysisEvents, contentInventoryEvents, contentMonitorEvents, contentRecommendationEvents, contentRecommendationOutcomes, domainStates, ga4Metrics, geogridScans, geogridSnapshots, gscSearchAnalytics, gscSearchAppearance, gscSitemaps, gscSyncRuns, keywordClusterDecisionEvents, keywordResearchHistory, keywords, landscapeOpportunityAcceptances, landscapePageMatchReviews, linkGapSnapshots, localListingSnapshots, localPackRankSnapshots, localReviewsSnapshots, pagePerformanceKeywords, pagePerformanceSnapshots, rankCheckJobs, rankCheckOutcomes, rankDropConfirmations, scheduledReportDeliveries, scheduledReports, serpObservations, siteDeletionTombstones, sitePulseSettings, sitePulseSubscriptions, teamMemberSiteGrants, trafficSnapshots, vendorCache, vendorResponses, weeklyPulseRuns, } from '../../db/schema/index.js';
 import type { MongoSiteResourceInventory } from './site-mongo-cascade.js';
 import type { ApplicationDb } from '../../shared/types/application-db.js';
 /**
@@ -42,6 +42,7 @@ export const SITE_SCOPED_POSTGRES_TABLE_NAMES = [
     'gsc_sitemaps',
     'gsc_sync_runs',
     'keyword_cluster_decision_events',
+    'keyword_research_history',
     'landscape_opportunity_acceptances',
     'landscape_page_match_reviews',
     'link_gap_snapshots',
@@ -50,6 +51,8 @@ export const SITE_SCOPED_POSTGRES_TABLE_NAMES = [
     'local_reviews_snapshots',
     'page_performance_keywords',
     'page_performance_snapshots',
+    'rank_check_jobs',
+    'rank_check_outcomes',
     'rank_drop_confirmations',
     'scheduled_report_deliveries',
     'scheduled_report_runs',
@@ -154,6 +157,9 @@ export async function purgeSitePostgresData(db: ApplicationDb, accountId: string
             .delete(keywordClusterDecisionEvents)
             .where(eq(keywordClusterDecisionEvents.siteId, siteId));
         await tx
+            .delete(keywordResearchHistory)
+            .where(and(eq(keywordResearchHistory.accountId, accountId), eq(keywordResearchHistory.siteId, siteId)));
+        await tx
             .delete(landscapeOpportunityAcceptances)
             .where(eq(landscapeOpportunityAcceptances.siteId, siteId));
         await tx
@@ -170,6 +176,9 @@ export async function purgeSitePostgresData(db: ApplicationDb, accountId: string
             .delete(pagePerformanceSnapshots)
             .where(and(eq(pagePerformanceSnapshots.accountId, accountId), eq(pagePerformanceSnapshots.siteId, siteId)));
         await tx.delete(rankDropConfirmations).where(eq(rankDropConfirmations.siteId, siteId));
+        // Items cascade from jobs; outcomes also cascade from keywords.
+        await tx.delete(rankCheckJobs).where(eq(rankCheckJobs.siteId, siteId));
+        await tx.delete(rankCheckOutcomes).where(eq(rankCheckOutcomes.siteId, siteId));
         await tx
             .delete(scheduledReportDeliveries)
             .where(eq(scheduledReportDeliveries.siteId, siteId));

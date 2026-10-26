@@ -1,3 +1,4 @@
+import { Bdi } from '@shared/components/Bdi';
 import { Form, Link, useLoaderData, useOutletContext, useSearchParams } from 'react-router-dom';
 import { ArrowUpRight, Search } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
@@ -74,8 +75,8 @@ export const DocsHome = () => {
                 {results.map((doc) => (
                   <Link key={doc.slug} to={docsUrl(doc.slug, catalog.locale)} className="group border bg-background p-6 transition-colors hover:bg-muted/60">
                     <span className="text-xs font-semibold uppercase tracking-wide text-highlight">{t(`sections.${doc.section}`)}</span>
-                    <h2 className="mt-2 font-serif text-2xl font-semibold group-hover:underline">{doc.title}</h2>
-                    <p className="mt-2 text-sm leading-6 text-muted-foreground">{doc.description}</p>
+                    <h2 className="mt-2 font-serif text-2xl font-semibold group-hover:underline"><Bdi>{doc.title}</Bdi></h2>
+                    <p className="mt-2 text-sm leading-6 text-muted-foreground"><Bdi>{doc.description}</Bdi></p>
                   </Link>
                 ))}
               </div>
@@ -101,8 +102,8 @@ export const DocsHome = () => {
                   <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-3">
                     {docs.map((doc) => (
                       <Link key={doc.slug} to={docsUrl(doc.slug, catalog.locale)} className="group flex min-h-40 flex-col border bg-card p-5 transition-colors hover:border-foreground/40">
-                        <h3 className="font-serif text-xl font-semibold">{doc.title}</h3>
-                        <p className="mt-2 flex-1 text-sm leading-6 text-muted-foreground">{doc.description}</p>
+                        <h3 className="font-serif text-xl font-semibold"><Bdi>{doc.title}</Bdi></h3>
+                        <p className="mt-2 flex-1 text-sm leading-6 text-muted-foreground"><Bdi>{doc.description}</Bdi></p>
                         <span className="mt-4 inline-flex items-center gap-1 text-sm font-medium">{t('readGuide')}<ArrowUpRight className="size-4" /></span>
                       </Link>
                     ))}

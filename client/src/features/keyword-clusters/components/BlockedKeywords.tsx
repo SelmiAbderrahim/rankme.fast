@@ -1,3 +1,4 @@
+import { Bdi } from '@shared/components/Bdi';
 import { useTranslation } from 'react-i18next';
 import { Link } from 'react-router-dom';
 import {
@@ -8,6 +9,7 @@ import {
 } from '@shared/ui/accordion';
 import { Badge } from '@shared/ui/badge';
 import { Button } from '@shared/ui/button';
+import { formatAbsoluteDate } from '@shared/lib/datetime';
 import type { KeywordClusterBlocked } from '../types';
 
 interface BlockedKeywordsProps {
@@ -21,7 +23,7 @@ interface BlockedKeywordsProps {
  * silently drops a tracked keyword from a run.
  */
 export const BlockedKeywords = ({ blocked, total, ranksHref }: BlockedKeywordsProps) => {
-  const { t } = useTranslation('keywordClusters');
+  const { t, i18n } = useTranslation('keywordClusters');
   if (blocked.length === 0) return null;
 
   return (
@@ -37,11 +39,13 @@ export const BlockedKeywords = ({ blocked, total, ranksHref }: BlockedKeywordsPr
                 className="border-border flex flex-wrap items-center gap-2 border p-2"
                 data-testid={`keyword-clusters-blocked-${row.reason}`}
               >
-                <span className="text-sm font-medium">{row.phrase}</span>
+                <span className="text-sm font-medium"><Bdi>{row.phrase}</Bdi></span>
                 <Badge variant="outline">{t(`blocked.reason.${row.reason}`)}</Badge>
                 {row.observedAt ? (
                   <span className="text-muted-foreground text-xs">
-                    {t('blocked.observedAt', { date: row.observedAt })}
+                    {t('blocked.observedAt', {
+                      date: formatAbsoluteDate(row.observedAt, i18n.language),
+                    })}
                   </span>
                 ) : null}
               </li>

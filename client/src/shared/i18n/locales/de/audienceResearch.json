@@ -9,7 +9,12 @@
       "label": "Markt",
       "country": "Land",
       "language": "Sprache",
-      "device": "Gerät"
+      "device": "Gerät",
+      "devices": {
+        "desktop": "Desktop",
+        "mobile": "Mobil",
+        "all": "Alle Geräte"
+      }
     },
     "competitors": {
       "label": "Wettbewerber",
@@ -17,12 +22,13 @@
       "chipRemove": "{{domain}} entfernen",
       "limit": "Maximal {{max}} Wettbewerber ausgewählt.",
       "loading": "Wettbewerber werden geladen …",
-      "empty": "Diese Website hat noch keine aktiven Wettbewerber. Füge zuerst die Wettbewerber hinzu, die du untersuchen möchtest.",
+      "empty": "Diese Website hat noch keine aktiven Wettbewerber. Fügen Sie zuerst die Wettbewerber hinzu, die Sie untersuchen möchten.",
       "openCompetitors": "Wettbewerber öffnen",
       "loadFailed": "Die Wettbewerber konnten nicht geladen werden. Lade die Seite neu und versuche es erneut."
     },
     "topics": {
       "label": "Themen",
+      "add": "Hinzufügen",
       "placeholder": "Thema hinzufügen und Eingabetaste drücken",
       "chipRemove": "{{topic}} entfernen",
       "count": "{{count}} / {{max}}",
@@ -30,33 +36,23 @@
       "validationEmpty": "Geben Sie ein Thema ein, bevor Sie es hinzufügen.",
       "validationMax": "Sie können bis zu {{max}} Themen hinzufügen."
     },
-    "reviewButton": "Prüfen",
-    "submitting": "Wird bearbeitet…"
-  },
-  "preview": {
-    "unitLabel": "1 Zielgruppen-Recherche",
-    "remainingLabel": "{{remaining}} von {{cap}} in diesem Monat verbleibend",
-    "operationCeilings": "Was dieser Lauf tun wird",
-    "cached": "Zwischengespeichert",
-    "fresh": "Aktuell",
-    "supported": "Dieser Markt wird vollständig unterstützt.",
-    "unsupported": "Dieser Markt wird nur eingeschränkt unterstützt — die Ergebnisse können dünner ausfallen.",
-    "maxPages": "Bis zu {{max}} öffentliche Seiten",
-    "totalBudget": "Gesamtbudget: {{micros}} Mikro-USD",
-    "aiBudget": "KI-Budget: {{micros}} Mikro-USD",
-    "coverageOk": "Vollständige Anbieterabdeckung",
-    "coverageDegraded": "Eingeschränkte Anbieterabdeckung — Ergebnisse können unvollständig sein.",
-    "coverageBlocked": "Scraping ohne Datenspeicherung ist für dieses Konto blockiert."
+    "submitting": "Wird bearbeitet…",
+    "startRequirement": "Fügen Sie mindestens ein Thema hinzu oder wählen Sie einen Wettbewerber, um einen Lauf zu starten. Ohne beides hat der Lauf nichts, wonach er suchen kann."
   },
   "confirm": {
     "title": "Diese Zielgruppen-Recherche starten?",
-    "body": "Dieser Lauf durchsucht bis zu {{maxPages}} öffentliche Seiten und erzeugt Signale aus dem öffentlichen Web. Er läuft einmalig — es gibt keine fortlaufende Überwachung.",
+    "body_one": "Dieser Lauf durchsucht bis zu {{maxPages}} öffentliche Seite und erzeugt Signale aus dem öffentlichen Web. Er läuft einmalig — es gibt keine fortlaufende Überwachung.",
     "confirmButton": "Lauf starten",
     "cancelButton": "Abbrechen",
     "marketLine": "Markt",
     "competitorsLine": "Wettbewerber",
     "topicsLine": "Themen",
-    "unitLine": "Verbrauchte Einheiten"
+    "unitLine": "Verbrauchte Einheiten",
+    "body_zero": "Dieser Lauf durchsucht bis zu {{maxPages}} öffentliche Seiten und erzeugt Signale aus dem öffentlichen Web. Er läuft einmalig — es gibt keine fortlaufende Überwachung.",
+    "body_two": "Dieser Lauf durchsucht bis zu {{maxPages}} öffentliche Seiten und erzeugt Signale aus dem öffentlichen Web. Er läuft einmalig — es gibt keine fortlaufende Überwachung.",
+    "body_few": "Dieser Lauf durchsucht bis zu {{maxPages}} öffentliche Seiten und erzeugt Signale aus dem öffentlichen Web. Er läuft einmalig — es gibt keine fortlaufende Überwachung.",
+    "body_many": "Dieser Lauf durchsucht bis zu {{maxPages}} öffentliche Seiten und erzeugt Signale aus dem öffentlichen Web. Er läuft einmalig — es gibt keine fortlaufende Überwachung.",
+    "body_other": "Dieser Lauf durchsucht bis zu {{maxPages}} öffentliche Seiten und erzeugt Signale aus dem öffentlichen Web. Er läuft einmalig — es gibt keine fortlaufende Überwachung."
   },
   "progress": {
     "stage": {
@@ -70,8 +66,18 @@
       "failed": "Fehlgeschlagen"
     },
     "counts": {
-      "sources": "{{count}} Quellen gefunden",
-      "signals": "{{count}} Signale gefunden"
+      "sources_one": "{{count}} Quelle gefunden",
+      "signals_one": "{{count}} Signal gefunden",
+      "sources_zero": "{{count}} Quellen gefunden",
+      "sources_two": "{{count}} Quellen gefunden",
+      "sources_few": "{{count}} Quellen gefunden",
+      "sources_many": "{{count}} Quellen gefunden",
+      "sources_other": "{{count}} Quellen gefunden",
+      "signals_zero": "{{count}} Signale gefunden",
+      "signals_two": "{{count}} Signale gefunden",
+      "signals_few": "{{count}} Signale gefunden",
+      "signals_many": "{{count}} Signale gefunden",
+      "signals_other": "{{count}} Signale gefunden"
     },
     "partial": {
       "title": "Dieser Lauf wurde mit teilweiser Abdeckung abgeschlossen",
@@ -96,8 +102,7 @@
       "state": "Status",
       "sources": "Quellen",
       "signals": "Signale",
-      "coverage": "Abdeckung",
-      "unit": "Einheit"
+      "coverage": "Abdeckung"
     },
     "empty": {
       "title": "Noch keine Läufe",
@@ -111,30 +116,12 @@
     "coverageNote": "Teilweise Abdeckung — öffnen Sie den Lauf für Details",
     "coverageFull": "Vollständige Abdeckung"
   },
-  "locked": {
-    "title": "Zielgruppen-Recherche ist in Ihrem Tarif nicht enthalten",
-    "body": "Wechseln Sie zu Starter, Pro oder Agency, um Voice-of-Customer-Recherchen durchzuführen und öffentliches Feedback in Content-, Produkt- und SEO-Chancen zu verwandeln.",
-    "cta": "Tarife ansehen"
-  },
-  "usage": {
-    "metrics": {
-      "audience_research_runs": {
-        "label": "Zielgruppen-Recherchen",
-        "description": "Eine Einheit deckt einen vollständigen Voice-of-Customer-Lauf ab, unabhängig davon, wie viele Suchen oder Seitenabrufe er ausführt."
-      }
-    }
-  },
-  "billing": {
-    "overCap": {
-      "audience_research_runs": "Sie haben in diesem Monat alle Zielgruppen-Recherchen Ihres Tarifs verbraucht. Upgraden Sie, um mehr Voice-of-Customer-Recherchen durchzuführen."
-    }
-  },
   "signals": {
     "empty": {
       "title": "Dieser Lauf ist beendet, hat aber keine Signale erzeugt.",
       "filtered": "Keine Signale entsprechen den aktuellen Filtern."
     },
-    "citationCount": "{{count}} zitierte Quellen",
+    "citationCount_one": "{{count}} zitierte Quelle",
     "confidence": {
       "high": "Hohe Sicherheit",
       "medium": "Mittlere Sicherheit",
@@ -158,7 +145,7 @@
       "aiInterpretationHint": "Der vorgeschlagene Weg ist eine KI-Interpretation, kein Marktanteilssignal."
     },
     "rationale": {
-      "summary": "{{independentDomainCount}} unabhängige Domains über {{sourceTypeCount}} Quelltypen; {{recent}}.",
+      "summary": "Unabhängige Domains: {{independentDomainCount}}; Quelltypen: {{sourceTypeCount}}; {{recent}}.",
       "recent": "jüngste Quelle {{date}}",
       "recentUnknown": "Datum nicht verfügbar"
     },
@@ -226,7 +213,12 @@
         "duplicate": "Duplikat",
         "other": "Andere"
       }
-    }
+    },
+    "citationCount_zero": "{{count}} zitierte Quellen",
+    "citationCount_two": "{{count}} zitierte Quellen",
+    "citationCount_few": "{{count}} zitierte Quellen",
+    "citationCount_many": "{{count}} zitierte Quellen",
+    "citationCount_other": "{{count}} zitierte Quellen"
   },
   "errors": {
     "overCap": "Sie haben in diesem Monat alle Zielgruppen-Recherchen Ihres Tarifs verbraucht. Upgraden Sie, um mehr durchzuführen.",

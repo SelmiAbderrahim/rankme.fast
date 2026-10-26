@@ -1,3 +1,4 @@
+import { Bdi } from '@shared/components/Bdi';
 /**
  * PageSpeed block — compact field vs lab table rendered inside
  * a page-speed rule row (`core-web-vitals-poor`, `page-speed-lab-low`,
@@ -97,7 +98,7 @@ export const PageSpeedBlock = ({ section }: PageSpeedBlockProps) => {
                   rel="nofollow ugc noopener noreferrer"
                   className="text-primary min-w-0 flex-1 font-mono text-xs break-all underline"
                 >
-                  {sample.url}
+                  <Bdi>{sample.url}</Bdi>
                 </a>
                 {cwv ? (
                   <Badge

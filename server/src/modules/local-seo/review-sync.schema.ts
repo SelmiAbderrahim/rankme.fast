@@ -7,56 +7,37 @@
  * the account's rate bucket allowance or reach the queue.
  */
 import { z } from 'zod';
-import { validateSiteUrl } from '../../shared/validation/site-url.js';
-import { REVIEW_SOURCES, REVIEW_SYNC_MAX_DEPTH } from './review-sync.model.js';
+import { env } from '../../config/env.js';
+import { REVIEW_SOURCES, REVIEW_SYNC_MAX_DEPTH, REVIEW_TARGET_MAX_CHARS, type ReviewSourceName, } from './review-sync.model.js';
+import { normalizeReviewTarget } from './review-sync.targets.js';
 const objectIdHexSchema = z
     .string()
     .regex(/^[0-9a-f]{24}$/i, 'reviewIntelligence.errors.notFound');
 export const reviewSourceEnumSchema = z.enum(REVIEW_SOURCES);
 const INVALID_TARGET_KEY = 'reviewIntelligence.errors.invalidTarget';
-function isOpaqueTargetToken(value: string): boolean {
-    for (let index = 0; index < value.length; index += 1) {
-        const code = value.charCodeAt(index);
-        if (code <= 0x20 || code === 0x7f)
-            return false;
-    }
-    return true;
+/**
+ * Each source has its own target rule (see `review-sync.targets.ts`): a
+ * Google Place ID heuristic, a numeric Tripadvisor location id, and a
+ * Trustpilot business domain. The raw string is bounded and trimmed first so
+ * an impossible value never reaches the rate bucket or the vendor adapter.
+ */
+function reviewTargetSchema(source: ReviewSourceName) {
+    return z
+        .string()
+        .trim()
+        .min(1, INVALID_TARGET_KEY)
+        .max(REVIEW_TARGET_MAX_CHARS, INVALID_TARGET_KEY)
+        .transform((raw, context) => {
+        const target = normalizeReviewTarget(source, raw, {
+            allowFakeScenarios: env.PROVIDER_REVIEWS === 'fake',
+        });
+        if (target === null) {
+            context.addIssue({ code: z.ZodIssueCode.custom, message: INVALID_TARGET_KEY });
+            return z.NEVER;
+        }
+        return target;
+    });
 }
-/**
- * Google Place/CID and Tripadvisor location identifiers are opaque provider
- * tokens. Their punctuation is deliberately not constrained, so
- * this module only applies the shared provider bound and rejects ASCII
- * controls/whitespace. Prefix forms such as `place_id:` / `location_id:` are
- * therefore valid without opening an unbounded input path.
- */
-const opaqueReviewTargetSchema = z
-    .string()
-    .trim()
-    .min(1, INVALID_TARGET_KEY)
-    .max(200, INVALID_TARGET_KEY)
-    .refine(isOpaqueTargetToken, INVALID_TARGET_KEY);
-/**
- * Trustpilot business identifier — the reviewed business DOMAIN, which is
- * what the Business Data endpoint keys on. Normalized through the shipped
- * site-URL validator so `WWW.Example.COM` and `example.com` are one target.
- */
-const trustpilotTargetSchema = z
-    .string()
-    .trim()
-    .min(1)
-    .max(200)
-    .transform((raw, context) => {
-    if (/^[a-z][a-z\d+.-]*:\/\//i.test(raw)) {
-        context.addIssue({ code: z.ZodIssueCode.custom, message: INVALID_TARGET_KEY });
-        return z.NEVER;
-    }
-    const parsed = validateSiteUrl(`https://${raw}`);
-    if (!parsed.ok || parsed.domain.length > 200) {
-        context.addIssue({ code: z.ZodIssueCode.custom, message: INVALID_TARGET_KEY });
-        return z.NEVER;
-    }
-    return parsed.domain.toLowerCase().replace(/^www\./, '');
-});
 /** Per-source target validation — the discriminant decides the shape. */
 export const createReviewSourceSchema = z
     .discriminatedUnion('source', [
@@ -64,14 +45,14 @@ export const createReviewSourceSchema = z
         .object({
         profileId: objectIdHexSchema,
         source: z.literal('google'),
-        target: opaqueReviewTargetSchema,
+        target: reviewTargetSchema('google'),
     })
         .strict(),
     z
-        .object({ profileId: objectIdHexSchema, source: z.literal('trustpilot'), target: trustpilotTargetSchema })
+        .object({ profileId: objectIdHexSchema, source: z.literal('trustpilot'), target: reviewTargetSchema('trustpilot') })
         .strict(),
     z
-        .object({ profileId: objectIdHexSchema, source: z.literal('tripadvisor'), target: opaqueReviewTargetSchema })
+        .object({ profileId: objectIdHexSchema, source: z.literal('tripadvisor'), target: reviewTargetSchema('tripadvisor') })
         .strict(),
 ]);
 export type CreateReviewSourceInput = z.infer<typeof createReviewSourceSchema>;

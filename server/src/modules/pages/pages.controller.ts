@@ -7,8 +7,8 @@ import { PagesError, type PagesService } from './pages.service.js';
 /**
  * Pages keeps its own coded envelope (`{ error: { code, message } }` plus the
  * optional stale-state sibling). It now renders through the shared fail-closed
- * resolver, so the stable `PAGES_*` code survives, `messageKey` is additive,
- * and an unresolvable key produces localized status-family copy instead of the
+ * resolver. Canonical codes retain their previous alias in `legacyCode`, and
+ * an unresolvable key produces localized status-family copy instead of the
  * raw key.
  */
 function sendPagesError(req: Request, res: Response, error: PagesError): void {
@@ -23,6 +23,7 @@ function sendPagesError(req: Request, res: Response, error: PagesError): void {
     res.status(error.status).json({
         error: {
             code: payload.code,
+            ...(payload.legacyCode === undefined ? {} : { legacyCode: payload.legacyCode }),
             message: payload.message,
             messageKey: payload.messageKey,
             ...(error.details ? { details: error.details } : {}),
@@ -56,7 +57,7 @@ export function createPagesController(service: PagesService) {
         const accountId = requireAccountId(req);
         const { siteId, pageId } = pagesDetailParamsSchema.parse(req.params);
         const { range } = pagesDetailQuerySchema.parse(req.query);
-        res.status(200).json(await service.detail(accountId, siteId, pageId, range));
+        res.status(200).json(await service.detail(accountId, siteId, pageId, range, toSupportedLocale(req.language)));
     });
     const refresh = handler(async (req, res) => {
         const accountId = requireAccountId(req);

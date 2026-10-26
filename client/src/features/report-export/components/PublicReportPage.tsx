@@ -1,3 +1,4 @@
+import { Bdi } from '@shared/components/Bdi';
 import { useEffect, type ReactNode } from 'react';
 import { Download } from 'lucide-react';
 import { Helmet } from 'react-helmet-async';
@@ -57,7 +58,7 @@ function ReportTable({ data }: { data: ReportTableData }) {
         <TableHeader>
           <TableRow>
             {data.columns.map((column) => (
-              <TableHead key={column.key}>{column.label}</TableHead>
+              <TableHead key={column.key}><Bdi>{column.label}</Bdi></TableHead>
             ))}
           </TableRow>
         </TableHeader>
@@ -81,20 +82,20 @@ function ReportBlock({ block }: { block: PublicReportBlock }) {
   const { t, i18n } = useTranslation('report');
   if (block.type === 'heading') {
     return block.level <= 2 ? (
-      <h2 className="text-2xl font-semibold tracking-tight">{block.text}</h2>
+      <h2 className="text-2xl font-semibold tracking-tight"><Bdi>{block.text}</Bdi></h2>
     ) : (
-      <h3 className="text-lg font-semibold">{block.text}</h3>
+      <h3 className="text-lg font-semibold"><Bdi>{block.text}</Bdi></h3>
     );
   }
   if (block.type === 'prose') {
-    return <p className="whitespace-pre-wrap leading-7 text-muted-foreground">{block.text}</p>;
+    return <p className="whitespace-pre-wrap leading-7 text-muted-foreground"><Bdi>{block.text}</Bdi></p>;
   }
   if (block.type === 'kpi_group' || block.type === 'key_value') {
     return (
       <dl className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
         {block.items.map((item) => (
           <Card key={item.id ?? item.label} className="gap-0 px-6">
-            <dt className="text-sm text-muted-foreground">{item.label}</dt>
+            <dt className="text-sm text-muted-foreground"><Bdi>{item.label}</Bdi></dt>
             <dd className="mt-1 text-xl font-semibold">
               {scalar(item.value, t('publicShare.unavailable'), i18n.language)}
               {item.unit ? ` ${item.unit}` : ''}
@@ -114,7 +115,7 @@ function ReportBlock({ block }: { block: PublicReportBlock }) {
                 <Badge variant="outline">{item.severity}</Badge>
                 <Badge variant="secondary">{item.bucket}</Badge>
               </div>
-              <CardTitle className="text-base">{item.title}</CardTitle>
+              <CardTitle className="text-base"><Bdi>{item.title}</Bdi></CardTitle>
             </CardHeader>
             <CardContent className="flex flex-col gap-3 text-sm">
               <p>{item.why}</p>
@@ -127,7 +128,7 @@ function ReportBlock({ block }: { block: PublicReportBlock }) {
                   href={safeExternalHref(url)}
                   rel={SAFE_EXTERNAL_REL}
                 >
-                  {url}
+                  <Bdi>{url}</Bdi>
                 </a>
               ))}
               {item.evidence.map((entry, index) => (

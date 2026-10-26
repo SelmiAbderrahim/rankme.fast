@@ -49,9 +49,13 @@
     "loadMore": "加载更多",
     "warnings": "一个或多个警告",
     "notAvailable": "不可用",
-    "warningCount": "{{count}} 条警告",
+    "warningCount_one": "{{count}} 条警告",
     "warningCount_other": "{{count}} 条警告",
-    "progress": "已完成 {{value}}%"
+    "progress": "已完成 {{value}}%",
+    "warningCount_zero": "{{count}} 条警告",
+    "warningCount_two": "{{count}} 条警告",
+    "warningCount_few": "{{count}} 条警告",
+    "warningCount_many": "{{count}} 条警告"
   },
   "status": {
     "queued": "排队中",
@@ -77,11 +81,14 @@
     "locale": "输出语言",
     "detectedLocale": "从你的账户语言检测:{{locale}}。",
     "localeOverrideHint": "你可以为本次输出更改语言。",
-    "consent": "我了解可将有限、经清理的页面内容发送给已配置的 AI 提供方以生成简报和初稿。",
+    "consent": "我了解此页面的文本将发送给我们的 AI 服务提供商，用于撰写简报和初稿。",
     "consentRequired": "需要同意。",
-    "reviewedSources": { "title": "已审核的比较页面", "description": "这些公开排名页面来自您批准的匹配。是否开始分析仍由您确认。" },
+    "reviewedSources": {
+      "title": "已审核的比较页面",
+      "description": "这些公开排名页面来自您批准的匹配。是否开始分析仍由您确认。"
+    },
     "included": {
-      "title": "一次积分包含",
+      "title": "此分析包含的内容",
       "owned": "一个自有页面",
       "competitors": "最多三个公开自然比较页面",
       "scorecard": "一张评分卡",
@@ -91,20 +98,17 @@
     },
     "previewLoading": "正在检查当前额度…",
     "previewError": "无法检查当前额度。",
-    "baseRemaining": "剩余基础额度：{{count}}",
-    "packRemaining": "积分包余额：{{count}}",
-    "balance": "本月剩余基础额度:{{used}} / {{cap}}。",
-    "packBalance": "增值包余额:额外 {{balance}} 次分析。",
     "submit": "启动分析",
     "submitting": "启动中…",
     "invalidUrl": "请输入有效 URL。",
     "urlRequired": "请输入或选择页面 URL。",
     "keywordRequired": "请输入或选择目标关键词。",
-    "keywordTooLong": "目标关键词不得超过 200 个字符。",
+    "keywordTooLong": "请使用不超过 {{max}} 个字符。",
+    "keywordList": "请输入一个搜索查询，而不是列表。请为每个关键词分别开始一次分析。",
+    "keywordCounter": "{{length}}/{{max}} 个字符",
     "offOrigin": "URL 必须匹配你的站点来源。",
     "urlUnsafe": "URL 不能公开访问。",
-    "urlNotOwned": "该 URL 不属于你拥有的站点。",
-    "capacityExhausted": "月度额度和增值包均已耗尽。"
+    "urlNotOwned": "该 URL 不属于你拥有的站点。"
   },
   "detail": {
     "progress": {
@@ -113,6 +117,7 @@
       "step": "第 {{current}} 步，共 {{total}} 步",
       "percentComplete": "已完成 {{percent}}%",
       "autoRefresh": "分析运行期间，此页面会自动刷新。",
+      "stillRunning": "仍在运行。您可以离开此页面，稍后回来查看，结果会保留在这里。",
       "errorTitle": "此分析提前停止",
       "errorGeneric": "分析在完成前已停止。"
     },
@@ -129,6 +134,57 @@
       "cancelled": "此分析已取消。",
       "unexpected": "分析因意外错误而停止。"
     },
+    "failureReason": {
+      "robots_blocked": "您网站的 robots.txt 禁止我们的读取程序访问此页面。",
+      "access_denied": "您的网站拒绝访问此页面，例如由于机器人防护或登录页面。",
+      "http_error": "您的页面返回了 HTTP 状态码 {{status}}，而不是页面内容。",
+      "timeout": "您的页面加载时间过长。",
+      "temporarily_unavailable": "这次无法加载该页面。",
+      "empty_content": "页面上没有找到可读文本。页面可能为空，或只通过 JavaScript 加载内容。",
+      "too_large": "页面太大，无法一次读取。",
+      "unsafe_url": "页面地址或其重定向到的页面无法公开访问。",
+      "unreadable": "页面返回的格式我们无法读取。",
+      "redirect_loop": "你的页面的重定向在原地打转。",
+      "redirect_limit": "你的页面重定向超过五次，因此我们停止跟随。",
+      "unsafe_redirect": "你的页面重定向到了无法公开访问的地址。",
+      "non_html": "此地址提供的是 {{type}}，不是网页。"
+    },
+    "failureReasonUnknown": "我们没有记录具体原因。常见原因包括 robots.txt 屏蔽、机器人防护或登录墙、HTTP 错误、响应过慢,或文本需要运行 JavaScript 后才出现。请确认页面能在无痕浏览窗口中打开,然后重试。",
+    "failureCode": {
+      "provider_unavailable": "我们的内容服务暂时不可用。",
+      "page_unreachable": "我们无法读取您的页面。",
+      "page_blocked": "您的页面阻止了我们的读取程序，例如通过 robots.txt、机器人防护或登录页面。",
+      "page_too_large": "您的页面过大，无法一次读完。",
+      "timeout": "您的页面或我们的内容服务响应超时。",
+      "internal": "我们这边出了问题。"
+    },
+    "failureHint": {
+      "robots_blocked": "在 robots.txt 中允许爬虫读取此页面，然后重试。",
+      "access_denied": "允许自动访问此页面或将其设为公开，然后重试。",
+      "http_error": "检查网址是否正确，以及页面能否在浏览器无痕窗口中打开，然后重试。",
+      "timeout": "这通常是暂时的。请重试，并确认页面加载速度较快。",
+      "temporarily_unavailable": "这通常是暂时的。请几分钟后重试。",
+      "empty_content": "确保正文包含在页面 HTML 中(服务端渲染)，然后重试。",
+      "too_large": "尝试较短的页面，或将很长的内容拆分到多个页面。",
+      "unsafe_url": "使用页面的公开地址并检查其重定向，然后重试。",
+      "unreadable": "请重试。如果仍然失败，请检查页面能否在浏览器中正常打开。",
+      "redirect_loop": "修复重定向，让它最终停在同一个页面上，然后重试。",
+      "redirect_limit": "让地址直接指向最终页面，然后重试。",
+      "unsafe_redirect": "改为重定向到公开地址，然后重试。",
+      "non_html": "请使用页面本身的地址，而不是文件地址，然后重试。"
+    },
+    "failureEvidence": {
+      "redirectPath": "重定向路径：{{path}}"
+    },
+    "failedNoOutput": "此次分析在生成任何内容之前就已中止，因此没有可显示的内容机会、简报或草稿。",
+    "retryDialog": {
+      "title": "要重新尝试此分析吗？",
+      "description": "这将针对同一页面和关键词开始一次新的分析。",
+      "confirm": "重试",
+      "back": "取消",
+      "loading": "正在加载此分析的详情…",
+      "loadFailed": "无法加载此分析的详情。"
+    },
     "back": "返回分析",
     "meta": {
       "page": "页面",
@@ -136,18 +192,37 @@
       "locale": "语言",
       "requested": "请求时间",
       "completed": "完成时间",
+      "readAt": "经重定向后在 {{url}} 读取",
       "cost": "分析成本:{{units}} 积分"
     },
     "explanation": "这是内容就绪度对比,不是搜索引擎评分。",
-    "score": { "title": "内容就绪度评分", "overall": "总分", "confidence": "证据可信度", "breakdown": "分项明细", "section": "分项", "weight": "权重", "reason": "评分依据", "reasonUnavailable": "此分项暂无说明。", "reasonStrong": "现有证据支持此分项。", "reasonNeedsWork": "现有证据表明此分项仍可改进。", "reasonLimited": "证据有限，降低了此分项的可信度。", "sectionProgress": "{{section}} 得分：{{score}}/100" },
+    "score": {
+      "title": "内容就绪度评分",
+      "overall": "总分",
+      "confidence": "证据可信度",
+      "breakdown": "分项明细",
+      "section": "分项",
+      "weight": "权重",
+      "reason": "评分依据",
+      "reasonUnavailable": "此分项暂无说明。",
+      "reasonStrong": "现有证据支持此分项。",
+      "reasonNeedsWork": "现有证据表明此分项仍可改进。",
+      "reasonLimited": "证据有限，降低了此分项的可信度。",
+      "sectionProgress": "{{section}} 得分：{{score}}/100"
+    },
     "sections": {
-      "readability": "可读性", "intent": "搜索意图匹配度",
+      "readability": "可读性",
+      "intent": "搜索意图匹配度",
       "coverage": "覆盖度",
-      "structure": "结构", "links": "链接实用性", "schema": "结构化数据与答案清晰度", "technical": "技术内容信号"
+      "structure": "结构",
+      "links": "链接实用性",
+      "schema": "结构化数据与答案清晰度",
+      "technical": "技术内容信号"
     },
     "warnings": {
       "title": "警告",
-      "empty": "无警告。", "unknown": "部分分析内容不可用。"
+      "empty": "无警告。",
+      "unknown": "部分分析内容不可用。"
     },
     "recommendations": {
       "title": "建议",
@@ -170,9 +245,14 @@
       "saveFailed": "无法保存此简报版本，请重试。",
       "versionHistory": "简报版本历史",
       "noVersions": "尚无已保存的简报版本。",
-      "versionMeta": "{{date}} · {{count}} 节",
+      "versionMeta_one": "{{date}} · {{count}} 节",
       "unsavedGuard": "简报存在未保存的更改。",
-      "savedHint": "这是可编辑的建议，不会发布任何内容。"
+      "savedHint": "这是可编辑的建议，不会发布任何内容。",
+      "versionMeta_zero": "{{date}} · {{count}} 节",
+      "versionMeta_two": "{{date}} · {{count}} 节",
+      "versionMeta_few": "{{date}} · {{count}} 节",
+      "versionMeta_many": "{{date}} · {{count}} 节",
+      "versionMeta_other": "{{date}} · {{count}} 节"
     },
     "draft": {
       "title": "初稿",
@@ -183,23 +263,37 @@
       "saveFailed": "无法保存此版本，请重试。",
       "versionHistory": "版本历史",
       "noVersions": "尚无已保存版本。",
-      "versionMeta": "{{date}} · {{count}} 字",
+      "versionMeta_one": "{{date}} · {{count}} 字",
       "copy": "复制到剪贴板",
       "copying": "正在复制…",
       "copied": "已复制到剪贴板。",
       "copyFailed": "无法复制草稿。",
       "copyRetry": "再次尝试复制",
       "export": "导出为 Markdown",
-      "wordCount": "{{count}} 词",
-      "unsavedGuard": "存在未保存的更改。"
+      "wordCount_one": "{{count}} 词",
+      "unsavedGuard": "存在未保存的更改。",
+      "versionMeta_zero": "{{date}} · {{count}} 字",
+      "versionMeta_two": "{{date}} · {{count}} 字",
+      "versionMeta_few": "{{date}} · {{count}} 字",
+      "versionMeta_many": "{{date}} · {{count}} 字",
+      "versionMeta_other": "{{date}} · {{count}} 字",
+      "wordCount_zero": "{{count}} 词",
+      "wordCount_two": "{{count}} 词",
+      "wordCount_few": "{{count}} 词",
+      "wordCount_many": "{{count}} 词",
+      "wordCount_other": "{{count}} 词"
     },
     "sources": {
       "title": "来源",
-      "empty": "无引用。", "owned": "自有页面", "comparison": "对比页面 {{count}}"
+      "empty": "无引用。",
+      "owned": "自有页面",
+      "comparison": "对比页面 {{count}}"
     },
     "actions": {
       "cancel": "取消分析",
-      "regenerate": "重新生成(消耗一个积分)"
+      "regenerate": "重新生成",
+      "retry": "重试",
+      "editUrl": "修改网址"
     }
   },
   "confirm": {
@@ -215,27 +309,25 @@
       "confirm": "重新生成",
       "back": "取消"
     },
-    "discard": { "title": "放弃未保存的草稿更改？", "description": "最新编辑尚未保存为一个版本。", "confirm": "放弃并离开", "back": "继续编辑" }
-  },
-  "paywall": {
-    "title": "内容智能",
-    "description": "升级到 Starter 或以上以运行内容分析。",
-    "action": "查看套餐",
-    "exhausted": {
-      "title": "额度用尽",
-      "description": "月度额度和增值包已用尽。购买增值包或升级套餐。",
-      "buyPack": "购买分析包",
-      "seePlans": "查看套餐"
-    },
-    "packHint": "你的下一次将来自积分包。"
+    "discard": {
+      "title": "放弃未保存的草稿更改？",
+      "description": "最新编辑尚未保存为一个版本。",
+      "confirm": "放弃并离开",
+      "back": "继续编辑"
+    }
   },
   "partial": {
     "title": "部分结果",
     "description": "本次运行数据有限。评分卡可用;部分部分可能缺失。"
   },
-  "warnings": { "keywordUnavailable": "关键词证据不可用，因此缺少该关键词的专项比较。", "serpUnavailable": "搜索结果证据不可用，因此评分仅依据自有页面。", "competitorsPartial": "部分对比页面不可用；评分使用成功读取的页面。", "aiBudgetExhausted": "写作预算在所有生成分项完成前已用尽。", "stuffingSuspected": "页面重复关键词的频率异常。", "briefFailed": "简报不可用，但评分卡已保留。", "draftFailed": "初稿不可用，但评分卡和简报已保留。" },
-  "refund": {
-    "refunded": "分析积分已退回。"
+  "warnings": {
+    "keywordUnavailable": "关键词证据不可用，因此缺少该关键词的专项比较。",
+    "serpUnavailable": "搜索结果证据不可用，因此评分仅依据自有页面。",
+    "competitorsPartial": "部分对比页面不可用；评分使用成功读取的页面。",
+    "aiBudgetExhausted": "写作预算在所有生成分项完成前已用尽。",
+    "stuffingSuspected": "页面重复关键词的频率异常。",
+    "briefFailed": "简报不可用，但评分卡已保留。",
+    "draftFailed": "初稿不可用，但评分卡和简报已保留。"
   },
   "errors": {
     "loadEntitlementsFailed": "无法检查内容智能访问权限。",
@@ -250,7 +342,7 @@
   },
   "opportunities": {
     "title": "内容机会",
-    "description": "跟踪每条建议直至确认应用。状态更改不会调用供应商。",
+    "description": "跟踪每条建议直至确认应用。更改状态不会获取任何新数据。",
     "empty": "没有符合筛选条件的建议。",
     "filters": {
       "state": "状态",
@@ -270,7 +362,16 @@
       "low": "低"
     },
     "recommendationLabel": "{{direction}} · {{section}}",
-    "rationale": "依据", "rationaleUnavailable": "此建议暂无依据说明。", "rationaleText": "请根据关联证据{{direction}}{{section}}分项。", "ownedEvidence": "自有页面证据", "directions": { "add": "补充", "strengthen": "强化", "clarify": "澄清", "remove": "精简" },
+    "rationale": "依据",
+    "rationaleUnavailable": "此建议暂无依据说明。",
+    "rationaleText": "请根据关联证据{{direction}}{{section}}分项。",
+    "ownedEvidence": "自有页面证据",
+    "directions": {
+      "add": "补充",
+      "strengthen": "强化",
+      "clarify": "澄清",
+      "remove": "精简"
+    },
     "confidence": "建议置信度：{{value}}",
     "evidence_zero": "{{count}} 个关联证据来源",
     "evidence_one": "{{count}} 个关联证据来源",
@@ -301,7 +402,7 @@
       "changedTitle": "检测到内容变化",
       "changedDescription": "最新授权页面哈希与分析锚点不同。",
       "unavailableTitle": "没有可用的近期页面哈希",
-      "unavailableDescription": "确认前请运行新的授权分析。此检查不会调用供应商。",
+      "unavailableDescription": "确认前请运行新的授权分析。此检查不会获取任何新数据。",
       "noteRequired": "请添加说明备注，以便在未检测到变化时确认。",
       "error": "无法完成页面哈希检查。请在确认前重试。"
     },
@@ -379,7 +480,7 @@
       "baseline": "之前 28 天",
       "following": "之后 28 天",
       "delta": "绝对变化",
-      "coverage": "数据覆盖 — Search Console：{{gsc}} 天；排名：{{rank}} 天。",
+      "coverage": "数据覆盖天数 — Search Console：{{gsc}}；排名：{{rank}}。",
       "disclaimer": "外部因素会影响搜索表现。此视图显示相关变化，而非归因。",
       "metrics": {
         "clicks": "点击",
@@ -428,15 +529,9 @@
       "title": "开始清单运行",
       "description": "抓取你的页面，获得聚类、重复、单薄与孤立页面、关键词内耗和主题空缺。",
       "pageLimit": "要抓取的页面数",
-      "pageLimitHint": "介于 1 到 {{max}} 页之间。每四页构成一个预留区块。",
-      "blocksTitle": "本次预留",
-      "blocks_zero": "已预留 {{count}} 个区块。页数上限：{{pages}}（每区块四页）。",
-      "blocks_one": "已预留 {{count}} 个区块。页数上限：{{pages}}（每区块四页）。",
-      "blocks_two": "已预留 {{count}} 个区块。页数上限：{{pages}}（每区块四页）。",
-      "blocks_few": "已预留 {{count}} 个区块。页数上限：{{pages}}（每区块四页）。",
-      "blocks_many": "已预留 {{count}} 个区块。页数上限：{{pages}}（每区块四页）。",
-      "blocks_other": "已预留 {{count}} 个区块。页数上限：{{pages}}（每区块四页）。",
-      "blocksInvalid": "输入有效的页面数以查看预留的区块数量。",
+      "pageLimitHint": "一至 {{max}} 个页面。",
+      "blocksTitle": "本次运行的页面",
+      "blocksInvalid": "输入有效页数以查看抓取上限。",
       "allowedPaths": "仅这些路径（可选）",
       "excludedPaths": "跳过这些路径（可选）",
       "sitemapSeeds": "站点地图 URL（可选）",
@@ -451,7 +546,14 @@
         "invalidPath": "每个路径必须以斜杠开头（例如 /blog）。",
         "tooManySeeds": "最多使用五个站点地图 URL。",
         "invalidSeed": "其中一个站点地图 URL 过长。"
-      }
+      },
+      "pageCount_zero": "{{count}} 页",
+      "pageCount_one": "{{count}} 页",
+      "pageCount_two": "{{count}} 页",
+      "pageCount_few": "{{count}} 页",
+      "pageCount_many": "{{count}} 页",
+      "pageCount_other": "{{count}} 页",
+      "blocks": "最多 $t(contentIntelligence:inventory.start.pageCount, {\"count\": {{pages}}})。"
     },
     "runs": {
       "title": "清单运行",
@@ -601,7 +703,11 @@
       "failed": "失败",
       "cancelled": "已取消"
     },
-    "confidence": { "high": "高", "medium": "中", "low": "低" },
+    "confidence": {
+      "high": "高",
+      "medium": "中",
+      "low": "低"
+    },
     "warnings": {
       "partialPortfolio": "部分竞争对手无法读取；结果仅涵盖我们能访问到的对象。",
       "stoppedEarly": "为控制预算，本次运行提前停止。",
@@ -628,7 +734,10 @@
     "manager": {
       "suggestionsTitle": "建议的竞争对手",
       "suggestionsDescription": "来自你现有竞争对手数据、已与你一同排名的域名。确认你想要对比的对象。",
-      "suggestionsEmpty": { "title": "暂无建议", "description": "请先从 Competitors 标签页运行竞争对手发现,或在下方通过 URL 添加竞争对手。" },
+      "suggestionsEmpty": {
+        "title": "暂无建议",
+        "description": "请先从 Competitors 标签页运行竞争对手发现,或在下方通过 URL 添加竞争对手。"
+      },
       "columns": {
         "domain": "域名",
         "avgPosition": "平均排名",
@@ -648,9 +757,18 @@
       "portfolioFull": "你的组合已达到最多 {{max}} 个竞争对手。请先归档一个再添加。",
       "portfolioTitle": "你的竞争对手",
       "portfolioDescription": "可用于对比的已确认竞争对手。归档你不再跟踪的对象。",
-      "portfolioEmpty": { "title": "暂无竞争对手", "description": "确认一条建议或通过 URL 添加竞争对手,以建立你的组合。" },
-      "source": { "suggested": "建议", "manual": "手动" },
-      "profileStatus": { "active": "活跃", "archived": "已归档" },
+      "portfolioEmpty": {
+        "title": "暂无竞争对手",
+        "description": "确认一条建议或通过 URL 添加竞争对手,以建立你的组合。"
+      },
+      "source": {
+        "suggested": "建议",
+        "manual": "手动"
+      },
+      "profileStatus": {
+        "active": "活跃",
+        "archived": "已归档"
+      },
       "archive": "归档",
       "restore": "恢复",
       "updating": "正在更新…",
@@ -664,7 +782,10 @@
     "run": {
       "title": "开始一次比较运行",
       "description": "将你的某个页面与已确认的竞争对手进行比较,获取差异、缺口和机会。",
-      "noCompetitors": { "title": "请先确认一个竞争对手", "description": "开始比较运行前,请先在上方添加至少一个活跃的竞争对手。" },
+      "noCompetitors": {
+        "title": "请先确认一个竞争对手",
+        "description": "开始比较运行前,请先在上方添加至少一个活跃的竞争对手。"
+      },
       "selectCompetitors": "选择要比较的竞争对手(最多 {{max}} 个)",
       "ownedUrl": "你的页面 URL",
       "ownedUrlHint": "必须是你所拥有网站上的页面。",
@@ -673,33 +794,64 @@
       "keywordHint": "将比较范围缩小到你想赢得的搜索意图。",
       "pageLimit": "要读取的竞争对手页面数",
       "pageLimitHint": "在所选竞争对手中读取 1 到 {{max}} 个页面。",
-      "disclosureTitle": "本次运行的成本",
-      "disclosure_zero": "本次运行占用一个单位,并在 {{count}} 个竞争对手中读取最多 {{pages}} 个页面。",
-      "disclosure_one": "本次运行占用一个单位,并在 {{count}} 个竞争对手中读取最多 {{pages}} 个页面。",
-      "disclosure_two": "本次运行占用一个单位,并在 {{count}} 个竞争对手中读取最多 {{pages}} 个页面。",
-      "disclosure_few": "本次运行占用一个单位,并在 {{count}} 个竞争对手中读取最多 {{pages}} 个页面。",
-      "disclosure_many": "本次运行占用一个单位,并在 {{count}} 个竞争对手中读取最多 {{pages}} 个页面。",
-      "disclosure_other": "本次运行占用一个单位,并在 {{count}} 个竞争对手中读取最多 {{pages}} 个页面。",
-      "disclosureInvalid": "请输入有效的页面数量,以查看本次运行占用的资源。",
+      "disclosureTitle": "本次运行的页面与竞争对手",
+      "disclosureInvalid": "输入有效页数以查看运行上限。",
       "inFlight": "已有运行正在进行。请等待其完成后再开始新的运行。",
       "submit": "开始比较",
       "submitting": "正在启动…",
-      "reviewed": { "title": "审核排名页面", "description": "确认实际要比较的页面。未经您的批准不会开始运行。", "loading": "正在加载已审核匹配…", "notFound": "该已审核匹配已不可用。", "loadFailed": "无法加载已审核匹配。", "evidence": "关联关键词证据", "openSuggested": "打开建议排名页面", "competitorUrl": "竞争对手排名页面", "disclosure": "此次比较预留一个单位，并读取一个已审核竞争对手页面及其配对自有页面。", "reviewAction": "审核费用并确认", "confirmTitle": "开始此比较？", "confirmDescription": "我们将保存同域页面选择、预留一个单位并将比较加入队列。", "cancel": "继续审核", "confirm": "确认并开始" },
+      "reviewed": {
+        "title": "审核排名页面",
+        "description": "确认实际要比较的页面。未经您的批准不会开始运行。",
+        "loading": "正在加载已审核匹配…",
+        "notFound": "该已审核匹配已不可用。",
+        "loadFailed": "无法加载已审核匹配。",
+        "evidence": "关联关键词证据",
+        "openSuggested": "打开建议排名页面",
+        "competitorUrl": "竞争对手排名页面",
+        "disclosure": "此次比较预留一个单位，并读取一个已审核竞争对手页面及其配对自有页面。",
+        "reviewAction": "审核费用并确认",
+        "confirmTitle": "开始此比较？",
+        "confirmDescription": "我们将保存同域页面选择、预留一个单位并将比较加入队列。",
+        "cancel": "继续审核",
+        "confirm": "确认并开始"
+      },
       "errors": {
         "noSelection": "请至少选择一个竞争对手进行比较。",
         "tooMany": "所选竞争对手数量不得超过允许的上限。",
         "invalidUrl": "请输入以 http 或 https 开头的有效页面 URL。",
         "invalidCompetitorUrl": "请为每个选中的竞争对手输入明确的排名页面网址。",
         "pageLimitRange": "请输入允许范围内的页面数量。"
-      }
+      },
+      "pageCount_zero": "{{count}} 个页面",
+      "pageCount_one": "{{count}} 个页面",
+      "pageCount_two": "{{count}} 个页面",
+      "pageCount_few": "{{count}} 个页面",
+      "pageCount_many": "{{count}} 个页面",
+      "pageCount_other": "{{count}} 个页面",
+      "competitorCount_zero": "{{count}} 个竞争对手",
+      "competitorCount_one": "{{count}} 个竞争对手",
+      "competitorCount_two": "{{count}} 个竞争对手",
+      "competitorCount_few": "{{count}} 个竞争对手",
+      "competitorCount_many": "{{count}} 个竞争对手",
+      "competitorCount_other": "{{count}} 个竞争对手",
+      "disclosure": "本次运行在 $t(contentIntelligence:competitorContent.run.competitorCount, {\"count\": {{count}}})中读取最多 $t(contentIntelligence:competitorContent.run.pageCount, {\"count\": {{pages}}})。"
     },
     "runs": {
       "title": "比较运行",
       "description": "该网站的所有比较运行,最新的在前。",
-      "columns": { "requested": "请求时间", "status": "状态", "competitors": "竞争对手", "pages": "页面", "actions": "操作" },
+      "columns": {
+        "requested": "请求时间",
+        "status": "状态",
+        "competitors": "竞争对手",
+        "pages": "页面",
+        "actions": "操作"
+      },
       "view": "打开",
       "loadMore": "加载更多",
-      "empty": { "title": "暂无比较运行", "description": "开始你的首次运行,看看你的页面与竞争对手相比如何。" }
+      "empty": {
+        "title": "暂无比较运行",
+        "description": "开始你的首次运行,看看你的页面与竞争对手相比如何。"
+      }
     },
     "progress": {
       "title": "运行进度",
@@ -707,14 +859,16 @@
       "competitorsProcessed": "已读取的竞争对手",
       "competitorsFailed": "失败的竞争对手",
       "pagesScraped": "已读取的页面",
-      "refundNote": "预留的单位已退回到你的额度。",
       "warningsTitle": "警告",
       "errorTitle": "本次运行提前停止",
       "errorGeneric": "运行在完成前停止。",
       "cancel": "取消运行",
       "cancelling": "正在取消…"
     },
-    "detail": { "back": "返回竞争对手", "pending": "本次运行仍在进行。完成后将显示结果。" },
+    "detail": {
+      "back": "返回竞争对手",
+      "pending": "本次运行仍在进行。完成后将显示结果。"
+    },
     "findings": {
       "confidence": "置信度:{{value}}",
       "evidence_zero": "{{count}} 个关联证据来源",
@@ -723,7 +877,9 @@
       "evidence_few": "{{count}} 个关联证据来源",
       "evidence_many": "{{count}} 个关联证据来源",
       "evidence_other": "{{count}} 个关联证据来源",
-      "explanation": { "title": "摘要" }
+      "explanation": {
+        "title": "摘要"
+      }
     },
     "comparison": {
       "title": "比较概览",
@@ -733,7 +889,11 @@
       "emptyHint": "本次运行未生成各竞争对手的差异。",
       "noMatches": "没有竞争对手符合这些筛选条件。",
       "clearFilters": "清除筛选",
-      "filters": { "domain": "竞争对手包含", "domainPlaceholder": "例如 competitor.com", "dimension": "维度" },
+      "filters": {
+        "domain": "竞争对手包含",
+        "domainPlaceholder": "例如 competitor.com",
+        "dimension": "维度"
+      },
       "dimensions": {
         "all": "所有维度",
         "length": "内容长度",
@@ -772,7 +932,10 @@
       "description": "你的页面以及我们读取的每个竞争对手页面的派生数据。",
       "empty": "暂无页面详情",
       "emptyHint": "本次运行未存储任何页面数据。",
-      "role": { "owned": "你的页面", "competitor": "竞争对手" },
+      "role": {
+        "owned": "你的页面",
+        "competitor": "竞争对手"
+      },
       "visit": "访问页面",
       "words": "字数",
       "headings": "标题",
@@ -800,18 +963,31 @@
       "checks": "本月每周检查",
       "targetKind": "你想监测什么？",
       "targetKinds": {
-        "owned": { "label": "我的某个页面", "hint": "本站上你已拥有的页面。" },
-        "competitor": { "label": "竞争对手页面", "hint": "你已确认的某个竞争对手的页面。" }
+        "owned": {
+          "label": "我的某个页面",
+          "hint": "本站上你已拥有的页面。"
+        },
+        "competitor": {
+          "label": "竞争对手页面",
+          "hint": "你已确认的某个竞争对手的页面。"
+        }
       },
       "ownedUrl": "页面地址",
       "ownedUrlHint": "你自己网站上该页面的完整地址。",
       "selectCompetitor": "选择一个已确认的竞争对手",
       "competitorUrl": "竞争对手页面地址",
       "competitorUrlHint": "要监测的具体竞争对手页面。它必须属于已确认的竞争对手。",
-      "noCompetitors": { "title": "尚无已确认的竞争对手", "description": "请先在竞争对手视图中确认一个竞争对手，然后才能监测其页面。", "action": "前往竞争对手" },
+      "noCompetitors": {
+        "title": "尚无已确认的竞争对手",
+        "description": "请先在竞争对手视图中确认一个竞争对手，然后才能监测其页面。",
+        "action": "前往竞争对手"
+      },
       "cadenceTitle": "检查频率",
       "cadenceValue": "每次检查按{{cadence}}进行。此设置无法更改。",
-      "errors": { "noCompetitor": "请先选择一个已确认的竞争对手。", "invalidUrl": "请输入以 http 或 https 开头的完整地址。" },
+      "errors": {
+        "noCompetitor": "请先选择一个已确认的竞争对手。",
+        "invalidUrl": "请输入以 http 或 https 开头的完整地址。"
+      },
       "slotsFull": "你已用满全部 {{limit}} 个监测名额。删除一个后才能再添加。",
       "confirmTitle": "开始监控此页面？",
       "confirmDescription": "确认对 {{url}} 进行{{cadence}}检查。这会占用一个监控名额，但不会启动内容分析。",
@@ -820,13 +996,29 @@
       "submit": "开始监测",
       "submitting": "正在开始…"
     },
-    "cadence": { "weekly": "每周" },
-    "targetKinds": { "owned": "自有页面", "competitor": "竞争对手页面" },
-    "status": { "active": "活动", "paused": "已暂停", "cap_paused": "已暂停（已达上限）", "error": "错误" },
+    "cadence": {
+      "weekly": "每周"
+    },
+    "targetKinds": {
+      "owned": "自有页面",
+      "competitor": "竞争对手页面"
+    },
+    "status": {
+      "active": "活动",
+      "paused": "已暂停",
+      "cap_paused": "已暂停（已达上限）",
+      "error": "错误"
+    },
     "list": {
       "title": "你的监测",
       "description": "你正在监测的每个页面、其状态及最近一次检查。",
-      "columns": { "target": "页面", "status": "状态", "lastCheck": "上次检查", "lastChange": "上次变更", "actions": "操作" },
+      "columns": {
+        "target": "页面",
+        "status": "状态",
+        "lastCheck": "上次检查",
+        "lastChange": "上次变更",
+        "actions": "操作"
+      },
       "never": "尚未检查",
       "noChange": "尚无变更",
       "view": "记录",
@@ -834,7 +1026,10 @@
       "resume": "恢复",
       "delete": "删除",
       "updating": "处理中…",
-      "empty": { "title": "尚无监测", "description": "在上方添加你的第一个监测，开始跟踪每周变更。" },
+      "empty": {
+        "title": "尚无监测",
+        "description": "在上方添加你的第一个监测，开始跟踪每周变更。"
+      },
       "deleteConfirm": {
         "title": "删除此监测？",
         "description": "我们将停止检查此页面并删除其变更历史。此操作无法撤销。",
@@ -842,11 +1037,20 @@
         "confirm": "删除监测"
       }
     },
-    "filters": { "all": "全部", "active": "活动", "paused": "已暂停", "cap_paused": "已达上限", "error": "错误" },
+    "filters": {
+      "all": "全部",
+      "active": "活动",
+      "paused": "已暂停",
+      "cap_paused": "已达上限",
+      "error": "错误"
+    },
     "feed": {
       "title": "变更记录",
       "description": "每次每周检查以及我们检测到的任何实质性变更，最新的在前。",
-      "empty": { "title": "尚无检查", "description": "首次每周检查尚未运行。请在下次检查后再来查看。" },
+      "empty": {
+        "title": "尚无检查",
+        "description": "首次每周检查尚未运行。请在下次检查后再来查看。"
+      },
       "kinds": {
         "check_reserved": "已排定检查",
         "check_completed": "检查完成",
@@ -857,7 +1061,12 @@
       },
       "loadMore": "显示更多"
     },
-    "detail": { "back": "返回监测", "kind": "类型", "cadence": "频率", "lastCheck": "上次检查" },
+    "detail": {
+      "back": "返回监测",
+      "kind": "类型",
+      "cadence": "频率",
+      "lastCheck": "上次检查"
+    },
     "errorCategory": {
       "provider_unavailable": "监测服务不可用。",
       "reconcile_failed": "上次排定的检查未能完成。",
@@ -887,29 +1096,27 @@
     },
     "preview": {
       "title": "费用预览",
-      "unit": "此简报将使用 {{count}} 个内容简报单位。",
       "serp": {
         "stored": "使用 {{date}} 保存的搜索结果观测；预计无需重新抓取。",
         "fetched": "没有新鲜的已存搜索结果；此单位包含一次计费抓取。"
       },
-      "scrapes": "将分别读取最多 {{count}} 个公开结果页面。",
+      "scrapes_one": "将分别读取最多 {{count}} 个公开结果页面。",
       "consume": "预计使用：基础 {{base}}，套餐 {{pack}}。",
-      "remaining": "当前可用：基础 {{base}}，套餐 {{pack}}。"
+      "scrapes_zero": "将分别读取最多 {{count}} 个公开结果页面。",
+      "scrapes_two": "将分别读取最多 {{count}} 个公开结果页面。",
+      "scrapes_few": "将分别读取最多 {{count}} 个公开结果页面。",
+      "scrapes_many": "将分别读取最多 {{count}} 个公开结果页面。",
+      "scrapes_other": "将分别读取最多 {{count}} 个公开结果页面。"
     },
     "status": {
       "queued": "排队中",
       "running": "处理中",
       "completed": "已完成",
-      "completed_empty": "已完成 — 无语料",
+      "completed_empty": "已完成：未找到竞争页面",
       "completed_partial": "部分完成",
       "failed": "失败"
     },
     "states": {
-      "cap": {
-        "title": "简报额度已用完",
-        "description": "基础额度和简报套餐余额不足以创建此简报。",
-        "action": "查看简报套餐"
-      },
       "disabled": {
         "title": "内容简报暂不可用",
         "description": "此功能目前已停用，已保存数据不会改变。"
@@ -919,18 +1126,18 @@
         "description": "本次运行已停止，安全保留的证据仍然可见。"
       }
     },
-    "locked": {
-      "title": "内容简报需要 Pro 或 Agency",
-      "description": "Agency 包含每月额度；Pro 可以使用简报套餐点数。",
-      "action": "比较方案"
-    },
     "list": {
       "title": "已保存的简报",
       "description": "重新打开任何已保存简报都不会消耗新单位。",
       "filter": "状态筛选",
       "all": "全部状态",
       "loading": "正在加载简报…",
-      "meta": "申请于 {{date}} · 保留 {{count}} 个页面"
+      "meta_one": "申请于 {{date}} · 保留 {{count}} 个页面",
+      "meta_zero": "申请于 {{date}} · 保留 {{count}} 个页面",
+      "meta_two": "申请于 {{date}} · 保留 {{count}} 个页面",
+      "meta_few": "申请于 {{date}} · 保留 {{count}} 个页面",
+      "meta_many": "申请于 {{date}} · 保留 {{count}} 个页面",
+      "meta_other": "申请于 {{date}} · 保留 {{count}} 个页面"
     },
     "empty": {
       "title": "还没有简报",
@@ -969,7 +1176,7 @@
       }
     },
     "corpus": {
-      "title": "前十名语料统计",
+      "title": "前 10 个结果概览",
       "scrapeDates": "前十名平均值基于 {{dates}} 抓取的页面。",
       "noDates": "没有保留日期",
       "range": "字数范围",
@@ -982,8 +1189,13 @@
     "sources": {
       "title": "已保存来源页面",
       "description": "标题和小标题是不受信任的第三方文本，将按原文显示。",
-      "meta": "抓取于 {{date}} · {{count}} 个词",
-      "empty": "未保留任何来源文档。"
+      "meta_one": "抓取于 {{date}} · {{count}} 个词",
+      "empty": "未保留任何来源文档。",
+      "meta_zero": "抓取于 {{date}} · {{count}} 个词",
+      "meta_two": "抓取于 {{date}} · {{count}} 个词",
+      "meta_few": "抓取于 {{date}} · {{count}} 个词",
+      "meta_many": "抓取于 {{date}} · {{count}} 个词",
+      "meta_other": "抓取于 {{date}} · {{count}} 个词"
     },
     "outline": {
       "title": "带引用的大纲",
@@ -997,7 +1209,9 @@
       "title": "关键词组次要词",
       "empty": "没有已保存的关键词组包含此关键词。"
     },
-    "paa": { "title": "已保存的相关问题条目" },
+    "paa": {
+      "title": "已保存的相关问题条目"
+    },
     "abstentions": {
       "title": "证据限制",
       "noSerpResults": "已保存或新抓取的搜索结果中没有可用网址。",
@@ -1007,11 +1221,11 @@
       "malformedEvidence": "缺少依据或格式错误的智能输出已被丢弃。",
       "unknown": "由于证据不足，某个部分已被省略。"
     },
-    "guidance": "这是基于已存语料的方向性建议；实际搜索结果可能不同。",
+    "guidance": "基于已保存的排名靠前结果给出的建议；你的搜索结果可能不同。",
     "cost": "本次运行费用：{{used}}，上限为 {{ceiling}} 微美元。",
     "editor": {
       "title": "草稿编辑器：{{keyword}}",
-      "description": "将受限草稿与已存语料比较。重新评分不会消耗新简报单位，且仅在原运行费用余量充足时调用智能模型。",
+      "description": "将你的草稿（在长度限制内）与已保存的排名靠前结果进行比较。重新评分不会消耗新的简报，仅在原始运行仍有预算时才使用 AI。",
       "draft": "草稿",
       "characters": "已输入 {{count}} / 50,000 个字符",
       "score": "评估此版本",
@@ -1019,16 +1233,16 @@
       "history": "评分历史",
       "empty": "尚未评估任何草稿版本。",
       "version": "版本 {{version}}",
-      "deterministicScore": "确定性建议：{{score}}/100",
+      "deterministicScore": "基于规则的评分：{{score}}/100",
       "words": "字词",
       "headings": "标题",
       "entities": "匹配实体",
       "aiScore": "智能建议：{{score}}/100",
-      "deterministicOnly": "仅提供确定性建议",
+      "deterministicOnly": "仅基于规则的评分",
       "disclosure": {
         "scored": "受限智能评分以已保存证据为依据。",
         "cost_ceiling": "原运行的费用余量不足，无法再次调用智能模型。",
-        "provider_error": "智能模型供应商不可用；确定性比较仍然可用。",
+        "provider_error": "AI 服务不可用；基于规则的比较仍可使用。",
         "malformed_output": "智能回复缺少证据依据，已被丢弃。"
       }
     },

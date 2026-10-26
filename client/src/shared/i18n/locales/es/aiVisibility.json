@@ -4,7 +4,7 @@
   "loadFailed": "No se pudo cargar AI Visibility.",
   "form": {
     "label": "Prompt seguido",
-    "placeholder": "mejor herramienta de auditoría SEO para agencias",
+    "placeholder": "Una pregunta que un cliente podría hacerle a un asistente de IA",
     "add": "Seguir prompt",
     "adding": "Añadiendo…",
     "cap": "{{count}}/{{cap}} prompts seguidos",
@@ -30,10 +30,20 @@
   },
   "refresh": {
     "button": "Comprobar ahora",
-    "cooldown": "Espera {{seconds}} s antes de volver a comprobar.",
+    "cooldown_one": "Espera {{seconds}} s antes de volver a comprobar.",
     "failed": "No se pudo comprobar AI Visibility ahora mismo. Se siguen mostrando tus últimos datos.",
-    "success": "{{total}} prompts comprobados — las respuestas de AI te mencionan en {{mentioned}} de ellos.",
-    "cost": "Consume {{prompts}} de tus {{remaining}} comprobaciones restantes este mes."
+    "success_one": "{{total}} prompt comprobado — las respuestas de AI te mencionan en {{mentioned}} de ellos.",
+    "cooldown_zero": "Espera {{seconds}} s antes de volver a comprobar.",
+    "cooldown_two": "Espera {{seconds}} s antes de volver a comprobar.",
+    "cooldown_few": "Espera {{seconds}} s antes de volver a comprobar.",
+    "cooldown_many": "Espera {{seconds}} s antes de volver a comprobar.",
+    "cooldown_other": "Espera {{seconds}} s antes de volver a comprobar.",
+    "success_zero": "{{total}} prompts comprobados — las respuestas de AI te mencionan en {{mentioned}} de ellos.",
+    "success_two": "{{total}} prompts comprobados — las respuestas de AI te mencionan en {{mentioned}} de ellos.",
+    "success_few": "{{total}} prompts comprobados — las respuestas de AI te mencionan en {{mentioned}} de ellos.",
+    "success_many": "{{total}} prompts comprobados — las respuestas de AI te mencionan en {{mentioned}} de ellos.",
+    "success_other": "{{total}} prompts comprobados — las respuestas de AI te mencionan en {{mentioned}} de ellos.",
+    "needPrompts": "Sigue al menos una frase abajo para ejecutar una comprobación."
   },
   "lastChecked": "Última comprobación {{date}}",
   "neverChecked": "Aún sin comprobar",
@@ -65,13 +75,23 @@
     "emptyTitle": "Aún no hay tendencia",
     "empty": "Ejecuta dos comprobaciones en días distintos para ver una tendencia.",
     "latest": "Último dato: las respuestas de AI te mencionan en el {{rate}}% de las comprobaciones.",
-    "chartLabel": "Tendencia de la tasa de mención en {{count}} días comprobados",
-    "tableSummary": "Tasa de mención por día en {{count}} días",
+    "chartLabel_one": "Tendencia de la tasa de mención en {{count}} día comprobado",
+    "tableSummary_one": "Tasa de mención por día en {{count}} día",
     "tableDate": "Fecha",
     "tableRate": "Tasa de mención",
     "tableShare": "Cuota de voz",
     "tableChecks": "Comprobaciones",
-    "failed": "No se pudo cargar la tendencia."
+    "failed": "No se pudo cargar la tendencia.",
+    "chartLabel_zero": "Tendencia de la tasa de mención en {{count}} días comprobados",
+    "chartLabel_two": "Tendencia de la tasa de mención en {{count}} días comprobados",
+    "chartLabel_few": "Tendencia de la tasa de mención en {{count}} días comprobados",
+    "chartLabel_many": "Tendencia de la tasa de mención en {{count}} días comprobados",
+    "chartLabel_other": "Tendencia de la tasa de mención en {{count}} días comprobados",
+    "tableSummary_zero": "Tasa de mención por día en {{count}} días",
+    "tableSummary_two": "Tasa de mención por día en {{count}} días",
+    "tableSummary_few": "Tasa de mención por día en {{count}} días",
+    "tableSummary_many": "Tasa de mención por día en {{count}} días",
+    "tableSummary_other": "Tasa de mención por día en {{count}} días"
   },
   "onboarding": {
     "suggestionsReady": "Empieza con los prompts sugeridos de abajo: un clic los sigue todos.",
@@ -79,10 +99,7 @@
     "needKeywords": "Sigue palabras clave en la pestaña Keywords o ejecuta una auditoría para desbloquear sugerencias."
   },
   "share": {
-    "title": "Cuota de voz",
     "description": "Con qué frecuencia las respuestas de AI te nombran frente a tus competidores.",
-    "brand": "Tú",
-    "competitors": "Competidores",
     "noData": "Sin datos"
   },
   "sentiment": {
@@ -102,18 +119,30 @@
     "trackingAll": "Siguiendo…",
     "aiGenerated": "Sugerido por AI",
     "generate": "Generar sugerencias",
-    "cooldown": "Espera {{seconds}} s antes de volver a generar.",
-    "cost": "Usa una de tus {{remaining}} generaciones restantes este mes.",
-    "capReached": "Has usado todas tus generaciones de sugerencias este mes.",
+    "cooldown_one": "Espera {{seconds}} s antes de volver a generar.",
     "emptyGenerated": "Todavía no hemos podido crear preguntas con tus datos. Añade palabras clave en seguimiento o ejecuta una auditoría y vuelve a generar.",
     "generatedAt": "Generado el {{date}}",
     "outputLocale": "Idioma de salida: {{locale}}",
     "generateFailed": "No se han podido generar sugerencias ahora mismo. Tu generación no se ha contabilizado.",
-    "generated": "Se han generado {{count}} sugerencias."
-  },
-  "locked": {
-    "body": "AI Visibility está disponible en el plan Agency.",
-    "upgrade": "Ver planes"
+    "generated_one": "Se ha generado {{count}} sugerencia.",
+    "cooldown_zero": "Espera {{seconds}} s antes de volver a generar.",
+    "cooldown_two": "Espera {{seconds}} s antes de volver a generar.",
+    "cooldown_few": "Espera {{seconds}} s antes de volver a generar.",
+    "cooldown_many": "Espera {{seconds}} s antes de volver a generar.",
+    "cooldown_other": "Espera {{seconds}} s antes de volver a generar.",
+    "generated_zero": "Se han generado {{count}} sugerencias.",
+    "generated_two": "Se han generado {{count}} sugerencias.",
+    "generated_few": "Se han generado {{count}} sugerencias.",
+    "generated_many": "Se han generado {{count}} sugerencias.",
+    "generated_other": "Se han generado {{count}} sugerencias.",
+    "cancel": "Dejar de esperar",
+    "cancelled": "Dejaste de esperar. Si la generación termina, sus sugerencias aparecerán la próxima vez que abras esta pestaña.",
+    "evidenceLimited": "Estas sugerencias se basan en pocos datos sobre tu sitio. Ejecuta una auditoría, sigue palabras clave o conecta Search Console para obtener preguntas basadas en lo que ofreces.",
+    "evidenceNone": "Todavía no tenemos datos sobre lo que ofrece tu sitio, así que estas preguntas solo mencionan tu dominio. Ejecuta una auditoría, sigue palabras clave o conecta Search Console y vuelve a generar.",
+    "generatingHint": "Generando sugerencias… puede tardar hasta un minuto.",
+    "regenerate": "Volver a generar sugerencias",
+    "staleBody": "Se crearon antes de que las sugerencias usaran solo los datos de este sitio, así que las ocultamos. Genera un conjunto nuevo con el botón de arriba. No se descuenta nada hasta que hagas clic.",
+    "staleTitle": "Estas sugerencias están desactualizadas"
   },
   "add": {
     "failed": "No se pudo añadir ese prompt."

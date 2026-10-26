@@ -1,3 +1,5 @@
+import { isolateText } from '@shared/lib/bidi';
+import { Bdi } from '@shared/components/Bdi';
 /**
  * GoogleSearchDetailPanel — the `?view=` drill-in layer of the site
  * workspace Google tab. Four Search Analytics dimensions (queries / pages /
@@ -39,6 +41,7 @@ import {
 } from '@shared/ui/table';
 import { TableHeaderHelp } from '@shared/ui/table-header-help';
 import { useAppDispatch, useAppSelector } from '@shared/hooks/redux';
+import { countryLabelFromAlpha3 } from '@shared/markets';
 import { contentAnalysisHref } from '@shared/navigation/contentIntelligenceHref';
 import {
   selectGoogleDetailRange,
@@ -54,9 +57,8 @@ import {
   deviceLabelKey,
   formatDate,
   formatInt,
-  formatPercent,
-  formatPosition,
 } from '../lib/format';
+import { MetricValue } from '@shared/components/MetricValue';
 import type { GscSearchDimension, GscSitemap } from '../types';
 
 export interface GoogleSearchDetailPanelProps {
@@ -175,7 +177,7 @@ const AnalyticsSection = ({ view, siteId }: { view: AnalyticsView; siteId: strin
   };
 
   const rowLabel = (key: string): string => {
-    if (dimension === 'country') return key.toUpperCase();
+    if (dimension === 'country') return countryLabelFromAlpha3(key, locale);
     if (dimension === 'device') {
       return t(`searchSummary.devices.${deviceLabelKey(key)}`);
     }
@@ -306,8 +308,8 @@ const AnalyticsSection = ({ view, siteId }: { view: AnalyticsView; siteId: strin
               {rows.map((row) => (
                 <TableRow key={row.key} data-testid="google-detail-row">
                   <TableCell className="max-w-xs">
-                    <span className="block truncate" title={row.key}>
-                      {rowLabel(row.key)}
+                    <span className="block truncate" title={isolateText(row.key)}>
+                      <Bdi>{rowLabel(row.key)}</Bdi>
                     </span>
                   </TableCell>
                   <TableCell className="text-end tabular-nums" dir="ltr">
@@ -317,10 +319,10 @@ const AnalyticsSection = ({ view, siteId }: { view: AnalyticsView; siteId: strin
                     {formatInt(locale, row.impressions)}
                   </TableCell>
                   <TableCell className="text-end tabular-nums" dir="ltr">
-                    {formatPercent(locale, row.ctr)}
+                    <MetricValue kind="ratio" value={row.ctr} denominator={row.impressions} />
                   </TableCell>
                   <TableCell className="text-end tabular-nums" dir="ltr">
-                    {formatPosition(locale, row.position)}
+                    <MetricValue kind="position" value={row.position} denominator={row.impressions} />
                   </TableCell>
                   {dimension === 'query' || dimension === 'page' ? (
                     <TableCell className="text-end">
@@ -482,7 +484,7 @@ const SitemapsSection = ({ siteId }: { siteId: string }) => {
                 </TableCell>
                 <TableCell>
                   <Badge className={status.tone} data-testid="google-sitemaps-status">
-                    {t(status.labelKey, { n: formatInt(locale, status.n) })}
+                    {t(status.labelKey, { count: status.n, n: formatInt(locale, status.n) })}
                   </Badge>
                 </TableCell>
               </TableRow>

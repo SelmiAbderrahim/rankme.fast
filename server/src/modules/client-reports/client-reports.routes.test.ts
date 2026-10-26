@@ -1,6 +1,7 @@
 import { randomUUID } from 'node:crypto';
 import type { Job, Queue } from 'bullmq';
 import type { NextFunction, Request, Response } from 'express';
+import { eq } from 'drizzle-orm';
 import mongoose from 'mongoose';
 import request from 'supertest';
 import sharp from 'sharp';
@@ -116,7 +117,7 @@ const scheduleBody = {
   name: 'Monday report',
   frequency: 'weekly',
   weekdayUtc: 1,
-  hourUtc: 9,
+  localHour: 9,
   locale: 'en',
   recipients: ['CLIENT@example.test', 'client@example.test'],
   sections: { audit: true, ranks: false, gsc: false },
@@ -370,7 +371,7 @@ describe('scheduled report CRUD', () => {
         frequency: 'monthly',
         weekdayUtc: null,
         monthdayUtc: 12,
-        hourUtc: 10,
+        localHour: 10,
       })
       .then((response) => response);
     // Give the newer request an opportunity to queue behind the account lock
@@ -421,6 +422,106 @@ describe('scheduled report CRUD', () => {
       .delete(`/api/client-reports/sites/${siteId}/schedules/${created.body.id}`)
       .set('Cookie', stranger.cookie);
     expect(response.status).toBe(404);
+  });
+
+  it('persists { timezone, localHour } and schedules in that zone', async () => {
+    const user = await seedUser();
+    const siteId = await seedSite(user);
+    const created = await request(app)
+      .post(`/api/client-reports/sites/${siteId}/schedules`)
+      .set('Cookie', user.cookie)
+      .send({ ...scheduleBody, timezone: 'Asia/Riyadh', localHour: 9 });
+    expect(created.status).toBe(201);
+    expect(created.body).toMatchObject({ timezone: 'Asia/Riyadh', localHour: 9, weekdayUtc: 1 });
+    expect(created.body).not.toHaveProperty('hourUtc');
+    const [, options] = queue.upsertJobScheduler.mock.calls[0]!;
+    expect(options).toEqual({ pattern: `${created.body.minuteUtc} 9 * * 1`, tz: 'Asia/Riyadh' });
+    // Monday 09:MM in Riyadh is Monday 06:MM UTC.
+    const nextRun = new Date(created.body.nextRunAt as string);
+    expect(nextRun.getUTCDay()).toBe(1);
+    expect(nextRun.getUTCHours()).toBe(6);
+    const [stored] = await getTestDb()
+      .select({ timezone: scheduledReports.timezone, localHour: scheduledReports.localHour })
+      .from(scheduledReports)
+      .where(eq(scheduledReports.id, created.body.id));
+    expect(stored).toEqual({ timezone: 'Asia/Riyadh', localHour: 9 });
+
+    const listed = await request(app)
+      .get(`/api/client-reports/sites/${siteId}`)
+      .set('Cookie', user.cookie);
+    expect(listed.status).toBe(200);
+    expect(JSON.stringify(listed.body)).toContain('"timezone":"Asia/Riyadh"');
+
+    const invalid = await request(app)
+      .post(`/api/client-reports/sites/${siteId}/schedules`)
+      .set('Cookie', user.cookie)
+      .send({ ...scheduleBody, timezone: 'Mars/Olympus', localHour: 9 });
+    expect(invalid.status).toBe(400);
+    const legacy = await request(app)
+      .post(`/api/client-reports/sites/${siteId}/schedules`)
+      .set('Cookie', user.cookie)
+      .send({ ...scheduleBody, localHour: undefined, hourUtc: 9 });
+    expect(legacy.status).toBe(400);
+
+    const stranger = await seedUser();
+    const foreign = await request(app)
+      .put(`/api/client-reports/sites/${siteId}/schedules/${created.body.id}`)
+      .set('Cookie', stranger.cookie)
+      .send({ ...scheduleBody, timezone: 'UTC', localHour: 3 });
+    expect(foreign.status).toBe(404);
+    const anonymous = await request(app)
+      .post(`/api/client-reports/sites/${siteId}/schedules`)
+      .send({ ...scheduleBody, timezone: 'UTC', localHour: 3 });
+    expect(anonymous.status).toBe(401);
+  });
+
+  it('rejects out-of-range days of month at the API and persists nothing', async () => {
+    const user = await seedUser();
+    const siteId = await seedSite(user);
+    const monthly = { ...scheduleBody, frequency: 'monthly', weekdayUtc: null };
+    for (const monthdayUtc of [0, 29, 31, 45, -2, 1.5]) {
+      const rejected = await request(app)
+        .post(`/api/client-reports/sites/${siteId}/schedules`)
+        .set('Cookie', user.cookie)
+        .send({ ...monthly, monthdayUtc });
+      expect(rejected.status, `monthdayUtc ${monthdayUtc}`).toBe(400);
+    }
+    expect(queue.upsertJobScheduler).not.toHaveBeenCalled();
+    const listed = await request(app)
+      .get(`/api/client-reports/sites/${siteId}`)
+      .set('Cookie', user.cookie);
+    expect(listed.body.schedules).toHaveLength(0);
+
+    const created = await request(app)
+      .post(`/api/client-reports/sites/${siteId}/schedules`)
+      .set('Cookie', user.cookie)
+      .send({ ...monthly, monthdayUtc: 28 });
+    expect(created.status).toBe(201);
+    const badUpdate = await request(app)
+      .put(`/api/client-reports/sites/${siteId}/schedules/${created.body.id}`)
+      .set('Cookie', user.cookie)
+      .send({ ...monthly, monthdayUtc: 45 });
+    expect(badUpdate.status).toBe(400);
+  });
+
+  it('stores and schedules the explicit last-day mode, including February', async () => {
+    const user = await seedUser();
+    const siteId = await seedSite(user);
+    const created = await request(app)
+      .post(`/api/client-reports/sites/${siteId}/schedules`)
+      .set('Cookie', user.cookie)
+      .send({ ...scheduleBody, frequency: 'monthly', weekdayUtc: null, monthdayUtc: -1 });
+    expect(created.status).toBe(201);
+    expect(created.body).toMatchObject({ frequency: 'monthly', monthdayUtc: -1 });
+    expect(queue.upsertJobScheduler).toHaveBeenCalledOnce();
+    const [, options] = queue.upsertJobScheduler.mock.calls[0]!;
+    expect(options).toEqual({
+      pattern: `${created.body.minuteUtc} 9 L * *`,
+      tz: 'UTC',
+    });
+    // The first stored run is the last day of its month: the next day is the 1st.
+    const nextRun = new Date(created.body.nextRunAt as string);
+    expect(new Date(nextRun.getTime() + 86_400_000).getUTCDate()).toBe(1);
   });
 
   it('resolves site ownership before feature-flag gates on every resource route', async () => {

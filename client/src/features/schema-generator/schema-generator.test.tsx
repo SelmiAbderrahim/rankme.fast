@@ -7,6 +7,8 @@ import { I18nextProvider } from 'react-i18next';
 import { MemoryRouter, useLocation } from 'react-router-dom';
 import { ApiError, apiClient } from '@shared/api/client';
 import { changeLanguage, i18n, initI18n } from '@shared/i18n';
+import { formatAbsoluteDate } from '@shared/lib/datetime';
+import { GenerationList } from './components/GenerationList';
 import { writeToClipboard } from '@shared/lib/clipboard';
 import { SchemaGeneratorPanel } from './components/SchemaGeneratorPanel';
 import { StateNotice } from './components/StateNotice';
@@ -20,6 +22,7 @@ import {
 import { toSchemaGate } from './gate';
 import { isValidPastedPageUrl } from './validation';
 import { isSchemaView } from './urlState';
+import { filterPages, groupPages, pathGroupOf } from './pageGroups';
 import {
   initialSchemaGeneratorState,
   isSupportedSchemaType,
@@ -47,8 +50,10 @@ const typeProjection = (
   type: SchemaTypeProjection['type'],
   required: string[],
   recommended: string[],
+  richResults: SchemaTypeProjection['richResults'] = null,
 ): SchemaTypeProjection => ({
   type,
+  richResults,
   required: required.map((name) => ({
     name,
     class: 'required' as const,
@@ -92,6 +97,7 @@ const sourcesResponse = (overrides: Record<string, unknown> = {}) => ({
       richResultsVerdict: null,
     },
   ],
+  auditedPagesTotal: 2,
   inventoryPages: [
     { url: INVENTORY_URL, schemaTypes: ['Article'], hasSchemaOrgArticle: false },
   ],
@@ -108,7 +114,6 @@ const detailResponse = (overrides: Partial<GenerationDetail> = {}): GenerationDe
   status: 'complete',
   conformanceStatus: 'gaps',
   failureReason: null,
-  refunded: false,
   generatedAt: '2026-08-01T09:00:00.000Z',
   payload: '{"@context":"https://schema.org","@type":"WebPage","name":"A guide"}',
   mediaType: 'application/ld+json',
@@ -140,7 +145,6 @@ const summaryOf = (detail: GenerationDetail) => ({
   status: detail.status,
   conformanceStatus: detail.conformanceStatus,
   failureReason: detail.failureReason,
-  refunded: detail.refunded,
   generatedAt: detail.generatedAt,
 });
 
@@ -152,6 +156,7 @@ interface Handlers {
   create?: () => unknown;
   detail?: () => unknown;
   download?: () => unknown;
+  regenerate?: (init?: { body?: unknown }) => unknown;
 }
 
 /** Route each mocked call by path so ordering never matters. */
@@ -171,6 +176,9 @@ const routeApi = (handlers: Handlers = {}) => {
     }
     if (path === '/schema-generator/generations' && init?.method === 'POST') {
       return Promise.resolve(handlers.create?.() ?? detailResponse()) as never;
+    }
+    if (path.endsWith('/regenerate')) {
+      return Promise.resolve(handlers.regenerate?.(init as { body?: unknown }) ?? detailResponse()) as never;
     }
     if (path.startsWith('/schema-generator/generations/')) {
       return Promise.resolve(handlers.detail?.() ?? detailResponse()) as never;
@@ -311,6 +319,42 @@ describe('StateNotice', () => {
 });
 
 describe('SchemaGeneratorPanel — pickers', () => {
+  it('keeps FAQPage and HowTo last and says what Google does with them now', async () => {
+    routeApi({
+      types: () => ({
+        registryVersion: '1',
+        types: [
+          typeProjection('WebPage', ['name', 'url'], ['inLanguage']),
+          typeProjection('Article', ['headline', 'datePublished'], ['author']),
+          typeProjection('FAQPage', ['mainEntity'], [], 'limited'),
+          typeProjection('HowTo', ['name', 'step'], ['description'], 'retired'),
+        ],
+      }),
+    });
+    renderPanel();
+
+    const picker = await screen.findByTestId('schema-type-picker');
+    const order = Array.from(picker.querySelectorAll('[data-testid^="schema-type-"]'))
+      .map((el) => el.getAttribute('data-testid'))
+      .filter((id) => /^schema-type-[A-Z]\w*$/.test(id ?? ''));
+    expect(order).toEqual(['schema-type-WebPage', 'schema-type-Article', 'schema-type-FAQPage', 'schema-type-HowTo']);
+    expect(screen.getByTestId('schema-type-note-FAQPage')).toHaveTextContent(
+      'Google shows FAQ answers in search results only for well-known government and health sites. The markup is still valid.',
+    );
+    expect(screen.getByTestId('schema-type-note-HowTo')).toHaveTextContent(
+      'Google no longer shows HowTo steps in search results. The markup is still valid.',
+    );
+    expect(screen.queryByTestId('schema-type-note-WebPage')).toBeNull();
+    expect(screen.queryByTestId('schema-type-note-Article')).toBeNull();
+    // The note is announced with the option, and the option is still selectable.
+    const howTo = screen.getByRole('radio', { name: /HowTo/ });
+    expect(howTo).toHaveAccessibleDescription('Google no longer shows HowTo steps in search results. The markup is still valid.');
+    expect(screen.getByRole('radio', { name: /WebPage/ })).not.toHaveAttribute('aria-describedby');
+    await userEvent.click(howTo);
+    expect(howTo).toBeChecked();
+  });
+
+
   it('loads the registry, the stored work lists and the stored generations', async () => {
     routeApi({ list: () => ({ items: [summaryOf(detailResponse())] }) });
     renderPanel();
@@ -322,7 +366,7 @@ describe('SchemaGeneratorPanel — pickers', () => {
       AUDITED_URL,
     );
     // Crawled page titles are untrusted mixed-direction text.
-    expect(screen.getByText('A guide')).toHaveAttribute('dir', 'auto');
+    expect(screen.getByText('A guide')).toHaveAttribute('dir', 'ltr');
     // Crawl + Search Console context travels with the page row.
     expect(screen.getByTestId('schema-audited-option-0')).toHaveTextContent(
       'No structured data found',
@@ -370,6 +414,109 @@ describe('SchemaGeneratorPanel — pickers', () => {
     expect(await screen.findByTestId('schema-type-declared-Article')).toBeInTheDocument();
   });
 
+  it('says so when the audit stored more pages than the picker lists', async () => {
+    routeApi({ sources: () => sourcesResponse({ auditedPagesTotal: 1200 }) });
+    renderPanel();
+    await screen.findByTestId('schema-audited-option-0');
+    expect(screen.getByText('Showing 2 of 1200')).toBeInTheDocument();
+    expect(screen.getByTestId('schema-audited-capped')).toHaveTextContent(
+      'This list holds the first 2 of 1200 crawled pages.',
+    );
+  });
+
+  it('treats a server that predates the audited-page total as a complete list', async () => {
+    routeApi({ sources: () => sourcesResponse({ auditedPagesTotal: undefined }) });
+    renderPanel();
+    await screen.findByTestId('schema-audited-option-0');
+    expect(screen.getByText('Showing 2 of 2')).toBeInTheDocument();
+    expect(screen.queryByTestId('schema-audited-capped')).not.toBeInTheDocument();
+  });
+
+  it('shows no partial-list note when the list holds every audited page', async () => {
+    routeApi({ sources: () => sourcesResponse() });
+    renderPanel();
+    await screen.findByTestId('schema-audited-option-0');
+    expect(screen.queryByTestId('schema-audited-capped')).not.toBeInTheDocument();
+  });
+
+  it('filters a long audited list and groups it by language folder', async () => {
+    routeApi({
+      sources: () =>
+        sourcesResponse({
+          auditedPagesTotal: 3,
+          auditedPages: [
+            {
+              url: 'https://example.test/ar/episode-1',
+              title: 'حلقة EpisodeBrief الأولى',
+              hasStructuredData: false,
+              structuredDataErrors: 0,
+              richResultsVerdict: null,
+            },
+            {
+              url: 'https://example.test/about',
+              title: 'About us',
+              hasStructuredData: false,
+              structuredDataErrors: 0,
+              richResultsVerdict: null,
+            },
+            {
+              url: 'https://example.test/ar/episode-2',
+              title: null,
+              hasStructuredData: true,
+              structuredDataErrors: 0,
+              richResultsVerdict: null,
+            },
+          ],
+        }),
+    });
+    renderPanel();
+    await screen.findByTestId('schema-audited-option-0');
+
+    // Grouped by the first path segment, in first-seen order.
+    expect(screen.getByRole('group', { name: '/ar/ (2)' })).toBeInTheDocument();
+    expect(screen.getByRole('group', { name: 'Top-level pages (1)' })).toBeInTheDocument();
+    // Mixed-direction titles are bidi-isolated in their dominant direction.
+    const title = screen.getByTestId('schema-audited-title-0');
+    expect(title.tagName).toBe('BDI');
+    expect(title).toHaveAttribute('dir', 'rtl');
+    expect(screen.getByText('Showing 3 of 3')).toBeInTheDocument();
+
+    const filter = screen.getByLabelText('Find a page');
+    await userEvent.type(filter, 'about');
+    expect(screen.getByText('Showing 1 of 3')).toBeInTheDocument();
+    expect(screen.queryByTestId('schema-audited-option-0')).not.toBeInTheDocument();
+    // Ids stay tied to the original position, and one group needs no heading.
+    expect(screen.getByTestId('schema-audited-option-1')).toBeInTheDocument();
+    expect(screen.queryByRole('group', { name: /Top-level pages/ })).not.toBeInTheDocument();
+    expect(screen.getByTestId('schema-audited-group-/')).not.toHaveAttribute('role');
+    await userEvent.click(screen.getByTestId('schema-audited-option-1'));
+    expect(screen.getByLabelText(/example\.test\/about/)).toBeChecked();
+
+    await userEvent.clear(filter);
+    await userEvent.type(filter, 'nothing-here');
+    expect(screen.getByTestId('schema-audited-no-matches')).toHaveTextContent(
+      'No page matches that search.',
+    );
+  });
+
+  it('filters the inventory list too', async () => {
+    routeApi({
+      sources: () =>
+        sourcesResponse({
+          inventoryPages: [
+            { url: INVENTORY_URL, schemaTypes: [], hasSchemaOrgArticle: false },
+            { url: 'https://example.test/blog/post', schemaTypes: [], hasSchemaOrgArticle: false },
+          ],
+        }),
+    });
+    renderPanel();
+    await screen.findByTestId('schema-page-picker');
+    await userEvent.click(screen.getByLabelText('Inventory page'));
+    await userEvent.type(await screen.findByTestId('schema-inventory-filter'), 'blog');
+    expect(screen.getByTestId('schema-inventory-option-1')).toBeInTheDocument();
+    expect(screen.queryByTestId('schema-inventory-option-0')).not.toBeInTheDocument();
+  });
+
   it('validates a pasted URL before anything leaves the browser', async () => {
     routeApi();
     renderPanel();
@@ -415,7 +562,8 @@ describe('SchemaGeneratorPanel — pickers', () => {
 
   it('renders honest empty lists for a site with no audit and no inventory gap', async () => {
     routeApi({
-      sources: () => sourcesResponse({ runId: null, auditedPages: [], inventoryPages: [] }),
+      sources: () =>
+        sourcesResponse({ runId: null, auditedPages: [], auditedPagesTotal: 0, inventoryPages: [] }),
     });
     renderPanel();
     expect(await screen.findByTestId('schema-state-empty')).toBeInTheDocument();
@@ -774,14 +922,13 @@ describe('SchemaGeneratorPanel — result and stored reads', () => {
     expect(screen.getByTestId('schema-copy')).toHaveTextContent('Copy');
   });
 
-  it('explains a provider failure and its refund, with nothing to copy', async () => {
+  it('explains a provider failure, with nothing to copy', async () => {
     routeApi({
       detail: () =>
         detailResponse({
           status: 'failed',
           conformanceStatus: null,
           failureReason: 'ai_provider_failed',
-          refunded: true,
           payload: null,
           evidence: [],
           omissions: [],
@@ -793,7 +940,6 @@ describe('SchemaGeneratorPanel — result and stored reads', () => {
     expect(await screen.findByTestId('schema-result-failed')).toHaveTextContent(
       'The model did not answer',
     );
-    expect(screen.getByTestId('schema-result-refunded')).toBeInTheDocument();
     expect(screen.queryByTestId('schema-payload')).toBeNull();
     expect(screen.queryByTestId('schema-copy')).toBeNull();
   });
@@ -804,7 +950,6 @@ describe('SchemaGeneratorPanel — result and stored reads', () => {
         detailResponse({
           status: 'failed',
           failureReason: 'ai_output_rejected',
-          refunded: false,
         }),
     });
     renderPanel(`/sites/${SITE_ID}?tab=schema&view=detail&generation=${GENERATION_ID}`);
@@ -812,7 +957,6 @@ describe('SchemaGeneratorPanel — result and stored reads', () => {
     expect(await screen.findByTestId('schema-result-failed')).toHaveTextContent(
       'failed our fact check',
     );
-    expect(screen.queryByTestId('schema-result-refunded')).toBeNull();
     expect(screen.getByTestId('schema-payload')).toBeInTheDocument();
   });
 
@@ -922,5 +1066,191 @@ describe('SchemaGeneratorPanel — result and stored reads', () => {
     expect(
       await screen.findByTestId('schema-required-gap-datePublished'),
     ).toBeInTheDocument();
+  });
+});
+
+describe('schema page picker helpers', () => {
+  it('groups by the first path segment only when a page sits below one', () => {
+    expect(pathGroupOf('https://example.test/ar/page')).toBe('/ar/');
+    expect(pathGroupOf('https://example.test/ar/')).toBe('/');
+    expect(pathGroupOf('https://example.test/')).toBe('/');
+    expect(pathGroupOf('not a url')).toBe('/');
+  });
+
+  it('matches the address or the title, case-insensitively, keeping original indexes', () => {
+    const pages = [
+      { url: 'https://example.test/a', title: 'Hello World' },
+      { url: 'https://example.test/B-page', title: null },
+      { url: 'https://example.test/c' },
+    ];
+    expect(filterPages(pages, '  ').map((entry) => entry.index)).toEqual([0, 1, 2]);
+    expect(filterPages(pages, 'world').map((entry) => entry.index)).toEqual([0]);
+    expect(filterPages(pages, 'b-PAGE').map((entry) => entry.index)).toEqual([1]);
+    expect(filterPages(pages, 'zzz')).toEqual([]);
+    const groups = groupPages(
+      filterPages(
+        [
+          { url: 'https://example.test/fr/x' },
+          { url: 'https://example.test/y' },
+          { url: 'https://example.test/fr/z' },
+        ],
+        '',
+      ),
+    );
+    expect(groups.map((group) => [group.prefix, group.pages.map((entry) => entry.index)])).toEqual([
+      ['/fr/', [0, 2]],
+      ['/', [1]],
+    ]);
+  });
+});
+
+describe('GenerationList — localized dates', () => {
+  it.each(['en', 'ar', 'de'] as const)('shows the generation date for %s', async (locale) => {
+    await changeLanguage(locale);
+    const generatedAt = '2026-08-01T09:00:00.000Z';
+    render(
+      <I18nextProvider i18n={i18n}>
+        <GenerationList
+          generations={[summaryOf(detailResponse({ generatedAt }))]}
+          onOpen={vi.fn()}
+        />
+      </I18nextProvider>,
+    );
+    const row = screen.getByTestId(`schema-generation-${GENERATION_ID}`);
+    expect(row).toHaveTextContent(formatAbsoluteDate(generatedAt, locale));
+    expect(row).not.toHaveTextContent('2026-08-01');
+    await changeLanguage('en');
+  });
+});
+
+describe('SchemaGeneratorPanel — user-supplied facts ', () => {
+  const REBUILT_ID = 'd'.repeat(24);
+  const ALL_SUPPLIABLE = [
+    'name', 'headline', 'description', 'inLanguage', 'datePublished',
+    'dateModified', 'logo', 'image', 'primaryImageOfPage',
+  ] as const;
+  const omitted = (properties: readonly string[]) =>
+    properties.map((property) => ({ property, reasonCode: 'no_evidence' as const, class: 'recommended' as const }));
+  const detailUrl = `/sites/${SITE_ID}?tab=schema&view=detail&generation=${GENERATION_ID}`;
+
+  it('offers an input for every omitted property the user can state, and only those', async () => {
+    routeApi({ detail: () => detailResponse({ omissions: [...omitted(ALL_SUPPLIABLE), ...omitted(['sameAs', 'url'])] }) });
+    renderPanel(detailUrl);
+    await screen.findByTestId('schema-user-facts');
+    for (const property of ALL_SUPPLIABLE) {
+      expect(screen.getByTestId(`schema-user-fact-${property}`)).toBeInTheDocument();
+    }
+    expect(screen.queryByTestId('schema-user-fact-sameAs')).toBeNull();
+    expect(screen.queryByTestId('schema-user-fact-url')).toBeNull();
+    expect(screen.getByLabelText('Description').tagName).toBe('TEXTAREA');
+    expect(screen.getByLabelText('Language')).toHaveAccessibleDescription('A language code such as en or pt-BR.');
+    expect(screen.getByLabelText('Logo address')).toHaveAttribute('type', 'url');
+    expect(screen.getByLabelText('Logo address')).toHaveAttribute('dir', 'ltr');
+    expect(screen.getByLabelText('Publication date')).toHaveAttribute('maxLength', '64');
+    expect(screen.getByLabelText('Name')).not.toHaveAttribute('dir');
+    expect(screen.getByLabelText('Name')).not.toHaveAccessibleDescription();
+    expect(screen.getByText('Free: we reuse the facts already found and use no generation.')).toBeInTheDocument();
+  });
+
+  it('rebuilds with trimmed, non-empty values and opens the new generation', async () => {
+    const calls: unknown[] = [];
+    const rebuilt = detailResponse({
+      id: REBUILT_ID,
+      regeneratedFrom: GENERATION_ID,
+      omissions: [],
+      evidence: [
+        { property: 'name', factId: 'page.titleBrand', factLabel: 'Brand in the page title', value: 'Guides' },
+        { property: 'inLanguage', factId: 'user.inLanguage', factLabel: 'Provided by you', value: 'en' },
+      ],
+    });
+    routeApi({
+      detail: () => (calls.length > 0 ? rebuilt : detailResponse({ omissions: omitted(['description', 'inLanguage']) })),
+      regenerate: (init) => {
+        calls.push(init?.body);
+        return rebuilt;
+      },
+    });
+    const { store } = renderPanel(detailUrl);
+    const user = userEvent.setup();
+    await user.type(await screen.findByLabelText('Language'), 'en');
+    await user.type(screen.getByLabelText('Description'), '   ');
+    await user.click(screen.getByTestId('schema-user-facts-submit'));
+
+    await waitFor(() => expect(search).toContain(`generation=${REBUILT_ID}`));
+    expect(calls).toEqual([{ facts: { inLanguage: 'en' } }]);
+    expect(await screen.findByTestId('schema-result-regenerated')).toHaveTextContent('No generation was used.');
+    expect(screen.getByTestId('schema-provided-by-you-inLanguage')).toHaveTextContent('Provided by you');
+    expect(screen.getByTestId('schema-evidence-name')).toHaveTextContent('from Brand name in the page title');
+    // Nothing left out → no form; the rebuilt row leads the stored list.
+    expect(screen.queryByTestId('schema-user-facts')).toBeNull();
+    expect(selectSchemaGenerations(store.getState() as never)[0]).toMatchObject({ id: REBUILT_ID, regeneratedFrom: GENERATION_ID });
+    // The original is never fetched again once the rebuild exists.
+    const originalReads = mockedApiClient.mock.calls.filter(([path]) => path === `/schema-generator/generations/${GENERATION_ID}`);
+    expect(originalReads).toHaveLength(1);
+  });
+
+  it('asks for at least one value instead of sending an empty rebuild', async () => {
+    routeApi({ detail: () => detailResponse({ omissions: omitted(['inLanguage']) }) });
+    renderPanel(detailUrl);
+    const user = userEvent.setup();
+    await user.click(await screen.findByTestId('schema-user-facts-submit'));
+    expect(screen.getByTestId('schema-user-facts-empty')).toHaveTextContent('Fill in at least one field.');
+    expect(mockedApiClient.mock.calls.some(([path]) => String(path).endsWith('/regenerate'))).toBe(false);
+  });
+
+  it('shows the server refusal beside the form and keeps the original open', async () => {
+    routeApi({
+      detail: () => detailResponse({ omissions: omitted(['inLanguage']) }),
+      regenerate: () => {
+        throw httpError(400, 'Enter a valid value.');
+      },
+    });
+    renderPanel(detailUrl);
+    const user = userEvent.setup();
+    await user.type(await screen.findByLabelText('Language'), 'not a tag');
+    await user.click(screen.getByTestId('schema-user-facts-submit'));
+    expect(await screen.findByTestId('schema-user-facts-error')).toHaveTextContent('Enter a valid value.');
+    expect(search).toContain(`generation=${GENERATION_ID}`);
+  });
+
+  it('localizes the new provenance labels and the form in Arabic', async () => {
+    await changeLanguage('ar');
+    routeApi({
+      detail: () => detailResponse({
+        omissions: omitted(['inLanguage']),
+        evidence: [
+          { property: 'name', factId: 'page.ogSiteName', factLabel: 'Site name (og:site_name)', value: 'Brand' },
+          { property: 'url', factId: 'page.jsonLdName', factLabel: 'Name in the page’s structured data', value: 'Brand' },
+        ],
+      }),
+    });
+    renderPanel(detailUrl);
+    expect(await screen.findByTestId('schema-evidence-name')).toHaveTextContent('og:site_name');
+    expect(screen.getByTestId('schema-evidence-name')).not.toHaveTextContent('Site name (');
+    expect(screen.getByTestId('schema-evidence-url')).toHaveTextContent('البيانات المنظَّمة');
+    expect(screen.getByLabelText('اللغة')).toBeInTheDocument();
+  });
+
+  it('offers no form for a generation without markup', async () => {
+    routeApi({ detail: () => detailResponse({ payload: null, status: 'failed', failureReason: 'ai_provider_failed', omissions: omitted(['inLanguage']) }) });
+    renderPanel(detailUrl);
+    await screen.findByTestId('schema-result-failed');
+    expect(screen.queryByTestId('schema-user-facts')).toBeNull();
+  });
+});
+
+describe('schemaGeneratorReducer — regenerate ', () => {
+  it('records a rebuild refusal, with or without a server gate', () => {
+    const base = { ...initialSchemaGeneratorState, regenerateStatus: 'loading' as const };
+    const rejected = (payload?: unknown) => ({
+      type: 'schemaGenerator/regenerate/rejected',
+      payload,
+      error: { message: 'Rejected' },
+    });
+    expect(schemaGeneratorReducer(base, rejected())).toMatchObject({ regenerateStatus: 'error', regenerateGate: null });
+    expect(schemaGeneratorReducer(base, rejected({ kind: 'failed', message: 'No' }))).toMatchObject({
+      regenerateStatus: 'error',
+      regenerateGate: { kind: 'failed', message: 'No' },
+    });
   });
 });

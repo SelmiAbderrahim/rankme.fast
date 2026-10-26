@@ -4,7 +4,7 @@
  * and localized error states.
  */
 import { beforeEach, describe, expect, it, vi } from 'vitest';
-import { fireEvent, render, screen, waitFor } from '@testing-library/react';
+import { fireEvent, render, screen, waitFor, within } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { Provider } from 'react-redux';
 import { MemoryRouter } from 'react-router-dom';
@@ -61,26 +61,87 @@ describe('BrandingPanel', () => {
   it('loads on mount and hydrates the form with stored values', async () => {
     renderPanel();
     expect(await screen.findByDisplayValue('Acme SEO')).toBeInTheDocument();
-    expect(screen.getByDisplayValue('#3366ff')).toBeInTheDocument();
+    expect(screen.getByLabelText('Accent color')).toHaveValue('#3366ff');
     expect(mocked.getBrandingRequest).toHaveBeenCalledTimes(1);
-    // Valid color → the preview swatch carries the picked background.
-    expect(screen.getByTestId('branding-swatch')).toHaveStyle({
-      backgroundColor: '#3366ff',
-    });
+    // Valid color → the swatch/picker carries the stored value.
+    expect(screen.getByTestId('branding-swatch')).toHaveValue('#3366ff');
+    expect(screen.getByLabelText('Pick accent color')).toHaveAttribute('type', 'color');
   });
 
-  it('shows no swatch for an empty or invalid accent color', async () => {
-    mocked.getBrandingRequest.mockResolvedValue({
-      branding: { companyName: 'Acme SEO', accentColor: '', logoDataUrl: null },
-    });
+  it('binds a real color picker to the hex field and shows the default when empty', async () => {
+    mocked.putBrandingRequest.mockImplementation(async (branding) => ({ branding }));
     renderPanel();
     await screen.findByDisplayValue('Acme SEO');
-    expect(screen.queryByTestId('branding-swatch')).not.toBeInTheDocument();
-    const input = screen.getByLabelText('Accent color');
-    await userEvent.type(input, '#33');
-    expect(screen.queryByTestId('branding-swatch')).not.toBeInTheDocument();
-    await userEvent.type(input, '66ff');
-    expect(screen.getByTestId('branding-swatch')).toBeInTheDocument();
+    const hexInput = screen.getByLabelText('Accent color');
+    const picker = screen.getByLabelText('Pick accent color');
+    // No placeholder colour that differs from what the swatch shows.
+    expect(hexInput).toHaveAttribute('placeholder', '#b5321e');
+
+    await userEvent.clear(hexInput);
+    expect(picker).toHaveValue('#b5321e');
+    await userEvent.type(hexInput, '#12');
+    expect(picker).toHaveValue('#b5321e');
+    await userEvent.type(hexInput, '34AB');
+    expect(picker).toHaveValue('#1234ab');
+
+    // An invalid value's error clears once the picker supplies a valid one.
+    await userEvent.clear(hexInput);
+    await userEvent.type(hexInput, '#zzz');
+    await userEvent.click(screen.getByRole('button', { name: 'Save branding' }));
+    expect(
+      await screen.findByText('Enter a color like #b5321e, or leave it empty.'),
+    ).toBeInTheDocument();
+    fireEvent.change(picker, { target: { value: '#00aa55' } });
+    expect(hexInput).toHaveValue('#00aa55');
+    expect(
+      screen.queryByText('Enter a color like #b5321e, or leave it empty.'),
+    ).not.toBeInTheDocument();
+    await userEvent.click(screen.getByRole('button', { name: 'Save branding' }));
+    await waitFor(() => expect(mocked.putBrandingRequest).toHaveBeenCalledWith({
+      companyName: 'Acme SEO',
+      accentColor: '#00aa55',
+      logoDataUrl: null,
+    }));
+  });
+
+  it('replaces the raw file input with a styled chooser and a file-name line', async () => {
+    renderPanel();
+    await screen.findByDisplayValue('Acme SEO');
+    const input = screen.getByLabelText('Company logo') as HTMLInputElement;
+    expect(input).toHaveClass('sr-only');
+    expect(input).toHaveAttribute('tabindex', '-1');
+    expect(screen.getByTestId('branding-logo-file')).toHaveTextContent('No file chosen');
+
+    const clickSpy = vi.spyOn(input, 'click');
+    const chooser = screen.getByRole('button', { name: 'Choose image' });
+    expect(chooser).toHaveAttribute('aria-describedby', 'branding-logo-help branding-logo-file');
+    await userEvent.click(chooser);
+    expect(clickSpy).toHaveBeenCalledTimes(1);
+
+    await userEvent.upload(
+      input,
+      new File([new Uint8Array([137, 80, 78, 71])], 'brand-mark.png', { type: 'image/png' }),
+    );
+    await screen.findByAltText('Company logo preview');
+    expect(screen.getByTestId('branding-logo-file')).toHaveTextContent('brand-mark.png');
+
+    await userEvent.click(screen.getByRole('button', { name: 'Remove logo' }));
+    expect(screen.getByTestId('branding-logo-file')).toHaveTextContent('No file chosen');
+    expect(input.value).toBe('');
+  });
+
+  it('labels a stored logo that was not picked in this session', async () => {
+    mocked.getBrandingRequest.mockResolvedValue({
+      branding: {
+        companyName: 'Acme SEO',
+        accentColor: '',
+        logoDataUrl: 'data:image/png;base64,c3RvcmVk',
+      },
+    });
+    renderPanel();
+    await screen.findByAltText('Company logo preview');
+    expect(screen.getByTestId('branding-logo-file')).toHaveTextContent('Saved logo in use');
+    expect(screen.getByTestId('branding-swatch')).toHaveValue('#b5321e');
   });
 
   it('shows a skeleton while loading', () => {
@@ -134,25 +195,83 @@ describe('BrandingPanel', () => {
     });
   });
 
-  it('accepts clearing both fields (empty accent allowed)', async () => {
+  it('accepts clearing the accent (an empty accent uses the default) but not the company name', async () => {
     mocked.putBrandingRequest.mockResolvedValue({
-      branding: { companyName: '', accentColor: '', logoDataUrl: null },
+      branding: { companyName: 'Acme SEO', accentColor: '', logoDataUrl: null },
     });
     renderPanel();
     // Hydration must land before we clear (see note above).
     await screen.findByDisplayValue('Acme SEO');
-    const nameInput = screen.getByLabelText('Company name');
-    await userEvent.clear(nameInput);
     const colorInput = screen.getByLabelText('Accent color');
     await userEvent.clear(colorInput);
     await userEvent.click(screen.getByRole('button', { name: 'Save branding' }));
     await waitFor(() =>
       expect(mocked.putBrandingRequest).toHaveBeenCalledWith({
-        companyName: '',
+        companyName: 'Acme SEO',
         accentColor: '',
         logoDataUrl: null,
       }),
     );
+  });
+
+  it.each(['', '   '])('refuses to save a blank company name %j, with the error on the field', async (blank) => {
+    renderPanel();
+    await screen.findByDisplayValue('Acme SEO');
+    const nameInput = screen.getByLabelText('Company name');
+    await userEvent.clear(nameInput);
+    if (blank) await userEvent.type(nameInput, blank);
+    await userEvent.click(screen.getByRole('button', { name: 'Save branding' }));
+    expect(await screen.findByText('Enter your company name.')).toBeInTheDocument();
+    expect(nameInput).toHaveAttribute('aria-invalid', 'true');
+    expect(nameInput).toHaveAccessibleDescription('Enter your company name.');
+    expect(mocked.putBrandingRequest).not.toHaveBeenCalled();
+    // The error clears as soon as there is a name.
+    await userEvent.type(nameInput, 'A');
+    expect(screen.queryByText('Enter your company name.')).toBeNull();
+  });
+
+  it('shows the PDF header preview from the same values, including unsaved edits', async () => {
+    mocked.getBrandingRequest.mockResolvedValue({
+      branding: { companyName: 'Acme SEO', accentColor: '#112233', logoDataUrl: 'data:image/png;base64,c3RvcmVk' },
+    });
+    renderPanel();
+    await screen.findByDisplayValue('Acme SEO');
+    const preview = screen.getByTestId('branding-preview');
+    expect(within(preview).getByText('PDF header preview')).toBeInTheDocument();
+    expect(within(preview).getByTestId('branding-preview-name')).toHaveTextContent('Acme SEO');
+    expect(within(preview).getByTestId('branding-preview-logo')).toHaveAttribute('src', 'data:image/png;base64,c3RvcmVk');
+    // The saved color is used as saved, never replaced by the default.
+    expect(within(preview).getByTestId('branding-preview-rule')).toHaveStyle({ backgroundColor: '#112233' });
+    expect(within(preview).getByTestId('branding-preview-heading')).toHaveStyle({ color: '#112233' });
+
+    // Unsaved edits show at once: a new name and a new color.
+    const nameInput = screen.getByLabelText('Company name');
+    await userEvent.clear(nameInput);
+    await userEvent.type(nameInput, 'Beta Studio');
+    const colorInput = screen.getByLabelText('Accent color');
+    await userEvent.clear(colorInput);
+    await userEvent.type(colorInput, '#00aa55');
+    expect(within(preview).getByTestId('branding-preview-name')).toHaveTextContent('Beta Studio');
+    expect(within(preview).getByTestId('branding-preview-rule')).toHaveStyle({ backgroundColor: '#00aa55' });
+    expect(mocked.putBrandingRequest).not.toHaveBeenCalled();
+  });
+
+  it('previews the default accent and the product name when nothing is chosen', async () => {
+    mocked.getBrandingRequest.mockResolvedValue({
+      branding: { companyName: 'Acme SEO', accentColor: '', logoDataUrl: null },
+    });
+    renderPanel();
+    await screen.findByDisplayValue('Acme SEO');
+    const nameInput = screen.getByLabelText('Company name');
+    await userEvent.clear(nameInput);
+    const preview = screen.getByTestId('branding-preview');
+    expect(within(preview).getByTestId('branding-preview-name')).toHaveTextContent('RankMeFast');
+    expect(within(preview).getByTestId('branding-preview-rule')).toHaveStyle({ backgroundColor: '#b5321e' });
+    expect(within(preview).queryByTestId('branding-preview-logo')).toBeNull();
+    // A half-typed color falls back to the default rather than a broken swatch.
+    const colorInput = screen.getByLabelText('Accent color');
+    await userEvent.type(colorInput, '#zz');
+    expect(within(preview).getByTestId('branding-preview-rule')).toHaveStyle({ backgroundColor: '#b5321e' });
   });
 
   it('shows the server-localized message for other save failures', async () => {
@@ -228,21 +347,41 @@ describe('BrandingPanel', () => {
     ));
   });
 
-  it('rejects non-PNG and oversized files without previewing them', async () => {
+  it('accepts JPEG and SVG logos alongside PNG', async () => {
+    mocked.putBrandingRequest.mockImplementation(async (branding) => ({ branding }));
+    renderPanel();
+    await screen.findByDisplayValue('Acme SEO');
+    const input = screen.getByLabelText('Company logo') as HTMLInputElement;
+    expect(input).toHaveAttribute('accept', 'image/png,image/jpeg,image/svg+xml');
+    expect(screen.getByText(/PNG, JPEG or SVG, up to 256 KB/)).toBeInTheDocument();
+    for (const [name, type] of [
+      ['logo.jpg', 'image/jpeg'],
+      ['logo.svg', 'image/svg+xml'],
+    ] as const) {
+      await userEvent.upload(input, new File(['x'], name, { type }));
+      expect(await screen.findByTestId('branding-logo-file')).toHaveTextContent(name);
+      expect(screen.getByAltText('Company logo preview').getAttribute('src')).toMatch(
+        new RegExp(`^data:${type.replace('+', '\\+')};base64,`),
+      );
+    }
+    expect(screen.queryByRole('alert')).not.toBeInTheDocument();
+  });
+
+  it('rejects other image types and oversized files without previewing them', async () => {
     renderPanel();
     await screen.findByDisplayValue('Acme SEO');
     const input = screen.getByLabelText('Company logo') as HTMLInputElement;
     await userEvent.upload(input, new File(['gif'], 'logo.gif', { type: 'image/gif' }), {
       applyAccept: false,
     });
-    expect(await screen.findByText('Choose a PNG image.')).toBeInTheDocument();
+    expect(await screen.findByText('Choose a PNG, JPEG or SVG image.')).toBeInTheDocument();
     expect(input.value).toBe('');
 
     await userEvent.upload(
       input,
       new File([new Uint8Array(256 * 1024 + 1)], 'large.png', { type: 'image/png' }),
     );
-    expect(await screen.findByText('Choose a PNG smaller than 256 KB.')).toBeInTheDocument();
+    expect(await screen.findByText('Choose an image smaller than 256 KB.')).toBeInTheDocument();
     expect(screen.queryByAltText('Company logo preview')).not.toBeInTheDocument();
   });
 
@@ -270,7 +409,7 @@ describe('BrandingPanel', () => {
     }
     vi.stubGlobal('FileReader', FakeReader);
     await userEvent.upload(input, new File(['png'], 'error.png', { type: 'image/png' }));
-    expect(await screen.findByText("We couldn't read that image. Choose another PNG.")).toBeInTheDocument();
+    expect(await screen.findByText("We couldn't read that image. Choose another file.")).toBeInTheDocument();
     await userEvent.upload(input, new File(['png'], 'array.png', { type: 'image/png' }));
     expect(screen.queryByAltText('Company logo preview')).not.toBeInTheDocument();
     vi.stubGlobal('FileReader', OriginalReader);

@@ -3,12 +3,16 @@ import { UnrecoverableError, type Job } from 'bullmq';
 import type { Logger } from 'pino';
 import { SUPPORTED_LOCALES, isSupportedLocale, type SupportedLocale, } from '../../shared/i18n/locales.js';
 import type { SummaryProvider } from '../../shared/providers/index.js';
+import { ProviderError, VendorTimeoutError } from '../../shared/providers/errors.js';
+import type { ActionEventsDb } from '../actions/actions.events.repo.js';
 import { auditSummaryJobIdentitySchema, auditSummaryJobSchema, legacyAuditSummaryJobSchema, } from '../../shared/queue/index.js';
-import { ReportSnapshot } from './report-snapshot.model.js';
+import { ReportSnapshot, type AiSummaryFailureCode } from './report-snapshot.model.js';
 import { generateAuditSummary, type GenerateAuditSummaryDeps, } from './summary.service.js';
 import { plainAuditSummarySnapshot } from './summary.selection.js';
 export interface AuditSummaryProcessorDeps {
     provider: SummaryProvider | null;
+    /** The decisions store: findings the owner dismissed or fixed are left out of the summary. */
+    db?: ActionEventsDb;
     logger?: Pick<Logger, 'info'>;
     now?: () => Date;
     archiveVendorResponse?: GenerateAuditSummaryDeps['archiveVendorResponse'];
@@ -114,6 +118,31 @@ async function resolveConsumedPayload(data: unknown): Promise<ResolvedAuditSumma
         return null;
     return resolved;
 }
+/** Narrow a generation error to a code the card can explain. */
+export function auditSummaryFailureCode(error: unknown): AiSummaryFailureCode {
+    if (error instanceof VendorTimeoutError)
+        return 'timeout';
+    if (error instanceof ProviderError)
+        return 'provider_unavailable';
+    return 'internal';
+}
+/** Mark an open job failed, recording why. Only the transition from queued/running counts. */
+async function failSummaryJob(input: ResolvedAuditSummaryPayload, failureCode: AiSummaryFailureCode, finishedAt: Date): Promise<void> {
+    const path = `aiSummaryJobsByLocale.${input.locale}`;
+    await ReportSnapshot.updateOne({
+        runId: input.runId,
+        accountId: input.accountId,
+        [`${path}.generationId`]: input.generationId,
+        [`${path}.locale`]: input.locale,
+        [`${path}.status`]: { $in: ['queued', 'running'] },
+    }, {
+        $set: {
+            [`${path}.status`]: 'failed',
+            [`${path}.finishedAt`]: finishedAt,
+            [`${path}.failureCode`]: failureCode,
+        },
+    });
+}
 export function createAuditSummaryProcessor(deps: AuditSummaryProcessorDeps) {
     const now = deps.now ?? (() => new Date());
     return async (job: Job): Promise<AuditSummaryJobOutcome> => {
@@ -145,9 +174,15 @@ export function createAuditSummaryProcessor(deps: AuditSummaryProcessorDeps) {
         else if (initialStatus !== 'running') {
             return 'stale';
         }
+        const setStage = async (stage: string): Promise<void> => {
+            await ReportSnapshot.updateOne({ ...filter, [`${path}.status`]: 'running' }, { $set: { [`${path}.stage`]: stage } });
+        };
         try {
+            await setStage('reading_findings');
             const summary = await generateAuditSummary(payload, {
                 provider: deps.provider,
+                onStage: setStage,
+                ...(deps.db ? { db: deps.db } : {}),
                 logger: deps.logger,
                 now,
                 ...(deps.archiveVendorResponse
@@ -170,38 +205,23 @@ export function createAuditSummaryProcessor(deps: AuditSummaryProcessorDeps) {
             return updated.modifiedCount > 0 ? 'succeeded' : 'stale';
         }
         catch (error) {
-            await ReportSnapshot.updateOne({
-                ...filter,
-                [`${path}.status`]: { $in: ['queued', 'running'] },
-            }, {
-                $set: {
-                    [`${path}.status`]: 'failed',
-                    [`${path}.finishedAt`]: now(),
-                },
-            });
+            await failSummaryJob(payload, auditSummaryFailureCode(error), now());
             throw error;
         }
     };
 }
-/** Terminal hook can update only a valid payload's exact locale path. */
-export async function onAuditSummaryJobExhausted(job: Job, _error: Error): Promise<void> {
+/**
+ * Terminal hook can update only a valid payload's exact locale path. A job
+ * that never reached the processor (for example a lease refusal) is failed
+ * here; one the processor already failed is left alone.
+ */
+export async function onAuditSummaryJobExhausted(job: Job, error: Error): Promise<void> {
     const parsed = auditSummaryJobSchema.safeParse(job.data);
     if (!parsed.success)
         return;
-    const path = `aiSummaryJobsByLocale.${parsed.data.locale}`;
-    await ReportSnapshot.updateOne({
-        runId: parsed.data.runId,
-        accountId: parsed.data.accountId,
-        [`${path}.generationId`]: parsed.data.generationId,
-        [`${path}.locale`]: parsed.data.locale,
-        [`${path}.status`]: { $in: ['queued', 'running'] },
-    }, {
-        $set: {
-            [`${path}.status`]: 'failed',
-            [`${path}.finishedAt`]: new Date(),
-        },
-    });
+    await failSummaryJob(parsed.data, auditSummaryFailureCode(error), new Date());
 }
 export const auditSummaryProcessorTestables = Object.freeze({
+    failSummaryJob,
     matchingLocaleCandidates,
 });

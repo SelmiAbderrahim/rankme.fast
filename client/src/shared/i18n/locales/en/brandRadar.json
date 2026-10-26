@@ -26,7 +26,7 @@
     "filter": {
       "label": "Filter by status",
       "all": "All statuses",
-      "note": "Filtering applies only to the scans loaded on this page."
+      "note": "Filters apply to the scans shown below. Load more to include older scans."
     }
   },
   "status": {
@@ -63,21 +63,11 @@
       "description": "New scans are switched off right now.",
       "storedReads": "Scans you already ran stay readable."
     },
-    "notOnPlan": {
-      "title": "Brand Radar needs a higher plan",
-      "description": "Move to Pro or Agency to unlock brand scans.",
-      "link": "See plans"
-    },
     "addonRequired": {
       "title": "Add Brand Radar to your plan",
       "description": "Check Billing for current Brand Radar add-on availability.",
       "price": "{{price}} per month, {{units}} scans included.",
       "link": "View Brand Radar options"
-    },
-    "overCap": {
-      "title": "You have used every brand scan",
-      "description": "Check Billing for current {{slug}} pack availability.",
-      "link": "View scan credit options"
     }
   },
   "form": {
@@ -116,7 +106,7 @@
     "back": "Back to scans",
     "loading": "Loading this scan",
     "errorTitle": "We could not load this scan",
-    "mentionCount": "{{count}} mention found",
+    "mentionCount_one": "{{count}} mention found",
     "mentionCount_other": "{{count}} mentions found",
     "market": "Market",
     "outputLocale": "Output language",
@@ -186,9 +176,13 @@
       "pending": "The summary is still being written.",
       "absent": "No summary was produced for this scan.",
       "withheld": "The summary was withheld because no sentence could be tied to a mention.",
-      "citations": "{{count}} source",
+      "citations_one": "{{count}} source",
       "citations_other": "{{count}} sources",
-      "citationMissing": "Citation not in this page"
+      "citationMissing": "Citation not in this page",
+      "citations_zero": "{{count}} sources",
+      "citations_two": "{{count}} sources",
+      "citations_few": "{{count}} sources",
+      "citations_many": "{{count}} sources"
     },
     "mentions": {
       "title": "Mentions",
@@ -219,7 +213,11 @@
         "sentiment": "Tone",
         "observedAt": "Seen"
       }
-    }
+    },
+    "mentionCount_zero": "{{count}} mentions found",
+    "mentionCount_two": "{{count}} mentions found",
+    "mentionCount_few": "{{count}} mentions found",
+    "mentionCount_many": "{{count}} mentions found"
   },
   "errors": {
     "previewTitle": "We could not price this scan",

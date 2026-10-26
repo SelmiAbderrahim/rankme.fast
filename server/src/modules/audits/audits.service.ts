@@ -15,7 +15,7 @@ import { randomUUID } from 'node:crypto';
 import { assertSiteNotPaused } from '../sites/sites.guard.js';
 import { AuditRun, type AuditRunHydrated, type AuditRunStatus } from './audit-run.model.js';
 import { AuditedPage, type AuditedPageHydrated } from './audited-page.model.js';
-import { AUDIT_PAGE_CAP_MAX } from './audits.schema.js';
+import { AUDIT_PAGE_CAP_MAX, pageCapForScan, resolveResourceScan } from './audits.schema.js';
 const CONCURRENT_STATUSES: AuditRunStatus[] = ['queued', 'running'];
 /**
  * Per-audit page ceiling (max_crawl_pages — the vendor's cost basis).
@@ -32,8 +32,9 @@ export interface PublicAuditRun {
     siteId: string;
     status: AuditRunStatus;
     pageCap: number;
+    /** The crawl loads images, scripts and stylesheets. */
+    resourceScan: boolean;
     pagesCrawled: number;
-    vendorTaskId: string | null;
     startedAt: string | null;
     finishedAt: string | null;
     error: string | null;
@@ -50,8 +51,8 @@ export function toPublicAuditRun(run: AuditRunHydrated, pagesCrawled = 0): Publi
         siteId: run.siteId.toString(),
         status: run.status,
         pageCap: run.pageCap,
+        resourceScan: run.resourceScan === true,
         pagesCrawled,
-        vendorTaskId: run.vendorTaskId ?? null,
         startedAt: run.startedAt ? run.startedAt.toISOString() : null,
         finishedAt: run.finishedAt ? run.finishedAt.toISOString() : null,
         error: run.error ?? null,
@@ -63,6 +64,8 @@ export interface StartAuditForSiteInput {
     accountId: string;
     siteId: string;
     requestedPageCap?: number;
+    /** Scan images, scripts and stylesheets. Omitted = on; `false` opts out. */
+    resourceScan?: boolean;
 }
 export interface StartAuditDeps {
     /** BullMQ audits queue. `null` = queueing not configured — 503. */
@@ -106,7 +109,8 @@ export async function startAuditForSite(input: StartAuditForSiteInput, deps: Sta
             if (inFlight) {
                 throw HttpError.conflict({ code: 'AUDITS_ERRORS_RUN_IN_PROGRESS', messageKey: 'audits.errors.runInProgress' });
             }
-            const pageCap = resolveAuditPageCap(input.requestedPageCap);
+            const resourceScan = resolveResourceScan(input.resourceScan);
+            const pageCap = pageCapForScan(resolveAuditPageCap(input.requestedPageCap), resourceScan);
             let run: AuditRunHydrated;
             try {
                 run = await AuditRun.create({
@@ -114,6 +118,7 @@ export async function startAuditForSite(input: StartAuditForSiteInput, deps: Sta
                     siteId: site._id,
                     status: 'queued',
                     pageCap,
+                    resourceScan,
                     activeKey: (site._id as Types.ObjectId).toString(),
                 });
             }

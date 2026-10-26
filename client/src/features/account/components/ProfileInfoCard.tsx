@@ -1,3 +1,4 @@
+import { Bdi } from '@shared/components/Bdi';
 import { useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
@@ -15,6 +16,8 @@ import { Separator } from '@shared/ui/separator';
 import { Alert, AlertDescription } from '@shared/ui/alert';
 import { StatusChip } from '@shared/ui/status-chip';
 import { useClearOnPresentationRefresh } from '@shared/i18n';
+import { useAppSelector } from '@shared/hooks/redux';
+import { selectActiveWorkspaceRole } from '@features/workspace';
 
 const buildProfileSchema = (msg: { required: string; tooLong: string }) =>
   z.object({
@@ -41,8 +44,9 @@ const initialsFor = (name: string, email: string): string => {
  * header re-renders without a manual refetch.
  */
 export const ProfileInfoCard = () => {
-  const { t, i18n } = useTranslation('account');
+  const { t, i18n } = useTranslation(['account', 'team']);
   const { user } = useAuthSession();
+  const workspaceRole = useAppSelector(selectActiveWorkspaceRole);
   const [errorMessage, setErrorMessage] = useState('');
   useClearOnPresentationRefresh(() => setErrorMessage(''));
 
@@ -94,18 +98,11 @@ export const ProfileInfoCard = () => {
           </Avatar>
           <div className="flex min-w-0 flex-col gap-1">
             <span className="text-foreground truncate text-base font-semibold">
-              {name || user.email}
+              <Bdi>{name || user.email}</Bdi>
             </span>
-            <span className="text-muted-foreground truncate text-sm">{user.email}</span>
+            <span className="text-muted-foreground truncate text-sm"><Bdi>{user.email}</Bdi></span>
             <div className="mt-1 flex flex-wrap items-center gap-2">
-              {/* `user.role` is the PLATFORM role (Member/Admin/SuperAdmin), not the
-                  team role the Team page lists, so a plain "Member" badge read as a
-                  contradiction. Every account owns its own workspace; the platform
-                  role is only worth showing when it is elevated. */}
-              <Badge variant="outline">{t('profile.workspaceOwner')}</Badge>
-              {user.role === 'Admin' || user.role === 'SuperAdmin' ? (
-                <Badge variant="outline">{t(`profile.platformRole.${user.role}`)}</Badge>
-              ) : null}
+              <Badge variant="outline">{t(`team:members.roles.${workspaceRole}`)}</Badge>
               <StatusChip tone={user.emailVerified ? 'success' : 'warning'} dot>
                 {user.emailVerified ? t('profile.verified') : t('profile.unverified')}
               </StatusChip>

@@ -4,7 +4,12 @@
   "status": {
     "loading": "Загрузка действий…",
     "refreshing": "Обновление действий…",
-    "showing": "Показано действий: {{count}}"
+    "showing_one": "Показано действий: {{count}}",
+    "showing_zero": "Показано действий: {{count}}",
+    "showing_two": "Показано действий: {{count}}",
+    "showing_few": "Показано действий: {{count}}",
+    "showing_many": "Показано действий: {{count}}",
+    "showing_other": "Показано действий: {{count}}"
   },
   "errors": {
     "loadFailed": "Не удалось загрузить действия. Попробуйте еще раз.",
@@ -18,6 +23,7 @@
     "label": "Фильтр действий",
     "reset": "Сбросить фильтры",
     "all": "Все",
+    "openAndPlanned": "Открытые и запланированные",
     "state": "Статус",
     "source": "Источник",
     "severity": "Серьезность",
@@ -43,7 +49,8 @@
     "ga4_decline": "Спад в Analytics",
     "content_recommendation": "Рекомендация по контенту",
     "citation_gap": "Пробел в ИИ-цитировании",
-    "audience_research": "Исследование аудитории"
+    "audience_research": "Исследование аудитории",
+    "competitor_opportunity": "Возможность из анализа конкурентов"
   },
   "severity": {
     "critical": "Критично",
@@ -69,22 +76,50 @@
   "freshness": {
     "fresh": "Свежие данные",
     "stale": "Устаревшие данные",
-    "unavailable": "Не проверено"
+    "unavailable": "Не проверено",
+    "partial": "Неполные данные",
+    "blocked": "Заблокировано",
+    "failed": "Ошибка",
+    "unknown": "Актуальность неизвестна"
   },
   "card": {
     "nextStep": "Следующий шаг",
     "observedAt": "Зафиксировано {{date}}",
     "openSource": "Открыть источник",
     "affectedNone": "Весь сайт",
-    "affectedOne": "Затронут 1 URL",
-    "affectedCount": "Затронуто URL: {{count}}",
+    "affectedCount_one": "Затронуто URL: {{count}}",
     "evidence": "Доказательства",
-    "evidenceLabel": "{{source}} · {{date}}",
+    "evidenceLabel": "{{source}} · {{date}} · {{detail}}",
     "evidenceLink": "Открыть источник доказательства",
     "history": "История",
     "retest": "Перепроверить",
-    "affectedSample": "(показано {{shown}})",
-    "noteLabel": "Заметка"
+    "noteLabel": "Заметка",
+    "affectedCount_zero": "Затронуто URL: {{count}}",
+    "affectedCount_two": "Затронуто URL: {{count}}",
+    "affectedCount_few": "Затронуто URL: {{count}}",
+    "affectedCount_many": "Затронуто URL: {{count}}",
+    "affectedCount_other": "Затронуто URL: {{count}}",
+    "affectedCountSampled_zero": "Затронуто URL: {{count}} (показано {{shown}})",
+    "affectedCountSampled_one": "Затронуто URL: {{count}} (показано {{shown}})",
+    "affectedCountSampled_two": "Затронуто URL: {{count}} (показано {{shown}})",
+    "affectedCountSampled_few": "Затронуто URL: {{count}} (показано {{shown}})",
+    "affectedCountSampled_many": "Затронуто URL: {{count}} (показано {{shown}})",
+    "affectedCountSampled_other": "Затронуто URL: {{count}} (показано {{shown}})",
+    "seeAllUrls_zero": "Все URL ({{count}}) — в отчёте",
+    "seeAllUrls_one": "Все URL ({{count}}) — в отчёте",
+    "seeAllUrls_two": "Все URL ({{count}}) — в отчёте",
+    "seeAllUrls_few": "Все URL ({{count}}) — в отчёте",
+    "seeAllUrls_many": "Все URL ({{count}}) — в отчёте",
+    "seeAllUrls_other": "Все URL ({{count}}) — в отчёте",
+    "seeLinkTargets_zero": "Все страницы ({{count}}) и битые ссылки на них — в отчёте",
+    "seeLinkTargets_one": "Все страницы ({{count}}) и битые ссылки на них — в отчёте",
+    "seeLinkTargets_two": "Все страницы ({{count}}) и битые ссылки на них — в отчёте",
+    "seeLinkTargets_few": "Все страницы ({{count}}) и битые ссылки на них — в отчёте",
+    "seeLinkTargets_many": "Все страницы ({{count}}) и битые ссылки на них — в отчёте",
+    "seeLinkTargets_other": "Все страницы ({{count}}) и битые ссылки на них — в отчёте",
+    "linkSourcesCount": "Страниц с битыми ссылками: {{count}}",
+    "staleRetestHint": "Эти данные устарели. Запустите повторную проверку, чтобы обновить их.",
+    "linkSourcesCountSampled": "Страниц с битыми ссылками: {{count}} (показано {{shown}})"
   },
   "transitions": {
     "planned": "Запланировать",
@@ -110,7 +145,14 @@
     "confirm": "Подтвердить",
     "saving": "Сохранение…",
     "conflict": "Кто-то изменил это действие раньше вас. Перезагрузите его и попробуйте снова.",
-    "conflictReload": "Перезагрузить действие"
+    "conflictReload": "Перезагрузить действие",
+    "reasonLabel": "Почему вы отклоняете эту проблему?",
+    "reasons": {
+      "false_positive": "Ложное срабатывание",
+      "wont_fix": "Не будем исправлять",
+      "fixed_elsewhere": "Исправлено в другом месте",
+      "other": "Другая причина"
+    }
   },
   "history": {
     "title": "История действия",
@@ -118,7 +160,9 @@
     "actor": "Участник команды",
     "from": "из статуса «{{state}}»",
     "close": "Закрыть",
-    "actorYou": "Вы"
+    "actorYou": "Вы",
+    "observed": "Обнаружено",
+    "actorSystem": "Автоматическая проверка"
   },
   "retest": {
     "title": "Перепроверить этот вывод?",
@@ -127,8 +171,6 @@
     "unitsValue": "1",
     "freshRun": "Перепроверка всегда сканирует сайт заново — результаты никогда не берутся из кэша.",
     "selfHosted": "На этом сервере лимиты использования не применяются.",
-    "remaining": "Осталось {{remaining}} из {{cap}} аудитов в этом периоде",
-    "allowanceUnknown": "Не удалось загрузить остаток лимита. Сервер все равно проверит лимит перед запуском.",
     "confirm": "Запустить перепроверку",
     "starting": "Запуск…",
     "queued": "Перепроверка поставлена в очередь. Следите за прогрессом на вкладке отчета.",
@@ -154,6 +196,8 @@
     "dismissedLabel": "Отклонено как ложное срабатывание",
     "fixCta": "Отметить как исправленное",
     "fixedLabel": "Отмечено как исправленное",
-    "reappearedLabel": "Всё ещё обнаруживается после отметки об исправлении"
+    "reappearedLabel": "Всё ещё обнаруживается после отметки об исправлении",
+    "notCounted": "Не учтено в этих числах — отклонено: {{dismissed}}, отмечено как исправленное: {{completed}}.",
+    "fixedGroupIn": "Отмечено исправленным в разделе «{{tab}}» ({{count}})"
   }
 }

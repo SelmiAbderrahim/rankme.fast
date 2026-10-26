@@ -2,7 +2,7 @@ import { z } from 'zod';
 import { SUPPORTED_LOCALES } from '../../shared/i18n/locales.js';
 import { LANDSCAPE_MAX_COMPETITORS, LANDSCAPE_CLASSES, LANDSCAPE_STATES, } from './landscape/landscape.schemas.js';
 const objectId = z.string().regex(/^[0-9a-f]{24}$/);
-const profileId = z.string().uuid();
+const profileId = z.string().guid();
 const visibleAsciiKey = z
     .string()
     .min(1)

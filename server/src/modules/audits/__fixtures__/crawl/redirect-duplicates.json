@@ -1,0 +1,76 @@
+{
+  "description": "Crawl of a locale site with a redirect source, a non-canonical duplicate (http + www address of a canonical page) and a non-HTML file next to its canonical pages, plus the Search Console rows.",
+  "siteUrl": "https://episodebrief.example/",
+  "auditRows": [
+    {
+      "url": "https://episodebrief.example/en",
+      "title": "EpisodeBrief",
+      "isIndexable": true,
+      "statusCode": 200
+    },
+    {
+      "url": "https://episodebrief.example/en/episode-pass",
+      "title": "Episode Pass",
+      "isIndexable": true,
+      "statusCode": 200
+    },
+    {
+      "url": "https://episodebrief.example/episode-pass",
+      "title": null,
+      "isIndexable": true,
+      "statusCode": 301,
+      "finalUrl": "https://episodebrief.example/en/episode-pass",
+      "redirectChain": [
+        {
+          "url": "https://episodebrief.example/episode-pass",
+          "status": 301
+        }
+      ]
+    },
+    {
+      "url": "http://www.episodebrief.example/en/episode-pass",
+      "title": "Episode Pass",
+      "isIndexable": true,
+      "statusCode": 200
+    },
+    {
+      "url": "https://episodebrief.example/en/help",
+      "title": "Help",
+      "isIndexable": true,
+      "statusCode": 200
+    },
+    {
+      "url": "https://episodebrief.example/files/press-kit.pdf",
+      "title": null,
+      "isIndexable": false,
+      "nonIndexableReason": "non_html",
+      "statusCode": 200,
+      "contentType": "application/pdf",
+      "fetchFailure": {
+        "kind": "non_html",
+        "contentType": "application/pdf"
+      }
+    }
+  ],
+  "gscPages": [
+    {
+      "url": "https://episodebrief.example/episode-pass",
+      "clicks": 4,
+      "impressions": 200,
+      "position": 12.0
+    },
+    {
+      "url": "https://episodebrief.example/en/help",
+      "clicks": 1,
+      "impressions": 100,
+      "position": 80.0
+    }
+  ],
+  "expected": {
+    "auditRowsFetched": 6,
+    "inventoryPages": 3,
+    "measuredPages": 2,
+    "redirectSources": 1,
+    "averagePosition": 34.67
+  }
+}

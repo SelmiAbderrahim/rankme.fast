@@ -1,5 +1,5 @@
 {
-  "title": "مولّد ترميز schema",
+  "title": "ترميز Schema",
   "description": "ينشئ JSON-LD لصفحة اعتمادًا على الحقائق التي حفظناها عنها. لا نخترع شيئًا: أي حقل لا نملك حقيقة تسنده نتركه، ونذكر السبب.",
   "new": {
     "title": "إنشاء الترميز",
@@ -23,19 +23,44 @@
     "urlLabel": "عنوان الصفحة",
     "urlPlaceholder": "https://example.com/page",
     "urlHint": "نقرأ الصفحة مرة واحدة عبر اتصال آمن. العناوين العامة فقط تعمل.",
-    "urlInvalid": "أدخل عنوان https كاملًا، دون اسم مستخدم أو كلمة مرور."
+    "urlInvalid": "أدخل عنوان https كاملًا، دون اسم مستخدم أو كلمة مرور.",
+    "listCapped_zero": "تضم هذه القائمة $t(schemaGenerator:source.firstPages, {\"count\": {{shown}}}) من أصل $t(schemaGenerator:source.crawledPages, {\"count\": {{total}}}). الصق عنوان الصفحة لاستخدام أي صفحة أخرى.",
+    "listCapped_one": "تضم هذه القائمة $t(schemaGenerator:source.firstPages, {\"count\": {{shown}}}) من أصل $t(schemaGenerator:source.crawledPages, {\"count\": {{total}}}). الصق عنوان الصفحة لاستخدام أي صفحة أخرى.",
+    "listCapped_two": "تضم هذه القائمة $t(schemaGenerator:source.firstPages, {\"count\": {{shown}}}) من أصل $t(schemaGenerator:source.crawledPages, {\"count\": {{total}}}). الصق عنوان الصفحة لاستخدام أي صفحة أخرى.",
+    "listCapped_few": "تضم هذه القائمة $t(schemaGenerator:source.firstPages, {\"count\": {{shown}}}) من أصل $t(schemaGenerator:source.crawledPages, {\"count\": {{total}}}). الصق عنوان الصفحة لاستخدام أي صفحة أخرى.",
+    "listCapped_many": "تضم هذه القائمة $t(schemaGenerator:source.firstPages, {\"count\": {{shown}}}) من أصل $t(schemaGenerator:source.crawledPages, {\"count\": {{total}}}). الصق عنوان الصفحة لاستخدام أي صفحة أخرى.",
+    "listCapped_other": "تضم هذه القائمة $t(schemaGenerator:source.firstPages, {\"count\": {{shown}}}) من أصل $t(schemaGenerator:source.crawledPages, {\"count\": {{total}}}). الصق عنوان الصفحة لاستخدام أي صفحة أخرى.",
+    "firstPages_zero": "أول {{count}} صفحات",
+    "firstPages_one": "أول صفحة",
+    "firstPages_two": "أول {{count}} من الصفحات",
+    "firstPages_few": "أول {{count}} صفحات",
+    "firstPages_many": "أول {{count}} صفحة",
+    "firstPages_other": "أول {{count}} صفحة",
+    "crawledPages_zero": "{{count}} صفحات تم فحصها",
+    "crawledPages_one": "{{count}} صفحة تم فحصها",
+    "crawledPages_two": "{{count}} من الصفحات التي تم فحصها",
+    "crawledPages_few": "{{count}} صفحات تم فحصها",
+    "crawledPages_many": "{{count}} صفحة تم فحصها",
+    "crawledPages_other": "{{count}} صفحة تم فحصها",
+    "filterLabel": "ابحث عن صفحة",
+    "filterPlaceholder": "اكتب جزءًا من العنوان أو اسم الصفحة",
+    "filterCount": "يُعرض {{shown}} من أصل {{total}}",
+    "filterNoMatches": "لا توجد صفحة تطابق هذا البحث.",
+    "groupRoot": "صفحات المستوى الأعلى"
   },
   "type": {
     "legend": "نوع schema.org",
     "required": "المطلوبة: {{n}}",
     "recommended": "المستحسنة: {{n}}",
-    "alreadyDeclared": "هذه الصفحة تعلن هذا النوع بالفعل."
+    "alreadyDeclared": "هذه الصفحة تعلن هذا النوع بالفعل.",
+    "note": {
+      "FAQPage": "لا يعرض Google إجابات الأسئلة الشائعة في نتائج البحث إلا لمواقع حكومية وصحية معروفة. يبقى الترميز صالحًا.",
+      "HowTo": "لم يعد Google يعرض خطوات HowTo في نتائج البحث. يبقى الترميز صالحًا."
+    }
   },
   "preview": {
     "title": "تكلفة هذه العملية",
     "show": "اعرض التكلفة",
-    "units": "{{count}} عملية إنشاء من حصتك الشهرية.",
-    "units_other": "{{count}} عمليات إنشاء من حصتك الشهرية.",
     "confirm": "إنشاء الترميز",
     "remaining": "المتبقي في خطتك هذا الشهر: {{remaining}}.",
     "pack": "بالإضافة إلى {{units}} من حزم الرصيد.",
@@ -53,14 +78,14 @@
     "failedTitle": "لم يُنشأ أي شيء",
     "failedProvider": "لم يستجب النموذج، لذلك لم نحتفظ بأي ترميز.",
     "failedRejected": "كل الحقول التي اقترحها النموذج رسبت في تدقيق الحقائق، فاحتفظنا بما يمكن إثباته فقط.",
-    "refunded": "أُعيدت الوحدة إلى حصتك.",
     "evidence": "مصدر كل حقل",
     "evidenceDescription": "سطر لكل حقل في الترميز، يذكر الحقيقة المحفوظة التي تسنده.",
     "evidenceFrom": "من {{fact}}",
     "evidenceEmpty": "لم يتيسّر ملء أي حقل من حقيقة محفوظة.",
     "omissions": "ما تركناه",
     "omissionsDescription": "حقول لا تسندها حقيقة، وسبب غياب كل منها.",
-    "omissionsEmpty": "لم نترك شيئًا."
+    "omissionsEmpty": "لم نترك شيئًا.",
+    "regenerated": "أُعيد بناؤه من توليد سابق باستخدام معلومات قدّمتَها. لم يُستهلك أي توليد."
   },
   "fact": {
     "pageUrl": "عنوان URL للصفحة",
@@ -75,7 +100,11 @@
     "articleModifiedTime": "وقت تعديل المقالة",
     "siteOrigin": "أصل الموقع",
     "siteDomain": "نطاق الموقع",
-    "siteName": "اسم الموقع"
+    "siteName": "اسم الموقع",
+    "ogSiteName": "وسم اسم الموقع (og:site_name)",
+    "jsonLdName": "الاسم الوارد في البيانات المنظَّمة الحالية للصفحة",
+    "titleBrand": "اسم العلامة في عنوان الصفحة",
+    "providedByYou": "قدّمتَه أنت"
   },
   "reason": {
     "no_evidence": "لا نملك حقيقة بشأنه",
@@ -111,15 +140,6 @@
       "title": "لا فحص بعد",
       "body": "شغّل فحصًا لهذا الموقع لتصبح صفحاته قابلة للاختيار هنا."
     },
-    "cap": {
-      "title": "استُهلكت الحصة الشهرية",
-      "body": "استخدمت كل عمليات إنشاء الترميز في خطتك هذا الشهر.",
-      "link": "عرض الخطط"
-    },
-    "notOnPlan": {
-      "title": "غير مشمول في خطتك",
-      "body": "إنشاء الترميز يبدأ من خطة Starter."
-    },
     "killSwitch": {
       "title": "غير متاح مؤقتًا",
       "body": "عمليات الإنشاء الجديدة متوقفة الآن. ما أنشأته يبقى قابلًا للقراءة."
@@ -139,6 +159,29 @@
     "failed": {
       "title": "حدث خطأ ما",
       "body": "لم نتمكن من إنهاء هذا. حاول مجددًا."
+    }
+  },
+  "userFacts": {
+    "title": "أضف ما تركناه",
+    "description": "اكتب معلومة لا يعرفها سواك. نضيفها كما كتبتَها تمامًا ونميّزها بعبارة \"قدّمتَه أنت\".",
+    "submit": "أعد البناء بمعلوماتي",
+    "free": "مجانًا: نعيد استخدام المعلومات التي وجدناها ولا نستهلك أي توليد.",
+    "required": "املأ حقلًا واحدًا على الأقل.",
+    "hint": {
+      "language": "رمز لغة مثل en أو pt-BR.",
+      "date": "تاريخ مثل 2026-10-01.",
+      "url": "عنوان عام يبدأ بـ https://."
+    },
+    "label": {
+      "name": "الاسم",
+      "headline": "العنوان الرئيسي",
+      "description": "الوصف",
+      "inLanguage": "اللغة",
+      "datePublished": "تاريخ النشر",
+      "dateModified": "تاريخ آخر تحديث",
+      "logo": "عنوان الشعار",
+      "image": "عنوان الصورة",
+      "primaryImageOfPage": "عنوان الصورة الرئيسية"
     }
   }
 }

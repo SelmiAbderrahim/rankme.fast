@@ -1,6 +1,7 @@
 import { createSlice, type PayloadAction } from '@reduxjs/toolkit';
 import type {
   ContentAnalysis,
+  ContentAnalysisJobStatus,
   InventoryRun,
   InventoryRunDetail,
   PreflightReason,
@@ -268,6 +269,24 @@ const slice = createSlice({
   initialState,
   reducers: {
     resetContentIntelligence: () => initialState,
+    /**
+     * A non-terminal status poll: move the step on in both the detail and the
+     * list copy, so neither shows an older step.
+     */
+    analysisStatusReceived: (
+      state,
+      action: PayloadAction<{ siteId: string; job: ContentAnalysisJobStatus }>,
+    ) => {
+      if (action.payload.siteId !== state.siteId) return;
+      const { analysisId, status, ...progress } = action.payload.job;
+      const patch = (analysis: ContentAnalysis | undefined) => {
+        if (!analysis) return;
+        analysis.status = status;
+        analysis.progress = progress;
+      };
+      patch(state.detail[analysisId]);
+      patch(state.analyses.find((analysis) => analysis.analysisId === analysisId));
+    },
     setActiveAnalysisId: (state, action: PayloadAction<string | null>) => {
       state.activeAnalysisId = action.payload;
     },
@@ -829,6 +848,7 @@ function applyMonitorMutation(
 export const contentIntelligenceReducer = slice.reducer;
 export const {
   resetContentIntelligence,
+  analysisStatusReceived,
   setActiveAnalysisId,
   updateFormDraft,
   clearFormDraft,

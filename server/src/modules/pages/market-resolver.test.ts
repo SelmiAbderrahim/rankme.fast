@@ -69,4 +69,23 @@ describe('resolvePagesFallbackMarket', () => {
       resolvePagesFallbackMarket(db as never, 'account', 'site'),
     ).resolves.toMatchObject({ locationCode: 2840, languageCode: 'en' });
   });
+
+  it("prefers the site's default market over tracked keywords", async () => {
+    const db = getTestDb();
+    // Ten keywords tracked in the United States must not drag a Saudi site's
+    // fallback snapshot to US English.
+    await db.insert(keywords).values(
+      Array.from({ length: 3 }, (_, index) => ({
+        accountId: 'account', siteId: 'site', phrase: `us-${index}`, locationCode: 2840,
+        languageCode: 'en', active: true, engine: 'google' as const, device: 'desktop' as const,
+      })),
+    );
+    await expect(
+      resolvePagesFallbackMarket(db as never, 'account', 'site', { locationCode: 2682, languageCode: 'AR' }),
+    ).resolves.toEqual({ locationCode: 2682, languageCode: 'ar', selection: 'site_default' });
+    await expect(
+      resolvePagesFallbackMarket(db as never, 'account', 'site', null),
+    ).resolves.toMatchObject({ locationCode: 2840, selection: 'tracked_keyword_mode' });
+  });
 });
+

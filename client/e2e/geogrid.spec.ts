@@ -12,7 +12,7 @@
  *   - a partial-failure scan (deterministic fake injection) marks failed cells
  *     and does NOT refund, because retained observations consumed the unit;
  *   - the N+1 scan lands on the localized cap state naming `geogrid_scans`;
- *   - reopening a stored scan is free;
+ *   - reopening a stored scan works;
  *   - with `GEOGRID_ENABLED=false` the new-scan entry point refuses while
  *     stored reads stay open (proved against an api ACTUALLY booted with the
  *     flag off, then restored);
@@ -29,8 +29,6 @@ import {
   assertComposeRuntimeParity,
   captureInheritedComposeEnvironment,
   recreateComposeServices,
-  runComposePsql,
-  runComposePsqlOutput,
 } from './helpers/compose';
 
 test.describe.configure({ mode: 'serial' });
@@ -38,7 +36,6 @@ test.describe.configure({ mode: 'serial' });
 const WCAG_TAGS = ['wcag2a', 'wcag2aa', 'wcag21a', 'wcag21aa'];
 
 /** Agency base cap for `geogrid_scans`. */
-const AGENCY_CAP = 6;
 
 /** Fake-provider markers (server/src/shared/providers/fakes.ts). */
 const PARTIAL_MARKER = 'gridfail';
@@ -89,41 +86,6 @@ async function csrfPost(
   });
 }
 
-async function sessionUserId(page: Page): Promise<string> {
-  const res = await page.request.get('/api/auth/get-session');
-  const body = (await res.json()) as { user?: { id?: string } };
-  if (!body.user?.id) throw new Error('geogrid spec: no session user id');
-  return body.user.id;
-}
-
-function seedAgencyTier(accountId: string): void {
-  runComposePsql(
-    `INSERT INTO subscriptions (account_id, tier, status)
-     VALUES (:'accountId', 'agency', 'active')
-     ON CONFLICT (account_id) DO UPDATE SET tier = 'agency', status = 'active';`,
-    { variables: { accountId } },
-  );
-}
-
-function seedUsedScans(accountId: string, used: string): void {
-  runComposePsql(
-    `INSERT INTO usage_counters (account_id, period, metric, used, "limit")
-     VALUES (:'accountId', to_char(now() AT TIME ZONE 'UTC', 'YYYY-MM'),
-             'geogrid_scans', :'used'::bigint, ${AGENCY_CAP})
-     ON CONFLICT (account_id, period, metric)
-     DO UPDATE SET used = :'used'::bigint;`,
-    { variables: { accountId, used } },
-  );
-}
-
-function usedScans(accountId: string): string {
-  return runComposePsqlOutput(
-    `SELECT coalesce(max(used), 0) FROM usage_counters
-     WHERE account_id = :'accountId' AND metric = 'geogrid_scans';`,
-    { variables: { accountId } },
-  ).trim();
-}
-
 async function createSite(page: Page, url: string): Promise<string> {
   const response = await csrfPost(page, '/api/sites', { url, label: 'Geogrid Journey' });
   expect(response.status()).toBe(201);
@@ -143,6 +105,12 @@ async function addKeyword(page: Page, siteId: string, phrase: string): Promise<s
   return body.keyword.id;
 }
 
+/** The coordinate fields live behind the centre picker's advanced mode. */
+async function useTypedCoordinates(page: Page): Promise<void> {
+  await page.getByTestId('geogrid-center-mode-coordinates').click();
+  await expect(page.getByTestId('geogrid-lat')).toBeVisible();
+}
+
 /** Fill the grid form and run the non-reserving estimate. */
 async function estimate(
   page: Page,
@@ -153,6 +121,7 @@ async function estimate(
   await page.goto(`/sites/${siteId}?tab=geogrid`);
   await expect(page.getByTestId('geogrid-form')).toBeVisible({ timeout: 30_000 });
   await page.getByTestId('geogrid-keyword').selectOption({ label: keywordPhrase });
+  await useTypedCoordinates(page);
   await page.getByTestId('geogrid-lat').fill('30.2672');
   await page.getByTestId('geogrid-lng').fill('-97.7431');
   await page.locator(`#geogrid-size-${size}`).check();
@@ -177,10 +146,10 @@ async function waitForScanTerminal(page: Page, siteId: string): Promise<string> 
   return body.scans[0]!.id;
 }
 
-test('geogrid: typed-coordinate grid, preview/cancel, heat grid + table fallback, partial failure, cap, free reopen, flag-off, RTL, axe', async ({
+test('geogrid: typed-coordinate grid, preview/cancel, heat grid + table fallback, partial failure, reopen, flag-off, RTL, axe', async ({
   page,
 }) => {
-  // Multi-step composed-stack journey (signup, several metered scans through
+  // Multi-step composed-stack journey (signup, several scans through
   // the real worker, one api recreate pair) on a shared gate host. Retries 0.
   // Budget is sized for a COLD stack. Runtime here scales with the number of
   // stored `geogrid_scans` the workspace lists and axe-scans, so a reused e2e
@@ -192,23 +161,20 @@ test('geogrid: typed-coordinate grid, preview/cancel, heat grid + table fallback
 
   const account = freshAccount('geogrid');
   await signUp(page, account);
-  const accountId = await sessionUserId(page);
-  seedAgencyTier(accountId);
 
   const siteId = await createSite(page, 'https://example.com');
   const cleanPhrase = 'dentist austin';
   const partialPhrase = `dentist austin ${PARTIAL_MARKER}`;
   const cleanKeywordId = await addKeyword(page, siteId, cleanPhrase);
   await addKeyword(page, siteId, partialPhrase);
-  seedUsedScans(accountId, '0');
 
   let firstScanId = '';
 
   try {
-    await test.step('the coordinate form is typed, not picked from a map', async () => {
+    await test.step('the centre can be typed as coordinates, with no map', async () => {
       await page.goto(`/sites/${siteId}?tab=geogrid`);
       await expect(page.getByTestId('geogrid-form')).toBeVisible({ timeout: 30_000 });
-      await expect(page.getByTestId('geogrid-lat')).toBeVisible();
+      await useTypedCoordinates(page);
       await expect(page.getByTestId('geogrid-lng')).toBeVisible();
       // No map tile vendor is ever contacted — the panel holds no map frame
       // and no map canvas, only numeric coordinate fields.
@@ -222,14 +188,12 @@ test('geogrid: typed-coordinate grid, preview/cancel, heat grid + table fallback
       await expect(page.getByTestId('geogrid-preview-card')).toContainText('9');
       await page.getByTestId('geogrid-cancel').click();
       await expect(page.getByTestId('geogrid-preview-card')).toHaveCount(0);
-      expect(usedScans(accountId)).toBe('0');
     });
 
     await test.step('a confirmed scan settles and renders the heat grid plus the table fallback', async () => {
       await estimate(page, siteId, cleanPhrase);
       await page.getByTestId('geogrid-confirm').click();
       firstScanId = await waitForScanTerminal(page, siteId);
-      expect(usedScans(accountId)).toBe('1');
 
       await page.goto(`/sites/${siteId}?tab=geogrid&scan=${firstScanId}`);
       await expect(page.getByTestId('geogrid-heat')).toBeVisible({ timeout: 30_000 });
@@ -256,23 +220,20 @@ test('geogrid: typed-coordinate grid, preview/cancel, heat grid + table fallback
       await expect(page.getByTestId('geogrid-cell-detail')).toBeVisible();
     });
 
-    await test.step('a partial-failure scan marks failed cells and keeps the unit', async () => {
+    await test.step('a partial-failure scan marks failed cells', async () => {
       await estimate(page, siteId, partialPhrase);
       await page.getByTestId('geogrid-confirm').click();
       const partialScanId = await waitForScanTerminal(page, siteId);
-      expect(usedScans(accountId)).toBe('2');
 
       const detail = await page.request.get(`/api/sites/${siteId}/geogrid/scans/${partialScanId}`);
       expect(detail.status()).toBe(200);
       const body = (await detail.json()) as {
         status: string;
         failedCells: number;
-        refundIssued: boolean;
         cells: Array<{ state: string; position?: number; capturedAt?: string }>;
       };
       expect(body.status).toBe('completed_partial');
       expect(body.failedCells).toBeGreaterThan(0);
-      expect(body.refundIssued).toBe(false);
       // Honesty invariant on the wire: a failed cell carries no rank and no
       // capture time, so it can never render as "not in the pack".
       for (const cell of body.cells) {
@@ -290,26 +251,11 @@ test('geogrid: typed-coordinate grid, preview/cancel, heat grid + table fallback
       await scan(page, 'geogrid-partial(light)');
     });
 
-    await test.step('reopening a stored scan is free', async () => {
-      const before = usedScans(accountId);
+    await test.step('reopening a stored scan works', async () => {
       await page.goto(`/sites/${siteId}?tab=geogrid`);
       await expect(page.getByTestId('geogrid-history')).toBeVisible({ timeout: 30_000 });
       await page.getByTestId(`geogrid-history-row-${firstScanId}`).click();
       await expect(page.getByTestId('geogrid-heat')).toBeVisible({ timeout: 30_000 });
-      expect(usedScans(accountId)).toBe(before);
-    });
-
-    await test.step('the N+1 scan lands on the localized cap state', async () => {
-      await estimate(page, siteId, cleanPhrase);
-      // Preview while affordable, then consume the final allowance through the
-      // database seam so confirmation exercises the API's N+1 race boundary.
-      seedUsedScans(accountId, String(AGENCY_CAP));
-      await page.getByTestId('geogrid-confirm').click();
-      await expect(page.getByTestId('geogrid-gate-cap')).toBeVisible({ timeout: 30_000 });
-      await expect(page.getByTestId('geogrid-pack-cta')).toHaveCount(0);
-      expect(usedScans(accountId)).toBe(String(AGENCY_CAP));
-      await scan(page, 'geogrid-cap(light)');
-      seedUsedScans(accountId, '2');
     });
 
     await test.step('Arabic RTL renders the grid and its table fallback', async () => {
@@ -351,6 +297,7 @@ test('geogrid: typed-coordinate grid, preview/cancel, heat grid + table fallback
       await page.goto(`/sites/${siteId}?tab=geogrid`);
       await expect(page.getByTestId('geogrid-form')).toBeVisible({ timeout: 60_000 });
       await page.getByTestId('geogrid-keyword').selectOption({ label: cleanPhrase });
+      await useTypedCoordinates(page);
       await page.getByTestId('geogrid-lat').fill('30.2672');
       await page.getByTestId('geogrid-lng').fill('-97.7431');
       await page.getByTestId('geogrid-preview-submit').click();
@@ -358,7 +305,6 @@ test('geogrid: typed-coordinate grid, preview/cancel, heat grid + table fallback
         timeout: 30_000,
       });
       await expect(page.getByTestId('geogrid-preview-card')).toHaveCount(0);
-      expect(usedScans(accountId)).toBe('2');
     });
   } finally {
     recreateApiWithFlag(inheritedRuntime.GEOGRID_ENABLED!);

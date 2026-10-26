@@ -49,7 +49,9 @@
     "assistant": "Assistant response",
     "streaming": "Assistant is responding",
     "stopped": "Response stopped",
-    "loading": "Loading conversation…"
+    "loading": "Loading conversation…",
+    "cutOff": "The response was cut off before it finished.",
+    "retryCutOff": "Retry"
   },
   "tool": {
     "arguments": "Arguments",
@@ -70,7 +72,35 @@
       "startAudit": "Start audit",
       "auditStatus": "Audit status",
       "listActions": "Next actions",
-      "setActionState": "Update an action"
+      "setActionState": "Update an action",
+      "getGscSearchSummary": "Get Search Console summary",
+      "listGscTopQueries": "List top searches",
+      "listGscTopPages": "List top search pages",
+      "getGa4Summary": "Get Analytics summary",
+      "listPages": "List pages",
+      "getPageDetail": "Get page details",
+      "getBacklinksSummary": "Get backlinks summary",
+      "listBacklinks": "List backlinks",
+      "listCompetitors": "List competitors",
+      "listKeywordResearchHistory": "List keyword research history",
+      "getKeywordResearchResult": "Get keyword research result",
+      "getAiVisibilitySummary": "Get AI visibility summary",
+      "getLocalSeoSummary": "Get local SEO summary",
+      "getReviewsSummary": "Get reviews summary",
+      "listClientReports": "List client reports"
+    },
+    "errors": {
+      "forbiddenOutput": "This step's result was withheld because it contained content that can't be shown safely. Try asking again.",
+      "invalidInput": "This step couldn't run because the request was not valid. Try rephrasing your question.",
+      "notFound": "The site for this step isn't available in this conversation.",
+      "internal": "Something went wrong on our side while running this step. Try again.",
+      "generic": "This step couldn't be completed. Try again."
+    },
+    "retry": "Ask again",
+    "storedStatus": {
+      "ok": "Stored data",
+      "empty": "Nothing stored",
+      "unavailable": "Unavailable"
     }
   },
   "results": {
@@ -86,7 +116,14 @@
     "topFindings": "Top findings",
     "noFindings": "No findings were returned.",
     "domain": "Domain",
-    "url": "URL"
+    "url": "URL",
+    "change": "Change",
+    "truncated": "Only the first rows are shown.",
+    "scopeSource": "Source",
+    "scopeRange": "Range",
+    "scopePeriod": "Dates",
+    "scopeAsOf": "As of",
+    "scopeTimezone": "Time zone"
   },
   "states": {
     "locked": {

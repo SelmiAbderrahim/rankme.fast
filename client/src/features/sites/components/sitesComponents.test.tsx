@@ -1,3 +1,4 @@
+import { isolateText } from '@shared/lib/bidi';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 import { act, render, screen, waitFor, within } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
@@ -30,9 +31,12 @@ function getFiberOnOpenChange(el: Element): ((open: boolean) => void) | null {
 
 vi.mock('../api', () => ({
   fetchSitesRequest: vi.fn(),
+  fetchSiteSummariesRequest: vi.fn(),
+  fetchSiteMarketRequest: vi.fn(),
   createSiteRequest: vi.fn(),
   deleteSiteRequest: vi.fn(),
   updateSiteRequest: vi.fn(),
+  updateSiteMarketRequest: vi.fn(),
   pauseSiteRequest: vi.fn(),
   resumeSiteRequest: vi.fn(),
 }));
@@ -63,11 +67,11 @@ const makeStore = (preloaded?: Partial<SitesState>) =>
 
 type SitesStore = ReturnType<typeof makeStore>;
 
-const renderWith = (ui: React.ReactNode, store: SitesStore = makeStore()) => {
+const renderWith = (ui: React.ReactNode, store: SitesStore = makeStore(), route = '/') => {
   render(
     <Provider store={store}>
       <I18nextProvider i18n={i18n}>
-        <MemoryRouter>{ui}</MemoryRouter>
+        <MemoryRouter initialEntries={[route]}>{ui}</MemoryRouter>
       </I18nextProvider>
     </Provider>,
   );
@@ -79,6 +83,7 @@ beforeEach(async () => {
   await changeLanguage('en');
   vi.clearAllMocks();
   mocked.fetchSitesRequest.mockResolvedValue({ sites: [], nextCursor: null });
+  mocked.fetchSiteSummariesRequest.mockResolvedValue({ summaries: [] });
 });
 
 describe('AddSiteForm', () => {
@@ -101,7 +106,7 @@ describe('AddSiteForm', () => {
     await user.type(input, 'ftp://example.com');
     await user.click(screen.getByRole('button', { name: 'Add site' }));
 
-    const error = await screen.findByText('Only http:// and https:// URLs are supported.');
+    const error = await screen.findByText('Enter a URL that starts with http:// or https://.');
     expect(error).toHaveAttribute('id', 'site-url-error');
     expect(input).toHaveAttribute('aria-describedby', 'site-url-error');
     expect(input).toHaveAttribute('aria-invalid', 'true');
@@ -112,7 +117,7 @@ describe('AddSiteForm', () => {
     const user = userEvent.setup();
     renderWith(<AddSiteForm />);
     await user.click(screen.getByRole('button', { name: 'Add site' }));
-    const error = await screen.findByText('Enter your site URL.');
+    const error = await screen.findByText('Enter your site URL, like https://example.com.');
     expect(error).toHaveAttribute('role', 'alert');
     expect(screen.getByLabelText('Site URL')).toHaveAttribute('aria-describedby', 'site-url-error');
     expect(mocked.createSiteRequest).not.toHaveBeenCalled();
@@ -181,6 +186,34 @@ describe('AddSiteForm', () => {
 });
 
 describe('SitesPage', () => {
+  it('shows stored site summaries without starting a check', async () => {
+    mocked.fetchSiteSummariesRequest.mockResolvedValueOnce({ summaries: [{ id: 'a',
+      lastAudit: { state: 'value', finishedAt: '2026-07-02T00:00:00.000Z', asOf: '2026-07-02T00:00:00.000Z', status: 'succeeded' },
+      openFixNow: { state: 'value', count: 2, asOf: '2026-07-02T00:00:00.000Z' }, trackedKeywords: 3 }] });
+    renderWith(<SitesPage />, makeStore({ loaded: true, items: [site('a')] }));
+    expect(await screen.findAllByText('2 open')).toHaveLength(2);
+    expect(mocked.fetchSiteSummariesRequest).toHaveBeenCalledWith(['a']);
+    expect(screen.getByRole('columnheader', { name: 'Keywords' })).toBeInTheDocument();
+  });
+
+  it('opens the requested tool after a dashboard site choice', () => {
+    renderWith(<SitesPage />, makeStore({ loaded: true, items: [site('a')] }), '/sites?open=keywords');
+    for (const link of screen.getAllByRole('link', { name: 'a.example.com' })) {
+      expect(link).toHaveAttribute('href', '/sites/a?tab=keywords');
+    }
+    expect(screen.getByTestId('sites-open-tab-hint')).toHaveTextContent('Choose a site to open its Keywords section.');
+  });
+  it('opens the header add-site dialog for an existing site and closes it after adding', async () => {
+    const user = userEvent.setup();
+    mocked.createSiteRequest.mockResolvedValue({ site: site('new'), message: 'Site added.' });
+    renderWith(<SitesPage />, makeStore({ loaded: true, items: [site('a')] }));
+    await user.click(screen.getByRole('button', { name: 'Add site' }));
+    const dialog = screen.getByRole('dialog', { name: 'Add your site' });
+    await user.type(within(dialog).getByLabelText('Site URL'), 'https://new.example.com');
+    await user.click(within(dialog).getByRole('button', { name: 'Add site' }));
+    await waitFor(() => expect(mocked.createSiteRequest).toHaveBeenCalledWith('https://new.example.com'));
+    await waitFor(() => expect(screen.queryByRole('dialog', { name: 'Add your site' })).not.toBeInTheDocument());
+  });
   it('shows the skeleton loading state before the list arrives', () => {
     renderWith(<SitesPage />, makeStore({ loading: true }));
     expect(screen.getByText('Loading your sites…')).toBeInTheDocument();
@@ -220,6 +253,13 @@ describe('SitesPage', () => {
     expect(screen.getByRole('columnheader', { name: 'Added' })).toBeInTheDocument();
   });
 
+  it('shows no pager when the whole list fits on one page', () => {
+    const store = makeStore({ loaded: true, items: [site('a')], nextCursor: null, cursorStack: [] });
+    renderWith(<SitesPage />, store);
+    expect(screen.queryByRole('button', { name: 'Next' })).toBeNull();
+    expect(screen.queryByRole('button', { name: 'Previous' })).toBeNull();
+  });
+
   it('paginates forward and back through cursors', async () => {
     const user = userEvent.setup();
     const store = makeStore({
@@ -254,7 +294,7 @@ describe('SitesPage', () => {
     await user.click(await screen.findByRole('menuitem', { name: 'Delete' }));
 
     expect(await screen.findByRole('alertdialog')).toHaveTextContent(
-      'This removes a.example.com from your account.',
+      `This removes ${isolateText('a.example.com')} from your account.`,
     );
     await user.click(screen.getByRole('button', { name: 'Delete site' }));
 
@@ -297,6 +337,24 @@ describe('SitesPage', () => {
     expect(mocked.fetchSitesRequest).not.toHaveBeenCalled();
   });
 
+  it('opens the market editor from the row menu and closes it again', async () => {
+    const user = userEvent.setup();
+    renderWith(<SitesPage />, makeStore({ loaded: true, items: [site('a')] }));
+    await user.click(screen.getAllByRole('button', { name: 'Open menu for a.example.com' })[0]!);
+    await user.click(await screen.findByTestId('site-market-menu-a'));
+    expect(await screen.findByTestId('site-market-dialog')).toBeInTheDocument();
+    await user.click(screen.getByRole('button', { name: i18n.t('market.cancel', { ns: 'sites' }) }));
+    await waitFor(() => expect(screen.queryByTestId('site-market-dialog')).not.toBeInTheDocument());
+  });
+
+  it('names the status of a last audit that did not succeed', async () => {
+    mocked.fetchSiteSummariesRequest.mockResolvedValueOnce({ summaries: [{ id: 'a',
+      lastAudit: { state: 'value', finishedAt: '2026-07-02T00:00:00.000Z', asOf: '2026-07-02T00:00:00.000Z', status: 'failed' },
+      openFixNow: { state: 'unavailable', reason: 'no_audit' }, trackedKeywords: 0 }] });
+    renderWith(<SitesPage />, makeStore({ loaded: true, items: [site('a')] }));
+    expect((await screen.findAllByText(i18n.t('list.auditStatus.failed', { ns: 'sites' }))).length).toBeGreaterThan(0);
+  });
+
   it('renders Backlinks and Competitors items in the row menu', async () => {
     const user = userEvent.setup();
     const store = makeStore({ loaded: true, items: [site('a')] });
@@ -314,6 +372,11 @@ describe('SitesPage', () => {
 });
 
 describe('SitesTable', () => {
+  it('gives the phone site link a full-height tap row', () => {
+    renderWith(<SitesTable sites={[site('a')]} deletingId={null} onDelete={vi.fn()} />);
+    const links = screen.getAllByRole('link', { name: 'a.example.com' });
+    expect(links.find((link) => link.closest('.md\\:hidden'))).toHaveClass('min-h-11');
+  });
   it('disables the row menu while that site is deleting', () => {
     renderWith(
       <SitesTable sites={[site('a')]} deletingId="a" onDelete={vi.fn()} />,
@@ -415,6 +478,22 @@ describe('SitesTable', () => {
       expect(mocked.updateSiteRequest).toHaveBeenCalledWith('a', 'My blog'),
     );
     await waitFor(() => expect(dialog).not.toBeInTheDocument());
+  });
+
+  it('opens the rename field on the domain a never-renamed site shows, and saving it unchanged keeps the default name', async () => {
+    const user = userEvent.setup();
+    mocked.updateSiteRequest.mockResolvedValue({ site: site('a'), message: 'Site updated.' });
+    renderWith(
+      <SitesTable sites={[site('a')]} deletingId={null} onDelete={vi.fn()} />,
+    );
+    await user.click(
+      screen.getAllByRole('button', { name: 'Open menu for a.example.com' })[0]!,
+    );
+    await user.click(await screen.findByRole('menuitem', { name: 'Edit display name' }));
+    const input = await screen.findByLabelText('Display name');
+    expect(input).toHaveValue('a.example.com');
+    await user.click(screen.getByRole('button', { name: 'Save' }));
+    await waitFor(() => expect(mocked.updateSiteRequest).toHaveBeenCalledWith('a', ''));
   });
 
   it('surfaces a rename failure inline and keeps the dialog open', async () => {
@@ -560,6 +639,16 @@ describe('SitesTable — pause and resume', () => {
     }
   });
 
+  it('explains what pausing does from a focusable help button next to the chip', async () => {
+    const user = userEvent.setup();
+    renderWith(
+      <SitesTable sites={[pausedSite()]} deletingId={null} onDelete={vi.fn()} />,
+    );
+    const [help] = screen.getAllByRole('button', { name: /About Paused/u });
+    await user.click(help!);
+    expect((await screen.findAllByText(/audits, rank checks, weekly reports/u)).length).toBeGreaterThan(0);
+  });
+
   it('renders no chip for an unpaused site', () => {
     renderWith(
       <SitesTable sites={[site('a')]} deletingId={null} onDelete={vi.fn()} />,
@@ -585,7 +674,7 @@ describe('SitesTable — pause and resume', () => {
     const dialog = await screen.findByRole('alertdialog');
     expect(dialog).toHaveTextContent('Pause this site?');
     expect(dialog).toHaveTextContent(
-      'Audits, rank checks, weekly reports, content monitoring, and alerts stop for a.example.com.',
+      `Audits, rank checks, weekly reports, content monitoring, and alerts stop for ${isolateText('a.example.com')}.`,
     );
     await user.click(within(dialog).getByRole('button', { name: 'Pause site' }));
 

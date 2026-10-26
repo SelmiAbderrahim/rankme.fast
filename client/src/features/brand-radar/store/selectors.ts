@@ -62,7 +62,6 @@ export const selectBrandRadarRows = createSelector(
       status: item.status,
       digestState: item.digestState,
       retainedRowCount: item.retainedRowCount,
-      refundState: item.refund.state,
       createdAt: item.createdAt,
     }));
     if (!optimistic || rows.some((row) => row.id === optimistic.id)) return rows;
@@ -76,7 +75,6 @@ export const selectBrandRadarRows = createSelector(
         status: optimistic.status,
         digestState: optimistic.digestState,
         retainedRowCount: null,
-        refundState: 'none',
         createdAt: null,
       },
       ...rows,

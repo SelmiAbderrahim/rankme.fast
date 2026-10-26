@@ -40,20 +40,22 @@
  * SEC-REDACT: crawled and AI-generated text NEVER reaches the logger — only
  * ids, statuses, codes, and counts are logged.
  */
+import { countWords } from '../../shared/utils/text-length.js';
 import type { Job, Processor } from 'bullmq';
 import type { Logger } from 'pino';
 import { env } from '../../config/env.js';
 import type { ContentSourceProvider } from '../../shared/providers/content-source.js';
+import type { PageProber } from '../../shared/security/site-probe.js';
 import type { KeywordProvider, RankProvider } from '../../shared/providers/types.js';
 import type { AiGenerationProviderKey } from '../../shared/providers/ai-generation.js';
 import { resolveAiTaskProfile } from '../../shared/ai-profiles/index.js';
 import type { AiProfileRunner } from '../../shared/ai-profiles/index.js';
 import { contentAnalysisJobSchema, parseConsumedPayload, type ContentAnalysisJob, } from '../../shared/queue/index.js';
-import { ContentAnalysis, type ContentAnalysisErrorCategory, type ContentAnalysisHydrated, type ContentAnalysisStatus, } from './content-analysis.model.js';
+import { ContentAnalysis, type ContentAnalysisErrorCategory, type ContentAnalysisFailureReason, type ContentAnalysisHydrated, type ContentAnalysisStatus, } from './content-analysis.model.js';
 import { CONTENT_SNAPSHOT_MAX_EXCERPT_CHARS, ContentSnapshot, } from './content-snapshot.model.js';
 import { CONTENT_ANALYSIS_STAGE_ORDER, assertContentAnalysisTransition, isTerminalStatus, } from './content-analysis.state.js';
 import { recordContentAnalysisEvent } from './content-analysis.events.js';
-import { hashInputs, runBriefStage, runCompetitorsStage, runDraftStage, runOwnedStage, runSerpStage, type BriefStageArtifact, type PipelineDeps, type StageContext, } from './content-analysis.pipeline.js';
+import { hashInputs, runBriefStage, runCompetitorsStage, runDraftStage, runOwnedStage, runSerpStage, type BriefStageArtifact, type OwnedFetchEvidence, type PipelineDeps, type StageContext, } from './content-analysis.pipeline.js';
 import { competitorEvidenceSchema, competitorFailureSchema, keywordEvidenceSchema, ownedPageFactsSchema, scorecardSchema, serpEvidenceSchema, stageLedgerEntrySchema, type CompetitorEvidence, type CompetitorFailure, type KeywordEvidence, type OwnedPageFacts, type SerpEvidence, type StageLedgerEntry, } from './content-analysis.schemas.js';
 import { buildScorecard } from './content-analysis.score.js';
 export interface ContentAnalysisProcessorDeps {
@@ -63,6 +65,8 @@ export interface ContentAnalysisProcessorDeps {
     rank: RankProvider;
     ai: AiProfileRunner;
     aiProviderOrder: readonly AiGenerationProviderKey[];
+    /** First-party page prober; see {@link PipelineDeps.pageProber}. */
+    pageProber?: PageProber;
     logger: Logger;
     /** Test seams — env-derived defaults, overridable without touching env. */
     now?: () => Date;
@@ -163,9 +167,6 @@ export function stripHtmlMarkers(input: string): string {
         out = out.replace(/<\/?script\b|<\/?iframe\b|<!doctype/gi, '');
     }
     return HTML_MARKER_TEST.test(out) ? out.replace(/[<>]/g, ' ') : out;
-}
-function countWords(text: string): number {
-    return text.trim().split(/\s+/).filter(Boolean).length;
 }
 function addWarning(doc: ContentAnalysisHydrated, code: string, messageKey: string): void {
     if (doc.warnings.some((w) => w.code === code))
@@ -286,12 +287,28 @@ async function enterStage(analysisId: string, target: (typeof CONTENT_ANALYSIS_S
  * Terminal failure: status + error saved FIRST, then the idempotent `failed`
  * event. A concurrent terminal state that won the race stops quietly.
  */
-async function finalizeFailure(db: ApplicationDb, payload: ContentAnalysisJob, category: ContentAnalysisErrorCategory, messageKey: string, now: () => Date, retryable = false): Promise<void> {
+async function finalizeFailure(db: ApplicationDb, payload: ContentAnalysisJob, category: ContentAnalysisErrorCategory, messageKey: string, now: () => Date, retryable = false, detail: {
+    reason?: ContentAnalysisFailureReason | undefined;
+    httpStatus?: number | undefined;
+    fetchEvidence?: OwnedFetchEvidence | undefined;
+} = {}): Promise<void> {
     const advanced = await advanceContentAnalysisStage({
         analysisId: payload.analysisId,
         nextStatus: 'failed',
         onEnter: (doc) => {
-            doc.error = { category, messageKey, retryable, terminal: true };
+            doc.set('error', {
+                category,
+                messageKey,
+                retryable,
+                terminal: true,
+                reason: detail.reason ?? null,
+                httpStatus: detail.httpStatus ?? null,
+                finalUrl: detail.fetchEvidence?.finalUrl ?? null,
+                ...(detail.fetchEvidence?.redirectChain
+                    ? { redirectChain: detail.fetchEvidence.redirectChain }
+                    : {}),
+                contentType: detail.fetchEvidence?.contentType ?? null,
+            });
             doc.completedAt = now();
             // `advanceContentAnalysisStage` pushed the terminal stage entry right
             // before invoking this hook, so the array is never empty here.
@@ -385,6 +402,7 @@ export function createContentAnalysisProcessor(deps: ContentAnalysisProcessorDep
     const aiBudgetMicros = deps.aiBudgetMicros ?? env.CONTENT_ANALYSIS_AI_BUDGET_MICROS;
     const snapshotTtlDays = deps.snapshotTtlDays ?? env.CONTENT_ANALYSIS_SNAPSHOT_TTL_DAYS;
     const pipelineDeps: PipelineDeps = {
+        ...(deps.pageProber ? { pageProber: deps.pageProber } : {}),
         contentSource: deps.contentSource,
         keyword: deps.keyword,
         rank: deps.rank,
@@ -439,7 +457,11 @@ export function createContentAnalysisProcessor(deps: ContentAnalysisProcessorDep
                 const { category, messageKey, retryable } = OWNED_FAILURES[outcome.code in OWNED_FAILURES
                     ? (outcome.code as OwnedFailureCode)
                     : 'owned_page_unusable'];
-                await finalizeFailure(deps.db, payload, category, messageKey, now, retryable);
+                await finalizeFailure(deps.db, payload, category, messageKey, now, retryable, {
+                    reason: outcome.failureReason,
+                    httpStatus: outcome.httpStatus,
+                    fetchEvidence: outcome.fetchEvidence,
+                });
                 // Credential rejections surface at warn so operator misconfig is visible
                 // at default log levels; the other two are user/transient noise.
                 deps.logger[category === 'provider_unavailable' ? 'warn' : 'info']({

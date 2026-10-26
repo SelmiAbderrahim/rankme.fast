@@ -908,7 +908,21 @@ describe('envSchema', () => {
     expect(bad.success).toBe(false);
   });
 
-  // Prompt 15 — Content Intelligence rollout flags. All default true and
+  // `.env.example` ships `CONTACT_FORM_RECIPIENT=` blank and compose forwards
+  // it as "", so a blank value must mean unset instead of failing `.email()`.
+  it('CONTACT_FORM_RECIPIENT treats an empty string as unset and still validates an address', () => {
+    const empty = envSchema.safeParse({ ...baseEnv, CONTACT_FORM_RECIPIENT: '' });
+    expect(empty.success).toBe(true);
+    if (empty.success) expect(empty.data.CONTACT_FORM_RECIPIENT).toBeUndefined();
+
+    const set = envSchema.safeParse({ ...baseEnv, CONTACT_FORM_RECIPIENT: 'hello@example.com' });
+    expect(set.success).toBe(true);
+    if (set.success) expect(set.data.CONTACT_FORM_RECIPIENT).toBe('hello@example.com');
+
+    expect(envSchema.safeParse({ ...baseEnv, CONTACT_FORM_RECIPIENT: 'nope' }).success).toBe(false);
+  });
+
+  // Content Intelligence rollout flags. All default true and
   // accept the "true" / "false" literal strings that docker-compose forwards.
   it('Content Intelligence rollout flags default to true and toggle to false', () => {
     const defaults = envSchema.safeParse(baseEnv);
@@ -1031,7 +1045,7 @@ describe('envSchema', () => {
   });
 
   // ------------------------------------------------------------------
-  // rankme-semrush-parity kill switches (Prompt 00) — all default false;
+  // rankme-semrush-parity kill switches — all default false;
   // strict 'true' | 'false' string parse; junk rejected.
   // ------------------------------------------------------------------
   const PARITY_FLAGS = [
@@ -1150,7 +1164,7 @@ describe('envSchema', () => {
   });
 
   // ------------------------------------------------------------------
-  // rankme-community-requests (Prompt 00) — twelve kill switches and four
+  // rankme-community-requests — twelve kill switches and four
   // per-run cost ceilings. Flags default false; ceilings are positive
   // integers with pinned defaults.
   // ------------------------------------------------------------------
@@ -1174,15 +1188,15 @@ describe('envSchema', () => {
    * expected. Each entry names the prompt that wired it. Every other flag
    * stays declared-only and is still guarded below.
    *
-   *   SERP_FEATURE_TRACKING_ENABLED — prompt 01 (SERP feature capture).
-   *   CANNIBALIZATION_ENABLED — prompt 04 (GSC cannibalization reports).
-   *   TOXIC_LINKS_ENABLED — prompt 05 (toxicity review and disavow export).
-   *   INTERNAL_LINKING_ENABLED — prompt 07 (stored-inventory link guidance).
-   *   CONTENT_BRIEFS_ENABLED — prompt 08 (content briefs and editor).
-   *   SCHEMA_GENERATOR_ENABLED — prompt 10 (schema generator routes and service).
-   *   CLIENT_REPORTS_ENABLED — prompt 11 (client reports, schedules, portal).
-   *   PUBLIC_EXPORTS_ENABLED — prompt 12 (CSV exports and public API docs).
-   *   ALERTS_ENABLED — prompt 06 (alert rules, channels, dispatch).
+   *   SERP_FEATURE_TRACKING_ENABLED (SERP feature capture).
+   *   CANNIBALIZATION_ENABLED (GSC cannibalization reports).
+   *   TOXIC_LINKS_ENABLED (toxicity review and disavow export).
+   *   INTERNAL_LINKING_ENABLED (stored-inventory link guidance).
+   *   CONTENT_BRIEFS_ENABLED (content briefs and editor).
+   *   SCHEMA_GENERATOR_ENABLED (schema generator routes and service).
+   *   CLIENT_REPORTS_ENABLED (client reports, schedules, portal).
+   *   PUBLIC_EXPORTS_ENABLED (CSV exports and public API docs).
+   *   ALERTS_ENABLED (alert rules, channels, dispatch).
    */
   const WIRED_COMMUNITY_FLAGS = new Set<string>([
     'SERP_FEATURE_TRACKING_ENABLED',
@@ -1301,7 +1315,7 @@ describe('envSchema', () => {
   });
 
   it('rankme-community-requests flags gain a runtime consumer only once their prompt ships', () => {
-    // Prompt 00 DECLARES the seams; the owning feature prompt wires each one
+    // The schema DECLARES the seams; the owning feature wires each one
     // and moves it into `WIRED_COMMUNITY_FLAGS` in the same change. Anything
     // reading a STILL-DECLARED-ONLY `env.<FLAG>` outside the schema, the
     // read-only superadmin surface, and this suite is scope creep — fail

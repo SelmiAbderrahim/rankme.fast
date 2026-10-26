@@ -11,6 +11,7 @@ import { getSite, Site, type PublicSite } from '../sites/index.js';
 import { GA4_DEFAULT_LAG_DAYS, assertGa4StoredReadAccess, getAnalyticsDetailFor, getAnalyticsSummaryFor, } from './google-analytics.service.js';
 import { GSC_SEARCH_LAG_DAYS, assertGscStoredReadAccess, getSearchAnalyticsDetailFor, getSearchSummaryFor, getSitemapsFor, } from './google-connections.service.js';
 import { RANGE_VALUES } from './google-connections.schema.js';
+import { metricOrNull, percentOrNull } from '../../shared/utils/metric-value.js';
 const GSC_DIMENSIONS = ['summary', 'query', 'page', 'country', 'device', 'date'] as const;
 const GA4_DIMENSIONS = ['summary', 'channel', 'page', 'country', 'device', 'date'] as const;
 const gscSearchSelectionSchema = z.object({
@@ -253,8 +254,9 @@ function gscSearchAdapter(db: GoogleReportDb): ReportExportAdapter<GscSearchSele
                 blocks.push({ type: 'kpi_group', id: 'gsc-summary', items: [
                         ['clicks', 'fields.clicks', summary.totalClicks, null],
                         ['impressions', 'fields.impressions', summary.totalImpressions, null],
-                        ['ctr', 'fields.ctr', summary.averageCtr * 100, '%'],
-                        ['position', 'fields.position', summary.averagePosition, null],
+                        // No impressions means no CTR or position (null), never 0.
+                        ['ctr', 'fields.ctr', percentOrNull(summary.averageCtr, summary.totalImpressions), '%'],
+                        ['position', 'fields.position', metricOrNull('position', summary.averagePosition, summary.totalImpressions), null],
                         ['click-delta', 'fields.clickDelta', summary.previousPeriod ? summary.totalClicks - summary.previousPeriod.totalClicks : null, null],
                         ['impression-delta', 'fields.impressionDelta', summary.previousPeriod ? summary.totalImpressions - summary.previousPeriod.totalImpressions : null, null],
                     ].map(([id, key, value, unit]) => ({ id: String(id), label: reportCopy(context.locale, String(key)), value: value === null ? { type: 'null' as const, value: null } : { type: 'number' as const, value: Number(value) }, ...(unit ? { unit: String(unit) } : {}), sourceDateId: 'gsc-observation' })) });
@@ -263,15 +265,15 @@ function gscSearchAdapter(db: GoogleReportDb): ReportExportAdapter<GscSearchSele
                 const detail = details.get(dimension);
                 if (!detail)
                     continue;
-                blocks.push(reportTable({ id: `gsc-${dimension}`, columns: metricsColumns(context.locale, `fields.${dimension}`), rows: detail.rows.map((row, index) => ({ id: `${dimension}-${index + 1}`, values: [row.key, row.clicks, row.impressions, row.ctr * 100, row.position], sourceDateId: 'gsc-observation' })) }));
+                blocks.push(reportTable({ id: `gsc-${dimension}`, columns: metricsColumns(context.locale, `fields.${dimension}`), rows: detail.rows.map((row, index) => ({ id: `${dimension}-${index + 1}`, values: [row.key, row.clicks, row.impressions, percentOrNull(row.ctr, row.impressions), metricOrNull('position', row.position, row.impressions)], sourceDateId: 'gsc-observation' })) }));
             }
             if (dimensions.has('date')) {
-                const fallback = reportTable({ id: 'gsc-date-fallback', columns: metricsColumns(context.locale, 'fields.date'), rows: summary.timeseries.map((row, index) => ({ id: `date-${index + 1}`, values: [row.date, row.clicks, row.impressions, row.ctr * 100, row.position], sourceDateId: 'gsc-observation' })) });
+                const fallback = reportTable({ id: 'gsc-date-fallback', columns: metricsColumns(context.locale, 'fields.date'), rows: summary.timeseries.map((row, index) => ({ id: `date-${index + 1}`, values: [row.date, row.clicks, row.impressions, percentOrNull(row.ctr, row.impressions), metricOrNull('position', row.position, row.impressions)], sourceDateId: 'gsc-observation' })) });
                 blocks.push({ type: 'time_series', id: 'gsc-timeseries', series: [
                         { id: 'clicks', label: reportCopy(context.locale, 'fields.clicks'), sourceDateId: 'gsc-observation', points: summary.timeseries.map((row) => ({ timestamp: reportIsoDateTime(row.date), value: row.clicks })) },
                         { id: 'impressions', label: reportCopy(context.locale, 'fields.impressions'), sourceDateId: 'gsc-observation', points: summary.timeseries.map((row) => ({ timestamp: reportIsoDateTime(row.date), value: row.impressions })) },
-                        { id: 'ctr', label: reportCopy(context.locale, 'fields.ctr'), unit: '%', sourceDateId: 'gsc-observation', points: summary.timeseries.map((row) => ({ timestamp: reportIsoDateTime(row.date), value: row.ctr * 100 })) },
-                        { id: 'position', label: reportCopy(context.locale, 'fields.position'), sourceDateId: 'gsc-observation', points: summary.timeseries.map((row) => ({ timestamp: reportIsoDateTime(row.date), value: row.position })) },
+                        { id: 'ctr', label: reportCopy(context.locale, 'fields.ctr'), unit: '%', sourceDateId: 'gsc-observation', points: summary.timeseries.map((row) => ({ timestamp: reportIsoDateTime(row.date), value: percentOrNull(row.ctr, row.impressions) })) },
+                        { id: 'position', label: reportCopy(context.locale, 'fields.position'), sourceDateId: 'gsc-observation', points: summary.timeseries.map((row) => ({ timestamp: reportIsoDateTime(row.date), value: metricOrNull('position', row.position, row.impressions) })) },
                     ], tableFallback: { columns: fallback.columns, rows: fallback.rows } });
             }
             blocks.push(reportSourceNote({ id: 'gsc-source-note', sourceDateId: 'gsc-observation', methodology: reportCopy(context.locale, 'notes.gscObservation') }));
@@ -379,7 +381,7 @@ function generativeAdapter(db: GoogleReportDb): ReportExportAdapter<GenerativeSe
                     { key: 'impressions', label: reportCopy(context.locale, 'fields.impressions'), valueType: 'number' },
                     { key: 'ctr', label: reportCopy(context.locale, 'fields.ctr'), valueType: 'number', unit: '%' },
                     { key: 'position', label: reportCopy(context.locale, 'fields.position'), valueType: 'number' },
-                ], rows: rows.map((row, index) => ({ id: `appearance-${index + 1}`, values: [row.rawAppearance, row.classificationSlug, row.isGenerative, row.clicks, row.impressions, row.ctr * 100, row.position], sourceDateId: 'gsc-generative' })) }));
+                ], rows: rows.map((row, index) => ({ id: `appearance-${index + 1}`, values: [row.rawAppearance, row.classificationSlug, row.isGenerative, row.clicks, row.impressions, percentOrNull(row.ctr, row.impressions), metricOrNull('position', row.position, row.impressions)], sourceDateId: 'gsc-generative' })) }));
             blocks.push(reportSourceNote({ id: 'generative-source-note', sourceDateId: 'gsc-generative', methodology: reportCopy(context.locale, 'notes.gscGenerative') }));
             const finalVersion = await googleStoredVersion(db, 'google.gsc_generative_appearance', context.accountId, context.target.siteId, binding.generation);
             assertStableGoogleVersion(sourceVersion, finalVersion);

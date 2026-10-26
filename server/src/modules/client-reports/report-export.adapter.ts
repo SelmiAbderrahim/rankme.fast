@@ -4,9 +4,11 @@ import { env } from '../../config/env.js';
 import { REPORT_DOCUMENT_SCHEMA, REPORT_DOCUMENT_SCHEMA_VERSION, renderReportDocument, reportCatalogCopy, reportCopy, reportSourceDate, reportSourceNote, reportSourceVersion, reportTable, type ReportBlockV1, type ReportDocumentV1, } from '../../shared/report-exports/index.js';
 import { HttpError } from '../../shared/utils/http-error.js';
 import type { ReportExportAdapter } from '../report-exports/index.js';
+import { deepCrawlEvidenceLines } from '../audits/index.js';
 import { getSite } from '../sites/index.js';
 import { clientReportSectionsSchema } from './client-reports.schema.js';
 import { composeClientReport, inspectClientReportCompleteness, } from './report-composer.service.js';
+import { metricOrNull, percentOrNull } from '../../shared/utils/metric-value.js';
 const clientExportSelectionSchema = z.object({
     sections: clientReportSectionsSchema.default({ audit: true, ranks: true, gsc: true }),
 }).strict();
@@ -106,7 +108,7 @@ export function createClientReportExportAdapter(db: Db): ReportExportAdapter<Cli
                             why: finding.copy.reason ?? finding.copy.why,
                             ...(finding.bucket === 'passed' ? { pass: finding.copy.passedLabel } : { fix: finding.copy.fix }),
                             affectedUrls: [...finding.affectedUrls].sort(),
-                            evidence: [],
+                            evidence: deepCrawlEvidenceLines(finding.meta),
                             sourceDateId: 'client-audit',
                         })) });
                     if (audit.report.aiSummary) {
@@ -149,9 +151,10 @@ export function createClientReportExportAdapter(db: Db): ReportExportAdapter<Cli
                     blocks.push({ type: 'kpi_group', id: 'client-gsc-totals', items: [
                             ['clicks', 'fields.clicks', gsc.totalClicks],
                             ['impressions', 'fields.impressions', gsc.totalImpressions],
-                            ['ctr', 'fields.ctr', gsc.averageCtr * 100],
-                            ['position', 'fields.position', gsc.averagePosition],
-                        ].map(([id, key, value]) => ({ id: String(id), label: reportCopy(context.locale, String(key)), value: { type: 'number' as const, value: Number(value) }, ...(id === 'ctr' ? { unit: '%' } : {}), sourceDateId: 'client-gsc' })) });
+                            // No impressions means no CTR or position (null), never 0.
+                            ['ctr', 'fields.ctr', percentOrNull(gsc.averageCtr, gsc.totalImpressions)],
+                            ['position', 'fields.position', metricOrNull('position', gsc.averagePosition, gsc.totalImpressions)],
+                        ].map(([id, key, value]) => ({ id: String(id), label: reportCopy(context.locale, String(key)), value: value === null ? { type: 'null' as const, value: null } : { type: 'number' as const, value: Number(value) }, ...(id === 'ctr' ? { unit: '%' } : {}), sourceDateId: 'client-gsc' })) });
                     blocks.push(reportTable({ id: 'client-gsc-queries', columns: [
                             { key: 'query', label: reportCopy(context.locale, 'fields.query'), valueType: 'string' },
                             { key: 'clicks', label: reportCopy(context.locale, 'fields.clicks'), valueType: 'number' },
@@ -159,7 +162,7 @@ export function createClientReportExportAdapter(db: Db): ReportExportAdapter<Cli
                             { key: 'ctr', label: reportCopy(context.locale, 'fields.ctr'), valueType: 'number', unit: '%' },
                             { key: 'position', label: reportCopy(context.locale, 'fields.position'), valueType: 'number' },
                             { key: 'snapshot', label: reportCopy(context.locale, 'fields.snapshotDate'), valueType: 'string' },
-                        ], rows: gsc.topQueries.map((row, index) => ({ id: `query-${index + 1}`, values: [row.query, row.clicks, row.impressions, row.ctr * 100, row.position, row.snapshotDate], sourceDateId: 'client-gsc' })) }));
+                        ], rows: gsc.topQueries.map((row, index) => ({ id: `query-${index + 1}`, values: [row.query, row.clicks, row.impressions, percentOrNull(row.ctr, row.impressions), metricOrNull('position', row.position, row.impressions), row.snapshotDate], sourceDateId: 'client-gsc' })) }));
                     representedItems += gsc.topQueries.length;
                 }
             }

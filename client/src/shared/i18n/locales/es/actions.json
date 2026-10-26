@@ -4,7 +4,12 @@
   "status": {
     "loading": "Cargando acciones…",
     "refreshing": "Actualizando acciones…",
-    "showing": "Mostrando {{count}} acciones"
+    "showing_one": "Mostrando {{count}} acción",
+    "showing_zero": "Mostrando {{count}} acciones",
+    "showing_two": "Mostrando {{count}} acciones",
+    "showing_few": "Mostrando {{count}} acciones",
+    "showing_many": "Mostrando {{count}} acciones",
+    "showing_other": "Mostrando {{count}} acciones"
   },
   "errors": {
     "loadFailed": "No pudimos cargar tus acciones. Inténtalo de nuevo.",
@@ -18,6 +23,7 @@
     "label": "Filtrar acciones",
     "reset": "Restablecer filtros",
     "all": "Todas",
+    "openAndPlanned": "Abiertas y planificadas",
     "state": "Estado",
     "source": "Fuente",
     "severity": "Gravedad",
@@ -43,7 +49,8 @@
     "ga4_decline": "Descenso en Analytics",
     "content_recommendation": "Recomendación de contenido",
     "citation_gap": "Brecha de citas de IA",
-    "audience_research": "Investigación de audiencia"
+    "audience_research": "Investigación de audiencia",
+    "competitor_opportunity": "Oportunidad frente a la competencia"
   },
   "severity": {
     "critical": "Crítica",
@@ -69,22 +76,50 @@
   "freshness": {
     "fresh": "Reciente",
     "stale": "Obsoleto",
-    "unavailable": "Sin verificar"
+    "unavailable": "Sin verificar",
+    "partial": "Parcial",
+    "blocked": "Bloqueado",
+    "failed": "Fallido",
+    "unknown": "Actualidad desconocida"
   },
   "card": {
     "nextStep": "Siguiente paso",
     "observedAt": "Observado el {{date}}",
     "openSource": "Abrir vista de origen",
     "affectedNone": "En todo el sitio",
-    "affectedOne": "1 URL afectada",
-    "affectedCount": "{{count}} URL afectadas",
+    "affectedCount_one": "{{count}} URL afectada",
     "evidence": "Evidencia",
-    "evidenceLabel": "{{source}} · {{date}}",
+    "evidenceLabel": "{{source}} · {{date}} · {{detail}}",
     "evidenceLink": "Abrir fuente de la evidencia",
     "history": "Historial",
     "retest": "Reanalizar",
-    "affectedSample": "(se muestran {{shown}})",
-    "noteLabel": "Nota"
+    "noteLabel": "Nota",
+    "affectedCount_zero": "{{count}} URL afectadas",
+    "affectedCount_two": "{{count}} URL afectadas",
+    "affectedCount_few": "{{count}} URL afectadas",
+    "affectedCount_many": "{{count}} URL afectadas",
+    "affectedCount_other": "{{count}} URL afectadas",
+    "affectedCountSampled_zero": "{{count}} URL afectadas (se muestran {{shown}})",
+    "affectedCountSampled_one": "{{count}} URL afectada (se muestran {{shown}})",
+    "affectedCountSampled_two": "{{count}} URL afectadas (se muestran {{shown}})",
+    "affectedCountSampled_few": "{{count}} URL afectadas (se muestran {{shown}})",
+    "affectedCountSampled_many": "{{count}} URL afectadas (se muestran {{shown}})",
+    "affectedCountSampled_other": "{{count}} URL afectadas (se muestran {{shown}})",
+    "seeAllUrls_zero": "Ver las {{count}} URL en el informe",
+    "seeAllUrls_one": "Ver {{count}} URL en el informe",
+    "seeAllUrls_two": "Ver las {{count}} URL en el informe",
+    "seeAllUrls_few": "Ver las {{count}} URL en el informe",
+    "seeAllUrls_many": "Ver las {{count}} URL en el informe",
+    "seeAllUrls_other": "Ver las {{count}} URL en el informe",
+    "seeLinkTargets_zero": "Ver las {{count}} páginas y los enlaces rotos a los que apuntan en el informe",
+    "seeLinkTargets_one": "Ver {{count}} página y los enlaces rotos a los que apunta en el informe",
+    "seeLinkTargets_two": "Ver las {{count}} páginas y los enlaces rotos a los que apuntan en el informe",
+    "seeLinkTargets_few": "Ver las {{count}} páginas y los enlaces rotos a los que apuntan en el informe",
+    "seeLinkTargets_many": "Ver las {{count}} páginas y los enlaces rotos a los que apuntan en el informe",
+    "seeLinkTargets_other": "Ver las {{count}} páginas y los enlaces rotos a los que apuntan en el informe",
+    "linkSourcesCount": "Páginas con enlaces rotos: {{count}}",
+    "staleRetestHint": "Esta evidencia está desactualizada. Vuelve a probar para comprobarla de nuevo.",
+    "linkSourcesCountSampled": "Páginas con enlaces rotos: {{count}} (se muestran {{shown}})"
   },
   "transitions": {
     "planned": "Planificar",
@@ -110,7 +145,14 @@
     "confirm": "Confirmar",
     "saving": "Guardando…",
     "conflict": "Otra persona cambió esta acción primero. Recárgala e inténtalo de nuevo.",
-    "conflictReload": "Recargar acción"
+    "conflictReload": "Recargar acción",
+    "reasonLabel": "¿Por qué descartas este hallazgo?",
+    "reasons": {
+      "false_positive": "Falso positivo",
+      "wont_fix": "No se corregirá",
+      "fixed_elsewhere": "Corregido en otro sitio",
+      "other": "Otro motivo"
+    }
   },
   "history": {
     "title": "Historial de la acción",
@@ -118,7 +160,9 @@
     "actor": "Miembro del equipo",
     "from": "desde {{state}}",
     "close": "Cerrar",
-    "actorYou": "Tú"
+    "actorYou": "Tú",
+    "observed": "Detectado",
+    "actorSystem": "Comprobación automática"
   },
   "retest": {
     "title": "¿Reanalizar este hallazgo?",
@@ -127,8 +171,6 @@
     "unitsValue": "1",
     "freshRun": "Un reanálisis siempre rastrea de nuevo — los resultados nunca provienen de una caché.",
     "selfHosted": "En este servidor no se aplican límites de uso.",
-    "remaining": "Quedan {{remaining}} de {{cap}} auditorías en este período",
-    "allowanceUnknown": "No pudimos cargar tu saldo restante. El servidor comprobará tu límite antes de ejecutar de todos modos.",
     "confirm": "Iniciar reanálisis",
     "starting": "Iniciando…",
     "queued": "Reanálisis en cola. Sigue el progreso en la pestaña de informe.",
@@ -154,6 +196,8 @@
     "dismissedLabel": "Descartado como falso positivo",
     "fixCta": "Marcar como corregido",
     "fixedLabel": "Marcado como corregido",
-    "reappearedLabel": "Se sigue detectando tras marcarlo como corregido"
+    "reappearedLabel": "Se sigue detectando tras marcarlo como corregido",
+    "notCounted": "Fuera de estos totales — descartados: {{dismissed}}, marcados como corregidos: {{completed}}.",
+    "fixedGroupIn": "Marcados como corregidos en {{tab}} ({{count}})"
   }
 }

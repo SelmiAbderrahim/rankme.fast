@@ -424,6 +424,28 @@ describe('stored-run projections', () => {
 });
 
 describe('production default dependencies', () => {
+  it('counts every ineligible reason when the detailed list is capped', async () => {
+    const ineligible = Array.from({ length: 23 }, (_, index) => ({
+      keywordId: kwId(index + 1), phrase: `keyword ${index + 1}`,
+      reasonCode: (index < 11 ? 'never_checked' : index < 18 ? 'check_too_old' : 'no_serp_snapshot') as
+        'never_checked' | 'check_too_old' | 'no_serp_snapshot',
+      observedAt: null,
+    }));
+    const preview = await previewKeywordClusterRun(
+      { accountId, siteId, locale: 'en' },
+      { db: getTestDb() as never, queue: fakeQueue(),
+        evaluateEligibilityFn: vi.fn(async () => ({ eligible: [], ineligible, canRun: false,
+          blockingReasonCode: 'not_enough_eligible' as const })) },
+    );
+    expect(preview.ready).toBe(false);
+    expect(preview.blocked).toHaveLength(20);
+    expect(preview.blockedTotal).toBe(23);
+    expect(preview.eligibility).toEqual({
+      canRun: false, blockingReasonCode: 'not_enough_eligible', total: 23, eligibleCount: 0, ineligibleCount: 23,
+      reasonCounts: { never_checked: 11, check_too_old: 7, no_serp_snapshot: 5, failed_last_check: 0 },
+    });
+  });
+
   it('previews with the default clock and no injected readiness reader', async () => {
     await seedGroupablePair();
     const preview = await previewKeywordClusterRun(
@@ -465,8 +487,8 @@ describe('production default dependencies', () => {
   it('never previews a separate AI spend and starts from injected readiness', async () => {
     const queue = fakeQueue();
     const observedAt = new Date().toISOString();
-    const readReadinessFn = vi.fn(async () => ({
-      ready: [
+    const evaluateEligibilityFn = vi.fn(async () => ({
+      eligible: [
         {
           keywordId: kwId(1),
           phrase: 'alpha',
@@ -480,12 +502,14 @@ describe('production default dependencies', () => {
           topUrls: ['https://beta.example/page'],
         },
       ],
-      blocked: [],
+      ineligible: [],
+      canRun: true,
+      blockingReasonCode: null,
     }));
     const deps = {
       db: getTestDb() as never,
       queue,
-      readReadinessFn,
+      evaluateEligibilityFn,
     };
 
     const preview = await previewKeywordClusterRun(
@@ -498,58 +522,78 @@ describe('production default dependencies', () => {
       deps,
     );
     expect(run.keywordCount).toBe(2);
-    expect(readReadinessFn).toHaveBeenCalledTimes(2);
+    expect(evaluateEligibilityFn).toHaveBeenCalledTimes(2);
   });
 
-  it('refuses the whole selected scope when any keyword is blocked', async () => {
+  it('runs the eligible keywords and records the left-out ones with their reason', async () => {
     const queue = fakeQueue();
     const observedAt = OBSERVED.toISOString();
-    const readReadinessFn = vi.fn(async () => ({
-      ready: [
-        {
-          keywordId: kwId(1),
-          phrase: 'aaa shoes',
-          observedAt,
-          topUrls: ['https://one.example/page'],
-        },
-        {
-          keywordId: kwId(2),
-          phrase: 'bbb shoes',
-          observedAt,
-          topUrls: ['https://two.example/page'],
-        },
+    const evaluateEligibilityFn = vi.fn(async () => ({
+      eligible: [
+        { keywordId: kwId(1), phrase: 'aaa shoes', observedAt, topUrls: ['https://one.example/page'] },
+        { keywordId: kwId(2), phrase: 'bbb shoes', observedAt, topUrls: ['https://two.example/page'] },
       ],
-      blocked: [
-        {
-          keywordId: kwId(3),
-          phrase: 'stale boots',
-          reason: 'stale' as const,
-          observedAt,
-        },
+      ineligible: [
+        { keywordId: kwId(3), phrase: 'stale boots', reasonCode: 'check_too_old' as const, observedAt },
+        { keywordId: kwId(4), phrase: 'new boots', reasonCode: 'never_checked' as const, observedAt: null },
       ],
+      canRun: true,
+      blockingReasonCode: null,
     }));
-    const deps = {
-        db: getTestDb() as never,
-        queue,
-        readReadinessFn,
-      };
+    const deps = { db: getTestDb() as never, queue, evaluateEligibilityFn };
 
-    const preview = await previewKeywordClusterRun(
-      { accountId, siteId, locale: 'en' },
-      deps,
-    );
+    const preview = await previewKeywordClusterRun({ accountId, siteId, locale: 'en' }, deps);
+    expect(preview).toMatchObject({
+      ready: true,
+      reason: null,
+      readyCount: 2,
+      blockedTotal: 2,
+      eligibility: {
+        canRun: true,
+        blockingReasonCode: null,
+        total: 4,
+        eligibleCount: 2,
+        ineligibleCount: 2,
+        reasonCounts: { check_too_old: 1, never_checked: 1, no_serp_snapshot: 0, failed_last_check: 0 },
+      },
+    });
+    expect(preview.blocked[0]).toEqual({ keywordId: kwId(3), phrase: 'stale boots', reason: 'check_too_old', observedAt });
+
+    const detail = await startKeywordClusterRun({ accountId, siteId, locale: 'en' }, deps);
+    expect(detail).toMatchObject({ keywordCount: 2, blockedCount: 2 });
+    expect(detail.blocked.map((row) => [row.phrase, row.reason, row.observedAt])).toEqual([
+      ['stale boots', 'check_too_old', observedAt],
+      ['new boots', 'never_checked', null],
+    ]);
+  });
+
+  it('refuses before a run exists when fewer than two keywords are eligible', async () => {
+    const queue = fakeQueue();
+    const observedAt = OBSERVED.toISOString();
+    const evaluateEligibilityFn = vi.fn(async () => ({
+      eligible: [
+        { keywordId: kwId(1), phrase: 'aaa shoes', observedAt, topUrls: ['https://one.example/page'] },
+      ],
+      ineligible: [
+        { keywordId: kwId(3), phrase: 'stale boots', reasonCode: 'no_serp_snapshot' as const, observedAt },
+      ],
+      canRun: false,
+      blockingReasonCode: 'not_enough_eligible' as const,
+    }));
+    const deps = { db: getTestDb() as never, queue, evaluateEligibilityFn };
+
+    const preview = await previewKeywordClusterRun({ accountId, siteId, locale: 'en' }, deps);
     expect(preview).toMatchObject({
       ready: false,
       reason: 'notEnoughKeywords',
-      readyCount: 2,
+      readyCount: 1,
       blockedTotal: 1,
+      spend: null,
+      eligibility: { canRun: false, blockingReasonCode: 'not_enough_eligible', total: 2 },
     });
-    expect(preview.blocked[0]).toMatchObject({ phrase: 'stale boots', observedAt });
-
-    await expect(startKeywordClusterRun(
-      { accountId, siteId, locale: 'en' },
-      deps,
-    )).rejects.toMatchObject({ status: 409 });
+    await expect(startKeywordClusterRun({ accountId, siteId, locale: 'en' }, deps)).rejects.toMatchObject({
+      status: 409,
+    });
     expect(queue.add).not.toHaveBeenCalled();
     expect(await SerpClusterRun.countDocuments()).toBe(0);
   });

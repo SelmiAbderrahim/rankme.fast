@@ -211,6 +211,21 @@ export function AssistantPage() {
     }
   };
 
+  // A failed tool step or a cut-off reply is retried by asking the same
+  // question again, from the last thing the user sent. The button is disabled
+  // the moment the stream starts, so a second click cannot start a second
+  // request. Tool cards only exist inside the open conversation.
+  const retryTool = () => {
+    const lastUser = [...messages].reverse().find((message) => message.role === 'user');
+    const text = lastUser?.parts
+      .filter((part): part is Extract<typeof part, { type: 'text' }> => part.type === 'text')
+      .map((part) => part.text)
+      .join('\n')
+      .trim();
+    if (!text || !activeConversationId) return;
+    void sendText(text, activeConversationId);
+  };
+
   if (listStatus === 'idle' || listStatus === 'loading') {
     return (
       <section className="mx-auto flex w-full max-w-7xl flex-col gap-6 p-4 sm:p-6" aria-labelledby="assistant-title">
@@ -303,6 +318,7 @@ export function AssistantPage() {
               assistantMessageId={stream.assistantMessageId}
               onPromptSelect={selectPrompt}
               onRetry={paneRetry}
+              onRetryTool={retryTool}
             />
           )}
 

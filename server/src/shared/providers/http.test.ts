@@ -16,6 +16,7 @@ import {
   createVendorHttpClient,
   dataForSeoClientCacheSize,
   dataForSeoRequest,
+  dataForSeoRequestPerTask,
   extractVendorCost,
   type DataForSeoConfig,
   type VendorHttpClientConfig,
@@ -531,6 +532,98 @@ const dfsConfig: DataForSeoConfig = {
 function dfsEnvelope(overrides: Record<string, unknown>) {
   return { version: '0.1.20260101', status_message: 'Ok.', ...overrides };
 }
+
+describe('DataForSEO task handling', () => {
+  it('accepts a documented task-specific unavailable result only when requested', async () => {
+    server.use(http.post(DFS_URL, () => HttpResponse.json(dfsEnvelope({
+      status_code: 20000,
+      tasks: [{ id: 'TASK_ID', status_code: 40406, result: null }],
+    }))));
+    await expect(dataForSeoRequest(dfsConfig, DFS_PATH, [], z.null(), {
+      acceptTaskStatusCodes: [40406],
+    })).resolves.toEqual([{ status: 'ok', taskId: 'TASK_ID', costUsd: null, result: null }]);
+    await expect(dataForSeoRequest(dfsConfig, DFS_PATH, [], z.null()))
+      .rejects.toBeInstanceOf(VendorMalformedError);
+  });
+
+  it('still validates the result of an accepted task status', async () => {
+    server.use(http.post(DFS_URL, () => HttpResponse.json(dfsEnvelope({
+      status_code: 20000,
+      tasks: [{ status_code: 40406, result: 'unexpected' }],
+    }))));
+    await expect(dataForSeoRequest(dfsConfig, DFS_PATH, [], z.null(), {
+      acceptTaskStatusCodes: [40406],
+    })).rejects.toThrow('task result failed schema validation');
+  });
+
+  it('never accepts an envelope error through the task-status allowlist', async () => {
+    server.use(http.post(DFS_URL, () => HttpResponse.json(dfsEnvelope({
+      status_code: 40406,
+      tasks: [],
+    }))));
+    await expect(dataForSeoRequest(dfsConfig, DFS_PATH, [], z.null(), {
+      acceptTaskStatusCodes: [40406],
+    })).rejects.toThrow('unrecognized vendor status 40406');
+  });
+
+  it('settles task faults separately while preserving successful, created and pending siblings', async () => {
+    server.use(http.post(DFS_URL, () => HttpResponse.json(dfsEnvelope({
+      status_code: 20000,
+      cost: 0.006,
+      tasks: [
+        { id: 'TASK_OK', status_code: 20000, cost: 0.001, result: [{ keyword: 'sample' }] },
+        { id: 'TASK_CREATED', status_code: 20100 },
+        { id: 'TASK_PENDING', status_code: 40602 },
+        { status_code: 40200 },
+        { id: 'TASK_BAD_SHAPE', status_code: 20000, result: 'invalid' },
+        { id: 'TASK_AUTH', status_code: 40101 },
+        { id: 'TASK_UNAVAILABLE', status_code: 50000 },
+        { id: 'TASK_UNKNOWN', status_code: 30000 },
+      ],
+    }))));
+    const { value: outcomes, costMicros } = await captureVendorCost(() =>
+      dataForSeoRequestPerTask(dfsConfig, DFS_PATH, [], dfsResultSchema));
+    expect(outcomes.slice(0, 3)).toEqual([
+      { status: 'ok', taskId: 'TASK_OK', costUsd: 0.001, result: [{ keyword: 'sample' }] },
+      { status: 'created', taskId: 'TASK_CREATED', costUsd: null },
+      { status: 'in_queue', taskId: 'TASK_PENDING' },
+    ]);
+    expect(outcomes.slice(3)).toEqual([
+      { status: 'error', taskId: null, error: expect.any(VendorQuotaError) },
+      { status: 'error', taskId: 'TASK_BAD_SHAPE', error: expect.any(VendorMalformedError) },
+      { status: 'error', taskId: 'TASK_AUTH', error: expect.any(VendorAuthError) },
+      { status: 'error', taskId: 'TASK_UNAVAILABLE', error: expect.any(VendorUnavailableError) },
+      { status: 'error', taskId: 'TASK_UNKNOWN', error: expect.any(VendorMalformedError) },
+    ]);
+    expect(costMicros).toBe(6000n);
+  });
+
+  it('supports caller-handled task statuses in a batch', async () => {
+    server.use(http.post(DFS_URL, () => HttpResponse.json(dfsEnvelope({
+      status_code: 20000,
+      tasks: [{ status_code: 40406, result: null }],
+    }))));
+    await expect(dataForSeoRequestPerTask(dfsConfig, DFS_PATH, [], z.null(), {
+      acceptTaskStatusCodes: [40406],
+    })).resolves.toEqual([{ status: 'ok', taskId: null, costUsd: null, result: null }]);
+  });
+
+  it('throws request-level authentication failures for the entire batch', async () => {
+    server.use(http.post(DFS_URL, () => HttpResponse.json(dfsEnvelope({ status_code: 40100 }))));
+    await expect(dataForSeoRequestPerTask(dfsConfig, DFS_PATH, [], dfsResultSchema))
+      .rejects.toBeInstanceOf(VendorAuthError);
+  });
+
+  it('preserves unexpected parser errors instead of mislabelling them as provider faults', async () => {
+    server.use(http.post(DFS_URL, () => HttpResponse.json(dfsEnvelope({
+      status_code: 20000,
+      tasks: [{ status_code: 20000, result: [] }],
+    }))));
+    const failure = new Error('caller parser failed');
+    const schema = { safeParse: () => { throw failure; } } as unknown as z.ZodType<unknown>;
+    await expect(dataForSeoRequestPerTask(dfsConfig, DFS_PATH, [], schema)).rejects.toBe(failure);
+  });
+});
 
 describe('dataForSeoRequest', () => {
   it('sends Basic auth from config and parses an ok task (both levels 20000)', async () => {

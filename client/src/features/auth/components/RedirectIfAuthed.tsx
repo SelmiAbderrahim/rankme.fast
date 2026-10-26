@@ -1,4 +1,4 @@
-import type { ReactNode } from 'react';
+import { useRef, type ReactNode } from 'react';
 import { Navigate, useLocation } from 'react-router-dom';
 import { useAuthSession } from '../useAuthSession';
 import { authSuccessHref, requiredPasswordChangeHref, verifyEmailHref } from '../intent';
@@ -26,8 +26,10 @@ export const RedirectIfAuthed = ({ children, to }: RedirectIfAuthedProps) => {
     provisionalAccount,
   } = useAuthSession();
   const location = useLocation();
+  const hasResolved = useRef(false);
+  if (!isPending) hasResolved.current = true;
 
-  if (isPending) {
+  if (isPending && !hasResolved.current) {
     return <SessionPending />;
   }
   if (authenticated) {

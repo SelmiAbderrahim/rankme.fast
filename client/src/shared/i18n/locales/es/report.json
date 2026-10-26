@@ -1,4 +1,23 @@
 {
+  "categories": {
+    "label": "Categoría",
+    "all": "Todas las categorías",
+    "indexability": "Indexación",
+    "links-redirects": "Enlaces y redirecciones",
+    "content": "Contenido",
+    "html": "HTML",
+    "media": "Imágenes y multimedia",
+    "performance": "Velocidad",
+    "security": "Seguridad",
+    "social": "Redes sociales y fichas",
+    "emptyTitle": "Nada en esta categoría",
+    "emptyDescription": "Ningún resultado de esta pestaña pertenece a esta categoría. Elige otra categoría o todas."
+  },
+  "resourceScan": {
+    "label": "Analizar imágenes, scripts y estilos",
+    "help": "Carga cada imagen, script y hoja de estilo para encontrar archivos rotos o demasiado pesados. Tarda más y limita la auditoría a {{pages}} páginas.",
+    "notCovered": "Esta auditoría rastreará {{pages}} páginas como máximo. Desmarque el análisis para rastrear más."
+  },
   "title": "Tu informe de auditoría",
   "subtitle": "Qué corregir, qué vigilar y qué ya está bien.",
   "history": {
@@ -20,10 +39,16 @@
     "passed": "Aprobados"
   },
   "row": {
-    "affectedPages": "{{count}} páginas afectadas",
+    "affectedPages_one": "{{count}} página afectada",
     "affectedPagesOne": "1 página afectada",
     "siteWide": "Comprobación de todo el sitio",
-    "passedSummary": "Esta comprobación se ha superado."
+    "passedSummary": "Esta comprobación se ha superado.",
+    "affectedPages_zero": "{{count}} páginas afectadas",
+    "affectedPages_two": "{{count}} páginas afectadas",
+    "affectedPages_few": "{{count}} páginas afectadas",
+    "affectedPages_many": "{{count}} páginas afectadas",
+    "affectedPages_other": "{{count}} páginas afectadas",
+    "brokenLinksSummary": "Páginas con enlaces rotos: {{pages}} · URL rotas: {{targets}}"
   },
   "severity": {
     "critical": "Crítico",
@@ -35,6 +60,61 @@
     "regressed": "Empeoró"
   },
   "detail": {
+    "evidence": {
+      "status": "Estado {{status}}",
+      "noAnswer": "Sin respuesta",
+      "statusUnknown": "Estado no indicado",
+      "clickDepth": "Clics desde el inicio: {{depth}}",
+      "inboundLinks": "Enlaces a esta página: {{links}}",
+      "pageSize": "Tamaño de la página: {{size}}",
+      "transferSize": "Enviado: {{size}}",
+      "serverResponse": "Primer byte: {{time}}",
+      "fetchTime": "Tiempo de carga: {{time}}",
+      "images": "Imágenes: {{images}}",
+      "blockingScripts": "Scripts que bloquean: {{scripts}}",
+      "blockingStylesheets": "Hojas de estilo que bloquean: {{styles}}",
+      "compression": "Compresión: {{encoding}}",
+      "noCompression": "Sin comprimir",
+      "openGraphMissing": "Sin etiquetas Open Graph",
+      "twitterCardMissing": "Sin etiquetas de tarjeta de Twitter",
+      "canonicalLabel": "El canonical apunta a",
+      "usedOn": "Se usa en",
+      "usedOnTotal": "Páginas que lo usan: {{total}}",
+      "resourceType": {
+        "image": "Imagen",
+        "script": "Script",
+        "stylesheet": "Hoja de estilo",
+        "other": "Otro archivo"
+      },
+      "chainsTitle": "Pasos de la redirección",
+      "loop": "Bucle",
+      "groupsTitle": "Páginas que coinciden entre sí",
+      "sharedTitle": "Título compartido:",
+      "noTitle": "Sin título",
+      "similarity": "Similitud: {{score}} de 10",
+      "insecureTitle": "Archivos no seguros que cargan estas páginas",
+      "reachedThroughChain": "Páginas a las que se llega mediante una cadena de redirecciones",
+      "cut": "Detalles mostrados para los primeros {{shown}} de {{total}}.",
+      "problems": {
+        "canonicalToBroken": "El canonical apunta a una página rota",
+        "canonicalToRedirect": "El canonical apunta a una redirección",
+        "canonicalChain": "El canonical apunta a una página con otro canonical",
+        "canonicalLoop": "Los canonical se apuntan entre sí",
+        "linkRelationConflict": "Recibe enlaces seguidos y nofollow a la vez",
+        "largePage": "Más de 1 MB",
+        "veryLargePage": "Más de 3 MB",
+        "slowServerResponse": "Primer byte lento",
+        "slowLoad": "Carga lenta",
+        "missingDoctype": "Sin doctype",
+        "missingCharset": "Sin juego de caracteres",
+        "deprecatedTags": "Etiquetas obsoletas",
+        "flash": "Usa Flash",
+        "frames": "Usa marcos",
+        "urlHasUnusualCharacters": "Caracteres poco habituales",
+        "urlHasParameters": "Parámetros de consulta",
+        "urlTooLong": "Más de 120 caracteres"
+      }
+    },
     "whyTitle": "Por qué es importante",
     "affectedUrlsTitle": "URLs afectadas",
     "brokenLinkTargetsTitle": "Destinos que la auditoría no pudo cargar",
@@ -56,6 +136,55 @@
       "okChip": "OK",
       "problemChip": "Hay que corregirla",
       "unknownChip": "Sin comprobar"
+    },
+    "measured": {
+      "words_zero": "{{count}} palabras",
+      "words_one": "{{count}} palabra",
+      "words_two": "{{count}} palabras",
+      "words_few": "{{count}} palabras",
+      "words_many": "{{count}} palabras",
+      "words_other": "{{count}} palabras",
+      "characters_zero": "{{count}} caracteres",
+      "characters_one": "{{count}} carácter",
+      "characters_two": "{{count}} caracteres",
+      "characters_few": "{{count}} caracteres",
+      "characters_many": "{{count}} caracteres",
+      "characters_other": "{{count}} caracteres"
+    },
+    "downloadUrls": "Descargar URL (CSV)",
+    "previewNote": "Se muestran {{shown}} de {{total}}.",
+    "loadFullList": "Mostrar la lista completa",
+    "loadingFullList": "Cargando la lista completa…",
+    "fullListFailed": "No se pudo cargar la lista completa. Inténtalo de nuevo.",
+    "brokenLinks": {
+      "title": "Enlaces rotos y lo que encontramos al revisarlos de nuevo",
+      "download": "Descargar todo (CSV)",
+      "linkedFrom": "Enlazado desde",
+      "pointsTo": "Apunta a",
+      "redirectsTo": "Redirige a",
+      "http": "HTTP {{status}}",
+      "noAnswer": "Sin respuesta",
+      "failure": {
+        "http_error": "Error HTTP",
+        "redirect_loop": "Bucle de redirección",
+        "redirect_limit": "Más de cinco redirecciones",
+        "unsafe_redirect": "Redirige a una dirección que no seguimos",
+        "robots_blocked": "Bloqueado por robots.txt",
+        "timeout": "Sin respuesta a tiempo",
+        "non_html": "No es una página web",
+        "unreachable": "No se pudo conectar"
+      },
+      "outcome": {
+        "confirmed": "Sigue roto",
+        "unverified": "No se pudo revisar de nuevo",
+        "reported": "Indicado por el rastreo",
+        "cleared": "Funciona al revisarlo de nuevo"
+      },
+      "showAll": "Mostrar los {{count}}",
+      "showFewer": "Mostrar menos",
+      "dismissedTitle": "Funciona al revisarlo de nuevo ({{count}})",
+      "dismissedHelp": "El rastreo indicó que estos enlaces estaban rotos, pero se abren con normalidad al pedirlos otra vez, así que no se cuentan.",
+      "cut": "Filas mostradas desde el inicio: {{shown}} de {{total}}."
     }
   },
   "retest": {
@@ -69,16 +198,21 @@
     "label": "Páginas a rastrear",
     "max": "Máximo permitido",
     "help": "Define cuántas páginas visita el rastreador. «Máximo permitido» cubre tantas páginas como admita este servidor; con menos páginas termina antes.",
-    "pages": "{{pages}} páginas"
+    "pages_one": "{{pages}} página",
+    "pages_zero": "{{pages}} páginas",
+    "pages_two": "{{pages}} páginas",
+    "pages_few": "{{pages}} páginas",
+    "pages_many": "{{pages}} páginas",
+    "pages_other": "{{pages}} páginas"
   },
   "empty": {
     "fix-now": {
       "title": "Nada que corregir ahora",
-      "description": "Buen trabajo — no se han detectado problemas críticos en esta auditoría."
+      "description": "No hay problemas críticos abiertos en esta auditoría."
     },
     "watch": {
       "title": "Nada que vigilar",
-      "description": "No hay advertencias en tu sitio ahora mismo."
+      "description": "No hay advertencias abiertas en esta auditoría."
     },
     "passed": {
       "title": "Aún no hay aprobados",
@@ -110,7 +244,7 @@
     "noFieldDataTitle": "Aún no hay suficientes datos de visitantes",
     "noFieldDataBody": "Chrome solo reporta la velocidad de visitantes reales cuando un sitio tiene suficiente tráfico. Al crecer, esta sección se completará automáticamente.",
     "originFallback": "Datos a nivel de origen (no solo esta página)",
-    "sampleLabel": "{{count}} páginas muestreadas",
+    "sampleLabel_one": "{{count}} página muestreada",
     "sampleLabelOne": "1 página muestreada",
     "metrics": {
       "lcp": "LCP",
@@ -122,7 +256,12 @@
       "good": "Bueno",
       "needs-improvement": "A mejorar",
       "poor": "Deficiente"
-    }
+    },
+    "sampleLabel_zero": "{{count}} páginas muestreadas",
+    "sampleLabel_two": "{{count}} páginas muestreadas",
+    "sampleLabel_few": "{{count}} páginas muestreadas",
+    "sampleLabel_many": "{{count}} páginas muestreadas",
+    "sampleLabel_other": "{{count}} páginas muestreadas"
   },
   "aiSummary": {
     "cardTitle": "Resumen con IA de tus correcciones",
@@ -135,13 +274,48 @@
     "errors": {
       "unavailable": "El resumen con IA no está disponible temporalmente — tu lista de correcciones no se ve afectada.",
       "capReached": "Has alcanzado tu límite mensual de resúmenes con IA. Actualiza tu plan o añade créditos para seguir generando."
-    }
+    },
+    "basis_zero": "Basado en {{count}} hallazgos abiertos",
+    "basis_one": "Basado en {{count}} hallazgo abierto",
+    "basis_two": "Basado en {{count}} hallazgos abiertos",
+    "basis_few": "Basado en {{count}} hallazgos abiertos",
+    "basis_many": "Basado en {{count}} hallazgos abiertos",
+    "basis_other": "Basado en {{count}} hallazgos abiertos",
+    "stage": {
+      "queued": "Preparando…",
+      "reading_findings": "Leyendo tus hallazgos…",
+      "checking_priorities": "Revisando prioridades…",
+      "writing_summary": "Escribiendo el resumen…"
+    },
+    "elapsed": "Tiempo transcurrido: {{time}}",
+    "expectation": "Suele tardar entre 30 y 40 segundos. Puedes salir de esta página: el resumen sigue generándose y estará aquí cuando vuelvas.",
+    "ready": "Tu resumen con IA está listo.",
+    "failedAnnouncement": "No se pudo escribir el resumen con IA.",
+    "failure": {
+      "provider_unavailable": "Nuestro proveedor de IA no está disponible ahora mismo, así que no se escribió el resumen.",
+      "timeout": "El proveedor de IA tardó demasiado, así que no se escribió el resumen.",
+      "internal": "Algo falló por nuestra parte, así que no se escribió el resumen."
+    },
+    "tryAgain": "Volver a intentarlo",
+    "staleMarker": "Desactualizado",
+    "firstStep": "Primer paso:",
+    "actIn": {
+      "report": "Abrir este hallazgo en el informe",
+      "pages": "Abrir Páginas",
+      "google": "Abrir la pestaña de Google",
+      "schema": "Abrir el generador de esquemas",
+      "local-seo": "Abrir SEO local",
+      "ai-visibility": "Abrir visibilidad en IA"
+    },
+    "staleTitle": "Este resumen está desactualizado",
+    "staleBody": "Hallazgos que cubre se descartaron, corrigieron o reabrieron después de escribirlo. Regenérelo para que coincida con sus correcciones abiertas.",
+    "showPrevious": "Mostrar el resumen anterior",
+    "hidePrevious": "Ocultar el resumen anterior"
   },
   "pdf": {
     "download": "Descargar PDF",
     "downloading": "Preparando el PDF…",
-    "error": "No se pudo preparar el PDF. Inténtalo de nuevo.",
-    "upgradeHint": "Los informes en PDF están disponibles en los planes Pro y Agency."
+    "error": "No se pudo preparar el PDF. Inténtalo de nuevo."
   },
   "gscBlock": {
     "sectionTitle": "Rendimiento de búsqueda de Google (últimos 28 días)",
@@ -173,11 +347,26 @@
     "noSitemapsTitle": "No se ha enviado ningún sitemap a Google",
     "noSitemapsBody": "Envía tu sitemap en Google Search Console para que Google pueda encontrar cada página que quieras indexar.",
     "sitemapHealthy": "Correcto",
-    "sitemapErrors": "{{count}} errores",
-    "sitemapWarnings": "{{count}} advertencias",
-    "sitemapProcessed": "{{count}} URLs enviadas",
+    "sitemapErrors_one": "{{count}} error",
+    "sitemapWarnings_one": "{{count}} advertencia",
+    "sitemapProcessed_one": "{{count}} URL enviada",
     "sitemapLastDownloaded": "Última lectura de Google: {{date}}",
-    "sitemapNeverDownloaded": "Aún no leído por Google"
+    "sitemapNeverDownloaded": "Aún no leído por Google",
+    "sitemapErrors_zero": "{{count}} errores",
+    "sitemapErrors_two": "{{count}} errores",
+    "sitemapErrors_few": "{{count}} errores",
+    "sitemapErrors_many": "{{count}} errores",
+    "sitemapErrors_other": "{{count}} errores",
+    "sitemapWarnings_zero": "{{count}} advertencias",
+    "sitemapWarnings_two": "{{count}} advertencias",
+    "sitemapWarnings_few": "{{count}} advertencias",
+    "sitemapWarnings_many": "{{count}} advertencias",
+    "sitemapWarnings_other": "{{count}} advertencias",
+    "sitemapProcessed_zero": "{{count}} URLs enviadas",
+    "sitemapProcessed_two": "{{count}} URLs enviadas",
+    "sitemapProcessed_few": "{{count}} URLs enviadas",
+    "sitemapProcessed_many": "{{count}} URLs enviadas",
+    "sitemapProcessed_other": "{{count}} URLs enviadas"
   },
   "aiVisibilityBlock": {
     "title": "AI Visibility",
@@ -214,20 +403,134 @@
     "unansweredQuestions": "Preguntas sin responder",
     "localPack": "Paquete de mapas local",
     "notRanked": "Fuera del paquete de mapas",
-    "packSize": "{{count}} resultados",
-    "noData": "Sin datos"
+    "packSize_one": "{{count}} resultado",
+    "noData": "Sin datos",
+    "packSize_zero": "{{count}} resultados",
+    "packSize_two": "{{count}} resultados",
+    "packSize_few": "{{count}} resultados",
+    "packSize_many": "{{count}} resultados",
+    "packSize_other": "{{count}} resultados"
   },
   "exportUi": {
-    "trigger": "Exportar o compartir", "loading": "Cargando opciones de exportación…", "preparing": "Preparando el archivo…", "ready": "Exportación lista. También se guardó una copia en Exportaciones y enlaces.", "unavailable": "Exportación no disponible", "empty": "Aún no hay nada que exportar", "formatsLabel": "Formatos de archivo",
-    "clipboard": { "action": "Copiar al portapapeles", "success": "Copiado al portapapeles.", "error": "No se pudo copiar al portapapeles." },
-    "formats": { "view": "Vista web", "pdf": "PDF", "csv": "CSV", "json": "JSON", "md": "Markdown", "jsonld": "JSON-LD", "txt": "Texto" },
-    "kindAreas": { "audit": "Auditoría del sitio", "ranks": "Posiciones", "google": "Datos de Google", "client": "Informe de cliente", "keyword": "Palabras clave", "backlinks": "Backlinks", "competitors": "Competidores", "actions": "Próximas acciones", "ai": "Visibilidad en IA", "audience": "Investigación de audiencia", "brand": "Brand Radar", "content": "Contenido", "internal_links": "Enlaces internos", "weekly_pulse": "Resumen semanal", "local": "SEO local", "schema": "Marcado schema", "pages": "Páginas", "app": "Optimización de tiendas de apps" },
-    "states": { "active": "Activo", "revoked": "Revocado", "expired": "Caducado" },
-    "actions": { "retry": "Intentar de nuevo", "download": "Descargar", "delete": "Eliminar", "revoke": "Revocar", "cancel": "Cancelar", "done": "Listo" },
-    "errors": { "capabilities": "No se pudieron cargar las opciones de exportación.", "create": "No se pudo exportar el informe. Reduce el alcance e inténtalo de nuevo.", "download": "No se pudo descargar el archivo guardado.", "list": "No se pudieron cargar las exportaciones guardadas.", "delete": "No se pudo eliminar la exportación guardada.", "share": "No se pudo crear el enlace compartido.", "revoke": "No se pudo revocar el enlace compartido.", "copy": "No se pudo copiar el enlace." },
-    "share": { "action": "Crear enlace compartido", "title": "Compartir un informe inmutable", "description": "Elige qué pueden abrir los destinatarios. El informe no cambiará después de crear el enlace.", "locale": "Idioma del informe", "expiry": "Caduca después de", "expiryHelp": "Elige entre uno y 90 días.", "permissions": "Formatos permitidos", "create": "Crear enlace", "creating": "Creando enlace…", "showOnce": "Copia este enlace ahora", "linkLabel": "Enlace compartido", "copy": "Copiar enlace", "copied": "Copiado", "savedWithoutToken": "Por seguridad, RankMeFast no guarda el enlace legible. Puedes revocarlo desde el centro de exportación.", "existing": "Enlaces de esta captura", "refresh": "Actualizar" },
-    "confirm": { "revokeTitle": "¿Revocar este enlace?", "revokeBody": "Quien lo use perderá el acceso de inmediato.", "deleteTitle": "¿Eliminar esta exportación guardada?", "deleteBody": "El archivo dejará de funcionar y se revocarán todos sus enlaces compartidos." },
-    "center": { "title": "Exportaciones y enlaces", "description": "Descarga capturas de informes y gestiona enlaces públicos.", "tabsLabel": "Secciones del centro de exportación", "downloads": "Descargas", "shares": "Enlaces", "disabledTitle": "Las nuevas exportaciones están pausadas", "disabledBody": "Los archivos existentes pueden seguir disponibles, pero ahora no se pueden crear archivos ni enlaces nuevos.", "emptyDownloadsTitle": "Todavía no hay exportaciones guardadas", "emptyDownloadsBody": "Crea una desde cualquier informe con Exportar o compartir.", "emptySharesTitle": "Todavía no hay enlaces compartidos", "emptySharesBody": "Comparte un informe compatible para gestionar su enlace aquí.", "deletedReport": "Informe eliminado o caducado", "noSite": "Toda la cuenta", "more": "Cargar más", "expiresValue": "Caduca el {{date}}", "views": "{{count}} visitas", "columns": { "report": "Informe", "site": "Sitio", "format": "Formato", "created": "Creado", "expires": "Caduca", "actions": "Acciones" } }
+    "trigger": "Exportar o compartir",
+    "loading": "Cargando opciones de exportación…",
+    "preparing": "Preparando el archivo…",
+    "ready": "Exportación lista. También se guardó una copia en Exportaciones y enlaces.",
+    "unavailable": "Exportación no disponible",
+    "empty": "Aún no hay nada que exportar",
+    "formatsLabel": "Formatos de archivo",
+    "clipboard": {
+      "action": "Copiar al portapapeles",
+      "success": "Copiado al portapapeles.",
+      "error": "No se pudo copiar al portapapeles."
+    },
+    "formats": {
+      "view": "Vista web",
+      "pdf": "PDF",
+      "csv": "CSV",
+      "json": "JSON",
+      "md": "Markdown",
+      "jsonld": "JSON-LD",
+      "txt": "Texto"
+    },
+    "kindAreas": {
+      "audit": "Auditoría del sitio",
+      "ranks": "Posiciones",
+      "google": "Datos de Google",
+      "client": "Informe de cliente",
+      "keyword": "Palabras clave",
+      "backlinks": "Backlinks",
+      "competitors": "Competidores",
+      "actions": "Próximas acciones",
+      "ai": "Visibilidad en IA",
+      "audience": "Investigación de audiencia",
+      "brand": "Brand Radar",
+      "content": "Contenido",
+      "internal_links": "Enlaces internos",
+      "weekly_pulse": "Resumen semanal",
+      "local": "SEO local",
+      "schema": "Marcado schema",
+      "pages": "Páginas",
+      "app": "Optimización de tiendas de apps"
+    },
+    "states": {
+      "active": "Activo",
+      "revoked": "Revocado",
+      "expired": "Caducado"
+    },
+    "actions": {
+      "retry": "Intentar de nuevo",
+      "download": "Descargar",
+      "delete": "Eliminar",
+      "revoke": "Revocar",
+      "cancel": "Cancelar",
+      "done": "Listo"
+    },
+    "errors": {
+      "capabilities": "No se pudieron cargar las opciones de exportación.",
+      "create": "No se pudo exportar el informe. Reduce el alcance e inténtalo de nuevo.",
+      "download": "No se pudo descargar el archivo guardado.",
+      "list": "No se pudieron cargar las exportaciones guardadas.",
+      "delete": "No se pudo eliminar la exportación guardada.",
+      "share": "No se pudo crear el enlace compartido.",
+      "revoke": "No se pudo revocar el enlace compartido.",
+      "copy": "No se pudo copiar el enlace."
+    },
+    "share": {
+      "action": "Crear enlace compartido",
+      "title": "Compartir un informe inmutable",
+      "description": "Elige qué pueden abrir los destinatarios. El informe no cambiará después de crear el enlace.",
+      "locale": "Idioma del informe",
+      "expiry": "Caduca después de",
+      "expiryHelp": "Elige entre uno y 90 días.",
+      "permissions": "Formatos permitidos",
+      "create": "Crear enlace",
+      "creating": "Creando enlace…",
+      "showOnce": "Copia este enlace ahora",
+      "linkLabel": "Enlace compartido",
+      "copy": "Copiar enlace",
+      "copied": "Copiado",
+      "savedWithoutToken": "Por seguridad, RankMeFast no guarda el enlace legible. Puedes revocarlo desde el centro de exportación.",
+      "existing": "Enlaces de esta captura",
+      "refresh": "Actualizar"
+    },
+    "confirm": {
+      "revokeTitle": "¿Revocar este enlace?",
+      "revokeBody": "Quien lo use perderá el acceso de inmediato.",
+      "deleteTitle": "¿Eliminar esta exportación guardada?",
+      "deleteBody": "El archivo dejará de funcionar y se revocarán todos sus enlaces compartidos."
+    },
+    "center": {
+      "title": "Exportaciones y enlaces",
+      "description": "Descarga capturas de informes y gestiona enlaces públicos.",
+      "tabsLabel": "Secciones del centro de exportación",
+      "downloads": "Descargas",
+      "shares": "Enlaces",
+      "disabledTitle": "Las nuevas exportaciones están pausadas",
+      "disabledBody": "Los archivos existentes pueden seguir disponibles, pero ahora no se pueden crear archivos ni enlaces nuevos.",
+      "emptyDownloadsTitle": "Todavía no hay exportaciones guardadas",
+      "emptyDownloadsBody": "Crea una desde cualquier informe con Exportar o compartir.",
+      "emptySharesTitle": "Todavía no hay enlaces compartidos",
+      "emptySharesBody": "Comparte un informe compatible para gestionar su enlace aquí.",
+      "deletedReport": "Informe eliminado o caducado",
+      "noSite": "Toda la cuenta",
+      "more": "Cargar más",
+      "expiresValue": "Caduca el {{date}}",
+      "views_one": "{{count}} visita",
+      "columns": {
+        "report": "Informe",
+        "site": "Sitio",
+        "format": "Formato",
+        "created": "Creado",
+        "expires": "Caduca",
+        "actions": "Acciones"
+      },
+      "views_zero": "{{count}} visitas",
+      "views_two": "{{count}} visitas",
+      "views_few": "{{count}} visitas",
+      "views_many": "{{count}} visitas",
+      "views_other": "{{count}} visitas"
+    }
   },
   "publicShare": {
     "report": "Informe compartido",
@@ -248,10 +551,16 @@
     "description": "Estas comprobaciones no se pudieron ejecutar porque falta una fuente de datos. No cuentan como problemas.",
     "badge": "Sin evaluar",
     "sources": {
+      "legacyRun": "Esta auditoría se ejecutó antes de que existiera esta comprobación. Ejecuta una auditoría nueva para incluirla.",
+      "scanOff": "Esta auditoría se hizo sin el análisis de imágenes, scripts y estilos. Ejecuta una auditoría nueva con esa opción marcada para incluir esta comprobación.",
+      "crawlReadUnavailable": "Esta parte del rastreo no se pudo leer durante esta auditoría. La comprobación se volverá a ejecutar en la próxima auditoría.",
       "gsc": "Conecta Google Search Console para comprobar esto.",
       "gscReconnect": "Vuelve a conectar Google Search Console para comprobar esto.",
       "pageSpeed": "Aún no hay datos de velocidad de visitantes reales para este sitio.",
       "localSeo": "Añade una ficha de negocio o una fuente de reseñas para comprobar esto.",
+      "localUnavailable": "No se pudieron cargar los datos de SEO local durante esta auditoría. Esta comprobación se repetirá en la próxima auditoría.",
+      "localNoProfile": "No encontramos ninguna ficha de empresa, reseñas ni valoración para este sitio (por ejemplo, un Perfil de Empresa de Google), así que no había nada local que comprobar.",
+      "localPackSetup": "Activa el seguimiento de resultados en el mapa para una de tus palabras clave seguidas para comprobar esto.",
       "aiVisibility": "Sigue prompts de IA para comprobar esto.",
       "generic": "El rastreo no devolvió datos suficientes para comprobar esto.",
       "probeUnreachable": "No pudimos acceder a {{file}} en tu sitio, así que no se pudo comprobar esto.",
@@ -267,5 +576,93 @@
     "title": "Ejecuta tu primera auditoría",
     "description": "Rastreamos tu sitio una vez y te mostramos qué corregir, qué vigilar y qué ya pasa.",
     "confirm": "Iniciar auditoría"
+  },
+  "findingStatus": "{{bucket}} · {{severity}}",
+  "progress": {
+    "upTo_zero": "Rastreando hasta {{cap}} páginas.",
+    "upTo_one": "Rastreando hasta {{cap}} página.",
+    "upTo_two": "Rastreando hasta {{cap}} páginas.",
+    "upTo_few": "Rastreando hasta {{cap}} páginas.",
+    "upTo_many": "Rastreando hasta {{cap}} páginas.",
+    "upTo_other": "Rastreando hasta {{cap}} páginas."
+  },
+  "dismissed": {
+    "title_zero": "Descartados ({{count}})",
+    "title_one": "Descartados ({{count}})",
+    "title_two": "Descartados ({{count}})",
+    "title_few": "Descartados ({{count}})",
+    "title_many": "Descartados ({{count}})",
+    "title_other": "Descartados ({{count}})",
+    "stillDetected_zero": "Sigue detectado en la auditoría más reciente: {{count}} páginas afectadas.",
+    "stillDetected_one": "Sigue detectado en la auditoría más reciente: {{count}} página afectada.",
+    "stillDetected_two": "Sigue detectado en la auditoría más reciente: {{count}} páginas afectadas.",
+    "stillDetected_few": "Sigue detectado en la auditoría más reciente: {{count}} páginas afectadas.",
+    "stillDetected_many": "Sigue detectado en la auditoría más reciente: {{count}} páginas afectadas.",
+    "stillDetected_other": "Sigue detectado en la auditoría más reciente: {{count}} páginas afectadas.",
+    "resurfaced_zero": "Descartado, pero ahora hay {{count}} páginas más afectadas.",
+    "resurfaced_one": "Descartado, pero ahora hay {{count}} página más afectada.",
+    "resurfaced_two": "Descartado, pero ahora hay {{count}} páginas más afectadas.",
+    "resurfaced_few": "Descartado, pero ahora hay {{count}} páginas más afectadas.",
+    "resurfaced_many": "Descartado, pero ahora hay {{count}} páginas más afectadas.",
+    "resurfaced_other": "Descartado, pero ahora hay {{count}} páginas más afectadas.",
+    "description": "Estos hallazgos no se cuentan arriba. Restaura uno para devolverlo a la lista.",
+    "justNow": "Descartado",
+    "byOn": "Descartado por {{name}} el {{date}}",
+    "on": "Descartado el {{date}}",
+    "reason": "Motivo: {{reason}}",
+    "notDetected": "No se detectó en la auditoría más reciente.",
+    "recheckResult": "Comprobado de nuevo el {{date}}: de {{checked}} URL, {{stillFailing}} siguen fallando, {{cleared}} ya funcionan y {{unverified}} no se pudieron comprobar.",
+    "recheckByAudit": "Para volver a comprobar este hallazgo, ejecuta una nueva auditoría.",
+    "recheckCta": "Volver a comprobar estas URL",
+    "restoreCta": "Restaurar",
+    "recheckTitle": "¿Volver a comprobar estas URL?",
+    "recheckUrls": "Volveremos a solicitar {{urls}} de {{total}} URL y anotaremos lo que responde cada una.",
+    "recheckNote": "Una nueva comprobación solo solicita tus propias páginas. No inicia una auditoría nueva.",
+    "recheckConfirm": "Comprobar ahora",
+    "recheckRunning": "Comprobando…",
+    "recheckFailed": "No pudimos volver a comprobar estas URL. Inténtalo de nuevo."
+  },
+  "stale": {
+    "title_zero": "Última auditoría hace {{count}} días",
+    "title_one": "Última auditoría hace {{count}} día",
+    "title_two": "Última auditoría hace {{count}} días",
+    "title_few": "Última auditoría hace {{count}} días",
+    "title_many": "Última auditoría hace {{count}} días",
+    "title_other": "Última auditoría hace {{count}} días",
+    "body": "Es posible que los resultados ya no reflejen su sitio. Ejecute una auditoría nueva para actualizarlos.",
+    "cta": "Ejecutar una auditoría nueva"
+  },
+  "comparison": {
+    "status": {
+      "new": "Nuevo",
+      "regressed": "Empeorado",
+      "improved": "Mejorado",
+      "unchanged": "Sin cambios",
+      "resolved": "Resuelto",
+      "not_comparable": "No comparable"
+    },
+    "description": {
+      "new": "Nuevo: la auditoría anterior no revisó esto o no pudo hacerlo.",
+      "regressed": "Empeorado: peor que en la auditoría anterior, que sí lo revisó.",
+      "improved": "Mejorado: sigue abierto, pero mejor que en la auditoría anterior.",
+      "unchanged": "Sin cambios desde la auditoría anterior.",
+      "resolved": "Resuelto: un problema de la auditoría anterior que ahora se supera.",
+      "not_comparable": "No comparable: las dos auditorías rastrearon conjuntos de páginas distintos, así que las cifras no se pueden comparar."
+    },
+    "scopeNote": "La auditoría anterior rastreó {{previous}} páginas y esta {{current}}, así que el número de páginas no es directamente comparable.",
+    "scopeNoteLimits": "La auditoría anterior tenía un límite de {{previous}} páginas y esta de {{current}}, así que el número de páginas no es directamente comparable."
+  },
+  "notApplicable": {
+    "title": "No aplica a este sitio",
+    "description": "Estas comprobaciones de SEO local son para negocios que atienden a clientes en una dirección o en una zona concreta. No se cuentan en ninguna parte de este informe.",
+    "optIn": "Es un negocio local",
+    "optInHint": "Las comprobaciones pasan entonces a «Sin evaluar» hasta que configures el SEO local.",
+    "saving": "Guardando…",
+    "failed": "No pudimos guardarlo. Inténtalo de nuevo."
+  },
+  "olderRun": {
+    "viewing": "Estás viendo la auditoría del {{date}}.",
+    "viewingUndated": "Estás viendo una auditoría anterior.",
+    "backToLatest": "Volver al informe más reciente"
   }
 }

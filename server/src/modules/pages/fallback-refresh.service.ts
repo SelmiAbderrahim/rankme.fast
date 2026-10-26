@@ -3,7 +3,7 @@ import type { Db } from '../../db/client.js';
 import type { SiteKeywordCandidate, SiteKeywordProvider } from '../../shared/providers/index.js';
 import { getCachedSiteKeywordCandidates, SITE_RANKED_KEYWORD_LIMIT, type CachedSiteKeywordCandidatesResult, } from '../ranks/index.js';
 import { createPagesRepository, type NormalizedPagePerformanceKeyword, type PagePerformanceCoverageWrite, type PagesRepository, type WrittenPagePerformanceSnapshot, } from './pages.repository.js';
-import { resolvePagesFallbackMarket, type PagesFallbackMarket, } from './market-resolver.js';
+import { resolvePagesFallbackMarket, type PagesFallbackMarket, type PagesSiteMarket, } from './market-resolver.js';
 import { canonicalizePageUrl } from './url-normalizer.js';
 export type PagesKeywordProviderSelection = 'fake' | 'dataforseo';
 export type PagesFallbackSource = 'demo' | 'dataforseo';
@@ -16,6 +16,8 @@ export interface PagesFallbackRefreshInput {
     siteId: string;
     domain: string;
     siteUrl: string;
+    /** The site's default market, preferred over keyword markets. */
+    siteMarket?: PagesSiteMarket | null;
 }
 interface PagesFallbackRefreshBase {
     source: PagesFallbackSource;
@@ -155,7 +157,7 @@ export function createPagesFallbackRefreshService(deps: PagesFallbackRefreshDeps
     const source = pagesFallbackSourceForProvider(deps.providerSelection);
     return {
         async refresh(input) {
-            const market = await resolveMarket(deps.db, input.accountId, input.siteId);
+            const market = await resolveMarket(deps.db, input.accountId, input.siteId, input.siteMarket);
             let cached: CachedSiteKeywordCandidatesResult;
             try {
                 cached = await readRankedCandidates({

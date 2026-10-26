@@ -12,7 +12,7 @@
  *     "waiting for the next sync" state — never a live Google fetch;
  *   - the previewed unit is disclosed BEFORE the paid confirm, and the N+1
  *     request lands on the localized cap state;
- *   - re-opening a stored report is free (the meter does not move);
+ *   - re-opening a stored report works (the meter does not move);
  *   - with `CANNIBALIZATION_ENABLED=false` the new-report entry point answers
  *     the shipped localized 503 while stored reads stay open (proved against
  *     an api ACTUALLY booted with the flag off, then restored);
@@ -30,8 +30,6 @@ import {
   assertComposeRuntimeParity,
   captureInheritedComposeEnvironment,
   recreateComposeServices,
-  runComposePsql,
-  runComposePsqlOutput,
 } from './helpers/compose';
 
 test.describe.configure({ mode: 'serial' });
@@ -46,8 +44,6 @@ const GSC_SCOPE = 'https://www.googleapis.com/auth/webmasters.readonly';
 const SPLIT_QUERY = 'seo audit tool';
 const PRIMARY_PAGE = 'https://example.com/seo-audit';
 const SECOND_PAGE = 'https://example.com/blog/seo-audit-guide';
-/** Starter base cap for `cannibalization_reports`. */
-const STARTER_CAP = 4;
 
 async function scan(page: Page, label: string): Promise<void> {
   await page.addStyleTag({
@@ -106,16 +102,6 @@ async function sessionUserId(page: Page): Promise<string> {
   const body = (await res.json()) as { user?: { id?: string } };
   if (!body.user?.id) throw new Error('cannibalization spec: no session user id');
   return body.user.id;
-}
-
-/** Starter tier: `cannibalization_reports` cap 4, so the N+1 lands quickly. */
-function seedStarterTier(accountId: string): void {
-  runComposePsql(
-    `INSERT INTO subscriptions (account_id, tier, status)
-     VALUES (:'accountId', 'starter', 'active')
-     ON CONFLICT (account_id) DO UPDATE SET tier = 'starter', status = 'active';`,
-    { variables: { accountId } },
-  );
 }
 
 /**
@@ -178,33 +164,6 @@ async function syncFakeGsc(page: Page, siteId: string): Promise<string> {
   return snapshotDate;
 }
 
-/**
- * Pre-spend the account down to its last report so the N+1 refusal is reached
- * in two generations instead of five. The shipped named per-account rate
- * bucket (`cannibalization`, 10 mutations/min) would otherwise 429 before the
- * cap could answer, and a 429 is not the state under test. The router-level
- * N+1 -> 402 invariant is additionally covered by
- * `server/src/modules/cannibalization/cannibalization.routes.test.ts`.
- */
-function seedUsedReports(accountId: string, used: string): void {
-  runComposePsql(
-    `INSERT INTO usage_counters (account_id, period, metric, used, "limit")
-     VALUES (:'accountId', to_char(now() AT TIME ZONE 'UTC', 'YYYY-MM'),
-             'cannibalization_reports', :'used'::bigint, 4)
-     ON CONFLICT (account_id, period, metric)
-     DO UPDATE SET used = :'used'::bigint;`,
-    { variables: { accountId, used } },
-  );
-}
-
-function usedReports(accountId: string): string {
-  return runComposePsqlOutput(
-    `SELECT coalesce(max(used), 0) FROM usage_counters
-     WHERE account_id = :'accountId' AND metric = 'cannibalization_reports';`,
-    { variables: { accountId } },
-  ).trim();
-}
-
 async function previewAndGenerate(page: Page, siteId: string): Promise<void> {
   await page.goto(`/sites/${siteId}?tab=cannibalization&view=new`);
   await page.getByTestId('cannibalization-preview-button').click();
@@ -214,7 +173,7 @@ async function previewAndGenerate(page: Page, siteId: string): Promise<void> {
   await page.getByTestId('cannibalization-generate-button').click();
 }
 
-test('cannibalization: stored-row report, honest states, cap, free reopen, flag-off, RTL, axe', async ({
+test('cannibalization: stored-row report, honest states, reopen, flag-off, RTL, axe', async ({
   page,
 }) => {
   // Multi-step composed-stack journey (signup, fake-GSC link + sync, two
@@ -229,7 +188,6 @@ test('cannibalization: stored-row report, honest states, cap, free reopen, flag-
   const account = freshAccount('cannibalization');
   await signUp(page, account);
   const accountId = await sessionUserId(page);
-  seedStarterTier(accountId);
 
   const siteId = await addSite(page, 'https://example.com');
   const emptySiteId = await addSite(page, 'https://empty.example.com');
@@ -251,11 +209,9 @@ test('cannibalization: stored-row report, honest states, cap, free reopen, flag-
       await expect(page.getByTestId('cannibalization-state-awaitingSync')).toBeVisible({
         timeout: 30_000,
       });
-      // Nothing was charged for a report that cannot exist.
-      expect(usedReports(accountId)).toBe('0');
     });
 
-    await test.step('the previewed unit precedes the paid confirm and yields candidates', async () => {
+    await test.step('the preview precedes the confirm and the report yields candidates', async () => {
       await previewAndGenerate(page, siteId);
       await expect(page.getByTestId('cannibalization-candidates')).toBeVisible({
         timeout: 60_000,
@@ -281,7 +237,6 @@ test('cannibalization: stored-row report, honest states, cap, free reopen, flag-
       await expect(page.getByTestId('cannibalization-provenance')).toContainText(
         syncedSnapshotDate,
       );
-      expect(usedReports(accountId)).toBe('1');
 
       const reportUrl = new URL(page.url());
       firstReportId = reportUrl.searchParams.get('report') ?? '';
@@ -305,30 +260,12 @@ test('cannibalization: stored-row report, honest states, cap, free reopen, flag-
       await setTheme(page, 'light');
     });
 
-    await test.step('re-opening a stored report is free', async () => {
-      const before = usedReports(accountId);
+    await test.step('re-opening a stored report works', async () => {
       await page.goto(`/sites/${siteId}?tab=cannibalization`);
       await page.getByTestId(`cannibalization-open-${firstReportId}`).click();
       await expect(page.getByTestId('cannibalization-candidates')).toBeVisible({
         timeout: 30_000,
       });
-      expect(usedReports(accountId)).toBe(before);
-    });
-
-    await test.step('the N+1 report lands on the localized cap state', async () => {
-      seedUsedReports(accountId, String(STARTER_CAP - 1));
-      await previewAndGenerate(page, siteId);
-      await expect(page.getByTestId('cannibalization-candidates')).toBeVisible({
-        timeout: 60_000,
-      });
-      expect(usedReports(accountId)).toBe(String(STARTER_CAP));
-
-      await previewAndGenerate(page, siteId);
-      await expect(page.getByTestId('cannibalization-state-cap')).toBeVisible({
-        timeout: 30_000,
-      });
-      // The refused request consumed nothing.
-      expect(usedReports(accountId)).toBe(String(STARTER_CAP));
     });
 
     await test.step('Arabic RTL renders the workspace under logical layout', async () => {

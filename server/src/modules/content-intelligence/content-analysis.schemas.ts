@@ -45,6 +45,12 @@ export const ownedPageFactsSchema = z
     externalLinkCount: z.number().int().min(0),
     contentHash: z.string().min(1).max(128),
     excerpt: z.string().max(8000),
+    /** Where the owned URL's redirects ended; present only when it redirected. */
+    finalUrl: z.string().min(1).max(2048).optional(),
+    redirectChain: z
+        .array(z.object({ url: z.string().min(1).max(2048), status: z.number().int() }).strict())
+        .max(5)
+        .optional(),
 })
     .strict();
 export type OwnedPageFacts = z.infer<typeof ownedPageFactsSchema>;

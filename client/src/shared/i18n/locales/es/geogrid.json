@@ -2,18 +2,17 @@
   "title": "Seguimiento local con geocuadrícula",
   "description": "Comprueba en qué posición aparece tu negocio en el pack local a lo largo de una cuadrícula de coordenadas. Un escaneo cubre toda la cuadrícula y cuesta un escaneo de geocuadrícula.",
   "locked": {
-    "body": "Los escaneos de geocuadrícula están en los planes Pro y Agencia.",
-    "cta": "Ver planes"
+    "body": "Los escaneos de geocuadrícula están en los planes Pro y Agencia."
   },
   "form": {
     "keyword": "Palabra clave en seguimiento",
     "keywordPlaceholder": "Elige una palabra clave",
-    "coordinateHelp": "Escribe el punto central en números. No hay selector de mapa: no compramos teselas de mapa.",
+    "coordinateHelp": "Escribe el punto central como latitud y longitud en grados decimales. Para encontrarlos, haz clic derecho sobre tu negocio en Google Maps y pulsa los números de la parte superior del menú para copiarlos.",
     "latitude": "Latitud del centro",
     "longitude": "Longitud del centro",
     "spacing": "Separación entre puntos",
     "spacingOption": "{{km}} km",
-    "spacingCustom": "Separación personalizada (m)",
+    "spacingCustom": "Separación personalizada en km",
     "size": "Tamaño de la cuadrícula",
     "sizeOption": "{{size}} por {{size}} ({{cells}} puntos)",
     "zoom": "Zoom del mapa",
@@ -21,11 +20,16 @@
     "previewing": "Estimando…",
     "errors": {
       "keyword": "Elige primero una palabra clave en seguimiento.",
-      "latitude": "La latitud debe estar entre -{{max}} y {{max}}.",
-      "longitude": "La longitud debe estar entre -180 y 180.",
-      "spacing": "La separación debe estar entre {{min}} y {{max}} metros, en pasos de {{step}}.",
-      "zoom": "El zoom debe estar entre {{min}} y {{max}}."
-    }
+      "latitude": "Escribe una latitud entre -{{max}} y {{max}}.",
+      "longitude": "Escribe una longitud entre -180 y 180.",
+      "spacing": "Elige una separación entre {{min}} y {{max}} km, en pasos de {{step}} km.",
+      "zoom": "Escribe un nivel de zoom entre {{min}} y {{max}}."
+    },
+    "zoomHelp": "Cuánto se acerca Google Maps en cada punto: {{min}} muestra una región amplia y {{max}} unas pocas calles. Los valores altos equivalen a alguien que busca muy cerca; {{default}} es nivel de calle.",
+    "useLastCenter": "Usar el centro del último escaneo",
+    "keywordEmpty": "Este sitio aún no tiene palabras clave en seguimiento. Cada escaneo geogrid revisa una palabra clave en seguimiento.",
+    "keywordEmptyCta": "Seguir una palabra clave",
+    "spacingCustomOption": "Personalizada"
   },
   "preview": {
     "title": "Lo que cuesta este escaneo",
@@ -96,9 +100,7 @@
     "failedRefunded": "Ningún punto respondió, así que devolvimos el escaneo a tu cuota."
   },
   "gates": {
-    "cap": "Te has quedado sin escaneos de geocuadrícula",
     "killSwitch": "Los escaneos de geocuadrícula están en pausa",
-    "notOnPlan": "No está en tu plan",
     "notFound": "No encontrado",
     "rateLimited": "Demasiadas solicitudes",
     "invalid": "Revisa los ajustes de la cuadrícula",
@@ -109,5 +111,39 @@
     "loadFailed": "No pudimos cargar tus escaneos de geocuadrícula.",
     "previewFailed": "No pudimos estimar este escaneo.",
     "submitFailed": "No pudimos iniciar este escaneo."
+  },
+  "center": {
+    "place": {
+      "label": "Nombre o dirección del lugar",
+      "placeholder": "Calle Mayor 1, Madrid",
+      "hint": "Cada búsqueda consulta una vez a tu proveedor de fichas locales. Elegir un resultado no envía ninguna solicitud y no cambia nada en SEO local.",
+      "search": "Buscar",
+      "searching": "Buscando…",
+      "invalid": "Escribe entre {{min}} y {{max}} caracteres.",
+      "searchFailed": "La búsqueda falló. Vuelve a intentarlo en un momento.",
+      "noResults": "No encontramos lugares con ubicación en el mapa para «{{query}}». Prueba con una dirección más completa o introduce coordenadas.",
+      "resultsLegend_zero": "{{count}} lugares para «{{query}}». Elige el centro:",
+      "resultsLegend_one": "{{count}} lugar para «{{query}}». Elige el centro:",
+      "resultsLegend_two": "{{count}} lugares para «{{query}}». Elige el centro:",
+      "resultsLegend_few": "{{count}} lugares para «{{query}}». Elige el centro:",
+      "resultsLegend_many": "{{count}} lugares para «{{query}}». Elige el centro:",
+      "resultsLegend_other": "{{count}} lugares para «{{query}}». Elige el centro:"
+    },
+    "legend": "Centro de la cuadrícula",
+    "mode": {
+      "business": "Mi negocio",
+      "place": "Buscar un lugar",
+      "coordinates": "Introducir coordenadas"
+    },
+    "business": {
+      "loading": "Cargando tu negocio…",
+      "loadFailed": "No pudimos cargar tu negocio. Busca un lugar o introduce coordenadas.",
+      "none": "Este sitio aún no tiene un negocio configurado. Elígelo en SEO local y la cuadrícula podrá empezar desde su ubicación.",
+      "setUp": "Configurar tu negocio",
+      "noLocation": "La ficha de este negocio no tiene ubicación en el mapa. Busca un lugar o introduce coordenadas."
+    },
+    "noAddress": "Sin dirección indicada",
+    "current": "La cuadrícula se centrará en",
+    "required": "Elige un centro para la cuadrícula."
   }
 }

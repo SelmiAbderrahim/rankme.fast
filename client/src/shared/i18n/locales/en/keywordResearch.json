@@ -4,7 +4,7 @@
   "searchTitle": "Research a set of keywords",
   "inputLabel": "Keywords to research",
   "inputPlaceholder": "Type a keyword and press Enter",
-  "selectionCount": "{{count}} of {{max}} selected",
+  "selectionCount_one": "{{count}} of {{max}} selected",
   "removeKeyword": "Remove {{phrase}}",
   "tracked": {
     "title": "Tracked keywords",
@@ -18,7 +18,12 @@
     "emptyCta": "Go to tracked keywords",
     "noMatch": "No tracked keywords match the selected location and language.",
     "allSelected": "All matching tracked keywords are selected.",
-    "limitReached": "You have selected the maximum of {{max}} keywords."
+    "limitReached_one": "You have selected the maximum of {{max}} keyword.",
+    "limitReached_zero": "You have selected the maximum of {{max}} keywords.",
+    "limitReached_two": "You have selected the maximum of {{max}} keywords.",
+    "limitReached_few": "You have selected the maximum of {{max}} keywords.",
+    "limitReached_many": "You have selected the maximum of {{max}} keywords.",
+    "limitReached_other": "You have selected the maximum of {{max}} keywords."
   },
   "locationLabel": "Location",
   "languageLabel": "Language",
@@ -40,9 +45,6 @@
   "columnCpc": "CPC",
   "columnTrend": "12-mo trend",
   "columnActions": "Actions",
-  "lockedTitle": "Upgrade to unlock keyword research",
-  "lockedBody": "Volume, difficulty and related keywords are part of the Pro plan.",
-  "upgrade": "See plans",
   "exampleTitle": "Example: what you get on Pro",
   "columnIntent": "Intent",
   "getIdeas": "Get ideas from this seed",
@@ -103,8 +105,8 @@
     "clusterIdInvalid": "That cluster identifier is not valid.",
     "decisionConflict": "That cluster already has a different decision. Reload and try again.",
     "decisionKindInvalid": "Decision must be either accepted or dismissed.",
-    "idempotencyKeyRequired": "A client idempotency key is required.",
-    "idempotencyKeyTooLong": "That idempotency key is too long (200 characters max).",
+    "idempotencyKeyRequired": "This request couldn't be checked for duplicates. Refresh the page and try again.",
+    "idempotencyKeyTooLong": "This request couldn't be checked for duplicates. Refresh the page and try again.",
     "noteTooLong": "That note is too long (500 characters max).",
     "siteRequired": "Choose the site this recommendation should apply to.",
     "siteNotAllowed": "A site cannot be set when dismissing a cluster.",
@@ -131,7 +133,7 @@
     "columnSearchVolume": "Volume",
     "emptyPair": "No overlapping keywords for this competitor.",
     "emptyResults": "No keyword gap found for the selected competitors.",
-    "resultCount": "{{count}} keywords found",
+    "resultCount_one": "{{count}} keyword found",
     "cachedBadge": "Cached",
     "freshBadge": "Live",
     "pairPickerLabel": "Choose a competitor",
@@ -157,7 +159,12 @@
     },
     "idle": "Run a gap analysis to see which keywords your competitors rank for.",
     "loadFailed": "Could not run the keyword gap analysis.",
-    "siteWorkspaceLink": "Open this setup in the site competitor workspace"
+    "siteWorkspaceLink": "Open this setup in the site competitor workspace",
+    "resultCount_zero": "{{count}} keywords found",
+    "resultCount_two": "{{count}} keywords found",
+    "resultCount_few": "{{count}} keywords found",
+    "resultCount_many": "{{count}} keywords found",
+    "resultCount_other": "{{count}} keywords found"
   },
   "overview": {
     "title": "SERP overview",
@@ -295,7 +302,19 @@
     "loadMore": "Load more",
     "loading": "Loading…",
     "loadFailed": "Could not load research history.",
-    "back": "Back to keyword research"
+    "back": "Back to keyword research",
+    "shown_zero": "No saved lookups",
+    "shown_one": "Showing {{loaded}} of {{count}} saved lookup",
+    "shown_two": "Showing {{loaded}} of {{count}} saved lookups",
+    "shown_few": "Showing {{loaded}} of {{count}} saved lookups",
+    "shown_many": "Showing {{loaded}} of {{count}} saved lookups",
+    "shown_other": "Showing {{loaded}} of {{count}} saved lookups",
+    "viewResults": "View results",
+    "viewResultsFor": "View stored results for {{query}}",
+    "viewResultsHint": "View results opens what was saved from that search. It does not call the data provider again.",
+    "searchAgainFor": "Search again for {{query}}",
+    "searchAgainHint": "Search again runs the lookup again with the data provider, the same as a new search.",
+    "emptySite": "No research for this site yet. Lookups you run here will appear in this list."
   },
   "previewFailed": "Could not load the spend preview.",
   "tabs": {
@@ -312,27 +331,19 @@
     "observedAt": "Observed {{time}}",
     "freshUntil": "Fresh until {{time}}"
   },
-  "cap": {
-    "title": "Monthly allowance reached",
-    "packBody": "The configured keyword pack adds {{count}} lookups for {{price}} after your included allowance.",
-    "packCta": "Buy the keyword pack",
-    "aiBody": "AI summary units are part of your plan allowance. Upgrade your plan to run more clustering passes this month.",
-    "aiCta": "See plans and billing"
-  },
   "clusters": {
     "title": "AI keyword clusters",
-    "description": "Group 10–200 of your stored phrases into topics with one AI pass. The AI reads only rows you already fetched — it never calls the search vendor.",
-    "noCandidates": "No stored phrases yet. Run keyword research first — clustering reads your stored rows.",
-    "selectionCount": "{{count}} selected ({{min}}–{{max}} required)",
+    "description": "Group 10–200 of your stored phrases into topics with one AI pass. The AI reads only rows you already fetched and never runs a new search.",
+    "noCandidates": "No stored phrases for this market yet. Change the market above or run keyword research first — clustering reads your stored rows.",
+    "selectionCount_one": "{{count}} selected ({{min}}–{{max}} required)",
     "source": {
-      "metrics": "research",
-      "ideas": "idea",
-      "history": "history"
+      "seed": "searched",
+      "related": "related",
+      "idea": "idea",
+      "long_tail": "long-tail"
     },
     "disclosureUnit": "One clustering pass uses one AI summary unit.",
     "disclosureRerunFree": "Running the exact same selection again is free — it returns the stored run.",
-    "remainingAllowance": "{{remaining}} of {{cap}} AI summaries left this month",
-    "allowanceUnknown": "Your remaining allowance could not be loaded. The server still checks it before running.",
     "boundsError": "Select between {{min}} and {{max}} phrases.",
     "run": "Run clustering",
     "running": "Clustering…",
@@ -341,7 +352,7 @@
     "listFailed": "Could not load stored clustering runs.",
     "detailFailed": "Could not load that clustering run.",
     "decisionFailed": "Could not save the decision.",
-    "resultTitle": "{{count}} clusters",
+    "resultTitle_one": "{{count}} cluster",
     "cachedRun": "Stored run — free read",
     "freshRun": "Fresh run",
     "aiProfileLine": "AI profile {{name}} v{{version}}",
@@ -357,7 +368,7 @@
     "noFilterMatch": "No clusters match the current decision filter.",
     "runsTitle": "Stored clustering runs",
     "runsEmpty": "No clustering runs stored yet.",
-    "runRowTitle": "{{count}} clusters",
+    "runRowTitle_one": "{{count}} cluster",
     "runRowMembers": "phrases",
     "openRun": "Open",
     "route": {
@@ -369,11 +380,11 @@
       "medium": "Medium confidence",
       "high": "High confidence"
     },
-    "confidenceNote": "Confidence is computed deterministically from member count and intent homogeneity — the AI suggests the grouping; the label is not an AI score.",
+    "confidenceNote": "Confidence comes from fixed rules: how many keywords a group has and how alike their intent is. The AI suggests the groups, but the confidence label is not an AI score.",
     "summedVolume": "Combined monthly search volume: {{volume}}",
-    "membersToggle": "Show {{count}} member keywords",
+    "membersToggle_one": "Show {{count}} member keyword",
     "memberSource": {
-      "vendor_cache": "stored provider row",
+      "vendor_cache": "saved keyword data",
       "history": "research history"
     },
     "accept": "Accept",
@@ -395,7 +406,46 @@
     "dismissBody": "Dismissing is final for this cluster — the decision log is append-only and cannot be flipped later.",
     "dismissConfirm": "Dismiss cluster",
     "dismissSuccess": "Cluster dismissed.",
-    "dismissReplayHint": "This cluster is already dismissed."
+    "dismissReplayHint": "This cluster is already dismissed.",
+    "selectionCount_zero": "{{count}} selected ({{min}}–{{max}} required)",
+    "selectionCount_two": "{{count}} selected ({{min}}–{{max}} required)",
+    "selectionCount_few": "{{count}} selected ({{min}}–{{max}} required)",
+    "selectionCount_many": "{{count}} selected ({{min}}–{{max}} required)",
+    "selectionCount_other": "{{count}} selected ({{min}}–{{max}} required)",
+    "resultTitle_zero": "{{count}} clusters",
+    "resultTitle_two": "{{count}} clusters",
+    "resultTitle_few": "{{count}} clusters",
+    "resultTitle_many": "{{count}} clusters",
+    "resultTitle_other": "{{count}} clusters",
+    "runRowTitle_zero": "{{count}} clusters",
+    "runRowTitle_two": "{{count}} clusters",
+    "runRowTitle_few": "{{count}} clusters",
+    "runRowTitle_many": "{{count}} clusters",
+    "runRowTitle_other": "{{count}} clusters",
+    "membersToggle_zero": "Show {{count}} member keywords",
+    "membersToggle_two": "Show {{count}} member keywords",
+    "membersToggle_few": "Show {{count}} member keywords",
+    "membersToggle_many": "Show {{count}} member keywords",
+    "membersToggle_other": "Show {{count}} member keywords",
+    "truncatedNote_zero": "Stored keywords shown: {{count, number}} of {{total, number}}. Search to narrow the list.",
+    "truncatedNote_one": "Stored keywords shown: {{count, number}} of {{total, number}}. Search to narrow the list.",
+    "truncatedNote_two": "Stored keywords shown: {{count, number}} of {{total, number}}. Search to narrow the list.",
+    "truncatedNote_few": "Stored keywords shown: {{count, number}} of {{total, number}}. Search to narrow the list.",
+    "truncatedNote_many": "Stored keywords shown: {{count, number}} of {{total, number}}. Search to narrow the list.",
+    "truncatedNote_other": "Stored keywords shown: {{count, number}} of {{total, number}}. Search to narrow the list.",
+    "belowMinimum": "Stored keywords for this market: {{count}}. AI keyword topics need at least {{min}}, so run keyword research to store more.",
+    "candidatesFailed": "Could not load your stored keywords.",
+    "clearSelection": "Clear selection",
+    "findMore": "Find more keywords",
+    "limitReached": "You can select up to {{max}} phrases. Deselect some to add others.",
+    "noMatches": "No stored keywords match that search.",
+    "searchLabel": "Search stored keywords",
+    "searchPlaceholder": "Filter by word or phrase",
+    "selectAll": "Select all shown ({{count}})",
+    "crossLink": {
+      "body": "Want groups built from shared Google results for the keywords you track on a site?",
+      "cta": "See SERP overlap groups on your sites"
+    }
   },
   "liveTrends": {
     "title": "Live search interest",
@@ -414,27 +464,19 @@
     },
     "preview": {
       "title": "Cost estimate",
-      "units": "{{count}} unit will be used.",
-      "units_other": "{{count}} units will be used.",
       "cached": "Cached",
       "fresh_required": "Fresh fetch",
       "mixed": "Mixed",
-      "unknown": "Unknown",
-      "baseRemaining": "Base allowance remaining",
-      "packRemaining": "Pack units remaining",
-      "packTitle": "Need more?",
-      "packLink": "See credit packs"
+      "unknown": "Unknown"
     },
     "states": {
       "unavailableTitle": "Live trends is temporarily unavailable",
-    "unavailableBody": "This tool is paused. Existing runs are still readable.",
-    "capBody": "You have reached your monthly live-trends allowance.",
-    "capPackName": "Keyword trends pack",
-    "failedTitle": "The exploration could not complete",
-    "providerFailedTitle": "The trends provider did not respond",
-    "emptyTitle": "No search-interest series returned",
-    "emptyBody": "The provider completed the exploration but returned no series for this market. The unit was still used.",
-    "sparseTitle": "History is thin for this market",
+      "unavailableBody": "This tool is paused. Existing runs are still readable.",
+      "failedTitle": "The exploration could not complete",
+      "providerFailedTitle": "The trends provider did not respond",
+      "emptyTitle": "No search-interest series returned",
+      "emptyBody": "The provider completed the exploration but returned no series for this market. The unit was still used.",
+      "sparseTitle": "History is thin for this market",
       "sparseBody": "Need at least 24 months of history for seasonality and 56 weeks for year-over-year."
     },
     "readouts": {
@@ -485,10 +527,23 @@
     },
     "explore": {
       "failed": "Live trends exploration failed."
-    },
-    "workspaceLocked": {
-      "body": "Live search interest is available from Starter up, even though the rest of this workspace needs Pro.",
-      "cta": "Open live search interest"
     }
+  },
+  "selectionCount_zero": "{{count}} of {{max}} selected",
+  "selectionCount_two": "{{count}} of {{max}} selected",
+  "selectionCount_few": "{{count}} of {{max}} selected",
+  "selectionCount_many": "{{count}} of {{max}} selected",
+  "selectionCount_other": "{{count}} of {{max}} selected",
+  "recentDescriptionSite": "Keyword lookups run for this site, newest first.",
+  "stored": {
+    "title": "Stored results",
+    "freeNote": "Opened from saved data. Nothing was looked up again.",
+    "close": "Close stored results",
+    "expired": "The stored results for this search are no longer available. Search again to fetch them fresh.",
+    "unsupported": "This type of search has no stored view here. Open its own tab to see it.",
+    "storedOn": "Saved {{date}}",
+    "partial": "Keywords still stored: {{stored}} of {{requested}}",
+    "searchAgain": "Search again",
+    "loadFailed": "Could not load the stored results."
   }
 }

@@ -1083,6 +1083,21 @@ describe('CompetitorsPanel panel polish', () => {
     );
   });
 
+  it('a stored read with nothing stored says nothing was checked yet and does not refresh on its own', async () => {
+    mocked.fetchCompetitors.mockResolvedValueOnce({
+      ...list(),
+      fetchedAt: null,
+      competitors: [],
+    });
+    withProviders(<CompetitorsPanel siteId="site-1" />);
+    const empty = await screen.findByTestId('competitors-empty');
+    expect(empty).toHaveTextContent(i18n.t('competitors:notFetchedTitle'));
+    expect(empty).toHaveTextContent(i18n.t('competitors:notFetched'));
+    expect(empty).not.toHaveTextContent(i18n.t('competitors:emptyTitle'));
+    // Opening the panel only performed the free stored read.
+    expect(mocked.refreshCompetitors).not.toHaveBeenCalled();
+  });
+
   it('gap empty renders an Empty block with a CTA that reloads the intersection', async () => {
     mocked.fetchCompetitors.mockResolvedValueOnce(list());
     mocked.fetchIntersection.mockResolvedValue({

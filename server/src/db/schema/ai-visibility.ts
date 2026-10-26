@@ -50,6 +50,9 @@ export const aiTrackedPrompts = pgTable('ai_tracked_prompts', {
 export const AI_PROMPT_SUGGESTION_LIMIT = 8;
 /** Where a retained prompt came from. `ideas` is gone with the paid top-up. */
 export const AI_PROMPT_SUGGESTION_SOURCES = ['template', 'ai'] as const;
+/** How much stored evidence a suggestion run was built from. */
+export const AI_PROMPT_SUGGESTION_EVIDENCE_LEVELS = ['rich', 'limited', 'none'] as const;
+export type AiPromptSuggestionEvidenceLevel = (typeof AI_PROMPT_SUGGESTION_EVIDENCE_LEVELS)[number];
 /** Which path actually produced the retained set for a run. */
 export const AI_PROMPT_SUGGESTION_GENERATORS = ['ai', 'template'] as const;
 const aiPromptSuggestionRowSchema = z
@@ -83,6 +86,12 @@ const aiPromptSuggestionRowSchema = z
         .nullable(),
     /** The exact GSC query / seed the row derives from; null on templates. */
     evidenceRef: z.string().max(280).nullable(),
+    /**
+     * Language the prompt is written in (a site gets its market language plus
+     * at most one keyword-evidenced language). Absent on rows stored before
+     * mixed-language runs, which are in the run's outputLocale.
+     */
+    language: z.enum(SUPPORTED_LOCALES).optional(),
 })
     .strict();
 export const aiPromptSuggestionSetSchema = z
@@ -99,6 +108,17 @@ export const aiPromptSuggestionSeedsSchema = z
     titles: z.array(z.string().max(500)).max(15),
     competitors: z.array(z.string().max(253)).max(15),
     gscQueries: z.array(z.string().max(200)).max(15),
+    /**
+     * How much first-party evidence (crawled copy, keywords, search queries)
+     * backed the run. Absent on runs stored before the site profile existed,
+     * which the API reports as "unknown".
+     */
+    evidenceLevel: z.enum(AI_PROMPT_SUGGESTION_EVIDENCE_LEVELS).optional(),
+    /**
+     * `site` = every seed was read with account+site scoping. Absent on older
+     * runs, whose provenance is re-checked on read.
+     */
+    provenance: z.literal('site').optional(),
 })
     .strict();
 export type AiPromptSuggestionRow = z.infer<typeof aiPromptSuggestionRowSchema>;

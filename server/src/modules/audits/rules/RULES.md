@@ -1,22 +1,22 @@
 # Audit Rule Catalogue
 
-Developer-facing reference. Every rule listed here has stable id, deterministic bucket policy, and localized copy in all seven locales (`en, ar, fr, de, es, ru, zh`) under the `auditRules` namespace. Prompt 20 turns this file into user-facing docs.
+Developer-facing reference. Every rule listed here has stable id, deterministic bucket policy, and localized copy in all seven locales (`en, ar, fr, de, es, ru, zh`) under the `auditRules` namespace. The user-facing version lives in the audit report guide under `docs/`.
 
 | id | trigger | bucket policy |
 |----|---------|---------------|
 | `robots-blocked` | Pages non-indexable with a `robots.txt`-derived reason. | Any hit → `fix-now` (critical). Otherwise `passed`. |
 | `sitemap-missing-or-weak` | `domainChecks.sitemapFound` false → `fix-now`. Found but `sitemapReferencedInRobots` false → `watch`. Signal undefined → `watch` (`insufficientData`). Otherwise `passed`. |
-| `title-missing-or-weak` | Indexable page with missing / whitespace-only title → `fix-now`. Title < 10 or > 60 characters → `watch`. Otherwise `passed`. |
+| `title-missing-or-weak` | Indexable page with missing / whitespace-only title → `fix-now`. Title < 10 or > 60 characters → `watch`. Otherwise `passed`. `meta.crawlerLengthChecks` adds the crawler's own 65 / 30 character counts as evidence only. |
 | `meta-description-missing` | Indexable page with missing description, or the same description on ≥2 pages → `watch`. Otherwise `passed`. |
 | `headings-weak` | Indexable page with no H1 → `fix-now`. Page with ≥2 H1s → `watch`. Otherwise `passed`. |
 | `canonical-missing-or-broken` | Indexable page with canonical pointing to a different origin (or an unparseable URL) → `fix-now`. Missing canonical → `watch`. Otherwise `passed`. |
 | `structured-data-missing` | Indexable page with `structuredDataErrors.length > 0` → `fix-now`. Indexable page with no structured data → `watch`. Otherwise `passed`. |
-| `broken-internal-links` | Any indexable page with a non-empty `brokenLinks[]` → `fix-now`. Otherwise `passed`. |
+| `broken-internal-links` | Any page with a non-empty `brokenLinks[]` → `fix-now`. The processor re-requests every reported target first and drops the ones that resolve (`meta.clearedTargets`); `meta` counts the rest as `confirmedTargets`, `unverifiedTargets` or `reportedTargets` (no re-check recorded). When every remaining target was only an inconclusive re-check (a refusal such as 403, a timeout, an unreachable host) the finding is `watch` (warning), not fix-now. Otherwise `passed`. |
 | `thin-content` | Indexable page with `wordCount < 200` → `watch`. No page has `wordCount` → `watch` (`insufficientData`). Otherwise `passed`. |
 | `faq-content-missing` | Indexable page with `hasFaqSignals === false` → `watch`. No page has `hasFaqSignals` → `watch` (`insufficientData`). Otherwise `passed`. Never `fix-now`. |
 | `llms-txt-missing` | `domainChecks.llmsTxtFound` false → `watch` (info). Signal undefined → `watch` (`insufficientData`, info). Otherwise `passed`. Copy explicitly advisory. |
 | `https-canonicalization` | HTTPS not enforced OR `httpsRedirect === false` → `fix-now`. `canonicalizationOk === false` → `watch`. Otherwise `passed`. |
-| `core-web-vitals-poor` | (PageSpeed) Any sampled URL with CrUX p75 category `poor` → `fix-now`. Any `needs-improvement` → `watch`. No field data on any sample → `watch` (`insufficientData: 'no-field-data'`) — "not enough visitor data yet". Provider unavailable → `watch` (`insufficientData: 'unavailable'`). Otherwise `passed`. |
+| `core-web-vitals-poor` | (PageSpeed) Any sampled URL with CrUX p75 category `poor` → `fix-now`. Any `needs-improvement` → `watch`. Both failing branches store the field-data evidence in `meta.samples`. Lab (Lighthouse) data never feeds this rule; the Overview Core Web Vitals tile uses the same worst-of-samples reading. No field data on any sample → `watch` (`insufficientData: 'no-field-data'`) — "not enough visitor data yet". Provider unavailable → `watch` (`insufficientData: 'unavailable'`). Otherwise `passed`. |
 | `page-speed-lab-low` | Any sampled URL with Lighthouse performance < 50 → `watch`. Copy MUST label this a "lab estimate" — a single Lighthouse run varies ~10 points between attempts. Otherwise `passed`. |
 | `mobile-unfriendly` | Any sampled MOBILE URL with `mobileFriendly === false` (derived from the Lighthouse `viewport` + `tap-targets` audits) → `fix-now`. No mobile samples → `watch` (`no-mobile-samples`). Mobile samples without a signal → `watch` (`no-signal`). Otherwise `passed`. |
 | `accessibility-low` | Any sampled URL with Lighthouse accessibility < 90 → `watch`; any sample < 70 escalates the finding to `fix-now` (critical). Copy MUST label this a "lab estimate", never a legal-compliance verdict. Provider unavailable / no samples → `watch` (`insufficientData`). Otherwise `passed`. |
@@ -26,16 +26,49 @@ Developer-facing reference. Every rule listed here has stable id, deterministic 
 | `gsc-ctr-low` | (GSC Search Analytics) `status === 'ok'` AND any top query with `impressions >= 1000` AND `ctr < 0.01` → `watch` (warning). Copy: Google shows the page often but few people click — rewrite the title/meta description. `status !== 'ok'` (incl. `no-data`) or null input → `watch` (`insufficientData`). No qualifying query → `passed`. **Never `fix-now`** — CTR is opportunity, not breakage. |
 | `sitemap-errors` | (GSC sitemaps) `status === 'ok'` AND any submitted sitemap with `errors > 0` → `fix-now` (critical) — errors block indexing. Else any sitemap with `warnings > 0` → `watch`. `status === 'no-sitemaps'` → `watch` (`insufficientData: 'no-sitemaps'` — "no sitemap submitted to Google"). Other non-`ok` status / null → `watch` (`insufficientData`). Otherwise `passed`. Distinct from the crawl-based `sitemap-missing-or-weak`: this is Google's own verdict on what was submitted. |
 | `ai-visibility-low` | (AI Visibility) Passing fixture: tracked prompts have at least one Google AI Overview citation or AI chat mention, and competitors do not own all answers. Failing fixtures: no presence across checked Google AI Overview + AI chat answers; competitors are present and share of voice is 0%; negative brand wording is the plurality of checked AI chat answers. Non-`ok` / no tracked prompts / null → `watch` (`insufficientData`). | Always `watch` for opportunities, never `fix-now`; otherwise `passed`. |
-| `nap-inconsistency` | (Local SEO) Any business-listing directory row with `consistent: false` (name/address/phone mismatch vs the canonical listing) → `fix-now` (critical) — mismatched NAP actively hurts local rank. `status !== 'ok'` / null → `watch` (`insufficientData`). Otherwise `passed`. | The one local-seo rule that can land in `fix-now`. |
-| `low-review-count` | `reviews !== null && reviews.reviewCount < 10` → `watch`. Absent reviews data or `status !== 'ok'` / null → `watch` (`insufficientData`). Otherwise `passed`. | Always `watch`, never `fix-now` — an opportunity, not a defect. |
+| `nap-inconsistency` | (Local SEO) Any business-listing directory row with `consistent: false` (name/address/phone mismatch vs the canonical listing) → `fix-now` (critical) — mismatched NAP actively hurts local rank. `status !== 'ok'` / null → `watch` (`insufficientData`). No listing rows at all (no business profile found) → `not-evaluated` (`reason: 'no-business-listings'`), never `passed`. Otherwise `passed`. | The one local-seo rule that can land in `fix-now`. |
+| `low-review-count` | `reviews !== null && reviews.reviewCount < 10` → `watch`. Zero reviews with no rating and no listing rows (no business profile found) → `not-evaluated` (`reason: 'no-business-profile'`). Absent reviews data or `status !== 'ok'` / null → `watch` (`insufficientData`). Otherwise `passed`. | Always `watch`, never `fix-now` — an opportunity, not a defect. |
 | `low-review-rating` | `reviews !== null && reviews.averageRating !== null && reviews.averageRating < 4.0` → `watch`. Missing rating data or `status !== 'ok'` / null → `watch` (`insufficientData`). Otherwise `passed`. | Always `watch`, never `fix-now`. |
 | `local-pack-not-ranking` | `localPack !== null && localPack.position === null` → `watch` — mirrors the `not-indexed` pattern: a visibility gap, not a defect. `localPack === null` (no local-pack keyword tracked) → `watch` (`insufficientData`, copy explains how to enable the opt-in `trackLocalPack` flag on a tracked keyword). `status !== 'ok'` / null → `watch` (`insufficientData`). Otherwise `passed`. | Always `watch`, never `fix-now`. |
+
+## Deep crawl rules
+
+Read from the vendor-neutral fields the On-Page adapter fills (`AuditPage.checks`, page facts, `duplicateGroups`, `redirectChains`, `resources`). Vendor thresholds below are DataForSEO's documented check definitions (docs.dataforseo.com/v3/on_page/pages, 2026-10-22); "ours" marks a line this product sets. Every rule shares one not-evaluated contract (`deep-crawl.ts`): `legacy-run` (a result from before these signals — no `capabilities`), `no-crawl-signal` (the crawler did not report the check), `unavailable` + `cause` (`vendor-error` / `budget`, an extra read failed), `scan-off` (resource rules on a crawl posted without the resource scan). A missing signal is never `passed`. Scope is served, indexable pages unless stated.
+
+| id | trigger | threshold source | bucket policy |
+|----|---------|------------------|---------------|
+| `http-error-pages` | Any crawled address answering ≥400; 5xx listed first. | HTTP status. | `fix-now` (critical). Only refusals (401/403/429, often bot protection) → `watch` (warning), `meta.refusalsOnly`. Never not evaluated. |
+| `redirect-chains` | A chain of two or more redirects, or a loop, from the redirect-chain read; pages reached through a chain the read did not list. | Vendor `redirect_chain` ("at least two redirects"); `REDIRECT_CHAIN_MIN_HOPS = 2`. | Loop → `fix-now` (critical); chain → `watch` (warning). No read and no page flag → not evaluated. |
+| `links-to-redirects` | `checks.linksToRedirects`. | Vendor `has_links_to_redirects` (link target answers 3xx). | `watch` (warning). |
+| `meta-refresh-redirect` | `checks.metaRefreshRedirect` on any page that served a body. | Vendor `has_meta_refresh_redirect`. | `watch` (warning). |
+| `canonical-chain-or-conflict` | Canonical to a broken page, to a redirect, to a page with its own canonical, back and forth; or a link-relation conflict. | Vendor `canonical_to_broken`, `canonical_to_redirect`, `canonical_chain`, `recursive_canonical`, `is_link_relation_conflict`. | Canonical to broken → `fix-now` (critical); others → `watch` (warning). |
+| `orphan-pages` | `checks.orphan`. | Vendor `is_orphan_page` (no reference from other pages of the domain). | `watch` (warning). |
+| `deep-pages` | `clickDepth > DEEP_CLICK_DEPTH`. | Ours: `DEEP_CLICK_DEPTH = 3`. | `watch` (info). |
+| `duplicate-titles` | A title shared by two or more indexable pages (duplicate-tag read); without the read, pages flagged `checks.duplicateTitle`, grouped by title. | Vendor `duplicate_tags` / `duplicate_title`. | `watch` (warning). |
+| `duplicate-content` | Pages flagged `checks.duplicateContent`, with matches and 0–10 similarity from the per-page read (≤50 pages, 3-minute budget); the rest counted in `meta.unverifiedCount`. | Vendor `duplicate_content` (default similarity 6 of 10). | `watch` (warning). |
+| `placeholder-text` | `checks.placeholderText`. | Vendor `lorem_ipsum`. | `fix-now` (critical). |
+| `mixed-content` | HTTPS pages with `checks.insecureLinks`; with the scan, HTTP resources they load in `meta.insecureResources`. | Vendor `https_to_http_links`. | `watch` (warning). |
+| `images-missing-alt` | `checks.imagesMissingAlt`, with the page's image count. | Vendor `no_image_alt` (any image). | `watch` (warning). |
+| `slow-server-response` | `checks.slowServerResponse` or `checks.slowLoad`; time to first byte from the per-page waterfall read (≤50 pages). | Vendor `high_waiting_time` (TTFB > 1.5 s), `high_loading_time` (> 3 s). | `watch` (warning). |
+| `large-pages` | `checks.largePage` / `checks.veryLargePage`. | Vendor `large_page_size` (> 1 MB), `size_greater_than_3mb`. | Over 3 MB → `fix-now` (warning, `bucketFor(…, { fixNow })`); else `watch` (info). |
+| `uncompressed-pages` | `checks.uncompressed`. | Vendor `no_content_encoding`. | `watch` (warning). |
+| `render-blocking-resources` | `checks.renderBlocking`, with script and stylesheet counts. | Vendor `has_render_blocking_resources`. | `watch` (info). |
+| `html-basics-missing` | `checks.missingDoctype` / `checks.missingCharset`. | Vendor `no_doctype`, `no_encoding_meta_tag`. `meta_charset_consistency` is not read: its recorded polarity contradicts its documentation. | `watch` (warning). |
+| `deprecated-html` | `checks.deprecatedTags` / `flash` / `frames`. | Vendor `deprecated_html_tags`, `flash`, `frame` (includes `iframe`, so the copy asks to check). | `watch` (info). |
+| `url-structure` | Unusual characters, query parameters, or over 120 characters. | Vendor `seo_friendly_url_characters_check`, `_dynamic_check`, `_relative_length_check` (inverted: they report a pass). | `watch` (info). |
+| `social-tags-missing` | Page has no Open Graph tags (Twitter/X cards fall back to them). | Presence of `og:*` keys in the crawled social tags. | `watch` (info). |
+| `favicon-missing` | `checks.missingFavicon`. | Vendor `no_favicon`. | `watch` (info). |
+| `broken-resources` | Resource scan: image/script/stylesheet with `isBroken` (4xx/5xx or no answer). | Vendor resource `is_broken` / status. | `fix-now` (warning). |
+| `oversized-images` | Resource scan: image over `OVERSIZED_IMAGE_BYTES`. | Ours: 500 KB. | `watch` (info). |
+| `uncached-static-resources` | Resource scan: resource answered with `cacheable: false` (unknown answers skipped). | Vendor `cache_control.cachable`. | `watch` (info). |
+
+Evidence is bounded at `MAX_EVIDENCE_ROWS = 200` rows per finding (`meta.evidenceTruncated` records the total); `affectedUrls` stays complete. Existing rules gain evidence only, with unchanged bucket policies: `meta-description-missing` adds `meta.crawlerDuplicateGroups` from the duplicate-description read, and `title-missing-or-weak` adds `meta.crawlerLengthChecks` (vendor 65 / 30 character checks).
 
 ## Design notes
 
 - Rules are **pure functions over `AuditResult`** (`server/src/shared/providers/types.ts`). They never touch a vendor field name — that firewall keeps rule ids stable across vendor swaps.
 - Every rule is registered in `ALL_RULES` (`engine.ts`). The rule suite (`rules.test.ts`) has a meta-test that fails if a new rule is registered without both a passing and a failing fixture.
-- Bucketing lives in `bucket.ts` in ONE function: `bucketFor(severity, passed)`. Rules never invent buckets.
+- Bucketing lives in `bucket.ts` in ONE function: `bucketFor(severity, passed, { fixNow })`. Rules never invent buckets; `fixNow` lets a rule send a warning-level failure to fix-now (a page over 3 MB, a broken image).
 - Priority within a bucket = severity first, then affected-URL count (larger blast radius sinks lower id), stable tiebreak by `ruleId`.
 - Reports are frozen at snapshot time in `report_snapshots` — copy and thresholds can change, but a report a user got yesterday must not silently retell its story tomorrow.
 - Snapshot diff (`diffSnapshots`) groups per `(ruleId, url)` into `fixed | regressed | new | unchanged`. The report screen reads it.

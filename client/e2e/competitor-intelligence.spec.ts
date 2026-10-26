@@ -3,7 +3,7 @@ import { expect, test, type APIRequestContext, type Page } from '@playwright/tes
 
 import type { LandscapeDetail } from '../src/features/competitors/types';
 import { freshAccount, signUp } from './helpers/account';
-import { runComposePsql, runComposePsqlOutput } from './helpers/compose';
+import { runComposePsqlOutput } from './helpers/compose';
 import { csrfHeaders } from './helpers/csrf';
 import { collectDenials, denyNonLoopback } from './helpers/denyNonLoopback';
 
@@ -31,16 +31,6 @@ async function accountId(request: APIRequestContext): Promise<string> {
   const id = ((await response.json()) as { user?: { id?: string } }).user?.id;
   expect(id).toBeTruthy();
   return id!;
-}
-
-function setTier(id: string, tier: 'pro' | 'agency'): void {
-  runComposePsql(
-    `INSERT INTO subscriptions (account_id, tier, status)
-       VALUES (:'account_id', :'tier', 'active')
-       ON CONFLICT (account_id)
-       DO UPDATE SET tier = :'tier', status = 'active', updated_at = now();`,
-    { variables: { account_id: id, tier } },
-  );
 }
 
 async function createSite(
@@ -195,7 +185,6 @@ test('competitor intelligence: Pro discovery/report/action/export and Agency par
   await signUp(page, freshAccount('competitor-intelligence'));
   const owner = await accountId(page.request);
 
-  setTier(owner, 'pro');
   const proSite = await createSite(
     page.request,
     'https://example.com',
@@ -309,7 +298,6 @@ test('competitor intelligence: Pro discovery/report/action/export and Agency par
   await expect(page.getByRole('button', { name: 'Export or share' })).toBeVisible();
   await scan(page, 'Pro competitor report');
 
-  setTier(owner, 'agency');
   const agencySite = await createSite(
     page.request,
     'https://example.net',

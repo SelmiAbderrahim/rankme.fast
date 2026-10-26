@@ -6,7 +6,8 @@
 import type { SupportedLocale } from '@shared/i18n';
 
 export type ChatMessageRole = 'user' | 'assistant';
-export type ChatMessageStatus = 'complete' | 'error' | 'aborted';
+/** `incomplete`: the reply was cut off. */
+export type ChatMessageStatus = 'complete' | 'incomplete' | 'error' | 'aborted';
 
 export type ChatMessagePart =
   | { type: 'text'; text: string }
@@ -62,6 +63,11 @@ export interface ChatStreamMeta {
   userMessageId: string;
   assistantMessageId: string;
   responseLocale: SupportedLocale;
+  /**
+   * The server-generated conversation title (deterministic, de-duplicated).
+   * Optional so a stream from an older server still falls back to the text.
+   */
+  conversationTitle?: string;
 }
 
 export interface ChatStreamDelta {

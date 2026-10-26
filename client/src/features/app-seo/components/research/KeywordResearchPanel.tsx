@@ -1,3 +1,4 @@
+import { Bdi } from '@shared/components/Bdi';
 import { type FormEvent, useState } from 'react';
 import { Download, Search } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
@@ -165,7 +166,7 @@ export function KeywordResearchPanel({
                   {result.rows.map((row) => (
                     <TableRow key={`${row.keyword}-${row.rank ?? 'none'}`}>
                       <TableCell>{row.rank ?? t('common.notRanked')}</TableCell>
-                      <TableCell className="font-medium">{row.keyword}</TableCell>
+                      <TableCell className="font-medium"><Bdi>{row.keyword}</Bdi></TableCell>
                       <TableCell>
                         {row.lastUpdatedAt
                           ? new Intl.DateTimeFormat(i18n.language, { dateStyle: 'medium' }).format(

@@ -44,7 +44,6 @@ export {
   backlinkDomainSchema,
   bulkRankDomainsSchema,
   linkGapFormSchema,
-  splitGapCompetitors,
   LINK_GAP_MIN_COMPETITORS,
   LINK_GAP_MAX_COMPETITORS,
 } from './validation';

@@ -11,12 +11,12 @@ vi.mock('../mcp-permissions/index.js', () => ({
 }));
 
 import { env } from '../../config/env.js';
-import { DICTIONARIES, SUPPORTED_LOCALES } from '../../shared/i18n/index.js';
+import { DICTIONARIES, SUPPORTED_LOCALES, translate } from '../../shared/i18n/index.js';
 import { bearerLanguage } from '../../shared/middleware/bearer-language.js';
 import { errorHandler } from '../../shared/middleware/error-handler.js';
 import { Site } from '../sites/index.js';
 import { mcpRouter } from './mcp.routes.js';
-import { MCP_TOOL_NAMES } from './mcp.registry.js';
+import { MCP_TOOL_NAMES, MCP_TOOL_REGISTRY } from './mcp.registry.js';
 
 const authenticate: RequestHandler = (req, _res, next) => {
   req.user = { id: 'account-1' };
@@ -73,21 +73,9 @@ describe('real MCP SDK transport localization', () => {
       MCP_TOOL_NAMES,
     );
     expect(response.body.result.tools.map((tool: { description: string }) => tool.description)).toEqual(
-      MCP_TOOL_NAMES.map((name) => {
-        const keyByName = {
-          list_sites: 'listSites',
-          get_latest_audit_report: 'getLatestAuditReport',
-          list_keywords: 'listKeywords',
-          get_rank_history: 'getRankHistory',
-          list_content_analyses: 'listContentAnalyses',
-          get_content_analysis: 'getContentAnalysis',
-          start_audit: 'startAudit',
-          get_audit_status: 'getAuditStatus',
-          list_actions: 'listActions',
-          set_action_state: 'setActionState',
-        } as const;
-        return DICTIONARIES[locale].mcp.tools[keyByName[name]].description;
-      }),
+      MCP_TOOL_NAMES.map((name) =>
+        translate(locale, MCP_TOOL_REGISTRY[name].descriptionKey),
+      ),
     );
     expectNoInternalProse(response.body);
   });

@@ -1,4 +1,4 @@
-import { LoaderCircle, Network } from 'lucide-react';
+import { LoaderCircle } from 'lucide-react';
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Link } from 'react-router-dom';
@@ -44,6 +44,7 @@ import { ClusterList } from './ClusterList';
 import { NewRunPanel } from './NewRunPanel';
 import { RunList } from './RunList';
 import { StateNotice } from './StateNotice';
+import { PageHeading } from '@shared/components/PageHeader';
 
 const POLL_INTERVAL_MS = 1_500;
 
@@ -74,6 +75,9 @@ export const KeywordClustersPage = ({ siteId }: KeywordClustersPageProps) => {
   const [keywords, setKeywords] = useState<KeywordClusterSelectableKeyword[]>([]);
   const [selectedKeywordIds, setSelectedKeywordIds] = useState<string[]>([]);
   const [keywordsLoading, setKeywordsLoading] = useState(false);
+  // True only once the keyword scope loaded successfully — a failed load must
+  // never be read as "this site tracks no keywords".
+  const [keywordsLoaded, setKeywordsLoaded] = useState(false);
 
   const loadRuns = useCallback(async (selectedSiteId: string, signal?: AbortSignal) => {
     const response = await fetchKeywordClusterRuns(selectedSiteId, signal);
@@ -102,11 +106,13 @@ export const KeywordClustersPage = ({ siteId }: KeywordClustersPageProps) => {
     const controller = new AbortController();
     let active = true;
     setKeywordsLoading(true);
+    setKeywordsLoaded(false);
     void fetchKeywordClusterKeywords(siteId, controller.signal)
       .then((items) => {
         if (!active) return;
         setKeywords(items);
         setSelectedKeywordIds(items.map((item) => item.id));
+        setKeywordsLoaded(true);
       })
       .catch((error: unknown) => {
         if (active) setActionGate(keywordClusterGate(error));
@@ -224,26 +230,30 @@ export const KeywordClustersPage = ({ siteId }: KeywordClustersPageProps) => {
 
   const ranksHref = ranksSurfaceHref(siteId);
   const running = detail?.status === 'queued' || detail?.status === 'processing';
+  const noTrackedKeywords = keywordsLoaded && keywords.length === 0;
 
   return (
     <div
       className="flex w-full min-w-0 flex-col gap-6"
       data-testid="keyword-clusters-page"
     >
-      <div className="space-y-2">
-        <div className="text-muted-foreground flex items-center gap-2 text-sm">
-          <Network className="size-4" aria-hidden="true" />
-          <span>{t('eyebrow')}</span>
+      <div className="flex flex-wrap items-start justify-between gap-3">
+        <div className="space-y-2">
+          <PageHeading className="text-2xl font-semibold tracking-tight">{t('title')}</PageHeading>
+          <p className="text-muted-foreground max-w-3xl text-sm">{t('subtitle')}</p>
         </div>
-        <h1 className="text-2xl font-semibold tracking-tight">{t('title')}</h1>
-        <p className="text-muted-foreground max-w-3xl text-sm">{t('subtitle')}</p>
-      </div>
-
-      <div className="flex flex-wrap items-end gap-4">
         <Button asChild variant="outline" size="sm">
           <Link to={ranksHref}>{t('site.ranksLink')}</Link>
         </Button>
       </div>
+
+      {/* Two grouping features, two names, linked both ways. */}
+      <p className="text-muted-foreground text-sm" data-testid="keyword-clusters-cross-link">
+        {t('crossLink.body')}{' '}
+        <Link className="text-primary font-medium underline-offset-4 hover:underline" to="/keyword-research?tab=clusters">
+          {t('crossLink.cta')}
+        </Link>
+      </p>
 
       <Tabs
         value={url.view}
@@ -330,8 +340,12 @@ export const KeywordClustersPage = ({ siteId }: KeywordClustersPageProps) => {
             <Skeleton className="h-32 w-full" data-testid="keyword-clusters-runs-loading" />
           ) : null}
           {runsGate ? <StateNotice kind={runsGate} /> : null}
-          {!runsLoading && !runsGate && runs.length === 0 ? (
-            <StateNotice kind="emptyRuns" />
+          {!runsLoading && !runsGate && runs.length === 0 && !keywordsLoading ? (
+            noTrackedKeywords ? (
+              <StateNotice kind="noTrackedKeywords" ranksHref={ranksHref} />
+            ) : (
+              <StateNotice kind="emptyRuns" />
+            )
           ) : null}
           {runs.length > 0 ? (
             <RunList runs={runs} activeRunId={url.runId} onOpen={url.setRunId} />

@@ -22,6 +22,7 @@ const EMPTY_LIST_ENTRY: PagesCacheEntry<PagesListResponse> = {
   loading: false,
   loaded: false,
   invalidated: false,
+  loadedAt: null,
   error: null,
   requestId: null,
 };
@@ -145,7 +146,8 @@ const metricAvailability = (source: PagesEnvelope['source']): PagesSourceCapabil
 const supportedInsights = (source: PagesEnvelope['source']): PagesInsight[] => {
   if (source === 'gsc') return [...PAGES_INSIGHTS];
   if (source === 'dataforseo' || source === 'demo') {
-    return PAGES_INSIGHTS.filter((insight) => insight !== 'low_ctr');
+    // Low CTR and too-little-data both read observed Search Console impressions.
+    return PAGES_INSIGHTS.filter((insight) => insight !== 'low_ctr' && insight !== 'low_data');
   }
   return ['unmeasured'];
 };

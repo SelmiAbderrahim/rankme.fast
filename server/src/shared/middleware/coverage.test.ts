@@ -256,7 +256,7 @@ describe('errorHandler development stack branch', () => {
     };
     expect(body.error.stack).toContain('kaboom');
     expect(body.error.message).toBe(translate('en', 'errors.internal'));
-    expect(body.error.code).toBe('INTERNAL');
+    expect(body.error.code).toBe('INTERNAL_ERROR');
     expect(body.error.messageKey).toBe('errors.internal');
   });
 
@@ -270,7 +270,7 @@ describe('errorHandler development stack branch', () => {
       {
         reqId: undefined,
         status: 500,
-        code: 'INTERNAL',
+        code: 'INTERNAL_ERROR',
         messageKey: 'errors.internal',
         causeName: 'Error',
       },
@@ -726,7 +726,8 @@ describe('errorHandler body-parser branch', () => {
     const body = res.body as { error: { message: string; code: string; messageKey: string } };
     expect(body.error).toEqual({
       message: translate('ru', 'errors.malformedJson'),
-      code: 'ERRORS_MALFORMED_JSON',
+      code: 'MALFORMED_JSON',
+      legacyCode: 'ERRORS_MALFORMED_JSON',
       messageKey: 'errors.malformedJson',
     });
     expect(res.headers['Content-Language']).toBe('ru');

@@ -4,7 +4,8 @@
  */
 import { afterEach, describe, expect, it } from 'vitest';
 import { getSummaryProvider, setSummaryProvider } from './summary.holder.js';
-import { getSummaryDb, setSummaryDb } from './summary.db-holder.js';
+import { getSummaryDb, resolveSummaryDb, setSummaryDb } from './summary.db-holder.js';
+import { db as productionDb } from '../../db/client.js';
 import { createFakeSummaryProvider } from '../../shared/providers/summary/fakes.js';
 import type { Db } from '../../db/client.js';
 
@@ -32,6 +33,14 @@ describe('summary db holder', () => {
   it('defaults to null', () => {
     setSummaryDb(null);
     expect(getSummaryDb()).toBeNull();
+  });
+
+  it('resolves to the injected db, or the production client when none is set', () => {
+    const fake = { __marker: true } as unknown as Db;
+    setSummaryDb(fake);
+    expect(resolveSummaryDb()).toBe(fake);
+    setSummaryDb(null);
+    expect(resolveSummaryDb()).toBe(productionDb);
   });
 
   it('returns whatever db was set', () => {

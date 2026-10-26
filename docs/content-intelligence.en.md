@@ -142,6 +142,10 @@ You can also open a focused content analysis from a landscape opportunity.
 Your URL, the keyword, and the reviewed competitor page are filled in, but
 you still confirm before the analysis starts.
 
+## When an analysis fails
+
+A failed analysis says what went wrong in plain words: a robots.txt block, bot protection or a login wall, an HTTP error, a slow page, a redirect loop or more than five redirects, or an address that serves a file instead of a web page. A redirected page is read at its final address. A page that answers with a 4xx error fails the analysis, while a temporary server problem (HTTP 429 or 5xx) is worth trying again. Each reason comes with one step that fixes it. **Try again** asks you to confirm, then starts a new analysis of the same page and keyword. For a wrong address, **Edit the URL** returns to the form with it filled in. An analysis takes one search query, so a pasted list of keywords is refused with a message: start a separate analysis for each keyword.
+
 ## Managing allowances and the 20-analysis pack
 
 Your monthly `content_analyses` allowance depends on your tier. See

@@ -423,6 +423,25 @@ describe('assistant slice stream actions', () => {
     expect(state).toEqual(snapshot);
   });
 
+  it('prefers the server conversation title over the raw text for an untitled conversation', () => {
+    const meta = {
+      requestId: 'stream-1',
+      conversationId: 'c1',
+      userMessageId: 'u1',
+      assistantMessageId: 'a1',
+      responseLocale: 'en' as const,
+      userText: 'Please summarize the most important issues. Thanks!',
+      createdAt: '2026-08-02T11:00:00.000Z',
+    };
+    const withServerTitle = assistantReducer(
+      start(),
+      streamMetaReceived({ ...meta, conversationTitle: 'Summarize the most important issues' }),
+    );
+    expect(withServerTitle.conversations[0]?.title).toBe('Summarize the most important issues');
+    const withoutServerTitle = assistantReducer(start(), streamMetaReceived(meta));
+    expect(withoutServerTitle.conversations[0]?.title).toBe(meta.userText);
+  });
+
   it('appends into an existing message list, keeps an existing title, and finalizes an abort', () => {
     let state = start('Existing title');
     state = assistantReducer(

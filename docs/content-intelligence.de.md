@@ -107,6 +107,10 @@ Aus einer Landscape-Chance lässt sich außerdem eine fokussierte Inhaltsanalyse
 öffnen. Eigene URL, Keyword und geprüfte Wettbewerberseite sind vorausgefüllt,
 der Start muss aber weiterhin bestätigt werden.
 
+## Wenn eine Analyse fehlschlägt
+
+Eine fehlgeschlagene Analyse nennt in einfachen Worten, was schiefging: eine robots.txt-Sperre, Bot-Schutz oder eine Anmeldeschranke, ein HTTP-Fehler, eine langsame Seite, eine Weiterleitungsschleife oder mehr als fünf Weiterleitungen oder eine Adresse, die eine Datei statt einer Webseite liefert. Eine weitergeleitete Seite wird unter ihrer endgültigen Adresse gelesen. Eine Seite, die mit einem 4xx-Fehler antwortet, lässt die Analyse fehlschlagen, ein vorübergehendes Serverproblem (HTTP 429 oder 5xx) lohnt dagegen einen neuen Versuch. Zu jedem Grund gehört ein Schritt zur Behebung. **Erneut versuchen** bittet um Bestätigung und startet dann eine neue Analyse derselben Seite und desselben Keywords. Bei einer falschen Adresse führt **URL bearbeiten** zum ausgefüllten Formular zurück. Eine Analyse nimmt eine Suchanfrage, daher wird eine eingefügte Keyword-Liste mit einer Meldung abgelehnt: Starten Sie für jedes Keyword eine eigene Analyse.
+
 ## Kontingent verwalten und 20er-Pack
 
 Das Monatskontingent hängt vom Tarif ab, siehe

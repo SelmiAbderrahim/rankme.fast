@@ -13,12 +13,11 @@
   },
   "locked": {
     "title": "Le SEO d'application est disponible avec Pro",
-    "description": "Passez à Pro ou à une offre supérieure pour enregistrer des applications et ouvrir cet espace.",
-    "cta": "Voir les offres"
+    "description": "Passez à Pro ou à une offre supérieure pour enregistrer des applications et ouvrir cet espace."
   },
   "registration": {
     "title": "Enregistrer une application",
-    "description": "Ajoutez un package Google Play, un identifiant App Store ou les deux. L'enregistrement vérifie uniquement le format et ne consomme aucun crédit fournisseur.",
+    "description": "Ajoutez un package Google Play, un identifiant App Store ou les deux. L'enregistrement vérifie uniquement le format et ne récupère aucune donnée.",
     "playLabel": "Identifiant de package Google Play",
     "playPlaceholder": "com.example.app",
     "playHelp": "Utilisez l'identifiant en DNS inversé affiché dans Google Play.",
@@ -27,7 +26,6 @@
     "appleHelp": "Saisissez l'identifiant numérique de 6 à 12 chiffres.",
     "pairedLabel": "Ces fiches correspondent à la même application",
     "pairedHelp": "Associez-les uniquement si elles représentent le même produit.",
-    "usage": "{{used}} profils sur {{limit}}",
     "submit": "Enregistrer l'application",
     "registering": "Enregistrement…"
   },
@@ -46,7 +44,6 @@
   "states": {
     "limitTitle": "Limite de profils atteinte",
     "limitDescription": "Supprimez un profil pour libérer une place ou choisissez une offre avec plus de profils.",
-    "upgrade": "Voir les offres",
     "errorTitle": "Impossible de mettre à jour les profils"
   },
   "validation": {

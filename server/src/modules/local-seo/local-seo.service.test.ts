@@ -198,6 +198,7 @@ describe('persistLocalSeoSnapshot', () => {
       listings: [],
       reviews: { averageRating: 4.2, reviewCount: 10, recentReviewCount: null },
       qa: { questionCount: 2, unansweredCount: 1 },
+      business: { ref: 'place_id:ChIJTest', name: 'Test Business' },
     });
     // No listing rows — the insert block was skipped.
     const listingRows = await db.select().from(localListingSnapshots);

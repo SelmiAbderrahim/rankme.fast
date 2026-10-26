@@ -21,6 +21,11 @@ describe('Seo', () => {
     expect(() => renderSeo()).not.toThrow();
   });
 
+  it('uses the supplied title without a second brand suffix at the root path', async () => {
+    renderSeo({ title: 'RankMeFast', basePath: '/' });
+    await waitFor(() => expect(document.title).toBe('RankMeFast'));
+  });
+
   it('renders the noindex + article + rtl + json-ld-array variant', () => {
     expect(() =>
       renderSeo({

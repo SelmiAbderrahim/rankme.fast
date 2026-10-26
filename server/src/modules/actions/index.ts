@@ -7,5 +7,9 @@ export { registerBuiltInActionAdapters } from './adapters/index.js';
 export { DEFAULT_LIST_LIMIT, getActionHistory, listActionsForSite, MAX_LIST_LIMIT, type ActionHistoryEntry, type ListActionsResult, } from './actions.service.js';
 export { mutateActionState, type MutateActionStateInput, type MutateActionStateResult, } from './actions.state.service.js';
 export { appendActionEvent, deleteAllEventsForAccount, exportAllEventsForAccount, findLatestEventForAction, findLatestEventsForActions, listEventsForAction, listSiteEventHistory, type ActionEventsDb, type AppendActionEventInput, type AppendActionEventResult, } from './actions.events.repo.js';
+export { isResolvedAuditDecision, loadAuditDecisions, loadAuditDecisionStates,
+    openAuditRuleIds, resolveAuditDecisionEvidence, type AuditDecision,
+    type AuditDecisionEvidence, } from './audit-decisions.js';
+export { AUDIT_REGRESSION_ACTOR, isAuditRegressionEvent, reasonCodeForActor } from './actions.regression.js';
 export { confidenceFromFreshness, type ActionEvidence, type ActionItem, type CandidateAction, type SourceStatus, type SourceStatusEnvelope, type SourceStatusEntry, } from './actions.types.js';
 export { createActionsReportExportAdapter } from './report-export.adapter.js';

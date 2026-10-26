@@ -209,6 +209,19 @@ describe('SEC-URL direct-fetch guard', () => {
 });
 
 describe('fetchPublicUrlSafe — pinning, redirects, and bounds', () => {
+  it('keeps HEAD as HEAD through a 303 redirect', async () => {
+    const methods: Array<string | undefined> = [];
+    await fetchPublicUrlSafe('https://example.com/start', { method: 'HEAD' }, {
+      resolver: publicResolver,
+      transport: async (url, _pin, init) => {
+        methods.push(init.method);
+        return url.pathname === '/start'
+          ? new Response(null, { status: 303, headers: { location: '/final' } })
+          : new Response(null, { headers: { 'content-type': 'text/html' } });
+      },
+    });
+    expect(methods).toEqual(['HEAD', 'HEAD']);
+  });
   it('returns the authority-derived final URL without trusting response headers', async () => {
     const transport: PublicUrlTransport = async (url) =>
       url.pathname === '/start'
@@ -425,6 +438,11 @@ describe('pinnedHttpTransport — native resolve-then-pin connector', () => {
 
   beforeAll(async () => {
     server = createServer((req, res) => {
+      if (req.url?.startsWith('/status/')) {
+        res.statusCode = Number(req.url.slice('/status/'.length));
+        res.end();
+        return;
+      }
       if (req.url === '/large') {
         res.end('12345');
         return;
@@ -462,6 +480,26 @@ describe('pinnedHttpTransport — native resolve-then-pin connector', () => {
     expect(response.headers.get('x-auth-seen')).toBe('none');
     expect(response.headers.getSetCookie()).toEqual(['a=1', 'b=2']);
   });
+
+  it.each([[204, 'GET'], [205, 'GET'], [304, 'GET'], [200, 'HEAD']] as const)('returns a native bodyless %i %s response without an uncaught exception', async (status, method) => {
+    const response = await pinnedHttpTransport(
+      new URL(`http://public.example:${port}/status/${status}`),
+      { address: '127.0.0.1', family: 4 },
+      { method },
+      new AbortController().signal,
+      100,
+    );
+    expect(response.status).toBe(status);
+    expect(response.body).toBeNull();
+  }, 1000);
+
+  it('rejects an unrepresentable native HTTP status through the safety error boundary', async () => {
+    await expect(pinnedHttpTransport(
+      new URL(`http://public.example:${port}/status/600`),
+      { address: '127.0.0.1', family: 4 },
+      {}, new AbortController().signal, 100,
+    )).rejects.toThrow('invalid HTTP response');
+  }, 1000);
 
   it('rejects unsupported bodies and oversized responses', async () => {
     await expect(

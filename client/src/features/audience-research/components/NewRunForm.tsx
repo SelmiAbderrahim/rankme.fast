@@ -1,3 +1,4 @@
+import { Bdi } from '@shared/components/Bdi';
 import { useCallback, useEffect, useId, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Link } from 'react-router-dom';
@@ -75,6 +76,7 @@ export function NewRunForm({ siteId }: NewRunFormProps) {
   const countryId = useId();
   const languageId = useId();
   const deviceId = useId();
+  const startRequirementId = useId();
   const topicInputId = useId();
 
   useEffect(() => {
@@ -209,7 +211,10 @@ export function NewRunForm({ siteId }: NewRunFormProps) {
     dispatch(clearStartStatus());
   }, [dispatch]);
 
-  const canStart = !startStatus.loading && Boolean(selectedMarket) && !marketCatalog.error;
+  // A run with no topic and no competitor has nothing to search for and can
+  // only end without public evidence, so ask for one of the two first.
+  const hasResearchInput = form.topics.length > 0 || form.competitors.length > 0;
+  const canStart = !startStatus.loading && Boolean(selectedMarket) && !marketCatalog.error && hasResearchInput;
 
   return (
     <Card data-testid="audience-research-new-run-form">
@@ -272,7 +277,7 @@ export function NewRunForm({ siteId }: NewRunFormProps) {
                 <SelectContent>
                   {DEVICES.map((d) => (
                     <SelectItem key={d} value={d}>
-                      {d}
+                      {t(`form.market.devices.${d}`)}
                     </SelectItem>
                   ))}
                 </SelectContent>
@@ -319,7 +324,7 @@ export function NewRunForm({ siteId }: NewRunFormProps) {
                     data-testid={`audience-research-competitor-${domain}`}
                     data-selected={selected ? 'true' : undefined}
                   >
-                    <Badge variant={selected ? 'default' : 'outline'}>{domain}</Badge>
+                    <Badge variant={selected ? 'default' : 'outline'}><Bdi>{domain}</Bdi></Badge>
                   </button>
                 );
               })}
@@ -346,7 +351,7 @@ export function NewRunForm({ siteId }: NewRunFormProps) {
           <div className="mb-2 flex flex-wrap gap-2" data-testid="audience-research-topics-chips">
             {form.topics.map((topic, index) => (
               <Badge key={`${topic}-${index}`} variant="secondary" className="gap-1">
-                {topic}
+                <Bdi>{topic}</Bdi>
                 <button
                   type="button"
                   onClick={() => removeTopicAt(index)}
@@ -376,8 +381,9 @@ export function NewRunForm({ siteId }: NewRunFormProps) {
               variant="outline"
               onClick={addTopic}
               disabled={form.topics.length >= MAX_TOPICS || topicDraft.trim().length === 0}
+              data-testid="audience-research-topic-add"
             >
-              {t('form.topics.label')}
+              {t('form.topics.add')}
             </Button>
           </div>
           {topicValidationKey ? (
@@ -399,15 +405,27 @@ export function NewRunForm({ siteId }: NewRunFormProps) {
           </Alert>
         ) : null}
 
-        <div className="flex flex-wrap gap-2">
-          <Button
-            type="button"
-            onClick={openConfirm}
-            disabled={!canStart}
-            data-testid="audience-research-start-button"
-          >
-            {t('confirm.confirmButton')}
-          </Button>
+        <div className="flex flex-col gap-2">
+          <div className="flex flex-wrap gap-2">
+            <Button
+              type="button"
+              onClick={openConfirm}
+              disabled={!canStart}
+              aria-describedby={hasResearchInput ? undefined : startRequirementId}
+              data-testid="audience-research-start-button"
+            >
+              {t('confirm.confirmButton')}
+            </Button>
+          </div>
+          {hasResearchInput ? null : (
+            <p
+              id={startRequirementId}
+              className="text-muted-foreground text-xs"
+              data-testid="audience-research-start-requirement"
+            >
+              {t('form.startRequirement')}
+            </p>
+          )}
         </div>
       </CardContent>
 

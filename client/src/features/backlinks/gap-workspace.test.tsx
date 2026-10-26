@@ -8,6 +8,7 @@ import { MemoryRouter } from 'react-router-dom';
 import { ApiError, __resetCsrfTokenCacheForTests } from '@shared/api/client';
 import { changeLanguage, i18n, initI18n } from '@shared/i18n';
 import * as api from './api';
+import * as competitorsApi from '@features/competitors';
 import {
   GapCompetitorCard,
   GapOverlapStats,
@@ -27,7 +28,7 @@ import type {
   LinkGapWireLegStatus,
   SpendPreview,
 } from './types';
-import { linkGapFormSchema, splitGapCompetitors } from './validation';
+import { linkGapFormSchema } from './validation';
 
 vi.mock('./api', async (importOriginal) => ({
   ...(await importOriginal<typeof import('./api')>()),
@@ -36,7 +37,18 @@ vi.mock('./api', async (importOriginal) => ({
   fetchLinkGapRun: vi.fn(),
 }));
 
+vi.mock('@features/competitors', () => ({ fetchCompetitorProfiles: vi.fn() }));
+
 const mocked = vi.mocked(api);
+const mockedCompetitors = vi.mocked(competitorsApi);
+const profile = (registrableDomain: string) => ({
+  id: registrableDomain,
+  origin: `https://${registrableDomain}`,
+  registrableDomain,
+  source: 'manual' as const,
+  status: 'active' as const,
+  createdAt: null,
+});
 const globalFetchSpy = vi.spyOn(globalThis, 'fetch');
 
 const previewFixture = (overrides: Partial<SpendPreview> = {}): SpendPreview => ({
@@ -157,15 +169,13 @@ beforeEach(async () => {
   mocked.startLinkGap.mockReset();
   mocked.fetchLinkGapRun.mockReset();
   mocked.fetchLinkGapRun.mockImplementation(() => new Promise(() => undefined));
+  mockedCompetitors.fetchCompetitorProfiles.mockReset();
+  mockedCompetitors.fetchCompetitorProfiles.mockResolvedValue({ items: [] });
   __resetCsrfTokenCacheForTests();
 });
 
 describe('gap zod mirror', () => {
-  it('normalizes and dedupes domains, drops blanks, and splits comma/newline input', () => {
-    expect(splitGapCompetitors(' rival.example,\n\nWWW.RIVAL.example ')).toEqual([
-      'rival.example',
-      'WWW.RIVAL.example',
-    ]);
+  it('normalizes and dedupes domains and drops blanks', () => {
     expect(
       linkGapFormSchema.parse({
         ownDomain: 'WWW.Example.com',
@@ -188,6 +198,64 @@ describe('gap zod mirror', () => {
   });
 });
 
+describe('gap form prefill', () => {
+  it('starts from up to three distinct confirmed competitors and says so', async () => {
+    mockedCompetitors.fetchCompetitorProfiles.mockResolvedValue({
+      items: [profile('a.example'), profile('b.example'), profile('a.example'), profile('c.example'), profile('d.example')],
+    });
+    renderWorkspace();
+    expect(await screen.findByTestId('link-gap-prefilled')).toHaveTextContent(
+      'Filled in from your confirmed competitors',
+    );
+    for (const domain of ['a.example', 'b.example', 'c.example']) {
+      expect(screen.getByTestId(`link-gap-competitors-chip-${domain}`)).toBeInTheDocument();
+    }
+    expect(screen.queryByTestId('link-gap-competitors-chip-d.example')).not.toBeInTheDocument();
+    expect(screen.getByLabelText('Competitor domains')).toHaveValue('');
+    expect(mockedCompetitors.fetchCompetitorProfiles).toHaveBeenCalledWith(
+      'site-1',
+      'active',
+      expect.any(AbortSignal),
+    );
+  });
+
+  it('never overwrites what was typed before the competitors arrive', async () => {
+    let release: (value: { items: ReturnType<typeof profile>[] }) => void = () => undefined;
+    mockedCompetitors.fetchCompetitorProfiles.mockReturnValue(
+      new Promise((resolve) => {
+        release = resolve;
+      }),
+    );
+    renderWorkspace();
+    await userEvent.type(screen.getByLabelText('Competitor domains'), 'mine.example,');
+    release({ items: [profile('a.example')] });
+    await waitFor(() => expect(mockedCompetitors.fetchCompetitorProfiles).toHaveBeenCalled());
+    await Promise.resolve();
+    expect(screen.getByTestId('link-gap-competitors-chip-mine.example')).toBeInTheDocument();
+    expect(screen.queryByTestId('link-gap-competitors-chip-a.example')).not.toBeInTheDocument();
+    expect(screen.queryByTestId('link-gap-prefilled')).not.toBeInTheDocument();
+  });
+
+  it('leaves the field empty when there are no confirmed competitors or the read fails', async () => {
+    renderWorkspace();
+    await waitFor(() => expect(mockedCompetitors.fetchCompetitorProfiles).toHaveBeenCalled());
+    expect(screen.getByLabelText('Competitor domains')).toHaveValue('');
+    expect(screen.getByTestId('link-gap-competitors-count')).toHaveTextContent('Domains: 0 of 3');
+    expect(screen.queryByTestId('link-gap-prefilled')).not.toBeInTheDocument();
+    mockedCompetitors.fetchCompetitorProfiles.mockRejectedValue(new Error('network'));
+    renderWorkspace();
+    await waitFor(() => expect(mockedCompetitors.fetchCompetitorProfiles).toHaveBeenCalledTimes(2));
+    expect(screen.queryByTestId('link-gap-prefilled')).not.toBeInTheDocument();
+  });
+
+  it('does not read competitors while a stored run is open', async () => {
+    mocked.fetchLinkGapRun.mockResolvedValue(runFixture());
+    renderWorkspace({ entry: '/sites/site-1/backlinks?tab=gap&runId=507f1f77bcf86cd799439011' });
+    await screen.findByText('Link gap results');
+    expect(mockedCompetitors.fetchCompetitorProfiles).not.toHaveBeenCalled();
+  });
+});
+
 describe('gap form preview and confirm', () => {
   it('dedupes before preview and cancel never starts a paid run', async () => {
     mocked.previewLinkGap.mockResolvedValue(previewFixture());
@@ -195,8 +263,9 @@ describe('gap form preview and confirm', () => {
     const user = userEvent.setup();
     await user.type(
       screen.getByLabelText('Competitor domains'),
-      'Rival.example\nwww.rival.example',
+      'Rival.example, www.rival.example,',
     );
+    expect(screen.getByTestId('link-gap-competitors-duplicate')).toHaveTextContent(/Already added: \W?rival\.example/);
     await user.click(screen.getByRole('button', { name: 'Preview gap spend' }));
     await waitFor(() =>
       expect(mocked.previewLinkGap).toHaveBeenCalledWith({
@@ -225,7 +294,7 @@ describe('gap form preview and confirm', () => {
     const user = userEvent.setup();
     await user.type(screen.getByLabelText('Competitor domains'), 'Rival.example');
     await user.click(screen.getByRole('button', { name: 'Preview gap spend' }));
-    await user.click(await screen.findByRole('button', { name: 'Confirm and spend 1 units' }));
+    await user.click(await screen.findByRole('button', { name: 'Confirm and run the gap check' }));
     await waitFor(() => expect(mocked.startLinkGap).toHaveBeenCalledTimes(1));
     expect(mocked.startLinkGap).toHaveBeenCalledWith({
       siteId: 'site-1',
@@ -237,17 +306,64 @@ describe('gap form preview and confirm', () => {
     );
   });
 
-  it.each([
-    ['', 'Enter at least one competitor domain.'],
-    ['example.com', 'Your own domain cannot be a competitor.'],
-    ['a.example,b.example,c.example,d.example', 'Enter no more than three competitor domains.'],
-    ['javascript:alert(1)', 'Enter valid domain names.'],
-  ])('shows inline validation for %j', async (competitors, message) => {
+  it('asks for at least one competitor when the list is empty', async () => {
     renderWorkspace();
-    if (competitors) await userEvent.type(screen.getByLabelText('Competitor domains'), competitors);
     await userEvent.click(screen.getByRole('button', { name: 'Preview gap spend' }));
-    expect(await screen.findByRole('alert')).toHaveTextContent(message);
+    expect(await screen.findByRole('alert')).toHaveTextContent('Enter at least one competitor domain.');
     expect(mocked.previewLinkGap).not.toHaveBeenCalled();
+  });
+
+  it('refuses the own domain and invalid names as chips and says why', async () => {
+    renderWorkspace();
+    const user = userEvent.setup();
+    await user.type(screen.getByLabelText('Competitor domains'), 'example.com,');
+    expect(screen.getByTestId('link-gap-competitors-own')).toHaveTextContent(
+      /That is your own site, so it can't be a competitor: \W?example\.com/,
+    );
+    await user.clear(screen.getByLabelText('Competitor domains'));
+    await user.type(screen.getByLabelText('Competitor domains'), 'javascript:alert(1),');
+    expect(screen.getByTestId('link-gap-competitors-invalid')).toHaveTextContent('Not a domain name');
+    await user.clear(screen.getByLabelText('Competitor domains'));
+    await user.click(screen.getByRole('button', { name: 'Preview gap spend' }));
+    expect(await screen.findByTestId('link-gap-competitors-error')).toHaveTextContent(
+      'Enter at least one competitor domain.',
+    );
+    expect(mocked.previewLinkGap).not.toHaveBeenCalled();
+  });
+
+  it('keeps at most three competitors and shows the limit', async () => {
+    renderWorkspace();
+    await userEvent.type(
+      screen.getByLabelText('Competitor domains'),
+      'a.example,b.example,c.example,d.example,',
+    );
+    expect(screen.getByTestId('link-gap-competitors-limit')).toBeInTheDocument();
+    expect(screen.queryByTestId('link-gap-competitors-chip-d.example')).not.toBeInTheDocument();
+  });
+
+  it('blocks a preview when the own domain is edited to match a competitor', async () => {
+    renderWorkspace();
+    const user = userEvent.setup();
+    await user.type(screen.getByLabelText('Competitor domains'), 'rival.example,');
+    await user.clear(screen.getByLabelText('Your domain'));
+    await user.type(screen.getByLabelText('Your domain'), 'rival.example');
+    await user.click(screen.getByRole('button', { name: 'Preview gap spend' }));
+    expect(await screen.findByTestId('link-gap-competitors-error')).toHaveTextContent(
+      'Your own domain cannot be a competitor.',
+    );
+    expect(mocked.previewLinkGap).not.toHaveBeenCalled();
+  });
+
+  it('shows the invalid message when the own domain is not a domain name', async () => {
+    renderWorkspace();
+    const user = userEvent.setup();
+    await user.type(screen.getByLabelText('Competitor domains'), 'rival.example,');
+    await user.clear(screen.getByLabelText('Your domain'));
+    await user.type(screen.getByLabelText('Your domain'), 'not a domain');
+    await user.click(screen.getByRole('button', { name: 'Preview gap spend' }));
+    expect(await screen.findByTestId('link-gap-competitors-error')).toHaveTextContent(
+      'Enter valid domain names.',
+    );
   });
 
   it('invalidates a stale preview when either editable input changes', async () => {
@@ -256,7 +372,7 @@ describe('gap form preview and confirm', () => {
     await userEvent.type(screen.getByLabelText('Competitor domains'), 'rival.example');
     await userEvent.click(screen.getByRole('button', { name: 'Preview gap spend' }));
     await screen.findByTestId('link-intel-preview');
-    await userEvent.type(screen.getByLabelText('Competitor domains'), 'x');
+    await userEvent.type(screen.getByLabelText('Competitor domains'), 'other.example,');
     expect(screen.queryByTestId('link-intel-preview')).not.toBeInTheDocument();
     await userEvent.type(screen.getByLabelText('Your domain'), 'x');
     rendered.rerender(
@@ -273,14 +389,14 @@ describe('gap form preview and confirm', () => {
 
   it('does not submit when a preloaded preview has no confirmed form input', async () => {
     renderWorkspace({ gap: { preview: previewFixture() } });
-    await userEvent.click(screen.getByRole('button', { name: 'Confirm and spend 1 units' }));
+    await userEvent.click(screen.getByRole('button', { name: 'Confirm and run the gap check' }));
     expect(mocked.startLinkGap).not.toHaveBeenCalled();
   });
 
-  it('uses one unit in the confirmation label without finite quota claims', () => {
+  it('labels the confirmation with the action, not a unit count', () => {
     renderWorkspace({ gap: { preview: previewFixture() } });
     expect(screen.getByTestId('link-gap-confirm')).toHaveTextContent(
-      'Confirm and spend 1 units',
+      'Confirm and run the gap check',
     );
   });
 
@@ -290,7 +406,7 @@ describe('gap form preview and confirm', () => {
     renderWorkspace();
     await userEvent.type(screen.getByLabelText('Competitor domains'), 'rival.example');
     await userEvent.click(screen.getByRole('button', { name: 'Preview gap spend' }));
-    await userEvent.click(await screen.findByRole('button', { name: 'Confirm and spend 1 units' }));
+    await userEvent.click(await screen.findByRole('button', { name: 'Confirm and run the gap check' }));
     expect(await screen.findByTestId('link-gap-error')).toBeInTheDocument();
     expect(screen.getByTestId('link-intel-preview')).toBeInTheDocument();
   });
@@ -300,7 +416,7 @@ describe('Link-gap accessibility and RTL', () => {
   it('supports keyboard-only traversal with visible focus on every form control', async () => {
     renderWorkspace();
     const user = userEvent.setup();
-    for (const testId of ['link-gap-own-domain', 'link-gap-competitors', 'link-gap-preview']) {
+    for (const testId of ['link-gap-own-domain', 'link-gap-competitors-input', 'link-gap-preview']) {
       await user.tab();
       const control = screen.getByTestId(testId);
       expect(control).toHaveFocus();

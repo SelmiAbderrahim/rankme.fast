@@ -19,11 +19,13 @@ import { isSupportedLocale, type SupportedLocale, } from '../../shared/i18n/loca
 import { Site } from '../sites/sites.model.js';
 import { loadOwnedSite } from '../sites/sites.guard.js';
 import { LocalSeoReviewRow, LocalSeoReviewSource, LocalSeoReviewSyncRun, REVIEW_SOURCES, type LocalSeoReviewRowHydrated, type LocalSeoReviewSourceHydrated, type LocalSeoReviewSyncRunHydrated, type ReviewSourceName, type ReviewSourceOutcome, } from './review-sync.model.js';
+import { normalizeReviewTarget } from './review-sync.targets.js';
 import { computeReviewStats, type ReviewStats, type ReviewStatsRow } from './reviews.stats.js';
 import type { CreateReviewSourceInput, ReviewInventoryExportQuery, ReviewInventoryQuery, ReviewRunListQuery, ReviewSyncInput, } from './review-sync.schema.js';
 export const REVIEW_NOT_FOUND_KEY = 'reviewIntelligence.errors.notFound';
 export const REVIEW_UNAVAILABLE_KEY = 'reviewIntelligence.errors.productUnavailable';
 export const REVIEW_SOURCE_NOT_CONFIGURED_KEY = 'reviewIntelligence.errors.sourceNotConfigured';
+export const REVIEW_INVALID_TARGET_KEY = 'reviewIntelligence.errors.invalidTarget';
 export const REVIEW_INVENTORY_PAGE_SIZE = 50;
 export interface ReviewSyncServiceDeps {
     queue: Queue | null;
@@ -100,8 +102,14 @@ export async function listReviewSources(accountId: string, profileId: string) {
     });
     return { sources: docs.map(serializeReviewSource) };
 }
-/** Configured target per requested source; throws 400 on the first gap. */
-export async function resolveConfiguredTargets(accountId: string, profileId: string, sources: readonly ReviewSourceName[]): Promise<Record<string, string>> {
+/**
+ * Configured target per requested source; throws 400 on the first gap. The
+ * enqueue path also re-checks the stored format (`validateFormat`); the worker
+ * does not, so an already-accepted run is never failed by a later rule change.
+ */
+export async function resolveConfiguredTargets(accountId: string, profileId: string, sources: readonly ReviewSourceName[], options: {
+    validateFormat?: boolean;
+} = {}): Promise<Record<string, string>> {
     const docs = await LocalSeoReviewSource.find({
         accountId,
         profileId,
@@ -113,6 +121,12 @@ export async function resolveConfiguredTargets(accountId: string, profileId: str
         const target = bySource.get(source);
         if (!target) {
             throw HttpError.badRequest({ code: 'REVIEW_SOURCE_NOT_CONFIGURED', messageKey: REVIEW_SOURCE_NOT_CONFIGURED_KEY }, { source });
+        }
+        // A row saved before target validation existed (`abc`) must not become a
+        // vendor search keyword: ask the owner to re-save it.
+        if (options.validateFormat === true &&
+            normalizeReviewTarget(source, target, { allowFakeScenarios: env.PROVIDER_REVIEWS === 'fake' }) === null) {
+            throw HttpError.badRequest({ code: 'REVIEW_INVALID_TARGET', messageKey: REVIEW_INVALID_TARGET_KEY }, { source });
         }
         targets[source] = target;
     }
@@ -180,7 +194,7 @@ export async function enqueueReviewSync(accountId: string, input: ReviewSyncInpu
     if (!deps.queue)
         throw new HttpError(503, { code: 'REVIEW_UNAVAILABLE', messageKey: REVIEW_UNAVAILABLE_KEY });
     // A sync that cannot identify a business must never create a run.
-    await resolveConfiguredTargets(accountId, profileId, input.sources);
+    await resolveConfiguredTargets(accountId, profileId, input.sources, { validateFormat: true });
     const now = (deps.now ?? (() => new Date()))();
     const run = await LocalSeoReviewSyncRun.create({
         accountId,

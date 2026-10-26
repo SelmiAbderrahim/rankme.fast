@@ -625,7 +625,7 @@ describe('content brief editor', () => {
         }],
       }));
       renderEditor();
-      expect(await screen.findByText('Deterministic guidance only')).toBeInTheDocument();
+      expect(await screen.findByText('Rule-based score only')).toBeInTheDocument();
       expect(screen.getByTestId('content-brief-score-1')).not.toHaveTextContent('ranking guarantee');
     },
   );

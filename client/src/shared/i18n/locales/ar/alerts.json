@@ -22,36 +22,54 @@
   },
   "list": {
     "title": "قواعدك",
-    "capUsed": "{{count}} قواعد قيد الاستخدام.",
+    "capUsed_one": "{{count}} قاعدة قيد الاستخدام.",
     "type": "النوع",
     "threshold": "الحد",
     "channels": "القنوات",
     "state": "الحالة",
     "actions": "إجراءات",
-    "emailCount": "{{count}} مستلمي بريد",
+    "emailCount_one": "{{count}} مستلم بريد",
     "secretTail": "ينتهي مفتاح التوقيع بـ {{tail}}",
     "enabled": "مفعّلة",
     "disabled": "متوقفة",
     "enable": "تفعيل",
     "disable": "إيقاف",
     "viewLog": "عرض السجل",
-    "delete": "حذف"
+    "delete": "حذف",
+    "capUsed_zero": "{{count}} قواعد قيد الاستخدام.",
+    "capUsed_two": "{{count}} من القواعد قيد الاستخدام.",
+    "capUsed_few": "{{count}} قواعد قيد الاستخدام.",
+    "capUsed_many": "{{count}} قاعدة قيد الاستخدام.",
+    "capUsed_other": "{{count}} قاعدة قيد الاستخدام.",
+    "emailCount_zero": "{{count}} مستلمي بريد",
+    "emailCount_two": "{{count}} من مستلمي البريد",
+    "emailCount_few": "{{count}} مستلمي بريد",
+    "emailCount_many": "{{count}} مستلم بريد",
+    "emailCount_other": "{{count}} مستلم بريد"
   },
   "builder": {
     "title": "قاعدة جديدة",
     "description": "اختر ما تريد مراقبته وإلى أين يُرسل.",
     "site": "الموقع",
     "sitePlaceholder": "اختر موقعًا",
-    "siteRequired": "اختر موقعًا لإنشاء قاعدة.",
+    "siteRequired": "اختر موقعًا للمتابعة.",
     "type": "نوع التنبيه",
     "threshold": "حد المركز",
     "thresholdHint": "ننبّهك عندما يبلغ المركز المؤكَّد هذا الرقم أو أسوأ.",
     "channels": "القنوات",
     "slackPlaceholder": "عنوان ويب هوك الوارد في Slack",
     "webhookPlaceholder": "عنوان https الخاص بك",
-    "paidChannelLocked": "قناتا Slack والويب هوك تتطلبان باقة Pro أو أعلى.",
     "noChannel": "اختر قناة واحدة على الأقل.",
-    "submit": "إنشاء قاعدة"
+    "submit": "إنشاء قاعدة",
+    "sitePaused": "متوقف مؤقتًا",
+    "rankDropHint": "لا تُطلَق إلا بعد أن يرصد فحص ترتيب مجدول هبوطاً ويؤكّده فحص ثانٍ للكلمة المفتاحية نفسها.",
+    "rankDropBuiltIn": "بريد انخفاض الترتيب المدمج منفصل، وله مفتاح خاص به في",
+    "rankDropBuiltInLink": "الإشعارات",
+    "thresholdInvalid": "أدخل مركزًا صحيحًا بين {{min}} و{{max}}.",
+    "slackRequired": "أدخل عنوان ويب هوك Slack.",
+    "webhookRequired": "أدخل عنوان ويب هوك الخاص بك.",
+    "sitePausedOption": "استأنف هذا الموقع لإنشاء قواعد التنبيه",
+    "sitePausedBlocked": "هذا الموقع متوقف مؤقتًا. استأنف هذا الموقع لإنشاء قواعد التنبيه."
   },
   "secret": {
     "title": "انسخ مفتاح التوقيع الآن",
@@ -68,7 +86,7 @@
     "rankPair": "المركز {{before}} بتاريخ {{beforeAt}}، ثم {{after}} بتاريخ {{afterAt}}.",
     "linkPair": "{{beforeCount}} نطاقات بتاريخ {{beforeAt}}، ثم {{afterCount}} بتاريخ {{afterAt}}.",
     "notRanked": "خارج أفضل 100 نتيجة",
-    "domainCount": "تغيّر {{count}} نطاقات",
+    "domainCount_one": "النطاقات التي تغيّرت: {{count}}",
     "attempt": "المحاولة {{attempt}}",
     "statusLabel": {
       "pending": "قيد الإرسال",
@@ -91,17 +109,29 @@
       "unsafe_url": "لم يعد الوصول إلى هذا العنوان آمنًا.",
       "channel_timeout": "استغرقت القناة وقتًا طويلًا للرد.",
       "retries_exhausted": "توقفنا بعد ثلاث محاولات فاشلة."
+    },
+    "domainCount_zero": "النطاقات التي تغيّرت: {{count}}",
+    "domainCount_two": "النطاقات التي تغيّرت: {{count}}",
+    "domainCount_few": "النطاقات التي تغيّرت: {{count}}",
+    "domainCount_many": "النطاقات التي تغيّرت: {{count}}",
+    "domainCount_other": "النطاقات التي تغيّرت: {{count}}",
+    "rulePicker": "القاعدة",
+    "rulePickerPlaceholder": "اختر قاعدة",
+    "ruleOption": "{{type}} · {{site}}",
+    "empty": {
+      "title": "لم نُرسل أي تنبيه بعد",
+      "noRules": "تظهر التنبيهات المرسلة هنا. ليست لديك قاعدة بعد، لذا لا يمكن إرسال أي تنبيه.",
+      "createRule": "أنشئ قاعدة",
+      "rule": "لم تُرسل هذه القاعدة أي تنبيه بعد.",
+      "pickRule": "اختر قاعدة لترى التنبيهات التي أرسلتها."
+    },
+    "filtered": {
+      "title": "لا توجد عمليات إرسال تطابق عوامل التصفية هذه",
+      "body": "امسح عوامل التصفية لترى كل عمليات الإرسال لهذه القاعدة.",
+      "clear": "مسح عوامل التصفية"
     }
   },
   "states": {
-    "cap": {
-      "title": "بلغت حد القواعد",
-      "body": "لقد استخدمت كل قواعد التنبيه المتاحة في باقتك."
-    },
-    "tierLocked": {
-      "title": "القناة تتطلب باقة أعلى",
-      "body": "قناتا Slack والويب هوك تتطلبان باقة Pro أو أعلى."
-    },
     "disabled": {
       "title": "التنبيهات موقوفة مؤقتًا",
       "body": "التنبيهات غير متاحة حاليًا. قواعدك وسجلك ما زالا هنا."

@@ -1,3 +1,4 @@
+import { SignedNumber } from '@shared/components/SignedNumber';
 import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { chartXAxisPosition } from '@shared/charts/x-axis';
@@ -31,10 +32,6 @@ export const TrendSparkline = ({ points }: TrendSparklineProps) => {
     [i18n.language],
   );
   const number = useMemo(() => new Intl.NumberFormat(i18n.language), [i18n.language]);
-  const signed = useMemo(
-    () => new Intl.NumberFormat(i18n.language, { signDisplay: 'exceptZero' }),
-    [i18n.language],
-  );
 
   const max = Math.max(1, ...points.map((point) => point.mentionCount));
   const plotted = points.map((point, index) => ({
@@ -114,7 +111,7 @@ export const TrendSparkline = ({ points }: TrendSparklineProps) => {
                   {/* Only the viewed scan carries a server-computed delta. */}
                   {point.delta === null
                     ? t('detail.trend.deltaUnavailable')
-                    : signed.format(point.delta)}
+                    : <SignedNumber value={point.delta} />}
                 </td>
               </tr>
             ))}

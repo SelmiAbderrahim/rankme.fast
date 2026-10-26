@@ -1,5 +1,5 @@
 {
-  "title": "Schema-Markup-Generator",
+  "title": "Schema-Markup",
   "description": "Erzeugt JSON-LD für eine Seite aus Fakten, die wir bereits gespeichert haben. Nichts wird erfunden: Ein Feld ohne belegbaren Fakt bleibt weg, und wir nennen den Grund.",
   "new": {
     "title": "Markup erzeugen",
@@ -23,19 +23,44 @@
     "urlLabel": "Seitenadresse",
     "urlPlaceholder": "https://example.com/page",
     "urlHint": "Wir lesen die Seite einmal über eine sichere Verbindung. Nur öffentliche Adressen funktionieren.",
-    "urlInvalid": "Geben Sie eine vollständige https-Adresse ohne Benutzername und Passwort ein."
+    "urlInvalid": "Geben Sie eine vollständige https-Adresse ohne Benutzername und Passwort ein.",
+    "listCapped_zero": "Diese Liste enthält $t(schemaGenerator:source.firstPages, {\"count\": {{shown}}}) von $t(schemaGenerator:source.crawledPages, {\"count\": {{total}}}). Fügen Sie eine Seitenadresse ein, um eine andere Seite zu verwenden.",
+    "listCapped_one": "Diese Liste enthält $t(schemaGenerator:source.firstPages, {\"count\": {{shown}}}) von $t(schemaGenerator:source.crawledPages, {\"count\": {{total}}}). Fügen Sie eine Seitenadresse ein, um eine andere Seite zu verwenden.",
+    "listCapped_two": "Diese Liste enthält $t(schemaGenerator:source.firstPages, {\"count\": {{shown}}}) von $t(schemaGenerator:source.crawledPages, {\"count\": {{total}}}). Fügen Sie eine Seitenadresse ein, um eine andere Seite zu verwenden.",
+    "listCapped_few": "Diese Liste enthält $t(schemaGenerator:source.firstPages, {\"count\": {{shown}}}) von $t(schemaGenerator:source.crawledPages, {\"count\": {{total}}}). Fügen Sie eine Seitenadresse ein, um eine andere Seite zu verwenden.",
+    "listCapped_many": "Diese Liste enthält $t(schemaGenerator:source.firstPages, {\"count\": {{shown}}}) von $t(schemaGenerator:source.crawledPages, {\"count\": {{total}}}). Fügen Sie eine Seitenadresse ein, um eine andere Seite zu verwenden.",
+    "listCapped_other": "Diese Liste enthält $t(schemaGenerator:source.firstPages, {\"count\": {{shown}}}) von $t(schemaGenerator:source.crawledPages, {\"count\": {{total}}}). Fügen Sie eine Seitenadresse ein, um eine andere Seite zu verwenden.",
+    "firstPages_zero": "die ersten {{count}}",
+    "firstPages_one": "die erste",
+    "firstPages_two": "die ersten {{count}}",
+    "firstPages_few": "die ersten {{count}}",
+    "firstPages_many": "die ersten {{count}}",
+    "firstPages_other": "die ersten {{count}}",
+    "crawledPages_zero": "{{count}} gecrawlten Seiten",
+    "crawledPages_one": "{{count}} gecrawlten Seite",
+    "crawledPages_two": "{{count}} gecrawlten Seiten",
+    "crawledPages_few": "{{count}} gecrawlten Seiten",
+    "crawledPages_many": "{{count}} gecrawlten Seiten",
+    "crawledPages_other": "{{count}} gecrawlten Seiten",
+    "filterLabel": "Seite suchen",
+    "filterPlaceholder": "Teil der Adresse oder des Titels eingeben",
+    "filterCount": "{{shown}} von {{total}} angezeigt",
+    "filterNoMatches": "Keine Seite passt zu dieser Suche.",
+    "groupRoot": "Seiten der obersten Ebene"
   },
   "type": {
     "legend": "schema.org-Typ",
     "required": "Pflicht: {{n}}",
     "recommended": "Empfohlen: {{n}}",
-    "alreadyDeclared": "Diese Seite gibt diesen Typ bereits an."
+    "alreadyDeclared": "Diese Seite gibt diesen Typ bereits an.",
+    "note": {
+      "FAQPage": "Google zeigt FAQ-Antworten in den Suchergebnissen nur für bekannte Websites von Behörden und aus dem Gesundheitsbereich. Das Markup bleibt gültig.",
+      "HowTo": "Google zeigt HowTo-Schritte nicht mehr in den Suchergebnissen. Das Markup bleibt gültig."
+    }
   },
   "preview": {
     "title": "Was das kostet",
     "show": "Kosten anzeigen",
-    "units": "{{count}} Erzeugung aus Ihrem Monatskontingent.",
-    "units_other": "{{count}} Erzeugungen aus Ihrem Monatskontingent.",
     "confirm": "Markup erzeugen",
     "remaining": "Diesen Monat in Ihrem Tarif übrig: {{remaining}}.",
     "pack": "Dazu {{units}} aus Guthabenpaketen.",
@@ -53,14 +78,14 @@
     "failedTitle": "Es wurde nichts erzeugt",
     "failedProvider": "Das Modell hat nicht geantwortet, daher wurde kein Markup behalten.",
     "failedRejected": "Alle vom Modell angebotenen Felder fielen bei unserer Faktenprüfung durch; wir haben nur Belegbares behalten.",
-    "refunded": "Ihr Kontingent wurde zurückgebucht.",
     "evidence": "Woher jedes Feld stammt",
     "evidenceDescription": "Eine Zeile je Feld im Markup, mit dem gespeicherten Fakt dahinter.",
     "evidenceFrom": "aus {{fact}}",
     "evidenceEmpty": "Kein Feld ließ sich aus einem gespeicherten Fakt füllen.",
     "omissions": "Was wir weggelassen haben",
     "omissionsDescription": "Felder ohne Fakt dahinter und der Grund für jede Lücke.",
-    "omissionsEmpty": "Es wurde nichts weggelassen."
+    "omissionsEmpty": "Es wurde nichts weggelassen.",
+    "regenerated": "Aus einer früheren Generierung mit Ihren Angaben neu aufgebaut. Es wurde keine Generierung verbraucht."
   },
   "fact": {
     "pageUrl": "Seiten-URL",
@@ -75,7 +100,11 @@
     "articleModifiedTime": "Änderungszeit des Artikels",
     "siteOrigin": "Website-Ursprung",
     "siteDomain": "Website-Domain",
-    "siteName": "Website-Name"
+    "siteName": "Website-Name",
+    "ogSiteName": "Website-Namens-Tag (og:site_name)",
+    "jsonLdName": "Name in den vorhandenen strukturierten Daten der Seite",
+    "titleBrand": "Markenname im Seitentitel",
+    "providedByYou": "Von Ihnen angegeben"
   },
   "reason": {
     "no_evidence": "wir haben dazu keinen Fakt",
@@ -111,15 +140,6 @@
       "title": "Noch keine Prüfung",
       "body": "Starten Sie eine Prüfung für diese Website, dann lassen sich ihre Seiten hier auswählen."
     },
-    "cap": {
-      "title": "Monatskontingent aufgebraucht",
-      "body": "Sie haben diesen Monat alle Markup-Erzeugungen Ihres Tarifs verbraucht.",
-      "link": "Tarife ansehen"
-    },
-    "notOnPlan": {
-      "title": "Nicht in Ihrem Tarif",
-      "body": "Die Markup-Erzeugung beginnt mit dem Starter-Tarif."
-    },
     "killSwitch": {
       "title": "Vorübergehend nicht verfügbar",
       "body": "Neue Erzeugungen pausieren. Bereits erzeugtes Markup bleibt lesbar."
@@ -139,6 +159,29 @@
     "failed": {
       "title": "Etwas ist schiefgelaufen",
       "body": "Wir konnten das nicht abschließen. Versuchen Sie es erneut."
+    }
+  },
+  "userFacts": {
+    "title": "Ergänzen, was fehlt",
+    "description": "Tragen Sie eine Angabe ein, die nur Sie kennen. Wir übernehmen sie genau so und kennzeichnen sie mit „Von Ihnen angegeben“.",
+    "submit": "Mit meinen Angaben neu aufbauen",
+    "free": "Kostenlos: Wir verwenden die bereits gefundenen Angaben wieder und verbrauchen keine Generierung.",
+    "required": "Füllen Sie mindestens ein Feld aus.",
+    "hint": {
+      "language": "Ein Sprachcode wie en oder pt-BR.",
+      "date": "Ein Datum wie 2026-10-01.",
+      "url": "Eine öffentliche Adresse, die mit https:// beginnt."
+    },
+    "label": {
+      "name": "Name",
+      "headline": "Überschrift",
+      "description": "Beschreibung",
+      "inLanguage": "Sprache",
+      "datePublished": "Veröffentlichungsdatum",
+      "dateModified": "Datum der letzten Änderung",
+      "logo": "Logo-Adresse",
+      "image": "Bildadresse",
+      "primaryImageOfPage": "Adresse des Hauptbilds"
     }
   }
 }

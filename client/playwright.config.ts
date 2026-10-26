@@ -286,6 +286,14 @@ export default defineConfig({
       use: { ...devices['Desktop Chrome'], reducedMotion: 'reduce' },
     },
     {
+      // Canonical route scheme, legacy redirects and the breadcrumb rule on one
+      // serial signed-in account.
+      name: 'route-scheme',
+      testMatch: /(?:^|\/)route-scheme\.spec\.ts$/,
+      workers: 1,
+      use: { ...devices['Desktop Chrome'], reducedMotion: 'reduce' },
+    },
+    {
       name: 'cwv',
       testMatch: /(?:^|\/)cwv\.spec\.ts$/,
       use: { ...devices['Desktop Chrome'] },
@@ -380,14 +388,6 @@ export default defineConfig({
     {
       name: 'brand-radar',
       testMatch: /(?:^|\/)brand-radar\.spec\.ts$/,
-      workers: 1,
-      use: { ...devices['Desktop Chrome'], reducedMotion: 'reduce' },
-    },
-    // Superadmin market health/cost/queue/sensor/commerce panels,
-    // Member 404 concealment, guarded requeue, deep links, and light/dark axe.
-    {
-      name: 'superadmin-market',
-      testMatch: /(?:^|\/)superadmin-market\.spec\.ts$/,
       workers: 1,
       use: { ...devices['Desktop Chrome'], reducedMotion: 'reduce' },
     },
@@ -547,6 +547,21 @@ export default defineConfig({
       workers: 1,
       use: { ...devices['Desktop Chrome'], reducedMotion: 'reduce' },
     },
+    {
+      // Deep crawl findings: category filter, evidence, no-scan note, Pages issues.
+      name: 'deep-crawl-report',
+      testMatch: /(?:^|\/)deep-crawl-report\.spec\.ts$/,
+      workers: 1,
+      use: { ...devices['Desktop Chrome'], reducedMotion: 'reduce' },
+    },
+    {
+      // Resource scan: ticked by default, 1,000-page limit while scanning,
+      // opt-out per run, evaluated vs not-evaluated resource checks, axe.
+      name: 'resource-scan',
+      testMatch: /(?:^|\/)resource-scan\.spec\.ts$/,
+      workers: 1,
+      use: { ...devices['Desktop Chrome'], reducedMotion: 'reduce' },
+    },
     // Bing / YouTube / Amazon rank tracking.
     // Serial (one story per worker) because it signs up an isolated account,
     // drives the engine picker's pre-submit spend disclosure, adds Bing,
@@ -557,6 +572,12 @@ export default defineConfig({
     // restoring it. Includes Arabic RTL and axe scans in light and dark. Its
     // `finally` block always recreates the api with the flag back ON, so the
     // project that follows still sees a normal stack.
+    {
+      name: 'rank-bulk-check',
+      testMatch: /(?:^|\/)rank-bulk-check\.spec\.ts$/,
+      workers: 1,
+      use: { ...devices['Desktop Chrome'], reducedMotion: 'reduce' },
+    },
     {
       name: 'alt-engines',
       testMatch: /(?:^|\/)alt-engines\.spec\.ts$/,

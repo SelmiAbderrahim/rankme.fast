@@ -1,3 +1,5 @@
+import { Bdi } from '@shared/components/Bdi';
+import { MetricValue } from '@shared/components/MetricValue';
 import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { ReportExportControl } from '@features/report-export';
@@ -56,7 +58,7 @@ export const SnapshotDetail = ({ detail, loading, error = '' }: SnapshotDetailPr
     return (
       <Card aria-busy="true" aria-live="polite">
         <CardHeader>
-          <CardTitle>{detail.targetDomain}</CardTitle>
+          <CardTitle><Bdi>{detail.targetDomain}</Bdi></CardTitle>
           <CardDescription>{t(`states.${detail.status}`)}</CardDescription>
         </CardHeader>
         <CardContent className="flex flex-col gap-2">
@@ -79,19 +81,13 @@ export const SnapshotDetail = ({ detail, loading, error = '' }: SnapshotDetailPr
     {
       key: 'rank',
       label: t('detail.rank'),
-      value:
-        payload.domainRank.value === null
-          ? t('common.notAvailable')
-          : number.format(payload.domainRank.value),
+      value: <MetricValue kind="count" value={payload.domainRank.value} />,
       observation: payload.domainRank.observation,
     },
     {
       key: 'keywords',
       label: t('detail.keywords'),
-      value:
-        payload.keywordCount.value === null
-          ? t('common.notAvailable')
-          : number.format(payload.keywordCount.value),
+      value: <MetricValue kind="count" value={payload.keywordCount.value} />,
       observation: payload.keywordCount.observation,
     },
   ];
@@ -101,7 +97,7 @@ export const SnapshotDetail = ({ detail, loading, error = '' }: SnapshotDetailPr
       <div className="flex flex-wrap items-start justify-between gap-3">
         <div>
           <h2 id="traffic-detail-title" className="text-start text-xl font-semibold">
-            {detail.targetDomain}
+            <Bdi>{detail.targetDomain}</Bdi>
           </h2>
           <p className="text-start text-sm text-muted-foreground">{t('detail.description')}</p>
         </div>
@@ -127,7 +123,7 @@ export const SnapshotDetail = ({ detail, loading, error = '' }: SnapshotDetailPr
         {statRows.map((stat) => (
           <Card key={stat.key} data-testid={`traffic-stat-${stat.key}`}>
             <CardHeader>
-              <CardDescription>{stat.label}</CardDescription>
+              <CardDescription><Bdi>{stat.label}</Bdi></CardDescription>
               <CardTitle className="text-2xl tabular-nums">{stat.value}</CardTitle>
             </CardHeader>
             <CardContent>
@@ -141,37 +137,47 @@ export const SnapshotDetail = ({ detail, loading, error = '' }: SnapshotDetailPr
           <CardTitle>{t('detail.countries.title')}</CardTitle>
           <CardDescription>{t('detail.countries.description')}</CardDescription>
         </CardHeader>
-        <CardContent className="p-0">
-          <Table data-testid="traffic-country-table">
-            <caption className="sr-only">{t('detail.countries.title')}</caption>
-            <TableHeader>
-              <TableRow>
-                <TableHead className="text-start">{t('detail.countries.country')}</TableHead>
-                <TableHead className="text-end">
-                  <TableHeaderHelp
-                    label={t('detail.countries.visits')}
-                    description={t('common:tableHelp.estimatedTraffic')}
-                  />
-                </TableHead>
-              </TableRow>
-            </TableHeader>
-            <TableBody>
-              {payload.topCountries.map((country) => (
-                <TableRow key={country.countryCode}>
-                  <TableCell className="text-start">
-                    {countries.of(country.countryCode) ?? country.countryCode}
-                  </TableCell>
-                  <TableCell className="text-end">
-                    <span className="flex flex-col items-end gap-1">
-                      <span className="tabular-nums">{number.format(country.visits.value)}</span>
-                      <CoverageNote observation={country.visits.observation} />
-                    </span>
-                  </TableCell>
+        {/* A snapshot with no retained countries says so instead of rendering an
+            empty table shell (same pattern as the history). */}
+        {payload.topCountries.length === 0 ? (
+          <CardContent>
+            <p className="text-sm text-muted-foreground" data-testid="traffic-country-empty">
+              {t('detail.countries.empty')}
+            </p>
+          </CardContent>
+        ) : (
+          <CardContent className="p-0">
+            <Table data-testid="traffic-country-table">
+              <caption className="sr-only">{t('detail.countries.title')}</caption>
+              <TableHeader>
+                <TableRow>
+                  <TableHead className="text-start">{t('detail.countries.country')}</TableHead>
+                  <TableHead className="text-end">
+                    <TableHeaderHelp
+                      label={t('detail.countries.visits')}
+                      description={t('common:tableHelp.estimatedTraffic')}
+                    />
+                  </TableHead>
                 </TableRow>
-              ))}
-            </TableBody>
-          </Table>
-        </CardContent>
+              </TableHeader>
+              <TableBody>
+                {payload.topCountries.map((country) => (
+                  <TableRow key={country.countryCode}>
+                    <TableCell className="text-start">
+                      {countries.of(country.countryCode) ?? country.countryCode}
+                    </TableCell>
+                    <TableCell className="text-end">
+                      <span className="flex flex-col items-end gap-1">
+                        <span className="tabular-nums">{number.format(country.visits.value)}</span>
+                        <CoverageNote observation={country.visits.observation} />
+                      </span>
+                    </TableCell>
+                  </TableRow>
+                ))}
+              </TableBody>
+            </Table>
+          </CardContent>
+        )}
       </Card>
       <Card>
         <CardHeader>

@@ -1,6 +1,5 @@
 {
-  "eyebrow": "Gruppierung aus gespeicherten Beobachtungen",
-  "title": "Keyword-Clustering nach SERP-Überschneidung",
+  "title": "SERP-Überschneidungsgruppen",
   "subtitle": "Gruppieren Sie verfolgte Keywords, die auf Google dieselben Seiten zurückgeben. Jede Gruppierung wird aus bereits bezahlten Positionsprüfungen berechnet — es wird keine neue Suche ausgeführt.",
   "site": {
     "ranksLink": "Positionsverfolgung öffnen"
@@ -11,30 +10,36 @@
   },
   "scope": {
     "title": "Keywords in diesem Lauf",
-    "description": "{{count}} Keywords ausgewählt. Jedes ausgewählte Keyword benötigt ein nutzbares, aktuelles Google-Ergebnis.",
+    "description_one": "{{count}} Keyword ausgewählt. Jedes ausgewählte Keyword benötigt ein nutzbares, aktuelles Google-Ergebnis.",
     "empty": "Diese Website hat noch keine aktiven Google-Keywords.",
-    "minimum": "Wählen Sie mindestens zwei Keywords aus, bevor Sie den Lauf in der Vorschau anzeigen."
+    "minimum": "Wählen Sie mindestens zwei Keywords aus, bevor Sie den Lauf in der Vorschau anzeigen.",
+    "description_zero": "{{count}} Keywords ausgewählt. Jedes ausgewählte Keyword benötigt ein nutzbares, aktuelles Google-Ergebnis.",
+    "description_two": "{{count}} Keywords ausgewählt. Jedes ausgewählte Keyword benötigt ein nutzbares, aktuelles Google-Ergebnis.",
+    "description_few": "{{count}} Keywords ausgewählt. Jedes ausgewählte Keyword benötigt ein nutzbares, aktuelles Google-Ergebnis.",
+    "description_many": "{{count}} Keywords ausgewählt. Jedes ausgewählte Keyword benötigt ein nutzbares, aktuelles Google-Ergebnis.",
+    "description_other": "{{count}} Keywords ausgewählt. Jedes ausgewählte Keyword benötigt ein nutzbares, aktuelles Google-Ergebnis."
   },
   "newRun": {
     "title": "Clustering-Lauf vorbereiten",
-    "description": "Sehen Sie die qualifizierten Keywords und Ihr Kontingent, bevor Sie einen Lauf verbrauchen.",
+    "description": "Sehen Sie die qualifizierten Keywords, bevor der Lauf startet.",
     "storedOnly": "Clustering liest ausschließlich gespeicherte Ergebnisse. Es wird keine Suche an einen Anbieter gesendet.",
-    "unitLabel": "Kontingent",
-    "unitValue": "{{count}} Clustering-Lauf",
     "scopeLabel": "Bereite Keywords",
-    "scopeValue": "{{count}} verfolgte Keywords qualifizieren sich",
+    "scopeValue_one": "{{count}} verfolgtes Keyword qualifiziert sich",
     "method": "Zwei Keywords werden gruppiert, wenn sie mindestens {{shared}} ihrer Top-{{window}}-Ergebnisse teilen, aus einer Positionsprüfung der letzten {{days}} Tage.",
-    "remaining": "Vor diesem Lauf verbleiben {{count}} Läufe.",
     "labelingIncluded": "Optionale KI-Gruppenbezeichnungen sind in diesem Lauf enthalten und ändern niemals die Cluster-Zugehörigkeit.",
     "preview": "Lauf vorschauen",
     "previewing": "Gespeicherte Ergebnisse werden geprüft…",
     "confirm": "Clustering-Lauf starten",
     "starting": "Wird gestartet…",
-    "cancel": "Abbrechen"
+    "cancel": "Abbrechen",
+    "scopeValue_zero": "{{count}} verfolgte Keywords qualifizieren sich",
+    "scopeValue_two": "{{count}} verfolgte Keywords qualifizieren sich",
+    "scopeValue_few": "{{count}} verfolgte Keywords qualifizieren sich",
+    "scopeValue_many": "{{count}} verfolgte Keywords qualifizieren sich",
+    "scopeValue_other": "{{count}} verfolgte Keywords qualifizieren sich"
   },
   "states": {
     "ranksCta": "Positionsprüfung ausführen",
-    "planCta": "Tarife ansehen",
     "emptyRuns": {
       "title": "Noch keine gespeicherten Läufe",
       "body": "Sehen Sie sich einen neuen Lauf an, um zu erfahren, welche verfolgten Keywords sich qualifizieren."
@@ -45,11 +50,7 @@
     },
     "notEnoughKeywords": {
       "title": "Nicht genügend aktuelle Positionsprüfungen",
-      "body": "Mindestens zwei verfolgte Keywords brauchen eine Prüfung aus den letzten sieben Tagen. Es wurde kein Lauf verbraucht."
-    },
-    "cap": {
-      "title": "Monatliches Kontingent erreicht",
-      "body": "Diese Anfrage wurde nicht gestartet. Warten Sie auf die nächste Kontingentperiode oder prüfen Sie die verfügbaren Tarife."
+      "body": "Weniger als zwei verfolgte Keywords haben eine verwertbare Ranking-Prüfung aus den letzten sieben Tagen. Es wurde kein Lauf verbraucht."
     },
     "disabled": {
       "title": "Clustering-Läufe nicht verfügbar",
@@ -70,6 +71,11 @@
     "running": {
       "title": "Keywords werden gruppiert",
       "body": "Der Worker vergleicht gespeicherte Ergebnisse und benennt die Gruppen. Diese Ansicht aktualisiert sich automatisch."
+    },
+    "keywordsCta": "Keywords verfolgen",
+    "noTrackedKeywords": {
+      "title": "Verfolgen Sie zuerst Keywords",
+      "body": "Das Clustering gruppiert die Google-Keywords, die Sie für diese Website verfolgen. Fügen Sie auf dem Tab „Keywords“ Keywords hinzu, führen Sie eine Positionsprüfung aus und sehen Sie sich dann einen Lauf an."
     }
   },
   "status": {
@@ -79,20 +85,34 @@
     "failed": "Fehlgeschlagen"
   },
   "runs": {
-    "summary": "{{clusters}} Gruppen aus {{keywords}} Keywords",
+    "summary": "Gruppen: {{clusters}} · Ausgangskeywords: {{keywords}}",
     "requestedAt": "Angefordert am {{date}}",
     "open": "Lauf öffnen"
   },
   "blocked": {
-    "title": "{{count}} Keywords konnten nicht teilnehmen",
-    "body": "Diese verfolgten Keywords haben noch kein verwertbares gespeichertes Ergebnis. Führen Sie eine Positionsprüfung aus, dann qualifizieren sie sich für den nächsten Lauf.",
-    "more": "und {{count}} weitere",
+    "title_one": "{{count}} Keyword konnte nicht teilnehmen",
+    "body": "Diese verfolgten Keywords bleiben bei diesem Lauf außen vor. Führen Sie eine Ranking-Prüfung aus, dann sind sie beim nächsten Lauf dabei.",
+    "more_one": "und {{count}} weitere",
     "observedAt": "zuletzt geprüft {{date}}",
     "reason": {
       "missing": "Nie geprüft",
       "stale": "Prüfung zu alt",
-      "empty": "Keine gespeicherten Ergebnisse"
-    }
+      "empty": "Keine gespeicherten Ergebnisse",
+      "check_too_old": "Prüfung zu alt",
+      "no_serp_snapshot": "Vollständige Ergebnisseite nicht gespeichert",
+      "never_checked": "Noch nie geprüft",
+      "failed_last_check": "Letzte Prüfung fehlgeschlagen"
+    },
+    "more_zero": "und {{count}} weitere",
+    "more_two": "und {{count}} weitere",
+    "more_few": "und {{count}} weitere",
+    "more_many": "und {{count}} weitere",
+    "more_other": "und {{count}} weitere",
+    "title_zero": "{{count}} Keywords konnten nicht teilnehmen",
+    "title_two": "{{count}} Keywords konnten nicht teilnehmen",
+    "title_few": "{{count}} Keywords konnten nicht teilnehmen",
+    "title_many": "{{count}} Keywords konnten nicht teilnehmen",
+    "title_other": "{{count}} Keywords konnten nicht teilnehmen"
   },
   "results": {
     "title": "Gruppen",
@@ -110,15 +130,15 @@
   "cluster": {
     "unlabeled": "Unbenannte Gruppe",
     "aiSuggestion": "KI-Vorschlag",
-    "grouped": "{{count}} Keywords",
+    "grouped_one": "{{count}} Keyword",
     "singleton": "Nicht gruppiert",
-    "commonCore": "{{count}} Ergebnisse, die alle Keywords teilen",
+    "commonCore_one": "{{count}} Ergebnis, das alle Keywords teilen",
     "noCommonCore": "Kein einzelnes Ergebnis wird von allen Keywords dieser Gruppe geteilt",
     "showEvidence": "Überschneidung anzeigen",
     "hideEvidence": "Überschneidung ausblenden",
     "pivot": "Referenz",
-    "pivotWindow": "{{count}} gespeicherte Ergebnisse verglichen",
-    "sharedWithPivot": "{{count}} gemeinsam mit dem Referenz-Keyword",
+    "pivotWindow_one": "{{count}} gespeichertes Ergebnis verglichen",
+    "sharedWithPivot_one": "{{count}} gemeinsam mit dem Referenz-Keyword",
     "evidenceTitle": "Welche Ergebnisse sich überschneiden",
     "evidenceBody": "Jedes Keyword unten ist gruppiert, weil es diese gespeicherten Ergebnis-URLs mit dem Referenz-Keyword teilt.",
     "singletonEvidence": "Dieses Keyword teilte zu wenige Ergebnisse mit einem anderen verfolgten Keyword, um gruppiert zu werden.",
@@ -126,6 +146,52 @@
       "keyword": "Keyword",
       "observedAt": "Ergebnis beobachtet",
       "sharedUrls": "Überschneidung"
-    }
+    },
+    "sharedWithPivot_zero": "{{count}} gemeinsam mit dem Referenz-Keyword",
+    "sharedWithPivot_two": "{{count}} gemeinsam mit dem Referenz-Keyword",
+    "sharedWithPivot_few": "{{count}} gemeinsam mit dem Referenz-Keyword",
+    "sharedWithPivot_many": "{{count}} gemeinsam mit dem Referenz-Keyword",
+    "sharedWithPivot_other": "{{count}} gemeinsam mit dem Referenz-Keyword",
+    "grouped_zero": "{{count}} Keywords",
+    "grouped_two": "{{count}} Keywords",
+    "grouped_few": "{{count}} Keywords",
+    "grouped_many": "{{count}} Keywords",
+    "grouped_other": "{{count}} Keywords",
+    "commonCore_zero": "{{count}} Ergebnisse, die alle Keywords teilen",
+    "commonCore_two": "{{count}} Ergebnisse, die alle Keywords teilen",
+    "commonCore_few": "{{count}} Ergebnisse, die alle Keywords teilen",
+    "commonCore_many": "{{count}} Ergebnisse, die alle Keywords teilen",
+    "commonCore_other": "{{count}} Ergebnisse, die alle Keywords teilen",
+    "pivotWindow_zero": "{{count}} gespeicherte Ergebnisse verglichen",
+    "pivotWindow_two": "{{count}} gespeicherte Ergebnisse verglichen",
+    "pivotWindow_few": "{{count}} gespeicherte Ergebnisse verglichen",
+    "pivotWindow_many": "{{count}} gespeicherte Ergebnisse verglichen",
+    "pivotWindow_other": "{{count}} gespeicherte Ergebnisse verglichen"
+  },
+  "eligibility": {
+    "needCheck_zero": "{{count}} von {{total}} Keywords brauchen eine neue Ranking-Prüfung.",
+    "needCheck_one": "{{count}} von {{total}} Keywords braucht eine neue Ranking-Prüfung.",
+    "needCheck_two": "{{count}} von {{total}} Keywords brauchen eine neue Ranking-Prüfung.",
+    "needCheck_few": "{{count}} von {{total}} Keywords brauchen eine neue Ranking-Prüfung.",
+    "needCheck_many": "{{count}} von {{total}} Keywords brauchen eine neue Ranking-Prüfung.",
+    "needCheck_other": "{{count}} von {{total}} Keywords brauchen eine neue Ranking-Prüfung.",
+    "ready_zero": "{{count}} sind bereit.",
+    "ready_one": "{{count}} ist bereit.",
+    "ready_two": "{{count}} sind bereit.",
+    "ready_few": "{{count}} sind bereit.",
+    "ready_many": "{{count}} sind bereit.",
+    "ready_other": "{{count}} sind bereit.",
+    "minimum_zero": "Für das Clustering braucht es mindestens {{count}} bereite Keywords.",
+    "minimum_one": "Für das Clustering braucht es mindestens {{count}} bereites Keyword.",
+    "minimum_two": "Für das Clustering braucht es mindestens {{count}} bereite Keywords.",
+    "minimum_few": "Für das Clustering braucht es mindestens {{count}} bereite Keywords.",
+    "minimum_many": "Für das Clustering braucht es mindestens {{count}} bereite Keywords.",
+    "minimum_other": "Für das Clustering braucht es mindestens {{count}} bereite Keywords.",
+    "title": "Nicht genug Keywords bereit",
+    "snapshotNote": "Einige aktuelle Prüfungen haben nur die Position gespeichert, nicht die vollständige Ergebnisseite. Für das Clustering braucht es eine Ranking-Prüfung, die die vollständige Ergebnisseite speichert."
+  },
+  "crossLink": {
+    "body": "Sie möchten Themen aus recherchierten Keywords, nicht nur aus den verfolgten?",
+    "cta": "KI-Keyword-Themen öffnen"
   }
 }

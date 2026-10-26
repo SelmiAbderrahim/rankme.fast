@@ -64,11 +64,11 @@
   },
   "queued": {
     "title": "Listing check in progress",
-    "description": "The report will refresh when the stored observations are ready."
+    "description": "The report will refresh when the saved data is ready."
   },
   "run": {
     "title": "Check listing health",
-    "description": "Observe the current store listings and create a deterministic fix list.",
+    "description": "Check the current store listings and get a rule-based fix list.",
     "profile": "App profile",
     "previewing": "Checking capacity…",
     "button": "Preview run",
@@ -91,7 +91,12 @@
     "description": "Store description",
     "openListing": "Open store listing",
     "screenshotLink": "Screenshot link {{number}}",
-    "moreScreenshots": "{{count}} more screenshot links"
+    "moreScreenshots_one": "{{count}} more screenshot link",
+    "moreScreenshots_zero": "{{count}} more screenshot links",
+    "moreScreenshots_two": "{{count}} more screenshot links",
+    "moreScreenshots_few": "{{count}} more screenshot links",
+    "moreScreenshots_many": "{{count}} more screenshot links",
+    "moreScreenshots_other": "{{count}} more screenshot links"
   },
   "parity": {
     "title": "Paired-store consistency",

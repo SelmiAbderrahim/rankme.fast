@@ -1,4 +1,4 @@
-import { appVersion } from '@shared/config/version';
+import { appBuildIdentifier, appDisplayVersion } from '@shared/config/version';
 import { releaseStage } from '@shared/config/release';
 import { Link } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
@@ -7,10 +7,10 @@ import { BRAND_NAME } from '@shared/brand';
 import { isAnalyticsConfigured, writeAnalyticsChoice } from '@shared/analytics';
 import { Button } from '@shared/ui/button';
 import { Separator } from '@shared/ui/separator';
+import { TAP_TARGET_LINK } from '@shared/ui/tap-target';
 
 const AUTHED_LINKS = [
   { to: '/dashboard', labelKey: 'nav.dashboard' },
-  { to: '/logout', labelKey: 'nav.logout' },
 ];
 
 const ANON_LINKS = [
@@ -25,13 +25,17 @@ export const Footer = () => {
   const links = authenticated ? AUTHED_LINKS : ANON_LINKS;
 
   return (
-    <footer className="mt-auto border-t">
-      <div className="text-muted-foreground container mx-auto flex flex-col items-center gap-4 px-4 py-6 text-sm sm:flex-row sm:justify-between">
+    <footer className="@container mt-auto border-t">
+      {/* The footer sits beside the app sidebar, so its room depends on the
+          column width, not the viewport: container queries pick the layout.
+          Items wrap onto a second row before any of them has to break
+          mid-phrase. */}
+      <div className="text-muted-foreground container mx-auto flex flex-col items-center gap-x-6 gap-y-4 px-4 py-6 text-sm @2xl:flex-row @2xl:flex-wrap @2xl:justify-between">
         <nav>
-          <ul className="flex flex-wrap items-center gap-4">
+          <ul className="flex flex-wrap items-center justify-center gap-x-4 gap-y-2">
             {links.map((link) => (
               <li key={link.to}>
-                <Link to={link.to} className="hover:text-foreground transition-colors">
+                <Link to={link.to} className={`hover:text-foreground transition-colors ${TAP_TARGET_LINK}`}>
                   {t(link.labelKey)}
                 </Link>
               </li>
@@ -52,9 +56,9 @@ export const Footer = () => {
             ) : null}
           </ul>
         </nav>
-        <p className="text-muted-foreground" dir="ltr">{t('footer.version', { version: appVersion, stage: releaseStage() })}</p>
-        <Separator className="sm:hidden" />
-        <p>{t('footer.copyright', { year, brand: BRAND_NAME })}</p>
+        <p className="text-muted-foreground whitespace-nowrap" dir="ltr" title={appBuildIdentifier} data-testid="footer-version">{t('footer.version', { version: appDisplayVersion, stage: t(`releaseStage.stage.${releaseStage()}`) })}</p>
+        <Separator className="@2xl:hidden" />
+        <p className="text-center">{t('footer.copyright', { year, brand: BRAND_NAME })}</p>
       </div>
     </footer>
   );

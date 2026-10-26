@@ -33,6 +33,7 @@ import {
   loadSchemaSources,
   loadSchemaTypes,
   previewSchemaGenerationThunk,
+  regenerateSchemaGenerationThunk,
 } from '../store/thunks';
 import {
   selectSchemaDetail,
@@ -47,6 +48,8 @@ import {
   selectSchemaPreview,
   selectSchemaPreviewGate,
   selectSchemaPreviewStatus,
+  selectSchemaRegenerateGate,
+  selectSchemaRegenerateStatus,
   selectSchemaSiteId,
   selectSchemaSources,
   selectSchemaSourcesGate,
@@ -56,6 +59,7 @@ import {
 } from '../store/selectors';
 import { useSchemaUrlState } from '../urlState';
 import { isValidPastedPageUrl } from '../validation';
+import type { UserFacts } from '../types';
 
 export interface SchemaGeneratorPanelProps {
   siteId: string;
@@ -90,6 +94,8 @@ export const SchemaGeneratorPanel = ({ siteId }: SchemaGeneratorPanelProps) => {
   const generateStatus = useAppSelector(selectSchemaGenerateStatus);
   const generateGate = useAppSelector(selectSchemaGenerateGate);
   const form = useAppSelector(selectSchemaForm);
+  const regenerateStatus = useAppSelector(selectSchemaRegenerateStatus);
+  const regenerateGate = useAppSelector(selectSchemaRegenerateGate);
 
   useEffect(() => {
     dispatch(setSchemaSiteId(siteId));
@@ -160,6 +166,13 @@ export const SchemaGeneratorPanel = ({ siteId }: SchemaGeneratorPanelProps) => {
     }
   };
 
+  const onRegenerate = async (generationId: string, facts: UserFacts) => {
+    const result = await dispatch(regenerateSchemaGenerationThunk({ generationId, facts }));
+    if (regenerateSchemaGenerationThunk.fulfilled.match(result)) {
+      setUrl({ view: 'detail', generationId: result.payload.id });
+    }
+  };
+
   const onOpen = (generationId: string) => {
     setUrl({ view: 'detail', generationId });
   };
@@ -202,7 +215,14 @@ export const SchemaGeneratorPanel = ({ siteId }: SchemaGeneratorPanelProps) => {
           {detailGate ? (
             <StateNotice kind={detailGate.kind} message={detailGate.message} />
           ) : null}
-          {detail ? <GenerationResult detail={detail} /> : null}
+          {detail ? (
+            <GenerationResult
+              detail={detail}
+              onRegenerate={(facts) => void onRegenerate(detail.id, facts)}
+              regenerating={regenerateStatus === 'loading'}
+              regenerateError={regenerateGate?.message ?? null}
+            />
+          ) : null}
         </div>
       ) : (
         <div className="flex flex-col gap-4">

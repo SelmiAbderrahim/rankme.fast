@@ -1,5 +1,6 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
-import { render, screen, waitFor, fireEvent, act } from '@testing-library/react';
+import { cleanup, render, screen, waitFor, fireEvent, act, within } from '@testing-library/react';
+import { useState } from 'react';
 import userEvent from '@testing-library/user-event';
 import { Provider } from 'react-redux';
 import { I18nextProvider } from 'react-i18next';
@@ -26,13 +27,21 @@ import {
   MAX_KEYWORDS,
   MAX_PHRASE_LENGTH,
   buildSearchAgainUrl,
+  buildViewResultsUrl,
   difficultyBand,
   keywordResearchErrorMessage,
   apiErrorStatus,
   metricsFormSchema,
   parsePrefillParams,
 } from './index';
-import type { KeywordMetric, RelatedKeyword, ResearchHistoryItem, SearchIntent } from './types';
+import type {
+  KeywordMetric,
+  RelatedKeyword,
+  ResearchHistoryItem,
+  SearchIntent,
+  StoredResearchResult,
+} from './types';
+import { ResearchWorkspaceStateProvider } from './researchWorkspaceState';
 import {
   formatCpc,
   formatVolume,
@@ -54,6 +63,7 @@ vi.mock('./api', () => ({
     cached: false,
   }),
   fetchHistoryRequest: vi.fn().mockResolvedValue({ items: [], nextCursor: null }),
+  fetchStoredResultRequest: vi.fn(),
 }));
 vi.mock('@features/ranks/api', () => ({
   fetchKeywordsRequest: vi.fn(),
@@ -158,6 +168,8 @@ const withProviders = (ui: React.ReactNode, store = makeStore()) =>
   );
 
 beforeEach(() => {
+  // The market picker remembers the last market used; start every test clean.
+  window.localStorage.clear();
   mockedRanks.fetchKeywordsRequest.mockReset();
   mockedRanks.fetchKeywordsRequest.mockResolvedValue(trackedKeywordPage());
   initI18n({ initialLocale: 'en' });
@@ -658,6 +670,7 @@ const historyItem = (overrides: Partial<ResearchHistoryItem> = {}): ResearchHist
   languageCode: 'en',
   resultCount: 3,
   cached: false,
+  lookupId: null,
   createdAt: '2026-07-10T00:00:00.000Z',
   ...overrides,
 });
@@ -831,15 +844,18 @@ describe('KeywordResearchPanel — recent research', () => {
   });
 
   it('refreshes Recent research after a lookup without a page reload (issue #13)', async () => {
+    const refreshed = {
+      items: [
+        historyItem({ id: 'h-new-metrics', phrases: ['trading bot', 'crypto trading bot'] }),
+        historyItem({ id: 'h-new-intent', kind: 'intent', phrases: ['trading bot', 'crypto trading bot'] }),
+      ],
+      nextCursor: null,
+    };
+    // The first load, then one refresh per settled lookup (metrics + intent).
     mocked.fetchHistoryRequest
       .mockResolvedValueOnce({ items: [], nextCursor: null })
-      .mockResolvedValueOnce({
-        items: [
-          historyItem({ id: 'h-new-metrics', phrases: ['trading bot', 'crypto trading bot'] }),
-          historyItem({ id: 'h-new-intent', kind: 'intent', phrases: ['trading bot', 'crypto trading bot'] }),
-        ],
-        nextCursor: null,
-      });
+      .mockResolvedValueOnce(refreshed)
+      .mockResolvedValueOnce(refreshed);
     mocked.fetchMetricsRequest.mockResolvedValueOnce({ keywords: [metric()] });
     withProviders(<KeywordResearchPage siteId="s1" />);
     await screen.findByTestId('keyword-research-recent-empty');
@@ -849,10 +865,13 @@ describe('KeywordResearchPanel — recent research', () => {
     await user.click(screen.getByTestId('keyword-research-submit'));
 
     await screen.findByTestId('keyword-research-table');
-    expect(await screen.findByTestId('keyword-research-recent-row-h-new-metrics')).toBeInTheDocument();
-    expect(screen.getByTestId('keyword-research-recent-row-h-new-intent')).toBeInTheDocument();
-    // One refresh after both lookups (metrics + intent) settle.
-    expect(mocked.fetchHistoryRequest).toHaveBeenCalledTimes(2);
+    // The metrics + intent records of one press show as ONE lookup row.
+    const row = await screen.findByTestId('keyword-research-recent-row-h-new-metrics');
+    expect(row).toHaveTextContent('Metrics');
+    expect(row).toHaveTextContent('Intent');
+    expect(screen.queryByTestId('keyword-research-recent-row-h-new-intent')).toBeNull();
+    // The refresh stays on the site's own list.
+    expect(mocked.fetchHistoryRequest).toHaveBeenLastCalledWith({ siteId: 's1' });
   });
 
   it('does not re-read Recent research when every lookup of a submit fails', async () => {
@@ -976,6 +995,7 @@ describe('KeywordResearchPanel — recent research', () => {
       seed: 'seo, audit',
       locationCode: 2276,
       languageCode: 'de',
+      siteId: 's1',
     });
     expect(mocked.fetchMetricsRequest).not.toHaveBeenCalled();
   });
@@ -1453,6 +1473,10 @@ describe('prefill (?q=&location=&lang=)', () => {
     expect(parsePrefillParams(new URLSearchParams(`q=${many}`)).chips).toHaveLength(MAX_KEYWORDS);
   });
 
+  it('buildViewResultsUrl opens the saved results of one history row', () => {
+    expect(buildViewResultsUrl('row 1')).toBe('/keyword-research?stored=row%201');
+  });
+
   it('buildSearchAgainUrl tolerates a long-tail entry without a stored seed', () => {
     const url = buildSearchAgainUrl(historyItem({ kind: 'long_tail', phrases: [] }));
     expect(new URLSearchParams(url.split('?')[1]).get('seed')).toBe('');
@@ -1467,6 +1491,7 @@ describe('prefill (?q=&location=&lang=)', () => {
       languageCode: 'de',
       resultCount: 2,
       cached: true,
+      lookupId: null,
       createdAt: '2026-07-01T00:00:00.000Z',
     };
     const url = buildSearchAgainUrl(item);
@@ -1688,5 +1713,253 @@ describe('KeywordResearchPanel — renders before the lazy slice materializes', 
     });
     withProviders(<KeywordResearchPanel siteId="s1" />, bareStore as never);
     expect(await screen.findByTestId('keyword-research-panel')).toBeInTheDocument();
+  });
+});
+
+const STORED_ID = '3f2b8c1e-5d4a-4c6b-9e7f-1a2b3c4d5e6f';
+
+const storedResult = (overrides: Partial<StoredResearchResult> = {}): StoredResearchResult => ({
+  id: STORED_ID,
+  kind: 'metrics',
+  lookupId: null,
+  phrases: ['seo audit tool'],
+  locationCode: 2276,
+  languageCode: 'de',
+  status: 'available',
+  requestedCount: 1,
+  storedCount: 1,
+  seed: null,
+  keywords: [
+    {
+      keyword: 'seo audit tool',
+      searchVolume: 5400,
+      difficulty: 62,
+      cpc: '4.120000',
+      monthlySearches: [],
+      intent: 'commercial',
+      confidence: 0.9,
+      cached: true,
+      fetchedAt: '2026-07-01T00:00:00.000Z',
+      expiresAt: '2026-07-31T00:00:00.000Z',
+    },
+  ],
+  items: [],
+  fetchedAt: '2026-07-01T00:00:00.000Z',
+  expiresAt: '2026-07-31T00:00:00.000Z',
+  ...overrides,
+});
+
+const Probe = () => {
+  const location = useLocation();
+  return <div data-testid="probe">{location.pathname + location.search}</div>;
+};
+
+const withEntry = (entry: string, ui: React.ReactNode, store = makeStore()) =>
+  render(
+    <Provider store={store}>
+      <I18nextProvider i18n={i18n}>
+        <MemoryRouter initialEntries={[entry]}>
+          {ui}
+          <Probe />
+        </MemoryRouter>
+      </I18nextProvider>
+    </Provider>,
+  );
+
+describe('KeywordResearchPanel — site scope and lookup ids', () => {
+  it('sends the site and ONE shared lookup id on the metrics and intent calls', async () => {
+    mocked.fetchMetricsRequest.mockResolvedValueOnce({ keywords: [metric()] });
+    withProviders(<KeywordResearchPage siteId="s1" />);
+    await screen.findByTestId('keyword-research-recent-empty');
+    expect(mocked.fetchHistoryRequest).toHaveBeenCalledWith({ siteId: 's1' });
+    expect(screen.getByTestId('keyword-research-recent-empty')).toHaveTextContent(
+      'No research for this site yet',
+    );
+    const user = userEvent.setup();
+    await user.type(screen.getByTestId('keyword-research-input'), 'seo audit tool{enter}');
+    await user.click(screen.getByTestId('keyword-research-submit'));
+    await screen.findByTestId('keyword-research-table');
+    const metricsBody = mocked.fetchMetricsRequest.mock.calls[0]![0];
+    const intentBody = mocked.fetchIntentRequest.mock.calls[0]![0];
+    expect(metricsBody.siteId).toBe('s1');
+    expect(metricsBody.lookupId).toMatch(/^[0-9a-f-]{36}$/);
+    expect(intentBody).toMatchObject({ siteId: 's1', lookupId: metricsBody.lookupId });
+  });
+
+  it('keeps the standalone page account-wide and attributes nothing to a site', async () => {
+    mocked.fetchMetricsRequest.mockResolvedValueOnce({ keywords: [metric()] });
+    withProviders(<KeywordResearchPage />);
+    await screen.findByTestId('keyword-research-recent-empty');
+    expect(mocked.fetchHistoryRequest).toHaveBeenCalledWith({});
+    const user = userEvent.setup();
+    await user.type(screen.getByTestId('keyword-research-input'), 'seo audit tool{enter}');
+    await user.click(screen.getByTestId('keyword-research-submit'));
+    await screen.findByTestId('keyword-research-table');
+    expect(mocked.fetchMetricsRequest.mock.calls[0]![0]).not.toHaveProperty('siteId');
+  });
+
+  it("never shows another scope's rows while the site list is loading", async () => {
+    const store = makeStore();
+    mocked.fetchHistoryRequest.mockResolvedValueOnce({
+      items: [historyItem({ id: 'account-row', phrases: ['account wide'] })],
+      nextCursor: null,
+    });
+    await store.dispatch(
+      (await import('./store/thunks')).loadHistory({}),
+    );
+    mocked.fetchHistoryRequest.mockResolvedValueOnce({ items: [], nextCursor: null });
+    withProviders(<KeywordResearchPanel siteId="s1" />, store);
+    expect(screen.queryByTestId('keyword-research-recent-row-account-row')).toBeNull();
+    await screen.findByTestId('keyword-research-recent');
+  });
+});
+
+describe('KeywordResearchPanel — saved results', () => {
+  it('opens a saved lookup from ?stored= without a lookup call, fills the form, and hides paid row actions', async () => {
+    mocked.fetchStoredResultRequest.mockResolvedValueOnce(storedResult());
+    withEntry(`/?stored=${STORED_ID}`, <KeywordResearchPanel siteId="s1" />);
+    await screen.findByTestId('keyword-research-stored');
+    expect(mocked.fetchStoredResultRequest).toHaveBeenCalledWith(STORED_ID);
+    expect(screen.getByTestId('keyword-research-stored-date')).toHaveTextContent('Saved');
+    expect(screen.getByTestId('keyword-research-stored')).toHaveTextContent(
+      'Nothing was looked up again',
+    );
+    expect(mocked.fetchMetricsRequest).not.toHaveBeenCalled();
+    const table = within(screen.getByTestId('keyword-research-stored')).getByTestId('keyword-research-table');
+    expect(within(table).queryByRole('button', { name: /related/i })).toBeNull();
+    const user = userEvent.setup();
+    await user.click(within(table).getByTestId('keyword-research-row-menu-seo-audit-tool'));
+    expect(await screen.findByTestId('keyword-research-copy-seo-audit-tool')).toBeInTheDocument();
+    expect(screen.queryByTestId('keyword-research-ideas-seo-audit-tool')).toBeNull();
+    // The form mirrors the opened lookup.
+    expect(screen.getByTestId('keyword-research-chip-seo-audit-tool')).toBeInTheDocument();
+  });
+
+  it('says plainly when only part of a lookup is still stored', async () => {
+    mocked.fetchStoredResultRequest.mockResolvedValueOnce(
+      storedResult({ status: 'partial', requestedCount: 3, storedCount: 1 }),
+    );
+    withEntry(`/?stored=${STORED_ID}`, <KeywordResearchPanel siteId={null} />);
+    expect(await screen.findByTestId('keyword-research-stored-partial')).toHaveTextContent('1 of 3');
+  });
+
+  it('shows saved related, ideas or long-tail suggestions as a list', async () => {
+    mocked.fetchStoredResultRequest.mockResolvedValueOnce(
+      storedResult({ kind: 'related', seed: 'seo', keywords: [], items: [relatedRow()] }),
+    );
+    withEntry(`/?stored=${STORED_ID}`, <KeywordResearchPanel siteId={null} />);
+    expect(await screen.findByTestId('keyword-research-stored-list')).toHaveTextContent(
+      'free seo audit tool',
+    );
+  });
+
+  it('offers a fresh search when the saved results have expired, and leaves the saved view', async () => {
+    mocked.fetchStoredResultRequest.mockResolvedValueOnce(
+      storedResult({ status: 'expired', keywords: [], fetchedAt: null, expiresAt: null }),
+    );
+    mocked.fetchMetricsRequest.mockResolvedValueOnce({ keywords: [metric()] });
+    withEntry(`/?stored=${STORED_ID}`, <KeywordResearchPanel siteId="s1" />);
+    expect(await screen.findByTestId('keyword-research-stored-unavailable')).toHaveTextContent(
+      'no longer available',
+    );
+    const user = userEvent.setup();
+    await user.click(screen.getByTestId('keyword-research-stored-search-again'));
+    await waitFor(() =>
+      expect(mocked.fetchMetricsRequest).toHaveBeenCalledWith(
+        expect.objectContaining({
+          keywords: ['seo audit tool'],
+          locationCode: 2276,
+          languageCode: 'de',
+          siteId: 's1',
+        }),
+      ),
+    );
+    await waitFor(() => expect(screen.getByTestId('probe')).toHaveTextContent(/^\/$/));
+    expect(screen.queryByTestId('keyword-research-stored')).toBeNull();
+  });
+
+  it('explains a kind without a saved view and does not offer a re-run', async () => {
+    mocked.fetchStoredResultRequest.mockResolvedValueOnce(
+      storedResult({ kind: 'gap', status: 'unsupported', keywords: [], fetchedAt: null, expiresAt: null }),
+    );
+    withEntry(`/?stored=${STORED_ID}`, <KeywordResearchPanel siteId={null} />);
+    expect(await screen.findByTestId('keyword-research-stored-unavailable')).toHaveTextContent(
+      'no stored view',
+    );
+    expect(screen.queryByTestId('keyword-research-stored-search-again')).toBeNull();
+  });
+
+  it('shows a load failure and closes back to the plain page', async () => {
+    mocked.fetchStoredResultRequest.mockRejectedValueOnce(new ApiError('missing', 404, {}));
+    withEntry(`/?stored=${STORED_ID}`, <KeywordResearchPanel siteId={null} />);
+    expect(await screen.findByTestId('keyword-research-stored-error')).toBeInTheDocument();
+    const user = userEvent.setup();
+    await user.click(screen.getByTestId('keyword-research-stored-close'));
+    await waitFor(() => expect(screen.queryByTestId('keyword-research-stored')).toBeNull());
+    expect(screen.getByTestId('probe')).toHaveTextContent(/^\/$/);
+  });
+
+  it('opens the saved results of a Recent research row through the URL', async () => {
+    mocked.fetchHistoryRequest.mockResolvedValueOnce({
+      items: [historyItem({ id: STORED_ID })],
+      nextCursor: null,
+    });
+    mocked.fetchStoredResultRequest.mockResolvedValueOnce(storedResult());
+    withEntry('/', <KeywordResearchPage />);
+    const user = userEvent.setup();
+    await user.click(await screen.findByTestId(`keyword-research-recent-view-${STORED_ID}`));
+    await screen.findByTestId('keyword-research-stored');
+    expect(screen.getByTestId('probe')).toHaveTextContent(`stored=${STORED_ID}`);
+  });
+
+  it('a new search, ideas or long-tail request leaves the saved view', async () => {
+    mocked.fetchStoredResultRequest.mockResolvedValue(storedResult());
+    mocked.fetchIdeasRequest.mockResolvedValueOnce({ seed: 'seo audit tool', ideas: [relatedRow()], cached: false });
+    mocked.fetchLongTailRequest.mockResolvedValueOnce({ seed: 'seo audit tool', suggestions: [relatedRow()], cached: false });
+    mocked.fetchMetricsRequest.mockResolvedValueOnce({ keywords: [metric()] });
+    const user = userEvent.setup();
+    withEntry(`/?stored=${STORED_ID}`, <KeywordResearchPanel siteId={null} />);
+    await screen.findByTestId('keyword-research-stored');
+    await user.click(screen.getByTestId('keyword-research-get-ideas'));
+    await waitFor(() => expect(screen.getByTestId('probe')).toHaveTextContent(/^\/$/));
+    await screen.findByTestId('keyword-research-ideas');
+    mocked.fetchStoredResultRequest.mockResolvedValue(storedResult());
+    cleanup();
+    withEntry(`/?stored=${STORED_ID}`, <KeywordResearchPanel siteId={null} />);
+    await screen.findByTestId('keyword-research-stored');
+    await user.click(screen.getByTestId('keyword-research-find-long-tail'));
+    await waitFor(() => expect(screen.getByTestId('probe')).toHaveTextContent(/^\/$/));
+    cleanup();
+    withEntry(`/?stored=${STORED_ID}`, <KeywordResearchPanel siteId={null} />);
+    await screen.findByTestId('keyword-research-stored');
+    await user.click(screen.getByTestId('keyword-research-submit'));
+    await waitFor(() => expect(mocked.fetchMetricsRequest).toHaveBeenCalled());
+    await waitFor(() => expect(screen.getByTestId('probe')).toHaveTextContent(/^\/$/));
+  });
+});
+
+describe('ResearchWorkspaceStateProvider', () => {
+  it('keeps the keyword chips while the panel is unmounted and mounted again', async () => {
+    const user = userEvent.setup();
+    const Harness = () => {
+      const [shown, setShown] = useState(true);
+      return (
+        <ResearchWorkspaceStateProvider initialChips={['first']}>
+          <button type="button" onClick={() => setShown((value) => !value)}>
+            toggle
+          </button>
+          {shown ? <KeywordResearchPanel siteId={null} /> : null}
+        </ResearchWorkspaceStateProvider>
+      );
+    };
+    withProviders(<Harness />);
+    await screen.findByTestId('keyword-research-chip-first');
+    await user.type(screen.getByTestId('keyword-research-input'), 'second{enter}');
+    await screen.findByTestId('keyword-research-chip-second');
+    await user.click(screen.getByRole('button', { name: 'toggle' }));
+    await waitFor(() => expect(screen.queryByTestId('keyword-research-panel')).toBeNull());
+    await user.click(screen.getByRole('button', { name: 'toggle' }));
+    expect(await screen.findByTestId('keyword-research-chip-second')).toBeInTheDocument();
+    expect(screen.getByTestId('keyword-research-chip-first')).toBeInTheDocument();
   });
 });

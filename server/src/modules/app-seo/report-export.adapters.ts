@@ -9,7 +9,7 @@ import { listAppProfiles } from './app-seo.service.js';
 import { getAppKeywordHistory, listAppKeywords } from './keywords.service.js';
 import { readLatestAppResearch } from './research.service.js';
 const keywordSelectionSchema = z.object({
-    keywordIds: z.array(z.string().uuid()).max(250).optional(),
+    keywordIds: z.array(z.string().guid()).max(250).optional(),
     historyLimit: z.number().int().min(1).max(104).default(104),
 }).strict();
 type KeywordSelection = z.infer<typeof keywordSelectionSchema>;

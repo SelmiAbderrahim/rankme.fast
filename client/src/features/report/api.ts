@@ -6,6 +6,9 @@ import {
 } from '@shared/api/client';
 import type {
   AuditReport,
+  FindingRecheck,
+  FindingRecheckPreview,
+  FindingUrls,
   AuditSummaryState,
   AuditRunListPage,
   PublicAuditRun,
@@ -32,6 +35,40 @@ export const fetchReportRequest = (
   init?: PresentationReadInit,
 ): Promise<AuditReport> =>
   apiClient<AuditReport>(`/audits/${runId}/report`, presentationReadOptions(init));
+
+/** The full affected-URL, broken-link and per-URL diff lists of one finding. */
+export const fetchFindingUrlsRequest = (runId: string, ruleId: string): Promise<FindingUrls> =>
+  apiClient<FindingUrls>(`/audits/${encodeURIComponent(runId)}/findings/${encodeURIComponent(ruleId)}/urls`);
+
+/** What a re-check of a dismissed finding would request (read-only, free). */
+export const fetchFindingRecheckPreviewRequest = (
+  runId: string,
+  ruleId: string,
+): Promise<FindingRecheckPreview> =>
+  apiClient<FindingRecheckPreview>(
+    `/audits/${encodeURIComponent(runId)}/findings/${encodeURIComponent(ruleId)}/recheck`,
+  );
+
+/** Requests the URLs of a dismissed finding again and stores what each answers. */
+export const runFindingRecheckRequest = (
+  runId: string,
+  ruleId: string,
+): Promise<{ recheck: FindingRecheck }> =>
+  apiClient<{ recheck: FindingRecheck }>(
+    `/audits/${encodeURIComponent(runId)}/findings/${encodeURIComponent(ruleId)}/recheck`,
+    { method: 'POST' },
+  );
+
+/**
+ * The owner says the site is a local business, which turns its Local SEO
+ * checks back into ordinary checks. The site route answers 404 for a site the
+ * caller does not own.
+ */
+export const markLocalBusinessRequest = (siteId: string): Promise<unknown> =>
+  apiClient<unknown>(`/sites/${encodeURIComponent(siteId)}`, {
+    method: 'PATCH',
+    body: { localBusiness: true },
+  });
 
 export const fetchLatestRunRequest = (
   siteId: string,
@@ -70,10 +107,11 @@ export const fetchRunRequest = (
 export const startAuditRequest = (
   siteId: string,
   requestedPageCap?: number,
+  resourceScan = true,
 ): Promise<StartAuditResponse> =>
   apiClient<StartAuditResponse>(`/sites/${siteId}/audits`, {
     method: 'POST',
-    body: requestedPageCap === undefined ? {} : { requestedPageCap },
+    body: { ...(requestedPageCap === undefined ? {} : { requestedPageCap }), resourceScan },
   });
 
 /**

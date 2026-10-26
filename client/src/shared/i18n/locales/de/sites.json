@@ -48,6 +48,7 @@
   "pauseFailed": "Die Website konnte nicht pausiert werden.",
   "resumeFailed": "Die Website konnte nicht fortgesetzt werden.",
   "paused": {
+    "actionBlocked": "Aktivieren Sie diese Website wieder, um Prüfungen, Audits oder geplante Aufgaben auszuführen.",
     "chip": "Pausiert",
     "menuPause": "Website pausieren",
     "menuResume": "Website fortsetzen",
@@ -59,15 +60,17 @@
     "banner": "Diese Website ist pausiert — keine Prüfungen oder Audits laufen. Pausiert {{when}}.",
     "resumeCta": "Fortsetzen",
     "pausing": "Wird pausiert…",
-    "resuming": "Wird fortgesetzt…"
+    "resuming": "Wird fortgesetzt…",
+    "optionSuffix": "pausiert",
+    "help": "Pausiert: Audits, Positionsprüfungen, wöchentliche Berichte, Inhaltsüberwachung und Warnungen sind aus. Berichte und Verlauf bleiben lesbar. Mit „Fortsetzen“ laufen sie wieder."
   },
   "errors": {
-    "urlRequired": "Geben Sie die URL Ihrer Website ein.",
-    "urlTooLong": "Diese URL ist zu lang (maximal 2048 Zeichen).",
+    "urlRequired": "Geben Sie die URL Ihrer Website ein, z. B. https://example.com.",
+    "urlTooLong": "Geben Sie eine URL mit höchstens 2.048 Zeichen ein.",
     "urlInvalid": "Geben Sie eine gültige URL ein, z. B. https://example.com.",
-    "urlScheme": "Nur http://- und https://-URLs werden unterstützt.",
+    "urlScheme": "Geben Sie eine URL ein, die mit http:// oder https:// beginnt.",
     "urlUserinfo": "Entfernen Sie Benutzername und Passwort aus der URL.",
-    "urlIpLiteral": "IP-Adressen werden nicht unterstützt — verwenden Sie einen Domainnamen.",
+    "urlIpLiteral": "Geben Sie einen Domainnamen ein, keine IP-Adresse.",
     "urlNoTld": "Geben Sie einen vollständigen Domainnamen ein, z. B. https://example.com."
   },
   "workspace": {
@@ -88,7 +91,7 @@
       "localSeo": "Lokale SEO",
       "reviews": "Bewertungen",
       "geogrid": "Geogrid",
-      "content": "Inhalt",
+      "content": "Content-Analysen",
       "internalLinks": "Interne Links",
       "cannibalization": "Keyword-Kannibalisierung",
       "audienceResearch": "Zielgruppen-Recherche",
@@ -103,7 +106,32 @@
     },
     "navigationLabel": "Arbeitsbereichsansicht",
     "activeGroupLabel": "{{group}} · {{current}}",
-    "upgradeHint": "Upgraden Sie Ihren Plan, um diesen Tab freizuschalten."
+    "switchSite": "Website wechseln",
+    "loadingSite": "Website wird geladen…",
+    "filterSites": "Websites filtern…",
+    "filterPages": "Seiten filtern…",
+    "choosePage": "Seite auswählen",
+    "choosePageDescription": "Eine Seite dieser Website öffnen.",
+    "siblingPages": "Seiten in diesem Bereich",
+    "noSites": "Keine Websites gefunden",
+    "navLandmark": "Website",
+    "switchSiteNamed": "Website wechseln · {{site}}",
+    "currentSite": "Aktuelle Website",
+    "recentSites": "Zuletzt geöffnet",
+    "allSites": "Alle Websites",
+    "noSitesMatch": "Keine Website passt zu „{{query}}“",
+    "addSite": "Website hinzufügen",
+    "manageSites": "Websites verwalten",
+    "collapseSiteMenu": "Website-Menü einklappen",
+    "expandSiteMenu": "Website-Menü ausklappen",
+    "filterPagesShort": "Seiten filtern",
+    "clearFilter": "Filter löschen",
+    "noPagesMatch": "Keine Seite passt zu „{{query}}“",
+    "unknownTab": {
+      "title": "Diesen Bereich gibt es nicht",
+      "body": "Dieser Bereich ist in diesem Arbeitsbereich nicht verfügbar, deshalb wird stattdessen die Übersicht angezeigt."
+    },
+    "unknownSite": "Unbekannte Website"
   },
   "overview": {
     "next": {
@@ -124,9 +152,10 @@
     },
     "search": {
       "title": "Suchleistung",
-      "description": "Aus dem Search-Console-Snapshot des letzten Audits.",
+      "description": "Ihre neuesten Google-Search-Console-Daten der letzten 28 Tage.",
       "topQuery": "Top-Suchanfrage",
-      "openGoogle": "Google-Daten öffnen"
+      "openGoogle": "Google-Daten öffnen",
+      "asOf": "Daten bis {{date}}"
     },
     "pageSpeed": {
       "title": "Website-Erlebnis",
@@ -134,6 +163,8 @@
       "accessibility": "Barrierefreiheit",
       "seo": "SEO",
       "coreWebVitals": "Core Web Vitals",
+      "coreWebVitalsSource": "Daten echter Besucher: das schlechteste Ergebnis der geprüften Seiten.",
+      "coreWebVitalsNoFieldData": "Google hat für die geprüften Seiten noch keine Daten echter Besucher.",
       "noAuditTitle": "Noch keine Geschwindigkeitsergebnisse",
       "noAuditBody": "Starten Sie Ihren ersten Audit, um mobile PageSpeed-Ergebnisse zu sehen.",
       "notMeasuredTitle": "Seitengeschwindigkeit nicht gemessen",
@@ -154,13 +185,12 @@
     "competitors": {
       "open": "Wettbewerber öffnen",
       "notLoadedTitle": "Wettbewerbsdaten sind bei Bedarf verfügbar",
-      "notLoadedDescription": "Öffnen Sie Wettbewerber, um eine Abfrage auszuführen. Die Übersicht verwendet das Ergebnis erneut, ohne eine weitere Abfrage zu verbrauchen."
+      "notLoadedDescription": "Fügen Sie Wettbewerber hinzu, die Sie bereits kennen, oder sehen Sie sich auf der Seite „Wettbewerber“ eine Vorschau der Erkennungsaktualisierung an. Es wird erst etwas abgerufen, wenn Sie die Aktualisierung bestätigen."
     },
     "unlock": {
       "title": "Weitere Einblicke sind verfügbar",
       "backlinksAndCompetitors": "Upgraden Sie für Backlink-Stärke und Wettbewerbsüberschneidungen.",
-      "competitors": "Upgraden Sie auf Agency für Wettbewerbsüberschneidungen und Keyword-Lücken.",
-      "openPlans": "Tarife vergleichen"
+      "competitors": "Upgraden Sie auf Agency für Wettbewerbsüberschneidungen und Keyword-Lücken."
     },
     "statError": "Konnte nicht geladen werden",
     "meta": {
@@ -205,5 +235,40 @@
   "lookupFailed": {
     "title": "Diese Website konnte nicht geladen werden",
     "description": "Wir konnten diese Website gerade nicht prüfen. Versuchen Sie es gleich noch einmal."
-  }
+  },
+  "picker": {
+    "loading": "Ihre Websites werden geladen…",
+    "loadFailed": "Ihre Websites konnten nicht geladen werden.",
+    "empty": "Sie haben noch keine Websites.",
+    "addSite": "Website hinzufügen",
+    "truncated": "Hier werden nur Ihre ersten {{shown, number}} Websites aufgeführt."
+  },
+  "market": {
+    "menuItem": "Standardmarkt",
+    "title": "Standardmarkt",
+    "description": "Ranking-Tracking, Keyword-Recherche und die anderen Tools starten mit diesem Land, dieser Sprache und diesem Gerät. In jedem Tool können Sie weiterhin einen anderen Markt wählen. Website:",
+    "inferredNote": "Wir haben ihn aus Adresse und Sprache der Website abgeleitet. Ändern Sie ihn, falls er nicht stimmt.",
+    "country": "Land",
+    "language": "Sprache",
+    "device": "Gerät",
+    "devices": {
+      "desktop": "Desktop",
+      "mobile": "Mobil"
+    },
+    "save": "Markt speichern",
+    "saving": "Wird gespeichert…",
+    "cancel": "Abbrechen",
+    "saveFailed": "Der Standardmarkt konnte nicht gespeichert werden. Versuchen Sie es erneut."
+  },
+  "list": {
+    "columnLastAudit": "Letztes Audit",
+    "columnHealth": "Zustand",
+    "columnKeywords": "Keywords",
+    "noAudit": "Noch kein Audit",
+    "auditStatus": {
+      "failed": "Audit fehlgeschlagen",
+      "unavailable": "Audit nicht verfügbar"
+    }
+  },
+  "openTabHint": "Wählen Sie eine Website, um den Bereich {{tab}} zu öffnen."
 }

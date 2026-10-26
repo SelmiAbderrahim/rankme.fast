@@ -11,6 +11,12 @@ order: 5
 
 Si tus clientes te encuentran buscando un lugar («fontanero cerca de mí», «cafetería en el centro»), la mayor parte de ese tráfico viene de los resultados del mapa y de las fichas de empresa, no de los enlaces azules habituales. El posicionamiento local sigue las tres cosas que deciden si apareces ahí. Está disponible en **Pro** y **Agency**.
 
+## Elige primero tu negocio
+
+SEO local informa sobre un solo negocio: el que elijas para el sitio. Abre la pestaña **SEO local** del sitio y busca por nombre del negocio, dirección o ID de lugar de Google. Cada resultado muestra el nombre y la dirección, así que es fácil distinguir dos sucursales con el mismo nombre. Elige la tuya y pulsa **Usar este negocio**. Hasta entonces, la actualización permanece desactivada. Cada búsqueda consulta una vez a tu proveedor de fichas locales, y guardar el negocio elegido es gratis.
+
+Para cambiarlo más adelante, elige **Cambiar de negocio** y busca de nuevo. Tu negocio actual se mantiene hasta que guardes uno nuevo. Los datos actualizados antes de elegir un negocio se marcan como datos anteriores obtenidos a través de tu sitio web.
+
 ## Exactitud de la ficha
 
 Los buscadores confían en un negocio cuyos datos coinciden en todos los sitios donde aparecen. RankMeFast comprueba que **el nombre, la dirección y el número de teléfono** de tu negocio sean iguales en todas las fichas que podemos ver. Una discrepancia, como una dirección antigua, un segundo número o un nombre abreviado, puede hacerte bajar en los resultados locales sin que te des cuenta. Señalamos cada una para que la corrijas donde está publicada.

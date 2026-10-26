@@ -21,6 +21,7 @@ import { useBrandRadarUrlState } from '../urlState';
 import { NewScanForm } from './NewScanForm';
 import { ScanDetailPanel } from './ScanDetailPanel';
 import { ScanListTable } from './ScanListTable';
+import { PageHeading } from '@shared/components/PageHeader';
 
 /**
  * Poll cadence while a scan is `queued`/`running`. The shipped
@@ -99,7 +100,7 @@ export const BrandRadarPage = ({ siteId }: BrandRadarPageProps) => {
     >
       <div className="flex flex-wrap items-start justify-between gap-4">
         <div className="flex flex-col gap-1">
-          <h1 className="text-2xl font-semibold tracking-tight">{t('title')}</h1>
+          <PageHeading className="text-2xl font-semibold tracking-tight">{t('title')}</PageHeading>
           <p className="text-muted-foreground text-sm">{t('description')}</p>
         </div>
         <DocsLink slug="brand-radar" className="text-muted-foreground hover:text-foreground shrink-0 text-xs underline underline-offset-2" />

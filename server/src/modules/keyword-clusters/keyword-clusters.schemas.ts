@@ -22,13 +22,24 @@ export const KEYWORD_CLUSTER_AI_STATUSES = [
     'skipped',
 ] as const;
 export type KeywordClusterAiStatus = (typeof KEYWORD_CLUSTER_AI_STATUSES)[number];
-/** Why a tracked keyword could not take part. Never silently dropped. */
+/**
+ * Why a tracked keyword could not take part. Never silently dropped. Reasons
+ * come from `evaluateClusterEligibility`.
+ */
 export const KEYWORD_CLUSTER_BLOCK_REASONS = [
-    'missing',
-    'stale',
-    'empty',
+    'check_too_old',
+    'no_serp_snapshot',
+    'never_checked',
+    'failed_last_check',
 ] as const;
 export type KeywordClusterBlockReason = (typeof KEYWORD_CLUSTER_BLOCK_REASONS)[number];
+/** Reasons written by the earlier readiness check; still readable on stored runs. */
+export const KEYWORD_CLUSTER_LEGACY_BLOCK_REASONS = ['missing', 'stale', 'empty'] as const;
+export const KEYWORD_CLUSTER_STORED_BLOCK_REASONS = [
+    ...KEYWORD_CLUSTER_BLOCK_REASONS,
+    ...KEYWORD_CLUSTER_LEGACY_BLOCK_REASONS,
+] as const;
+export type KeywordClusterStoredBlockReason = (typeof KEYWORD_CLUSTER_STORED_BLOCK_REASONS)[number];
 export const KEYWORD_CLUSTER_ERROR_CATEGORIES = [
     'queue_failed',
     'processing_failed',
@@ -63,7 +74,7 @@ export const KEYWORD_CLUSTER_MAX_URL_LENGTH = 2048;
 const objectIdSchema = z
     .string()
     .regex(/^[0-9a-fA-F]{24}$/, 'validation.issue.invalidString');
-const uuidSchema = z.string().uuid();
+const uuidSchema = z.string().guid();
 export const keywordClusterSiteParamsSchema = z
     .object({ siteId: objectIdSchema })
     .strict();
@@ -80,7 +91,7 @@ export const keywordClusterStartBodySchema = z
     locale: z.enum(SUPPORTED_LOCALES).default('en'),
 })
     .strict()
-    .default({});
+    .prefault({});
 export const keywordClusterListQuerySchema = z
     .object({ limit: z.coerce.number().int().min(1).max(50).default(20) })
     .strict();
@@ -165,7 +176,7 @@ export const keywordClusterBlockedSchema = z
     .object({
     keywordId: uuidSchema,
     phrase: z.string().min(1).max(KEYWORD_CLUSTER_MAX_PHRASE_LENGTH),
-    reason: z.enum(KEYWORD_CLUSTER_BLOCK_REASONS),
+    reason: z.enum(KEYWORD_CLUSTER_STORED_BLOCK_REASONS),
     observedAt: z.string().datetime().nullable(),
 })
     .strict();

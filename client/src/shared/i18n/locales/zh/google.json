@@ -38,8 +38,13 @@
   "revoke": {
     "cta": "在所有网站撤销 Google 访问权限",
     "confirmTitle": "撤销共享的 Google 连接？",
-    "confirmBody": "这会撤销 Google 访问权限，并取消所有 {{count}} 个已连接网站的关联。此操作无法仅限当前网站。",
-    "confirm": "全部撤销"
+    "confirmBody_one": "这会撤销 Google 访问权限，并取消所有 {{count}} 个已连接网站的关联。此操作无法仅限当前网站。",
+    "confirm": "全部撤销",
+    "confirmBody_zero": "这会撤销 Google 访问权限，并取消所有 {{count}} 个已连接网站的关联。此操作无法仅限当前网站。",
+    "confirmBody_two": "这会撤销 Google 访问权限，并取消所有 {{count}} 个已连接网站的关联。此操作无法仅限当前网站。",
+    "confirmBody_few": "这会撤销 Google 访问权限，并取消所有 {{count}} 个已连接网站的关联。此操作无法仅限当前网站。",
+    "confirmBody_many": "这会撤销 Google 访问权限，并取消所有 {{count}} 个已连接网站的关联。此操作无法仅限当前网站。",
+    "confirmBody_other": "这会撤销 Google 访问权限，并取消所有 {{count}} 个已连接网站的关联。此操作无法仅限当前网站。"
   },
   "autoMatch": {
     "queued": "正在检查此网站的 Google 资源…",
@@ -86,7 +91,9 @@
     "viewAllLabel": "查看全部 — {{section}}",
     "sitemapsLink": "查看站点地图",
     "asOf": "数据截至 {{date}}",
-    "previousPeriod": "上一周期：{{clicks}} 次点击 · {{impressions}} 次展示",
+    "totalsNote": "{{start}} 至 {{end}} 的网站合计，按 Search Console 的每日数据相加。",
+    "scopeNote": "Search Console 对每个列表单独计数，因此列表各行相加的结果可能比网站合计略多或略少。",
+    "previousPeriod": "上一周期 — 点击： {{clicks}} · 展示： {{impressions}}",
     "reportLink": "在报告中查看完整数据",
     "emptyTitle": "暂无搜索数据",
     "emptyCta": "管理连接",
@@ -98,10 +105,13 @@
     "refreshError": "无法刷新您的搜索数据，请稍后重试。",
     "refreshedJustNow": "刚刚已更新",
     "timeseriesTitle": "点击次数和展示次数随时间变化",
-    "timeseriesSubtitle": "过去 {{days}} 天的每日总计。",
+    "timeseriesSubtitle_one": "过去 {{days}} 天的每日总计。",
     "timeseriesEmpty": "暂无每日数据。",
-    "timeseriesChartLabel": "过去 {{days}} 天的每日{{metric}}",
-    "timeseriesTableCaption": "过去 {{days}} 天的每日搜索表现",
+    "timeseriesNoActivity": "此期间没有活动。",
+    "timeseriesNoClicks": "此期间没有点击。",
+    "timeseriesNoImpressions": "此期间没有展示。",
+    "timeseriesChartLabel_one": "过去 {{days}} 天的每日{{metric}}",
+    "timeseriesTableCaption_one": "过去 {{days}} 天的每日搜索表现",
     "tableDate": "日期",
     "metricLabel": "选择要绘制的指标",
     "countriesTitle": "热门国家/地区",
@@ -117,26 +127,45 @@
       "mobile": "移动设备",
       "tablet": "平板设备",
       "unknown": "其他"
-    }
+    },
+    "timeseriesSubtitle_zero": "过去 {{days}} 天的每日总计。",
+    "timeseriesSubtitle_two": "过去 {{days}} 天的每日总计。",
+    "timeseriesSubtitle_few": "过去 {{days}} 天的每日总计。",
+    "timeseriesSubtitle_many": "过去 {{days}} 天的每日总计。",
+    "timeseriesSubtitle_other": "过去 {{days}} 天的每日总计。",
+    "timeseriesChartLabel_zero": "过去 {{days}} 天的每日{{metric}}",
+    "timeseriesChartLabel_two": "过去 {{days}} 天的每日{{metric}}",
+    "timeseriesChartLabel_few": "过去 {{days}} 天的每日{{metric}}",
+    "timeseriesChartLabel_many": "过去 {{days}} 天的每日{{metric}}",
+    "timeseriesChartLabel_other": "过去 {{days}} 天的每日{{metric}}",
+    "timeseriesTableCaption_zero": "过去 {{days}} 天的每日搜索表现",
+    "timeseriesTableCaption_two": "过去 {{days}} 天的每日搜索表现",
+    "timeseriesTableCaption_few": "过去 {{days}} 天的每日搜索表现",
+    "timeseriesTableCaption_many": "过去 {{days}} 天的每日搜索表现",
+    "timeseriesTableCaption_other": "过去 {{days}} 天的每日搜索表现"
   },
   "analytics": {
-    "title": "Google Analytics（过去 {{days}} 天）",
+    "title": "Google Analytics 数据",
     "sessions": "会话数",
     "activeUsers": "活跃用户",
     "engagedSessions": "互动会话数",
     "keyEvents": "关键事件",
     "engagementRateLabel": "互动率",
     "engagementRateLine": "互动率：{{rate}}",
-    "previousPeriod": "上一周期：{{sessions}} 次会话 · {{activeUsers}} 位活跃用户",
+    "windowNote": "{{start}} 至 {{end}} 的合计。",
+    "previousPeriod": "上一周期 — 会话：{{sessions}} · 活跃用户：{{activeUsers}}",
     "emptyTitle": "暂无分析数据",
     "empty": "暂无分析数据。连接媒体资源后不久数据就会出现——请尝试刷新。",
     "error": "无法加载您的分析摘要，请稍后重试。",
     "refresh": "刷新分析数据",
     "refreshError": "无法刷新您的分析数据，请稍后重试。",
+    "staleTitle": "Analytics 数据已过期",
+    "noRecentSessions": "自 {{date}} 起没有记录到会话。最近已检查 Google Analytics，未报告更新的流量。",
+    "dailyRange": "{{start}} 至 {{end}} 的每日总计。",
     "timeseriesTitle": "会话数和活跃用户随时间变化",
-    "timeseriesSubtitle": "过去 {{days}} 天的每日总计。",
-    "timeseriesChartLabel": "过去 {{days}} 天的每日{{metric}}",
-    "timeseriesTableCaption": "过去 {{days}} 天的每日分析表现",
+    "timeseriesSubtitle_one": "过去 {{days}} 天的每日总计。",
+    "timeseriesChartLabel_one": "过去 {{days}} 天的每日{{metric}}",
+    "timeseriesTableCaption_one": "过去 {{days}} 天的每日分析表现",
     "channelsTitle": "渠道",
     "channelsEmpty": "暂无渠道数据。",
     "channelsTableCaption": "按渠道的会话数",
@@ -153,10 +182,6 @@
     "devicesEmpty": "暂无设备数据。",
     "devicesTableCaption": "按设备的会话数",
     "deviceHeader": "设备",
-    "locked": {
-      "body": "Google Analytics 数据分析包含在 Pro 及更高级别的方案中。升级后即可在搜索数据旁查看会话、互动和关键事件。",
-      "upgrade": "升级方案"
-    },
     "enableTitle": "尚未启用 Google Analytics",
     "enableBody": "授予对 Google Analytics 的只读访问权限，即可查看此网站的会话、互动和关键事件。",
     "enableCta": "启用 Google Analytics",
@@ -167,7 +192,28 @@
     "propertiesError": "无法加载您的 Analytics 媒体资源，请稍后重试。",
     "setPropertyError": "无法保存该 Analytics 媒体资源，请稍后重试。",
     "settingsTitle": "Google 分析",
-    "settingsSubtitle": "选择 RankMeFast 读取的 GA4 媒体资源。"
+    "settingsSubtitle": "选择 RankMeFast 读取的 GA4 媒体资源。",
+    "timeseriesSubtitle_zero": "过去 {{days}} 天的每日总计。",
+    "timeseriesSubtitle_two": "过去 {{days}} 天的每日总计。",
+    "timeseriesSubtitle_few": "过去 {{days}} 天的每日总计。",
+    "timeseriesSubtitle_many": "过去 {{days}} 天的每日总计。",
+    "timeseriesSubtitle_other": "过去 {{days}} 天的每日总计。",
+    "timeseriesChartLabel_zero": "过去 {{days}} 天的每日{{metric}}",
+    "timeseriesChartLabel_two": "过去 {{days}} 天的每日{{metric}}",
+    "timeseriesChartLabel_few": "过去 {{days}} 天的每日{{metric}}",
+    "timeseriesChartLabel_many": "过去 {{days}} 天的每日{{metric}}",
+    "timeseriesChartLabel_other": "过去 {{days}} 天的每日{{metric}}",
+    "timeseriesTableCaption_zero": "过去 {{days}} 天的每日分析表现",
+    "timeseriesTableCaption_two": "过去 {{days}} 天的每日分析表现",
+    "timeseriesTableCaption_few": "过去 {{days}} 天的每日分析表现",
+    "timeseriesTableCaption_many": "过去 {{days}} 天的每日分析表现",
+    "timeseriesTableCaption_other": "过去 {{days}} 天的每日分析表现",
+    "staleBody_zero": "这里最新的 Google Analytics 数据截至 {{date}}，但截至 {{expected}} 的数据应该已经可用，因此这些数字并未覆盖最近 {{days}} 天。请刷新以重新同步。如果日期仍未变化，请重新连接 Google。",
+    "staleBody_one": "这里最新的 Google Analytics 数据截至 {{date}}，但截至 {{expected}} 的数据应该已经可用，因此这些数字并未覆盖最近 {{days}} 天。请刷新以重新同步。如果日期仍未变化，请重新连接 Google。",
+    "staleBody_two": "这里最新的 Google Analytics 数据截至 {{date}}，但截至 {{expected}} 的数据应该已经可用，因此这些数字并未覆盖最近 {{days}} 天。请刷新以重新同步。如果日期仍未变化，请重新连接 Google。",
+    "staleBody_few": "这里最新的 Google Analytics 数据截至 {{date}}，但截至 {{expected}} 的数据应该已经可用，因此这些数字并未覆盖最近 {{days}} 天。请刷新以重新同步。如果日期仍未变化，请重新连接 Google。",
+    "staleBody_many": "这里最新的 Google Analytics 数据截至 {{date}}，但截至 {{expected}} 的数据应该已经可用，因此这些数字并未覆盖最近 {{days}} 天。请刷新以重新同步。如果日期仍未变化，请重新连接 Google。",
+    "staleBody_other": "这里最新的 Google Analytics 数据截至 {{date}}，但截至 {{expected}} 的数据应该已经可用，因此这些数字并未覆盖最近 {{days}} 天。请刷新以重新同步。如果日期仍未变化，请重新连接 Google。"
   },
   "searchDetail": {
     "back": "概览",
@@ -205,17 +251,93 @@
       },
       "status": {
         "ok": "正常",
-        "errors": "{{n}} 个错误",
-        "warnings": "{{n}} 个警告"
+        "errors_one": "{{n}} 个错误",
+        "warnings_one": "{{n}} 个警告",
+        "errors_zero": "{{n}} 个错误",
+        "errors_two": "{{n}} 个错误",
+        "errors_few": "{{n}} 个错误",
+        "errors_many": "{{n}} 个错误",
+        "errors_other": "{{n}} 个错误",
+        "warnings_zero": "{{n}} 个警告",
+        "warnings_two": "{{n}} 个警告",
+        "warnings_few": "{{n}} 个警告",
+        "warnings_many": "{{n}} 个警告",
+        "warnings_other": "{{n}} 个警告"
       }
     }
   },
-  "required": {
-    "title": "连接 Google Search Console",
-    "cta": "连接 Google Search Console",
-    "body": {
-      "cannibalization": "关键词蚕食报告基于您的 Search Console 数据生成。请先为此网站连接 Search Console，再生成报告。已保存的报告仍可查看。",
-      "internalLinks": "内部链接建议会根据您的 Search Console 搜索查询来判断哪些页面重要。请先为此网站连接 Search Console，以获得基于真实搜索的建议。"
-    }
+  "breakdown": {
+    "shareHeader": "{{metric}} · 占总数比例",
+    "shareHeaderRows": "{{metric}} · 占此列表比例",
+    "other_zero": "其他（另有 {{hidden}} 项）",
+    "other_one": "其他（另有 {{hidden}} 项）",
+    "other_two": "其他（另有 {{hidden}} 项）",
+    "other_few": "其他（另有 {{hidden}} 项）",
+    "other_many": "其他（另有 {{hidden}} 项）",
+    "other_other": "其他（另有 {{hidden}} 项）",
+    "engagedRate": "{{rate}} 互动",
+    "ctrRate": "点击率 {{rate}}",
+    "byImpressions": "此期间没有点击，因此国家和设备按展示次数显示。"
+  },
+  "readiness": {
+    "gsc": {
+      "not_connected": {
+        "title": "Search Console 未连接",
+        "body": "连接您的 Google 账号，即可在 RankMeFast 中查看 <site>{{domain}}</site> 的搜索点击和展示次数。",
+        "cta": "连接 Google"
+      },
+      "no_property": {
+        "title": "请选择 Search Console 资源",
+        "body": "Google 已连接，但尚未为 <site>{{domain}}</site> 选择 Search Console 资源。",
+        "cta": "选择 Search Console 资源"
+      },
+      "property_mismatch": {
+        "title": "该资源未覆盖此网站",
+        "body": "为 <site>{{domain}}</site> 选择的 Search Console 资源不包含该网站的地址，请选择包含该地址的资源。",
+        "cta": "选择 Search Console 资源"
+      },
+      "error": {
+        "title": "暂时无法读取 Search Console",
+        "body": "Google 拒绝了 <site>{{domain}}</site> 的请求，或缺少某项权限。请重试；如果问题持续，请重新连接 Google。",
+        "cta": "重试"
+      }
+    },
+    "ga4": {
+      "not_connected": {
+        "title": "Google Analytics 未连接",
+        "body": "连接您的 Google 账号，即可查看 <site>{{domain}}</site> 的访问量和互动情况。",
+        "cta": "连接 Google"
+      },
+      "no_property": {
+        "title": "请选择 Google Analytics 媒体资源",
+        "body": "Google 已连接，但尚未为 <site>{{domain}}</site> 选择 Google Analytics 媒体资源。",
+        "cta": "选择 Google Analytics 媒体资源"
+      },
+      "property_mismatch": {
+        "title": "该媒体资源与此网站不匹配",
+        "body": "为 <site>{{domain}}</site> 选择的 Google Analytics 媒体资源统计的是另一个地址，请选择此网站对应的媒体资源。",
+        "cta": "选择 Google Analytics 媒体资源"
+      },
+      "error": {
+        "title": "暂时无法读取 Google Analytics",
+        "body": "Google 拒绝了 <site>{{domain}}</site> 的请求，或缺少 Analytics 访问权限。请重试；如果问题持续，请重新连接 Google。",
+        "cta": "重试"
+      }
+    },
+    "matching": "正在查找匹配的资源。"
+  },
+  "propertyPicker": {
+    "thisSite": "此网站",
+    "noneFound": "未找到 {{domain}} 的 Search Console 资源。请先在 Search Console 中添加，然后刷新此列表。",
+    "openSearchConsole": "打开 Search Console",
+    "newTab": "（在新标签页中打开）",
+    "refresh": "刷新",
+    "refreshing": "正在刷新…",
+    "linkDifferent": "关联其他资源",
+    "differentHint": "这些资源属于其他网站。关联其中一个后，它的搜索数据会显示在 {{domain}} 上。",
+    "otherLabel": "其他网站的资源",
+    "confirmTitle": "要将 {{site}} 关联到 {{property}} 的数据吗？",
+    "confirmBody": "{{property}} 是另一个网站。在您更换资源之前，它的搜索数据会显示在 {{site}} 上。资源：",
+    "confirm": "仍然关联"
   }
 }

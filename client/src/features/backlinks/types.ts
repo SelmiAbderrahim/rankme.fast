@@ -1,4 +1,22 @@
+/** Why a link was flagged for manual review; each code maps to one plain sentence. */
+export const LINK_SUSPICION_REASONS = [
+  'vendor_spam_score',
+  'dated_numbered_path',
+  'shared_path_template',
+  'lookalike_domain',
+] as const;
+export type LinkSuspicionReason = (typeof LINK_SUSPICION_REASONS)[number];
+
+/** A heuristic review flag. `verified` is always false: it is never proof of harm. */
+export interface LinkSuspicion {
+  status: 'suspected';
+  verified: false;
+  reasons: LinkSuspicionReason[];
+}
+
 export interface BacklinkRow {
+  /** Referring host reported by the provider; absent on older stored pages. */
+  domainFrom?: string;
   urlFrom: string;
   urlTo: string;
   anchor: string | null;
@@ -6,6 +24,8 @@ export interface BacklinkRow {
   isBroken: boolean;
   firstSeen: string | null;
   lastSeen: string | null;
+  /** Absent on older API responses; null when nothing looked suspicious. */
+  suspicion?: LinkSuspicion | null;
 }
 
 export interface BacklinkSummaryDelta {
@@ -286,7 +306,6 @@ export interface ToxicityRunSummary {
   sourceKind: 'provider_observation';
   retainedCount: number;
   bulkDomainCount: number;
-  refunded: boolean;
   providerStatus: ToxicityProviderStatus;
   aiStatus: ToxicityAiStatus;
   failureKind: 'provider_failed' | 'ceiling_halted' | null;

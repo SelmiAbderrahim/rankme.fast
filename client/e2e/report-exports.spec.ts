@@ -45,16 +45,6 @@ async function accountId(request: APIRequestContext): Promise<string> {
   return id!;
 }
 
-function setAgency(id: string): void {
-  runComposePsql(
-    `INSERT INTO subscriptions (account_id, tier, status)
-       VALUES (:'account_id', 'agency', 'active')
-       ON CONFLICT (account_id)
-       DO UPDATE SET tier = 'agency', status = 'active', updated_at = now();`,
-    { variables: { account_id: id } },
-  );
-}
-
 async function createSite(request: APIRequestContext): Promise<string> {
   const response = await request.post('/api/sites', {
     data: { url: 'https://export-proof.example', label: 'Unified export proof' },
@@ -208,7 +198,6 @@ test('unified report exports: formats, immutable bytes, public lifecycle, owners
   await denyNonLoopback(context, { onDeny: ownerDenials.onDeny });
   await signUp(page, freshAccount('report-exports'));
   const owner = await accountId(page.request);
-  setAgency(owner);
   const siteId = await createSite(page.request);
   const runId = await runAudit(page.request, siteId);
   const target = { scope: 'site_resource', siteId, resourceId: runId };
@@ -419,7 +408,7 @@ test('unified report exports: formats, immutable bytes, public lifecycle, owners
   await expect(page.getByRole('heading', { name: 'Exports and shares' })).toBeVisible();
   await page.setViewportSize({ width: 390, height: 844 });
   await expect(
-    page.locator('[data-slot="card"]:visible').getByText('audit.run', { exact: true }).first(),
+    page.locator('[data-slot="card"]:visible').getByText('Site audit', { exact: true }).first(),
   ).toBeVisible();
 
   const deleted = await page.request.delete(`/api/sites/${siteId}`, {

@@ -15,6 +15,8 @@ Beaucoup d’acheteurs interrogent désormais un assistant IA au lieu de parcour
 
 Une requête est une question qu’un acheteur pourrait poser à un assistant IA, par exemple « meilleur outil de gestion de projet pour une petite équipe ». Vous ajoutez les requêtes qui comptent pour votre activité. Vous pouvez suivre jusqu’à **10 requêtes par site**. Choisissez celles les plus proches d’une décision d’achat ; c’est là qu’être mentionné vaut le plus.
 
+Ajouter une requête que vous suivez déjà est refusé avec un message ; les requêtes sont comparées sans tenir compte de la casse, des espaces et de la ponctuation. Les suggestions sont rédigées dans la langue du marché de votre site et construites à partir de vos propres pages, mots-clés et données Search Console, et une suggestion déjà suivie est écartée. Quand les preuves sont minces, un message le signale ; **Régénérer les suggestions** crée un nouveau lot, et un ancien lot créé avant cette règle reste masqué tant que vous ne le faites pas. Une requête jamais vérifiée affiche **Pas encore vérifié** au lieu d’un résultat, et elle n’est jamais comptée comme non mentionnée.
+
 ## Lancer une vérification
 
 Une vérification exécute chaque requête suivie et lit la réponse renvoyée par l’assistant. Pour chaque requête, elle enregistre :

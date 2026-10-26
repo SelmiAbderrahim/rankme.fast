@@ -1,3 +1,4 @@
+import { Bdi } from '@shared/components/Bdi';
 import { useTranslation } from 'react-i18next';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@shared/ui/card';
 import { Badge } from '@shared/ui/badge';
@@ -55,7 +56,7 @@ export function ClusterView({ clusters }: ClusterViewProps) {
               <TableBody>
                 {clusters.map((cluster) => (
                   <TableRow key={cluster.id} data-testid={`inventory-cluster-${cluster.id}`}>
-                    <TableCell className="font-medium">{cluster.label}</TableCell>
+                    <TableCell className="font-medium"><Bdi>{cluster.label}</Bdi></TableCell>
                     <TableCell className="text-end tabular-nums">
                       {cluster.urls.length}
                     </TableCell>
@@ -67,7 +68,7 @@ export function ClusterView({ clusters }: ClusterViewProps) {
                             variant="outline"
                             className="font-normal"
                           >
-                            {term}
+                            <Bdi>{term}</Bdi>
                           </Badge>
                         ))}
                       </div>

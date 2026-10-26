@@ -1,3 +1,4 @@
+import { Bdi } from '@shared/components/Bdi';
 import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Badge } from '@shared/ui/badge';
@@ -44,7 +45,7 @@ export function AppReviewClusters({ run }: { run: AppReviewRunDetail }) {
         <Card key={`${cluster.label}-${index}`}>
           <CardHeader>
             <div className="flex flex-wrap items-center gap-2">
-              <CardTitle>{cluster.label}</CardTitle>
+              <CardTitle><Bdi>{cluster.label}</Bdi></CardTitle>
               <Badge className={sentimentClass(cluster.sentiment)}>
                 {t(`sentiment.${cluster.sentiment}`)}
               </Badge>

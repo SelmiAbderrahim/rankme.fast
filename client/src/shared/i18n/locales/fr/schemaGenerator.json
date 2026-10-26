@@ -1,5 +1,5 @@
 {
-  "title": "Générateur de balisage schema",
+  "title": "Balisage schema",
   "description": "Créez du JSON-LD pour une page à partir des faits que nous avons déjà enregistrés. Rien n'est inventé : un champ que nous ne pouvons pas appuyer sur un fait est omis, et nous en donnons la raison.",
   "new": {
     "title": "Générer le balisage",
@@ -23,19 +23,44 @@
     "urlLabel": "Adresse de la page",
     "urlPlaceholder": "https://example.com/page",
     "urlHint": "Nous lisons la page une fois via une connexion sûre. Seules les adresses publiques fonctionnent.",
-    "urlInvalid": "Saisissez une adresse https complète, sans nom d'utilisateur ni mot de passe."
+    "urlInvalid": "Saisissez une adresse https complète, sans nom d'utilisateur ni mot de passe.",
+    "listCapped_zero": "Cette liste contient $t(schemaGenerator:source.firstPages, {\"count\": {{shown}}}) des $t(schemaGenerator:source.crawledPages, {\"count\": {{total}}}). Collez l’adresse d’une page pour en utiliser une autre.",
+    "listCapped_one": "Cette liste contient $t(schemaGenerator:source.firstPages, {\"count\": {{shown}}}) des $t(schemaGenerator:source.crawledPages, {\"count\": {{total}}}). Collez l’adresse d’une page pour en utiliser une autre.",
+    "listCapped_two": "Cette liste contient $t(schemaGenerator:source.firstPages, {\"count\": {{shown}}}) des $t(schemaGenerator:source.crawledPages, {\"count\": {{total}}}). Collez l’adresse d’une page pour en utiliser une autre.",
+    "listCapped_few": "Cette liste contient $t(schemaGenerator:source.firstPages, {\"count\": {{shown}}}) des $t(schemaGenerator:source.crawledPages, {\"count\": {{total}}}). Collez l’adresse d’une page pour en utiliser une autre.",
+    "listCapped_many": "Cette liste contient $t(schemaGenerator:source.firstPages, {\"count\": {{shown}}}) des $t(schemaGenerator:source.crawledPages, {\"count\": {{total}}}). Collez l’adresse d’une page pour en utiliser une autre.",
+    "listCapped_other": "Cette liste contient $t(schemaGenerator:source.firstPages, {\"count\": {{shown}}}) des $t(schemaGenerator:source.crawledPages, {\"count\": {{total}}}). Collez l’adresse d’une page pour en utiliser une autre.",
+    "firstPages_zero": "les {{count}} premières",
+    "firstPages_one": "la première",
+    "firstPages_two": "les {{count}} premières",
+    "firstPages_few": "les {{count}} premières",
+    "firstPages_many": "les {{count}} premières",
+    "firstPages_other": "les {{count}} premières",
+    "crawledPages_zero": "{{count}} page explorée",
+    "crawledPages_one": "{{count}} page explorée",
+    "crawledPages_two": "{{count}} pages explorées",
+    "crawledPages_few": "{{count}} pages explorées",
+    "crawledPages_many": "{{count}} pages explorées",
+    "crawledPages_other": "{{count}} pages explorées",
+    "filterLabel": "Trouver une page",
+    "filterPlaceholder": "Saisissez une partie de l'adresse ou du titre",
+    "filterCount": "{{shown}} sur {{total}} affichées",
+    "filterNoMatches": "Aucune page ne correspond à cette recherche.",
+    "groupRoot": "Pages de premier niveau"
   },
   "type": {
     "legend": "Type schema.org",
     "required": "Obligatoires : {{n}}",
     "recommended": "Recommandés : {{n}}",
-    "alreadyDeclared": "Cette page déclare déjà ce type."
+    "alreadyDeclared": "Cette page déclare déjà ce type.",
+    "note": {
+      "FAQPage": "Google n’affiche les réponses de FAQ dans les résultats de recherche que pour des sites gouvernementaux et de santé reconnus. Le balisage reste valide.",
+      "HowTo": "Google n’affiche plus les étapes HowTo dans les résultats de recherche. Le balisage reste valide."
+    }
   },
   "preview": {
     "title": "Ce que cela coûte",
     "show": "Afficher le coût",
-    "units": "{{count}} génération sur votre quota mensuel.",
-    "units_other": "{{count}} générations sur votre quota mensuel.",
     "confirm": "Générer le balisage",
     "remaining": "Restant sur votre offre ce mois-ci : {{remaining}}.",
     "pack": "Plus {{units}} issus des packs de crédits.",
@@ -53,14 +78,14 @@
     "failedTitle": "Rien n'a été généré",
     "failedProvider": "Le modèle n'a pas répondu, aucun balisage n'a donc été conservé.",
     "failedRejected": "Tous les champs proposés par le modèle ont échoué à notre vérification des faits ; nous n'avons gardé que le prouvable.",
-    "refunded": "Votre quota a été recrédité.",
     "evidence": "D'où vient chaque champ",
     "evidenceDescription": "Une ligne par champ du balisage, nommant le fait enregistré qui le justifie.",
     "evidenceFrom": "d'après {{fact}}",
     "evidenceEmpty": "Aucun champ n'a pu être rempli à partir d'un fait enregistré.",
     "omissions": "Ce que nous avons omis",
     "omissionsDescription": "Champs sans fait derrière eux, et la raison de chaque absence.",
-    "omissionsEmpty": "Rien n'a été omis."
+    "omissionsEmpty": "Rien n'a été omis.",
+    "regenerated": "Reconstruit à partir d’une génération précédente avec les informations que vous avez fournies. Aucune génération n’a été utilisée."
   },
   "fact": {
     "pageUrl": "URL de la page",
@@ -75,7 +100,11 @@
     "articleModifiedTime": "Date de modification de l’article",
     "siteOrigin": "Origine du site",
     "siteDomain": "Domaine du site",
-    "siteName": "Nom du site"
+    "siteName": "Nom du site",
+    "ogSiteName": "Balise de nom du site (og:site_name)",
+    "jsonLdName": "Nom présent dans les données structurées actuelles de la page",
+    "titleBrand": "Nom de marque dans le titre de la page",
+    "providedByYou": "Fourni par vous"
   },
   "reason": {
     "no_evidence": "nous n'avons aucun fait à ce sujet",
@@ -111,15 +140,6 @@
       "title": "Aucun audit pour l'instant",
       "body": "Lancez un audit pour ce site et ses pages deviendront sélectionnables ici."
     },
-    "cap": {
-      "title": "Quota mensuel épuisé",
-      "body": "Vous avez utilisé toutes les générations de balisage de votre offre ce mois-ci.",
-      "link": "Voir les offres"
-    },
-    "notOnPlan": {
-      "title": "Absent de votre offre",
-      "body": "La génération de balisage commence avec l'offre Starter."
-    },
     "killSwitch": {
       "title": "Temporairement indisponible",
       "body": "Les nouvelles générations sont suspendues. Les balisages déjà générés restent consultables."
@@ -139,6 +159,29 @@
     "failed": {
       "title": "Une erreur est survenue",
       "body": "Nous n'avons pas pu terminer. Réessayez."
+    }
+  },
+  "userFacts": {
+    "title": "Ajoutez ce que nous avons laissé de côté",
+    "description": "Indiquez une information que vous seul connaissez. Nous l’ajoutons telle quelle et la marquons « Fourni par vous ».",
+    "submit": "Reconstruire avec mes informations",
+    "free": "Gratuit : nous réutilisons les informations déjà trouvées, sans utiliser de génération.",
+    "required": "Remplissez au moins un champ.",
+    "hint": {
+      "language": "Un code de langue comme en ou pt-BR.",
+      "date": "Une date comme 2026-10-01.",
+      "url": "Une adresse publique qui commence par https://."
+    },
+    "label": {
+      "name": "Nom",
+      "headline": "Titre",
+      "description": "Description",
+      "inLanguage": "Langue",
+      "datePublished": "Date de publication",
+      "dateModified": "Date de mise à jour",
+      "logo": "Adresse du logo",
+      "image": "Adresse de l’image",
+      "primaryImageOfPage": "Adresse de l’image principale"
     }
   }
 }

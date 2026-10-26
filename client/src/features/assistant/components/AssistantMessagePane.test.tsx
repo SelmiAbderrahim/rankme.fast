@@ -39,6 +39,51 @@ beforeEach(async () => {
 });
 
 describe('AssistantMessagePane', () => {
+  it('says a reply was cut off and offers Retry on the newest one only', async () => {
+    const onRetryTool = vi.fn();
+    const cut = (id: string) => message({ id, status: 'incomplete', parts: [{ type: 'text', text: '✅ No issue —' }] });
+    const { rerender } = render(
+      <AssistantMessagePane {...baseProps()} messages={[cut('old'), cut('new')]} onRetryTool={onRetryTool} />,
+    );
+    const notices = screen.getAllByTestId('assistant-cut-off');
+    expect(notices).toHaveLength(2);
+    expect(notices[0]).toHaveTextContent('The response was cut off before it finished.');
+    expect(screen.getAllByRole('button', { name: 'Retry' })).toHaveLength(1);
+    await userEvent.click(screen.getByRole('button', { name: 'Retry' }));
+    expect(onRetryTool).toHaveBeenCalledTimes(1);
+
+    // While the newest reply is streaming it is not yet cut off.
+    rerender(
+      <AssistantMessagePane
+        {...baseProps()}
+        messages={[cut('old'), cut('new')]}
+        streaming
+        assistantMessageId="new"
+        onRetryTool={onRetryTool}
+      />,
+    );
+    expect(screen.getAllByTestId('assistant-cut-off')).toHaveLength(1);
+  });
+
+  it('keeps long unbroken text and wide content inside the panel', () => {
+    render(
+      <AssistantMessagePane
+        {...baseProps()}
+        messages={[
+          message({ id: 'u1', role: 'user', parts: [{ type: 'text', text: 'x'.repeat(200) }] }),
+          message({ id: 'a1', parts: [{ type: 'text', text: 'y'.repeat(200) }] }),
+        ]}
+      />,
+    );
+    expect(screen.getByText('x'.repeat(200)).parentElement).toHaveClass('[overflow-wrap:anywhere]');
+    // Radix wraps viewport content in a `display: table` box that grows to the
+    // widest child; the pane forces it back to block so content stays bounded.
+    expect(screen.getByRole('log').closest('[data-slot="scroll-area"]')).toHaveClass(
+      '[&_[data-slot=scroll-area-viewport]>div]:block!',
+      'min-w-0',
+    );
+  });
+
   it('shows an accessible loading state', () => {
     render(<AssistantMessagePane {...baseProps()} loadStatus="loading" />);
     expect(screen.getByRole('status', { name: 'Loading conversation…' })).toBeInTheDocument();
@@ -138,7 +183,9 @@ describe('AssistantMessagePane', () => {
       />,
     );
     expect(screen.getByLabelText('Your message')).toHaveTextContent('**not bold**');
-    expect(screen.getByRole('heading', { level: 2, name: 'Fix now' })).toBeInTheDocument();
+    // Reply headings sit under the page h1 and the log's own h2, so they render as h3.
+    expect(screen.getByRole('heading', { level: 3, name: 'Fix now' })).toBeInTheDocument();
+    expect(screen.getByRole('heading', { level: 2, name: 'Conversation messages' })).toHaveClass('sr-only');
     expect(screen.getByText('cashback.sa').tagName).toBe('STRONG');
   });
 

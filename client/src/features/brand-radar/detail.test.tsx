@@ -199,27 +199,11 @@ describe('brand-radar scan detail — state map', () => {
     expect(screen.queryByTestId('brand-radar-trend-chart')).toBeNull();
   });
 
-  it('discloses the returned credit on a refunded failure, and stays silent otherwise', async () => {
-    routeApi({
-      detail: () =>
-        detailFor('failed', 'digest_absent', {
-          refund: { state: 'refunded', unit: 1 },
-        }),
-    });
-    const view = renderDetail();
-    expect(await screen.findByTestId('brand-radar-detail-refund')).toBeInTheDocument();
-    expect(screen.getByTestId('brand-radar-detail-failed')).toHaveTextContent(
-      'your scan credit was returned',
-    );
-    view.unmount();
-
+  it('explains a failed scan without any refund wording', async () => {
     routeApi({ detail: () => detailFor('failed', 'digest_absent') });
     renderDetail();
-    await screen.findByTestId('brand-radar-detail-failed');
-    expect(screen.queryByTestId('brand-radar-detail-refund')).toBeNull();
-    expect(screen.getByTestId('brand-radar-detail-failed').textContent).not.toContain(
-      'not refunded',
-    );
+    const failed = await screen.findByTestId('brand-radar-detail-failed');
+    expect(failed.textContent).not.toMatch(/refund|credit/i);
   });
 
   it.each([

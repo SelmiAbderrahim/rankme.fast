@@ -747,6 +747,7 @@ describe('site lifecycle middleware resolvers', () => {
 
   it('skips safe methods by default, the lifecycle DELETE, and payloads without a site', async () => {
     const next = vi.fn();
+    const owned = await createSite('preflight-no-lease.example.com');
     await createSiteMutationLease(() => null)(
       { method: 'GET', params: {}, path: '/', user: null } as never,
       {} as never,
@@ -785,7 +786,7 @@ describe('site lifecycle middleware resolvers', () => {
     );
     await siteMutationLease(
       {
-        method: 'POST', params: { siteId: new mongoose.Types.ObjectId().toString() },
+        method: 'POST', params: { siteId: String(owned._id) },
         path: '/content-analyses/preflight', user: { id: String(accountId) },
       } as never,
       {} as never,
@@ -806,7 +807,16 @@ describe('site lifecycle middleware resolvers', () => {
       {} as never,
       next,
     );
-    await vi.waitFor(() => expect(next).toHaveBeenCalledTimes(9));
+    for (const path of ['/content-analyses/preflight', '/audits']) {
+      await siteMutationLease(
+        { method: 'POST', params: {}, path, user: { id: String(accountId) } } as never,
+        {} as never,
+        next,
+      );
+    }
+    await vi.waitFor(() => expect(next).toHaveBeenCalledTimes(11));
+    expect(next.mock.calls.every((args) => args.length === 0)).toBe(true);
+    expect((await Site.findById(owned._id).lean())?.workLeases).toEqual([]);
   });
 
   it('uses the request fallback lease id and logs heartbeat/release failures', async () => {

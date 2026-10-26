@@ -24,7 +24,6 @@ const row = (overrides: Partial<BrandRadarRow> = {}): BrandRadarRow => ({
   status: 'completed',
   digestState: 'digest_present',
   retainedRowCount: 42,
-  refundState: 'none',
   createdAt: '2026-07-20T10:00:00.000Z',
   ...overrides,
   outputLocale: overrides.outputLocale === undefined ? 'en' : overrides.outputLocale,
@@ -138,21 +137,6 @@ describe('ScanListTable', () => {
     });
   });
 
-  it('shows a refund chip only when the credit came back', () => {
-    renderUi(
-      <ScanListTable
-        {...listProps({
-          rows: [
-            row({ id: 'a', refundState: 'refunded' }),
-            row({ id: 'b', refundState: 'none' }),
-          ],
-        })}
-      />,
-    );
-    expect(screen.getAllByTestId('brand-radar-refund-chip')).toHaveLength(1);
-    expect(screen.queryByText(/not refunded/i)).not.toBeInTheDocument();
-  });
-
   it('renders the optimistic row without a fabricated count or timestamp', () => {
     renderUi(
       <ScanListTable
@@ -192,7 +176,7 @@ describe('ScanListTable', () => {
     renderUi(<ScanListTable {...props} />);
     expect(screen.getAllByTestId('brand-radar-row')).toHaveLength(1);
     expect(
-      screen.getByText('Filtering applies only to the scans loaded on this page.'),
+      screen.getByText('Filters apply to the scans shown below. Load more to include older scans.'),
     ).toBeInTheDocument();
 
     await userEvent.selectOptions(screen.getByTestId('brand-radar-status-filter'), 'queued');

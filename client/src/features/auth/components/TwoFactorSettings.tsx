@@ -11,6 +11,8 @@ import { Card, CardContent, CardHeader, CardTitle } from '@shared/ui/card';
 import { authClient } from '../authClient';
 import { useAuthSession } from '../useAuthSession';
 import { useClearOnPresentationRefresh } from '@shared/i18n';
+import { FieldFeedback } from '@shared/components/FieldFeedback';
+import { PasswordInput } from './PasswordInput';
 
 type EnrolState = {
   totpURI: string;
@@ -29,7 +31,7 @@ type EnrolState = {
  *      only then does the account gain a verified factor.
  * Disable requires the current password (Better Auth's contract).
  */
-export const TwoFactorSettings = () => {
+export const TwoFactorSettings = ({ hasPassword = true }: { hasPassword?: boolean } = {}) => {
   const { t } = useTranslation('auth');
   const { user } = useAuthSession();
   const twoFactorEnabled = Boolean(
@@ -41,9 +43,10 @@ export const TwoFactorSettings = () => {
   const [verifyCode, setVerifyCode] = useState('');
   const [disableCode, setDisableCode] = useState('');
   const [errorMessage, setErrorMessage] = useState('');
+  const [passwordError, setPasswordError] = useState('');
   const [isBusy, setBusy] = useState(false);
   const [showDisable, setShowDisable] = useState(false);
-  useClearOnPresentationRefresh(() => setErrorMessage(''));
+  useClearOnPresentationRefresh(() => { setErrorMessage(''); setPasswordError(''); });
 
   const resetState = () => {
     setPassword('');
@@ -51,15 +54,17 @@ export const TwoFactorSettings = () => {
     setVerifyCode('');
     setDisableCode('');
     setErrorMessage('');
+    setPasswordError('');
     setShowDisable(false);
   };
 
   const startEnrol = async () => {
     setErrorMessage('');
     if (!password) {
-      setErrorMessage(t('twoFactor.passwordRequired'));
+      setPasswordError(t('twoFactor.passwordRequired'));
       return;
     }
+    setPasswordError('');
     setBusy(true);
     const { data, error } = await authClient.twoFactor.enable({ password });
     setBusy(false);
@@ -168,15 +173,19 @@ export const TwoFactorSettings = () => {
             </Alert>
           ) : null}
 
-          {twoFactorEnabled ? (
+          {!hasPassword ? (
+            <div className="flex flex-col gap-2">
+              <p className="text-muted-foreground text-sm">{t('setupPassword.twoFactor')}</p>
+              <Button asChild variant="outline"><a href="#password-setup">{t('setupPassword.title')}</a></Button>
+            </div>
+          ) : twoFactorEnabled ? (
             <div className="flex flex-col gap-2">
               {showDisable ? (
                 <>
                   <p className="text-muted-foreground text-sm">{t('twoFactor.confirmDisable')}</p>
                   <Label htmlFor="two-factor-disable-code">{t('twoFactor.passwordLabel')}</Label>
-                  <Input
+                  <PasswordInput
                     id="two-factor-disable-code"
-                    type="password"
                     autoComplete="current-password"
                     value={disableCode}
                     onChange={(e) => setDisableCode(e.target.value)}
@@ -303,13 +312,16 @@ export const TwoFactorSettings = () => {
           ) : (
             <div className="flex flex-col gap-2">
               <Label htmlFor="two-factor-enrol-password">{t('twoFactor.passwordLabel')}</Label>
-              <Input
+              <PasswordInput
                 id="two-factor-enrol-password"
-                type="password"
                 autoComplete="current-password"
                 value={password}
-                onChange={(e) => setPassword(e.target.value)}
+                aria-required="true"
+                aria-invalid={Boolean(passwordError)}
+                aria-describedby={passwordError ? 'two-factor-enrol-password-error' : undefined}
+                onChange={(e) => { setPassword(e.target.value); setPasswordError(''); }}
               />
+              <FieldFeedback id="two-factor-enrol-password" error={passwordError} />
               <Button type="button" disabled={isBusy} onClick={startEnrol}>
                 {isBusy ? t('twoFactor.enabling') : t('twoFactor.enable')}
               </Button>

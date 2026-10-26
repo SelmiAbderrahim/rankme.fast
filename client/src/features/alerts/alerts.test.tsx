@@ -7,6 +7,7 @@ import { I18nextProvider } from 'react-i18next';
 import { MemoryRouter, useLocation } from 'react-router-dom';
 import { ApiError, apiClient } from '@shared/api/client';
 import { changeLanguage, i18n, initI18n } from '@shared/i18n';
+import { chooseOption } from '@/test/radixSelect';
 import { AlertsPage } from './components/AlertsPage';
 import { DeliveryLog } from './components/DeliveryLog';
 import { RuleBuilder } from './components/RuleBuilder';
@@ -224,7 +225,7 @@ describe('alerts API and route loader', () => {
       .mockResolvedValueOnce({ deliveries: [delivery()] } as never);
 
     await expect(fetchAlertSites()).resolves.toEqual([
-      { id: SITE_ID, domain: 'example.test', displayName: 'Example' },
+      { id: SITE_ID, domain: 'example.test', displayName: 'Example', paused: false },
     ]);
     await fetchAlertSites({ signal: controller.signal });
     await fetchAlertRules();
@@ -359,21 +360,32 @@ describe('alerts URL state', () => {
 });
 
 describe('AlertsPage — rules tab', () => {
-  it('uses the same page gutter as Dashboard and Sites', async () => {
+  it('leaves the page frame to the shell instead of adding its own gutter', async () => {
     routeApi();
     renderPage();
-    expect(await screen.findByTestId('alerts-page')).toHaveClass('px-4', 'py-8');
+    expect(await screen.findByTestId('alerts-page')).not.toHaveClass('px-4', 'py-8');
   });
 
-  it('renders the Type and State filters with the shared select styling', async () => {
+  it('renders the Type and State filters with the shared select', async () => {
     routeApi();
     renderPage();
-    await screen.findByTestId('alerts-page');
+    await screen.findByTestId('alerts-rule-list');
     for (const name of ['Type', 'State']) {
-      const select = screen.getAllByLabelText(name).find((node) => node.tagName === 'SELECT');
-      expect(select).toHaveAttribute('data-slot', 'native-select');
-      expect(select).toHaveClass('h-9', 'border-input');
+      expect(screen.getByLabelText(name)).toHaveAttribute('data-slot', 'select-trigger');
     }
+  });
+
+  it('hides the filters while the account has no rules, and keeps an active one', async () => {
+    routeApi({ rules: () => ({ rules: [], cap: { used: 0 } }) });
+    const first = renderPage();
+    await screen.findByTestId('alerts-state-empty');
+    expect(screen.queryByLabelText('State')).not.toBeInTheDocument();
+    first.unmount();
+
+    routeApi({ rules: () => ({ rules: [], cap: { used: 0 } }) });
+    renderPage('/dashboard/alerts?enabled=false');
+    await screen.findByTestId('alerts-state-empty');
+    expect(screen.getByLabelText('State')).toBeInTheDocument();
   });
 
   it('lists configured rules with their cap usage', async () => {
@@ -381,7 +393,7 @@ describe('AlertsPage — rules tab', () => {
     renderPage();
 
     expect(await screen.findByTestId('alerts-rule-list')).toBeInTheDocument();
-    expect(screen.getByText('1 rules in use.')).toBeInTheDocument();
+    expect(screen.getByText('1 rule in use.')).toBeInTheDocument();
     // 'Rank drop' also appears as a builder <option>, so scope to the table.
     const list = screen.getByTestId('alerts-rule-list');
     expect(within(list).getByText('Rank drop')).toBeInTheDocument();
@@ -434,22 +446,16 @@ describe('AlertsPage — rules tab', () => {
     expect(screen.getByTestId('alerts-rule-builder')).toBeInTheDocument();
   });
 
-  it('renders the cap refusal with the server message and a plans link', async () => {
+  it('renders an unexpected payment status as a plain failure with the server message', async () => {
     routeApi({
       rules: () => {
-        throw new ApiError('Payment Required', 402, {
-          error: {
-            message: 'You have used every alert rule on your plan.',
-            details: { structuralLimit: 'alertRules', used: 2, limit: 2 },
-          },
-        });
+        throw new ApiError('Payment Required', 402, { error: { message: 'The server said no.' } });
       },
     });
     renderPage();
 
-    expect(await screen.findByTestId('alerts-state-cap')).toBeInTheDocument();
-    expect(screen.getByText('You have used every alert rule on your plan.')).toBeInTheDocument();
-    expect(screen.queryByRole('link', { name: 'See plans' })).not.toBeInTheDocument();
+    expect(await screen.findByTestId('alerts-state-failed')).toBeInTheDocument();
+    expect(screen.getByText('The server said no.')).toBeInTheDocument();
   });
 
   it('keeps stored rules readable when the kill switch is off', async () => {
@@ -470,14 +476,11 @@ describe('AlertsPage — rules tab', () => {
     expect(selectAlertRules(store.getState() as never)).toHaveLength(1);
   });
 
-  it('locks the paid channel inputs after a tier refusal', async () => {
+  it('shows a save refusal next to the builder', async () => {
     routeApi({
       create: () => {
-        throw new ApiError('Payment Required', 402, {
-          error: {
-            message: 'Slack and webhook channels need the Pro plan or higher.',
-            details: { requiredTier: 'pro' },
-          },
+        throw new ApiError('Too Many Requests', 429, {
+          error: { message: 'Too many alert requests. Try again in a minute.' },
         });
       },
     });
@@ -486,10 +489,8 @@ describe('AlertsPage — rules tab', () => {
 
     await userEvent.click(screen.getByRole('button', { name: 'Create rule' }));
 
-    expect(await screen.findByTestId('alerts-state-tierLocked')).toBeInTheDocument();
-    expect(screen.getByLabelText('Slack')).toBeDisabled();
-    expect(screen.getByLabelText('Webhook')).toBeDisabled();
-    expect(screen.getAllByTestId(/alerts-(slack|webhook)-locked/)).toHaveLength(2);
+    expect(await screen.findByTestId('alerts-state-rateLimited')).toBeInTheDocument();
+    expect(screen.getByRole('button', { name: 'Create rule' })).toBeEnabled();
   });
 
   it('reveals a freshly minted secret once, then never again', async () => {
@@ -513,40 +514,47 @@ describe('AlertsPage — rules tab', () => {
     expect(selectRevealedSecret(store.getState() as never)).toBeNull();
   });
 
-  it('refuses to submit with no channel selected', async () => {
+  it('explains a missing channel on save instead of disabling the button', async () => {
     routeApi();
-    renderPage();
+    renderPage(`/alerts?siteId=${SITE_ID}`);
     await screen.findByTestId('alerts-rule-builder');
 
     await userEvent.click(screen.getByLabelText('Email'));
+    expect(screen.queryByTestId('alerts-no-channel')).not.toBeInTheDocument();
+    expect(screen.getByRole('button', { name: 'Create rule' })).toBeEnabled();
+
+    await userEvent.click(screen.getByRole('button', { name: 'Create rule' }));
 
     expect(await screen.findByTestId('alerts-no-channel')).toBeInTheDocument();
-    expect(screen.getByRole('button', { name: 'Create rule' })).toBeDisabled();
+    expect(mockedApiClient.mock.calls.some(([, init]) => init?.method === 'POST')).toBe(false);
   });
 
   it('does not invent an email recipient when the auth session has no user', async () => {
     authSession.user = null;
     routeApi();
     renderPage(`/alerts?siteId=${SITE_ID}`);
+    await screen.findByTestId('alerts-rule-builder');
+
+    await userEvent.click(screen.getByRole('button', { name: 'Create rule' }));
 
     expect(await screen.findByTestId('alerts-no-channel')).toBeInTheDocument();
-    expect(screen.getByRole('button', { name: 'Create rule' })).toBeDisabled();
   });
 
   it('persists list filters in the URL', async () => {
+    const user = userEvent.setup();
     routeApi();
     renderPage();
     await screen.findByTestId('alerts-rule-list');
 
-    await userEvent.selectOptions(screen.getByLabelText('Type'), 'new_backlink');
+    await chooseOption(user, screen.getByLabelText('Type'), 'New links');
     await waitFor(() => expect(search).toContain('type=new_backlink'));
 
-    await userEvent.selectOptions(screen.getByLabelText('State'), 'false');
+    await chooseOption(user, screen.getByLabelText('State'), 'Off');
     await waitFor(() => expect(search).toContain('enabled=false'));
 
-    await userEvent.selectOptions(screen.getByLabelText('Type'), '');
+    await chooseOption(user, screen.getByLabelText('Type'), 'All');
     await waitFor(() => expect(search).not.toContain('type='));
-    await userEvent.selectOptions(screen.getByLabelText('State'), '');
+    await chooseOption(user, screen.getByLabelText('State'), 'All');
     await waitFor(() => expect(search).not.toContain('enabled='));
   });
 
@@ -572,64 +580,72 @@ describe('AlertsPage — rules tab', () => {
   });
 });
 
-describe('RuleBuilder', () => {
-  it('labels a site without a display name by its domain and selects it', async () => {
-    const onSubmit = vi.fn();
-    render(
-      <I18nextProvider i18n={i18n}>
+interface BuilderOverrides {
+  sites?: Array<{ id: string; domain: string; displayName: string; paused?: boolean }>;
+  siteId?: string | null;
+  currentUserId?: string | null;
+  submitting?: boolean;
+}
+
+const renderBuilder = (overrides: BuilderOverrides = {}) => {
+  const onSubmit = vi.fn();
+  const view = render(
+    <I18nextProvider i18n={i18n}>
+      <MemoryRouter>
         <RuleBuilder
-          sites={[{ id: SITE_ID, domain: 'example.test', displayName: '' }]}
-          siteId={null}
-          currentUserId="u1"
-          paidChannelsLocked={false}
-          capReached={false}
-          submitting={false}
+          sites={overrides.sites ?? [{ id: SITE_ID, domain: 'example.test', displayName: 'Example' }]}
+          siteId={overrides.siteId === undefined ? null : overrides.siteId}
+          currentUserId={overrides.currentUserId === undefined ? 'u1' : overrides.currentUserId}
+          submitting={overrides.submitting ?? false}
           onSubmit={onSubmit}
         />
-      </I18nextProvider>,
-    );
+      </MemoryRouter>
+    </I18nextProvider>,
+  );
+  return { onSubmit, ...view };
+};
 
-    expect(screen.getByRole('button', { name: 'Create rule' })).toBeDisabled();
-    expect(screen.getByTestId('alerts-site-required')).toHaveTextContent(
-      'Choose a site to create a rule.',
-    );
-
-    await userEvent.click(screen.getByLabelText('Site'));
-    await userEvent.click(screen.getByRole('option', { name: 'example.test' }));
+describe('RuleBuilder', () => {
+  it('labels a site without a display name by its domain and explains a missing site on save', async () => {
+    const user = userEvent.setup();
+    const { onSubmit } = renderBuilder({
+      sites: [{ id: SITE_ID, domain: 'example.test', displayName: '' }],
+    });
 
     expect(screen.queryByTestId('alerts-site-required')).not.toBeInTheDocument();
-    await userEvent.click(screen.getByRole('button', { name: 'Create rule' }));
+    await user.click(screen.getByRole('button', { name: 'Create rule' }));
+    expect(onSubmit).not.toHaveBeenCalled();
+    expect(screen.getByTestId('alerts-site-required')).toHaveTextContent('Choose a site to continue.');
+    expect(screen.getByLabelText('Site')).toHaveAttribute('aria-invalid', 'true');
+
+    await chooseOption(user, screen.getByLabelText('Site'), 'example.test');
+
+    expect(screen.queryByTestId('alerts-site-required')).not.toBeInTheDocument();
+    await user.click(screen.getByRole('button', { name: 'Create rule' }));
     expect(onSubmit).toHaveBeenCalledWith(
       expect.objectContaining({ siteId: SITE_ID, type: 'rank_drop' }),
     );
   });
 
-  it('edits every field and submits a non-rank rule with paid channels', async () => {
-    const onSubmit = vi.fn();
-    render(
-      <I18nextProvider i18n={i18n}>
-        <RuleBuilder
-          sites={[{ id: SITE_ID, domain: 'example.test', displayName: 'Example' }]}
-          siteId={null}
-          currentUserId="u1"
-          paidChannelsLocked={false}
-          capReached={false}
-          submitting={false}
-          onSubmit={onSubmit}
-        />
-      </I18nextProvider>,
-    );
+  it('edits every field and submits a non-rank rule with Slack and webhook channels', async () => {
+    const user = userEvent.setup();
+    const { onSubmit } = renderBuilder();
 
-    await userEvent.click(screen.getByLabelText('Site'));
-    await userEvent.click(screen.getByRole('option', { name: 'Example' }));
-    await userEvent.clear(screen.getByLabelText('Position threshold'));
-    await userEvent.type(screen.getByLabelText('Position threshold'), '17');
-    await userEvent.click(screen.getByLabelText('Alert type'));
-    await userEvent.click(screen.getByRole('option', { name: 'New links' }));
-    await userEvent.click(screen.getByLabelText('Email'));
-    await userEvent.type(screen.getByLabelText('Slack'), 'https://hooks.slack.test/services/x');
-    await userEvent.type(screen.getByLabelText('Webhook'), 'https://hooks.example.test/x');
-    await userEvent.click(screen.getByRole('button', { name: 'Create rule' }));
+    await chooseOption(user, screen.getByLabelText('Site'), /Example/);
+    await user.clear(screen.getByLabelText('Position threshold'));
+    await user.type(screen.getByLabelText('Position threshold'), '17');
+    await chooseOption(user, screen.getByLabelText('Alert type'), 'New links');
+    expect(screen.queryByLabelText('Position threshold')).not.toBeInTheDocument();
+    await user.click(screen.getByLabelText('Email'));
+    expect(screen.queryByLabelText('Slack incoming webhook address')).not.toBeInTheDocument();
+    await user.click(screen.getByLabelText('Slack'));
+    await user.click(screen.getByLabelText('Webhook'));
+    await user.type(
+      screen.getByLabelText('Slack incoming webhook address'),
+      ' https://hooks.slack.test/services/x ',
+    );
+    await user.type(screen.getByLabelText('Your https endpoint'), 'https://hooks.example.test/x');
+    await user.click(screen.getByRole('button', { name: 'Create rule' }));
 
     expect(onSubmit).toHaveBeenCalledWith({
       siteId: SITE_ID,
@@ -639,23 +655,100 @@ describe('RuleBuilder', () => {
     });
   });
 
-  it('submits the authenticated user id for the email channel', async () => {
-    const onSubmit = vi.fn();
-    render(
-      <I18nextProvider i18n={i18n}>
-        <RuleBuilder
-          sites={[{ id: SITE_ID, domain: 'example.test', displayName: 'Example' }]}
-          siteId={SITE_ID}
-          currentUserId="authenticated-user-id"
-          paidChannelsLocked={false}
-          capReached={false}
-          submitting={false}
-          onSubmit={onSubmit}
-        />
-      </I18nextProvider>,
+  it('reports a ticked channel with no address when its field loses focus, not when it is ticked', async () => {
+    const user = userEvent.setup();
+    const { onSubmit } = renderBuilder({ siteId: SITE_ID });
+
+    await user.click(screen.getByLabelText('Slack'));
+    expect(screen.queryByText('Enter your Slack webhook address.')).not.toBeInTheDocument();
+
+    await user.click(screen.getByLabelText('Slack incoming webhook address'));
+    await user.tab();
+    const slackError = await screen.findByText('Enter your Slack webhook address.');
+    expect(slackError).toHaveAttribute('role', 'alert');
+    expect(screen.getByLabelText('Slack incoming webhook address')).toHaveAttribute('aria-invalid', 'true');
+    // Leaving the field again keeps the same message.
+    await user.click(screen.getByLabelText('Slack incoming webhook address'));
+    await user.tab();
+    expect(screen.getAllByText('Enter your Slack webhook address.')).toHaveLength(1);
+
+    await user.click(screen.getByLabelText('Webhook'));
+    await user.click(screen.getByRole('button', { name: 'Create rule' }));
+    expect(onSubmit).not.toHaveBeenCalled();
+    expect(screen.getByText('Enter your webhook address.')).toBeInTheDocument();
+
+    // Turning a channel off clears its message and lets the rule save.
+    await user.click(screen.getByLabelText('Slack'));
+    await user.click(screen.getByLabelText('Webhook'));
+    expect(screen.queryByText('Enter your Slack webhook address.')).not.toBeInTheDocument();
+    await user.click(screen.getByRole('button', { name: 'Create rule' }));
+    expect(onSubmit).toHaveBeenCalledTimes(1);
+  });
+
+  it('validates the rank-drop threshold inline', async () => {
+    const user = userEvent.setup();
+    const { onSubmit } = renderBuilder({ siteId: SITE_ID });
+    const field = screen.getByLabelText('Position threshold');
+
+    await user.clear(field);
+    await user.type(field, '250');
+    await user.click(screen.getByRole('button', { name: 'Create rule' }));
+    expect(onSubmit).not.toHaveBeenCalled();
+    expect(screen.getByText('Enter a whole position from 1 to 100.')).toBeInTheDocument();
+    expect(field).toHaveAttribute('aria-invalid', 'true');
+
+    await user.clear(field);
+    await user.type(field, '40');
+    expect(screen.queryByText('Enter a whole position from 1 to 100.')).not.toBeInTheDocument();
+    await user.click(screen.getByRole('button', { name: 'Create rule' }));
+    expect(onSubmit).toHaveBeenCalledWith(expect.objectContaining({ threshold: 40 }));
+  });
+
+  it('says when rank-drop rules fire and links to the built-in email setting', async () => {
+    const user = userEvent.setup();
+    renderBuilder();
+    const hint = screen.getByTestId('alerts-rank-drop-hint');
+    expect(hint).toHaveTextContent(
+      'Fires only after a scheduled rank check finds a drop and a second check of the same keyword confirms it.',
+    );
+    expect(within(hint).getByRole('link', { name: 'Notifications' })).toHaveAttribute(
+      'href',
+      '/settings/notifications',
+    );
+    await chooseOption(user, screen.getByLabelText('Alert type'), 'Lost links');
+    expect(screen.queryByTestId('alerts-rank-drop-hint')).not.toBeInTheDocument();
+  });
+
+  it('keeps a paused site out of reach and blocks a preselected one', async () => {
+    const user = userEvent.setup();
+    const { onSubmit } = renderBuilder({
+      sites: [
+        { id: SITE_ID, domain: 'example.test', displayName: 'Example' },
+        { id: 'b'.repeat(24), domain: 'paused.test', displayName: 'Paused', paused: true },
+      ],
+      siteId: 'b'.repeat(24),
+    });
+
+    expect(screen.getByTestId('alerts-site-paused-hint')).toHaveTextContent(
+      'This site is paused. Resume this site to create alert rules.',
+    );
+    await user.click(screen.getByRole('button', { name: 'Create rule' }));
+    expect(onSubmit).not.toHaveBeenCalled();
+    expect(screen.getByTestId('alerts-site-required')).toHaveTextContent(
+      'This site is paused. Resume this site to create alert rules.',
     );
 
-    await userEvent.click(screen.getByRole('button', { name: 'Create rule' }));
+    await user.click(screen.getByLabelText('Site'));
+    const option = await screen.findByTestId(`alerts-site-option-${'b'.repeat(24)}`);
+    expect(option).toHaveAttribute('aria-disabled', 'true');
+    expect(option).toHaveTextContent('Resume this site to create alert rules');
+  });
+
+  it('submits the authenticated user id for the email channel', async () => {
+    const user = userEvent.setup();
+    const { onSubmit } = renderBuilder({ siteId: SITE_ID, currentUserId: 'authenticated-user-id' });
+
+    await user.click(screen.getByRole('button', { name: 'Create rule' }));
 
     expect(onSubmit).toHaveBeenCalledWith({
       siteId: SITE_ID,
@@ -665,23 +758,10 @@ describe('RuleBuilder', () => {
     });
   });
 
-  it('refuses a forged submit while the builder is disabled', () => {
-    const onSubmit = vi.fn();
-    render(
-      <I18nextProvider i18n={i18n}>
-        <RuleBuilder
-          sites={[]}
-          siteId={null}
-          currentUserId="u1"
-          paidChannelsLocked={false}
-          capReached
-          submitting={false}
-          onSubmit={onSubmit}
-        />
-      </I18nextProvider>,
-    );
+  it('ignores a forged submit while a save is in flight', () => {
+    const saving = renderBuilder({ siteId: SITE_ID, submitting: true });
     fireEvent.submit(screen.getByTestId('alerts-rule-builder'));
-    expect(onSubmit).not.toHaveBeenCalled();
+    expect(saving.onSubmit).not.toHaveBeenCalled();
   });
 });
 
@@ -695,15 +775,43 @@ describe('AlertsPage — log tab', () => {
 
     expect(await screen.findByTestId('alerts-delivery-log')).toBeInTheDocument();
     expect(
-      screen.getByText('Position 3 on 2026-07-01, then 24 on 2026-07-02.'),
+      screen.getByText('Position 3 on Jul 1, 2026, then 24 on Jul 2, 2026.'),
     ).toBeInTheDocument();
     await waitFor(() => expect(search).toContain(`rule=${RULE_ID}`));
   });
 
-  it('asks for a rule before rendering a log', async () => {
+  it('asks for a rule before rendering a log and lets the picker choose one', async () => {
+    const user = userEvent.setup();
     routeApi();
     renderPage('/dashboard/alerts?tab=log');
-    expect(await screen.findByTestId('alerts-state-empty')).toBeInTheDocument();
+    expect(await screen.findByTestId('alerts-log-pick-rule')).toHaveTextContent(
+      'Choose a rule to see the alerts it sent.',
+    );
+
+    await chooseOption(user, await screen.findByLabelText('Rule'), /Rank drop · .*example\.test/);
+
+    await waitFor(() => expect(search).toContain(`rule=${RULE_ID}`));
+    expect(await screen.findByTestId('alerts-delivery-log')).toBeInTheDocument();
+  });
+
+  it('falls back to the site id when the picker names a rule on an unknown site', async () => {
+    routeApi({
+      rules: () => ({ rules: [rule({ siteId: 'c'.repeat(24) })], cap: { used: 1 } }),
+    });
+    renderPage('/dashboard/alerts?tab=log');
+    await userEvent.click(await screen.findByLabelText('Rule'));
+    expect(await screen.findByRole('option', { name: new RegExp(`Rank drop · .*${'c'.repeat(24)}`) })).toBeInTheDocument();
+  });
+
+  it('points to the Rules tab when there is no rule to show a log for', async () => {
+    routeApi({ rules: () => ({ rules: [], cap: { used: 0 } }) });
+    renderPage('/dashboard/alerts?tab=log');
+    expect(await screen.findByTestId('alerts-log-no-rules')).toHaveTextContent('No alerts sent yet');
+
+    await userEvent.click(screen.getByTestId('alerts-log-create-rule'));
+
+    await waitFor(() => expect(search).not.toContain('tab=log'));
+    expect(await screen.findByTestId('alerts-rule-builder')).toBeInTheDocument();
   });
 
   it('discloses a log read failure', async () => {
@@ -721,7 +829,20 @@ describe('AlertsPage — log tab', () => {
   it('renders an empty completed delivery log', async () => {
     routeApi({ deliveries: () => ({ deliveries: [] }) });
     renderPage(`/alerts?tab=log&rule=${RULE_ID}`);
-    expect(await screen.findByTestId('alerts-state-empty')).toBeInTheDocument();
+    expect(await screen.findByTestId('alerts-log-empty')).toHaveTextContent(
+      "This rule hasn't sent an alert yet.",
+    );
+  });
+
+  it('offers to clear the log filters when none of the deliveries match', async () => {
+    routeApi({ deliveries: () => ({ deliveries: [] }) });
+    renderPage(`/alerts?tab=log&rule=${RULE_ID}&status=failed&channel=webhook`);
+    expect(await screen.findByTestId('alerts-log-filtered-empty')).toBeInTheDocument();
+
+    await userEvent.click(screen.getByTestId('alerts-log-clear-filters'));
+
+    await waitFor(() => expect(search).not.toContain('status='));
+    expect(search).not.toContain('channel=');
   });
 });
 
@@ -745,7 +866,7 @@ describe('DeliveryLog', () => {
       </I18nextProvider>,
     );
     expect(
-      screen.getByText(/Position 3 on 2026-07-01, then below the top 100/),
+      screen.getByText(/Position 3 on Jul 1, 2026, then below the top 100/),
     ).toBeInTheDocument();
   });
 
@@ -768,7 +889,7 @@ describe('DeliveryLog', () => {
       </I18nextProvider>,
     );
     expect(
-      screen.getByText(/Position below the top 100 on 2026-07-01, then 24/),
+      screen.getByText(/Position below the top 100 on Jul 1, 2026, then 24/),
     ).toBeInTheDocument();
   });
 
@@ -937,22 +1058,10 @@ describe('StateNotice', () => {
 });
 
 describe('toAlertGate', () => {
-  it('separates a structural cap from a channel tier refusal on the same 402', () => {
-    const cap = toAlertGate(
-      new ApiError('x', 402, {
-        error: { message: 'cap', details: { structuralLimit: 'alertRules' } },
-      }),
-      'fallback',
-    );
-    expect(cap).toEqual({ kind: 'cap', message: 'cap' });
-
-    const tier = toAlertGate(
-      new ApiError('x', 402, {
-        error: { message: 'tier', details: { requiredTier: 'pro' } },
-      }),
-      'fallback',
-    );
-    expect(tier).toEqual({ kind: 'tierLocked', message: 'tier' });
+  it('treats an unexpected payment status as a plain failure that keeps the server message', () => {
+    expect(
+      toAlertGate(new ApiError('x', 402, { error: { message: 'no' } }), 'fallback'),
+    ).toEqual({ kind: 'failed', message: 'no' });
   });
 
   it('maps every other disclosed status and falls back for the rest', () => {
@@ -999,9 +1108,9 @@ describe('alerts slice', () => {
         rules: [rule()],
         capUsed: 1,
         listStatus: 'failed' as const,
-        listGate: { kind: 'cap' as const, message: 'cap' },
+        listGate: { kind: 'disabled' as const, message: 'paused' },
         saveStatus: 'loading' as const,
-        saveGate: { kind: 'tierLocked' as const, message: 'tier' },
+        saveGate: { kind: 'invalid' as const, message: 'bad' },
         revealedSecret: { ruleId: RULE_ID, secret: 'secret' },
         deliveries: [delivery()],
         logStatus: 'succeeded' as const,
@@ -1014,9 +1123,9 @@ describe('alerts slice', () => {
     expect(selectAlertRules(state as never)).toHaveLength(1);
     expect(selectAlertCapUsed(state as never)).toBe(1);
     expect(selectAlertListStatus(state as never)).toBe('failed');
-    expect(selectAlertListGate(state as never)?.kind).toBe('cap');
+    expect(selectAlertListGate(state as never)?.kind).toBe('disabled');
     expect(selectAlertSaveStatus(state as never)).toBe('loading');
-    expect(selectAlertSaveGate(state as never)?.kind).toBe('tierLocked');
+    expect(selectAlertSaveGate(state as never)?.kind).toBe('invalid');
     expect(selectRevealedSecret(state as never)?.secret).toBe('secret');
     expect(selectAlertDeliveries(state as never)).toHaveLength(1);
     expect(selectAlertLogStatus(state as never)).toBe('succeeded');

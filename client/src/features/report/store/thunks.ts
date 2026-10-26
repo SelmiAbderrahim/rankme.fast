@@ -49,6 +49,8 @@ export interface LoadReportResult {
   runStatus: PublicAuditRun['status'];
   /** Crawl ceiling of the resolved run (in-progress indicator). */
   pageCap?: number;
+  /** When the resolved run finished, for the audit-age prompt. */
+  runAt?: string | null;
 }
 
 /**
@@ -66,6 +68,7 @@ export const loadReport = createAsyncThunk<
   try {
     let resolvedRunId = runId;
     let runStatus: PublicAuditRun['status'] = 'succeeded';
+    let runAt: string | null = null;
     if (!resolvedRunId) {
       const page: AuditRunListPage = await fetchLatestRunRequest(
         siteId,
@@ -77,18 +80,20 @@ export const loadReport = createAsyncThunk<
       }
       resolvedRunId = latest.id;
       runStatus = latest.status;
+      runAt = latest.finishedAt ?? latest.createdAt;
       if (runStatus !== 'succeeded') {
         return { siteId, runId: resolvedRunId, report: null, runStatus, pageCap: latest.pageCap };
       }
     } else {
       const { run } = await fetchRunRequest(resolvedRunId, readInit(identity, signal));
       runStatus = run.status;
+      runAt = run.finishedAt ?? run.createdAt;
       if (runStatus !== 'succeeded') {
         return { siteId, runId: resolvedRunId, report: null, runStatus, pageCap: run.pageCap };
       }
     }
     const report = await fetchReportRequest(resolvedRunId, readInit(identity, signal));
-    return { siteId, runId: resolvedRunId, report, runStatus };
+    return { siteId, runId: resolvedRunId, report, runStatus, runAt };
   } catch (err) {
     return rejectWithValue(reportErrorMessage(err, 'report:loadFailed'));
   }
@@ -96,11 +101,11 @@ export const loadReport = createAsyncThunk<
 
 export const startRetest = createAsyncThunk<
   StartAuditResponse,
-  { siteId: string; requestedPageCap?: number },
+  { siteId: string; requestedPageCap?: number; resourceScan?: boolean },
   { rejectValue: string }
->('report/retest', async ({ siteId, requestedPageCap }, { rejectWithValue }) => {
+>('report/retest', async ({ siteId, requestedPageCap, resourceScan }, { rejectWithValue }) => {
   try {
-    return await startAuditRequest(siteId, requestedPageCap);
+    return await startAuditRequest(siteId, requestedPageCap, resourceScan);
   } catch (err) {
     return rejectWithValue(reportErrorMessage(err, 'report:retestFailed'));
   }

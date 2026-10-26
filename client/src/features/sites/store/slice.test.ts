@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest';
 import { clearSiteMessages, sitesReducer } from './slice';
-import { addSite, loadSites, pauseSite, removeSite, renameSite, resumeSite } from './thunks';
+import { addSite, loadSites, pauseSite, removeSite, renameSite, resumeSite, updateSiteMarket } from './thunks';
 import {
   selectAddSiteError,
   selectAddingSite,
@@ -441,3 +441,13 @@ describe('sites slice — clearSiteMessages', () => {
     expect(state.message).toBe('');
   });
 });
+
+describe('sites slice — market save failure', () => {
+  it('stores an empty message when the market save fails without a reason', () => {
+    const action = { type: updateSiteMarket.rejected.type, meta: { arg: { id: 's-1' } }, payload: undefined, error: { message: 'x' } };
+    const state = sitesReducer(initial(), action as never);
+    expect(state.marketSavingId).toBeNull();
+    expect(state.marketError).toBe('');
+  });
+});
+

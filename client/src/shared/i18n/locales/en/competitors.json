@@ -3,6 +3,8 @@
   "description": "See which sites you compete with and the keywords they rank for.",
   "empty": "No competitors found for this domain yet. Track a few keywords and we'll analyze the sites dominating those search results.",
   "emptyTitle": "No competitors yet",
+  "notFetchedTitle": "Competitors not checked yet",
+  "notFetched": "Refresh to find the sites competing with yours. The data comes from your search data provider, so it can take a moment.",
   "loadFailed": "Could not load competitors.",
   "intersectionFailed": "Could not load gap keywords.",
   "table": {
@@ -26,27 +28,26 @@
   },
   "refresh": {
     "button": "Refresh",
-    "cooldown": "Wait {{seconds}}s before refreshing.",
-    "failed": "Couldn't refresh right now. Your last data is still shown."
+    "cooldown_one": "Wait {{seconds}}s before refreshing.",
+    "failed": "Couldn't refresh right now. Your last data is still shown.",
+    "cooldown_zero": "Wait {{seconds}}s before refreshing.",
+    "cooldown_two": "Wait {{seconds}}s before refreshing.",
+    "cooldown_few": "Wait {{seconds}}s before refreshing.",
+    "cooldown_many": "Wait {{seconds}}s before refreshing.",
+    "cooldown_other": "Wait {{seconds}}s before refreshing."
   },
   "locked": {
     "title": "Upgrade to unlock competitor analysis",
-    "body": "Competitor portfolios and keyword landscapes start on Pro. Agency adds larger reports and ranking-page content comparison.",
-    "upgrade": "See plans"
+    "body": "Competitor portfolios and keyword landscapes start on Pro. Agency adds larger reports and ranking-page content comparison."
   },
   "example": {
     "title": "Example: what you get on Pro and Agency"
   },
   "intelligence": {
-    "title": "Competitor Intelligence",
+    "title": "Competitors",
     "description": "Manage confirmed competitors, compare keyword landscapes, and keep accepted recommendations in one site workspace.",
     "common": {
       "cancel": "Cancel"
-    },
-    "tiers": {
-      "starter": "Starter",
-      "pro": "Pro",
-      "agency": "Agency"
     },
     "views": {
       "label": "Competitor Intelligence views",
@@ -57,17 +58,16 @@
       "traffic": "Traffic",
       "reports": "Reports"
     },
-    "locked": {
-      "title": "Competitor Intelligence starts on Pro",
-      "description": "Upgrade to confirm competitors, run keyword landscape reports, and accept recommendations into Next Actions.",
-      "action": "Compare plans"
-    },
     "portfolio": {
       "title": "Confirmed competitor portfolio",
       "description": "{{active}} of {{max}} active competitor slots are in use. Managing this list does not use an allowance.",
       "manualLabel": "Add a public competitor URL",
       "manualPlaceholder": "https://competitor.example/",
+      "manualInvalid": "Enter a public website such as competitor.com or https://competitor.com.",
+      "ownDomain": "That is your own site's domain. Add a different website as a competitor.",
       "add": "Add competitor",
+      "addDisabledEmpty": "Enter a competitor's website address first.",
+      "addDisabledFull": "Your portfolio already has {{max}} active competitors. Archive one to add another.",
       "adding": "Adding competitor…",
       "confirmed": "Competitor confirmed.",
       "duplicate": "That competitor is already in the portfolio.",
@@ -78,7 +78,7 @@
       "emptyTitle": "No confirmed competitors",
       "empty": "Confirm a discovery suggestion or add a public competitor URL.",
       "domain": "Domain",
-      "source": "Provenance",
+      "source": "Source",
       "status": "Status",
       "added": "Added",
       "action": "Action",
@@ -110,32 +110,58 @@
       "confirmAction": "Confirm refresh"
     },
     "technology": {
-      "title": "Current portfolio summary",
-      "description": "This summary uses stored portfolio facts only. It does not start technology detection or another paid lookup.",
-      "summary": "{{manual}} competitors were added manually and {{suggested}} came from confirmed discovery suggestions. Technology details stay unavailable until a separately previewed lookup exists."
+      "title": "Active competitors by source",
+      "description": "Based on stored data only. No technology detection or new data request runs here.",
+      "summary": "Added manually: {{manual}}. From confirmed discovery suggestions: {{suggested}}. Technology details are not available yet."
     },
     "landscape": {
       "title": "Build a keyword landscape",
-      "description": "Select up to {{count}} confirmed competitors. The server checks the tier, market, allowance, and exact units before a run can start.",
-      "selection": "{{selected}} of {{count}} competitors selected",
-      "limit": "You can select up to {{count}} competitors for this report.",
+      "description_one": "Select up to {{count}} confirmed competitor.",
+      "selection_one": "{{selected}} of {{count}} competitor selected",
+      "limit_one": "You can select up to {{count}} competitor for this report.",
       "emptyTitle": "Confirm a competitor first",
       "empty": "Return to Overview and add at least one active competitor.",
       "previewAction": "Preview report spend",
       "previewing": "Preparing report preview…",
-      "previewTitle": "Server-authoritative spend preview",
+      "previewTitle": "Usage preview",
       "previewDescription": "This report uses {{units}} keyword lookup units and can retain up to {{rows}} rows. {{remaining}} units remain before it starts.",
-      "cacheCounts": "Cache hits count toward usage",
       "reviewAction": "Review and confirm",
       "confirmTitle": "Start this landscape report?",
       "confirmDescription": "Compare {{count}} competitors for {{units}} keyword lookup units.",
       "confirmAction": "Confirm report",
       "duplicate": "The matching report request already exists. The existing run was opened.",
-      "editMarket": "Edit tracked-keyword market"
+      "editMarket": "Edit tracked-keyword market",
+      "rowCount_zero": "{{count}} rows",
+      "rowCount_one": "{{count}} row",
+      "rowCount_two": "{{count}} rows",
+      "rowCount_few": "{{count}} rows",
+      "rowCount_many": "{{count}} rows",
+      "rowCount_other": "{{count}} rows",
+      "selection_zero": "{{selected}} of {{count}} competitors selected",
+      "selection_two": "{{selected}} of {{count}} competitors selected",
+      "selection_few": "{{selected}} of {{count}} competitors selected",
+      "selection_many": "{{selected}} of {{count}} competitors selected",
+      "selection_other": "{{selected}} of {{count}} competitors selected",
+      "limit_zero": "You can select up to {{count}} competitors for this report.",
+      "limit_two": "You can select up to {{count}} competitors for this report.",
+      "limit_few": "You can select up to {{count}} competitors for this report.",
+      "limit_many": "You can select up to {{count}} competitors for this report.",
+      "limit_other": "You can select up to {{count}} competitors for this report.",
+      "competitorCount_zero": "{{count}} competitors",
+      "competitorCount_one": "{{count}} competitor",
+      "competitorCount_two": "{{count}} competitors",
+      "competitorCount_few": "{{count}} competitors",
+      "competitorCount_many": "{{count}} competitors",
+      "competitorCount_other": "{{count}} competitors",
+      "description_zero": "Select up to {{count}} confirmed competitors.",
+      "description_two": "Select up to {{count}} confirmed competitors.",
+      "description_few": "Select up to {{count}} confirmed competitors.",
+      "description_many": "Select up to {{count}} confirmed competitors.",
+      "description_other": "Select up to {{count}} confirmed competitors."
     },
     "reports": {
       "title": "Stored landscape reports",
-      "description": "Reopen immutable reports without starting another vendor lookup.",
+      "description": "Reopen saved reports without running another lookup.",
       "emptyTitle": "No landscape reports",
       "empty": "Create a report from the Keyword landscape view.",
       "date": "Created",
@@ -148,14 +174,14 @@
     },
     "detail": {
       "title": "Landscape report",
-      "summary": "{{domain}} compared with {{count}} competitors on {{date}}.",
-      "progress": "{{done}} of {{total}} source steps complete",
+      "summary_one": "{{domain}} compared with {{count}} competitor on {{date}}.",
+      "progress": "Source steps complete: {{done}} of {{total}}",
       "polling": "The report is still running. This stored status will refresh automatically.",
-      "partial": "{{usable}} of {{requested}} competitors produced usable data. {{failed}} source steps failed; missing values were not inferred.",
+      "partial": "Competitors with usable data: {{usable}} of {{requested}}. Failed source steps: {{failed}}. Missing values were not inferred.",
       "back": "Back to report history",
       "cancel": "Cancel report",
       "rollupTitle": "Portfolio keyword rollup",
-      "rollupDescription": "{{rows}} keyword rows across {{usable}} competitors.",
+      "rollupDescription": "$t(competitors:intelligence.detail.rowCount, {\"count\": {{rows}}}) across $t(competitors:intelligence.detail.competitorCount, {\"count\": {{usable}}}).",
       "filtersTitle": "Report filters",
       "classFilter": "Keyword class",
       "domainFilter": "Competitor",
@@ -200,7 +226,24 @@
       "acceptTitle": "Accept this recommendation?",
       "acceptDescription": "Acceptance creates one durable Next Action. Sending the same decision again will not create a duplicate.",
       "acceptConfirm": "Accept recommendation",
-      "openAction": "Open in Next Actions"
+      "openAction": "Open in Next Actions",
+      "rowCount_zero": "{{count}} keyword rows",
+      "rowCount_one": "{{count}} keyword row",
+      "rowCount_two": "{{count}} keyword rows",
+      "rowCount_few": "{{count}} keyword rows",
+      "rowCount_many": "{{count}} keyword rows",
+      "rowCount_other": "{{count}} keyword rows",
+      "competitorCount_zero": "{{count}} competitors",
+      "competitorCount_one": "{{count}} competitor",
+      "competitorCount_two": "{{count}} competitors",
+      "competitorCount_few": "{{count}} competitors",
+      "competitorCount_many": "{{count}} competitors",
+      "competitorCount_other": "{{count}} competitors",
+      "summary_zero": "{{domain}} compared with {{count}} competitors on {{date}}.",
+      "summary_two": "{{domain}} compared with {{count}} competitors on {{date}}.",
+      "summary_few": "{{domain}} compared with {{count}} competitors on {{date}}.",
+      "summary_many": "{{domain}} compared with {{count}} competitors on {{date}}.",
+      "summary_other": "{{domain}} compared with {{count}} competitors on {{date}}."
     },
     "classes": {
       "missing": "Missing",
@@ -221,7 +264,6 @@
     "states": {
       "loading": "Report in progress",
       "partial": "Partial data",
-      "cap": "This request exceeds the remaining allowance. Upgrade or add an eligible credit pack before confirming.",
       "disabled": "New competitor requests are temporarily disabled. Stored reports remain available.",
       "unsafeLink": "Unsafe source link hidden",
       "rateLimit": "Too many requests. Wait and try again.",
@@ -240,7 +282,7 @@
     },
     "market": {
       "tracked_keyword_mode": "Market from tracked keywords",
-      "default": "Default market fallback"
+      "default": "Site's default market"
     },
     "confidence": {
       "high": "High",

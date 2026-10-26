@@ -3,6 +3,8 @@
   "description": "Sehen Sie, mit welchen Websites Sie konkurrieren und auf welchen Keywords sie ranken.",
   "empty": "Für diese Domain wurden noch keine Wettbewerber gefunden. Verfolgen Sie einige Keywords, und wir analysieren die Websites, die diese Suchergebnisse dominieren.",
   "emptyTitle": "Noch keine Wettbewerber",
+  "notFetchedTitle": "Wettbewerber noch nicht geprüft",
+  "notFetched": "Aktualisieren Sie, um die Websites zu finden, die mit Ihrer konkurrieren. Die Daten stammen von Ihrem Anbieter für Suchdaten, das kann einen Moment dauern.",
   "loadFailed": "Wettbewerber konnten nicht geladen werden.",
   "intersectionFailed": "Gap-Keywords konnten nicht geladen werden.",
   "table": {
@@ -26,27 +28,26 @@
   },
   "refresh": {
     "button": "Aktualisieren",
-    "cooldown": "Warten Sie {{seconds}} s vor der nächsten Aktualisierung.",
-    "failed": "Aktualisierung derzeit nicht möglich. Ihre letzten Daten werden weiterhin angezeigt."
+    "cooldown_one": "Warten Sie {{seconds}} s vor der nächsten Aktualisierung.",
+    "failed": "Aktualisierung derzeit nicht möglich. Ihre letzten Daten werden weiterhin angezeigt.",
+    "cooldown_zero": "Warten Sie {{seconds}} s vor der nächsten Aktualisierung.",
+    "cooldown_two": "Warten Sie {{seconds}} s vor der nächsten Aktualisierung.",
+    "cooldown_few": "Warten Sie {{seconds}} s vor der nächsten Aktualisierung.",
+    "cooldown_many": "Warten Sie {{seconds}} s vor der nächsten Aktualisierung.",
+    "cooldown_other": "Warten Sie {{seconds}} s vor der nächsten Aktualisierung."
   },
   "locked": {
     "title": "Führen Sie ein Upgrade durch, um die Wettbewerbsanalyse freizuschalten",
-    "body": "Wettbewerber-Portfolios und Keyword-Landschaften beginnen mit Pro. Agency ergänzt größere Berichte und den Content-Vergleich von Ranking-Seiten.",
-    "upgrade": "Pläne ansehen"
+    "body": "Wettbewerber-Portfolios und Keyword-Landschaften beginnen mit Pro. Agency ergänzt größere Berichte und den Content-Vergleich von Ranking-Seiten."
   },
   "example": {
     "title": "Beispiel: Was Pro und Agency bieten"
   },
   "intelligence": {
-    "title": "Wettbewerbsinformationen",
+    "title": "Wettbewerber",
     "description": "Verwalten Sie bestätigte Konkurrenten, vergleichen Sie Keyword-Landschaften und behalten Sie akzeptierte Empfehlungen in einem Site-Workspace bei.",
     "common": {
       "cancel": "Abbrechen"
-    },
-    "tiers": {
-      "starter": "Starter",
-      "pro": "Pro",
-      "agency": "Agency"
     },
     "views": {
       "label": "Ansichten der Wettbewerbsanalyse",
@@ -57,17 +58,16 @@
       "traffic": "Traffic",
       "reports": "Berichte"
     },
-    "locked": {
-      "title": "Die Wettbewerbsanalyse beginnt mit Pro",
-      "description": "Wechseln Sie zu Pro, um Wettbewerber zu bestätigen, Keyword-Landschaften zu erstellen und Empfehlungen in Nächste Aktionen zu übernehmen.",
-      "action": "Tarife vergleichen"
-    },
     "portfolio": {
       "title": "Bestätigtes Wettbewerberportfolio",
       "description": "{{active}} von {{max}} aktiven Wettbewerber-Slots sind belegt. Für die Verwaltung dieser Liste wird kein Zuschlag verwendet.",
       "manualLabel": "Fügen Sie eine öffentliche Mitbewerber-URL hinzu",
       "manualPlaceholder": "https://competitor.example/",
+      "manualInvalid": "Geben Sie eine öffentliche Website ein, z. B. competitor.com oder https://competitor.com.",
+      "ownDomain": "Das ist die Domain Ihrer eigenen Website. Fügen Sie eine andere Website als Wettbewerber hinzu.",
       "add": "Mitbewerber hinzufügen",
+      "addDisabledEmpty": "Geben Sie zuerst die Website-Adresse eines Wettbewerbers ein.",
+      "addDisabledFull": "Ihr Portfolio hat bereits {{max}} aktive Wettbewerber. Archivieren Sie einen, um einen weiteren hinzuzufügen.",
       "adding": "Wettbewerber wird hinzugefügt…",
       "confirmed": "Wettbewerber bestätigt.",
       "duplicate": "Dieser Konkurrent ist bereits im Portfolio.",
@@ -78,7 +78,7 @@
       "emptyTitle": "Keine bestätigten Konkurrenten",
       "empty": "Bestätigen Sie einen Entdeckungsvorschlag oder fügen Sie eine öffentliche Mitbewerber-URL hinzu.",
       "domain": "Domäne",
-      "source": "Provenienz",
+      "source": "Quelle",
       "status": "Status",
       "added": "Hinzugefügt",
       "action": "Aktion",
@@ -110,32 +110,58 @@
       "confirmAction": "Bestätigen Sie die Aktualisierung"
     },
     "technology": {
-      "title": "Aktuelle Portfolioübersicht",
-      "description": "Diese Zusammenfassung verwendet ausschließlich gespeicherte Portfolio-Fakten. Es wird keine Technologieerkennung oder eine andere kostenpflichtige Suche gestartet.",
-      "summary": "{{manual}} Konkurrenten wurden manuell hinzugefügt und {{suggested}} stammten aus bestätigten Entdeckungsvorschlägen. Technologiedetails bleiben erst verfügbar, wenn eine separate Vorschau-Suche vorliegt."
+      "title": "Aktive Wettbewerber nach Quelle",
+      "description": "Basiert nur auf gespeicherten Daten. Hier läuft weder eine Technologieerkennung noch eine neue Datenabfrage.",
+      "summary": "Manuell hinzugefügt: {{manual}}. Aus bestätigten Entdeckungsvorschlägen: {{suggested}}. Technologiedetails sind noch nicht verfügbar."
     },
     "landscape": {
       "title": "Erstellen Sie eine Keyword-Landschaft",
-      "description": "Wählen Sie bis zu {{count}} bestätigte Konkurrenten aus. Der Server überprüft die Stufe, den Markt, die Zulage und die genauen Einheiten, bevor ein Lauf beginnen kann.",
-      "selection": "{{selected}} von {{count}} Teilnehmern ausgewählt",
-      "limit": "Sie können bis zu {{count}} Mitbewerber für diesen Bericht auswählen.",
+      "description_one": "Wählen Sie bis zu {{count}} bestätigten Konkurrenten aus.",
+      "selection_one": "{{selected}} von {{count}} Teilnehmer ausgewählt",
+      "limit_one": "Sie können bis zu {{count}} Mitbewerber für diesen Bericht auswählen.",
       "emptyTitle": "Bestätigen Sie zuerst einen Konkurrenten",
       "empty": "Kehren Sie zur Übersicht zurück und fügen Sie mindestens einen aktiven Konkurrenten hinzu.",
       "previewAction": "Vorschau der Berichtsausgaben",
       "previewing": "Berichtsvorschau wird vorbereitet…",
-      "previewTitle": "Serverautoritative Ausgabenvorschau",
+      "previewTitle": "Verbrauchsvorschau",
       "previewDescription": "Dieser Bericht verwendet {{units}} Schlüsselwortsucheinheiten und kann bis zu {{rows}} Zeilen speichern. {{remaining}} Einheiten bleiben vor dem Start übrig.",
-      "cacheCounts": "Cache-Treffer zählen zur Nutzung",
       "reviewAction": "Überprüfen und bestätigen Sie",
       "confirmTitle": "Diesen Landschaftsbericht starten?",
       "confirmDescription": "Vergleichen Sie {{count}} Mitbewerber für {{units}} Keyword-Sucheinheiten.",
       "confirmAction": "Bericht bestätigen",
       "duplicate": "Die entsprechende Berichtsanforderung ist bereits vorhanden. Der bestehende Lauf wurde geöffnet.",
-      "editMarket": "Bearbeiten Sie den Markt für verfolgte Keywords"
+      "editMarket": "Bearbeiten Sie den Markt für verfolgte Keywords",
+      "rowCount_zero": "{{count}} Zeilen",
+      "rowCount_one": "{{count}} Zeile",
+      "rowCount_two": "{{count}} Zeilen",
+      "rowCount_few": "{{count}} Zeilen",
+      "rowCount_many": "{{count}} Zeilen",
+      "rowCount_other": "{{count}} Zeilen",
+      "selection_zero": "{{selected}} von {{count}} Teilnehmern ausgewählt",
+      "selection_two": "{{selected}} von {{count}} Teilnehmern ausgewählt",
+      "selection_few": "{{selected}} von {{count}} Teilnehmern ausgewählt",
+      "selection_many": "{{selected}} von {{count}} Teilnehmern ausgewählt",
+      "selection_other": "{{selected}} von {{count}} Teilnehmern ausgewählt",
+      "limit_zero": "Sie können bis zu {{count}} Mitbewerber für diesen Bericht auswählen.",
+      "limit_two": "Sie können bis zu {{count}} Mitbewerber für diesen Bericht auswählen.",
+      "limit_few": "Sie können bis zu {{count}} Mitbewerber für diesen Bericht auswählen.",
+      "limit_many": "Sie können bis zu {{count}} Mitbewerber für diesen Bericht auswählen.",
+      "limit_other": "Sie können bis zu {{count}} Mitbewerber für diesen Bericht auswählen.",
+      "competitorCount_zero": "{{count}} Mitbewerber",
+      "competitorCount_one": "{{count}} Mitbewerber",
+      "competitorCount_two": "{{count}} Mitbewerber",
+      "competitorCount_few": "{{count}} Mitbewerber",
+      "competitorCount_many": "{{count}} Mitbewerber",
+      "competitorCount_other": "{{count}} Mitbewerber",
+      "description_zero": "Wählen Sie bis zu {{count}} bestätigte Konkurrenten aus.",
+      "description_two": "Wählen Sie bis zu {{count}} bestätigte Konkurrenten aus.",
+      "description_few": "Wählen Sie bis zu {{count}} bestätigte Konkurrenten aus.",
+      "description_many": "Wählen Sie bis zu {{count}} bestätigte Konkurrenten aus.",
+      "description_other": "Wählen Sie bis zu {{count}} bestätigte Konkurrenten aus."
     },
     "reports": {
       "title": "Gespeicherte Landschaftsberichte",
-      "description": "Öffnen Sie unveränderliche Berichte erneut, ohne eine weitere Anbietersuche zu starten.",
+      "description": "Öffnen Sie gespeicherte Berichte erneut, ohne eine weitere Abfrage zu starten.",
       "emptyTitle": "Keine Landschaftsberichte",
       "empty": "Erstellen Sie einen Bericht aus der Keyword-Landschaftsansicht.",
       "date": "Erstellt",
@@ -148,14 +174,14 @@
     },
     "detail": {
       "title": "Landschaftsbericht",
-      "summary": "{{domain}} im Vergleich mit {{count}} Mitbewerbern am {{date}}.",
-      "progress": "{{done}} von {{total}} Quellschritten abgeschlossen",
+      "summary_one": "{{domain}} im Vergleich mit {{count}} Mitbewerber am {{date}}.",
+      "progress": "Abgeschlossene Quellschritte: {{done}} von {{total}}",
       "polling": "Der Bericht läuft noch. Dieser gespeicherte Status wird automatisch aktualisiert.",
-      "partial": "{{usable}} von {{requested}} Wettbewerbern produzierten verwertbare Daten. {{failed}} Quellschritte fehlgeschlagen; fehlende Werte wurden nicht abgeleitet.",
+      "partial": "Wettbewerber mit verwertbaren Daten: {{usable}} von {{requested}}. Fehlgeschlagene Quellschritte: {{failed}}. Fehlende Werte wurden nicht abgeleitet.",
       "back": "Zurück zum Berichtsverlauf",
       "cancel": "Bericht abbrechen",
       "rollupTitle": "Portfolio-Keyword-Rollup",
-      "rollupDescription": "{{rows}} Keyword-Zeilen bei {{usable}} Mitbewerbern.",
+      "rollupDescription": "$t(competitors:intelligence.detail.rowCount, {\"count\": {{rows}}}) bei $t(competitors:intelligence.detail.competitorCount, {\"count\": {{usable}}}).",
       "filtersTitle": "Berichtsfilter",
       "classFilter": "Keyword-Klasse",
       "domainFilter": "Konkurrent",
@@ -166,7 +192,7 @@
       "keywordsDescription": "Ränge und URLs sind beobachtete Fakten. Beim Suchvolumen handelt es sich um eine Schätzung des Anbieters. Es werden Klassen und Empfehlungen abgeleitet.",
       "keyword": "Stichwort",
       "class": "Klasse",
-      "ownedRank": "Dein Rang",
+      "ownedRank": "Ihr Rang",
       "competitorRank": "Wettbewerbsrang",
       "volume": "Geschätztes Volumen",
       "source": "Beweise",
@@ -200,7 +226,24 @@
       "acceptTitle": "Akzeptieren Sie diese Empfehlung?",
       "acceptDescription": "Akzeptanz schafft eine dauerhafte nächste Aktion. Durch das erneute Senden derselben Entscheidung wird kein Duplikat erstellt.",
       "acceptConfirm": "Empfehlung annehmen",
-      "openAction": "In „Nächste Aktionen“ öffnen"
+      "openAction": "In „Nächste Aktionen“ öffnen",
+      "rowCount_zero": "{{count}} Keyword-Zeilen",
+      "rowCount_one": "{{count}} Keyword-Zeile",
+      "rowCount_two": "{{count}} Keyword-Zeilen",
+      "rowCount_few": "{{count}} Keyword-Zeilen",
+      "rowCount_many": "{{count}} Keyword-Zeilen",
+      "rowCount_other": "{{count}} Keyword-Zeilen",
+      "competitorCount_zero": "{{count}} Mitbewerbern",
+      "competitorCount_one": "{{count}} Mitbewerber",
+      "competitorCount_two": "{{count}} Mitbewerbern",
+      "competitorCount_few": "{{count}} Mitbewerbern",
+      "competitorCount_many": "{{count}} Mitbewerbern",
+      "competitorCount_other": "{{count}} Mitbewerbern",
+      "summary_zero": "{{domain}} im Vergleich mit {{count}} Mitbewerbern am {{date}}.",
+      "summary_two": "{{domain}} im Vergleich mit {{count}} Mitbewerbern am {{date}}.",
+      "summary_few": "{{domain}} im Vergleich mit {{count}} Mitbewerbern am {{date}}.",
+      "summary_many": "{{domain}} im Vergleich mit {{count}} Mitbewerbern am {{date}}.",
+      "summary_other": "{{domain}} im Vergleich mit {{count}} Mitbewerbern am {{date}}."
     },
     "classes": {
       "missing": "Fehlt",
@@ -221,7 +264,6 @@
     "states": {
       "loading": "Bericht in Bearbeitung",
       "partial": "Teildaten",
-      "cap": "Dieser Antrag übersteigt den verbleibenden Betrag. Führen Sie vor der Bestätigung ein Upgrade durch oder fügen Sie ein berechtigtes Guthabenpaket hinzu.",
       "disabled": "Neue Mitbewerberanfragen sind vorübergehend deaktiviert. Gespeicherte Berichte bleiben verfügbar.",
       "unsafeLink": "Unsicherer Quelllink ausgeblendet",
       "rateLimit": "Zu viele Anfragen. Warten Sie und versuchen Sie es erneut.",
@@ -240,7 +282,7 @@
     },
     "market": {
       "tracked_keyword_mode": "Markt anhand von verfolgten Schlüsselwörtern",
-      "default": "Standardmarkt-Fallback"
+      "default": "Standardmarkt der Website"
     },
     "confidence": {
       "high": "Hoch",

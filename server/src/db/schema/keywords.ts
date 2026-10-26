@@ -84,7 +84,7 @@ export const keywords = pgTable('keywords', {
     // engine='google', so the Google projection of this index is identical to
     // the earlier index it replaces.
     uniqueIndex('keywords_site_engine_phrase_loc_lang_device_idx').on(table.siteId, table.engine, table.phrase, table.locationCode, table.languageCode, table.device),
-    index('keywords_site_active_idx').on(table.siteId, table.active),
+    index('keywords_site_active_created_idx').on(table.siteId, table.active, table.createdAt, table.id),
     // Serves `countActiveKeywords` (account-scoped
     // filter on `active=true`) without a per-account partial index.
     index('keywords_account_active_idx').on(table.accountId, table.active),

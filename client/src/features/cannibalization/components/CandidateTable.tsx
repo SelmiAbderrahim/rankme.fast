@@ -1,3 +1,4 @@
+import { Bdi } from '@shared/components/Bdi';
 import { useTranslation } from 'react-i18next';
 import { Badge } from '@shared/ui/badge';
 import { Button } from '@shared/ui/button';
@@ -42,7 +43,7 @@ export const CandidateTable = ({ candidates, activeCandidateId, onOpen }: Candid
             data-active={candidate.id === activeCandidateId ? 'true' : 'false'}
           >
             <TableCell>
-              <span className="font-medium">{candidate.query}</span>
+              <span className="font-medium"><Bdi>{candidate.query}</Bdi></span>
               <span className="text-muted-foreground block text-xs">{t('candidates.label')}</span>
             </TableCell>
             <TableCell className="text-end">{candidate.pages.length}</TableCell>

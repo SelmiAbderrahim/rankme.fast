@@ -1,6 +1,11 @@
 import { z } from 'zod';
 import type { TFunction } from 'i18next';
 import { RANK_ENGINES } from './types';
+import { parsePhraseList } from '@shared/lib/phraseList';
+
+export const KEYWORD_PHRASE_MAX = 300;
+/** The textarea previews up to 1,000 distinct phrases; requests use batches of 100. */
+export const KEYWORD_PASTE_MAX = 1000;
 
 /** Client mirrors of the server's engine-target patterns. */
 export const YOUTUBE_HANDLE_RE = /^@?[A-Za-z0-9._-]{3,60}$/;
@@ -16,12 +21,10 @@ export const buildAddKeywordSchema = (t: TFunction<'ranks'>) =>
       const phrases = parseKeywordLines(value);
       if (phrases.length === 0) {
         ctx.addIssue({ code: z.ZodIssueCode.custom, message: t('errors.phraseRequired') });
-      } else if (phrases.some((phrase) => phrase.length > 300)) {
-        ctx.addIssue({ code: z.ZodIssueCode.custom, message: t('errors.phraseTooLong') });
       }
     }),
     locationCode: z.coerce
-      .number({ invalid_type_error: t('errors.locationInvalid') })
+      .number<number>({ error: t('errors.locationInvalid') })
       .int(t('errors.locationInvalid'))
       .positive(t('errors.locationInvalid')),
     languageCode: z
@@ -77,14 +80,7 @@ export const normalizeKeywordPhrase = (phrase: string): string =>
 
 /** Newlines and commas both delimit phrases (pasted lists come either way). */
 export const parseKeywordLines = (value: string): string[] => {
-  const seen = new Set<string>();
-  return value.split(/[\r\n,]+/).flatMap((line) => {
-    const phrase = line.trim();
-    const key = normalizeKeywordPhrase(phrase);
-    if (!key || seen.has(key)) return [];
-    seen.add(key);
-    return [phrase];
-  });
+  return parsePhraseList(value);
 };
 
 export const longTailResearchSeed = (value: string, engine: string): string | null => {

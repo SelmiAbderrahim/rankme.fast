@@ -2,6 +2,7 @@ import type { LucideIcon } from 'lucide-react';
 import {
   Bell,
   BellRing,
+  Building2,
   BookOpenText,
   Bot,
   Cable,
@@ -33,6 +34,7 @@ export const APP_PAGE_ICONS = {
   exports: FileArchive,
   profile: CircleUserRound,
   team: UsersRound,
+  workspace: Building2,
   google: Cable,
   notifications: Bell,
   security: LockKeyhole,
@@ -52,6 +54,7 @@ export const SIDEBAR_ICON_KEYS = [
   'exports',
   'profile',
   'team',
+  'workspace',
   'google',
   'notifications',
   'security',

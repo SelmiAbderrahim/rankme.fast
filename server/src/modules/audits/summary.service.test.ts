@@ -443,6 +443,7 @@ describe("summary state and enqueue orchestration", () => {
     expect(state.status).toBe("idle");
   });
 
+
   it("marks failed when Redis enqueue fails", async () => {
     const ids = await seedOne();
     const failureAt = new Date("2026-07-16T10:01:00.000Z");
@@ -638,6 +639,8 @@ describe("worker-side provider generation", () => {
       model: "model-1",
       truncated: true,
       createdAt: generatedAt.toISOString(),
+      basisRuleIds: ["title-missing-or-weak", "headings-weak"],
+      inputHash: expect.stringMatching(/^[0-9a-f]{64}$/),
     });
     expect(summarize).toHaveBeenCalledWith(
       expect.objectContaining({

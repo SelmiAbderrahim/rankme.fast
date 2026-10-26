@@ -28,6 +28,7 @@ import {
   writeReportSnapshot,
 } from './report.service.js';
 import { makeAuditResult } from './rules/fixtures.js';
+import { categoryOf } from './rules/index.js';
 
 beforeAll(() => startMemoryMongo());
 afterAll(() => stopMemoryMongo());
@@ -430,6 +431,8 @@ describe('getAuditReport', () => {
         pages: [{ url: 'https://example.com/a', title: null }],
       }),
     });
+    // The baseline is the previous run that produced a report.
+    await AuditRun.updateOne({ _id: ids.runId }, { $set: { status: 'succeeded' } });
     // Second run for the same site: fixed.
     const site = await Site.findById(ids.siteId);
     const run2 = await AuditRun.create({
@@ -789,6 +792,41 @@ describe('getAuditReport', () => {
     expect(titleRule?.copy.reason).toBeUndefined();
   });
 
+  it('puts every finding in its report category and refuses an id this release dropped', async () => {
+    const ids = await seedRun();
+    await writeReportSnapshot({ ...ids, result: makeAuditResult() });
+    await ReportSnapshot.updateOne(
+      { runId: ids.runId },
+      { $push: { findings: { ruleId: 'retired-rule', bucket: 'passed', severity: 'info', affectedUrls: [], meta: null } } },
+    );
+    const report = await getAuditReport({ runId: ids.runId, accountId: ids.accountId, locale: 'en' }).catch((error) => error);
+    // An unknown stored id has no copy, which the reader refuses to invent.
+    expect(report).toBeInstanceOf(RangeError);
+    await ReportSnapshot.updateOne({ runId: ids.runId }, { $pull: { findings: { ruleId: 'retired-rule' } } });
+    const known = await getAuditReport({ runId: ids.runId, accountId: ids.accountId, locale: 'en' });
+    for (const finding of known.findings) expect(finding.category, finding.ruleId).toBe(categoryOf(finding.ruleId));
+    expect(known.findings.find((f) => f.ruleId === 'robots-blocked')?.category).toBe('indexability');
+    expect(known.findings.find((f) => f.ruleId === 'redirect-chains')?.category).toBe('links-redirects');
+  });
+
+  it('adds the deep crawl qualifier to the finding copy only when the evidence needs it', async () => {
+    const ids = await seedRun();
+    await writeReportSnapshot({ ...ids, result: makeAuditResult() });
+    for (const [ruleId, meta] of [
+      ['http-error-pages', { refusalsOnly: true }],
+      ['duplicate-content', { unverifiedCount: 2 }],
+    ] as const) {
+      await ReportSnapshot.updateOne(
+        { runId: ids.runId, 'findings.ruleId': ruleId },
+        { $set: { 'findings.$.bucket': 'watch', 'findings.$.meta': meta } },
+      );
+    }
+    const report = await getAuditReport({ runId: ids.runId, accountId: ids.accountId, locale: 'en' });
+    expect(report.findings.find((f) => f.ruleId === 'http-error-pages')?.copy.reason).toMatch(/refused our crawler/);
+    expect(report.findings.find((f) => f.ruleId === 'duplicate-content')?.copy.reason).toMatch(/not compared one by one/);
+    expect(report.findings.find((f) => f.ruleId === 'redirect-chains')?.copy.reason).toBeUndefined();
+  });
+
   it('preserves finding meta when the rule attaches it', async () => {
     const ids = await seedRun();
     await writeReportSnapshot({
@@ -811,6 +849,9 @@ describe('getAuditReport', () => {
     expect(broken?.meta).toEqual({
       totalBroken: 1,
       brokenLinkTargets: ['https://example.com/404'],
+      confirmedTargets: 0,
+      unverifiedTargets: 0,
+      reportedTargets: 1,
     });
     expect(broken?.brokenLinkTargets).toEqual(['https://example.com/404']);
     expect(broken?.codeFixPromptAvailable).toBe(true);
@@ -884,7 +925,7 @@ describe('getAuditReport', () => {
 
     const notEvaluated = report.findings.filter((finding) => finding.notEvaluated);
     expect(notEvaluated.map((finding) => finding.ruleId)).toEqual(
-      expect.arrayContaining(['gsc-ctr-low', 'not-indexed', 'sitemap-errors', 'low-review-rating', 'core-web-vitals-poor']),
+      expect.arrayContaining(['gsc-ctr-low', 'not-indexed', 'sitemap-errors', 'core-web-vitals-poor']),
     );
     for (const finding of notEvaluated) {
       expect(finding.meta?.insufficientData).toBe(true);

@@ -16,6 +16,8 @@ const renderButton = (props: Partial<React.ComponentProps<typeof RefreshButton>>
         cooldownKey="backlinks:refresh.cooldown"
         data-testid="refresh-btn"
         {...(props.disabled !== undefined ? { disabled: props.disabled } : {})}
+        {...(props.variant !== undefined ? { variant: props.variant } : {})}
+        {...(props.describedBy !== undefined ? { describedBy: props.describedBy } : {})}
       />
     </I18nextProvider>,
   );
@@ -30,6 +32,11 @@ afterEach(() => {
 });
 
 describe('RefreshButton', () => {
+  it('points at the element that explains why it is disabled', () => {
+    renderButton({ disabled: true, describedBy: 'why-disabled' });
+    expect(screen.getByTestId('refresh-btn')).toHaveAttribute('aria-describedby', 'why-disabled');
+  });
+
   it('renders the localized label and aria-label, enabled by default', () => {
     renderButton();
     const button = screen.getByTestId('refresh-btn');
@@ -50,6 +57,14 @@ describe('RefreshButton', () => {
     const button = screen.getByTestId('refresh-btn');
     expect(button).toBeDisabled();
     expect(button.querySelector('svg')).toHaveClass('animate-spin');
+  });
+
+  it('uses the ghost variant by default and the outline variant when asked', () => {
+    const { unmount } = renderButton();
+    expect(screen.getByTestId('refresh-btn')).toHaveAttribute('data-variant', 'ghost');
+    unmount();
+    renderButton({ variant: 'outline' });
+    expect(screen.getByTestId('refresh-btn')).toHaveAttribute('data-variant', 'outline');
   });
 
   it('honours the explicit disabled prop', () => {

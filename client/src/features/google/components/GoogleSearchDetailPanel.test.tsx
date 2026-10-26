@@ -191,7 +191,7 @@ describe('GoogleSearchDetailPanel — analytics views', () => {
     );
   });
 
-  it('countries view uppercases the ISO codes like the summary card', async () => {
+  it('countries view localizes ISO codes like the summary card', async () => {
     mockedApi.fetchSearchAnalyticsDetail.mockResolvedValue({
       detail: {
         asOf: '2026-07-04',
@@ -199,8 +199,8 @@ describe('GoogleSearchDetailPanel — analytics views', () => {
       },
     });
     renderPanel('countries');
-    expect(await screen.findByText('USA')).toBeInTheDocument();
-    expect(screen.getByText('FRA')).toBeInTheDocument();
+    expect(await screen.findByText('United States')).toBeInTheDocument();
+    expect(screen.getByText('France')).toBeInTheDocument();
     expect(mockedApi.fetchSearchAnalyticsDetail).toHaveBeenCalledWith(
       'site-1',
       'country',

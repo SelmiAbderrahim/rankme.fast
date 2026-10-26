@@ -1,5 +1,7 @@
+import { Bdi } from '@shared/components/Bdi';
 import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
+import { formatAbsoluteDate } from '@shared/lib/datetime';
 import {
   Sheet,
   SheetContent,
@@ -48,7 +50,7 @@ export function SignalEvidenceDrawer({
   sources,
   onClose,
 }: SignalEvidenceDrawerProps) {
-  const { t } = useTranslation('audienceResearch');
+  const { t, i18n } = useTranslation('audienceResearch');
 
   const sourceById = useMemo(() => {
     const map = new Map<string, RunResultSource>();
@@ -78,7 +80,7 @@ export function SignalEvidenceDrawer({
       >
         <SheetHeader>
           <SheetTitle>
-            {signal ? signal.title : t('signals.evidence.title')}
+            <Bdi>{signal ? signal.title : t('signals.evidence.title')}</Bdi>
           </SheetTitle>
           <SheetDescription>{t('signals.evidence.description')}</SheetDescription>
         </SheetHeader>
@@ -107,7 +109,7 @@ export function SignalEvidenceDrawer({
                 }
                 const meta = readObservationMeta(source.observationMeta);
                 const observedDisplay = source.observedAt
-                  ? source.observedAt.slice(0, 10)
+                  ? formatAbsoluteDate(source.observedAt, i18n.language)
                   : t('signals.evidence.dateUnavailable');
                 const href = safeExternalHref(source.canonicalUrl);
                 let host: string;

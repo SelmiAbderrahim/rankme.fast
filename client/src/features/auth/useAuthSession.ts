@@ -4,6 +4,9 @@ import type { AuthSessionUser } from './types';
 export interface AuthSessionState {
   /** True once a live session is confirmed. */
   authenticated: boolean;
+  /** A failed read is not evidence that the cookie session is absent. */
+  isUnavailable?: boolean;
+  isRefetching?: boolean;
   /** True while the initial session fetch is in flight. */
   isPending: boolean;
   emailVerified: boolean;
@@ -21,9 +24,11 @@ export interface AuthSessionState {
  * all read from this hook; there is no Redux mirror of auth state.
  */
 export const useAuthSession = (): AuthSessionState => {
-  const { data, isPending, refetch } = authClient.useSession();
+  const { data, isPending, isRefetching, error, refetch } = authClient.useSession();
   return {
     authenticated: Boolean(data),
+    isUnavailable: Boolean(error && error.status !== 401),
+    isRefetching: Boolean(isRefetching),
     isPending,
     emailVerified: data?.user.emailVerified ?? false,
     mustChangePassword: data?.user.mustChangePassword === true,

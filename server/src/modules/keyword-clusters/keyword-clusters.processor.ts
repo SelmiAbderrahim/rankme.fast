@@ -15,7 +15,7 @@ import { keywordClusterJobSchema, parseConsumedPayload, type KeywordClusterJob, 
 import { applyClusterLabelsAiOutput, KeywordClusterAiOutputContractError, validateClusterLabelsAiOutput, } from './keyword-clusters.ai-contract.js';
 import { SerpClusterRun } from './keyword-clusters.model.js';
 import { clusterKeywordsBySerpOverlap } from './keyword-clusters.overlap.js';
-import { readKeywordClusterReadiness } from './keyword-clusters.readiness.js';
+import { evaluateClusterEligibility } from './keyword-clusters.readiness.js';
 import { KEYWORD_CLUSTER_MAX_AI_CLUSTERS, KEYWORD_CLUSTER_MAX_AI_MEMBERS, type KeywordCluster, } from './keyword-clusters.schemas.js';
 export interface KeywordClustersProcessorDeps {
     db: Db;
@@ -74,11 +74,11 @@ export function createKeywordClustersProcessor(deps: KeywordClustersProcessorDep
                     observedAt: input.observedAt.toISOString(),
                     topUrls: [...input.topUrls],
                 }))
-                : (await readKeywordClusterReadiness(deps.db, {
+                : (await evaluateClusterEligibility(deps.db, {
                     siteId: payload.siteId,
                     keywordIds: existing.keywordIds,
                     now: now(),
-                })).ready;
+                })).eligible;
             const deterministic = clusterKeywordsBySerpOverlap({
                 keywords: ready,
                 minSharedUrls: existing.minSharedUrls,

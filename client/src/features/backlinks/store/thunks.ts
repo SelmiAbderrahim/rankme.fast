@@ -96,7 +96,7 @@ export const refreshSummary = createAsyncThunk<
 
 export const loadList = createAsyncThunk<
   BacklinkList,
-  { siteId: string; cursor?: string; limit?: number },
+  { siteId: string; cursor?: string; limit?: number; fresh?: boolean },
   { rejectValue: RejectPayload }
 >('backlinks/loadList', async (args, { rejectWithValue, signal }) => {
   try {

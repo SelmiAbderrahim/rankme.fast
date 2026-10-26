@@ -4,7 +4,7 @@ import { RequireVerified } from '@features/auth';
 
 export const accountRoutes: RouteObject[] = [
   {
-    path: 'profile',
+    path: 'settings/profile',
     lazy: async () => {
       const [
         { AccountPage },

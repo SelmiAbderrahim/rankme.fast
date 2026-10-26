@@ -87,6 +87,7 @@ import {
   reportExportRefusalCode,
   reportExportServiceTestables,
   resolveOwnedReportExportSiteId,
+  resolveReportExportSites,
   stableReportJson,
 } from "./report-exports.service.js";
 import type {
@@ -727,6 +728,56 @@ describe("report-export authenticated management routes", () => {
       .get(`/api/report-exports/${snapshotId}`)
       .set("Cookie", source.user.cookie)
       .expect(404);
+  });
+
+  it("labels listed exports and shares from account-owned sites", async () => {
+    const source = await context();
+    const foreign = await context();
+    const created = await createSnapshot(source).expect(201);
+    await createReportExportShare({
+      accountId: source.user.id,
+      actorUserId: source.user.id,
+      snapshotId: created.body.snapshot.id as string,
+      body: { formats: ["view"], expiresInDays: 7 },
+    });
+    const site = {
+      id: source.siteId,
+      domain: expect.stringContaining(".example"),
+      name: "Stored report source",
+    };
+    const exportsPage = await listReportExports({
+      accountId: source.user.id,
+      actorUserId: source.user.id,
+      limit: 10,
+    });
+    expect(exportsPage.items).toMatchObject([{ site }]);
+    const sharesPage = await listReportExportSharesForAccount({
+      accountId: source.user.id,
+      actorUserId: source.user.id,
+      limit: 10,
+    });
+    expect(sharesPage.items).toMatchObject([{ snapshot: { site } }]);
+    expect(await resolveReportExportSites(source.user.id, [new mongoose.Types.ObjectId(foreign.siteId)]))
+      .toEqual(new Map());
+    expect(await resolveReportExportSites(source.user.id, [null])).toEqual(new Map());
+    await Site.collection.updateOne(
+      { _id: new mongoose.Types.ObjectId(source.siteId) },
+      { $set: { displayName: "" } },
+    );
+    expect((await resolveReportExportSites(source.user.id, [new mongoose.Types.ObjectId(source.siteId)]))
+      .get(source.siteId)?.name).toMatch(/\.example$/u);
+    await Site.collection.updateOne(
+      { _id: new mongoose.Types.ObjectId(source.siteId) },
+      { $set: { displayName: null } },
+    );
+    expect((await resolveReportExportSites(source.user.id, [new mongoose.Types.ObjectId(source.siteId)]))
+      .get(source.siteId)?.name).toMatch(/\.example$/u);
+
+    await Site.collection.deleteOne({ _id: new mongoose.Types.ObjectId(source.siteId) });
+    expect((await listReportExports({ accountId: source.user.id, actorUserId: source.user.id, limit: 10 })).items)
+      .toMatchObject([{ site: null }]);
+    expect((await listReportExportSharesForAccount({ accountId: source.user.id, actorUserId: source.user.id, limit: 10 })).items)
+      .toMatchObject([{ snapshot: { site: null } }]);
   });
 
   it("uses zod boundaries, catalog format truth, and constant cross-account 404s", async () => {

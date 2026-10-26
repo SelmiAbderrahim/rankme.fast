@@ -20,6 +20,7 @@ import {
   truncateAllTables,
 } from '../../shared/testing/postgres.js';
 import { Site } from '../sites/index.js';
+import { AuditRun } from '../audits/audit-run.model.js';
 import { user as authUser } from '../../db/schema/auth.js';
 import { teamMembers } from '../../db/schema/team-members.js';
 import {
@@ -28,6 +29,7 @@ import {
   exportAllEventsForAccount,
   findLatestEventForAction,
   findLatestEventsForActions,
+  listEventsForAction,
   listSiteEventHistory,
 } from './actions.events.repo.js';
 import { hashActionId, hashSourceIdRef } from './actions.identity.js';
@@ -38,6 +40,8 @@ import {
 } from './actions.registry.js';
 import { getActionHistory, listActionsForSite } from './actions.service.js';
 import { mutateActionState } from './actions.state.service.js';
+import { openAuditRuleIds } from './audit-decisions.js';
+import { AUDIT_REGRESSION_ACTOR } from './actions.regression.js';
 import type { CandidateAction } from './actions.types.js';
 
 function candidate(over: Partial<CandidateAction> = {}): CandidateAction {
@@ -1098,6 +1102,49 @@ describe('mutateActionState', () => {
     }
     // No event was written for either content source.
     expect(await exportAllEventsForAccount(getTestDb(), accountId)).toEqual([]);
+  });
+});
+
+describe('audit finding decisions', () => {
+  it('uses only actionable evaluated findings as newer audit evidence', () => {
+    expect([...openAuditRuleIds([
+      { ruleId: 'open', bucket: 'fix-now' },
+      { ruleId: 'watch', bucket: 'watch' },
+      { ruleId: 'passed', bucket: 'passed' },
+      { ruleId: 'unknown', bucket: 'watch', meta: { insufficientData: true } },
+    ])]).toEqual(['open', 'watch']);
+  });
+
+  it('reopens a marked-fixed rule once when a newer audit still reports it', async () => {
+    const { accountId, siteId } = await seedSite();
+    const observedAt = new Date(Date.now() + 60_000);
+    const run = await AuditRun.create({ accountId, siteId, status: 'succeeded',
+      kind: 'site', pageCap: 25, finishedAt: observedAt });
+    const ruleId = 'headings-weak';
+    registerStub('audit_finding', [candidate({ sourceType: 'audit_finding', sourceId: ruleId,
+      evidence: [{ sourceRef: `${run.id}:${ruleId}`, observation: {
+        sourceKind: 'provider_observation', observedAt: observedAt.toISOString(),
+        sourceLabel: null, freshUntil: null, freshness: 'fresh', market: null, sampleCount: 0,
+        coverageNoteKey: null,
+      } }], observedAt: observedAt.toISOString() })]);
+    const actionId = hashActionId({ accountId, siteId, sourceType: 'audit_finding', sourceId: ruleId });
+    await appendActionEvent(getTestDb(), { accountId, siteId, actionId,
+      sourceType: 'audit_finding', sourceIdRef: hashSourceIdRef({ accountId,
+        sourceType: 'audit_finding', sourceId: ruleId }),
+      priorState: 'open', newState: 'completed', eventKind: 'complete',
+      actorUserId: accountId, note: 'Fixed it', idempotencyKey: 'fixed-before-audit' });
+    const input = { accountId, siteId, locale: 'en' as const, db: getTestDb() };
+    const first = await listActionsForSite(input);
+    expect(first.items[0]).toMatchObject({ state: 'open', version: 2,
+      reappearedAfterFix: true, latestNote: null });
+    const second = await listActionsForSite(input);
+    expect(second.items[0]).toMatchObject({ state: 'open', version: 2 });
+    const events = await listEventsForAction(getTestDb(), accountId, actionId);
+    expect(events).toHaveLength(2);
+    expect(events[1]).toMatchObject({ actorUserId: AUDIT_REGRESSION_ACTOR,
+      priorState: 'completed', newState: 'open', eventKind: 'reopen' });
+    const history = await getActionHistory({ ...input, actionId });
+    expect(history.entries[1]).toMatchObject({ reasonCode: 'audit_regression', note: null });
   });
 });
 

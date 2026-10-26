@@ -1,6 +1,5 @@
 {
-  "eyebrow": "Orientación del inventario guardado",
-  "title": "Sugerencias de enlaces internos",
+  "title": "Enlaces internos",
   "subtitle": "Revisa oportunidades entre páginas de origen y destino a partir del último inventario y de los datos guardados de Search Console. No se aplica ningún cambio al sitio.",
   "site": {
     "inventoryLink": "Abrir inventario de contenido"
@@ -11,12 +10,9 @@
   },
   "newRun": {
     "title": "Preparar una ejecución de sugerencias",
-    "description": "Comprueba la instantánea exacta y el cupo antes de gastar una ejecución.",
+    "description": "Comprueba la instantánea exacta antes de iniciar la ejecución.",
     "guidanceOnly": "Las sugerencias son solo orientativas. RankMeFast no modifica tu CMS ni el HTML de las páginas.",
-    "unitLabel": "Cupo",
-    "unitValue": "{{count}} ejecución de enlaces internos",
     "inventoryLabel": "Instantánea del inventario",
-    "remaining": "Quedan {{count}} ejecuciones antes de esta.",
     "preview": "Previsualizar ejecución",
     "previewing": "Comprobando el inventario…",
     "confirm": "Iniciar sugerencias",
@@ -25,14 +21,15 @@
   },
   "states": {
     "inventoryCta": "Volver a ejecutar el inventario",
-    "planCta": "Ver planes",
     "emptyRuns": {
       "title": "Aún no hay ejecuciones guardadas",
-      "body": "Previsualiza una nueva ejecución para ver qué inventario guardado utilizará."
+      "body": "Previsualiza una nueva ejecución para ver qué inventario guardado utilizará.",
+      "action": "Iniciar un análisis"
     },
     "emptySuggestions": {
-      "title": "No hay sugerencias coincidentes",
-      "body": "No se encontraron pares aptos o los filtros de la URL los están ocultando."
+      "title": "Ninguna sugerencia coincide con estos filtros",
+      "body": "Borra los filtros para ver todas las sugerencias de este análisis.",
+      "action": "Borrar filtros"
     },
     "missing": {
       "title": "Se necesita un inventario de contenido",
@@ -41,10 +38,6 @@
     "stale": {
       "title": "El inventario está desactualizado",
       "body": "Vuelve a ejecutar el inventario para usar una instantánea reciente. No se gastó ninguna ejecución."
-    },
-    "cap": {
-      "title": "Cupo mensual alcanzado",
-      "body": "La solicitud no se inició. Espera al próximo periodo o revisa los planes disponibles."
     },
     "disabled": {
       "title": "Las sugerencias no están disponibles",
@@ -65,19 +58,30 @@
     "running": {
       "title": "Creando sugerencias",
       "body": "El proceso ordena los candidatos guardados y redacta anclas. La vista se actualiza automáticamente."
+    },
+    "inventoryRunCta": "Ejecutar el inventario de contenido",
+    "inventoryDifference": "La pestaña Páginas muestra las páginas que encontró la auditoría del sitio; las sugerencias necesitan un inventario de contenido, que lee el texto de cada página.",
+    "noSuggestions": {
+      "title": "No hay sugerencias en este análisis",
+      "body": "Este análisis no encontró pares de páginas que valga la pena enlazar. Actualiza tu inventario de contenido y luego inicia un análisis nuevo.",
+      "action": "Iniciar un análisis nuevo"
     }
   },
   "status": {
     "queued": "En cola",
     "processing": "En proceso",
     "completed": "Completada",
-    "failed": "Fallida",
-    "refunded": "Ejecución devuelta"
+    "failed": "Fallida"
   },
   "runs": {
     "snapshot": "Inventario: {{date}}",
-    "suggestionCount": "{{count}} sugerencias",
-    "open": "Abrir ejecución"
+    "suggestionCount_one": "{{count}} sugerencia",
+    "open": "Abrir ejecución",
+    "suggestionCount_zero": "{{count}} sugerencias",
+    "suggestionCount_two": "{{count}} sugerencias",
+    "suggestionCount_few": "{{count}} sugerencias",
+    "suggestionCount_many": "{{count}} sugerencias",
+    "suggestionCount_other": "{{count}} sugerencias"
   },
   "flags": {
     "orphan": "Huérfana",
@@ -98,7 +102,7 @@
     "codeFixProblem": "Falta un enlace interno relevante.",
     "codeFixWhy": "La página de destino recibe pocos enlaces internos y comparte un contexto de búsqueda o encabezados relevante con la página de origen.",
     "codeFixRecommendation": "Añade el enlace en la sección más pertinente de la página de origen y usa el texto de ancla sugerido cuando encaje de forma natural.",
-    "fallback": "La ordenación mediante IA no estaba disponible o fue rechazada. Se muestran candidatos deterministas respaldados por pruebas."
+    "fallback": "La ordenación con IA no estaba disponible o se rechazó, así que estas sugerencias salen de reglas fijas y de los datos de tu sitio."
   },
   "evidence": {
     "title": "Por qué se sugirió este par",

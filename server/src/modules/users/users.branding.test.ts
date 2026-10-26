@@ -1,5 +1,5 @@
 /**
- * White-label PDF branding endpoints (workstream B).
+ * PDF branding endpoints owned by the signed-in account.
  *
  * GET /api/users/branding  — any verified user (settings panel read).
  * PUT /api/users/branding  — any verified user.
@@ -76,6 +76,20 @@ describe('GET /api/users/branding', () => {
     });
   });
 
+  it('keeps each account branding separate on the workspace settings route', async () => {
+    const owner = await signupVerifiedUser(app, { email: 'branding-owner@x.co' });
+    const other = await signupVerifiedUser(app, { email: 'branding-other@x.co' });
+    const update = await request(app).put('/api/users/branding')
+      .set('Cookie', owner.cookie)
+      .send({ companyName: 'Owner brand', accentColor: '#123456' });
+    expect(update.status).toBe(200);
+    const otherRead = await request(app).get('/api/users/branding').set('Cookie', other.cookie);
+    expect(otherRead.status).toBe(200);
+    expect(otherRead.body.branding).toEqual({ companyName: '', accentColor: '', logoDataUrl: null });
+    const ownerRead = await request(app).get('/api/users/branding').set('Cookie', owner.cookie);
+    expect(ownerRead.body.branding.companyName).toBe('Owner brand');
+  });
+
   it('returns the empty default when the Mongo mirror doc is missing', async () => {
     const user = await signupVerifiedUser(app, { email: 'branding-gone@x.co' });
     await User.findByIdAndDelete(user.id);
@@ -120,15 +134,32 @@ describe('PUT /api/users/branding', () => {
     });
   });
 
-  it('accepts the empty accent (clears custom branding colors)', async () => {
+  it('accepts the empty accent (clears custom branding colors) but not an empty company name', async () => {
     const user = await signupVerifiedUser(app, { email: 'branding-clear@x.co' });
-    const res = await put(user, { companyName: '', accentColor: '' });
+    const res = await put(user, { companyName: 'Clear Co', accentColor: '' });
     expect(res.status).toBe(200);
     expect(res.body.branding).toEqual({
-      companyName: '',
+      companyName: 'Clear Co',
       accentColor: '',
       logoDataUrl: null,
     });
+  });
+
+  it.each(['', '   ', '\t\n'])('rejects a blank company name %j and keeps what was saved', async (blank) => {
+    const user = await signupVerifiedUser(app, { email: `branding-blank-${blank.length}@x.co` });
+    expect((await put(user, { companyName: 'Kept Co', accentColor: '#112233' })).status).toBe(200);
+    const res = await put(user, { companyName: blank, accentColor: '#445566' });
+    expect(res.status).toBe(400);
+    const stored = await User.findById(user.id).select('branding').lean();
+    expect(stored?.branding?.companyName).toBe('Kept Co');
+    expect(stored?.branding?.accentColor).toBe('#112233');
+  });
+
+  it('stores a padded company name trimmed', async () => {
+    const user = await signupVerifiedUser(app, { email: 'branding-trim@x.co' });
+    const res = await put(user, { companyName: '   Padded Co   ', accentColor: '' });
+    expect(res.status).toBe(200);
+    expect(res.body.branding.companyName).toBe('Padded Co');
   });
 
   it('decodes and re-encodes a PNG before persisting and returns the normalized preview', async () => {

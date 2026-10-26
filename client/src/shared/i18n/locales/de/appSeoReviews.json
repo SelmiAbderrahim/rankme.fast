@@ -1,14 +1,28 @@
 {
-  "common": { "notAvailable": "Nicht verfügbar" },
-  "stats": { "total": "Rezensionen", "average": "Durchschnittsbewertung" },
-  "mix": { "positive": "Positiv", "neutral": "Neutral", "negative": "Negativ" },
+  "common": {
+    "notAvailable": "Nicht verfügbar"
+  },
+  "stats": {
+    "total": "Rezensionen",
+    "average": "Durchschnittsbewertung"
+  },
+  "mix": {
+    "positive": "Positiv",
+    "neutral": "Neutral",
+    "negative": "Negativ"
+  },
   "histogram": {
     "title": "Sterneverteilung",
     "chartLabel": "Anzahl der Rezensionen nach Sternen",
     "tableCaption": "Anzahl der Rezensionen je Sternebewertung",
-    "star": "{{star}} Sterne",
+    "star_one": "{{star}} Stern",
     "rating": "Bewertung",
-    "count": "Rezensionen"
+    "count": "Rezensionen",
+    "star_zero": "{{star}} Sterne",
+    "star_two": "{{star}} Sterne",
+    "star_few": "{{star}} Sterne",
+    "star_many": "{{star}} Sterne",
+    "star_other": "{{star}} Sterne"
   },
   "trend": {
     "title": "Rezensionsvolumen",
@@ -28,12 +42,21 @@
     "failedTitle": "Rezensionsabruf fehlgeschlagen",
     "failedDescription": "Für diesen Lauf wurden keine Rezensionen gespeichert. Starten Sie bei Bedarf einen neuen Lauf."
   },
-  "sentiment": { "positive": "Positiv", "neutral": "Neutral", "negative": "Negativ", "mixed": "Gemischt" },
-  "clusters": { "title": "Rezensionsthemen", "aiInterpretation": "KI-Interpretation", "anonymous": "Anonyme Person", "rating": "{{rating}} von 5" },
+  "sentiment": {
+    "positive": "Positiv",
+    "neutral": "Neutral",
+    "negative": "Negativ",
+    "mixed": "Gemischt"
+  },
+  "clusters": {
+    "title": "Rezensionsthemen",
+    "aiInterpretation": "KI-Interpretation",
+    "anonymous": "Anonyme Person",
+    "rating": "{{rating}} von 5"
+  },
   "dialog": {
     "title": "Rezensionsanalyse bestätigen",
     "description": "Dieser einmalige Lauf ruft eine begrenzte Stichprobe ab und analysiert deren Themen.",
-    "units": "Nutzung für diesen Lauf: {{units}} Einheit",
     "bound": "Bis zu 300 Rezensionen",
     "unavailable": "Für diesen Lauf ist keine Kapazität verfügbar.",
     "confirming": "Analyse wird gestartet…",
@@ -44,9 +67,19 @@
     "noProfileDescription": "Ein Lauf benötigt ein App-Profil mit Google-Play-Paket oder App-Store-ID.",
     "noRuns": "Für diese App und diesen Store gibt es noch keine Rezensionsläufe."
   },
-  "disabled": { "title": "Neue Rezensionsläufe sind nicht verfügbar", "description": "Gespeicherte Rezensionsläufe bleiben lesbar." },
-  "upsell": { "title": "App-SEO-Add-on aktivieren", "description": "Ihr Tarif unterstützt App SEO, für die Rezensionsanalyse ist jedoch das App-SEO-Add-on erforderlich.", "cta": "Abrechnung ansehen" },
-  "errors": { "title": "Rezensionsdaten konnten nicht geladen werden", "requestFailed": "Die Rezensionsanfrage ist fehlgeschlagen. Bitte versuchen Sie es erneut." },
+  "disabled": {
+    "title": "Neue Rezensionsläufe sind nicht verfügbar",
+    "description": "Gespeicherte Rezensionsläufe bleiben lesbar."
+  },
+  "upsell": {
+    "title": "App-SEO-Add-on aktivieren",
+    "description": "Ihr Tarif unterstützt App SEO, für die Rezensionsanalyse ist jedoch das App-SEO-Add-on erforderlich.",
+    "cta": "Abrechnung ansehen"
+  },
+  "errors": {
+    "title": "Rezensionsdaten konnten nicht geladen werden",
+    "requestFailed": "Die Rezensionsanfrage ist fehlgeschlagen. Bitte versuchen Sie es erneut."
+  },
   "run": {
     "title": "App-Rezensionen analysieren",
     "description": "Rufen Sie eine neue, begrenzte Stichprobe für eine App und einen Store ab. Läufe werden nie automatisch geplant.",
@@ -54,8 +87,14 @@
     "previewing": "Kapazität wird geprüft…",
     "button": "Lauf prüfen"
   },
-  "scope": { "profile": "App-Profil", "store": "Store" },
-  "stores": { "google_play": "Google Play", "app_store": "App Store" },
+  "scope": {
+    "profile": "App-Profil",
+    "store": "Store"
+  },
+  "stores": {
+    "google_play": "Google Play",
+    "app_store": "App Store"
+  },
   "list": {
     "title": "Rezensionsläufe",
     "description": "Gespeicherte Daten bleiben lesbar, auch wenn keine neuen Läufe verfügbar sind.",
@@ -66,6 +105,15 @@
     "actions": "Aktionen",
     "view": "Ansehen"
   },
-  "status": { "queued": "Warteschlange", "pulling": "Rezensionen werden abgerufen", "clustering": "Themen werden ermittelt", "completed": "Abgeschlossen", "failed": "Fehlgeschlagen" },
-  "detail": { "title": "Laufdetails", "description": "Deterministische Statistiken und belegte Themen aus diesem gespeicherten Lauf." }
+  "status": {
+    "queued": "Warteschlange",
+    "pulling": "Rezensionen werden abgerufen",
+    "clustering": "Themen werden ermittelt",
+    "completed": "Abgeschlossen",
+    "failed": "Fehlgeschlagen"
+  },
+  "detail": {
+    "title": "Laufdetails",
+    "description": "Aus den Bewertungen berechnete Statistiken und Themen, die mit zitierten Bewertungen belegt sind, aus diesem gespeicherten Lauf."
+  }
 }

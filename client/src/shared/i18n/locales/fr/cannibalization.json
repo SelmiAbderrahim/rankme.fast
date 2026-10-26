@@ -24,8 +24,6 @@
   },
   "preview": {
     "title": "Ce que cela coûte",
-    "units": "{{count}} rapport sur votre quota mensuel.",
-    "units_other": "{{count}} rapports sur votre quota mensuel.",
     "remaining": "Restant sur votre offre ce mois-ci : {{remaining}}.",
     "pack": "Plus {{units}} issus des packs de crédits.",
     "noFit": "Cela ne tient pas dans le restant. Ajoutez des crédits ou changez d’offre."
@@ -39,7 +37,7 @@
     "open": "Ouvrir"
   },
   "detail": {
-    "provenance": "À partir de vos données Search Console stockées sur {{days}} jours, dernière synchro {{date}}. {{queries}} requêtes lues."
+    "provenance": "À partir de vos données Search Console stockées sur $t(cannibalization:counts.windowDays, {\"count\": {{days}}}), dernière synchro {{date}}. $t(cannibalization:counts.queriesRead, {\"count\": {{queries}}})"
   },
   "candidates": {
     "query": "Requête",
@@ -56,7 +54,7 @@
     "inspect": "Inspecter"
   },
   "drilldown": {
-    "provenance": "Lignes stockées sur {{days}} jours, dernière synchro {{date}}.",
+    "provenance": "Lignes stockées sur $t(cannibalization:counts.windowDays, {\"count\": {{days}}}), dernière synchro {{date}}.",
     "recommendation": "Gardez {{url}} comme page principale.",
     "reason": {
       "most_clicks": "Elle obtient déjà le plus de clics pour cette requête.",
@@ -73,16 +71,12 @@
   "states": {
     "empty": {
       "title": "Rien à afficher pour l’instant",
-      "body": "Générez un rapport pour voir les requêtes que vos pages se disputent."
+      "body": "Générez un rapport pour voir les requêtes que vos pages se disputent.",
+      "action": "Créer un rapport"
     },
     "awaitingSync": {
       "title": "En attente de la prochaine synchro",
       "body": "Aucune ligne requête et page de la Search Console n’est encore stockée pour cette période. Elles arriveront à la prochaine synchronisation."
-    },
-    "cap": {
-      "title": "Quota mensuel épuisé",
-      "body": "Vous avez utilisé tous les rapports de cannibalisation de votre offre ce mois-ci.",
-      "link": "Voir les offres"
     },
     "disabled": {
       "title": "Momentanément indisponible",
@@ -99,6 +93,35 @@
     "failed": {
       "title": "Une erreur est survenue",
       "body": "Le chargement a échoué. Réessayez."
+    },
+    "noCandidates": {
+      "title": "Aucune page concurrente trouvée",
+      "body": "Sur cette période, aucune de vos pages n’a concurrencé une autre sur la même requête.",
+      "action": "Créer un nouveau rapport"
+    },
+    "filtered": {
+      "title": "Aucun cas à ce niveau de confiance",
+      "body": "Affichez tous les niveaux de confiance pour voir les cas de ce rapport.",
+      "action": "Tout afficher"
+    },
+    "needsGsc": "Les nouveaux rapports nécessitent une propriété Search Console utilisable. Corrigez l’état ci-dessus, puis revenez ici.",
+    "emptyNoGsc": {
+      "title": "Rien à afficher pour l’instant",
+      "body": "Les rapports sont créés à partir de vos données Search Console enregistrées. Connectez une propriété Search Console pour ce site, puis créez votre premier rapport."
     }
+  },
+  "counts": {
+    "windowDays_zero": "{{count}} jour",
+    "windowDays_one": "{{count}} jour",
+    "windowDays_two": "{{count}} jours",
+    "windowDays_few": "{{count}} jours",
+    "windowDays_many": "{{count}} jours",
+    "windowDays_other": "{{count}} jours",
+    "queriesRead_zero": "{{count}} requête lue.",
+    "queriesRead_one": "{{count}} requête lue.",
+    "queriesRead_two": "{{count}} requêtes lues.",
+    "queriesRead_few": "{{count}} requêtes lues.",
+    "queriesRead_many": "{{count}} requêtes lues.",
+    "queriesRead_other": "{{count}} requêtes lues."
   }
 }

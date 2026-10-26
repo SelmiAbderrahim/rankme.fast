@@ -19,6 +19,7 @@ describe('long-tail keyword client state', () => {
       languageCode: 'en',
       resultCount: 2,
       cached: true,
+      lookupId: null,
       createdAt: '2026-08-12T00:00:00.000Z',
     });
     expect(new URLSearchParams(url.split('?')[1]).get('seed')).toBe('seo, audit');

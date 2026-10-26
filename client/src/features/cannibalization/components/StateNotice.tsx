@@ -1,11 +1,21 @@
 import { useTranslation } from 'react-i18next';
 import { Alert, AlertDescription, AlertTitle } from '@shared/ui/alert';
+import { Button } from '@shared/ui/button';
 import type { CannibalizationGateKind } from '../types';
 
+export type CannibalizationNoticeKind =
+  | CannibalizationGateKind
+  | 'empty'
+  | 'emptyNoGsc'
+  | 'noCandidates'
+  | 'filtered';
+
 interface StateNoticeProps {
-  kind: CannibalizationGateKind | 'empty';
+  kind: CannibalizationNoticeKind;
   /** Server-authored refusal sentence; preferred over the generic copy. */
   message?: string;
+  /** The one next step an empty state offers. */
+  onAction?: () => void;
 }
 
 /**
@@ -13,13 +23,24 @@ interface StateNoticeProps {
  * the one the server already made, and only falls back to its own copy for
  * the state the server never speaks to (empty list).
  */
-export const StateNotice = ({ kind, message }: StateNoticeProps) => {
+export const StateNotice = ({ kind, message, onAction }: StateNoticeProps) => {
   const { t } = useTranslation('cannibalization');
   return (
     <Alert role="status" data-testid={`cannibalization-state-${kind}`}>
       <AlertTitle>{t(`states.${kind}.title`)}</AlertTitle>
       <AlertDescription className="flex flex-col items-start gap-2">
         <span>{message || t(`states.${kind}.body`)}</span>
+        {onAction ? (
+          <Button
+            type="button"
+            variant="outline"
+            size="sm"
+            onClick={onAction}
+            data-testid={`cannibalization-state-${kind}-action`}
+          >
+            {t(`states.${kind}.action`)}
+          </Button>
+        ) : null}
       </AlertDescription>
     </Alert>
   );

@@ -17,7 +17,6 @@ import {
 } from '@playwright/test';
 
 import { freshAccount, logIn, signUp } from './helpers/account';
-import { runComposePsql } from './helpers/compose';
 import { collectDenials, denyNonLoopback } from './helpers/denyNonLoopback';
 import {
   gotoWithStaticAssetNetworkRecovery,
@@ -66,20 +65,6 @@ async function accountId(request: APIRequestContext): Promise<string> {
   return session.user!.id!;
 }
 
-function setTier(id: string, tier: 'starter'): void {
-  runComposePsql(
-    `UPDATE "user"
-        SET email_verified = true, updated_at = now()
-      WHERE id = :'account_id';
-
-     INSERT INTO subscriptions (account_id, tier, status)
-       VALUES (:'account_id', :'tier', 'active')
-       ON CONFLICT (account_id)
-         DO UPDATE SET tier = EXCLUDED.tier, status = 'active', updated_at = now();`,
-    { variables: { account_id: id, tier } },
-  );
-}
-
 async function logout(page: Page): Promise<void> {
   await gotoWithStaticAssetNetworkRecovery(page, '/logout');
   await page.waitForURL('/login');
@@ -95,7 +80,6 @@ async function signUpAtStarter(page: Page): Promise<void> {
   await logout(page);
   // Apply the tier only after Better Auth's signup hooks settle, then use the
   // real login screen so the journey explicitly covers login → /assistant.
-  setTier(id, 'starter');
   await logIn(page, account);
 }
 
@@ -227,7 +211,7 @@ test('Assistant streams, runs tools, persists, enforces MCP defaults, and passes
     );
     await page.getByRole('button', { name: 'Save permissions' }).click();
     expect((await saved).status()).toBe(200);
-    await expect(page.getByRole('status')).toContainText('MCP permissions saved.');
+    await expect(page.getByRole('status').filter({ hasText: 'MCP permissions saved.' })).toBeVisible();
 
     await reloadWithStaticAssetNetworkRecovery(page);
     await expect(page.getByRole('switch', { name: 'List sites' })).not.toBeChecked();

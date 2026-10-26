@@ -4,12 +4,13 @@ import { asyncHandler } from '../../shared/utils/async-handler.js';
 import { HttpError } from '../../shared/utils/http-error.js';
 import { requireAccountId } from '../../shared/utils/require-account-id.js';
 import { getCompetitorProvider, getCompetitorsCooldown, getCompetitorsDb, } from './competitors.holder.js';
-import { intersectionQuerySchema, siteIdParamsSchema, techStackParamsSchema, } from './competitors.schema.js';
+import { intersectionQuerySchema, listQuerySchema, siteIdParamsSchema, techStackParamsSchema, } from './competitors.schema.js';
 import { getCompetitorTechStack, getIntersection, listCompetitors, refreshCompetitors, } from './competitors.service.js';
 export const listHandler: RequestHandler = asyncHandler(async (req, res) => {
     const accountId = requireAccountId(req);
     const { siteId } = siteIdParamsSchema.parse(req.params);
-    const result = await listCompetitors({ accountId, siteId }, { db: getCompetitorsDb(), provider: getCompetitorProvider() });
+    const { fresh } = listQuerySchema.parse(req.query);
+    const result = await listCompetitors({ accountId, siteId, fresh }, { db: getCompetitorsDb(), provider: getCompetitorProvider() });
     res.status(200).json(result);
 });
 export const refreshHandler: RequestHandler = asyncHandler(async (req, res) => {

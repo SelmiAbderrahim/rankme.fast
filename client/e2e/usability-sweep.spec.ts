@@ -79,35 +79,6 @@ async function accountId(request: APIRequestContext): Promise<string> {
   return session.user!.id!;
 }
 
-function setTier(id: string, tier: Tier): void {
-  runComposePsql(
-    `UPDATE "user"
-        SET email_verified = true, updated_at = now()
-      WHERE id = :'account_id';
-
-     INSERT INTO subscriptions
-       (account_id, tier, status, brand_radar)
-       VALUES (
-         :'account_id',
-         :'tier',
-         'active',
-         :'brand_radar'::boolean
-       )
-       ON CONFLICT (account_id)
-         DO UPDATE SET tier = EXCLUDED.tier,
-                       status = 'active',
-                       brand_radar = EXCLUDED.brand_radar,
-                       updated_at = now();`,
-    {
-      variables: {
-        account_id: id,
-        tier,
-        brand_radar: tier === 'agency' ? 'true' : 'false',
-      },
-    },
-  );
-}
-
 async function signUpAtTier(
   page: Page,
   prefix: string,
@@ -118,7 +89,6 @@ async function signUpAtTier(
   const id = await accountId(page.request);
   await page.goto('/logout');
   await page.waitForURL('/login');
-  setTier(id, tier);
   await logIn(page, account);
   return { account, id };
 }
@@ -138,31 +108,6 @@ async function createSite(
     201,
   );
   return created.site.id;
-}
-
-function promoteToSuperadmin(id: string): void {
-  runComposePsql(
-    `UPDATE "user"
-        SET role = 'SuperAdmin',
-            two_factor_enabled = true,
-            email_verified = true,
-            updated_at = now()
-      WHERE id = :'account_id';`,
-    { variables: { account_id: id } },
-  );
-  runComposeApiScript(
-    `
-      const mongooseModule = await import('mongoose');
-      const mongoose = mongooseModule.default;
-      await mongoose.connect(process.env.MONGODB_URI);
-      await mongoose.connection.db.collection('users').updateOne(
-        { _id: new mongoose.Types.ObjectId(process.env.SWEEP_ACCOUNT_ID) },
-        { $set: { role: 'SuperAdmin' } },
-      );
-      await mongoose.disconnect();
-    `,
-    { SWEEP_ACCOUNT_ID: id },
-  );
 }
 
 async function tabTo(
@@ -246,7 +191,7 @@ async function assertHistoryPair(
   await expect(second.marker).toBeVisible();
 }
 
-test('keyboard-only paid flows, CSV exports, and superadmin panels', async ({
+test('keyboard-only flows and CSV exports', async ({
   page,
   context,
 }) => {
@@ -341,7 +286,7 @@ test('keyboard-only paid flows, CSV exports, and superadmin panels', async ({
     await page.goto(`/sites/${siteId}?tab=reviews&utm=sweep`);
     const sourceInput = page.getByTestId('reviews-source-input-google');
     await tabTo(page, sourceInput);
-    await page.keyboard.type(`ChIJUsability${suffix}`);
+    await page.keyboard.type(`ChIJUsability0123456789${suffix}`);
     const saved = page.waitForResponse(
       (response) =>
         response.request().method() === 'POST' &&
@@ -431,38 +376,6 @@ test('keyboard-only paid flows, CSV exports, and superadmin panels', async ({
     await expect(page.getByTestId('brand-radar-mention-row').first()).toBeVisible();
     const csv = await keyboardDownload(page, page.getByTestId('brand-radar-export'));
     expect(csv).toContain('scan_id,captured_at,brand_query');
-  });
-
-  await test.step('all six superadmin intelligence panels traverse with arrow keys', async () => {
-    promoteToSuperadmin(account.id);
-    await page.goto('/superadmin?tab=intelligence&intel=overview&utm=sweep');
-    // The platform tabs live in the app sidebar on /superadmin.
-    await expect(
-      page.getByRole('link', { name: 'Intelligence', exact: true }),
-    ).toHaveAttribute('aria-current', 'page');
-    const sections = [
-      'overview',
-      'providers',
-      'costs',
-      'quality',
-      'queues',
-      'monitors',
-    ] as const;
-    const first = page.getByTestId(`intelligence-section-${sections[0]}`);
-    await tabTo(page, first);
-    for (let index = 0; index < sections.length; index += 1) {
-      const section = sections[index]!;
-      const trigger = page.getByTestId(`intelligence-section-${section}`);
-      await expect(trigger).toBeFocused();
-      await expect(trigger).toHaveAttribute('data-state', 'active');
-      await expect(page).toHaveURL(new RegExp(`intel=${section}`));
-      const panel = page.locator('[role="tabpanel"][data-state="active"]').last();
-      await expect(panel).toBeVisible();
-      await expect(panel).toHaveAttribute('aria-live', 'polite');
-      if (index < sections.length - 1) {
-        await page.keyboard.press('ArrowRight');
-      }
-    }
   });
 
   expect(denials.urls, `unexpected external egress: ${denials.urls.join(', ')}`).toEqual([]);
@@ -571,25 +484,4 @@ test('all batch tab/filter URLs deep-link, reload, traverse history, normalize, 
   await expect(page).not.toHaveURL(/view=wrong|status=|scan=|sentiment=|from=|to=/);
   await expect(page).toHaveURL(/domain=bad.example/);
   await expect(page).toHaveURL(/utm=sweep/);
-
-  promoteToSuperadmin(account.id);
-  await assertHistoryPair(
-    page,
-    {
-      path: '/superadmin?tab=intelligence&intel=providers&utm=sweep',
-      marker: page.getByTestId('intelligence-section-providers'),
-    },
-    {
-      path: '/superadmin?tab=intelligence&intel=costs&utm=sweep',
-      marker: page.getByTestId('intelligence-section-costs'),
-    },
-  );
-  await page.goto('/superadmin?tab=intelligence&intel=wrong&utm=sweep');
-  await expect(page).toHaveURL(/intel=overview/);
-  await expect(page).toHaveURL(/tab=intelligence/);
-  await expect(page).toHaveURL(/utm=sweep/);
-  await expect(page.getByTestId('intelligence-section-overview')).toHaveAttribute(
-    'data-state',
-    'active',
-  );
 });

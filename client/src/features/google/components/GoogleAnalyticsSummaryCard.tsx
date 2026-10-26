@@ -25,12 +25,14 @@
  */
 import { useEffect, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { RefreshCw } from 'lucide-react';
+import { RefreshCw, TriangleAlert } from 'lucide-react';
 import { ReportExportControl } from '@features/report-export';
+import { Alert, AlertDescription, AlertTitle } from '@shared/ui/alert';
 import { Button } from '@shared/ui/button';
 import { Empty, EmptyContent, EmptyDescription, EmptyTitle } from '@shared/ui/empty';
 import { Skeleton } from '@shared/ui/skeleton';
 import { useAppDispatch, useAppSelector } from '@shared/hooks/redux';
+import { localizeEnglishCountryName } from '@shared/markets';
 import {
   selectGoogleAnalytics,
   selectGoogleConnection,
@@ -45,7 +47,8 @@ import {
   markerCallbackUrl,
   startGoogleLink,
 } from '../lib/googleLink';
-import { deviceLabelKey, formatDate, formatInt, formatPercent } from '../lib/format';
+import { deviceLabelKey, formatDay, formatInt, windowStartDay } from '../lib/format';
+import { formatMetricValue } from '@shared/lib/metricValue';
 import { MetricTimeseriesChart } from './MetricTimeseriesChart';
 import { GscBreakdownList, type GscBreakdownRow } from './GscBreakdownList';
 import { GoogleRangeSelect } from './GoogleRangeSelect';
@@ -157,7 +160,7 @@ export const GoogleAnalyticsSummaryCard = ({
   }));
   const countryRows: GscBreakdownRow[] = (summary?.countries ?? []).map((row) => ({
     id: row.country,
-    label: row.country,
+    label: localizeEnglishCountryName(row.country, locale),
     value: row.sessions,
     rate: rowRate(row),
   }));
@@ -167,16 +170,23 @@ export const GoogleAnalyticsSummaryCard = ({
     value: row.sessions,
     rate: rowRate(row),
   }));
-  const breakdownValueHeader = `${t('analytics.sessions')} · ${t('analytics.engagementRateLabel')}`;
+  const breakdownValueHeader = t('breakdown.shareHeader', { metric: t('analytics.sessions') });
+  const formatEngagedRate = (rate: string) => t('breakdown.engagedRate', { rate });
+  const windowStart = summary ? formatDay(locale, windowStartDay(summary.asOf, days)) : '';
+  const windowEnd = summary ? formatDay(locale, summary.asOf) : '';
+  const staleExpected = summary?.freshness?.stale ? formatDay(locale, summary.freshness.expectedAsOf) : null;
+  const quietSince = !staleExpected && summary?.freshness?.noRecentSessions ? windowEnd : null;
+  const pastWindow = staleExpected !== null || quietSince !== null;
+  const title = t('analytics.title');
 
   return (
     <section
       className="rounded-xl border bg-card p-4 shadow-sm"
       data-testid="google-analytics-summary-card"
-      aria-label={t('analytics.title', { days })}
+      aria-label={title}
     >
       <div className="flex flex-wrap items-center justify-between gap-2">
-        <h3 className="text-sm font-semibold">{t('analytics.title', { days })}</h3>
+        <h3 className="text-sm font-semibold">{title}</h3>
         <div className="flex items-center gap-2">
           {summary ? (
             <ReportExportControl
@@ -193,7 +203,7 @@ export const GoogleAnalyticsSummaryCard = ({
           ) : null}
           {summary ? (
             <span className="text-muted-foreground text-xs">
-              {t('searchSummary.asOf', { date: formatDate(locale, summary.asOf) })}
+              {t('searchSummary.asOf', { date: windowEnd })}
             </span>
           ) : null}
           {showControls ? (
@@ -296,6 +306,17 @@ export const GoogleAnalyticsSummaryCard = ({
         </Empty>
       ) : (
         <>
+          {staleExpected ? (
+            <Alert role="status" className="mt-3" data-testid="google-analytics-stale">
+              <TriangleAlert className="text-warning" aria-hidden="true" />
+              <AlertTitle>{t('analytics.staleTitle')}</AlertTitle>
+              <AlertDescription>{t('analytics.staleBody', { date: windowEnd, expected: staleExpected, count: days, days })}</AlertDescription>
+            </Alert>
+          ) : quietSince ? (
+            <p role="status" className="text-muted-foreground mt-3 text-sm" data-testid="google-analytics-no-recent-sessions">
+              {t('analytics.noRecentSessions', { date: quietSince })}
+            </p>
+          ) : null}
           <dl className="mt-3 grid grid-cols-2 gap-3 lg:grid-cols-4">
             <div className="rounded-lg border p-3" data-testid="google-analytics-sessions">
               <dt className="text-muted-foreground text-xs">
@@ -331,12 +352,20 @@ export const GoogleAnalyticsSummaryCard = ({
             </div>
           </dl>
 
+          <p className="text-muted-foreground mt-2 text-xs" data-testid="google-analytics-window">
+            {t('analytics.windowNote', { start: windowStart, end: windowEnd })}
+          </p>
+
           <p
             className="text-muted-foreground mt-2 text-xs"
             data-testid="google-analytics-engagement"
           >
             {t('analytics.engagementRateLine', {
-              rate: formatPercent(locale, summary.engagementRate),
+              // No sessions means no engagement rate, not 0%.
+              rate:
+                formatMetricValue('ratio', summary.engagementRate, locale, {
+                  denominator: summary.totalSessions,
+                }) ?? t('common:metric.noData'),
             })}
           </p>
 
@@ -370,7 +399,9 @@ export const GoogleAnalyticsSummaryCard = ({
               {t('analytics.timeseriesTitle')}
             </p>
             <p className="text-muted-foreground text-xs">
-              {t('analytics.timeseriesSubtitle', { days })}
+              {pastWindow
+                ? t('analytics.dailyRange', { start: windowStart, end: windowEnd })
+                : t('analytics.timeseriesSubtitle', { count: days, days })}
             </p>
             <MetricTimeseriesChart
               points={summary.timeseries}
@@ -410,12 +441,13 @@ export const GoogleAnalyticsSummaryCard = ({
                 },
               ]}
               chartLabel={(metric) =>
-                t('analytics.timeseriesChartLabel', { metric, days })
+                t('analytics.timeseriesChartLabel', { count: days, metric, days })
               }
               metricGroupLabel={t('searchSummary.metricLabel')}
-              tableCaption={t('analytics.timeseriesTableCaption', { days })}
+              tableCaption={t('analytics.timeseriesTableCaption', { count: days, days })}
               dateHeader={t('searchSummary.tableDate')}
               emptyLabel={t('searchSummary.timeseriesEmpty')}
+              noActivityLabel={() => t('searchSummary.timeseriesNoActivity')}
               testIdPrefix="ga4-timeseries"
             />
           </div>
@@ -430,6 +462,7 @@ export const GoogleAnalyticsSummaryCard = ({
               emptyLabel={t('analytics.channelsEmpty')}
               rows={channelRows}
               total={summary.totalSessions}
+              formatRate={formatEngagedRate}
             />
             <GscBreakdownList
               testId="google-analytics-pages"
@@ -440,6 +473,7 @@ export const GoogleAnalyticsSummaryCard = ({
               emptyLabel={t('analytics.pagesEmpty')}
               rows={pageRows}
               total={summary.totalSessions}
+              formatRate={formatEngagedRate}
             />
             <GscBreakdownList
               testId="google-analytics-countries"
@@ -450,6 +484,7 @@ export const GoogleAnalyticsSummaryCard = ({
               emptyLabel={t('analytics.countriesEmpty')}
               rows={countryRows}
               total={summary.totalSessions}
+              formatRate={formatEngagedRate}
             />
             <GscBreakdownList
               testId="google-analytics-devices"
@@ -460,6 +495,7 @@ export const GoogleAnalyticsSummaryCard = ({
               emptyLabel={t('analytics.devicesEmpty')}
               rows={deviceRows}
               total={summary.totalSessions}
+              formatRate={formatEngagedRate}
             />
           </div>
         </>

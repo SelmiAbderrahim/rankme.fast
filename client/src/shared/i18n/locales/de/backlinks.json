@@ -26,65 +26,308 @@
     "dofollowYes": "Dofollow",
     "dofollowNo": "Nofollow",
     "loadMore": "Mehr laden",
-    "loading": "Wird geladen…"
+    "loadMoreHint": "Beim Laden weiterer Zeilen wird die nächste Seite beim Datenanbieter abgefragt.",
+    "loading": "Wird geladen…",
+    "scope_zero": "{{shown}} von {{total}} Backlinks angezeigt (ein Link pro verweisender Domain)",
+    "scope_one": "{{shown}} von {{total}} Backlink angezeigt (ein Link pro verweisender Domain)",
+    "scope_two": "{{shown}} von {{total}} Backlinks angezeigt (ein Link pro verweisender Domain)",
+    "scope_few": "{{shown}} von {{total}} Backlinks angezeigt (ein Link pro verweisender Domain)",
+    "scope_many": "{{shown}} von {{total}} Backlinks angezeigt (ein Link pro verweisender Domain)",
+    "scope_other": "{{shown}} von {{total}} Backlinks angezeigt (ein Link pro verweisender Domain)",
+    "scopeNoTotal_zero": "{{shown}} Backlinks angezeigt (ein Link pro verweisender Domain)",
+    "scopeNoTotal_one": "{{shown}} Backlink angezeigt (ein Link pro verweisender Domain)",
+    "scopeNoTotal_two": "{{shown}} Backlinks angezeigt (ein Link pro verweisender Domain)",
+    "scopeNoTotal_few": "{{shown}} Backlinks angezeigt (ein Link pro verweisender Domain)",
+    "scopeNoTotal_many": "{{shown}} Backlinks angezeigt (ein Link pro verweisender Domain)",
+    "scopeNoTotal_other": "{{shown}} Backlinks angezeigt (ein Link pro verweisender Domain)",
+    "review": "Prüfen",
+    "selectRow": "{{domain}} für die Disavow-Datei auswählen"
   },
   "refresh": {
     "button": "Aktualisieren",
-    "cooldown": "Warten Sie {{seconds}} s vor der nächsten Aktualisierung.",
-    "failed": "Aktualisierung derzeit nicht möglich. Ihre letzten Daten werden weiterhin angezeigt."
-  },
-  "locked": {
-    "title": "Führen Sie ein Upgrade durch, um Backlinks freizuschalten",
-    "body": "Domain-Bewertung, verweisende Domains und Ihre Backlink-Liste sind Teil des Pro-Plans.",
-    "upgrade": "Pläne ansehen"
+    "cooldown_one": "Warten Sie {{seconds}} s vor der nächsten Aktualisierung.",
+    "failed": "Aktualisierung derzeit nicht möglich. Ihre letzten Daten werden weiterhin angezeigt.",
+    "cooldown_zero": "Warten Sie {{seconds}} s vor der nächsten Aktualisierung.",
+    "cooldown_two": "Warten Sie {{seconds}} s vor der nächsten Aktualisierung.",
+    "cooldown_few": "Warten Sie {{seconds}} s vor der nächsten Aktualisierung.",
+    "cooldown_many": "Warten Sie {{seconds}} s vor der nächsten Aktualisierung.",
+    "cooldown_other": "Warten Sie {{seconds}} s vor der nächsten Aktualisierung."
   },
   "errors": {
     "capExceeded": "Das Backlink-Zeilenlimit Ihres Tarifs ({{used}}/{{limit}} {{metric}}) ist erschöpft. Führen Sie ein Upgrade durch oder kaufen Sie ein Credit-Paket, um weitere Zeilen abzurufen."
   },
   "intelligence": {
-    "title": "Link-Intelligence", "description": "Prüfen Sie gespeicherte Backlink-Belege und entscheiden Sie, wann Einheiten für einen neuen Anbieterabruf verwendet werden.",
-    "tabs": { "label": "Link-Intelligence-Ansichten", "overview": "Übersicht", "rows": "Backlinks", "domains": "Domains", "anchors": "Anker", "history": "Verlauf", "gap": "Link-Lücke", "toxicity": "Linkprüfung" },
-    "preview": { "title": "Verbrauchsvorschau", "description": "Diese Schätzung ist kostenlos. Einheiten werden erst nach Ihrer Bestätigung reserviert.", "units": "{{count}} Einheit", "cached": "Gespeichertes Ergebnis", "mixed": "Gemischter Cache", "fresh": "Neuer Abruf erforderlich", "available": "Kontingent verfügbar", "unavailable": "Kontingent erreicht", "baseRemaining": "{{count}} Basiseinheiten verbleiben", "packRemaining": "{{count}} Paketeinheiten verbleiben", "confirm": "Bestätigen und {{count}} Einheiten verwenden", "cancel": "Abbrechen", "button": "Verbrauch prüfen" },
-    "states": { "default": "Noch kein gespeichertes Ergebnis. Prüfen Sie vor einem neuen Abruf den Verbrauch.", "emptyTitle": "Keine Ergebnisse gefunden", "emptyBody": "Der Anbieter hat den Abruf ohne passende Zeilen abgeschlossen.", "partialTitle": "Teilergebnis", "partialBody": "Einige Zeilen wurden gespeichert, bevor der Anbieter nicht mehr antwortete.", "providerTitle": "Anbieterabruf fehlgeschlagen", "providerBody": "Keine Zeilen wurden gespeichert; die reservierte Einheit wurde erstattet.", "capTitle": "Link-Intelligence-Kontingent erreicht", "capBody": "Nutzen Sie das Überlaufpaket {{pack}} oder warten Sie auf die Erneuerung.", "disabledTitle": "Link-Intelligence ist vorübergehend deaktiviert", "disabledBody": "Gespeicherte Ergebnisse bleiben verfügbar, neue Abrufe sind pausiert.", "lockedTitle": "Upgrade für Link-Intelligence", "lockedBody": "Tiefe Backlink-Abrufe sind in Pro und Agency verfügbar.", "upgrade": "Pläne ansehen", "errorTitle": "Link-Intelligence konnte nicht geladen werden" },
-    "provenance": { "providerObservation": "Anbieterbeobachtung" },
-    "domains": { "title": "Verweisende Domains", "description": "Domains mit Links zu dieser Website, Stärke und Entdeckungsdaten.", "sort": "Standardsortierung: Domainrang absteigend, Backlinks absteigend, dann Domain A–Z." },
-    "anchors": { "title": "Ankertext", "description": "Inerter Text, den verweisende Seiten für Links zu dieser Website verwenden." },
-    "history": { "title": "Backlink-Verlauf", "description": "Bis zu 24 monatliche Beobachtungen in zeitlicher Reihenfolge.", "chartLabel": "Backlinks pro Monat", "tableCaption": "Daten zum Backlink-Verlauf" },
-    "bulk": { "title": "Domainrang-Stapelprüfung", "description": "Prüfen Sie den Anbieterrang für bis zu 100 eindeutige Domains.", "label": "Domains", "help": "Eine Domain pro Zeile oder durch Kommas getrennt eingeben.", "invalid": "Geben Sie 1 bis 100 gültige Domains ein.", "duplicate": "Entfernen Sie doppelte Domains." },
-    "filters": { "minRank": "Minimaler Domainrang", "minBacklinks": "Minimale Backlinks", "anchor": "Ankertext filtern" },
-    "columns": { "domain": "Domain", "backlinks": "Backlinks", "domainRank": "Domainrang", "firstSeen": "Zuerst gesehen", "lastSeen": "Zuletzt gesehen", "anchor": "Anker", "referringDomains": "Verweisende Domains", "month": "Monat", "rank": "Rang" },
-    "gap": { "title": "Link-Lücke", "description": "Linkchancen von Wettbewerbern vergleichen.", "next": "Der Wettbewerber-Arbeitsbereich folgt im nächsten Link-Intelligence-Abschnitt." },
-    "errors": { "preview": "Verbrauchsvorschau konnte nicht erstellt werden.", "submit": "Anbieterabruf konnte nicht gestartet werden.", "load": "Gespeichertes Ergebnis konnte nicht geladen werden." }
+    "title": "Link-Intelligence",
+    "description": "Prüfen Sie gespeicherte Backlink-Daten und entscheiden Sie, wann neue Daten abgerufen werden.",
+    "tabs": {
+      "label": "Link-Intelligence-Ansichten",
+      "overview": "Übersicht",
+      "rows": "Backlinks",
+      "domains": "Domains",
+      "anchors": "Anker",
+      "history": "Verlauf",
+      "gap": "Link-Lücke",
+      "toxicity": "Linkprüfung"
+    },
+    "preview": {
+      "title": "Verbrauchsvorschau",
+      "description": "Diese Schätzung ist kostenlos. Einheiten werden erst nach Ihrer Bestätigung reserviert.",
+      "cached": "Gespeichertes Ergebnis",
+      "mixed": "Gemischter Cache",
+      "fresh": "Neue Daten erforderlich",
+      "available": "Kontingent verfügbar",
+      "unavailable": "Kontingent erreicht",
+      "confirm": "Bestätigen und Abruf starten",
+      "cancel": "Abbrechen",
+      "button": "Verbrauch prüfen"
+    },
+    "states": {
+      "default": "Noch keine gespeicherte Liste. Die Übersicht zeigt nur Summen; diese Liste ist ein eigener Abruf. Sehen Sie sich die Vorschau an, bevor Sie ihn starten.",
+      "emptyTitle": "Keine Ergebnisse gefunden",
+      "emptyBody": "Die Abfrage wurde abgeschlossen, ohne passende Zeilen zu finden.",
+      "partialTitle": "Teilergebnis",
+      "partialBody": "Einige Zeilen wurden gespeichert, bevor die Datenquelle nicht mehr antwortete.",
+      "providerTitle": "Neue Daten konnten nicht abgerufen werden",
+      "providerBody": "Es wurde nichts gespeichert.",
+      "disabledTitle": "Link-Intelligence ist vorübergehend deaktiviert",
+      "disabledBody": "Gespeicherte Ergebnisse bleiben verfügbar, aber das Abrufen neuer Daten ist pausiert.",
+      "errorTitle": "Link-Intelligence konnte nicht geladen werden"
+    },
+    "provenance": {
+      "providerObservation": "Anbieterbeobachtung"
+    },
+    "domains": {
+      "title": "Verweisende Domains",
+      "description": "Domains mit Links zu dieser Website, Stärke und Entdeckungsdaten.",
+      "sort": "Standardsortierung: Domainrang absteigend, Backlinks absteigend, dann Domain A–Z."
+    },
+    "anchors": {
+      "title": "Ankertext",
+      "description": "Inerter Text, den verweisende Seiten für Links zu dieser Website verwenden."
+    },
+    "history": {
+      "title": "Backlink-Verlauf",
+      "description": "Bis zu 24 monatliche Beobachtungen in zeitlicher Reihenfolge.",
+      "chartLabel": "Backlinks pro Monat",
+      "tableCaption": "Daten zum Backlink-Verlauf"
+    },
+    "bulk": {
+      "title": "Domainrang-Stapelprüfung",
+      "description": "Prüfen Sie den Domain-Rang für bis zu 100 eindeutige Domains.",
+      "label": "Domains",
+      "help": "Eine Domain pro Zeile oder durch Kommas getrennt eingeben.",
+      "invalid": "Geben Sie 1 bis 100 gültige Domains ein.",
+      "duplicate": "Entfernen Sie doppelte Domains."
+    },
+    "filters": {
+      "minRank": "Minimaler Domainrang",
+      "minBacklinks": "Minimale Backlinks",
+      "anchor": "Ankertext filtern"
+    },
+    "columns": {
+      "domain": "Domain",
+      "backlinks": "Backlinks",
+      "domainRank": "Domainrang",
+      "firstSeen": "Zuerst gesehen",
+      "lastSeen": "Zuletzt gesehen",
+      "anchor": "Anker",
+      "referringDomains": "Verweisende Domains",
+      "month": "Monat",
+      "rank": "Rang"
+    },
+    "gap": {
+      "title": "Link-Lücke",
+      "description": "Linkchancen von Wettbewerbern vergleichen.",
+      "next": "Der Wettbewerber-Arbeitsbereich folgt im nächsten Link-Intelligence-Abschnitt."
+    },
+    "errors": {
+      "preview": "Verbrauchsvorschau konnte nicht erstellt werden.",
+      "submit": "Das Abrufen neuer Daten konnte nicht gestartet werden.",
+      "load": "Gespeichertes Ergebnis konnte nicht geladen werden."
+    }
   },
   "gap": {
-    "workspace": { "title": "Link-Lücken bei Wettbewerbern finden", "description": "Vergleichen Sie Ihre Website mit bis zu drei Wettbewerbern und prüfen Sie den Einheitenverbrauch vor dem Start." },
-    "form": {
-      "ownDomainLabel": "Ihre Domain", "competitorsLabel": "Wettbewerber-Domains", "competitorsHelp": "Geben Sie {{min}} bis {{max}} Domains ein, je eine pro Zeile oder durch Kommas getrennt. Duplikate werden entfernt.",
-      "errors": { "ownAmongCompetitors": "Ihre eigene Domain darf kein Wettbewerber sein.", "duplicate": "Doppelte Wettbewerber wurden entfernt.", "atLeastOne": "Geben Sie mindestens eine Wettbewerber-Domain ein.", "tooMany": "Geben Sie höchstens drei Wettbewerber-Domains ein.", "invalid": "Geben Sie gültige Domainnamen ein." }
+    "workspace": {
+      "title": "Link-Lücken bei Wettbewerbern finden",
+      "description": "Vergleichen Sie Ihre Website mit bis zu drei Wettbewerbern und prüfen Sie den Einheitenverbrauch vor dem Start."
     },
-    "preview": { "title": "Verbrauchsvorschau für die Link-Lücke", "units": "{{n}} Einheiten", "remainingBase": "{{n}} Basiseinheiten verbleiben", "remainingPack": "{{n}} Paketeinheiten verbleiben", "cached": "Gespeicherte Daten", "fresh": "Neuer Anbieterabruf", "confirm": "Bestätigen und {{n}} Einheiten verwenden", "cancel": "Abbrechen", "button": "Verbrauch prüfen" },
-    "result": { "title": "Ergebnisse der Link-Lücke", "readOnly": "Gespeichertes Ergebnis · schreibgeschützt", "competitorDescription": "Domains, die auf diesen Wettbewerber, aber nicht auf Ihre Website verlinken.", "status": { "complete": "Abgeschlossen", "partial": "Teilweise" } },
-    "legStatus": { "ok": "Abgeschlossen · Einheit verbraucht", "provider_failed_refunded": "Anbieter fehlgeschlagen · Einheit erstattet", "zero_retained_consumed": "Keine Zeilen behalten · Einheit verbraucht", "zero_retained_refunded": "Keine Zeilen behalten · Einheit erstattet" },
-    "overlap": { "totalUnique": "Eindeutige verlinkende Domains", "exclusiveToCompetitor": "Exklusiv für Wettbewerber", "exclusivePctLabel": "Exklusiver Anteil", "exclusivePct": "{{pct}} % exklusiv" },
-    "table": { "domain": "Verlinkende Domain", "rank": "Rang", "firstSeen": "Zuerst gesehen", "emptyTitle": "Keine exklusiven Domains", "empty": "Für diesen Wettbewerber wurden keine exklusiven verlinkenden Domains gespeichert." },
-    "errors": { "title": "Link-Lücke konnte nicht geladen werden", "preview": "Vorschau konnte nicht erstellt werden.", "submit": "Link-Lücken-Analyse konnte nicht gestartet werden.", "load": "Gespeicherte Link-Lücken-Analyse konnte nicht geladen werden." }
+    "form": {
+      "ownDomainLabel": "Ihre Domain",
+      "competitorsLabel": "Wettbewerber-Domains",
+      "competitorsHelp": "Geben Sie {{min}} bis {{max}} Domains ein. Drücken Sie nach jeder Domain die Eingabetaste oder tippen Sie ein Komma. Duplikate werden entfernt.",
+      "prefilled": "Aus Ihren bestätigten Wettbewerbern übernommen. Passen Sie die Liste bei Bedarf an.",
+      "errors": {
+        "ownAmongCompetitors": "Ihre eigene Domain darf kein Wettbewerber sein.",
+        "duplicate": "Doppelte Wettbewerber wurden entfernt.",
+        "atLeastOne": "Geben Sie mindestens eine Wettbewerber-Domain ein.",
+        "invalid": "Geben Sie gültige Domainnamen ein."
+      }
+    },
+    "preview": {
+      "title": "Verbrauchsvorschau für die Link-Lücke",
+      "cached": "Gespeicherte Daten",
+      "fresh": "Neue Daten",
+      "confirm": "Bestätigen und Lückenanalyse starten",
+      "cancel": "Abbrechen",
+      "button": "Verbrauch prüfen"
+    },
+    "result": {
+      "title": "Ergebnisse der Link-Lücke",
+      "readOnly": "Gespeichertes Ergebnis · schreibgeschützt",
+      "competitorDescription": "Domains, die auf diesen Wettbewerber, aber nicht auf Ihre Website verlinken.",
+      "status": {
+        "complete": "Abgeschlossen",
+        "partial": "Teilweise"
+      }
+    },
+    "legStatus": {
+      "ok": "Abgeschlossen · Einheit verbraucht",
+      "provider_failed_refunded": "Datenquelle fehlgeschlagen",
+      "zero_retained_consumed": "Keine Zeilen behalten · Einheit verbraucht",
+      "zero_retained_refunded": "Keine Zeilen behalten · Einheit erstattet"
+    },
+    "overlap": {
+      "totalUnique": "Eindeutige verlinkende Domains",
+      "exclusiveToCompetitor": "Exklusiv für Wettbewerber",
+      "exclusivePctLabel": "Exklusiver Anteil",
+      "exclusivePct": "{{pct}} % exklusiv"
+    },
+    "table": {
+      "domain": "Verlinkende Domain",
+      "rank": "Rang",
+      "firstSeen": "Zuerst gesehen",
+      "emptyTitle": "Keine exklusiven Domains",
+      "empty": "Für diesen Wettbewerber wurden keine exklusiven verlinkenden Domains gespeichert."
+    },
+    "errors": {
+      "title": "Link-Lücke konnte nicht geladen werden",
+      "preview": "Vorschau konnte nicht erstellt werden.",
+      "submit": "Link-Lücken-Analyse konnte nicht gestartet werden.",
+      "load": "Gespeicherte Link-Lücken-Analyse konnte nicht geladen werden."
+    }
   },
   "toxicity": {
-    "start": { "title": "Backlink-Beobachtungen prüfen", "description": "Bewerte bis zu 1.000 gespeicherte Backlink-Zeilen mit einem deterministischen Raster, bevor du den Export zusammenstellst." },
-    "preview": { "unit": "1 Linkprüfungs-Einheit", "rowClamp": "Bis zu 1.000 Zeilen · 100 bewertete Domains", "available": "Kontingent verfügbar", "capReached": "Kontingent erreicht", "explanation": "Der Lauf nutzt eine toxicity_reviews-Einheit. Nach dem Inklusivkontingent ist das Paket toxicity-reviews-10 verfügbar. Vorschau und Abbruch verbrauchen keine Einheit.", "confirm": "Bestätigen und 1 Einheit nutzen", "cancel": "Abbrechen", "button": "Kosten der Prüfung ansehen" },
-    "states": { "lockedTitle": "Upgrade für die Backlink-Prüfung", "lockedBody": "Linkprüfung und Disavow-Datei sind in Pro und Agency verfügbar.", "disabledTitle": "Neue Linkprüfungen sind pausiert", "disabledBody": "Gespeicherte Prüfungen bleiben lesbar, während neue Bewertungen ausgesetzt sind.", "capTitle": "Linkprüfungs-Kontingent erreicht", "capBody": "Füge das Paket toxicity-reviews-10 hinzu oder warte auf die Erneuerung.", "errorTitle": "Linkprüfung konnte nicht geladen werden", "errorBody": "Versuche es gleich noch einmal. Gespeicherte Ergebnisse und frühere Downloads bleiben unverändert.", "listError": "Gespeicherte Linkprüfungen konnten nicht geladen werden.", "runningTitle": "Gespeicherte Backlink-Beobachtungen werden geprüft", "failedTitle": "Linkprüfung angehalten", "providerRefunded": "Der Anbieter ist ausgefallen, bevor eine bewertete Zeile gespeichert wurde. Die reservierte Einheit wurde erstattet.", "ceilingConsumed": "Der Lauf wurde am Kostenlimit gestoppt. Die reservierte Einheit wurde verbraucht und es erfolgte keine automatische Aktion.", "partial": "Teilweise Anbieterbeobachtungen", "emptyTitle": "Keine bewerteten Zeilen", "emptyBody": "Der Lauf wurde ohne gespeicherte bewertete Backlink-Zeile abgeschlossen." },
-    "actions": { "viewPlans": "Tarife ansehen", "viewPacks": "Credit-Pakete ansehen", "open": "Öffnen", "back": "Zurück zu einer neuen Prüfung" },
-    "runs": { "title": "Gespeicherte Prüfungen", "description": "Öffne abgeschlossene Prüfungen erneut, ohne eine weitere Einheit zu nutzen.", "date": "Erstellt", "status": "Status", "rows": "Zeilen", "emptyTitle": "Keine gespeicherten Prüfungen", "emptyBody": "Beginne mit einer kostenlosen Kostenvorschau, wenn du bereit bist." },
-    "filters": { "status": "Prüfungen nach Status filtern", "allStatuses": "Alle Status", "band": "Zeilen nach Rasterband filtern", "allBands": "Alle Bänder" },
-    "status": { "queued": "Warteschlange", "running": "Läuft", "succeeded": "Abgeschlossen", "failed": "Fehlgeschlagen" },
-    "results": { "title": "Ergebnisse der Linkprüfung", "rubric": "Raster {{version}}", "rowsTitle": "Bewertete Backlink-Zeilen", "observationCopy": "Die Bänder beschreiben gespeicherte Anbieterbeobachtungen nach dem festgelegten Raster. Sie sagen keine Suchmaschinenaktion voraus.", "providerObservation": "Anbieterbeobachtung · deterministisches Raster" },
-    "columns": { "domain": "Verweisende Domain", "score": "Spam-Wert", "band": "Rasterband", "signals": "Beitragende Signale", "firstSeen": "Zuerst gesehen", "lastSeen": "Zuletzt gesehen", "rationale": "Optionale Begründung" },
-    "band": { "clean": "Unauffällig", "watch": "Beobachten", "toxic": "Toxisch" },
-    "signal": { "spam_clean": "Wert 0–29", "spam_watch": "Wert 30–59", "spam_toxic": "Wert 60–100", "broken": "Defekt", "dofollow": "Dofollow", "nofollow": "Nofollow" },
-    "rationale": { "toggle": "Begründung", "not_requested": "Für diese Zeile wurde keine Begründung angefordert.", "annotated": "Gespeicherte Begründung", "abstained": "Die KI hat sich enthalten; das deterministische Band bleibt unverändert.", "failed": "Keine Begründung verfügbar; das deterministische Band bleibt unverändert." },
-    "disavow": { "title": "Disavow-Datei erstellen", "description": "Toxische Zeilen sind anfangs enthalten. Prüfe jede Zeile und wähle Domain oder exakte URL.", "selectionCaption": "Für die Disavow-Datei verfügbare Zeilen", "include": "Aufnehmen", "scope": "Umfang", "preview": "Live-Dateivorschau", "reviewTitle": "Prüfung vor dem Download erforderlich", "reviewBody": "RankMeFast übermittelt diese Datei niemals. Du musst den Text prüfen, herunterladen und nur dann selbst einreichen, wenn du ihn für angemessen hältst.", "download": ".txt herunterladen", "downloadFailed": "Die Datei konnte nicht erstellt werden. Prüfe deine Auswahl und versuche es erneut.", "includeDomain": "{{domain}} in die Datei aufnehmen", "scopeFor": "Umfang für {{domain}}", "domainScope": "Ganze Domain", "urlScope": "Exakte URL" }
+    "start": {
+      "title": "Backlink-Beobachtungen prüfen",
+      "description": "Bewerten Sie bis zu 1.000 gespeicherte Backlink-Zeilen mit einem deterministischen Raster, bevor Sie den Export zusammenstellen."
+    },
+    "preview": {
+      "scope": "Gespeicherte Backlinks prüfen",
+      "rowClamp": "Bis zu 1.000 Zeilen · 100 bewertete Domains",
+      "confirm": "Prüfung starten",
+      "cancel": "Abbrechen",
+      "button": "Gespeicherte Backlinks prüfen"
+    },
+    "states": {
+      "disabledTitle": "Neue Linkprüfungen sind pausiert",
+      "disabledBody": "Gespeicherte Prüfungen bleiben lesbar, während neue Bewertungen ausgesetzt sind.",
+      "errorTitle": "Linkprüfung konnte nicht geladen werden",
+      "errorBody": "Versuche es gleich noch einmal. Gespeicherte Ergebnisse und frühere Downloads bleiben unverändert.",
+      "listError": "Gespeicherte Linkprüfungen konnten nicht geladen werden.",
+      "runningTitle": "Gespeicherte Backlink-Beobachtungen werden geprüft",
+      "failedTitle": "Linkprüfung angehalten",
+      "providerFailed": "Die Prüfung wurde beendet, bevor Ergebnisse gespeichert wurden. Versuchen Sie es erneut.",
+      "runLimitReached": "Die Prüfung wurde an ihrer Laufgrenze beendet. Es wurde keine automatische Aktion ausgeführt.",
+      "partial": "Teilweise Anbieterbeobachtungen",
+      "emptyTitle": "Keine bewerteten Zeilen",
+      "emptyBody": "Der Lauf wurde ohne gespeicherte bewertete Backlink-Zeile abgeschlossen."
+    },
+    "actions": {
+      "open": "Öffnen",
+      "back": "Zurück zu einer neuen Prüfung"
+    },
+    "runs": {
+      "title": "Gespeicherte Prüfungen",
+      "description": "Öffnen Sie gespeicherte Prüfungen erneut, ohne eine weitere Prüfung zu starten.",
+      "date": "Erstellt",
+      "status": "Status",
+      "rows": "Zeilen",
+      "emptyTitle": "Keine gespeicherten Prüfungen",
+      "emptyBody": "Sehen Sie sich eine Prüfungsvorschau an, wenn Sie bereit sind."
+    },
+    "filters": {
+      "status": "Prüfungen nach Status filtern",
+      "allStatuses": "Alle Status",
+      "band": "Zeilen nach Risikostufe filtern",
+      "allBands": "Alle Bänder"
+    },
+    "status": {
+      "queued": "Warteschlange",
+      "running": "Läuft",
+      "succeeded": "Abgeschlossen",
+      "failed": "Fehlgeschlagen"
+    },
+    "results": {
+      "title": "Ergebnisse der Linkprüfung",
+      "rubric": "Regelversion {{version}}",
+      "rowsTitle": "Bewertete Backlink-Zeilen",
+      "observationCopy": "Die Risikostufen beschreiben die gespeicherten Backlink-Daten nach dieser Regelversion. Sie sagen nicht voraus, was eine Suchmaschine tun wird.",
+      "providerObservation": "Gespeicherte Backlink-Daten · regelbasierte Bewertung"
+    },
+    "columns": {
+      "domain": "Verweisende Domain",
+      "score": "Spam-Wert",
+      "band": "Risikostufe",
+      "signals": "Beitragende Signale",
+      "firstSeen": "Zuerst gesehen",
+      "lastSeen": "Zuletzt gesehen",
+      "rationale": "Optionale Begründung"
+    },
+    "band": {
+      "clean": "Unauffällig",
+      "watch": "Beobachten",
+      "toxic": "Toxisch"
+    },
+    "signal": {
+      "spam_clean": "Wert 0–29",
+      "spam_watch": "Wert 30–59",
+      "spam_toxic": "Wert 60–100",
+      "broken": "Defekt",
+      "dofollow": "Dofollow",
+      "nofollow": "Nofollow"
+    },
+    "rationale": {
+      "toggle": "Begründung",
+      "not_requested": "Für diese Zeile wurde keine Begründung angefordert.",
+      "annotated": "Gespeicherte Begründung",
+      "abstained": "Die KI hat keine Erklärung gegeben; die regelbasierte Risikostufe bleibt unverändert.",
+      "failed": "Es war keine Erklärung verfügbar; die regelbasierte Risikostufe bleibt unverändert."
+    },
+    "disavow": {
+      "title": "Disavow-Datei erstellen",
+      "description": "Toxische Zeilen sind anfangs enthalten. Prüfen Sie jede Zeile und wählen Sie Domain oder exakte URL.",
+      "selectionCaption": "Für die Disavow-Datei verfügbare Zeilen",
+      "include": "Aufnehmen",
+      "scope": "Umfang",
+      "preview": "Live-Dateivorschau",
+      "reviewTitle": "Prüfung vor dem Download erforderlich",
+      "reviewBody": "RankMeFast übermittelt diese Datei niemals. Sie müssen den Text prüfen, herunterladen und nur dann selbst einreichen, wenn Sie ihn für angemessen halten.",
+      "download": ".txt herunterladen",
+      "downloadFailed": "Die Datei konnte nicht erstellt werden. Prüfen Sie Ihre Auswahl und versuchen Sie es erneut.",
+      "includeDomain": "{{domain}} in die Datei aufnehmen",
+      "scopeFor": "Umfang für {{domain}}",
+      "domainScope": "Ganze Domain",
+      "urlScope": "Exakte URL"
+    }
   },
-  "cap": { "reached": "Kein {{metric}}-Kontingent mehr verfügbar", "pack": "{{name}} fügt {{units}} Einheiten für {{price}} hinzu.", "upgrade": "Abrechnungsoptionen ansehen" },
-  "killswitch": { "title": "Link-Lücke ist vorübergehend nicht verfügbar", "disabled": "Neue Analysen sind pausiert. Gespeicherte Ergebnisse bleiben lesbar." },
-  "tier": { "locked": "Upgrade für Link-Lücken", "lockedBody": "Die Link-Lücken-Analyse ist in Pro und Agency verfügbar." }
+  "killswitch": {
+    "title": "Link-Lücke ist vorübergehend nicht verfügbar",
+    "disabled": "Neue Analysen sind pausiert. Gespeicherte Ergebnisse bleiben lesbar."
+  },
+  "suspicion": {
+    "badge": "Verdacht auf Spam",
+    "notVerified": "Verdacht, nicht bestätigt. Prüfen Sie es, bevor Sie handeln.",
+    "summary": "Zur Prüfung markierte Links: {{flagged}}",
+    "selected": "Für die Datei ausgewählt: {{selected}}",
+    "selectAll": "Alle markierten auswählen",
+    "clear": "Auswahl aufheben",
+    "download": "Disavow-Datei herunterladen ({{selected}})",
+    "help": "Die Markierungen beruhen auf einfachen Mustern, nicht auf einer Prüfung der Seite selbst. Die Datei listet ganze Domains, sehen Sie sich also jede an. Senden Sie sie nur dann an das Disavow-Tool von Google, wenn Sie sicher sind, dass diese Links Ihrer Website schaden.",
+    "reasons": {
+      "vendor_spam_score": "Der Datenanbieter gibt diesem Link einen hohen Spam-Wert.",
+      "dated_numbered_path": "Die Seitenadresse endet mit einem Datum und einer laufenden Nummer, ein Muster, das bei generierten Seiten häufig ist.",
+      "shared_path_template": "Mehrere voneinander unabhängige Websites verlinken von Seiten mit demselben Adressmuster.",
+      "lookalike_domain": "Der Domainname wirkt wie die Kopie eines Shops oder einer Marke mit wenig vertrauenswürdiger Endung."
+    }
+  }
 }
