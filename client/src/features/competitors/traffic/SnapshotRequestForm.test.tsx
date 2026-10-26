@@ -9,7 +9,7 @@ import { I18nextProvider } from 'react-i18next';
 import { MemoryRouter } from 'react-router-dom';
 import { ApiError, apiClient } from '@shared/api/client';
 import { changeLanguage, i18n, initI18n } from '@shared/i18n';
-import { SiteMarketProvider, type MarketCatalogEntry } from '@shared/markets';
+import { SiteMarketProvider, type SiteMarketChoice, type MarketCatalogEntry } from '@shared/markets';
 import { chooseOption } from '@/test/radixSelect';
 import { SnapshotRequestForm, SpendPreviewCard } from './components/SnapshotRequestForm';
 import { trafficSnapshotsReducer } from './store/slice';
@@ -52,7 +52,7 @@ const preview = (overrides: Partial<TrafficSpendPreview> = {}): TrafficSpendPrev
 
 const renderForm = (
   siteId: string | null = '0123456789abcdef01234567',
-  siteMarket?: { locationCode: number; languageCode: string; device: 'desktop' | 'mobile'; source?: 'cctld' },
+  siteMarket?: SiteMarketChoice,
 ) => {
   const store = configureStore({ reducer: { trafficSnapshots: trafficSnapshotsReducer } });
   const form = <SnapshotRequestForm siteId={siteId ?? undefined} />;
@@ -442,6 +442,17 @@ describe('SnapshotRequestForm market', () => {
     await user.click(country);
     await user.click(await screen.findByRole('option', { name: /Antarctica/ }));
     expect(country).toHaveTextContent('United States');
+  });
+
+  it('explains the populated fallback market on a traffic snapshot (issue #60)', () => {
+    renderForm(undefined, { locationCode: 2840, languageCode: 'en', device: 'desktop', source: 'assumed' });
+    expect(screen.getByTestId('traffic-market-country')).toHaveTextContent('United States');
+    expect(screen.getByTestId('traffic-market-language')).toHaveTextContent('English');
+    const notice = screen.getByTestId('traffic-market-provenance');
+    expect(notice).toHaveTextContent('Using a fallback market');
+    expect(notice).toHaveTextContent('United States');
+    expect(notice).toHaveTextContent('English');
+    expect(notice).not.toHaveTextContent('adding keywords');
   });
 
   it('keeps the default market usable while the catalog loads or fails', () => {

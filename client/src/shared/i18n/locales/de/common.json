@@ -389,7 +389,7 @@
       "search_console": "Voreinstellung aus den Search-Console-Zugriffen Ihrer Website ({{country}}).",
       "cctld": "Voreinstellung aus dem Land Ihrer Website ({{country}}).",
       "site_language": "Voreinstellung aus der Sprache der Seiten Ihrer Website ({{language}}).",
-      "assumed": "Wir konnten den Markt Ihrer Website nicht erkennen. Prüfen Sie ihn, bevor Sie Keywords hinzufügen.",
+      "assumed": "Es wird ein Ersatzmarkt verwendet ({{country}} · {{language}}). Für diese Website ist noch kein bestätigter Markt gespeichert. Speichern Sie diesen Standard oder wählen Sie einen anderen Markt.",
       "hint": "Sie können ihn hier ändern.",
       "edit": "Standardmarkt der Website ändern"
     },

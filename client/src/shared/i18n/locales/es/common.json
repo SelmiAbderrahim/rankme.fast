@@ -389,7 +389,7 @@
       "search_console": "Elegido según el tráfico de Search Console de tu sitio ({{country}}).",
       "cctld": "Elegido según el país de tu sitio ({{country}}).",
       "site_language": "Elegido según el idioma de las páginas de tu sitio ({{language}}).",
-      "assumed": "No pudimos detectar el mercado de tu sitio. Revísalo antes de añadir palabras clave.",
+      "assumed": "Se está usando un mercado de respaldo ({{country}} · {{language}}). Aún no hay un mercado confirmado guardado para este sitio. Guarde este valor predeterminado o elija otro mercado.",
       "hint": "Puedes cambiarlo aquí.",
       "edit": "Cambiar el mercado predeterminado del sitio"
     },

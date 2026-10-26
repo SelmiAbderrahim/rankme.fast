@@ -389,7 +389,7 @@
       "search_console": "根据您网站的 Search Console 流量默认选择（{{country}}）。",
       "cctld": "根据您网站所属的国家/地区默认选择（{{country}}）。",
       "site_language": "根据您网站页面的语言默认选择（{{language}}）。",
-      "assumed": "我们无法识别您网站的市场。添加关键词前请先核对。",
+      "assumed": "正在使用备用市场（{{country}} · {{language}}）。此网站尚未保存已确认的市场。请将此选择保存为默认市场，或选择其他市场。",
       "hint": "您可以在这里更改。",
       "edit": "更改网站默认市场"
     },
