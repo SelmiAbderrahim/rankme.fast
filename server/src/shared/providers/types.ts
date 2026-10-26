@@ -68,7 +68,7 @@ export interface AuditDomainChecks {
 /** One root-file read that gave no usable verdict. */
 export interface SiteProbeFailure {
     /** `blocked` = 401 / 403 / 429; `http-error` = any other unusable status; `unreachable` = no answer. */
-    reason: 'unreachable' | 'blocked' | 'http-error';
+    reason: 'unreachable' | 'blocked' | 'http-error' | 'tls' | 'dns' | 'timeout';
     /** HTTP status; absent when `unreachable`. */
     status?: number;
 }
@@ -79,6 +79,8 @@ export interface SiteProbeFailures {
 }
 /** One probed address variant of a site (`https-canonicalization` evidence). */
 export interface AddressVariantResult {
+    /** Why the attempted check failed; never a site-health verdict. */
+    failure?: SiteProbeFailure;
     /** The variant that was requested, e.g. `http://www.example.com/`. */
     url: string;
     /** Final HTTP status after redirects; null when the variant did not answer. */

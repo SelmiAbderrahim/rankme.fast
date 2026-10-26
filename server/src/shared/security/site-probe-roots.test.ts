@@ -4,6 +4,7 @@
  * http/https × apex/www address ends up.
  */
 import { describe, expect, it, vi } from 'vitest';
+import { UnsafeUrlError } from './url-safety.js';
 import { createSiteProbe, detectHostRedirect, robotsSitemapDirectives, type ProbeResponse } from './site-probe.js';
 
 type Route = { status: number; finalUrl?: string; contentType?: string; body?: string } | 'down';
@@ -249,6 +250,43 @@ describe('createSiteProbe', () => {
     });
     const result = await createSiteProbe({ fetchUrl })({ domain: 'www.example.com', url: 'https://www.example.com' });
     expect(result.startPageFinalUrl).toBe(apex);
+  });
+
+  it.each([
+    ['tls', new UnsafeUrlError('request failed', { code: 'ERR_TLS_CERT_ALTNAME_INVALID' })],
+    ['dns', new UnsafeUrlError('request failed', { code: 'ENOTFOUND' })],
+    ['timeout', new UnsafeUrlError('deadline exceeded', undefined, 'timeout')],
+    ['unreachable', new Error('connection reset')],
+    ['tls', { code: 'ERR_TLS_HANDSHAKE_TIMEOUT' }],
+    ['dns', { code: 'EAI_AGAIN' }],
+    ['timeout', { code: 'ETIMEDOUT' }],
+    ['unreachable', 'no answer'],
+  ] as const)('preserves %s failures rather than claiming a variant was not checked (issue #59)', async (reason, error) => {
+    const probe = createSiteProbe({ safety: {
+      resolver: async () => [{ address: '93.184.216.34', family: 4 }],
+      transport: async (url) => {
+        if (url.hostname === 'www.example.com' || url.pathname === '/robots.txt') throw error;
+        return new Response('ok');
+      },
+    } });
+    const result = await probe({ domain: 'example.com', url: 'https://example.com' });
+    expect(result.addressVariants?.find(v => v.url === 'https://www.example.com/')).toMatchObject({
+      status: null, finalUrl: null, ok: null, failure: { reason },
+    });
+    expect(result.failures?.robots).toEqual({ reason });
+  });
+
+  it('records a real www redirect as healthy without discarding the chain outcome (issue #59)', async () => {
+    const probe = createSiteProbe({ safety: {
+      resolver: async () => [{ address: '93.184.216.34', family: 4 }],
+      transport: async (url) => url.hostname === 'www.example.com'
+        ? new Response(null, { status: 301, headers: { location: 'https://example.com/' } })
+        : new Response('ok'),
+    } });
+    const result = await probe({ domain: 'example.com', url: 'https://example.com' });
+    expect(result.addressVariants?.find(v => v.url === 'https://www.example.com/')).toEqual({
+      url: 'https://www.example.com/', status: 200, finalUrl: 'https://example.com/', ok: true,
+    });
   });
 
   it('reads through the shared SSRF authority by default', async () => {

@@ -132,10 +132,12 @@
       "redirectsTo": "Leitet weiter zu {{url}}",
       "answersDirectly": "Öffnet hier ohne Weiterleitung (Status {{status}})",
       "endsWithError": "Endet auf {{url}} mit einem Fehler (Status {{status}})",
-      "unreachable": "Keine Antwort",
+      "unreachable": "Verbindung fehlgeschlagen",
       "okChip": "OK",
       "problemChip": "Beheben",
-      "unknownChip": "Nicht geprüft"
+      "failure": {"tls": "TLS-Zertifikat konnte nicht validiert werden", "dns": "DNS-Auflösung fehlgeschlagen", "timeout": "Zeitüberschreitung der Anfrage"},
+      "retryHint": "Starten Sie ein neues Audit, um fehlgeschlagene Prüfungen zu wiederholen.",
+      "unknownChip": "Prüfung fehlgeschlagen"
     },
     "measured": {
       "words_zero": "{{count}} Wörter",
@@ -570,6 +572,9 @@
       "localPackSetup": "Aktivieren Sie das Tracking der Kartenergebnisse für eines Ihrer verfolgten Keywords, um dies zu prüfen.",
       "aiVisibility": "Verfolgen Sie KI-Prompts, um dies zu prüfen.",
       "generic": "Der Crawl hat nicht genug Daten geliefert, um dies zu prüfen.",
+      "probeTls": "TLS-Zertifikat konnte beim Lesen von {{file}} nicht validiert werden.",
+      "probeDns": "DNS-Auflösung beim Lesen von {{file}} fehlgeschlagen.",
+      "probeTimeout": "Zeitüberschreitung bei der Anfrage für {{file}}.",
       "probeUnreachable": "Wir konnten {{file}} auf Ihrer Website nicht erreichen, daher ließ sich dies nicht prüfen.",
       "probeBlocked": "Ihre Website hat unsere Anfrage für {{file}} abgelehnt (HTTP {{status}}), daher ließ sich dies nicht prüfen.",
       "probeHttpError": "Ihre Website hat für {{file}} mit HTTP {{status}} geantwortet, daher ließ sich dies nicht prüfen."

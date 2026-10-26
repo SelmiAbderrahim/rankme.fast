@@ -671,6 +671,9 @@ describe('ReportPage — not-evaluated checks (issue #1)', () => {
           withProbe('llms-txt-missing', 'llms.txt missing', { file: 'llms.txt', reason: 'http-error', status: 503 }),
           withProbe('thin-content', 'Thin content', { file: 'robots.txt', reason: 'unreachable' }),
           withProbe('faq-content-missing', 'FAQ', { file: 'x', reason: 'weird' }),
+          withProbe('tls-probe', 'TLS', { file: 'robots.txt', reason: 'tls' }),
+          withProbe('dns-probe', 'DNS', { file: 'llms.txt', reason: 'dns' }),
+          withProbe('timeout-probe', 'Timeout', { file: 'robots.txt', reason: 'timeout' }),
         ],
       }),
     );
@@ -686,6 +689,9 @@ describe('ReportPage — not-evaluated checks (issue #1)', () => {
       'Your site answered with HTTP 503 for llms.txt',
     );
     expect(hint('thin-content')).toContain('We could not reach robots.txt on your site');
+    expect(hint('tls-probe')).toContain('TLS certificate validation failed while reading robots.txt');
+    expect(hint('dns-probe')).toContain('DNS lookup failed while reading llms.txt');
+    expect(hint('timeout-probe')).toContain('The request for robots.txt timed out');
     // An unknown reason never leaks raw keys: it falls back to the generic copy.
     expect(hint('faq-content-missing')).toContain('did not return enough data');
     // A non-object value is ignored too.
@@ -1579,7 +1585,7 @@ describe('IssueRow / IssueDetail units', () => {
       'http://www.example.com/Opens here without redirecting (status 200)Needs fixing',
       'https://example.com/Your main addressOK',
       'https://www.example.com/Ends on https://www.example.com/ with an error (status 404)Needs fixing',
-      'https://old.example.com/Did not answerNot checked',
+      'https://old.example.com/Could not connectCheck failed',
     ]);
     // The table replaces the plain URL list and the page-level content CTA.
     expect(screen.queryByText('Affected URLs')).toBeNull();

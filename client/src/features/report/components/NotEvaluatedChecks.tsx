@@ -33,6 +33,9 @@ export type NotEvaluatedSource =
   | 'localNoProfile'
   | 'localPackSetup'
   | 'aiVisibility'
+  | 'probeTls'
+  | 'probeDns'
+  | 'probeTimeout'
   | 'probeUnreachable'
   | 'probeBlocked'
   | 'probeHttpError'
@@ -42,6 +45,9 @@ export type NotEvaluatedSource =
   | 'generic';
 
 const PROBE_SOURCES = {
+  tls: 'probeTls',
+  dns: 'probeDns',
+  timeout: 'probeTimeout',
   unreachable: 'probeUnreachable',
   blocked: 'probeBlocked',
   'http-error': 'probeHttpError',

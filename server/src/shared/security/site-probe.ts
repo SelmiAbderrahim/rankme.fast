@@ -87,7 +87,7 @@ export async function readSiteLanguageHead(
     }
 }
 
-const defaultFetchUrl = (safety: SiteProbeOptions['safety']) => (url: string): Promise<ProbeResponse | null> =>
+const defaultFetchUrl = (safety: SiteProbeOptions['safety'], failures: Map<string, SiteProbeFailure>) => (url: string): Promise<ProbeResponse | null> =>
     fetchPublicUrlSafeWithFinalUrl(url, { method: 'GET', headers: { accept: 'text/plain,text/html;q=0.8,*/*;q=0.5' } }, {
         ...safety,
         // The http:// variants are exactly what this check is about.
@@ -100,7 +100,23 @@ const defaultFetchUrl = (safety: SiteProbeOptions['safety']) => (url: string): P
         finalUrl: finalUrl.href,
         contentType: response.headers.get('content-type') ?? '',
         text: () => response.text(),
-    }), () => null);
+    }), (error: unknown) => {
+        failures.set(url, networkFailure(error));
+        return null;
+    });
+
+/** Preserve safe error categories, never raw transport messages or certificate data. */
+function networkFailure(error: unknown): SiteProbeFailure {
+    if (error instanceof UnsafeUrlError && error.kind === 'timeout') return { reason: 'timeout' };
+    const cause = error instanceof Error && error.cause ? error.cause : error;
+    const code = typeof cause === 'object' && cause !== null ? (cause as { code?: unknown }).code : undefined;
+    if (typeof code === 'string') {
+        if (code.includes('CERT') || code.startsWith('ERR_TLS')) return { reason: 'tls' };
+        if (code === 'ENOTFOUND' || code === 'EAI_AGAIN') return { reason: 'dns' };
+        if (code === 'ETIMEDOUT') return { reason: 'timeout' };
+    }
+    return { reason: 'unreachable' };
+}
 
 /** Bare hostname without a leading `www.`. */
 function apexOf(hostname: string): string {
@@ -156,16 +172,17 @@ const isHtml = (contentType: string): boolean => /\bhtml\b/i.test(contentType);
  * What went wrong reading one root file. Only reads that did not give a
  * usable verdict (a 404 / 410 is a verdict: the file is not there).
  */
-function failureOf(response: ProbeResponse | null): SiteProbeFailure {
+function failureOf(response: ProbeResponse | null, failure?: SiteProbeFailure): SiteProbeFailure {
     if (!response)
-        return { reason: 'unreachable' };
+        return failure ?? { reason: 'unreachable' };
     const reason = BLOCKED_STATUSES.has(response.status) ? 'blocked' : 'http-error';
     return { reason, status: response.status };
 }
 
 export function createSiteProbe(opts: SiteProbeOptions = {}): SiteProbe {
-    const fetchUrl = opts.fetchUrl ?? defaultFetchUrl(opts.safety);
     return async ({ domain, url, canonicalUrl }) => {
+        const failedReads = new Map<string, SiteProbeFailure>();
+        const fetchUrl = opts.fetchUrl ?? defaultFetchUrl(opts.safety, failedReads);
         let siteHost: string;
         try {
             siteHost = new URL(url).hostname.toLowerCase();
@@ -214,7 +231,7 @@ export function createSiteProbe(opts: SiteProbeOptions = {}): SiteProbe {
             out.sitemapReferencedInRobots = false;
         }
         else {
-            failures.robots = failureOf(robots);
+            failures.robots = failureOf(robots, failedReads.get(`${origin}/robots.txt`));
         }
 
         if (sitemap && sitemap.status === 200 && !isHtml(sitemap.contentType))
@@ -231,7 +248,7 @@ export function createSiteProbe(opts: SiteProbeOptions = {}): SiteProbe {
             out.llmsTxtFound = false;
         }
         else {
-            failures.llms = failureOf(llms);
+            failures.llms = failureOf(llms, failedReads.get(`${origin}/llms.txt`));
         }
         if (failures.robots || failures.llms)
             out.failures = failures;
@@ -249,8 +266,10 @@ export function createSiteProbe(opts: SiteProbeOptions = {}): SiteProbe {
         ];
         out.addressVariants = await Promise.all(variantUrls.map(async (variant): Promise<AddressVariantResult> => {
             const response = variant === `https://${siteHost}/` ? home : await fetchUrl(variant);
-            if (!response)
-                return { url: variant, status: null, finalUrl: null, ok: null };
+            if (!response) {
+                const failure = failedReads.get(variant);
+                return { url: variant, status: null, finalUrl: null, ok: null, ...(failure ? { failure } : {}) };
+            }
             const final = new URL(response.finalUrl);
             return {
                 url: variant,
