@@ -115,6 +115,7 @@ export const auditActionAdapter: SourceReader = async (ctx) => {
             affectedUrlCount: countCanonicalAffectedUrls(finding.affectedUrls ?? []),
             evidence,
             severity: finding.severity,
+            auditBucket: finding.bucket,
             firstPartyImpact: 'none',
             confidence: 'high',
             effort: 'medium',

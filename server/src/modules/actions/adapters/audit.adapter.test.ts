@@ -218,6 +218,19 @@ describe('auditActionAdapter', () => {
     expect(result.actions[0]?.affectedUrlCount).toBe(170);
   });
 
+  it('preserves the report bucket separately from severity (issue #56)', async () => {
+    const ctx = ids();
+    await seedRun({ ...ctx, findings: [
+      { ruleId: 'broken-resources', bucket: 'fix-now', severity: 'warning' },
+      { ruleId: 'thin-content', bucket: 'watch', severity: 'warning' },
+    ] });
+    const result = await auditActionAdapter({ ...ctx, db: unusedDb });
+    expect(result.actions).toMatchObject([
+      { auditBucket: 'fix-now', severity: 'warning' },
+      { auditBucket: 'watch', severity: 'warning' },
+    ]);
+  });
+
   it('adds code-fix metadata only for actionable technical findings with evidence', async () => {
     const { accountId, siteId } = ids();
     await seedRun({

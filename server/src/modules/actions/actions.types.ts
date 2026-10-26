@@ -25,6 +25,8 @@ export interface CandidateAction {
     affectedUrlCount?: number;
     evidence: readonly ActionEvidence[];
     severity: Severity;
+    /** Audit report priority, preserved separately from severity. */
+    auditBucket?: 'fix-now' | 'watch';
     firstPartyImpact: FirstPartyImpact;
     confidence: Confidence;
     effort: Effort;
@@ -63,6 +65,8 @@ export interface ActionItem {
     affectedUrlCount: number;
     evidence: readonly ActionEvidence[];
     severity: Severity;
+    /** Audit report priority, preserved separately from severity. */
+    auditBucket?: 'fix-now' | 'watch';
     firstPartyImpact: FirstPartyImpact;
     confidence: Confidence;
     effort: Effort;
