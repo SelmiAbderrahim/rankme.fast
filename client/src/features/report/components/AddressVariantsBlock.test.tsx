@@ -10,6 +10,17 @@ beforeEach(async () => {
 });
 
 describe('failed address checks (issue #59)', () => {
+  it('offers no retry when every address answered conclusively, including a site error', () => {
+    render(<I18nextProvider i18n={i18n}><AddressVariantsBlock variants={[
+      { url: 'https://example.com/', status: 200, finalUrl: 'https://example.com/', ok: true },
+      { url: 'http://www.example.com/', status: 404, finalUrl: 'http://www.example.com/', ok: false },
+    ]} /></I18nextProvider>);
+    expect(screen.getByText('Your main address')).toBeInTheDocument();
+    expect(screen.getByText('Needs fixing')).toBeInTheDocument();
+    expect(screen.queryByTestId('report-address-retry')).not.toBeInTheDocument();
+    expect(screen.queryByText('Check failed')).not.toBeInTheDocument();
+  });
+
   it.each([
     ['tls', 'TLS certificate validation failed'],
     ['dns', 'DNS lookup failed'],
