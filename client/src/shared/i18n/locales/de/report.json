@@ -275,6 +275,13 @@
       "unavailable": "KI-Zusammenfassung ist vorübergehend nicht verfügbar — Ihre Checkliste bleibt unverändert.",
       "capReached": "Ihr monatliches KI-Zusammenfassungslimit ist erreicht. Upgraden oder Guthaben aufladen, um weitere Zusammenfassungen zu erzeugen."
     },
+    "highlights_zero": "Zusammenfassung: {{shown}} von {{count}} offenen Befunden.",
+    "highlights_one": "Zusammenfassung: {{shown}} von {{count}} offenem Befund.",
+    "highlights_two": "Zusammenfassung: {{shown}} von {{count}} offenen Befunden.",
+    "highlights_few": "Zusammenfassung: {{shown}} von {{count}} offenen Befunden.",
+    "highlights_many": "Zusammenfassung: {{shown}} von {{count}} offenen Befunden.",
+    "highlights_other": "Zusammenfassung: {{shown}} von {{count}} offenen Befunden.",
+    "allFindings": "Alle Befunde in diesem Bericht ansehen",
     "basis_zero": "Basiert auf {{count}} offenen Befunden",
     "basis_one": "Basiert auf {{count}} offenem Befund",
     "basis_two": "Basiert auf {{count}} offenen Befunden",

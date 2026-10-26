@@ -295,6 +295,23 @@ describe('AiSummaryCard — structured summaries, freshness and progress', () =>
     expect(screen.queryByTestId('report-ai-summary-stale')).not.toBeInTheDocument();
   });
 
+  it.each([4, 7])('discloses that three highlights cover only part of %i findings (issue #57)', (total) => {
+    const item = structured.structured!.items[0]!;
+    renderWithRouter({ initial: {
+      ...structured,
+      basisRuleIds: Array.from({ length: total }, (_, i) => `rule-${i}`),
+      structured: { status: 'Review these first.', items: [item, { ...item, ruleId: 'title-missing-or-weak' }, { ...item, ruleId: 'https-canonicalization' }] },
+    } });
+    expect(screen.getByTestId('report-ai-summary-basis')).toHaveTextContent(`Summary highlights: 3 of ${total} open findings`);
+    expect(screen.getByRole('link', { name: 'See all findings in this report' })).toHaveAttribute('href', '#report-findings');
+  });
+
+  it('keeps the basis count when every finding is covered', () => {
+    renderWithRouter();
+    expect(screen.getByTestId('report-ai-summary-basis')).toHaveTextContent('Based on 2 open findings');
+    expect(screen.queryByTestId('report-ai-summary-all-findings')).not.toBeInTheDocument();
+  });
+
   it('renders a status-only structured summary without an item list', () => {
     renderWithRouter({ initial: { ...structured, structured: { status: 'Nothing urgent.', items: [] } } });
     expect(screen.getByTestId('report-ai-summary-status')).toHaveTextContent('Nothing urgent.');

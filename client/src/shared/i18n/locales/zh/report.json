@@ -275,6 +275,13 @@
       "unavailable": "AI 摘要暂时不可用 —— 您的检查清单不受影响。",
       "capReached": "您已达到本月 AI 摘要额度。请升级套餐或购买额度以继续生成。"
     },
+    "highlights_zero": "摘要重点：{{count}} 项待处理发现中的 {{shown}} 项。",
+    "highlights_one": "摘要重点：{{count}} 项待处理发现中的 {{shown}} 项。",
+    "highlights_two": "摘要重点：{{count}} 项待处理发现中的 {{shown}} 项。",
+    "highlights_few": "摘要重点：{{count}} 项待处理发现中的 {{shown}} 项。",
+    "highlights_many": "摘要重点：{{count}} 项待处理发现中的 {{shown}} 项。",
+    "highlights_other": "摘要重点：{{count}} 项待处理发现中的 {{shown}} 项。",
+    "allFindings": "查看此报告中的所有发现",
     "basis_zero": "基于 {{count}} 个未解决的问题",
     "basis_one": "基于 {{count}} 个未解决的问题",
     "basis_two": "基于 {{count}} 个未解决的问题",

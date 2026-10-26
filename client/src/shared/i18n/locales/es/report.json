@@ -275,6 +275,13 @@
       "unavailable": "El resumen con IA no está disponible temporalmente — tu lista de correcciones no se ve afectada.",
       "capReached": "Has alcanzado tu límite mensual de resúmenes con IA. Actualiza tu plan o añade créditos para seguir generando."
     },
+    "highlights_zero": "Puntos destacados: {{shown}} de {{count}} hallazgos abiertos.",
+    "highlights_one": "Puntos destacados: {{shown}} de {{count}} hallazgo abierto.",
+    "highlights_two": "Puntos destacados: {{shown}} de {{count}} hallazgos abiertos.",
+    "highlights_few": "Puntos destacados: {{shown}} de {{count}} hallazgos abiertos.",
+    "highlights_many": "Puntos destacados: {{shown}} de {{count}} hallazgos abiertos.",
+    "highlights_other": "Puntos destacados: {{shown}} de {{count}} hallazgos abiertos.",
+    "allFindings": "Ver todos los hallazgos de este informe",
     "basis_zero": "Basado en {{count}} hallazgos abiertos",
     "basis_one": "Basado en {{count}} hallazgo abierto",
     "basis_two": "Basado en {{count}} hallazgos abiertos",

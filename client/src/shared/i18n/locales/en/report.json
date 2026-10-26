@@ -275,6 +275,13 @@
       "unavailable": "AI summary is temporarily unavailable — your checklist is unaffected.",
       "capReached": "You've reached your monthly AI summary limit. Upgrade or add credits to keep generating."
     },
+    "highlights_zero": "Summary highlights: {{shown}} of {{count}} open findings.",
+    "highlights_one": "Summary highlights: {{shown}} of {{count}} open finding.",
+    "highlights_two": "Summary highlights: {{shown}} of {{count}} open findings.",
+    "highlights_few": "Summary highlights: {{shown}} of {{count}} open findings.",
+    "highlights_many": "Summary highlights: {{shown}} of {{count}} open findings.",
+    "highlights_other": "Summary highlights: {{shown}} of {{count}} open findings.",
+    "allFindings": "See all findings in this report",
     "basis_zero": "Based on {{count}} open findings",
     "basis_one": "Based on {{count}} open finding",
     "basis_two": "Based on {{count}} open findings",

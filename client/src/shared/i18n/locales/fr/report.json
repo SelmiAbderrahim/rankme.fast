@@ -275,6 +275,13 @@
       "unavailable": "Le résumé IA est temporairement indisponible — votre liste de correctifs n’est pas affectée.",
       "capReached": "Vous avez atteint votre limite mensuelle de résumés IA. Passez au niveau supérieur ou ajoutez des crédits pour continuer."
     },
+    "highlights_zero": "Points clés du résumé : {{shown}} sur {{count}} constats ouverts.",
+    "highlights_one": "Points clés du résumé : {{shown}} sur {{count}} constat ouvert.",
+    "highlights_two": "Points clés du résumé : {{shown}} sur {{count}} constats ouverts.",
+    "highlights_few": "Points clés du résumé : {{shown}} sur {{count}} constats ouverts.",
+    "highlights_many": "Points clés du résumé : {{shown}} sur {{count}} constats ouverts.",
+    "highlights_other": "Points clés du résumé : {{shown}} sur {{count}} constats ouverts.",
+    "allFindings": "Voir tous les constats de ce rapport",
     "basis_zero": "Basé sur {{count}} constat ouvert",
     "basis_one": "Basé sur {{count}} constat ouvert",
     "basis_two": "Basé sur {{count}} constats ouverts",

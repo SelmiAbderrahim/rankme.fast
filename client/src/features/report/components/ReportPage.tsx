@@ -825,6 +825,8 @@ export const ReportPage = ({
 
       {report ? (
         <Tabs
+          id="report-findings"
+          tabIndex={-1}
           value={activeTab}
           onValueChange={(v) => setActiveTab(v as ReportTab)}
           defaultValue={DEFAULT_REPORT_TAB}
