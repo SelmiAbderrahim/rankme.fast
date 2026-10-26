@@ -825,6 +825,13 @@ describe('audit processor — page persistence and PageSpeed sampling', () => {
     const target = { domain: 'example.com', url: 'https://example.com' };
     const ok = (url: string) => ({ url, status: 200, finalUrl: 'https://example.com/', ok: true });
 
+    it('passes the crawl-resolved host to the root-file probe (issue #53)', async () => {
+      const probeSite = vi.fn(async () => ({ llmsTxtFound: false }));
+      const www = { domain: 'www.example.com', url: 'https://www.example.com' };
+      await applySiteProbe(FAKE_AUDIT_RESULT, www, { probeSite, logger });
+      expect(probeSite).toHaveBeenCalledWith({ ...www, canonicalUrl: 'https://example.com/' });
+    });
+
     it('never overrides a signal the vendor reported', async () => {
       const result = {
         ...FAKE_AUDIT_RESULT,

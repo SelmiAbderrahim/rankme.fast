@@ -602,7 +602,13 @@ export async function applySiteProbe(result: AuditResult, target: ResolvedAuditT
         return result;
     let probe: SiteProbeResult;
     try {
-        probe = await deps.probeSite(target);
+        // Root files describe the host the crawl actually audited, even if the
+        // original host cannot complete TLS from this worker.
+        const redirect = detectHostRedirect(siteHostOf(target), undefined, result.pages.map((page) => page.url));
+        probe = await deps.probeSite({
+            ...target,
+            ...(redirect ? { canonicalUrl: `https://${redirect.to}/` } : {}),
+        });
     }
     catch (err) {
         deps.logger.warn({ err: (err as Error).message }, 'site probe failed — keeping vendor verdict');

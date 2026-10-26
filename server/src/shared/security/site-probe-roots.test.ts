@@ -25,6 +25,23 @@ const target = { domain: 'bottradesforyou.com', url: 'https://bottradesforyou.co
 const HOME = 'https://bottradesforyou.com/';
 
 describe('createSiteProbe', () => {
+  it('reads canonical crawl root files when the original www TLS connection fails (issue #53)', async () => {
+    const fetchUrl = fakeNetwork({
+      'https://www.bottradesforyou.com/': 'down',
+      [HOME]: { status: 200 },
+      'https://bottradesforyou.com/robots.txt': { status: 200, body: 'Sitemap: https://bottradesforyou.com/sitemap.xml' },
+      'https://bottradesforyou.com/sitemap.xml': { status: 200, contentType: 'application/xml' },
+      'https://bottradesforyou.com/llms.txt': { status: 404, contentType: 'text/html' },
+    });
+    const target = { domain: 'www.bottradesforyou.com', url: 'https://www.bottradesforyou.com', canonicalUrl: HOME };
+    const result = await createSiteProbe({ fetchUrl })(target);
+    expect(result.sitemapReferencedInRobots).toBe(true);
+    expect(result.sitemapFound).toBe(true);
+    expect(result.llmsTxtFound).toBe(false);
+    expect(result.failures).toBeUndefined();
+    expect(fetchUrl).not.toHaveBeenCalledWith('https://www.bottradesforyou.com/robots.txt');
+  });
+
   it('reports the variant that serves its own page instead of redirecting (issue #17)', async () => {
     const fetchUrl = fakeNetwork({
       [HOME]: { status: 200, contentType: 'text/html' },

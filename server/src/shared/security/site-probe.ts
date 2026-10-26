@@ -42,7 +42,7 @@ export interface SiteProbeResult {
     addressVariants?: AddressVariantResult[];
 }
 
-export type SiteProbe = (target: { domain: string; url: string }) => Promise<SiteProbeResult>;
+export type SiteProbe = (target: { domain: string; url: string; canonicalUrl?: string }) => Promise<SiteProbeResult>;
 
 /** Minimal response view the probe needs — lets tests fake the network. */
 export interface ProbeResponse {
@@ -165,7 +165,7 @@ function failureOf(response: ProbeResponse | null): SiteProbeFailure {
 
 export function createSiteProbe(opts: SiteProbeOptions = {}): SiteProbe {
     const fetchUrl = opts.fetchUrl ?? defaultFetchUrl(opts.safety);
-    return async ({ domain, url }) => {
+    return async ({ domain, url, canonicalUrl }) => {
         let siteHost: string;
         try {
             siteHost = new URL(url).hostname.toLowerCase();
@@ -180,9 +180,9 @@ export function createSiteProbe(opts: SiteProbeOptions = {}): SiteProbe {
         // readable: a bot-blocked or erroring home page must not hide them.
         // They are read from the origin the start page ended on — the
         // redirected host when it answered, the site's own host otherwise.
-        let origin = `https://${siteHost}`;
+        let origin = canonicalUrl ? new URL(canonicalUrl).origin : `https://${siteHost}`;
         const homeUsable = home !== null && home.status < 400;
-        if (home) {
+        if (home && !canonicalUrl) {
             const final = new URL(home.finalUrl);
             if (homeUsable || apexOf(final.hostname) === apex)
                 origin = final.origin;
