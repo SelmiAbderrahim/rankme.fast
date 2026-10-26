@@ -854,12 +854,13 @@ describe('audit processor — page persistence and PageSpeed sampling', () => {
       },
     );
 
-    it('ignores malformed and non-HTTP evidence when resolving a probe origin', async () => {
+    it('ignores malformed, unrelated and non-HTTP evidence when resolving a probe origin', async () => {
       const probeSite = vi.fn(async () => ({}));
       const page = FAKE_AUDIT_RESULT.pages[0]!;
       const www = { domain: 'www.example.com', url: 'https://www.example.com' };
       await applySiteProbe({ ...FAKE_AUDIT_RESULT, pages: [
-        { ...page, url: 'malformed' }, { ...page, url: 'ftp://example.com/a' },
+        { ...page, url: 'malformed' }, { ...page, url: 'https://unrelated.example.net/a' },
+        { ...page, url: 'ftp://example.com/a' },
         { ...page, url: 'https://example.com:8443/a' },
       ] }, www, { probeSite, logger });
       expect(probeSite).toHaveBeenLastCalledWith({ ...www, canonicalUrl: 'https://example.com:8443/' });

@@ -261,6 +261,8 @@ describe('createSiteProbe', () => {
     ['dns', { code: 'EAI_AGAIN' }],
     ['timeout', { code: 'ETIMEDOUT' }],
     ['unreachable', 'no answer'],
+    ['unreachable', null],
+    ['unreachable', { code: 'ECONNRESET' }],
   ] as const)('preserves %s failures rather than claiming a variant was not checked (issue #59)', async (reason, error) => {
     const probe = createSiteProbe({ safety: {
       resolver: async () => [{ address: '93.184.216.34', family: 4 }],
