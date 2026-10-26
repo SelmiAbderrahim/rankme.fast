@@ -13,6 +13,7 @@ import { Bdi } from '@shared/components/Bdi';
  */
 import { useEffect, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
+import { TAP_TARGET_LINK } from '@shared/ui/tap-target';
 import { Link } from 'react-router-dom';
 import { ArrowRight, RefreshCw } from 'lucide-react';
 import { ReportExportControl } from '@features/report-export';
@@ -432,7 +433,7 @@ export const GoogleSearchSummaryCard = ({ siteId }: GoogleSearchSummaryCardProps
           <div className="mt-3 flex flex-wrap items-center gap-x-4 gap-y-1">
             <Link
               to={`/sites/${siteId}?tab=report`}
-              className="text-primary inline-block text-sm font-medium underline"
+              className={`text-primary inline-block text-sm font-medium underline ${TAP_TARGET_LINK}`}
               data-testid="google-summary-report-link"
             >
               {t('searchSummary.reportLink')}

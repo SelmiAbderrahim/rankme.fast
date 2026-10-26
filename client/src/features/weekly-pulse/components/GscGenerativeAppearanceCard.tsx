@@ -8,6 +8,7 @@
  */
 import { useCallback, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
+import { formatAbsoluteDate } from '@shared/lib/datetime';
 import { ReportExportControl } from '@features/report-export';
 import { useAppDispatch, useAppSelector } from '@shared/hooks/redux';
 import { Button } from '@shared/ui/button';
@@ -98,7 +99,7 @@ function GscAppearanceContent({
   loading: boolean;
   onRetry: () => void;
 }) {
-  const { t } = useTranslation('weeklyPulse');
+  const { t, i18n } = useTranslation('weeklyPulse');
   const status = appearance.status;
 
   if (status === 'reconnect_required') {
@@ -140,8 +141,8 @@ function GscAppearanceContent({
       {appearance.window ? (
         <p className="text-muted-foreground text-xs">
           {t('gsc.window', {
-            start: appearance.window.start,
-            end: appearance.window.end,
+            start: formatAbsoluteDate(appearance.window.start, i18n.language),
+            end: formatAbsoluteDate(appearance.window.end, i18n.language),
           })}
         </p>
       ) : null}

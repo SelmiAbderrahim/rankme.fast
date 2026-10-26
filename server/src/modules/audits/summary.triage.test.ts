@@ -151,6 +151,37 @@ describe("summary input selection", () => {
     expect(selected[1]).not.toHaveProperty("evidence");
   });
 
+  it("describes OSS address-variant evidence in the summary input", () => {
+    const selected = selectSummaryFindings([finding("https-canonicalization", "watch", {
+      addressVariants: [
+        { url: "https://example.com/", status: 200, finalUrl: "https://example.com/", ok: true },
+        { url: "http://www.example.com/", status: 200, finalUrl: "http://www.example.com/", ok: false },
+      ],
+    }, 1)], "en");
+    expect(selected[0]?.evidence).toEqual([
+      "the http www address answers with status 200 and ends on www.example.com over http instead of example.com over https",
+    ]);
+  });
+
+  it("rejects malformed address evidence and describes a failed probe without a canonical response", () => {
+    const evidence = summaryEvidenceFor(finding("https-canonicalization", "watch", {
+      addressVariants: [
+        null,
+        {},
+        { url: "https://example.com", status: "200", finalUrl: null, ok: false },
+        { url: "https://example.com", status: null, finalUrl: 7, ok: false },
+        { url: "https://example.com", status: null, finalUrl: null, ok: "false" },
+        { url: "not a URL", status: null, finalUrl: null, ok: false },
+        { url: "http://example.com", status: 200, finalUrl: null, ok: false },
+        { url: "https://example.com", status: null, finalUrl: null, ok: null },
+      ],
+    }, 0));
+    expect(evidence).toEqual([
+      "the address answers with no status and ends on no answer",
+      "the http non-www address answers with status 200 and ends on no answer",
+    ]);
+  });
+
   it("carries no evidence for malformed or absent host-variant meta", () => {
     for (const meta of [
       null,
@@ -258,6 +289,26 @@ describe("summary input selection", () => {
       { db: getTestDb(), provider: fakeProvider(), queue: fakeQueue() },
     );
     expect(state).toMatchObject({ status: "idle", aiSummary: null });
+  });
+
+  it('reads the current state without an injected DB after losing a deterministic claim', async () => {
+    const ids = await seedOne({ findings: [] });
+    vi.spyOn(ReportSnapshot, 'findOneAndUpdate').mockResolvedValueOnce(null);
+    const state = await startAuditSummary(
+      { ...ids, locale: 'en' },
+      { provider: fakeProvider(), queue: fakeQueue() },
+    );
+    expect(state.status).toBe('idle');
+  });
+
+  it('reads the current state with an injected DB after losing a queued claim', async () => {
+    const ids = await seedOne();
+    vi.spyOn(ReportSnapshot, 'findOneAndUpdate').mockResolvedValueOnce(null);
+    const state = await startAuditSummary(
+      { ...ids, locale: 'en' },
+      { db: getTestDb(), provider: fakeProvider(), queue: fakeQueue() },
+    );
+    expect(state.status).toBe('idle');
   });
 
   it("never calls the model for a queued job whose audit has nothing actionable", async () => {

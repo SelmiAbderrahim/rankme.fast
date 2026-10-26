@@ -433,7 +433,7 @@ export const KeywordsTable = ({
                 <button
                   type="button"
                   onClick={() => onSelect(k)}
-                  className="min-w-0 break-words text-start font-medium hover:underline focus-visible:underline focus-visible:outline-none"
+                  className="min-w-0 break-words text-start font-medium hover:underline focus-visible:underline focus-visible:outline-none max-md:min-h-11"
                 >
                   <Bdi>{k.phrase}</Bdi>
                 </button>

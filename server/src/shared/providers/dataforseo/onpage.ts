@@ -435,11 +435,19 @@ async function fetchNonIndexable(cfg: DataForSeoOnPageProviderConfig, vendorTask
 }
 function normalizeDomainChecks(checks: Record<string, unknown> | undefined): AuditResult['domainChecks'] {
     const bool = (key: string): boolean => checks?.[key] === true;
+    const httpsRedirect = typeof checks?.test_https_redirect === 'boolean'
+        ? checks.test_https_redirect
+        : typeof checks?.http_to_https_redirect === 'boolean'
+            ? checks.http_to_https_redirect
+            : undefined;
     return {
         robotsTxtFound: bool('robots_txt'),
         sitemapFound: bool('sitemap'),
-        httpsEnforced: bool('ssl') || bool('http_to_https_redirect'),
-        canonicalizationOk: bool('canonicalization'),
+        httpsEnforced: bool('ssl') || httpsRedirect === true,
+        canonicalizationOk: typeof checks?.test_www_redirect === 'boolean'
+            ? checks.test_www_redirect
+            : bool('canonicalization'),
+        ...(httpsRedirect === undefined ? {} : { httpsRedirect }),
     };
 }
 const HTML_MEDIA_TYPES: ReadonlySet<string> = new Set(['text/html', 'application/xhtml+xml']);

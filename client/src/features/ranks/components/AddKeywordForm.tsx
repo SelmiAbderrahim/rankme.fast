@@ -7,6 +7,7 @@ import { Link } from 'react-router-dom';
 import { safeExternalHref } from '@shared/security';
 import { NativeSelect } from '@shared/ui/native-select';
 import { Alert, AlertDescription } from '@shared/ui/alert';
+import { DisabledAction } from '@shared/components/DisabledAction';
 import { Button } from '@shared/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@shared/ui/card';
 import { Checkbox } from '@shared/ui/checkbox';
@@ -749,14 +750,15 @@ export const AddKeywordForm = ({
                     </Link>
                   </Button>
                 ) : (
-                  <Button
+                  <DisabledAction
                     type="button"
                     variant="outline"
                     disabled
+                    reason={t('longTailResearch.disabledReason')}
                     data-testid="keyword-long-tail-research-disabled"
                   >
                     {t('longTailResearch.cta')}
-                  </Button>
+                  </DisabledAction>
                 )}
               </div>
             ) : null}

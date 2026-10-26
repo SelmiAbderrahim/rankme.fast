@@ -1,5 +1,5 @@
-import { createSlice } from '@reduxjs/toolkit';
-import type { ReportState } from '../types';
+import { createSlice, type PayloadAction } from '@reduxjs/toolkit';
+import type { AuditSummaryState, ReportState } from '../types';
 import { downloadReportPdf, loadReport, loadRuns, pollRun, startRetest } from './thunks';
 import {
   presentationCacheKey,
@@ -64,6 +64,21 @@ const reportSlice = createSlice({
       state.pdfError = '';
     },
     resetReport: () => initialState,
+    aiSummaryStateReceived: (
+      state,
+      action: PayloadAction<{ runId: string; summary: AuditSummaryState }>,
+    ) => {
+      const { runId, summary } = action.payload;
+      if (!state.report || state.report.runId !== runId) return;
+      state.report.aiSummary = summary.aiSummary;
+      state.report.aiSummaryStatus = summary.status;
+      state.report.aiSummaryFreshness = summary.freshness ?? null;
+      state.report.aiSummaryAvailability = {
+        requestedLocale: summary.requestedLocale,
+        availableLocales: summary.availableLocales,
+        status: summary.status,
+      };
+    },
   },
   extraReducers: (builder) => {
     builder
@@ -224,5 +239,5 @@ const reportSlice = createSlice({
   },
 });
 
-export const { clearReportMessages, resetReport } = reportSlice.actions;
+export const { clearReportMessages, resetReport, aiSummaryStateReceived } = reportSlice.actions;
 export const reportReducer = reportSlice.reducer;

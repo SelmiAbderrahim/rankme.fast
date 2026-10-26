@@ -372,6 +372,11 @@ describe('SitesPage', () => {
 });
 
 describe('SitesTable', () => {
+  it('gives the phone site link a full-height tap row', () => {
+    renderWith(<SitesTable sites={[site('a')]} deletingId={null} onDelete={vi.fn()} />);
+    const links = screen.getAllByRole('link', { name: 'a.example.com' });
+    expect(links.find((link) => link.closest('.md\\:hidden'))).toHaveClass('min-h-11');
+  });
   it('disables the row menu while that site is deleting', () => {
     renderWith(
       <SitesTable sites={[site('a')]} deletingId="a" onDelete={vi.fn()} />,

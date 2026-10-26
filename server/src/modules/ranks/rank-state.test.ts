@@ -32,4 +32,35 @@ describe('keyword rank state', () => {
     expect(counts.failed_last_check).toBe(1);
     expect(counts.improved).toBe(0);
   });
+
+  it('classifies empty, unranked, newly ranked, unchanged, and failed-after-check histories', () => {
+    expect(classifyKeywordRankState({ lastFailedCheckAt: null }, [])).toMatchObject({
+      state: 'never_checked', failedAt: null,
+    });
+    expect(classifyKeywordRankState({ lastFailedCheckAt: at(3) }, [])).toMatchObject({
+      state: 'failed_last_check', failedAt: at(3).toISOString(),
+    });
+    expect(classifyKeywordRankState({ lastFailedCheckAt: at(1) }, [
+      { position: 5, checkedAt: at(2) },
+    ])).toMatchObject({ state: 'ranked', failedAt: at(1).toISOString() });
+    expect(classifyKeywordRankState({ lastFailedCheckAt: null }, [
+      { position: null, checkedAt: at(3) }, { position: null, checkedAt: at(2) },
+    ])).toMatchObject({ state: 'not_in_top_100', baselinePosition: null });
+    expect(classifyKeywordRankState({ lastFailedCheckAt: null }, [
+      { position: 7, checkedAt: at(3) }, { position: null, checkedAt: at(2) },
+    ])).toMatchObject({ state: 'new', baselinePosition: null });
+    expect(classifyKeywordRankState({ lastFailedCheckAt: null }, [
+      { position: 7, checkedAt: at(3) }, { position: 7, checkedAt: at(2) },
+    ])).toMatchObject({ state: 'unchanged', change: 0 });
+    expect(keywordCheckStatus({ state: 'never_checked' })).toBe('never_checked');
+    expect(keywordCheckStatus({ state: 'lost' })).toBe('not_in_top_100');
+    expect(keywordCheckStatus({ state: 'improved' })).toBe('ok');
+  });
+
+  it('falls back to the first earlier result when best-ever has no ranked result', () => {
+    expect(classifyKeywordRankState({ lastFailedCheckAt: null }, [
+      { position: 8, checkedAt: at(3) }, { position: null, checkedAt: at(2) },
+      { position: 101, checkedAt: at(1) },
+    ], 'best_ever')).toMatchObject({ state: 'new', baselineCheckedAt: at(2).toISOString() });
+  });
 });

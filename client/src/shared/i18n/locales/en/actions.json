@@ -49,7 +49,8 @@
     "ga4_decline": "Analytics decline",
     "content_recommendation": "Content recommendation",
     "citation_gap": "AI citation gap",
-    "audience_research": "Audience research"
+    "audience_research": "Audience research",
+    "competitor_opportunity": "Competitor opportunity"
   },
   "severity": {
     "critical": "Critical",
@@ -75,7 +76,11 @@
   "freshness": {
     "fresh": "Fresh",
     "stale": "Stale",
-    "unavailable": "Not verified"
+    "unavailable": "Not verified",
+    "partial": "Partial",
+    "blocked": "Blocked",
+    "failed": "Failed",
+    "unknown": "Freshness unknown"
   },
   "card": {
     "nextStep": "Next step",
@@ -84,7 +89,7 @@
     "affectedNone": "Site-wide",
     "affectedCount_one": "{{count}} affected URL",
     "evidence": "Evidence",
-    "evidenceLabel": "{{source}} · {{date}}",
+    "evidenceLabel": "{{source}} · {{date}} · {{detail}}",
     "evidenceLink": "Open evidence source",
     "history": "History",
     "retest": "Retest",

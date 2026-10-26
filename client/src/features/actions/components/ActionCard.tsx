@@ -160,7 +160,7 @@ export function ActionCard({ item, siteId, onReload }: ActionCardProps) {
         <div>
           <button
             type="button"
-            className="text-muted-foreground hover:text-foreground focus-visible:ring-ring inline-flex cursor-pointer items-center gap-1 text-xs focus-visible:ring-2 focus-visible:outline-none"
+            className="text-muted-foreground hover:text-foreground focus-visible:ring-ring inline-flex cursor-pointer items-center gap-1 text-xs focus-visible:ring-2 focus-visible:outline-none max-md:min-h-11"
             aria-expanded={urlsExpanded}
             aria-controls={urlsRegionId}
             onClick={() => setUrlsExpanded((value) => !value)}
@@ -238,15 +238,23 @@ export function ActionCard({ item, siteId, onReload }: ActionCardProps) {
             {item.evidence.map((entry) => {
               const external = entry.url ? safeExternalHref(entry.url) : null;
               const linkable = external !== null && external !== UNSAFE_HREF_PLACEHOLDER;
+              const detail = linkable
+                ? (() => {
+                    const url = new URL(external);
+                    if (!url.host) return item.problem;
+                    return url.pathname === '/' ? url.host : `${url.host}${url.pathname}`;
+                  })()
+                : item.problem;
               return (
                 <li key={entry.sourceRef} className="flex flex-wrap items-center gap-2">
                   {/* `sourceRef` is an internal key (e.g. `<auditId>:<ruleId>`)
                       and never user copy: label the evidence by its source
-                      and observation date instead (issue #19). */}
+                      and observation date, with a readable URL when safe. */}
                   <span data-testid="action-evidence-label">
                     {t('card.evidenceLabel', {
                       source: t(`source.${item.sourceType}`),
                       date: formatDate(entry.observation.observedAt),
+                      detail,
                     })}
                   </span>
                   <StatusChip

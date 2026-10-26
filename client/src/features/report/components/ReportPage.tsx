@@ -27,7 +27,7 @@
  *   - report-no-run                        first-run empty state
  *   - report-not-evaluated                 checks that could not run
  */
-import { useEffect, useId, useMemo, useRef, useState } from 'react';
+import { useCallback, useEffect, useId, useMemo, useRef, useState } from 'react';
 import { useParams, useSearchParams } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { RefreshCw } from 'lucide-react';
@@ -68,6 +68,7 @@ import {
 } from '../tabState';
 import { REPORT_CATEGORIES } from '../types';
 import { loadReport, pollRun, startRetest } from '../store/thunks';
+import { aiSummaryStateReceived } from '../store/slice';
 import {
   selectReport,
   selectReportError,
@@ -82,6 +83,7 @@ import {
   selectReportSiteId,
 } from '../store/selectors';
 import type {
+  AuditSummaryState,
   DiffKind,
   LocalizedFinding,
 } from '../types';
@@ -224,6 +226,10 @@ export const ReportPage = ({
     [presentation.generation, presentationLocale],
   );
   const dispatch = useAppDispatch();
+  const onAiSummaryState = useCallback(
+    (summary: AuditSummaryState, forRunId: string) => dispatch(aiSummaryStateReceived({ runId: forRunId, summary })),
+    [dispatch],
+  );
   const params = useParams<{ siteId: string; runId?: string }>();
   /* c8 ignore next -- route matcher guarantees params.siteId when the standalone route is used, and the prop path is exercised by the workspace embed test. */
   const siteId = siteIdProp ?? params.siteId ?? '';
@@ -790,6 +796,7 @@ export const ReportPage = ({
         <AiSummaryCard
           key={`${report.runId}:${presentationLocale}`}
           runId={report.runId}
+          onStateChange={onAiSummaryState}
           siteId={siteId}
           initialFreshness={report.aiSummaryFreshness ?? null}
           triageChanged={triageChangedSinceLoad(report.findings, auditDecisions)}

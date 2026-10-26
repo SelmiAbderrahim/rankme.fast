@@ -66,6 +66,8 @@
       "manualInvalid": "Introduce un sitio público, como competitor.com o https://competitor.com.",
       "ownDomain": "Ese es el dominio de tu propio sitio. Añade otro sitio web como competidor.",
       "add": "Agregar competidor",
+      "addDisabledEmpty": "Primero escribe la dirección web de un competidor.",
+      "addDisabledFull": "Tu cartera ya tiene {{max}} competidores activos. Archiva uno para añadir otro.",
       "adding": "Añadiendo competidor...",
       "confirmed": "Competidor confirmado.",
       "duplicate": "Ese competidor ya está en la cartera.",

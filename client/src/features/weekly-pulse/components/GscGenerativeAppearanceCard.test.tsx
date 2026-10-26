@@ -65,6 +65,7 @@ describe('GscGenerativeAppearanceCard', () => {
     );
     // Rows exist, so the export is not marked as empty.
     expect(screen.queryByText('Nothing to export yet')).toBeNull();
+    expect(screen.getByText(/Dec 1, 2025/)).toBeInTheDocument();
   });
 
   it('renders a connect prompt, not an error, when Search Console has no data', async () => {

@@ -623,8 +623,8 @@ export function createDataForSeoRankProvider(cfg: DataForSeoSerpProviderConfig):
         return outcomes;
     }
     async function postSerpTask(input: RankCheckInput): Promise<PostedSerpTask> {
-        const [outcome] = await postSerpTasks([input]);
-        if (!outcome?.ok) throw outcome?.error ?? new VendorMalformedError('serp/task_post returned no tasks', { ...ctx, operation: 'serp-task-post' });
+        const outcome = (await postSerpTasks([input]))[0]!;
+        if (!outcome.ok) throw outcome.error;
         return { vendorTaskId: outcome.vendorTaskId };
     }
     async function pollSerpTask(taskId: string): Promise<SerpTaskPoll> {

@@ -30,6 +30,11 @@ beforeEach(() => { initI18n({ initialLocale: 'en' }); });
 afterEach(() => { vi.unstubAllGlobals(); vi.restoreAllMocks(); });
 
 describe('header search destinations', () => {
+  it('shows a readable Search label on the phone trigger', () => {
+    mount();
+    const trigger = screen.getByRole('button', { name: 'Search' });
+    expect(within(trigger).getByText('Search')).toHaveClass('max-[359px]:sr-only');
+  });
   it('keeps a valid selection when the site results shrink', async () => {
     const user = mount();
     await user.click(input());

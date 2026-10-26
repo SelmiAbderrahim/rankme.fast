@@ -10,6 +10,7 @@ import { setMarketCatalogDeps } from '../market-catalog/index.js';
 import { setTeamDb } from '../team/team.holder.js';
 import { setSitesDb } from './sites.holder.js';
 import { Site } from './sites.model.js';
+import { getSiteMarket, updateSite } from './sites.service.js';
 
 const app = createApp();
 const catalogProvider = createFakeKeywordProvider();
@@ -79,5 +80,43 @@ describe('site default market', () => {
         expect(read.status).toBe(404);
         expect(listMarkets).not.toHaveBeenCalled();
         expect((await Site.findById(site._id).lean())?.defaultMarket).toBeNull();
+    });
+
+    it('rejects invalid site ids and unsupported owner market choices', async () => {
+        const user = await signupVerifiedUser(app, { email: 'site-market-invalid@example.test' });
+        const site = await Site.create({ accountId: user.id, url: 'https://store.example.sa/', domain: 'store.example.sa' });
+        expect((await request(app).get('/api/sites/not-an-id/market').set('Cookie', user.cookie)).status).toBe(404);
+        const response = await request(app).patch(`/api/sites/${site._id}`).set('Cookie', user.cookie)
+            .send({ defaultMarket: { locationCode: 2840, languageCode: 'zz', device: 'mobile' } });
+        expect(response.status).toBe(400);
+        expect((await Site.findById(site._id).lean())?.defaultMarket).toBeNull();
+    });
+
+    it('keeps existing market reads available while catalog service is unavailable', async () => {
+        const user = await signupVerifiedUser(app, { email: 'site-market-unavailable@example.test' });
+        const site = await Site.create({ accountId: user.id, url: 'https://store.example.sa/', domain: 'store.example.sa' });
+        setMarketCatalogDeps(null);
+        const read = await request(app).get(`/api/sites/${site._id}/market`).set('Cookie', user.cookie);
+        expect(read.status).toBe(200);
+        expect(read.body.market).toMatchObject({ source: 'cctld', languageCode: 'ar' });
+        const update = await request(app).patch(`/api/sites/${site._id}`).set('Cookie', user.cookie)
+            .send({ defaultMarket: { locationCode: 2840, languageCode: 'en', device: 'desktop' } });
+        expect(update.status).toBe(503);
+    });
+
+    it('rejects a vanished owned site during a direct market read or update', async () => {
+        const user = await signupVerifiedUser(app, { email: 'site-market-race@example.test' });
+        const absent = new Site({ accountId: user.id, url: 'https://absent.example.com/', domain: 'absent.example.com' });
+        await expect(getSiteMarket(user.id, String(absent._id))).rejects.toMatchObject({ status: 404 });
+        const site = await Site.create({ accountId: user.id, url: 'https://race.example.com/', domain: 'race.example.com' });
+        const update = vi.spyOn(Site, 'findOneAndUpdate').mockResolvedValueOnce(null as never);
+        try {
+            await expect(updateSite(user.id, String(site._id), { displayName: 'New name' }))
+                .rejects.toMatchObject({ status: 404 });
+        }
+        finally {
+            update.mockRestore();
+        }
+        expect((await Site.findById(site._id).lean())?.displayName).toBe('');
     });
 });

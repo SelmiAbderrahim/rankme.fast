@@ -10,12 +10,14 @@ interface LanguageSwitcherProps {
   className?: string;
   id?: string;
   onLocaleChange?: (locale: SupportedLocale) => void;
+  showLabel?: boolean;
 }
 
 export const LanguageSwitcher = ({
   className,
   id = 'language-switcher',
   onLocaleChange,
+  showLabel = false,
 }: LanguageSwitcherProps) => {
   const { t, i18n } = useTranslation('language');
   const { changeLocale, isSaving } = useLocaleContext();
@@ -27,7 +29,7 @@ export const LanguageSwitcher = ({
 
   return (
     <div className={className} aria-busy={busy || undefined}>
-      <label htmlFor={id} className="sr-only">
+      <label htmlFor={id} className={showLabel ? 'text-sm font-medium' : 'sr-only'}>
         {label}
       </label>
       <NativeSelect

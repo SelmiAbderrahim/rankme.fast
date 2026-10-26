@@ -103,7 +103,7 @@ export interface AuditProcessorDeps {
      * initial HTML carries valid JSON-LD. Optional; a failure keeps the
      * vendor verdict and never fails the run.
      */
-    probeStructuredData?: (urls: readonly string[]) => Promise<ReadonlySet<string>>;
+    probeStructuredData?: (urls: readonly string[]) => Promise<ReadonlySet<string> & { faqUrls?: ReadonlySet<string> }>;
     /**
      * Site-level probe (robots.txt sitemap directive, `/llms.txt`, and the
      * http/https × apex/www address variants). Fills the site-wide signals the
@@ -571,7 +571,7 @@ export async function applyStructuredDataProbe(result: AuditResult, deps: Pick<A
         .map((page) => page.url);
     if (candidates.length === 0)
         return result;
-    let withJsonLd: ReadonlySet<string>;
+    let withJsonLd: ReadonlySet<string> & { faqUrls?: ReadonlySet<string> };
     try {
         withJsonLd = await deps.probeStructuredData(candidates);
     }
@@ -579,11 +579,14 @@ export async function applyStructuredDataProbe(result: AuditResult, deps: Pick<A
         deps.logger.warn({ err: (err as Error).message }, 'structured-data probe failed — keeping vendor verdict');
         return result;
     }
-    if (withJsonLd.size === 0)
+    if (withJsonLd.size === 0 && !withJsonLd.faqUrls?.size)
         return result;
     return {
         ...result,
-        pages: result.pages.map((page) => withJsonLd.has(page.url) ? { ...page, hasStructuredData: true } : page),
+        pages: result.pages.map((page) =>
+            withJsonLd.has(page.url) || withJsonLd.faqUrls?.has(page.url)
+                ? { ...page, ...(withJsonLd.has(page.url) ? { hasStructuredData: true } : {}), ...(withJsonLd.faqUrls?.has(page.url) ? { hasFaqSignals: true } : {}) }
+                : page),
     };
 }
 /**

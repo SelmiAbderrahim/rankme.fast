@@ -1,6 +1,7 @@
 import { useCallback, useEffect, useRef } from 'react';
 import { Link } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
+import { TAP_TARGET_LINK } from '@shared/ui/tap-target';
 import { useAppDispatch, useAppSelector } from '@shared/hooks/redux';
 import { Alert, AlertDescription } from '@shared/ui/alert';
 import { Button } from '@shared/ui/button';
@@ -134,7 +135,7 @@ export const RunHistory = ({ siteId }: { siteId: string }) => {
               </div>
               <Link
                 to={`/sites/${siteId}/report/${run.id}`}
-                className="text-primary text-sm font-medium hover:underline"
+                className={`text-primary text-sm font-medium hover:underline ${TAP_TARGET_LINK}`}
               >
                 {t('history.viewRun')}
               </Link>

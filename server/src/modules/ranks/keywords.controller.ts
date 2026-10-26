@@ -156,12 +156,12 @@ export const activeRankJobHandler: RequestHandler = asyncHandler(async (req, res
 export const rankJobHandler: RequestHandler = asyncHandler(async (req, res) => {
     const { siteId } = siteIdParamsSchema.parse(req.params);
     res.status(200).json({ job: await getRankCheckJob({ accountId: requireAccountId(req), siteId,
-        jobId: String(req.params.jobId ?? '') }, getRanksDb()) });
+        jobId: String(req.params.jobId) }, getRanksDb()) });
 });
 export const retryFailedRankJobHandler: RequestHandler = asyncHandler(async (req, res) => {
     const { siteId } = siteIdParamsSchema.parse(req.params);
     const result = await retryFailedRankCheckJob({ accountId: requireAccountId(req), siteId,
-        jobId: String(req.params.jobId ?? '') }, { db: getRanksDb(), ranksQueue: getRanksQueue() });
+        jobId: String(req.params.jobId) }, { db: getRanksDb(), ranksQueue: getRanksQueue() });
     res.status(202).json({ message: req.t('ranks.checkQueued'), checkStartedAt: result.startedAt.toISOString(),
         job: result.job, reused: result.reused });
 });

@@ -1,9 +1,27 @@
 import { describe, expect, it, vi } from 'vitest';
-import { createPageProber } from './site-probe.js';
+import { createPageProber, readSiteLanguageHead } from './site-probe.js';
 import { UnsafeUrlError, type PublicUrlResolver, type PublicUrlTransport } from './url-safety.js';
 
 const resolver: PublicUrlResolver = async () => [{ address: '93.184.216.34', family: 4 }];
 const html = () => new Response('<h1>Page</h1>', { headers: { 'content-type': 'text/html; charset=utf-8' } });
+describe('readSiteLanguageHead', () => {
+  it('reads a bounded HTML head and returns null for other responses or failures', async () => {
+    const options = { resolver, transport: async () => html() };
+    expect(await readSiteLanguageHead('https://example.test/', options)).toBe('<h1>Page</h1>');
+    expect(await readSiteLanguageHead('https://example.test/', {
+      resolver, transport: async () => new Response(null, { status: 204 }),
+    })).toBeNull();
+    expect(await readSiteLanguageHead('https://example.test/', {
+      resolver, transport: async () => new Response('plain', { headers: { 'content-type': 'text/plain' } }),
+    })).toBeNull();
+    expect(await readSiteLanguageHead('https://example.test/', {
+      resolver, transport: async () => new Response(null),
+    })).toBeNull();
+    expect(await readSiteLanguageHead('https://example.test/', {
+      resolver, transport: async () => { throw new Error('connection reset'); },
+    })).toBeNull();
+  });
+});
 describe('page evidence in the site probe authority', () => {
   it('reads robots once per origin and reports only observed path blocks', async () => {
     const requests: string[] = [];

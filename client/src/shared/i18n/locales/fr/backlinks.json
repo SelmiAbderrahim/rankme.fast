@@ -212,12 +212,11 @@
       "description": "Notez jusqu’à 1 000 backlinks enregistrés selon des règles d’alerte fixes avant de décider quoi exporter."
     },
     "preview": {
-      "unit": "1 unité d’analyse de liens",
+      "scope": "Examiner les liens entrants enregistrés",
       "rowClamp": "Jusqu’à 1 000 lignes · 100 domaines évalués",
-      "available": "Quota disponible",
-      "confirm": "Confirmer et utiliser 1 unité",
+      "confirm": "Lancer l’examen",
       "cancel": "Annuler",
-      "button": "Prévisualiser le coût"
+      "button": "Examiner les liens entrants enregistrés"
     },
     "states": {
       "disabledTitle": "Les nouvelles analyses sont suspendues",
@@ -227,8 +226,8 @@
       "listError": "Impossible de charger les analyses enregistrées.",
       "runningTitle": "Analyse des observations enregistrées",
       "failedTitle": "L’analyse des liens s’est arrêtée",
-      "providerRefunded": "Le fournisseur a échoué avant qu’une ligne évaluée ne soit conservée. L’unité réservée a été remboursée.",
-      "ceilingConsumed": "L’exécution s’est arrêtée au plafond de coût. L’unité réservée a été consommée et aucune action automatique n’a été effectuée.",
+      "providerFailed": "L’examen s’est arrêté avant l’enregistrement de résultats. Réessayez.",
+      "runLimitReached": "L’examen s’est arrêté à sa limite d’exécution. Aucune action automatique n’a été effectuée.",
       "partial": "Observations partielles du fournisseur",
       "emptyTitle": "Aucune ligne évaluée",
       "emptyBody": "L’exécution s’est terminée sans conserver de backlink évalué."

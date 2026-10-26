@@ -168,6 +168,25 @@ describe('normalizeBrandingLogo defensive failures', () => {
 describe('JPEG and SVG envelopes', () => {
   const JPEG = Buffer.from([0xff, 0xd8, 0xff, 0xe0, 0x00, 0x10, 0xff, 0xd9]);
 
+  it('applies photo orientation before storing a JPEG as PNG', async () => {
+    sharpMocks.metadata.mockResolvedValueOnce({ format: 'jpeg', width: 24, height: 12, pages: 1 });
+    await expect(normalizeBrandingLogo(`data:image/jpeg;base64,${JPEG.toString('base64')}`)).resolves.toMatchObject({
+      logoWidth: 24,
+      logoHeight: 12,
+    });
+    expect(sharpMocks.pipeline.rotate).toHaveBeenCalledOnce();
+  });
+
+  it('rasterizes a small vector logo at a density suited to the stored image', async () => {
+    const svg = Buffer.from('<svg xmlns="http://www.w3.org/2000/svg" width="10" height="10"></svg>');
+    sharpMocks.metadata.mockResolvedValueOnce({ format: 'svg', width: 10, height: 10, pages: 1 });
+    await expect(normalizeBrandingLogo(`data:image/svg+xml;base64,${svg.toString('base64')}`)).resolves.toMatchObject({
+      logoWidth: 24,
+      logoHeight: 12,
+    });
+    expect(sharpMocks.factory).toHaveBeenLastCalledWith(svg, expect.objectContaining({ density: 576 }));
+  });
+
   it('accepts a JPEG that starts with SOI and ends with EOI', () => {
     expect(() => assertCompleteJpegEnvelope(JPEG)).not.toThrow();
   });

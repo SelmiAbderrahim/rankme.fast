@@ -57,7 +57,8 @@
   "longTailResearch": {
     "title": "Besoin d’idées plus précises ?",
     "description": "Saisissez un seul mot-clé Google de 80 caractères maximum. La recherche de mots-clés s’ouvre avec l’expression et le marché préremplis, sans lancer de recherche automatiquement.",
-    "cta": "Rechercher des mots-clés de longue traîne"
+    "cta": "Rechercher des mots-clés de longue traîne",
+    "disabledReason": "Saisissez un mot-clé ci-dessus pour ouvrir la recherche de mots-clés avec celui-ci."
   },
   "addLocationLabel": "Emplacement",
   "addLanguageLabel": "Langue",

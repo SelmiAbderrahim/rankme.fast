@@ -1,9 +1,8 @@
 import { Bdi } from '@shared/components/Bdi';
-import { useEffect, useMemo } from 'react';
+import { useEffect } from 'react';
 import { Download, FileArchive, Link2, Trash2, Unlink } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 import { useSearchParams } from 'react-router-dom';
-import { loadSites, selectSites, selectSitesLoaded } from '@features/sites';
 import { PageHeader } from '@shared/components/PageHeader';
 import { useAppDispatch, useAppSelector } from '@shared/hooks/redux';
 import { Alert, AlertDescription, AlertTitle } from '@shared/ui/alert';
@@ -25,9 +24,10 @@ import { Empty, EmptyDescription, EmptyHeader, EmptyMedia, EmptyTitle } from '@s
 import { Skeleton } from '@shared/ui/skeleton';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@shared/ui/table';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@shared/ui/tabs';
-import type { ReportShareCenterItem, ReportSnapshotSummary } from '../types';
+import type { ReportExportSite, ReportShareCenterItem, ReportSnapshotSummary } from '../types';
 import {
   selectReportExportActiveOperation,
+  selectReportExportCapabilities,
   selectReportExportCapabilitiesError,
   selectReportExportCapabilitiesLoaded,
   selectReportExportEnabled,
@@ -74,6 +74,16 @@ function shareState(share: ReportShareCenterItem): 'active' | 'revoked' | 'expir
   return Date.parse(share.expiresAt) <= Date.now() ? 'expired' : 'active';
 }
 
+function SiteLabel({ site }: { site: ReportExportSite | null | undefined }) {
+  if (!site) return null;
+  return (
+    <span className="flex min-w-0 flex-wrap items-center gap-x-2">
+      <Bdi className="break-words font-medium">{site.name}</Bdi>
+      {site.name !== site.domain ? <span dir="ltr" className="break-all">{site.domain}</span> : null}
+    </span>
+  );
+}
+
 export function ExportCenterPage() {
   const { t, i18n } = useTranslation('report');
   const dispatch = useAppDispatch();
@@ -84,6 +94,7 @@ export function ExportCenterPage() {
       ? (requested as ExportCenterTab)
       : 'downloads';
   const enabled = useAppSelector(selectReportExportEnabled);
+  const capabilities = useAppSelector(selectReportExportCapabilities);
   const capabilitiesLoaded = useAppSelector(selectReportExportCapabilitiesLoaded);
   const capabilitiesError = useAppSelector(selectReportExportCapabilitiesError);
   const snapshots = useAppSelector(selectReportSnapshots);
@@ -98,21 +109,21 @@ export function ExportCenterPage() {
   const sharesError = useAppSelector(selectReportSharesError);
   const operation = useAppSelector(selectReportExportActiveOperation);
   const operationError = useAppSelector(selectReportExportOperationError);
-  const sites = useAppSelector(selectSites);
-  const sitesLoaded = useAppSelector(selectSitesLoaded);
-  const siteDomains = useMemo(() => new Map(sites.map((site) => [site.id, site.domain])), [sites]);
-  const kindArea = (kind: string) => t(kindAreaKey(kind), { defaultValue: '' });
-  const siteLabel = (snapshot: ReportSnapshotSummary) =>
-    snapshot.siteId
-      ? (siteDomains.get(snapshot.siteId) ?? '—')
-      : t('exportUi.center.noSite');
+  const kindArea = (kind: string) => {
+    const key = kindAreaKey(kind);
+    return i18n.exists(key, { ns: 'report' }) ? t(key) : '';
+  };
+  const reportName = (snapshot: Pick<ReportSnapshotSummary, 'kind' | 'title'>) =>
+    capabilities.find((capability) => capability.kind === snapshot.kind)?.title ?? snapshot.title;
+  const siteLabel = (snapshot: Pick<ReportSnapshotSummary, 'siteId' | 'site'>) =>
+    snapshot.site ? <SiteLabel site={snapshot.site} /> :
+    snapshot.siteId ? '—' : t('exportUi.center.noSite');
 
   useEffect(() => {
-    if (!sitesLoaded) void dispatch(loadSites({ direction: 'initial' }));
     void dispatch(loadReportExportCapabilities());
     if (!snapshotsLoaded) void dispatch(loadReportSnapshots(undefined));
     if (!sharesLoaded) void dispatch(loadReportShareCenter(undefined));
-  }, [dispatch, sharesLoaded, sitesLoaded, snapshotsLoaded]);
+  }, [dispatch, sharesLoaded, snapshotsLoaded]);
 
   const changeTab = (value: string) => {
     const next = new URLSearchParams(params);
@@ -194,7 +205,7 @@ export function ExportCenterPage() {
                       <TableRow key={snapshot.id}>
                         <TableCell>
                           <div className="flex flex-col gap-1">
-                            <span className="font-medium"><Bdi>{snapshot.title}</Bdi></span>
+                            <span className="font-medium"><Bdi>{reportName(snapshot)}</Bdi></span>
                             <span className="text-xs text-muted-foreground">
                               {kindArea(snapshot.kind)}
                             </span>
@@ -225,9 +236,10 @@ export function ExportCenterPage() {
                 {snapshots.map((snapshot) => (
                   <Card key={snapshot.id}>
                     <CardHeader>
-                      <CardTitle className="text-base"><Bdi>{snapshot.title}</Bdi></CardTitle>
+                      <CardTitle className="text-base"><Bdi>{reportName(snapshot)}</Bdi></CardTitle>
                       <CardDescription>
-                        {[kindArea(snapshot.kind), siteLabel(snapshot)].filter(Boolean).join(' · ')}
+                        {kindArea(snapshot.kind) ? `${kindArea(snapshot.kind)} · ` : null}
+                        <Bdi>{siteLabel(snapshot)}</Bdi>
                       </CardDescription>
                     </CardHeader>
                     <CardContent className="flex flex-col gap-3">
@@ -293,9 +305,12 @@ export function ExportCenterPage() {
                     <CardHeader className="flex flex-row items-start justify-between gap-4">
                       <div className="min-w-0">
                         <CardTitle className="break-words text-base">
-                          <Bdi>{share.snapshot?.title ?? t('exportUi.center.deletedReport')}</Bdi>
+                          <Bdi>{share.snapshot ? reportName(share.snapshot) : t('exportUi.center.deletedReport')}</Bdi>
                         </CardTitle>
-                        <CardDescription>{date(share.createdAt, i18n.language)}</CardDescription>
+                        <CardDescription className="flex flex-col gap-1">
+                          <SiteLabel site={share.snapshot?.site} />
+                          <span>{date(share.createdAt, i18n.language)}</span>
+                        </CardDescription>
                       </div>
                       <Badge variant={state === 'active' ? 'secondary' : 'outline'}>
                         {t(`exportUi.states.${state}`)}

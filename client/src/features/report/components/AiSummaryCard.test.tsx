@@ -69,6 +69,20 @@ afterEach(() => {
 });
 
 describe('AiSummaryCard', () => {
+  it('publishes accepted summary states so its owner can keep the report snapshot current', async () => {
+    const onStateChange = vi.fn();
+    mocked.generateAiSummaryRequest.mockResolvedValue(summaryState('succeeded', storedSummary));
+    render(
+      <I18nextProvider i18n={i18n}>
+        <AiSummaryCard runId="run-1" initial={null} requestedLocale="en" onStateChange={onStateChange} />
+      </I18nextProvider>,
+    );
+    await act(async () => {
+      fireEvent.click(screen.getByTestId('report-ai-summary-cta'));
+      await Promise.resolve();
+    });
+    expect(onStateChange).toHaveBeenCalledWith(summaryState('succeeded', storedSummary), 'run-1');
+  });
   it('renders the CTA and docs link when no summary exists', () => {
     renderCard();
     expect(screen.getByTestId('report-ai-summary-cta')).toHaveTextContent('Summarize my fixes');

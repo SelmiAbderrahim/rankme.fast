@@ -65,7 +65,11 @@ describe('long-tail research handoff', () => {
       </I18nextProvider>,
     );
 
-    expect(screen.getByTestId('keyword-long-tail-research-disabled')).toBeDisabled();
+    const disabledResearch = screen.getByTestId('keyword-long-tail-research-disabled');
+    expect(disabledResearch).toBeDisabled();
+    expect(screen.getByText(i18n.t('ranks:longTailResearch.disabledReason'))).toHaveAttribute(
+      'id', disabledResearch.getAttribute('aria-describedby'),
+    );
     await user.type(screen.getByLabelText('Keywords'), 'best shoes for rain');
     const link = screen.getByTestId('keyword-long-tail-research-link');
     const params = new URLSearchParams(link.getAttribute('href')?.split('?')[1]);

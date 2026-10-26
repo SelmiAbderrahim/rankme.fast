@@ -49,7 +49,8 @@
     "ga4_decline": "Спад в Analytics",
     "content_recommendation": "Рекомендация по контенту",
     "citation_gap": "Пробел в ИИ-цитировании",
-    "audience_research": "Исследование аудитории"
+    "audience_research": "Исследование аудитории",
+    "competitor_opportunity": "Возможность из анализа конкурентов"
   },
   "severity": {
     "critical": "Критично",
@@ -75,7 +76,11 @@
   "freshness": {
     "fresh": "Свежие данные",
     "stale": "Устаревшие данные",
-    "unavailable": "Не проверено"
+    "unavailable": "Не проверено",
+    "partial": "Неполные данные",
+    "blocked": "Заблокировано",
+    "failed": "Ошибка",
+    "unknown": "Актуальность неизвестна"
   },
   "card": {
     "nextStep": "Следующий шаг",
@@ -84,7 +89,7 @@
     "affectedNone": "Весь сайт",
     "affectedCount_one": "Затронуто URL: {{count}}",
     "evidence": "Доказательства",
-    "evidenceLabel": "{{source}} · {{date}}",
+    "evidenceLabel": "{{source}} · {{date}} · {{detail}}",
     "evidenceLink": "Открыть источник доказательства",
     "history": "История",
     "retest": "Перепроверить",

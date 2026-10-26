@@ -66,6 +66,8 @@
       "manualInvalid": "Geben Sie eine öffentliche Website ein, z. B. competitor.com oder https://competitor.com.",
       "ownDomain": "Das ist die Domain Ihrer eigenen Website. Fügen Sie eine andere Website als Wettbewerber hinzu.",
       "add": "Mitbewerber hinzufügen",
+      "addDisabledEmpty": "Geben Sie zuerst die Website-Adresse eines Wettbewerbers ein.",
+      "addDisabledFull": "Ihr Portfolio hat bereits {{max}} aktive Wettbewerber. Archivieren Sie einen, um einen weiteren hinzuzufügen.",
       "adding": "Wettbewerber wird hinzugefügt…",
       "confirmed": "Wettbewerber bestätigt.",
       "duplicate": "Dieser Konkurrent ist bereits im Portfolio.",

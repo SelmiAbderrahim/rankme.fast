@@ -93,7 +93,6 @@ const detailFixture = (overrides: Partial<ToxicityRunDetail> = {}): ToxicityRunD
   sourceKind: 'provider_observation',
   retainedCount: 3,
   bulkDomainCount: 3,
-  refunded: false,
   providerStatus: 'succeeded',
   aiStatus: 'succeeded',
   failureKind: null,
@@ -153,11 +152,11 @@ beforeEach(async () => {
   });
 });
 
-describe('toxicity spend preview and states', () => {
-  it('cancels a disclosed preview without starting or spending', async () => {
+describe('toxicity review preview and states', () => {
+  it('cancels a review preview without starting', async () => {
     renderWorkspace();
     const user = userEvent.setup();
-    await user.click(screen.getByRole('button', { name: 'Preview review spend' }));
+    await user.click(screen.getByRole('button', { name: 'Review saved backlinks' }));
     expect(await screen.findByTestId('toxicity-preview')).toHaveTextContent(
       'Up to 1,000 rows · 100 scored domains',
     );
@@ -168,8 +167,8 @@ describe('toxicity spend preview and states', () => {
   it('confirms once and opens the URL-backed run', async () => {
     renderWorkspace();
     const user = userEvent.setup();
-    await user.click(screen.getByRole('button', { name: 'Preview review spend' }));
-    await user.click(await screen.findByRole('button', { name: 'Confirm and use 1 unit' }));
+    await user.click(screen.getByRole('button', { name: 'Review saved backlinks' }));
+    await user.click(await screen.findByRole('button', { name: 'Start review' }));
     await waitFor(() => expect(mocked.startToxicityReview).toHaveBeenCalledWith('site-1', 'en'));
     await waitFor(() =>
       expect(mocked.fetchToxicityReview).toHaveBeenCalledWith(
@@ -180,17 +179,16 @@ describe('toxicity spend preview and states', () => {
     );
   });
 
-  it('renders disabled, failed-refund, running, and empty states honestly', async () => {
+  it('renders disabled, failed, running, and empty states honestly', async () => {
     mocked.previewToxicityReview.mockRejectedValueOnce(new ApiError('off', 503, null));
     const second = renderWorkspace();
-    await userEvent.setup().click(screen.getByRole('button', { name: 'Preview review spend' }));
+    await userEvent.setup().click(screen.getByRole('button', { name: 'Review saved backlinks' }));
     expect(await screen.findByTestId('toxicity-disabled')).toBeInTheDocument();
     second.unmount();
 
     mocked.fetchToxicityReview.mockResolvedValueOnce(
       detailFixture({
         status: 'failed',
-        refunded: true,
         providerStatus: 'failed',
         failureKind: 'provider_failed',
         rows: [],
@@ -199,7 +197,7 @@ describe('toxicity spend preview and states', () => {
     const fourth = renderWorkspace({
       entry: `/sites/site-1/backlinks?tab=toxicity&toxRun=${RUN_ID}`,
     });
-    expect(await screen.findByTestId('toxicity-failed')).toHaveTextContent('unit was refunded');
+    expect(await screen.findByTestId('toxicity-failed')).toHaveTextContent('before any results were saved');
     fourth.unmount();
 
     mocked.fetchToxicityReview.mockResolvedValueOnce(
@@ -219,15 +217,15 @@ describe('toxicity spend preview and states', () => {
   it('maps generic transport failures, including a failed start', async () => {
     mocked.previewToxicityReview.mockRejectedValueOnce(new Error('preview failed'));
     const failedPreview = renderWorkspace();
-    await userEvent.setup().click(screen.getByRole('button', { name: 'Preview review spend' }));
+    await userEvent.setup().click(screen.getByRole('button', { name: 'Review saved backlinks' }));
     expect(await screen.findByTestId('toxicity-start-error')).toBeInTheDocument();
     failedPreview.unmount();
 
     mocked.startToxicityReview.mockRejectedValueOnce(new Error('start failed'));
     renderWorkspace();
     const user = userEvent.setup();
-    await user.click(screen.getByRole('button', { name: 'Preview review spend' }));
-    await user.click(await screen.findByRole('button', { name: 'Confirm and use 1 unit' }));
+    await user.click(screen.getByRole('button', { name: 'Review saved backlinks' }));
+    await user.click(await screen.findByRole('button', { name: 'Start review' }));
     expect(await screen.findByTestId('toxicity-start-error')).toBeInTheDocument();
   });
 });
@@ -436,23 +434,31 @@ describe('scored rows and disavow builder', () => {
     expect(await screen.findByTestId('toxicity-start')).toBeInTheDocument();
   });
 
-  it('shows a consumed failed run and an active detail-load failure', async () => {
+  it('shows a run-limit failure and an active detail-load failure', async () => {
     mocked.fetchToxicityReview.mockResolvedValueOnce(
       detailFixture({
         status: 'failed',
-        refunded: false,
         providerStatus: 'failed',
         failureKind: 'ceiling_halted',
         rows: [],
       }),
     );
-    const consumed = renderWorkspace({
+    const limited = renderWorkspace({
       entry: `/sites/site-1/backlinks?tab=toxicity&toxRun=${RUN_ID}`,
     });
     expect(await screen.findByTestId('toxicity-failed')).toHaveTextContent(
-      'reserved unit was consumed',
+      'stopped at its run limit',
     );
-    consumed.unmount();
+    limited.unmount();
+
+    mocked.fetchToxicityReview.mockResolvedValueOnce(
+      detailFixture({ status: 'failed', failureKind: null, rows: [] }),
+    );
+    const unknown = renderWorkspace({
+      entry: `/sites/site-1/backlinks?tab=toxicity&toxRun=${RUN_ID}`,
+    });
+    expect(await screen.findByTestId('toxicity-failed')).toHaveTextContent('Try again shortly');
+    unknown.unmount();
 
     mocked.fetchToxicityReview.mockRejectedValueOnce(new Error('detail failed'));
     renderWorkspace({ entry: `/sites/site-1/backlinks?tab=toxicity&toxRun=${RUN_ID}` });
@@ -486,7 +492,7 @@ describe('toxicity locale and encoding contracts', () => {
     renderWorkspace();
     const workspace = screen.getByTestId('toxicity-workspace');
     expect(workspace).toHaveAttribute('dir', 'rtl');
-    const previewButton = screen.getByRole('button', { name: 'معاينة تكلفة المراجعة' });
+    const previewButton = screen.getByRole('button', { name: 'مراجعة الروابط الخلفية المحفوظة' });
     await userEvent.setup().tab();
     expect(previewButton).toHaveFocus();
     expect(previewButton.className).toContain('focus-visible:');

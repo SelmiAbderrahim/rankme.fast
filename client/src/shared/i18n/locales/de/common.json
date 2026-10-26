@@ -438,7 +438,8 @@
       "dismiss": "Beta-Hinweis ausblenden"
     },
     "badge": "Beta-Version",
-    "badgeName": "{{brand}}, öffentliche Beta"
+    "badgeName": "{{brand}}, öffentliche Beta",
+    "stage": { "beta": "Beta", "ga": "stabil" }
   },
   "feedback": {
     "reportBug": "Fehler melden",

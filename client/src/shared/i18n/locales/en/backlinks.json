@@ -212,12 +212,11 @@
       "description": "Score up to 1,000 saved backlinks against fixed warning rules before you decide what to export."
     },
     "preview": {
-      "unit": "1 link-review unit",
+      "scope": "Review saved backlinks",
       "rowClamp": "Up to 1,000 rows · 100 scored domains",
-      "available": "Allowance available",
-      "confirm": "Confirm and use 1 unit",
+      "confirm": "Start review",
       "cancel": "Cancel",
-      "button": "Preview review spend"
+      "button": "Review saved backlinks"
     },
     "states": {
       "disabledTitle": "New link reviews are paused",
@@ -227,8 +226,8 @@
       "listError": "Stored link reviews could not be loaded.",
       "runningTitle": "Reviewing stored backlink observations",
       "failedTitle": "Link review stopped",
-      "providerRefunded": "The provider failed before any scored row was retained. The reserved unit was refunded.",
-      "ceilingConsumed": "The run stopped at its cost ceiling. The reserved unit was consumed and no automatic action was taken.",
+      "providerFailed": "The review stopped before any results were saved. Try again.",
+      "runLimitReached": "The review stopped at its run limit. No automatic action was taken.",
       "partial": "Partial provider observations",
       "emptyTitle": "No scored rows",
       "emptyBody": "The run completed without retaining a scored backlink row."

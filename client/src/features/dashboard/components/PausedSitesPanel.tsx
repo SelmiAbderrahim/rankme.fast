@@ -10,6 +10,7 @@ import { useAppDispatch, useAppSelector } from '@shared/hooks/redux';
 import { PausedChip, resumeSite, selectPausingSiteId } from '@features/sites';
 import { selectActiveWorkspaceRole } from '@features/workspace';
 import { Button } from '@shared/ui/button';
+import { TAP_TARGET_LINK } from '@shared/ui/tap-target';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@shared/ui/card';
 import type { SiteHealthResponse } from '../types';
 
@@ -31,7 +32,7 @@ export function PausedSitesPanel({ health }: { health: SiteHealthResponse }) {
       const name = siteLabel(site);
       return <li key={site.id} className="flex flex-wrap items-center justify-between gap-3 rounded-lg border p-3">
         <div className="flex flex-wrap items-center gap-2">
-          <Link to={`/sites/${encodeURIComponent(site.id)}`} className="font-medium underline"><Bdi>{name}</Bdi></Link>
+          <Link to={`/sites/${encodeURIComponent(site.id)}`} className={`font-medium underline ${TAP_TARGET_LINK}`}><Bdi>{name}</Bdi></Link>
           <PausedChip siteId={site.id} />
           {site.pausedAt ? <span className="text-sm text-muted-foreground">{t('common:dashboard.health.paused.since', { when: formatRelativeDate(site.pausedAt, i18n.language) })}</span> : null}
         </div>
@@ -44,7 +45,7 @@ export function PausedSitesPanel({ health }: { health: SiteHealthResponse }) {
       </li>;
     })}</ul>
       {more > 0 ? <p className="text-sm text-muted-foreground">{t('common:dashboard.health.paused.more', { count: more, n: more })}{' '}
-        <Link to="/sites" className="underline">{t('common:dashboard.health.paused.manage')}</Link></p> : null}
+        <Link to="/sites" className={`underline ${TAP_TARGET_LINK}`}>{t('common:dashboard.health.paused.manage')}</Link></p> : null}
       {role !== 'owner' ? <p className="text-sm text-muted-foreground">{t('common:dashboard.health.paused.ownerOnly')}</p> : null}
     </CardContent>
   </Card>;

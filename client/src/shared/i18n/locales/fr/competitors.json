@@ -66,6 +66,8 @@
       "manualInvalid": "Saisissez un site public, par exemple competitor.com ou https://competitor.com.",
       "ownDomain": "C'est le domaine de votre propre site. Ajoutez un autre site comme concurrent.",
       "add": "Ajouter un concurrent",
+      "addDisabledEmpty": "Saisissez d'abord l'adresse du site d'un concurrent.",
+      "addDisabledFull": "Votre portefeuille compte déjà {{max}} concurrents actifs. Archivez-en un pour en ajouter un autre.",
       "adding": "Ajout d'un concurrent…",
       "confirmed": "Concurrent confirmé.",
       "duplicate": "Ce concurrent est déjà dans le portefeuille.",

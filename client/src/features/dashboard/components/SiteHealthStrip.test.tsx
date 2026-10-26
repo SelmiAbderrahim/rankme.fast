@@ -29,6 +29,11 @@ const row: SiteHealthRow = {
 beforeEach(() => initI18n({ initialLocale: 'en' }));
 
 describe('dashboard health row', () => {
+  it('makes the site and metric links easy to tap on phones', () => {
+    render(<I18nextProvider i18n={i18n}><MemoryRouter><HealthRow row={row} /></MemoryRouter></I18nextProvider>);
+    expect(screen.getAllByRole('link')).toHaveLength(5);
+    for (const link of screen.getAllByRole('link')) expect(link).toHaveClass('max-md:min-h-11');
+  });
   it('shows failed checks separately from compared rank movement', () => {
     render(<I18nextProvider i18n={i18n}><MemoryRouter><HealthRow row={row} /></MemoryRouter></I18nextProvider>);
     expect(screen.getByText(/1 check failed/)).toBeInTheDocument();

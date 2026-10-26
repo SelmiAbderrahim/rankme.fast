@@ -56,6 +56,10 @@ export type ActionSourceStatus = (typeof ACTION_SOURCE_STATUSES)[number];
 export const ACTION_OBSERVATION_FRESHNESSES = [
   'fresh',
   'stale',
+  'partial',
+  'blocked',
+  'failed',
+  'unknown',
   'unavailable',
 ] as const;
 export type ActionObservationFreshness =

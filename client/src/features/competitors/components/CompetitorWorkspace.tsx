@@ -32,6 +32,7 @@ import {
 import { NativeSelect } from '@shared/ui/native-select';
 import { Alert, AlertDescription, AlertTitle } from '@shared/ui/alert';
 import { Badge } from '@shared/ui/badge';
+import { DisabledAction } from '@shared/components/DisabledAction';
 import { Button } from '@shared/ui/button';
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@shared/ui/card';
 import { Checkbox } from '@shared/ui/checkbox';
@@ -315,16 +316,19 @@ function OverviewView({ siteId, siteDomain }: { siteId: string; siteDomain: stri
                 aria-invalid={manualError ? true : undefined}
                 aria-describedby={manualError ? manualErrorId : undefined}
               />
-              <Button
+              <DisabledAction
                 type="submit"
                 variant="outline"
                 disabled={!manualUrl.trim() || active.length >= COMPETITOR_LIMIT}
+                reason={active.length >= COMPETITOR_LIMIT
+                  ? t('intelligence.portfolio.addDisabledFull', { max: COMPETITOR_LIMIT })
+                  : !manualUrl.trim() ? t('intelligence.portfolio.addDisabledEmpty') : undefined}
                 loading={state.mutationKey === normalizeManualCompetitorUrl(manualUrl)}
                 loadingLabel={t('intelligence.portfolio.adding')}
               >
                 <Plus data-icon="inline-start" />
                 {t('intelligence.portfolio.add')}
-              </Button>
+              </DisabledAction>
             </div>
             {manualError ? (
               <p id={manualErrorId} role="alert" className="text-destructive text-sm">

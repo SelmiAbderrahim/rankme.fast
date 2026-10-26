@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { countryFromDomain, inferSiteMarket, parsePageLanguageEvidence } from './site-market.js';
+import { countryFromDomain, countryLanguage, inferSiteMarket, isCatalogSiteMarket, parsePageLanguageEvidence } from './site-market.js';
 
 const catalog = [
     { countryCode: 'US', locationCode: 2840, languageCodes: ['en', 'es'] },
@@ -28,12 +28,55 @@ describe('site market inference', () => {
     it('does not mistake generic country TLDs for an audience country', () => {
         expect(countryFromDomain('brand.ai')).toBeNull();
         expect(countryFromDomain('brand.co.uk')).toBe('GB');
+        expect(countryFromDomain('brand.COM.')).toBeNull();
+        expect(countryFromDomain('BRAND.DE.')).toBe('DE');
+        expect(countryFromDomain('')).toBeNull();
+    });
+
+    it('uses a supported page language or regional alternate when the TLD is generic', () => {
+        const multilingual = [
+            { countryCode: 'DE', locationCode: 2276, languageCodes: ['en', 'de'] },
+            { countryCode: 'US', locationCode: 2840, languageCodes: ['en'] },
+        ];
+        expect(inferSiteMarket({ domain: 'brand.com', catalog: multilingual,
+            evidence: { htmlLang: 'de', hreflangs: [] } }))
+            .toMatchObject({ locationCode: 2276, languageCode: 'de', basis: 'page' });
+        expect(inferSiteMarket({ domain: 'brand.de', catalog: multilingual,
+            evidence: { htmlLang: 'fr', hreflangs: ['en-DE'] } }))
+            .toMatchObject({ locationCode: 2276, languageCode: 'en', basis: 'cctld' });
+    });
+
+    it('ignores unusable catalog rows and validates complete markets', () => {
+        const rows = [{ countryCode: 'DE', locationCode: null, languageCodes: ['de'] },
+            { countryCode: 'DE', locationCode: 2276, languageCodes: [] }, ...catalog];
+        expect(inferSiteMarket({ domain: 'brand.de', catalog: rows })).toMatchObject({
+            locationCode: 2276, languageCode: 'de', basis: 'cctld',
+        });
+        expect(isCatalogSiteMarket({ locationCode: 2276, languageCode: 'de', device: 'desktop' }, rows)).toBe(true);
+        expect(isCatalogSiteMarket({ locationCode: 2276, languageCode: 'zz', device: 'desktop' }, rows)).toBe(false);
+    });
+
+    it('falls back from unsupported page and account locales to the TLD catalog language', () => {
+        expect(countryLanguage('XX')).toBeNull();
+        expect(inferSiteMarket({ domain: 'brand.de',
+            catalog: [{ countryCode: 'DE', locationCode: 2276, languageCodes: ['fr'] }],
+            evidence: { htmlLang: 'zz-ZZ', hreflangs: ['zz-ZZ'] }, accountLocale: 'zz' }))
+            .toMatchObject({ locationCode: 2276, languageCode: 'fr', basis: 'cctld' });
+        expect(inferSiteMarket({ domain: 'brand.com', catalog,
+            evidence: { htmlLang: 'zz', hreflangs: [] }, accountLocale: 'zz' }))
+            .toMatchObject({ basis: 'fallback' });
     });
 
     it('reads only bounded head language metadata', () => {
         expect(parsePageLanguageEvidence('<html lang="ar-SA"><head><link rel="alternate" hreflang="en-SA" href="/"></head>'))
             .toEqual({ htmlLang: 'ar-SA', hreflangs: ['en-SA'] });
         expect(parsePageLanguageEvidence('<body lang="ru"><script>window.lang="ru"</script>'))
+            .toEqual({ htmlLang: null, hreflangs: [] });
+        expect(parsePageLanguageEvidence('')).toEqual({ htmlLang: null, hreflangs: [] });
+    });
+
+    it('does not read body metadata or links without an alternate relation', () => {
+        expect(parsePageLanguageEvidence('<head><link rel="canonical" hreflang="de-DE"></head><html lang="de-DE">'))
             .toEqual({ htmlLang: null, hreflangs: [] });
     });
 });

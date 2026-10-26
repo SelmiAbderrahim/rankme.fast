@@ -49,7 +49,8 @@
     "ga4_decline": "Analytics-Rückgang",
     "content_recommendation": "Content-Empfehlung",
     "citation_gap": "KI-Zitationslücke",
-    "audience_research": "Zielgruppenforschung"
+    "audience_research": "Zielgruppenforschung",
+    "competitor_opportunity": "Wettbewerbschance"
   },
   "severity": {
     "critical": "Kritisch",
@@ -75,7 +76,11 @@
   "freshness": {
     "fresh": "Aktuell",
     "stale": "Veraltet",
-    "unavailable": "Nicht überprüft"
+    "unavailable": "Nicht überprüft",
+    "partial": "Unvollständig",
+    "blocked": "Blockiert",
+    "failed": "Fehlgeschlagen",
+    "unknown": "Aktualität unbekannt"
   },
   "card": {
     "nextStep": "Nächster Schritt",
@@ -84,7 +89,7 @@
     "affectedNone": "Websiteweit",
     "affectedCount_one": "{{count}} betroffene URL",
     "evidence": "Belege",
-    "evidenceLabel": "{{source}} · {{date}}",
+    "evidenceLabel": "{{source}} · {{date}} · {{detail}}",
     "evidenceLink": "Belegquelle öffnen",
     "history": "Verlauf",
     "retest": "Erneut prüfen",

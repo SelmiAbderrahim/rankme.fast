@@ -795,6 +795,12 @@ describe('geogrid presentational components', () => {
     expect(screen.getByTestId('geogrid-cell-table')).toBeInTheDocument();
     expect(screen.queryByTestId('geogrid-cell-row-0')).not.toBeInTheDocument();
   });
+  it('localizes captured times in the cell table and stored scan history', () => {
+    renderWithI18n(<><GeogridCellTable cells={[cell({ pointIndex: 0 })]} />
+      <GeogridScanHistory scans={[summary()]} selectedScanId={null} onSelect={() => {}} /></>);
+    expect(screen.getByTestId('geogrid-cell-row-0')).not.toHaveTextContent(CAPTURED_AT);
+    expect(screen.getByTestId(`geogrid-history-row-${SCAN_ID}`)).not.toHaveTextContent(CAPTURED_AT);
+  });
 
   it('the history highlights the selected scan', () => {
     renderWithI18n(

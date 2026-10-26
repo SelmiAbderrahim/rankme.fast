@@ -34,6 +34,8 @@ import { User } from '../users/users.model.js';
 import { setSummaryDb } from './summary.db-holder.js';
 import { setAuditsQueue } from './audits.queue-holder.js';
 import { AuditRun } from './audit-run.model.js';
+import { ReportSnapshot } from './report-snapshot.model.js';
+import * as summaryService from './summary.service.js';
 import { Site, setSitesDb } from '../sites/index.js';
 import { writeReportSnapshot } from './report.service.js';
 import { makeAuditResult } from './rules/fixtures.js';
@@ -140,6 +142,34 @@ describe('GET /api/audits/:runId/report', () => {
     for (const finding of res.body.findings) {
       expect(finding.copy.title).toBeTypeOf('string');
       expect(finding.copy.title.length).toBeGreaterThan(0);
+    }
+  });
+
+  it('includes freshness for an existing AI summary', async () => {
+    const owner = await signupVerifiedUser(app, { email: 'report-summary-freshness@x.co' });
+    const { runId } = await seedRunFor(owner);
+    await ReportSnapshot.updateOne(
+      { runId },
+      { $set: { 'aiSummaryVariantsByLocale.en': {
+        text: 'Stored summary', locale: 'en', model: 'test-model', truncated: false,
+        createdAt: new Date('2026-07-01T00:00:00.000Z'),
+      } } },
+    );
+    const res = await request(app).get(`/api/audits/${runId}/report`).set('Cookie', owner.cookie);
+    expect(res.status).toBe(200);
+    expect(res.body.aiSummary).toMatchObject({ text: 'Stored summary', locale: 'en' });
+    expect(res.body.aiSummaryFreshness).toMatchObject({ stale: expect.any(Boolean) });
+
+    // A concurrent summary removal after the report read leaves no freshness verdict.
+    const state = vi.spyOn(summaryService, 'getAuditSummaryState').mockResolvedValueOnce({
+      status: 'idle', aiSummary: null, requestedLocale: 'en', availableLocales: [],
+    });
+    try {
+      const raced = await request(app).get(`/api/audits/${runId}/report`).set('Cookie', owner.cookie);
+      expect(raced.status).toBe(200);
+      expect(raced.body.aiSummaryFreshness).toBeNull();
+    } finally {
+      state.mockRestore();
     }
   });
 

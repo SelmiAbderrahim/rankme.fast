@@ -10,7 +10,7 @@ import { assertCurrentSiteWorkLease, tryRunWithSiteWorkLease, } from '../sites/i
 import { ReportExportShare } from './report-export-share.model.js';
 import { ReportExportSnapshot } from './report-export-snapshot.model.js';
 import { getReportExportsDb } from './report-exports.holder.js';
-import { downloadPublicReportExport, inspectPublicReportExport, inspectReportExport, } from './report-exports.service.js';
+import { downloadPublicReportExport, inspectPublicReportExport, inspectReportExport, resolveReportExportSites, } from './report-exports.service.js';
 import type { CreateReportExportShareBody } from './report-export-shares.schema.js';
 import type { PublicReportDto, PublicReportFile, ReportPublicFormat, ReportExportShareCenterListDto, } from './report-exports.types.js';
 export const REPORT_SHARE_TOKEN_BYTES = OPAQUE_BEARER_TOKEN_BYTES;
@@ -265,6 +265,7 @@ export async function listReportExportSharesForAccount(input: {
         .limit(input.limit + 1)
         .lean<ShareLean[]>();
     const page = rows.slice(0, input.limit);
+    const sites = await resolveReportExportSites(input.accountId, page.map((row) => row.siteId));
     const items: ReportExportShareCenterListDto['items'] = [];
     for (const row of page) {
         let snapshot: ReportExportShareCenterListDto['items'][number]['snapshot'] = null;
@@ -280,6 +281,7 @@ export async function listReportExportSharesForAccount(input: {
                 locale: summary.locale,
                 title: summary.title,
                 expiresAt: summary.expiresAt,
+                site: (row.siteId && sites.get(row.siteId.toString())) || null,
             };
         }
         catch (error) {

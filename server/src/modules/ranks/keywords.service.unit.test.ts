@@ -3,9 +3,10 @@
  * harness — kept out of keywords.routes.test.ts because they poke the
  * service directly rather than the HTTP surface.
  */
-import { afterAll, beforeAll, beforeEach, describe, expect, it } from 'vitest';
+import { afterAll, beforeAll, beforeEach, describe, expect, it, vi } from 'vitest';
 import mongoose from 'mongoose';
 import {
+  domainStates,
   keywords as keywordsTable,
   rankings as rankingsTable,
 } from '../../db/schema/keywords.js';
@@ -24,13 +25,17 @@ import { isUniqueViolation } from '../../shared/utils/db-errors.js';
 import { Site } from '../sites/index.js';
 import {
   CLIENT_REPORT_RANK_ROW_LIMIT,
+  createKeywordsBulk,
   getKeywordHistoryBatch,
   hasOwnedKeywordRowsForSite,
   HISTORY_MAX_POINTS,
   keywordsServiceTestables,
+  listKeywords,
   readClientReportRankProjection,
   readClientReportRankRows,
   resolveOwnedKeywordSiteId,
+  triggerKeywordRankCheck,
+  triggerRankCheck,
 } from './keywords.service.js';
 
 describe('isUniqueViolation (shared re-import)', () => {
@@ -237,5 +242,92 @@ describe('getKeywordHistoryBatch — branch coverage', () => {
     await expect(
       readClientReportRankRows(new mongoose.Types.ObjectId().toHexString(), siteId, db as never),
     ).rejects.toMatchObject({ status: 404 });
+  });
+
+  it('applies the manual check cooldown to site checks and rejects inactive keywords', async () => {
+    const db = getTestDb();
+    const accountId = new mongoose.Types.ObjectId().toHexString();
+    const site = await Site.create({ accountId: new mongoose.Types.ObjectId(accountId),
+      url: 'https://manual.example', domain: 'manual.example' });
+    const siteId = site.id as string;
+    const [keyword] = await db.insert(keywordsTable).values({ accountId, siteId,
+      phrase: 'manual phrase', locationCode: 2840, languageCode: 'en', active: false }).returning();
+    const deps = { db: db as never, ranksQueue: null };
+    expect(await triggerRankCheck({ accountId, siteId }, deps)).toMatchObject({ queued: false });
+    await expect(triggerRankCheck({ accountId, siteId }, deps))
+      .rejects.toMatchObject({ status: 429 });
+    await expect(triggerKeywordRankCheck({ accountId, keywordId: keyword!.id }, deps))
+      .rejects.toMatchObject({ status: 404 });
+  });
+
+  it('queues one keyword and surfaces queue failures to explicit checks', async () => {
+    const db = getTestDb();
+    const accountId = new mongoose.Types.ObjectId().toHexString();
+    const site = await Site.create({ accountId: new mongoose.Types.ObjectId(accountId),
+      url: 'https://manual-queue.example', domain: 'manual-queue.example' });
+    const siteId = site.id as string;
+    const [keyword] = await db.insert(keywordsTable).values({ accountId, siteId,
+      phrase: 'manual keyword', locationCode: 2840, languageCode: 'en' }).returning();
+    const add = vi.fn(async () => ({}));
+    const deps = { db: db as never, ranksQueue: { add } as never };
+    expect(await triggerKeywordRankCheck({ accountId, keywordId: keyword!.id }, deps))
+      .toMatchObject({ queued: true });
+    expect((add.mock.calls[0] as unknown[])[1]).toMatchObject({ keywordIds: [keyword!.id] });
+    await db.delete(domainStates);
+    add.mockRejectedValueOnce(new Error('queue offline'));
+    await expect(triggerRankCheck({ accountId, siteId }, deps))
+      .rejects.toMatchObject({ status: 503 });
+  });
+
+  it('uses the requested limit as page size when a direct caller omits pageSize', async () => {
+    const db = getTestDb();
+    const accountId = new mongoose.Types.ObjectId().toHexString();
+    const site = await Site.create({ accountId: new mongoose.Types.ObjectId(accountId),
+      url: 'https://page-fallback.example', domain: 'page-fallback.example' });
+    const siteId = site.id as string;
+    await db.insert(keywordsTable).values(['first', 'second', 'third'].map((phrase) => ({
+      accountId, siteId, phrase, locationCode: 2840, languageCode: 'en',
+    })));
+    const page = await listKeywords({ accountId, siteId, page: 2, limit: 2 },
+      { db: db as never, ranksQueue: null });
+    expect(page.page).toBe(2);
+    expect(page.pageSize).toBe(2);
+    expect(page.keywords).toHaveLength(1);
+    expect(page.total).toBe(3);
+    expect(page.siteTotal).toBe(3);
+  });
+
+  it('defaults map tracking off for a direct bulk caller that omits the option', async () => {
+    const db = getTestDb();
+    const accountId = new mongoose.Types.ObjectId().toHexString();
+    const site = await Site.create({ accountId: new mongoose.Types.ObjectId(accountId),
+      url: 'https://bulk-default.example', domain: 'bulk-default.example' });
+    const result = await createKeywordsBulk({ accountId, siteId: site.id as string,
+      phrases: ['plain phrase'], maxLength: 300, engine: 'google', locationCode: 2840,
+      languageCode: 'en', device: 'desktop', engineTarget: null },
+    { db: db as never, ranksQueue: null });
+    expect(result).toMatchObject([{ status: 'added', keyword: { trackLocalPack: false } }]);
+    expect((await db.select().from(keywordsTable))[0]?.trackLocalPack).toBe(false);
+  });
+
+  it('reports a duplicate when a competing writer wins after the bulk preflight read', async () => {
+    const accountId = new mongoose.Types.ObjectId().toHexString();
+    const site = await Site.create({ accountId: new mongoose.Types.ObjectId(accountId),
+      url: 'https://bulk-race.example', domain: 'bulk-race.example' });
+    // The database returns no inserted row when ON CONFLICT finds an active
+    // keyword written after the transaction's initial tracked-phrase read.
+    const db = { transaction: async (callback: (tx: unknown) => Promise<unknown>) => callback({
+      execute: async () => undefined,
+      select: () => ({ from: () => ({ where: async () => [] }) }),
+      insert: () => ({ values: () => ({ onConflictDoUpdate: () => ({
+        returning: async () => [],
+      }) }) }),
+    }) };
+    const result = await createKeywordsBulk({ accountId, siteId: site.id as string,
+      phrases: ['raced phrase'], maxLength: 300, engine: 'google', locationCode: 2840,
+      languageCode: 'en', device: 'desktop', engineTarget: null },
+    { db: db as never, ranksQueue: null });
+    expect(result).toEqual([{ phrase: 'raced phrase', status: 'duplicate',
+      reason: 'already_tracked', messageKey: 'ranks.errors.keywordDuplicate' }]);
   });
 });

@@ -7,6 +7,7 @@ import { BRAND_NAME } from '@shared/brand';
 import { isAnalyticsConfigured, writeAnalyticsChoice } from '@shared/analytics';
 import { Button } from '@shared/ui/button';
 import { Separator } from '@shared/ui/separator';
+import { TAP_TARGET_LINK } from '@shared/ui/tap-target';
 
 const AUTHED_LINKS = [
   { to: '/dashboard', labelKey: 'nav.dashboard' },
@@ -34,7 +35,7 @@ export const Footer = () => {
           <ul className="flex flex-wrap items-center justify-center gap-x-4 gap-y-2">
             {links.map((link) => (
               <li key={link.to}>
-                <Link to={link.to} className="hover:text-foreground transition-colors">
+                <Link to={link.to} className={`hover:text-foreground transition-colors ${TAP_TARGET_LINK}`}>
                   {t(link.labelKey)}
                 </Link>
               </li>
@@ -55,7 +56,7 @@ export const Footer = () => {
             ) : null}
           </ul>
         </nav>
-        <p className="text-muted-foreground whitespace-nowrap" dir="ltr" title={appBuildIdentifier} data-testid="footer-version">{t('footer.version', { version: appDisplayVersion, stage: releaseStage() })}</p>
+        <p className="text-muted-foreground whitespace-nowrap" dir="ltr" title={appBuildIdentifier} data-testid="footer-version">{t('footer.version', { version: appDisplayVersion, stage: t(`releaseStage.stage.${releaseStage()}`) })}</p>
         <Separator className="@2xl:hidden" />
         <p className="text-center">{t('footer.copyright', { year, brand: BRAND_NAME })}</p>
       </div>

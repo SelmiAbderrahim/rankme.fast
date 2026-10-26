@@ -1,6 +1,7 @@
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { useScrollFades } from '@shared/hooks/useScrollFades';
 import { Bdi } from '@shared/components/Bdi';
+import { isolateText } from '@shared/lib/bidi';
 import { useTranslation } from 'react-i18next';
 import { ExternalLink } from 'lucide-react';
 import { Link, useLocation } from 'react-router-dom';
@@ -13,7 +14,6 @@ import { APP_NAV_GROUPS, resolveActiveNavKey } from '@shared/navigation/appNav';
 import {
   Sidebar,
   SidebarContent,
-  SidebarFooter,
   SidebarGroup,
   SidebarGroupContent,
   SidebarGroupLabel,
@@ -109,6 +109,16 @@ export const AppSidebar = () => {
       </SidebarHeader>
 
       <SidebarContent className="min-h-0 flex-1 gap-0 overflow-hidden">
+        {isMobile ? (
+          <div className="shrink-0 border-b border-border px-4 pt-2 pb-3">
+            <LanguageSwitcher
+              id="language-switcher-drawer"
+              showLabel
+              className="flex items-center justify-between gap-3 [&_select]:min-w-40"
+              onLocaleChange={closeOnMobile}
+            />
+          </div>
+        ) : null}
         <nav ref={navRef} aria-label={t('nav.primary')} data-app-nav="" className="nav-scroll min-h-0 flex-1 scroll-pb-2 group-data-[collapsible=icon]:nav-scroll-rail">
           {renderedGroups.map((group) => (
             <SidebarGroup key={group.labelKey}>
@@ -133,6 +143,7 @@ export const AppSidebar = () => {
                               href={row.href}
                               target="_blank"
                               rel="noopener noreferrer"
+                              title={isolateText(row.label)}
                               onClick={closeOnMobile}
                             >
                               <Icon />
@@ -145,6 +156,7 @@ export const AppSidebar = () => {
                               to={row.href}
                               ref={row.active ? activeRowRef : undefined}
                               aria-current={row.active ? 'page' : undefined}
+                              title={isolateText(row.label)}
                               onClick={closeOnMobile}
                             >
                               <Icon />
@@ -162,17 +174,6 @@ export const AppSidebar = () => {
         </nav>
       </SidebarContent>
 
-      {isMobile ? (
-        // The top-bar switcher only fits from `md` up; below that the drawer is
-        // the one place a language can be chosen. Same shared component.
-        <SidebarFooter>
-          <LanguageSwitcher
-            id="language-switcher-drawer"
-            className="[&_select]:w-full"
-            onLocaleChange={closeOnMobile}
-          />
-        </SidebarFooter>
-      ) : null}
     </Sidebar>
   );
 };

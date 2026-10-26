@@ -1126,6 +1126,24 @@ describe('manual competitor form', () => {
     return input;
   };
 
+  it('explains why adding a competitor is unavailable before entry and at the portfolio limit', async () => {
+    const workspace = renderWorkspace(formPath);
+    const add = await screen.findByRole('button', { name: /add competitor/i });
+    expect(add).toBeDisabled();
+    expect(screen.getByText(i18n.t('competitors:intelligence.portfolio.addDisabledEmpty'))).toHaveAttribute(
+      'id', add.getAttribute('aria-describedby'),
+    );
+    workspace.unmount();
+
+    mocked.fetchCompetitorProfiles.mockResolvedValue({ items: Array.from({ length: 10 }, (_, index) => profile(`full-${index}`)) });
+    renderWorkspace(formPath);
+    const fullAdd = await screen.findByRole('button', { name: /add competitor/i });
+    expect(fullAdd).toBeDisabled();
+    expect(screen.getByText(i18n.t('competitors:intelligence.portfolio.addDisabledFull', { max: 10 }))).toHaveAttribute(
+      'id', fullAdd.getAttribute('aria-describedby'),
+    );
+  });
+
   it('explains an invalid address beside the field without calling the server, and clears it on edit', async () => {
     renderWorkspace(formPath);
     const input = await typeManual('not a url');

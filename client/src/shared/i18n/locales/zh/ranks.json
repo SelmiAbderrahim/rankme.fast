@@ -57,7 +57,8 @@
   "longTailResearch": {
     "title": "需要更具体的关键词建议？",
     "description": "请只输入一个不超过 80 个字符的 Google 关键词。关键词调研页面会预填该短语和市场，但不会自动发起查询。",
-    "cta": "研究长尾关键词"
+    "cta": "研究长尾关键词",
+    "disabledReason": "在上方输入一个关键词，即可用它打开关键词研究。"
   },
   "addLocationLabel": "位置",
   "addLanguageLabel": "语言",

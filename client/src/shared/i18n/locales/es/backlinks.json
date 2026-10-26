@@ -212,12 +212,11 @@
       "description": "Puntúa hasta 1000 backlinks guardados con reglas de alerta fijas antes de decidir qué exportar."
     },
     "preview": {
-      "unit": "1 unidad de revisión de enlaces",
+      "scope": "Revisar enlaces entrantes guardados",
       "rowClamp": "Hasta 1000 filas · 100 dominios puntuados",
-      "available": "Cuota disponible",
-      "confirm": "Confirmar y usar 1 unidad",
+      "confirm": "Iniciar revisión",
       "cancel": "Cancelar",
-      "button": "Previsualizar el coste"
+      "button": "Revisar enlaces entrantes guardados"
     },
     "states": {
       "disabledTitle": "Las nuevas revisiones están pausadas",
@@ -227,8 +226,8 @@
       "listError": "No se pudieron cargar las revisiones guardadas.",
       "runningTitle": "Revisando observaciones guardadas",
       "failedTitle": "La revisión se detuvo",
-      "providerRefunded": "El proveedor falló antes de conservar una fila puntuada. Se reembolsó la unidad reservada.",
-      "ceilingConsumed": "La ejecución se detuvo en el límite de coste. Se consumió la unidad reservada y no se realizó ninguna acción automática.",
+      "providerFailed": "La revisión se detuvo antes de guardar resultados. Inténtelo de nuevo.",
+      "runLimitReached": "La revisión se detuvo al llegar a su límite de ejecución. No se realizó ninguna acción automática.",
       "partial": "Observaciones parciales del proveedor",
       "emptyTitle": "No hay filas puntuadas",
       "emptyBody": "La ejecución terminó sin conservar filas de backlinks puntuadas."

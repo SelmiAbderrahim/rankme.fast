@@ -2,6 +2,9 @@ import { z } from 'zod';
 import { SUPPORTED_LOCALES } from '../../shared/i18n/locales.js';
 import { PAGES_INSIGHTS, PAGES_SORTS } from '../pages/pages.schema.js';
 import { MCP_PAGE_LIMIT_DEFAULT, MCP_PAGE_LIMIT_MAX } from './mcp.schema.js';
+import { READ_RANGES } from './mcp.read-ranges.js';
+
+export { READ_RANGES, READ_RANGE_DEFAULT, type ReadRange } from './mcp.read-ranges.js';
 
 /**
  * Bounded input shapes for the stored-data READ tools.
@@ -23,10 +26,6 @@ const limitSchema = z.coerce
   .max(MCP_PAGE_LIMIT_MAX)
   .optional();
 
-/** Search Console / GA4 windows — identical to the Google tab's range picker. */
-export const READ_RANGES = ['7d', '28d', '90d'] as const;
-export type ReadRange = (typeof READ_RANGES)[number];
-export const READ_RANGE_DEFAULT: ReadRange = '28d';
 const rangeSchema = z.enum(READ_RANGES).optional();
 
 export { MCP_PAGE_LIMIT_DEFAULT };

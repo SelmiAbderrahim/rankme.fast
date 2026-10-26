@@ -1,6 +1,7 @@
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 import { fireEvent, render, screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
+import { clearDate, pickDate } from '@/test/datePicker';
 import { I18nextProvider } from 'react-i18next';
 import { MemoryRouter, useLocation, useNavigate } from 'react-router-dom';
 import { changeLanguage, i18n, initI18n } from '@shared/i18n';
@@ -58,14 +59,19 @@ beforeEach(async () => {
 });
 
 describe('SnapshotList URL-backed filters', () => {
+  it('uses localized calendar controls for the from and to filters', () => {
+    renderList();
+    expect(screen.getByRole('button', { name: /From date/ })).toHaveAttribute('data-slot', 'date-picker');
+    expect(screen.getByRole('button', { name: /To date/ })).toHaveAttribute('data-slot', 'date-picker');
+  });
   it('round-trips domain/from/to/cursor and preserves the workspace tab', async () => {
     renderList({}, '/sites/site-1?tab=traffic&domain=old.example&from=2026-01-01&to=2026-07-01');
     const user = userEvent.setup();
     const domain = screen.getByRole('textbox', { name: 'Filter by domain' });
     await user.clear(domain);
     await user.type(domain, 'new.example');
-    fireEvent.change(screen.getByLabelText('From date'), { target: { value: '2026-02-01' } });
-    fireEvent.change(screen.getByLabelText('To date'), { target: { value: '2026-08-01' } });
+    await pickDate(user, screen.getByRole('button', { name: /From date/ }), '2026-02-01');
+    await pickDate(user, screen.getByRole('button', { name: /To date/ }), '2026-08-01');
     await waitFor(() => {
       const params = new URLSearchParams(search);
       expect(params.get('tab')).toBe('traffic');
@@ -137,8 +143,8 @@ describe('SnapshotList URL-backed filters', () => {
     renderList({}, '/sites/site-1?tab=traffic&domain=a.test&from=2026-01-01&to=2026-02-01&cursor=c');
     const user = userEvent.setup();
     await user.clear(screen.getByRole('textbox', { name: 'Filter by domain' }));
-    fireEvent.change(screen.getByLabelText('From date'), { target: { value: '' } });
-    fireEvent.change(screen.getByLabelText('To date'), { target: { value: '' } });
+    await clearDate(user, screen.getByRole('button', { name: /From date/ }));
+    await clearDate(user, screen.getByRole('button', { name: /To date/ }));
     await waitFor(() => expect(search).toBe('?tab=traffic'));
   });
 

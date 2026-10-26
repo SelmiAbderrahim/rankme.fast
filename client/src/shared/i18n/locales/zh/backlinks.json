@@ -212,12 +212,11 @@
       "description": "在决定导出内容之前，按固定的预警规则为最多 1,000 条已保存的反向链接评分。"
     },
     "preview": {
-      "unit": "1 个链接审核单位",
+      "scope": "检查已保存的反向链接",
       "rowClamp": "最多 1000 行 · 100 个评分域名",
-      "available": "配额可用",
-      "confirm": "确认并使用 1 个单位",
+      "confirm": "开始检查",
       "cancel": "取消",
-      "button": "预览审核消耗"
+      "button": "检查已保存的反向链接"
     },
     "states": {
       "disabledTitle": "新链接审核已暂停",
@@ -227,8 +226,8 @@
       "listError": "无法加载已保存的链接审核。",
       "runningTitle": "正在审核已保存的反向链接观测",
       "failedTitle": "链接审核已停止",
-      "providerRefunded": "提供商在保留任何评分行之前失败。预留单位已退还。",
-      "ceilingConsumed": "运行在成本上限处停止。预留单位已消耗，且未执行任何自动操作。",
+      "providerFailed": "检查在保存任何结果前停止。请重试。",
+      "runLimitReached": "检查达到运行上限后停止。未执行任何自动操作。",
       "partial": "部分提供商观测",
       "emptyTitle": "没有评分行",
       "emptyBody": "运行已完成，但未保留评分后的反向链接行。"

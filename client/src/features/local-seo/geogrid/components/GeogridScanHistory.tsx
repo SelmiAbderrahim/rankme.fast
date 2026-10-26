@@ -10,6 +10,7 @@ import { isolateText } from '@shared/lib/bidi';
  *   - geogrid-history-empty         empty state
  */
 import { useTranslation } from 'react-i18next';
+import { formatAbsoluteDate } from '@shared/lib/datetime';
 import { Button } from '@shared/ui/button';
 import {
   Empty,
@@ -27,7 +28,7 @@ interface Props {
 }
 
 export const GeogridScanHistory = ({ scans, selectedScanId, onSelect }: Props) => {
-  const { t } = useTranslation('geogrid');
+  const { t, i18n } = useTranslation('geogrid');
   if (scans.length === 0) {
     return (
       <Empty data-testid="geogrid-history-empty">
@@ -60,7 +61,7 @@ export const GeogridScanHistory = ({ scans, selectedScanId, onSelect }: Props) =
               <span className="text-muted-foreground text-xs">
                 {t('history.meta', {
                   status: t(`status.${scan.status}`),
-                  createdAt: scan.createdAt,
+                  createdAt: formatAbsoluteDate(scan.createdAt, i18n.language, { withTime: true }),
                 })}
               </span>
             </span>

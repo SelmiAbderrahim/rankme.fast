@@ -491,6 +491,11 @@ describe('ActionsPanel — error states', () => {
 });
 
 describe('ActionCard — content, safe links, collapse', () => {
+  it('gives the affected URLs toggle a full-height phone tap target', async () => {
+    renderPanel();
+    const card = (await screen.findAllByTestId('action-card'))[0]!;
+    expect(within(card).getByTestId('action-urls-toggle')).toHaveClass('max-md:min-h-11');
+  });
   it('maps eligible action context into a code prompt across workflow states', async () => {
     mocked.listActions.mockResolvedValueOnce(
       okResponse([
@@ -657,6 +662,7 @@ describe('ActionCard — content, safe links, collapse', () => {
     const safeLink = within(cards[0]!).getByTestId('action-evidence-link');
     expect(safeLink).toHaveAttribute('href', 'https://vendor.example/safe');
     expect(safeLink).toHaveAttribute('rel', 'nofollow ugc noopener noreferrer');
+    expect(within(cards[0]!).getByTestId('action-evidence-label')).toHaveTextContent('vendor.example/safe');
     expect(
       within(cards[1]!).queryByTestId('action-evidence-link'),
     ).not.toBeInTheDocument();
@@ -666,6 +672,33 @@ describe('ActionCard — content, safe links, collapse', () => {
     expect(
       within(cards[2]!).queryByTestId('action-evidence-link'),
     ).not.toBeInTheDocument();
+  });
+
+  it('labels root and email evidence without exposing an internal reference', async () => {
+    mocked.listActions.mockResolvedValueOnce(okResponse([
+      item('root-evidence', {
+        evidence: [{ sourceRef: 'opaque-root', url: 'https://vendor.example/', observation: { freshness: 'fresh', observedAt: '2026-07-10T00:00:00.000Z' } }],
+      }),
+      item('email-evidence', {
+        evidence: [{ sourceRef: 'opaque-email', url: 'mailto:team@example.com', observation: { freshness: 'fresh', observedAt: '2026-07-10T00:00:00.000Z' } }],
+      }),
+    ]));
+    renderPanel();
+    const cards = await screen.findAllByTestId('action-card');
+    expect(within(cards[0]!).getByTestId('action-evidence-label')).toHaveTextContent('vendor.example');
+    expect(within(cards[0]!).getByTestId('action-evidence-label')).not.toHaveTextContent('opaque-root');
+    expect(within(cards[1]!).getByTestId('action-evidence-label')).toHaveTextContent('email-evidence problem');
+    expect(within(cards[1]!).getByTestId('action-evidence-link')).toHaveAttribute('href', 'mailto:team@example.com');
+    expect(within(cards[1]!).getByTestId('action-evidence-label')).not.toHaveTextContent('opaque-email');
+  });
+
+  it('labels an unknown observation freshness instead of showing a translation key', async () => {
+    mocked.listActions.mockResolvedValueOnce(okResponse([item('opportunity', {
+      evidence: [{ sourceRef: 'opaque', observation: { freshness: 'unknown', observedAt: '2026-09-28T08:00:00.000Z' } }],
+    })]));
+    renderPanel();
+    const card = (await screen.findAllByTestId('action-card'))[0]!;
+    expect(within(card).getByTestId('action-freshness-chip')).toHaveTextContent('Freshness unknown');
   });
 
   it('labels evidence by source and date, never by its internal key (issue #19)', async () => {

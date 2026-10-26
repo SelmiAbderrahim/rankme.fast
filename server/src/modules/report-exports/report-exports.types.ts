@@ -73,6 +73,13 @@ export interface ReportExportSnapshotSummaryDto {
     sourceDates: ReportDocumentV1['sourceDates'];
     createdAt: string;
     expiresAt: string;
+    /** Account-scoped source site, present on list responses only. */
+    site?: ReportExportSiteDto | null;
+}
+export interface ReportExportSiteDto {
+    id: string;
+    domain: string;
+    name: string;
 }
 export interface ReportExportSnapshotDetailDto extends ReportExportSnapshotSummaryDto {
     document: ReportDocumentV1;
@@ -90,7 +97,7 @@ export interface ReportExportShareCenterItemDto {
     accessCount: number;
     lastAccessedAt: string | null;
     createdAt: string;
-    snapshot: null | Pick<ReportExportSnapshotSummaryDto, 'id' | 'kind' | 'locale' | 'title' | 'expiresAt'>;
+    snapshot: null | (Pick<ReportExportSnapshotSummaryDto, 'id' | 'kind' | 'locale' | 'title' | 'expiresAt'> & { site: ReportExportSiteDto | null });
 }
 export interface ReportExportShareCenterListDto {
     items: ReportExportShareCenterItemDto[];

@@ -438,7 +438,8 @@
       "dismiss": "Hide the beta notice"
     },
     "badge": "Beta",
-    "badgeName": "{{brand}}, public beta"
+    "badgeName": "{{brand}}, public beta",
+    "stage": { "beta": "beta", "ga": "stable" }
   },
   "feedback": {
     "reportBug": "Report a bug",

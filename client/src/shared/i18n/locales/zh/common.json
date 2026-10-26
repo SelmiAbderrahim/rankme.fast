@@ -438,7 +438,8 @@
       "dismiss": "隐藏测试版提示"
     },
     "badge": "测试版",
-    "badgeName": "{{brand}}，公开测试版"
+    "badgeName": "{{brand}}，公开测试版",
+    "stage": { "beta": "测试版", "ga": "正式版" }
   },
   "feedback": {
     "reportBug": "报告错误",

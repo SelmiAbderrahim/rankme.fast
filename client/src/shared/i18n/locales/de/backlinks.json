@@ -212,12 +212,11 @@
       "description": "Bewerten Sie bis zu 1.000 gespeicherte Backlink-Zeilen mit einem deterministischen Raster, bevor Sie den Export zusammenstellen."
     },
     "preview": {
-      "unit": "1 Linkprüfungs-Einheit",
+      "scope": "Gespeicherte Backlinks prüfen",
       "rowClamp": "Bis zu 1.000 Zeilen · 100 bewertete Domains",
-      "available": "Kontingent verfügbar",
-      "confirm": "Bestätigen und 1 Einheit nutzen",
+      "confirm": "Prüfung starten",
       "cancel": "Abbrechen",
-      "button": "Kosten der Prüfung ansehen"
+      "button": "Gespeicherte Backlinks prüfen"
     },
     "states": {
       "disabledTitle": "Neue Linkprüfungen sind pausiert",
@@ -227,8 +226,8 @@
       "listError": "Gespeicherte Linkprüfungen konnten nicht geladen werden.",
       "runningTitle": "Gespeicherte Backlink-Beobachtungen werden geprüft",
       "failedTitle": "Linkprüfung angehalten",
-      "providerRefunded": "Der Anbieter ist ausgefallen, bevor eine bewertete Zeile gespeichert wurde. Die reservierte Einheit wurde erstattet.",
-      "ceilingConsumed": "Der Lauf wurde am Kostenlimit gestoppt. Die reservierte Einheit wurde verbraucht und es erfolgte keine automatische Aktion.",
+      "providerFailed": "Die Prüfung wurde beendet, bevor Ergebnisse gespeichert wurden. Versuchen Sie es erneut.",
+      "runLimitReached": "Die Prüfung wurde an ihrer Laufgrenze beendet. Es wurde keine automatische Aktion ausgeführt.",
       "partial": "Teilweise Anbieterbeobachtungen",
       "emptyTitle": "Keine bewerteten Zeilen",
       "emptyBody": "Der Lauf wurde ohne gespeicherte bewertete Backlink-Zeile abgeschlossen."

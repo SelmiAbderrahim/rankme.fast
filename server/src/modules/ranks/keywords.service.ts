@@ -1093,8 +1093,10 @@ export async function listKeywords(input: ListKeywordsInput, deps: KeywordsServi
     return {
         keywords: items,
         nextCursor,
-        total: Number(totals?.total ?? 0),
-        siteTotal: Number(totals?.siteTotal ?? 0),
+        // An aggregate without GROUP BY always returns one count row, even
+        // when the site has no keywords.
+        total: Number(totals!.total),
+        siteTotal: Number(totals!.siteTotal),
         page: input.page ?? null,
         pageSize,
         cadence,

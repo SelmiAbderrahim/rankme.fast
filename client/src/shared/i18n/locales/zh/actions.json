@@ -49,7 +49,8 @@
     "ga4_decline": "Analytics 下滑",
     "content_recommendation": "内容建议",
     "citation_gap": "AI 引用缺口",
-    "audience_research": "受众研究"
+    "audience_research": "受众研究",
+    "competitor_opportunity": "竞争对手机会"
   },
   "severity": {
     "critical": "严重",
@@ -75,7 +76,11 @@
   "freshness": {
     "fresh": "最新",
     "stale": "已过时",
-    "unavailable": "未验证"
+    "unavailable": "未验证",
+    "partial": "部分数据",
+    "blocked": "已被阻止",
+    "failed": "失败",
+    "unknown": "时效未知"
   },
   "card": {
     "nextStep": "下一步",
@@ -84,7 +89,7 @@
     "affectedNone": "全站范围",
     "affectedCount_one": "{{count}} 个受影响的网址",
     "evidence": "证据",
-    "evidenceLabel": "{{source}} · {{date}}",
+    "evidenceLabel": "{{source}} · {{date}} · {{detail}}",
     "evidenceLink": "打开证据来源",
     "history": "历史记录",
     "retest": "重新检测",

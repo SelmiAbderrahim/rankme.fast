@@ -5,10 +5,11 @@ import { REPORT_DOCUMENT_SCHEMA_VERSION, REPORT_GLOBAL_BOUNDS, REPORT_SNAPSHOT_T
 import { HttpError } from '../../shared/utils/http-error.js';
 import type { TranslationKey } from '../../shared/i18n/errors.js';
 import { BRANDING_LOGO_MAX_OUTPUT_BYTES, User, assertCompletePngEnvelope, resolveStoredUserBranding, } from '../users/index.js';
+import { Site } from '../sites/index.js';
 import { ReportExportSnapshot } from './report-export-snapshot.model.js';
 import { getReportExportAdapterRegistry, } from './report-exports.holder.js';
 import type { CreateReportExportBody, ListReportExportsQuery, } from './report-exports.schema.js';
-import type { ReportExportAdapter, ReportExportDownload, ReportExportListDto, ReportExportSnapshotDetailDto, ReportExportSnapshotSummaryDto, PublicReportDto, PublicReportFile, ReportPublicFormat, } from './report-exports.types.js';
+import type { ReportExportAdapter, ReportExportDownload, ReportExportListDto, ReportExportSiteDto, ReportExportSnapshotDetailDto, ReportExportSnapshotSummaryDto, PublicReportDto, PublicReportFile, ReportPublicFormat, } from './report-exports.types.js';
 const SNAPSHOT_PURGE_DELAY_MS = 24 * 60 * 60 * 1000;
 const MAX_DOWNLOAD_COUNT = 1000000;
 const FORBIDDEN_PUBLIC_IDENTIFIER = /^(?:[a-f0-9]{24}|[a-f0-9]{8}-[a-f0-9]{4}-[1-5][a-f0-9]{3}-[89ab][a-f0-9]{3}-[a-f0-9]{12})$/iu;
@@ -198,6 +199,17 @@ function toSummary(snapshot: SnapshotLean, document = parseSnapshotDocument(snap
 function toDetail(snapshot: SnapshotLean): ReportExportSnapshotDetailDto {
     const document = parseSnapshotDocument(snapshot);
     return { ...toSummary(snapshot, document), document };
+}
+export async function resolveReportExportSites(accountId: string, siteIds: ReadonlyArray<{ toString(): string } | null>): Promise<Map<string, ReportExportSiteDto>> {
+    const ids = [...new Set(siteIds.filter((id): id is { toString(): string } => id !== null).map((id) => id.toString()))];
+    if (ids.length === 0) return new Map();
+    const sites = await Site.find({ _id: { $in: ids }, accountId })
+        .select({ domain: 1, displayName: 1 })
+        .lean<Array<{ _id: Types.ObjectId; domain: string; displayName?: string | null }>>();
+    return new Map(sites.map((site) => {
+        const id = String(site._id);
+        return [id, { id, domain: site.domain, name: (site.displayName ?? '').trim() || site.domain }];
+    }));
 }
 function adapterForSnapshot(snapshot: SnapshotLean): ReportExportAdapter {
     const adapter = getReportExportAdapterRegistry().get(snapshot.kind);
@@ -438,11 +450,12 @@ export async function listReportExports(input: Omit<SnapshotActorInput, 'snapsho
         .limit(input.limit + 1)
         .lean<SnapshotLean[]>();
     const page = snapshots.slice(0, input.limit);
+    const sites = await resolveReportExportSites(input.accountId, page.map((snapshot) => snapshot.siteId));
     const items: ReportExportSnapshotSummaryDto[] = [];
     for (const snapshot of page) {
         try {
             await assertSnapshotAccess(snapshot, input.actorUserId, 'read');
-            items.push(toSummary(snapshot));
+            items.push({ ...toSummary(snapshot), site: (snapshot.siteId && sites.get(String(snapshot.siteId))) || null });
         }
         catch (error) {
             if (error instanceof HttpError && error.status === 404)

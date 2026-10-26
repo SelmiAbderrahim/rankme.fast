@@ -234,7 +234,7 @@ function ToxicityStartCard({
         {preview ? (
           <div className="flex flex-col gap-4" data-testid="toxicity-preview">
             <div className="flex flex-wrap gap-2">
-              <StatusChip tone="primary">{t('toxicity.preview.unit')}</StatusChip>
+              <StatusChip tone="primary">{t('toxicity.preview.scope')}</StatusChip>
               <StatusChip tone="info">{t('toxicity.preview.rowClamp')}</StatusChip>
             </div>
             <div className="flex flex-wrap gap-2">
@@ -441,9 +441,11 @@ function ToxicityRunView({
         <CardHeader>
           <CardTitle>{t('toxicity.states.failedTitle')}</CardTitle>
           <CardDescription>
-            {detail.refunded
-              ? t('toxicity.states.providerRefunded')
-              : t('toxicity.states.ceilingConsumed')}
+            {detail.failureKind === 'provider_failed'
+              ? t('toxicity.states.providerFailed')
+              : detail.failureKind === 'ceiling_halted'
+                ? t('toxicity.states.runLimitReached')
+                : t('toxicity.states.errorBody')}
           </CardDescription>
         </CardHeader>
         <CardContent>

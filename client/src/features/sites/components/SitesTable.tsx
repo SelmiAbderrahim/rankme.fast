@@ -310,11 +310,11 @@ export const SitesTable = ({ sites, deletingId, onDelete, openTab, summaries }: 
                   </AvatarFallback>
                 </Avatar>
                 <div className="min-w-0">
-                  <p className="truncate font-medium">
-                    <Link to={siteHref(site)} className="hover:underline">
-                      <Bdi>{siteName(site)}</Bdi>
+                  <div className="min-w-0 font-medium">
+                    <Link to={siteHref(site)} className="flex min-h-11 min-w-0 items-center hover:underline">
+                      <span className="truncate"><Bdi>{siteName(site)}</Bdi></span>
                     </Link>
-                  </p>
+                  </div>
                   <p className="text-muted-foreground truncate text-sm"><Bdi>{site.domain}</Bdi></p>
                   <p className="text-muted-foreground text-sm">
                     {t('columnAdded')}: {formatAdded(site.createdAt, i18n.language)}

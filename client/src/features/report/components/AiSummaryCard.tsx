@@ -46,6 +46,7 @@ export interface AiSummaryCardProps {
    * the report loaded: the stored summary no longer matches what the list shows.
    */
   triageChanged?: boolean;
+  onStateChange?: (next: AuditSummaryState, runId: string) => void;
 }
 
 const isActive = (status: AuditSummaryStatus): boolean =>
@@ -59,6 +60,7 @@ export const AiSummaryCard = ({
   initialFreshness = null,
   requestedLocale,
   triageChanged = false,
+  onStateChange,
 }: AiSummaryCardProps) => {
   const { t } = useTranslation('report');
   const [summary, setSummary] = useState<AuditReportAiSummary | null>(initial);
@@ -91,8 +93,9 @@ export const AiSummaryCard = ({
             ? t(`aiSummary.failure.${next.progress.failureCode}`)
             : t('aiSummary.errors.unavailable'),
       );
+      onStateChange?.(next, runId);
     },
-    [requestedLocale, t],
+    [onStateChange, requestedLocale, runId, t],
   );
 
   useEffect(() => {

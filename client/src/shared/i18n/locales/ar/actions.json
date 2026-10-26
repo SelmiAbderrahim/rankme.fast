@@ -49,7 +49,8 @@
     "ga4_decline": "تراجع في التحليلات",
     "content_recommendation": "توصية محتوى",
     "citation_gap": "فجوة استشهاد الذكاء الاصطناعي",
-    "audience_research": "أبحاث الجمهور"
+    "audience_research": "أبحاث الجمهور",
+    "competitor_opportunity": "فرصة من تحليل المنافسين"
   },
   "severity": {
     "critical": "حرج",
@@ -75,7 +76,11 @@
   "freshness": {
     "fresh": "حديث",
     "stale": "قديم",
-    "unavailable": "غير مُتحقق منه"
+    "unavailable": "غير مُتحقق منه",
+    "partial": "جزئي",
+    "blocked": "محظور",
+    "failed": "فشل",
+    "unknown": "الحداثة غير معروفة"
   },
   "card": {
     "nextStep": "الخطوة التالية",
@@ -84,7 +89,7 @@
     "affectedNone": "على مستوى الموقع",
     "affectedCount_one": "{{count}} من عناوين URL متأثرة",
     "evidence": "الأدلة",
-    "evidenceLabel": "{{source}} · {{date}}",
+    "evidenceLabel": "{{source}} · {{date}} · {{detail}}",
     "evidenceLink": "فتح مصدر الدليل",
     "history": "السجل",
     "retest": "إعادة الفحص",

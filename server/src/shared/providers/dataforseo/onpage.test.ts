@@ -265,6 +265,7 @@ describe('DataForSeoOnPageAuditProvider.getAuditResult', () => {
       robotsTxtFound: true,
       sitemapFound: true,
       httpsEnforced: true,
+      httpsRedirect: true,
       canonicalizationOk: true,
     });
     expect(result.pages).toHaveLength(2);
@@ -295,6 +296,19 @@ describe('DataForSeoOnPageAuditProvider.getAuditResult', () => {
       brokenLinks: ['https://example.com/404'],
       onPageScore: 41.2,
     });
+  });
+
+  it('reads the live redirect check names and preserves a negative verdict', async () => {
+    wireHappyPath();
+    const fixture = readFixture('summary', 'success') as { tasks: Array<{ result: Array<{ domain_info: { checks: Record<string, unknown> } }> }> };
+    const checks = fixture.tasks[0]!.result[0]!.domain_info.checks;
+    delete checks.http_to_https_redirect;
+    delete checks.canonicalization;
+    checks.test_https_redirect = false;
+    checks.test_www_redirect = true;
+    vendorMockServer.use(http.get('*/on_page/summary/*', () => HttpResponse.json(fixture)));
+    const result = await provider.getAuditResult('TASK_ID');
+    expect(result.domainChecks).toMatchObject({ httpsRedirect: false, canonicalizationOk: true });
   });
 
   it('maps word count and question-style headings so thin-content and FAQ checks run (issue #16)', async () => {

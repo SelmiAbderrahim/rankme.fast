@@ -311,8 +311,9 @@ export const AppSearch = () => {
       <SearchCombobox className="hidden max-w-sm flex-1 sm:block" />
       <Dialog open={dialogOpen} onOpenChange={setDialogOpen}>
         <DialogTrigger asChild>
-          <Button variant="ghost" size="icon" className="sm:hidden" aria-label={t('shell.search')}>
+          <Button variant="outline" size="sm" className="sm:hidden" aria-haspopup="dialog">
             <Search aria-hidden="true" />
+            <span className="max-[359px]:sr-only">{t('shell.search')}</span>
           </Button>
         </DialogTrigger>
         <DialogContent className="top-[15%] translate-y-0 gap-3 p-4">

@@ -394,7 +394,7 @@ describe('AddKeywordForm — engine picker', () => {
     await user.click(screen.getByLabelText(/Amazon/));
     await user.type(await screen.findByLabelText('Product ASIN'), 'B0TRACKED1');
     await user.click(screen.getByLabelText(/Google/));
-    await user.type(screen.getByLabelText(/Keyword/i), 'google only phrase');
+    await user.type(screen.getByRole('textbox', { name: /Keyword/i }), 'google only phrase');
     await user.click(screen.getByRole('button', { name: /track/i }));
 
     await waitFor(() => expect(onSubmit).toHaveBeenCalledTimes(1));

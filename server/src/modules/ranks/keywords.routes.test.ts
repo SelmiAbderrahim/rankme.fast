@@ -990,7 +990,64 @@ describe('POST /api/sites/:siteId/keywords', () => {
 });
 
 describe('bulk keyword management', () => {
-  const market = { locationCode: 2840, languageCode: 'en', device: 'desktop' };
+  const market = { locationCode: 2840, languageCode: 'en', device: 'desktop' as const };
+
+  it('returns per-phrase errors without creating a check when every phrase is invalid', async () => {
+    const user = await seedUser('bulk-invalid@x.co');
+    const siteId = await seedSite(user.id);
+    const response = await request(app).post(`/api/sites/${siteId}/keywords/bulk`)
+      .set('Cookie', user.cookie).send({ ...market, phrases: ['   ', 'x'.repeat(301)] });
+    expect(response.status).toBe(200);
+    expect(response.body.counts).toEqual({ added: 0, duplicate: 0, invalid: 2 });
+    expect(response.body.results.map((item: { reason: string }) => item.reason))
+      .toEqual(['empty', 'too_long']);
+    expect(await getTestDb().select().from(keywordsTable)).toHaveLength(0);
+  });
+
+  it('does not schedule a first check when every requested phrase is already tracked', async () => {
+    const user = await seedUser('bulk-existing@x.co');
+    const siteId = await seedSite(user.id);
+    await getTestDb().insert(keywordsTable).values({ accountId: user.id, siteId,
+      phrase: 'existing phrase', ...market });
+    const queue = fakeQueue();
+    setRanksQueue(queue as never);
+    const response = await request(app).post(`/api/sites/${siteId}/keywords/bulk`)
+      .set('Cookie', user.cookie).send({ ...market, phrases: ['existing phrase'] });
+    expect(response.status).toBe(200);
+    expect(response.body.results).toMatchObject([{ status: 'duplicate', reason: 'already_tracked' }]);
+    expect(queue.add).not.toHaveBeenCalled();
+  });
+
+  it('reactivates a removed keyword in bulk and restores its map tracking option', async () => {
+    const user = await seedUser('bulk-reactivate@x.co');
+    const siteId = await seedSite(user.id);
+    const [removed] = await getTestDb().insert(keywordsTable).values({ accountId: user.id,
+      siteId, phrase: 'returning phrase', ...market, active: false }).returning();
+    const response = await request(app).post(`/api/sites/${siteId}/keywords/bulk`)
+      .set('Cookie', user.cookie).send({ ...market, trackLocalPack: true,
+        phrases: ['returning phrase'] });
+    expect(response.status).toBe(200);
+    expect(response.body.results).toMatchObject([{ status: 'added',
+      keyword: { id: removed!.id, active: true, trackLocalPack: true } }]);
+    const rows = await getTestDb().select().from(keywordsTable);
+    expect(rows).toHaveLength(1);
+    expect(rows[0]).toMatchObject({ id: removed!.id, active: true, trackLocalPack: true });
+  });
+
+  it('rejects bulk addition for a disabled alternate engine', async () => {
+    const user = await seedUser('bulk-disabled-engine@x.co');
+    const siteId = await seedSite(user.id);
+    const prior = env.ALT_ENGINE_TRACKING_ENABLED;
+    try {
+      (env as { ALT_ENGINE_TRACKING_ENABLED: boolean }).ALT_ENGINE_TRACKING_ENABLED = false;
+      const response = await request(app).post(`/api/sites/${siteId}/keywords/bulk`)
+        .set('Cookie', user.cookie).send({ ...market, engine: 'bing', phrases: ['one phrase'] });
+      expect(response.status).toBe(404);
+      expect(await getTestDb().select().from(keywordsTable)).toHaveLength(0);
+    } finally {
+      (env as { ALT_ENGINE_TRACKING_ENABLED: boolean }).ALT_ENGINE_TRACKING_ENABLED = prior;
+    }
+  });
 
   it('returns one result per phrase, handles repeats and existing rows, and reads stored phrases', async () => {
     const user = await seedUser('bulk-mixed@x.co');
@@ -1034,6 +1091,22 @@ describe('bulk keyword management', () => {
     expect(q.add).toHaveBeenCalledOnce();
     expect(q.add).toHaveBeenCalledWith(expect.any(String),
       expect.objectContaining({ keywordIds: [] }), expect.anything());
+  });
+
+  it('keeps newly added keywords when the first-check queue is unavailable', async () => {
+    const user = await seedUser('bulk-queue-down@x.co');
+    const siteId = await seedSite(user.id);
+    const queue = fakeQueue();
+    queue.add.mockRejectedValueOnce(new Error('queue unavailable'));
+    setRanksQueue(queue as never);
+    const response = await request(app).post(`/api/sites/${siteId}/keywords/bulk`)
+      .set('Cookie', user.cookie).send({ ...market, trackLocalPack: true,
+        phrases: ['retained keyword'] });
+    expect(response.status).toBe(200);
+    expect(response.body.results).toMatchObject([{ status: 'added' }]);
+    expect((await getTestDb().select().from(keywordsTable)).map((row) =>
+      ({ phrase: row.phrase, trackLocalPack: row.trackLocalPack })))
+      .toEqual([{ phrase: 'retained keyword', trackLocalPack: true }]);
   });
 
   it('returns 404 for another account and rejects an oversized request before writing', async () => {
@@ -1435,6 +1508,29 @@ describe('GET /api/sites/:siteId/keywords', () => {
 });
 
 describe('GET /api/sites/:siteId/keywords — cursor pagination', () => {
+  it('keeps a search filter on subsequent cursor pages', async () => {
+    const user = await seedUser('cursor-search@x.co');
+    const siteId = await seedSite(user.id);
+    await getTestDb().insert(keywordsTable).values([
+      { accountId: user.id, siteId, phrase: 'match third', locationCode: 2840,
+        languageCode: 'en', createdAt: new Date('2026-07-03T00:00:00.000Z') },
+      { accountId: user.id, siteId, phrase: 'other phrase', locationCode: 2840,
+        languageCode: 'en', createdAt: new Date('2026-07-02T00:00:00.000Z') },
+      { accountId: user.id, siteId, phrase: 'match first', locationCode: 2840,
+        languageCode: 'en', createdAt: new Date('2026-07-01T00:00:00.000Z') },
+    ]);
+    const first = await request(app).get(`/api/sites/${siteId}/keywords?search=match&limit=1`)
+      .set('Cookie', user.cookie);
+    expect(first.status).toBe(200);
+    expect(first.body.keywords).toMatchObject([{ phrase: 'match third' }]);
+    const second = await request(app)
+      .get(`/api/sites/${siteId}/keywords?search=match&limit=1&cursor=${first.body.nextCursor}`)
+      .set('Cookie', user.cookie);
+    expect(second.status).toBe(200);
+    expect(second.body.keywords).toMatchObject([{ phrase: 'match first' }]);
+    expect(second.body.nextCursor).toBeNull();
+  });
+
   it('paginates losslessly when keywords share created_at', async () => {
     const user = await seedUser('cursor-same-ts@x.co');
     const siteId = await seedSite(user.id);

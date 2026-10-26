@@ -46,4 +46,31 @@ describe('stored keyword rank state', () => {
     expect(movement.tracked).toBe(2_001);
     expect(movement.notCompared.noPair).toBe(2_001);
   });
+
+  it('filters by engine and IDs, pages rows, and uses all checks for the best-ever baseline', async () => {
+    const db = getTestDb();
+    const siteId = '507f1f77bcf86cd799439011';
+    const [alpha, beta, inactive, video] = await db.insert(keywords).values([
+      { accountId: 'owner', siteId, phrase: 'alpha', engine: 'google', locationCode: 2840, languageCode: 'en' },
+      { accountId: 'owner', siteId, phrase: 'beta', engine: 'google', locationCode: 2840, languageCode: 'en' },
+      { accountId: 'owner', siteId, phrase: 'inactive', engine: 'google', active: false,
+        locationCode: 2840, languageCode: 'en' },
+      { accountId: 'owner', siteId, phrase: 'video', engine: 'youtube', engineTarget: 'channel-id',
+        locationCode: 2840, languageCode: 'en' },
+    ]).returning();
+    await db.insert(rankings).values([
+      { keywordId: alpha!.id, position: 2, checkedAt: new Date('2026-10-01T00:00:00.000Z'), source: 'fresh' },
+      { keywordId: alpha!.id, position: 9, checkedAt: new Date('2026-10-02T00:00:00.000Z'), source: 'fresh' },
+      { keywordId: alpha!.id, position: 5, checkedAt: new Date('2026-10-03T00:00:00.000Z'), source: 'fresh' },
+    ]);
+    const matching = await readKeywordRankStates(db as never, { siteId, engine: 'google',
+      keywordIds: [alpha!.id, inactive!.id, video!.id], baseline: 'best_ever' });
+    expect(matching).toHaveLength(1);
+    expect(matching[0]!.rankState).toMatchObject({ state: 'declined', baselinePosition: 2, change: 3 });
+    const previous = await readKeywordRankStates(db as never, { siteId, keywordIds: [alpha!.id] });
+    expect(previous[0]!.rankState).toMatchObject({ state: 'improved', baselinePosition: 9, change: 4 });
+    const page = await readKeywordRankStates(db as never, { siteId, engine: 'google', limit: 1, offset: 1 });
+    expect(page.map((row) => row.keywordId)).toEqual([beta!.id]);
+    expect(await readKeywordRankStates(db as never, { siteId, engine: 'google', offset: 3 })).toEqual([]);
+  });
 });

@@ -438,7 +438,8 @@
       "dismiss": "Ocultar el aviso de beta"
     },
     "badge": "Versión beta",
-    "badgeName": "{{brand}}, beta pública"
+    "badgeName": "{{brand}}, beta pública",
+    "stage": { "beta": "beta", "ga": "estable" }
   },
   "feedback": {
     "reportBug": "Informar de un error",

@@ -1,10 +1,12 @@
-import { afterAll, beforeAll, beforeEach, describe, expect, it } from 'vitest';
+import { afterAll, beforeAll, beforeEach, describe, expect, it, vi } from 'vitest';
 import request from 'supertest';
 import { createApp } from '../../app.js';
 import { clearCollections, startMemoryMongo, stopMemoryMongo } from '../../shared/testing/mongo.js';
 import { startTestPostgres, stopTestPostgres, truncateAllTables } from '../../shared/testing/postgres.js';
 import { installTestAuth, signupVerifiedUser, uninstallTestAuth } from '../../shared/testing/auth.js';
 import { User } from './users.model.js';
+import { dismissTwoFactorRecommendation, getTwoFactorRecommendationDismissedAt } from './users.service.js';
+import { Types } from 'mongoose';
 
 const app = createApp();
 const path = '/api/users/preferences/two-factor-recommendation';
@@ -52,5 +54,24 @@ describe('two-factor recommendation dismissal', () => {
     const caller = await signupVerifiedUser(app, { email: 'recommendation-header-caller@example.test' });
     await request(app).put(path).set('Cookie', caller.cookie).set('x-workspace-id', owner.id);
     expect((await User.findById(owner.id).lean())?.twoFactorRecommendationDismissedAt ?? null).toBeNull();
+  });
+
+  it('returns not found when the preference owner has been removed', async () => {
+    const missingId = new Types.ObjectId().toString();
+    await expect(getTwoFactorRecommendationDismissedAt(missingId)).rejects.toMatchObject({ status: 404 });
+    await expect(dismissTwoFactorRecommendation(missingId)).rejects.toMatchObject({ status: 404 });
+  });
+
+  it('does not report a dismissal if the conditional update did not persist it', async () => {
+    const user = await signupVerifiedUser(app, { email: 'recommendation-write-race@example.test' });
+    const update = vi.spyOn(User, 'findOneAndUpdate').mockReturnValueOnce({
+      select: () => ({ lean: async () => null }),
+    } as never);
+    try {
+      await expect(dismissTwoFactorRecommendation(user.id)).rejects.toMatchObject({ status: 404 });
+      expect((await User.findById(user.id).lean())?.twoFactorRecommendationDismissedAt ?? null).toBeNull();
+    } finally {
+      update.mockRestore();
+    }
   });
 });

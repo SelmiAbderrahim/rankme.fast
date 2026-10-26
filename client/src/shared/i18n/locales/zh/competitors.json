@@ -66,6 +66,8 @@
       "manualInvalid": "请输入公开网站，例如 competitor.com 或 https://competitor.com。",
       "ownDomain": "这是您自己站点的域名。请添加其他网站作为竞争对手。",
       "add": "添加竞争对手",
+      "addDisabledEmpty": "请先输入竞争对手的网站地址。",
+      "addDisabledFull": "您的组合中已有 {{max}} 个活跃竞争对手。请先归档一个，再添加新的。",
       "adding": "添加竞争对手...",
       "confirmed": "竞争对手确认。",
       "duplicate": "该竞争对手已经在产品组合中。",

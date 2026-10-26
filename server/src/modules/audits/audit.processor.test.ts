@@ -33,7 +33,7 @@ import {
   selectPageSpeedSampleUrls,
   urlPathDepth,
 } from './index.js';
-import { applyHostRedirect, applySiteProbe } from './audit.processor.js';
+import { applyHostRedirect, applySiteProbe, applyStructuredDataProbe } from './audit.processor.js';
 import { RESOURCE_SCAN_MAX_PAGES } from './audits.schema.js';
 
 const logger = pino({ level: 'silent' });
@@ -632,7 +632,25 @@ describe('audit processor — page persistence and PageSpeed sampling', () => {
     expect(snap!.findings.length).toBeGreaterThan(0);
   });
 
-  describe('JSON-LD structured-data probe (issue #2)', () => {
+  describe('JSON-LD structured-data probe', () => {
+    it('credits FAQPage markup as a FAQ signal on the same probe result', async () => {
+      const page = { ...FAKE_AUDIT_RESULT.pages[0]!, hasStructuredData: false, hasFaqSignals: false };
+      const found = Object.assign(new Set([page.url]), { faqUrls: new Set([page.url]) });
+      const result = await applyStructuredDataProbe({ ...FAKE_AUDIT_RESULT, pages: [page] }, {
+        probeStructuredData: async () => found,
+        logger,
+      });
+      expect(result.pages[0]).toMatchObject({ hasStructuredData: true, hasFaqSignals: true });
+    });
+    it('adds an FAQ signal without claiming generic structured data for an unmatched page', async () => {
+      const page = { ...FAKE_AUDIT_RESULT.pages[0]!, hasStructuredData: false, hasFaqSignals: false };
+      const found = Object.assign(new Set<string>(), { faqUrls: new Set([page.url]) });
+      const result = await applyStructuredDataProbe({ ...FAKE_AUDIT_RESULT, pages: [page] }, {
+        probeStructuredData: async () => found,
+        logger,
+      });
+      expect(result.pages[0]).toMatchObject({ hasStructuredData: false, hasFaqSignals: true });
+    });
     const jsonLdResult = {
       ...FAKE_AUDIT_RESULT,
       pages: [

@@ -3,6 +3,7 @@
  * card and the drill-in detail panel. All values render `tabular-nums` and
  * `dir="ltr"` at the call sites so RTL locales keep numerics pinned.
  */
+import { formatAbsoluteDate } from '@shared/lib/datetime';
 
 export const formatInt = (locale: string, n: number): string =>
   new Intl.NumberFormat(locale).format(n);
@@ -17,7 +18,7 @@ export const formatPosition = (locale: string, n: number): string =>
   n < 1 ? '—' : new Intl.NumberFormat(locale, { maximumFractionDigits: 1 }).format(n);
 
 export const formatDate = (locale: string, iso: string): string =>
-  new Intl.DateTimeFormat(locale, { dateStyle: 'medium' }).format(new Date(iso));
+  formatAbsoluteDate(iso, locale);
 
 export const formatDay = (locale: string, isoDay: string): string =>
   new Intl.DateTimeFormat(locale, { dateStyle: 'medium', timeZone: 'UTC' })

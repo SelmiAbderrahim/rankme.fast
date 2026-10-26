@@ -306,7 +306,6 @@ export interface ToxicityRunSummary {
   sourceKind: 'provider_observation';
   retainedCount: number;
   bulkDomainCount: number;
-  refunded: boolean;
   providerStatus: ToxicityProviderStatus;
   aiStatus: ToxicityAiStatus;
   failureKind: 'provider_failed' | 'ceiling_halted' | null;

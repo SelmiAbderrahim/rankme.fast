@@ -220,6 +220,7 @@ describe('KeywordLiveTrendsPage', () => {
     renderInRouter(<KeywordLiveTrendsPage />);
     expect(screen.getByTestId('keyword-live-trends-page')).toBeInTheDocument();
     expect(screen.getByTestId('live-trends-view')).toBeInTheDocument();
+    expect(screen.getAllByText(en.liveTrends.description)).toHaveLength(1);
   });
 });
 

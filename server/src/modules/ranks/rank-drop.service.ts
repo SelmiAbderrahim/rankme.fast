@@ -33,7 +33,8 @@ export function detectRankDrop(previous: number | null, current: number | null):
     if (movement.kind !== 'declined' || previous === null || current === null) return false;
     if (previous <= RANK_DROP_TOP_BUCKET && current > RANK_DROP_TOP_BUCKET)
         return true;
-    return (movement.amount ?? 0) >= RANK_DROP_MIN_DELTA;
+    // A declined movement always has a numeric delta from the rank classifier.
+    return movement.amount! >= RANK_DROP_MIN_DELTA;
 }
 export interface RankDropEvent {
     accountId: string;

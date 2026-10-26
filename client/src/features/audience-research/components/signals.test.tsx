@@ -222,7 +222,7 @@ describe('SignalCard', () => {
       'High confidence',
     );
     expect(screen.getByTestId('signal-rationale-sig-1')).toHaveTextContent(
-      'Independent domains: 3; source types: 2; most recent source 2026-06-01.',
+      'Independent domains: 3; source types: 2; most recent source Jun 1, 2026.',
     );
     expect(screen.getByTestId('signal-citation-count-sig-1')).toHaveTextContent(
       '1 cited source',
@@ -477,6 +477,8 @@ describe('SignalEvidenceDrawer', () => {
     expect(link.rel).toBe('nofollow ugc noopener noreferrer');
     expect(link.target).toBe('_blank');
     expect(within(drawer).getByTestId('evidence-meta-freshness')).toBeInTheDocument();
+    expect(drawer).toHaveTextContent('Jun 1, 2026');
+    expect(drawer).not.toHaveTextContent('2026-06-01');
   });
 
   it('renders a missing-source row when a cited id is not in the sources list', () => {

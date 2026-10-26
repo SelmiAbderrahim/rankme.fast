@@ -168,6 +168,25 @@ function describeAddress(raw: string | null): string {
 export function summaryEvidenceFor(finding: StoredSummaryFinding): string[] {
     if (finding.ruleId !== 'https-canonicalization')
         return [];
+    const addressVariants = finding.meta?.addressVariants;
+    if (Array.isArray(addressVariants)) {
+        const valid = addressVariants.filter((value): value is { url: string; status: number | null; finalUrl: string | null; ok: boolean | null } =>
+            typeof value === 'object' && value !== null && typeof value.url === 'string' &&
+            (typeof value.status === 'number' || value.status === null) &&
+            (typeof value.finalUrl === 'string' || value.finalUrl === null) &&
+            (typeof value.ok === 'boolean' || value.ok === null));
+        const canonical = valid.find((variant) => variant.ok === true)?.finalUrl ?? null;
+        return valid.filter((variant) => variant.ok === false).slice(0, MAX_SUMMARY_EVIDENCE_LINES).map((variant) => {
+            let requested = 'the address';
+            try {
+                const url = new URL(variant.url);
+                requested = `the ${url.protocol.replace(':', '')} ${url.hostname.startsWith('www.') ? 'www' : 'non-www'} address`;
+            } catch { /* Stored evidence can contain an unreadable URL. */ }
+            const status = variant.status === null ? 'no status' : `status ${variant.status}`;
+            const expected = canonical ? ` instead of ${describeAddress(canonical)}` : '';
+            return `${requested} answers with ${status} and ends on ${describeAddress(variant.finalUrl)}${expected}`;
+        });
+    }
     const evidence = readHostVariants(finding.meta);
     if (!evidence)
         return [];

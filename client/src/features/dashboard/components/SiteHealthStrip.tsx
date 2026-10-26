@@ -14,6 +14,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@shar
 import { Skeleton } from '@shared/ui/skeleton';
 import { DeltaPill } from '@shared/ui/delta-pill';
 import { StatusChip } from '@shared/ui/status-chip';
+import { TAP_TARGET_LINK } from '@shared/ui/tap-target';
 import { loadSiteHealth } from '../store/thunks';
 import { selectSiteHealth, selectSiteHealthError, selectSiteHealthLoadedAt, selectSiteHealthLoading } from '../store/selectors';
 import type { SiteHealthRow } from '../types';
@@ -47,7 +48,7 @@ export function HealthRow({ row }: { row: SiteHealthRow }) {
     rank.state === 'stale' ? { source: 'rank', asOf: rank.asOf } : null,
   ].filter((entry): entry is { source: string; asOf: string } => entry !== null);
   return <li className="rounded-xl border p-4" data-testid={`site-health-row-${row.id}`}>
-    <h3 className="mb-3 font-semibold"><Link to={base} className="hover:underline"><Bdi>{name}</Bdi></Link></h3>
+    <h3 className="mb-3 font-semibold"><Link to={base} className={`hover:underline ${TAP_TARGET_LINK}`}><Bdi>{name}</Bdi></Link></h3>
     {name !== row.domain ? <p className="mb-3 text-sm text-muted-foreground"><Bdi>{row.domain}</Bdi></p> : null}
     {staleSources.length > 0 ? <div role="group" aria-label={t('dashboard.health.stale')} className="mb-3 flex flex-wrap gap-1.5">
       {staleSources.map((entry) => <StatusChip key={entry.source} tone="warning"
@@ -63,7 +64,7 @@ export function HealthRow({ row }: { row: SiteHealthRow }) {
           : <><OpenIssuesChip metric={fixNow} />
             {fixNow.state === 'stale' ? <span className="ms-2 text-muted-foreground">{t('dashboard.health.asOf', { date: date(fixNow.asOf) })}</span> : null}</>}
         </dd>
-        <dd><Link to={`${base}?tab=actions`} className="text-xs underline">{t('dashboard.health.open.actions')}<span className="sr-only"> — <Bdi>{name}</Bdi></span></Link></dd>
+        <dd><Link to={`${base}?tab=actions`} className={`text-xs underline ${TAP_TARGET_LINK}`}>{t('dashboard.health.open.actions')}<span className="sr-only"> — <Bdi>{name}</Bdi></span></Link></dd>
       </div>
       <div><dt className="text-xs font-medium text-muted-foreground">{t('dashboard.health.columns.lastAudit')}</dt>
         <dd className="mt-1 text-sm">{audit.state === 'unavailable' ? t('dashboard.health.lastAudit.never')
@@ -71,7 +72,7 @@ export function HealthRow({ row }: { row: SiteHealthRow }) {
             <span className="block text-xs text-muted-foreground">{date(audit.finishedAt)}</span>
             {audit.status !== 'succeeded' ? <span className="block">{t(`dashboard.health.lastAudit.status.${audit.status}`)}</span> : null}
             {audit.state === 'stale' ? <span className="block text-xs text-muted-foreground">{t('dashboard.health.stale')}</span> : null}</>}</dd>
-        <dd><Link to={`${base}?tab=report`} className="text-xs underline">{t('dashboard.health.open.report')}<span className="sr-only"> — <Bdi>{name}</Bdi></span></Link></dd>
+        <dd><Link to={`${base}?tab=report`} className={`text-xs underline ${TAP_TARGET_LINK}`}>{t('dashboard.health.open.report')}<span className="sr-only"> — <Bdi>{name}</Bdi></span></Link></dd>
       </div>
       <div><dt className="text-xs font-medium text-muted-foreground">{t('dashboard.health.columns.search')}</dt>
         <dd className="mt-1 text-sm">{search.state === 'unavailable'
@@ -85,7 +86,7 @@ export function HealthRow({ row }: { row: SiteHealthRow }) {
                   <span className="sr-only">{t('dashboard.health.search.impressionsDelta')}</span></> : null}</span>
               <span className="block text-xs text-muted-foreground">{t(previousSearch ? 'dashboard.health.search.through' : 'dashboard.health.search.noPrevious', { date: date(search.asOf) })}</span>
               {search.state === 'stale' ? <span className="text-muted-foreground">{t('dashboard.health.stale')}</span> : null}</>}</dd>
-        <dd><Link to={`${base}?tab=google`} className="text-xs underline">{t('dashboard.health.open.google')}<span className="sr-only"> — <Bdi>{name}</Bdi></span></Link></dd>
+        <dd><Link to={`${base}?tab=google`} className={`text-xs underline ${TAP_TARGET_LINK}`}>{t('dashboard.health.open.google')}<span className="sr-only"> — <Bdi>{name}</Bdi></span></Link></dd>
       </div>
       <div><dt className="text-xs font-medium text-muted-foreground">{t('dashboard.health.columns.keywords')}</dt>
         <dd className="mt-1 text-sm">{rank.state === 'unavailable' ? t(`dashboard.health.rank.unavailable.${rank.reason}`)
@@ -94,7 +95,7 @@ export function HealthRow({ row }: { row: SiteHealthRow }) {
             {rankExcluded.length > 0 ? <span className="block text-xs text-muted-foreground">{t('dashboard.health.rank.notCompared.lead', { parts: new Intl.ListFormat(i18n.language, { type: 'conjunction' }).format(rankExcluded) })}</span> : null}
             <span className="block text-xs text-muted-foreground">{t('dashboard.health.rank.lastCheck', { when: formatRelativeDate(rank.asOf, i18n.language) })}</span>
             {rank.state === 'stale' ? <span className="block text-xs text-muted-foreground">{t('dashboard.health.stale')}</span> : null}</>}</dd>
-        <dd><Link to={`${base}?tab=keywords`} className="text-xs underline">{t('dashboard.health.open.keywords')}<span className="sr-only"> — <Bdi>{name}</Bdi></span></Link></dd>
+        <dd><Link to={`${base}?tab=keywords`} className={`text-xs underline ${TAP_TARGET_LINK}`}>{t('dashboard.health.open.keywords')}<span className="sr-only"> — <Bdi>{name}</Bdi></span></Link></dd>
       </div>
     </dl>
   </li>;

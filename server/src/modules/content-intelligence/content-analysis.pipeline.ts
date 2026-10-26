@@ -283,8 +283,7 @@ export async function runOwnedStage(ctx: StageContext, deps: PipelineDeps): Prom
                 ok: false,
                 code: 'owned_page_unusable',
                 reason: 'no usable content',
-                ...(refined.failureReason ? { failureReason: refined.failureReason } : {}),
-                ...(refined.httpStatus === undefined ? {} : { httpStatus: refined.httpStatus }),
+                ...refined,
                 ...(evidence ? { fetchEvidence: evidence } : {}),
             };
         }

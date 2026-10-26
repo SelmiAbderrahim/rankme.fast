@@ -106,6 +106,9 @@ export async function checkSiteNow(input: { accountId: string; siteId: string; i
 
 export async function checkKeywordNow(input: { accountId: string; keywordId: string; idempotencyKey: string | null },
   deps: { db: Db; ranksQueue: Queue | null }): Promise<RankCheckResult> {
+  if (!UUID_RE.test(input.keywordId)) throw HttpError.notFound({
+    code: 'RANKS_ERRORS_KEYWORD_NOT_FOUND', messageKey: 'ranks.errors.keywordNotFound',
+  });
   const [keyword] = await deps.db.select().from(keywords).where(and(eq(keywords.id, input.keywordId),
     eq(keywords.accountId, input.accountId), eq(keywords.active, true))).limit(1);
   if (!keyword) throw HttpError.notFound({ code: 'RANKS_ERRORS_KEYWORD_NOT_FOUND', messageKey: 'ranks.errors.keywordNotFound' });

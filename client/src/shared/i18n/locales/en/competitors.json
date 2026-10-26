@@ -66,6 +66,8 @@
       "manualInvalid": "Enter a public website such as competitor.com or https://competitor.com.",
       "ownDomain": "That is your own site's domain. Add a different website as a competitor.",
       "add": "Add competitor",
+      "addDisabledEmpty": "Enter a competitor's website address first.",
+      "addDisabledFull": "Your portfolio already has {{max}} active competitors. Archive one to add another.",
       "adding": "Adding competitor…",
       "confirmed": "Competitor confirmed.",
       "duplicate": "That competitor is already in the portfolio.",

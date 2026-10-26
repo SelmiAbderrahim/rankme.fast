@@ -34,6 +34,10 @@ beforeEach(async () => {
 });
 
 describe('SiteWorkspaceNavigation', () => {
+  it('names the active Content destination as Content analyses', () => {
+    renderNavigation('content');
+    expect(screen.getByTestId('site-nav-group-content')).toHaveAccessibleName('Content · Content analyses');
+  });
   it('shows Overview directly and identifies the active desktop group and destination', async () => {
     const user = userEvent.setup();
     const { onTabChange } = renderNavigation('keywords');
@@ -131,7 +135,7 @@ describe('SiteWorkspaceNavigation', () => {
 
     expect(document.documentElement.dir).toBe('rtl');
     expect(screen.getByTestId('site-navigation')).toHaveAccessibleName('عرض مساحة العمل');
-    expect(screen.getByTestId('site-nav-group-content')).toHaveAccessibleName('المحتوى · المحتوى');
+    expect(screen.getByTestId('site-nav-group-content')).toHaveAccessibleName('المحتوى · تحليلات المحتوى');
   });
 });
 

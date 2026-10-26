@@ -57,7 +57,8 @@
   "longTailResearch": {
     "title": "Need more specific keyword ideas?",
     "description": "Enter exactly one Google keyword of 80 characters or fewer. Keyword Research opens with the phrase and market prefilled, but it will not run a lookup automatically.",
-    "cta": "Research long-tail keywords"
+    "cta": "Research long-tail keywords",
+    "disabledReason": "Enter one keyword above to open Keyword Research with it."
   },
   "addLocationLabel": "Location",
   "addLanguageLabel": "Language",

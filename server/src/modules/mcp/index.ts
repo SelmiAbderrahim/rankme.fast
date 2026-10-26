@@ -10,6 +10,7 @@
 // import-free leaf guarantees `MCP_TOOL_NAMES` is initialized whenever a cycle
 // re-enters, whatever module the process loads first.
 export { MCP_TOOL_NAMES, type McpToolName } from './mcp.tool-names.js';
+export { READ_RANGES, READ_RANGE_DEFAULT, type ReadRange } from './mcp.read-ranges.js';
 export { MCP_TOOL_REGISTRY, resolveMcpToolDefinition, type McpToolDefinition, type McpToolDescriptionKey, } from './mcp.registry.js';
 export { mcpRouter } from './mcp.routes.js';
 export { mcpMethodNotAllowedHandler, mcpPostHandler, MCP_INPUT_SCHEMAS, } from './mcp.controller.js';

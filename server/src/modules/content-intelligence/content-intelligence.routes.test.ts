@@ -649,6 +649,14 @@ describe('content-intelligence service defensive paths', () => {
       }),
     ).resolves.toEqual({ ok: false, reason: 'not_owned' });
 
+    await expect(
+      preflightAnalysis({
+        accountId: new Types.ObjectId().toString(),
+        siteId: new Types.ObjectId().toString(),
+        ownedUrl: 'https://example.com/pillar', keyword: 'seo', locale: 'en',
+      }),
+    ).resolves.toEqual({ ok: false, reason: 'not_owned' });
+
     vi.spyOn(Site, 'findOne').mockResolvedValueOnce({ url: 'http://127.0.0.1' } as never);
     await expect(
       preflightAnalysis({
@@ -1230,6 +1238,8 @@ describe('GET / cancel / regenerate / list', () => {
             terminal: true,
             reason: 'http_error',
             httpStatus: 403,
+            finalUrl: 'https://example.com/login',
+            redirectChain: [{ url: 'https://example.com/', status: 302 }],
           },
         },
       },
@@ -1245,8 +1255,8 @@ describe('GET / cancel / regenerate / list', () => {
       terminal: true,
       reason: 'http_error',
       httpStatus: 403,
-      finalUrl: null,
-      redirectChain: [],
+      finalUrl: 'https://example.com/login',
+      redirectChain: [{ url: 'https://example.com/', status: 302 }],
       contentType: null,
     });
 

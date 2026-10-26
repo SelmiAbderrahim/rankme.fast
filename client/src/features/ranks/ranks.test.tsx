@@ -2282,6 +2282,7 @@ describe('component units', () => {
     );
     expect(screen.getByTestId('keyword-card-k1')).toBeInTheDocument();
     expect(screen.getByTestId('keyword-card-k2')).toBeInTheDocument();
+    expect(within(screen.getByTestId('keyword-card-k1')).getByRole('button', { name: 'phrase-k1' })).toHaveClass('max-md:min-h-11');
     // Down delta with magnitude > 1 renders plural copy for a11y.
     const decreaseLabel = screen.getAllByLabelText('Down 3 positions');
     expect(decreaseLabel.length).toBeGreaterThan(0);

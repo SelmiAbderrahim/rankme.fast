@@ -1,4 +1,5 @@
-import { afterAll, beforeAll, beforeEach, describe, expect, it } from 'vitest';
+import { afterAll, beforeAll, beforeEach, describe, expect, it, vi } from 'vitest';
+import { Types } from 'mongoose';
 import request from 'supertest';
 import { createApp } from '../../app.js';
 import { clearCollections, startMemoryMongo, stopMemoryMongo } from '../../shared/testing/mongo.js';
@@ -8,7 +9,7 @@ import { keywords, rankings } from '../../db/schema/keywords.js';
 import { gscSearchAnalytics } from '../../db/schema/gsc.js';
 import { setRanksDb } from '../ranks/ranks.queue-holder.js';
 import { Site } from '../sites/sites.model.js';
-import { getSiteHealth } from './dashboard.service.js';
+import { getSiteHealth, getSiteSummaries } from './dashboard.service.js';
 import { GoogleConnection } from '../google-connections/google-connection.model.js';
 import { AuditRun, ReportSnapshot, FindingDismissal } from '../audits/index.js';
 import { appendActionEvent, hashActionId } from '../actions/index.js';
@@ -35,6 +36,24 @@ beforeEach(async () => {
 });
 
 describe('dashboard site summaries', () => {
+  it('returns no summaries for invalid, unauthorized, and missing site ids', async () => {
+    const owner = await signupVerifiedUser(app, { email: 'dashboard-empty@example.com' });
+    const missing = new Types.ObjectId().toString();
+    expect(await getSiteSummaries({ accountId: owner.id, allowedSiteIds: [missing], siteIds: ['bad-id'] }, getTestDb() as never))
+      .toEqual({ summaries: [] });
+    expect(await getSiteSummaries({ accountId: owner.id, allowedSiteIds: null, siteIds: [missing] }, getTestDb() as never))
+      .toEqual({ summaries: [] });
+  });
+
+  it('shows a missing report after a successful audit', async () => {
+    const owner = await signupVerifiedUser(app, { email: 'dashboard-missing-report@example.com' });
+    const site = await Site.create({ accountId: owner.id, url: 'https://no-report.example.com', domain: 'no-report.example.com' });
+    await AuditRun.create({ accountId: owner.id, siteId: site.id, pageCap: 100,
+      status: 'succeeded', finishedAt: new Date() });
+    const response = await request(app).get(`/api/dashboard/site-summaries?ids=${site.id}`).set('Cookie', owner.cookie);
+    expect(response.status).toBe(200);
+    expect(response.body.summaries[0].openFixNow).toEqual({ state: 'unavailable', reason: 'report_missing' });
+  });
   it('requires a verified session and returns only owned site ids', async () => {
     const owner = await signupVerifiedUser(app, { email: 'dashboard-owner@example.com' });
     const other = await signupVerifiedUser(app, { email: 'dashboard-other@example.com' });
@@ -75,6 +94,23 @@ describe('dashboard site summaries', () => {
     expect(response.status).toBe(200);
     expect(response.body.summaries[0].lastAudit).toMatchObject({ status: 'failed' });
     expect(response.body.summaries[0].openFixNow).toMatchObject({ count: 1 });
+  });
+
+  it('keeps the newest audit when grouped statuses arrive newest first', async () => {
+    const owner = await signupVerifiedUser(app, { email: 'dashboard-audit-order@example.com' });
+    const site = await Site.create({ accountId: owner.id, url: 'https://audit-order.example.com', domain: 'audit-order.example.com' });
+    const olderId = new Types.ObjectId('000000000000000000000001');
+    const newerId = new Types.ObjectId('000000000000000000000002');
+    const aggregate = vi.spyOn(AuditRun, 'aggregate').mockResolvedValueOnce([
+      { _id: { siteId: site._id, status: 'failed' }, runId: newerId, finishedAt: new Date('2026-10-26T12:00:00Z') },
+      { _id: { siteId: site._id, status: 'succeeded' }, runId: olderId, finishedAt: new Date('2026-10-25T12:00:00Z') },
+    ] as never);
+    try {
+      const result = await getSiteSummaries({ accountId: owner.id, allowedSiteIds: null, siteIds: [String(site.id)] }, getTestDb() as never);
+      expect(result.summaries[0]?.lastAudit).toMatchObject({ status: 'failed' });
+    } finally {
+      aggregate.mockRestore();
+    }
   });
 });
 
@@ -130,6 +166,62 @@ describe('dashboard open Fix-now count follows the owner\'s decisions', () => {
 });
 
 describe('dashboard site health', () => {
+  it('keeps an owned summary when its Google readiness read races with removal', async () => {
+    const owner = await signupVerifiedUser(app, { email: 'health-readiness-race@example.com' });
+    const site = await Site.create({ accountId: owner.id, url: 'https://readiness-race.example.com',
+      domain: 'readiness-race.example.com' });
+    const actualFind = Site.find.bind(Site);
+    const find = vi.spyOn(Site, 'find').mockImplementation(((filter: unknown, projection?: unknown) => {
+      if (!projection && typeof filter === 'object' && filter !== null && '_id' in filter) {
+        return actualFind({ ...filter, accountId: new Types.ObjectId() } as never);
+      }
+      return actualFind(filter as never, projection as never);
+    }) as never);
+    try {
+      const health = await getSiteHealth({ accountId: owner.id, allowedSiteIds: null }, getTestDb() as never);
+      expect(health.sites).toEqual([expect.objectContaining({ id: String(site._id),
+        searchTrend: { state: 'unavailable', reason: 'not_connected' } })]);
+    }
+    finally {
+      find.mockRestore();
+    }
+  });
+
+  it('returns paused sites with missing legacy display fields when no active site remains', async () => {
+    const owner = await signupVerifiedUser(app, { email: 'health-paused-legacy@example.com' });
+    const site = await Site.create({ accountId: owner.id, url: 'https://paused-legacy.example.com',
+      domain: 'paused-legacy.example.com', paused: true });
+    await Site.collection.updateOne({ _id: site._id }, { $unset: { displayName: '', pausedAt: '' } });
+    const response = await request(app).get('/api/dashboard/site-health').set('Cookie', owner.cookie);
+    expect(response.status).toBe(200);
+    expect(response.body).toMatchObject({ activeSites: 0, pausedSites: 1, sites: [],
+      pausedList: [{ id: String(site._id), displayName: '', pausedAt: null }] });
+  });
+
+  it('renders a legacy active site without a display name', async () => {
+    const owner = await signupVerifiedUser(app, { email: 'health-active-legacy@example.com' });
+    const site = await Site.create({ accountId: owner.id, url: 'https://active-legacy.example.com',
+      domain: 'active-legacy.example.com' });
+    await Site.collection.updateOne({ _id: site._id }, { $unset: { displayName: '' } });
+    const response = await request(app).get('/api/dashboard/site-health').set('Cookie', owner.cookie);
+    expect(response.status).toBe(200);
+    expect(response.body.sites[0]).toMatchObject({ id: String(site._id), displayName: '' });
+  });
+
+  it('reports no checks and a single check separately for tracked keywords', async () => {
+    const owner = await signupVerifiedUser(app, { email: 'health-first-rank@example.com' });
+    const site = await Site.create({ accountId: owner.id, url: 'https://first-rank.example.com', domain: 'first-rank.example.com' });
+    const [keyword] = await getTestDb().insert(keywords).values({ accountId: owner.id, siteId: String(site.id),
+      phrase: 'first check', locationCode: 2840, languageCode: 'en' }).returning({ id: keywords.id });
+    const path = '/api/dashboard/site-health';
+    expect((await request(app).get(path).set('Cookie', owner.cookie)).body.sites[0].rankMovement)
+      .toEqual({ state: 'unavailable', reason: 'no_checks', tracked: 1 });
+    await getTestDb().insert(rankings).values({ keywordId: keyword!.id,
+      checkedAt: new Date('2026-10-24T00:00:00Z'), position: 8, source: 'fresh' });
+    expect((await request(app).get(path).set('Cookie', owner.cookie)).body.sites[0].rankMovement)
+      .toEqual({ state: 'unavailable', reason: 'single_check', tracked: 1 });
+  });
+
   it('counts only visible owned sites and excludes paused metrics', async () => {
     const owner = await signupVerifiedUser(app, { email: 'health-owner@example.com' });
     const other = await signupVerifiedUser(app, { email: 'health-other@example.com' });
@@ -189,6 +281,50 @@ describe('dashboard site health', () => {
     expect(response.status).toBe(200);
     expect(response.body.sites[0].searchTrend).toMatchObject({ clicks: 12, impressions: 40,
       previousClicks: 3, previousImpressions: 20, asOf: '2026-10-22', source: 'query' });
+  });
+
+  it('shows no stored search data, then current query data without a prior window', async () => {
+    const owner = await signupVerifiedUser(app, { email: 'health-gsc-first@example.com' });
+    const site = await Site.create({ accountId: owner.id, url: 'https://first-gsc.example.com',
+      domain: 'first-gsc.example.com', gscPropertyUrl: 'sc-domain:first-gsc.example.com' });
+    await GoogleConnection.create({ accountId: owner.id, googleAccountEmail: 'health-gsc-first@example.com',
+      encryptedRefreshToken: { ciphertext: 'x', iv: 'x', authTag: 'x', keyVersion: 1 },
+      scopes: ['https://www.googleapis.com/auth/webmasters.readonly'], status: 'connected', connectedAt: new Date() });
+    const path = '/api/dashboard/site-health';
+    expect((await request(app).get(path).set('Cookie', owner.cookie)).body.sites[0].searchTrend)
+      .toEqual({ state: 'unavailable', reason: 'no_data_yet' });
+    await getTestDb().insert(gscSearchAnalytics).values({ accountId: owner.id, siteId: String(site.id),
+      bindingGenerationId: 'legacy', snapshotDate: '2026-10-22', dimensionSet: 'query',
+      dimensionKey: 'first', clicks: 2, impressions: 20, ctr: 0.1, position: 5 });
+    expect((await request(app).get(path).set('Cookie', owner.cookie)).body.sites[0].searchTrend)
+      .toMatchObject({ source: 'query', clicks: 2, impressions: 20,
+        previousClicks: null, previousImpressions: null });
+  });
+
+  it('marks search data unavailable when the stored Google credential needs reconnecting', async () => {
+    const owner = await signupVerifiedUser(app, { email: 'health-gsc-reconnect@example.com' });
+    await Site.create({ accountId: owner.id, url: 'https://reconnect.example.com',
+      domain: 'reconnect.example.com', gscPropertyUrl: 'sc-domain:reconnect.example.com' });
+    await GoogleConnection.create({ accountId: owner.id, googleAccountEmail: 'health-gsc-reconnect@example.com',
+      encryptedRefreshToken: { ciphertext: 'x', iv: 'x', authTag: 'x', keyVersion: 1 },
+      scopes: ['https://www.googleapis.com/auth/webmasters.readonly'], status: 'needs_reconnect', connectedAt: new Date() });
+    expect((await request(app).get('/api/dashboard/site-health').set('Cookie', owner.cookie)).body.sites[0].searchTrend)
+      .toEqual({ state: 'unavailable', reason: 'reconnect_needed' });
+  });
+
+  it('reports current daily totals without a previous daily window', async () => {
+    const owner = await signupVerifiedUser(app, { email: 'health-gsc-daily-first@example.com' });
+    const site = await Site.create({ accountId: owner.id, url: 'https://first-daily.example.com',
+      domain: 'first-daily.example.com', gscPropertyUrl: 'sc-domain:first-daily.example.com' });
+    await GoogleConnection.create({ accountId: owner.id, googleAccountEmail: 'health-gsc-daily-first@example.com',
+      encryptedRefreshToken: { ciphertext: 'x', iv: 'x', authTag: 'x', keyVersion: 1 },
+      scopes: ['https://www.googleapis.com/auth/webmasters.readonly'], status: 'connected', connectedAt: new Date() });
+    await getTestDb().insert(gscSearchAnalytics).values({ accountId: owner.id, siteId: String(site.id),
+      bindingGenerationId: 'legacy', snapshotDate: '2026-10-22', windowDays: 90,
+      dimensionSet: 'date', dimensionKey: '2026-10-22', clicks: 4, impressions: 40, ctr: 0.1, position: 4 });
+    expect((await request(app).get('/api/dashboard/site-health').set('Cookie', owner.cookie)).body.sites[0].searchTrend)
+      .toMatchObject({ source: 'date', clicks: 4, impressions: 40,
+        previousClicks: null, previousImpressions: null });
   });
 
   it('compares only the newest two stored rank checks per keyword', async () => {

@@ -372,7 +372,7 @@ export function createGoogleConnectionsController(deps: GoogleConnectionsControl
             throw new HttpError(503, { code: 'GOOGLE_ANALYTICS_REFRESH_FAILED', messageKey: 'google.analyticsRefreshFailed' });
         }
         const summary = await getAnalyticsSummaryFor(accountId, siteId, range,
-            buildGa4ReadDeps(db, site.ga4BindingGenerationId ?? 'legacy', sync.syncedAt ?? site.ga4LastSyncedAt));
+            buildGa4ReadDeps(db, site.ga4BindingGenerationId ?? 'legacy', sync.syncedAt));
         res.status(200).json({ summary });
     });
     return {

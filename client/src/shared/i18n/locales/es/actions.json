@@ -49,7 +49,8 @@
     "ga4_decline": "Descenso en Analytics",
     "content_recommendation": "Recomendación de contenido",
     "citation_gap": "Brecha de citas de IA",
-    "audience_research": "Investigación de audiencia"
+    "audience_research": "Investigación de audiencia",
+    "competitor_opportunity": "Oportunidad frente a la competencia"
   },
   "severity": {
     "critical": "Crítica",
@@ -75,7 +76,11 @@
   "freshness": {
     "fresh": "Reciente",
     "stale": "Obsoleto",
-    "unavailable": "Sin verificar"
+    "unavailable": "Sin verificar",
+    "partial": "Parcial",
+    "blocked": "Bloqueado",
+    "failed": "Fallido",
+    "unknown": "Actualidad desconocida"
   },
   "card": {
     "nextStep": "Siguiente paso",
@@ -84,7 +89,7 @@
     "affectedNone": "En todo el sitio",
     "affectedCount_one": "{{count}} URL afectada",
     "evidence": "Evidencia",
-    "evidenceLabel": "{{source}} · {{date}}",
+    "evidenceLabel": "{{source}} · {{date}} · {{detail}}",
     "evidenceLink": "Abrir fuente de la evidencia",
     "history": "Historial",
     "retest": "Reanalizar",

@@ -60,7 +60,7 @@ const LANGUAGE_HOME: Readonly<Record<string, string>> = Object.freeze({
 export const countryLanguage = (country: string): string | null => COUNTRY_LANGUAGE[country] ?? null;
 
 export function countryFromDomain(domain: string): string | null {
-    const tld = domain.toLowerCase().replace(/\.$/u, '').split('.').pop() ?? '';
+    const tld = domain.toLowerCase().replace(/\.$/u, '').split('.').pop()!;
     if (!/^[a-z]{2}$/.test(tld) || GENERIC_CCTLDS.has(tld)) return null;
     return tld === 'uk' ? 'GB' : tld.toUpperCase();
 }
@@ -141,7 +141,7 @@ export function isCatalogSiteMarket(market: SiteMarket, catalog: readonly Catalo
 
 /** Parse language tags from a bounded document head without executing markup. */
 export function parsePageLanguageEvidence(html: string): PageLanguageEvidence {
-    const head = html.slice(0, 256 * 1024).split(/<\/head\s*>/i, 1)[0] ?? '';
+    const head = html.slice(0, 256 * 1024).split(/<\/head\s*>/i, 1)[0]!;
     const htmlTag = /<html\b[^>]*>/i.exec(head)?.[0] ?? '';
     const htmlLang = /\blang\s*=\s*["']?([a-z]{2,3}(?:[-_][a-z0-9]{2,8})*)/i.exec(htmlTag)?.[1] ?? null;
     const hreflangs: string[] = [];

@@ -8,6 +8,7 @@ import { MemoryRouter, Route, Routes, useLocation } from 'react-router-dom';
 import { TooltipProvider } from '@shared/ui/tooltip';
 import { ThemeProvider } from '@shared/theme/ThemeProvider';
 import { i18n, initI18n } from '@shared/i18n';
+import { isolateText } from '@shared/lib/bidi';
 import { useAuthSession, type AuthSessionState } from '@features/auth';
 import { sitesReducer, type Site } from '@features/sites';
 import { workspaceInitialState, workspaceReducer, type WorkspaceState } from '@features/workspace';
@@ -239,6 +240,19 @@ describe('AppSidebar', () => {
     await userEvent.selectOptions(select, 'fr');
     await waitFor(() => expect(i18n.language).toBe('fr'));
     expect(sidebar.setOpenMobile).toHaveBeenCalledWith(false);
+  });
+  it('puts a visible language label before navigation in the phone drawer', () => {
+    sidebar.isMobile = true;
+    render(<Wrap><AppSidebar /></Wrap>);
+    const label = screen.getByText('Language');
+    expect(label).not.toHaveClass('sr-only');
+    expect(label.compareDocumentPosition(screen.getByRole('navigation')) & Node.DOCUMENT_POSITION_FOLLOWING).toBeTruthy();
+  });
+  it('exposes the full long translated navigation label on hover', async () => {
+    await i18n.changeLanguage('ru');
+    render(<Wrap><AppSidebar /></Wrap>);
+    const label = i18n.t('common:nav.keywordResearch');
+    expect(screen.getByRole('link', { name: label })).toHaveAttribute('title', isolateText(label));
   });
 
   it('does not render a second language switcher in the desktop sidebar', () => {

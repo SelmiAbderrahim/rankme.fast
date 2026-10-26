@@ -57,7 +57,8 @@
   "longTailResearch": {
     "title": "Benötigen Sie genauere Keyword-Ideen?",
     "description": "Geben Sie genau ein Google-Keyword mit höchstens 80 Zeichen ein. Die Keyword-Recherche öffnet sich mit vorausgefüllter Phrase und vorausgefülltem Markt, startet aber keine Abfrage automatisch.",
-    "cta": "Long-Tail-Keywords recherchieren"
+    "cta": "Long-Tail-Keywords recherchieren",
+    "disabledReason": "Geben Sie oben ein Keyword ein, um damit die Keyword-Recherche zu öffnen."
   },
   "addLocationLabel": "Standort",
   "addLanguageLabel": "Sprache",

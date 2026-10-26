@@ -895,7 +895,7 @@ async function prepareGoogleBatch(targets: ResolvedTarget[], deps: RankProcessor
             }
             const value: SerpTaskResult = poll.result;
             const shared: SharedSerpFlightOutcome = { topResults: serpItemsToTopResults(value.items),
-                aiOverview: value.aiOverview ?? null, features: value.features ?? null,
+                aiOverview: value.aiOverview, features: value.features,
                 fetchedAt: deps.clock?.() ?? new Date(), origin: 'fresh' };
             if (deps.cache) await deps.cache.write({ cacheKey: group.cacheKey,
                 topResults: shared.topResults, aiOverview: shared.aiOverview,

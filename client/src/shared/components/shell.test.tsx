@@ -111,6 +111,12 @@ describe('Header', () => {
 });
 
 describe('Footer', () => {
+  it('translates the release stage in the selected language', async () => {
+    await i18n.changeLanguage('fr');
+    renderWithAuth(<Footer />, true);
+    expect(screen.getByTestId('footer-version')).toHaveTextContent(`v${appDisplayVersion} · bêta`);
+    await i18n.changeLanguage('en');
+  });
   it('renders the authenticated link set + copyright', () => {
     renderWithAuth(<Footer />, true);
     expect(screen.getByText(`v${appDisplayVersion} · ${releaseStage()}`)).toBeInTheDocument();
