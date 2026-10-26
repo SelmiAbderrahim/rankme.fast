@@ -48,6 +48,7 @@ import type { Logger } from 'pino';
 import { z } from 'zod';
 import { dataForSeoRequest, type DataForSeoConfig } from '../http.js';
 import { VendorMalformedError } from '../errors.js';
+import { normalizeSerpDomain } from '../serp-normalization.js';
 import type { AiAnswerInput, AiAnswerRow, AiKeywordVolume, AiMentionCheckInput, AiMentionRow, AiVisibilityProvider, } from '../types.js';
 // ---------------------------------------------------------------------------
 // Config
@@ -153,11 +154,14 @@ const keywordVolumeResultSchema = z
 // ---------------------------------------------------------------------------
 // Pure helpers
 // ---------------------------------------------------------------------------
-/** Strip protocol + trailing slash so the vendor sees a bare host. */
+/**
+ * Strip protocol, `www.` and trailing slash so both sides of a mention match
+ * compare as bare hosts, the same way `normalizeSerpDomain` does for SERP and
+ * AI Overview matching: a site stored as `www.example.com` is the domain the
+ * vendor reports as `example.com`, and the other way round.
+ */
 export function normalizeAiVisibilityTarget(target: string): string {
-    const trimmed = target.trim();
-    const withoutScheme = trimmed.replace(/^https?:\/\//i, '');
-    return withoutScheme.replace(/\/+$/, '').toLowerCase();
+    return normalizeSerpDomain(target.trim());
 }
 /**
  * Extract the answer body from an LLM Responses item. Every engine surfaces
@@ -228,7 +232,7 @@ export function createDataForSeoAiVisibilityProvider(cfg: DataForSeoAiVisibility
             // Vendor reports a row per (domain, keyword) that appears. We check
             // whether OUR domain shows up for this prompt on this platform.
             const hit = items.find((it) => typeof it.domain === 'string' &&
-                it.domain.toLowerCase() === target);
+                normalizeAiVisibilityTarget(it.domain) === target);
             const citedUrl = hit && typeof (hit.url ?? hit.source_url) === 'string'
                 ? String(hit.url ?? hit.source_url)
                 : undefined;
