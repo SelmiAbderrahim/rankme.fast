@@ -526,6 +526,22 @@ describe('listActionsForSite', () => {
     expect(bySourceId.get('analysis1:rec1')!.reappearedAfterFix).toBe(false);
   });
 
+  it('includes the fix-now warning first in the overview page and the full action list (issue #56)', async () => {
+    const ids = await seedSite();
+    const warnings = Array.from({ length: 5 }, (_, i) => candidate({
+      sourceType: 'audit_finding', sourceId: `watch-${i}`, auditBucket: 'watch',
+      affectedUrls: Array.from({ length: 10 }, (_, n) => `https://example.com/p${n}`),
+    }));
+    registerStub('audit_finding', [...warnings, candidate({
+      sourceType: 'audit_finding', sourceId: 'broken-resources', auditBucket: 'fix-now',
+      affectedUrls: ['https://example.com/app.js'],
+    })]);
+    for (const limit of [4, 50]) {
+      const result = await listActionsForSite({ ...ids, locale: 'en', db: getTestDb(), limit });
+      expect(result.items[0]).toMatchObject({ sourceId: 'broken-resources', auditBucket: 'fix-now', severity: 'warning' });
+    }
+  });
+
   it('sorts by the deterministic tuple and caps affected URLs at 20', async () => {
     const { accountId, siteId } = await seedSite();
     const manyUrls = (n: number, prefix: string) =>

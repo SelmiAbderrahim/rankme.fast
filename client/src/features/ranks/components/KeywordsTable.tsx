@@ -1,4 +1,5 @@
 import { isolateText } from '@shared/lib/bidi';
+import { HorizontalScrollRegion } from '@shared/components/HorizontalScrollRegion';
 import { Bdi } from '@shared/components/Bdi';
 import { useMemo, useState, type ReactNode } from 'react';
 import { useTranslation } from 'react-i18next';
@@ -352,10 +353,11 @@ export const KeywordsTable = ({
   return (
     <>
       <div className="hidden rounded-xl border md:block" data-testid="keywords-table">
-        <Table>
+        <HorizontalScrollRegion>
+        <Table containerProps={{ role: 'region', 'aria-label': t('tableLabel') }}>
           <TableHeader>
             <TableRow>
-              <TableHead className="w-1/3 min-w-48">{t('columnPhrase')}</TableHead>
+              <TableHead className="sticky start-0 z-20 w-1/3 min-w-48 border-e bg-card">{t('columnPhrase')}</TableHead>
               <TableHead>{t('columnLocation')}</TableHead>
               <TableHead>{t('columnDevice')}</TableHead>
               <TableHead className="text-end">
@@ -386,6 +388,7 @@ export const KeywordsTable = ({
             {keywords.map((k) => (
               <TableRow
                 key={k.id}
+                className="group/keyword"
                 data-state={isSelected(k) ? 'selected' : undefined}
                 aria-selected={isSelected(k)}
                 data-testid={`keyword-row-${k.id}`}
@@ -394,7 +397,7 @@ export const KeywordsTable = ({
                     instead of the phrase widening the whole table; min-w-48
                     keeps short phrases readable when the table is narrow (the
                     other columns shrink and the table scrolls before it clips). */}
-                <TableCell className="w-1/3 min-w-48 max-w-0">
+                <TableCell className="sticky start-0 z-10 w-1/3 min-w-48 max-w-0 border-e bg-card group-data-[state=selected]/keyword:bg-muted">
                   <button
                     type="button"
                     onClick={() => onSelect(k)}
@@ -423,6 +426,7 @@ export const KeywordsTable = ({
             ))}
           </TableBody>
         </Table>
+        </HorizontalScrollRegion>
       </div>
 
       <div className="flex flex-col gap-3 md:hidden">

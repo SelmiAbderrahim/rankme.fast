@@ -132,10 +132,12 @@
       "redirectsTo": "Redirige vers {{url}}",
       "answersDirectly": "S’ouvre ici sans redirection (statut {{status}})",
       "endsWithError": "Aboutit à {{url}} avec une erreur (statut {{status}})",
-      "unreachable": "N’a pas répondu",
+      "unreachable": "Connexion impossible",
       "okChip": "OK",
       "problemChip": "À corriger",
-      "unknownChip": "Non vérifiée"
+      "failure": {"tls": "Échec de validation du certificat TLS", "dns": "Échec de résolution DNS", "timeout": "Délai de la requête dépassé"},
+      "retryHint": "Lancez un nouvel audit pour réessayer les vérifications en échec.",
+      "unknownChip": "Échec de la vérification"
     },
     "measured": {
       "words_zero": "{{count}} mot",
@@ -275,6 +277,13 @@
       "unavailable": "Le résumé IA est temporairement indisponible — votre liste de correctifs n’est pas affectée.",
       "capReached": "Vous avez atteint votre limite mensuelle de résumés IA. Passez au niveau supérieur ou ajoutez des crédits pour continuer."
     },
+    "highlights_zero": "Points clés du résumé : {{shown}} sur {{count}} constats ouverts.",
+    "highlights_one": "Points clés du résumé : {{shown}} sur {{count}} constat ouvert.",
+    "highlights_two": "Points clés du résumé : {{shown}} sur {{count}} constats ouverts.",
+    "highlights_few": "Points clés du résumé : {{shown}} sur {{count}} constats ouverts.",
+    "highlights_many": "Points clés du résumé : {{shown}} sur {{count}} constats ouverts.",
+    "highlights_other": "Points clés du résumé : {{shown}} sur {{count}} constats ouverts.",
+    "allFindings": "Voir tous les constats de ce rapport",
     "basis_zero": "Basé sur {{count}} constat ouvert",
     "basis_one": "Basé sur {{count}} constat ouvert",
     "basis_two": "Basé sur {{count}} constats ouverts",
@@ -563,6 +572,9 @@
       "localPackSetup": "Activez le suivi des résultats sur la carte pour l'un de vos mots-clés suivis afin d'effectuer cette vérification.",
       "aiVisibility": "Suivez des requêtes IA pour effectuer cette vérification.",
       "generic": "L'exploration n'a pas renvoyé assez de données pour effectuer cette vérification.",
+      "probeTls": "Échec de validation du certificat TLS lors de la lecture de {{file}}.",
+      "probeDns": "Échec de résolution DNS lors de la lecture de {{file}}.",
+      "probeTimeout": "Le délai de la requête pour {{file}} a été dépassé.",
       "probeUnreachable": "Nous n'avons pas pu joindre {{file}} sur votre site, cette vérification n'a donc pas pu être faite.",
       "probeBlocked": "Votre site a refusé notre requête pour {{file}} (HTTP {{status}}), cette vérification n'a donc pas pu être faite.",
       "probeHttpError": "Votre site a répondu HTTP {{status}} pour {{file}}, cette vérification n'a donc pas pu être faite."

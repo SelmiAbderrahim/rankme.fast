@@ -11,6 +11,7 @@ import {
 
 /** One probed http/https × apex/www address (`https-canonicalization` evidence). */
 export interface AddressVariant {
+  failure?: { reason: string };
   url: string;
   status: number | null;
   finalUrl: string | null;
@@ -50,7 +51,10 @@ export const AddressVariantsBlock = ({ variants }: { variants: AddressVariant[] 
 
   const resultFor = (variant: AddressVariant): string => {
     if (variant.status === null || variant.finalUrl === null) {
-      return t('detail.addressVariants.unreachable');
+      const reason = variant.failure?.reason;
+      return reason === 'tls' || reason === 'dns' || reason === 'timeout'
+        ? t(`detail.addressVariants.failure.${reason}`)
+        : t('detail.addressVariants.unreachable');
     }
     if (variant.status >= 400) {
       return t('detail.addressVariants.endsWithError', {
@@ -100,6 +104,11 @@ export const AddressVariantsBlock = ({ variants }: { variants: AddressVariant[] 
           ))}
         </TableBody>
       </Table>
+      {variants.some(variant => variant.ok === null) ? (
+        <p className="mt-2 text-xs text-muted-foreground" data-testid="report-address-retry">
+          {t('detail.addressVariants.retryHint')}
+        </p>
+      ) : null}
     </div>
   );
 };

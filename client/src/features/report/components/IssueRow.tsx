@@ -37,7 +37,6 @@ const severityTone: Record<RuleSeverity, StatusTone> = {
 
 export interface IssueRowProps {
   finding: LocalizedFinding;
-  ruleDiffKind?: DiffKind | undefined;
   diffByUrl: Map<string, DiffKind>;
   pageSpeed?: PageSpeedSection | null;
   gscSearch?: GscSearchSection | null;
@@ -62,7 +61,6 @@ const selectNoAction = () => null;
 
 export const IssueRow = ({
   finding,
-  ruleDiffKind,
   diffByUrl,
   pageSpeed,
   gscSearch,
@@ -132,16 +130,6 @@ export const IssueRow = ({
           </span>
         </span>
         <span className="flex shrink-0 items-center gap-2">
-          {ruleDiffKind === 'fixed' ? (
-            <StatusChip tone="success" data-testid="report-badge-fixed">
-              {t('badges.fixed')}
-            </StatusChip>
-          ) : null}
-          {ruleDiffKind === 'regressed' ? (
-            <StatusChip tone="destructive" data-testid="report-badge-regressed">
-              {t('badges.regressed')}
-            </StatusChip>
-          ) : null}
           <ComparisonBadge status={finding.comparisonStatus} />
           {finding.bucket === 'passed' ? (
             <StatusChip tone="success" data-testid="report-badge-passed">

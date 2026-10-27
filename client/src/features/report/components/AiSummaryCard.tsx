@@ -183,6 +183,8 @@ export const AiSummaryCard = ({
   // a user action, so this only informs.
   const stale = Boolean(summary) && (freshness?.stale === true || triageChanged) && !loading;
   const basisCount = stale ? 0 : (summary?.basisRuleIds?.length ?? 0);
+  const highlightedCount = summary?.structured?.items.length;
+  const partial = highlightedCount !== undefined && highlightedCount < basisCount;
   const errorMessage = status === 'failed' ? (message ?? t('aiSummary.errors.unavailable')) : null;
   const stage = progress?.stage ?? 'queued';
   const elapsed = formatElapsed((progress?.elapsedMs ?? 0) + Math.max(0, now - progressAt));
@@ -336,8 +338,15 @@ export const AiSummaryCard = ({
           ) : null}
           {basisCount > 0 ? (
             <p className="text-muted-foreground text-xs" data-testid="report-ai-summary-basis">
-              {t('aiSummary.basis', { count: basisCount })}
+              {partial
+                ? t('aiSummary.highlights', { count: basisCount, shown: highlightedCount })
+                : t('aiSummary.basis', { count: basisCount })}
             </p>
+          ) : null}
+          {partial ? (
+            <a href="#report-findings" className={`text-primary text-xs underline ${TAP_TARGET_LINK}`} data-testid="report-ai-summary-all-findings">
+              {t('aiSummary.allFindings')}
+            </a>
           ) : null}
           <p className="text-muted-foreground text-xs" data-testid="report-ai-summary-attribution">
             {t('aiSummary.attribution')}

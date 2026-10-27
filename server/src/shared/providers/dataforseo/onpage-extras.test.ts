@@ -281,6 +281,22 @@ describe('deep crawl reads — recorded shapes and edge cases', () => {
         tasks: [{ id: 'TASK_ID', status_code: 20000, result: [{ total_items_count: total, items }] }],
       });
 
+    it('trusts successful HTTP responses over stale broken flags (issue #54)', async () => {
+      vendorMockServer.use(http.post('*/on_page/resources', () => resourcesEnvelope([
+        { url: 'https://example.com/app.js', resource_type: 'broken', accept_type: 'script', status_code: 200, checks: { is_broken: true } },
+        { url: 'https://example.com/app.css', resource_type: 'stylesheet', status_code: 200, checks: { is_broken: true } },
+        { url: 'https://example.com/missing.png', resource_type: 'image', status_code: 404, checks: { is_broken: false } },
+        { url: 'https://example.com/down.js', resource_type: 'script', status_code: 0 },
+      ], 4)));
+      const { resources } = await fetchResources(cfg, 'TASK_ID', 1000);
+      expect(resources.map(({ url, isBroken }) => ({ url, isBroken }))).toEqual([
+        { url: 'https://example.com/app.js', isBroken: false },
+        { url: 'https://example.com/app.css', isBroken: false },
+        { url: 'https://example.com/missing.png', isBroken: true },
+        { url: 'https://example.com/down.js', isBroken: true },
+      ]);
+    });
+
     it('asks for broken resources first, then fills the bound with the largest ones', async () => {
       const bodies: Record<string, unknown>[] = [];
       vendorMockServer.use(

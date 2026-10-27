@@ -22,6 +22,13 @@ function make(overrides: Partial<OrderableAction>): OrderableAction {
 }
 
 describe('compareActions — tie-break tuple', () => {
+  it('sorts fix-now findings ahead of watch findings before URL-count ties (issue #56)', () => {
+    const fix = { ...make({ id: 'fix', affectedUrls: ['asset'] }), auditBucket: 'fix-now' as const };
+    const watch = { ...make({ id: 'watch', affectedUrls: new Array(10).fill('page') }), auditBucket: 'watch' as const };
+    expect(compareActions(fix, watch)).toBeLessThan(0);
+    expect(compareActions(watch, fix)).toBeGreaterThan(0);
+  });
+
   it('severity dominates', () => {
     const critical = make({ id: 'a', severity: 'critical' });
     const info = make({ id: 'b', severity: 'info' });

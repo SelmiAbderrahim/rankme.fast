@@ -188,6 +188,14 @@ describe('filtersFromQuery', () => {
 });
 
 describe('ActionsPanel — load, order, filters, pagination', () => {
+  it.each([['fix-now', 'Fix now'], ['watch', 'Watch']] as const)('labels the %s report bucket on a warning (issue #56)', async (auditBucket, label) => {
+    mocked.listActions.mockResolvedValue(okResponse([item('fix', { severity: 'warning', auditBucket })]));
+    renderPanel();
+    const card = await screen.findByTestId('action-card');
+    expect(within(card).getByTestId('action-bucket-chip')).toHaveTextContent(label);
+    expect(within(card).getByTestId('action-severity-chip')).toHaveTextContent('Warning');
+  });
+
   it('loads the open and planned actions and renders them in server order', async () => {
     mocked.listActions.mockResolvedValueOnce(
       okResponse([item('z-second-by-alpha'), item('a-first-by-alpha')]),

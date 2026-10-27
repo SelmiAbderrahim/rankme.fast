@@ -39,7 +39,7 @@ export interface ActionCardProps {
 }
 
 export function ActionCard({ item, siteId, onReload }: ActionCardProps) {
-  const { t, i18n } = useTranslation('actions');
+  const { t, i18n } = useTranslation(['actions', 'report']);
   const urlsRegionId = useId();
   const [targetState, setTargetState] = useState<ActionState | null>(null);
   // `transitionTargetRef` remembers WHICH transition button opened the dialog;
@@ -99,6 +99,11 @@ export function ActionCard({ item, siteId, onReload }: ActionCardProps) {
         >
           {t(`severity.${item.severity}`)}
         </StatusChip>
+        {item.auditBucket ? (
+          <StatusChip tone={item.auditBucket === 'fix-now' ? 'destructive' : 'warning'} data-testid="action-bucket-chip">
+            {t(`report:tabs.${item.auditBucket}`)}
+          </StatusChip>
+        ) : null}
         <StatusChip tone="muted" data-testid="action-source-chip">
           {t(`source.${item.sourceType}`)}
         </StatusChip>

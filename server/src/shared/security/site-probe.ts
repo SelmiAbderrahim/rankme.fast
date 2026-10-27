@@ -38,11 +38,11 @@ export interface SiteProbeResult {
     llmsTxtFound?: boolean;
     /** Why a root file gave no verdict; independent of the start page. */
     failures?: SiteProbeFailures;
-    /** Absent when the site's own https address could not be read. */
+    /** Absent when neither the start page nor the crawl identifies a canonical HTTPS origin. */
     addressVariants?: AddressVariantResult[];
 }
 
-export type SiteProbe = (target: { domain: string; url: string }) => Promise<SiteProbeResult>;
+export type SiteProbe = (target: { domain: string; url: string; canonicalUrl?: string }) => Promise<SiteProbeResult>;
 
 /** Minimal response view the probe needs — lets tests fake the network. */
 export interface ProbeResponse {
@@ -87,7 +87,7 @@ export async function readSiteLanguageHead(
     }
 }
 
-const defaultFetchUrl = (safety: SiteProbeOptions['safety']) => (url: string): Promise<ProbeResponse | null> =>
+const defaultFetchUrl = (safety: SiteProbeOptions['safety'], failures: Map<string, SiteProbeFailure>) => (url: string): Promise<ProbeResponse | null> =>
     fetchPublicUrlSafeWithFinalUrl(url, { method: 'GET', headers: { accept: 'text/plain,text/html;q=0.8,*/*;q=0.5' } }, {
         ...safety,
         // The http:// variants are exactly what this check is about.
@@ -100,7 +100,23 @@ const defaultFetchUrl = (safety: SiteProbeOptions['safety']) => (url: string): P
         finalUrl: finalUrl.href,
         contentType: response.headers.get('content-type') ?? '',
         text: () => response.text(),
-    }), () => null);
+    }), (error: unknown) => {
+        failures.set(url, networkFailure(error));
+        return null;
+    });
+
+/** Preserve safe error categories, never raw transport messages or certificate data. */
+function networkFailure(error: unknown): SiteProbeFailure {
+    if (error instanceof UnsafeUrlError && error.kind === 'timeout') return { reason: 'timeout' };
+    const cause = error instanceof Error && error.cause ? error.cause : error;
+    const code = typeof cause === 'object' && cause !== null ? (cause as { code?: unknown }).code : undefined;
+    if (typeof code === 'string') {
+        if (code.includes('CERT') || code.startsWith('ERR_TLS')) return { reason: 'tls' };
+        if (code === 'ENOTFOUND' || code === 'EAI_AGAIN') return { reason: 'dns' };
+        if (code === 'ETIMEDOUT') return { reason: 'timeout' };
+    }
+    return { reason: 'unreachable' };
+}
 
 /** Bare hostname without a leading `www.`. */
 function apexOf(hostname: string): string {
@@ -156,16 +172,17 @@ const isHtml = (contentType: string): boolean => /\bhtml\b/i.test(contentType);
  * What went wrong reading one root file. Only reads that did not give a
  * usable verdict (a 404 / 410 is a verdict: the file is not there).
  */
-function failureOf(response: ProbeResponse | null): SiteProbeFailure {
+function failureOf(response: ProbeResponse | null, failure?: SiteProbeFailure): SiteProbeFailure {
     if (!response)
-        return { reason: 'unreachable' };
+        return failure ?? { reason: 'unreachable' };
     const reason = BLOCKED_STATUSES.has(response.status) ? 'blocked' : 'http-error';
     return { reason, status: response.status };
 }
 
 export function createSiteProbe(opts: SiteProbeOptions = {}): SiteProbe {
-    const fetchUrl = opts.fetchUrl ?? defaultFetchUrl(opts.safety);
-    return async ({ domain, url }) => {
+    return async ({ domain, url, canonicalUrl }) => {
+        const failedReads = new Map<string, SiteProbeFailure>();
+        const fetchUrl = opts.fetchUrl ?? defaultFetchUrl(opts.safety, failedReads);
         let siteHost: string;
         try {
             siteHost = new URL(url).hostname.toLowerCase();
@@ -180,9 +197,9 @@ export function createSiteProbe(opts: SiteProbeOptions = {}): SiteProbe {
         // readable: a bot-blocked or erroring home page must not hide them.
         // They are read from the origin the start page ended on — the
         // redirected host when it answered, the site's own host otherwise.
-        let origin = `https://${siteHost}`;
+        let origin = canonicalUrl ? new URL(canonicalUrl).origin : `https://${siteHost}`;
         const homeUsable = home !== null && home.status < 400;
-        if (home) {
+        if (home && !canonicalUrl) {
             const final = new URL(home.finalUrl);
             if (homeUsable || apexOf(final.hostname) === apex)
                 origin = final.origin;
@@ -214,7 +231,7 @@ export function createSiteProbe(opts: SiteProbeOptions = {}): SiteProbe {
             out.sitemapReferencedInRobots = false;
         }
         else {
-            failures.robots = failureOf(robots);
+            failures.robots = failureOf(robots, failedReads.get(`${origin}/robots.txt`));
         }
 
         if (sitemap && sitemap.status === 200 && !isHtml(sitemap.contentType))
@@ -231,17 +248,15 @@ export function createSiteProbe(opts: SiteProbeOptions = {}): SiteProbe {
             out.llmsTxtFound = false;
         }
         else {
-            failures.llms = failureOf(llms);
+            failures.llms = failureOf(llms, failedReads.get(`${origin}/llms.txt`));
         }
         if (failures.robots || failures.llms)
             out.failures = failures;
 
-        // Address variants judge every other origin against the site's own
-        // https address, so they need a readable start page.
-        if (!homeUsable)
-            return out;
-        const canonical = new URL(home.finalUrl);
-        if (canonical.protocol !== 'https:')
+        // The crawl's canonical origin remains usable evidence even when
+        // the original address cannot complete TLS from this worker.
+        const canonical = canonicalUrl ? new URL(canonicalUrl) : homeUsable ? new URL(home.finalUrl) : null;
+        if (!canonical || canonical.protocol !== 'https:')
             return out;
         const variantUrls = [
             `http://${apex}/`,
@@ -251,8 +266,10 @@ export function createSiteProbe(opts: SiteProbeOptions = {}): SiteProbe {
         ];
         out.addressVariants = await Promise.all(variantUrls.map(async (variant): Promise<AddressVariantResult> => {
             const response = variant === `https://${siteHost}/` ? home : await fetchUrl(variant);
-            if (!response)
-                return { url: variant, status: null, finalUrl: null, ok: null };
+            if (!response) {
+                const failure = failedReads.get(variant);
+                return { url: variant, status: null, finalUrl: null, ok: null, ...(failure ? { failure } : {}) };
+            }
             const final = new URL(response.finalUrl);
             return {
                 url: variant,

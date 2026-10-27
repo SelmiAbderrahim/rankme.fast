@@ -132,10 +132,12 @@
       "redirectsTo": "重定向到 {{url}}",
       "answersDirectly": "直接在此打开，未重定向（状态 {{status}}）",
       "endsWithError": "最终到达 {{url}} 并出错（状态 {{status}}）",
-      "unreachable": "无响应",
+      "unreachable": "无法连接",
       "okChip": "正常",
       "problemChip": "需要修复",
-      "unknownChip": "未检查"
+      "failure": {"tls": "TLS 证书验证失败", "dns": "DNS 查询失败", "timeout": "请求超时"},
+      "retryHint": "运行新审计以重试失败的检查。",
+      "unknownChip": "检查失败"
     },
     "measured": {
       "words_zero": "{{count}} 个词",
@@ -275,6 +277,13 @@
       "unavailable": "AI 摘要暂时不可用 —— 您的检查清单不受影响。",
       "capReached": "您已达到本月 AI 摘要额度。请升级套餐或购买额度以继续生成。"
     },
+    "highlights_zero": "摘要重点：{{count}} 项待处理发现中的 {{shown}} 项。",
+    "highlights_one": "摘要重点：{{count}} 项待处理发现中的 {{shown}} 项。",
+    "highlights_two": "摘要重点：{{count}} 项待处理发现中的 {{shown}} 项。",
+    "highlights_few": "摘要重点：{{count}} 项待处理发现中的 {{shown}} 项。",
+    "highlights_many": "摘要重点：{{count}} 项待处理发现中的 {{shown}} 项。",
+    "highlights_other": "摘要重点：{{count}} 项待处理发现中的 {{shown}} 项。",
+    "allFindings": "查看此报告中的所有发现",
     "basis_zero": "基于 {{count}} 个未解决的问题",
     "basis_one": "基于 {{count}} 个未解决的问题",
     "basis_two": "基于 {{count}} 个未解决的问题",
@@ -563,6 +572,9 @@
       "localPackSetup": "为你跟踪的某个关键词开启地图结果跟踪后即可检查此项。",
       "aiVisibility": "跟踪 AI 提示词以进行此项检查。",
       "generic": "抓取未返回足够的数据来进行此项检查。",
+      "probeTls": "读取 {{file}} 时 TLS 证书验证失败。",
+      "probeDns": "读取 {{file}} 时 DNS 查询失败。",
+      "probeTimeout": "请求 {{file}} 超时。",
       "probeUnreachable": "我们无法访问你网站上的 {{file}}，因此无法完成此项检查。",
       "probeBlocked": "你的网站拒绝了我们对 {{file}} 的请求（HTTP {{status}}），因此无法完成此项检查。",
       "probeHttpError": "你的网站对 {{file}} 返回了 HTTP {{status}}，因此无法完成此项检查。"

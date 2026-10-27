@@ -33,6 +33,7 @@ export const ACTION_MAX_AFFECTED_URLS = 20;
 export interface OrderableAction {
     id: string;
     severity: Severity;
+    auditBucket?: 'fix-now' | 'watch';
     firstPartyImpact: FirstPartyImpact;
     confidence: Confidence;
     effort: Effort;
@@ -42,6 +43,14 @@ export interface OrderableAction {
 // Deterministic tuple compare — no black-box score. Ties broken by newest
 // `observedAt`, then `id` ASC for total-order stability.
 export function compareActions(a: OrderableAction, b: OrderableAction): number {
+    // Audit priority survives independently of severity: a warning can need
+    // fixing now. Other sources retain their severity-based urgency.
+    const urgency = (action: OrderableAction): number => action.auditBucket
+        ? (action.auditBucket === 'fix-now' ? 0 : 1)
+        : (action.severity === 'critical' ? 0 : 1);
+    const byBucket = urgency(a) - urgency(b);
+    if (byBucket !== 0)
+        return byBucket;
     const bySeverity = SEVERITY_RANK[a.severity] - SEVERITY_RANK[b.severity];
     if (bySeverity !== 0)
         return bySeverity;

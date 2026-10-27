@@ -116,6 +116,8 @@ export interface ActionItem {
   affectedUrlCount?: number;
   evidence: ActionEvidence[];
   severity: ActionSeverity;
+  /** Report priority, distinct from rule severity. */
+  auditBucket?: 'fix-now' | 'watch';
   firstPartyImpact: ActionFirstPartyImpact;
   confidence: ActionConfidence;
   effort: ActionEffort;

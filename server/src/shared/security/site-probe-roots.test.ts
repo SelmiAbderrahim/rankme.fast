@@ -4,6 +4,7 @@
  * http/https × apex/www address ends up.
  */
 import { describe, expect, it, vi } from 'vitest';
+import { UnsafeUrlError } from './url-safety.js';
 import { createSiteProbe, detectHostRedirect, robotsSitemapDirectives, type ProbeResponse } from './site-probe.js';
 
 type Route = { status: number; finalUrl?: string; contentType?: string; body?: string } | 'down';
@@ -25,6 +26,39 @@ const target = { domain: 'bottradesforyou.com', url: 'https://bottradesforyou.co
 const HOME = 'https://bottradesforyou.com/';
 
 describe('createSiteProbe', () => {
+  it('reads canonical crawl root files when the original www TLS connection fails (issue #53)', async () => {
+    const fetchUrl = fakeNetwork({
+      'https://www.bottradesforyou.com/': 'down',
+      [HOME]: { status: 200 },
+      'https://bottradesforyou.com/robots.txt': { status: 200, body: 'Sitemap: https://bottradesforyou.com/sitemap.xml' },
+      'https://bottradesforyou.com/sitemap.xml': { status: 200, contentType: 'application/xml' },
+      'https://bottradesforyou.com/llms.txt': { status: 404, contentType: 'text/html' },
+    });
+    const target = { domain: 'www.bottradesforyou.com', url: 'https://www.bottradesforyou.com', canonicalUrl: HOME };
+    const result = await createSiteProbe({ fetchUrl })(target);
+    expect(result.sitemapReferencedInRobots).toBe(true);
+    expect(result.sitemapFound).toBe(true);
+    expect(result.llmsTxtFound).toBe(false);
+    expect(result.failures).toBeUndefined();
+    expect(fetchUrl).not.toHaveBeenCalledWith('https://www.bottradesforyou.com/robots.txt');
+  });
+
+  it('keeps four address variants when the crawl resolved the canonical host but www is down (issue #58)', async () => {
+    const fetchUrl = fakeNetwork({
+      [HOME]: { status: 200 },
+      'https://www.bottradesforyou.com/': 'down',
+      'http://bottradesforyou.com/': { status: 200, finalUrl: HOME },
+      'http://www.bottradesforyou.com/': { status: 404 },
+    });
+    const result = await createSiteProbe({ fetchUrl })({
+      domain: 'www.bottradesforyou.com', url: 'https://www.bottradesforyou.com', canonicalUrl: HOME,
+    });
+    expect(result.addressVariants).toHaveLength(4);
+    expect(result.addressVariants?.filter(v => v.ok === false).map(v => v.url)).toEqual(['http://www.bottradesforyou.com/']);
+    expect(result.addressVariants?.find(v => v.url === HOME)?.ok).toBe(true);
+    expect(result.startPageFinalUrl).toBeUndefined();
+  });
+
   it('reports the variant that serves its own page instead of redirecting (issue #17)', async () => {
     const fetchUrl = fakeNetwork({
       [HOME]: { status: 200, contentType: 'text/html' },
@@ -216,6 +250,45 @@ describe('createSiteProbe', () => {
     });
     const result = await createSiteProbe({ fetchUrl })({ domain: 'www.example.com', url: 'https://www.example.com' });
     expect(result.startPageFinalUrl).toBe(apex);
+  });
+
+  it.each([
+    ['tls', new UnsafeUrlError('request failed', { code: 'ERR_TLS_CERT_ALTNAME_INVALID' })],
+    ['dns', new UnsafeUrlError('request failed', { code: 'ENOTFOUND' })],
+    ['timeout', new UnsafeUrlError('deadline exceeded', undefined, 'timeout')],
+    ['unreachable', new Error('connection reset')],
+    ['tls', { code: 'ERR_TLS_HANDSHAKE_TIMEOUT' }],
+    ['dns', { code: 'EAI_AGAIN' }],
+    ['timeout', { code: 'ETIMEDOUT' }],
+    ['unreachable', 'no answer'],
+    ['unreachable', null],
+    ['unreachable', { code: 'ECONNRESET' }],
+  ] as const)('preserves %s failures rather than claiming a variant was not checked (issue #59)', async (reason, error) => {
+    const probe = createSiteProbe({ safety: {
+      resolver: async () => [{ address: '93.184.216.34', family: 4 }],
+      transport: async (url) => {
+        if (url.hostname === 'www.example.com' || url.pathname === '/robots.txt') throw error;
+        return new Response('ok');
+      },
+    } });
+    const result = await probe({ domain: 'example.com', url: 'https://example.com' });
+    expect(result.addressVariants?.find(v => v.url === 'https://www.example.com/')).toMatchObject({
+      status: null, finalUrl: null, ok: null, failure: { reason },
+    });
+    expect(result.failures?.robots).toEqual({ reason });
+  });
+
+  it('records a real www redirect as healthy without discarding the chain outcome (issue #59)', async () => {
+    const probe = createSiteProbe({ safety: {
+      resolver: async () => [{ address: '93.184.216.34', family: 4 }],
+      transport: async (url) => url.hostname === 'www.example.com'
+        ? new Response(null, { status: 301, headers: { location: 'https://example.com/' } })
+        : new Response('ok'),
+    } });
+    const result = await probe({ domain: 'example.com', url: 'https://example.com' });
+    expect(result.addressVariants?.find(v => v.url === 'https://www.example.com/')).toEqual({
+      url: 'https://www.example.com/', status: 200, finalUrl: 'https://example.com/', ok: true,
+    });
   });
 
   it('reads through the shared SSRF authority by default', async () => {

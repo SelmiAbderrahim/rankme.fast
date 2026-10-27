@@ -154,6 +154,7 @@ export async function listActionsForSite(input: ListActionsInput): Promise<ListA
             affectedUrlCount: Math.max(candidate.affectedUrlCount ?? candidate.affectedUrls.length, urls.length),
             evidence: candidate.evidence,
             severity: candidate.severity,
+            ...(candidate.auditBucket ? { auditBucket: candidate.auditBucket } : {}),
             firstPartyImpact: candidate.firstPartyImpact,
             confidence: candidate.confidence,
             effort: candidate.effort,

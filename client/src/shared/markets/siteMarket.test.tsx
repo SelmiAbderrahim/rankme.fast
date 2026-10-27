@@ -38,12 +38,25 @@ describe('site market context', () => {
 
   it.each([
     ['owner', 'saved market'], ['search_console', 'Search Console traffic'], ['cctld', "site's country"],
-    ['site_language', 'page language'], ['assumed', 'could not detect'],
+    ['site_language', 'page language'], ['assumed', 'fallback market'],
   ] as const)('labels %s defaults honestly', (source, expected) => {
     render(<SiteMarketProvider market={{ ...FR, source }}><MarketProvenance /></SiteMarketProvider>);
     expect(screen.getByTestId('market-provenance')).toHaveTextContent(expected);
     expect(screen.getByTestId('market-provenance')).toHaveAttribute('data-source', source);
     if (source === 'assumed') expect(screen.getByTestId('market-provenance')).toHaveAttribute('role', 'status');
+  });
+
+  it('names the actual fallback and asks for confirmation without keyword-specific advice (issue #60)', () => {
+    const edit = vi.fn();
+    render(<SiteMarketProvider market={{ ...FR, source: 'assumed' }} onEditMarket={edit}><MarketProvenance /></SiteMarketProvider>);
+    const notice = screen.getByTestId('market-provenance');
+    expect(notice).toHaveTextContent('Using a fallback market');
+    expect(notice).toHaveTextContent('France');
+    expect(notice).toHaveTextContent('French');
+    expect(notice).toHaveTextContent('Save this default or choose another market');
+    expect(notice).not.toHaveTextContent('adding keywords');
+    fireEvent.click(screen.getByRole('button', { name: 'Change site default' }));
+    expect(edit).toHaveBeenCalledOnce();
   });
 
   it('offers editing while the current picker uses the site market and hides stale captions', () => {

@@ -577,6 +577,11 @@ export const OverviewPanel = ({ siteId }: Props) => {
                               <StatusChip tone={ACTION_STATE_TONES[item.state]} dot>
                                 {t(`actions:state.${item.state}`)}
                               </StatusChip>
+                              {item.auditBucket ? (
+                                <StatusChip tone={item.auditBucket === 'fix-now' ? 'destructive' : 'warning'}>
+                                  {t(`report:tabs.${item.auditBucket}`)}
+                                </StatusChip>
+                              ) : null}
                               <StatusChip tone="muted">
                                 {t(`actions:source.${item.sourceType}`)}
                               </StatusChip>

@@ -112,7 +112,7 @@ import {
   type PagesColumnsController,
 } from '../columns';
 import { PageDetailSheet } from './PageDetailSheet';
-import { HorizontalScrollRegion } from './HorizontalScrollRegion';
+import { HorizontalScrollRegion } from '@shared/components/HorizontalScrollRegion';
 import { GscTotalsNote, SiteGoogleNotice } from '@features/google';
 import { ReportExportControl } from '@features/report-export';
 import { PositionDelta } from '@shared/components/PositionDelta';

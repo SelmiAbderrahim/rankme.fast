@@ -671,6 +671,9 @@ describe('ReportPage — not-evaluated checks (issue #1)', () => {
           withProbe('llms-txt-missing', 'llms.txt missing', { file: 'llms.txt', reason: 'http-error', status: 503 }),
           withProbe('thin-content', 'Thin content', { file: 'robots.txt', reason: 'unreachable' }),
           withProbe('faq-content-missing', 'FAQ', { file: 'x', reason: 'weird' }),
+          withProbe('tls-probe', 'TLS', { file: 'robots.txt', reason: 'tls' }),
+          withProbe('dns-probe', 'DNS', { file: 'llms.txt', reason: 'dns' }),
+          withProbe('timeout-probe', 'Timeout', { file: 'robots.txt', reason: 'timeout' }),
         ],
       }),
     );
@@ -686,6 +689,9 @@ describe('ReportPage — not-evaluated checks (issue #1)', () => {
       'Your site answered with HTTP 503 for llms.txt',
     );
     expect(hint('thin-content')).toContain('We could not reach robots.txt on your site');
+    expect(hint('tls-probe')).toContain('TLS certificate validation failed while reading robots.txt');
+    expect(hint('dns-probe')).toContain('DNS lookup failed while reading llms.txt');
+    expect(hint('timeout-probe')).toContain('The request for robots.txt timed out');
     // An unknown reason never leaks raw keys: it falls back to the generic copy.
     expect(hint('faq-content-missing')).toContain('did not return enough data');
     // A non-object value is ignored too.
@@ -954,66 +960,40 @@ describe('ReportPage — retest & diff badges', () => {
     }
   });
 
-  it('renders Fixed and Regressed badges from the diff', async () => {
-    mocked.fetchReportRequest.mockResolvedValue(
-      makeReport({
-        diff: {
-          entries: [
-            { ruleId: 'title-missing-or-weak', url: 'https://example.com/a', kind: 'fixed' },
-            { ruleId: 'headings-weak', url: 'https://example.com/c', kind: 'regressed' },
-          ],
-          summary: { fixed: 1, regressed: 1, new: 0, unchanged: 0 },
-        },
-      }),
-    );
+  it.each([
+    ['new', 'new'],
+    ['not_comparable', 'regressed'],
+    ['improved', 'fixed'],
+    ['regressed', 'regressed'],
+    ['unchanged', 'fixed'],
+  ] as const)('renders only the authoritative %s comparison despite URL diff %s (issue #55)', async (status, kind) => {
+    mocked.fetchReportRequest.mockResolvedValue(makeReport({
+      findings: [{ ...findingsFixture[0]!, comparisonStatus: status }],
+      diff: {
+        entries: [{ ruleId: 'title-missing-or-weak', url: 'https://example.com/a', kind }],
+        summary: { fixed: 0, regressed: 0, new: 0, unchanged: 0 },
+      },
+    }));
     renderReport();
-    await waitFor(() =>
-      expect(mocked.fetchReportRequest).toHaveBeenCalledWith('run-1', expect.objectContaining({ signal: expect.any(AbortSignal) })),
-    );
-    // Fix-now row (title-missing-or-weak) shows a Fixed badge (any URL fixed).
-    expect(await screen.findByTestId('report-badge-fixed')).toBeInTheDocument();
-    const user = userEvent.setup();
-    await user.click(screen.getByTestId('report-tab-watch'));
-    expect(await screen.findByTestId('report-badge-regressed')).toBeInTheDocument();
+    const row = await screen.findByTestId('report-issue-row');
+    expect(within(row).queryByTestId('report-badge-fixed')).not.toBeInTheDocument();
+    expect(within(row).queryByTestId('report-badge-regressed')).not.toBeInTheDocument();
+    const badges = row.querySelectorAll('[data-testid^="report-comparison-"]');
+    expect(badges).toHaveLength(status === 'unchanged' ? 0 : 1);
+    if (status !== 'unchanged') expect(within(row).getByTestId(`report-comparison-${status}`)).toBeInTheDocument();
   });
 
-  it('renders no diff badge when only "unchanged" entries exist for the rule', async () => {
-    mocked.fetchReportRequest.mockResolvedValue(
-      makeReport({
-        diff: {
-          entries: [
-            { ruleId: 'title-missing-or-weak', url: 'https://example.com/a', kind: 'unchanged' },
-          ],
-          summary: { fixed: 0, regressed: 0, new: 0, unchanged: 1 },
-        },
-      }),
-    );
+  it('does not infer a finding-level change from a partial URL diff', async () => {
+    mocked.fetchReportRequest.mockResolvedValue(makeReport({
+      diff: {
+        entries: [{ ruleId: 'title-missing-or-weak', url: 'https://example.com/a', kind: 'fixed' }],
+        summary: { fixed: 1, regressed: 0, new: 0, unchanged: 0 },
+      },
+    }));
     renderReport();
-    await waitFor(() =>
-      expect(mocked.fetchReportRequest).toHaveBeenCalledWith('run-1', expect.objectContaining({ signal: expect.any(AbortSignal) })),
-    );
-    // Row present, no fixed/regressed badge.
-    expect(await screen.findByText('Page titles missing or weak')).toBeInTheDocument();
+    await screen.findByTestId('report-issue-row');
     expect(screen.queryByTestId('report-badge-fixed')).not.toBeInTheDocument();
     expect(screen.queryByTestId('report-badge-regressed')).not.toBeInTheDocument();
-  });
-
-  it('treats a "new" diff kind as a regression on the row badge', async () => {
-    mocked.fetchReportRequest.mockResolvedValue(
-      makeReport({
-        diff: {
-          entries: [
-            { ruleId: 'title-missing-or-weak', url: 'https://example.com/x', kind: 'new' },
-          ],
-          summary: { fixed: 0, regressed: 0, new: 1, unchanged: 0 },
-        },
-      }),
-    );
-    renderReport();
-    await waitFor(() =>
-      expect(mocked.fetchReportRequest).toHaveBeenCalledWith('run-1', expect.objectContaining({ signal: expect.any(AbortSignal) })),
-    );
-    expect(await screen.findByTestId('report-badge-regressed')).toBeInTheDocument();
   });
 
   it('surfaces the retest error inside the confirmation, then page-level after close', async () => {
@@ -1300,7 +1280,7 @@ describe('ReportPage — retest & diff badges', () => {
     }
   });
 
-  it('buildDiffMap: duplicate ruleId entry hits false branch of if(!bucket)', async () => {
+  it('keeps URL comparisons separate when one page improves and another regresses', async () => {
     // Two entries with the same ruleId — first creates the bucket (true),
     // second finds the existing bucket (false branch of if(!bucket)).
     mocked.fetchReportRequest.mockResolvedValue(
@@ -1318,8 +1298,11 @@ describe('ReportPage — retest & diff badges', () => {
     await waitFor(() =>
       expect(mocked.fetchReportRequest).toHaveBeenCalled(),
     );
-    // Regressed badge wins (regressed > fixed precedence).
-    expect(await screen.findByTestId('report-badge-regressed')).toBeInTheDocument();
+    const row = await screen.findByTestId('report-issue-row');
+    expect(within(row).queryByTestId('report-badge-regressed')).not.toBeInTheDocument();
+    await userEvent.setup().click(within(row).getByRole('button', { expanded: false }));
+    expect(within(row).getByText('Fixed')).toBeInTheDocument();
+    expect(within(row).getByText('Regressed')).toBeInTheDocument();
   });
 
   it('buildDiffMap: empty url entry hits false branch of if(entry.url)', async () => {
@@ -1338,7 +1321,8 @@ describe('ReportPage — retest & diff badges', () => {
     await waitFor(() =>
       expect(mocked.fetchReportRequest).toHaveBeenCalled(),
     );
-    expect(await screen.findByTestId('report-badge-fixed')).toBeInTheDocument();
+    await screen.findByTestId('report-issue-row');
+    expect(screen.queryByTestId('report-badge-fixed')).not.toBeInTheDocument();
   });
 
   it('shows the run-in-progress banner when a deep-linked run is still running', async () => {
@@ -1601,7 +1585,7 @@ describe('IssueRow / IssueDetail units', () => {
       'http://www.example.com/Opens here without redirecting (status 200)Needs fixing',
       'https://example.com/Your main addressOK',
       'https://www.example.com/Ends on https://www.example.com/ with an error (status 404)Needs fixing',
-      'https://old.example.com/Did not answerNot checked',
+      'https://old.example.com/Could not connectCheck failed',
     ]);
     // The table replaces the plain URL list and the page-level content CTA.
     expect(screen.queryByText('Affected URLs')).toBeNull();

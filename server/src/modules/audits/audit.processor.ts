@@ -602,7 +602,28 @@ export async function applySiteProbe(result: AuditResult, target: ResolvedAuditT
         return result;
     let probe: SiteProbeResult;
     try {
-        probe = await deps.probeSite(target);
+        // Root files describe the host the crawl actually audited, even if the
+        // original host cannot complete TLS from this worker.
+        const redirect = detectHostRedirect(siteHostOf(target), undefined, result.pages.map((page) => page.url));
+        let canonicalUrl: string | undefined;
+        if (redirect) {
+            for (const page of result.pages) {
+                try {
+                    const observed = new URL(page.url);
+                    if (observed.hostname !== redirect.to || !['http:', 'https:'].includes(observed.protocol)) continue;
+                    // Retain the observed scheme and port, including HTTPS
+                    // sites whose crawl ended on HTTP or another public port.
+                    canonicalUrl = `${observed.origin}/`;
+                    break;
+                } catch {
+                    // Malformed vendor URLs carry no origin evidence.
+                }
+            }
+        }
+        probe = await deps.probeSite({
+            ...target,
+            ...(canonicalUrl ? { canonicalUrl } : {}),
+        });
     }
     catch (err) {
         deps.logger.warn({ err: (err as Error).message }, 'site probe failed — keeping vendor verdict');

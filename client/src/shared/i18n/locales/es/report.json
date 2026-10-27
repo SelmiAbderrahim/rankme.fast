@@ -132,10 +132,12 @@
       "redirectsTo": "Redirige a {{url}}",
       "answersDirectly": "Se abre aquí sin redirigir (estado {{status}})",
       "endsWithError": "Termina en {{url}} con un error (estado {{status}})",
-      "unreachable": "No respondió",
+      "unreachable": "No se pudo conectar",
       "okChip": "OK",
       "problemChip": "Hay que corregirla",
-      "unknownChip": "Sin comprobar"
+      "failure": {"tls": "Error al validar el certificado TLS", "dns": "Error en la consulta DNS", "timeout": "La solicitud agotó el tiempo de espera"},
+      "retryHint": "Ejecute una nueva auditoría para reintentar las comprobaciones fallidas.",
+      "unknownChip": "La comprobación falló"
     },
     "measured": {
       "words_zero": "{{count}} palabras",
@@ -275,6 +277,13 @@
       "unavailable": "El resumen con IA no está disponible temporalmente — tu lista de correcciones no se ve afectada.",
       "capReached": "Has alcanzado tu límite mensual de resúmenes con IA. Actualiza tu plan o añade créditos para seguir generando."
     },
+    "highlights_zero": "Puntos destacados: {{shown}} de {{count}} hallazgos abiertos.",
+    "highlights_one": "Puntos destacados: {{shown}} de {{count}} hallazgo abierto.",
+    "highlights_two": "Puntos destacados: {{shown}} de {{count}} hallazgos abiertos.",
+    "highlights_few": "Puntos destacados: {{shown}} de {{count}} hallazgos abiertos.",
+    "highlights_many": "Puntos destacados: {{shown}} de {{count}} hallazgos abiertos.",
+    "highlights_other": "Puntos destacados: {{shown}} de {{count}} hallazgos abiertos.",
+    "allFindings": "Ver todos los hallazgos de este informe",
     "basis_zero": "Basado en {{count}} hallazgos abiertos",
     "basis_one": "Basado en {{count}} hallazgo abierto",
     "basis_two": "Basado en {{count}} hallazgos abiertos",
@@ -563,6 +572,9 @@
       "localPackSetup": "Activa el seguimiento de resultados en el mapa para una de tus palabras clave seguidas para comprobar esto.",
       "aiVisibility": "Sigue prompts de IA para comprobar esto.",
       "generic": "El rastreo no devolvió datos suficientes para comprobar esto.",
+      "probeTls": "Error al validar el certificado TLS al leer {{file}}.",
+      "probeDns": "Error en la consulta DNS al leer {{file}}.",
+      "probeTimeout": "La solicitud de {{file}} agotó el tiempo de espera.",
       "probeUnreachable": "No pudimos acceder a {{file}} en tu sitio, así que no se pudo comprobar esto.",
       "probeBlocked": "Tu sitio rechazó nuestra solicitud de {{file}} (HTTP {{status}}), así que no se pudo comprobar esto.",
       "probeHttpError": "Tu sitio respondió con HTTP {{status}} para {{file}}, así que no se pudo comprobar esto."

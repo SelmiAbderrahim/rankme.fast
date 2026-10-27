@@ -63,6 +63,17 @@ The repository cannot remove it; the operator does:
    done
    ```
 
+## Install the shared routing configuration
+
+Copy `ops/nginx/rankme-proxy.conf` to
+`/etc/nginx/snippets/rankme-proxy.conf` and include it from **both** host
+server blocks below. Remove any old app-route locations or cross-host
+redirects from those blocks first: a more-specific location overrides the
+catch-all. Define the upstreams, rate-limit zones and upgrade map shown below
+once in the nginx `http` context. Then run `nginx -t` before reloading nginx.
+The checked-in snippet preserves `/api/` and all app paths, including query
+strings, without maintaining a route list.
+
 ## Reference nginx server blocks
 
 Replace `docs.example.com`, `app.example.com`, and the loopback ports with the

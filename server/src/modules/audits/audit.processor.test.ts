@@ -29,6 +29,7 @@ import {
   AuditedPage,
   ReportSnapshot,
   createAuditProcessor,
+  createSiteProbe,
   onAuditJobExhausted,
   selectPageSpeedSampleUrls,
   urlPathDepth,
@@ -742,6 +743,23 @@ describe('audit processor — page persistence and PageSpeed sampling', () => {
       { url: 'https://www.example.com/', status: 200, finalUrl: 'https://example.com/', ok: true },
     ];
 
+    it('stores the same address evidence on www and apex reports (issue #58)', async () => {
+      const probeSite = createSiteProbe({ fetchUrl: async (url) => {
+        if (url === 'https://www.example.com/') return null;
+        const broken = url === 'http://www.example.com/';
+        return { status: broken ? 404 : 200, finalUrl: broken ? url : 'https://example.com/', contentType: 'text/html', text: async () => '' };
+      } });
+      for (const domain of ['www.example.com', 'example.com']) {
+        const ids = await seed();
+        await Site.updateOne({ _id: ids.siteId }, { domain, url: `https://${domain}` });
+        const processor = createAuditProcessor({ provider: createFakeAuditProvider(), probeSite, logger });
+        await processor(jobFor({ ...ids, pageCap: 100 }));
+        const finding = await findingOf(ids.runId, 'https-canonicalization');
+        expect(finding.meta?.addressVariants).toHaveLength(4);
+        expect(finding.affectedUrls).toEqual(['http://www.example.com/']);
+      }
+    });
+
     it('evaluates the sitemap and llms.txt checks from the probe instead of "not evaluated"', async () => {
       const ids = await seed();
       const probeSite = vi.fn(async () => ({
@@ -824,6 +842,40 @@ describe('audit processor — page persistence and PageSpeed sampling', () => {
   describe('applySiteProbe', () => {
     const target = { domain: 'example.com', url: 'https://example.com' };
     const ok = (url: string) => ({ url, status: 200, finalUrl: 'https://example.com/', ok: true });
+
+    it.each(['http://example.com', 'https://example.com:8443'])(
+      'preserves the observed canonical origin %s instead of inventing HTTPS on the default port', async (origin) => {
+        const probeSite = vi.fn(async () => ({}));
+        const result = { ...FAKE_AUDIT_RESULT, pages: FAKE_AUDIT_RESULT.pages.map(page => ({
+          ...page, url: page.url.replace('https://example.com', origin),
+        })) };
+        await applySiteProbe(result, { domain: 'www.example.com', url: 'https://www.example.com' }, { probeSite, logger });
+        expect(probeSite).toHaveBeenCalledWith({ domain: 'www.example.com', url: 'https://www.example.com', canonicalUrl: `${origin}/` });
+      },
+    );
+
+    it('ignores malformed, unrelated and non-HTTP evidence when resolving a probe origin', async () => {
+      const probeSite = vi.fn(async () => ({}));
+      const page = FAKE_AUDIT_RESULT.pages[0]!;
+      const www = { domain: 'www.example.com', url: 'https://www.example.com' };
+      await applySiteProbe({ ...FAKE_AUDIT_RESULT, pages: [
+        { ...page, url: 'malformed' }, { ...page, url: 'https://unrelated.example.net/a' },
+        { ...page, url: 'ftp://example.com/a' },
+        { ...page, url: 'https://example.com:8443/a' },
+      ] }, www, { probeSite, logger });
+      expect(probeSite).toHaveBeenLastCalledWith({ ...www, canonicalUrl: 'https://example.com:8443/' });
+      await applySiteProbe({ ...FAKE_AUDIT_RESULT, pages: [
+        { ...page, url: 'ftp://example.com/a' },
+      ] }, www, { probeSite, logger });
+      expect(probeSite).toHaveBeenLastCalledWith(www);
+    });
+
+    it('passes the crawl-resolved host to the root-file probe (issue #53)', async () => {
+      const probeSite = vi.fn(async () => ({ llmsTxtFound: false }));
+      const www = { domain: 'www.example.com', url: 'https://www.example.com' };
+      await applySiteProbe(FAKE_AUDIT_RESULT, www, { probeSite, logger });
+      expect(probeSite).toHaveBeenCalledWith({ ...www, canonicalUrl: 'https://example.com/' });
+    });
 
     it('never overrides a signal the vendor reported', async () => {
       const result = {

@@ -389,7 +389,7 @@
       "search_console": "Choisi d’après le trafic Search Console de votre site ({{country}}).",
       "cctld": "Choisi d’après le pays de votre site ({{country}}).",
       "site_language": "Choisi d’après la langue des pages de votre site ({{language}}).",
-      "assumed": "Nous n’avons pas pu détecter le marché de votre site. Vérifiez-le avant d’ajouter des mots-clés.",
+      "assumed": "Un marché de repli est utilisé ({{country}} · {{language}}). Aucun marché confirmé n’est encore enregistré pour ce site. Enregistrez ce choix par défaut ou choisissez un autre marché.",
       "hint": "Vous pouvez le modifier ici.",
       "edit": "Modifier le marché par défaut du site"
     },

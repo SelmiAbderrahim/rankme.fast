@@ -479,6 +479,16 @@ describe('OverviewPanel', () => {
     expect(screen.getAllByTestId('overview-action-item')).toHaveLength(2);
   });
 
+  it('labels audit priorities consistently with the report (issue #56)', () => {
+    renderPanel(buildStore({ actions: [
+      actionItem('fix', { auditBucket: 'fix-now', severity: 'warning' }),
+      actionItem('watch', { auditBucket: 'watch', severity: 'warning' }),
+    ] }));
+    const rows = screen.getAllByTestId('overview-action-item');
+    expect(within(rows[0]!).getByText('Fix now')).toBeInTheDocument();
+    expect(within(rows[1]!).getByText('Watch')).toBeInTheDocument();
+  });
+
   it('turns the latest audit and cached feature data into an action-first overview', () => {
     renderPanel();
 

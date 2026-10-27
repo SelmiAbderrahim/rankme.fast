@@ -132,10 +132,12 @@
       "redirectsTo": "Redirects to {{url}}",
       "answersDirectly": "Opens here without redirecting (status {{status}})",
       "endsWithError": "Ends on {{url}} with an error (status {{status}})",
-      "unreachable": "Did not answer",
+      "unreachable": "Could not connect",
       "okChip": "OK",
       "problemChip": "Needs fixing",
-      "unknownChip": "Not checked"
+      "failure": {"tls": "TLS certificate validation failed", "dns": "DNS lookup failed", "timeout": "Request timed out"},
+      "retryHint": "Run a new audit to retry failed checks.",
+      "unknownChip": "Check failed"
     },
     "measured": {
       "words_zero": "{{count}} words",
@@ -275,6 +277,13 @@
       "unavailable": "AI summary is temporarily unavailable — your checklist is unaffected.",
       "capReached": "You've reached your monthly AI summary limit. Upgrade or add credits to keep generating."
     },
+    "highlights_zero": "Summary highlights: {{shown}} of {{count}} open findings.",
+    "highlights_one": "Summary highlights: {{shown}} of {{count}} open finding.",
+    "highlights_two": "Summary highlights: {{shown}} of {{count}} open findings.",
+    "highlights_few": "Summary highlights: {{shown}} of {{count}} open findings.",
+    "highlights_many": "Summary highlights: {{shown}} of {{count}} open findings.",
+    "highlights_other": "Summary highlights: {{shown}} of {{count}} open findings.",
+    "allFindings": "See all findings in this report",
     "basis_zero": "Based on {{count}} open findings",
     "basis_one": "Based on {{count}} open finding",
     "basis_two": "Based on {{count}} open findings",
@@ -563,6 +572,9 @@
       "localPackSetup": "Turn on map-results tracking for one of your tracked keywords to check this.",
       "aiVisibility": "Track AI prompts to check this.",
       "generic": "The crawl did not return enough data to check this.",
+      "probeTls": "TLS certificate validation failed while reading {{file}}.",
+      "probeDns": "DNS lookup failed while reading {{file}}.",
+      "probeTimeout": "The request for {{file}} timed out.",
       "probeUnreachable": "We could not reach {{file}} on your site, so this could not be checked.",
       "probeBlocked": "Your site refused our request for {{file}} (HTTP {{status}}), so this could not be checked.",
       "probeHttpError": "Your site answered with HTTP {{status}} for {{file}}, so this could not be checked."

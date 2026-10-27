@@ -174,7 +174,6 @@ const CategoryFilter = ({
 };
 
 interface RuleDiff {
-  kind: DiffKind | undefined;
   byUrl: Map<string, DiffKind>;
 }
 
@@ -185,17 +184,11 @@ export const buildRuleDiffMap = (
   for (const entry of entries) {
     let bucket = map.get(entry.ruleId);
     if (!bucket) {
-      bucket = { kind: undefined, byUrl: new Map<string, DiffKind>() };
+      bucket = { byUrl: new Map<string, DiffKind>() };
       map.set(entry.ruleId, bucket);
     }
     if (entry.url) bucket.byUrl.set(entry.url, entry.kind);
-    // Precedence: regressed > new > fixed. `new` maps to `regressed` in the
-    // rule-level badge — the finding is worse than the previous snapshot.
-    if (entry.kind === 'regressed' || entry.kind === 'new') {
-      bucket.kind = 'regressed';
-    } else if (entry.kind === 'fixed' && bucket.kind !== 'regressed') {
-      bucket.kind = 'fixed';
-    }
+
   }
   return map;
 };
@@ -543,7 +536,6 @@ export const ReportPage = ({
           <IssueRow
             key={finding.ruleId}
             finding={finding}
-            ruleDiffKind={bucket?.kind}
             diffByUrl={bucket?.byUrl ?? EMPTY_DIFF_BY_URL}
             pageSpeed={report?.pageSpeed ?? null}
             gscSearch={report?.gscSearch ?? null}
@@ -833,6 +825,8 @@ export const ReportPage = ({
 
       {report ? (
         <Tabs
+          id="report-findings"
+          tabIndex={-1}
           value={activeTab}
           onValueChange={(v) => setActiveTab(v as ReportTab)}
           defaultValue={DEFAULT_REPORT_TAB}

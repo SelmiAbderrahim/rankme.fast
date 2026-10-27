@@ -389,7 +389,7 @@
       "search_console": "Defaulted from your Search Console traffic ({{country}}).",
       "cctld": "Defaulted from your site's country ({{country}}).",
       "site_language": "Defaulted from your site's page language ({{language}}).",
-      "assumed": "We could not detect your site's market. Check this before adding keywords.",
+      "assumed": "Using a fallback market ({{country}} · {{language}}). No confirmed site market is saved yet. Save this default or choose another market.",
       "hint": "You can change it here.",
       "edit": "Change site default"
     },
